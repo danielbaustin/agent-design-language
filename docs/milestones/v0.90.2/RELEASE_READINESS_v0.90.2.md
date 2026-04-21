@@ -2,11 +2,12 @@
 
 ## Status
 
-WP-15 docs, quality, and review convergence record.
+WP-19 release-tail handoff record.
 
-v0.90.2 implementation and demo/proof coverage have landed through WP-14A. The
-milestone is ready for WP-16 internal review after this convergence record is
-reviewed and merged.
+v0.90.2 implementation and demo/proof coverage have landed through WP-14A.
+WP-15 docs convergence, WP-16 internal review, WP-17 external review, and WP-18
+accepted-finding remediation are complete. The milestone is in WP-19
+next-milestone handoff before WP-20 release ceremony.
 
 ## Review Entry Points
 
@@ -131,7 +132,7 @@ handoff to WP-16:
 - Active milestone: v0.90.2
 - Crate version: `0.90.2`
 - Most recently completed milestone: v0.90.1
-- Current release-tail stage: WP-15 complete after this record merges
+- Current release-tail stage: WP-19 next-milestone handoff
 
 Reviewers should treat any conflicting older v0.90.1 crate-version statement
 or claim that v0.90.2 is still pre-issue-wave as a stale release-truth defect.
@@ -148,11 +149,16 @@ v0.90.2 does not claim:
 - live unbounded Runtime v2 autonomy
 - Observatory mutation authority outside governed command packets
 
+## Review-Tail Disposition
+
+- WP-16 internal review completed and its accepted findings were fixed by
+  #2317, #2318, #2319, and #2320.
+- WP-17 external / third-party review completed with zero P0/P1/P2/P3 findings.
+- WP-18 accepted-finding remediation completed; optional non-blocking ideas
+  were routed to backlog candidates.
+
 ## Remaining Release-Tail Gates
 
-- WP-16 internal review must still run.
-- WP-17 external / third-party review must still run.
-- WP-18 must fix accepted findings or defer them explicitly.
 - WP-19 must complete next-milestone planning and v0.91/v0.92 handoff.
 - WP-20 must run the release ceremony from clean main after merge and operator
   fast-forward.

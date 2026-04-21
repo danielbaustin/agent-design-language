@@ -4,10 +4,10 @@ All notable project-level changes are summarized here by milestone/release.
 
 ## v0.90.2 (In progress)
 
-Status: Implementation and demo/proof coverage have landed through WP-14A;
-WP-15 begins the docs, quality, and review-convergence tail before internal
-review, external review, remediation, next-milestone handoff, and release
-ceremony.
+Status: Implementation and demo/proof coverage have landed through WP-14A.
+WP-15 docs convergence, WP-16 internal review, WP-17 external review, and
+WP-18 accepted-finding remediation are complete. WP-19 is finalizing
+next-milestone handoff before WP-20 release ceremony.
 
 Summary:
 - v0.90.2 is the first bounded CSM run and Runtime v2 hardening milestone.
@@ -26,7 +26,11 @@ Summary:
 - WP-15 reviewed the active coverage, gap-status, and Rust module watch
   trackers: coverage remains above the active gates at `92.40%`, the remaining
   gap risk is release-tail and lifecycle-record verification, and the Rust
-  tracker is waiting for issue #2309 before its next refresh.
+  tracker was refreshed after the v0.90.2 refactoring pass.
+- WP-16 internal review findings were fixed by #2317, #2318, #2319, and #2320.
+  WP-17 external review found zero P0/P1/P2/P3 findings, and WP-18 closed with
+  only optional backlog candidates for milestone-compression documentation and
+  a Runtime v2 overview diagram.
 - The crate version is `0.90.2` for the active v0.90.2 release line.
 
 References:

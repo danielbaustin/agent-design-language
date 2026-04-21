@@ -7,11 +7,17 @@ tracked_package: docs/milestones/v0.90.3
 notes:
   - "Issue wave is not open yet."
   - "This package was prepared during v0.90.2 by #2269."
+  - "This package was refined during v0.90.2 WP-19 #2263 after WP-16 through WP-18 review-tail fixes closed."
   - "Do not claim first true Gödel-agent birthday in v0.90.3."
   - "Do not collapse v0.91 moral/emotional civilization or v0.92 birthday scope into v0.90.3."
-  - "Full economics and contract-market work belongs to tentative v0.90.4 / #2271 unless WP-16 accepts a narrow resource-stewardship bridge."
+  - "Full economics and contract-market work belongs to tentative v0.90.4 / #2271 unless WP-13 records a narrow resource-stewardship bridge for citizen-state safety."
   - "Use local-first sealed checkpoint semantics; cloud enclave backends are later options, not v0.90.3 dependencies."
-  - "Preserve an explicit demo matrix and feature proof demo WP before docs/review convergence."
+  - "Use WP-01 through WP-20 as the release shape, with explicit WP-14A for demo matrix and feature proof demos before the quality/docs/review gate."
+  - "Preserve the v0.87.1/v0.90.2 release-tail pattern: demo/proof coverage, quality gate, docs convergence, internal review, external review, remediation, next-milestone planning, release ceremony."
+card_update_rule:
+  - "WP-01 must copy the relevant section from WP_EXECUTION_READINESS_v0.90.3.md into each issue body before implementation."
+  - "Cards must include required outputs, required validation, non-goals, and source docs rather than generic ship-code/docs wording."
+  - "No issue should claim implementation, review, or release completion until its evidence has landed and validated."
 work_packages:
   - wp: WP-01
     issue: planned
@@ -81,51 +87,57 @@ work_packages:
     depends_on: WP-03
   - wp: WP-12
     issue: planned
+    title: Access-control semantics
+    queue: runtime
+    outcome: authority matrix, access events, and denial tests
+    depends_on: WP-10, WP-11
+  - wp: WP-13
+    issue: planned
+    title: Continuity challenge, appeal, threat model, and economics placement
+    queue: runtime
+    outcome: challenge/appeal schemas, freeze behavior, threat model, and economics placement record
+    depends_on: WP-07, WP-09-WP-12
+  - wp: WP-14
+    issue: planned
     title: Integrated citizen-state demo
     queue: demo
     outcome: integrated proof packet and operator report
-    depends_on: WP-03-WP-11
-  - wp: WP-13
-    issue: planned
-    title: Access-control semantics
-    queue: runtime
-    outcome: authority matrix and access events
-    depends_on: WP-10-WP-12
-  - wp: WP-14
-    issue: planned
-    title: Projection policy
-    queue: runtime
-    outcome: projection policy and leakage tests
-    depends_on: WP-10, WP-13
-  - wp: WP-15
-    issue: planned
-    title: Continuity challenge and appeal flow
-    queue: runtime
-    outcome: challenge/appeal schemas and freeze behavior
-    depends_on: WP-07, WP-13
-  - wp: WP-16
-    issue: planned
-    title: Citizen-state threat model and economics placement decision
-    queue: review
-    outcome: threat model, negative-test candidates, and economics placement record
-    depends_on: WP-03-WP-15
-  - wp: WP-17
+    depends_on: WP-03-WP-13
+  - wp: WP-14A
     issue: planned
     title: Demo matrix and feature proof demos
     queue: demo
     outcome: demo matrix update and feature proof coverage record
-    depends_on: WP-12-WP-16
+    depends_on: WP-03-WP-14
+  - wp: WP-15
+    issue: planned
+    title: Quality gate, docs, and review convergence
+    queue: docs
+    outcome: coherent quality gate and docs/review package
+    depends_on: WP-14A
+  - wp: WP-16
+    issue: planned
+    title: Internal review
+    queue: review
+    outcome: findings-first internal review packet
+    depends_on: WP-15
+  - wp: WP-17
+    issue: planned
+    title: External / third-party review
+    queue: review
+    outcome: completed external review record
+    depends_on: WP-16
   - wp: WP-18
     issue: planned
-    title: Docs, quality, and review convergence
-    queue: docs
-    outcome: coherent docs/review package
-    depends_on: WP-17
+    title: Review findings remediation
+    queue: review
+    outcome: accepted findings fixed or explicitly deferred with owner and rationale
+    depends_on: WP-16, WP-17
   - wp: WP-19
     issue: planned
-    title: Internal and external review remediation
-    queue: review
-    outcome: review packets and remediation notes
+    title: Next-milestone planning and handoff
+    queue: docs
+    outcome: v0.90.4/v0.91/v0.92 planning package and handoff notes
     depends_on: WP-18
   - wp: WP-20
     issue: planned

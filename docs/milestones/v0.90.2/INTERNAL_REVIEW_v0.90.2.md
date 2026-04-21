@@ -66,9 +66,8 @@ canonical.
 
 ### F2. P2 - Repo packet builder records worktree name as repository name
 
-Location:
-`.adl/reviews/v0.90.2/internal/codebuddy/repo-packet/run_manifest.json`,
-`.adl/reviews/v0.90.2/internal/codebuddy/repo-packet/repo_scope.md`
+Location: local v0.90.2 internal-review CodeBuddy repo-packet manifest and
+scope artifacts.
 
 The CodeBuddy repo packet generated during WP-16 records the repository name as
 the issue worktree directory, `adl-wp-2260`, rather than the canonical project
@@ -130,12 +129,12 @@ WP-16 and later release-tail gates open before this review.
 
 Passed during this review:
 
-- `bash adl/tools/closeout_completed_issue_wave.sh --version v0.90.2 --report .adl/reports/closeout/closeout-wave-v0.90.2.md`
+- `bash adl/tools/closeout_completed_issue_wave.sh --version v0.90.2 --report <local-closeout-report>`
   was run before WP-16 execution from the main checkout and reported
   `PASS closeout_completed_issue_wave version=v0.90.2 normalized=32`.
 - `bash adl/tools/pr.sh doctor 2260 --version v0.90.2 --json` passed before
   binding execution.
-- `python3 <repo-packet-builder-skill>/scripts/build_repo_packet.py . --out .adl/reviews/v0.90.2/internal/codebuddy/repo-packet`
+- `python3 <repo-packet-builder-skill>/scripts/build_repo_packet.py . --out <local-review-packet-root>`
   generated the CodeBuddy-style repo packet used as review input.
 - `bash adl/tools/test_skill_documentation_completeness.sh` passed.
 - `bash adl/tools/test_multi_agent_repo_review_specialist_skill_contracts.sh`

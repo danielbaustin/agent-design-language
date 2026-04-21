@@ -135,7 +135,9 @@ The milestone is intentionally contract-first:
 - WP-02 audits inherited state
 - WP-03 through WP-07 define format, envelope, ledger, witness, and key
   mechanics
-- WP-08 through WP-12 prove negative and integrated behavior
-- WP-13 through WP-18 fill policy, projection, challenge, threat, and economics
-  placement
-- WP-19 and WP-20 close the milestone with review and release truth
+- WP-08 through WP-13 prove negative behavior, access boundaries, challenge
+  flow, threat assumptions, and economics placement
+- WP-14 and WP-14A prove integrated behavior and feature-by-feature coverage
+- WP-15 through WP-20 preserve the v0.87.1/v0.90.2 review-tail shape: quality
+  gate, docs convergence, internal review, external review, remediation,
+  next-milestone handoff, and release ceremony

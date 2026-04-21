@@ -36,6 +36,6 @@ reviewable failure, recovery, quarantine, and security-boundary evidence.
 
 ## Release Note Rule
 
-Before release, verify this draft against WP-16 internal review, WP-17 external
-review, WP-18 remediation, WP-19 handoff, and WP-20 ceremony evidence. Do not
-ship aspirational language as release truth.
+Before release, verify this draft against the completed WP-16 internal review,
+completed WP-17 external review, completed WP-18 remediation, WP-19 handoff,
+and WP-20 ceremony evidence. Do not ship aspirational language as release truth.

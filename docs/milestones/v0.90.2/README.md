@@ -79,7 +79,7 @@ Out of scope:
 - Decisions log: `DECISIONS_v0.90.2.md`
 - Demo matrix: `DEMO_MATRIX_v0.90.2.md`
 - Feature proof coverage: `FEATURE_PROOF_COVERAGE_v0.90.2.md`
-- Release readiness / WP-15 convergence:
+- Release readiness / WP-19 handoff:
   `RELEASE_READINESS_v0.90.2.md`
 - Internal review / WP-16:
   `INTERNAL_REVIEW_v0.90.2.md`
@@ -252,3 +252,26 @@ implementation or hollow demo matrix, confirmed the D1-D11 proof surface is
 substantial and bounded, and routed remaining review-substrate findings to the
 release tail. WP-16 does not approve final release; it hands the milestone to
 WP-17 external review and WP-18 accepted-finding remediation.
+
+## WP-17 External Review Gate
+
+WP-17 records the third-party review disposition. The external review found
+zero P0, P1, P2, or P3 findings, recognized the first bounded CSM run, D1-D11
+proof coverage, ADR 0012, version discipline, and the preserved non-claims for
+first true birthday, v0.91, v0.92, unbounded Runtime v2 autonomy, and complete
+security ecology.
+
+## WP-18 Remediation Gate
+
+WP-18 confirms the accepted internal-review findings and ADR gap were fixed:
+multi-agent repo-review contract drift, repo-packet canonical naming,
+bounded review-quality wrapper decision, and ADR 0012. The external review did
+not require additional remediation. Optional ideas from the review were routed
+as backlog candidates instead of release blockers.
+
+## WP-19 Next-Milestone Handoff Gate
+
+WP-19 prepares v0.90.3 to start quickly after v0.90.2 closes. The v0.90.3
+package now includes a polished citizen-state substrate plan, explicit
+WP-14A demo/proof lane, WP execution-readiness guidance for card authoring, and
+the same release-tail pattern v0.90.2 used successfully.

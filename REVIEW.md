@@ -40,13 +40,17 @@ For the active v0.90.2 review-tail package, start with:
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
-The current v0.90.2 review posture is review-tail copy. WP-01 through WP-14A
-have produced the first bounded CSM run and Runtime v2 hardening proof package:
+The current v0.90.2 review posture is release-tail copy. WP-01 through WP-14A
+produced the first bounded CSM run and Runtime v2 hardening proof package:
 CSM run packet contract, invariant and violation artifacts, boot/admission
 evidence, governed episode scheduling, Freedom Gate mediation, invalid-action
 rejection, snapshot/rehydrate/wake continuity, Observatory packet/report,
 recovery/quarantine evidence, governed adversarial hardening, integrated
 first-run demo, and feature-proof coverage.
+
+WP-15 docs convergence, WP-16 internal review, WP-17 external review, and WP-18
+accepted-finding remediation are complete. WP-19 is finalizing v0.90.3 and
+later-milestone handoff before WP-20 release ceremony.
 
 The crate version is `0.90.2` for the active v0.90.2 release line. Reviewers
 should treat any conflicting older version reference as a stale release-truth
@@ -61,9 +65,8 @@ Important v0.90.2 non-claims:
   migration.
 - v0.90.2 does not ship the complete red/blue/purple security ecology.
 
-Before release approval, verify that WP-16 internal review, WP-17 external /
-third-party review, WP-18 remediation, WP-19 next-milestone handoff, and WP-20
-release ceremony have completed.
+Before release approval, verify that WP-19 next-milestone handoff and WP-20
+release ceremony have completed from clean main.
 
 WP-15 tracker status to preserve during review:
 - coverage remains above the active quality gate at `92.40%` workspace line

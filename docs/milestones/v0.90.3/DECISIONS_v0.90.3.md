@@ -12,3 +12,4 @@
 | D-08 | Communication does not imply inspection | Proposed | Standing and communication are social/action boundaries; raw private-state access remains separate. |
 | D-09 | Keep full economics and contract-market work in v0.90.4 | Proposed | v0.90.3 may decide on a narrow resource-stewardship bridge, but economics should not distort citizen-state safety. |
 | D-10 | Preserve v0.91 and v0.92 scope | Proposed | v0.90.3 prepares for moral/emotional civilization and birthday work without claiming either. |
+| D-11 | Preserve the v0.87.1/v0.90.2 release-tail pattern | Proposed | Demo/proof coverage, quality gate, docs convergence, internal review, external review, remediation, next-milestone handoff, and release ceremony should remain explicit rather than compressed into one ambiguous closeout issue. |
