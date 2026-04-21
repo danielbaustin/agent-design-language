@@ -9,6 +9,7 @@ owned by the v0.90.3 feature proofs and demo matrix.
 
 | Source | Purpose |
 | --- | --- |
+| `csm_observatory_modes.mmd` | multimode Observatory architecture over shared CSM primitives |
 | `csm_observatory_surface_map.mmd` | first-screen information architecture for the Observatory surface |
 | `csm_observatory_projection_flow.mmd` | redacted projection and authority flow from CSM artifacts into reviewer/operator views |
 

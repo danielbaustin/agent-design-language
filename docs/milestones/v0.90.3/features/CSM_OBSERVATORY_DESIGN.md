@@ -59,8 +59,8 @@ dangerous.
 
 Subtle inspirations to carry forward:
 
-- rooms, not generic pages: Observatory, Operator, and Citizen modes should each
-  feel like purpose-built environments
+- rooms, not generic pages: World, Governance, Cognition, and future Citizen
+  modes should each feel like purpose-built environments
 - instruments, not widgets: the Freedom Gate docket, trace ribbon, kernel
   pulse, and citizen constellation should read as precise instruments
 - progressive reveal: advanced controls can remain dimmed, folded, or
@@ -80,6 +80,7 @@ first-screen screenshot mockup.
 
 | Artifact | Purpose | Status |
 | --- | --- | --- |
+| `../diagrams/csm_observatory_modes.mmd` | multimode Observatory architecture and shared primitives | source-backed Mermaid diagram |
 | `../diagrams/csm_observatory_surface_map.mmd` | information architecture for the Observatory first screen | source-backed Mermaid diagram |
 | `../diagrams/csm_observatory_projection_flow.mmd` | redacted projection and authority flow | source-backed Mermaid diagram |
 | `../assets/csm_observatory_first_screen.svg` | durable vector mockup of the first screen | rendered locally |
@@ -101,17 +102,54 @@ artifact.
 
 ## Modes
 
-### Observatory Mode
+The Observatory should expose multiple coordinated rooms over the same CSM
+reality, not three competing products or disconnected dashboards.
 
-Read-only. Shows manifold state, citizens, episodes, trace, resources,
-invariants, continuity, redacted projections, and review artifacts. This is the
-safe v0.90.3 demo mode.
+All modes share the same primitives:
 
-### Operator Mode
+- event
+- decision
+- trace
+- agent/worldline
+- state
+- lens
+- memory dot
+- authority boundary
+- continuity evidence
 
-Future bounded command surface. Commands such as pause, resume, request
-snapshot, annotate trace, request recovery, or open review packet must emit
-operator events and must not bypass policy or trace.
+### World / Reality Mode
+
+Default landing room. Shows the CSM as an inhabited world: citizens, guests,
+service actors, topology, routes, boundaries, episodes, standing, and movement
+through time. This is the best place to help a new operator or reviewer see the
+polis as a world rather than as a table of artifacts.
+
+Living Atlas is the design reference for this mode. It should use cartographic
+and civic-map metaphors carefully: nodes as actors, regions as domains or
+states, routes as trace and causality, lenses as perspective transforms, and
+sanctuary/quarantine as visible boundaries.
+
+### Operator / Governance Mode
+
+Decision and audit room. Shows Freedom Gate decisions as dockets, trace as
+ribbon, policy state, kernel pulse, resource pressure, evidence links, and
+operator action affordances.
+
+Civic Instrument Room is the design reference for this mode. It should make
+ADL feel governable, auditable, and serious. Future bounded commands such as
+pause, resume, request snapshot, annotate trace, request recovery, or open
+review packet must emit operator events and must not bypass policy or trace.
+
+### Cognition / Internal State Mode
+
+Advanced analysis room. Shows integration, coupling, coherence, internal
+state summaries, and eventually affect or PHI-adjacent measurements when those
+surfaces exist.
+
+Kansei Console is the design reference for this mode. In v0.90.3 it must remain
+carefully bounded: it can define the intended room and visual vocabulary, but it
+must not claim mature PHI, affect, instinct, or emotional-substrate
+instrumentation before those features exist.
 
 ### Citizen Mode
 
@@ -122,6 +160,31 @@ decisions, and continuity proof only within authorized visibility.
 These modes are rooms in the interaction sense. Switching mode should change
 the task environment and visibility contract, not merely highlight a different
 navigation item.
+
+The existing art deco UI remains a fallback direction: useful if implementation
+pressure requires a quick, coherent surface, but not the final target if the
+multimode room architecture proves workable.
+
+## Mode Architecture
+
+```mermaid
+flowchart LR
+    primitives["Shared CSM primitives\nevent, decision, trace, agent/worldline,\nstate, lens, memory dot, authority boundary,\ncontinuity evidence"]
+    world["World / Reality Mode\nLiving Atlas\nstate, topology, movement"]
+    governance["Operator / Governance Mode\nCivic Instrument Room\ndecisions, trace, policy"]
+    cognition["Cognition / Internal State Mode\nKansei Console\ncoupling, coherence, integration"]
+    citizen["Future Citizen Mode\npersonal continuity and commitments"]
+    demo["v0.90.3 flagship demo\ninhabited Observatory story"]
+
+    primitives --> world
+    primitives --> governance
+    primitives --> cognition
+    primitives --> citizen
+    world --> demo
+    governance --> demo
+    cognition -.-> demo
+    citizen -.-> demo
+```
 
 ## Minimum Visibility Packet
 
@@ -205,6 +268,7 @@ The first screen should have six high-signal regions.
    - visual map of citizens, guests, and service actors
    - state encoding for awake, sleeping, paused, degraded, blocked, challenged,
      or quarantined
+   - should evolve toward the World / Reality Mode atlas
 
 3. Kernel Pulse
    - scheduler, trace, snapshot, invariant, resource, and guardrail health
@@ -212,6 +276,7 @@ The first screen should have six high-signal regions.
 4. Freedom Gate Docket
    - recent allow/defer/refuse/challenge decisions
    - risky or rejected actions should be impossible to miss
+   - belongs most strongly to Operator / Governance Mode
 
 5. Timeline / Trace Ribbon
    - ordered recent events with causal links
@@ -259,14 +324,15 @@ Avoid generic dashboard cards.
 The visual language should combine:
 
 - chartroom
-- mission control
 - constitutional court docket
+- civic atlas
+- instrument room
 - runtime debugger
 - social system monitor
 
 Good motifs:
 
-- orbital citizen layout around the manifold
+- atlas view of citizens, guests, service actors, routes, and boundaries
 - timeline ribbon with causal markers
 - invariant lights as status beacons
 - Freedom Gate verdict cards
@@ -274,6 +340,7 @@ Good motifs:
 - quarantine as visible but protected boundary
 - redaction/projection lenses over protected state
 - saved operator/reviewer views as memory dots
+- cognition console for bounded integration/coherence surfaces
 
 ## Non-Proving Boundaries
 

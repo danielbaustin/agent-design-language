@@ -1,0 +1,16 @@
+flowchart LR
+    primitives["Shared CSM primitives\nevent, decision, trace, agent/worldline,\nstate, lens, memory dot, authority boundary,\ncontinuity evidence"]
+    world["World / Reality Mode\nLiving Atlas\nstate, topology, movement"]
+    governance["Operator / Governance Mode\nCivic Instrument Room\ndecisions, trace, policy"]
+    cognition["Cognition / Internal State Mode\nKansei Console\ncoupling, coherence, integration"]
+    citizen["Future Citizen Mode\npersonal continuity and commitments"]
+    demo["v0.90.3 flagship demo\ninhabited Observatory story"]
+
+    primitives --> world
+    primitives --> governance
+    primitives --> cognition
+    primitives --> citizen
+    world --> demo
+    governance --> demo
+    cognition -.-> demo
+    citizen -.-> demo
