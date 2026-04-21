@@ -6,6 +6,7 @@ planning_source: docs/milestones/v0.90.2
 tracked_package: docs/milestones/v0.90.2
 notes:
   - "Issue wave is open as #2245-#2264."
+  - "WP-14A is open as #2301 to restore the explicit demo matrix and feature proof demo lane without renumbering WP-15 through WP-20."
   - "Do not claim first true Gödel-agent birthday in v0.90.2."
   - "Do not collapse v0.91 moral/emotional civilization or v0.92 birthday scope into v0.90.2."
   - "v0.90.2 is the first bounded CSM run milestone plus hardening around that run."
@@ -97,12 +98,18 @@ work_packages:
     queue: demo
     outcome: integrated CSM run demo packet
     depends_on: WP-05-WP-13
+  - wp: WP-14A
+    issue: 2301
+    title: Demo matrix and feature proof demos
+    queue: demo
+    outcome: demo matrix update and feature proof coverage record
+    depends_on: WP-03-WP-14
   - wp: WP-15
     issue: 2259
     title: Docs, quality, and review convergence
     queue: docs
     outcome: aligned docs, quality posture, demo matrix, README, and reviewer entry surfaces
-    depends_on: WP-14
+    depends_on: WP-14A
   - wp: WP-16
     issue: 2260
     title: Internal review

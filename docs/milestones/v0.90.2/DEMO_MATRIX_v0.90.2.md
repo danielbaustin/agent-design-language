@@ -3,7 +3,9 @@
 ## Status
 
 Issue wave open. Demo commands remain pending until the implementation WPs
-land, but every planned demo now has a mapped WP issue.
+land, but every planned demo now has a mapped WP issue. WP-14A #2301 owns the
+feature-by-feature demo/proof coverage pass before WP-15 docs and review
+convergence.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |
@@ -17,6 +19,17 @@ land, but every planned demo now has a mapped WP issue.
 | D8 | Recovery versus quarantine | WP-11 #2255 / WP-12 #2256 | Runtime distinguishes safe resume from required quarantine | recovery eligibility model, recovery decisions, quarantine artifact | LANDED |
 | D9 | Governed adversarial hook and hardening probes | WP-13 #2257 | One bounded adversarial scenario is contained under explicit operator rules, and duplicate activation, snapshot integrity, and replay-gap failures are detected and recorded | adversarial hook packet, rules of engagement, hardening proof packets | LANDED |
 | D10 | Integrated first CSM run proof | WP-14 #2258 | Reviewer can inspect the first bounded CSM run and its failure-boundary evidence end to end | integrated CSM run packet, trace, Observatory report, hardening artifacts | PLANNED |
+| D11 | Feature proof coverage record | WP-14A #2301 | Every v0.90.2 feature claim has a runnable demo command, test-backed proof packet, fixture-backed artifact, documented non-proving status, or explicit deferral before review convergence | demo matrix update and feature proof coverage record | PLANNED |
+
+## Demo-Program Ownership
+
+- WP-13 owns the governed adversarial hook and hardening probes only.
+- WP-14 owns the integrated first CSM run proof packet.
+- WP-14A owns feature-by-feature demo/proof coverage across WP-03 through
+  WP-14.
+- WP-15 consumes the completed demo/proof coverage record during docs, quality,
+  and review convergence; it should not be the place where missing feature
+  demos are invented.
 
 ## Non-Proving Boundaries
 
