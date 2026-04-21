@@ -1,0 +1,4 @@
+display_name: Portable Contract Normalizer
+short_description: Detect and optionally normalize machine-local assumptions in bounded contracts, tests, packets, and validation surfaces
+default_prompt: Scan bounded repo contracts, tests, packets, and validation surfaces for absolute host paths, brittle worktree names, machine-local temp paths, stale hard-coded contract references, and environment-specific assertions. Emit findings first, separate safe mechanical normalization from design-decision findings, and only apply narrow safe fixes when explicitly requested.
+

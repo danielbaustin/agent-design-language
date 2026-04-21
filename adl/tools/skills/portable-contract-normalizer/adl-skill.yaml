@@ -1,0 +1,100 @@
+version: "0.1"
+kind: "adl-skill"
+id: "portable-contract-normalizer"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "portable_contract_normalizer.v1"
+    reference_doc: "../docs/PORTABLE_CONTRACT_NORMALIZER_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "scan_contracts"
+      - "scan_and_apply_safe_fixes"
+      - "inspect_normalizer_report"
+    policy_fields:
+      - "write_report"
+      - "apply_safe_fixes"
+      - "bounded_paths"
+      - "preserve_legitimate_host_evidence"
+      - "stop_before_broad_rewrite"
+      - "stop_before_design_decision"
+    mode_requirements:
+      scan_contracts:
+        required_target_fields:
+          - "paths"
+      scan_and_apply_safe_fixes:
+        required_target_fields:
+          - "paths"
+          - "operator_approval"
+      inspect_normalizer_report:
+        required_target_fields:
+          - "report_path"
+  intent:
+    - "contract_portability"
+    - "path_leakage_detection"
+    - "safe_mechanical_normalization"
+  required_inputs:
+    - "target"
+    - "policy"
+  optional_inputs:
+    - "repo_root"
+    - "output_root"
+    - "run_id"
+  stop_if_missing:
+    - "target.paths"
+  prevalidation_rules:
+    - "skill_input_schema_must_equal_portable_contract_normalizer.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "bounded_paths_must_be_explicit"
+    - "policy.stop_before_broad_rewrite_must_be_true"
+    - "policy.stop_before_design_decision_must_be_true"
+    - "scan_and_apply_safe_fixes_requires_operator_approval"
+execution:
+  mode: "portability_scan_or_explicit_safe_fix"
+  allow_code_edits: true
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/normalize_portable_contracts.py"
+      interpreter: "python3"
+      read_only: false
+      allowed_args:
+        - "--root <path>"
+        - "--out <artifact-root>"
+        - "--run-id <id>"
+        - "--apply"
+  preferred_read_order:
+    - "bounded target files"
+    - "contract tests"
+    - "skill metadata"
+    - "review packet manifests"
+    - "validation artifacts"
+  invocation_guidance: "prefer_report_only_first_then_explicit_apply"
+boundaries:
+  must_not_run:
+    - "unbounded_repository_rewrite"
+    - "customer_packet_mutation_without_permission"
+    - "semantic_test_rewrite"
+    - "design_decision_resolution"
+    - "legitimate_evidence_redaction"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/portable-contract-normalizer/<run_id>/"
+  required_artifacts:
+    - "portable_contract_normalizer_report.md"
+    - "portable_contract_normalizer_report.json"
+security:
+  no_network: true
+  bounded_paths_required: true
+  safe_fixes_require_explicit_apply: true
+  preserve_legitimate_evidence: true
+
