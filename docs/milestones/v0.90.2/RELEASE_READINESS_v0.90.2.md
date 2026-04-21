@@ -96,12 +96,13 @@ handoff to WP-16:
 - Coverage tracker: current workspace line coverage remains `92.40%`, which is
   approximately `93.00%` when rounded. The workspace coverage gate and per-file
   coverage gate both pass with no active file-floor exclusion.
-- Gap status: no substantial active gap-analysis tracker was found outside a
-  retired thin note, so WP-15 captures the current gap state directly from
-  current issue and validation evidence. The v0.90.2 implementation tranche is
-  substantial through WP-14A, but release completion still depends on WP-16
-  internal review, WP-17 external review, WP-18 remediation, WP-19 handoff, and
-  WP-20 ceremony. Remaining gap concerns belong to release-tail verification and
+- Gap status: the active v0.90.2 gap-analysis note lives in the local TBD
+  surface and is intentionally not treated as a canonical tracked release
+  document. WP-15 captures the current gap state directly from current issue
+  and validation evidence. The v0.90.2 implementation tranche is substantial
+  through WP-14A, but release completion still depends on WP-16 internal review,
+  WP-17 external review, WP-18 remediation, WP-19 handoff, and WP-20 ceremony.
+  Remaining gap concerns belong to release-tail verification and
   lifecycle-record truth checks.
 - Rust module watch tracker: the current largest Rust hotspots are Runtime v2
   tests, `runtime_v2/governed_episode.rs`, and `long_lived_agent.rs`. The test
