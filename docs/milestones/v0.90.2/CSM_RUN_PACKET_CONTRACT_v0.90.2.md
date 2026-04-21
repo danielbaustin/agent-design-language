@@ -110,6 +110,8 @@ The first bounded run must use these artifact requirements:
 | `runtime_v2/hardening/snapshot_integrity_probe.json` | WP-13 | WP-14 | D9 snapshot integrity negative probe |
 | `runtime_v2/hardening/trace_replay_gap_probe.json` | WP-13 | WP-14 | D9 trace/replay gap negative probe |
 | `runtime_v2/hardening/hardening_proof_packet.json` | WP-13 | WP-14 | D9 hardening summary proof packet |
+| `runtime_v2/csm_run/integrated_first_run_transcript.jsonl` | WP-14 | WP-14A | D10 deterministic stage transcript emitted by the flagship demo command |
+| `runtime_v2/csm_run/integrated_first_run_proof_packet.json` | WP-14 | WP-14A | D10 integrated first-run proof packet tying WP-05 through WP-13 evidence together |
 
 ## Stage Contract
 
@@ -123,6 +125,7 @@ The first-run stage order is fixed and must remain contiguous:
 | 4 | `governed_episode_and_rejection` | WP-06-WP-08 | `runtime_v2/csm_run/first_run_trace.jsonl` |
 | 5 | `snapshot_wake_and_observatory` | WP-09-WP-10 | `runtime_v2/observatory/visibility_packet.json` |
 | 6 | `governed_adversarial_hardening` | WP-11-WP-13 | `runtime_v2/hardening/hardening_proof_packet.json` |
+| 7 | `integrated_first_run_proof` | WP-14 | `runtime_v2/csm_run/integrated_first_run_proof_packet.json` |
 
 Later WPs may add evidence fields to their own artifacts, but they must not
 silently reorder this spine or produce competing first-run packet contracts.
@@ -148,6 +151,11 @@ artifact are landed.
 D9 is proving after WP-13: one governed adversarial hook is contained under
 explicit rules of engagement, and duplicate activation, snapshot integrity, and
 trace/replay gap failures are recorded as fail-closed hardening probes.
+
+D10 is proving after WP-14: the runnable `adl runtime-v2 integrated-csm-run-demo`
+command emits a deterministic ten-stage transcript, prints the Observatory
+operator report to stdout, and writes the integrated first-run proof packet tying
+WP-05 through WP-13 evidence into one reviewer-facing bundle.
 
 Proved now:
 
@@ -188,11 +196,14 @@ Proved now:
 - the snapshot integrity probe refuses unverified wake before active state
 - the trace/replay gap probe refuses replay with missing trace sequence and preserves evidence
 - the hardening proof packet classifies D9 as proving while preserving live-run, first-birthday, and complete-security-ecology non-claims
+- the D10 command emits a deterministic stage transcript showing each bounded CSM stage as `PASS`
+- the D10 integrated first-run proof packet references the trace, Observatory packet/report, recovery decisions, quarantine evidence, and governed hardening proof
+- the `adl runtime-v2 integrated-csm-run-demo` command prints the Observatory report and writes a deterministic reviewer bundle containing the bounded first-run evidence package
 
 Not proved yet:
 
 - Observatory output is not a live Runtime v2 capture
-- WP-14 still owns the integrated first CSM run proof
+- D10 remains a bounded evidence package, not an unbounded live Runtime v2 execution
 
 ## Validation
 
@@ -210,6 +221,8 @@ cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapt
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_hardening -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture
+adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run
 ```
 
 This validates the contract prototypes, golden fixtures, path hygiene, positive
@@ -222,7 +235,8 @@ operator-report drift, missing D7 source artifacts, recovery decision polarity,
 ambiguous safe-resume rejection, complete recovery rule evaluation, and live-run
 overclaiming, quarantine transition ordering, immutable evidence preservation,
 unsafe release-to-active transitions, governed adversarial hook containment,
-hardening probe refusal, and D9 proof-packet overclaim rejection.
+hardening probe refusal, D9 proof-packet overclaim rejection, D10 integrated
+proof coverage, and runnable demo bundle generation.
 
 ## Non-Claims
 
