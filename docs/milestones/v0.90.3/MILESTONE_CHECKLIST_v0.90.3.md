@@ -26,10 +26,11 @@
 - [ ] Economics placement decision recorded
 - [ ] Integrated citizen-state demo complete
 - [ ] Demo matrix and feature proof coverage record complete
+- [ ] Quality gate and coverage/tracker truth recorded before internal review
 
 ## Review And Release
 
-- [ ] Docs, demo matrix, and feature docs converge before internal review
+- [ ] Docs, demo matrix, quality gate, and feature docs converge before internal review
 - [ ] Internal review complete
 - [ ] External / third-party review complete
 - [ ] Accepted review findings remediated or explicitly deferred

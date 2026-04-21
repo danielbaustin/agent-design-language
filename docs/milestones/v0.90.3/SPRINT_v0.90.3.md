@@ -37,13 +37,14 @@ are explicit, and full economics is routed cleanly to v0.90.4.
 ## Sprint 4 - Demo Proofs, Review, Handoff, And Release
 
 - WP-14A demo matrix and feature proof demos
-- WP-15 docs, quality, and review convergence
+- WP-15 quality gate, docs, and review convergence
 - WP-16 internal review
 - WP-17 external / third-party review
 - WP-18 review findings remediation
 - WP-19 next-milestone planning and handoff
 - WP-20 release ceremony
 
-Exit when feature-by-feature proof coverage is explicit, the package is
-reviewed, findings are fixed or explicitly deferred, v0.90.4/v0.91/v0.92
-handoff is clear, and release ceremony can run from clean main.
+Exit when feature-by-feature proof coverage is explicit, quality and coverage
+truth is recorded before review begins, the package is reviewed, findings are
+fixed or explicitly deferred, v0.90.4/v0.91/v0.92 handoff is clear, and release
+ceremony can run from clean main.

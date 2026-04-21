@@ -28,19 +28,22 @@ Required before release:
 - challenge/appeal proof
 - threat model
 - economics placement decision
+- quality gate and coverage/tracker truth
 - internal and external review records
 
 ## Review Tail
 
 The release tail should follow the v0.87.1/v0.90.2 pattern:
 
-1. docs, quality, and review convergence
-2. internal review
-3. external / third-party review
-4. accepted finding remediation or explicit deferral
-5. next-milestone planning and handoff
-6. release notes and release evidence
-7. release ceremony
+1. demo/proof coverage
+2. quality gate
+3. docs and review convergence
+4. internal review
+5. external / third-party review
+6. accepted finding remediation or explicit deferral
+7. next-milestone planning and handoff
+8. release notes and release evidence
+9. release ceremony
 
 ## Release Non-Claims
 

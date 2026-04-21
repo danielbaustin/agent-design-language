@@ -138,6 +138,6 @@ The milestone is intentionally contract-first:
 - WP-08 through WP-13 prove negative behavior, access boundaries, challenge
   flow, threat assumptions, and economics placement
 - WP-14 and WP-14A prove integrated behavior and feature-by-feature coverage
-- WP-15 through WP-20 preserve the v0.90.2 review-tail shape: docs convergence,
-  internal review, external review, remediation, next-milestone handoff, and
-  release ceremony
+- WP-15 through WP-20 preserve the v0.87.1/v0.90.2 review-tail shape: quality
+  gate, docs convergence, internal review, external review, remediation,
+  next-milestone handoff, and release ceremony

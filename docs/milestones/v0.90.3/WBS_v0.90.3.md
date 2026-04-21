@@ -24,7 +24,7 @@ format and envelope before implementation widens.
 | WP-13 | planned | Continuity challenge, appeal, threat model, and economics placement | Implement due-process artifacts, model citizen-state threats, and decide whether v0.90.3 needs only a resource-stewardship bridge before v0.90.4 economics | challenge/appeal schemas, freeze behavior, threat model, economics placement record | WP-07, WP-09-WP-12 |
 | WP-14 | planned | Integrated citizen-state demo | Prove the substrate end to end in one bounded scenario | integrated proof packet and operator report | WP-03-WP-13 |
 | WP-14A | planned | Demo matrix and feature proof demos | Verify every citizen-state feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral | demo matrix update and feature proof coverage record | WP-03-WP-14 |
-| WP-15 | planned | Docs, quality, and review convergence | Align docs, quality posture, README, reviewer entry surfaces, and the completed demo/proof coverage record | coherent docs/review package | WP-14A |
+| WP-15 | planned | Quality gate, docs, and review convergence | Align quality posture, coverage/tracker truth, docs, README, reviewer entry surfaces, and the completed demo/proof coverage record | coherent quality gate and docs/review package | WP-14A |
 | WP-16 | planned | Internal review | Run findings-first internal review over code, docs, tests, demos, issue truth, and release boundaries | internal review packet and finding register | WP-15 |
 | WP-17 | planned | External / third-party review | Run bounded external review and record findings or zero-finding disposition | third-party review record | WP-16 |
 | WP-18 | planned | Review findings remediation | Fix accepted internal/external findings or defer explicitly with owner and rationale | remediation PRs or deferral records | WP-16, WP-17 |
@@ -44,7 +44,7 @@ Compression must not skip:
 - challenge/appeal behavior
 - anti-equivocation negative tests
 - threat modeling
-- feature-by-feature demo/proof coverage before docs/review convergence
+- feature-by-feature demo/proof coverage before the quality gate and docs/review convergence
 - internal review, external review, and accepted-finding remediation
 - next-milestone planning before release ceremony
 - release-truth checks

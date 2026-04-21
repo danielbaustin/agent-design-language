@@ -245,13 +245,13 @@ Required validation:
 
 ## Sprint 4: Review, Handoff, And Release
 
-### WP-15 Docs, quality, and review convergence
+### WP-15 Quality gate, docs, and review convergence
 
 Required outputs:
 
 - aligned README, CHANGELOG, REVIEW, milestone docs, feature docs, demo matrix,
   release notes, and checklist
-- quality posture and tracker references
+- quality posture, coverage/tracker truth, and explicit release-gate exceptions
 - reviewer entry surface
 
 Required validation:
@@ -259,6 +259,7 @@ Required validation:
 - version/status scan
 - local-path scan
 - stale claim scan for future-scope overclaims
+- quality and coverage tracker scan before internal review begins
 
 ### WP-16 Internal review
 
