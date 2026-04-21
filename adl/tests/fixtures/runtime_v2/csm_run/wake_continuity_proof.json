@@ -1,0 +1,50 @@
+{
+  "schema_version": "runtime_v2.csm_wake_continuity_proof.v1",
+  "proof_id": "proto-csm-01-wake-continuity-0001",
+  "demo_id": "D6",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/wake_continuity_proof.json",
+  "snapshot_ref": "runtime_v2/snapshots/snapshot-0001.json",
+  "rehydration_report_ref": "runtime_v2/rehydration_report.json",
+  "source_trace_ref": "runtime_v2/csm_run/first_run_trace.jsonl",
+  "wake_trace_sequence": 9,
+  "restored_active_citizens": [
+    "proto-citizen-alpha"
+  ],
+  "continuity_checks": [
+    {
+      "invariant_id": "snapshot_checksum_verified",
+      "status": "passed",
+      "checked_before_wake": true
+    },
+    {
+      "invariant_id": "snapshot_restore_must_validate_before_active_state",
+      "status": "passed",
+      "checked_before_wake": true
+    },
+    {
+      "invariant_id": "no_duplicate_active_citizen_instance",
+      "status": "passed",
+      "checked_before_wake": true
+    }
+  ],
+  "citizen_continuity": [
+    {
+      "citizen_id": "proto-citizen-alpha",
+      "snapshot_record_ref": "runtime_v2/citizens/proto-citizen-alpha.json",
+      "restored_record_ref": "runtime_v2/citizens/proto-citizen-alpha.json",
+      "predecessor_snapshot_id": "snapshot-0001",
+      "successor_trace_sequence": 9,
+      "continuity_status": "unique_successor_active_head"
+    }
+  ],
+  "duplicate_activation_guard": {
+    "invariant_id": "no_duplicate_active_citizen_instance",
+    "attempted_duplicate_active_heads": false,
+    "duplicate_active_citizen_detected": false,
+    "quarantine_required": false,
+    "guard_result": "accepted_unique_active_head"
+  },
+  "proof_outcome": "wake_allowed_unique_active_head",
+  "claim_boundary": "This proof backs WP-09 D6 snapshot rehydrate wake continuity for the bounded CSM trace; it does not execute a live CSM run, does not claim first true Godel-agent birth, and does not implement v0.92 identity or migration semantics."
+}

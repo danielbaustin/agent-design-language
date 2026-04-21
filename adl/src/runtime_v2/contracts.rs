@@ -91,6 +91,10 @@ pub fn runtime_v2_csm_invalid_action_rejection_contract(
     RuntimeV2CsmInvalidActionRejectionArtifacts::prototype()
 }
 
+pub fn runtime_v2_csm_wake_continuity_contract() -> Result<RuntimeV2CsmWakeContinuityArtifacts> {
+    RuntimeV2CsmWakeContinuityArtifacts::prototype()
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }

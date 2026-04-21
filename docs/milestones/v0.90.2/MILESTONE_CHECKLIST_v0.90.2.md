@@ -15,7 +15,7 @@
 - [x] Governed episode and resource scheduling complete
 - [x] Freedom Gate mediation complete
 - [x] Invalid action rejection complete
-- [ ] Snapshot rehydrate wake continuity complete
+- [x] Snapshot rehydrate wake continuity complete
 - [ ] Observatory packet and operator report integrated
 - [x] Invariant coverage map complete
 - [x] Violation artifact contract implemented

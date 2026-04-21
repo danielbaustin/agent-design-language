@@ -68,7 +68,7 @@
       "owner_wp": "WP-06",
       "required_by_wp": "WP-14",
       "must_exist_before_live_run": false,
-      "purpose": "ordered trace spine for scheduling, mediation, and rejection"
+      "purpose": "ordered trace spine for scheduling, mediation, rejection, and wake continuity"
     },
     {
       "artifact_id": "resource_pressure_fixture",
@@ -123,6 +123,33 @@
       "required_by_wp": "WP-11",
       "must_exist_before_live_run": false,
       "purpose": "stable violation packet proving invalid action rejection without side effects"
+    },
+    {
+      "artifact_id": "snapshot_manifest",
+      "artifact_kind": "snapshot",
+      "path": "runtime_v2/snapshots/snapshot-0001.json",
+      "owner_wp": "WP-09",
+      "required_by_wp": "WP-10",
+      "must_exist_before_live_run": false,
+      "purpose": "captured manifold snapshot used by the D6 wake-continuity proof"
+    },
+    {
+      "artifact_id": "rehydration_report",
+      "artifact_kind": "rehydration_report",
+      "path": "runtime_v2/rehydration_report.json",
+      "owner_wp": "WP-09",
+      "required_by_wp": "WP-10",
+      "must_exist_before_live_run": false,
+      "purpose": "validated restore report proving invariants ran before wake"
+    },
+    {
+      "artifact_id": "wake_continuity_proof",
+      "artifact_kind": "continuity_proof",
+      "path": "runtime_v2/csm_run/wake_continuity_proof.json",
+      "owner_wp": "WP-09",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D6 proof that wake resumes one unique active citizen head"
     },
     {
       "artifact_id": "observatory_packet",
@@ -197,7 +224,7 @@
         "snapshot_restore_must_validate_before_active_state",
         "no_duplicate_active_citizen_instance"
       ],
-      "status_before_wp": "planned",
+      "status_before_wp": "wp09_wake_continuity_landed",
       "proof_obligation": "wake continuity and operator visibility are tied to the same bounded run"
     }
   ],
@@ -214,6 +241,9 @@
       "runtime_v2/csm_run/freedom_gate_decision.json",
       "runtime_v2/csm_run/invalid_action_fixture.json",
       "runtime_v2/csm_run/invalid_action_violation.json",
+      "runtime_v2/snapshots/snapshot-0001.json",
+      "runtime_v2/rehydration_report.json",
+      "runtime_v2/csm_run/wake_continuity_proof.json",
       "runtime_v2/csm_run/first_run_trace.jsonl"
     ],
     "validation_commands": [
@@ -223,6 +253,7 @@
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture",
       "git diff --check"
     ],
     "non_claims": [
