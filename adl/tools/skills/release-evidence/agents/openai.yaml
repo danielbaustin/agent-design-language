@@ -1,0 +1,4 @@
+display_name: Release Evidence
+short_description: Assemble milestone release proof surfaces into a bounded evidence packet without approving or publishing releases
+default_prompt: Assemble a milestone release-evidence packet from existing issue, PR, demo, review, remediation, validation, non-claim, and residual-risk surfaces. Classify the packet as ready, partial, blocked, or not-run with source-grounded reasons, and stop before release approval, publication, tags, merges, issue closure, or repository mutation.
+

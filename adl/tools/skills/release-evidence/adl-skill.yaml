@@ -1,0 +1,114 @@
+version: "0.1"
+kind: "adl-skill"
+id: "release-evidence"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "release_evidence.v1"
+    reference_doc: "../docs/RELEASE_EVIDENCE_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "milestone"
+      - "evidence"
+      - "policy"
+    mode_enum:
+      - "assemble_milestone_evidence"
+      - "refresh_release_evidence"
+      - "inspect_release_evidence"
+    policy_fields:
+      - "write_evidence_artifact"
+      - "include_open_issues"
+      - "require_review_records"
+      - "require_validation_commands"
+      - "stop_before_release_approval"
+      - "stop_before_mutation"
+    mode_requirements:
+      assemble_milestone_evidence:
+        required_target_fields:
+          - "milestone"
+          - "evidence.milestone_root"
+      refresh_release_evidence:
+        required_target_fields:
+          - "milestone"
+          - "evidence.previous_report_path"
+      inspect_release_evidence:
+        required_target_fields:
+          - "evidence.report_path"
+  intent:
+    - "release_evidence_packaging"
+    - "milestone_closeout_review"
+    - "release_readiness_evidence"
+  required_inputs:
+    - "milestone"
+    - "evidence"
+    - "policy"
+  optional_inputs:
+    - "output_root"
+    - "run_id"
+    - "issue_range"
+    - "pr_range"
+    - "review_roots"
+    - "demo_roots"
+  stop_if_missing:
+    - "milestone"
+    - "evidence.milestone_root"
+  prevalidation_rules:
+    - "skill_input_schema_must_equal_release_evidence.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "milestone_must_be_explicit"
+    - "evidence_root_must_be_explicit"
+    - "policy.stop_before_release_approval_must_be_true"
+    - "policy.stop_before_mutation_must_be_true"
+execution:
+  mode: "evidence_assembly_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/assemble_release_evidence.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "--milestone <version>"
+        - "--milestone-root <path>"
+        - "--out <artifact-root>"
+        - "--run-id <id>"
+  preferred_read_order:
+    - "milestone README"
+    - "issue wave or WBS"
+    - "release readiness"
+    - "demo matrix and proof coverage"
+    - "internal and external review artifacts"
+    - "remediation and finding closeout records"
+    - "validation and checklist records"
+    - "release notes draft"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  must_not_run:
+    - "release_approval"
+    - "release_publication"
+    - "tag_creation"
+    - "pull_request_merge"
+    - "issue_closure"
+    - "release_notes_publication"
+    - "demo_execution"
+    - "evidence_rewriting_to_hide_gaps"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/release-evidence/<run_id>/"
+  required_artifacts:
+    - "release_evidence_report.md"
+    - "release_evidence_report.json"
+security:
+  no_release_approval: true
+  no_publication: true
+  no_tag_creation: true
+  no_issue_closure: true
+  no_pr_merge: true
+

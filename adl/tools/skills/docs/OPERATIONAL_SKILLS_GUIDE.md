@@ -34,6 +34,7 @@ The tracked skill set is:
 - `pr-stack-manager`
 - `product-report-writer`
 - `redaction-and-evidence-auditor`
+- `release-evidence`
 - `review-comment-triage`
 - `refactoring-helper`
 - `repo-architecture-review`
@@ -73,6 +74,7 @@ The normal workflow is:
 `repo-code-review` is cross-cutting rather than phase-specific.
 `test-generator` is a bounded helper skill for focused tests for a concrete issue, diff, file, or worktree.
 `demo-operator` is a bounded helper skill for running one named demo and classifying the proof result consistently.
+`release-evidence` is a bounded helper skill for assembling milestone release proof surfaces into a reviewable evidence packet without approving, publishing, tagging, merging, or closing anything.
 `medium-article-writer` is a bounded helper skill for turning one concrete article brief into a reviewer-friendly Medium packet without publishing.
 `arxiv-paper-writer` is a bounded helper skill for turning one concrete scholarly source packet into a reviewer-friendly arXiv-style manuscript packet without submitting, publishing, or inventing citations.
 `diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
@@ -1788,6 +1790,87 @@ policy:
 Run the named demo in a bounded way, classify the result, and stop.
 ```
 
+## `release-evidence`
+
+### Purpose
+
+`release-evidence` assembles one milestone release-evidence packet from existing
+issue, PR, demo, proof, review, remediation, validation, non-claim, and
+residual-risk records.
+
+It is an evidence packaging helper, not a release authority.
+
+### When To Use It
+
+Use it when:
+
+- a milestone needs one reviewable release proof surface
+- internal or external review needs issue, PR, demo, review, remediation, and validation evidence in one place
+- release closeout preparation needs explicit non-claims and residual risks
+
+Do not use it for:
+
+- release approval or release ceremony decisions
+- PR merge, issue closure, tag creation, or publication
+- demo execution or remediation implementation
+
+### Required Inputs
+
+Minimum:
+
+- `milestone`
+- structured invocation should use `skill_input_schema: release_evidence.v1`
+- `evidence.milestone_root`
+- `policy.stop_before_release_approval: true`
+- `policy.stop_before_mutation: true`
+
+### Input Schema
+
+Canonical schema:
+
+- `adl/tools/skills/docs/RELEASE_EVIDENCE_SKILL_INPUT_SCHEMA.md`
+
+Schema id:
+
+- `release_evidence.v1`
+
+Structured invocation shape:
+
+```yaml
+skill_input_schema: release_evidence.v1
+mode: assemble_milestone_evidence
+milestone: v0.90.2
+evidence:
+  milestone_root: docs/milestones/v0.90.2
+  review_roots:
+    - .adl/reviews/v0.90.2/internal-review
+  demo_roots:
+    - artifacts/v0.90.2
+policy:
+  write_evidence_artifact: true
+  include_open_issues: true
+  require_review_records: true
+  require_validation_commands: true
+  stop_before_release_approval: true
+  stop_before_mutation: true
+```
+
+### Output And Stop Boundary
+
+Expected output includes:
+
+- ready, partial, blocked, or not-run classification
+- evidence families and source paths
+- blocking or partial evidence
+- non-claims
+- residual risks
+- validation commands
+- safety flags
+
+The skill may write a Markdown and JSON evidence artifact. It must stop before
+release approval, publication, tag creation, PR merge, issue closure, demo
+execution, or remediation.
+
 ## `arxiv-paper-writer`
 
 ### Purpose
@@ -2068,6 +2151,8 @@ Use this quick selector:
   - `test-generator`
 - need to run one named demo and classify the proof result:
   - `demo-operator`
+- need to assemble milestone release proof surfaces:
+  - `release-evidence`
 - need to finalize local issue state after merge/closure:
   - `pr-closeout`
 - need to clean drifted lifecycle records before closeout or janitor handoff:
@@ -2141,6 +2226,7 @@ surfaces:
 | `pr-stack-manager` | `PR_STACK_MANAGER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | stack topology analysis or bounded stack plan only |
 | `product-report-writer` | `PRODUCT_REPORT_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | product report packet only |
 | `redaction-and-evidence-auditor` | `REDACTION_AND_EVIDENCE_AUDITOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | safety audit only |
+| `release-evidence` | `RELEASE_EVIDENCE_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | release evidence packet only |
 | `review-comment-triage` | `REVIEW_COMMENT_TRIAGE_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | review-comment triage only |
 | `refactoring-helper` | `REFACTORING_HELPER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | refactor plan only |
 | `repo-architecture-review` | `REPO_ARCHITECTURE_REVIEW_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | architecture findings only |
