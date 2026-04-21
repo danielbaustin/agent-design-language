@@ -58,6 +58,12 @@ If you want the bounded arXiv manuscript workflow demo:
 bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh
 ```
 
+If you want the v0.90.2 arXiv-writer field-test packet:
+
+```bash
+bash adl/tools/test_demo_v0902_arxiv_writer_field_test.sh
+```
+
 If you want the bounded multi-agent repo code review demo:
 
 ```bash
@@ -275,6 +281,15 @@ Freedom Gate decisions, trace tail, operator-action boundaries, and caveats.
 Use `bash adl/tools/demo_v0901_csm_observatory.sh` for the first command-driven
 Observatory demo bundle. It emits the packet copy, operator report, static
 console reference, and demo manifest from one ADL CLI command.
+
+### v0.90.2 publication field-test demos
+
+- `v0.90.2/arxiv_writer_field_test_demo.md`
+
+Use `bash adl/tools/test_demo_v0902_arxiv_writer_field_test.sh` for the
+bounded arXiv-writer field test. It validates the `What Is ADL?` source packet
+and manuscript packet, including claim-boundary labels, citation-gap handling,
+and the explicit no-submission publication boundary.
 
 Use `v0.87/v087_demo_program.md` for the canonical `v0.87` demo order and bounded
 repo-local commands.
