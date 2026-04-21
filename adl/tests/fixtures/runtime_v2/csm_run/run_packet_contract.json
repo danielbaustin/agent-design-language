@@ -89,6 +89,24 @@
       "purpose": "reviewable scheduler choice before Freedom Gate mediation"
     },
     {
+      "artifact_id": "citizen_action_fixture",
+      "artifact_kind": "runtime_artifact",
+      "path": "runtime_v2/csm_run/citizen_action_fixture.json",
+      "owner_wp": "WP-07",
+      "required_by_wp": "WP-08",
+      "must_exist_before_live_run": false,
+      "purpose": "scheduled non-trivial citizen action routed through the Freedom Gate"
+    },
+    {
+      "artifact_id": "freedom_gate_decision",
+      "artifact_kind": "runtime_artifact",
+      "path": "runtime_v2/csm_run/freedom_gate_decision.json",
+      "owner_wp": "WP-07",
+      "required_by_wp": "WP-08",
+      "must_exist_before_live_run": false,
+      "purpose": "bounded Freedom Gate mediation decision for the scheduled action"
+    },
+    {
       "artifact_id": "observatory_packet",
       "artifact_kind": "observatory",
       "path": "runtime_v2/observatory/visibility_packet.json",
@@ -148,7 +166,7 @@
         "trace_sequence_must_advance_monotonically",
         "invalid_action_must_be_refused_before_commit"
       ],
-      "status_before_wp": "wp06_scheduling_landed",
+      "status_before_wp": "wp07_mediation_landed",
       "proof_obligation": "one resource-pressure episode and one invalid action rejection share the same trace spine"
     },
     {
@@ -174,6 +192,8 @@
       "runtime_v2/violations/violation_artifact_schema.json",
       "runtime_v2/csm_run/resource_pressure_fixture.json",
       "runtime_v2/csm_run/scheduling_decision.json",
+      "runtime_v2/csm_run/citizen_action_fixture.json",
+      "runtime_v2/csm_run/freedom_gate_decision.json",
       "runtime_v2/csm_run/first_run_trace.jsonl"
     ],
     "validation_commands": [
@@ -181,11 +201,11 @@
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture",
       "git diff --check"
     ],
     "non_claims": [
       "does not execute a live CSM run",
-      "does not execute WP-07 Freedom Gate mediation",
       "does not execute WP-08 invalid-action rejection",
       "does not claim first true Godel-agent birth",
       "does not implement v0.91 moral or emotional civilization scope",

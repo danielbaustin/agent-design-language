@@ -13,7 +13,7 @@
 
 - [x] `proto-csm-01` boot and citizen admission complete
 - [x] Governed episode and resource scheduling complete
-- [ ] Freedom Gate mediation complete
+- [x] Freedom Gate mediation complete
 - [ ] Invalid action rejection complete
 - [ ] Snapshot rehydrate wake continuity complete
 - [ ] Observatory packet and operator report integrated

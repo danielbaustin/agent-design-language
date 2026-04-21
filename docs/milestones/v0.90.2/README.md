@@ -15,6 +15,8 @@ Current execution state:
   that later Runtime v2 work packages must consume.
 - WP-06 provides bounded resource-pressure scheduling evidence for the first
   governed episode while leaving Freedom Gate mediation to WP-07.
+- WP-07 routes the scheduled action through the Freedom Gate with a bounded
+  mediation decision while leaving invalid-action rejection to WP-08.
 
 ## Thesis
 
@@ -124,3 +126,11 @@ code-backed boot manifest, citizen roster, and boot/admission trace prove that
 two worker citizens have traceable identity handles for the bounded first-run
 spine while preserving the provisional boundary and avoiding any true-birthday
 claim.
+
+## WP-06/WP-07 Governed Episode Gate
+
+WP-06 lands the bounded D4 resource-pressure scheduler evidence, and WP-07
+adds the Freedom Gate mediation artifact for the scheduled non-trivial action.
+Together they prove a governed episode can be selected under pressure and
+mediated before execution. WP-08 still owns invalid-action rejection and
+violation packet emission.

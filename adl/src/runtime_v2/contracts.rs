@@ -81,6 +81,11 @@ pub fn runtime_v2_csm_governed_episode_contract() -> Result<RuntimeV2CsmGoverned
     RuntimeV2CsmGovernedEpisodeArtifacts::prototype()
 }
 
+pub fn runtime_v2_csm_freedom_gate_mediation_contract(
+) -> Result<RuntimeV2CsmFreedomGateMediationArtifacts> {
+    RuntimeV2CsmFreedomGateMediationArtifacts::prototype()
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }

@@ -6,6 +6,7 @@ WP-03 / D2 packet contract artifact: LANDED.
 WP-04 / D2 invariant and violation contract artifacts: LANDED.
 WP-05 / D3 boot and admission artifacts: LANDED.
 WP-06 / D4 resource-pressure scheduling artifacts: LANDED.
+WP-07 / D4 Freedom Gate mediation artifacts: LANDED.
 
 This document defines the first bounded CSM run packet contract for
 `proto-csm-01`. It is intentionally a contract and fixture gate, not a live run
@@ -25,6 +26,8 @@ own run packet surfaces.
 | `adl/tests/fixtures/runtime_v2/csm_run/boot_admission_trace.jsonl` | Golden boot/admission trace fixture used by Runtime v2 tests |
 | `adl/tests/fixtures/runtime_v2/csm_run/resource_pressure_fixture.json` | Golden resource-pressure fixture used by Runtime v2 tests |
 | `adl/tests/fixtures/runtime_v2/csm_run/scheduling_decision.json` | Golden scheduler decision fixture used by Runtime v2 tests |
+| `adl/tests/fixtures/runtime_v2/csm_run/citizen_action_fixture.json` | Golden citizen action fixture used by Runtime v2 tests |
+| `adl/tests/fixtures/runtime_v2/csm_run/freedom_gate_decision.json` | Golden Freedom Gate decision fixture used by Runtime v2 tests |
 | `adl/tests/fixtures/runtime_v2/csm_run/first_run_trace.jsonl` | Golden first-run trace fixture used by Runtime v2 tests |
 | `demos/fixtures/csm_run/proto-csm-01-run-packet.json` | Reviewer-facing fixture definition for the first bounded run |
 | `docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md` | WP-02 inheritance gate that this contract consumes |
@@ -57,6 +60,8 @@ The first bounded run must use these artifact requirements:
 | `runtime_v2/csm_run/first_run_trace.jsonl` | WP-06 | WP-14 | Ordered trace spine for scheduling, mediation, and rejection |
 | `runtime_v2/csm_run/resource_pressure_fixture.json` | WP-06 | WP-14 | Bounded pressure input for the governed episode scheduler |
 | `runtime_v2/csm_run/scheduling_decision.json` | WP-06 | WP-07 | Reviewable scheduler choice before Freedom Gate mediation |
+| `runtime_v2/csm_run/citizen_action_fixture.json` | WP-07 | WP-08 | Scheduled non-trivial citizen action routed through the Freedom Gate |
+| `runtime_v2/csm_run/freedom_gate_decision.json` | WP-07 | WP-08 | Bounded Freedom Gate mediation decision for the scheduled action |
 | `runtime_v2/observatory/visibility_packet.json` | WP-10 | WP-14 | Operator-visible projection of the bounded run |
 
 ## Stage Contract
@@ -80,8 +85,8 @@ D2 is contract-proving after WP-04.
 
 D3 is proving after WP-05.
 
-D4 has scheduling evidence after WP-06. It is not complete until WP-07 adds
-Freedom Gate mediation.
+D4 has scheduling and Freedom Gate mediation evidence after WP-07. It is not
+the WP-08 invalid-action proof.
 
 Proved now:
 
@@ -98,10 +103,12 @@ Proved now:
 - resource pressure exceeds the available bounded budget
 - the scheduler chooses the only admitted executable worker under pressure
 - the first-run trace records resource loading, candidate ranking, scheduling, and deferral in contiguous order
+- the scheduled action fixture binds the non-trivial action to `proto-citizen-alpha`
+- the Freedom Gate decision allows the action only after bounded mediation
+- the first-run trace records the Freedom Gate mediation event after scheduling
 
 Not proved yet:
 
-- WP-07 Freedom Gate mediation has not executed
 - WP-08 invalid-action flow has not executed through the live runtime path
 - Observatory output has not been generated from live first-run artifacts
 
@@ -114,20 +121,20 @@ cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- 
 cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture
 ```
 
 This validates the contract prototypes, golden fixtures, path hygiene, positive
 and negative fixture pairing, and negative cases for unsafe paths,
 non-contiguous stages, missing invariant/violation coverage, boot/admission
 trace ordering, resource-pressure scheduling ambiguity, first-run trace
-ordering, and live-run overclaiming.
+ordering, Freedom Gate action/decision mismatches, and live-run overclaiming.
 
 ## Non-Claims
 
 This contract does not prove:
 
 - a live CSM run
-- WP-07 Freedom Gate mediation
 - WP-08 invalid-action execution through the live runtime path
 - first true Gödel-agent birth
 - full v0.91 moral or emotional civilization
