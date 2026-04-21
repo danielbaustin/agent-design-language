@@ -2,7 +2,8 @@
 
 ## Status
 
-Planning draft. No v0.90.3 issue wave has been opened yet.
+Planning/live-wave matrix. The v0.90.3 issue wave is open as #2327-#2347,
+with the explicit demo matrix and feature proof lane at WP-14A / #2341.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |

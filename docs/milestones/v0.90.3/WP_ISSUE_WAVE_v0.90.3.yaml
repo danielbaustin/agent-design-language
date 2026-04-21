@@ -1,11 +1,11 @@
 milestone: v0.90.3
-status: tracked_planning_ready
-issue_wave_opened: false
-owner_issue: 2269
+status: issue_wave_open
+issue_wave_opened: true
+owner_issue: 2327
 planning_source: docs/milestones/v0.90.3
 tracked_package: docs/milestones/v0.90.3
 notes:
-  - "Issue wave is not open yet."
+  - "Issue wave opened on 2026-04-21 as #2327-#2347."
   - "This package was prepared during v0.90.2 by #2269."
   - "This package was refined during v0.90.2 WP-19 #2263 after WP-16 through WP-18 review-tail fixes closed."
   - "Do not claim first true Gödel-agent birthday in v0.90.3."
@@ -20,127 +20,127 @@ card_update_rule:
   - "No issue should claim implementation, review, or release completion until its evidence has landed and validated."
 work_packages:
   - wp: WP-01
-    issue: planned
+    issue: 2327
     title: Promote v0.90.3 milestone package
     queue: docs
     outcome: tracked v0.90.3 docs and issue cards
     depends_on: v0.90.2 closeout
   - wp: WP-02
-    issue: planned
+    issue: 2328
     title: Citizen-state inheritance and gap audit
     queue: docs
     outcome: inheritance and unsafe-assumption report
     depends_on: WP-01
   - wp: WP-03
-    issue: planned
+    issue: 2329
     title: Canonical private state format
     queue: runtime
     outcome: format decision, schema, and projection fixture
     depends_on: WP-02
   - wp: WP-04
-    issue: planned
+    issue: 2330
     title: Signed envelope and trust root
     queue: runtime
     outcome: envelope schema, trust-root fixture, and negative tests
     depends_on: WP-03
   - wp: WP-05
-    issue: planned
+    issue: 2331
     title: Local-first key management and sealing
     queue: runtime
     outcome: local key policy and sealed checkpoint fixture
     depends_on: WP-04
   - wp: WP-06
-    issue: planned
+    issue: 2332
     title: Append-only lineage ledger
     queue: runtime
     outcome: ledger schema, accepted head calculation, and tamper tests
     depends_on: WP-04
   - wp: WP-07
-    issue: planned
+    issue: 2333
     title: Continuity witnesses and receipts
     queue: runtime
     outcome: witness schema, receipt schema, and fixtures
     depends_on: WP-06
   - wp: WP-08
-    issue: planned
+    issue: 2334
     title: Anti-equivocation
     queue: runtime
     outcome: conflict fixture and negative test
     depends_on: WP-06, WP-07
   - wp: WP-09
-    issue: planned
+    issue: 2335
     title: Sanctuary and quarantine behavior
     queue: runtime
     outcome: sanctuary/quarantine semantics and tests
     depends_on: WP-08
   - wp: WP-10
-    issue: planned
+    issue: 2336
     title: Redacted Observatory projections
     queue: runtime
     outcome: projection schema, redaction tests, and Observatory packet update
     depends_on: WP-03, WP-07
   - wp: WP-11
-    issue: planned
+    issue: 2337
     title: Citizen, guest, standing, and communication boundary
     queue: runtime
     outcome: standing schema/events and negative tests
     depends_on: WP-03
   - wp: WP-12
-    issue: planned
+    issue: 2338
     title: Access-control semantics
     queue: runtime
     outcome: authority matrix, access events, and denial tests
     depends_on: WP-10, WP-11
   - wp: WP-13
-    issue: planned
+    issue: 2339
     title: Continuity challenge, appeal, threat model, and economics placement
     queue: runtime
     outcome: challenge/appeal schemas, freeze behavior, threat model, and economics placement record
     depends_on: WP-07, WP-09-WP-12
   - wp: WP-14
-    issue: planned
+    issue: 2340
     title: Integrated citizen-state demo
     queue: demo
     outcome: integrated proof packet and operator report
     depends_on: WP-03-WP-13
   - wp: WP-14A
-    issue: planned
+    issue: 2341
     title: Demo matrix and feature proof demos
     queue: demo
     outcome: demo matrix update and feature proof coverage record
     depends_on: WP-03-WP-14
   - wp: WP-15
-    issue: planned
+    issue: 2342
     title: Quality gate, docs, and review convergence
     queue: docs
     outcome: coherent quality gate and docs/review package
     depends_on: WP-14A
   - wp: WP-16
-    issue: planned
+    issue: 2343
     title: Internal review
     queue: review
     outcome: findings-first internal review packet
     depends_on: WP-15
   - wp: WP-17
-    issue: planned
+    issue: 2344
     title: External / third-party review
     queue: review
     outcome: completed external review record
     depends_on: WP-16
   - wp: WP-18
-    issue: planned
+    issue: 2345
     title: Review findings remediation
     queue: review
     outcome: accepted findings fixed or explicitly deferred with owner and rationale
     depends_on: WP-16, WP-17
   - wp: WP-19
-    issue: planned
+    issue: 2346
     title: Next-milestone planning and handoff
     queue: docs
     outcome: v0.90.4/v0.91/v0.92 planning package and handoff notes
     depends_on: WP-18
   - wp: WP-20
-    issue: planned
+    issue: 2347
     title: Release ceremony
     queue: release
     outcome: release notes, ceremony result, and next-milestone handoff
