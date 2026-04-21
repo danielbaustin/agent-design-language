@@ -8,6 +8,7 @@ mod invariant;
 mod invariant_contract;
 mod kernel_loop;
 mod manifold;
+mod observatory;
 mod operator;
 mod security;
 mod snapshot;
@@ -38,6 +39,8 @@ pub use invariant_contract::*;
 pub use kernel_loop::*;
 #[allow(unused_imports)]
 pub use manifold::*;
+#[allow(unused_imports)]
+pub use observatory::*;
 #[allow(unused_imports)]
 pub use operator::*;
 #[allow(unused_imports)]

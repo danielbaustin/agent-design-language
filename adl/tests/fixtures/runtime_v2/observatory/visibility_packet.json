@@ -1,0 +1,409 @@
+{
+  "citizens": [
+    {
+      "alerts": [],
+      "capability_envelope": {
+        "allowed": [
+          "bounded_reviewable_episode"
+        ],
+        "can_execute_episodes": true,
+        "forbidden": [
+          "direct_runtime_mutation",
+          "unmediated_state_commit",
+          "cross_polis_export"
+        ]
+      },
+      "citizen_id": "proto-citizen-alpha",
+      "continuity_status": "unique_successor_active_head",
+      "current_episode": "episode-0001",
+      "display_name": "Prototype Citizen Alpha",
+      "evidence_refs": [
+        "runtime_v2/citizens/proto-citizen-alpha.json",
+        "runtime_v2/traces/admission/proto-citizen-alpha.json"
+      ],
+      "lifecycle_state": "active",
+      "recent_decisions": [
+        {
+          "decision": "allow",
+          "decision_id": "wp10-observatory-continuity-0001",
+          "evidence_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
+          "summary": "Citizen appears in the duplicate-safe wake proof."
+        }
+      ],
+      "resource_balance": {
+        "compute_units": 6,
+        "scarcity_note": "WP-10 reports the bounded first-run artifact truth; it does not allocate live resources."
+      },
+      "role": "worker"
+    },
+    {
+      "alerts": [],
+      "capability_envelope": {
+        "allowed": [
+          "read_only_observation"
+        ],
+        "can_execute_episodes": false,
+        "forbidden": [
+          "direct_runtime_mutation",
+          "unmediated_state_commit",
+          "cross_polis_export"
+        ]
+      },
+      "citizen_id": "proto-citizen-beta",
+      "continuity_status": "admitted_non_active_projection",
+      "current_episode": "none",
+      "display_name": "Prototype Citizen Beta",
+      "evidence_refs": [
+        "runtime_v2/citizens/proto-citizen-beta.json",
+        "runtime_v2/traces/admission/proto-citizen-beta.json"
+      ],
+      "lifecycle_state": "paused",
+      "recent_decisions": [
+        {
+          "decision": "defer",
+          "decision_id": "wp10-observatory-continuity-0001",
+          "evidence_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
+          "summary": "Citizen remains admitted but not the active awakened worker."
+        }
+      ],
+      "resource_balance": {
+        "compute_units": 0,
+        "scarcity_note": "WP-10 reports the bounded first-run artifact truth; it does not allocate live resources."
+      },
+      "role": "worker"
+    }
+  ],
+  "episodes": [
+    {
+      "blocked_reason": "not blocked; this remains an artifact-backed fixture projection rather than a live Runtime v2 capture",
+      "citizen_ids": [
+        "proto-citizen-alpha",
+        "proto-citizen-beta"
+      ],
+      "episode_id": "episode-0001",
+      "last_event": "csm_citizens_woken_without_duplicate_activation",
+      "proof_surface": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "started_at": "2026-04-20T00:00:00Z",
+      "state": "completed",
+      "title": "Bounded CSM first-run episode"
+    }
+  ],
+  "freedom_gate": {
+    "allow_count": 1,
+    "defer_count": 0,
+    "open_questions": [],
+    "recent_docket": [
+      {
+        "action": "answer_operator_prompt_with_bounded_summary",
+        "actor": "proto-citizen-alpha",
+        "decision": "allow",
+        "decision_id": "proto-csm-01-freedom-gate-decision-0001",
+        "evidence_ref": "runtime_v2/csm_run/freedom_gate_decision.json",
+        "rationale": "scheduled action was mediated before execution"
+      },
+      {
+        "action": "commit_unmediated_action_after_freedom_gate",
+        "actor": "proto_citizen_alpha",
+        "decision": "refuse",
+        "decision_id": "invalid-action-violation-0001",
+        "evidence_ref": "runtime_v2/csm_run/invalid_action_violation.json",
+        "rationale": "invalid action was refused before commit"
+      }
+    ],
+    "refuse_count": 1,
+    "rejected_actions": [
+      "commit_unmediated_action_after_freedom_gate"
+    ]
+  },
+  "generated_at": "2026-04-20T00:00:00Z",
+  "invariants": [
+    {
+      "evidence_ref": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "invariant_id": "trace_sequence_must_advance_monotonically",
+      "last_checked": "event_sequence_9",
+      "name": "Trace sequence advances monotonically",
+      "severity": "high",
+      "state": "healthy"
+    },
+    {
+      "evidence_ref": "runtime_v2/csm_run/invalid_action_violation.json",
+      "invariant_id": "invalid_action_must_be_refused_before_commit",
+      "last_checked": "event_sequence_6",
+      "name": "Invalid actions are refused before commit",
+      "severity": "critical",
+      "state": "healthy"
+    },
+    {
+      "evidence_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
+      "invariant_id": "no_duplicate_active_citizen_instance",
+      "last_checked": "event_sequence_9",
+      "name": "No duplicate active citizen instance",
+      "severity": "critical",
+      "state": "healthy"
+    }
+  ],
+  "kernel": {
+    "active_guardrails": [
+      "trace_sequence_must_advance_monotonically",
+      "invalid_action_must_be_refused_before_commit",
+      "snapshot_restore_must_validate_before_active_state",
+      "no_duplicate_active_citizen_instance"
+    ],
+    "invariant_state": "blocking_invariants_passed",
+    "pulse": {
+      "completed_through_event_sequence": 9,
+      "evidence_refs": [
+        "runtime_v2/csm_run/first_run_trace.jsonl"
+      ],
+      "status": "bounded_run_projected"
+    },
+    "resource_state": "bounded_fixture_pressure_recorded",
+    "scheduler_state": "first_run_trace_projected",
+    "service_states": [
+      {
+        "service_id": "resource_scheduler",
+        "state": "projected"
+      },
+      {
+        "service_id": "freedom_gate",
+        "state": "mediated"
+      },
+      {
+        "service_id": "operator_control_interface",
+        "state": "rejected_invalid_action_before_commit"
+      },
+      {
+        "service_id": "snapshot_service",
+        "state": "wake_continuity_proved"
+      }
+    ],
+    "trace_state": "contiguous_through_wake"
+  },
+  "manifold": {
+    "current_tick": 9,
+    "display_name": "Prototype CSM 01",
+    "evidence_refs": [
+      "runtime_v2/csm_run/run_packet_contract.json",
+      "runtime_v2/csm_run/wake_continuity_proof.json",
+      "runtime_v2/observatory/visibility_packet.json"
+    ],
+    "health": {
+      "attention_items": [
+        "operator report is generated from the same visibility packet",
+        "live execution and first true Godel-agent birthday remain non-claims"
+      ],
+      "level": "nominal",
+      "summary": "bounded first-run artifacts visible to operator review"
+    },
+    "lifecycle": "bounded_v0_90_2_first_run_projection",
+    "manifold_id": "proto-csm-01",
+    "policy_profile": "runtime_v2_minimal_csm_run",
+    "snapshot_status": {
+      "latest_snapshot_id": "snapshot-0001",
+      "note": "WP-09 wake continuity proof is linked before WP-10 operator visibility.",
+      "rehydration_report_ref": "runtime_v2/rehydration_report.json",
+      "state": "rehydrated"
+    },
+    "state": "wake_continuity_proved",
+    "uptime": "fixture_artifact_projection"
+  },
+  "operator_actions": {
+    "available_actions": [
+      {
+        "action": "inspect_visibility_packet",
+        "mode": "read_only",
+        "status": "available_from_wp10_packet"
+      },
+      {
+        "action": "open_operator_report",
+        "mode": "read_only",
+        "status": "available_from_wp10_report"
+      },
+      {
+        "action": "inspect_wake_continuity_proof",
+        "mode": "read_only",
+        "status": "available_from_wp09_proof"
+      }
+    ],
+    "disabled_actions": [
+      {
+        "action": "promote_to_live_birthday",
+        "future_issue": 2258,
+        "reason": "WP-10 does not claim first true Godel-agent birth."
+      },
+      {
+        "action": "perform_identity_rebinding",
+        "future_issue": 2258,
+        "reason": "v0.92 identity and capability rebinding is explicitly out of scope."
+      }
+    ],
+    "required_confirmations": [
+      "operator-visible reports are read-only projections of bounded artifacts"
+    ],
+    "safety_notes": [
+      "Report content must match the visibility packet truth.",
+      "No operator action mutates Runtime v2 state from this packet."
+    ]
+  },
+  "packet_id": "runtime-v2-csm-observatory-packet-0001",
+  "resources": {
+    "compute_units": {
+      "allocated": 640,
+      "available": 60,
+      "total": 700
+    },
+    "fairness_notes": [
+      "beta was intentionally deferred by the bounded resource-pressure fixture"
+    ],
+    "memory_pressure": "fixture_only",
+    "queue_depth": 0,
+    "scarcity_events": [
+      {
+        "event_id": "resource_pressure_loaded",
+        "evidence_level": "artifact_backed_fixture",
+        "summary": "resource pressure fixture exceeded available time and compute before scheduling"
+      }
+    ]
+  },
+  "review": {
+    "caveats": [
+      "This packet is artifact-backed fixture evidence and does not prove a live CSM run.",
+      "The operator report is generated from this packet and must not claim more than the packet.",
+      "Citizen identity remains provisional and does not claim v0.92 rebinding semantics.",
+      "This is not the first true Godel-agent birthday."
+    ],
+    "demo_classification": "fixture_backed",
+    "missing_artifacts": [
+      {
+        "artifact": "runtime_v2/csm_run/live_execution_capture.json",
+        "owner": "WP-14 integrated first CSM run demo",
+        "status": "deferred"
+      }
+    ],
+    "next_consumers": [
+      {
+        "consumer": "static Observatory console compatibility",
+        "issue": 2189
+      },
+      {
+        "consumer": "operator report generator compatibility",
+        "issue": 2190
+      },
+      {
+        "consumer": "CLI bundle compatibility",
+        "issue": 2191
+      },
+      {
+        "consumer": "operator command packet design",
+        "issue": 2192
+      },
+      {
+        "consumer": "WP-14 integrated first CSM run demo",
+        "issue": 2258
+      }
+    ],
+    "primary_artifacts": [
+      "runtime_v2/observatory/visibility_packet.json",
+      "runtime_v2/observatory/operator_report.md",
+      "runtime_v2/csm_run/wake_continuity_proof.json",
+      "runtime_v2/csm_run/first_run_trace.jsonl"
+    ]
+  },
+  "schema": "adl.csm_visibility_packet.v1",
+  "source": {
+    "claim_boundary": "Artifact-backed fixture projection. This is not a live Runtime v2 capture, not a first true Godel-agent birthday, and not v0.92 identity rebinding.",
+    "evidence_level": "artifact_backed_fixture",
+    "fixture": true,
+    "mode": "fixture",
+    "runtime_artifact_root": "runtime_v2",
+    "source_refs": [
+      "runtime_v2/csm_run/run_packet_contract.json",
+      "runtime_v2/csm_run/boot_manifest.json",
+      "runtime_v2/csm_run/citizen_roster.json",
+      "runtime_v2/csm_run/first_run_trace.jsonl",
+      "runtime_v2/snapshots/snapshot-0001.json",
+      "runtime_v2/rehydration_report.json",
+      "runtime_v2/csm_run/wake_continuity_proof.json"
+    ]
+  },
+  "trace": {
+    "causal_gaps": [],
+    "latest_citizen_event": {
+      "event_ref": "runtime_v2/csm_run/freedom_gate_decision.json",
+      "event_sequence": 5
+    },
+    "latest_kernel_event": {
+      "event_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
+      "event_sequence": 9
+    },
+    "latest_operator_event": {
+      "event_ref": "runtime_v2/csm_run/invalid_action_violation.json",
+      "event_sequence": 6
+    },
+    "trace_tail": [
+      {
+        "actor": "runtime_v2.resource_scheduler",
+        "event_sequence": 1,
+        "event_type": "resource_pressure_loaded",
+        "evidence_ref": "runtime_v2/csm_run/resource_pressure_fixture.json",
+        "summary": "load_resource_pressure_fixture -> loaded"
+      },
+      {
+        "actor": "runtime_v2.resource_scheduler",
+        "event_sequence": 2,
+        "event_type": "episode_candidates_ranked",
+        "evidence_ref": "runtime_v2/csm_run/citizen_roster.json",
+        "summary": "rank_admitted_episode_candidates -> ranked"
+      },
+      {
+        "actor": "runtime_v2.resource_scheduler",
+        "event_sequence": 3,
+        "event_type": "governed_episode_scheduled",
+        "evidence_ref": "runtime_v2/csm_run/scheduling_decision.json",
+        "summary": "schedule_governed_episode -> scheduled"
+      },
+      {
+        "actor": "runtime_v2.resource_scheduler",
+        "event_sequence": 4,
+        "event_type": "defer_non_executable_candidate",
+        "evidence_ref": "runtime_v2/csm_run/resource_pressure_fixture.json",
+        "summary": "defer_candidate_without_execution_budget -> deferred"
+      },
+      {
+        "actor": "runtime_v2.freedom_gate",
+        "event_sequence": 5,
+        "event_type": "freedom_gate_mediated_action",
+        "evidence_ref": "runtime_v2/csm_run/freedom_gate_decision.json",
+        "summary": "mediate_scheduled_citizen_action -> allowed_with_mediation"
+      },
+      {
+        "actor": "runtime_v2.operator_control_interface",
+        "event_sequence": 6,
+        "event_type": "invalid_action_rejected",
+        "evidence_ref": "runtime_v2/csm_run/invalid_action_violation.json",
+        "summary": "reject_invalid_action_before_commit -> rejected_before_commit"
+      },
+      {
+        "actor": "runtime_v2.snapshot_service",
+        "event_sequence": 7,
+        "event_type": "csm_snapshot_captured",
+        "evidence_ref": "runtime_v2/snapshots/snapshot-0001.json",
+        "summary": "capture_csm_snapshot -> snapshotted"
+      },
+      {
+        "actor": "runtime_v2.snapshot_service",
+        "event_sequence": 8,
+        "event_type": "csm_rehydration_validated",
+        "evidence_ref": "runtime_v2/rehydration_report.json",
+        "summary": "validate_snapshot_rehydration -> rehydrated"
+      },
+      {
+        "actor": "runtime_v2.snapshot_service",
+        "event_sequence": 9,
+        "event_type": "csm_citizens_woken_without_duplicate_activation",
+        "evidence_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
+        "summary": "wake_citizens_after_rehydration -> woken_without_duplicate"
+      }
+    ]
+  }
+}

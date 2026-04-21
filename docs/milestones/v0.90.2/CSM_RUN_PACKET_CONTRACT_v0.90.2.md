@@ -9,6 +9,7 @@ WP-06 / D4 resource-pressure scheduling artifacts: LANDED.
 WP-07 / D4 Freedom Gate mediation artifacts: LANDED.
 WP-08 / D5 invalid-action rejection artifacts: LANDED.
 WP-09 / D6 snapshot rehydrate wake continuity artifacts: LANDED.
+WP-10 / D7 Observatory packet and operator report artifacts: LANDED.
 
 This document defines the first bounded CSM run packet contract for
 `proto-csm-01`. It is intentionally a contract and fixture gate, not a live run
@@ -36,6 +37,9 @@ own run packet surfaces.
 | `adl/tests/fixtures/runtime_v2/snapshots/snapshot-0001.json` | Golden snapshot manifest consumed by D6 wake continuity |
 | `adl/tests/fixtures/runtime_v2/rehydration_report.json` | Golden rehydration report consumed by D6 wake continuity |
 | `adl/tests/fixtures/runtime_v2/csm_run/first_run_trace.jsonl` | Golden first-run trace fixture used by Runtime v2 tests |
+| `adl/src/runtime_v2/observatory.rs` | Code-backed D7 visibility packet and operator-report integration |
+| `adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json` | Golden D7 Observatory visibility packet fixture |
+| `adl/tests/fixtures/runtime_v2/observatory/operator_report.md` | Golden D7 operator report rendered from the packet |
 | `demos/fixtures/csm_run/proto-csm-01-run-packet.json` | Reviewer-facing fixture definition for the first bounded run |
 | `docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md` | WP-02 inheritance gate that this contract consumes |
 | `docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md` | D2 proof target |
@@ -75,6 +79,7 @@ The first bounded run must use these artifact requirements:
 | `runtime_v2/rehydration_report.json` | WP-09 | WP-10 | Rehydration report proving invariants ran before wake |
 | `runtime_v2/csm_run/wake_continuity_proof.json` | WP-09 | WP-14 | Proof that wake resumes one unique active citizen head |
 | `runtime_v2/observatory/visibility_packet.json` | WP-10 | WP-14 | Operator-visible projection of the bounded run |
+| `runtime_v2/observatory/operator_report.md` | WP-10 | WP-14 | Human-readable operator report rendered from the visibility packet |
 
 ## Stage Contract
 
@@ -103,6 +108,8 @@ D5 is proving after WP-08.
 
 D6 is proving after WP-09.
 
+D7 is proving after WP-10.
+
 Proved now:
 
 - a code-backed CSM run packet contract exists
@@ -128,10 +135,14 @@ Proved now:
 - the wake continuity proof ties the restored active citizen to the snapshot record
 - the duplicate-active-head guard is explicitly checked before wake
 - the first-run trace records snapshot capture, rehydration validation, and wake continuity in contiguous order
+- the D7 Observatory packet is generated from the run packet, boot/admission, first-run trace, and wake-continuity proof
+- the D7 operator report is rendered from the same packet and checked against packet truth
+- the operator-visible surface includes the invalid-action refusal, wake-continuity proof, and no-birthday boundary
 
 Not proved yet:
 
-- Observatory output has not been generated from live first-run artifacts
+- Observatory output is not a live Runtime v2 capture
+- WP-14 still owns the integrated first CSM run proof
 
 ## Validation
 
@@ -145,6 +156,7 @@ cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --n
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture
 ```
 
 This validates the contract prototypes, golden fixtures, path hygiene, positive
@@ -153,7 +165,7 @@ non-contiguous stages, missing invariant/violation coverage, boot/admission
 trace ordering, resource-pressure scheduling ambiguity, first-run trace
 ordering, Freedom Gate action/decision mismatches, invalid-action rejection
 before commit, duplicate-active wake rejection, wake continuity proof drift, and
-live-run overclaiming.
+operator-report drift, missing D7 source artifacts, and live-run overclaiming.
 
 ## Non-Claims
 

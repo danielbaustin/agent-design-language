@@ -95,6 +95,10 @@ pub fn runtime_v2_csm_wake_continuity_contract() -> Result<RuntimeV2CsmWakeConti
     RuntimeV2CsmWakeContinuityArtifacts::prototype()
 }
 
+pub fn runtime_v2_csm_observatory_contract() -> Result<RuntimeV2CsmObservatoryArtifacts> {
+    RuntimeV2CsmObservatoryArtifacts::prototype()
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }
