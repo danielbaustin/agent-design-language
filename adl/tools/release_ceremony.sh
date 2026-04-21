@@ -88,23 +88,84 @@ assert_branch() {
 }
 
 assert_tag_absent_local() {
-  git -C "$ROOT" rev-parse -q --verify "refs/tags/$TAG" >/dev/null 2>&1 && fail "tag already exists locally: $TAG"
+  if git -C "$ROOT" rev-parse -q --verify "refs/tags/$TAG" >/dev/null 2>&1; then
+    fail "tag already exists locally: $TAG"
+  fi
 }
 
 assert_tag_present_local() {
-  git -C "$ROOT" rev-parse -q --verify "refs/tags/$TAG" >/dev/null 2>&1 || fail "local tag does not exist: $TAG"
+  if ! git -C "$ROOT" rev-parse -q --verify "refs/tags/$TAG" >/dev/null 2>&1; then
+    fail "local tag does not exist: $TAG"
+  fi
 }
 
 assert_tag_absent_remote() {
-  git -C "$ROOT" ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1 && fail "tag already exists on origin: $TAG"
+  local status
+  if git -C "$ROOT" ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+    status=0
+  else
+    status="$?"
+  fi
+
+  case "$status" in
+    0)
+      fail "tag already exists on origin: $TAG"
+      ;;
+    1|2)
+      :
+      ;;
+    *)
+      fail "could not verify remote tag state for $TAG (git ls-remote exit $status)"
+      ;;
+  esac
+}
+
+resolve_repo_name() {
+  gh repo view --json nameWithOwner -q .nameWithOwner
 }
 
 assert_release_absent() {
-  gh release view "$TAG" --repo "$(gh repo view --json nameWithOwner -q .nameWithOwner)" >/dev/null 2>&1 && fail "GitHub release already exists for tag: $TAG"
+  local status repo
+  repo="$(resolve_repo_name)"
+
+  if gh release view "$TAG" --repo "$repo" >/dev/null 2>&1; then
+    status=0
+  else
+    status="$?"
+  fi
+  case "$status" in
+    0)
+      fail "GitHub release already exists for tag: $TAG"
+      ;;
+    1)
+      :
+      ;;
+    *)
+      fail "could not verify GitHub release absence for tag: $TAG (gh release view exit $status)"
+      ;;
+  esac
 }
 
 assert_release_present() {
-  gh release view "$TAG" --repo "$(gh repo view --json nameWithOwner -q .nameWithOwner)" >/dev/null 2>&1 || fail "GitHub release does not exist for tag: $TAG"
+  local status repo
+  repo="$(resolve_repo_name)"
+
+  if gh release view "$TAG" --repo "$repo" >/dev/null 2>&1; then
+    status=0
+  else
+    status="$?"
+  fi
+  case "$status" in
+    0)
+      :
+      ;;
+    1)
+      fail "GitHub release does not exist for tag: $TAG"
+      ;;
+    *)
+      fail "could not verify GitHub release presence for tag: $TAG (gh release view exit $status)"
+      ;;
+  esac
 }
 
 check_cargo_version() {
@@ -145,7 +206,7 @@ check_sor_gate() {
 }
 
 print_plan() {
-  cat <<EOF
+cat <<EOF
 
 Release ceremony plan
   version:        $VERSION
@@ -166,6 +227,12 @@ Manual ceremony reminders
   - Review ${PLAN_FILE#$ROOT/} and ${CHECKLIST_FILE#$ROOT/} before mutating release state.
   - Confirm review/remediation/next-milestone gates are actually closed or explicitly dispositioned.
   - Verify ${NOTES_FILE#$ROOT/} is final before creating or publishing the GitHub release.
+
+Split-step sequence (recommended)
+  1. --create-tag        (creates local tag)
+  2. --push-tag          (pushes tag to origin)
+  3. --draft-release     (creates draft release for the pushed tag)
+  4. --publish-release   (publishes the drafted release)
 EOF
 }
 
