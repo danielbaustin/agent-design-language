@@ -16,7 +16,8 @@ for path in "$README" "$HTML" "$JS" "$CSS"; do
 done
 
 required_terms=(
-  "v0.90.2"
+  "Current Dataset"
+  "Refresh Rule"
   "read-only"
   "active WP wave"
   "PR/check"
@@ -34,6 +35,25 @@ for term in "${required_terms[@]}"; do
     exit 1
   fi
 done
+
+dashboard_milestone="$(
+  sed -n 's/.*milestone: "\(v[0-9][0-9.]*\)".*/\1/p' "$JS" | head -n 1
+)"
+
+if [[ -z "$dashboard_milestone" ]]; then
+  echo "dashboard JS does not declare a milestoneData milestone" >&2
+  exit 1
+fi
+
+if ! grep -Fq "bundled dataset is \`$dashboard_milestone\`" "$README"; then
+  echo "dashboard README Current Dataset does not match JS milestone $dashboard_milestone" >&2
+  exit 1
+fi
+
+if grep -Riq -- "v0.90.2" "$DASHBOARD_DIR"; then
+  echo "dashboard still contains stale v0.90.2 dataset text" >&2
+  exit 1
+fi
 
 required_ids=(
   "signal-grid"
