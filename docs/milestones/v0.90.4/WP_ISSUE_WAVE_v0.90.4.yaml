@@ -1,0 +1,133 @@
+milestone: v0.90.4
+status: tracked_planning_ready
+issue_wave_opened: false
+owner_issue: 2271
+planning_source: docs/milestones/v0.90.4
+tracked_package: docs/milestones/v0.90.4
+notes:
+  - "Issue wave is not open yet."
+  - "This package is owned by planning issue #2271."
+  - "v0.90.4 consumes v0.90.3 citizen-state, standing, access-control, projection, and challenge/appeal authority."
+  - "Do not claim payment settlement, Lightning, x402, or full inter-polis economics in v0.90.4 unless a later decision explicitly changes scope."
+  - "Use fixture-first contract-market proof before any production economics claims."
+work_packages:
+  - wp: WP-01
+    issue: planned
+    title: Promote v0.90.4 milestone package
+    queue: docs
+    outcome: tracked v0.90.4 docs and issue cards
+    depends_on: v0.90.3 closeout
+  - wp: WP-02
+    issue: planned
+    title: Economics inheritance and authority audit
+    queue: docs
+    outcome: authority dependency report
+    depends_on: WP-01
+  - wp: WP-03
+    issue: planned
+    title: Contract schema
+    queue: runtime
+    outcome: contract schema, examples, and negative fixtures
+    depends_on: WP-02
+  - wp: WP-04
+    issue: planned
+    title: Bid schema
+    queue: runtime
+    outcome: bid schema and bid fixtures
+    depends_on: WP-03
+  - wp: WP-05
+    issue: planned
+    title: Evaluation and selection model
+    queue: runtime
+    outcome: evaluation artifact and selection tests
+    depends_on: WP-03, WP-04
+  - wp: WP-06
+    issue: planned
+    title: Transition authority model
+    queue: runtime
+    outcome: transition matrix and authority tests
+    depends_on: WP-02-WP-05
+  - wp: WP-07
+    issue: planned
+    title: Contract lifecycle state
+    queue: runtime
+    outcome: lifecycle state machine and fixtures
+    depends_on: WP-06
+  - wp: WP-08
+    issue: planned
+    title: External counterparty model
+    queue: runtime
+    outcome: counterparty schema and denial cases
+    depends_on: WP-02, WP-06
+  - wp: WP-09
+    issue: planned
+    title: Delegation and subcontract model
+    queue: runtime
+    outcome: subcontract schema and trace-link tests
+    depends_on: WP-03-WP-08
+  - wp: WP-10
+    issue: planned
+    title: Contract-market fixture set
+    queue: runtime
+    outcome: fixture packet
+    depends_on: WP-03-WP-09
+  - wp: WP-11
+    issue: planned
+    title: Contract-market runner
+    queue: runtime
+    outcome: runner and proof artifacts
+    depends_on: WP-10
+  - wp: WP-12
+    issue: planned
+    title: Review summary shape
+    queue: docs
+    outcome: summary schema and example
+    depends_on: WP-10, WP-11
+  - wp: WP-13
+    issue: planned
+    title: Bounded contract-market demo
+    queue: demo
+    outcome: contract-market proof packet
+    depends_on: WP-10-WP-12
+  - wp: WP-14
+    issue: planned
+    title: Negative authority and trace cases
+    queue: runtime
+    outcome: negative test packet
+    depends_on: WP-06-WP-13
+  - wp: WP-15
+    issue: planned
+    title: Resource stewardship bridge
+    queue: docs
+    outcome: resource bridge decision and fixture
+    depends_on: WP-13, WP-14
+  - wp: WP-16
+    issue: planned
+    title: Docs, feature index, and demo matrix convergence
+    queue: docs
+    outcome: coherent docs package
+    depends_on: WP-03-WP-15
+  - wp: WP-17
+    issue: planned
+    title: Internal review
+    queue: review
+    outcome: findings-first internal review
+    depends_on: WP-16
+  - wp: WP-18
+    issue: planned
+    title: External review and remediation
+    queue: review
+    outcome: review packet and remediation notes
+    depends_on: WP-17
+  - wp: WP-19
+    issue: planned
+    title: Next milestone planning handoff
+    queue: docs
+    outcome: handoff docs and backlog updates
+    depends_on: WP-18
+  - wp: WP-20
+    issue: planned
+    title: Release ceremony
+    queue: release
+    outcome: release notes, ceremony result, and next handoff
+    depends_on: WP-19
