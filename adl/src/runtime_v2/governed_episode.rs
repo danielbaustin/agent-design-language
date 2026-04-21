@@ -7,6 +7,10 @@ pub const RUNTIME_V2_CSM_RESOURCE_PRESSURE_SCHEMA: &str =
 pub const RUNTIME_V2_CSM_SCHEDULING_DECISION_SCHEMA: &str = "runtime_v2.csm_scheduling_decision.v1";
 pub const RUNTIME_V2_CSM_FIRST_RUN_TRACE_EVENT_SCHEMA: &str =
     "runtime_v2.csm_first_run_trace_event.v1";
+pub const RUNTIME_V2_CSM_CITIZEN_ACTION_FIXTURE_SCHEMA: &str =
+    "runtime_v2.csm_citizen_action_fixture.v1";
+pub const RUNTIME_V2_CSM_FREEDOM_GATE_DECISION_SCHEMA: &str =
+    "runtime_v2.csm_freedom_gate_decision.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RuntimeV2CsmEpisodeCandidate {
@@ -73,10 +77,59 @@ pub struct RuntimeV2CsmFirstRunTraceEvent {
     pub artifact_ref: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2CsmCitizenActionFixture {
+    pub schema_version: String,
+    pub action_id: String,
+    pub demo_id: String,
+    pub manifold_id: String,
+    pub artifact_path: String,
+    pub scheduling_decision_ref: String,
+    pub episode_id: String,
+    pub citizen_id: String,
+    pub requested_action: String,
+    pub action_payload_summary: String,
+    pub resource_budget_tokens: u64,
+    pub wall_clock_budget_ms: u64,
+    pub safety_class: String,
+    pub required_gate: String,
+    pub claim_boundary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2CsmFreedomGateDecision {
+    pub schema_version: String,
+    pub decision_id: String,
+    pub demo_id: String,
+    pub manifold_id: String,
+    pub artifact_path: String,
+    pub citizen_action_ref: String,
+    pub scheduling_decision_ref: String,
+    pub episode_id: String,
+    pub citizen_id: String,
+    pub gate_id: String,
+    pub gate_policy: String,
+    pub decision_outcome: String,
+    pub mediated_action: String,
+    pub decision_reason: String,
+    pub checked_invariants: Vec<String>,
+    pub trace_ref: String,
+    pub downstream_boundary: String,
+    pub claim_boundary: String,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RuntimeV2CsmGovernedEpisodeArtifacts {
     pub resource_pressure: RuntimeV2CsmResourcePressureFixture,
     pub scheduling_decision: RuntimeV2CsmSchedulingDecision,
+    pub first_run_trace: Vec<RuntimeV2CsmFirstRunTraceEvent>,
+    pub first_run_trace_path: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RuntimeV2CsmFreedomGateMediationArtifacts {
+    pub citizen_action: RuntimeV2CsmCitizenActionFixture,
+    pub freedom_gate_decision: RuntimeV2CsmFreedomGateDecision,
     pub first_run_trace: Vec<RuntimeV2CsmFirstRunTraceEvent>,
     pub first_run_trace_path: String,
 }
@@ -319,6 +372,186 @@ impl RuntimeV2CsmGovernedEpisodeArtifacts {
     }
 }
 
+impl RuntimeV2CsmFreedomGateMediationArtifacts {
+    pub fn prototype() -> Result<Self> {
+        let governed_episode = RuntimeV2CsmGovernedEpisodeArtifacts::prototype()?;
+        Self::from_governed_episode(&governed_episode)
+    }
+
+    pub fn from_governed_episode(
+        governed_episode: &RuntimeV2CsmGovernedEpisodeArtifacts,
+    ) -> Result<Self> {
+        governed_episode.validate()?;
+
+        let selected = governed_episode
+            .resource_pressure
+            .candidates
+            .iter()
+            .find(|candidate| {
+                candidate.episode_id == governed_episode.scheduling_decision.selected_episode_id
+                    && candidate.citizen_id
+                        == governed_episode.scheduling_decision.selected_citizen_id
+            })
+            .ok_or_else(|| {
+                anyhow!("Freedom Gate mediation requires the scheduled candidate action")
+            })?;
+
+        let citizen_action = RuntimeV2CsmCitizenActionFixture {
+            schema_version: RUNTIME_V2_CSM_CITIZEN_ACTION_FIXTURE_SCHEMA.to_string(),
+            action_id: "proto-csm-01-citizen-action-0001".to_string(),
+            demo_id: "D4".to_string(),
+            manifold_id: governed_episode.resource_pressure.manifold_id.clone(),
+            artifact_path: "runtime_v2/csm_run/citizen_action_fixture.json".to_string(),
+            scheduling_decision_ref: governed_episode.scheduling_decision.artifact_path.clone(),
+            episode_id: selected.episode_id.clone(),
+            citizen_id: selected.citizen_id.clone(),
+            requested_action: selected.requested_action.clone(),
+            action_payload_summary:
+                "respond_to_operator_prompt_with_bounded_reasoning_under_pressure".to_string(),
+            resource_budget_tokens: selected.estimated_compute_tokens,
+            wall_clock_budget_ms: selected.estimated_wall_clock_ms,
+            safety_class: selected.safety_class.clone(),
+            required_gate: "freedom_gate".to_string(),
+            claim_boundary:
+                "This fixture proves a bounded non-trivial action input for WP-07 Freedom Gate mediation; it is not WP-08 invalid-action rejection or first true Godel-agent birth."
+                    .to_string(),
+        };
+
+        let freedom_gate_decision = RuntimeV2CsmFreedomGateDecision {
+            schema_version: RUNTIME_V2_CSM_FREEDOM_GATE_DECISION_SCHEMA.to_string(),
+            decision_id: "proto-csm-01-freedom-gate-decision-0001".to_string(),
+            demo_id: "D4".to_string(),
+            manifold_id: governed_episode.resource_pressure.manifold_id.clone(),
+            artifact_path: "runtime_v2/csm_run/freedom_gate_decision.json".to_string(),
+            citizen_action_ref: citizen_action.artifact_path.clone(),
+            scheduling_decision_ref: governed_episode.scheduling_decision.artifact_path.clone(),
+            episode_id: citizen_action.episode_id.clone(),
+            citizen_id: citizen_action.citizen_id.clone(),
+            gate_id: "freedom_gate".to_string(),
+            gate_policy: "bounded_consent_and_resource_review".to_string(),
+            decision_outcome: "allowed_with_mediation".to_string(),
+            mediated_action: "answer_operator_prompt_with_bounded_summary".to_string(),
+            decision_reason:
+                "scheduled action is admitted, resource-bounded, reviewable, and mediated before execution"
+                    .to_string(),
+            checked_invariants: vec![
+                "trace_sequence_must_advance_monotonically".to_string(),
+                "no_duplicate_active_citizen_instance".to_string(),
+                "scheduled_episode_must_match_gate_action".to_string(),
+            ],
+            trace_ref: governed_episode.first_run_trace_path.clone(),
+            downstream_boundary:
+                "WP-08 owns invalid-action rejection and violation packet emission".to_string(),
+            claim_boundary:
+                "This decision proves WP-07 Freedom Gate mediation for one scheduled allowed action; it does not prove WP-08 invalid-action rejection, snapshot wake continuity, or true Godel-agent birth."
+                    .to_string(),
+        };
+
+        let mut first_run_trace = governed_episode.first_run_trace.clone();
+        first_run_trace.push(first_run_trace_event(FirstRunTraceEventSpec {
+            sequence: 5,
+            event_id: "freedom_gate_mediated_action",
+            manifold_id: &governed_episode.resource_pressure.manifold_id,
+            episode_id: &citizen_action.episode_id,
+            citizen_id: &citizen_action.citizen_id,
+            service_id: "freedom_gate",
+            action: "mediate_scheduled_citizen_action",
+            outcome: "allowed_with_mediation",
+            artifact_ref: &freedom_gate_decision.artifact_path,
+        }));
+
+        let artifacts = Self {
+            citizen_action,
+            freedom_gate_decision,
+            first_run_trace,
+            first_run_trace_path: governed_episode.first_run_trace_path.clone(),
+        };
+        artifacts.validate()?;
+        Ok(artifacts)
+    }
+
+    pub fn validate(&self) -> Result<()> {
+        self.citizen_action.validate()?;
+        self.freedom_gate_decision.validate()?;
+        validate_relative_path(
+            &self.first_run_trace_path,
+            "csm_freedom_gate.first_run_trace_path",
+        )?;
+        if self.freedom_gate_decision.citizen_action_ref != self.citizen_action.artifact_path {
+            return Err(anyhow!(
+                "Freedom Gate decision must point at the citizen action fixture"
+            ));
+        }
+        if self.freedom_gate_decision.scheduling_decision_ref
+            != self.citizen_action.scheduling_decision_ref
+        {
+            return Err(anyhow!(
+                "Freedom Gate action and decision must share the scheduling decision"
+            ));
+        }
+        if self.freedom_gate_decision.episode_id != self.citizen_action.episode_id
+            || self.freedom_gate_decision.citizen_id != self.citizen_action.citizen_id
+        {
+            return Err(anyhow!(
+                "Freedom Gate decision must mediate the scheduled citizen action"
+            ));
+        }
+        if self.freedom_gate_decision.trace_ref != self.first_run_trace_path {
+            return Err(anyhow!(
+                "Freedom Gate decision trace_ref must match the first-run trace"
+            ));
+        }
+        if self.first_run_trace.len() != 5 {
+            return Err(anyhow!(
+                "CSM first-run trace must contain scheduling plus WP-07 mediation events"
+            ));
+        }
+        for (index, event) in self.first_run_trace.iter().enumerate() {
+            event.validate()?;
+            if event.event_sequence != index as u64 + 1 {
+                return Err(anyhow!("CSM first-run trace events must be contiguous"));
+            }
+            if event.manifold_id != self.citizen_action.manifold_id {
+                return Err(anyhow!(
+                    "Freedom Gate trace manifold id must match citizen action"
+                ));
+            }
+        }
+        if !self.first_run_trace.iter().any(|event| {
+            event.event_id == "freedom_gate_mediated_action"
+                && event.episode_id == self.citizen_action.episode_id
+                && event.citizen_id == self.citizen_action.citizen_id
+                && event.artifact_ref == self.freedom_gate_decision.artifact_path
+        }) {
+            return Err(anyhow!(
+                "CSM first-run trace must include the Freedom Gate mediation event"
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn first_run_trace_jsonl_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        let mut bytes = Vec::new();
+        for event in &self.first_run_trace {
+            bytes.extend(serde_json::to_vec(event).context("serialize first-run trace event")?);
+            bytes.push(b'\n');
+        }
+        Ok(bytes)
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        let root = root.as_ref();
+        self.citizen_action.write_to_root(root)?;
+        self.freedom_gate_decision.write_to_root(root)?;
+        write_relative(
+            root,
+            &self.first_run_trace_path,
+            self.first_run_trace_jsonl_bytes()?,
+        )
+    }
+}
+
 impl RuntimeV2CsmResourcePressureFixture {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != RUNTIME_V2_CSM_RESOURCE_PRESSURE_SCHEMA {
@@ -481,6 +714,188 @@ impl RuntimeV2CsmSchedulingDecision {
     }
 }
 
+impl RuntimeV2CsmCitizenActionFixture {
+    pub fn validate(&self) -> Result<()> {
+        if self.schema_version != RUNTIME_V2_CSM_CITIZEN_ACTION_FIXTURE_SCHEMA {
+            return Err(anyhow!(
+                "unsupported Runtime v2 CSM citizen action fixture schema '{}'",
+                self.schema_version
+            ));
+        }
+        if self.demo_id != "D4" {
+            return Err(anyhow!("CSM citizen action fixture must map to D4"));
+        }
+        normalize_id(self.action_id.clone(), "csm_freedom_gate.action_id")?;
+        normalize_id(self.manifold_id.clone(), "csm_freedom_gate.manifold_id")?;
+        validate_relative_path(&self.artifact_path, "csm_freedom_gate.action_artifact_path")?;
+        validate_relative_path(
+            &self.scheduling_decision_ref,
+            "csm_freedom_gate.scheduling_decision_ref",
+        )?;
+        normalize_id(self.episode_id.clone(), "csm_freedom_gate.episode_id")?;
+        normalize_id(self.citizen_id.clone(), "csm_freedom_gate.citizen_id")?;
+        match self.requested_action.as_str() {
+            "answer_operator_prompt_under_resource_pressure" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported csm_freedom_gate.requested_action '{other}'"
+                ))
+            }
+        }
+        validate_nonempty_text(
+            &self.action_payload_summary,
+            "csm_freedom_gate.action_payload_summary",
+        )?;
+        if self.resource_budget_tokens == 0 || self.wall_clock_budget_ms == 0 {
+            return Err(anyhow!(
+                "CSM citizen action fixture must preserve positive resource bounds"
+            ));
+        }
+        match self.safety_class.as_str() {
+            "bounded_reviewable" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported csm_freedom_gate.safety_class '{other}'"
+                ))
+            }
+        }
+        match self.required_gate.as_str() {
+            "freedom_gate" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported csm_freedom_gate.required_gate '{other}'"
+                ))
+            }
+        }
+        if !self.claim_boundary.contains("WP-07 Freedom Gate mediation")
+            || !self
+                .claim_boundary
+                .contains("not WP-08 invalid-action rejection")
+            || !self.claim_boundary.contains("first true Godel-agent birth")
+        {
+            return Err(anyhow!(
+                "CSM citizen action fixture must preserve mediation and later-WP non-claims"
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn to_pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        serde_json::to_vec_pretty(self).context("serialize Runtime v2 CSM citizen action fixture")
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        write_relative(
+            root.as_ref(),
+            &self.artifact_path,
+            self.to_pretty_json_bytes()?,
+        )
+    }
+}
+
+impl RuntimeV2CsmFreedomGateDecision {
+    pub fn validate(&self) -> Result<()> {
+        if self.schema_version != RUNTIME_V2_CSM_FREEDOM_GATE_DECISION_SCHEMA {
+            return Err(anyhow!(
+                "unsupported Runtime v2 CSM Freedom Gate decision schema '{}'",
+                self.schema_version
+            ));
+        }
+        if self.demo_id != "D4" {
+            return Err(anyhow!("CSM Freedom Gate decision must map to D4"));
+        }
+        normalize_id(self.decision_id.clone(), "csm_freedom_gate.decision_id")?;
+        normalize_id(self.manifold_id.clone(), "csm_freedom_gate.manifold_id")?;
+        validate_relative_path(
+            &self.artifact_path,
+            "csm_freedom_gate.decision_artifact_path",
+        )?;
+        validate_relative_path(
+            &self.citizen_action_ref,
+            "csm_freedom_gate.citizen_action_ref",
+        )?;
+        validate_relative_path(
+            &self.scheduling_decision_ref,
+            "csm_freedom_gate.scheduling_decision_ref",
+        )?;
+        normalize_id(self.episode_id.clone(), "csm_freedom_gate.episode_id")?;
+        normalize_id(self.citizen_id.clone(), "csm_freedom_gate.citizen_id")?;
+        match self.gate_id.as_str() {
+            "freedom_gate" => {}
+            other => return Err(anyhow!("unsupported csm_freedom_gate.gate_id '{other}'")),
+        }
+        match self.gate_policy.as_str() {
+            "bounded_consent_and_resource_review" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported csm_freedom_gate.gate_policy '{other}'"
+                ))
+            }
+        }
+        match self.decision_outcome.as_str() {
+            "allowed_with_mediation" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported csm_freedom_gate.decision_outcome '{other}'"
+                ))
+            }
+        }
+        match self.mediated_action.as_str() {
+            "answer_operator_prompt_with_bounded_summary" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported csm_freedom_gate.mediated_action '{other}'"
+                ))
+            }
+        }
+        validate_nonempty_text(&self.decision_reason, "csm_freedom_gate.decision_reason")?;
+        validate_ids(
+            &self.checked_invariants,
+            "csm_freedom_gate.checked_invariants",
+        )?;
+        if !self
+            .checked_invariants
+            .iter()
+            .any(|invariant| invariant == "scheduled_episode_must_match_gate_action")
+        {
+            return Err(anyhow!(
+                "Freedom Gate decision must prove the scheduled action was mediated"
+            ));
+        }
+        validate_relative_path(&self.trace_ref, "csm_freedom_gate.trace_ref")?;
+        if !self.downstream_boundary.contains("WP-08") {
+            return Err(anyhow!(
+                "Freedom Gate decision must preserve the WP-08 downstream boundary"
+            ));
+        }
+        if !self.claim_boundary.contains("WP-07 Freedom Gate mediation")
+            || !self
+                .claim_boundary
+                .contains("does not prove WP-08 invalid-action rejection")
+            || !self.claim_boundary.contains("true Godel-agent birth")
+        {
+            return Err(anyhow!(
+                "CSM Freedom Gate decision must preserve mediation and later-WP non-claims"
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn to_pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        serde_json::to_vec_pretty(self).context("serialize Runtime v2 CSM Freedom Gate decision")
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        write_relative(
+            root.as_ref(),
+            &self.artifact_path,
+            self.to_pretty_json_bytes()?,
+        )
+    }
+}
+
 impl RuntimeV2CsmFirstRunTraceEvent {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != RUNTIME_V2_CSM_FIRST_RUN_TRACE_EVENT_SCHEMA {
@@ -501,7 +916,7 @@ impl RuntimeV2CsmFirstRunTraceEvent {
         normalize_id(self.service_id.clone(), "csm_first_run_trace.service_id")?;
         normalize_id(self.action.clone(), "csm_first_run_trace.action")?;
         match self.outcome.as_str() {
-            "loaded" | "ranked" | "scheduled" | "deferred" => {}
+            "loaded" | "ranked" | "scheduled" | "deferred" | "allowed_with_mediation" => {}
             other => return Err(anyhow!("unsupported csm_first_run_trace.outcome '{other}'")),
         }
         validate_relative_path(&self.artifact_ref, "csm_first_run_trace.artifact_ref")
