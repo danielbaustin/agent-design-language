@@ -9,6 +9,7 @@ import json
 import subprocess
 from collections import Counter, defaultdict
 from pathlib import Path
+from urllib.parse import urlparse
 
 SCHEMA_PREFIX = "codebuddy.repo_packet"
 IGNORED_DIR_NAMES = {
@@ -100,6 +101,42 @@ def repo_ref(repo_root: Path) -> str:
     return "unknown"
 
 
+def canonical_repo_name_from_remote(url: str) -> str | None:
+    stripped = url.strip().rstrip("/")
+    if not stripped:
+        return None
+
+    path = ""
+    if "://" in stripped:
+        parsed = urlparse(stripped)
+        path = parsed.path.lstrip("/")
+    else:
+        # SSH-style git@github.com:org/repo.git or git@host:repo.git.
+        if ":" in stripped:
+            path = stripped.split(":", 1)[1]
+        elif "/" in stripped:
+            path = stripped
+    if not path:
+        return None
+    candidate = Path(path).name.removesuffix(".git")
+    return candidate or None
+
+
+def canonical_repo_name(repo_root: Path) -> str:
+    for remote_name in ("origin", "upstream"):
+        code, stdout = run_git(repo_root, ["remote", "get-url", remote_name])
+        if code != 0:
+            continue
+        candidate = canonical_repo_name_from_remote(stdout)
+        if candidate:
+            return candidate
+    return repo_root.name
+
+
+def derive_repo_identity(repo_root: Path) -> tuple[str, str]:
+    return canonical_repo_name(repo_root), repo_root.name
+
+
 def count_lines(path: Path) -> int:
     try:
         with path.open("rb") as handle:
@@ -183,7 +220,7 @@ def limited(items: list[str], limit: int = MAX_LIST) -> list[str]:
     return items[:limit]
 
 
-def inventory(repo_root: Path, files: list[str]) -> dict[str, object]:
+def inventory(repo_root: Path, files: list[str], repo_name: str) -> dict[str, object]:
     ext_counts: Counter[str] = Counter()
     top_dirs: Counter[str] = Counter()
     code_roots: Counter[str] = Counter()
@@ -218,7 +255,9 @@ def inventory(repo_root: Path, files: list[str]) -> dict[str, object]:
 
     return {
         "schema": f"{SCHEMA_PREFIX}.inventory.v1",
-        "repo_name": repo_root.name,
+        "repo_name": repo_name,
+        "worktree_name": repo_root.name,
+        "is_worktree": ".worktrees" in repo_root.parts,
         "file_count": len(files),
         "extension_counts": dict(sorted(ext_counts.items())),
         "top_level_dirs": dict(sorted(top_dirs.items())),
@@ -297,7 +336,13 @@ def write_json(path: Path, data: object) -> None:
     path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def write_scope(path: Path, args: argparse.Namespace, repo_name: str, inv: dict[str, object]) -> None:
+def write_scope(
+    path: Path,
+    args: argparse.Namespace,
+    canonical_repo_name: str,
+    worktree_name: str,
+    inv: dict[str, object],
+) -> None:
     included = [
         "tracked repository files",
         "top-level manifests",
@@ -310,7 +355,7 @@ def write_scope(path: Path, args: argparse.Namespace, repo_name: str, inv: dict[
 
 ## Scope Reviewed
 
-- Repository: {repo_name}
+- Repository: {canonical_repo_name}
 - Review mode: {args.mode}
 - Target path: {args.target_path or "not specified"}
 - Diff base: {args.diff_base or "not specified"}
@@ -360,6 +405,10 @@ def write_scope(path: Path, args: argparse.Namespace, repo_name: str, inv: dict[
 - Docs sampled: {len(inv["docs"])}
 - Tests sampled: {len(inv["tests"])}
 - CI files: {len(inv["ci"])}
+
+## Review Context
+
+- Worktree name: {worktree_name}
 """
     path.write_text(content, encoding="utf-8")
 
@@ -392,7 +441,8 @@ def main() -> int:
         prefix = Path(args.target_path).as_posix().rstrip("/") + "/"
         files = [path for path in files if path == args.target_path or path.startswith(prefix)]
 
-    inv = inventory(repo_root, files)
+    canonical_name, worktree_name = derive_repo_identity(repo_root)
+    inv = inventory(repo_root, files, canonical_name)
     evidence = build_evidence(repo_root, files)
     assignments = assignments_from_evidence(evidence)
     now = dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -400,7 +450,9 @@ def main() -> int:
     manifest = {
         "schema": f"{SCHEMA_PREFIX}.run_manifest.v1",
         "run_id": run_id,
-        "repo_name": repo_root.name,
+        "repo_name": canonical_name,
+        "worktree_name": worktree_name,
+        "is_worktree": ".worktrees" in repo_root.parts,
         "repo_ref": repo_ref(repo_root),
         "review_mode": args.mode,
         "started_at": now,
@@ -414,7 +466,7 @@ def main() -> int:
     }
 
     write_json(artifact_root / "run_manifest.json", manifest)
-    write_scope(artifact_root / "repo_scope.md", args, repo_root.name, inv)
+    write_scope(artifact_root / "repo_scope.md", args, canonical_name, worktree_name, inv)
     write_json(artifact_root / "repo_inventory.json", inv)
     write_json(artifact_root / "evidence_index.json", {"schema": f"{SCHEMA_PREFIX}.evidence.v1", "evidence": evidence})
     write_json(
@@ -428,4 +480,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
