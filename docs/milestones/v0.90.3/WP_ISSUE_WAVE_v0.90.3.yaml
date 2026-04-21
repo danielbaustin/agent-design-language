@@ -1,0 +1,134 @@
+milestone: v0.90.3
+status: tracked_planning_ready
+issue_wave_opened: false
+owner_issue: 2269
+planning_source: docs/milestones/v0.90.3
+tracked_package: docs/milestones/v0.90.3
+notes:
+  - "Issue wave is not open yet."
+  - "This package was prepared during v0.90.2 by #2269."
+  - "Do not claim first true Gödel-agent birthday in v0.90.3."
+  - "Do not collapse v0.91 moral/emotional civilization or v0.92 birthday scope into v0.90.3."
+  - "Full economics and contract-market work belongs to tentative v0.90.4 / #2271 unless WP-17 accepts a narrow resource-stewardship bridge."
+  - "Use local-first sealed checkpoint semantics; cloud enclave backends are later options, not v0.90.3 dependencies."
+work_packages:
+  - wp: WP-01
+    issue: planned
+    title: Promote v0.90.3 milestone package
+    queue: docs
+    outcome: tracked v0.90.3 docs and issue cards
+    depends_on: v0.90.2 closeout
+  - wp: WP-02
+    issue: planned
+    title: Citizen-state inheritance and gap audit
+    queue: docs
+    outcome: inheritance and unsafe-assumption report
+    depends_on: WP-01
+  - wp: WP-03
+    issue: planned
+    title: Canonical private state format
+    queue: runtime
+    outcome: format decision, schema, and projection fixture
+    depends_on: WP-02
+  - wp: WP-04
+    issue: planned
+    title: Signed envelope and trust root
+    queue: runtime
+    outcome: envelope schema, trust-root fixture, and negative tests
+    depends_on: WP-03
+  - wp: WP-05
+    issue: planned
+    title: Local-first key management and sealing
+    queue: runtime
+    outcome: local key policy and sealed checkpoint fixture
+    depends_on: WP-04
+  - wp: WP-06
+    issue: planned
+    title: Append-only lineage ledger
+    queue: runtime
+    outcome: ledger schema, accepted head calculation, and tamper tests
+    depends_on: WP-04
+  - wp: WP-07
+    issue: planned
+    title: Continuity witnesses and receipts
+    queue: runtime
+    outcome: witness schema, receipt schema, and fixtures
+    depends_on: WP-06
+  - wp: WP-08
+    issue: planned
+    title: Anti-equivocation
+    queue: runtime
+    outcome: conflict fixture and negative test
+    depends_on: WP-06, WP-07
+  - wp: WP-09
+    issue: planned
+    title: Sanctuary and quarantine behavior
+    queue: runtime
+    outcome: sanctuary/quarantine semantics and tests
+    depends_on: WP-08
+  - wp: WP-10
+    issue: planned
+    title: Redacted Observatory projections
+    queue: runtime
+    outcome: projection schema, redaction tests, and Observatory packet update
+    depends_on: WP-03, WP-07
+  - wp: WP-11
+    issue: planned
+    title: Citizen, guest, standing, and communication boundary
+    queue: runtime
+    outcome: standing schema/events and negative tests
+    depends_on: WP-03
+  - wp: WP-12
+    issue: planned
+    title: Integrated citizen-state demo
+    queue: demo
+    outcome: integrated proof packet and operator report
+    depends_on: WP-03-WP-11
+  - wp: WP-13
+    issue: planned
+    title: Access-control semantics
+    queue: runtime
+    outcome: authority matrix and access events
+    depends_on: WP-10-WP-12
+  - wp: WP-14
+    issue: planned
+    title: Projection policy
+    queue: runtime
+    outcome: projection policy and leakage tests
+    depends_on: WP-10, WP-13
+  - wp: WP-15
+    issue: planned
+    title: Continuity challenge and appeal flow
+    queue: runtime
+    outcome: challenge/appeal schemas and freeze behavior
+    depends_on: WP-07, WP-13
+  - wp: WP-16
+    issue: planned
+    title: Citizen-state threat model
+    queue: review
+    outcome: threat model and negative-test candidates
+    depends_on: WP-03-WP-15
+  - wp: WP-17
+    issue: planned
+    title: Economics placement decision
+    queue: docs
+    outcome: resource-stewardship bridge decision or v0.90.4 deferral
+    depends_on: WP-02, WP-16
+  - wp: WP-18
+    issue: planned
+    title: Docs, quality, and review convergence
+    queue: docs
+    outcome: coherent docs/review package
+    depends_on: WP-12-WP-17
+  - wp: WP-19
+    issue: planned
+    title: Internal and external review remediation
+    queue: review
+    outcome: review packets and remediation notes
+    depends_on: WP-18
+  - wp: WP-20
+    issue: planned
+    title: Release ceremony
+    queue: release
+    outcome: release notes, ceremony result, and next-milestone handoff
+    depends_on: WP-19
