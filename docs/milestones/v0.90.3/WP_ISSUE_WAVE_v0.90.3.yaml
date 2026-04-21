@@ -9,8 +9,9 @@ notes:
   - "This package was prepared during v0.90.2 by #2269."
   - "Do not claim first true Gödel-agent birthday in v0.90.3."
   - "Do not collapse v0.91 moral/emotional civilization or v0.92 birthday scope into v0.90.3."
-  - "Full economics and contract-market work belongs to tentative v0.90.4 / #2271 unless WP-17 accepts a narrow resource-stewardship bridge."
+  - "Full economics and contract-market work belongs to tentative v0.90.4 / #2271 unless WP-16 accepts a narrow resource-stewardship bridge."
   - "Use local-first sealed checkpoint semantics; cloud enclave backends are later options, not v0.90.3 dependencies."
+  - "Preserve an explicit demo matrix and feature proof demo WP before docs/review convergence."
 work_packages:
   - wp: WP-01
     issue: planned
@@ -104,22 +105,22 @@ work_packages:
     depends_on: WP-07, WP-13
   - wp: WP-16
     issue: planned
-    title: Citizen-state threat model
+    title: Citizen-state threat model and economics placement decision
     queue: review
-    outcome: threat model and negative-test candidates
+    outcome: threat model, negative-test candidates, and economics placement record
     depends_on: WP-03-WP-15
   - wp: WP-17
     issue: planned
-    title: Economics placement decision
-    queue: docs
-    outcome: resource-stewardship bridge decision or v0.90.4 deferral
-    depends_on: WP-02, WP-16
+    title: Demo matrix and feature proof demos
+    queue: demo
+    outcome: demo matrix update and feature proof coverage record
+    depends_on: WP-12-WP-16
   - wp: WP-18
     issue: planned
     title: Docs, quality, and review convergence
     queue: docs
     outcome: coherent docs/review package
-    depends_on: WP-12-WP-17
+    depends_on: WP-17
   - wp: WP-19
     issue: planned
     title: Internal and external review remediation

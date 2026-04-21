@@ -33,15 +33,15 @@ continuity, and preserve evidence when continuity is ambiguous.
 Exit when reviewers can inspect a bounded citizen-state proof without raw
 private-state access and operators have a safe visibility path.
 
-## Sprint 4 - Challenge, Threat Model, Economics Boundary, Review, And Release
+## Sprint 4 - Challenge, Threat Model, Demo Proofs, Review, And Release
 
 - WP-15 continuity challenge and appeal flow
-- WP-16 citizen-state threat model
-- WP-17 economics placement decision
+- WP-16 citizen-state threat model and economics placement decision
+- WP-17 demo matrix and feature proof demos
 - WP-18 docs, quality, and review convergence
 - WP-19 internal and external review remediation
 - WP-20 release ceremony
 
-Exit when the package is reviewed, truth-aligned, and clearly hands full
-economics and contract-market work to v0.90.4 while preserving v0.91/v0.92
-boundaries.
+Exit when feature-by-feature proof coverage is explicit, the package is
+reviewed, truth-aligned, and clearly hands full economics and contract-market
+work to v0.90.4 while preserving v0.91/v0.92 boundaries.

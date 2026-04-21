@@ -22,9 +22,9 @@ runner and proof demo widen.
 | WP-12 | planned | Review summary shape | Produce reviewer-facing summaries of market execution and residual risk | summary schema and example | WP-10, WP-11 |
 | WP-13 | planned | Bounded contract-market demo | Prove the parent contract, bids, award, delegation, completion, and summary end to end | contract-market proof packet | WP-10-WP-12 |
 | WP-14 | planned | Negative authority and trace cases | Prove unauthorized transitions, invalid bids, unsupported delegation, and missing traces fail safely | negative test packet | WP-06-WP-13 |
-| WP-15 | planned | Resource stewardship bridge | Connect contract-market execution to compute, memory, attention, and bandwidth without payment rails | resource bridge decision and fixture | WP-13, WP-14 |
-| WP-16 | planned | Docs, feature index, and demo matrix convergence | Align docs, feature docs, demo matrix, and reviewer entry surfaces | coherent docs package | WP-03-WP-15 |
-| WP-17 | planned | Internal review | Review claims, authority boundaries, fixtures, and proof packets | findings-first internal review | WP-16 |
+| WP-15 | planned | Resource stewardship bridge and late authority boundary | Connect contract-market execution to compute, memory, attention, and bandwidth without payment rails, while preserving negative authority lessons | resource bridge decision, fixture, and boundary notes | WP-13, WP-14 |
+| WP-16 | planned | Demo matrix and feature proof demos | Verify every contract-market feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral | demo matrix update and feature proof coverage record | WP-03-WP-15 |
+| WP-17 | planned | Docs, quality, and review convergence | Align docs, feature docs, reviewer entry surfaces, and the completed demo/proof coverage record | coherent docs package and review-ready surface | WP-16 |
 | WP-18 | planned | External review and remediation | Run external review and fix or defer accepted findings | review packet and remediation notes | WP-17 |
 | WP-19 | planned | Next milestone planning handoff | Prepare v0.91/v0.92/v0.90.5 or payment-lane handoff as appropriate | handoff docs and backlog updates | WP-18 |
 | WP-20 | planned | Release ceremony | Complete release closure | release notes, ceremony result, next handoff | WP-19 |
@@ -42,4 +42,5 @@ Compression must not skip:
 - unauthorized transition negative tests
 - delegation authority checks
 - review summary truth
+- feature-by-feature demo/proof coverage before docs/review convergence
 - release-truth checks

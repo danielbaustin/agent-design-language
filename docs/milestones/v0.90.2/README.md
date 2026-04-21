@@ -3,12 +3,15 @@
 ## Status
 
 Active milestone package. v0.90.2 is open and the issue wave has been created
-as #2245-#2264 from the reviewed milestone package.
+as #2245-#2264 from the reviewed milestone package, with WP-14A added as
+#2301 to restore the explicit demo matrix and feature proof demo lane.
 
 Current execution state:
 
 - WP-01 is #2245 and finalizes this package after issue-wave creation.
 - WP-02 through WP-20 are #2246-#2264.
+- WP-14A is #2301 and owns feature-by-feature demo/proof coverage before
+  WP-15 docs and review convergence.
 - WP-02 provides the Runtime v2 inheritance and compression audit before
   runtime implementation widens.
 - WP-03 provides the code-backed CSM run packet contract and fixture definition
@@ -176,3 +179,13 @@ positive path requires a declared predecessor, validated rehydration, and a
 single active head; the negative path refuses ambiguous or duplicate-head
 recovery and hands evidence preservation to WP-12. This does not implement the
 quarantine state machine or widen into live Runtime v2 execution.
+
+## WP-14A Demo Program Gate
+
+WP-14A restores the standard ADL milestone pattern where feature-by-feature
+demo and proof coverage is explicit before docs/review convergence. WP-13 owns
+the governed adversarial hook, WP-14 owns the integrated first CSM run proof,
+and WP-14A verifies that each v0.90.2 feature claim has a runnable demo command,
+test-backed proof packet, fixture-backed artifact, documented non-proving
+status, or explicit deferral. WP-15 consumes that coverage record rather than
+inventing missing demos during review convergence.
