@@ -6,6 +6,9 @@ v0.90.3 design surface for the CSM Observatory. This document promotes the
 local Observatory planning note into the tracked milestone package so WP-14 and
 WP-14A have a shared design spine.
 
+The deeper UI architecture brief lives in
+`../OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md`.
+
 ## Purpose
 
 CSM Observatory is the operator, reviewer, and eventually citizen-facing way to
@@ -85,6 +88,7 @@ first-screen screenshot mockup.
 | `../diagrams/csm_observatory_projection_flow.mmd` | redacted projection and authority flow | source-backed Mermaid diagram |
 | `../assets/csm_observatory_first_screen.svg` | durable vector mockup of the first screen | rendered locally |
 | `../assets/csm_observatory_first_screen.png` | raster screenshot for review packets and surfaces that do not render SVG | rendered locally |
+| `../assets/csm_observatory_multimode_ui_mockups.png` | triptych mockup for World, Governance, and Cognition rooms | design mockup |
 
 The screenshot is a design mockup, not a runtime UI capture and not a proof
 artifact.
