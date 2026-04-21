@@ -116,6 +116,10 @@ pub fn runtime_v2_csm_integrated_run_contract() -> Result<RuntimeV2CsmIntegrated
     RuntimeV2CsmIntegratedRunArtifacts::prototype()
 }
 
+pub fn runtime_v2_feature_proof_coverage_contract() -> Result<RuntimeV2FeatureProofCoveragePacket> {
+    RuntimeV2FeatureProofCoveragePacket::prototype()
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }

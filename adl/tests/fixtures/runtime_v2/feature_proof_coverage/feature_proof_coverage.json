@@ -1,0 +1,188 @@
+{
+  "schema_version": "runtime_v2.feature_proof_coverage.v1",
+  "coverage_id": "v0-90-2-feature-proof-coverage-0001",
+  "demo_id": "D11",
+  "milestone": "v0.90.2",
+  "artifact_path": "runtime_v2/feature_proof_coverage/feature_proof_coverage.json",
+  "coverage_summary": "D11 verifies every v0.90.2 Runtime v2 / CSM feature claim has a reviewable proof surface before WP-15 convergence.",
+  "entries": [
+    {
+      "feature_id": "D1",
+      "wp": "WP-02",
+      "claim": "v0.90.2 inherits the actual v0.90.1 Runtime v2 substrate before CSM work widens",
+      "coverage_kind": "fixture_backed_artifact",
+      "primary_evidence_refs": [
+        "docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md"
+      ],
+      "validation_refs": [
+        "test -f docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md"
+      ],
+      "status": "proving"
+    },
+    {
+      "feature_id": "D2",
+      "wp": "WP-03-WP-04",
+      "claim": "The first CSM run has a stable packet, invariant map, and violation artifact contract",
+      "coverage_kind": "test_backed_proof_packet",
+      "primary_evidence_refs": [
+        "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
+        "adl/tests/fixtures/runtime_v2/csm_run/run_packet_contract.json",
+        "adl/tests/fixtures/runtime_v2/invariants/csm_run_invariant_map.json",
+        "adl/tests/fixtures/runtime_v2/violations/violation_artifact_schema.json"
+      ],
+      "validation_refs": [
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture"
+      ],
+      "status": "proving"
+    },
+    {
+      "feature_id": "D3",
+      "wp": "WP-05",
+      "claim": "proto-csm-01 boots and admits two worker citizens with traceable identity handles",
+      "coverage_kind": "test_backed_proof_packet",
+      "primary_evidence_refs": [
+        "adl/tests/fixtures/runtime_v2/csm_run/boot_manifest.json",
+        "adl/tests/fixtures/runtime_v2/csm_run/citizen_roster.json",
+        "adl/tests/fixtures/runtime_v2/csm_run/boot_admission_trace.jsonl"
+      ],
+      "validation_refs": [
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture"
+      ],
+      "status": "proving"
+    },
+    {
+      "feature_id": "D4",
+      "wp": "WP-06-WP-07",
+      "claim": "A governed episode runs under resource pressure and Freedom Gate mediation",
+      "coverage_kind": "test_backed_proof_packet",
+      "primary_evidence_refs": [
+        "adl/tests/fixtures/runtime_v2/csm_run/scheduling_decision.json",
+        "adl/tests/fixtures/runtime_v2/csm_run/freedom_gate_decision.json",
+        "adl/tests/fixtures/runtime_v2/csm_run/first_run_trace.jsonl"
+      ],
+      "validation_refs": [
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture"
+      ],
+      "status": "proving"
+    },
+    {
+      "feature_id": "D5",
+      "wp": "WP-08",
+      "claim": "An invalid action is rejected before commit through the normal policy path",
+      "coverage_kind": "test_backed_proof_packet",
+      "primary_evidence_refs": [
+        "adl/tests/fixtures/runtime_v2/csm_run/invalid_action_fixture.json",
+        "adl/tests/fixtures/runtime_v2/csm_run/invalid_action_violation.json",
+        "adl/tests/fixtures/runtime_v2/csm_run/first_run_trace.jsonl"
+      ],
+      "validation_refs": [
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture"
+      ],
+      "status": "proving"
+    },
+    {
+      "feature_id": "D6",
+      "wp": "WP-09",
+      "claim": "Snapshot, rehydrate, and wake preserve continuity without duplicate activation",
+      "coverage_kind": "test_backed_proof_packet",
+      "primary_evidence_refs": [
+        "adl/tests/fixtures/runtime_v2/snapshots/snapshot-0001.json",
+        "adl/tests/fixtures/runtime_v2/rehydration_report.json",
+        "adl/tests/fixtures/runtime_v2/csm_run/wake_continuity_proof.json"
+      ],
+      "validation_refs": [
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture"
+      ],
+      "status": "proving"
+    },
+    {
+      "feature_id": "D7",
+      "wp": "WP-10",
+      "claim": "The CSM Observatory shows the first bounded run through packet and operator report surfaces",
+      "coverage_kind": "test_backed_proof_packet",
+      "primary_evidence_refs": [
+        "adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json",
+        "adl/tests/fixtures/runtime_v2/observatory/operator_report.md"
+      ],
+      "validation_refs": [
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture"
+      ],
+      "status": "proving"
+    },
+    {
+      "feature_id": "D8",
+      "wp": "WP-11-WP-12",
+      "claim": "Runtime distinguishes safe resume from quarantine-required unsafe recovery",
+      "coverage_kind": "test_backed_proof_packet",
+      "primary_evidence_refs": [
+        "adl/tests/fixtures/runtime_v2/recovery/eligibility_model.json",
+        "adl/tests/fixtures/runtime_v2/recovery/safe_resume_decision.json",
+        "adl/tests/fixtures/runtime_v2/quarantine/quarantine_artifact.json"
+      ],
+      "validation_refs": [
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture"
+      ],
+      "status": "proving"
+    },
+    {
+      "feature_id": "D9",
+      "wp": "WP-13",
+      "claim": "The governed adversarial hook and hardening probes fail closed under explicit rules",
+      "coverage_kind": "test_backed_proof_packet",
+      "primary_evidence_refs": [
+        "adl/tests/fixtures/runtime_v2/hardening/adversarial_hook_packet.json",
+        "adl/tests/fixtures/runtime_v2/hardening/hardening_proof_packet.json"
+      ],
+      "validation_refs": [
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_hardening -- --nocapture"
+      ],
+      "status": "proving"
+    },
+    {
+      "feature_id": "D10",
+      "wp": "WP-14",
+      "claim": "The flagship command runs the bounded CSM stage spine and prints the Observatory report",
+      "coverage_kind": "runnable_demo_command",
+      "primary_evidence_refs": [
+        "adl/tests/fixtures/runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+        "docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md"
+      ],
+      "validation_refs": [
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture",
+        "adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run"
+      ],
+      "status": "proving"
+    },
+    {
+      "feature_id": "D11",
+      "wp": "WP-14A",
+      "claim": "Every v0.90.2 feature claim has an explicit proof surface before WP-15 convergence",
+      "coverage_kind": "runnable_demo_command",
+      "primary_evidence_refs": [
+        "docs/milestones/v0.90.2/FEATURE_PROOF_COVERAGE_v0.90.2.md",
+        "runtime_v2/feature_proof_coverage/feature_proof_coverage.json"
+      ],
+      "validation_refs": [
+        "cargo test --manifest-path adl/Cargo.toml runtime_v2_feature_proof_coverage -- --nocapture",
+        "adl runtime-v2 feature-proof-coverage --out artifacts/v0902/feature-proof-coverage.json"
+      ],
+      "status": "proving"
+    }
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_feature_proof_coverage -- --nocapture",
+    "adl runtime-v2 feature-proof-coverage --out artifacts/v0902/feature-proof-coverage.json",
+    "git diff --check"
+  ],
+  "non_claims": [
+    "does not execute a new unbounded live CSM run",
+    "does not claim first true Godel-agent birth",
+    "does not implement v0.91 moral or emotional civilization scope",
+    "does not implement v0.92 identity or migration semantics",
+    "does not implement a complete red/blue/purple security ecology"
+  ],
+  "claim_boundary": "This packet proves v0.90.2 feature-proof coverage, not new runtime behavior beyond the referenced D1 through D10 evidence surfaces."
+}
