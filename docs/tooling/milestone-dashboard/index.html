@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADL Milestone Dashboard</title>
+  <title>ADL Milestone Compression Dashboard</title>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -11,9 +11,9 @@
     <aside class="rail">
       <div class="rail-block rail-brand">
         <p class="rail-kicker">ADL Tooling</p>
-        <h1>Milestone Dashboard</h1>
+        <h1>Milestone Compression Dashboard</h1>
         <p class="rail-copy">
-          A reusable project cockpit for milestone truth, sprint posture, work-package coverage, and next actions.
+          A read-only cockpit for milestone issue-wave posture, evidence drift, review gates, and next safe operator action.
         </p>
       </div>
 
@@ -24,12 +24,12 @@
       </div>
 
       <div class="rail-block">
-        <p class="rail-label">Bands</p>
-        <ul id="bands-list" class="bands-list"></ul>
+        <p class="rail-label">Read-only boundary</p>
+        <ul id="boundary-list" class="bands-list"></ul>
       </div>
 
       <div class="rail-block">
-        <p class="rail-label">Primary actions</p>
+        <p class="rail-label">Next operator action</p>
         <ul id="next-actions" class="next-actions"></ul>
       </div>
     </aside>
@@ -37,17 +37,19 @@
     <section class="workspace">
       <header class="workspace-header">
         <div>
-          <p class="section-kicker">Milestone posture</p>
+          <p class="section-kicker">Compression visibility</p>
           <h2 id="headline"></h2>
         </div>
         <p id="lede" class="lede"></p>
       </header>
 
+      <section class="signal-grid" id="signal-grid" aria-label="Milestone signals"></section>
+
       <section class="hero-grid">
         <article class="surface metric-surface">
           <div class="surface-head">
             <div>
-              <p class="section-kicker">Status</p>
+              <p class="section-kicker">Issue wave</p>
               <h3>Execution snapshot</h3>
             </div>
             <div id="status-badge" class="status-badge"></div>
@@ -55,7 +57,7 @@
           <div class="metric-stack" id="metric-stack"></div>
           <div class="progress-shell">
             <div class="progress-label-row">
-              <span>Milestone coverage</span>
+              <span>Closed WP issues</span>
               <strong id="progress-copy"></strong>
             </div>
             <div class="progress-track">
@@ -67,7 +69,7 @@
         <article class="surface watch-surface">
           <div class="surface-head">
             <div>
-              <p class="section-kicker">Operator view</p>
+              <p class="section-kicker">Evidence posture</p>
               <h3>Watchlist</h3>
             </div>
           </div>
@@ -78,30 +80,31 @@
       <section class="surface">
         <div class="surface-head">
           <div>
-            <p class="section-kicker">Sprint model</p>
-            <h3>Three-sprint flow</h3>
+            <p class="section-kicker">Compression lanes</p>
+            <h3>Milestone flow</h3>
           </div>
         </div>
-        <div id="sprint-grid" class="sprint-grid"></div>
+        <div id="lane-grid" class="sprint-grid"></div>
       </section>
 
       <section class="surface">
         <div class="surface-head">
           <div>
             <p class="section-kicker">Work packages</p>
-            <h3>Execution map</h3>
+            <h3>Issue-wave state and next action</h3>
           </div>
           <div class="toolbar">
             <div id="status-filters" class="chip-group"></div>
-            <div id="sprint-filters" class="chip-group"></div>
+            <div id="lane-filters" class="chip-group"></div>
           </div>
         </div>
         <div class="table-head">
           <span>Work package</span>
           <span>Status</span>
-          <span>Sprint</span>
-          <span>Dependencies</span>
-          <span>Issue</span>
+          <span>Issue / PR</span>
+          <span>Validation</span>
+          <span>Checks</span>
+          <span>Next action</span>
         </div>
         <div id="wp-list" class="wp-list"></div>
       </section>
@@ -110,21 +113,43 @@
         <article class="surface">
           <div class="surface-head">
             <div>
-              <p class="section-kicker">Source docs</p>
-              <h3>Canonical package</h3>
+              <p class="section-kicker">Authority</p>
+              <h3>Canonical source surfaces</h3>
             </div>
           </div>
-          <div id="docs-list" class="docs-list"></div>
+          <div id="authority-list" class="docs-list"></div>
         </article>
 
         <article class="surface">
           <div class="surface-head">
             <div>
-              <p class="section-kicker">Issue map</p>
-              <h3>Tracked issues and pull-ins</h3>
+              <p class="section-kicker">Validation profile</p>
+              <h3>Compression-safe checks</h3>
             </div>
           </div>
-          <div id="issues-list" class="issues-list"></div>
+          <div id="validation-list" class="review-list"></div>
+        </article>
+      </section>
+
+      <section class="detail-grid">
+        <article class="surface">
+          <div class="surface-head">
+            <div>
+              <p class="section-kicker">Release blockers</p>
+              <h3>Not green until resolved</h3>
+            </div>
+          </div>
+          <ul id="release-blockers" class="watchlist blocker-list"></ul>
+        </article>
+
+        <article class="surface">
+          <div class="surface-head">
+            <div>
+              <p class="section-kicker">Deferred scope</p>
+              <h3>Guarded findings and non-claims</h3>
+            </div>
+          </div>
+          <div id="deferred-findings" class="issues-list"></div>
         </article>
       </section>
     </section>

@@ -14,6 +14,8 @@
   --good-soft: rgba(37, 99, 79, 0.12);
   --warn: #8a5d13;
   --warn-soft: rgba(138, 93, 19, 0.12);
+  --unknown: #5f6472;
+  --unknown-soft: rgba(95, 100, 114, 0.13);
   --shadow: 0 24px 60px rgba(32, 30, 24, 0.08);
   --radius-xl: 32px;
   --radius-lg: 24px;
@@ -114,11 +116,12 @@ body::before {
 .bands-list li,
 .next-actions li,
 .watchlist li,
-.sprint-card p,
+.lane-card p,
 .doc-meta,
 .issue-copy,
 .wp-meta,
-.wp-desc {
+.wp-desc,
+.review-item p {
   color: var(--muted);
 }
 
@@ -221,9 +224,14 @@ body::before {
 }
 
 .hero-grid,
-.detail-grid {
+.detail-grid,
+.signal-grid {
   display: grid;
   gap: 20px;
+}
+
+.signal-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .hero-grid {
@@ -310,13 +318,44 @@ body::before {
   background: var(--warn);
 }
 
+.signal-card {
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  animation: rise 520ms ease both;
+}
+
+.signal-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.signal-card strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  letter-spacing: -0.04em;
+}
+
+.signal-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .sprint-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
 
-.sprint-card {
+.lane-card {
   padding: 18px;
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.62);
@@ -325,7 +364,7 @@ body::before {
   gap: 12px;
 }
 
-.sprint-topline,
+.lane-topline,
 .wp-topline {
   display: flex;
   justify-content: space-between;
@@ -333,13 +372,13 @@ body::before {
   align-items: start;
 }
 
-.sprint-card h4,
+.lane-card h4,
 .wp-title {
   margin: 0;
   font-size: 1.04rem;
 }
 
-.sprint-card ul {
+.lane-card ul {
   margin: 0;
   padding-left: 18px;
   color: var(--muted);
@@ -378,7 +417,7 @@ body::before {
 .table-head,
 .wp-row {
   display: grid;
-  grid-template-columns: minmax(260px, 1.4fr) 140px 120px minmax(150px, 0.9fr) minmax(150px, 0.9fr);
+  grid-template-columns: minmax(260px, 1.4fr) 140px 140px minmax(150px, 0.9fr) minmax(150px, 0.9fr) minmax(150px, 0.9fr);
   gap: 14px;
 }
 
@@ -443,7 +482,10 @@ body::before {
 
 .status-pending,
 .status-planned,
-.status-closeout {
+.status-closeout,
+.status-warn,
+.status-guarded,
+.status-bounded {
   background: var(--warn-soft);
   color: var(--warn);
 }
@@ -453,14 +495,34 @@ body::before {
   color: var(--accent);
 }
 
+.status-unknown,
+.status-stale {
+  background: var(--unknown-soft);
+  color: var(--unknown);
+}
+
+.inline-pill {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-right: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .docs-list,
-.issues-list {
+.issues-list,
+.review-list {
   display: grid;
   gap: 12px;
 }
 
 .doc-item,
-.issue-item {
+.issue-item,
+.review-item {
   display: grid;
   gap: 4px;
   padding: 14px 16px;
@@ -481,6 +543,27 @@ body::before {
   color: var(--accent);
 }
 
+.review-item {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.review-item code {
+  grid-column: 1 / -1;
+  width: fit-content;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: rgba(31, 35, 48, 0.07);
+  color: var(--ink);
+}
+
+.review-item p {
+  margin: 6px 0 0;
+  line-height: 1.45;
+}
+
 .status-badge.status-active {
   background: var(--cool-soft);
   color: var(--cool);
@@ -495,6 +578,11 @@ body::before {
 .status-badge.status-complete {
   background: var(--good-soft);
   color: var(--good);
+}
+
+.status-badge.status-blocked {
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 @keyframes rise {
@@ -522,6 +610,7 @@ body::before {
   .hero-grid,
   .detail-grid,
   .workspace-header,
+  .signal-grid,
   .sprint-grid {
     grid-template-columns: 1fr;
   }
