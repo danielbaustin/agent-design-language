@@ -10,6 +10,7 @@
 | `features/LOCAL_SEALED_QUINTESSENCE_CHECKPOINTS.md` | local-first protected checkpoint strategy and enclave-ready backend seam | WP-04, WP-05, WP-07 |
 | `features/ECONOMICS_PLACEMENT_BRIDGE.md` | narrow v0.90.3 resource-stewardship decision and v0.90.4 handoff | WP-13 |
 | `features/CSM_OBSERVATORY_DESIGN.md` | operator, reviewer, and future citizen visibility design for the inhabited CSM Observatory flagship | WP-10, WP-14, WP-14A |
+| `OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md` | multimode UI architecture for World / Reality, Operator / Governance, Cognition / Internal State, and Corporate Investor fallback rooms | WP-14, WP-14A |
 
 ## Proof And Audit Docs
 

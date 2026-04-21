@@ -20,6 +20,7 @@ with the explicit demo matrix and feature proof lane at WP-14A / #2341.
 | D11 | Challenge, appeal, and threat review | WP-13 | A challenged wake or projection freezes destructive transition and preserves evidence, with threat-model coverage before demo claims widen | challenge artifact, appeal/review artifact, threat model, economics placement record | PLANNED |
 | D12 | Integrated citizen-state proof | WP-14 | Reviewer can inspect one bounded end-to-end citizen-state scenario | integrated proof packet, witness, receipt, projection, operator report | PLANNED |
 | D13 | Feature proof coverage record | WP-14A | Every v0.90.3 feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral | feature proof coverage record and demo matrix update | PLANNED |
+| D14 | Observatory multimode UI architecture | WP-14A | The flagship Observatory demo has a reviewed room/lens/memory-dot architecture before demo redesign | `OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md`, multimode mockup, Corporate Investor UI fallback rule | LANDED |
 
 ## Non-Proving Boundaries
 
@@ -30,3 +31,4 @@ with the explicit demo matrix and feature proof lane at WP-14A / #2341.
 - These demos do not prove full citizen economics or contract-market execution.
 - These demos do not prove cloud enclave deployment.
 - These demos prove bounded local citizen-state safety surfaces, not personhood.
+- D14 is a design artifact, not a runtime UI implementation or proof artifact.
