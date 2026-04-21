@@ -4,8 +4,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use ::adl::runtime_v2::{
-    runtime_v2_csm_integrated_run_contract, runtime_v2_foundation_demo_contract,
-    runtime_v2_operator_control_report_contract, runtime_v2_security_boundary_proof_contract,
+    runtime_v2_csm_integrated_run_contract, runtime_v2_feature_proof_coverage_contract,
+    runtime_v2_foundation_demo_contract, runtime_v2_operator_control_report_contract,
+    runtime_v2_security_boundary_proof_contract,
 };
 
 pub(crate) fn real_runtime_v2(args: &[String]) -> Result<()> {
@@ -29,7 +30,7 @@ fn resolve_relative_output_path(
 fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, or integrated-csm-run-demo"
+            "runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, or feature-proof-coverage"
         ));
     };
 
@@ -38,12 +39,13 @@ fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
         "security-boundary" => real_runtime_v2_security_boundary(repo_root, &args[1..]),
         "foundation-demo" => real_runtime_v2_foundation_demo(repo_root, &args[1..]),
         "integrated-csm-run-demo" => real_runtime_v2_integrated_csm_run_demo(repo_root, &args[1..]),
+        "feature-proof-coverage" => real_runtime_v2_feature_proof_coverage(repo_root, &args[1..]),
         "--help" | "-h" | "help" => {
             println!("{}", super::usage::usage());
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls, security-boundary, foundation-demo, or integrated-csm-run-demo)"
+            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, or feature-proof-coverage)"
         )),
     }
 }
@@ -252,6 +254,47 @@ fn real_runtime_v2_integrated_csm_run_demo(repo_root: &Path, args: &[String]) ->
     Ok(())
 }
 
+fn real_runtime_v2_feature_proof_coverage(repo_root: &Path, args: &[String]) -> Result<()> {
+    let mut out_path: Option<PathBuf> = None;
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out" => {
+                let Some(value) = args.get(i + 1) else {
+                    return Err(anyhow!(
+                        "runtime-v2 feature-proof-coverage requires --out <path>"
+                    ));
+                };
+                out_path = Some(PathBuf::from(value));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", super::usage::usage());
+                return Ok(());
+            }
+            other => {
+                return Err(anyhow!(
+                    "unknown arg for runtime-v2 feature-proof-coverage: {other}"
+                ))
+            }
+        }
+        i += 1;
+    }
+
+    let packet = runtime_v2_feature_proof_coverage_contract()?;
+    let Some(out_path) = out_path else {
+        println!("{}", to_string_pretty(&packet)?);
+        return Ok(());
+    };
+    let resolved = resolve_relative_output_path(repo_root, &out_path, "feature-proof-coverage")?;
+    packet.write_to_path(&resolved)?;
+    println!(
+        "RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH={}",
+        resolved.display()
+    );
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -329,7 +372,7 @@ mod tests {
         let err = real_runtime_v2_in_repo(&[], &repo).expect_err("missing subcommand should fail");
         assert!(err
             .to_string()
-            .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, or integrated-csm-run-demo"));
+            .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, or feature-proof-coverage"));
 
         let err = real_runtime_v2_in_repo(&["bogus".to_string()], &repo)
             .expect_err("unknown subcommand should fail");
@@ -618,6 +661,81 @@ mod tests {
         assert!(err
             .to_string()
             .contains("runtime-v2 integrated-csm-run-demo requires --out <dir>"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn runtime_v2_feature_proof_coverage_writes_packet_json() {
+        let repo = temp_repo("feature-proof-coverage");
+        let out_path = repo.join("out/feature-proof-coverage.json");
+
+        real_runtime_v2_in_repo(
+            &[
+                "feature-proof-coverage".to_string(),
+                "--out".to_string(),
+                "out/feature-proof-coverage.json".to_string(),
+            ],
+            &repo,
+        )
+        .expect("feature proof coverage");
+
+        let json: serde_json::Value =
+            serde_json::from_slice(&fs::read(&out_path).expect("coverage packet should exist"))
+                .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.feature_proof_coverage.v1"
+        );
+        assert_eq!(json["demo_id"], "D11");
+        assert_eq!(json["entries"].as_array().expect("entries").len(), 11);
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn runtime_v2_feature_proof_coverage_validates_stdout_help_and_output_path_rules() {
+        let repo = temp_repo("feature-proof-coverage-branches");
+
+        real_runtime_v2_in_repo(&["feature-proof-coverage".to_string()], &repo)
+            .expect("stdout coverage packet");
+        real_runtime_v2_in_repo(
+            &["feature-proof-coverage".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("feature proof coverage help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "feature-proof-coverage".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/feature-proof-coverage.json")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output path should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 feature-proof-coverage --out path must be repository-relative"));
+
+        let err = real_runtime_v2_in_repo(
+            &["feature-proof-coverage".to_string(), "--bogus".to_string()],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 feature-proof-coverage: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &["feature-proof-coverage".to_string(), "--out".to_string()],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 feature-proof-coverage requires --out <path>"));
 
         fs::remove_dir_all(repo).ok();
     }

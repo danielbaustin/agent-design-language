@@ -78,6 +78,7 @@ Out of scope:
 - Sprint plan: `SPRINT_v0.90.2.md`
 - Decisions log: `DECISIONS_v0.90.2.md`
 - Demo matrix: `DEMO_MATRIX_v0.90.2.md`
+- Feature proof coverage: `FEATURE_PROOF_COVERAGE_v0.90.2.md`
 - Inheritance and compression audit:
   `RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md`
 - CSM run packet contract: `CSM_RUN_PACKET_CONTRACT_v0.90.2.md`
@@ -225,5 +226,6 @@ demo and proof coverage is explicit before docs/review convergence. WP-13 owns
 the governed adversarial hook, WP-14 owns the integrated first CSM run proof,
 and WP-14A verifies that each v0.90.2 feature claim has a runnable demo command,
 test-backed proof packet, fixture-backed artifact, documented non-proving
-status, or explicit deferral. WP-15 consumes that coverage record rather than
-inventing missing demos during review convergence.
+status, or explicit deferral. `FEATURE_PROOF_COVERAGE_v0.90.2.md` is the D11
+coverage record for that verification. WP-15 consumes that coverage record
+rather than inventing missing demos during review convergence.

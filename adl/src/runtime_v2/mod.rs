@@ -2,6 +2,7 @@ mod boot_admission;
 mod citizen;
 mod contracts;
 mod csm_run;
+mod feature_proof_coverage;
 mod foundation;
 mod governed_episode;
 mod hardening;
@@ -31,6 +32,8 @@ pub use citizen::*;
 pub use contracts::*;
 #[allow(unused_imports)]
 pub use csm_run::*;
+#[allow(unused_imports)]
+pub use feature_proof_coverage::*;
 #[allow(unused_imports)]
 pub use foundation::*;
 #[allow(unused_imports)]
