@@ -21,6 +21,8 @@ Current execution state:
   tests proving rejection before commit without side effects.
 - WP-09 adds the D6 snapshot, rehydration report, wake continuity proof, and
   duplicate-active-head guard evidence.
+- WP-10 adds the D7 Observatory visibility packet and operator report generated
+  from the bounded first-run artifacts.
 
 ## Thesis
 
@@ -154,3 +156,13 @@ checks snapshot checksum, restore-before-active-state, and
 `no_duplicate_active_citizen_instance` before wake. The first-run trace now
 records snapshot capture, rehydration validation, and duplicate-safe wake as
 contiguous events while preserving the non-live and no-birthday boundaries.
+
+## WP-10 Observatory Visibility Gate
+
+WP-10 lands the D7 operator visibility proof surface. The Runtime v2
+Observatory packet uses the inherited `adl.csm_visibility_packet.v1` contract
+and is generated from the CSM run packet, boot/admission evidence, first-run
+trace, snapshot/rehydration artifacts, and wake-continuity proof. The operator
+report is rendered from the same packet and validated against packet truth,
+including the event sequence, allow/refuse counts, wake-continuity evidence, and
+explicit no-live-run/no-birthday boundary.

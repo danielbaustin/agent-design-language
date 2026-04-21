@@ -159,6 +159,15 @@
       "required_by_wp": "WP-14",
       "must_exist_before_live_run": false,
       "purpose": "operator-visible projection of the completed bounded run"
+    },
+    {
+      "artifact_id": "operator_report",
+      "artifact_kind": "operator_report",
+      "path": "runtime_v2/observatory/operator_report.md",
+      "owner_wp": "WP-10",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "human-readable operator report rendered from the WP-10 visibility packet"
     }
   ],
   "stages": [
@@ -244,7 +253,9 @@
       "runtime_v2/snapshots/snapshot-0001.json",
       "runtime_v2/rehydration_report.json",
       "runtime_v2/csm_run/wake_continuity_proof.json",
-      "runtime_v2/csm_run/first_run_trace.jsonl"
+      "runtime_v2/csm_run/first_run_trace.jsonl",
+      "runtime_v2/observatory/visibility_packet.json",
+      "runtime_v2/observatory/operator_report.md"
     ],
     "validation_commands": [
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
@@ -254,6 +265,7 @@
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture",
       "git diff --check"
     ],
     "non_claims": [

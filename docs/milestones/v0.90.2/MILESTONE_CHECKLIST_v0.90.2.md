@@ -16,7 +16,7 @@
 - [x] Freedom Gate mediation complete
 - [x] Invalid action rejection complete
 - [x] Snapshot rehydrate wake continuity complete
-- [ ] Observatory packet and operator report integrated
+- [x] Observatory packet and operator report integrated
 - [x] Invariant coverage map complete
 - [x] Violation artifact contract implemented
 - [ ] Recovery eligibility model implemented

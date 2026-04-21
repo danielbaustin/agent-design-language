@@ -236,6 +236,16 @@ impl RuntimeV2CsmRunPacketContract {
                     purpose: "operator-visible projection of the completed bounded run"
                         .to_string(),
                 },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "operator_report".to_string(),
+                    artifact_kind: "operator_report".to_string(),
+                    path: "runtime_v2/observatory/operator_report.md".to_string(),
+                    owner_wp: "WP-10".to_string(),
+                    required_by_wp: "WP-14".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "human-readable operator report rendered from the WP-10 visibility packet"
+                        .to_string(),
+                },
             ],
             stages: vec![
                 RuntimeV2CsmRunStage {
@@ -334,6 +344,8 @@ impl RuntimeV2CsmRunPacketContract {
                     "runtime_v2/rehydration_report.json".to_string(),
                     "runtime_v2/csm_run/wake_continuity_proof.json".to_string(),
                     "runtime_v2/csm_run/first_run_trace.jsonl".to_string(),
+                    "runtime_v2/observatory/visibility_packet.json".to_string(),
+                    "runtime_v2/observatory/operator_report.md".to_string(),
                 ],
                 validation_commands: vec![
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture".to_string(),
@@ -343,6 +355,7 @@ impl RuntimeV2CsmRunPacketContract {
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture".to_string(),
                     "git diff --check".to_string(),
                 ],
                 non_claims: vec![
@@ -505,6 +518,7 @@ fn validate_csm_run_artifact_requirements(
         "rehydration_report",
         "wake_continuity_proof",
         "observatory_packet",
+        "operator_report",
     ];
     for required_id in required_ids {
         if !seen.contains(required_id) {
@@ -513,7 +527,7 @@ fn validate_csm_run_artifact_requirements(
             ));
         }
     }
-    if artifacts.len() < 16 {
+    if artifacts.len() < 17 {
         return Err(anyhow!(
             "CSM run packet contract must define the first-run artifact set"
         ));
