@@ -1906,6 +1906,34 @@ fn runtime_v2_csm_wake_continuity_writes_without_path_leakage() {
 }
 
 #[test]
+fn runtime_v2_csm_wake_continuity_proof_standalone_writes_without_path_leakage() {
+    let temp_root = unique_temp_path("csm-wake-proof-standalone");
+    let artifacts = runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+
+    let proof_json = String::from_utf8(
+        artifacts
+            .wake_continuity_proof
+            .to_pretty_json_bytes()
+            .expect("standalone proof json"),
+    )
+    .expect("utf8 proof json");
+    assert!(proof_json.contains("\"proof_outcome\": \"wake_allowed_unique_active_head\""));
+
+    artifacts
+        .wake_continuity_proof
+        .write_to_root(&temp_root)
+        .expect("write standalone wake proof");
+
+    let proof_path = temp_root.join(&artifacts.wake_continuity_proof.artifact_path);
+    assert!(proof_path.is_file());
+    let proof_text = fs::read_to_string(proof_path).expect("proof text");
+    assert!(!proof_text.contains(temp_root.to_string_lossy().as_ref()));
+    assert!(proof_text.contains("\"demo_id\": \"D6\""));
+
+    fs::remove_dir_all(temp_root).ok();
+}
+
+#[test]
 fn runtime_v2_csm_wake_continuity_validation_rejects_unsafe_or_ambiguous_state() {
     let mut artifacts =
         runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
@@ -1970,4 +1998,51 @@ fn runtime_v2_csm_wake_continuity_validation_rejects_unsafe_or_ambiguous_state()
         .expect_err("overclaim should fail")
         .to_string()
         .contains("non-claims"));
+}
+
+#[test]
+fn runtime_v2_csm_wake_continuity_validation_rejects_guard_and_lineage_drift() {
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts
+        .wake_continuity_proof
+        .duplicate_activation_guard
+        .attempted_duplicate_active_heads = true;
+    assert!(artifacts
+        .validate()
+        .expect_err("attempted duplicate active head should fail")
+        .to_string()
+        .contains("unique active head"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts
+        .wake_continuity_proof
+        .duplicate_activation_guard
+        .guard_result = "quarantined_duplicate_head".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("unsupported guard result should fail")
+        .to_string()
+        .contains("guard_result"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.citizen_continuity[0].restored_record_ref =
+        "runtime_v2/citizens/other.json".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("restored record drift should fail")
+        .to_string()
+        .contains("citizen refs"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.citizen_continuity[0].continuity_status =
+        "ambiguous_branch".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("ambiguous continuity status should fail")
+        .to_string()
+        .contains("continuity_status"));
 }
