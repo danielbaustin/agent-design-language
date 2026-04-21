@@ -214,6 +214,44 @@ EOF
 "$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_valid.md"
 "$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_valid.md"
 
+cat >"$tmpdir/stp_missing_multiple_sections.md" <<'EOF'
+---
+issue_card_schema: adl.issue.v1
+wp: "SUB-ISSUE"
+slug: "invalid-structured-task-prompt"
+title: "Invalid STP"
+labels:
+  - "track:roadmap"
+issue_number: 901
+status: "draft"
+action: "create"
+depends_on: []
+milestone_sprint: "Sprint 2"
+required_outcome_type:
+  - "code"
+repo_inputs:
+  - "docs/tooling/prompt-spec.md"
+canonical_files: []
+demo_required: false
+demo_names: []
+issue_graph_notes: []
+pr_start:
+  enabled: false
+  slug: "invalid-structured-task-prompt"
+---
+
+# Issue Card
+
+## Goal
+x
+EOF
+
+if "$VALIDATOR" --type stp --input "$tmpdir/stp_missing_multiple_sections.md" >"$tmpdir/stp_missing_multiple_sections.out" 2>&1; then
+  echo "expected multi-section-missing STP to fail validation" >&2
+  exit 1
+fi
+grep -Fq "missing required sections: Summary, Required Outcome, Deliverables, Acceptance Criteria, Repo Inputs, Dependencies, Demo Expectations, Non-goals, Issue-Graph Notes, Notes, Tooling Notes" "$tmpdir/stp_missing_multiple_sections.out"
+
 cp "$tmpdir/sip_valid.md" "$tmpdir/sip_dot_version_valid.md"
 perl -0pi -e 's/Version: v0\.85/Version: v0.87.1/' "$tmpdir/sip_dot_version_valid.md"
 "$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_dot_version_valid.md"

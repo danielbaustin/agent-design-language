@@ -960,9 +960,15 @@ fn real_pr_create_rejects_issue_body_that_cannot_pass_source_prompt_validation()
     assert!(err
         .to_string()
         .contains("create: issue body cannot satisfy source-prompt validation"));
+    assert!(err.to_string().contains(
+        "missing required sections: Summary, Required Outcome, Deliverables, Acceptance Criteria"
+    ));
     assert!(err
         .to_string()
         .contains("docs/templates/PR_INIT_INVOCATION_TEMPLATE.md"));
+    assert!(err
+        .to_string()
+        .contains("#canonical-authored-issue-body-scaffold"));
 }
 
 #[test]

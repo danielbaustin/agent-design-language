@@ -66,6 +66,66 @@ Typical choices:
 - `policy.body_source: generated` when you want the control plane to generate the first readable body
 - `policy.label_source: explicit` for tracked issue creation
 
+If you provide an authored issue body with `issue.body` or `issue.body_file`,
+start from the scaffold below. The create path validates authored bodies against
+the source-prompt contract before it calls GitHub, so missing sections should be
+fixed in one pass instead of discovered one at a time.
+
+## Canonical Authored Issue Body Scaffold
+
+Use this shape for direct authored issue bodies passed to `pr create --body`,
+`pr create --body-file`, or `pr-init` `issue.body` / `issue.body_file`.
+
+```markdown
+## Summary
+
+Describe the bounded issue in one short paragraph.
+
+## Goal
+
+State the user-facing or operator-facing goal.
+
+## Required Outcome
+
+State the concrete outcome that must be true when this issue is complete.
+
+## Deliverables
+
+- List the expected code, docs, tests, demos, or records.
+
+## Acceptance Criteria
+
+- List the observable checks that prove the issue is complete.
+
+## Repo Inputs
+
+- List the files, docs, tools, or issue references that bound the work.
+
+## Dependencies
+
+- List blocking or related issues, or `none`.
+
+## Demo Expectations
+
+- State required demos or `none`.
+
+## Non-goals
+
+- List explicit out-of-scope work.
+
+## Issue-Graph Notes
+
+- Record dependency, split, supersession, or milestone-routing notes.
+
+## Notes
+
+- Add implementation notes, risks, or operator context.
+
+## Tooling Notes
+
+- Add workflow, validation, or closeout notes for the ADL control plane.
+```
+
 ### `bootstrap_existing_issue`
 
 Use when the GitHub issue already exists and only the local bootstrap surfaces must be created or reconciled.
