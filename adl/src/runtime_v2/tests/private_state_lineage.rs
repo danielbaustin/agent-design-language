@@ -100,6 +100,48 @@ fn runtime_v2_private_state_lineage_calculates_accepted_head() {
 }
 
 #[test]
+fn runtime_v2_private_state_lineage_accepts_matching_head_and_successor_candidate() {
+    let artifacts = runtime_v2_private_state_lineage_contract().expect("lineage artifacts");
+    let head = artifacts.ledger.accepted_head().expect("accepted head");
+
+    let disposition = artifacts
+        .materialized_head
+        .disposition_against_ledger(&artifacts.ledger, &artifacts.sealing_artifacts)
+        .expect("accepted head disposition");
+    assert_eq!(disposition.disposition, "accepted");
+    assert!(disposition
+        .reason
+        .contains("matches append-only ledger accepted head"));
+
+    let successor = RuntimeV2PrivateStateLineageEntry::new_accepted(
+        "lineage-entry-proto-citizen-alpha-0002".to_string(),
+        head.entry_hash.clone(),
+        "snapshot".to_string(),
+        artifacts.ledger.citizen_id.clone(),
+        artifacts.ledger.manifold_id.clone(),
+        artifacts.ledger.lineage_id.clone(),
+        head.state_sequence + 1,
+        head.canonical_state_hash.clone(),
+        head.envelope_ref.clone(),
+        head.envelope_hash.clone(),
+        head.sealed_checkpoint_ref.clone(),
+        head.sealed_checkpoint_hash.clone(),
+        "sha256:4444444444444444444444444444444444444444444444444444444444444444".to_string(),
+        head.writer_identity.clone(),
+        Some("runtime_v2/private_state/witnesses/lineage-entry-0002.json".to_string()),
+        Some("runtime_v2/private_state/receipts/lineage-entry-0002.json".to_string()),
+        head.recorded_at_logical_tick + 1,
+    )
+    .expect("valid successor");
+
+    let candidates = artifacts
+        .ledger
+        .fork_candidates(successor)
+        .expect("non-fork successor accepted as candidate");
+    assert_eq!(candidates.len(), artifacts.ledger.entries.len() + 1);
+}
+
+#[test]
 fn runtime_v2_private_state_lineage_rejects_tamper_truncation_fork_and_replay() {
     let artifacts = runtime_v2_private_state_lineage_contract().expect("lineage artifacts");
 
