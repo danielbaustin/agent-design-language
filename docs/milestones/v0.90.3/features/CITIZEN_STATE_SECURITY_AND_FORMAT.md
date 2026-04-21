@@ -28,8 +28,9 @@ WP-03 selected deterministic tagged binary with protobuf-compatible field-number
 semantics as the v1 canonical private-state format. WP-04 wraps that canonical
 state in a deterministic Ed25519-signed envelope checked against a local trust
 root. WP-05 adds local-first sealed checkpoint fixtures. WP-06 adds the
-append-only lineage ledger and materialized-head validation rule. JSON remains
-a projection and review surface, not private-state authority.
+append-only lineage ledger and materialized-head validation rule. WP-07 adds
+continuity-witness and citizen-facing receipt fixtures for major transitions.
+JSON remains a projection and review surface, not private-state authority.
 
 The format decision must include:
 
@@ -56,6 +57,10 @@ evidence in `adl/src/runtime_v2/private_state_sealing.rs`.
 The landed append-only lineage proof is recorded in
 `docs/milestones/v0.90.3/APPEND_ONLY_LINEAGE_LEDGER_v0.90.3.md`, with runtime
 evidence in `adl/src/runtime_v2/private_state_lineage.rs`.
+
+The landed continuity witness and receipt proof is recorded in
+`docs/milestones/v0.90.3/CONTINUITY_WITNESSES_AND_RECEIPTS_v0.90.3.md`, with
+runtime evidence in `adl/src/runtime_v2/private_state_witness.rs`.
 
 ## Signed Envelope
 
@@ -103,7 +108,7 @@ convenient.
 
 ## Continuity Witnesses And Receipts
 
-Major identity transitions should emit continuity witnesses and citizen-facing
+Major identity transitions emit continuity witnesses and citizen-facing
 receipts.
 
 Required first transitions:
@@ -114,8 +119,11 @@ Required first transitions:
 - quarantine
 - release from quarantine
 
-The receipt should explain why the polis believes the current state is a valid
-continuation without exposing unrelated private state.
+The WP-07 witness set covers those transition examples and binds each witness to
+ledger, materialized-head, envelope, sealed-checkpoint, and canonical-state
+hash evidence. The receipt explains why the polis believes the current state is
+a valid continuation without exposing unrelated private state, raw private-state
+bytes, sealed payload material, private keys, or other citizens' state.
 
 ## Validation Targets
 

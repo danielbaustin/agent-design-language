@@ -96,6 +96,7 @@ dependencies.
 - Demo matrix: `DEMO_MATRIX_v0.90.3.md`
 - Citizen-state inheritance audit: `CITIZEN_STATE_INHERITANCE_AUDIT_v0.90.3.md`
 - Append-only lineage ledger proof: `APPEND_ONLY_LINEAGE_LEDGER_v0.90.3.md`
+- Continuity witnesses and receipts: `CONTINUITY_WITNESSES_AND_RECEIPTS_v0.90.3.md`
 - WP execution readiness: `WP_EXECUTION_READINESS_v0.90.3.md`
 - Feature index: `FEATURE_DOCS_v0.90.3.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.3.md`

@@ -142,3 +142,8 @@ pub fn runtime_v2_private_state_lineage_contract() -> Result<RuntimeV2PrivateSta
 {
     RuntimeV2PrivateStateLineageArtifacts::prototype()
 }
+
+pub fn runtime_v2_private_state_witness_contract() -> Result<RuntimeV2PrivateStateWitnessArtifacts>
+{
+    RuntimeV2PrivateStateWitnessArtifacts::prototype()
+}

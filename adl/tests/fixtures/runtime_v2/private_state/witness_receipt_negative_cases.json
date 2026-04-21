@@ -1,0 +1,37 @@
+{
+  "schema_version": "runtime_v2.private_state_witness_receipt_proof.v1",
+  "proof_id": "private-state-witness-receipt-negative-cases-proto-citizen-alpha",
+  "demo_id": "D6",
+  "witness_set_ref": "runtime_v2/private_state/continuity_witnesses.json",
+  "receipt_set_ref": "runtime_v2/private_state/citizen_receipts.json",
+  "ledger_ref": "runtime_v2/private_state/lineage_ledger.json",
+  "required_negative_cases": [
+    {
+      "case_id": "tampered_witness_hash",
+      "mutation": "replace witness_hash after evidence is bound",
+      "expected_error_fragment": "private-state continuity witness hash mismatch"
+    },
+    {
+      "case_id": "mismatched_ledger_root",
+      "mutation": "point a witness at a ledger root that does not match the accepted ledger",
+      "expected_error_fragment": "private-state continuity witness must bind to ledger and envelope evidence"
+    },
+    {
+      "case_id": "receipt_leaks_sealed_payload",
+      "mutation": "copy sealed_payload_b64 into a citizen-facing receipt",
+      "expected_error_fragment": "private-state citizen receipt leaked private or sealed material"
+    },
+    {
+      "case_id": "missing_continuity_explanation",
+      "mutation": "remove valid-continuation language from a receipt",
+      "expected_error_fragment": "private-state citizen receipt must explain valid continuation"
+    },
+    {
+      "case_id": "missing_required_transition",
+      "mutation": "omit one of admission, snapshot, wake, quarantine, release-from-quarantine",
+      "expected_error_fragment": "missing required transition"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_witness -- --nocapture",
+  "claim_boundary": "Proves witness and receipt schema fixtures for five transition examples; does not implement anti-equivocation or full challenge/appeal."
+}
