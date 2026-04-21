@@ -147,3 +147,8 @@ pub fn runtime_v2_private_state_witness_contract() -> Result<RuntimeV2PrivateSta
 {
     RuntimeV2PrivateStateWitnessArtifacts::prototype()
 }
+
+pub fn runtime_v2_private_state_anti_equivocation_contract(
+) -> Result<RuntimeV2PrivateStateAntiEquivocationArtifacts> {
+    RuntimeV2PrivateStateAntiEquivocationArtifacts::prototype()
+}

@@ -5,7 +5,8 @@
 Planning contract for v0.90.3. WP-03 has landed the canonical private-state
 format decision and fixture-backed projection boundary. WP-04 has landed the
 signed envelope, local trust-root fixture, and fail-closed negative cases for
-the canonical state artifact.
+the canonical state artifact. WP-08 has landed the first anti-equivocation
+conflict fixture and negative tests.
 
 ## Purpose
 
@@ -30,7 +31,10 @@ state in a deterministic Ed25519-signed envelope checked against a local trust
 root. WP-05 adds local-first sealed checkpoint fixtures. WP-06 adds the
 append-only lineage ledger and materialized-head validation rule. WP-07 adds
 continuity-witness and citizen-facing receipt fixtures for major transitions.
-JSON remains a projection and review surface, not private-state authority.
+WP-08 adds a conflicting-successor fixture proving that two signed successors
+for the same citizen lineage, predecessor, and sequence cannot both become
+active and must preserve evidence for sanctuary or quarantine review. JSON
+remains a projection and review surface, not private-state authority.
 
 The format decision must include:
 
@@ -61,6 +65,10 @@ evidence in `adl/src/runtime_v2/private_state_lineage.rs`.
 The landed continuity witness and receipt proof is recorded in
 `docs/milestones/v0.90.3/CONTINUITY_WITNESSES_AND_RECEIPTS_v0.90.3.md`, with
 runtime evidence in `adl/src/runtime_v2/private_state_witness.rs`.
+
+The landed anti-equivocation proof is recorded in
+`docs/milestones/v0.90.3/ANTI_EQUIVOCATION_CONFLICT_v0.90.3.md`, with runtime
+evidence in `adl/src/runtime_v2/private_state_equivocation.rs`.
 
 ## Signed Envelope
 

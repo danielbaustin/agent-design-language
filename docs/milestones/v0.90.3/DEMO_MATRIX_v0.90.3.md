@@ -22,7 +22,7 @@ The matrix has three layers:
 | D4 | Local sealed quintessence checkpoint | WP-05 | Private checkpoint can be sealed locally without making cloud enclaves mandatory | sealed checkpoint fixture, key policy, open/decrypt refusal cases | PLANNED |
 | D5 | Append-only lineage replay | WP-06 | Current state is accepted only when it matches append-only lineage | ledger fixture, accepted head calculation, tamper/truncation tests | PLANNED |
 | D6 | Continuity witness and citizen receipt | WP-07 | Admission, snapshot, wake, and quarantine transitions produce explainable continuity evidence | witness schema, receipt schema, sample receipt | PLANNED |
-| D7 | Anti-equivocation conflict | WP-08 | Conflicting signed successors for the same sequence are detected | conflict fixture and quarantine/sanctuary disposition | PLANNED |
+| D7 | Anti-equivocation conflict | WP-08 | Conflicting signed successors for the same sequence are detected and cannot both become active | `ANTI_EQUIVOCATION_CONFLICT_v0.90.3.md`, conflict fixture, sanctuary/quarantine disposition, negative-case proof | LANDED |
 | D8 | Sanctuary/quarantine ambiguous wake | WP-09 | Ambiguous wake preserves evidence and blocks unsafe activation | ambiguous wake fixture, quarantine artifact, operator report | PLANNED |
 | D9 | Redacted Observatory projection | WP-10 | Operators see continuity status without raw private state | projection schema, leakage tests, Observatory packet/report | PLANNED |
 | D10 | Standing, communication, and access boundary | WP-11 / WP-12 | Guests and service actors cannot silently acquire citizen rights or inspection access | standing events, access-denial events, communication examples | PLANNED |

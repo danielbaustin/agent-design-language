@@ -1,0 +1,32 @@
+{
+  "schema_version": "runtime_v2.private_state_anti_equivocation_disposition.v1",
+  "disposition_id": "anti-equivocation-disposition-proto-citizen-alpha-0002",
+  "artifact_path": "runtime_v2/private_state/anti_equivocation_disposition.json",
+  "conflict_ref": "runtime_v2/private_state/anti_equivocation_conflict.json",
+  "conflict_hash": "sha256:d570ed6bbb3879a01af7fba19e1715abf8f16aaaa0eed5781f71ec4561ff6507",
+  "disposition": "sanctuary_or_quarantine",
+  "activation_allowed": false,
+  "active_candidate_id": null,
+  "reason": "Two signed successor claims target the same citizen lineage, predecessor, and sequence; activation stops and evidence is preserved for review.",
+  "evidence_refs": [
+    "runtime_v2/private_state/lineage_ledger.json",
+    "runtime_v2/private_state/continuity_witnesses.json",
+    "runtime_v2/private_state/citizen_receipts.json",
+    "runtime_v2/private_state/anti_equivocation_conflict.json"
+  ],
+  "preserved_candidate_ids": [
+    "candidate-alpha-snapshot",
+    "candidate-alpha-wake"
+  ],
+  "preserved_candidate_entry_hashes": [
+    "sha256:51f3e5a6200e1e0a47c4e71ecf66926b5548e9db7383af511a1fe965db6972f1",
+    "sha256:5a46b0eb2a2a60dc3caebb8c702e09bce7fe0142e42a30a879974f6497272374"
+  ],
+  "preserved_candidate_claim_hashes": [
+    "sha256:fa3bca0aa4bcb333c9804d9a4a93cc044e1cdb134b1a6fdc9980048c51834532",
+    "sha256:735646c85b90fc02c8112cde15aad60d99a9d46e02b4b3b018506b36956f99fc"
+  ],
+  "destructive_transition_policy": "block_activation_and_preserve_evidence_until_review",
+  "review_route": "sanctuary_or_quarantine_operator_review",
+  "disposition_hash": "sha256:bab069ad3304b05e240cf0c1b37f05b30d7ed072b3ecc1b8b069ed516da26738"
+}
