@@ -165,6 +165,12 @@ The existing art deco UI remains a fallback direction: useful if implementation
 pressure requires a quick, coherent surface, but not the final target if the
 multimode room architecture proves workable.
 
+The fallback must be reachable quickly. The production design should include a
+small operator-visible fallback control and a keyboard shortcut that switches
+to the art deco UI without changing the underlying CSM evidence packet,
+redaction policy, trace, or authority boundaries. The control is for demo
+continuity and operational resilience, not for bypassing governance.
+
 ## Mode Architecture
 
 ```mermaid
@@ -286,6 +292,8 @@ The first screen should have six high-signal regions.
 6. Operator Action Rail
    - read-only in v0.90.3
    - shows available future actions and why some are disabled
+   - includes a clearly labeled art deco fallback switch when the multimode UI
+     is unavailable, unstable, or inappropriate for the current demo/review
 
 ## Privacy And Redaction
 
@@ -341,6 +349,7 @@ Good motifs:
 - redaction/projection lenses over protected state
 - saved operator/reviewer views as memory dots
 - cognition console for bounded integration/coherence surfaces
+- quick fallback switch to the art deco UI for demo continuity
 
 ## Non-Proving Boundaries
 
