@@ -26,14 +26,15 @@ Goal: prove that market state changes are authority-checked and traceable.
 - WP-12: Review summary shape
 - WP-13: Bounded contract-market demo
 - WP-14: Negative authority and trace cases
-- WP-15: Resource stewardship bridge
+- WP-15: Resource stewardship bridge and late authority boundary
+- WP-16: Demo matrix and feature proof demos
 
-Goal: produce one reviewer-visible market proof without payment rails.
+Goal: produce one reviewer-visible market proof without payment rails and
+verify feature-by-feature demo/proof coverage before review convergence.
 
 ## Sprint 4: Review And Release
 
-- WP-16: Docs, feature index, and demo matrix convergence
-- WP-17: Internal review
+- WP-17: Docs, quality, and review convergence
 - WP-18: External review and remediation
 - WP-19: Next milestone planning handoff
 - WP-20: Release ceremony

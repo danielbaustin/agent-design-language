@@ -31,9 +31,11 @@ Observatory-visible evidence.
 - WP-12 #2256 quarantine state machine
 - WP-13 #2257 governed adversarial hook and hardening probes
 - WP-14 #2258 integrated first CSM run demo
+- WP-14A #2301 demo matrix and feature proof demos
 
 Exit when the first run has recovery/quarantine semantics, one bounded governed
-adversarial hook, concrete hardening probes, and one integrated proof packet.
+adversarial hook, concrete hardening probes, one integrated proof packet, and
+feature-by-feature demo/proof coverage ready for review convergence.
 
 ## Sprint 4 - Review And Release Tail
 

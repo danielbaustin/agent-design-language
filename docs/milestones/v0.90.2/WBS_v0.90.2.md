@@ -22,7 +22,8 @@ contract before implementation begins.
 | WP-12 | #2256 | Quarantine state machine | Implement quarantine state and evidence preservation for unsafe recovery | quarantine artifact and tests | WP-11 |
 | WP-13 | #2257 | Governed adversarial hook and hardening probes | Add one bounded adversarial probe plus duplicate activation, snapshot integrity, and trace/replay gap negative probes | adversarial hook packet and hardening proof packets | WP-11, WP-12 |
 | WP-14 | #2258 | Integrated first CSM run demo | Produce one end-to-end first-run and hardening proof packet | integrated CSM run demo packet | WP-05-WP-13 |
-| WP-15 | #2259 | Docs, quality, and review convergence | Align feature docs, demo matrix, README, quality posture, and reviewer entry surfaces | coherent docs/review package and quality report | WP-14 |
+| WP-14A | #2301 | Demo matrix and feature proof demos | Restore the explicit milestone demo-program lane by verifying every feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral | demo matrix update and feature proof coverage record | WP-03-WP-14 |
+| WP-15 | #2259 | Docs, quality, and review convergence | Align feature docs, demo matrix, README, quality posture, and reviewer entry surfaces after demo coverage is explicit | coherent docs/review package and quality report | WP-14A |
 | WP-16 | #2260 | Internal review | Review claims, artifacts, compression, quality, and boundaries | findings-first internal review packet | WP-15 |
 | WP-17 | #2261 | External / 3rd-party review | Execute external review against the stabilized v0.90.2 proof package | completed external review record | WP-16 |
 | WP-18 | #2262 | Review findings remediation | Fix accepted findings or defer explicitly with owner and rationale | patches, closure notes, and tracked deferrals | WP-16, WP-17 |
@@ -41,6 +42,8 @@ Compression target:
   contract is stable
 - WP-13 should stay bounded to one governed adversarial hook plus concrete
   hardening probes, not expand into a full security-ecology sprint
+- WP-14A restores the older milestone pattern where feature-by-feature
+  demo/proof coverage is created before docs/review convergence
 - WP-15 through WP-19 must preserve the v0.87.1 closeout pattern:
   docs/review convergence, internal review, external / 3rd-party review,
   findings remediation, next-milestone planning, then ceremony

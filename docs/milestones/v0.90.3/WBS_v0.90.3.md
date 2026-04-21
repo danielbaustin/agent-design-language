@@ -23,9 +23,9 @@ before implementation widens.
 | WP-13 | planned | Access-control semantics | Define who may inspect, decrypt, project, migrate, wake, quarantine, challenge, or appeal | authority matrix and access events | WP-10-WP-12 |
 | WP-14 | planned | Projection policy | Define private, citizen, operator, reviewer, public, and debug views | projection policy and leakage tests | WP-10, WP-13 |
 | WP-15 | planned | Continuity challenge and appeal flow | Implement due-process artifacts for challenged continuity | challenge/appeal schemas and freeze behavior | WP-07, WP-13 |
-| WP-16 | planned | Citizen-state threat model | Model threats before demo claims widen | threat model and negative-test candidates | WP-03-WP-15 |
-| WP-17 | planned | Economics placement decision | Decide if v0.90.3 needs a resource-stewardship bridge before v0.90.4 economics | short decision record | WP-02, WP-16 |
-| WP-18 | planned | Docs, quality, and review convergence | Align docs, quality posture, demo matrix, README, and reviewer entry surfaces | coherent docs/review package | WP-12-WP-17 |
+| WP-16 | planned | Citizen-state threat model and economics placement decision | Model threats before demo claims widen and decide whether v0.90.3 needs only a resource-stewardship bridge before v0.90.4 economics | threat model, negative-test candidates, and economics placement record | WP-03-WP-15 |
+| WP-17 | planned | Demo matrix and feature proof demos | Verify every citizen-state feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral | demo matrix update and feature proof coverage record | WP-12-WP-16 |
+| WP-18 | planned | Docs, quality, and review convergence | Align docs, quality posture, README, reviewer entry surfaces, and the completed demo/proof coverage record | coherent docs/review package | WP-17 |
 | WP-19 | planned | Internal and external review remediation | Run reviews and fix or defer accepted findings | review packets and remediation notes | WP-18 |
 | WP-20 | planned | Release ceremony | Complete release closure and handoff | release notes, ceremony result, next-milestone handoff | WP-19 |
 
@@ -42,4 +42,5 @@ Compression must not skip:
 - challenge/appeal behavior
 - anti-equivocation negative tests
 - threat modeling
+- feature-by-feature demo/proof coverage before docs/review convergence
 - release-truth checks
