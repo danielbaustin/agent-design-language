@@ -15,10 +15,20 @@ specialists=(
 )
 
 for skill in "${specialists[@]}"; do
+  case "${skill}" in
+    repo-review-code) schema_doc="REPO_REVIEW_CODE_SKILL_INPUT_SCHEMA.md" ;;
+    repo-review-security) schema_doc="REPO_REVIEW_SECURITY_SKILL_INPUT_SCHEMA.md" ;;
+    repo-review-tests) schema_doc="REPO_REVIEW_TESTS_SKILL_INPUT_SCHEMA.md" ;;
+    repo-review-docs) schema_doc="REPO_REVIEW_DOCS_SKILL_INPUT_SCHEMA.md" ;;
+    repo-review-synthesis) schema_doc="REPO_REVIEW_SYNTHESIS_SKILL_INPUT_SCHEMA.md" ;;
+    *) echo "unknown repo-review specialist: ${skill}" >&2; exit 1 ;;
+  esac
   [[ -f "${skills_root}/${skill}/SKILL.md" ]]
   [[ -f "${skills_root}/${skill}/adl-skill.yaml" ]]
   [[ -f "${skills_root}/${skill}/agents/openai.yaml" ]]
-  grep -Fq 'reference_doc: "../docs/MULTI_AGENT_REPO_REVIEW_SKILL_SUITE.md"' "${skills_root}/${skill}/adl-skill.yaml"
+  [[ -f "${skills_root}/docs/${schema_doc}" ]]
+  grep -Fq "reference_doc: \"../docs/${schema_doc}\"" "${skills_root}/${skill}/adl-skill.yaml"
+  grep -Fq "${skill}" "${skills_root}/docs/MULTI_AGENT_REPO_REVIEW_SKILL_SUITE.md"
   grep -Fq "allow_code_edits: false" "${skills_root}/${skill}/adl-skill.yaml"
   grep -Fq "allow_network: false" "${skills_root}/${skill}/adl-skill.yaml"
 done
