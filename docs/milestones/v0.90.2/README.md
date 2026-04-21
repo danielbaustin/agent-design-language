@@ -166,3 +166,13 @@ trace, snapshot/rehydration artifacts, and wake-continuity proof. The operator
 report is rendered from the same packet and validated against packet truth,
 including the event sequence, allow/refuse counts, wake-continuity evidence, and
 explicit no-live-run/no-birthday boundary.
+
+## WP-11 Recovery Eligibility Gate
+
+WP-11 lands the D8 recovery decision boundary. The eligibility model consumes
+WP-08 invalid-action rejection evidence and WP-09 wake-continuity evidence to
+produce one safe-resume decision and one quarantine-required decision. The
+positive path requires a declared predecessor, validated rehydration, and a
+single active head; the negative path refuses ambiguous or duplicate-head
+recovery and hands evidence preservation to WP-12. This does not implement the
+quarantine state machine or widen into live Runtime v2 execution.

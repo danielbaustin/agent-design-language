@@ -22,7 +22,10 @@
     "runtime_v2/csm_run/wake_continuity_proof.json",
     "runtime_v2/csm_run/first_run_trace.jsonl",
     "runtime_v2/observatory/visibility_packet.json",
-    "runtime_v2/observatory/operator_report.md"
+    "runtime_v2/observatory/operator_report.md",
+    "runtime_v2/recovery/eligibility_model.json",
+    "runtime_v2/recovery/safe_resume_decision.json",
+    "runtime_v2/recovery/quarantine_required_decision.json"
   ],
   "run_identity": {
     "run_id": "proto-csm-01-first-bounded-run-0001",
@@ -64,11 +67,18 @@
     },
     {
       "stage_id": "snapshot_wake_and_observatory",
-    "owner_wp": "WP-09-WP-10",
-    "required_input": "runtime_v2/csm_run/first_run_trace.jsonl",
-    "required_output": "runtime_v2/observatory/visibility_packet.json",
-    "live_run_state": "wp10_observatory_landed"
-  }
+      "owner_wp": "WP-09-WP-10",
+      "required_input": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "required_output": "runtime_v2/observatory/visibility_packet.json",
+      "live_run_state": "wp10_observatory_landed"
+    },
+    {
+      "stage_id": "recovery_eligibility",
+      "owner_wp": "WP-11",
+      "required_input": "runtime_v2/csm_run/wake_continuity_proof.json",
+      "required_output": "runtime_v2/recovery/eligibility_model.json",
+      "live_run_state": "wp11_recovery_eligibility_landed"
+    }
   ],
   "review_target": {
     "entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",

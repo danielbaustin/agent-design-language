@@ -168,6 +168,33 @@
       "required_by_wp": "WP-14",
       "must_exist_before_live_run": false,
       "purpose": "human-readable operator report rendered from the WP-10 visibility packet"
+    },
+    {
+      "artifact_id": "recovery_eligibility_model",
+      "artifact_kind": "recovery_model",
+      "path": "runtime_v2/recovery/eligibility_model.json",
+      "owner_wp": "WP-11",
+      "required_by_wp": "WP-12",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 eligibility rules distinguishing safe resume from required quarantine"
+    },
+    {
+      "artifact_id": "safe_resume_decision",
+      "artifact_kind": "recovery_decision",
+      "path": "runtime_v2/recovery/safe_resume_decision.json",
+      "owner_wp": "WP-11",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 positive recovery decision proving validated wake can resume safely"
+    },
+    {
+      "artifact_id": "quarantine_required_decision",
+      "artifact_kind": "recovery_decision",
+      "path": "runtime_v2/recovery/quarantine_required_decision.json",
+      "owner_wp": "WP-11",
+      "required_by_wp": "WP-12",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 negative recovery decision handing unsafe resume to WP-12 quarantine"
     }
   ],
   "stages": [
@@ -255,7 +282,10 @@
       "runtime_v2/csm_run/wake_continuity_proof.json",
       "runtime_v2/csm_run/first_run_trace.jsonl",
       "runtime_v2/observatory/visibility_packet.json",
-      "runtime_v2/observatory/operator_report.md"
+      "runtime_v2/observatory/operator_report.md",
+      "runtime_v2/recovery/eligibility_model.json",
+      "runtime_v2/recovery/safe_resume_decision.json",
+      "runtime_v2/recovery/quarantine_required_decision.json"
     ],
     "validation_commands": [
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
@@ -266,6 +296,7 @@
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture",
       "git diff --check"
     ],
     "non_claims": [
@@ -279,6 +310,8 @@
     "WP-04 invariant and violation artifact contract",
     "WP-05 manifold boot and citizen admission",
     "WP-10 Observatory packet and operator report integration",
+    "WP-11 recovery eligibility decisions",
+    "WP-12 quarantine state machine",
     "WP-14 integrated first CSM run demo"
   ],
   "claim_boundary": "This contract fixes the first bounded CSM run packet shape and review target; it is not a live Runtime v2 execution artifact."

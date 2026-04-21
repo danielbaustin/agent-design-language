@@ -10,6 +10,7 @@ WP-07 / D4 Freedom Gate mediation artifacts: LANDED.
 WP-08 / D5 invalid-action rejection artifacts: LANDED.
 WP-09 / D6 snapshot rehydrate wake continuity artifacts: LANDED.
 WP-10 / D7 Observatory packet and operator report artifacts: LANDED.
+WP-11 / D8 recovery eligibility model and decision records: LANDED.
 
 This document defines the first bounded CSM run packet contract for
 `proto-csm-01`. It is intentionally a contract and fixture gate, not a live run
@@ -40,6 +41,10 @@ own run packet surfaces.
 | `adl/src/runtime_v2/observatory.rs` | Code-backed D7 visibility packet and operator-report integration |
 | `adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json` | Golden D7 Observatory visibility packet fixture |
 | `adl/tests/fixtures/runtime_v2/observatory/operator_report.md` | Golden D7 operator report rendered from the packet |
+| `adl/src/runtime_v2/recovery.rs` | Code-backed D8 recovery eligibility model and decision records |
+| `adl/tests/fixtures/runtime_v2/recovery/eligibility_model.json` | Golden D8 recovery eligibility model fixture |
+| `adl/tests/fixtures/runtime_v2/recovery/safe_resume_decision.json` | Golden D8 safe-resume decision fixture |
+| `adl/tests/fixtures/runtime_v2/recovery/quarantine_required_decision.json` | Golden D8 quarantine-required decision fixture |
 | `demos/fixtures/csm_run/proto-csm-01-run-packet.json` | Reviewer-facing fixture definition for the first bounded run |
 | `docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md` | WP-02 inheritance gate that this contract consumes |
 | `docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md` | D2 proof target |
@@ -80,6 +85,9 @@ The first bounded run must use these artifact requirements:
 | `runtime_v2/csm_run/wake_continuity_proof.json` | WP-09 | WP-14 | Proof that wake resumes one unique active citizen head |
 | `runtime_v2/observatory/visibility_packet.json` | WP-10 | WP-14 | Operator-visible projection of the bounded run |
 | `runtime_v2/observatory/operator_report.md` | WP-10 | WP-14 | Human-readable operator report rendered from the visibility packet |
+| `runtime_v2/recovery/eligibility_model.json` | WP-11 | WP-12 | D8 rules distinguishing safe resume from required quarantine |
+| `runtime_v2/recovery/safe_resume_decision.json` | WP-11 | WP-14 | Positive D8 decision proving validated wake can resume safely |
+| `runtime_v2/recovery/quarantine_required_decision.json` | WP-11 | WP-12 | Negative D8 decision handing unsafe recovery to quarantine |
 
 ## Stage Contract
 
@@ -110,6 +118,10 @@ D6 is proving after WP-09.
 
 D7 is proving after WP-10.
 
+D8 is partially proving after WP-11: the recovery eligibility model and
+decision records are landed, while WP-12 still owns the quarantine artifact and
+state machine.
+
 Proved now:
 
 - a code-backed CSM run packet contract exists
@@ -138,10 +150,14 @@ Proved now:
 - the D7 Observatory packet is generated from the run packet, boot/admission, first-run trace, and wake-continuity proof
 - the D7 operator report is rendered from the same packet and checked against packet truth
 - the operator-visible surface includes the invalid-action refusal, wake-continuity proof, and no-birthday boundary
+- the D8 recovery eligibility model is generated from the invalid-action and wake-continuity evidence
+- the safe-resume decision requires a declared predecessor, validated rehydration, and a unique active head
+- the reject/quarantine decision refuses ambiguous predecessor linkage and duplicate active-head risk
 
 Not proved yet:
 
 - Observatory output is not a live Runtime v2 capture
+- WP-12 still owns the quarantine artifact and quarantine state machine
 - WP-14 still owns the integrated first CSM run proof
 
 ## Validation
@@ -157,6 +173,7 @@ cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation 
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture
 ```
 
 This validates the contract prototypes, golden fixtures, path hygiene, positive
@@ -165,7 +182,9 @@ non-contiguous stages, missing invariant/violation coverage, boot/admission
 trace ordering, resource-pressure scheduling ambiguity, first-run trace
 ordering, Freedom Gate action/decision mismatches, invalid-action rejection
 before commit, duplicate-active wake rejection, wake continuity proof drift, and
-operator-report drift, missing D7 source artifacts, and live-run overclaiming.
+operator-report drift, missing D7 source artifacts, recovery decision polarity,
+ambiguous safe-resume rejection, complete recovery rule evaluation, and live-run
+overclaiming.
 
 ## Non-Claims
 

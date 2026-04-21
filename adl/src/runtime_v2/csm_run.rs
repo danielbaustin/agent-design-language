@@ -246,6 +246,36 @@ impl RuntimeV2CsmRunPacketContract {
                     purpose: "human-readable operator report rendered from the WP-10 visibility packet"
                         .to_string(),
                 },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "recovery_eligibility_model".to_string(),
+                    artifact_kind: "recovery_model".to_string(),
+                    path: "runtime_v2/recovery/eligibility_model.json".to_string(),
+                    owner_wp: "WP-11".to_string(),
+                    required_by_wp: "WP-12".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D8 eligibility rules distinguishing safe resume from required quarantine"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "safe_resume_decision".to_string(),
+                    artifact_kind: "recovery_decision".to_string(),
+                    path: "runtime_v2/recovery/safe_resume_decision.json".to_string(),
+                    owner_wp: "WP-11".to_string(),
+                    required_by_wp: "WP-14".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D8 positive recovery decision proving validated wake can resume safely"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "quarantine_required_decision".to_string(),
+                    artifact_kind: "recovery_decision".to_string(),
+                    path: "runtime_v2/recovery/quarantine_required_decision.json".to_string(),
+                    owner_wp: "WP-11".to_string(),
+                    required_by_wp: "WP-12".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D8 negative recovery decision handing unsafe resume to WP-12 quarantine"
+                        .to_string(),
+                },
             ],
             stages: vec![
                 RuntimeV2CsmRunStage {
@@ -346,6 +376,9 @@ impl RuntimeV2CsmRunPacketContract {
                     "runtime_v2/csm_run/first_run_trace.jsonl".to_string(),
                     "runtime_v2/observatory/visibility_packet.json".to_string(),
                     "runtime_v2/observatory/operator_report.md".to_string(),
+                    "runtime_v2/recovery/eligibility_model.json".to_string(),
+                    "runtime_v2/recovery/safe_resume_decision.json".to_string(),
+                    "runtime_v2/recovery/quarantine_required_decision.json".to_string(),
                 ],
                 validation_commands: vec![
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture".to_string(),
@@ -356,6 +389,7 @@ impl RuntimeV2CsmRunPacketContract {
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture".to_string(),
                     "git diff --check".to_string(),
                 ],
                 non_claims: vec![
@@ -370,6 +404,8 @@ impl RuntimeV2CsmRunPacketContract {
                 "WP-04 invariant and violation artifact contract".to_string(),
                 "WP-05 manifold boot and citizen admission".to_string(),
                 "WP-10 Observatory packet and operator report integration".to_string(),
+                "WP-11 recovery eligibility decisions".to_string(),
+                "WP-12 quarantine state machine".to_string(),
                 "WP-14 integrated first CSM run demo".to_string(),
             ],
             claim_boundary:
@@ -519,6 +555,9 @@ fn validate_csm_run_artifact_requirements(
         "wake_continuity_proof",
         "observatory_packet",
         "operator_report",
+        "recovery_eligibility_model",
+        "safe_resume_decision",
+        "quarantine_required_decision",
     ];
     for required_id in required_ids {
         if !seen.contains(required_id) {
@@ -527,7 +566,7 @@ fn validate_csm_run_artifact_requirements(
             ));
         }
     }
-    if artifacts.len() < 17 {
+    if artifacts.len() < 20 {
         return Err(anyhow!(
             "CSM run packet contract must define the first-run artifact set"
         ));

@@ -1,0 +1,50 @@
+{
+  "schema_version": "runtime_v2.csm_recovery_eligibility_model.v1",
+  "model_id": "proto-csm-01-recovery-eligibility-model-0001",
+  "demo_id": "D8",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/recovery/eligibility_model.json",
+  "source_refs": [
+    "runtime_v2/csm_run/invalid_action_violation.json",
+    "runtime_v2/csm_run/first_run_trace.jsonl",
+    "runtime_v2/snapshots/snapshot-0001.json",
+    "runtime_v2/rehydration_report.json",
+    "runtime_v2/csm_run/wake_continuity_proof.json"
+  ],
+  "rules": [
+    {
+      "rule_id": "invalid_action_blocked_before_commit",
+      "required_status_for_resume": "passed",
+      "quarantine_if_failed": true,
+      "evidence_family": "violation_packet"
+    },
+    {
+      "rule_id": "snapshot_checksum_verified",
+      "required_status_for_resume": "passed",
+      "quarantine_if_failed": true,
+      "evidence_family": "snapshot"
+    },
+    {
+      "rule_id": "rehydration_invariants_ran_before_resume",
+      "required_status_for_resume": "passed",
+      "quarantine_if_failed": true,
+      "evidence_family": "rehydration_report"
+    },
+    {
+      "rule_id": "wake_continuity_unique_active_head",
+      "required_status_for_resume": "passed",
+      "quarantine_if_failed": true,
+      "evidence_family": "continuity_proof"
+    },
+    {
+      "rule_id": "predecessor_linkage_unambiguous",
+      "required_status_for_resume": "passed",
+      "quarantine_if_failed": true,
+      "evidence_family": "continuity_proof"
+    }
+  ],
+  "safe_resume_decision_ref": "runtime_v2/recovery/safe_resume_decision.json",
+  "quarantine_required_decision_ref": "runtime_v2/recovery/quarantine_required_decision.json",
+  "next_owner_wp": "WP-12",
+  "claim_boundary": "This model decides recovery eligibility for the bounded v0.90.2 CSM run; it does not implement the WP-12 quarantine state machine, live Runtime v2 execution, first true Godel-agent birth, or v0.92 identity rebinding."
+}

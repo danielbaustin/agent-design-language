@@ -99,6 +99,11 @@ pub fn runtime_v2_csm_observatory_contract() -> Result<RuntimeV2CsmObservatoryAr
     RuntimeV2CsmObservatoryArtifacts::prototype()
 }
 
+pub fn runtime_v2_csm_recovery_eligibility_contract(
+) -> Result<RuntimeV2CsmRecoveryEligibilityArtifacts> {
+    RuntimeV2CsmRecoveryEligibilityArtifacts::prototype()
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }
