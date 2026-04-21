@@ -42,14 +42,16 @@ The map covers the first CSM run spine before boot/admission work widens:
 | `no_duplicate_active_citizen_instance` | citizen continuity | `invariant_checker` | WP-05 | negative fixture backed |
 | `trace_sequence_must_advance_monotonically` | temporal ordering | `trace_writer` | WP-06 | contracted for WP-06 |
 | `invalid_action_must_be_refused_before_commit` | security boundary enforcement | `operator_control_interface` | WP-08 | WP-08 rejection packet backed |
-| `snapshot_restore_must_validate_before_active_state` | recovery eligibility | `snapshot_service` | WP-09 | contracted for WP-09 |
+| `snapshot_restore_must_validate_before_active_state` | recovery eligibility | `snapshot_service` | WP-09 | WP-09 wake continuity backed |
 
 ## Gap Policy
 
 Missing or ambiguous coverage blocks WP-05 boot and any later live-run claim.
-WP-08 adds concrete rejection evidence for invalid actions before commit. Later
-WPs may add more runtime evidence, but they must not replace this map with a
-competing invariant set or silently weaken fail-closed behavior.
+WP-08 adds concrete rejection evidence for invalid actions before commit, and
+WP-09 adds snapshot/rehydration evidence that restore validation and the
+duplicate-active-citizen guard run before wake. Later WPs may add more runtime
+evidence, but they must not replace this map with a competing invariant set or
+silently weaken fail-closed behavior.
 
 ## Validation
 
@@ -58,8 +60,10 @@ Focused validation:
 ```sh
 cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture
 ```
 
 This validates schema identity, golden fixture stability, path hygiene,
 positive/negative fixture pairing, required invariant coverage, the WP-08
-before-commit rejection proof, and overclaim rejection.
+before-commit rejection proof, the WP-09 pre-wake continuity proof, and
+overclaim rejection.

@@ -13,6 +13,8 @@ pub const RUNTIME_V2_CSM_FREEDOM_GATE_DECISION_SCHEMA: &str =
     "runtime_v2.csm_freedom_gate_decision.v1";
 pub const RUNTIME_V2_CSM_INVALID_ACTION_FIXTURE_SCHEMA: &str =
     "runtime_v2.csm_invalid_action_fixture.v1";
+pub const RUNTIME_V2_CSM_WAKE_CONTINUITY_PROOF_SCHEMA: &str =
+    "runtime_v2.csm_wake_continuity_proof.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RuntimeV2CsmEpisodeCandidate {
@@ -159,6 +161,59 @@ pub struct RuntimeV2CsmInvalidActionFixture {
 pub struct RuntimeV2CsmInvalidActionRejectionArtifacts {
     pub invalid_action: RuntimeV2CsmInvalidActionFixture,
     pub violation_packet: RuntimeV2InvariantViolationArtifact,
+    pub first_run_trace: Vec<RuntimeV2CsmFirstRunTraceEvent>,
+    pub first_run_trace_path: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2CsmWakeContinuityCheck {
+    pub invariant_id: String,
+    pub status: String,
+    pub checked_before_wake: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2CsmCitizenWakeContinuity {
+    pub citizen_id: String,
+    pub snapshot_record_ref: String,
+    pub restored_record_ref: String,
+    pub predecessor_snapshot_id: String,
+    pub successor_trace_sequence: u64,
+    pub continuity_status: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2CsmDuplicateActivationGuard {
+    pub invariant_id: String,
+    pub attempted_duplicate_active_heads: bool,
+    pub duplicate_active_citizen_detected: bool,
+    pub quarantine_required: bool,
+    pub guard_result: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2CsmWakeContinuityProof {
+    pub schema_version: String,
+    pub proof_id: String,
+    pub demo_id: String,
+    pub manifold_id: String,
+    pub artifact_path: String,
+    pub snapshot_ref: String,
+    pub rehydration_report_ref: String,
+    pub source_trace_ref: String,
+    pub wake_trace_sequence: u64,
+    pub restored_active_citizens: Vec<String>,
+    pub continuity_checks: Vec<RuntimeV2CsmWakeContinuityCheck>,
+    pub citizen_continuity: Vec<RuntimeV2CsmCitizenWakeContinuity>,
+    pub duplicate_activation_guard: RuntimeV2CsmDuplicateActivationGuard,
+    pub proof_outcome: String,
+    pub claim_boundary: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RuntimeV2CsmWakeContinuityArtifacts {
+    pub snapshot_rehydration: RuntimeV2SnapshotAndRehydrationArtifacts,
+    pub wake_continuity_proof: RuntimeV2CsmWakeContinuityProof,
     pub first_run_trace: Vec<RuntimeV2CsmFirstRunTraceEvent>,
     pub first_run_trace_path: String,
 }
@@ -790,6 +845,217 @@ impl RuntimeV2CsmInvalidActionRejectionArtifacts {
     }
 }
 
+impl RuntimeV2CsmWakeContinuityArtifacts {
+    pub fn prototype() -> Result<Self> {
+        let invalid_action_rejection = RuntimeV2CsmInvalidActionRejectionArtifacts::prototype()?;
+        Self::from_invalid_action_rejection(&invalid_action_rejection)
+    }
+
+    pub fn from_invalid_action_rejection(
+        invalid_action_rejection: &RuntimeV2CsmInvalidActionRejectionArtifacts,
+    ) -> Result<Self> {
+        invalid_action_rejection.validate()?;
+
+        let manifold = runtime_v2_manifold_contract()?;
+        let kernel = RuntimeV2KernelLoopArtifacts::prototype(&manifold)?;
+        let citizens = RuntimeV2CitizenLifecycleArtifacts::prototype(&manifold)?;
+        let snapshot_rehydration =
+            RuntimeV2SnapshotAndRehydrationArtifacts::prototype(&manifold, &kernel, &citizens)?;
+        if snapshot_rehydration.snapshot.manifold_id
+            != invalid_action_rejection.invalid_action.manifold_id
+        {
+            return Err(anyhow!(
+                "CSM wake continuity snapshot manifold id must match prior run artifacts"
+            ));
+        }
+
+        let wake_trace_sequence = snapshot_rehydration
+            .rehydration_report
+            .trace_resume_sequence;
+        let restored_active_citizens = snapshot_rehydration
+            .rehydration_report
+            .restored_active_citizens
+            .clone();
+        let citizen_continuity = snapshot_rehydration
+            .snapshot
+            .active_index
+            .citizens
+            .iter()
+            .map(|entry| RuntimeV2CsmCitizenWakeContinuity {
+                citizen_id: entry.citizen_id.clone(),
+                snapshot_record_ref: entry.record_path.clone(),
+                restored_record_ref: entry.record_path.clone(),
+                predecessor_snapshot_id: snapshot_rehydration.snapshot.snapshot_id.clone(),
+                successor_trace_sequence: wake_trace_sequence,
+                continuity_status: "unique_successor_active_head".to_string(),
+            })
+            .collect::<Vec<_>>();
+
+        let wake_continuity_proof = RuntimeV2CsmWakeContinuityProof {
+            schema_version: RUNTIME_V2_CSM_WAKE_CONTINUITY_PROOF_SCHEMA.to_string(),
+            proof_id: "proto-csm-01-wake-continuity-0001".to_string(),
+            demo_id: "D6".to_string(),
+            manifold_id: snapshot_rehydration.snapshot.manifold_id.clone(),
+            artifact_path: "runtime_v2/csm_run/wake_continuity_proof.json".to_string(),
+            snapshot_ref: snapshot_rehydration.snapshot.snapshot_path.clone(),
+            rehydration_report_ref: snapshot_rehydration
+                .rehydration_report
+                .report_path
+                .clone(),
+            source_trace_ref: invalid_action_rejection.first_run_trace_path.clone(),
+            wake_trace_sequence,
+            restored_active_citizens,
+            continuity_checks: vec![
+                RuntimeV2CsmWakeContinuityCheck {
+                    invariant_id: "snapshot_checksum_verified".to_string(),
+                    status: "passed".to_string(),
+                    checked_before_wake: true,
+                },
+                RuntimeV2CsmWakeContinuityCheck {
+                    invariant_id: "snapshot_restore_must_validate_before_active_state".to_string(),
+                    status: "passed".to_string(),
+                    checked_before_wake: true,
+                },
+                RuntimeV2CsmWakeContinuityCheck {
+                    invariant_id: "no_duplicate_active_citizen_instance".to_string(),
+                    status: "passed".to_string(),
+                    checked_before_wake: true,
+                },
+            ],
+            citizen_continuity,
+            duplicate_activation_guard: RuntimeV2CsmDuplicateActivationGuard {
+                invariant_id: "no_duplicate_active_citizen_instance".to_string(),
+                attempted_duplicate_active_heads: false,
+                duplicate_active_citizen_detected: false,
+                quarantine_required: false,
+                guard_result: "accepted_unique_active_head".to_string(),
+            },
+            proof_outcome: "wake_allowed_unique_active_head".to_string(),
+            claim_boundary:
+                "This proof backs WP-09 D6 snapshot rehydrate wake continuity for the bounded CSM trace; it does not execute a live CSM run, does not claim first true Godel-agent birth, and does not implement v0.92 identity or migration semantics."
+                    .to_string(),
+        };
+
+        let mut first_run_trace = invalid_action_rejection.first_run_trace.clone();
+        first_run_trace.push(first_run_trace_event(FirstRunTraceEventSpec {
+            sequence: 7,
+            event_id: "csm_snapshot_captured",
+            manifold_id: &wake_continuity_proof.manifold_id,
+            episode_id: "episode-0001",
+            citizen_id: "proto-csm-01",
+            service_id: "snapshot_service",
+            action: "capture_csm_snapshot",
+            outcome: "snapshotted",
+            artifact_ref: &snapshot_rehydration.snapshot.snapshot_path,
+        }));
+        first_run_trace.push(first_run_trace_event(FirstRunTraceEventSpec {
+            sequence: 8,
+            event_id: "csm_rehydration_validated",
+            manifold_id: &wake_continuity_proof.manifold_id,
+            episode_id: "episode-0001",
+            citizen_id: "proto-csm-01",
+            service_id: "snapshot_service",
+            action: "validate_snapshot_rehydration",
+            outcome: "rehydrated",
+            artifact_ref: &snapshot_rehydration.rehydration_report.report_path,
+        }));
+        first_run_trace.push(first_run_trace_event(FirstRunTraceEventSpec {
+            sequence: wake_trace_sequence,
+            event_id: "csm_citizens_woken_without_duplicate_activation",
+            manifold_id: &wake_continuity_proof.manifold_id,
+            episode_id: "episode-0001",
+            citizen_id: "proto-citizen-alpha",
+            service_id: "snapshot_service",
+            action: "wake_citizens_after_rehydration",
+            outcome: "woken_without_duplicate",
+            artifact_ref: &wake_continuity_proof.artifact_path,
+        }));
+
+        let artifacts = Self {
+            snapshot_rehydration,
+            wake_continuity_proof,
+            first_run_trace,
+            first_run_trace_path: invalid_action_rejection.first_run_trace_path.clone(),
+        };
+        artifacts.validate()?;
+        Ok(artifacts)
+    }
+
+    pub fn validate(&self) -> Result<()> {
+        self.snapshot_rehydration.validate()?;
+        self.wake_continuity_proof.validate_against(
+            &self.snapshot_rehydration.snapshot,
+            &self.snapshot_rehydration.rehydration_report,
+            &self.first_run_trace_path,
+            &self.first_run_trace,
+        )?;
+        validate_relative_path(
+            &self.first_run_trace_path,
+            "csm_wake_continuity.first_run_trace_path",
+        )?;
+        if self.first_run_trace.len() != 9 {
+            return Err(anyhow!(
+                "CSM first-run trace must contain scheduling, mediation, rejection, snapshot, rehydration, and wake events"
+            ));
+        }
+        for (index, event) in self.first_run_trace.iter().enumerate() {
+            event.validate()?;
+            if event.event_sequence != index as u64 + 1 {
+                return Err(anyhow!("CSM first-run trace events must be contiguous"));
+            }
+            if event.manifold_id != self.wake_continuity_proof.manifold_id {
+                return Err(anyhow!(
+                    "wake continuity trace manifold id must match proof manifold"
+                ));
+            }
+        }
+        let final_event = self
+            .first_run_trace
+            .last()
+            .ok_or_else(|| anyhow!("wake continuity trace must contain events"))?;
+        if final_event.event_id != "csm_citizens_woken_without_duplicate_activation"
+            || final_event.event_sequence != self.wake_continuity_proof.wake_trace_sequence
+            || final_event.artifact_ref != self.wake_continuity_proof.artifact_path
+        {
+            return Err(anyhow!(
+                "wake continuity trace must end with the duplicate-safe wake proof"
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn wake_continuity_proof_pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        serde_json::to_vec_pretty(&self.wake_continuity_proof)
+            .context("serialize Runtime v2 CSM wake continuity proof")
+    }
+
+    pub fn first_run_trace_jsonl_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        let mut bytes = Vec::new();
+        for event in &self.first_run_trace {
+            bytes.extend(serde_json::to_vec(event).context("serialize first-run trace event")?);
+            bytes.push(b'\n');
+        }
+        Ok(bytes)
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        let root = root.as_ref();
+        self.snapshot_rehydration.write_to_root(root)?;
+        write_relative(
+            root,
+            &self.wake_continuity_proof.artifact_path,
+            self.wake_continuity_proof_pretty_json_bytes()?,
+        )?;
+        write_relative(
+            root,
+            &self.first_run_trace_path,
+            self.first_run_trace_jsonl_bytes()?,
+        )
+    }
+}
+
 impl RuntimeV2CsmResourcePressureFixture {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != RUNTIME_V2_CSM_RESOURCE_PRESSURE_SCHEMA {
@@ -1219,6 +1485,168 @@ impl RuntimeV2CsmInvalidActionFixture {
     }
 }
 
+impl RuntimeV2CsmWakeContinuityProof {
+    pub fn validate_against(
+        &self,
+        snapshot: &RuntimeV2SnapshotManifest,
+        rehydration_report: &RuntimeV2RehydrationReport,
+        first_run_trace_path: &str,
+        first_run_trace: &[RuntimeV2CsmFirstRunTraceEvent],
+    ) -> Result<()> {
+        if self.schema_version != RUNTIME_V2_CSM_WAKE_CONTINUITY_PROOF_SCHEMA {
+            return Err(anyhow!(
+                "unsupported Runtime v2 CSM wake continuity proof schema '{}'",
+                self.schema_version
+            ));
+        }
+        if self.demo_id != "D6" {
+            return Err(anyhow!("CSM wake continuity proof must map to D6"));
+        }
+        normalize_id(self.proof_id.clone(), "csm_wake.proof_id")?;
+        normalize_id(self.manifold_id.clone(), "csm_wake.manifold_id")?;
+        validate_relative_path(&self.artifact_path, "csm_wake.artifact_path")?;
+        validate_relative_path(&self.snapshot_ref, "csm_wake.snapshot_ref")?;
+        validate_relative_path(
+            &self.rehydration_report_ref,
+            "csm_wake.rehydration_report_ref",
+        )?;
+        validate_relative_path(&self.source_trace_ref, "csm_wake.source_trace_ref")?;
+        if self.manifold_id != snapshot.manifold_id
+            || self.manifold_id != rehydration_report.manifold_id
+        {
+            return Err(anyhow!(
+                "CSM wake continuity proof manifold id must match snapshot and rehydration report"
+            ));
+        }
+        if self.snapshot_ref != snapshot.snapshot_path {
+            return Err(anyhow!(
+                "CSM wake continuity proof must reference the captured snapshot"
+            ));
+        }
+        if self.rehydration_report_ref != rehydration_report.report_path {
+            return Err(anyhow!(
+                "CSM wake continuity proof must reference the rehydration report"
+            ));
+        }
+        if self.source_trace_ref != first_run_trace_path {
+            return Err(anyhow!(
+                "CSM wake continuity proof source_trace_ref must match first-run trace"
+            ));
+        }
+        if self.wake_trace_sequence != rehydration_report.trace_resume_sequence {
+            return Err(anyhow!(
+                "CSM wake continuity proof wake trace sequence must match rehydration resume sequence"
+            ));
+        }
+        if !rehydration_report.wake_allowed || rehydration_report.duplicate_active_citizen_detected
+        {
+            return Err(anyhow!(
+                "CSM wake continuity proof requires allowed wake without duplicate active citizens"
+            ));
+        }
+        if self.restored_active_citizens != rehydration_report.restored_active_citizens {
+            return Err(anyhow!(
+                "CSM wake continuity proof restored citizens must match rehydration report"
+            ));
+        }
+        let mut restored_seen = std::collections::BTreeSet::new();
+        for citizen_id in &self.restored_active_citizens {
+            normalize_id(citizen_id.clone(), "csm_wake.restored_active_citizens")?;
+            if !restored_seen.insert(citizen_id.clone()) {
+                return Err(anyhow!(
+                    "CSM wake continuity proof restored citizens contain duplicate '{}'",
+                    citizen_id
+                ));
+            }
+        }
+        validate_csm_wake_continuity_checks(&self.continuity_checks)?;
+        self.duplicate_activation_guard.validate()?;
+        if self
+            .duplicate_activation_guard
+            .duplicate_active_citizen_detected
+            || self
+                .duplicate_activation_guard
+                .attempted_duplicate_active_heads
+            || self.duplicate_activation_guard.quarantine_required
+        {
+            return Err(anyhow!(
+                "CSM wake continuity proof may only allow wake for one unique active head"
+            ));
+        }
+        validate_csm_citizen_wake_continuity(
+            &self.citizen_continuity,
+            snapshot,
+            self.wake_trace_sequence,
+        )?;
+        match self.proof_outcome.as_str() {
+            "wake_allowed_unique_active_head" => {}
+            other => return Err(anyhow!("unsupported csm_wake.proof_outcome '{other}'")),
+        }
+        if !first_run_trace.iter().any(|event| {
+            event.event_sequence == self.wake_trace_sequence
+                && event.event_id == "csm_citizens_woken_without_duplicate_activation"
+                && event.artifact_ref == self.artifact_path
+        }) {
+            return Err(anyhow!(
+                "CSM wake continuity proof must be present in the first-run trace"
+            ));
+        }
+        if !self
+            .claim_boundary
+            .contains("WP-09 D6 snapshot rehydrate wake continuity")
+            || !self
+                .claim_boundary
+                .contains("does not execute a live CSM run")
+            || !self
+                .claim_boundary
+                .contains("does not claim first true Godel-agent birth")
+            || !self
+                .claim_boundary
+                .contains("does not implement v0.92 identity or migration semantics")
+        {
+            return Err(anyhow!(
+                "CSM wake continuity proof must preserve live-run, birthday, and v0.92 non-claims"
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn to_pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        let snapshot = runtime_v2_snapshot_rehydration_contract()?.snapshot;
+        let rehydration_report = runtime_v2_snapshot_rehydration_contract()?.rehydration_report;
+        let trace = RuntimeV2CsmWakeContinuityArtifacts::prototype()?.first_run_trace;
+        self.validate_against(
+            &snapshot,
+            &rehydration_report,
+            "runtime_v2/csm_run/first_run_trace.jsonl",
+            &trace,
+        )?;
+        serde_json::to_vec_pretty(self).context("serialize Runtime v2 CSM wake continuity proof")
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        write_relative(
+            root.as_ref(),
+            &self.artifact_path,
+            self.to_pretty_json_bytes()?,
+        )
+    }
+}
+
+impl RuntimeV2CsmDuplicateActivationGuard {
+    fn validate(&self) -> Result<()> {
+        match self.invariant_id.as_str() {
+            "no_duplicate_active_citizen_instance" => {}
+            other => return Err(anyhow!("unsupported csm_wake.guard.invariant_id '{other}'")),
+        }
+        match self.guard_result.as_str() {
+            "accepted_unique_active_head" => {}
+            other => return Err(anyhow!("unsupported csm_wake.guard_result '{other}'")),
+        }
+        Ok(())
+    }
+}
+
 impl RuntimeV2CsmFirstRunTraceEvent {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != RUNTIME_V2_CSM_FIRST_RUN_TRACE_EVENT_SCHEMA {
@@ -1244,11 +1672,110 @@ impl RuntimeV2CsmFirstRunTraceEvent {
             | "scheduled"
             | "deferred"
             | "allowed_with_mediation"
-            | "rejected_before_commit" => {}
+            | "rejected_before_commit"
+            | "snapshotted"
+            | "rehydrated"
+            | "woken_without_duplicate" => {}
             other => return Err(anyhow!("unsupported csm_first_run_trace.outcome '{other}'")),
         }
         validate_relative_path(&self.artifact_ref, "csm_first_run_trace.artifact_ref")
     }
+}
+
+fn validate_csm_wake_continuity_checks(checks: &[RuntimeV2CsmWakeContinuityCheck]) -> Result<()> {
+    if checks.len() < 3 {
+        return Err(anyhow!(
+            "CSM wake continuity proof must include snapshot, restore, and duplicate-head checks"
+        ));
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for check in checks {
+        normalize_id(check.invariant_id.clone(), "csm_wake.check.invariant_id")?;
+        match check.status.as_str() {
+            "passed" => {}
+            other => return Err(anyhow!("unsupported csm_wake.check.status '{other}'")),
+        }
+        if !check.checked_before_wake {
+            return Err(anyhow!("CSM wake continuity checks must run before wake"));
+        }
+        if !seen.insert(check.invariant_id.clone()) {
+            return Err(anyhow!(
+                "CSM wake continuity proof contains duplicate check '{}'",
+                check.invariant_id
+            ));
+        }
+    }
+    for required in [
+        "snapshot_checksum_verified",
+        "snapshot_restore_must_validate_before_active_state",
+        "no_duplicate_active_citizen_instance",
+    ] {
+        if !seen.contains(required) {
+            return Err(anyhow!(
+                "CSM wake continuity proof missing required check '{required}'"
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn validate_csm_citizen_wake_continuity(
+    entries: &[RuntimeV2CsmCitizenWakeContinuity],
+    snapshot: &RuntimeV2SnapshotManifest,
+    wake_trace_sequence: u64,
+) -> Result<()> {
+    let active_records = snapshot
+        .active_index
+        .citizens
+        .iter()
+        .map(|entry| (entry.citizen_id.clone(), entry.record_path.clone()))
+        .collect::<std::collections::BTreeMap<_, _>>();
+    if entries.len() != active_records.len() {
+        return Err(anyhow!(
+            "CSM wake continuity proof must include one continuity entry per active citizen"
+        ));
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for entry in entries {
+        normalize_id(entry.citizen_id.clone(), "csm_wake.citizen_id")?;
+        validate_relative_path(&entry.snapshot_record_ref, "csm_wake.snapshot_record_ref")?;
+        validate_relative_path(&entry.restored_record_ref, "csm_wake.restored_record_ref")?;
+        normalize_id(
+            entry.predecessor_snapshot_id.clone(),
+            "csm_wake.predecessor_snapshot_id",
+        )?;
+        if !seen.insert(entry.citizen_id.clone()) {
+            return Err(anyhow!(
+                "CSM wake continuity proof contains duplicate citizen continuity entry '{}'",
+                entry.citizen_id
+            ));
+        }
+        let Some(record_ref) = active_records.get(&entry.citizen_id) else {
+            return Err(anyhow!(
+                "CSM wake continuity proof references a citizen outside the snapshot active index"
+            ));
+        };
+        if &entry.snapshot_record_ref != record_ref || &entry.restored_record_ref != record_ref {
+            return Err(anyhow!(
+                "CSM wake continuity proof citizen refs must match the snapshot active record"
+            ));
+        }
+        if entry.predecessor_snapshot_id != snapshot.snapshot_id {
+            return Err(anyhow!(
+                "CSM wake continuity proof predecessor snapshot must match snapshot id"
+            ));
+        }
+        if entry.successor_trace_sequence != wake_trace_sequence {
+            return Err(anyhow!(
+                "CSM wake continuity proof successor sequence must match wake trace sequence"
+            ));
+        }
+        match entry.continuity_status.as_str() {
+            "unique_successor_active_head" => {}
+            other => return Err(anyhow!("unsupported csm_wake.continuity_status '{other}'")),
+        }
+    }
+    Ok(())
 }
 
 struct FirstRunTraceEventSpec<'a> {

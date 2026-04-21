@@ -19,6 +19,8 @@ Current execution state:
   mediation decision.
 - WP-08 adds the D5 invalid-action fixture, violation packet, and negative
   tests proving rejection before commit without side effects.
+- WP-09 adds the D6 snapshot, rehydration report, wake continuity proof, and
+  duplicate-active-head guard evidence.
 
 ## Thesis
 
@@ -143,3 +145,12 @@ to bypass the mediated Freedom Gate decision, and the violation packet proves
 the normal policy path rejected that action before commit while preserving
 `transition_refused_state_unchanged`. This is still fixture-backed Runtime v2
 evidence, not a live CSM run or first true birthday claim.
+
+## WP-09 Snapshot Wake Continuity Gate
+
+WP-09 lands the D6 continuity proof surface. The snapshot manifest and
+rehydration report are consumed by a CSM-specific wake continuity proof that
+checks snapshot checksum, restore-before-active-state, and
+`no_duplicate_active_citizen_instance` before wake. The first-run trace now
+records snapshot capture, rehydration validation, and duplicate-safe wake as
+contiguous events while preserving the non-live and no-birthday boundaries.

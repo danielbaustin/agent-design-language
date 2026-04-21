@@ -8,6 +8,7 @@ WP-05 / D3 boot and admission artifacts: LANDED.
 WP-06 / D4 resource-pressure scheduling artifacts: LANDED.
 WP-07 / D4 Freedom Gate mediation artifacts: LANDED.
 WP-08 / D5 invalid-action rejection artifacts: LANDED.
+WP-09 / D6 snapshot rehydrate wake continuity artifacts: LANDED.
 
 This document defines the first bounded CSM run packet contract for
 `proto-csm-01`. It is intentionally a contract and fixture gate, not a live run
@@ -31,6 +32,9 @@ own run packet surfaces.
 | `adl/tests/fixtures/runtime_v2/csm_run/freedom_gate_decision.json` | Golden Freedom Gate decision fixture used by Runtime v2 tests |
 | `adl/tests/fixtures/runtime_v2/csm_run/invalid_action_fixture.json` | Golden invalid-action fixture used by Runtime v2 tests |
 | `adl/tests/fixtures/runtime_v2/csm_run/invalid_action_violation.json` | Golden invalid-action violation packet used by Runtime v2 tests |
+| `adl/tests/fixtures/runtime_v2/csm_run/wake_continuity_proof.json` | Golden D6 wake continuity proof used by Runtime v2 tests |
+| `adl/tests/fixtures/runtime_v2/snapshots/snapshot-0001.json` | Golden snapshot manifest consumed by D6 wake continuity |
+| `adl/tests/fixtures/runtime_v2/rehydration_report.json` | Golden rehydration report consumed by D6 wake continuity |
 | `adl/tests/fixtures/runtime_v2/csm_run/first_run_trace.jsonl` | Golden first-run trace fixture used by Runtime v2 tests |
 | `demos/fixtures/csm_run/proto-csm-01-run-packet.json` | Reviewer-facing fixture definition for the first bounded run |
 | `docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md` | WP-02 inheritance gate that this contract consumes |
@@ -60,13 +64,16 @@ The first bounded run must use these artifact requirements:
 | `runtime_v2/invariants/csm_run_invariant_map.json` | WP-04 | WP-05 | Expanded invariant map before live work widens |
 | `runtime_v2/violations/violation_artifact_schema.json` | WP-04 | WP-08 | Stable invalid-action and violation artifact shape |
 | `runtime_v2/csm_run/boot_manifest.json` | WP-05 | WP-14 | Live manifold boot evidence |
-| `runtime_v2/csm_run/first_run_trace.jsonl` | WP-06 | WP-14 | Ordered trace spine for scheduling, mediation, and rejection |
+| `runtime_v2/csm_run/first_run_trace.jsonl` | WP-06 | WP-14 | Ordered trace spine for scheduling, mediation, rejection, and wake continuity |
 | `runtime_v2/csm_run/resource_pressure_fixture.json` | WP-06 | WP-14 | Bounded pressure input for the governed episode scheduler |
 | `runtime_v2/csm_run/scheduling_decision.json` | WP-06 | WP-07 | Reviewable scheduler choice before Freedom Gate mediation |
 | `runtime_v2/csm_run/citizen_action_fixture.json` | WP-07 | WP-08 | Scheduled non-trivial citizen action routed through the Freedom Gate |
 | `runtime_v2/csm_run/freedom_gate_decision.json` | WP-07 | WP-08 | Bounded Freedom Gate mediation decision for the scheduled action |
 | `runtime_v2/csm_run/invalid_action_fixture.json` | WP-08 | WP-11 | Invalid action input that must be rejected before commit |
 | `runtime_v2/csm_run/invalid_action_violation.json` | WP-08 | WP-11 | Stable violation packet proving rejection without side effects |
+| `runtime_v2/snapshots/snapshot-0001.json` | WP-09 | WP-10 | Captured manifold snapshot used by D6 wake continuity |
+| `runtime_v2/rehydration_report.json` | WP-09 | WP-10 | Rehydration report proving invariants ran before wake |
+| `runtime_v2/csm_run/wake_continuity_proof.json` | WP-09 | WP-14 | Proof that wake resumes one unique active citizen head |
 | `runtime_v2/observatory/visibility_packet.json` | WP-10 | WP-14 | Operator-visible projection of the bounded run |
 
 ## Stage Contract
@@ -94,6 +101,8 @@ D4 has scheduling and Freedom Gate mediation evidence after WP-07.
 
 D5 is proving after WP-08.
 
+D6 is proving after WP-09.
+
 Proved now:
 
 - a code-backed CSM run packet contract exists
@@ -115,6 +124,10 @@ Proved now:
 - the invalid-action fixture attempts to bypass the mediated Freedom Gate result
 - the violation packet rejects that action before commit with unchanged state
 - the first-run trace records the rejection event after Freedom Gate mediation
+- the snapshot manifest and rehydration report validate before wake
+- the wake continuity proof ties the restored active citizen to the snapshot record
+- the duplicate-active-head guard is explicitly checked before wake
+- the first-run trace records snapshot capture, rehydration validation, and wake continuity in contiguous order
 
 Not proved yet:
 
@@ -131,6 +144,7 @@ cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --noc
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture
 ```
 
 This validates the contract prototypes, golden fixtures, path hygiene, positive
@@ -138,7 +152,8 @@ and negative fixture pairing, and negative cases for unsafe paths,
 non-contiguous stages, missing invariant/violation coverage, boot/admission
 trace ordering, resource-pressure scheduling ambiguity, first-run trace
 ordering, Freedom Gate action/decision mismatches, invalid-action rejection
-before commit, and live-run overclaiming.
+before commit, duplicate-active wake rejection, wake continuity proof drift, and
+live-run overclaiming.
 
 ## Non-Claims
 

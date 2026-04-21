@@ -133,7 +133,7 @@ impl RuntimeV2CsmRunPacketContract {
                     owner_wp: "WP-06".to_string(),
                     required_by_wp: "WP-14".to_string(),
                     must_exist_before_live_run: false,
-                    purpose: "ordered trace spine for scheduling, mediation, and rejection"
+                    purpose: "ordered trace spine for scheduling, mediation, rejection, and wake continuity"
                         .to_string(),
                 },
                 RuntimeV2CsmRunArtifactRequirement {
@@ -194,6 +194,36 @@ impl RuntimeV2CsmRunPacketContract {
                     required_by_wp: "WP-11".to_string(),
                     must_exist_before_live_run: false,
                     purpose: "stable violation packet proving invalid action rejection without side effects"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "snapshot_manifest".to_string(),
+                    artifact_kind: "snapshot".to_string(),
+                    path: "runtime_v2/snapshots/snapshot-0001.json".to_string(),
+                    owner_wp: "WP-09".to_string(),
+                    required_by_wp: "WP-10".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "captured manifold snapshot used by the D6 wake-continuity proof"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "rehydration_report".to_string(),
+                    artifact_kind: "rehydration_report".to_string(),
+                    path: "runtime_v2/rehydration_report.json".to_string(),
+                    owner_wp: "WP-09".to_string(),
+                    required_by_wp: "WP-10".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "validated restore report proving invariants ran before wake"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "wake_continuity_proof".to_string(),
+                    artifact_kind: "continuity_proof".to_string(),
+                    path: "runtime_v2/csm_run/wake_continuity_proof.json".to_string(),
+                    owner_wp: "WP-09".to_string(),
+                    required_by_wp: "WP-14".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D6 proof that wake resumes one unique active citizen head"
                         .to_string(),
                 },
                 RuntimeV2CsmRunArtifactRequirement {
@@ -280,7 +310,7 @@ impl RuntimeV2CsmRunPacketContract {
                         "snapshot_restore_must_validate_before_active_state".to_string(),
                         "no_duplicate_active_citizen_instance".to_string(),
                     ],
-                    status_before_wp: "planned".to_string(),
+                    status_before_wp: "wp09_wake_continuity_landed".to_string(),
                     proof_obligation:
                         "wake continuity and operator visibility are tied to the same bounded run"
                             .to_string(),
@@ -300,6 +330,9 @@ impl RuntimeV2CsmRunPacketContract {
                     "runtime_v2/csm_run/freedom_gate_decision.json".to_string(),
                     "runtime_v2/csm_run/invalid_action_fixture.json".to_string(),
                     "runtime_v2/csm_run/invalid_action_violation.json".to_string(),
+                    "runtime_v2/snapshots/snapshot-0001.json".to_string(),
+                    "runtime_v2/rehydration_report.json".to_string(),
+                    "runtime_v2/csm_run/wake_continuity_proof.json".to_string(),
                     "runtime_v2/csm_run/first_run_trace.jsonl".to_string(),
                 ],
                 validation_commands: vec![
@@ -309,6 +342,7 @@ impl RuntimeV2CsmRunPacketContract {
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture".to_string(),
                     "git diff --check".to_string(),
                 ],
                 non_claims: vec![
@@ -467,6 +501,9 @@ fn validate_csm_run_artifact_requirements(
         "freedom_gate_decision",
         "invalid_action_fixture",
         "invalid_action_violation",
+        "snapshot_manifest",
+        "rehydration_report",
+        "wake_continuity_proof",
         "observatory_packet",
     ];
     for required_id in required_ids {
@@ -476,7 +513,7 @@ fn validate_csm_run_artifact_requirements(
             ));
         }
     }
-    if artifacts.len() < 13 {
+    if artifacts.len() < 16 {
         return Err(anyhow!(
             "CSM run packet contract must define the first-run artifact set"
         ));

@@ -17,6 +17,9 @@
     "runtime_v2/csm_run/freedom_gate_decision.json",
     "runtime_v2/csm_run/invalid_action_fixture.json",
     "runtime_v2/csm_run/invalid_action_violation.json",
+    "runtime_v2/snapshots/snapshot-0001.json",
+    "runtime_v2/rehydration_report.json",
+    "runtime_v2/csm_run/wake_continuity_proof.json",
     "runtime_v2/csm_run/first_run_trace.jsonl"
   ],
   "run_identity": {
@@ -62,11 +65,11 @@
       "owner_wp": "WP-09-WP-10",
       "required_input": "runtime_v2/csm_run/first_run_trace.jsonl",
       "required_output": "runtime_v2/observatory/visibility_packet.json",
-      "live_run_state": "planned"
+      "live_run_state": "wp09_wake_continuity_landed"
     }
   ],
   "review_target": {
     "entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
-    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture"
+    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture"
   }
 }
