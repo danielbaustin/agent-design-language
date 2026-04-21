@@ -117,7 +117,7 @@
         "single_active_manifold_instance",
         "no_duplicate_active_citizen_instance"
       ],
-      "status_before_wp": "planned",
+      "status_before_wp": "landed_by_wp05",
       "proof_obligation": "proto-csm-01 boots and admits workers only after contract gates pass"
     },
     {
@@ -158,11 +158,12 @@
     "validation_commands": [
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture",
       "git diff --check"
     ],
     "non_claims": [
       "does not execute a live CSM run",
-      "does not execute WP-05 boot and admission",
+      "does not execute WP-06 governed episode scheduling",
       "does not claim first true Godel-agent birth",
       "does not implement v0.91 moral or emotional civilization scope",
       "does not implement v0.92 identity or migration semantics"

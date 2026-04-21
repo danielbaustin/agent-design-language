@@ -73,6 +73,10 @@ pub fn runtime_v2_csm_run_packet_contract() -> Result<RuntimeV2CsmRunPacketContr
     RuntimeV2CsmRunPacketContract::prototype(&manifold, &kernel, &citizens)
 }
 
+pub fn runtime_v2_csm_boot_admission_contract() -> Result<RuntimeV2CsmBootAdmissionArtifacts> {
+    RuntimeV2CsmBootAdmissionArtifacts::prototype()
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }
