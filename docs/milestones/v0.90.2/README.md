@@ -81,6 +81,8 @@ Out of scope:
 - Feature proof coverage: `FEATURE_PROOF_COVERAGE_v0.90.2.md`
 - Release readiness / WP-15 convergence:
   `RELEASE_READINESS_v0.90.2.md`
+- Internal review / WP-16:
+  `INTERNAL_REVIEW_v0.90.2.md`
 - Inheritance and compression audit:
   `RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md`
 - CSM run packet contract: `CSM_RUN_PACKET_CONTRACT_v0.90.2.md`
@@ -241,3 +243,12 @@ feature-proof coverage record, top-level README/changelog/review guide, crate
 version, validation commands, explicit non-claims, and remaining release-tail
 work. WP-15 does not replace WP-16 internal review, WP-17 external review,
 WP-18 remediation, WP-19 handoff, or WP-20 ceremony.
+
+## WP-16 Internal Review Gate
+
+WP-16 records the internal review pass in
+`INTERNAL_REVIEW_v0.90.2.md`. The review found no missing flagship
+implementation or hollow demo matrix, confirmed the D1-D11 proof surface is
+substantial and bounded, and routed remaining review-substrate findings to the
+release tail. WP-16 does not approve final release; it hands the milestone to
+WP-17 external review and WP-18 accepted-finding remediation.
