@@ -140,3 +140,89 @@ fn runtime_v2_csm_freedom_gate_mediation_validation_rejects_unsafe_or_ambiguous_
         .to_string()
         .contains("later-WP non-claims"));
 }
+
+#[test]
+fn runtime_v2_csm_freedom_gate_record_validators_reject_contract_drift() {
+    let artifacts =
+        runtime_v2_csm_freedom_gate_mediation_contract().expect("Freedom Gate mediation artifacts");
+
+    let mut action = artifacts.citizen_action.clone();
+    action.schema_version = "runtime_v2.csm_citizen_action_fixture.v0".to_string();
+    assert!(action
+        .validate()
+        .expect_err("unsupported action schema should fail")
+        .to_string()
+        .contains("unsupported Runtime v2 CSM citizen action fixture schema"));
+
+    let mut action = artifacts.citizen_action.clone();
+    action.requested_action = "bypass_operator_prompt".to_string();
+    assert!(action
+        .validate()
+        .expect_err("unsupported requested action should fail")
+        .to_string()
+        .contains("requested_action"));
+
+    let mut action = artifacts.citizen_action.clone();
+    action.resource_budget_tokens = 0;
+    assert!(action
+        .validate()
+        .expect_err("zero action budget should fail")
+        .to_string()
+        .contains("positive resource bounds"));
+
+    let mut action = artifacts.citizen_action.clone();
+    action.required_gate = "none".to_string();
+    assert!(action
+        .validate()
+        .expect_err("unsupported gate should fail")
+        .to_string()
+        .contains("required_gate"));
+
+    let mut decision = artifacts.freedom_gate_decision.clone();
+    decision.schema_version = "runtime_v2.csm_freedom_gate_decision.v0".to_string();
+    assert!(decision
+        .validate()
+        .expect_err("unsupported decision schema should fail")
+        .to_string()
+        .contains("unsupported Runtime v2 CSM Freedom Gate decision schema"));
+
+    let mut decision = artifacts.freedom_gate_decision.clone();
+    decision.gate_id = "raw_action_gate".to_string();
+    assert!(decision
+        .validate()
+        .expect_err("unsupported gate id should fail")
+        .to_string()
+        .contains("gate_id"));
+
+    let mut decision = artifacts.freedom_gate_decision.clone();
+    decision.gate_policy = "allow_all".to_string();
+    assert!(decision
+        .validate()
+        .expect_err("unsupported gate policy should fail")
+        .to_string()
+        .contains("gate_policy"));
+
+    let mut decision = artifacts.freedom_gate_decision.clone();
+    decision.decision_outcome = "denied".to_string();
+    assert!(decision
+        .validate()
+        .expect_err("unsupported decision outcome should fail")
+        .to_string()
+        .contains("decision_outcome"));
+
+    let mut decision = artifacts.freedom_gate_decision.clone();
+    decision.mediated_action = "raw_action".to_string();
+    assert!(decision
+        .validate()
+        .expect_err("unsupported mediated action should fail")
+        .to_string()
+        .contains("mediated_action"));
+
+    let mut decision = artifacts.freedom_gate_decision.clone();
+    decision.downstream_boundary = "none".to_string();
+    assert!(decision
+        .validate()
+        .expect_err("missing downstream boundary should fail")
+        .to_string()
+        .contains("WP-08 downstream boundary"));
+}

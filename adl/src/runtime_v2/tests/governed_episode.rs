@@ -141,3 +141,120 @@ fn runtime_v2_csm_governed_episode_validation_rejects_unsafe_or_ambiguous_state(
         .to_string()
         .contains("WP-06-only non-claims"));
 }
+
+#[test]
+fn runtime_v2_csm_governed_episode_record_validators_reject_contract_drift() {
+    let artifacts = runtime_v2_csm_governed_episode_contract().expect("governed episode artifacts");
+
+    let mut pressure = artifacts.resource_pressure.clone();
+    pressure.schema_version = "runtime_v2.csm_resource_pressure_fixture.v0".to_string();
+    assert!(pressure
+        .validate()
+        .expect_err("unsupported pressure schema should fail")
+        .to_string()
+        .contains("unsupported Runtime v2 CSM resource pressure schema"));
+
+    let mut pressure = artifacts.resource_pressure.clone();
+    pressure.demo_id = "D5".to_string();
+    assert!(pressure
+        .validate()
+        .expect_err("wrong pressure demo should fail")
+        .to_string()
+        .contains("must map to D4"));
+
+    let mut pressure = artifacts.resource_pressure.clone();
+    pressure.pressure_kind = "memory_pressure".to_string();
+    assert!(pressure
+        .validate()
+        .expect_err("unsupported pressure kind should fail")
+        .to_string()
+        .contains("pressure_kind"));
+
+    let mut pressure = artifacts.resource_pressure.clone();
+    pressure.available_compute_tokens = 0;
+    assert!(pressure
+        .validate()
+        .expect_err("zero pressure budget should fail")
+        .to_string()
+        .contains("budgets must be positive"));
+
+    let mut pressure = artifacts.resource_pressure.clone();
+    pressure.requested_compute_tokens = pressure.available_compute_tokens;
+    assert!(pressure
+        .validate()
+        .expect_err("non-exceeding pressure fixture should fail")
+        .to_string()
+        .contains("exceed available resources"));
+
+    let mut candidate = artifacts.resource_pressure.candidates[0].clone();
+    candidate.identity_handle = "citizen://proto-citizen-alpha".to_string();
+    assert!(candidate
+        .validate()
+        .expect_err("wrong identity scheme should fail")
+        .to_string()
+        .contains("runtime-v2 scheme"));
+
+    let mut candidate = artifacts.resource_pressure.candidates[0].clone();
+    candidate.priority = 0;
+    assert!(candidate
+        .validate()
+        .expect_err("zero priority should fail")
+        .to_string()
+        .contains("priority must be positive"));
+
+    let mut candidate = artifacts.resource_pressure.candidates[0].clone();
+    candidate.estimated_compute_tokens = 0;
+    assert!(candidate
+        .validate()
+        .expect_err("zero estimate should fail")
+        .to_string()
+        .contains("positive compute and time budgets"));
+
+    let mut candidate = artifacts.resource_pressure.candidates[0].clone();
+    candidate.safety_class = "unbounded".to_string();
+    assert!(candidate
+        .validate()
+        .expect_err("unsupported safety class should fail")
+        .to_string()
+        .contains("safety_class"));
+
+    let mut decision = artifacts.scheduling_decision.clone();
+    decision.schema_version = "runtime_v2.csm_scheduling_decision.v0".to_string();
+    assert!(decision
+        .validate()
+        .expect_err("unsupported scheduling schema should fail")
+        .to_string()
+        .contains("unsupported Runtime v2 CSM scheduling decision schema"));
+
+    let mut decision = artifacts.scheduling_decision.clone();
+    decision.scheduling_outcome = "skipped".to_string();
+    assert!(decision
+        .validate()
+        .expect_err("unsupported scheduling outcome should fail")
+        .to_string()
+        .contains("scheduling_outcome"));
+
+    let mut decision = artifacts.scheduling_decision.clone();
+    decision.deferred_episode_ids.clear();
+    assert!(decision
+        .validate()
+        .expect_err("empty deferred ids should fail")
+        .to_string()
+        .contains("deferred_episode_ids must not be empty"));
+
+    let mut event = artifacts.first_run_trace[0].clone();
+    event.event_sequence = 0;
+    assert!(event
+        .validate()
+        .expect_err("zero trace sequence should fail")
+        .to_string()
+        .contains("sequence must be positive"));
+
+    let mut event = artifacts.first_run_trace[0].clone();
+    event.outcome = "teleported".to_string();
+    assert!(event
+        .validate()
+        .expect_err("unsupported trace outcome should fail")
+        .to_string()
+        .contains("outcome"));
+}
