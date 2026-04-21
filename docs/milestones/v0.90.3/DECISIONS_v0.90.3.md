@@ -3,8 +3,8 @@
 | ID | Decision | Status | Rationale |
 | --- | --- | --- | --- |
 | D-01 | Treat v0.90.3 as the citizen-state substrate milestone | Proposed | v0.90.2 proves the first bounded run; v0.90.3 protects the continuity-bearing state behind that run. |
-| D-02 | Treat JSON as projection, not authority | Proposed | Prototype JSON is useful for review, but durable citizen identity needs typed, signed, hash-linked state. |
-| D-03 | Use protobuf-backed signed artifacts as the expected canonical direction | Proposed | Protobuf gives typed evolution and compact bytes, but WP-03 remains the formal decision gate. |
+| D-02 | Treat JSON as projection, not authority | Accepted in WP-03 | Prototype JSON is useful for review, but durable citizen identity needs typed, hash-linked binary state; `runtime_v2.private_state_projection.v1` is explicitly non-authoritative. |
+| D-03 | Use protobuf-compatible private-state artifacts as the expected canonical direction | Accepted in WP-03 | WP-03 lands deterministic tagged-binary field-number semantics with protobuf-compatible meanings; later signed-envelope work may add concrete protobuf/prost bindings without changing the authority boundary. |
 | D-04 | Keep sealed quintessence checkpoints local-first | Proposed | v0.90.3 should define enclave-ready envelopes without depending on cloud confidential computing. |
 | D-05 | Make lineage append-only and authoritative | Proposed | Continuity must survive file drift, replay, and operator mistakes. |
 | D-06 | Emit witnesses and citizen-facing receipts for major transitions | Proposed | Citizens and reviewers need explainable continuity, not only implicit hashes. |

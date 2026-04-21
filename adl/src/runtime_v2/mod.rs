@@ -13,6 +13,7 @@ mod kernel_loop;
 mod manifold;
 mod observatory;
 mod operator;
+mod private_state;
 mod quarantine;
 mod recovery;
 mod security;
@@ -54,6 +55,8 @@ pub use manifold::*;
 pub use observatory::*;
 #[allow(unused_imports)]
 pub use operator::*;
+#[allow(unused_imports)]
+pub use private_state::*;
 #[allow(unused_imports)]
 pub use quarantine::*;
 #[allow(unused_imports)]

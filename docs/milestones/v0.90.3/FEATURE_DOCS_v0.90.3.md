@@ -19,6 +19,7 @@
 | `WP_EXECUTION_READINESS_v0.90.3.md` | per-WP required outputs, validation, and non-goals for issue-card authoring | WP-01 |
 | `WP_ISSUE_WAVE_v0.90.3.yaml` | live issue-wave source with real issue mapping | WP-01 |
 | `CITIZEN_STATE_INHERITANCE_AUDIT_v0.90.3.md` | D1 audit of v0.90.2 citizen, snapshot, wake, quarantine, Observatory, and hardening artifacts with v0.90.3 requirement mapping | WP-02 |
+| `PRIVATE_STATE_FORMAT_DECISION_v0.90.3.md` | D2 canonical private-state format decision, binary authority boundary, JSON projection non-authority rule, fixtures, and focused validation | WP-03 |
 
 ## Context / Idea Docs
 

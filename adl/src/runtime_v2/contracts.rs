@@ -123,3 +123,7 @@ pub fn runtime_v2_feature_proof_coverage_contract() -> Result<RuntimeV2FeaturePr
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }
+
+pub fn runtime_v2_private_state_contract() -> Result<RuntimeV2PrivateStateArtifacts> {
+    RuntimeV2PrivateStateArtifacts::prototype()
+}

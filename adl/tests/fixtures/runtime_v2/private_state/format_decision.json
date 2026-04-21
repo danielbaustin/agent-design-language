@@ -1,0 +1,44 @@
+{
+  "schema_version": "runtime_v2.private_state_format_decision.v1",
+  "decision_id": "v0-90-3-wp-03-private-state-format",
+  "milestone": "v0.90.3",
+  "selected_format": "deterministic_tagged_binary_v1_with_protobuf_compatible_field_numbers",
+  "canonical_state_schema": "runtime_v2.private_citizen_state.v1",
+  "canonical_artifact_path": "runtime_v2/private_state/proto-citizen-alpha.private-state.bin",
+  "projection_schema": "runtime_v2.private_state_projection.v1",
+  "projection_artifact_path": "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+  "authority_rule": "The canonical binary private-state artifact is authority; JSON is only a redacted projection for review surfaces.",
+  "projection_rule": "Projection must be derived from canonical bytes, must carry the source hash, and must never be accepted as private-state authority.",
+  "serialization_rules": [
+    "field numbers are encoded in ascending order",
+    "integers are encoded big-endian",
+    "strings are UTF-8 with u32 length prefixes",
+    "repeated sections preserve declared order after validation",
+    "content hashes are sha256 over the exact canonical byte stream"
+  ],
+  "schema_evolution_rules": [
+    "field numbers 1 through 15 are reserved for v1 identity, lineage, projection, ledger, and policy fields",
+    "unknown required fields fail closed until a migration policy accepts them",
+    "future protobuf/prost bindings must preserve the same field meanings and hash input boundaries",
+    "schema migration must emit a continuity witness before later WPs may treat the successor as active"
+  ],
+  "compatibility_notes": [
+    "v0.90.2 JSON citizen, wake, quarantine, and Observatory artifacts are inheritance evidence, not durable private-state authority",
+    "v0.90.3 WP-03 records the canonical format boundary before signed envelopes, local sealing, and append-only ledger work add stronger authority layers",
+    "JSON projections remain useful for operators only when they hash-link back to canonical bytes and preserve redaction boundaries"
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state -- --nocapture",
+    "git diff --check"
+  ],
+  "source_audit_refs": [
+    "docs/milestones/v0.90.3/CITIZEN_STATE_INHERITANCE_AUDIT_v0.90.3.md",
+    "docs/milestones/v0.90.3/features/CITIZEN_STATE_SECURITY_AND_FORMAT.md"
+  ],
+  "non_claims": [
+    "does not implement signed envelopes or trust-root validation",
+    "does not implement encryption, sealed checkpoint storage, or cloud enclaves",
+    "does not implement append-only lineage replay or duplicate-head quarantine",
+    "does not claim first true Godel-agent birth"
+  ]
+}

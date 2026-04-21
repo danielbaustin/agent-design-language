@@ -2,7 +2,8 @@
 
 ## Status
 
-Planning contract for v0.90.3.
+Planning contract for v0.90.3. WP-03 has landed the canonical private-state
+format decision and fixture-backed projection boundary.
 
 ## Purpose
 
@@ -21,8 +22,10 @@ as the long-term source of continuity.
 
 ## Expected Format Direction
 
-WP-03 is the formal decision gate. The expected direction is protobuf-backed
-signed artifacts unless a better source-grounded alternative is recorded.
+WP-03 selected deterministic tagged binary with protobuf-compatible field-number
+semantics as the v1 canonical private-state format. Signed envelopes remain
+owned by WP-04; the WP-03 contract establishes that JSON is a projection, not
+authority.
 
 The format decision must include:
 
@@ -32,6 +35,11 @@ The format decision must include:
 - content-hash rules
 - projection generation rules
 - compatibility policy for old checkpoints
+
+The landed decision is recorded in
+`docs/milestones/v0.90.3/PRIVATE_STATE_FORMAT_DECISION_v0.90.3.md`, with runtime
+evidence in `adl/src/runtime_v2/private_state.rs` and fixture evidence under
+`adl/tests/fixtures/runtime_v2/private_state/`.
 
 ## Signed Envelope
 
