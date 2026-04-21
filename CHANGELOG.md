@@ -2,6 +2,46 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
+## v0.90.2 (In progress)
+
+Status: Implementation and demo/proof coverage have landed through WP-14A;
+WP-15 begins the docs, quality, and review-convergence tail before internal
+review, external review, remediation, next-milestone handoff, and release
+ceremony.
+
+Summary:
+- v0.90.2 is the first bounded CSM run and Runtime v2 hardening milestone.
+- The issue wave opened as #2245-#2264, with WP-14A added as #2301 to restore
+  the explicit demo matrix and feature-proof coverage lane before WP-15.
+- The milestone now has a code-backed CSM run packet contract, invariant and
+  violation artifacts, boot/admission evidence, governed resource scheduling,
+  Freedom Gate mediation, invalid-action rejection, snapshot/rehydrate/wake
+  continuity, Observatory packet/report integration, recovery eligibility,
+  quarantine evidence, governed adversarial hardening probes, and an integrated
+  bounded first-run demo packet.
+- WP-14A landed the D11 feature-proof coverage record, so every v0.90.2 feature
+  claim has a runnable demo command, test-backed proof packet, fixture-backed
+  artifact, documented non-proving status, or explicit deferral before review
+  convergence.
+- The crate version is `0.90.2` for the active v0.90.2 release line.
+
+References:
+- `docs/milestones/v0.90.2/README.md`
+- `docs/milestones/v0.90.2/WBS_v0.90.2.md`
+- `docs/milestones/v0.90.2/SPRINT_v0.90.2.md`
+- `docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md`
+- `docs/milestones/v0.90.2/FEATURE_DOCS_v0.90.2.md`
+- `docs/milestones/v0.90.2/FEATURE_PROOF_COVERAGE_v0.90.2.md`
+- `docs/milestones/v0.90.2/RELEASE_READINESS_v0.90.2.md`
+- `docs/milestones/v0.90.2/RELEASE_PLAN_v0.90.2.md`
+- `docs/milestones/v0.90.2/RELEASE_NOTES_v0.90.2.md`
+
+Not claimed in v0.90.2:
+- first true Gödel-agent birthday
+- full v0.91 moral, emotional, kindness, humor, or wellbeing substrate
+- full v0.92 identity/capability rebinding or cross-polis migration
+- complete red/blue/purple security ecology
+
 ## v0.90.1 (Released 2026-04-20)
 
 Status: Completed. Implementation, docs, quality, review, remediation,

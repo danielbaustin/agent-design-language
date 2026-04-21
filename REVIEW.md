@@ -21,6 +21,50 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
+For the active v0.90.2 review-tail package, start with:
+
+- `docs/milestones/v0.90.2/README.md`
+- `docs/milestones/v0.90.2/WBS_v0.90.2.md`
+- `docs/milestones/v0.90.2/SPRINT_v0.90.2.md`
+- `docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md`
+- `docs/milestones/v0.90.2/FEATURE_DOCS_v0.90.2.md`
+- `docs/milestones/v0.90.2/FEATURE_PROOF_COVERAGE_v0.90.2.md`
+- `docs/milestones/v0.90.2/RELEASE_READINESS_v0.90.2.md`
+- `docs/milestones/v0.90.2/MILESTONE_CHECKLIST_v0.90.2.md`
+- `docs/milestones/v0.90.2/RELEASE_PLAN_v0.90.2.md`
+- `docs/milestones/v0.90.2/RELEASE_NOTES_v0.90.2.md`
+- `docs/milestones/v0.90.2/WP_ISSUE_WAVE_v0.90.2.yaml`
+- `docs/planning/ADL_FEATURE_LIST.md`
+- `CHANGELOG.md`
+- `README.md`
+- `adl/Cargo.toml`
+- `adl/Cargo.lock`
+
+The current v0.90.2 review posture is review-tail copy. WP-01 through WP-14A
+have produced the first bounded CSM run and Runtime v2 hardening proof package:
+CSM run packet contract, invariant and violation artifacts, boot/admission
+evidence, governed episode scheduling, Freedom Gate mediation, invalid-action
+rejection, snapshot/rehydrate/wake continuity, Observatory packet/report,
+recovery/quarantine evidence, governed adversarial hardening, integrated
+first-run demo, and feature-proof coverage.
+
+The crate version is `0.90.2` for the active v0.90.2 release line. Reviewers
+should treat any conflicting older version reference as a stale release-truth
+defect.
+
+Important v0.90.2 non-claims:
+
+- v0.90.2 does not birth the first true Gödel agent.
+- v0.90.2 does not complete v0.91 moral, emotional, kindness, humor, or
+  wellbeing substrate.
+- v0.90.2 does not complete v0.92 identity/capability rebinding or cross-polis
+  migration.
+- v0.90.2 does not ship the complete red/blue/purple security ecology.
+
+Before release approval, verify that WP-16 internal review, WP-17 external /
+third-party review, WP-18 remediation, WP-19 next-milestone handoff, and WP-20
+release ceremony have completed.
+
 For the most recently completed v0.90.1 release package, start with:
 
 - `docs/milestones/v0.90.1/README.md`
@@ -38,19 +82,15 @@ For the most recently completed v0.90.1 release package, start with:
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
-The current v0.90.1 review posture is final release copy. WP-01 through WP-20
-have produced the Runtime v2 foundation implementation, documentation package,
-quality evidence, internal review, third-party review, accepted remediation,
-release readiness, v0.91/v0.92 handoff, release evidence, and release ceremony
+The v0.90.1 review posture is final release copy. WP-01 through WP-20 produced
+the Runtime v2 foundation implementation, documentation package, quality
+evidence, internal review, third-party review, accepted remediation, release
+readiness, v0.91/v0.92 handoff, release evidence, and release ceremony
 preflight.
 
 The crate version is `0.90.1` for the completed v0.90.1 release line. Reviewers
 should treat any conflicting older version reference as a stale release-truth
 defect.
-
-Before tag/release publication, verify that the WP-20 closeout PR has merged,
-root main has been fast-forwarded by the operator, and the release ceremony
-script is run from clean main.
 
 For the most recently completed v0.90 post-release review, start with:
 

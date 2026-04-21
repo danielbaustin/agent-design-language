@@ -79,6 +79,8 @@ Out of scope:
 - Decisions log: `DECISIONS_v0.90.2.md`
 - Demo matrix: `DEMO_MATRIX_v0.90.2.md`
 - Feature proof coverage: `FEATURE_PROOF_COVERAGE_v0.90.2.md`
+- Release readiness / WP-15 convergence:
+  `RELEASE_READINESS_v0.90.2.md`
 - Inheritance and compression audit:
   `RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md`
 - CSM run packet contract: `CSM_RUN_PACKET_CONTRACT_v0.90.2.md`
@@ -229,3 +231,13 @@ test-backed proof packet, fixture-backed artifact, documented non-proving
 status, or explicit deferral. `FEATURE_PROOF_COVERAGE_v0.90.2.md` is the D11
 coverage record for that verification. WP-15 consumes that coverage record
 rather than inventing missing demos during review convergence.
+
+## WP-15 Docs, Quality, And Review Convergence Gate
+
+WP-15 aligns the release-truth surfaces after implementation and demo coverage
+have landed. `RELEASE_READINESS_v0.90.2.md` is the convergence record for this
+gate: it points reviewers to the current milestone docs, demo matrix,
+feature-proof coverage record, top-level README/changelog/review guide, crate
+version, validation commands, explicit non-claims, and remaining release-tail
+work. WP-15 does not replace WP-16 internal review, WP-17 external review,
+WP-18 remediation, WP-19 handoff, or WP-20 ceremony.

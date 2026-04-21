@@ -2,10 +2,10 @@
 
 ## Headline
 
-v0.90.2 is planned to run the first bounded CSM world and harden Runtime v2
-around reviewable failure, recovery, quarantine, and security-boundary evidence.
+v0.90.2 runs the first bounded CSM world and hardens Runtime v2 around
+reviewable failure, recovery, quarantine, and security-boundary evidence.
 
-## Planned Highlights
+## Landed Highlights
 
 - Runtime v2 inheritance audit from v0.90.1
 - compression-ready execution package
@@ -23,6 +23,8 @@ around reviewable failure, recovery, quarantine, and security-boundary evidence.
 - additional duplicate activation, snapshot integrity, and trace/replay hardening probes
 - bounded security-boundary hardening proof
 - integrated first CSM run demo
+- feature-proof coverage record before review convergence
+- docs, quality, and reviewer-entry convergence record
 
 ## Explicit Non-Claims
 
@@ -34,5 +36,6 @@ around reviewable failure, recovery, quarantine, and security-boundary evidence.
 
 ## Release Note Rule
 
-Before release, replace this draft with exact landed scope and commands. Do not
+Before release, verify this draft against WP-16 internal review, WP-17 external
+review, WP-18 remediation, WP-19 handoff, and WP-20 ceremony evidence. Do not
 ship aspirational language as release truth.
