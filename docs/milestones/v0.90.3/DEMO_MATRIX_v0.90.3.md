@@ -5,6 +5,15 @@
 Planning/live-wave matrix. The v0.90.3 issue wave is open as #2327-#2347,
 with the explicit demo matrix and feature proof lane at WP-14A / #2341.
 
+The matrix has three layers:
+
+- feature proof rows: D1 through D11 prove individual citizen-state safety,
+  access, continuity, projection, and challenge surfaces
+- flagship demo row: D12 ties those proofs into one inhabited CSM Observatory
+  scenario with agents inside the polis
+- design architecture row: D14 defines the room/lens/memory-dot architecture
+  that D12 should consume without treating design assets as runtime proof
+
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |
 | D1 | Citizen-state inheritance audit | WP-02 | v0.90.3 targets actual v0.90.2 citizen, snapshot, wake, quarantine, and Observatory artifacts | `CITIZEN_STATE_INHERITANCE_AUDIT_v0.90.3.md`, unsafe-assumption list | LANDED |
@@ -18,9 +27,25 @@ with the explicit demo matrix and feature proof lane at WP-14A / #2341.
 | D9 | Redacted Observatory projection | WP-10 | Operators see continuity status without raw private state | projection schema, leakage tests, Observatory packet/report | PLANNED |
 | D10 | Standing, communication, and access boundary | WP-11 / WP-12 | Guests and service actors cannot silently acquire citizen rights or inspection access | standing events, access-denial events, communication examples | PLANNED |
 | D11 | Challenge, appeal, and threat review | WP-13 | A challenged wake or projection freezes destructive transition and preserves evidence, with threat-model coverage before demo claims widen | challenge artifact, appeal/review artifact, threat model, economics placement record | PLANNED |
-| D12 | Integrated citizen-state proof | WP-14 | Reviewer can inspect one bounded end-to-end citizen-state scenario | integrated proof packet, witness, receipt, projection, operator report | PLANNED |
+| D12 | Inhabited CSM Observatory flagship | WP-14 | Reviewer can inspect one bounded end-to-end citizen-state scenario through World / Reality, Operator / Governance, optional bounded Cognition / Internal State, and Corporate Investor fallback surfaces | `OBSERVATORY_FLAGSHIP_DEMO_v0.90.3.md`, `OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md`, integrated proof packet, witness, receipt, redacted projection, access event, challenge/quarantine artifact, operator report | PLANNED |
 | D13 | Feature proof coverage record | WP-14A | Every v0.90.3 feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral | feature proof coverage record and demo matrix update | PLANNED |
 | D14 | Observatory multimode UI architecture | WP-14A | The flagship Observatory demo has a reviewed room/lens/memory-dot architecture before demo redesign | `OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md`, multimode mockup, Corporate Investor UI fallback rule | LANDED |
+
+## Flagship Demo Rule
+
+WP-14 / D12 should show an inhabited CSM:
+
+- citizen-like actor with continuity evidence
+- guest with no silent rights escalation
+- service actor with bounded authority
+- operator with redacted visibility
+- challenged or quarantined transition when continuity or authority is unsafe
+- room traversal from World / Reality Mode into Operator / Governance Mode
+- optional Cognition / Internal State Mode only for bounded implemented signals
+- Corporate Investor UI fallback for demo continuity and investor-safe summary
+
+WP-14A / D13 should keep every feature proof row mapped to proof, fixture,
+non-proving status, or explicit deferral.
 
 ## Non-Proving Boundaries
 
