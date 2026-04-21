@@ -18,3 +18,4 @@ promoted.
 - `0009-bounded-cognitive-system-architecture.md`
 - `0010-chronosense-substrate.md`
 - `0011-long-lived-agent-runtime.md`
+- `0012-runtime-v2-bounded-csm-run.md`
