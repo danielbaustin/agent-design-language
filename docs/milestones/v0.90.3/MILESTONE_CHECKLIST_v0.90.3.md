@@ -14,7 +14,7 @@
 - [x] v0.90.2 inheritance and unsafe-assumption audit complete
 - [x] Canonical private-state format selected
 - [x] Signed envelope and trust-root fixture landed
-- [ ] Local sealed checkpoint path defined
+- [x] Local sealed checkpoint path defined
 - [ ] Append-only lineage ledger implemented
 - [ ] Continuity witnesses and receipts emitted
 - [ ] Anti-equivocation negative test landed

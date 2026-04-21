@@ -1,0 +1,44 @@
+{
+  "schema_version": "runtime_v2.private_state_key_policy.v1",
+  "policy_id": "local-private-state-key-policy-0001",
+  "artifact_path": "runtime_v2/private_state/key_policy.json",
+  "primary_key_id": "local-seal-key-0001",
+  "allowed_algorithms": [
+    "deterministic_sha256_stream_fixture"
+  ],
+  "key_slots": [
+    {
+      "key_id": "local-seal-key-0001",
+      "status": "active",
+      "sealing_algorithm": "deterministic_sha256_stream_fixture",
+      "scope": "local_private_state_checkpoint",
+      "key_material_digest": "sha256:f5966ac9527b8d499b8944ab24424bf25496e337e826a6a1953f56bc7eb31bd1",
+      "storage_policy": "local_fixture_key_material_is_not_serialized_in_checkpoint_artifacts"
+    },
+    {
+      "key_id": "local-seal-key-unavailable-0001",
+      "status": "unavailable",
+      "sealing_algorithm": "deterministic_sha256_stream_fixture",
+      "scope": "local_private_state_checkpoint",
+      "key_material_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "storage_policy": "records fail-closed behavior when local key material cannot be loaded"
+    }
+  ],
+  "unavailable_key_ids": [
+    "local-seal-key-unavailable-0001"
+  ],
+  "backend_seam_ref": "runtime_v2/private_state/sealing_backend_seam.json",
+  "validation_policy": [
+    "unavailable sealing keys fail closed",
+    "wrong key material fails before plaintext is accepted",
+    "sealed payloads cannot be treated as raw JSON",
+    "backend adapters must return explicit key ids and material digests",
+    "cloud or hardware backends must preserve checkpoint semantics"
+  ],
+  "non_claims": [
+    "deterministic fixture sealing is not production cryptography",
+    "does not require cloud confidential computing",
+    "does not implement key rotation",
+    "does not replace append-only lineage ledger authority"
+  ]
+}

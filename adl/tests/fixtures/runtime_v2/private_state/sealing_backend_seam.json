@@ -1,0 +1,29 @@
+{
+  "schema_version": "runtime_v2.private_state_sealing_backend_seam.v1",
+  "seam_id": "local-private-state-sealing-backend-seam-0001",
+  "artifact_path": "runtime_v2/private_state/sealing_backend_seam.json",
+  "selected_backend_kind": "deterministic_fixture_local",
+  "adapter_contract": [
+    "adapter exposes backend kind, key id, and key material digest",
+    "adapter seals canonical private-state bytes with associated envelope data",
+    "adapter opens only when key policy and checkpoint metadata agree",
+    "adapter returns explicit unavailable-key errors without exposing plaintext"
+  ],
+  "future_backend_kinds": [
+    "os_keychain",
+    "tpm",
+    "secure_enclave",
+    "hsm",
+    "cloud_confidential_vm"
+  ],
+  "invariants": [
+    "checkpoint semantics do not depend on a cloud enclave",
+    "sealed payload bytes are never accepted as JSON authority",
+    "backend substitution must preserve key id, algorithm, and content-hash checks"
+  ],
+  "non_claims": [
+    "does not implement production hardware isolation",
+    "does not make cloud confidential computing mandatory",
+    "does not implement key rotation or migration continuity"
+  ]
+}

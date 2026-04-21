@@ -15,6 +15,7 @@ mod observatory;
 mod operator;
 mod private_state;
 mod private_state_envelope;
+mod private_state_sealing;
 mod quarantine;
 mod recovery;
 mod security;
@@ -60,6 +61,8 @@ pub use operator::*;
 pub use private_state::*;
 #[allow(unused_imports)]
 pub use private_state_envelope::*;
+#[allow(unused_imports)]
+pub use private_state_sealing::*;
 #[allow(unused_imports)]
 pub use quarantine::*;
 #[allow(unused_imports)]

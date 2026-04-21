@@ -132,3 +132,8 @@ pub fn runtime_v2_private_state_envelope_contract() -> Result<RuntimeV2PrivateSt
 {
     RuntimeV2PrivateStateEnvelopeArtifacts::prototype()
 }
+
+pub fn runtime_v2_private_state_sealing_contract() -> Result<RuntimeV2PrivateStateSealingArtifacts>
+{
+    RuntimeV2PrivateStateSealingArtifacts::prototype()
+}

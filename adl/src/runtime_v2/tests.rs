@@ -18,6 +18,7 @@ mod observatory;
 mod operator_control;
 mod private_state;
 mod private_state_envelope;
+mod private_state_sealing;
 mod quarantine;
 mod recovery_eligibility;
 mod security_boundary;

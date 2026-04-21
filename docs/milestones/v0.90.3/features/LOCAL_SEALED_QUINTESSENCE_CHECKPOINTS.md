@@ -2,7 +2,8 @@
 
 ## Status
 
-Planning contract for v0.90.3.
+WP-05 landed the local key policy, deterministic sealed checkpoint fixture, and
+backend seam for v0.90.3.
 
 ## Purpose
 
@@ -14,7 +15,8 @@ continuity checkpoint."
 
 ## Core Shape
 
-A checkpoint package should include:
+A checkpoint package includes the following WP-05 fields now, with later WPs
+adding ledger, witness, and receipt authority:
 
 - sealed private state blob
 - redacted projection
@@ -26,8 +28,8 @@ A checkpoint package should include:
 - schema id
 - key id
 - writer signature
-- continuity witness
-- citizen-facing receipt
+- continuity witness (later WP)
+- citizen-facing receipt (later WP)
 
 ## Local-First Backend
 
@@ -41,9 +43,22 @@ Acceptable first backend directions:
 - TPM or platform Secure Enclave adapter
 - YubiHSM-style hardware key adapter
 
-The milestone should define the backend seam so Nitro Enclaves, Google
-Confidential Space, confidential VMs, or other TEE backends can be added later
-without changing the checkpoint semantics.
+WP-05 defines the backend seam so OS keychain, TPM, Secure Enclave, HSM, Nitro
+Enclaves, Google Confidential Space, confidential VMs, or other TEE backends can
+be added later without changing the checkpoint semantics.
+
+The landed runtime evidence is:
+
+- `adl/src/runtime_v2/private_state_sealing.rs`
+- `adl/src/runtime_v2/tests/private_state_sealing.rs`
+- `adl/tests/fixtures/runtime_v2/private_state/key_policy.json`
+- `adl/tests/fixtures/runtime_v2/private_state/sealing_backend_seam.json`
+- `adl/tests/fixtures/runtime_v2/private_state/proto-citizen-alpha.sealed-checkpoint.json`
+- `adl/tests/fixtures/runtime_v2/private_state/sealing_negative_cases.json`
+
+The milestone evidence note is:
+
+- `docs/milestones/v0.90.3/LOCAL_PRIVATE_STATE_SEALING_v0.90.3.md`
 
 ## Non-Claims
 
