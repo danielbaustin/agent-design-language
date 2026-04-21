@@ -2,14 +2,18 @@ mod boot_admission;
 mod citizen;
 mod contracts;
 mod csm_run;
+mod feature_proof_coverage;
 mod foundation;
 mod governed_episode;
+mod hardening;
+mod integrated_csm_run;
 mod invariant;
 mod invariant_contract;
 mod kernel_loop;
 mod manifold;
 mod observatory;
 mod operator;
+mod quarantine;
 mod recovery;
 mod security;
 mod snapshot;
@@ -29,9 +33,15 @@ pub use contracts::*;
 #[allow(unused_imports)]
 pub use csm_run::*;
 #[allow(unused_imports)]
+pub use feature_proof_coverage::*;
+#[allow(unused_imports)]
 pub use foundation::*;
 #[allow(unused_imports)]
 pub use governed_episode::*;
+#[allow(unused_imports)]
+pub use hardening::*;
+#[allow(unused_imports)]
+pub use integrated_csm_run::*;
 #[allow(unused_imports)]
 pub use invariant::*;
 #[allow(unused_imports)]
@@ -44,6 +54,8 @@ pub use manifold::*;
 pub use observatory::*;
 #[allow(unused_imports)]
 pub use operator::*;
+#[allow(unused_imports)]
+pub use quarantine::*;
 #[allow(unused_imports)]
 pub use recovery::*;
 #[allow(unused_imports)]

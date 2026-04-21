@@ -78,6 +78,7 @@ Out of scope:
 - Sprint plan: `SPRINT_v0.90.2.md`
 - Decisions log: `DECISIONS_v0.90.2.md`
 - Demo matrix: `DEMO_MATRIX_v0.90.2.md`
+- Feature proof coverage: `FEATURE_PROOF_COVERAGE_v0.90.2.md`
 - Inheritance and compression audit:
   `RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md`
 - CSM run packet contract: `CSM_RUN_PACKET_CONTRACT_v0.90.2.md`
@@ -180,6 +181,44 @@ single active head; the negative path refuses ambiguous or duplicate-head
 recovery and hands evidence preservation to WP-12. This does not implement the
 quarantine state machine or widen into live Runtime v2 execution.
 
+## WP-12 Quarantine State Machine Gate
+
+WP-12 completes D8 by adding the quarantine state machine and evidence hold. The
+unsafe recovery fixture consumes the WP-11 quarantine-required decision, the
+quarantine artifact blocks execution pending operator review, and the evidence
+preservation artifact records the immutable source evidence that must survive
+until review. This proves quarantine behavior for the bounded first-run evidence
+without claiming live Runtime v2 execution, first true birthday, or v0.92
+identity rebinding.
+
+## WP-13 Governed Adversarial Hardening Gate
+
+WP-13 lands D9 as a bounded, code-backed hardening proof. The rules of
+engagement authorize one adversarial pressure path against the quarantined
+recovery boundary, forbid committed-state mutation, release from quarantine,
+evidence pruning, and live forking, and require reviewable evidence. The
+adversarial hook proves the pressure remains contained by the WP-12 quarantine
+artifact. The hardening probes then record fail-closed duplicate activation,
+snapshot-integrity, and trace/replay-gap negative paths, with a summary proof
+packet for WP-14 to consume. This remains an operator-scoped proof surface, not
+a live CSM run, first true birthday, v0.92 identity rebinding, or complete
+red/blue/purple security ecology.
+
+## WP-14 Integrated First CSM Run Demo Gate
+
+WP-14 lands D10 as the bounded, code-backed flagship demo for v0.90.2. The
+`adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run`
+command executes a deterministic ten-stage CSM evidence spine, prints the stage
+summary and Observatory operator report to stdout, and writes the CSM run
+contract, invariant/violation artifacts,
+boot/admission evidence, governed episode trace, Freedom Gate mediation,
+invalid-action rejection, wake-continuity proof, Observatory packet/report,
+recovery decisions, quarantine evidence, governed hardening artifacts, and the
+integrated first-run transcript/proof packet into one reviewer-facing bundle.
+This proves the v0.90.2 first-run evidence package is connected end to end,
+while preserving the non-claims for unbounded live execution, first true birthday, v0.91 civic
+substrate, v0.92 identity rebinding, and a complete security ecology.
+
 ## WP-14A Demo Program Gate
 
 WP-14A restores the standard ADL milestone pattern where feature-by-feature
@@ -187,5 +226,6 @@ demo and proof coverage is explicit before docs/review convergence. WP-13 owns
 the governed adversarial hook, WP-14 owns the integrated first CSM run proof,
 and WP-14A verifies that each v0.90.2 feature claim has a runnable demo command,
 test-backed proof packet, fixture-backed artifact, documented non-proving
-status, or explicit deferral. WP-15 consumes that coverage record rather than
-inventing missing demos during review convergence.
+status, or explicit deferral. `FEATURE_PROOF_COVERAGE_v0.90.2.md` is the D11
+coverage record for that verification. WP-15 consumes that coverage record
+rather than inventing missing demos during review convergence.

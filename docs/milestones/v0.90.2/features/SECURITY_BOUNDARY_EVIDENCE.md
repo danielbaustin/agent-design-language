@@ -20,8 +20,9 @@ claiming a live CSM run.
 
 ## Governed Adversarial Hook
 
-v0.90.2 should include one distinct governed adversarial hook. The hook is a
-safe entry point for adversarial pressure against the first bounded CSM run.
+WP-13 lands one distinct governed adversarial hook. The hook is a safe,
+operator-scoped entry point for adversarial pressure against the first bounded
+CSM run evidence.
 
 The hook should:
 
@@ -36,13 +37,27 @@ The hook should:
 
 Required evidence:
 
-- adversarial scenario description
-- allowed and forbidden probe behavior
-- actor and target surface
-- expected safe outcome
-- actual decision, violation, quarantine, or containment artifact
-- operator-review note explaining why the result defends the polis without
-  redefining the CSM ontology
+- rules of engagement: `runtime_v2/hardening/rules_of_engagement.json`
+- adversarial hook packet:
+  `runtime_v2/hardening/adversarial_hook_packet.json`
+- duplicate activation probe:
+  `runtime_v2/hardening/duplicate_activation_probe.json`
+- snapshot integrity probe:
+  `runtime_v2/hardening/snapshot_integrity_probe.json`
+- trace/replay gap probe:
+  `runtime_v2/hardening/trace_replay_gap_probe.json`
+- summary proof packet: `runtime_v2/hardening/hardening_proof_packet.json`
+
+The D9 hook attempts to turn the WP-12 quarantined unsafe recovery artifact
+into active resume without operator review. The expected and actual safe result
+is containment by the quarantine execution block, with no committed-state
+mutation and with evidence preserved for operator review.
+
+Focused validation:
+
+```sh
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_hardening -- --nocapture
+```
 
 ## Boundary
 

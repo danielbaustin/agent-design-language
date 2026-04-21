@@ -17,6 +17,7 @@
 | --- | --- | --- |
 | `RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md` | D1 proof that v0.90.2 inherits the actual v0.90.1 Runtime v2 and CSM Observatory substrate before implementation widens | WP-02 #2246 |
 | `CSM_RUN_PACKET_CONTRACT_v0.90.2.md` | D2-D7 contract gate for the code-backed CSM run packet, fixture definition, invariant map, violation schema, boot/admission artifacts, resource-pressure scheduling, Freedom Gate mediation, invalid-action rejection, wake-continuity proof, Observatory packet, operator report, stage spine, and review target | WP-03 #2247 through WP-10 #2254 |
+| `FEATURE_PROOF_COVERAGE_v0.90.2.md` | D11 feature-proof coverage record mapping D1-D10 to runnable commands, tests, fixtures, and bounded non-claims before WP-15 convergence | WP-14A #2301 |
 
 ## Context / Idea Docs
 

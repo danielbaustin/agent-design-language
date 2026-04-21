@@ -20,11 +20,11 @@
 - [x] Invariant coverage map complete
 - [x] Violation artifact contract implemented
 - [x] Recovery eligibility model implemented
-- [ ] Quarantine state machine implemented
-- [ ] Governed adversarial hook complete with rules of engagement and evidence
-- [ ] Additional hardening probes complete
-- [ ] Integrated first CSM run demo implemented
-- [ ] WP-14A demo matrix and feature proof coverage completed before WP-15
+- [x] Quarantine state machine implemented
+- [x] Governed adversarial hook complete with rules of engagement and evidence
+- [x] Additional hardening probes complete
+- [x] Integrated first CSM run demo implemented
+- [x] WP-14A demo matrix and feature proof coverage completed before WP-15
 
 ## Truth And Safety
 
@@ -32,10 +32,10 @@
 - [ ] No docs claim full moral/emotional civilization
 - [ ] No docs claim cross-polis migration or v0.92 identity rebinding
 - [ ] No docs center red/blue ecology as the Runtime v2 thesis
-- [ ] Governed adversarial hook remains bounded and operator-scoped
-- [ ] Security-boundary evidence is present and bounded
-- [ ] Recovery and quarantine outcomes are explicit
-- [ ] Every feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral
+- [x] Governed adversarial hook remains bounded and operator-scoped
+- [x] Security-boundary evidence is present and bounded
+- [x] Recovery and quarantine outcomes are explicit
+- [x] Every feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral
 - [ ] Quality gate is green or exceptions are explicit
 
 ## Release
