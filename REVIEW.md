@@ -21,7 +21,55 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the v0.90.2 release-closeout package, start with:
+For the active v0.90.3 citizen-state substrate package, start with:
+
+- `docs/milestones/v0.90.3/README.md`
+- `docs/milestones/v0.90.3/WBS_v0.90.3.md`
+- `docs/milestones/v0.90.3/SPRINT_v0.90.3.md`
+- `docs/milestones/v0.90.3/DEMO_MATRIX_v0.90.3.md`
+- `docs/milestones/v0.90.3/FEATURE_DOCS_v0.90.3.md`
+- `docs/milestones/v0.90.3/MILESTONE_CHECKLIST_v0.90.3.md`
+- `docs/milestones/v0.90.3/RELEASE_PLAN_v0.90.3.md`
+- `docs/milestones/v0.90.3/RELEASE_NOTES_v0.90.3.md`
+- `docs/milestones/v0.90.3/WP_EXECUTION_READINESS_v0.90.3.md`
+- `docs/milestones/v0.90.3/WP_ISSUE_WAVE_v0.90.3.yaml`
+- `docs/planning/ADL_FEATURE_LIST.md`
+- `CHANGELOG.md`
+- `README.md`
+- `adl/Cargo.toml`
+- `adl/Cargo.lock`
+
+The current v0.90.3 review posture is active issue-wave execution. The wave is
+open as #2327-#2347. WP-01 is #2327, WP-02 through WP-14 are #2328-#2340,
+WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
+
+v0.90.3 should produce the citizen-state substrate: canonical private state,
+signed envelopes, local-first sealing, append-only lineage, continuity
+witnesses and receipts, anti-equivocation, sanctuary/quarantine behavior,
+redacted Observatory projections, standing and access-control semantics,
+challenge/appeal flow, threat modeling, and one integrated citizen-state proof
+demo.
+
+The crate version is `0.90.3` for the active v0.90.3 development line. Reviewers
+should treat any conflicting older version reference as a stale release-truth
+defect.
+
+Important v0.90.3 non-claims:
+
+- v0.90.3 does not birth the first true Gödel agent.
+- v0.90.3 does not complete v0.91 moral, emotional, kindness, humor, or
+  wellbeing substrate.
+- v0.90.3 does not complete v0.92 identity/capability rebinding, migration, or
+  birthday scope.
+- v0.90.3 does not implement full citizen economics, contract markets, payment
+  rails, or inter-polis trade.
+- v0.90.3 does not require cloud enclaves.
+
+During execution, verify that every WP preserves the required outputs and
+validation from `WP_EXECUTION_READINESS_v0.90.3.md` rather than widening into
+generic implementation work.
+
+For the most recently completed v0.90.2 release package, start with:
 
 - `docs/milestones/v0.90.2/README.md`
 - `docs/milestones/v0.90.2/WBS_v0.90.2.md`
@@ -35,40 +83,18 @@ For the v0.90.2 release-closeout package, start with:
 - `docs/milestones/v0.90.2/RELEASE_PLAN_v0.90.2.md`
 - `docs/milestones/v0.90.2/RELEASE_NOTES_v0.90.2.md`
 - `docs/milestones/v0.90.2/WP_ISSUE_WAVE_v0.90.2.yaml`
-- `docs/planning/ADL_FEATURE_LIST.md`
-- `CHANGELOG.md`
-- `README.md`
-- `adl/Cargo.toml`
-- `adl/Cargo.lock`
 
-The current v0.90.2 review posture is release-closeout copy. WP-01 through WP-14A
-produced the first bounded CSM run and Runtime v2 hardening proof package:
-CSM run packet contract, invariant and violation artifacts, boot/admission
-evidence, governed episode scheduling, Freedom Gate mediation, invalid-action
-rejection, snapshot/rehydrate/wake continuity, Observatory packet/report,
+The v0.90.2 review posture is final release copy. WP-01 through WP-14A produced
+the first bounded CSM run and Runtime v2 hardening proof package: CSM run
+packet contract, invariant and violation artifacts, boot/admission evidence,
+governed episode scheduling, Freedom Gate mediation, invalid-action rejection,
+snapshot/rehydrate/wake continuity, Observatory packet/report,
 recovery/quarantine evidence, governed adversarial hardening, integrated
 first-run demo, and feature-proof coverage.
 
 WP-15 docs convergence, WP-16 internal review, WP-17 external review, WP-18
 accepted-finding remediation, WP-19 v0.90.3/later-milestone handoff, and WP-20
-release ceremony preflight are complete. Final tag/release publication runs
-from clean main after closeout merge.
-
-The crate version is `0.90.2` for the v0.90.2 release line. Reviewers
-should treat any conflicting older version reference as a stale release-truth
-defect.
-
-Important v0.90.2 non-claims:
-
-- v0.90.2 does not birth the first true Gödel agent.
-- v0.90.2 does not complete v0.91 moral, emotional, kindness, humor, or
-  wellbeing substrate.
-- v0.90.2 does not complete v0.92 identity/capability rebinding or cross-polis
-  migration.
-- v0.90.2 does not ship the complete red/blue/purple security ecology.
-
-Before final tag/release publication, verify that the closeout PR has merged
-and the ceremony script is rerun from clean main.
+release ceremony are complete.
 
 WP-15 tracker status to preserve during review:
 - coverage remains above the active quality gate at `92.40%` workspace line
@@ -80,7 +106,7 @@ WP-15 tracker status to preserve during review:
   governed-episode split and the Rust tracker should be refreshed after it
   merges
 
-For the most recently completed v0.90.1 release package, start with:
+For the completed v0.90.1 release package, start with:
 
 - `docs/milestones/v0.90.1/README.md`
 - `docs/milestones/v0.90.1/WBS_v0.90.1.md`
@@ -107,7 +133,7 @@ The crate version is `0.90.1` for the completed v0.90.1 release line. Reviewers
 should treat any conflicting older version reference as a stale release-truth
 defect.
 
-For the most recently completed v0.90 post-release review, start with:
+For the completed v0.90 post-release review, start with:
 
 - `docs/milestones/v0.90/README.md`
 - `docs/milestones/v0.90/V090_PRE_THIRD_PARTY_READINESS_REPORT.md`

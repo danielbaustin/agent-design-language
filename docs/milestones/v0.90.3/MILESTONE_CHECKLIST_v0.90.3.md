@@ -3,11 +3,11 @@
 ## Planning
 
 - [x] Draft v0.90.3 package created during v0.90.2
-- [ ] Planning package reviewed
-- [ ] WP issue wave opened from reviewed YAML
-- [ ] Real issue numbers recorded in WBS and YAML
-- [ ] Cards generated and reviewed
-- [ ] WP execution readiness guidance copied into issue bodies
+- [x] Planning package reviewed for issue-wave launch
+- [x] WP issue wave opened from reviewed YAML
+- [x] Real issue numbers recorded in WBS and YAML
+- [x] Cards generated and reviewed for required outputs and validation
+- [x] WP execution readiness guidance copied into issue bodies
 
 ## Execution Gates
 

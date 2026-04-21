@@ -2,12 +2,12 @@
 
 ## Status
 
-Draft milestone package. v0.90.3 is planned as the citizen-state substrate
-milestone. It was created during v0.90.2 under issue #2269 and refined during
-the v0.90.2 WP-19 handoff pass (#2263).
+Active milestone package. v0.90.3 is the citizen-state substrate milestone. It
+was created during v0.90.2 under issue #2269 and refined during the v0.90.2
+WP-19 handoff pass (#2263).
 
-The issue wave has not been opened. This package is the reviewable planning
-source for a later WP-01 issue-wave creation pass.
+The issue wave is open as #2327-#2347. WP-01 is #2327, WP-02 through WP-14 are
+#2328-#2340, WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
 
 ## Thesis
 
@@ -99,19 +99,19 @@ dependencies.
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.3.md`
 - Release plan: `RELEASE_PLAN_v0.90.3.md`
 - Release notes draft: `RELEASE_NOTES_v0.90.3.md`
-- Issue wave draft: `WP_ISSUE_WAVE_v0.90.3.yaml`
+- Issue wave: `WP_ISSUE_WAVE_v0.90.3.yaml`
 
 ## Execution Rule
 
-This package is planning truth, not an execution claim. The WP issue wave must
-be created from the reviewed YAML before implementation starts.
+This package is execution planning truth, not a release-completion claim. The
+WP issue wave has been created from the reviewed YAML, and every WP issue body
+inherits the relevant `WP_EXECUTION_READINESS_v0.90.3.md` section.
 
-Once the wave opens, issue work should happen in issue worktrees. Root checkout
-edits are not part of the ADL execution model.
+Issue work should happen in issue worktrees. Root checkout edits are not part of
+the ADL execution model.
 
-WP-01 should use `WP_EXECUTION_READINESS_v0.90.3.md` when authoring cards so the
-issue bodies are not generic. Every execution session should inherit the
-relevant required outputs, validation, and non-goals before implementation.
+Every execution session should preserve the relevant required outputs,
+validation, and non-goals before implementation.
 
 ## Compression Rule
 

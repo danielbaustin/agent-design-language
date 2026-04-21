@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.90.2%20release--ready-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.90.3%20active-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -119,11 +119,11 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.90.2 release closeout**
-- Current release state: **v0.90.2 implementation, demo/proof coverage, docs convergence, internal review, third-party review, accepted-finding remediation, next-milestone handoff, and WP-20 ceremony preflight are complete; final tag/release publication runs from clean main after this closeout PR merges**
-- Most recently completed milestone: **v0.90.1**
-- Current crate version: **0.90.2**
-- Version note: **v0.90.2 carries the bounded CSM first-run and Runtime v2 hardening release line**
+- Active milestone: **v0.90.3**
+- Current release state: **v0.90.3 issue wave is open as #2327-#2347; implementation begins with WP-02 after WP-01 live-wave mapping merges**
+- Most recently completed milestone: **v0.90.2**
+- Current crate version: **0.90.3**
+- Version note: **v0.90.3 is the active citizen-state substrate development line**
 - Previous completed milestone package: **v0.89.1**
 - Previous completed milestone: **v0.89**
 - Project changelog: `CHANGELOG.md`
@@ -132,13 +132,25 @@ ADL is in active development. This repository contains both implemented runtime 
 
 ## Current Milestone
 
-v0.90.2 is the first bounded CSM run and Runtime v2 hardening milestone. Its
-tracked package lives under `docs/milestones/v0.90.2/`. The issue wave opened
-as #2245-#2264, and the explicit WP-14A demo/proof lane was added as #2301
-before WP-15 review convergence. The milestone now has feature-by-feature proof
-coverage, an integrated first-run demo packet, internal review, third-party
-review, accepted-finding remediation, next-milestone handoff, and WP-20 release
-ceremony preflight evidence.
+v0.90.3 is the active citizen-state substrate milestone. Its tracked package
+lives under `docs/milestones/v0.90.3/`. The issue wave is open as #2327-#2347:
+WP-01 is #2327, WP-02 through WP-14 are #2328-#2340, WP-14A is #2341, and
+WP-15 through WP-20 are #2342-#2347.
+
+v0.90.3 should turn the bounded CSM run from v0.90.2 into safer citizen-state
+substrate work: canonical private state, signed envelopes, local-first sealing,
+append-only lineage, continuity witnesses and receipts, anti-equivocation,
+sanctuary/quarantine behavior, redacted Observatory projections, standing and
+access-control semantics, challenge/appeal flow, threat modeling, and one
+integrated citizen-state proof demo. It does not claim first true Gödel-agent
+birthday, full economics, v0.91 moral/emotional civilization, or v0.92
+migration/birthday scope.
+
+v0.90.2 is the most recently completed release milestone. Its tracked package
+lives under `docs/milestones/v0.90.2/`. It carries the first bounded CSM run and
+Runtime v2 hardening proof package, including feature-by-feature proof coverage,
+an integrated first-run demo packet, internal review, third-party review,
+accepted-finding remediation, next-milestone handoff, and release evidence.
 
 v0.90.1 is the completed Runtime v2 foundation prototype milestone. Its issue
 wave opened with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160,
@@ -163,7 +175,7 @@ Best current v0.90 entrypoints:
 
 ### v0.90 - Long-Lived-Agent Runtime Milestone
 
-v0.90 is the most recently completed milestone package. It landed the bounded long-lived-agent runtime slice, stock-league proof package, release-discipline sidecars, coverage ratchet, Rust refactoring pass, internal and third-party review, ADR 0011 remediation, and v0.90.1 planning handoff.
+v0.90 is a completed long-lived-agent runtime milestone package. It landed the bounded long-lived-agent runtime slice, stock-league proof package, release-discipline sidecars, coverage ratchet, Rust refactoring pass, internal and third-party review, ADR 0011 remediation, and v0.90.1 planning handoff.
 
 Key features:
 - supervised recurring cycles with heartbeat and lease status
@@ -279,9 +291,9 @@ ADL includes both ordinary demos and heavyweight reviewer or release proof packa
 
 Start here:
 - canonical user-facing demo index: `demos/README.md`
-- active milestone demo matrix: `docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md`
-- active CSM first-run demo: `cargo run --manifest-path adl/Cargo.toml -- runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run`
-- active feature-proof coverage packet: `cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0902/feature-proof-coverage.json`
+- active milestone demo matrix: `docs/milestones/v0.90.3/DEMO_MATRIX_v0.90.3.md`
+- latest completed CSM first-run demo: `cargo run --manifest-path adl/Cargo.toml -- runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run`
+- latest completed feature-proof coverage packet: `cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0902/feature-proof-coverage.json`
 - latest completed milestone state check: `python3 adl/tools/check_v090_milestone_state.py`
 
 Important supporting demo/readiness docs:

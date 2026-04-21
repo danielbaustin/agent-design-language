@@ -2,6 +2,30 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
+## v0.90.3 (In development)
+
+Status: Issue wave opened on 2026-04-21. WP-01 is #2327, WP-02 through WP-14
+are #2328-#2340, WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
+
+Planned scope:
+- v0.90.3 is the citizen-state substrate milestone.
+- The milestone should turn v0.90.2 bounded CSM run evidence into protected
+  continuity substrate work: canonical private state, signed envelopes,
+  local-first sealing, append-only lineage, continuity witnesses and receipts,
+  anti-equivocation, sanctuary/quarantine behavior, redacted Observatory
+  projections, standing and access-control semantics, challenge/appeal flow,
+  threat modeling, and one integrated citizen-state proof demo.
+- WP-14A preserves the explicit demo matrix and feature-proof coverage lane
+  before WP-15 quality/docs/review convergence.
+- The crate version is `0.90.3` for the active v0.90.3 development line.
+
+Not claimed in v0.90.3:
+- first true Gödel-agent birthday
+- full v0.91 moral, emotional, kindness, humor, or wellbeing substrate
+- full v0.92 identity/capability rebinding, migration, or birthday scope
+- full citizen economics, contract markets, payment rails, or inter-polis trade
+- mandatory cloud enclave deployment
+
 ## v0.90.2 (Release closeout)
 
 Status: Implementation, demo/proof coverage, docs convergence, internal

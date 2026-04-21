@@ -17,7 +17,7 @@
 | `WBS_v0.90.3.md` | WP-01 through WP-20 execution plan with explicit WP-14A demo/proof lane | WP-01 |
 | `DEMO_MATRIX_v0.90.3.md` | planned proof matrix and non-proving boundaries | WP-01, WP-14, WP-14A |
 | `WP_EXECUTION_READINESS_v0.90.3.md` | per-WP required outputs, validation, and non-goals for issue-card authoring | WP-01 |
-| `WP_ISSUE_WAVE_v0.90.3.yaml` | future issue-wave source once reviewed | WP-01 |
+| `WP_ISSUE_WAVE_v0.90.3.yaml` | live issue-wave source with real issue mapping | WP-01 |
 
 ## Context / Idea Docs
 
