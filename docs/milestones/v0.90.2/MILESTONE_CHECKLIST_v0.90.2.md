@@ -42,7 +42,7 @@
 ## Release
 
 - [x] Docs, quality, and reviewer entry surfaces converged
-- [ ] Internal review complete
+- [x] Internal review complete
 - [ ] External / 3rd-party review complete
 - [ ] Accepted findings remediated or explicitly deferred
 - [ ] Release notes describe landed work only
