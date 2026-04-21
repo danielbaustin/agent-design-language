@@ -21,6 +21,10 @@ The milestone should prove that Runtime v2 can:
 - emit stable violation artifacts
 - distinguish safe recovery from quarantine
 - preserve evidence when execution must stop
+- contain one governed adversarial pressure path under explicit rules of
+  engagement
+- record duplicate activation, snapshot integrity, and trace/replay gap
+  negative probes
 - expose reviewer/operator inspection surfaces
 - prove one bounded security boundary through normal kernel/policy flow
 

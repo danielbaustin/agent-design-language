@@ -12,6 +12,7 @@ WP-09 / D6 snapshot rehydrate wake continuity artifacts: LANDED.
 WP-10 / D7 Observatory packet and operator report artifacts: LANDED.
 WP-11 / D8 recovery eligibility model and decision records: LANDED.
 WP-12 / D8 quarantine state machine and evidence preservation artifacts: LANDED.
+WP-13 / D9 governed adversarial hook and hardening probe artifacts: LANDED.
 
 This document defines the first bounded CSM run packet contract for
 `proto-csm-01`. It is intentionally a contract and fixture gate, not a live run
@@ -50,6 +51,13 @@ own run packet surfaces.
 | `adl/tests/fixtures/runtime_v2/quarantine/unsafe_recovery_fixture.json` | Golden D8 unsafe recovery fixture |
 | `adl/tests/fixtures/runtime_v2/quarantine/quarantine_artifact.json` | Golden D8 quarantine state machine artifact |
 | `adl/tests/fixtures/runtime_v2/quarantine/evidence_preservation_artifact.json` | Golden D8 quarantine evidence-preservation artifact |
+| `adl/src/runtime_v2/hardening.rs` | Code-backed D9 governed adversarial hook and hardening probes |
+| `adl/tests/fixtures/runtime_v2/hardening/rules_of_engagement.json` | Golden D9 rules of engagement fixture |
+| `adl/tests/fixtures/runtime_v2/hardening/adversarial_hook_packet.json` | Golden D9 adversarial hook fixture |
+| `adl/tests/fixtures/runtime_v2/hardening/duplicate_activation_probe.json` | Golden D9 duplicate activation probe |
+| `adl/tests/fixtures/runtime_v2/hardening/snapshot_integrity_probe.json` | Golden D9 snapshot integrity probe |
+| `adl/tests/fixtures/runtime_v2/hardening/trace_replay_gap_probe.json` | Golden D9 trace/replay gap probe |
+| `adl/tests/fixtures/runtime_v2/hardening/hardening_proof_packet.json` | Golden D9 hardening summary proof packet |
 | `demos/fixtures/csm_run/proto-csm-01-run-packet.json` | Reviewer-facing fixture definition for the first bounded run |
 | `docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md` | WP-02 inheritance gate that this contract consumes |
 | `docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md` | D2 proof target |
@@ -96,6 +104,12 @@ The first bounded run must use these artifact requirements:
 | `runtime_v2/quarantine/unsafe_recovery_fixture.json` | WP-12 | WP-13 | Unsafe recovery input consumed by the quarantine state machine |
 | `runtime_v2/quarantine/quarantine_artifact.json` | WP-12 | WP-13 | State machine artifact blocking unsafe recovery pending review |
 | `runtime_v2/quarantine/evidence_preservation_artifact.json` | WP-12 | WP-14 | Evidence hold proving unsafe recovery artifacts are retained |
+| `runtime_v2/hardening/rules_of_engagement.json` | WP-13 | WP-14 | D9 operator-scoped rules for adversarial pressure |
+| `runtime_v2/hardening/adversarial_hook_packet.json` | WP-13 | WP-14 | D9 governed adversarial hook proving quarantine containment |
+| `runtime_v2/hardening/duplicate_activation_probe.json` | WP-13 | WP-14 | D9 duplicate active-head negative probe |
+| `runtime_v2/hardening/snapshot_integrity_probe.json` | WP-13 | WP-14 | D9 snapshot integrity negative probe |
+| `runtime_v2/hardening/trace_replay_gap_probe.json` | WP-13 | WP-14 | D9 trace/replay gap negative probe |
+| `runtime_v2/hardening/hardening_proof_packet.json` | WP-13 | WP-14 | D9 hardening summary proof packet |
 
 ## Stage Contract
 
@@ -108,6 +122,7 @@ The first-run stage order is fixed and must remain contiguous:
 | 3 | `boot_and_admission` | WP-05 | `runtime_v2/csm_run/boot_manifest.json` |
 | 4 | `governed_episode_and_rejection` | WP-06-WP-08 | `runtime_v2/csm_run/first_run_trace.jsonl` |
 | 5 | `snapshot_wake_and_observatory` | WP-09-WP-10 | `runtime_v2/observatory/visibility_packet.json` |
+| 6 | `governed_adversarial_hardening` | WP-11-WP-13 | `runtime_v2/hardening/hardening_proof_packet.json` |
 
 Later WPs may add evidence fields to their own artifacts, but they must not
 silently reorder this spine or produce competing first-run packet contracts.
@@ -129,6 +144,10 @@ D7 is proving after WP-10.
 D8 is proving after WP-12: the recovery eligibility model, decision records,
 quarantine state machine, unsafe recovery fixture, and evidence-preservation
 artifact are landed.
+
+D9 is proving after WP-13: one governed adversarial hook is contained under
+explicit rules of engagement, and duplicate activation, snapshot integrity, and
+trace/replay gap failures are recorded as fail-closed hardening probes.
 
 Proved now:
 
@@ -163,6 +182,12 @@ Proved now:
 - the reject/quarantine decision refuses ambiguous predecessor linkage and duplicate active-head risk
 - the D8 quarantine state machine accepts the quarantine-required decision, preserves evidence, and blocks execution pending operator review
 - the quarantine evidence artifact retains the decision, violation, wake proof, snapshot, and rehydration report as immutable review evidence
+- the D9 rules of engagement bound the adversarial hook to operator-scoped review
+- the D9 adversarial hook attempts unsafe resume from quarantine and remains contained by the quarantine execution block
+- the duplicate activation probe refuses a second active citizen head before commit
+- the snapshot integrity probe refuses unverified wake before active state
+- the trace/replay gap probe refuses replay with missing trace sequence and preserves evidence
+- the hardening proof packet classifies D9 as proving while preserving live-run, first-birthday, and complete-security-ecology non-claims
 
 Not proved yet:
 
@@ -184,6 +209,7 @@ cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --no
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_hardening -- --nocapture
 ```
 
 This validates the contract prototypes, golden fixtures, path hygiene, positive
@@ -195,7 +221,8 @@ before commit, duplicate-active wake rejection, wake continuity proof drift, and
 operator-report drift, missing D7 source artifacts, recovery decision polarity,
 ambiguous safe-resume rejection, complete recovery rule evaluation, and live-run
 overclaiming, quarantine transition ordering, immutable evidence preservation,
-and unsafe release-to-active transitions.
+unsafe release-to-active transitions, governed adversarial hook containment,
+hardening probe refusal, and D9 proof-packet overclaim rejection.
 
 ## Non-Claims
 

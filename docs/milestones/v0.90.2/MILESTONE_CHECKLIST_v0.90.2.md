@@ -21,8 +21,8 @@
 - [x] Violation artifact contract implemented
 - [x] Recovery eligibility model implemented
 - [x] Quarantine state machine implemented
-- [ ] Governed adversarial hook complete with rules of engagement and evidence
-- [ ] Additional hardening probes complete
+- [x] Governed adversarial hook complete with rules of engagement and evidence
+- [x] Additional hardening probes complete
 - [ ] Integrated first CSM run demo implemented
 
 ## Truth And Safety
@@ -31,8 +31,8 @@
 - [ ] No docs claim full moral/emotional civilization
 - [ ] No docs claim cross-polis migration or v0.92 identity rebinding
 - [ ] No docs center red/blue ecology as the Runtime v2 thesis
-- [ ] Governed adversarial hook remains bounded and operator-scoped
-- [ ] Security-boundary evidence is present and bounded
+- [x] Governed adversarial hook remains bounded and operator-scoped
+- [x] Security-boundary evidence is present and bounded
 - [x] Recovery and quarantine outcomes are explicit
 - [ ] Quality gate is green or exceptions are explicit
 

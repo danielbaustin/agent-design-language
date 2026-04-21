@@ -28,7 +28,13 @@
     "runtime_v2/recovery/quarantine_required_decision.json",
     "runtime_v2/quarantine/unsafe_recovery_fixture.json",
     "runtime_v2/quarantine/quarantine_artifact.json",
-    "runtime_v2/quarantine/evidence_preservation_artifact.json"
+    "runtime_v2/quarantine/evidence_preservation_artifact.json",
+    "runtime_v2/hardening/rules_of_engagement.json",
+    "runtime_v2/hardening/adversarial_hook_packet.json",
+    "runtime_v2/hardening/duplicate_activation_probe.json",
+    "runtime_v2/hardening/snapshot_integrity_probe.json",
+    "runtime_v2/hardening/trace_replay_gap_probe.json",
+    "runtime_v2/hardening/hardening_proof_packet.json"
   ],
   "run_identity": {
     "run_id": "proto-csm-01-first-bounded-run-0001",
@@ -88,6 +94,13 @@
       "required_input": "runtime_v2/recovery/quarantine_required_decision.json",
       "required_output": "runtime_v2/quarantine/quarantine_artifact.json",
       "live_run_state": "wp12_quarantine_landed"
+    },
+    {
+      "stage_id": "governed_adversarial_hardening",
+      "owner_wp": "WP-13",
+      "required_input": "runtime_v2/quarantine/quarantine_artifact.json",
+      "required_output": "runtime_v2/hardening/hardening_proof_packet.json",
+      "live_run_state": "wp13_hardening_landed"
     }
   ],
   "review_target": {

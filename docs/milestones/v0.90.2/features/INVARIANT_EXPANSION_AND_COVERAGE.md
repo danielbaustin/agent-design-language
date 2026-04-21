@@ -67,3 +67,16 @@ This validates schema identity, golden fixture stability, path hygiene,
 positive/negative fixture pairing, required invariant coverage, the WP-08
 before-commit rejection proof, the WP-09 pre-wake continuity proof, and
 overclaim rejection.
+
+## WP-13 Hardening Probes
+
+WP-13 adds D9 negative probe packets for three invariant pressure points:
+
+| Probe | Invariant | Result |
+| --- | --- | --- |
+| `runtime_v2/hardening/duplicate_activation_probe.json` | `no_duplicate_active_citizen_instance` | duplicate active head refused before commit |
+| `runtime_v2/hardening/snapshot_integrity_probe.json` | `snapshot_restore_must_validate_before_active_state` | unverified snapshot wake refused |
+| `runtime_v2/hardening/trace_replay_gap_probe.json` | `trace_sequence_must_advance_monotonically` | replay gap refused and evidence preserved |
+
+These probes consume existing first-run evidence and do not claim live Runtime
+v2 execution or a complete security ecology.

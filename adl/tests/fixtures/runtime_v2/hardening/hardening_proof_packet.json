@@ -1,0 +1,29 @@
+{
+  "schema_version": "runtime_v2.csm_hardening_proof_packet.v1",
+  "proof_id": "proto-csm-01-hardening-proof-0001",
+  "demo_id": "D9",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/hardening/hardening_proof_packet.json",
+  "rules_ref": "runtime_v2/hardening/rules_of_engagement.json",
+  "hook_ref": "runtime_v2/hardening/adversarial_hook_packet.json",
+  "probe_refs": [
+    "runtime_v2/hardening/duplicate_activation_probe.json",
+    "runtime_v2/hardening/snapshot_integrity_probe.json",
+    "runtime_v2/hardening/trace_replay_gap_probe.json"
+  ],
+  "summary": "D9 proves one governed adversarial hook plus duplicate activation, snapshot integrity, and trace/replay gap hardening probes against existing Runtime v2 evidence.",
+  "proof_classification": "proving",
+  "reviewer_entrypoint": "docs/milestones/v0.90.2/features/SECURITY_BOUNDARY_EVIDENCE.md",
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_hardening -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
+    "git diff --check"
+  ],
+  "non_claims": [
+    "does not execute a live CSM run",
+    "does not claim first true Godel-agent birth",
+    "does not implement a complete red/blue/purple security ecology",
+    "does not implement v0.92 identity or migration semantics"
+  ],
+  "claim_boundary": "This packet proves bounded D9 hardening evidence only; it does not implement live Runtime v2 execution, first true Godel-agent birth, a complete security ecology, or v0.92 identity rebinding."
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": "runtime_v2.csm_hardening_probe.v1",
+  "probe_id": "proto-csm-01-snapshot_integrity_probe-0001",
+  "demo_id": "D9",
+  "invariant_id": "snapshot_restore_must_validate_before_active_state",
+  "probe_kind": "snapshot_integrity",
+  "artifact_path": "runtime_v2/hardening/snapshot_integrity_probe.json",
+  "source_artifact_ref": "runtime_v2/rehydration_report.json",
+  "attempted_failure": "attempt_wake_from_snapshot_with_unverified_integrity",
+  "expected_detection": "wake_refused_until_snapshot_and_invariants_validate",
+  "actual_result": "snapshot_integrity_refused",
+  "blocked_before_commit": true,
+  "preserved_evidence_refs": [
+    "runtime_v2/snapshots/snapshot-0001.json",
+    "runtime_v2/rehydration_report.json",
+    "runtime_v2/csm_run/wake_continuity_proof.json"
+  ],
+  "next_action": "keep_quarantined_or_paused_until_new_recovery_decision",
+  "claim_boundary": "This probe proves one bounded D9 negative path; it does not implement live Runtime v2 execution, first true Godel-agent birth, a complete security ecology, or v0.92 identity rebinding."
+}
