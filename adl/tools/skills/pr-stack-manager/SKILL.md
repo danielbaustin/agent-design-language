@@ -111,6 +111,8 @@ Write structured findings and next-step recommendations to a bounded artifact.
 
 1. Resolve target identity and stack context.
 2. Run topology+base analysis.
+   - For fixture-backed analysis, use
+     `python3 adl/tools/skills/pr-stack-manager/scripts/analyze_pr_stack.py <stack-packet>`.
 3. Report `blocking` stack risks first.
 4. If `allow_mutation` is enabled and risks are unambiguous, apply bounded actions.
 5. Write residual recommendations and handoff state.
