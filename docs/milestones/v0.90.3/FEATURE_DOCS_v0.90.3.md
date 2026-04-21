@@ -18,6 +18,7 @@
 | `DEMO_MATRIX_v0.90.3.md` | planned proof matrix and non-proving boundaries | WP-01, WP-14, WP-14A |
 | `WP_EXECUTION_READINESS_v0.90.3.md` | per-WP required outputs, validation, and non-goals for issue-card authoring | WP-01 |
 | `WP_ISSUE_WAVE_v0.90.3.yaml` | live issue-wave source with real issue mapping | WP-01 |
+| `CITIZEN_STATE_INHERITANCE_AUDIT_v0.90.3.md` | D1 audit of v0.90.2 citizen, snapshot, wake, quarantine, Observatory, and hardening artifacts with v0.90.3 requirement mapping | WP-02 |
 
 ## Context / Idea Docs
 
