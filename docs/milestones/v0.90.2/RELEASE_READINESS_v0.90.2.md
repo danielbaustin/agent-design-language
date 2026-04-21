@@ -2,12 +2,13 @@
 
 ## Status
 
-WP-19 release-tail handoff record.
+WP-20 release-closeout record.
 
 v0.90.2 implementation and demo/proof coverage have landed through WP-14A.
 WP-15 docs convergence, WP-16 internal review, WP-17 external review, and WP-18
-accepted-finding remediation are complete. The milestone is in WP-19
-next-milestone handoff before WP-20 release ceremony.
+accepted-finding remediation are complete. WP-19 next-milestone handoff and
+WP-20 release ceremony preflight are complete. Final tag/release publication
+runs from clean main after the closeout PR merges.
 
 ## Review Entry Points
 
@@ -24,6 +25,7 @@ next-milestone handoff before WP-20 release ceremony.
 - `docs/milestones/v0.90.2/FEATURE_PROOF_COVERAGE_v0.90.2.md`
 - `docs/milestones/v0.90.2/MILESTONE_CHECKLIST_v0.90.2.md`
 - `docs/milestones/v0.90.2/RELEASE_PLAN_v0.90.2.md`
+- `docs/milestones/v0.90.2/RELEASE_EVIDENCE_v0.90.2.md`
 - `docs/milestones/v0.90.2/RELEASE_NOTES_v0.90.2.md`
 - `docs/milestones/v0.90.2/WP_ISSUE_WAVE_v0.90.2.yaml`
 
@@ -117,10 +119,9 @@ handoff to WP-16:
   surface and is intentionally not treated as a canonical tracked release
   document. WP-15 captures the current gap state directly from current issue
   and validation evidence. The v0.90.2 implementation tranche is substantial
-  through WP-14A, but release completion still depends on WP-16 internal review,
-  WP-17 external review, WP-18 remediation, WP-19 handoff, and WP-20 ceremony.
-  Remaining gap concerns belong to release-tail verification and
-  lifecycle-record truth checks.
+  through WP-14A, and release-tail verification has now passed through WP-20
+  preflight. Remaining publication work is the final tag/release operation from
+  clean main after closeout merge.
 - Rust module watch tracker: the current largest Rust hotspots are Runtime v2
   tests, `runtime_v2/governed_episode.rs`, and `long_lived_agent.rs`. The test
   split and long-lived-agent continuation landed in the refactor lane; issue
@@ -132,7 +133,7 @@ handoff to WP-16:
 - Active milestone: v0.90.2
 - Crate version: `0.90.2`
 - Most recently completed milestone: v0.90.1
-- Current release-tail stage: WP-19 next-milestone handoff
+- Current release-tail stage: WP-20 preflight complete; final publication after closeout merge
 
 Reviewers should treat any conflicting older v0.90.1 crate-version statement
 or claim that v0.90.2 is still pre-issue-wave as a stale release-truth defect.
@@ -157,11 +158,10 @@ v0.90.2 does not claim:
 - WP-18 accepted-finding remediation completed; optional non-blocking ideas
   were routed to backlog candidates.
 
-## Remaining Release-Tail Gates
+## Remaining Release-Tail Gate
 
-- WP-19 must complete next-milestone planning and v0.91/v0.92 handoff.
-- WP-20 must run the release ceremony from clean main after merge and operator
-  fast-forward.
+- Final tag/release publication must run from clean main after this closeout PR
+  merges and Daniel fast-forwards main.
 
 ## WP-15 Disposition
 

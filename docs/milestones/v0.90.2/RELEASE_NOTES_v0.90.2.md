@@ -1,4 +1,4 @@
-# Release Notes Draft - v0.90.2
+# Release Notes - v0.90.2
 
 ## Headline
 
@@ -25,6 +25,18 @@ reviewable failure, recovery, quarantine, and security-boundary evidence.
 - integrated first CSM run demo
 - feature-proof coverage record before review convergence
 - docs, quality, and reviewer-entry convergence record
+- internal review, third-party review, and accepted-finding remediation
+- v0.90.3 next-milestone planning and v0.91/v0.92 handoff preservation
+- release ceremony preflight and closed-issue truth gate
+
+## Release-Tail Evidence
+
+- WP-16 internal review is complete.
+- WP-17 third-party review is complete with zero P0/P1/P2/P3 findings.
+- WP-18 accepted-finding remediation is complete.
+- WP-19 next-milestone planning and v0.91/v0.92 handoff is complete.
+- WP-20 release ceremony preflight passed, including the closed-issue SOR truth
+  gate across 40 closed v0.90.2 issues.
 
 ## Explicit Non-Claims
 
@@ -34,8 +46,7 @@ reviewable failure, recovery, quarantine, and security-boundary evidence.
 - v0.90.2 does not complete cross-polis migration.
 - v0.90.2 does not ship the full red/blue/purple security ecology.
 
-## Release Note Rule
+## Release Publication Rule
 
-Before release, verify this draft against the completed WP-16 internal review,
-completed WP-17 external review, completed WP-18 remediation, WP-19 handoff,
-and WP-20 ceremony evidence. Do not ship aspirational language as release truth.
+This file is final release-note input for v0.90.2. Do not add aspirational
+claims or later-milestone scope during tag/release publication.

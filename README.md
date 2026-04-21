@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.90.2%20review--tail-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.90.2%20release--ready-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -53,7 +53,7 @@ python3 adl/tools/check_v090_milestone_state.py
 
 This is the best top-level entrypoint if you want to see the milestone-compression drift check and proof graph for the latest completed milestone.
 
-### If you want the active v0.90.2 first-run proof package
+### If you want the v0.90.2 first-run proof package
 
 Generate the feature-proof coverage packet:
 
@@ -119,8 +119,8 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.90.2 review tail**
-- Current release state: **v0.90.2 implementation, demo/proof coverage, docs convergence, internal review, third-party review, and accepted-finding remediation are complete; WP-19 is finalizing next-milestone handoff before WP-20 ceremony**
+- Active milestone: **v0.90.2 release closeout**
+- Current release state: **v0.90.2 implementation, demo/proof coverage, docs convergence, internal review, third-party review, accepted-finding remediation, next-milestone handoff, and WP-20 ceremony preflight are complete; final tag/release publication runs from clean main after this closeout PR merges**
 - Most recently completed milestone: **v0.90.1**
 - Current crate version: **0.90.2**
 - Version note: **v0.90.2 carries the bounded CSM first-run and Runtime v2 hardening release line**
@@ -132,14 +132,13 @@ ADL is in active development. This repository contains both implemented runtime 
 
 ## Current Milestone
 
-v0.90.2 is the active first bounded CSM run and Runtime v2 hardening
-milestone. Its tracked package lives under `docs/milestones/v0.90.2/`. The
-issue wave opened as #2245-#2264, and the explicit WP-14A demo/proof lane was
-added as #2301 before WP-15 review convergence. The milestone now has
-feature-by-feature proof coverage, an integrated first-run demo packet, and a
-review-tail sequence that has completed internal review, third-party review,
-and accepted-finding remediation. WP-19 now finalizes next-milestone handoff
-before WP-20 release ceremony.
+v0.90.2 is the first bounded CSM run and Runtime v2 hardening milestone. Its
+tracked package lives under `docs/milestones/v0.90.2/`. The issue wave opened
+as #2245-#2264, and the explicit WP-14A demo/proof lane was added as #2301
+before WP-15 review convergence. The milestone now has feature-by-feature proof
+coverage, an integrated first-run demo packet, internal review, third-party
+review, accepted-finding remediation, next-milestone handoff, and WP-20 release
+ceremony preflight evidence.
 
 v0.90.1 is the completed Runtime v2 foundation prototype milestone. Its issue
 wave opened with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160,
