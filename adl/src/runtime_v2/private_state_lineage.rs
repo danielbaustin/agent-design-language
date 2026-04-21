@@ -291,8 +291,7 @@ impl RuntimeV2PrivateStateLineageLedger {
         let mut seen_sequences = BTreeSet::new();
         let mut previous_hash = "genesis".to_string();
         let mut previous_state_hash = "genesis".to_string();
-        let mut expected_sequence = 1_u64;
-        for entry in &self.entries {
+        for (expected_sequence, entry) in (1_u64..).zip(self.entries.iter()) {
             entry.validate()?;
             if entry.citizen_id != self.citizen_id
                 || entry.manifold_id != self.manifold_id
@@ -328,7 +327,6 @@ impl RuntimeV2PrivateStateLineageLedger {
             }
             previous_hash = entry.entry_hash.clone();
             previous_state_hash = entry.canonical_state_hash.clone();
-            expected_sequence += 1;
         }
         let head = self
             .entries
