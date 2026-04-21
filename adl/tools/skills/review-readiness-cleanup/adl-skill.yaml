@@ -1,0 +1,107 @@
+version: "0.1"
+kind: "adl-skill"
+id: "review-readiness-cleanup"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "review_readiness_cleanup.v1"
+    reference_doc: "../docs/REVIEW_READINESS_CLEANUP_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "review_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "inspect_review_packet"
+      - "inspect_milestone_review"
+      - "refresh_readiness_cleanup"
+    policy_fields:
+      - "write_cleanup_artifact"
+      - "allow_safe_mechanical_cleanup"
+      - "require_finding_register"
+      - "require_demo_or_proof_register"
+      - "stop_before_remediation"
+      - "stop_before_publication"
+      - "stop_before_review_approval"
+    mode_requirements:
+      inspect_review_packet:
+        required_target_fields:
+          - "review_root"
+      inspect_milestone_review:
+        required_target_fields:
+          - "target.milestone"
+          - "review_root"
+      refresh_readiness_cleanup:
+        required_target_fields:
+          - "target.previous_report_path"
+          - "review_root"
+  intent:
+    - "review_readiness_cleanup"
+    - "review_packet_preflight"
+    - "milestone_review_precheck"
+  required_inputs:
+    - "review_root"
+    - "target"
+    - "policy"
+  optional_inputs:
+    - "output_root"
+    - "run_id"
+    - "required_surfaces"
+    - "review_type"
+  stop_if_missing:
+    - "review_root"
+  prevalidation_rules:
+    - "skill_input_schema_must_equal_review_readiness_cleanup.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "review_root_must_be_explicit"
+    - "policy.stop_before_remediation_must_be_true"
+    - "policy.stop_before_publication_must_be_true"
+    - "policy.stop_before_review_approval_must_be_true"
+execution:
+  mode: "readiness_cleanup_classification_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/inspect_review_readiness.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "--review-root <path>"
+        - "--out <artifact-root>"
+        - "--run-id <id>"
+  preferred_read_order:
+    - "review plan"
+    - "finding register"
+    - "demo or proof register"
+    - "review packet manifest"
+    - "milestone review docs"
+    - "validation notes"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  must_not_run:
+    - "review_execution"
+    - "finding_remediation"
+    - "severity_rewriting"
+    - "publication"
+    - "review_approval_claims"
+    - "tracker_item_creation"
+    - "pull_request_creation"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/review-readiness-cleanup/<run_id>/"
+  required_artifacts:
+    - "review_readiness_cleanup_report.md"
+    - "review_readiness_cleanup_report.json"
+security:
+  no_review_approval: true
+  no_publication: true
+  no_finding_rewrites: true
+  no_repo_mutation: true
+

@@ -8,7 +8,7 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in workflow-conductor issue-watcher pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator release-evidence medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
+  for skill in workflow-conductor issue-watcher pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator release-evidence review-readiness-cleanup medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
@@ -50,6 +50,8 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/demo-operator/SKILL.md" ]]
   [[ -f "${root}/skills/release-evidence/SKILL.md" ]]
   [[ -x "${root}/skills/release-evidence/scripts/assemble_release_evidence.py" ]]
+  [[ -f "${root}/skills/review-readiness-cleanup/SKILL.md" ]]
+  [[ -x "${root}/skills/review-readiness-cleanup/scripts/inspect_review_readiness.py" ]]
   [[ -f "${root}/skills/medium-article-writer/SKILL.md" ]]
   [[ -f "${root}/skills/arxiv-paper-writer/SKILL.md" ]]
   [[ -f "${root}/skills/diagram-author/SKILL.md" ]]
@@ -80,6 +82,7 @@ assert_skill_bundle() {
   grep -Fq "smallest truthful test surface" "${root}/skills/test-generator/SKILL.md"
   grep -Fq "run one named demo" "${root}/skills/demo-operator/SKILL.md"
   grep -Fq "evidence packaging skill" "${root}/skills/release-evidence/SKILL.md"
+  grep -Fq "readiness cleanup classifier" "${root}/skills/review-readiness-cleanup/SKILL.md"
   grep -Fq "stopping before publication" "${root}/skills/medium-article-writer/SKILL.md"
   grep -Fq "without submitting, publishing, inventing citations" "${root}/skills/arxiv-paper-writer/SKILL.md"
   grep -Fq "diagram-as-code and model-as-code router" "${root}/skills/diagram-author/SKILL.md"
@@ -110,6 +113,7 @@ assert_skill_bundle() {
     "${root}/skills/test-generator/SKILL.md" \
     "${root}/skills/demo-operator/SKILL.md" \
     "${root}/skills/release-evidence/SKILL.md" \
+    "${root}/skills/review-readiness-cleanup/SKILL.md" \
     "${root}/skills/medium-article-writer/SKILL.md" \
     "${root}/skills/arxiv-paper-writer/SKILL.md" \
     "${root}/skills/diagram-author/SKILL.md" \
@@ -140,6 +144,7 @@ assert_skill_bundle "${CODEX_HOME}"
 [[ -L "${CODEX_HOME}/skills/architecture-fitness-function-author" ]]
 [[ -L "${CODEX_HOME}/skills/finding-to-issue-planner" ]]
 [[ -L "${CODEX_HOME}/skills/release-evidence" ]]
+[[ -L "${CODEX_HOME}/skills/review-readiness-cleanup" ]]
 [[ -L "${CODEX_HOME}/skills/arxiv-paper-writer" ]]
 [[ -L "${CODEX_HOME}/skills/diagram-author" ]]
 [[ "$(cd "${CODEX_HOME}/skills/pr-init" && pwd -P)" == "${repo_root}/adl/tools/skills/pr-init" ]]
