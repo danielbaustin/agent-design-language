@@ -88,6 +88,26 @@ The WP-15 convergence pass ran these focused checks:
   merely planning-only.
 - `git diff --check` passed.
 
+## Tracker Review
+
+WP-15 also reviewed the active local quality and maintenance trackers before
+handoff to WP-16:
+
+- Coverage tracker: current workspace line coverage remains `92.40%`, which is
+  approximately `93.00%` when rounded. The workspace coverage gate and per-file
+  coverage gate both pass with no active file-floor exclusion.
+- Gap analysis tracker: the v0.90.2 implementation tranche is substantial
+  through WP-14A, but release completion still depends on WP-16 internal review,
+  WP-17 external review, WP-18 remediation, WP-19 handoff, and WP-20 ceremony.
+  The prior gap-review concerns about WP-14A being open were resolved by the
+  WP-14A merge; remaining gap-analysis concerns belong to release-tail
+  verification and lifecycle-record truth checks.
+- Rust module watch tracker: the current largest Rust hotspots are Runtime v2
+  tests, `runtime_v2/governed_episode.rs`, and `long_lived_agent.rs`. The test
+  split and long-lived-agent continuation landed in the refactor lane; issue
+  #2309 remains open for the governed-episode split and should be reflected in
+  the Rust tracker after it merges.
+
 ## Version Truth
 
 - Active milestone: v0.90.2

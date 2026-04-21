@@ -65,6 +65,15 @@ Before release approval, verify that WP-16 internal review, WP-17 external /
 third-party review, WP-18 remediation, WP-19 next-milestone handoff, and WP-20
 release ceremony have completed.
 
+WP-15 tracker status to preserve during review:
+- coverage remains above the active quality gate at `92.40%` workspace line
+  coverage, with the per-file gate passing and no active file-floor exclusion
+- gap-analysis risk is now concentrated in release-tail execution and
+  lifecycle-record truth checks, not missing core v0.90.2 implementation proof
+- Rust module watch status remains active; issue #2309 is still open for the
+  governed-episode split and the Rust tracker should be refreshed after it
+  merges
+
 For the most recently completed v0.90.1 release package, start with:
 
 - `docs/milestones/v0.90.1/README.md`
