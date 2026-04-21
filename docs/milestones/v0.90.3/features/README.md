@@ -12,3 +12,4 @@ behavior until the corresponding WPs land.
 | `SANCTUARY_QUARANTINE_AND_CHALLENGE.md` | conservative behavior and due-process artifacts for uncertain continuity |
 | `LOCAL_SEALED_QUINTESSENCE_CHECKPOINTS.md` | local-first protected checkpoint strategy and backend seam |
 | `ECONOMICS_PLACEMENT_BRIDGE.md` | narrow v0.90.3 resource-stewardship decision and v0.90.4 handoff |
+| `CSM_OBSERVATORY_DESIGN.md` | design spine for the inhabited CSM Observatory flagship and redacted visibility surface, including diagrams and a first-screen screenshot mockup |

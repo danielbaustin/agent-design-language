@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">CSM Observatory first-screen mockup</title>
+  <desc id="desc">A static design mockup of the v0.90.3 CSM Observatory showing a manifold header, citizen constellation, kernel pulse, Freedom Gate docket, trace ribbon, and operator action rail.</desc>
+  <defs>
+    <radialGradient id="bg" cx="34%" cy="22%" r="86%">
+      <stop offset="0%" stop-color="#17334f"/>
+      <stop offset="38%" stop-color="#0f1b2a"/>
+      <stop offset="100%" stop-color="#091017"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#193049" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#0c1723" stop-opacity="0.96"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" x2="1">
+      <stop offset="0%" stop-color="#f3c86a"/>
+      <stop offset="100%" stop-color="#f08d52"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" x2="1">
+      <stop offset="0%" stop-color="#54d6ff"/>
+      <stop offset="100%" stop-color="#75f0c2"/>
+    </linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      .label { font-family: Avenir Next, Optima, Helvetica, sans-serif; fill: #e9f4ff; letter-spacing: 0.5px; }
+      .small { font-size: 20px; fill: #9fb2c8; }
+      .tiny { font-size: 15px; fill: #9fb2c8; }
+      .title { font-size: 34px; font-weight: 700; }
+      .section { font-size: 22px; font-weight: 700; fill: #dcecff; }
+      .metric { font-size: 24px; font-weight: 700; fill: #f5f0d6; }
+      .panel { fill: url(#panel); stroke: #2d5272; stroke-width: 1.5; rx: 28; }
+      .hairline { stroke: #335b78; stroke-width: 1; opacity: 0.75; }
+      .beacon { filter: url(#glow); }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <circle cx="1260" cy="180" r="420" fill="#19335a" opacity="0.18"/>
+  <circle cx="360" cy="760" r="480" fill="#234440" opacity="0.14"/>
+  <path d="M0 210 C260 160 430 265 670 210 S1160 120 1600 210" fill="none" stroke="#31506b" stroke-width="2" opacity="0.35"/>
+  <path d="M0 780 C220 700 500 850 760 760 S1240 650 1600 730" fill="none" stroke="#31506b" stroke-width="2" opacity="0.22"/>
+
+  <rect x="64" y="52" width="1472" height="112" rx="32" fill="#102135" stroke="#375d79" stroke-width="1.5"/>
+  <text x="96" y="102" class="label title">CSM Observatory</text>
+  <text x="96" y="135" class="label small">Manifold Polis Alpha · tick 18,240 · snapshot sealed · operator projection redacted</text>
+  <g transform="translate(1040 78)">
+    <circle cx="0" cy="0" r="10" fill="#75f0c2" class="beacon"/>
+    <text x="24" y="8" class="label small">runtime stable</text>
+    <circle cx="196" cy="0" r="10" fill="#f3c86a" class="beacon"/>
+    <text x="220" y="8" class="label small">2 judgments pending</text>
+  </g>
+
+  <rect x="64" y="196" width="580" height="520" class="panel"/>
+  <text x="96" y="238" class="label section">Citizen Constellation</text>
+  <text x="96" y="268" class="label tiny">standing, lifecycle, continuity, and boundary status</text>
+  <circle cx="354" cy="464" r="112" fill="none" stroke="#345f82" stroke-width="2"/>
+  <circle cx="354" cy="464" r="188" fill="none" stroke="#284761" stroke-width="2" stroke-dasharray="8 12"/>
+  <circle cx="354" cy="464" r="42" fill="#122841" stroke="url(#cyan)" stroke-width="3" class="beacon"/>
+  <text x="317" y="470" class="label small">polis</text>
+
+  <g>
+    <circle cx="354" cy="276" r="30" fill="#12364c" stroke="#75f0c2" stroke-width="3"/>
+    <text x="301" y="335" class="label tiny">citizen Ada · awake</text>
+    <circle cx="510" cy="360" r="26" fill="#322840" stroke="#f3c86a" stroke-width="3"/>
+    <text x="468" y="414" class="label tiny">guest Theo</text>
+    <circle cx="496" cy="580" r="30" fill="#3a1f28" stroke="#ff6f7d" stroke-width="3"/>
+    <text x="447" y="637" class="label tiny">challenged</text>
+    <circle cx="204" cy="590" r="25" fill="#1b3440" stroke="#54d6ff" stroke-width="3"/>
+    <text x="143" y="644" class="label tiny">service actor</text>
+    <circle cx="206" cy="352" r="25" fill="#172d38" stroke="#91a8bd" stroke-width="3"/>
+    <text x="152" y="407" class="label tiny">sleeping</text>
+  </g>
+  <path d="M354 464 L354 276 M354 464 L510 360 M354 464 L496 580 M354 464 L204 590 M354 464 L206 352" class="hairline"/>
+
+  <rect x="680" y="196" width="420" height="250" class="panel"/>
+  <text x="714" y="238" class="label section">Kernel Pulse</text>
+  <g transform="translate(720 282)">
+    <text class="label tiny" x="0" y="0">scheduler</text>
+    <rect x="0" y="14" width="330" height="12" rx="6" fill="#183047"/>
+    <rect x="0" y="14" width="248" height="12" rx="6" fill="url(#cyan)"/>
+    <text class="label tiny" x="0" y="62">trace anchoring</text>
+    <rect x="0" y="76" width="330" height="12" rx="6" fill="#183047"/>
+    <rect x="0" y="76" width="292" height="12" rx="6" fill="url(#cyan)"/>
+    <text class="label tiny" x="0" y="124">resource pressure</text>
+    <rect x="0" y="138" width="330" height="12" rx="6" fill="#183047"/>
+    <rect x="0" y="138" width="184" height="12" rx="6" fill="url(#gold)"/>
+  </g>
+
+  <rect x="680" y="466" width="420" height="250" class="panel"/>
+  <text x="714" y="508" class="label section">Freedom Gate Docket</text>
+  <g transform="translate(714 542)">
+    <rect x="0" y="0" width="352" height="44" rx="14" fill="#13283d" stroke="#335b78"/>
+    <text x="18" y="29" class="label tiny">ALLOW · service actor reads public digest</text>
+    <rect x="0" y="58" width="352" height="44" rx="14" fill="#3b2e1c" stroke="#f3c86a"/>
+    <text x="18" y="87" class="label tiny">DEFER · guest asks for citizen channel</text>
+    <rect x="0" y="116" width="352" height="44" rx="14" fill="#3a1f28" stroke="#ff6f7d"/>
+    <text x="18" y="145" class="label tiny">CHALLENGE · lineage witness mismatch</text>
+  </g>
+
+  <rect x="1136" y="196" width="400" height="520" class="panel"/>
+  <text x="1170" y="238" class="label section">Operator Action Rail</text>
+  <text x="1170" y="268" class="label tiny">read-only in v0.90.3, explicit disabled reasons</text>
+  <g transform="translate(1170 306)">
+    <rect width="318" height="62" rx="18" fill="#10283a" stroke="#54d6ff"/>
+    <text x="20" y="38" class="label small">Open review packet</text>
+    <rect y="82" width="318" height="62" rx="18" fill="#172334" stroke="#405c75"/>
+    <text x="20" y="120" class="label small">Pause actor · future command</text>
+    <rect y="164" width="318" height="62" rx="18" fill="#172334" stroke="#405c75"/>
+    <text x="20" y="202" class="label small">Request recovery · policy-bound</text>
+    <rect y="246" width="318" height="62" rx="18" fill="#3a1f28" stroke="#ff6f7d"/>
+    <text x="20" y="284" class="label small">Decrypt private state · denied</text>
+    <rect y="328" width="318" height="62" rx="18" fill="#30291c" stroke="#f3c86a"/>
+    <text x="20" y="366" class="label small">Quarantine appeal · pending</text>
+  </g>
+
+  <rect x="64" y="748" width="1472" height="188" class="panel"/>
+  <text x="96" y="790" class="label section">Timeline / Trace Ribbon</text>
+  <line x1="112" y1="856" x2="1488" y2="856" stroke="#375d79" stroke-width="3"/>
+  <g class="label tiny">
+    <circle cx="160" cy="856" r="12" fill="#75f0c2"/>
+    <text x="130" y="902">wake</text>
+    <circle cx="358" cy="856" r="12" fill="#54d6ff"/>
+    <text x="314" y="902">episode</text>
+    <circle cx="596" cy="856" r="12" fill="#f3c86a"/>
+    <text x="543" y="902">deferred</text>
+    <circle cx="826" cy="856" r="12" fill="#75f0c2"/>
+    <text x="780" y="902">receipt</text>
+    <circle cx="1046" cy="856" r="12" fill="#ff6f7d"/>
+    <text x="992" y="902">challenge</text>
+    <circle cx="1276" cy="856" r="12" fill="#91a8bd"/>
+    <text x="1222" y="902">redacted</text>
+    <circle cx="1474" cy="856" r="12" fill="#f3c86a"/>
+    <text x="1408" y="902">operator note</text>
+  </g>
+
+  <text x="64" y="980" class="label tiny">Static design screenshot for v0.90.3 planning. Not a runtime UI capture and not a proof artifact.</text>
+</svg>

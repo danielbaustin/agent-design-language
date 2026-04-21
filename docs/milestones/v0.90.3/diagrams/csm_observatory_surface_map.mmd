@@ -1,0 +1,17 @@
+flowchart LR
+    manifold["Manifold Header\nruntime state, tick, snapshot, global health"]
+    constellation["Citizen Constellation\ncitizens, guests, service actors, standing"]
+    pulse["Kernel Pulse\nscheduler, trace, invariants, resources, guardrails"]
+    docket["Freedom Gate Docket\nallow, defer, refuse, challenge, quarantine"]
+    ribbon["Timeline / Trace Ribbon\ncausal events and continuity markers"]
+    rail["Operator Action Rail\nread-only affordances and disabled reasons"]
+
+    manifold --> constellation
+    manifold --> pulse
+    constellation --> docket
+    pulse --> docket
+    docket --> ribbon
+    constellation --> ribbon
+    pulse --> ribbon
+    ribbon --> rail
+    docket --> rail
