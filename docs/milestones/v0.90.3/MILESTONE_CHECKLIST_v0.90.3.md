@@ -20,10 +20,10 @@
 - [x] Anti-equivocation negative test landed
 - [x] Sanctuary/quarantine behavior proven
 - [x] Redacted Observatory projection proven
-- [ ] Standing, communication, and access boundaries proven
-- [ ] Challenge and appeal flow proven
-- [ ] Threat model reviewed
-- [ ] Economics placement decision recorded
+- [x] Standing, communication, and access boundaries proven
+- [x] Challenge and appeal flow proven
+- [x] Threat model reviewed
+- [x] Economics placement decision recorded
 - [ ] Integrated citizen-state demo complete
 - [ ] Demo matrix and feature proof coverage record complete
 - [ ] Quality gate and coverage/tracker truth recorded before internal review

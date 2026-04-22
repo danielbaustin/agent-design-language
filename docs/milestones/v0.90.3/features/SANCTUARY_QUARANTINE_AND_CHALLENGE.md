@@ -4,8 +4,9 @@
 
 Planning and implementation contract for v0.90.3. WP-08 has landed the first
 anti-equivocation disposition into `sanctuary_or_quarantine`; WP-09 has landed
-the bounded sanctuary/quarantine behavior proof for ambiguous wake. WP-13 still
-owns challenge, appeal, threat-model, and review-resolution behavior.
+the bounded sanctuary/quarantine behavior proof for ambiguous wake. WP-13 has
+landed the D11 challenge, freeze, appeal/review, threat-model, and economics
+placement proof in `CONTINUITY_CHALLENGE_APPEAL_v0.90.3.md`.
 
 ## Purpose
 
@@ -67,6 +68,17 @@ Challenge should:
 
 Appeal should be bounded. It does not imply arbitrary disclosure of private
 state.
+
+WP-13 makes this concrete for the v0.90.3 proof slice:
+
+- challenged wake freezes activation and cannot advance the active head
+- challenged projection freezes publication and cannot widen into raw
+  private-state disclosure
+- appeal/review cannot release state without resolution evidence
+- threat coverage includes insider/operator abuse, compromised key, malicious
+  guest, equivocation, replay, projection leakage, and unsafe release from
+  quarantine
+- economics placement remains a resource-stewardship bridge only
 
 ## Validation Targets
 

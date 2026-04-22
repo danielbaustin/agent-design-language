@@ -1,5 +1,6 @@
 mod access_control;
 mod boot_admission;
+mod challenge;
 mod citizen;
 mod contracts;
 mod csm_run;
@@ -38,6 +39,8 @@ use std::path::{Path, PathBuf};
 pub use access_control::*;
 #[allow(unused_imports)]
 pub use boot_admission::*;
+#[allow(unused_imports)]
+pub use challenge::*;
 #[allow(unused_imports)]
 pub use citizen::*;
 #[allow(unused_imports)]

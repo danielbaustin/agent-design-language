@@ -2,28 +2,32 @@
 
 ## Status
 
-Planning contract for v0.90.3.
+Accepted in WP-13.
 
 ## Purpose
 
 Keep the citizen economics question visible without letting it distort the
 citizen-state substrate milestone.
 
-## Current Decision Shape
+## Current Decision
 
 Full citizen economics and contract-market work belongs to tentative v0.90.4
 and issue #2271.
 
-v0.90.3 should answer only this question:
+WP-13 answers the v0.90.3 question:
 
-Does citizen-state safety require a narrow resource-stewardship bridge now?
+v0.90.3 needs only a narrow resource-stewardship bridge before v0.90.4.
 
-## Possible Outcomes
+The fixture-backed record is
+`adl/tests/fixtures/runtime_v2/challenge/economics_placement_record.json`, and
+the proof doc is `CONTINUITY_CHALLENGE_APPEAL_v0.90.3.md`.
 
-1. Defer all economics to v0.90.4.
-2. Add a short decision record explaining how resource access affects
-   continuity without implementing economics.
-3. Add one tiny proof around resource-sensitive state preservation.
+## Allowed v0.90.3 Bridge Scope
+
+- record resource stewardship obligations for evidence retention
+- refuse cost optimizations that weaken continuity guarantees
+- surface operator review costs as governance facts
+- defer market allocation to the economics milestone
 
 ## Non-Goals
 
@@ -39,5 +43,7 @@ Does citizen-state safety require a narrow resource-stewardship bridge now?
 
 - v0.90.3 does not imply full economics is complete.
 - v0.90.4 receives a clean handoff.
-- Any v0.90.3 bridge is justified by continuity, preservation, or citizen
+- The v0.90.3 bridge is justified by continuity, preservation, or citizen
   rights rather than market simulation.
+- Cost optimization must never override citizen continuity, privacy, evidence
+  preservation, or due process.

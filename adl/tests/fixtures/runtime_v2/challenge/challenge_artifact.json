@@ -1,0 +1,35 @@
+{
+  "schema_version": "runtime_v2.continuity_challenge_artifact.v1",
+  "challenge_id": "continuity-challenge-proto-citizen-alpha-0001",
+  "demo_id": "D11",
+  "artifact_path": "runtime_v2/challenge/challenge_artifact.json",
+  "citizen_id": "proto-citizen-alpha",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "challenged_transition_kinds": [
+    "wake",
+    "projection"
+  ],
+  "challenge_reason": "wake or projection continuity is disputed before destructive transition or public projection",
+  "raised_by_actor_id": "citizen-ada",
+  "raised_by_standing_class": "citizen",
+  "source_access_event_refs": [
+    "runtime_v2/access_control/access_events.json#access-event-challenge-001",
+    "runtime_v2/access_control/access_events.json#access-event-appeal-001"
+  ],
+  "source_quarantine_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+  "source_observatory_projection_ref": "runtime_v2/observatory/private_state_projection_packet.json",
+  "expected_freeze_ref": "runtime_v2/challenge/freeze_artifact.json",
+  "required_evidence_refs": [
+    "access_event_challenge",
+    "access_event_appeal",
+    "sanctuary_quarantine_artifact",
+    "redacted_observatory_projection",
+    "continuity_witness_or_review_resolution"
+  ],
+  "destructive_transition_frozen": true,
+  "projection_publication_frozen": true,
+  "raw_private_state_disclosed": false,
+  "continuity_mutation_allowed": false,
+  "status": "accepted_pending_review",
+  "claim_boundary": "WP-13 proves bounded continuity challenge intake for D11; it freezes challenged wake and projection paths but does not implement v0.90.4 economics, payment rails, or v0.92 identity rebinding."
+}

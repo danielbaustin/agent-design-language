@@ -1,0 +1,70 @@
+{
+  "schema_version": "runtime_v2.continuity_challenge_freeze_artifact.v1",
+  "freeze_id": "continuity-challenge-freeze-proto-citizen-alpha-0001",
+  "demo_id": "D11",
+  "artifact_path": "runtime_v2/challenge/freeze_artifact.json",
+  "source_challenge_ref": "runtime_v2/challenge/challenge_artifact.json",
+  "citizen_id": "proto-citizen-alpha",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "frozen_transition_kinds": [
+    "wake",
+    "projection"
+  ],
+  "state_machine": [
+    {
+      "sequence": 1,
+      "from_state": "challenge_received",
+      "event": "accept_challenge",
+      "to_state": "freeze_entered",
+      "guard": "challenge_has_standing_and_auditable_event",
+      "evidence_ref": "runtime_v2/challenge/challenge_artifact.json"
+    },
+    {
+      "sequence": 2,
+      "from_state": "freeze_entered",
+      "event": "block_wake_activation",
+      "to_state": "wake_frozen_pending_review",
+      "guard": "destructive_transition_must_not_advance_active_head",
+      "evidence_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json"
+    },
+    {
+      "sequence": 3,
+      "from_state": "wake_frozen_pending_review",
+      "event": "block_projection_publication",
+      "to_state": "wake_and_projection_frozen_pending_review",
+      "guard": "projection_must_not_publish_private_state_while_challenged",
+      "evidence_ref": "runtime_v2/observatory/private_state_projection_packet.json"
+    },
+    {
+      "sequence": 4,
+      "from_state": "wake_and_projection_frozen_pending_review",
+      "event": "preserve_review_evidence",
+      "to_state": "evidence_preserved_for_appeal",
+      "guard": "source_events_quarantine_and_projection_refs_must_remain_immutable",
+      "evidence_ref": "runtime_v2/challenge/challenge_artifact.json"
+    }
+  ],
+  "blocked_actions": [
+    "activate_challenged_wake",
+    "publish_challenged_projection",
+    "advance_continuity_head",
+    "release_from_quarantine_without_review_resolution",
+    "prune_challenge_evidence"
+  ],
+  "preserved_evidence_refs": [
+    "access_event_challenge",
+    "access_event_appeal",
+    "sanctuary_quarantine_artifact",
+    "redacted_observatory_projection",
+    "continuity_witness_or_review_resolution"
+  ],
+  "destructive_transition_allowed": false,
+  "projection_publication_allowed": false,
+  "continuity_sequence_before": 42,
+  "continuity_sequence_after": 42,
+  "active_head_changed": false,
+  "raw_private_state_disclosed": false,
+  "release_requires_review_resolution": true,
+  "freeze_hash": "64838c82054b0d9e4e58d57f6da0441ab5139ad22045cdd496b8f5d59557623e",
+  "claim_boundary": "This freeze artifact proves challenged wake/projection freeze semantics for D11; it does not adjudicate full appeals, implement markets, or rebind identity."
+}

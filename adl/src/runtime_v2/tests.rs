@@ -2,6 +2,7 @@ use super::*;
 
 mod access_control;
 mod boot_admission;
+mod challenge;
 mod citizen_lifecycle;
 mod common;
 mod csm_run_packet;

@@ -1,0 +1,39 @@
+{
+  "schema_version": "runtime_v2.continuity_appeal_review_artifact.v1",
+  "appeal_id": "continuity-appeal-review-proto-citizen-alpha-0001",
+  "demo_id": "D11",
+  "artifact_path": "runtime_v2/challenge/appeal_review_artifact.json",
+  "source_challenge_ref": "runtime_v2/challenge/challenge_artifact.json",
+  "source_freeze_ref": "runtime_v2/challenge/freeze_artifact.json",
+  "citizen_id": "proto-citizen-alpha",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "appellant_actor_id": "citizen-ada",
+  "appellant_standing_class": "citizen",
+  "reviewer_standing_classes": [
+    "authorized_reviewer",
+    "operator"
+  ],
+  "permitted_outcomes": [
+    "uphold_freeze_pending_valid_proof",
+    "release_with_new_continuity_proof",
+    "escalate_to_quarantine"
+  ],
+  "current_outcome": "uphold_freeze_pending_valid_proof",
+  "release_allowed": false,
+  "destructive_transition_allowed": false,
+  "required_resolution_evidence": [
+    "reviewer_identity_and_authority",
+    "continuity_proof_or_quarantine_reason",
+    "access_event_packet",
+    "freeze_hash",
+    "citizen_facing_continuity_explanation"
+  ],
+  "due_process_guarantees": [
+    "challenge remains visible to citizen and reviewer",
+    "evidence is preserved before destructive transition",
+    "release requires explicit review resolution",
+    "appeal cannot disclose raw private state",
+    "appeal cannot bypass quarantine release requirements"
+  ],
+  "claim_boundary": "This artifact proves bounded appeal/review-resolution shape for D11; it does not implement a full constitutional court, markets, payment rails, or v0.92 birthday semantics."
+}

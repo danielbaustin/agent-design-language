@@ -1,0 +1,142 @@
+{
+  "schema_version": "runtime_v2.citizen_state_threat_model.v1",
+  "model_id": "citizen-state-threat-model-v0-90-3-d11",
+  "demo_id": "D11",
+  "artifact_path": "runtime_v2/challenge/citizen_state_threat_model.json",
+  "challenge_ref": "runtime_v2/challenge/challenge_artifact.json",
+  "freeze_ref": "runtime_v2/challenge/freeze_artifact.json",
+  "appeal_review_ref": "runtime_v2/challenge/appeal_review_artifact.json",
+  "access_matrix_ref": "runtime_v2/access_control/authority_matrix.json",
+  "quarantine_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+  "threats": [
+    {
+      "threat_id": "insider_operator_abuse",
+      "actor_class": "operator",
+      "attack_path": "operator attempts raw inspection, unauthorized release, or destructive transition despite challenge",
+      "required_controls": [
+        "access authority matrix",
+        "challenge artifact",
+        "freeze artifact",
+        "appeal review evidence"
+      ],
+      "detection_artifacts": [
+        "runtime_v2/access_control/authority_matrix.json",
+        "runtime_v2/challenge/challenge_artifact.json",
+        "runtime_v2/challenge/freeze_artifact.json",
+        "runtime_v2/challenge/appeal_review_artifact.json"
+      ],
+      "fail_closed_behavior": "freeze remains active and release is denied until review resolution",
+      "covered_by_wp13": true
+    },
+    {
+      "threat_id": "compromised_key",
+      "actor_class": "credential_or_key_adversary",
+      "attack_path": "compromised signing or encryption key tries to resume or release stale state",
+      "required_controls": [
+        "continuity proof required",
+        "key evolution must preserve verifiability",
+        "release requires review resolution"
+      ],
+      "detection_artifacts": [
+        "runtime_v2/challenge/freeze_artifact.json",
+        "runtime_v2/challenge/appeal_review_artifact.json",
+        "runtime_v2/private_state/sanctuary_quarantine_artifact.json"
+      ],
+      "fail_closed_behavior": "state remains frozen or quarantined until key continuity is verified",
+      "covered_by_wp13": true
+    },
+    {
+      "threat_id": "malicious_guest",
+      "actor_class": "guest",
+      "attack_path": "guest attempts to challenge, inspect, or project private citizen state without standing",
+      "required_controls": [
+        "standing policy",
+        "access denial events",
+        "raw private-state disclosure denied"
+      ],
+      "detection_artifacts": [
+        "runtime_v2/standing/standing_policy.json",
+        "runtime_v2/access_control/access_events.json",
+        "runtime_v2/challenge/challenge_artifact.json"
+      ],
+      "fail_closed_behavior": "challenge path records the attempt but does not disclose or mutate citizen state",
+      "covered_by_wp13": true
+    },
+    {
+      "threat_id": "equivocation",
+      "actor_class": "runtime_or_storage_adversary",
+      "attack_path": "two incompatible successor claims appear for the same citizen lineage",
+      "required_controls": [
+        "anti-equivocation conflict evidence",
+        "sanctuary quarantine",
+        "freeze active head"
+      ],
+      "detection_artifacts": [
+        "runtime_v2/private_state/anti_equivocation_conflict.json",
+        "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+        "runtime_v2/challenge/freeze_artifact.json"
+      ],
+      "fail_closed_behavior": "activation is blocked and evidence is preserved for review",
+      "covered_by_wp13": true
+    },
+    {
+      "threat_id": "replay",
+      "actor_class": "replay_adversary",
+      "attack_path": "old wake, projection, or release claim is replayed after newer accepted state",
+      "required_controls": [
+        "continuity sequence check",
+        "predecessor linkage check",
+        "review-resolution requirement"
+      ],
+      "detection_artifacts": [
+        "runtime_v2/challenge/challenge_artifact.json",
+        "runtime_v2/challenge/freeze_artifact.json",
+        "runtime_v2/access_control/access_events.json"
+      ],
+      "fail_closed_behavior": "replayed claim cannot advance sequence or active head",
+      "covered_by_wp13": true
+    },
+    {
+      "threat_id": "projection_leakage",
+      "actor_class": "projection_consumer_or_service_actor",
+      "attack_path": "redacted projection is widened into raw private-state disclosure during a challenge",
+      "required_controls": [
+        "observatory redaction policy",
+        "projection publication freeze",
+        "raw private-state disclosure denial"
+      ],
+      "detection_artifacts": [
+        "runtime_v2/observatory/private_state_redaction_policy.json",
+        "runtime_v2/observatory/private_state_projection_packet.json",
+        "runtime_v2/challenge/freeze_artifact.json"
+      ],
+      "fail_closed_behavior": "projection publication remains frozen and raw state is never disclosed",
+      "covered_by_wp13": true
+    },
+    {
+      "threat_id": "unsafe_release_from_quarantine",
+      "actor_class": "operator_or_runtime_release_path",
+      "attack_path": "quarantined state is released without continuity proof, review record, or preserved evidence",
+      "required_controls": [
+        "quarantine release requirements",
+        "appeal review evidence",
+        "release denied until continuity proof"
+      ],
+      "detection_artifacts": [
+        "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+        "runtime_v2/challenge/appeal_review_artifact.json",
+        "access-denial-fixtures-v0-90-3"
+      ],
+      "fail_closed_behavior": "release is denied and the citizen remains in sanctuary/quarantine pending review",
+      "covered_by_wp13": true
+    }
+  ],
+  "universal_controls": [
+    "fail closed before wake activation or projection publication",
+    "emit auditable access events for challenge and appeal",
+    "preserve evidence until review resolution",
+    "deny raw private-state disclosure",
+    "deny release from quarantine without continuity proof"
+  ],
+  "claim_boundary": "WP-13 threat model covers bounded citizen-state abuse paths for D11; it is not a complete security program, market design, or cloud enclave mandate."
+}
