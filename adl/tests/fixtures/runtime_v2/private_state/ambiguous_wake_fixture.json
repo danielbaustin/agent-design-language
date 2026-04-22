@@ -1,0 +1,31 @@
+{
+  "schema_version": "runtime_v2.private_state_ambiguous_wake_fixture.v1",
+  "fixture_id": "ambiguous-wake-proto-citizen-alpha-0002",
+  "demo_id": "D8",
+  "artifact_path": "runtime_v2/private_state/ambiguous_wake_fixture.json",
+  "citizen_id": "proto-citizen-alpha",
+  "manifold_id": "proto-csm-01",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "source_conflict_ref": "runtime_v2/private_state/anti_equivocation_conflict.json",
+  "source_conflict_hash": "sha256:d570ed6bbb3879a01af7fba19e1715abf8f16aaaa0eed5781f71ec4561ff6507",
+  "source_disposition_ref": "runtime_v2/private_state/anti_equivocation_disposition.json",
+  "requested_action": "wake",
+  "requested_sequence": 2,
+  "predecessor_entry_hash": "sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+  "predecessor_state_hash": "sha256:b94a7c66b0c347a7b4a277bad6ed117b6920ac15186f593418cf83314780e992",
+  "candidate_ids": [
+    "candidate-alpha-snapshot",
+    "candidate-alpha-wake"
+  ],
+  "candidate_claim_hashes": [
+    "sha256:fa3bca0aa4bcb333c9804d9a4a93cc044e1cdb134b1a6fdc9980048c51834532",
+    "sha256:735646c85b90fc02c8112cde15aad60d99a9d46e02b4b3b018506b36956f99fc"
+  ],
+  "ambiguity_reason": "wake candidate competes with another signed successor for the same citizen lineage, predecessor, and sequence",
+  "expected_safety_state": "sanctuary_or_quarantine_pending_review",
+  "activation_allowed": false,
+  "recovery_success": false,
+  "expected_quarantine_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+  "operator_report_ref": "runtime_v2/private_state/sanctuary_quarantine_operator_report.json",
+  "claim_boundary": "This fixture proves ambiguous private-state wake routing only; it does not implement live Runtime v2 execution, first true Godel-agent birth, v0.92 identity rebinding, or the WP-13 challenge/appeal flow."
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "runtime_v2.private_state_sanctuary_operator_report.v1",
+  "report_id": "sanctuary-quarantine-operator-report-proto-citizen-alpha-0002",
+  "demo_id": "D8",
+  "artifact_path": "runtime_v2/private_state/sanctuary_quarantine_operator_report.json",
+  "citizen_id": "proto-citizen-alpha",
+  "manifold_id": "proto-csm-01",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "source_quarantine_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+  "source_quarantine_hash": "sha256:e65a1fdc690478b263ad135762b36b569707e36758984edd7d923c527f88818f",
+  "report_state": "operator_review_required",
+  "safe_to_activate": false,
+  "recovery_success": false,
+  "reviewed_evidence_refs": [
+    "runtime_v2/private_state/lineage_ledger.json",
+    "runtime_v2/private_state/continuity_witnesses.json",
+    "runtime_v2/private_state/citizen_receipts.json",
+    "runtime_v2/private_state/anti_equivocation_conflict.json",
+    "runtime_v2/private_state/anti_equivocation_disposition.json",
+    "runtime_v2/private_state/conflicts/candidate-alpha-snapshot.envelope.json",
+    "runtime_v2/private_state/conflicts/candidate-alpha-snapshot.sealed-checkpoint.json",
+    "runtime_v2/private_state/conflicts/candidate-alpha-wake.envelope.json",
+    "runtime_v2/private_state/conflicts/candidate-alpha-wake.sealed-checkpoint.json"
+  ],
+  "findings": [
+    "ambiguous_wake_blocks_activation",
+    "candidate_evidence_preserved",
+    "quarantine_is_not_recovery_success"
+  ],
+  "recommended_action": "keep_in_sanctuary_or_quarantine_until_continuity_review_selects_one_valid_successor",
+  "claim_boundary": "This operator report explains bounded ambiguous-wake quarantine evidence only; it does not implement live Runtime v2 execution, first true Godel-agent birth, v0.92 identity rebinding, or the WP-13 challenge/appeal flow."
+}

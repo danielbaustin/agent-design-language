@@ -152,3 +152,8 @@ pub fn runtime_v2_private_state_anti_equivocation_contract(
 ) -> Result<RuntimeV2PrivateStateAntiEquivocationArtifacts> {
     RuntimeV2PrivateStateAntiEquivocationArtifacts::prototype()
 }
+
+pub fn runtime_v2_private_state_sanctuary_contract(
+) -> Result<RuntimeV2PrivateStateSanctuaryArtifacts> {
+    RuntimeV2PrivateStateSanctuaryArtifacts::prototype()
+}

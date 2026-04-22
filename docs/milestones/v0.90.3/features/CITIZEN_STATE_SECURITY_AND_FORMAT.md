@@ -6,7 +6,8 @@ Planning contract for v0.90.3. WP-03 has landed the canonical private-state
 format decision and fixture-backed projection boundary. WP-04 has landed the
 signed envelope, local trust-root fixture, and fail-closed negative cases for
 the canonical state artifact. WP-08 has landed the first anti-equivocation
-conflict fixture and negative tests.
+conflict fixture and negative tests. WP-09 has landed bounded
+sanctuary/quarantine behavior for ambiguous wake.
 
 ## Purpose
 
@@ -33,8 +34,11 @@ append-only lineage ledger and materialized-head validation rule. WP-07 adds
 continuity-witness and citizen-facing receipt fixtures for major transitions.
 WP-08 adds a conflicting-successor fixture proving that two signed successors
 for the same citizen lineage, predecessor, and sequence cannot both become
-active and must preserve evidence for sanctuary or quarantine review. JSON
-remains a projection and review surface, not private-state authority.
+active and must preserve evidence for sanctuary or quarantine review. WP-09
+adds the corresponding safety-state behavior for ambiguous wake: activation is
+blocked, evidence is preserved, and quarantine is not treated as recovery
+success. JSON remains a projection and review surface, not private-state
+authority.
 
 The format decision must include:
 
@@ -69,6 +73,10 @@ runtime evidence in `adl/src/runtime_v2/private_state_witness.rs`.
 The landed anti-equivocation proof is recorded in
 `docs/milestones/v0.90.3/ANTI_EQUIVOCATION_CONFLICT_v0.90.3.md`, with runtime
 evidence in `adl/src/runtime_v2/private_state_equivocation.rs`.
+
+The landed sanctuary/quarantine proof is recorded in
+`docs/milestones/v0.90.3/SANCTUARY_QUARANTINE_BEHAVIOR_v0.90.3.md`, with
+runtime evidence in `adl/src/runtime_v2/private_state_sanctuary.rs`.
 
 ## Signed Envelope
 

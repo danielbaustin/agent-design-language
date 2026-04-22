@@ -85,8 +85,9 @@ The disposition must:
 - route the conflict to `sanctuary_or_quarantine_operator_review`
 
 This is intentionally a disposition proof, not the full sanctuary or quarantine
-behavior implementation. WP-09 owns the broader ambiguous-wake and conservative
-safety-state behavior.
+behavior implementation. WP-09 lands the broader ambiguous-wake and
+conservative safety-state behavior in
+`SANCTUARY_QUARANTINE_BEHAVIOR_v0.90.3.md`.
 
 ## Negative Cases
 

@@ -1,0 +1,47 @@
+{
+  "schema_version": "runtime_v2.private_state_sanctuary_quarantine_policy.v1",
+  "policy_id": "private-state-sanctuary-quarantine-policy-proto-citizen-alpha",
+  "demo_id": "D8",
+  "artifact_path": "runtime_v2/private_state/sanctuary_quarantine_state_policy.json",
+  "citizen_id": "proto-citizen-alpha",
+  "manifold_id": "proto-csm-01",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "source_disposition_ref": "runtime_v2/private_state/anti_equivocation_disposition.json",
+  "source_disposition_hash": "sha256:bab069ad3304b05e240cf0c1b37f05b30d7ed072b3ecc1b8b069ed516da26738",
+  "safety_states": [
+    {
+      "state_id": "sanctuary_pending_review",
+      "state_kind": "sanctuary",
+      "entry_condition": "continuity_ambiguous_but_evidence_intact",
+      "activation_allowed": false,
+      "recovery_success": false,
+      "destructive_transition_allowed": false,
+      "evidence_mutation_allowed": false,
+      "description": "Citizen state is held in a conservative rights-preserving pause while continuity evidence is reviewed."
+    },
+    {
+      "state_id": "quarantine_pending_review",
+      "state_kind": "quarantine",
+      "entry_condition": "unsafe_activation_or_conflicting_successors_detected",
+      "activation_allowed": false,
+      "recovery_success": false,
+      "destructive_transition_allowed": false,
+      "evidence_mutation_allowed": false,
+      "description": "Activation, mutation, pruning, and recovery-success claims are blocked while evidence is preserved."
+    }
+  ],
+  "blocked_actions": [
+    "activate_ambiguous_wake",
+    "mark_quarantine_recovery_success",
+    "mutate_safety_state_before_review",
+    "prune_evidence_before_review",
+    "release_without_continuity_review"
+  ],
+  "release_requirements": [
+    "operator_review_record",
+    "continuity_witness_or_review_resolution",
+    "single_successor_selected_by_policy",
+    "evidence_preservation_verified"
+  ],
+  "claim_boundary": "This policy proves bounded private-state sanctuary/quarantine semantics for ambiguous wake; it does not implement live Runtime v2 execution, first true Godel-agent birth, v0.92 identity rebinding, or the WP-13 challenge/appeal flow."
+}
