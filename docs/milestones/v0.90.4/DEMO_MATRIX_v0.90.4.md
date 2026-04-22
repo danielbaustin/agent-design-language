@@ -27,4 +27,7 @@ Planning draft. No v0.90.4 issue wave has been opened yet.
 - These demos do not prove full inter-polis economics.
 - These demos do not prove production counterparty identity verification.
 - These demos do not redefine citizen standing or private-state authority.
+- These demos do not prove Governed Tools v1.0, UTS, ACC, tool registry binding,
+  or direct tool execution. Contracts may record tool requirements only as
+  constraints and evidence until v0.90.5.
 - These demos prove bounded contract-market mechanics, not a complete economy.

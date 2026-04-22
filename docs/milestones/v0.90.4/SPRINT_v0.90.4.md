@@ -18,7 +18,9 @@ Goal: make contracts and bids explicit before the market runner exists.
 - WP-09: Delegation and subcontract model
 - WP-10: Resource stewardship bridge
 
-Goal: prove that market state changes are authority-checked and traceable.
+Goal: prove that market state changes are authority-checked and traceable,
+including the rule that tool-mediated requirements are constraints rather than
+tool-call grants.
 
 ## Sprint 3: Runner, Proof, And Negative Cases
 
@@ -46,5 +48,5 @@ Goal: close the milestone with truthful review, release, and handoff evidence.
 
 WP-03 and WP-04 can begin after WP-02 if the authority audit is clear. WP-05
 should wait for both schemas. WP-08 can run beside WP-07 if the transition
-authority model is stable. WP-10 can begin once schemas identify resource
-claims. WP-14A through WP-20 should remain sequential.
+authority model is stable. WP-10 can begin once schemas identify resource and
+tool-requirement claims. WP-14A through WP-20 should remain sequential.

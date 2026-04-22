@@ -9,6 +9,8 @@ The milestone is releasable when:
 
 - v0.90.3 citizen-state dependencies are explicitly inherited or safely
   fixture-backed
+- contracts that mention tool-mediated work express tool needs as constraints,
+  not execution authority
 - contracts and bids have validation fixtures
 - evaluation and selection are reviewable
 - lifecycle transitions are authority-checked
@@ -35,3 +37,5 @@ The closeout should hand off:
 - inter-polis economics follow-ons
 - production contract/legal/billing boundaries
 - any deferred authority or trace negative cases
+- v0.90.5 governed-tools follow-up for UTS, ACC, tool registry binding,
+  executor authority, redaction, replay, denial records, and model testing

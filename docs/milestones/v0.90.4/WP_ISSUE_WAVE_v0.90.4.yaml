@@ -12,6 +12,7 @@ notes:
   - "Do not claim payment settlement, Lightning, x402, or full inter-polis economics in v0.90.4 unless a later decision explicitly changes scope."
   - "Use fixture-first contract-market proof before any production economics claims."
   - "Preserve an explicit demo matrix and feature proof demo WP before docs/review convergence."
+  - "Contracts and bids may describe tool requirements only as constraints and evidence; v0.90.5 owns governed tool-call semantics, UTS, ACC, executor authority, denial records, and model testing."
 card_update_rule:
   - "WP-01 must copy the relevant section from WP_EXECUTION_READINESS_v0.90.4.md into each issue body before implementation."
   - "Cards must include required outputs, required validation, source docs, non-goals, and demo/proof expectations."
@@ -75,7 +76,7 @@ work_packages:
     issue: planned
     title: Resource stewardship bridge
     queue: docs
-    outcome: resource bridge decision, fixture, and boundary notes
+    outcome: resource bridge decision, fixture, tool-requirement boundary, and boundary notes
     depends_on: WP-03-WP-09
   - wp: WP-11
     issue: planned
@@ -135,7 +136,7 @@ work_packages:
     issue: planned
     title: Next milestone planning handoff
     queue: docs
-    outcome: handoff docs and backlog updates
+    outcome: v0.90.5 governed-tools handoff docs and backlog updates
     depends_on: WP-18
   - wp: WP-20
     issue: planned

@@ -18,9 +18,14 @@ Evaluation should support:
 - critical-criterion failure
 - human override with rationale
 - tie-break rules
+- tool-readiness checks when a bid depends on tool-mediated execution
 
 The evaluation artifact must explain selection rather than merely record a
 winner.
+
+If a bid depends on tools, evaluation may record that dependency and whether the
+required governed-tool surface exists. It must not treat valid JSON, model
+confidence, or adapter availability as authority to execute the tool.
 
 ## Transition Authority
 
@@ -55,3 +60,4 @@ The implementation should include denial cases for:
 - completion without required artifacts
 - cancellation after completion
 - human override without traceable rationale
+- selection that assumes a tool may execute without governed-tool authority

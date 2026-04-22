@@ -25,3 +25,4 @@
 | --- | --- | --- |
 | ideas/V0903_CITIZEN_STATE_DEPENDENCY.md | explain why economics depends on citizen-state authority | context only |
 | ideas/PAYMENT_AND_INTERPOLIS_DEFERRAL.md | preserve payment and inter-polis boundaries | context only |
+| ideas/V0905_GOVERNED_TOOLS_HANDOFF.md | preserve the boundary between contract-market requirements and governed tool-call execution | context only |

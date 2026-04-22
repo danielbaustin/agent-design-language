@@ -10,6 +10,8 @@ Read them with the milestone boundary in mind:
 - v0.90.4 owns contracts, bids, evaluation, lifecycle authority, delegation,
   external counterparty participation, fixture-backed execution, and bounded
   review summaries.
+- v0.90.5 owns governed tool-call semantics, UTS, ACC, registry binding,
+  executor authority, denial records, replay/redaction, and model testing.
 - payment rails and full inter-polis economics remain later work.
 
 ## Docs

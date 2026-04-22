@@ -31,5 +31,7 @@ reviewable market proof.
 - v0.90.4 is not planned to ship full inter-polis economics.
 - v0.90.4 is not planned to redefine citizen standing or private-state
   authority.
+- v0.90.4 is not planned to ship Governed Tools v1.0, UTS, ACC, or production
+  tool-call execution authority.
 - v0.90.4 is not planned to ship production legal contracting, billing, tax, or
   counterparty identity verification.

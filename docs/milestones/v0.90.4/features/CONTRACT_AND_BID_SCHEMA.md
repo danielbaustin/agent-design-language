@@ -18,6 +18,7 @@ A contract should include:
 - scope, inputs, and deliverables
 - process rules
 - constraints
+- tool or adapter requirements, if the work expects tool-mediated execution
 - timeline
 - evaluation criteria
 - artifact references
@@ -34,6 +35,8 @@ A bid should include:
 - bidding agent or counterparty
 - proposal
 - cost or resource claim
+- expected tool or adapter usage, expressed as a requirement rather than an
+  execution grant
 - confidence
 - commitments
 - exceptions
@@ -51,8 +54,14 @@ Minimum validation should reject:
 - contract without trace requirements
 - bid without commitments or exceptions
 - artifact references without reviewable paths
+- tool requirement that implies direct execution authority
 
 ## Non-Claims
 
 These schemas do not settle payment, legal status, tax, or production identity.
 They create reviewable ADL artifacts for bounded market execution.
+
+These schemas also do not authorize tool calls. Tool requirements are contract
+constraints and review evidence only until the governed-tools layer supplies
+UTS, ACC, registry binding, executor authority, denial records, redaction, and
+replay semantics.

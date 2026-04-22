@@ -24,6 +24,8 @@ A reviewer can open one contract-market proof packet and see:
 - a subcontract that is linked to the parent contract without hiding parent
   responsibility
 - external counterparty evidence that is explicit about trust and limits
+- any tool-mediated requirement recorded as a contract constraint, not as
+  permission to execute a tool
 - a final review summary that distinguishes proof, judgment, warnings, and
   residual risk
 
@@ -40,3 +42,6 @@ This milestone must not pretend that a contract-market proof is a complete
 economy. It must not blur citizen standing, governance authority, or private
 state boundaries. It must not import real payment rails before the authority and
 evidence model is trustworthy.
+
+It must also avoid treating tool calls as an incidental implementation detail.
+Contracts may need tools, but governed tool-call semantics belong to v0.90.5.
