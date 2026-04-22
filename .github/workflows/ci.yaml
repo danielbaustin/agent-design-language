@@ -60,6 +60,10 @@ jobs:
         run: bash adl/tools/test_check_coverage_impact.sh
         working-directory: .
 
+      - name: path-policy PR-fast coverage contract
+        run: bash adl/tools/test_ci_path_policy.sh
+        working-directory: .
+
       - name: guardrail (no new legacy refs)
         run: bash adl/tools/check_no_new_legacy_swarm_refs.sh
         working-directory: .
@@ -98,8 +102,14 @@ jobs:
         run: bash tools/check_release_notes_commands.sh
 
       - name: test
-        if: steps.path-policy.outputs.rust_required == 'true'
+        if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
         run: cargo test
+
+      - name: test covered by full coverage lane
+        if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required == 'true'
+        run: |
+          echo "Skipping standalone cargo test because this event requires the full cargo-llvm-cov lane."
+          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
 
       - name: Rust validation skipped by path policy
         if: steps.path-policy.outputs.rust_required != 'true'
@@ -143,28 +153,28 @@ jobs:
         working-directory: .
 
       - name: Install Rust toolchain
-        if: steps.path-policy.outputs.coverage_required == 'true'
+        if: steps.path-policy.outputs.full_coverage_required == 'true'
         uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
         with:
           components: llvm-tools-preview
 
       - name: Rust cache
-        if: steps.path-policy.outputs.coverage_required == 'true'
+        if: steps.path-policy.outputs.full_coverage_required == 'true'
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
         with:
           workspaces: |
             adl -> target
 
       - name: Install cargo-llvm-cov
-        if: steps.path-policy.outputs.coverage_required == 'true'
+        if: steps.path-policy.outputs.full_coverage_required == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
 
       - name: Coverage run and summary (json)
-        if: steps.path-policy.outputs.coverage_required == 'true'
+        if: steps.path-policy.outputs.full_coverage_required == 'true'
         run: cargo llvm-cov --workspace --all-features --json --summary-only --output-path coverage-summary.json
 
       - name: Coverage-impact changed-source gate
-        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true'
+        if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'
         env:
           PER_FILE_LINE_THRESHOLD: "80"
         run: |
@@ -175,8 +185,29 @@ jobs:
             --threshold "$PER_FILE_LINE_THRESHOLD"
         working-directory: .
 
+      - name: PR coverage-impact preflight
+        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
+        env:
+          PER_FILE_LINE_THRESHOLD: "80"
+        run: |
+          bash adl/tools/check_coverage_impact.sh \
+            --base "${{ github.event.pull_request.base.sha }}" \
+            --head "${{ github.event.pull_request.head.sha }}" \
+            --require-summary-for-risk \
+            --threshold "$PER_FILE_LINE_THRESHOLD"
+        working-directory: .
+
+      - name: Full coverage deferred by PR policy
+        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
+        run: |
+          echo "Full cargo-llvm-cov is deferred for this PR to avoid duplicate full test execution."
+          echo "This check ran the changed-source coverage-impact preflight instead."
+          echo "Full coverage remains required on push-to-main, nightly coverage ratchet, and fail-closed classification."
+          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+        working-directory: .
+
       - name: Enforce coverage policy gates (workspace + per-file)
-        if: steps.path-policy.outputs.coverage_required == 'true'
+        if: steps.path-policy.outputs.full_coverage_required == 'true'
         env:
           WORKSPACE_LINE_THRESHOLD: "90"
           PER_FILE_LINE_THRESHOLD: "80"
@@ -185,24 +216,24 @@ jobs:
           bash tools/enforce_coverage_gates.sh coverage-summary.json
 
       - name: Coverage (ADL Rust workspace lcov)
-        if: steps.path-policy.outputs.coverage_required == 'true'
+        if: steps.path-policy.outputs.full_coverage_required == 'true'
         run: cargo llvm-cov report --lcov --output-path lcov.info
 
       - name: Coverage summary (text)
-        if: steps.path-policy.outputs.coverage_required == 'true'
+        if: steps.path-policy.outputs.full_coverage_required == 'true'
         run: cargo llvm-cov report --summary-only | tee coverage-summary.txt
 
       - name: Verify generated lcov file
-        if: steps.path-policy.outputs.coverage_required == 'true'
+        if: steps.path-policy.outputs.full_coverage_required == 'true'
         run: test -s lcov.info && ls -l lcov.info
 
       - name: Verify lcov path from repository root
-        if: steps.path-policy.outputs.coverage_required == 'true'
+        if: steps.path-policy.outputs.full_coverage_required == 'true'
         run: test -s adl/lcov.info && ls -l adl/lcov.info
         working-directory: .
 
       - name: Upload coverage artifact
-        if: steps.path-policy.outputs.coverage_required == 'true'
+        if: steps.path-policy.outputs.full_coverage_required == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: adl-coverage-lcov
@@ -221,7 +252,7 @@ jobs:
         working-directory: .
 
       - name: Upload coverage to Codecov
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.path-policy.outputs.coverage_required == 'true'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.path-policy.outputs.full_coverage_required == 'true'
         uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

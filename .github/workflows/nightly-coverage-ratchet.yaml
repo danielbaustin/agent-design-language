@@ -40,11 +40,11 @@ jobs:
         continue-on-error: true
         run: |
           set -euo pipefail
-          cargo llvm-cov --summary-only | tee coverage-summary.txt
-          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
           cargo fmt --all -- --check
           cargo clippy --all-targets -- -D warnings
-          cargo test
+          cargo llvm-cov --summary-only | tee coverage-summary.txt
+          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+          cargo test --doc
 
       - name: Build nightly report
         id: report
