@@ -63,8 +63,9 @@ That means the feature story should be read this way:
   Observatory band
 - `v0.90.2` added the implemented first bounded CSM run and Runtime v2
   hardening band
-- `v0.90.3` is the active citizen-state, standing, private-state, and early
-  forward-governance planning band
+- `v0.90.3` is the active citizen-state substrate band: private-state authority,
+  signed envelopes, local sealing, lineage, witnesses, standing, access control,
+  redacted projections, challenge/appeal, and the inhabited Observatory demo
 - `v0.90.4` through `v0.95` are the next planned capability bands
 
 ## ADL at a Glance
@@ -142,7 +143,7 @@ ADL already provides a serious platform baseline:
 | Milestone compression and repo visibility prototypes | Implemented baseline | `v0.90` compression and repo-visibility docs/proofs | Deepen through `v0.90.1+` |
 | HTML milestone dashboard and compression reporting | Planned | backlog item and milestone-compression planning surfaces | Future compression/dashboard lane |
 | Runtime v2 foundation prototype | Implemented baseline | `v0.90.1` feature contracts, Runtime v2 WPs, integrated demo, and proof packet | Foundation complete; hardened by `v0.90.2` |
-| CSM Observatory visibility and operator-report surfaces | Implemented baseline | visibility packet, static console, operator report, CLI bundle, command packet design, v0.90.2 operator report integration | Deepen through redacted projection and live operator integration |
+| CSM Observatory visibility and operator-report surfaces | Implemented baseline | visibility packet, static console, operator report, CLI bundle, command packet design, v0.90.2 operator report integration, v0.90.3 redacted projections, multimode UI architecture, and inhabited flagship demo | Deepen through active operator integration |
 | Runtime v2 hardening, recovery, quarantine, and expanded invariants | Implemented baseline | `v0.90.2` implementation docs, proof packets, tests, and demo matrix | Complete baseline; consumed by Runtime v2 follow-on milestones |
 | First bounded CSM run | Implemented baseline | `v0.90.2` integrated first-run demo, feature-proof coverage, CSM run packet, Observatory report | Complete baseline; deepened by v0.90.3 citizen-state work |
 | Third-party review and review-quality gates | Implemented baseline | v0.90.1 WP-15A, v0.90.2 review-tail planning, review handoff packets, finding disposition | Harden through release tails |
@@ -150,7 +151,7 @@ ADL already provides a serious platform baseline:
 | CSM Shepherd model and Gemma training path | Planned | ANRM comparison results and evaluator/scaffold backlog | Future shepherd/evaluator/training lane |
 | Aptitude Atlas model-evaluation platform | Planned | TBD/product planning and backlog issues | Future product/project lane |
 | CodeBuddy repo-review product layer | Planned | CodeBuddy planning, repo-review skills, product-report backlog | Future product/project lane |
-| Governed tool calls and capability contracts | Planned | `TBD/tools` Universal Tool Schema, ADL Capability Contract, and tool-to-capability compiler planning | Near-term tools/runtime/security lane |
+| Governed tool calls and capability contracts | Planned | `docs/milestones/v0.90.5` Governed Tools v1.0 planning, Universal Tool Schema, ADL Capability Contract, and tool-to-capability compiler design | `v0.90.5` |
 | Cognitive Compression Cost instrumentation | Implemented first pass | CCC v0 fixture extractor, generated comparison report, validation command, metric draft, and milestone-compression planning | Harden toward real trace ingestion and later Aptitude Atlas/reporting lanes |
 | Automated repository modernization and external refactoring integration | Deferred | backlog note for ADL-to-Moderne or direct modernization workflows | Future product/tooling lane if promoted |
 | Web-based code editor integration | Planned | editor backlog issue and skills-wiring planning | Future editor/operator lane |
@@ -160,7 +161,7 @@ ADL already provides a serious platform baseline:
 | Identity, capability, names, and continuity substrate | Planned | `v0.92` identity, continuity, and birthday allocation plan | `v0.92` |
 | First true Gödel-agent birthday | Planned | `v0.92` identity, continuity, and birthday allocation plan plus Runtime v2 birthday boundary roadmap | `v0.92` |
 | Governance, delegation, IAM, social contract | Planned | `v0.93` constitutional citizenship and polis-governance allocation plan | `v0.93` |
-| Economics, accounting, and payment substrate | Planned | economics planning corpus and roadmap docs | `v0.93` / `v0.94` |
+| Economics, accounting, and payment substrate | Planned | `docs/milestones/v0.90.4` citizen economics and contract-market planning | `v0.90.4` |
 | Distributed execution integration | Partially implemented | cluster groundwork plus planning docs | `v0.94` / `v0.95` |
 | Demo catalog and polished MVP walkthrough | Partially implemented | milestone demo matrices and reviewer packages | `v0.95` |
 | Control-plane Rust migration / tooling hardening | Partially implemented | mixed Rust/shell control plane and active tooling hardening | `v0.95` |
@@ -186,8 +187,9 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.90` | Long-lived supervisor, heartbeat, cycle manifests, artifact contracts, continuity handles, operator safety, status/inspection boundary, stock-league demos, repo visibility, milestone compression, CodeBuddy showcase, architecture-document generation, coverage ratchet, Rust refactoring tracker, ADR remediation, internal review, and third-party review closeout. |
 | `v0.90.1` | Runtime v2 foundation, manifold/snapshot contracts, kernel/control-plane boundaries, provisional citizens, invariant/security-boundary proof, CSM Observatory visibility packet, static console, operator report, CLI bundle, command-packet design, ANRM shepherd experiments, third-party review as WP-15A, Aptitude Atlas planning, and CodeBuddy product-lane planning. |
 | `v0.90.2` | Runtime v2 hardening, expanded invariants, violation artifacts, recovery/quarantine, operator review surfaces, stronger security-boundary evidence, CSM Observatory integration, and first meaningful CSM-run preparation. |
-| `v0.90.3` | Citizen state security, standing, private-state envelopes, access control, redacted projections, and forward planning for constitutional citizenship/governance prerequisites. |
-| `v0.90.4+` | Governed tool calls, cognitive compression metrics, economics/contract-market work if promoted, and other near-term architecture slices as scheduled. |
+| `v0.90.3` | Citizen state security, standing, canonical private-state authority, signed envelopes, local sealing, append-only lineage, continuity witnesses/receipts, anti-equivocation, sanctuary/quarantine, access control, redacted projections, challenge/appeal/threat-model evidence, inhabited Observatory flagship demo, and forward planning for later governance prerequisites. |
+| `v0.90.4` | Citizen economics and contract-market planning/implementation lane, with resource stewardship carried forward from v0.90.3. |
+| `v0.90.5` | Governed Tools v1.0: Universal Tool Schema, ADL Capability Contract, capability-to-tool binding, policy enforcement, audit, privacy, and model compatibility proof. |
 | `v0.91` | Wellbeing and happiness, affect, kindness, humor, moral cognition, and the evaluation surfaces needed for emotionally and normatively legible agents. |
 | `v0.92` | Identity-bearing agent substrate, stable names, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
 | `v0.93` | Governance, delegation, IAM, social contract, policy/constitutional surfaces, rights/duties, and accountable multi-agent society boundaries. |
@@ -351,6 +353,32 @@ run:
 - access-control semantics for who may inspect, project, wake, migrate, or
   challenge citizen state
 
+### v0.90.4 - Citizen Economics And Contract Markets
+
+`v0.90.4` is the planned home for citizen economics:
+- resource stewardship
+- contract-market shape
+- accounting and allocation evidence
+- citizen-safe economic boundaries
+- non-payment proof surfaces before any payment rail claims
+
+This milestone should consume the v0.90.3 economics placement bridge rather
+than hiding economics inside citizen-state security work.
+
+### v0.90.5 - Governed Tools v1.0
+
+`v0.90.5` is the planned home for governed tool calls:
+- Universal Tool Schema
+- ADL Capability Contract
+- capability-to-tool binding
+- authority, privacy, and audit semantics
+- denial and misuse proof surfaces
+- model compatibility testing
+
+Tools are first-class ADL primitives, but the current industry pattern is too
+unsafe to treat as a production governance model. This milestone should make
+tool calls policy-mediated, inspectable, and fail-closed.
+
 ### v0.91 - Affect and Moral Cognition
 
 `v0.91` is where ADL’s cognitive architecture becomes more emotionally and
@@ -397,18 +425,12 @@ runtime lifecycle mechanics.
 - policy and constitutional surfaces
 - rights/duties and social contract surfaces
 
-### v0.93 - v0.94 Economics and Payment Substrate
+### Later Economics And Payment Substrate
 
-The planning corpus already points toward a serious economics band:
-- accounting schema
-- economic agency
-- governance rules
-- payment adapters
-- Lightning / x402 experiments
-- market and settlement surfaces
-
-This is an important future platform direction, even though it is not part of
-the current `v0.90.3` execution band.
+v0.90.4 should define the citizen-economics and contract-market substrate.
+Payment adapters, settlement rails, Lightning / x402 experiments, and
+cross-polis economic integration remain later extensions unless v0.90.4
+explicitly promotes a bounded proof.
 
 ### v0.94 - Integration and Dependency Closure
 

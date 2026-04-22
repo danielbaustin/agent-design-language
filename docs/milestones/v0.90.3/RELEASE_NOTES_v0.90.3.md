@@ -3,6 +3,9 @@
 ## Status
 
 Draft release notes. Do not publish as shipped scope until the milestone closes.
+WP-15 has created the release-readiness reviewer entry surface after WP-14A
+landed feature-proof coverage. Internal review finalization, third-party
+review, remediation, handoff, and ceremony remain release-tail gates.
 
 ## Planned Headline
 
@@ -24,6 +27,7 @@ reviewable foundation for protected citizen continuity.
 - continuity challenge and appeal flow
 - citizen-state threat model
 - narrow economics placement decision for v0.90.4 handoff
+- inhabited CSM Observatory flagship proof demo
 
 ## Planned Non-Claims
 

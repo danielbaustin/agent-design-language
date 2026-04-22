@@ -30,6 +30,7 @@ For the active v0.90.3 citizen-state substrate package, start with:
 - `docs/milestones/v0.90.3/FEATURE_DOCS_v0.90.3.md`
 - `docs/milestones/v0.90.3/MILESTONE_CHECKLIST_v0.90.3.md`
 - `docs/milestones/v0.90.3/RELEASE_PLAN_v0.90.3.md`
+- `docs/milestones/v0.90.3/RELEASE_READINESS_v0.90.3.md`
 - `docs/milestones/v0.90.3/RELEASE_NOTES_v0.90.3.md`
 - `docs/milestones/v0.90.3/WP_EXECUTION_READINESS_v0.90.3.md`
 - `docs/milestones/v0.90.3/WP_ISSUE_WAVE_v0.90.3.yaml`
@@ -39,9 +40,11 @@ For the active v0.90.3 citizen-state substrate package, start with:
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
-The current v0.90.3 review posture is active issue-wave execution. The wave is
-open as #2327-#2347. WP-01 is #2327, WP-02 through WP-14 are #2328-#2340,
-WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
+The current v0.90.3 review posture is release-tail convergence before external
+review. The wave is open as #2327-#2347. WP-01 is #2327, WP-02 through WP-14
+are #2328-#2340, WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
+WP-14 has landed the inhabited CSM Observatory flagship demo, and WP-14A has
+landed the explicit feature-proof coverage record.
 
 v0.90.3 should produce the citizen-state substrate: canonical private state,
 signed envelopes, local-first sealing, append-only lineage, continuity
@@ -68,6 +71,20 @@ Important v0.90.3 non-claims:
 During execution, verify that every WP preserves the required outputs and
 validation from `WP_EXECUTION_READINESS_v0.90.3.md` rather than widening into
 generic implementation work.
+
+WP-15 tracker status to preserve during review:
+- coverage truth remains the current tracked `92.40%` workspace line coverage
+  from the recent quality gate, rounded to the intended `93%` tranche; WP-15 is
+  docs-only and does not claim a fresh full coverage run
+- changed-path CI policy is active for docs-heavy closeout PRs; green
+  docs-only `adl-coverage` checks are PR evidence, not release coverage
+  evidence
+- #2409 has also landed the PR-fast validation split that avoids requiring two
+  full Rust test universes for the same PR while preserving release coverage
+  boundaries
+- internal review status is release-tail truth: no P0/P1 blocker has been found
+  in the citizen-state substrate; any remaining review items should be tracked
+  as minor P2/P3 follow-ups or explicit deferrals before third-party review
 
 For the most recently completed v0.90.2 release package, start with:
 
