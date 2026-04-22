@@ -30,6 +30,7 @@
 | `SANCTUARY_QUARANTINE_BEHAVIOR_v0.90.3.md` | D8 sanctuary/quarantine state policy, ambiguous-wake activation block, evidence-preserving quarantine artifact, and operator report | WP-09 |
 | `REDACTED_OBSERVATORY_PROJECTIONS_v0.90.3.md` | D9 redaction policy, audience projection packet, operator report, and leakage/authority negative cases for private citizen-state Observatory visibility | WP-10 |
 | `STANDING_COMMUNICATION_BOUNDARY_v0.90.3.md` | D10 standing policy, standing events, communication examples, and negative cases for guest, service actor, communication-inspection, and naked-actor boundaries | WP-11 |
+| `ACCESS_CONTROL_SEMANTICS_v0.90.3.md` | D10 authority matrix, access event packet, and denial fixtures for inspection, decryption, projection, migration, wake, quarantine, challenge, appeal, and release | WP-12 |
 
 ## Context / Idea Docs
 

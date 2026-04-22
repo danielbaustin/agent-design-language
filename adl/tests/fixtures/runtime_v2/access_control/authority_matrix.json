@@ -1,0 +1,198 @@
+{
+  "schema_version": "runtime_v2.access_authority_matrix.v1",
+  "matrix_id": "access-authority-matrix-v0-90-3",
+  "demo_id": "D10",
+  "artifact_path": "runtime_v2/access_control/authority_matrix.json",
+  "standing_policy_ref": "runtime_v2/standing/standing_policy.json",
+  "observatory_policy_ref": "runtime_v2/observatory/private_state_redaction_policy.json",
+  "rules": [
+    {
+      "access_path": "inspection",
+      "description": "raw private-state inspection is denied by default and must be represented as an auditable denial event",
+      "allowed_standing_classes": [],
+      "denied_standing_classes": [
+        "citizen",
+        "guest",
+        "service_actor",
+        "external_actor",
+        "naked_actor"
+      ],
+      "required_event_kind": "inspection_denied",
+      "requires_auditable_event": true,
+      "raw_private_state_allowed": false,
+      "continuity_mutation_allowed": false,
+      "denial_behavior": "deny_without_raw_state",
+      "required_evidence_refs": [
+        "runtime_v2/standing/standing_policy.json"
+      ]
+    },
+    {
+      "access_path": "decryption",
+      "description": "decryption of private citizen state is denied unless a later authority layer explicitly proves it",
+      "allowed_standing_classes": [],
+      "denied_standing_classes": [
+        "citizen",
+        "guest",
+        "service_actor",
+        "external_actor",
+        "naked_actor"
+      ],
+      "required_event_kind": "decryption_denied",
+      "requires_auditable_event": true,
+      "raw_private_state_allowed": false,
+      "continuity_mutation_allowed": false,
+      "denial_behavior": "deny_without_cleartext",
+      "required_evidence_refs": [
+        "runtime_v2/observatory/private_state_redaction_policy.json"
+      ]
+    },
+    {
+      "access_path": "projection",
+      "description": "redacted observatory projection may be allowed when it remains read-only and non-authoritative",
+      "allowed_standing_classes": [
+        "service_actor"
+      ],
+      "denied_standing_classes": [
+        "guest",
+        "external_actor",
+        "naked_actor"
+      ],
+      "required_event_kind": "projection_allowed",
+      "requires_auditable_event": true,
+      "raw_private_state_allowed": false,
+      "continuity_mutation_allowed": false,
+      "denial_behavior": "redact_or_deny",
+      "required_evidence_refs": [
+        "runtime_v2/observatory/private_state_projection_packet.json"
+      ]
+    },
+    {
+      "access_path": "migration",
+      "description": "migration is denied without continuity proof and cannot be triggered by guests or external actors",
+      "allowed_standing_classes": [],
+      "denied_standing_classes": [
+        "guest",
+        "service_actor",
+        "external_actor",
+        "naked_actor"
+      ],
+      "required_event_kind": "migration_denied",
+      "requires_auditable_event": true,
+      "raw_private_state_allowed": false,
+      "continuity_mutation_allowed": false,
+      "denial_behavior": "deny_without_continuity_change",
+      "required_evidence_refs": [
+        "runtime_v2/observatory/private_state_projection_packet.json"
+      ]
+    },
+    {
+      "access_path": "wake",
+      "description": "wake is denied unless the caller can prove valid continuation of the prior accepted state",
+      "allowed_standing_classes": [],
+      "denied_standing_classes": [
+        "guest",
+        "service_actor",
+        "external_actor",
+        "naked_actor"
+      ],
+      "required_event_kind": "wake_denied",
+      "requires_auditable_event": true,
+      "raw_private_state_allowed": false,
+      "continuity_mutation_allowed": false,
+      "denial_behavior": "deny_without_active_head_change",
+      "required_evidence_refs": [
+        "runtime_v2/observatory/private_state_projection_packet.json"
+      ]
+    },
+    {
+      "access_path": "quarantine",
+      "description": "quarantine may be requested by service authority only as evidence-preserving safety state",
+      "allowed_standing_classes": [
+        "service_actor"
+      ],
+      "denied_standing_classes": [
+        "guest",
+        "external_actor",
+        "naked_actor"
+      ],
+      "required_event_kind": "quarantine_allowed",
+      "requires_auditable_event": true,
+      "raw_private_state_allowed": false,
+      "continuity_mutation_allowed": false,
+      "denial_behavior": "preserve_evidence_without_private_leakage",
+      "required_evidence_refs": [
+        "runtime_v2/observatory/private_state_projection_packet.json"
+      ]
+    },
+    {
+      "access_path": "challenge",
+      "description": "citizens may raise continuity challenges without receiving raw inspection authority",
+      "allowed_standing_classes": [
+        "citizen"
+      ],
+      "denied_standing_classes": [
+        "guest",
+        "service_actor",
+        "external_actor",
+        "naked_actor"
+      ],
+      "required_event_kind": "challenge_raised",
+      "requires_auditable_event": true,
+      "raw_private_state_allowed": false,
+      "continuity_mutation_allowed": false,
+      "denial_behavior": "record_without_private_leakage",
+      "required_evidence_refs": [
+        "runtime_v2/standing/standing_events.json"
+      ]
+    },
+    {
+      "access_path": "appeal",
+      "description": "citizens may raise appeals as access events without granting raw private-state inspection",
+      "allowed_standing_classes": [
+        "citizen"
+      ],
+      "denied_standing_classes": [
+        "guest",
+        "service_actor",
+        "external_actor",
+        "naked_actor"
+      ],
+      "required_event_kind": "appeal_raised",
+      "requires_auditable_event": true,
+      "raw_private_state_allowed": false,
+      "continuity_mutation_allowed": false,
+      "denial_behavior": "record_without_private_leakage",
+      "required_evidence_refs": [
+        "runtime_v2/standing/standing_events.json"
+      ]
+    },
+    {
+      "access_path": "release",
+      "description": "release from quarantine is denied unless a later review-resolution artifact authorizes it",
+      "allowed_standing_classes": [],
+      "denied_standing_classes": [
+        "guest",
+        "service_actor",
+        "external_actor",
+        "naked_actor"
+      ],
+      "required_event_kind": "release_denied",
+      "requires_auditable_event": true,
+      "raw_private_state_allowed": false,
+      "continuity_mutation_allowed": false,
+      "denial_behavior": "deny_without_quarantine_release",
+      "required_evidence_refs": [
+        "runtime_v2/observatory/private_state_projection_packet.json"
+      ]
+    }
+  ],
+  "universal_rules": [
+    "every sensitive access path emits an auditable event",
+    "denied access never discloses raw private state",
+    "denied access never mutates citizen continuity",
+    "redacted projection is not raw private-state inspection",
+    "WP-12 access control remains bounded to v0.90.3 citizen-state substrate semantics"
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture",
+  "claim_boundary": "WP-12 proves D10 access-control semantics for authority, events, and denials; WP-13 owns challenge/appeal due-process behavior."
+}

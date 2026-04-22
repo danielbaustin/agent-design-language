@@ -1,3 +1,4 @@
+mod access_control;
 mod boot_admission;
 mod citizen;
 mod contracts;
@@ -33,6 +34,8 @@ use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
+#[allow(unused_imports)]
+pub use access_control::*;
 #[allow(unused_imports)]
 pub use boot_admission::*;
 #[allow(unused_imports)]
