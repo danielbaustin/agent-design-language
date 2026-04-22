@@ -17,6 +17,7 @@ mod invariant_violation;
 mod kernel_loop;
 mod manifold;
 mod observatory;
+mod observatory_flagship;
 mod operator_control;
 mod private_state;
 mod private_state_envelope;

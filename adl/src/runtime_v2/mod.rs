@@ -14,6 +14,7 @@ mod invariant_contract;
 mod kernel_loop;
 mod manifold;
 mod observatory;
+mod observatory_flagship;
 mod operator;
 mod private_state;
 mod private_state_envelope;
@@ -67,6 +68,8 @@ pub use kernel_loop::*;
 pub use manifold::*;
 #[allow(unused_imports)]
 pub use observatory::*;
+#[allow(unused_imports)]
+pub use observatory_flagship::*;
 #[allow(unused_imports)]
 pub use operator::*;
 #[allow(unused_imports)]
