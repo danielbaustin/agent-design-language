@@ -20,6 +20,7 @@ mod private_state;
 mod private_state_envelope;
 mod private_state_equivocation;
 mod private_state_lineage;
+mod private_state_observatory;
 mod private_state_sanctuary;
 mod private_state_sealing;
 mod private_state_witness;

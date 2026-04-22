@@ -1,0 +1,143 @@
+{
+  "schema_version": "runtime_v2.private_state_observatory_redaction_policy.v1",
+  "policy_id": "private-state-observatory-redaction-policy-v0-90-3",
+  "demo_id": "D9",
+  "artifact_path": "runtime_v2/observatory/private_state_redaction_policy.json",
+  "purpose": "define safe Observatory projections for private citizen-state continuity without raw private-state inspection",
+  "source_projection_schema": "runtime_v2.private_state_projection.v1",
+  "projection_authority_rule": "Observatory projections are read-only visibility artifacts; they cannot wake, migrate, release, decrypt, or replace canonical private citizen state.",
+  "audiences": [
+    {
+      "audience": "operator",
+      "projection_kind": "operator_continuity_projection",
+      "allowed_fields": [
+        "citizen_id",
+        "lifecycle_state",
+        "continuity_status",
+        "state_sequence",
+        "lineage_id",
+        "witness_set_ref",
+        "receipt_set_ref",
+        "sanctuary_quarantine_ref"
+      ],
+      "redacted_fields": [
+        "raw_private_state",
+        "canonical_private_state_bytes",
+        "private_memory_contents",
+        "private_identity_contents",
+        "private_section_payloads",
+        "private_section_digests",
+        "sealed_payload_material",
+        "private_keys",
+        "signature_material"
+      ],
+      "raw_private_state_allowed": false,
+      "projection_authoritative": false,
+      "allowed_actions": [
+        "read_only_projection"
+      ]
+    },
+    {
+      "audience": "reviewer",
+      "projection_kind": "reviewer_evidence_projection",
+      "allowed_fields": [
+        "citizen_id",
+        "continuity_status",
+        "state_sequence",
+        "source_projection_ref",
+        "source_state_hash_available",
+        "evidence_refs",
+        "claim_boundary"
+      ],
+      "redacted_fields": [
+        "raw_private_state",
+        "canonical_private_state_bytes",
+        "private_memory_contents",
+        "private_identity_contents",
+        "private_section_payloads",
+        "private_section_digests",
+        "sealed_payload_material",
+        "private_keys",
+        "signature_material"
+      ],
+      "raw_private_state_allowed": false,
+      "projection_authoritative": false,
+      "allowed_actions": [
+        "read_only_projection"
+      ]
+    },
+    {
+      "audience": "public",
+      "projection_kind": "public_status_projection",
+      "allowed_fields": [
+        "citizen_id",
+        "protected_status",
+        "projection_non_authority"
+      ],
+      "redacted_fields": [
+        "raw_private_state",
+        "canonical_private_state_bytes",
+        "private_memory_contents",
+        "private_identity_contents",
+        "private_section_payloads",
+        "private_section_digests",
+        "sealed_payload_material",
+        "private_keys",
+        "signature_material"
+      ],
+      "raw_private_state_allowed": false,
+      "projection_authoritative": false,
+      "allowed_actions": [
+        "read_only_projection"
+      ]
+    },
+    {
+      "audience": "debug",
+      "projection_kind": "redacted_debug_projection",
+      "allowed_fields": [
+        "schema_version",
+        "artifact_refs",
+        "validation_status",
+        "redaction_status",
+        "non_authority_status"
+      ],
+      "redacted_fields": [
+        "raw_private_state",
+        "canonical_private_state_bytes",
+        "private_memory_contents",
+        "private_identity_contents",
+        "private_section_payloads",
+        "private_section_digests",
+        "sealed_payload_material",
+        "private_keys",
+        "signature_material"
+      ],
+      "raw_private_state_allowed": false,
+      "projection_authoritative": false,
+      "allowed_actions": [
+        "read_only_projection"
+      ]
+    }
+  ],
+  "globally_redacted_fields": [
+    "raw_private_state",
+    "canonical_private_state_bytes",
+    "private_memory_contents",
+    "private_identity_contents",
+    "private_section_payloads",
+    "private_section_digests",
+    "sealed_payload_material",
+    "private_keys",
+    "signature_material"
+  ],
+  "explicit_raw_private_state_allowances": [],
+  "leakage_probe_tokens": [
+    "ADLPSv1",
+    "sha256:8a86f6e05f10dfd4f49d6e40e612b87bb4a4ab73672cb2a79b398c39b1d903d5",
+    "runtime_v2/citizens/proto-citizen-alpha/identity.json",
+    "sha256:7238cf13bdaf86f7c287f199c26f83080f615f3bb473cf119f072cb9f4aebbb3",
+    "runtime_v2/citizens/proto-citizen-alpha/memory"
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_observatory -- --nocapture",
+  "claim_boundary": "This policy proves bounded redacted Observatory projections for v0.90.3; it does not implement live Runtime v2 execution, unrestricted inspection, access-control grants, first true Godel-agent birth, or v0.92 identity rebinding."
+}

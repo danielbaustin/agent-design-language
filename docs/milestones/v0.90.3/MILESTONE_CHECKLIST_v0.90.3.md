@@ -19,7 +19,7 @@
 - [x] Continuity witnesses and receipts emitted
 - [x] Anti-equivocation negative test landed
 - [x] Sanctuary/quarantine behavior proven
-- [ ] Redacted Observatory projection proven
+- [x] Redacted Observatory projection proven
 - [ ] Standing, communication, and access boundaries proven
 - [ ] Challenge and appeal flow proven
 - [ ] Threat model reviewed
