@@ -105,6 +105,7 @@ dependencies.
 - Continuity challenge and appeal proof: `CONTINUITY_CHALLENGE_APPEAL_v0.90.3.md`
 - CI runtime policy for closeout sessions: `CI_RUNTIME_POLICY_v0.90.3.md`
 - WP execution readiness: `WP_EXECUTION_READINESS_v0.90.3.md`
+- Architecture decision record: `../../adr/0013-runtime-v2-citizen-state-continuity-substrate.md`
 - Feature index: `FEATURE_DOCS_v0.90.3.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.3.md`
 - Release plan: `RELEASE_PLAN_v0.90.3.md`

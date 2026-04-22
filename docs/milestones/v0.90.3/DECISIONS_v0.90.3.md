@@ -2,7 +2,7 @@
 
 | ID | Decision | Status | Rationale |
 | --- | --- | --- | --- |
-| D-01 | Treat v0.90.3 as the citizen-state substrate milestone | Proposed | v0.90.2 proves the first bounded run; v0.90.3 protects the continuity-bearing state behind that run. |
+| D-01 | Treat v0.90.3 as the citizen-state substrate milestone | Accepted by ADR 0013 | v0.90.2 proves the first bounded run; v0.90.3 protects the continuity-bearing state behind that run. |
 | D-02 | Treat JSON as projection, not authority | Accepted in WP-03 | Prototype JSON is useful for review, but durable citizen identity needs typed, hash-linked binary state; `runtime_v2.private_state_projection.v1` is explicitly non-authoritative. |
 | D-03 | Use protobuf-compatible private-state artifacts as the expected canonical direction | Accepted in WP-03 | WP-03 lands deterministic tagged-binary field-number semantics with protobuf-compatible meanings; later signed-envelope work may add concrete protobuf/prost bindings without changing the authority boundary. |
 | D-04 | Keep sealed quintessence checkpoints local-first | Accepted in WP-05 | WP-05 lands deterministic local sealing fixtures and a backend seam for later OS keychain, TPM, Secure Enclave, HSM, or cloud confidential adapters without making cloud confidential computing mandatory. |
