@@ -29,6 +29,7 @@ Required before release:
 - threat model
 - economics placement decision
 - quality gate and coverage/tracker truth
+- reviewer entry and release-readiness surface
 - internal and external review records
 
 ## Review Tail

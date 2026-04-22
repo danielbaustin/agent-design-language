@@ -26,11 +26,12 @@
 - [x] Economics placement decision recorded
 - [x] Integrated citizen-state demo complete
 - [x] Demo matrix and feature proof coverage record complete
-- [ ] Quality gate and coverage/tracker truth recorded before internal review
+- [x] Quality gate and coverage/tracker truth recorded before internal review
 
 ## Review And Release
 
-- [ ] Docs, demo matrix, quality gate, and feature docs converge before internal review
+- [x] Docs, quality gate, and feature docs converge before internal review
+- [x] Demo matrix and feature proof coverage converge before internal review
 - [ ] Internal review complete
 - [ ] External / third-party review complete
 - [ ] Accepted review findings remediated or explicitly deferred
@@ -41,9 +42,9 @@
 
 ## Non-Claim Checks
 
-- [ ] No claim that v0.90.3 births the first true Gödel agent
-- [ ] No claim that v0.90.3 completes v0.91 moral/emotional civilization
-- [ ] No claim that v0.90.3 completes v0.92 birthday or migration scope
-- [ ] No claim that v0.90.3 completes full economics or contract markets
-- [ ] No claim that cloud enclaves are required for v0.90.3
-- [ ] No private local paths in tracked docs or generated artifacts
+- [x] No claim that v0.90.3 births the first true Gödel agent
+- [x] No claim that v0.90.3 completes v0.91 moral/emotional civilization
+- [x] No claim that v0.90.3 completes v0.92 birthday or migration scope
+- [x] No claim that v0.90.3 completes full economics or contract markets
+- [x] No claim that cloud enclaves are required for v0.90.3
+- [x] No private local paths in tracked docs or generated artifacts

@@ -8,6 +8,8 @@ WP-19 handoff pass (#2263).
 
 The issue wave is open as #2327-#2347. WP-01 is #2327, WP-02 through WP-14 are
 #2328-#2340, WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
+WP-01 through WP-14A have landed. WP-15 records the quality, docs, and
+reviewer-entry convergence surface before the final review tail.
 
 ## Thesis
 
@@ -105,6 +107,7 @@ dependencies.
 - Continuity challenge and appeal proof: `CONTINUITY_CHALLENGE_APPEAL_v0.90.3.md`
 - Feature proof coverage record: `FEATURE_PROOF_COVERAGE_v0.90.3.md`
 - CI runtime policy for closeout sessions: `CI_RUNTIME_POLICY_v0.90.3.md`
+- Release readiness / WP-15 convergence: `RELEASE_READINESS_v0.90.3.md`
 - WP execution readiness: `WP_EXECUTION_READINESS_v0.90.3.md`
 - Architecture decision record: `../../adr/0013-runtime-v2-citizen-state-continuity-substrate.md`
 - Feature index: `FEATURE_DOCS_v0.90.3.md`

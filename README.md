@@ -42,7 +42,7 @@ Actually run the same minimal example and emit trace/artifact output:
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
 ```
 
-### If you want the latest completed release proof package
+### If you want the completed v0.90 long-lived release proof package
 
 Run the v0.90 readiness and proof surfaces from the completed milestone
 package:
@@ -53,7 +53,7 @@ python3 adl/tools/check_v090_milestone_state.py
 
 This is the best top-level entrypoint if you want to see the milestone-compression drift check and proof graph for the latest completed milestone.
 
-### If you want the v0.90.2 first-run proof package
+### If you want the latest completed v0.90.2 first-run proof package
 
 Generate the feature-proof coverage packet:
 
@@ -120,7 +120,7 @@ Other useful entrypoints:
 ## Current Status
 
 - Active milestone: **v0.90.3**
-- Current release state: **v0.90.3 issue wave is open as #2327-#2347; implementation begins with WP-02 after WP-01 live-wave mapping merges**
+- Current release state: **v0.90.3 is in release-tail convergence; WP-01 through WP-14A have landed, WP-15 carries quality/docs convergence, and WP-16 through WP-20 carry review/remediation/handoff/ceremony**
 - Most recently completed milestone: **v0.90.2**
 - Current crate version: **0.90.3**
 - Version note: **v0.90.3 is the active citizen-state substrate development line**
@@ -135,7 +135,12 @@ ADL is in active development. This repository contains both implemented runtime 
 v0.90.3 is the active citizen-state substrate milestone. Its tracked package
 lives under `docs/milestones/v0.90.3/`. The issue wave is open as #2327-#2347:
 WP-01 is #2327, WP-02 through WP-14 are #2328-#2340, WP-14A is #2341, and
-WP-15 through WP-20 are #2342-#2347.
+WP-15 through WP-20 are #2342-#2347. WP-01 through WP-14A have landed.
+
+The current reviewer entry surface is
+`docs/milestones/v0.90.3/RELEASE_READINESS_v0.90.3.md`. It records the WP-15
+quality/docs convergence posture, the landed feature-proof coverage record, and
+the no-P0/P1 internal-review posture before third-party review.
 
 v0.90.3 should turn the bounded CSM run from v0.90.2 into safer citizen-state
 substrate work: canonical private state, signed envelopes, local-first sealing,
