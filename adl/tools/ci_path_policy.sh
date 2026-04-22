@@ -50,6 +50,7 @@ done
 bool_false=false
 rust_required="$bool_false"
 coverage_required="$bool_false"
+full_coverage_required="$bool_false"
 demo_smoke_required="$bool_false"
 fail_closed=false
 reason="path_policy_docs_or_tooling_only"
@@ -68,6 +69,7 @@ emit() {
 require_full_validation() {
   rust_required=true
   coverage_required=true
+  full_coverage_required=true
   demo_smoke_required=true
 }
 
@@ -93,7 +95,7 @@ else
           rust_required=true
           coverage_required=true
           demo_smoke_required=true
-          reason="runtime_or_rust_test_change_runs_full_validation"
+          reason="runtime_or_rust_test_change_runs_pr_fast_validation"
           ;;
         demos/*|adl/tools/demo_*|adl/tools/test_demo_*)
           demo_smoke_required=true
@@ -107,6 +109,7 @@ fi
 
 emit "rust_required" "$rust_required"
 emit "coverage_required" "$coverage_required"
+emit "full_coverage_required" "$full_coverage_required"
 emit "demo_smoke_required" "$demo_smoke_required"
 emit "fail_closed" "$fail_closed"
 emit "changed_count" "$changed_count"
@@ -115,6 +118,7 @@ emit "reason" "$reason"
 printf '\nChanged path policy: %s\n' "$reason"
 printf '  rust_required=%s\n' "$rust_required"
 printf '  coverage_required=%s\n' "$coverage_required"
+printf '  full_coverage_required=%s\n' "$full_coverage_required"
 printf '  demo_smoke_required=%s\n' "$demo_smoke_required"
 printf '  fail_closed=%s\n' "$fail_closed"
 printf '  changed_count=%s\n' "$changed_count"
