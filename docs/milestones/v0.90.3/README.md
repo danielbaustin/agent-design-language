@@ -103,6 +103,7 @@ dependencies.
 - Standing and communication boundary proof: `STANDING_COMMUNICATION_BOUNDARY_v0.90.3.md`
 - Access-control semantics proof: `ACCESS_CONTROL_SEMANTICS_v0.90.3.md`
 - Continuity challenge and appeal proof: `CONTINUITY_CHALLENGE_APPEAL_v0.90.3.md`
+- CI runtime policy for closeout sessions: `CI_RUNTIME_POLICY_v0.90.3.md`
 - WP execution readiness: `WP_EXECUTION_READINESS_v0.90.3.md`
 - Feature index: `FEATURE_DOCS_v0.90.3.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.3.md`

@@ -1,255 +1,113 @@
-# Demo Matrix Template
+# v0.92 Demo Matrix: Candidate Birthday Proofs
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues / work packages: {{issues_or_wps}}
+## Status
+
+Candidate demo planning only. Commands and artifacts will be finalized when the
+v0.92 implementation WPs exist.
 
 ## Purpose
-Define the canonical milestone demo program: which bounded demos exist, which milestone claims they prove, how to run them, and what artifacts or proof surfaces reviewers should inspect.
 
-## How To Use
-- Use this document for runnable milestone evidence, not for broad feature brainstorming.
-- Keep demo rows and per-demo sections aligned so a reviewer can move from summary -> execution -> proof surface without reconstructing context by hand.
-- Prefer bounded, replayable, copy/paste-friendly commands over aspirational demo descriptions.
-- If a milestone claim cannot yet be shown through a runnable demo, say so explicitly and record the substitute proof surface.
-- Keep names stable across milestones where practical so comparisons remain easy.
-- If a section is not relevant, include a one-line rationale instead of deleting it.
+The v0.92 demo program should prove that the first true Gödel-agent birthday is
+evidence-bearing runtime behavior, not a ceremonial label.
 
-## Scope
+## Candidate Coverage Summary
 
-In scope for `{{milestone}}`:
-- {{in_scope_demo_area_1}}
-- {{in_scope_demo_area_2}}
-- {{in_scope_demo_area_3}}
+| Demo ID | Candidate demo | Milestone claim | Primary proof surface | Status |
+| --- | --- | --- | --- | --- |
+| D1 | First birthday rehearsal | A named identity can cross the birth boundary with required evidence. | Birthday record, witness set, receipt, and reviewer packet. | Planned candidate |
+| D2 | Not-a-birthday negative suite | Startup, wake, snapshot, admission, and copied state are not birth. | Negative fixtures and validation report. | Planned candidate |
+| D3 | Continuity across bounded cycles | Identity persists across multiple bounded cycles with evidence. | Cycle artifacts, continuity record, witness links. | Planned candidate |
+| D4 | Memory grounding proof | Birth references witnessed memory artifacts without exposing raw private memory. | Memory-grounding fixture and redacted packet. | Planned candidate |
+| D5 | Capability envelope proof | The birth record declares provider, model, tool, skill, authority, and limit context. | Capability envelope and validation report. | Planned candidate |
+| D6 | Birthday-to-governance handoff | v0.93 governance can consume v0.92 identity evidence without redefining birth. | Handoff packet mapping identity evidence to future governance. | Planned candidate |
 
-Out of scope for `{{milestone}}`:
-- {{out_of_scope_demo_area_1}}
-- {{out_of_scope_demo_area_2}}
+## Demo Rules
 
-## Runtime Preconditions
+- Every demo must distinguish birth from ordinary runtime activity.
+- Every birthday claim must cite evidence.
+- Every private-state boundary must have a redaction or denial proof.
+- Every capability claim must include limits and authority context.
+- Demo outputs should distinguish engineering evidence from philosophical or
+  governance context.
 
-Working directory:
+## Candidate Details
 
-```bash
-{{working_directory_command}}
-```
+### D1) First Birthday Rehearsal
 
-Deterministic runtime / provider assumptions:
+The demo should emit a synthetic but structurally complete birthday packet.
 
-```bash
-{{runtime_preconditions}}
-```
+Expected proof:
 
-Additional environment / fixture requirements:
-- {{env_requirement_1}}
-- {{env_requirement_2}}
+- stable name
+- identity root
+- continuity evidence
+- memory-grounding references
+- capability envelope
+- witness set
+- citizen-facing receipt
+- reviewer finding
 
-## Related Docs
-- Design contract: `{{design_doc}}`
-- WBS / milestone mapping: `{{wbs_doc}}`
-- Sprint / execution plan: `{{sprint_doc}}`
-- Release / checklist context: `{{release_or_checklist_doc}}`
-- Other proof-surface docs: {{other_related_docs}}
+### D2) Not-A-Birthday Negative Suite
 
-## Demo Coverage Summary
+The demo should prove that the milestone does not overclaim ordinary runtime
+events.
 
-Use this table as the fast review surface for milestone coverage.
+Expected rejected cases:
 
-| Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
-|---|---|---|---|---|---|---|---|
-| D1 | {{demo_title_1}} | {{claim_or_wp_1}} | `{{command_stub_1}}` | `{{proof_surface_1}}` | {{success_signal_1}} | {{determinism_note_1}} | {{status_1}} |
-| D2 | {{demo_title_2}} | {{claim_or_wp_2}} | `{{command_stub_2}}` | `{{proof_surface_2}}` | {{success_signal_2}} | {{determinism_note_2}} | {{status_2}} |
-| D3 | {{demo_title_3}} | {{claim_or_wp_3}} | `{{command_stub_3}}` | `{{proof_surface_3}}` | {{success_signal_3}} | {{determinism_note_3}} | {{status_3}} |
+- process startup
+- snapshot
+- wake
+- admission
+- copied state
+- named test fixture without continuity evidence
 
-Status guidance:
-- `PLANNED` = intended but not yet validated
-- `READY` = runnable and locally validated
-- `BLOCKED` = known dependency or missing proof surface
-- `LANDED` = milestone evidence exists and is ready for review
+### D3) Continuity Across Bounded Cycles
 
-## Coverage Rules
-- Every major milestone claim should map to a runnable demo or an explicit alternate proof surface.
-- Every demo should name one primary proof surface that a reviewer can inspect directly.
-- Commands should be copy/paste-ready and should not require private local state.
-- Success signals should say what to check, not just “command exits 0”.
-- Determinism / replay notes should explain how stability is judged.
+The demo should show identity continuity across more than one bounded cycle.
 
-## Demo Details
+Expected proof:
 
-Repeat one block per demo in the coverage summary.
+- prior and successor cycle artifacts
+- continuity record
+- witness links
+- ambiguity handling or clear continuity grade
 
-### {{demo_id_1}}) {{demo_title_1}}
+### D4) Memory Grounding Proof
 
-Description:
-- {{demo_description_1}}
-- {{demo_description_1b}}
+The demo should show memory grounding through references and witnesses rather
+than raw private memory exposure.
 
-Milestone claims / work packages covered:
-- {{claim_detail_1a}}
-- {{claim_detail_1b}}
+Expected proof:
 
-Commands to run:
+- witnessed memory-artifact references
+- redacted projection
+- reviewer packet that can inspect grounding without private-state disclosure
 
-```bash
-{{demo_commands_1}}
-```
+### D5) Capability Envelope Proof
 
-Expected artifacts:
-- `{{artifact_1a}}`
-- `{{artifact_1b}}`
-- `{{artifact_1c}}`
+The demo should show that the birthday record includes bounded capability
+claims.
 
-Primary proof surface:
-- `{{primary_proof_surface_1}}`
+Expected proof:
 
-Secondary proof surfaces:
-- `{{secondary_proof_surface_1a}}`
-- `{{secondary_proof_surface_1b}}`
+- provider and model capability context
+- tool and skill authority context
+- declared limits
+- validation report
 
-Expected success signals:
-- {{success_detail_1a}}
-- {{success_detail_1b}}
+### D6) Birthday-To-Governance Handoff
 
-Determinism / replay notes:
-- {{determinism_detail_1a}}
-- {{determinism_detail_1b}}
+The demo should show how v0.93 can consume identity evidence.
 
-Reviewer checks:
-- {{reviewer_check_1a}}
-- {{reviewer_check_1b}}
+Expected proof:
 
-Known limits / caveats:
-- {{caveat_1}}
+- identity evidence map
+- standing/governance handoff notes
+- explicit non-claim that governance is not completed by the birthday itself
 
----
+## Non-Claims
 
-### {{demo_id_2}}) {{demo_title_2}}
-
-Description:
-- {{demo_description_2}}
-
-Milestone claims / work packages covered:
-- {{claim_detail_2a}}
-
-Commands to run:
-
-```bash
-{{demo_commands_2}}
-```
-
-Expected artifacts:
-- `{{artifact_2a}}`
-- `{{artifact_2b}}`
-
-Primary proof surface:
-- `{{primary_proof_surface_2}}`
-
-Expected success signals:
-- {{success_detail_2a}}
-
-Determinism / replay notes:
-- {{determinism_detail_2a}}
-
-Reviewer checks:
-- {{reviewer_check_2a}}
-
-Known limits / caveats:
-- {{caveat_2}}
-
----
-
-### {{demo_id_3}}) {{demo_title_3}}
-
-Description:
-- {{demo_description_3}}
-
-Milestone claims / work packages covered:
-- {{claim_detail_3a}}
-
-Commands to run:
-
-```bash
-{{demo_commands_3}}
-```
-
-Expected artifacts:
-- `{{artifact_3a}}`
-
-Primary proof surface:
-- `{{primary_proof_surface_3}}`
-
-Expected success signals:
-- {{success_detail_3a}}
-
-Determinism / replay notes:
-- {{determinism_detail_3a}}
-
-Reviewer checks:
-- {{reviewer_check_3a}}
-
-Known limits / caveats:
-- {{caveat_3}}
-
-## Cross-Demo Validation
-
-Required baseline validation:
-
-```bash
-{{baseline_validation_commands}}
-```
-
-Cross-demo checks:
-- {{cross_demo_check_1}}
-- {{cross_demo_check_2}}
-- {{cross_demo_check_3}}
-
-Failure policy:
-- If one demo is blocked, record the blocker and say whether milestone review can proceed with an alternate proof surface.
-- If deterministic behavior is expected but not observed, record the exact unstable artifact or command output.
-
-## Determinism Evidence
-
-Evidence directory / run root:
-- `{{evidence_root}}`
-
-Repeatability approach:
-- {{repeatability_rule_1}}
-- {{repeatability_rule_2}}
-
-Normalization rules:
-- {{normalization_rule_1}}
-- {{normalization_rule_2}}
-
-Observed results summary:
-- {{determinism_result_1}}
-- {{determinism_result_2}}
-- {{determinism_result_3}}
-
-## Reviewer Sign-Off Surface
-
-For each demo, the reviewer should be able to answer:
-- What milestone claim does this demo prove?
-- Which command should be run first?
-- Which artifact or trace is the primary proof surface?
-- What deterministic or replay guarantee is being claimed?
-- What caveats or substitutions apply?
-
-Review owners:
-- {{review_owner_1}}
-- {{review_owner_2}}
-
-Review status:
-- {{review_status_note}}
-
-## Notes
-- {{note_1}}
-- {{note_2}}
-
-## Exit Criteria
-- The milestone’s major claims are mapped to bounded demos or explicit alternate proof surfaces.
-- Each demo has runnable commands, expected artifacts, and a clear success signal.
-- Determinism / replay expectations are explicit where required.
-- A reviewer can inspect the matrix and locate the primary proof surface for each demo without extra reconstruction work.
+- These demos do not prove legal personhood.
+- These demos do not prove production citizenship.
+- These demos do not complete constitutional governance.
+- These demos do not expose raw private state.

@@ -157,8 +157,8 @@ ADL already provides a serious platform baseline:
 | Reasoning graph baseline | Planned | planning/schema/proof surfaces | Later reasoning/provenance band |
 | Signed trace and trace query | Planned | roadmap and planning docs | Later reasoning/provenance band |
 | Wellbeing, affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |
-| Identity, capability, names, and continuity substrate | Planned | `v0.92` planning docs and Runtime v2 boundary docs | `v0.92` |
-| First true Gödel-agent birthday | Planned | `v0.92` planning docs and identity boundary notes | `v0.92` |
+| Identity, capability, names, and continuity substrate | Planned | `v0.92` identity, continuity, and birthday allocation plan | `v0.92` |
+| First true Gödel-agent birthday | Planned | `v0.92` identity, continuity, and birthday allocation plan plus Runtime v2 birthday boundary roadmap | `v0.92` |
 | Governance, delegation, IAM, social contract | Planned | `v0.93` constitutional citizenship and polis-governance allocation plan | `v0.93` |
 | Economics, accounting, and payment substrate | Planned | economics planning corpus and roadmap docs | `v0.93` / `v0.94` |
 | Distributed execution integration | Partially implemented | cluster groundwork plus planning docs | `v0.94` / `v0.95` |
@@ -189,7 +189,7 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.90.3` | Citizen state security, standing, private-state envelopes, access control, redacted projections, and forward planning for constitutional citizenship/governance prerequisites. |
 | `v0.90.4+` | Governed tool calls, cognitive compression metrics, economics/contract-market work if promoted, and other near-term architecture slices as scheduled. |
 | `v0.91` | Wellbeing and happiness, affect, kindness, humor, moral cognition, and the evaluation surfaces needed for emotionally and normatively legible agents. |
-| `v0.92` | Identity-bearing agent substrate, stable names, model/provider capability contracts, continuity across runs, and the first true Gödel-agent birthday. |
+| `v0.92` | Identity-bearing agent substrate, stable names, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
 | `v0.93` | Governance, delegation, IAM, social contract, policy/constitutional surfaces, rights/duties, and accountable multi-agent society boundaries. |
 | `v0.94` | Economics/payment work if promoted into a full milestone package, distributed-substrate integration, cross-band convergence, and dependency closure. |
 | `v0.95` | MVP convergence, polished demo catalog, coherent reviewer/customer walkthrough, control-plane/tooling hardening, feature freeze, and the 1.0 scope boundary. |
@@ -380,6 +380,14 @@ agents:
 - stable names
 - continuity hooks across runs
 - first true Gödel-agent birthday
+- witnessed memory grounding
+- birth record, witness set, receipt, and reviewer packet
+- negative cases proving startup, wake, snapshot, admission, and copied state
+  are not birth
+
+The birthday is the special center of gravity for this milestone. It should be
+reviewable as an event, not asserted as ceremony or inferred from ordinary
+runtime lifecycle mechanics.
 
 ### v0.93 - Governance, Delegation, IAM, and Social Contract
 

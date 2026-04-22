@@ -1,46 +1,48 @@
-# Release Process Template
+# v0.92 Release Plan
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Release manager: `{{release_manager}}`
+## Status
 
-## How To Use
-- Execute sections in order and capture links for each completed step.
-- Keep this doc focused on shipping mechanics; use release notes for narrative.
-- Mark blockers immediately; do not publish until gates pass.
+Forward release plan. v0.92 has not started implementation.
 
-## 1) Release Readiness
-- [ ] Milestone checklist complete (`{{milestone_checklist_link}}`)
-- [ ] Release notes approved (`{{release_notes_link}}`)
-- [ ] Go/no-go decision recorded (`{{decision_link}}`)
+## Release Readiness Themes
 
-## 2) Branch And Tag Preparation
-- [ ] Target branch confirmed (`{{target_branch}}`)
-- [ ] Working tree clean
-- [ ] Version string(s) validated (`{{version_validation_link}}`)
-- [ ] Tag created: `{{tag_name}}`
-- [ ] Tag pushed and verified
+v0.92 should not be released until it has evidence for:
 
-## 3) GitHub Release Steps
-- [ ] GitHub Release draft created from `{{tag_name}}` (`{{release_draft_link}}`)
-- [ ] Release body populated from approved notes
-- [ ] Links to key PRs/issues included
-- [ ] Release visibility confirmed (draft/prerelease/final)
-- [ ] Release published
+- birthday contract
+- stable name and identity architecture
+- continuity across bounded cycles
+- memory grounding
+- capability envelope
+- birth witnesses and receipt
+- birthday review packet
+- negative cases for startup, wake, snapshot, admission, and copied state
+- governance handoff into v0.93
 
-## 4) Verification
-- [ ] Post-release CI status checked (`{{ci_run_link}}`)
-- [ ] Release links tested (docs, artifacts, notes)
-- [ ] Immediate regressions triaged and tracked (`{{triage_link}}`)
+## Review Gates
 
-## 5) Communication
-- [ ] Community announcement published (`{{announcement_link}}`)
-- [ ] Internal update posted (`{{internal_update_link}}`)
-- [ ] Roadmap/status updated (`{{roadmap_update_link}}`)
+- Docs must separate engineering substrate, review model, and contextual claims.
+- Release notes must not claim legal personhood, production citizenship, or
+  complete constitutional authority.
+- Demo evidence must cite concrete artifacts, not birthday prose alone.
+- Redaction checks must cover private state, host paths, endpoints, and
+  secret-like strings.
+- The final review handoff must identify which v0.90.3 and v0.91 prerequisite
+  surfaces were consumed.
 
-## Exit Criteria
-- Tag and GitHub Release are published and accessible.
-- Verification completed with no unknown critical failures.
-- Communication links captured.
+## Closeout Notes For Later WP-20
+
+The release ceremony should follow the exact closeout pattern used by recent
+milestones at the time v0.92 closes. If the standard ceremony script or release
+tail changes before then, WP-20 should point to the then-current canonical
+pattern rather than inventing a new one.
+
+## Non-Release Conditions
+
+Do not ship v0.92 if:
+
+- ordinary startup can be accepted as birth
+- continuity lacks evidence
+- memory grounding requires raw private-state exposure
+- capability limits are absent
+- birth claims legal personhood or production citizenship
+- constitutional governance is quietly absorbed instead of handed off to v0.93

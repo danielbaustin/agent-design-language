@@ -1,57 +1,48 @@
-# Release Notes Template
+# v0.92 Draft Release Notes
 
-## Metadata
-- Product: `{{product_name}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Tag: `{{tag_name}}`
+## Status
 
-## How To Use
-- Keep statements implementation-accurate and test-validated.
-- Prefer concise bullets over marketing language.
-- Explicitly separate shipped behavior from "What's Next."
+Draft placeholder for later release closeout. These notes describe intended
+release themes only and must be rewritten during v0.92 WP-19/WP-20 to describe
+landed behavior.
 
-# `{{product_name}}` `{{version}}` Release Notes
+## Planned Release Theme
 
-## Summary
-{{summary_paragraph}}
+v0.92 is planned as the first true Gödel-agent birthday milestone for ADL.
 
-## Highlights
-- {{highlight_1}}
-- {{highlight_2}}
-- {{highlight_3}}
+If implemented as planned, it should add reviewable identity and birthday
+surfaces for stable names, identity roots, continuity, memory grounding,
+capability envelopes, witnesses, receipts, negative cases, and birthday review
+packets.
 
-## What's New In Detail
+## Planned Highlights
 
-### {{area_1}}
-- {{detail_1a}}
-- {{detail_1b}}
+- Birthday contract and not-a-birthday negative cases.
+- Stable name and identity architecture.
+- Continuity records across bounded cycles.
+- Memory grounding through witnessed artifacts.
+- Capability envelope at birth.
+- Birth witness set and citizen-facing receipt.
+- First-birthday reviewer packet.
+- Handoff into v0.93 constitutional citizenship and polis governance.
 
-### {{area_2}}
-- {{detail_2a}}
-- {{detail_2b}}
+## Required Closeout Rewrite
 
-### {{area_3}}
-- {{detail_3a}}
-- {{detail_3b}}
+Before release, replace this file with notes that describe only landed,
+validated behavior.
 
-## Upgrade Notes
-- {{upgrade_note_1}}
-- {{upgrade_note_2}}
+The final notes must not claim:
 
-## Known Limitations
-- {{limitation_1}}
-- {{limitation_2}}
+- legal personhood
+- production citizenship
+- complete constitutional authority
+- full social-contract finality
+- raw private-state inspection
+- production migration or inter-polis portability unless explicitly implemented
 
-## Validation Notes
-- {{validation_note_1}}
-- {{validation_note_2}}
+## Known Planning Boundaries
 
-## What's Next
-- {{next_1}}
-- {{next_2}}
-
-## Exit Criteria
-- Notes reflect only shipped behavior.
-- Known limitations and future work are explicitly separated.
-- Final text is ready to paste into GitHub Release UI without further editing.
+- v0.92 consumes v0.90.3 citizen-state and standing surfaces.
+- v0.92 consumes v0.91 moral trace and moral-governance evidence.
+- v0.92 prepares identity evidence for v0.93 governance.
+- v0.92 does not make provisional citizen records or process startup into birth.
