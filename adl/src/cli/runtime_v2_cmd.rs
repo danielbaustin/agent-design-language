@@ -284,12 +284,20 @@ fn real_runtime_v2_observatory_flagship_demo(repo_root: &Path, args: &[String]) 
         i += 1;
     }
 
+    let resolved = match out_path.as_ref() {
+        Some(out_path) => Some(resolve_relative_output_path(
+            repo_root,
+            out_path,
+            "observatory-flagship-demo",
+        )?),
+        None => None,
+    };
+
     let artifacts = runtime_v2_observatory_flagship_contract()?;
-    let Some(out_path) = out_path else {
+    let Some(resolved) = resolved else {
         println!("{}", to_string_pretty(&artifacts.proof_packet)?);
         return Ok(());
     };
-    let resolved = resolve_relative_output_path(repo_root, &out_path, "observatory-flagship-demo")?;
     fs::create_dir_all(&resolved).with_context(|| {
         format!(
             "failed to create Runtime v2 Observatory flagship demo root {}",
@@ -766,13 +774,18 @@ mod tests {
         );
         assert_eq!(json["proof_classification"], "proving");
         assert_eq!(json["demo_id"], "D12");
-        let summary = runtime_v2_observatory_flagship_contract()
-            .expect("observatory flagship artifacts")
-            .execution_summary()
-            .expect("execution summary");
-        assert!(summary.contains("D12 inhabited CSM Observatory flagship proof"));
-        assert!(summary.contains("World / Reality"));
-        assert!(summary.contains("Corporate Investor"));
+        let lens_sequence = json["lens_sequence"].as_array().expect("lens sequence");
+        assert!(lens_sequence
+            .iter()
+            .any(|step| step["room"] == "World / Reality"));
+        assert!(lens_sequence
+            .iter()
+            .any(|step| step["room"] == "Corporate Investor"));
+        let report =
+            fs::read_to_string(out_dir.join("runtime_v2/observatory/flagship_operator_report.md"))
+                .expect("operator report should exist");
+        assert!(report.contains("D12 Inhabited CSM Observatory Flagship"));
+        assert!(report.contains("Citizen continuity basis"));
 
         fs::remove_dir_all(repo).ok();
     }
@@ -781,8 +794,6 @@ mod tests {
     fn runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules() {
         let repo = temp_repo("observatory-flagship-demo-branches");
 
-        real_runtime_v2_in_repo(&["observatory-flagship-demo".to_string()], &repo)
-            .expect("stdout proof packet");
         real_runtime_v2_in_repo(
             &[
                 "observatory-flagship-demo".to_string(),

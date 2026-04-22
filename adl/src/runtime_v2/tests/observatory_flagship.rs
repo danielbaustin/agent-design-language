@@ -1,11 +1,20 @@
 use super::common::unique_temp_path;
 use super::*;
 use std::fs;
+use std::sync::OnceLock;
+
+fn flagship_artifacts() -> RuntimeV2ObservatoryFlagshipArtifacts {
+    static ARTIFACTS: OnceLock<RuntimeV2ObservatoryFlagshipArtifacts> = OnceLock::new();
+    ARTIFACTS
+        .get_or_init(|| {
+            runtime_v2_observatory_flagship_contract().expect("observatory flagship artifacts")
+        })
+        .clone()
+}
 
 #[test]
 fn runtime_v2_observatory_flagship_contract_is_stable() {
-    let artifacts =
-        runtime_v2_observatory_flagship_contract().expect("observatory flagship artifacts");
+    let artifacts = flagship_artifacts();
     artifacts
         .validate()
         .expect("valid observatory flagship artifacts");
@@ -68,8 +77,7 @@ fn runtime_v2_observatory_flagship_contract_is_stable() {
 #[test]
 fn runtime_v2_observatory_flagship_writes_integrated_artifacts_without_path_leakage() {
     let temp_root = unique_temp_path("observatory-flagship");
-    let artifacts =
-        runtime_v2_observatory_flagship_contract().expect("observatory flagship artifacts");
+    let artifacts = flagship_artifacts();
 
     artifacts
         .write_to_root(&temp_root)
@@ -119,8 +127,7 @@ fn runtime_v2_observatory_flagship_writes_integrated_artifacts_without_path_leak
 
 #[test]
 fn runtime_v2_observatory_flagship_validation_rejects_overclaim_or_missing_evidence() {
-    let mut artifacts =
-        runtime_v2_observatory_flagship_contract().expect("observatory flagship artifacts");
+    let mut artifacts = flagship_artifacts();
     artifacts.proof_packet.proof_classification = "non_proving".to_string();
     assert!(artifacts
         .validate()
@@ -128,8 +135,7 @@ fn runtime_v2_observatory_flagship_validation_rejects_overclaim_or_missing_evide
         .to_string()
         .contains("classified as proving"));
 
-    let mut artifacts =
-        runtime_v2_observatory_flagship_contract().expect("observatory flagship artifacts");
+    let mut artifacts = flagship_artifacts();
     artifacts.proof_packet.claim_boundary = "personhood proven".to_string();
     assert!(artifacts
         .validate()
@@ -137,8 +143,7 @@ fn runtime_v2_observatory_flagship_validation_rejects_overclaim_or_missing_evide
         .to_string()
         .contains("bounded D12 claim boundary"));
 
-    let mut artifacts =
-        runtime_v2_observatory_flagship_contract().expect("observatory flagship artifacts");
+    let mut artifacts = flagship_artifacts();
     artifacts
         .proof_packet
         .required_artifact_refs
@@ -149,8 +154,7 @@ fn runtime_v2_observatory_flagship_validation_rejects_overclaim_or_missing_evide
         .to_string()
         .contains("citizen_receipts.json"));
 
-    let mut artifacts =
-        runtime_v2_observatory_flagship_contract().expect("observatory flagship artifacts");
+    let mut artifacts = flagship_artifacts();
     artifacts
         .operator_report_markdown
         .push_str("\nsealed_payload_b64");

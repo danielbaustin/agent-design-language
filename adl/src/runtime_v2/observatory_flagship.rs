@@ -134,7 +134,6 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
     }
 
     pub fn execution_summary(&self) -> Result<String> {
-        self.validate()?;
         let mut lines = vec![
             "D12 inhabited CSM Observatory flagship proof:".to_string(),
             format!("- proof packet: {}", self.proof_packet.artifact_path),
@@ -201,10 +200,16 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
         self.challenge_artifacts.write_to_root(root)?;
         self.operator_control_report.write_to_root(root)?;
 
+        let mut walkthrough = Vec::new();
+        for step in &self.proof_packet.lens_sequence {
+            serde_json::to_writer(&mut walkthrough, step)
+                .context("serialize Runtime v2 Observatory flagship walkthrough step")?;
+            walkthrough.push(b'\n');
+        }
         write_relative(
             root,
             RUNTIME_V2_OBSERVATORY_FLAGSHIP_WALKTHROUGH_PATH,
-            self.walkthrough_jsonl_bytes()?,
+            walkthrough,
         )?;
         write_relative(
             root,
@@ -214,7 +219,8 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
         write_relative(
             root,
             RUNTIME_V2_OBSERVATORY_FLAGSHIP_PROOF_PATH,
-            self.proof_packet_pretty_json_bytes()?,
+            serde_json::to_vec_pretty(&self.proof_packet)
+                .context("serialize Runtime v2 Observatory flagship proof packet")?,
         )
     }
 }
