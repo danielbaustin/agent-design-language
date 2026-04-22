@@ -82,6 +82,18 @@ Before closeout:
 - confirm the intended staged paths are explicit or deterministically derived
 - confirm validation claims in the output record are truthful
 
+When PR checks are used as validation evidence, apply
+`adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md`:
+- `adl-ci` and `adl-coverage` are stable check names, not proof that every
+  expensive Rust phase ran
+- if coverage was skipped by path policy, record
+  `Coverage: skipped by path policy` plus the classifier `reason`
+- if full coverage ran, record the coverage artifact or gate evidence, such as
+  `coverage-summary.json`
+- do not claim full coverage from a green `adl-coverage` check unless the
+  coverage-required lane actually ran
+- do not cite docs-only PR-level coverage skips as release coverage evidence
+
 ### 3. Run Finish Through The Repo Control Plane
 
 Prefer repo-native finish commands rather than manual git/PR surgery.

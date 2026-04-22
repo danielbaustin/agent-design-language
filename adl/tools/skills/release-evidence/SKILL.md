@@ -66,6 +66,26 @@ Classify the package as:
 Do not use `ready` as release approval. It only means the evidence packet itself
 is complete enough to review.
 
+## CI Runtime Evidence Boundary
+
+Apply `adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md` when using PR checks
+as validation evidence.
+
+Docs-only PR-level `adl-coverage` skips can support PR readiness for docs,
+planning, or non-runtime tooling changes, but they do not satisfy release
+coverage gates. Release evidence must cite full validation from `main`, release
+ceremony, runtime PRs, or explicit coverage artifacts produced by a full
+coverage lane.
+
+Do not claim release coverage from:
+- a green `adl-coverage` check that skipped coverage by path policy
+- a docs-only PR that did not produce coverage artifacts
+- an ambiguous path classification that should have failed closed
+
+When coverage is claimed, preserve the evidence surface, such as
+`coverage-summary.json`, the coverage gate output, or the full-validation check
+run that produced the full coverage lane.
+
 ## Output
 
 Write Markdown and JSON artifacts when an output root is available.
@@ -101,4 +121,3 @@ Handoff candidates:
   candidates.
 - `demo-operator` when one missing proof surface needs a bounded demo run.
 - `pr-closeout` when merged issues need truthful local closeout.
-

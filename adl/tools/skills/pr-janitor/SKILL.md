@@ -119,6 +119,22 @@ At minimum, inspect where applicable:
 - review status and blocking review findings
 - whether the branch is behind main or otherwise needs refresh
 
+When inspecting `adl-ci` or `adl-coverage`, use
+`adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md` and inspect the
+`Classify changed paths` step when a stable check is skipped, unexpectedly quick, or
+ambiguous. Record the classifier `reason` when it affects readiness.
+
+Healthy CI interpretation requires:
+- stable checks are green
+- the path-policy reason matches the PR's changed surface
+- docs-only or tooling-only skips are explicit and expected
+
+Blocked CI interpretation includes:
+- runtime, source, test, or demo-affecting changes skipped coverage or demo
+  smoke unexpectedly
+- `fail_closed=true` requires full validation
+- stable check results contradict the PR diff or the path-policy reason
+
 ### 3. Classify the Problem
 
 Distinguish among:
