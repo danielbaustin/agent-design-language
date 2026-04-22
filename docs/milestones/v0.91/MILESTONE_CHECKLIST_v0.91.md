@@ -1,50 +1,38 @@
-# Milestone Checklist Template
+# Milestone Checklist - v0.91
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Target release date: `{{target_release_date}}`
-- Owner: `{{owner}}`
+## Planning Readiness
 
-## Purpose
-Ship/no-ship gate for the milestone. Check items only when evidence exists.
+- [ ] v0.91 planning package reviewed.
+- [ ] Moral governance allocation accepted or updated.
+- [ ] Issue wave opened from reviewed WP YAML when v0.91 becomes active.
+- [ ] WP issue cards authored from concrete readiness sections.
+- [ ] v0.90.3 citizen-state dependency state confirmed.
+- [ ] v0.92 birthday and v0.93 constitutional-governance boundaries accepted.
 
-## Planning
-- [ ] Milestone goal defined (`{{goal_doc_link}}`)
-- [ ] Scope + non-goals documented (`{{scope_doc_link}}`)
-- [ ] WBS created and mapped to issues (`{{wbs_link}}`)
-- [ ] Decision log initialized (`{{decisions_link}}`)
-- [ ] Sprint plan created (`{{sprint_plan_link}}`)
+## Execution Readiness
 
-## Execution Discipline
-- [ ] Each issue has input/output cards under `.adl/cards/<issue>/`
-- [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp>/`
-- [ ] Draft PR opened for each issue before merge
-- [ ] Transient failures retried and documented
-- [ ] "Green-only merge" policy followed
+- [ ] Moral event contract accepted.
+- [ ] Moral event validation accepted.
+- [ ] Moral trace schema accepted.
+- [ ] Outcome linkage and attribution accepted.
+- [ ] Moral metrics accepted as evidence, not verdicts.
+- [ ] Moral trajectory review accepted.
+- [ ] Anti-harm trajectory proof path accepted.
+- [ ] Wellbeing metrics v0 access policy accepted.
+- [ ] Demo matrix and feature proof coverage lane preserved before review convergence.
 
-## Quality Gates
-- [ ] `cargo fmt` passes
-- [ ] `cargo clippy --all-targets -- -D warnings` passes
-- [ ] `cargo test` passes
-- [ ] CI is green on the merge target
-- [ ] Coverage signal is not red (or exception documented) (`{{coverage_link_or_note}}`)
-- [ ] No unresolved high-priority blockers (`{{blocker_report_link}}`)
+## Review Readiness
 
-## Release Packaging
-- [ ] Release notes finalized (`{{release_notes_link}}`)
-- [ ] Tag verified: `{{tag_name}}`
-- [ ] GitHub Release drafted (`{{release_draft_link}}`)
-- [ ] Links validated in release body
-- [ ] Release published
+- [ ] Demo matrix reflects actual proof status.
+- [ ] Feature docs match implemented artifacts.
+- [ ] Private wellbeing diagnostics are not exposed as public reputation.
+- [ ] Moral metrics and karma language avoid scoreboard framing.
+- [ ] Release notes avoid aspirational shipped language until closeout.
 
-## Post-Release
-- [ ] Milestone/epic issues closed with release links
-- [ ] Deferred items moved to next milestone backlog
-- [ ] Follow-up bugs/tech debt captured as issues
-- [ ] Roadmap/status docs updated (`{{roadmap_update_link}}`)
-- [ ] Retrospective summary recorded (`{{retro_link}}`)
+## Release Readiness
 
-## Exit Criteria
-- All required gates are checked, or each exception has an owner + due date.
-- Milestone can be audited end-to-end via the links captured above.
+- [ ] Internal review complete.
+- [ ] Third-party review complete or explicitly deferred.
+- [ ] Accepted findings fixed or dispositioned.
+- [ ] Changelog, README, Cargo metadata, feature list, and milestone docs aligned.
+- [ ] Ceremony completed.

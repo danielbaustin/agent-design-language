@@ -143,9 +143,9 @@ commitments.
 
 ## Cleanup Notes
 
-- Older references that place anti-harm or harm-prevention work in v0.89.1 are
-  stale. Treat the current bounded implementation home as v0.91 unless later
-  planning changes it deliberately.
+- Older references that place anti-harm or harm-prevention work in earlier
+  milestones are stale. Treat the current bounded implementation home as v0.91
+  unless later planning changes it deliberately.
 - References to FREEDOM_GATE_V2.md and MORAL_RESOURCES_SUBSYSTEM.md should be
   checked during the feature-doc promotion pass. They appear to be stale names
   or placeholders rather than current tracked milestone documents.

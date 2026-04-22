@@ -1,30 +1,11 @@
-# Decisions Template
+# Decisions - v0.91
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-
-## Purpose
-Capture significant decisions (architecture, scope, process) at the time they are made.
-
-## How To Use
-- Add one row per decision.
-- Prefer links to issues/PRs over long prose.
-- Keep status current: `accepted`, `rejected`, `deferred`, `superseded`.
-
-## Decision Log
-| ID | Decision | Status | Rationale | Alternatives | Impact | Link |
-|---|---|---|---|---|---|---|
-| D-01 | {{decision_1}} | {{status_1}} | {{rationale_1}} | {{alternatives_1}} | {{impact_1}} | {{link_1}} |
-| D-02 | {{decision_2}} | {{status_2}} | {{rationale_2}} | {{alternatives_2}} | {{impact_2}} | {{link_2}} |
-
-## Open Questions
-- {{open_question_1}} (Owner: {{owner_oq1}}) (Issue: {{issue_oq1}})
-- {{open_question_2}} (Owner: {{owner_oq2}}) (Issue: {{issue_oq2}})
-
-## Exit Criteria
-- All milestone-critical decisions are logged with a rationale.
-- Deferred/rejected/superseded options are explicitly recorded.
-- Open questions have owners and tracking links.
+| ID | Decision | Status | Rationale | Consequences |
+| --- | --- | --- | --- | --- |
+| D-01 | Treat v0.91 as moral governance and wellbeing foundations | Proposed | Moral trace and wellbeing evidence must land before birthday and constitutional governance can be credible. | v0.91 issue wave should implement bounded moral evidence, not vague ethics prose. |
+| D-02 | Moral events are evidence records, not moral verdicts | Proposed | Reviewers need durable choice evidence without pretending the runtime has final moral judgment. | Event records must include alternatives, reasons, constraints, authority, trace, and temporal anchors. |
+| D-03 | Metrics are signals, not scores | Proposed | Scalar goodness, karma, or happiness scores would distort the model. | Moral metrics and wellbeing diagnostics must stay decomposed and reviewable. |
+| D-04 | Citizen self-access to wellbeing diagnostics is required | Proposed | A citizen should be able to inspect its own wellbeing state. | Operator, public, and governance views must be mediated and redacted by policy. |
+| D-05 | Anti-harm must be trajectory-aware | Proposed | Harm can be decomposed across benign-looking steps or delegated actors. | v0.91 needs synthetic delegated-harm proof candidates. |
+| D-06 | First birthday remains v0.92 | Proposed | v0.91 supplies moral conditions but not the identity/birth event. | Birthday language must stay downstream. |
+| D-07 | Constitutional citizenship remains v0.93 | Proposed | v0.91 trace evidence feeds governance but does not complete it. | Rights, duties, social contract, ToM, reputation, and shared social memory stay in v0.93. |

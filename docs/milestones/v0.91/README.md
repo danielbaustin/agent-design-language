@@ -1,164 +1,119 @@
 # v0.91 Milestone README
 
-## Runtime v2 Inheritance Boundary
+## Status
 
-v0.91 inherits Runtime v2 from the v0.90.1 and v0.90.2 follow-on milestones,
-but it should not be reduced to runtime plumbing.
-
-The center of gravity for v0.91 remains moral and emotional civilization:
-kindness, affect, wellbeing, humor, cultivation, harm prevention, moral
-resources, polis governance, and defensive posture. Runtime v2 gives those
-ideas a better substrate; it does not replace them.
-
-The first true Gödel-agent birthday is still out of scope for v0.91 and remains
-reserved for v0.92. v0.91 may prepare the moral and governance conditions for
-that birth, but it should not claim the birth event itself.
-
-Roadmap: ../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
-
-## Moral Governance Allocation
-
-v0.91 is the planned foundation milestone for moral trace and moral-governance
-evidence surfaces. The current allocation is recorded in
-[MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md).
-
-That allocation keeps the boundary clear:
-
-- v0.91 develops Freedom Gate moral events, validation rules, moral trace,
-  outcome linkage, moral metrics, trajectory review, anti-harm constraints,
-  moral resources, and bounded proof candidates.
-- v0.92 remains the identity, continuity, and first true birthday milestone.
-- v0.93 remains the constitutional citizenship, polis governance, and social
-  contract milestone.
-
-The remaining template sections in this README are provisional until the later
-v0.91 WP-level planning pass. The moral-governance allocation above is the
-source-backed portion added during v0.90.3 forward planning.
-
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+Forward planning. v0.91 is not yet an active implementation milestone and has no
+final issue wave.
 
 ## Purpose
-Provide a single entry point for the milestone: what it is, why it matters, what is included, and how to navigate the canonical documents and artifacts.
 
-## How To Use
-- Start here before reading individual milestone documents.
-- Use this README to locate the canonical design, execution, and validation surfaces.
-- Keep this document concise and navigational; detailed content belongs in the linked docs.
-- Keep links up to date as files move or are renamed.
+v0.91 is the planned moral governance and wellbeing-foundation milestone.
 
-## Overview
+The canonical allocation is recorded in
+[MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md).
 
-`{{milestone}}` represents the stage where `{{project_name}}` moves from `{{previous_state}}` to `{{target_state}}`.
+## Milestone Role
 
-This milestone focuses on:
-- {{focus_1}}
-- {{focus_2}}
-- {{focus_3}}
+v0.91 should establish:
 
-Key outcomes:
-- {{outcome_1}}
-- {{outcome_2}}
-- {{outcome_3}}
+- Freedom Gate moral event records
+- moral event validation rules
+- moral trace schema
+- outcome linkage and attribution
+- moral metrics as evidence, not verdicts
+- moral trajectory review
+- anti-harm trajectory constraints
+- moral resources as a care, refusal, and non-dehumanization substrate
+- wellbeing metrics v0 as a decomposable diagnostic after trace foundations
+
+v0.91 should not claim production moral agency, final constitutional
+citizenship, legal personhood, a scalar karma score, or the first true
+Gödel-agent birthday.
+
+## Runtime v2 Inheritance Boundary
+
+v0.91 inherits Runtime v2 and citizen-state foundations from earlier v0.90.x
+milestones, but it should not be reduced to runtime plumbing. Runtime v2 gives
+moral trace, wellbeing, anti-harm, and review surfaces a substrate; it does not
+replace them.
+
+The first true Gödel-agent birthday remains reserved for v0.92. v0.91 may
+prepare moral and governance conditions for that birth, but it should not claim
+the birth event itself.
+
+## Dependency Boundary
+
+v0.91 depends on:
+
+- v0.90.3 citizen state, signed state envelopes, lineage, standing, access
+  control, challenge, sanctuary, quarantine, and redacted projection surfaces
+- v0.90.5 governed tools only where tool-mediated moral evidence or refusal
+  evidence depends on landed UTS, ACC, and tool-call trace
+- v0.92 as a downstream consumer of moral trace and wellbeing evidence for
+  identity, continuity, and birthday readiness
+- v0.93 as a downstream consumer of moral evidence for constitutional
+  citizenship, polis governance, social cognition, and review institutions
 
 ## Scope Summary
 
 ### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
-- {{in_scope_3}}
+
+- Moral event and moral trace contracts.
+- Validation and negative fixtures for incomplete or evasive moral evidence.
+- Outcome linkage and attribution with uncertainty.
+- Moral metrics over trace evidence.
+- Moral trajectory review packets.
+- Anti-harm constraints, including decomposed and delegated harm.
+- Wellbeing metrics v0 as a non-scalar diagnostic.
+- Proof candidates that make moral evidence visible to reviewers.
 
 ### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
+
+- Runtime implementation in this planning pass.
+- Full constitutional citizenship or final social contract.
+- First true Gödel-agent birthday.
+- Production moral agency.
+- Scalar karma, scalar happiness, or scoreboard framing.
+- Public exposure of private wellbeing diagnostics.
+- Replacing v0.90.3 citizen-state/security work.
+- Replacing v0.92 identity and birthday semantics.
 
 ## Document Map
 
-Canonical milestone documents:
-
-- Vision: `{{vision_doc}}`
-- Design: `{{design_doc}}`
-- Work Breakdown Structure (WBS): `{{wbs_doc}}`
-- Sprint plan: `{{sprint_doc}}`
-- Decisions log: `{{decisions_doc}}`
-- Demo matrix: `{{demo_matrix_doc}}`
-- Milestone checklist: `{{checklist_doc}}`
-- Release plan / process: `{{release_process_doc}}`
-- Release notes: `{{release_notes_doc}}`
-
-Supporting / domain-specific docs:
-- [MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md)
-- [features/WELLBEING_AND_HAPPINESS.md](features/WELLBEING_AND_HAPPINESS.md)
+- Vision: [VISION_v0.91.md](VISION_v0.91.md)
+- Design: [DESIGN_v0.91.md](DESIGN_v0.91.md)
+- WBS: [WBS_v0.91.md](WBS_v0.91.md)
+- Sprint plan: [SPRINT_v0.91.md](SPRINT_v0.91.md)
+- Decisions: [DECISIONS_v0.91.md](DECISIONS_v0.91.md)
+- Demo matrix: [DEMO_MATRIX_v0.91.md](DEMO_MATRIX_v0.91.md)
+- Milestone checklist: [MILESTONE_CHECKLIST_v0.91.md](MILESTONE_CHECKLIST_v0.91.md)
+- Release plan: [RELEASE_PLAN_v0.91.md](RELEASE_PLAN_v0.91.md)
+- Release notes: [RELEASE_NOTES_v0.91.md](RELEASE_NOTES_v0.91.md)
+- Feature planning: [features/README.md](features/README.md)
+- Moral governance allocation:
+  [MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md)
 
 ## Execution Model
 
-This milestone is executed as a sequence of work packages (WPs):
+Later WP planning should preserve the standard milestone rhythm:
 
-- WP-01: Design pass (docs + planning)
-- WP-02 - WP-12: Feature and system work
-- WP-13: Demo matrix and integration demos
-- WP-14: Coverage / quality gate
-- WP-15: Docs and review convergence
-- WP-16: Release ceremony
+- WP-01: promote reviewed milestone docs and issue wave
+- feature WPs: implement moral event, trace, validation, attribution, metrics,
+  trajectory review, anti-harm, moral resources, and wellbeing surfaces
+- demo WP: build moral trace, anti-harm, and wellbeing proof demos
+- quality/review WPs: validate docs, tests, demo evidence, review packets, and
+  accepted-finding remediation
+- release WP: close the milestone under the normal ceremony pattern
 
-Execution expectations:
-- Each WP is tracked by an issue and implemented via PRs.
-- Each issue produces structured artifacts (input/output cards, reports).
-- All work merges under green CI and passes quality gates.
+The exact WP sequence is intentionally deferred until v0.91 planning is active.
 
-## Demo and Validation Surface
+## Success Criteria
 
-Primary validation is defined in:
-- Demo matrix: `{{demo_matrix_doc}}`
+v0.91 is ready to execute when:
 
-Additional validation surfaces:
-- Test suite results
-- Generated run artifacts
-- Trace and replay outputs
-
-Success criteria:
-- {{success_criteria_1}}
-- {{success_criteria_2}}
-- {{success_criteria_3}}
-
-## Determinism and Reproducibility
-
-The milestone should demonstrate:
-- Deterministic or bounded-repeatable execution where required
-- Replayable traces and inspectable artifacts
-- Stable command entry points for demos
-
-Evidence locations:
-- {{determinism_evidence_path_1}}
-- {{determinism_evidence_path_2}}
-
-## Risks and Open Questions
-
-Known risks:
-- {{risk_1}}
-- {{risk_2}}
-
-Open questions:
-- {{open_question_1}}
-- {{open_question_2}}
-
-## Status
-
-Current status: {{status}}
-
-- Planning: {{planning_status}}
-- Execution: {{execution_status}}
-- Validation: {{validation_status}}
-- Release readiness: {{release_status}}
-
-## Exit Criteria
-
-- All canonical milestone documents are complete and internally consistent.
-- All WBS items are implemented or explicitly deferred.
-- Demo matrix is runnable and validated.
-- Quality gates (fmt, clippy, test, CI) are passing.
-- Milestone checklist is complete or exceptions are documented.
-- Release artifacts (notes, tag, docs) are ready.
+- moral trace and moral event contracts are concrete enough to become cards
+- wellbeing metrics are diagnostic and self-accessible, not public reputation
+- anti-harm proof candidates are safe, synthetic, deterministic, and reviewable
+- moral resources are grounded in trace evidence rather than rhetoric
+- v0.92 birthday and v0.93 constitutional governance remain downstream
+- demos prove behavior and artifacts rather than merely describing values

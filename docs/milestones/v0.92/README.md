@@ -45,6 +45,8 @@ v0.92 depends on:
 
 - v0.90.3 for citizen state, signed envelopes, lineage, continuity witnesses,
   standing, challenge, sanctuary, quarantine, and redacted projections
+- v0.90.5 for governed-tool authority, UTS, ACC, and tool-call trace if
+  capability envelopes include tool-mediated actions
 - v0.91 for moral trace, moral trajectory review, outcome linkage, wellbeing,
   moral resources, and anti-harm evidence
 - v0.93 as a downstream consumer of identity evidence for constitutional
@@ -72,6 +74,7 @@ v0.92 depends on:
 - Production citizenship.
 - Full constitutional governance.
 - Economics, payments, or markets.
+- Governed-tool substrate implementation.
 - Full memory palace implementation.
 - Replacing v0.90.3 citizen-state/security work.
 - Replacing v0.91 moral trace or moral trajectory review.

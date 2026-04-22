@@ -1,74 +1,77 @@
-# Design Template
+# Design - v0.91
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues: {{issues}}
+## Design Center
 
-## Purpose
-Define what we are building, why, and how we validate it — concisely, with links to issues/PRs.
+The design center is a fixture-backed moral-evidence layer for the CSM runtime.
 
-## Problem Statement
-{{problem_statement}}
+The layer is governed by four boundaries:
 
-## Goals
-- {{goal_1}}
-- {{goal_2}}
+- identity: moral evidence attaches to governed identities, not loose transcripts
+- trace: choices, alternatives, refusals, outcomes, and review surfaces are
+  recorded
+- privacy: wellbeing and moral evidence have policy-bound views
+- interpretation: metrics and diagnostics inform review but are not verdicts
 
-## Non-Goals
-- {{non_goal_1}}
-- {{non_goal_2}}
+## Core Objects
 
-## Scope
-### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
+v0.91 should introduce or formalize these implementation-facing objects:
 
-### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
+- Freedom Gate moral event
+- moral event validation result
+- moral trace record
+- outcome-linkage and attribution record
+- moral metric signal
+- trajectory review packet
+- anti-harm trajectory constraint
+- delegated-harm proof fixture
+- moral resources record
+- wellbeing diagnostic report
+- redacted reviewer and citizen views
 
-## Requirements
-### Functional
-- {{functional_requirement_1}}
-- {{functional_requirement_2}}
+## Moral Event Flow
 
-### Non-functional
-- Deterministic behavior and reproducible outputs.
-- Clear failure semantics and observability.
-- {{non_functional_requirement_1}}
+The planned flow is:
 
-## Proposed Design
-### Overview
-{{architecture_summary}}
+1. A candidate action reaches a morally significant decision point.
+2. Freedom Gate records selected and rejected alternatives.
+3. The runtime emits a moral event with actor, authority, context, reason,
+   constraints, trace links, and temporal anchor.
+4. Validation checks structural completeness and moral legibility.
+5. Outcomes are linked later with uncertainty rather than false certainty.
+6. Metrics and trajectory review summarize evidence without becoming judgment.
 
-### Interfaces / Data contracts
-- {{interface_or_contract_1}}
-- {{interface_or_contract_2}}
+## Wellbeing Access Model
 
-### Execution semantics
-{{execution_semantics}}
+The citizen identity should always have access to its own wellbeing diagnostic.
+Operator, reviewer, public, and governance views are mediated, logged, and
+redacted by policy.
 
-## Risks and Mitigations
-- Risk: {{risk_1}}
-  - Mitigation: {{mitigation_1}}
-- Risk: {{risk_2}}
-  - Mitigation: {{mitigation_2}}
+The first wellbeing metrics should be decomposable:
 
-## Alternatives Considered
-- Option: {{alternative_1}}
-  - Tradeoff: {{tradeoff_1}}
-- Option: {{alternative_2}}
-  - Tradeoff: {{tradeoff_2}}
+- coherence
+- agency
+- continuity
+- progress
+- moral integrity
+- participation
 
-## Validation Plan
-- Checks/tests: {{validation_checks}}
-- Success metrics: {{success_metrics}}
-- Rollback/fallback: {{rollback_plan}}
+They should not form a scalar happiness score, reward target, or public
+reputation surrogate.
 
-## Exit Criteria
-- Goals/non-goals and scope boundaries are explicit.
-- Validation plan is actionable and referenced by the milestone checklist.
-- Major open questions are resolved or tracked in the decision log.
+## Anti-Harm Design
+
+v0.91 should move beyond action-only refusal. The proof surface should include a
+safe synthetic scenario where individually benign-looking steps form a harmful
+trajectory when delegated or decomposed.
+
+The desired result is a reviewable refusal or constraint event with evidence,
+not a hidden policy veto.
+
+## Compression Design
+
+Docs and fixtures should land before runtime code widens. The milestone can
+compress only if moral event, validation, trace, attribution, and review
+contracts are precise enough for independent implementation slices.
+
+Compression must not skip negative fixtures, privacy/redaction checks,
+wellbeing self-access policy, anti-harm proof cases, or review convergence.
