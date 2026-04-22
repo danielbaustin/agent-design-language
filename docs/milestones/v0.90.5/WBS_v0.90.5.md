@@ -2,8 +2,9 @@
 
 ## Work Package Shape
 
-v0.90.5 should use the standard 20-WP shape. It is an implementation milestone
-for Governed Tools v1.0, not a documentation-only planning lane.
+v0.90.5 should use the standard release shape plus an explicit demo/proof lane.
+It is an implementation milestone for Governed Tools v1.0, not a
+documentation-only planning lane.
 
 | WP | Issue | Title | Purpose | Primary Output | Depends On |
 | --- | --- | --- | --- | --- | --- |
@@ -25,8 +26,9 @@ for Governed Tools v1.0, not a documentation-only planning lane.
 | WP-16 | planned | Model proposal benchmark harness | Test model tool proposals against schema, authority, privacy, and bypass rubrics | benchmark runner and report | WP-04, WP-15 |
 | WP-17 | planned | Local model and Gemma-focused evaluation | Evaluate local models and Gemma-family candidates | local model scorecards | WP-16 |
 | WP-18 | planned | Governed Tools v1.0 flagship demo | Show proposal, validation, ACC, policy, gate, execution/denial, trace, and redaction | flagship demo proof packet | WP-13-WP-17 |
-| WP-19 | planned | Demo matrix, docs, review, and public-spec handoff | Align docs, feature docs, conformance, demo matrix, and review packet | review-ready package | WP-18 |
-| WP-20 | planned | Release ceremony | Complete release closure | release evidence and next handoff | WP-19 |
+| WP-18A | planned | Demo matrix and feature proof coverage | Verify every governed-tools claim has proof, fixture, non-proving status, or deferral before review convergence | demo matrix update and proof coverage record | WP-03-WP-18 |
+| WP-19 | planned | Quality, docs, review, and public-spec handoff | Align docs, conformance, feature docs, review packets, public-spec language, and accepted-finding routing | review-ready package and finding register | WP-18A |
+| WP-20 | planned | Release ceremony | Complete release closure and next handoff | release evidence and next handoff | WP-19 |
 
 ## Compression Candidate
 
@@ -34,3 +36,13 @@ The milestone can compress after UTS, ACC, fixtures, and compiler contracts are
 stable. It must not compress away threat modeling, public conformance, model
 testing, negative security tests, or redaction/visibility review.
 
+Compression must not skip:
+
+- the threat model and proposal/action boundary
+- UTS conformance fixtures and invalid examples
+- ACC authority, visibility, delegation, and redaction fixtures
+- unknown-tool and unregistered-adapter rejection
+- dangerous negative safety cases
+- model proposal benchmarking
+- feature-by-feature proof coverage before review convergence
+- findings-first internal review and third-party review handoff

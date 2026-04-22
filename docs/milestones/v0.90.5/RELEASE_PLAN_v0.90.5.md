@@ -17,7 +17,9 @@ Freedom Gate mediation, and trace.
 - model proposal benchmark
 - local/Gemma evaluation
 - flagship demo proof packet
+- feature proof coverage record
 - internal and external review notes
+- accepted-finding disposition record
 
 ## Release Risks
 
@@ -25,9 +27,13 @@ Freedom Gate mediation, and trace.
 - tool traces could leak private data if redaction is incomplete
 - demo could imply arbitrary tool execution if non-goals are weak
 - model benchmark could become anecdotal if scoring is not stable
+- public UTS compatibility could be mistaken for public standardization or
+  runtime permission
 
 ## Release Rule
 
 Do not release v0.90.5 as successful unless the negative suite and redaction
 evidence prove that model output cannot bypass governed execution.
 
+Do not move into release review until every feature claim has a proof,
+non-proving classification, or explicit deferral.

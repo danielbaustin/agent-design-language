@@ -11,6 +11,12 @@ notes:
   - "UTS is portable and public-compatible; ACC is ADL-native and owns runtime authority."
   - "UTS validity must never be treated as permission to execute."
   - "Preserve a flagship Governed Tools v1.0 demo and per-feature proof coverage."
+  - "WP-01 must author cards from WP_EXECUTION_READINESS_v0.90.5.md before implementation."
+  - "Do not compress away negative safety tests, redaction checks, model testing, internal review, or third-party review handoff."
+card_update_rule:
+  - "WP-01 must copy the relevant section from WP_EXECUTION_READINESS_v0.90.5.md into each issue body before implementation."
+  - "Cards must include required outputs, required validation, source docs, non-goals, and demo/proof expectations."
+  - "No issue should claim tool execution, release readiness, public specification status, or review completion until evidence has landed and validated."
 work_packages:
   - wp: WP-01
     issue: planned
@@ -120,12 +126,18 @@ work_packages:
     queue: demo
     outcome: flagship demo proof packet
     depends_on: WP-13-WP-17
+  - wp: WP-18A
+    issue: planned
+    title: Demo matrix and feature proof coverage
+    queue: demo
+    outcome: demo matrix update and proof coverage record
+    depends_on: WP-03-WP-18
   - wp: WP-19
     issue: planned
-    title: Demo matrix, docs, review, and public-spec handoff
+    title: Quality, docs, review, and public-spec handoff
     queue: docs
-    outcome: review-ready package
-    depends_on: WP-18
+    outcome: review-ready package and finding register
+    depends_on: WP-18A
   - wp: WP-20
     issue: planned
     title: Release ceremony
