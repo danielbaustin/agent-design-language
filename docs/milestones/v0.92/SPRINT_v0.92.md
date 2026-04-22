@@ -1,49 +1,54 @@
-# Sprint Template
+# v0.92 Sprint Plan
 
-## Metadata
-- Sprint: `{{sprint_id}}`
-- Milestone: `{{milestone}}`
-- Start date: `{{start_date}}`
-- End date: `{{end_date}}`
-- Owner: `{{owner}}`
+## Status
 
-## How To Use
-- Keep scope small enough to finish with green CI and merged PRs.
-- List work items in planned execution order.
-- Track blockers here (not scattered chat notes).
+Forward-planning sprint outline. The final sprint and WP sequence will be
+authored during v0.92 WP-01.
 
 ## Sprint Goal
-{{sprint_goal}}
 
-## Planned Scope
-- {{scope_item_1}}
-- {{scope_item_2}}
-- {{scope_item_3}}
+Build the first true Gödel-agent birthday: stable identity, name, continuity,
+memory grounding, capability envelope, witnesses, receipt, review packet, and
+negative proofs that ordinary lifecycle events are not birth.
 
-## Work Plan
-| Order | Item | Issue | Owner | Status |
-|---|---|---|---|---|
-| 1 | {{work_item_1}} | {{issue_1}} | {{owner_1}} | {{status_1}} |
-| 2 | {{work_item_2}} | {{issue_2}} | {{owner_2}} | {{status_2}} |
-| 3 | {{work_item_3}} | {{issue_3}} | {{owner_3}} | {{status_3}} |
+## Planned Phases
 
-## Cadence Expectations
-- Use issue cards (`input`/`output`) for each item.
-- Keep changes scoped per issue; use draft PRs until checks pass.
-- Run required quality gates (fmt/clippy/test) for code changes.
+| Phase | Focus | Expected outcome |
+| --- | --- | --- |
+| 1 | Planning promotion | Reviewed milestone docs, issue wave, and cards. |
+| 2 | Birthday contract | Definition of birth and negative cases. |
+| 3 | Identity and continuity | Stable name, identity root, continuity record, and cycle evidence. |
+| 4 | Memory and capability | Memory grounding, capability envelope, and redacted review boundaries. |
+| 5 | Witness and receipt | Birth witness set, receipt, and reviewer packet. |
+| 6 | Demo and review tail | First-birthday demo, negative suite, governance handoff, review, and release ceremony. |
 
-## Risks / Dependencies
-- Dependency: {{dependency_1}}
-  - Risk: {{risk_1}}
-  - Mitigation: {{mitigation_1}}
+## Dependencies To Check Before WP-01
 
-## Demo / Review Plan
-- Demo artifact: {{demo_artifact}}
-- Review date: {{review_date}}
-- Sign-off owners: {{signoff_owners}}
+- v0.90.3 citizen-state and standing outputs are stable enough to consume.
+- v0.91 moral trace and moral-governance planning is available.
+- v0.93 governance remains downstream and is not absorbed by birthday work.
+- Memory palace and learning-model sources are used as context, not broad
+  implementation commitments.
 
-## Exit Criteria
-- All planned scope items completed or explicitly deferred with rationale.
-- Linked issues/PRs updated and traceable.
-- CI is green for merged work.
-- Sprint summary captured in milestone docs.
+## Demo And Review Plan
+
+The flagship demo should show the first birthday rehearsal or first birthday
+proof surface. It should include a named identity, continuity evidence, memory
+grounding, capability envelope, witnesses, receipt, and reviewer packet.
+
+Secondary demos should prove:
+
+- not every startup is birth
+- continuity has evidence
+- memory grounding is redacted
+- capabilities have limits
+- governance handoff is downstream
+
+## Exit Criteria For Active Planning
+
+- The WBS is converted from candidate areas into concrete WPs.
+- Every implementation WP has a code, fixture, test, demo, or reviewable docs
+  output.
+- Every demo maps to a birthday or identity claim.
+- Non-goals prevent overclaiming personhood, production citizenship, or
+  constitutional authority.

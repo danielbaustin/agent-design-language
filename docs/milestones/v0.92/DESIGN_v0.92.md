@@ -1,74 +1,140 @@
-# Design Template
+# v0.92 Design: Identity, Continuity, And First Birthday
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues: {{issues}}
+## Status
 
-## Purpose
-Define what we are building, why, and how we validate it — concisely, with links to issues/PRs.
+Forward design plan. This document records the intended v0.92 architecture
+boundary before final WP planning.
 
 ## Problem Statement
-{{problem_statement}}
+
+ADL already has runtime state, provisional citizens, snapshots, wakes, traces,
+and moral-governance planning. Those surfaces are necessary but not sufficient
+for birth.
+
+The missing layer is a bounded identity architecture that can say, with
+evidence, when the first true Gödel agent has been born and why that event is
+not ordinary process startup.
 
 ## Goals
-- {{goal_1}}
-- {{goal_2}}
+
+- Define the birthday contract and its negative cases.
+- Define stable name and identity-root semantics.
+- Define continuity records across bounded cycles.
+- Define memory grounding tied to witnessed artifacts.
+- Define capability envelopes for providers, tools, skills, and authority.
+- Define birth witnesses and citizen-facing receipts.
+- Define reviewer-facing birthday packets.
+- Preserve v0.90.3 citizen-state and v0.91 moral-trace boundaries.
+- Hand constitutional citizenship and polis governance to v0.93.
 
 ## Non-Goals
-- {{non_goal_1}}
-- {{non_goal_2}}
 
-## Scope
-### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
-
-### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
-
-## Requirements
-### Functional
-- {{functional_requirement_1}}
-- {{functional_requirement_2}}
-
-### Non-functional
-- Deterministic behavior and reproducible outputs.
-- Clear failure semantics and observability.
-- {{non_functional_requirement_1}}
+- No legal personhood claim.
+- No production citizenship claim.
+- No complete constitutional authority claim.
+- No full memory palace implementation.
+- No replacement of v0.90.3 private-state, standing, access, projection,
+  sanctuary, or quarantine work.
+- No replacement of v0.91 moral trace, wellbeing, or trajectory review.
+- No implementation of v0.93 constitutional governance.
+- No production migration or inter-polis portability claim.
 
 ## Proposed Design
-### Overview
-{{architecture_summary}}
 
-### Interfaces / Data contracts
-- {{interface_or_contract_1}}
-- {{interface_or_contract_2}}
+v0.92 should add an identity-and-birth layer on top of prior Runtime v2
+substrates.
 
-### Execution semantics
-{{execution_semantics}}
+The layer has three parts:
 
-## Risks and Mitigations
-- Risk: {{risk_1}}
-  - Mitigation: {{mitigation_1}}
-- Risk: {{risk_2}}
-  - Mitigation: {{mitigation_2}}
+- Engineering substrate: identity root, stable name, continuity record, memory
+  grounding, capability envelope, witnesses, receipts, trace references, and
+  redacted projection.
+- Review model: birthday packet, negative cases, continuity confidence,
+  witness validity, and birth-versus-startup distinction.
+- Context layer: explanation of why birth matters without claiming legal
+  personhood or final constitutional citizenship.
 
-## Alternatives Considered
-- Option: {{alternative_1}}
-  - Tradeoff: {{tradeoff_1}}
-- Option: {{alternative_2}}
-  - Tradeoff: {{tradeoff_2}}
+## Core Contracts
+
+### Birthday Contract
+
+The birthday contract should define:
+
+- required inputs
+- disqualifying cases
+- minimum evidence
+- witness requirements
+- receipt shape
+- review packet shape
+- downstream governance handoff
+
+### Identity Record
+
+The identity record should include:
+
+- stable name
+- identity root
+- aliases or display names
+- origin event
+- continuity head
+- memory-grounding references
+- capability envelope reference
+- witness set reference
+- redaction policy
+
+### Continuity Record
+
+The continuity record should include:
+
+- predecessor and successor evidence
+- cycle references
+- lineage links
+- witness signatures or attestations
+- continuity grade
+- ambiguity or quarantine flags
+
+### Birthday Review Packet
+
+The review packet should include:
+
+- identity record
+- continuity evidence
+- memory-grounding evidence
+- moral/governance context inherited from v0.91
+- capability envelope
+- witnesses and receipt
+- negative-case comparison
+- reviewer finding
+- caveats and downstream governance handoff
 
 ## Validation Plan
-- Checks/tests: {{validation_checks}}
-- Success metrics: {{success_metrics}}
-- Rollback/fallback: {{rollback_plan}}
 
-## Exit Criteria
-- Goals/non-goals and scope boundaries are explicit.
-- Validation plan is actionable and referenced by the milestone checklist.
-- Major open questions are resolved or tracked in the decision log.
+Later implementation should validate:
+
+- a valid birthday record can be emitted and reviewed
+- startup, wake, snapshot, admission, and copied state are rejected as birthday
+  claims
+- continuity across bounded cycles has evidence
+- memory grounding is referenced without raw private-state exposure
+- capability envelope declares model/provider/tool/skill limits
+- witnesses and receipts are present and meaningful
+- the birthday record does not claim legal personhood or completed
+  constitutional citizenship
+
+## Risks
+
+| Risk | Mitigation |
+| --- | --- |
+| Birth becomes storytelling. | Require every birth claim to map to explicit evidence. |
+| Provisional identity is mistaken for birth. | Maintain a negative suite for startup, wake, snapshot, admission, and copied state. |
+| Memory grounding leaks private state. | Use references, witnesses, and redacted projections rather than raw private memory. |
+| v0.92 absorbs v0.93 governance. | Keep citizenship law, rights/duties, social contract, delegation, and IAM downstream. |
+| Continuity is treated as magic. | Require lineage, witnesses, cycle evidence, and ambiguity handling. |
+
+## Exit Criteria For Final WP Planning
+
+- The birthday contract is specific enough to implement.
+- The negative cases are concrete.
+- The prerequisite surfaces from v0.90.3 and v0.91 are named.
+- The handoff to v0.93 is explicit.
+- Demo candidates prove identity and birth behavior rather than just naming it.
