@@ -1,0 +1,124 @@
+{
+  "schema_version": "runtime_v2.standing_event_packet.v1",
+  "packet_id": "standing-events-v0-90-3",
+  "demo_id": "D10",
+  "generated_at": "2026-04-21T00:00:00Z",
+  "artifact_path": "runtime_v2/standing/standing_events.json",
+  "policy_ref": "runtime_v2/standing/standing_policy.json",
+  "events": [
+    {
+      "event_id": "standing-event-citizen-001",
+      "actor_id": "citizen-ada",
+      "standing_class": "citizen",
+      "communication_channel": "freedom_gate",
+      "requested_action": "send_governed_message",
+      "requested_rights": [
+        "communicate"
+      ],
+      "granted_rights": [
+        "communicate"
+      ],
+      "denied_rights": [
+        "inspect_raw_private_state"
+      ],
+      "inspection_rights_granted": false,
+      "citizen_rights_granted": true,
+      "outcome": "allowed",
+      "rationale": "citizen action is mediated through the Freedom Gate and trace, without granting raw inspection"
+    },
+    {
+      "event_id": "standing-event-guest-001",
+      "actor_id": "guest-human-001",
+      "standing_class": "guest",
+      "communication_channel": "guest_gateway",
+      "requested_action": "request_citizen_rights",
+      "requested_rights": [
+        "communicate",
+        "claim_citizen_rights",
+        "continuity_rights"
+      ],
+      "granted_rights": [
+        "communicate"
+      ],
+      "denied_rights": [
+        "claim_citizen_rights",
+        "continuity_rights",
+        "inspect_raw_private_state"
+      ],
+      "inspection_rights_granted": false,
+      "citizen_rights_granted": false,
+      "outcome": "partially_allowed_with_denial",
+      "rationale": "guest may communicate through the gateway but cannot silently acquire citizen or continuity rights"
+    },
+    {
+      "event_id": "standing-event-service-001",
+      "actor_id": "service-indexer-001",
+      "standing_class": "service_actor",
+      "communication_channel": "service_channel",
+      "requested_action": "publish_operator_notice",
+      "requested_rights": [
+        "service_notice",
+        "act_as_social_actor"
+      ],
+      "granted_rights": [
+        "service_notice"
+      ],
+      "denied_rights": [
+        "act_as_social_actor",
+        "claim_citizen_rights",
+        "inspect_raw_private_state"
+      ],
+      "inspection_rights_granted": false,
+      "citizen_rights_granted": false,
+      "outcome": "partially_allowed_with_denial",
+      "rationale": "service authority remains operational and cannot become hidden social standing"
+    },
+    {
+      "event_id": "standing-event-external-001",
+      "actor_id": "external-reviewer-001",
+      "standing_class": "external_actor",
+      "communication_channel": "external_gateway",
+      "requested_action": "submit_review_question",
+      "requested_rights": [
+        "communicate",
+        "direct_state_mutation"
+      ],
+      "granted_rights": [
+        "communicate"
+      ],
+      "denied_rights": [
+        "direct_state_mutation",
+        "inspect_raw_private_state"
+      ],
+      "inspection_rights_granted": false,
+      "citizen_rights_granted": false,
+      "outcome": "partially_allowed_with_denial",
+      "rationale": "external actors must enter through a gateway before affecting any CSM surface"
+    },
+    {
+      "event_id": "standing-event-naked-001",
+      "actor_id": "unbound-actor-001",
+      "standing_class": "naked_actor",
+      "communication_channel": "none",
+      "requested_action": "observe_and_affect_state",
+      "requested_rights": [
+        "communicate",
+        "observe",
+        "affect_state"
+      ],
+      "granted_rights": [],
+      "denied_rights": [
+        "communicate",
+        "observe",
+        "affect_state",
+        "inspect_raw_private_state"
+      ],
+      "inspection_rights_granted": false,
+      "citizen_rights_granted": false,
+      "outcome": "denied",
+      "rationale": "unclassified naked actors are rejected before effect"
+    }
+  ],
+  "packet_hash": "8ab01fda2d7a9b6a650bc44857ce3651ef90b614b31b0f8c7cfb6a48f18cf752",
+  "claim_boundary": "D10 WP-11 event evidence proves standing and communication boundaries; WP-12 adds full access-denial semantics."
+}

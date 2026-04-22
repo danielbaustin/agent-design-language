@@ -98,6 +98,7 @@ surface, but it should not be the default investor-facing path.
 - redacted projection
 - private-state redaction policy and leakage/authority negative-case proof
 - standing or communication event
+- standing policy and communication-boundary negative-case proof
 - access approval or denial event
 - challenge or quarantine artifact
 - operator report

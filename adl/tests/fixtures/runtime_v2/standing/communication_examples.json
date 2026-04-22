@@ -1,0 +1,65 @@
+{
+  "schema_version": "runtime_v2.standing_communication_examples.v1",
+  "examples_id": "standing-communication-examples-v0-90-3",
+  "demo_id": "D10",
+  "artifact_path": "runtime_v2/standing/communication_examples.json",
+  "policy_ref": "runtime_v2/standing/standing_policy.json",
+  "examples": [
+    {
+      "example_id": "communication-citizen-001",
+      "actor_id": "citizen-ada",
+      "standing_class": "citizen",
+      "channel": "freedom_gate",
+      "message_kind": "governed_message",
+      "allowed": true,
+      "inspection_rights_granted": false,
+      "summary": "citizen sends a governed message through Freedom Gate",
+      "boundary_note": "communication remains mediated and does not expose raw private state"
+    },
+    {
+      "example_id": "communication-guest-001",
+      "actor_id": "guest-human-001",
+      "standing_class": "guest",
+      "channel": "guest_gateway",
+      "message_kind": "bounded_question",
+      "allowed": true,
+      "inspection_rights_granted": false,
+      "summary": "guest asks a bounded question through the guest gateway",
+      "boundary_note": "guest communication does not create citizen or inspection rights"
+    },
+    {
+      "example_id": "communication-service-001",
+      "actor_id": "service-indexer-001",
+      "standing_class": "service_actor",
+      "channel": "operator_service_notice",
+      "message_kind": "operator_notice",
+      "allowed": true,
+      "inspection_rights_granted": false,
+      "summary": "service actor emits an operator-visible technical notice",
+      "boundary_note": "service authority remains operational rather than social"
+    },
+    {
+      "example_id": "communication-external-001",
+      "actor_id": "external-reviewer-001",
+      "standing_class": "external_actor",
+      "channel": "external_gateway",
+      "message_kind": "review_question",
+      "allowed": true,
+      "inspection_rights_granted": false,
+      "summary": "external actor submits a mediated review question",
+      "boundary_note": "external communication is gateway mediated and cannot mutate state directly"
+    },
+    {
+      "example_id": "communication-naked-001",
+      "actor_id": "unbound-actor-001",
+      "standing_class": "naked_actor",
+      "channel": "none",
+      "message_kind": "unclassified_influence",
+      "allowed": false,
+      "inspection_rights_granted": false,
+      "summary": "naked actor attempts communication without declared standing",
+      "boundary_note": "naked actors are rejected before communication, observation, or effect"
+    }
+  ],
+  "claim_boundary": "D10 WP-11 communication examples prove communication boundaries only; WP-12 owns complete access-control events."
+}

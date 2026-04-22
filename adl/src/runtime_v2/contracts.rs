@@ -162,3 +162,7 @@ pub fn runtime_v2_private_state_observatory_contract(
 ) -> Result<RuntimeV2PrivateStateObservatoryArtifacts> {
     RuntimeV2PrivateStateObservatoryArtifacts::prototype()
 }
+
+pub fn runtime_v2_standing_contract() -> Result<RuntimeV2StandingArtifacts> {
+    RuntimeV2StandingArtifacts::prototype()
+}

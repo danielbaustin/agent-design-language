@@ -2,7 +2,9 @@
 
 ## Status
 
-Planning contract for v0.90.3.
+Planning contract for v0.90.3. WP-11 has landed the standing and
+communication boundary proof. WP-12 still owns the full access-control matrix
+and explicit access-denial events.
 
 ## Purpose
 
@@ -32,6 +34,29 @@ v0.90.3 should make the following classes explicit:
 - Inspection, projection, migration, wake, quarantine, challenge, appeal, and
   decryption must be explicit access events.
 
+## WP-11 Runtime Evidence
+
+The WP-11 proof is recorded in
+`docs/milestones/v0.90.3/STANDING_COMMUNICATION_BOUNDARY_v0.90.3.md`.
+
+Runtime evidence:
+
+- `adl/src/runtime_v2/standing.rs`
+- `adl/src/runtime_v2/tests/standing.rs`
+
+Fixture evidence:
+
+- `adl/tests/fixtures/runtime_v2/standing/standing_policy.json`
+- `adl/tests/fixtures/runtime_v2/standing/standing_events.json`
+- `adl/tests/fixtures/runtime_v2/standing/communication_examples.json`
+- `adl/tests/fixtures/runtime_v2/standing/standing_negative_cases.json`
+
+Focused validation:
+
+```bash
+cargo test --manifest-path adl/Cargo.toml runtime_v2_standing -- --nocapture
+```
+
 ## Access-Control Events
 
 Required event families:
@@ -58,3 +83,6 @@ Required event families:
 - service actor cannot initiate arbitrary communication
 - operator cannot inspect private state without an access event
 - projection access does not become raw state access
+
+WP-11 satisfies the first three acceptance tests directly. WP-12 owns operator
+inspection events and projection-access denial semantics.
