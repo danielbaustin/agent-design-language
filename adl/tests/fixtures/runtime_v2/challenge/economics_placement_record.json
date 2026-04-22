@@ -1,0 +1,27 @@
+{
+  "schema_version": "runtime_v2.economics_placement_record.v1",
+  "record_id": "economics-placement-v0-90-3-resource-stewardship-bridge",
+  "demo_id": "D11",
+  "artifact_path": "runtime_v2/challenge/economics_placement_record.json",
+  "decision": "resource_stewardship_bridge_only_before_v0_90_4",
+  "rationale": "v0.90.3 needs continuity-preserving resource stewardship around challenge, freeze, quarantine, and review; full economics belongs to v0.90.4.",
+  "allowed_v0_90_3_scope": [
+    "record resource stewardship obligations for evidence retention",
+    "refuse cost optimizations that weaken continuity guarantees",
+    "surface operator review costs as governance facts",
+    "defer market allocation to the economics milestone"
+  ],
+  "deferred_to_v0_90_4": [
+    "markets",
+    "payment_rails",
+    "bidding",
+    "subcontracting",
+    "inter_polis_trade"
+  ],
+  "markets_implemented": false,
+  "payment_rails_implemented": false,
+  "bidding_implemented": false,
+  "subcontracting_implemented": false,
+  "continuity_priority_rule": "cost optimization must never override citizen continuity, privacy, evidence preservation, or due process",
+  "claim_boundary": "This record places economics for v0.90.3 as a narrow resource-stewardship bridge only; it explicitly does not implement markets, payment rails, bidding, subcontracting, or inter-polis trade."
+}

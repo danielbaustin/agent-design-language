@@ -170,3 +170,7 @@ pub fn runtime_v2_standing_contract() -> Result<RuntimeV2StandingArtifacts> {
 pub fn runtime_v2_access_control_contract() -> Result<RuntimeV2AccessControlArtifacts> {
     RuntimeV2AccessControlArtifacts::prototype()
 }
+
+pub fn runtime_v2_continuity_challenge_contract() -> Result<RuntimeV2ContinuityChallengeArtifacts> {
+    RuntimeV2ContinuityChallengeArtifacts::prototype()
+}
