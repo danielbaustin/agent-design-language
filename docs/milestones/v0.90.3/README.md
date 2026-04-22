@@ -108,6 +108,7 @@ dependencies.
 - Feature proof coverage record: `FEATURE_PROOF_COVERAGE_v0.90.3.md`
 - CI runtime policy for closeout sessions: `CI_RUNTIME_POLICY_v0.90.3.md`
 - Release readiness / WP-15 convergence: `RELEASE_READINESS_v0.90.3.md`
+- Internal review: `INTERNAL_REVIEW_v0.90.3.md`
 - WP execution readiness: `WP_EXECUTION_READINESS_v0.90.3.md`
 - Architecture decision record: `../../adr/0013-runtime-v2-citizen-state-continuity-substrate.md`
 - Feature index: `FEATURE_DOCS_v0.90.3.md`
