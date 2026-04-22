@@ -17,7 +17,7 @@ bounded by explicit rights and duties.
 ## Core Vision
 
 The ADL polis should become a walled civic space, not an ungoverned process
-swarm.
+cloud.
 
 That means:
 
