@@ -6,6 +6,7 @@
 - [ ] UTS/ACC scope confirmed as Governed Tools v1.0
 - [ ] Issue wave opened from reviewed YAML
 - [ ] WP issue numbers recorded in WBS and YAML
+- [ ] WP issue cards authored from WP_EXECUTION_READINESS_v0.90.5.md
 
 ## Implementation Gates
 
@@ -19,6 +20,7 @@
 - [ ] model proposal benchmark executed or truthfully skipped by provider
 - [ ] local/Gemma model evaluation recorded
 - [ ] flagship demo proof packet available
+- [ ] demo matrix and feature proof coverage completed before review convergence
 
 ## Review Gates
 
@@ -28,7 +30,8 @@
 - [ ] UTS validity never described as execution authority
 - [ ] privacy and redaction claims backed by tests or explicit deferrals
 - [ ] internal review complete
-- [ ] external review complete or explicitly deferred
+- [ ] third-party review handoff prepared and external review complete or explicitly deferred
+- [ ] accepted findings fixed or explicitly dispositioned
 
 ## Release Gates
 
@@ -36,4 +39,3 @@
 - [ ] no stale version references
 - [ ] no local path leaks in tracked docs
 - [ ] release ceremony completed
-

@@ -14,13 +14,13 @@
 
 | Doc | Purpose | Execution WPs |
 | --- | --- | --- |
-| WBS_v0.90.5.md | 20-WP execution plan for Governed Tools v1.0 | WP-01 |
+| WBS_v0.90.5.md | execution plan for Governed Tools v1.0 | WP-01 |
 | DEMO_MATRIX_v0.90.5.md | planned proof matrix and non-proving boundaries | WP-01, WP-18, WP-19 |
 | WP_ISSUE_WAVE_v0.90.5.yaml | future issue-wave source once reviewed | WP-01 |
+| WP_EXECUTION_READINESS_v0.90.5.md | card-authoring source for concrete WP outputs, validation, non-goals, and proof expectations | WP-01 |
 
 ## Context / Idea Docs
 
 | Idea Doc | Purpose | Boundary |
 | --- | --- | --- |
 | ideas/TOOLS_ARE_GOVERNED_CAPABILITIES.md | explain why ADL treats tools as authority-bearing capabilities, not model-callable functions | context only |
-

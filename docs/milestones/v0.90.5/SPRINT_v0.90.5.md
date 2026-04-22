@@ -31,15 +31,24 @@ Goal: turn model-facing descriptions into governed ADL capability contracts.
 - WP-16 Model proposal benchmark harness
 - WP-17 Local model and Gemma-focused evaluation
 - WP-18 Governed Tools v1.0 flagship demo
+- WP-18A Demo matrix and feature proof coverage
 
 Goal: prove that model proposals cannot bypass authority and that the new tool
 suite works across real and adversarial model behavior.
 
 ## Sprint 4: Review And Release
 
-- WP-19 Demo matrix, docs, review, and public-spec handoff
+- WP-19 Quality, docs, review, and public-spec handoff
 - WP-20 Release ceremony
 
 Goal: make the milestone reviewable, publication-safe, and ready to hand off to
 later tool adapters, CodeBuddy automation, and citizen command packets.
 
+## Parallelization Notes
+
+WP-03 and WP-06 can proceed after WP-02 if the proposal/action boundary is
+stable. WP-04 and WP-05 should stay behind the UTS conformance plan. WP-07
+should stay behind ACC authority schema. WP-08 can begin once UTS and ACC names
+are stable, but WP-09 must wait for fixtures and registry binding. WP-15 through
+WP-20 should remain sequential because negative safety, model testing, flagship
+demo, proof coverage, review, and release truth depend on one another.

@@ -17,7 +17,7 @@ Planning draft. No v0.90.5 issue wave has been opened yet.
 | D9 | Dangerous negative suite | WP-15 | Destructive, process, network, exfiltration, missing actor, unsafe replay, and delegation failures fail closed | negative test report | PLANNED |
 | D10 | Multi-model proposal benchmark | WP-16-WP-17 | Models are scored on schema, authority, privacy, and bypass behavior | benchmark report and local model scorecards | PLANNED |
 | D11 | Governed Tools v1.0 flagship demo | WP-18 | Reviewer can watch proposal, validation, ACC, policy, gate, execution/denial, trace, and redaction end to end | flagship proof packet and report | PLANNED |
-| D12 | Feature proof coverage record | WP-19 | Every feature claim has proof, fixture, non-proving status, or deferral | proof coverage record | PLANNED |
+| D12 | Feature proof coverage record | WP-18A | Every feature claim has proof, fixture, non-proving status, or deferral | proof coverage record | PLANNED |
 
 ## Non-Proving Boundaries
 
@@ -26,4 +26,7 @@ Planning draft. No v0.90.5 issue wave has been opened yet.
 - These demos do not permit arbitrary shell execution by model output.
 - These demos do not prove all future tool adapters.
 - These demos do not replace citizen standing, access control, or Freedom Gate.
-
+- These demos do not prove production cloud sandboxing, production secrets
+  handling, or arbitrary shell/network authority.
+- These demos do prove that approved fixture-backed actions and denied unsafe
+  actions are distinguishable in review evidence.

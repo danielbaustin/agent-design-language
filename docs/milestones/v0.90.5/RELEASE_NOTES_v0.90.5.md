@@ -16,9 +16,17 @@ v0.90.5 is planned to deliver Governed Tools v1.0.
 - dangerous tool negative suite
 - multi-model proposal benchmark and local/Gemma evaluation
 - Governed Tools v1.0 flagship demo
+- feature proof coverage before review convergence
 
 ## Draft Caveat
 
 These release notes are aspirational until the v0.90.5 issue wave executes and
 release evidence is available.
 
+## Planned Non-Claims
+
+- v0.90.5 is not planned to ship arbitrary shell execution by model output.
+- v0.90.5 is not planned to ship production secrets integration.
+- v0.90.5 is not planned to claim that UTS alone is enough for ADL safety.
+- v0.90.5 is not planned to claim public standardization of UTS unless that
+  occurs separately.
