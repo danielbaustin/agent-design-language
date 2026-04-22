@@ -354,6 +354,15 @@ normatively legible:
 - kindness
 - humor/absurdity
 - moral cognition and related evaluation surfaces
+- Freedom Gate moral event records
+- moral trace schema, validation, outcome linkage, metrics, and trajectory
+  review
+- anti-harm trajectory constraints and bounded harm-prevention proof surfaces
+- moral resources and wellbeing links that remain evidence-grounded rather than
+  scalar or rhetorical
+
+This milestone should not claim full constitutional citizenship, final social
+contract, production moral agency, or the first true Gödel-agent birthday.
 
 ### v0.92 - Identity, Capability, and Continuity
 

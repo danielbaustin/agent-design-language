@@ -1,4 +1,4 @@
-# Milestone README Template
+# v0.91 Milestone README
 
 ## Runtime v2 Inheritance Boundary
 
@@ -15,6 +15,25 @@ reserved for v0.92. v0.91 may prepare the moral and governance conditions for
 that birth, but it should not claim the birth event itself.
 
 Roadmap: ../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
+
+## Moral Governance Allocation
+
+v0.91 is the planned foundation milestone for moral trace and moral-governance
+evidence surfaces. The current allocation is recorded in
+[MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md).
+
+That allocation keeps the boundary clear:
+
+- v0.91 develops Freedom Gate moral events, validation rules, moral trace,
+  outcome linkage, moral metrics, trajectory review, anti-harm constraints,
+  moral resources, and bounded proof candidates.
+- v0.92 remains the identity, continuity, and first true birthday milestone.
+- v0.93 remains the constitutional citizenship, polis governance, and social
+  contract milestone.
+
+The remaining template sections in this README are provisional until the later
+v0.91 WP-level planning pass. The moral-governance allocation above is the
+source-backed portion added during v0.90.3 forward planning.
 
 ## Metadata
 - Milestone: `{{milestone}}`
@@ -71,9 +90,8 @@ Canonical milestone documents:
 - Release notes: `{{release_notes_doc}}`
 
 Supporting / domain-specific docs:
-- {{supporting_doc_1}}
-- {{supporting_doc_2}}
-- {{supporting_doc_3}}
+- [MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md)
+- [features/WELLBEING_AND_HAPPINESS.md](features/WELLBEING_AND_HAPPINESS.md)
 
 ## Execution Model
 
@@ -98,7 +116,7 @@ Primary validation is defined in:
 
 Additional validation surfaces:
 - Test suite results
-- Generated artifacts under `.adl/runs/`
+- Generated run artifacts
 - Trace and replay outputs
 
 Success criteria:
