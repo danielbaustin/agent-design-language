@@ -728,6 +728,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "full D12 CLI filesystem smoke is validated by the explicit observatory-flagship-demo command; keep always-on coverage bounded"]
     fn runtime_v2_observatory_flagship_demo_writes_proof_bundle() {
         let repo = temp_repo("observatory-flagship-demo");
         let out_dir = repo.join("out/observatory-flagship");

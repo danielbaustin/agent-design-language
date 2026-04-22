@@ -75,6 +75,7 @@ fn runtime_v2_observatory_flagship_contract_is_stable() {
 }
 
 #[test]
+#[ignore = "full D12 filesystem smoke is validated by the explicit observatory-flagship-demo command; keep always-on coverage bounded"]
 fn runtime_v2_observatory_flagship_writes_integrated_artifacts_without_path_leakage() {
     let temp_root = unique_temp_path("observatory-flagship");
     let artifacts = flagship_artifacts();
