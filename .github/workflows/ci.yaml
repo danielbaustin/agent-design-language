@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   adl-ci:
     runs-on: ubuntu-latest
@@ -17,12 +21,24 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Classify changed paths
+        id: path-policy
+        run: |
+          bash adl/tools/ci_path_policy.sh \
+            --event-name "${{ github.event_name }}" \
+            --base "${{ github.event.pull_request.base.sha }}" \
+            --head "${{ github.event.pull_request.head.sha }}" \
+            --github-output "$GITHUB_OUTPUT"
+        working-directory: .
+
       - name: Install Rust toolchain
+        if: steps.path-policy.outputs.rust_required == 'true'
         uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
         with:
           components: rustfmt, clippy, llvm-tools-preview
 
       - name: Rust cache
+        if: steps.path-policy.outputs.rust_required == 'true'
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
         with:
           workspaces: |
@@ -67,19 +83,37 @@ jobs:
         working-directory: .
 
       - name: fmt
+        if: steps.path-policy.outputs.rust_required == 'true'
         run: cargo fmt --all -- --check
 
       - name: clippy
+        if: steps.path-policy.outputs.rust_required == 'true'
         run: cargo clippy --all-targets -- -D warnings
 
       - name: docs command check
         run: bash tools/check_release_notes_commands.sh
 
       - name: test
+        if: steps.path-policy.outputs.rust_required == 'true'
         run: cargo test
 
+      - name: Rust validation skipped by path policy
+        if: steps.path-policy.outputs.rust_required != 'true'
+        run: |
+          echo "Rust fmt/clippy/test skipped because changed paths do not touch Rust runtime or test surfaces."
+          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+        working-directory: .
+
       - name: demo smoke (S-01..S-05)
+        if: steps.path-policy.outputs.demo_smoke_required == 'true'
         run: bash adl/tools/demo_smoke_v07_story.sh
+        working-directory: .
+
+      - name: Demo smoke skipped by path policy
+        if: steps.path-policy.outputs.demo_smoke_required != 'true'
+        run: |
+          echo "Demo smoke skipped because changed paths do not touch runtime or demo surfaces."
+          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
         working-directory: .
 
   adl-coverage:
@@ -94,30 +128,47 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Classify changed paths
+        id: path-policy
+        run: |
+          bash adl/tools/ci_path_policy.sh \
+            --event-name "${{ github.event_name }}" \
+            --base "${{ github.event.pull_request.base.sha }}" \
+            --head "${{ github.event.pull_request.head.sha }}" \
+            --github-output "$GITHUB_OUTPUT"
+        working-directory: .
+
       - name: Install Rust toolchain
+        if: steps.path-policy.outputs.coverage_required == 'true'
         uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
         with:
           components: llvm-tools-preview
 
       - name: Rust cache
+        if: steps.path-policy.outputs.coverage_required == 'true'
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
         with:
           workspaces: |
             adl -> target
 
       - name: Install cargo-llvm-cov
+        if: steps.path-policy.outputs.coverage_required == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
 
       - name: Coverage (swarm)
+        if: steps.path-policy.outputs.coverage_required == 'true'
         run: cargo llvm-cov --workspace --all-features --lcov --output-path lcov.info
 
       - name: Coverage summary (json)
+        if: steps.path-policy.outputs.coverage_required == 'true'
         run: cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
 
       - name: Coverage summary (text)
-        run: cargo llvm-cov --workspace --summary-only | tee coverage-summary.txt
+        if: steps.path-policy.outputs.coverage_required == 'true'
+        run: cargo llvm-cov report --summary-only | tee coverage-summary.txt
 
       - name: Enforce coverage policy gates (workspace + per-file)
+        if: steps.path-policy.outputs.coverage_required == 'true'
         env:
           WORKSPACE_LINE_THRESHOLD: "90"
           PER_FILE_LINE_THRESHOLD: "80"
@@ -126,13 +177,16 @@ jobs:
           bash tools/enforce_coverage_gates.sh coverage-summary.json
 
       - name: Verify generated lcov file
+        if: steps.path-policy.outputs.coverage_required == 'true'
         run: test -s lcov.info && ls -l lcov.info
 
       - name: Verify lcov path from repository root
+        if: steps.path-policy.outputs.coverage_required == 'true'
         run: test -s adl/lcov.info && ls -l adl/lcov.info
         working-directory: .
 
       - name: Upload coverage artifact
+        if: steps.path-policy.outputs.coverage_required == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: adl-coverage-lcov
@@ -142,8 +196,16 @@ jobs:
             adl/coverage-summary.txt
           if-no-files-found: error
 
+      - name: Coverage skipped by path policy
+        if: steps.path-policy.outputs.coverage_required != 'true'
+        run: |
+          echo "Coverage skipped because changed paths do not touch Rust runtime or test surfaces."
+          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+          echo "This keeps the adl-coverage check stable while avoiding full cargo-llvm-cov for docs/planning/tools-only PRs."
+        working-directory: .
+
       - name: Upload coverage to Codecov
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.path-policy.outputs.coverage_required == 'true'
         uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
