@@ -7,7 +7,8 @@ entered active execution.
 
 ## Planning
 
-- [ ] Milestone goal reviewed against the constitutional citizenship allocation.
+- [ ] Milestone goal reviewed against the constitutional citizenship and
+  social-cognition allocation.
 - [ ] WBS converted from candidate allocation into concrete WPs.
 - [ ] Issue wave authored and opened.
 - [ ] Cards reviewed for concrete outputs and non-goals.
@@ -19,6 +20,9 @@ entered active execution.
 - [ ] v0.93 consumes moral trace and trajectory review without duplicating it.
 - [ ] v0.93 consumes identity/birthday work as prerequisite where citizenship
   depends on durable identity.
+- [ ] Private ToM, public reputation, standing, and constitutional review remain
+  distinct.
+- [ ] Shared social memory is redacted, evidence-grounded, and challengeable.
 - [ ] Human, guest, operator, service, tool, and citizen-mode boundaries are
   explicit.
 - [ ] Economics and payment rails are excluded or explicitly bridged by
@@ -30,6 +34,8 @@ entered active execution.
 - [ ] Demo matrix commands are runnable where demos are implemented.
 - [ ] Review packets cite evidence and do not depend on raw private-state
   inspection.
+- [ ] Review packets do not expose private ToM or convert it into public
+  reputation without authority and redaction.
 - [ ] Claim-boundary scan finds no production-law, legal-personhood, or
   completed-constitution overclaims.
 
@@ -44,6 +50,7 @@ entered active execution.
 
 ## Exit Criteria
 
-- Constitutional citizenship, standing, review, appeal, delegation, IAM, and
-  proof demos are traceable from docs to PRs and evidence.
+- Constitutional citizenship, ToM, reputation boundary, shared social memory,
+  standing, review, appeal, delegation, IAM, and proof demos are traceable from
+  docs to PRs and evidence.
 - The milestone can be audited without reconstructing intent from chat.

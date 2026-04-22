@@ -6,8 +6,8 @@ Planning allocation document. This is not a final v0.93 work-package sequence
 and does not create the v0.93 issue wave.
 
 v0.93 is the planned milestone for turning citizen state, moral trace,
-identity, and standing into a reviewable constitutional governance layer for the
-ADL polis.
+identity, standing, and bounded social cognition into a reviewable
+constitutional governance layer for the ADL polis.
 
 ## Purpose
 
@@ -19,6 +19,8 @@ The milestone should answer:
 
 - what it means for a CSM identity to be a citizen of a polis
 - which rights and duties attach to that citizenship
+- how bounded Theory of Mind, reputation, and shared social memory support
+  governance without becoming hidden verdicts
 - how standing is maintained, degraded, challenged, restored, or revoked
 - how constitutional review consumes trace evidence
 - how delegation and IAM work without turning humans, services, or tools into
@@ -44,7 +46,7 @@ Direct out-of-band human action does not count as citizen action.
 | v0.90.5 | Governed tool calls, UTS, ACC, authority evaluation, capability contracts, and tool-call trace. | Tool schemas, tool execution semantics, or public tool conformance. |
 | v0.91 | Freedom Gate moral events, moral trace, validation rules, outcome linkage, metrics, trajectory review, anti-harm constraints, moral resources, and wellbeing evidence. | Moral trace schema, moral metrics, anti-harm proof, or moral-trajectory review foundations. |
 | v0.92 | Durable identity, names, capability envelopes, continuity, memory grounding, and the first true Gödel-agent birthday. | Identity architecture, birth event semantics, or continuity prerequisites. |
-| v0.93 | Constitutional citizenship, polis governance, rights/duties, social contract, constitutional review, delegation/IAM policy, and reviewer-facing governance evidence. | Earlier substrate layers. |
+| v0.93 | Constitutional citizenship, Theory of Mind, reputation boundary, shared social memory, polis governance, rights/duties, social contract, constitutional review, delegation/IAM policy, and reviewer-facing governance evidence. | Earlier substrate layers. |
 
 ## Feature And Idea Allocation
 
@@ -53,8 +55,9 @@ Direct out-of-band human action does not count as citizen action.
 | Constitutional citizenship contract | Primary feature | A bounded contract defining citizen eligibility, rights, duties, standing states, review inputs, and non-goals. |
 | Citizen and guest boundary | Primary feature | Runtime/policy documentation and fixtures showing guest-by-default human entry and citizen-mode identity binding. |
 | Rights and duties model | Primary feature | Rights/duties table tied to state, trace, review, communication, improvement, privacy, and policy constraints. |
+| Theory of Mind and social cognition | Primary feature | A bounded contract for private evidence-grounded ToM, signed update events, conflict/decay semantics, reputation projection, and shared social memory. |
 | Standing maintenance and degradation | Primary feature | Rules for good standing, monitored, restricted, suspended, restored, and revoked states. |
-| Constitutional review | Primary feature | Review packet shape that consumes moral trace, outcome linkage, standing evidence, identity records, and policy context. |
+| Constitutional review | Primary feature | Review packet shape that consumes moral trace, outcome linkage, allowed ToM projections, reputation, standing evidence, identity records, and policy context. |
 | Challenge and appeal | Primary feature | Flow for challenging a governance finding, preserving evidence, and producing an appeal disposition. |
 | Delegation and IAM | Primary feature | Authority-chain model for citizen, guest, service actor, operator, and tool-mediated action. |
 | Social contract representation | Design feature | Draft representation of the polis obligations owed to and by citizens; should remain bounded and reviewable. |
@@ -81,12 +84,14 @@ They are provenance labels, not public links.
 | Moral resources, wellbeing, anti-harm, and Freedom Gate schemas | v0.91 foundation | These stay in v0.91 as evidence and moral-cognition foundations. v0.93 consumes their outputs. |
 | Economics and contract-market corpus | Context or prerequisite only | Economics belongs to the v0.90.4 lane unless later planning deliberately promotes a narrow governance bridge. |
 | Governed tools corpus | Prerequisite for tool-mediated governance | v0.93 should consume UTS/ACC authority evidence if v0.90.5 lands first; it should not own the governed-tools substrate. |
+| ToM source packet | Primary v0.93 social-cognition source | Supplies initial architecture, integration, and draft schema ideas. The tracked v0.93 feature plan supersedes stale late-roadmap targeting and adds standing, privacy, reputation, signed-trace, conflict, decay, and Runtime v2 boundaries. |
 
 ## Engineering, Policy, And Context Boundaries
 
 | Claim type | v0.93 should do | v0.93 should not do |
 | --- | --- | --- |
 | Engineering substrate | Consume signed trace, identity, standing, access-control, lineage, projection, and tool-authority records. | Rebuild the runtime substrate or bypass earlier milestone contracts. |
+| Social-cognition model | Define private ToM, public reputation projection, shared social memory, and challengeable evidence boundaries. | Treat private ToM as public standing, reputation, or constitutional judgment. |
 | Policy model | Define bounded constitutional citizenship, rights, duties, governance review, appeals, delegation, and IAM. | Claim production law, legal personhood, or a complete constitution for real-world deployment. |
 | Philosophical/contextual | Explain why trace-grounded law matters for a polis of agents. | Present speculative moral theory as implemented behavior. |
 
@@ -99,6 +104,7 @@ A later v0.93 implementation should be able to emit a packet with:
 - moral trace event references
 - outcome and attribution references
 - standing-change rationale
+- allowed ToM projection or reputation evidence when policy permits
 - challenge or appeal status
 - delegation and IAM authority chain if another actor participated
 - privacy/redaction disposition
@@ -118,6 +124,7 @@ commitments.
 | Human guest versus citizen-mode boundary | Human input is permitted as guest participation, while citizen action requires identity binding and Freedom Gate mediation. | Two-case fixture showing guest-only transcript and mediated citizen-mode action. |
 | Delegated authority chain | A delegated action is allowed or denied based on standing, policy, capability, and traceable authority. | IAM/delegation fixture, decision event, selected/rejected action evidence. |
 | Communication without inspection | Citizens can communicate through governed channels without granting private-state access. | Communication event fixture, redacted projection, failed inspection attempt. |
+| ToM and reputation boundary | Private ToM can inform review only through authorized, redacted, evidence-grounded projections. | Private model fixture, signed update event, reputation projection, redaction report, denied unauthorized inspection. |
 | Polis governance health packet | Reviewers can inspect governance health without scalar moral verdicts or private-state leaks. | Generated governance report with evidence references, caveats, and unresolved questions. |
 
 ## Non-Goals
@@ -131,6 +138,8 @@ commitments.
 - No economics, payments, inter-polis markets, or settlement implementation.
 - No arbitrary human operator override counted as citizen action.
 - No scalar karma score, reputation shortcut, or moral leaderboard.
+- No private ToM model treated as public reputation, standing, or final
+  constitutional judgment.
 
 ## Readiness For Later WP Planning
 
@@ -142,8 +151,10 @@ Recommended ordering pressure:
 
 1. Define the constitutional citizenship contract.
 2. Bind citizen, guest, human-provider, service-actor, and operator authority.
-3. Define rights, duties, standing transitions, and challenge/appeal flow.
-4. Add constitutional review packets over moral trace and outcome evidence.
+3. Define rights, duties, ToM, reputation, shared social memory, standing
+   transitions, and challenge/appeal flow.
+4. Add constitutional review packets over moral trace, outcome evidence, and
+   authorized social-cognition projections.
 5. Add delegation and IAM governance only after tool/capability authority is
    stable enough to consume.
 6. Produce demo/proof packets that distinguish engineering substrate, policy
