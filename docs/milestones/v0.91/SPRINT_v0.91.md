@@ -1,49 +1,54 @@
-# Sprint Template
+# Sprint Plan - v0.91
 
-## Metadata
-- Sprint: `{{sprint_id}}`
-- Milestone: `{{milestone}}`
-- Start date: `{{start_date}}`
-- End date: `{{end_date}}`
-- Owner: `{{owner}}`
+## Status
 
-## How To Use
-- Keep scope small enough to finish with green CI and merged PRs.
-- List work items in planned execution order.
-- Track blockers here (not scattered chat notes).
+Candidate sprint shape only. v0.91 has no final issue wave yet.
 
-## Sprint Goal
-{{sprint_goal}}
+## Sprint 1: Moral Evidence Foundation
 
-## Planned Scope
-- {{scope_item_1}}
-- {{scope_item_2}}
-- {{scope_item_3}}
+- WP-01: Promote reviewed v0.91 milestone package.
+- Moral event contract.
+- Moral event validation.
+- Moral trace schema.
+- Outcome linkage and attribution.
 
-## Work Plan
-| Order | Item | Issue | Owner | Status |
-|---|---|---|---|---|
-| 1 | {{work_item_1}} | {{issue_1}} | {{owner_1}} | {{status_1}} |
-| 2 | {{work_item_2}} | {{issue_2}} | {{owner_2}} | {{status_2}} |
-| 3 | {{work_item_3}} | {{issue_3}} | {{owner_3}} | {{status_3}} |
+Goal: make moral choices and alternatives durable before metrics or demos widen.
 
-## Cadence Expectations
-- Use issue cards (`input`/`output`) for each item.
-- Keep changes scoped per issue; use draft PRs until checks pass.
-- Run required quality gates (fmt/clippy/test) for code changes.
+## Sprint 2: Metrics, Trajectory, And Anti-Harm
 
-## Risks / Dependencies
-- Dependency: {{dependency_1}}
-  - Risk: {{risk_1}}
-  - Mitigation: {{mitigation_1}}
+- Moral metrics over trace evidence.
+- Moral trajectory review.
+- Anti-harm trajectory constraints.
+- Delegated-harm proof fixtures.
 
-## Demo / Review Plan
-- Demo artifact: {{demo_artifact}}
-- Review date: {{review_date}}
-- Sign-off owners: {{signoff_owners}}
+Goal: make moral behavior reviewable over time without turning metrics into
+verdicts.
 
-## Exit Criteria
-- All planned scope items completed or explicitly deferred with rationale.
-- Linked issues/PRs updated and traceable.
-- CI is green for merged work.
-- Sprint summary captured in milestone docs.
+## Sprint 3: Wellbeing, Moral Resources, And Demos
+
+- Wellbeing metrics v0 diagnostic.
+- Citizen self-access and redacted operator/reviewer/public views.
+- Moral resources implementation slice, if trace foundations are stable enough.
+- Moral governance flagship demo.
+- Demo matrix and feature proof coverage.
+
+Goal: make the evidence visible to citizens and reviewers without exposing
+private diagnostics or pretending the system has solved wellbeing.
+
+## Sprint 4: Review And Release
+
+- Quality/docs convergence.
+- Internal review.
+- Third-party review handoff.
+- Accepted-finding remediation.
+- Next-milestone planning handoff to v0.92 and v0.93.
+- Release ceremony.
+
+Goal: close the milestone with truthful review, release, and handoff evidence.
+
+## Parallelization Notes
+
+Moral event validation can proceed beside trace-schema work once the event
+contract is stable. Metrics should wait for trace and outcome linkage. Wellbeing
+metrics should wait for trajectory review because they need evidence rather than
+affect theater. Release-tail work should remain sequential.

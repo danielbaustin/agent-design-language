@@ -1,65 +1,54 @@
-# Work Breakdown Structure (WBS) Template
+# v0.91 Candidate Work Breakdown Structure
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+## Status
 
-## How To Use
-- Break work into independently-mergeable issues.
-- Keep each item measurable and testable.
-- Include deliverables + dependencies + issue links.
-- `WP-01` is **always** the milestone **design pass** (canonical docs + WBS + decisions + sprint plan + checklist).
-- Reserve the final WPs for the release tail in this order: `WP-13` demos, `WP-14` quality/coverage gate, `WP-15` docs/review convergence, `WP-16` release ceremony.
+Candidate allocation only. v0.91 has no final issue wave yet.
+
+The exact WP sequence should be produced by the v0.91 WP-01 planning pass after
+v0.90.3 citizen-state and v0.90.5 governed-tool prerequisites are stable enough
+to consume where relevant.
 
 ## WBS Summary
-{{wbs_summary}}
 
-## Work Packages
-| ID | Work Package | Description | Deliverable | Dependencies | Issue |
-|---|---|---|---|---|---|
-| WP-01 | Design pass (milestone docs + planning) | {{description_01}} | {{deliverable_01}} | {{deps_01}} | {{issue_01}} |
-| WP-02 | {{package_02}} | {{description_02}} | {{deliverable_02}} | {{deps_02}} | {{issue_02}} |
-| WP-03 | {{package_03}} | {{description_03}} | {{deliverable_03}} | {{deps_03}} | {{issue_03}} |
-| WP-04 | {{package_04}} | {{description_04}} | {{deliverable_04}} | {{deps_04}} | {{issue_04}} |
-| WP-05 | {{package_05}} | {{description_05}} | {{deliverable_05}} | {{deps_05}} | {{issue_05}} |
-| WP-06 | {{package_06}} | {{description_06}} | {{deliverable_06}} | {{deps_06}} | {{issue_06}} |
-| WP-07 | {{package_07}} | {{description_07}} | {{deliverable_07}} | {{deps_07}} | {{issue_07}} |
-| WP-08 | {{package_08}} | {{description_08}} | {{deliverable_08}} | {{deps_08}} | {{issue_08}} |
-| WP-09 | {{package_09}} | {{description_09}} | {{deliverable_09}} | {{deps_09}} | {{issue_09}} |
-| WP-10 | {{package_10}} | {{description_10}} | {{deliverable_10}} | {{deps_10}} | {{issue_10}} |
-| WP-11 | {{package_11}} | {{description_11}} | {{deliverable_11}} | {{deps_11}} | {{issue_11}} |
-| WP-12 | {{package_12}} | {{description_12}} | {{deliverable_12}} | {{deps_12}} | {{issue_12}} |
-| WP-13 | Demo matrix + integration demos | {{description_13}} | {{deliverable_13}} | {{deps_13}} | {{issue_13}} |
-| WP-14 | Coverage / quality gate (ratchet + exclusions) | {{description_14}} | {{deliverable_14}} | {{deps_14}} | {{issue_14}} |
-| WP-15 | Docs + review pass (repo-wide alignment) | {{description_15}} | {{deliverable_15}} | {{deps_15}} | {{issue_15}} |
-| WP-16 | Release ceremony (final validation + tag + notes + cleanup) | {{description_16}} | {{deliverable_16}} | {{deps_16}} | {{issue_16}} |
+v0.91 should develop moral governance and wellbeing foundations without stealing
+work from identity, birthday, constitutional citizenship, reputation, or Theory
+of Mind milestones.
 
-## Sequencing
-- Phase 1: {{phase_1}}
-- Phase 2: {{phase_2}}
-- Phase 3: {{phase_3}}
+## Candidate Work Areas
+
+| Candidate | Work Area | Description | Primary Deliverable | Key Dependencies |
+| --- | --- | --- | --- | --- |
+| A | Moral event contract | Define the Freedom Gate moral event shape and required evidence. | Moral event feature contract and fixtures. | v0.90.3 identity/standing, Freedom Gate context. |
+| B | Moral event validation | Reject incomplete, evasive, or unreviewable moral events. | Validation rules and negative fixtures. | A. |
+| C | Moral trace schema | Link choices, alternatives, refusals, outcomes, attribution, and review. | Trace schema and examples. | A, B. |
+| D | Outcome linkage and attribution | Preserve uncertainty while connecting downstream consequences to choices. | Outcome-linkage record and tests. | C. |
+| E | Moral metrics | Produce trace-derived signals for review and trend detection. | Metric definitions and fixture report. | C, D. |
+| F | Moral trajectory review | Review event sequences over segments and longitudinal windows. | Trajectory review packet. | C, D, E. |
+| G | Anti-harm trajectory constraints | Detect decomposed or delegated harm across steps. | Synthetic delegated-harm proof packet. | C through F. |
+| H | Moral resources | Model care, refusal, attention, and anti-dehumanization as design resources. | Design contract and implementation slice if stable. | A through G. |
+| I | Wellbeing metrics v0 | Emit a decomposable diagnostic over coherence, agency, continuity, progress, moral integrity, and participation. | Diagnostic report and policy views. | C through F. |
+| J | Moral governance demo | Show moral event, validation, trace, outcome linkage, trajectory review, anti-harm, and wellbeing evidence. | Runnable proof demo and artifacts. | A through I. |
+| K | Demo matrix and proof coverage | Align demos with milestone claims and non-claims. | Demo matrix rows and validation commands. | J. |
+| L | Review, docs, and release tail | Align docs, update feature list, run review, fix findings, and close the milestone. | Review handoff, release notes, ceremony evidence. | All prior work. |
+
+## Sequencing Pressure
+
+1. Define moral event, validation, and trace contracts first.
+2. Add outcome linkage and attribution.
+3. Add metrics and trajectory review.
+4. Add anti-harm proof surfaces.
+5. Add wellbeing metrics only after trace and review surfaces exist.
+6. Add moral resources only after the evidence layer can carry them.
+7. Build demos and review packets last.
 
 ## Acceptance Mapping
-- WP-01 (Design pass) -> {{acceptance_criteria_01}}
-- WP-02 -> {{acceptance_criteria_02}}
-- WP-03 -> {{acceptance_criteria_03}}
-- WP-04 -> {{acceptance_criteria_04}}
-- WP-05 -> {{acceptance_criteria_05}}
-- WP-06 -> {{acceptance_criteria_06}}
-- WP-07 -> {{acceptance_criteria_07}}
-- WP-08 -> {{acceptance_criteria_08}}
-- WP-09 -> {{acceptance_criteria_09}}
-- WP-10 -> {{acceptance_criteria_10}}
-- WP-11 -> {{acceptance_criteria_11}}
-- WP-12 -> {{acceptance_criteria_12}}
-- WP-13 (Demos) -> {{acceptance_criteria_13}}
-- WP-14 (Quality gate) -> {{acceptance_criteria_14}}
-- WP-15 (Docs/review) -> {{acceptance_criteria_15}}
-- WP-16 (Release ceremony) -> {{acceptance_criteria_16}}
 
-## Exit Criteria
-- Every in-scope requirement maps to at least one WBS item.
-- Every WBS item has an owner, issue reference, and concrete deliverable.
-- Dependency order is explicit enough to execute deterministically.
+- Moral events must be attached to governed identities and trace.
+- Validation must reject incomplete or evasive evidence.
+- Outcome linkage must preserve uncertainty.
+- Metrics must remain evidence, not judgment.
+- Wellbeing diagnostics must remain decomposed, self-accessible to the citizen,
+  and policy-mediated for others.
+- Anti-harm proof must show a harmful trajectory, not just a forbidden action.
+- v0.92 birthday and v0.93 constitutional governance must consume v0.91 evidence
+  rather than being pulled into v0.91.

@@ -22,7 +22,7 @@ milestones.
 | B | Stable name and identity architecture | Define identity root, stable name, aliases, provenance, and continuity head. | Identity record contract and fixtures. | v0.90.3 signed state and lineage. |
 | C | Continuity across bounded cycles | Prove identity survives multiple bounded cycles with evidence. | Continuity record, cycle fixtures, validation. | v0.90.3 lineage and witness surfaces. |
 | D | Memory grounding | Bind identity to witnessed artifacts and memory references without raw private-state exposure. | Memory-grounding contract and redacted packet. | ObsMem/trace baseline and v0.90.3 projection policy. |
-| E | Capability envelope | Declare provider, model, tool, skill, authority, and limit context at birth. | Capability envelope and validation fixtures. | Provider/tool substrate and governed-tool planning. |
+| E | Capability envelope | Declare provider, model, tool, skill, authority, and limit context at birth. | Capability envelope and validation fixtures. | Provider/skill substrate and v0.90.5 governed-tool evidence where tool actions are in scope. |
 | F | Birth witnesses and receipts | Define witness set and citizen-facing receipt for the birthday event. | Witness schema, receipt schema, validation. | v0.90.3 continuity witnesses. |
 | G | Birthday review packet | Assemble identity, continuity, memory, capability, witness, and moral context into one review surface. | Reviewer packet and fixture. | A through F and v0.91 moral trace. |
 | H | Migration and cross-polis continuity planning | Define bounded design notes for future movement without production migration claims. | Design note and non-goals. | Identity record and continuity contract. |

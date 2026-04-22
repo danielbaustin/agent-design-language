@@ -1,57 +1,44 @@
-# Release Notes Template
+# v0.91 Draft Release Notes
 
-## Metadata
-- Product: `{{product_name}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Tag: `{{tag_name}}`
+## Status
 
-## How To Use
-- Keep statements implementation-accurate and test-validated.
-- Prefer concise bullets over marketing language.
-- Explicitly separate shipped behavior from "What's Next."
+Draft placeholder for later release closeout. These notes describe intended
+release themes only and must be rewritten during v0.91 closeout to describe
+landed behavior.
 
-# `{{product_name}}` `{{version}}` Release Notes
+## Planned Release Theme
 
-## Summary
-{{summary_paragraph}}
+v0.91 is planned as the moral governance and wellbeing-foundation milestone for
+ADL.
 
-## Highlights
-- {{highlight_1}}
-- {{highlight_2}}
-- {{highlight_3}}
+If implemented as planned, it should add reviewable moral-evidence surfaces for
+Freedom Gate events, moral trace, event validation, outcome linkage, metrics,
+trajectory review, anti-harm constraints, moral resources, and wellbeing
+diagnostics.
 
-## What's New In Detail
+## Planned Highlights
 
-### {{area_1}}
-- {{detail_1a}}
-- {{detail_1b}}
+- Freedom Gate moral event records.
+- Moral event validation and negative cases.
+- Moral trace linking choices, alternatives, outcomes, and review.
+- Outcome linkage and attribution with uncertainty preserved.
+- Moral metrics as evidence, not verdicts.
+- Moral trajectory review.
+- Anti-harm trajectory proof.
+- Wellbeing metrics v0 diagnostic with citizen self-access and redacted views.
+- Handoff into v0.92 birthday and v0.93 constitutional governance.
 
-### {{area_2}}
-- {{detail_2a}}
-- {{detail_2b}}
+## Required Closeout Rewrite
 
-### {{area_3}}
-- {{detail_3a}}
-- {{detail_3b}}
+Before release, replace this file with notes that describe only landed,
+validated behavior.
 
-## Upgrade Notes
-- {{upgrade_note_1}}
-- {{upgrade_note_2}}
+The final notes must not claim:
 
-## Known Limitations
-- {{limitation_1}}
-- {{limitation_2}}
-
-## Validation Notes
-- {{validation_note_1}}
-- {{validation_note_2}}
-
-## What's Next
-- {{next_1}}
-- {{next_2}}
-
-## Exit Criteria
-- Notes reflect only shipped behavior.
-- Known limitations and future work are explicitly separated.
-- Final text is ready to paste into GitHub Release UI without further editing.
+- production moral agency
+- legal personhood
+- complete constitutional authority
+- the first true birthday
+- scalar karma, scalar happiness, or final moral judgment
+- public wellbeing diagnostics or public reputation derived from private
+  wellbeing state

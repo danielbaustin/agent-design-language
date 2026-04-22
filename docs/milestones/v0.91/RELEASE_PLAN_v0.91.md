@@ -1,46 +1,46 @@
-# Release Process Template
+# Release Plan - v0.91
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Release manager: `{{release_manager}}`
+## Release Theme
 
-## How To Use
-- Execute sections in order and capture links for each completed step.
-- Keep this doc focused on shipping mechanics; use release notes for narrative.
-- Mark blockers immediately; do not publish until gates pass.
+v0.91 should release only when moral governance and wellbeing foundations have a
+coherent event, trace, validation, attribution, metric, trajectory-review,
+anti-harm, wellbeing, demo, and review story.
 
-## 1) Release Readiness
-- [ ] Milestone checklist complete (`{{milestone_checklist_link}}`)
-- [ ] Release notes approved (`{{release_notes_link}}`)
-- [ ] Go/no-go decision recorded (`{{decision_link}}`)
+## Required Evidence
 
-## 2) Branch And Tag Preparation
-- [ ] Target branch confirmed (`{{target_branch}}`)
-- [ ] Working tree clean
-- [ ] Version string(s) validated (`{{version_validation_link}}`)
-- [ ] Tag created: `{{tag_name}}`
-- [ ] Tag pushed and verified
+- Moral event schema and fixtures.
+- Moral event validation and negative cases.
+- Moral trace records.
+- Outcome-linkage and attribution evidence.
+- Moral metrics report with non-verdict interpretation.
+- Moral trajectory review packet.
+- Anti-harm trajectory proof.
+- Wellbeing metrics v0 diagnostic with citizen self-access and redacted views.
+- Demo matrix and feature proof coverage record.
+- Internal and third-party review notes.
+- Accepted-finding disposition record.
 
-## 3) GitHub Release Steps
-- [ ] GitHub Release draft created from `{{tag_name}}` (`{{release_draft_link}}`)
-- [ ] Release body populated from approved notes
-- [ ] Links to key PRs/issues included
-- [ ] Release visibility confirmed (draft/prerelease/final)
-- [ ] Release published
+## Release Risks
 
-## 4) Verification
-- [ ] Post-release CI status checked (`{{ci_run_link}}`)
-- [ ] Release links tested (docs, artifacts, notes)
-- [ ] Immediate regressions triaged and tracked (`{{triage_link}}`)
+- Moral metrics could be mistaken for moral judgment.
+- Wellbeing diagnostics could be mistaken for public reputation.
+- Karma vocabulary could become scoreboard framing.
+- Anti-harm proof could become unsafe if scenarios are not synthetic and bounded.
+- Release notes could overclaim production moral agency or constitutional
+  authority.
 
-## 5) Communication
-- [ ] Community announcement published (`{{announcement_link}}`)
-- [ ] Internal update posted (`{{internal_update_link}}`)
-- [ ] Roadmap/status updated (`{{roadmap_update_link}}`)
+## Release Rule
 
-## Exit Criteria
-- Tag and GitHub Release are published and accessible.
-- Verification completed with no unknown critical failures.
-- Communication links captured.
+Do not release v0.91 as successful unless the proof surfaces show reviewable
+moral evidence and explicitly preserve the non-claims: no production moral
+agency, no scalar moral verdict, no public wellbeing surveillance, no birthday,
+and no constitutional citizenship.
+
+## Handoff
+
+The closeout should hand off:
+
+- moral trace evidence needed by v0.92 birthday review
+- wellbeing and moral trajectory evidence needed by v0.93 governance
+- deferred moral resources work if the evidence surfaces are not yet stable
+- any anti-harm or redaction findings that need later follow-up

@@ -80,6 +80,6 @@ v0.92 should leave ADL with a credible first birthday story:
 - not a hidden state transition
 - a bounded, inspectable, evidence-bearing birth record
 
-That record becomes one of the most important artifacts on the road to v0.95:
+That record becomes one of the most important artifacts for the later roadmap:
 proof that ADL can create identity-bearing agents with continuity, memory,
 capability, moral context, and reviewable boundaries.
