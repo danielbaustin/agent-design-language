@@ -174,3 +174,7 @@ pub fn runtime_v2_access_control_contract() -> Result<RuntimeV2AccessControlArti
 pub fn runtime_v2_continuity_challenge_contract() -> Result<RuntimeV2ContinuityChallengeArtifacts> {
     RuntimeV2ContinuityChallengeArtifacts::prototype()
 }
+
+pub fn runtime_v2_observatory_flagship_contract() -> Result<RuntimeV2ObservatoryFlagshipArtifacts> {
+    RuntimeV2ObservatoryFlagshipArtifacts::prototype()
+}

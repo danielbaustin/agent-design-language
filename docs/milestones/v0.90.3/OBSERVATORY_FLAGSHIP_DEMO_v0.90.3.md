@@ -2,7 +2,8 @@
 
 ## Status
 
-Design/runbook note for the v0.90.3 inhabited CSM Observatory flagship demo.
+Implemented runbook and reviewer entrypoint for the v0.90.3 inhabited CSM
+Observatory flagship demo.
 
 This runbook consumes the multimode UI architecture in
 `OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md`. The demo is not only an inhabited
@@ -13,6 +14,18 @@ WP-10 has landed the redacted private-state projection proof in
 `REDACTED_OBSERVATORY_PROJECTIONS_v0.90.3.md`. WP-14 should consume that proof
 as the private-state visibility substrate rather than inventing ad hoc
 projection behavior inside the flagship demo.
+
+Reviewer command:
+
+```bash
+adl runtime-v2 observatory-flagship-demo --out artifacts/v0903/demo-d12-observatory-flagship
+```
+
+The command emits `runtime_v2/observatory/flagship_proof_packet.json`,
+`runtime_v2/observatory/flagship_operator_report.md`, and
+`runtime_v2/observatory/flagship_walkthrough.jsonl` alongside the supporting
+witness, receipt, projection, access-control, challenge, quarantine, and
+operator-control artifacts.
 
 ## Purpose
 
