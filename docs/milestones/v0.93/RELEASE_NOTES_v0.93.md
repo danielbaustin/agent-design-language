@@ -1,57 +1,50 @@
-# Release Notes Template
+# v0.93 Draft Release Notes
 
-## Metadata
-- Product: `{{product_name}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Tag: `{{tag_name}}`
+## Status
 
-## How To Use
-- Keep statements implementation-accurate and test-validated.
-- Prefer concise bullets over marketing language.
-- Explicitly separate shipped behavior from "What's Next."
+Draft placeholder for later release closeout. These notes describe intended
+release themes only and must be rewritten during v0.93 WP-19/WP-20 to describe
+landed behavior.
 
-# `{{product_name}}` `{{version}}` Release Notes
+## Planned Release Theme
 
-## Summary
-{{summary_paragraph}}
+v0.93 is planned as the constitutional citizenship and polis-governance
+milestone for ADL.
 
-## Highlights
-- {{highlight_1}}
-- {{highlight_2}}
-- {{highlight_3}}
+If implemented as planned, it should add reviewable governance surfaces for
+citizenship, rights, duties, standing, constitutional review, challenge,
+appeal, delegation, IAM, and privacy-preserving reviewer evidence.
 
-## What's New In Detail
+## Planned Highlights
 
-### {{area_1}}
-- {{detail_1a}}
-- {{detail_1b}}
+- Constitutional citizenship contract over CSM identities.
+- Human guest and mediated citizen-mode boundary.
+- Rights and duties model.
+- Evidence-based standing transitions.
+- Constitutional review packets over trace and outcome evidence.
+- Challenge and appeal flow.
+- Delegation and IAM authority-chain proof.
+- Governance demos that show behavior and evidence, not just policy prose.
 
-### {{area_2}}
-- {{detail_2a}}
-- {{detail_2b}}
+## Required Closeout Rewrite
 
-### {{area_3}}
-- {{detail_3a}}
-- {{detail_3b}}
+Before release, replace this file with notes that describe only landed,
+validated behavior.
 
-## Upgrade Notes
-- {{upgrade_note_1}}
-- {{upgrade_note_2}}
+The final notes must not claim:
 
-## Known Limitations
-- {{limitation_1}}
-- {{limitation_2}}
+- legal personhood
+- production citizenship
+- complete constitutional authority
+- full social-contract finality
+- raw private-state inspection
+- economics, payments, or markets unless explicitly implemented
 
-## Validation Notes
-- {{validation_note_1}}
-- {{validation_note_2}}
+## Known Planning Boundaries
 
-## What's Next
-- {{next_1}}
-- {{next_2}}
-
-## Exit Criteria
-- Notes reflect only shipped behavior.
-- Known limitations and future work are explicitly separated.
-- Final text is ready to paste into GitHub Release UI without further editing.
+- v0.93 consumes v0.90.3 citizen-state and standing surfaces.
+- v0.93 consumes v0.91 moral trace and moral-governance evidence.
+- v0.93 consumes v0.92 identity and birthday surfaces where citizenship depends
+  on durable identity.
+- v0.93 may consume governed-tool authority surfaces if they have landed before
+  implementation.

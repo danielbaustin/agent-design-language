@@ -1,50 +1,49 @@
-# Milestone Checklist Template
+# v0.93 Milestone Checklist
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Target release date: `{{target_release_date}}`
-- Owner: `{{owner}}`
+## Status
 
-## Purpose
-Ship/no-ship gate for the milestone. Check items only when evidence exists.
+Forward checklist. Items are intentionally unchecked because v0.93 has not
+entered active execution.
 
 ## Planning
-- [ ] Milestone goal defined (`{{goal_doc_link}}`)
-- [ ] Scope + non-goals documented (`{{scope_doc_link}}`)
-- [ ] WBS created and mapped to issues (`{{wbs_link}}`)
-- [ ] Decision log initialized (`{{decisions_link}}`)
-- [ ] Sprint plan created (`{{sprint_plan_link}}`)
 
-## Execution Discipline
-- [ ] Each issue has input/output cards under `.adl/cards/<issue>/`
-- [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp>/`
-- [ ] Draft PR opened for each issue before merge
-- [ ] Transient failures retried and documented
-- [ ] "Green-only merge" policy followed
+- [ ] Milestone goal reviewed against the constitutional citizenship allocation.
+- [ ] WBS converted from candidate allocation into concrete WPs.
+- [ ] Issue wave authored and opened.
+- [ ] Cards reviewed for concrete outputs and non-goals.
+- [ ] Dependencies on v0.90.3, v0.91, v0.92, and governed tools checked.
+
+## Scope Integrity
+
+- [ ] v0.93 consumes citizen-state and standing work without redefining it.
+- [ ] v0.93 consumes moral trace and trajectory review without duplicating it.
+- [ ] v0.93 consumes identity/birthday work as prerequisite where citizenship
+  depends on durable identity.
+- [ ] Human, guest, operator, service, tool, and citizen-mode boundaries are
+  explicit.
+- [ ] Economics and payment rails are excluded or explicitly bridged by
+  decision.
 
 ## Quality Gates
-- [ ] `cargo fmt` passes
-- [ ] `cargo clippy --all-targets -- -D warnings` passes
-- [ ] `cargo test` passes
-- [ ] CI is green on the merge target
-- [ ] Coverage signal is not red (or exception documented) (`{{coverage_link_or_note}}`)
-- [ ] No unresolved high-priority blockers (`{{blocker_report_link}}`)
 
-## Release Packaging
-- [ ] Release notes finalized (`{{release_notes_link}}`)
-- [ ] Tag verified: `{{tag_name}}`
-- [ ] GitHub Release drafted (`{{release_draft_link}}`)
-- [ ] Links validated in release body
-- [ ] Release published
+- [ ] Formatting, lint, and tests pass for implementation changes.
+- [ ] Demo matrix commands are runnable where demos are implemented.
+- [ ] Review packets cite evidence and do not depend on raw private-state
+  inspection.
+- [ ] Claim-boundary scan finds no production-law, legal-personhood, or
+  completed-constitution overclaims.
 
-## Post-Release
-- [ ] Milestone/epic issues closed with release links
-- [ ] Deferred items moved to next milestone backlog
-- [ ] Follow-up bugs/tech debt captured as issues
-- [ ] Roadmap/status docs updated (`{{roadmap_update_link}}`)
-- [ ] Retrospective summary recorded (`{{retro_link}}`)
+## Review And Release
+
+- [ ] Internal review completed.
+- [ ] Third-party review handoff prepared if the milestone follows the current
+  review cadence.
+- [ ] Findings resolved or explicitly deferred.
+- [ ] Release notes describe landed work only.
+- [ ] Release ceremony completed.
 
 ## Exit Criteria
-- All required gates are checked, or each exception has an owner + due date.
-- Milestone can be audited end-to-end via the links captured above.
+
+- Constitutional citizenship, standing, review, appeal, delegation, IAM, and
+  proof demos are traceable from docs to PRs and evidence.
+- The milestone can be audited without reconstructing intent from chat.

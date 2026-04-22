@@ -1,65 +1,51 @@
-# Work Breakdown Structure (WBS) Template
+# v0.93 Candidate Work Breakdown Structure
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+## Status
 
-## How To Use
-- Break work into independently-mergeable issues.
-- Keep each item measurable and testable.
-- Include deliverables + dependencies + issue links.
-- `WP-01` is **always** the milestone **design pass** (canonical docs + WBS + decisions + sprint plan + checklist).
-- Reserve the final WPs for the release tail in this order: `WP-13` demos, `WP-14` quality/coverage gate, `WP-15` docs/review convergence, `WP-16` release ceremony.
+Candidate allocation only. v0.93 has no final issue wave yet.
+
+The exact WP sequence should be produced by the v0.93 WP-01 planning pass after
+v0.90.3, v0.91, and v0.92 have landed enough prerequisite evidence.
 
 ## WBS Summary
-{{wbs_summary}}
 
-## Work Packages
-| ID | Work Package | Description | Deliverable | Dependencies | Issue |
-|---|---|---|---|---|---|
-| WP-01 | Design pass (milestone docs + planning) | {{description_01}} | {{deliverable_01}} | {{deps_01}} | {{issue_01}} |
-| WP-02 | {{package_02}} | {{description_02}} | {{deliverable_02}} | {{deps_02}} | {{issue_02}} |
-| WP-03 | {{package_03}} | {{description_03}} | {{deliverable_03}} | {{deps_03}} | {{issue_03}} |
-| WP-04 | {{package_04}} | {{description_04}} | {{deliverable_04}} | {{deps_04}} | {{issue_04}} |
-| WP-05 | {{package_05}} | {{description_05}} | {{deliverable_05}} | {{deps_05}} | {{issue_05}} |
-| WP-06 | {{package_06}} | {{description_06}} | {{deliverable_06}} | {{deps_06}} | {{issue_06}} |
-| WP-07 | {{package_07}} | {{description_07}} | {{deliverable_07}} | {{deps_07}} | {{issue_07}} |
-| WP-08 | {{package_08}} | {{description_08}} | {{deliverable_08}} | {{deps_08}} | {{issue_08}} |
-| WP-09 | {{package_09}} | {{description_09}} | {{deliverable_09}} | {{deps_09}} | {{issue_09}} |
-| WP-10 | {{package_10}} | {{description_10}} | {{deliverable_10}} | {{deps_10}} | {{issue_10}} |
-| WP-11 | {{package_11}} | {{description_11}} | {{deliverable_11}} | {{deps_11}} | {{issue_11}} |
-| WP-12 | {{package_12}} | {{description_12}} | {{deliverable_12}} | {{deps_12}} | {{issue_12}} |
-| WP-13 | Demo matrix + integration demos | {{description_13}} | {{deliverable_13}} | {{deps_13}} | {{issue_13}} |
-| WP-14 | Coverage / quality gate (ratchet + exclusions) | {{description_14}} | {{deliverable_14}} | {{deps_14}} | {{issue_14}} |
-| WP-15 | Docs + review pass (repo-wide alignment) | {{description_15}} | {{deliverable_15}} | {{deps_15}} | {{issue_15}} |
-| WP-16 | Release ceremony (final validation + tag + notes + cleanup) | {{description_16}} | {{deliverable_16}} | {{deps_16}} | {{issue_16}} |
+v0.93 should develop the constitutional citizenship and polis-governance layer
+without stealing work from the earlier substrate milestones.
 
-## Sequencing
-- Phase 1: {{phase_1}}
-- Phase 2: {{phase_2}}
-- Phase 3: {{phase_3}}
+## Candidate Work Areas
+
+| Candidate | Work Area | Description | Primary deliverable | Key dependencies |
+| --- | --- | --- | --- | --- |
+| A | Constitutional citizenship contract | Define eligibility, rights, duties, standing, review, and non-goals. | Feature contract and fixtures. | v0.90.3 standing/state, v0.92 identity. |
+| B | Human, guest, operator, and citizen-mode boundary | Make guest-by-default human entry and mediated citizen action explicit. | Boundary doc, policy fixtures, negative cases. | v0.90.3 standing, v0.91 Freedom Gate, v0.92 identity. |
+| C | Rights and duties model | Define what the polis owes citizens and what citizens owe the polis. | Rights/duties schema or contract. | v0.91 moral resources and wellbeing context. |
+| D | Standing maintenance and degradation | Define evidence-based transitions among good standing, monitored, restricted, suspended, restored, and revoked. | Standing transition tests and review packet. | v0.90.3 standing and challenge flow. |
+| E | Constitutional review packet | Consume trace, outcome, attribution, policy, and standing evidence. | Review packet schema and fixtures. | v0.91 moral trace and trajectory review. |
+| F | Challenge and appeal flow | Preserve evidence, allow challenge, record appeal disposition, and avoid arbitrary punishment. | Challenge/appeal state machine and proof fixture. | v0.90.3 challenge/quarantine, v0.91 review evidence. |
+| G | Delegation and IAM | Model delegated authority across citizens, guests, services, operators, and tools. | Authority-chain model and allow/deny fixtures. | v0.90.5 governed tools if landed. |
+| H | Communication without inspection | Ensure governed communication does not create private-state inspection rights. | Communication/inspection negative proof. | v0.90.3 communication and projection policy. |
+| I | Social contract representation | Represent the bounded obligations of the polis and citizens. | Draft social-contract contract and review notes. | A through H. |
+| J | Polis governance health evidence | Summarize governance state without scalar moral verdicts or private-state leaks. | Governance evidence packet and redacted report. | E through I. |
+| K | Demo matrix and proof demos | Build constitutional review, standing transition, delegation/IAM, and guest/citizen boundary demos. | Demo matrix rows and runnable proof commands. | A through J. |
+| L | Review, docs, and release tail | Align docs, update feature list, run review, and close the milestone. | Review handoff, release notes, ceremony evidence. | All prior work. |
+
+## Sequencing Pressure
+
+1. Start with the citizenship contract and actor boundary.
+2. Add rights, duties, and standing transition semantics.
+3. Add review packet, challenge, and appeal.
+4. Add delegation and IAM after authority prerequisites are clear.
+5. Add communication and social-contract surfaces.
+6. Build proof demos only after the contracts can constrain them.
 
 ## Acceptance Mapping
-- WP-01 (Design pass) -> {{acceptance_criteria_01}}
-- WP-02 -> {{acceptance_criteria_02}}
-- WP-03 -> {{acceptance_criteria_03}}
-- WP-04 -> {{acceptance_criteria_04}}
-- WP-05 -> {{acceptance_criteria_05}}
-- WP-06 -> {{acceptance_criteria_06}}
-- WP-07 -> {{acceptance_criteria_07}}
-- WP-08 -> {{acceptance_criteria_08}}
-- WP-09 -> {{acceptance_criteria_09}}
-- WP-10 -> {{acceptance_criteria_10}}
-- WP-11 -> {{acceptance_criteria_11}}
-- WP-12 -> {{acceptance_criteria_12}}
-- WP-13 (Demos) -> {{acceptance_criteria_13}}
-- WP-14 (Quality gate) -> {{acceptance_criteria_14}}
-- WP-15 (Docs/review) -> {{acceptance_criteria_15}}
-- WP-16 (Release ceremony) -> {{acceptance_criteria_16}}
 
-## Exit Criteria
-- Every in-scope requirement maps to at least one WBS item.
-- Every WBS item has an owner, issue reference, and concrete deliverable.
-- Dependency order is explicit enough to execute deterministically.
+- Constitutional citizenship must be tied to identity, standing, trace, and
+  policy, not merely existence in the runtime.
+- Human provider participation must remain guest or operator activity unless a
+  CSM identity mediates the action as citizen conduct.
+- Constitutional review must cite trace/outcome/standing evidence.
+- Standing changes must be evidence-based, reviewable, and appealable.
+- Delegation and IAM must fail closed when authority is missing.
+- Public or operator-facing projections must not leak private state.
+- Demos must show behavior and evidence, not just policy text.
