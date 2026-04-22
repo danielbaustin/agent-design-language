@@ -9,3 +9,4 @@ These docs are not implementation contracts by themselves.
 
 - V0903_CITIZEN_STATE_DEPENDENCY.md
 - PAYMENT_AND_INTERPOLIS_DEFERRAL.md
+- V0905_GOVERNED_TOOLS_HANDOFF.md

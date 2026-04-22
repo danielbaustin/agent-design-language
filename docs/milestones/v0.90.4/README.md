@@ -54,6 +54,8 @@ In scope:
 - one bounded contract-market demo
 - release/review evidence that the economics layer consumes citizen standing
   and access-control authority rather than redefining citizenship
+- explicit handoff to v0.90.5 for governed tool-call semantics, UTS, ACC, and
+  tool execution authority when contracts or bids require tools
 
 Out of scope:
 
@@ -64,6 +66,8 @@ Out of scope:
 - redefining citizen standing, admission, private state, or continuity
 - open-ended autonomous markets
 - production identity, KYC, billing, tax, or legal contracting systems
+- implementing Governed Tools v1.0, Universal Tool Schema, ADL Capability
+  Contracts, tool registry semantics, or direct model-to-tool execution
 
 ## Canonical Planning Docs
 
@@ -115,3 +119,14 @@ projection, challenge, appeal, and continuity semantics.
 
 If v0.90.3 defers a required authority surface, v0.90.4 should either narrow its
 proof to a fixture-backed boundary or delay the affected WP.
+
+## Handoff To v0.90.5
+
+Contracts and bids may describe tool requirements, resource estimates, adapter
+expectations, or evidence emitted by tool-mediated work. They must not authorize
+tool execution by themselves.
+
+v0.90.4 should record tool needs as contract constraints and review evidence.
+v0.90.5 owns the governed tool layer: UTS, ACC, tool registry binding,
+capability compilation, Freedom Gate mediation for tool use, executor behavior,
+redaction, replay, denial records, and multi-model tool-call testing.

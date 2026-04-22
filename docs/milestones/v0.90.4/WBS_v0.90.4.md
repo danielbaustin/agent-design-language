@@ -18,7 +18,7 @@ fixtures, validators, and lifecycle before the runner and proof demo widen.
 | WP-07 | planned | Contract lifecycle state | Implement lifecycle states and transition validation | lifecycle state machine and fixtures | WP-06 |
 | WP-08 | planned | External counterparty model | Bound non-citizen participation through identity, assurance, sponsor, and gateway rules | counterparty schema and denial cases | WP-02, WP-06 |
 | WP-09 | planned | Delegation and subcontract model | Link subcontracts to parent responsibility without authority leakage | subcontract schema and trace-link tests | WP-03-WP-08 |
-| WP-10 | planned | Resource stewardship bridge | Connect contract-market execution to compute, memory, attention, bandwidth, artifact storage, and review time without payment rails | resource bridge decision, fixture, and boundary notes | WP-03-WP-09 |
+| WP-10 | planned | Resource stewardship bridge | Connect contract-market execution to compute, memory, attention, bandwidth, artifact storage, review time, and tool-resource requirements without payment rails or tool-call authority | resource bridge decision, fixture, and boundary notes | WP-03-WP-09 |
 | WP-11 | planned | Contract-market fixture set | Produce canonical parent, bids, evaluation, subcontract, output, trace, review-summary seed, and manifest fixtures | fixture packet | WP-03-WP-10 |
 | WP-12 | planned | Contract-market runner | Validate fixtures and emit transition/review artifacts deterministically | runner and proof artifacts | WP-11 |
 | WP-13 | planned | Review summary shape | Produce reviewer-facing summaries of market execution and residual risk | summary schema and example | WP-11, WP-12 |
@@ -28,7 +28,7 @@ fixtures, validators, and lifecycle before the runner and proof demo widen.
 | WP-16 | planned | Internal review | Run findings-first internal review over code, docs, tests, demos, issue truth, and release boundaries | internal review packet and finding register | WP-15 |
 | WP-17 | planned | External review | Run bounded external review and record findings or zero-finding disposition | third-party review record | WP-16 |
 | WP-18 | planned | Review findings remediation | Fix accepted internal/external findings or defer explicitly with owner and rationale | remediation PRs or deferral records | WP-16, WP-17 |
-| WP-19 | planned | Next milestone planning handoff | Prepare v0.91/v0.92/v0.90.5 or payment-lane handoff as appropriate | handoff docs and backlog updates | WP-18 |
+| WP-19 | planned | Next milestone planning handoff | Prepare v0.90.5 governed-tools handoff plus v0.91/v0.92/payment-lane follow-ups as appropriate | handoff docs and backlog updates | WP-18 |
 | WP-20 | planned | Release ceremony | Complete release closure | release notes, ceremony result, next handoff | WP-19 |
 
 ## Compression Candidate
@@ -43,6 +43,7 @@ Compression must not skip:
 - external counterparty boundaries
 - unauthorized transition negative tests
 - delegation authority checks
+- governed-tool boundary checks when contracts or bids mention tool-mediated work
 - review summary truth
 - feature-by-feature demo/proof coverage before docs/review convergence
 - internal review, external review, and accepted-finding remediation

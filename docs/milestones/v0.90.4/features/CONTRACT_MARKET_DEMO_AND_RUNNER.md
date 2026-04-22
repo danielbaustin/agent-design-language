@@ -35,6 +35,7 @@ The runner should:
 - load the fixture set
 - validate parent contract
 - validate bids
+- validate that any tool requirements are constraints and not execution grants
 - validate evaluation
 - emit award transition
 - validate acceptance
@@ -48,4 +49,9 @@ The runner should:
 
 The runner proves bounded artifact integrity and lifecycle authority. It does
 not prove production scheduling, payment settlement, legal contract enforcement,
-or autonomous market optimization.
+autonomous market optimization, or governed tool execution.
+
+If the fixture mentions tool-mediated work, the runner should emit review
+evidence that the requirement was recognized and kept inside the contract
+boundary. It should not run the tool unless a later milestone supplies governed
+tool authority.

@@ -13,3 +13,4 @@
 | D-09 | Defer full inter-polis economics | Proposed | Cross-polis economics depends on stronger identity, reputation, payment, and governance layers. |
 | D-10 | Defer real payment rails | Proposed | Payment settlement should wait until contract authority, lifecycle, review, and dispute evidence are stable. |
 | D-11 | Preserve the demo-matrix WP before quality and review convergence | Proposed | Feature claims should not enter review without landed, skipped, failed, non-proving, or explicitly deferred proof status. |
+| D-12 | Defer governed tool-call semantics to v0.90.5 | Proposed | Contracts may describe tool needs, but UTS, ACC, registry binding, executor authority, denial records, and tool-call model testing belong to the governed-tools milestone. |

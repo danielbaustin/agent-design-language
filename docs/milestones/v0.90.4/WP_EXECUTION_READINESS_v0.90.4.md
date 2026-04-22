@@ -20,8 +20,12 @@ placeholder.
 - Treat payment settlement, Lightning, x402, stablecoins, banking, invoicing,
   tax, production legal contracting, and full inter-polis economics as explicit
   later work.
+- Treat tool requirements as constraints, resource estimates, adapter
+  expectations, or evidence requirements. v0.90.4 must not authorize direct tool
+  execution, implement UTS/ACC, or treat model output as permission to act.
 - Require negative cases for unauthorized transitions, invalid bids, unsupported
-  delegation, revoked counterparties, and missing trace links.
+  delegation, revoked counterparties, missing trace links, and tool execution
+  attempts that lack governed-tool authority.
 - Preserve the demo-matrix WP before quality/docs/review convergence.
 - Use the release-tail pattern: quality/docs convergence, internal review,
   external review, remediation, next-milestone planning, release ceremony.
@@ -66,7 +70,8 @@ Required outputs:
 - Contract schema or strongly typed contract artifact.
 - Valid parent-contract fixture.
 - Invalid contract fixtures for missing trace requirements, missing authority
-  basis, unsupported lifecycle state, and incomplete evaluation criteria.
+  basis, unsupported lifecycle state, incomplete evaluation criteria, and tool
+  requirements that imply direct execution authority.
 - Validator tests or fixture validation command.
 
 Required validation:
@@ -74,6 +79,7 @@ Required validation:
 - Valid fixture passes.
 - Invalid fixtures fail for the intended reasons.
 - Schema does not grant citizen standing by itself.
+- Schema records tool-mediated requirements as constraints, not execution grants.
 
 ## WP-04: Bid Schema
 
@@ -82,7 +88,8 @@ Required outputs:
 - Bid schema or strongly typed bid artifact.
 - At least two valid bid fixtures against the parent contract.
 - Invalid bid fixtures for wrong contract, late bid, ineligible counterparty,
-  missing commitments, and missing trace/signature requirements.
+  missing commitments, missing trace/signature requirements, and attempted tool
+  authority beyond the bid's contract constraints.
 - Validator tests or fixture validation command.
 
 Required validation:
@@ -91,6 +98,8 @@ Required validation:
 - Invalid bid fixtures fail for the intended reasons.
 - Bid artifact preserves room for later pricing or payment rails without
   implementing settlement.
+- Bid artifact preserves room for governed-tool integration without bypassing
+  v0.90.5 UTS/ACC authority.
 
 ## WP-05: Evaluation And Selection Model
 
@@ -101,6 +110,8 @@ Required outputs:
 - Selection fixture using the WP-03 and WP-04 artifacts.
 - Negative or warning cases for critical criterion failure, tie-break, and
   unsupported override.
+- Tool-readiness field or warning path when a selected bid depends on
+  tool-mediated execution.
 
 Required validation:
 
@@ -108,6 +119,8 @@ Required validation:
   winner.
 - Override requires traceable rationale.
 - Evaluation does not bypass authority checks.
+- Evaluation does not treat valid JSON, model confidence, or adapter availability
+  as authority to execute a tool.
 
 ## WP-06: Transition Authority Model
 
@@ -119,6 +132,8 @@ Required outputs:
 - Denial fixtures for unauthorized award, wrong actor acceptance, execution
   before acceptance, cancellation after completion, and completion without
   artifacts.
+- Denial fixture for a transition that attempts to execute a tool without
+  governed-tool authority.
 
 Required validation:
 
@@ -146,7 +161,8 @@ Required outputs:
 - External counterparty record shape.
 - Trust, assurance, sponsor, gateway, revocation, and allowed-action fields.
 - Denial fixtures for insufficient assurance, revoked counterparty, missing
-  gateway, and private-state inspection attempt.
+  gateway, private-state inspection attempt, and tool-mediated action outside
+  allowed scope.
 
 Required validation:
 
@@ -163,7 +179,8 @@ Required outputs:
 - Delegated output fixture.
 - Parent integration fixture.
 - Negative cases for missing parent link, scope expansion, unsupported
-  subcontractor, and integration without review.
+  subcontractor, integration without review, and delegated tool use outside
+  parent contract constraints.
 
 Required validation:
 
@@ -175,8 +192,9 @@ Required validation:
 Required outputs:
 
 - Resource claim model for compute, memory, attention, bandwidth, artifact
-  storage, and review/operator time where relevant.
-- Fixture showing contract and bid resource estimates.
+  storage, review/operator time, and tool-adapter budget where relevant.
+- Fixture showing contract and bid resource estimates, including at least one
+  tool-mediated requirement recorded as a constraint.
 - Boundary note explaining what remains outside v0.90.4.
 
 Required validation:
@@ -184,6 +202,8 @@ Required validation:
 - Resource claims are policy-bound and do not override standing, access
   control, quarantine, sanctuary, or challenge rights.
 - Payment and pricing remain explicitly out of scope.
+- Tool-resource requirements remain explicitly non-executable until v0.90.5
+  governed-tool authority exists.
 
 ## WP-11: Contract-Market Fixture Set
 
@@ -193,6 +213,8 @@ Required outputs:
   award transition, acceptance transition, subcontract, delegated output, parent
   integration output, completion event, trace bundle, review summary seed, and
   demo manifest.
+- Optional tool-requirement fixture showing a needed tool as a constraint, not a
+  grant.
 - Invalid fixture packet for the negative-case suite.
 
 Required validation:
@@ -207,6 +229,8 @@ Required outputs:
 - Deterministic runner that loads the fixture packet, validates artifacts,
   executes allowed lifecycle transitions, rejects negative cases, and emits
   transition/review artifacts.
+- Runner behavior that recognizes tool requirements as constraints and refuses
+  to execute them without governed-tool authority.
 - Runner tests or smoke command.
 
 Required validation:
@@ -215,6 +239,7 @@ Required validation:
 - Negative fixtures fail safely.
 - Runner output contains no secrets, prompt text, tool arguments, or local host
   paths.
+- Runner output distinguishes contract-market proof from governed-tool proof.
 
 ## WP-13: Review Summary Shape
 
@@ -224,6 +249,7 @@ Required outputs:
 - Summary sections for scope, participants, authority basis, bid comparison,
   selection rationale, delegation, artifacts, trace, validation, caveats, and
   residual risk.
+- Summary language for tool requirements that were recorded, denied, or deferred.
 
 Required validation:
 
@@ -237,13 +263,16 @@ Required outputs:
 - End-to-end contract-market proof packet.
 - Operator/reviewer report for the successful path.
 - Negative authority and trace packet covering unauthorized transition, invalid
-  bid, unsupported delegation, revoked counterparty, and missing trace link.
+  bid, unsupported delegation, revoked counterparty, missing trace link, and
+  unauthorized tool execution attempt if the demo includes tool-mediated work.
 
 Required validation:
 
 - Successful demo proves only bounded contract-market mechanics.
 - Negative demo cases fail for the expected reason.
 - Demo claims do not imply payment settlement or full economics.
+- Demo claims do not imply Governed Tools v1.0, UTS, ACC, or production tool
+  execution authority.
 
 ## WP-14A: Demo Matrix And Feature Proof Demos
 
@@ -252,7 +281,8 @@ Required outputs:
 - Updated DEMO_MATRIX_v0.90.4.md with landed, skipped, failed, non-proving, or
   deferred status for every feature claim.
 - Feature proof coverage record showing which schema, fixture, runner, summary,
-  and negative-case surfaces prove each claim.
+  and negative-case surfaces prove each claim, including any non-proving
+  governed-tool handoff claims.
 
 Required validation:
 
@@ -322,7 +352,8 @@ Required outputs:
 - Next-milestone planning package updated for the economic follow-on, v0.91,
   v0.92, v0.93, or v0.90.5 governed-tools lane as appropriate.
 - Backlog updated with any deferred payment, reputation, resource accounting,
-  inter-polis economics, or contract/legal/billing work.
+  inter-polis economics, contract/legal/billing work, or governed-tool
+  requirements discovered during contract-market execution.
 
 Required validation:
 

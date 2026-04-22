@@ -28,6 +28,7 @@ v0.90.4 should introduce or formalize these implementation-facing objects:
 - external counterparty record
 - contract-market review summary
 - demo manifest
+- tool requirement record, when a contract or bid depends on tool-mediated work
 
 ## Contract Lifecycle
 
@@ -67,6 +68,8 @@ Minimum authority rules:
 - delegation requires explicit parent-contract permission
 - subcontractors cannot silently inherit parent authority
 - disputed or failed states preserve evidence for review
+- tool requirements do not become executable unless a governed-tool authority
+  layer approves them
 
 ## External Counterparties
 
@@ -91,6 +94,7 @@ The proof should include at least one negative case:
 - unsupported delegation
 - missing trace link
 - external counterparty without sufficient assurance
+- attempted tool execution without governed-tool authority
 
 ## Compression Design
 

@@ -20,6 +20,8 @@ Minimum counterparty fields:
 - allowed actions
 - trace requirements
 - revocation behavior
+- permitted tool-mediated actions, if any, expressed as constraints rather than
+  execution authority
 
 ## Delegation
 
@@ -42,6 +44,10 @@ Required subcontract properties:
 Subcontractors cannot silently inherit parent authority. They may perform only
 the delegated scope, and parent integration remains a separate reviewable step.
 
+If delegated work requires tools, the subcontract must identify that requirement
+without granting direct execution authority. Governed tool permission is a
+separate layer and should be handed to v0.90.5.
+
 ## Required Negative Cases
 
 - subcontract exceeds parent scope
@@ -49,3 +55,5 @@ the delegated scope, and parent integration remains a separate reviewable step.
 - external subcontractor lacks sufficient assurance
 - delegated output is integrated without parent review
 - revoked counterparty continues participation
+- subcontractor attempts to execute or inspect through a tool outside delegated
+  scope

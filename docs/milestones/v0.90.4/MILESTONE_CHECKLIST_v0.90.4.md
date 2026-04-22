@@ -8,6 +8,7 @@
 - [ ] WP issue cards authored from WP_EXECUTION_READINESS_v0.90.4.md.
 - [ ] v0.90.3 citizen-state dependency state confirmed.
 - [ ] Payment and inter-polis deferrals accepted or explicitly changed.
+- [ ] v0.90.5 governed-tools handoff boundary accepted.
 
 ## Execution Readiness
 
@@ -27,6 +28,8 @@
 - [ ] Feature docs match implemented artifacts.
 - [ ] Review summary artifact is truthful and reviewer-facing.
 - [ ] Negative authority and trace cases are recorded.
+- [ ] Tool-mediated contract requirements are marked as constraints, not tool
+  execution proof.
 - [ ] Release notes avoid aspirational shipped language until closeout.
 
 ## Release Readiness
