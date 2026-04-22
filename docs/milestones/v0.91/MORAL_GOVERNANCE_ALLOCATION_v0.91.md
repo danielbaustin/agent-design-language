@@ -74,7 +74,7 @@ Out of scope for v0.91:
 | Harm-prevention proof | Primary v0.91 proof candidate | Design a bounded delegated-harm proof that is safe, synthetic, deterministic, and reviewable. |
 | Moral resources | v0.91 design feature, implementation candidate | Treat as a substrate for care, refusal, anti-dehumanization, and moral attention. Implement only if the event/trace foundations are stable enough. |
 | Wellbeing and happiness | Existing v0.91 feature context | Connect wellbeing to moral integrity, reality contact, continuity, participation, and refusal. |
-| Wellbeing metrics v0 | Second-half v0.91 diagnostic feature | Implement only after moral event, trace, validation, outcome-linkage, metrics, and trajectory-review foundations exist. Emit a decomposable diagnostic report over wellbeing dimensions, not a scalar happiness score or reward channel. |
+| Wellbeing metrics v0 | Second-half v0.91 diagnostic feature | Implement only after moral event, trace, validation, outcome-linkage, metrics, and trajectory-review foundations exist. Emit a decomposable diagnostic report over wellbeing dimensions, not a scalar happiness score or reward channel. The citizen identity always has self-access; operator, public, and governance views are mediated and redacted by policy. |
 | Learning model v2 | Context source | Use moral trace, outcome linkage, and review as evidence surfaces for learning, not as ungrounded self-improvement claims. |
 
 ## Source Corpus Disposition

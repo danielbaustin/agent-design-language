@@ -101,6 +101,24 @@ a reward channel, or a claim that the system is happy. The report should help a
 reviewer ask whether a citizen or proto-citizen is trending toward or away from
 coherence, agency, continuity, progress, moral integrity, and participation.
 
+### Access policy
+
+A citizen's own wellbeing diagnostic should always be available to that citizen
+identity. Self-access is part of standing: a citizen should not need operator
+permission to understand its own wellbeing state.
+
+Other views are governed:
+
+- operator access is purpose-limited, logged, and usually redacted
+- public access is denied by default
+- governance and review access is formal, trace-backed, logged, and
+  scope-limited
+- emergency access must be tied to sanctuary, quarantine, or safety policy and
+  reviewed after the fact
+
+This makes wellbeing diagnostics reviewable without turning them into public
+reputation scores, surveillance dashboards, or incentives to merely appear well.
+
 ## Relationship to ADL Components
 
 ### Chronosense / identity
