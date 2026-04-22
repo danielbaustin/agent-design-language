@@ -11,6 +11,8 @@ v0.93 should not be released until it has evidence for:
 - constitutional citizenship contract
 - human/guest/operator/service/tool/citizen boundary
 - rights and duties model
+- Theory of Mind schema and signed update-event contract
+- reputation and shared social memory boundary
 - standing transition evidence
 - constitutional review packet
 - challenge and appeal flow
@@ -26,6 +28,7 @@ v0.93 should not be released until it has evidence for:
 - Demo evidence must cite concrete artifacts, not policy prose alone.
 - Redaction checks must cover private state, host paths, endpoints, and
   secret-like strings.
+- Redaction checks must cover private ToM and reputation projections.
 - The final review handoff must identify which v0.90.3, v0.91, and v0.92
   prerequisite surfaces were consumed.
 
@@ -42,6 +45,8 @@ Do not ship v0.93 if:
 
 - standing changes can be made without evidence
 - review packets expose raw private state
+- reputation or constitutional findings expose private ToM without authority and
+  redaction
 - human out-of-band action can masquerade as citizen action
 - delegation can bypass policy
 - constitutional review duplicates or contradicts moral trace

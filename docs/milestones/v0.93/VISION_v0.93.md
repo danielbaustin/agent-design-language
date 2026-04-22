@@ -8,7 +8,7 @@ milestone.
 ## Overview
 
 v0.93 is the milestone where ADL should move from identity-bearing citizens
-with moral trace toward a governable polis.
+with moral trace toward a governable, socially aware polis.
 
 The milestone should not merely let agents exist in a shared runtime. It should
 make their participation accountable, reviewable, privacy-preserving, and
@@ -24,6 +24,9 @@ That means:
 - every participant has declared standing
 - citizen action is mediated through CSM identity, Freedom Gate, signed trace,
   and temporal anchoring
+- Theory of Mind is evidence-grounded and private by default, not a hidden
+  public verdict
+- reputation and shared social memory are redacted, challengeable projections
 - humans can participate, but human action is not automatically citizen action
 - rights and duties are explicit enough to evaluate
 - standing changes are evidence-based and appealable
@@ -49,7 +52,16 @@ conduct under policy.
 This distinction matters: the trace is evidence, not law; the constitution is
 policy, not raw telemetry.
 
-### 3. Governance Without Inspection Absolutism
+### 3. Social Cognition Without Hidden Judgment
+
+Citizens need models of one another to coordinate, delegate, communicate, and
+review conflicts. Those models must not become invisible reputation systems.
+
+v0.93 should establish Theory of Mind as private, evidence-grounded,
+uncertainty-aware social cognition. Any reputation or governance-facing summary
+must be redacted, authorized, traceable, and challengeable.
+
+### 4. Governance Without Inspection Absolutism
 
 A governable polis must be inspectable, but not naked.
 
@@ -57,13 +69,13 @@ Citizens should not lose all privacy merely because they participate in
 governance. Review packets should cite evidence, use redacted projections, and
 explain findings without becoming a universal private-state browser.
 
-### 4. Delegation Without Hidden Sovereignty
+### 5. Delegation Without Hidden Sovereignty
 
 Operators, tools, service actors, human providers, guests, and external
 counterparties must not become invisible sovereigns. If they can affect shared
 state, their authority must be declared, bounded, and traceable.
 
-### 5. Civic Proof, Not Civic Theater
+### 6. Civic Proof, Not Civic Theater
 
 The milestone should prove governance behavior through fixtures, tests, review
 packets, and demos.
@@ -79,6 +91,8 @@ v0.93 should prepare ADL for a polis where citizens can:
 - communicate without being inspected
 - challenge findings
 - recover standing when evidence supports restoration
+- model one another under bounded ToM rules without losing privacy
+- use shared social memory without collapsing into a scalar reputation culture
 - delegate under bounded authority
 - participate in a shared world with traceable accountability
 

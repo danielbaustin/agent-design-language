@@ -7,9 +7,10 @@ no final issue wave.
 
 ## Purpose
 
-v0.93 is the planned constitutional citizenship and polis-governance milestone.
-It should convert earlier citizen-state, moral-trace, and identity work into a
-bounded governance layer for the ADL polis.
+v0.93 is the planned constitutional citizenship, social-cognition, and
+polis-governance milestone. It should convert earlier citizen-state,
+moral-trace, identity, and standing work into a bounded governance layer for the
+ADL polis.
 
 The canonical allocation is recorded in
 [CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md](CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md).
@@ -19,6 +20,8 @@ The canonical allocation is recorded in
 v0.93 should establish:
 
 - constitutional citizenship as a trace-grounded policy model
+- bounded Theory of Mind, reputation, and shared social memory as distinct
+  social-cognition surfaces
 - rights, duties, standing, challenge, appeal, delegation, and IAM semantics
 - reviewer-facing governance evidence that does not expose raw private state
 - a clear boundary between CSM citizen identity and human/operator action
@@ -47,6 +50,8 @@ v0.93 depends on:
 - Constitutional citizenship contract.
 - Citizen, guest, human-provider, service-actor, and operator boundary.
 - Rights and duties model.
+- Bounded Theory of Mind and shared social memory.
+- Reputation as a redacted, challengeable projection distinct from private ToM.
 - Standing maintenance, degradation, restoration, suspension, and revocation.
 - Constitutional review packet shape.
 - Challenge and appeal flow.
@@ -63,6 +68,8 @@ v0.93 depends on:
 - Replacing v0.90.3 citizen-state/security work.
 - Replacing v0.91 moral trace.
 - Replacing v0.92 identity and birthday semantics.
+- Treating private Theory of Mind as public reputation or constitutional
+  verdict.
 
 ## Document Map
 
@@ -75,16 +82,19 @@ v0.93 depends on:
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.93.md](MILESTONE_CHECKLIST_v0.93.md)
 - Release plan: [RELEASE_PLAN_v0.93.md](RELEASE_PLAN_v0.93.md)
 - Release notes: [RELEASE_NOTES_v0.93.md](RELEASE_NOTES_v0.93.md)
+- Feature plans: [features/README.md](features/README.md)
 - Constitutional citizenship and polis governance allocation:
   [CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md](CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md)
+- Theory of Mind and social cognition:
+  [THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md](features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md)
 
 ## Execution Model
 
 Later WP planning should preserve the standard milestone rhythm:
 
 - WP-01: promote reviewed milestone docs and issue wave
-- feature WPs: implement constitutional citizenship, standing, review,
-  delegation, IAM, and social-contract surfaces
+- feature WPs: implement constitutional citizenship, ToM/social-cognition,
+  standing, review, delegation, IAM, and social-contract surfaces
 - demo WP: build constitutional/polis proof demos
 - quality/review WPs: validate docs, tests, demo evidence, and review packets
 - release WP: close the milestone under the normal ceremony pattern
@@ -98,6 +108,7 @@ v0.93 is ready to execute when:
 - every governance feature consumes earlier substrate instead of redefining it
 - the human/citizen boundary is explicit in docs, fixtures, and tests
 - constitutional review packets are trace-grounded and privacy-preserving
+- ToM, reputation, standing, and constitutional review remain distinct
 - delegation and IAM decisions are reviewable
 - demo candidates prove behavior rather than merely describing policy
 - philosophical claims remain separated from implemented engineering behavior

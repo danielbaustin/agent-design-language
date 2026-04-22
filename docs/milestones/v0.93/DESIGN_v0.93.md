@@ -7,10 +7,10 @@ boundary before final WP planning.
 
 ## Problem Statement
 
-ADL is gaining citizens, state, moral trace, identity, and tool authority. Those
-surfaces are necessary but not sufficient for a polis. A polis also needs
-governance: rights, duties, standing, review, appeal, delegation, and rules for
-who can act under which authority.
+ADL is gaining citizens, state, moral trace, identity, social cognition, and
+tool authority. Those surfaces are necessary but not sufficient for a polis. A
+polis also needs governance: rights, duties, standing, review, appeal,
+delegation, and rules for who can act under which authority.
 
 Without v0.93, ADL risks having traceable agent behavior but no bounded law over
 that behavior.
@@ -21,6 +21,10 @@ that behavior.
 - Preserve the boundary that a human is not the citizen; the CSM identity is
   the citizen.
 - Define rights and duties that can be evaluated against trace evidence.
+- Define Theory of Mind as private evidence-grounded social cognition, distinct
+  from reputation, standing, and constitutional judgment.
+- Define shared social memory as redacted, challengeable governance evidence
+  rather than leaked private models.
 - Define standing transitions, challenge, appeal, and restoration semantics.
 - Define constitutional review packets that consume moral trace, outcome
   linkage, identity, and standing evidence.
@@ -40,6 +44,8 @@ that behavior.
 - No economics, payment rails, or market settlement unless later milestone
   planning deliberately creates a narrow bridge.
 - No scalar reputation, karma score, or moral leaderboard.
+- No private ToM model treated as public reputation, standing, or constitutional
+  review outcome.
 
 ## Proposed Design
 
@@ -49,6 +55,8 @@ The layer has three parts:
 
 - Engineering substrate: signed state, lineage, standing, identity, trace,
   outcome linkage, capability contracts, and redacted projection records.
+- Social-cognition model: private ToM, reputation projections, shared social
+  memory, uncertainty, conflict, decay, and redaction policy.
 - Policy model: constitutional citizenship, rights, duties, standing changes,
   review, appeal, delegation, IAM, and social-contract representation.
 - Context layer: philosophical and civic vocabulary that explains why the polis
@@ -86,6 +94,23 @@ A review packet should include:
 - finding, severity, uncertainty, and appeal status
 - redaction disposition
 
+### Theory Of Mind And Social Cognition Contract
+
+The social-cognition contract should reference:
+
+- target actor identity and standing
+- model owner or maintaining actor
+- evidence references for beliefs, intentions, capabilities, and uncertainty
+- confidence and confidence basis for every modeled entry
+- conflict, decay, and freshness state
+- policy and authority context for creation, inspection, and projection
+- signed update events and model-version links
+- redaction class for any public, reviewer, operator, or citizen-facing view
+
+Private ToM may inform arbitration, Freedom Gate evaluation, delegation, and
+constitutional review only through authorized projections. It must not bypass
+standing, access control, redaction, appeal, or policy.
+
 ### Authority Boundary
 
 The design must represent these actor classes distinctly:
@@ -114,6 +139,9 @@ Later implementation should validate:
 - delegated action is allowed or denied based on explicit authority chain
 - communication does not grant inspection
 - redacted projections do not leak private state
+- a ToM update requires evidence, confidence, signed trace, and authority
+- reputation projection does not expose the private ToM model
+- conflict and decay are explicit rather than silently overwritten
 
 ## Risks
 
@@ -124,6 +152,8 @@ Later implementation should validate:
 | Human operator authority is mistaken for citizenship. | Keep human-provider, guest, operator, and citizen-mode paths separate. |
 | Standing becomes punishment. | Require evidence, review transparency, challenge, appeal, and restoration paths. |
 | Privacy is collapsed by review. | Use redacted projections and evidence references instead of raw private-state access. |
+| ToM becomes hidden reputation. | Keep private ToM, public reputation, standing, and constitutional review separate, with authorized projections between them. |
+| Social cognition becomes prompt theater. | Require signed update events, model versions, evidence references, conflict handling, and decay semantics. |
 
 ## Exit Criteria For Final WP Planning
 

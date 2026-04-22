@@ -8,18 +8,21 @@ landed behavior.
 
 ## Planned Release Theme
 
-v0.93 is planned as the constitutional citizenship and polis-governance
-milestone for ADL.
+v0.93 is planned as the constitutional citizenship, social-cognition, and
+polis-governance milestone for ADL.
 
 If implemented as planned, it should add reviewable governance surfaces for
-citizenship, rights, duties, standing, constitutional review, challenge,
-appeal, delegation, IAM, and privacy-preserving reviewer evidence.
+citizenship, rights, duties, Theory of Mind, reputation boundary, shared social
+memory, standing, constitutional review, challenge, appeal, delegation, IAM, and
+privacy-preserving reviewer evidence.
 
 ## Planned Highlights
 
 - Constitutional citizenship contract over CSM identities.
 - Human guest and mediated citizen-mode boundary.
 - Rights and duties model.
+- Bounded Theory of Mind contract with signed update events.
+- Reputation and shared social memory as redacted, challengeable projections.
 - Evidence-based standing transitions.
 - Constitutional review packets over trace and outcome evidence.
 - Challenge and appeal flow.
@@ -38,6 +41,8 @@ The final notes must not claim:
 - complete constitutional authority
 - full social-contract finality
 - raw private-state inspection
+- raw private-ToM inspection or public reputation derived from private ToM
+  without authority and redaction
 - economics, payments, or markets unless explicitly implemented
 
 ## Known Planning Boundaries
@@ -48,3 +53,5 @@ The final notes must not claim:
   on durable identity.
 - v0.93 may consume governed-tool authority surfaces if they have landed before
   implementation.
+- v0.93 must keep private ToM, public reputation, standing, and constitutional
+  review distinct.
