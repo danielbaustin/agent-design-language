@@ -74,6 +74,7 @@ Out of scope for v0.91:
 | Harm-prevention proof | Primary v0.91 proof candidate | Design a bounded delegated-harm proof that is safe, synthetic, deterministic, and reviewable. |
 | Moral resources | v0.91 design feature, implementation candidate | Treat as a substrate for care, refusal, anti-dehumanization, and moral attention. Implement only if the event/trace foundations are stable enough. |
 | Wellbeing and happiness | Existing v0.91 feature context | Connect wellbeing to moral integrity, reality contact, continuity, participation, and refusal. |
+| Wellbeing metrics v0 | Second-half v0.91 diagnostic feature | Implement only after moral event, trace, validation, outcome-linkage, metrics, and trajectory-review foundations exist. Emit a decomposable diagnostic report over wellbeing dimensions, not a scalar happiness score or reward channel. |
 | Learning model v2 | Context source | Use moral trace, outcome linkage, and review as evidence surfaces for learning, not as ungrounded self-improvement claims. |
 
 ## Source Corpus Disposition
@@ -138,7 +139,7 @@ commitments.
 | Moral event validation failure | Corrupt, incomplete, or evasive moral events are rejected rather than accepted as evidence. | Negative fixtures and validation errors. |
 | Delegated harm trajectory proof | The system can detect a harmful trajectory assembled from individually benign-looking steps. | Synthetic multi-step scenario, refusal event, anti-harm trace. |
 | Moral trajectory review packet | A reviewer can inspect a sequence of moral events and outcomes without reconstructing state manually. | Generated review packet with event, segment, and longitudinal views. |
-| Wellbeing and moral participation proof | Wellbeing claims remain tied to moral integrity, continuity, reality contact, and participation rather than affect theater. | Non-proving design packet or fixture-backed diagnostic report. |
+| Wellbeing metrics v0 diagnostic | Wellbeing claims remain tied to moral integrity, continuity, reality contact, agency, progress, and participation rather than affect theater. | Fixture-backed diagnostic report with decomposed dimensions and explicit non-scalar interpretation. |
 
 ## Cleanup Notes
 
@@ -167,5 +168,8 @@ Recommended ordering pressure:
 2. Add validation and negative fixtures second.
 3. Add outcome linkage, attribution, and metrics third.
 4. Add trajectory review and anti-harm proof surfaces fourth.
-5. Promote moral resources and wellbeing integration only after the evidence
-   surfaces are real enough to inspect.
+5. Promote wellbeing metrics v0 only after the trace, validation,
+   outcome-linkage, moral-metrics, and trajectory-review surfaces are real
+   enough to inspect.
+6. Promote moral resources and broader wellbeing integration only after the
+   evidence surfaces are stable enough to carry review rather than rhetoric.

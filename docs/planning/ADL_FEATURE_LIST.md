@@ -358,8 +358,10 @@ normatively legible:
 - moral trace schema, validation, outcome linkage, metrics, and trajectory
   review
 - anti-harm trajectory constraints and bounded harm-prevention proof surfaces
+- wellbeing metrics v0 as a second-half diagnostic report after trace,
+  validation, outcome-linkage, and trajectory-review foundations
 - moral resources and wellbeing links that remain evidence-grounded rather than
-  scalar or rhetorical
+  scalar, reward-channel, or rhetorical
 
 This milestone should not claim full constitutional citizenship, final social
 contract, production moral agency, or the first true Gödel-agent birthday.

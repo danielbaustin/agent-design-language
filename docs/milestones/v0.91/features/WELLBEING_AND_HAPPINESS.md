@@ -83,6 +83,24 @@ Where:
 
 This function should never be treated as a simple reward channel. It exists to guide diagnosis, adaptation, and system design, not to provide a wireheadable scalar target. The architecture should prefer durable improvement in these dimensions, not local optimization of an internal pleasure variable.
 
+## Implementation Placement
+
+Wellbeing metrics v0 belongs in the second half of v0.91, after the moral
+evidence surfaces are real enough to inspect. The required predecessors are:
+
+- Freedom Gate moral event records
+- moral event validation rules
+- moral trace schema
+- outcome linkage and attribution
+- moral metrics
+- moral trajectory review
+
+The first implementation should produce a decomposable diagnostic report over
+the wellbeing dimensions above. It should not produce a scalar happiness score,
+a reward channel, or a claim that the system is happy. The report should help a
+reviewer ask whether a citizen or proto-citizen is trending toward or away from
+coherence, agency, continuity, progress, moral integrity, and participation.
+
 ## Relationship to ADL Components
 
 ### Chronosense / identity

@@ -14,6 +14,7 @@ milestone compression and WP authoring.
 | Outcome linkage and attribution | [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md) | Planned v0.91 feature surface |
 | Moral metrics and trajectory review | [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md) | Planned v0.91 feature surface |
 | Anti-harm trajectory constraints | [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md) | Planned v0.91 feature and proof surface |
+| Wellbeing metrics v0 | [WELLBEING_AND_HAPPINESS.md](WELLBEING_AND_HAPPINESS.md) and [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md) | Second-half v0.91 diagnostic feature after trace foundations |
 | Moral resources substrate | [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md) | Planned design source; implementation depends on trace foundations |
 
 The later v0.91 planning pass should promote the strongest of these allocation
