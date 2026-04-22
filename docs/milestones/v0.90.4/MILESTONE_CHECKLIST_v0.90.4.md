@@ -5,6 +5,7 @@
 - [ ] v0.90.4 planning package reviewed.
 - [ ] v0.90.4 issue wave opened from reviewed WP YAML.
 - [ ] WP issue numbers recorded in WBS and WP YAML.
+- [ ] WP issue cards authored from WP_EXECUTION_READINESS_v0.90.4.md.
 - [ ] v0.90.3 citizen-state dependency state confirmed.
 - [ ] Payment and inter-polis deferrals accepted or explicitly changed.
 
@@ -18,6 +19,7 @@
 - [ ] External counterparty boundary accepted.
 - [ ] Delegation/subcontract boundary accepted.
 - [ ] Fixture set and runner proof path accepted.
+- [ ] Demo matrix and feature proof coverage WP preserved before review convergence.
 
 ## Review Readiness
 

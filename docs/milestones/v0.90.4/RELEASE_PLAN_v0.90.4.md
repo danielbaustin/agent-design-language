@@ -16,6 +16,7 @@ The milestone is releasable when:
 - delegation preserves parent responsibility
 - the contract-market runner emits deterministic proof artifacts
 - the demo matrix distinguishes landed, skipped, failed, and non-proving claims
+- the feature proof coverage WP is complete before quality/docs convergence
 - internal and external review findings are fixed or dispositioned
 - release notes describe actual shipped scope
 

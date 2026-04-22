@@ -3,7 +3,8 @@
 ## Status
 
 Draft milestone package. v0.90.4 is planned as the citizen economics and
-contract-market substrate milestone under planning issue #2271.
+contract-market substrate milestone. It was initially placed by planning issue
+#2271 and polished for execution readiness by #2389.
 
 The issue wave has not been opened. This package is the reviewable planning
 source for a later WP-01 issue-wave creation pass.
@@ -73,6 +74,7 @@ Out of scope:
 - Decisions log: DECISIONS_v0.90.4.md
 - Demo matrix: DEMO_MATRIX_v0.90.4.md
 - Feature index: FEATURE_DOCS_v0.90.4.md
+- WP execution readiness: WP_EXECUTION_READINESS_v0.90.4.md
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.4.md
 - Release plan: RELEASE_PLAN_v0.90.4.md
 - Release notes draft: RELEASE_NOTES_v0.90.4.md
@@ -86,6 +88,10 @@ be created from the reviewed YAML before implementation starts.
 Once the wave opens, issue work should happen in issue worktrees. Root checkout
 edits are not part of the ADL execution model.
 
+WP-01 should use WP_EXECUTION_READINESS_v0.90.4.md as the card-authoring source
+so every issue body carries concrete outputs, validation, non-goals, and source
+docs instead of generic implementation language.
+
 ## Compression Rule
 
 v0.90.4 should use the compression model learned in v0.90.1 through v0.90.3:
@@ -96,6 +102,7 @@ v0.90.4 should use the compression model learned in v0.90.1 through v0.90.3:
 - front-load negative cases for unauthorized transition, invalid bid,
   unsupported delegation, and trace discontinuity
 - keep demo claims narrow
+- preserve the demo-matrix WP before quality/docs/review convergence
 - let docs-only and fixture-only WPs run with focused validation
 - do not compress away authority checks, review summaries, external-party
   boundaries, or release-truth work

@@ -13,11 +13,12 @@ Planning draft. No v0.90.4 issue wave has been opened yet.
 | D5 | Transition authority | WP-06 / WP-07 | Contract lifecycle transitions are allowed only by authorized actors | transition matrix, lifecycle fixtures, denial cases | PLANNED |
 | D6 | External counterparty boundary | WP-08 | External counterparties can participate only through explicit trust and gateway limits | counterparty fixture, denial case | PLANNED |
 | D7 | Delegation and subcontract | WP-09 | Subcontracts preserve parent responsibility and trace linkage | subcontract fixture, delegated output, parent link | PLANNED |
-| D8 | Contract-market fixture set | WP-10 | One coherent fixture packet contains parent contract, bids, evaluation, subcontract, output, trace, and manifest | fixture packet and manifest | PLANNED |
-| D9 | Contract-market runner | WP-11 | A deterministic runner validates fixtures and emits transition/review artifacts | runner output, artifact manifest | PLANNED |
-| D10 | Review summary | WP-12 | Reviewers can inspect scope, participants, selection, execution, artifacts, trace, validation, and caveats | summary artifact | PLANNED |
-| D11 | Bounded contract-market proof | WP-13 | One parent contract can receive bids, award, accept, delegate, integrate, complete, and summarize | proof packet and operator report | PLANNED |
-| D12 | Negative authority and trace proof | WP-14 | Unauthorized transitions, invalid bids, unsupported delegation, and missing trace links fail safely | negative test packet | PLANNED |
+| D8 | Resource stewardship bridge | WP-10 | Contract and bid artifacts can declare resource estimates without becoming payment or pricing rails | resource fixture and boundary note | PLANNED |
+| D9 | Contract-market fixture set | WP-11 | One coherent fixture packet contains parent contract, bids, evaluation, subcontract, output, trace, summary seed, and manifest | fixture packet and manifest | PLANNED |
+| D10 | Contract-market runner | WP-12 | A deterministic runner validates fixtures and emits transition/review artifacts | runner output, artifact manifest | PLANNED |
+| D11 | Review summary | WP-13 | Reviewers can inspect scope, participants, selection, execution, artifacts, trace, validation, and caveats | summary artifact | PLANNED |
+| D12 | Bounded contract-market proof | WP-14 | One parent contract can receive bids, award, accept, delegate, integrate, complete, summarize, and reject unsafe variants | proof packet, operator report, negative test packet | PLANNED |
+| D13 | Feature proof coverage | WP-14A | Every feature claim has a landed, skipped, failed, non-proving, or explicitly deferred proof status | feature proof coverage record | PLANNED |
 
 ## Non-Proving Boundaries
 

@@ -16,26 +16,27 @@ Goal: make contracts and bids explicit before the market runner exists.
 - WP-07: Contract lifecycle state
 - WP-08: External counterparty model
 - WP-09: Delegation and subcontract model
-- WP-10: Contract-market fixture set
+- WP-10: Resource stewardship bridge
 
 Goal: prove that market state changes are authority-checked and traceable.
 
 ## Sprint 3: Runner, Proof, And Negative Cases
 
-- WP-11: Contract-market runner
-- WP-12: Review summary shape
-- WP-13: Bounded contract-market demo
-- WP-14: Negative authority and trace cases
-- WP-15: Resource stewardship bridge and late authority boundary
-- WP-16: Demo matrix and feature proof demos
+- WP-11: Contract-market fixture set
+- WP-12: Contract-market runner
+- WP-13: Review summary shape
+- WP-14: Bounded contract-market demo and negative cases
+- WP-14A: Demo matrix and feature proof demos
 
 Goal: produce one reviewer-visible market proof without payment rails and
 verify feature-by-feature demo/proof coverage before review convergence.
 
 ## Sprint 4: Review And Release
 
-- WP-17: Docs, quality, and review convergence
-- WP-18: External review and remediation
+- WP-15: Quality gate, docs, and review convergence
+- WP-16: Internal review
+- WP-17: External review
+- WP-18: Review findings remediation
 - WP-19: Next milestone planning handoff
 - WP-20: Release ceremony
 
@@ -45,4 +46,5 @@ Goal: close the milestone with truthful review, release, and handoff evidence.
 
 WP-03 and WP-04 can begin after WP-02 if the authority audit is clear. WP-05
 should wait for both schemas. WP-08 can run beside WP-07 if the transition
-authority model is stable. WP-16 through WP-20 should remain sequential.
+authority model is stable. WP-10 can begin once schemas identify resource
+claims. WP-14A through WP-20 should remain sequential.
