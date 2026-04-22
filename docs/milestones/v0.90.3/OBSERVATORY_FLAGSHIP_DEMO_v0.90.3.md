@@ -100,6 +100,7 @@ surface, but it should not be the default investor-facing path.
 - standing or communication event
 - standing policy and communication-boundary negative-case proof
 - access approval or denial event
+- access authority matrix and denial-fixture proof
 - challenge or quarantine artifact
 - operator report
 - feature proof coverage record

@@ -3,8 +3,8 @@
 ## Status
 
 Planning contract for v0.90.3. WP-11 has landed the standing and
-communication boundary proof. WP-12 still owns the full access-control matrix
-and explicit access-denial events.
+communication boundary proof. WP-12 has landed the authority matrix,
+access-event packet, and denial fixtures for the full access-control proof.
 
 ## Purpose
 
@@ -86,3 +86,28 @@ Required event families:
 
 WP-11 satisfies the first three acceptance tests directly. WP-12 owns operator
 inspection events and projection-access denial semantics.
+
+## WP-12 Runtime Evidence
+
+The WP-12 proof is recorded in
+`docs/milestones/v0.90.3/ACCESS_CONTROL_SEMANTICS_v0.90.3.md`.
+
+Runtime evidence:
+
+- `adl/src/runtime_v2/access_control.rs`
+- `adl/src/runtime_v2/tests/access_control.rs`
+
+Fixture evidence:
+
+- `adl/tests/fixtures/runtime_v2/access_control/authority_matrix.json`
+- `adl/tests/fixtures/runtime_v2/access_control/access_events.json`
+- `adl/tests/fixtures/runtime_v2/access_control/denial_fixtures.json`
+
+Focused validation:
+
+```bash
+cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture
+```
+
+WP-12 satisfies operator inspection-event and projection-access denial
+semantics. WP-13 still owns challenge and appeal due-process behavior.

@@ -1,5 +1,6 @@
 use super::*;
 
+mod access_control;
 mod boot_admission;
 mod citizen_lifecycle;
 mod common;

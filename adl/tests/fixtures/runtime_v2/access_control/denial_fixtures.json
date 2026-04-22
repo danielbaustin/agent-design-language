@@ -1,0 +1,47 @@
+{
+  "schema_version": "runtime_v2.access_denial_fixtures.v1",
+  "proof_id": "access-denial-fixtures-v0-90-3",
+  "demo_id": "D10",
+  "matrix_ref": "runtime_v2/access_control/authority_matrix.json",
+  "event_packet_ref": "runtime_v2/access_control/access_events.json",
+  "required_denials": [
+    {
+      "case_id": "missing-access-event-is-rejected",
+      "access_path": "inspection",
+      "mutation": "remove the inspection access event from the packet",
+      "expected_error_fragment": "every sensitive access path emits an auditable event"
+    },
+    {
+      "case_id": "denied-inspection-cannot-leak-raw-state",
+      "access_path": "inspection",
+      "mutation": "mark denied inspection as raw_private_state_disclosed",
+      "expected_error_fragment": "denied access must not leak raw private state"
+    },
+    {
+      "case_id": "denied-decryption-cannot-return-cleartext",
+      "access_path": "decryption",
+      "mutation": "grant decrypted_payload on a denied decryption event",
+      "expected_error_fragment": "denied access must not leak raw private state"
+    },
+    {
+      "case_id": "denied-migration-cannot-advance-continuity",
+      "access_path": "migration",
+      "mutation": "advance continuity_sequence_after on a denied migration event",
+      "expected_error_fragment": "denied access must not mutate citizen continuity"
+    },
+    {
+      "case_id": "denied-wake-cannot-change-active-head",
+      "access_path": "wake",
+      "mutation": "mark denied wake as continuity_mutated",
+      "expected_error_fragment": "denied access must not mutate citizen continuity"
+    },
+    {
+      "case_id": "denied-release-cannot-release-quarantine",
+      "access_path": "release",
+      "mutation": "grant release_from_quarantine on a denied release event",
+      "expected_error_fragment": "denied access decision cannot grant authority"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture",
+  "claim_boundary": "WP-12 denial fixtures prove event emission and denial safety without implementing WP-13 due-process behavior."
+}

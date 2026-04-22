@@ -166,3 +166,7 @@ pub fn runtime_v2_private_state_observatory_contract(
 pub fn runtime_v2_standing_contract() -> Result<RuntimeV2StandingArtifacts> {
     RuntimeV2StandingArtifacts::prototype()
 }
+
+pub fn runtime_v2_access_control_contract() -> Result<RuntimeV2AccessControlArtifacts> {
+    RuntimeV2AccessControlArtifacts::prototype()
+}
