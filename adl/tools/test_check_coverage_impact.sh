@@ -37,6 +37,11 @@ docs_only="$TMP/docs_only.txt"
 printf 'M\tdocs/milestones/v0.90.3/README.md\n' >"$docs_only"
 bash "$SCRIPT" --changed-files "$docs_only" --require-summary-for-risk >/dev/null
 
+test_only="$TMP/test_only.txt"
+printf 'M\tadl/src/runtime_v2/tests/feature_proof_coverage.rs\n' >"$test_only"
+bash "$SCRIPT" --changed-files "$test_only" --require-summary-for-risk >/tmp/coverage-impact-test-only.out
+grep -F "no changed production adl/src Rust files" /tmp/coverage-impact-test-only.out >/dev/null
+
 changed="$TMP/changed.txt"
 printf 'A\tadl/src/runtime_v2/new_large_surface.rs\n' >"$changed"
 if bash "$SCRIPT" --changed-files "$changed" --require-summary-for-risk >/tmp/coverage-impact-missing.out 2>&1; then

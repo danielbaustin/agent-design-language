@@ -24,8 +24,8 @@
 - [x] Challenge and appeal flow proven
 - [x] Threat model reviewed
 - [x] Economics placement decision recorded
-- [ ] Integrated citizen-state demo complete
-- [ ] Demo matrix and feature proof coverage record complete
+- [x] Integrated citizen-state demo complete
+- [x] Demo matrix and feature proof coverage record complete
 - [ ] Quality gate and coverage/tracker truth recorded before internal review
 
 ## Review And Release

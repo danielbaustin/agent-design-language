@@ -105,11 +105,17 @@ normalize_changed_path() {
 changed_source_rows="$(
   changed_rows \
     | normalize_changed_path \
-    | awk -F '\t' '$2 ~ /^adl\/src\/.*\.rs$/ { print $1 "\t" $2 }'
+    | awk -F '\t' '
+        $2 ~ /^adl\/src\/.*\.rs$/ &&
+        $2 !~ /^adl\/src\/(.+\/)?tests\.rs$/ &&
+        $2 !~ /^adl\/src\/.*\/tests\/.*\.rs$/ {
+          print $1 "\t" $2
+        }
+      '
 )"
 
 if [ -z "$changed_source_rows" ]; then
-  echo "Coverage-impact preflight: no changed adl/src Rust files."
+  echo "Coverage-impact preflight: no changed production adl/src Rust files."
   exit 0
 fi
 

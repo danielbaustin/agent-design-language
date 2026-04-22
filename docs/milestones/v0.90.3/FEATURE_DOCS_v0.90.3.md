@@ -33,6 +33,7 @@
 | `ACCESS_CONTROL_SEMANTICS_v0.90.3.md` | D10 authority matrix, access event packet, and denial fixtures for inspection, decryption, projection, migration, wake, quarantine, challenge, appeal, and release | WP-12 |
 | `CONTINUITY_CHALLENGE_APPEAL_v0.90.3.md` | D11 challenge artifact, freeze artifact, appeal/review artifact, citizen-state threat model, and economics placement record | WP-13 |
 | `OBSERVATORY_FLAGSHIP_DEMO_v0.90.3.md` | D12 integrated inhabited CSM Observatory proof command, generated proof packet, operator report, and room/lens walkthrough | WP-14 |
+| `FEATURE_PROOF_COVERAGE_v0.90.3.md` | D13 feature-proof coverage record and runtime packet mapping every D1-D14 feature claim to proof, fixture, command, design boundary, or named deferral before WP-15 convergence | WP-14A |
 
 ## Context / Idea Docs
 
