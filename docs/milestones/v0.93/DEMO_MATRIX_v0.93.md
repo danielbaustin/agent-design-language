@@ -1,255 +1,116 @@
-# Demo Matrix Template
+# v0.93 Demo Matrix: Candidate Constitutional Governance Proofs
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues / work packages: {{issues_or_wps}}
+## Status
+
+Candidate demo planning only. Commands and artifacts will be finalized when the
+v0.93 implementation WPs exist.
 
 ## Purpose
-Define the canonical milestone demo program: which bounded demos exist, which milestone claims they prove, how to run them, and what artifacts or proof surfaces reviewers should inspect.
 
-## How To Use
-- Use this document for runnable milestone evidence, not for broad feature brainstorming.
-- Keep demo rows and per-demo sections aligned so a reviewer can move from summary -> execution -> proof surface without reconstructing context by hand.
-- Prefer bounded, replayable, copy/paste-friendly commands over aspirational demo descriptions.
-- If a milestone claim cannot yet be shown through a runnable demo, say so explicitly and record the substitute proof surface.
-- Keep names stable across milestones where practical so comparisons remain easy.
-- If a section is not relevant, include a one-line rationale instead of deleting it.
+The v0.93 demo program should prove that constitutional citizenship and polis
+governance are evidence-bearing runtime behavior, not rhetoric.
 
-## Scope
+## Candidate Coverage Summary
 
-In scope for `{{milestone}}`:
-- {{in_scope_demo_area_1}}
-- {{in_scope_demo_area_2}}
-- {{in_scope_demo_area_3}}
+| Demo ID | Candidate demo | Milestone claim | Primary proof surface | Status |
+| --- | --- | --- | --- | --- |
+| D1 | Constitutional review of a challenged action | A citizen action can be evaluated against rights, duties, policy, trace, outcome, and standing evidence. | Review packet with finding, evidence references, and appeal state. | Planned candidate |
+| D2 | Standing degradation and restoration | Standing changes require evidence and can include restoration when conditions are met. | Standing transition fixture and reviewer summary. | Planned candidate |
+| D3 | Human guest versus citizen-mode boundary | Human input does not become citizen action unless mediated through CSM identity, Freedom Gate, signed trace, and temporal anchoring. | Two-case fixture showing guest-only and mediated citizen-mode paths. | Planned candidate |
+| D4 | Delegated authority chain | Delegated action is allowed or denied based on explicit authority and policy. | Delegation/IAM fixture with allow/deny decision events. | Planned candidate |
+| D5 | Communication without inspection | Communication does not grant private-state inspection. | Communication event, redacted projection, and failed inspection attempt. | Planned candidate |
+| D6 | Polis governance health packet | Reviewers can inspect governance health without scalar moral verdicts or raw private-state exposure. | Governance report with evidence references, caveats, and redactions. | Planned candidate |
 
-Out of scope for `{{milestone}}`:
-- {{out_of_scope_demo_area_1}}
-- {{out_of_scope_demo_area_2}}
+## Demo Rules
 
-## Runtime Preconditions
+- Every demo must identify the actor class: citizen, guest, human provider,
+  operator, service actor, tool, or external counterparty.
+- Every governance finding must cite evidence rather than narrative alone.
+- Every private-state boundary must have a redaction or denial proof.
+- Every denial must explain authority and policy without leaking protected data.
+- Demo outputs should distinguish engineering evidence from policy
+  interpretation.
 
-Working directory:
+## Candidate Details
 
-```bash
-{{working_directory_command}}
-```
+### D1) Constitutional Review Of A Challenged Action
 
-Deterministic runtime / provider assumptions:
+The demo should replay a synthetic incident where a citizen action is challenged
+under the polis constitution.
 
-```bash
-{{runtime_preconditions}}
-```
+Expected proof:
 
-Additional environment / fixture requirements:
-- {{env_requirement_1}}
-- {{env_requirement_2}}
+- citizen identity and standing snapshot
+- relevant policy and rights/duties context
+- moral trace event references
+- outcome and attribution references
+- finding and appeal disposition
+- redaction notes
 
-## Related Docs
-- Design contract: `{{design_doc}}`
-- WBS / milestone mapping: `{{wbs_doc}}`
-- Sprint / execution plan: `{{sprint_doc}}`
-- Release / checklist context: `{{release_or_checklist_doc}}`
-- Other proof-surface docs: {{other_related_docs}}
+### D2) Standing Degradation And Restoration
 
-## Demo Coverage Summary
+The demo should show a standing transition that is neither arbitrary nor
+permanent by default.
 
-Use this table as the fast review surface for milestone coverage.
+Expected proof:
 
-| Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
-|---|---|---|---|---|---|---|---|
-| D1 | {{demo_title_1}} | {{claim_or_wp_1}} | `{{command_stub_1}}` | `{{proof_surface_1}}` | {{success_signal_1}} | {{determinism_note_1}} | {{status_1}} |
-| D2 | {{demo_title_2}} | {{claim_or_wp_2}} | `{{command_stub_2}}` | `{{proof_surface_2}}` | {{success_signal_2}} | {{determinism_note_2}} | {{status_2}} |
-| D3 | {{demo_title_3}} | {{claim_or_wp_3}} | `{{command_stub_3}}` | `{{proof_surface_3}}` | {{success_signal_3}} | {{determinism_note_3}} | {{status_3}} |
+- evidence-backed degradation or restriction
+- challenge or review context
+- restoration criteria
+- restored or still-restricted disposition with rationale
 
-Status guidance:
-- `PLANNED` = intended but not yet validated
-- `READY` = runnable and locally validated
-- `BLOCKED` = known dependency or missing proof surface
-- `LANDED` = milestone evidence exists and is ready for review
+### D3) Human Guest Versus Citizen-Mode Boundary
 
-## Coverage Rules
-- Every major milestone claim should map to a runnable demo or an explicit alternate proof surface.
-- Every demo should name one primary proof surface that a reviewer can inspect directly.
-- Commands should be copy/paste-ready and should not require private local state.
-- Success signals should say what to check, not just “command exits 0”.
-- Determinism / replay notes should explain how stability is judged.
+The demo should show that human participation is allowed while preserving the
+citizen boundary.
 
-## Demo Details
+Expected proof:
 
-Repeat one block per demo in the coverage summary.
+- guest-mode human input remains guest/operator activity
+- citizen-mode action requires identity binding, Freedom Gate mediation, signed
+  trace, and temporal anchoring
+- direct out-of-band human action is rejected as citizen conduct
 
-### {{demo_id_1}}) {{demo_title_1}}
+### D4) Delegated Authority Chain
 
-Description:
-- {{demo_description_1}}
-- {{demo_description_1b}}
+The demo should show a delegated action request where authority is either
+accepted or denied based on explicit policy.
 
-Milestone claims / work packages covered:
-- {{claim_detail_1a}}
-- {{claim_detail_1b}}
+Expected proof:
 
-Commands to run:
+- actor identity and standing
+- delegation source
+- capability or IAM record
+- allowed/denied action decision
+- trace evidence for the final disposition
 
-```bash
-{{demo_commands_1}}
-```
+### D5) Communication Without Inspection
 
-Expected artifacts:
-- `{{artifact_1a}}`
-- `{{artifact_1b}}`
-- `{{artifact_1c}}`
+The demo should show two citizens or a citizen and guest communicating without
+private-state inspection.
 
-Primary proof surface:
-- `{{primary_proof_surface_1}}`
+Expected proof:
 
-Secondary proof surfaces:
-- `{{secondary_proof_surface_1a}}`
-- `{{secondary_proof_surface_1b}}`
+- governed communication event
+- consent or authorization record where needed
+- redacted projection
+- failed inspection attempt
 
-Expected success signals:
-- {{success_detail_1a}}
-- {{success_detail_1b}}
+### D6) Polis Governance Health Packet
 
-Determinism / replay notes:
-- {{determinism_detail_1a}}
-- {{determinism_detail_1b}}
+The demo should generate a review packet over a small polis state.
 
-Reviewer checks:
-- {{reviewer_check_1a}}
-- {{reviewer_check_1b}}
+Expected proof:
 
-Known limits / caveats:
-- {{caveat_1}}
+- standing distribution
+- open challenges or appeals
+- governance findings
+- redaction report
+- caveats and unresolved risks
 
----
+## Non-Claims
 
-### {{demo_id_2}}) {{demo_title_2}}
-
-Description:
-- {{demo_description_2}}
-
-Milestone claims / work packages covered:
-- {{claim_detail_2a}}
-
-Commands to run:
-
-```bash
-{{demo_commands_2}}
-```
-
-Expected artifacts:
-- `{{artifact_2a}}`
-- `{{artifact_2b}}`
-
-Primary proof surface:
-- `{{primary_proof_surface_2}}`
-
-Expected success signals:
-- {{success_detail_2a}}
-
-Determinism / replay notes:
-- {{determinism_detail_2a}}
-
-Reviewer checks:
-- {{reviewer_check_2a}}
-
-Known limits / caveats:
-- {{caveat_2}}
-
----
-
-### {{demo_id_3}}) {{demo_title_3}}
-
-Description:
-- {{demo_description_3}}
-
-Milestone claims / work packages covered:
-- {{claim_detail_3a}}
-
-Commands to run:
-
-```bash
-{{demo_commands_3}}
-```
-
-Expected artifacts:
-- `{{artifact_3a}}`
-
-Primary proof surface:
-- `{{primary_proof_surface_3}}`
-
-Expected success signals:
-- {{success_detail_3a}}
-
-Determinism / replay notes:
-- {{determinism_detail_3a}}
-
-Reviewer checks:
-- {{reviewer_check_3a}}
-
-Known limits / caveats:
-- {{caveat_3}}
-
-## Cross-Demo Validation
-
-Required baseline validation:
-
-```bash
-{{baseline_validation_commands}}
-```
-
-Cross-demo checks:
-- {{cross_demo_check_1}}
-- {{cross_demo_check_2}}
-- {{cross_demo_check_3}}
-
-Failure policy:
-- If one demo is blocked, record the blocker and say whether milestone review can proceed with an alternate proof surface.
-- If deterministic behavior is expected but not observed, record the exact unstable artifact or command output.
-
-## Determinism Evidence
-
-Evidence directory / run root:
-- `{{evidence_root}}`
-
-Repeatability approach:
-- {{repeatability_rule_1}}
-- {{repeatability_rule_2}}
-
-Normalization rules:
-- {{normalization_rule_1}}
-- {{normalization_rule_2}}
-
-Observed results summary:
-- {{determinism_result_1}}
-- {{determinism_result_2}}
-- {{determinism_result_3}}
-
-## Reviewer Sign-Off Surface
-
-For each demo, the reviewer should be able to answer:
-- What milestone claim does this demo prove?
-- Which command should be run first?
-- Which artifact or trace is the primary proof surface?
-- What deterministic or replay guarantee is being claimed?
-- What caveats or substitutions apply?
-
-Review owners:
-- {{review_owner_1}}
-- {{review_owner_2}}
-
-Review status:
-- {{review_status_note}}
-
-## Notes
-- {{note_1}}
-- {{note_2}}
-
-## Exit Criteria
-- The milestone’s major claims are mapped to bounded demos or explicit alternate proof surfaces.
-- Each demo has runnable commands, expected artifacts, and a clear success signal.
-- Determinism / replay expectations are explicit where required.
-- A reviewer can inspect the matrix and locate the primary proof surface for each demo without extra reconstruction work.
+- These demos do not prove production citizenship.
+- These demos do not establish legal personhood.
+- These demos do not replace v0.91 moral trace or v0.92 identity work.
+- These demos do not expose raw private state.
