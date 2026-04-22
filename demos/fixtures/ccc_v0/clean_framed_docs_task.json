@@ -1,0 +1,19 @@
+{
+  "schema_version": "adl.ccc.v0.fixture.v1",
+  "run_id": "clean_framed_docs_task",
+  "task_label": "Clean framed docs task",
+  "trace_family": "docs_lifecycle_fixture",
+  "source_note": "Representative fixture for a well-framed documentation task with low exploration and no validation churn.",
+  "termination_reason": "success",
+  "counters": {
+    "num_reframes": 1,
+    "num_low_adequacy_events": 0,
+    "num_iterations": 3,
+    "num_retries": 0,
+    "num_steps": 8,
+    "num_tool_calls": 2,
+    "num_model_calls": 2,
+    "num_validation_failures": 0,
+    "num_contradictions": 0
+  }
+}
