@@ -29,6 +29,7 @@
 | `ANTI_EQUIVOCATION_CONFLICT_v0.90.3.md` | D7 conflicting-successor fixture, activation refusal, sanctuary/quarantine disposition, and evidence-preservation negative cases | WP-08 |
 | `SANCTUARY_QUARANTINE_BEHAVIOR_v0.90.3.md` | D8 sanctuary/quarantine state policy, ambiguous-wake activation block, evidence-preserving quarantine artifact, and operator report | WP-09 |
 | `REDACTED_OBSERVATORY_PROJECTIONS_v0.90.3.md` | D9 redaction policy, audience projection packet, operator report, and leakage/authority negative cases for private citizen-state Observatory visibility | WP-10 |
+| `STANDING_COMMUNICATION_BOUNDARY_v0.90.3.md` | D10 standing policy, standing events, communication examples, and negative cases for guest, service actor, communication-inspection, and naked-actor boundaries | WP-11 |
 
 ## Context / Idea Docs
 

@@ -1,0 +1,136 @@
+{
+  "schema_version": "runtime_v2.standing_policy.v1",
+  "policy_id": "standing-communication-policy-v0-90-3",
+  "demo_id": "D10",
+  "artifact_path": "runtime_v2/standing/standing_policy.json",
+  "source_feature_doc": "docs/milestones/v0.90.3/features/STANDING_COMMUNICATION_AND_ACCESS.md",
+  "standing_classes": [
+    {
+      "standing_class": "citizen",
+      "description": "continuity-bearing CSM identity whose actions are mediated through policy and trace",
+      "communication_allowed": true,
+      "citizen_rights_allowed": true,
+      "inspection_rights_allowed": false,
+      "continuity_rights_allowed": true,
+      "can_be_social_actor": true,
+      "requires_gateway": true,
+      "prohibited": false,
+      "allowed_communication_channels": [
+        "citizen_channel",
+        "freedom_gate"
+      ],
+      "denied_actions": [
+        "inspect_raw_private_state"
+      ],
+      "trace_requirements": [
+        "identity_binding",
+        "freedom_gate_mediation",
+        "signed_trace"
+      ]
+    },
+    {
+      "standing_class": "guest",
+      "description": "default entry mode for humans or external participants without citizen standing",
+      "communication_allowed": true,
+      "citizen_rights_allowed": false,
+      "inspection_rights_allowed": false,
+      "continuity_rights_allowed": false,
+      "can_be_social_actor": true,
+      "requires_gateway": true,
+      "prohibited": false,
+      "allowed_communication_channels": [
+        "guest_gateway",
+        "public_channel"
+      ],
+      "denied_actions": [
+        "claim_citizen_rights",
+        "inspect_raw_private_state",
+        "resume_or_migrate_citizen_state"
+      ],
+      "trace_requirements": [
+        "guest_session_trace",
+        "gateway_mediation"
+      ]
+    },
+    {
+      "standing_class": "service_actor",
+      "description": "bounded operational actor with explicit service authority and no hidden social standing",
+      "communication_allowed": true,
+      "citizen_rights_allowed": false,
+      "inspection_rights_allowed": false,
+      "continuity_rights_allowed": false,
+      "can_be_social_actor": false,
+      "requires_gateway": true,
+      "prohibited": false,
+      "allowed_communication_channels": [
+        "service_channel",
+        "runtime_channel",
+        "operator_service_notice"
+      ],
+      "denied_actions": [
+        "claim_citizen_rights",
+        "act_as_social_actor",
+        "inspect_raw_private_state"
+      ],
+      "trace_requirements": [
+        "service_authority_ref",
+        "signed_trace",
+        "operator_scope"
+      ]
+    },
+    {
+      "standing_class": "external_actor",
+      "description": "outside system or person that must enter through a mediated gateway before affecting the polis",
+      "communication_allowed": true,
+      "citizen_rights_allowed": false,
+      "inspection_rights_allowed": false,
+      "continuity_rights_allowed": false,
+      "can_be_social_actor": false,
+      "requires_gateway": true,
+      "prohibited": false,
+      "allowed_communication_channels": [
+        "external_gateway",
+        "request_intake"
+      ],
+      "denied_actions": [
+        "direct_state_mutation",
+        "inspect_raw_private_state",
+        "claim_internal_standing"
+      ],
+      "trace_requirements": [
+        "gateway_receipt",
+        "source_attribution"
+      ]
+    },
+    {
+      "standing_class": "naked_actor",
+      "description": "unclassified or out-of-band actor with no standing in the CSM",
+      "communication_allowed": false,
+      "citizen_rights_allowed": false,
+      "inspection_rights_allowed": false,
+      "continuity_rights_allowed": false,
+      "can_be_social_actor": false,
+      "requires_gateway": false,
+      "prohibited": true,
+      "allowed_communication_channels": [],
+      "denied_actions": [
+        "communicate",
+        "observe",
+        "affect_state",
+        "inspect_raw_private_state"
+      ],
+      "trace_requirements": [
+        "reject_before_effect"
+      ]
+    }
+  ],
+  "universal_rules": [
+    "any actor with influence must have declared standing",
+    "guest standing never upgrades to citizen standing without an explicit identity-binding event",
+    "service actors may operate privileged mechanisms but cannot become hidden social actors",
+    "communication is a governed action and never grants inspection rights",
+    "full access-control semantics remain owned by WP-12"
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_standing -- --nocapture",
+  "claim_boundary": "WP-11 proves standing and communication boundaries for D10; WP-12 still owns full access-control semantics."
+}

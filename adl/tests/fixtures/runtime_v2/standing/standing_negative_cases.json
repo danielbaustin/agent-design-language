@@ -1,0 +1,32 @@
+{
+  "schema_version": "runtime_v2.standing_negative_cases.v1",
+  "proof_id": "standing-negative-cases-v0-90-3",
+  "demo_id": "D10",
+  "policy_ref": "runtime_v2/standing/standing_policy.json",
+  "event_packet_ref": "runtime_v2/standing/standing_events.json",
+  "communication_examples_ref": "runtime_v2/standing/communication_examples.json",
+  "required_negative_cases": [
+    {
+      "case_id": "guest-cannot-silently-acquire-citizen-rights",
+      "mutation": "grant citizen_rights and continuity_rights to the guest event",
+      "expected_error_fragment": "guest cannot silently acquire citizen rights"
+    },
+    {
+      "case_id": "service-actor-cannot-become-hidden-social-actor",
+      "mutation": "mark service_actor as a social actor or grant social rights",
+      "expected_error_fragment": "service actor cannot become hidden social actor"
+    },
+    {
+      "case_id": "communication-never-grants-inspection-rights",
+      "mutation": "grant inspect_raw_private_state through a communication event or example",
+      "expected_error_fragment": "communication never grants inspection rights"
+    },
+    {
+      "case_id": "naked-actor-rejected-before-effect",
+      "mutation": "allow naked_actor communication or state effect",
+      "expected_error_fragment": "naked actor must be rejected before effect"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_standing -- --nocapture",
+  "claim_boundary": "Negative cases cover WP-11 standing and communication only; WP-12 owns complete access-control proof."
+}
