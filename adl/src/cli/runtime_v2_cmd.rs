@@ -307,7 +307,10 @@ fn real_runtime_v2_observatory_flagship_demo(repo_root: &Path, args: &[String]) 
     artifacts.write_to_root(&resolved)?;
     println!(
         "RUNTIME_V2_OBSERVATORY_FLAGSHIP_DEMO_ROOT={}",
-        resolved.display()
+        out_path
+            .as_ref()
+            .expect("resolved D12 output path should preserve requested --out")
+            .display()
     );
     println!();
     println!("{}", artifacts.execution_summary()?);
@@ -352,7 +355,7 @@ fn real_runtime_v2_feature_proof_coverage(repo_root: &Path, args: &[String]) -> 
     packet.write_to_path(&resolved)?;
     println!(
         "RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH={}",
-        resolved.display()
+        out_path.display()
     );
     Ok(())
 }
