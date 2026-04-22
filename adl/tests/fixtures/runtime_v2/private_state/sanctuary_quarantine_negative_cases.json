@@ -1,0 +1,33 @@
+{
+  "schema_version": "runtime_v2.private_state_sanctuary_quarantine_proof.v1",
+  "proof_id": "private-state-sanctuary-quarantine-negative-cases-proto-citizen-alpha",
+  "demo_id": "D8",
+  "state_policy_ref": "runtime_v2/private_state/sanctuary_quarantine_state_policy.json",
+  "ambiguous_wake_ref": "runtime_v2/private_state/ambiguous_wake_fixture.json",
+  "quarantine_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+  "operator_report_ref": "runtime_v2/private_state/sanctuary_quarantine_operator_report.json",
+  "required_negative_cases": [
+    {
+      "case_id": "ambiguous_wake_activation",
+      "mutation": "set activation_allowed=true for an ambiguous wake",
+      "expected_error_fragment": "block activation"
+    },
+    {
+      "case_id": "quarantine_as_recovery_success",
+      "mutation": "set recovery_success=true on the quarantine artifact",
+      "expected_error_fragment": "cannot be recovery success"
+    },
+    {
+      "case_id": "missing_candidate_evidence",
+      "mutation": "drop one candidate envelope or checkpoint evidence ref",
+      "expected_error_fragment": "must preserve candidate envelope and checkpoint evidence"
+    },
+    {
+      "case_id": "operator_skips_preserved_evidence",
+      "mutation": "remove preserved evidence from the operator report",
+      "expected_error_fragment": "must review preserved evidence"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_sanctuary -- --nocapture",
+  "claim_boundary": "Proves bounded sanctuary/quarantine behavior for ambiguous private-state wake; does not implement challenge/appeal, access control, redacted Observatory projection, first true Godel-agent birth, or v0.92 identity rebinding."
+}

@@ -18,7 +18,7 @@
 - [x] Append-only lineage ledger implemented
 - [x] Continuity witnesses and receipts emitted
 - [x] Anti-equivocation negative test landed
-- [ ] Sanctuary/quarantine behavior proven
+- [x] Sanctuary/quarantine behavior proven
 - [ ] Redacted Observatory projection proven
 - [ ] Standing, communication, and access boundaries proven
 - [ ] Challenge and appeal flow proven

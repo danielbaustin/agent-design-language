@@ -27,6 +27,7 @@
 | `APPEND_ONLY_LINEAGE_LEDGER_v0.90.3.md` | D5 append-only lineage ledger, materialized-head authority, and negative-case proof | WP-06 |
 | `CONTINUITY_WITNESSES_AND_RECEIPTS_v0.90.3.md` | D6 continuity witness schema, citizen-facing receipt schema, transition examples, and privacy-preserving validation | WP-07 |
 | `ANTI_EQUIVOCATION_CONFLICT_v0.90.3.md` | D7 conflicting-successor fixture, activation refusal, sanctuary/quarantine disposition, and evidence-preservation negative cases | WP-08 |
+| `SANCTUARY_QUARANTINE_BEHAVIOR_v0.90.3.md` | D8 sanctuary/quarantine state policy, ambiguous-wake activation block, evidence-preserving quarantine artifact, and operator report | WP-09 |
 
 ## Context / Idea Docs
 

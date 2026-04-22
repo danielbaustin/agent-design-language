@@ -17,6 +17,7 @@ mod private_state;
 mod private_state_envelope;
 mod private_state_equivocation;
 mod private_state_lineage;
+mod private_state_sanctuary;
 mod private_state_sealing;
 mod private_state_witness;
 mod quarantine;
@@ -68,6 +69,8 @@ pub use private_state_envelope::*;
 pub use private_state_equivocation::*;
 #[allow(unused_imports)]
 pub use private_state_lineage::*;
+#[allow(unused_imports)]
+pub use private_state_sanctuary::*;
 #[allow(unused_imports)]
 pub use private_state_sealing::*;
 #[allow(unused_imports)]

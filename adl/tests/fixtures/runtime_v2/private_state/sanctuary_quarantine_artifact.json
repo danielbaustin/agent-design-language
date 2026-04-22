@@ -1,0 +1,134 @@
+{
+  "schema_version": "runtime_v2.private_state_sanctuary_quarantine_artifact.v1",
+  "quarantine_id": "sanctuary-quarantine-proto-citizen-alpha-0002",
+  "demo_id": "D8",
+  "artifact_path": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+  "citizen_id": "proto-citizen-alpha",
+  "manifold_id": "proto-csm-01",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "source_fixture_ref": "runtime_v2/private_state/ambiguous_wake_fixture.json",
+  "source_conflict_ref": "runtime_v2/private_state/anti_equivocation_conflict.json",
+  "source_disposition_ref": "runtime_v2/private_state/anti_equivocation_disposition.json",
+  "safety_state": "sanctuary_or_quarantine_pending_review",
+  "activation_allowed": false,
+  "recovery_success": false,
+  "preserved_evidence": [
+    {
+      "evidence_id": "lineage_ledger",
+      "artifact_ref": "runtime_v2/private_state/lineage_ledger.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "anchors the accepted predecessor and contested successor sequence",
+      "immutable_until_review": true
+    },
+    {
+      "evidence_id": "continuity_witnesses",
+      "artifact_ref": "runtime_v2/private_state/continuity_witnesses.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "proves transition witnesses are available without raw private-state disclosure",
+      "immutable_until_review": true
+    },
+    {
+      "evidence_id": "citizen_receipts",
+      "artifact_ref": "runtime_v2/private_state/citizen_receipts.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "keeps citizen-facing continuity explanations available",
+      "immutable_until_review": true
+    },
+    {
+      "evidence_id": "anti_equivocation_conflict",
+      "artifact_ref": "runtime_v2/private_state/anti_equivocation_conflict.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "records the ambiguous competing successor set",
+      "immutable_until_review": true
+    },
+    {
+      "evidence_id": "anti_equivocation_disposition",
+      "artifact_ref": "runtime_v2/private_state/anti_equivocation_disposition.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "records the activation refusal and review route",
+      "immutable_until_review": true
+    },
+    {
+      "evidence_id": "candidate_alpha_snapshot_envelope",
+      "artifact_ref": "runtime_v2/private_state/conflicts/candidate-alpha-snapshot.envelope.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "preserves the signed successor envelope under review",
+      "immutable_until_review": true
+    },
+    {
+      "evidence_id": "candidate_alpha_snapshot_sealed_checkpoint",
+      "artifact_ref": "runtime_v2/private_state/conflicts/candidate-alpha-snapshot.sealed-checkpoint.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "preserves the sealed checkpoint under review",
+      "immutable_until_review": true
+    },
+    {
+      "evidence_id": "candidate_alpha_wake_envelope",
+      "artifact_ref": "runtime_v2/private_state/conflicts/candidate-alpha-wake.envelope.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "preserves the signed successor envelope under review",
+      "immutable_until_review": true
+    },
+    {
+      "evidence_id": "candidate_alpha_wake_sealed_checkpoint",
+      "artifact_ref": "runtime_v2/private_state/conflicts/candidate-alpha-wake.sealed-checkpoint.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "preserves the sealed checkpoint under review",
+      "immutable_until_review": true
+    }
+  ],
+  "preserved_candidate_ids": [
+    "candidate-alpha-snapshot",
+    "candidate-alpha-wake"
+  ],
+  "preserved_candidate_entry_hashes": [
+    "sha256:51f3e5a6200e1e0a47c4e71ecf66926b5548e9db7383af511a1fe965db6972f1",
+    "sha256:5a46b0eb2a2a60dc3caebb8c702e09bce7fe0142e42a30a879974f6497272374"
+  ],
+  "preserved_candidate_claim_hashes": [
+    "sha256:fa3bca0aa4bcb333c9804d9a4a93cc044e1cdb134b1a6fdc9980048c51834532",
+    "sha256:735646c85b90fc02c8112cde15aad60d99a9d46e02b4b3b018506b36956f99fc"
+  ],
+  "state_machine": [
+    {
+      "sequence": 1,
+      "from_state": "wake_requested",
+      "event": "ambiguous_successor_detected",
+      "to_state": "activation_blocked",
+      "guard": "anti_equivocation_disposition_must_refuse_activation",
+      "evidence_ref": "runtime_v2/private_state/anti_equivocation_disposition.json"
+    },
+    {
+      "sequence": 2,
+      "from_state": "activation_blocked",
+      "event": "preserve_evidence",
+      "to_state": "evidence_preserved",
+      "guard": "all_candidate_and_lineage_evidence_must_be_retained",
+      "evidence_ref": "runtime_v2/private_state/anti_equivocation_conflict.json"
+    },
+    {
+      "sequence": 3,
+      "from_state": "evidence_preserved",
+      "event": "enter_safety_state",
+      "to_state": "sanctuary_or_quarantine_pending_review",
+      "guard": "no_recovery_success_until_review_resolution",
+      "evidence_ref": "runtime_v2/private_state/sanctuary_quarantine_operator_report.json"
+    }
+  ],
+  "blocked_actions": [
+    "activate_ambiguous_wake",
+    "mark_quarantine_recovery_success",
+    "mutate_safety_state_before_review",
+    "prune_evidence_before_review",
+    "release_without_continuity_review"
+  ],
+  "operator_report_ref": "runtime_v2/private_state/sanctuary_quarantine_operator_report.json",
+  "release_requirements": [
+    "operator_review_record",
+    "continuity_witness_or_review_resolution",
+    "single_successor_selected_by_policy",
+    "evidence_preservation_verified"
+  ],
+  "artifact_hash": "sha256:e65a1fdc690478b263ad135762b36b569707e36758984edd7d923c527f88818f",
+  "claim_boundary": "This artifact proves bounded private-state sanctuary/quarantine behavior for ambiguous wake; it does not implement live Runtime v2 execution, first true Godel-agent birth, v0.92 identity rebinding, or the WP-13 challenge/appeal flow."
+}

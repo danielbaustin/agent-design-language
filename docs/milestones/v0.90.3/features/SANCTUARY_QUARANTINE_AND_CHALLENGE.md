@@ -2,9 +2,10 @@
 
 ## Status
 
-Planning contract for v0.90.3. WP-08 has landed the first
-anti-equivocation disposition into `sanctuary_or_quarantine`; WP-09 still owns
-the broader sanctuary/quarantine behavior proof.
+Planning and implementation contract for v0.90.3. WP-08 has landed the first
+anti-equivocation disposition into `sanctuary_or_quarantine`; WP-09 has landed
+the bounded sanctuary/quarantine behavior proof for ambiguous wake. WP-13 still
+owns challenge, appeal, threat-model, and review-resolution behavior.
 
 ## Purpose
 
@@ -38,6 +39,13 @@ The WP-08 anti-equivocation disposition applies this rule to conflicting signed
 successors for the same citizen lineage position. It blocks activation,
 preserves all candidate evidence, and routes review through
 `sanctuary_or_quarantine_operator_review`.
+
+WP-09 adds the runtime-backed D8 proof in
+`SANCTUARY_QUARANTINE_BEHAVIOR_v0.90.3.md`. The proof defines sanctuary and
+quarantine as evidence-preserving safety states, emits an ambiguous-wake
+fixture, blocks activation, preserves candidate envelopes and sealed
+checkpoints, and emits an operator report that explicitly does not mark
+quarantine as recovery success.
 
 ## Challenge And Appeal
 
