@@ -22,6 +22,7 @@ reviewable market proof.
 - deterministic fixture set and runner
 - reviewer-facing summary artifact
 - bounded contract-market demo
+- negative authority and trace cases
 - resource-stewardship bridge without payment rails
 
 ## Planned Non-Claims
