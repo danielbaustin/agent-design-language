@@ -10,16 +10,37 @@ fn runtime_v2_feature_proof_coverage_contract_is_stable() {
         packet.schema_version,
         RUNTIME_V2_FEATURE_PROOF_COVERAGE_SCHEMA
     );
-    assert_eq!(packet.demo_id, "D11");
-    assert_eq!(packet.entries.len(), 11);
+    assert_eq!(packet.demo_id, "D13");
+    assert_eq!(packet.milestone, "v0.90.3");
+    assert_eq!(packet.entries.len(), 14);
     assert_eq!(packet.entries[0].feature_id, "D1");
-    assert_eq!(packet.entries[10].feature_id, "D11");
-    assert!(packet.entries.iter().any(|entry| entry.feature_id == "D10"
+    assert_eq!(packet.entries[13].feature_id, "D14");
+    assert!(packet
+        .entries
+        .iter()
+        .all(|entry| !entry.working_demo_command.trim().is_empty()));
+    assert!(packet.entries.iter().any(|entry| entry.feature_id == "D12"
         && entry.coverage_kind == "runnable_demo_command"
+        && entry
+            .working_demo_command
+            .contains("observatory-flagship-demo")
         && entry
             .validation_refs
             .iter()
-            .any(|value| value.contains("integrated-csm-run-demo"))));
+            .any(|value| value.contains("observatory-flagship-demo"))));
+    assert!(packet.entries.iter().any(|entry| entry.feature_id == "D13"
+        && entry.coverage_kind == "runnable_demo_command"
+        && entry
+            .working_demo_command
+            .contains("feature-proof-coverage")
+        && entry
+            .validation_refs
+            .iter()
+            .any(|value| value.contains("feature-proof-coverage"))));
+    assert!(packet.entries.iter().any(|entry| entry.feature_id == "D14"
+        && entry.coverage_kind == "documented_non_runtime_design_artifact"
+        && entry.working_demo_command.starts_with("test -f ")
+        && entry.status == "non_proving_design_boundary"));
     assert!(packet
         .validation_commands
         .iter()
@@ -51,7 +72,7 @@ fn runtime_v2_feature_proof_coverage_validation_rejects_gaps() {
         .validate()
         .expect_err("missing feature should fail")
         .to_string()
-        .contains("D1 through D11"));
+        .contains("D1 through D14"));
 
     let mut packet =
         runtime_v2_feature_proof_coverage_contract().expect("feature proof coverage packet");
@@ -61,6 +82,26 @@ fn runtime_v2_feature_proof_coverage_validation_rejects_gaps() {
         .expect_err("unsupported coverage kind should fail")
         .to_string()
         .contains("unsupported feature proof coverage kind"));
+
+    let mut packet =
+        runtime_v2_feature_proof_coverage_contract().expect("feature proof coverage packet");
+    packet.entries[13].status = "proving".to_string();
+    packet.entries[13].coverage_kind = "documented_non_runtime_design_artifact".to_string();
+    assert!(packet
+        .validate()
+        .expect_err("design row must stay non-proving")
+        .to_string()
+        .contains("non-proving design-boundary status"));
+
+    let mut packet =
+        runtime_v2_feature_proof_coverage_contract().expect("feature proof coverage packet");
+    packet.entries[13].status = "non_proving_design_boundary".to_string();
+    packet.entries[13].coverage_kind = "runnable_demo_command".to_string();
+    assert!(packet
+        .validate()
+        .expect_err("non-proving runtime row should fail")
+        .to_string()
+        .contains("documented design artifacts"));
 
     let mut packet =
         runtime_v2_feature_proof_coverage_contract().expect("feature proof coverage packet");

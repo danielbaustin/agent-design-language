@@ -56,6 +56,9 @@ fail_closed=false
 reason="path_policy_docs_or_tooling_only"
 changed_count=0
 changed_files=""
+changed_rows=""
+large_file_lines="${COVERAGE_IMPACT_LARGE_FILE_LINES:-200}"
+large_file_delta="${COVERAGE_IMPACT_LARGE_FILE_DELTA:-80}"
 
 emit() {
   local key="$1"
@@ -73,6 +76,44 @@ require_full_validation() {
   demo_smoke_required=true
 }
 
+normalize_changed_rows() {
+  awk -F '\t' '
+    NF == 1 { print "M\t" $1; next }
+    $1 ~ /^R/ && NF >= 3 { print $1 "\t" $3; next }
+    NF >= 2 { print $1 "\t" $2; next }
+  '
+}
+
+is_production_rust_source() {
+  local path="$1"
+  case "$path" in
+    adl/src/*.rs)
+      case "$path" in
+        adl/src/tests.rs|adl/src/*/tests.rs|adl/src/*/tests/*)
+          return 1
+          ;;
+      esac
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+line_count_for_path() {
+  local path="$1"
+  if [ -f "$path" ]; then
+    wc -l <"$path" | tr -d ' '
+  else
+    echo 0
+  fi
+}
+
+changed_line_delta_for_path() {
+  local path="$1"
+  git diff --numstat "$base_sha" "$head_sha" -- "$path" 2>/dev/null \
+    | awk '($1 ~ /^[0-9]+$/ && $2 ~ /^[0-9]+$/) { total += $1 + $2 } END { print total + 0 }'
+}
+
 if [ "$event_name" != "pull_request" ]; then
   require_full_validation
   reason="non_pull_request_event_runs_full_validation"
@@ -81,8 +122,9 @@ elif [ -z "$base_sha" ] || [ -z "$head_sha" ]; then
   fail_closed=true
   reason="missing_pull_request_sha_runs_full_validation"
 else
-  changed_files="$(git diff --name-only "$base_sha" "$head_sha" 2>/dev/null || true)"
-  if [ -z "$changed_files" ]; then
+  changed_rows="$(git diff --name-status --diff-filter=ACMR "$base_sha" "$head_sha" 2>/dev/null | normalize_changed_rows || true)"
+  changed_files="$(printf '%s\n' "$changed_rows" | awk -F '\t' 'NF >= 2 { print $2 }')"
+  if [ -z "$changed_rows" ]; then
     require_full_validation
     fail_closed=true
     reason="empty_or_unavailable_diff_runs_full_validation"
@@ -103,6 +145,25 @@ else
       esac
     done <<EOF
 $changed_files
+EOF
+    while IFS=$'\t' read -r status path; do
+      [ -n "$path" ] || continue
+      if ! is_production_rust_source "$path"; then
+        continue
+      fi
+      if [[ "$status" == A* ]]; then
+        full_coverage_required=true
+        reason="risky_rust_source_change_runs_full_coverage"
+        continue
+      fi
+      lines="$(line_count_for_path "$path")"
+      delta="$(changed_line_delta_for_path "$path")"
+      if [ "$lines" -ge "$large_file_lines" ] && [ "$delta" -ge "$large_file_delta" ]; then
+        full_coverage_required=true
+        reason="risky_rust_source_change_runs_full_coverage"
+      fi
+    done <<EOF
+$changed_rows
 EOF
   fi
 fi

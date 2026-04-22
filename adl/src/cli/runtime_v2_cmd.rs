@@ -862,10 +862,11 @@ mod tests {
                 .expect("valid json");
         assert_eq!(
             json["schema_version"],
-            "runtime_v2.feature_proof_coverage.v1"
+            "runtime_v2.feature_proof_coverage.v2"
         );
-        assert_eq!(json["demo_id"], "D11");
-        assert_eq!(json["entries"].as_array().expect("entries").len(), 11);
+        assert_eq!(json["demo_id"], "D13");
+        assert_eq!(json["milestone"], "v0.90.3");
+        assert_eq!(json["entries"].as_array().expect("entries").len(), 14);
 
         fs::remove_dir_all(repo).ok();
     }
