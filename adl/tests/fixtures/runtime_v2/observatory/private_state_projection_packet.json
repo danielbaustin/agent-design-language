@@ -1,0 +1,296 @@
+{
+  "schema_version": "runtime_v2.private_state_observatory_packet.v1",
+  "packet_id": "private-state-observatory-packet-proto-citizen-alpha-0001",
+  "demo_id": "D9",
+  "generated_at": "2026-04-22T00:00:00Z",
+  "artifact_path": "runtime_v2/observatory/private_state_projection_packet.json",
+  "report_path": "runtime_v2/observatory/private_state_projection_report.md",
+  "policy_ref": "runtime_v2/observatory/private_state_redaction_policy.json",
+  "source_private_state_projection_ref": "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+  "source_private_state_projection_schema": "runtime_v2.private_state_projection.v1",
+  "projection_authority_status": "non_authoritative_review_projection",
+  "projections": [
+    {
+      "audience": "operator",
+      "projection_kind": "operator_continuity_projection",
+      "citizen_id": "proto-citizen-alpha",
+      "visible_summary": [
+        "private citizen-state continuity is visible without raw private-state inspection",
+        "witness and receipt refs are available for read-only review",
+        "sanctuary/quarantine evidence is visible but does not authorize release"
+      ],
+      "continuity": {
+        "citizen_id": "proto-citizen-alpha",
+        "manifold_id": "proto-csm-01",
+        "lineage_id": "lineage-proto-citizen-alpha",
+        "state_sequence": 1,
+        "continuity_status": "hash_linked_witnessed_private_state_projection",
+        "source_projection_ref": "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+        "source_projection_schema": "runtime_v2.private_state_projection.v1",
+        "source_state_hash_available": true,
+        "witness_set_ref": "runtime_v2/private_state/continuity_witnesses.json",
+        "receipt_set_ref": "runtime_v2/private_state/citizen_receipts.json",
+        "sanctuary_quarantine_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+        "evidence_refs": [
+          "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+          "runtime_v2/private_state/continuity_witnesses.json",
+          "runtime_v2/private_state/citizen_receipts.json",
+          "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+          "runtime_v2/private_state/sanctuary_quarantine_operator_report.json"
+        ]
+      },
+      "visible_fields": [
+        "citizen_id",
+        "lifecycle_state",
+        "continuity_status",
+        "state_sequence",
+        "lineage_id",
+        "witness_set_ref",
+        "receipt_set_ref",
+        "sanctuary_quarantine_ref"
+      ],
+      "redacted_fields": [
+        "raw_private_state",
+        "canonical_private_state_bytes",
+        "private_memory_contents",
+        "private_identity_contents",
+        "private_section_payloads",
+        "private_section_digests",
+        "sealed_payload_material",
+        "private_keys",
+        "signature_material"
+      ],
+      "raw_private_state_present": false,
+      "projection_authoritative": false,
+      "allowed_actions": [
+        "read_only_projection"
+      ],
+      "denied_actions": [
+        "inspect_raw_private_state",
+        "decrypt_private_state",
+        "wake_from_projection",
+        "migrate_from_projection",
+        "release_from_quarantine_from_projection"
+      ],
+      "caveats": [
+        "projection is not authority",
+        "canonical private-state bytes remain sealed from this view",
+        "access-control grants are deferred to WP-12"
+      ]
+    },
+    {
+      "audience": "reviewer",
+      "projection_kind": "reviewer_evidence_projection",
+      "citizen_id": "proto-citizen-alpha",
+      "visible_summary": [
+        "projection is hash-linked to canonical private-state evidence",
+        "reviewer can follow refs without receiving raw private-state contents",
+        "negative cases prove raw-state and authority leakage are rejected"
+      ],
+      "continuity": {
+        "citizen_id": "proto-citizen-alpha",
+        "manifold_id": "proto-csm-01",
+        "lineage_id": "lineage-proto-citizen-alpha",
+        "state_sequence": 1,
+        "continuity_status": "hash_linked_witnessed_private_state_projection",
+        "source_projection_ref": "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+        "source_projection_schema": "runtime_v2.private_state_projection.v1",
+        "source_state_hash_available": true,
+        "witness_set_ref": "runtime_v2/private_state/continuity_witnesses.json",
+        "receipt_set_ref": "runtime_v2/private_state/citizen_receipts.json",
+        "sanctuary_quarantine_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+        "evidence_refs": [
+          "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+          "runtime_v2/private_state/continuity_witnesses.json",
+          "runtime_v2/private_state/citizen_receipts.json",
+          "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+          "runtime_v2/private_state/sanctuary_quarantine_operator_report.json"
+        ]
+      },
+      "visible_fields": [
+        "citizen_id",
+        "continuity_status",
+        "state_sequence",
+        "source_projection_ref",
+        "source_state_hash_available",
+        "evidence_refs",
+        "claim_boundary"
+      ],
+      "redacted_fields": [
+        "raw_private_state",
+        "canonical_private_state_bytes",
+        "private_memory_contents",
+        "private_identity_contents",
+        "private_section_payloads",
+        "private_section_digests",
+        "sealed_payload_material",
+        "private_keys",
+        "signature_material"
+      ],
+      "raw_private_state_present": false,
+      "projection_authoritative": false,
+      "allowed_actions": [
+        "read_only_projection"
+      ],
+      "denied_actions": [
+        "inspect_raw_private_state",
+        "decrypt_private_state",
+        "wake_from_projection",
+        "migrate_from_projection",
+        "release_from_quarantine_from_projection"
+      ],
+      "caveats": [
+        "projection is not authority",
+        "canonical private-state bytes remain sealed from this view",
+        "access-control grants are deferred to WP-12"
+      ]
+    },
+    {
+      "audience": "public",
+      "projection_kind": "public_status_projection",
+      "citizen_id": "proto-citizen-alpha",
+      "visible_summary": [
+        "protected citizen-state continuity exists",
+        "public view is non-authoritative and minimal"
+      ],
+      "continuity": {
+        "citizen_id": "proto-citizen-alpha",
+        "manifold_id": "proto-csm-01",
+        "lineage_id": "lineage-proto-citizen-alpha",
+        "state_sequence": 1,
+        "continuity_status": "hash_linked_witnessed_private_state_projection",
+        "source_projection_ref": "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+        "source_projection_schema": "runtime_v2.private_state_projection.v1",
+        "source_state_hash_available": true,
+        "witness_set_ref": "runtime_v2/private_state/continuity_witnesses.json",
+        "receipt_set_ref": "runtime_v2/private_state/citizen_receipts.json",
+        "sanctuary_quarantine_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+        "evidence_refs": [
+          "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+          "runtime_v2/private_state/continuity_witnesses.json",
+          "runtime_v2/private_state/citizen_receipts.json",
+          "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+          "runtime_v2/private_state/sanctuary_quarantine_operator_report.json"
+        ]
+      },
+      "visible_fields": [
+        "citizen_id",
+        "protected_status",
+        "projection_non_authority"
+      ],
+      "redacted_fields": [
+        "raw_private_state",
+        "canonical_private_state_bytes",
+        "private_memory_contents",
+        "private_identity_contents",
+        "private_section_payloads",
+        "private_section_digests",
+        "sealed_payload_material",
+        "private_keys",
+        "signature_material"
+      ],
+      "raw_private_state_present": false,
+      "projection_authoritative": false,
+      "allowed_actions": [
+        "read_only_projection"
+      ],
+      "denied_actions": [
+        "inspect_raw_private_state",
+        "decrypt_private_state",
+        "wake_from_projection",
+        "migrate_from_projection",
+        "release_from_quarantine_from_projection"
+      ],
+      "caveats": [
+        "projection is not authority",
+        "canonical private-state bytes remain sealed from this view",
+        "access-control grants are deferred to WP-12"
+      ]
+    },
+    {
+      "audience": "debug",
+      "projection_kind": "redacted_debug_projection",
+      "citizen_id": "proto-citizen-alpha",
+      "visible_summary": [
+        "debug view exposes schema and artifact refs only",
+        "raw private-state bytes, section digests, keys, and sealed payload material remain redacted"
+      ],
+      "continuity": {
+        "citizen_id": "proto-citizen-alpha",
+        "manifold_id": "proto-csm-01",
+        "lineage_id": "lineage-proto-citizen-alpha",
+        "state_sequence": 1,
+        "continuity_status": "hash_linked_witnessed_private_state_projection",
+        "source_projection_ref": "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+        "source_projection_schema": "runtime_v2.private_state_projection.v1",
+        "source_state_hash_available": true,
+        "witness_set_ref": "runtime_v2/private_state/continuity_witnesses.json",
+        "receipt_set_ref": "runtime_v2/private_state/citizen_receipts.json",
+        "sanctuary_quarantine_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+        "evidence_refs": [
+          "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+          "runtime_v2/private_state/continuity_witnesses.json",
+          "runtime_v2/private_state/citizen_receipts.json",
+          "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+          "runtime_v2/private_state/sanctuary_quarantine_operator_report.json"
+        ]
+      },
+      "visible_fields": [
+        "schema_version",
+        "artifact_refs",
+        "validation_status",
+        "redaction_status",
+        "non_authority_status"
+      ],
+      "redacted_fields": [
+        "raw_private_state",
+        "canonical_private_state_bytes",
+        "private_memory_contents",
+        "private_identity_contents",
+        "private_section_payloads",
+        "private_section_digests",
+        "sealed_payload_material",
+        "private_keys",
+        "signature_material"
+      ],
+      "raw_private_state_present": false,
+      "projection_authoritative": false,
+      "allowed_actions": [
+        "read_only_projection"
+      ],
+      "denied_actions": [
+        "inspect_raw_private_state",
+        "decrypt_private_state",
+        "wake_from_projection",
+        "migrate_from_projection",
+        "release_from_quarantine_from_projection"
+      ],
+      "caveats": [
+        "projection is not authority",
+        "canonical private-state bytes remain sealed from this view",
+        "access-control grants are deferred to WP-12"
+      ]
+    }
+  ],
+  "operator_continuity_summary": [
+    "proto-citizen-alpha has a hash-linked private-state projection",
+    "continuity witness and citizen receipt refs are visible without raw private-state bytes",
+    "sanctuary/quarantine status is visible as evidence, not as release authority"
+  ],
+  "reviewer_evidence_refs": [
+    "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+    "runtime_v2/private_state/continuity_witnesses.json",
+    "runtime_v2/private_state/citizen_receipts.json",
+    "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+    "runtime_v2/private_state/sanctuary_quarantine_operator_report.json"
+  ],
+  "prohibited_uses": [
+    "wake_from_projection",
+    "migrate_from_projection",
+    "decrypt_from_projection",
+    "release_from_quarantine_from_projection",
+    "treat_projection_as_canonical_state"
+  ],
+  "packet_hash": "sha256:1517758b539dd7fdbed06a8493e7c1c2d084a20daf4a5072a6f76aad5554da5b",
+  "claim_boundary": "This packet proves bounded redacted Observatory projections for private citizen state; it does not implement live Runtime v2 execution, unrestricted inspection, access-control grants, first true Godel-agent birth, or v0.92 identity rebinding."
+}

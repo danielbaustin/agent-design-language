@@ -7,7 +7,8 @@ format decision and fixture-backed projection boundary. WP-04 has landed the
 signed envelope, local trust-root fixture, and fail-closed negative cases for
 the canonical state artifact. WP-08 has landed the first anti-equivocation
 conflict fixture and negative tests. WP-09 has landed bounded
-sanctuary/quarantine behavior for ambiguous wake.
+sanctuary/quarantine behavior for ambiguous wake. WP-10 has landed bounded
+redacted Observatory projections for private-state continuity status.
 
 ## Purpose
 
@@ -37,8 +38,11 @@ for the same citizen lineage, predecessor, and sequence cannot both become
 active and must preserve evidence for sanctuary or quarantine review. WP-09
 adds the corresponding safety-state behavior for ambiguous wake: activation is
 blocked, evidence is preserved, and quarantine is not treated as recovery
-success. JSON remains a projection and review surface, not private-state
-authority.
+success. WP-10 adds the private-state Observatory projection proof: operators,
+reviewers, public views, and debug views receive read-only redacted continuity
+projections, while raw private state and canonical state authority remain
+unavailable through projection surfaces. JSON remains a projection and review
+surface, not private-state authority.
 
 The format decision must include:
 
@@ -77,6 +81,10 @@ evidence in `adl/src/runtime_v2/private_state_equivocation.rs`.
 The landed sanctuary/quarantine proof is recorded in
 `docs/milestones/v0.90.3/SANCTUARY_QUARANTINE_BEHAVIOR_v0.90.3.md`, with
 runtime evidence in `adl/src/runtime_v2/private_state_sanctuary.rs`.
+
+The landed redacted Observatory projection proof is recorded in
+`docs/milestones/v0.90.3/REDACTED_OBSERVATORY_PROJECTIONS_v0.90.3.md`, with
+runtime evidence in `adl/src/runtime_v2/private_state_observatory.rs`.
 
 ## Signed Envelope
 

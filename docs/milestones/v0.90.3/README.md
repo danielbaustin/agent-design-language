@@ -99,6 +99,7 @@ dependencies.
 - Continuity witnesses and receipts: `CONTINUITY_WITNESSES_AND_RECEIPTS_v0.90.3.md`
 - Anti-equivocation conflict proof: `ANTI_EQUIVOCATION_CONFLICT_v0.90.3.md`
 - Sanctuary/quarantine behavior proof: `SANCTUARY_QUARANTINE_BEHAVIOR_v0.90.3.md`
+- Redacted Observatory projection proof: `REDACTED_OBSERVATORY_PROJECTIONS_v0.90.3.md`
 - WP execution readiness: `WP_EXECUTION_READINESS_v0.90.3.md`
 - Feature index: `FEATURE_DOCS_v0.90.3.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.3.md`

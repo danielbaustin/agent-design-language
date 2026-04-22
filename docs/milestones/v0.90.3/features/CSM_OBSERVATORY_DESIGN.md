@@ -6,6 +6,12 @@ v0.90.3 design surface for the CSM Observatory. This document promotes the
 local Observatory planning note into the tracked milestone package so WP-14 and
 WP-14A have a shared design spine.
 
+WP-10 has landed the first private-state Observatory projection proof in
+`../REDACTED_OBSERVATORY_PROJECTIONS_v0.90.3.md`. That proof supplies a
+redaction policy, audience projection packet, operator report, and leakage
+negative cases. It is a runtime proof surface for private-state visibility, not
+the WP-14 inhabited flagship UI.
+
 The deeper UI architecture brief lives in
 `../OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md`.
 
@@ -215,6 +221,8 @@ Required sections:
 - trace: recent causal events and gaps
 - operator_actions: available and disabled actions with safety reasons
 - review: primary artifacts, missing artifacts, classification, and caveats
+- private_state_projection: redaction policy, audience projections, leakage
+  proof status, prohibited uses, and non-authority caveats
 
 ## Surface Map
 
@@ -311,9 +319,12 @@ Rules:
 - operator view is redacted unless explicit policy grants more visibility
 - reviewer view preserves evidence without exposing private state
 - public/demo view is non-authoritative and aggressively redacted
+- debug view is not a raw-state escape hatch
 - denial records must not leak protected arguments, private state, or hidden
   policy details
 - every projection should identify its source artifacts and redaction class
+- projection artifacts cannot wake, migrate, decrypt, release quarantine, or
+  replace canonical private citizen state
 
 ## v0.90.3 Flagship Role
 

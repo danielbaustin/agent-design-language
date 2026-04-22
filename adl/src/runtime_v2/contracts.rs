@@ -157,3 +157,8 @@ pub fn runtime_v2_private_state_sanctuary_contract(
 ) -> Result<RuntimeV2PrivateStateSanctuaryArtifacts> {
     RuntimeV2PrivateStateSanctuaryArtifacts::prototype()
 }
+
+pub fn runtime_v2_private_state_observatory_contract(
+) -> Result<RuntimeV2PrivateStateObservatoryArtifacts> {
+    RuntimeV2PrivateStateObservatoryArtifacts::prototype()
+}

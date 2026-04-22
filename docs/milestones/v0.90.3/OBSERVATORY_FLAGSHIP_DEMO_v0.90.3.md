@@ -9,6 +9,11 @@ This runbook consumes the multimode UI architecture in
 story; it is the first planned traversal through the Observatory rooms, lenses,
 memory dots, and Corporate Investor UI fallback.
 
+WP-10 has landed the redacted private-state projection proof in
+`REDACTED_OBSERVATORY_PROJECTIONS_v0.90.3.md`. WP-14 should consume that proof
+as the private-state visibility substrate rather than inventing ad hoc
+projection behavior inside the flagship demo.
+
 ## Purpose
 
 The v0.90.3 demo matrix should not collapse into integration tests in disguise.
@@ -91,6 +96,7 @@ surface, but it should not be the default investor-facing path.
 - witness
 - citizen receipt
 - redacted projection
+- private-state redaction policy and leakage/authority negative-case proof
 - standing or communication event
 - access approval or denial event
 - challenge or quarantine artifact

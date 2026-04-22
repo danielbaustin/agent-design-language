@@ -1,0 +1,37 @@
+{
+  "schema_version": "runtime_v2.private_state_observatory_projection_proof.v1",
+  "proof_id": "private-state-observatory-projection-negative-cases",
+  "demo_id": "D9",
+  "policy_ref": "runtime_v2/observatory/private_state_redaction_policy.json",
+  "packet_ref": "runtime_v2/observatory/private_state_projection_packet.json",
+  "report_ref": "runtime_v2/observatory/private_state_projection_report.md",
+  "required_negative_cases": [
+    {
+      "case_id": "raw_private_state_token_in_projection",
+      "mutation": "inject a canonical private-state payload digest into an audience projection",
+      "expected_error_fragment": "raw private-state token leak"
+    },
+    {
+      "case_id": "projection_marked_authoritative",
+      "mutation": "set projection_authoritative=true for an audience projection",
+      "expected_error_fragment": "must not expose raw state or authority"
+    },
+    {
+      "case_id": "debug_projection_allows_raw_state",
+      "mutation": "set raw_private_state_allowed=true for the debug audience policy",
+      "expected_error_fragment": "must not allow raw state or authority"
+    },
+    {
+      "case_id": "public_projection_exposes_lineage_hash",
+      "mutation": "add lineage_id or source_state_hash to public visible fields",
+      "expected_error_fragment": "public Observatory projection must stay minimal"
+    },
+    {
+      "case_id": "report_claims_raw_inspection",
+      "mutation": "add raw inspection language to the operator report",
+      "expected_error_fragment": "operator report must not claim raw private-state inspection"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_observatory -- --nocapture",
+  "claim_boundary": "Proves bounded redacted Observatory projections for private citizen-state continuity; does not implement access-control grants, unrestricted inspection, first true Godel-agent birth, or v0.92 identity rebinding."
+}
