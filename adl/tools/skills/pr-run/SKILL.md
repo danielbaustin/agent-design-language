@@ -204,6 +204,29 @@ Prefer:
 
 Do not run an oversized validation suite unless the changed surface truly requires it or the user asks for it.
 
+#### CI Runtime Policy
+
+Use `adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md` when selecting and
+recording the validation lane.
+
+For docs, planning, and non-runtime tooling changes:
+- run focused docs, tooling, contract, path, and guardrail checks
+- record the lane as a docs-only or tooling-only path-policy validation surface
+- do not imply Rust coverage ran
+
+For runtime, source, test, or demo-affecting changes:
+- expect Rust fmt, clippy, tests, demo smoke when required, and coverage gates
+- treat a skipped `adl-coverage` lane as a blocker unless the path-policy
+  `reason` proves the PR is truly non-runtime
+
+For ambiguous changed-path classification:
+- fail closed to full validation or record an explicit operator deferral
+- do not use uncertainty as a validation waiver
+
+When recording execution truth, distinguish `docs_only_path_policy_skip`,
+`runtime_full_validation`, `failed_closed_full_validation`, and
+`release_or_main_full_validation`.
+
 ### 6. Update The Execution Record
 
 Update the output card or execution record truthfully:

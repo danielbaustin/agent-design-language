@@ -93,6 +93,18 @@ Inspect where applicable:
 Use direct GitHub metadata or `gh` where available. Do not infer readiness only
 from stale local cards when live GitHub state is required.
 
+When watching PR checks, apply
+`adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md`. Continue watching stable
+check names (`adl-ci` and `adl-coverage`), but classify their meaning through
+the CI lane when needed:
+- `healthy_with_path_policy_skip`
+- `healthy_with_full_runtime_validation`
+- `pending_stable_checks`
+- `blocked_failed_closed_or_unexpected_skip`
+
+If the path-policy lane is unclear, route to `pr-janitor` rather than claiming
+the PR is ready.
+
 ### 3. Classify The Result
 
 Use:
@@ -128,4 +140,3 @@ This skill must not:
 - collapse into `pr-janitor`, `pr-run`, or `pr-closeout`
 
 When ADL expects structured output, follow `references/output-contract.md`.
-

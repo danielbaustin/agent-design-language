@@ -87,6 +87,12 @@ The normal workflow is:
 `review-readiness-cleanup` is a bounded review-cycle preflight helper for classifying safe cleanup, blockers, skipped surfaces, and follow-on needs before formal review starts.
 `portable-contract-normalizer` is a bounded portability helper for detecting machine-local assumptions and applying only explicitly approved safe mechanical normalization.
 
+The PR lifecycle skills share the CI runtime interpretation policy in
+`adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md`. Stable PR check names
+(`adl-ci` and `adl-coverage`) remain required, but skills must distinguish a
+docs-only path-policy skip from full runtime validation, failed-closed
+classification, and release/main full-validation evidence.
+
 The three editor skills are helper skills:
 - `stp-editor` for bounded `stp.md` cleanup
 - `sip-editor` for truthful `sip.md` cleanup

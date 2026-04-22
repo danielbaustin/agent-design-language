@@ -88,6 +88,15 @@ Prefer:
 - bounded smoke command
 - one live-provider path only when explicitly allowed
 
+If the demo run is being interpreted alongside PR CI, use
+`adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md`:
+- if `demo_smoke_required=false` and the PR is docs/planning/non-runtime only,
+  record a truthful demo-smoke skip instead of a failed demo
+- if demo code, fixtures, manifests, or demo-facing runtime behavior changed,
+  expect demo smoke or record an explicit operator deferral
+- do not treat a docs-only path-policy skip as proof that a changed demo still
+  works
+
 ### 4. Classify The Result
 
 Use one of:
