@@ -55,6 +55,21 @@ trap 'rm -rf "$tmp_dir"' EXIT
   assert_has "$runtime_output" "demo_smoke_required=true"
   assert_has "$runtime_output" "reason=runtime_or_rust_test_change_runs_pr_fast_validation"
 
+  git checkout -q -b risky-runtime-change "$base_sha"
+  for i in $(seq 1 220); do
+    printf 'pub fn risky_added_%03d() -> bool { true }\n' "$i" >> adl/src/lib.rs
+  done
+  git add adl/src/lib.rs
+  git commit -q -m risky-runtime-change
+  risky_runtime_head="$(git rev-parse HEAD)"
+
+  risky_runtime_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$risky_runtime_head")"
+  assert_has "$risky_runtime_output" "rust_required=true"
+  assert_has "$risky_runtime_output" "coverage_required=true"
+  assert_has "$risky_runtime_output" "full_coverage_required=true"
+  assert_has "$risky_runtime_output" "demo_smoke_required=true"
+  assert_has "$risky_runtime_output" "reason=risky_rust_source_change_runs_full_coverage"
+
   main_output="$("$POLICY" --event-name push)"
   assert_has "$main_output" "rust_required=true"
   assert_has "$main_output" "coverage_required=true"
