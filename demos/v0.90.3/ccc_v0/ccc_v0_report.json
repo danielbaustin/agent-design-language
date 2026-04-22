@@ -1,0 +1,219 @@
+{
+  "metric_version": "v0",
+  "runs": [
+    {
+      "ccc_metric": {
+        "breakdown": {
+          "num_contradictions": 0,
+          "num_iterations": 3,
+          "num_low_adequacy_events": 0,
+          "num_model_calls": 2,
+          "num_reframes": 1,
+          "num_retries": 0,
+          "num_steps": 8,
+          "num_tool_calls": 2,
+          "num_validation_failures": 0,
+          "termination_penalty": 0,
+          "termination_reason": "success"
+        },
+        "component_costs": {
+          "execution": 8,
+          "exploration": 3,
+          "framing": 3,
+          "residual_error": 0
+        },
+        "dominant_cost_driver": "execution",
+        "interpretation": "Execution cost dominates, so the selected frame required many steps or invocations.",
+        "total": 14,
+        "version": "v0",
+        "weights": {
+          "execution": {
+            "num_model_calls": 1,
+            "num_steps": 0.5,
+            "num_tool_calls": 1
+          },
+          "exploration": {
+            "num_iterations": 1,
+            "num_retries": 2
+          },
+          "framing": {
+            "num_low_adequacy_events": 1,
+            "num_reframes": 3
+          },
+          "residual_error": {
+            "num_contradictions": 2,
+            "num_validation_failures": 2,
+            "termination_penalty": 1
+          }
+        }
+      },
+      "claim_boundary": {
+        "not_absolute_intelligence": true,
+        "not_cross_agent_normalized": true,
+        "not_moral_worth": true,
+        "not_pricing": true,
+        "not_productivity_ranking": true
+      },
+      "run_id": "clean_framed_docs_task",
+      "source_note": "Representative fixture for a well-framed documentation task with low exploration and no validation churn.",
+      "task_label": "Clean framed docs task",
+      "trace_family": "docs_lifecycle_fixture"
+    },
+    {
+      "ccc_metric": {
+        "breakdown": {
+          "num_contradictions": 0,
+          "num_iterations": 20,
+          "num_low_adequacy_events": 1,
+          "num_model_calls": 4,
+          "num_reframes": 2,
+          "num_retries": 4,
+          "num_steps": 10,
+          "num_tool_calls": 3,
+          "num_validation_failures": 0,
+          "termination_penalty": 0,
+          "termination_reason": "success"
+        },
+        "component_costs": {
+          "execution": 12,
+          "exploration": 28,
+          "framing": 7,
+          "residual_error": 0
+        },
+        "dominant_cost_driver": "exploration",
+        "interpretation": "Exploration cost dominates, so search, retries, or branching drove the cost.",
+        "total": 47,
+        "version": "v0",
+        "weights": {
+          "execution": {
+            "num_model_calls": 1,
+            "num_steps": 0.5,
+            "num_tool_calls": 1
+          },
+          "exploration": {
+            "num_iterations": 1,
+            "num_retries": 2
+          },
+          "framing": {
+            "num_low_adequacy_events": 1,
+            "num_reframes": 3
+          },
+          "residual_error": {
+            "num_contradictions": 2,
+            "num_validation_failures": 2,
+            "termination_penalty": 1
+          }
+        }
+      },
+      "claim_boundary": {
+        "not_absolute_intelligence": true,
+        "not_cross_agent_normalized": true,
+        "not_moral_worth": true,
+        "not_pricing": true,
+        "not_productivity_ranking": true
+      },
+      "run_id": "search_heavy_implementation_task",
+      "source_note": "Representative fixture for an implementation task where exploration dominates the cost.",
+      "task_label": "Search-heavy implementation task",
+      "trace_family": "implementation_fixture"
+    },
+    {
+      "ccc_metric": {
+        "breakdown": {
+          "num_contradictions": 3,
+          "num_iterations": 8,
+          "num_low_adequacy_events": 1,
+          "num_model_calls": 7,
+          "num_reframes": 2,
+          "num_retries": 5,
+          "num_steps": 14,
+          "num_tool_calls": 5,
+          "num_validation_failures": 8,
+          "termination_penalty": 5,
+          "termination_reason": "bounded_failure"
+        },
+        "component_costs": {
+          "execution": 19,
+          "exploration": 18,
+          "framing": 7,
+          "residual_error": 27
+        },
+        "dominant_cost_driver": "residual_error",
+        "interpretation": "Residual-error cost dominates, so validation churn or contradictions drove the cost.",
+        "total": 71,
+        "version": "v0",
+        "weights": {
+          "execution": {
+            "num_model_calls": 1,
+            "num_steps": 0.5,
+            "num_tool_calls": 1
+          },
+          "exploration": {
+            "num_iterations": 1,
+            "num_retries": 2
+          },
+          "framing": {
+            "num_low_adequacy_events": 1,
+            "num_reframes": 3
+          },
+          "residual_error": {
+            "num_contradictions": 2,
+            "num_validation_failures": 2,
+            "termination_penalty": 1
+          }
+        }
+      },
+      "claim_boundary": {
+        "not_absolute_intelligence": true,
+        "not_cross_agent_normalized": true,
+        "not_moral_worth": true,
+        "not_pricing": true,
+        "not_productivity_ranking": true
+      },
+      "run_id": "validation_churn_task",
+      "source_note": "Representative fixture for a task where validation failures, contradictions, and bounded failure dominate the cost.",
+      "task_label": "Validation-churn task",
+      "trace_family": "validation_fixture"
+    }
+  ],
+  "schema_version": "adl.ccc.v0.report.v1",
+  "source_fixtures": [
+    "demos/fixtures/ccc_v0/clean_framed_docs_task.json",
+    "demos/fixtures/ccc_v0/search_heavy_implementation_task.json",
+    "demos/fixtures/ccc_v0/validation_churn_task.json"
+  ],
+  "source_planning": [
+    ".adl/docs/TBD/CCC_METRIC_v0.md",
+    ".adl/docs/TBD/ccc/CCC_FIRST_PASS_PLAN.md",
+    ".adl/docs/TBD/MILESTONE_COMPRESSION_PLAN.md",
+    ".adl/docs/TBD/capability_testing/",
+    ".adl/docs/TBD/economics/REVIEW_SUMMARY_SHAPE_v0.md",
+    ".adl/docs/TBD/economics/EVALUATION_MODEL_v0.md",
+    "docs/planning/ADL_FEATURE_LIST.md"
+  ],
+  "summary": {
+    "caveats": [
+      "CCC v0 is a deterministic fixture-derived effort signal.",
+      "CCC v0 is not pricing, moral worth, absolute intelligence, or productivity ranking.",
+      "CCC v0 is not cross-agent normalized and should not be used as a leaderboard.",
+      "Lower CCC can indicate easier task shape, better framing, or less validation churn; it is not a virtue score."
+    ],
+    "comparison_note": "validation_churn_task is 57 CCC points higher than clean_framed_docs_task. The comparison is explained by residual_error dominance, not by an absolute capability claim.",
+    "dominant_driver_distribution": {
+      "execution": 1,
+      "exploration": 1,
+      "residual_error": 1
+    },
+    "highest_ccc_run": {
+      "dominant_cost_driver": "residual_error",
+      "run_id": "validation_churn_task",
+      "total": 71
+    },
+    "lowest_ccc_run": {
+      "dominant_cost_driver": "execution",
+      "run_id": "clean_framed_docs_task",
+      "total": 14
+    },
+    "run_count": 3
+  }
+}

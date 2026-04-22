@@ -1,0 +1,19 @@
+{
+  "schema_version": "adl.ccc.v0.fixture.v1",
+  "run_id": "validation_churn_task",
+  "task_label": "Validation-churn task",
+  "trace_family": "validation_fixture",
+  "source_note": "Representative fixture for a task where validation failures, contradictions, and bounded failure dominate the cost.",
+  "termination_reason": "bounded_failure",
+  "counters": {
+    "num_reframes": 2,
+    "num_low_adequacy_events": 1,
+    "num_iterations": 8,
+    "num_retries": 5,
+    "num_steps": 14,
+    "num_tool_calls": 5,
+    "num_model_calls": 7,
+    "num_validation_failures": 8,
+    "num_contradictions": 3
+  }
+}

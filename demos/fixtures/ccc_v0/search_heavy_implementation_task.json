@@ -1,0 +1,19 @@
+{
+  "schema_version": "adl.ccc.v0.fixture.v1",
+  "run_id": "search_heavy_implementation_task",
+  "task_label": "Search-heavy implementation task",
+  "trace_family": "implementation_fixture",
+  "source_note": "Representative fixture for an implementation task where exploration dominates the cost.",
+  "termination_reason": "success",
+  "counters": {
+    "num_reframes": 2,
+    "num_low_adequacy_events": 1,
+    "num_iterations": 20,
+    "num_retries": 4,
+    "num_steps": 10,
+    "num_tool_calls": 3,
+    "num_model_calls": 4,
+    "num_validation_failures": 0,
+    "num_contradictions": 0
+  }
+}

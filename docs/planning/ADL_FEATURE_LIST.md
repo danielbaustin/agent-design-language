@@ -148,7 +148,7 @@ ADL already provides a serious platform baseline:
 | Aptitude Atlas model-evaluation platform | Planned | TBD/product planning and backlog issues | Future product/project lane |
 | CodeBuddy repo-review product layer | Planned | CodeBuddy planning, repo-review skills, product-report backlog | Future product/project lane |
 | Governed tool calls and capability contracts | Planned | `TBD/tools` Universal Tool Schema, ADL Capability Contract, and tool-to-capability compiler planning | Near-term tools/runtime/security lane |
-| Cognitive Compression Cost instrumentation | Planned | CCC metric draft and milestone-compression planning | Near-term compression/evaluation lane |
+| Cognitive Compression Cost instrumentation | Implemented first pass | CCC v0 fixture extractor, generated comparison report, validation command, metric draft, and milestone-compression planning | Harden toward real trace ingestion and later Aptitude Atlas/reporting lanes |
 | Automated repository modernization and external refactoring integration | Deferred | backlog note for ADL-to-Moderne or direct modernization workflows | Future product/tooling lane if promoted |
 | Web-based code editor integration | Planned | editor backlog issue and skills-wiring planning | Future editor/operator lane |
 | Reasoning graph baseline | Planned | planning/schema/proof surfaces | Later reasoning/provenance band |
