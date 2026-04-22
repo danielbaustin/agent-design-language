@@ -1,65 +1,53 @@
-# Work Breakdown Structure (WBS) Template
+# v0.92 Candidate Work Breakdown Structure
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+## Status
 
-## How To Use
-- Break work into independently-mergeable issues.
-- Keep each item measurable and testable.
-- Include deliverables + dependencies + issue links.
-- `WP-01` is **always** the milestone **design pass** (canonical docs + WBS + decisions + sprint plan + checklist).
-- Reserve the final WPs for the release tail in this order: `WP-13` demos, `WP-14` quality/coverage gate, `WP-15` docs/review convergence, `WP-16` release ceremony.
+Candidate allocation only. v0.92 has no final issue wave yet.
+
+The exact WP sequence should be produced by the v0.92 WP-01 planning pass after
+v0.90.3 citizen-state and v0.91 moral-governance prerequisites are stable
+enough to consume.
 
 ## WBS Summary
-{{wbs_summary}}
 
-## Work Packages
-| ID | Work Package | Description | Deliverable | Dependencies | Issue |
-|---|---|---|---|---|---|
-| WP-01 | Design pass (milestone docs + planning) | {{description_01}} | {{deliverable_01}} | {{deps_01}} | {{issue_01}} |
-| WP-02 | {{package_02}} | {{description_02}} | {{deliverable_02}} | {{deps_02}} | {{issue_02}} |
-| WP-03 | {{package_03}} | {{description_03}} | {{deliverable_03}} | {{deps_03}} | {{issue_03}} |
-| WP-04 | {{package_04}} | {{description_04}} | {{deliverable_04}} | {{deps_04}} | {{issue_04}} |
-| WP-05 | {{package_05}} | {{description_05}} | {{deliverable_05}} | {{deps_05}} | {{issue_05}} |
-| WP-06 | {{package_06}} | {{description_06}} | {{deliverable_06}} | {{deps_06}} | {{issue_06}} |
-| WP-07 | {{package_07}} | {{description_07}} | {{deliverable_07}} | {{deps_07}} | {{issue_07}} |
-| WP-08 | {{package_08}} | {{description_08}} | {{deliverable_08}} | {{deps_08}} | {{issue_08}} |
-| WP-09 | {{package_09}} | {{description_09}} | {{deliverable_09}} | {{deps_09}} | {{issue_09}} |
-| WP-10 | {{package_10}} | {{description_10}} | {{deliverable_10}} | {{deps_10}} | {{issue_10}} |
-| WP-11 | {{package_11}} | {{description_11}} | {{deliverable_11}} | {{deps_11}} | {{issue_11}} |
-| WP-12 | {{package_12}} | {{description_12}} | {{deliverable_12}} | {{deps_12}} | {{issue_12}} |
-| WP-13 | Demo matrix + integration demos | {{description_13}} | {{deliverable_13}} | {{deps_13}} | {{issue_13}} |
-| WP-14 | Coverage / quality gate (ratchet + exclusions) | {{description_14}} | {{deliverable_14}} | {{deps_14}} | {{issue_14}} |
-| WP-15 | Docs + review pass (repo-wide alignment) | {{description_15}} | {{deliverable_15}} | {{deps_15}} | {{issue_15}} |
-| WP-16 | Release ceremony (final validation + tag + notes + cleanup) | {{description_16}} | {{deliverable_16}} | {{deps_16}} | {{issue_16}} |
+v0.92 should develop the identity, continuity, and first-birthday layer without
+stealing work from citizen-state, moral-trace, or constitutional-governance
+milestones.
 
-## Sequencing
-- Phase 1: {{phase_1}}
-- Phase 2: {{phase_2}}
-- Phase 3: {{phase_3}}
+## Candidate Work Areas
+
+| Candidate | Work Area | Description | Primary deliverable | Key dependencies |
+| --- | --- | --- | --- | --- |
+| A | Birthday contract | Define what counts as birth and what does not. | Feature contract and negative cases. | Runtime v2, v0.90.3 state, v0.91 moral evidence. |
+| B | Stable name and identity architecture | Define identity root, stable name, aliases, provenance, and continuity head. | Identity record contract and fixtures. | v0.90.3 signed state and lineage. |
+| C | Continuity across bounded cycles | Prove identity survives multiple bounded cycles with evidence. | Continuity record, cycle fixtures, validation. | v0.90.3 lineage and witness surfaces. |
+| D | Memory grounding | Bind identity to witnessed artifacts and memory references without raw private-state exposure. | Memory-grounding contract and redacted packet. | ObsMem/trace baseline and v0.90.3 projection policy. |
+| E | Capability envelope | Declare provider, model, tool, skill, authority, and limit context at birth. | Capability envelope and validation fixtures. | Provider/tool substrate and governed-tool planning. |
+| F | Birth witnesses and receipts | Define witness set and citizen-facing receipt for the birthday event. | Witness schema, receipt schema, validation. | v0.90.3 continuity witnesses. |
+| G | Birthday review packet | Assemble identity, continuity, memory, capability, witness, and moral context into one review surface. | Reviewer packet and fixture. | A through F and v0.91 moral trace. |
+| H | Migration and cross-polis continuity planning | Define bounded design notes for future movement without production migration claims. | Design note and non-goals. | Identity record and continuity contract. |
+| I | First birthday demo | Build a flagship demo showing a real birthday record and negative cases. | Runnable proof demo and artifacts. | A through G. |
+| J | Birthday-to-governance handoff | Produce the evidence map v0.93 governance will consume. | Handoff packet mapping identity evidence to governance. | G and v0.93 allocation. |
+| K | Demo matrix and proof coverage | Align demos with milestone claims. | Demo matrix rows and validation commands. | I and J. |
+| L | Review, docs, and release tail | Align docs, update feature list, run review, and close the milestone. | Review handoff, release notes, ceremony evidence. | All prior work. |
+
+## Sequencing Pressure
+
+1. Start with the birthday contract and negative cases.
+2. Add stable name and identity architecture.
+3. Add continuity, memory grounding, and capability envelope.
+4. Add witnesses, receipts, and review packets.
+5. Add migration planning only after local birth semantics are stable.
+6. Build the flagship birthday demo and governance handoff last.
 
 ## Acceptance Mapping
-- WP-01 (Design pass) -> {{acceptance_criteria_01}}
-- WP-02 -> {{acceptance_criteria_02}}
-- WP-03 -> {{acceptance_criteria_03}}
-- WP-04 -> {{acceptance_criteria_04}}
-- WP-05 -> {{acceptance_criteria_05}}
-- WP-06 -> {{acceptance_criteria_06}}
-- WP-07 -> {{acceptance_criteria_07}}
-- WP-08 -> {{acceptance_criteria_08}}
-- WP-09 -> {{acceptance_criteria_09}}
-- WP-10 -> {{acceptance_criteria_10}}
-- WP-11 -> {{acceptance_criteria_11}}
-- WP-12 -> {{acceptance_criteria_12}}
-- WP-13 (Demos) -> {{acceptance_criteria_13}}
-- WP-14 (Quality gate) -> {{acceptance_criteria_14}}
-- WP-15 (Docs/review) -> {{acceptance_criteria_15}}
-- WP-16 (Release ceremony) -> {{acceptance_criteria_16}}
 
-## Exit Criteria
-- Every in-scope requirement maps to at least one WBS item.
-- Every WBS item has an owner, issue reference, and concrete deliverable.
-- Dependency order is explicit enough to execute deterministically.
+- Birth must be distinguishable from startup, wake, snapshot, admission, and
+  copied state.
+- Identity must include stable name, identity root, continuity, memory
+  grounding, capability, witnesses, and receipt.
+- Continuity must be evidence-based and reviewable.
+- Memory grounding must not expose raw private state.
+- Capability envelope must record limits and authority context.
+- v0.93 governance must consume v0.92 evidence rather than redefine birth.
+- Demos must show behavior and artifacts, not just narrative.

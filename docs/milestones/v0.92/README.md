@@ -1,145 +1,115 @@
-# Milestone README Template
+# v0.92 Milestone README
+
+## Status
+
+Forward planning. v0.92 is not yet an active implementation milestone and has
+no final issue wave.
+
+## Purpose
+
+v0.92 is the planned first true Gödel-agent birthday milestone.
+
+The canonical allocation is recorded in
+[IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md).
+
+## Milestone Role
+
+v0.92 should establish:
+
+- stable name and identity architecture
+- continuity evidence across bounded cycles
+- memory grounding tied to witnessed artifacts
+- capability envelope at birth
+- inherited moral/governance context from v0.91
+- birth witnesses and citizen-facing receipt
+- reviewer-facing evidence that distinguishes birth from process startup
+
+v0.92 should not claim legal personhood, production citizenship, or full
+constitutional governance.
 
 ## First Birthday Boundary
 
-v0.92 owns the first true Gödel-agent birthday.
-
 Earlier milestones may create provisional citizen records, continuity handles,
-snapshot identities, named test citizens, and bounded runtime processes. Those
-are engineering and proof surfaces, not the first birth event.
+snapshot identities, named test citizens, wake records, and bounded runtime
+processes. Those are engineering and proof surfaces, not the first birth event.
 
 For v0.92, the birthday must include a name, identity architecture, continuity
 record, memory grounding, capability envelope, inherited moral/governance
-context, and reviewable evidence distinguishing birth from ordinary process
-startup.
+context, witnesses, and reviewable evidence.
 
-Roadmap: ../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
+Roadmap: [Runtime v2 And Birthday Boundary Roadmap](../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md)
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+## Dependency Boundary
 
-## Purpose
-Provide a single entry point for the milestone: what it is, why it matters, what is included, and how to navigate the canonical documents and artifacts.
+v0.92 depends on:
 
-## How To Use
-- Start here before reading individual milestone documents.
-- Use this README to locate the canonical design, execution, and validation surfaces.
-- Keep this document concise and navigational; detailed content belongs in the linked docs.
-- Keep links up to date as files move or are renamed.
-
-## Overview
-
-`{{milestone}}` represents the stage where `{{project_name}}` moves from `{{previous_state}}` to `{{target_state}}`.
-
-This milestone focuses on:
-- {{focus_1}}
-- {{focus_2}}
-- {{focus_3}}
-
-Key outcomes:
-- {{outcome_1}}
-- {{outcome_2}}
-- {{outcome_3}}
+- v0.90.3 for citizen state, signed envelopes, lineage, continuity witnesses,
+  standing, challenge, sanctuary, quarantine, and redacted projections
+- v0.91 for moral trace, moral trajectory review, outcome linkage, wellbeing,
+  moral resources, and anti-harm evidence
+- v0.93 as a downstream consumer of identity evidence for constitutional
+  citizenship and polis governance
 
 ## Scope Summary
 
 ### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
-- {{in_scope_3}}
+
+- Birthday contract.
+- Stable name and identity architecture.
+- Continuity record across bounded cycles.
+- Memory grounding.
+- Capability envelope.
+- Birth witnesses and receipt.
+- Birthday review packet.
+- Negative cases that prove startup, wake, snapshot, admission, and copied
+  state are not birth.
+- Bounded migration and cross-polis continuity planning.
 
 ### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
+
+- Runtime implementation in this planning pass.
+- Legal personhood.
+- Production citizenship.
+- Full constitutional governance.
+- Economics, payments, or markets.
+- Full memory palace implementation.
+- Replacing v0.90.3 citizen-state/security work.
+- Replacing v0.91 moral trace or moral trajectory review.
 
 ## Document Map
 
-Canonical milestone documents:
-
-- Vision: `{{vision_doc}}`
-- Design: `{{design_doc}}`
-- Work Breakdown Structure (WBS): `{{wbs_doc}}`
-- Sprint plan: `{{sprint_doc}}`
-- Decisions log: `{{decisions_doc}}`
-- Demo matrix: `{{demo_matrix_doc}}`
-- Milestone checklist: `{{checklist_doc}}`
-- Release plan / process: `{{release_process_doc}}`
-- Release notes: `{{release_notes_doc}}`
-
-Supporting / domain-specific docs:
-- {{supporting_doc_1}}
-- {{supporting_doc_2}}
-- {{supporting_doc_3}}
+- Vision: [VISION_v0.92.md](VISION_v0.92.md)
+- Design: [DESIGN_v0.92.md](DESIGN_v0.92.md)
+- WBS: [WBS_v0.92.md](WBS_v0.92.md)
+- Sprint plan: [SPRINT_v0.92.md](SPRINT_v0.92.md)
+- Decisions: [DECISIONS_v0.92.md](DECISIONS_v0.92.md)
+- Demo matrix: [DEMO_MATRIX_v0.92.md](DEMO_MATRIX_v0.92.md)
+- Milestone checklist: [MILESTONE_CHECKLIST_v0.92.md](MILESTONE_CHECKLIST_v0.92.md)
+- Release plan: [RELEASE_PLAN_v0.92.md](RELEASE_PLAN_v0.92.md)
+- Release notes: [RELEASE_NOTES_v0.92.md](RELEASE_NOTES_v0.92.md)
+- Identity, continuity, and birthday allocation:
+  [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md)
 
 ## Execution Model
 
-This milestone is executed as a sequence of work packages (WPs):
+Later WP planning should preserve the standard milestone rhythm:
 
-- WP-01: Design pass (docs + planning)
-- WP-02 - WP-12: Feature and system work
-- WP-13: Demo matrix and integration demos
-- WP-14: Coverage / quality gate
-- WP-15: Docs and review convergence
-- WP-16: Release ceremony
+- WP-01: promote reviewed milestone docs and issue wave
+- feature WPs: implement identity, continuity, memory grounding, capability,
+  witness, receipt, and birthday-record surfaces
+- demo WP: build first-birthday proof demos and negative cases
+- quality/review WPs: validate docs, tests, demo evidence, and review packets
+- release WP: close the milestone under the normal ceremony pattern
 
-Execution expectations:
-- Each WP is tracked by an issue and implemented via PRs.
-- Each issue produces structured artifacts (input/output cards, reports).
-- All work merges under green CI and passes quality gates.
+The exact WP sequence is intentionally deferred until v0.92 planning is active.
 
-## Demo and Validation Surface
+## Success Criteria
 
-Primary validation is defined in:
-- Demo matrix: `{{demo_matrix_doc}}`
+v0.92 is ready to execute when:
 
-Additional validation surfaces:
-- Test suite results
-- Generated artifacts under `.adl/runs/`
-- Trace and replay outputs
-
-Success criteria:
-- {{success_criteria_1}}
-- {{success_criteria_2}}
-- {{success_criteria_3}}
-
-## Determinism and Reproducibility
-
-The milestone should demonstrate:
-- Deterministic or bounded-repeatable execution where required
-- Replayable traces and inspectable artifacts
-- Stable command entry points for demos
-
-Evidence locations:
-- {{determinism_evidence_path_1}}
-- {{determinism_evidence_path_2}}
-
-## Risks and Open Questions
-
-Known risks:
-- {{risk_1}}
-- {{risk_2}}
-
-Open questions:
-- {{open_question_1}}
-- {{open_question_2}}
-
-## Status
-
-Current status: {{status}}
-
-- Planning: {{planning_status}}
-- Execution: {{execution_status}}
-- Validation: {{validation_status}}
-- Release readiness: {{release_status}}
-
-## Exit Criteria
-
-- All canonical milestone documents are complete and internally consistent.
-- All WBS items are implemented or explicitly deferred.
-- Demo matrix is runnable and validated.
-- Quality gates (fmt, clippy, test, CI) are passing.
-- Milestone checklist is complete or exceptions are documented.
-- Release artifacts (notes, tag, docs) are ready.
+- every birthday claim maps to name, identity, continuity, memory, capability,
+  witness, receipt, trace, or review evidence
+- negative cases clearly reject ordinary process startup as birth
+- v0.90.3 and v0.91 prerequisites are named rather than redefined
+- v0.93 governance is downstream rather than absorbed
+- demo candidates prove identity and birth behavior, not merely vocabulary
