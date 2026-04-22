@@ -56,6 +56,10 @@ jobs:
         run: sh adl/tools/codexw.sh --help
         working-directory: .
 
+      - name: coverage-impact preflight contract
+        run: bash adl/tools/test_check_coverage_impact.sh
+        working-directory: .
+
       - name: guardrail (no new legacy refs)
         run: bash adl/tools/check_no_new_legacy_swarm_refs.sh
         working-directory: .
@@ -155,17 +159,21 @@ jobs:
         if: steps.path-policy.outputs.coverage_required == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
 
-      - name: Coverage (swarm)
+      - name: Coverage run and summary (json)
         if: steps.path-policy.outputs.coverage_required == 'true'
-        run: cargo llvm-cov --workspace --all-features --lcov --output-path lcov.info
+        run: cargo llvm-cov --workspace --all-features --json --summary-only --output-path coverage-summary.json
 
-      - name: Coverage summary (json)
-        if: steps.path-policy.outputs.coverage_required == 'true'
-        run: cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
-
-      - name: Coverage summary (text)
-        if: steps.path-policy.outputs.coverage_required == 'true'
-        run: cargo llvm-cov report --summary-only | tee coverage-summary.txt
+      - name: Coverage-impact changed-source gate
+        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true'
+        env:
+          PER_FILE_LINE_THRESHOLD: "80"
+        run: |
+          bash adl/tools/check_coverage_impact.sh \
+            --base "${{ github.event.pull_request.base.sha }}" \
+            --head "${{ github.event.pull_request.head.sha }}" \
+            --summary adl/coverage-summary.json \
+            --threshold "$PER_FILE_LINE_THRESHOLD"
+        working-directory: .
 
       - name: Enforce coverage policy gates (workspace + per-file)
         if: steps.path-policy.outputs.coverage_required == 'true'
@@ -175,6 +183,14 @@ jobs:
         run: |
           set -eu
           bash tools/enforce_coverage_gates.sh coverage-summary.json
+
+      - name: Coverage (ADL Rust workspace lcov)
+        if: steps.path-policy.outputs.coverage_required == 'true'
+        run: cargo llvm-cov report --lcov --output-path lcov.info
+
+      - name: Coverage summary (text)
+        if: steps.path-policy.outputs.coverage_required == 'true'
+        run: cargo llvm-cov report --summary-only | tee coverage-summary.txt
 
       - name: Verify generated lcov file
         if: steps.path-policy.outputs.coverage_required == 'true'

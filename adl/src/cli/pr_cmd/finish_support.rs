@@ -431,6 +431,22 @@ pub(super) fn run_finish_validation_rust(
     }
 
     let manifest = repo_root.join("adl/Cargo.toml");
+    let coverage_impact = repo_root.join("adl/tools/check_coverage_impact.sh");
+    let coverage_summary = repo_root.join("adl/target/coverage-impact-summary.json");
+    if coverage_impact.is_file() {
+        run_status(
+            "bash",
+            &[
+                path_str(&coverage_impact)?,
+                "--base",
+                "origin/main",
+                "--include-working-tree",
+                "--summary",
+                path_str(&coverage_summary)?,
+                "--require-summary-for-risk",
+            ],
+        )?;
+    }
     run_status(
         "cargo",
         &[
@@ -466,6 +482,7 @@ pub(super) fn render_default_finish_validation(mode: FinishValidationMode) -> St
         .join("\n"),
         FinishValidationMode::FullRust => [
             "- bash adl/tools/check_no_tracked_adl_issue_record_residue.sh",
+            "- bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk",
             "- cargo fmt",
             "- cargo clippy --all-targets -- -D warnings",
             "- cargo test",
