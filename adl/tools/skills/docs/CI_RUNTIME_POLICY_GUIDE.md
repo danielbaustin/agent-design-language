@@ -58,6 +58,9 @@ or assembling release evidence:
   is not release coverage evidence.
 - A runtime/source/test/demo-affecting PR should not skip Rust validation,
   demo smoke when required, or coverage gates.
+- Rust source additions or heavy edits should run the coverage-impact preflight
+  before publication. This is an authoring-time early warning, not a replacement
+  for the full `adl-coverage` gate.
 - `fail_closed=true` means full validation is required; it is not an approved
   skip.
 - If the stable check result and changed files disagree, treat the PR as

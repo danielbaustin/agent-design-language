@@ -56,6 +56,10 @@ jobs:
         run: sh adl/tools/codexw.sh --help
         working-directory: .
 
+      - name: coverage-impact preflight contract
+        run: bash adl/tools/test_check_coverage_impact.sh
+        working-directory: .
+
       - name: guardrail (no new legacy refs)
         run: bash adl/tools/check_no_new_legacy_swarm_refs.sh
         working-directory: .
@@ -155,7 +159,7 @@ jobs:
         if: steps.path-policy.outputs.coverage_required == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
 
-      - name: Coverage (swarm)
+      - name: Coverage (ADL Rust workspace)
         if: steps.path-policy.outputs.coverage_required == 'true'
         run: cargo llvm-cov --workspace --all-features --lcov --output-path lcov.info
 

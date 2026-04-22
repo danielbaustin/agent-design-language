@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+
+SCRIPT="$ROOT/adl/tools/check_coverage_impact.sh"
+
+make_summary() {
+  local path="$1"
+  local covered="$2"
+  local count="$3"
+  local out="$4"
+  cat >"$out" <<EOF
+{
+  "data": [
+    {
+      "files": [
+        {
+          "filename": "$path",
+          "summary": {
+            "lines": {
+              "covered": $covered,
+              "count": $count
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+EOF
+}
+
+docs_only="$TMP/docs_only.txt"
+printf 'M\tdocs/milestones/v0.90.3/README.md\n' >"$docs_only"
+bash "$SCRIPT" --changed-files "$docs_only" --require-summary-for-risk >/dev/null
+
+changed="$TMP/changed.txt"
+printf 'A\tadl/src/runtime_v2/new_large_surface.rs\n' >"$changed"
+if bash "$SCRIPT" --changed-files "$changed" --require-summary-for-risk >/tmp/coverage-impact-missing.out 2>&1; then
+  echo "expected risky changed source without summary to fail" >&2
+  exit 1
+fi
+grep -F "Coverage-impact preflight needs coverage evidence" /tmp/coverage-impact-missing.out >/dev/null
+grep -F "new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
+
+low_summary="$TMP/low-summary.json"
+make_summary "adl/src/runtime_v2/new_large_surface.rs" 77 100 "$low_summary"
+if bash "$SCRIPT" --changed-files "$changed" --summary "$low_summary" >/tmp/coverage-impact-low.out 2>&1; then
+  echo "expected below-threshold changed source to fail" >&2
+  exit 1
+fi
+grep -F "77.00% < 80%" /tmp/coverage-impact-low.out >/dev/null
+
+missing_summary="$TMP/missing-row-summary.json"
+make_summary "adl/src/runtime_v2/other.rs" 100 100 "$missing_summary"
+if bash "$SCRIPT" --changed-files "$changed" --summary "$missing_summary" >/tmp/coverage-impact-missing-row.out 2>&1; then
+  echo "expected missing coverage row for changed source to fail" >&2
+  exit 1
+fi
+grep -F "no coverage row" /tmp/coverage-impact-missing-row.out >/dev/null
+
+passing_summary="$TMP/passing-summary.json"
+make_summary "/private/tmp/repo/adl/src/runtime_v2/new_large_surface.rs" 88 100 "$passing_summary"
+bash "$SCRIPT" --changed-files "$changed" --summary "$passing_summary" >/tmp/coverage-impact-pass.out
+grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-pass.out >/dev/null
+
+echo "PASS test_check_coverage_impact"
