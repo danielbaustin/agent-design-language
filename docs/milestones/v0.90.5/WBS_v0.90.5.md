@@ -28,7 +28,7 @@ documentation-only planning lane.
 | WP-18 | planned | Governed Tools v1.0 flagship demo | Show proposal, validation, ACC, policy, gate, execution/denial, trace, and redaction | flagship demo proof packet | WP-13-WP-17 |
 | WP-18A | planned | Demo matrix and feature proof coverage | Verify every governed-tools claim has proof, fixture, non-proving status, or deferral before review convergence | demo matrix update and proof coverage record | WP-03-WP-18 |
 | WP-19 | planned | Quality, docs, review, and public-spec handoff | Align docs, conformance, feature docs, review packets, public-spec language, and accepted-finding routing | review-ready package and finding register | WP-18A |
-| WP-20 | planned | Release ceremony | Complete release closure and next handoff | release evidence and next handoff | WP-19 |
+| WP-20 | planned | Release ceremony | Complete release closure and next handoff | release evidence, end-of-milestone report, and next handoff | WP-19 |
 
 ## Compression Candidate
 

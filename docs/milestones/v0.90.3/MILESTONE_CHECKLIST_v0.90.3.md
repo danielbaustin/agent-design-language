@@ -37,6 +37,7 @@
 - [x] Accepted review findings remediated or explicitly deferred
 - [x] Next-milestone planning and handoff complete
 - [x] Release notes describe actual shipped scope
+- [x] End-of-milestone report written or refreshed
 - [ ] Release ceremony preflight passes
 - [ ] Tag and release completed or blocked truthfully
 

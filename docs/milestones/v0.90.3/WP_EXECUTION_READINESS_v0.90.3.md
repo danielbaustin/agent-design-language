@@ -321,6 +321,7 @@ Required outputs:
 
 - release ceremony result
 - final release notes
+- end-of-milestone report
 - version/status truth confirmed
 - release closure note
 

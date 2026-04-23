@@ -23,6 +23,7 @@ The milestone is releasable when:
 - the feature proof coverage WP is complete before quality/docs convergence
 - internal and external review findings are fixed or dispositioned
 - release notes describe actual shipped scope
+- end-of-milestone report is written before ceremony
 
 ## Quality Bar
 

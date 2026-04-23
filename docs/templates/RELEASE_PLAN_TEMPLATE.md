@@ -10,6 +10,29 @@
 - Execute sections in order and capture links for each completed step.
 - Keep this doc focused on shipping mechanics; use release notes for narrative.
 - Mark blockers immediately; do not publish until gates pass.
+- Ceremony is a confirmation and publication phase, not a hidden implementation
+  phase.
+
+## 0) Release-Tail Convergence
+- [ ] Live trackers refreshed and reflected honestly:
+  - coverage/test tracker
+  - Rust module watch / refactoring tracker
+  - any active milestone-specific gap/risk tracker
+- [ ] Gap analysis refreshed or explicitly confirmed still current
+- [ ] Closed-issue closeout pass refreshed so issue/card truth is not stale
+- [ ] Release-truth docs aligned:
+  - `README.md`
+  - `CHANGELOG.md`
+  - `Cargo.toml`
+  - `REVIEW.md`
+  - feature list
+  - milestone checklist
+  - release plan
+  - release notes
+- [ ] Review artifacts collected and review disposition reflected truthfully
+- [ ] End-of-milestone report written or refreshed (`{{end_of_milestone_report_link}}`)
+- [ ] Next-milestone handoff prepared before ceremony starts
+- [ ] Any remaining work is either landed, explicitly deferred, or routed
 
 ## 1) Release Readiness
 - [ ] Milestone checklist complete (`{{milestone_checklist_link}}`)
@@ -41,6 +64,7 @@
 - [ ] Roadmap/status updated (`{{roadmap_update_link}}`)
 
 ## Exit Criteria
+- No hidden implementation or unresolved truth-maintenance work remains in the ceremony phase.
 - Tag and GitHub Release are published and accessible.
 - Verification completed with no unknown critical failures.
 - Communication links captured.
