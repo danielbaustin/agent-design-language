@@ -29,7 +29,7 @@ fixtures, validators, and lifecycle before the runner and proof demo widen.
 | WP-17 | planned | External review | Run bounded external review and record findings or zero-finding disposition | third-party review record | WP-16 |
 | WP-18 | planned | Review findings remediation | Fix accepted internal/external findings or defer explicitly with owner and rationale | remediation PRs or deferral records | WP-16, WP-17 |
 | WP-19 | planned | Next milestone planning handoff | Prepare v0.90.5 governed-tools handoff plus v0.91/v0.92/payment-lane follow-ups as appropriate | handoff docs and backlog updates | WP-18 |
-| WP-20 | planned | Release ceremony | Complete release closure | release notes, ceremony result, next handoff | WP-19 |
+| WP-20 | planned | Release ceremony | Complete release closure | release notes, ceremony result, end-of-milestone report, next handoff | WP-19 |
 
 ## Compression Candidate
 

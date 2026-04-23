@@ -126,23 +126,27 @@ This convergence pass used focused documentation and release-truth validation:
 
 ## Tracker Review
 
-- Coverage tracker: current tracked release surfaces still carry the active
-  coverage truth from the recent quality gate, with workspace line coverage at
-  `92.40%`, rounded to the intended `93%` tranche, and no active file-floor
-  exclusion documented. WP-15 did not rerun full coverage because this PR is a
-  docs/release-truth convergence pass; release evidence must still come from a
-  full coverage lane, a runtime PR, a main push, or ceremony validation.
+- Coverage tracker: the local tracker was refreshed on `2026-04-23` and now
+  records workspace line coverage at `90.72%` (`~91.00%` rounded). The
+  workspace gate still passes, and there is still no active file-floor
+  exclusion. WP-15 did not rerun full coverage because that issue was a
+  docs/release-truth convergence pass; the current ceremony surface should use
+  the refreshed tracker rather than the older `92.40%` snapshot.
 - CI runtime policy: #2392, #2394, #2406, and #2409 have landed the docs-heavy
   PR path policy, skill integration, coverage-impact preflight, and duplicate
   full-Rust-test reduction. Green `adl-ci` and `adl-coverage` checks on
   docs-only PRs can be healthy PR evidence, but they are not full release
   coverage evidence.
 - Gap status: the active gap risk before ceremony is no longer review-tail
-  findings. The remaining work is handoff truth and ceremony sequencing from
-  clean main.
-- Rust module watch: no new Rust refactoring scope is introduced by WP-15.
-  Runtime/source changes should still use the coverage-impact preflight before
-  PR publication.
+  findings. The remaining work is ceremony sequencing from clean main, not
+  unresolved review or closeout drift.
+- Rust module watch: the local watch list was refreshed from `main` at commit
+  `2c686ce5` on `2026-04-23 12:42:28 PDT`. There are still no `RATIONALE`-band
+  modules. The current watch posture is twenty-seven `REVIEW` items and twenty
+  `WATCH` items, with the largest module still below the `1500` LoC threshold.
+- Closed-issue truth: the v0.90.3 closeout wave is complete with `23` eligible
+  issues, `23` normalized issues, and `0` failures. WP-20 should treat
+  closeout normalization as complete ceremony input, not remaining tail work.
 
 ## Version Truth
 

@@ -43,7 +43,7 @@ The release tail should follow the v0.87.1/v0.90.2 pattern:
 5. external / third-party review
 6. accepted finding remediation or explicit deferral
 7. next-milestone planning and handoff
-8. release notes and release evidence
+8. release notes, end-of-milestone report, and release evidence
 9. release ceremony
 
 ## Release Non-Claims

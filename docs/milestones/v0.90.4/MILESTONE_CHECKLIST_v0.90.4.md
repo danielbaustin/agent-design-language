@@ -39,4 +39,5 @@
 - [ ] External review complete or explicitly waived.
 - [ ] Accepted findings fixed or dispositioned.
 - [ ] Changelog, README, Cargo metadata, and milestone docs aligned.
+- [ ] End-of-milestone report written or refreshed.
 - [ ] Ceremony completed.

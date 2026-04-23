@@ -20,6 +20,7 @@ Freedom Gate mediation, and trace.
 - feature proof coverage record
 - internal and external review notes
 - accepted-finding disposition record
+- end-of-milestone report
 
 ## Release Risks
 

@@ -29,7 +29,7 @@ format and envelope before implementation widens.
 | WP-17 | #2344 | External / third-party review | Run bounded external review and record findings or zero-finding disposition | third-party review record | WP-16 |
 | WP-18 | #2345 | Review findings remediation | Fix accepted internal/external findings or defer explicitly with owner and rationale | remediation PRs or deferral records | WP-16, WP-17 |
 | WP-19 | #2346 | Next-milestone planning and handoff | Prepare v0.90.4/v0.91/v0.92 handoff and preserve later-scope boundaries before ceremony | next-milestone planning package and handoff notes | WP-18 |
-| WP-20 | #2347 | Release ceremony | Complete release closure and handoff | release notes, ceremony result, next-milestone handoff | WP-19 |
+| WP-20 | #2347 | Release ceremony | Complete release closure and handoff | release notes, ceremony result, end-of-milestone report, next-milestone handoff | WP-19 |
 
 ## Compression Candidate
 

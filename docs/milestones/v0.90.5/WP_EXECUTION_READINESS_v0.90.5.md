@@ -338,6 +338,7 @@ Required validation:
 Required outputs:
 
 - Release notes updated from actual evidence.
+- End-of-milestone report written and stored in the local planning lane or other explicitly designated closeout surface.
 - Changelog, README, Cargo metadata, feature list, milestone checklist, review
   records, and issue closeout state aligned.
 - Ceremony script run using the milestone's accepted closeout pattern.

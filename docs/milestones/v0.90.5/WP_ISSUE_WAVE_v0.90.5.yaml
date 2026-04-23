@@ -142,5 +142,5 @@ work_packages:
     issue: planned
     title: Release ceremony
     queue: release
-    outcome: release evidence and next handoff
+    outcome: release evidence, end-of-milestone report, and next handoff
     depends_on: WP-19
