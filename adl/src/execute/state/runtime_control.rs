@@ -2,7 +2,6 @@
 //!
 /// Execution state is derived deterministically from step records and trace signals
 /// to provide machine-readable status and control diagnostics.
-
 use std::collections::HashSet;
 
 use crate::artifacts;
@@ -110,7 +109,6 @@ fn collect_runtime_signal_evidence(
         scheduler_max_parallel_observed,
     }
 }
-
 
 fn compute_max_parallel_observed_from_trace(tr: &trace::Trace) -> usize {
     let mut active: HashSet<&str> = HashSet::new();
