@@ -2,17 +2,16 @@
 
 ## Status
 
-Draft release notes. Do not publish as shipped scope until the milestone closes.
-WP-15 has created the release-readiness reviewer entry surface after WP-14A
-landed feature-proof coverage. Internal review finalization, third-party
-review, remediation, handoff, and ceremony remain release-tail gates.
+Pre-ceremony release notes draft. The implementation, demo/proof, internal
+review, third-party review, and handoff passes are complete; only the WP-20
+ceremony remains before publication.
 
-## Planned Headline
+## Draft Headline
 
-v0.90.3 is planned to introduce the citizen-state substrate: a local-first,
-reviewable foundation for protected citizen continuity.
+v0.90.3 introduces the citizen-state substrate: a local-first, reviewable
+foundation for protected citizen continuity.
 
-## Planned Highlights
+## Draft Highlights
 
 - canonical private citizen-state format
 - signed state envelopes and local trust-root fixture
@@ -29,7 +28,7 @@ reviewable foundation for protected citizen continuity.
 - narrow economics placement decision for v0.90.4 handoff
 - inhabited CSM Observatory flagship proof demo
 
-## Planned Non-Claims
+## Draft Non-Claims
 
 - v0.90.3 does not birth the first true Gödel agent.
 - v0.90.3 does not complete moral/emotional civilization.
@@ -39,5 +38,4 @@ reviewable foundation for protected citizen continuity.
 
 ## Release Note Rule
 
-At closeout, replace planned language with actual shipped evidence. Delete any
-item that did not land or mark it explicitly as deferred.
+At ceremony closeout, keep only landed evidence and any explicit deferrals.

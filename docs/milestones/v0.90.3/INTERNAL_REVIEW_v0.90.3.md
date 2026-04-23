@@ -32,8 +32,11 @@ and `WP-15` work:
   WP-14A feature-proof coverage.
 
 This report does not approve the release by itself. It says the internal review
-gate is healthy enough to hand to external review, remediation/deferral, next
-milestone handoff, and final ceremony.
+gate was healthy enough to hand to external review, remediation/deferral, next
+milestone handoff, and final ceremony. That later release-tail work has now
+confirmed the same direction: third-party review closed with no blocking
+findings, and the only small internal stdout-path hygiene item was fixed in
+#2415.
 
 ## Readiness Gate
 
@@ -42,9 +45,13 @@ At final refresh:
 - `WP-01` through `WP-14` were closed.
 - `WP-14A` (`#2341`) was closed at 2026-04-22T19:26:32Z.
 - `WP-15` (`#2342`) was closed at 2026-04-22T19:40:24Z.
-- `WP-16` (`#2343`) is the active internal-review PR.
-- `WP-17` through `WP-20` remain the third-party review, accepted-finding
-  remediation, next-milestone handoff, and release ceremony tail.
+- `WP-16` (`#2343`) closed and merged at 2026-04-22T19:58:27Z.
+- `WP-17` (`#2344`) closed after the third-party review reported no blocking
+  findings.
+- `WP-18` (`#2345`) closed by zero-finding disposition, with the small internal
+  stdout-path hygiene follow-up completed in `#2415`.
+- `WP-19` and `WP-20` remain the next-milestone handoff and release ceremony
+  tail.
 
 ## Findings
 
@@ -157,27 +164,26 @@ Not run:
   tracker truth and preserves release-tail coverage as a later ceremony or CI
   responsibility.
 
-## WP-18 Remediation Queue
+## WP-18 Remediation Outcome
 
-Recommended order:
+Outcome:
 
-1. Decide whether to add v0.90.3 demo wrapper scripts for feature-proof
-   coverage and Observatory flagship proof.
-2. Decide whether demo stdout should print repo-relative output roots or keep
-   absolute local roots as operator diagnostics.
-3. Preserve any new `WP-17` external-review findings separately so this
-   internal-review packet does not blur internal and external review evidence.
+1. Demo wrapper parity was left as optional later polish; it was not needed for
+   truthful proof or release readiness.
+2. Demo stdout path hygiene was accepted as the only concrete internal P3
+   follow-up and completed in `#2415`.
+3. `WP-17` external review produced no additional remediation bundle.
 
-## WP-17 Handoff
+## WP-17 Handoff And Result
 
-WP-17 can use this packet as final internal-review context. External review
-should recheck the D12 and D13 commands, confirm the two P3 notes are acceptable
-or routed to WP-18, and preserve any third-party findings as a separate review
-surface.
+WP-17 used this packet as final internal-review context. External review later
+closed with no blocking findings, so this internal packet remained the main
+source for the small P3 polish queue rather than becoming one half of a larger
+remediation story.
 
 ## Release-Tail Disposition
 
-Current assessment: ready for external review handoff. The v0.90.3
-implementation quality is high in the core citizen-state substrate, and the
-remaining internal-review notes are release-tail ergonomics and publication
-hygiene rather than missing core implementation.
+Current assessment: internal review is complete and later tail work confirmed
+its direction. The v0.90.3 implementation quality is high in the core
+citizen-state substrate, and the internal-review notes resolved as release-tail
+ergonomics rather than missing core implementation.

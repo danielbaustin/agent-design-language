@@ -44,8 +44,10 @@ Required validation:
 
 - Check the issue wave matches WP ordering.
 - Check no WP body is generic or missing required outputs and validation.
-- Check planning docs contain no unresolved scaffold markers or local host
+- Check planning docs contain no unresolved template placeholders or local host
   paths.
+- Check the v0.90.3 handoff truth still shows no blocking carryover before
+  opening the wave.
 
 ## WP-02: Economics Inheritance And Authority Audit
 

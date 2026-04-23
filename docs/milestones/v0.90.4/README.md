@@ -4,10 +4,13 @@
 
 Draft milestone package. v0.90.4 is planned as the citizen economics and
 contract-market substrate milestone. It was initially placed by planning issue
-#2271 and polished for execution readiness by #2389.
+#2271, polished for execution readiness by #2389, and reviewed again during the
+v0.90.3 WP-19 handoff pass.
 
 The issue wave has not been opened. This package is the reviewable planning
-source for a later WP-01 issue-wave creation pass.
+source for a later WP-01 issue-wave creation pass. The v0.90.3 review tail
+closed with no blocking carryover, so this package is intended to be ready for
+immediate WP-01 issue-wave creation after the v0.90.3 ceremony.
 
 ## Thesis
 
@@ -119,6 +122,10 @@ projection, challenge, appeal, and continuity semantics.
 
 If v0.90.3 defers a required authority surface, v0.90.4 should either narrow its
 proof to a fixture-backed boundary or delay the affected WP.
+
+The current handoff result is favorable: v0.90.3 closed internal review,
+third-party review, and accepted-finding disposition without any blocking
+economics-facing carryover.
 
 ## Handoff To v0.90.5
 

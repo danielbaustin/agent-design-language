@@ -3,7 +3,9 @@
 ## Status
 
 Forward planning. v0.92 is not yet an active implementation milestone and has
-no final issue wave.
+no final issue wave. Its boundary was rechecked during the v0.90.3 WP-19
+handoff pass so it stays about identity and birth rather than absorbing
+economics, governed tools, or constitutional citizenship prematurely.
 
 ## Purpose
 
@@ -45,6 +47,9 @@ v0.92 depends on:
 
 - v0.90.3 for citizen state, signed envelopes, lineage, continuity witnesses,
   standing, challenge, sanctuary, quarantine, and redacted projections
+- v0.90.4 only for any landed economic or contractual context that becomes part
+  of a later capability envelope; v0.92 must not absorb contract-market
+  implementation
 - v0.90.5 for governed-tool authority, UTS, ACC, and tool-call trace if
   capability envelopes include tool-mediated actions
 - v0.91 for moral trace, moral trajectory review, outcome linkage, wellbeing,

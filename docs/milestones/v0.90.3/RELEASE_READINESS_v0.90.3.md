@@ -2,17 +2,18 @@
 
 ## Status
 
-WP-15 pre-third-party-review convergence record.
+WP-19 handoff record, ready for WP-20 ceremony.
 
 This document is the reviewer entry surface for the v0.90.3 citizen-state
-substrate milestone after WP-14A feature-proof coverage and before the final
-third-party review tail. It records the current quality posture, review
-entrypoints, proof evidence, and release-tail gates.
+substrate milestone after the internal review, third-party review, and accepted
+finding disposition pass. It records the current quality posture, review
+entrypoints, proof evidence, and the final handoff and ceremony gates.
 
 Important boundary: WP-14A / #2341 has landed the final feature-proof coverage
-record. WP-15 aligns docs and quality truth, but it does not approve the
-release, replace internal review, replace third-party review, or close the
-release-tail remediation/handoff/ceremony gates.
+record. WP-15 aligned docs and quality truth, WP-16 and WP-17 closed the review
+passes, and WP-18 closed by zero-finding disposition plus the small internal
+stdout-path hygiene cleanup issue #2415. None of those steps approve the
+release by themselves; WP-19 and WP-20 still own final handoff and ceremony.
 
 ## Review Entry Points
 
@@ -39,17 +40,20 @@ release-tail remediation/handoff/ceremony gates.
 
 ## Current Issue State
 
-At WP-15 refresh:
+At WP-19 refresh:
 
 - WP-01 through WP-14A have landed.
 - WP-14A / #2341 landed the explicit demo-matrix and feature-proof coverage
   record.
 - WP-15 / #2342 records quality, documentation, and reviewer-entry convergence.
-- WP-16 internal review is in progress and has not identified a P0/P1 blocker
-  in the citizen-state substrate; any remaining internal-review items are
-  expected to be minor P2/P3 follow-ups or explicit deferrals.
-- WP-17 through WP-20 remain the third-party review, remediation, planning
-  handoff, and ceremony tail.
+- WP-16 / #2343 is closed. Internal review found no P0, P1, or P2 findings and
+  left only small P3 polish notes.
+- WP-17 / #2344 is closed. Third-party review reported no P0, P1, or P2
+  findings and no external remediation bundle was required.
+- WP-18 / #2345 is closed by truthful zero-finding disposition plus completion
+  of the small internal stdout-path hygiene follow-up #2415.
+- WP-19 / #2346 completed the next-milestone planning and handoff pass.
+- WP-20 / #2347 remains the final release ceremony.
 
 ## Landed Proof Surface
 
@@ -133,10 +137,9 @@ This convergence pass used focused documentation and release-truth validation:
   full-Rust-test reduction. Green `adl-ci` and `adl-coverage` checks on
   docs-only PRs can be healthy PR evidence, but they are not full release
   coverage evidence.
-- Gap status: the active gap risk before third-party review is not a missing
-  core runtime slice; it is release-tail truth. Internal review should preserve
-  any minor P2/P3 follow-ups or explicit deferrals without reopening the
-  completed WP-14A feature-proof coverage gate.
+- Gap status: the active gap risk before ceremony is no longer review-tail
+  findings. The remaining work is handoff truth and ceremony sequencing from
+  clean main.
 - Rust module watch: no new Rust refactoring scope is introduced by WP-15.
   Runtime/source changes should still use the coverage-impact preflight before
   PR publication.
@@ -146,9 +149,8 @@ This convergence pass used focused documentation and release-truth validation:
 - Active milestone: v0.90.3
 - Crate version: `0.90.3`
 - Most recently completed milestone: v0.90.2
-- Current release-tail stage: WP-15 convergence after WP-14A feature-proof
-  coverage, with WP-16 internal review finalization and WP-17 third-party review
-  next
+- Current release-tail stage: WP-20 ceremony after clean internal/external
+  review closure and completed next-milestone handoff
 
 Reviewers should treat any conflicting older crate-version statement or claim
 that v0.90.3 is still pre-issue-wave as stale release-truth drift.
@@ -167,13 +169,6 @@ v0.90.3 does not claim:
 
 ## Remaining Release-Tail Gates
 
-- WP-16 internal review must record final P0/P1/P2/P3 findings or explicit
-  no-finding statements; the current internal-review posture has no P0/P1
-  blocker in the citizen-state substrate.
-- WP-17 third-party review must archive review artifacts in the review
-  directory.
-- WP-18 must fix accepted findings or defer them with owner and rationale.
-- WP-19 must complete next-milestone planning and handoff before ceremony.
 - WP-20 release ceremony must run from clean main after all closeout PRs merge.
 
 ## WP-15 Disposition

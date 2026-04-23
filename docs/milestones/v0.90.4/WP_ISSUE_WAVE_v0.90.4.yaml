@@ -8,7 +8,9 @@ notes:
   - "Issue wave is not open yet."
   - "This package is owned by planning issue #2271."
   - "This package was polished for execution readiness by #2389."
+  - "This package was reviewed again during v0.90.3 WP-19 handoff."
   - "v0.90.4 consumes v0.90.3 citizen-state, standing, access-control, projection, and challenge/appeal authority."
+  - "v0.90.3 closed internal review, third-party review, and accepted-finding disposition without blocking economics-facing carryover."
   - "Do not claim payment settlement, Lightning, x402, or full inter-polis economics in v0.90.4 unless a later decision explicitly changes scope."
   - "Use fixture-first contract-market proof before any production economics claims."
   - "Preserve an explicit demo matrix and feature proof demo WP before docs/review convergence."
@@ -16,6 +18,7 @@ notes:
 card_update_rule:
   - "WP-01 must copy the relevant section from WP_EXECUTION_READINESS_v0.90.4.md into each issue body before implementation."
   - "Cards must include required outputs, required validation, source docs, non-goals, and demo/proof expectations."
+  - "WP-01 should confirm the v0.90.3 handoff still has no blocking carryover before opening the wave."
   - "No issue should claim implementation, review, payment, settlement, or release completion until evidence has landed and validated."
 work_packages:
   - wp: WP-01

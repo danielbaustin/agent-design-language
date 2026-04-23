@@ -2,13 +2,14 @@
 
 ## Planning Readiness
 
-- [ ] v0.90.4 planning package reviewed.
+- [x] v0.90.4 planning package reviewed.
 - [ ] v0.90.4 issue wave opened from reviewed WP YAML.
 - [ ] WP issue numbers recorded in WBS and WP YAML.
 - [ ] WP issue cards authored from WP_EXECUTION_READINESS_v0.90.4.md.
-- [ ] v0.90.3 citizen-state dependency state confirmed.
-- [ ] Payment and inter-polis deferrals accepted or explicitly changed.
-- [ ] v0.90.5 governed-tools handoff boundary accepted.
+- [x] v0.90.3 citizen-state dependency state confirmed.
+- [x] Payment and inter-polis deferrals accepted or explicitly changed.
+- [x] v0.90.5 governed-tools handoff boundary accepted.
+- [x] No blocking carryover remains from the v0.90.3 review tail.
 
 ## Execution Readiness
 

@@ -8,8 +8,11 @@ WP-19 handoff pass (#2263).
 
 The issue wave is open as #2327-#2347. WP-01 is #2327, WP-02 through WP-14 are
 #2328-#2340, WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
-WP-01 through WP-14A have landed. WP-15 records the quality, docs, and
-reviewer-entry convergence surface before the final review tail.
+WP-01 through WP-18 are now complete. WP-16 internal review closed with only
+minor P3 notes, WP-17 external review closed with no third-party findings, and
+WP-18 closed by truthful zero-finding disposition plus the small stdout-path
+hygiene follow-up #2415. WP-19 completes the next-milestone handoff package, so
+WP-20 release ceremony is the only remaining milestone-closeout step.
 
 ## Thesis
 

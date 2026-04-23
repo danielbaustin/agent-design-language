@@ -32,11 +32,11 @@
 
 - [x] Docs, quality gate, and feature docs converge before internal review
 - [x] Demo matrix and feature proof coverage converge before internal review
-- [ ] Internal review complete
-- [ ] External / third-party review complete
-- [ ] Accepted review findings remediated or explicitly deferred
-- [ ] Next-milestone planning and handoff complete
-- [ ] Release notes describe actual shipped scope
+- [x] Internal review complete
+- [x] External / third-party review complete
+- [x] Accepted review findings remediated or explicitly deferred
+- [x] Next-milestone planning and handoff complete
+- [x] Release notes describe actual shipped scope
 - [ ] Release ceremony preflight passes
 - [ ] Tag and release completed or blocked truthfully
 

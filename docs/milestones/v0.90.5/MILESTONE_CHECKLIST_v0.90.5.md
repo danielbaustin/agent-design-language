@@ -2,11 +2,13 @@
 
 ## Before Issue Wave
 
-- [ ] v0.90.5 planning package reviewed
-- [ ] UTS/ACC scope confirmed as Governed Tools v1.0
+- [x] v0.90.5 planning package reviewed
+- [x] UTS/ACC scope confirmed as Governed Tools v1.0
 - [ ] Issue wave opened from reviewed YAML
 - [ ] WP issue numbers recorded in WBS and YAML
 - [ ] WP issue cards authored from WP_EXECUTION_READINESS_v0.90.5.md
+- [x] Package is ready to accept v0.90.4 handoff without reopening scope
+  confusion about tool authority
 
 ## Implementation Gates
 
