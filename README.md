@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.90.3%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.90.4%20active-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -119,24 +119,26 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.90.3**
-- Current release state: **v0.90.3 has completed WP-01 through WP-19; WP-20 release ceremony is the only remaining tail step**
-- Most recently completed milestone: **v0.90.2**
+- Active milestone: **v0.90.4**
+- Current release state: **v0.90.3 is released; v0.90.4 is open as issue wave #2420-#2440**
+- Most recently completed milestone: **v0.90.3**
 - Current crate version: **0.90.3**
-- Version note: **v0.90.3 is the active citizen-state substrate development line**
-- Previous completed milestone package: **v0.89.1**
-- Previous completed milestone: **v0.89**
+- Version note: **v0.90.4 is the active citizen economics and contract-market development line**
+- Previous completed milestone package: **v0.90.2**
+- Previous completed milestone: **v0.90.1**
 - Project changelog: `CHANGELOG.md`
 
 ADL is in active development. This repository contains both implemented runtime surfaces and milestone/spec/planning documents. Read the milestone docs as bounded engineering records: they distinguish what has shipped, what is under active review or closeout, what is demoable, and what is still planned.
 
 ## Current Milestone
 
-v0.90.3 is the active citizen-state substrate milestone. Its tracked package
-lives under `docs/milestones/v0.90.3/`. The issue wave is open as #2327-#2347:
-WP-01 is #2327, WP-02 through WP-14 are #2328-#2340, WP-14A is #2341, and
-WP-15 through WP-20 are #2342-#2347. WP-01 through WP-19 have landed, and only
-WP-20 release ceremony remains.
+v0.90.4 is the active citizen economics and contract-market substrate
+milestone. Its tracked package lives under `docs/milestones/v0.90.4/`. The
+issue wave is open as #2420-#2440: WP-01 is #2420, WP-02 through WP-14 are
+#2421-#2433, WP-14A is #2434, and WP-15 through WP-20 are #2435-#2440.
+
+v0.90.3 is now the most recently completed citizen-state milestone and the
+current released crate line remains 0.90.3 until v0.90.4 closes.
 
 The current release-tail entry surface is
 `docs/milestones/v0.90.3/RELEASE_READINESS_v0.90.3.md`. It records the landed

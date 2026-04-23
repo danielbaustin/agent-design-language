@@ -14,10 +14,10 @@
 
 | Doc | Purpose | Execution WPs |
 | --- | --- | --- |
-| WBS_v0.90.4.md | 20-WP execution plan for the contract-market substrate milestone | WP-01 |
-| DEMO_MATRIX_v0.90.4.md | planned proof matrix and non-proving boundaries | WP-01, WP-14, WP-14A |
-| WP_ISSUE_WAVE_v0.90.4.yaml | future issue-wave source once reviewed | WP-01 |
-| WP_EXECUTION_READINESS_v0.90.4.md | card-authoring source for concrete WP outputs and validation | WP-01 |
+| WBS_v0.90.4.md | opened execution map for the contract-market substrate milestone | WP-01 / #2420 |
+| DEMO_MATRIX_v0.90.4.md | live proof matrix and non-proving boundaries | WP-01 / #2420, WP-14 / #2433, WP-14A / #2434 |
+| WP_ISSUE_WAVE_v0.90.4.yaml | opened issue-wave source of truth with real issue numbers | WP-01 / #2420 |
+| WP_EXECUTION_READINESS_v0.90.4.md | card-authoring source for concrete WP outputs and validation | WP-01 / #2420 |
 
 ## Context / Idea Docs
 

@@ -6,11 +6,11 @@ Use this index to find the right source of truth quickly.
 
 ## Start Here
 
-- Active milestone package: `milestones/v0.90.1/` with issue wave open and
-  implementation complete through WP-12
-- Most recently completed milestone: `milestones/v0.90/`
-- Previous completed milestone package: `milestones/v0.89.1/`
-- Previous completed milestone: `milestones/v0.89/`
+- Active milestone package: `milestones/v0.90.4/` with issue wave open as
+  `#2420-#2440`
+- Most recently completed milestone: `milestones/v0.90.3/`
+- Previous completed milestone package: `milestones/v0.90.2/`
+- Previous completed milestone: `milestones/v0.90.1/`
 - Root project overview: `../README.md`
 - Runtime and CLI guide: `../adl/README.md`
 - Language/spec entrypoint: `../adl-spec/README.md`
@@ -19,11 +19,11 @@ Use this index to find the right source of truth quickly.
 
 ## Milestone Documentation
 
-- Active milestone package: `milestones/v0.90.1/` with issue wave open and
-  implementation complete through WP-12
-- Most recently completed milestone: `milestones/v0.90/`
-- Previous completed milestone package: `milestones/v0.89.1/`
-- Previous completed milestone: `milestones/v0.89/`
+- Active milestone package: `milestones/v0.90.4/` with issue wave open as
+  `#2420-#2440`
+- Most recently completed milestone: `milestones/v0.90.3/`
+- Previous completed milestone package: `milestones/v0.90.2/`
+- Previous completed milestone: `milestones/v0.90.1/`
 - Recent stable milestones: `milestones/v0.87.1/`, `milestones/v0.87/`, `milestones/v0.86/`, `milestones/v0.85/`, `milestones/v0.8/`
 - Earlier milestones: `milestones/v0.75/`, `milestones/v0.7/`, `milestones/v0.6/`
 - Historical milestones: `milestones/v0.5/`, `milestones/v0.4/`, `milestones/v0.3/`, `milestones/v0.2/`
@@ -40,12 +40,17 @@ Use this index to find the right source of truth quickly.
 ## Demo and Tooling Surfaces
 
 - Canonical demo index: `../demos/README.md`
-- Active milestone demo matrix: `milestones/v0.90.1/DEMO_MATRIX_v0.90.1.md`
-- Most recently completed milestone demo matrix: `milestones/v0.90/DEMO_MATRIX_v0.90.md`
-- Previous completed milestone demo matrix: `milestones/v0.89.1/DEMO_MATRIX_v0.89.1.md`
-- Earlier milestone demo matrix: `milestones/v0.89/DEMO_MATRIX_v0.89.md`
+- Active milestone demo matrix: `milestones/v0.90.4/DEMO_MATRIX_v0.90.4.md`
+- Most recently completed milestone demo matrix: `milestones/v0.90.3/DEMO_MATRIX_v0.90.3.md`
+- Previous completed milestone demo matrix: `milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md`
+- Earlier milestone demo matrix: `milestones/v0.90.1/DEMO_MATRIX_v0.90.1.md`
 - Editor/tooling demo surfaces: `tooling/editor/README.md`
 
 ## Notes
 
-Milestone docs should be read as bounded engineering records. They distinguish what has shipped, what is currently being implemented, what is demoable, and what is planned for later milestones. At the moment, `v0.90.1` is the active Runtime v2 foundation milestone with its issue wave open, implementation complete through WP-12, WP-13 docs alignment underway, and WP-15A third-party review queued as #2215; `v0.90` is the most recently completed long-lived-agent runtime milestone, and `v0.89.1` is the previous completed adversarial-runtime milestone.
+Milestone docs should be read as bounded engineering records. They distinguish
+what has shipped, what is currently being implemented, what is demoable, and
+what is planned for later milestones. At the moment, `v0.90.4` is the active
+citizen economics and contract-market milestone with its issue wave open as
+`#2420-#2440`; `v0.90.3` is the most recently completed citizen-state milestone;
+and `v0.90.2` is the previous completed Runtime v2 first-run milestone.

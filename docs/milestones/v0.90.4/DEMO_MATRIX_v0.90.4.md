@@ -2,7 +2,8 @@
 
 ## Status
 
-Planning draft. No v0.90.4 issue wave has been opened yet.
+Issue wave open. v0.90.4 demos now map to live execution issues #2421 through
+#2434, with WP-14 as #2433 and WP-14A as #2434.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |
