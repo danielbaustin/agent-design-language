@@ -3,7 +3,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
+BARREL_DIR="$ROOT/adl/src/runtime_v2/__coverage_impact_test__"
+trap 'rm -rf "$TMP" "$BARREL_DIR"' EXIT
 
 SCRIPT="$ROOT/adl/tools/check_coverage_impact.sh"
 
@@ -66,6 +67,23 @@ if bash "$SCRIPT" --changed-files "$changed" --summary "$missing_summary" >/tmp/
   exit 1
 fi
 grep -F "no coverage row" /tmp/coverage-impact-missing-row.out >/dev/null
+
+mkdir -p "$BARREL_DIR"
+cat >"$BARREL_DIR/mod.rs" <<'EOF'
+mod contract_schema;
+mod contracts;
+
+pub use contract_schema::*;
+pub use contracts::*;
+
+#[cfg(test)]
+mod tests;
+EOF
+
+barrel_changed="$TMP/barrel-changed.txt"
+printf 'M\tadl/src/runtime_v2/__coverage_impact_test__/mod.rs\n' >"$barrel_changed"
+bash "$SCRIPT" --changed-files "$barrel_changed" --summary "$missing_summary" >/tmp/coverage-impact-barrel-pass.out
+grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-barrel-pass.out >/dev/null
 
 passing_summary="$TMP/passing-summary.json"
 make_summary "/private/tmp/repo/adl/src/runtime_v2/new_large_surface.rs" 88 100 "$passing_summary"
