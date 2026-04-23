@@ -1,4 +1,9 @@
 use super::*;
+
+pub fn runtime_v2_contract_schema_contract() -> Result<RuntimeV2ContractSchemaArtifacts> {
+    RuntimeV2ContractSchemaArtifacts::prototype()
+}
+
 pub fn runtime_v2_manifold_contract() -> Result<RuntimeV2ManifoldRoot> {
     RuntimeV2ManifoldRoot::prototype("proto-csm-01")
 }

@@ -2,6 +2,7 @@ mod access_control;
 mod boot_admission;
 mod challenge;
 mod citizen;
+mod contract_schema;
 mod contracts;
 mod csm_run;
 mod feature_proof_coverage;
@@ -44,6 +45,8 @@ pub use boot_admission::*;
 pub use challenge::*;
 #[allow(unused_imports)]
 pub use citizen::*;
+#[allow(unused_imports)]
+pub use contract_schema::*;
 #[allow(unused_imports)]
 pub use contracts::*;
 #[allow(unused_imports)]

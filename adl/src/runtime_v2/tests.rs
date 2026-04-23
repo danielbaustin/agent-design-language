@@ -5,6 +5,7 @@ mod boot_admission;
 mod challenge;
 mod citizen_lifecycle;
 mod common;
+mod contract_schema;
 mod csm_run_packet;
 mod feature_proof_coverage;
 mod freedom_gate_mediation;
