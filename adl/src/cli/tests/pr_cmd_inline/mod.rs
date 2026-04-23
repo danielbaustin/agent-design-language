@@ -1,5 +1,5 @@
 use super::*;
-use crate::cli::pr_cmd_cards::write_output_card;
+use crate::cli::pr_cmd_cards::{validate_bootstrap_output_card, write_output_card};
 use crate::cli::pr_cmd_prompt::{infer_wp_from_title, render_generated_issue_prompt};
 use crate::cli::pr_cmd_validate::bootstrap_stub_reason;
 use crate::cli::tests::env_lock as cli_env_lock;
@@ -316,6 +316,46 @@ verification_summary:
 "#
     );
     fs::write(path, body).expect("write completed sor fixture");
+}
+
+#[test]
+fn write_output_card_emits_truthful_pre_run_scaffold() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-bootstrap-output-card");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+
+    let issue_ref = IssueRef::new(1442, "v0.90.4", "normalize-child-sors").expect("issue ref");
+    let output = issue_ref.task_bundle_output_path(&repo);
+    fs::create_dir_all(output.parent().expect("output parent")).expect("create bundle dir");
+
+    write_output_card(
+        &repo,
+        &output,
+        &issue_ref,
+        "[v0.90.4][tools] Normalize child SORs during WP-01 issue-wave opening",
+        "codex/1442-normalize-child-sors",
+    )
+    .expect("write bootstrap output");
+
+    validate_bootstrap_output_card(
+        &repo,
+        1442,
+        "normalize-child-sors",
+        "codex/1442-normalize-child-sors",
+        &output,
+    )
+    .expect("bootstrap output should validate");
+
+    let text = fs::read_to_string(&output).expect("read output");
+    assert!(text.contains("Pre-run output scaffold initialized during issue-wave opening."));
+    assert!(text.contains("Local ignored output-card scaffold"));
+    assert!(text.contains("Integration method used: direct write in main repo for the local ignored pre-run record; tracked implementation artifacts do not exist yet"));
+    assert!(text.contains("Verification scope: main_repo"));
+    assert!(text.contains("Issue-wave opening emits a truthful pre-run SOR scaffold instead of leaving raw template residue for later cleanup."));
+    assert!(!text.contains("none | list explicitly"));
+    assert!(!text.contains("PASS | FAIL"));
+    assert!(!text.contains("worktree | pr_branch | main_repo"));
 }
 
 mod basics;
