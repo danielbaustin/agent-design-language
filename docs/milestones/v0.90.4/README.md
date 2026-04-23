@@ -2,15 +2,14 @@
 
 ## Status
 
-Draft milestone package. v0.90.4 is planned as the citizen economics and
-contract-market substrate milestone. It was initially placed by planning issue
-#2271, polished for execution readiness by #2389, and reviewed again during the
-v0.90.3 WP-19 handoff pass.
+Active milestone package. v0.90.4 is the citizen economics and contract-market
+substrate milestone. It was initially placed by planning issue #2271, polished
+for execution readiness by #2389, reviewed again during the v0.90.3 WP-19
+handoff pass, and opened by WP-01 as issue #2420 after the v0.90.3 release
+ceremony.
 
-The issue wave has not been opened. This package is the reviewable planning
-source for a later WP-01 issue-wave creation pass. The v0.90.3 review tail
-closed with no blocking carryover, so this package is intended to be ready for
-immediate WP-01 issue-wave creation after the v0.90.3 ceremony.
+The issue wave is now open as #2420 through #2440. This package is no longer
+planning-only truth: it is the tracked execution map for the live v0.90.4 wave.
 
 ## Thesis
 
@@ -85,12 +84,13 @@ Out of scope:
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.4.md
 - Release plan: RELEASE_PLAN_v0.90.4.md
 - Release notes draft: RELEASE_NOTES_v0.90.4.md
-- Issue wave draft: WP_ISSUE_WAVE_v0.90.4.yaml
+- Issue wave: WP_ISSUE_WAVE_v0.90.4.yaml
 
 ## Execution Rule
 
-This package is planning truth, not an execution claim. The WP issue wave must
-be created from the reviewed YAML before implementation starts.
+WP-01 created the issue wave from the reviewed YAML. Treat
+WP_ISSUE_WAVE_v0.90.4.yaml as the issue-number source of truth for the live
+milestone.
 
 Once the wave opens, issue work should happen in issue worktrees. Root checkout
 edits are not part of the ADL execution model.
@@ -98,6 +98,19 @@ edits are not part of the ADL execution model.
 WP-01 should use WP_EXECUTION_READINESS_v0.90.4.md as the card-authoring source
 so every issue body carries concrete outputs, validation, non-goals, and source
 docs instead of generic implementation language.
+
+## Open Issue Wave
+
+The official v0.90.4 wave is open:
+
+- WP-01 through WP-20 are #2420 through #2440
+- Sprint 1 is #2420 through #2424
+- Sprint 2 is #2425 through #2429
+- Sprint 3 is #2430 through #2434
+- Sprint 4 is #2435 through #2440
+
+WP-14A remains explicit as #2434 so demo/proof coverage does not disappear into
+review tail work.
 
 ## Compression Rule
 

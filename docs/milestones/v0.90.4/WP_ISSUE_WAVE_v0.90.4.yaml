@@ -1,12 +1,12 @@
 milestone: v0.90.4
-status: tracked_planning_ready
-issue_wave_opened: false
-owner_issue: 2271
+status: issue_wave_open
+issue_wave_opened: true
+owner_issue: 2420
 planning_source: docs/milestones/v0.90.4
 tracked_package: docs/milestones/v0.90.4
 notes:
-  - "Issue wave is not open yet."
-  - "This package is owned by planning issue #2271."
+  - "Issue wave opened by WP-01 as #2420 after the v0.90.3 release ceremony."
+  - "This package was initially placed by planning issue #2271."
   - "This package was polished for execution readiness by #2389."
   - "This package was reviewed again during v0.90.3 WP-19 handoff."
   - "v0.90.4 consumes v0.90.3 citizen-state, standing, access-control, projection, and challenge/appeal authority."
@@ -22,127 +22,127 @@ card_update_rule:
   - "No issue should claim implementation, review, payment, settlement, or release completion until evidence has landed and validated."
 work_packages:
   - wp: WP-01
-    issue: planned
+    issue: 2420
     title: Promote v0.90.4 milestone package
     queue: docs
     outcome: tracked v0.90.4 docs, issue wave, and readiness-authored issue cards
     depends_on: v0.90.3 closeout
   - wp: WP-02
-    issue: planned
+    issue: 2421
     title: Economics inheritance and authority audit
     queue: docs
     outcome: authority dependency report
     depends_on: WP-01
   - wp: WP-03
-    issue: planned
+    issue: 2422
     title: Contract schema
     queue: runtime
     outcome: contract schema, examples, and negative fixtures
     depends_on: WP-02
   - wp: WP-04
-    issue: planned
+    issue: 2423
     title: Bid schema
     queue: runtime
     outcome: bid schema and bid fixtures
     depends_on: WP-03
   - wp: WP-05
-    issue: planned
+    issue: 2424
     title: Evaluation and selection model
     queue: runtime
     outcome: evaluation artifact and selection tests
     depends_on: WP-03, WP-04
   - wp: WP-06
-    issue: planned
+    issue: 2425
     title: Transition authority model
     queue: runtime
     outcome: transition matrix and authority tests
     depends_on: WP-02-WP-05
   - wp: WP-07
-    issue: planned
+    issue: 2426
     title: Contract lifecycle state
     queue: runtime
     outcome: lifecycle state machine and fixtures
     depends_on: WP-06
   - wp: WP-08
-    issue: planned
+    issue: 2427
     title: External counterparty model
     queue: runtime
     outcome: counterparty schema and denial cases
     depends_on: WP-02, WP-06
   - wp: WP-09
-    issue: planned
+    issue: 2428
     title: Delegation and subcontract model
     queue: runtime
     outcome: subcontract schema and trace-link tests
     depends_on: WP-03-WP-08
   - wp: WP-10
-    issue: planned
+    issue: 2429
     title: Resource stewardship bridge
     queue: docs
     outcome: resource bridge decision, fixture, tool-requirement boundary, and boundary notes
     depends_on: WP-03-WP-09
   - wp: WP-11
-    issue: planned
+    issue: 2430
     title: Contract-market fixture set
     queue: runtime
     outcome: fixture packet
     depends_on: WP-10
   - wp: WP-12
-    issue: planned
+    issue: 2431
     title: Contract-market runner
     queue: runtime
     outcome: runner and proof artifacts
     depends_on: WP-11
   - wp: WP-13
-    issue: planned
+    issue: 2432
     title: Review summary shape
     queue: docs
     outcome: summary schema and example
     depends_on: WP-11, WP-12
   - wp: WP-14
-    issue: planned
+    issue: 2433
     title: Bounded contract-market demo and negative cases
     queue: demo
     outcome: contract-market proof packet and negative test packet
     depends_on: WP-06-WP-13
   - wp: WP-14A
-    issue: planned
+    issue: 2434
     title: Demo matrix and feature proof demos
     queue: demo
     outcome: demo matrix update and feature proof coverage record
     depends_on: WP-03-WP-14
   - wp: WP-15
-    issue: planned
+    issue: 2435
     title: Quality gate, docs, and review convergence
     queue: docs
     outcome: coherent quality gate and docs/review package
     depends_on: WP-14A
   - wp: WP-16
-    issue: planned
+    issue: 2436
     title: Internal review
     queue: review
     outcome: findings-first internal review packet
     depends_on: WP-15
   - wp: WP-17
-    issue: planned
+    issue: 2437
     title: External review
     queue: review
     outcome: completed external review record
     depends_on: WP-16
   - wp: WP-18
-    issue: planned
+    issue: 2438
     title: Review findings remediation
     queue: review
     outcome: accepted findings fixed or explicitly deferred with owner and rationale
     depends_on: WP-16, WP-17
   - wp: WP-19
-    issue: planned
+    issue: 2439
     title: Next milestone planning handoff
     queue: docs
     outcome: v0.90.5 governed-tools handoff docs and backlog updates
     depends_on: WP-18
   - wp: WP-20
-    issue: planned
+    issue: 2440
     title: Release ceremony
     queue: release
     outcome: release notes, ceremony result, end-of-milestone report, and next handoff

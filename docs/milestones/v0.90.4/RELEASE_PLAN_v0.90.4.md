@@ -3,6 +3,13 @@
 v0.90.4 should release only when the contract-market substrate has a coherent
 schema, lifecycle, authority, fixture, runner, demo, and review-summary story.
 
+## Current State
+
+- Issue wave opened by WP-01 as #2420.
+- WP-02 through WP-20 are open as #2421 through #2440.
+- The tracked milestone package now records the live issue map and execution
+  order.
+
 ## Release Gates
 
 The milestone is releasable when:
