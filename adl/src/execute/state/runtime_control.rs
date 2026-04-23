@@ -1,3 +1,8 @@
+//! Runtime control surface used to derive bounded execution telemetry and routing state.
+//!
+/// Execution state is derived deterministically from step records and trace signals
+/// to provide machine-readable status and control diagnostics.
+
 use std::collections::HashSet;
 
 use crate::artifacts;
@@ -31,6 +36,7 @@ struct RuntimeSignalEvidence {
     scheduler_max_parallel_observed: usize,
 }
 
+/// Build a deterministic execution-control snapshot from step outputs and trace signals.
 pub fn derive_runtime_control_state(
     overall_status: &str,
     records: &[StepExecutionRecord],
@@ -104,6 +110,7 @@ fn collect_runtime_signal_evidence(
         scheduler_max_parallel_observed,
     }
 }
+
 
 fn compute_max_parallel_observed_from_trace(tr: &trace::Trace) -> usize {
     let mut active: HashSet<&str> = HashSet::new();
@@ -465,6 +472,7 @@ fn derive_agency_selection_state(
     }
 }
 
+/// Build the first-class instinctive control template used by downstream selection logic.
 pub fn select_instinct_runtime_candidate(
     selected_path: SelectedPath,
     dominant_instinct: DominantInstinct,

@@ -1,3 +1,8 @@
+//! Runtime-v2 private-state sealing and transition contracts.
+//!
+//! Defines seal/unseal style records and transitions used to close or restore
+//! sensitive private-state operations in a reviewable manner.
+
 use super::*;
 use base64::Engine;
 use sha2::{Digest, Sha256};

@@ -1,6 +1,15 @@
+//! Workflow tooling helpers for ADL issue and worktree path resolution.
+//!
+//! This module converts issue identifiers into concrete task cards, branch names,
+//! and worktree checkout locations used across the ADL PR lifecycle.
+
 use anyhow::{anyhow, Result};
 use std::path::{Path, PathBuf};
 
+/// Canonical reference to an ADL issue and its workflow-local artifacts.
+///
+/// The helper exposes validated identifiers and deterministic path derivation for
+/// issue prompts, task bundles, and branch names.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct IssueRef {
     issue_number: u32,
@@ -9,6 +18,11 @@ pub struct IssueRef {
 }
 
 impl IssueRef {
+    /// Build a validated `IssueRef` from user-supplied metadata.
+    ///
+    /// `scope` must be non-empty, and `slug` is normalized to a workflow-safe
+    /// form before being stored. The error contract is intentionally strict for
+    /// deterministic path construction.
     pub fn new(
         issue_number: u32,
         scope: impl Into<String>,
@@ -33,26 +47,32 @@ impl IssueRef {
         self.issue_number
     }
 
+    /// Return the issue scope token associated with this issue record.
     pub fn scope(&self) -> &str {
         &self.scope
     }
 
+    /// Return the normalized slug used in branch/task filenames.
     pub fn slug(&self) -> &str {
         &self.slug
     }
 
+    /// Return a zero-padded issue number, used for legacy ADL task directory names.
     pub fn padded_issue_number(&self) -> String {
         format!("{:04}", self.issue_number)
     }
 
+    /// Derive the standard `issue-xxxx` task identifier.
     pub fn task_issue_id(&self) -> String {
         format!("issue-{}", self.padded_issue_number())
     }
 
+    /// Return the canonical task bundle directory name used by the lifecycle tools.
     pub fn task_bundle_dir_name(&self) -> String {
         format!("{}__{}", self.task_issue_id(), self.slug)
     }
 
+    /// Resolve the source issue prompt path in the workflow scope.
     pub fn issue_prompt_path(&self, repo_root: &Path) -> PathBuf {
         repo_root
             .join(".adl")
@@ -97,6 +117,7 @@ impl IssueRef {
         format!("{prefix}/{}-{}", self.issue_number, self.slug)
     }
 
+    /// Return the default worktree directory for this issue.
     pub fn default_worktree_path(
         &self,
         primary_checkout_root: &Path,
@@ -117,6 +138,10 @@ impl IssueRef {
     }
 }
 
+/// Normalize a human-facing slug into a workflow-safe path segment.
+///
+/// The function keeps only lower-case alphanumerics and collapses all other
+/// characters to single dash separators, trimming leading/trailing separators.
 pub fn sanitize_slug(raw: impl AsRef<str>) -> String {
     let mut out = String::new();
     let mut last_was_dash = false;
@@ -176,6 +201,7 @@ pub fn resolve_primary_checkout_root(current_top: &Path, git_common_dir: Option<
     current_top.to_path_buf()
 }
 
+/// Resolve cards root from explicit override or default `.adl/cards`.
 pub fn resolve_cards_root(
     primary_checkout_root: &Path,
     cards_root_override: Option<&Path>,

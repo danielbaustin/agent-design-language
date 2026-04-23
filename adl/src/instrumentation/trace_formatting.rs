@@ -1,5 +1,8 @@
+//! Deterministic formatting utilities for normalized instrumentation events.
+
 use super::TraceEventNormalized;
 
+/// Render one normalized event into a stable single-line string.
 pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
     match ev {
         TraceEventNormalized::LifecyclePhaseEntered { phase } => {

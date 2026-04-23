@@ -1,3 +1,9 @@
+//! Runtime v2 public surface for core operational APIs and proof artifacts.
+//!
+//! This module groups the prototype runtime domain into smaller documented surfaces:
+//! manifold state, kernel control, citizen lifecycle, private-state pathways,
+//! and proof-bearing contracts used by downstream review tooling.
+
 mod access_control;
 mod boot_admission;
 mod challenge;

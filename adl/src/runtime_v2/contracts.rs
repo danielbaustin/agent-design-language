@@ -1,3 +1,8 @@
+//! Runtime-v2 shared contract types and validation-facing structures.
+//!
+//! The public surface in this module is used as the typed backbone for
+//! manifold, kernel, snapshot, and citizen artifact contracts.
+
 use super::*;
 pub fn runtime_v2_manifold_contract() -> Result<RuntimeV2ManifoldRoot> {
     RuntimeV2ManifoldRoot::prototype("proto-csm-01")

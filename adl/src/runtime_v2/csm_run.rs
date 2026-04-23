@@ -1,3 +1,8 @@
+//! Runtime-v2 CSM run packet contracts and policy checkpoints.
+//!
+//! Provides schema/version contracts for run manifests and related trace
+//! entries consumed by boot, manifold, and operator control checks.
+
 use std::path::Path;
 
 use super::*;

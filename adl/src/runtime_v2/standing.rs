@@ -1,3 +1,8 @@
+//! Runtime-v2 standing classes and standing-policy evidence.
+//!
+//! Defines standing classifications, access rights examples, and negative-case
+//! fixtures for policy- and communication-focused controls.
+
 use super::*;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;

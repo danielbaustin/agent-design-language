@@ -1,8 +1,11 @@
+//! Resume steering model for execution pause and resume control state.
+
 use std::collections::{HashMap, HashSet};
 
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 
+/// Snapshot of a paused execution state and deferred continuation plan.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PauseState {
     pub paused_step_id: String,
@@ -13,6 +16,7 @@ pub struct PauseState {
     pub completed_outputs: HashMap<String, String>,
 }
 
+/// Mutable state persisted across resume attempts.
 #[derive(Debug, Clone, Default)]
 pub struct ResumeState {
     pub completed_step_ids: HashSet<String>,
@@ -21,6 +25,7 @@ pub struct ResumeState {
     pub steering_history: Vec<SteeringRecord>,
 }
 
+/// Declarative steering patch applied at the configured resume boundary.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct SteeringPatch {
@@ -34,6 +39,7 @@ pub struct SteeringPatch {
     pub remove_state: Vec<String>,
 }
 
+/// Applied steering operation record for deterministic audit trails.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct SteeringRecord {
@@ -51,6 +57,7 @@ pub struct SteeringRecord {
 pub const STEERING_PATCH_SCHEMA_VERSION: &str = "steering_patch.v1";
 pub const STEERING_APPLY_AT_RESUME_BOUNDARY: &str = "resume_boundary";
 
+/// Validate a steering patch for schema, application boundary, and basic key rules.
 pub fn validate_steering_patch(patch: &SteeringPatch) -> Result<()> {
     if patch.schema_version != STEERING_PATCH_SCHEMA_VERSION {
         return Err(anyhow!(
@@ -103,6 +110,7 @@ pub fn validate_steering_patch(patch: &SteeringPatch) -> Result<()> {
     Ok(())
 }
 
+/// Build a persisted steering record from an applied steering patch.
 pub fn steering_record_from_patch(
     sequence: u32,
     payload_fingerprint: String,
@@ -124,6 +132,7 @@ pub fn steering_record_from_patch(
     }
 }
 
+/// Apply a steering patch to resume state and record the resulting deterministic patch history.
 pub fn apply_steering_patch(
     resume: &mut ResumeState,
     patch: &SteeringPatch,

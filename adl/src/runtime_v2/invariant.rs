@@ -1,3 +1,8 @@
+//! Runtime-v2 invariant definitions and proof records.
+//!
+//! Defines invariants, enforcement signals, and report shapes used to determine
+//! whether a run state remains acceptable to continue execution.
+
 use super::*;
 impl RuntimeV2InvariantViolationArtifact {
     pub fn duplicate_active_citizen_prototype(

@@ -1,3 +1,8 @@
+//! Runtime-v2 governed episode and bounded citizen participation model.
+//!
+//! This file documents episode-level manifests and behavior around lifecycle
+//! transitions subject to governance policies.
+
 use std::path::Path;
 
 use super::*;

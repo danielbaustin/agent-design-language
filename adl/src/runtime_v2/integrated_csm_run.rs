@@ -1,3 +1,8 @@
+//! Runtime-v2 integrated CSM run artifacts and execution recorders.
+//!
+//! Defines the integrated contract surface used after candidate admission and
+//! before steady-state manifold and kernel operations.
+
 use std::path::Path;
 
 use super::*;

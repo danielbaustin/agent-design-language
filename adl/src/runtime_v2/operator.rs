@@ -1,3 +1,7 @@
+//! Runtime-v2 operator control and command artifacts.
+//! Exposes operator-facing proof artifacts, checks, and status surfaces used to
+//! assert bounded operator interventions.
+
 use super::*;
 impl RuntimeV2OperatorControlReport {
     pub fn prototype(

@@ -1,3 +1,8 @@
+//! Execution entrypoints and orchestration for resolved ADL run plans.
+//!
+//! Provides the public API for sequential and deterministic concurrent execution,
+//! resume handling, and step-level tracing/outputs.
+
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
@@ -62,6 +67,10 @@ pub fn execute_sequential(
     )
 }
 
+/// Execute a resolved plan with optional resume state.
+///
+/// This variant preserves deterministic execution semantics while allowing
+/// resumed runs to validate prior step completion state before continuing.
 pub fn execute_sequential_with_resume(
     resolved: &AdlResolved,
     tr: &mut Trace,

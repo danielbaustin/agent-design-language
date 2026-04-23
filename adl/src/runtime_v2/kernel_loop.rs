@@ -1,3 +1,8 @@
+//! Runtime-v2 kernel loop contracts and service-loop state artifacts.
+//!
+//! Documents the public contract used by the service loop for service registry,
+//! execution state, and event tracking.
+
 use super::*;
 impl RuntimeV2KernelLoopArtifacts {
     pub fn prototype(manifold: &RuntimeV2ManifoldRoot) -> Result<Self> {

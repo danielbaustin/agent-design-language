@@ -1,9 +1,19 @@
+//! Deterministic trace-event stream used across execution and replay tooling.
+//!
+//! `Trace` is the main in-memory event log for runtime execution, while
+//! `TraceEvent` captures concrete lifecycle, delegation, and step transitions
+//! used for artifact replay and audit.
+
 use std::collections::HashMap;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 use crate::adl::DelegationSpec;
 use crate::execute::{ExecutionBoundary, RuntimeLifecyclePhase};
 
+/// In-memory execution trace captured during runtime operation.
+///
+/// A `Trace` stores high-level lifecycle markers and step-level telemetry in an
+/// append-only sequence, including timings for replay-friendly review.
 #[derive(Debug, Clone)]
 pub struct Trace {
     pub run_id: String,
@@ -18,6 +28,10 @@ pub struct Trace {
 }
 
 #[derive(Debug, Clone)]
+/// Canonical trace event model emitted by runtime execution.
+///
+/// Variants are intentionally stable and replay-oriented. Additional variants
+/// should preserve naming conventions and include bounded human-readable fields.
 pub enum TraceEvent {
     LifecyclePhaseEntered {
         ts_ms: u128,
@@ -147,6 +161,7 @@ pub enum TraceEvent {
 }
 
 impl TraceEvent {
+    /// Convert an event to a short, stable summary string for logs and snapshots.
     pub fn summarize(&self) -> String {
         match self {
             TraceEvent::LifecyclePhaseEntered {
@@ -410,6 +425,10 @@ impl TraceEvent {
 }
 
 impl Trace {
+    /// Construct a new trace context for a run/workflow pair.
+    ///
+    /// `run_id` and `workflow_id` participate in replay artifact naming and
+    /// are emitted verbatim in trace output.
     pub fn new(
         run_id: impl Into<String>,
         workflow_id: impl Into<String>,
@@ -436,6 +455,7 @@ impl Trace {
             .unwrap_or(0)
     }
 
+    /// Record a phase transition in the runtime lifecycle.
     pub fn lifecycle_phase_entered(&mut self, phase: RuntimeLifecyclePhase) {
         let elapsed_ms = self.run_started_instant.elapsed().as_millis();
         let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
@@ -446,6 +466,7 @@ impl Trace {
         });
     }
 
+    /// Record a boundary transition such as runtime init, workflow call, or pause.
     pub fn execution_boundary_crossed(&mut self, boundary: ExecutionBoundary, state: &str) {
         let elapsed_ms = self.run_started_instant.elapsed().as_millis();
         let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
@@ -457,6 +478,7 @@ impl Trace {
         });
     }
 
+    /// Mark a step start with normalized actor/provider/task metadata.
     pub fn step_started(
         &mut self,
         step_id: &str,
@@ -649,6 +671,7 @@ impl Trace {
         });
     }
 
+    /// Record a terminal step result including success and duration.
     pub fn step_finished(&mut self, step_id: &str, success: bool) {
         let elapsed_ms = self.run_started_instant.elapsed().as_millis();
         let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
@@ -697,6 +720,7 @@ impl Trace {
         });
     }
 
+    /// Record final run completion.
     pub fn run_finished(&mut self, success: bool) {
         let elapsed_ms = self.run_started_instant.elapsed().as_millis();
         let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
@@ -707,10 +731,12 @@ impl Trace {
         });
     }
 
+    /// Return elapsed milliseconds from trace start to now.
     pub fn current_elapsed_ms(&self) -> u128 {
         self.run_started_instant.elapsed().as_millis()
     }
 
+    /// Return the current trace timestamp in wall-clock milliseconds.
     pub fn current_ts_ms(&self) -> u128 {
         self.run_started_ms
             .saturating_add(self.run_started_instant.elapsed().as_millis())

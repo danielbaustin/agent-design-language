@@ -1,3 +1,5 @@
+//! Execution state model for deterministic workflow execution and resume control.
+
 mod contracts;
 mod policy;
 mod runtime_control;

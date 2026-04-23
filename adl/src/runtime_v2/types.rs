@@ -1,3 +1,8 @@
+//! Runtime-v2 core schema types and shared artifact record graph.
+//!
+//! Holds the canonical type system for manifold, kernel, citizen, snapshot, and
+//! security-boundary records shared across Runtime-v2 public APIs.
+
 use serde::{Deserialize, Serialize};
 
 pub const RUNTIME_V2_MANIFOLD_SCHEMA: &str = "runtime_v2.manifold.v1";

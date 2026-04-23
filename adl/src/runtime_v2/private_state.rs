@@ -1,3 +1,8 @@
+//! Runtime-v2 private-state contract primitives.
+//!
+//! Describes private-state references, lifecycle metadata, and serialization-safe
+//! payloads for privacy-sensitive execution flow.
+
 use super::*;
 use sha2::{Digest, Sha256};
 

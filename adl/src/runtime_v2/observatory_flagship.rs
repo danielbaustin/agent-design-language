@@ -1,3 +1,8 @@
+//! Runtime-v2 flagship observatory contract and report artifacts.
+//!
+//! Captures flagship observatory surfaces used as a reduced proof set for
+//! review and cross-boundary integration checkpoints.
+
 use super::*;
 use std::collections::BTreeSet;
 use std::path::Path;

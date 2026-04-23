@@ -1,3 +1,8 @@
+//! Runtime-v2 citizen lifecycle contracts and index records.
+//!
+//! This module exposes canonical records for provisional citizens, lifecycle
+//! indices, and helper constructors used by higher-level runtime-v2 proofs.
+
 use super::*;
 impl RuntimeV2CitizenLifecycleArtifacts {
     pub fn prototype(manifold: &RuntimeV2ManifoldRoot) -> Result<Self> {

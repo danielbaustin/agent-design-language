@@ -1,3 +1,8 @@
+//! Runtime-v2 boot and admission artifacts.
+//!
+//! Defines the initial boot manifest, citizen roster, and admission trace
+//! contract records for CSM entry and readiness checks.
+
 use std::path::Path;
 
 use super::*;
