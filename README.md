@@ -120,7 +120,7 @@ Other useful entrypoints:
 ## Current Status
 
 - Active milestone: **v0.90.3**
-- Current release state: **v0.90.3 is in release-tail convergence; WP-01 through WP-14A have landed, WP-15 carries quality/docs convergence, and WP-16 through WP-20 carry review/remediation/handoff/ceremony**
+- Current release state: **v0.90.3 has completed WP-01 through WP-19; WP-20 release ceremony is the only remaining tail step**
 - Most recently completed milestone: **v0.90.2**
 - Current crate version: **0.90.3**
 - Version note: **v0.90.3 is the active citizen-state substrate development line**
@@ -135,12 +135,14 @@ ADL is in active development. This repository contains both implemented runtime 
 v0.90.3 is the active citizen-state substrate milestone. Its tracked package
 lives under `docs/milestones/v0.90.3/`. The issue wave is open as #2327-#2347:
 WP-01 is #2327, WP-02 through WP-14 are #2328-#2340, WP-14A is #2341, and
-WP-15 through WP-20 are #2342-#2347. WP-01 through WP-14A have landed.
+WP-15 through WP-20 are #2342-#2347. WP-01 through WP-19 have landed, and only
+WP-20 release ceremony remains.
 
-The current reviewer entry surface is
-`docs/milestones/v0.90.3/RELEASE_READINESS_v0.90.3.md`. It records the WP-15
-quality/docs convergence posture, the landed feature-proof coverage record, and
-the no-P0/P1 internal-review posture before third-party review.
+The current release-tail entry surface is
+`docs/milestones/v0.90.3/RELEASE_READINESS_v0.90.3.md`. It records the landed
+feature-proof coverage record, closed internal review, clean third-party review
+result, accepted-finding disposition, completed next-milestone handoff, and the
+fact that v0.90.4 is ready to open immediately after ceremony.
 
 v0.90.3 should turn the bounded CSM run from v0.90.2 into safer citizen-state
 substrate work: canonical private state, signed envelopes, local-first sealing,

@@ -6,9 +6,10 @@ All notable project-level changes are summarized here by milestone/release.
 
 Status: Issue wave opened on 2026-04-21. WP-01 is #2327, WP-02 through WP-14
 are #2328-#2340, WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
-WP-01 through WP-14A have landed. WP-15 records the current
-quality/docs/reviewer-entry convergence surface, and WP-16 internal review is
-in progress with no P0/P1 blocker found in the citizen-state substrate.
+WP-01 through WP-19 have landed. WP-16 internal review closed with only minor
+internal cleanup, WP-17 external review closed with zero third-party findings,
+WP-18 closed by zero-finding disposition plus trivial follow-up #2415, WP-19
+completed the next-milestone handoff, and only WP-20 release ceremony remains.
 
 Planned scope:
 - v0.90.3 is the citizen-state substrate milestone.
@@ -23,6 +24,9 @@ Planned scope:
 - WP-15 adds `docs/milestones/v0.90.3/RELEASE_READINESS_v0.90.3.md` as the
   reviewer entry surface, records coverage/tracker truth, and keeps docs-only CI
   path-policy skips separate from full release coverage evidence.
+- WP-19 leaves the v0.90.4 economics package, the v0.90.5 governed-tools
+  package, and the downstream v0.91/v0.92 boundaries ready to start cleanly
+  after v0.90.3 ceremony.
 - The crate version is `0.90.3` for the active v0.90.3 development line.
 
 Not claimed in v0.90.3:

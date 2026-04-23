@@ -50,6 +50,7 @@ can survive code review, ops review, and postmortem analysis.
 The current repo truth is:
 - active milestone: `v0.90.3`
 - current crate version on the active release line: `0.90.3`
+- current release-tail state: `WP-20 ceremony remains; WP-19 handoff is complete`
 - most recently completed Runtime v2 foundation milestone package: `v0.90.1`
 - most recently completed long-lived runtime milestone package: `v0.90`
 - most recently completed adversarial-runtime milestone package before that: `v0.89.1`
@@ -66,7 +67,9 @@ That means the feature story should be read this way:
 - `v0.90.3` is the active citizen-state substrate band: private-state authority,
   signed envelopes, local sealing, lineage, witnesses, standing, access control,
   redacted projections, challenge/appeal, and the inhabited Observatory demo
-- `v0.90.4` through `v0.95` are the next planned capability bands
+- `v0.90.4` and `v0.90.5` are already prepared as the next immediate planning
+  packages after v0.90.3 ceremony
+- `v0.91` through `v0.95` are the later planned capability bands
 
 ## ADL at a Glance
 
@@ -339,12 +342,12 @@ citizen state and standing; it does not claim full identity, moral
 civilization, production citizenship, legal personhood, or complete
 constitutional authority.
 
-## Major Capability Bands Still to Come
+## Current And Upcoming Capability Bands
 
 ### v0.90.3 - Citizen State, Standing, And Private-State Substrate
 
-`v0.90.3` is expected to deepen citizen continuity after the first bounded CSM
-run:
+`v0.90.3` is the current closeout band. Its implementation and review tail have
+already landed through WP-19, leaving only ceremony:
 - private citizen-state format
 - signed envelopes and continuity witnesses
 - append-only lineage and anti-equivocation rules
@@ -352,6 +355,9 @@ run:
 - redacted Observatory projections
 - access-control semantics for who may inspect, project, wake, migrate, or
   challenge citizen state
+
+Its remaining release-tail work is ceremony and closeout, not more feature
+scope.
 
 ### v0.90.4 - Citizen Economics And Contract Markets
 
