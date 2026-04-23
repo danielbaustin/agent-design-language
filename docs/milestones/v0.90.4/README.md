@@ -79,6 +79,8 @@ Out of scope:
 - Sprint plan: SPRINT_v0.90.4.md
 - Decisions log: DECISIONS_v0.90.4.md
 - Demo matrix: DEMO_MATRIX_v0.90.4.md
+- Economics inheritance audit:
+  ECONOMICS_INHERITANCE_AND_AUTHORITY_AUDIT_v0.90.4.md
 - Feature index: FEATURE_DOCS_v0.90.4.md
 - WP execution readiness: WP_EXECUTION_READINESS_v0.90.4.md
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.4.md
