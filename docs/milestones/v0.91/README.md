@@ -3,7 +3,9 @@
 ## Status
 
 Forward planning. v0.91 is not yet an active implementation milestone and has no
-final issue wave.
+final issue wave. Its boundary was rechecked during the v0.90.3 WP-19 handoff
+pass so it stays clearly downstream of the nearer v0.90.4 and v0.90.5
+milestones.
 
 ## Purpose
 
@@ -47,6 +49,9 @@ v0.91 depends on:
 
 - v0.90.3 citizen state, signed state envelopes, lineage, standing, access
   control, challenge, sanctuary, quarantine, and redacted projection surfaces
+- v0.90.4 only for any landed contract-market evidence that later moral review
+  needs to inspect; v0.91 should not absorb economics implementation as part of
+  moral governance
 - v0.90.5 governed tools only where tool-mediated moral evidence or refusal
   evidence depends on landed UTS, ACC, and tool-call trace
 - v0.92 as a downstream consumer of moral trace and wellbeing evidence for
@@ -75,6 +80,7 @@ v0.91 depends on:
 - Production moral agency.
 - Scalar karma, scalar happiness, or scoreboard framing.
 - Public exposure of private wellbeing diagnostics.
+- Replacing v0.90.4 economics or v0.90.5 governed-tool implementation.
 - Replacing v0.90.3 citizen-state/security work.
 - Replacing v0.92 identity and birthday semantics.
 

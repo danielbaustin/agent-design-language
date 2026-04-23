@@ -3,10 +3,13 @@
 ## Status
 
 Draft milestone package. v0.90.5 is planned as the Governed Tools v1.0
-milestone under planning issue #2350, with follow-up polish under #2402.
+milestone under planning issue #2350, with follow-up polish under #2402 and an
+additional readiness review during the v0.90.3 WP-19 handoff pass.
 
 The issue wave has not been opened. This package is the reviewable planning
-source for a later WP-01 issue-wave creation pass.
+source for a later WP-01 issue-wave creation pass. It is intended to be the
+next immediately executable planning package after v0.90.4 closeout, not a
+half-managed later idea lane.
 
 ## Thesis
 
@@ -113,3 +116,7 @@ v0.90.5 builds on:
 
 v0.90.5 should not own the v0.90.3 inhabited CSM demo. It should own the
 Governed Tools v1.0 flagship demo.
+
+It also should not inherit unresolved v0.90.4 ambiguity about whether contract
+tool needs are constraints or execution grants. WP-19 of v0.90.4 is expected to
+hand that boundary off cleanly.

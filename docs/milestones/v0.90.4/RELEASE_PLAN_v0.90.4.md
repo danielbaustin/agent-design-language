@@ -7,6 +7,8 @@ schema, lifecycle, authority, fixture, runner, demo, and review-summary story.
 
 The milestone is releasable when:
 
+- v0.90.3 closes with no blocking economics-facing carryover from its review
+  tail
 - v0.90.3 citizen-state dependencies are explicitly inherited or safely
   fixture-backed
 - contracts that mention tool-mediated work express tool needs as constraints,
@@ -39,3 +41,5 @@ The closeout should hand off:
 - any deferred authority or trace negative cases
 - v0.90.5 governed-tools follow-up for UTS, ACC, tool registry binding,
   executor authority, redaction, replay, denial records, and model testing
+- any contract-market requirement that recorded tool needs only as a constraint
+  and must be picked up by v0.90.5
