@@ -1,3 +1,8 @@
+//! Runtime-v2 private-state observatory contract and projections.
+//!
+//! Provides observability structures for private-state projection requests,
+//! snapshots, and proof-related checks.
+
 use super::*;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;

@@ -1,3 +1,8 @@
+//! Runtime-v2 private-state equivocation evidence.
+//!
+//! Covers evidence records and report artifacts for equivocation events and
+//! handling paths in replayable runtime proofs.
+
 use super::*;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;

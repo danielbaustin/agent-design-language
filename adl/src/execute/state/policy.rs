@@ -1,3 +1,5 @@
+//! Execution policy errors and stable classification codes.
+
 use super::super::DELEGATION_POLICY_DENY_CODE;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -19,6 +21,7 @@ pub struct ExecutionPolicyError {
 }
 
 impl ExecutionPolicyError {
+    /// Convert the error variant to a short stable error code.
     pub fn code(&self) -> &'static str {
         match self.kind {
             ExecutionPolicyErrorKind::Denied => DELEGATION_POLICY_DENY_CODE,
@@ -59,6 +62,7 @@ impl std::fmt::Display for ExecutionPolicyError {
 
 impl std::error::Error for ExecutionPolicyError {}
 
+/// Map execution policy errors to a stable failure classification.
 pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
     for cause in err.chain() {
         if cause.downcast_ref::<ExecutionPolicyError>().is_some() {

@@ -1,3 +1,8 @@
+//! Runtime-v2 private-state sanctuary and protection envelope.
+//!
+//! Defines sanctuary-boundary rules and records for sensitive continuity and
+//! continuity-state safety checks.
+
 use super::*;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;

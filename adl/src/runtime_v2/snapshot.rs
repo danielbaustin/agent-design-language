@@ -1,3 +1,8 @@
+//! Runtime-v2 snapshot and rehydration contracts.
+//!
+//! Captures canonical snapshot manifests and rehydration reports consumed by
+//! wake/resume workflows and snapshot validation.
+
 use super::*;
 impl RuntimeV2SnapshotAndRehydrationArtifacts {
     pub fn prototype(

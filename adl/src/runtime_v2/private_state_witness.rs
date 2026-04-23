@@ -1,3 +1,8 @@
+//! Runtime-v2 private-state witness material and evidentiary hashes.
+//!
+//! Covers witness artifacts and witness-set validation used to support replayed
+//! continuity and private-state checks.
+
 use super::*;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;

@@ -1,6 +1,9 @@
+//! Mapping from runtime events to normalized replay events.
+
 use super::TraceEventNormalized;
 use crate::trace::TraceEvent;
 
+/// Normalize raw runtime trace events into replay-safe normalized events.
 pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized> {
     events
         .iter()

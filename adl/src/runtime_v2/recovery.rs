@@ -1,3 +1,8 @@
+//! Runtime-v2 recovery eligibility and rehydration surfaces.
+//!
+//! Documents recovery artifact contracts and constraints that gate resumed
+//! execution after invariant and continuity transitions.
+
 use std::path::Path;
 
 use super::*;

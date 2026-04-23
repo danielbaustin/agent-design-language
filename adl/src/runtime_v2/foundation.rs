@@ -1,3 +1,8 @@
+//! Runtime-v2 foundation proof packet assembly.
+//!
+//! Produces foundational proof artifacts and cross-subsystem checks used by WP-06/07/
+//! and adjacent Runtime-v2 milestone documentation flows.
+
 use std::path::Path;
 
 use anyhow::{anyhow, Context, Result};

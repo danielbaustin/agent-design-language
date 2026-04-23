@@ -1,3 +1,8 @@
+//! Runtime-v2 feature proof coverage artifacts.
+//!
+//! Defines explicit proof packets and coverage summaries used to represent
+//! feature-level verification outcomes in a replayable format.
+
 use super::*;
 
 pub const RUNTIME_V2_FEATURE_PROOF_COVERAGE_SCHEMA: &str = "runtime_v2.feature_proof_coverage.v2";

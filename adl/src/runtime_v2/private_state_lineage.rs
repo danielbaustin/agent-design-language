@@ -1,3 +1,8 @@
+//! Runtime-v2 private-state lineage tracking.
+//!
+//! Documents lineage references and continuity chain metadata used to prove
+//! deterministic private-state evolution across state transitions.
+
 use super::*;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;

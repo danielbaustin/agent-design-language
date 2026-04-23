@@ -1,3 +1,8 @@
+//! Runtime-v2 security-boundary contracts and operator refusal artifacts.
+//!
+//! Defines security-boundary proof packets and related invariants used by
+//! resume gating and operator control policy checks.
+
 use super::*;
 impl RuntimeV2SecurityBoundaryProofPacket {
     pub fn refused_resume_without_invariant_prototype(

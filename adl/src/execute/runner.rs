@@ -1,3 +1,8 @@
+//! Core execution scheduling internals and delegation policy enforcement.
+//!
+//! This module implements deterministic setup, step execution dispatch, and
+//! delegation policy checks that produce stable execution outcomes.
+
 use super::*;
 
 use crate::bounded_executor;
@@ -24,6 +29,7 @@ pub(super) struct StepRunFailure {
 type StepJob = Box<dyn FnOnce() -> (String, Result<StepRunSuccess>) + Send>;
 
 pub const DELEGATION_POLICY_DENY_CODE: &str = "DELEGATION_POLICY_DENY";
+/// Error code used when an explicit approval decision is required.
 pub const DELEGATION_POLICY_APPROVAL_REQUIRED_CODE: &str = "DELEGATION_POLICY_APPROVAL_REQUIRED";
 
 #[derive(Debug)]
@@ -165,6 +171,7 @@ pub(super) fn effective_max_concurrency_with_source(
     Ok((max_parallel, source))
 }
 
+/// Return effective concurrency policy for the run when concurrent execution is in use.
 pub fn scheduler_policy_for_run(
     resolved: &AdlResolved,
 ) -> Result<Option<(usize, SchedulerPolicySource)>> {

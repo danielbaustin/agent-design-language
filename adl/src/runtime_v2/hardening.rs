@@ -1,3 +1,8 @@
+//! Runtime-v2 hardening artifacts and checks.
+//!
+//! Captures explicit hardening evidence and structured outputs for hardening
+//! controls, constraints, and review-ready checkpoints.
+
 use std::path::Path;
 
 use super::*;

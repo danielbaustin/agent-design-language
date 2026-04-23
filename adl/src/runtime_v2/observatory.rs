@@ -1,3 +1,8 @@
+//! Runtime-v2 observatory data structures and projection artifacts.
+//!
+//! Provides types describing the observatory projection path and review-facing
+//! telemetry checkpoints for private-state and continuity operations.
+
 use std::path::Path;
 
 use crate::csm_observatory::{

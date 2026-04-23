@@ -1,3 +1,8 @@
+//! Runtime-v2 continuity challenge and review pathways.
+//!
+//! This module covers challenge artifacts, freeze records, and appeal review
+//! structures used to reason about continuity transitions and risk control.
+
 use super::*;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;

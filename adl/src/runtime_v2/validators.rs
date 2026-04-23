@@ -1,3 +1,8 @@
+//! Runtime-v2 shared validation helpers.
+//!
+//! Contains internal helpers used by runtime-v2 validation paths to enforce
+//! stable identifiers, lifecycle values, and repository-relative paths.
+
 use super::*;
 pub(crate) fn normalize_id(value: String, field: &str) -> Result<String> {
     let trimmed = value.trim();

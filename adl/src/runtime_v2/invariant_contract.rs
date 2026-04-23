@@ -1,3 +1,8 @@
+//! Runtime-v2 invariant contract artifacts.
+//!
+//! Bundles invariant definitions, failure envelopes, and validation contracts
+//! used by the invariant-checking workflow.
+
 use std::path::Path;
 
 use super::*;

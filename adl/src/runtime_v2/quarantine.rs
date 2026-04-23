@@ -1,3 +1,8 @@
+//! Runtime-v2 quarantine and release surfaces.
+//!
+//! Provides quarantine packet contracts and release validation checks used to
+//! model temporarily constrained runtime behavior.
+
 use std::path::Path;
 
 use super::*;

@@ -1,3 +1,8 @@
+//! Runtime-v2 private-state envelope validation and packaging.
+//!
+//! Defines the envelope structures used to encode private-state provenance and
+//! persistence boundaries across trace and snapshot operations.
+
 use super::*;
 use base64::Engine;
 use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};

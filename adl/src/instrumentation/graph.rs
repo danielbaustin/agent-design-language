@@ -1,20 +1,25 @@
+//! Execution-plan graph projections used for trace and plan visualization.
+
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::execution_plan::ExecutionPlan;
 
+/// Node metadata for execution-plan exports.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct GraphNode {
     pub id: String,
     pub save_as: Option<String>,
 }
 
+/// Directed edge payload for execution-plan dependency graphs.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct GraphEdge {
     pub from: String,
     pub to: String,
 }
 
+/// Full graph export used by DOT/JSON renderers.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct GraphExport {
     pub workflow_kind: String,
@@ -52,11 +57,13 @@ pub fn export_graph(plan: &ExecutionPlan) -> GraphExport {
     }
 }
 
+/// Export graph data in deterministic JSON for replay and CI artifacts.
 pub fn export_graph_json(plan: &ExecutionPlan) -> Result<String> {
     let graph = export_graph(plan);
     serde_json::to_string_pretty(&graph).context("serialize graph json")
 }
 
+/// Export graph data to Graphviz DOT for quick structural inspection.
 pub fn export_graph_dot(plan: &ExecutionPlan) -> String {
     let graph = export_graph(plan);
     let mut out = String::new();

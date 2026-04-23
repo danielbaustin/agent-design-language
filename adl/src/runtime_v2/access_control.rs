@@ -1,3 +1,9 @@
+//! Runtime-v2 access-control contracts and evidence artifacts.
+//!
+//! This module models authority boundaries for runtime services, action-level
+//! access decisions, and machine-readable proof artifacts used to validate denial
+//! and approval behavior in reviews.
+
 use super::*;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;

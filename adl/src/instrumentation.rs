@@ -1,3 +1,8 @@
+//! Trace instrumentation and replay normalization helpers.
+//!
+//! This module exposes graph exports, event formatting, and trace normalization
+//! utilities used by replay, diagnostics, and CI evidence generation.
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::Path;
@@ -20,6 +25,7 @@ pub use trace_normalization::normalize_trace_events;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "kind", deny_unknown_fields)]
+/// Stable, normalized event shape consumed by replay and diff tooling.
 pub enum TraceEventNormalized {
     LifecyclePhaseEntered {
         phase: String,
@@ -112,6 +118,7 @@ pub enum TraceEventNormalized {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+/// Replay projection of step lifecycle ordering.
 pub struct TraceReplay {
     pub step_started_order: Vec<String>,
     pub step_finished_order: Vec<String>,
@@ -120,6 +127,7 @@ pub struct TraceReplay {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+/// Diff of two execution plan or trace graphs.
 pub struct PlanDiff {
     pub added_nodes: Vec<String>,
     pub removed_nodes: Vec<String>,
@@ -128,6 +136,7 @@ pub struct PlanDiff {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+/// Diff of two normalized trace traces.
 pub struct TraceDiff {
     pub changed_indices: Vec<usize>,
     pub left_only: Vec<String>,
@@ -158,6 +167,7 @@ impl std::fmt::Display for ReplayInvariantError {
 
 impl std::error::Error for ReplayInvariantError {}
 
+/// Activation-log wrapper version; kept stable for replay diff comparability.
 pub const ACTIVATION_LOG_VERSION: u32 = 1;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -177,6 +187,7 @@ struct ActivationLogArtifact {
     events: Vec<TraceEventNormalized>,
 }
 
+/// Serialize a raw trace into a canonical activation-log artifact on disk.
 pub fn write_trace_artifact(path: &Path, events: &[TraceEvent]) -> Result<()> {
     let normalized = normalize_trace_events(events);
     let artifact = ActivationLogArtifact {
@@ -194,6 +205,7 @@ pub fn write_trace_artifact(path: &Path, events: &[TraceEvent]) -> Result<()> {
         .with_context(|| format!("failed writing trace artifact '{}'", path.display()))
 }
 
+/// Classify a trace invariant error into a replay-facing failure code.
 pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
     for cause in err.chain() {
         if cause.downcast_ref::<ReplayInvariantError>().is_some() {
@@ -203,6 +215,7 @@ pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
     None
 }
 
+/// Load a normalized activation-log trace artifact for replay or validation.
 pub fn load_trace_artifact(path: &Path) -> Result<Vec<TraceEventNormalized>> {
     let raw = fs::read_to_string(path)
         .with_context(|| format!("failed reading trace artifact '{}'", path.display()))?;
@@ -261,6 +274,7 @@ pub fn load_trace_artifact(path: &Path) -> Result<Vec<TraceEventNormalized>> {
     }
 }
 
+/// Derive execution-order summaries from normalized event streams.
 pub fn replay_trace(events: &[TraceEventNormalized]) -> TraceReplay {
     let mut step_started_order = Vec::new();
     let mut step_finished_order = Vec::new();

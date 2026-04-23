@@ -1,3 +1,8 @@
+//! Public contract types for execution phases, boundaries, and step artifacts.
+//!
+//! These APIs define trace-referenced lifecycle and boundary enums plus the
+//! execution result envelope used by tracing and resume flows.
+
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
@@ -7,6 +12,10 @@ use crate::sandbox;
 
 use super::{PauseState, RuntimeControlState, SteeringRecord};
 
+/// Resolve `@file:` inputs into in-memory, validated input values.
+///
+/// Inputs are loaded and normalized deterministically with explicit size limits
+/// and sandbox path checks.
 pub fn materialize_inputs(
     mut inputs: HashMap<String, String>,
     base_dir: &Path,
@@ -99,6 +108,7 @@ pub const MATERIALIZE_INPUT_MAX_FILE_BYTES: u64 = 512 * 1024;
 pub(crate) const DEFAULT_MAX_CONCURRENCY: usize = 4;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Execution lifecycle markers emitted in traces.
 pub enum RuntimeLifecyclePhase {
     Init,
     Execute,
@@ -117,6 +127,7 @@ impl RuntimeLifecyclePhase {
     }
 }
 
+/// Runtime execution boundaries traversed during execution.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExecutionBoundary {
     RuntimeInit,
@@ -138,6 +149,7 @@ impl ExecutionBoundary {
     }
 }
 
+/// Scheduler policy source used for concurrency selection.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SchedulerPolicySource {
     WorkflowOverride,

@@ -1,3 +1,8 @@
+//! Runtime-v2 manifold and proof-surface contracts.
+//!
+//! This module defines manifold-root and manifold-linked proof artifacts that
+//! bind together kernel, citizens, invariants, and observability surfaces.
+
 use super::*;
 impl RuntimeV2ManifoldRoot {
     pub fn prototype(manifold_id: impl Into<String>) -> Result<Self> {
