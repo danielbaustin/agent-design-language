@@ -210,8 +210,7 @@ impl RuntimeV2ContinuityChallengeArtifacts {
     }
 
     pub fn validate(&self) -> Result<()> {
-        self.access_control_artifacts.validate()?;
-        self.sanctuary_artifacts.validate()?;
+        validate_challenge_inputs(&self.access_control_artifacts, &self.sanctuary_artifacts)?;
         self.challenge
             .validate_against(&self.access_control_artifacts, &self.sanctuary_artifacts)?;
         self.freeze.validate_against(&self.challenge)?;
@@ -264,8 +263,7 @@ impl RuntimeV2ContinuityChallengeArtifact {
         access: &RuntimeV2AccessControlArtifacts,
         sanctuary: &RuntimeV2PrivateStateSanctuaryArtifacts,
     ) -> Result<Self> {
-        access.validate()?;
-        sanctuary.validate()?;
+        validate_challenge_inputs(access, sanctuary)?;
         let challenge_event = access
             .event_packet
             .events
@@ -739,8 +737,7 @@ impl RuntimeV2CitizenStateThreatModel {
         sanctuary: &RuntimeV2PrivateStateSanctuaryArtifacts,
     ) -> Result<Self> {
         appeal.validate_against(challenge, freeze)?;
-        access.validate()?;
-        sanctuary.validate()?;
+        validate_challenge_inputs(access, sanctuary)?;
         let model = Self {
             schema_version: RUNTIME_V2_CITIZEN_STATE_THREAT_MODEL_SCHEMA.to_string(),
             model_id: "citizen-state-threat-model-v0-90-3-d11".to_string(),
@@ -827,6 +824,19 @@ impl RuntimeV2CitizenStateThreatModel {
         self.validate_shape()?;
         serde_json::to_vec_pretty(self).context("serialize Runtime v2 citizen-state threat model")
     }
+}
+
+fn validate_challenge_inputs(
+    access: &RuntimeV2AccessControlArtifacts,
+    sanctuary: &RuntimeV2PrivateStateSanctuaryArtifacts,
+) -> Result<()> {
+    access.authority_matrix.validate_shape()?;
+    access
+        .event_packet
+        .validate_against(&access.authority_matrix, &access.observatory_artifacts)?;
+    access.denial_fixtures.validate_shape()?;
+    sanctuary.quarantine_artifact.validate_shape()?;
+    Ok(())
 }
 
 impl RuntimeV2CitizenStateThreat {

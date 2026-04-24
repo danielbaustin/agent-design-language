@@ -20,69 +20,55 @@ fn runtime_v2_access_control_contract_is_stable() {
 }
 
 #[test]
-fn runtime_v2_access_control_matrix_matches_golden_fixture() {
+fn runtime_v2_access_control_serializes_and_matches_golden_fixtures() {
     let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
-    let json = String::from_utf8(
+    let matrix_json = String::from_utf8(
         artifacts
             .authority_matrix
             .pretty_json_bytes()
             .expect("matrix json"),
     )
     .expect("utf8 matrix");
-
     assert_eq!(
-        json,
+        matrix_json,
         include_str!("../../../tests/fixtures/runtime_v2/access_control/authority_matrix.json")
             .trim_end()
     );
-}
-
-#[test]
-fn runtime_v2_access_control_events_match_golden_fixture() {
-    let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
-    let json = String::from_utf8(
+    let events_json = String::from_utf8(
         artifacts
             .event_packet
             .pretty_json_bytes()
             .expect("events json"),
     )
     .expect("utf8 events");
-
     assert_eq!(
-        json,
+        events_json,
         include_str!("../../../tests/fixtures/runtime_v2/access_control/access_events.json")
             .trim_end()
     );
-}
-
-#[test]
-fn runtime_v2_access_control_denials_match_golden_fixture() {
-    let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
-    let json = String::from_utf8(
+    let denials_json = String::from_utf8(
         artifacts
             .denial_fixtures
             .pretty_json_bytes()
             .expect("denials json"),
     )
     .expect("utf8 denials");
-
     assert_eq!(
-        json,
+        denials_json,
         include_str!("../../../tests/fixtures/runtime_v2/access_control/denial_fixtures.json")
             .trim_end()
     );
 }
 
 #[test]
-fn runtime_v2_access_control_requires_event_for_every_sensitive_path() {
+fn runtime_v2_access_control_rejects_unsafe_event_mutations() {
     let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
-    let mut packet = artifacts.event_packet.clone();
-    packet
+    let mut missing_event = artifacts.event_packet.clone();
+    missing_event
         .events
         .retain(|event| event.access_path != "inspection");
-    packet.packet_hash = packet.computed_hash();
-
-    assert!(packet
+    missing_event.packet_hash = missing_event.computed_hash();
+    assert!(missing_event
         .validate_against(
             &artifacts.authority_matrix,
             &artifacts.observatory_artifacts
@@ -90,21 +76,16 @@ fn runtime_v2_access_control_requires_event_for_every_sensitive_path() {
         .expect_err("missing sensitive event should fail")
         .to_string()
         .contains("every sensitive access path emits an auditable event"));
-}
 
-#[test]
-fn runtime_v2_access_control_denied_access_cannot_leak_raw_private_state() {
-    let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
-    let mut packet = artifacts.event_packet.clone();
-    let inspection = packet
+    let mut denied_inspection = artifacts.event_packet.clone();
+    let inspection = denied_inspection
         .events
         .iter_mut()
         .find(|event| event.access_path == "inspection")
         .expect("inspection event");
     inspection.raw_private_state_disclosed = true;
-    packet.packet_hash = packet.computed_hash();
-
-    assert!(packet
+    denied_inspection.packet_hash = denied_inspection.computed_hash();
+    assert!(denied_inspection
         .validate_against(
             &artifacts.authority_matrix,
             &artifacts.observatory_artifacts
@@ -112,13 +93,9 @@ fn runtime_v2_access_control_denied_access_cannot_leak_raw_private_state() {
         .expect_err("raw leakage should fail")
         .to_string()
         .contains("denied access must not leak raw private state"));
-}
 
-#[test]
-fn runtime_v2_access_control_denied_decryption_cannot_return_cleartext() {
-    let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
-    let mut packet = artifacts.event_packet.clone();
-    let decryption = packet
+    let mut denied_decryption = artifacts.event_packet.clone();
+    let decryption = denied_decryption
         .events
         .iter_mut()
         .find(|event| event.access_path == "decryption")
@@ -127,9 +104,8 @@ fn runtime_v2_access_control_denied_decryption_cannot_return_cleartext() {
     decryption
         .granted_authority
         .push("decrypted_payload".to_string());
-    packet.packet_hash = packet.computed_hash();
-
-    assert!(packet
+    denied_decryption.packet_hash = denied_decryption.computed_hash();
+    assert!(denied_decryption
         .validate_against(
             &artifacts.authority_matrix,
             &artifacts.observatory_artifacts
@@ -137,22 +113,17 @@ fn runtime_v2_access_control_denied_decryption_cannot_return_cleartext() {
         .expect_err("cleartext denial should fail")
         .to_string()
         .contains("denied access must not leak raw private state"));
-}
 
-#[test]
-fn runtime_v2_access_control_denied_access_cannot_mutate_continuity() {
-    let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
-    let mut packet = artifacts.event_packet.clone();
-    let migration = packet
+    let mut denied_migration = artifacts.event_packet.clone();
+    let migration = denied_migration
         .events
         .iter_mut()
         .find(|event| event.access_path == "migration")
         .expect("migration event");
     migration.continuity_mutated = true;
     migration.continuity_sequence_after += 1;
-    packet.packet_hash = packet.computed_hash();
-
-    assert!(packet
+    denied_migration.packet_hash = denied_migration.computed_hash();
+    assert!(denied_migration
         .validate_against(
             &artifacts.authority_matrix,
             &artifacts.observatory_artifacts
@@ -160,24 +131,19 @@ fn runtime_v2_access_control_denied_access_cannot_mutate_continuity() {
         .expect_err("continuity mutation should fail")
         .to_string()
         .contains("denied access must not mutate citizen continuity"));
-}
 
-#[test]
-fn runtime_v2_access_control_allowed_projection_cannot_become_raw_inspection() {
-    let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
-    let mut packet = artifacts.event_packet.clone();
-    let projection = packet
+    let mut projection = artifacts.event_packet.clone();
+    let projection_event = projection
         .events
         .iter_mut()
         .find(|event| event.access_path == "projection")
         .expect("projection event");
-    projection.raw_private_state_disclosed = true;
-    projection
+    projection_event.raw_private_state_disclosed = true;
+    projection_event
         .granted_authority
         .push("inspect_raw_private_state".to_string());
-    packet.packet_hash = packet.computed_hash();
-
-    assert!(packet
+    projection.packet_hash = projection.computed_hash();
+    assert!(projection
         .validate_against(
             &artifacts.authority_matrix,
             &artifacts.observatory_artifacts
@@ -185,13 +151,9 @@ fn runtime_v2_access_control_allowed_projection_cannot_become_raw_inspection() {
         .expect_err("raw projection should fail")
         .to_string()
         .contains("access events must not disclose raw private state"));
-}
 
-#[test]
-fn runtime_v2_access_control_denied_release_cannot_grant_authority() {
-    let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
-    let mut packet = artifacts.event_packet.clone();
-    let release = packet
+    let mut denied_release = artifacts.event_packet.clone();
+    let release = denied_release
         .events
         .iter_mut()
         .find(|event| event.access_path == "release")
@@ -199,9 +161,8 @@ fn runtime_v2_access_control_denied_release_cannot_grant_authority() {
     release
         .granted_authority
         .push("release_from_quarantine".to_string());
-    packet.packet_hash = packet.computed_hash();
-
-    assert!(packet
+    denied_release.packet_hash = denied_release.computed_hash();
+    assert!(denied_release
         .validate_against(
             &artifacts.authority_matrix,
             &artifacts.observatory_artifacts

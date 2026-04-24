@@ -114,21 +114,23 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
     }
 
     pub fn validate(&self) -> Result<()> {
-        self.challenge_artifacts.validate()?;
-        self.operator_control_report.validate()?;
         self.proof_packet
             .validate_against(&self.challenge_artifacts, &self.operator_control_report)?;
+        self.challenge_artifacts.validate()?;
+        self.operator_control_report.validate()?;
         validate_flagship_operator_report(&self.proof_packet, &self.operator_report_markdown)
     }
 
     pub fn proof_packet_pretty_json_bytes(&self) -> Result<Vec<u8>> {
-        self.validate()?;
+        self.proof_packet
+            .validate_against(&self.challenge_artifacts, &self.operator_control_report)?;
         serde_json::to_vec_pretty(&self.proof_packet)
             .context("serialize Runtime v2 Observatory flagship proof packet")
     }
 
     pub fn walkthrough_jsonl_bytes(&self) -> Result<Vec<u8>> {
-        self.validate()?;
+        self.proof_packet
+            .validate_against(&self.challenge_artifacts, &self.operator_control_report)?;
         let mut out = Vec::new();
         for step in &self.proof_packet.lens_sequence {
             serde_json::to_writer(&mut out, step)
