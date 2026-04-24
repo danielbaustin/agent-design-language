@@ -1,0 +1,82 @@
+{
+  "schema_version": "runtime_v2.external_counterparty_negative_cases.v1",
+  "demo_id": "D6",
+  "wp_id": "WP-08",
+  "artifact_path": "runtime_v2/contract_market/external_counterparty_negative_cases.json",
+  "counterparty_model_ref": "runtime_v2/contract_market/external_counterparty_model.json",
+  "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+  "required_negative_cases": [
+    {
+      "case_id": "insufficient-assurance",
+      "counterparty_id": "counterparty-alpha",
+      "attempted_action": "submit_bid",
+      "attempted_assurance_class": "guest",
+      "sponsor_ref": "runtime_v2/access_control/access_events.json#sponsor-alpha",
+      "gateway_ref": "runtime_v2/access_control/access_events.json#gateway-alpha",
+      "revocation_status": "active",
+      "private_state_access_requested": false,
+      "requested_tool_capability": null,
+      "human_action_mode": "trace_mediated_external_participation",
+      "expected_error_fragment": "counterparty assurance does not satisfy the parent contract minimum",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/bid_negative_cases.json#ineligible-counterparty"
+    },
+    {
+      "case_id": "revoked-counterparty",
+      "counterparty_id": "counterparty-bravo",
+      "attempted_action": "accept_award",
+      "attempted_assurance_class": "gateway-reviewed",
+      "sponsor_ref": "runtime_v2/access_control/access_events.json#sponsor-bravo",
+      "gateway_ref": "runtime_v2/access_control/access_events.json#gateway-bravo",
+      "revocation_status": "revoked",
+      "private_state_access_requested": false,
+      "requested_tool_capability": null,
+      "human_action_mode": "trace_mediated_external_participation",
+      "expected_error_fragment": "revoked counterparty cannot participate",
+      "reviewable_evidence_ref": "runtime_v2/access_control/denial_fixtures.json#release-without-approved-event"
+    },
+    {
+      "case_id": "missing-gateway",
+      "counterparty_id": "counterparty-alpha",
+      "attempted_action": "submit_bid",
+      "attempted_assurance_class": "sponsored-review-eligible",
+      "sponsor_ref": "runtime_v2/access_control/access_events.json#sponsor-alpha",
+      "gateway_ref": null,
+      "revocation_status": "active",
+      "private_state_access_requested": false,
+      "requested_tool_capability": null,
+      "human_action_mode": "trace_mediated_external_participation",
+      "expected_error_fragment": "counterparty gateway_ref must be present when the parent contract requires gateway review",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/bid_negative_cases.json#missing-gateway-review"
+    },
+    {
+      "case_id": "private-state-inspection-attempt",
+      "counterparty_id": "counterparty-bravo",
+      "attempted_action": "inspect_private_state",
+      "attempted_assurance_class": "gateway-reviewed",
+      "sponsor_ref": "runtime_v2/access_control/access_events.json#sponsor-bravo",
+      "gateway_ref": "runtime_v2/access_control/access_events.json#gateway-bravo",
+      "revocation_status": "active",
+      "private_state_access_requested": true,
+      "requested_tool_capability": null,
+      "human_action_mode": "trace_mediated_external_participation",
+      "expected_error_fragment": "counterparty participation does not grant private-state inspection rights",
+      "reviewable_evidence_ref": "runtime_v2/access_control/denial_fixtures.json#inspection-without-authority"
+    },
+    {
+      "case_id": "tool-mediated-action-outside-allowed-scope",
+      "counterparty_id": "counterparty-alpha",
+      "attempted_action": "execute_projection_render",
+      "attempted_assurance_class": "sponsored-review-eligible",
+      "sponsor_ref": "runtime_v2/access_control/access_events.json#sponsor-alpha",
+      "gateway_ref": "runtime_v2/access_control/access_events.json#gateway-alpha",
+      "revocation_status": "active",
+      "private_state_access_requested": false,
+      "requested_tool_capability": "projection_rendering",
+      "human_action_mode": "trace_mediated_external_participation",
+      "expected_error_fragment": "tool-mediated action is outside allowed scope for external counterparties",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/selection_negative_cases.json#unsupported-override-authority-shortcut"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_external_counterparty -- --nocapture",
+  "claim_boundary": "These denial fixtures prove that WP-08 fails closed on insufficient assurance, revocation, missing gateway review, private-state inspection attempts, and out-of-scope tool-mediated actions."
+}

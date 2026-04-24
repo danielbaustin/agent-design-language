@@ -14,6 +14,7 @@ mod contract_schema;
 mod contracts;
 mod csm_run;
 mod evaluation_selection;
+mod external_counterparty;
 mod feature_proof_coverage;
 mod foundation;
 mod governed_episode;
@@ -67,6 +68,8 @@ pub use contracts::*;
 pub use csm_run::*;
 #[allow(unused_imports)]
 pub use evaluation_selection::*;
+#[allow(unused_imports)]
+pub use external_counterparty::*;
 #[allow(unused_imports)]
 pub use feature_proof_coverage::*;
 #[allow(unused_imports)]

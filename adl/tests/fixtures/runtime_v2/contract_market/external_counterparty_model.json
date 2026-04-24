@@ -1,0 +1,100 @@
+{
+  "schema_version": "runtime_v2.external_counterparty_model.v1",
+  "demo_id": "D6",
+  "wp_id": "WP-08",
+  "artifact_path": "runtime_v2/contract_market/external_counterparty_model.json",
+  "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+  "access_event_ref": "runtime_v2/access_control/access_events.json",
+  "records": [
+    {
+      "record_id": "counterparty-alpha-record",
+      "counterparty_id": "counterparty-alpha",
+      "counterparty_type": "review_vendor",
+      "identity_status": "sponsor_attested",
+      "standing_class": "external_counterparty",
+      "citizen_status": "not_citizen",
+      "trust_level": "sponsor-bounded",
+      "assurance_class": "sponsored-review-eligible",
+      "sponsor_ref": "runtime_v2/access_control/access_events.json#sponsor-alpha",
+      "gateway_ref": "runtime_v2/access_control/access_events.json#gateway-alpha",
+      "revocation_status": "active",
+      "revocation_evidence_ref": null,
+      "allowed_actions": [
+        "submit_bid",
+        "accept_award",
+        "deliver_review_packet",
+        "submit_trace_bundle",
+        "request_tool_review"
+      ],
+      "tool_action_constraints": [
+        {
+          "capability": "projection_rendering",
+          "usage_mode": "constraint_only",
+          "governed_authority_required": true,
+          "execution_authority_granted": false,
+          "allowed_request_actions": [
+            "request_tool_review"
+          ],
+          "rationale": "Tool-mediated projection work may be requested as review evidence, but the counterparty record never grants direct execution authority."
+        }
+      ],
+      "trace_requirements": [
+        "bid_trace_link",
+        "gateway_attestation",
+        "counterparty_signature"
+      ],
+      "linked_bid_refs": [
+        "runtime_v2/contract_market/bid_alpha.json"
+      ],
+      "private_state_access": "denied",
+      "human_action_policy": "out_of_band_human_action_not_citizen_action",
+      "claim_boundary": "This counterparty record bounds an external participant through assurance, sponsorship, and gateway review without granting citizen standing, private-state inspection, or tool execution authority."
+    },
+    {
+      "record_id": "counterparty-bravo-record",
+      "counterparty_id": "counterparty-bravo",
+      "counterparty_type": "review_vendor",
+      "identity_status": "gateway_attested",
+      "standing_class": "external_counterparty",
+      "citizen_status": "not_citizen",
+      "trust_level": "gateway-reviewed",
+      "assurance_class": "gateway-reviewed",
+      "sponsor_ref": "runtime_v2/access_control/access_events.json#sponsor-bravo",
+      "gateway_ref": "runtime_v2/access_control/access_events.json#gateway-bravo",
+      "revocation_status": "active",
+      "revocation_evidence_ref": null,
+      "allowed_actions": [
+        "submit_bid",
+        "accept_award",
+        "deliver_review_packet",
+        "submit_trace_bundle",
+        "request_tool_review"
+      ],
+      "tool_action_constraints": [
+        {
+          "capability": "projection_rendering",
+          "usage_mode": "constraint_only",
+          "governed_authority_required": true,
+          "execution_authority_granted": false,
+          "allowed_request_actions": [
+            "request_tool_review"
+          ],
+          "rationale": "Tool-mediated projection work may be requested as review evidence, but the counterparty record never grants direct execution authority."
+        }
+      ],
+      "trace_requirements": [
+        "bid_trace_link",
+        "gateway_attestation",
+        "counterparty_signature"
+      ],
+      "linked_bid_refs": [
+        "runtime_v2/contract_market/bid_bravo.json"
+      ],
+      "private_state_access": "denied",
+      "human_action_policy": "out_of_band_human_action_not_citizen_action",
+      "claim_boundary": "This counterparty record bounds an external participant through assurance, sponsorship, and gateway review without granting citizen standing, private-state inspection, or tool execution authority."
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_external_counterparty -- --nocapture",
+  "claim_boundary": "D6 proves that external counterparties participate only through explicit records, bounded trust, and gateway review; they are not citizens by default, gain no private-state inspection rights, and do not receive governed-tool execution authority."
+}
