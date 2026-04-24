@@ -10,7 +10,7 @@ v0.5 scope is frozen to the following categories:
 
 1. Language Surface Completion
    - Explicit schemas for all 6 primitives:
-     Agents, Runs, Providers, Tasks, Tools, Workflows
+     Providers, Tools, Agents, Tasks, Workflows, `run`
    - Deterministic composition semantics
 
 2. Pattern + Compilation Layer
@@ -56,7 +56,7 @@ The milestone follows a disciplined execution structure:
 |-------|--------------------------|-------------------------------------------------------------|-----------------------------------|---------------------------------|-------|
 | WP-00 | Milestone Init           | Finalize milestone docs, freeze scope                        | DESIGN + WBS + DECISIONS + SPRINT + CHECKLIST finalized | None                            | #330  |
 | WP-01 | Tooling Stabilization    | Fix pr.sh start bug, stabilize nightly automations          | pr.sh fix + CI stable              | WP-00                           | #342  |
-| WP-02 | Primitive Schema Completion | Explicit schemas for Agents, Runs, Providers, Tasks, Tools, Workflows | Schema definitions + validation tests | WP-00                           | #343  |
+| WP-02 | Primitive Schema Completion | Explicit schemas for Providers, Tools, Agents, Tasks, Workflows, and `run` | Schema definitions + validation tests | WP-00                           | #343  |
 | WP-03 | Composition Layer        | Implement include/call + hierarchical workflow composition  | Deterministic multi-file workflow demo | WP-02                       | #344  |
 | WP-04 | Pattern Compiler v0.1    | PatternSchema → ExecutionPlan compiler (linear, fork_join; optional map_reduce) | Deterministic pattern demo        | WP-03                           | #345  |
 | WP-05 | Scheduler Configurability | Expose `run.defaults.max_concurrency` with deterministic scheduling | Configurable concurrency demo     | WP-04                           | #357  |
@@ -103,6 +103,11 @@ Each primitive must have:
 
 - Solo demo
 - Composed demo
+
+Language docs should also make clear that `patterns` and `signature` are
+top-level language features layered onto the six-primitives model, not extra
+primitives, and that packet/control-plane contracts are outside this core
+language inventory.
 
 Structural demos must include:
 

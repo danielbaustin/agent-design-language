@@ -40,7 +40,7 @@ v0.5 must:
 
 - Introduce explicit schemas for all six primitives:
   - Agents
-  - Runs
+  - Run
   - Providers
   - Tasks
   - Tools
@@ -64,7 +64,14 @@ v0.5 formalizes six first-class primitives in a single ADL document:
 - `workflows`: step graphs (currently sequential or concurrent)
 - `run`: execution instance that references a workflow and provides input/placement hooks
 
-Minimal complete example (full file: `swarm/examples/v0-5-primitives-minimal.adl.yaml`):
+The primitive count remains six. `patterns` and `signature` are valid top-level
+language features, but they are not additional primitives.
+
+This language surface should also be kept distinct from later packet and
+control-plane contracts such as structured task prompts, output records, or CSM
+visibility/operator packets.
+
+Minimal complete example (full file: `adl/examples/v0-5-primitives-minimal.adl.yaml`):
 
 ```yaml
 version: "0.5"
@@ -175,6 +182,11 @@ ObsMem exists as a separate crate and integrates through Tools or Providers.
 - `WorkflowSchema`
 - `PatternSchema`
 - `RunDefaultsSpec { max_concurrency }`
+
+The language core remains the six primitives above. `PatternSchema` and
+signature metadata extend the top-level language surface without changing the
+primitive count. Packet contracts outside the ADL document shape should be
+documented separately from the language core.
 
 PatternSchema compiles into deterministic ExecutionPlan nodes with stable IDs.
 
