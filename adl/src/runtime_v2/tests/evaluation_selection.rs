@@ -231,3 +231,39 @@ fn runtime_v2_evaluation_selection_recommendation_requires_traceable_selection_l
         .to_string()
         .contains("must follow the highest-ranked bid unless a traceable override is recorded"));
 }
+
+#[test]
+fn runtime_v2_evaluation_selection_rejects_unnecessary_tie_breaks_and_negative_case_drift() {
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
+
+    let mut unnecessary_tie_break = artifacts.selection.clone();
+    unnecessary_tie_break.recommendation.tie_break_rationale =
+        Some("No tie exists, but pretend one does.".to_string());
+    assert!(unnecessary_tie_break
+        .validate_against(&artifacts.contract, &artifacts.valid_bids)
+        .expect_err("tie-break rationale without tie should fail")
+        .to_string()
+        .contains("tie_break_rationale is only valid for top-score ties"));
+
+    let mut stray_override_rationale = artifacts.selection.clone();
+    stray_override_rationale.recommendation.override_rationale =
+        Some("Operator just prefers this bid.".to_string());
+    assert!(stray_override_rationale
+        .validate_against(&artifacts.contract, &artifacts.valid_bids)
+        .expect_err("override rationale without override should fail")
+        .to_string()
+        .contains("override_rationale is only valid when override_applied is true"));
+
+    let mut bad_negative_cases = artifacts.negative_cases.clone();
+    bad_negative_cases.required_negative_cases.pop();
+    assert!(bad_negative_cases
+        .validate_against(
+            &artifacts.contract,
+            &artifacts.valid_bids,
+            &artifacts.selection
+        )
+        .expect_err("negative case count drift should fail")
+        .to_string()
+        .contains("must contain three required mutations"));
+}
