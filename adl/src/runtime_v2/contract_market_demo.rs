@@ -1,8 +1,9 @@
 use super::*;
 use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
-use serde_json::json;
+use serde_json::{json, Value};
 use std::collections::BTreeSet;
+use std::fs;
 use std::path::Path;
 
 pub const RUNTIME_V2_CONTRACT_MARKET_PROOF_SCHEMA: &str =
@@ -274,10 +275,10 @@ impl RuntimeV2ContractMarketDemoArtifacts {
             RUNTIME_V2_CONTRACT_MARKET_NEGATIVE_PACKET_PATH,
             self.negative_packet_pretty_json_bytes()?,
         )?;
-        self.validate_bundle(root)
+        self.validate_written_bundle(root)
     }
 
-    fn validate_bundle(&self, root: &Path) -> Result<()> {
+    pub(crate) fn validate_written_bundle(&self, root: &Path) -> Result<()> {
         let required_files = self
             .proof_packet
             .support_artifact_refs
@@ -309,24 +310,191 @@ impl RuntimeV2ContractMarketDemoArtifacts {
                 ));
             }
         }
+        self.validate_support_artifact_contents(root)?;
         Ok(())
     }
 
-    fn support_artifact_files(&self) -> Result<Vec<RuntimeV2SupportArtifactFile>> {
-        let selected_bid = self
-            .bid_schema
+    fn selected_bid(&self) -> Result<&RuntimeV2BidArtifact> {
+        self.bid_schema
             .valid_bids
             .iter()
             .find(|bid| {
                 bid.artifact_path == self.selection.selection.recommendation.selected_bid_ref
             })
-            .ok_or_else(|| anyhow!("selected bid ref must match a valid bid"))?;
-        let runner_up_bid = self
-            .bid_schema
+            .ok_or_else(|| anyhow!("selected bid ref must match a valid bid"))
+    }
+
+    fn runner_up_bid(&self) -> Result<&RuntimeV2BidArtifact> {
+        let selected_bid = self.selected_bid()?;
+        self.bid_schema
             .valid_bids
             .iter()
             .find(|bid| bid.artifact_path != selected_bid.artifact_path)
-            .ok_or_else(|| anyhow!("contract-market proof requires a runner-up bid"))?;
+            .ok_or_else(|| anyhow!("contract-market proof requires a runner-up bid"))
+    }
+
+    fn selected_counterparty_record(&self) -> Result<&RuntimeV2ExternalCounterpartyRecord> {
+        let selected_bid = self.selected_bid()?;
+        self.external_counterparty
+            .model
+            .records
+            .iter()
+            .find(|record| {
+                record.counterparty_id == selected_bid.bidder_actor_id
+                    && record.linked_bid_refs.len() == 1
+                    && record.linked_bid_refs[0] == selected_bid.artifact_path
+            })
+            .ok_or_else(|| {
+                anyhow!("selected bid counterparty must bind to the reviewed counterparty record")
+            })
+    }
+
+    fn validate_support_artifact_contents(&self, root: &Path) -> Result<()> {
+        let selected_bid = self.selected_bid()?;
+        let runner_up_bid = self.runner_up_bid()?;
+        let selected_counterparty = self.selected_counterparty_record()?;
+        let expected_counterparty_ref = repo_ref(
+            &self.external_counterparty.model.artifact_path,
+            &selected_counterparty.record_id,
+        );
+
+        let selection_rationale =
+            read_support_json(root, RUNTIME_V2_CONTRACT_MARKET_SELECTION_RATIONALE_PATH)?;
+        require_json_string(
+            &selection_rationale,
+            "artifact_path",
+            RUNTIME_V2_CONTRACT_MARKET_SELECTION_RATIONALE_PATH,
+            "selection_rationale.artifact_path",
+        )?;
+        require_json_string(
+            &selection_rationale,
+            "selection_ref",
+            &self.selection.selection.artifact_path,
+            "selection_rationale.selection_ref",
+        )?;
+        require_json_string(
+            &selection_rationale,
+            "selected_bid_ref",
+            &selected_bid.artifact_path,
+            "selection_rationale.selected_bid_ref",
+        )?;
+        require_json_string(
+            &selection_rationale,
+            "runner_up_bid_ref",
+            &runner_up_bid.artifact_path,
+            "selection_rationale.runner_up_bid_ref",
+        )?;
+
+        let award_record = read_support_json(root, RUNTIME_V2_CONTRACT_MARKET_AWARD_RECORD_PATH)?;
+        require_json_string(
+            &award_record,
+            "selected_bid_ref",
+            &selected_bid.artifact_path,
+            "award_record.selected_bid_ref",
+        )?;
+        require_json_string(
+            &award_record,
+            "selection_rationale_ref",
+            &repo_ref(
+                RUNTIME_V2_CONTRACT_MARKET_SELECTION_RATIONALE_PATH,
+                "selected-bid",
+            ),
+            "award_record.selection_rationale_ref",
+        )?;
+
+        let acceptance_record =
+            read_support_json(root, RUNTIME_V2_CONTRACT_MARKET_ACCEPTANCE_RECORD_PATH)?;
+        require_json_string(
+            &acceptance_record,
+            "award_ref",
+            &repo_ref(RUNTIME_V2_CONTRACT_MARKET_AWARD_RECORD_PATH, "selected-bid"),
+            "acceptance_record.award_ref",
+        )?;
+        require_json_string(
+            &acceptance_record,
+            "accepted_bid_ref",
+            &selected_bid.artifact_path,
+            "acceptance_record.accepted_bid_ref",
+        )?;
+        require_json_string(
+            &acceptance_record,
+            "counterparty_ref",
+            &expected_counterparty_ref,
+            "acceptance_record.counterparty_ref",
+        )?;
+
+        let execution_readiness =
+            read_support_json(root, RUNTIME_V2_CONTRACT_MARKET_EXECUTION_READINESS_PATH)?;
+        require_json_string(
+            &execution_readiness,
+            "acceptance_ref",
+            &repo_ref(
+                RUNTIME_V2_CONTRACT_MARKET_ACCEPTANCE_RECORD_PATH,
+                "accepted-counterparty",
+            ),
+            "execution_readiness.acceptance_ref",
+        )?;
+        require_json_string(
+            &execution_readiness,
+            "readiness_status",
+            "execution-cleared",
+            "execution_readiness.readiness_status",
+        )?;
+
+        let execution_trace =
+            read_support_json(root, RUNTIME_V2_CONTRACT_MARKET_EXECUTION_TRACE_PATH)?;
+        require_json_array_contains(
+            &execution_trace,
+            "trace_links",
+            &repo_ref(
+                RUNTIME_V2_CONTRACT_MARKET_ACCEPTANCE_RECORD_PATH,
+                "accepted-counterparty",
+            ),
+            "execution_trace.trace_links",
+        )?;
+        require_json_array_contains(
+            &execution_trace,
+            "trace_links",
+            &repo_ref(
+                RUNTIME_V2_CONTRACT_MARKET_EXECUTION_READINESS_PATH,
+                "execution-cleared",
+            ),
+            "execution_trace.trace_links",
+        )?;
+        require_json_array_contains(
+            &execution_trace,
+            "trace_links",
+            &repo_ref(
+                RUNTIME_V2_CONTRACT_MARKET_COMPLETION_RECORD_PATH,
+                "deliverables-accepted",
+            ),
+            "execution_trace.trace_links",
+        )?;
+
+        let completion_record =
+            read_support_json(root, RUNTIME_V2_CONTRACT_MARKET_COMPLETION_RECORD_PATH)?;
+        require_json_string(
+            &completion_record,
+            "execution_trace_ref",
+            &repo_ref(
+                RUNTIME_V2_CONTRACT_MARKET_EXECUTION_TRACE_PATH,
+                "completion",
+            ),
+            "completion_record.execution_trace_ref",
+        )?;
+        require_json_string(
+            &completion_record,
+            "deliverable_manifest_ref",
+            RUNTIME_V2_CONTRACT_MARKET_DELIVERABLE_MANIFEST_PATH,
+            "completion_record.deliverable_manifest_ref",
+        )?;
+        Ok(())
+    }
+
+    fn support_artifact_files(&self) -> Result<Vec<RuntimeV2SupportArtifactFile>> {
+        let selected_bid = self.selected_bid()?;
+        let runner_up_bid = self.runner_up_bid()?;
+        let selected_counterparty = self.selected_counterparty_record()?;
 
         let make_json =
             |path: &str, value: serde_json::Value| -> Result<RuntimeV2SupportArtifactFile> {
@@ -445,7 +613,7 @@ impl RuntimeV2ContractMarketDemoArtifacts {
                     "award_ref": repo_ref(RUNTIME_V2_CONTRACT_MARKET_AWARD_RECORD_PATH, "selected-bid"),
                     "counterparty_ref": repo_ref(
                         &self.external_counterparty.model.artifact_path,
-                        &self.external_counterparty.model.records[0].record_id,
+                        &selected_counterparty.record_id,
                     ),
                     "accepted_bid_ref": selected_bid.artifact_path,
                     "acceptance_status": "accepted",
@@ -1050,6 +1218,41 @@ fn validate_repo_ref_with_fragment(value: &str, field: &str) -> Result<()> {
 
 fn reference_path(value: &str) -> &str {
     value.split('#').next().unwrap_or(value)
+}
+
+fn read_support_json(root: &Path, rel_path: &str) -> Result<Value> {
+    let path = root.join(rel_path);
+    let text = fs::read_to_string(&path)
+        .with_context(|| format!("read contract-market support artifact {rel_path}"))?;
+    serde_json::from_str(&text)
+        .with_context(|| format!("parse contract-market support artifact {rel_path}"))
+}
+
+fn require_json_string(value: &Value, key: &str, expected: &str, field: &str) -> Result<()> {
+    let actual = value
+        .get(key)
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("{field} must be a string"))?;
+    if actual != expected {
+        return Err(anyhow!("{field} must equal {expected}"));
+    }
+    Ok(())
+}
+
+fn require_json_array_contains(
+    value: &Value,
+    key: &str,
+    expected: &str,
+    field: &str,
+) -> Result<()> {
+    let values = value
+        .get(key)
+        .and_then(Value::as_array)
+        .ok_or_else(|| anyhow!("{field} must be an array"))?;
+    if !values.iter().any(|item| item.as_str() == Some(expected)) {
+        return Err(anyhow!("{field} must contain {expected}"));
+    }
+    Ok(())
 }
 
 fn validate_relative_paths(values: &[String], field: &str) -> Result<()> {
