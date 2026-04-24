@@ -60,6 +60,9 @@ This document should be reviewed at each milestone boundary.
   rather than silently skipping the review surface.
 - The unchanged path is valid only when the reviewing owner, reviewed file set, and
   rationale are recorded.
+- If unchanged is claimed while supporting docs remain untouched, explicitly
+  confirm the canonical diagram packet is still complete for this milestone and
+  note any non-urgent omissions as follow-up items.
 - Update ADR-facing support docs whenever architecture decision logic is adjusted
   and capture that change in the milestone handoff artifacts.
 

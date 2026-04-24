@@ -1,0 +1,18 @@
+%% Evidence: docs/default_workflow.md, adl/src/control_plane.rs, docs/architecture/ADL_ARCHITECTURE.md
+%% Assumptions: merge and closeout are human/governance events; tool state labels represent lifecycle checkpoints, not internal Rust enum names.
+stateDiagram-v2
+  [*] --> IssueCaptured
+  IssueCaptured --> BundleInitialized: pr init
+  BundleInitialized --> DoctorReady: pr ready
+  DoctorReady --> WorktreeBound: pr run
+  WorktreeBound --> Editing: implementation in worktree
+  Editing --> ValidationChecked: focused doc checks pass
+  ValidationChecked --> DraftPR: pr finish
+  DraftPR --> ChecksPending: janitor monitors checks and reviews
+  ChecksPending --> MergeGate: checks/review pass
+  MergeGate --> MergeGate: rebase/refresh if needed
+  ChecksPending --> RepairLoop: PR conflicts or review request
+  RepairLoop --> Editing: bound edits and re-run validation
+  MergeGate --> Merged: merged by human
+  Merged --> ClosedOut: pr closeout
+  ClosedOut --> [*]

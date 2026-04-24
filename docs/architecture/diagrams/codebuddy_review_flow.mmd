@@ -1,0 +1,38 @@
+%% Evidence: docs/architecture/ARCHITECTURE_REVIEW_AUTOMATION.md, docs/architecture/ADL_ARCHITECTURE.md, docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
+%% Assumptions: reviewers evaluate findings through report artifacts, and this path shows one bounded coverage lane rather than every specialist exception.
+flowchart LR
+  Trigger["Issue, patch, or architecture change"]
+  Packet["repo-packet-builder"]
+  Repo["repo-review-docs"]
+  Code["repo-review-code"]
+  Security["repo-review-security"]
+  Tests["repo-review-tests"]
+  Architecture["repo-architecture-review"]
+  Dependency["repo-dependency-review"]
+  Diagrams["repo-diagram-planner"]
+  DiagramAuthor["diagram-author"]
+  DiagramReviewer["architecture-diagram-reviewer"]
+  Redaction["redaction-and-evidence-auditor"]
+  Report["product report and review-quality evaluator"]
+  Operator["Operator closeout and release decision"]
+
+  Trigger --> Packet
+  Packet --> Repo
+  Packet --> Code
+  Packet --> Security
+  Packet --> Tests
+  Packet --> Architecture
+  Packet --> Dependency
+  Packet --> Diagrams
+  Diagrams --> DiagramAuthor
+  DiagramAuthor --> DiagramReviewer
+  Repo --> Report
+  Code --> Report
+  Security --> Report
+  Tests --> Report
+  Architecture --> Report
+  Dependency --> Report
+  DiagramReviewer --> Redaction
+  Report --> Redaction
+  Redaction --> Operator
+  Operator --> Report
