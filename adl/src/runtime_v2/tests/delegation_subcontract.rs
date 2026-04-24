@@ -113,12 +113,47 @@ fn runtime_v2_delegation_subcontract_preserves_authority_and_parent_accountabili
         "counterparty-alpha"
     );
     assert_eq!(
+        artifacts.subcontract.subcontractor_selection_basis_ref,
+        "runtime_v2/contract_market/evaluation_selection.json#runner-up-bid"
+    );
+    assert_eq!(
         artifacts.subcontract.subcontractor_counterparty_id,
         "counterparty-bravo"
     );
     assert_eq!(
         artifacts.parent_integration.parent_responsibility_status,
         "retained_and_reviewable"
+    );
+}
+
+#[test]
+fn runtime_v2_delegation_subcontract_selection_basis_is_order_independent() {
+    let artifacts =
+        runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
+    let contract = runtime_v2_contract_schema_contract()
+        .expect("contract artifacts")
+        .contract;
+    let selection_artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("selection artifacts");
+    let mut reordered_bids = selection_artifacts.valid_bids.clone();
+    reordered_bids.reverse();
+    let mut reordered_counterparties = runtime_v2_external_counterparty_model()
+        .expect("counterparty artifacts")
+        .model;
+    reordered_counterparties.records.reverse();
+
+    artifacts
+        .subcontract
+        .validate_against(
+            &contract,
+            &selection_artifacts.selection,
+            &reordered_bids,
+            &reordered_counterparties,
+        )
+        .expect("runner-up selection basis should not depend on bid or record order");
+    assert_eq!(
+        artifacts.subcontract.subcontractor_counterparty_id,
+        "counterparty-bravo"
     );
 }
 
@@ -194,6 +229,22 @@ fn runtime_v2_delegation_subcontract_rejects_reference_and_review_drift() {
         .to_string()
         .contains("selection_ref must bind the selection artifact"));
 
+    let mut bad_basis_ref = artifacts.subcontract.clone();
+    bad_basis_ref.subcontractor_selection_basis_ref =
+        "runtime_v2/contract_market/evaluation_selection.json#selected-bid".to_string();
+    assert!(bad_basis_ref
+        .validate_against(
+            &contract,
+            &selection_artifacts.selection,
+            &selection_artifacts.valid_bids,
+            &counterparties,
+        )
+        .expect_err("subcontractor basis drift should fail")
+        .to_string()
+        .contains(
+            "subcontractor_selection_basis_ref must bind the selection artifact runner-up bid"
+        ));
+
     let mut bad_record_ref = artifacts.subcontract.clone();
     bad_record_ref.subcontractor_record_ref =
         "runtime_v2/contract_market/external_counterparty_model.json#counterparty-alpha-record"
@@ -232,6 +283,47 @@ fn runtime_v2_delegation_subcontract_rejects_reference_and_review_drift() {
         .expect_err("responsibility transfer should fail")
         .to_string()
         .contains("must preserve retained accountability"));
+}
+
+#[test]
+fn runtime_v2_delegation_subcontract_rejects_subcontractor_outside_runner_up_basis() {
+    let artifacts =
+        runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
+    let contract = runtime_v2_contract_schema_contract()
+        .expect("contract artifacts")
+        .contract;
+    let selection_artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("selection artifacts");
+    let mut counterparties = runtime_v2_external_counterparty_model()
+        .expect("counterparty artifacts")
+        .model;
+    let mut extra_record = counterparties
+        .records
+        .iter()
+        .find(|record| record.counterparty_id == "counterparty-bravo")
+        .expect("bravo counterparty")
+        .clone();
+    extra_record.record_id = "counterparty-charlie-record".to_string();
+    extra_record.counterparty_id = "counterparty-charlie".to_string();
+    extra_record.linked_bid_refs.clear();
+    counterparties.records.push(extra_record);
+
+    let mut wrong_subcontractor = artifacts.subcontract.clone();
+    wrong_subcontractor.subcontractor_counterparty_id = "counterparty-charlie".to_string();
+    wrong_subcontractor.subcontractor_record_ref =
+        "runtime_v2/contract_market/external_counterparty_model.json#counterparty-charlie-record"
+            .to_string();
+
+    assert!(wrong_subcontractor
+        .validate_against(
+            &contract,
+            &selection_artifacts.selection,
+            &selection_artifacts.valid_bids,
+            &counterparties,
+        )
+        .expect_err("selected bidder should not satisfy runner-up subcontractor basis")
+        .to_string()
+        .contains("subcontractor must match the runner-up bid counterparty selected by subcontractor_selection_basis_ref"));
 }
 
 #[test]
