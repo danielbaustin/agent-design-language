@@ -1,3 +1,4 @@
+//! Chronosense temporal schema contract definitions.
 use serde::{Deserialize, Serialize};
 
 use super::TEMPORAL_SCHEMA_V01;

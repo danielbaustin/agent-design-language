@@ -1,7 +1,7 @@
+//! Gödel affect-slice experiments and persisted candidate selection contracts.
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
-
-use serde::{Deserialize, Serialize};
 
 use super::hypothesis::PersistedHypothesisArtifact;
 use super::policy::PersistedPolicyArtifact;

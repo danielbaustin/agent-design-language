@@ -1,3 +1,4 @@
+//! Gödel surface status probe for v0.8+ compatibility checks.
 use std::fs;
 use std::path::{Path, PathBuf};
 

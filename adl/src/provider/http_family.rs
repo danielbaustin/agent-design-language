@@ -1,3 +1,6 @@
+//! HTTP-based provider implementations and request transport helpers.
+//!
+//! Supports OpenAI, Anthropic, generic HTTP, and Ollama-HTTP style backends.
 use super::*;
 use std::thread;
 use std::time::Duration;
@@ -43,6 +46,7 @@ fn acquire_invocation_artifact_lock(path: &Path) -> std::io::Result<InvocationAr
     ))
 }
 
+/// Maximum number of provider error-body characters kept for inline request-failure messages.
 const MAX_PROVIDER_ERROR_BODY_BYTES: usize = 200;
 
 fn truncate_provider_body(text: &str) -> String {
@@ -240,6 +244,7 @@ fn extract_anthropic_output_text(json: &Value) -> Option<String> {
 }
 
 #[derive(Debug, Clone)]
+/// OpenAI-compatible provider backed by HTTP/requests API.
 pub struct OpenAiProvider {
     endpoint: String,
     auth_env: String,
@@ -249,6 +254,7 @@ pub struct OpenAiProvider {
 }
 
 impl OpenAiProvider {
+    /// Build an OpenAI provider from normalized invocation target.
     pub fn from_target(
         spec: &adl::ProviderSpec,
         target: &ProviderInvocationTargetV1,
@@ -307,6 +313,7 @@ impl Provider for OpenAiProvider {
 }
 
 #[derive(Debug, Clone)]
+/// Anthropic-compatible provider using the messages API format.
 pub struct AnthropicProvider {
     endpoint: String,
     auth_env: String,
@@ -316,6 +323,7 @@ pub struct AnthropicProvider {
 }
 
 impl AnthropicProvider {
+    /// Build an Anthropic provider from normalized invocation target.
     pub fn from_target(
         spec: &adl::ProviderSpec,
         target: &ProviderInvocationTargetV1,
@@ -378,6 +386,7 @@ impl Provider for AnthropicProvider {
 }
 
 #[derive(Debug, Clone)]
+/// Generic HTTP provider for configurable endpoint + optional bearer auth.
 pub struct HttpProvider {
     endpoint: String,
     auth: Option<HttpAuth>,
@@ -386,6 +395,7 @@ pub struct HttpProvider {
 }
 
 #[derive(Debug, Clone)]
+/// Ollama-specific HTTP provider with prompt/model serialization.
 pub struct OllamaHttpProvider {
     endpoint: String,
     model: String,
@@ -394,6 +404,7 @@ pub struct OllamaHttpProvider {
 }
 
 impl OllamaHttpProvider {
+    /// Build an Ollama HTTP provider from the normalized invocation target.
     pub fn from_target(
         spec: &adl::ProviderSpec,
         target: &ProviderInvocationTargetV1,
@@ -447,6 +458,7 @@ impl Provider for OllamaHttpProvider {
 }
 
 impl HttpProvider {
+    /// Build an HTTP provider from an already-normalized invocation spec.
     pub fn from_spec(spec: &adl::ProviderSpec) -> Result<Self> {
         let target = provider_substrate::provider_invocation_target_v1(
             spec.id.as_deref().unwrap_or("<anonymous-provider>"),
@@ -456,6 +468,7 @@ impl HttpProvider {
         Self::from_target(spec, &target)
     }
 
+    /// Build a generic HTTP provider from the normalized invocation target.
     pub fn from_target(
         spec: &adl::ProviderSpec,
         target: &ProviderInvocationTargetV1,

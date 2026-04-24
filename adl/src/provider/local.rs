@@ -1,12 +1,18 @@
+//! Local and CLI-backed provider implementations.
+//!
+//! Includes the mock test provider and local command-line Ollama adapter used for
+//! offline or deterministic integration behavior.
 use super::http_family::timeout_secs;
 use super::*;
 
 #[derive(Debug, Clone)]
+/// Deterministic local provider used by tests and local smoke flows.
 pub struct MockProvider {
     model: String,
 }
 
 impl MockProvider {
+    /// Build the mock provider from a normalized target.
     pub fn from_target(target: &ProviderInvocationTargetV1) -> Self {
         Self {
             model: target.model_ref.clone(),
@@ -15,6 +21,7 @@ impl MockProvider {
 }
 
 impl Provider for MockProvider {
+    /// Returns the input prompt unchanged for deterministic pass-through testing.
     fn complete(&self, prompt: &str) -> Result<String> {
         let _model = &self.model;
         Ok(prompt.to_string())
@@ -24,12 +31,14 @@ impl Provider for MockProvider {
 /// Ollama provider (blocking) using the local `ollama` CLI.
 /// This keeps v0.1 dependency-light and works well for local prototyping.
 #[derive(Debug, Clone)]
+/// Local Ollama provider backed by the `ollama` binary.
 pub struct OllamaProvider {
     pub model: String,
     pub temperature: Option<f32>,
 }
 
 impl OllamaProvider {
+    /// Build an Ollama provider from ADL spec and optional run-time model override.
     pub fn from_spec(spec: &adl::ProviderSpec, model_override: Option<&str>) -> Result<Self> {
         let target = provider_substrate::provider_invocation_target_v1(
             spec.id.as_deref().unwrap_or("<anonymous-provider>"),
@@ -39,6 +48,7 @@ impl OllamaProvider {
         Self::from_target(spec, &target)
     }
 
+    /// Build from a resolved invocation target after `provider_substrate` expansion.
     pub fn from_target(
         spec: &adl::ProviderSpec,
         target: &ProviderInvocationTargetV1,
@@ -211,6 +221,7 @@ impl OllamaProvider {
 }
 
 impl Provider for OllamaProvider {
+    /// Execute a prompt through `ollama run` and return complete stdout text.
     fn complete(&self, prompt: &str) -> Result<String> {
         self.complete_streaming(prompt, None)
     }

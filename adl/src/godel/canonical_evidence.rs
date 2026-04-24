@@ -1,3 +1,4 @@
+//! Canonical evidence artifacts and schema checks for Gödel.
 use std::fs;
 use std::path::{Path, PathBuf};
 

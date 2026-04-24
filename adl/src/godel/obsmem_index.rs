@@ -1,3 +1,4 @@
+//! Observation-memory index contracts for Gödel surface lookup.
 use std::fs;
 use std::path::{Path, PathBuf};
 

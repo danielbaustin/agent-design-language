@@ -1,3 +1,4 @@
+//! Long-lived agent orchestration surfaces.
 use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Duration as ChronoDuration, Utc};
 use serde_json::{json, Value};

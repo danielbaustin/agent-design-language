@@ -1,3 +1,4 @@
+//! Error surfaces and stability classifications for remote execution paths.
 use anyhow::Error;
 
 use super::REMOTE_REQUEST_SIGNATURE_ALG_ED25519;

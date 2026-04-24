@@ -1,3 +1,4 @@
+//! Integration tests for long-lived agent execution and artifact invariants.
 use super::*;
 use std::sync::atomic::{AtomicU64, Ordering};
 

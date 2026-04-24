@@ -1,3 +1,4 @@
+//! Policy artifacts, comparisons, and schema boundaries for Gödel runs.
 use std::fs;
 use std::path::{Path, PathBuf};
 

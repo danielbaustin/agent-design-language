@@ -1,3 +1,4 @@
+//! Chronosense instinct model contracts and review surfaces.
 use serde::{Deserialize, Serialize};
 
 use super::{INSTINCT_MODEL_SCHEMA, INSTINCT_RUNTIME_SURFACE_SCHEMA};

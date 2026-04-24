@@ -1,3 +1,4 @@
+//! Gödel stage-loop orchestration and persistence contracts.
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};

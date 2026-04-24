@@ -1,8 +1,10 @@
+//! Serializable configuration and state types for long-lived agents.
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::path::PathBuf;
 
+/// Parsed configuration for one long-lived agent instance.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentSpec {
     pub schema: String,
@@ -17,6 +19,7 @@ pub struct AgentSpec {
     pub memory: Value,
 }
 
+/// Workflow selection for a long-lived agent spec.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorkflowSpec {
     pub kind: String,
@@ -28,6 +31,7 @@ pub struct WorkflowSpec {
     pub run_args: Value,
 }
 
+/// Heartbeat configuration for recurring cycle execution.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HeartbeatSpec {
     #[serde(default)]
@@ -38,6 +42,7 @@ pub struct HeartbeatSpec {
     pub stale_lease_after_secs: Option<u64>,
 }
 
+/// Finite state for a running long-lived agent.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum AgentStatusState {
@@ -50,6 +55,7 @@ pub enum AgentStatusState {
     Completed,
 }
 
+/// Active lease details for one cycle.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LeaseRecord {
     pub schema: String,
@@ -63,12 +69,14 @@ pub struct LeaseRecord {
     pub status: String,
 }
 
+/// Error payload for stop records in status and run history.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StatusError {
     pub class: String,
     pub message: String,
 }
 
+/// Canonical status checkpoint written during agent runs.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StatusRecord {
     pub schema: String,
@@ -87,6 +95,7 @@ pub struct StatusRecord {
     pub updated_at: DateTime<Utc>,
 }
 
+/// Stop request artifact persisted by operator/API calls.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StopRecord {
     pub schema: String,
@@ -99,6 +108,7 @@ pub struct StopRecord {
     pub requested_at: DateTime<Utc>,
 }
 
+/// Resolved and normalized spec plus state paths after loading.
 #[derive(Debug, Clone)]
 pub struct LoadedAgentSpec {
     pub spec: AgentSpec,
@@ -106,11 +116,13 @@ pub struct LoadedAgentSpec {
     pub state_root: PathBuf,
 }
 
+/// Tick execution options for one iteration.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct TickOptions {
     pub recover_stale_lease: bool,
 }
 
+/// Runtime control options for agent execution loops.
 #[derive(Debug, Clone, Copy)]
 pub struct RunOptions {
     pub max_cycles: u64,
@@ -119,6 +131,7 @@ pub struct RunOptions {
     pub recover_stale_lease: bool,
 }
 
+/// Inspection options for selecting a specific cycle.
 #[derive(Debug, Clone, Default)]
 pub struct InspectOptions {
     pub cycle_id: Option<String>,

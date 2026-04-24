@@ -1,3 +1,4 @@
+//! Inspection packet generation for long-lived agent cycles.
 use super::{
     ledger_cursor, load_spec, path_artifact_ref, status, status_path, LoadedAgentSpec,
     INSPECTION_PACKET_SCHEMA,

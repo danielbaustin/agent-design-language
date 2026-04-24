@@ -1,3 +1,4 @@
+//! Chronosense temporal causality contracts.
 use serde::{Deserialize, Serialize};
 
 use super::TEMPORAL_CAUSALITY_EXPLANATION_SCHEMA;

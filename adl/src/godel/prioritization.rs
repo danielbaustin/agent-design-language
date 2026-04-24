@@ -1,3 +1,4 @@
+//! Experiment prioritization inputs and persisted ranking records.
 use std::fs;
 use std::path::{Path, PathBuf};
 

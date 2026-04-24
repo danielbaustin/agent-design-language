@@ -1,3 +1,4 @@
+//! Static embedded workflow template parser for Gödel stage orchestration.
 use anyhow::{bail, Context, Result};
 use serde::Deserialize;
 

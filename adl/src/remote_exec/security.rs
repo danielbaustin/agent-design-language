@@ -1,9 +1,14 @@
+//! Security-envelope validation for remote execution requests.
+//!
+//! This module validates signing/verification flags, path sandbox policy, and
+//! required key source constraints for inbound execute requests.
 use crate::sandbox;
 use crate::signing;
 
 use super::signing_support::verify_execute_request_signature_v1;
 use super::{ExecuteRequest, SecurityEnvelopeError};
 
+/// Validate the request security envelope before execution.
 pub fn validate_security_envelope(
     req: &ExecuteRequest,
 ) -> std::result::Result<(), SecurityEnvelopeError> {

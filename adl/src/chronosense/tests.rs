@@ -1,3 +1,4 @@
+//! Test helpers for chronosense fixtures.
 use super::*;
 use chrono::{TimeZone, Utc};
 use std::{

@@ -1,3 +1,4 @@
+//! Chronosense identity and temporal foundation contracts.
 use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Datelike, FixedOffset, Offset, Timelike, Utc};
 use chrono_tz::Tz;

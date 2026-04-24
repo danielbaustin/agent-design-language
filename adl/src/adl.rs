@@ -1,3 +1,7 @@
+//! ADL document model and public loader APIs.
+//!
+//! This module defines the top-level `AdlDoc` structure and re-exports the
+//! schema-facing types that back ADL YAML loading, validation, and execution.
 use anyhow::{Context, Result};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -19,6 +23,8 @@ pub use types::*;
 /// MVP v0.1 supports:
 /// - providers, tools, agents, tasks
 /// - a single `run` with a workflow
+///
+/// Use this as the authoritative in-memory representation for ADL YAML input.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 pub struct AdlDoc {
     pub version: String,
@@ -48,7 +54,11 @@ pub struct AdlDoc {
 }
 
 impl AdlDoc {
-    /// Load an ADL YAML document from a file path.
+    /// Load and validate an ADL document from a file path.
+    ///
+    /// This is the canonical bootstrap path for local execution and tests:
+    /// it merges nested includes, validates schema, parses typed objects, and
+    /// runs semantic validation.
     ///
     /// Loading order:
     /// 1. expands top-level `include` files with deterministic merge semantics
