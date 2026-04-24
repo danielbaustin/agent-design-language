@@ -23,8 +23,10 @@ Options:
   -h, --help                   Show this help.
 
 This script selects the ordinary PR-fast non-coverage Rust test lane.
-It fails closed to the full nextest sweep unless every changed Rust surface
-maps to a bounded focused filter expression.
+It prefers:
+  1. focused nextest filters for small, precisely-mapped changes
+  2. bounded family filters for broader-but-still-bounded changes
+  3. the full nextest sweep only for broad or ambiguous changes
 USAGE
 }
 
@@ -218,6 +220,25 @@ filter_token_for_path() {
   return 1
 }
 
+family_token_for_path() {
+  local path="$1"
+  case "$path" in
+    adl/src/runtime_v2/*)
+      printf 'runtime_v2'
+      return 0
+      ;;
+    adl/src/cli/*)
+      printf 'cli'
+      return 0
+      ;;
+    adl/src/demo/*)
+      printf 'demo'
+      return 0
+      ;;
+  esac
+  return 1
+}
+
 build_filter_expression() {
   python3 - "$@" <<'PY'
 import sys
@@ -240,13 +261,28 @@ token_already_seen() {
   return 1
 }
 
+family_token_already_seen() {
+  local needle="$1"
+  local token
+  for token in "${family_tokens[@]:-}"; do
+    if [ "$token" = "$needle" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 mode="full"
 reason="ordinary_pr_fast_lane_fails_closed_to_full_nextest"
 filter_tokens=""
 filter_expression=""
 rust_surface_count=0
+all_paths_have_precise_token=true
+all_paths_have_family_token=true
+classification_locked=false
 
 declare -a tokens=()
+declare -a family_tokens=()
 
 while IFS= read -r path; do
   [ -n "$path" ] || continue
@@ -257,17 +293,24 @@ while IFS= read -r path; do
   if is_broad_rust_surface "$path"; then
     mode="full"
     reason="broad_rust_surface_requires_full_nextest"
+    classification_locked=true
     tokens=()
+    family_tokens=()
     break
   fi
-  if ! token="$(filter_token_for_path "$path")"; then
-    mode="full"
-    reason="unmapped_rust_surface_requires_full_nextest"
-    tokens=()
-    break
+  if token="$(filter_token_for_path "$path")"; then
+    if ! token_already_seen "$token"; then
+      tokens+=("$token")
+    fi
+  else
+    all_paths_have_precise_token=false
   fi
-  if ! token_already_seen "$token"; then
-    tokens+=("$token")
+  if family_token="$(family_token_for_path "$path")"; then
+    if ! family_token_already_seen "$family_token"; then
+      family_tokens+=("$family_token")
+    fi
+  else
+    all_paths_have_family_token=false
   fi
 done <<EOF
 $(changed_rows \
@@ -275,19 +318,39 @@ $(changed_rows \
   | awk -F '\t' 'NF >= 2 { print $2 }')
 EOF
 
-if [ "$rust_surface_count" -eq 0 ]; then
+if [ "$classification_locked" = true ]; then
+  :
+elif [ "$rust_surface_count" -eq 0 ]; then
   mode="full"
   reason="no_relevant_rust_surface_detected_for_fast_lane"
-elif [ "${#tokens[@]}" -gt 0 ]; then
+elif [ "$all_paths_have_precise_token" = true ] && [ "${#tokens[@]}" -gt 0 ]; then
   if [ "${#tokens[@]}" -le 4 ]; then
     mode="focused"
     reason="bounded_rust_surface_runs_focused_nextest"
     filter_expression="$(build_filter_expression "${tokens[@]}")"
     filter_tokens="$(printf '%s\n' "${tokens[@]}" | paste -sd, -)"
+  elif [ "$all_paths_have_family_token" = true ] && [ "${#family_tokens[@]}" -gt 0 ] && [ "${#family_tokens[@]}" -le 3 ]; then
+    mode="family"
+    reason="bounded_rust_surface_runs_family_nextest"
+    filter_expression="$(build_filter_expression "${family_tokens[@]}")"
+    filter_tokens="$(printf '%s\n' "${family_tokens[@]}" | paste -sd, -)"
   else
     mode="full"
     reason="too_many_focused_filters_require_full_nextest"
   fi
+elif [ "$all_paths_have_family_token" = true ] && [ "${#family_tokens[@]}" -gt 0 ]; then
+  if [ "${#family_tokens[@]}" -le 3 ]; then
+    mode="family"
+    reason="bounded_family_surface_runs_family_nextest"
+    filter_expression="$(build_filter_expression "${family_tokens[@]}")"
+    filter_tokens="$(printf '%s\n' "${family_tokens[@]}" | paste -sd, -)"
+  else
+    mode="full"
+    reason="too_many_family_filters_require_full_nextest"
+  fi
+else
+  mode="full"
+  reason="unmapped_rust_surface_requires_full_nextest"
 fi
 
 emit "mode" "$mode"
@@ -302,8 +365,8 @@ fi
 
 cd "$ROOT_DIR/adl"
 
-if [ "$mode" = "focused" ]; then
-  echo "Running focused nextest lane: $filter_expression"
+if [ "$mode" = "focused" ] || [ "$mode" = "family" ]; then
+  echo "Running $mode nextest lane: $filter_expression"
   cargo nextest run --status-level all --final-status-level slow -E "$filter_expression"
 else
   echo "Running full nextest lane: $reason"

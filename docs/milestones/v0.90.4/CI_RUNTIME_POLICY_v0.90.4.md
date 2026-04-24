@@ -148,10 +148,12 @@ adl/tools/run_pr_fast_test_lane.sh
 This runner is intentionally conservative:
 
 - it computes the changed surface from the PR base/head SHAs
-- it uses a focused `cargo nextest` expression only when every changed fast-lane
-  surface maps to a bounded token set
-- it fails closed to the full ordinary nextest sweep when the change is broad,
-  ambiguous, or touches too many independently-filtered modules
+- it uses a focused `cargo nextest` expression when every changed fast-lane
+  surface maps to a small bounded token set
+- it uses a bounded family `cargo nextest` expression when the change is still
+  reviewably scoped but too broad for tiny token-by-token filtering
+- it fails closed to the full ordinary nextest sweep only when the change is
+  broad, ambiguous, or crosses too many fallback families
 
 Focused fast-lane cases currently include bounded slices such as:
 
@@ -166,13 +168,21 @@ Focused fast-lane cases currently include bounded slices such as:
 - publication-control-plane docs that intentionally route to the `pr_cmd`
   validation slice
 
+Bounded family fallback cases now include broader-but-still-reviewable slices
+such as:
+
+- nested or multi-module `runtime_v2` changes that can run through the
+  `runtime_v2` family lane
+- nested or mixed CLI changes that can run through the `cli` family lane
+- bounded demo-surface changes that can run through the `demo` family lane
+
 Fail-closed full-lane cases include:
 
 - broad entry surfaces such as `adl/src/lib.rs`, `adl/src/main.rs`,
   `adl/src/runtime_v2/mod.rs`, and `adl/src/schema.rs`
 - test-harness and integration surfaces under `adl/tests/`
-- unmapped nested source paths
-- PRs that would need more than four focused test tokens
+- truly unmapped source paths outside the known fallback families
+- PRs that would cross more than three fallback families
 
 The goal is not to guess. The goal is to use a smaller truthful lane when the
 changed surface is obvious and bounded, and otherwise keep the prior full

@@ -74,13 +74,39 @@ M	adl/src/runtime_v2/inheritance.rs
 M	adl/src/runtime_v2/gateway_policies.rs
 EOF
 too_many_output="$(bash "$SCRIPT" --changed-files "$too_many" --print-plan)"
-assert_has "$too_many_output" "mode=full"
-assert_has "$too_many_output" "reason=too_many_focused_filters_require_full_nextest"
+assert_has "$too_many_output" "mode=family"
+assert_has "$too_many_output" "reason=bounded_rust_surface_runs_family_nextest"
+assert_has "$too_many_output" "filter_tokens=runtime_v2"
+assert_has "$too_many_output" "filter_expression=test(runtime_v2)"
 
 unmapped="$TMP/unmapped.txt"
 printf 'M\tadl/src/runtime_v2/subdir/nested.rs\n' >"$unmapped"
 unmapped_output="$(bash "$SCRIPT" --changed-files "$unmapped" --print-plan)"
-assert_has "$unmapped_output" "mode=full"
-assert_has "$unmapped_output" "reason=unmapped_rust_surface_requires_full_nextest"
+assert_has "$unmapped_output" "mode=family"
+assert_has "$unmapped_output" "reason=bounded_family_surface_runs_family_nextest"
+assert_has "$unmapped_output" "filter_tokens=runtime_v2"
+assert_has "$unmapped_output" "filter_expression=test(runtime_v2)"
+
+mixed_family="$TMP/mixed_family.txt"
+cat >"$mixed_family" <<'EOF'
+M	adl/src/runtime_v2/subdir/nested.rs
+M	adl/src/cli/identity_cmd/dispatch.rs
+EOF
+mixed_family_output="$(bash "$SCRIPT" --changed-files "$mixed_family" --print-plan)"
+assert_has "$mixed_family_output" "mode=family"
+assert_has "$mixed_family_output" "reason=bounded_family_surface_runs_family_nextest"
+assert_has "$mixed_family_output" "filter_tokens=runtime_v2,cli"
+assert_has "$mixed_family_output" "filter_expression=test(runtime_v2) or test(cli)"
+
+too_many_families="$TMP/too_many_families.txt"
+cat >"$too_many_families" <<'EOF'
+M	adl/src/runtime_v2/subdir/nested.rs
+M	adl/src/cli/subdir/nested.rs
+M	adl/src/demo/subdir/nested.rs
+M	adl/src/unknown.rs
+EOF
+too_many_families_output="$(bash "$SCRIPT" --changed-files "$too_many_families" --print-plan)"
+assert_has "$too_many_families_output" "mode=full"
+assert_has "$too_many_families_output" "reason=unmapped_rust_surface_requires_full_nextest"
 
 echo "PASS test_run_pr_fast_test_lane"
