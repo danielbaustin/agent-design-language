@@ -37,15 +37,23 @@ if ordinary_doc_test != "cargo test --doc":
         f"found: {ordinary_doc_test}"
     )
 
-coverage_run = step_run("Coverage run and summary (json)")
-expected_coverage = (
-    "cargo llvm-cov --workspace --all-features --json --summary-only "
-    "--output-path coverage-summary.json"
-)
-if coverage_run != expected_coverage:
+if "tool: nextest" not in workflow:
     raise SystemExit(
-        "authoritative coverage lane must retain full all-features llvm-cov command; "
-        f"found: {coverage_run}"
+        "coverage lanes must install cargo-nextest before running cargo llvm-cov nextest"
+    )
+
+expected_coverage = (
+    "cargo llvm-cov nextest --workspace --all-features --status-level slow "
+    "--final-status-level slow --slow-time 60s --no-report"
+)
+if expected_coverage not in workflow:
+    raise SystemExit(
+        "authoritative coverage lane must run through cargo llvm-cov nextest with slow markers"
+    )
+
+if "cargo llvm-cov report --json --summary-only --output-path coverage-summary.json" not in workflow:
+    raise SystemExit(
+        "coverage lanes must emit coverage-summary.json via cargo llvm-cov report after nextest execution"
     )
 
 print("PASS test_ci_runtime_contracts")
