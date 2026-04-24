@@ -121,6 +121,13 @@ when focused local checks directly prove the changed surface. The output record
 must say that full local validation was not run, list the focused commands that
 did run, and keep CI required before merge.
 
+Current implementation is intentionally narrower than the general policy: the
+focused `pr finish` lane currently applies only to docs-only paths and a
+bounded publication-control-plane slice (`pr_cmd`, `finish_support`, inline finish tests,
+CI path-policy / coverage-impact scripts, and the matching workflow/docs
+surfaces). Other changes still escalate to full local validation until more
+focused lanes are explicitly implemented and tested.
+
 Use full local validation for runtime, schema, security, release, broad tooling,
 or ambiguous changes.
 
