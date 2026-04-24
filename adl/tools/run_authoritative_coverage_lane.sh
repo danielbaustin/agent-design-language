@@ -4,11 +4,13 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ADL_DIR="$ROOT_DIR/adl"
 PRINT_PLAN=false
+AUTHORITY="push_main"
+EVENT_NAME="push"
 
 usage() {
   cat <<'USAGE'
 Usage:
-  adl/tools/run_authoritative_coverage_lane.sh [--print-plan]
+  adl/tools/run_authoritative_coverage_lane.sh [--print-plan] [--authority <authority>] [--event-name <name>]
 
 Run the authoritative coverage lane in two bounded phases:
 1. always-on authoritative coverage for the base workspace
@@ -23,6 +25,14 @@ while [ "$#" -gt 0 ]; do
     --print-plan)
       PRINT_PLAN=true
       shift
+      ;;
+    --authority)
+      AUTHORITY="${2:-}"
+      shift 2
+      ;;
+    --event-name)
+      EVENT_NAME="${2:-}"
+      shift 2
       ;;
     -h|--help)
       usage
@@ -74,11 +84,23 @@ readonly -a PROOF_TOKENS=(
 
 proof_expr="$(build_expression "${PROOF_TOKENS[@]}")"
 base_expr="not (${proof_expr})"
+run_proof_phase=true
+
+if [ "$EVENT_NAME" = "pull_request" ] && [ "$AUTHORITY" = "pr_policy_surface" ]; then
+  run_proof_phase=false
+fi
 
 if [ "$PRINT_PLAN" = true ]; then
+  printf 'authority=%s\n' "$AUTHORITY"
+  printf 'event_name=%s\n' "$EVENT_NAME"
   printf 'phase=always_on_authoritative\n'
   printf 'base_filter=%s\n' "$base_expr"
-  printf 'phase=proof_heavy_authoritative\n'
+  if [ "$run_proof_phase" = true ]; then
+    printf 'proof_phase=enabled\n'
+    printf 'phase=proof_heavy_authoritative\n'
+  else
+    printf 'proof_phase=deferred_for_pr_policy_surface\n'
+  fi
   printf 'proof_features=%s\n' "$PROOF_FEATURES"
   printf 'proof_filter=%s\n' "$proof_expr"
   exit 0
@@ -95,15 +117,21 @@ cargo llvm-cov nextest \
   --no-report \
   -E "$base_expr"
 
-echo "Authoritative coverage phase: proof_heavy_authoritative"
-echo "Proof features: $PROOF_FEATURES"
-echo "Proof filter: $proof_expr"
-cargo llvm-cov nextest \
-  --workspace \
-  --features "$PROOF_FEATURES" \
-  --status-level all \
-  --final-status-level slow \
-  --no-report \
-  -E "$proof_expr"
+if [ "$run_proof_phase" = true ]; then
+  echo "Authoritative coverage phase: proof_heavy_authoritative"
+  echo "Proof features: $PROOF_FEATURES"
+  echo "Proof filter: $proof_expr"
+  cargo llvm-cov nextest \
+    --workspace \
+    --features "$PROOF_FEATURES" \
+    --status-level all \
+    --final-status-level slow \
+    --no-report \
+    -E "$proof_expr"
+else
+  echo "Authoritative coverage phase: proof_heavy_authoritative (deferred)"
+  echo "Proof-heavy authoritative coverage is deferred for pull-request policy-surface validation."
+  echo "Push-to-main remains the full authoritative proof lane."
+fi
 
 cargo llvm-cov report --json --summary-only --output-path coverage-summary.json

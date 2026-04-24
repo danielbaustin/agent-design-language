@@ -60,9 +60,18 @@ if "tool: nextest" not in workflow:
         "coverage lanes must install cargo-nextest before running cargo llvm-cov nextest"
     )
 
-if "run: bash tools/run_authoritative_coverage_lane.sh" not in workflow:
+expected_authoritative_run = (
+    'run: bash tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" '
+    '--event-name "${{ github.event_name }}"'
+)
+if expected_authoritative_run not in workflow:
     raise SystemExit(
         "authoritative coverage lane must run through the bounded authoritative coverage runner"
+    )
+
+if "coverage_authority == 'pr_policy_surface'" not in workflow:
+    raise SystemExit(
+        "policy-surface PR authoritative coverage must be able to defer the proof-heavy/workspace gate tranche"
     )
 
 if "cargo llvm-cov report --json --summary-only --output-path coverage-summary.json" not in workflow:

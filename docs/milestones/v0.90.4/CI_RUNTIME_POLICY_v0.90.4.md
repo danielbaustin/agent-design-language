@@ -128,8 +128,10 @@ Ordinary runtime/source PRs:
 Coverage-policy-sensitive PRs:
 
 - run the same base validation as other relevant PRs
-- run full coverage because the PR changes the rules or enforcement surfaces
-  that govern coverage itself
+- run the bounded authoritative base coverage summary because the PR changes
+  the rules or enforcement surfaces that govern coverage itself
+- defer the proof-heavy authoritative slice and workspace-threshold gate to the
+  push-to-main run so policy PRs do not pay the full proof tax twice
 
 Pushes to `main` and nightly coverage:
 
@@ -199,8 +201,12 @@ The authoritative lane is now split internally as well:
   runs the bounded proof-heavy slice and opt-in feature tranches through a
   second targeted `cargo llvm-cov nextest` pass
 
-Both phases accumulate into the same final coverage report. The split is about
-runtime stability and explainability, not about dropping proof surfaces.
+Both phases accumulate into the same final coverage report on `main` and other
+full-evidence events. For `pr_policy_surface` pull requests, the workflow runs
+the always-on authoritative base summary plus the changed-source coverage gate,
+then defers the proof-heavy phase and workspace-threshold gate to push-to-main.
+The split is about runtime stability and explainability, not about dropping
+proof surfaces.
 
 That keeps ordinary PR validation fast without pretending those proof surfaces
 no longer matter.
@@ -230,8 +236,9 @@ smoke when required, and coverage-impact preflight. Do not cite the PR-fast
 coverage lane as full release coverage evidence.
 
 When working a PR that changes coverage governance or coverage tooling, expect
-the full coverage lane. That slower path is intentional because the PR is
-changing how coverage trust is enforced.
+the authoritative base coverage lane on the PR and the full proof-heavy lane on
+push-to-main. That keeps governance changes reviewable without making every
+policy PR pay the full proof-heavy workspace gate before merge.
 
 When working a `main`, nightly, release, or fail-closed event, expect full
 coverage. In those lanes, standalone `cargo test` may be skipped because
@@ -246,7 +253,8 @@ not run.
 
 ## Non-Claims
 
-This policy does not lower coverage thresholds or weaken release governance. It
-keeps ordinary bounded Rust PRs on the fast truthful path while preserving full
-coverage for `main`, nightly, release, fail-closed events, and PRs that modify
-coverage governance itself.
+This policy does not lower push-to-main coverage thresholds or weaken release
+governance. It keeps ordinary bounded Rust PRs on the fast truthful path,
+keeps policy-surface PRs on a bounded authoritative base lane, and preserves
+the full proof-heavy/workspace-threshold coverage gate for `main`, nightly,
+release, and other full-evidence events.
