@@ -4,6 +4,15 @@
 //! manifold, kernel, snapshot, and citizen artifact contracts.
 
 use super::*;
+use once_cell::sync::OnceCell;
+
+fn cached_contract<T, F>(cell: &OnceCell<T>, build: F) -> Result<T>
+where
+    T: Clone,
+    F: FnOnce() -> Result<T>,
+{
+    cell.get_or_try_init(build).cloned()
+}
 
 pub fn runtime_v2_contract_schema_contract() -> Result<RuntimeV2ContractSchemaArtifacts> {
     RuntimeV2ContractSchemaArtifacts::prototype()
@@ -127,7 +136,8 @@ pub fn runtime_v2_csm_integrated_run_contract() -> Result<RuntimeV2CsmIntegrated
 }
 
 pub fn runtime_v2_feature_proof_coverage_contract() -> Result<RuntimeV2FeatureProofCoveragePacket> {
-    RuntimeV2FeatureProofCoveragePacket::prototype()
+    static PACKET: OnceCell<RuntimeV2FeatureProofCoveragePacket> = OnceCell::new();
+    cached_contract(&PACKET, RuntimeV2FeatureProofCoveragePacket::prototype)
 }
 
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
@@ -170,7 +180,8 @@ pub fn runtime_v2_private_state_sanctuary_contract(
 
 pub fn runtime_v2_private_state_observatory_contract(
 ) -> Result<RuntimeV2PrivateStateObservatoryArtifacts> {
-    RuntimeV2PrivateStateObservatoryArtifacts::prototype()
+    static ARTIFACTS: OnceCell<RuntimeV2PrivateStateObservatoryArtifacts> = OnceCell::new();
+    cached_contract(&ARTIFACTS, RuntimeV2PrivateStateObservatoryArtifacts::prototype)
 }
 
 pub fn runtime_v2_standing_contract() -> Result<RuntimeV2StandingArtifacts> {
@@ -178,13 +189,16 @@ pub fn runtime_v2_standing_contract() -> Result<RuntimeV2StandingArtifacts> {
 }
 
 pub fn runtime_v2_access_control_contract() -> Result<RuntimeV2AccessControlArtifacts> {
-    RuntimeV2AccessControlArtifacts::prototype()
+    static ARTIFACTS: OnceCell<RuntimeV2AccessControlArtifacts> = OnceCell::new();
+    cached_contract(&ARTIFACTS, RuntimeV2AccessControlArtifacts::prototype)
 }
 
 pub fn runtime_v2_continuity_challenge_contract() -> Result<RuntimeV2ContinuityChallengeArtifacts> {
-    RuntimeV2ContinuityChallengeArtifacts::prototype()
+    static ARTIFACTS: OnceCell<RuntimeV2ContinuityChallengeArtifacts> = OnceCell::new();
+    cached_contract(&ARTIFACTS, RuntimeV2ContinuityChallengeArtifacts::prototype)
 }
 
 pub fn runtime_v2_observatory_flagship_contract() -> Result<RuntimeV2ObservatoryFlagshipArtifacts> {
-    RuntimeV2ObservatoryFlagshipArtifacts::prototype()
+    static ARTIFACTS: OnceCell<RuntimeV2ObservatoryFlagshipArtifacts> = OnceCell::new();
+    cached_contract(&ARTIFACTS, RuntimeV2ObservatoryFlagshipArtifacts::prototype)
 }
