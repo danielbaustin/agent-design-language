@@ -1088,6 +1088,8 @@ assert route_pr_blocked["workflow_state"]["blocker_class"] == "review_changes_re
 
 route_pr_merged = load("route_pr_merged.out.json")
 assert route_pr_merged["selected_skill"]["skill_name"] == "pr-closeout"
+assert route_pr_merged["workflow_state"]["detected_phase"] == "merged_needs_closeout"
+assert route_pr_merged["handoff_state"]["next_phase"] == "pr-closeout"
 
 route_pr_clean = load("route_pr_clean.out.json")
 assert route_pr_clean["selected_skill"]["skill_name"] == "none"
