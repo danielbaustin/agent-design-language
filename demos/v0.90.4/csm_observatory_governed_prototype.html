@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CSM Observatory / Governed Prototype</title>
+    <link rel="stylesheet" href="./csm_observatory_governed_prototype.css">
+  </head>
+  <body>
+    <main
+      class="observatory-governed-shell"
+      data-packet-ref="../fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json"
+    >
+      <section class="hero" aria-labelledby="prototype-title">
+        <div class="hero__backdrop" aria-hidden="true"></div>
+        <header class="hero__mast">
+          <div>
+            <p class="eyebrow">CSM Observatory / governed prototype</p>
+            <h1 id="prototype-title">Prototype CSM 02</h1>
+            <p class="hero__lede" id="hero-lede">
+              Fixture-backed Observatory prototype with rooms, lenses, memory dots, and proposal-only controls.
+            </p>
+          </div>
+          <div class="truth-strip" aria-label="Truth boundary">
+            <span>Fixture packet</span>
+            <span>Proposal only</span>
+            <span>No live mutation</span>
+            <span id="investor-mode-tag">Atlas mode</span>
+          </div>
+        </header>
+
+        <section class="control-strip" aria-label="Observatory navigation">
+          <div class="control-strip__group">
+            <p class="eyebrow">Rooms</p>
+            <div id="room-tabs" class="chip-row"></div>
+          </div>
+          <div class="control-strip__group">
+            <p class="eyebrow">Lenses</p>
+            <div id="lens-tabs" class="chip-row"></div>
+          </div>
+          <div class="control-strip__group">
+            <p class="eyebrow">Memory Dots</p>
+            <div id="memory-dots" class="chip-row chip-row--memory"></div>
+          </div>
+          <button id="fallback-toggle" class="fallback-toggle" type="button">
+            Toggle Corporate Investor UI
+          </button>
+        </section>
+
+        <section class="observatory-grid" aria-label="Governed Observatory prototype surface">
+          <section class="atlas-panel panel" aria-labelledby="atlas-heading">
+            <p class="eyebrow">World / Reality Mode</p>
+            <div class="panel__header">
+              <h2 id="atlas-heading">Inhabited polis atlas</h2>
+              <p id="atlas-summary" class="panel-note"></p>
+            </div>
+            <div class="atlas-orb">
+              <div class="atlas-orb__halo atlas-orb__halo--outer"></div>
+              <div class="atlas-orb__halo atlas-orb__halo--inner"></div>
+              <div class="atlas-orb__core">
+                <span class="atlas-orb__label">CSM</span>
+                <strong id="manifold-core-id">02</strong>
+              </div>
+            </div>
+            <div id="citizen-atlas" class="citizen-atlas"></div>
+            <div class="manifold-metrics" id="manifold-metrics"></div>
+          </section>
+
+          <section class="governance-panel panel" aria-labelledby="governance-heading">
+            <p class="eyebrow">Operator / Governance Mode</p>
+            <div class="panel__header">
+              <h2 id="governance-heading">Freedom Gate docket</h2>
+              <p class="panel-note" id="governance-summary"></p>
+            </div>
+            <div id="docket-cases" class="docket-cases"></div>
+          </section>
+
+          <section class="inspector-panel panel" aria-labelledby="inspector-heading">
+            <p class="eyebrow">Selected Actor</p>
+            <div class="panel__header">
+              <h2 id="inspector-heading">Prototype Citizen Alpha</h2>
+              <p id="inspector-summary" class="panel-note"></p>
+            </div>
+            <dl class="inspector-grid">
+              <div>
+                <dt>Role</dt>
+                <dd id="inspector-role"></dd>
+              </div>
+              <div>
+                <dt>Episode</dt>
+                <dd id="inspector-episode"></dd>
+              </div>
+              <div>
+                <dt>Allowed</dt>
+                <dd id="inspector-allowed"></dd>
+              </div>
+              <div>
+                <dt>Forbidden</dt>
+                <dd id="inspector-forbidden"></dd>
+              </div>
+            </dl>
+            <ul id="inspector-evidence" class="evidence-list"></ul>
+          </section>
+
+          <section class="trace-panel panel" aria-labelledby="trace-heading">
+            <p class="eyebrow">Trace Ribbon</p>
+            <div class="panel__header">
+              <h2 id="trace-heading">Temporal anchoring</h2>
+              <p class="panel-note">
+                Proposal, decision, challenge, and review export remain causally legible.
+              </p>
+            </div>
+            <ol id="trace-ribbon" class="trace-ribbon"></ol>
+          </section>
+
+          <section class="proposal-panel panel" aria-labelledby="proposal-heading">
+            <p class="eyebrow">Governed Request Surface</p>
+            <div class="panel__header">
+              <h2 id="proposal-heading">Proposal-only actions</h2>
+              <p id="proposal-mode-statement" class="panel-note"></p>
+            </div>
+            <div id="proposal-cards" class="proposal-cards"></div>
+            <article id="proposal-detail" class="proposal-detail" aria-live="polite"></article>
+          </section>
+
+          <section class="review-panel panel" aria-labelledby="review-heading">
+            <p class="eyebrow">Review / Export Surface</p>
+            <div class="panel__header">
+              <h2 id="review-heading">Proof links and caveats</h2>
+              <p id="review-summary" class="panel-note"></p>
+            </div>
+            <ul id="review-links" class="review-links"></ul>
+            <ul id="review-caveats" class="review-caveats"></ul>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="./csm_observatory_governed_prototype.js"></script>
+  </body>
+  </html>
