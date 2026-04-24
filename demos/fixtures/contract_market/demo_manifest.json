@@ -1,0 +1,18 @@
+{
+  "schema_version": "adl.v0904.contract_market.demo_manifest.v1",
+  "demo_id": "D9",
+  "fixture_id": "contract-market-v0.90.4-baseline-01",
+  "execution_shape": "fixture_packet_only",
+  "claim_boundary": "This manifest records the bounded fixture packet for WP-11. It does not claim a runner or end-to-end market execution.",
+  "primary_packet_manifest": "packet_manifest.json",
+  "negative_packet_root": "../contract_market_invalid",
+  "validation_commands": [
+    "python3 demos/fixtures/contract_market/validation_protocol.py",
+    "bash adl/tools/test_v0904_contract_market_fixture_set.sh"
+  ],
+  "non_proving_boundaries": [
+    "no payment settlement",
+    "no governed tool execution",
+    "no production counterparty verification"
+  ]
+}

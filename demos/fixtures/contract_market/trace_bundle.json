@@ -1,0 +1,47 @@
+{
+  "schema": "adl.v0904.contract_market.trace_bundle.v1",
+  "bundle_id": "trace-bundle-001",
+  "contract_id": "contract-parent-001",
+  "events": [
+    {
+      "event_id": "trace-event-001-contract-opened",
+      "kind": "contract_opened",
+      "artifact_ref": "parent_contract.json"
+    },
+    {
+      "event_id": "trace-event-002-bids-received",
+      "kind": "bids_received",
+      "artifact_ref": "evaluation.json"
+    },
+    {
+      "event_id": "trace-event-003-award",
+      "kind": "award",
+      "artifact_ref": "award_transition.json"
+    },
+    {
+      "event_id": "trace-event-004-acceptance",
+      "kind": "acceptance",
+      "artifact_ref": "acceptance_transition.json"
+    },
+    {
+      "event_id": "trace-event-005-subcontract",
+      "kind": "delegation",
+      "artifact_ref": "subcontract.json"
+    },
+    {
+      "event_id": "trace-event-006-delegated-output",
+      "kind": "delegated_output",
+      "artifact_ref": "delegated_output.json"
+    },
+    {
+      "event_id": "trace-event-007-parent-integration",
+      "kind": "integration",
+      "artifact_ref": "parent_integration_output.json"
+    },
+    {
+      "event_id": "trace-event-008-completion",
+      "kind": "completion",
+      "artifact_ref": "completion_event.json"
+    }
+  ]
+}

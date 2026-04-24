@@ -1,0 +1,54 @@
+{
+  "schema": "adl.v0904.contract_market.evaluation.v1",
+  "evaluation_id": "evaluation-001",
+  "target_contract_id": "contract-parent-001",
+  "mode": "hybrid",
+  "mandatory_checks": [
+    {
+      "check_id": "contract_match",
+      "status": "pass"
+    },
+    {
+      "check_id": "eligible_bidder",
+      "status": "pass"
+    },
+    {
+      "check_id": "trace_requirements_present",
+      "status": "pass"
+    },
+    {
+      "check_id": "tool_requirements_not_execution_grants",
+      "status": "pass"
+    }
+  ],
+  "scorecards": [
+    {
+      "bid_id": "bid-alpha-001",
+      "criterion_scores": {
+        "trace_completeness": 4,
+        "bounded_delegation_quality": 4,
+        "artifact_portability": 5,
+        "review_clarity": 4
+      },
+      "aggregate_score": 4.25
+    },
+    {
+      "bid_id": "bid-beta-001",
+      "criterion_scores": {
+        "trace_completeness": 5,
+        "bounded_delegation_quality": 5,
+        "artifact_portability": 5,
+        "review_clarity": 4
+      },
+      "aggregate_score": 4.75
+    }
+  ],
+  "recommendation": {
+    "selected_bid_id": "bid-beta-001",
+    "rationale": "Bid beta wins on trace completeness and bounded delegation while keeping tool usage in a deferred requirement-only posture."
+  },
+  "human_override": {
+    "used": false,
+    "rationale": null
+  }
+}

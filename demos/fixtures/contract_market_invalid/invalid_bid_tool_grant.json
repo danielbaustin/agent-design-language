@@ -1,0 +1,34 @@
+{
+  "schema": "adl.v0904.contract_market.bid.v1",
+  "bid_id": "bid-invalid-tool-grant-001",
+  "version": "1.0.0",
+  "target_contract_id": "contract-parent-001",
+  "bidder": {
+    "actor_id": "citizen.contract.invalid",
+    "actor_type": "citizen",
+    "eligibility": "eligible"
+  },
+  "proposal": "Invalid bid that attempts to grant direct tool execution.",
+  "resource_claim": {
+    "compute": "medium"
+  },
+  "tool_requirements": [
+    {
+      "requirement_id": "tool-req-invalid-grant-01",
+      "description": "Improper direct tool access.",
+      "mode": "direct_execution",
+      "execution_authority": "granted"
+    }
+  ],
+  "confidence": "0.52",
+  "commitments": [
+    "invalid example only"
+  ],
+  "exceptions": [
+    "should be rejected"
+  ],
+  "trace_requirements": {
+    "signature_required": true,
+    "event_linking_required": true
+  }
+}

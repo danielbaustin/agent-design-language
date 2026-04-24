@@ -1,0 +1,15 @@
+{
+  "schema": "adl.v0904.contract_market.transition.v1",
+  "transition_id": "transition-completion-001",
+  "contract_id": "contract-parent-001",
+  "from_state": "executing",
+  "to_state": "completed",
+  "actor_id": "citizen.contract.beta",
+  "authority_basis": "completion_with_required_artifacts",
+  "required_artifact_refs": [
+    "review_summary_seed.json",
+    "trace_bundle.json",
+    "parent_integration_output.json"
+  ],
+  "trace_event_ref": "trace-event-008-completion"
+}

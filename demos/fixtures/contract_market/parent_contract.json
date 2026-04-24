@@ -1,0 +1,75 @@
+{
+  "schema": "adl.v0904.contract_market.contract.v1",
+  "contract_id": "contract-parent-001",
+  "version": "1.0.0",
+  "contract_type": "review_packet_assembly",
+  "lifecycle_state": "open_for_bidding",
+  "parties": {
+    "issuer": "citizen.market.issuer",
+    "eligible_bidders": [
+      "citizen.contract.alpha",
+      "citizen.contract.beta"
+    ]
+  },
+  "scope": {
+    "inputs": [
+      "source packet",
+      "review criteria",
+      "evidence policy"
+    ],
+    "deliverables": [
+      "review packet summary",
+      "evidence index"
+    ]
+  },
+  "process_rules": {
+    "bidding_closes_at": "2026-04-24T00:00:00Z",
+    "selection_mode": "hybrid",
+    "human_override_allowed": true
+  },
+  "constraints": [
+    "no payment settlement",
+    "no governed tool execution",
+    "portable artifact paths only"
+  ],
+  "tool_requirements": [
+    {
+      "requirement_id": "tool-req-review-search-01",
+      "description": "Search may be required during later execution.",
+      "mode": "constraint_only",
+      "execution_authority": "not_granted"
+    }
+  ],
+  "timeline": {
+    "opening_at": "2026-04-23T00:00:00Z",
+    "expected_completion_at": "2026-04-25T00:00:00Z"
+  },
+  "evaluation_criteria": [
+    "trace completeness",
+    "bounded delegation quality",
+    "artifact portability",
+    "review clarity"
+  ],
+  "artifact_references": [
+    "review_summary_seed.json",
+    "trace_bundle.json"
+  ],
+  "identity_and_trust_requirements": {
+    "minimum_trust_level": "internal_citizen",
+    "counterparty_allowed": false
+  },
+  "trace_requirements": {
+    "required": true,
+    "minimum_events": [
+      "evaluation_decision",
+      "award",
+      "acceptance",
+      "delegation",
+      "completion"
+    ]
+  },
+  "extension_slot": {
+    "pricing": "deferred",
+    "payment": "deferred"
+  }
+}

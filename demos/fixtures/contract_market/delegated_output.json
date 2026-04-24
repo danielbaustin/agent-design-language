@@ -1,0 +1,12 @@
+{
+  "schema": "adl.v0904.contract_market.delegated_output.v1",
+  "output_id": "delegated-output-001",
+  "subcontract_id": "subcontract-001",
+  "producer": "counterparty.editorial.gamma",
+  "deliverable_type": "evidence_index_fragment",
+  "artifact_refs": [
+    "trace_bundle.json"
+  ],
+  "status": "completed",
+  "trace_event_ref": "trace-event-006-delegated-output"
+}

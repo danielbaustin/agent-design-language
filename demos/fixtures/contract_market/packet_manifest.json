@@ -1,0 +1,85 @@
+{
+  "schema": "adl.v0904.contract_market.packet_manifest.v1",
+  "fixture_id": "contract-market-v0.90.4-baseline-01",
+  "fixture_version": "v0.90.4-01",
+  "source_mode": "fixture_contract",
+  "claim_boundary": "Bounded fixture packet for the first reviewable contract-market proof. This packet does not grant tool authority or prove payment settlement.",
+  "packet_root": "demos/fixtures/contract_market",
+  "artifacts": [
+    {
+      "artifact_id": "parent_contract",
+      "path": "parent_contract.json",
+      "proof_purpose": "Defines the bounded work, deliverables, constraints, trace requirements, and tool requirements as constraints only."
+    },
+    {
+      "artifact_id": "bid_alpha",
+      "path": "bid_alpha.json",
+      "proof_purpose": "Valid bid from an eligible internal bidder with explicit commitments and no tool dependency."
+    },
+    {
+      "artifact_id": "bid_beta",
+      "path": "bid_beta.json",
+      "proof_purpose": "Valid bid from an eligible bidder that records tool dependency as a requirement rather than authority."
+    },
+    {
+      "artifact_id": "evaluation",
+      "path": "evaluation.json",
+      "proof_purpose": "Explains mandatory checks, scorecards, recommendation, and why the selected bid wins."
+    },
+    {
+      "artifact_id": "award_transition",
+      "path": "award_transition.json",
+      "proof_purpose": "Records the authorized award transition with actor and authority basis."
+    },
+    {
+      "artifact_id": "acceptance_transition",
+      "path": "acceptance_transition.json",
+      "proof_purpose": "Records acceptance by the awarded actor before execution begins."
+    },
+    {
+      "artifact_id": "subcontract",
+      "path": "subcontract.json",
+      "proof_purpose": "Shows bounded delegation with explicit parent link, delegated scope, and inherited constraints."
+    },
+    {
+      "artifact_id": "delegated_output",
+      "path": "delegated_output.json",
+      "proof_purpose": "Captures delegated deliverables without collapsing parent review and integration."
+    },
+    {
+      "artifact_id": "parent_integration_output",
+      "path": "parent_integration_output.json",
+      "proof_purpose": "Shows the parent contractor integrating delegated output into the parent deliverable."
+    },
+    {
+      "artifact_id": "completion_event",
+      "path": "completion_event.json",
+      "proof_purpose": "Records completion with explicit artifact links and authority basis."
+    },
+    {
+      "artifact_id": "trace_bundle",
+      "path": "trace_bundle.json",
+      "proof_purpose": "Provides reviewer-facing trace references across contract, bid, evaluation, delegation, and completion events."
+    },
+    {
+      "artifact_id": "review_summary_seed",
+      "path": "review_summary_seed.json",
+      "proof_purpose": "Seeds the later reviewer summary with scope, participants, rationale, caveats, and residual risk sections."
+    },
+    {
+      "artifact_id": "demo_manifest",
+      "path": "demo_manifest.json",
+      "proof_purpose": "Records packet identity, claim boundary, validation commands, and non-proving limits."
+    },
+    {
+      "artifact_id": "tool_requirement_fixture",
+      "path": "tool_requirement_fixture.json",
+      "proof_purpose": "Shows how tool-mediated work is represented as a requirement and review boundary rather than an execution grant."
+    }
+  ],
+  "validation_commands": [
+    "python3 demos/fixtures/contract_market/validation_protocol.py",
+    "bash adl/tools/test_v0904_contract_market_fixture_set.sh"
+  ],
+  "negative_packet_root": "demos/fixtures/contract_market_invalid"
+}
