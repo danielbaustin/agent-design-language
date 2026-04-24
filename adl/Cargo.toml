@@ -23,6 +23,10 @@ path = "src/bin/adl_remote.rs"
 # ordinary `cargo test` but remain covered by authoritative `--all-features`
 # lanes such as cargo-llvm-cov.
 slow-proof-tests = []
+# Heavy `pr finish` temp-repo publication and sync integration tests stay out
+# of ordinary `cargo test` but remain covered by authoritative `--all-features`
+# lanes such as cargo-llvm-cov.
+slow-finish-tests = []
 
 [dependencies]
 # CLI

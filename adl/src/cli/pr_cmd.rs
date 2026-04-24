@@ -73,12 +73,6 @@ use self::git_support::{
     has_uncommitted_or_untracked_changes, issue_create_repo, path_str, primary_checkout_root,
     repo_root, run_capture, run_capture_allow_failure, run_status, tracked_changes_status,
 };
-#[cfg(test)]
-use self::github::ensure_pr_closing_linkage;
-#[cfg(test)]
-use self::github::pr_has_closing_linkage;
-#[cfg(test)]
-use self::github::{current_pr_url, ensure_or_repair_pr_closing_linkage};
 use self::github::{
     ensure_issue_metadata_parity, format_open_pr_wave, gh_issue_create, gh_issue_edit_body,
     gh_issue_title, issue_version, unresolved_milestone_pr_wave,

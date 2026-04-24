@@ -82,6 +82,8 @@ Out of scope:
 - Economics inheritance audit:
   ECONOMICS_INHERITANCE_AND_AUTHORITY_AUDIT_v0.90.4.md
 - CI runtime policy for execution sessions: CI_RUNTIME_POLICY_v0.90.4.md
+- Finish test topology for validation throughput:
+  FINISH_TEST_TOPOLOGY_v0.90.4.md
 - Feature index: FEATURE_DOCS_v0.90.4.md
 - WP execution readiness: WP_EXECUTION_READINESS_v0.90.4.md
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.4.md
