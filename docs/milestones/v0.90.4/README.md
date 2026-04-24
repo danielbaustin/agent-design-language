@@ -8,6 +8,10 @@ for execution readiness by #2389, reviewed again during the v0.90.3 WP-19
 handoff pass, and opened by WP-01 as issue #2420 after the v0.90.3 release
 ceremony.
 
+During the live release tail, active crate and CLI version surfaces should read
+`0.90.4` even though the latest published release tag remains `v0.90.3` until
+v0.90.4 ceremony closes.
+
 The issue wave is now open as #2420 through #2440. This package is no longer
 planning-only truth: it is the tracked execution map for the live v0.90.4 wave.
 

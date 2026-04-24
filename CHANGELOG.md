@@ -2,7 +2,19 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.90.3 (In development)
+## v0.90.4 (In development)
+
+Status: v0.90.4 is the active citizen economics and contract-market milestone.
+The issue wave is open as #2420-#2440, and the active crate/package version
+surface is now `0.90.4` for the live development line even though the latest
+released tag remains v0.90.3 until v0.90.4 closes.
+
+Scope note:
+- This entry is intentionally minimal during the live issue wave.
+- Detailed milestone scope, proof expectations, and release-tail truth live in
+  `docs/milestones/v0.90.4/`.
+
+## v0.90.3 (Released 2026-04-23)
 
 Status: Issue wave opened on 2026-04-21. WP-01 is #2327, WP-02 through WP-14
 are #2328-#2340, WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
@@ -27,7 +39,7 @@ Planned scope:
 - WP-19 leaves the v0.90.4 economics package, the v0.90.5 governed-tools
   package, and the downstream v0.91/v0.92 boundaries ready to start cleanly
   after v0.90.3 ceremony.
-- The crate version is `0.90.3` for the active v0.90.3 development line.
+- The crate version is `0.90.3` for the released v0.90.3 line.
 
 Not claimed in v0.90.3:
 - first true Gödel-agent birthday
