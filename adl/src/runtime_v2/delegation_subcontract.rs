@@ -9,6 +9,7 @@ pub const RUNTIME_V2_PARENT_INTEGRATION_ARTIFACT_SCHEMA: &str =
     "runtime_v2.parent_integration_artifact.v1";
 pub const RUNTIME_V2_DELEGATION_NEGATIVE_CASES_SCHEMA: &str =
     "runtime_v2.delegation_negative_cases.v1";
+const RUNTIME_V2_SUBCONTRACT_SELECTION_RUNNER_UP_REF_FRAGMENT: &str = "runner-up-bid";
 pub const RUNTIME_V2_SUBCONTRACT_ARTIFACT_PATH: &str =
     "runtime_v2/contract_market/delegation_subcontract.json";
 pub const RUNTIME_V2_DELEGATED_OUTPUT_ARTIFACT_PATH: &str =
@@ -47,6 +48,7 @@ pub struct RuntimeV2SubcontractArtifact {
     pub counterparty_model_ref: String,
     pub delegating_record_ref: String,
     pub delegating_counterparty_id: String,
+    pub subcontractor_selection_basis_ref: String,
     pub subcontractor_record_ref: String,
     pub subcontractor_counterparty_id: String,
     pub delegated_scope_summary: String,
@@ -242,14 +244,9 @@ impl RuntimeV2SubcontractArtifact {
         counterparties: &RuntimeV2ExternalCounterpartyModel,
     ) -> Result<Self> {
         let selected_bid = selected_bid(selection, valid_bids)?;
+        let runner_up_bid = runner_up_bid(selection, valid_bids)?;
         let delegating_record = counterparty_record_for_bid(counterparties, selected_bid)?;
-        let subcontractor_record = counterparties
-            .records
-            .iter()
-            .find(|record| record.counterparty_id != selected_bid.bidder_actor_id)
-            .ok_or_else(|| {
-                anyhow!("delegation prototype requires a second supported counterparty")
-            })?;
+        let subcontractor_record = counterparty_record_for_bid(counterparties, runner_up_bid)?;
 
         let artifact = Self {
             schema_version: RUNTIME_V2_SUBCONTRACT_ARTIFACT_SCHEMA.to_string(),
@@ -267,6 +264,10 @@ impl RuntimeV2SubcontractArtifact {
                 counterparties.artifact_path, delegating_record.record_id
             ),
             delegating_counterparty_id: delegating_record.counterparty_id.clone(),
+            subcontractor_selection_basis_ref: format!(
+                "{}#{}",
+                selection.artifact_path, RUNTIME_V2_SUBCONTRACT_SELECTION_RUNNER_UP_REF_FRAGMENT
+            ),
             subcontractor_record_ref: format!(
                 "{}#{}",
                 counterparties.artifact_path, subcontractor_record.record_id
@@ -345,9 +346,20 @@ impl RuntimeV2SubcontractArtifact {
         }
 
         let selected_bid = selected_bid(selection, valid_bids)?;
+        let runner_up_bid = runner_up_bid(selection, valid_bids)?;
         if self.delegating_counterparty_id != selected_bid.bidder_actor_id {
             return Err(anyhow!(
                 "delegating counterparty must match the selected bid counterparty"
+            ));
+        }
+        if self.subcontractor_selection_basis_ref
+            != format!(
+                "{}#{}",
+                selection.artifact_path, RUNTIME_V2_SUBCONTRACT_SELECTION_RUNNER_UP_REF_FRAGMENT
+            )
+        {
+            return Err(anyhow!(
+                "subcontract.subcontractor_selection_basis_ref must bind the selection artifact runner-up bid"
             ));
         }
 
@@ -355,10 +367,22 @@ impl RuntimeV2SubcontractArtifact {
             counterparty_record_by_id(counterparties, &self.delegating_counterparty_id)?;
         let subcontractor_record =
             counterparty_record_by_id(counterparties, &self.subcontractor_counterparty_id)?;
+        let expected_subcontractor_record =
+            counterparty_record_for_bid(counterparties, runner_up_bid)?;
 
         if self.delegating_counterparty_id == self.subcontractor_counterparty_id {
             return Err(anyhow!(
                 "subcontractor must be distinct from the delegating counterparty"
+            ));
+        }
+        if self.subcontractor_counterparty_id != runner_up_bid.bidder_actor_id {
+            return Err(anyhow!(
+                "subcontractor must match the runner-up bid counterparty selected by subcontractor_selection_basis_ref"
+            ));
+        }
+        if subcontractor_record.counterparty_id != expected_subcontractor_record.counterparty_id {
+            return Err(anyhow!(
+                "subcontractor record must match the runner-up bid counterparty record"
             ));
         }
         if self.delegating_record_ref
@@ -470,6 +494,10 @@ impl RuntimeV2SubcontractArtifact {
         validate_relative_ref(
             &self.delegating_record_ref,
             "subcontract.delegating_record_ref",
+        )?;
+        validate_relative_ref(
+            &self.subcontractor_selection_basis_ref,
+            "subcontract.subcontractor_selection_basis_ref",
         )?;
         validate_relative_ref(
             &self.subcontractor_record_ref,
@@ -1132,6 +1160,16 @@ fn selected_bid<'a>(
         .iter()
         .find(|bid| bid.artifact_path == selection.recommendation.selected_bid_ref)
         .ok_or_else(|| anyhow!("selected bid ref must bind a valid bid"))
+}
+
+fn runner_up_bid<'a>(
+    selection: &RuntimeV2EvaluationSelectionArtifact,
+    valid_bids: &'a [RuntimeV2BidArtifact],
+) -> Result<&'a RuntimeV2BidArtifact> {
+    valid_bids
+        .iter()
+        .find(|bid| bid.bid_id == selection.recommendation.runner_up_bid_id)
+        .ok_or_else(|| anyhow!("runner-up bid id must bind a valid bid"))
 }
 
 fn counterparty_record_for_bid<'a>(
