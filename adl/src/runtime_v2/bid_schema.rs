@@ -7,6 +7,10 @@ pub const RUNTIME_V2_BID_BRAVO_PATH: &str = "runtime_v2/contract_market/bid_brav
 pub const RUNTIME_V2_BID_NEGATIVE_CASES_PATH: &str =
     "runtime_v2/contract_market/bid_negative_cases.json";
 
+pub fn runtime_v2_bid_schema_contract() -> Result<RuntimeV2BidSchemaArtifacts> {
+    RuntimeV2BidSchemaArtifacts::prototype()
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RuntimeV2BidToolUsage {
     pub requirement_id: String,

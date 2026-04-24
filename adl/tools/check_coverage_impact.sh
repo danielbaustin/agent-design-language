@@ -11,6 +11,7 @@ THRESHOLD="${PER_FILE_LINE_THRESHOLD:-80}"
 LARGE_FILE_LINES="${COVERAGE_IMPACT_LARGE_FILE_LINES:-200}"
 LARGE_FILE_DELTA="${COVERAGE_IMPACT_LARGE_FILE_DELTA:-80}"
 REQUIRE_SUMMARY_FOR_RISK=false
+PRINT_RISK_FILTERS=false
 
 usage() {
   cat <<'USAGE'
@@ -26,6 +27,7 @@ Options:
                                   "path" or "STATUS<TAB>path".
   --threshold <percent>           Per-file line threshold. Defaults to PER_FILE_LINE_THRESHOLD or 80.
   --require-summary-for-risk      Fail when risky changed Rust files lack summary evidence.
+  --print-risk-filters            Print one candidate test filter per risky changed Rust file and exit.
   -h, --help                      Show this help.
 
 This is a fast authoring-time guard. It does not replace the full GitHub
@@ -62,6 +64,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     --require-summary-for-risk)
       REQUIRE_SUMMARY_FOR_RISK=true
+      shift
+      ;;
+    --print-risk-filters)
+      PRINT_RISK_FILTERS=true
       shift
       ;;
     -h|--help)
@@ -115,6 +121,9 @@ changed_source_rows="$(
 )"
 
 if [ -z "$changed_source_rows" ]; then
+  if [ "$PRINT_RISK_FILTERS" = true ]; then
+    exit 0
+  fi
   echo "Coverage-impact preflight: no changed production adl/src Rust files."
   exit 0
 fi
@@ -249,6 +258,19 @@ EOF
     exit 1
   fi
   echo "Coverage-impact preflight passed for changed Rust source files using ${SUMMARY}."
+  exit 0
+fi
+
+if [ "$PRINT_RISK_FILTERS" = true ]; then
+  if [ -z "$risk_rows" ]; then
+    exit 0
+  fi
+  printf '%s' "$risk_rows" \
+    | while IFS=$'\t' read -r _status path _lines _delta _reason; do
+        [ -n "$path" ] || continue
+        candidate_filter_for_path "$path"
+      done \
+    | awk '!seen[$0]++'
   exit 0
 fi
 

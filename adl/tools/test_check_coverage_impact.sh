@@ -45,12 +45,20 @@ grep -F "no changed production adl/src Rust files" /tmp/coverage-impact-test-onl
 
 changed="$TMP/changed.txt"
 printf 'A\tadl/src/runtime_v2/new_large_surface.rs\n' >"$changed"
+risk_filters="$TMP/risk-filters.txt"
+bash "$SCRIPT" --changed-files "$changed" --print-risk-filters >"$risk_filters"
+grep -Fx "new_large_surface" "$risk_filters" >/dev/null
+
 if bash "$SCRIPT" --changed-files "$changed" --require-summary-for-risk >/tmp/coverage-impact-missing.out 2>&1; then
   echo "expected risky changed source without summary to fail" >&2
   exit 1
 fi
 grep -F "Coverage-impact preflight needs coverage evidence" /tmp/coverage-impact-missing.out >/dev/null
 grep -F "new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
+
+docs_filters="$TMP/docs-filters.txt"
+bash "$SCRIPT" --changed-files "$docs_only" --print-risk-filters >"$docs_filters"
+[ ! -s "$docs_filters" ]
 
 low_summary="$TMP/low-summary.json"
 make_summary "adl/src/runtime_v2/new_large_surface.rs" 77 100 "$low_summary"
