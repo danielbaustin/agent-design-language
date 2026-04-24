@@ -20,6 +20,7 @@ fn runtime_v2_access_control_contract_is_stable() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_access_control_serializes_and_matches_golden_fixtures() {
     let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
     let matrix_json = String::from_utf8(
@@ -173,6 +174,7 @@ fn runtime_v2_access_control_rejects_unsafe_event_mutations() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_access_control_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_access_control_contract().expect("access artifacts");
     let root = common::unique_temp_path("access-control-write");

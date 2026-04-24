@@ -703,6 +703,7 @@ impl RuntimeV2ExternalCounterpartyNegativeCases {
         }
 
         let mut seen_cases = BTreeSet::new();
+        let expected_case_ids = expected_external_counterparty_negative_case_ids();
         for case in &self.required_negative_cases {
             case.validate()?;
             if !seen_cases.insert(case.case_id.clone()) {
@@ -725,6 +726,11 @@ impl RuntimeV2ExternalCounterpartyNegativeCases {
                     err
                 ));
             }
+        }
+        if seen_cases != expected_case_ids {
+            return Err(anyhow!(
+                "external_counterparty_negative_cases must preserve the reviewed denial coverage membership"
+            ));
         }
         Ok(())
     }
@@ -987,6 +993,19 @@ fn validate_counterparty_actions(values: &[String]) -> Result<()> {
         }
     }
     Ok(())
+}
+
+fn expected_external_counterparty_negative_case_ids() -> BTreeSet<String> {
+    [
+        "mismatched-assurance-claim",
+        "mismatched-revocation-claim",
+        "missing-gateway",
+        "private-state-inspection-attempt",
+        "tool-mediated-action-outside-allowed-scope",
+    ]
+    .into_iter()
+    .map(str::to_string)
+    .collect()
 }
 
 fn validate_human_action_mode(value: &str) -> Result<()> {

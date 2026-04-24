@@ -106,3 +106,40 @@ Success criteria for this posture:
 - repeated runs have a chance to reuse compiler outputs instead of paying only
   target-directory cache restores
 - linker acceleration is truthfully active in CI rather than silently dormant
+
+## Authoritative Coverage Outliers
+
+Recent successful always-on authoritative coverage still showed one narrow proof
+tranche dominating runtime and variance.
+
+Observed on successful `main` run `24907648370`:
+
+- `adl-coverage`: about `811s`
+- `Coverage run and summary (json)`: about `755s`
+
+Largest proof-heavy families inside that coverage step:
+
+- `runtime_v2::tests::access_control::*`: about `38s` to `40s`
+- `runtime_v2::tests::challenge::*`: about `47s` to `48s`
+- `runtime_v2::tests::observatory_flagship::*`: about `48s`
+- `runtime_v2::tests::private_state_observatory::*`: about `37s` to `44s`
+
+This matters because the previous authoritative command shape forced one giant
+`cargo llvm-cov nextest --workspace --all-features` universe. That made the
+lane harder to explain and let proof-heavy families and opt-in feature tranches
+share the same wall-time envelope as the always-on contract surface.
+
+## Bounded Follow-on Change
+
+To make the authoritative lane more stable without weakening release evidence,
+the workflow now uses a bounded two-phase runner:
+
+1. `always_on_authoritative`
+   - runs the base authoritative coverage surface without the proof-heavy slice
+2. `proof_heavy_authoritative`
+   - runs the known proof-heavy families and opt-in feature tranches through a
+     targeted second `cargo llvm-cov nextest` pass
+
+Both passes accumulate into the same final `coverage-summary.json` and LCOV
+artifacts. The trust model stays fail-closed, but the lane is now explicit
+about which slices are always-on versus proof-heavy.

@@ -30,6 +30,21 @@ documentation-only planning lane.
 | WP-19 | planned | Quality, docs, review, and public-spec handoff | Align docs, conformance, feature docs, review packets, public-spec language, and accepted-finding routing | review-ready package and finding register | WP-18A |
 | WP-20 | planned | Release ceremony | Complete release closure and next handoff | release evidence, end-of-milestone report, and next handoff | WP-19 |
 
+## Parallel Python Reduction Tranche
+
+v0.90.5 should reserve bounded capacity for Python elimination without turning
+the milestone into a Python-only rewrite band. The cross-milestone program is
+recorded in [Python Elimination Staged Plan](../../planning/PYTHON_ELIMINATION_STAGED_PLAN.md).
+
+Recommended `v0.90.5` tranche:
+
+- freeze and no-new-tracked-Python rule
+- Python inventory and disposition truth surface
+- one coherent high-leverage Rust port or deletion wave
+
+Exact issue selection should happen at issue-wave time based on the current
+Python inventory, milestone pressure, and what can be finished truthfully.
+
 ## Compression Candidate
 
 The milestone can compress after UTS, ACC, fixtures, and compiler contracts are

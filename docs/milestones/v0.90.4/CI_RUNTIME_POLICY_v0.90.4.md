@@ -20,9 +20,27 @@ The v0.90.4 policy keeps the stable check names, keeps PR validation truthful,
 and makes the full-coverage trigger explicit and reviewable:
 
 - ordinary runtime/test PRs run the fast PR validation path
-- coverage-policy-sensitive PRs still fail closed into the full coverage lane
+- coverage-policy-sensitive PRs still enter the authoritative coverage lane,
+  but tooling-only policy PRs use one bounded authoritative pass while mixed
+  runtime-plus-policy PRs still fail closed into the full all-features lane
 - pushes to `main`, nightly automation, and other non-PR events still run the
   authoritative full coverage workflow
+
+## Current Cost Center
+
+After the coverage split and slow-proof isolation landed, the ordinary PR path
+still had one obvious long pole: the non-coverage `adl-ci` test step.
+
+Observed on successful run `24903573520` for PR `#2517`:
+
+- `adl-ci`: about `13m17s`
+- `clippy`: about `66s`
+- `test`: about `10m37s`
+- `demo smoke`: about `43s`
+
+That run is important because it shows the remaining bottleneck was not the
+coverage lane. The ordinary `cargo nextest run` sweep itself was still too
+broad for bounded PRs.
 
 ## Stable Check Names
 
@@ -112,14 +130,73 @@ Ordinary runtime/source PRs:
 Coverage-policy-sensitive PRs:
 
 - run the same base validation as other relevant PRs
-- run full coverage because the PR changes the rules or enforcement surfaces
-  that govern coverage itself
+- run the authoritative coverage lane because the PR changes the rules or
+  enforcement surfaces that govern coverage itself
+- tooling-only policy PRs run one bounded workspace `cargo llvm-cov nextest`
+  pass on the PR so they stop paying the full all-features governance tax on
+  every iteration
+- tooling-only policy PRs still run the changed-source coverage-impact check,
+  but they defer the full workspace `90%` gate and LCOV artifact path because
+  those belong to the full-evidence lane
+- mixed runtime-plus-policy PRs still run the full all-features authoritative
+  coverage lane
 
 Pushes to `main` and nightly coverage:
 
 - run full validation and full coverage
 - avoid a second standalone full `cargo test` when the full coverage lane is
   already executing the Rust test suite
+
+## Ordinary PR-Fast Test Runner
+
+The ordinary non-coverage test step now runs through:
+
+```bash
+adl/tools/run_pr_fast_test_lane.sh
+```
+
+This runner is intentionally conservative:
+
+- it computes the changed surface from the PR base/head SHAs
+- it uses a focused `cargo nextest` expression when every changed fast-lane
+  surface maps to a small bounded token set
+- it uses a bounded family `cargo nextest` expression when the change is still
+  reviewably scoped but too broad for tiny token-by-token filtering
+- it fails closed to the full ordinary nextest sweep only when the change is
+  broad, ambiguous, or crosses too many fallback families
+
+Focused fast-lane cases currently include bounded slices such as:
+
+- individual `runtime_v2` module files
+- bounded `runtime_v2` family surfaces such as `runtime_v2/mod.rs`,
+  `runtime_v2/tests.rs`, `runtime_v2/validators.rs`, and
+  `runtime_v2/governed_episode/*`
+- bounded CLI command files
+- bounded CLI family surfaces such as `cli/mod.rs`, `cli/tests.rs`,
+  `cli/identity_cmd/*`, `cli/tests/internal_commands/*`,
+  `cli/tests/artifact_builders/*`, and `cli/tests/run_state/*`
+- publication-control-plane docs that intentionally route to the `pr_cmd`
+  validation slice
+
+Bounded family fallback cases now include broader-but-still-reviewable slices
+such as:
+
+- nested or multi-module `runtime_v2` changes that can run through the
+  `runtime_v2` family lane
+- nested or mixed CLI changes that can run through the `cli` family lane
+- bounded demo-surface changes that can run through the `demo` family lane
+
+Fail-closed full-lane cases include:
+
+- broad entry surfaces such as `adl/src/lib.rs`, `adl/src/main.rs`,
+  `adl/src/runtime_v2/mod.rs`, and `adl/src/schema.rs`
+- test-harness and integration surfaces under `adl/tests/`
+- truly unmapped source paths outside the known fallback families
+- PRs that would cross more than three fallback families
+
+The goal is not to guess. The goal is to use a smaller truthful lane when the
+changed surface is obvious and bounded, and otherwise keep the prior full
+ordinary lane.
 
 ## Coverage Behavior
 
@@ -130,8 +207,26 @@ The heavyweight `runtime_v2` proof-materialization tranche is intentionally
 classified separately from always-on contract checks:
 
 - default `adl-ci` runs `cargo test` without `slow-proof-tests`
+- large multi-artifact runtime_v2 golden-packet parity checks and
+  `write_to_root` materialization proofs for access control, contract
+  lifecycle, delegation subcontract, evaluation selection, external
+  counterparty, resource stewardship bridge, and transition authority now live
+  behind that same `slow-proof-tests` feature
 - authoritative `cargo llvm-cov --workspace --all-features` lanes still execute
   that tranche
+
+The authoritative lane is now one-pass per event:
+
+- `full_authoritative_all_features`
+  runs one full `cargo llvm-cov nextest --workspace --all-features` pass on
+  `main` and other full-evidence events
+- `bounded_policy_surface_pr`
+  runs one bounded `cargo llvm-cov nextest --workspace` pass on policy-surface
+  pull requests, followed by the changed-source coverage gate
+
+This replaces the earlier two-phase authoritative split. The goal is to keep
+PR governance validation reviewable without paying for one near-full coverage
+pass plus a second proof-heavy pass in the same job.
 
 That keeps ordinary PR validation fast without pretending those proof surfaces
 no longer matter.
@@ -144,6 +239,16 @@ When `full_coverage_required=true`, full coverage generates:
 
 from the coverage data produced by one coverage run.
 
+In implementation terms, the workflow now routes this through:
+
+```bash
+adl/tools/run_authoritative_coverage_lane.sh
+```
+
+That runner is the machine-readable contract for which events get the full
+all-features authoritative pass and which policy-surface PRs get the bounded
+one-pass lane.
+
 ## Session Guidance
 
 When working a normal runtime PR, expect Rust fmt, clippy, normal tests, demo
@@ -151,8 +256,10 @@ smoke when required, and coverage-impact preflight. Do not cite the PR-fast
 coverage lane as full release coverage evidence.
 
 When working a PR that changes coverage governance or coverage tooling, expect
-the full coverage lane. That slower path is intentional because the PR is
-changing how coverage trust is enforced.
+the authoritative coverage lane. Tooling-only policy PRs now use one bounded
+authoritative workspace pass; mixed runtime-plus-policy PRs still take the full
+all-features lane because they are changing both governance and executable
+runtime surfaces.
 
 When working a `main`, nightly, release, or fail-closed event, expect full
 coverage. In those lanes, standalone `cargo test` may be skipped because
@@ -169,5 +276,5 @@ not run.
 
 This policy does not lower coverage thresholds or weaken release governance. It
 keeps ordinary bounded Rust PRs on the fast truthful path while preserving full
-coverage for `main`, nightly, release, fail-closed events, and PRs that modify
-coverage governance itself.
+all-features coverage for `main`, nightly, release, fail-closed events, and
+mixed runtime-plus-policy governance changes.

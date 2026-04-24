@@ -11,6 +11,7 @@
   "counterparty_model_ref": "runtime_v2/contract_market/external_counterparty_model.json",
   "delegating_record_ref": "runtime_v2/contract_market/external_counterparty_model.json#counterparty-alpha-record",
   "delegating_counterparty_id": "counterparty-alpha",
+  "subcontractor_selection_basis_ref": "runtime_v2/contract_market/evaluation_selection.json#runner-up-bid",
   "subcontractor_record_ref": "runtime_v2/contract_market/external_counterparty_model.json#counterparty-bravo-record",
   "subcontractor_counterparty_id": "counterparty-bravo",
   "delegated_scope_summary": "Delegate the trace-linked artifact manifest packaging step while the selected counterparty retains final review-packet judgment and operator-facing accountability.",

@@ -77,9 +77,11 @@ or assembling release evidence:
 - Ordinary Rust source additions and edits should run the coverage-impact
   preflight before publication. On normal PRs, this is the fast
   `adl-coverage` lane rather than a second full instrumented test run.
-- PRs that change explicit coverage-governance surfaces should run full
-  coverage even when they are otherwise tooling-focused. The trigger is
-  policy-surface based, not size- or novelty-based.
+- PRs that change explicit coverage-governance surfaces should still run the
+  authoritative coverage lane. Tooling-only policy PRs may use the bounded
+  authoritative workspace pass, while mixed runtime-plus-policy PRs still run
+  the full all-features lane. The trigger is policy-surface based, not size-
+  or novelty-based.
 - When `full_coverage_required=true`, the JSON summary and changed-source
   impact gate should execute before LCOV artifact generation. A coverage
   failure should fail at the first reviewable policy gate instead of spending
@@ -182,9 +184,12 @@ Observed:
 
 Truthful interpretation:
 
-- Rust fmt, clippy, broad non-coverage tests via `cargo nextest run`, doc
-  tests via `cargo test --doc`, demo smoke where applicable, and the fast
-  coverage-impact preflight are expected.
+- Rust fmt, clippy, doc tests via `cargo test --doc`, demo smoke where
+  applicable, and the fast coverage-impact preflight are expected.
+- The non-coverage `test` step now runs through
+  `adl/tools/run_pr_fast_test_lane.sh`. For bounded PRs, that runner may use a
+  focused `cargo nextest` expression. For broad or ambiguous PRs, it fails
+  closed to the full ordinary nextest sweep.
 - The ordinary PR lane must not re-enable heavyweight opt-in features such as
   `slow-proof-tests`; those stay reserved for dedicated heavy proof or
   authoritative coverage lanes.
@@ -200,23 +205,48 @@ Observed:
 - `coverage_required=true`
 - `full_coverage_required=true`
 - `coverage_lane=authoritative_full`
-- `coverage_authority=push_main`, `pr_policy_surface`, or another
-  authoritative trigger
+- `coverage_authority=push_main`, `pr_policy_surface_tooling_only`,
+  `pr_policy_surface_runtime_mixed`, or another authoritative trigger
 
 Truthful interpretation:
 
-- Standalone `cargo test` may be skipped because the full `cargo llvm-cov`
-  lane is the authoritative full test execution for that event.
+- Standalone `cargo test` may be skipped because the authoritative
+  `cargo llvm-cov` lane is the relevant Rust test execution for that event.
 - A lightweight `cargo test --doc` check may still run to preserve doc-test
   coverage without duplicating the whole suite.
 - Full coverage artifacts and policy gates are expected.
 - This lane can be cited as full coverage evidence when it produces
   `coverage-summary.json`, `coverage-summary.txt`, and `lcov.info`.
 
-For a policy-surface PR, `rust_required` and `demo_smoke_required` may stay
-false if the changed paths are tooling-only, but `full_coverage_required=true`
-still means the authoritative full coverage lane must run because the PR is
-modifying coverage governance itself.
+For a tooling-only policy-surface PR, `rust_required` and `demo_smoke_required`
+may stay false while `full_coverage_required=true` still means the
+authoritative coverage lane must run. In that bounded case, the PR uses one
+workspace `cargo llvm-cov nextest` pass without `--all-features`. If the same
+PR also changes runtime or demo-affecting surfaces, the authority upgrades to
+`pr_policy_surface_runtime_mixed` and the full all-features authoritative lane
+still runs.
+
+Tooling-only policy-surface PRs should still run changed-source coverage-impact
+validation from the generated `coverage-summary.json`, but they should not be
+described as having passed the full workspace coverage gate or produced full
+release-evidence LCOV artifacts. Those remain reserved for full-evidence
+authorities such as `push_main`, `fail_closed`, and mixed runtime-plus-policy
+governance changes.
+
+The authoritative coverage implementation is now explicit:
+
+```bash
+adl/tools/run_authoritative_coverage_lane.sh
+```
+
+That runner performs one pass per event:
+
+- `full_authoritative_all_features` on `main` and other full-evidence events
+- `bounded_policy_surface_pr` on policy-surface pull requests
+
+and then emits one coverage summary report. Skills should treat
+`bounded_policy_surface_pr` as bounded PR governance validation, not as full
+release evidence.
 
 ### Failed-Closed Classification
 

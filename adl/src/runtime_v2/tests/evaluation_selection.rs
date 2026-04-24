@@ -20,6 +20,7 @@ fn runtime_v2_evaluation_selection_contract_is_stable() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_evaluation_selection_matches_golden_fixture() {
     let artifacts =
         RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
@@ -41,6 +42,7 @@ fn runtime_v2_evaluation_selection_matches_golden_fixture() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_selection_negative_cases_match_golden_fixture() {
     let artifacts =
         RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
@@ -122,6 +124,7 @@ fn runtime_v2_evaluation_selection_does_not_treat_tool_availability_as_authority
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_evaluation_selection_write_to_root_materializes_fixtures() {
     let artifacts =
         RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");

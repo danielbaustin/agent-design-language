@@ -2,10 +2,11 @@
 
 ## Status
 
-WP-14A is complete. v0.90.4 demos map to execution issues #2421 through #2434,
-and those proof-producing WPs are now closed. This matrix is the current
-feature proof coverage record for the milestone until later review or
-remediation changes land.
+WP-14A is complete and now serves as the proof-coverage closeout lane for the
+live v0.90.4 demo set. v0.90.4 demos map to execution issues #2421 through
+#2434, those proof-producing WPs are now closed, and rows D1 through D13 each
+have an explicit proof home. The matching feature coverage record lives in
+`FEATURE_PROOF_COVERAGE_v0.90.4.md`.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |
@@ -21,7 +22,7 @@ remediation changes land.
 | D10 | Contract-market runner | WP-12 | A deterministic runner validates fixtures and emits transition/review artifacts | runner output, artifact manifest | LANDED |
 | D11 | Review summary | WP-13 | Reviewers can inspect scope, participants, selection, execution, artifacts, trace, validation, and caveats | summary artifact | LANDED |
 | D12 | Bounded contract-market proof | WP-14 | One parent contract can receive bids, award, accept, delegate, integrate, complete, summarize, and reject unsafe variants | proof packet, operator report, negative test packet | LANDED |
-| D13 | Feature proof coverage | WP-14A | Every feature claim has a landed, skipped, failed, non-proving, or explicitly deferred proof status | this demo matrix | LANDED |
+| D13 | Feature proof coverage | WP-14A | Every feature claim has a landed, skipped, failed, non-proving, or explicitly deferred proof status | feature proof coverage record | LANDED |
 
 ## Non-Proving Boundaries
 
@@ -34,3 +35,4 @@ remediation changes land.
   or direct tool execution. Contracts may record tool requirements only as
   constraints and evidence until v0.90.5.
 - These demos prove bounded contract-market mechanics, not a complete economy.
+- The exact proof home for each row now lives in `FEATURE_PROOF_COVERAGE_v0.90.4.md`.
