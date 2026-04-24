@@ -13,6 +13,7 @@ for required in \
   "test(challenge)" \
   "test(observatory_flagship)" \
   "test(private_state_observatory)" \
+  "test(runtime_v2_feature_proof_coverage_runs_runtime_v2_cli_regression_matrix)" \
   "test(runtime_v2_v0903_demo_stdout_uses_repo_relative_output_paths)" \
   "test(real_pr_finish_creates_draft_pr_and_commits_branch_changes)" \
   "test(real_pr_finish_rejects_main_and_reports_no_pr_when_only_local_bundle_sync_changes_exist)" \

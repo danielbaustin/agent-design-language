@@ -446,7 +446,8 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             .iter()
             .any(|path| finish_path_needs_authoritative_coverage_local_validation(path))
         {
-            commands.push("bash adl/tools/test_run_local_authoritative_coverage_gate.sh".to_string());
+            commands
+                .push("bash adl/tools/test_run_local_authoritative_coverage_gate.sh".to_string());
             commands.push("bash adl/tools/run_local_authoritative_coverage_gate.sh".to_string());
         }
         if paths
@@ -596,11 +597,13 @@ pub(super) fn run_finish_validation_rust(
                     run_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_run_local_authoritative_coverage_gate.sh" => {
-                    let script = repo_root.join("adl/tools/test_run_local_authoritative_coverage_gate.sh");
+                    let script =
+                        repo_root.join("adl/tools/test_run_local_authoritative_coverage_gate.sh");
                     run_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/run_local_authoritative_coverage_gate.sh" => {
-                    let script = repo_root.join("adl/tools/run_local_authoritative_coverage_gate.sh");
+                    let script =
+                        repo_root.join("adl/tools/run_local_authoritative_coverage_gate.sh");
                     run_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_ci_path_policy.sh" => {

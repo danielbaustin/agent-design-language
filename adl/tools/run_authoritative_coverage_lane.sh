@@ -66,6 +66,7 @@ readonly -a PROOF_TOKENS=(
   "runtime_v2_private_state_anti_equivocation_write_to_root_materializes_fixtures"
   "runtime_v2_private_state_witness_write_to_root_materializes_fixtures"
   "runtime_v2_private_state_sealing_write_to_root_materializes_fixtures"
+  "runtime_v2_feature_proof_coverage_runs_runtime_v2_cli_regression_matrix"
   "real_pr_finish_creates_draft_pr_and_commits_branch_changes"
   "real_pr_finish_rejects_main_and_reports_no_pr_when_only_local_bundle_sync_changes_exist"
   "real_pr_finish_rejects_staged_gitignore_changes_without_allow_flag"
