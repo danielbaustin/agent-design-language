@@ -444,14 +444,6 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
-            .any(|path| finish_path_needs_authoritative_coverage_local_validation(path))
-        {
-            commands
-                .push("bash adl/tools/test_run_local_authoritative_coverage_gate.sh".to_string());
-            commands.push("bash adl/tools/run_local_authoritative_coverage_gate.sh".to_string());
-        }
-        if paths
-            .iter()
             .any(|path| finish_path_needs_ci_policy_focused_validation(path))
         {
             commands.push("bash adl/tools/test_ci_path_policy.sh".to_string());
@@ -501,11 +493,6 @@ fn finish_path_is_focused_local_ci_gated(path: &str) -> bool {
             | "adl/tools/test_check_coverage_impact.sh"
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
-            | "adl/tools/enforce_coverage_gates.sh"
-            | "adl/tools/run_authoritative_coverage_lane.sh"
-            | "adl/tools/test_run_authoritative_coverage_lane.sh"
-            | "adl/tools/run_local_authoritative_coverage_gate.sh"
-            | "adl/tools/test_run_local_authoritative_coverage_gate.sh"
             | "adl/src/cli/pr_cmd/finish_support.rs"
     ) || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
 }
@@ -524,21 +511,6 @@ fn finish_path_needs_coverage_tooling_focused_validation(path: &str) -> bool {
         ".github/workflows/ci.yaml"
             | "adl/tools/check_coverage_impact.sh"
             | "adl/tools/test_check_coverage_impact.sh"
-    )
-}
-
-fn finish_path_needs_authoritative_coverage_local_validation(path: &str) -> bool {
-    let trimmed = path.trim().trim_matches('/');
-    matches!(
-        trimmed,
-        ".github/workflows/ci.yaml"
-            | "adl/tools/ci_path_policy.sh"
-            | "adl/tools/test_ci_path_policy.sh"
-            | "adl/tools/enforce_coverage_gates.sh"
-            | "adl/tools/run_authoritative_coverage_lane.sh"
-            | "adl/tools/test_run_authoritative_coverage_lane.sh"
-            | "adl/tools/run_local_authoritative_coverage_gate.sh"
-            | "adl/tools/test_run_local_authoritative_coverage_gate.sh"
     )
 }
 
@@ -594,16 +566,6 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_check_coverage_impact.sh" => {
                     let script = repo_root.join("adl/tools/test_check_coverage_impact.sh");
-                    run_status("bash", &[path_str(&script)?])?;
-                }
-                "bash adl/tools/test_run_local_authoritative_coverage_gate.sh" => {
-                    let script =
-                        repo_root.join("adl/tools/test_run_local_authoritative_coverage_gate.sh");
-                    run_status("bash", &[path_str(&script)?])?;
-                }
-                "bash adl/tools/run_local_authoritative_coverage_gate.sh" => {
-                    let script =
-                        repo_root.join("adl/tools/run_local_authoritative_coverage_gate.sh");
                     run_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_ci_path_policy.sh" => {
