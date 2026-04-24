@@ -99,6 +99,20 @@ is_production_rust_source() {
   return 1
 }
 
+is_full_coverage_policy_surface() {
+  local path="$1"
+  case "$path" in
+    .github/workflows/ci.yaml|\
+    .github/workflows/nightly-coverage-ratchet.yaml|\
+    adl/tools/ci_path_policy.sh|\
+    adl/tools/check_coverage_impact.sh|\
+    adl/tools/enforce_coverage_gates.sh)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
 line_count_for_path() {
   local path="$1"
   if [ -f "$path" ]; then
@@ -146,21 +160,12 @@ else
     done <<EOF
 $changed_files
 EOF
-    while IFS=$'\t' read -r status path; do
+    while IFS=$'\t' read -r _status path; do
       [ -n "$path" ] || continue
-      if ! is_production_rust_source "$path"; then
-        continue
-      fi
-      if [[ "$status" == A* ]]; then
+      if is_full_coverage_policy_surface "$path"; then
         full_coverage_required=true
-        reason="risky_rust_source_change_runs_full_coverage"
+        reason="coverage_policy_surface_change_runs_full_coverage"
         continue
-      fi
-      lines="$(line_count_for_path "$path")"
-      delta="$(changed_line_delta_for_path "$path")"
-      if [ "$lines" -ge "$large_file_lines" ] && [ "$delta" -ge "$large_file_delta" ]; then
-        full_coverage_required=true
-        reason="risky_rust_source_change_runs_full_coverage"
       fi
     done <<EOF
 $changed_rows
