@@ -24,6 +24,18 @@ def step_run(name: str) -> str:
         raise SystemExit(f"missing workflow step: {name}")
     return match.group(1).strip()
 
+def step_if(name: str) -> str:
+    pattern = re.compile(
+        rf"^\s*-\s+name:\s+{re.escape(name)}\s*$"
+        rf"(?:\n^\s+.*$)*?"
+        rf"\n^\s+if:\s+(.+)$",
+        re.MULTILINE,
+    )
+    match = pattern.search(workflow)
+    if not match:
+        raise SystemExit(f"missing workflow if condition for step: {name}")
+    return match.group(1).strip()
+
 ordinary_test = step_run("test")
 expected_ordinary_test = (
     'bash adl/tools/run_pr_fast_test_lane.sh --base "${{ github.event.pull_request.base.sha }}" '
@@ -68,6 +80,14 @@ if coverage_step != expected_coverage:
 if not runner_test.exists():
     raise SystemExit(
         "authoritative coverage runner contract test must exist"
+    )
+
+gate_if = step_if("Enforce coverage policy gates (workspace + per-file)")
+expected_gate_fragment = "steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'"
+if expected_gate_fragment not in gate_if:
+    raise SystemExit(
+        "workspace coverage gate must defer for tooling-only policy authoritative PRs; "
+        f"found: {gate_if}"
     )
 
 print("PASS test_ci_runtime_contracts")

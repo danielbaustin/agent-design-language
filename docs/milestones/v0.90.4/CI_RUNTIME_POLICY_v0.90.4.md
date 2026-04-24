@@ -135,6 +135,9 @@ Coverage-policy-sensitive PRs:
 - tooling-only policy PRs run one bounded workspace `cargo llvm-cov nextest`
   pass on the PR so they stop paying the full all-features governance tax on
   every iteration
+- tooling-only policy PRs still run the changed-source coverage-impact check,
+  but they defer the full workspace `90%` gate and LCOV artifact path because
+  those belong to the full-evidence lane
 - mixed runtime-plus-policy PRs still run the full all-features authoritative
   coverage lane
 

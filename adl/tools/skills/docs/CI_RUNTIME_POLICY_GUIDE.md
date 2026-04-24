@@ -226,6 +226,13 @@ PR also changes runtime or demo-affecting surfaces, the authority upgrades to
 `pr_policy_surface_runtime_mixed` and the full all-features authoritative lane
 still runs.
 
+Tooling-only policy-surface PRs should still run changed-source coverage-impact
+validation from the generated `coverage-summary.json`, but they should not be
+described as having passed the full workspace coverage gate or produced full
+release-evidence LCOV artifacts. Those remain reserved for full-evidence
+authorities such as `push_main`, `fail_closed`, and mixed runtime-plus-policy
+governance changes.
+
 ### Failed-Closed Classification
 
 Observed:
