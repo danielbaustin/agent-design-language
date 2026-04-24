@@ -4,9 +4,10 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use ::adl::runtime_v2::{
-    runtime_v2_csm_integrated_run_contract, runtime_v2_feature_proof_coverage_contract,
-    runtime_v2_foundation_demo_contract, runtime_v2_observatory_flagship_contract,
-    runtime_v2_operator_control_report_contract, runtime_v2_security_boundary_proof_contract,
+    runtime_v2_contract_market_demo_contract, runtime_v2_csm_integrated_run_contract,
+    runtime_v2_feature_proof_coverage_contract, runtime_v2_foundation_demo_contract,
+    runtime_v2_observatory_flagship_contract, runtime_v2_operator_control_report_contract,
+    runtime_v2_security_boundary_proof_contract,
 };
 
 pub(crate) fn real_runtime_v2(args: &[String]) -> Result<()> {
@@ -30,7 +31,7 @@ fn resolve_relative_output_path(
 fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, or feature-proof-coverage"
+            "runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, contract-market-demo, or feature-proof-coverage"
         ));
     };
 
@@ -42,13 +43,14 @@ fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
         "observatory-flagship-demo" => {
             real_runtime_v2_observatory_flagship_demo(repo_root, &args[1..])
         }
+        "contract-market-demo" => real_runtime_v2_contract_market_demo(repo_root, &args[1..]),
         "feature-proof-coverage" => real_runtime_v2_feature_proof_coverage(repo_root, &args[1..]),
         "--help" | "-h" | "help" => {
             println!("{}", super::usage::usage());
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, or feature-proof-coverage)"
+            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, contract-market-demo, or feature-proof-coverage)"
         )),
     }
 }
@@ -358,6 +360,54 @@ fn real_runtime_v2_feature_proof_coverage(repo_root: &Path, args: &[String]) -> 
     Ok(())
 }
 
+fn real_runtime_v2_contract_market_demo(repo_root: &Path, args: &[String]) -> Result<()> {
+    let mut out_path: Option<PathBuf> = None;
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out" => {
+                let Some(value) = args.get(i + 1) else {
+                    return Err(anyhow!(
+                        "runtime-v2 contract-market-demo requires --out <dir>"
+                    ));
+                };
+                out_path = Some(PathBuf::from(value));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", super::usage::usage());
+                return Ok(());
+            }
+            other => {
+                return Err(anyhow!(
+                    "unknown arg for runtime-v2 contract-market-demo: {other}"
+                ))
+            }
+        }
+        i += 1;
+    }
+
+    let artifacts = runtime_v2_contract_market_demo_contract()?;
+    let Some(out_path) = out_path else {
+        println!("{}", to_string_pretty(&artifacts.proof_packet)?);
+        return Ok(());
+    };
+    let resolved = resolve_relative_output_path(repo_root, &out_path, "contract-market-demo")?;
+    fs::create_dir_all(&resolved).with_context(|| {
+        format!(
+            "failed to create Runtime v2 contract-market demo root {}",
+            resolved.display()
+        )
+    })?;
+    artifacts.write_to_root(&resolved)?;
+    println!("{}", contract_market_demo_stdout_line(&out_path));
+    println!();
+    println!("{}", artifacts.execution_summary()?);
+    println!();
+    println!("{}", artifacts.operator_report_markdown);
+    Ok(())
+}
+
 fn observatory_flagship_demo_stdout_line(out_path: &Path) -> String {
     format!(
         "RUNTIME_V2_OBSERVATORY_FLAGSHIP_DEMO_ROOT={}",
@@ -368,6 +418,13 @@ fn observatory_flagship_demo_stdout_line(out_path: &Path) -> String {
 fn feature_proof_coverage_stdout_line(out_path: &Path) -> String {
     format!(
         "RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH={}",
+        out_path.display()
+    )
+}
+
+fn contract_market_demo_stdout_line(out_path: &Path) -> String {
+    format!(
+        "RUNTIME_V2_CONTRACT_MARKET_DEMO_ROOT={}",
         out_path.display()
     )
 }
@@ -449,7 +506,7 @@ mod tests {
         let err = real_runtime_v2_in_repo(&[], &repo).expect_err("missing subcommand should fail");
         assert!(err
             .to_string()
-            .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, or feature-proof-coverage"));
+            .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, contract-market-demo, or feature-proof-coverage"));
 
         let err = real_runtime_v2_in_repo(&["bogus".to_string()], &repo)
             .expect_err("unknown subcommand should fail");
@@ -934,6 +991,53 @@ mod tests {
     }
 
     #[test]
+    fn runtime_v2_contract_market_demo_validates_stdout_help_and_output_path_rules() {
+        let repo = temp_repo("contract-market-demo-branches");
+
+        real_runtime_v2_in_repo(&["contract-market-demo".to_string()], &repo)
+            .expect("stdout contract-market demo");
+        real_runtime_v2_in_repo(
+            &["contract-market-demo".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("contract-market demo help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "contract-market-demo".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/contract-market-demo")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output path should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 contract-market-demo --out path must be repository-relative"));
+
+        let err = real_runtime_v2_in_repo(
+            &["contract-market-demo".to_string(), "--bogus".to_string()],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 contract-market-demo: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &["contract-market-demo".to_string(), "--out".to_string()],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 contract-market-demo requires --out <dir>"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
     fn runtime_v2_demo_stdout_lines_preserve_requested_relative_paths() {
         let rel_root = PathBuf::from("target/v0903-path-hygiene-demo");
         let rel_file = rel_root.join("feature-proof-coverage.json");
@@ -942,11 +1046,11 @@ mod tests {
             .display()
             .to_string();
 
-        let d12_stdout = observatory_flagship_demo_stdout_line(&rel_root);
+        let d12_stdout = contract_market_demo_stdout_line(&rel_root);
         assert_eq!(
             d12_stdout,
             format!(
-                "RUNTIME_V2_OBSERVATORY_FLAGSHIP_DEMO_ROOT={}",
+                "RUNTIME_V2_CONTRACT_MARKET_DEMO_ROOT={}",
                 rel_root.display()
             )
         );

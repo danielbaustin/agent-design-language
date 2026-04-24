@@ -9,6 +9,7 @@ mod challenge;
 mod citizen_lifecycle;
 mod common;
 mod contract_lifecycle_state;
+mod contract_market_demo;
 mod contract_schema;
 mod csm_run_packet;
 mod delegation_subcontract;

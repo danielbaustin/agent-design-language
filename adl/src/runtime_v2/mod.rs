@@ -10,6 +10,7 @@ mod boot_admission;
 mod challenge;
 mod citizen;
 mod contract_lifecycle_state;
+mod contract_market_demo;
 mod contract_schema;
 mod contracts;
 mod csm_run;
@@ -62,6 +63,8 @@ pub use challenge::*;
 pub use citizen::*;
 #[allow(unused_imports)]
 pub use contract_lifecycle_state::*;
+#[allow(unused_imports)]
+pub use contract_market_demo::*;
 #[allow(unused_imports)]
 pub use contract_schema::*;
 #[allow(unused_imports)]
