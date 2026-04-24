@@ -12,6 +12,7 @@ mod citizen;
 mod contract_schema;
 mod contracts;
 mod csm_run;
+mod evaluation_selection;
 mod feature_proof_coverage;
 mod foundation;
 mod governed_episode;
@@ -60,6 +61,8 @@ pub use contract_schema::*;
 pub use contracts::*;
 #[allow(unused_imports)]
 pub use csm_run::*;
+#[allow(unused_imports)]
+pub use evaluation_selection::*;
 #[allow(unused_imports)]
 pub use feature_proof_coverage::*;
 #[allow(unused_imports)]
