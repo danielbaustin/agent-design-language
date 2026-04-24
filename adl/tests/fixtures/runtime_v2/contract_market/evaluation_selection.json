@@ -1,0 +1,150 @@
+{
+  "schema_version": "runtime_v2.evaluation_selection_artifact.v1",
+  "demo_id": "D3",
+  "wp_id": "WP-05",
+  "evaluation_id": "selection-observatory-readiness-alpha",
+  "artifact_path": "runtime_v2/contract_market/evaluation_selection.json",
+  "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+  "contract_id": "contract-observatory-readiness-alpha",
+  "evaluated_bid_refs": [
+    "runtime_v2/contract_market/bid_alpha.json",
+    "runtime_v2/contract_market/bid_bravo.json"
+  ],
+  "evaluation_method": "Evaluate both admissible bids against the parent contract criteria, fail closed on mandatory authority checks, and emit a reviewer-visible award recommendation.",
+  "bid_evaluations": [
+    {
+      "bid_id": "bid-alpha-observatory-review",
+      "bid_ref": "runtime_v2/contract_market/bid_alpha.json",
+      "bidder_actor_id": "counterparty-alpha",
+      "criterion_scores": [
+        {
+          "criterion_id": "trace-integrity",
+          "label": "trace integrity",
+          "max_basis_points": 5000,
+          "awarded_basis_points": 5000,
+          "mandatory": true,
+          "passed": true,
+          "rationale": "Selection score for 'trace integrity' records reviewer-visible evidence and stays within the contract weight.",
+          "evidence_refs": [
+            "runtime_v2/contract_market/trace_requirements.json#trace-integrity",
+            "runtime_v2/contract_market/bid_alpha.json#trace_requirements"
+          ]
+        },
+        {
+          "criterion_id": "evidence-quality",
+          "label": "evidence quality",
+          "max_basis_points": 3000,
+          "awarded_basis_points": 2700,
+          "mandatory": true,
+          "passed": true,
+          "rationale": "Selection score for 'evidence quality' records reviewer-visible evidence and stays within the contract weight.",
+          "evidence_refs": [
+            "runtime_v2/access_control/access_events.json#projection",
+            "runtime_v2/contract_market/bid_alpha.json#commitments"
+          ]
+        },
+        {
+          "criterion_id": "resource-fit",
+          "label": "resource fit",
+          "max_basis_points": 2000,
+          "awarded_basis_points": 1600,
+          "mandatory": false,
+          "passed": true,
+          "rationale": "Selection score for 'resource fit' records reviewer-visible evidence and stays within the contract weight.",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_alpha.json#resource_claims"
+          ]
+        }
+      ],
+      "aggregate_score_basis_points": 9300,
+      "mandatory_failures": [],
+      "minimum_assurance_satisfied": true,
+      "sponsor_present": true,
+      "gateway_present": true,
+      "tool_readiness_status": "deferred_governed_tool_authority",
+      "tool_readiness_notes": [
+        "selected bid records tool dependency as a deferred execution constraint",
+        "adapter availability is not treated as authority to execute a governed tool"
+      ],
+      "evaluation_summary": "Alpha preserves full trace integrity, keeps reviewer-visible evidence quality high, and remains within the lower bounded operator budget.",
+      "rank": 1
+    },
+    {
+      "bid_id": "bid-bravo-observatory-review",
+      "bid_ref": "runtime_v2/contract_market/bid_bravo.json",
+      "bidder_actor_id": "counterparty-bravo",
+      "criterion_scores": [
+        {
+          "criterion_id": "trace-integrity",
+          "label": "trace integrity",
+          "max_basis_points": 5000,
+          "awarded_basis_points": 4800,
+          "mandatory": true,
+          "passed": true,
+          "rationale": "Selection score for 'trace integrity' records reviewer-visible evidence and stays within the contract weight.",
+          "evidence_refs": [
+            "runtime_v2/contract_market/trace_requirements.json#trace-integrity",
+            "runtime_v2/contract_market/bid_bravo.json#trace_requirements"
+          ]
+        },
+        {
+          "criterion_id": "evidence-quality",
+          "label": "evidence quality",
+          "max_basis_points": 3000,
+          "awarded_basis_points": 2800,
+          "mandatory": true,
+          "passed": true,
+          "rationale": "Selection score for 'evidence quality' records reviewer-visible evidence and stays within the contract weight.",
+          "evidence_refs": [
+            "runtime_v2/access_control/access_events.json#projection",
+            "runtime_v2/contract_market/bid_bravo.json#commitments"
+          ]
+        },
+        {
+          "criterion_id": "resource-fit",
+          "label": "resource fit",
+          "max_basis_points": 2000,
+          "awarded_basis_points": 1500,
+          "mandatory": false,
+          "passed": true,
+          "rationale": "Selection score for 'resource fit' records reviewer-visible evidence and stays within the contract weight.",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_bravo.json#resource_claims"
+          ]
+        }
+      ],
+      "aggregate_score_basis_points": 9100,
+      "mandatory_failures": [],
+      "minimum_assurance_satisfied": true,
+      "sponsor_present": true,
+      "gateway_present": true,
+      "tool_readiness_status": "deferred_governed_tool_authority",
+      "tool_readiness_notes": [
+        "bravo remains tool-dependent but keeps that dependency in evidence-only mode",
+        "selection does not treat gateway review, valid JSON, or model confidence as tool authority"
+      ],
+      "evaluation_summary": "Bravo remains admissible and reviewer-visible, but it carries the larger bounded operator burden and a slightly lower aggregate score.",
+      "rank": 2
+    }
+  ],
+  "recommendation": {
+    "decision": "recommend_award",
+    "selected_bid_id": "bid-alpha-observatory-review",
+    "selected_bid_ref": "runtime_v2/contract_market/bid_alpha.json",
+    "explanation": "Recommend alpha because it satisfies all mandatory criteria, preserves stronger trace continuity, and fits the bounded operator budget while explicitly deferring governed-tool execution.",
+    "winning_score_basis_points": 9300,
+    "runner_up_bid_id": "bid-bravo-observatory-review",
+    "runner_up_score_basis_points": 9100,
+    "tie_break_rationale": null,
+    "override_applied": false,
+    "override_rationale": null,
+    "authority_guardrails": [
+      "selection re-checks minimum assurance, sponsor presence, and gateway presence before award recommendation",
+      "tool-readiness warnings are evidence only and do not grant tool execution authority",
+      "valid JSON, model confidence, and adapter availability are never treated as authority to execute a tool"
+    ],
+    "execution_authority_granted": false
+  },
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_evaluation_selection -- --nocapture",
+  "claim_boundary": "This artifact explains bounded bid evaluation and award recommendation, but it does not settle payment, grant citizen standing, or authorize governed tool execution."
+}

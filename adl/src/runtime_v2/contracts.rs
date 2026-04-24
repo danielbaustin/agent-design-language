@@ -188,3 +188,7 @@ pub fn runtime_v2_continuity_challenge_contract() -> Result<RuntimeV2ContinuityC
 pub fn runtime_v2_observatory_flagship_contract() -> Result<RuntimeV2ObservatoryFlagshipArtifacts> {
     RuntimeV2ObservatoryFlagshipArtifacts::prototype()
 }
+
+pub fn runtime_v2_evaluation_selection_contract() -> Result<RuntimeV2EvaluationSelectionArtifacts> {
+    RuntimeV2EvaluationSelectionArtifacts::prototype()
+}
