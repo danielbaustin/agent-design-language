@@ -1,5 +1,4 @@
 use super::*;
-use std::path::PathBuf;
 
 #[test]
 fn runtime_v2_delegation_subcontract_artifacts_are_stable() {
@@ -21,6 +20,7 @@ fn runtime_v2_delegation_subcontract_artifacts_are_stable() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_delegation_subcontract_matches_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
@@ -42,6 +42,7 @@ fn runtime_v2_delegation_subcontract_matches_golden_fixture() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_delegated_output_matches_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
@@ -61,6 +62,7 @@ fn runtime_v2_delegated_output_matches_golden_fixture() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_parent_integration_matches_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
@@ -80,6 +82,7 @@ fn runtime_v2_parent_integration_matches_golden_fixture() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_delegation_negative_cases_match_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
@@ -327,6 +330,7 @@ fn runtime_v2_delegation_subcontract_rejects_subcontractor_outside_runner_up_bas
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_delegation_subcontract_write_to_root_materializes_fixtures() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");

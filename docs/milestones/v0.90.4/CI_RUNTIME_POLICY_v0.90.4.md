@@ -197,6 +197,11 @@ The heavyweight `runtime_v2` proof-materialization tranche is intentionally
 classified separately from always-on contract checks:
 
 - default `adl-ci` runs `cargo test` without `slow-proof-tests`
+- large multi-artifact runtime_v2 golden-packet parity checks and
+  `write_to_root` materialization proofs for access control, contract
+  lifecycle, delegation subcontract, evaluation selection, external
+  counterparty, resource stewardship bridge, and transition authority now live
+  behind that same `slow-proof-tests` feature
 - authoritative `cargo llvm-cov --workspace --all-features` lanes still execute
   that tranche
 

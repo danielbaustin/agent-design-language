@@ -16,6 +16,7 @@ fn runtime_v2_transition_authority_contract_is_stable() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_transition_authority_matrix_matches_golden_fixture() {
     let artifacts =
         runtime_v2_transition_authority_model().expect("transition authority artifacts");
@@ -32,6 +33,7 @@ fn runtime_v2_transition_authority_matrix_matches_golden_fixture() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_transition_authority_basis_matches_golden_fixture() {
     let artifacts =
         runtime_v2_transition_authority_model().expect("transition authority artifacts");
@@ -53,6 +55,7 @@ fn runtime_v2_transition_authority_basis_matches_golden_fixture() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_transition_authority_negative_cases_match_golden_fixture() {
     let artifacts =
         runtime_v2_transition_authority_model().expect("transition authority artifacts");
@@ -141,6 +144,7 @@ fn runtime_v2_transition_authority_records_governed_tool_boundary() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_transition_authority_write_to_root_materializes_fixtures() {
     let artifacts =
         runtime_v2_transition_authority_model().expect("transition authority artifacts");
