@@ -2,7 +2,8 @@ use super::*;
 
 #[test]
 fn runtime_v2_evaluation_selection_contract_is_stable() {
-    let artifacts = runtime_v2_evaluation_selection_contract().expect("evaluation selection");
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
     artifacts.validate().expect("valid evaluation selection");
 
     assert_eq!(
@@ -20,7 +21,8 @@ fn runtime_v2_evaluation_selection_contract_is_stable() {
 
 #[test]
 fn runtime_v2_evaluation_selection_matches_golden_fixture() {
-    let artifacts = runtime_v2_evaluation_selection_contract().expect("evaluation selection");
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
     let json = String::from_utf8(
         artifacts
             .selection
@@ -40,7 +42,8 @@ fn runtime_v2_evaluation_selection_matches_golden_fixture() {
 
 #[test]
 fn runtime_v2_selection_negative_cases_match_golden_fixture() {
-    let artifacts = runtime_v2_evaluation_selection_contract().expect("evaluation selection");
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
     let json = String::from_utf8(
         artifacts
             .negative_cases
@@ -60,7 +63,8 @@ fn runtime_v2_selection_negative_cases_match_golden_fixture() {
 
 #[test]
 fn runtime_v2_evaluation_selection_explains_the_winner_and_keeps_tool_warning_bounded() {
-    let artifacts = runtime_v2_evaluation_selection_contract().expect("evaluation selection");
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
     let recommendation = &artifacts.selection.recommendation;
     let selected = artifacts
         .selection
@@ -83,7 +87,8 @@ fn runtime_v2_evaluation_selection_explains_the_winner_and_keeps_tool_warning_bo
 
 #[test]
 fn runtime_v2_evaluation_selection_rejects_negative_cases_for_expected_reasons() {
-    let artifacts = runtime_v2_evaluation_selection_contract().expect("evaluation selection");
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
 
     for case in &artifacts.negative_cases.required_negative_cases {
         let err = case
@@ -101,7 +106,8 @@ fn runtime_v2_evaluation_selection_rejects_negative_cases_for_expected_reasons()
 
 #[test]
 fn runtime_v2_evaluation_selection_does_not_treat_tool_availability_as_authority() {
-    let artifacts = runtime_v2_evaluation_selection_contract().expect("evaluation selection");
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
     let mut invalid = artifacts.selection.clone();
     invalid.recommendation.override_applied = true;
     invalid.recommendation.override_rationale = Some(
@@ -117,7 +123,8 @@ fn runtime_v2_evaluation_selection_does_not_treat_tool_availability_as_authority
 
 #[test]
 fn runtime_v2_evaluation_selection_write_to_root_materializes_fixtures() {
-    let artifacts = runtime_v2_evaluation_selection_contract().expect("evaluation selection");
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
     let root = common::unique_temp_path("evaluation-selection-write");
 
     artifacts
@@ -135,4 +142,92 @@ fn runtime_v2_evaluation_selection_write_to_root_materializes_fixtures() {
     }
 
     std::fs::remove_dir_all(root).expect("cleanup evaluation selection temp root");
+}
+
+#[test]
+fn runtime_v2_evaluation_selection_validation_rejects_bad_demo_and_claim_boundary() {
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
+
+    let mut bad_demo = artifacts.selection.clone();
+    bad_demo.demo_id = "3".to_string();
+    assert!(bad_demo
+        .validate_against(&artifacts.contract, &artifacts.valid_bids)
+        .expect_err("bad demo id should fail")
+        .to_string()
+        .contains("must start with 'D'"));
+
+    let mut bad_claim = artifacts.selection.clone();
+    bad_claim.claim_boundary = "selection writes a nice report".to_string();
+    assert!(bad_claim
+        .validate_against(&artifacts.contract, &artifacts.valid_bids)
+        .expect_err("missing claim-boundary limits should fail")
+        .to_string()
+        .contains("does not settle payment"));
+}
+
+#[test]
+fn runtime_v2_evaluation_selection_bid_validation_rejects_bad_tool_state() {
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
+    let mut invalid = artifacts.selection.clone();
+    let selected = invalid
+        .bid_evaluations
+        .iter_mut()
+        .find(|evaluation| evaluation.bid_id == invalid.recommendation.selected_bid_id)
+        .expect("selected evaluation");
+
+    selected.tool_readiness_status = "adapter_ready_now".to_string();
+    assert!(invalid
+        .validate_against(&artifacts.contract, &artifacts.valid_bids)
+        .expect_err("unsupported tool readiness should fail")
+        .to_string()
+        .contains("unsupported bid_evaluation.tool_readiness_status"));
+
+    let mut invalid = artifacts.selection.clone();
+    let selected = invalid
+        .bid_evaluations
+        .iter_mut()
+        .find(|evaluation| evaluation.bid_id == invalid.recommendation.selected_bid_id)
+        .expect("selected evaluation");
+    selected.tool_readiness_notes.clear();
+    assert!(invalid
+        .validate_against(&artifacts.contract, &artifacts.valid_bids)
+        .expect_err("missing tool readiness notes should fail")
+        .to_string()
+        .contains("tool_readiness_notes must explain tool readiness status"));
+}
+
+#[test]
+fn runtime_v2_evaluation_selection_recommendation_requires_traceable_selection_logic() {
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
+
+    let mut wrong_runner_up_score = artifacts.selection.clone();
+    wrong_runner_up_score
+        .recommendation
+        .runner_up_score_basis_points += 1;
+    assert!(wrong_runner_up_score
+        .validate_against(&artifacts.contract, &artifacts.valid_bids)
+        .expect_err("runner-up score drift should fail")
+        .to_string()
+        .contains("runner_up_score_basis_points must match"));
+
+    let mut unexplained_override = artifacts.selection.clone();
+    unexplained_override.recommendation.selected_bid_id =
+        unexplained_override.recommendation.runner_up_bid_id.clone();
+    unexplained_override.recommendation.selected_bid_ref =
+        artifacts.valid_bids[1].artifact_path.clone();
+    unexplained_override
+        .recommendation
+        .winning_score_basis_points = unexplained_override
+        .recommendation
+        .runner_up_score_basis_points;
+    unexplained_override.recommendation.override_applied = false;
+    unexplained_override.recommendation.override_rationale = None;
+    assert!(unexplained_override
+        .validate_against(&artifacts.contract, &artifacts.valid_bids)
+        .expect_err("non-traceable override should fail")
+        .to_string()
+        .contains("must follow the highest-ranked bid unless a traceable override is recorded"));
 }
