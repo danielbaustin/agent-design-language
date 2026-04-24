@@ -579,7 +579,7 @@ impl RuntimeV2ExternalCounterpartyNegativeCases {
             contract_ref: contract.artifact_path.clone(),
             required_negative_cases: vec![
                 RuntimeV2ExternalCounterpartyNegativeCase {
-                    case_id: "insufficient-assurance".to_string(),
+                    case_id: "mismatched-assurance-claim".to_string(),
                     counterparty_id: alpha.counterparty_id.clone(),
                     attempted_action: "submit_bid".to_string(),
                     attempted_assurance_class: "guest".to_string(),
@@ -590,14 +590,14 @@ impl RuntimeV2ExternalCounterpartyNegativeCases {
                     requested_tool_capability: None,
                     human_action_mode: "trace_mediated_external_participation".to_string(),
                     expected_error_fragment:
-                        "counterparty assurance does not satisfy the parent contract minimum"
+                        "counterparty attempted_assurance_class must match the bound external-counterparty record"
                             .to_string(),
                     reviewable_evidence_ref:
                         "runtime_v2/contract_market/bid_negative_cases.json#ineligible-counterparty"
                             .to_string(),
                 },
                 RuntimeV2ExternalCounterpartyNegativeCase {
-                    case_id: "revoked-counterparty".to_string(),
+                    case_id: "mismatched-revocation-claim".to_string(),
                     counterparty_id: bravo.counterparty_id.clone(),
                     attempted_action: "accept_award".to_string(),
                     attempted_assurance_class: bravo.assurance_class.clone(),
@@ -607,7 +607,9 @@ impl RuntimeV2ExternalCounterpartyNegativeCases {
                     private_state_access_requested: false,
                     requested_tool_capability: None,
                     human_action_mode: "trace_mediated_external_participation".to_string(),
-                    expected_error_fragment: "revoked counterparty cannot participate".to_string(),
+                    expected_error_fragment:
+                        "counterparty revocation_status must match the bound external-counterparty record"
+                            .to_string(),
                     reviewable_evidence_ref:
                         "runtime_v2/access_control/denial_fixtures.json#release-without-approved-event"
                             .to_string(),
@@ -671,7 +673,7 @@ impl RuntimeV2ExternalCounterpartyNegativeCases {
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_external_counterparty -- --nocapture"
                     .to_string(),
             claim_boundary:
-                "These denial fixtures prove that WP-08 fails closed on insufficient assurance, revocation, missing gateway review, private-state inspection attempts, and out-of-scope tool-mediated actions."
+                "These denial fixtures prove that WP-08 fails closed on mismatched authority assertions, missing gateway review, private-state inspection attempts, and out-of-scope tool-mediated actions."
                     .to_string(),
         };
         negative_cases.validate_against(model, contract)?;
@@ -759,7 +761,9 @@ impl RuntimeV2ExternalCounterpartyNegativeCases {
                 "external_counterparty_negative_cases.validation_command must target focused tests"
             ));
         }
-        if !self.claim_boundary.contains("insufficient assurance")
+        if !self
+            .claim_boundary
+            .contains("mismatched authority assertions")
             || !self.claim_boundary.contains("private-state inspection")
             || !self.claim_boundary.contains("tool-mediated actions")
         {
@@ -828,7 +832,12 @@ pub(crate) fn validate_counterparty_attempt(
     if attempt.human_action_mode == "out_of_band_human_action" {
         return Err(anyhow!("human out-of-band action is not citizen action"));
     }
-    if assurance_rank(&attempt.attempted_assurance_class)
+    if attempt.attempted_assurance_class != record.assurance_class {
+        return Err(anyhow!(
+            "counterparty attempted_assurance_class must match the bound external-counterparty record"
+        ));
+    }
+    if assurance_rank(&record.assurance_class)
         < assurance_rank(&contract.minimum_counterparty_assurance)
     {
         return Err(anyhow!(
@@ -847,6 +856,11 @@ pub(crate) fn validate_counterparty_attempt(
             "counterparty sponsor_ref must be present when the parent contract requires sponsorship"
         ));
     }
+    if attempt.sponsor_ref != record.sponsor_ref {
+        return Err(anyhow!(
+            "counterparty sponsor_ref must match the bound external-counterparty record"
+        ));
+    }
     if contract.gateway_required
         && attempt
             .gateway_ref
@@ -859,8 +873,18 @@ pub(crate) fn validate_counterparty_attempt(
             "counterparty gateway_ref must be present when the parent contract requires gateway review"
         ));
     }
-    if attempt.revocation_status != "active" {
+    if attempt.gateway_ref != record.gateway_ref {
+        return Err(anyhow!(
+            "counterparty gateway_ref must match the bound external-counterparty record"
+        ));
+    }
+    if record.revocation_status != "active" {
         return Err(anyhow!("revoked counterparty cannot participate"));
+    }
+    if attempt.revocation_status != record.revocation_status {
+        return Err(anyhow!(
+            "counterparty revocation_status must match the bound external-counterparty record"
+        ));
     }
     if attempt.private_state_access_requested || attempt.attempted_action == "inspect_private_state"
     {

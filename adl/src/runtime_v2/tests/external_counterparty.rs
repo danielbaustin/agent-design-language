@@ -437,6 +437,56 @@ fn runtime_v2_external_counterparty_negative_cases_and_attempts_reject_remaining
 }
 
 #[test]
+fn runtime_v2_external_counterparty_attempts_must_match_bound_authority_fields() {
+    let artifacts =
+        runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
+    let contract = runtime_v2_contract_schema_contract()
+        .expect("contract artifacts")
+        .contract;
+    let record = artifacts.model.records[0].clone();
+
+    let mut mismatched_assurance = permitted_attempt_for(&record);
+    mismatched_assurance.attempted_assurance_class = "gateway-reviewed".to_string();
+    assert!(
+        validate_counterparty_attempt(&record, &mismatched_assurance, &contract)
+            .expect_err("mismatched assurance should fail")
+            .to_string()
+            .contains(
+                "attempted_assurance_class must match the bound external-counterparty record"
+            )
+    );
+
+    let mut mismatched_sponsor = permitted_attempt_for(&record);
+    mismatched_sponsor.sponsor_ref =
+        Some("runtime_v2/contract_market/spoofed_sponsor_packet.json".to_string());
+    assert!(
+        validate_counterparty_attempt(&record, &mismatched_sponsor, &contract)
+            .expect_err("mismatched sponsor should fail")
+            .to_string()
+            .contains("sponsor_ref must match the bound external-counterparty record")
+    );
+
+    let mut mismatched_gateway = permitted_attempt_for(&record);
+    mismatched_gateway.gateway_ref =
+        Some("runtime_v2/contract_market/spoofed_gateway_review.json".to_string());
+    assert!(
+        validate_counterparty_attempt(&record, &mismatched_gateway, &contract)
+            .expect_err("mismatched gateway should fail")
+            .to_string()
+            .contains("gateway_ref must match the bound external-counterparty record")
+    );
+
+    let mut mismatched_revocation = permitted_attempt_for(&record);
+    mismatched_revocation.revocation_status = "revoked".to_string();
+    assert!(
+        validate_counterparty_attempt(&record, &mismatched_revocation, &contract)
+            .expect_err("mismatched revocation should fail")
+            .to_string()
+            .contains("revocation_status must match the bound external-counterparty record")
+    );
+}
+
+#[test]
 fn runtime_v2_external_counterparty_helper_validators_cover_remaining_variants() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");

@@ -7,7 +7,7 @@
   "contract_ref": "runtime_v2/contract_market/parent_contract.json",
   "required_negative_cases": [
     {
-      "case_id": "insufficient-assurance",
+      "case_id": "mismatched-assurance-claim",
       "counterparty_id": "counterparty-alpha",
       "attempted_action": "submit_bid",
       "attempted_assurance_class": "guest",
@@ -17,11 +17,11 @@
       "private_state_access_requested": false,
       "requested_tool_capability": null,
       "human_action_mode": "trace_mediated_external_participation",
-      "expected_error_fragment": "counterparty assurance does not satisfy the parent contract minimum",
+      "expected_error_fragment": "counterparty attempted_assurance_class must match the bound external-counterparty record",
       "reviewable_evidence_ref": "runtime_v2/contract_market/bid_negative_cases.json#ineligible-counterparty"
     },
     {
-      "case_id": "revoked-counterparty",
+      "case_id": "mismatched-revocation-claim",
       "counterparty_id": "counterparty-bravo",
       "attempted_action": "accept_award",
       "attempted_assurance_class": "gateway-reviewed",
@@ -31,7 +31,7 @@
       "private_state_access_requested": false,
       "requested_tool_capability": null,
       "human_action_mode": "trace_mediated_external_participation",
-      "expected_error_fragment": "revoked counterparty cannot participate",
+      "expected_error_fragment": "counterparty revocation_status must match the bound external-counterparty record",
       "reviewable_evidence_ref": "runtime_v2/access_control/denial_fixtures.json#release-without-approved-event"
     },
     {
@@ -78,5 +78,5 @@
     }
   ],
   "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_external_counterparty -- --nocapture",
-  "claim_boundary": "These denial fixtures prove that WP-08 fails closed on insufficient assurance, revocation, missing gateway review, private-state inspection attempts, and out-of-scope tool-mediated actions."
+  "claim_boundary": "These denial fixtures prove that WP-08 fails closed on mismatched authority assertions, missing gateway review, private-state inspection attempts, and out-of-scope tool-mediated actions."
 }
