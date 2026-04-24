@@ -99,6 +99,20 @@ is_production_rust_source() {
   return 1
 }
 
+is_pr_finish_control_plane_surface() {
+  local path="$1"
+  case "$path" in
+    adl/src/cli/pr_cmd.rs|\
+    adl/src/cli/pr_cmd/finish_support.rs|\
+    adl/src/cli/tests/pr_cmd_inline/finish/*|\
+    docs/default_workflow.md|\
+    docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
 is_full_coverage_policy_surface() {
   local path="$1"
   case "$path" in
@@ -143,9 +157,15 @@ else
     fail_closed=true
     reason="empty_or_unavailable_diff_runs_full_validation"
   else
+    saw_pr_finish_control_plane=false
     changed_count="$(printf '%s\n' "$changed_files" | sed '/^$/d' | wc -l | tr -d ' ')"
     while IFS= read -r path; do
       [ -n "$path" ] || continue
+      if is_pr_finish_control_plane_surface "$path"; then
+        rust_required=true
+        saw_pr_finish_control_plane=true
+        continue
+      fi
       case "$path" in
         adl/src/*|adl/tests/*|adl/Cargo.toml|adl/Cargo.lock|adl/build.rs)
           rust_required=true
@@ -170,6 +190,12 @@ EOF
     done <<EOF
 $changed_rows
 EOF
+    if [ "$saw_pr_finish_control_plane" = true ] \
+      && [ "$coverage_required" != true ] \
+      && [ "$full_coverage_required" != true ] \
+      && [ "$demo_smoke_required" != true ]; then
+      reason="publication_control_plane_change_runs_focused_rust_validation"
+    fi
   fi
 fi
 

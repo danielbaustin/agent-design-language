@@ -54,8 +54,9 @@ use self::finish_support::{
     extra_pr_body_looks_like_issue_template, extract_markdown_section, finish_changed_paths,
     finish_inputs_fingerprint, issue_bundle_issue_number_from_repo_relative,
     render_default_finish_validation, render_pr_body, run_finish_validation_rust,
-    select_finish_validation_mode, stage_selected_paths_rust, staged_diff_is_empty,
+    select_finish_validation_plan, stage_selected_paths_rust, staged_diff_is_empty,
     staged_gitignore_change_present, tracked_issue_surface_paths, FinishValidationMode,
+    FinishValidationPlan,
 };
 use self::finish_support::{
     ensure_nonempty_file_path, validate_completed_sor, write_temp_markdown,
