@@ -45,6 +45,28 @@
 
       <section class="signal-grid" id="signal-grid" aria-label="Milestone signals"></section>
 
+      <section class="detail-grid">
+        <article class="surface">
+          <div class="surface-head">
+            <div>
+              <p class="section-kicker">Snapshot freshness</p>
+              <h3>Unknown and stale-state handling</h3>
+            </div>
+          </div>
+          <ul id="freshness-list" class="watchlist"></ul>
+        </article>
+
+        <article class="surface">
+          <div class="surface-head">
+            <div>
+              <p class="section-kicker">PR and check state</p>
+              <h3>Live posture snapshot</h3>
+            </div>
+          </div>
+          <div id="pr-check-list" class="issues-list"></div>
+        </article>
+      </section>
+
       <section class="hero-grid">
         <article class="surface metric-surface">
           <div class="surface-head">
@@ -113,6 +135,16 @@
         <article class="surface">
           <div class="surface-head">
             <div>
+              <p class="section-kicker">Review-tail gates</p>
+              <h3>Not yet releasable</h3>
+            </div>
+          </div>
+          <div id="review-tail-list" class="issues-list"></div>
+        </article>
+
+        <article class="surface">
+          <div class="surface-head">
+            <div>
               <p class="section-kicker">Authority</p>
               <h3>Canonical source surfaces</h3>
             </div>
@@ -155,6 +187,7 @@
     </section>
   </main>
 
+  <script src="./data/v0.90.4.js"></script>
   <script src="./dashboard.js"></script>
 </body>
 </html>
