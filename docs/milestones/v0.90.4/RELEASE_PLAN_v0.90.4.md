@@ -9,6 +9,9 @@ schema, lifecycle, authority, fixture, runner, demo, and review-summary story.
 - WP-02 through WP-20 are open as #2421 through #2440.
 - The tracked milestone package now records the live issue map and execution
   order.
+- Active crate/package version-reporting surfaces should read `0.90.4` during
+  the live release tail, even while the latest published tag remains `v0.90.3`
+  until ceremony.
 
 ## Release Gates
 

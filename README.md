@@ -122,7 +122,7 @@ Other useful entrypoints:
 - Active milestone: **v0.90.4**
 - Current release state: **v0.90.3 is released; v0.90.4 is open as issue wave #2420-#2440**
 - Most recently completed milestone: **v0.90.3**
-- Current crate version: **0.90.3**
+- Current crate version: **0.90.4**
 - Version note: **v0.90.4 is the active citizen economics and contract-market development line**
 - Previous completed milestone package: **v0.90.2**
 - Previous completed milestone: **v0.90.1**
@@ -137,8 +137,9 @@ milestone. Its tracked package lives under `docs/milestones/v0.90.4/`. The
 issue wave is open as #2420-#2440: WP-01 is #2420, WP-02 through WP-14 are
 #2421-#2433, WP-14A is #2434, and WP-15 through WP-20 are #2435-#2440.
 
-v0.90.3 is now the most recently completed citizen-state milestone and the
-current released crate line remains 0.90.3 until v0.90.4 closes.
+v0.90.3 is now the most recently completed citizen-state milestone. The latest
+released tag remains v0.90.3, while the active development crate line is now
+0.90.4 for the open v0.90.4 milestone.
 
 The current release-tail entry surface is
 `docs/milestones/v0.90.3/RELEASE_READINESS_v0.90.3.md`. It records the landed
