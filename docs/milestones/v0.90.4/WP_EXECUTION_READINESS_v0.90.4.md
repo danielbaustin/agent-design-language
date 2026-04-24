@@ -29,6 +29,11 @@ placeholder.
 - Preserve the demo-matrix WP before quality/docs/review convergence.
 - Use the release-tail pattern: quality/docs convergence, internal review,
   external review, remediation, next-milestone planning, release ceremony.
+- Treat canonical architecture docs as a milestone-level truth surface: each
+  milestone must either (a) update architecture narrative/support docs and ADR
+  surfaces touched by accepted scope changes, or (b) record an explicit
+  `architecture-reviewed-unchanged` outcome.
+- Architecture no-change affirmations must include owner, date, and reviewed file list.
 
 ## WP-01: Promote v0.90.4 Milestone Package
 
@@ -296,7 +301,7 @@ Required validation:
 Required outputs:
 
 - README, feature index, WBS, sprint plan, release plan, release notes, demo
-  matrix, and checklist aligned with actual implementation.
+  matrix, architecture docs, and checklist aligned with actual implementation.
 - Cargo metadata, changelog, README, feature list, tracker docs, and review
   entry surfaces checked and updated if needed.
 
@@ -305,6 +310,8 @@ Required validation:
 - Quality gate evidence is fresh.
 - Docs contain no stale issue-wave state, local absolute paths, or aspirational
   shipped claims.
+- Architecture refresh outcome for the milestone is explicitly recorded as either
+  `architecture-update` or `architecture-reviewed-unchanged`.
 
 ## WP-16: Internal Review
 
@@ -382,3 +389,5 @@ Required validation:
 - Root main can be fast-forwarded cleanly after final merge.
 - No stale planning package or ignored review artifact contradicts the tracked
   milestone docs.
+- No stale architecture narrative state and no hidden architecture scope deltas
+  remain after closeout validation.

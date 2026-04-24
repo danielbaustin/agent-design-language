@@ -14,6 +14,8 @@ must be reviewable by humans and safe to track publicly.
 - Milestone source: `docs/milestones/v0.90`
 - Existing architecture source: `docs/architecture`
 - Workflow source: `docs/default_workflow.md`
+- Closeout and package sources: `docs/milestones/v0.90.4`, `docs/reviews`,
+  `CHANGELOG.md`
 - Operational skills source:
   `docs/milestones/v0.89.1/features/OPERATIONAL_SKILLS_SUBSTRATE.md`
 - Skill composition source:
@@ -45,6 +47,21 @@ Every generated architecture packet should include:
 - Proof/demo artifact.
 - Validation script or command.
 - Residual-risk and missing-skill notes.
+
+## Milestone Refresh Integration
+
+This document should be reviewed at each milestone boundary.
+
+- If an architecture claim, `ADL_ARCHITECTURE.md`, or architecture-support doc
+  changed with accepted work in that milestone, update this document and its
+  generated packet in the same cycle.
+- If architecture did not change materially, explicitly record
+  `architecture-reviewed-unchanged` in the milestone planning/closeout artifacts
+  rather than silently skipping the review surface.
+- The unchanged path is valid only when the reviewing owner, reviewed file set, and
+  rationale are recorded.
+- Update ADR-facing support docs whenever architecture decision logic is adjusted
+  and capture that change in the milestone handoff artifacts.
 
 ## Diagram Template
 
