@@ -41,6 +41,9 @@ These checks can be automated today or with small follow-up scripts:
 - SOR closeout claims match GitHub issue and PR state.
 - Provider docs keep model refs, transport ids, and policy decisions separate.
 - Long-lived-agent docs describe cycle-scoped artifacts and operator controls.
+- Review packet authors should verify that each canonical diagram in
+  `diagrams/DIAGRAM_PACKET.md` serves an enduring architecture surface rather
+  than a one-off milestone artifact.
 
 ## Human-Judgment Gates
 
