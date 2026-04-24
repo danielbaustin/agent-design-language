@@ -32,14 +32,15 @@ This issue implements three bounded changes:
 
 1. Install and enable `sccache` in both `adl-ci` and `adl-coverage`
 2. Persist `~/.cache/sccache` through the existing Rust cache action
-3. Enable `lld` opportunistically on Linux runners when `ld.lld` is present
+3. Install and assert `lld` on GitHub-hosted Linux runners
 
 Operational posture:
 
 - `RUSTC_WRAPPER=sccache` is set only in CI
 - `SCCACHE_DIR=$HOME/.cache/sccache` is persisted by `Swatinem/rust-cache`
-- `RUSTFLAGS=-C link-arg=-fuse-ld=lld` is set only when the runner actually
-  has `ld.lld`
+- `lld` is installed in CI before Rust acceleration is configured
+- `RUSTFLAGS=-C link-arg=-fuse-ld=lld` is set only after `ld.lld` is verified
+- the workflow fails closed if `ld.lld` is still unavailable after install
 - each job emits `sccache --show-stats` so operators can verify whether the
   cache is helping in practice
 
@@ -50,7 +51,8 @@ This is intentionally conservative.
 - It improves repeated CI compiles without forcing a host-specific local tool
   chain on every contributor.
 - It does not assume `mold` or another non-default linker is installed.
-- It keeps the repo portable by detecting `lld` instead of hard-requiring it.
+- It keeps the repo portable locally while making the hosted CI runner posture
+  deterministic.
 - It produces visible cache stats in the job logs so we can judge whether the
   posture is working.
 
@@ -83,9 +85,19 @@ That local setup remains optional and out of the tracked repo contract.
 
 ## Expected Outcome
 
-This issue does not claim a guaranteed sub-5-minute total validation wall time
-by itself. It should reduce repeated compile/link cost and make the remaining
-compile work more observable.
+The original opportunistic linker posture proved insufficient in practice:
+
+- successful run `24884703780` still logged `RUST_LINK_ACCEL=system-default`
+- `adl-coverage` rose from about `447s` baseline to about `600s`
+- `Coverage run and summary (json)` rose from about `409s` to about `555s`
+- `sccache` was active but only reached about `46.65%` Rust cache hit rate
+
+That evidence means cache help alone is not enough; the linker path must be
+truthful and active on the hosted runners.
+
+This issue still does not claim a guaranteed sub-5-minute total validation wall
+time by itself. It should make the linker posture truthful, reduce repeated
+compile/link cost, and make remaining compile work more observable.
 
 Success criteria for this posture:
 
@@ -93,4 +105,4 @@ Success criteria for this posture:
 - `sccache` stats appear in job logs
 - repeated runs have a chance to reuse compiler outputs instead of paying only
   target-directory cache restores
-- linker acceleration stays opportunistic rather than brittle
+- linker acceleration is truthfully active in CI rather than silently dormant
