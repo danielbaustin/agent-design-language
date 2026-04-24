@@ -2,7 +2,9 @@
 
 ## Status
 
-Planning draft. No v0.90.5 issue wave has been opened yet.
+Reviewed planning matrix. No v0.90.5 issue wave has been opened yet, but the
+demo lane is already allocated so WP-18 and WP-18A are not treated as generic
+release-tail cleanup.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |
@@ -16,8 +18,8 @@ Planning draft. No v0.90.5 issue wave has been opened yet.
 | D8 | Trace/redaction proof | WP-14 | Tool evidence is reviewable without leaking private data | trace packet and redacted views | PLANNED |
 | D9 | Dangerous negative suite | WP-15 | Destructive, process, network, exfiltration, missing actor, unsafe replay, and delegation failures fail closed | negative test report | PLANNED |
 | D10 | Multi-model proposal benchmark | WP-16-WP-17 | Models are scored on schema, authority, privacy, and bypass behavior | benchmark report and local model scorecards | PLANNED |
-| D11 | Governed Tools v1.0 flagship demo | WP-18 | Reviewer can watch proposal, validation, ACC, policy, gate, execution/denial, trace, and redaction end to end | flagship proof packet and report | PLANNED |
-| D12 | Feature proof coverage record | WP-18A | Every feature claim has proof, fixture, non-proving status, or deferral | proof coverage record | PLANNED |
+| D11 | Governed Tools v1.0 flagship demo | WP-18 | Reviewer can watch proposal, validation, ACC, policy, gate, execution or denial, trace, and redaction end to end in one coherent governed-tools story | flagship proof packet and report | PLANNED |
+| D12 | Feature proof coverage record | WP-18A | Every governed-tools feature claim reaches review with proof, fixture, non-proving status, or explicit deferral | proof coverage record | PLANNED |
 
 ## Non-Proving Boundaries
 
@@ -26,7 +28,5 @@ Planning draft. No v0.90.5 issue wave has been opened yet.
 - These demos do not permit arbitrary shell execution by model output.
 - These demos do not prove all future tool adapters.
 - These demos do not replace citizen standing, access control, or Freedom Gate.
-- These demos do not prove production cloud sandboxing, production secrets
-  handling, or arbitrary shell/network authority.
 - These demos do prove that approved fixture-backed actions and denied unsafe
   actions are distinguishable in review evidence.

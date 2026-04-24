@@ -7,6 +7,7 @@ tracked_package: docs/milestones/v0.90.5
 notes:
   - "Issue wave is not open yet."
   - "This package is owned by Governed Tools v1.0 planning issue #2350."
+  - "Current tracked execution-prep pass is running under issue #2443."
   - "v0.90.5 is intended to implement the first full governed tool suite, not only plan it."
   - "UTS is portable and public-compatible; ACC is ADL-native and owns runtime authority."
   - "UTS validity must never be treated as permission to execute."
