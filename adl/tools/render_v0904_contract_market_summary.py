@@ -170,11 +170,11 @@ def render_summary(schema: dict[str, Any], seed: dict[str, Any], review_bundle: 
 
 def main() -> int:
     args = parse_args()
-    seed = load_json(Path(args.seed))
-    review_bundle = load_json(Path(args.review_bundle))
-    schema = load_json(Path(args.schema))
     out_path = Path(args.out)
     try:
+        seed = load_json(Path(args.seed))
+        review_bundle = load_json(Path(args.review_bundle))
+        schema = load_json(Path(args.schema))
         rendered = render_summary(schema, seed, review_bundle)
     except RenderError as exc:
         out_path.parent.mkdir(parents=True, exist_ok=True)
