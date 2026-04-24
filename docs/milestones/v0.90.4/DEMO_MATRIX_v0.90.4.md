@@ -2,9 +2,11 @@
 
 ## Status
 
-WP-14A is now the proof-coverage closeout lane for the live v0.90.4 demo set.
-Rows D1 through D13 each have an explicit proof home, and the matching feature
-coverage record lives in `FEATURE_PROOF_COVERAGE_v0.90.4.md`.
+WP-14A is complete and now serves as the proof-coverage closeout lane for the
+live v0.90.4 demo set. v0.90.4 demos map to execution issues #2421 through
+#2434, those proof-producing WPs are now closed, and rows D1 through D13 each
+have an explicit proof home. The matching feature coverage record lives in
+`FEATURE_PROOF_COVERAGE_v0.90.4.md`.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |

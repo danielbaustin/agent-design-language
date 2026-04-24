@@ -2,9 +2,10 @@
 
 ## Purpose
 
-This document is the card-authoring source for the future v0.90.4 WP issue
-wave. WP-01 should copy the relevant section into each issue body before
-implementation begins.
+This document is the card-authoring source that opened the v0.90.4 WP issue
+wave. WP-01 copied the relevant section into each issue body before
+implementation began, and the document remains the execution-readiness source
+for the live milestone package.
 
 v0.90.4 is the citizen economics and contract-market substrate milestone. It
 must produce concrete contracts, fixtures, validators, runner artifacts, and

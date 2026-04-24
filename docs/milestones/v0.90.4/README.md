@@ -12,8 +12,10 @@ During the live release tail, active crate and CLI version surfaces should read
 `0.90.4` even though the latest published release tag remains `v0.90.3` until
 v0.90.4 ceremony closes.
 
-The issue wave is now open as #2420 through #2440. This package is no longer
-planning-only truth: it is the tracked execution map for the live v0.90.4 wave.
+The issue wave is now live as #2420 through #2440. WP-01 through WP-14A are
+closed, and Sprint 4 remains active as WP-15 through WP-20. This package is no
+longer planning-only truth: it is the tracked execution map for the live
+v0.90.4 wave.
 
 ## Thesis
 
@@ -111,18 +113,19 @@ WP-01 should use WP_EXECUTION_READINESS_v0.90.4.md as the card-authoring source
 so every issue body carries concrete outputs, validation, non-goals, and source
 docs instead of generic implementation language.
 
-## Open Issue Wave
+## Issue Wave State
 
-The official v0.90.4 wave is open:
+The official v0.90.4 wave is live:
 
 - WP-01 through WP-20 are #2420 through #2440
-- Sprint 1 is #2420 through #2424
-- Sprint 2 is #2425 through #2429
-- Sprint 3 is #2430 through #2434
-- Sprint 4 is #2435 through #2440
+- Sprint 1 (#2420 through #2424) is closed
+- Sprint 2 (#2425 through #2429) is closed
+- Sprint 3 (#2430 through #2434) is closed
+- Sprint 4 (#2435 through #2440) is the remaining open release-tail tranche
 
-WP-14A remains explicit as #2434 so demo/proof coverage does not disappear into
-review tail work.
+WP-14A remained explicit as #2434 so demo/proof coverage did not disappear into
+review tail work, and its resulting proof status is now recorded in
+DEMO_MATRIX_v0.90.4.md.
 
 ## Compression Rule
 

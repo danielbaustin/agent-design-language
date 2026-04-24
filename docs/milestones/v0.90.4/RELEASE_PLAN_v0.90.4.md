@@ -6,9 +6,12 @@ schema, lifecycle, authority, fixture, runner, demo, and review-summary story.
 ## Current State
 
 - Issue wave opened by WP-01 as #2420.
-- WP-02 through WP-20 are open as #2421 through #2440.
+- WP-02 through WP-14A are closed as #2421 through #2434.
+- WP-15 through WP-20 remain open as #2435 through #2440.
 - The tracked milestone package now records the live issue map and execution
   order.
+- Demo/proof coverage has been carried through WP-14A and is now recorded in
+  DEMO_MATRIX_v0.90.4.md.
 - Active crate/package version-reporting surfaces should read `0.90.4` during
   the live release tail, even while the latest published tag remains `v0.90.3`
   until ceremony.
