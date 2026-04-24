@@ -1,0 +1,14 @@
+{
+  "schema": "adl.v0904.contract_market.parent_integration_output.v1",
+  "integration_id": "integration-001",
+  "parent_contract_id": "contract-parent-001",
+  "integrating_actor": "citizen.contract.beta",
+  "integrated_inputs": [
+    "delegated-output-001"
+  ],
+  "result_artifacts": [
+    "review_summary_seed.json"
+  ],
+  "parent_review_required": true,
+  "trace_event_ref": "trace-event-007-parent-integration"
+}

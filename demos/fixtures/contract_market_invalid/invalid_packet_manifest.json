@@ -1,0 +1,13 @@
+{
+  "schema": "adl.v0904.contract_market.invalid_packet_manifest.v1",
+  "fixture_id": "contract-market-v0.90.4-invalid-01",
+  "source_mode": "fixture_contract_invalid",
+  "expected_invalid_reasons": [
+    "tool requirement grants authority instead of recording a constraint",
+    "completion event omits required artifact refs"
+  ],
+  "artifacts": [
+    "invalid_bid_tool_grant.json",
+    "invalid_completion_missing_artifacts.json"
+  ]
+}

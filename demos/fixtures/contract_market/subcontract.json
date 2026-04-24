@@ -1,0 +1,19 @@
+{
+  "schema": "adl.v0904.contract_market.subcontract.v1",
+  "subcontract_id": "subcontract-001",
+  "parent_contract_id": "contract-parent-001",
+  "delegated_scope": "compile one evidence index subsection",
+  "delegating_actor": "citizen.contract.beta",
+  "subcontracted_actor": "counterparty.editorial.gamma",
+  "authority_basis": "bounded_subcontract_clause",
+  "inherited_constraints": [
+    "portable artifact paths only",
+    "no governed tool execution"
+  ],
+  "deliverables": [
+    "evidence-index-fragment"
+  ],
+  "trace_links": [
+    "trace-event-005-subcontract"
+  ]
+}

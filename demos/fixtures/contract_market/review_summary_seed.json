@@ -1,0 +1,31 @@
+{
+  "schema": "adl.v0904.contract_market.review_summary_seed.v1",
+  "summary_id": "review-summary-seed-001",
+  "scope": "One parent contract, two bids, one award, one bounded subcontract, one delegated output, and one completion path.",
+  "participants": [
+    "citizen.market.issuer",
+    "citizen.contract.alpha",
+    "citizen.contract.beta",
+    "counterparty.editorial.gamma"
+  ],
+  "authority_basis": "Issuer awards, awarded actor accepts, delegated scope is bounded, and completion requires linked artifacts.",
+  "bid_comparison": "Bid beta is selected for stronger trace and delegation posture while keeping tool requirements deferred.",
+  "selection_rationale": "Selection favors reviewable bounded delegation and trace quality over lower complexity alone.",
+  "delegation": "Delegated scope remains smaller than the parent contract and requires explicit parent integration.",
+  "artifacts": [
+    "packet_manifest.json",
+    "evaluation.json",
+    "trace_bundle.json",
+    "parent_integration_output.json",
+    "completion_event.json"
+  ],
+  "trace": "Every major lifecycle step links to a trace event and artifact ref in the trace bundle.",
+  "validation": "Packet is fixture-backed, portable, and does not grant governed tool authority.",
+  "caveats": [
+    "This is a bounded fixture packet, not a live market run.",
+    "Tool requirements remain constraints only."
+  ],
+  "residual_risk": [
+    "Future governed-tool work may change how tool-dependent bids are evaluated."
+  ]
+}

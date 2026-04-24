@@ -1,0 +1,12 @@
+{
+  "schema": "adl.v0904.contract_market.tool_requirement_fixture.v1",
+  "fixture_id": "tool-requirement-constraint-001",
+  "contract_id": "contract-parent-001",
+  "recorded_requirement": {
+    "tool_family": "search",
+    "purpose": "Later evidence lookup support if governed tools exist",
+    "representation": "constraint_only",
+    "execution_authority": "not_granted"
+  },
+  "review_note": "The fixture intentionally records a tool requirement without granting executor authority."
+}

@@ -1,0 +1,11 @@
+{
+  "schema": "adl.v0904.contract_market.transition.v1",
+  "transition_id": "transition-invalid-completion-001",
+  "contract_id": "contract-parent-001",
+  "from_state": "executing",
+  "to_state": "completed",
+  "actor_id": "citizen.contract.invalid",
+  "authority_basis": "invalid_missing_artifacts_example",
+  "required_artifact_refs": [],
+  "trace_event_ref": "trace-event-invalid-completion"
+}

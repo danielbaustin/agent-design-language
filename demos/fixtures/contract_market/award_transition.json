@@ -1,0 +1,11 @@
+{
+  "schema": "adl.v0904.contract_market.transition.v1",
+  "transition_id": "transition-award-001",
+  "contract_id": "contract-parent-001",
+  "from_state": "bidding",
+  "to_state": "awarded",
+  "actor_id": "citizen.market.issuer",
+  "authority_basis": "issuer_award_authority",
+  "selected_bid_id": "bid-beta-001",
+  "trace_event_ref": "trace-event-003-award"
+}

@@ -1,0 +1,31 @@
+{
+  "schema": "adl.v0904.contract_market.bid.v1",
+  "bid_id": "bid-alpha-001",
+  "version": "1.0.0",
+  "target_contract_id": "contract-parent-001",
+  "bidder": {
+    "actor_id": "citizen.contract.alpha",
+    "actor_type": "citizen",
+    "eligibility": "eligible"
+  },
+  "proposal": "Assemble the review packet summary directly with bounded internal execution.",
+  "resource_claim": {
+    "compute": "medium",
+    "memory": "low",
+    "review_time": "medium"
+  },
+  "tool_requirements": [],
+  "confidence": "0.78",
+  "commitments": [
+    "bounded scope",
+    "portable artifact paths",
+    "reviewable output"
+  ],
+  "exceptions": [
+    "does not provide governed tool execution"
+  ],
+  "trace_requirements": {
+    "signature_required": true,
+    "event_linking_required": true
+  }
+}

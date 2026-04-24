@@ -1,0 +1,38 @@
+{
+  "schema": "adl.v0904.contract_market.bid.v1",
+  "bid_id": "bid-beta-001",
+  "version": "1.0.0",
+  "target_contract_id": "contract-parent-001",
+  "bidder": {
+    "actor_id": "citizen.contract.beta",
+    "actor_type": "citizen",
+    "eligibility": "eligible"
+  },
+  "proposal": "Assemble the review packet summary with optional search support recorded as a later tool requirement.",
+  "resource_claim": {
+    "compute": "medium",
+    "memory": "medium",
+    "review_time": "low"
+  },
+  "tool_requirements": [
+    {
+      "requirement_id": "tool-req-review-search-01",
+      "description": "Would benefit from later governed search support.",
+      "mode": "requirement_only",
+      "execution_authority": "not_granted"
+    }
+  ],
+  "confidence": "0.81",
+  "commitments": [
+    "preserve trace linkage",
+    "do not execute tools directly",
+    "bounded subcontract only if awarded"
+  ],
+  "exceptions": [
+    "tool-dependent work remains deferred without governed authority"
+  ],
+  "trace_requirements": {
+    "signature_required": true,
+    "event_linking_required": true
+  }
+}
