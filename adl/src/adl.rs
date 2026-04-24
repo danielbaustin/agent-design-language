@@ -20,9 +20,17 @@ pub use types::*;
 
 /// Top-level ADL document.
 ///
-/// MVP v0.1 supports:
-/// - providers, tools, agents, tasks
-/// - a single `run` with a workflow
+/// Canonical ADL primitives:
+/// - providers
+/// - tools
+/// - agents
+/// - tasks
+/// - workflows
+/// - run
+///
+/// Top-level language features that are not additional primitives:
+/// - patterns
+/// - signature
 ///
 /// Use this as the authoritative in-memory representation for ADL YAML input.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]

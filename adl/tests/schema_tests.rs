@@ -107,6 +107,42 @@ fn committed_schema_json_is_present_and_has_basic_fields() {
 }
 
 #[test]
+fn committed_schema_exposes_six_primitives_surface() {
+    let j = schema::committed_schema_json();
+    let properties = j
+        .get("properties")
+        .and_then(|value| value.as_object())
+        .expect("committed schema should expose top-level properties");
+
+    for key in [
+        "version",
+        "providers",
+        "tools",
+        "agents",
+        "tasks",
+        "workflows",
+        "run",
+    ] {
+        assert!(
+            properties.contains_key(key),
+            "committed schema missing expected top-level key: {key}"
+        );
+    }
+
+    assert!(
+        !properties.contains_key("runs"),
+        "committed schema should not expose legacy top-level runs key"
+    );
+
+    for key in ["patterns", "signature"] {
+        assert!(
+            properties.contains_key(key),
+            "committed schema should expose top-level language feature: {key}"
+        );
+    }
+}
+
+#[test]
 fn strict_rejects_unknown_top_level_key_but_loose_allows_it() {
     // This doc is structurally valid for AdlDoc, but includes an extra top-level key.
     // validate_adl_yaml() uses the strict-toplevel schema and should reject it.
