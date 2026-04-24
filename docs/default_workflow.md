@@ -135,6 +135,9 @@ For broad non-coverage Rust lanes, prefer `cargo nextest run` over raw
 `cargo test` when the lane is executing the whole runnable test graph rather
 than a narrow filtered proof. Keep `cargo llvm-cov` on its own coverage lanes,
 and preserve doc-test signal explicitly with `cargo test --doc` where needed.
+Do not add `--all-features` back onto the ordinary PR lane when opt-in heavy
+features such as `slow-proof-tests` are being used to keep proof-materialization
+surfaces out of routine validation.
 
 ### Issue-Class Validation Rule
 

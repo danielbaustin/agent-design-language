@@ -306,11 +306,12 @@ fn real_runtime_v2_observatory_flagship_demo(repo_root: &Path, args: &[String]) 
     })?;
     artifacts.write_to_root(&resolved)?;
     println!(
-        "RUNTIME_V2_OBSERVATORY_FLAGSHIP_DEMO_ROOT={}",
-        out_path
-            .as_ref()
-            .expect("resolved D12 output path should preserve requested --out")
-            .display()
+        "{}",
+        observatory_flagship_demo_stdout_line(
+            out_path
+                .as_ref()
+                .expect("resolved D12 output path should preserve requested --out")
+        )
     );
     println!();
     println!("{}", artifacts.execution_summary()?);
@@ -353,11 +354,22 @@ fn real_runtime_v2_feature_proof_coverage(repo_root: &Path, args: &[String]) -> 
     };
     let resolved = resolve_relative_output_path(repo_root, &out_path, "feature-proof-coverage")?;
     packet.write_to_path(&resolved)?;
-    println!(
+    println!("{}", feature_proof_coverage_stdout_line(&out_path));
+    Ok(())
+}
+
+fn observatory_flagship_demo_stdout_line(out_path: &Path) -> String {
+    format!(
+        "RUNTIME_V2_OBSERVATORY_FLAGSHIP_DEMO_ROOT={}",
+        out_path.display()
+    )
+}
+
+fn feature_proof_coverage_stdout_line(out_path: &Path) -> String {
+    format!(
         "RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH={}",
         out_path.display()
-    );
-    Ok(())
+    )
 }
 
 #[cfg(test)]
@@ -919,5 +931,41 @@ mod tests {
             .contains("runtime-v2 feature-proof-coverage requires --out <path>"));
 
         fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn runtime_v2_demo_stdout_lines_preserve_requested_relative_paths() {
+        let rel_root = PathBuf::from("target/v0903-path-hygiene-demo");
+        let rel_file = rel_root.join("feature-proof-coverage.json");
+        let cwd = std::env::current_dir()
+            .expect("current dir")
+            .display()
+            .to_string();
+
+        let d12_stdout = observatory_flagship_demo_stdout_line(&rel_root);
+        assert_eq!(
+            d12_stdout,
+            format!(
+                "RUNTIME_V2_OBSERVATORY_FLAGSHIP_DEMO_ROOT={}",
+                rel_root.display()
+            )
+        );
+        assert!(
+            !d12_stdout.contains(&cwd),
+            "D12 stdout should not expose absolute repo root:\n{d12_stdout}"
+        );
+
+        let d13_stdout = feature_proof_coverage_stdout_line(&rel_file);
+        assert_eq!(
+            d13_stdout,
+            format!(
+                "RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH={}",
+                rel_file.display()
+            )
+        );
+        assert!(
+            !d13_stdout.contains(&cwd),
+            "D13 stdout should not expose absolute repo root:\n{d13_stdout}"
+        );
     }
 }

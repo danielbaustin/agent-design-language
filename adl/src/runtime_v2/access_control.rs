@@ -134,8 +134,7 @@ impl RuntimeV2AccessControlArtifacts {
         standing_artifacts: RuntimeV2StandingArtifacts,
         observatory_artifacts: RuntimeV2PrivateStateObservatoryArtifacts,
     ) -> Result<Self> {
-        standing_artifacts.validate()?;
-        observatory_artifacts.validate()?;
+        validate_access_control_inputs(&standing_artifacts, &observatory_artifacts)?;
         let authority_matrix =
             RuntimeV2AccessAuthorityMatrix::prototype(&standing_artifacts, &observatory_artifacts)?;
         let event_packet =
@@ -153,8 +152,7 @@ impl RuntimeV2AccessControlArtifacts {
     }
 
     pub fn validate(&self) -> Result<()> {
-        self.standing_artifacts.validate()?;
-        self.observatory_artifacts.validate()?;
+        validate_access_control_inputs(&self.standing_artifacts, &self.observatory_artifacts)?;
         self.authority_matrix
             .validate_against(&self.standing_artifacts, &self.observatory_artifacts)?;
         self.event_packet
@@ -190,8 +188,7 @@ impl RuntimeV2AccessAuthorityMatrix {
         standing: &RuntimeV2StandingArtifacts,
         observatory: &RuntimeV2PrivateStateObservatoryArtifacts,
     ) -> Result<Self> {
-        standing.validate()?;
-        observatory.validate()?;
+        validate_access_control_inputs(standing, observatory)?;
         let matrix = Self {
             schema_version: RUNTIME_V2_ACCESS_AUTHORITY_MATRIX_SCHEMA.to_string(),
             matrix_id: "access-authority-matrix-v0-90-3".to_string(),
@@ -224,6 +221,8 @@ impl RuntimeV2AccessAuthorityMatrix {
         observatory: &RuntimeV2PrivateStateObservatoryArtifacts,
     ) -> Result<()> {
         self.validate_shape()?;
+        standing.policy.validate()?;
+        observatory.redaction_policy.validate_shape()?;
         if self.standing_policy_ref != standing.policy.artifact_path {
             return Err(anyhow!(
                 "access authority matrix must bind to standing policy"
@@ -300,7 +299,8 @@ impl RuntimeV2AccessEventPacket {
         observatory: &RuntimeV2PrivateStateObservatoryArtifacts,
     ) -> Result<Self> {
         matrix.validate_shape()?;
-        observatory.validate()?;
+        observatory.redaction_policy.validate_shape()?;
+        observatory.projection_packet.validate_shape()?;
         let mut packet = Self {
             schema_version: RUNTIME_V2_ACCESS_EVENT_PACKET_SCHEMA.to_string(),
             packet_id: "access-events-v0-90-3".to_string(),
@@ -328,7 +328,8 @@ impl RuntimeV2AccessEventPacket {
     ) -> Result<()> {
         self.validate_shape()?;
         matrix.validate_shape()?;
-        observatory.validate()?;
+        observatory.redaction_policy.validate_shape()?;
+        observatory.projection_packet.validate_shape()?;
         if self.matrix_ref != matrix.artifact_path {
             return Err(anyhow!("access event packet must bind to authority matrix"));
         }
@@ -411,11 +412,7 @@ impl RuntimeV2AccessEventPacket {
     }
 
     pub fn pretty_json_bytes(&self) -> Result<Vec<u8>> {
-        let artifacts = RuntimeV2AccessControlArtifacts::prototype()?;
-        self.validate_against(
-            &artifacts.authority_matrix,
-            &artifacts.observatory_artifacts,
-        )?;
+        self.validate_shape()?;
         serde_json::to_vec_pretty(self).context("serialize Runtime v2 access events")
     }
 }
@@ -567,10 +564,20 @@ impl RuntimeV2AccessDenialFixtures {
     }
 
     pub fn pretty_json_bytes(&self) -> Result<Vec<u8>> {
-        let artifacts = RuntimeV2AccessControlArtifacts::prototype()?;
-        self.validate_against(&artifacts.authority_matrix, &artifacts.event_packet)?;
+        self.validate_shape()?;
         serde_json::to_vec_pretty(self).context("serialize Runtime v2 access denial fixtures")
     }
+}
+
+fn validate_access_control_inputs(
+    standing: &RuntimeV2StandingArtifacts,
+    observatory: &RuntimeV2PrivateStateObservatoryArtifacts,
+) -> Result<()> {
+    standing.policy.validate()?;
+    standing.event_packet.validate_shape()?;
+    observatory.redaction_policy.validate_shape()?;
+    observatory.projection_packet.validate_shape()?;
+    Ok(())
 }
 
 impl RuntimeV2AccessDenialFixture {

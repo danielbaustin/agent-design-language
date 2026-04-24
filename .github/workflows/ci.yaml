@@ -102,6 +102,9 @@ jobs:
       - name: docs command check
         run: bash tools/check_release_notes_commands.sh
 
+      - name: ci runtime contract check
+        run: bash tools/test_ci_runtime_contracts.sh
+
       - name: Install cargo-nextest
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
@@ -110,11 +113,11 @@ jobs:
 
       - name: test
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        run: cargo nextest run --all-features
+        run: cargo nextest run --status-level all --final-status-level slow --slow-time 60s
 
       - name: doc test
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        run: cargo test --doc --all-features
+        run: cargo test --doc
 
       - name: test covered by full coverage lane
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required == 'true'
@@ -203,14 +206,23 @@ jobs:
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
 
+      - name: Install cargo-nextest for coverage
+        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        with:
+          tool: nextest
+
       - name: Coverage run and summary (json)
         if: steps.path-policy.outputs.full_coverage_required == 'true'
-        run: cargo llvm-cov --workspace --all-features --json --summary-only --output-path coverage-summary.json
+        run: |
+          cargo llvm-cov nextest --workspace --all-features --status-level all --final-status-level slow --no-report
+          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
 
       - name: PR fast coverage summary (json)
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: |
-          CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path coverage-summary.json -- ${{ steps.coverage-impact.outputs.filters }}
+          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --all-features --status-level all --final-status-level slow --no-report -- ${{ steps.coverage-impact.outputs.filters }}
+          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
 
       - name: Coverage-impact changed-source gate
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'

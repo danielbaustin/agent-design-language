@@ -166,6 +166,9 @@ Truthful interpretation:
 - Rust fmt, clippy, broad non-coverage tests via `cargo nextest run`, doc
   tests via `cargo test --doc`, demo smoke where applicable, and the fast
   coverage-impact preflight are expected.
+- The ordinary PR lane must not re-enable heavyweight opt-in features such as
+  `slow-proof-tests`; those stay reserved for dedicated heavy proof or
+  authoritative coverage lanes.
 - Full instrumented coverage is intentionally deferred for the PR to avoid
   running all tests twice.
 - The PR does not itself provide full release coverage evidence.
