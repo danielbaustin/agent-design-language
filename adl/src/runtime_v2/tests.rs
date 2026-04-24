@@ -38,6 +38,7 @@ mod private_state_sealing;
 mod private_state_witness;
 mod quarantine;
 mod recovery_eligibility;
+mod resource_stewardship_bridge;
 mod security_boundary;
 mod snapshot_rehydration;
 mod standing;

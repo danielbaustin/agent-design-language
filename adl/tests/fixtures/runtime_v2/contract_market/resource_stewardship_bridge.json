@@ -1,0 +1,372 @@
+{
+  "schema_version": "runtime_v2.resource_stewardship_bridge_artifact.v1",
+  "demo_id": "D8",
+  "wp_id": "WP-10",
+  "artifact_path": "runtime_v2/contract_market/resource_stewardship_bridge.json",
+  "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+  "selection_ref": "runtime_v2/contract_market/evaluation_selection.json",
+  "selected_bid_ref": "runtime_v2/contract_market/bid_alpha.json",
+  "subcontract_ref": "runtime_v2/contract_market/delegation_subcontract.json",
+  "bridge_decision": "Keep resource stewardship as a policy-bound review surface: the parent contract declares bounded resource envelopes, bids estimate how they fit that envelope, the selected bid remains within scope, and delegated packaging stays reviewable without transferring authority or pricing semantics.",
+  "policy_bindings": [
+    {
+      "policy_domain": "standing",
+      "source_surface": "v0.90.3 standing inheritance audit for contract-market participation",
+      "enforcement_rule": "resource claims may shape feasibility review but never create or override standing"
+    },
+    {
+      "policy_domain": "access_control",
+      "source_surface": "runtime_v2/access_control/access_events.json#contract-issuance-reviewed",
+      "enforcement_rule": "resource envelopes remain subordinate to explicit access-control review and gateway checks"
+    },
+    {
+      "policy_domain": "quarantine",
+      "source_surface": "v0.90.3 quarantine and evidence-preservation policy surface",
+      "enforcement_rule": "resource pressure cannot bypass quarantine or evidence-preservation requirements"
+    },
+    {
+      "policy_domain": "sanctuary",
+      "source_surface": "v0.90.3 sanctuary and private-state protection policy surface",
+      "enforcement_rule": "resource scarcity cannot justify sanctuary bypass or private-state inspection"
+    },
+    {
+      "policy_domain": "challenge",
+      "source_surface": "v0.90.3 challenge and appeal rights for contested operational decisions",
+      "enforcement_rule": "resource stewardship decisions remain reviewable and cannot extinguish challenge or appeal rights"
+    }
+  ],
+  "contract_resource_claims": [
+    {
+      "claim_id": "contract_compute_hours_limit",
+      "resource_kind": "compute_hours",
+      "estimate_kind": "contract_constraint",
+      "estimated_units": 6,
+      "unit_basis": "hours",
+      "bounded_by_policy": true,
+      "tool_execution_authorized": false,
+      "rationale": "bounded compute envelope for replayable projection, review, and trace packaging",
+      "evidence_refs": [
+        "runtime_v2/contract_market/parent_contract.json"
+      ]
+    },
+    {
+      "claim_id": "contract_memory_gib_limit",
+      "resource_kind": "memory_gib",
+      "estimate_kind": "contract_constraint",
+      "estimated_units": 8,
+      "unit_basis": "gib",
+      "bounded_by_policy": true,
+      "tool_execution_authorized": false,
+      "rationale": "bounded memory envelope for redacted packet assembly",
+      "evidence_refs": [
+        "runtime_v2/contract_market/parent_contract.json"
+      ]
+    },
+    {
+      "claim_id": "contract_attention_items_limit",
+      "resource_kind": "attention_items",
+      "estimate_kind": "contract_constraint",
+      "estimated_units": 12,
+      "unit_basis": "review_items",
+      "bounded_by_policy": true,
+      "tool_execution_authorized": false,
+      "rationale": "bounded reviewer attention envelope for trace, evidence, and exception checks",
+      "evidence_refs": [
+        "runtime_v2/contract_market/parent_contract.json#evaluation_criteria"
+      ]
+    },
+    {
+      "claim_id": "contract_bandwidth_mb_limit",
+      "resource_kind": "bandwidth_mb",
+      "estimate_kind": "contract_constraint",
+      "estimated_units": 256,
+      "unit_basis": "megabytes",
+      "bounded_by_policy": true,
+      "tool_execution_authorized": false,
+      "rationale": "bounded transfer envelope for packet exchange and manifest delivery",
+      "evidence_refs": [
+        "runtime_v2/contract_market/parent_contract.json"
+      ]
+    },
+    {
+      "claim_id": "contract_artifact_storage_mb_limit",
+      "resource_kind": "artifact_storage_mb",
+      "estimate_kind": "contract_constraint",
+      "estimated_units": 32,
+      "unit_basis": "megabytes",
+      "bounded_by_policy": true,
+      "tool_execution_authorized": false,
+      "rationale": "bounded artifact storage envelope for packet, manifest, and review summary",
+      "evidence_refs": [
+        "runtime_v2/contract_market/parent_contract.json#deliverables"
+      ]
+    },
+    {
+      "claim_id": "contract_operator_review_minutes_limit",
+      "resource_kind": "operator_review_minutes",
+      "estimate_kind": "contract_constraint",
+      "estimated_units": 90,
+      "unit_basis": "minutes",
+      "bounded_by_policy": true,
+      "tool_execution_authorized": false,
+      "rationale": "bounded reviewer and operator time envelope for award, integration, and dispute-ready review",
+      "evidence_refs": [
+        "runtime_v2/contract_market/parent_contract.json#process_rules"
+      ]
+    },
+    {
+      "claim_id": "contract_tool_adapter_budget_units_limit",
+      "resource_kind": "tool_adapter_budget_units",
+      "estimate_kind": "contract_constraint",
+      "estimated_units": 1,
+      "unit_basis": "adapter_session",
+      "bounded_by_policy": true,
+      "tool_execution_authorized": false,
+      "rationale": "one bounded tool-mediated step may be budgeted as a deferred requirement without authorizing execution",
+      "evidence_refs": [
+        "runtime_v2/contract_market/parent_contract.json#tool_requirements"
+      ]
+    }
+  ],
+  "bid_resource_estimates": [
+    {
+      "bid_id": "bid-alpha-observatory-review",
+      "bid_ref": "runtime_v2/contract_market/bid_alpha.json",
+      "bidder_actor_id": "counterparty-alpha",
+      "estimate_summary": "Alpha keeps the lowest bounded operator and compute profile while treating projection rendering as a deferred adapter constraint.",
+      "claims": [
+        {
+          "claim_id": "alpha_observatory_review_artifact_storage_mb",
+          "resource_kind": "artifact_storage_mb",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 20,
+          "unit_basis": "megabytes",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "artifact storage estimate for review packet, manifest, and supporting notes",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_alpha.json#resource_claims"
+          ]
+        },
+        {
+          "claim_id": "alpha_observatory_review_attention_items",
+          "resource_kind": "attention_items",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 8,
+          "unit_basis": "review_items",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "review attention estimate for exceptions, commitments, and artifact verification",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_alpha.json"
+          ]
+        },
+        {
+          "claim_id": "alpha_observatory_review_bandwidth_mb",
+          "resource_kind": "bandwidth_mb",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 128,
+          "unit_basis": "megabytes",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "network transfer estimate for bounded packet fetch, upload, and trace exchange",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_alpha.json"
+          ]
+        },
+        {
+          "claim_id": "alpha_observatory_review_compute_hours",
+          "resource_kind": "compute_hours",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 4,
+          "unit_basis": "hours",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "bounded compute estimate for projection handling, trace packaging, and packet assembly",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_alpha.json#resource_claims"
+          ]
+        },
+        {
+          "claim_id": "alpha_observatory_review_memory_gib",
+          "resource_kind": "memory_gib",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 6,
+          "unit_basis": "gib",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "working-memory estimate for bounded replayable packet assembly",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_alpha.json"
+          ]
+        },
+        {
+          "claim_id": "alpha_observatory_review_operator_review_minutes",
+          "resource_kind": "operator_review_minutes",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 45,
+          "unit_basis": "minutes",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "bounded reviewer time estimate for award, integration, and residual-risk review",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_alpha.json#resource_claims"
+          ]
+        },
+        {
+          "claim_id": "alpha_observatory_review_tool_adapter_budget_units",
+          "resource_kind": "tool_adapter_budget_units",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 1,
+          "unit_basis": "adapter_session",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "one bounded adapter-mediated step is budgeted as a deferred constraint rather than an execution grant",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_alpha.json#expected_tool_usage"
+          ]
+        }
+      ],
+      "tool_resource_constraints": [
+        {
+          "requirement_id": "tool-req-projection-render",
+          "capability": "projection_rendering",
+          "adapter_family": "observatory_adapter",
+          "usage_mode": "constraint",
+          "budget_claim_id": "alpha_observatory_review_tool_adapter_budget_units",
+          "governed_authority_required": true,
+          "execution_authority_granted": false,
+          "required_evidence": [
+            "tool requirement remains pending governed-tool authority",
+            "review summary records unmet tool dependency when executor authority is absent"
+          ],
+          "boundary_note": "Tool-resource budgeting remains a feasibility constraint only; governed-tool authority is still required before any execution may occur."
+        }
+      ]
+    },
+    {
+      "bid_id": "bid-bravo-observatory-review",
+      "bid_ref": "runtime_v2/contract_market/bid_bravo.json",
+      "bidder_actor_id": "counterparty-bravo",
+      "estimate_summary": "Bravo remains feasible but carries the larger operator and storage profile while still keeping tool needs in non-executable evidence mode.",
+      "claims": [
+        {
+          "claim_id": "bravo_observatory_review_artifact_storage_mb",
+          "resource_kind": "artifact_storage_mb",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 24,
+          "unit_basis": "megabytes",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "artifact storage estimate for review packet, manifest, and supporting notes",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_bravo.json#resource_claims"
+          ]
+        },
+        {
+          "claim_id": "bravo_observatory_review_attention_items",
+          "resource_kind": "attention_items",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 10,
+          "unit_basis": "review_items",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "review attention estimate for exceptions, commitments, and artifact verification",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_bravo.json"
+          ]
+        },
+        {
+          "claim_id": "bravo_observatory_review_bandwidth_mb",
+          "resource_kind": "bandwidth_mb",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 160,
+          "unit_basis": "megabytes",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "network transfer estimate for bounded packet fetch, upload, and trace exchange",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_bravo.json"
+          ]
+        },
+        {
+          "claim_id": "bravo_observatory_review_compute_hours",
+          "resource_kind": "compute_hours",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 5,
+          "unit_basis": "hours",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "bounded compute estimate for projection handling, trace packaging, and packet assembly",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_bravo.json#resource_claims"
+          ]
+        },
+        {
+          "claim_id": "bravo_observatory_review_memory_gib",
+          "resource_kind": "memory_gib",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 8,
+          "unit_basis": "gib",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "working-memory estimate for bounded replayable packet assembly",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_bravo.json"
+          ]
+        },
+        {
+          "claim_id": "bravo_observatory_review_operator_review_minutes",
+          "resource_kind": "operator_review_minutes",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 60,
+          "unit_basis": "minutes",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "bounded reviewer time estimate for award, integration, and residual-risk review",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_bravo.json#resource_claims"
+          ]
+        },
+        {
+          "claim_id": "bravo_observatory_review_tool_adapter_budget_units",
+          "resource_kind": "tool_adapter_budget_units",
+          "estimate_kind": "bid_estimate",
+          "estimated_units": 1,
+          "unit_basis": "adapter_session",
+          "bounded_by_policy": true,
+          "tool_execution_authorized": false,
+          "rationale": "one bounded adapter-mediated step is budgeted as a deferred constraint rather than an execution grant",
+          "evidence_refs": [
+            "runtime_v2/contract_market/bid_bravo.json#expected_tool_usage"
+          ]
+        }
+      ],
+      "tool_resource_constraints": [
+        {
+          "requirement_id": "tool-req-projection-render",
+          "capability": "projection_rendering",
+          "adapter_family": "observatory_adapter",
+          "usage_mode": "evidence_only",
+          "budget_claim_id": "bravo_observatory_review_tool_adapter_budget_units",
+          "governed_authority_required": true,
+          "execution_authority_granted": false,
+          "required_evidence": [
+            "operator report records whether projection rendering remained deferred",
+            "selection review notes the tool dependency without treating it as authority"
+          ],
+          "boundary_note": "Tool-resource budgeting remains a feasibility constraint only; governed-tool authority is still required before any execution may occur."
+        }
+      ]
+    }
+  ],
+  "selected_bid_resource_summary": "Selected bid alpha preserves the lowest bounded compute and operator-review profile while keeping the tool-mediated projection step in constraint mode. The later subcontracted trace-manifest packaging step remains parent-reviewed and does not transfer tool or standing authority.",
+  "boundary_notes": [
+    "Payment and pricing remain explicitly out of scope for v0.90.4 resource stewardship; this bridge records bounded feasibility rather than settlement or rate formation.",
+    "Tool-resource requirements remain non-executable constraints until v0.90.5 governed-tool authority exists.",
+    "Reputation markets, inter-polis economics, and production budget enforcement remain deferred until a later milestone.",
+    "Resource claims may inform evaluation and review load, but they do not override standing, access control, quarantine, sanctuary, or challenge rights."
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_resource_stewardship_bridge -- --nocapture",
+  "claim_boundary": "D8 proves that resource stewardship in v0.90.4 is a reviewable estimate layer only: it records compute, memory, attention, bandwidth, artifact storage, operator time, and tool-adapter budget without pricing, payment settlement, or governed-tool execution authority."
+}
