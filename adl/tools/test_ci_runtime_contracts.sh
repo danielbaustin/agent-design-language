@@ -54,6 +54,13 @@ if ordinary_doc_test != "cargo test --doc":
         f"found: {ordinary_doc_test}"
     )
 
+authoritative_contract = step_run("authoritative coverage lane contract")
+if authoritative_contract != "bash adl/tools/test_run_authoritative_coverage_lane.sh":
+    raise SystemExit(
+        "adl-ci must validate the authoritative coverage split contract explicitly; "
+        f"found: {authoritative_contract}"
+    )
+
 release_version_truth = step_run("release version truth check")
 if release_version_truth != "bash adl/tools/check_release_version_surfaces.sh":
     raise SystemExit(
@@ -88,6 +95,14 @@ if expected_gate_fragment not in gate_if:
     raise SystemExit(
         "workspace coverage gate must defer for tooling-only policy authoritative PRs; "
         f"found: {gate_if}"
+    )
+
+deferred_policy_step = step_if("Full workspace coverage gate deferred for policy PR")
+expected_deferred_fragment = "steps.path-policy.outputs.coverage_authority == 'pr_policy_surface_tooling_only'"
+if expected_deferred_fragment not in deferred_policy_step:
+    raise SystemExit(
+        "tooling-only policy PR defer note must be keyed to pr_policy_surface_tooling_only; "
+        f"found: {deferred_policy_step}"
     )
 
 print("PASS test_ci_runtime_contracts")

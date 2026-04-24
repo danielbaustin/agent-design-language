@@ -233,6 +233,21 @@ release-evidence LCOV artifacts. Those remain reserved for full-evidence
 authorities such as `push_main`, `fail_closed`, and mixed runtime-plus-policy
 governance changes.
 
+The authoritative coverage implementation is now explicit:
+
+```bash
+adl/tools/run_authoritative_coverage_lane.sh
+```
+
+That runner performs one pass per event:
+
+- `full_authoritative_all_features` on `main` and other full-evidence events
+- `bounded_policy_surface_pr` on policy-surface pull requests
+
+and then emits one coverage summary report. Skills should treat
+`bounded_policy_surface_pr` as bounded PR governance validation, not as full
+release evidence.
+
 ### Failed-Closed Classification
 
 Observed:

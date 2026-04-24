@@ -215,6 +215,19 @@ classified separately from always-on contract checks:
 - authoritative `cargo llvm-cov --workspace --all-features` lanes still execute
   that tranche
 
+The authoritative lane is now one-pass per event:
+
+- `full_authoritative_all_features`
+  runs one full `cargo llvm-cov nextest --workspace --all-features` pass on
+  `main` and other full-evidence events
+- `bounded_policy_surface_pr`
+  runs one bounded `cargo llvm-cov nextest --workspace` pass on policy-surface
+  pull requests, followed by the changed-source coverage gate
+
+This replaces the earlier two-phase authoritative split. The goal is to keep
+PR governance validation reviewable without paying for one near-full coverage
+pass plus a second proof-heavy pass in the same job.
+
 That keeps ordinary PR validation fast without pretending those proof surfaces
 no longer matter.
 
@@ -225,6 +238,16 @@ When `full_coverage_required=true`, full coverage generates:
 - `coverage-summary.txt`
 
 from the coverage data produced by one coverage run.
+
+In implementation terms, the workflow now routes this through:
+
+```bash
+adl/tools/run_authoritative_coverage_lane.sh
+```
+
+That runner is the machine-readable contract for which events get the full
+all-features authoritative pass and which policy-surface PRs get the bounded
+one-pass lane.
 
 ## Session Guidance
 
