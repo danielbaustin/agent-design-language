@@ -1,0 +1,472 @@
+{
+  "schema_version": "runtime_v2.contract_negative_cases.v1",
+  "proof_id": "contract-schema-negative-cases",
+  "demo_id": "D2",
+  "artifact_path": "runtime_v2/contract_market/contract_negative_cases.json",
+  "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+  "required_negative_cases": [
+    {
+      "case_id": "missing-trace-requirements",
+      "mutation": "remove all required trace links",
+      "expected_error_fragment": "contract.trace_requirements must not be empty",
+      "invalid_contract": {
+        "schema_version": "runtime_v2.contract_artifact.v1",
+        "demo_id": "D2",
+        "wp_id": "WP-03",
+        "contract_id": "contract-observatory-readiness-alpha",
+        "artifact_path": "runtime_v2/contract_market/parent_contract.json",
+        "contract_type": "bounded_service_contract",
+        "lifecycle_state": "bidding",
+        "issuer_actor_id": "proto-citizen-alpha",
+        "issuer_standing_class": "citizen",
+        "authority_basis_ref": "runtime_v2/access_control/access_events.json#contract-issuance-reviewed",
+        "scope_summary": "Prepare one bounded observatory readiness packet using redacted citizen-state evidence.",
+        "required_inputs": [
+          "redacted observatory projection packet",
+          "standing and access-control evidence",
+          "bounded review checklist"
+        ],
+        "deliverables": [
+          "review packet",
+          "operator summary",
+          "trace-linked artifact manifest"
+        ],
+        "process_rules": [
+          "reviewed selection required before award",
+          "all bids must preserve trace continuity",
+          "tool requirements remain non-executable constraints"
+        ],
+        "constraints": [
+          "no payment settlement in v0.90.4",
+          "no direct tool execution authority",
+          "no private-state inspection grant"
+        ],
+        "tool_requirements": [
+          {
+            "requirement_id": "tool-req-projection-render",
+            "capability": "projection_rendering",
+            "adapter_family": "observatory_adapter",
+            "usage_mode": "constraint",
+            "direct_execution_allowed": false,
+            "required_evidence": [
+              "tool requirement recorded as contract constraint",
+              "review summary must record unmet tool needs"
+            ]
+          }
+        ],
+        "announced_at_utc": "2026-04-23T23:05:00Z",
+        "bidding_closes_at_utc": "2026-04-24T23:05:00Z",
+        "target_complete_at_utc": "2026-04-26T23:05:00Z",
+        "evaluation_criteria": [
+          {
+            "criterion_id": "trace-integrity",
+            "label": "trace integrity",
+            "weight_basis_points": 5000,
+            "mandatory": true,
+            "rationale": "deliverables must preserve issuer-visible trace linkage"
+          },
+          {
+            "criterion_id": "evidence-quality",
+            "label": "evidence quality",
+            "weight_basis_points": 3000,
+            "mandatory": true,
+            "rationale": "output must remain reviewer-visible without exposing raw private state"
+          },
+          {
+            "criterion_id": "resource-fit",
+            "label": "resource fit",
+            "weight_basis_points": 2000,
+            "mandatory": false,
+            "rationale": "proposal should fit bounded operator and compute budget assumptions"
+          }
+        ],
+        "artifact_refs": [
+          "runtime_v2/contract_market/review_summary_seed.json",
+          "runtime_v2/contract_market/trace_requirements.json"
+        ],
+        "minimum_counterparty_assurance": "sponsored-review-eligible",
+        "sponsor_required": true,
+        "gateway_required": true,
+        "trace_requirements": [],
+        "extension_slots": [
+          "pricing",
+          "payment_rails",
+          "governed_tools_authority"
+        ],
+        "claim_boundary": "This contract is a bounded market artifact and does not grant citizen standing, private-state inspection, or tool execution authority."
+      }
+    },
+    {
+      "case_id": "missing-authority-basis",
+      "mutation": "clear authority basis ref",
+      "expected_error_fragment": "contract.authority_basis_ref must not be empty",
+      "invalid_contract": {
+        "schema_version": "runtime_v2.contract_artifact.v1",
+        "demo_id": "D2",
+        "wp_id": "WP-03",
+        "contract_id": "contract-observatory-readiness-alpha",
+        "artifact_path": "runtime_v2/contract_market/parent_contract.json",
+        "contract_type": "bounded_service_contract",
+        "lifecycle_state": "bidding",
+        "issuer_actor_id": "proto-citizen-alpha",
+        "issuer_standing_class": "citizen",
+        "authority_basis_ref": "",
+        "scope_summary": "Prepare one bounded observatory readiness packet using redacted citizen-state evidence.",
+        "required_inputs": [
+          "redacted observatory projection packet",
+          "standing and access-control evidence",
+          "bounded review checklist"
+        ],
+        "deliverables": [
+          "review packet",
+          "operator summary",
+          "trace-linked artifact manifest"
+        ],
+        "process_rules": [
+          "reviewed selection required before award",
+          "all bids must preserve trace continuity",
+          "tool requirements remain non-executable constraints"
+        ],
+        "constraints": [
+          "no payment settlement in v0.90.4",
+          "no direct tool execution authority",
+          "no private-state inspection grant"
+        ],
+        "tool_requirements": [
+          {
+            "requirement_id": "tool-req-projection-render",
+            "capability": "projection_rendering",
+            "adapter_family": "observatory_adapter",
+            "usage_mode": "constraint",
+            "direct_execution_allowed": false,
+            "required_evidence": [
+              "tool requirement recorded as contract constraint",
+              "review summary must record unmet tool needs"
+            ]
+          }
+        ],
+        "announced_at_utc": "2026-04-23T23:05:00Z",
+        "bidding_closes_at_utc": "2026-04-24T23:05:00Z",
+        "target_complete_at_utc": "2026-04-26T23:05:00Z",
+        "evaluation_criteria": [
+          {
+            "criterion_id": "trace-integrity",
+            "label": "trace integrity",
+            "weight_basis_points": 5000,
+            "mandatory": true,
+            "rationale": "deliverables must preserve issuer-visible trace linkage"
+          },
+          {
+            "criterion_id": "evidence-quality",
+            "label": "evidence quality",
+            "weight_basis_points": 3000,
+            "mandatory": true,
+            "rationale": "output must remain reviewer-visible without exposing raw private state"
+          },
+          {
+            "criterion_id": "resource-fit",
+            "label": "resource fit",
+            "weight_basis_points": 2000,
+            "mandatory": false,
+            "rationale": "proposal should fit bounded operator and compute budget assumptions"
+          }
+        ],
+        "artifact_refs": [
+          "runtime_v2/contract_market/review_summary_seed.json",
+          "runtime_v2/contract_market/trace_requirements.json"
+        ],
+        "minimum_counterparty_assurance": "sponsored-review-eligible",
+        "sponsor_required": true,
+        "gateway_required": true,
+        "trace_requirements": [
+          "issuer_signature",
+          "authority_basis",
+          "bid_trace_link",
+          "selection_trace_link"
+        ],
+        "extension_slots": [
+          "pricing",
+          "payment_rails",
+          "governed_tools_authority"
+        ],
+        "claim_boundary": "This contract is a bounded market artifact and does not grant citizen standing, private-state inspection, or tool execution authority."
+      }
+    },
+    {
+      "case_id": "unsupported-lifecycle-state",
+      "mutation": "use unsupported lifecycle state",
+      "expected_error_fragment": "unsupported contract.lifecycle_state",
+      "invalid_contract": {
+        "schema_version": "runtime_v2.contract_artifact.v1",
+        "demo_id": "D2",
+        "wp_id": "WP-03",
+        "contract_id": "contract-observatory-readiness-alpha",
+        "artifact_path": "runtime_v2/contract_market/parent_contract.json",
+        "contract_type": "bounded_service_contract",
+        "lifecycle_state": "auto-executing",
+        "issuer_actor_id": "proto-citizen-alpha",
+        "issuer_standing_class": "citizen",
+        "authority_basis_ref": "runtime_v2/access_control/access_events.json#contract-issuance-reviewed",
+        "scope_summary": "Prepare one bounded observatory readiness packet using redacted citizen-state evidence.",
+        "required_inputs": [
+          "redacted observatory projection packet",
+          "standing and access-control evidence",
+          "bounded review checklist"
+        ],
+        "deliverables": [
+          "review packet",
+          "operator summary",
+          "trace-linked artifact manifest"
+        ],
+        "process_rules": [
+          "reviewed selection required before award",
+          "all bids must preserve trace continuity",
+          "tool requirements remain non-executable constraints"
+        ],
+        "constraints": [
+          "no payment settlement in v0.90.4",
+          "no direct tool execution authority",
+          "no private-state inspection grant"
+        ],
+        "tool_requirements": [
+          {
+            "requirement_id": "tool-req-projection-render",
+            "capability": "projection_rendering",
+            "adapter_family": "observatory_adapter",
+            "usage_mode": "constraint",
+            "direct_execution_allowed": false,
+            "required_evidence": [
+              "tool requirement recorded as contract constraint",
+              "review summary must record unmet tool needs"
+            ]
+          }
+        ],
+        "announced_at_utc": "2026-04-23T23:05:00Z",
+        "bidding_closes_at_utc": "2026-04-24T23:05:00Z",
+        "target_complete_at_utc": "2026-04-26T23:05:00Z",
+        "evaluation_criteria": [
+          {
+            "criterion_id": "trace-integrity",
+            "label": "trace integrity",
+            "weight_basis_points": 5000,
+            "mandatory": true,
+            "rationale": "deliverables must preserve issuer-visible trace linkage"
+          },
+          {
+            "criterion_id": "evidence-quality",
+            "label": "evidence quality",
+            "weight_basis_points": 3000,
+            "mandatory": true,
+            "rationale": "output must remain reviewer-visible without exposing raw private state"
+          },
+          {
+            "criterion_id": "resource-fit",
+            "label": "resource fit",
+            "weight_basis_points": 2000,
+            "mandatory": false,
+            "rationale": "proposal should fit bounded operator and compute budget assumptions"
+          }
+        ],
+        "artifact_refs": [
+          "runtime_v2/contract_market/review_summary_seed.json",
+          "runtime_v2/contract_market/trace_requirements.json"
+        ],
+        "minimum_counterparty_assurance": "sponsored-review-eligible",
+        "sponsor_required": true,
+        "gateway_required": true,
+        "trace_requirements": [
+          "issuer_signature",
+          "authority_basis",
+          "bid_trace_link",
+          "selection_trace_link"
+        ],
+        "extension_slots": [
+          "pricing",
+          "payment_rails",
+          "governed_tools_authority"
+        ],
+        "claim_boundary": "This contract is a bounded market artifact and does not grant citizen standing, private-state inspection, or tool execution authority."
+      }
+    },
+    {
+      "case_id": "incomplete-evaluation-criteria",
+      "mutation": "truncate evaluation criteria to one item",
+      "expected_error_fragment": "contract.evaluation_criteria must include at least two criteria",
+      "invalid_contract": {
+        "schema_version": "runtime_v2.contract_artifact.v1",
+        "demo_id": "D2",
+        "wp_id": "WP-03",
+        "contract_id": "contract-observatory-readiness-alpha",
+        "artifact_path": "runtime_v2/contract_market/parent_contract.json",
+        "contract_type": "bounded_service_contract",
+        "lifecycle_state": "bidding",
+        "issuer_actor_id": "proto-citizen-alpha",
+        "issuer_standing_class": "citizen",
+        "authority_basis_ref": "runtime_v2/access_control/access_events.json#contract-issuance-reviewed",
+        "scope_summary": "Prepare one bounded observatory readiness packet using redacted citizen-state evidence.",
+        "required_inputs": [
+          "redacted observatory projection packet",
+          "standing and access-control evidence",
+          "bounded review checklist"
+        ],
+        "deliverables": [
+          "review packet",
+          "operator summary",
+          "trace-linked artifact manifest"
+        ],
+        "process_rules": [
+          "reviewed selection required before award",
+          "all bids must preserve trace continuity",
+          "tool requirements remain non-executable constraints"
+        ],
+        "constraints": [
+          "no payment settlement in v0.90.4",
+          "no direct tool execution authority",
+          "no private-state inspection grant"
+        ],
+        "tool_requirements": [
+          {
+            "requirement_id": "tool-req-projection-render",
+            "capability": "projection_rendering",
+            "adapter_family": "observatory_adapter",
+            "usage_mode": "constraint",
+            "direct_execution_allowed": false,
+            "required_evidence": [
+              "tool requirement recorded as contract constraint",
+              "review summary must record unmet tool needs"
+            ]
+          }
+        ],
+        "announced_at_utc": "2026-04-23T23:05:00Z",
+        "bidding_closes_at_utc": "2026-04-24T23:05:00Z",
+        "target_complete_at_utc": "2026-04-26T23:05:00Z",
+        "evaluation_criteria": [
+          {
+            "criterion_id": "trace-integrity",
+            "label": "trace integrity",
+            "weight_basis_points": 5000,
+            "mandatory": true,
+            "rationale": "deliverables must preserve issuer-visible trace linkage"
+          }
+        ],
+        "artifact_refs": [
+          "runtime_v2/contract_market/review_summary_seed.json",
+          "runtime_v2/contract_market/trace_requirements.json"
+        ],
+        "minimum_counterparty_assurance": "sponsored-review-eligible",
+        "sponsor_required": true,
+        "gateway_required": true,
+        "trace_requirements": [
+          "issuer_signature",
+          "authority_basis",
+          "bid_trace_link",
+          "selection_trace_link"
+        ],
+        "extension_slots": [
+          "pricing",
+          "payment_rails",
+          "governed_tools_authority"
+        ],
+        "claim_boundary": "This contract is a bounded market artifact and does not grant citizen standing, private-state inspection, or tool execution authority."
+      }
+    },
+    {
+      "case_id": "tool-requirement-implies-direct-execution",
+      "mutation": "set direct execution allowed on tool requirement",
+      "expected_error_fragment": "contract.tool_requirements must not grant direct execution authority",
+      "invalid_contract": {
+        "schema_version": "runtime_v2.contract_artifact.v1",
+        "demo_id": "D2",
+        "wp_id": "WP-03",
+        "contract_id": "contract-observatory-readiness-alpha",
+        "artifact_path": "runtime_v2/contract_market/parent_contract.json",
+        "contract_type": "bounded_service_contract",
+        "lifecycle_state": "bidding",
+        "issuer_actor_id": "proto-citizen-alpha",
+        "issuer_standing_class": "citizen",
+        "authority_basis_ref": "runtime_v2/access_control/access_events.json#contract-issuance-reviewed",
+        "scope_summary": "Prepare one bounded observatory readiness packet using redacted citizen-state evidence.",
+        "required_inputs": [
+          "redacted observatory projection packet",
+          "standing and access-control evidence",
+          "bounded review checklist"
+        ],
+        "deliverables": [
+          "review packet",
+          "operator summary",
+          "trace-linked artifact manifest"
+        ],
+        "process_rules": [
+          "reviewed selection required before award",
+          "all bids must preserve trace continuity",
+          "tool requirements remain non-executable constraints"
+        ],
+        "constraints": [
+          "no payment settlement in v0.90.4",
+          "no direct tool execution authority",
+          "no private-state inspection grant"
+        ],
+        "tool_requirements": [
+          {
+            "requirement_id": "tool-req-projection-render",
+            "capability": "projection_rendering",
+            "adapter_family": "observatory_adapter",
+            "usage_mode": "constraint",
+            "direct_execution_allowed": true,
+            "required_evidence": [
+              "tool requirement recorded as contract constraint",
+              "review summary must record unmet tool needs"
+            ]
+          }
+        ],
+        "announced_at_utc": "2026-04-23T23:05:00Z",
+        "bidding_closes_at_utc": "2026-04-24T23:05:00Z",
+        "target_complete_at_utc": "2026-04-26T23:05:00Z",
+        "evaluation_criteria": [
+          {
+            "criterion_id": "trace-integrity",
+            "label": "trace integrity",
+            "weight_basis_points": 5000,
+            "mandatory": true,
+            "rationale": "deliverables must preserve issuer-visible trace linkage"
+          },
+          {
+            "criterion_id": "evidence-quality",
+            "label": "evidence quality",
+            "weight_basis_points": 3000,
+            "mandatory": true,
+            "rationale": "output must remain reviewer-visible without exposing raw private state"
+          },
+          {
+            "criterion_id": "resource-fit",
+            "label": "resource fit",
+            "weight_basis_points": 2000,
+            "mandatory": false,
+            "rationale": "proposal should fit bounded operator and compute budget assumptions"
+          }
+        ],
+        "artifact_refs": [
+          "runtime_v2/contract_market/review_summary_seed.json",
+          "runtime_v2/contract_market/trace_requirements.json"
+        ],
+        "minimum_counterparty_assurance": "sponsored-review-eligible",
+        "sponsor_required": true,
+        "gateway_required": true,
+        "trace_requirements": [
+          "issuer_signature",
+          "authority_basis",
+          "bid_trace_link",
+          "selection_trace_link"
+        ],
+        "extension_slots": [
+          "pricing",
+          "payment_rails",
+          "governed_tools_authority"
+        ],
+        "claim_boundary": "This contract is a bounded market artifact and does not grant citizen standing, private-state inspection, or tool execution authority."
+      }
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_contract_schema -- --nocapture",
+  "claim_boundary": "Negative cases prove the contract schema rejects missing authority, missing trace linkage, unsupported lifecycle state, incomplete evaluation criteria, and tool requirements that imply execution grants."
+}

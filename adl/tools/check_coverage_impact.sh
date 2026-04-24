@@ -152,6 +152,24 @@ candidate_filter_for_path() {
   basename "$path" .rs
 }
 
+file_is_structural_module_barrel() {
+  local path="$1"
+  [ -f "$ROOT/$path" ] || return 1
+  case "$(basename "$path")" in
+    mod.rs) ;;
+    *) return 1 ;;
+  esac
+
+  awk '
+    /^[[:space:]]*$/ { next }
+    /^[[:space:]]*\/\// { next }
+    /^[[:space:]]*#\[/ { next }
+    /^[[:space:]]*(pub[[:space:]]+)?mod[[:space:]]+[A-Za-z_][A-Za-z0-9_]*;[[:space:]]*$/ { next }
+    /^[[:space:]]*(pub([[:space:]]*\([^)]*\))?[[:space:]]+)?use[[:space:]].*;[[:space:]]*$/ { next }
+    { exit 1 }
+  ' "$ROOT/$path"
+}
+
 risk_rows=""
 while IFS=$'\t' read -r status path; do
   [ -n "$path" ] || continue
@@ -207,6 +225,9 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
         end
     ' "$SUMMARY")"
     if [ -z "$row" ]; then
+      if file_is_structural_module_barrel "$path"; then
+        continue
+      fi
       missing="${missing}  - ${path} (no coverage row in ${SUMMARY})"$'\n'
       continue
     fi
