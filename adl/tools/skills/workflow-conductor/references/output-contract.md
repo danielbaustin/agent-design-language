@@ -22,6 +22,8 @@ workflow_compliance:
   card_editor_skills_required: true | false
   subagent_requirement: required | recommended | optional | forbidden
   subagent_assigned: true | false | not_applicable
+  issue_classification: docs-only | milestone-package-truth | workflow-docs | tooling-focused | rust-focused | demo-focused | review-remediation | release-tail | unknown
+  validation_profile_selected: docs-bounded | tooling-focused | rust-focused | repo-native-finish | janitor-focused | demo-focused | review-remediation | release-tail | unknown
   bypasses:
     - component: <policy_component>
       reason: <bounded_reason>

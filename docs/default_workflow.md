@@ -124,6 +124,41 @@ did run, and keep CI required before merge.
 Use full local validation for runtime, schema, security, release, broad tooling,
 or ambiguous changes.
 
+### Issue-Class Validation Rule
+
+Before choosing validation, classify the issue using the narrowest truthful
+changed-surface class.
+
+Recommended classes:
+
+- `docs-only`
+- `milestone-package-truth`
+- `workflow-docs`
+- `tooling-focused`
+- `rust-focused`
+- `demo-focused`
+- `review-remediation`
+- `release-tail`
+
+Default rule:
+
+- docs-heavy classes do not require the full Rust test cycle
+- bounded tooling classes use focused shell or unit checks
+- runtime or schema classes use targeted Rust validation and widen only when the
+  changed surface demands it
+- release-tail classes rely on tracker, gap, closeout, review-truth, path, and
+  guardrail checks unless tracked code changed
+
+Always record:
+
+- the chosen issue class
+- the selected validation profile
+- the exact commands run
+- what was intentionally not run
+
+Do not use full local validation as a reflex. Use it because the changed
+surface needs it.
+
 ## 7) Finish PR
 
 ```bash
