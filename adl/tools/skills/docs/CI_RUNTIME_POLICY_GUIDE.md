@@ -81,6 +81,48 @@ or assembling release evidence:
 - Do not treat a green `adl-coverage` check as sufficient release evidence
   unless the evidence shows the full coverage lane ran.
 
+## Local Validation Selection Before PR
+
+The CI path-policy classifier does not mean every issue should run the full
+local Rust cycle before publication.
+
+Skills should classify the changed surface first:
+
+- `docs-only`
+- `milestone-package-truth`
+- `workflow-docs`
+- `tooling-focused`
+- `rust-focused`
+- `demo-focused`
+- `review-remediation`
+- `release-tail`
+
+Expected local-validation posture:
+
+- `docs-only`, `milestone-package-truth`, and most `workflow-docs` work use
+  docs, path, contract, Markdown, and guardrail checks rather than local Rust
+  fmt, clippy, tests, or coverage
+- `tooling-focused` work uses the smallest shell, unit, or contract check that
+  proves the changed behavior
+- `rust-focused` work uses targeted Rust validation and widens only when the
+  changed module or contract boundary is broad
+- `demo-focused` work runs the named demo or smallest proving proof surface
+- `review-remediation` work reruns the narrow validation that proves the named
+  finding is fixed
+- `release-tail` work uses tracker, gap, closeout, review-truth, path, and
+  evidence checks unless tracked code changed
+
+This is the main compression rule:
+
+- do not use the full local test cycle as the default for every issue
+- do use the smallest truthful local validation that proves the changed surface
+- widen only when the issue, ambiguity, or failed checks justify it
+
+When recording PR or output-card truth, say both:
+
+- what validation class ran
+- what larger validation did not run and why that was acceptable
+
 ## Examples
 
 ### Docs-Only PR

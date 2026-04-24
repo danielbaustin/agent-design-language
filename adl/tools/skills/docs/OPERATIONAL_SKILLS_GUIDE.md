@@ -256,6 +256,32 @@ worktree, allowed scope, stop boundary, and a reminder not to merge, close,
 reset, recreate branches, or widen issue scope without explicit operator
 direction.
 
+Issue classification comes before validation selection.
+
+Classify the issue using the narrowest truthful class:
+
+- `docs-only`
+  - README, changelog, milestone docs, planning docs, review handoffs,
+    backlog docs, feature lists, ADR text, rustdoc-only updates, and similar
+    repo-documentation changes with no runtime behavior change
+- `milestone-package-truth`
+  - WBS, wave YAML, checklist, release readiness, issue-wave truth, and other
+    tracked milestone package alignment work
+- `workflow-docs`
+  - execution policy, operational skill docs, templates, and process guidance
+- `tooling-focused`
+  - PR tooling, scripts, validators, generators, lifecycle helpers, and other
+    bounded non-runtime code or shell work
+- `rust-focused`
+  - bounded Rust source or schema-affecting implementation work
+- `demo-focused`
+  - proof/demo scripts, demo surfaces, and demo matrix execution work
+- `review-remediation`
+  - bounded fixes for specific internal or third-party review findings
+- `release-tail`
+  - trackers, gap analysis, closeout, review-truth alignment, and ceremony
+    preparation
+
 Validation should match the changed surface:
 
 - `docs-bounded`: docs-only edits; check referenced paths, host-path or
@@ -268,6 +294,29 @@ Validation should match the changed surface:
   plus output-card contract validation
 - `janitor-focused`: failed PR checks or conflicts; reproduce the smallest
   failing check and validate the bounded repair
+
+Default mapping:
+
+- `docs-only` -> `docs-bounded`
+- `milestone-package-truth` -> `docs-bounded`
+- `workflow-docs` -> `docs-bounded` unless tracked tooling behavior changed
+- `tooling-focused` -> `tooling-focused`
+- `rust-focused` -> `rust-focused`
+- `demo-focused` -> focused demo or proof command plus any narrow supporting
+  tooling or Rust checks required by the changed surface
+- `review-remediation` -> the smallest validation that proves the named finding
+  is fixed
+- `release-tail` -> docs, guardrail, tracker, gap, closeout, and review-truth
+  checks rather than the full Rust cycle unless a tracked code change demands
+  more
+
+Full local validation is not the default. It is required when:
+
+- the changed surface is broad or ambiguous
+- the issue changes shared runtime or schema behavior
+- the path-policy or local classifier fails closed
+- the user explicitly requests the larger validation scope
+- focused validation fails and broader diagnosis is needed
 
 Compression reduces redundant waiting and oversized local validation. It does
 not remove human review, output-card truth, or the requirement to prove the

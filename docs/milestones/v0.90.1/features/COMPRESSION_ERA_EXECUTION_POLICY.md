@@ -82,6 +82,19 @@ For v0.90.1:
 Compressed execution should use the smallest validation set that proves the
 changed surface.
 
+Issue classification comes first.
+
+Recommended classes:
+
+- `docs-only`
+- `milestone-package-truth`
+- `workflow-docs`
+- `tooling-focused`
+- `rust-focused`
+- `demo-focused`
+- `review-remediation`
+- `release-tail`
+
 | Profile | Use When | Expected Evidence |
 | --- | --- | --- |
 | `docs-bounded` | docs-only edits | referenced paths exist, no host-path or credential-marker leakage, relevant Markdown or prompt contracts pass when available |
@@ -93,6 +106,28 @@ changed surface.
 The selected profile must be recorded in the SOR. A larger validation run is
 allowed when the changed surface is broad or when the repo-native lifecycle
 command requires it.
+
+Default mapping:
+
+- `docs-only` -> `docs-bounded`
+- `milestone-package-truth` -> `docs-bounded`
+- `workflow-docs` -> `docs-bounded` unless tracked tooling behavior changed
+- `tooling-focused` -> `tooling-focused`
+- `rust-focused` -> `rust-focused`
+- `demo-focused` -> focused demo or proof command plus any narrow supporting
+  checks required by the changed surface
+- `review-remediation` -> the smallest validation that proves the named finding
+  is fixed
+- `release-tail` -> tracker, gap, closeout, review-truth, path, and evidence
+  checks unless tracked code changed
+
+Full local validation is not the default. It is required when:
+
+- the changed surface is broad or ambiguous
+- the issue changes shared runtime or schema behavior
+- path-policy or local classification fails closed
+- the operator explicitly requests the larger validation scope
+- focused validation fails and broader diagnosis is needed
 
 ### SOR Evidence
 
