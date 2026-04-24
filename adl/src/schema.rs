@@ -4,14 +4,16 @@ use once_cell::sync::Lazy;
 use schemars::schema_for;
 use serde_json::Value as JsonValue;
 
-/// **Written** JSON Schema for ADL v0.1 (committed to the repo).
+/// Committed JSON Schema for the published ADL document surface.
 ///
 /// Location: `schemas/adl.schema.json` (relative to the crate root).
 ///
 /// Notes:
-/// - This file is treated as a *published artifact* for humans/tools.
+/// - This file is treated as a *published artifact* for humans, editors, and tooling.
 /// - Runtime validation intentionally uses the generated schema below so it stays
-///   in lockstep with our Rust structs (and avoids schema drift).
+///   in lockstep with our Rust structs.
+/// - The committed artifact should remain aligned with the generated shape for the
+///   canonical six primitives: providers, tools, agents, tasks, workflows, and run.
 pub static ADL_SCHEMA_JSON: Lazy<JsonValue> = Lazy::new(|| {
     let raw = include_str!("../schemas/adl.schema.json");
     serde_json::from_str::<JsonValue>(raw).expect("schemas/adl.schema.json must be valid JSON")
@@ -19,7 +21,7 @@ pub static ADL_SCHEMA_JSON: Lazy<JsonValue> = Lazy::new(|| {
 
 /// Schema generated directly from the Rust ADL structs.
 ///
-/// This is the authoritative validator for v0.1 because it matches `crate::adl::*`.
+/// This is the authoritative runtime validator because it matches `crate::adl::*`.
 static ADL_SCHEMA_GENERATED: Lazy<JsonValue> = Lazy::new(|| {
     let schema = schema_for!(crate::adl::AdlDoc);
     serde_json::to_value(&schema).expect("schemars schema must serialize to JSON")
@@ -35,7 +37,7 @@ static ADL_SCHEMA_LOOSE: Lazy<JSONSchema> = Lazy::new(|| {
         .expect("failed to compile generated ADL JSON schema")
 });
 
-/// A strict-ish validator for v0.1 that enforces:
+/// A strict-ish validator that enforces:
 /// - top-level `version` and `run` are required
 /// - unknown top-level keys are rejected
 ///
@@ -63,9 +65,9 @@ static ADL_SCHEMA_STRICT_TOPLEVEL: Lazy<JSONSchema> = Lazy::new(|| {
         .expect("failed to compile strict top-level ADL JSON schema")
 });
 
-/// Validate an ADL YAML document against the v0.1 schema.
+/// Validate an ADL YAML document against the ADL document schema.
 ///
-/// This is intentionally strict-ish for v0.1: if the schema rejects, we fail early.
+/// This is intentionally strict-ish: if the schema rejects, we fail early.
 pub fn validate_adl_yaml(yaml_text: &str) -> Result<()> {
     // Parse YAML -> serde_yaml::Value
     let yaml_value: serde_yaml::Value =
