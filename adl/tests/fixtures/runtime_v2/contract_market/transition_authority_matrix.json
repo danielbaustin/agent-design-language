@@ -1,0 +1,146 @@
+{
+  "schema_version": "runtime_v2.transition_authority_matrix.v1",
+  "demo_id": "D5",
+  "wp_id": "WP-06",
+  "artifact_path": "runtime_v2/contract_market/transition_authority_matrix.json",
+  "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+  "valid_bid_refs": [
+    "runtime_v2/contract_market/bid_alpha.json",
+    "runtime_v2/contract_market/bid_bravo.json"
+  ],
+  "lifecycle_states": [
+    "draft",
+    "open",
+    "bidding",
+    "awarded",
+    "accepted",
+    "executing",
+    "completed",
+    "failed",
+    "disputed",
+    "cancelled"
+  ],
+  "rows": [
+    {
+      "transition_id": "draft_to_open",
+      "from_state": "draft",
+      "to_state": "open",
+      "actor_role": "contract_issuer",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#draft_to_open",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "open_to_bidding",
+      "from_state": "open",
+      "to_state": "bidding",
+      "actor_role": "contract_issuer",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#open_to_bidding",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "bidding_to_awarded",
+      "from_state": "bidding",
+      "to_state": "awarded",
+      "actor_role": "selection_authority",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#bidding_to_awarded",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "awarded_to_accepted",
+      "from_state": "awarded",
+      "to_state": "accepted",
+      "actor_role": "awarded_counterparty",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#awarded_to_accepted",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "accepted_to_executing",
+      "from_state": "accepted",
+      "to_state": "executing",
+      "actor_role": "execution_operator",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#accepted_to_executing",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "executing_to_completed",
+      "from_state": "executing",
+      "to_state": "completed",
+      "actor_role": "execution_operator",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#executing_to_completed",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "executing_to_failed",
+      "from_state": "executing",
+      "to_state": "failed",
+      "actor_role": "execution_operator",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#executing_to_failed",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "executing_to_disputed",
+      "from_state": "executing",
+      "to_state": "disputed",
+      "actor_role": "dispute_initiator",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#executing_to_disputed",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "open_to_cancelled",
+      "from_state": "open",
+      "to_state": "cancelled",
+      "actor_role": "contract_issuer",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#open_to_cancelled",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "bidding_to_cancelled",
+      "from_state": "bidding",
+      "to_state": "cancelled",
+      "actor_role": "contract_issuer",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#bidding_to_cancelled",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "awarded_to_cancelled",
+      "from_state": "awarded",
+      "to_state": "cancelled",
+      "actor_role": "contract_issuer",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#awarded_to_cancelled",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "accepted_to_cancelled",
+      "from_state": "accepted",
+      "to_state": "cancelled",
+      "actor_role": "contract_issuer",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#accepted_to_cancelled",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "executing_to_cancelled",
+      "from_state": "executing",
+      "to_state": "cancelled",
+      "actor_role": "resolution_authority",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#executing_to_cancelled",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "disputed_to_completed",
+      "from_state": "disputed",
+      "to_state": "completed",
+      "actor_role": "resolution_authority",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#disputed_to_completed",
+      "tool_execution_allowed": false
+    },
+    {
+      "transition_id": "disputed_to_failed",
+      "from_state": "disputed",
+      "to_state": "failed",
+      "actor_role": "resolution_authority",
+      "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#disputed_to_failed",
+      "tool_execution_allowed": false
+    }
+  ],
+  "claim_boundary": "D5 proves lifecycle transition authority only: actors and authority bases are explicit, while governed-tool execution authority, payment rails, and external counterparty trust remain later work."
+}
