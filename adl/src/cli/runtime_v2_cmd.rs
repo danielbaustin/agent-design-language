@@ -937,8 +937,8 @@ mod tests {
             "runtime_v2.feature_proof_coverage.v2"
         );
         assert_eq!(json["demo_id"], "D13");
-        assert_eq!(json["milestone"], "v0.90.3");
-        assert_eq!(json["entries"].as_array().expect("entries").len(), 14);
+        assert_eq!(json["milestone"], "v0.90.4");
+        assert_eq!(json["entries"].as_array().expect("entries").len(), 13);
 
         fs::remove_dir_all(repo).ok();
     }
@@ -1039,7 +1039,7 @@ mod tests {
 
     #[test]
     fn runtime_v2_demo_stdout_lines_preserve_requested_relative_paths() {
-        let rel_root = PathBuf::from("target/v0903-path-hygiene-demo");
+        let rel_root = PathBuf::from("target/v0904-path-hygiene-demo");
         let rel_file = rel_root.join("feature-proof-coverage.json");
         let cwd = std::env::current_dir()
             .expect("current dir")

@@ -39,30 +39,29 @@ impl RuntimeV2FeatureProofCoveragePacket {
     pub fn prototype() -> Result<Self> {
         let packet = Self {
             schema_version: RUNTIME_V2_FEATURE_PROOF_COVERAGE_SCHEMA.to_string(),
-            coverage_id: "v0-90-3-feature-proof-coverage-0001".to_string(),
+            coverage_id: "v0-90-4-feature-proof-coverage-0001".to_string(),
             demo_id: "D13".to_string(),
-            milestone: "v0.90.3".to_string(),
+            milestone: "v0.90.4".to_string(),
             artifact_path: RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH.to_string(),
             coverage_summary:
-                "D13 verifies every v0.90.3 citizen-state substrate feature claim has a reviewable proof surface, non-proving boundary, or explicit deferral before WP-15 convergence."
+                "D13 verifies every v0.90.4 contract-market feature claim has a reviewable proof surface, runnable demo, or explicit non-proving boundary before WP-15 convergence."
                     .to_string(),
             entries: feature_proof_entries(),
             validation_commands: vec![
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_feature_proof_coverage -- --nocapture".to_string(),
-                "cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0903/feature-proof-coverage.json".to_string(),
+                "cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0904/feature-proof-coverage.json".to_string(),
                 "git diff --check".to_string(),
             ],
             non_claims: vec![
-                "does not execute a new unbounded live CSM run".to_string(),
-                "does not claim first true Godel-agent birth".to_string(),
-                "does not implement v0.91 moral or emotional civilization scope".to_string(),
-                "does not implement v0.92 identity/capability rebinding, migration, or birthday record semantics".to_string(),
-                "does not implement full citizen economics or contract-market execution".to_string(),
-                "does not claim production cloud enclave deployment".to_string(),
-                "does not claim production Observatory UI readiness".to_string(),
+                "does not implement payment settlement, Lightning, x402, banking, invoicing, tax, or legal contracting".to_string(),
+                "does not implement governed tool execution, UTS, ACC, registry binding, or executor authority before v0.90.5".to_string(),
+                "does not redefine citizen standing, admission, private-state inspection, continuity, or challenge authority".to_string(),
+                "does not implement v0.91 moral governance, emotional civilization, or humor/wellbeing scope".to_string(),
+                "does not implement v0.92 identity, capability rebinding, migration, or birthday semantics".to_string(),
+                "does not implement full inter-polis economics or open-ended autonomous markets".to_string(),
             ],
             claim_boundary:
-                "This packet proves v0.90.3 feature-proof coverage, not new runtime behavior beyond the referenced D1 through D12 evidence surfaces; D14 remains a non-runtime UI architecture boundary."
+                "This packet proves v0.90.4 feature-proof coverage, not new runtime behavior beyond the referenced D1 through D12 evidence surfaces; governed-tool execution remains a non-proving v0.90.5 handoff boundary."
                     .to_string(),
         };
         packet.validate()?;
@@ -81,9 +80,9 @@ impl RuntimeV2FeatureProofCoveragePacket {
                 "feature proof coverage must map to demo matrix row D13"
             ));
         }
-        if self.milestone != "v0.90.3" {
+        if self.milestone != "v0.90.4" {
             return Err(anyhow!(
-                "feature proof coverage must target milestone v0.90.3"
+                "feature proof coverage must target milestone v0.90.4"
             ));
         }
         normalize_id(self.coverage_id.clone(), "feature_proof.coverage_id")?;
@@ -114,10 +113,10 @@ impl RuntimeV2FeatureProofCoveragePacket {
         if !self
             .non_claims
             .iter()
-            .any(|claim| claim.contains("first true Godel-agent birth"))
+            .any(|claim| claim.contains("governed tool execution"))
         {
             return Err(anyhow!(
-                "feature proof coverage must preserve the first-birthday non-claim"
+                "feature proof coverage must preserve the governed-tool non-claim"
             ));
         }
         if !self.claim_boundary.contains("D1 through D12") {
@@ -125,9 +124,9 @@ impl RuntimeV2FeatureProofCoveragePacket {
                 "feature proof coverage must preserve the D1 through D12 claim boundary"
             ));
         }
-        if !self.claim_boundary.contains("D14") {
+        if !self.claim_boundary.contains("v0.90.5") {
             return Err(anyhow!(
-                "feature proof coverage must preserve the D14 non-runtime design boundary"
+                "feature proof coverage must preserve the v0.90.5 governed-tool handoff boundary"
             ));
         }
         Ok(())
@@ -164,196 +163,206 @@ fn feature_proof_entries() -> Vec<RuntimeV2FeatureProofCoverageEntry> {
         entry(
             "D1",
             "WP-02",
-            "v0.90.3 targets actual v0.90.2 citizen, snapshot, wake, quarantine, and Observatory artifacts",
+            "v0.90.4 consumes the v0.90.3 citizen-state authority surfaces it depends on instead of redefining them",
             "fixture_backed_artifact",
-            &["docs/milestones/v0.90.3/CITIZEN_STATE_INHERITANCE_AUDIT_v0.90.3.md"],
-            &["test -f docs/milestones/v0.90.3/CITIZEN_STATE_INHERITANCE_AUDIT_v0.90.3.md"],
+            &["docs/milestones/v0.90.4/ECONOMICS_INHERITANCE_AND_AUTHORITY_AUDIT_v0.90.4.md"],
+            &["test -f docs/milestones/v0.90.4/ECONOMICS_INHERITANCE_AND_AUTHORITY_AUDIT_v0.90.4.md"],
             "proving",
         ),
         entry(
             "D2",
             "WP-03",
-            "Authoritative private citizen state is typed and distinct from JSON projection",
+            "Contract scope, parties, deliverables, process, constraints, evaluation hooks, and trace requirements are explicit and fixture-backed",
             "test_backed_proof_packet",
             &[
-                "docs/milestones/v0.90.3/PRIVATE_STATE_FORMAT_DECISION_v0.90.3.md",
-                "adl/tests/fixtures/runtime_v2/private_state/format_decision.json",
+                "docs/milestones/v0.90.4/features/CONTRACT_AND_BID_SCHEMA.md",
+                "adl/tests/fixtures/runtime_v2/contract_market/parent_contract.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/contract_negative_cases.json",
             ],
             &[
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state -- --nocapture",
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_contract_schema -- --nocapture",
             ],
             "proving",
         ),
         entry(
             "D3",
             "WP-04",
-            "Missing, unknown, revoked, mismatched, regressed, and broken-predecessor private states are rejected",
+            "Bids capture proposal, cost, commitments, exceptions, and trace/signature requirements while preserving governed-tool boundaries",
             "test_backed_proof_packet",
             &[
-                "docs/milestones/v0.90.3/SIGNED_PRIVATE_STATE_ENVELOPE_v0.90.3.md",
-                "adl/tests/fixtures/runtime_v2/private_state/envelope_negative_cases.json",
+                "docs/milestones/v0.90.4/features/CONTRACT_AND_BID_SCHEMA.md",
+                "adl/tests/fixtures/runtime_v2/contract_market/bid_alpha.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/bid_bravo.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/bid_negative_cases.json",
             ],
             &[
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_envelope -- --nocapture",
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_trust_root_matches_golden_fixture -- --nocapture",
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_bid_schema -- --nocapture",
             ],
             "proving",
         ),
         entry(
             "D4",
             "WP-05",
-            "Private checkpoints can be sealed locally without making cloud enclaves mandatory",
+            "Bid selection is reviewable through mandatory checks, scoring, recommendation, and override evidence without granting tool authority",
             "test_backed_proof_packet",
             &[
-                "docs/milestones/v0.90.3/LOCAL_PRIVATE_STATE_SEALING_v0.90.3.md",
-                "adl/tests/fixtures/runtime_v2/private_state/sealing_negative_cases.json",
+                "docs/milestones/v0.90.4/features/EVALUATION_AND_TRANSITION_AUTHORITY.md",
+                "adl/tests/fixtures/runtime_v2/contract_market/evaluation_selection.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/selection_negative_cases.json",
             ],
             &[
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_sealing -- --nocapture",
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_evaluation_selection -- --nocapture",
             ],
             "proving",
         ),
         entry(
             "D5",
-            "WP-06",
-            "Current state is accepted only when it matches append-only lineage",
+            "WP-06 / WP-07",
+            "Contract lifecycle transitions are allowed only by authorized actors and terminal states cannot be silently reopened",
             "test_backed_proof_packet",
             &[
-                "docs/milestones/v0.90.3/APPEND_ONLY_LINEAGE_LEDGER_v0.90.3.md",
-                "adl/tests/fixtures/runtime_v2/private_state/lineage_negative_cases.json",
+                "docs/milestones/v0.90.4/features/EVALUATION_AND_TRANSITION_AUTHORITY.md",
+                "adl/tests/fixtures/runtime_v2/contract_market/transition_authority_matrix.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/transition_authority_basis.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/transition_authority_negative_cases.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/contract_lifecycle_state_machine.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/contract_lifecycle_negative_cases.json",
             ],
-            &["cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_lineage -- --nocapture"],
+            &[
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_transition_authority -- --nocapture",
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_contract_lifecycle -- --nocapture",
+            ],
             "proving",
         ),
         entry(
             "D6",
-            "WP-07",
-            "Admission, snapshot, wake, and quarantine transitions produce explainable continuity evidence",
+            "WP-08",
+            "External counterparties can participate only through explicit trust, sponsorship, gateway review, revocation, and allowed-action limits",
             "test_backed_proof_packet",
             &[
-                "docs/milestones/v0.90.3/CONTINUITY_WITNESSES_AND_RECEIPTS_v0.90.3.md",
-                "adl/tests/fixtures/runtime_v2/private_state/witness_receipt_negative_cases.json",
+                "docs/milestones/v0.90.4/features/COUNTERPARTY_AND_DELEGATION.md",
+                "adl/tests/fixtures/runtime_v2/contract_market/external_counterparty_model.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/external_counterparty_negative_cases.json",
             ],
             &[
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_witness -- --nocapture",
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state -- --nocapture",
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_external_counterparty -- --nocapture",
             ],
             "proving",
         ),
         entry(
             "D7",
-            "WP-08",
-            "Conflicting signed successors for the same sequence are detected and cannot both become active",
+            "WP-09",
+            "Delegation and subcontracting preserve parent accountability, explicit scope, and governed-tool non-authority boundaries",
             "test_backed_proof_packet",
             &[
-                "docs/milestones/v0.90.3/ANTI_EQUIVOCATION_CONFLICT_v0.90.3.md",
-                "adl/tests/fixtures/runtime_v2/private_state/anti_equivocation_negative_cases.json",
+                "docs/milestones/v0.90.4/features/COUNTERPARTY_AND_DELEGATION.md",
+                "adl/tests/fixtures/runtime_v2/contract_market/delegation_subcontract.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/delegated_output.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/parent_integration.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/delegation_negative_cases.json",
             ],
-            &["cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_anti_equivocation -- --nocapture"],
+            &[
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_delegation_subcontract -- --nocapture",
+            ],
             "proving",
         ),
         entry(
             "D8",
-            "WP-09",
-            "Ambiguous wake preserves evidence and blocks unsafe activation",
+            "WP-10",
+            "Contract and bid artifacts can declare bounded resource estimates without becoming payment, pricing, or executable tool rails",
             "test_backed_proof_packet",
             &[
-                "docs/milestones/v0.90.3/SANCTUARY_QUARANTINE_BEHAVIOR_v0.90.3.md",
-                "adl/tests/fixtures/runtime_v2/private_state/sanctuary_quarantine_negative_cases.json",
-                "adl/tests/fixtures/runtime_v2/quarantine/quarantine_artifact.json",
+                "docs/milestones/v0.90.4/features/RESOURCE_STEWARDSHIP_BRIDGE.md",
+                "adl/tests/fixtures/runtime_v2/contract_market/resource_stewardship_bridge.json",
             ],
             &[
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_sanctuary -- --nocapture",
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture",
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_resource_stewardship_bridge -- --nocapture",
             ],
             "proving",
         ),
         entry(
             "D9",
-            "WP-10",
-            "Operators see continuity status without raw private state",
-            "test_backed_proof_packet",
+            "WP-11",
+            "One coherent fixture packet contains the parent contract, bids, evaluation, delegation, integration, completion, and manifest-linked deliverables",
+            "fixture_backed_artifact",
             &[
-                "docs/milestones/v0.90.3/REDACTED_OBSERVATORY_PROJECTIONS_v0.90.3.md",
-                "adl/tests/fixtures/runtime_v2/observatory/private_state_redaction_policy.json",
-                "adl/tests/fixtures/runtime_v2/observatory/private_state_projection_negative_cases.json",
+                "docs/milestones/v0.90.4/features/CONTRACT_MARKET_DEMO_AND_RUNNER.md",
+                "adl/tests/fixtures/runtime_v2/contract_market/parent_contract.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/bid_alpha.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/bid_bravo.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/evaluation_selection.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/delegation_subcontract.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/delegated_output.json",
+                "adl/tests/fixtures/runtime_v2/contract_market/parent_integration.json",
             ],
-            &["cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_observatory -- --nocapture"],
+            &[
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_contract_market_demo_review_surfaces_are_stable -- --nocapture",
+            ],
             "proving",
         ),
         entry(
             "D10",
-            "WP-11-WP-12",
-            "Guests and service actors cannot silently acquire citizen rights or inspection access, and every sensitive access path emits an auditable event",
-            "test_backed_proof_packet",
+            "WP-12",
+            "A deterministic runner validates the fixture packet, emits transition/review artifacts, and refuses unauthorized tool execution",
+            "runnable_demo_command",
             &[
-                "docs/milestones/v0.90.3/STANDING_COMMUNICATION_BOUNDARY_v0.90.3.md",
-                "docs/milestones/v0.90.3/ACCESS_CONTROL_SEMANTICS_v0.90.3.md",
-                "adl/tests/fixtures/runtime_v2/standing/standing_policy.json",
-                "adl/tests/fixtures/runtime_v2/access_control/authority_matrix.json",
+                "docs/milestones/v0.90.4/features/CONTRACT_MARKET_DEMO_AND_RUNNER.md",
+                "runtime_v2/contract_market/proof_packet.json",
+                "runtime_v2/contract_market/operator_report.md",
             ],
             &[
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_standing -- --nocapture",
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture",
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_contract_market_demo -- --nocapture",
+                "cargo run --manifest-path adl/Cargo.toml -- runtime-v2 contract-market-demo --out artifacts/v0904/demo-d12-contract-market",
             ],
             "proving",
         ),
         entry(
             "D11",
             "WP-13",
-            "A challenged wake or projection freezes destructive transition and preserves evidence, with threat-model coverage before demo claims widen",
+            "Reviewers can inspect scope, participants, selection, execution, artifacts, trace, validation, caveats, and residual risk through one bounded review surface",
             "test_backed_proof_packet",
             &[
-                "docs/milestones/v0.90.3/CONTINUITY_CHALLENGE_APPEAL_v0.90.3.md",
+                "docs/milestones/v0.90.4/features/CONTRACT_MARKET_DEMO_AND_RUNNER.md",
+                "runtime_v2/contract_market/review_summary_seed.md",
+                "runtime_v2/contract_market/operator_report.md",
             ],
-            &["cargo test --manifest-path adl/Cargo.toml runtime_v2_continuity_challenge -- --nocapture"],
+            &[
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_contract_market_demo_review_surfaces_are_stable -- --nocapture",
+            ],
             "proving",
         ),
         entry(
             "D12",
             "WP-14",
-            "The inhabited CSM Observatory flagship demo ties citizen-state evidence into one bounded reviewer scenario",
+            "One bounded contract-market demo proves award, acceptance, delegation, integration, completion, reviewer summary, and negative denial coverage end to end",
             "runnable_demo_command",
             &[
-                "docs/milestones/v0.90.3/OBSERVATORY_FLAGSHIP_DEMO_v0.90.3.md",
-                "runtime_v2/observatory/flagship_proof_packet.json",
+                "docs/milestones/v0.90.4/features/CONTRACT_MARKET_DEMO_AND_RUNNER.md",
+                "runtime_v2/contract_market/proof_packet.json",
+                "runtime_v2/contract_market/negative_packet.json",
+                "runtime_v2/contract_market/operator_report.md",
             ],
             &[
-                "cargo test --manifest-path adl/Cargo.toml runtime_v2_observatory_flagship -- --nocapture",
-                "cargo run --manifest-path adl/Cargo.toml -- runtime-v2 observatory-flagship-demo --out artifacts/v0903/demo-d12-observatory-flagship",
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_contract_market_demo -- --nocapture",
+                "cargo run --manifest-path adl/Cargo.toml -- runtime-v2 contract-market-demo --out artifacts/v0904/demo-d12-contract-market",
             ],
             "proving",
         ),
         entry(
             "D13",
             "WP-14A",
-            "Every v0.90.3 feature claim has an explicit proof surface, non-proving status, or named deferral before WP-15 convergence",
+            "Every v0.90.4 feature claim has an explicit proof surface, runnable demo, or explicit non-proving boundary before WP-15 convergence",
             "runnable_demo_command",
             &[
-                "docs/milestones/v0.90.3/FEATURE_PROOF_COVERAGE_v0.90.3.md",
-                "docs/milestones/v0.90.3/DEMO_MATRIX_v0.90.3.md",
+                "docs/milestones/v0.90.4/FEATURE_PROOF_COVERAGE_v0.90.4.md",
+                "docs/milestones/v0.90.4/DEMO_MATRIX_v0.90.4.md",
                 RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH,
             ],
             &[
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_feature_proof_coverage -- --nocapture",
-                "cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0903/feature-proof-coverage.json",
+                "cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0904/feature-proof-coverage.json",
             ],
             "proving",
-        ),
-        entry(
-            "D14",
-            "WP-14A",
-            "The Observatory multimode UI architecture is landed as a design artifact, not as runtime UI proof",
-            "documented_non_runtime_design_artifact",
-            &[
-                "docs/milestones/v0.90.3/OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md",
-                "docs/milestones/v0.90.3/assets/csm_observatory_multimode_ui_mockups.png",
-            ],
-            &[
-                "test -f docs/milestones/v0.90.3/OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md",
-                "test -f docs/milestones/v0.90.3/assets/csm_observatory_multimode_ui_mockups.png",
-            ],
-            "non_proving_design_boundary",
         ),
     ]
 }
@@ -386,9 +395,9 @@ fn entry(
 }
 
 fn validate_feature_entries(entries: &[RuntimeV2FeatureProofCoverageEntry]) -> Result<()> {
-    if entries.len() != 14 {
+    if entries.len() != 13 {
         return Err(anyhow!(
-            "feature proof coverage must include D1 through D14"
+            "feature proof coverage must include D1 through D13"
         ));
     }
     let mut seen = std::collections::BTreeSet::new();
@@ -396,7 +405,7 @@ fn validate_feature_entries(entries: &[RuntimeV2FeatureProofCoverageEntry]) -> R
         let expected = format!("D{}", index + 1);
         if entry.feature_id != expected {
             return Err(anyhow!(
-                "feature proof coverage entries must be ordered D1 through D14"
+                "feature proof coverage entries must be ordered D1 through D13"
             ));
         }
         if !seen.insert(entry.feature_id.clone()) {
