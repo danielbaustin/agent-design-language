@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::pr_cmd::github::current_pr_url;
 
 #[test]
 fn issue_create_repo_requires_github_origin_remote() {
