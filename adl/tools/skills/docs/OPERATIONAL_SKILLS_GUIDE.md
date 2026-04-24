@@ -23,6 +23,7 @@ The tracked skill set is:
 - `documentation-specialist`
 - `finding-to-issue-planner`
 - `gap-analysis`
+- `issue-folding`
 - `issue-watcher`
 - `medium-article-writer`
 - `portable-contract-normalizer`
@@ -81,6 +82,7 @@ The normal workflow is:
 `arxiv-paper-writer` is a bounded helper skill for turning one concrete scholarly source packet into a reviewer-friendly arXiv-style manuscript packet without submitting, publishing, or inventing citations.
 `diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
+`issue-folding` is a bounded issue-disposition helper for classifying duplicate, superseded, absorbed, already-satisfied, obsolete, or still-actionable issues before closeout.
 `issue-watcher` is a bounded wait-window helper for watching one issue, PR, branch, or dependency gate and routing blockers without mutating state.
 `pr-stack-manager` is a bounded stack-topology helper for ancestry, base alignment, and dependency-order analysis.
 `review-comment-triage` is a bounded review-feedback helper for classifying PR comments before implementation.
@@ -1367,6 +1369,48 @@ Use `documentation-specialist` for approved mechanical cleanup, `gap-analysis`
 for scope-vs-evidence uncertainty, `finding-to-issue-planner` for follow-on
 issue candidates, and `review-quality-evaluator` for packet quality gates.
 
+## `issue-folding`
+
+### Purpose
+
+`issue-folding` classifies one bounded issue packet to decide whether it should
+stay actionable or close as duplicate, superseded, absorbed, already satisfied,
+or obsolete work.
+
+It preserves linked issue or PR references and recommends the truthful closeout
+handoff without claiming that closure already happened.
+
+### When To Use It
+
+Use it when:
+
+- an issue appears to be already covered by other work
+- closeout might be a no-op rather than a fresh implementation path
+- issue-graph references should be preserved before closure
+
+Do not use it for:
+
+- performing the closeout itself
+- implementing the absorbed work
+- broad tracker cleanup without one bounded issue target
+
+Structured schema:
+
+- `adl/tools/skills/docs/ISSUE_FOLDING_SKILL_INPUT_SCHEMA.md`
+- schema id: `issue_folding.v1`
+
+Deterministic fixture analyzer:
+
+```bash
+python3 adl/tools/skills/issue-folding/scripts/classify_issue_folding.py --task-bundle <path> --source-prompt <path> --out <artifact-root> --run-id <run-id>
+```
+
+### Typical Handoff
+
+Use `workflow-conductor` for still-actionable issues, `pr-closeout` for
+evidence-backed foldable outcomes, and operator review when disposition signals
+conflict.
+
 ## `portable-contract-normalizer`
 
 ### Purpose
@@ -2318,6 +2362,8 @@ Use this quick selector:
   - `release-evidence`
 - need to finalize local issue state after merge/closure:
   - `pr-closeout`
+- need to classify whether an issue should close as duplicate, superseded, absorbed, already satisfied, or obsolete work:
+  - `issue-folding`
 - need to clean drifted lifecycle records before closeout or janitor handoff:
   - `records-hygiene`
 - need to inspect stacked PR topology or stale branch bases:
@@ -2383,6 +2429,7 @@ surfaces:
 | `documentation-specialist` | `DOCUMENTATION_SPECIALIST_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | bounded docs write, audit, or handoff |
 | `finding-to-issue-planner` | `FINDING_TO_ISSUE_PLANNER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | issue candidates only |
 | `gap-analysis` | `GAP_ANALYSIS_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | gap report only |
+| `issue-folding` | `ISSUE_FOLDING_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | issue disposition classification only |
 | `medium-article-writer` | `MEDIUM_ARTICLE_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | article packet only |
 | `portable-contract-normalizer` | `PORTABLE_CONTRACT_NORMALIZER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | bounded portability scan or explicit safe normalization only |
 | `pr-closeout` | `PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | local closeout only |

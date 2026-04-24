@@ -1,0 +1,3 @@
+display_name: Issue Folding
+short_description: Classify whether one issue should stay actionable or close as duplicate, superseded, absorbed, already satisfied, or obsolete work
+default_prompt: Inspect one issue packet or task bundle for evidence that it is still actionable, duplicated, superseded, absorbed elsewhere, already satisfied on main, or obsolete. Preserve linked issue or PR references, recommend the truthful closeout outcome and worktree action, and stop before implementation, tracker mutation, or silent issue closure.
