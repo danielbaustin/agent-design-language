@@ -6,9 +6,11 @@ TMP_DIR="$(mktemp -d "$ROOT_DIR/.tmp-contract-market-summary.XXXXXX")"
 RUNNER_OUT_REL="$(basename "$TMP_DIR")/runner"
 RENDERED_ONE_REL="$(basename "$TMP_DIR")/rendered_one.md"
 RENDERED_TWO_REL="$(basename "$TMP_DIR")/rendered_two.md"
+TRAVERSAL_RENDER_REL="../summary-escape-attempt.md"
 RUNNER_OUT="$ROOT_DIR/$RUNNER_OUT_REL"
 RENDERED_ONE="$ROOT_DIR/$RENDERED_ONE_REL"
 RENDERED_TWO="$ROOT_DIR/$RENDERED_TWO_REL"
+ABSOLUTE_RENDER="/tmp/adl-contract-market-summary-absolute.md"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
 cd "$ROOT_DIR"
@@ -57,5 +59,35 @@ assert "/private/" not in text
 assert "/var/" not in text
 assert "file://" not in text
 PY
+
+rm -f "$ABSOLUTE_RENDER"
+set +e
+ABSOLUTE_OUTPUT="$(
+  python3 adl/tools/render_v0904_contract_market_summary.py \
+    --review-bundle "$RUNNER_OUT_REL/review_bundle.json" \
+    --out "$ABSOLUTE_RENDER" \
+    2>&1
+)"
+ABSOLUTE_STATUS=$?
+set -e
+
+test "$ABSOLUTE_STATUS" -eq 1
+[[ "$ABSOLUTE_OUTPUT" == *"contract_market_summary: fail [absolute_path_forbidden]"* ]]
+[[ "$ABSOLUTE_OUTPUT" != *"Traceback (most recent call last)"* ]]
+test ! -e "$ABSOLUTE_RENDER"
+
+set +e
+TRAVERSAL_OUTPUT="$(
+  python3 adl/tools/render_v0904_contract_market_summary.py \
+    --review-bundle "$RUNNER_OUT_REL/review_bundle.json" \
+    --out "$TRAVERSAL_RENDER_REL" \
+    2>&1
+)"
+TRAVERSAL_STATUS=$?
+set -e
+
+test "$TRAVERSAL_STATUS" -eq 1
+[[ "$TRAVERSAL_OUTPUT" == *"contract_market_summary: fail [path_traversal_forbidden]"* ]]
+[[ "$TRAVERSAL_OUTPUT" != *"Traceback (most recent call last)"* ]]
 
 echo "v0.90.4 contract-market summary smoke: pass"
