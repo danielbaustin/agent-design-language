@@ -1,0 +1,47 @@
+{
+  "schema": "adl.v0904.contract_market.review_summary_schema.v1",
+  "summary_schema_id": "contract-market-review-summary-v1",
+  "audience": "reviewer",
+  "section_order": [
+    "scope",
+    "participants",
+    "authority_basis",
+    "bid_comparison",
+    "selection_rationale",
+    "delegation",
+    "artifacts",
+    "trace",
+    "validation",
+    "tool_requirements",
+    "caveats",
+    "residual_risk"
+  ],
+  "required_sections": [
+    "scope",
+    "participants",
+    "authority_basis",
+    "bid_comparison",
+    "selection_rationale",
+    "delegation",
+    "artifacts",
+    "trace",
+    "validation",
+    "tool_requirements",
+    "caveats",
+    "residual_risk"
+  ],
+  "labels": {
+    "proof": "Proof",
+    "judgment": "Judgment",
+    "non_claims": "Non-claims",
+    "recorded": "Recorded",
+    "deferred": "Denied / deferred",
+    "residual_risk": "Residual risk"
+  },
+  "tool_language": {
+    "recorded": "Recorded tool requirements remain constraints only.",
+    "denied": "Any attempt to grant direct tool execution is denied in v0.90.4.",
+    "deferred": "Governed tool execution is deferred to v0.90.5."
+  },
+  "claim_boundary": "Reviewer-facing summary for the bounded v0.90.4 contract-market substrate. This summary must distinguish proof from judgment, preserve warnings and non-claims, and avoid claiming governed tool execution or payment rails."
+}
