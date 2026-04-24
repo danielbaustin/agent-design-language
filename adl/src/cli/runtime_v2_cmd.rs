@@ -366,7 +366,10 @@ fn observatory_flagship_demo_stdout_line(out_path: &Path) -> String {
 }
 
 fn feature_proof_coverage_stdout_line(out_path: &Path) -> String {
-    format!("RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH={}", out_path.display())
+    format!(
+        "RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH={}",
+        out_path.display()
+    )
 }
 
 #[cfg(test)]
@@ -955,7 +958,10 @@ mod tests {
         let d13_stdout = feature_proof_coverage_stdout_line(&rel_file);
         assert_eq!(
             d13_stdout,
-            format!("RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH={}", rel_file.display())
+            format!(
+                "RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH={}",
+                rel_file.display()
+            )
         );
         assert!(
             !d13_stdout.contains(&cwd),

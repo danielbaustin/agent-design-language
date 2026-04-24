@@ -181,7 +181,10 @@ pub fn runtime_v2_private_state_sanctuary_contract(
 pub fn runtime_v2_private_state_observatory_contract(
 ) -> Result<RuntimeV2PrivateStateObservatoryArtifacts> {
     static ARTIFACTS: OnceCell<RuntimeV2PrivateStateObservatoryArtifacts> = OnceCell::new();
-    cached_contract(&ARTIFACTS, RuntimeV2PrivateStateObservatoryArtifacts::prototype)
+    cached_contract(
+        &ARTIFACTS,
+        RuntimeV2PrivateStateObservatoryArtifacts::prototype,
+    )
 }
 
 pub fn runtime_v2_standing_contract() -> Result<RuntimeV2StandingArtifacts> {
