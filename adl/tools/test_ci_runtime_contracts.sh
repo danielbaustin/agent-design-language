@@ -55,7 +55,7 @@ if "tool: nextest" not in workflow:
     )
 
 expected_coverage = (
-    'bash adl/tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" '
+    'bash tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" '
     '--event-name "${{ github.event_name }}"'
 )
 coverage_step = step_run("Coverage run and summary (json)")
