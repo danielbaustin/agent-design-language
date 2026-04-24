@@ -59,6 +59,19 @@ v0.91 depends on:
 - v0.93 as a downstream consumer of moral evidence for constitutional
   citizenship, polis governance, social cognition, and review institutions
 
+## Parallel Python Reduction Tranche
+
+v0.91 should preserve room for a bounded Python-reduction tranche alongside the
+moral-governance milestone. The cross-milestone rule is recorded in
+[Python Elimination Staged Plan](../../planning/PYTHON_ELIMINATION_STAGED_PLAN.md).
+
+The likely `v0.91` tranche is:
+
+- validators and renderers that still sit in Python
+- proof and review surfaces used in milestone or release truth
+- one coherent family that reduces Python dependence in review and evidence
+  flow
+
 ## Scope Summary
 
 ### In scope
