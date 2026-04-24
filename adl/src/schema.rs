@@ -119,6 +119,12 @@ pub fn compiled_schema_loose() -> &'static JSONSchema {
     &ADL_SCHEMA_LOOSE
 }
 
+/// Expose the generated runtime schema JSON for drift checks and tooling tests.
+#[allow(dead_code)]
+pub fn generated_schema_json() -> &'static JsonValue {
+    &ADL_SCHEMA_GENERATED
+}
+
 /// Expose the *committed* (written) schema JSON for CLI/display.
 #[allow(dead_code)]
 pub fn committed_schema_json() -> &'static JsonValue {
