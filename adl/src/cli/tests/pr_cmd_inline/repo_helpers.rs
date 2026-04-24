@@ -1,5 +1,5 @@
 use super::*;
-use crate::cli::pr_cmd::github::current_pr_url;
+use crate::cli::pr_cmd::github::{current_pr_url, OpenPullRequest};
 
 #[test]
 fn issue_create_repo_requires_github_origin_remote() {
@@ -248,6 +248,79 @@ fn issue_version_prefers_labels_and_falls_back_to_title() {
 }
 
 #[test]
+fn unresolved_milestone_pr_wave_filters_by_version_queue_and_excluded_branch() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-unresolved-wave");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    write_executable(
+        &bin_dir.join("gh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'pr list' ]; then\n  cat <<'EOF'\n[\n  {\n    \"number\": 101,\n    \"title\": \"[v0.90.4][docs] Quality gate, docs, and review convergence\",\n    \"url\": \"https://example.invalid/pr/101\",\n    \"headRefName\": \"codex/2435-v0-90-4-wp-15-quality-gate-docs-and-review-convergence\",\n    \"baseRefName\": \"main\",\n    \"isDraft\": true\n  },\n  {\n    \"number\": 102,\n    \"title\": \"[v0.90.4][WP-02] Runtime economics inheritance and authority audit\",\n    \"url\": \"https://example.invalid/pr/102\",\n    \"headRefName\": \"codex/2421-v0-90-4-wp-02-economics-inheritance-and-authority-audit\",\n    \"baseRefName\": \"main\",\n    \"isDraft\": false\n  },\n  {\n    \"number\": 103,\n    \"title\": \"[v0.90.3][WP-15] Older milestone tail\",\n    \"url\": \"https://example.invalid/pr/103\",\n    \"headRefName\": \"codex/old-tail\",\n    \"baseRefName\": \"main\",\n    \"isDraft\": false\n  },\n  {\n    \"number\": 104,\n    \"title\": \"[v0.90.4][WP-15] Wrong base\",\n    \"url\": \"https://example.invalid/pr/104\",\n    \"headRefName\": \"codex/wrong-base\",\n    \"baseRefName\": \"release\",\n    \"isDraft\": false\n  }\n]\nEOF\n  exit 0\nfi\nexit 1\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let prs = unresolved_milestone_pr_wave(
+        "danielbaustin/agent-design-language",
+        "v0.90.4",
+        "docs",
+        Some("codex/2435-v0-90-4-wp-15-quality-gate-docs-and-review-convergence"),
+    )
+    .expect("wave");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert!(
+        prs.is_empty(),
+        "excluded docs branch should leave no matching PRs"
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let prs =
+        unresolved_milestone_pr_wave("danielbaustin/agent-design-language", "v0.90.4", "wp", None)
+            .expect("runtime wave");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert_eq!(prs.len(), 1);
+    assert_eq!(prs[0].number, 102);
+    assert_eq!(prs[0].queue.as_deref(), Some("wp"));
+}
+
+#[test]
+fn format_open_pr_wave_marks_draft_and_unknown_queue() {
+    let mut pr = OpenPullRequest {
+        number: 101,
+        title: "[v0.90.4][WP-15] Quality gate, docs, and review convergence".to_string(),
+        url: "https://example.invalid/pr/101".to_string(),
+        head_ref_name: "codex/2435-v0-90-4-wp-15-quality-gate-docs-and-review-convergence"
+            .to_string(),
+        base_ref_name: "main".to_string(),
+        is_draft: true,
+        queue: Some("docs".to_string()),
+    };
+    let rendered = format_open_pr_wave(&[pr.clone()]);
+    assert!(rendered.contains("#101 [draft] [queue=docs]"));
+    assert!(rendered.contains("https://example.invalid/pr/101"));
+
+    pr.queue = None;
+    pr.is_draft = false;
+    let rendered = format_open_pr_wave(&[pr]);
+    assert!(rendered.contains("#101 [ready] [queue=unknown]"));
+}
+
+#[test]
 fn ensure_source_issue_prompt_replaces_existing_bootstrap_stub_when_github_body_is_authored() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-replace-bootstrap-stub");
@@ -442,6 +515,61 @@ fn real_pr_init_repairs_missing_version_metadata_on_github_issue() {
         gh_log.contains("issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity")
     );
     assert!(gh_log.contains("issue edit 1153 -R owner/repo --add-label version:v0.87.1"));
+}
+
+#[test]
+fn ensure_issue_metadata_parity_errors_when_drift_remains_after_repair() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-metadata-parity-drift-remains");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    let title_state = temp.join("gh-title.txt");
+    let labels_state = temp.join("gh-labels.txt");
+    fs::write(&title_state, "[tools] Metadata parity\n").expect("seed title");
+    fs::write(
+        &labels_state,
+        "track:roadmap\ntype:task\narea:tools\nversion:v0.86\n",
+    )
+    .expect("seed labels");
+    write_executable(
+        &bin_dir.join("gh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nTITLE_FILE='{}'\nLABELS_FILE='{}'\nread_title() {{ cat \"$TITLE_FILE\"; }}\nread_labels() {{ cat \"$LABELS_FILE\"; }}\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title -q .title\"* ]]; then\n  read_title\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels -q .labels[].name\"* ]]; then\n  read_labels\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity\"* ]]; then\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--add-label version:v0.87.1\"* ]]; then\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--remove-label version:v0.86\"* ]]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            title_state.display(),
+            labels_state.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let err = ensure_issue_metadata_parity(
+        "owner/repo",
+        1153,
+        "[v0.87.1][tools] Metadata parity",
+        "track:roadmap,type:task,area:tools,version:v0.87.1",
+    )
+    .expect_err("drift should remain when gh edits are ineffective");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let message = err.to_string();
+    assert!(
+        message.contains("title mismatch after metadata parity enforcement")
+            || message.contains("metadata drift remains after parity enforcement")
+    );
+    let gh_log = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(
+        gh_log.contains("issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity")
+    );
+    assert!(gh_log.contains("issue edit 1153 -R owner/repo --add-label version:v0.87.1"));
+    assert!(gh_log.contains("issue edit 1153 -R owner/repo --remove-label version:v0.86"));
 }
 
 #[test]
