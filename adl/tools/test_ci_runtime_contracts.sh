@@ -37,6 +37,13 @@ if ordinary_doc_test != "cargo test --doc":
         f"found: {ordinary_doc_test}"
     )
 
+release_version_truth = step_run("release version truth check")
+if release_version_truth != "bash adl/tools/check_release_version_surfaces.sh":
+    raise SystemExit(
+        "release-version-only PRs must run the bounded release version truth check; "
+        f"found: {release_version_truth}"
+    )
+
 if "tool: nextest" not in workflow:
     raise SystemExit(
         "coverage lanes must install cargo-nextest before running cargo llvm-cov nextest"

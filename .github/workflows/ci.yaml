@@ -140,6 +140,11 @@ jobs:
       - name: ci cache/linker contract check
         run: bash tools/test_ci_cache_linker_contracts.sh
 
+      - name: release version truth check
+        if: steps.path-policy.outputs.release_version_only == 'true'
+        run: bash adl/tools/check_release_version_surfaces.sh
+        working-directory: .
+
       - name: Install cargo-nextest
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
@@ -162,8 +167,17 @@ jobs:
           echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
           echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
 
+      - name: release-version Rust lane replacement
+        if: steps.path-policy.outputs.release_version_only == 'true'
+        run: |
+          echo "Ordinary Rust fmt/clippy/test is replaced by the bounded release-version truth check for this PR."
+          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+          echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
+          echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
+        working-directory: .
+
       - name: Rust validation skipped by path policy
-        if: steps.path-policy.outputs.rust_required != 'true'
+        if: steps.path-policy.outputs.rust_required != 'true' && steps.path-policy.outputs.release_version_only != 'true'
         run: |
           echo "Rust fmt/clippy/test skipped because changed paths do not touch Rust runtime or test surfaces."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
