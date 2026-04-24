@@ -2,6 +2,10 @@
 
 This proof surface shows how the static task-bundle editor aligns with the current ADL workflow skill family without claiming direct browser execution.
 
+It also confirms that the HTML editor stack now points at the corrected ADL
+language contract: six primitives with singular `run`, plus top-level
+`patterns` and `signature` features.
+
 ## Scenario
 
 Use the default editor state:
@@ -16,6 +20,7 @@ The editor should display:
 - current local bundle root: `.adl/v0.90/tasks/issue-2053__backlog-tools-refresh-web-task-editor-current-skills/`
 - current local card target for the active STP, SIP, or SOR card
 - a copy-only workflow action for the `pr-run` handoff
+- an ADL language contract panel listing `providers`, `tools`, `agents`, `tasks`, `workflows`, and `run`
 
 ## Command Proof
 

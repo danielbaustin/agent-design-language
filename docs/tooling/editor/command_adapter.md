@@ -4,6 +4,21 @@ This document is the current editor command adapter contract for ADL task-bundle
 
 It defines what browser/editor surfaces may prepare, what remains human-run through repo tooling and workflow skills, and what is explicitly out of scope for direct browser invocation.
 
+## Language Contract Assumptions
+
+This editor stack is a direct consumer of the ADL language story even though it
+does not edit full ADL documents end to end.
+
+The browser/editor surfaces should therefore assume the same canonical language
+contract as the runtime and published schema:
+
+- six primitives: `providers`, `tools`, `agents`, `tasks`, `workflows`, `run`
+- singular `run` at the top level
+- `patterns` and `signature` as top-level language features, not additional
+  primitives
+- packet and control-plane contracts remain outside the six-primitives language
+  core
+
 ## Contract
 
 The supported adapter surface is intentionally copy-only:
@@ -23,6 +38,7 @@ The browser/editor may:
 - prepare a lifecycle command
 - copy that command for a human to run from the repo root
 - validate issue, branch, slug, and version constraints before surfacing the command
+- surface the canonical ADL language contract for human orientation
 
 The browser/editor may not claim direct browser invocation of:
 

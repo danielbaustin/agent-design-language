@@ -18,6 +18,25 @@
       </p>
     </header>
 
+    <section class="panel language-contract">
+      <div class="section-header">
+        <h2>ADL Language Contract</h2>
+        <p id="contract-summary">
+          This editor does not author full ADL documents, but it should still describe the same canonical language shape as the runtime, schema, and docs.
+        </p>
+      </div>
+      <div class="contract-grid">
+        <div class="contract-block">
+          <h3>Six Primitives</h3>
+          <ul id="contract-primitives" class="contract-list"></ul>
+        </div>
+        <div class="contract-block">
+          <h3>Top-level Features</h3>
+          <ul id="contract-features" class="contract-list"></ul>
+        </div>
+      </div>
+    </section>
+
     <section class="panel controls">
       <div class="control-grid">
         <label>
@@ -107,6 +126,8 @@
       <h2>Current Boundaries</h2>
       <ul>
         <li>This issue refreshes the task-bundle workspace shell for the current ADL workflow skill family.</li>
+        <li>The editor consumes the canonical ADL six-primitives contract: providers, tools, agents, tasks, workflows, and singular run.</li>
+        <li>Patterns and signature are top-level language features, not extra primitives.</li>
         <li>STP and SIP remain editable authoring surfaces, and SOR remains an editable review-first closeout surface.</li>
         <li>SOR now has a bounded review-first surface for evidence, integration state, and follow-up structure.</li>
         <li>The review flow now turns SOR evidence, proof, and follow-up fields into a reviewer-facing checklist and bounded recommendation.</li>
