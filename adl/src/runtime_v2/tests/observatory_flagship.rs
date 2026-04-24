@@ -13,7 +13,7 @@ fn flagship_artifacts() -> RuntimeV2ObservatoryFlagshipArtifacts {
 }
 
 #[test]
-fn runtime_v2_observatory_flagship_contract_is_stable() {
+fn runtime_v2_observatory_flagship_review_surfaces_are_stable_and_serializable() {
     let artifacts = flagship_artifacts();
     artifacts
         .validate()
@@ -72,12 +72,6 @@ fn runtime_v2_observatory_flagship_contract_is_stable() {
     assert!(artifacts
         .operator_report_markdown
         .contains("D12 Inhabited CSM Observatory Flagship"));
-}
-
-#[test]
-fn runtime_v2_observatory_flagship_serializes_review_surfaces() {
-    let artifacts = flagship_artifacts();
-
     let proof_json: serde_json::Value = serde_json::from_slice(
         &artifacts
             .proof_packet_pretty_json_bytes()
@@ -163,47 +157,7 @@ fn runtime_v2_observatory_flagship_writes_integrated_artifacts_without_path_leak
 }
 
 #[test]
-fn runtime_v2_observatory_flagship_validation_rejects_overclaim_or_missing_evidence() {
-    let mut artifacts = flagship_artifacts();
-    artifacts.proof_packet.proof_classification = "non_proving".to_string();
-    assert!(artifacts
-        .validate()
-        .expect_err("non-proving classification should fail")
-        .to_string()
-        .contains("classified as proving"));
-
-    let mut artifacts = flagship_artifacts();
-    artifacts.proof_packet.claim_boundary = "personhood proven".to_string();
-    assert!(artifacts
-        .validate()
-        .expect_err("overclaim boundary should fail")
-        .to_string()
-        .contains("bounded D12 claim boundary"));
-
-    let mut artifacts = flagship_artifacts();
-    artifacts
-        .proof_packet
-        .required_artifact_refs
-        .retain(|artifact| artifact != "runtime_v2/private_state/citizen_receipts.json");
-    assert!(artifacts
-        .validate()
-        .expect_err("missing receipt should fail")
-        .to_string()
-        .contains("citizen_receipts.json"));
-
-    let mut artifacts = flagship_artifacts();
-    artifacts
-        .operator_report_markdown
-        .push_str("\nsealed_payload_b64");
-    assert!(artifacts
-        .validate()
-        .expect_err("leakage token should fail")
-        .to_string()
-        .contains("leaked forbidden private-state token"));
-}
-
-#[test]
-fn runtime_v2_observatory_flagship_shape_rejects_malformed_fields() {
+fn runtime_v2_observatory_flagship_rejects_shape_and_boundary_drift() {
     let packet = flagship_artifacts().proof_packet;
 
     let mut bad_schema = packet.clone();
@@ -247,11 +201,6 @@ fn runtime_v2_observatory_flagship_shape_rejects_malformed_fields() {
         .expect_err("duplicate artifact refs should fail")
         .to_string()
         .contains("duplicate path"));
-}
-
-#[test]
-fn runtime_v2_observatory_flagship_shape_rejects_missing_review_claims() {
-    let packet = flagship_artifacts().proof_packet;
 
     let mut missing_command = packet.clone();
     missing_command.validation_commands.clear();
@@ -291,11 +240,6 @@ fn runtime_v2_observatory_flagship_shape_rejects_missing_review_claims() {
         .expect_err("missing birthday non-claim should fail")
         .to_string()
         .contains("first-birthday non-claim"));
-}
-
-#[test]
-fn runtime_v2_observatory_flagship_shape_rejects_bad_actor_roster_and_walkthrough() {
-    let packet = flagship_artifacts().proof_packet;
 
     let mut missing_actor = packet.clone();
     missing_actor.actor_roster.pop();
@@ -337,4 +281,41 @@ fn runtime_v2_observatory_flagship_shape_rejects_bad_actor_roster_and_walkthroug
         .expect_err("missing room should fail")
         .to_string()
         .contains("missing expected room 'Corporate Investor'"));
+
+    let mut artifacts = flagship_artifacts();
+    artifacts.proof_packet.proof_classification = "non_proving".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("non-proving classification should fail")
+        .to_string()
+        .contains("classified as proving"));
+
+    let mut artifacts = flagship_artifacts();
+    artifacts.proof_packet.claim_boundary = "personhood proven".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("overclaim boundary should fail")
+        .to_string()
+        .contains("bounded D12 claim boundary"));
+
+    let mut artifacts = flagship_artifacts();
+    artifacts
+        .proof_packet
+        .required_artifact_refs
+        .retain(|artifact| artifact != "runtime_v2/private_state/citizen_receipts.json");
+    assert!(artifacts
+        .validate()
+        .expect_err("missing receipt should fail")
+        .to_string()
+        .contains("citizen_receipts.json"));
+
+    let mut artifacts = flagship_artifacts();
+    artifacts
+        .operator_report_markdown
+        .push_str("\nsealed_payload_b64");
+    assert!(artifacts
+        .validate()
+        .expect_err("leakage token should fail")
+        .to_string()
+        .contains("leaked forbidden private-state token"));
 }

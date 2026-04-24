@@ -30,87 +30,62 @@ fn runtime_v2_continuity_challenge_contract_is_stable() {
 }
 
 #[test]
-fn runtime_v2_continuity_challenge_artifact_matches_golden_fixture() {
+fn runtime_v2_continuity_challenge_serializes_and_matches_golden_fixtures() {
     let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
-    let json = String::from_utf8(
+    let challenge_json = String::from_utf8(
         artifacts
             .challenge
             .pretty_json_bytes()
             .expect("challenge json"),
     )
     .expect("utf8 challenge");
-
     assert_eq!(
-        json,
+        challenge_json,
         include_str!("../../../tests/fixtures/runtime_v2/challenge/challenge_artifact.json")
             .trim_end()
     );
-}
-
-#[test]
-fn runtime_v2_continuity_challenge_freeze_matches_golden_fixture() {
-    let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
-    let json = String::from_utf8(artifacts.freeze.pretty_json_bytes().expect("freeze json"))
+    let freeze_json = String::from_utf8(artifacts.freeze.pretty_json_bytes().expect("freeze json"))
         .expect("utf8 freeze");
-
     assert_eq!(
-        json,
+        freeze_json,
         include_str!("../../../tests/fixtures/runtime_v2/challenge/freeze_artifact.json")
             .trim_end()
     );
-}
-
-#[test]
-fn runtime_v2_continuity_challenge_appeal_matches_golden_fixture() {
-    let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
-    let json = String::from_utf8(
+    let appeal_json = String::from_utf8(
         artifacts
             .appeal_review
             .pretty_json_bytes()
             .expect("appeal json"),
     )
     .expect("utf8 appeal");
-
     assert_eq!(
-        json,
+        appeal_json,
         include_str!("../../../tests/fixtures/runtime_v2/challenge/appeal_review_artifact.json")
             .trim_end()
     );
-}
-
-#[test]
-fn runtime_v2_continuity_challenge_threat_model_matches_golden_fixture() {
-    let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
-    let json = String::from_utf8(
+    let threat_model_json = String::from_utf8(
         artifacts
             .threat_model
             .pretty_json_bytes()
             .expect("threat model json"),
     )
     .expect("utf8 threat model");
-
     assert_eq!(
-        json,
+        threat_model_json,
         include_str!(
             "../../../tests/fixtures/runtime_v2/challenge/citizen_state_threat_model.json"
         )
         .trim_end()
     );
-}
-
-#[test]
-fn runtime_v2_continuity_challenge_economics_matches_golden_fixture() {
-    let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
-    let json = String::from_utf8(
+    let economics_json = String::from_utf8(
         artifacts
             .economics_placement
             .pretty_json_bytes()
             .expect("economics json"),
     )
     .expect("utf8 economics");
-
     assert_eq!(
-        json,
+        economics_json,
         include_str!(
             "../../../tests/fixtures/runtime_v2/challenge/economics_placement_record.json"
         )
@@ -119,70 +94,49 @@ fn runtime_v2_continuity_challenge_economics_matches_golden_fixture() {
 }
 
 #[test]
-fn runtime_v2_continuity_challenge_freezes_destructive_transition() {
+fn runtime_v2_continuity_challenge_rejects_unsafe_freeze_and_appeal_mutations() {
     let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
-    let mut freeze = artifacts.freeze.clone();
-    freeze.destructive_transition_allowed = true;
-    freeze.continuity_sequence_after += 1;
-    freeze.freeze_hash = freeze.computed_hash();
-
-    assert!(freeze
+    let mut destructive = artifacts.freeze.clone();
+    destructive.destructive_transition_allowed = true;
+    destructive.continuity_sequence_after += 1;
+    destructive.freeze_hash = destructive.computed_hash();
+    assert!(destructive
         .validate_against(&artifacts.challenge)
         .expect_err("unsafe destructive transition should fail")
         .to_string()
         .contains("challenged destructive transition freezes safely"));
-}
 
-#[test]
-fn runtime_v2_continuity_challenge_freezes_projection_publication() {
-    let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
-    let mut freeze = artifacts.freeze.clone();
-    freeze.projection_publication_allowed = true;
-    freeze.freeze_hash = freeze.computed_hash();
-
-    assert!(freeze
+    let mut projection = artifacts.freeze.clone();
+    projection.projection_publication_allowed = true;
+    projection.freeze_hash = projection.computed_hash();
+    assert!(projection
         .validate_against(&artifacts.challenge)
         .expect_err("unsafe projection publication should fail")
         .to_string()
         .contains("challenged projection publication must freeze safely"));
-}
 
-#[test]
-fn runtime_v2_continuity_challenge_cannot_change_active_head() {
-    let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
-    let mut freeze = artifacts.freeze.clone();
-    freeze.active_head_changed = true;
-    freeze.freeze_hash = freeze.computed_hash();
-
-    assert!(freeze
+    let mut active_head = artifacts.freeze.clone();
+    active_head.active_head_changed = true;
+    active_head.freeze_hash = active_head.computed_hash();
+    assert!(active_head
         .validate_against(&artifacts.challenge)
         .expect_err("active-head mutation should fail")
         .to_string()
         .contains("freeze must not change the active citizen head"));
-}
 
-#[test]
-fn runtime_v2_continuity_challenge_appeal_cannot_release_without_resolution() {
-    let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
     let mut appeal = artifacts.appeal_review.clone();
     appeal.release_allowed = true;
     appeal.destructive_transition_allowed = true;
-
     assert!(appeal
         .validate_against(&artifacts.challenge, &artifacts.freeze)
         .expect_err("appeal release without proof should fail")
         .to_string()
         .contains("appeal cannot release or permit destructive transition"));
-}
 
-#[test]
-fn runtime_v2_continuity_challenge_threat_model_covers_required_abuse_paths() {
-    let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
     let mut threat_model = artifacts.threat_model.clone();
     threat_model
         .threats
         .retain(|threat| threat.threat_id != "compromised_key");
-
     assert!(threat_model
         .validate_against(
             &artifacts.challenge,
@@ -194,14 +148,9 @@ fn runtime_v2_continuity_challenge_threat_model_covers_required_abuse_paths() {
         .expect_err("missing threat should fail")
         .to_string()
         .contains("threat model must cover insider/operator abuse"));
-}
 
-#[test]
-fn runtime_v2_continuity_challenge_economics_record_does_not_implement_markets() {
-    let artifacts = runtime_v2_continuity_challenge_contract().expect("challenge artifacts");
     let mut economics = artifacts.economics_placement.clone();
     economics.markets_implemented = true;
-
     assert!(economics
         .validate()
         .expect_err("market implementation should fail")
