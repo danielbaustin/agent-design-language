@@ -68,6 +68,17 @@ Use the shared suite contract in
 `adl/tools/skills/docs/MULTI_AGENT_REPO_REVIEW_SKILL_SUITE.md` when ADL expects
 a structured artifact.
 
+## Required Review Outputs
+
+For each scoped review packet, this specialist is expected to identify and list:
+- documentation objects inspected (for example schemas, skills, manifests,
+  runbooks, demos, and release surfaces),
+- evidence for each major claim that is checked, and
+- skipped-object rationale when a bounded docs lane is intentionally not run.
+
+All doc findings must preserve severity and role ownership exactly as discovered,
+matching the severity framing used by other lanes.
+
 ## Stop Boundary
 
 Stop after producing the docs-review artifact.

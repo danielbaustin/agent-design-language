@@ -11,11 +11,15 @@ Default `repo-review-docs` artifacts are Markdown review packets with these sect
 
 ## Findings
 - <priority>: <title>
+  Severity: <P0 | P1 | P2 | P3>
   File: <repo-relative path or none>
   Role: docs
   Scenario: <trigger or review condition>
   Impact: <behavioral consequence>
   Evidence: <specific code/doc/test/config observation>
+
+## Documentation Objects
+- <bounded object> (`schema` | `skill` | `review artifact` | `demo` | `guide` | `runbook` | `release note`)
 
 ## Commands Or Claims Checked
 - <bounded list or explicit none>
@@ -25,6 +29,12 @@ Default `repo-review-docs` artifacts are Markdown review packets with these sect
 
 ## Residual Risk
 - <what this role did not inspect or could not prove>
+
+If no docs review was performed, write `Documentation Review: skipped`.
+State skip reason, owner, and follow-up action in `Residual Risk`.
+
+If findings are found, preserve the same severity framing used by other
+specialist lanes and call out any disagreement from synthesis or peer artifacts.
 ```
 
 ## Rules

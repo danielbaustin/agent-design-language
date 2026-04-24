@@ -17,6 +17,7 @@ Default `repo-review-synthesis` artifacts are Markdown review packets with these
 
 ## Findings
 - <priority>: <title>
+  Severity: <P0 | P1 | P2 | P3>
   Source Roles: <role list>
   File: <repo-relative path or none>
   Scenario: <trigger or review condition>
@@ -30,6 +31,10 @@ Default `repo-review-synthesis` artifacts are Markdown review packets with these
 - Docs: present | missing | skipped
 - Architecture: present | missing | skipped
 - Dependency: present | missing | skipped
+
+`Docs` must be `present`, `missing`, or `skipped`. If `skipped`, include a skip
+reason, owner, and follow-up owner in `Residual Risk` and a concrete follow-up
+issue candidate unless the skip was pre-approved.
 
 ## Dedupe Notes
 - <dedupe decision or explicit none>
