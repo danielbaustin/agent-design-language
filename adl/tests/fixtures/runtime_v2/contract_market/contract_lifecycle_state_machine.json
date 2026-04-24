@@ -1,0 +1,425 @@
+{
+  "schema_version": "runtime_v2.contract_lifecycle_state_machine.v1",
+  "demo_id": "D5",
+  "wp_id": "WP-07",
+  "artifact_path": "runtime_v2/contract_market/contract_lifecycle_state_machine.json",
+  "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+  "transition_matrix_ref": "runtime_v2/contract_market/transition_authority_matrix.json",
+  "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json",
+  "lifecycle_states": [
+    "draft",
+    "open",
+    "bidding",
+    "awarded",
+    "accepted",
+    "executing",
+    "completed",
+    "failed",
+    "disputed",
+    "cancelled"
+  ],
+  "allowed_transition_ids": [
+    "draft_to_open",
+    "open_to_bidding",
+    "bidding_to_awarded",
+    "awarded_to_accepted",
+    "accepted_to_executing",
+    "executing_to_completed",
+    "executing_to_failed",
+    "executing_to_disputed",
+    "open_to_cancelled",
+    "bidding_to_cancelled",
+    "awarded_to_cancelled",
+    "accepted_to_cancelled",
+    "executing_to_cancelled",
+    "disputed_to_completed",
+    "disputed_to_failed"
+  ],
+  "terminal_states": [
+    "completed",
+    "failed",
+    "cancelled"
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "normal-completion",
+      "scenario_kind": "normal_completion",
+      "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+      "initial_state": "draft",
+      "terminal_state": "completed",
+      "events": [
+        {
+          "event_id": "normal-completion-event-01",
+          "transition_id": "draft_to_open",
+          "from_state": "draft",
+          "to_state": "open",
+          "actor_role": "contract_issuer",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#draft_to_open",
+          "temporal_anchor_utc": "2026-04-24T00:10:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/parent_contract.json#draft-publication",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/parent_contract.json"
+          ]
+        },
+        {
+          "event_id": "normal-completion-event-02",
+          "transition_id": "open_to_bidding",
+          "from_state": "open",
+          "to_state": "bidding",
+          "actor_role": "contract_issuer",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#open_to_bidding",
+          "temporal_anchor_utc": "2026-04-24T00:12:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/bidding_window_notice.json#bidding-open",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/bidding_window_notice.json"
+          ]
+        },
+        {
+          "event_id": "normal-completion-event-03",
+          "transition_id": "bidding_to_awarded",
+          "from_state": "bidding",
+          "to_state": "awarded",
+          "actor_role": "selection_authority",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#bidding_to_awarded",
+          "temporal_anchor_utc": "2026-04-24T08:30:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/selection_rationale.json#selected-bid",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/selection_rationale.json"
+          ]
+        },
+        {
+          "event_id": "normal-completion-event-04",
+          "transition_id": "awarded_to_accepted",
+          "from_state": "awarded",
+          "to_state": "accepted",
+          "actor_role": "awarded_counterparty",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#awarded_to_accepted",
+          "temporal_anchor_utc": "2026-04-24T09:00:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/acceptance_record.json#accepted-counterparty",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/acceptance_record.json"
+          ]
+        },
+        {
+          "event_id": "normal-completion-event-05",
+          "transition_id": "accepted_to_executing",
+          "from_state": "accepted",
+          "to_state": "executing",
+          "actor_role": "execution_operator",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#accepted_to_executing",
+          "temporal_anchor_utc": "2026-04-24T09:05:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/execution_readiness.json#execution-cleared",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/execution_readiness.json"
+          ]
+        },
+        {
+          "event_id": "normal-completion-event-06",
+          "transition_id": "executing_to_completed",
+          "from_state": "executing",
+          "to_state": "completed",
+          "actor_role": "execution_operator",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#executing_to_completed",
+          "temporal_anchor_utc": "2026-04-24T12:45:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/completion_record.json#deliverables-accepted",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/deliverable_manifest.json",
+            "runtime_v2/contract_market/completion_record.json"
+          ]
+        }
+      ],
+      "claim_boundary": "Normal completion proves deterministic forward-only progress through acceptance and execution completion; it does not prove settlement, governed-tool authority, or counterparty identity trust."
+    },
+    {
+      "scenario_id": "failed-execution",
+      "scenario_kind": "failed_execution",
+      "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+      "initial_state": "draft",
+      "terminal_state": "failed",
+      "events": [
+        {
+          "event_id": "failed-execution-event-01",
+          "transition_id": "draft_to_open",
+          "from_state": "draft",
+          "to_state": "open",
+          "actor_role": "contract_issuer",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#draft_to_open",
+          "temporal_anchor_utc": "2026-04-24T00:20:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/parent_contract.json#draft-publication",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/parent_contract.json"
+          ]
+        },
+        {
+          "event_id": "failed-execution-event-02",
+          "transition_id": "open_to_bidding",
+          "from_state": "open",
+          "to_state": "bidding",
+          "actor_role": "contract_issuer",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#open_to_bidding",
+          "temporal_anchor_utc": "2026-04-24T00:22:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/bidding_window_notice.json#bidding-open",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/bidding_window_notice.json"
+          ]
+        },
+        {
+          "event_id": "failed-execution-event-03",
+          "transition_id": "bidding_to_awarded",
+          "from_state": "bidding",
+          "to_state": "awarded",
+          "actor_role": "selection_authority",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#bidding_to_awarded",
+          "temporal_anchor_utc": "2026-04-24T08:40:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/selection_rationale.json#selected-bid",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/selection_rationale.json"
+          ]
+        },
+        {
+          "event_id": "failed-execution-event-04",
+          "transition_id": "awarded_to_accepted",
+          "from_state": "awarded",
+          "to_state": "accepted",
+          "actor_role": "awarded_counterparty",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#awarded_to_accepted",
+          "temporal_anchor_utc": "2026-04-24T09:10:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/acceptance_record.json#accepted-counterparty",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/acceptance_record.json"
+          ]
+        },
+        {
+          "event_id": "failed-execution-event-05",
+          "transition_id": "accepted_to_executing",
+          "from_state": "accepted",
+          "to_state": "executing",
+          "actor_role": "execution_operator",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#accepted_to_executing",
+          "temporal_anchor_utc": "2026-04-24T09:20:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/execution_readiness.json#execution-cleared",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/execution_readiness.json"
+          ]
+        },
+        {
+          "event_id": "failed-execution-event-06",
+          "transition_id": "executing_to_failed",
+          "from_state": "executing",
+          "to_state": "failed",
+          "actor_role": "execution_operator",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#executing_to_failed",
+          "temporal_anchor_utc": "2026-04-24T11:15:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/failure_record.json#execution-failed",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/failure_record.json"
+          ]
+        }
+      ],
+      "claim_boundary": "Failed execution proves the state machine records execution failure with anchored evidence; it does not imply automatic retry, economic recovery, or operator absolution."
+    },
+    {
+      "scenario_id": "accepted-cancellation",
+      "scenario_kind": "cancellation",
+      "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+      "initial_state": "draft",
+      "terminal_state": "cancelled",
+      "events": [
+        {
+          "event_id": "accepted-cancellation-event-01",
+          "transition_id": "draft_to_open",
+          "from_state": "draft",
+          "to_state": "open",
+          "actor_role": "contract_issuer",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#draft_to_open",
+          "temporal_anchor_utc": "2026-04-24T00:30:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/parent_contract.json#draft-publication",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/parent_contract.json"
+          ]
+        },
+        {
+          "event_id": "accepted-cancellation-event-02",
+          "transition_id": "open_to_bidding",
+          "from_state": "open",
+          "to_state": "bidding",
+          "actor_role": "contract_issuer",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#open_to_bidding",
+          "temporal_anchor_utc": "2026-04-24T00:32:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/bidding_window_notice.json#bidding-open",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/bidding_window_notice.json"
+          ]
+        },
+        {
+          "event_id": "accepted-cancellation-event-03",
+          "transition_id": "bidding_to_awarded",
+          "from_state": "bidding",
+          "to_state": "awarded",
+          "actor_role": "selection_authority",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#bidding_to_awarded",
+          "temporal_anchor_utc": "2026-04-24T08:50:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/selection_rationale.json#selected-bid",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/selection_rationale.json"
+          ]
+        },
+        {
+          "event_id": "accepted-cancellation-event-04",
+          "transition_id": "awarded_to_accepted",
+          "from_state": "awarded",
+          "to_state": "accepted",
+          "actor_role": "awarded_counterparty",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#awarded_to_accepted",
+          "temporal_anchor_utc": "2026-04-24T09:25:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/acceptance_record.json#accepted-counterparty",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/acceptance_record.json"
+          ]
+        },
+        {
+          "event_id": "accepted-cancellation-event-05",
+          "transition_id": "accepted_to_cancelled",
+          "from_state": "accepted",
+          "to_state": "cancelled",
+          "actor_role": "contract_issuer",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#accepted_to_cancelled",
+          "temporal_anchor_utc": "2026-04-24T09:55:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/cancellation_record.json#accepted-contract-cancelled",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/cancellation_record.json"
+          ]
+        }
+      ],
+      "claim_boundary": "Cancellation proves an active contract can terminate with reviewable cancellation evidence before execution completes; it does not prove retroactive reopening or silent deletion of prior commitments."
+    },
+    {
+      "scenario_id": "dispute-resolution",
+      "scenario_kind": "dispute_resolution",
+      "contract_ref": "runtime_v2/contract_market/parent_contract.json",
+      "initial_state": "draft",
+      "terminal_state": "completed",
+      "events": [
+        {
+          "event_id": "dispute-resolution-event-01",
+          "transition_id": "draft_to_open",
+          "from_state": "draft",
+          "to_state": "open",
+          "actor_role": "contract_issuer",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#draft_to_open",
+          "temporal_anchor_utc": "2026-04-24T00:40:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/parent_contract.json#draft-publication",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/parent_contract.json"
+          ]
+        },
+        {
+          "event_id": "dispute-resolution-event-02",
+          "transition_id": "open_to_bidding",
+          "from_state": "open",
+          "to_state": "bidding",
+          "actor_role": "contract_issuer",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#open_to_bidding",
+          "temporal_anchor_utc": "2026-04-24T00:42:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/bidding_window_notice.json#bidding-open",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/bidding_window_notice.json"
+          ]
+        },
+        {
+          "event_id": "dispute-resolution-event-03",
+          "transition_id": "bidding_to_awarded",
+          "from_state": "bidding",
+          "to_state": "awarded",
+          "actor_role": "selection_authority",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#bidding_to_awarded",
+          "temporal_anchor_utc": "2026-04-24T09:05:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/selection_rationale.json#selected-bid",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/selection_rationale.json"
+          ]
+        },
+        {
+          "event_id": "dispute-resolution-event-04",
+          "transition_id": "awarded_to_accepted",
+          "from_state": "awarded",
+          "to_state": "accepted",
+          "actor_role": "awarded_counterparty",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#awarded_to_accepted",
+          "temporal_anchor_utc": "2026-04-24T09:35:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/acceptance_record.json#accepted-counterparty",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/acceptance_record.json"
+          ]
+        },
+        {
+          "event_id": "dispute-resolution-event-05",
+          "transition_id": "accepted_to_executing",
+          "from_state": "accepted",
+          "to_state": "executing",
+          "actor_role": "execution_operator",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#accepted_to_executing",
+          "temporal_anchor_utc": "2026-04-24T09:45:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/execution_readiness.json#execution-cleared",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/execution_readiness.json"
+          ]
+        },
+        {
+          "event_id": "dispute-resolution-event-06",
+          "transition_id": "executing_to_disputed",
+          "from_state": "executing",
+          "to_state": "disputed",
+          "actor_role": "dispute_initiator",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#executing_to_disputed",
+          "temporal_anchor_utc": "2026-04-24T11:40:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/dispute_opening_record.json#dispute-opened",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/dispute_opening_record.json"
+          ]
+        },
+        {
+          "event_id": "dispute-resolution-event-07",
+          "transition_id": "disputed_to_completed",
+          "from_state": "disputed",
+          "to_state": "completed",
+          "actor_role": "resolution_authority",
+          "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#disputed_to_completed",
+          "temporal_anchor_utc": "2026-04-24T14:10:00Z",
+          "trace_link_ref": "runtime_v2/contract_market/dispute_resolution.json#completed-resolution",
+          "validation_result": "pass",
+          "supporting_artifact_refs": [
+            "runtime_v2/contract_market/dispute_resolution.json",
+            "runtime_v2/contract_market/completion_record.json"
+          ]
+        }
+      ],
+      "claim_boundary": "Dispute resolution proves disputed work can conclude via explicit resolution authority and anchored reviewer-visible evidence; it does not prove appeals, arbitration economics, or external court enforcement."
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_contract_lifecycle -- --nocapture",
+  "claim_boundary": "These fixtures prove deterministic contract lifecycle sequencing with anchored lifecycle events and terminal-state closure; they do not grant governed-tool execution, settlement, or external counterparty trust."
+}

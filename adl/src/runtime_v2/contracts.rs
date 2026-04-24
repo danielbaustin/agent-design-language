@@ -18,6 +18,11 @@ pub fn runtime_v2_contract_schema_contract() -> Result<RuntimeV2ContractSchemaAr
     RuntimeV2ContractSchemaArtifacts::prototype()
 }
 
+pub fn runtime_v2_contract_lifecycle_state_model() -> Result<RuntimeV2ContractLifecycleArtifacts> {
+    static ARTIFACTS: OnceCell<RuntimeV2ContractLifecycleArtifacts> = OnceCell::new();
+    cached_contract(&ARTIFACTS, RuntimeV2ContractLifecycleArtifacts::prototype)
+}
+
 pub fn runtime_v2_manifold_contract() -> Result<RuntimeV2ManifoldRoot> {
     RuntimeV2ManifoldRoot::prototype("proto-csm-01")
 }
