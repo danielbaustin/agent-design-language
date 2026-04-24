@@ -1,0 +1,28 @@
+{
+  "schema_version": "runtime_v2.parent_integration_artifact.v1",
+  "demo_id": "D7",
+  "wp_id": "WP-09",
+  "integration_id": "parent-integration-alpha-reviewed",
+  "artifact_path": "runtime_v2/contract_market/parent_integration.json",
+  "parent_contract_ref": "runtime_v2/contract_market/parent_contract.json",
+  "selection_ref": "runtime_v2/contract_market/evaluation_selection.json",
+  "subcontract_ref": "runtime_v2/contract_market/delegation_subcontract.json",
+  "delegated_output_ref": "runtime_v2/contract_market/delegated_output.json",
+  "parent_review_ref": "runtime_v2/contract_market/evaluation_selection.json#delegated-review-approved",
+  "accepted_deliverables": [
+    "trace-linked artifact manifest"
+  ],
+  "retained_parent_responsibilities": [
+    "counterparty-alpha remains accountable for final review-packet completeness",
+    "counterparty-alpha remains accountable for the operator-facing summary",
+    "the issuer can trace delegated output back to the selected bid and parent review"
+  ],
+  "integration_trace_links": [
+    "runtime_v2/contract_market/delegated_output.json#parent-review-complete",
+    "runtime_v2/contract_market/evaluation_selection.json#selected-bid",
+    "runtime_v2/contract_market/parent_contract.json#trace_requirements"
+  ],
+  "review_status": "review_completed",
+  "parent_responsibility_status": "retained_and_reviewable",
+  "claim_boundary": "Parent integration records reviewed incorporation of delegated output while keeping parent responsibility explicit, reviewable, and non-transferable."
+}

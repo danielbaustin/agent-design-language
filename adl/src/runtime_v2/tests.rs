@@ -11,6 +11,7 @@ mod common;
 mod contract_lifecycle_state;
 mod contract_schema;
 mod csm_run_packet;
+mod delegation_subcontract;
 mod evaluation_selection;
 mod external_counterparty;
 mod feature_proof_coverage;
