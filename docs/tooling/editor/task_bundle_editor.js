@@ -147,6 +147,16 @@ const FORMAT_HINTS = {
   }
 };
 
+const LANGUAGE_CONTRACT = {
+  summary: "The task-bundle editor is not a full ADL document editor, but every language-facing surface in this stack should match the canonical ADL contract used by the runtime and published schema.",
+  primitives: ["providers", "tools", "agents", "tasks", "workflows", "run"],
+  features: [
+    "patterns are top-level language features, not extra primitives",
+    "signature is a top-level language feature, not an extra primitive",
+    "packet and control-plane contracts are outside the six-primitives language core"
+  ]
+};
+
 const form = document.getElementById("artifact-form");
 const preview = document.getElementById("artifact-preview");
 const validationList = document.getElementById("validation-list");
@@ -162,6 +172,9 @@ const editorPanelTitle = document.getElementById("editor-panel-title");
 const editorPanelCopy = document.getElementById("editor-panel-copy");
 const actionSummary = document.getElementById("action-summary");
 const actionCommand = document.getElementById("action-command");
+const contractSummary = document.getElementById("contract-summary");
+const contractPrimitives = document.getElementById("contract-primitives");
+const contractFeatures = document.getElementById("contract-features");
 const reviewSummary = document.getElementById("review-summary");
 const reviewDecision = document.getElementById("review-decision");
 const reviewChecklist = document.getElementById("review-checklist");
@@ -229,6 +242,24 @@ function buildCards() {
       buildForm();
     });
     bundleCards.append(card);
+  });
+}
+
+function renderLanguageContract() {
+  contractSummary.textContent = LANGUAGE_CONTRACT.summary;
+
+  contractPrimitives.innerHTML = "";
+  LANGUAGE_CONTRACT.primitives.forEach((primitive) => {
+    const li = document.createElement("li");
+    li.textContent = primitive;
+    contractPrimitives.append(li);
+  });
+
+  contractFeatures.innerHTML = "";
+  LANGUAGE_CONTRACT.features.forEach((feature) => {
+    const li = document.createElement("li");
+    li.textContent = feature;
+    contractFeatures.append(li);
   });
 }
 
@@ -475,6 +506,7 @@ function validate(model) {
   });
 
   results.push({ ok: true, text: "Task bundle keeps STP, SIP, and SOR visible together in one workspace." });
+  results.push({ ok: true, text: "Editor language contract is aligned with providers, tools, agents, tasks, workflows, and singular run." });
 
   if (modelArtifactKey === "sor") {
     results.push({ ok: true, text: "SOR is visibly linked in the workspace shell and participates in the bounded review flow." });
@@ -699,5 +731,6 @@ branchInput.addEventListener("input", updateAll);
 taskIdInput.value = "issue-2053";
 titleInput.value = "[v0.90][tools] Refresh web task editor for current ADL skills";
 branchInput.value = "codex/2053-backlog-tools-refresh-web-task-editor-current-skills";
+renderLanguageContract();
 buildCards();
 buildForm();

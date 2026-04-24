@@ -9,6 +9,7 @@ It demonstrates the real workflow that now exists in the repo:
 - see validation and rendered preview update live
 - prepare a bounded current lifecycle command from the editor
 - use the integrated SOR review flow to prepare a reviewer handoff
+- keep the browser-visible language contract aligned with the canonical ADL six-primitives model
 
 The canonical near-term adapter contract for this slice is:
 
@@ -40,17 +41,21 @@ It does not claim a finished browser-only workflow platform.
    - primary proof surface
    - artifact verification and deferred follow-ups
 10. Confirm the new review-flow panel now shows:
-   - a bounded recommendation
-   - a reviewer checklist tied to the SOR proof surface
-   - a copyable review note that summarizes review focus and follow-ups
-11. Compare the preview output with a current local issue bundle:
-   - `.adl/<version>/tasks/<task-id>__<slug>/stp.md`
-   - `.adl/<version>/tasks/<task-id>__<slug>/sip.md`
-   - `.adl/<version>/tasks/<task-id>__<slug>/sor.md`
-12. Return to the `Structured Task Prompt` card, set a numeric GitHub issue number that matches the branch prefix, and confirm the workflow action panel shows a ready `pr run` command.
-13. Copy the command from the editor and run it from the repo root:
+    - a bounded recommendation
+    - a reviewer checklist tied to the SOR proof surface
+    - a copyable review note that summarizes review focus and follow-ups
+11. Confirm the new ADL Language Contract panel shows:
+    - the six primitives: `providers`, `tools`, `agents`, `tasks`, `workflows`, `run`
+    - singular `run` as the top-level execution primitive
+    - `patterns` and `signature` as top-level language features rather than extra primitives
+12. Compare the preview output with a current local issue bundle:
+    - `.adl/<version>/tasks/<task-id>__<slug>/stp.md`
+    - `.adl/<version>/tasks/<task-id>__<slug>/sip.md`
+    - `.adl/<version>/tasks/<task-id>__<slug>/sor.md`
+13. Return to the `Structured Task Prompt` card, set a numeric GitHub issue number that matches the branch prefix, and confirm the workflow action panel shows a ready `pr run` command.
+14. Copy the command from the editor and run it from the repo root:
     - `adl/tools/editor_action.sh prepare --phase run --issue <issue-number> --slug <slug> --version <version>`
-14. Copy the review note from the Review Flow panel and confirm it summarizes:
+15. Copy the review note from the Review Flow panel and confirm it summarizes:
     - the bounded recommendation
     - the current proof surface
     - the follow-ups that still remain manual
@@ -81,6 +86,7 @@ It does not claim a finished browser-only workflow platform.
 - the editor presents a linked task-bundle workspace rather than isolated artifact editing only
 - the editor supports STP and SIP authoring while keeping SOR review visible and editable in the same workspace
 - the editor turns SOR proof/evidence fields into a bounded review loop rather than leaving review as a side conversation
+- the editor surfaces the canonical six-primitives language contract instead of relying on stale or implied language-shape assumptions
 - the editor preview and validation are materially closer to the current STP/SIP contract expectations
 - the editor exposes bounded validated lifecycle command preparation without duplicating workflow logic in browser code
 - the demo makes the remaining manual steps explicit instead of hiding them

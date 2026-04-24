@@ -62,6 +62,20 @@ notes:
   - Browser/editor surfaces may prepare or copy lifecycle commands, but must not claim direct browser execution.
   - The current taught path is pr init, pr doctor/ready, pr run, pr finish, pr janitor, and pr closeout through repo-owned tooling and skills.
   - The legacy start action remains only so older deterministic demos can keep validating compatibility until they are retired.
+language_contract:
+  primitives:
+    - providers
+    - tools
+    - agents
+    - tasks
+    - workflows
+    - run
+  top_level_features:
+    - patterns
+    - signature
+  notes:
+    - singular run is the canonical top-level execution primitive
+    - packet and control-plane contracts are outside the six-primitives language core
 EOF
 }
 
@@ -104,7 +118,15 @@ emit_contract_json() {
     "Browser/editor surfaces may prepare or copy lifecycle commands, but must not claim direct browser execution.",
     "The current taught path is pr init, pr doctor/ready, pr run, pr finish, pr janitor, and pr closeout through repo-owned tooling and skills.",
     "The legacy start action remains only so older deterministic demos can keep validating compatibility until they are retired."
-  ]
+  ],
+  "language_contract": {
+    "primitives": ["providers", "tools", "agents", "tasks", "workflows", "run"],
+    "top_level_features": ["patterns", "signature"],
+    "notes": [
+      "singular run is the canonical top-level execution primitive",
+      "packet and control-plane contracts are outside the six-primitives language core"
+    ]
+  }
 }
 EOF
 }

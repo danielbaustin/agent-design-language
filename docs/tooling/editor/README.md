@@ -24,6 +24,21 @@ The editor is intentionally simple:
   - derived review recommendation
   - copyable review note tied to SOR proof and follow-ups
 
+## ADL Language Contract
+
+This stack is not a full ADL document editor.
+
+It is a task-bundle editor that consumes and refers to the canonical ADL
+language shape. When this stack talks about ADL document structure, it should
+follow the same contract as the runtime and published schema:
+
+- six primitives: `providers`, `tools`, `agents`, `tasks`, `workflows`, `run`
+- singular `run` at the top level
+- `patterns` and `signature` as top-level language features, not extra
+  primitives
+- packet and control-plane contracts treated as adjacent surfaces, not part of
+  the six-primitives language core
+
 ## What This First Slice Does
 
 - presents one task bundle as a linked three-card workspace
@@ -48,6 +63,7 @@ The editor is intentionally simple:
 ## What It Does Not Do Yet
 
 - it does not write files directly
+- it does not provide a full browser-side editor for providers, tools, agents, tasks, workflows, and run as a complete ADL document
 - it does not replace `pr init`, `pr ready`/`pr doctor`, `pr run`, `pr finish`, `pr janitor`, or `pr closeout`
 - it does not imply direct browser invocation for the authoring lifecycle
 - it does not yet provide the full SOR decision loop or acceptance workflow
