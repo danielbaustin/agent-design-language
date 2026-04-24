@@ -1,153 +1,1088 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://agent-design-language.org/schemas/adl.schema.json",
-  "title": "ADL v0.1 (DRAFT - NOT AUTHORITATIVE)",
-  "$comment": "DRAFT artifact. The authoritative v0.1 schema is generated from Rust structs in adl/src/adl.rs and used at runtime. This file may lag and is intended for human reference only.",
+  "title": "ADL document schema (published reference)",
+  "$comment": "Published reference schema for the ADL document surface. Runtime validation is generated from Rust structs in adl/src/adl.rs and should stay aligned with this committed artifact. Canonical primitives: providers, tools, agents, tasks, workflows, and run. patterns and signature are top-level language features, not additional primitives.",
+  "description": "Top-level ADL document.\n\nCanonical ADL primitives: - providers - tools - agents - tasks - workflows - run\n\nTop-level language features that are not additional primitives: - patterns - signature\n\nUse this as the authoritative in-memory representation for ADL YAML input.",
   "type": "object",
-  "additionalProperties": true,
+  "additionalProperties": false,
+  "required": [
+    "run",
+    "version"
+  ],
   "properties": {
-    "header": { "$ref": "#/definitions/Header" },
+    "version": {
+      "type": "string"
+    },
     "providers": {
+      "default": {},
       "type": "object",
-      "additionalProperties": { "$ref": "#/definitions/Provider" }
+      "additionalProperties": {
+        "$ref": "#/definitions/ProviderSpec"
+      }
+    },
+    "tools": {
+      "default": {},
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/ToolSpec"
+      }
     },
     "agents": {
+      "default": {},
       "type": "object",
-      "additionalProperties": { "$ref": "#/definitions/Agent" }
+      "additionalProperties": {
+        "$ref": "#/definitions/AgentSpec"
+      }
     },
     "tasks": {
+      "default": {},
       "type": "object",
-      "additionalProperties": { "$ref": "#/definitions/Task" }
+      "additionalProperties": {
+        "$ref": "#/definitions/TaskSpec"
+      }
     },
     "workflows": {
+      "default": {},
       "type": "object",
-      "additionalProperties": { "$ref": "#/definitions/Workflow" }
+      "additionalProperties": {
+        "$ref": "#/definitions/WorkflowSpec"
+      }
     },
-    "runs": {
-      "type": "object",
-      "additionalProperties": { "$ref": "#/definitions/Run" }
+    "patterns": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/PatternSpec"
+      }
+    },
+    "signature": {
+      "default": null,
+      "anyOf": [
+        {
+          "$ref": "#/definitions/SignatureSpec"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "run": {
+      "$ref": "#/definitions/RunSpec"
     }
   },
   "definitions": {
-    "Header": {
+    "AgentSpec": {
+      "description": "Agent spec.",
       "type": "object",
-      "additionalProperties": true,
+      "required": [
+        "model",
+        "provider"
+      ],
       "properties": {
-        "version": { "type": "string" },
-        "description": { "type": "string" }
-      }
-    },
-    "Id": { "type": "string", "minLength": 1 },
-
-    "Prompt": {
-      "description": "Prompt can be a simple string, or a structured chat prompt object.",
-      "oneOf": [
-        { "type": "string" },
-        {
-          "type": "object",
-          "additionalProperties": true,
-          "properties": {
-            "system": { "type": "string" },
-            "developer": { "type": "string" },
-            "user": { "type": "string" },
-            "output": { "type": "string" }
+        "description": {
+          "description": "Optional agent description.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model": {
+          "description": "Model name (provider-specific).",
+          "type": "string"
+        },
+        "prompt": {
+          "description": "Optional default prompt for the agent.",
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PromptSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "provider": {
+          "description": "Provider this agent uses.",
+          "type": "string"
+        },
+        "temperature": {
+          "description": "Optional temperature for this agent.",
+          "default": null,
+          "allOf": [
+            {
+              "$ref": "#/definitions/StringOrNumber"
+            }
+          ]
+        },
+        "tools": {
+          "description": "Optional tool ids this agent may use.",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
           }
-        }
-      ]
-    },
-
-    "Provider": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "id": { "$ref": "#/definitions/Id" },
-        "kind": { "type": "string" },
-        "type": { "type": "string" },
-        "base_url": { "type": "string" },
-        "config": {
-          "type": "object",
-          "additionalProperties": true
+        },
+        "top_k": {
+          "description": "Optional top-k for this agent.",
+          "default": null,
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0.0
         }
       },
-      "anyOf": [
-        { "required": ["kind"] },
-        { "required": ["type"] }
+      "additionalProperties": false
+    },
+    "ConversationTurnSpec": {
+      "description": "Optional conversation turn metadata for a workflow step.\n\nThe runtime treats this as audit metadata: it records speaker/turn semantics without changing scheduler ordering or saved-state dependency behavior.",
+      "type": "object",
+      "required": [
+        "id",
+        "speaker"
+      ],
+      "properties": {
+        "id": {
+          "description": "Stable turn id within the workflow, e.g. \"turn_01\".",
+          "type": "string"
+        },
+        "responds_to": {
+          "description": "Optional prior turn id this turn responds to.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sequence": {
+          "description": "Optional 1-based turn sequence for reviewer-facing ordering.",
+          "default": null,
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0.0
+        },
+        "speaker": {
+          "description": "Human-readable speaker label for this turn.",
+          "type": "string"
+        },
+        "thread_id": {
+          "description": "Optional conversation/thread id for grouping turns.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "DelegationActionKind": {
+      "description": "Supported kinds of action that can be delegated.",
+      "type": "string",
+      "enum": [
+        "tool_invoke",
+        "provider_call",
+        "remote_exec",
+        "filesystem_read",
+        "filesystem_write"
       ]
     },
-
-    "Agent": {
+    "DelegationPolicyRuleSpec": {
+      "description": "Rule entry for explicit allow/deny overrides.",
       "type": "object",
-      "additionalProperties": true,
+      "required": [
+        "action",
+        "effect",
+        "id"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/Id" },
-        "description": { "type": "string" },
-        "provider": { "type": "string" },
-        "prompt": { "$ref": "#/definitions/Prompt" },
-        "config": { "type": "object", "additionalProperties": true }
-      }
+        "action": {
+          "$ref": "#/definitions/DelegationActionKind"
+        },
+        "effect": {
+          "$ref": "#/definitions/DelegationRuleEffect"
+        },
+        "id": {
+          "type": "string"
+        },
+        "require_approval": {
+          "default": false,
+          "type": "boolean"
+        },
+        "target_id": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
     },
-
-    "Task": {
+    "DelegationPolicySpec": {
+      "description": "Root delegation policy for run-time permission checks.",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
-        "id": { "$ref": "#/definitions/Id" },
-        "description": { "type": "string" },
-        "prompt": { "$ref": "#/definitions/Prompt" },
-        "inputs": {
+        "default_allow": {
+          "default": true,
+          "type": "boolean"
+        },
+        "rules": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DelegationPolicyRuleSpec"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "DelegationRuleEffect": {
+      "description": "Delegation rule effect used by policy evaluators.",
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny"
+      ]
+    },
+    "DelegationSpec": {
+      "type": "object",
+      "properties": {
+        "escalation_target": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "requires_verification": {
+          "default": null,
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "role": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tags": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "GuardSpec": {
+      "description": "Guard directive (content normalization / output constraints, etc.).",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "config": {
+          "default": {},
           "type": "object",
           "additionalProperties": true
         },
-        "contracts": {
-          "type": "array",
-          "items": { "type": "string" }
+        "type": {
+          "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
-
-    "Workflow": {
+    "PatternBranchSpec": {
       "type": "object",
-      "additionalProperties": true,
+      "required": [
+        "id"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/Id" },
-        "description": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
         "steps": {
+          "default": [],
           "type": "array",
-          "items": { "$ref": "#/definitions/Step" }
+          "items": {
+            "type": "string"
+          }
         }
       },
-      "required": ["steps"]
+      "additionalProperties": false
     },
-
-    "Step": {
+    "PatternForkSpec": {
       "type": "object",
-      "additionalProperties": true,
       "properties": {
-        "id": { "$ref": "#/definitions/Id" },
-        "task": { "type": "string" },
-        "agent": { "type": "string" },
-        "provider": { "type": "string" },
-        "prompt": { "$ref": "#/definitions/Prompt" },
-        "inputs": {
+        "branches": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PatternBranchSpec"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "PatternJoinSpec": {
+      "type": "object",
+      "required": [
+        "step"
+      ],
+      "properties": {
+        "step": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PatternKind": {
+      "type": "string",
+      "enum": [
+        "linear",
+        "fork_join"
+      ]
+    },
+    "PatternSpec": {
+      "type": "object",
+      "required": [
+        "id",
+        "type"
+      ],
+      "properties": {
+        "fork": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PatternForkSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "join": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PatternJoinSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "steps": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/PatternKind"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PlacementMode": {
+      "type": "string",
+      "enum": [
+        "local",
+        "remote"
+      ]
+    },
+    "PromptSpec": {
+      "description": "Prompt specification: structured fields that will be assembled into a final prompt.",
+      "type": "object",
+      "properties": {
+        "context": {
+          "description": "Extra context (e.g. retrieved docs) to be injected.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "developer": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "output": {
+          "description": "Output requirements / format.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "system": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "user": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProviderSpec": {
+      "description": "Provider spec: local Ollama, OpenAI, etc.",
+      "type": "object",
+      "properties": {
+        "base_url": {
+          "description": "Optional base URL.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "config": {
+          "description": "Arbitrary provider config.",
+          "default": {},
           "type": "object",
           "additionalProperties": true
+        },
+        "default_model": {
+          "description": "Optional default model name (provider-specific).",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "profile": {
+          "description": "Optional provider profile id (deterministic in-code preset).",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "description": "Provider type (e.g. \"ollama\", \"openai\").",
+          "default": "",
+          "type": "string"
         }
       },
-      "required": ["task"]
+      "additionalProperties": false
     },
-
-    "Run": {
+    "RunDefaults": {
+      "description": "Default run-level knobs applied when a workflow omits local settings.",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
-        "id": { "$ref": "#/definitions/Id" },
-        "workflow": { "type": "string" },
+        "max_concurrency": {
+          "description": "Global runtime concurrency cap for concurrent workflows/pattern runs. When omitted, runtime uses a conservative default.",
+          "default": null,
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "system": {
+          "description": "Default system string applied if prompt has no system.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "RunPlacementLegacySpec": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "target": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "RunPlacementSpec": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/PlacementMode"
+        },
+        {
+          "$ref": "#/definitions/RunPlacementLegacySpec"
+        }
+      ]
+    },
+    "RunRemoteSpec": {
+      "type": "object",
+      "required": [
+        "endpoint"
+      ],
+      "properties": {
+        "endpoint": {
+          "type": "string"
+        },
+        "require_key_id": {
+          "default": false,
+          "type": "boolean"
+        },
+        "require_signed_requests": {
+          "default": false,
+          "type": "boolean"
+        },
+        "timeout_ms": {
+          "default": null,
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0.0
+        },
+        "verify_allowed_algs": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "verify_allowed_key_sources": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "RunSpec": {
+      "description": "Run spec: what to execute.",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "description": "Optional creation time in UTC ISO 8601 / RFC3339 with trailing Z (e.g. \"2026-01-24T10:30:00Z\").",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "defaults": {
+          "default": {
+            "max_concurrency": null,
+            "system": null
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/RunDefaults"
+            }
+          ]
+        },
+        "delegation_policy": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/DelegationPolicySpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "inputs": {
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pattern_ref": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "placement": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RunPlacementSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "remote": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RunRemoteSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workflow": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/WorkflowSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workflow_ref": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "SignatureSpec": {
+      "type": "object",
+      "required": [
+        "alg",
+        "key_id",
+        "sig_b64",
+        "signed_header"
+      ],
+      "properties": {
+        "alg": {
+          "type": "string"
+        },
+        "key_id": {
+          "type": "string"
+        },
+        "public_key_b64": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sig_b64": {
+          "type": "string"
+        },
+        "signed_header": {
+          "$ref": "#/definitions/SignedHeaderSpec"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SignedHeaderSpec": {
+      "type": "object",
+      "required": [
+        "adl_version"
+      ],
+      "properties": {
+        "adl_version": {
+          "type": "string"
+        },
+        "workflow_id": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "StepOnError": {
+      "type": "string",
+      "enum": [
+        "fail",
+        "continue"
+      ]
+    },
+    "StepRetry": {
+      "type": "object",
+      "required": [
+        "max_attempts"
+      ],
+      "properties": {
+        "max_attempts": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0.0
+        }
+      },
+      "additionalProperties": false
+    },
+    "StepSpec": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "description": "Agent id to run (key in `agents`).",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "as": {
+          "description": "Optional namespace for call results.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "call": {
+          "description": "Workflow id to call (key in `workflows`).",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "conversation": {
+          "description": "Optional conversation turn metadata for multi-agent discussion workflows.",
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ConversationTurnSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "delegation": {
+          "description": "Optional delegation metadata for audit/trace surfaces.",
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/DelegationSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "guards": {
+          "description": "Guard directives (content normalization / output constraints, etc.).",
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GuardSpec"
+          }
+        },
+        "id": {
+          "description": "Optional explicit id for the step.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inputs": {
+          "description": "Named inputs that can be used by the runtime/prompt assembly.",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "on_error": {
+          "description": "Step-level error behavior. Defaults to fail-fast.",
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/StepOnError"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "placement": {
+          "description": "Optional placement override for this step.",
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PlacementMode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "prompt": {
+          "description": "Inline prompt override.",
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PromptSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retry": {
+          "description": "Optional deterministic retry policy.",
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/StepRetry"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "save_as": {
+          "description": "Optional state key to save the step output under.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "task": {
+          "description": "Task id to run (key in `tasks`).",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "with": {
+          "description": "Optional call input bindings.",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "write_to": {
+          "description": "Optional relative path to write the step output under `--out`.",
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "StringOrNumber": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer",
+          "format": "int64"
+        },
+        {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0.0
+        },
+        {
+          "type": "number",
+          "format": "double"
+        }
+      ]
+    },
+    "TaskSpec": {
+      "description": "Task spec.",
+      "type": "object",
+      "required": [
+        "prompt"
+      ],
+      "properties": {
+        "agent_ref": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inputs": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prompt": {
+          "description": "Default prompt for this task.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/PromptSpec"
+            }
+          ]
+        },
+        "tool_allowlist": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ToolSpec": {
+      "description": "Tool spec (eventually maps to MCP tools, local tools, etc.).",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "config": {
+          "description": "Arbitrary config.",
+          "default": {},
           "type": "object",
           "additionalProperties": true
+        },
+        "id": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "description": "Tool type (e.g. \"mcp\", \"http\", \"local\").",
+          "type": "string"
         }
       },
-      "required": ["workflow"]
+      "additionalProperties": false
+    },
+    "WorkflowKind": {
+      "type": "string",
+      "enum": [
+        "sequential",
+        "concurrent"
+      ]
+    },
+    "WorkflowSpec": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kind": {
+          "default": "sequential",
+          "allOf": [
+            {
+              "$ref": "#/definitions/WorkflowKind"
+            }
+          ]
+        },
+        "max_concurrency": {
+          "description": "Optional workflow-local concurrency cap for concurrent runs.\n\nPrecedence for concurrent workflow runs: 1) `run.workflow.max_concurrency` (or `workflows.<id>.max_concurrency` via `workflow_ref`) 2) run.defaults.max_concurrency 3) runtime default (4)",
+          "default": null,
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "steps": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StepSpec"
+          }
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
