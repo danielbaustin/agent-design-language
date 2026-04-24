@@ -97,6 +97,10 @@ jobs:
         run: bash adl/tools/test_ci_path_policy.sh
         working-directory: .
 
+      - name: PR-fast test lane contract
+        run: bash adl/tools/test_run_pr_fast_test_lane.sh
+        working-directory: .
+
       - name: guardrail (no new legacy refs)
         run: bash adl/tools/check_no_new_legacy_swarm_refs.sh
         working-directory: .
@@ -153,7 +157,8 @@ jobs:
 
       - name: test
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        run: cargo nextest run --status-level all --final-status-level slow
+        run: bash adl/tools/run_pr_fast_test_lane.sh --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}"
+        working-directory: .
 
       - name: doc test
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'

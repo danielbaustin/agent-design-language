@@ -182,9 +182,12 @@ Observed:
 
 Truthful interpretation:
 
-- Rust fmt, clippy, broad non-coverage tests via `cargo nextest run`, doc
-  tests via `cargo test --doc`, demo smoke where applicable, and the fast
-  coverage-impact preflight are expected.
+- Rust fmt, clippy, doc tests via `cargo test --doc`, demo smoke where
+  applicable, and the fast coverage-impact preflight are expected.
+- The non-coverage `test` step now runs through
+  `adl/tools/run_pr_fast_test_lane.sh`. For bounded PRs, that runner may use a
+  focused `cargo nextest` expression. For broad or ambiguous PRs, it fails
+  closed to the full ordinary nextest sweep.
 - The ordinary PR lane must not re-enable heavyweight opt-in features such as
   `slow-proof-tests`; those stay reserved for dedicated heavy proof or
   authoritative coverage lanes.
