@@ -1,0 +1,91 @@
+version: "0.1"
+kind: "adl-skill"
+id: "issue-folding"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "issue_folding.v1"
+    reference_doc: "../docs/ISSUE_FOLDING_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "analyze_issue_bundle"
+      - "analyze_issue_number"
+    policy_fields:
+      - "allow_network"
+      - "stop_before_closeout"
+      - "stop_before_tracker_mutation"
+      - "permit_safe_noop_closeout_handoff"
+      - "require_closure_references_for_linked_dispositions"
+    mode_requirements:
+      analyze_issue_bundle:
+        required_target_fields:
+          - "task_bundle_path"
+      analyze_issue_number:
+        required_target_fields:
+          - "issue_number"
+  intent:
+    - "issue_disposition_classification"
+    - "fold_or_closeout_routing"
+    - "issue_graph_preservation"
+required_inputs:
+  - "repo_root"
+optional_inputs:
+  - "issue_number"
+  - "task_bundle_path"
+  - "source_issue_prompt_path"
+  - "issue_state"
+  - "pr_state"
+  - "closure_hints"
+stop_if_missing:
+  - "repo_root"
+  - "policy.stop_before_closeout"
+  - "policy.stop_before_tracker_mutation"
+prevalidation_rules:
+  - "repo_root_must_be_absolute"
+  - "skill_input_schema_must_equal_issue_folding.v1_when_structured_input_is_used"
+  - "mode_must_match_supported_enum"
+  - "exactly_one_issue_target_should_drive_the_mode"
+  - "policy.stop_before_closeout_must_be_true"
+  - "policy.stop_before_tracker_mutation_must_be_true"
+  - "linked_dispositions_require_reference_evidence"
+execution:
+  mode: "classify_only"
+  allow_code_edits: false
+  allow_network: true
+  allow_subagents: false
+  preferred_commands:
+    - "python3 adl/tools/skills/issue-folding/scripts/classify_issue_folding.py --task-bundle <path> --source-prompt <path> --out <path>"
+    - "rg -n \"duplicate|superseded|covered by|absorbed|already satisfied|obsolete\" .adl"
+  preferred_path: "task_bundle_first"
+  stop_before:
+    - "pr_run"
+    - "issue_closure"
+    - "worktree_pruning"
+    - "silent_scope_rewrite"
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-issue-folding.md"
+  required_sections:
+    - "status"
+    - "classification"
+    - "evidence"
+    - "closure_outcome"
+    - "worktree_action"
+    - "recommended_handoff"
+    - "non_claims"
+    - "safety_flags"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  no_live_github_mutation_without_explicit_permission: true
+  manifest_declares_executables: true
