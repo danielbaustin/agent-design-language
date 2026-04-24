@@ -13,28 +13,28 @@
 
 ## Execution Readiness
 
-- [ ] Contract schema accepted.
-- [ ] Bid schema accepted.
-- [ ] Evaluation model accepted.
-- [ ] Transition authority model accepted.
-- [ ] Lifecycle state model accepted.
-- [ ] External counterparty boundary accepted.
-- [ ] Delegation/subcontract boundary accepted.
-- [ ] Fixture set and runner proof path accepted.
-- [ ] Demo matrix and feature proof coverage WP preserved before review convergence.
+- [x] Contract schema accepted.
+- [x] Bid schema accepted.
+- [x] Evaluation model accepted.
+- [x] Transition authority model accepted.
+- [x] Lifecycle state model accepted.
+- [x] External counterparty boundary accepted.
+- [x] Delegation/subcontract boundary accepted.
+- [x] Fixture set and runner proof path accepted.
+- [x] Demo matrix and feature proof coverage WP preserved before review convergence.
 - [ ] Architecture docs and ADR surfaces reviewed for this milestone.
 - [ ] Architecture-change outcome recorded as update vs explicit no-change.
 
 ## Review Readiness
 
-- [ ] Demo matrix reflects actual proof status.
+- [x] Demo matrix reflects actual proof status.
 - [ ] Feature docs match implemented artifacts.
 - [ ] Review summary artifact is truthful and reviewer-facing.
 - [ ] Architecture summary and no-change declaration in closeout reviewed.
 - [ ] Negative authority and trace cases are recorded.
 - [ ] Tool-mediated contract requirements are marked as constraints, not tool
   execution proof.
-- [ ] Release notes avoid aspirational shipped language until closeout.
+- [x] Release notes avoid aspirational shipped language until closeout.
 
 ## Release Readiness
 
