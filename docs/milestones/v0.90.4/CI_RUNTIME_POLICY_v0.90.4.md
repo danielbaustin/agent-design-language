@@ -190,6 +190,18 @@ classified separately from always-on contract checks:
 - authoritative `cargo llvm-cov --workspace --all-features` lanes still execute
   that tranche
 
+The authoritative lane is now split internally as well:
+
+- `always_on_authoritative`
+  runs the base coverage universe that must remain always-on for release
+  governance
+- `proof_heavy_authoritative`
+  runs the bounded proof-heavy slice and opt-in feature tranches through a
+  second targeted `cargo llvm-cov nextest` pass
+
+Both phases accumulate into the same final coverage report. The split is about
+runtime stability and explainability, not about dropping proof surfaces.
+
 That keeps ordinary PR validation fast without pretending those proof surfaces
 no longer matter.
 
@@ -200,6 +212,16 @@ When `full_coverage_required=true`, full coverage generates:
 - `coverage-summary.txt`
 
 from the coverage data produced by one coverage run.
+
+In implementation terms, the workflow now routes this through:
+
+```bash
+adl/tools/run_authoritative_coverage_lane.sh
+```
+
+That runner is the machine-readable contract for which authoritative surfaces
+stay always-on and which proof-heavy slices are executed in the targeted second
+pass.
 
 ## Session Guidance
 

@@ -101,6 +101,10 @@ jobs:
         run: bash adl/tools/test_run_pr_fast_test_lane.sh
         working-directory: .
 
+      - name: authoritative coverage lane contract
+        run: bash adl/tools/test_run_authoritative_coverage_lane.sh
+        working-directory: .
+
       - name: guardrail (no new legacy refs)
         run: bash adl/tools/check_no_new_legacy_swarm_refs.sh
         working-directory: .
@@ -306,9 +310,7 @@ jobs:
 
       - name: Coverage run and summary (json)
         if: steps.path-policy.outputs.full_coverage_required == 'true'
-        run: |
-          cargo llvm-cov nextest --workspace --all-features --status-level all --final-status-level slow --no-report
-          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+        run: bash tools/run_authoritative_coverage_lane.sh
 
       - name: PR fast coverage summary (json)
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'

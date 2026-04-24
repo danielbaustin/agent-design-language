@@ -221,6 +221,21 @@ false if the changed paths are tooling-only, but `full_coverage_required=true`
 still means the authoritative full coverage lane must run because the PR is
 modifying coverage governance itself.
 
+The authoritative coverage implementation is now explicit:
+
+```bash
+adl/tools/run_authoritative_coverage_lane.sh
+```
+
+That runner performs:
+
+- `always_on_authoritative`
+- `proof_heavy_authoritative`
+
+and then emits one merged coverage report. Skills should treat this as one
+authoritative evidence lane with two internal phases, not as a docs-only
+optimization or a waiver.
+
 ### Failed-Closed Classification
 
 Observed:
