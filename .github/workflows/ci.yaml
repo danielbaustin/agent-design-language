@@ -53,6 +53,15 @@ jobs:
         with:
           tool: sccache
 
+      - name: Install lld
+        if: steps.path-policy.outputs.rust_required == 'true'
+        run: |
+          if ! command -v ld.lld >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y lld
+          fi
+          command -v ld.lld
+
       - name: Configure Rust acceleration
         if: steps.path-policy.outputs.rust_required == 'true'
         run: |
@@ -60,12 +69,12 @@ jobs:
           echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"
           echo "SCCACHE_CACHE_SIZE=2G" >> "$GITHUB_ENV"
           echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
-          if command -v ld.lld >/dev/null 2>&1; then
-            echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"
-            echo "RUST_LINK_ACCEL=lld" >> "$GITHUB_ENV"
-          else
-            echo "RUST_LINK_ACCEL=system-default" >> "$GITHUB_ENV"
+          if ! command -v ld.lld >/dev/null 2>&1; then
+            echo "::error::ld.lld is unavailable after the install step"
+            exit 1
           fi
+          echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"
+          echo "RUST_LINK_ACCEL=lld" >> "$GITHUB_ENV"
           sccache --zero-stats || true
 
       - name: tooling sanity (bash -n)
@@ -246,6 +255,15 @@ jobs:
         with:
           tool: sccache
 
+      - name: Install lld for coverage
+        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
+        run: |
+          if ! command -v ld.lld >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y lld
+          fi
+          command -v ld.lld
+
       - name: Configure Rust acceleration for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: |
@@ -253,12 +271,12 @@ jobs:
           echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"
           echo "SCCACHE_CACHE_SIZE=2G" >> "$GITHUB_ENV"
           echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
-          if command -v ld.lld >/dev/null 2>&1; then
-            echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"
-            echo "RUST_LINK_ACCEL=lld" >> "$GITHUB_ENV"
-          else
-            echo "RUST_LINK_ACCEL=system-default" >> "$GITHUB_ENV"
+          if ! command -v ld.lld >/dev/null 2>&1; then
+            echo "::error::ld.lld is unavailable after the install step"
+            exit 1
           fi
+          echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"
+          echo "RUST_LINK_ACCEL=lld" >> "$GITHUB_ENV"
           sccache --zero-stats || true
 
       - name: Install cargo-nextest for coverage

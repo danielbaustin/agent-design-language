@@ -15,7 +15,9 @@ required_fragments = [
     "tool: sccache",
     'echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"',
     'echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"',
-    "command -v ld.lld >/dev/null 2>&1",
+    'sudo apt-get install -y lld',
+    'command -v ld.lld',
+    'echo "::error::ld.lld is unavailable after the install step"',
     'echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"',
     'sccache --zero-stats || true',
     'sccache --show-stats || true',
@@ -30,8 +32,10 @@ if missing:
 
 for step in [
     "Install sccache",
+    "Install lld",
     "Configure Rust acceleration",
     "Install sccache for coverage",
+    "Install lld for coverage",
     "Configure Rust acceleration for coverage",
     "Rust acceleration stats",
     "Rust acceleration stats for coverage",
