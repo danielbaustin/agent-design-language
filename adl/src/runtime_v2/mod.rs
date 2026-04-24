@@ -5,6 +5,7 @@
 //! and proof-bearing contracts used by downstream review tooling.
 
 mod access_control;
+mod bid_schema;
 mod boot_admission;
 mod challenge;
 mod citizen;
@@ -45,6 +46,8 @@ use std::path::{Path, PathBuf};
 
 #[allow(unused_imports)]
 pub use access_control::*;
+#[allow(unused_imports)]
+pub use bid_schema::*;
 #[allow(unused_imports)]
 pub use boot_admission::*;
 #[allow(unused_imports)]

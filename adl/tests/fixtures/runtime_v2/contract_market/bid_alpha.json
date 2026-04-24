@@ -1,0 +1,71 @@
+{
+  "schema_version": "runtime_v2.bid_artifact.v1",
+  "demo_id": "D3",
+  "wp_id": "WP-04",
+  "bid_id": "bid-alpha-observatory-review",
+  "artifact_path": "runtime_v2/contract_market/bid_alpha.json",
+  "target_contract_ref": "runtime_v2/contract_market/parent_contract.json",
+  "target_contract_id": "contract-observatory-readiness-alpha",
+  "bidder_actor_id": "counterparty-alpha",
+  "bidder_actor_class": "external_counterparty",
+  "bidder_assurance_class": "sponsored-review-eligible",
+  "sponsor_ref": "runtime_v2/access_control/access_events.json#sponsor-alpha",
+  "gateway_ref": "runtime_v2/access_control/access_events.json#gateway-alpha",
+  "proposal_summary": "Produce one bounded observatory readiness packet with explicit trace mapping and reviewer-visible caveats.",
+  "resource_claims": [
+    {
+      "resource_kind": "operator_review_minutes",
+      "estimated_units": 45,
+      "unit_basis": "minutes",
+      "rationale": "final packet requires one bounded reviewer pass before award recommendation"
+    },
+    {
+      "resource_kind": "compute_hours",
+      "estimated_units": 4,
+      "unit_basis": "hours",
+      "rationale": "projection rendering and trace packaging remain bounded and replayable"
+    }
+  ],
+  "expected_tool_usage": [
+    {
+      "requirement_id": "tool-req-projection-render",
+      "capability": "projection_rendering",
+      "adapter_family": "observatory_adapter",
+      "usage_mode": "constraint",
+      "direct_execution_allowed": false,
+      "required_evidence": [
+        "tool requirement remains pending governed-tool authority",
+        "review summary records unmet tool dependency when executor authority is absent"
+      ]
+    }
+  ],
+  "confidence_basis_points": 7800,
+  "commitments": [
+    "preserve issuer-visible trace continuity across all derived artifacts",
+    "emit a reviewable artifact manifest before completion is claimed",
+    "avoid raw private-state inspection or disclosure"
+  ],
+  "exceptions": [
+    "tool-mediated rendering remains contingent on governed-tool authority in v0.90.5"
+  ],
+  "submitted_at_utc": "2026-04-24T10:00:00Z",
+  "bidding_window_closes_at_utc": "2026-04-24T23:05:00Z",
+  "trace_requirements": [
+    "bid_trace_link",
+    "authority_basis",
+    "selection_trace_link"
+  ],
+  "signature_requirements": [
+    "bidder_signature",
+    "gateway_attestation"
+  ],
+  "artifact_refs": [
+    "runtime_v2/contract_market/bid_alpha_notes.json"
+  ],
+  "extension_slots": [
+    "pricing",
+    "payment_rails",
+    "governed_tools_authority"
+  ],
+  "claim_boundary": "This bid records proposal, resource, and tool constraints but does not settle payment or grant governed-tool execution authority."
+}

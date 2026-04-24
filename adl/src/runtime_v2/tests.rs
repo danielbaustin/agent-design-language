@@ -1,6 +1,7 @@
 use super::*;
 
 mod access_control;
+mod bid_schema;
 mod boot_admission;
 mod challenge;
 mod citizen_lifecycle;

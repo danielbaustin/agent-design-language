@@ -9,6 +9,10 @@ pub fn runtime_v2_contract_schema_contract() -> Result<RuntimeV2ContractSchemaAr
     RuntimeV2ContractSchemaArtifacts::prototype()
 }
 
+pub fn runtime_v2_bid_schema_contract() -> Result<RuntimeV2BidSchemaArtifacts> {
+    RuntimeV2BidSchemaArtifacts::prototype()
+}
+
 pub fn runtime_v2_manifold_contract() -> Result<RuntimeV2ManifoldRoot> {
     RuntimeV2ManifoldRoot::prototype("proto-csm-01")
 }
