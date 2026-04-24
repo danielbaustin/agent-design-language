@@ -44,7 +44,7 @@ if "tool: nextest" not in workflow:
 
 expected_coverage = (
     "cargo llvm-cov nextest --workspace --all-features --status-level slow "
-    "--final-status-level slow --slow-time 60s --no-report"
+    "--final-status-level slow --no-report"
 )
 if expected_coverage not in workflow:
     raise SystemExit(
