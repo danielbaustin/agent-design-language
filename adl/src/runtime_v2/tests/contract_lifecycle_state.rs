@@ -95,6 +95,45 @@ fn runtime_v2_contract_lifecycle_terminal_states_cannot_be_silently_reopened() {
 }
 
 #[test]
+fn runtime_v2_contract_lifecycle_negative_cases_require_full_terminal_reopen_matrix() {
+    let artifacts =
+        runtime_v2_contract_lifecycle_state_model().expect("contract lifecycle artifacts");
+
+    let mut missing_terminal_case = artifacts.negative_cases.clone();
+    missing_terminal_case.required_negative_cases.pop();
+    assert!(RuntimeV2ContractLifecycleArtifacts {
+        state_machine: artifacts.state_machine.clone(),
+        negative_cases: missing_terminal_case,
+    }
+    .validate()
+    .expect_err("missing terminal reopen case should fail")
+    .to_string()
+    .contains("must cover every terminal state exactly once"));
+
+    let mut duplicate_terminal_case = artifacts.negative_cases.clone();
+    duplicate_terminal_case.required_negative_cases[2].prior_terminal_state =
+        duplicate_terminal_case.required_negative_cases[1]
+            .prior_terminal_state
+            .clone();
+    duplicate_terminal_case.required_negative_cases[2].from_state = duplicate_terminal_case
+        .required_negative_cases[1]
+        .from_state
+        .clone();
+    duplicate_terminal_case.required_negative_cases[2].resulting_state = duplicate_terminal_case
+        .required_negative_cases[1]
+        .resulting_state
+        .clone();
+    assert!(RuntimeV2ContractLifecycleArtifacts {
+        state_machine: artifacts.state_machine,
+        negative_cases: duplicate_terminal_case,
+    }
+    .validate()
+    .expect_err("duplicate terminal reopen coverage should fail")
+    .to_string()
+    .contains("must contain exactly one reopen denial per terminal state"));
+}
+
+#[test]
 fn runtime_v2_contract_lifecycle_write_to_root_materializes_fixtures() {
     let artifacts =
         runtime_v2_contract_lifecycle_state_model().expect("contract lifecycle artifacts");

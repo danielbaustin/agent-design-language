@@ -756,8 +756,24 @@ impl RuntimeV2ContractLifecycleNegativeCases {
                 "contract_lifecycle_negative_cases.claim_boundary must preserve terminal-state closure language"
             ));
         }
+        let expected_terminal_states = state_machine
+            .terminal_states
+            .iter()
+            .cloned()
+            .collect::<BTreeSet<_>>();
+        let mut covered_terminal_states = BTreeSet::new();
         for case in &self.required_negative_cases {
+            if !covered_terminal_states.insert(case.prior_terminal_state.clone()) {
+                return Err(anyhow!(
+                    "contract_lifecycle_negative_cases.required_negative_cases must contain exactly one reopen denial per terminal state"
+                ));
+            }
             case.validate_against(state_machine, authority_basis)?;
+        }
+        if covered_terminal_states != expected_terminal_states {
+            return Err(anyhow!(
+                "contract_lifecycle_negative_cases.required_negative_cases must cover every terminal state exactly once"
+            ));
         }
         Ok(())
     }
