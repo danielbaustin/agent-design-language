@@ -143,6 +143,68 @@ fn committed_schema_exposes_six_primitives_surface() {
 }
 
 #[test]
+fn committed_schema_matches_generated_language_surface() {
+    let committed = schema::committed_schema_json();
+    let generated = schema::generated_schema_json();
+
+    let committed_properties = committed
+        .get("properties")
+        .and_then(|value| value.as_object())
+        .expect("committed schema should expose top-level properties");
+    let generated_properties = generated
+        .get("properties")
+        .and_then(|value| value.as_object())
+        .expect("generated schema should expose top-level properties");
+
+    let committed_keys: Vec<&str> = committed_properties.keys().map(String::as_str).collect();
+    let generated_keys: Vec<&str> = generated_properties.keys().map(String::as_str).collect();
+    assert_eq!(
+        committed_keys, generated_keys,
+        "committed and generated schema top-level key order drifted"
+    );
+
+    for key in &generated_keys {
+        assert_eq!(
+            committed_properties.get(*key),
+            generated_properties.get(*key),
+            "committed and generated schema top-level property drifted for key: {key}"
+        );
+    }
+
+    assert_eq!(
+        committed.get("required"),
+        generated.get("required"),
+        "committed and generated schema required keys drifted"
+    );
+
+    let committed_definitions = committed
+        .get("definitions")
+        .and_then(|value| value.as_object())
+        .expect("committed schema should expose definitions");
+    let generated_definitions = generated
+        .get("definitions")
+        .and_then(|value| value.as_object())
+        .expect("generated schema should expose definitions");
+
+    for definition in [
+        "ProviderSpec",
+        "ToolSpec",
+        "AgentSpec",
+        "TaskSpec",
+        "WorkflowSpec",
+        "RunSpec",
+        "PatternSpec",
+        "SignatureSpec",
+    ] {
+        assert_eq!(
+            committed_definitions.get(definition),
+            generated_definitions.get(definition),
+            "committed and generated schema definition drifted for: {definition}"
+        );
+    }
+}
+
+#[test]
 fn strict_rejects_unknown_top_level_key_but_loose_allows_it() {
     // This doc is structurally valid for AdlDoc, but includes an extra top-level key.
     // validate_adl_yaml() uses the strict-toplevel schema and should reject it.
