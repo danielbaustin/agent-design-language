@@ -1107,6 +1107,56 @@ fn attach_pr_janitor_invokes_helper_successfully() {
 }
 
 #[test]
+fn attach_pr_janitor_falls_back_when_command_override_is_blank() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-attach-janitor-blank-override");
+    let repo = temp.join("repo");
+    let tools_dir = repo.join("adl/tools");
+    let argv_log = temp.join("janitor-args.log");
+    fs::create_dir_all(&tools_dir).expect("tools dir");
+    write_executable(
+        &tools_dir.join("attach_pr_janitor.sh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" > '{}'\n",
+            argv_log.display()
+        ),
+    );
+
+    let old_disable = env::var("ADL_PR_JANITOR_DISABLE").ok();
+    let old_cmd = env::var("ADL_PR_JANITOR_CMD").ok();
+    unsafe {
+        env::set_var("ADL_PR_JANITOR_DISABLE", "0");
+        env::set_var("ADL_PR_JANITOR_CMD", "   ");
+    }
+
+    attach_pr_janitor(
+        &repo,
+        "owner/repo",
+        1153,
+        "codex/1153-rust-finish-test",
+        "https://github.com/owner/repo/pull/1159",
+        "draft",
+    )
+    .expect("blank command override should fall back to helper path");
+
+    unsafe {
+        if let Some(value) = old_disable {
+            env::set_var("ADL_PR_JANITOR_DISABLE", value);
+        } else {
+            env::remove_var("ADL_PR_JANITOR_DISABLE");
+        }
+        if let Some(value) = old_cmd {
+            env::set_var("ADL_PR_JANITOR_CMD", value);
+        } else {
+            env::remove_var("ADL_PR_JANITOR_CMD");
+        }
+    }
+
+    let argv = fs::read_to_string(&argv_log).expect("janitor args");
+    assert!(argv.contains("--repo owner/repo"));
+}
+
+#[test]
 fn attach_post_merge_closeout_reports_failure_output() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-attach-closeout-failure");
@@ -1239,4 +1289,53 @@ fn attach_post_merge_closeout_invokes_helper_successfully() {
     assert!(argv.contains("--issue 1153"));
     assert!(argv.contains("--branch codex/1153-rust-finish-test"));
     assert!(argv.contains("--pr-url https://github.com/owner/repo/pull/1159"));
+}
+
+#[test]
+fn attach_post_merge_closeout_falls_back_when_command_override_is_blank() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-attach-closeout-blank-override");
+    let repo = temp.join("repo");
+    let tools_dir = repo.join("adl/tools");
+    let argv_log = temp.join("closeout-args.log");
+    fs::create_dir_all(&tools_dir).expect("tools dir");
+    write_executable(
+        &tools_dir.join("attach_post_merge_closeout.sh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" > '{}'\n",
+            argv_log.display()
+        ),
+    );
+
+    let old_disable = env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE").ok();
+    let old_cmd = env::var("ADL_POST_MERGE_CLOSEOUT_CMD").ok();
+    unsafe {
+        env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "0");
+        env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", "   ");
+    }
+
+    attach_post_merge_closeout(
+        &repo,
+        "owner/repo",
+        1153,
+        "codex/1153-rust-finish-test",
+        "https://github.com/owner/repo/pull/1159",
+    )
+    .expect("blank command override should fall back to helper path");
+
+    unsafe {
+        if let Some(value) = old_disable {
+            env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", value);
+        } else {
+            env::remove_var("ADL_POST_MERGE_CLOSEOUT_DISABLE");
+        }
+        if let Some(value) = old_cmd {
+            env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", value);
+        } else {
+            env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
+        }
+    }
+
+    let argv = fs::read_to_string(&argv_log).expect("closeout args");
+    assert!(argv.contains("--repo owner/repo"));
 }
