@@ -192,21 +192,18 @@ classified separately from always-on contract checks:
 - authoritative `cargo llvm-cov --workspace --all-features` lanes still execute
   that tranche
 
-The authoritative lane is now split internally as well:
+The authoritative lane is now one-pass per event:
 
-- `always_on_authoritative`
-  runs the base coverage universe that must remain always-on for release
-  governance
-- `proof_heavy_authoritative`
-  runs the bounded proof-heavy slice and opt-in feature tranches through a
-  second targeted `cargo llvm-cov nextest` pass
+- `full_authoritative_all_features`
+  runs one full `cargo llvm-cov nextest --workspace --all-features` pass on
+  `main` and other full-evidence events
+- `bounded_policy_surface_pr`
+  runs one bounded `cargo llvm-cov nextest --workspace` pass on policy-surface
+  pull requests, followed by the changed-source coverage gate
 
-Both phases accumulate into the same final coverage report on `main` and other
-full-evidence events. For `pr_policy_surface` pull requests, the workflow runs
-the always-on authoritative base summary plus the changed-source coverage gate,
-then defers the proof-heavy phase and workspace-threshold gate to push-to-main.
-The split is about runtime stability and explainability, not about dropping
-proof surfaces.
+This replaces the earlier two-phase authoritative split. The goal is to keep
+PR governance validation reviewable without paying for one near-full coverage
+pass plus a second proof-heavy pass in the same job.
 
 That keeps ordinary PR validation fast without pretending those proof surfaces
 no longer matter.
@@ -225,9 +222,9 @@ In implementation terms, the workflow now routes this through:
 adl/tools/run_authoritative_coverage_lane.sh
 ```
 
-That runner is the machine-readable contract for which authoritative surfaces
-stay always-on and which proof-heavy slices are executed in the targeted second
-pass.
+That runner is the machine-readable contract for which events get the full
+all-features authoritative pass and which policy-surface PRs get the bounded
+one-pass lane.
 
 ## Session Guidance
 
@@ -236,9 +233,9 @@ smoke when required, and coverage-impact preflight. Do not cite the PR-fast
 coverage lane as full release coverage evidence.
 
 When working a PR that changes coverage governance or coverage tooling, expect
-the authoritative base coverage lane on the PR and the full proof-heavy lane on
-push-to-main. That keeps governance changes reviewable without making every
-policy PR pay the full proof-heavy workspace gate before merge.
+the bounded one-pass authoritative coverage lane on the PR and the full
+all-features authoritative lane on push-to-main. That keeps governance changes
+reviewable without making every policy PR pay the same full coverage cost twice.
 
 When working a `main`, nightly, release, or fail-closed event, expect full
 coverage. In those lanes, standalone `cargo test` may be skipped because

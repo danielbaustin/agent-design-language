@@ -227,15 +227,14 @@ The authoritative coverage implementation is now explicit:
 adl/tools/run_authoritative_coverage_lane.sh
 ```
 
-That runner performs:
+That runner performs one pass per event:
 
-- `always_on_authoritative`
-- `proof_heavy_authoritative`
+- `full_authoritative_all_features` on `main` and other full-evidence events
+- `bounded_policy_surface_pr` on policy-surface pull requests
 
-and then emits one merged coverage report. On `pr_policy_surface` pull
-requests, the proof-heavy phase is intentionally deferred and the workspace
-coverage threshold is enforced on push-to-main instead. Skills should treat
-that as bounded PR governance validation, not as full release evidence.
+and then emits one coverage summary report. Skills should treat
+`bounded_policy_surface_pr` as bounded PR governance validation, not as full
+release evidence.
 
 ### Failed-Closed Classification
 

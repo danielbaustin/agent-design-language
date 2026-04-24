@@ -6,17 +6,18 @@ ADL_DIR="$ROOT_DIR/adl"
 PRINT_PLAN=false
 AUTHORITY="push_main"
 EVENT_NAME="push"
+MODE="full_authoritative_all_features"
 
 usage() {
   cat <<'USAGE'
 Usage:
   adl/tools/run_authoritative_coverage_lane.sh [--print-plan] [--authority <authority>] [--event-name <name>]
 
-Run the authoritative coverage lane in two bounded phases:
-1. always-on authoritative coverage for the base workspace
-2. proof-heavy authoritative slices that need opt-in features or dominate lane variance
+Run the authoritative coverage lane in one bounded pass per event:
+- full authoritative all-features coverage on push/main and other full-evidence events
+- bounded workspace coverage on policy-surface pull requests
 
-The two cargo-llvm-cov nextest runs accumulate into one final coverage report.
+The run always emits one final coverage summary report.
 USAGE
 }
 
@@ -46,92 +47,44 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-build_expression() {
-  python3 - "$@" <<'PY'
-import sys
-
-tokens = [token for token in sys.argv[1:] if token]
-if not tokens:
-    raise SystemExit(1)
-print(" or ".join(f"test({token})" for token in tokens))
-PY
-}
-
-readonly PROOF_FEATURES="slow-proof-tests,slow-finish-tests"
-readonly -a PROOF_TOKENS=(
-  "access_control"
-  "challenge"
-  "observatory_flagship"
-  "private_state_observatory"
-  "runtime_v2_v0903_demo_stdout_uses_repo_relative_output_paths"
-  "runtime_v2_csm_invalid_action_rejection"
-  "runtime_v2_csm_observatory"
-  "runtime_v2_csm_quarantine"
-  "runtime_v2_csm_recovery_eligibility"
-  "runtime_v2_csm_hardening"
-  "runtime_v2_csm_wake_continuity"
-  "runtime_v2_private_state_sanctuary"
-  "runtime_v2_private_state_envelope"
-  "runtime_v2_private_state_write_to_root_materializes_authority_and_projection"
-  "runtime_v2_private_state_anti_equivocation_write_to_root_materializes_fixtures"
-  "runtime_v2_private_state_witness_write_to_root_materializes_fixtures"
-  "runtime_v2_private_state_sealing_write_to_root_materializes_fixtures"
-  "runtime_v2_feature_proof_coverage_runs_runtime_v2_cli_regression_matrix"
-  "real_pr_finish_creates_draft_pr_and_commits_branch_changes"
-  "real_pr_finish_rejects_main_and_reports_no_pr_when_only_local_bundle_sync_changes_exist"
-  "real_pr_finish_rejects_staged_gitignore_changes_without_allow_flag"
-)
-
-proof_expr="$(build_expression "${PROOF_TOKENS[@]}")"
-base_expr="not (${proof_expr})"
-run_proof_phase=true
-
 if [ "$EVENT_NAME" = "pull_request" ] && [ "$AUTHORITY" = "pr_policy_surface" ]; then
-  run_proof_phase=false
+  MODE="bounded_policy_surface_pr"
 fi
 
 if [ "$PRINT_PLAN" = true ]; then
   printf 'authority=%s\n' "$AUTHORITY"
   printf 'event_name=%s\n' "$EVENT_NAME"
-  printf 'phase=always_on_authoritative\n'
-  printf 'base_filter=%s\n' "$base_expr"
-  if [ "$run_proof_phase" = true ]; then
-    printf 'proof_phase=enabled\n'
-    printf 'phase=proof_heavy_authoritative\n'
+  printf 'mode=%s\n' "$MODE"
+  if [ "$MODE" = "full_authoritative_all_features" ]; then
+    printf 'features=all_features\n'
+    printf 'workspace=full\n'
   else
-    printf 'proof_phase=deferred_for_pr_policy_surface\n'
+    printf 'features=default\n'
+    printf 'workspace=bounded_policy_surface\n'
   fi
-  printf 'proof_features=%s\n' "$PROOF_FEATURES"
-  printf 'proof_filter=%s\n' "$proof_expr"
   exit 0
 fi
 
 cd "$ADL_DIR"
 
-echo "Authoritative coverage phase: always_on_authoritative"
-echo "Base filter: $base_expr"
-cargo llvm-cov nextest \
-  --workspace \
-  --status-level all \
-  --final-status-level slow \
-  --no-report \
-  -E "$base_expr"
-
-if [ "$run_proof_phase" = true ]; then
-  echo "Authoritative coverage phase: proof_heavy_authoritative"
-  echo "Proof features: $PROOF_FEATURES"
-  echo "Proof filter: $proof_expr"
+if [ "$MODE" = "full_authoritative_all_features" ]; then
+  echo "Authoritative coverage mode: full_authoritative_all_features"
+  echo "Features: all_features"
   cargo llvm-cov nextest \
     --workspace \
-    --features "$PROOF_FEATURES" \
+    --all-features \
     --status-level all \
     --final-status-level slow \
-    --no-report \
-    -E "$proof_expr"
+    --no-report
 else
-  echo "Authoritative coverage phase: proof_heavy_authoritative (deferred)"
-  echo "Proof-heavy authoritative coverage is deferred for pull-request policy-surface validation."
-  echo "Push-to-main remains the full authoritative proof lane."
+  echo "Authoritative coverage mode: bounded_policy_surface_pr"
+  echo "Features: default"
+  echo "Full authoritative all-features proof remains reserved for push-to-main."
+  cargo llvm-cov nextest \
+    --workspace \
+    --status-level all \
+    --final-status-level slow \
+    --no-report
 fi
 
 cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
