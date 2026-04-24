@@ -28,6 +28,7 @@ jobs:
             --event-name "${{ github.event_name }}" \
             --base "${{ github.event.pull_request.base.sha }}" \
             --head "${{ github.event.pull_request.head.sha }}" \
+            --ref "${{ github.ref }}" \
             --github-output "$GITHUB_OUTPUT"
         working-directory: .
 
@@ -110,12 +111,16 @@ jobs:
         run: |
           echo "Skipping standalone cargo test because this event requires the full cargo-llvm-cov lane."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+          echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
+          echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
 
       - name: Rust validation skipped by path policy
         if: steps.path-policy.outputs.rust_required != 'true'
         run: |
           echo "Rust fmt/clippy/test skipped because changed paths do not touch Rust runtime or test surfaces."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+          echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
+          echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
         working-directory: .
 
       - name: demo smoke (S-01..S-05)
@@ -149,6 +154,7 @@ jobs:
             --event-name "${{ github.event_name }}" \
             --base "${{ github.event.pull_request.base.sha }}" \
             --head "${{ github.event.pull_request.head.sha }}" \
+            --ref "${{ github.ref }}" \
             --github-output "$GITHUB_OUTPUT"
         working-directory: .
 
@@ -236,6 +242,8 @@ jobs:
           echo "This check ran the changed-source coverage-impact preflight instead."
           echo "Full coverage remains required on push-to-main, nightly coverage ratchet, and fail-closed classification."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+          echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
+          echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
         working-directory: .
 
       - name: Enforce coverage policy gates (workspace + per-file)
@@ -281,6 +289,8 @@ jobs:
           echo "Coverage skipped because changed paths do not touch Rust runtime or test surfaces."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
           echo "This keeps the adl-coverage check stable while avoiding full cargo-llvm-cov for docs/planning/tools-only PRs."
+          echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
+          echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
         working-directory: .
 
       - name: Upload coverage to Codecov
