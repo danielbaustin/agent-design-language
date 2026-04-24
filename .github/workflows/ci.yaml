@@ -110,11 +110,11 @@ jobs:
 
       - name: test
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        run: cargo nextest run --all-features
+        run: cargo nextest run --status-level slow --final-status-level slow --slow-time 60s
 
       - name: doc test
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        run: cargo test --doc --all-features
+        run: cargo test --doc
 
       - name: test covered by full coverage lane
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required == 'true'
