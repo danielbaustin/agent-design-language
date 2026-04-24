@@ -285,13 +285,9 @@ fn unresolved_milestone_pr_wave_filters_by_version_queue_and_excluded_branch() {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
     }
 
-    let prs = unresolved_milestone_pr_wave(
-        "danielbaustin/agent-design-language",
-        "v0.90.4",
-        "wp",
-        None,
-    )
-    .expect("runtime wave");
+    let prs =
+        unresolved_milestone_pr_wave("danielbaustin/agent-design-language", "v0.90.4", "wp", None)
+            .expect("runtime wave");
 
     unsafe {
         env::set_var("PATH", old_path);
