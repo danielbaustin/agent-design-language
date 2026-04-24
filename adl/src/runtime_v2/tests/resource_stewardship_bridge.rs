@@ -1,5 +1,4 @@
 use super::*;
-use std::path::PathBuf;
 
 #[test]
 fn runtime_v2_resource_stewardship_bridge_is_stable() {
@@ -20,6 +19,7 @@ fn runtime_v2_resource_stewardship_bridge_is_stable() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_resource_stewardship_bridge_matches_golden_fixture() {
     let artifact =
         runtime_v2_resource_stewardship_bridge().expect("resource stewardship bridge artifact");
@@ -158,6 +158,7 @@ fn runtime_v2_resource_stewardship_bridge_rejects_policy_and_authority_drift() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_resource_stewardship_bridge_write_to_root_materializes_fixture() {
     let artifact =
         runtime_v2_resource_stewardship_bridge().expect("resource stewardship bridge artifact");

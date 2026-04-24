@@ -623,6 +623,7 @@ fn runtime_v2_external_counterparty_helper_validators_cover_remaining_variants()
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_external_counterparty_model_matches_golden_fixture() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -660,6 +661,7 @@ fn runtime_v2_external_counterparty_negative_cases_match_golden_fixture() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_external_counterparty_write_to_root_materializes_fixtures() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
