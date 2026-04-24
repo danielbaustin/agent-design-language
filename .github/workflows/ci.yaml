@@ -44,6 +44,29 @@ jobs:
         with:
           workspaces: |
             adl -> target
+          cache-directories: |
+            ~/.cache/sccache
+
+      - name: Install sccache
+        if: steps.path-policy.outputs.rust_required == 'true'
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        with:
+          tool: sccache
+
+      - name: Configure Rust acceleration
+        if: steps.path-policy.outputs.rust_required == 'true'
+        run: |
+          mkdir -p "$HOME/.cache/sccache"
+          echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"
+          echo "SCCACHE_CACHE_SIZE=2G" >> "$GITHUB_ENV"
+          echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
+          if command -v ld.lld >/dev/null 2>&1; then
+            echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"
+            echo "RUST_LINK_ACCEL=lld" >> "$GITHUB_ENV"
+          else
+            echo "RUST_LINK_ACCEL=system-default" >> "$GITHUB_ENV"
+          fi
+          sccache --zero-stats || true
 
       - name: tooling sanity (bash -n)
         run: bash -n adl/tools/*.sh
@@ -105,6 +128,9 @@ jobs:
       - name: ci runtime contract check
         run: bash tools/test_ci_runtime_contracts.sh
 
+      - name: ci cache/linker contract check
+        run: bash tools/test_ci_cache_linker_contracts.sh
+
       - name: Install cargo-nextest
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
@@ -147,6 +173,12 @@ jobs:
           echo "Demo smoke skipped because changed paths do not touch runtime or demo surfaces."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
         working-directory: .
+
+      - name: Rust acceleration stats
+        if: always() && steps.path-policy.outputs.rust_required == 'true'
+        run: |
+          echo "Linker mode: ${RUST_LINK_ACCEL:-unknown}"
+          sccache --show-stats || true
 
   adl-coverage:
     runs-on: ubuntu-latest
@@ -201,10 +233,33 @@ jobs:
         with:
           workspaces: |
             adl -> target
+          cache-directories: |
+            ~/.cache/sccache
 
       - name: Install cargo-llvm-cov
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
+
+      - name: Install sccache for coverage
+        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        with:
+          tool: sccache
+
+      - name: Configure Rust acceleration for coverage
+        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
+        run: |
+          mkdir -p "$HOME/.cache/sccache"
+          echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"
+          echo "SCCACHE_CACHE_SIZE=2G" >> "$GITHUB_ENV"
+          echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
+          if command -v ld.lld >/dev/null 2>&1; then
+            echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"
+            echo "RUST_LINK_ACCEL=lld" >> "$GITHUB_ENV"
+          else
+            echo "RUST_LINK_ACCEL=system-default" >> "$GITHUB_ENV"
+          fi
+          sccache --zero-stats || true
 
       - name: Install cargo-nextest for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
@@ -318,6 +373,12 @@ jobs:
       - name: Upload coverage to Codecov
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.path-policy.outputs.full_coverage_required == 'true'
         uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
+
+      - name: Rust acceleration stats for coverage
+        if: always() && (steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true')
+        run: |
+          echo "Linker mode: ${RUST_LINK_ACCEL:-unknown}"
+          sccache --show-stats || true
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: adl/lcov.info
