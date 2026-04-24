@@ -128,8 +128,10 @@ Ordinary runtime/source PRs:
 Coverage-policy-sensitive PRs:
 
 - run the same base validation as other relevant PRs
-- run full coverage because the PR changes the rules or enforcement surfaces
-  that govern coverage itself
+- run the bounded authoritative base coverage summary because the PR changes
+  the rules or enforcement surfaces that govern coverage itself
+- defer the proof-heavy authoritative slice and workspace-threshold gate to the
+  push-to-main run so policy PRs do not pay the full proof tax twice
 
 Pushes to `main` and nightly coverage:
 
@@ -205,6 +207,19 @@ classified separately from always-on contract checks:
 - authoritative `cargo llvm-cov --workspace --all-features` lanes still execute
   that tranche
 
+The authoritative lane is now one-pass per event:
+
+- `full_authoritative_all_features`
+  runs one full `cargo llvm-cov nextest --workspace --all-features` pass on
+  `main` and other full-evidence events
+- `bounded_policy_surface_pr`
+  runs one bounded `cargo llvm-cov nextest --workspace` pass on policy-surface
+  pull requests, followed by the changed-source coverage gate
+
+This replaces the earlier two-phase authoritative split. The goal is to keep
+PR governance validation reviewable without paying for one near-full coverage
+pass plus a second proof-heavy pass in the same job.
+
 That keeps ordinary PR validation fast without pretending those proof surfaces
 no longer matter.
 
@@ -216,6 +231,16 @@ When `full_coverage_required=true`, full coverage generates:
 
 from the coverage data produced by one coverage run.
 
+In implementation terms, the workflow now routes this through:
+
+```bash
+adl/tools/run_authoritative_coverage_lane.sh
+```
+
+That runner is the machine-readable contract for which events get the full
+all-features authoritative pass and which policy-surface PRs get the bounded
+one-pass lane.
+
 ## Session Guidance
 
 When working a normal runtime PR, expect Rust fmt, clippy, normal tests, demo
@@ -223,8 +248,9 @@ smoke when required, and coverage-impact preflight. Do not cite the PR-fast
 coverage lane as full release coverage evidence.
 
 When working a PR that changes coverage governance or coverage tooling, expect
-the full coverage lane. That slower path is intentional because the PR is
-changing how coverage trust is enforced.
+the bounded one-pass authoritative coverage lane on the PR and the full
+all-features authoritative lane on push-to-main. That keeps governance changes
+reviewable without making every policy PR pay the same full coverage cost twice.
 
 When working a `main`, nightly, release, or fail-closed event, expect full
 coverage. In those lanes, standalone `cargo test` may be skipped because
@@ -239,7 +265,8 @@ not run.
 
 ## Non-Claims
 
-This policy does not lower coverage thresholds or weaken release governance. It
-keeps ordinary bounded Rust PRs on the fast truthful path while preserving full
-coverage for `main`, nightly, release, fail-closed events, and PRs that modify
-coverage governance itself.
+This policy does not lower push-to-main coverage thresholds or weaken release
+governance. It keeps ordinary bounded Rust PRs on the fast truthful path,
+keeps policy-surface PRs on a bounded authoritative base lane, and preserves
+the full proof-heavy/workspace-threshold coverage gate for `main`, nightly,
+release, and other full-evidence events.

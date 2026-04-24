@@ -78,8 +78,8 @@ or assembling release evidence:
   preflight before publication. On normal PRs, this is the fast
   `adl-coverage` lane rather than a second full instrumented test run.
 - PRs that change explicit coverage-governance surfaces should run full
-  coverage even when they are otherwise tooling-focused. The trigger is
-  policy-surface based, not size- or novelty-based.
+  authoritative coverage behavior even when they are otherwise tooling-focused.
+  The trigger is policy-surface based, not size- or novelty-based.
 - When `full_coverage_required=true`, the JSON summary and changed-source
   impact gate should execute before LCOV artifact generation. A coverage
   failure should fail at the first reviewable policy gate instead of spending
@@ -218,8 +218,23 @@ Truthful interpretation:
 
 For a policy-surface PR, `rust_required` and `demo_smoke_required` may stay
 false if the changed paths are tooling-only, but `full_coverage_required=true`
-still means the authoritative full coverage lane must run because the PR is
+still means the authoritative base coverage lane must run because the PR is
 modifying coverage governance itself.
+
+The authoritative coverage implementation is now explicit:
+
+```bash
+adl/tools/run_authoritative_coverage_lane.sh
+```
+
+That runner performs one pass per event:
+
+- `full_authoritative_all_features` on `main` and other full-evidence events
+- `bounded_policy_surface_pr` on policy-surface pull requests
+
+and then emits one coverage summary report. Skills should treat
+`bounded_policy_surface_pr` as bounded PR governance validation, not as full
+release evidence.
 
 ### Failed-Closed Classification
 

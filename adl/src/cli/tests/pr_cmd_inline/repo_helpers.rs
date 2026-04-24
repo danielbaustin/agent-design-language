@@ -299,6 +299,33 @@ fn unresolved_milestone_pr_wave_filters_by_version_queue_and_excluded_branch() {
 }
 
 #[test]
+fn unresolved_milestone_pr_wave_rejects_invalid_json() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-unresolved-wave-invalid-json");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    write_executable(
+        &bin_dir.join("gh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'pr list' ]; then\n  printf 'not-json\\n'\n  exit 0\nfi\nexit 1\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let err =
+        unresolved_milestone_pr_wave("danielbaustin/agent-design-language", "v0.90.4", "wp", None)
+            .expect_err("invalid json should be rejected");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert!(err.to_string().contains("failed to parse gh pr list json"));
+}
+
+#[test]
 fn format_open_pr_wave_marks_draft_and_unknown_queue() {
     let mut pr = OpenPullRequest {
         number: 101,
