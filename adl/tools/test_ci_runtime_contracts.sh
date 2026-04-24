@@ -4,12 +4,13 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 WORKFLOW="$ROOT_DIR/.github/workflows/ci.yaml"
 
-python3 - "$WORKFLOW" <<'PY'
+python3 - "$WORKFLOW" "$ROOT_DIR/adl/tools/test_run_authoritative_coverage_lane.sh" <<'PY'
 import pathlib
 import re
 import sys
 
 workflow = pathlib.Path(sys.argv[1]).read_text()
+runner_test = pathlib.Path(sys.argv[2])
 
 def step_run(name: str) -> str:
     pattern = re.compile(
@@ -54,17 +55,19 @@ if "tool: nextest" not in workflow:
     )
 
 expected_coverage = (
-    "cargo llvm-cov nextest --workspace --all-features --status-level all "
-    "--final-status-level slow --no-report"
+    'bash adl/tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" '
+    '--event-name "${{ github.event_name }}"'
 )
-if expected_coverage not in workflow:
+coverage_step = step_run("Coverage run and summary (json)")
+if coverage_step != expected_coverage:
     raise SystemExit(
-        "authoritative coverage lane must run through cargo llvm-cov nextest with slow markers"
+        "authoritative coverage lane must route through the bounded runner; "
+        f"found: {coverage_step}"
     )
 
-if "cargo llvm-cov report --json --summary-only --output-path coverage-summary.json" not in workflow:
+if not runner_test.exists():
     raise SystemExit(
-        "coverage lanes must emit coverage-summary.json via cargo llvm-cov report after nextest execution"
+        "authoritative coverage runner contract test must exist"
     )
 
 print("PASS test_ci_runtime_contracts")

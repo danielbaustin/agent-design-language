@@ -167,8 +167,25 @@ EOF
   assert_has "$policy_surface_output" "demo_smoke_required=false"
   assert_has "$policy_surface_output" "release_version_only=false"
   assert_has "$policy_surface_output" "coverage_lane=authoritative_full"
-  assert_has "$policy_surface_output" "coverage_authority=pr_policy_surface"
-  assert_has "$policy_surface_output" "reason=coverage_policy_surface_change_runs_full_coverage"
+  assert_has "$policy_surface_output" "coverage_authority=pr_policy_surface_tooling_only"
+  assert_has "$policy_surface_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
+
+  git checkout -q -b runtime-policy-surface-change "$base_sha"
+  mkdir -p adl/tools
+  printf '#!/usr/bin/env bash\nprintf policy\n' > adl/tools/enforce_coverage_gates.sh
+  printf 'pub fn runtime_with_policy() -> bool { true }\n' >> adl/src/lib.rs
+  git add adl/tools/enforce_coverage_gates.sh adl/src/lib.rs
+  git commit -q -m runtime-policy-surface-change
+  runtime_policy_surface_head="$(git rev-parse HEAD)"
+
+  runtime_policy_surface_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$runtime_policy_surface_head" --ref "refs/pull/1/merge")"
+  assert_has "$runtime_policy_surface_output" "rust_required=true"
+  assert_has "$runtime_policy_surface_output" "coverage_required=true"
+  assert_has "$runtime_policy_surface_output" "full_coverage_required=true"
+  assert_has "$runtime_policy_surface_output" "demo_smoke_required=true"
+  assert_has "$runtime_policy_surface_output" "coverage_lane=authoritative_full"
+  assert_has "$runtime_policy_surface_output" "coverage_authority=pr_policy_surface_runtime_mixed"
+  assert_has "$runtime_policy_surface_output" "reason=coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
 
   main_output="$("$POLICY" --event-name push --ref "refs/heads/main")"
   assert_has "$main_output" "rust_required=true"

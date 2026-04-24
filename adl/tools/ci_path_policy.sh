@@ -103,10 +103,12 @@ mark_pr_fast_coverage() {
 }
 
 mark_policy_surface_full_coverage() {
+  local authority="$1"
+  local reason_value="$2"
   full_coverage_required=true
   coverage_lane="authoritative_full"
-  coverage_authority="pr_policy_surface"
-  reason="coverage_policy_surface_change_runs_full_coverage"
+  coverage_authority="$authority"
+  reason="$reason_value"
 }
 
 normalize_changed_rows() {
@@ -356,7 +358,15 @@ EOF
     while IFS=$'\t' read -r _status path; do
       [ -n "$path" ] || continue
       if is_full_coverage_policy_surface "$path"; then
-        mark_policy_surface_full_coverage
+        if [ "$coverage_required" = true ] || [ "$demo_smoke_required" = true ]; then
+          mark_policy_surface_full_coverage \
+            "pr_policy_surface_runtime_mixed" \
+            "coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
+        else
+          mark_policy_surface_full_coverage \
+            "pr_policy_surface_tooling_only" \
+            "coverage_policy_surface_change_runs_bounded_authoritative_coverage"
+        fi
         continue
       fi
     done <<EOF

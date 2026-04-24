@@ -306,9 +306,7 @@ jobs:
 
       - name: Coverage run and summary (json)
         if: steps.path-policy.outputs.full_coverage_required == 'true'
-        run: |
-          cargo llvm-cov nextest --workspace --all-features --status-level all --final-status-level slow --no-report
-          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+        run: bash adl/tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"
 
       - name: PR fast coverage summary (json)
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'
