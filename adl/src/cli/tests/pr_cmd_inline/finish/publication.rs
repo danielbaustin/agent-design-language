@@ -1,4 +1,8 @@
 use super::*;
+use crate::cli::pr_cmd::github::{
+    current_pr_url, ensure_or_repair_pr_closing_linkage, ensure_pr_closing_linkage,
+    pr_has_closing_linkage,
+};
 
 #[test]
 fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
