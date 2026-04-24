@@ -113,7 +113,7 @@ jobs:
 
       - name: test
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        run: cargo nextest run --status-level all --final-status-level slow --slow-time 60s
+        run: cargo nextest run --status-level all --final-status-level slow --slow-timeout 60s
 
       - name: doc test
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'

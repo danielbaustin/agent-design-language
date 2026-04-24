@@ -1,0 +1,61 @@
+{
+  "schema_version": "runtime_v2.contract_lifecycle_negative_cases.v1",
+  "demo_id": "D5",
+  "wp_id": "WP-07",
+  "artifact_path": "runtime_v2/contract_market/contract_lifecycle_negative_cases.json",
+  "state_machine_ref": "runtime_v2/contract_market/contract_lifecycle_state_machine.json",
+  "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json",
+  "required_negative_cases": [
+    {
+      "case_id": "completed-to-executing-reopen",
+      "prior_terminal_state": "completed",
+      "attempted_transition_id": "completed_to_executing",
+      "from_state": "completed",
+      "to_state": "executing",
+      "actor_role": "execution_operator",
+      "provided_authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#executing_to_completed",
+      "provided_artifact_refs": [
+        "runtime_v2/contract_market/execution_trace.json",
+        "runtime_v2/contract_market/deliverable_manifest.json",
+        "runtime_v2/contract_market/completion_record.json"
+      ],
+      "expected_error_fragment": "transition not allowed from completed to executing",
+      "resulting_state": "completed",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/contract_lifecycle_negative_cases.json#completed-to-executing-reopen"
+    },
+    {
+      "case_id": "failed-to-executing-reopen",
+      "prior_terminal_state": "failed",
+      "attempted_transition_id": "failed_to_executing",
+      "from_state": "failed",
+      "to_state": "executing",
+      "actor_role": "execution_operator",
+      "provided_authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#executing_to_failed",
+      "provided_artifact_refs": [
+        "runtime_v2/contract_market/execution_trace.json",
+        "runtime_v2/contract_market/failure_record.json"
+      ],
+      "expected_error_fragment": "transition not allowed from failed to executing",
+      "resulting_state": "failed",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/contract_lifecycle_negative_cases.json#failed-to-executing-reopen"
+    },
+    {
+      "case_id": "cancelled-to-open-reopen",
+      "prior_terminal_state": "cancelled",
+      "attempted_transition_id": "cancelled_to_open",
+      "from_state": "cancelled",
+      "to_state": "open",
+      "actor_role": "contract_issuer",
+      "provided_authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#accepted_to_cancelled",
+      "provided_artifact_refs": [
+        "runtime_v2/contract_market/acceptance_record.json",
+        "runtime_v2/contract_market/cancellation_record.json"
+      ],
+      "expected_error_fragment": "transition not allowed from cancelled to open",
+      "resulting_state": "cancelled",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/contract_lifecycle_negative_cases.json#cancelled-to-open-reopen"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_contract_lifecycle -- --nocapture",
+  "claim_boundary": "These negative cases prove completed, failed, and cancelled contracts stay terminal in v0.90.4; they do not imply workflow rollback, hidden reopening, or post-hoc authority invention."
+}
