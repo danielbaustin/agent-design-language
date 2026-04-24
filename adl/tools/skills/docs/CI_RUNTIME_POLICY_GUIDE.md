@@ -163,7 +163,8 @@ Observed:
 
 Truthful interpretation:
 
-- Rust fmt, clippy, tests, demo smoke where applicable, and the fast
+- Rust fmt, clippy, broad non-coverage tests via `cargo nextest run`, doc
+  tests via `cargo test --doc`, demo smoke where applicable, and the fast
   coverage-impact preflight are expected.
 - Full instrumented coverage is intentionally deferred for the PR to avoid
   running all tests twice.

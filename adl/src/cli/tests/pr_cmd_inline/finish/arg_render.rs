@@ -51,7 +51,8 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
                 "bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk".to_string(),
                 "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
                 "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings".to_string(),
-                "cargo test --manifest-path adl/Cargo.toml".to_string(),
+                "cargo nextest run --manifest-path adl/Cargo.toml --all-features (fallback: cargo test --manifest-path adl/Cargo.toml --all-features when cargo-nextest is unavailable locally)".to_string(),
+                "cargo test --manifest-path adl/Cargo.toml --doc --all-features".to_string(),
             ],
         })),
         "fp-123",
@@ -79,7 +80,8 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
                 "bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk".to_string(),
                 "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
                 "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings".to_string(),
-                "cargo test --manifest-path adl/Cargo.toml".to_string(),
+                "cargo nextest run --manifest-path adl/Cargo.toml --all-features (fallback: cargo test --manifest-path adl/Cargo.toml --all-features when cargo-nextest is unavailable locally)".to_string(),
+                "cargo test --manifest-path adl/Cargo.toml --doc --all-features".to_string(),
             ],
         })),
         "fp-123",
@@ -122,6 +124,7 @@ fn render_pr_body_defaults_docs_only_validation_when_needed() {
     assert!(body.contains("bash adl/tools/check_no_tracked_adl_issue_record_residue.sh"));
     assert!(body.contains("git diff --check"));
     assert!(!body.contains("cargo clippy --all-targets -- -D warnings"));
+    assert!(!body.contains("cargo nextest run"));
     assert!(!body.contains("cargo test"));
 }
 
@@ -344,7 +347,59 @@ fn finish_helper_paths_cover_ahead_count_and_validation_modes() {
     let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
     assert!(cargo_calls.contains("fmt --manifest-path"));
     assert!(cargo_calls.contains("clippy --manifest-path"));
+    assert!(cargo_calls.contains("nextest --version"));
+    assert!(cargo_calls.contains("nextest run --manifest-path"));
     assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("--doc --all-features"));
+}
+
+#[test]
+fn finish_full_rust_validation_falls_back_when_nextest_is_unavailable() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-nextest-fallback");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    let cargo_path = bin_dir.join("cargo");
+    write_executable(
+        &cargo_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"${{1:-}}\" = 'nextest' ] && [ \"${{2:-}}\" = '--version' ]; then\n  exit 1\nfi\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    run_finish_validation_rust(
+        &repo,
+        &select_finish_validation_plan("adl,docs").expect("full-rust plan"),
+    )
+    .expect("full validation");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("nextest --version"));
+    assert!(!cargo_calls.contains("nextest run --manifest-path"));
+    assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("--all-features"));
+    assert!(cargo_calls.contains("--doc --all-features"));
 }
 
 #[test]

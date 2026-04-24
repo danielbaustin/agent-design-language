@@ -397,6 +397,10 @@ fn finish_validation_guard(repo_root: &Path) -> Result<()> {
     run_status("bash", &[path_str(&tracked_residue_guard)?])
 }
 
+fn cargo_nextest_available() -> bool {
+    run_status_allow_failure("cargo", &["nextest", "--version"]).unwrap_or(false)
+}
+
 pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishValidationPlan> {
     let paths = paths_csv
         .split(',')
@@ -456,7 +460,8 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             "bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk".to_string(),
             "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
             "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings".to_string(),
-            "cargo test --manifest-path adl/Cargo.toml".to_string(),
+            "cargo nextest run --manifest-path adl/Cargo.toml --all-features (fallback: cargo test --manifest-path adl/Cargo.toml --all-features when cargo-nextest is unavailable locally)".to_string(),
+            "cargo test --manifest-path adl/Cargo.toml --doc --all-features".to_string(),
         ],
     })
 }
@@ -612,7 +617,41 @@ pub(super) fn run_finish_validation_rust(
             "warnings",
         ],
     )?;
-    run_status("cargo", &["test", "--manifest-path", path_str(&manifest)?])?;
+    if cargo_nextest_available() {
+        run_status(
+            "cargo",
+            &[
+                "nextest",
+                "run",
+                "--manifest-path",
+                path_str(&manifest)?,
+                "--all-features",
+            ],
+        )?;
+    } else {
+        eprintln!(
+            "• cargo-nextest not available locally; falling back to cargo test for full local Rust validation."
+        );
+        run_status(
+            "cargo",
+            &[
+                "test",
+                "--manifest-path",
+                path_str(&manifest)?,
+                "--all-features",
+            ],
+        )?;
+    }
+    run_status(
+        "cargo",
+        &[
+            "test",
+            "--manifest-path",
+            path_str(&manifest)?,
+            "--doc",
+            "--all-features",
+        ],
+    )?;
     Ok(())
 }
 
