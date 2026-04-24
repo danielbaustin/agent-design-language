@@ -1,8 +1,10 @@
 use super::*;
 
+#[cfg(feature = "slow-proof-tests")]
 mod access_control;
 mod bid_schema;
 mod boot_admission;
+#[cfg(feature = "slow-proof-tests")]
 mod challenge;
 mod citizen_lifecycle;
 mod common;
@@ -19,6 +21,7 @@ mod invariant_violation;
 mod kernel_loop;
 mod manifold;
 mod observatory;
+#[cfg(feature = "slow-proof-tests")]
 mod observatory_flagship;
 mod operator_control;
 mod private_state;

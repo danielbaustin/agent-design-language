@@ -18,6 +18,9 @@ path = "src/main.rs"
 name = "adl-remote"
 path = "src/bin/adl_remote.rs"
 
+[features]
+slow-proof-tests = []
+
 [dependencies]
 # CLI
 clap = { version = "4.5", features = ["derive"] }

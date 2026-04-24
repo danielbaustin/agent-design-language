@@ -141,6 +141,7 @@ fn csm_observatory_cli_fails_safely_on_missing_packet() {
 }
 
 #[test]
+#[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_v0903_demo_stdout_uses_repo_relative_output_paths() {
     let unique = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
