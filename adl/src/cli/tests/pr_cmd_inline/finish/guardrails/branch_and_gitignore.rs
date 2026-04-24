@@ -85,6 +85,7 @@ fn real_pr_finish_rejects_primary_checkout_when_issue_branch_is_bound_elsewhere(
     assert!(err.contains(&worktree.display().to_string()));
 }
 
+#[cfg(feature = "slow-finish-tests")]
 #[test]
 fn real_pr_finish_rejects_main_and_reports_no_pr_when_only_local_bundle_sync_changes_exist() {
     let _guard = env_lock();
@@ -274,6 +275,7 @@ fn real_pr_finish_rejects_main_and_reports_no_pr_when_only_local_bundle_sync_cha
     assert!(bundle_sync_err.to_string().contains("Nothing to PR."));
 }
 
+#[cfg(feature = "slow-finish-tests")]
 #[test]
 fn real_pr_finish_rejects_staged_gitignore_changes_without_allow_flag() {
     let _guard = env_lock();
