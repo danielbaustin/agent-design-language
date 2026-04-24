@@ -113,14 +113,16 @@ is_broad_rust_surface() {
     adl/src/main.rs|\
     adl/src/adl.rs|\
     adl/src/schema.rs|\
-    adl/src/providers.rs|\
-    adl/src/cli.rs|\
     adl/src/demo.rs|\
-    adl/src/runtime_v2/mod.rs|\
-    adl/src/runtime_v2/validators.rs|\
-    adl/src/tests.rs|\
     adl/tests/*)
       return 0
+      ;;
+    adl/src/runtime_v2/mod.rs|\
+    adl/src/runtime_v2/tests.rs|\
+    adl/src/runtime_v2/validators.rs|\
+    adl/src/cli/mod.rs|\
+    adl/src/cli/tests.rs)
+      return 1
       ;;
     */mod.rs)
       return 0
@@ -132,6 +134,14 @@ is_broad_rust_surface() {
 filter_token_for_path() {
   local path="$1"
   case "$path" in
+    adl/src/runtime_v2/mod.rs|adl/src/runtime_v2/tests.rs|adl/src/runtime_v2/validators.rs)
+      printf 'runtime_v2'
+      return 0
+      ;;
+    adl/src/runtime_v2/governed_episode/*.rs)
+      printf 'governed_episode'
+      return 0
+      ;;
     adl/src/runtime_v2/*/*.rs|adl/src/runtime_v2/*/*/*.rs|adl/src/runtime_v2/*/*/*/*.rs)
       return 1
       ;;
@@ -141,6 +151,26 @@ filter_token_for_path() {
       ;;
     adl/src/runtime_v2/[^/]*.rs)
       basename "$path" .rs
+      return 0
+      ;;
+    adl/src/cli/mod.rs|adl/src/cli/tests.rs)
+      printf 'cli'
+      return 0
+      ;;
+    adl/src/cli/identity_cmd/*.rs|adl/src/cli/identity_cmd/tests.rs|adl/src/cli/identity_cmd/tests/*.rs)
+      printf 'identity_cmd'
+      return 0
+      ;;
+    adl/src/cli/tests/internal_commands/*.rs)
+      printf 'internal_commands'
+      return 0
+      ;;
+    adl/src/cli/tests/artifact_builders/*.rs|adl/src/cli/tests/artifact_builders/*/*.rs)
+      printf 'artifact_builders'
+      return 0
+      ;;
+    adl/src/cli/tests/run_state/*.rs)
+      printf 'run_state'
       return 0
       ;;
     adl/src/cli/tests/pr_cmd_inline/*/*|adl/src/cli/tests/pr_cmd_inline/*)

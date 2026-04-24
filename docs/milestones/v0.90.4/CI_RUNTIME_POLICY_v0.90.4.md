@@ -156,7 +156,13 @@ This runner is intentionally conservative:
 Focused fast-lane cases currently include bounded slices such as:
 
 - individual `runtime_v2` module files
+- bounded `runtime_v2` family surfaces such as `runtime_v2/mod.rs`,
+  `runtime_v2/tests.rs`, `runtime_v2/validators.rs`, and
+  `runtime_v2/governed_episode/*`
 - bounded CLI command files
+- bounded CLI family surfaces such as `cli/mod.rs`, `cli/tests.rs`,
+  `cli/identity_cmd/*`, `cli/tests/internal_commands/*`,
+  `cli/tests/artifact_builders/*`, and `cli/tests/run_state/*`
 - publication-control-plane docs that intentionally route to the `pr_cmd`
   validation slice
 
