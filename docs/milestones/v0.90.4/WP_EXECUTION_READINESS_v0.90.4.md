@@ -312,6 +312,9 @@ Required outputs:
 
 - Findings-first internal review packet covering code, docs, demos, tests,
   issue truth, release boundaries, and proof claims.
+- Documentation review artifact from `repo-review-docs` when any review scope
+  touches documentation, review templates, release text, or claim-bearing
+  project surfaces.
 - Findings register and proof register.
 
 Required validation:
@@ -319,6 +322,8 @@ Required validation:
 - Review packet has exact scope, exact files, requested review questions, and
   severity rubric.
 - Accepted findings are routed to WP-18 or explicitly dispositioned.
+- If documentation review was skipped, the skipped state and reason are explicit in
+  the internal review artifact, include an owner, and carry a concrete follow-up.
 
 ## WP-17: External Review
 

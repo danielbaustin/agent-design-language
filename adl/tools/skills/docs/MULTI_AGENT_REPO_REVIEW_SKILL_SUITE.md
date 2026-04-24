@@ -53,8 +53,13 @@ Recommended order:
 17. `review-quality-evaluator`
 
 The first four roles may run independently when the operator wants parallel
-review. The synthesis role should run after at least one specialist artifact is
-available, and ideally after all required roles have reported.
+review. The suite treats documentation review as required for all internal and
+external review packets unless a lane is explicitly skipped.
+
+For this suite, the synthesis role must run after at least one specialist
+artifact is available, and ideally after all required roles have reported.
+When a required role is intentionally skipped, record an explicit skip reason,
+the owner of that skip decision, and a follow-up path in the synthesis record.
 The diagram planner should normally run after packet building and after the
 specialist artifacts that may propose diagram work. It emits bounded task briefs
 for `diagram-author`; it is not itself a review or diagram-authoring lane.
@@ -183,7 +188,8 @@ Each specialist artifact should use this shape:
 - `repo-review-code` must include `reviewed_surfaces` and code-risk residuals.
 - `repo-review-security` must include `trust_boundaries` and asset/attacker notes when relevant.
 - `repo-review-tests` must include a `missing_proof_map` when coverage gaps are found.
-- `repo-review-docs` must include `commands_or_claims_checked` when docs make runnable claims.
+- `repo-review-docs` must include `documentation_objects` for the bounded scope,
+  and `commands_or_claims_checked` when docs make runnable claims.
 - `repo-architecture-review` must include an `architecture_map`, candidate diagram tasks, candidate ADRs, and candidate fitness functions.
 - `repo-dependency-review` must include a `dependency_surface_map`, candidate supply-chain findings, candidate dependency test gaps, and candidate license review notes.
 
@@ -217,6 +223,10 @@ Each specialist artifact should use this shape:
 - Docs: present | missing | skipped
 - Architecture: present | missing | skipped
 - Dependency: present | missing | skipped
+
+Use `docs: skipped` only when the lane was intentionally skipped, with a
+named rationale and a follow-up owner captured in `Residual Risk` or
+`Recommended Follow-up Issues`.
 
 ## Dedupe Notes
 - <what was merged and why>
