@@ -390,6 +390,57 @@ fn runtime_v2_external_counterparty_negative_cases_and_attempts_reject_remaining
     };
     assert!(artifacts_validation_err(duplicate_case_artifacts).contains("contains duplicate case"));
 
+    let mut missing_required_case = artifacts.negative_cases.clone();
+    missing_required_case.required_negative_cases.pop();
+    missing_required_case.required_negative_cases.push(RuntimeV2ExternalCounterpartyNegativeCase {
+        case_id: "duplicate-tool-denial-shape".to_string(),
+        counterparty_id: artifacts.model.records[0].counterparty_id.clone(),
+        attempted_action: "request_tool_review".to_string(),
+        attempted_assurance_class: artifacts.model.records[0].assurance_class.clone(),
+        sponsor_ref: artifacts.model.records[0].sponsor_ref.clone(),
+        gateway_ref: artifacts.model.records[0].gateway_ref.clone(),
+        revocation_status: artifacts.model.records[0].revocation_status.clone(),
+        private_state_access_requested: false,
+        requested_tool_capability: Some("trace_projection".to_string()),
+        human_action_mode: "trace_mediated_external_participation".to_string(),
+        expected_error_fragment:
+            "tool-mediated action is outside allowed scope for external counterparties".to_string(),
+        reviewable_evidence_ref:
+            "runtime_v2/contract_market/selection_negative_cases.json#unsupported-override-authority-shortcut"
+                .to_string(),
+    });
+    let missing_required_case_artifacts = RuntimeV2ExternalCounterpartyArtifacts {
+        model: artifacts.model.clone(),
+        negative_cases: missing_required_case,
+    };
+    assert!(artifacts_validation_err(missing_required_case_artifacts)
+        .contains("must preserve the reviewed denial coverage membership"));
+
+    let mut substituted_case = artifacts.negative_cases.clone();
+    substituted_case.required_negative_cases[2] = RuntimeV2ExternalCounterpartyNegativeCase {
+        case_id: "substituted-tool-denial-shape".to_string(),
+        counterparty_id: artifacts.model.records[0].counterparty_id.clone(),
+        attempted_action: "request_tool_review".to_string(),
+        attempted_assurance_class: artifacts.model.records[0].assurance_class.clone(),
+        sponsor_ref: artifacts.model.records[0].sponsor_ref.clone(),
+        gateway_ref: artifacts.model.records[0].gateway_ref.clone(),
+        revocation_status: artifacts.model.records[0].revocation_status.clone(),
+        private_state_access_requested: false,
+        requested_tool_capability: Some("trace_projection".to_string()),
+        human_action_mode: "trace_mediated_external_participation".to_string(),
+        expected_error_fragment:
+            "tool-mediated action is outside allowed scope for external counterparties".to_string(),
+        reviewable_evidence_ref:
+            "runtime_v2/contract_market/selection_negative_cases.json#unsupported-override-authority-shortcut"
+                .to_string(),
+    };
+    let substituted_case_artifacts = RuntimeV2ExternalCounterpartyArtifacts {
+        model: artifacts.model.clone(),
+        negative_cases: substituted_case,
+    };
+    assert!(artifacts_validation_err(substituted_case_artifacts)
+        .contains("must preserve the reviewed denial coverage membership"));
+
     let mut bad_case_artifacts = artifacts.clone();
     bad_case_artifacts.negative_cases.required_negative_cases[0].human_action_mode =
         "unsupported_mode".to_string();
