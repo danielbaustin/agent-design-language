@@ -425,6 +425,12 @@ fn finish_validation_plan_supports_focused_local_ci_gated_mode() {
         .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
     assert!(plan
         .commands
+        .contains(&"bash adl/tools/test_run_local_authoritative_coverage_gate.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_local_authoritative_coverage_gate.sh".to_string()));
+    assert!(plan
+        .commands
         .contains(&"bash adl/tools/test_ci_path_policy.sh".to_string()));
     assert!(!plan
         .commands
@@ -452,6 +458,14 @@ fn finish_helper_paths_run_focused_local_ci_gated_validation() {
     write_executable(
         &repo.join("adl/tools/test_check_coverage_impact.sh"),
         "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' coverage >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_run_local_authoritative_coverage_gate.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' authoritative-coverage-contract >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/run_local_authoritative_coverage_gate.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' authoritative-coverage >> \"$FOCUSED_LOG\"\n",
     );
     write_executable(
         &repo.join("adl/tools/test_ci_path_policy.sh"),
@@ -500,6 +514,8 @@ fn finish_helper_paths_run_focused_local_ci_gated_validation() {
 
     let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
     assert!(focused_calls.contains("coverage"));
+    assert!(focused_calls.contains("authoritative-coverage-contract"));
+    assert!(focused_calls.contains("authoritative-coverage"));
     assert!(focused_calls.contains("path-policy"));
 }
 
