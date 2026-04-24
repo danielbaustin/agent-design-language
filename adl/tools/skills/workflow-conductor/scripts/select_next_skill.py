@@ -70,7 +70,13 @@ def evaluate(payload):
         skill_name = "none"
         continuation = "ask_operator"
         escalation_reason = "healthy_pr_waiting"
-    elif pr_state in ("merged", "intentionally_closed", "closed_no_pr", "superseded", "duplicate"):
+    elif pr_state == "merged":
+        detected_phase = "merged_needs_closeout"
+        selected_phase = "closeout"
+        skill_name = "pr-closeout"
+        continuation = "continue"
+        escalation_reason = "none"
+    elif pr_state in ("intentionally_closed", "closed_no_pr", "superseded", "duplicate"):
         detected_phase = "closed_out"
         selected_phase = "closeout"
         skill_name = "pr-closeout"

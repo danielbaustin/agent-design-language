@@ -11,11 +11,14 @@ DRY_RUN=0
 usage() {
   cat <<'EOF'
 Usage:
-  closeout_completed_issue_wave.sh --version <v0.88> [--repo <owner/name>] [--issues <csv>] [--report <path>] [--dry-run]
+  closeout_completed_issue_wave.sh --version <v0.88> [--repo <owner/name>] [--issues <csv>] [--report <path>] [--dry-run|--report-only]
 
 Scans the local `.adl/<version>/tasks/` bundle set, finds GitHub issues that are
 already CLOSED/COMPLETED for that version, and runs `adl/tools/pr.sh closeout`
 for the matching local issue bundles.
+
+Use `--dry-run` or `--report-only` to emit a merged-needs-closeout candidate
+report without mutating local issue bundles.
 EOF
 }
 
@@ -59,18 +62,30 @@ write_report() {
   local path="$1"
   local mode="$2"
   local eligible_count="$3"
-  local normalized_count="$4"
-  local failed_count="$5"
-  local normalized_list="$6"
-  local failed_list="$7"
+  local candidate_count="$4"
+  local candidate_list="$5"
+  local normalized_count="$6"
+  local failed_count="$7"
+  local normalized_list="$8"
+  local failed_list="$9"
   mkdir -p "$(dirname "$path")"
   {
     echo "version: $VERSION"
     echo "repo: $REPO"
     echo "mode: $mode"
     echo "eligible_issues: $eligible_count"
+    echo "candidate_issues: $candidate_count"
     echo "normalized_issues: $normalized_count"
     echo "failed_issues: $failed_count"
+    echo "candidate_reason: closed/completed on GitHub and local closeout may still be pending"
+    echo "candidates:"
+    if [[ -n "$candidate_list" ]]; then
+      while IFS= read -r line; do
+        [[ -n "$line" ]] && echo "  - $line"
+      done <<< "$candidate_list"
+    else
+      echo "  - none"
+    fi
     echo "normalized:"
     if [[ -n "$normalized_list" ]]; then
       while IFS= read -r line; do
@@ -97,6 +112,7 @@ while [[ $# -gt 0 ]]; do
     --issues) ISSUES_CSV="${2:-}"; shift 2 ;;
     --report) REPORT_PATH="${2:-}"; shift 2 ;;
     --dry-run) DRY_RUN=1; shift ;;
+    --report-only) DRY_RUN=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) die "unknown arg: $1" ;;
   esac
@@ -116,8 +132,8 @@ fi
 
 local_issues="$(collect_local_issues "$VERSION")"
 if [[ -z "$local_issues" ]]; then
-  write_report "$REPORT_PATH" "$([[ "$DRY_RUN" == "1" ]] && echo dry_run || echo apply)" 0 0 0 "" ""
-  echo "PASS closeout_completed_issue_wave version=$VERSION eligible=0"
+  write_report "$REPORT_PATH" "$([[ "$DRY_RUN" == "1" ]] && echo dry_run || echo apply)" 0 0 "" 0 0 "" ""
+  echo "PASS closeout_completed_issue_wave version=$VERSION candidates=0 normalized=0"
   exit 0
 fi
 
@@ -147,11 +163,12 @@ PY
 )"
 
 if [[ -z "$eligible_issues" ]]; then
-  write_report "$REPORT_PATH" "$([[ "$DRY_RUN" == "1" ]] && echo dry_run || echo apply)" 0 0 0 "" ""
-  echo "PASS closeout_completed_issue_wave version=$VERSION eligible=0"
+  write_report "$REPORT_PATH" "$([[ "$DRY_RUN" == "1" ]] && echo dry_run || echo apply)" 0 0 "" 0 0 "" ""
+  echo "PASS closeout_completed_issue_wave version=$VERSION candidates=0 normalized=0"
   exit 0
 fi
 
+candidate_list=""
 normalized_list=""
 failed_list=""
 normalized_count=0
@@ -161,9 +178,8 @@ trap 'rm -f "$report_log"' EXIT
 
 while IFS= read -r issue; do
   [[ -n "$issue" ]] || continue
+  candidate_list+="${issue}"$'\n'
   if [[ "$DRY_RUN" == "1" ]]; then
-    normalized_list+="${issue}"$'\n'
-    normalized_count=$((normalized_count + 1))
     continue
   fi
   if bash "$ROOT/adl/tools/pr.sh" closeout "$issue" --version "$VERSION" --no-fetch-issue >>"$report_log" 2>&1; then
@@ -180,6 +196,8 @@ write_report \
   "$REPORT_PATH" \
   "$([[ "$DRY_RUN" == "1" ]] && echo dry_run || echo apply)" \
   "$(printf '%s\n' "$eligible_issues" | sed '/^$/d' | wc -l | tr -d ' ')" \
+  "$(printf '%s\n' "$candidate_list" | sed '/^$/d' | wc -l | tr -d ' ')" \
+  "$candidate_list" \
   "$normalized_count" \
   "$failed_count" \
   "$normalized_list" \
@@ -189,4 +207,4 @@ if [[ "$failed_count" != "0" ]]; then
   die "failed to normalize $failed_count closed issue bundle(s); see $REPORT_PATH"
 fi
 
-echo "PASS closeout_completed_issue_wave version=$VERSION normalized=$normalized_count"
+echo "PASS closeout_completed_issue_wave version=$VERSION candidates=$(printf '%s\n' "$candidate_list" | sed '/^$/d' | wc -l | tr -d ' ') normalized=$normalized_count"

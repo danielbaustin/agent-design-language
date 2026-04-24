@@ -439,6 +439,8 @@ Good patterns:
   truthfulness
 - after merge or intentional closure is confirmed, `pr-closeout` finalizes the
   cards and prunes the worktree
+- a merged PR should be treated as `merged_needs_closeout`, not as already
+  closed out; the next lifecycle phase is still `pr-closeout`
 - if the issue closed without a PR because it was superseded, duplicated, or
   intentionally resolved without code publication, `pr-closeout` records that
   disposition and the relevant follow-on links before pruning
@@ -1084,6 +1086,7 @@ Use `pr-closeout` when:
 - the PR outcome is already known
 - publication and review are over
 - the remaining work is local workflow truth and cleanup
+- a PR has merged and the issue now needs truthful local finalization
 
 Do not use it for:
 
@@ -1139,10 +1142,25 @@ policy:
 
 - after `pr-janitor` confirms the PR has merged and there are no remaining
   blocker states
+- when workflow-conductor reports `merged_needs_closeout` and routes directly to
+  `pr-closeout`
 - after an intentionally closed PR where the issue still needs final truthful
   local cleanup
 - when the cards are complete but the worktree and root bundle still need final
   reconciliation
+
+### Merged-Issue Hygiene
+
+For milestone-level visibility, use:
+
+```bash
+bash adl/tools/closeout_completed_issue_wave.sh --version <milestone> --report-only --report <path>
+```
+
+This produces a local report of closed/completed issues whose local closeout may
+still be pending. Use it as the merged-needs-closeout visibility surface before
+or during release tail work, then run the same helper without `--report-only`
+to apply bounded closeout catch-up when appropriate.
 
 ### Caller Notes
 

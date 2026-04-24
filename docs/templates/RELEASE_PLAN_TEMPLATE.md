@@ -20,6 +20,7 @@
   - any active milestone-specific gap/risk tracker
 - [ ] Gap analysis refreshed or explicitly confirmed still current
 - [ ] Closed-issue closeout pass refreshed so issue/card truth is not stale
+  - capture a merged-needs-closeout visibility report before apply mode when useful
 - [ ] Release-truth docs aligned:
   - `README.md`
   - `CHANGELOG.md`

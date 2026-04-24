@@ -48,9 +48,18 @@ EOF
 chmod +x "$BIN/gh"
 
 REPORT="$TMP/report.md"
+DRY_REPORT="$TMP/dry-report.md"
+(cd "$REPO" && PATH="$BIN:$PATH" bash ./adl/tools/closeout_completed_issue_wave.sh --version v0.88 --repo danielbaustin/agent-design-language --report "$DRY_REPORT" --report-only)
+
+grep -Fq 'candidate_issues: 1' "$DRY_REPORT"
+grep -Fq 'normalized_issues: 0' "$DRY_REPORT"
+grep -Fq 'candidates:' "$DRY_REPORT"
+grep -Fq '  - 100' "$DRY_REPORT"
+
 (cd "$REPO" && PATH="$BIN:$PATH" bash ./adl/tools/closeout_completed_issue_wave.sh --version v0.88 --repo danielbaustin/agent-design-language --report "$REPORT")
 
 grep -Fq 'closeout 100 --version v0.88 --no-fetch-issue' "$CLOSEOUT_LOG"
+grep -Fq 'candidate_issues: 1' "$REPORT"
 grep -Fq 'normalized_issues: 1' "$REPORT"
 grep -Fq 'failed_issues: 0' "$REPORT"
 
