@@ -255,7 +255,7 @@ fn unresolved_milestone_pr_wave_filters_by_version_queue_and_excluded_branch() {
     fs::create_dir_all(&bin_dir).expect("bin dir");
     write_executable(
         &bin_dir.join("gh"),
-        "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'pr list' ]; then\n  cat <<'EOF'\n[\n  {\n    \"number\": 101,\n    \"title\": \"[v0.90.4][WP-15] Quality gate, docs, and review convergence\",\n    \"url\": \"https://example.invalid/pr/101\",\n    \"headRefName\": \"codex/2435-v0-90-4-wp-15-quality-gate-docs-and-review-convergence\",\n    \"baseRefName\": \"main\",\n    \"isDraft\": true\n  },\n  {\n    \"number\": 102,\n    \"title\": \"[v0.90.4][WP-02] Economics inheritance and authority audit\",\n    \"url\": \"https://example.invalid/pr/102\",\n    \"headRefName\": \"codex/2421-v0-90-4-wp-02-economics-inheritance-and-authority-audit\",\n    \"baseRefName\": \"main\",\n    \"isDraft\": false\n  },\n  {\n    \"number\": 103,\n    \"title\": \"[v0.90.3][WP-15] Older milestone tail\",\n    \"url\": \"https://example.invalid/pr/103\",\n    \"headRefName\": \"codex/old-tail\",\n    \"baseRefName\": \"main\",\n    \"isDraft\": false\n  },\n  {\n    \"number\": 104,\n    \"title\": \"[v0.90.4][WP-15] Wrong base\",\n    \"url\": \"https://example.invalid/pr/104\",\n    \"headRefName\": \"codex/wrong-base\",\n    \"baseRefName\": \"release\",\n    \"isDraft\": false\n  }\n]\nEOF\n  exit 0\nfi\nexit 1\n",
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'pr list' ]; then\n  cat <<'EOF'\n[\n  {\n    \"number\": 101,\n    \"title\": \"[v0.90.4][docs] Quality gate, docs, and review convergence\",\n    \"url\": \"https://example.invalid/pr/101\",\n    \"headRefName\": \"codex/2435-v0-90-4-wp-15-quality-gate-docs-and-review-convergence\",\n    \"baseRefName\": \"main\",\n    \"isDraft\": true\n  },\n  {\n    \"number\": 102,\n    \"title\": \"[v0.90.4][WP-02] Runtime economics inheritance and authority audit\",\n    \"url\": \"https://example.invalid/pr/102\",\n    \"headRefName\": \"codex/2421-v0-90-4-wp-02-economics-inheritance-and-authority-audit\",\n    \"baseRefName\": \"main\",\n    \"isDraft\": false\n  },\n  {\n    \"number\": 103,\n    \"title\": \"[v0.90.3][WP-15] Older milestone tail\",\n    \"url\": \"https://example.invalid/pr/103\",\n    \"headRefName\": \"codex/old-tail\",\n    \"baseRefName\": \"main\",\n    \"isDraft\": false\n  },\n  {\n    \"number\": 104,\n    \"title\": \"[v0.90.4][WP-15] Wrong base\",\n    \"url\": \"https://example.invalid/pr/104\",\n    \"headRefName\": \"codex/wrong-base\",\n    \"baseRefName\": \"release\",\n    \"isDraft\": false\n  }\n]\nEOF\n  exit 0\nfi\nexit 1\n",
     );
 
     let old_path = env::var("PATH").unwrap_or_default();
@@ -288,7 +288,7 @@ fn unresolved_milestone_pr_wave_filters_by_version_queue_and_excluded_branch() {
     let prs = unresolved_milestone_pr_wave(
         "danielbaustin/agent-design-language",
         "v0.90.4",
-        "runtime",
+        "wp",
         None,
     )
     .expect("runtime wave");
@@ -299,7 +299,7 @@ fn unresolved_milestone_pr_wave_filters_by_version_queue_and_excluded_branch() {
 
     assert_eq!(prs.len(), 1);
     assert_eq!(prs[0].number, 102);
-    assert_eq!(prs[0].queue.as_deref(), Some("runtime"));
+    assert_eq!(prs[0].queue.as_deref(), Some("wp"));
 }
 
 #[test]
