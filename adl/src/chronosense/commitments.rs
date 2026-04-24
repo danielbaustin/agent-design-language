@@ -1,3 +1,4 @@
+//! Chronosense commitment and deadline contract definitions.
 use serde::{Deserialize, Serialize};
 
 use super::COMMITMENT_DEADLINE_SCHEMA;

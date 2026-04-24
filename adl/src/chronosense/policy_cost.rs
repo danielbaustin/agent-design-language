@@ -1,3 +1,4 @@
+//! Chronosense cost policy and review-surface contracts.
 use serde::{Deserialize, Serialize};
 
 use super::{

@@ -1,5 +1,10 @@
+//! Provider profile presets and expansion helpers.
+//!
+//! This module maps profile names to deterministic provider defaults and expands
+//! ADL documents into explicit provider specs before execution.
 use super::*;
 
+/// Profile payload used by `provider_profile_registry`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct ProviderProfilePreset {
     pub(crate) kind: &'static str,
@@ -10,6 +15,7 @@ pub(crate) struct ProviderProfilePreset {
 const HTTP_PROFILE_PLACEHOLDER_ENDPOINT: &str = "https://api.example.invalid/v1/complete";
 const INVALID_ENDPOINT_HOST_MARKER: &str = "example.invalid";
 
+/// Validate that a profile-provided endpoint is usable and non-placeholder.
 pub(crate) fn validate_profile_endpoint(
     provider_id: &str,
     profile_name: &str,
@@ -49,6 +55,7 @@ pub(crate) fn is_allowed_ollama_endpoint(endpoint: &str) -> bool {
 
 pub(crate) const OPENAI_RESPONSES_ENDPOINT: &str = "https://api.openai.com/v1/responses";
 pub(crate) const ANTHROPIC_MESSAGES_ENDPOINT: &str = "https://api.anthropic.com/v1/messages";
+/// Canonical Anthropic API version used by the HTTP adapter.
 pub(crate) const ANTHROPIC_VERSION: &str = "2023-06-01";
 
 pub(crate) fn provider_profile_registry() -> BTreeMap<&'static str, ProviderProfilePreset> {
@@ -147,6 +154,7 @@ pub(crate) fn provider_profile_registry() -> BTreeMap<&'static str, ProviderProf
     m
 }
 
+/// Return available profile names for validation and command completions.
 pub fn provider_profile_names() -> Vec<String> {
     provider_profile_registry()
         .keys()
@@ -154,6 +162,10 @@ pub fn provider_profile_names() -> Vec<String> {
         .collect()
 }
 
+/// Expand provider profiles in an ADL document into explicit concrete specs.
+///
+/// This is a bounded transform: it expands profile-only providers while keeping
+/// explicit `kind`/`base_url`/`default_model` usage unchanged.
 pub fn expand_provider_profiles(doc: &adl::AdlDoc) -> Result<adl::AdlDoc> {
     let registry = provider_profile_registry();
     let available = provider_profile_names().join(", ");

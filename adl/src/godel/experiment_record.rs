@@ -1,3 +1,4 @@
+//! Gödel experiment record model and canonicalization helpers.
 use std::fs;
 use std::path::{Path, PathBuf};
 

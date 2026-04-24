@@ -1,3 +1,4 @@
+//! Mutation artifact contracts and canonical mutation records.
 use std::fs;
 use std::path::{Path, PathBuf};
 

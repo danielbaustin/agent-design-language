@@ -1,3 +1,4 @@
+//! Persistent storage helpers for long-lived agent state artifacts.
 use super::schema::OPERATOR_EVENT_SCHEMA;
 use super::types::{LeaseRecord, LoadedAgentSpec, StatusRecord, StopRecord};
 use anyhow::{Context, Result};

@@ -1,3 +1,7 @@
+//! Remote execution protocol and transport adapter.
+//!
+//! This module owns the request/response contract for remote step execution and
+//! the local client/server behavior behind `/v1/execute`.
 use std::collections::HashMap;
 use std::io::Read;
 use std::time::Duration;
@@ -21,6 +25,7 @@ mod signing_support;
 mod types;
 
 pub const PROTOCOL_VERSION: &str = "0.1";
+/// Maximum accepted request body size for `/v1/execute`.
 const MAX_REQUEST_BYTES: usize = 5 * 1024 * 1024;
 const REMOTE_REQUEST_SIGNATURE_SCHEMA_V1: &str = "remote_request_signature.v1";
 const REMOTE_REQUEST_SIGNATURE_ALG_ED25519: &str = "ed25519";

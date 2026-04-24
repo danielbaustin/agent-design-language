@@ -1,3 +1,4 @@
+//! Cross-workflow handoff artifacts and policy propagation contracts.
 use std::fs;
 use std::path::{Path, PathBuf};
 

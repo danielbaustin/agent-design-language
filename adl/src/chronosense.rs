@@ -1,3 +1,5 @@
+//! Chronosense contracts for temporal reasoning, continuity, and cognition-like
+//! runtime semantics.
 pub const IDENTITY_PROFILE_SCHEMA: &str = "identity_profile.v1";
 pub const TEMPORAL_CONTEXT_SCHEMA: &str = "temporal_context.v1";
 pub const CHRONOSENSE_FOUNDATION_SCHEMA: &str = "chronosense_foundation.v1";

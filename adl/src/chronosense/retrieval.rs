@@ -1,3 +1,4 @@
+//! Chronosense temporal retrieval contracts.
 use serde::{Deserialize, Serialize};
 
 use super::TEMPORAL_QUERY_RETRIEVAL_SCHEMA;

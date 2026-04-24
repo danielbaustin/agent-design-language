@@ -1,3 +1,4 @@
+//! Chronosense phi-integration and metric contracts.
 use serde::{Deserialize, Serialize};
 
 use super::PHI_INTEGRATION_METRICS_SCHEMA;

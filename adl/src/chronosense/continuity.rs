@@ -1,3 +1,4 @@
+//! Chronosense continuity and resumption semantics.
 use serde::{Deserialize, Serialize};
 
 use super::CONTINUITY_SEMANTICS_SCHEMA;

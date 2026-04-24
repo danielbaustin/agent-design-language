@@ -1,3 +1,7 @@
+//! Canonicalization and signing helpers for remote execute requests.
+//!
+//! These helpers centralize deterministic request encoding and optional signing
+//! from environment-provided private keys.
 use anyhow::{anyhow, Context, Result};
 use base64::Engine;
 use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};

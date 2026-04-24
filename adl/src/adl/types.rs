@@ -1,3 +1,7 @@
+//! ADL schema surface types.
+//!
+//! These public Rust structs and enums define the material contract for providers,
+//! task/workflow execution shapes, and policy wiring used by runtime and tooling.
 use anyhow::{anyhow, Result};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -194,6 +198,9 @@ pub struct RunSpec {
 }
 
 impl RunSpec {
+    /// Resolve the effective workflow from either `workflow_ref` or inline `workflow`.
+    ///
+    /// This helper enforces that only one workflow selector is used per run.
     pub fn resolve_workflow<'a>(&'a self, doc: &'a AdlDoc) -> Result<&'a WorkflowSpec> {
         if self.pattern_ref.is_some() {
             return Err(anyhow!(
@@ -215,6 +222,7 @@ impl RunSpec {
     }
 }
 
+/// Default run-level knobs applied when a workflow omits local settings.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct RunDefaults {
@@ -228,6 +236,7 @@ pub struct RunDefaults {
     pub max_concurrency: Option<usize>,
 }
 
+/// Root delegation policy for run-time permission checks.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct DelegationPolicySpec {
@@ -247,6 +256,7 @@ impl Default for DelegationPolicySpec {
     }
 }
 
+/// Rule entry for explicit allow/deny overrides.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct DelegationPolicyRuleSpec {
@@ -262,6 +272,7 @@ pub struct DelegationPolicyRuleSpec {
     pub require_approval: bool,
 }
 
+/// Supported kinds of action that can be delegated.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum DelegationActionKind {
@@ -284,6 +295,7 @@ impl DelegationActionKind {
     }
 }
 
+/// Delegation rule effect used by policy evaluators.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum DelegationRuleEffect {

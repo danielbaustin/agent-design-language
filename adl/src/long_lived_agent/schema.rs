@@ -1,3 +1,4 @@
+//! Schema version constants and defaults for the long-lived agent subsystem.
 pub(crate) const SPEC_SCHEMA: &str = "adl.long_lived_agent_spec.v1";
 pub(crate) const LEASE_SCHEMA: &str = "adl.long_lived_agent_lease.v1";
 pub(crate) const STATUS_SCHEMA: &str = "adl.long_lived_agent_status.v1";

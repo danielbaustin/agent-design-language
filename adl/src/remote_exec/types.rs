@@ -1,5 +1,8 @@
+//! Data contracts exchanged over the remote execution protocol.
+//!
+//! These serializable types are stable surfaces for API consumers and on-disk
+//! execution traces.
 use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use crate::adl;

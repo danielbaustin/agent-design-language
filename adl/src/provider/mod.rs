@@ -1,3 +1,7 @@
+//! Provider selection and execution entrypoints for ADL.
+//!
+//! This module selects among mock/HTTP/CLI provider implementations and exposes
+//! the minimal abstraction layer used by scheduler and remote-exec paths.
 use anyhow::{anyhow, Context, Result};
 use serde_json::Value;
 use std::collections::{BTreeMap, HashMap};
@@ -28,10 +32,13 @@ pub(crate) use profiles::{
     ANTHROPIC_VERSION, OPENAI_RESPONSES_ENDPOINT,
 };
 
-/// A minimal blocking provider interface for v0.1.
+/// A minimal blocking provider abstraction used by runtime execution paths.
 pub trait Provider: Send + Sync {
+    /// Run a single completion call and return output text.
     fn complete(&self, prompt: &str) -> Result<String>;
 
+    /// Optional streaming callback form; default implementation buffers internally
+    /// and emits progress via callback before returning the full output.
     fn complete_stream(&self, prompt: &str, on_chunk: &mut dyn FnMut(&str)) -> Result<String> {
         let out = self.complete(prompt)?;
         on_chunk(&out);
@@ -149,6 +156,7 @@ impl fmt::Display for ProviderError {
 
 impl StdError for ProviderError {}
 
+/// Validate and normalize an unsupported provider kind into a typed error.
 fn unknown_kind(kind: &str) -> anyhow::Error {
     ProviderError::unknown_kind(kind).into()
 }
@@ -204,7 +212,7 @@ pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
     None
 }
 
-/// Factory: build a provider implementation from ADL ProviderSpec.
+/// Construct a provider implementation from a `ProviderSpec`.
 ///
 /// Expected schema (based on your compiler errors):
 /// ProviderSpec { kind, base_url, config }
@@ -219,6 +227,7 @@ pub fn build_provider(
     )
 }
 
+/// Build a provider with explicit identity and optional model override.
 pub fn build_provider_for_id(
     provider_id: &str,
     spec: &adl::ProviderSpec,

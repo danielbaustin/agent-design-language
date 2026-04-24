@@ -1,3 +1,4 @@
+//! Evaluation contracts used by the Gödel experiment loop.
 use std::fs;
 use std::path::{Path, PathBuf};
 
