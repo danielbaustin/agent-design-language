@@ -4,11 +4,13 @@
 
 - [x] v0.90.5 planning package reviewed
 - [x] UTS/ACC scope confirmed as Governed Tools v1.0
+- [x] Decisions log reflects the accepted planning baseline for governed tools
 - [ ] Issue wave opened from reviewed YAML
 - [ ] WP issue numbers recorded in WBS and YAML
 - [ ] WP issue cards authored from WP_EXECUTION_READINESS_v0.90.5.md
 - [x] Package is ready to accept v0.90.4 handoff without reopening scope
   confusion about tool authority
+- [x] Demo/proof lane is explicit, including WP-18A before review convergence
 
 ## Implementation Gates
 

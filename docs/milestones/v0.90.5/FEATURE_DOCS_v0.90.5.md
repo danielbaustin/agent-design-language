@@ -15,9 +15,11 @@
 | Doc | Purpose | Execution WPs |
 | --- | --- | --- |
 | WBS_v0.90.5.md | execution plan for Governed Tools v1.0 | WP-01 |
-| DEMO_MATRIX_v0.90.5.md | planned proof matrix and non-proving boundaries | WP-01, WP-18, WP-19 |
+| DEMO_MATRIX_v0.90.5.md | proof matrix, flagship-demo proof boundary, and non-proving classifications | WP-01, WP-18A, WP-19 |
 | WP_ISSUE_WAVE_v0.90.5.yaml | future issue-wave source once reviewed | WP-01 |
 | WP_EXECUTION_READINESS_v0.90.5.md | card-authoring source for concrete WP outputs, validation, non-goals, and proof expectations | WP-01 |
+| RELEASE_PLAN_v0.90.5.md | release evidence, public-spec guardrails, and review-handoff expectations | WP-19, WP-20 |
+| DECISIONS_v0.90.5.md | accepted planning baseline for governed-tools scope and boundaries | WP-01, WP-19 |
 
 ## Context / Idea Docs
 

@@ -18,6 +18,7 @@ Freedom Gate mediation, and trace.
 - local/Gemma evaluation
 - flagship demo proof packet
 - feature proof coverage record
+- public-spec language audit and boundary note
 - internal and external review notes
 - accepted-finding disposition record
 - end-of-milestone report
@@ -38,3 +39,7 @@ evidence prove that model output cannot bypass governed execution.
 
 Do not move into release review until every feature claim has a proof,
 non-proving classification, or explicit deferral.
+
+Do not describe UTS as a public standard, stable external contract, or
+standalone execution authority unless separate evidence and review approve that
+claim.

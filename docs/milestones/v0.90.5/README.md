@@ -2,9 +2,9 @@
 
 ## Status
 
-Draft milestone package. v0.90.5 is planned as the Governed Tools v1.0
-milestone under planning issue #2350, with follow-up polish under #2402 and an
-additional readiness review during the v0.90.3 WP-19 handoff pass.
+Tracked planning package for Governed Tools v1.0. The milestone direction was
+established under planning issue #2350, tightened under #2402, and is being
+prepared for clean execution in the current docs-prep pass under #2443.
 
 The issue wave has not been opened. This package is the reviewable planning
 source for a later WP-01 issue-wave creation pass. It is intended to be the
@@ -111,8 +111,8 @@ v0.90.5 builds on:
 
 - v0.90.3 citizen-state, standing, access-control, redacted projection, and
   inhabited CSM demo work
-- v0.90.4 contract-market planning and authority lessons, if v0.90.4 remains
-  focused on citizen economics
+- v0.90.4 contract-market, authority, and citizen-economics lessons that bear
+  on governed delegation and action approval
 
 v0.90.5 should not own the v0.90.3 inhabited CSM demo. It should own the
 Governed Tools v1.0 flagship demo.
@@ -120,3 +120,7 @@ Governed Tools v1.0 flagship demo.
 It also should not inherit unresolved v0.90.4 ambiguity about whether contract
 tool needs are constraints or execution grants. WP-19 of v0.90.4 is expected to
 hand that boundary off cleanly.
+
+Current docs-review findings may still sharpen wording, rustdoc references, and
+public-spec boundaries, but they should not widen the core milestone scope away
+from governed tools.
