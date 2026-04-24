@@ -88,6 +88,9 @@ Ordinary runtime/source PRs:
 - run tooling sanity checks
 - run guardrails and contract checks
 - run Rust fmt, clippy, and full tests
+- keep heavyweight `runtime_v2` proof-materialization tests and the explicit
+  CLI proof-smoke stdout test behind the `slow-proof-tests` feature so the
+  default `cargo test` lane stays bounded
 - run demo smoke when required
 - run the changed-source coverage-impact preflight in the stable
   `adl-coverage` check
@@ -110,6 +113,16 @@ Pushes to `main` and nightly coverage:
 
 Coverage-impact preflight still runs for Rust/runtime PR changes. The workflow
 does not run a second full instrumented test universe for ordinary PRs.
+
+The heavyweight `runtime_v2` proof-materialization tranche is intentionally
+classified separately from always-on contract checks:
+
+- default `adl-ci` runs `cargo test` without `slow-proof-tests`
+- authoritative `cargo llvm-cov --workspace --all-features` lanes still execute
+  that tranche
+
+That keeps ordinary PR validation fast without pretending those proof surfaces
+no longer matter.
 
 When `full_coverage_required=true`, full coverage generates:
 

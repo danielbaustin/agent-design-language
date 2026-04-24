@@ -137,6 +137,7 @@ fn runtime_v2_private_state_validation_rejects_missing_required_boundaries() {
         .contains("non-authority"));
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_private_state_write_to_root_materializes_authority_and_projection() {
     let artifacts = runtime_v2_private_state_contract().expect("private-state artifacts");

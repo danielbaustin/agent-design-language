@@ -186,6 +186,7 @@ fn runtime_v2_private_state_anti_equivocation_rejects_non_conflicting_claims() {
         .contains("must contain conflicting signed successors"));
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_private_state_anti_equivocation_write_to_root_materializes_fixtures() {
     let artifacts =

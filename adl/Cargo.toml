@@ -19,6 +19,9 @@ name = "adl-remote"
 path = "src/bin/adl_remote.rs"
 
 [features]
+# Heavy runtime_v2 proof-materialization and CLI proof-smoke tests stay out of
+# ordinary `cargo test` but remain covered by authoritative `--all-features`
+# lanes such as cargo-llvm-cov.
 slow-proof-tests = []
 
 [dependencies]
