@@ -351,243 +351,265 @@ impl RuntimeV2TransitionAuthorityBasis {
         let contract_basis_ref =
             format!("{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#draft_to_open");
         let entries = vec![
-            basis_entry(
-                "draft_to_open",
-                "draft",
-                "open",
-                "contract_issuer",
-                "issuer_publication",
-                strings(&[&contract.artifact_path]),
-                strings(&[&contract.artifact_path]),
-                strings(&["issuer_signature", "authority_basis"]),
-                false,
-                "The issuer may publish the drafted contract into the open state after preserving the reviewed contract artifact.",
-            ),
-            basis_entry(
-                "open_to_bidding",
-                "open",
-                "bidding",
-                "contract_issuer",
-                "issuer_window_activation",
-                strings(&[
+            basis_entry(BasisEntrySpec {
+                transition_id: "draft_to_open",
+                from_state: "draft",
+                to_state: "open",
+                actor_role: "contract_issuer",
+                authority_kind: "issuer_publication",
+                backing_evidence_refs: strings(&[&contract.artifact_path]),
+                required_artifact_refs: strings(&[&contract.artifact_path]),
+                trace_requirements: strings(&["issuer_signature", "authority_basis"]),
+                tool_execution_allowed: false,
+                rationale: "The issuer may publish the drafted contract into the open state after preserving the reviewed contract artifact.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "open_to_bidding",
+                from_state: "open",
+                to_state: "bidding",
+                actor_role: "contract_issuer",
+                authority_kind: "issuer_window_activation",
+                backing_evidence_refs: strings(&[
                     &contract.artifact_path,
                     "runtime_v2/contract_market/bidding_window_notice.json",
                 ]),
-                strings(&["runtime_v2/contract_market/bidding_window_notice.json"]),
-                strings(&["issuer_signature", "trace_link"]),
-                false,
-                "The issuer may activate bidding only after publishing the bidding window notice and trace link.",
-            ),
-            basis_entry(
-                "bidding_to_awarded",
-                "bidding",
-                "awarded",
-                "selection_authority",
-                "selection_rationale",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/bidding_window_notice.json",
+                ]),
+                trace_requirements: strings(&["issuer_signature", "trace_link"]),
+                tool_execution_allowed: false,
+                rationale: "The issuer may activate bidding only after publishing the bidding window notice and trace link.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "bidding_to_awarded",
+                from_state: "bidding",
+                to_state: "awarded",
+                actor_role: "selection_authority",
+                authority_kind: "selection_rationale",
+                backing_evidence_refs: strings(&[
                     &contract.artifact_path,
                     &valid_bids[0].artifact_path,
                     &valid_bids[1].artifact_path,
                     "runtime_v2/contract_market/selection_rationale.json",
                 ]),
-                strings(&["runtime_v2/contract_market/selection_rationale.json"]),
-                strings(&["selection_trace_link", "authority_basis"]),
-                false,
-                "Award requires a traceable selection rationale over the bounded bid set; an observer cannot award by convenience alone.",
-            ),
-            basis_entry(
-                "awarded_to_accepted",
-                "awarded",
-                "accepted",
-                "awarded_counterparty",
-                "counterparty_acceptance",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/selection_rationale.json",
+                ]),
+                trace_requirements: strings(&["selection_trace_link", "authority_basis"]),
+                tool_execution_allowed: false,
+                rationale: "Award requires a traceable selection rationale over the bounded bid set; an observer cannot award by convenience alone.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "awarded_to_accepted",
+                from_state: "awarded",
+                to_state: "accepted",
+                actor_role: "awarded_counterparty",
+                authority_kind: "counterparty_acceptance",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/award_record.json",
                     &award_basis_ref,
                     "runtime_v2/contract_market/acceptance_record.json",
                 ]),
-                strings(&["runtime_v2/contract_market/acceptance_record.json"]),
-                strings(&["counterparty_signature", "trace_link"]),
-                false,
-                "Only the awarded counterparty may accept, and the acceptance record must bind back to the award basis.",
-            ),
-            basis_entry(
-                "accepted_to_executing",
-                "accepted",
-                "executing",
-                "execution_operator",
-                "execution_readiness_review",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/acceptance_record.json",
+                ]),
+                trace_requirements: strings(&["counterparty_signature", "trace_link"]),
+                tool_execution_allowed: false,
+                rationale: "Only the awarded counterparty may accept, and the acceptance record must bind back to the award basis.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "accepted_to_executing",
+                from_state: "accepted",
+                to_state: "executing",
+                actor_role: "execution_operator",
+                authority_kind: "execution_readiness_review",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/acceptance_record.json",
                     "runtime_v2/contract_market/execution_readiness.json",
                 ]),
-                strings(&["runtime_v2/contract_market/execution_readiness.json"]),
-                strings(&["operator_signature", "authority_basis"]),
-                false,
-                "Execution may begin only after acceptance and an explicit readiness review; tool requirements remain constraints, not authority.",
-            ),
-            basis_entry(
-                "executing_to_completed",
-                "executing",
-                "completed",
-                "execution_operator",
-                "deliverable_completion_review",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/execution_readiness.json",
+                ]),
+                trace_requirements: strings(&["operator_signature", "authority_basis"]),
+                tool_execution_allowed: false,
+                rationale: "Execution may begin only after acceptance and an explicit readiness review; tool requirements remain constraints, not authority.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "executing_to_completed",
+                from_state: "executing",
+                to_state: "completed",
+                actor_role: "execution_operator",
+                authority_kind: "deliverable_completion_review",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/execution_trace.json",
                     "runtime_v2/contract_market/deliverable_manifest.json",
                     "runtime_v2/contract_market/completion_record.json",
                 ]),
-                strings(&[
+                required_artifact_refs: strings(&[
                     "runtime_v2/contract_market/deliverable_manifest.json",
                     "runtime_v2/contract_market/completion_record.json",
                 ]),
-                strings(&["artifact_manifest", "completion_trace"]),
-                false,
-                "Completion must name the produced artifacts and evidence chain; a bare state flip is not valid completion authority.",
-            ),
-            basis_entry(
-                "executing_to_failed",
-                "executing",
-                "failed",
-                "execution_operator",
-                "failure_disposition",
-                strings(&[
+                trace_requirements: strings(&["artifact_manifest", "completion_trace"]),
+                tool_execution_allowed: false,
+                rationale: "Completion must name the produced artifacts and evidence chain; a bare state flip is not valid completion authority.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "executing_to_failed",
+                from_state: "executing",
+                to_state: "failed",
+                actor_role: "execution_operator",
+                authority_kind: "failure_disposition",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/execution_trace.json",
                     "runtime_v2/contract_market/failure_record.json",
                 ]),
-                strings(&["runtime_v2/contract_market/failure_record.json"]),
-                strings(&["failure_trace", "authority_basis"]),
-                false,
-                "Failure requires a bounded failure disposition that preserves reviewable evidence rather than silently abandoning the contract.",
-            ),
-            basis_entry(
-                "executing_to_disputed",
-                "executing",
-                "disputed",
-                "dispute_initiator",
-                "dispute_opening_record",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/failure_record.json",
+                ]),
+                trace_requirements: strings(&["failure_trace", "authority_basis"]),
+                tool_execution_allowed: false,
+                rationale: "Failure requires a bounded failure disposition that preserves reviewable evidence rather than silently abandoning the contract.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "executing_to_disputed",
+                from_state: "executing",
+                to_state: "disputed",
+                actor_role: "dispute_initiator",
+                authority_kind: "dispute_opening_record",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/execution_trace.json",
                     "runtime_v2/contract_market/dispute_opening_record.json",
                 ]),
-                strings(&["runtime_v2/contract_market/dispute_opening_record.json"]),
-                strings(&["challenge_trace", "authority_basis"]),
-                false,
-                "A dispute may be opened only with a reviewable dispute record that preserves the contested execution evidence.",
-            ),
-            basis_entry(
-                "open_to_cancelled",
-                "open",
-                "cancelled",
-                "contract_issuer",
-                "issuer_cancellation",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/dispute_opening_record.json",
+                ]),
+                trace_requirements: strings(&["challenge_trace", "authority_basis"]),
+                tool_execution_allowed: false,
+                rationale: "A dispute may be opened only with a reviewable dispute record that preserves the contested execution evidence.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "open_to_cancelled",
+                from_state: "open",
+                to_state: "cancelled",
+                actor_role: "contract_issuer",
+                authority_kind: "issuer_cancellation",
+                backing_evidence_refs: strings(&[
                     &contract_basis_ref,
                     "runtime_v2/contract_market/cancellation_record.json",
                 ]),
-                strings(&["runtime_v2/contract_market/cancellation_record.json"]),
-                strings(&["issuer_signature", "cancellation_trace"]),
-                false,
-                "Before bidding begins, the issuer may cancel with a traceable cancellation record.",
-            ),
-            basis_entry(
-                "bidding_to_cancelled",
-                "bidding",
-                "cancelled",
-                "contract_issuer",
-                "issuer_cancellation",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/cancellation_record.json",
+                ]),
+                trace_requirements: strings(&["issuer_signature", "cancellation_trace"]),
+                tool_execution_allowed: false,
+                rationale: "Before bidding begins, the issuer may cancel with a traceable cancellation record.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "bidding_to_cancelled",
+                from_state: "bidding",
+                to_state: "cancelled",
+                actor_role: "contract_issuer",
+                authority_kind: "issuer_cancellation",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/bidding_window_notice.json",
                     "runtime_v2/contract_market/cancellation_record.json",
                 ]),
-                strings(&["runtime_v2/contract_market/cancellation_record.json"]),
-                strings(&["issuer_signature", "cancellation_trace"]),
-                false,
-                "The issuer may cancel while bidding is open so long as the cancellation remains reviewable to bidders.",
-            ),
-            basis_entry(
-                "awarded_to_cancelled",
-                "awarded",
-                "cancelled",
-                "contract_issuer",
-                "issuer_cancellation",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/cancellation_record.json",
+                ]),
+                trace_requirements: strings(&["issuer_signature", "cancellation_trace"]),
+                tool_execution_allowed: false,
+                rationale: "The issuer may cancel while bidding is open so long as the cancellation remains reviewable to bidders.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "awarded_to_cancelled",
+                from_state: "awarded",
+                to_state: "cancelled",
+                actor_role: "contract_issuer",
+                authority_kind: "issuer_cancellation",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/award_record.json",
                     "runtime_v2/contract_market/cancellation_record.json",
                 ]),
-                strings(&["runtime_v2/contract_market/cancellation_record.json"]),
-                strings(&["issuer_signature", "counterparty_notice"]),
-                false,
-                "An awarded contract may still be cancelled by the issuer before acceptance if the cancellation is explicit and reviewable.",
-            ),
-            basis_entry(
-                "accepted_to_cancelled",
-                "accepted",
-                "cancelled",
-                "contract_issuer",
-                "issuer_cancellation",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/cancellation_record.json",
+                ]),
+                trace_requirements: strings(&["issuer_signature", "counterparty_notice"]),
+                tool_execution_allowed: false,
+                rationale: "An awarded contract may still be cancelled by the issuer before acceptance if the cancellation is explicit and reviewable.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "accepted_to_cancelled",
+                from_state: "accepted",
+                to_state: "cancelled",
+                actor_role: "contract_issuer",
+                authority_kind: "issuer_cancellation",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/acceptance_record.json",
                     "runtime_v2/contract_market/cancellation_record.json",
                 ]),
-                strings(&["runtime_v2/contract_market/cancellation_record.json"]),
-                strings(&["issuer_signature", "counterparty_notice"]),
-                false,
-                "Post-acceptance cancellation still requires a specific record naming why execution will not proceed.",
-            ),
-            basis_entry(
-                "executing_to_cancelled",
-                "executing",
-                "cancelled",
-                "resolution_authority",
-                "executing_cancellation_resolution",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/cancellation_record.json",
+                ]),
+                trace_requirements: strings(&["issuer_signature", "counterparty_notice"]),
+                tool_execution_allowed: false,
+                rationale: "Post-acceptance cancellation still requires a specific record naming why execution will not proceed.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "executing_to_cancelled",
+                from_state: "executing",
+                to_state: "cancelled",
+                actor_role: "resolution_authority",
+                authority_kind: "executing_cancellation_resolution",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/execution_trace.json",
                     "runtime_v2/contract_market/cancellation_record.json",
                 ]),
-                strings(&["runtime_v2/contract_market/cancellation_record.json"]),
-                strings(&["resolution_trace", "authority_basis"]),
-                false,
-                "Cancelling an executing contract is a resolution action and must be distinguished from ordinary issuer preference.",
-            ),
-            basis_entry(
-                "disputed_to_completed",
-                "disputed",
-                "completed",
-                "resolution_authority",
-                "dispute_resolution",
-                strings(&[
+                required_artifact_refs: strings(&[
+                    "runtime_v2/contract_market/cancellation_record.json",
+                ]),
+                trace_requirements: strings(&["resolution_trace", "authority_basis"]),
+                tool_execution_allowed: false,
+                rationale: "Cancelling an executing contract is a resolution action and must be distinguished from ordinary issuer preference.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "disputed_to_completed",
+                from_state: "disputed",
+                to_state: "completed",
+                actor_role: "resolution_authority",
+                authority_kind: "dispute_resolution",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/dispute_opening_record.json",
                     "runtime_v2/contract_market/dispute_resolution.json",
                     "runtime_v2/contract_market/completion_record.json",
                 ]),
-                strings(&[
+                required_artifact_refs: strings(&[
                     "runtime_v2/contract_market/dispute_resolution.json",
                     "runtime_v2/contract_market/completion_record.json",
                 ]),
-                strings(&["resolution_trace", "completion_trace"]),
-                false,
-                "A disputed contract may complete only through explicit resolution evidence tied back to the dispute.",
-            ),
-            basis_entry(
-                "disputed_to_failed",
-                "disputed",
-                "failed",
-                "resolution_authority",
-                "dispute_resolution",
-                strings(&[
+                trace_requirements: strings(&["resolution_trace", "completion_trace"]),
+                tool_execution_allowed: false,
+                rationale: "A disputed contract may complete only through explicit resolution evidence tied back to the dispute.",
+            }),
+            basis_entry(BasisEntrySpec {
+                transition_id: "disputed_to_failed",
+                from_state: "disputed",
+                to_state: "failed",
+                actor_role: "resolution_authority",
+                authority_kind: "dispute_resolution",
+                backing_evidence_refs: strings(&[
                     "runtime_v2/contract_market/dispute_opening_record.json",
                     "runtime_v2/contract_market/dispute_resolution.json",
                     "runtime_v2/contract_market/failure_record.json",
                 ]),
-                strings(&[
+                required_artifact_refs: strings(&[
                     "runtime_v2/contract_market/dispute_resolution.json",
                     "runtime_v2/contract_market/failure_record.json",
                 ]),
-                strings(&["resolution_trace", "failure_trace"]),
-                false,
-                "A disputed contract may fail only through explicit resolution evidence, not by silent timeout or missing artifacts.",
-            ),
+                trace_requirements: strings(&["resolution_trace", "failure_trace"]),
+                tool_execution_allowed: false,
+                rationale: "A disputed contract may fail only through explicit resolution evidence, not by silent timeout or missing artifacts.",
+            }),
         ];
         let basis = Self {
             schema_version: RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_SCHEMA.to_string(),
@@ -726,78 +748,98 @@ impl RuntimeV2TransitionAuthorityNegativeCases {
             matrix_ref: matrix.artifact_path.clone(),
             authority_basis_ref: authority_basis.artifact_path.clone(),
             required_negative_cases: vec![
-                negative_case(
-                    "unauthorized_award",
-                    "bidding_to_awarded",
-                    "bidding",
-                    "awarded",
-                    "unauthorized_reviewer",
-                    Some(format!("{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#bidding_to_awarded")),
-                    strings(&["runtime_v2/contract_market/selection_rationale.json"]),
-                    false,
-                    None,
-                    "actor role not authorized",
-                ),
-                negative_case(
-                    "wrong_actor_acceptance",
-                    "awarded_to_accepted",
-                    "awarded",
-                    "accepted",
-                    "issuer_delegate",
-                    Some(format!("{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#awarded_to_accepted")),
-                    strings(&["runtime_v2/contract_market/acceptance_record.json"]),
-                    false,
-                    None,
-                    "actor role not authorized",
-                ),
-                negative_case(
-                    "execution_before_acceptance",
-                    "awarded_to_executing",
-                    "awarded",
-                    "executing",
-                    "execution_operator",
-                    None,
-                    strings(&["runtime_v2/contract_market/execution_readiness.json"]),
-                    false,
-                    None,
-                    "transition not allowed",
-                ),
-                negative_case(
-                    "cancellation_after_completion",
-                    "completed_to_cancelled",
-                    "completed",
-                    "cancelled",
-                    "contract_issuer",
-                    None,
-                    strings(&["runtime_v2/contract_market/cancellation_record.json"]),
-                    false,
-                    None,
-                    "transition not allowed",
-                ),
-                negative_case(
-                    "completion_without_artifacts",
-                    "executing_to_completed",
-                    "executing",
-                    "completed",
-                    "execution_operator",
-                    Some(format!("{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#executing_to_completed")),
-                    strings(&["runtime_v2/contract_market/completion_record.json"]),
-                    false,
-                    None,
-                    "missing required artifacts",
-                ),
-                negative_case(
-                    "tool_execution_without_governed_authority",
-                    "accepted_to_executing",
-                    "accepted",
-                    "executing",
-                    "execution_operator",
-                    Some(format!("{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#accepted_to_executing")),
-                    strings(&["runtime_v2/contract_market/execution_readiness.json"]),
-                    true,
-                    None,
-                    "missing governed-tool authority",
-                ),
+                negative_case(NegativeCaseSpec {
+                    case_id: "unauthorized_award",
+                    attempted_transition_id: "bidding_to_awarded",
+                    from_state: "bidding",
+                    to_state: "awarded",
+                    actor_role: "unauthorized_reviewer",
+                    provided_authority_basis_ref: Some(format!(
+                        "{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#bidding_to_awarded"
+                    )),
+                    provided_artifact_refs: strings(&[
+                        "runtime_v2/contract_market/selection_rationale.json",
+                    ]),
+                    requested_tool_execution: false,
+                    governed_tool_authority_ref: None,
+                    expected_error_fragment: "actor role not authorized",
+                }),
+                negative_case(NegativeCaseSpec {
+                    case_id: "wrong_actor_acceptance",
+                    attempted_transition_id: "awarded_to_accepted",
+                    from_state: "awarded",
+                    to_state: "accepted",
+                    actor_role: "issuer_delegate",
+                    provided_authority_basis_ref: Some(format!(
+                        "{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#awarded_to_accepted"
+                    )),
+                    provided_artifact_refs: strings(&[
+                        "runtime_v2/contract_market/acceptance_record.json",
+                    ]),
+                    requested_tool_execution: false,
+                    governed_tool_authority_ref: None,
+                    expected_error_fragment: "actor role not authorized",
+                }),
+                negative_case(NegativeCaseSpec {
+                    case_id: "execution_before_acceptance",
+                    attempted_transition_id: "awarded_to_executing",
+                    from_state: "awarded",
+                    to_state: "executing",
+                    actor_role: "execution_operator",
+                    provided_authority_basis_ref: None,
+                    provided_artifact_refs: strings(&[
+                        "runtime_v2/contract_market/execution_readiness.json",
+                    ]),
+                    requested_tool_execution: false,
+                    governed_tool_authority_ref: None,
+                    expected_error_fragment: "transition not allowed",
+                }),
+                negative_case(NegativeCaseSpec {
+                    case_id: "cancellation_after_completion",
+                    attempted_transition_id: "completed_to_cancelled",
+                    from_state: "completed",
+                    to_state: "cancelled",
+                    actor_role: "contract_issuer",
+                    provided_authority_basis_ref: None,
+                    provided_artifact_refs: strings(&[
+                        "runtime_v2/contract_market/cancellation_record.json",
+                    ]),
+                    requested_tool_execution: false,
+                    governed_tool_authority_ref: None,
+                    expected_error_fragment: "transition not allowed",
+                }),
+                negative_case(NegativeCaseSpec {
+                    case_id: "completion_without_artifacts",
+                    attempted_transition_id: "executing_to_completed",
+                    from_state: "executing",
+                    to_state: "completed",
+                    actor_role: "execution_operator",
+                    provided_authority_basis_ref: Some(format!(
+                        "{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#executing_to_completed"
+                    )),
+                    provided_artifact_refs: strings(&[
+                        "runtime_v2/contract_market/completion_record.json",
+                    ]),
+                    requested_tool_execution: false,
+                    governed_tool_authority_ref: None,
+                    expected_error_fragment: "missing required artifacts",
+                }),
+                negative_case(NegativeCaseSpec {
+                    case_id: "tool_execution_without_governed_authority",
+                    attempted_transition_id: "accepted_to_executing",
+                    from_state: "accepted",
+                    to_state: "executing",
+                    actor_role: "execution_operator",
+                    provided_authority_basis_ref: Some(format!(
+                        "{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#accepted_to_executing"
+                    )),
+                    provided_artifact_refs: strings(&[
+                        "runtime_v2/contract_market/execution_readiness.json",
+                    ]),
+                    requested_tool_execution: true,
+                    governed_tool_authority_ref: None,
+                    expected_error_fragment: "missing governed-tool authority",
+                }),
             ],
             validation_command:
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_transition_authority -- --nocapture"
@@ -1004,61 +1046,69 @@ fn matrix_row(
     }
 }
 
-fn basis_entry(
-    transition_id: &str,
-    from_state: &str,
-    to_state: &str,
-    actor_role: &str,
-    authority_kind: &str,
+fn basis_entry(spec: BasisEntrySpec) -> RuntimeV2TransitionAuthorityBasisEntry {
+    RuntimeV2TransitionAuthorityBasisEntry {
+        basis_ref: format!(
+            "{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#{}",
+            spec.transition_id
+        ),
+        transition_id: spec.transition_id.to_string(),
+        from_state: spec.from_state.to_string(),
+        to_state: spec.to_state.to_string(),
+        actor_role: spec.actor_role.to_string(),
+        authority_kind: spec.authority_kind.to_string(),
+        backing_evidence_refs: spec.backing_evidence_refs,
+        required_artifact_refs: spec.required_artifact_refs,
+        trace_requirements: spec.trace_requirements,
+        tool_execution_allowed: spec.tool_execution_allowed,
+        rationale: spec.rationale.to_string(),
+    }
+}
+
+fn negative_case(spec: NegativeCaseSpec) -> RuntimeV2TransitionAuthorityNegativeCase {
+    RuntimeV2TransitionAuthorityNegativeCase {
+        case_id: spec.case_id.to_string(),
+        attempted_transition_id: spec.attempted_transition_id.to_string(),
+        from_state: spec.from_state.to_string(),
+        to_state: spec.to_state.to_string(),
+        actor_role: spec.actor_role.to_string(),
+        provided_authority_basis_ref: spec.provided_authority_basis_ref,
+        provided_artifact_refs: spec.provided_artifact_refs,
+        requested_tool_execution: spec.requested_tool_execution,
+        governed_tool_authority_ref: spec.governed_tool_authority_ref,
+        expected_error_fragment: spec.expected_error_fragment.to_string(),
+        resulting_state: "transition_refused_state_unchanged".to_string(),
+        reviewable_evidence_ref: format!(
+            "{RUNTIME_V2_TRANSITION_AUTHORITY_NEGATIVE_CASES_PATH}#{}",
+            spec.case_id
+        ),
+    }
+}
+
+struct BasisEntrySpec<'a> {
+    transition_id: &'a str,
+    from_state: &'a str,
+    to_state: &'a str,
+    actor_role: &'a str,
+    authority_kind: &'a str,
     backing_evidence_refs: Vec<String>,
     required_artifact_refs: Vec<String>,
     trace_requirements: Vec<String>,
     tool_execution_allowed: bool,
-    rationale: &str,
-) -> RuntimeV2TransitionAuthorityBasisEntry {
-    RuntimeV2TransitionAuthorityBasisEntry {
-        basis_ref: format!("{RUNTIME_V2_TRANSITION_AUTHORITY_BASIS_PATH}#{transition_id}"),
-        transition_id: transition_id.to_string(),
-        from_state: from_state.to_string(),
-        to_state: to_state.to_string(),
-        actor_role: actor_role.to_string(),
-        authority_kind: authority_kind.to_string(),
-        backing_evidence_refs,
-        required_artifact_refs,
-        trace_requirements,
-        tool_execution_allowed,
-        rationale: rationale.to_string(),
-    }
+    rationale: &'a str,
 }
 
-fn negative_case(
-    case_id: &str,
-    attempted_transition_id: &str,
-    from_state: &str,
-    to_state: &str,
-    actor_role: &str,
+struct NegativeCaseSpec<'a> {
+    case_id: &'a str,
+    attempted_transition_id: &'a str,
+    from_state: &'a str,
+    to_state: &'a str,
+    actor_role: &'a str,
     provided_authority_basis_ref: Option<String>,
     provided_artifact_refs: Vec<String>,
     requested_tool_execution: bool,
     governed_tool_authority_ref: Option<String>,
-    expected_error_fragment: &str,
-) -> RuntimeV2TransitionAuthorityNegativeCase {
-    RuntimeV2TransitionAuthorityNegativeCase {
-        case_id: case_id.to_string(),
-        attempted_transition_id: attempted_transition_id.to_string(),
-        from_state: from_state.to_string(),
-        to_state: to_state.to_string(),
-        actor_role: actor_role.to_string(),
-        provided_authority_basis_ref,
-        provided_artifact_refs,
-        requested_tool_execution,
-        governed_tool_authority_ref,
-        expected_error_fragment: expected_error_fragment.to_string(),
-        resulting_state: "transition_refused_state_unchanged".to_string(),
-        reviewable_evidence_ref: format!(
-            "{RUNTIME_V2_TRANSITION_AUTHORITY_NEGATIVE_CASES_PATH}#{case_id}"
-        ),
-    }
+    expected_error_fragment: &'a str,
 }
 
 fn expected_lifecycle_states() -> Vec<String> {
