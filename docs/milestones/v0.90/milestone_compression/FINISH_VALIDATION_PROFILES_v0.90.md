@@ -56,8 +56,9 @@ Required local evidence:
 
 ### FOCUSED_LOCAL_CI_GATED
 
-Use this profile only for low-risk docs/static-tooling work where the changed
-surface is narrow and easy to validate directly.
+Use this profile only for low-risk docs/static-tooling or explicitly bounded
+publication-control-plane work where the changed surface is narrow and easy to
+validate directly.
 
 Eligible examples:
 
@@ -66,6 +67,17 @@ Eligible examples:
 - static browser copy or validation text
 - small shell helper docs/tests where behavior is covered by a focused script
 - review packet or process docs with deterministic grep-style guardrails
+- `pr finish` publication-control-plane surfaces currently limited to:
+  - `adl/src/cli/pr_cmd.rs`
+  - `adl/src/cli/pr_cmd/finish_support.rs`
+  - `adl/src/cli/tests/pr_cmd_inline/finish/**`
+  - `.github/workflows/ci.yaml`
+  - `adl/tools/check_coverage_impact.sh`
+  - `adl/tools/test_check_coverage_impact.sh`
+  - `adl/tools/ci_path_policy.sh`
+  - `adl/tools/test_ci_path_policy.sh`
+  - `docs/default_workflow.md`
+  - `docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md`
 
 Required local evidence:
 
@@ -84,6 +96,18 @@ Required SOR wording:
 - CI requirement: required before merge
 - rationale: one sentence explaining why focused validation is safe for this
   issue
+
+Current implementation note:
+
+- the focused `pr finish` lane is intentionally narrow rather than generic
+- when those publication-control-plane surfaces are the only changed paths, the
+  local finish validator may run targeted commands such as:
+  - `cargo fmt --manifest-path adl/Cargo.toml --all --check`
+  - `cargo test --manifest-path adl/Cargo.toml cli::pr_cmd::tests::finish`
+  - `bash adl/tools/test_check_coverage_impact.sh`
+  - `bash adl/tools/test_ci_path_policy.sh`
+- if the changed paths fall outside that bounded set, `pr finish` must
+  escalate back to `FULL_LOCAL`
 
 ### ESCALATE_TO_FULL
 

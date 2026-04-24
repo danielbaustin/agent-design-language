@@ -68,6 +68,22 @@ trap 'rm -rf "$tmp_dir"' EXIT
   assert_has "$new_runtime_file_output" "demo_smoke_required=true"
   assert_has "$new_runtime_file_output" "reason=runtime_or_rust_test_change_runs_pr_fast_validation"
 
+  git checkout -q -b finish-control-plane "$base_sha"
+  mkdir -p adl/src/cli/pr_cmd adl/src/cli/tests/pr_cmd_inline/finish docs/milestones/v0.90/milestone_compression
+  printf 'pub fn finish_support() -> bool { true }\n' > adl/src/cli/pr_cmd/finish_support.rs
+  printf 'use super::*;\n#[test]\nfn finish_path_is_stable() {}\n' > adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+  printf '# workflow\n' > docs/default_workflow.md
+  git add adl/src/cli/pr_cmd/finish_support.rs adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs docs/default_workflow.md
+  git commit -q -m finish-control-plane
+  finish_control_plane_head="$(git rev-parse HEAD)"
+
+  finish_control_plane_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$finish_control_plane_head")"
+  assert_has "$finish_control_plane_output" "rust_required=true"
+  assert_has "$finish_control_plane_output" "coverage_required=false"
+  assert_has "$finish_control_plane_output" "full_coverage_required=false"
+  assert_has "$finish_control_plane_output" "demo_smoke_required=false"
+  assert_has "$finish_control_plane_output" "reason=publication_control_plane_change_runs_focused_rust_validation"
+
   git checkout -q -b policy-surface-change "$base_sha"
   mkdir -p adl/tools
   printf '#!/usr/bin/env bash\nprintf policy\n' > adl/tools/enforce_coverage_gates.sh

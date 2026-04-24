@@ -44,9 +44,16 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
         &input,
         &output,
         Some("extra notes"),
-        Some(&render_default_finish_validation(
-            FinishValidationMode::FullRust,
-        )),
+        Some(&render_default_finish_validation(&FinishValidationPlan {
+            mode: FinishValidationMode::FullRust,
+            commands: vec![
+                "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+                "bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk".to_string(),
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
+                "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings".to_string(),
+                "cargo test --manifest-path adl/Cargo.toml".to_string(),
+            ],
+        })),
         "fp-123",
         &temp,
     )
@@ -65,9 +72,16 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
         &input,
         &output,
         Some("issue_card_schema: adl.issue.v1"),
-        Some(&render_default_finish_validation(
-            FinishValidationMode::FullRust,
-        )),
+        Some(&render_default_finish_validation(&FinishValidationPlan {
+            mode: FinishValidationMode::FullRust,
+            commands: vec![
+                "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+                "bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk".to_string(),
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
+                "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings".to_string(),
+                "cargo test --manifest-path adl/Cargo.toml".to_string(),
+            ],
+        })),
         "fp-123",
         &temp,
     )
@@ -93,9 +107,13 @@ fn render_pr_body_defaults_docs_only_validation_when_needed() {
         &input,
         &output,
         None,
-        Some(&render_default_finish_validation(
-            FinishValidationMode::DocsOnly,
-        )),
+        Some(&render_default_finish_validation(&FinishValidationPlan {
+            mode: FinishValidationMode::DocsOnly,
+            commands: vec![
+                "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+                "git diff --check".to_string(),
+            ],
+        })),
         "fp-123",
         &temp,
     )
@@ -293,21 +311,32 @@ fn finish_helper_paths_cover_ahead_count_and_validation_modes() {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
     }
     assert_eq!(
-        select_finish_validation_mode("docs,README.md").expect("docs-only mode"),
+        select_finish_validation_plan("docs,README.md")
+            .expect("docs-only plan")
+            .mode,
         FinishValidationMode::DocsOnly
     );
-    run_finish_validation_rust(&repo, FinishValidationMode::DocsOnly)
-        .expect("docs-only validation");
+    run_finish_validation_rust(
+        &repo,
+        &select_finish_validation_plan("docs,README.md").expect("docs-only plan"),
+    )
+    .expect("docs-only validation");
     assert!(
         !cargo_log.exists(),
         "docs-only validation should not invoke cargo"
     );
 
     assert_eq!(
-        select_finish_validation_mode("adl,docs").expect("full-rust mode"),
+        select_finish_validation_plan("adl,docs")
+            .expect("full-rust plan")
+            .mode,
         FinishValidationMode::FullRust
     );
-    run_finish_validation_rust(&repo, FinishValidationMode::FullRust).expect("full validation");
+    run_finish_validation_rust(
+        &repo,
+        &select_finish_validation_plan("adl,docs").expect("full-rust plan"),
+    )
+    .expect("full validation");
     unsafe {
         env::set_var("PATH", old_path);
     }
@@ -316,6 +345,107 @@ fn finish_helper_paths_cover_ahead_count_and_validation_modes() {
     assert!(cargo_calls.contains("fmt --manifest-path"));
     assert!(cargo_calls.contains("clippy --manifest-path"));
     assert!(cargo_calls.contains("test --manifest-path"));
+}
+
+#[test]
+fn finish_validation_plan_supports_focused_local_ci_gated_mode() {
+    let plan = select_finish_validation_plan(
+        "adl/src/cli/pr_cmd/finish_support.rs,adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs,.github/workflows/ci.yaml,adl/tools/check_coverage_impact.sh,adl/tools/ci_path_policy.sh",
+    )
+    .expect("focused plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml cli::pr_cmd::tests::finish".to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_ci_path_policy.sh".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+}
+
+#[test]
+fn finish_helper_paths_run_focused_local_ci_gated_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-focused-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::create_dir_all(repo.join("adl/src/cli/tests/pr_cmd_inline/finish"))
+        .expect("finish tests dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_check_coverage_impact.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' coverage >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_ci_path_policy.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' path-policy >> \"$FOCUSED_LOG\"\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    let focused_log = temp.join("focused.log");
+    let cargo_path = bin_dir.join("cargo");
+    write_executable(
+        &cargo_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan = select_finish_validation_plan(
+        "adl/src/cli/pr_cmd/finish_support.rs,.github/workflows/ci.yaml,adl/tools/check_coverage_impact.sh,adl/tools/ci_path_policy.sh",
+    )
+    .expect("focused plan");
+    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    run_finish_validation_rust(&repo, &plan).expect("focused validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("fmt --manifest-path"));
+    assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(!cargo_calls.contains("clippy --manifest-path"));
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains("coverage"));
+    assert!(focused_calls.contains("path-policy"));
 }
 
 #[test]
