@@ -10,6 +10,7 @@ skip/defer behavior.
 The source milestone policy is:
 
 - `docs/milestones/v0.90.4/CI_RUNTIME_POLICY_v0.90.4.md`
+- `docs/milestones/v0.90.4/RUST_VALIDATION_ACCELERATION_v0.90.4.md`
 
 ## Core Rule
 
@@ -136,6 +137,23 @@ When recording PR or output-card truth, say both:
 - what larger validation did not run and why that was acceptable
 
 ## Examples
+
+## Build Acceleration Posture
+
+Current CI posture also includes bounded build acceleration:
+
+- `sccache` is installed in Rust lanes and wired through `RUSTC_WRAPPER`
+- `~/.cache/sccache` is persisted through the existing Rust cache action
+- `lld` is enabled only when `ld.lld` is available on the runner
+- CI logs emit `sccache --show-stats` so operators can tell whether compiler
+  output reuse is actually happening
+
+Skills should treat this as throughput infrastructure, not proof by itself:
+
+- a green run still needs the correct validation lane
+- cache hits are supporting evidence about efficiency, not correctness
+- missing `lld` is acceptable because the workflow falls back to the system
+  default linker rather than failing closed
 
 ### Docs-Only PR
 
