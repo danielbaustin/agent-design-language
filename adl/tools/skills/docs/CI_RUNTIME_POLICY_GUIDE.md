@@ -3,12 +3,13 @@
 ## Purpose
 
 This guide explains how ADL operational skills should interpret PR validation
-after the v0.90.3 changed-path CI policy introduced stable check names, PR-fast
-Rust validation, and truthful skip/defer behavior.
+after the v0.90.4 changed-path CI policy introduced stable check names, explicit
+full-coverage policy surfaces, PR-fast Rust validation, and truthful
+skip/defer behavior.
 
 The source milestone policy is:
 
-- `docs/milestones/v0.90.3/CI_RUNTIME_POLICY_v0.90.3.md`
+- `docs/milestones/v0.90.4/CI_RUNTIME_POLICY_v0.90.4.md`
 
 ## Core Rule
 
@@ -64,9 +65,12 @@ or assembling release evidence:
   is not release coverage evidence.
 - A runtime/source/test/demo-affecting PR should not skip Rust validation,
   demo smoke when required, or the PR coverage-impact preflight.
-- Rust source additions or heavy edits should run the coverage-impact preflight
-  before publication. On normal PRs, this is the fast `adl-coverage` lane rather
-  than a second full instrumented test run.
+- Ordinary Rust source additions and edits should run the coverage-impact
+  preflight before publication. On normal PRs, this is the fast
+  `adl-coverage` lane rather than a second full instrumented test run.
+- PRs that change explicit coverage-governance surfaces should run full
+  coverage even when they are otherwise tooling-focused. The trigger is
+  policy-surface based, not size- or novelty-based.
 - When `full_coverage_required=true`, the JSON summary and changed-source
   impact gate should execute before LCOV artifact generation. A coverage
   failure should fail at the first reviewable policy gate instead of spending
@@ -155,7 +159,7 @@ Truthful interpretation:
   running all tests twice.
 - The PR does not itself provide full release coverage evidence.
 
-### Full-Evidence Runtime Event
+### Full-Evidence Runtime Event Or Policy-Surface PR
 
 Observed:
 
@@ -172,6 +176,11 @@ Truthful interpretation:
 - Full coverage artifacts and policy gates are expected.
 - This lane can be cited as full coverage evidence when it produces
   `coverage-summary.json`, `coverage-summary.txt`, and `lcov.info`.
+
+For a policy-surface PR, `rust_required` and `demo_smoke_required` may stay
+false if the changed paths are tooling-only, but `full_coverage_required=true`
+still means the authoritative full coverage lane must run because the PR is
+modifying coverage governance itself.
 
 ### Failed-Closed Classification
 

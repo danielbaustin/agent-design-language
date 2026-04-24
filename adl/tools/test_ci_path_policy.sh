@@ -55,20 +55,32 @@ trap 'rm -rf "$tmp_dir"' EXIT
   assert_has "$runtime_output" "demo_smoke_required=true"
   assert_has "$runtime_output" "reason=runtime_or_rust_test_change_runs_pr_fast_validation"
 
-  git checkout -q -b risky-runtime-change "$base_sha"
-  for i in $(seq 1 220); do
-    printf 'pub fn risky_added_%03d() -> bool { true }\n' "$i" >> adl/src/lib.rs
-  done
-  git add adl/src/lib.rs
-  git commit -q -m risky-runtime-change
-  risky_runtime_head="$(git rev-parse HEAD)"
+  git checkout -q -b new-runtime-file "$base_sha"
+  printf 'pub fn contract_schema() -> bool { true }\n' > adl/src/contract_schema.rs
+  git add adl/src/contract_schema.rs
+  git commit -q -m new-runtime-file
+  new_runtime_file_head="$(git rev-parse HEAD)"
 
-  risky_runtime_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$risky_runtime_head")"
-  assert_has "$risky_runtime_output" "rust_required=true"
-  assert_has "$risky_runtime_output" "coverage_required=true"
-  assert_has "$risky_runtime_output" "full_coverage_required=true"
-  assert_has "$risky_runtime_output" "demo_smoke_required=true"
-  assert_has "$risky_runtime_output" "reason=risky_rust_source_change_runs_full_coverage"
+  new_runtime_file_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$new_runtime_file_head")"
+  assert_has "$new_runtime_file_output" "rust_required=true"
+  assert_has "$new_runtime_file_output" "coverage_required=true"
+  assert_has "$new_runtime_file_output" "full_coverage_required=false"
+  assert_has "$new_runtime_file_output" "demo_smoke_required=true"
+  assert_has "$new_runtime_file_output" "reason=runtime_or_rust_test_change_runs_pr_fast_validation"
+
+  git checkout -q -b policy-surface-change "$base_sha"
+  mkdir -p adl/tools
+  printf '#!/usr/bin/env bash\nprintf policy\n' > adl/tools/enforce_coverage_gates.sh
+  git add adl/tools/enforce_coverage_gates.sh
+  git commit -q -m policy-surface-change
+  policy_surface_head="$(git rev-parse HEAD)"
+
+  policy_surface_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$policy_surface_head")"
+  assert_has "$policy_surface_output" "rust_required=false"
+  assert_has "$policy_surface_output" "coverage_required=false"
+  assert_has "$policy_surface_output" "full_coverage_required=true"
+  assert_has "$policy_surface_output" "demo_smoke_required=false"
+  assert_has "$policy_surface_output" "reason=coverage_policy_surface_change_runs_full_coverage"
 
   main_output="$("$POLICY" --event-name push)"
   assert_has "$main_output" "rust_required=true"
