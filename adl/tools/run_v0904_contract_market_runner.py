@@ -18,6 +18,18 @@ class RunnerError(Exception):
         self.message = message
 
 
+def resolve_repo_relative_path(raw: str, *, field: str) -> Path:
+    path = Path(raw)
+    if path.is_absolute():
+        raise RunnerError("absolute_path_forbidden", f"{field} must be repo-relative: {raw}")
+    if any(part == ".." for part in path.parts):
+        raise RunnerError(
+            "path_traversal_forbidden",
+            f"{field} must stay within repository root: {raw}",
+        )
+    return path
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Run the bounded v0.90.4 contract-market fixture packet."
@@ -471,11 +483,15 @@ def build_runner_manifest(
 
 def main() -> int:
     args = parse_args()
-    fixture_root = Path(args.fixture_root)
-    negative_root = Path(args.negative_root)
-    out_root = Path(args.out)
-
+    out_root: Path | None = None
     try:
+        fixture_root = resolve_repo_relative_path(
+            args.fixture_root, field="--fixture-root"
+        )
+        negative_root = resolve_repo_relative_path(
+            args.negative_root, field="--negative-root"
+        )
+        out_root = resolve_repo_relative_path(args.out, field="--out")
         packet = validate_packet_root(fixture_root, negative_root)
         validate_contract(packet)
         transition_report = build_transition_report(packet)
@@ -505,13 +521,14 @@ def main() -> int:
         print("contract_market_runner: pass")
         return 0
     except RunnerError as exc:
-        payload = {
-            "schema": "adl.v0904.contract_market.runner_failure.v1",
-            "status": "failed",
-            "code": exc.code,
-            "message": exc.message,
-        }
-        write_json(out_root / "runner_failure.json", payload)
+        if out_root is not None:
+            payload = {
+                "schema": "adl.v0904.contract_market.runner_failure.v1",
+                "status": "failed",
+                "code": exc.code,
+                "message": exc.message,
+            }
+            write_json(out_root / "runner_failure.json", payload)
         print(f"contract_market_runner: fail [{exc.code}]")
         return 1
 

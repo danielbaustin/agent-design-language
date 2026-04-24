@@ -5,8 +5,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TMP_DIR="$(mktemp -d "$ROOT_DIR/.tmp-contract-market-runner.XXXXXX")"
 OUT_ONE_REL="$(basename "$TMP_DIR")/run_one"
 OUT_TWO_REL="$(basename "$TMP_DIR")/run_two"
+TRAVERSAL_OUT_REL="../runner-escape-attempt"
 OUT_ONE="$ROOT_DIR/$OUT_ONE_REL"
 OUT_TWO="$ROOT_DIR/$OUT_TWO_REL"
+ABSOLUTE_OUT="/tmp/adl-contract-market-runner-absolute"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
 cd "$ROOT_DIR"
@@ -61,5 +63,29 @@ for path in out.glob("*.json"):
     assert "tool_arguments" not in text
     assert "prompt text" not in text
 PY
+
+rm -rf "$ABSOLUTE_OUT"
+set +e
+ABSOLUTE_OUTPUT="$(
+  python3 adl/tools/run_v0904_contract_market_runner.py --out "$ABSOLUTE_OUT" 2>&1
+)"
+ABSOLUTE_STATUS=$?
+set -e
+
+test "$ABSOLUTE_STATUS" -eq 1
+[[ "$ABSOLUTE_OUTPUT" == *"contract_market_runner: fail [absolute_path_forbidden]"* ]]
+[[ "$ABSOLUTE_OUTPUT" != *"Traceback (most recent call last)"* ]]
+test ! -e "$ABSOLUTE_OUT"
+
+set +e
+TRAVERSAL_OUTPUT="$(
+  python3 adl/tools/run_v0904_contract_market_runner.py --out "$TRAVERSAL_OUT_REL" 2>&1
+)"
+TRAVERSAL_STATUS=$?
+set -e
+
+test "$TRAVERSAL_STATUS" -eq 1
+[[ "$TRAVERSAL_OUTPUT" == *"contract_market_runner: fail [path_traversal_forbidden]"* ]]
+[[ "$TRAVERSAL_OUTPUT" != *"Traceback (most recent call last)"* ]]
 
 echo "v0.90.4 contract-market runner smoke: pass"

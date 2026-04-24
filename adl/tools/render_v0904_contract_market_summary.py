@@ -18,6 +18,18 @@ class RenderError(Exception):
         self.message = message
 
 
+def resolve_repo_relative_path(raw: str, *, field: str) -> Path:
+    path = Path(raw)
+    if path.is_absolute():
+        raise RenderError("absolute_path_forbidden", f"{field} must be repo-relative: {raw}")
+    if any(part == ".." for part in path.parts):
+        raise RenderError(
+            "path_traversal_forbidden",
+            f"{field} must stay within repository root: {raw}",
+        )
+    return path
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Render the deterministic v0.90.4 contract-market review summary."
@@ -170,15 +182,22 @@ def render_summary(schema: dict[str, Any], seed: dict[str, Any], review_bundle: 
 
 def main() -> int:
     args = parse_args()
-    out_path = Path(args.out)
+    out_path: Path | None = None
     try:
-        seed = load_json(Path(args.seed))
-        review_bundle = load_json(Path(args.review_bundle))
-        schema = load_json(Path(args.schema))
+        seed_path = resolve_repo_relative_path(args.seed, field="--seed")
+        review_bundle_path = resolve_repo_relative_path(
+            args.review_bundle, field="--review-bundle"
+        )
+        schema_path = resolve_repo_relative_path(args.schema, field="--schema")
+        out_path = resolve_repo_relative_path(args.out, field="--out")
+        seed = load_json(seed_path)
+        review_bundle = load_json(review_bundle_path)
+        schema = load_json(schema_path)
         rendered = render_summary(schema, seed, review_bundle)
     except RenderError as exc:
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(f"render_failure: {exc.code}: {exc.message}\n")
+        if out_path is not None:
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            out_path.write_text(f"render_failure: {exc.code}: {exc.message}\n")
         print(f"contract_market_summary: fail [{exc.code}]")
         return 1
     out_path.parent.mkdir(parents=True, exist_ok=True)
