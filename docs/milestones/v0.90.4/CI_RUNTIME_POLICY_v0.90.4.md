@@ -49,10 +49,22 @@ For pull requests, it compares the PR base and head SHAs and emits:
 - `full_coverage_required`
 - `demo_smoke_required`
 - `fail_closed`
+- `coverage_lane`
+- `coverage_authority`
 - `changed_count`
 - `reason`
 
 For non-PR events, including pushes to `main`, it runs full validation.
+
+Interpretation order:
+
+1. `coverage_lane`
+2. `coverage_authority`
+3. `reason`
+
+`reason` remains the human-facing explanation, while `coverage_lane` and
+`coverage_authority` make the authoritative-vs-fast coverage split explicit for
+skills and operators.
 
 If the diff cannot be determined, the policy fails closed and runs full
 validation.
@@ -88,6 +100,9 @@ Ordinary runtime/source PRs:
 - run tooling sanity checks
 - run guardrails and contract checks
 - run Rust fmt, clippy, and full tests
+- keep heavyweight `runtime_v2` proof-materialization tests and the explicit
+  CLI proof-smoke stdout test behind the `slow-proof-tests` feature so the
+  default `cargo test` lane stays bounded
 - run demo smoke when required
 - run the changed-source coverage-impact preflight in the stable
   `adl-coverage` check
@@ -110,6 +125,16 @@ Pushes to `main` and nightly coverage:
 
 Coverage-impact preflight still runs for Rust/runtime PR changes. The workflow
 does not run a second full instrumented test universe for ordinary PRs.
+
+The heavyweight `runtime_v2` proof-materialization tranche is intentionally
+classified separately from always-on contract checks:
+
+- default `adl-ci` runs `cargo test` without `slow-proof-tests`
+- authoritative `cargo llvm-cov --workspace --all-features` lanes still execute
+  that tranche
+
+That keeps ordinary PR validation fast without pretending those proof surfaces
+no longer matter.
 
 When `full_coverage_required=true`, full coverage generates:
 
@@ -136,7 +161,9 @@ coverage. In those lanes, standalone `cargo test` may be skipped because
 duplicating the whole suite.
 
 When in doubt, check the `Classify changed paths` step in `adl-ci` or
-`adl-coverage`. Its `reason` field explains why a lane did or did not run.
+`adl-coverage`. Read `coverage_lane` first, `coverage_authority` second, and
+then use `reason` as the human-readable explanation for why a lane did or did
+not run.
 
 ## Non-Claims
 

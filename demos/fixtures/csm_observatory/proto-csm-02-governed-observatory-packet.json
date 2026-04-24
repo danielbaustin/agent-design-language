@@ -1,0 +1,575 @@
+{
+  "schema": "adl.csm_visibility_packet.v1",
+  "packet_id": "csm-observatory-fixture-proto-csm-02",
+  "generated_at": "2026-04-24T02:00:00Z",
+  "source": {
+    "mode": "fixture",
+    "evidence_level": "fixture_backed",
+    "fixture": true,
+    "runtime_artifact_root": "adl/tests/fixtures/runtime_v2/observatory",
+    "claim_boundary": "Fixture-backed governed Observatory prototype. This is not a live Runtime v2 capture and it does not grant direct mutation authority."
+  },
+  "manifold": {
+    "manifold_id": "proto-csm-02",
+    "display_name": "Prototype CSM 02",
+    "state": "running",
+    "lifecycle": "fixture_backed_governed_projection",
+    "current_tick": 14,
+    "uptime": "fixture_artifact_projection",
+    "policy_profile": "runtime_v2_governed_observatory_prototype",
+    "snapshot_status": {
+      "latest_snapshot_id": "snapshot-0004",
+      "note": "Snapshots remain reviewed evidence surfaces; this prototype only renders proposal posture.",
+      "rehydration_report_ref": "runtime_v2/rehydration_report.json",
+      "state": "sealed_reviewable"
+    },
+    "health": {
+      "level": "nominal",
+      "summary": "Bounded polis state is inspectable, trace-backed, and still explicitly governed.",
+      "attention_items": [
+        "All active-looking controls remain proposal-only.",
+        "Challenge and quarantine remain visible protection boundaries, not hidden error states."
+      ]
+    },
+    "evidence_refs": [
+      "runtime_v2/observatory/visibility_packet.json",
+      "runtime_v2/observatory/operator_report.md",
+      "runtime_v2/csm_run/wake_continuity_proof.json"
+    ]
+  },
+  "kernel": {
+    "scheduler_state": "bounded_governed_projection",
+    "trace_state": "contiguous_through_operator_review",
+    "invariant_state": "blocking_invariants_passed",
+    "resource_state": "moderate_pressure_visible",
+    "service_states": [
+      {
+        "service_id": "resource_scheduler",
+        "state": "projected"
+      },
+      {
+        "service_id": "freedom_gate",
+        "state": "mediated"
+      },
+      {
+        "service_id": "operator_control_interface",
+        "state": "proposal_only"
+      },
+      {
+        "service_id": "snapshot_manager",
+        "state": "review_request_only"
+      },
+      {
+        "service_id": "quarantine_service",
+        "state": "visible_boundary"
+      }
+    ],
+    "active_guardrails": [
+      "trace_sequence_must_advance_monotonically",
+      "invalid_action_must_be_refused_before_commit",
+      "operator_request_must_emit_trace_anchor",
+      "private_state_projection_must_be_redacted_by_lens"
+    ],
+    "pulse": {
+      "status": "bounded_review_tick_complete",
+      "completed_through_event_sequence": 14,
+      "evidence_refs": [
+        "runtime_v2/csm_run/first_run_trace.jsonl",
+        "runtime_v2/observatory/operator_report.md"
+      ]
+    }
+  },
+  "citizens": [
+    {
+      "citizen_id": "proto-citizen-alpha",
+      "display_name": "Prototype Citizen Alpha",
+      "role": "worker",
+      "lifecycle_state": "active",
+      "continuity_status": "unique_successor_active_head",
+      "current_episode": "episode-0007",
+      "resource_balance": {
+        "compute_units": 6,
+        "scarcity_note": "Alpha is carrying the active bounded work while queue pressure remains visible."
+      },
+      "recent_decisions": [
+        {
+          "decision_id": "fg-alpha-allow-0007",
+          "decision": "allow",
+          "summary": "Allowed to continue bounded reviewable episode work.",
+          "evidence_ref": "runtime_v2/csm_run/freedom_gate_decision.json"
+        }
+      ],
+      "capability_envelope": {
+        "allowed": [
+          "bounded_reviewable_episode",
+          "answer_operator_prompt_with_bounded_summary"
+        ],
+        "forbidden": [
+          "direct_runtime_mutation",
+          "unmediated_state_commit",
+          "cross_polis_export"
+        ],
+        "can_execute_episodes": true
+      },
+      "alerts": [
+        "resource pressure visible under operator lens"
+      ],
+      "evidence_refs": [
+        "runtime_v2/citizens/proto-citizen-alpha.json",
+        "runtime_v2/csm_run/wake_continuity_proof.json"
+      ]
+    },
+    {
+      "citizen_id": "proto-citizen-beta",
+      "display_name": "Prototype Citizen Beta",
+      "role": "guest",
+      "lifecycle_state": "paused",
+      "continuity_status": "admitted_non_active_projection",
+      "current_episode": "none",
+      "resource_balance": {
+        "compute_units": 1,
+        "scarcity_note": "Guest visibility is bounded and rights escalation remains denied."
+      },
+      "recent_decisions": [
+        {
+          "decision_id": "fg-beta-defer-0004",
+          "decision": "defer",
+          "summary": "Guest request for citizen-like authority was deferred pending review.",
+          "evidence_ref": "runtime_v2/observatory/operator_report.md"
+        }
+      ],
+      "capability_envelope": {
+        "allowed": [
+          "read_only_observation",
+          "challenge_review"
+        ],
+        "forbidden": [
+          "citizen_rights_escalation",
+          "direct_runtime_mutation",
+          "cross_polis_export"
+        ],
+        "can_execute_episodes": false
+      },
+      "alerts": [
+        "standing is bounded to guest view"
+      ],
+      "evidence_refs": [
+        "runtime_v2/citizens/proto-citizen-beta.json",
+        "runtime_v2/observatory/private_state_projection_report.md"
+      ]
+    },
+    {
+      "citizen_id": "proto-service-shepherd",
+      "display_name": "Shepherd Service Actor",
+      "role": "service_actor",
+      "lifecycle_state": "active",
+      "continuity_status": "service_actor_projection",
+      "current_episode": "triage-review-001",
+      "resource_balance": {
+        "compute_units": 2,
+        "scarcity_note": "Service actor remains bounded to advisory and review-routing tasks."
+      },
+      "recent_decisions": [
+        {
+          "decision_id": "fg-shepherd-allow-0002",
+          "decision": "allow",
+          "summary": "Allowed to prepare a review packet export without changing citizen state.",
+          "evidence_ref": "runtime_v2/observatory/operator_report.md"
+        }
+      ],
+      "capability_envelope": {
+        "allowed": [
+          "prepare_review_packet_export",
+          "surface_disabled_reasoning"
+        ],
+        "forbidden": [
+          "become_hidden_citizen",
+          "direct_runtime_mutation"
+        ],
+        "can_execute_episodes": false
+      },
+      "alerts": [],
+      "evidence_refs": [
+        "runtime_v2/services/shepherd_service.json",
+        "runtime_v2/observatory/operator_report.md"
+      ]
+    }
+  ],
+  "episodes": [
+    {
+      "episode_id": "episode-0007",
+      "title": "Governed continuity review",
+      "state": "active",
+      "citizen_ids": [
+        "proto-citizen-alpha",
+        "proto-service-shepherd"
+      ],
+      "started_at": "2026-04-24T01:10:00Z",
+      "last_event": "operator_requested_continuity_review",
+      "proof_surface": "runtime_v2/observatory/operator_report.md",
+      "blocked_reason": "not blocked; governed review remains in progress"
+    },
+    {
+      "episode_id": "challenge-0002",
+      "title": "Guest standing challenge",
+      "state": "blocked",
+      "citizen_ids": [
+        "proto-citizen-beta"
+      ],
+      "started_at": "2026-04-24T01:18:00Z",
+      "last_event": "guest_request_deferred_to_challenge_review",
+      "proof_surface": "runtime_v2/observatory/private_state_projection_report.md",
+      "blocked_reason": "standing change requires reviewer and operator judgment"
+    }
+  ],
+  "freedom_gate": {
+    "recent_docket": [
+      {
+        "decision_id": "fg-alpha-allow-0007",
+        "actor": "proto-citizen-alpha",
+        "action": "answer_operator_prompt_with_bounded_summary",
+        "decision": "allow",
+        "evidence_ref": "runtime_v2/csm_run/freedom_gate_decision.json",
+        "rationale": "bounded summary request stayed within the active capability envelope"
+      },
+      {
+        "decision_id": "fg-beta-challenge-0004",
+        "actor": "proto-citizen-beta",
+        "action": "request_citizen_rights_escalation",
+        "decision": "defer",
+        "evidence_ref": "runtime_v2/observatory/private_state_projection_report.md",
+        "rationale": "escalation request moved into governed challenge review"
+      },
+      {
+        "decision_id": "fg-snapshot-quarantine-0003",
+        "actor": "operator.demo",
+        "action": "request_snapshot_review",
+        "decision": "refuse",
+        "evidence_ref": "runtime_v2/observatory/operator_report.md",
+        "rationale": "snapshot request is visible as a proposal only until a governed handler exists"
+      }
+    ],
+    "allow_count": 1,
+    "defer_count": 1,
+    "refuse_count": 1,
+    "open_questions": [
+      "Should guest standing challenges surface directly to the operator lens or stay reviewer-first?"
+    ],
+    "rejected_actions": [
+      "request_snapshot_review"
+    ]
+  },
+  "invariants": [
+    {
+      "invariant_id": "trace_sequence_must_advance_monotonically",
+      "name": "Trace sequence advances monotonically",
+      "state": "healthy",
+      "severity": "high",
+      "last_checked": "event_sequence_14",
+      "evidence_ref": "runtime_v2/csm_run/first_run_trace.jsonl"
+    },
+    {
+      "invariant_id": "private_state_projection_must_be_redacted_by_lens",
+      "name": "Private-state projection remains lens-bounded",
+      "state": "healthy",
+      "severity": "critical",
+      "last_checked": "event_sequence_13",
+      "evidence_ref": "runtime_v2/observatory/private_state_projection_report.md"
+    },
+    {
+      "invariant_id": "operator_request_must_emit_trace_anchor",
+      "name": "Operator requests emit trace and review anchors",
+      "state": "healthy",
+      "severity": "critical",
+      "last_checked": "event_sequence_14",
+      "evidence_ref": "runtime_v2/observatory/operator_report.md"
+    }
+  ],
+  "resources": {
+    "compute_units": "9 total / 3 reserved / 6 visible active",
+    "memory_pressure": "moderate",
+    "queue_depth": "2 governed requests waiting on review or handler availability",
+    "fairness_notes": [
+      "Service actor remains bounded to support work rather than hidden execution authority.",
+      "Guest requests do not silently acquire citizen standing."
+    ],
+    "scarcity_events": [
+      "review queue pressure raised the continuity lens to default operator attention"
+    ]
+  },
+  "trace": {
+    "trace_tail": [
+      {
+        "event_sequence": 11,
+        "actor": "operator.demo",
+        "event_type": "proposal_created",
+        "summary": "Operator opened a continuity review request in Governance Mode."
+      },
+      {
+        "event_sequence": 12,
+        "actor": "kernel.freedom_gate",
+        "event_type": "decision_recorded",
+        "summary": "Freedom Gate allowed a bounded continuity summary request."
+      },
+      {
+        "event_sequence": 13,
+        "actor": "proto-citizen-beta",
+        "event_type": "challenge_opened",
+        "summary": "Guest standing escalation entered challenge review instead of silent promotion."
+      },
+      {
+        "event_sequence": 14,
+        "actor": "shepherd.service",
+        "event_type": "review_export_prepared",
+        "summary": "Review export links were prepared without mutating citizen state."
+      }
+    ],
+    "causal_gaps": [],
+    "latest_operator_event": "continuity_review_request_opened",
+    "latest_citizen_event": "guest_standing_challenge_opened",
+    "latest_kernel_event": "review_export_prepared"
+  },
+  "operator_actions": {
+    "available_actions": [
+      {
+        "action": "inspect_citizen_continuity",
+        "mode": "read_only",
+        "status": "available"
+      },
+      {
+        "action": "open_review_export",
+        "mode": "read_only",
+        "status": "available"
+      }
+    ],
+    "disabled_actions": [
+      {
+        "action": "commit_snapshot_now",
+        "reason": "No live snapshot handler is wired to the governed Observatory surface."
+      },
+      {
+        "action": "promote_guest_to_citizen",
+        "reason": "Standing changes must route through challenge, authority review, and trace."
+      }
+    ],
+    "required_confirmations": [
+      "Guarded mutation requests need explicit confirmation phrases and trace anchors before any future handler may execute."
+    ],
+    "safety_notes": [
+      "This prototype is proposal-only.",
+      "Disabled reasons are part of the proof, not a missing-feature apology."
+    ]
+  },
+  "review": {
+    "primary_artifacts": [
+      "runtime_v2/observatory/visibility_packet.json",
+      "runtime_v2/observatory/operator_report.md",
+      "docs/milestones/v0.90.3/OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md"
+    ],
+    "missing_artifacts": [
+      "live governed action handler",
+      "Governed Tools v1.0 authority execution path"
+    ],
+    "demo_classification": "fixture_backed",
+    "caveats": [
+      "This is not a live mutation console.",
+      "Corporate Investor mode does not change evidence, authority, or trace boundaries."
+    ],
+    "next_consumers": [
+      {
+        "consumer": "static Observatory console compatibility",
+        "issue": 2189
+      },
+      {
+        "consumer": "operator report generator compatibility",
+        "issue": 2190
+      },
+      {
+        "consumer": "CLI bundle compatibility",
+        "issue": 2191
+      },
+      {
+        "consumer": "operator command packet design",
+        "issue": 2192
+      },
+      {
+        "consumer": "governed Observatory prototype follow-on planning",
+        "issue": 2492
+      }
+    ]
+  },
+  "observatory_ui": {
+    "default_room": "world",
+    "default_lens": "operator",
+    "default_memory_dot": "triage_overview",
+    "proposal_mode_statement": "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface.",
+    "rooms": [
+      {
+        "room_id": "world",
+        "label": "World / Reality",
+        "question": "What exists, where is it, and what is moving?",
+        "note": "Default inhabited polis view."
+      },
+      {
+        "room_id": "governance",
+        "label": "Operator / Governance",
+        "question": "What decision, policy, or challenge needs judgment?",
+        "note": "Freedom Gate docket and disabled reasons live here."
+      },
+      {
+        "room_id": "cognition",
+        "label": "Cognition / Internal State",
+        "question": "What coupling or degradation is visible without overclaiming?",
+        "note": "Still bounded to implemented evidence only."
+      }
+    ],
+    "lenses": [
+      {
+        "lens_id": "public",
+        "label": "Public lens",
+        "summary": "Boardroom-safe projection with heavy redaction."
+      },
+      {
+        "lens_id": "operator",
+        "label": "Operator lens",
+        "summary": "Operational state, disabled reasons, and review links."
+      },
+      {
+        "lens_id": "reviewer",
+        "label": "Reviewer lens",
+        "summary": "Proof surfaces and caveats."
+      },
+      {
+        "lens_id": "continuity",
+        "label": "Continuity lens",
+        "summary": "Worldline, wake proof, and standing evidence."
+      },
+      {
+        "lens_id": "quarantine",
+        "label": "Quarantine lens",
+        "summary": "Challenge and protected-boundary states."
+      }
+    ],
+    "memory_dots": [
+      {
+        "dot_id": "triage_overview",
+        "label": "Triage overview",
+        "room": "world",
+        "lens": "operator",
+        "selected_target": "proto-citizen-alpha",
+        "note": "Open the polis with the active worker in focus."
+      },
+      {
+        "dot_id": "continuity_proofs",
+        "label": "Continuity proofs",
+        "room": "world",
+        "lens": "continuity",
+        "selected_target": "proto-citizen-alpha",
+        "note": "Follow wake and standing evidence."
+      },
+      {
+        "dot_id": "quarantine_review",
+        "label": "Quarantine review",
+        "room": "governance",
+        "lens": "quarantine",
+        "selected_target": "proto-citizen-beta",
+        "note": "Inspect the guest challenge and safe boundary."
+      },
+      {
+        "dot_id": "anomaly_watch",
+        "label": "Anomaly watch",
+        "room": "cognition",
+        "lens": "reviewer",
+        "selected_target": "proto-service-shepherd",
+        "note": "Show bounded internal-state-adjacent signals only."
+      },
+      {
+        "dot_id": "corporate_investor_view",
+        "label": "Corporate Investor",
+        "room": "governance",
+        "lens": "public",
+        "selected_target": "proto-citizen-alpha",
+        "note": "Fallback presentation mode without changing evidence."
+      }
+    ],
+    "corporate_investor_fallback": {
+      "label": "Corporate Investor UI",
+      "keyboard_shortcut": "i",
+      "claim_boundary": "Presentation mode only; evidence, authority, and trace boundaries do not change."
+    },
+    "proposal_cases": [
+      {
+        "proposal_id": "proposal-inspect-alpha",
+        "title": "Inspect Alpha continuity packet",
+        "target_kind": "citizen",
+        "target_id": "proto-citizen-alpha",
+        "room": "world",
+        "lens": "continuity",
+        "disposition": "available",
+        "summary": "Open continuity evidence, standing, and packet links for the active worker.",
+        "authority_checks": [
+          "validate_operator_identity",
+          "validate_projection_class",
+          "append_trace_anchor"
+        ],
+        "disabled_reason": null,
+        "trace_anchor": "runtime_v2/observatory/visibility_packet.json#citizens[0]",
+        "review_export": "runtime_v2/observatory/operator_report.md"
+      },
+      {
+        "proposal_id": "proposal-review-guest-challenge",
+        "title": "Request guest standing challenge review",
+        "target_kind": "citizen",
+        "target_id": "proto-citizen-beta",
+        "room": "governance",
+        "lens": "quarantine",
+        "disposition": "challenge",
+        "summary": "Route a guest standing escalation into challenge instead of silent promotion.",
+        "authority_checks": [
+          "validate_guest_scope",
+          "route_to_challenge_boundary",
+          "emit_review_anchor"
+        ],
+        "disabled_reason": "Requires reviewer and operator judgment before any standing change.",
+        "trace_anchor": "runtime_v2/observatory/private_state_projection_report.md",
+        "review_export": "runtime_v2/observatory/operator_report.md#guest-standing"
+      },
+      {
+        "proposal_id": "proposal-request-snapshot-review",
+        "title": "Request manifold snapshot review",
+        "target_kind": "manifold",
+        "target_id": "proto-csm-02",
+        "room": "governance",
+        "lens": "operator",
+        "disposition": "defer",
+        "summary": "Prepare a guarded snapshot proposal without invoking a live handler.",
+        "authority_checks": [
+          "validate_operator_identity",
+          "validate_snapshot_policy",
+          "require_confirmation_phrase"
+        ],
+        "disabled_reason": "Governed snapshot execution remains future work until handler and review path land.",
+        "trace_anchor": "runtime_v2/observatory/operator_report.md#snapshot-review",
+        "review_export": "runtime_v2/observatory/operator_report.md#snapshot-review"
+      },
+      {
+        "proposal_id": "proposal-export-review-packet",
+        "title": "Prepare review export packet",
+        "target_kind": "service_actor",
+        "target_id": "proto-service-shepherd",
+        "room": "governance",
+        "lens": "reviewer",
+        "disposition": "available",
+        "summary": "Collect packet/report links for a reviewer without mutating citizen state.",
+        "authority_checks": [
+          "validate_service_actor_scope",
+          "redact_private_state_by_lens",
+          "append_export_trace"
+        ],
+        "disabled_reason": null,
+        "trace_anchor": "runtime_v2/observatory/operator_report.md#review-export",
+        "review_export": "runtime_v2/observatory/operator_report.md#review-export"
+      }
+    ]
+  }
+}

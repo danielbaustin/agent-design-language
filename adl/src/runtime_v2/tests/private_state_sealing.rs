@@ -233,6 +233,7 @@ fn runtime_v2_private_state_sealing_payload_is_not_raw_json_or_canonical_bytes()
     assert_ne!(sealed_payload, canonical);
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_private_state_sealing_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_private_state_sealing_contract().expect("sealing artifacts");

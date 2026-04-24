@@ -33,6 +33,25 @@ ADL_OLLAMA_BIN=tools/mock_ollama_v0_4.sh cargo run -q --bin adl -- examples/v0-6
 - v0.87.1: local Ollama family proof (`v0-87-1-provider-local-ollama-demo.adl.yaml`)
 - v0.87.1: ChatGPT family proof (`v0-87-1-provider-chatgpt-demo.adl.yaml`)
 
+## ADL Language Note
+
+ADL has six core language primitives:
+
+- `providers`
+- `tools`
+- `agents`
+- `tasks`
+- `workflows`
+- `run`
+
+The document surface uses singular `run` for the execution primitive.
+
+`patterns` and `signature` may also appear as top-level language features, but
+they are not counted as additional primitives.
+
+This examples directory demonstrates the language surface itself. It is not the
+home for later control-plane contracts or milestone-local packet schemas.
+
 ## See Also / Canonical Docs
 
 - Canonical demo index: `../../demos/README.md`

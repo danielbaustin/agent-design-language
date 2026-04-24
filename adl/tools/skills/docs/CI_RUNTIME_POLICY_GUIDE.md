@@ -50,11 +50,19 @@ It emits:
 - `full_coverage_required`
 - `demo_smoke_required`
 - `fail_closed`
+- `coverage_lane`
+- `coverage_authority`
 - `changed_count`
 - `reason`
 
-The `reason` field is the operator-facing explanation for why a lane ran or
-was skipped.
+The stable interpretation order is:
+
+1. `coverage_lane`
+2. `coverage_authority`
+3. `reason`
+
+`reason` remains the human-facing explanation, while `coverage_lane` and
+`coverage_authority` make the event/risk split machine-readable.
 
 ## Skill Interpretation Rules
 
@@ -149,11 +157,14 @@ Observed:
 - `rust_required=true`
 - `coverage_required=true`
 - `full_coverage_required=false`
+- `coverage_lane=pr_fast`
+- `coverage_authority=pr_changed_surface`
 - `demo_smoke_required=true` when demo surfaces changed
 
 Truthful interpretation:
 
-- Rust fmt, clippy, tests, demo smoke where applicable, and the fast
+- Rust fmt, clippy, broad non-coverage tests via `cargo nextest run`, doc
+  tests via `cargo test --doc`, demo smoke where applicable, and the fast
   coverage-impact preflight are expected.
 - Full instrumented coverage is intentionally deferred for the PR to avoid
   running all tests twice.
@@ -166,6 +177,9 @@ Observed:
 - `rust_required=true`
 - `coverage_required=true`
 - `full_coverage_required=true`
+- `coverage_lane=authoritative_full`
+- `coverage_authority=push_main`, `pr_policy_surface`, or another
+  authoritative trigger
 
 Truthful interpretation:
 
@@ -187,6 +201,8 @@ modifying coverage governance itself.
 Observed:
 
 - `fail_closed=true`
+- `coverage_lane=authoritative_full`
+- `coverage_authority=fail_closed`
 
 Truthful interpretation:
 

@@ -205,6 +205,7 @@ fn runtime_v2_private_state_lineage_head_disagreement_enters_recovery_or_quarant
         .contains("reconstruct_from_ledger_or_quarantine"));
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_private_state_lineage_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_private_state_lineage_contract().expect("lineage artifacts");

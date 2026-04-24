@@ -103,9 +103,9 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         })?;
     }
 
-    let finish_validation_mode = select_finish_validation_mode(&parsed.paths)?;
+    let finish_validation_plan = select_finish_validation_plan(&parsed.paths)?;
     if !parsed.no_checks {
-        run_finish_validation_rust(&repo_root, finish_validation_mode)?;
+        run_finish_validation_rust(&repo_root, &finish_validation_plan)?;
     }
 
     stage_selected_paths_rust(&repo_root, &parsed.paths)?;
@@ -133,7 +133,7 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     let default_validation = if parsed.no_checks {
         None
     } else {
-        Some(render_default_finish_validation(finish_validation_mode))
+        Some(render_default_finish_validation(&finish_validation_plan))
     };
     let fingerprint = finish_inputs_fingerprint(
         &parsed.title,
@@ -381,7 +381,14 @@ pub(super) fn validate_completed_sor(repo_root: &Path, output_path: &Path) -> Re
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum FinishValidationMode {
     DocsOnly,
+    FocusedLocalCiGated,
     FullRust,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) struct FinishValidationPlan {
+    pub mode: FinishValidationMode,
+    pub commands: Vec<String>,
 }
 
 fn finish_validation_guard(repo_root: &Path) -> Result<()> {
@@ -390,7 +397,11 @@ fn finish_validation_guard(repo_root: &Path) -> Result<()> {
     run_status("bash", &[path_str(&tracked_residue_guard)?])
 }
 
-pub(super) fn select_finish_validation_mode(paths_csv: &str) -> Result<FinishValidationMode> {
+fn cargo_nextest_available() -> bool {
+    run_status_allow_failure("cargo", &["nextest", "--version"]).unwrap_or(false)
+}
+
+pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishValidationPlan> {
     let paths = paths_csv
         .split(',')
         .map(str::trim)
@@ -400,9 +411,59 @@ pub(super) fn select_finish_validation_mode(paths_csv: &str) -> Result<FinishVal
         bail!("finish: --paths resolved to empty");
     }
     if paths.iter().all(|path| finish_path_is_docs_only(path)) {
-        return Ok(FinishValidationMode::DocsOnly);
+        return Ok(FinishValidationPlan {
+            mode: FinishValidationMode::DocsOnly,
+            commands: vec![
+                "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+                "git diff --check".to_string(),
+            ],
+        });
     }
-    Ok(FinishValidationMode::FullRust)
+    if paths
+        .iter()
+        .all(|path| finish_path_is_focused_local_ci_gated(path))
+    {
+        let mut commands = vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+        ];
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path))
+        {
+            commands.push("cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string());
+            commands.push(
+                "cargo test --manifest-path adl/Cargo.toml cli::pr_cmd::tests::finish".to_string(),
+            );
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_coverage_tooling_focused_validation(path))
+        {
+            commands.push("bash adl/tools/test_check_coverage_impact.sh".to_string());
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_ci_policy_focused_validation(path))
+        {
+            commands.push("bash adl/tools/test_ci_path_policy.sh".to_string());
+        }
+        return Ok(FinishValidationPlan {
+            mode: FinishValidationMode::FocusedLocalCiGated,
+            commands,
+        });
+    }
+    Ok(FinishValidationPlan {
+        mode: FinishValidationMode::FullRust,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk".to_string(),
+            "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
+            "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings".to_string(),
+            "cargo nextest run --manifest-path adl/Cargo.toml --all-features (fallback: cargo test --manifest-path adl/Cargo.toml --all-features when cargo-nextest is unavailable locally)".to_string(),
+            "cargo test --manifest-path adl/Cargo.toml --doc --all-features".to_string(),
+        ],
+    })
 }
 
 fn finish_path_is_docs_only(path: &str) -> bool {
@@ -420,13 +481,100 @@ fn finish_path_is_docs_only(path: &str) -> bool {
             .is_some_and(|ext| ext.eq_ignore_ascii_case("md"))
 }
 
+fn finish_path_is_focused_local_ci_gated(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        ".github/workflows/ci.yaml"
+            | "docs/default_workflow.md"
+            | "docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md"
+            | "adl/src/cli/pr_cmd.rs"
+            | "adl/tools/check_coverage_impact.sh"
+            | "adl/tools/test_check_coverage_impact.sh"
+            | "adl/tools/ci_path_policy.sh"
+            | "adl/tools/test_ci_path_policy.sh"
+            | "adl/src/cli/pr_cmd/finish_support.rs"
+    ) || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
+}
+
+fn finish_path_needs_pr_finish_rust_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed == "adl/src/cli/pr_cmd.rs"
+        || trimmed == "adl/src/cli/pr_cmd/finish_support.rs"
+        || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
+}
+
+fn finish_path_needs_coverage_tooling_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        ".github/workflows/ci.yaml"
+            | "adl/tools/check_coverage_impact.sh"
+            | "adl/tools/test_check_coverage_impact.sh"
+    )
+}
+
+fn finish_path_needs_ci_policy_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        ".github/workflows/ci.yaml"
+            | "adl/tools/ci_path_policy.sh"
+            | "adl/tools/test_ci_path_policy.sh"
+    )
+}
+
 pub(super) fn run_finish_validation_rust(
     repo_root: &Path,
-    mode: FinishValidationMode,
+    plan: &FinishValidationPlan,
 ) -> Result<()> {
     finish_validation_guard(repo_root)?;
-    if mode == FinishValidationMode::DocsOnly {
+    if plan.mode == FinishValidationMode::DocsOnly {
         run_status("git", &["-C", path_str(repo_root)?, "diff", "--check"])?;
+        return Ok(());
+    }
+
+    if plan.mode == FinishValidationMode::FocusedLocalCiGated {
+        run_status("git", &["-C", path_str(repo_root)?, "diff", "--check"])?;
+        let manifest = repo_root.join("adl/Cargo.toml");
+        for command in &plan.commands {
+            match command.as_str() {
+                "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh" => {}
+                "git diff --check" => {}
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check" => {
+                    run_status(
+                        "cargo",
+                        &[
+                            "fmt",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--all",
+                            "--check",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml cli::pr_cmd::tests::finish" => {
+                    run_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "cli::pr_cmd::tests::finish",
+                        ],
+                    )?;
+                }
+                "bash adl/tools/test_check_coverage_impact.sh" => {
+                    let script = repo_root.join("adl/tools/test_check_coverage_impact.sh");
+                    run_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_ci_path_policy.sh" => {
+                    let script = repo_root.join("adl/tools/test_ci_path_policy.sh");
+                    run_status("bash", &[path_str(&script)?])?;
+                }
+                other => bail!("finish: unsupported focused validation command '{other}'"),
+            }
+        }
         return Ok(());
     }
 
@@ -469,26 +617,50 @@ pub(super) fn run_finish_validation_rust(
             "warnings",
         ],
     )?;
-    run_status("cargo", &["test", "--manifest-path", path_str(&manifest)?])?;
+    if cargo_nextest_available() {
+        run_status(
+            "cargo",
+            &[
+                "nextest",
+                "run",
+                "--manifest-path",
+                path_str(&manifest)?,
+                "--all-features",
+            ],
+        )?;
+    } else {
+        eprintln!(
+            "• cargo-nextest not available locally; falling back to cargo test for full local Rust validation."
+        );
+        run_status(
+            "cargo",
+            &[
+                "test",
+                "--manifest-path",
+                path_str(&manifest)?,
+                "--all-features",
+            ],
+        )?;
+    }
+    run_status(
+        "cargo",
+        &[
+            "test",
+            "--manifest-path",
+            path_str(&manifest)?,
+            "--doc",
+            "--all-features",
+        ],
+    )?;
     Ok(())
 }
 
-pub(super) fn render_default_finish_validation(mode: FinishValidationMode) -> String {
-    match mode {
-        FinishValidationMode::DocsOnly => [
-            "- bash adl/tools/check_no_tracked_adl_issue_record_residue.sh",
-            "- git diff --check",
-        ]
-        .join("\n"),
-        FinishValidationMode::FullRust => [
-            "- bash adl/tools/check_no_tracked_adl_issue_record_residue.sh",
-            "- bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk",
-            "- cargo fmt",
-            "- cargo clippy --all-targets -- -D warnings",
-            "- cargo test",
-        ]
-        .join("\n"),
-    }
+pub(super) fn render_default_finish_validation(plan: &FinishValidationPlan) -> String {
+    plan.commands
+        .iter()
+        .map(|command| format!("- {command}"))
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 pub(super) fn ensure_issue_surfaces_are_local_only(

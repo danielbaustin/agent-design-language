@@ -111,6 +111,7 @@ fn runtime_v2_bid_schema_rejects_invalid_bid_fixtures_for_expected_reasons() {
     }
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_bid_schema_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_bid_schema_contract().expect("bid schema artifacts");

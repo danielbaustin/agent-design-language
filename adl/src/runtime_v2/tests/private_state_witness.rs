@@ -201,6 +201,7 @@ fn runtime_v2_private_state_receipts_reject_leakage_and_missing_explanation() {
         .contains("must explain valid continuation"));
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_private_state_witness_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_private_state_witness_contract().expect("witness artifacts");
