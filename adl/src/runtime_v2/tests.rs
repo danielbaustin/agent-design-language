@@ -38,4 +38,5 @@ mod recovery_eligibility;
 mod security_boundary;
 mod snapshot_rehydration;
 mod standing;
+mod transition_authority;
 mod wake_continuity;

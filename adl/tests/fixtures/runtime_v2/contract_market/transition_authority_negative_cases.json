@@ -1,0 +1,108 @@
+{
+  "schema_version": "runtime_v2.transition_authority_negative_cases.v1",
+  "demo_id": "D5",
+  "wp_id": "WP-06",
+  "artifact_path": "runtime_v2/contract_market/transition_authority_negative_cases.json",
+  "matrix_ref": "runtime_v2/contract_market/transition_authority_matrix.json",
+  "authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json",
+  "required_negative_cases": [
+    {
+      "case_id": "unauthorized_award",
+      "attempted_transition_id": "bidding_to_awarded",
+      "from_state": "bidding",
+      "to_state": "awarded",
+      "actor_role": "unauthorized_reviewer",
+      "provided_authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#bidding_to_awarded",
+      "provided_artifact_refs": [
+        "runtime_v2/contract_market/selection_rationale.json"
+      ],
+      "requested_tool_execution": false,
+      "governed_tool_authority_ref": null,
+      "expected_error_fragment": "actor role not authorized",
+      "resulting_state": "transition_refused_state_unchanged",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/transition_authority_negative_cases.json#unauthorized_award"
+    },
+    {
+      "case_id": "wrong_actor_acceptance",
+      "attempted_transition_id": "awarded_to_accepted",
+      "from_state": "awarded",
+      "to_state": "accepted",
+      "actor_role": "issuer_delegate",
+      "provided_authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#awarded_to_accepted",
+      "provided_artifact_refs": [
+        "runtime_v2/contract_market/acceptance_record.json"
+      ],
+      "requested_tool_execution": false,
+      "governed_tool_authority_ref": null,
+      "expected_error_fragment": "actor role not authorized",
+      "resulting_state": "transition_refused_state_unchanged",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/transition_authority_negative_cases.json#wrong_actor_acceptance"
+    },
+    {
+      "case_id": "execution_before_acceptance",
+      "attempted_transition_id": "awarded_to_executing",
+      "from_state": "awarded",
+      "to_state": "executing",
+      "actor_role": "execution_operator",
+      "provided_authority_basis_ref": null,
+      "provided_artifact_refs": [
+        "runtime_v2/contract_market/execution_readiness.json"
+      ],
+      "requested_tool_execution": false,
+      "governed_tool_authority_ref": null,
+      "expected_error_fragment": "transition not allowed",
+      "resulting_state": "transition_refused_state_unchanged",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/transition_authority_negative_cases.json#execution_before_acceptance"
+    },
+    {
+      "case_id": "cancellation_after_completion",
+      "attempted_transition_id": "completed_to_cancelled",
+      "from_state": "completed",
+      "to_state": "cancelled",
+      "actor_role": "contract_issuer",
+      "provided_authority_basis_ref": null,
+      "provided_artifact_refs": [
+        "runtime_v2/contract_market/cancellation_record.json"
+      ],
+      "requested_tool_execution": false,
+      "governed_tool_authority_ref": null,
+      "expected_error_fragment": "transition not allowed",
+      "resulting_state": "transition_refused_state_unchanged",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/transition_authority_negative_cases.json#cancellation_after_completion"
+    },
+    {
+      "case_id": "completion_without_artifacts",
+      "attempted_transition_id": "executing_to_completed",
+      "from_state": "executing",
+      "to_state": "completed",
+      "actor_role": "execution_operator",
+      "provided_authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#executing_to_completed",
+      "provided_artifact_refs": [
+        "runtime_v2/contract_market/completion_record.json"
+      ],
+      "requested_tool_execution": false,
+      "governed_tool_authority_ref": null,
+      "expected_error_fragment": "missing required artifacts",
+      "resulting_state": "transition_refused_state_unchanged",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/transition_authority_negative_cases.json#completion_without_artifacts"
+    },
+    {
+      "case_id": "tool_execution_without_governed_authority",
+      "attempted_transition_id": "accepted_to_executing",
+      "from_state": "accepted",
+      "to_state": "executing",
+      "actor_role": "execution_operator",
+      "provided_authority_basis_ref": "runtime_v2/contract_market/transition_authority_basis.json#accepted_to_executing",
+      "provided_artifact_refs": [
+        "runtime_v2/contract_market/execution_readiness.json"
+      ],
+      "requested_tool_execution": true,
+      "governed_tool_authority_ref": null,
+      "expected_error_fragment": "missing governed-tool authority",
+      "resulting_state": "transition_refused_state_unchanged",
+      "reviewable_evidence_ref": "runtime_v2/contract_market/transition_authority_negative_cases.json#tool_execution_without_governed_authority"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_transition_authority -- --nocapture",
+  "claim_boundary": "Denied transition fixtures preserve reviewable evidence and unchanged-state semantics; they do not implement governed-tool execution or external trust policy."
+}

@@ -38,6 +38,7 @@ mod recovery;
 mod security;
 mod snapshot;
 mod standing;
+mod transition_authority;
 mod types;
 mod validators;
 
@@ -113,6 +114,8 @@ pub use security::*;
 pub use snapshot::*;
 #[allow(unused_imports)]
 pub use standing::*;
+#[allow(unused_imports)]
+pub use transition_authority::*;
 #[allow(unused_imports)]
 pub use types::*;
 #[allow(unused_imports)]
