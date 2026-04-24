@@ -84,3 +84,41 @@ mmdc -i docs/architecture/diagrams/system_context.mmd -o artifacts/diagrams/adl-
 - Assumptions: publication is a review-process boundary, not a Rust module
   boundary.
 - Unsupported claims excluded: no claim that all workflows are safe by default.
+
+## Diagram A8: Task Bundle and PR Lifecycle
+
+- Source: `docs/architecture/diagrams/task_bundle_and_pr_lifecycle.mmd`
+- Purpose: show issue binding, worktree execution, PR draft, janitor review, and
+  closeout checkpoints.
+- Evidence: `docs/default_workflow.md`, `adl/src/control_plane.rs`,
+  `docs/architecture/ADL_ARCHITECTURE.md`.
+- Assumptions: merge and closeout are external governance events; state names in
+  the diagram capture lifecycle checkpoints used by issue processing.
+- Unsupported claims excluded: no claim that merge timing or conflict resolution is
+  always fast, or that checks do not require reruns.
+
+## Diagram A9: Runtime v2 Subsystem Structure
+
+- Source: `docs/architecture/diagrams/runtime_v2_subsystem_structure.mmd`
+- Purpose: show deterministic relationships among plan/scheduler/trace/artifacts,
+  control-plane issue binding, and long-lived continuity artifacts.
+- Evidence: `adl/src/execution_plan.rs`, `adl/src/execute/mod.rs`,
+  `adl/src/trace.rs`, `adl/src/artifacts.rs`,
+  `adl/src/long_lived_agent.rs`, `adl/src/control_plane.rs`.
+- Assumptions: component labels are bounded slices of the v0.90/0.90.4 runtime
+  surface and omit non-canonical UI/demo-only modules.
+- Unsupported claims excluded: no claim that the diagram is the complete runtime
+  source tree or a full threat model.
+
+## Diagram A10: CodeBuddy Review Flow
+
+- Source: `docs/architecture/diagrams/codebuddy_review_flow.mmd`
+- Purpose: show the bounded CodeBuddy/ADL review specialist lane for architecture
+  and proof surfaces.
+- Evidence: `docs/architecture/ARCHITECTURE_REVIEW_AUTOMATION.md`,
+  `docs/architecture/ADL_ARCHITECTURE.md`,
+  `docs/milestones/v0.90/DEMO_MATRIX_v0.90.md`.
+- Assumptions: not every specialist runs for every issue; this is the canonical
+  review-sequence template.
+- Unsupported claims excluded: no claim that all reviewers agree on every finding
+  or that every issue follows the same full specialist breadth.

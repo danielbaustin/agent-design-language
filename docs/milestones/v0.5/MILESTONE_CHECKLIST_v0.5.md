@@ -54,12 +54,14 @@ v0.6 issues remain open and are out of scope for the v0.5 ship gate.
 ## Feature Gates (v0.5)
 ### Language surface
 - [ ] Explicit schemas exist for all 6 primitives:
-  - [ ] Agents
-  - [ ] Runs
   - [ ] Providers
-  - [ ] Tasks
   - [ ] Tools
+  - [ ] Agents
+  - [ ] Tasks
   - [ ] Workflows
+  - [ ] `run` (singular top-level execution primitive)
+- [ ] `patterns` and `signature` are documented as top-level language features, not extra primitives
+- [ ] Language-core schema docs are clearly separated from later packet/control-plane contracts
 - [ ] Composition rules defined and enforced (validation + deterministic ordering)
 - [ ] Examples exist for each primitive alone and composed
 

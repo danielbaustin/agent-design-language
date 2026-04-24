@@ -255,9 +255,12 @@ See `diagrams/DIAGRAM_PACKET.md` for diagram evidence and assumptions.
 - `diagrams/runtime_lifecycle.mmd`
 - `diagrams/control_plane_lifecycle.mmd`
 - `diagrams/task_bundle_state.mmd`
+- `diagrams/task_bundle_and_pr_lifecycle.mmd`
 - `diagrams/skill_orchestration.mmd`
 - `diagrams/artifact_data_flow.mmd`
 - `diagrams/trust_boundaries.mmd`
+- `diagrams/runtime_v2_subsystem_structure.mmd`
+- `diagrams/codebuddy_review_flow.mmd`
 
 ## ADR Candidates
 

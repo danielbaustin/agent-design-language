@@ -1,0 +1,33 @@
+%% Evidence: adl/src/long_lived_agent.rs, adl/src/execution_plan.rs, adl/src/execute/mod.rs, adl/src/control_plane.rs, docs/architecture/ADL_ARCHITECTURE.md
+%% Assumptions: runtime_v2 subsystem names track the current v0.90.4 control-plane and review-provenable components.
+flowchart LR
+  subgraph RuntimeCore["Runtime subsystem"]
+    Plan["Execution plan builder\nexecution_plan.rs"]
+    Scheduler["Scheduler and lifecycle phases\nexecute/mod.rs"]
+    Trace["Trace stream\ntrace.rs"]
+    Artifacts["Deterministic artifacts\nartifacts.rs"]
+    Provider["Provider and tool call layer\nprovider/mod.rs"]
+  end
+
+  subgraph Control["Control and review subsystem"]
+    ControlPlane["Workflow control plane\ncontrol_plane.rs"]
+    Worktree["Issue worktree binding"]
+    Lifecycles["pr init ready run finish janitor closeout"]
+  end
+
+  subgraph Continuous["Long-lived subsystem"]
+    LongLived["Long-lived substrate\nlong_lived_agent.rs"]
+    Observer["Cycle and guardrail artifacts"]
+  end
+
+  Worktree --> ControlPlane
+  ControlPlane --> Plan
+  Plan --> Scheduler
+  Scheduler --> Trace
+  Scheduler --> Artifacts
+  Scheduler --> Provider
+  Trace --> Artifacts
+  Artifacts --> Observer
+  LongLived --> Observer
+  LongLived --> Scheduler
+  Lifecycles --> Worktree

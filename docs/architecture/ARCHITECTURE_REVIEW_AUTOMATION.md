@@ -33,12 +33,17 @@ These checks can be automated today or with small follow-up scripts:
   secret markers.
 - Architecture docs include evidence, assumptions, validation, residual risk,
   and known-gap sections.
+- Milestone closeout records include an explicit architecture delta outcome for
+  the period covered (`architecture-update` or `architecture-reviewed-unchanged`).
 - Demo matrix entries do not claim a command before the command exists.
 - Issue work has STP, SIP, and SOR cards before `pr run`.
 - Worktree-bound implementation is used for tracked issues.
 - SOR closeout claims match GitHub issue and PR state.
 - Provider docs keep model refs, transport ids, and policy decisions separate.
 - Long-lived-agent docs describe cycle-scoped artifacts and operator controls.
+- Review packet authors should verify that each canonical diagram in
+  `diagrams/DIAGRAM_PACKET.md` serves an enduring architecture surface rather
+  than a one-off milestone artifact.
 
 ## Human-Judgment Gates
 
@@ -46,6 +51,8 @@ These checks should remain explicitly human-reviewed:
 
 - Whether an architecture finding severity matches user impact.
 - Whether a diagram hides an important boundary or implies unsupported behavior.
+- Whether an architecture change decision is accurately represented as change versus
+  unchanged for the current milestone.
 - Whether a tradeoff deserves an ADR or only an implementation note.
 - Whether a runtime capability is mature enough to be claimed publicly.
 - Whether a demo is genuinely proving, merely illustrative, skipped, or failed.

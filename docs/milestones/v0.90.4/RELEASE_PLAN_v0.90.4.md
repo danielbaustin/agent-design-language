@@ -29,6 +29,8 @@ The milestone is releasable when:
 - the demo matrix distinguishes landed, skipped, failed, and non-proving claims
 - the feature proof coverage WP is complete before quality/docs convergence
 - internal and external review findings are fixed or dispositioned
+- architecture refresh evidence is complete for the milestone period (`architecture-update`
+  or explicit `architecture-reviewed-unchanged`).
 - release notes describe actual shipped scope
 - end-of-milestone report is written before ceremony
 
@@ -51,3 +53,5 @@ The closeout should hand off:
   executor authority, redaction, replay, denial records, and model testing
 - any contract-market requirement that recorded tool needs only as a constraint
   and must be picked up by v0.90.5
+- whether the canonical architecture packet changed and was updated, or was explicitly
+  reviewed as unchanged with a tracked owner and rationale.

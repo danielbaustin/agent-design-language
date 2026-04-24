@@ -14,6 +14,22 @@ and architecture-document generation.
 - `adr/CANDIDATE_ADRS.md` records architecture decisions that should be promoted
   only after human review.
 
+## Milestone Refresh Policy
+
+The canonical architecture package is refreshed or explicitly affirmed unchanged at
+every milestone boundary.
+
+- If architecture, control-plane behavior, or review workflow changed in a way
+  that affects source-truth claims, update:
+  - `ADL_ARCHITECTURE.md`
+  - any affected support docs in this directory
+  - and supporting ADR surfaces.
+- If no material architecture change is accepted for a milestone, author a clear
+  `Reviewed and unchanged` statement in the release closeout package for that
+  milestone and include the evidence reviewed.
+- `ADL_ARCHITECTURE.md` remains the canonical public narrative. No competing
+  parallel canon is introduced.
+
 ## Validation
 
 Run this from repository root:
