@@ -24,6 +24,22 @@ and makes the full-coverage trigger explicit and reviewable:
 - pushes to `main`, nightly automation, and other non-PR events still run the
   authoritative full coverage workflow
 
+## Current Cost Center
+
+After the coverage split and slow-proof isolation landed, the ordinary PR path
+still had one obvious long pole: the non-coverage `adl-ci` test step.
+
+Observed on successful run `24903573520` for PR `#2517`:
+
+- `adl-ci`: about `13m17s`
+- `clippy`: about `66s`
+- `test`: about `10m37s`
+- `demo smoke`: about `43s`
+
+That run is important because it shows the remaining bottleneck was not the
+coverage lane. The ordinary `cargo nextest run` sweep itself was still too
+broad for bounded PRs.
+
 ## Stable Check Names
 
 The required PR checks remain:
@@ -120,6 +136,41 @@ Pushes to `main` and nightly coverage:
 - run full validation and full coverage
 - avoid a second standalone full `cargo test` when the full coverage lane is
   already executing the Rust test suite
+
+## Ordinary PR-Fast Test Runner
+
+The ordinary non-coverage test step now runs through:
+
+```bash
+adl/tools/run_pr_fast_test_lane.sh
+```
+
+This runner is intentionally conservative:
+
+- it computes the changed surface from the PR base/head SHAs
+- it uses a focused `cargo nextest` expression only when every changed fast-lane
+  surface maps to a bounded token set
+- it fails closed to the full ordinary nextest sweep when the change is broad,
+  ambiguous, or touches too many independently-filtered modules
+
+Focused fast-lane cases currently include bounded slices such as:
+
+- individual `runtime_v2` module files
+- bounded CLI command files
+- publication-control-plane docs that intentionally route to the `pr_cmd`
+  validation slice
+
+Fail-closed full-lane cases include:
+
+- broad entry surfaces such as `adl/src/lib.rs`, `adl/src/main.rs`,
+  `adl/src/runtime_v2/mod.rs`, and `adl/src/schema.rs`
+- test-harness and integration surfaces under `adl/tests/`
+- unmapped nested source paths
+- PRs that would need more than four focused test tokens
+
+The goal is not to guess. The goal is to use a smaller truthful lane when the
+changed surface is obvious and bounded, and otherwise keep the prior full
+ordinary lane.
 
 ## Coverage Behavior
 

@@ -24,9 +24,13 @@ def step_run(name: str) -> str:
     return match.group(1).strip()
 
 ordinary_test = step_run("test")
-if ordinary_test != "cargo nextest run --status-level all --final-status-level slow":
+expected_ordinary_test = (
+    'bash adl/tools/run_pr_fast_test_lane.sh --base "${{ github.event.pull_request.base.sha }}" '
+    '--head "${{ github.event.pull_request.head.sha }}"'
+)
+if ordinary_test != expected_ordinary_test:
     raise SystemExit(
-        "ordinary adl-ci test lane must be 'cargo nextest run --status-level all --final-status-level slow' without --all-features; "
+        "ordinary adl-ci test lane must run through the fail-closed PR-fast runner; "
         f"found: {ordinary_test}"
     )
 
