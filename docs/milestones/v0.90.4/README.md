@@ -83,6 +83,7 @@ Out of scope:
 - Sprint plan: SPRINT_v0.90.4.md
 - Decisions log: DECISIONS_v0.90.4.md
 - Demo matrix: DEMO_MATRIX_v0.90.4.md
+- Feature proof coverage: FEATURE_PROOF_COVERAGE_v0.90.4.md
 - Economics inheritance audit:
   ECONOMICS_INHERITANCE_AND_AUTHORITY_AUDIT_v0.90.4.md
 - CI runtime policy for execution sessions: CI_RUNTIME_POLICY_v0.90.4.md

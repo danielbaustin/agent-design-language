@@ -17,6 +17,7 @@
 | ECONOMICS_INHERITANCE_AND_AUTHORITY_AUDIT_v0.90.4.md | map which v0.90.3 authority surfaces are inherited, fixture-backed, or deferred for contract-market work | WP-02 / #2421 |
 | WBS_v0.90.4.md | opened execution map for the contract-market substrate milestone | WP-01 / #2420 |
 | DEMO_MATRIX_v0.90.4.md | live proof matrix and non-proving boundaries | WP-01 / #2420, WP-14 / #2433, WP-14A / #2434 |
+| FEATURE_PROOF_COVERAGE_v0.90.4.md | reviewer map from every D1-D13 claim to its landed proof home and explicit non-proving governed-tool handoff boundary | WP-14A / #2434 |
 | WP_ISSUE_WAVE_v0.90.4.yaml | opened issue-wave source of truth with real issue numbers | WP-01 / #2420 |
 | WP_EXECUTION_READINESS_v0.90.4.md | card-authoring source for concrete WP outputs and validation | WP-01 / #2420 |
 

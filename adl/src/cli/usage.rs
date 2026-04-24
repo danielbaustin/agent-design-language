@@ -115,7 +115,7 @@ Examples:
   adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run
   adl runtime-v2 observatory-flagship-demo --out artifacts/v0903/demo-d12-observatory-flagship
   adl runtime-v2 contract-market-demo --out artifacts/v0904/demo-d12-contract-market
-  adl runtime-v2 feature-proof-coverage --out artifacts/v0903/feature-proof-coverage.json
+  adl runtime-v2 feature-proof-coverage --out artifacts/v0904/feature-proof-coverage.json
   adl provider setup chatgpt
   adl provider setup claude
   adl provider setup anthropic --out ./.adl/provider-setup/anthropic
