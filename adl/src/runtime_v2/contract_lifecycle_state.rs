@@ -10,6 +10,10 @@ pub const RUNTIME_V2_CONTRACT_LIFECYCLE_STATE_MACHINE_PATH: &str =
 pub const RUNTIME_V2_CONTRACT_LIFECYCLE_NEGATIVE_CASES_PATH: &str =
     "runtime_v2/contract_market/contract_lifecycle_negative_cases.json";
 
+pub fn runtime_v2_contract_lifecycle_state_model() -> Result<RuntimeV2ContractLifecycleArtifacts> {
+    RuntimeV2ContractLifecycleArtifacts::prototype()
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RuntimeV2ContractLifecycleTransitionEvent {
     pub event_id: String,
