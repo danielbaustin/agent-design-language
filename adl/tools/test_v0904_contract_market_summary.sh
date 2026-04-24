@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+TMP_DIR="$(mktemp -d "$ROOT_DIR/.tmp-contract-market-summary.XXXXXX")"
+RUNNER_OUT_REL="$(basename "$TMP_DIR")/runner"
+RENDERED_ONE_REL="$(basename "$TMP_DIR")/rendered_one.md"
+RENDERED_TWO_REL="$(basename "$TMP_DIR")/rendered_two.md"
+RUNNER_OUT="$ROOT_DIR/$RUNNER_OUT_REL"
+RENDERED_ONE="$ROOT_DIR/$RENDERED_ONE_REL"
+RENDERED_TWO="$ROOT_DIR/$RENDERED_TWO_REL"
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+cd "$ROOT_DIR"
+
+python3 adl/tools/run_v0904_contract_market_runner.py --out "$RUNNER_OUT_REL"
+python3 adl/tools/render_v0904_contract_market_summary.py \
+  --review-bundle "$RUNNER_OUT_REL/review_bundle.json" \
+  --out "$RENDERED_ONE_REL"
+python3 adl/tools/render_v0904_contract_market_summary.py \
+  --review-bundle "$RUNNER_OUT_REL/review_bundle.json" \
+  --out "$RENDERED_TWO_REL"
+
+diff -u "$RENDERED_ONE" "$RENDERED_TWO"
+diff -u "$RENDERED_ONE" "demos/fixtures/contract_market/review_summary_example.md"
+
+python3 - "$RENDERED_ONE" <<'PY'
+from pathlib import Path
+import sys
+
+text = Path(sys.argv[1]).read_text()
+
+required_headings = [
+    "## Scope",
+    "## Participants",
+    "## Authority Basis",
+    "## Bid Comparison",
+    "## Selection Rationale",
+    "## Delegation",
+    "## Artifacts",
+    "## Trace",
+    "## Validation",
+    "## Tool Requirements",
+    "## Caveats",
+    "## Residual Risk",
+]
+for heading in required_headings:
+    assert heading in text
+
+assert "Proof:" in text
+assert "Judgment:" in text
+assert "Non-claims:" in text
+assert "Residual risk:" in text
+assert "Governed tool execution is deferred to v0.90.5." in text
+assert "/Users/" not in text
+assert "/private/" not in text
+assert "/var/" not in text
+assert "file://" not in text
+PY
+
+echo "v0.90.4 contract-market summary smoke: pass"
