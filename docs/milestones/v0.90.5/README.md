@@ -11,6 +11,22 @@ source for a later WP-01 issue-wave creation pass. It is intended to be the
 next immediately executable planning package after v0.90.4 closeout, not a
 half-managed later idea lane.
 
+## Parallel Python Reduction Tranche
+
+v0.90.5 should remain Governed Tools v1.0. It should not be repurposed into a
+stop-the-world Python rewrite gate.
+
+Instead, the milestone should reserve a small bounded Python-reduction tranche
+alongside the main governed-tools work. The cross-milestone policy is recorded
+in [Python Elimination Staged Plan](../../planning/PYTHON_ELIMINATION_STAGED_PLAN.md).
+
+The expected `v0.90.5` Python tranche is:
+
+- freeze and no-new-tracked-Python discipline
+- inventory and disposition truth surface
+- one high-leverage Rust port or delete wave for a coherent Python tooling
+  family
+
 ## Thesis
 
 v0.90.5 should make tools a first-class governed ADL primitive.

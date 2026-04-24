@@ -11,6 +11,15 @@ RUNNER_OUT="$ROOT_DIR/$RUNNER_OUT_REL"
 RENDERED_ONE="$ROOT_DIR/$RENDERED_ONE_REL"
 RENDERED_TWO="$ROOT_DIR/$RENDERED_TWO_REL"
 ABSOLUTE_RENDER="/tmp/adl-contract-market-summary-absolute.md"
+MISSING_RENDER_REL="$(basename "$TMP_DIR")/rendered_missing.md"
+INVALID_REVIEW_REL="$(basename "$TMP_DIR")/invalid_review_bundle.json"
+INVALID_RENDER_REL="$(basename "$TMP_DIR")/rendered_invalid.md"
+RUNNER_OUT="$ROOT_DIR/$RUNNER_OUT_REL"
+RENDERED_ONE="$ROOT_DIR/$RENDERED_ONE_REL"
+RENDERED_TWO="$ROOT_DIR/$RENDERED_TWO_REL"
+MISSING_RENDER="$ROOT_DIR/$MISSING_RENDER_REL"
+INVALID_REVIEW="$ROOT_DIR/$INVALID_REVIEW_REL"
+INVALID_RENDER="$ROOT_DIR/$INVALID_RENDER_REL"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
 cd "$ROOT_DIR"
@@ -89,5 +98,37 @@ set -e
 test "$TRAVERSAL_STATUS" -eq 1
 [[ "$TRAVERSAL_OUTPUT" == *"contract_market_summary: fail [path_traversal_forbidden]"* ]]
 [[ "$TRAVERSAL_OUTPUT" != *"Traceback (most recent call last)"* ]]
+
+set +e
+MISSING_OUTPUT="$(
+  python3 adl/tools/render_v0904_contract_market_summary.py \
+    --review-bundle "$(basename "$TMP_DIR")/does_not_exist.json" \
+    --out "$MISSING_RENDER_REL" \
+    2>&1
+)"
+MISSING_STATUS=$?
+set -e
+
+test "$MISSING_STATUS" -eq 1
+[[ "$MISSING_OUTPUT" == *"contract_market_summary: fail [missing_input]"* ]]
+[[ "$MISSING_OUTPUT" != *"Traceback (most recent call last)"* ]]
+grep -F "render_failure: missing_input:" "$MISSING_RENDER"
+
+printf '{ invalid json }\n' > "$INVALID_REVIEW"
+
+set +e
+INVALID_OUTPUT="$(
+  python3 adl/tools/render_v0904_contract_market_summary.py \
+    --review-bundle "$INVALID_REVIEW_REL" \
+    --out "$INVALID_RENDER_REL" \
+    2>&1
+)"
+INVALID_STATUS=$?
+set -e
+
+test "$INVALID_STATUS" -eq 1
+[[ "$INVALID_OUTPUT" == *"contract_market_summary: fail [invalid_json]"* ]]
+[[ "$INVALID_OUTPUT" != *"Traceback (most recent call last)"* ]]
+grep -F "render_failure: invalid_json:" "$INVALID_RENDER"
 
 echo "v0.90.4 contract-market summary smoke: pass"
