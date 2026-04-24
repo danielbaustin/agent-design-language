@@ -18,15 +18,10 @@ do
   fi
 done
 
-if grep -F "proof_" <<<"$plan" >/dev/null 2>&1; then
-  echo "authoritative coverage runner should no longer advertise proof-phase split tokens" >&2
-  exit 1
-fi
-
-policy_plan="$(bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" --authority pr_policy_surface --event-name pull_request --print-plan)"
+policy_plan="$(bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" --authority pr_policy_surface_tooling_only --event-name pull_request --print-plan)"
 
 for required in \
-  "authority=pr_policy_surface" \
+  "authority=pr_policy_surface_tooling_only" \
   "event_name=pull_request" \
   "mode=bounded_policy_surface_pr" \
   "features=default" \
@@ -38,9 +33,19 @@ do
   fi
 done
 
-if grep -F "proof_" <<<"$policy_plan" >/dev/null 2>&1; then
-  echo "policy-surface authoritative plan must not expose legacy proof-phase split tokens" >&2
-  exit 1
-fi
+runtime_policy_plan="$(bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" --authority pr_policy_surface_runtime_mixed --event-name pull_request --print-plan)"
+
+for required in \
+  "authority=pr_policy_surface_runtime_mixed" \
+  "event_name=pull_request" \
+  "mode=full_authoritative_all_features" \
+  "features=all_features" \
+  "workspace=full"
+do
+  if ! grep -F "$required" <<<"$runtime_policy_plan" >/dev/null 2>&1; then
+    echo "missing mixed policy-surface authoritative coverage plan token: $required" >&2
+    exit 1
+  fi
+done
 
 echo "PASS test_run_authoritative_coverage_lane"

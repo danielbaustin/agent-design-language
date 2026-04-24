@@ -20,7 +20,9 @@ The v0.90.4 policy keeps the stable check names, keeps PR validation truthful,
 and makes the full-coverage trigger explicit and reviewable:
 
 - ordinary runtime/test PRs run the fast PR validation path
-- coverage-policy-sensitive PRs still fail closed into the full coverage lane
+- coverage-policy-sensitive PRs still enter the authoritative coverage lane,
+  but tooling-only policy PRs use one bounded authoritative pass while mixed
+  runtime-plus-policy PRs still fail closed into the full all-features lane
 - pushes to `main`, nightly automation, and other non-PR events still run the
   authoritative full coverage workflow
 
@@ -128,10 +130,16 @@ Ordinary runtime/source PRs:
 Coverage-policy-sensitive PRs:
 
 - run the same base validation as other relevant PRs
-- run the bounded authoritative base coverage summary because the PR changes
-  the rules or enforcement surfaces that govern coverage itself
-- defer the proof-heavy authoritative slice and workspace-threshold gate to the
-  push-to-main run so policy PRs do not pay the full proof tax twice
+- run the authoritative coverage lane because the PR changes the rules or
+  enforcement surfaces that govern coverage itself
+- tooling-only policy PRs run one bounded workspace `cargo llvm-cov nextest`
+  pass on the PR so they stop paying the full all-features governance tax on
+  every iteration
+- tooling-only policy PRs still run the changed-source coverage-impact check,
+  but they defer the full workspace `90%` gate and LCOV artifact path because
+  those belong to the full-evidence lane
+- mixed runtime-plus-policy PRs still run the full all-features authoritative
+  coverage lane
 
 Pushes to `main` and nightly coverage:
 
@@ -248,9 +256,10 @@ smoke when required, and coverage-impact preflight. Do not cite the PR-fast
 coverage lane as full release coverage evidence.
 
 When working a PR that changes coverage governance or coverage tooling, expect
-the bounded one-pass authoritative coverage lane on the PR and the full
-all-features authoritative lane on push-to-main. That keeps governance changes
-reviewable without making every policy PR pay the same full coverage cost twice.
+the authoritative coverage lane. Tooling-only policy PRs now use one bounded
+authoritative workspace pass; mixed runtime-plus-policy PRs still take the full
+all-features lane because they are changing both governance and executable
+runtime surfaces.
 
 When working a `main`, nightly, release, or fail-closed event, expect full
 coverage. In those lanes, standalone `cargo test` may be skipped because
@@ -265,8 +274,7 @@ not run.
 
 ## Non-Claims
 
-This policy does not lower push-to-main coverage thresholds or weaken release
-governance. It keeps ordinary bounded Rust PRs on the fast truthful path,
-keeps policy-surface PRs on a bounded authoritative base lane, and preserves
-the full proof-heavy/workspace-threshold coverage gate for `main`, nightly,
-release, and other full-evidence events.
+This policy does not lower coverage thresholds or weaken release governance. It
+keeps ordinary bounded Rust PRs on the fast truthful path while preserving full
+all-features coverage for `main`, nightly, release, fail-closed events, and
+mixed runtime-plus-policy governance changes.

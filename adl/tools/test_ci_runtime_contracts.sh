@@ -4,12 +4,13 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 WORKFLOW="$ROOT_DIR/.github/workflows/ci.yaml"
 
-python3 - "$WORKFLOW" <<'PY'
+python3 - "$WORKFLOW" "$ROOT_DIR/adl/tools/test_run_authoritative_coverage_lane.sh" <<'PY'
 import pathlib
 import re
 import sys
 
 workflow = pathlib.Path(sys.argv[1]).read_text()
+runner_test = pathlib.Path(sys.argv[2])
 
 def step_run(name: str) -> str:
     pattern = re.compile(
@@ -21,6 +22,18 @@ def step_run(name: str) -> str:
     match = pattern.search(workflow)
     if not match:
         raise SystemExit(f"missing workflow step: {name}")
+    return match.group(1).strip()
+
+def step_if(name: str) -> str:
+    pattern = re.compile(
+        rf"^\s*-\s+name:\s+{re.escape(name)}\s*$"
+        rf"(?:\n^\s+.*$)*?"
+        rf"\n^\s+if:\s+(.+)$",
+        re.MULTILINE,
+    )
+    match = pattern.search(workflow)
+    if not match:
+        raise SystemExit(f"missing workflow if condition for step: {name}")
     return match.group(1).strip()
 
 ordinary_test = step_run("test")
@@ -60,23 +73,36 @@ if "tool: nextest" not in workflow:
         "coverage lanes must install cargo-nextest before running cargo llvm-cov nextest"
     )
 
-expected_authoritative_run = (
-    'run: bash tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" '
+expected_coverage = (
+    'bash tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" '
     '--event-name "${{ github.event_name }}"'
 )
-if expected_authoritative_run not in workflow:
+coverage_step = step_run("Coverage run and summary (json)")
+if coverage_step != expected_coverage:
     raise SystemExit(
-        "authoritative coverage lane must run through the bounded authoritative coverage runner"
+        "authoritative coverage lane must route through the bounded runner; "
+        f"found: {coverage_step}"
     )
 
-if "coverage_authority == 'pr_policy_surface'" not in workflow:
+if not runner_test.exists():
     raise SystemExit(
-        "policy-surface PR authoritative coverage must be able to defer the proof-heavy/workspace gate tranche"
+        "authoritative coverage runner contract test must exist"
     )
 
-if "cargo llvm-cov report --json --summary-only --output-path coverage-summary.json" not in workflow:
+gate_if = step_if("Enforce coverage policy gates (workspace + per-file)")
+expected_gate_fragment = "steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'"
+if expected_gate_fragment not in gate_if:
     raise SystemExit(
-        "coverage lanes must emit coverage-summary.json via cargo llvm-cov report after nextest execution"
+        "workspace coverage gate must defer for tooling-only policy authoritative PRs; "
+        f"found: {gate_if}"
+    )
+
+deferred_policy_step = step_if("Full workspace coverage gate deferred for policy PR")
+expected_deferred_fragment = "steps.path-policy.outputs.coverage_authority == 'pr_policy_surface_tooling_only'"
+if expected_deferred_fragment not in deferred_policy_step:
+    raise SystemExit(
+        "tooling-only policy PR defer note must be keyed to pr_policy_surface_tooling_only; "
+        f"found: {deferred_policy_step}"
     )
 
 print("PASS test_ci_runtime_contracts")

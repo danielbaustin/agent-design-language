@@ -15,7 +15,7 @@ Usage:
 
 Run the authoritative coverage lane in one bounded pass per event:
 - full authoritative all-features coverage on push/main and other full-evidence events
-- bounded workspace coverage on policy-surface pull requests
+- bounded workspace coverage on tooling-only policy pull requests
 
 The run always emits one final coverage summary report.
 USAGE
@@ -47,7 +47,7 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-if [ "$EVENT_NAME" = "pull_request" ] && [ "$AUTHORITY" = "pr_policy_surface" ]; then
+if [ "$EVENT_NAME" = "pull_request" ] && [ "$AUTHORITY" = "pr_policy_surface_tooling_only" ]; then
   MODE="bounded_policy_surface_pr"
 fi
 
@@ -79,7 +79,7 @@ if [ "$MODE" = "full_authoritative_all_features" ]; then
 else
   echo "Authoritative coverage mode: bounded_policy_surface_pr"
   echo "Features: default"
-  echo "Full authoritative all-features proof remains reserved for push-to-main."
+  echo "Full authoritative all-features proof remains reserved for push-to-main and mixed runtime policy changes."
   cargo llvm-cov nextest \
     --workspace \
     --status-level all \
