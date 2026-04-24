@@ -1,7 +1,7 @@
 use super::*;
 use crate::cli::pr_cmd::github::{
-    current_pr_url, ensure_or_repair_pr_closing_linkage, ensure_pr_closing_linkage,
-    pr_has_closing_linkage,
+    attach_post_merge_closeout, attach_pr_janitor, current_pr_url,
+    ensure_or_repair_pr_closing_linkage, ensure_pr_closing_linkage, pr_has_closing_linkage,
 };
 
 #[test]
@@ -872,4 +872,192 @@ fn ensure_or_repair_pr_closing_linkage_repairs_live_pr_body() {
     assert!(repaired.contains("Closes #1153"));
     let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
     assert!(gh_calls.contains("pr edit -R danielbaustin/agent-design-language https://github.com/danielbaustin/agent-design-language/pull/1159 --body-file"));
+}
+
+#[test]
+fn ensure_pr_closing_linkage_errors_when_pr_body_has_no_issue_reference() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-missing-linkage");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    exit 0\n  fi\n  if printf '%s ' \"$@\" | grep -q ' --json body '; then\n    printf 'Refs #9999\\n'\n    exit 0\n  fi\nfi\nexit 1\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let err = ensure_pr_closing_linkage(
+        "danielbaustin/agent-design-language",
+        "https://github.com/danielbaustin/agent-design-language/pull/1159",
+        1153,
+        false,
+    )
+    .expect_err("missing linkage should fail");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert!(err
+        .to_string()
+        .contains("missing closing linkage to issue #1153"));
+}
+
+#[test]
+fn ensure_or_repair_pr_closing_linkage_is_noop_when_no_close_is_set() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-no-close");
+    let body_file = temp.join("desired.md");
+    fs::write(&body_file, "Refs #1153\n").expect("body");
+
+    let repaired = ensure_or_repair_pr_closing_linkage(
+        "danielbaustin/agent-design-language",
+        "https://github.com/danielbaustin/agent-design-language/pull/1159",
+        1153,
+        true,
+        &body_file,
+    )
+    .expect("no-close should skip linkage repair");
+
+    assert!(!repaired);
+}
+
+#[test]
+fn ensure_or_repair_pr_closing_linkage_is_noop_when_linkage_already_exists() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-linkage-already-present");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    write_executable(
+        &bin_dir.join("gh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    printf '1153\\n'\n    exit 0\n  fi\n  if printf '%s ' \"$@\" | grep -q ' --json body '; then\n    printf 'Closes #1153\\n'\n    exit 0\n  fi\nfi\nif [ \"$1 $2\" = 'pr edit' ]; then\n  exit 99\nfi\nexit 1\n",
+            gh_log.display()
+        ),
+    );
+    let body_file = temp.join("desired.md");
+    fs::write(&body_file, "Closes #1153\n").expect("body");
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let repaired = ensure_or_repair_pr_closing_linkage(
+        "danielbaustin/agent-design-language",
+        "https://github.com/danielbaustin/agent-design-language/pull/1159",
+        1153,
+        false,
+        &body_file,
+    )
+    .expect("existing linkage should not require repair");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert!(!repaired);
+    let gh_log = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(!gh_log.contains("pr edit -R"));
+}
+
+#[test]
+fn attach_pr_janitor_reports_failure_output() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-attach-janitor-failure");
+    let repo = temp.join("repo");
+    let tools_dir = repo.join("adl/tools");
+    fs::create_dir_all(&tools_dir).expect("tools dir");
+    write_executable(
+        &tools_dir.join("attach_pr_janitor.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\necho 'janitor stdout'\necho 'janitor stderr' >&2\nexit 17\n",
+    );
+
+    let old_disable = env::var("ADL_PR_JANITOR_DISABLE").ok();
+    let old_cmd = env::var("ADL_PR_JANITOR_CMD").ok();
+    unsafe {
+        env::remove_var("ADL_PR_JANITOR_CMD");
+        env::set_var("ADL_PR_JANITOR_DISABLE", "0");
+    }
+
+    let err = attach_pr_janitor(
+        &repo,
+        "owner/repo",
+        1153,
+        "codex/1153-rust-finish-test",
+        "https://github.com/owner/repo/pull/1159",
+        "draft",
+    )
+    .expect_err("failing janitor helper should bubble up");
+
+    unsafe {
+        if let Some(value) = old_disable {
+            env::set_var("ADL_PR_JANITOR_DISABLE", value);
+        } else {
+            env::remove_var("ADL_PR_JANITOR_DISABLE");
+        }
+        if let Some(value) = old_cmd {
+            env::set_var("ADL_PR_JANITOR_CMD", value);
+        } else {
+            env::remove_var("ADL_PR_JANITOR_CMD");
+        }
+    }
+
+    let message = err.to_string();
+    assert!(message.contains("PR janitor auto-attach failed"));
+    assert!(message.contains("janitor stderr"));
+    assert!(message.contains("stdout: janitor stdout"));
+}
+
+#[test]
+fn attach_post_merge_closeout_reports_failure_output() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-attach-closeout-failure");
+    let repo = temp.join("repo");
+    let tools_dir = repo.join("adl/tools");
+    fs::create_dir_all(&tools_dir).expect("tools dir");
+    write_executable(
+        &tools_dir.join("attach_post_merge_closeout.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\necho 'closeout stdout'\necho 'closeout stderr' >&2\nexit 18\n",
+    );
+
+    let old_disable = env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE").ok();
+    let old_cmd = env::var("ADL_POST_MERGE_CLOSEOUT_CMD").ok();
+    unsafe {
+        env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
+        env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "0");
+    }
+
+    let err = attach_post_merge_closeout(
+        &repo,
+        "owner/repo",
+        1153,
+        "codex/1153-rust-finish-test",
+        "https://github.com/owner/repo/pull/1159",
+    )
+    .expect_err("failing closeout helper should bubble up");
+
+    unsafe {
+        if let Some(value) = old_disable {
+            env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", value);
+        } else {
+            env::remove_var("ADL_POST_MERGE_CLOSEOUT_DISABLE");
+        }
+        if let Some(value) = old_cmd {
+            env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", value);
+        } else {
+            env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
+        }
+    }
+
+    let message = err.to_string();
+    assert!(message.contains("post-merge closeout auto-attach failed"));
+    assert!(message.contains("closeout stderr"));
+    assert!(message.contains("stdout: closeout stdout"));
 }
