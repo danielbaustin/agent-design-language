@@ -10,6 +10,9 @@ Active planning docs:
 
 - `ADL_FEATURE_LIST.md` - full feature list, current status, implemented gaps,
   and target completion milestones through `v0.95`
+- `PYTHON_ELIMINATION_STAGED_PLAN.md` - cross-milestone staged reduction plan
+  for retiring tracked Python without turning the roadmap into a stop-the-world
+  rewrite
 - `ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md` - cross-milestone Runtime v2,
   v0.91 moral/emotional, and v0.92 birthday boundary roadmap
 

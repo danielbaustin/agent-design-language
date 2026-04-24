@@ -43,6 +43,18 @@ v0.93 depends on:
 - v0.90.4 and v0.90.5 only where economics or governed-tool authority has
   landed before v0.93
 
+## Parallel Python Reduction Tranche
+
+v0.93 should preserve room for the final Python-burn-down tranche if the
+footprint has not already reached zero. The cross-milestone rule is recorded in
+[Python Elimination Staged Plan](../../planning/PYTHON_ELIMINATION_STAGED_PLAN.md).
+
+The likely `v0.93` tranche is:
+
+- remaining low-count helpers and odd one-off scripts
+- CI zero-tracked-Python enforcement if the footprint is already near zero
+- parity audit and final cleanup rather than another large migration wave
+
 ## Scope Summary
 
 ### In scope

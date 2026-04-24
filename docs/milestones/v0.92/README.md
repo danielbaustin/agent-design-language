@@ -57,6 +57,19 @@ v0.92 depends on:
 - v0.93 as a downstream consumer of identity evidence for constitutional
   citizenship and polis governance
 
+## Parallel Python Reduction Tranche
+
+v0.92 should also carry a bounded Python-reduction tranche. The cross-milestone
+rule is recorded in
+[Python Elimination Staged Plan](../../planning/PYTHON_ELIMINATION_STAGED_PLAN.md).
+
+The likely `v0.92` tranche is:
+
+- provider mocks and adapter cleanup
+- bridge or protocol leftovers that still sit in Python
+- edge-surface deletion or Rust replacement that is easier to finish after the
+  earlier control-plane waves land
+
 ## Scope Summary
 
 ### In scope
