@@ -101,14 +101,24 @@ jobs:
       - name: docs command check
         run: bash tools/check_release_notes_commands.sh
 
+      - name: Install cargo-nextest
+        if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        with:
+          tool: nextest
+
       - name: test
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        run: cargo test
+        run: cargo nextest run --all-features
+
+      - name: doc test
+        if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
+        run: cargo test --doc --all-features
 
       - name: test covered by full coverage lane
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required == 'true'
         run: |
-          echo "Skipping standalone cargo test because this event requires the full cargo-llvm-cov lane."
+          echo "Skipping standalone cargo nextest/doc-test lane because this event requires the full cargo-llvm-cov lane."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
 
       - name: Rust validation skipped by path policy

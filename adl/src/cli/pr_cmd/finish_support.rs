@@ -390,6 +390,10 @@ fn finish_validation_guard(repo_root: &Path) -> Result<()> {
     run_status("bash", &[path_str(&tracked_residue_guard)?])
 }
 
+fn cargo_nextest_available() -> bool {
+    run_status_allow_failure("cargo", &["nextest", "--version"]).unwrap_or(false)
+}
+
 pub(super) fn select_finish_validation_mode(paths_csv: &str) -> Result<FinishValidationMode> {
     let paths = paths_csv
         .split(',')
@@ -469,7 +473,41 @@ pub(super) fn run_finish_validation_rust(
             "warnings",
         ],
     )?;
-    run_status("cargo", &["test", "--manifest-path", path_str(&manifest)?])?;
+    if cargo_nextest_available() {
+        run_status(
+            "cargo",
+            &[
+                "nextest",
+                "run",
+                "--manifest-path",
+                path_str(&manifest)?,
+                "--all-features",
+            ],
+        )?;
+    } else {
+        eprintln!(
+            "• cargo-nextest not available locally; falling back to cargo test for full local Rust validation."
+        );
+        run_status(
+            "cargo",
+            &[
+                "test",
+                "--manifest-path",
+                path_str(&manifest)?,
+                "--all-features",
+            ],
+        )?;
+    }
+    run_status(
+        "cargo",
+        &[
+            "test",
+            "--manifest-path",
+            path_str(&manifest)?,
+            "--doc",
+            "--all-features",
+        ],
+    )?;
     Ok(())
 }
 
@@ -485,7 +523,8 @@ pub(super) fn render_default_finish_validation(mode: FinishValidationMode) -> St
             "- bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk",
             "- cargo fmt",
             "- cargo clippy --all-targets -- -D warnings",
-            "- cargo test",
+            "- cargo nextest run --manifest-path adl/Cargo.toml --all-features (fallback: cargo test --manifest-path adl/Cargo.toml --all-features when cargo-nextest is unavailable locally)",
+            "- cargo test --manifest-path adl/Cargo.toml --doc --all-features",
         ]
         .join("\n"),
     }
