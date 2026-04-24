@@ -13,6 +13,7 @@ mod contract_lifecycle_state;
 mod contract_schema;
 mod contracts;
 mod csm_run;
+mod delegation_subcontract;
 mod evaluation_selection;
 mod external_counterparty;
 mod feature_proof_coverage;
@@ -66,6 +67,8 @@ pub use contract_schema::*;
 pub use contracts::*;
 #[allow(unused_imports)]
 pub use csm_run::*;
+#[allow(unused_imports)]
+pub use delegation_subcontract::*;
 #[allow(unused_imports)]
 pub use evaluation_selection::*;
 #[allow(unused_imports)]

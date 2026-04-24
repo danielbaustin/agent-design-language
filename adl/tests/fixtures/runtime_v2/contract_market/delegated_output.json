@@ -1,0 +1,39 @@
+{
+  "schema_version": "runtime_v2.delegated_output_artifact.v1",
+  "demo_id": "D7",
+  "wp_id": "WP-09",
+  "output_id": "delegated-output-bravo-manifest",
+  "artifact_path": "runtime_v2/contract_market/delegated_output.json",
+  "subcontract_ref": "runtime_v2/contract_market/delegation_subcontract.json",
+  "parent_contract_ref": "runtime_v2/contract_market/parent_contract.json",
+  "produced_by_counterparty_id": "counterparty-bravo",
+  "produced_deliverables": [
+    "trace-linked artifact manifest"
+  ],
+  "delivered_artifact_refs": [
+    "runtime_v2/contract_market/delegated_manifest_packet.json",
+    "runtime_v2/contract_market/delegated_manifest_trace.json"
+  ],
+  "delegated_tool_usage": [
+    {
+      "requirement_id": "tool-req-projection-render",
+      "capability": "projection_rendering",
+      "adapter_family": "observatory_adapter",
+      "usage_mode": "evidence_only",
+      "governed_authority_required": true,
+      "execution_authority_granted": false,
+      "required_evidence": [
+        "delegated output must remain reviewable before parent integration",
+        "tool dependency stays bounded by the parent contract constraint"
+      ]
+    }
+  ],
+  "trace_links": [
+    "runtime_v2/contract_market/evaluation_selection.json#selected-bid",
+    "runtime_v2/contract_market/delegation_subcontract.json#trace-manifest-scope",
+    "runtime_v2/contract_market/parent_integration.json#delegated-review-approved"
+  ],
+  "review_status": "parent_review_completed",
+  "parent_review_ref": "runtime_v2/contract_market/evaluation_selection.json#delegated-review-approved",
+  "claim_boundary": "This delegated output is evidence reviewed by the parent before integration; it does not transfer parent responsibility or governed-tool execution authority."
+}
