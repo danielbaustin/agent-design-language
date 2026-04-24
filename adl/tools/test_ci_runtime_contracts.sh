@@ -24,9 +24,9 @@ def step_run(name: str) -> str:
     return match.group(1).strip()
 
 ordinary_test = step_run("test")
-if ordinary_test != "cargo nextest run --status-level pass --final-status-level slow --slow-time 60s":
+if ordinary_test != "cargo nextest run --status-level slow --final-status-level slow --slow-time 60s":
     raise SystemExit(
-        "ordinary adl-ci test lane must be 'cargo nextest run --status-level pass --final-status-level slow --slow-time 60s' without --all-features; "
+        "ordinary adl-ci test lane must be 'cargo nextest run --status-level slow --final-status-level slow --slow-time 60s' without --all-features; "
         f"found: {ordinary_test}"
     )
 
