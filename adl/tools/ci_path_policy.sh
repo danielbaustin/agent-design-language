@@ -4,12 +4,13 @@ set -euo pipefail
 event_name="${GITHUB_EVENT_NAME:-}"
 base_sha=""
 head_sha=""
+ref_name="${GITHUB_REF:-}"
 github_output="${GITHUB_OUTPUT:-}"
 
 usage() {
   cat <<'USAGE'
 Usage:
-  adl/tools/ci_path_policy.sh [--event-name <name>] [--base <sha>] [--head <sha>] [--github-output <path>]
+  adl/tools/ci_path_policy.sh [--event-name <name>] [--base <sha>] [--head <sha>] [--ref <ref>] [--github-output <path>]
 
 Classifies changed paths for CI so docs/planning/tools-only PRs can skip
 expensive Rust test and coverage phases while runtime/source changes still run
@@ -29,6 +30,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     --head)
       head_sha="${2:-}"
+      shift 2
+      ;;
+    --ref)
+      ref_name="${2:-}"
       shift 2
       ;;
     --github-output)
@@ -53,6 +58,8 @@ coverage_required="$bool_false"
 full_coverage_required="$bool_false"
 demo_smoke_required="$bool_false"
 fail_closed=false
+coverage_lane="skip"
+coverage_authority="not_required"
 reason="path_policy_docs_or_tooling_only"
 changed_count=0
 changed_files=""
@@ -74,6 +81,31 @@ require_full_validation() {
   coverage_required=true
   full_coverage_required=true
   demo_smoke_required=true
+}
+
+mark_authoritative_full_coverage() {
+  local authority="$1"
+  local reason_value="$2"
+  require_full_validation
+  coverage_lane="authoritative_full"
+  coverage_authority="$authority"
+  reason="$reason_value"
+}
+
+mark_pr_fast_coverage() {
+  rust_required=true
+  coverage_required=true
+  demo_smoke_required=true
+  coverage_lane="pr_fast"
+  coverage_authority="pr_changed_surface"
+  reason="runtime_or_rust_test_change_runs_pr_fast_validation"
+}
+
+mark_policy_surface_full_coverage() {
+  full_coverage_required=true
+  coverage_lane="authoritative_full"
+  coverage_authority="pr_policy_surface"
+  reason="coverage_policy_surface_change_runs_full_coverage"
 }
 
 normalize_changed_rows() {
@@ -143,19 +175,20 @@ changed_line_delta_for_path() {
 }
 
 if [ "$event_name" != "pull_request" ]; then
-  require_full_validation
-  reason="non_pull_request_event_runs_full_validation"
+  if [ "$event_name" = "push" ] && [ "$ref_name" = "refs/heads/main" ]; then
+    mark_authoritative_full_coverage "push_main" "push_main_runs_authoritative_full_coverage"
+  else
+    mark_authoritative_full_coverage "non_pr_event" "non_pull_request_event_runs_full_validation"
+  fi
 elif [ -z "$base_sha" ] || [ -z "$head_sha" ]; then
-  require_full_validation
   fail_closed=true
-  reason="missing_pull_request_sha_runs_full_validation"
+  mark_authoritative_full_coverage "fail_closed" "missing_pull_request_sha_runs_full_validation"
 else
   changed_rows="$(git diff --name-status --diff-filter=ACMR "$base_sha" "$head_sha" 2>/dev/null | normalize_changed_rows || true)"
   changed_files="$(printf '%s\n' "$changed_rows" | awk -F '\t' 'NF >= 2 { print $2 }')"
   if [ -z "$changed_rows" ]; then
-    require_full_validation
     fail_closed=true
-    reason="empty_or_unavailable_diff_runs_full_validation"
+    mark_authoritative_full_coverage "fail_closed" "empty_or_unavailable_diff_runs_full_validation"
   else
     saw_pr_finish_control_plane=false
     changed_count="$(printf '%s\n' "$changed_files" | sed '/^$/d' | wc -l | tr -d ' ')"
@@ -168,10 +201,7 @@ else
       fi
       case "$path" in
         adl/src/*|adl/tests/*|adl/Cargo.toml|adl/Cargo.lock|adl/build.rs)
-          rust_required=true
-          coverage_required=true
-          demo_smoke_required=true
-          reason="runtime_or_rust_test_change_runs_pr_fast_validation"
+          mark_pr_fast_coverage
           ;;
         demos/*|adl/tools/demo_*|adl/tools/test_demo_*)
           demo_smoke_required=true
@@ -183,8 +213,7 @@ EOF
     while IFS=$'\t' read -r _status path; do
       [ -n "$path" ] || continue
       if is_full_coverage_policy_surface "$path"; then
-        full_coverage_required=true
-        reason="coverage_policy_surface_change_runs_full_coverage"
+        mark_policy_surface_full_coverage
         continue
       fi
     done <<EOF
@@ -204,6 +233,8 @@ emit "coverage_required" "$coverage_required"
 emit "full_coverage_required" "$full_coverage_required"
 emit "demo_smoke_required" "$demo_smoke_required"
 emit "fail_closed" "$fail_closed"
+emit "coverage_lane" "$coverage_lane"
+emit "coverage_authority" "$coverage_authority"
 emit "changed_count" "$changed_count"
 emit "reason" "$reason"
 
@@ -213,4 +244,6 @@ printf '  coverage_required=%s\n' "$coverage_required"
 printf '  full_coverage_required=%s\n' "$full_coverage_required"
 printf '  demo_smoke_required=%s\n' "$demo_smoke_required"
 printf '  fail_closed=%s\n' "$fail_closed"
+printf '  coverage_lane=%s\n' "$coverage_lane"
+printf '  coverage_authority=%s\n' "$coverage_authority"
 printf '  changed_count=%s\n' "$changed_count"

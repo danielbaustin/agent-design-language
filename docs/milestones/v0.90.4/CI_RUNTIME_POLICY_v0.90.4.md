@@ -49,10 +49,22 @@ For pull requests, it compares the PR base and head SHAs and emits:
 - `full_coverage_required`
 - `demo_smoke_required`
 - `fail_closed`
+- `coverage_lane`
+- `coverage_authority`
 - `changed_count`
 - `reason`
 
 For non-PR events, including pushes to `main`, it runs full validation.
+
+Interpretation order:
+
+1. `coverage_lane`
+2. `coverage_authority`
+3. `reason`
+
+`reason` remains the human-facing explanation, while `coverage_lane` and
+`coverage_authority` make the authoritative-vs-fast coverage split explicit for
+skills and operators.
 
 If the diff cannot be determined, the policy fails closed and runs full
 validation.
@@ -136,7 +148,9 @@ coverage. In those lanes, standalone `cargo test` may be skipped because
 duplicating the whole suite.
 
 When in doubt, check the `Classify changed paths` step in `adl-ci` or
-`adl-coverage`. Its `reason` field explains why a lane did or did not run.
+`adl-coverage`. Read `coverage_lane` first, `coverage_authority` second, and
+then use `reason` as the human-readable explanation for why a lane did or did
+not run.
 
 ## Non-Claims
 
