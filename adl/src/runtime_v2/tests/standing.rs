@@ -184,6 +184,7 @@ fn runtime_v2_standing_rejects_naked_actor_effects() {
         .contains("naked actor must be rejected before effect"));
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_standing_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_standing_contract().expect("standing artifacts");

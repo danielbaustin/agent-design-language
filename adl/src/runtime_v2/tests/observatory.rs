@@ -1,5 +1,7 @@
+#[cfg(feature = "slow-proof-tests")]
 use super::common::unique_temp_path;
 use super::*;
+#[cfg(feature = "slow-proof-tests")]
 use std::fs;
 
 #[test]
@@ -43,6 +45,7 @@ fn runtime_v2_csm_observatory_contract_is_stable() {
         .contains("This is not the first true Godel-agent birthday."));
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_csm_observatory_writes_without_path_leakage() {
     let temp_root = unique_temp_path("csm-observatory");

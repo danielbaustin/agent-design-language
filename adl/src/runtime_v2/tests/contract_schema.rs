@@ -93,6 +93,7 @@ fn runtime_v2_contract_schema_rejects_invalid_contract_fixtures_for_expected_rea
     }
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_contract_schema_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_contract_schema_contract().expect("contract schema artifacts");

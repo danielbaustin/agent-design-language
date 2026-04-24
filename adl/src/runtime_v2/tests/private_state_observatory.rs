@@ -209,6 +209,7 @@ fn runtime_v2_private_state_observatory_rejects_public_overexposure_and_report_d
     .contains("must not claim raw private-state inspection"));
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_private_state_observatory_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");

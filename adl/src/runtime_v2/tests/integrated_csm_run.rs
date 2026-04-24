@@ -1,5 +1,7 @@
+#[cfg(feature = "slow-proof-tests")]
 use super::common::unique_temp_path;
 use super::*;
+#[cfg(feature = "slow-proof-tests")]
 use std::fs;
 
 #[test]
@@ -60,6 +62,7 @@ fn runtime_v2_csm_integrated_run_contract_matches_golden_fixture() {
     );
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_csm_integrated_run_writes_without_path_leakage() {
     let temp_root = unique_temp_path("csm-integrated-run");
