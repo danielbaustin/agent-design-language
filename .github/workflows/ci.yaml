@@ -103,7 +103,7 @@ jobs:
         run: bash tools/check_release_notes_commands.sh
 
       - name: ci runtime contract check
-        run: bash adl/tools/test_ci_runtime_contracts.sh
+        run: bash tools/test_ci_runtime_contracts.sh
 
       - name: Install cargo-nextest
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
