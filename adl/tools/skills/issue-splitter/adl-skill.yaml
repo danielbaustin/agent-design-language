@@ -1,0 +1,92 @@
+version: "0.1"
+kind: "adl-skill"
+id: "issue-splitter"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "issue_splitter.v1"
+    reference_doc: "../docs/ISSUE_SPLITTER_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "analyze_issue_bundle"
+      - "analyze_issue_number"
+    policy_fields:
+      - "stop_before_tracker_mutation"
+      - "stop_before_card_mutation"
+      - "allow_follow_on_issue_drafts"
+      - "max_follow_on_count"
+      - "preserve_issue_graph_links"
+    mode_requirements:
+      analyze_issue_bundle:
+        required_target_fields:
+          - "task_bundle_path"
+      analyze_issue_number:
+        required_target_fields:
+          - "issue_number"
+  intent:
+    - "issue_scope_classification"
+    - "issue_split_planning"
+    - "follow_on_issue_planning"
+required_inputs:
+  - "repo_root"
+optional_inputs:
+  - "issue_number"
+  - "task_bundle_path"
+  - "source_issue_prompt_path"
+  - "issue_title"
+  - "split_policy"
+  - "current_scope_preference"
+stop_if_missing:
+  - "repo_root"
+  - "policy.stop_before_tracker_mutation"
+  - "policy.stop_before_card_mutation"
+prevalidation_rules:
+  - "repo_root_must_be_absolute"
+  - "skill_input_schema_must_equal_issue_splitter.v1_when_structured_input_is_used"
+  - "mode_must_match_supported_enum"
+  - "exactly_one_issue_target_should_drive_the_mode"
+  - "policy.stop_before_tracker_mutation_must_be_true"
+  - "policy.stop_before_card_mutation_must_be_true"
+  - "policy.max_follow_on_count_must_be_positive_integer_when_present"
+execution:
+  mode: "plan_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  preferred_commands:
+    - "python3 adl/tools/skills/issue-splitter/scripts/plan_issue_split.py --task-bundle <path> --source-prompt <path> --out <path>"
+    - "rg -n \"follow-on|split|separate issue|must stay together|defer\" .adl"
+  preferred_path: "task_bundle_first"
+  stop_before:
+    - "issue_creation"
+    - "card_rewrite"
+    - "pr_run"
+    - "silent_scope_fragmentation"
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-issue-splitter.md"
+  required_sections:
+    - "status"
+    - "classification"
+    - "concern_buckets"
+    - "current_scope_recommendation"
+    - "proposed_follow_ons"
+    - "issue_graph_notes"
+    - "recommended_handoff"
+    - "non_claims"
+    - "safety_flags"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  no_live_tracker_mutation_without_explicit_permission: true
+  manifest_declares_executables: true

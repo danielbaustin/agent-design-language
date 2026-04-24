@@ -24,6 +24,7 @@ The tracked skill set is:
 - `finding-to-issue-planner`
 - `gap-analysis`
 - `issue-folding`
+- `issue-splitter`
 - `issue-watcher`
 - `medium-article-writer`
 - `portable-contract-normalizer`
@@ -83,6 +84,7 @@ The normal workflow is:
 `diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
 `issue-folding` is a bounded issue-disposition helper for classifying duplicate, superseded, absorbed, already-satisfied, obsolete, or still-actionable issues before closeout.
+`issue-splitter` is a bounded issue-scope helper for deciding whether one issue should stay intact, split now, defer splitting, or stop for operator review.
 `issue-watcher` is a bounded wait-window helper for watching one issue, PR, branch, or dependency gate and routing blockers without mutating state.
 `pr-stack-manager` is a bounded stack-topology helper for ancestry, base alignment, and dependency-order analysis.
 `review-comment-triage` is a bounded review-feedback helper for classifying PR comments before implementation.
@@ -1411,6 +1413,49 @@ Use `workflow-conductor` for still-actionable issues, `pr-closeout` for
 evidence-backed foldable outcomes, and operator review when disposition signals
 conflict.
 
+## `issue-splitter`
+
+### Purpose
+
+`issue-splitter` inspects one bounded issue packet and decides whether the issue
+should stay intact, split into follow-on work now, defer splitting, or stop for
+operator review.
+
+It preserves concern-bucket rationale, proposed follow-ons, and issue-graph
+links without mutating the tracker.
+
+### When To Use It
+
+Use it when:
+
+- an issue mixes multiple concern families or follow-on hints
+- scope drift should be turned into explicit split planning
+- current-scope narrowing should be reasoned about before touching cards
+
+Do not use it for:
+
+- automatic issue creation
+- silent card rewrites
+- broad milestone decomposition
+
+Structured schema:
+
+- `adl/tools/skills/docs/ISSUE_SPLITTER_SKILL_INPUT_SCHEMA.md`
+- schema id: `issue_splitter.v1`
+
+Deterministic fixture analyzer:
+
+```bash
+python3 adl/tools/skills/issue-splitter/scripts/plan_issue_split.py --task-bundle <path> --source-prompt <path> --out <artifact-root> --run-id <run-id>
+```
+
+### Typical Handoff
+
+Use `workflow-conductor` when the issue should stay intact,
+`finding-to-issue-planner` or approved issue-creation flow for split-now or
+defer outcomes, and operator review when the packet contains conflicting split
+signals.
+
 ## `portable-contract-normalizer`
 
 ### Purpose
@@ -2364,6 +2409,8 @@ Use this quick selector:
   - `pr-closeout`
 - need to classify whether an issue should close as duplicate, superseded, absorbed, already satisfied, or obsolete work:
   - `issue-folding`
+- need to decide whether one issue should stay intact or split into follow-on work:
+  - `issue-splitter`
 - need to clean drifted lifecycle records before closeout or janitor handoff:
   - `records-hygiene`
 - need to inspect stacked PR topology or stale branch bases:
@@ -2430,6 +2477,7 @@ surfaces:
 | `finding-to-issue-planner` | `FINDING_TO_ISSUE_PLANNER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | issue candidates only |
 | `gap-analysis` | `GAP_ANALYSIS_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | gap report only |
 | `issue-folding` | `ISSUE_FOLDING_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | issue disposition classification only |
+| `issue-splitter` | `ISSUE_SPLITTER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | issue split planning only |
 | `medium-article-writer` | `MEDIUM_ARTICLE_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | article packet only |
 | `portable-contract-normalizer` | `PORTABLE_CONTRACT_NORMALIZER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | bounded portability scan or explicit safe normalization only |
 | `pr-closeout` | `PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | local closeout only |

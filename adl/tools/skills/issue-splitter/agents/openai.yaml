@@ -1,0 +1,3 @@
+display_name: Issue Splitter
+short_description: Classify whether one issue should stay intact, split into follow-ons, defer, or stop for operator judgment
+default_prompt: Inspect one issue packet or task bundle for mixed or drifting scope. Detect concern buckets, decide whether the issue should stay intact, split now, defer, or stop as blocked, and emit current-scope guidance plus follow-on issue candidates without mutating the tracker or rewriting cards automatically.
