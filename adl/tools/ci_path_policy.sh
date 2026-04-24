@@ -57,6 +57,7 @@ rust_required="$bool_false"
 coverage_required="$bool_false"
 full_coverage_required="$bool_false"
 demo_smoke_required="$bool_false"
+release_version_only="$bool_false"
 fail_closed=false
 coverage_lane="skip"
 coverage_authority="not_required"
@@ -159,6 +160,141 @@ is_full_coverage_policy_surface() {
   return 1
 }
 
+is_release_truth_doc_surface() {
+  local path="$1"
+  case "$path" in
+    README.md|CHANGELOG.md|REVIEW.md|docs/*)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+cargo_manifest_package_version_only_change() {
+  python3 - "$base_sha" "$head_sha" <<'PY'
+import io
+import subprocess
+import sys
+import tomllib
+
+base, head = sys.argv[1], sys.argv[2]
+path = "adl/Cargo.toml"
+
+def load(rev: str):
+    try:
+        text = subprocess.check_output(
+            ["git", "show", f"{rev}:{path}"], text=True, stderr=subprocess.DEVNULL
+        )
+    except subprocess.CalledProcessError:
+        return None
+    return tomllib.loads(text)
+
+before = load(base)
+after = load(head)
+if before is None or after is None:
+    raise SystemExit(1)
+
+before_pkg = dict(before.get("package", {}))
+after_pkg = dict(after.get("package", {}))
+before_version = before_pkg.pop("version", None)
+after_version = after_pkg.pop("version", None)
+
+before_norm = dict(before)
+after_norm = dict(after)
+before_norm["package"] = before_pkg
+after_norm["package"] = after_pkg
+
+if (
+    before_version
+    and after_version
+    and before_version != after_version
+    and before_norm == after_norm
+):
+    raise SystemExit(0)
+raise SystemExit(1)
+PY
+}
+
+cargo_lock_adl_package_version_only_change() {
+  python3 - "$base_sha" "$head_sha" <<'PY'
+import subprocess
+import sys
+import tomllib
+
+base, head = sys.argv[1], sys.argv[2]
+path = "adl/Cargo.lock"
+
+def load(rev: str):
+    try:
+        text = subprocess.check_output(
+            ["git", "show", f"{rev}:{path}"], text=True, stderr=subprocess.DEVNULL
+        )
+    except subprocess.CalledProcessError:
+        return None
+    return tomllib.loads(text)
+
+def normalize(data):
+    packages = []
+    changed_versions = []
+    for package in data.get("package", []):
+        pkg = dict(package)
+        if pkg.get("name") == "adl":
+            changed_versions.append(pkg.get("version"))
+            pkg.pop("version", None)
+        packages.append(pkg)
+    normalized = dict(data)
+    normalized["package"] = packages
+    return normalized, changed_versions
+
+before = load(base)
+after = load(head)
+if before is None or after is None:
+    raise SystemExit(1)
+
+before_norm, before_versions = normalize(before)
+after_norm, after_versions = normalize(after)
+
+if (
+    before_versions
+    and after_versions
+    and before_versions != after_versions
+    and before_norm == after_norm
+):
+    raise SystemExit(0)
+raise SystemExit(1)
+PY
+}
+
+is_release_version_only_surface_change() {
+  local saw_manifest=false
+  local saw_lock=false
+  local path=""
+  while IFS= read -r path; do
+    [ -n "$path" ] || continue
+    case "$path" in
+      adl/Cargo.toml)
+        saw_manifest=true
+        ;;
+      adl/Cargo.lock)
+        saw_lock=true
+        ;;
+      *)
+        if ! is_release_truth_doc_surface "$path"; then
+          return 1
+        fi
+        ;;
+    esac
+  done <<EOF
+$changed_files
+EOF
+
+  [ "$saw_manifest" = true ] || return 1
+  [ "$saw_lock" = true ] || return 1
+  cargo_manifest_package_version_only_change || return 1
+  cargo_lock_adl_package_version_only_change || return 1
+  return 0
+}
+
 line_count_for_path() {
   local path="$1"
   if [ -f "$path" ]; then
@@ -192,6 +328,10 @@ else
   else
     saw_pr_finish_control_plane=false
     changed_count="$(printf '%s\n' "$changed_files" | sed '/^$/d' | wc -l | tr -d ' ')"
+    if is_release_version_only_surface_change; then
+      release_version_only=true
+      reason="release_version_only_cargo_surface_change_runs_lightweight_validation"
+    fi
     while IFS= read -r path; do
       [ -n "$path" ] || continue
       if is_pr_finish_control_plane_surface "$path"; then
@@ -201,6 +341,9 @@ else
       fi
       case "$path" in
         adl/src/*|adl/tests/*|adl/Cargo.toml|adl/Cargo.lock|adl/build.rs)
+          if [ "$release_version_only" = true ] && { [ "$path" = "adl/Cargo.toml" ] || [ "$path" = "adl/Cargo.lock" ]; }; then
+            continue
+          fi
           mark_pr_fast_coverage
           ;;
         demos/*|adl/tools/demo_*|adl/tools/test_demo_*)
@@ -232,6 +375,7 @@ emit "rust_required" "$rust_required"
 emit "coverage_required" "$coverage_required"
 emit "full_coverage_required" "$full_coverage_required"
 emit "demo_smoke_required" "$demo_smoke_required"
+emit "release_version_only" "$release_version_only"
 emit "fail_closed" "$fail_closed"
 emit "coverage_lane" "$coverage_lane"
 emit "coverage_authority" "$coverage_authority"
@@ -243,6 +387,7 @@ printf '  rust_required=%s\n' "$rust_required"
 printf '  coverage_required=%s\n' "$coverage_required"
 printf '  full_coverage_required=%s\n' "$full_coverage_required"
 printf '  demo_smoke_required=%s\n' "$demo_smoke_required"
+printf '  release_version_only=%s\n' "$release_version_only"
 printf '  fail_closed=%s\n' "$fail_closed"
 printf '  coverage_lane=%s\n' "$coverage_lane"
 printf '  coverage_authority=%s\n' "$coverage_authority"
