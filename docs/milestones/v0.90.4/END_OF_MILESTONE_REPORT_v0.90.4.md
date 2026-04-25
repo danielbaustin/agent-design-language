@@ -2,11 +2,11 @@
 
 ## Status
 
-Pre-ceremony closeout report for `v0.90.4`.
+Final end-of-milestone report for `v0.90.4`.
 
 The implementation wave, feature-proof coverage, internal review, third-party
-review, ADR remediation, and next-milestone handoff are complete. Only the
-release-ceremony step remains open.
+review, ADR remediation, next-milestone handoff, and release ceremony are
+complete.
 
 ## What v0.90.4 Delivered
 
@@ -77,9 +77,10 @@ The handoff remains clean:
 - future `WP-19` handoffs should include explicit ADL architecture-doc review
   and update when scope changes have architectural consequences
 
-## Remaining Open Step
+## Ceremony Result
 
-- `WP-20` / `#2440` release ceremony
+- `WP-20` / `#2440` release ceremony: complete
 
-At this point, the open work is release closure, not hidden implementation or
-architecture recovery.
+At milestone close, no hidden implementation or architecture recovery work
+remained inside `v0.90.4`; the remaining carry-forward is already placed
+explicitly into later milestones and backlog lanes.
