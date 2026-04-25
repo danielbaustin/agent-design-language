@@ -5,6 +5,11 @@
 The governed executor runs tool actions only after ACC construction, policy
 evaluation, and Freedom Gate mediation.
 
+This feature inherits the WP-02 proposal/action boundary from
+`TOOL_CALL_THREAT_MODEL_AND_SEMANTICS.md`: direct model-output execution is
+forbidden, and dangerous categories require denial evidence unless a later
+bounded fixture proves a safer dry-run path.
+
 ## Execution Contract
 
 The executor must:
@@ -35,3 +40,6 @@ Trace must record:
 
 Trace must be useful for accountability without becoming a privacy leak.
 
+Denied proposals are first-class trace evidence. They must identify the
+boundary that stopped the proposal without leaking protected arguments,
+private state, prompts, credentials, or secret-like values.

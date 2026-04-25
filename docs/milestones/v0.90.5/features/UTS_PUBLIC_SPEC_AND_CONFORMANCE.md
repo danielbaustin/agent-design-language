@@ -6,6 +6,10 @@ Universal Tool Schema v1.0 is the portable, model-facing description layer for
 tools. It should be JSON-compatible and useful outside ADL, but it must not
 pretend to grant runtime authority.
 
+This feature inherits the WP-02 proposal/action boundary from
+`TOOL_CALL_THREAT_MODEL_AND_SEMANTICS.md`: UTS validity is schema compatibility,
+not permission to execute.
+
 ## Required Contract
 
 UTS v1.0 must define:
@@ -32,6 +36,8 @@ Conformance must include:
   destructive categories
 - invalid fixtures for missing semantics, missing security, malformed schema,
   invalid enum values, unsafe extension shape, and ambiguous side effects
+- dangerous-category fixtures for process, network, destructive, and
+  exfiltration proposals that classify risk without granting execution
 - explicit rule that UTS validity is not permission to execute
 - compatibility notes for existing JSON tool-call systems
 - versioning and extension guidance
@@ -41,4 +47,3 @@ Conformance must include:
 - UTS does not define ADL actor authority.
 - UTS does not define Freedom Gate decisions.
 - UTS does not define citizen standing or operator inspection rights.
-

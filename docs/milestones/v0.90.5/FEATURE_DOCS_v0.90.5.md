@@ -4,6 +4,7 @@
 
 | Feature Doc | Purpose | Execution WPs |
 | --- | --- | --- |
+| features/TOOL_CALL_THREAT_MODEL_AND_SEMANTICS.md | proposal/action boundary, tool-call threat model, side-effect taxonomy, dangerous-category denial expectations, and governed-tools non-goals | WP-02 |
 | features/UTS_PUBLIC_SPEC_AND_CONFORMANCE.md | Universal Tool Schema v1.0 public-compatible schema, examples, invalid examples, extension rules, and conformance | WP-03-WP-05 |
 | features/ACC_AUTHORITY_AND_VISIBILITY.md | ADL Capability Contract v1.0 authority, identity, delegation, privacy, visibility, redaction, trace, replay, and policy semantics | WP-06-WP-07 |
 | features/TOOL_REGISTRY_AND_COMPILER.md | registered tools, binding rules, UTS-to-ACC compiler, normalization, and rejection behavior | WP-08-WP-10 |
