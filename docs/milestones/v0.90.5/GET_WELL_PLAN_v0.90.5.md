@@ -29,6 +29,7 @@ and must not reorder the Governed Tools v1.0 implementation state machine.
 Detailed source plan:
 
 - [Test Runtime Reduction Plan](ideas/TEST_RUNTIME_REDUCTION_PLAN_v0.90.5.md)
+- [Get-Well Runtime Tracking](GET_WELL_TRACKING_v0.90.5.md)
 
 The source plan identifies the remaining heavyweight proof-family test problem:
 
@@ -51,18 +52,37 @@ It must not:
 
 ## Open Get-Well Wave
 
-| Slice | Issue | Scope |
-| --- | --- | --- |
-| GW-00 | #2592 | runtime baseline, budget, tracking artifact, and recovery-wave coordination |
-| GW-01 | #2593 | collapse external-counterparty proof-family tests |
-| GW-02 | #2594 | collapse private-state observatory proof-family tests |
-| GW-03 | #2595 | collapse delegation-subcontract proof-family tests |
-| GW-04 | #2596 | collapse contract-market and resource-stewardship proof-family tests |
-| GW-05 | #2597 | shrink CLI and demo proof-matrix tail |
+GW-00 owns the tracking artifact for the wave:
+
+- [Get-Well Runtime Tracking](GET_WELL_TRACKING_v0.90.5.md)
+
+| Slice | Issue | Scope | Status |
+| --- | --- | --- | --- |
+| GW-00 | #2592 | runtime baseline, budget, tracking artifact, and recovery-wave coordination | in progress |
+| GW-01 | #2593 | collapse external-counterparty proof-family tests | scheduled after GW-00 |
+| GW-02 | #2594 | collapse private-state observatory proof-family tests | scheduled after GW-01 |
+| GW-03 | #2595 | collapse delegation-subcontract proof-family tests | scheduled after GW-02 |
+| GW-04 | #2596 | collapse contract-market and resource-stewardship proof-family tests | scheduled after GW-03 |
+| GW-05 | #2597 | shrink CLI and demo proof-matrix tail | scheduled after GW-04 |
 
 The GW slices should run as early as practical, ideally before WP-02 starts
 accumulating more validation cost. They are execution-support work, not
 additional Governed Tools feature WPs.
+
+## Runtime Budget
+
+The baseline and budget are recorded in
+[Get-Well Runtime Tracking](GET_WELL_TRACKING_v0.90.5.md). The initial target
+for the full GW wave is:
+
+- reduce authoritative coverage wall time from `660.944s` toward `< 540s`
+- reduce unique tests over `45s` from `39` toward `< 18`
+- reduce tests over `60s` from `1` to `0`
+- reduce deduped runtime for tests over `45s` from `1938.389s` toward `< 900s`
+
+These targets are directional until each PR has GitHub `adl-coverage` evidence.
+Focused local validation proves behavior preservation, not global wall-clock
+movement.
 
 ## WP-20 Disposition Requirement
 
