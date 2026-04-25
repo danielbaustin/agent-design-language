@@ -5,12 +5,14 @@
 - [x] v0.90.5 planning package reviewed
 - [x] UTS/ACC scope confirmed as Governed Tools v1.0
 - [x] Decisions log reflects the accepted planning baseline for governed tools
-- [ ] Issue wave opened from reviewed YAML
-- [ ] WP issue numbers recorded in WBS and YAML
-- [ ] WP issue cards authored from WP_EXECUTION_READINESS_v0.90.5.md
+- [x] Issue wave opened from reviewed YAML
+- [x] WP issue numbers recorded in WBS and YAML
+- [x] WP issue cards authored from WP_EXECUTION_READINESS_v0.90.5.md
+- [x] get-well plan visible in tracked milestone docs
+- [x] get-well wave opened separately from canonical WP numbering
 - [x] Package is ready to accept v0.90.4 handoff without reopening scope
   confusion about tool authority
-- [x] Demo/proof lane is explicit, including WP-18A before review convergence
+- [x] Demo/proof lane is explicit, including WP-19 before review convergence
 
 ## Implementation Gates
 
@@ -29,6 +31,8 @@
 ## Review Gates
 
 - [ ] demo matrix updated with proof classifications
+- [ ] coverage / quality gate complete
+- [ ] get-well wave disposition recorded by WP-20
 - [ ] feature docs linked and internally consistent
 - [ ] public-spec language checked for overclaiming
 - [ ] UTS validity never described as execution authority
@@ -36,6 +40,7 @@
 - [ ] internal review complete
 - [ ] third-party review handoff prepared and external review complete or explicitly deferred
 - [ ] accepted findings fixed or explicitly dispositioned
+- [ ] next milestone planning handoff complete before release ceremony
 
 ## Release Gates
 

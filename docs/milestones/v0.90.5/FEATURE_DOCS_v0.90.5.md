@@ -15,14 +15,17 @@
 | Doc | Purpose | Execution WPs |
 | --- | --- | --- |
 | WBS_v0.90.5.md | execution plan for Governed Tools v1.0 | WP-01 |
-| DEMO_MATRIX_v0.90.5.md | proof matrix, flagship-demo proof boundary, and non-proving classifications | WP-01, WP-18A, WP-19 |
-| WP_ISSUE_WAVE_v0.90.5.yaml | future issue-wave source once reviewed | WP-01 |
+| DEMO_MATRIX_v0.90.5.md | proof matrix, flagship-demo proof boundary, and non-proving classifications | WP-01, WP-19, WP-21 |
+| WP_ISSUE_WAVE_v0.90.5.yaml | opened issue-wave source of truth for the tracked v0.90.5 band | WP-01 |
 | WP_EXECUTION_READINESS_v0.90.5.md | card-authoring source for concrete WP outputs, validation, non-goals, and proof expectations | WP-01 |
-| RELEASE_PLAN_v0.90.5.md | release evidence, public-spec guardrails, and review-handoff expectations | WP-19, WP-20 |
-| DECISIONS_v0.90.5.md | accepted planning baseline for governed-tools scope and boundaries | WP-01, WP-19 |
+| GET_WELL_PLAN_v0.90.5.md | milestone-root get-well pointer for validation-cost recovery, the separate GW wave, and runtime-reduction disposition | WP-01, GW-00-GW-05, WP-20, WP-25 |
+| RELEASE_PLAN_v0.90.5.md | release evidence, public-spec guardrails, and review-handoff expectations | WP-21-WP-26 |
+| DECISIONS_v0.90.5.md | accepted planning baseline for governed-tools scope and boundaries | WP-01, WP-21 |
 
 ## Context / Idea Docs
 
 | Idea Doc | Purpose | Boundary |
 | --- | --- | --- |
 | ideas/TOOLS_ARE_GOVERNED_CAPABILITIES.md | explain why ADL treats tools as authority-bearing capabilities, not model-callable functions | context only |
+| ideas/GEMMA4_UTS_ACC_MODEL_BENCHMARK_PLAN.md | place the Gemma/local/remote benchmark plan across WP-16, WP-17, WP-18, and v0.91 follow-on work | v0.90.5 does bounded demo only; full comparison deferred to v0.91 |
+| ideas/TEST_RUNTIME_REDUCTION_PLAN_v0.90.5.md | execution-support plan for reducing heavyweight proof-family runtime cost without weakening governed-tools proof claims | separate GW wave; not a canonical WP |

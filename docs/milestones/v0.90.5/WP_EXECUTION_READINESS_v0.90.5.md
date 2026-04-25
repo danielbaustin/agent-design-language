@@ -24,11 +24,12 @@ It must not become a surface-only tool-schema cleanup.
 - Require denial records for unsafe, unknown, unregistered, unauthorized,
   exfiltrating, destructive, replay-unsafe, and hidden-delegation attempts.
 - Preserve redacted operator/reviewer/public/Observatory views before review.
-- Preserve demo-matrix proof coverage before quality/docs/review convergence.
+- Preserve demo-matrix proof coverage before quality, docs/review, internal
+  review, external review, remediation, next planning, and release ceremony.
 - Use docs-only and fixture-only focused validation where appropriate, but do
   not skip negative safety, redaction, model testing, review, or release truth.
 
-## WP-01: Promote v0.90.5 Governed Tools Milestone Package
+## WP-01: Design Pass (Milestone Docs + Planning)
 
 Required outputs:
 
@@ -40,10 +41,14 @@ Required outputs:
 
 Required validation:
 
-- Check the issue wave matches WP ordering, including WP-18A.
+- Check the issue wave matches WP ordering, including the standard closeout
+  sequence from WP-18 through WP-26.
 - Check no WP body is generic or missing required outputs and validation.
 - Check tracked milestone docs contain no host paths, unresolved scaffold
   markers, or aspirational implementation claims.
+- Check GET_WELL_PLAN_v0.90.5.md is visible in the tracked package and the
+  separate GW runtime-reduction wave is linked without changing canonical WP
+  numbering.
 
 ## WP-02: Tool-Call Threat Model And Semantics
 
@@ -273,15 +278,22 @@ Required validation:
 
 Required outputs:
 
-- Local model evaluation packet with Gemma-family focus where available.
-- At least one additional local model or explicit skip rationale.
-- Scorecards and failure notes for schema, authority, privacy, and bypass
-  behavior.
+- Simple bounded local/Gemma-focused evaluation demo where a model is
+  available.
+- Explicit skip rationale when a local/Gemma model is not available.
+- Small scorecard and failure notes for schema, authority, privacy, execution
+  humility, and bypass behavior.
+- Governed fixture-backed execution or refusal path where the demo harness
+  supports it.
+- Explicit deferral of full local-vs-remote and multi-model comparison report
+  to `v0.91`.
 
 Required validation:
 
-- Results are not overgeneralized from one run.
+- Results are not overgeneralized from a smoke demo.
 - Local-model failures become improvement evidence, not hidden defects.
+- The WP-17 output does not claim broad model ranking or execution safety.
+- The WP-17 demo does not expand into the full benchmark test suite.
 
 ## WP-18: Governed Tools v1.0 Flagship Demo
 
@@ -300,8 +312,9 @@ Required validation:
 - Demo makes proposal/action separation visible.
 - Demo proves only fixture-backed governed-tool behavior, not arbitrary
   production execution.
+- Demo is not blocked on the deferred `v0.91` full model comparison report.
 
-## WP-18A: Demo Matrix And Feature Proof Coverage
+## WP-19: Demo Matrix And Feature Proof Coverage
 
 Required outputs:
 
@@ -316,24 +329,103 @@ Required validation:
 - No feature claim reaches review convergence without proof status.
 - Non-proving and deferred claims are explicit.
 
-## WP-19: Quality, Docs, Review, And Public-Spec Handoff
+## WP-20: Coverage / Quality Gate
+
+Required outputs:
+
+- Auditable quality posture for the implemented governed-tools milestone.
+- Coverage, validation, demo, and proof evidence summary.
+- Explicit exception list for any skipped, slow, provider-gated, or
+  intentionally deferred validation.
+- Get-well wave disposition for any milestone-relevant runtime/test-cycle
+  reduction slices.
+
+Required validation:
+
+- Required checks pass or every exception has owner, rationale, and
+  disposition.
+- Quality evidence points at actual landed work, not aspirational claims.
+- GET_WELL_PLAN_v0.90.5.md and the GW runtime-reduction wave are updated or
+  explicitly referenced in the WP-20 output record.
+
+## WP-21: Docs + Review Pass
 
 Required outputs:
 
 - README, WBS, sprint, decisions, feature index, demo matrix, release plan,
   release notes, checklist, and issue-wave YAML aligned with actual evidence.
 - UTS public-spec language checked for overclaiming.
-- Findings-first internal review packet and third-party handoff packet.
-- Finding register and accepted-finding routing.
+- Reviewer entry surfaces prepared for internal and external review.
+- Public-spec handoff language and non-claims made explicit.
+
+Required validation:
+
+- Docs contain no host paths, stale issue-wave state, or aspirational shipped
+  claims.
+- Docs do not imply UTS is a public standard or standalone execution authority.
+
+## WP-22: Internal Review
+
+Required outputs:
+
+- Findings-first internal review packet.
+- Finding register with severity, owner, status, and accepted/rejected/deferred
+  disposition.
+- Clear scope and evidence list for the review.
+
+Required validation:
+
+- Internal review records concrete findings or explicitly records zero
+  findings.
+- Accepted findings are routed to WP-24 unless already fixed in the review PR.
+
+## WP-23: External / 3rd-Party Review
+
+Required outputs:
+
+- Third-party review handoff packet.
+- External review artifact or explicit operator-approved deferral if review
+  cannot complete before release.
+- Reviewer instructions, evidence map, and non-claims.
+
+Required validation:
+
+- External reviewer can inspect the package without reconstructing context from
+  issue history.
+- Review summary or deferral record is stored in the agreed review location.
+
+## WP-24: Review Findings Remediation
+
+Required outputs:
+
+- Accepted review finding fixes.
+- Rejected or deferred finding disposition record.
+- Follow-up issues for any human-approved deferrals.
 
 Required validation:
 
 - No accepted P1/P2 review finding remains unresolved without explicit
   human-approved deferral.
-- Docs contain no host paths, stale issue-wave state, or aspirational shipped
-  claims.
+- Remediation does not widen the milestone beyond Governed Tools v1.0.
 
-## WP-20: Release Ceremony
+## WP-25: Next Milestone Planning
+
+Required outputs:
+
+- Next milestone planning handoff.
+- Follow-on work that v0.90.5 deliberately does not complete.
+- Any deferred production sandbox, secrets, adapter, CodeBuddy, citizen-command,
+  Python-reduction, or test-runtime-reduction work routed to the right future
+  lane.
+- `v0.91` follow-on for the full Gemma/local/remote UTS + ACC model comparison
+  report.
+
+Required validation:
+
+- Follow-on work is captured without pretending it shipped in v0.90.5.
+- Next handoff does not reopen completed v0.90.5 scope.
+
+## WP-26: Release Ceremony
 
 Required outputs:
 
@@ -350,3 +442,4 @@ Required validation:
 - Root main can be fast-forwarded cleanly after final merge.
 - No stale planning package or ignored review artifact contradicts tracked
   milestone docs.
+- Release ceremony follows the accepted clean-main pattern.

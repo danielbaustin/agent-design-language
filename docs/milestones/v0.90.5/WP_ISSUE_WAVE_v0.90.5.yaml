@@ -1,147 +1,225 @@
 milestone: v0.90.5
-status: tracked_planning_ready
-issue_wave_opened: false
-owner_issue: 2350
+status: tracked_execution_wave_opened
+issue_wave_opened: true
+owner_issue: 2566
 planning_source: docs/milestones/v0.90.5
 tracked_package: docs/milestones/v0.90.5
 notes:
-  - "Issue wave is not open yet."
-  - "This package is owned by Governed Tools v1.0 planning issue #2350."
-  - "Current tracked execution-prep pass is running under issue #2443."
-  - "v0.90.5 is intended to implement the first full governed tool suite, not only plan it."
+  - "Issue wave opened under WP-01 issue #2566."
+  - "The original Governed Tools v1.0 planning direction was established under issue #2350."
+  - "Tracked execution-prep was completed under issue #2443."
+  - "v0.90.5 implements the first full governed tool suite, not only a planning package."
   - "UTS is portable and public-compatible; ACC is ADL-native and owns runtime authority."
   - "UTS validity must never be treated as permission to execute."
-  - "Preserve a flagship Governed Tools v1.0 demo and per-feature proof coverage."
-  - "WP-01 must author cards from WP_EXECUTION_READINESS_v0.90.5.md before implementation."
-  - "Do not compress away negative safety tests, redaction checks, model testing, internal review, or third-party review handoff."
+  - "Preserve the Governed Tools v1.0 flagship demo and per-feature proof coverage."
+  - "The get-well plan lives at GET_WELL_PLAN_v0.90.5.md and points to the detailed runtime-reduction source note."
+  - "Runtime-reduction work is execution support tracked as a separate GW wave, not an extra canonical WP."
+  - "Do not compress away negative safety tests, redaction checks, model testing, internal review, third-party review, remediation, next-milestone planning, or release ceremony."
 card_update_rule:
-  - "WP-01 must copy the relevant section from WP_EXECUTION_READINESS_v0.90.5.md into each issue body before implementation."
+  - "WP-01 copied the relevant section from WP_EXECUTION_READINESS_v0.90.5.md into each issue body before implementation."
   - "Cards must include required outputs, required validation, source docs, non-goals, and demo/proof expectations."
   - "No issue should claim tool execution, release readiness, public specification status, or review completion until evidence has landed and validated."
+closeout_sequence:
+  - "WP-18 Governed Tools v1.0 flagship demo"
+  - "WP-19 Demo matrix and feature proof coverage"
+  - "WP-20 Coverage / quality gate"
+  - "WP-21 Docs + review pass"
+  - "WP-22 Internal review"
+  - "WP-23 External / 3rd-party review"
+  - "WP-24 Review findings remediation"
+  - "WP-25 Next milestone planning"
+  - "WP-26 Release ceremony"
 work_packages:
   - wp: WP-01
-    issue: planned
-    title: Promote v0.90.5 Governed Tools milestone package
+    issue: 2566
+    title: Design pass (milestone docs + planning)
     queue: docs
     outcome: tracked docs and issue cards
-    depends_on: v0.90.4 closeout or roadmap approval
+    depends_on: v0.90.4 closeout
   - wp: WP-02
-    issue: planned
+    issue: 2567
     title: Tool-call threat model and semantics
     queue: docs
     outcome: threat model and semantics doc
     depends_on: WP-01
   - wp: WP-03
-    issue: planned
+    issue: 2568
     title: UTS public compatibility and conformance plan
     queue: tools
     outcome: UTS conformance plan
     depends_on: WP-02
   - wp: WP-04
-    issue: planned
+    issue: 2569
     title: UTS v1 schema finalization
     queue: tools
     outcome: UTS schema and tests
     depends_on: WP-03
   - wp: WP-05
-    issue: planned
+    issue: 2570
     title: UTS fixture and conformance suite
     queue: tools
     outcome: UTS fixture suite
     depends_on: WP-04
   - wp: WP-06
-    issue: planned
+    issue: 2571
     title: ACC v1 authority schema
     queue: tools
     outcome: ACC schema and authority fixtures
     depends_on: WP-02
   - wp: WP-07
-    issue: planned
+    issue: 2572
     title: ACC privacy, visibility, and delegation model
     queue: tools
     outcome: visibility/delegation matrix
     depends_on: WP-06
   - wp: WP-08
-    issue: planned
+    issue: 2573
     title: Tool registry and binding model
     queue: tools
     outcome: registry and binding tests
     depends_on: WP-04, WP-06
   - wp: WP-09
-    issue: planned
+    issue: 2574
     title: UTS to ACC compiler
     queue: tools
     outcome: compiler and mapping tests
     depends_on: WP-05-WP-08
   - wp: WP-10
-    issue: planned
+    issue: 2575
     title: Normalization and argument validation
     queue: tools
     outcome: normalization and rejection tests
     depends_on: WP-09
   - wp: WP-11
-    issue: planned
+    issue: 2576
     title: Policy injection and authority evaluation
     queue: runtime
     outcome: policy engine slice and tests
     depends_on: WP-07, WP-09
   - wp: WP-12
-    issue: planned
+    issue: 2577
     title: Freedom Gate integration
     queue: runtime
     outcome: decision events and gate tests
     depends_on: WP-11
   - wp: WP-13
-    issue: planned
+    issue: 2578
     title: Governed executor
     queue: runtime
     outcome: executor and refusal behavior
     depends_on: WP-12
   - wp: WP-14
-    issue: planned
+    issue: 2579
     title: Trace, replay, redaction, and evidence contract
     queue: runtime
     outcome: trace/redaction contract and tests
     depends_on: WP-13
   - wp: WP-15
-    issue: planned
+    issue: 2580
     title: Dangerous tool negative suite
     queue: test
     outcome: negative safety suite
     depends_on: WP-08-WP-14
   - wp: WP-16
-    issue: planned
+    issue: 2581
     title: Model proposal benchmark harness
     queue: test
     outcome: benchmark runner and report
     depends_on: WP-04, WP-15
   - wp: WP-17
-    issue: planned
+    issue: 2582
     title: Local model and Gemma-focused evaluation
     queue: test
-    outcome: local model scorecards
+    outcome: simple bounded model demo scorecard and failure notes
     depends_on: WP-16
   - wp: WP-18
-    issue: planned
+    issue: 2583
     title: Governed Tools v1.0 flagship demo
     queue: demo
     outcome: flagship demo proof packet
     depends_on: WP-13-WP-17
-  - wp: WP-18A
-    issue: planned
+  - wp: WP-19
+    issue: 2584
     title: Demo matrix and feature proof coverage
     queue: demo
     outcome: demo matrix update and proof coverage record
-    depends_on: WP-03-WP-18
-  - wp: WP-19
-    issue: planned
-    title: Quality, docs, review, and public-spec handoff
-    queue: docs
-    outcome: review-ready package and finding register
-    depends_on: WP-18A
+    depends_on: WP-18
   - wp: WP-20
-    issue: planned
+    issue: 2585
+    title: Coverage / quality gate
+    queue: quality
+    outcome: quality and coverage gate record plus get-well disposition
+    depends_on: WP-19
+  - wp: WP-21
+    issue: 2586
+    title: Docs + review pass
+    queue: docs
+    outcome: review-ready docs package
+    depends_on: WP-20
+  - wp: WP-22
+    issue: 2587
+    title: Internal review
+    queue: review
+    outcome: internal review record
+    depends_on: WP-21
+  - wp: WP-23
+    issue: 2588
+    title: External / 3rd-party review
+    queue: review
+    outcome: external review handoff and record
+    depends_on: WP-22
+  - wp: WP-24
+    issue: 2589
+    title: Review findings remediation
+    queue: review
+    outcome: remediation record and follow-up issues
+    depends_on: WP-23
+  - wp: WP-25
+    issue: 2590
+    title: Next milestone planning
+    queue: docs
+    outcome: next milestone planning handoff including deferred full model comparison report
+    depends_on: WP-24
+  - wp: WP-26
+    issue: 2591
     title: Release ceremony
     queue: release
     outcome: release evidence, end-of-milestone report, and next handoff
-    depends_on: WP-19
+    depends_on: WP-25
+get_well_wave:
+  - slice: GW-00
+    issue: 2592
+    title: Get-well test runtime reduction wave
+    queue: quality
+    outcome: runtime baseline, budget, tracking artifact, and recovery-wave coordination
+    depends_on: WP-01
+  - slice: GW-01
+    issue: 2593
+    title: Collapse external counterparty proof-family tests
+    queue: quality
+    outcome: reduced external-counterparty proof-family runtime
+    depends_on: GW-00
+  - slice: GW-02
+    issue: 2594
+    title: Collapse private-state observatory proof-family tests
+    queue: quality
+    outcome: reduced private-state observatory proof-family runtime
+    depends_on: GW-00
+  - slice: GW-03
+    issue: 2595
+    title: Collapse delegation subcontract proof-family tests
+    queue: quality
+    outcome: reduced delegation-subcontract proof-family runtime
+    depends_on: GW-00
+  - slice: GW-04
+    issue: 2596
+    title: Collapse contract-market and resource-stewardship proof-family tests
+    queue: quality
+    outcome: reduced contract-market and resource-stewardship proof-family runtime
+    depends_on: GW-00
+  - slice: GW-05
+    issue: 2597
+    title: Shrink CLI and demo proof-matrix tail
+    queue: quality
+    outcome: reduced CLI and demo proof-matrix tail runtime
+    depends_on: GW-00

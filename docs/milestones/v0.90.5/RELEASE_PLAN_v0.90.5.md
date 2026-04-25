@@ -15,12 +15,16 @@ Freedom Gate mediation, and trace.
 - trace/redaction evidence
 - dangerous negative suite
 - model proposal benchmark
-- local/Gemma evaluation
+- simple bounded local/Gemma evaluation demo or explicit skip
 - flagship demo proof packet
 - feature proof coverage record
+- coverage / quality gate record
+- get-well wave disposition
 - public-spec language audit and boundary note
 - internal and external review notes
 - accepted-finding disposition record
+- next milestone planning handoff
+- explicit `v0.91` follow-on for the full Gemma/local/remote comparison report
 - end-of-milestone report
 
 ## Release Risks
@@ -38,8 +42,23 @@ Do not release v0.90.5 as successful unless the negative suite and redaction
 evidence prove that model output cannot bypass governed execution.
 
 Do not move into release review until every feature claim has a proof,
-non-proving classification, or explicit deferral.
+non-proving classification, or explicit deferral, and the coverage / quality
+gate has recorded the milestone validation posture.
 
 Do not describe UTS as a public standard, stable external contract, or
 standalone execution authority unless separate evidence and review approve that
 claim.
+
+## Release-Tail Order
+
+After the Governed Tools v1.0 flagship demo, release work must preserve this
+order:
+
+- demo matrix and feature proof coverage
+- coverage / quality gate
+- docs + review pass
+- internal review
+- external / 3rd-party review
+- review findings remediation
+- next milestone planning
+- release ceremony
