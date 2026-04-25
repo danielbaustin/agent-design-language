@@ -68,6 +68,12 @@ Budget rules:
 - Do not make broad CI policy changes inside a family-collapse issue unless
   the issue explicitly requires them.
 
+## Slice Results
+
+| Slice | Local result | Validation evidence | Residual measurement gap |
+| --- | --- | --- | --- |
+| GW-01 | Collapsed the external-counterparty focused default surface from `12` sibling tests to `2` aggregate tests, with `3` aggregate tests under `slow-proof-tests`. | `cargo test --manifest-path adl/Cargo.toml runtime_v2_external_counterparty -- --nocapture` and `cargo test --manifest-path adl/Cargo.toml --features slow-proof-tests runtime_v2_external_counterparty -- --nocapture` both passed locally. | Authoritative wall-time effect remains pending until GitHub `adl-coverage` runs this PR. |
+
 ## Review Checklist
 
 For each GW slice, confirm:

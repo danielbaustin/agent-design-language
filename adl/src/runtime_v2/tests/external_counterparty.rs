@@ -1,6 +1,32 @@
 use super::*;
 
 #[test]
+fn runtime_v2_external_counterparty_contract_and_boundary_matrix_is_stable() {
+    runtime_v2_external_counterparty_model_is_stable();
+    runtime_v2_external_counterparty_records_preserve_non_citizen_private_state_boundary();
+    runtime_v2_external_counterparty_human_out_of_band_action_is_not_citizen_action();
+    runtime_v2_external_counterparty_negative_cases_fail_for_expected_reasons();
+    runtime_v2_external_counterparty_negative_cases_match_golden_fixture();
+}
+
+#[test]
+fn runtime_v2_external_counterparty_validation_matrix_rejects_drift() {
+    runtime_v2_external_counterparty_validation_rejects_drifted_authority_fields();
+    runtime_v2_external_counterparty_model_validation_fails_closed_on_reference_drift();
+    runtime_v2_external_counterparty_record_validation_rejects_linkage_and_policy_drift();
+    runtime_v2_external_counterparty_record_shape_and_tool_constraints_fail_closed();
+    runtime_v2_external_counterparty_negative_cases_and_attempts_reject_remaining_escape_hatches();
+    runtime_v2_external_counterparty_attempts_must_match_bound_authority_fields();
+    runtime_v2_external_counterparty_helper_validators_cover_remaining_variants();
+}
+
+#[test]
+#[cfg(feature = "slow-proof-tests")]
+fn runtime_v2_external_counterparty_golden_and_materialization_proofs_are_stable() {
+    runtime_v2_external_counterparty_model_matches_golden_fixture();
+    runtime_v2_external_counterparty_write_to_root_materializes_fixtures();
+}
+
 fn runtime_v2_external_counterparty_model_is_stable() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -18,7 +44,6 @@ fn runtime_v2_external_counterparty_model_is_stable() {
     assert_eq!(artifacts.negative_cases.required_negative_cases.len(), 5);
 }
 
-#[test]
 fn runtime_v2_external_counterparty_records_preserve_non_citizen_private_state_boundary() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -34,7 +59,6 @@ fn runtime_v2_external_counterparty_records_preserve_non_citizen_private_state_b
     }
 }
 
-#[test]
 fn runtime_v2_external_counterparty_human_out_of_band_action_is_not_citizen_action() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -70,7 +94,6 @@ fn runtime_v2_external_counterparty_human_out_of_band_action_is_not_citizen_acti
     .contains("human out-of-band action is not citizen action"));
 }
 
-#[test]
 fn runtime_v2_external_counterparty_negative_cases_fail_for_expected_reasons() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -96,7 +119,6 @@ fn runtime_v2_external_counterparty_negative_cases_fail_for_expected_reasons() {
     }
 }
 
-#[test]
 fn runtime_v2_external_counterparty_validation_rejects_drifted_authority_fields() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -140,7 +162,6 @@ fn runtime_v2_external_counterparty_validation_rejects_drifted_authority_fields(
         .contains("must not grant private-state inspection"));
 }
 
-#[test]
 fn runtime_v2_external_counterparty_model_validation_fails_closed_on_reference_drift() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -196,7 +217,6 @@ fn runtime_v2_external_counterparty_model_validation_fails_closed_on_reference_d
         .contains("contains duplicate counterparty"));
 }
 
-#[test]
 fn runtime_v2_external_counterparty_record_validation_rejects_linkage_and_policy_drift() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -270,7 +290,6 @@ fn runtime_v2_external_counterparty_record_validation_rejects_linkage_and_policy
         .contains("must link exactly one matching bid artifact"));
 }
 
-#[test]
 fn runtime_v2_external_counterparty_record_shape_and_tool_constraints_fail_closed() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -352,7 +371,6 @@ fn runtime_v2_external_counterparty_record_shape_and_tool_constraints_fail_close
         .contains("must preserve the no-execution boundary"));
 }
 
-#[test]
 fn runtime_v2_external_counterparty_negative_cases_and_attempts_reject_remaining_escape_hatches() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -487,7 +505,6 @@ fn runtime_v2_external_counterparty_negative_cases_and_attempts_reject_remaining
     .contains("not citizens by default"));
 }
 
-#[test]
 fn runtime_v2_external_counterparty_attempts_must_match_bound_authority_fields() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -537,7 +554,6 @@ fn runtime_v2_external_counterparty_attempts_must_match_bound_authority_fields()
     );
 }
 
-#[test]
 fn runtime_v2_external_counterparty_helper_validators_cover_remaining_variants() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -622,7 +638,6 @@ fn runtime_v2_external_counterparty_helper_validators_cover_remaining_variants()
         .contains("requested_tool_capability must not be empty"));
 }
 
-#[test]
 #[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_external_counterparty_model_matches_golden_fixture() {
     let artifacts =
@@ -639,7 +654,6 @@ fn runtime_v2_external_counterparty_model_matches_golden_fixture() {
     );
 }
 
-#[test]
 fn runtime_v2_external_counterparty_negative_cases_match_golden_fixture() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -660,7 +674,6 @@ fn runtime_v2_external_counterparty_negative_cases_match_golden_fixture() {
     );
 }
 
-#[test]
 #[cfg(feature = "slow-proof-tests")]
 fn runtime_v2_external_counterparty_write_to_root_materializes_fixtures() {
     let artifacts =
