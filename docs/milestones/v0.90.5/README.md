@@ -3,8 +3,9 @@
 ## Status
 
 Tracked planning package for Governed Tools v1.0. The milestone direction was
-established under planning issue #2350, tightened under #2402, and is being
-prepared for clean execution in the current docs-prep pass under #2443.
+established under planning issue #2350, tightened under #2402, prepared for
+clean execution under #2443, and re-affirmed as the immediate governed-tools
+follow-on during the `v0.90.4` WP-19 handoff pass under #2439.
 
 The issue wave has not been opened. This package is the reviewable planning
 source for a later WP-01 issue-wave creation pass. It is intended to be the
@@ -136,6 +137,10 @@ Governed Tools v1.0 flagship demo.
 It also should not inherit unresolved v0.90.4 ambiguity about whether contract
 tool needs are constraints or execution grants. WP-19 of v0.90.4 is expected to
 hand that boundary off cleanly.
+
+That handoff is now clean: `v0.90.4` leaves no loose issue backlog here. It
+hands off only the governed-tool authority lane that contracts and bids were
+explicitly not allowed to absorb.
 
 Current docs-review findings may still sharpen wording, rustdoc references, and
 public-spec boundaries, but they should not widen the core milestone scope away

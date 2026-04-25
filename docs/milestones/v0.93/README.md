@@ -3,7 +3,9 @@
 ## Status
 
 Forward planning. v0.93 is not yet an active implementation milestone and has
-no final issue wave.
+no final issue wave. Its boundary was rechecked during the `v0.90.4` WP-19
+handoff pass so reputation and social-cognition work stay here instead of
+turning into loose `v0.90.4` follow-on debt.
 
 ## Purpose
 

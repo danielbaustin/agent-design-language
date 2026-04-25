@@ -98,6 +98,7 @@ Out of scope:
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.4.md
 - Release plan: RELEASE_PLAN_v0.90.4.md
 - Release notes draft: RELEASE_NOTES_v0.90.4.md
+- Next-milestone handoff: NEXT_MILESTONE_HANDOFF_v0.90.4.md
 - Issue wave: WP_ISSUE_WAVE_v0.90.4.yaml
 
 ## Execution Rule
@@ -165,3 +166,7 @@ v0.90.4 should record tool needs as contract constraints and review evidence.
 v0.90.5 owns the governed tool layer: UTS, ACC, tool registry binding,
 capability compilation, Freedom Gate mediation for tool use, executor behavior,
 redaction, replay, denial records, and multi-model tool-call testing.
+
+WP-19 records the clean handoff in NEXT_MILESTONE_HANDOFF_v0.90.4.md. The
+result is zero leftover issue backlog from `v0.90.4`; all carry-forward scope is
+explicitly milestone-placed.
