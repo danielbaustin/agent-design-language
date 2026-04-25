@@ -3,9 +3,9 @@
 ## Status
 
 Forward planning. v0.91 is not yet an active implementation milestone and has no
-final issue wave. Its boundary was rechecked during the v0.90.3 WP-19 handoff
-pass so it stays clearly downstream of the nearer v0.90.4 and v0.90.5
-milestones.
+final issue wave. Its boundary was rechecked during the v0.90.3 and v0.90.4
+WP-19 handoff passes so it stays clearly downstream of the nearer v0.90.4 and
+v0.90.5 milestones without absorbing their implementation leftovers.
 
 ## Purpose
 

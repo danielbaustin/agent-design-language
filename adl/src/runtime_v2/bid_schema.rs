@@ -1,4 +1,5 @@
 use super::*;
+use std::collections::BTreeSet;
 
 pub const RUNTIME_V2_BID_ARTIFACT_SCHEMA: &str = "runtime_v2.bid_artifact.v1";
 pub const RUNTIME_V2_BID_NEGATIVE_CASES_SCHEMA: &str = "runtime_v2.bid_negative_cases.v1";
@@ -595,6 +596,25 @@ impl RuntimeV2BidNegativeCases {
         if self.required_negative_cases.len() != 7 {
             return Err(anyhow!(
                 "bid_negative_cases.required_negative_cases must contain seven required mutations"
+            ));
+        }
+        let actual_case_ids = self
+            .required_negative_cases
+            .iter()
+            .map(|case| case.case_id.as_str())
+            .collect::<BTreeSet<_>>();
+        let expected_case_ids = BTreeSet::from([
+            "ineligible-counterparty",
+            "late-bid",
+            "missing-commitments",
+            "missing-signature-requirements",
+            "missing-trace-requirements",
+            "tool-usage-outside-contract-constraints",
+            "wrong-contract-id",
+        ]);
+        if actual_case_ids != expected_case_ids {
+            return Err(anyhow!(
+                "bid_negative_cases.required_negative_cases must contain the required case-id set"
             ));
         }
         for case in &self.required_negative_cases {

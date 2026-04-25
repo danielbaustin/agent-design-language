@@ -1,4 +1,5 @@
 use super::*;
+use std::collections::BTreeSet;
 
 #[test]
 fn runtime_v2_bid_schema_contract_is_stable() {
@@ -9,6 +10,18 @@ fn runtime_v2_bid_schema_contract_is_stable() {
     assert_eq!(artifacts.valid_bids[0].demo_id, "D3");
     assert_eq!(artifacts.valid_bids[1].demo_id, "D3");
     assert_eq!(artifacts.negative_cases.required_negative_cases.len(), 7);
+    assert_eq!(
+        required_case_ids(&artifacts.negative_cases.required_negative_cases),
+        BTreeSet::from([
+            "ineligible-counterparty".to_string(),
+            "late-bid".to_string(),
+            "missing-commitments".to_string(),
+            "missing-signature-requirements".to_string(),
+            "missing-trace-requirements".to_string(),
+            "tool-usage-outside-contract-constraints".to_string(),
+            "wrong-contract-id".to_string(),
+        ])
+    );
 }
 
 #[test]
@@ -111,6 +124,20 @@ fn runtime_v2_bid_schema_rejects_invalid_bid_fixtures_for_expected_reasons() {
     }
 }
 
+#[test]
+fn runtime_v2_bid_schema_requires_named_negative_case_membership() {
+    let artifacts = runtime_v2_bid_schema_contract().expect("bid schema artifacts");
+    let mut invalid = artifacts.negative_cases.clone();
+    invalid.required_negative_cases[0] = invalid.required_negative_cases[6].clone();
+    invalid.required_negative_cases[0].case_id = "arbitrary-failing-case".to_string();
+
+    assert!(invalid
+        .validate_against(&artifacts.contract, &artifacts.valid_bids)
+        .expect_err("negative-case membership drift should fail")
+        .to_string()
+        .contains("must contain the required case-id set"));
+}
+
 #[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_bid_schema_write_to_root_materializes_fixtures() {
@@ -133,4 +160,8 @@ fn runtime_v2_bid_schema_write_to_root_materializes_fixtures() {
     }
 
     std::fs::remove_dir_all(root).expect("cleanup bid schema temp root");
+}
+
+fn required_case_ids(cases: &[RuntimeV2BidNegativeCase]) -> BTreeSet<String> {
+    cases.iter().map(|case| case.case_id.clone()).collect()
 }
