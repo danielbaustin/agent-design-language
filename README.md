@@ -120,7 +120,7 @@ Other useful entrypoints:
 ## Current Status
 
 - Active milestone: **v0.90.4**
-- Current release state: **v0.90.3 is released; v0.90.4 is open as issue wave #2420-#2440**
+- Current release state: **v0.90.3 is released; v0.90.4 has only WP-20 (#2440) remaining in the release tail**
 - Most recently completed milestone: **v0.90.3**
 - Current crate version: **0.90.4**
 - Version note: **v0.90.4 is the active citizen economics and contract-market development line**
@@ -134,22 +134,24 @@ ADL is in active development. This repository contains both implemented runtime 
 
 v0.90.4 is the active citizen economics and contract-market substrate
 milestone. Its tracked package lives under `docs/milestones/v0.90.4/`. The
-issue wave is open as #2420-#2440: WP-01 is #2420, WP-02 through WP-14 are
-#2421-#2433, WP-14A is #2434, and WP-15 through WP-20 are #2435-#2440.
+issue wave opened as #2420-#2440: WP-01 is #2420, WP-02 through WP-14 are
+#2421-#2433, WP-14A is #2434, WP-15 through WP-19 are now closed as
+#2435-#2439, and WP-20 release ceremony remains open as #2440.
 
 v0.90.3 is now the most recently completed citizen-state milestone. The latest
 released tag remains v0.90.3, while the active development crate line is now
 0.90.4 for the open v0.90.4 milestone.
 
 The current release-tail entry surface is
-`docs/milestones/v0.90.3/RELEASE_READINESS_v0.90.3.md`. It records the landed
-feature-proof coverage record, closed internal review, clean third-party review
-result, accepted-finding disposition, completed next-milestone handoff, and the
-fact that v0.90.4 is ready to open immediately after ceremony.
+`docs/milestones/v0.90.4/README.md`. It records the landed feature-proof
+coverage record, closed internal review, completed third-party review, ADR 0014
+architecture remediation, completed next-milestone handoff, and the fact that
+only ceremony remains open.
 
-v0.90.3 should turn the bounded CSM run from v0.90.2 into safer citizen-state
-substrate work: canonical private state, signed envelopes, local-first sealing,
-append-only lineage, continuity witnesses and receipts, anti-equivocation,
+v0.90.3 is the most recently released citizen-state milestone. It turned the
+bounded CSM run from v0.90.2 into safer citizen-state substrate work:
+canonical private state, signed envelopes, local-first sealing, append-only
+lineage, continuity witnesses and receipts, anti-equivocation,
 sanctuary/quarantine behavior, redacted Observatory projections, standing and
 access-control semantics, challenge/appeal flow, threat modeling, and one
 integrated citizen-state proof demo. It does not claim first true Gödel-agent

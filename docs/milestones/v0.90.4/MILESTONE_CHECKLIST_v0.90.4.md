@@ -28,20 +28,20 @@
 ## Review Readiness
 
 - [x] Demo matrix reflects actual proof status.
-- [ ] Feature docs match implemented artifacts.
-- [ ] Review summary artifact is truthful and reviewer-facing.
-- [ ] Architecture summary and no-change declaration in closeout reviewed.
-- [ ] Negative authority and trace cases are recorded.
-- [ ] Tool-mediated contract requirements are marked as constraints, not tool
+- [x] Feature docs match implemented artifacts.
+- [x] Review summary artifact is truthful and reviewer-facing.
+- [x] Architecture summary and change declaration in closeout reviewed.
+- [x] Negative authority and trace cases are recorded.
+- [x] Tool-mediated contract requirements are marked as constraints, not tool
   execution proof.
 - [x] Release notes avoid aspirational shipped language until closeout.
 
 ## Release Readiness
 
-- [ ] Internal review complete.
-- [ ] External review complete or explicitly waived.
-- [ ] Accepted findings fixed or dispositioned.
-- [ ] Changelog, README, Cargo metadata, and milestone docs aligned.
-- [ ] Architecture closeout entry reflects actual documentation delta status.
-- [ ] End-of-milestone report written or refreshed.
+- [x] Internal review complete.
+- [x] External review complete or explicitly waived.
+- [x] Accepted findings fixed or dispositioned.
+- [x] Changelog, README, Cargo metadata, and milestone docs aligned.
+- [x] Architecture closeout entry reflects actual documentation delta status.
+- [x] End-of-milestone report written or refreshed.
 - [ ] Ceremony completed.

@@ -12,9 +12,9 @@ During the live release tail, active crate and CLI version surfaces should read
 `0.90.4` even though the latest published release tag remains `v0.90.3` until
 v0.90.4 ceremony closes.
 
-The issue wave is now live as #2420 through #2440. WP-01 through WP-14A are
-closed, and Sprint 4 remains active as WP-15 through WP-20. This package is no
-longer planning-only truth: it is the tracked execution map for the live
+The issue wave is now live as #2420 through #2440. WP-01 through WP-19 are
+closed, and only WP-20 release ceremony remains open as #2440. This package is
+no longer planning-only truth: it is the tracked execution map for the live
 v0.90.4 wave.
 
 ## Thesis
@@ -99,7 +99,9 @@ Out of scope:
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.4.md
 - Release plan: RELEASE_PLAN_v0.90.4.md
 - Release notes draft: RELEASE_NOTES_v0.90.4.md
+- End-of-milestone report: END_OF_MILESTONE_REPORT_v0.90.4.md
 - Third-party review handoff: ADL_v0.90.4_THIRD_PARTY_REVIEW_HANDOFF.md
+- External review summary: ../../reviews/v0.90.4/external/EXTERNAL_REVIEW_SUMMARY.md
 - Next-milestone handoff: NEXT_MILESTONE_HANDOFF_v0.90.4.md
 - Issue wave: WP_ISSUE_WAVE_v0.90.4.yaml
 
@@ -124,7 +126,7 @@ The official v0.90.4 wave is live:
 - Sprint 1 (#2420 through #2424) is closed
 - Sprint 2 (#2425 through #2429) is closed
 - Sprint 3 (#2430 through #2434) is closed
-- Sprint 4 (#2435 through #2440) is the remaining open release-tail tranche
+- Sprint 4 closeout is down to WP-20 (#2440) release ceremony only
 
 WP-14A remained explicit as #2434 so demo/proof coverage did not disappear into
 review tail work, and its resulting proof status is now recorded in

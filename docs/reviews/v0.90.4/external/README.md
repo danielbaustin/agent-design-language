@@ -5,7 +5,7 @@
 - Milestone: `v0.90.4`
 - Review lane: `WP-17`
 - Review issue: `#2437`
-- Status: handoff prepared, external review pending
+- Status: external review complete; see `EXTERNAL_REVIEW_SUMMARY.md`
 - Prior review input: `docs/milestones/v0.90.4/INTERNAL_REVIEW_v0.90.4.md` if and when it lands, plus the WP-16 internal review plan used to prepare this packet
 - Remediation lane: `WP-18` / `#2438`
 
@@ -97,14 +97,9 @@ This review should not treat any of the following as shipped `v0.90.4` scope:
 Imported review artifacts for this lane should stay under this directory, not
 loose milestone or project-root locations.
 
-Expected imported artifacts when the review arrives:
+Tracked review artifact:
 
 - `docs/reviews/v0.90.4/external/EXTERNAL_REVIEW_SUMMARY.md`
-- `docs/reviews/v0.90.4/external/EXTERNAL_REVIEW_FULL_ARTIFACT.md`
-
-If the external reviewer delivers another bounded format such as PDF, keep the
-summary in this directory and store the full artifact beside it with a stable,
-descriptive filename.
 
 ## Finding Routing Rule
 
@@ -117,5 +112,5 @@ descriptive filename.
 
 ## Current State
 
-This packet is the prepared handoff surface only. It does not claim the
-external review has already happened.
+This packet remains the bounded entry surface, but the external review itself is
+now complete. The tracked result lives in `EXTERNAL_REVIEW_SUMMARY.md`.

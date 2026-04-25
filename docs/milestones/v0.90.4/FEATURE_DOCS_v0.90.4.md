@@ -18,6 +18,9 @@
 | WBS_v0.90.4.md | opened execution map for the contract-market substrate milestone | WP-01 / #2420 |
 | DEMO_MATRIX_v0.90.4.md | live proof matrix and non-proving boundaries | WP-01 / #2420, WP-14 / #2433, WP-14A / #2434 |
 | FEATURE_PROOF_COVERAGE_v0.90.4.md | reviewer map from every D1-D13 claim to its landed proof home and explicit non-proving governed-tool handoff boundary | WP-14A / #2434 |
+| ../../adr/0014-contract-market-architecture.md | accepted architecture record for the bounded contract-market substrate and governed-tools handoff boundary | WP-18 / #2438 |
+| ../../reviews/v0.90.4/external/EXTERNAL_REVIEW_SUMMARY.md | tracked third-party review result and accepted-finding summary | WP-17 / #2437 |
+| END_OF_MILESTONE_REPORT_v0.90.4.md | closeout summary of landed scope, review outcome, ADR remediation, and carry-forward placement | WP-20 / #2440 |
 | WP_ISSUE_WAVE_v0.90.4.yaml | opened issue-wave source of truth with real issue numbers | WP-01 / #2420 |
 | WP_EXECUTION_READINESS_v0.90.4.md | card-authoring source for concrete WP outputs and validation | WP-01 / #2420 |
 
