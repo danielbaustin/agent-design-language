@@ -98,7 +98,7 @@ Out of scope:
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.4.md
 - Release plan: RELEASE_PLAN_v0.90.4.md
 - Release notes draft: RELEASE_NOTES_v0.90.4.md
-- Third-party review handoff: THIRD_PARTY_REVIEW_v0.90.4.md
+- Third-party review handoff: ADL_v0.90.4_THIRD_PARTY_REVIEW_HANDOFF.md
 - Issue wave: WP_ISSUE_WAVE_v0.90.4.yaml
 
 ## Execution Rule
