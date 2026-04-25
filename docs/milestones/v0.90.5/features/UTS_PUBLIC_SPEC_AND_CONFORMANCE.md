@@ -80,6 +80,10 @@ unless a deliberately scoped later fixture proves a safe dry-run path.
 
 ## Validation Expectations
 
+WP-04 lands the first strongly typed UTS v1 artifact in
+`adl/src/uts.rs`. The review-facing Rust surface is
+`UniversalToolSchemaV1`, `validate_uts_v1`, and `uts_v1_schema_json`.
+
 WP-04 should make the schema and strongly typed artifact enforce these
 requirements:
 

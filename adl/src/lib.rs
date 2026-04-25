@@ -59,3 +59,4 @@ pub mod skill_composition_model;
 pub mod tool_result;
 pub mod trace;
 pub mod trace_schema_v1;
+pub mod uts;

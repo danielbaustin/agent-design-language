@@ -165,7 +165,7 @@ file_is_structural_module_barrel() {
   local path="$1"
   [ -f "$ROOT/$path" ] || return 1
   case "$(basename "$path")" in
-    mod.rs) ;;
+    mod.rs|lib.rs) ;;
     *) return 1 ;;
   esac
 
