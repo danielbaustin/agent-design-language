@@ -434,6 +434,27 @@ mod tests {
     use super::*;
     use std::time::{SystemTime, UNIX_EPOCH};
 
+    const RUNTIME_V2_CLI_REGRESSION_SMOKES: &[&str] = &[
+        "operator-controls:write-json",
+        "operator-controls:arg-validation",
+        "runtime-v2:dispatch",
+        "operator-controls:absolute-output",
+        "runtime-v2:public-current-dir",
+        "security-boundary:write-json",
+        "security-boundary:arg-validation",
+        "security-boundary:absolute-output",
+        "foundation-demo:write-bundle",
+        "foundation-demo:arg-validation",
+        "integrated-csm-run-demo:write-bundle",
+        "integrated-csm-run-demo:arg-validation",
+        "observatory-flagship-demo:write-bundle",
+        "observatory-flagship-demo:arg-validation",
+        "feature-proof-coverage:write-json",
+        "feature-proof-coverage:arg-validation",
+        "contract-market-demo:arg-validation",
+        "runtime-v2:path-hygiene",
+    ];
+
     fn temp_repo(label: &str) -> PathBuf {
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -992,24 +1013,45 @@ mod tests {
 
     #[test]
     fn runtime_v2_feature_proof_coverage_runs_runtime_v2_cli_regression_matrix() {
-        runtime_v2_operator_controls_writes_report_json();
-        runtime_v2_operator_controls_validates_unknown_args_and_missing_out_value();
-        runtime_v2_dispatch_covers_help_and_subcommand_errors();
-        runtime_v2_operator_controls_rejects_absolute_output();
-        runtime_v2_public_dispatch_uses_current_directory();
-        runtime_v2_security_boundary_writes_proof_json();
-        runtime_v2_security_boundary_validates_unknown_args_and_missing_out_value();
-        runtime_v2_security_boundary_rejects_absolute_output();
-        runtime_v2_foundation_demo_writes_integrated_bundle();
-        runtime_v2_foundation_demo_validates_stdout_help_and_output_path_rules();
-        runtime_v2_integrated_csm_run_demo_writes_proof_bundle();
-        runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules();
-        runtime_v2_observatory_flagship_demo_writes_proof_bundle();
-        runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules();
-        runtime_v2_feature_proof_coverage_writes_packet_json();
-        runtime_v2_feature_proof_coverage_validates_stdout_help_and_output_path_rules();
-        runtime_v2_contract_market_demo_validates_stdout_help_and_output_path_rules();
-        runtime_v2_demo_stdout_lines_preserve_requested_relative_paths();
+        let proof_surfaces: &[fn()] = &[
+            runtime_v2_operator_controls_writes_report_json,
+            runtime_v2_operator_controls_validates_unknown_args_and_missing_out_value,
+            runtime_v2_dispatch_covers_help_and_subcommand_errors,
+            runtime_v2_operator_controls_rejects_absolute_output,
+            runtime_v2_public_dispatch_uses_current_directory,
+            runtime_v2_security_boundary_writes_proof_json,
+            runtime_v2_security_boundary_validates_unknown_args_and_missing_out_value,
+            runtime_v2_security_boundary_rejects_absolute_output,
+            runtime_v2_foundation_demo_writes_integrated_bundle,
+            runtime_v2_foundation_demo_validates_stdout_help_and_output_path_rules,
+            runtime_v2_integrated_csm_run_demo_writes_proof_bundle,
+            runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules,
+            runtime_v2_observatory_flagship_demo_writes_proof_bundle,
+            runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules,
+            runtime_v2_feature_proof_coverage_writes_packet_json,
+            runtime_v2_feature_proof_coverage_validates_stdout_help_and_output_path_rules,
+            runtime_v2_contract_market_demo_validates_stdout_help_and_output_path_rules,
+            runtime_v2_demo_stdout_lines_preserve_requested_relative_paths,
+        ];
+        assert_eq!(proof_surfaces.len(), RUNTIME_V2_CLI_REGRESSION_SMOKES.len());
+        for (index, smoke) in RUNTIME_V2_CLI_REGRESSION_SMOKES.iter().enumerate() {
+            assert!(
+                !smoke.trim().is_empty(),
+                "CLI regression smoke {index} must be named"
+            );
+            assert!(
+                RUNTIME_V2_CLI_REGRESSION_SMOKES[index + 1..]
+                    .iter()
+                    .all(|candidate| candidate != smoke),
+                "CLI regression smoke is duplicated: {smoke}"
+            );
+        }
+        assert!(RUNTIME_V2_CLI_REGRESSION_SMOKES
+            .iter()
+            .any(|smoke| smoke.starts_with("feature-proof-coverage:")));
+        assert!(RUNTIME_V2_CLI_REGRESSION_SMOKES
+            .iter()
+            .any(|smoke| smoke.starts_with("contract-market-demo:")));
     }
 
     #[test]
