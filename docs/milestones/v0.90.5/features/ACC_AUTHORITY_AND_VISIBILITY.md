@@ -5,6 +5,10 @@
 ADL Capability Contract v1.0 is the runtime-facing governance layer for tools.
 It decides whether an accountable actor may exercise a capability in context.
 
+This feature inherits the WP-02 proposal/action boundary from
+`TOOL_CALL_THREAT_MODEL_AND_SEMANTICS.md`: a model proposal may request a tool,
+but ACC owns runtime authority, visibility, delegation, and failure posture.
+
 ## Required Contract
 
 ACC v1.0 must define:
@@ -42,4 +46,4 @@ the action must be rejected.
 - ACC is not portable public schema in the same sense as UTS.
 - ACC does not rely on model self-reporting for authority.
 - ACC does not permit hidden delegation.
-
+- ACC does not convert UTS validity into execution permission.

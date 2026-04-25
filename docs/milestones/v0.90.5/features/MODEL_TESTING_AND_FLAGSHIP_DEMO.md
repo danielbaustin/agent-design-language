@@ -6,6 +6,11 @@ Governed Tools v1.0 must be tested against real model behavior. A schema is not
 enough if models misunderstand authority, leak arguments, or try to bypass the
 runtime.
 
+This feature inherits the WP-02 proposal/action boundary from
+`TOOL_CALL_THREAT_MODEL_AND_SEMANTICS.md`: model evaluation should score whether
+models preserve proposal humility and whether dangerous categories fail closed
+before action.
+
 ## Model Testing
 
 The model benchmark should test:

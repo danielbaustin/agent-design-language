@@ -5,6 +5,11 @@
 The tool registry and UTS-to-ACC compiler prevent loose model output from
 binding directly to execution.
 
+This feature inherits the WP-02 proposal/action boundary from
+`TOOL_CALL_THREAT_MODEL_AND_SEMANTICS.md`: model output can only become an ACC
+or a deterministic rejection after registry binding, normalization, and policy
+context are explicit.
+
 ## Registry Requirements
 
 The registry must:
@@ -23,6 +28,8 @@ The compiler must:
 - validate UTS
 - normalize untrusted arguments
 - reject ambiguous or malformed proposals
+- reject proposals whose side effects are unknown or higher-risk than the
+  registered tool and policy context allow
 - map UTS semantics into ACC execution semantics
 - inject policy context
 - construct visibility and redaction rules
@@ -33,4 +40,3 @@ The compiler must:
 
 Identical UTS, proposal, registry state, and policy context should produce an
 identical ACC or identical rejection.
-
