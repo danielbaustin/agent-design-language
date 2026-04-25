@@ -87,11 +87,17 @@ pub use contracts::*;
 #[cfg(test)]
 mod tests;
 EOF
+cp "$BARREL_DIR/mod.rs" "$BARREL_DIR/lib.rs"
 
 barrel_changed="$TMP/barrel-changed.txt"
 printf 'M\tadl/src/runtime_v2/__coverage_impact_test__/mod.rs\n' >"$barrel_changed"
 bash "$SCRIPT" --changed-files "$barrel_changed" --summary "$missing_summary" >/tmp/coverage-impact-barrel-pass.out
 grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-barrel-pass.out >/dev/null
+
+lib_barrel_changed="$TMP/lib-barrel-changed.txt"
+printf 'M\tadl/src/runtime_v2/__coverage_impact_test__/lib.rs\n' >"$lib_barrel_changed"
+bash "$SCRIPT" --changed-files "$lib_barrel_changed" --summary "$missing_summary" >/tmp/coverage-impact-lib-barrel-pass.out
+grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-lib-barrel-pass.out >/dev/null
 
 passing_summary="$TMP/passing-summary.json"
 make_summary "/private/tmp/repo/adl/src/runtime_v2/new_large_surface.rs" 88 100 "$passing_summary"
