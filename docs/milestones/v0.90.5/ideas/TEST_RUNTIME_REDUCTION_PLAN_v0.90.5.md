@@ -38,6 +38,10 @@ WP-01 opened the runtime-reduction work as a separate GW wave:
 
 These slices are intentionally not part of the canonical WP numbering.
 
+GW-00 tracks execution details, runtime budgets, and per-slice validation in:
+
+- [Get-Well Runtime Tracking](../GET_WELL_TRACKING_v0.90.5.md)
+
 ## Source Evidence
 
 This plan is based on the merged `#2547` authoritative coverage run:
@@ -246,3 +250,6 @@ This plan has been split into bounded `v0.90.5` GW issues:
 - one issue per major runtime family cluster
 - one issue for the CLI proof-matrix rewrite
 - one issue for demo/artifact proof demotion where appropriate
+
+The per-slice issue mapping, runtime budget, and validation command table live
+in [Get-Well Runtime Tracking](../GET_WELL_TRACKING_v0.90.5.md).
