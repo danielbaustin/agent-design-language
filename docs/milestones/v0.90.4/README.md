@@ -93,6 +93,7 @@ Out of scope:
   RUST_VALIDATION_ACCELERATION_v0.90.4.md
 - Finish test topology for validation throughput:
   FINISH_TEST_TOPOLOGY_v0.90.4.md
+- Architecture ADR: ../../adr/0014-contract-market-architecture.md
 - Feature index: FEATURE_DOCS_v0.90.4.md
 - WP execution readiness: WP_EXECUTION_READINESS_v0.90.4.md
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.4.md
