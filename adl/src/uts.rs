@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 
 pub const UTS_SCHEMA_VERSION_V1: &str = "uts.v1";
 
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum UtsSideEffectClassV1 {
     Read,
@@ -47,6 +47,7 @@ pub enum UtsIdempotenceV1 {
 pub enum UtsAuthenticationModeV1 {
     None,
     ApiKey,
+    #[serde(rename = "oauth")]
     OAuth,
     UserDelegated,
     ServiceAccount,
@@ -226,6 +227,14 @@ fn extension_key_allowed(key: &str) -> bool {
         && !key.contains("permission")
 }
 
+fn extension_declares_required(value: &JsonValue) -> bool {
+    value
+        .as_object()
+        .and_then(|object| object.get("required"))
+        .and_then(JsonValue::as_bool)
+        .unwrap_or(false)
+}
+
 /// Validate UTS v1 semantic constraints that are stricter than serde shape.
 ///
 /// This validator intentionally treats UTS validity as schema compatibility
@@ -320,6 +329,16 @@ pub fn validate_uts_v1(schema: &UniversalToolSchemaV1) -> Result<(), UtsValidati
             "exfiltration side effects must declare high exfiltration risk",
         );
     }
+    if !matches!(schema.side_effect_class, UtsSideEffectClassV1::Exfiltration)
+        && matches!(schema.exfiltration_risk, UtsExfiltrationRiskV1::High)
+    {
+        push_error(
+            &mut errors,
+            "ambiguous_side_effects",
+            "side_effect_class",
+            "high exfiltration risk must use the exfiltration side-effect class",
+        );
+    }
     if schema.execution_environment.isolation.trim().is_empty() {
         push_error(
             &mut errors,
@@ -347,12 +366,20 @@ pub fn validate_uts_v1(schema: &UniversalToolSchemaV1) -> Result<(), UtsValidati
         }
     }
     for key in schema.extensions.keys() {
+        let value = &schema.extensions[key];
         if !extension_key_allowed(key) {
             push_error(
                 &mut errors,
                 "invalid_extension_key",
                 "extensions",
                 format!("extension key '{key}' is not allowed for UTS v1"),
+            );
+        } else if extension_declares_required(value) {
+            push_error(
+                &mut errors,
+                "unsupported_required_extension",
+                "extensions",
+                format!("extension key '{key}' declares unsupported required behavior"),
             );
         }
     }
