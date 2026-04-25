@@ -7,16 +7,13 @@
 - Review issue: `#2437`
 - Review materials: `docs/reviews/v0.90.4/external/`
 - Remediation lane: `WP-18` / `#2438`
-- Status: handoff prepared, external review pending
+- Status: external review complete; accepted finding remediated
 
 ## Summary
 
-This document is the tracked third-party review handoff surface for `v0.90.4`.
-
-It does not claim the external review has already happened. It records the
-bounded review scope, non-claims, expected artifact locations, and finding
-routing so an outside reviewer can evaluate the contract-market milestone
-without reconstructing the whole issue wave manually.
+This document began as the tracked third-party review handoff surface for
+`v0.90.4`. The external review is now complete, so this file also records the
+review outcome and the routing/remediation result.
 
 The intended review target is the bounded `v0.90.4` contract-market and
 resource-stewardship slice:
@@ -49,20 +46,11 @@ Primary review questions:
 The review should use the prepared handoff packet under
 `docs/reviews/v0.90.4/external/README.md` as the detailed entry surface.
 
-## Expected Imported Artifacts
+## Imported Review Artifacts
 
-Imported third-party review artifacts should be stored under
-`docs/reviews/v0.90.4/external/`, not loose project-root or milestone-root
-locations.
-
-Expected imported surfaces:
+Tracked review summary:
 
 - `docs/reviews/v0.90.4/external/EXTERNAL_REVIEW_SUMMARY.md`
-- `docs/reviews/v0.90.4/external/EXTERNAL_REVIEW_FULL_ARTIFACT.md`
-
-If the reviewer delivers another bounded format such as PDF, keep the summary
-in that directory and store the full artifact beside it with a stable,
-descriptive filename.
 
 ## Finding Routing Rule
 
@@ -71,6 +59,12 @@ descriptive filename.
   silence.
 - Findings that would widen `v0.90.4` beyond its bounded scope should be marked
   as non-blocking follow-on considerations rather than hidden release blockers.
+
+## Review Outcome
+
+- Overall result: ready after one P2 architecture remediation
+- Accepted finding: add ADR 0014 for the v0.90.4 contract-market architecture
+- Remediation result: completed in `WP-18` / `#2438`
 
 ## Non-Claims
 
@@ -86,5 +80,5 @@ This handoff does not claim that `v0.90.4` ships:
 
 ## Current Disposition
 
-Current disposition: ready for third-party review handoff, not yet a completed
-third-party review record.
+Current disposition: completed third-party review with one accepted P2 finding,
+now remediated by ADR 0014.

@@ -5,27 +5,27 @@ All notable project-level changes are summarized here by milestone/release.
 ## v0.90.4 (In development)
 
 Status: v0.90.4 is the active citizen economics and contract-market milestone.
-The issue wave is open as #2420-#2440, and the active crate/package version
+The issue wave opened as #2420-#2440; WP-15 through WP-19 are now closed, WP-20
+release ceremony remains open as #2440, and the active crate/package version
 surface is now `0.90.4` for the live development line even though the latest
 released tag remains v0.90.3 until v0.90.4 closes.
 
 Scope note:
-- This entry is intentionally minimal during the live issue wave.
+- This entry is intentionally bounded during the live release tail.
 - Detailed milestone scope, proof expectations, and release-tail truth live in
   `docs/milestones/v0.90.4/`.
+- ADR 0014 now records the contract-market architecture boundary for the
+  milestone.
 
 ## v0.90.3 (Released 2026-04-23)
 
-Status: Issue wave opened on 2026-04-21. WP-01 is #2327, WP-02 through WP-14
-are #2328-#2340, WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
-WP-01 through WP-19 have landed. WP-16 internal review closed with only minor
-internal cleanup, WP-17 external review closed with zero third-party findings,
-WP-18 closed by zero-finding disposition plus trivial follow-up #2415, WP-19
-completed the next-milestone handoff, and only WP-20 release ceremony remains.
+Status: Released. The issue wave opened on 2026-04-21 as #2327-#2347 and is now
+fully closed. Internal review, external review, accepted-finding disposition,
+next-milestone handoff, and release ceremony are complete.
 
-Planned scope:
+Scope:
 - v0.90.3 is the citizen-state substrate milestone.
-- The milestone should turn v0.90.2 bounded CSM run evidence into protected
+- The milestone turned v0.90.2 bounded CSM run evidence into protected
   continuity substrate work: canonical private state, signed envelopes,
   local-first sealing, append-only lineage, continuity witnesses and receipts,
   anti-equivocation, sanctuary/quarantine behavior, redacted Observatory

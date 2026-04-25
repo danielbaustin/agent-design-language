@@ -87,3 +87,10 @@ It preserves:
   governance
 
 The handoff result is a clean milestone chain, not a new backlog.
+
+## Future WP-19 Rule
+
+Future WP-19 handoffs should include an explicit ADL architecture-doc review and
+update pass when milestone scope changes have architectural consequences. The
+architecture narrative should move forward with next-milestone planning rather
+than waiting to surface only during late review or release-tail remediation.
