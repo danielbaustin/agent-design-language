@@ -44,4 +44,4 @@
 - [x] Changelog, README, Cargo metadata, and milestone docs aligned.
 - [x] Architecture closeout entry reflects actual documentation delta status.
 - [x] End-of-milestone report written or refreshed.
-- [ ] Ceremony completed.
+- [x] Ceremony completed.

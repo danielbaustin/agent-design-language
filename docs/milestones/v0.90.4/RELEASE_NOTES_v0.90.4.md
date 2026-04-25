@@ -1,19 +1,19 @@
-# Release Notes - v0.90.4 Draft
+# Release Notes - v0.90.4
 
 ## Status
 
-Pre-ceremony release notes draft. The implementation, feature-proof coverage,
-internal review, external review, ADR 0014 remediation, and next-milestone
-handoff are complete; only WP-20 ceremony remains before release publication.
+Final release notes for v0.90.4. The implementation, feature-proof coverage,
+internal review, external review, ADR 0014 remediation, next-milestone
+handoff, and release ceremony are complete.
 
-## Draft Headline
+## Headline
 
-v0.90.4 introduces ADL's first bounded citizen economics and contract-market
+v0.90.4 introduced ADL's first bounded citizen economics and contract-market
 substrate: governed contracts, bids, evaluation, lifecycle authority,
 counterparty participation, delegation, fixture-backed execution, a reviewer-
 facing proof packet, and an explicit governed-tools handoff boundary.
 
-## Draft Highlights
+## Highlights
 
 - contract and bid schemas
 - evaluation and selection artifacts
@@ -27,7 +27,7 @@ facing proof packet, and an explicit governed-tools handoff boundary.
 - resource-stewardship bridge without payment rails
 - ADR 0014 contract-market architecture record
 
-## Draft Non-Claims
+## Non-Claims
 
 - v0.90.4 does not ship payment settlement.
 - v0.90.4 does not ship full inter-polis economics.
@@ -40,4 +40,4 @@ facing proof packet, and an explicit governed-tools handoff boundary.
 
 ## Release Note Rule
 
-At ceremony closeout, keep only landed evidence and any explicit deferrals.
+This final note keeps only landed evidence and explicit deferrals.

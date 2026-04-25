@@ -2,20 +2,15 @@
 
 ## Status
 
-Active milestone package. v0.90.4 is the citizen economics and contract-market
+Closed milestone package. v0.90.4 is the citizen economics and contract-market
 substrate milestone. It was initially placed by planning issue #2271, polished
 for execution readiness by #2389, reviewed again during the v0.90.3 WP-19
-handoff pass, and opened by WP-01 as issue #2420 after the v0.90.3 release
-ceremony.
+handoff pass, opened by WP-01 as issue #2420 after the v0.90.3 release
+ceremony, and closed by WP-20 release ceremony issue #2440.
 
-During the live release tail, active crate and CLI version surfaces should read
-`0.90.4` even though the latest published release tag remains `v0.90.3` until
-v0.90.4 ceremony closes.
-
-The issue wave is now live as #2420 through #2440. WP-01 through WP-19 are
-closed, and only WP-20 release ceremony remains open as #2440. This package is
-no longer planning-only truth: it is the tracked execution map for the live
-v0.90.4 wave.
+The issue wave ran as #2420 through #2440, and all twenty work packages are now
+closed. This package is no longer planning-only truth or a live execution map;
+it is the final tracked milestone record for v0.90.4.
 
 ## Thesis
 
@@ -120,13 +115,13 @@ docs instead of generic implementation language.
 
 ## Issue Wave State
 
-The official v0.90.4 wave is live:
+The official v0.90.4 wave is closed:
 
 - WP-01 through WP-20 are #2420 through #2440
 - Sprint 1 (#2420 through #2424) is closed
 - Sprint 2 (#2425 through #2429) is closed
 - Sprint 3 (#2430 through #2434) is closed
-- Sprint 4 closeout is down to WP-20 (#2440) release ceremony only
+- Sprint 4 (#2435 through #2440) is closed
 
 WP-14A remained explicit as #2434 so demo/proof coverage did not disappear into
 review tail work, and its resulting proof status is now recorded in

@@ -8,7 +8,7 @@ schema, lifecycle, authority, fixture, runner, demo, and review-summary story.
 - Issue wave opened by WP-01 as #2420.
 - WP-02 through WP-14A are closed as #2421 through #2434.
 - WP-15 through WP-19 are closed as #2435 through #2439.
-- WP-20 release ceremony remains open as #2440.
+- WP-20 release ceremony is closed as #2440.
 - The tracked milestone package now records the live issue map and execution
   order.
 - Demo/proof coverage has been carried through WP-14A and is now recorded in
@@ -18,6 +18,9 @@ schema, lifecycle, authority, fixture, runner, demo, and review-summary story.
 - Active crate/package version-reporting surfaces should read `0.90.4` during
   the live release tail, even while the latest published tag remains `v0.90.3`
   until ceremony.
+
+The milestone release plan is now fully satisfied; this document remains as the
+record of the gates that were applied before ceremony closeout.
 
 ## Release Gates
 
