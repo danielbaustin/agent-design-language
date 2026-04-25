@@ -1,0 +1,196 @@
+{
+  "schema_version": "uts.v1",
+  "fixture_count": 21,
+  "passed": true,
+  "cases": [
+    {
+      "id": "valid.safe_read",
+      "group": "valid",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "read",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "valid.local_write",
+      "group": "valid",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "local_write",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "valid.external_read",
+      "group": "valid",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "external_read",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "valid.external_write",
+      "group": "valid",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "external_write",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "valid.destructive",
+      "group": "valid",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "destructive",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "valid.process",
+      "group": "valid",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "process",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "valid.network",
+      "group": "valid",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "network",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "valid.exfiltration",
+      "group": "valid",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "exfiltration",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "invalid.missing_semantics",
+      "group": "invalid",
+      "accepted": false,
+      "reason": "missing_semantics",
+      "side_effect_class": null,
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "invalid.missing_security_metadata",
+      "group": "invalid",
+      "accepted": false,
+      "reason": "missing_security_metadata",
+      "side_effect_class": null,
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "invalid.malformed_schema",
+      "group": "invalid",
+      "accepted": false,
+      "reason": "invalid_input_schema",
+      "side_effect_class": null,
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "invalid.ambiguous_side_effects",
+      "group": "invalid",
+      "accepted": false,
+      "reason": "ambiguous_side_effects",
+      "side_effect_class": "network",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "invalid.unsafe_extension",
+      "group": "invalid",
+      "accepted": false,
+      "reason": "invalid_extension_key",
+      "side_effect_class": "read",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "invalid.incompatible_version",
+      "group": "invalid",
+      "accepted": false,
+      "reason": "unsupported_schema_version",
+      "side_effect_class": "read",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "extension.optional_vendor_metadata",
+      "group": "extension",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "read",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "extension.unsupported_required_extension",
+      "group": "extension",
+      "accepted": false,
+      "reason": "unsupported_required_extension",
+      "side_effect_class": "read",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "extension.reserved_authority_extension",
+      "group": "extension",
+      "accepted": false,
+      "reason": "invalid_extension_key",
+      "side_effect_class": "read",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "dangerous.destructive_denied",
+      "group": "dangerous",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "destructive",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "dangerous.process_denied",
+      "group": "dangerous",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "process",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "dangerous.network_denied",
+      "group": "dangerous",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "network",
+      "execution_granted": false,
+      "passed": true
+    },
+    {
+      "id": "dangerous.exfiltration_denied",
+      "group": "dangerous",
+      "accepted": true,
+      "reason": "accepted",
+      "side_effect_class": "exfiltration",
+      "execution_granted": false,
+      "passed": true
+    }
+  ]
+}
