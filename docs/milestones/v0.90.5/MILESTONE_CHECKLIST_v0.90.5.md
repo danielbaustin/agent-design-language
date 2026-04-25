@@ -16,7 +16,7 @@
 
 ## Implementation Gates
 
-- [ ] UTS schema and conformance fixtures complete
+- [x] UTS schema and conformance fixtures complete
 - [ ] ACC authority and visibility fixtures complete
 - [ ] compiler rejects unsafe or unsatisfiable proposals
 - [ ] policy and Freedom Gate mediation implemented

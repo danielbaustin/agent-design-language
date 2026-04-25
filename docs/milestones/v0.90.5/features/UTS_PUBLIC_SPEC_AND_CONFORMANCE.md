@@ -104,6 +104,15 @@ WP-05 should provide a deterministic conformance command or harness that:
 - classifies every `dangerous.*` fixture without granting execution;
 - emits repository-relative, portable output with no host paths or secrets.
 
+WP-05 implements the review-facing conformance harness in
+`adl/src/uts_conformance.rs`. The fixture packet is exposed through
+`uts_conformance_fixtures`, and `run_uts_conformance_suite` evaluates the
+packet without granting execution. The focused validation command is:
+
+```sh
+cargo test --manifest-path adl/Cargo.toml uts -- --nocapture
+```
+
 ## Non-Goals
 
 - UTS does not define ADL actor authority.

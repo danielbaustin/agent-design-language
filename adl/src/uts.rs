@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 
 pub const UTS_SCHEMA_VERSION_V1: &str = "uts.v1";
 
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum UtsSideEffectClassV1 {
     Read,
@@ -47,6 +47,7 @@ pub enum UtsIdempotenceV1 {
 pub enum UtsAuthenticationModeV1 {
     None,
     ApiKey,
+    #[serde(rename = "oauth")]
     OAuth,
     UserDelegated,
     ServiceAccount,
@@ -226,6 +227,14 @@ fn extension_key_allowed(key: &str) -> bool {
         && !key.contains("permission")
 }
 
+fn extension_declares_required(value: &JsonValue) -> bool {
+    value
+        .as_object()
+        .and_then(|object| object.get("required"))
+        .and_then(JsonValue::as_bool)
+        .unwrap_or(false)
+}
+
 /// Validate UTS v1 semantic constraints that are stricter than serde shape.
 ///
 /// This validator intentionally treats UTS validity as schema compatibility
@@ -320,6 +329,16 @@ pub fn validate_uts_v1(schema: &UniversalToolSchemaV1) -> Result<(), UtsValidati
             "exfiltration side effects must declare high exfiltration risk",
         );
     }
+    if !matches!(schema.side_effect_class, UtsSideEffectClassV1::Exfiltration)
+        && matches!(schema.exfiltration_risk, UtsExfiltrationRiskV1::High)
+    {
+        push_error(
+            &mut errors,
+            "ambiguous_side_effects",
+            "side_effect_class",
+            "high exfiltration risk must use the exfiltration side-effect class",
+        );
+    }
     if schema.execution_environment.isolation.trim().is_empty() {
         push_error(
             &mut errors,
@@ -347,12 +366,20 @@ pub fn validate_uts_v1(schema: &UniversalToolSchemaV1) -> Result<(), UtsValidati
         }
     }
     for key in schema.extensions.keys() {
+        let value = &schema.extensions[key];
         if !extension_key_allowed(key) {
             push_error(
                 &mut errors,
                 "invalid_extension_key",
                 "extensions",
                 format!("extension key '{key}' is not allowed for UTS v1"),
+            );
+        } else if extension_declares_required(value) {
+            push_error(
+                &mut errors,
+                "unsupported_required_extension",
+                "extensions",
+                format!("extension key '{key}' declares unsupported required behavior"),
             );
         }
     }
@@ -487,6 +514,114 @@ mod tests {
         let err = validate_uts_v1(&schema).expect_err("invalid auth should fail");
 
         assert!(err.codes().contains(&"invalid_authentication"));
+    }
+
+    #[test]
+    fn uts_v1_accepts_oauth_wire_spelling_and_optional_extension_metadata() {
+        let mut value = valid_safe_read_json();
+        value["name"] = json!("fixture.external_write");
+        value["side_effect_class"] = json!("external_write");
+        value["authentication"] = json!({ "mode": "oauth", "required": true });
+        value["data_sensitivity"] = json!("confidential");
+        value["exfiltration_risk"] = json!("medium");
+        value["execution_environment"] = json!({
+            "kind": "external_service",
+            "isolation": "bounded external-write fixture; schema compatibility only"
+        });
+        value["extensions"] = json!({
+            "x-vendor-metadata": {
+                "required": false,
+                "review_note": "portable optional metadata"
+            }
+        });
+
+        let schema = parse_valid(value);
+        validate_uts_v1(&schema).expect("oauth wire spelling and optional metadata should pass");
+    }
+
+    #[test]
+    fn uts_v1_rejects_high_exfiltration_risk_without_exfiltration_class() {
+        let mut value = valid_safe_read_json();
+        value["side_effect_class"] = json!("network");
+        value["exfiltration_risk"] = json!("high");
+
+        let schema = parse_valid(value);
+        let err = validate_uts_v1(&schema).expect_err("ambiguous high-risk schema should fail");
+
+        assert!(err.codes().contains(&"ambiguous_side_effects"));
+    }
+
+    #[test]
+    fn uts_v1_rejects_required_extension_metadata() {
+        let mut value = valid_safe_read_json();
+        value["extensions"] = json!({
+            "x-vendor-required-mode": {
+                "required": true,
+                "mode": "vendor-private"
+            }
+        });
+
+        let schema = parse_valid(value);
+        let err = validate_uts_v1(&schema).expect_err("required extension should fail");
+
+        assert!(err.codes().contains(&"unsupported_required_extension"));
+    }
+
+    #[test]
+    fn uts_v1_validation_reports_semantic_error_families() {
+        let mut value = valid_safe_read_json();
+        value["name"] = json!("ab");
+        value["version"] = json!("1.0");
+        value["description"] = json!("short");
+        value["output_schema"] = json!({});
+        value["resources"] = json!([
+            { "resource_type": "Bad Token", "scope": "" }
+        ]);
+        value["side_effect_class"] = json!("exfiltration");
+        value["exfiltration_risk"] = json!("medium");
+        value["execution_environment"] = json!({
+            "kind": "fixture",
+            "isolation": ""
+        });
+        value["errors"] = json!([
+            {
+                "code": "Bad Code",
+                "message": "",
+                "retryable": false
+            }
+        ]);
+        value["extensions"] = json!({
+            "not-x": true
+        });
+
+        let schema = parse_valid(value);
+        let err = validate_uts_v1(&schema).expect_err("invalid schema should fail");
+        let codes = err.codes();
+
+        for code in [
+            "invalid_name",
+            "invalid_version",
+            "missing_description",
+            "invalid_output_schema",
+            "invalid_resource",
+            "invalid_exfiltration_risk",
+            "missing_execution_isolation",
+            "invalid_error_model",
+            "invalid_extension_key",
+        ] {
+            assert!(codes.contains(&code), "missing validation code {code}");
+        }
+    }
+
+    #[test]
+    fn uts_v1_rejects_missing_error_model() {
+        let mut value = valid_safe_read_json();
+        value["errors"] = json!([]);
+
+        let schema = parse_valid(value);
+        let err = validate_uts_v1(&schema).expect_err("missing error model should fail");
+
+        assert!(err.codes().contains(&"missing_error_model"));
     }
 
     #[test]
