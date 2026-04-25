@@ -1,9 +1,34 @@
 use super::*;
+use std::sync::OnceLock;
+
+fn resource_stewardship_bridge_artifact() -> &'static RuntimeV2ResourceStewardshipBridgeArtifact {
+    static ARTIFACT: OnceLock<RuntimeV2ResourceStewardshipBridgeArtifact> = OnceLock::new();
+    ARTIFACT.get_or_init(|| {
+        runtime_v2_resource_stewardship_bridge().expect("resource stewardship bridge artifact")
+    })
+}
 
 #[test]
-fn runtime_v2_resource_stewardship_bridge_is_stable() {
-    let artifact =
-        runtime_v2_resource_stewardship_bridge().expect("resource stewardship bridge artifact");
+fn runtime_v2_resource_stewardship_bridge_contract_and_policy_matrix_is_stable() {
+    resource_stewardship_bridge_is_stable();
+    resource_stewardship_bridge_preserves_policy_and_tool_boundaries();
+    resource_stewardship_bridge_preserves_existing_bid_claims();
+}
+
+#[test]
+fn runtime_v2_resource_stewardship_bridge_negative_matrix_rejects_drift() {
+    resource_stewardship_bridge_rejects_policy_and_authority_drift();
+}
+
+#[test]
+#[cfg(feature = "slow-proof-tests")]
+fn runtime_v2_resource_stewardship_bridge_golden_and_materialization_proofs_are_stable() {
+    resource_stewardship_bridge_matches_golden_fixture();
+    resource_stewardship_bridge_write_to_root_materializes_fixture();
+}
+
+fn resource_stewardship_bridge_is_stable() {
+    let artifact = resource_stewardship_bridge_artifact();
     artifact
         .validate()
         .expect("valid resource stewardship bridge artifact");
@@ -18,11 +43,9 @@ fn runtime_v2_resource_stewardship_bridge_is_stable() {
     assert_eq!(artifact.bid_resource_estimates.len(), 2);
 }
 
-#[test]
 #[cfg(feature = "slow-proof-tests")]
-fn runtime_v2_resource_stewardship_bridge_matches_golden_fixture() {
-    let artifact =
-        runtime_v2_resource_stewardship_bridge().expect("resource stewardship bridge artifact");
+fn resource_stewardship_bridge_matches_golden_fixture() {
+    let artifact = resource_stewardship_bridge_artifact();
     let json = String::from_utf8(
         artifact
             .pretty_json_bytes()
@@ -39,10 +62,8 @@ fn runtime_v2_resource_stewardship_bridge_matches_golden_fixture() {
     );
 }
 
-#[test]
-fn runtime_v2_resource_stewardship_bridge_preserves_policy_and_tool_boundaries() {
-    let artifact =
-        runtime_v2_resource_stewardship_bridge().expect("resource stewardship bridge artifact");
+fn resource_stewardship_bridge_preserves_policy_and_tool_boundaries() {
+    let artifact = resource_stewardship_bridge_artifact();
 
     let policy_domains = artifact
         .policy_bindings
@@ -79,10 +100,8 @@ fn runtime_v2_resource_stewardship_bridge_preserves_policy_and_tool_boundaries()
         .all(|constraint| !constraint.execution_authority_granted));
 }
 
-#[test]
-fn runtime_v2_resource_stewardship_bridge_preserves_existing_bid_claims() {
-    let artifact =
-        runtime_v2_resource_stewardship_bridge().expect("resource stewardship bridge artifact");
+fn resource_stewardship_bridge_preserves_existing_bid_claims() {
+    let artifact = resource_stewardship_bridge_artifact();
     let bid_artifacts = runtime_v2_bid_schema_contract().expect("bid schema artifacts");
 
     for bid in &bid_artifacts.valid_bids {
@@ -103,10 +122,8 @@ fn runtime_v2_resource_stewardship_bridge_preserves_existing_bid_claims() {
     }
 }
 
-#[test]
-fn runtime_v2_resource_stewardship_bridge_rejects_policy_and_authority_drift() {
-    let artifact =
-        runtime_v2_resource_stewardship_bridge().expect("resource stewardship bridge artifact");
+fn resource_stewardship_bridge_rejects_policy_and_authority_drift() {
+    let artifact = resource_stewardship_bridge_artifact();
     let contract = runtime_v2_contract_schema_contract()
         .expect("contract schema artifacts")
         .contract;
@@ -157,11 +174,9 @@ fn runtime_v2_resource_stewardship_bridge_rejects_policy_and_authority_drift() {
         .contains("must preserve overlapping bid resource claim"));
 }
 
-#[test]
 #[cfg(feature = "slow-proof-tests")]
-fn runtime_v2_resource_stewardship_bridge_write_to_root_materializes_fixture() {
-    let artifact =
-        runtime_v2_resource_stewardship_bridge().expect("resource stewardship bridge artifact");
+fn resource_stewardship_bridge_write_to_root_materializes_fixture() {
+    let artifact = resource_stewardship_bridge_artifact();
     let fixture_refresh_root = std::env::var("ADL_RUNTIME_V2_WRITE_ROOT").ok();
     let root = fixture_refresh_root
         .as_ref()

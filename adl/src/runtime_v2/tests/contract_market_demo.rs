@@ -12,7 +12,19 @@ fn contract_market_artifacts() -> &'static RuntimeV2ContractMarketDemoArtifacts 
 }
 
 #[test]
-fn runtime_v2_contract_market_demo_review_surfaces_are_stable() {
+fn runtime_v2_contract_market_demo_review_and_denial_surfaces_are_stable() {
+    contract_market_demo_review_surfaces_are_stable();
+    contract_market_negative_packet_preserves_required_denials();
+}
+
+#[test]
+fn runtime_v2_contract_market_demo_bundle_validation_matrix_is_stable() {
+    contract_market_demo_writes_bundle_without_path_leakage();
+    contract_market_demo_rejects_mismatched_acceptance_counterparty();
+    contract_market_demo_rejects_mismatched_selection_support_bid();
+}
+
+fn contract_market_demo_review_surfaces_are_stable() {
     let artifacts = contract_market_artifacts();
     artifacts.validate().expect("valid D12 artifacts");
 
@@ -46,8 +58,7 @@ fn runtime_v2_contract_market_demo_review_surfaces_are_stable() {
         .contains("tool requirements remain deferred and non-executable"));
 }
 
-#[test]
-fn runtime_v2_contract_market_negative_packet_preserves_required_denials() {
+fn contract_market_negative_packet_preserves_required_denials() {
     let packet = &contract_market_artifacts().negative_packet;
     let ids = packet
         .required_negative_cases
@@ -68,8 +79,7 @@ fn runtime_v2_contract_market_negative_packet_preserves_required_denials() {
     );
 }
 
-#[test]
-fn runtime_v2_contract_market_demo_writes_bundle_without_path_leakage() {
+fn contract_market_demo_writes_bundle_without_path_leakage() {
     let root = unique_temp_path("contract-market-demo");
     let artifacts = contract_market_artifacts();
 
@@ -107,8 +117,7 @@ fn runtime_v2_contract_market_demo_writes_bundle_without_path_leakage() {
     fs::remove_dir_all(root).ok();
 }
 
-#[test]
-fn runtime_v2_contract_market_demo_rejects_mismatched_acceptance_counterparty() {
+fn contract_market_demo_rejects_mismatched_acceptance_counterparty() {
     let root = unique_temp_path("contract-market-demo-mismatched-counterparty");
     let artifacts = contract_market_artifacts();
 
@@ -135,8 +144,7 @@ fn runtime_v2_contract_market_demo_rejects_mismatched_acceptance_counterparty() 
     fs::remove_dir_all(root).ok();
 }
 
-#[test]
-fn runtime_v2_contract_market_demo_rejects_mismatched_selection_support_bid() {
+fn contract_market_demo_rejects_mismatched_selection_support_bid() {
     let root = unique_temp_path("contract-market-demo-mismatched-selection");
     let artifacts = contract_market_artifacts();
 
