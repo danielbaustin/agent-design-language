@@ -240,7 +240,7 @@ impl RuntimeV2EvaluationSelectionArtifact {
 
         let artifact = Self {
             schema_version: RUNTIME_V2_EVALUATION_SELECTION_SCHEMA.to_string(),
-            demo_id: "D3".to_string(),
+            demo_id: "D4".to_string(),
             wp_id: "WP-05".to_string(),
             evaluation_id: "selection-observatory-readiness-alpha".to_string(),
             artifact_path: RUNTIME_V2_EVALUATION_SELECTION_PATH.to_string(),
@@ -752,7 +752,7 @@ impl RuntimeV2SelectionNegativeCases {
         let proof = Self {
             schema_version: RUNTIME_V2_SELECTION_NEGATIVE_CASES_SCHEMA.to_string(),
             proof_id: "evaluation-selection-negative-cases".to_string(),
-            demo_id: "D3".to_string(),
+            demo_id: "D4".to_string(),
             artifact_path: RUNTIME_V2_SELECTION_NEGATIVE_CASES_PATH.to_string(),
             contract_ref: contract.artifact_path.clone(),
             valid_selection_ref: selection.artifact_path.clone(),
@@ -827,6 +827,21 @@ impl RuntimeV2SelectionNegativeCases {
         if self.required_negative_cases.len() != 3 {
             return Err(anyhow!(
                 "selection_negative_cases.required_negative_cases must contain three required mutations"
+            ));
+        }
+        let actual_case_ids = self
+            .required_negative_cases
+            .iter()
+            .map(|case| case.case_id.as_str())
+            .collect::<BTreeSet<_>>();
+        let expected_case_ids = BTreeSet::from([
+            "selected-bid-loses-mandatory-criterion",
+            "top-score-tie-without-rationale",
+            "unsupported-override-authority-shortcut",
+        ]);
+        if actual_case_ids != expected_case_ids {
+            return Err(anyhow!(
+                "selection_negative_cases.required_negative_cases must contain the required case-id set"
             ));
         }
         validate_nonempty_text(

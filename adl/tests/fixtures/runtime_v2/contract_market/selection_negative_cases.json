@@ -1,7 +1,7 @@
 {
   "schema_version": "runtime_v2.selection_negative_cases.v1",
   "proof_id": "evaluation-selection-negative-cases",
-  "demo_id": "D3",
+  "demo_id": "D4",
   "artifact_path": "runtime_v2/contract_market/selection_negative_cases.json",
   "contract_ref": "runtime_v2/contract_market/parent_contract.json",
   "valid_selection_ref": "runtime_v2/contract_market/evaluation_selection.json",
@@ -12,7 +12,7 @@
       "expected_error_fragment": "selected bid must satisfy all mandatory criteria",
       "invalid_selection": {
         "schema_version": "runtime_v2.evaluation_selection_artifact.v1",
-        "demo_id": "D3",
+        "demo_id": "D4",
         "wp_id": "WP-05",
         "evaluation_id": "selection-observatory-readiness-alpha",
         "artifact_path": "runtime_v2/contract_market/evaluation_selection.json",
@@ -169,7 +169,7 @@
       "expected_error_fragment": "selection_recommendation.tie_break_rationale is required when top bids tie",
       "invalid_selection": {
         "schema_version": "runtime_v2.evaluation_selection_artifact.v1",
-        "demo_id": "D3",
+        "demo_id": "D4",
         "wp_id": "WP-05",
         "evaluation_id": "selection-observatory-readiness-alpha",
         "artifact_path": "runtime_v2/contract_market/evaluation_selection.json",
@@ -324,7 +324,7 @@
       "expected_error_fragment": "selection override rationale must not treat adapter availability, model confidence, or valid JSON as tool execution authority",
       "invalid_selection": {
         "schema_version": "runtime_v2.evaluation_selection_artifact.v1",
-        "demo_id": "D3",
+        "demo_id": "D4",
         "wp_id": "WP-05",
         "evaluation_id": "selection-observatory-readiness-alpha",
         "artifact_path": "runtime_v2/contract_market/evaluation_selection.json",

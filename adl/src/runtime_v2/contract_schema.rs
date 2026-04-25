@@ -1,4 +1,5 @@
 use super::*;
+use std::collections::BTreeSet;
 
 pub const RUNTIME_V2_CONTRACT_ARTIFACT_SCHEMA: &str = "runtime_v2.contract_artifact.v1";
 pub const RUNTIME_V2_CONTRACT_NEGATIVE_CASES_SCHEMA: &str = "runtime_v2.contract_negative_cases.v1";
@@ -431,6 +432,23 @@ impl RuntimeV2ContractNegativeCases {
         if self.required_negative_cases.len() != 5 {
             return Err(anyhow!(
                 "contract_negative_cases.required_negative_cases must contain five required mutations"
+            ));
+        }
+        let actual_case_ids = self
+            .required_negative_cases
+            .iter()
+            .map(|case| case.case_id.as_str())
+            .collect::<BTreeSet<_>>();
+        let expected_case_ids = BTreeSet::from([
+            "incomplete-evaluation-criteria",
+            "missing-authority-basis",
+            "missing-trace-requirements",
+            "tool-requirement-implies-direct-execution",
+            "unsupported-lifecycle-state",
+        ]);
+        if actual_case_ids != expected_case_ids {
+            return Err(anyhow!(
+                "contract_negative_cases.required_negative_cases must contain the required case-id set"
             ));
         }
         for case in &self.required_negative_cases {
