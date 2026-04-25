@@ -15,7 +15,8 @@ This is separate from the canonical WP wave. It does not consume WP numbering
 and must not reorder the Governed Tools v1.0 implementation state machine.
 
 - WP-01 records the plan in the tracked milestone package.
-- GW-00 tracks the get-well parent issue and scheduling decision.
+- GW-00 produces the runtime baseline, budget, tracking artifact, and recovery
+  wave coordination.
 - GW-01 through GW-05 are the bounded runtime-reduction slices opened from the
   detailed source plan.
 - WP-20, Coverage / quality gate, records final disposition and evidence from
@@ -52,7 +53,7 @@ It must not:
 
 | Slice | Issue | Scope |
 | --- | --- | --- |
-| GW-00 | #2592 | parent scheduling issue and recovery-wave coordination |
+| GW-00 | #2592 | runtime baseline, budget, tracking artifact, and recovery-wave coordination |
 | GW-01 | #2593 | collapse external-counterparty proof-family tests |
 | GW-02 | #2594 | collapse private-state observatory proof-family tests |
 | GW-03 | #2595 | collapse delegation-subcontract proof-family tests |

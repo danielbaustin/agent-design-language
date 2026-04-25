@@ -24,7 +24,7 @@ documentation-only planning lane.
 | WP-14 | #2579 | Trace, replay, redaction, and evidence contract | Emit accountable evidence without leaking private data | trace/redaction contract and tests | WP-13 |
 | WP-15 | #2580 | Dangerous tool negative suite | Prove destructive, process, network, exfiltration, missing actor, unsafe replay, and delegation failures | negative safety suite | WP-08-WP-14 |
 | WP-16 | #2581 | Model proposal benchmark harness | Test model tool proposals against schema, authority, privacy, and bypass rubrics | benchmark runner and report | WP-04, WP-15 |
-| WP-17 | #2582 | Local model and Gemma-focused evaluation | Evaluate local models and Gemma-family candidates | local model scorecards | WP-16 |
+| WP-17 | #2582 | Local model and Gemma-focused evaluation | Run a bounded local/Gemma-focused demo without taking on the full comparison suite | simple model demo scorecard and failure notes | WP-16 |
 | WP-18 | #2583 | Governed Tools v1.0 flagship demo | Show proposal, validation, ACC, policy, gate, execution/denial, trace, and redaction | flagship demo proof packet | WP-13-WP-17 |
 | WP-19 | #2584 | Demo matrix and feature proof coverage | Verify every governed-tools claim has proof, fixture, non-proving status, or deferral before review convergence | demo matrix update and proof coverage record | WP-18 |
 | WP-20 | #2585 | Coverage / quality gate | Establish auditable quality, validation, and coverage posture for the implemented milestone | quality and coverage gate record | WP-19 |
@@ -32,7 +32,7 @@ documentation-only planning lane.
 | WP-22 | #2587 | Internal review | Perform findings-first internal review against the converged milestone package | internal review record | WP-21 |
 | WP-23 | #2588 | External / 3rd-party review | Prepare and complete external review against a legible package | external review handoff and record | WP-22 |
 | WP-24 | #2589 | Review findings remediation | Fix accepted review findings or record explicit deferrals | remediation record and follow-up issues | WP-23 |
-| WP-25 | #2590 | Next milestone planning | Capture follow-on work before release closeout | next milestone planning handoff | WP-24 |
+| WP-25 | #2590 | Next milestone planning | Capture follow-on work before release closeout, including the deferred full model comparison report | next milestone planning handoff | WP-24 |
 | WP-26 | #2591 | Release ceremony | Complete release closure and next handoff | release evidence, end-of-milestone report, tag/release, and cleanup | WP-25 |
 
 ## Parallel Python Reduction Tranche
@@ -66,7 +66,7 @@ Opened get-well wave:
 
 | Slice | Issue | Title |
 | --- | --- | --- |
-| GW-00 | #2592 | Get-well test runtime reduction wave |
+| GW-00 | #2592 | Get-well baseline, runtime budget, and wave tracking artifact |
 | GW-01 | #2593 | Collapse external counterparty proof-family tests |
 | GW-02 | #2594 | Collapse private-state observatory proof-family tests |
 | GW-03 | #2595 | Collapse delegation subcontract proof-family tests |

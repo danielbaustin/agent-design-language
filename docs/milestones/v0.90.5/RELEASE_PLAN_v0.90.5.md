@@ -15,7 +15,7 @@ Freedom Gate mediation, and trace.
 - trace/redaction evidence
 - dangerous negative suite
 - model proposal benchmark
-- local/Gemma evaluation
+- simple bounded local/Gemma evaluation demo or explicit skip
 - flagship demo proof packet
 - feature proof coverage record
 - coverage / quality gate record
@@ -24,6 +24,7 @@ Freedom Gate mediation, and trace.
 - internal and external review notes
 - accepted-finding disposition record
 - next milestone planning handoff
+- explicit `v0.91` follow-on for the full Gemma/local/remote comparison report
 - end-of-milestone report
 
 ## Release Risks

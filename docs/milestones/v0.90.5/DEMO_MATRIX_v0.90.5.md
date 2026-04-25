@@ -16,8 +16,8 @@ are not treated as generic release-tail cleanup.
 | D7 | Governed executor proof | WP-13 | Only approved ACC-backed actions execute | executor output and refusal records | PLANNED |
 | D8 | Trace/redaction proof | WP-14 | Tool evidence is reviewable without leaking private data | trace packet and redacted views | PLANNED |
 | D9 | Dangerous negative suite | WP-15 | Destructive, process, network, exfiltration, missing actor, unsafe replay, and delegation failures fail closed | negative test report | PLANNED |
-| D10 | Multi-model proposal benchmark | WP-16-WP-17 | Models are scored on schema, authority, privacy, and bypass behavior | benchmark report and local model scorecards | PLANNED |
-| D11 | Governed Tools v1.0 flagship demo | WP-18 | Reviewer can watch proposal, validation, ACC, policy, gate, execution or denial, trace, and redaction end to end in one coherent governed-tools story | flagship proof packet and report | PLANNED |
+| D10 | Simple local/Gemma proposal evaluation demo | WP-16-WP-17 | A local/Gemma-focused model output can be scored on proposal shape, authority humility, privacy, unsafe resistance, and any governed fixture-backed execution/refusal path without running the full benchmark suite | harness output, small scorecard, failure notes, governed fixture-backed demo evidence, or explicit model-availability skip | PLANNED |
+| D11 | Governed Tools v1.0 flagship demo | WP-18 | Reviewer can watch proposal, validation, ACC, policy, gate, execution or denial, trace, and redaction end to end in one coherent governed-tools story | flagship proof packet and report; not blocked on full v0.91 model comparison | PLANNED |
 | D12 | Feature proof coverage record | WP-19 | Every governed-tools feature claim reaches review with proof, fixture, non-proving status, or explicit deferral | proof coverage record | PLANNED |
 
 ## Non-Proving Boundaries
@@ -26,6 +26,8 @@ are not treated as generic release-tail cleanup.
 - These demos do not prove production sandboxing or production secrets handling.
 - These demos do not permit arbitrary shell execution by model output.
 - These demos do not prove all future tool adapters.
+- These demos do not prove full local-vs-remote Gemma comparison; that report is
+  deferred to `v0.91`.
 - These demos do not replace citizen standing, access control, or Freedom Gate.
 - These demos do prove that approved fixture-backed actions and denied unsafe
   actions are distinguishable in review evidence.

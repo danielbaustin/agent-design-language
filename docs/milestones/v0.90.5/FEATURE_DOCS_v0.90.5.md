@@ -27,4 +27,5 @@
 | Idea Doc | Purpose | Boundary |
 | --- | --- | --- |
 | ideas/TOOLS_ARE_GOVERNED_CAPABILITIES.md | explain why ADL treats tools as authority-bearing capabilities, not model-callable functions | context only |
+| ideas/GEMMA4_UTS_ACC_MODEL_BENCHMARK_PLAN.md | place the Gemma/local/remote benchmark plan across WP-16, WP-17, WP-18, and v0.91 follow-on work | v0.90.5 does bounded demo only; full comparison deferred to v0.91 |
 | ideas/TEST_RUNTIME_REDUCTION_PLAN_v0.90.5.md | execution-support plan for reducing heavyweight proof-family runtime cost without weakening governed-tools proof claims | separate GW wave; not a canonical WP |

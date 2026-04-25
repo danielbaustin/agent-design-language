@@ -130,7 +130,7 @@ work_packages:
     issue: 2582
     title: Local model and Gemma-focused evaluation
     queue: test
-    outcome: local model scorecards
+    outcome: simple bounded model demo scorecard and failure notes
     depends_on: WP-16
   - wp: WP-18
     issue: 2583
@@ -178,7 +178,7 @@ work_packages:
     issue: 2590
     title: Next milestone planning
     queue: docs
-    outcome: next milestone planning handoff
+    outcome: next milestone planning handoff including deferred full model comparison report
     depends_on: WP-24
   - wp: WP-26
     issue: 2591
@@ -191,7 +191,7 @@ get_well_wave:
     issue: 2592
     title: Get-well test runtime reduction wave
     queue: quality
-    outcome: recovery-wave coordination and scheduling decision
+    outcome: runtime baseline, budget, tracking artifact, and recovery-wave coordination
     depends_on: WP-01
   - slice: GW-01
     issue: 2593

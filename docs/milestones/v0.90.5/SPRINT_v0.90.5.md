@@ -13,7 +13,7 @@ pretending it grants execution authority.
 
 ## Get-Well Wave: Test Runtime Reduction
 
-- GW-00 Get-well test runtime reduction wave
+- GW-00 Get-well baseline, runtime budget, and wave tracking artifact
 - GW-01 Collapse external counterparty proof-family tests
 - GW-02 Collapse private-state observatory proof-family tests
 - GW-03 Collapse delegation subcontract proof-family tests
@@ -42,11 +42,12 @@ Goal: turn model-facing descriptions into governed ADL capability contracts.
 - WP-14 Trace, replay, redaction, and evidence contract
 - WP-15 Dangerous tool negative suite
 - WP-16 Model proposal benchmark harness
-- WP-17 Local model and Gemma-focused evaluation
+- WP-17 Local model and Gemma-focused evaluation demo
 - WP-18 Governed Tools v1.0 flagship demo
 
 Goal: prove that model proposals cannot bypass authority and that the new tool
-suite works across real and adversarial model behavior.
+suite works across real and adversarial model behavior without taking on the
+full multi-model comparison report before `v0.91`.
 
 ## Sprint 4: Quality, Review, Release, And Handoff
 

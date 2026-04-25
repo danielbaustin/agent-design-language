@@ -278,15 +278,22 @@ Required validation:
 
 Required outputs:
 
-- Local model evaluation packet with Gemma-family focus where available.
-- At least one additional local model or explicit skip rationale.
-- Scorecards and failure notes for schema, authority, privacy, and bypass
-  behavior.
+- Simple bounded local/Gemma-focused evaluation demo where a model is
+  available.
+- Explicit skip rationale when a local/Gemma model is not available.
+- Small scorecard and failure notes for schema, authority, privacy, execution
+  humility, and bypass behavior.
+- Governed fixture-backed execution or refusal path where the demo harness
+  supports it.
+- Explicit deferral of full local-vs-remote and multi-model comparison report
+  to `v0.91`.
 
 Required validation:
 
-- Results are not overgeneralized from one run.
+- Results are not overgeneralized from a smoke demo.
 - Local-model failures become improvement evidence, not hidden defects.
+- The WP-17 output does not claim broad model ranking or execution safety.
+- The WP-17 demo does not expand into the full benchmark test suite.
 
 ## WP-18: Governed Tools v1.0 Flagship Demo
 
@@ -305,6 +312,7 @@ Required validation:
 - Demo makes proposal/action separation visible.
 - Demo proves only fixture-backed governed-tool behavior, not arbitrary
   production execution.
+- Demo is not blocked on the deferred `v0.91` full model comparison report.
 
 ## WP-19: Demo Matrix And Feature Proof Coverage
 
@@ -409,6 +417,8 @@ Required outputs:
 - Any deferred production sandbox, secrets, adapter, CodeBuddy, citizen-command,
   Python-reduction, or test-runtime-reduction work routed to the right future
   lane.
+- `v0.91` follow-on for the full Gemma/local/remote UTS + ACC model comparison
+  report.
 
 Required validation:
 
