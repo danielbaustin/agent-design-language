@@ -214,7 +214,10 @@ fn valid_token(value: &str) -> bool {
 }
 
 fn extension_key_allowed(key: &str) -> bool {
-    key.starts_with("x-")
+    let normalized = key.to_ascii_lowercase();
+    key == normalized
+        && valid_token(key)
+        && key.starts_with("x-")
         && !key.contains("authority")
         && !key.contains("grant")
         && !key.contains("freedom_gate")
@@ -495,6 +498,19 @@ mod tests {
 
         let schema = parse_valid(value);
         let err = validate_uts_v1(&schema).expect_err("authority extension should fail");
+
+        assert!(err.codes().contains(&"invalid_extension_key"));
+    }
+
+    #[test]
+    fn uts_v1_rejects_mixed_case_authority_extensions() {
+        let mut value = valid_safe_read_json();
+        value["extensions"] = json!({
+            "x-ADL-Authority-Grant": "operator"
+        });
+
+        let schema = parse_valid(value);
+        let err = validate_uts_v1(&schema).expect_err("mixed-case authority extension should fail");
 
         assert!(err.codes().contains(&"invalid_extension_key"));
     }
