@@ -22,8 +22,8 @@
 - [x] Delegation/subcontract boundary accepted.
 - [x] Fixture set and runner proof path accepted.
 - [x] Demo matrix and feature proof coverage WP preserved before review convergence.
-- [ ] Architecture docs and ADR surfaces reviewed for this milestone.
-- [ ] Architecture-change outcome recorded as update vs explicit no-change.
+- [x] Architecture docs and ADR surfaces reviewed for this milestone.
+- [x] Architecture-change outcome recorded as update vs explicit no-change.
 
 ## Review Readiness
 
