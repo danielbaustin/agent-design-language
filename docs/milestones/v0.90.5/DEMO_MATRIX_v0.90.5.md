@@ -2,9 +2,8 @@
 
 ## Status
 
-Reviewed planning matrix. No v0.90.5 issue wave has been opened yet, but the
-demo lane is already allocated so WP-18 and WP-18A are not treated as generic
-release-tail cleanup.
+Opened issue-wave proof matrix. The demo lane is allocated so WP-18 and WP-19
+are not treated as generic release-tail cleanup.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |
@@ -19,7 +18,7 @@ release-tail cleanup.
 | D9 | Dangerous negative suite | WP-15 | Destructive, process, network, exfiltration, missing actor, unsafe replay, and delegation failures fail closed | negative test report | PLANNED |
 | D10 | Multi-model proposal benchmark | WP-16-WP-17 | Models are scored on schema, authority, privacy, and bypass behavior | benchmark report and local model scorecards | PLANNED |
 | D11 | Governed Tools v1.0 flagship demo | WP-18 | Reviewer can watch proposal, validation, ACC, policy, gate, execution or denial, trace, and redaction end to end in one coherent governed-tools story | flagship proof packet and report | PLANNED |
-| D12 | Feature proof coverage record | WP-18A | Every governed-tools feature claim reaches review with proof, fixture, non-proving status, or explicit deferral | proof coverage record | PLANNED |
+| D12 | Feature proof coverage record | WP-19 | Every governed-tools feature claim reaches review with proof, fixture, non-proving status, or explicit deferral | proof coverage record | PLANNED |
 
 ## Non-Proving Boundaries
 

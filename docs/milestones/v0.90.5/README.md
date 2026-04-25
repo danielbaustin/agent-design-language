@@ -7,10 +7,7 @@ established under planning issue #2350, tightened under #2402, prepared for
 clean execution under #2443, and re-affirmed as the immediate governed-tools
 follow-on during the `v0.90.4` WP-19 handoff pass under #2439.
 
-The issue wave has not been opened. This package is the reviewable planning
-source for a later WP-01 issue-wave creation pass. It is intended to be the
-next immediately executable planning package after v0.90.4 closeout, not a
-half-managed later idea lane.
+The issue wave is open under [#2566](https://github.com/danielbaustin/agent-design-language/issues/2566), with [#2567](https://github.com/danielbaustin/agent-design-language/issues/2567) through [#2591](https://github.com/danielbaustin/agent-design-language/issues/2591) carrying the rest of the tracked milestone band. This package is now active execution truth for `v0.90.5`, not a later planning packet.
 
 ## Parallel Python Reduction Tranche
 
@@ -56,6 +53,37 @@ ADL should instead treat tool use as governed capability exercise:
 - feature contracts live under features/
 - context and later-band backgrounders live under ideas/
 
+## Execution Support Notes
+
+The governed-tools WBS is the milestone scope. Supporting execution plans may
+exist alongside it when they help the milestone land without widening the core
+story.
+
+Current tracked execution-support note:
+
+- [v0.90.5 Get-Well Plan](GET_WELL_PLAN_v0.90.5.md)
+- [v0.90.5 Test Runtime Reduction Plan](ideas/TEST_RUNTIME_REDUCTION_PLAN_v0.90.5.md)
+
+The get-well plan is the milestone-root pointer; the test-runtime reduction
+plan is the detailed source note under `ideas/`.
+
+This recovery work is intentionally kept as execution support:
+
+- it is active and worth keeping visible
+- it does not define Governed Tools v1.0 semantics
+- it is tracked as a separate GW wave instead of surprise extra WPs
+- it gives `v0.90.5` a truthful home for the remaining CI/runtime reduction
+  work if the wall-time problem stays material
+
+Opened get-well wave:
+
+- GW-00 / #2592 Get-well test runtime reduction wave
+- GW-01 / #2593 Collapse external counterparty proof-family tests
+- GW-02 / #2594 Collapse private-state observatory proof-family tests
+- GW-03 / #2595 Collapse delegation subcontract proof-family tests
+- GW-04 / #2596 Collapse contract-market and resource-stewardship proof-family tests
+- GW-05 / #2597 Shrink CLI and demo proof-matrix tail
+
 ## Scope Boundary
 
 In scope:
@@ -100,21 +128,36 @@ Out of scope:
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.5.md
 - Release plan: RELEASE_PLAN_v0.90.5.md
 - Release notes draft: RELEASE_NOTES_v0.90.5.md
-- Issue wave draft: WP_ISSUE_WAVE_v0.90.5.yaml
+- Opened issue wave: WP_ISSUE_WAVE_v0.90.5.yaml
+- Get-well plan: GET_WELL_PLAN_v0.90.5.md
+- Execution-support idea note: ideas/TEST_RUNTIME_REDUCTION_PLAN_v0.90.5.md
 
 ## Execution Rule
 
-This package is planning truth, not an execution claim. The WP issue wave must
-be created from the reviewed YAML before implementation starts.
+This package is execution truth for the opened `v0.90.5` wave.
 
-Once the wave opens, issue work should happen in issue worktrees. Root checkout
-edits are not part of the ADL execution model.
+Issue work should happen in issue worktrees. Root checkout edits are not part
+of the ADL execution model.
 
-WP-01 should use WP_EXECUTION_READINESS_v0.90.5.md as the card-authoring source
-so every issue body carries concrete outputs, validation, non-goals, and
-demo/proof expectations. This is especially important for v0.90.5 because the
-milestone is security-sensitive and likely to become externally visible if UTS
-stays public-compatible.
+WP-01 used WP_EXECUTION_READINESS_v0.90.5.md as the card-authoring source so
+every issue body carries concrete outputs, validation, non-goals, and
+demo/proof expectations. This remains especially important for `v0.90.5`
+because the milestone is security-sensitive and likely to become externally
+visible if UTS stays public-compatible.
+
+## Closeout Sequence
+
+`v0.90.5` keeps the established ADL closeout state machine after the flagship
+demo:
+
+- WP-19 demo matrix and feature proof coverage
+- WP-20 coverage / quality gate
+- WP-21 docs + review pass
+- WP-22 internal review
+- WP-23 external / 3rd-party review
+- WP-24 review findings remediation
+- WP-25 next milestone planning
+- WP-26 release ceremony
 
 ## Planning Mirror Rule
 
