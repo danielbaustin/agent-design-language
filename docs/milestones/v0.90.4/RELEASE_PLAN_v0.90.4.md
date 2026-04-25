@@ -48,16 +48,17 @@ release must say so plainly.
 
 ## Handoff
 
-The closeout should hand off:
+The closeout should record a zero-leftover handoff:
 
-- payment-settlement options, if still relevant
-- reputation and economic memory follow-ons
-- inter-polis economics follow-ons
-- production contract/legal/billing boundaries
-- any deferred authority or trace negative cases
+- no open carry-forward issue backlog from `v0.90.4`
 - v0.90.5 governed-tools follow-up for UTS, ACC, tool registry binding,
   executor authority, redaction, replay, denial records, and model testing
 - any contract-market requirement that recorded tool needs only as a constraint
   and must be picked up by v0.90.5
-- whether the canonical architecture packet changed and was updated, or was explicitly
-  reviewed as unchanged with a tracked owner and rationale.
+- payment, legal/billing, and inter-polis items remain explicit non-goals
+  unless some later milestone deliberately plans them from scratch
+- whether the canonical architecture packet changed and was updated, or was
+  explicitly reviewed as unchanged with a tracked owner and rationale
+
+The detailed handoff record should live in
+`NEXT_MILESTONE_HANDOFF_v0.90.4.md`.
