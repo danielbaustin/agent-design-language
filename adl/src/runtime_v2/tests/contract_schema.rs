@@ -1,4 +1,5 @@
 use super::*;
+use std::collections::BTreeSet;
 
 #[test]
 fn runtime_v2_contract_schema_contract_is_stable() {
@@ -15,6 +16,16 @@ fn runtime_v2_contract_schema_contract_is_stable() {
     assert_eq!(artifacts.contract.lifecycle_state, "bidding");
     assert_eq!(artifacts.contract.evaluation_criteria.len(), 3);
     assert_eq!(artifacts.negative_cases.required_negative_cases.len(), 5);
+    assert_eq!(
+        required_case_ids(&artifacts.negative_cases.required_negative_cases),
+        BTreeSet::from([
+            "incomplete-evaluation-criteria".to_string(),
+            "missing-authority-basis".to_string(),
+            "missing-trace-requirements".to_string(),
+            "tool-requirement-implies-direct-execution".to_string(),
+            "unsupported-lifecycle-state".to_string(),
+        ])
+    );
 }
 
 #[test]
@@ -93,6 +104,20 @@ fn runtime_v2_contract_schema_rejects_invalid_contract_fixtures_for_expected_rea
     }
 }
 
+#[test]
+fn runtime_v2_contract_schema_requires_named_negative_case_membership() {
+    let artifacts = runtime_v2_contract_schema_contract().expect("contract schema artifacts");
+    let mut invalid = artifacts.negative_cases.clone();
+    invalid.required_negative_cases[0] = invalid.required_negative_cases[4].clone();
+    invalid.required_negative_cases[0].case_id = "arbitrary-failing-case".to_string();
+
+    assert!(invalid
+        .validate_against(&artifacts.contract)
+        .expect_err("negative-case membership drift should fail")
+        .to_string()
+        .contains("must contain the required case-id set"));
+}
+
 #[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_contract_schema_write_to_root_materializes_fixtures() {
@@ -114,4 +139,8 @@ fn runtime_v2_contract_schema_write_to_root_materializes_fixtures() {
     }
 
     std::fs::remove_dir_all(root).expect("cleanup contract schema temp root");
+}
+
+fn required_case_ids(cases: &[RuntimeV2ContractNegativeCase]) -> BTreeSet<String> {
+    cases.iter().map(|case| case.case_id.clone()).collect()
 }

@@ -1,4 +1,5 @@
 use super::*;
+use std::collections::BTreeSet;
 
 #[test]
 fn runtime_v2_evaluation_selection_contract_is_stable() {
@@ -10,9 +11,17 @@ fn runtime_v2_evaluation_selection_contract_is_stable() {
         artifacts.selection.schema_version,
         RUNTIME_V2_EVALUATION_SELECTION_SCHEMA
     );
-    assert_eq!(artifacts.selection.demo_id, "D3");
+    assert_eq!(artifacts.selection.demo_id, "D4");
     assert_eq!(artifacts.selection.bid_evaluations.len(), 2);
     assert_eq!(artifacts.negative_cases.required_negative_cases.len(), 3);
+    assert_eq!(
+        required_case_ids(&artifacts.negative_cases.required_negative_cases),
+        BTreeSet::from([
+            "selected-bid-loses-mandatory-criterion".to_string(),
+            "top-score-tie-without-rationale".to_string(),
+            "unsupported-override-authority-shortcut".to_string(),
+        ])
+    );
     assert_eq!(
         artifacts.selection.recommendation.selected_bid_id,
         artifacts.valid_bids[0].bid_id
@@ -139,7 +148,7 @@ fn runtime_v2_evaluation_selection_write_to_root_materializes_fixtures() {
         RUNTIME_V2_SELECTION_NEGATIVE_CASES_PATH,
     ] {
         let text = std::fs::read_to_string(root.join(rel_path)).expect("artifact text");
-        assert!(text.contains("D3"));
+        assert!(text.contains("D4"));
         assert!(text.contains("selection"));
         assert!(!text.contains(root.to_string_lossy().as_ref()));
     }
@@ -269,4 +278,27 @@ fn runtime_v2_evaluation_selection_rejects_unnecessary_tie_breaks_and_negative_c
         .expect_err("negative case count drift should fail")
         .to_string()
         .contains("must contain three required mutations"));
+}
+
+#[test]
+fn runtime_v2_evaluation_selection_requires_named_negative_case_membership() {
+    let artifacts =
+        RuntimeV2EvaluationSelectionArtifacts::prototype().expect("evaluation selection");
+    let mut invalid = artifacts.negative_cases.clone();
+    invalid.required_negative_cases[0] = invalid.required_negative_cases[2].clone();
+    invalid.required_negative_cases[0].case_id = "arbitrary-failing-case".to_string();
+
+    assert!(invalid
+        .validate_against(
+            &artifacts.contract,
+            &artifacts.valid_bids,
+            &artifacts.selection
+        )
+        .expect_err("negative-case membership drift should fail")
+        .to_string()
+        .contains("must contain the required case-id set"));
+}
+
+fn required_case_ids(cases: &[RuntimeV2SelectionNegativeCase]) -> BTreeSet<String> {
+    cases.iter().map(|case| case.case_id.clone()).collect()
 }

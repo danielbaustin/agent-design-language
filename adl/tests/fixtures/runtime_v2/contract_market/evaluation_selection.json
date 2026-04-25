@@ -1,6 +1,6 @@
 {
   "schema_version": "runtime_v2.evaluation_selection_artifact.v1",
-  "demo_id": "D3",
+  "demo_id": "D4",
   "wp_id": "WP-05",
   "evaluation_id": "selection-observatory-readiness-alpha",
   "artifact_path": "runtime_v2/contract_market/evaluation_selection.json",
