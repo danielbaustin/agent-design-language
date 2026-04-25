@@ -73,6 +73,7 @@ Budget rules:
 | Slice | Local result | Validation evidence | Residual measurement gap |
 | --- | --- | --- | --- |
 | GW-01 | Collapsed the external-counterparty focused default surface from `12` sibling tests to `2` aggregate tests, with `3` aggregate tests under `slow-proof-tests`. | `cargo test --manifest-path adl/Cargo.toml runtime_v2_external_counterparty -- --nocapture` and `cargo test --manifest-path adl/Cargo.toml --features slow-proof-tests runtime_v2_external_counterparty -- --nocapture` both passed locally. | Authoritative wall-time effect remains pending until GitHub `adl-coverage` runs this PR. |
+| GW-02 | Collapsed the private-state observatory focused default surface from `8` sibling tests to `3` aggregate tests, with `4` aggregate tests under `slow-proof-tests`. | `cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_observatory -- --nocapture` and `cargo test --manifest-path adl/Cargo.toml --features slow-proof-tests runtime_v2_private_state_observatory -- --nocapture` both passed locally. | Authoritative wall-time effect remains pending until GitHub `adl-coverage` runs this PR. |
 
 ## Review Checklist
 

@@ -1,6 +1,31 @@
 use super::*;
 
 #[test]
+fn runtime_v2_private_state_observatory_contract_and_redaction_matrix_is_stable() {
+    runtime_v2_private_state_observatory_contract_is_stable();
+    runtime_v2_private_state_observatory_redacts_all_audience_views();
+}
+
+#[test]
+fn runtime_v2_private_state_observatory_golden_surfaces_are_stable() {
+    runtime_v2_private_state_observatory_policy_matches_golden_fixture();
+    runtime_v2_private_state_observatory_packet_matches_golden_fixture();
+    runtime_v2_private_state_observatory_report_matches_golden_fixture();
+    runtime_v2_private_state_observatory_negative_cases_match_golden_fixture();
+}
+
+#[test]
+fn runtime_v2_private_state_observatory_validation_matrix_rejects_leakage() {
+    runtime_v2_private_state_observatory_rejects_raw_state_leakage_and_authority();
+    runtime_v2_private_state_observatory_rejects_public_overexposure_and_report_drift();
+}
+
+#[cfg(feature = "slow-proof-tests")]
+#[test]
+fn runtime_v2_private_state_observatory_materialization_proof_is_stable() {
+    runtime_v2_private_state_observatory_write_to_root_materializes_fixtures();
+}
+
 fn runtime_v2_private_state_observatory_contract_is_stable() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");
     artifacts.validate().expect("valid observatory artifacts");
@@ -21,7 +46,6 @@ fn runtime_v2_private_state_observatory_contract_is_stable() {
     assert_eq!(artifacts.projection_packet.projections.len(), 4);
 }
 
-#[test]
 fn runtime_v2_private_state_observatory_policy_matches_golden_fixture() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");
     let json = String::from_utf8(
@@ -41,7 +65,6 @@ fn runtime_v2_private_state_observatory_policy_matches_golden_fixture() {
     );
 }
 
-#[test]
 fn runtime_v2_private_state_observatory_packet_matches_golden_fixture() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");
     let json = String::from_utf8(
@@ -61,7 +84,6 @@ fn runtime_v2_private_state_observatory_packet_matches_golden_fixture() {
     );
 }
 
-#[test]
 fn runtime_v2_private_state_observatory_report_matches_golden_fixture() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");
 
@@ -74,7 +96,6 @@ fn runtime_v2_private_state_observatory_report_matches_golden_fixture() {
     );
 }
 
-#[test]
 fn runtime_v2_private_state_observatory_negative_cases_match_golden_fixture() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");
     let json = String::from_utf8(
@@ -94,7 +115,6 @@ fn runtime_v2_private_state_observatory_negative_cases_match_golden_fixture() {
     );
 }
 
-#[test]
 fn runtime_v2_private_state_observatory_redacts_all_audience_views() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");
     for projection in &artifacts.projection_packet.projections {
@@ -120,7 +140,6 @@ fn runtime_v2_private_state_observatory_redacts_all_audience_views() {
         .contains(&"source_state_hash".to_string()));
 }
 
-#[test]
 fn runtime_v2_private_state_observatory_rejects_raw_state_leakage_and_authority() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");
 
@@ -164,7 +183,6 @@ fn runtime_v2_private_state_observatory_rejects_raw_state_leakage_and_authority(
         .contains("raw state or authority"));
 }
 
-#[test]
 fn runtime_v2_private_state_observatory_rejects_public_overexposure_and_report_drift() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");
 
@@ -210,7 +228,6 @@ fn runtime_v2_private_state_observatory_rejects_public_overexposure_and_report_d
 }
 
 #[cfg(feature = "slow-proof-tests")]
-#[test]
 fn runtime_v2_private_state_observatory_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");
     let root = common::unique_temp_path("private-state-observatory-write");
