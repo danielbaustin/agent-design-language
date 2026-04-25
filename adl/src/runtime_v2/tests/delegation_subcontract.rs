@@ -1,7 +1,36 @@
 use super::*;
 
 #[test]
-fn runtime_v2_delegation_subcontract_artifacts_are_stable() {
+fn runtime_v2_delegation_subcontract_contract_and_authority_matrix_is_stable() {
+    delegation_subcontract_artifacts_are_stable();
+    delegation_subcontract_preserves_authority_and_parent_accountability();
+    delegation_subcontract_selection_basis_is_order_independent();
+    delegation_subcontract_tool_constraints_remain_non_authoritative();
+}
+
+#[test]
+fn runtime_v2_delegation_subcontract_negative_matrix_rejects_drift() {
+    delegation_subcontract_negative_cases_fail_for_expected_reasons();
+    delegation_subcontract_rejects_reference_and_review_drift();
+    delegation_subcontract_rejects_subcontractor_outside_runner_up_basis();
+}
+
+#[test]
+#[cfg(feature = "slow-proof-tests")]
+fn runtime_v2_delegation_subcontract_golden_surfaces_are_stable() {
+    delegation_subcontract_matches_golden_fixture();
+    delegated_output_matches_golden_fixture();
+    parent_integration_matches_golden_fixture();
+    delegation_negative_cases_match_golden_fixture();
+}
+
+#[test]
+#[cfg(feature = "slow-proof-tests")]
+fn runtime_v2_delegation_subcontract_materialization_proof_is_stable() {
+    delegation_subcontract_write_to_root_materializes_fixtures();
+}
+
+fn delegation_subcontract_artifacts_are_stable() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
     artifacts
@@ -19,9 +48,8 @@ fn runtime_v2_delegation_subcontract_artifacts_are_stable() {
     assert_eq!(artifacts.negative_cases.required_negative_cases.len(), 5);
 }
 
-#[test]
 #[cfg(feature = "slow-proof-tests")]
-fn runtime_v2_delegation_subcontract_matches_golden_fixture() {
+fn delegation_subcontract_matches_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
     let json = String::from_utf8(
@@ -41,9 +69,8 @@ fn runtime_v2_delegation_subcontract_matches_golden_fixture() {
     );
 }
 
-#[test]
 #[cfg(feature = "slow-proof-tests")]
-fn runtime_v2_delegated_output_matches_golden_fixture() {
+fn delegated_output_matches_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
     let json = String::from_utf8(
@@ -61,9 +88,8 @@ fn runtime_v2_delegated_output_matches_golden_fixture() {
     );
 }
 
-#[test]
 #[cfg(feature = "slow-proof-tests")]
-fn runtime_v2_parent_integration_matches_golden_fixture() {
+fn parent_integration_matches_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
     let json = String::from_utf8(
@@ -81,9 +107,8 @@ fn runtime_v2_parent_integration_matches_golden_fixture() {
     );
 }
 
-#[test]
 #[cfg(feature = "slow-proof-tests")]
-fn runtime_v2_delegation_negative_cases_match_golden_fixture() {
+fn delegation_negative_cases_match_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
     let json = String::from_utf8(
@@ -103,8 +128,7 @@ fn runtime_v2_delegation_negative_cases_match_golden_fixture() {
     );
 }
 
-#[test]
-fn runtime_v2_delegation_subcontract_preserves_authority_and_parent_accountability() {
+fn delegation_subcontract_preserves_authority_and_parent_accountability() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
 
@@ -129,8 +153,7 @@ fn runtime_v2_delegation_subcontract_preserves_authority_and_parent_accountabili
     );
 }
 
-#[test]
-fn runtime_v2_delegation_subcontract_selection_basis_is_order_independent() {
+fn delegation_subcontract_selection_basis_is_order_independent() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
     let contract = runtime_v2_contract_schema_contract()
@@ -160,8 +183,7 @@ fn runtime_v2_delegation_subcontract_selection_basis_is_order_independent() {
     );
 }
 
-#[test]
-fn runtime_v2_delegation_subcontract_tool_constraints_remain_non_authoritative() {
+fn delegation_subcontract_tool_constraints_remain_non_authoritative() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
 
@@ -182,8 +204,7 @@ fn runtime_v2_delegation_subcontract_tool_constraints_remain_non_authoritative()
         .all(|constraint| !constraint.execution_authority_granted));
 }
 
-#[test]
-fn runtime_v2_delegation_subcontract_negative_cases_fail_for_expected_reasons() {
+fn delegation_subcontract_negative_cases_fail_for_expected_reasons() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
     let contract = runtime_v2_contract_schema_contract()
@@ -205,8 +226,7 @@ fn runtime_v2_delegation_subcontract_negative_cases_fail_for_expected_reasons() 
     }
 }
 
-#[test]
-fn runtime_v2_delegation_subcontract_rejects_reference_and_review_drift() {
+fn delegation_subcontract_rejects_reference_and_review_drift() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
     let contract = runtime_v2_contract_schema_contract()
@@ -288,8 +308,7 @@ fn runtime_v2_delegation_subcontract_rejects_reference_and_review_drift() {
         .contains("must preserve retained accountability"));
 }
 
-#[test]
-fn runtime_v2_delegation_subcontract_rejects_subcontractor_outside_runner_up_basis() {
+fn delegation_subcontract_rejects_subcontractor_outside_runner_up_basis() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
     let contract = runtime_v2_contract_schema_contract()
@@ -329,9 +348,8 @@ fn runtime_v2_delegation_subcontract_rejects_subcontractor_outside_runner_up_bas
         .contains("subcontractor must match the runner-up bid counterparty selected by subcontractor_selection_basis_ref"));
 }
 
-#[test]
 #[cfg(feature = "slow-proof-tests")]
-fn runtime_v2_delegation_subcontract_write_to_root_materializes_fixtures() {
+fn delegation_subcontract_write_to_root_materializes_fixtures() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
     let fixture_refresh_root = std::env::var("ADL_RUNTIME_V2_WRITE_ROOT").ok();
