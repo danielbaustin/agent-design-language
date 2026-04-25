@@ -348,21 +348,25 @@ pub fn uts_conformance_fixtures() -> Vec<UtsConformanceFixture> {
     ]
 }
 
-fn deserialize_reason(error: &serde_json::Error) -> &'static str {
-    let message = error.to_string();
-    if message.contains("side_effect_class")
-        || message.contains("determinism")
-        || message.contains("replay_safety")
-        || message.contains("idempotence")
+fn missing_required_reason(document: &JsonValue) -> Option<&'static str> {
+    let object = document.as_object()?;
+    if [
+        "side_effect_class",
+        "determinism",
+        "replay_safety",
+        "idempotence",
+    ]
+    .iter()
+    .any(|field| !object.contains_key(*field))
     {
-        "missing_semantics"
-    } else if message.contains("authentication")
-        || message.contains("data_sensitivity")
-        || message.contains("exfiltration_risk")
+        Some("missing_semantics")
+    } else if ["authentication", "data_sensitivity", "exfiltration_risk"]
+        .iter()
+        .any(|field| !object.contains_key(*field))
     {
-        "missing_security_metadata"
+        Some("missing_security_metadata")
     } else {
-        "deserialize_error"
+        None
     }
 }
 
@@ -377,6 +381,19 @@ fn side_effect_is_dangerous(side_effect: UtsSideEffectClassV1) -> bool {
 }
 
 fn evaluate_fixture(fixture: &UtsConformanceFixture) -> UtsConformanceCaseResult {
+    if let Some(reason) = missing_required_reason(&fixture.document) {
+        let execution_granted = false;
+        return UtsConformanceCaseResult {
+            id: fixture.id,
+            group: fixture.group,
+            accepted: false,
+            reason,
+            side_effect_class: None,
+            execution_granted,
+            passed: matches!(fixture.expected, UtsExpectedOutcome::Rejected(expected) if expected == reason),
+        };
+    }
+
     let parsed = serde_json::from_value::<UniversalToolSchemaV1>(fixture.document.clone());
     let (accepted, reason, side_effect_class) = match parsed {
         Ok(schema) => match validate_uts_v1(&schema) {
@@ -391,7 +408,7 @@ fn evaluate_fixture(fixture: &UtsConformanceFixture) -> UtsConformanceCaseResult
                 Some(schema.side_effect_class),
             ),
         },
-        Err(error) => (false, deserialize_reason(&error), None),
+        Err(_) => (false, "deserialize_error", None),
     };
 
     let execution_granted = false;
