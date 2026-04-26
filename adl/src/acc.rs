@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 
 pub const ACC_SCHEMA_VERSION_V1: &str = "acc.v1";
+pub const ACC_MAX_DELEGATION_DEPTH_V1: u8 = 8;
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -287,6 +288,19 @@ fn visibility_is_complete(visibility: &AccVisibilityPolicyV1) -> bool {
     .all(|value| !value.trim().is_empty())
 }
 
+fn policy_evidence_ref_is_known(contract: &AdlCapabilityContractV1, evidence_ref: &str) -> bool {
+    contract
+        .actor
+        .authority_evidence
+        .iter()
+        .any(|evidence| evidence.evidence_id == evidence_ref)
+        || contract.authority_grant.grant_id == evidence_ref
+        || contract
+            .delegation_chain
+            .iter()
+            .any(|step| step.delegation_id == evidence_ref)
+}
+
 pub fn validate_acc_v1(contract: &AdlCapabilityContractV1) -> Result<(), AccValidationReport> {
     let mut errors = Vec::new();
 
@@ -406,24 +420,37 @@ pub fn validate_acc_v1(contract: &AdlCapabilityContractV1) -> Result<(), AccVali
             || step.grantor_actor_id.trim().is_empty()
             || step.delegate_actor_id.trim().is_empty()
             || step.grant_id.trim().is_empty()
+            || step.depth == 0
+            || step.depth > ACC_MAX_DELEGATION_DEPTH_V1
         {
             push_error(
                 &mut errors,
                 "invalid_delegation_step",
                 "delegation_chain",
-                "delegation steps must preserve grantor attribution",
+                "delegation steps must preserve attribution and bounded depth",
             );
         }
     }
-    if matches!(contract.authority_grant.status, AccGrantStatusV1::Delegated)
-        && contract.delegation_chain.is_empty()
-    {
-        push_error(
-            &mut errors,
-            "hidden_delegation",
-            "delegation_chain",
-            "delegated grants require an explicit delegation chain",
-        );
+    if matches!(contract.authority_grant.status, AccGrantStatusV1::Delegated) {
+        if contract.delegation_chain.is_empty() {
+            push_error(
+                &mut errors,
+                "hidden_delegation",
+                "delegation_chain",
+                "delegated grants require an explicit delegation chain",
+            );
+        } else if !contract.delegation_chain.iter().any(|step| {
+            step.grant_id == contract.authority_grant.grant_id
+                && step.grantor_actor_id == contract.authority_grant.grantor_actor_id
+                && step.delegate_actor_id == contract.authority_grant.grantee_actor_id
+        }) {
+            push_error(
+                &mut errors,
+                "misattributed_delegation_chain",
+                "delegation_chain",
+                "delegation chain must bind the authority grant to its grantor and grantee",
+            );
+        }
     }
     if contract.capability.capability_id.trim().is_empty()
         || contract.capability.side_effect_class.trim().is_empty()
@@ -452,6 +479,22 @@ pub fn validate_acc_v1(contract: &AdlCapabilityContractV1) -> Result<(), AccVali
                 "invalid_policy_check",
                 "policy_checks",
                 "policy checks must name a policy id and evidence reference",
+            );
+        }
+        if check.decision != contract.decision {
+            push_error(
+                &mut errors,
+                "policy_decision_mismatch",
+                "policy_checks",
+                "policy check decisions must agree with the ACC decision",
+            );
+        }
+        if !policy_evidence_ref_is_known(contract, &check.evidence_ref) {
+            push_error(
+                &mut errors,
+                "unknown_policy_evidence_ref",
+                "policy_checks",
+                "policy checks must cite authority grant, delegation, or actor authority evidence",
             );
         }
     }
@@ -499,6 +542,16 @@ pub fn validate_acc_v1(contract: &AdlCapabilityContractV1) -> Result<(), AccVali
             "allowed_requires_execution_approval",
             "execution.approved_for_execution",
             "allowed ACC decisions must explicitly approve execution",
+        );
+    }
+    if contract.execution.adapter_id.trim().is_empty()
+        || contract.execution.adapter_id != contract.tool.adapter_id
+    {
+        push_error(
+            &mut errors,
+            "execution_adapter_mismatch",
+            "execution.adapter_id",
+            "execution adapter must match the declared tool adapter",
         );
     }
     if !matches!(contract.decision, AccDecisionV1::Allowed)
@@ -675,6 +728,7 @@ pub fn acc_v1_authority_fixtures() -> Vec<AccAuthorityFixtureV1> {
         depth: 1,
     }];
     delegated.policy_checks[0].decision = AccDecisionV1::Delegated;
+    delegated.policy_checks[0].evidence_ref = "delegation.operator-to-reviewer".to_string();
     delegated.decision = AccDecisionV1::Delegated;
     delegated.execution.approved_for_execution = false;
     delegated.failure_policy.failure_code = "delegated_requires_policy_evaluation".to_string();
@@ -813,6 +867,61 @@ mod tests {
         let err = validate_acc_v1(&contract).expect_err("hidden delegation should fail");
 
         assert!(err.codes().contains(&"hidden_delegation"));
+    }
+
+    #[test]
+    fn acc_v1_rejects_misattributed_delegation_chain() {
+        let mut contract = base_contract("acc.fixture.misattributed_delegation");
+        contract.actor.actor_id = "actor.agent.reviewer".to_string();
+        contract.actor.actor_kind = AccActorKindV1::Agent;
+        contract.actor.authority_evidence = vec![AccAuthorityEvidenceV1 {
+            evidence_id: "delegation.operator-to-reviewer".to_string(),
+            kind: AccAuthorityEvidenceKindV1::DelegationRecord,
+            issuer: "actor.operator.alice".to_string(),
+        }];
+        contract.authority_grant.status = AccGrantStatusV1::Delegated;
+        contract.authority_grant.grant_id = "grant.delegated.safe-read".to_string();
+        contract.authority_grant.grantor_actor_id = "actor.operator.alice".to_string();
+        contract.authority_grant.grantee_actor_id = "actor.agent.reviewer".to_string();
+        contract.delegation_chain = vec![AccDelegationStepV1 {
+            delegation_id: "delegation.unrelated".to_string(),
+            grantor_actor_id: "actor.operator.mallory".to_string(),
+            delegate_actor_id: "actor.agent.other".to_string(),
+            grant_id: "grant.unrelated".to_string(),
+            depth: 1,
+        }];
+        contract.policy_checks[0].decision = AccDecisionV1::Delegated;
+        contract.policy_checks[0].evidence_ref = "delegation.operator-to-reviewer".to_string();
+        contract.decision = AccDecisionV1::Delegated;
+        contract.execution.approved_for_execution = false;
+
+        let err =
+            validate_acc_v1(&contract).expect_err("misattributed delegation chain should fail");
+
+        assert!(err.codes().contains(&"misattributed_delegation_chain"));
+    }
+
+    #[test]
+    fn acc_v1_rejects_policy_decision_and_evidence_drift() {
+        let mut contract = base_contract("acc.fixture.policy_drift");
+        contract.policy_checks[0].decision = AccDecisionV1::Denied;
+        contract.policy_checks[0].evidence_ref = "credential.unknown".to_string();
+
+        let err = validate_acc_v1(&contract).expect_err("policy drift should fail");
+        let codes = err.codes();
+
+        assert!(codes.contains(&"policy_decision_mismatch"));
+        assert!(codes.contains(&"unknown_policy_evidence_ref"));
+    }
+
+    #[test]
+    fn acc_v1_rejects_execution_adapter_drift() {
+        let mut contract = base_contract("acc.fixture.adapter_drift");
+        contract.execution.adapter_id = "adapter.fixture.other".to_string();
+
+        let err = validate_acc_v1(&contract).expect_err("adapter drift should fail");
+
+        assert!(err.codes().contains(&"execution_adapter_mismatch"));
     }
 
     #[test]
