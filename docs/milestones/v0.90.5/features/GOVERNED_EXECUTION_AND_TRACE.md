@@ -65,3 +65,25 @@ bounded constraints. It emits allowed, denied, deferred, challenged, or revoked
 decisions with policy evidence records. Missing context fails closed, and model
 confidence is accepted only as an ignored input field so tests can prove that
 authority evaluation does not depend on model self-report.
+
+## WP-12: Freedom Gate Integration
+
+WP-12 implements the bounded Freedom Gate tool-candidate event slice in
+`adl/src/freedom_gate.rs`:
+
+- `FreedomGateToolCandidateV1`
+- `FreedomGateToolGateContextV1`
+- `FreedomGateToolDecisionEventV1`
+- `evaluate_tool_candidate_freedom_gate_v1`
+
+The evaluator emits allowed, denied, deferred, challenged, or escalated gate
+events for normalized tool candidates after ACC construction and policy
+authority evaluation. Allowed events are the only events that carry an executor
+invocation reference. Denied, deferred, challenged, and escalated events stop
+before executor invocation.
+
+Every event links the proposal, normalized proposal, ACC contract, policy
+evidence, candidate action kind, and gate candidate. Gate records keep private
+arguments out of the event body by carrying only a redacted digest summary.
+Unredacted private arguments, unsafe trace identifiers, malformed digests, or
+broken citizen and operator action boundaries fail closed before execution.
