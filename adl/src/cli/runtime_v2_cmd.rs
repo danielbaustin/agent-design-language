@@ -1012,7 +1012,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_feature_proof_coverage_runs_runtime_v2_cli_regression_matrix() {
+    fn runtime_v2_feature_proof_coverage_validates_runtime_v2_cli_regression_registry() {
         let proof_surfaces: &[fn()] = &[
             runtime_v2_operator_controls_writes_report_json,
             runtime_v2_operator_controls_validates_unknown_args_and_missing_out_value,
