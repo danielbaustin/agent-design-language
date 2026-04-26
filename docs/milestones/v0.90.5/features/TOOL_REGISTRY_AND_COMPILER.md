@@ -112,6 +112,21 @@ policy evaluator beyond this bounded policy-context slice. Because the WP-09
 ACC fixture emits one representable resource scope, multi-resource UTS inputs
 are rejected instead of being truncated into a partial ACC.
 
+WP-10 implements the bounded argument-normalization surface in the compiler
+module:
+
+- `UtsArgumentNormalizationErrorCodeV1`
+- `UtsArgumentNormalizationErrorV1`
+- `UtsArgumentNormalizationReportV1`
+- `normalize_tool_proposal_arguments_v1`
+
+The normalizer treats model-produced proposal arguments as untrusted input. It
+checks UTS-declared required fields, additional-field posture, top-level JSON
+types, bounded payload size, injection markers, path-traversal syntax, and
+ambiguous schema defaults before policy evaluation or ACC construction. Error
+evidence records only rejection classes and redacted digests; it does not echo
+protected prompt text, secret-like values, or raw tool arguments.
+
 ## Determinism
 
 Identical UTS, proposal, registry state, and policy context should produce an

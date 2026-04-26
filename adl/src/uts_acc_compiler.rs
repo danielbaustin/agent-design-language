@@ -23,7 +23,10 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value as JsonValue};
 use sha2::{Digest, Sha256};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
+
+const WP10_MAX_ARGUMENT_BYTES_V1: usize = 4096;
+const WP10_MAX_STRING_BYTES_V1: usize = 1024;
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -55,6 +58,18 @@ pub enum UtsAccCompilerRejectionCodeV1 {
     VisibilityConstraintUnsatisfied,
     ReplayConstraintUnsatisfied,
     ExecutionConstraintUnsatisfied,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum UtsArgumentNormalizationErrorCodeV1 {
+    MalformedValue,
+    InjectionString,
+    PathTraversal,
+    OversizedPayload,
+    MissingRequiredArgument,
+    AmbiguousDefault,
+    UnexpectedAdditionalField,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -132,6 +147,39 @@ pub struct UtsAccCompilerOutcomeV1 {
     pub evidence: Vec<UtsAccCompilerEvidenceV1>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct UtsArgumentNormalizationErrorV1 {
+    pub code: UtsArgumentNormalizationErrorCodeV1,
+    pub field: String,
+    pub message: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct UtsArgumentNormalizationReportV1 {
+    pub errors: Vec<UtsArgumentNormalizationErrorV1>,
+}
+
+impl UtsArgumentNormalizationReportV1 {
+    pub fn codes(&self) -> Vec<UtsArgumentNormalizationErrorCodeV1> {
+        self.errors.iter().map(|error| error.code.clone()).collect()
+    }
+}
+
+fn push_normalization_error(
+    errors: &mut Vec<UtsArgumentNormalizationErrorV1>,
+    code: UtsArgumentNormalizationErrorCodeV1,
+    field: impl Into<String>,
+    message: impl Into<String>,
+) {
+    errors.push(UtsArgumentNormalizationErrorV1 {
+        code,
+        field: field.into(),
+        message: message.into(),
+    });
+}
+
 fn evidence(
     stage: UtsAccCompilerEvidenceStageV1,
     detail: impl Into<String>,
@@ -205,9 +253,261 @@ fn proposal_arguments_evidence(arguments: &BTreeMap<String, JsonValue>) -> Strin
     )
 }
 
+fn normalized_arguments_evidence(arguments: &BTreeMap<String, JsonValue>) -> String {
+    let canonical_arguments =
+        serde_json::to_string(arguments).expect("normalized arguments should serialize");
+    format!(
+        "normalized_arguments_redacted count={} digest={}",
+        arguments.len(),
+        evidence_digest(&canonical_arguments)
+    )
+}
+
 fn registry_evidence(registry: &ToolRegistryV1) -> String {
     let fingerprint = registry_state_fingerprint_v1(registry);
     format!("registry_state_digest={}", evidence_digest(&fingerprint))
+}
+
+fn schema_properties(schema: &UniversalToolSchemaV1) -> BTreeMap<String, JsonValue> {
+    schema
+        .input_schema
+        .keywords
+        .get("properties")
+        .and_then(JsonValue::as_object)
+        .map(|properties| {
+            properties
+                .iter()
+                .map(|(key, value)| (key.clone(), value.clone()))
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+fn schema_required_fields(schema: &UniversalToolSchemaV1) -> BTreeSet<String> {
+    schema
+        .input_schema
+        .keywords
+        .get("required")
+        .and_then(JsonValue::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(JsonValue::as_str)
+        .map(ToString::to_string)
+        .collect()
+}
+
+fn schema_allows_additional_fields(schema: &UniversalToolSchemaV1) -> bool {
+    schema
+        .input_schema
+        .keywords
+        .get("additionalProperties")
+        .and_then(JsonValue::as_bool)
+        .unwrap_or(true)
+}
+
+fn expected_json_type(property_schema: &JsonValue) -> Option<&str> {
+    property_schema
+        .as_object()
+        .and_then(|schema| schema.get("type"))
+        .and_then(JsonValue::as_str)
+}
+
+fn value_matches_expected_type(value: &JsonValue, expected_type: &str) -> bool {
+    match expected_type {
+        "array" => value.is_array(),
+        "boolean" => value.is_boolean(),
+        "integer" => value.as_i64().is_some() || value.as_u64().is_some(),
+        "number" => value.is_number(),
+        "object" => value.is_object(),
+        "string" => value.is_string(),
+        _ => false,
+    }
+}
+
+fn normalize_value(value: &JsonValue) -> JsonValue {
+    match value {
+        JsonValue::String(value) => JsonValue::String(value.trim().to_string()),
+        JsonValue::Array(values) => JsonValue::Array(values.iter().map(normalize_value).collect()),
+        JsonValue::Object(values) => JsonValue::Object(
+            values
+                .iter()
+                .map(|(key, value)| (key.clone(), normalize_value(value)))
+                .collect(),
+        ),
+        _ => value.clone(),
+    }
+}
+
+fn contains_injection_marker(value: &str) -> bool {
+    let lowered = value.to_ascii_lowercase();
+    [
+        "<script",
+        "{{",
+        "}}",
+        "$(",
+        "`",
+        "; rm ",
+        "ignore previous instructions",
+        "system prompt",
+    ]
+    .iter()
+    .any(|marker| lowered.contains(marker))
+}
+
+fn contains_path_traversal(value: &str) -> bool {
+    let value = value.trim();
+    value.contains("../")
+        || value.contains("..\\")
+        || value.starts_with("~/")
+        || value.starts_with('/')
+        || value.as_bytes().get(1).is_some_and(|byte| *byte == b':')
+}
+
+fn scan_value_safety(
+    field: &str,
+    value: &JsonValue,
+    errors: &mut Vec<UtsArgumentNormalizationErrorV1>,
+) {
+    match value {
+        JsonValue::String(value) => {
+            if value.len() > WP10_MAX_STRING_BYTES_V1 {
+                push_normalization_error(
+                    errors,
+                    UtsArgumentNormalizationErrorCodeV1::OversizedPayload,
+                    field,
+                    "argument string exceeds the bounded fixture limit",
+                );
+            }
+            if contains_injection_marker(value) {
+                push_normalization_error(
+                    errors,
+                    UtsArgumentNormalizationErrorCodeV1::InjectionString,
+                    field,
+                    "argument string contains an unsafe control marker",
+                );
+            }
+            if contains_path_traversal(value) {
+                push_normalization_error(
+                    errors,
+                    UtsArgumentNormalizationErrorCodeV1::PathTraversal,
+                    field,
+                    "argument string contains path traversal or absolute path syntax",
+                );
+            }
+        }
+        JsonValue::Array(values) => {
+            for value in values {
+                scan_value_safety(field, value, errors);
+            }
+        }
+        JsonValue::Object(values) => {
+            for (key, value) in values {
+                if contains_injection_marker(key) {
+                    push_normalization_error(
+                        errors,
+                        UtsArgumentNormalizationErrorCodeV1::InjectionString,
+                        field,
+                        "argument object key contains an unsafe control marker",
+                    );
+                }
+                if contains_path_traversal(key) {
+                    push_normalization_error(
+                        errors,
+                        UtsArgumentNormalizationErrorCodeV1::PathTraversal,
+                        field,
+                        "argument object key contains path traversal or absolute path syntax",
+                    );
+                }
+                scan_value_safety(field, value, errors);
+            }
+        }
+        _ => {}
+    }
+}
+
+pub fn normalize_tool_proposal_arguments_v1(
+    schema: &UniversalToolSchemaV1,
+    arguments: &BTreeMap<String, JsonValue>,
+) -> Result<BTreeMap<String, JsonValue>, UtsArgumentNormalizationReportV1> {
+    let mut errors = Vec::new();
+    let properties = schema_properties(schema);
+    let required = schema_required_fields(schema);
+    let allows_additional = schema_allows_additional_fields(schema);
+
+    let serialized = serde_json::to_string(arguments).expect("proposal arguments should serialize");
+    if serialized.len() > WP10_MAX_ARGUMENT_BYTES_V1 {
+        push_normalization_error(
+            &mut errors,
+            UtsArgumentNormalizationErrorCodeV1::OversizedPayload,
+            "arguments",
+            "argument payload exceeds the bounded fixture limit",
+        );
+    }
+
+    for (field, property_schema) in &properties {
+        if !arguments.contains_key(field)
+            && property_schema
+                .as_object()
+                .is_some_and(|schema| schema.contains_key("default"))
+        {
+            push_normalization_error(
+                &mut errors,
+                UtsArgumentNormalizationErrorCodeV1::AmbiguousDefault,
+                field,
+                "schema default is ambiguous for an omitted model-produced argument",
+            );
+        }
+    }
+
+    for required_field in &required {
+        if !arguments.contains_key(required_field)
+            && !errors.iter().any(|error| error.field == *required_field)
+        {
+            push_normalization_error(
+                &mut errors,
+                UtsArgumentNormalizationErrorCodeV1::MissingRequiredArgument,
+                required_field,
+                "required argument is absent before policy evaluation",
+            );
+        }
+    }
+
+    if !allows_additional {
+        for field in arguments.keys() {
+            if !properties.contains_key(field) {
+                push_normalization_error(
+                    &mut errors,
+                    UtsArgumentNormalizationErrorCodeV1::UnexpectedAdditionalField,
+                    field,
+                    "argument is not declared by the UTS input schema",
+                );
+            }
+        }
+    }
+
+    let mut normalized = BTreeMap::new();
+    for (field, value) in arguments {
+        if let Some(property_schema) = properties.get(field) {
+            if let Some(expected_type) = expected_json_type(property_schema) {
+                if !value_matches_expected_type(value, expected_type) {
+                    push_normalization_error(
+                        &mut errors,
+                        UtsArgumentNormalizationErrorCodeV1::MalformedValue,
+                        field,
+                        "argument value does not match the declared JSON type",
+                    );
+                }
+            }
+        }
+        scan_value_safety(field, value, &mut errors);
+        normalized.insert(field.clone(), normalize_value(value));
+    }
+
+    if errors.is_empty() {
+        Ok(normalized)
+    } else {
+        Err(UtsArgumentNormalizationReportV1 { errors })
+    }
 }
 
 fn proposal_token_like(value: &str) -> bool {
@@ -470,6 +770,30 @@ pub fn compile_uts_to_acc_v1(input: &UtsAccCompilerInputV1) -> UtsAccCompilerOut
     evidence_log.push(evidence(
         UtsAccCompilerEvidenceStageV1::Validation,
         "UTS validation passed",
+    ));
+
+    let normalized_arguments =
+        match normalize_tool_proposal_arguments_v1(&tool.uts, &input.proposal.arguments) {
+            Ok(arguments) => arguments,
+            Err(report) => {
+                evidence_log.push(evidence(
+                    UtsAccCompilerEvidenceStageV1::Normalization,
+                    format!("argument_normalization rejected codes={:?}", report.codes()),
+                ));
+                evidence_log.push(evidence(
+                    UtsAccCompilerEvidenceStageV1::Policy,
+                    "policy not evaluated because argument normalization failed",
+                ));
+                return reject(
+                    UtsAccCompilerRejectionCodeV1::InvalidProposal,
+                    "proposal arguments failed normalization before policy evaluation",
+                    evidence_log,
+                );
+            }
+        };
+    evidence_log.push(evidence(
+        UtsAccCompilerEvidenceStageV1::Normalization,
+        normalized_arguments_evidence(&normalized_arguments),
     ));
     evidence_log.push(evidence(
         UtsAccCompilerEvidenceStageV1::RegistryBinding,
@@ -766,6 +1090,41 @@ mod tests {
             .collect()
     }
 
+    fn invalid_argument_outcome(arguments: BTreeMap<String, JsonValue>) -> UtsAccCompilerOutcomeV1 {
+        let mut input = wp09_compiler_input_fixture("fixture.safe_read");
+        input.proposal.arguments = arguments;
+        compile_uts_to_acc_v1(&input)
+    }
+
+    fn object_argument_outcome(object_argument: JsonValue) -> UtsAccCompilerOutcomeV1 {
+        let mut input = wp09_compiler_input_fixture("fixture.safe_read");
+        let properties = input.registry.tools[0]
+            .uts
+            .input_schema
+            .keywords
+            .get_mut("properties")
+            .and_then(JsonValue::as_object_mut)
+            .expect("fixture has properties");
+        properties.insert("payload".to_string(), json!({"type": "object"}));
+        input.proposal.arguments = BTreeMap::from([
+            ("fixture_id".to_string(), json!("fixture-a")),
+            ("payload".to_string(), object_argument),
+        ]);
+        compile_uts_to_acc_v1(&input)
+    }
+
+    fn assert_invalid_argument_rejection(outcome: &UtsAccCompilerOutcomeV1) {
+        assert_eq!(outcome.decision, UtsAccCompilerDecisionV1::RejectionEmitted);
+        assert_eq!(
+            outcome.rejection.as_ref().expect("rejection").code,
+            UtsAccCompilerRejectionCodeV1::InvalidProposal
+        );
+        assert!(
+            stages(outcome).contains(&UtsAccCompilerEvidenceStageV1::Policy),
+            "unsafe arguments should stop before policy evaluation but record policy status"
+        );
+    }
+
     #[test]
     fn wp09_maps_safe_read_to_allowed_acc() {
         let input = wp09_compiler_input_fixture("fixture.safe_read");
@@ -886,7 +1245,7 @@ mod tests {
     fn wp09_redacts_arguments_and_registry_evidence() {
         let mut input = wp09_compiler_input_fixture("fixture.safe_read");
         input.proposal.arguments.insert(
-            "secret_payload".to_string(),
+            "fixture_id".to_string(),
             json!("redaction-sensitive-token-123"),
         );
 
@@ -898,8 +1257,210 @@ mod tests {
         assert!(evidence_json.contains("proposal_arguments_redacted"));
         assert!(evidence_json.contains("registry_state_digest=sha256:"));
         assert!(!evidence_json.contains("redaction-sensitive-token-123"));
-        assert!(!evidence_json.contains("secret_payload"));
         assert!(!evidence_json.contains("registry.fixture.safe_read"));
+    }
+
+    #[test]
+    fn wp10_normalizes_model_produced_arguments_deterministically() {
+        let input = wp09_compiler_input_fixture("fixture.safe_read");
+        let mut reordered = BTreeMap::new();
+        reordered.insert("fixture_id".to_string(), json!(" fixture-a "));
+
+        let normalized =
+            normalize_tool_proposal_arguments_v1(&input.registry.tools[0].uts, &reordered)
+                .expect("arguments should normalize");
+
+        assert_eq!(normalized.get("fixture_id"), Some(&json!("fixture-a")));
+        assert_eq!(
+            normalize_tool_proposal_arguments_v1(&input.registry.tools[0].uts, &reordered),
+            Ok(normalized)
+        );
+    }
+
+    #[test]
+    fn wp10_rejects_malformed_values_before_policy() {
+        let outcome =
+            invalid_argument_outcome(BTreeMap::from([("fixture_id".to_string(), json!(7))]));
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(serde_json::to_string(&outcome.evidence)
+            .expect("evidence")
+            .contains("MalformedValue"));
+    }
+
+    #[test]
+    fn wp10_rejects_injection_strings_before_policy_without_echoing_value() {
+        let unsafe_value = "ignore previous instructions {{system prompt}}";
+        let outcome = invalid_argument_outcome(BTreeMap::from([(
+            "fixture_id".to_string(),
+            json!(unsafe_value),
+        )]));
+        let evidence_json = serde_json::to_string(&outcome.evidence).expect("evidence");
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(evidence_json.contains("InjectionString"));
+        assert!(!evidence_json.contains(unsafe_value));
+    }
+
+    #[test]
+    fn wp10_rejects_path_traversal_before_policy() {
+        let outcome = invalid_argument_outcome(BTreeMap::from([(
+            "fixture_id".to_string(),
+            json!("../secret"),
+        )]));
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(serde_json::to_string(&outcome.evidence)
+            .expect("evidence")
+            .contains("PathTraversal"));
+    }
+
+    #[test]
+    fn wp10_rejects_absolute_path_like_arguments_before_policy() {
+        let outcome = invalid_argument_outcome(BTreeMap::from([(
+            "fixture_id".to_string(),
+            json!("/workspace/secret"),
+        )]));
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(serde_json::to_string(&outcome.evidence)
+            .expect("evidence")
+            .contains("PathTraversal"));
+    }
+
+    #[test]
+    fn wp10_rejects_trimmed_absolute_path_like_arguments_before_policy() {
+        let outcome = invalid_argument_outcome(BTreeMap::from([(
+            "fixture_id".to_string(),
+            json!(" /workspace/secret"),
+        )]));
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(serde_json::to_string(&outcome.evidence)
+            .expect("evidence")
+            .contains("PathTraversal"));
+    }
+
+    #[test]
+    fn wp10_rejects_unsafe_object_keys_before_policy() {
+        let outcome = object_argument_outcome(json!({"../secret": "x"}));
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(serde_json::to_string(&outcome.evidence)
+            .expect("evidence")
+            .contains("PathTraversal"));
+    }
+
+    #[test]
+    fn wp10_rejects_injection_object_keys_before_policy_without_echoing_key() {
+        let unsafe_key = "ignore previous instructions";
+        let outcome = object_argument_outcome(json!({unsafe_key: "x"}));
+        let evidence_json = serde_json::to_string(&outcome.evidence).expect("evidence");
+        let rejection_json = serde_json::to_string(&outcome.rejection).expect("rejection");
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(evidence_json.contains("InjectionString"));
+        assert!(!evidence_json.contains(unsafe_key));
+        assert!(!rejection_json.contains(unsafe_key));
+    }
+
+    #[test]
+    fn wp10_rejects_oversized_payloads_before_policy() {
+        let outcome = invalid_argument_outcome(BTreeMap::from([(
+            "fixture_id".to_string(),
+            json!("x".repeat(WP10_MAX_STRING_BYTES_V1 + 1)),
+        )]));
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(serde_json::to_string(&outcome.evidence)
+            .expect("evidence")
+            .contains("OversizedPayload"));
+    }
+
+    #[test]
+    fn wp10_rejects_missing_required_arguments_before_policy() {
+        let outcome = invalid_argument_outcome(BTreeMap::new());
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(serde_json::to_string(&outcome.evidence)
+            .expect("evidence")
+            .contains("MissingRequiredArgument"));
+    }
+
+    #[test]
+    fn wp10_rejects_ambiguous_defaults_before_policy() {
+        let mut input = wp09_compiler_input_fixture("fixture.safe_read");
+        let properties = input.registry.tools[0]
+            .uts
+            .input_schema
+            .keywords
+            .get_mut("properties")
+            .and_then(JsonValue::as_object_mut)
+            .expect("fixture has properties");
+        properties
+            .get_mut("fixture_id")
+            .and_then(JsonValue::as_object_mut)
+            .expect("fixture_id has schema")
+            .insert("default".to_string(), json!("fixture-default"));
+        input.proposal.arguments.clear();
+
+        let outcome = compile_uts_to_acc_v1(&input);
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(serde_json::to_string(&outcome.evidence)
+            .expect("evidence")
+            .contains("AmbiguousDefault"));
+    }
+
+    #[test]
+    fn wp10_rejects_omitted_optional_defaults_before_policy() {
+        let mut input = wp09_compiler_input_fixture("fixture.safe_read");
+        let properties = input.registry.tools[0]
+            .uts
+            .input_schema
+            .keywords
+            .get_mut("properties")
+            .and_then(JsonValue::as_object_mut)
+            .expect("fixture has properties");
+        properties.insert(
+            "optional_mode".to_string(),
+            json!({"type": "string", "default": "implicit"}),
+        );
+
+        let outcome = compile_uts_to_acc_v1(&input);
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(serde_json::to_string(&outcome.evidence)
+            .expect("evidence")
+            .contains("AmbiguousDefault"));
+    }
+
+    #[test]
+    fn wp10_rejects_unexpected_additional_fields_before_policy() {
+        let outcome = invalid_argument_outcome(BTreeMap::from([
+            ("fixture_id".to_string(), json!("fixture-a")),
+            ("extra".to_string(), json!("surprise")),
+        ]));
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(serde_json::to_string(&outcome.evidence)
+            .expect("evidence")
+            .contains("UnexpectedAdditionalField"));
+    }
+
+    #[test]
+    fn wp10_does_not_echo_secret_like_argument_values_in_rejections() {
+        let secret_like = "sk-live-redaction-sensitive-token";
+        let outcome = invalid_argument_outcome(BTreeMap::from([
+            ("fixture_id".to_string(), json!("fixture-a")),
+            ("unexpected_secret".to_string(), json!(secret_like)),
+        ]));
+        let evidence_json = serde_json::to_string(&outcome.evidence).expect("evidence");
+        let rejection_json = serde_json::to_string(&outcome.rejection).expect("rejection");
+
+        assert_invalid_argument_rejection(&outcome);
+        assert!(!evidence_json.contains(secret_like));
+        assert!(!rejection_json.contains(secret_like));
     }
 
     #[test]
