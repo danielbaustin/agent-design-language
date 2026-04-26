@@ -8,6 +8,7 @@ Current tracked idea notes:
 
 - `TOOLS_ARE_GOVERNED_CAPABILITIES.md`
 - `GEMMA4_UTS_ACC_MODEL_BENCHMARK_PLAN.md`
+- `LOCAL_MODEL_PR_REVIEWER_AGENT_DESIGN.md`
 - `TEST_RUNTIME_REDUCTION_PLAN_v0.90.5.md`
 
 The milestone-root pointer for the runtime-reduction/get-well work is

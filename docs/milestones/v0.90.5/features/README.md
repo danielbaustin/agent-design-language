@@ -10,3 +10,6 @@ The shared WP-02 boundary lives in
 `TOOL_CALL_THREAT_MODEL_AND_SEMANTICS.md`: model tool calls are proposals, not
 actions, and UTS validity is schema compatibility rather than execution
 authority.
+
+The demo-grade local model PR reviewer tool usage guide lives in
+`LOCAL_MODEL_PR_REVIEWER_TOOL.md`.

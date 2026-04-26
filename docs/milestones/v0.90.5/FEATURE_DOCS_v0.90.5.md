@@ -10,6 +10,7 @@
 | features/TOOL_REGISTRY_AND_COMPILER.md | registered tools, binding rules, UTS-to-ACC compiler, normalization, and rejection behavior | WP-08-WP-10 |
 | features/GOVERNED_EXECUTION_AND_TRACE.md | policy injection, Freedom Gate integration, governed executor, trace, replay, and redaction contract | WP-11-WP-14 |
 | features/MODEL_TESTING_AND_FLAGSHIP_DEMO.md | multi-model benchmark, local/Gemma evaluation, dangerous negative suite, and Governed Tools v1.0 flagship demo | WP-15-WP-18 |
+| features/LOCAL_MODEL_PR_REVIEWER_TOOL.md | operator and agent usage guide for the demo-grade pre-PR code review tool, fixture backend, and direct Ollama HTTP path | #2603 |
 
 ## Proof And Audit Docs
 

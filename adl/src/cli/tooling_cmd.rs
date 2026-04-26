@@ -2,6 +2,8 @@ use anyhow::{anyhow, Result};
 
 #[path = "tooling_cmd/card_prompt.rs"]
 mod card_prompt;
+#[path = "tooling_cmd/code_review.rs"]
+mod code_review;
 #[path = "tooling_cmd/common.rs"]
 mod common;
 #[path = "tooling_cmd/markdown.rs"]
@@ -16,6 +18,7 @@ mod structured_prompt;
 mod wp_issue_wave;
 
 use card_prompt::real_card_prompt;
+use code_review::real_code_review;
 use review_contract::{real_verify_repo_review_contract, real_verify_review_output_provenance};
 use review_surface::{real_review_card_surface, real_review_runtime_surface};
 use structured_prompt::{real_lint_prompt_spec, real_validate_structured_prompt};
@@ -45,12 +48,13 @@ use structured_prompt::{
 pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "tooling requires a subcommand: card-prompt | lint-prompt-spec | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave"
+            "tooling requires a subcommand: card-prompt | code-review | lint-prompt-spec | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave"
         ));
     };
 
     match subcommand {
         "card-prompt" => real_card_prompt(&args[1..]),
+        "code-review" => real_code_review(&args[1..]),
         "generate-wp-issue-wave" => real_generate_wp_issue_wave(&args[1..]),
         "lint-prompt-spec" => real_lint_prompt_spec(&args[1..]),
         "validate-structured-prompt" => real_validate_structured_prompt(&args[1..]),
@@ -63,7 +67,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown tooling subcommand '{subcommand}' (expected card-prompt | lint-prompt-spec | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave)"
+            "unknown tooling subcommand '{subcommand}' (expected card-prompt | code-review | lint-prompt-spec | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave)"
         )),
     }
 }
@@ -71,6 +75,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
 fn tooling_usage() -> &'static str {
     "adl tooling card-prompt --issue <number> [--out <path>]\n\
 adl tooling card-prompt --input <path> [--out <path>]\n\
+adl tooling code-review --out <dir> [--backend fixture|ollama] [--visibility packet-only|read-only-repo] [--base <ref>] [--head <ref>] [--issue <number>] [--writer-session <id>] [--reviewer-session <id>] [--model <name>] [--allow-live-ollama] [--ollama-url <url>] [--fixture-case clean|blocked]\n\
 adl tooling generate-wp-issue-wave --version <version> [--wbs <path>] [--sprint <path>] [--out <path>]\n\
 adl tooling lint-prompt-spec --issue <number>\n\
 adl tooling lint-prompt-spec --input <path>\n\
