@@ -1,3 +1,4 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -51,6 +52,270 @@ pub struct FreedomGateDecision {
     pub judgment_boundary: String,
     pub required_follow_up: String,
     pub decision_record_kind: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum FreedomGateToolDecisionV1 {
+    Allowed,
+    Denied,
+    Deferred,
+    Challenged,
+    Escalated,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum FreedomGateToolBoundaryV1 {
+    Policy,
+    Privacy,
+    OperatorReview,
+    CitizenAction,
+    Escalation,
+    Execution,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct FreedomGateToolCandidateV1 {
+    pub candidate_id: String,
+    pub proposal_id: String,
+    pub normalized_proposal_ref: String,
+    pub acc_contract_id: String,
+    pub policy_evidence_ref: String,
+    pub action_kind: String,
+    pub risk_class: String,
+    pub operator_actor_id: String,
+    pub citizen_boundary_ref: String,
+    pub private_argument_digest: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct FreedomGateToolGateContextV1 {
+    pub policy_decision: String,
+    pub requires_operator_review: bool,
+    pub requires_human_challenge: bool,
+    pub escalation_available: bool,
+    pub citizen_action_boundary_intact: bool,
+    pub operator_action_boundary_intact: bool,
+    pub private_arguments_redacted: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct FreedomGateToolDecisionEventV1 {
+    pub decision: FreedomGateToolDecisionV1,
+    pub reason_code: String,
+    pub stopped_before_executor: bool,
+    pub executor_invocation_ref: Option<String>,
+    pub boundary: FreedomGateToolBoundaryV1,
+    pub trace_links: Vec<String>,
+    pub redaction_summary: String,
+}
+
+fn gate_token_like(value: &str) -> bool {
+    !value.trim().is_empty()
+        && value.chars().all(|ch| {
+            ch.is_ascii_lowercase() || ch.is_ascii_digit() || matches!(ch, '-' | '_' | '.')
+        })
+}
+
+fn contains_private_payload_shape(value: &str) -> bool {
+    value.contains('{')
+        || value.contains('}')
+        || value.contains('/')
+        || value.contains('\\')
+        || value.to_ascii_lowercase().contains("secret")
+}
+
+fn valid_private_argument_digest(value: &str) -> bool {
+    value
+        .strip_prefix("sha256:")
+        .is_some_and(|digest| digest.len() == 64 && digest.chars().all(|ch| ch.is_ascii_hexdigit()))
+}
+
+fn valid_tool_risk_class(value: &str) -> bool {
+    matches!(value, "low" | "medium" | "high")
+}
+
+fn decision_event(
+    decision: FreedomGateToolDecisionV1,
+    reason_code: impl Into<String>,
+    boundary: FreedomGateToolBoundaryV1,
+    candidate: &FreedomGateToolCandidateV1,
+) -> FreedomGateToolDecisionEventV1 {
+    let stopped_before_executor = !matches!(decision, FreedomGateToolDecisionV1::Allowed);
+    let executor_invocation_ref = if stopped_before_executor {
+        None
+    } else {
+        Some(format!("executor.{}", candidate.candidate_id))
+    };
+
+    FreedomGateToolDecisionEventV1 {
+        decision,
+        reason_code: reason_code.into(),
+        stopped_before_executor,
+        executor_invocation_ref,
+        boundary,
+        trace_links: vec![
+            format!("proposal:{}", candidate.proposal_id),
+            format!("normalized_proposal:{}", candidate.normalized_proposal_ref),
+            format!("acc:{}", candidate.acc_contract_id),
+            format!("policy:{}", candidate.policy_evidence_ref),
+            format!("action:{}", candidate.action_kind),
+            format!("gate:{}", candidate.candidate_id),
+        ],
+        redaction_summary: format!(
+            "private_arguments_redacted digest={}",
+            candidate.private_argument_digest
+        ),
+    }
+}
+
+fn invalid_candidate_decision_event() -> FreedomGateToolDecisionEventV1 {
+    FreedomGateToolDecisionEventV1 {
+        decision: FreedomGateToolDecisionV1::Denied,
+        reason_code: "invalid_gate_trace_context".to_string(),
+        stopped_before_executor: true,
+        executor_invocation_ref: None,
+        boundary: FreedomGateToolBoundaryV1::Privacy,
+        trace_links: vec![
+            "proposal:invalid".to_string(),
+            "normalized_proposal:invalid".to_string(),
+            "acc:invalid".to_string(),
+            "policy:invalid".to_string(),
+            "action:invalid".to_string(),
+            "gate:invalid".to_string(),
+        ],
+        redaction_summary: "private_arguments_redacted digest=invalid".to_string(),
+    }
+}
+
+pub fn evaluate_tool_candidate_freedom_gate_v1(
+    candidate: &FreedomGateToolCandidateV1,
+    context: &FreedomGateToolGateContextV1,
+) -> FreedomGateToolDecisionEventV1 {
+    if !gate_token_like(&candidate.candidate_id)
+        || !gate_token_like(&candidate.proposal_id)
+        || !gate_token_like(&candidate.normalized_proposal_ref)
+        || !gate_token_like(&candidate.acc_contract_id)
+        || !gate_token_like(&candidate.policy_evidence_ref)
+        || !gate_token_like(&candidate.action_kind)
+        || !valid_tool_risk_class(&candidate.risk_class)
+        || !gate_token_like(&candidate.operator_actor_id)
+        || !gate_token_like(&candidate.citizen_boundary_ref)
+        || !valid_private_argument_digest(&candidate.private_argument_digest)
+        || contains_private_payload_shape(&candidate.private_argument_digest)
+    {
+        return invalid_candidate_decision_event();
+    }
+
+    if !context.private_arguments_redacted {
+        return decision_event(
+            FreedomGateToolDecisionV1::Denied,
+            "private_arguments_not_redacted",
+            FreedomGateToolBoundaryV1::Privacy,
+            candidate,
+        );
+    }
+
+    if !context.citizen_action_boundary_intact {
+        return decision_event(
+            FreedomGateToolDecisionV1::Denied,
+            "citizen_action_boundary_broken",
+            FreedomGateToolBoundaryV1::CitizenAction,
+            candidate,
+        );
+    }
+
+    if !context.operator_action_boundary_intact {
+        return decision_event(
+            FreedomGateToolDecisionV1::Denied,
+            "operator_action_boundary_broken",
+            FreedomGateToolBoundaryV1::OperatorReview,
+            candidate,
+        );
+    }
+
+    match context.policy_decision.as_str() {
+        "denied" | "revoked" => {
+            return decision_event(
+                FreedomGateToolDecisionV1::Denied,
+                "policy_denied",
+                FreedomGateToolBoundaryV1::Policy,
+                candidate,
+            );
+        }
+        "deferred" => {
+            return decision_event(
+                FreedomGateToolDecisionV1::Deferred,
+                "policy_deferred",
+                FreedomGateToolBoundaryV1::OperatorReview,
+                candidate,
+            );
+        }
+        "challenged" => {
+            return decision_event(
+                FreedomGateToolDecisionV1::Challenged,
+                "policy_challenged",
+                FreedomGateToolBoundaryV1::OperatorReview,
+                candidate,
+            );
+        }
+        "allowed" => {}
+        _ => {
+            return decision_event(
+                FreedomGateToolDecisionV1::Denied,
+                "unknown_policy_decision",
+                FreedomGateToolBoundaryV1::Policy,
+                candidate,
+            );
+        }
+    }
+
+    if context.requires_human_challenge {
+        return decision_event(
+            FreedomGateToolDecisionV1::Challenged,
+            "human_challenge_required",
+            FreedomGateToolBoundaryV1::OperatorReview,
+            candidate,
+        );
+    }
+
+    if context.requires_operator_review {
+        return decision_event(
+            FreedomGateToolDecisionV1::Deferred,
+            "operator_review_required",
+            FreedomGateToolBoundaryV1::OperatorReview,
+            candidate,
+        );
+    }
+
+    if candidate.risk_class == "high" && context.escalation_available {
+        return decision_event(
+            FreedomGateToolDecisionV1::Escalated,
+            "high_risk_escalation_required",
+            FreedomGateToolBoundaryV1::Escalation,
+            candidate,
+        );
+    }
+
+    if candidate.risk_class == "high" {
+        return decision_event(
+            FreedomGateToolDecisionV1::Denied,
+            "high_risk_without_escalation",
+            FreedomGateToolBoundaryV1::Policy,
+            candidate,
+        );
+    }
+
+    decision_event(
+        FreedomGateToolDecisionV1::Allowed,
+        "gate_allowed",
+        FreedomGateToolBoundaryV1::Execution,
+        candidate,
+    )
 }
 
 pub fn evaluate_freedom_gate(input: &FreedomGateInput) -> FreedomGateDecision {
@@ -214,6 +479,163 @@ mod tests {
             },
             frame_state: "complete_run".to_string(),
         }
+    }
+
+    fn tool_candidate() -> FreedomGateToolCandidateV1 {
+        FreedomGateToolCandidateV1 {
+            candidate_id: "candidate.tool.safe-read".to_string(),
+            proposal_id: "proposal.fixture.safe-read".to_string(),
+            normalized_proposal_ref: "normalized.proposal.fixture.safe-read".to_string(),
+            acc_contract_id: "acc.compiler.proposal.fixture.safe-read".to_string(),
+            policy_evidence_ref: "policy.wp11.fixture".to_string(),
+            action_kind: "fixture_read".to_string(),
+            risk_class: "low".to_string(),
+            operator_actor_id: "actor.operator.alice".to_string(),
+            citizen_boundary_ref: "citizen.boundary.fixture".to_string(),
+            private_argument_digest: format!("sha256:{}", "1".repeat(64)),
+        }
+    }
+
+    fn tool_gate_context(policy_decision: &str) -> FreedomGateToolGateContextV1 {
+        FreedomGateToolGateContextV1 {
+            policy_decision: policy_decision.to_string(),
+            requires_operator_review: false,
+            requires_human_challenge: false,
+            escalation_available: false,
+            citizen_action_boundary_intact: true,
+            operator_action_boundary_intact: true,
+            private_arguments_redacted: true,
+        }
+    }
+
+    #[test]
+    fn tool_freedom_gate_allows_only_when_executor_invocation_is_safe() {
+        let event = evaluate_tool_candidate_freedom_gate_v1(
+            &tool_candidate(),
+            &tool_gate_context("allowed"),
+        );
+
+        assert_eq!(event.decision, FreedomGateToolDecisionV1::Allowed);
+        assert_eq!(event.reason_code, "gate_allowed");
+        assert!(!event.stopped_before_executor);
+        assert_eq!(
+            event.executor_invocation_ref.as_deref(),
+            Some("executor.candidate.tool.safe-read")
+        );
+        assert_eq!(event.boundary, FreedomGateToolBoundaryV1::Execution);
+        assert!(event
+            .trace_links
+            .contains(&"proposal:proposal.fixture.safe-read".to_string()));
+        assert!(event
+            .trace_links
+            .contains(&"acc:acc.compiler.proposal.fixture.safe-read".to_string()));
+        assert!(event
+            .trace_links
+            .contains(&"action:fixture_read".to_string()));
+    }
+
+    #[test]
+    fn tool_freedom_gate_stops_denied_deferred_challenged_and_escalated_actions() {
+        let candidate = tool_candidate();
+        let denied =
+            evaluate_tool_candidate_freedom_gate_v1(&candidate, &tool_gate_context("denied"));
+        let deferred =
+            evaluate_tool_candidate_freedom_gate_v1(&candidate, &tool_gate_context("deferred"));
+        let challenged =
+            evaluate_tool_candidate_freedom_gate_v1(&candidate, &tool_gate_context("challenged"));
+        let mut high_risk = candidate.clone();
+        high_risk.risk_class = "high".to_string();
+        let mut escalation_context = tool_gate_context("allowed");
+        escalation_context.escalation_available = true;
+        let escalated = evaluate_tool_candidate_freedom_gate_v1(&high_risk, &escalation_context);
+
+        for event in [denied, deferred, challenged, escalated] {
+            assert!(event.stopped_before_executor);
+            assert_eq!(event.executor_invocation_ref, None);
+            assert_ne!(event.decision, FreedomGateToolDecisionV1::Allowed);
+        }
+    }
+
+    #[test]
+    fn tool_freedom_gate_records_decisions_without_private_argument_leakage() {
+        let event = evaluate_tool_candidate_freedom_gate_v1(
+            &tool_candidate(),
+            &tool_gate_context("allowed"),
+        );
+        let serialized = serde_json::to_string(&event).expect("serialize gate event");
+
+        assert!(serialized.contains("private_arguments_redacted"));
+        assert!(serialized
+            .contains("sha256:1111111111111111111111111111111111111111111111111111111111111111"));
+        assert!(!serialized.contains("fixture_id"));
+        assert!(!serialized.contains("secret"));
+    }
+
+    #[test]
+    fn tool_freedom_gate_denies_unredacted_private_arguments_before_executor() {
+        let mut context = tool_gate_context("allowed");
+        context.private_arguments_redacted = false;
+
+        let event = evaluate_tool_candidate_freedom_gate_v1(&tool_candidate(), &context);
+
+        assert_eq!(event.decision, FreedomGateToolDecisionV1::Denied);
+        assert_eq!(event.reason_code, "private_arguments_not_redacted");
+        assert_eq!(event.boundary, FreedomGateToolBoundaryV1::Privacy);
+        assert!(event.stopped_before_executor);
+        assert_eq!(event.executor_invocation_ref, None);
+    }
+
+    #[test]
+    fn tool_freedom_gate_denies_broken_citizen_boundaries_before_executor() {
+        let mut context = tool_gate_context("allowed");
+        context.citizen_action_boundary_intact = false;
+
+        let event = evaluate_tool_candidate_freedom_gate_v1(&tool_candidate(), &context);
+
+        assert_eq!(event.decision, FreedomGateToolDecisionV1::Denied);
+        assert_eq!(event.reason_code, "citizen_action_boundary_broken");
+        assert_eq!(event.boundary, FreedomGateToolBoundaryV1::CitizenAction);
+        assert!(event.stopped_before_executor);
+        assert_eq!(event.executor_invocation_ref, None);
+    }
+
+    #[test]
+    fn tool_freedom_gate_denies_broken_operator_boundaries_before_executor() {
+        let mut context = tool_gate_context("allowed");
+        context.operator_action_boundary_intact = false;
+
+        let event = evaluate_tool_candidate_freedom_gate_v1(&tool_candidate(), &context);
+
+        assert_eq!(event.decision, FreedomGateToolDecisionV1::Denied);
+        assert_eq!(event.reason_code, "operator_action_boundary_broken");
+        assert_eq!(event.boundary, FreedomGateToolBoundaryV1::OperatorReview);
+        assert!(event.stopped_before_executor);
+        assert_eq!(event.executor_invocation_ref, None);
+    }
+
+    #[test]
+    fn tool_freedom_gate_rejects_unsafe_trace_and_digest_shapes() {
+        let mut candidate = tool_candidate();
+        candidate.action_kind = "../fixture_read".to_string();
+        let event =
+            evaluate_tool_candidate_freedom_gate_v1(&candidate, &tool_gate_context("allowed"));
+        assert_eq!(event.decision, FreedomGateToolDecisionV1::Denied);
+        assert_eq!(event.reason_code, "invalid_gate_trace_context");
+        assert!(event.stopped_before_executor);
+        let serialized = serde_json::to_string(&event).expect("serialize invalid action event");
+        assert!(!serialized.contains("../fixture_read"));
+        assert!(serialized.contains("action:invalid"));
+
+        let mut candidate = tool_candidate();
+        candidate.private_argument_digest = "secret-token-value".to_string();
+        let event =
+            evaluate_tool_candidate_freedom_gate_v1(&candidate, &tool_gate_context("allowed"));
+        assert_eq!(event.decision, FreedomGateToolDecisionV1::Denied);
+        assert_eq!(event.reason_code, "invalid_gate_trace_context");
+        assert!(event.stopped_before_executor);
+        let serialized = serde_json::to_string(&event).expect("serialize invalid digest event");
+        assert!(!serialized.contains("secret-token-value"));
+        assert!(serialized.contains("digest=invalid"));
     }
 
     #[test]
