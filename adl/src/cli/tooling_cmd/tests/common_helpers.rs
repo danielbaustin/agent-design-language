@@ -187,3 +187,38 @@ fn common_helpers_cover_safety_and_path_branches() {
     assert!(ensure_no_absolute_host_path(&clean, "sip").is_ok());
     assert!(ensure_no_absolute_host_path(&abs, "sip").is_err());
 }
+
+#[test]
+fn code_review_filter_covers_common_helpers_for_fast_coverage_lane() {
+    let repo = TempRepo::new("code-review-common");
+    let clean = repo.write_rel("safe.md", "safe relative/path content\n");
+    let secret = repo.write_rel("secret.md", "token ghs_secretvalue\n");
+    let host = repo.write_rel("host.md", "/tmp/adl-private\n");
+
+    assert!(is_repo_relative("docs/milestones/v0.90.5/features/demo.md"));
+    assert!(!is_repo_relative("/Users/daniel/demo.md"));
+    assert_eq!(normalize_issue("2603").expect("issue"), 2603);
+    assert!(normalize_issue("not-an-issue").is_err());
+    assert!(valid_reference("https://example.com/review"));
+    assert!(valid_reference("docs/milestones/v0.90.5/features/demo.md"));
+    assert!(contains_secret_like_token("prefix gho_secretvalue suffix"));
+    assert!(!contains_secret_like_token("ordinary-token"));
+    assert!(contains_absolute_host_path_in_text("C:\\Users\\reviewer"));
+    assert!(contains_absolute_host_path_in_text("D:/workspace/reviewer"));
+    assert!(!contains_absolute_host_path_in_text(
+        "json field with escaped colon \":\\n\""
+    ));
+
+    ensure_file(&clean, "clean").expect("clean file");
+    assert!(ensure_no_disallowed_content(&clean, "clean").is_ok());
+    assert!(ensure_no_disallowed_content(&secret, "secret").is_err());
+    assert!(ensure_no_absolute_host_path(&clean, "clean").is_ok());
+    assert!(ensure_no_absolute_host_path(&host, "host").is_err());
+
+    let abs = absolutize(&clean).expect("absolute");
+    assert!(abs.is_absolute());
+    assert_eq!(
+        repo_relative_display(repo.path(), &clean).expect("relative"),
+        "safe.md"
+    );
+}

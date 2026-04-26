@@ -191,6 +191,20 @@ fn code_review_ollama_without_live_gate_records_skipped_blocker() {
 }
 
 #[test]
+fn code_review_filter_covers_tooling_dispatch_help_and_errors() {
+    assert!(real_tooling(&["help".to_string()]).is_ok());
+    assert!(real_tooling(&["--help".to_string()]).is_ok());
+    assert!(real_tooling(&["code-review".to_string(), "--help".to_string()]).is_ok());
+
+    let missing = real_tooling(&["code-review".to_string()]).expect_err("missing out");
+    assert!(missing.to_string().contains("missing --out"));
+
+    let unknown = real_tooling(&["unknown-code-review-subcommand".to_string()])
+        .expect_err("unknown subcommand");
+    assert!(unknown.to_string().contains("unknown tooling subcommand"));
+}
+
+#[test]
 fn tooling_dispatch_accepts_help_and_rejects_unknown_subcommands() {
     assert!(real_tooling(&["help".to_string()]).is_ok());
     assert!(real_tooling(&["--help".to_string()]).is_ok());
