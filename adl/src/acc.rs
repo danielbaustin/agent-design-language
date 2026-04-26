@@ -355,6 +355,15 @@ fn redaction_examples_cover_required_surfaces(examples: &[AccRedactionExampleV1]
     .all(|surface| examples.iter().any(|example| &example.surface == surface))
 }
 
+fn redaction_examples_are_safe(examples: &[AccRedactionExampleV1]) -> bool {
+    examples.iter().all(|example| {
+        !example.source_shape.trim().is_empty()
+            && !example.redacted_shape.trim().is_empty()
+            && example.source_shape != example.redacted_shape
+            && !contains_private_state_marker(&example.redacted_shape)
+    })
+}
+
 fn visibility_matrix_covers_required_audiences(matrix: &[AccVisibilityMatrixEntryV1]) -> bool {
     [
         AccVisibilityAudienceV1::Actor,
@@ -695,21 +704,13 @@ pub fn validate_acc_v1(contract: &AdlCapabilityContractV1) -> Result<(), AccVali
         );
     }
     if !redaction_examples_cover_required_surfaces(&contract.privacy_redaction.redaction_examples)
-        || contract
-            .privacy_redaction
-            .redaction_examples
-            .iter()
-            .any(|example| {
-                example.source_shape.trim().is_empty()
-                    || example.redacted_shape.trim().is_empty()
-                    || example.source_shape == example.redacted_shape
-            })
+        || !redaction_examples_are_safe(&contract.privacy_redaction.redaction_examples)
     {
         push_error(
             &mut errors,
             "missing_redaction_examples",
             "privacy_redaction.redaction_examples",
-            "redaction examples must cover arguments, results, errors, traces, and projections",
+            "redaction examples must cover arguments, results, errors, traces, projections, and remove private-state markers",
         );
     }
     if contract
@@ -726,6 +727,8 @@ pub fn validate_acc_v1(contract: &AdlCapabilityContractV1) -> Result<(), AccVali
             .evidence_refs
             .iter()
             .any(|evidence_ref| contains_private_state_marker(evidence_ref))
+        || contains_private_state_marker(&contract.trace_replay.trace_id)
+        || contains_private_state_marker(&contract.trace_replay.replay_posture)
     {
         push_error(
             &mut errors,
@@ -891,7 +894,7 @@ pub fn acc_v1_redaction_examples() -> Vec<AccRedactionExampleV1> {
         AccRedactionExampleV1 {
             surface: AccRedactionSurfaceV1::Arguments,
             source_shape: r#"{"path":"citizen.private_state/memory.json"}"#.to_string(),
-            redacted_shape: r#"{"path":"[redacted-private-state-ref]"}"#.to_string(),
+            redacted_shape: r#"{"path":"[redacted-protected-ref]"}"#.to_string(),
         },
         AccRedactionExampleV1 {
             surface: AccRedactionSurfaceV1::Results,
@@ -1219,6 +1222,7 @@ mod tests {
         assert!(visibility_matrix_covers_required_audiences(&matrix));
         assert!(visibility_matrix_fails_closed(&matrix));
         assert!(redaction_examples_cover_required_surfaces(&examples));
+        assert!(redaction_examples_are_safe(&examples));
         assert!(matrix.iter().any(|entry| entry.audience
             == AccVisibilityAudienceV1::ObservatoryProjection
             && entry.level == AccVisibilityLevelV1::Redacted));
@@ -1259,8 +1263,27 @@ mod tests {
     }
 
     #[test]
+    fn acc_v1_rejects_redacted_examples_that_expose_private_state_markers() {
+        let mut contract = base_contract("acc.fixture.leaky_redacted_example");
+        let trace_example = contract
+            .privacy_redaction
+            .redaction_examples
+            .iter_mut()
+            .find(|example| example.surface == AccRedactionSurfaceV1::Traces)
+            .expect("trace redaction example should exist");
+        trace_example.redacted_shape = r#"{"trace_ref":"citizen.private_state.step"}"#.to_string();
+
+        let err =
+            validate_acc_v1(&contract).expect_err("leaky redacted example should fail validation");
+
+        assert!(err.codes().contains(&"missing_redaction_examples"));
+    }
+
+    #[test]
     fn acc_v1_rejects_private_state_trace_exposure() {
         let mut contract = base_contract("acc.fixture.private_state_trace_exposure");
+        contract.trace_replay.trace_id = "trace.citizen.private_state.step".to_string();
+        contract.trace_replay.replay_posture = "replay uses private_state marker".to_string();
         contract
             .trace_replay
             .evidence_refs
