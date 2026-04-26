@@ -120,40 +120,33 @@ fn reject(code: ToolRegistryRejectionCodeV1, evidence: Vec<String>) -> ToolBindi
 }
 
 pub fn registry_state_fingerprint_v1(registry: &ToolRegistryV1) -> String {
-    let mut entries = Vec::new();
-    for tool in &registry.tools {
-        let mut approved_adapter_ids = tool.approved_adapter_ids.clone();
-        approved_adapter_ids.sort();
-        entries.push(format!(
-            "tool:{}:{}:{}:{}:{:?}:{:?}:{}",
-            tool.registry_tool_id,
-            tool.tool_name,
-            tool.tool_version,
-            tool.active,
-            tool.uts.side_effect_class,
-            tool.uts.execution_environment.kind,
-            approved_adapter_ids.join(",")
-        ));
+    let mut normalized = registry.clone();
+    normalized.tools.sort_by(|left, right| {
+        (&left.registry_tool_id, &left.tool_name, &left.tool_version).cmp(&(
+            &right.registry_tool_id,
+            &right.tool_name,
+            &right.tool_version,
+        ))
+    });
+    for tool in &mut normalized.tools {
+        tool.approved_adapter_ids.sort();
     }
-    for adapter in &registry.adapters {
-        entries.push(format!(
-            "adapter:{}:{}:{}:{:?}:{:?}:{}:{}",
-            adapter.adapter_id,
-            adapter.tool_name,
-            adapter.tool_version,
-            adapter.side_effect_class,
-            adapter.execution_environment,
-            adapter.supports_dry_run,
-            adapter.approved_for_binding
-        ));
-    }
-    entries.sort();
-    format!(
-        "{}|{}|{}",
-        registry.schema_version,
-        registry.registry_id,
-        entries.join("|")
-    )
+    normalized.adapters.sort_by(|left, right| {
+        (
+            &left.adapter_id,
+            &left.tool_name,
+            &left.tool_version,
+            &left.capability_id,
+        )
+            .cmp(&(
+                &right.adapter_id,
+                &right.tool_name,
+                &right.tool_version,
+                &right.capability_id,
+            ))
+    });
+
+    serde_json::to_string(&normalized).expect("tool registry fingerprint should serialize")
 }
 
 pub fn validate_tool_registry_v1(
@@ -566,7 +559,7 @@ mod tests {
         assert!(outcome
             .evidence
             .iter()
-            .any(|entry| entry.starts_with(TOOL_REGISTRY_SCHEMA_VERSION_V1)));
+            .any(|entry| entry.contains(TOOL_REGISTRY_SCHEMA_VERSION_V1)));
     }
 
     #[test]
@@ -611,12 +604,24 @@ mod tests {
         let mut reordered = registry.clone();
         reordered.tools.reverse();
         reordered.adapters.reverse();
+        let mut changed_capability = registry.clone();
+        changed_capability.adapters[0].capability_id = "capability.fixture.changed".to_string();
+        let mut changed_uts = registry.clone();
+        changed_uts.tools[0].uts.resources[0].scope = "local-readonly-v2".to_string();
 
         assert_eq!(
             registry_state_fingerprint_v1(&registry),
             registry_state_fingerprint_v1(&reordered)
         );
         assert!(registry_state_fingerprint_v1(&registry).contains("registry.fixture.safe_read"));
+        assert_ne!(
+            registry_state_fingerprint_v1(&registry),
+            registry_state_fingerprint_v1(&changed_capability)
+        );
+        assert_ne!(
+            registry_state_fingerprint_v1(&registry),
+            registry_state_fingerprint_v1(&changed_uts)
+        );
     }
 
     #[test]
