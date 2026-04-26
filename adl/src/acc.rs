@@ -165,12 +165,67 @@ pub struct AccVisibilityPolicyV1 {
     pub observatory_projection: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum AccVisibilityAudienceV1 {
+    Actor,
+    Operator,
+    Reviewer,
+    PublicReport,
+    ObservatoryProjection,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum AccVisibilityLevelV1 {
+    Full,
+    Redacted,
+    Aggregate,
+    Denied,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct AccVisibilityMatrixEntryV1 {
+    pub audience: AccVisibilityAudienceV1,
+    pub level: AccVisibilityLevelV1,
+    pub rationale: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum AccRedactionSurfaceV1 {
+    Arguments,
+    Results,
+    Errors,
+    Traces,
+    Projections,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct AccRedactionExampleV1 {
+    pub surface: AccRedactionSurfaceV1,
+    pub source_shape: String,
+    pub redacted_shape: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct AccTracePrivacyPolicyV1 {
+    pub exposes_citizen_private_state: bool,
+    pub protected_state_refs: Vec<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct AccPrivacyRedactionV1 {
     pub data_sensitivity: String,
     pub visibility: AccVisibilityPolicyV1,
     pub redaction_rules: Vec<String>,
+    pub visibility_matrix: Vec<AccVisibilityMatrixEntryV1>,
+    pub redaction_examples: Vec<AccRedactionExampleV1>,
+    pub trace_privacy: AccTracePrivacyPolicyV1,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -286,6 +341,60 @@ fn visibility_is_complete(visibility: &AccVisibilityPolicyV1) -> bool {
     ]
     .iter()
     .all(|value| !value.trim().is_empty())
+}
+
+fn redaction_examples_cover_required_surfaces(examples: &[AccRedactionExampleV1]) -> bool {
+    [
+        AccRedactionSurfaceV1::Arguments,
+        AccRedactionSurfaceV1::Results,
+        AccRedactionSurfaceV1::Errors,
+        AccRedactionSurfaceV1::Traces,
+        AccRedactionSurfaceV1::Projections,
+    ]
+    .iter()
+    .all(|surface| examples.iter().any(|example| &example.surface == surface))
+}
+
+fn redaction_examples_are_safe(examples: &[AccRedactionExampleV1]) -> bool {
+    examples.iter().all(|example| {
+        !example.source_shape.trim().is_empty()
+            && !example.redacted_shape.trim().is_empty()
+            && example.source_shape != example.redacted_shape
+            && !contains_private_state_marker(&example.redacted_shape)
+    })
+}
+
+fn visibility_matrix_covers_required_audiences(matrix: &[AccVisibilityMatrixEntryV1]) -> bool {
+    [
+        AccVisibilityAudienceV1::Actor,
+        AccVisibilityAudienceV1::Operator,
+        AccVisibilityAudienceV1::Reviewer,
+        AccVisibilityAudienceV1::PublicReport,
+        AccVisibilityAudienceV1::ObservatoryProjection,
+    ]
+    .iter()
+    .all(|audience| matrix.iter().any(|entry| &entry.audience == audience))
+}
+
+fn visibility_matrix_fails_closed(matrix: &[AccVisibilityMatrixEntryV1]) -> bool {
+    matrix.iter().all(|entry| {
+        !entry.rationale.trim().is_empty()
+            && match entry.audience {
+                AccVisibilityAudienceV1::PublicReport
+                | AccVisibilityAudienceV1::ObservatoryProjection => {
+                    !matches!(entry.level, AccVisibilityLevelV1::Full)
+                }
+                _ => true,
+            }
+    })
+}
+
+fn contains_private_state_marker(value: &str) -> bool {
+    let lower = value.to_ascii_lowercase();
+    lower.contains("citizen.private")
+        || lower.contains("citizen_private")
+        || lower.contains("private_state")
+        || lower.contains("private-state")
 }
 
 fn policy_evidence_ref_is_known(contract: &AdlCapabilityContractV1, evidence_ref: &str) -> bool {
@@ -584,6 +693,50 @@ pub fn validate_acc_v1(contract: &AdlCapabilityContractV1) -> Result<(), AccVali
             "visibility and redaction policy must be complete before execution",
         );
     }
+    if !visibility_matrix_covers_required_audiences(&contract.privacy_redaction.visibility_matrix)
+        || !visibility_matrix_fails_closed(&contract.privacy_redaction.visibility_matrix)
+    {
+        push_error(
+            &mut errors,
+            "unsafe_visibility_matrix",
+            "privacy_redaction.visibility_matrix",
+            "visibility matrix must cover all audiences and fail closed for public projections",
+        );
+    }
+    if !redaction_examples_cover_required_surfaces(&contract.privacy_redaction.redaction_examples)
+        || !redaction_examples_are_safe(&contract.privacy_redaction.redaction_examples)
+    {
+        push_error(
+            &mut errors,
+            "missing_redaction_examples",
+            "privacy_redaction.redaction_examples",
+            "redaction examples must cover arguments, results, errors, traces, projections, and remove private-state markers",
+        );
+    }
+    if contract
+        .privacy_redaction
+        .trace_privacy
+        .exposes_citizen_private_state
+        || contract
+            .privacy_redaction
+            .trace_privacy
+            .protected_state_refs
+            .is_empty()
+        || contract
+            .trace_replay
+            .evidence_refs
+            .iter()
+            .any(|evidence_ref| contains_private_state_marker(evidence_ref))
+        || contains_private_state_marker(&contract.trace_replay.trace_id)
+        || contains_private_state_marker(&contract.trace_replay.replay_posture)
+    {
+        push_error(
+            &mut errors,
+            "private_state_trace_exposure",
+            "privacy_redaction.trace_privacy",
+            "tool traces must not expose citizen or private-state surfaces",
+        );
+    }
     if contract.failure_policy.failure_code.trim().is_empty()
         || contract.failure_policy.message.trim().is_empty()
     {
@@ -684,6 +837,15 @@ fn base_contract(id: &'static str) -> AdlCapabilityContractV1 {
                 observatory_projection: "redacted governance event".to_string(),
             },
             redaction_rules: vec!["redact_fixture_payload_for_public_report".to_string()],
+            visibility_matrix: acc_v1_visibility_matrix(),
+            redaction_examples: acc_v1_redaction_examples(),
+            trace_privacy: AccTracePrivacyPolicyV1 {
+                exposes_citizen_private_state: false,
+                protected_state_refs: vec![
+                    "citizen.private_state".to_string(),
+                    "operator.private_state".to_string(),
+                ],
+            },
         },
         failure_policy: AccFailurePolicyV1 {
             failure_code: "fixture_unavailable".to_string(),
@@ -692,6 +854,69 @@ fn base_contract(id: &'static str) -> AdlCapabilityContractV1 {
         },
         decision: AccDecisionV1::Allowed,
     }
+}
+
+pub fn acc_v1_visibility_matrix() -> Vec<AccVisibilityMatrixEntryV1> {
+    vec![
+        AccVisibilityMatrixEntryV1 {
+            audience: AccVisibilityAudienceV1::Actor,
+            level: AccVisibilityLevelV1::Redacted,
+            rationale: "actor can inspect request status without private-state internals"
+                .to_string(),
+        },
+        AccVisibilityMatrixEntryV1 {
+            audience: AccVisibilityAudienceV1::Operator,
+            level: AccVisibilityLevelV1::Full,
+            rationale: "operator may inspect full fixture evidence for accountability".to_string(),
+        },
+        AccVisibilityMatrixEntryV1 {
+            audience: AccVisibilityAudienceV1::Reviewer,
+            level: AccVisibilityLevelV1::Redacted,
+            rationale: "reviewer receives policy evidence with protected payloads redacted"
+                .to_string(),
+        },
+        AccVisibilityMatrixEntryV1 {
+            audience: AccVisibilityAudienceV1::PublicReport,
+            level: AccVisibilityLevelV1::Aggregate,
+            rationale: "public report receives aggregate pass/fail and denial taxonomy only"
+                .to_string(),
+        },
+        AccVisibilityMatrixEntryV1 {
+            audience: AccVisibilityAudienceV1::ObservatoryProjection,
+            level: AccVisibilityLevelV1::Redacted,
+            rationale: "Observatory projection receives redacted governance events".to_string(),
+        },
+    ]
+}
+
+pub fn acc_v1_redaction_examples() -> Vec<AccRedactionExampleV1> {
+    vec![
+        AccRedactionExampleV1 {
+            surface: AccRedactionSurfaceV1::Arguments,
+            source_shape: r#"{"path":"citizen.private_state/memory.json"}"#.to_string(),
+            redacted_shape: r#"{"path":"[redacted-protected-ref]"}"#.to_string(),
+        },
+        AccRedactionExampleV1 {
+            surface: AccRedactionSurfaceV1::Results,
+            source_shape: r#"{"content":"fixture payload"}"#.to_string(),
+            redacted_shape: r#"{"content":"[redacted-result-summary]"}"#.to_string(),
+        },
+        AccRedactionExampleV1 {
+            surface: AccRedactionSurfaceV1::Errors,
+            source_shape: r#"{"error":"adapter failed reading private_state"}"#.to_string(),
+            redacted_shape: r#"{"error":"adapter failed reading protected state"}"#.to_string(),
+        },
+        AccRedactionExampleV1 {
+            surface: AccRedactionSurfaceV1::Traces,
+            source_shape: r#"{"trace_ref":"citizen.private_state.step"}"#.to_string(),
+            redacted_shape: r#"{"trace_ref":"[redacted-trace-ref]"}"#.to_string(),
+        },
+        AccRedactionExampleV1 {
+            surface: AccRedactionSurfaceV1::Projections,
+            source_shape: r#"{"observatory":"private_state_changed"}"#.to_string(),
+            redacted_shape: r#"{"observatory":"governance_event_recorded"}"#.to_string(),
+        },
+    ]
 }
 
 pub fn acc_v1_authority_fixtures() -> Vec<AccAuthorityFixtureV1> {
@@ -987,6 +1212,90 @@ mod tests {
         let err = validate_acc_v1(&contract).expect_err("unsafe visibility should fail");
 
         assert!(err.codes().contains(&"unsafe_visibility_policy"));
+    }
+
+    #[test]
+    fn acc_v1_visibility_matrix_and_redaction_examples_cover_wp07_surfaces() {
+        let matrix = acc_v1_visibility_matrix();
+        let examples = acc_v1_redaction_examples();
+
+        assert!(visibility_matrix_covers_required_audiences(&matrix));
+        assert!(visibility_matrix_fails_closed(&matrix));
+        assert!(redaction_examples_cover_required_surfaces(&examples));
+        assert!(redaction_examples_are_safe(&examples));
+        assert!(matrix.iter().any(|entry| entry.audience
+            == AccVisibilityAudienceV1::ObservatoryProjection
+            && entry.level == AccVisibilityLevelV1::Redacted));
+    }
+
+    #[test]
+    fn acc_v1_rejects_unsafe_visibility_matrix() {
+        let mut contract = base_contract("acc.fixture.unsafe_visibility_matrix");
+        contract
+            .privacy_redaction
+            .visibility_matrix
+            .retain(|entry| entry.audience != AccVisibilityAudienceV1::Reviewer);
+        contract
+            .privacy_redaction
+            .visibility_matrix
+            .push(AccVisibilityMatrixEntryV1 {
+                audience: AccVisibilityAudienceV1::PublicReport,
+                level: AccVisibilityLevelV1::Full,
+                rationale: "unsafe public full view".to_string(),
+            });
+
+        let err = validate_acc_v1(&contract).expect_err("unsafe visibility matrix should fail");
+
+        assert!(err.codes().contains(&"unsafe_visibility_matrix"));
+    }
+
+    #[test]
+    fn acc_v1_rejects_missing_redaction_examples() {
+        let mut contract = base_contract("acc.fixture.missing_redaction_examples");
+        contract
+            .privacy_redaction
+            .redaction_examples
+            .retain(|example| example.surface != AccRedactionSurfaceV1::Traces);
+
+        let err = validate_acc_v1(&contract).expect_err("missing redaction example should fail");
+
+        assert!(err.codes().contains(&"missing_redaction_examples"));
+    }
+
+    #[test]
+    fn acc_v1_rejects_redacted_examples_that_expose_private_state_markers() {
+        let mut contract = base_contract("acc.fixture.leaky_redacted_example");
+        let trace_example = contract
+            .privacy_redaction
+            .redaction_examples
+            .iter_mut()
+            .find(|example| example.surface == AccRedactionSurfaceV1::Traces)
+            .expect("trace redaction example should exist");
+        trace_example.redacted_shape = r#"{"trace_ref":"citizen.private_state.step"}"#.to_string();
+
+        let err =
+            validate_acc_v1(&contract).expect_err("leaky redacted example should fail validation");
+
+        assert!(err.codes().contains(&"missing_redaction_examples"));
+    }
+
+    #[test]
+    fn acc_v1_rejects_private_state_trace_exposure() {
+        let mut contract = base_contract("acc.fixture.private_state_trace_exposure");
+        contract.trace_replay.trace_id = "trace.citizen.private_state.step".to_string();
+        contract.trace_replay.replay_posture = "replay uses private_state marker".to_string();
+        contract
+            .trace_replay
+            .evidence_refs
+            .push("citizen.private_state.step".to_string());
+        contract
+            .privacy_redaction
+            .trace_privacy
+            .exposes_citizen_private_state = true;
+
+        let err = validate_acc_v1(&contract).expect_err("private-state trace exposure should fail");
+
+        assert!(err.codes().contains(&"private_state_trace_exposure"));
     }
 
     #[test]
