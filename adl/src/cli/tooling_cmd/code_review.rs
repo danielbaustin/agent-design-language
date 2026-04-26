@@ -29,6 +29,8 @@ struct CodeReviewArgs {
     model: Option<String>,
     allow_live_ollama: bool,
     ollama_url: String,
+    timeout_secs: u64,
+    include_working_tree: bool,
     fixture_case: FixtureCase,
     max_diff_bytes: usize,
 }
@@ -248,6 +250,8 @@ fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
         allow_live_ollama: false,
         ollama_url: std::env::var("OLLAMA_HOST")
             .unwrap_or_else(|_| "http://127.0.0.1:11434".to_string()),
+        timeout_secs: 120,
+        include_working_tree: false,
         fixture_case: FixtureCase::Clean,
         max_diff_bytes: 12_000,
     };
@@ -297,8 +301,15 @@ fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
                 i += 1;
             }
             "--allow-live-ollama" => parsed.allow_live_ollama = true,
+            "--include-working-tree" => parsed.include_working_tree = true,
             "--ollama-url" => {
                 parsed.ollama_url = value_arg(args, i, "--ollama-url")?.to_string();
+                i += 1;
+            }
+            "--timeout-secs" => {
+                parsed.timeout_secs = value_arg(args, i, "--timeout-secs")?
+                    .parse()
+                    .map_err(|_| anyhow!("invalid --timeout-secs value"))?;
                 i += 1;
             }
             "--fixture-case" => {
@@ -324,6 +335,10 @@ fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
     ensure!(
         parsed.max_diff_bytes >= 256,
         "--max-diff-bytes must be at least 256"
+    );
+    ensure!(
+        (1..=900).contains(&parsed.timeout_secs),
+        "--timeout-secs must be between 1 and 900"
     );
     Ok(parsed)
 }
@@ -361,7 +376,7 @@ fn parse_fixture_case(raw: &str) -> Result<FixtureCase> {
 fn build_packet(root: &Path, args: &CodeReviewArgs) -> Result<ReviewPacket> {
     let branch = git_output(root, &["rev-parse", "--abbrev-ref", "HEAD"])
         .unwrap_or_else(|_| "unknown".to_string());
-    let changed_files = changed_files(root, &args.base_ref, &args.head_ref)?;
+    let changed_files = changed_files(root, args)?;
     let focused_diff_hunks = diff_hunks(root, args, &changed_files)?;
     let truncated_hunks = focused_diff_hunks.iter().any(|hunk| hunk.truncated);
     let static_analysis_evidence = static_evidence(root, args);
@@ -405,9 +420,16 @@ fn build_packet(root: &Path, args: &CodeReviewArgs) -> Result<ReviewPacket> {
     })
 }
 
-fn changed_files(root: &Path, base: &str, head: &str) -> Result<Vec<String>> {
+fn changed_files(root: &Path, args: &CodeReviewArgs) -> Result<Vec<String>> {
     let mut files = BTreeSet::new();
-    if let Ok(output) = git_output(root, &["diff", "--name-only", &format!("{base}...{head}")]) {
+    if let Ok(output) = git_output(
+        root,
+        &[
+            "diff",
+            "--name-only",
+            &format!("{}...{}", args.base_ref, args.head_ref),
+        ],
+    ) {
         files.extend(
             output
                 .lines()
@@ -416,7 +438,8 @@ fn changed_files(root: &Path, base: &str, head: &str) -> Result<Vec<String>> {
                 .map(str::to_string),
         );
     }
-    if let Ok(output) = git_output(root, &["diff", "--name-only"]) {
+    if args.include_working_tree {
+        let output = git_output(root, &["diff", "--name-only"])?;
         files.extend(
             output
                 .lines()
@@ -431,22 +454,26 @@ fn changed_files(root: &Path, base: &str, head: &str) -> Result<Vec<String>> {
 fn diff_hunks(root: &Path, args: &CodeReviewArgs, files: &[String]) -> Result<Vec<DiffHunk>> {
     let mut hunks = Vec::new();
     for file in files.iter().take(40) {
-        let diff = git_output(root, &["diff", "--", file])
-            .ok()
-            .filter(|text| !text.trim().is_empty())
-            .or_else(|| {
-                git_output(
-                    root,
-                    &[
-                        "diff",
-                        &format!("{}...{}", args.base_ref, args.head_ref),
-                        "--",
-                        file,
-                    ],
-                )
+        let diff = if args.include_working_tree {
+            git_output(root, &["diff", "--", file])
                 .ok()
-            })
-            .unwrap_or_default();
+                .filter(|text| !text.trim().is_empty())
+        } else {
+            None
+        }
+        .or_else(|| {
+            git_output(
+                root,
+                &[
+                    "diff",
+                    &format!("{}...{}", args.base_ref, args.head_ref),
+                    "--",
+                    file,
+                ],
+            )
+            .ok()
+        })
+        .unwrap_or_default();
         let (diff_excerpt, truncated) = truncate(&diff, args.max_diff_bytes);
         hunks.push(DiffHunk {
             file: file.clone(),
@@ -459,11 +486,13 @@ fn diff_hunks(root: &Path, args: &CodeReviewArgs, files: &[String]) -> Result<Ve
 
 fn static_evidence(root: &Path, args: &CodeReviewArgs) -> Vec<ValidationEvidence> {
     let mut evidence = Vec::new();
-    evidence.push(command_evidence(
-        root,
-        &["diff", "--check"],
-        "working tree whitespace check",
-    ));
+    if args.include_working_tree {
+        evidence.push(command_evidence(
+            root,
+            &["diff", "--check"],
+            "working tree whitespace check",
+        ));
+    }
     evidence.push(command_evidence(
         root,
         &[
@@ -621,7 +650,7 @@ fn ollama_review(
     let prompt = reviewer_prompt(packet);
     let endpoint = ollama_generate_url(&args.ollama_url)?;
     let client = reqwest::blocking::Client::builder()
-        .timeout(Duration::from_secs(120))
+        .timeout(Duration::from_secs(args.timeout_secs))
         .build()
         .context("build Ollama HTTP client")?;
     let response = client
@@ -666,7 +695,7 @@ fn ollama_review(
 
     let parsed = parse_model_review_json(&text);
     let (disposition, findings, residual) = match parsed {
-        Some((disposition, findings)) => (disposition, findings, Vec::new()),
+        Some((disposition, findings)) => normalize_model_review(disposition, findings),
         None => (
             ReviewDisposition::NonProving,
             Vec::new(),
@@ -776,7 +805,7 @@ fn evaluate_gate(result: &ReviewResult, packet: &ReviewPacket) -> GateResult {
 
 fn reviewer_prompt(packet: &ReviewPacket) -> String {
     format!(
-        "You are an ADL code reviewer. Review this bounded packet fairly and meticulously. Return only JSON matching schema_version adl.pr_review_result.v1 with fields disposition (blessed|blocked|non_proving), findings array, and residual_risk array. Packet:\n{}",
+        "You are an ADL code reviewer. Review this bounded packet fairly and meticulously. Return only JSON matching schema_version adl.pr_review_result.v1 with fields disposition (blessed|blocked|non_proving), findings array, and residual_risk array. Findings are only actionable risks, bugs, regressions, missing tests, security issues, or misleading documentation. Do not put praise, confirmations, or already-correct behavior in findings. If you include a finding, every finding must include a specific title, priority (P0|P1|P2|P3), file, body, evidence array, heuristic_ids array, confidence, blocking, and suggested_fix_scope. Do not include placeholder, empty, or non-actionable findings. Packet:\n{}",
         serde_json::to_string_pretty(packet).unwrap_or_default()
     )
 }
@@ -847,6 +876,69 @@ fn parse_model_review_json(raw: &str) -> Option<(ReviewDisposition, Vec<ReviewFi
     Some((disposition, findings))
 }
 
+fn normalize_model_review(
+    disposition: ReviewDisposition,
+    findings: Vec<ReviewFinding>,
+) -> (ReviewDisposition, Vec<ReviewFinding>, Vec<String>) {
+    let mut malformed = Vec::new();
+    for (idx, finding) in findings.iter().enumerate() {
+        let label = format!("finding {}", idx + 1);
+        if finding.title.trim().is_empty() || finding.title == "Untitled model finding" {
+            malformed.push(format!("{label} is missing a specific title"));
+        }
+        if !matches!(finding.priority.as_str(), "P0" | "P1" | "P2" | "P3") {
+            malformed.push(format!(
+                "{label} has unsupported priority '{}'",
+                finding.priority
+            ));
+        }
+        if finding.file.trim().is_empty() || finding.file == "unknown" {
+            malformed.push(format!("{label} is missing a specific file"));
+        }
+        if finding.body.trim().is_empty() {
+            malformed.push(format!("{label} is missing an explanatory body"));
+        }
+        if finding.evidence.is_empty()
+            || finding
+                .evidence
+                .iter()
+                .any(|evidence| evidence.trim().is_empty())
+        {
+            malformed.push(format!("{label} is missing concrete evidence"));
+        }
+        if finding.confidence.trim().is_empty() {
+            malformed.push(format!("{label} is missing confidence"));
+        }
+        if finding.suggested_fix_scope.trim().is_empty() {
+            malformed.push(format!("{label} is missing suggested_fix_scope"));
+        }
+        if is_non_actionable_fix_scope(&finding.suggested_fix_scope) {
+            malformed.push(format!(
+                "{label} is non-actionable praise or confirmation, not a review finding"
+            ));
+        }
+    }
+
+    if malformed.is_empty() {
+        return (disposition, findings, Vec::new());
+    }
+
+    let mut residual_risk = vec!["model review output contained malformed findings".to_string()];
+    residual_risk.extend(malformed);
+    (ReviewDisposition::NonProving, findings, residual_risk)
+}
+
+fn is_non_actionable_fix_scope(raw: &str) -> bool {
+    let normalized = raw.trim().to_ascii_lowercase();
+    normalized == "none"
+        || normalized == "n/a"
+        || normalized == "not applicable"
+        || normalized.starts_with("none.")
+        || normalized.starts_with("no fix")
+        || normalized.starts_with("no change")
+        || normalized.starts_with("no action")
+}
+
 fn string_array(value: Option<&Value>) -> Vec<String> {
     value
         .and_then(|v| v.as_array())
@@ -906,4 +998,331 @@ fn write_json(path: &Path, value: &impl Serialize) -> Result<()> {
     let bytes = serde_json::to_vec_pretty(value)?;
     fs::write(path, bytes)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn test_args() -> CodeReviewArgs {
+        CodeReviewArgs {
+            out: PathBuf::from("artifacts/review"),
+            backend: ReviewerBackend::Fixture,
+            visibility_mode: VisibilityMode::PacketOnly,
+            base_ref: "origin/main".to_string(),
+            head_ref: "HEAD".to_string(),
+            issue_number: Some(2603),
+            writer_session: "writer".to_string(),
+            reviewer_session: Some("reviewer".to_string()),
+            model: None,
+            allow_live_ollama: false,
+            ollama_url: "http://127.0.0.1:11434".to_string(),
+            timeout_secs: 120,
+            include_working_tree: false,
+            fixture_case: FixtureCase::Clean,
+            max_diff_bytes: 12_000,
+        }
+    }
+
+    fn test_packet() -> ReviewPacket {
+        ReviewPacket {
+            schema_version: PACKET_SCHEMA,
+            issue_number: Some(2603),
+            branch: "codex/test".to_string(),
+            base_ref: "origin/main".to_string(),
+            head_ref: "HEAD".to_string(),
+            visibility_mode: VisibilityMode::PacketOnly,
+            changed_files: vec!["docs/example.md".to_string()],
+            diff_summary: DiffSummary {
+                files_changed: 1,
+                max_diff_bytes: 12_000,
+                truncated_hunks: false,
+            },
+            focused_diff_hunks: vec![DiffHunk {
+                file: "docs/example.md".to_string(),
+                diff_excerpt: "+example".to_string(),
+                truncated: false,
+            }],
+            validation_evidence: Vec::new(),
+            static_analysis_evidence: Vec::new(),
+            repo_slice_manifest: RepoSliceManifest {
+                read_only: false,
+                write_allowed: false,
+                tool_execution_allowed: false,
+                files: vec!["docs/example.md".to_string()],
+            },
+            review_scope: "test review scope".to_string(),
+            non_scope: vec!["do not edit files".to_string()],
+            known_risks: Vec::new(),
+            redaction_status: RedactionStatus {
+                absolute_host_paths_present: false,
+                secret_like_values_present: false,
+            },
+        }
+    }
+
+    #[test]
+    fn parse_args_preserves_backend_after_out_and_accepts_timeout() {
+        let args = vec![
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--backend".to_string(),
+            "ollama".to_string(),
+            "--timeout-secs".to_string(),
+            "240".to_string(),
+            "--include-working-tree".to_string(),
+        ];
+        let parsed = parse_args(&args).expect("args should parse");
+        assert_eq!(parsed.backend, ReviewerBackend::Ollama);
+        assert_eq!(parsed.timeout_secs, 240);
+        assert!(parsed.include_working_tree);
+    }
+
+    #[test]
+    fn parse_args_excludes_working_tree_by_default() {
+        let args = vec!["--out".to_string(), "artifacts/review".to_string()];
+        let parsed = parse_args(&args).expect("args should parse");
+        assert!(!parsed.include_working_tree);
+    }
+
+    #[test]
+    fn parse_args_rejects_invalid_values_and_missing_required_out() {
+        assert!(parse_args(&["--backend".to_string(), "bad".to_string()]).is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--visibility".to_string(),
+            "bad".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--fixture-case".to_string(),
+            "bad".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--timeout-secs".to_string(),
+            "0".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--max-diff-bytes".to_string(),
+            "255".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&["--writer-session".to_string(), "".to_string()]).is_err());
+        assert!(parse_args(&["--out".to_string()]).is_err());
+        assert!(parse_args(&["--unknown".to_string()]).is_err());
+    }
+
+    #[test]
+    fn fixture_review_covers_blocked_and_same_session_paths() {
+        let packet = test_packet();
+        let packet_id = "packet-id";
+
+        let mut blocked_args = test_args();
+        blocked_args.fixture_case = FixtureCase::Blocked;
+        let blocked = fixture_review(&blocked_args, &packet, packet_id);
+        assert_eq!(blocked.disposition, ReviewDisposition::Blocked);
+        assert_eq!(blocked.findings.len(), 1);
+
+        let mut same_session_args = test_args();
+        same_session_args.reviewer_session = Some("writer".to_string());
+        let same_session = fixture_review(&same_session_args, &packet, packet_id);
+        assert_eq!(same_session.disposition, ReviewDisposition::NonProving);
+        assert!(same_session.same_session_as_writer);
+    }
+
+    #[test]
+    fn ollama_without_live_returns_skipped_blocker() {
+        let mut args = test_args();
+        args.backend = ReviewerBackend::Ollama;
+        args.model = Some("gemma4:test".to_string());
+        let packet = test_packet();
+        let result = ollama_review(&args, &packet, "packet-id").expect("skipped review");
+        assert_eq!(result.disposition, ReviewDisposition::Skipped);
+        let gate = evaluate_gate(&result, &packet);
+        assert!(!gate.pr_open_allowed);
+        assert!(gate.reasons.iter().any(|reason| reason.contains("skipped")));
+    }
+
+    #[test]
+    fn evaluate_gate_covers_static_failure_and_blocking_finding() {
+        let mut packet = test_packet();
+        packet.static_analysis_evidence.push(ValidationEvidence {
+            command: "git diff --check".to_string(),
+            status: "FAIL".to_string(),
+            summary: "whitespace error".to_string(),
+        });
+        let mut result = review_result(
+            &test_args(),
+            &packet,
+            "packet-id",
+            ReviewResultParts {
+                reviewer_session: "reviewer".to_string(),
+                reviewer_model: "fixture".to_string(),
+                same_session: false,
+                disposition: ReviewDisposition::Blessed,
+                findings: vec![ReviewFinding {
+                    title: "Blocking issue".to_string(),
+                    priority: "P2".to_string(),
+                    file: "docs/example.md".to_string(),
+                    line: Some(1),
+                    body: "A concrete problem exists.".to_string(),
+                    evidence: vec!["path:docs/example.md".to_string()],
+                    heuristic_ids: vec!["T1".to_string()],
+                    confidence: "high".to_string(),
+                    blocking: true,
+                    suggested_fix_scope: "issue_local".to_string(),
+                }],
+                residual_risk: Vec::new(),
+            },
+        );
+        result.same_session_as_writer = true;
+        let gate = evaluate_gate(&result, &packet);
+        assert!(!gate.pr_open_allowed);
+        assert!(gate
+            .reasons
+            .iter()
+            .any(|reason| reason.contains("static analysis")));
+        assert!(gate
+            .reasons
+            .iter()
+            .any(|reason| reason.contains("blocking P2 finding")));
+        assert!(gate
+            .reasons
+            .iter()
+            .any(|reason| reason.contains("matches writer session")));
+    }
+
+    #[test]
+    fn parse_model_review_json_accepts_fenced_json_and_filters_string_arrays() {
+        let raw = r#"```json
+{
+  "disposition": "blocked",
+  "findings": [
+    {
+      "title": "Missing evidence",
+      "priority": "P3",
+      "file": "docs/example.md",
+      "line": 12,
+      "body": "The example references a fact without evidence.",
+      "evidence": ["path:docs/example.md", 42],
+      "heuristic_ids": ["D1", false],
+      "confidence": "medium",
+      "blocking": false,
+      "suggested_fix_scope": "issue_local"
+    }
+  ]
+}
+```"#;
+        let (disposition, findings) = parse_model_review_json(raw).expect("parse review json");
+        assert_eq!(disposition, ReviewDisposition::Blocked);
+        assert_eq!(findings[0].evidence, vec!["path:docs/example.md"]);
+        assert_eq!(findings[0].heuristic_ids, vec!["D1"]);
+        assert_eq!(findings[0].line, Some(12));
+        assert!(parse_model_review_json("{not-json").is_none());
+        assert!(parse_model_review_json(r#"{"disposition":"unexpected"}"#).is_none());
+    }
+
+    #[test]
+    fn helpers_cover_url_normalization_prompt_and_unicode_truncation() {
+        assert_eq!(
+            ollama_generate_url("http://127.0.0.1:11434").expect("url"),
+            "http://127.0.0.1:11434/api/generate"
+        );
+        assert_eq!(
+            ollama_generate_url("http://127.0.0.1:11434/api/generate").expect("url"),
+            "http://127.0.0.1:11434/api/generate"
+        );
+        assert!(ollama_generate_url("not a url").is_err());
+
+        let prompt = reviewer_prompt(&test_packet());
+        assert!(prompt.contains("actionable risks"));
+        assert!(prompt.contains("adl.pr_review_result.v1"));
+
+        let (truncated, was_truncated) = truncate("éclair", 3);
+        assert!(was_truncated);
+        assert_eq!(truncated, "éc");
+    }
+
+    #[test]
+    fn normalize_model_review_rejects_placeholder_findings() {
+        let finding = ReviewFinding {
+            title: "Untitled model finding".to_string(),
+            priority: "P3".to_string(),
+            file: "unknown".to_string(),
+            line: None,
+            body: String::new(),
+            evidence: Vec::new(),
+            heuristic_ids: Vec::new(),
+            confidence: "medium".to_string(),
+            blocking: false,
+            suggested_fix_scope: "issue_local".to_string(),
+        };
+
+        let (disposition, findings, residual) =
+            normalize_model_review(ReviewDisposition::Blessed, vec![finding]);
+        assert_eq!(disposition, ReviewDisposition::NonProving);
+        assert_eq!(findings.len(), 1);
+        assert!(residual
+            .iter()
+            .any(|risk| risk.contains("malformed findings")));
+        assert!(residual
+            .iter()
+            .any(|risk| risk.contains("missing concrete evidence")));
+    }
+
+    #[test]
+    fn normalize_model_review_rejects_praise_as_findings() {
+        let finding = ReviewFinding {
+            title: "Correctly separates proposal and execution".to_string(),
+            priority: "P3".to_string(),
+            file: "docs/example.md".to_string(),
+            line: None,
+            body: "The change correctly preserves the intended safety boundary.".to_string(),
+            evidence: vec!["diff excerpt".to_string()],
+            heuristic_ids: vec!["ADL-REVIEW".to_string()],
+            confidence: "high".to_string(),
+            blocking: false,
+            suggested_fix_scope: "None. This is already correct.".to_string(),
+        };
+
+        let (disposition, findings, residual) =
+            normalize_model_review(ReviewDisposition::Blessed, vec![finding]);
+        assert_eq!(disposition, ReviewDisposition::NonProving);
+        assert_eq!(findings.len(), 1);
+        assert!(residual
+            .iter()
+            .any(|risk| risk.contains("non-actionable praise")));
+    }
+
+    #[test]
+    fn normalize_model_review_accepts_specific_evidenced_finding() {
+        let finding = ReviewFinding {
+            title: "Missing reviewer evidence link".to_string(),
+            priority: "P3".to_string(),
+            file: "docs/example.md".to_string(),
+            line: Some(12),
+            body: "The review packet mentions a follow-up but does not link the evidence."
+                .to_string(),
+            evidence: vec!["path:docs/example.md".to_string()],
+            heuristic_ids: vec!["C1".to_string()],
+            confidence: "medium".to_string(),
+            blocking: false,
+            suggested_fix_scope: "issue_local".to_string(),
+        };
+
+        let (disposition, findings, residual) =
+            normalize_model_review(ReviewDisposition::Blessed, vec![finding]);
+        assert_eq!(disposition, ReviewDisposition::Blessed);
+        assert_eq!(findings.len(), 1);
+        assert!(residual.is_empty());
+    }
 }

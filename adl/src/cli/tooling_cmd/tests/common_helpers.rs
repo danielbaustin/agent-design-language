@@ -107,6 +107,11 @@ fn common_helpers_cover_argument_and_content_guards() {
     assert!(contains_secret_like_token("ghs_1234567890"));
     assert!(!contains_secret_like_token("mask sk_short"));
     assert!(contains_absolute_host_path_in_text("/tmp/example"));
+    assert!(contains_absolute_host_path_in_text("C:\\Users\\example"));
+    assert!(contains_absolute_host_path_in_text("D:/workspace/example"));
+    assert!(!contains_absolute_host_path_in_text(
+        "ordinary JSON diff text with \":\\n\" escaped line endings"
+    ));
     assert!(!contains_absolute_host_path_in_text("relative/path"));
 
     assert!(is_repo_review_finding_title("1. [P2] Useful finding"));
@@ -152,6 +157,8 @@ fn common_helpers_cover_safety_and_path_branches() {
     assert!(contains_absolute_host_path_in_text(
         "/Users/example/project"
     ));
+    assert!(contains_absolute_host_path_in_text("C:\\Users\\example"));
+    assert!(!contains_absolute_host_path_in_text("field:\\nvalue"));
     assert!(!contains_absolute_host_path_in_text("relative/path"));
     assert!(contains_secret_like_token("prefix sk-abcdefgh suffix"));
     assert!(contains_secret_like_token("ghp_exampletoken"));

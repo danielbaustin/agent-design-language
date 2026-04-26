@@ -106,6 +106,7 @@ cargo run --manifest-path adl/Cargo.toml -- tooling code-review \
   --writer-session <writer-session-id> \
   --reviewer-session ollama-reviewer \
   --model gemma4:latest \
+  --timeout-secs 240 \
   --allow-live-ollama
 ```
 
@@ -125,6 +126,34 @@ or:
 
 ```bash
 --ollama-url http://127.0.0.1:11434
+```
+
+Use `--timeout-secs <n>` for larger remote models. The default timeout is 120
+seconds; the accepted range is 1 to 900 seconds.
+
+## Diff Scope
+
+By default, the packet contains only the requested committed diff:
+
+```text
+--base <ref> --head <ref>
+```
+
+This keeps historical PR reviews and merge-commit reviews from accidentally
+absorbing unrelated local edits in the reviewer worktree.
+
+Use `--include-working-tree` only when the reviewer intentionally needs to
+inspect uncommitted local edits before they are committed:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- tooling code-review \
+  --out artifacts/reviews/current-uncommitted \
+  --backend fixture \
+  --base origin/main \
+  --head HEAD \
+  --include-working-tree \
+  --writer-session <writer-session-id> \
+  --reviewer-session fixture-reviewer
 ```
 
 ## Visibility Modes
@@ -170,5 +199,11 @@ the tool.
   review quality.
 - Ollama output must return parseable normalized JSON to become proving review
   evidence; otherwise the result is `non_proving`.
+- Ollama findings must include concrete title, file, body, evidence,
+  confidence, and suggested fix scope. Placeholder or empty findings are treated
+  as `non_proving`, even when the model says `blessed`.
+- Findings must be actionable risks or defects. Positive observations,
+  confirmations, and `None`/`no action` fix scopes are treated as
+  `non_proving` because they are not review findings.
 - Packet compression is simple and may need improvement for large diffs.
 - Operator-waiver handling is intentionally not implemented in this first demo.

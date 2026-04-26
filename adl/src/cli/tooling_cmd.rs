@@ -75,7 +75,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
 fn tooling_usage() -> &'static str {
     "adl tooling card-prompt --issue <number> [--out <path>]\n\
 adl tooling card-prompt --input <path> [--out <path>]\n\
-adl tooling code-review --out <dir> [--backend fixture|ollama] [--visibility packet-only|read-only-repo] [--base <ref>] [--head <ref>] [--issue <number>] [--writer-session <id>] [--reviewer-session <id>] [--model <name>] [--allow-live-ollama] [--ollama-url <url>] [--fixture-case clean|blocked]\n\
+adl tooling code-review --out <dir> [--backend fixture|ollama] [--visibility packet-only|read-only-repo] [--base <ref>] [--head <ref>] [--issue <number>] [--writer-session <id>] [--reviewer-session <id>] [--model <name>] [--allow-live-ollama] [--ollama-url <url>] [--timeout-secs <n>] [--include-working-tree] [--fixture-case clean|blocked]\n\
 adl tooling generate-wp-issue-wave --version <version> [--wbs <path>] [--sprint <path>] [--out <path>]\n\
 adl tooling lint-prompt-spec --issue <number>\n\
 adl tooling lint-prompt-spec --input <path>\n\
