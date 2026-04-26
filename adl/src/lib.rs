@@ -57,6 +57,7 @@ pub mod sandbox;
 pub mod schema;
 pub mod signing;
 pub mod skill_composition_model;
+pub mod tool_registry;
 pub mod tool_result;
 pub mod trace;
 pub mod trace_schema_v1;
