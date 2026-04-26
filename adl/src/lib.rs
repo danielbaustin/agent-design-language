@@ -11,6 +11,7 @@
 //! - optional signature verification with strict enforcement on `--run`
 //! - remote execution MVP where scheduling remains local
 
+pub mod acc;
 pub mod adl;
 pub mod adversarial_execution_runner;
 pub mod adversarial_runtime;

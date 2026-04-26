@@ -28,6 +28,11 @@ ACC v1.0 must define:
 - redaction rules
 - failure policy
 
+WP-06 lands the first strongly typed ACC v1 artifact in `adl/src/acc.rs`.
+The review-facing Rust surface is `AdlCapabilityContractV1`,
+`validate_acc_v1`, `acc_v1_schema_json`, and
+`acc_v1_authority_fixtures`.
+
 ## Visibility Matrix
 
 Every ACC must define what is visible to:
@@ -47,3 +52,5 @@ the action must be rejected.
 - ACC does not rely on model self-reporting for authority.
 - ACC does not permit hidden delegation.
 - ACC does not convert UTS validity into execution permission.
+- WP-06 does not implement registry binding, UTS-to-ACC compilation, policy
+  evaluation, Freedom Gate mediation, or governed execution.
