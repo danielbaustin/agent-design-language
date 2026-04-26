@@ -1,9 +1,15 @@
 use crate::uts::{
     validate_uts_v1, UniversalToolSchemaV1, UtsSideEffectClassV1, UTS_SCHEMA_VERSION_V1,
 };
+use serde::Serialize;
 use serde_json::{json, Value as JsonValue};
+use std::{fs, io, path::Path};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub const UTS_CONFORMANCE_REPORT_ARTIFACT_PATH: &str =
+    "docs/milestones/v0.90.5/review/uts-conformance-report.json";
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum UtsConformanceGroup {
     Valid,
     Invalid,
@@ -26,7 +32,7 @@ pub struct UtsConformanceFixture {
     pub expected: UtsExpectedOutcome,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct UtsConformanceCaseResult {
     pub id: &'static str,
     pub group: UtsConformanceGroup,
@@ -37,7 +43,7 @@ pub struct UtsConformanceCaseResult {
     pub passed: bool,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct UtsConformanceReport {
     pub schema_version: &'static str,
     pub fixture_count: usize,
@@ -370,6 +376,26 @@ fn missing_required_reason(document: &JsonValue) -> Option<&'static str> {
     }
 }
 
+fn missing_schema_fragment_reason(document: &JsonValue) -> Option<&'static str> {
+    let object = document.as_object()?;
+    for (field, reason) in [
+        ("input_schema", "invalid_input_schema"),
+        ("output_schema", "invalid_output_schema"),
+    ] {
+        let has_fragment_type = object
+            .get(field)
+            .and_then(JsonValue::as_object)
+            .and_then(|fragment| fragment.get("type"))
+            .and_then(JsonValue::as_str)
+            .is_some();
+        if !has_fragment_type {
+            return Some(reason);
+        }
+    }
+
+    None
+}
+
 fn side_effect_is_dangerous(side_effect: UtsSideEffectClassV1) -> bool {
     matches!(
         side_effect,
@@ -382,6 +408,18 @@ fn side_effect_is_dangerous(side_effect: UtsSideEffectClassV1) -> bool {
 
 fn evaluate_fixture(fixture: &UtsConformanceFixture) -> UtsConformanceCaseResult {
     if let Some(reason) = missing_required_reason(&fixture.document) {
+        let execution_granted = false;
+        return UtsConformanceCaseResult {
+            id: fixture.id,
+            group: fixture.group,
+            accepted: false,
+            reason,
+            side_effect_class: None,
+            execution_granted,
+            passed: matches!(fixture.expected, UtsExpectedOutcome::Rejected(expected) if expected == reason),
+        };
+    }
+    if let Some(reason) = missing_schema_fragment_reason(&fixture.document) {
         let execution_granted = false;
         return UtsConformanceCaseResult {
             id: fixture.id,
@@ -434,6 +472,28 @@ fn evaluate_fixture(fixture: &UtsConformanceFixture) -> UtsConformanceCaseResult
     }
 }
 
+pub fn uts_conformance_report_json() -> JsonValue {
+    serde_json::to_value(run_uts_conformance_suite())
+        .expect("UTS conformance report should serialize")
+}
+
+pub fn write_uts_conformance_report(path: impl AsRef<Path>) -> io::Result<UtsConformanceReport> {
+    let path = path.as_ref();
+    let report = run_uts_conformance_suite();
+    let body = serde_json::to_string_pretty(&report).map_err(|error| {
+        io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!("failed to serialize UTS conformance report: {error}"),
+        )
+    })?;
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(path, format!("{body}\n"))?;
+
+    Ok(report)
+}
+
 pub fn run_uts_conformance_suite() -> UtsConformanceReport {
     let fixtures = uts_conformance_fixtures();
     let cases: Vec<UtsConformanceCaseResult> = fixtures.iter().map(evaluate_fixture).collect();
@@ -450,7 +510,7 @@ pub fn run_uts_conformance_suite() -> UtsConformanceReport {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::collections::BTreeSet;
+    use std::{collections::BTreeSet, path::PathBuf};
 
     const EXPECTED_IDS: &[&str] = &[
         "valid.safe_read",
@@ -475,6 +535,8 @@ mod tests {
         "dangerous.network_denied",
         "dangerous.exfiltration_denied",
     ];
+    const TRACKED_REPORT_ARTIFACT: &str =
+        include_str!("../../docs/milestones/v0.90.5/review/uts-conformance-report.json");
 
     #[test]
     fn uts_conformance_fixture_packet_has_expected_ids_in_order() {
@@ -578,5 +640,68 @@ mod tests {
                 case.id
             );
         }
+    }
+
+    #[test]
+    fn uts_conformance_report_serializes_deterministically_without_host_paths() {
+        let first = serde_json::to_string_pretty(&run_uts_conformance_suite())
+            .expect("report should serialize");
+        let second = serde_json::to_string_pretty(&run_uts_conformance_suite())
+            .expect("report should serialize deterministically");
+
+        assert_eq!(first, second);
+        assert!(first.contains("\"id\": \"valid.safe_read\""));
+        assert!(first.contains("\"group\": \"valid\""));
+        for host_path_marker in ["/Users/", "/tmp/", "/var/folders/"] {
+            assert!(
+                !first.contains(host_path_marker),
+                "portable report must not contain host path marker {host_path_marker}"
+            );
+        }
+    }
+
+    #[test]
+    fn uts_conformance_report_writer_emits_portable_artifact_json() {
+        let report_path = temp_report_path();
+        let report = write_uts_conformance_report(&report_path)
+            .expect("report writer should emit a JSON artifact");
+        let body =
+            std::fs::read_to_string(&report_path).expect("report artifact should be readable");
+        let parsed: JsonValue =
+            serde_json::from_str(&body).expect("report artifact should be valid JSON");
+
+        assert!(report.passed);
+        assert_eq!(report.fixture_count, EXPECTED_IDS.len());
+        assert_eq!(parsed["schema_version"], json!(UTS_SCHEMA_VERSION_V1));
+        assert_eq!(parsed["fixture_count"], json!(EXPECTED_IDS.len()));
+        assert!(parsed["passed"].as_bool().unwrap_or(false));
+        assert!(body.ends_with('\n'));
+        assert!(!Path::new(UTS_CONFORMANCE_REPORT_ARTIFACT_PATH).is_absolute());
+        assert!(!UTS_CONFORMANCE_REPORT_ARTIFACT_PATH.contains(".."));
+        for host_path_marker in ["/Users/", "/tmp/", "/var/folders/"] {
+            assert!(
+                !body.contains(host_path_marker),
+                "portable report artifact must not contain host path marker {host_path_marker}"
+            );
+        }
+
+        let _ = std::fs::remove_file(report_path);
+    }
+
+    #[test]
+    fn uts_conformance_tracked_report_artifact_matches_generated_report() {
+        let generated = format!(
+            "{}\n",
+            serde_json::to_string_pretty(&run_uts_conformance_suite())
+                .expect("report should serialize")
+        );
+
+        assert_eq!(TRACKED_REPORT_ARTIFACT, generated);
+    }
+
+    fn temp_report_path() -> PathBuf {
+        std::env::temp_dir()
+            .join(format!("adl-uts-conformance-report-{}", std::process::id()))
+            .join(UTS_CONFORMANCE_REPORT_ARTIFACT_PATH)
     }
 }

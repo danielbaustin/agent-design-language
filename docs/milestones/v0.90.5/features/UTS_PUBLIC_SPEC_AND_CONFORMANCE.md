@@ -87,6 +87,9 @@ WP-04 lands the first strongly typed UTS v1 artifact in
 WP-04 should make the schema and strongly typed artifact enforce these
 requirements:
 
+- input and output JSON Schema fragments use `UtsJsonSchemaFragmentV1` so the
+  generated schema exposes typed object fragments with a required nested `type`
+  field;
 - every fixture declares one side-effect class from the WP-02 taxonomy;
 - every fixture declares determinism and replay safety;
 - every fixture declares authentication posture and data sensitivity;
@@ -107,7 +110,12 @@ WP-05 should provide a deterministic conformance command or harness that:
 WP-05 implements the review-facing conformance harness in
 `adl/src/uts_conformance.rs`. The fixture packet is exposed through
 `uts_conformance_fixtures`, and `run_uts_conformance_suite` evaluates the
-packet without granting execution. The focused validation command is:
+packet without granting execution. `UtsConformanceReport` and
+`UtsConformanceCaseResult` serialize to deterministic JSON, and
+`write_uts_conformance_report` can emit the portable report artifact at the
+repository-relative path
+`docs/milestones/v0.90.5/review/uts-conformance-report.json` without embedding
+host paths or secrets. The focused validation command is:
 
 ```sh
 cargo test --manifest-path adl/Cargo.toml uts -- --nocapture

@@ -114,14 +114,22 @@ pub struct UtsErrorModelV1 {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
+pub struct UtsJsonSchemaFragmentV1 {
+    #[serde(rename = "type")]
+    pub schema_type: String,
+    #[serde(flatten, default)]
+    pub keywords: BTreeMap<String, JsonValue>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct UniversalToolSchemaV1 {
     pub schema_version: String,
     pub name: String,
     pub version: String,
     pub description: String,
-    pub input_schema: JsonValue,
-    pub output_schema: JsonValue,
+    pub input_schema: UtsJsonSchemaFragmentV1,
+    pub output_schema: UtsJsonSchemaFragmentV1,
     pub side_effect_class: UtsSideEffectClassV1,
     pub determinism: UtsDeterminismV1,
     pub replay_safety: UtsReplaySafetyV1,
@@ -199,12 +207,8 @@ fn valid_version(value: &str) -> bool {
             .all(|part| !part.is_empty() && part.chars().all(|ch| ch.is_ascii_digit()))
 }
 
-fn json_schema_fragment_has_type(value: &JsonValue) -> bool {
-    value
-        .as_object()
-        .and_then(|object| object.get("type"))
-        .and_then(JsonValue::as_str)
-        .is_some()
+fn json_schema_fragment_has_type(value: &UtsJsonSchemaFragmentV1) -> bool {
+    !value.schema_type.trim().is_empty()
 }
 
 fn valid_token(value: &str) -> bool {
@@ -492,7 +496,7 @@ mod tests {
         let mut value = valid_safe_read_json();
         value["name"] = json!("Bad Name");
         value["version"] = json!("v1");
-        value["input_schema"] = json!({});
+        value["input_schema"] = json!({ "type": "" });
         value["resources"] = json!([]);
 
         let schema = parse_valid(value);
@@ -573,7 +577,7 @@ mod tests {
         value["name"] = json!("ab");
         value["version"] = json!("1.0");
         value["description"] = json!("short");
-        value["output_schema"] = json!({});
+        value["output_schema"] = json!({ "type": "" });
         value["resources"] = json!([
             { "resource_type": "Bad Token", "scope": "" }
         ]);
@@ -662,6 +666,41 @@ mod tests {
     }
 
     #[test]
+    fn uts_v1_rejects_untyped_nested_schema_fragments_at_deserialize_boundary() {
+        let mut value = valid_safe_read_json();
+        value["input_schema"] = json!({
+            "properties": {
+                "fixture_id": { "type": "string" }
+            }
+        });
+
+        let err = serde_json::from_value::<UniversalToolSchemaV1>(value)
+            .expect_err("input_schema without a nested type must not deserialize");
+
+        assert!(err.to_string().contains("missing field `type`"));
+    }
+
+    fn resolve_generated_property_schema<'a>(
+        root: &'a JsonValue,
+        property: &'a JsonValue,
+    ) -> &'a JsonValue {
+        let Some(reference) = property.get("$ref").and_then(JsonValue::as_str) else {
+            return property;
+        };
+        let Some(name) = reference
+            .strip_prefix("#/definitions/")
+            .or_else(|| reference.strip_prefix("#/$defs/"))
+        else {
+            panic!("unsupported generated schema reference {reference}");
+        };
+
+        root.get("definitions")
+            .or_else(|| root.get("$defs"))
+            .and_then(|definitions| definitions.get(name))
+            .unwrap_or_else(|| panic!("missing generated schema definition {name}"))
+    }
+
+    #[test]
     fn uts_v1_schema_generation_exposes_required_surface() {
         let schema = uts_v1_schema_json();
         let properties = schema
@@ -689,6 +728,43 @@ mod tests {
             assert!(
                 properties.contains_key(key),
                 "UTS schema missing property {key}"
+            );
+        }
+    }
+
+    #[test]
+    fn uts_v1_schema_generation_requires_typed_nested_schema_fragments() {
+        let schema = uts_v1_schema_json();
+        let properties = schema
+            .get("properties")
+            .and_then(JsonValue::as_object)
+            .expect("generated UTS schema should expose properties");
+
+        for key in ["input_schema", "output_schema"] {
+            let property = properties
+                .get(key)
+                .unwrap_or_else(|| panic!("generated UTS schema missing property {key}"));
+            let fragment_schema = resolve_generated_property_schema(&schema, property);
+            let required = fragment_schema
+                .get("required")
+                .and_then(JsonValue::as_array)
+                .expect("nested JSON Schema fragment should list required fields");
+
+            assert_eq!(
+                fragment_schema.get("type").and_then(JsonValue::as_str),
+                Some("object"),
+                "{key} should be generated as an object schema"
+            );
+            assert!(
+                required.contains(&json!("type")),
+                "{key} should require a nested JSON Schema type field"
+            );
+            assert_eq!(
+                fragment_schema
+                    .pointer("/properties/type/type")
+                    .and_then(JsonValue::as_str),
+                Some("string"),
+                "{key}.type should be generated as a string field"
             );
         }
     }
