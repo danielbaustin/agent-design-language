@@ -44,6 +44,7 @@ pub mod obsmem_store;
 pub mod operational_skills_substrate;
 pub mod overlay;
 pub mod plan;
+pub mod policy_authority;
 pub mod prompt;
 pub mod provider;
 pub mod provider_extension_packaging;
