@@ -76,11 +76,47 @@ The compiler must:
 - reject unsatisfiable authority, resource, privacy, or execution constraints
 - emit trace evidence for validation, normalization, policy, and rejection
 
+WP-09 implements the review-facing deterministic compiler surface in
+`adl/src/uts_acc_compiler.rs`:
+
+- `ToolProposalV1`
+- `UtsAccPolicyContextV1`
+- `UtsAccCompilerInputV1`
+- `UtsAccCompilerOutcomeV1`
+- `UtsAccRejectionRecordV1`
+- `compile_uts_to_acc_v1`
+- `wp09_compiler_registry_fixture`
+- `wp09_compiler_input_fixture`
+
+The compiler consumes a normalized tool proposal, explicit WP-08 registry
+state, and a bounded policy context. It emits either an `AdlCapabilityContractV1`
+or a deterministic rejection record with evidence for validation,
+normalization, registry binding, policy, and rejection. Review-facing evidence
+uses redacted argument summaries and opaque registry digests rather than raw
+proposal arguments or registry payloads.
+
+The WP-09 mapping tests cover:
+
+- safe read to allowed ACC
+- delegated local write to delegated ACC
+- denied destructive action
+- denied exfiltration
+- ambiguous proposal rejection
+
+The WP-09 rejection tests cover unsatisfiable authority, resource, privacy,
+visibility, replay, and execution constraints.
+
+WP-09 remains fixture-backed and dry-run only. WP-10 owns broader argument
+normalization and injection/path-traversal validation. WP-11 owns the fuller
+policy evaluator beyond this bounded policy-context slice. Because the WP-09
+ACC fixture emits one representable resource scope, multi-resource UTS inputs
+are rejected instead of being truncated into a partial ACC.
+
 ## Determinism
 
 Identical UTS, proposal, registry state, and policy context should produce an
 identical ACC or identical rejection.
 
-For WP-08, determinism is proven at the registry-binding layer only. The later
-WP-09 compiler remains responsible for mapping validated UTS, normalized
-proposal, registry state, and policy context into ACC or rejection records.
+For WP-08, determinism is proven at the registry-binding layer. WP-09 extends
+that proof to deterministic UTS/proposal/registry/policy compilation into ACC
+or rejection records for the fixture-backed governed-tools slice.
