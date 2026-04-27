@@ -7,6 +7,7 @@ use crate::tool_registry::{
     ToolBindingSourceV1::RegistryCompiler, ToolRegistryRejectionCodeV1, ToolRegistryV1,
 };
 use serde_json::Value as JsonValue;
+use sha2::{Digest, Sha256};
 
 const GOVERNED_ACTION_ID_UNKNOWN: &str = "action.unknown";
 const GOVERNED_ADAPTER_UNKNOWN: &str = "adapter.unknown";
@@ -180,6 +181,71 @@ fn gate_refusal_reason(
     }
 }
 
+fn trace_binding_from_gate(
+    gate: &FreedomGateToolDecisionEventV1,
+    proposal_id: &str,
+    acc_contract_id: &str,
+    action_kind: &str,
+) -> Result<(), Vec<String>> {
+    let mut missing = Vec::new();
+    let expected_proposal = format!("proposal:{proposal_id}");
+    let expected_acc = format!("acc:{acc_contract_id}");
+    let expected_action = format!("action:{action_kind}");
+
+    if !gate
+        .trace_links
+        .iter()
+        .any(|link| link == &expected_proposal)
+    {
+        missing.push(format!(
+            "expected trace link {expected_proposal} not present"
+        ));
+    }
+    if !gate.trace_links.iter().any(|link| link == &expected_acc) {
+        missing.push(format!("expected trace link {expected_acc} not present"));
+    }
+    if !gate.trace_links.iter().any(|link| link == &expected_action) {
+        missing.push(format!("expected trace link {expected_action} not present"));
+    }
+
+    if missing.is_empty() {
+        return Ok(());
+    }
+
+    Err(missing)
+}
+
+fn gate_invocation_binding(gate: &FreedomGateToolDecisionEventV1) -> Result<(), Vec<String>> {
+    if gate.executor_invocation_ref.is_none()
+        || gate
+            .executor_invocation_ref
+            .as_deref()
+            .is_some_and(|invocation| invocation.trim().is_empty())
+    {
+        return Err(vec![
+            "expected executor invocation reference for allowed gate decision".to_string(),
+        ]);
+    }
+
+    Ok(())
+}
+
+fn arguments_digest_from_gate(gate: &FreedomGateToolDecisionEventV1) -> Option<String> {
+    let marker = "digest=";
+    let rest = gate.redaction_summary.split_once(marker)?.1;
+    let candidate = rest.split_whitespace().next()?;
+    Some(candidate.to_string())
+}
+
+fn compute_private_argument_digest(arguments: &BTreeMap<String, JsonValue>) -> String {
+    let canonical_arguments = serde_json::to_string(arguments)
+        .expect("governed executor arguments should serialize for local digest check");
+    format!(
+        "sha256:{:x}",
+        Sha256::digest(canonical_arguments.as_bytes())
+    )
+}
+
 fn map_registry_rejection(code: &ToolRegistryRejectionCodeV1) -> &'static str {
     match code {
         ToolRegistryRejectionCodeV1::UnknownTool => "unregistered_action",
@@ -312,6 +378,47 @@ pub fn execute_governed_action_v1(
         };
     }
 
+    if let Err(evidence) = trace_binding_from_gate(
+        &input.gate_decision,
+        &input.proposal_id,
+        &acc.contract_id,
+        &acc.tool.tool_name,
+    ) {
+        rejected_actions.push(rejected_record(
+            proposal_id.clone(),
+            action_id,
+            tool_name,
+            adapter_id,
+            "gate_trace_mismatch",
+            evidence,
+        ));
+        return GovernedExecutorExecutionOutcomeV1 {
+            selected_actions,
+            rejected_actions,
+            execution_result: None,
+        };
+    }
+
+    match arguments_digest_from_gate(&input.gate_decision) {
+        Some(expected_digest)
+            if expected_digest == compute_private_argument_digest(&input.arguments) => {}
+        _ => {
+            rejected_actions.push(rejected_record(
+                proposal_id.clone(),
+                action_id,
+                tool_name,
+                adapter_id,
+                "gate_argument_mismatch",
+                vec!["governed executor arguments do not match gate redacted digest".to_string()],
+            ));
+            return GovernedExecutorExecutionOutcomeV1 {
+                selected_actions,
+                rejected_actions,
+                execution_result: None,
+            };
+        }
+    }
+
     if !acc.trace_replay.replay_allowed {
         rejected_actions.push(rejected_record(
             proposal_id.clone(),
@@ -320,6 +427,22 @@ pub fn execute_governed_action_v1(
             adapter_id,
             "replay_unsafe",
             vec!["replay is not allowed by ACC trace policy".to_string()],
+        ));
+        return GovernedExecutorExecutionOutcomeV1 {
+            selected_actions,
+            rejected_actions,
+            execution_result: None,
+        };
+    }
+
+    if let Err(evidence) = gate_invocation_binding(&input.gate_decision) {
+        rejected_actions.push(rejected_record(
+            proposal_id.clone(),
+            action_id,
+            tool_name,
+            adapter_id,
+            "gate_invocation_missing",
+            evidence,
         ));
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
@@ -461,6 +584,13 @@ mod tests {
         let input = wp09_compiler_input_fixture("fixture.safe_read");
         let outcome = compile_uts_to_acc_v1(&input);
         let acc = outcome.acc.expect("safe-read fixture should compile");
+        let arguments = input
+            .proposal
+            .arguments
+            .iter()
+            .map(|(key, value)| (key.clone(), value.clone()))
+            .collect::<BTreeMap<String, JsonValue>>();
+        let private_argument_digest = compute_private_argument_digest(&arguments);
 
         let registry = wp09_compiler_registry_fixture();
         let candidate = crate::freedom_gate::FreedomGateToolCandidateV1 {
@@ -473,7 +603,7 @@ mod tests {
             risk_class: "low".to_string(),
             operator_actor_id: acc.actor.actor_id.clone(),
             citizen_boundary_ref: "citizen.boundary".to_string(),
-            private_argument_digest: "sha256:".to_string() + &"a".repeat(64),
+            private_argument_digest,
         };
         let gate_context = crate::freedom_gate::FreedomGateToolGateContextV1 {
             policy_decision: "allowed".to_string(),
@@ -492,12 +622,7 @@ mod tests {
             proposal_id: input.proposal.proposal_id,
             acc: Some(acc),
             registry,
-            arguments: input
-                .proposal
-                .arguments
-                .iter()
-                .map(|(key, value)| (key.clone(), value.clone()))
-                .collect(),
+            arguments,
             gate_decision,
         }
     }
@@ -638,6 +763,20 @@ mod tests {
     }
 
     #[test]
+    fn wp13_refuses_gate_without_executor_invocation_ref() {
+        let mut input = safe_read_input();
+        input.gate_decision.executor_invocation_ref = None;
+
+        let outcome = execute_governed_action_v1(&input);
+
+        assert_eq!(outcome.selected_actions.len(), 0);
+        assert_eq!(
+            outcome.rejected_actions[0].reason_code,
+            "gate_invocation_missing"
+        );
+    }
+
+    #[test]
     fn wp13_direct_model_output_execution_is_refused() {
         let mut input = safe_read_input();
         input.source = GovernedExecutorSourceV1::ModelOutput;
@@ -695,6 +834,41 @@ mod tests {
     }
 
     #[test]
+    fn wp13_refuses_gate_trace_mismatch() {
+        let mut input = safe_read_input();
+        input.gate_decision.trace_links = vec![
+            "proposal:proposal.mismatch".to_string(),
+            "acc:acc.mismatch".to_string(),
+            "action:action.mismatch".to_string(),
+        ];
+
+        let outcome = execute_governed_action_v1(&input);
+
+        assert_eq!(outcome.selected_actions.len(), 0);
+        assert_eq!(
+            outcome.rejected_actions[0].reason_code,
+            "gate_trace_mismatch"
+        );
+    }
+
+    #[test]
+    fn wp13_refuses_gate_argument_mismatch() {
+        let mut input = safe_read_input();
+        input.arguments.insert(
+            "fixture_id".to_string(),
+            JsonValue::String("modified-fixture".to_string()),
+        );
+
+        let outcome = execute_governed_action_v1(&input);
+
+        assert_eq!(outcome.selected_actions.len(), 0);
+        assert_eq!(
+            outcome.rejected_actions[0].reason_code,
+            "gate_argument_mismatch"
+        );
+    }
+
+    #[test]
     fn wp13_refuses_unregistered_action() {
         let mut input = safe_read_input();
         input
@@ -703,6 +877,18 @@ mod tests {
             .expect("safe-read should be present")
             .tool
             .tool_name = "fixture.unknown".to_string();
+        input.gate_decision.trace_links = vec![
+            format!("proposal:{}", input.proposal_id),
+            format!(
+                "acc:{}",
+                input
+                    .acc
+                    .as_ref()
+                    .expect("safe-read should be present")
+                    .contract_id
+            ),
+            "action:fixture.unknown".to_string(),
+        ];
 
         let outcome = execute_governed_action_v1(&input);
 
