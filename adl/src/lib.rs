@@ -31,6 +31,7 @@ pub mod exploit_artifact_replay;
 pub mod failure_taxonomy;
 pub mod freedom_gate;
 pub mod godel;
+pub mod governed_executor;
 pub mod instrumentation;
 pub mod learning_export;
 pub mod learning_guardrails;
