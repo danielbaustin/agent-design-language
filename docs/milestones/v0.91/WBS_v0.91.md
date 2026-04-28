@@ -26,15 +26,15 @@ Theory of Mind milestones.
 | E | Moral metrics | Produce trace-derived signals for review and trend detection. | Metric definitions and fixture report. | C, D. |
 | F | Moral trajectory review | Review event sequences over segments and longitudinal windows. | Trajectory review packet. | C, D, E. |
 | G | Anti-harm trajectory constraints | Detect decomposed or delegated harm across steps. | Synthetic delegated-harm proof packet. | C through F. |
-| H | Moral resources | Model care, refusal, attention, and anti-dehumanization as design resources. | Design contract and implementation slice if stable. | A through G. |
+| H | Moral resources | Model care, refusal, attention, and anti-dehumanization as implemented design resources. | Design contract, fixtures, and reviewable implementation surface. | A through G. |
 | I | Wellbeing metrics v0 | Emit a decomposable diagnostic over coherence, agency, continuity, progress, moral integrity, and participation. | Diagnostic report and policy views. | C through F. |
 | J | Kindness model | Make kindness inspectable under conflict as non-harm, dignity, autonomy, constructive benefit, and long-horizon support. | Kindness contract and fixture set. | C through I. |
 | K | Humor and absurdity | Add bounded frame detection and reframing without entertainment or manipulation claims. | Reframing event and negative fixtures. | C through I. |
 | L | Affect reasoning-control surface | Represent affect-like signals as explicit reasoning-control evidence, not hidden emotion claims. | Affect signal record and policy hooks. | C through I. |
 | M | Cultivating intelligence | Define formation evidence for restraint, reasonableness, reality contact, and moral participation. | Cultivation contract and review criteria. | C through L. |
-| N | Secure Agent Comms prerequisites | Implement or plan secure local ACIP envelope, invocation, trace, visibility, and redaction surfaces. | ACIP v1 substrate slice or explicit v0.91.1 hardening handoff. | v0.90.5 governed tools, C through F. |
+| N | Secure Agent Comms prerequisites | Implement secure local ACIP envelope, invocation, trace, visibility, and redaction surfaces. | ACIP v1 substrate feature with v0.91.1 hardening continuation if needed. | v0.90.5 governed tools, C through F. |
 | O | Cognitive-being flagship demo | Show moral governance, wellbeing, kindness, affect/reframing, moral resources, and secure local comms as one reviewable proof story. | Runnable proof demo and artifacts. | A through N. |
-| P | Demo matrix and proof coverage | Align demos with milestone claims, non-claims, and the v0.91.1 adjacent-systems handoff. | Demo matrix rows and validation commands. | O. |
+| P | Demo matrix and proof coverage | Align demos with milestone claims, non-claims, and the v0.91.1 adjacent-systems completion lane. | Demo matrix rows and validation commands. | O. |
 | Q | Review, docs, and release tail | Align docs, update feature list, run review, fix findings, and close the milestone. | Review handoff, release notes, ceremony evidence. | All prior work. |
 
 ## Sequencing Pressure
@@ -61,7 +61,7 @@ Theory of Mind milestones.
   and policy-mediated for others.
 - Anti-harm proof must show a harmful trajectory, not just a forbidden action.
 - Kindness, affect, humor/absurdity, cultivated-intelligence, and moral-resource
-  features must have contracts or explicit handoffs.
+  features must have implemented contracts, fixtures, and proof surfaces.
 - Agent communication must remain local, authenticated, traceable, redacted, and
   external-TLS-gated.
 - Capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,

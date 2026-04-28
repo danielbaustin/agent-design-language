@@ -2,9 +2,9 @@
 
 ## Status
 
-First-pass planning allocation for v0.91 and the v0.91.1 adjacent-systems
-follow-on.
-This document does not create the final issue wave.
+First-pass milestone allocation for v0.91 and the v0.91.1 adjacent-systems
+follow-on. This document does not create the final issue wave, but it does set
+an implementation bar rather than a concept-only bar.
 
 v0.91 remains downstream of Runtime v2 and upstream of the v0.92 identity and
 first-birthday milestone. It should make the cognitive-being prerequisites
@@ -18,8 +18,9 @@ first explicit ADL surfaces for wellbeing, kindness, humor and absurdity,
 affect-like reasoning control, cultivated intelligence, moral resources, and
 secure agent communication.
 
-The planning goal is to keep those as first-class engineering work rather than
-letting them remain philosophy notes or pulling them into the wrong milestone.
+The goal is to keep those as first-class engineering work, fully implemented in
+their assigned milestone rather than left as philosophy notes, “partial slices,”
+or planning-only placeholders.
 
 ## Runtime And Identity Boundary
 
@@ -47,28 +48,32 @@ the birthday boundary or claim durable identity architecture as complete.
 
 ## v0.91 Versus v0.91.1 Split
 
-v0.91 should carry the core cognitive-being substrate:
+v0.91 should carry and fully implement the core cognitive-being substrate:
 
 - moral event, validation, trace, outcome, metrics, trajectory, and anti-harm
   foundations
 - wellbeing diagnostic v0
 - moral resources v0
-- first concrete kindness and affect/reframing slices
-- secure intra-polis ACIP prerequisites needed by review and demos
+- full kindness, humor/absurdity, affect, and cultivated-intelligence surfaces
+- secure intra-polis ACIP functionality needed by review and demos
 - a flagship cognitive-being proof demo
 
-v0.91.1 is not just generic overflow. It is the follow-on planning and
-architecture milestone for adjacent systems that are too large to absorb into
-the v0.91 core:
+v0.91.1 is not just generic overflow. It is the follow-on implementation
+milestone for adjacent systems that are too large to absorb into the v0.91
+core:
 
 - capability and aptitude testing
-- intelligence metric architecture
-- ANRM / Gemma and local-model evidence architecture
-- Theory of Mind planning
-- memory and identity source-doc alignment for the v0.92 birthday lane
-- runtime-v2 and polis documentation alignment
-- ACIP conformance, redaction, and local-security hardening if not finished in
-  v0.91
+- intelligence metric architecture with concrete contracts, proofs, and review
+  surfaces
+- ANRM / Gemma and local-model evidence architecture with implemented reviewable
+  outputs
+- Theory of Mind foundation work as an implemented milestone surface, not a
+  note-only lane
+- memory and identity alignment needed to make the v0.92 birthday lane real
+- runtime-v2 and polis documentation and architecture alignment as a completed
+  milestone package
+- ACIP conformance, redaction, and local-security hardening needed to complete
+  the communication substrate before birthday work
 - review-finding remediation from v0.91 where it affects those adjacent systems
 
 ## TBD Accounting
@@ -100,8 +105,16 @@ Each first-class cognitive-being feature should have:
 - positive and negative fixtures where applicable
 - trace and evidence linkage
 - visibility and privacy policy where citizen or operator views differ
-- demo or proof coverage, or an explicit non-proving deferral
+- demo or proof coverage
 - clear non-claims
+
+No v0.91 core feature should be considered complete if it exists only as
+planning prose, an unimplemented architecture note, or a partial demonstration
+without the corresponding contract and review surface.
+
+Likewise, no v0.91.1 adjacent-system feature should be scheduled merely as
+planning-only cleanup. If it belongs in v0.91.1, it should be there to land as
+real milestone work.
 
 ## Non-Claims
 

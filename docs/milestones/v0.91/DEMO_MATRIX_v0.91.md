@@ -19,7 +19,7 @@ Planning draft. No v0.91 issue wave has been opened yet.
 | D11 | Moral resources proof | Care, refusal, anti-dehumanization, and moral attention are represented as durable reviewable resources. | moral-resource record and fixture evidence | PLANNED |
 | D12 | Secure intra-polis Agent Comms | Two local agents communicate through authenticated, traceable, policy-bound messages without external transport. | ACIP envelope, invocation record, trace, redacted reviewer view | PLANNED |
 | D13 | Cognitive-being flagship demo | Moral governance, wellbeing, kindness, affect/reframing, moral resources, and secure local comms are visible end to end. | proof packet and reviewer report | PLANNED |
-| D14 | Feature proof coverage record | Every v0.91 cognitive-being feature claim has proof, fixture, non-proving status, or explicit handoff. | proof coverage record | PLANNED |
+| D14 | Feature proof coverage record | Every v0.91 cognitive-being feature claim has proof and fixture coverage, not just prose allocation. | proof coverage record | PLANNED |
 
 ## Non-Proving Boundaries
 

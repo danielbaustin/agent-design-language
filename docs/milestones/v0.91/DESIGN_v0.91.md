@@ -118,5 +118,5 @@ contracts are precise enough for independent implementation slices.
 Compression must not skip negative fixtures, privacy/redaction checks,
 wellbeing self-access policy, cognitive-being non-claims, local communication
 security, anti-harm proof cases, or review convergence. v0.91.1 should absorb
-adjacent-system planning and hardening rather than lowering the v0.91 acceptance
-bar.
+adjacent-system completion and hardening rather than lowering the v0.91
+acceptance bar.

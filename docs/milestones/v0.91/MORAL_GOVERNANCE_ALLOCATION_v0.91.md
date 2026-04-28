@@ -5,10 +5,11 @@
 This is a planning allocation document, not a final work-package sequence.
 
 v0.91 should develop the first bounded moral-governance and cognitive-being
-foundation: moral trace, Freedom Gate moral events, validation rules, outcome
-linkage, moral metrics, trajectory review, anti-harm constraints, wellbeing,
-kindness, humor/absurdity, affect, moral resources, secure agent communication
-prerequisites, and proof candidates that make those surfaces reviewable.
+foundation as implemented milestone surfaces: moral trace, Freedom Gate moral
+events, validation rules, outcome linkage, moral metrics, trajectory review,
+anti-harm constraints, wellbeing, kindness, humor/absurdity, affect, moral
+resources, secure agent communication prerequisites, and proof surfaces that
+make those features reviewable.
 
 This document does not create the v0.91 issue wave. It records what belongs in
 the milestone so the later v0.91 WP planning pass has a source-backed map.
@@ -43,7 +44,7 @@ In scope for v0.91:
 - Outcome-linkage and attribution records.
 - Moral metrics over traces, with no scalar-goodness shortcut.
 - Moral trajectory review packets.
-- Anti-harm trajectory constraints and delegated-harm proof candidates.
+- Anti-harm trajectory constraints and delegated-harm proof surfaces.
 - Moral resources as a design substrate for refusal, care, and non-dehumanizing
   reasoning.
 - Kindness as an inspectable support and non-harm surface under conflict.
@@ -83,7 +84,7 @@ Out of scope for v0.91:
 | Moral metrics | Primary v0.91 feature | Provide trace-derived measures for review, trend detection, and learning. Metrics must remain evidence, not verdicts. |
 | Moral trajectory review | Primary v0.91 feature | Produce review packets over single events, segments, and longitudinal traces. |
 | Anti-harm constraints | Primary v0.91 feature | Move from action-only refusal to trajectory-aware harm prevention, including decomposed and delegated harm. |
-| Harm-prevention proof | Primary v0.91 proof candidate | Design a bounded delegated-harm proof that is safe, synthetic, deterministic, and reviewable. |
+| Harm-prevention proof | Primary v0.91 proof surface | Land a bounded delegated-harm proof that is safe, synthetic, deterministic, and reviewable. |
 | Moral resources | Primary v0.91 feature | Treat as a substrate for care, refusal, anti-dehumanization, and moral attention. Implement a bounded slice once event/trace foundations are stable enough. |
 | Wellbeing and happiness | Existing v0.91 feature context | Connect wellbeing to moral integrity, reality contact, continuity, participation, and refusal. |
 | Wellbeing metrics v0 | Second-half v0.91 diagnostic feature | Implement only after moral event, trace, validation, outcome-linkage, metrics, and trajectory-review foundations exist. Emit a decomposable diagnostic report over wellbeing dimensions, not a scalar happiness score or reward channel. The citizen identity always has self-access; operator, public, and governance views are mediated and redacted by policy. |
@@ -91,7 +92,7 @@ Out of scope for v0.91:
 | Humor and absurdity | v0.91 cognitive-being feature | Add bounded wrong-frame and contradiction detection with safe reframing. Do not treat this as entertainment or social manipulation. |
 | Affect model | v0.91 cognitive-control feature | Represent confidence, tension, curiosity, caution, frustration, satisfaction, escalation, and memory priority as explicit signals. |
 | Cultivating intelligence | v0.91 architecture feature | Define evidence for formation, reasonableness, restraint, reality contact, and moral participation. |
-| Agent Communication and Invocation Protocol | v0.91 substrate prerequisite, v0.91.1 hardening candidate | Keep intra-polis communication authenticated, traceable, redacted, and sensitive-payload protected; defer external transport until TLS/mTLS-equivalent support. |
+| Agent Communication and Invocation Protocol | v0.91 substrate feature, v0.91.1 hardening continuation | Keep intra-polis communication authenticated, traceable, redacted, and sensitive-payload protected; defer external transport until TLS/mTLS-equivalent support. |
 | Learning model v2 | Context source | Use moral trace, outcome linkage, and review as evidence surfaces for learning, not as ungrounded self-improvement claims. |
 
 ## Source Corpus Disposition
@@ -108,8 +109,8 @@ this allocation. They are listed as provenance, not as public milestone links.
 | FREEDOM_GATE_EVENT_SCHEMA.md | v0.91 feature source | Defines the atomic morally significant choice record. |
 | FREEDOM_GATE_EVENT_VALIDATION_RULES.md | v0.91 feature source | Defines validation rules for real, legible, reviewable Freedom Gate events. |
 | FREEDOM_GATE_MORAL_EVENT_SCHEMA.md | v0.91 feature source; consolidate | Overlaps the general event schema and should be reconciled before implementation. |
-| HARM_PREVENTION_DEMO.md | v0.91 proof candidate | Provides the delegated-harm trajectory proof shape. Stale older milestone placement should be ignored. |
-| MORAL_RESOURCES_SUBSTRATE.md | v0.91 design source; possible implementation slice | Supplies the deeper moral-cognition substrate for care, refusal, and anti-dehumanization. |
+| HARM_PREVENTION_DEMO.md | v0.91 proof source | Provides the delegated-harm trajectory proof shape. Stale older milestone placement should be ignored. |
+| MORAL_RESOURCES_SUBSTRATE.md | v0.91 feature source | Supplies the deeper moral-cognition substrate for care, refusal, and anti-dehumanization. |
 | MORAL_TRACE_METRICS.md | v0.91 feature source | Defines metrics derived from trace evidence. Must not become moral judgment by shortcut. |
 | MORAL_TRACE_SCHEMA.md | v0.91 feature source | Defines the trace record linking moral events, outcomes, attribution, and review. |
 | MORAL_TRAJECTORY_REVIEW_PROTOCOL.md | v0.91 review/proof source | Defines how to inspect moral behavior over events, segments, and longitudinal windows. |
@@ -155,8 +156,8 @@ quiet assumptions.
 
 ## Demo And Proof Candidates
 
-These are candidates for later v0.91 demo-matrix planning, not final WP
-commitments.
+These are required proof surfaces for the milestone, even though the final WP
+sequence will be authored later.
 
 | Candidate | What it proves | Expected proof surface |
 |---|---|---|
@@ -205,5 +206,5 @@ Recommended ordering pressure:
    review rather than rhetoric.
 7. Promote ACIP only as local, secure, traceable, intra-polis communication
    unless external TLS/mTLS support is deliberately accepted.
-8. Move adjacent-system planning and hardening into v0.91.1 rather than
+8. Move adjacent-system completion and hardening into v0.91.1 rather than
    weakening the v0.91 closeout bar.

@@ -10,7 +10,8 @@ v0.90.5 milestones without absorbing their implementation leftovers.
 ## Purpose
 
 v0.91 is the planned moral governance, wellbeing, and cognitive-being foundation
-milestone.
+milestone. The intent is full milestone implementation of the assigned feature
+set, not concept-only promotion.
 
 The canonical allocation is recorded in
 [MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md).
@@ -76,16 +77,16 @@ v0.91 depends on:
 ## v0.91.1 Adjacent-Systems Boundary
 
 The v0.91 feature set is large, and the adjacent TBD corpus is larger.
-v0.91.1 should be the follow-on planning and architecture milestone for:
+v0.91.1 should be the follow-on implementation milestone for:
 
 - capability and aptitude testing
 - intelligence metric architecture
 - ANRM / Gemma and local-model evidence architecture
-- Theory of Mind planning
-- memory and identity source-doc alignment for v0.92
-- runtime-v2 and polis documentation alignment
-- ACIP conformance, redaction, and local-encryption hardening if it cannot fit
-  safely in v0.91
+- Theory of Mind foundation work
+- memory and identity alignment for v0.92
+- runtime-v2 and polis documentation and architecture alignment
+- ACIP conformance, redaction, and local-encryption hardening needed to finish
+  the communication substrate before birthday work
 - review-finding remediation from the v0.91 core milestone where it affects
   those adjacent systems
 
@@ -117,7 +118,7 @@ The likely `v0.91` tranche is:
   surfaces as first-class cognitive-being prerequisites.
 - Secure local Agent Communication and Invocation Protocol work needed before
   identity and birthday evidence can depend on agent-to-agent communication.
-- Proof candidates that make moral evidence visible to reviewers.
+- Proof surfaces that make moral evidence visible to reviewers.
 
 ### Out of scope
 
@@ -166,7 +167,9 @@ Later WP planning should preserve the standard milestone rhythm:
   accepted-finding remediation
 - release WP: close the milestone under the normal ceremony pattern
 
-The exact WP sequence is intentionally deferred until v0.91 planning is active.
+The exact WP sequence is intentionally deferred until v0.91 planning is active,
+but the milestone is expected to land implemented feature surfaces rather than
+planning-only placeholders.
 
 ## Success Criteria
 
@@ -175,10 +178,10 @@ v0.91 is ready to execute when:
 - moral trace and moral event contracts are concrete enough to become cards
 - wellbeing metrics are diagnostic and self-accessible, not public reputation
 - kindness, affect, humor/absurdity, cultivated-intelligence, and moral-resource
-  claims have concrete contracts or explicit handoffs
+  claims have concrete implemented contracts and proof surfaces
 - Agent Comms work is local, secure, identity-bound, and explicit about the
   external TLS/mTLS boundary
-- anti-harm proof candidates are safe, synthetic, deterministic, and reviewable
+- anti-harm proof surfaces are safe, synthetic, deterministic, and reviewable
 - moral resources are grounded in trace evidence rather than rhetoric
 - v0.92 birthday and v0.93 constitutional governance remain downstream
 - demos prove behavior and artifacts rather than merely describing values

@@ -2,9 +2,10 @@
 
 ## Status
 
-First-pass planning allocation for Agent Communication and Invocation Protocol
+First-pass milestone allocation for Agent Communication and Invocation Protocol
 1.0 across v0.90.5, v0.91, v0.91.1 adjacent-system hardening, and the v0.92
-birthday boundary. This is not a final issue wave.
+birthday boundary. This is not a final issue wave, but it does set a real
+implementation boundary.
 
 ## Source Inputs
 
@@ -53,7 +54,7 @@ governed tools and early review/coding-agent work:
 
 ## v0.91 Core Scope
 
-v0.91 should make ACIP usable as a substrate feature:
+v0.91 should make ACIP usable as a real substrate feature:
 
 - secure message envelope v0
 - agent identity binding for sender, recipient, audience, and delegation
@@ -68,9 +69,9 @@ v0.91 should make ACIP usable as a substrate feature:
 - negative fixtures for unauthorized, unencrypted, unaudited, or ambiguous
   communication
 
-## v0.91.1 Candidate Scope
+## v0.91.1 Completion Scope
 
-v0.91.1 is the home for adjacent-system ACIP hardening:
+v0.91.1 is the home for adjacent-system ACIP completion and hardening:
 
 - expanded conformance suite
 - redaction and replay hardening
@@ -79,6 +80,9 @@ v0.91.1 is the home for adjacent-system ACIP hardening:
 - cross-agent demo variants
 - review finding remediation
 - capability-testing probes for communication behavior
+
+By the end of v0.91 and v0.91.1 together, ACIP should be implemented strongly
+enough that it is no longer a planning-only prerequisite for birthday work.
 
 ## Before v0.92 Birthday
 

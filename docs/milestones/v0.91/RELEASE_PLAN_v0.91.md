@@ -18,9 +18,9 @@ communication, demo, and review story.
 - Anti-harm trajectory proof.
 - Wellbeing metrics v0 diagnostic with citizen self-access and redacted views.
 - Kindness, humor/absurdity, affect, cultivated-intelligence, and moral-resource
-  contracts or explicit handoffs.
+  contracts, fixtures, and proof surfaces.
 - Secure intra-polis Agent Comms proof, with any v0.91.1 hardening separated.
-- v0.91.1 adjacent-systems handoff for capability/aptitude testing,
+- v0.91.1 adjacent-systems implementation plan for capability/aptitude testing,
   intelligence metric architecture, ANRM/Gemma, ToM, memory/identity, and
   runtime-v2/polis docs.
 - Demo matrix and feature proof coverage record.
@@ -54,7 +54,6 @@ The closeout should hand off:
 
 - moral trace evidence needed by v0.92 birthday review
 - wellbeing and moral trajectory evidence needed by v0.93 governance
-- deferred moral resources work if the evidence surfaces are not yet stable
 - v0.91.1 adjacent-systems plan for capability/aptitude testing, intelligence
   metric architecture, ANRM/Gemma, ToM, memory/identity, runtime-v2/polis docs,
   and any ACIP hardening

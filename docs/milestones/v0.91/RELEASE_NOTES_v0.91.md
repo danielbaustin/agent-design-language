@@ -28,11 +28,12 @@ secure intra-polis agent communication.
 - Anti-harm trajectory proof.
 - Wellbeing metrics v0 diagnostic with citizen self-access and redacted views.
 - Kindness, humor/absurdity, affect, cultivated-intelligence, and moral-resource
-  proof surfaces or explicit handoffs.
+  proof surfaces.
 - Secure local Agent Communication and Invocation Protocol evidence, with
   hardening separated if needed.
-- v0.91.1 handoff for capability/aptitude testing, intelligence metric
-  architecture, ANRM/Gemma, ToM, memory/identity, and runtime-v2/polis docs.
+- v0.91.1 implementation lane for capability/aptitude testing, intelligence
+  metric architecture, ANRM/Gemma, ToM, memory/identity, and runtime-v2/polis
+  docs.
 - Handoff into v0.92 birthday and v0.93 constitutional governance.
 
 ## Required Closeout Rewrite
