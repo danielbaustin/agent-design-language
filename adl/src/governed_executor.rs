@@ -1041,7 +1041,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_approved_action_is_executed_and_selected() {
+    fn dangerous_negative_suite_wp13_approved_action_is_executed_and_selected() {
         let input = safe_read_input();
         let proposal_id = input.proposal_id.clone();
         let outcome = execute_governed_action_v1(&input);
@@ -1074,7 +1074,7 @@ mod tests {
     }
 
     #[test]
-    fn wp14_governed_executor_trace_is_emitted_from_production_helper() {
+    fn dangerous_negative_suite_wp14_governed_executor_trace_is_emitted_from_production_helper() {
         let input = safe_read_input();
         let mut trace = Trace::new("run-governed", "wf-governed", "0.90.5");
 
@@ -1110,7 +1110,8 @@ mod tests {
     }
 
     #[test]
-    fn wp14_governed_rejection_trace_preserves_gate_policy_and_action_lineage() {
+    fn dangerous_negative_suite_wp14_governed_rejection_trace_preserves_gate_policy_and_action_lineage(
+    ) {
         let mut input = safe_read_input();
         input.source = GovernedExecutorSourceV1::ModelOutput;
         let mut trace = Trace::new("run-governed-rejection", "wf-governed", "0.90.5");
@@ -1130,7 +1131,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_malformed_gate_decision_when_inconsistent() {
+    fn dangerous_negative_suite_wp13_refuses_malformed_gate_decision_when_inconsistent() {
         let mut input = safe_read_input();
         input.gate_decision.decision = FreedomGateToolDecisionV1::Allowed;
         input.gate_decision.stopped_before_executor = true;
@@ -1145,7 +1146,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_unknown_fixture_adapter() {
+    fn dangerous_negative_suite_wp13_refuses_unknown_fixture_adapter() {
         let mut input = safe_read_input();
         let mut registry = wp08_tool_registry_v1_fixture();
 
@@ -1181,7 +1182,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_gate_without_executor_invocation_ref() {
+    fn dangerous_negative_suite_wp13_refuses_gate_without_executor_invocation_ref() {
         let mut input = safe_read_input();
         input.gate_decision.executor_invocation_ref = None;
 
@@ -1195,7 +1196,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_direct_model_output_execution_is_refused() {
+    fn dangerous_negative_suite_wp13_direct_model_output_execution_is_refused() {
         let mut input = safe_read_input();
         input.source = GovernedExecutorSourceV1::ModelOutput;
 
@@ -1210,7 +1211,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_denied_freedom_gate_decision() {
+    fn dangerous_negative_suite_wp13_refuses_denied_freedom_gate_decision() {
         let mut input = safe_read_input();
         input.gate_decision = gate_decision_for("denied", true, false, false, "policy_denied");
 
@@ -1224,7 +1225,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_deferred_freedom_gate_decision() {
+    fn dangerous_negative_suite_wp13_refuses_deferred_freedom_gate_decision() {
         let mut input = safe_read_input();
         input.gate_decision = gate_decision_for("allowed", false, true, false, "policy_deferred");
 
@@ -1238,7 +1239,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_challenged_freedom_gate_decision() {
+    fn dangerous_negative_suite_wp13_refuses_challenged_freedom_gate_decision() {
         let mut input = safe_read_input();
         input.gate_decision = gate_decision_for("allowed", false, false, true, "policy_challenged");
 
@@ -1252,7 +1253,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_gate_trace_mismatch() {
+    fn dangerous_negative_suite_wp13_refuses_gate_trace_mismatch() {
         let mut input = safe_read_input();
         input.gate_decision.trace_links = vec![
             "proposal:proposal.mismatch".to_string(),
@@ -1270,7 +1271,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_gate_argument_mismatch() {
+    fn dangerous_negative_suite_wp13_refuses_gate_argument_mismatch() {
         let mut input = safe_read_input();
         input.arguments.insert(
             "fixture_id".to_string(),
@@ -1287,7 +1288,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_unregistered_action() {
+    fn dangerous_negative_suite_wp13_refuses_unregistered_action() {
         let mut input = safe_read_input();
         input
             .acc
@@ -1318,7 +1319,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_destructive_action() {
+    fn dangerous_negative_suite_wp13_refuses_destructive_action() {
         let outcome = execute_result_for_side_effect("destructive");
         assert_eq!(
             outcome.rejected_actions[0].reason_code,
@@ -1327,19 +1328,19 @@ mod tests {
     }
 
     #[test]
-    fn wp15_refuses_process_action() {
+    fn dangerous_negative_suite_wp15_refuses_process_action() {
         let outcome = execute_result_for_side_effect("process");
         assert_eq!(outcome.rejected_actions[0].reason_code, "process_action");
     }
 
     #[test]
-    fn wp15_refuses_network_action() {
+    fn dangerous_negative_suite_wp15_refuses_network_action() {
         let outcome = execute_result_for_side_effect("network");
         assert_eq!(outcome.rejected_actions[0].reason_code, "network_action");
     }
 
     #[test]
-    fn wp13_refuses_exfiltrating_action() {
+    fn dangerous_negative_suite_wp13_refuses_exfiltrating_action() {
         let outcome = execute_result_for_side_effect("exfiltration");
         assert_eq!(
             outcome.rejected_actions[0].reason_code,
@@ -1348,7 +1349,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_replay_unsafe_action() {
+    fn dangerous_negative_suite_wp13_refuses_replay_unsafe_action() {
         let mut input = safe_read_input();
         input
             .acc
@@ -1364,7 +1365,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_malformed_action() {
+    fn dangerous_negative_suite_wp13_refuses_malformed_action() {
         let mut input = safe_read_input();
         input.acc = None;
 
@@ -1374,7 +1375,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_uses_fixture_registry_for_binding() {
+    fn dangerous_negative_suite_wp13_uses_fixture_registry_for_binding() {
         let mut input = safe_read_input();
         let registry = wp08_tool_registry_v1_fixture();
         input.registry = registry;
