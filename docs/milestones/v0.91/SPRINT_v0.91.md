@@ -7,6 +7,9 @@ Candidate sprint shape only. v0.91 has no final issue wave yet.
 ## Sprint 1: Moral Evidence Foundation
 
 - WP-01: Promote reviewed v0.91 milestone package.
+- Confirm v0.91/v0.91.1 split and the v0.92 identity boundary.
+- Promote the cognitive-being and Agent Comms split plans into tracked milestone
+  planning.
 - Moral event contract.
 - Moral event validation.
 - Moral trace schema.
@@ -28,12 +31,18 @@ verdicts.
 
 - Wellbeing metrics v0 diagnostic.
 - Citizen self-access and redacted operator/reviewer/public views.
-- Moral resources implementation slice, if trace foundations are stable enough.
-- Moral governance flagship demo.
+- Moral resources implementation slice.
+- Kindness model and conflict fixtures.
+- Humor/absurdity reframing slice.
+- Affect reasoning-control surface.
+- Cultivating-intelligence review criteria.
+- Secure intra-polis Agent Comms substrate slice if prerequisite scope is stable.
+- Cognitive-being flagship demo.
 - Demo matrix and feature proof coverage.
 
 Goal: make the evidence visible to citizens and reviewers without exposing
-private diagnostics or pretending the system has solved wellbeing.
+private diagnostics, pretending the system has solved wellbeing, or claiming the
+v0.92 birthday.
 
 ## Sprint 4: Review And Release
 
@@ -41,6 +50,9 @@ private diagnostics or pretending the system has solved wellbeing.
 - Internal review.
 - Third-party review handoff.
 - Accepted-finding remediation.
+- v0.91.1 adjacent-systems plan for capability/aptitude testing, intelligence
+  metric architecture, ANRM/Gemma, ToM, memory/identity, runtime-v2/polis docs,
+  and any ACIP hardening that does not fit safely in v0.91.
 - Next-milestone planning handoff to v0.92 and v0.93.
 - Release ceremony.
 
@@ -51,4 +63,7 @@ Goal: close the milestone with truthful review, release, and handoff evidence.
 Moral event validation can proceed beside trace-schema work once the event
 contract is stable. Metrics should wait for trace and outcome linkage. Wellbeing
 metrics should wait for trajectory review because they need evidence rather than
-affect theater. Release-tail work should remain sequential.
+affect theater. Kindness, humor/absurdity, affect, and cultivating-intelligence
+work can proceed in parallel only after the shared evidence and non-claim
+language is stable. ACIP work can proceed beside those slices if it stays local,
+secure, and external-TLS-gated. Release-tail work should remain sequential.
