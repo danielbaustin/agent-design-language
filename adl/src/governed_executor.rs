@@ -108,6 +108,7 @@ fn selected_record(
     action_id: String,
     tool_name: String,
     adapter_id: String,
+    evidence: Vec<String>,
 ) -> GovernedExecutorActionRecordV1 {
     GovernedExecutorActionRecordV1 {
         proposal_id,
@@ -116,7 +117,7 @@ fn selected_record(
         adapter_id,
         outcome: GovernedExecutorActionOutcomeV1::Selected,
         reason_code: "selected".to_string(),
-        evidence: vec!["governed_execution_allowed".to_string()],
+        evidence,
     }
 }
 
@@ -289,6 +290,12 @@ fn gate_boundary_label(gate: &FreedomGateToolDecisionEventV1) -> &'static str {
 
 fn governed_artifact_ref(run_id: &str, file_name: &str) -> String {
     format!("artifacts/{run_id}/governed/{file_name}")
+}
+
+fn governed_execution_evidence(input: &GovernedExecutorInputV1, action_id: &str) -> Vec<String> {
+    let mut evidence = input.gate_decision.trace_links.clone();
+    evidence.push(format!("execution:{action_id}"));
+    evidence
 }
 
 fn emit_governed_trace_context(
@@ -863,14 +870,22 @@ pub fn execute_governed_action_with_trace_v1(
         }
     };
 
+    let execution_evidence = governed_execution_evidence(input, &action_id);
     let selected = selected_record(
         proposal_id.clone(),
         action_id.clone(),
         tool_name.clone(),
         adapter_id.clone(),
+        execution_evidence.clone(),
     );
     if let Some(trace) = trace.as_deref_mut() {
-        trace.governed_action_selected(&proposal_id, &action_id, &tool_name, &adapter_id);
+        trace.governed_action_selected(
+            &proposal_id,
+            &action_id,
+            &tool_name,
+            &adapter_id,
+            execution_evidence,
+        );
         let result_ref = governed_artifact_ref(&trace.run_id, "result.redacted.json");
         trace.governed_execution_result(
             &proposal_id,
@@ -1037,6 +1052,14 @@ mod tests {
                 .and_then(|value| value.as_str()),
             Some("fixture_read_completed")
         );
+        assert!(outcome.selected_actions[0]
+            .evidence
+            .iter()
+            .any(|value| value == "gate:candidate.safe_read"));
+        assert!(outcome.selected_actions[0]
+            .evidence
+            .iter()
+            .any(|value| value == "policy:policy.wp11.fixture"));
     }
 
     #[test]
@@ -1057,8 +1080,17 @@ mod tests {
             .any(|event| matches!(event, TraceEvent::GovernedFreedomGateDecided { .. })));
         assert!(trace.events.iter().any(|event| matches!(
             event,
+            TraceEvent::GovernedActionSelected { evidence_refs, .. }
+                if evidence_refs.iter().any(|value| value == "gate:candidate.safe_read")
+                    && evidence_refs.iter().any(|value| value == "policy:policy.wp11.fixture")
+                    && evidence_refs.iter().any(|value| value == "execution:action.safe_read")
+        )));
+        assert!(trace.events.iter().any(|event| matches!(
+            event,
             TraceEvent::GovernedExecutionResultRecorded { evidence_refs, .. }
-                if !evidence_refs.is_empty()
+                if evidence_refs.iter().any(|value| value == "gate:candidate.safe_read")
+                    && evidence_refs.iter().any(|value| value == "policy:policy.wp11.fixture")
+                    && evidence_refs.iter().any(|value| value == "execution:action.safe_read")
         )));
         assert!(trace
             .events

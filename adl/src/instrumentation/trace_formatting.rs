@@ -76,9 +76,11 @@ pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
             action_id,
             tool_name,
             adapter_id,
+            evidence_refs,
         } => {
             format!(
-                "GovernedActionSelected proposal_id={proposal_id} action_id={action_id} tool={tool_name} adapter={adapter_id}"
+                "GovernedActionSelected proposal_id={proposal_id} action_id={action_id} tool={tool_name} adapter={adapter_id} evidence_count={}",
+                evidence_refs.len()
             )
         }
         TraceEventNormalized::GovernedActionRejected {

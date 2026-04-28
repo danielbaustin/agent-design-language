@@ -99,6 +99,7 @@ pub enum TraceEvent {
         action_id: String,
         tool_name: String,
         adapter_id: String,
+        evidence_refs: Vec<String>,
     },
     GovernedActionRejected {
         ts_ms: u128,
@@ -381,14 +382,16 @@ impl TraceEvent {
                 action_id,
                 tool_name,
                 adapter_id,
+                evidence_refs,
             } => format!(
-                "{} (+{}ms) GovernedActionSelected proposal_id={} action_id={} tool={} adapter={}",
+                "{} (+{}ms) GovernedActionSelected proposal_id={} action_id={} tool={} adapter={} evidence_count={}",
                 format_ts_ms(*ts_ms),
                 elapsed_ms,
                 proposal_id,
                 action_id,
                 tool_name,
-                adapter_id
+                adapter_id,
+                evidence_refs.len()
             ),
             TraceEvent::GovernedActionRejected {
                 ts_ms,
@@ -881,6 +884,7 @@ impl Trace {
         action_id: &str,
         tool_name: &str,
         adapter_id: &str,
+        evidence_refs: Vec<String>,
     ) {
         let elapsed_ms = self.run_started_instant.elapsed().as_millis();
         let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
@@ -891,6 +895,7 @@ impl Trace {
             action_id: action_id.to_string(),
             tool_name: tool_name.to_string(),
             adapter_id: adapter_id.to_string(),
+            evidence_refs,
         });
     }
 
@@ -1609,6 +1614,15 @@ mod tests {
             "action.safe_read",
             "fixture.safe_read",
             "adapter.fixture.safe_read.dry_run",
+            vec![
+                "proposal:proposal.fixture.safe-read".to_string(),
+                "acc:acc.compiler.proposal.fixture.safe-read".to_string(),
+                "action:fixture_read".to_string(),
+                "normalized_proposal:normalized.proposal.fixture.safe-read".to_string(),
+                "policy:policy.fixture.safe-read".to_string(),
+                "gate:candidate.safe-read".to_string(),
+                "execution:action.safe_read".to_string(),
+            ],
         );
         tr.governed_execution_result(
             "proposal.fixture.safe-read",
@@ -1617,7 +1631,7 @@ mod tests {
             "artifacts/run-governed/governed/result.redacted.json",
             vec![
                 "gate:candidate.safe-read".to_string(),
-                "execution:governed_execution_allowed".to_string(),
+                "execution:action.safe_read".to_string(),
             ],
         );
         tr.governed_redaction_decision(

@@ -289,6 +289,15 @@ fn trace_v1_records_delegation_and_failure_events() {
         "action.safe_read",
         "fixture.safe_read",
         "adapter.fixture.safe_read.dry_run",
+        vec![
+            "proposal:proposal.fixture.safe-read".to_string(),
+            "acc:acc.compiler.proposal.fixture.safe-read".to_string(),
+            "action:fixture_read".to_string(),
+            "normalized_proposal:normalized.proposal.fixture.safe-read".to_string(),
+            "policy:policy.fixture.safe-read".to_string(),
+            "gate:candidate.safe-read".to_string(),
+            "execution:action.safe_read".to_string(),
+        ],
     );
     tr.governed_execution_result(
         "proposal.fixture.safe-read",
@@ -297,7 +306,7 @@ fn trace_v1_records_delegation_and_failure_events() {
         &format!("artifacts/{run_id}/governed/result.redacted.json"),
         vec![
             "gate:candidate.safe-read".to_string(),
-            "execution:governed_execution_allowed".to_string(),
+            "execution:action.safe_read".to_string(),
         ],
     );
     tr.governed_action_rejected(
@@ -429,6 +438,23 @@ fn trace_v1_records_delegation_and_failure_events() {
         .events
         .iter()
         .any(|event| event.event_type == TraceEventTypeV1::ExecutionResult));
+    assert!(trace_v1.events.iter().any(|event| {
+        event.event_type == TraceEventTypeV1::ActionSelection
+            && event.governance.as_ref().is_some_and(|governance| {
+                governance
+                    .evidence_refs
+                    .iter()
+                    .any(|value| value == "gate:candidate.safe-read")
+                    && governance
+                        .evidence_refs
+                        .iter()
+                        .any(|value| value == "policy:policy.fixture.safe-read")
+                    && governance
+                        .evidence_refs
+                        .iter()
+                        .any(|value| value == "execution:action.safe_read")
+            })
+    }));
     assert!(trace_v1
         .events
         .iter()
@@ -486,6 +512,16 @@ fn trace_v1_records_delegation_and_failure_events() {
     assert!(
         trace_v1_json.contains("private_arguments_redacted"),
         "gate redaction summary should preserve accountable digest-only evidence"
+    );
+    let governed_arguments = run_dir.join("governed/proposal_arguments.redacted.json");
+    let governed_results = run_dir.join("governed/result.redacted.json");
+    assert!(
+        governed_arguments.is_file(),
+        "governed proposal redaction artifact should be persisted"
+    );
+    assert!(
+        governed_results.is_file(),
+        "governed result redaction artifact should be persisted"
     );
 
     let _ = std::fs::remove_dir_all(run_dir);

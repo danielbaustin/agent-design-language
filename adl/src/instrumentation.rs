@@ -75,6 +75,7 @@ pub enum TraceEventNormalized {
         action_id: String,
         tool_name: String,
         adapter_id: String,
+        evidence_refs: Vec<String>,
     },
     GovernedActionRejected {
         proposal_id: String,
@@ -237,8 +238,36 @@ impl std::fmt::Display for ReplayInvariantError {
 
 impl std::error::Error for ReplayInvariantError {}
 
-/// Activation-log wrapper version; kept stable for replay diff comparability.
-pub const ACTIVATION_LOG_VERSION: u32 = 1;
+pub const ACTIVATION_LOG_VERSION_V1: u32 = 1;
+pub const ACTIVATION_LOG_VERSION_V2: u32 = 2;
+
+fn normalized_event_requires_activation_log_v2(event: &TraceEventNormalized) -> bool {
+    matches!(
+        event,
+        TraceEventNormalized::GovernedProposalObserved { .. }
+            | TraceEventNormalized::GovernedProposalNormalized { .. }
+            | TraceEventNormalized::GovernedAccConstructed { .. }
+            | TraceEventNormalized::GovernedPolicyInjected { .. }
+            | TraceEventNormalized::GovernedVisibilityResolved { .. }
+            | TraceEventNormalized::GovernedFreedomGateDecided { .. }
+            | TraceEventNormalized::GovernedActionSelected { .. }
+            | TraceEventNormalized::GovernedActionRejected { .. }
+            | TraceEventNormalized::GovernedExecutionResultRecorded { .. }
+            | TraceEventNormalized::GovernedRefusalRecorded { .. }
+            | TraceEventNormalized::GovernedRedactionDecisionRecorded { .. }
+    )
+}
+
+fn activation_log_version_for_events(events: &[TraceEventNormalized]) -> u32 {
+    if events
+        .iter()
+        .any(normalized_event_requires_activation_log_v2)
+    {
+        ACTIVATION_LOG_VERSION_V2
+    } else {
+        ACTIVATION_LOG_VERSION_V1
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -260,8 +289,9 @@ struct ActivationLogArtifact {
 /// Serialize a raw trace into a canonical activation-log artifact on disk.
 pub fn write_trace_artifact(path: &Path, events: &[TraceEvent]) -> Result<()> {
     let normalized = normalize_trace_events(events);
+    let activation_log_version = activation_log_version_for_events(&normalized);
     let artifact = ActivationLogArtifact {
-        activation_log_version: ACTIVATION_LOG_VERSION,
+        activation_log_version,
         ordering: "append_only_emission_order".to_string(),
         stable_ids: ActivationLogStableIds {
             step_id: "stable within resolved execution plan".to_string(),
@@ -307,12 +337,15 @@ pub fn load_trace_artifact(path: &Path) -> Result<Vec<TraceEventNormalized>> {
                         path.display()
                     ))
                 })?;
-            if artifact.activation_log_version != ACTIVATION_LOG_VERSION {
+            if artifact.activation_log_version != ACTIVATION_LOG_VERSION_V1
+                && artifact.activation_log_version != ACTIVATION_LOG_VERSION_V2
+            {
                 return Err(ReplayInvariantError::new(format!(
-                    "unsupported activation_log_version {} in '{}'; expected {}",
+                    "unsupported activation_log_version {} in '{}'; expected {} or {}",
                     artifact.activation_log_version,
                     path.display(),
-                    ACTIVATION_LOG_VERSION
+                    ACTIVATION_LOG_VERSION_V1,
+                    ACTIVATION_LOG_VERSION_V2
                 ))
                 .into());
             }
@@ -320,6 +353,19 @@ pub fn load_trace_artifact(path: &Path) -> Result<Vec<TraceEventNormalized>> {
                 return Err(ReplayInvariantError::new(format!(
                     "unsupported activation log ordering '{}' in '{}'",
                     artifact.ordering,
+                    path.display()
+                ))
+                .into());
+            }
+            if artifact.activation_log_version == ACTIVATION_LOG_VERSION_V1
+                && artifact
+                    .events
+                    .iter()
+                    .any(normalized_event_requires_activation_log_v2)
+            {
+                return Err(ReplayInvariantError::new(format!(
+                    "activation_log_version {} in '{}' does not support governed normalized events",
+                    artifact.activation_log_version,
                     path.display()
                 ))
                 .into());
@@ -787,7 +833,7 @@ mod tests {
         let parsed: serde_json::Value = serde_json::from_str(&raw).expect("parse artifact");
         assert_eq!(
             parsed["activation_log_version"].as_u64(),
-            Some(ACTIVATION_LOG_VERSION as u64)
+            Some(ACTIVATION_LOG_VERSION_V1 as u64)
         );
         assert_eq!(
             parsed["ordering"].as_str(),
@@ -809,7 +855,7 @@ mod tests {
             std::process::id()
         ));
         let body = serde_json::json!({
-            "activation_log_version": ACTIVATION_LOG_VERSION,
+            "activation_log_version": ACTIVATION_LOG_VERSION_V1,
             "stable_ids": {
                 "step_id": "stable within resolved execution plan",
                 "delegation_id": "deterministic per run: del-<counter>",
@@ -841,7 +887,7 @@ mod tests {
             std::process::id()
         ));
         let body = serde_json::json!({
-            "activation_log_version": ACTIVATION_LOG_VERSION + 1,
+            "activation_log_version": ACTIVATION_LOG_VERSION_V2 + 1,
             "ordering": "append_only_emission_order",
             "stable_ids": {
                 "step_id": "stable within resolved execution plan",
@@ -875,7 +921,7 @@ mod tests {
             std::process::id()
         ));
         let body = serde_json::json!({
-            "activation_log_version": ACTIVATION_LOG_VERSION,
+            "activation_log_version": ACTIVATION_LOG_VERSION_V1,
             "ordering": "unordered",
             "stable_ids": {
                 "step_id": "stable within resolved execution plan",
@@ -935,6 +981,73 @@ mod tests {
             loaded,
             normalize_trace_events(&events),
             "activation log must preserve append order (no implicit re-sorting)"
+        );
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn write_trace_artifact_uses_v2_for_governed_events() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!(
+            "adl-trace-governed-wrapper-{now}-{}.json",
+            std::process::id()
+        ));
+        let events = vec![TraceEvent::GovernedProposalObserved {
+            ts_ms: 10,
+            elapsed_ms: 10,
+            proposal_id: "proposal.safe-read".to_string(),
+            tool_name: "fixture.safe_read".to_string(),
+            redacted_arguments_ref: "artifacts/run/governed/proposal_arguments.redacted.json"
+                .to_string(),
+        }];
+        write_trace_artifact(&path, &events).expect("write artifact");
+        let raw = std::fs::read_to_string(&path).expect("read artifact");
+        let parsed: serde_json::Value = serde_json::from_str(&raw).expect("parse artifact");
+        assert_eq!(
+            parsed["activation_log_version"].as_u64(),
+            Some(ACTIVATION_LOG_VERSION_V2 as u64)
+        );
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_trace_artifact_rejects_governed_events_under_v1_wrapper() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!(
+            "adl-trace-governed-v1-{now}-{}.json",
+            std::process::id()
+        ));
+        let body = serde_json::json!({
+            "activation_log_version": ACTIVATION_LOG_VERSION_V1,
+            "ordering": "append_only_emission_order",
+            "stable_ids": {
+                "step_id": "stable within resolved execution plan",
+                "delegation_id": "deterministic per run: del-<counter>",
+                "run_id": "run-scoped identifier; not replay-stable across independent runs"
+            },
+            "events": [{
+                "kind": "GovernedProposalObserved",
+                "proposal_id": "proposal.safe-read",
+                "tool_name": "fixture.safe_read",
+                "redacted_arguments_ref": "artifacts/run/governed/proposal_arguments.redacted.json"
+            }]
+        });
+        std::fs::write(
+            &path,
+            serde_json::to_vec_pretty(&body).expect("serialize governed v1 body"),
+        )
+        .expect("write artifact");
+        let err = load_trace_artifact(&path).expect_err("governed v1 wrapper should fail");
+        assert!(
+            err.to_string()
+                .contains("does not support governed normalized events"),
+            "unexpected error: {err:#}"
         );
         let _ = std::fs::remove_file(path);
     }

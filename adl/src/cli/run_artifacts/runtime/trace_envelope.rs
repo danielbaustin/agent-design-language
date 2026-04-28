@@ -475,6 +475,7 @@ pub(super) fn build_trace_v1_envelope(
                 action_id,
                 tool_name,
                 adapter_id,
+                evidence_refs,
                 ..
             } => push_trace_v1_event(
                 &mut events,
@@ -520,7 +521,7 @@ pub(super) fn build_trace_v1_envelope(
                         replay_posture: None,
                         result_ref: None,
                         redaction_summary: None,
-                        evidence_refs: vec!["governed_execution_allowed".to_string()],
+                        evidence_refs: evidence_refs.clone(),
                         visibility_views: None,
                     }),
                     redaction: None,

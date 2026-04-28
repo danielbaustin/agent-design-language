@@ -96,12 +96,14 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
                 action_id,
                 tool_name,
                 adapter_id,
+                evidence_refs,
                 ..
             } => TraceEventNormalized::GovernedActionSelected {
                 proposal_id: proposal_id.clone(),
                 action_id: action_id.clone(),
                 tool_name: tool_name.clone(),
                 adapter_id: adapter_id.clone(),
+                evidence_refs: evidence_refs.clone(),
             },
             TraceEvent::GovernedActionRejected {
                 proposal_id,
