@@ -10,9 +10,10 @@ to consume where relevant.
 
 ## WBS Summary
 
-v0.91 should develop moral governance and wellbeing foundations without stealing
-work from identity, birthday, constitutional citizenship, reputation, or Theory
-of Mind milestones.
+v0.91 should develop moral governance, wellbeing, secure intra-polis
+communication, and first-class cognitive-being foundations without stealing work
+from Runtime v2, identity, birthday, constitutional citizenship, reputation, or
+Theory of Mind milestones.
 
 ## Candidate Work Areas
 
@@ -25,11 +26,16 @@ of Mind milestones.
 | E | Moral metrics | Produce trace-derived signals for review and trend detection. | Metric definitions and fixture report. | C, D. |
 | F | Moral trajectory review | Review event sequences over segments and longitudinal windows. | Trajectory review packet. | C, D, E. |
 | G | Anti-harm trajectory constraints | Detect decomposed or delegated harm across steps. | Synthetic delegated-harm proof packet. | C through F. |
-| H | Moral resources | Model care, refusal, attention, and anti-dehumanization as design resources. | Design contract and implementation slice if stable. | A through G. |
+| H | Moral resources | Model care, refusal, attention, and anti-dehumanization as implemented design resources. | Design contract, fixtures, and reviewable implementation surface. | A through G. |
 | I | Wellbeing metrics v0 | Emit a decomposable diagnostic over coherence, agency, continuity, progress, moral integrity, and participation. | Diagnostic report and policy views. | C through F. |
-| J | Moral governance demo | Show moral event, validation, trace, outcome linkage, trajectory review, anti-harm, and wellbeing evidence. | Runnable proof demo and artifacts. | A through I. |
-| K | Demo matrix and proof coverage | Align demos with milestone claims and non-claims. | Demo matrix rows and validation commands. | J. |
-| L | Review, docs, and release tail | Align docs, update feature list, run review, fix findings, and close the milestone. | Review handoff, release notes, ceremony evidence. | All prior work. |
+| J | Kindness model | Make kindness inspectable under conflict as non-harm, dignity, autonomy, constructive benefit, and long-horizon support. | Kindness contract and fixture set. | C through I. |
+| K | Humor and absurdity | Add bounded frame detection and reframing without entertainment or manipulation claims. | Reframing event and negative fixtures. | C through I. |
+| L | Affect reasoning-control surface | Represent affect-like signals as explicit reasoning-control evidence, not hidden emotion claims. | Affect signal record and policy hooks. | C through I. |
+| M | Cultivating intelligence | Define formation evidence for restraint, reasonableness, reality contact, and moral participation. | Cultivation contract and review criteria. | C through L. |
+| N | Secure Agent Comms prerequisites | Implement secure local ACIP envelope, invocation, trace, visibility, and redaction surfaces. | ACIP v1 substrate feature with v0.91.1 hardening continuation if needed. | v0.90.5 governed tools, C through F. |
+| O | Cognitive-being flagship demo | Show moral governance, wellbeing, kindness, affect/reframing, moral resources, and secure local comms as one reviewable proof story. | Runnable proof demo and artifacts. | A through N. |
+| P | Demo matrix and proof coverage | Align demos with milestone claims, non-claims, and the v0.91.1 adjacent-systems completion lane. | Demo matrix rows and validation commands. | O. |
+| Q | Review, docs, and release tail | Align docs, update feature list, run review, fix findings, and close the milestone. | Review handoff, release notes, ceremony evidence. | All prior work. |
 
 ## Sequencing Pressure
 
@@ -38,8 +44,12 @@ of Mind milestones.
 3. Add metrics and trajectory review.
 4. Add anti-harm proof surfaces.
 5. Add wellbeing metrics only after trace and review surfaces exist.
-6. Add moral resources only after the evidence layer can carry them.
-7. Build demos and review packets last.
+6. Add moral resources, kindness, humor/absurdity, affect, and cultivating
+   intelligence after the evidence layer can carry them.
+7. Add secure Agent Comms where it is needed for review, handoff, invocation,
+   and demo proof; defer conformance expansion and adjacent-system alignment to
+   v0.91.1 if necessary.
+8. Build demos and review packets last.
 
 ## Acceptance Mapping
 
@@ -50,5 +60,12 @@ of Mind milestones.
 - Wellbeing diagnostics must remain decomposed, self-accessible to the citizen,
   and policy-mediated for others.
 - Anti-harm proof must show a harmful trajectory, not just a forbidden action.
+- Kindness, affect, humor/absurdity, cultivated-intelligence, and moral-resource
+  features must have implemented contracts, fixtures, and proof surfaces.
+- Agent communication must remain local, authenticated, traceable, redacted, and
+  external-TLS-gated.
+- Capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,
+  ToM, memory/identity, and runtime-v2/polis docs should be routed to v0.91.1,
+  not absorbed into v0.91.
 - v0.92 birthday and v0.93 constitutional governance must consume v0.91 evidence
   rather than being pulled into v0.91.

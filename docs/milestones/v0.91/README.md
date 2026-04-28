@@ -9,10 +9,16 @@ v0.90.5 milestones without absorbing their implementation leftovers.
 
 ## Purpose
 
-v0.91 is the planned moral governance and wellbeing-foundation milestone.
+v0.91 is the planned moral governance, wellbeing, and cognitive-being foundation
+milestone. The intent is full milestone implementation of the assigned feature
+set, not concept-only promotion.
 
 The canonical allocation is recorded in
 [MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md).
+The widened cognitive-being allocation is recorded in
+[COGNITIVE_BEING_FEATURES_v0.91.md](COGNITIVE_BEING_FEATURES_v0.91.md).
+The Agent Communication split is recorded in
+[AGENT_COMMS_SPLIT_PLAN_v0.91.md](AGENT_COMMS_SPLIT_PLAN_v0.91.md).
 
 ## Milestone Role
 
@@ -27,6 +33,12 @@ v0.91 should establish:
 - anti-harm trajectory constraints
 - moral resources as a care, refusal, and non-dehumanization substrate
 - wellbeing metrics v0 as a decomposable diagnostic after trace foundations
+- kindness as inspectable support under conflict, not politeness theater
+- humor and absurdity as bounded frame detection and reframing
+- affect-like reasoning-control signals with explicit policy and trace hooks
+- cultivated intelligence as formation, restraint, reasonableness, and moral
+  participation
+- secure intra-polis agent communication and invocation prerequisites
 
 v0.91 should not claim production moral agency, final constitutional
 citizenship, legal personhood, a scalar karma score, or the first true
@@ -54,10 +66,29 @@ v0.91 depends on:
   moral governance
 - v0.90.5 governed tools only where tool-mediated moral evidence or refusal
   evidence depends on landed UTS, ACC, and tool-call trace
+- v0.90.5 ACIP planning only as prerequisite terminology and governed-tool
+  alignment; v0.91 should own the first substrate-level secure communication
+  work if it is not already landed
 - v0.92 as a downstream consumer of moral trace and wellbeing evidence for
   identity, continuity, and birthday readiness
 - v0.93 as a downstream consumer of moral evidence for constitutional
   citizenship, polis governance, social cognition, and review institutions
+
+## v0.91.1 Adjacent-Systems Boundary
+
+The v0.91 feature set is large, and the adjacent TBD corpus is larger.
+v0.91.1 should be the follow-on implementation milestone for:
+
+- capability and aptitude testing
+- intelligence metric architecture
+- ANRM / Gemma and local-model evidence architecture
+- Theory of Mind foundation work
+- memory and identity alignment for v0.92
+- runtime-v2 and polis documentation and architecture alignment
+- ACIP conformance, redaction, and local-encryption hardening needed to finish
+  the communication substrate before birthday work
+- review-finding remediation from the v0.91 core milestone where it affects
+  those adjacent systems
 
 ## Parallel Python Reduction Tranche
 
@@ -83,7 +114,11 @@ The likely `v0.91` tranche is:
 - Moral trajectory review packets.
 - Anti-harm constraints, including decomposed and delegated harm.
 - Wellbeing metrics v0 as a non-scalar diagnostic.
-- Proof candidates that make moral evidence visible to reviewers.
+- Kindness, humor/absurdity, affect, cultivated-intelligence, and moral-resource
+  surfaces as first-class cognitive-being prerequisites.
+- Secure local Agent Communication and Invocation Protocol work needed before
+  identity and birthday evidence can depend on agent-to-agent communication.
+- Proof surfaces that make moral evidence visible to reviewers.
 
 ### Out of scope
 
@@ -93,6 +128,8 @@ The likely `v0.91` tranche is:
 - Production moral agency.
 - Scalar karma, scalar happiness, or scoreboard framing.
 - Public exposure of private wellbeing diagnostics.
+- External or cross-polis communication without TLS or mutual-TLS-equivalent
+  protection.
 - Replacing v0.90.4 economics or v0.90.5 governed-tool implementation.
 - Replacing v0.90.3 citizen-state/security work.
 - Replacing v0.92 identity and birthday semantics.
@@ -111,6 +148,10 @@ The likely `v0.91` tranche is:
 - Feature planning: [features/README.md](features/README.md)
 - Moral governance allocation:
   [MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md)
+- Cognitive-being feature allocation:
+  [COGNITIVE_BEING_FEATURES_v0.91.md](COGNITIVE_BEING_FEATURES_v0.91.md)
+- Agent Communication split plan:
+  [AGENT_COMMS_SPLIT_PLAN_v0.91.md](AGENT_COMMS_SPLIT_PLAN_v0.91.md)
 
 ## Execution Model
 
@@ -118,13 +159,17 @@ Later WP planning should preserve the standard milestone rhythm:
 
 - WP-01: promote reviewed milestone docs and issue wave
 - feature WPs: implement moral event, trace, validation, attribution, metrics,
-  trajectory review, anti-harm, moral resources, and wellbeing surfaces
-- demo WP: build moral trace, anti-harm, and wellbeing proof demos
+  trajectory review, anti-harm, wellbeing, kindness, affect/reframing, moral
+  resources, cultivated-intelligence, and secure Agent Comms surfaces
+- demo WP: build moral trace, anti-harm, wellbeing, cognitive-being, and secure
+  intra-polis communication proof demos
 - quality/review WPs: validate docs, tests, demo evidence, review packets, and
   accepted-finding remediation
 - release WP: close the milestone under the normal ceremony pattern
 
-The exact WP sequence is intentionally deferred until v0.91 planning is active.
+The exact WP sequence is intentionally deferred until v0.91 planning is active,
+but the milestone is expected to land implemented feature surfaces rather than
+planning-only placeholders.
 
 ## Success Criteria
 
@@ -132,7 +177,11 @@ v0.91 is ready to execute when:
 
 - moral trace and moral event contracts are concrete enough to become cards
 - wellbeing metrics are diagnostic and self-accessible, not public reputation
-- anti-harm proof candidates are safe, synthetic, deterministic, and reviewable
+- kindness, affect, humor/absurdity, cultivated-intelligence, and moral-resource
+  claims have concrete implemented contracts and proof surfaces
+- Agent Comms work is local, secure, identity-bound, and explicit about the
+  external TLS/mTLS boundary
+- anti-harm proof surfaces are safe, synthetic, deterministic, and reviewable
 - moral resources are grounded in trace evidence rather than rhetoric
 - v0.92 birthday and v0.93 constitutional governance remain downstream
 - demos prove behavior and artifacts rather than merely describing values

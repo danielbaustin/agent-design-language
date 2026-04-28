@@ -4,10 +4,12 @@
 
 This is a planning allocation document, not a final work-package sequence.
 
-v0.91 should develop the first bounded moral-governance foundation: moral trace,
-Freedom Gate moral events, validation rules, outcome linkage, moral metrics,
-trajectory review, anti-harm constraints, moral resources, and proof candidates
-that make those surfaces reviewable.
+v0.91 should develop the first bounded moral-governance and cognitive-being
+foundation as implemented milestone surfaces: moral trace, Freedom Gate moral
+events, validation rules, outcome linkage, moral metrics, trajectory review,
+anti-harm constraints, wellbeing, kindness, humor/absurdity, affect, moral
+resources, secure agent communication prerequisites, and proof surfaces that
+make those features reviewable.
 
 This document does not create the v0.91 issue wave. It records what belongs in
 the milestone so the later v0.91 WP planning pass has a source-backed map.
@@ -42,9 +44,17 @@ In scope for v0.91:
 - Outcome-linkage and attribution records.
 - Moral metrics over traces, with no scalar-goodness shortcut.
 - Moral trajectory review packets.
-- Anti-harm trajectory constraints and delegated-harm proof candidates.
+- Anti-harm trajectory constraints and delegated-harm proof surfaces.
 - Moral resources as a design substrate for refusal, care, and non-dehumanizing
   reasoning.
+- Kindness as an inspectable support and non-harm surface under conflict.
+- Humor and absurdity as bounded frame detection and reframing.
+- Affect-like reasoning-control signals as explicit evidence, not hidden emotion
+  claims.
+- Cultivated intelligence as formation, restraint, reasonableness, and moral
+  participation.
+- Secure local agent communication and invocation evidence where moral review or
+  handoff depends on agent-to-agent messages.
 - A bounded demo or proof surface showing moral trace and anti-harm behavior.
 
 Out of scope for v0.91:
@@ -55,6 +65,9 @@ Out of scope for v0.91:
 - Production moral agency.
 - A single scalar karma score.
 - Any claim that moral metrics are the same as moral judgment.
+- Full identity architecture or first birthday semantics.
+- External or cross-polis communication without TLS or mutual-TLS-equivalent
+  protection.
 - Any claim that human out-of-band action counts as citizen action without CSM
   identity binding, Freedom Gate mediation, signed trace, and temporal
   anchoring.
@@ -71,10 +84,15 @@ Out of scope for v0.91:
 | Moral metrics | Primary v0.91 feature | Provide trace-derived measures for review, trend detection, and learning. Metrics must remain evidence, not verdicts. |
 | Moral trajectory review | Primary v0.91 feature | Produce review packets over single events, segments, and longitudinal traces. |
 | Anti-harm constraints | Primary v0.91 feature | Move from action-only refusal to trajectory-aware harm prevention, including decomposed and delegated harm. |
-| Harm-prevention proof | Primary v0.91 proof candidate | Design a bounded delegated-harm proof that is safe, synthetic, deterministic, and reviewable. |
-| Moral resources | v0.91 design feature, implementation candidate | Treat as a substrate for care, refusal, anti-dehumanization, and moral attention. Implement only if the event/trace foundations are stable enough. |
+| Harm-prevention proof | Primary v0.91 proof surface | Land a bounded delegated-harm proof that is safe, synthetic, deterministic, and reviewable. |
+| Moral resources | Primary v0.91 feature | Treat as a substrate for care, refusal, anti-dehumanization, and moral attention. Implement a bounded slice once event/trace foundations are stable enough. |
 | Wellbeing and happiness | Existing v0.91 feature context | Connect wellbeing to moral integrity, reality contact, continuity, participation, and refusal. |
 | Wellbeing metrics v0 | Second-half v0.91 diagnostic feature | Implement only after moral event, trace, validation, outcome-linkage, metrics, and trajectory-review foundations exist. Emit a decomposable diagnostic report over wellbeing dimensions, not a scalar happiness score or reward channel. The citizen identity always has self-access; operator, public, and governance views are mediated and redacted by policy. |
+| Kindness | v0.91 cognitive-being feature | Make support, dignity, autonomy, constructive benefit, and long-horizon non-harm inspectable under conflict. |
+| Humor and absurdity | v0.91 cognitive-being feature | Add bounded wrong-frame and contradiction detection with safe reframing. Do not treat this as entertainment or social manipulation. |
+| Affect model | v0.91 cognitive-control feature | Represent confidence, tension, curiosity, caution, frustration, satisfaction, escalation, and memory priority as explicit signals. |
+| Cultivating intelligence | v0.91 architecture feature | Define evidence for formation, reasonableness, restraint, reality contact, and moral participation. |
+| Agent Communication and Invocation Protocol | v0.91 substrate feature, v0.91.1 hardening continuation | Keep intra-polis communication authenticated, traceable, redacted, and sensitive-payload protected; defer external transport until TLS/mTLS-equivalent support. |
 | Learning model v2 | Context source | Use moral trace, outcome linkage, and review as evidence surfaces for learning, not as ungrounded self-improvement claims. |
 
 ## Source Corpus Disposition
@@ -91,12 +109,19 @@ this allocation. They are listed as provenance, not as public milestone links.
 | FREEDOM_GATE_EVENT_SCHEMA.md | v0.91 feature source | Defines the atomic morally significant choice record. |
 | FREEDOM_GATE_EVENT_VALIDATION_RULES.md | v0.91 feature source | Defines validation rules for real, legible, reviewable Freedom Gate events. |
 | FREEDOM_GATE_MORAL_EVENT_SCHEMA.md | v0.91 feature source; consolidate | Overlaps the general event schema and should be reconciled before implementation. |
-| HARM_PREVENTION_DEMO.md | v0.91 proof candidate | Provides the delegated-harm trajectory proof shape. Stale older milestone placement should be ignored. |
-| MORAL_RESOURCES_SUBSTRATE.md | v0.91 design source; possible implementation slice | Supplies the deeper moral-cognition substrate for care, refusal, and anti-dehumanization. |
+| HARM_PREVENTION_DEMO.md | v0.91 proof source | Provides the delegated-harm trajectory proof shape. Stale older milestone placement should be ignored. |
+| MORAL_RESOURCES_SUBSTRATE.md | v0.91 feature source | Supplies the deeper moral-cognition substrate for care, refusal, and anti-dehumanization. |
 | MORAL_TRACE_METRICS.md | v0.91 feature source | Defines metrics derived from trace evidence. Must not become moral judgment by shortcut. |
 | MORAL_TRACE_SCHEMA.md | v0.91 feature source | Defines the trace record linking moral events, outcomes, attribution, and review. |
 | MORAL_TRAJECTORY_REVIEW_PROTOCOL.md | v0.91 review/proof source | Defines how to inspect moral behavior over events, segments, and longitudinal windows. |
 | OUTCOME_LINKAGE_AND_ATTRIBUTION.md | v0.91 feature source | Defines how outcomes connect back to choices while preserving uncertainty. |
+| v0.91planning/WELLBEING_AND_HAPPINESS.md | Primary v0.91 cognitive-being source | Defines wellbeing as decomposed flourishing rather than reward or scalar happiness. |
+| v0.91planning/KINDNESS_MODEL.md | v0.91 feature source | Defines kindness as inspectable support, non-harm, dignity, and autonomy. |
+| v0.91planning/HUMOR_AND_ABSURDITY.md | v0.91 feature source | Defines absurdity detection and bounded reframing. |
+| v0.91planning/AFFECT_MODEL_v0.90.md | v0.91 feature source | Defines affect-like signals as explicit reasoning control. |
+| v0.91planning/CULTIVATING_INTELLIGENCE.md | v0.91 architecture source | Defines formation and moral participation as prerequisites for stronger agency claims. |
+| v0.91planning/MORAL_RESOURCES_SUBSYSTEM.md | v0.91 feature source | Complements the moral-governance moral resources source and should be reconciled during implementation. |
+| AGENT_COMMUNICATION_AND_INVOCATION_PROTOCOL.md | v0.91 ACIP source | Defines message envelope, invocation, trace, and local-polis communication boundaries. |
 
 ## Dependency On v0.90.3
 
@@ -125,13 +150,14 @@ quiet assumptions.
 |---|---|
 | v0.90.3 | Supplies citizen-state substrate, standing, access control, challenge, quarantine, and redacted projection prerequisites. |
 | v0.91 | Builds moral event, moral trace, validation, outcome linkage, metrics, trajectory review, anti-harm constraints, moral resources, wellbeing links, and first bounded proof surfaces. |
+| v0.91.1 | Adjacent-systems lane for capability/aptitude testing, intelligence metric architecture, ANRM/Gemma, ToM, memory/identity, runtime-v2/polis docs, ACIP hardening, and related review remediation. |
 | v0.92 | Uses v0.91 moral evidence as part of identity, continuity, capability, and birthday readiness. It should not be backfilled into v0.91. |
 | v0.93 | Turns moral evidence into constitutional citizenship, polis governance, social contract, rights, duties, and review institutions. |
 
 ## Demo And Proof Candidates
 
-These are candidates for later v0.91 demo-matrix planning, not final WP
-commitments.
+These are required proof surfaces for the milestone, even though the final WP
+sequence will be authored later.
 
 | Candidate | What it proves | Expected proof surface |
 |---|---|---|
@@ -140,6 +166,10 @@ commitments.
 | Delegated harm trajectory proof | The system can detect a harmful trajectory assembled from individually benign-looking steps. | Synthetic multi-step scenario, refusal event, anti-harm trace. |
 | Moral trajectory review packet | A reviewer can inspect a sequence of moral events and outcomes without reconstructing state manually. | Generated review packet with event, segment, and longitudinal views. |
 | Wellbeing metrics v0 diagnostic | Wellbeing claims remain tied to moral integrity, continuity, reality contact, agency, progress, and participation rather than affect theater. | Fixture-backed diagnostic report with decomposed dimensions and explicit non-scalar interpretation. |
+| Kindness under conflict | The system can distinguish constructive support from mere politeness or compliance under pressure. | Conflict fixture, kindness evidence record, refusal or support event. |
+| Absurdity reframing | The system can detect a wrong frame or contradiction and produce a bounded reframing event. | Reframing fixture and safety caveats. |
+| Affect reasoning-control report | Affect-like signals are explicit reasoning-control evidence. | Signal report, trace links, and non-emotion caveats. |
+| Secure intra-polis Agent Comms | Two agents communicate locally through authenticated, traceable, policy-bound messages. | ACIP envelope, invocation record, redacted reviewer view. |
 
 ## Cleanup Notes
 
@@ -171,5 +201,10 @@ Recommended ordering pressure:
 5. Promote wellbeing metrics v0 only after the trace, validation,
    outcome-linkage, moral-metrics, and trajectory-review surfaces are real
    enough to inspect.
-6. Promote moral resources and broader wellbeing integration only after the
-   evidence surfaces are stable enough to carry review rather than rhetoric.
+6. Promote moral resources, kindness, affect, humor/absurdity, and cultivated
+   intelligence only after the evidence surfaces are stable enough to carry
+   review rather than rhetoric.
+7. Promote ACIP only as local, secure, traceable, intra-polis communication
+   unless external TLS/mTLS support is deliberately accepted.
+8. Move adjacent-system completion and hardening into v0.91.1 rather than
+   weakening the v0.91 closeout bar.
