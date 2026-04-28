@@ -11,6 +11,131 @@ pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
         TraceEventNormalized::ExecutionBoundaryCrossed { boundary, state } => {
             format!("ExecutionBoundaryCrossed boundary={boundary} state={state}")
         }
+        TraceEventNormalized::GovernedProposalObserved {
+            proposal_id,
+            tool_name,
+            redacted_arguments_ref,
+        } => {
+            format!(
+                "GovernedProposalObserved proposal_id={proposal_id} tool={tool_name} arguments_ref={redacted_arguments_ref}"
+            )
+        }
+        TraceEventNormalized::GovernedProposalNormalized {
+            proposal_id,
+            normalized_proposal_ref,
+            redacted_arguments_ref,
+        } => {
+            format!(
+                "GovernedProposalNormalized proposal_id={proposal_id} normalized_ref={normalized_proposal_ref} arguments_ref={redacted_arguments_ref}"
+            )
+        }
+        TraceEventNormalized::GovernedAccConstructed {
+            proposal_id,
+            acc_contract_id,
+            replay_posture,
+        } => {
+            format!(
+                "GovernedAccConstructed proposal_id={proposal_id} acc={acc_contract_id} replay_posture={replay_posture}"
+            )
+        }
+        TraceEventNormalized::GovernedPolicyInjected {
+            proposal_id,
+            policy_evidence_ref,
+            outcome,
+        } => {
+            format!(
+                "GovernedPolicyInjected proposal_id={proposal_id} policy_ref={policy_evidence_ref} outcome={outcome}"
+            )
+        }
+        TraceEventNormalized::GovernedVisibilityResolved {
+            proposal_id,
+            actor_view,
+            operator_view,
+            reviewer_view,
+            public_report_view,
+            observatory_projection,
+        } => {
+            format!(
+                "GovernedVisibilityResolved proposal_id={proposal_id} actor_view={actor_view} operator_view={operator_view} reviewer_view={reviewer_view} public_view={public_report_view} observatory={observatory_projection}"
+            )
+        }
+        TraceEventNormalized::GovernedFreedomGateDecided {
+            proposal_id,
+            candidate_id,
+            decision,
+            reason_code,
+            boundary,
+            redaction_summary,
+        } => {
+            format!(
+                "GovernedFreedomGateDecided proposal_id={proposal_id} candidate={candidate_id} decision={decision} reason={reason_code} boundary={boundary} redaction={redaction_summary}"
+            )
+        }
+        TraceEventNormalized::GovernedActionSelected {
+            proposal_id,
+            action_id,
+            tool_name,
+            adapter_id,
+            evidence_refs,
+        } => {
+            format!(
+                "GovernedActionSelected proposal_id={proposal_id} action_id={action_id} tool={tool_name} adapter={adapter_id} evidence_count={}",
+                evidence_refs.len()
+            )
+        }
+        TraceEventNormalized::GovernedActionRejected {
+            proposal_id,
+            action_id,
+            tool_name,
+            adapter_id,
+            reason_code,
+            evidence_refs,
+        } => {
+            format!(
+                "GovernedActionRejected proposal_id={proposal_id} action_id={action_id} tool={tool_name} adapter={adapter_id} reason={reason_code} evidence_count={}",
+                evidence_refs.len()
+            )
+        }
+        TraceEventNormalized::GovernedExecutionResultRecorded {
+            proposal_id,
+            action_id,
+            adapter_id,
+            result_ref,
+            evidence_refs,
+        } => {
+            format!(
+                "GovernedExecutionResultRecorded proposal_id={proposal_id} action_id={action_id} adapter={adapter_id} result_ref={result_ref} evidence_count={}",
+                evidence_refs.len()
+            )
+        }
+        TraceEventNormalized::GovernedRefusalRecorded {
+            proposal_id,
+            action_id,
+            reason_code,
+            evidence_refs,
+        } => {
+            format!(
+                "GovernedRefusalRecorded proposal_id={proposal_id} action_id={action_id} reason={reason_code} evidence_count={}",
+                evidence_refs.len()
+            )
+        }
+        TraceEventNormalized::GovernedRedactionDecisionRecorded {
+            proposal_id,
+            audience,
+            surfaces,
+            outcome,
+            detail,
+        } => {
+            let surfaces = surfaces.join(",");
+            let base = format!(
+                "GovernedRedactionDecisionRecorded proposal_id={proposal_id} audience={audience} surfaces={surfaces} outcome={outcome}"
+            );
+            if let Some(detail) = detail {
+                format!("{base} detail={detail}")
+            } else {
+                base
+            }
+        }
         TraceEventNormalized::SchedulerPolicy {
             max_concurrency,
             source,
@@ -156,6 +281,24 @@ mod tests {
                     state: "entered".to_string(),
                 },
                 "ExecutionBoundaryCrossed boundary=scheduler state=entered",
+            ),
+            (
+                TraceEventNormalized::GovernedProposalObserved {
+                    proposal_id: "proposal.safe-read".to_string(),
+                    tool_name: "fixture.safe_read".to_string(),
+                    redacted_arguments_ref: "artifacts/run/governed/proposal_arguments.redacted.json"
+                        .to_string(),
+                },
+                "GovernedProposalObserved proposal_id=proposal.safe-read tool=fixture.safe_read arguments_ref=artifacts/run/governed/proposal_arguments.redacted.json",
+            ),
+            (
+                TraceEventNormalized::GovernedProposalNormalized {
+                    proposal_id: "proposal.safe-read".to_string(),
+                    normalized_proposal_ref: "normalized.proposal.safe-read".to_string(),
+                    redacted_arguments_ref: "artifacts/run/governed/proposal_arguments.redacted.json"
+                        .to_string(),
+                },
+                "GovernedProposalNormalized proposal_id=proposal.safe-read normalized_ref=normalized.proposal.safe-read arguments_ref=artifacts/run/governed/proposal_arguments.redacted.json",
             ),
             (
                 TraceEventNormalized::SchedulerPolicy {

@@ -19,6 +19,148 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
                 boundary: boundary.as_str().to_string(),
                 state: state.clone(),
             },
+            TraceEvent::GovernedProposalObserved {
+                proposal_id,
+                tool_name,
+                redacted_arguments_ref,
+                ..
+            } => TraceEventNormalized::GovernedProposalObserved {
+                proposal_id: proposal_id.clone(),
+                tool_name: tool_name.clone(),
+                redacted_arguments_ref: redacted_arguments_ref.clone(),
+            },
+            TraceEvent::GovernedProposalNormalized {
+                proposal_id,
+                normalized_proposal_ref,
+                redacted_arguments_ref,
+                ..
+            } => TraceEventNormalized::GovernedProposalNormalized {
+                proposal_id: proposal_id.clone(),
+                normalized_proposal_ref: normalized_proposal_ref.clone(),
+                redacted_arguments_ref: redacted_arguments_ref.clone(),
+            },
+            TraceEvent::GovernedAccConstructed {
+                proposal_id,
+                acc_contract_id,
+                replay_posture,
+                ..
+            } => TraceEventNormalized::GovernedAccConstructed {
+                proposal_id: proposal_id.clone(),
+                acc_contract_id: acc_contract_id.clone(),
+                replay_posture: replay_posture.clone(),
+            },
+            TraceEvent::GovernedPolicyInjected {
+                proposal_id,
+                policy_evidence_ref,
+                outcome,
+                ..
+            } => TraceEventNormalized::GovernedPolicyInjected {
+                proposal_id: proposal_id.clone(),
+                policy_evidence_ref: policy_evidence_ref.clone(),
+                outcome: outcome.clone(),
+            },
+            TraceEvent::GovernedVisibilityResolved {
+                proposal_id,
+                actor_view,
+                operator_view,
+                reviewer_view,
+                public_report_view,
+                observatory_projection,
+                ..
+            } => TraceEventNormalized::GovernedVisibilityResolved {
+                proposal_id: proposal_id.clone(),
+                actor_view: actor_view.clone(),
+                operator_view: operator_view.clone(),
+                reviewer_view: reviewer_view.clone(),
+                public_report_view: public_report_view.clone(),
+                observatory_projection: observatory_projection.clone(),
+            },
+            TraceEvent::GovernedFreedomGateDecided {
+                proposal_id,
+                candidate_id,
+                decision,
+                reason_code,
+                boundary,
+                redaction_summary,
+                ..
+            } => TraceEventNormalized::GovernedFreedomGateDecided {
+                proposal_id: proposal_id.clone(),
+                candidate_id: candidate_id.clone(),
+                decision: decision.clone(),
+                reason_code: reason_code.clone(),
+                boundary: boundary.clone(),
+                redaction_summary: redaction_summary.clone(),
+            },
+            TraceEvent::GovernedActionSelected {
+                proposal_id,
+                action_id,
+                tool_name,
+                adapter_id,
+                evidence_refs,
+                ..
+            } => TraceEventNormalized::GovernedActionSelected {
+                proposal_id: proposal_id.clone(),
+                action_id: action_id.clone(),
+                tool_name: tool_name.clone(),
+                adapter_id: adapter_id.clone(),
+                evidence_refs: evidence_refs.clone(),
+            },
+            TraceEvent::GovernedActionRejected {
+                proposal_id,
+                action_id,
+                tool_name,
+                adapter_id,
+                reason_code,
+                evidence_refs,
+                ..
+            } => TraceEventNormalized::GovernedActionRejected {
+                proposal_id: proposal_id.clone(),
+                action_id: action_id.clone(),
+                tool_name: tool_name.clone(),
+                adapter_id: adapter_id.clone(),
+                reason_code: reason_code.clone(),
+                evidence_refs: evidence_refs.clone(),
+            },
+            TraceEvent::GovernedExecutionResultRecorded {
+                proposal_id,
+                action_id,
+                adapter_id,
+                result_ref,
+                evidence_refs,
+                ..
+            } => TraceEventNormalized::GovernedExecutionResultRecorded {
+                proposal_id: proposal_id.clone(),
+                action_id: action_id.clone(),
+                adapter_id: adapter_id.clone(),
+                result_ref: result_ref.clone(),
+                evidence_refs: evidence_refs.clone(),
+            },
+            TraceEvent::GovernedRefusalRecorded {
+                proposal_id,
+                action_id,
+                reason_code,
+                evidence_refs,
+                ..
+            } => TraceEventNormalized::GovernedRefusalRecorded {
+                proposal_id: proposal_id.clone(),
+                action_id: action_id.clone(),
+                reason_code: reason_code.clone(),
+                evidence_refs: evidence_refs.clone(),
+            },
+            TraceEvent::GovernedRedactionDecisionRecorded {
+                proposal_id,
+                audience,
+                surfaces,
+                outcome,
+                detail,
+                ..
+            } => TraceEventNormalized::GovernedRedactionDecisionRecorded {
+                proposal_id: proposal_id.clone(),
+                audience: audience.clone(),
+                surfaces: surfaces.clone(),
+                outcome: outcome.clone(),
+                detail: detail.clone(),
+            },
             TraceEvent::SchedulerPolicy {
                 max_concurrency,
                 source,

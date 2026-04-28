@@ -18,6 +18,124 @@ use super::super::*;
 use super::trace_envelope::build_trace_v1_envelope;
 use ::adl::runtime_environment::RuntimeEnvironment;
 use serde::Serialize;
+use serde_json::{json, Value as JsonValue};
+use std::collections::BTreeMap;
+
+fn governed_trace_artifacts_for_run(tr: &trace::Trace) -> (Option<JsonValue>, Option<JsonValue>) {
+    let mut proposal_redaction_summaries = BTreeMap::new();
+    let mut proposal_redaction_details = BTreeMap::new();
+    for event in &tr.events {
+        match event {
+            trace::TraceEvent::GovernedFreedomGateDecided {
+                proposal_id,
+                redaction_summary,
+                ..
+            } => {
+                proposal_redaction_summaries
+                    .entry(proposal_id.clone())
+                    .or_insert_with(|| redaction_summary.clone());
+            }
+            trace::TraceEvent::GovernedRedactionDecisionRecorded {
+                proposal_id,
+                detail,
+                ..
+            } => {
+                proposal_redaction_details
+                    .entry(proposal_id.clone())
+                    .or_insert_with(|| detail.clone());
+            }
+            _ => {}
+        }
+    }
+
+    let mut proposal_entries = Vec::new();
+    let mut result_entries = Vec::new();
+
+    for event in &tr.events {
+        match event {
+            trace::TraceEvent::GovernedProposalObserved {
+                proposal_id,
+                tool_name,
+                redacted_arguments_ref,
+                ..
+            } => {
+                proposal_entries.push(json!({
+                    "proposal_id": proposal_id,
+                    "tool_name": tool_name,
+                    "redacted_arguments_ref": redacted_arguments_ref,
+                    "redaction": {
+                        "status": "redacted",
+                        "detail": proposal_redaction_details
+                            .get(proposal_id)
+                            .cloned()
+                            .flatten(),
+                        "summary": proposal_redaction_summaries.get(proposal_id).cloned(),
+                    }
+                }));
+            }
+            trace::TraceEvent::GovernedExecutionResultRecorded {
+                proposal_id,
+                action_id,
+                adapter_id,
+                result_ref,
+                evidence_refs,
+                ..
+            } => {
+                result_entries.push(json!({
+                    "proposal_id": proposal_id,
+                    "action_id": action_id,
+                    "adapter_id": adapter_id,
+                    "result_ref": result_ref,
+                    "result_status": "redacted",
+                    "evidence_refs": evidence_refs,
+                }));
+            }
+            _ => {}
+        }
+    }
+
+    let proposal_artifact = (!proposal_entries.is_empty()).then(|| {
+        json!({
+            "schema_version": "governed_trace_arguments.v1",
+            "run_id": tr.run_id.clone(),
+            "entries": proposal_entries,
+        })
+    });
+    let result_artifact = (!result_entries.is_empty()).then(|| {
+        json!({
+            "schema_version": "governed_trace_results.v1",
+            "run_id": tr.run_id.clone(),
+            "entries": result_entries,
+        })
+    });
+
+    (proposal_artifact, result_artifact)
+}
+
+pub(crate) fn write_governed_trace_artifacts_for_run_paths(
+    run_paths: &artifacts::RunArtifactPaths,
+    tr: &trace::Trace,
+) -> Result<()> {
+    let governed_dir = run_paths.run_dir().join("governed");
+    std::fs::create_dir_all(&governed_dir).context("create governed artifact dir")?;
+
+    let (proposal_artifact, result_artifact) = governed_trace_artifacts_for_run(tr);
+    if let Some(proposal_artifact) = proposal_artifact {
+        artifacts::atomic_write(
+            &governed_dir.join("proposal_arguments.redacted.json"),
+            &serde_json::to_vec_pretty(&proposal_artifact)
+                .context("serialize governed proposal arguments artifact")?,
+        )?;
+    }
+    if let Some(result_artifact) = result_artifact {
+        artifacts::atomic_write(
+            &governed_dir.join("result.redacted.json"),
+            &serde_json::to_vec_pretty(&result_artifact)
+                .context("serialize governed result artifact")?,
+        )?;
+    }
+    Ok(())
+}
 
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn write_run_state_artifacts(
@@ -125,6 +243,7 @@ pub(crate) fn write_run_state_artifacts(
     let steps_json = serde_json::to_vec_pretty(&steps).context("serialize steps.json")?;
     let activation_log_path = run_paths.activation_log_json();
     instrumentation::write_trace_artifact(&activation_log_path, &tr.events)?;
+    write_governed_trace_artifacts_for_run_paths(&run_paths, tr)?;
     let trace_v1 =
         build_trace_v1_envelope(resolved, tr, &steps, start_ms, end_ms, status, failure)?;
     let trace_v1_json = serde_json::to_vec_pretty(&trace_v1).context("serialize trace_v1.json")?;

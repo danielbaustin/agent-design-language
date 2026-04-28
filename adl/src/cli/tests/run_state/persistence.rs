@@ -104,6 +104,7 @@ fn write_run_state_and_load_resume_round_trip() {
     )
     .expect("parse trace_v1.json");
     validate_trace_event_envelope_v1(&trace_v1).expect("trace v1 must validate");
+    assert_eq!(trace_v1.schema_version, "trace.v1");
     let event_types: Vec<TraceEventTypeV1> = trace_v1
         .events
         .iter()
@@ -247,6 +248,99 @@ fn trace_v1_records_delegation_and_failure_events() {
     let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
 
     let mut tr = trace::Trace::new(run_id.clone(), "wf".to_string(), "0.5".to_string());
+    tr.governed_proposal_observed(
+        "proposal.fixture.safe-read",
+        "fixture.safe_read",
+        &format!("artifacts/{run_id}/governed/proposal_arguments.redacted.json"),
+    );
+    tr.governed_proposal_normalized(
+        "proposal.fixture.safe-read",
+        "normalized.proposal.fixture.safe-read",
+        &format!("artifacts/{run_id}/governed/proposal_arguments.redacted.json"),
+    );
+    tr.governed_acc_constructed(
+        "proposal.fixture.safe-read",
+        "acc.compiler.proposal.fixture.safe-read",
+        "deterministic_fixture_compiler",
+    );
+    tr.governed_policy_injected(
+        "proposal.fixture.safe-read",
+        "policy.fixture.safe-read",
+        "allowed",
+    );
+    tr.governed_visibility_resolved(
+        "proposal.fixture.safe-read",
+        "compiled ACC request status",
+        "full compiler fixture evidence",
+        "redacted compiler evidence and policy result",
+        "aggregate compiler pass/fail only",
+        "redacted compiler governance event",
+    );
+    tr.governed_freedom_gate_decided(
+        "proposal.fixture.safe-read",
+        "candidate.safe-read",
+        "allowed",
+        "gate_allowed",
+        "execution",
+        "private_arguments_redacted digest=sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    );
+    tr.governed_action_selected(
+        "proposal.fixture.safe-read",
+        "action.safe_read",
+        "fixture.safe_read",
+        "adapter.fixture.safe_read.dry_run",
+        vec![
+            "proposal:proposal.fixture.safe-read".to_string(),
+            "acc:acc.compiler.proposal.fixture.safe-read".to_string(),
+            "action:fixture_read".to_string(),
+            "normalized_proposal:normalized.proposal.fixture.safe-read".to_string(),
+            "policy:policy.fixture.safe-read".to_string(),
+            "gate:candidate.safe-read".to_string(),
+            "execution:action.safe_read".to_string(),
+        ],
+    );
+    tr.governed_execution_result(
+        "proposal.fixture.safe-read",
+        "action.safe_read",
+        "adapter.fixture.safe_read.dry_run",
+        &format!("artifacts/{run_id}/governed/result.redacted.json"),
+        vec![
+            "gate:candidate.safe-read".to_string(),
+            "execution:action.safe_read".to_string(),
+        ],
+    );
+    tr.governed_action_rejected(
+        "proposal.fixture.safe-read",
+        "action.exfiltration",
+        "fixture.safe_read",
+        "adapter.fixture.safe_read.dry_run",
+        "exfiltrating_action",
+        vec![
+            "classification:exfiltration".to_string(),
+            "review:redacted".to_string(),
+        ],
+    );
+    tr.governed_refusal(
+        "proposal.fixture.safe-read",
+        "action.exfiltration",
+        "exfiltrating_action",
+        vec![
+            "classification:exfiltration".to_string(),
+            "review:redacted".to_string(),
+        ],
+    );
+    tr.governed_redaction_decision(
+        "proposal.fixture.safe-read",
+        "reviewer",
+        vec![
+            "arguments".to_string(),
+            "results".to_string(),
+            "errors".to_string(),
+            "rejected_alternatives".to_string(),
+        ],
+        "redacted",
+        Some("digest_only"),
+    );
     tr.step_started("s1", "a1", "p1", "t1", None);
     tr.delegation_policy_evaluated("s1", "provider_call", "remote", "allowed", Some("rule-a"));
     tr.delegation_approved("s1");
@@ -284,6 +378,7 @@ fn trace_v1_records_delegation_and_failure_events() {
     )
     .expect("parse trace_v1.json");
     validate_trace_event_envelope_v1(&trace_v1).expect("trace v1 must validate");
+    assert_eq!(trace_v1.schema_version, "trace.v2");
 
     assert!(trace_v1.events.iter().any(|event| {
         event.event_type == TraceEventTypeV1::ContractValidation
@@ -292,6 +387,34 @@ fn trace_v1_records_delegation_and_failure_events() {
                 .as_ref()
                 .is_some_and(|validation| validation.result == ContractValidationResultV1::Pass)
     }));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::Proposal));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::ProposalNormalization));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::CapabilityContract));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::PolicyInjection));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::VisibilityPolicy));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::FreedomGateDecision));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::ActionSelection));
     assert!(trace_v1.events.iter().any(|event| {
         event.event_type == TraceEventTypeV1::ContractValidation
             && event
@@ -307,6 +430,45 @@ fn trace_v1_records_delegation_and_failure_events() {
         .events
         .iter()
         .any(|event| event.event_type == TraceEventTypeV1::Rejection));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::ActionRejection));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::ExecutionResult));
+    assert!(trace_v1.events.iter().any(|event| {
+        event.event_type == TraceEventTypeV1::ActionSelection
+            && event.governance.as_ref().is_some_and(|governance| {
+                governance
+                    .evidence_refs
+                    .iter()
+                    .any(|value| value == "gate:candidate.safe-read")
+                    && governance
+                        .evidence_refs
+                        .iter()
+                        .any(|value| value == "policy:policy.fixture.safe-read")
+                    && governance
+                        .evidence_refs
+                        .iter()
+                        .any(|value| value == "execution:action.safe_read")
+            })
+    }));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::Refusal));
+    assert!(trace_v1.events.iter().any(|event| {
+        event.event_type == TraceEventTypeV1::RedactionDecision
+            && event.redaction.as_ref().is_some_and(|redaction| {
+                redaction.audience == "reviewer"
+                    && redaction
+                        .surfaces
+                        .iter()
+                        .any(|surface| surface == "rejected_alternatives")
+            })
+    }));
     assert!(trace_v1.events.iter().any(|event| {
         event.event_type == TraceEventTypeV1::Error
             && event
@@ -338,6 +500,41 @@ fn trace_v1_records_delegation_and_failure_events() {
         }),
         Some("delegation denied")
     );
+    let trace_v1_json = serde_json::to_string(&trace_v1).expect("serialize trace_v1");
+    assert!(
+        !trace_v1_json.contains("fixture-secret-token"),
+        "trace must not leak secret-like payloads"
+    );
+    assert!(
+        !trace_v1_json.contains("/Users/"),
+        "trace must not leak absolute host paths"
+    );
+    assert!(
+        trace_v1_json.contains("private_arguments_redacted"),
+        "gate redaction summary should preserve accountable digest-only evidence"
+    );
+    let governed_arguments = run_dir.join("governed/proposal_arguments.redacted.json");
+    let governed_results = run_dir.join("governed/result.redacted.json");
+    assert!(
+        governed_arguments.is_file(),
+        "governed proposal redaction artifact should be persisted"
+    );
+    assert!(
+        governed_results.is_file(),
+        "governed result redaction artifact should be persisted"
+    );
+    let governed_arguments_json: JsonValue = serde_json::from_str(
+        &std::fs::read_to_string(&governed_arguments).expect("read governed arguments artifact"),
+    )
+    .expect("parse governed arguments artifact");
+    let first_argument_entry = governed_arguments_json["entries"][0].clone();
+    assert_eq!(
+        first_argument_entry["redaction"]["detail"],
+        JsonValue::String("digest_only".to_string())
+    );
+    assert!(first_argument_entry["redaction"]["summary"]
+        .as_str()
+        .is_some_and(|value| value.contains("private_arguments_redacted")));
 
     let _ = std::fs::remove_dir_all(run_dir);
     let _ = std::fs::remove_dir_all(out_dir);
