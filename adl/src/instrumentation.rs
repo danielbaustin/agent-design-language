@@ -34,6 +34,76 @@ pub enum TraceEventNormalized {
         boundary: String,
         state: String,
     },
+    GovernedProposalObserved {
+        proposal_id: String,
+        tool_name: String,
+        redacted_arguments_ref: String,
+    },
+    GovernedProposalNormalized {
+        proposal_id: String,
+        normalized_proposal_ref: String,
+        redacted_arguments_ref: String,
+    },
+    GovernedAccConstructed {
+        proposal_id: String,
+        acc_contract_id: String,
+        replay_posture: String,
+    },
+    GovernedPolicyInjected {
+        proposal_id: String,
+        policy_evidence_ref: String,
+        outcome: String,
+    },
+    GovernedVisibilityResolved {
+        proposal_id: String,
+        actor_view: String,
+        operator_view: String,
+        reviewer_view: String,
+        public_report_view: String,
+        observatory_projection: String,
+    },
+    GovernedFreedomGateDecided {
+        proposal_id: String,
+        candidate_id: String,
+        decision: String,
+        reason_code: String,
+        boundary: String,
+        redaction_summary: String,
+    },
+    GovernedActionSelected {
+        proposal_id: String,
+        action_id: String,
+        tool_name: String,
+        adapter_id: String,
+    },
+    GovernedActionRejected {
+        proposal_id: String,
+        action_id: String,
+        tool_name: String,
+        adapter_id: String,
+        reason_code: String,
+        evidence_refs: Vec<String>,
+    },
+    GovernedExecutionResultRecorded {
+        proposal_id: String,
+        action_id: String,
+        adapter_id: String,
+        result_ref: String,
+        evidence_refs: Vec<String>,
+    },
+    GovernedRefusalRecorded {
+        proposal_id: String,
+        action_id: String,
+        reason_code: String,
+        evidence_refs: Vec<String>,
+    },
+    GovernedRedactionDecisionRecorded {
+        proposal_id: String,
+        audience: String,
+        surfaces: Vec<String>,
+        outcome: String,
+        detail: Option<String>,
+    },
     SchedulerPolicy {
         max_concurrency: usize,
         source: String,
@@ -283,7 +353,18 @@ pub fn replay_trace(events: &[TraceEventNormalized]) -> TraceReplay {
     for ev in events {
         match ev {
             TraceEventNormalized::LifecyclePhaseEntered { .. }
-            | TraceEventNormalized::ExecutionBoundaryCrossed { .. } => {}
+            | TraceEventNormalized::ExecutionBoundaryCrossed { .. }
+            | TraceEventNormalized::GovernedProposalObserved { .. }
+            | TraceEventNormalized::GovernedProposalNormalized { .. }
+            | TraceEventNormalized::GovernedAccConstructed { .. }
+            | TraceEventNormalized::GovernedPolicyInjected { .. }
+            | TraceEventNormalized::GovernedVisibilityResolved { .. }
+            | TraceEventNormalized::GovernedFreedomGateDecided { .. }
+            | TraceEventNormalized::GovernedActionSelected { .. }
+            | TraceEventNormalized::GovernedActionRejected { .. }
+            | TraceEventNormalized::GovernedExecutionResultRecorded { .. }
+            | TraceEventNormalized::GovernedRefusalRecorded { .. }
+            | TraceEventNormalized::GovernedRedactionDecisionRecorded { .. } => {}
             TraceEventNormalized::StepStarted { step_id, .. } => {
                 step_started_order.push(step_id.clone())
             }

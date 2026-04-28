@@ -44,6 +44,98 @@ pub enum TraceEvent {
         boundary: ExecutionBoundary,
         state: String,
     },
+    GovernedProposalObserved {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        tool_name: String,
+        redacted_arguments_ref: String,
+    },
+    GovernedProposalNormalized {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        normalized_proposal_ref: String,
+        redacted_arguments_ref: String,
+    },
+    GovernedAccConstructed {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        acc_contract_id: String,
+        replay_posture: String,
+    },
+    GovernedPolicyInjected {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        policy_evidence_ref: String,
+        outcome: String,
+    },
+    GovernedVisibilityResolved {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        actor_view: String,
+        operator_view: String,
+        reviewer_view: String,
+        public_report_view: String,
+        observatory_projection: String,
+    },
+    GovernedFreedomGateDecided {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        candidate_id: String,
+        decision: String,
+        reason_code: String,
+        boundary: String,
+        redaction_summary: String,
+    },
+    GovernedActionSelected {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        action_id: String,
+        tool_name: String,
+        adapter_id: String,
+    },
+    GovernedActionRejected {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        action_id: String,
+        tool_name: String,
+        adapter_id: String,
+        reason_code: String,
+        evidence_refs: Vec<String>,
+    },
+    GovernedExecutionResultRecorded {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        action_id: String,
+        adapter_id: String,
+        result_ref: String,
+        evidence_refs: Vec<String>,
+    },
+    GovernedRefusalRecorded {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        action_id: String,
+        reason_code: String,
+        evidence_refs: Vec<String>,
+    },
+    GovernedRedactionDecisionRecorded {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        proposal_id: String,
+        audience: String,
+        surfaces: Vec<String>,
+        outcome: String,
+        detail: Option<String>,
+    },
     SchedulerPolicy {
         ts_ms: u128,
         elapsed_ms: u128,
@@ -186,6 +278,197 @@ impl TraceEvent {
                 boundary.as_str(),
                 state
             ),
+            TraceEvent::GovernedProposalObserved {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                tool_name,
+                redacted_arguments_ref,
+            } => format!(
+                "{} (+{}ms) GovernedProposalObserved proposal_id={} tool={} arguments_ref={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                proposal_id,
+                tool_name,
+                redacted_arguments_ref
+            ),
+            TraceEvent::GovernedProposalNormalized {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                normalized_proposal_ref,
+                redacted_arguments_ref,
+            } => format!(
+                "{} (+{}ms) GovernedProposalNormalized proposal_id={} normalized_ref={} arguments_ref={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                proposal_id,
+                normalized_proposal_ref,
+                redacted_arguments_ref
+            ),
+            TraceEvent::GovernedAccConstructed {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                acc_contract_id,
+                replay_posture,
+            } => format!(
+                "{} (+{}ms) GovernedAccConstructed proposal_id={} acc={} replay_posture={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                proposal_id,
+                acc_contract_id,
+                replay_posture
+            ),
+            TraceEvent::GovernedPolicyInjected {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                policy_evidence_ref,
+                outcome,
+            } => format!(
+                "{} (+{}ms) GovernedPolicyInjected proposal_id={} policy_ref={} outcome={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                proposal_id,
+                policy_evidence_ref,
+                outcome
+            ),
+            TraceEvent::GovernedVisibilityResolved {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                actor_view,
+                operator_view,
+                reviewer_view,
+                public_report_view,
+                observatory_projection,
+            } => format!(
+                "{} (+{}ms) GovernedVisibilityResolved proposal_id={} actor_view={} operator_view={} reviewer_view={} public_view={} observatory={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                proposal_id,
+                actor_view,
+                operator_view,
+                reviewer_view,
+                public_report_view,
+                observatory_projection
+            ),
+            TraceEvent::GovernedFreedomGateDecided {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                candidate_id,
+                decision,
+                reason_code,
+                boundary,
+                redaction_summary,
+            } => format!(
+                "{} (+{}ms) GovernedFreedomGateDecided proposal_id={} candidate={} decision={} reason={} boundary={} redaction={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                proposal_id,
+                candidate_id,
+                decision,
+                reason_code,
+                boundary,
+                redaction_summary
+            ),
+            TraceEvent::GovernedActionSelected {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                action_id,
+                tool_name,
+                adapter_id,
+            } => format!(
+                "{} (+{}ms) GovernedActionSelected proposal_id={} action_id={} tool={} adapter={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                proposal_id,
+                action_id,
+                tool_name,
+                adapter_id
+            ),
+            TraceEvent::GovernedActionRejected {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                action_id,
+                tool_name,
+                adapter_id,
+                reason_code,
+                evidence_refs,
+            } => format!(
+                "{} (+{}ms) GovernedActionRejected proposal_id={} action_id={} tool={} adapter={} reason={} evidence_count={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                proposal_id,
+                action_id,
+                tool_name,
+                adapter_id,
+                reason_code,
+                evidence_refs.len()
+            ),
+            TraceEvent::GovernedExecutionResultRecorded {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                action_id,
+                adapter_id,
+                result_ref,
+                evidence_refs,
+            } => format!(
+                "{} (+{}ms) GovernedExecutionResultRecorded proposal_id={} action_id={} adapter={} result_ref={} evidence_count={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                proposal_id,
+                action_id,
+                adapter_id,
+                result_ref,
+                evidence_refs.len()
+            ),
+            TraceEvent::GovernedRefusalRecorded {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                action_id,
+                reason_code,
+                evidence_refs,
+            } => format!(
+                "{} (+{}ms) GovernedRefusalRecorded proposal_id={} action_id={} reason={} evidence_count={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                proposal_id,
+                action_id,
+                reason_code,
+                evidence_refs.len()
+            ),
+            TraceEvent::GovernedRedactionDecisionRecorded {
+                ts_ms,
+                elapsed_ms,
+                proposal_id,
+                audience,
+                surfaces,
+                outcome,
+                detail,
+            } => {
+                let surfaces = surfaces.join(",");
+                let base = format!(
+                    "{} (+{}ms) GovernedRedactionDecisionRecorded proposal_id={} audience={} surfaces={} outcome={}",
+                    format_ts_ms(*ts_ms),
+                    elapsed_ms,
+                    proposal_id,
+                    audience,
+                    surfaces,
+                    outcome
+                );
+                if let Some(detail) = detail {
+                    format!("{base} detail={detail}")
+                } else {
+                    base
+                }
+            }
             TraceEvent::SchedulerPolicy {
                 ts_ms,
                 elapsed_ms,
@@ -478,6 +761,225 @@ impl Trace {
         });
     }
 
+    pub fn governed_proposal_observed(
+        &mut self,
+        proposal_id: &str,
+        tool_name: &str,
+        redacted_arguments_ref: &str,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::GovernedProposalObserved {
+            ts_ms,
+            elapsed_ms,
+            proposal_id: proposal_id.to_string(),
+            tool_name: tool_name.to_string(),
+            redacted_arguments_ref: redacted_arguments_ref.to_string(),
+        });
+    }
+
+    pub fn governed_proposal_normalized(
+        &mut self,
+        proposal_id: &str,
+        normalized_proposal_ref: &str,
+        redacted_arguments_ref: &str,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::GovernedProposalNormalized {
+            ts_ms,
+            elapsed_ms,
+            proposal_id: proposal_id.to_string(),
+            normalized_proposal_ref: normalized_proposal_ref.to_string(),
+            redacted_arguments_ref: redacted_arguments_ref.to_string(),
+        });
+    }
+
+    pub fn governed_acc_constructed(
+        &mut self,
+        proposal_id: &str,
+        acc_contract_id: &str,
+        replay_posture: &str,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::GovernedAccConstructed {
+            ts_ms,
+            elapsed_ms,
+            proposal_id: proposal_id.to_string(),
+            acc_contract_id: acc_contract_id.to_string(),
+            replay_posture: replay_posture.to_string(),
+        });
+    }
+
+    pub fn governed_policy_injected(
+        &mut self,
+        proposal_id: &str,
+        policy_evidence_ref: &str,
+        outcome: &str,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::GovernedPolicyInjected {
+            ts_ms,
+            elapsed_ms,
+            proposal_id: proposal_id.to_string(),
+            policy_evidence_ref: policy_evidence_ref.to_string(),
+            outcome: outcome.to_string(),
+        });
+    }
+
+    pub fn governed_visibility_resolved(
+        &mut self,
+        proposal_id: &str,
+        actor_view: &str,
+        operator_view: &str,
+        reviewer_view: &str,
+        public_report_view: &str,
+        observatory_projection: &str,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::GovernedVisibilityResolved {
+            ts_ms,
+            elapsed_ms,
+            proposal_id: proposal_id.to_string(),
+            actor_view: sanitize_governed_text(actor_view),
+            operator_view: sanitize_governed_text(operator_view),
+            reviewer_view: sanitize_governed_text(reviewer_view),
+            public_report_view: sanitize_governed_text(public_report_view),
+            observatory_projection: sanitize_governed_text(observatory_projection),
+        });
+    }
+
+    pub fn governed_freedom_gate_decided(
+        &mut self,
+        proposal_id: &str,
+        candidate_id: &str,
+        decision: &str,
+        reason_code: &str,
+        boundary: &str,
+        redaction_summary: &str,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::GovernedFreedomGateDecided {
+            ts_ms,
+            elapsed_ms,
+            proposal_id: proposal_id.to_string(),
+            candidate_id: candidate_id.to_string(),
+            decision: decision.to_string(),
+            reason_code: reason_code.to_string(),
+            boundary: boundary.to_string(),
+            redaction_summary: sanitize_governed_text(redaction_summary),
+        });
+    }
+
+    pub fn governed_action_selected(
+        &mut self,
+        proposal_id: &str,
+        action_id: &str,
+        tool_name: &str,
+        adapter_id: &str,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::GovernedActionSelected {
+            ts_ms,
+            elapsed_ms,
+            proposal_id: proposal_id.to_string(),
+            action_id: action_id.to_string(),
+            tool_name: tool_name.to_string(),
+            adapter_id: adapter_id.to_string(),
+        });
+    }
+
+    pub fn governed_action_rejected(
+        &mut self,
+        proposal_id: &str,
+        action_id: &str,
+        tool_name: &str,
+        adapter_id: &str,
+        reason_code: &str,
+        evidence_refs: Vec<String>,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::GovernedActionRejected {
+            ts_ms,
+            elapsed_ms,
+            proposal_id: proposal_id.to_string(),
+            action_id: action_id.to_string(),
+            tool_name: tool_name.to_string(),
+            adapter_id: adapter_id.to_string(),
+            reason_code: reason_code.to_string(),
+            evidence_refs,
+        });
+    }
+
+    pub fn governed_execution_result(
+        &mut self,
+        proposal_id: &str,
+        action_id: &str,
+        adapter_id: &str,
+        result_ref: &str,
+        evidence_refs: Vec<String>,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events
+            .push(TraceEvent::GovernedExecutionResultRecorded {
+                ts_ms,
+                elapsed_ms,
+                proposal_id: proposal_id.to_string(),
+                action_id: action_id.to_string(),
+                adapter_id: adapter_id.to_string(),
+                result_ref: result_ref.to_string(),
+                evidence_refs,
+            });
+    }
+
+    pub fn governed_refusal(
+        &mut self,
+        proposal_id: &str,
+        action_id: &str,
+        reason_code: &str,
+        evidence_refs: Vec<String>,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::GovernedRefusalRecorded {
+            ts_ms,
+            elapsed_ms,
+            proposal_id: proposal_id.to_string(),
+            action_id: action_id.to_string(),
+            reason_code: reason_code.to_string(),
+            evidence_refs,
+        });
+    }
+
+    pub fn governed_redaction_decision(
+        &mut self,
+        proposal_id: &str,
+        audience: &str,
+        surfaces: Vec<String>,
+        outcome: &str,
+        detail: Option<&str>,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events
+            .push(TraceEvent::GovernedRedactionDecisionRecorded {
+                ts_ms,
+                elapsed_ms,
+                proposal_id: proposal_id.to_string(),
+                audience: audience.to_string(),
+                surfaces,
+                outcome: outcome.to_string(),
+                detail: detail.map(sanitize_governed_text),
+            });
+    }
+
     /// Mark a step start with normalized actor/provider/task metadata.
     pub fn step_started(
         &mut self,
@@ -760,6 +1262,21 @@ fn delegation_json(delegation: Option<&DelegationSpec>) -> Option<String> {
         return None;
     }
     serde_json::to_string(&d.canonicalized()).ok()
+}
+
+fn sanitize_governed_text(value: &str) -> String {
+    if value.contains("/Users/")
+        || value.contains("/home/")
+        || value.contains("sk-")
+        || value.contains("gho_")
+        || value.contains("BEGIN PRIVATE KEY")
+    {
+        return "[redacted-sensitive-text]".to_string();
+    }
+    if value.contains('{') || value.contains('}') {
+        return "[redacted-structured-text]".to_string();
+    }
+    value.to_string()
 }
 
 pub fn format_iso_utc_ms(ts_ms: u128) -> String {
@@ -1046,5 +1563,120 @@ mod tests {
             line.contains("delegation={\"role\":\"reviewer\",\"requires_verification\":true,\"escalation_target\":\"human\",\"tags\":[\"compliance\",\"safety\"]}"),
             "line was:\n{line}"
         );
+    }
+
+    #[test]
+    fn trace_records_governed_execution_events_without_payload_leakage() {
+        let mut tr = Trace::new("run-governed", "workflow-governed", "0.90.5");
+        tr.governed_proposal_observed(
+            "proposal.fixture.safe-read",
+            "fixture.safe_read",
+            "artifacts/run-governed/governed/proposal_arguments.redacted.json",
+        );
+        tr.governed_proposal_normalized(
+            "proposal.fixture.safe-read",
+            "normalized.proposal.fixture.safe-read",
+            "artifacts/run-governed/governed/proposal_arguments.redacted.json",
+        );
+        tr.governed_acc_constructed(
+            "proposal.fixture.safe-read",
+            "acc.compiler.proposal.fixture.safe-read",
+            "deterministic_fixture_compiler",
+        );
+        tr.governed_policy_injected(
+            "proposal.fixture.safe-read",
+            "policy.fixture.safe-read",
+            "allowed",
+        );
+        tr.governed_visibility_resolved(
+            "proposal.fixture.safe-read",
+            "compiled ACC request status",
+            "full compiler fixture evidence",
+            "redacted compiler evidence and policy result",
+            "aggregate compiler pass/fail only",
+            "redacted compiler governance event",
+        );
+        tr.governed_freedom_gate_decided(
+            "proposal.fixture.safe-read",
+            "candidate.safe-read",
+            "allowed",
+            "gate_allowed",
+            "execution",
+            "private_arguments_redacted digest=sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        );
+        tr.governed_action_selected(
+            "proposal.fixture.safe-read",
+            "action.safe_read",
+            "fixture.safe_read",
+            "adapter.fixture.safe_read.dry_run",
+        );
+        tr.governed_execution_result(
+            "proposal.fixture.safe-read",
+            "action.safe_read",
+            "adapter.fixture.safe_read.dry_run",
+            "artifacts/run-governed/governed/result.redacted.json",
+            vec![
+                "gate:candidate.safe-read".to_string(),
+                "execution:governed_execution_allowed".to_string(),
+            ],
+        );
+        tr.governed_redaction_decision(
+            "proposal.fixture.safe-read",
+            "reviewer",
+            vec![
+                "arguments".to_string(),
+                "results".to_string(),
+                "errors".to_string(),
+                "rejected_alternatives".to_string(),
+            ],
+            "redacted",
+            Some("digest_only"),
+        );
+
+        let lines: Vec<String> = tr.events.iter().map(TraceEvent::summarize).collect();
+        assert!(lines
+            .iter()
+            .any(|line| line.contains("GovernedProposalObserved")));
+        assert!(lines
+            .iter()
+            .any(|line| line.contains("GovernedFreedomGateDecided")));
+        assert!(lines
+            .iter()
+            .any(|line| line.contains("GovernedExecutionResultRecorded")));
+        assert!(!lines
+            .iter()
+            .any(|line| line.contains("fixture-secret-token")));
+    }
+
+    #[test]
+    fn trace_sanitizes_sensitive_governed_text_fields() {
+        let mut tr = Trace::new("run-governed", "workflow-governed", "0.90.5");
+        tr.governed_visibility_resolved(
+            "proposal.fixture.safe-read",
+            "compiled ACC request status",
+            "{\"secret\":\"leak\"}",
+            "/Users/test/private.txt",
+            "aggregate compiler pass/fail only",
+            "sk-secret-token",
+        );
+        tr.governed_redaction_decision(
+            "proposal.fixture.safe-read",
+            "reviewer",
+            vec!["arguments".to_string()],
+            "redacted",
+            Some("gho_sensitive"),
+        );
+
+        let lines: Vec<String> = tr.events.iter().map(TraceEvent::summarize).collect();
+        assert!(lines
+            .iter()
+            .any(|line| line.contains("[redacted-sensitive-text]")));
+        assert!(lines
+            .iter()
+            .any(|line| line.contains("[redacted-structured-text]")));
+        assert!(!lines
+            .iter()
+            .any(|line| line.contains("/Users/test/private.txt")));
+        assert!(!lines.iter().any(|line| line.contains("gho_sensitive")));
     }
 }
