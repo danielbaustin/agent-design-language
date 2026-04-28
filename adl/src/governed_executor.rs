@@ -952,7 +952,7 @@ pub fn execute_governed_action_with_trace_v1(
         adapter_id.clone(),
         execution_evidence.clone(),
     );
-    if let Some(trace) = trace.as_deref_mut() {
+    if let Some(trace) = trace {
         trace.governed_action_selected(
             &proposal_id,
             &action_id,
