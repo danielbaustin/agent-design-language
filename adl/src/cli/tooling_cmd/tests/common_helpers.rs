@@ -2,7 +2,7 @@ use super::support::*;
 use super::*;
 
 #[test]
-fn helper_validators_cover_expected_shapes() {
+fn code_review_filter_covers_helper_validators_expected_shapes() {
     assert!(is_repo_relative("docs/tooling/prompt-spec.md"));
     assert!(!is_repo_relative("/Users/daniel/file"));
     assert!(valid_task_id("issue-1374"));
@@ -63,7 +63,7 @@ fn helper_validators_cover_expected_shapes() {
 }
 
 #[test]
-fn common_helpers_cover_argument_and_content_guards() {
+fn code_review_filter_covers_common_helpers_argument_and_content_guards() {
     let repo = TempRepo::new("common");
     let clean = repo.write_rel("clean.txt", "safe text");
     let secret = repo.write_rel("secret.txt", "token gho_1234567890");
@@ -107,6 +107,7 @@ fn common_helpers_cover_argument_and_content_guards() {
     assert!(contains_secret_like_token("ghs_1234567890"));
     assert!(!contains_secret_like_token("mask sk_short"));
     assert!(contains_absolute_host_path_in_text("/tmp/example"));
+    assert!(contains_absolute_host_path_in_text("C:\\Users\\example"));
     assert!(!contains_absolute_host_path_in_text("relative/path"));
 
     assert!(is_repo_review_finding_title("1. [P2] Useful finding"));
@@ -118,7 +119,7 @@ fn common_helpers_cover_argument_and_content_guards() {
 }
 
 #[test]
-fn common_mapping_helpers_cover_yaml_access_patterns() {
+fn code_review_filter_covers_common_mapping_helpers_yaml_access_patterns() {
     let mapping: Mapping = serde_yaml::from_str(
         r#"
 flag: true
@@ -145,13 +146,14 @@ items:
 }
 
 #[test]
-fn common_helpers_cover_safety_and_path_branches() {
+fn code_review_filter_covers_common_helpers_safety_and_path_branches() {
     let root = repo_root_for_tests();
     let nested = root.join("adl/src/cli/tooling_cmd.rs");
 
     assert!(contains_absolute_host_path_in_text(
         "/Users/example/project"
     ));
+    assert!(contains_absolute_host_path_in_text("C:\\Users\\example"));
     assert!(!contains_absolute_host_path_in_text("relative/path"));
     assert!(contains_secret_like_token("prefix sk-abcdefgh suffix"));
     assert!(contains_secret_like_token("ghp_exampletoken"));
@@ -179,4 +181,35 @@ fn common_helpers_cover_safety_and_path_branches() {
     assert!(ensure_no_disallowed_content(&secret, "secret").is_err());
     assert!(ensure_no_absolute_host_path(&clean, "sip").is_ok());
     assert!(ensure_no_absolute_host_path(&abs, "sip").is_err());
+}
+
+#[test]
+fn code_review_filter_covers_common_helpers_for_fast_coverage_lane() {
+    let repo = TempRepo::new("code-review-common");
+    let clean = repo.write_rel("safe.md", "safe relative/path content\n");
+    let secret = repo.write_rel("secret.md", "token ghs_secretvalue\n");
+    let host = repo.write_rel("host.md", "/tmp/adl-private\n");
+
+    assert!(is_repo_relative("docs/milestones/v0.90.5/features/demo.md"));
+    assert!(!is_repo_relative("/Users/daniel/demo.md"));
+    assert_eq!(normalize_issue("2603").expect("issue"), 2603);
+    assert!(normalize_issue("not-an-issue").is_err());
+    assert!(valid_reference("https://example.com/review"));
+    assert!(valid_reference("docs/milestones/v0.90.5/features/demo.md"));
+    assert!(contains_secret_like_token("prefix gho_secretvalue suffix"));
+    assert!(!contains_secret_like_token("ordinary-token"));
+    assert!(contains_absolute_host_path_in_text("C:\\Users\\reviewer"));
+
+    ensure_file(&clean, "clean").expect("clean file");
+    assert!(ensure_no_disallowed_content(&clean, "clean").is_ok());
+    assert!(ensure_no_disallowed_content(&secret, "secret").is_err());
+    assert!(ensure_no_absolute_host_path(&clean, "clean").is_ok());
+    assert!(ensure_no_absolute_host_path(&host, "host").is_err());
+
+    let abs = absolutize(&clean).expect("absolute");
+    assert!(abs.is_absolute());
+    assert_eq!(
+        repo_relative_display(repo.path(), &clean).expect("relative"),
+        "safe.md"
+    );
 }

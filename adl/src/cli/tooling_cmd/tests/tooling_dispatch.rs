@@ -24,6 +24,8 @@ fn tooling_dispatch_and_help_paths_cover_public_entrypoint() {
     assert!(real_tooling(&[]).is_err());
     real_tooling(&["help".to_string()]).expect("help should succeed");
     assert!(real_tooling(&["unknown".to_string()]).is_err());
+    real_tooling(&["code-review".to_string(), "--help".to_string()])
+        .expect("code-review help should succeed without --out");
 
     real_tooling(&[
         "card-prompt".to_string(),
@@ -34,6 +36,25 @@ fn tooling_dispatch_and_help_paths_cover_public_entrypoint() {
     ])
     .expect("card-prompt dispatch should succeed");
     assert!(prompt_out.is_file());
+
+    let code_review_out = repo.path().join("code-review-clean");
+    real_tooling(&[
+        "code-review".to_string(),
+        "--out".to_string(),
+        code_review_out.to_string_lossy().to_string(),
+        "--backend".to_string(),
+        "fixture".to_string(),
+        "--visibility".to_string(),
+        "packet-only".to_string(),
+        "--writer-session".to_string(),
+        "writer-a".to_string(),
+        "--reviewer-session".to_string(),
+        "reviewer-a".to_string(),
+    ])
+    .expect("code-review fixture dispatch should succeed");
+    assert!(code_review_out.join("review_packet.json").is_file());
+    assert!(code_review_out.join("review_result.json").is_file());
+    assert!(code_review_out.join("gate_result.json").is_file());
 
     let wbs = repo.write_rel(
         ".tmp/tooling_cmd_tests/wbs.md",
@@ -103,6 +124,84 @@ fn tooling_dispatch_and_help_paths_cover_public_entrypoint() {
         review.to_string_lossy().to_string(),
     ])
     .expect("repo review contract dispatch should succeed");
+}
+
+#[test]
+fn code_review_fixture_backend_writes_blocking_gate_artifacts() {
+    let repo = TempRepo::new("code-review");
+    let out = repo.path().join("blocked");
+    real_tooling(&[
+        "code-review".to_string(),
+        "--out".to_string(),
+        out.to_string_lossy().to_string(),
+        "--backend".to_string(),
+        "fixture".to_string(),
+        "--fixture-case".to_string(),
+        "blocked".to_string(),
+        "--visibility".to_string(),
+        "read-only-repo".to_string(),
+        "--writer-session".to_string(),
+        "writer-session".to_string(),
+        "--reviewer-session".to_string(),
+        "reviewer-session".to_string(),
+    ])
+    .expect("blocked fixture review should write artifacts");
+
+    let gate: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(out.join("gate_result.json")).expect("gate"))
+            .expect("gate json");
+    assert_eq!(gate["schema_version"], "adl.pr_review_gate.v1");
+    assert_eq!(gate["pr_open_allowed"], false);
+
+    let result: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(out.join("review_result.json")).expect("result"))
+            .expect("result json");
+    assert_eq!(result["visibility_mode"], "read_only_repo");
+    assert_eq!(result["repo_access"]["write_allowed"], false);
+    assert_eq!(result["repo_access"]["tool_execution_allowed"], false);
+}
+
+#[test]
+fn code_review_ollama_without_live_gate_records_skipped_blocker() {
+    let repo = TempRepo::new("code-review-ollama-skip");
+    let out = repo.path().join("ollama-skip");
+    real_tooling(&[
+        "code-review".to_string(),
+        "--out".to_string(),
+        out.to_string_lossy().to_string(),
+        "--backend".to_string(),
+        "ollama".to_string(),
+        "--model".to_string(),
+        "gemma4:latest".to_string(),
+        "--writer-session".to_string(),
+        "writer-session".to_string(),
+        "--reviewer-session".to_string(),
+        "ollama-reviewer".to_string(),
+    ])
+    .expect("ollama skip should still write artifacts");
+
+    let gate: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(out.join("gate_result.json")).expect("gate"))
+            .expect("gate json");
+    assert_eq!(gate["pr_open_allowed"], false);
+    assert!(gate["reasons"][0]
+        .as_str()
+        .expect("reason")
+        .contains("skipped"));
+}
+
+#[test]
+fn code_review_filter_covers_tooling_dispatch_help_and_errors() {
+    assert!(real_tooling(&["help".to_string()]).is_ok());
+    assert!(real_tooling(&["--help".to_string()]).is_ok());
+    assert!(real_tooling(&["code-review".to_string(), "--help".to_string()]).is_ok());
+
+    let missing = real_tooling(&["code-review".to_string()]).expect_err("missing out");
+    assert!(missing.to_string().contains("missing --out"));
+
+    let unknown = real_tooling(&["unknown-code-review-subcommand".to_string()])
+        .expect_err("unknown subcommand");
+    assert!(unknown.to_string().contains("unknown tooling subcommand"));
 }
 
 #[test]

@@ -115,3 +115,14 @@ fn usage_mentions_v0_4_and_legacy_examples() {
     assert!(text.contains("examples/adl-0.1.yaml"));
     assert!(text.contains("--allow-unsigned"));
 }
+
+#[test]
+fn code_review_filter_covers_global_usage_entry() {
+    let text = usage();
+    assert!(text.contains("adl tooling <card-prompt|code-review|lint-prompt-spec"));
+    assert!(text.contains(
+        "adl tooling code-review --out artifacts/reviews/pr-review --backend fixture --visibility packet-only"
+    ));
+    assert!(text.contains("adl pr finish <issue> --title <title>"));
+    assert!(text.contains("adl runtime-v2 contract-market-demo"));
+}
