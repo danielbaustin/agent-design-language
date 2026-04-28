@@ -22,7 +22,7 @@ documentation-only planning lane.
 | WP-12 | #2577 | Freedom Gate integration | Evaluate candidate tool actions before execution | decision events and gate tests | WP-11 |
 | WP-13 | #2578 | Governed executor | Execute only approved ACC-backed actions | executor and refusal behavior | WP-12 |
 | WP-14 | #2579 | Trace, replay, redaction, and evidence contract | Emit accountable evidence without leaking private data | trace/redaction contract and tests | WP-13 |
-| WP-15 | #2580 | Dangerous tool negative suite | Prove destructive, process, network, exfiltration, missing actor, unsafe replay, and delegation failures | negative safety suite | WP-08-WP-14 |
+| WP-15 | #2580 | Dangerous tool negative suite | Prove destructive, process, network, exfiltration, missing actor, hidden delegation, unsafe replay, unregistered adapter, and prompt/tool-argument leakage failures fail closed | negative safety suite | WP-08-WP-14 |
 | WP-16 | #2581 | Model proposal benchmark harness | Test model tool proposals against schema, authority, privacy, and bypass rubrics | benchmark runner and report | WP-04, WP-15 |
 | WP-17 | #2582 | Local model and Gemma-focused evaluation | Run a bounded local/Gemma-focused demo without taking on the full comparison suite | simple model demo scorecard and failure notes | WP-16 |
 | WP-18 | #2583 | Governed Tools v1.0 flagship demo | Show proposal, validation, ACC, policy, gate, execution/denial, trace, and redaction | flagship demo proof packet | WP-13-WP-17 |

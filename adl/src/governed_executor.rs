@@ -784,41 +784,24 @@ pub fn execute_governed_action_with_trace_v1(
     }
 
     let side_effect = acc.capability.side_effect_class.as_str();
-    if side_effect == "destructive" {
-        let record = rejected_record(
-            proposal_id.clone(),
-            action_id.clone(),
-            tool_name.clone(),
-            adapter_id.clone(),
-            "destructive_action",
-            vec!["destructive side effects are refused".to_string()],
-        );
-        if let Some(trace) = trace.as_deref_mut() {
-            emit_governed_rejection_trace(
-                trace,
-                &proposal_id,
-                &action_id,
-                &tool_name,
-                &adapter_id,
-                &record.reason_code,
-                &record.evidence,
-            );
-        }
-        rejected_actions.push(record);
-        return GovernedExecutorExecutionOutcomeV1 {
-            selected_actions,
-            rejected_actions,
-            execution_result: None,
-        };
-    }
-    if side_effect == "exfiltration" {
-        let record = rejected_record(
-            proposal_id.clone(),
-            action_id.clone(),
-            tool_name.clone(),
-            adapter_id.clone(),
+    let dangerous_refusal = match side_effect {
+        "destructive" => Some(("destructive_action", "destructive side effects are refused")),
+        "process" => Some(("process_action", "process side effects are refused")),
+        "network" => Some(("network_action", "network side effects are refused")),
+        "exfiltration" => Some((
             "exfiltrating_action",
-            vec!["exfiltration side effects are refused".to_string()],
+            "exfiltration side effects are refused",
+        )),
+        _ => None,
+    };
+    if let Some((reason_code, evidence)) = dangerous_refusal {
+        let record = rejected_record(
+            proposal_id.clone(),
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
+            reason_code,
+            vec![evidence.to_string()],
         );
         if let Some(trace) = trace.as_deref_mut() {
             emit_governed_rejection_trace(
@@ -1341,6 +1324,18 @@ mod tests {
             outcome.rejected_actions[0].reason_code,
             "destructive_action"
         );
+    }
+
+    #[test]
+    fn wp15_refuses_process_action() {
+        let outcome = execute_result_for_side_effect("process");
+        assert_eq!(outcome.rejected_actions[0].reason_code, "process_action");
+    }
+
+    #[test]
+    fn wp15_refuses_network_action() {
+        let outcome = execute_result_for_side_effect("network");
+        assert_eq!(outcome.rejected_actions[0].reason_code, "network_action");
     }
 
     #[test]
