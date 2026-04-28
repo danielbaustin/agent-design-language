@@ -470,6 +470,7 @@ fn contains_disallowed_text(text: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{instrumentation, trace::Trace};
 
     fn write_fixture_run(root: &Path, run_id: &str) {
         let run = root.join(run_id);
@@ -532,7 +533,7 @@ mod tests {
     }
 
     #[test]
-    fn index_run_from_artifacts_is_deterministic() {
+    fn trace_index_run_from_artifacts_is_deterministic() {
         let tmp = unique_temp_dir("deterministic");
         write_fixture_run(&tmp, "r1");
         let left = index_run_from_artifacts(&tmp, "r1").expect("left");
@@ -545,7 +546,7 @@ mod tests {
     }
 
     #[test]
-    fn index_run_from_artifacts_captures_step_context_fields() {
+    fn trace_index_run_from_artifacts_captures_step_context_fields() {
         let tmp = unique_temp_dir("step-context");
         write_fixture_run(&tmp, "r2");
         let indexed = index_run_from_artifacts(&tmp, "r2").expect("indexed");
@@ -560,7 +561,7 @@ mod tests {
     }
 
     #[test]
-    fn indexed_memory_entry_validate_rejects_invalid_order_and_content() {
+    fn trace_indexed_memory_entry_validate_rejects_invalid_order_and_content() {
         let mut entry = IndexedMemoryEntry {
             run_id: "r1".to_string(),
             workflow_id: "wf".to_string(),
@@ -603,7 +604,7 @@ mod tests {
     }
 
     #[test]
-    fn index_run_from_artifacts_rejects_empty_and_missing_run_inputs() {
+    fn trace_index_run_from_artifacts_rejects_empty_and_missing_run_inputs() {
         let tmp = unique_temp_dir("missing-inputs");
         let err = index_run_from_artifacts(&tmp, "").expect_err("empty run_id must fail");
         assert!(err.message.contains("run_id must not be empty"));
@@ -614,7 +615,7 @@ mod tests {
     }
 
     #[test]
-    fn index_run_from_artifacts_rejects_unsafe_run_id_path_segments() {
+    fn trace_index_run_from_artifacts_rejects_unsafe_run_id_path_segments() {
         let tmp = unique_temp_dir("unsafe-run-id");
         let err = index_run_from_artifacts(&tmp, "../escape")
             .expect_err("unsafe run_id must fail before filesystem access");
@@ -622,7 +623,7 @@ mod tests {
     }
 
     #[test]
-    fn index_run_from_artifacts_requires_workflow_id_and_uses_status_fallback() {
+    fn trace_index_run_from_artifacts_requires_workflow_id_and_uses_status_fallback() {
         let tmp = unique_temp_dir("status-fallback");
         let run_id = "r3";
         let run = tmp.join(run_id);
@@ -668,5 +669,131 @@ mod tests {
         let indexed = index_run_from_artifacts(&tmp, run_id).expect("index should succeed");
         assert_eq!(indexed.status, "unknown");
         assert!(indexed.summary.contains("overall_status=unknown"));
+    }
+
+    #[test]
+    fn trace_index_run_from_artifacts_captures_governed_trace_event_refs() {
+        let tmp = unique_temp_dir("governed-trace-refs");
+        let run_id = "r-governed";
+        let run = tmp.join(run_id);
+        std::fs::create_dir_all(run.join("logs")).expect("mkdir logs");
+        std::fs::write(
+            run.join("run_summary.json"),
+            format!(
+                r#"{{"run_summary_version":1,"run_id":"{run_id}","workflow_id":"wf-governed"}}"#
+            ),
+        )
+        .expect("write run_summary");
+        std::fs::write(
+            run.join("run_status.json"),
+            r#"{"run_status_version":1,"run_id":"r-governed","overall_status":"success","failure_kind":null}"#,
+        )
+        .expect("write run_status");
+
+        let mut trace = Trace::new(
+            run_id.to_string(),
+            "wf-governed".to_string(),
+            "0.90.5".to_string(),
+        );
+        trace.governed_proposal_observed(
+            "proposal.safe-read",
+            "tool.safe_read",
+            "governed/proposal_arguments.redacted.json",
+        );
+        trace.governed_proposal_normalized(
+            "proposal.safe-read",
+            "governed/proposal.normalized.json",
+            "governed/proposal_arguments.redacted.json",
+        );
+        trace.governed_acc_constructed("proposal.safe-read", "acc.safe-read", "portable_replay");
+        trace.governed_policy_injected(
+            "proposal.safe-read",
+            "governed/policy_evidence.json",
+            "allowed",
+        );
+        trace.governed_visibility_resolved(
+            "proposal.safe-read",
+            "actor:redacted",
+            "operator:reviewable",
+            "reviewer:reviewable",
+            "public:withheld",
+            "observatory:bounded",
+        );
+        trace.governed_freedom_gate_decided(
+            "proposal.safe-read",
+            "candidate.safe-read",
+            "allowed",
+            "policy_ok",
+            "citizen_boundary",
+            "arguments_redacted",
+        );
+        trace.governed_action_selected(
+            "proposal.safe-read",
+            "action.safe-read",
+            "tool.safe_read",
+            "adapter.fixture.safe_read.dry_run",
+            vec![
+                "gate:policy_ok".to_string(),
+                "policy:portable_replay".to_string(),
+            ],
+        );
+        trace.governed_action_rejected(
+            "proposal.safe-read",
+            "action.write",
+            "tool.write",
+            "adapter.fixture.write.dry_run",
+            "write_not_allowed",
+            vec!["gate:denied".to_string()],
+        );
+        trace.governed_execution_result(
+            "proposal.safe-read",
+            "action.safe-read",
+            "adapter.fixture.safe_read.dry_run",
+            "governed/result.redacted.json",
+            vec!["result:fixture_read_completed".to_string()],
+        );
+        trace.governed_refusal(
+            "proposal.safe-read",
+            "action.write",
+            "write_not_allowed",
+            vec!["gate:denied".to_string()],
+        );
+        trace.governed_redaction_decision(
+            "proposal.safe-read",
+            "reviewer",
+            vec!["arguments".to_string(), "result".to_string()],
+            "redacted",
+            Some("bounded disclosure"),
+        );
+        instrumentation::write_trace_artifact(
+            &run.join("logs").join("activation_log.json"),
+            &trace.events,
+        )
+        .expect("write activation");
+
+        let indexed = index_run_from_artifacts(&tmp, run_id).expect("index should succeed");
+        let event_kinds: Vec<&str> = indexed
+            .trace_event_refs
+            .iter()
+            .map(|reference| reference.event_kind.as_str())
+            .collect();
+        for expected in [
+            "governed_proposal_observed",
+            "governed_proposal_normalized",
+            "governed_acc_constructed",
+            "governed_policy_injected",
+            "governed_visibility_resolved",
+            "governed_freedom_gate_decided",
+            "governed_action_selected",
+            "governed_action_rejected",
+            "governed_execution_result_recorded",
+            "governed_refusal_recorded",
+            "governed_redaction_decision_recorded",
+        ] {
+            assert!(
+                event_kinds.contains(&expected),
+                "missing governed trace ref for {expected}"
+            );
+        }
     }
 }

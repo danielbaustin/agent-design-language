@@ -501,7 +501,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_operator_controls_writes_report_json() {
+    fn trace_runtime_v2_operator_controls_writes_report_json() {
         let repo = temp_repo("operator-controls");
         let out_path = repo.join("out/operator_report.json");
 
@@ -529,7 +529,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_operator_controls_validates_unknown_args_and_missing_out_value() {
+    fn trace_runtime_v2_operator_controls_validates_unknown_args_and_missing_out_value() {
         let repo = temp_repo("operator-controls-errors");
 
         let err = real_runtime_v2_in_repo(
@@ -552,7 +552,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_dispatch_covers_help_and_subcommand_errors() {
+    fn trace_runtime_v2_dispatch_covers_help_and_subcommand_errors() {
         let repo = temp_repo("dispatch");
 
         real_runtime_v2_in_repo(&["--help".to_string()], &repo).expect("top-level help");
@@ -571,7 +571,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_operator_controls_rejects_absolute_output() {
+    fn trace_runtime_v2_operator_controls_rejects_absolute_output() {
         let repo = temp_repo("operator-controls-branches");
 
         real_runtime_v2_in_repo(&["operator-controls".to_string()], &repo).expect("stdout report");
@@ -599,12 +599,12 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_public_dispatch_uses_current_directory() {
+    fn trace_runtime_v2_public_dispatch_uses_current_directory() {
         real_runtime_v2(&["operator-controls".to_string()]).expect("public dispatch stdout");
     }
 
     #[test]
-    fn runtime_v2_security_boundary_writes_proof_json() {
+    fn trace_runtime_v2_security_boundary_writes_proof_json() {
         let repo = temp_repo("security-boundary");
         let out_path = repo.join("out/security_boundary.json");
 
@@ -632,7 +632,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_security_boundary_validates_unknown_args_and_missing_out_value() {
+    fn trace_runtime_v2_security_boundary_validates_unknown_args_and_missing_out_value() {
         let repo = temp_repo("security-boundary-errors");
 
         let err = real_runtime_v2_in_repo(
@@ -655,7 +655,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_security_boundary_rejects_absolute_output() {
+    fn trace_runtime_v2_security_boundary_rejects_absolute_output() {
         let repo = temp_repo("security-boundary-branches");
 
         real_runtime_v2_in_repo(&["security-boundary".to_string()], &repo).expect("stdout proof");
@@ -683,7 +683,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_foundation_demo_writes_integrated_bundle() {
+    fn trace_runtime_v2_foundation_demo_writes_integrated_bundle() {
         let repo = temp_repo("foundation-demo");
         let out_dir = repo.join("out/foundation");
 
@@ -717,7 +717,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_foundation_demo_validates_stdout_help_and_output_path_rules() {
+    fn trace_runtime_v2_foundation_demo_validates_stdout_help_and_output_path_rules() {
         let repo = temp_repo("foundation-demo-branches");
 
         real_runtime_v2_in_repo(&["foundation-demo".to_string()], &repo)
@@ -762,7 +762,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_integrated_csm_run_demo_writes_proof_bundle() {
+    fn trace_runtime_v2_integrated_csm_run_demo_writes_proof_bundle() {
         let repo = temp_repo("integrated-csm-run-demo");
         let out_dir = repo.join("out/integrated-csm");
 
@@ -827,7 +827,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules() {
+    fn trace_runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules() {
         let repo = temp_repo("integrated-csm-run-demo-branches");
 
         real_runtime_v2_in_repo(&["integrated-csm-run-demo".to_string()], &repo)
@@ -875,7 +875,7 @@ mod tests {
 
     #[test]
     #[ignore = "full D12 CLI filesystem smoke is validated by the explicit observatory-flagship-demo command; keep always-on coverage bounded"]
-    fn runtime_v2_observatory_flagship_demo_writes_proof_bundle() {
+    fn trace_runtime_v2_observatory_flagship_demo_writes_proof_bundle() {
         let repo = temp_repo("observatory-flagship-demo");
         let out_dir = repo.join("out/observatory-flagship");
 
@@ -938,7 +938,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules() {
+    fn trace_runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules() {
         let repo = temp_repo("observatory-flagship-demo-branches");
 
         real_runtime_v2_in_repo(
@@ -989,7 +989,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_feature_proof_coverage_writes_packet_json() {
+    fn trace_runtime_v2_feature_proof_coverage_writes_packet_json() {
         let repo = temp_repo("feature-proof-coverage");
         let out_path = repo.join("out/feature-proof-coverage.json");
 
@@ -1018,7 +1018,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_feature_proof_coverage_validates_stdout_help_and_output_path_rules() {
+    fn trace_runtime_v2_feature_proof_coverage_validates_stdout_help_and_output_path_rules() {
         let repo = temp_repo("feature-proof-coverage-branches");
 
         real_runtime_v2_in_repo(&["feature-proof-coverage".to_string()], &repo)
@@ -1065,26 +1065,26 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_feature_proof_coverage_validates_runtime_v2_cli_regression_registry() {
+    fn trace_runtime_v2_feature_proof_coverage_validates_runtime_v2_cli_regression_registry() {
         let proof_surfaces: &[fn()] = &[
-            runtime_v2_operator_controls_writes_report_json,
-            runtime_v2_operator_controls_validates_unknown_args_and_missing_out_value,
-            runtime_v2_dispatch_covers_help_and_subcommand_errors,
-            runtime_v2_operator_controls_rejects_absolute_output,
-            runtime_v2_public_dispatch_uses_current_directory,
-            runtime_v2_security_boundary_writes_proof_json,
-            runtime_v2_security_boundary_validates_unknown_args_and_missing_out_value,
-            runtime_v2_security_boundary_rejects_absolute_output,
-            runtime_v2_foundation_demo_writes_integrated_bundle,
-            runtime_v2_foundation_demo_validates_stdout_help_and_output_path_rules,
-            runtime_v2_integrated_csm_run_demo_writes_proof_bundle,
-            runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules,
-            runtime_v2_observatory_flagship_demo_writes_proof_bundle,
-            runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules,
-            runtime_v2_feature_proof_coverage_writes_packet_json,
-            runtime_v2_feature_proof_coverage_validates_stdout_help_and_output_path_rules,
-            runtime_v2_contract_market_demo_validates_stdout_help_and_output_path_rules,
-            runtime_v2_demo_stdout_lines_preserve_requested_relative_paths,
+            trace_runtime_v2_operator_controls_writes_report_json,
+            trace_runtime_v2_operator_controls_validates_unknown_args_and_missing_out_value,
+            trace_runtime_v2_dispatch_covers_help_and_subcommand_errors,
+            trace_runtime_v2_operator_controls_rejects_absolute_output,
+            trace_runtime_v2_public_dispatch_uses_current_directory,
+            trace_runtime_v2_security_boundary_writes_proof_json,
+            trace_runtime_v2_security_boundary_validates_unknown_args_and_missing_out_value,
+            trace_runtime_v2_security_boundary_rejects_absolute_output,
+            trace_runtime_v2_foundation_demo_writes_integrated_bundle,
+            trace_runtime_v2_foundation_demo_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_integrated_csm_run_demo_writes_proof_bundle,
+            trace_runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_observatory_flagship_demo_writes_proof_bundle,
+            trace_runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_feature_proof_coverage_writes_packet_json,
+            trace_runtime_v2_feature_proof_coverage_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_contract_market_demo_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_demo_stdout_lines_preserve_requested_relative_paths,
         ];
         assert_eq!(proof_surfaces.len(), RUNTIME_V2_CLI_REGRESSION_SMOKES.len());
         for (index, smoke) in RUNTIME_V2_CLI_REGRESSION_SMOKES.iter().enumerate() {
@@ -1108,7 +1108,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_contract_market_demo_validates_stdout_help_and_output_path_rules() {
+    fn trace_runtime_v2_contract_market_demo_validates_stdout_help_and_output_path_rules() {
         let repo = temp_repo("contract-market-demo-branches");
 
         real_runtime_v2_in_repo(&["contract-market-demo".to_string()], &repo)
@@ -1155,7 +1155,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_demo_stdout_lines_preserve_requested_relative_paths() {
+    fn trace_runtime_v2_demo_stdout_lines_preserve_requested_relative_paths() {
         let rel_root = PathBuf::from("target/v0904-path-hygiene-demo");
         let rel_file = rel_root.join("feature-proof-coverage.json");
         let cwd = std::env::current_dir()
