@@ -15,6 +15,7 @@ pub mod acc;
 pub mod adl;
 pub mod adversarial_execution_runner;
 pub mod adversarial_runtime;
+pub mod agent_comms;
 pub mod artifacts;
 pub mod bounded_executor;
 pub mod chronosense;
