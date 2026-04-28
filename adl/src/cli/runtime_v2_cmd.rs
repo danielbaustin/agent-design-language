@@ -3,12 +3,45 @@ use serde_json::to_string_pretty;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use super::run_artifacts::write_governed_trace_artifacts_for_run_paths;
 use ::adl::runtime_v2::{
     runtime_v2_contract_market_demo_contract, runtime_v2_csm_integrated_run_contract,
     runtime_v2_feature_proof_coverage_contract, runtime_v2_foundation_demo_contract,
     runtime_v2_observatory_flagship_contract, runtime_v2_operator_control_report_contract,
     runtime_v2_security_boundary_proof_contract,
 };
+use ::adl::{artifacts, governed_executor, instrumentation, trace};
+
+const RUNTIME_V2_GOVERNED_TRACE_RUN_ID: &str = "runtime-v2-governed-demo-run";
+const RUNTIME_V2_GOVERNED_TRACE_WORKFLOW_ID: &str = "runtime_v2.integrated_csm_run_demo";
+const RUNTIME_V2_GOVERNED_TRACE_VERSION: &str = "0.90.5";
+
+fn write_runtime_v2_governed_trace_demo(root: &Path) -> Result<()> {
+    let mut governed_trace = trace::Trace::new(
+        RUNTIME_V2_GOVERNED_TRACE_RUN_ID.to_string(),
+        RUNTIME_V2_GOVERNED_TRACE_WORKFLOW_ID.to_string(),
+        RUNTIME_V2_GOVERNED_TRACE_VERSION.to_string(),
+    );
+    let outcome = governed_executor::emit_fixture_safe_read_trace_v1(&mut governed_trace);
+    if outcome.selected_actions.is_empty() {
+        return Err(anyhow!(
+            "runtime-v2 governed trace demo must emit one selected governed action"
+        ));
+    }
+
+    let run_paths = artifacts::RunArtifactPaths::for_run_in_root(
+        RUNTIME_V2_GOVERNED_TRACE_RUN_ID,
+        root.join("artifacts"),
+    )?;
+    run_paths.ensure_layout()?;
+    run_paths.write_model_marker()?;
+    instrumentation::write_trace_artifact(
+        &run_paths.activation_log_json(),
+        &governed_trace.events,
+    )?;
+    write_governed_trace_artifacts_for_run_paths(&run_paths, &governed_trace)?;
+    Ok(())
+}
 
 pub(crate) fn real_runtime_v2(args: &[String]) -> Result<()> {
     let repo_root = std::env::current_dir().context("resolve current working directory")?;
@@ -248,6 +281,7 @@ fn real_runtime_v2_integrated_csm_run_demo(repo_root: &Path, args: &[String]) ->
         )
     })?;
     artifacts.write_to_root(&resolved)?;
+    write_runtime_v2_governed_trace_demo(&resolved)?;
     println!(
         "RUNTIME_V2_INTEGRATED_CSM_RUN_DEMO_ROOT={}",
         resolved.display()
@@ -753,6 +787,17 @@ mod tests {
         assert!(out_dir
             .join("runtime_v2/hardening/hardening_proof_packet.json")
             .is_file());
+        assert!(out_dir
+            .join("artifacts/runtime-v2-governed-demo-run/logs/activation_log.json")
+            .is_file());
+        assert!(out_dir
+            .join(
+                "artifacts/runtime-v2-governed-demo-run/governed/proposal_arguments.redacted.json"
+            )
+            .is_file());
+        assert!(out_dir
+            .join("artifacts/runtime-v2-governed-demo-run/governed/result.redacted.json")
+            .is_file());
         let json: serde_json::Value =
             serde_json::from_slice(&fs::read(&proof_path).expect("proof packet should exist"))
                 .expect("valid json");
@@ -762,6 +807,14 @@ mod tests {
         );
         assert_eq!(json["proof_classification"], "proving");
         assert_eq!(json["demo_id"], "D10");
+        let governed_trace_json: serde_json::Value = serde_json::from_slice(
+            &fs::read(
+                out_dir.join("artifacts/runtime-v2-governed-demo-run/logs/activation_log.json"),
+            )
+            .expect("governed activation log should exist"),
+        )
+        .expect("valid governed activation log json");
+        assert_eq!(governed_trace_json["activation_log_version"], 2);
         let observatory_console = runtime_v2_csm_integrated_run_contract()
             .expect("integrated artifacts")
             .observatory_console_markdown()

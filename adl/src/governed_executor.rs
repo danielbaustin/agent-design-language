@@ -298,6 +298,21 @@ fn governed_execution_evidence(input: &GovernedExecutorInputV1, action_id: &str)
     evidence
 }
 
+fn governed_rejection_trace_evidence(
+    input: &GovernedExecutorInputV1,
+    action_id: &str,
+    evidence: &[String],
+) -> Vec<String> {
+    let mut merged = input.gate_decision.trace_links.clone();
+    merged.push(format!("action_id:{action_id}"));
+    for item in evidence {
+        if !merged.iter().any(|existing| existing == item) {
+            merged.push(item.clone());
+        }
+    }
+    merged
+}
+
 fn emit_governed_trace_context(
     trace: &mut Trace,
     input: &GovernedExecutorInputV1,
@@ -367,26 +382,6 @@ fn emit_governed_trace_context(
     );
 }
 
-fn emit_governed_rejection_trace(
-    trace: &mut Trace,
-    proposal_id: &str,
-    action_id: &str,
-    tool_name: &str,
-    adapter_id: &str,
-    reason_code: &str,
-    evidence: &[String],
-) {
-    trace.governed_action_rejected(
-        proposal_id,
-        action_id,
-        tool_name,
-        adapter_id,
-        reason_code,
-        evidence.to_vec(),
-    );
-    trace.governed_refusal(proposal_id, action_id, reason_code, evidence.to_vec());
-}
-
 /// Execute one bounded governed action candidate.
 ///
 /// In the governed execution slice, execution is only allowed for:
@@ -403,6 +398,66 @@ pub fn execute_governed_action_v1(
     execute_governed_action_with_trace_v1(input, None)
 }
 
+pub fn fixture_safe_read_input_v1() -> GovernedExecutorInputV1 {
+    use crate::freedom_gate::{
+        evaluate_tool_candidate_freedom_gate_v1, FreedomGateToolCandidateV1,
+        FreedomGateToolGateContextV1,
+    };
+    use crate::uts_acc_compiler::{
+        compile_uts_to_acc_v1, wp09_compiler_input_fixture, wp09_compiler_registry_fixture,
+    };
+
+    let input = wp09_compiler_input_fixture("fixture.safe_read");
+    let outcome = compile_uts_to_acc_v1(&input);
+    let acc = outcome.acc.expect("safe-read fixture should compile");
+    let arguments = input
+        .proposal
+        .arguments
+        .iter()
+        .map(|(key, value)| (key.clone(), value.clone()))
+        .collect::<BTreeMap<String, JsonValue>>();
+    let private_argument_digest = compute_private_argument_digest(&arguments);
+
+    let registry = wp09_compiler_registry_fixture();
+    let candidate = FreedomGateToolCandidateV1 {
+        candidate_id: "candidate.safe_read".to_string(),
+        proposal_id: input.proposal.proposal_id.clone(),
+        normalized_proposal_ref: "normalized.proposal".to_string(),
+        acc_contract_id: acc.contract_id.clone(),
+        policy_evidence_ref: "policy.wp11.fixture".to_string(),
+        action_kind: acc.tool.tool_name.clone(),
+        risk_class: "low".to_string(),
+        operator_actor_id: acc.actor.actor_id.clone(),
+        citizen_boundary_ref: "citizen.boundary".to_string(),
+        private_argument_digest,
+    };
+    let gate_context = FreedomGateToolGateContextV1 {
+        policy_decision: "allowed".to_string(),
+        requires_operator_review: false,
+        requires_human_challenge: false,
+        escalation_available: false,
+        citizen_action_boundary_intact: true,
+        operator_action_boundary_intact: true,
+        private_arguments_redacted: true,
+    };
+    let gate_decision = evaluate_tool_candidate_freedom_gate_v1(&candidate, &gate_context);
+
+    GovernedExecutorInputV1 {
+        source: GovernedExecutorSourceV1::RegistryCompiler,
+        action_id: "action.safe_read".to_string(),
+        proposal_id: input.proposal.proposal_id,
+        acc: Some(acc),
+        registry,
+        arguments,
+        gate_decision,
+    }
+}
+
+pub fn emit_fixture_safe_read_trace_v1(trace: &mut Trace) -> GovernedExecutorExecutionOutcomeV1 {
+    let input = fixture_safe_read_input_v1();
+    execute_governed_action_with_trace_v1(&input, Some(trace))
+}
+
 pub fn execute_governed_action_with_trace_v1(
     input: &GovernedExecutorInputV1,
     mut trace: Option<&mut Trace>,
@@ -410,6 +465,25 @@ pub fn execute_governed_action_with_trace_v1(
     let mut selected_actions = Vec::new();
     let mut rejected_actions = Vec::new();
     let proposal_id = input.proposal_id.clone();
+    let emit_governed_rejection_trace =
+        |trace: &mut Trace,
+         proposal_id: &str,
+         action_id: &str,
+         tool_name: &str,
+         adapter_id: &str,
+         reason_code: &str,
+         evidence: &[String]| {
+            let governed_evidence = governed_rejection_trace_evidence(input, action_id, evidence);
+            trace.governed_action_rejected(
+                proposal_id,
+                action_id,
+                tool_name,
+                adapter_id,
+                reason_code,
+                governed_evidence.clone(),
+            );
+            trace.governed_refusal(proposal_id, action_id, reason_code, governed_evidence);
+        };
 
     let (action_id, tool_name, adapter_id) = unknown_identity(&input.action_id, input.acc.as_ref());
     if let Some(trace) = trace.as_deref_mut() {
@@ -919,55 +993,9 @@ mod tests {
     use crate::freedom_gate::evaluate_tool_candidate_freedom_gate_v1;
     use crate::tool_registry::wp08_tool_registry_v1_fixture;
     use crate::trace::TraceEvent;
-    use crate::uts_acc_compiler::{
-        compile_uts_to_acc_v1, wp09_compiler_input_fixture, wp09_compiler_registry_fixture,
-    };
 
     fn safe_read_input() -> GovernedExecutorInputV1 {
-        let input = wp09_compiler_input_fixture("fixture.safe_read");
-        let outcome = compile_uts_to_acc_v1(&input);
-        let acc = outcome.acc.expect("safe-read fixture should compile");
-        let arguments = input
-            .proposal
-            .arguments
-            .iter()
-            .map(|(key, value)| (key.clone(), value.clone()))
-            .collect::<BTreeMap<String, JsonValue>>();
-        let private_argument_digest = compute_private_argument_digest(&arguments);
-
-        let registry = wp09_compiler_registry_fixture();
-        let candidate = crate::freedom_gate::FreedomGateToolCandidateV1 {
-            candidate_id: "candidate.safe_read".to_string(),
-            proposal_id: input.proposal.proposal_id.clone(),
-            normalized_proposal_ref: "normalized.proposal".to_string(),
-            acc_contract_id: acc.contract_id.clone(),
-            policy_evidence_ref: "policy.wp11.fixture".to_string(),
-            action_kind: acc.tool.tool_name.clone(),
-            risk_class: "low".to_string(),
-            operator_actor_id: acc.actor.actor_id.clone(),
-            citizen_boundary_ref: "citizen.boundary".to_string(),
-            private_argument_digest,
-        };
-        let gate_context = crate::freedom_gate::FreedomGateToolGateContextV1 {
-            policy_decision: "allowed".to_string(),
-            requires_operator_review: false,
-            requires_human_challenge: false,
-            escalation_available: false,
-            citizen_action_boundary_intact: true,
-            operator_action_boundary_intact: true,
-            private_arguments_redacted: true,
-        };
-        let gate_decision = evaluate_tool_candidate_freedom_gate_v1(&candidate, &gate_context);
-
-        GovernedExecutorInputV1 {
-            source: GovernedExecutorSourceV1::RegistryCompiler,
-            action_id: "action.safe_read".to_string(),
-            proposal_id: input.proposal.proposal_id,
-            acc: Some(acc),
-            registry,
-            arguments,
-            gate_decision,
-        }
+        fixture_safe_read_input_v1()
     }
 
     fn gate_decision_for(
@@ -1096,6 +1124,26 @@ mod tests {
             .events
             .iter()
             .any(|event| matches!(event, TraceEvent::GovernedRedactionDecisionRecorded { .. })));
+    }
+
+    #[test]
+    fn wp14_governed_rejection_trace_preserves_gate_policy_and_action_lineage() {
+        let mut input = safe_read_input();
+        input.source = GovernedExecutorSourceV1::ModelOutput;
+        let mut trace = Trace::new("run-governed-rejection", "wf-governed", "0.90.5");
+
+        let outcome = execute_governed_action_with_trace_v1(&input, Some(&mut trace));
+
+        assert_eq!(outcome.selected_actions.len(), 0);
+        assert_eq!(outcome.rejected_actions.len(), 1);
+        assert!(trace.events.iter().any(|event| matches!(
+            event,
+            TraceEvent::GovernedActionRejected { evidence_refs, .. }
+                if evidence_refs.iter().any(|value| value == "gate:candidate.safe_read")
+                    && evidence_refs.iter().any(|value| value == "policy:policy.wp11.fixture")
+                    && evidence_refs.iter().any(|value| value == "action:fixture.safe_read")
+                    && evidence_refs.iter().any(|value| value == "action_id:action.safe_read")
+        )));
     }
 
     #[test]

@@ -19,28 +19,40 @@ use super::trace_envelope::build_trace_v1_envelope;
 use ::adl::runtime_environment::RuntimeEnvironment;
 use serde::Serialize;
 use serde_json::{json, Value as JsonValue};
+use std::collections::BTreeMap;
 
 fn governed_trace_artifacts_for_run(tr: &trace::Trace) -> (Option<JsonValue>, Option<JsonValue>) {
-    let mut proposal_entries = Vec::new();
-    let mut result_entries = Vec::new();
-    let mut redaction_detail = None;
-    let mut redaction_summary = None;
-
+    let mut proposal_redaction_summaries = BTreeMap::new();
+    let mut proposal_redaction_details = BTreeMap::new();
     for event in &tr.events {
         match event {
             trace::TraceEvent::GovernedFreedomGateDecided {
-                redaction_summary: summary,
+                proposal_id,
+                redaction_summary,
                 ..
             } => {
-                if redaction_summary.is_none() {
-                    redaction_summary = Some(summary.clone());
-                }
+                proposal_redaction_summaries
+                    .entry(proposal_id.clone())
+                    .or_insert_with(|| redaction_summary.clone());
             }
-            trace::TraceEvent::GovernedRedactionDecisionRecorded { detail, .. } => {
-                if redaction_detail.is_none() {
-                    redaction_detail = detail.clone();
-                }
+            trace::TraceEvent::GovernedRedactionDecisionRecorded {
+                proposal_id,
+                detail,
+                ..
+            } => {
+                proposal_redaction_details
+                    .entry(proposal_id.clone())
+                    .or_insert_with(|| detail.clone());
             }
+            _ => {}
+        }
+    }
+
+    let mut proposal_entries = Vec::new();
+    let mut result_entries = Vec::new();
+
+    for event in &tr.events {
+        match event {
             trace::TraceEvent::GovernedProposalObserved {
                 proposal_id,
                 tool_name,
@@ -53,8 +65,11 @@ fn governed_trace_artifacts_for_run(tr: &trace::Trace) -> (Option<JsonValue>, Op
                     "redacted_arguments_ref": redacted_arguments_ref,
                     "redaction": {
                         "status": "redacted",
-                        "detail": redaction_detail.clone(),
-                        "summary": redaction_summary.clone(),
+                        "detail": proposal_redaction_details
+                            .get(proposal_id)
+                            .cloned()
+                            .flatten(),
+                        "summary": proposal_redaction_summaries.get(proposal_id).cloned(),
                     }
                 }));
             }
@@ -97,7 +112,7 @@ fn governed_trace_artifacts_for_run(tr: &trace::Trace) -> (Option<JsonValue>, Op
     (proposal_artifact, result_artifact)
 }
 
-fn write_governed_trace_artifacts(
+pub(crate) fn write_governed_trace_artifacts_for_run_paths(
     run_paths: &artifacts::RunArtifactPaths,
     tr: &trace::Trace,
 ) -> Result<()> {
@@ -228,7 +243,7 @@ pub(crate) fn write_run_state_artifacts(
     let steps_json = serde_json::to_vec_pretty(&steps).context("serialize steps.json")?;
     let activation_log_path = run_paths.activation_log_json();
     instrumentation::write_trace_artifact(&activation_log_path, &tr.events)?;
-    write_governed_trace_artifacts(&run_paths, tr)?;
+    write_governed_trace_artifacts_for_run_paths(&run_paths, tr)?;
     let trace_v1 =
         build_trace_v1_envelope(resolved, tr, &steps, start_ms, end_ms, status, failure)?;
     let trace_v1_json = serde_json::to_vec_pretty(&trace_v1).context("serialize trace_v1.json")?;

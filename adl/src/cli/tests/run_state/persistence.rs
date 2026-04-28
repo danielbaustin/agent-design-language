@@ -523,6 +523,18 @@ fn trace_v1_records_delegation_and_failure_events() {
         governed_results.is_file(),
         "governed result redaction artifact should be persisted"
     );
+    let governed_arguments_json: JsonValue = serde_json::from_str(
+        &std::fs::read_to_string(&governed_arguments).expect("read governed arguments artifact"),
+    )
+    .expect("parse governed arguments artifact");
+    let first_argument_entry = governed_arguments_json["entries"][0].clone();
+    assert_eq!(
+        first_argument_entry["redaction"]["detail"],
+        JsonValue::String("digest_only".to_string())
+    );
+    assert!(first_argument_entry["redaction"]["summary"]
+        .as_str()
+        .is_some_and(|value| value.contains("private_arguments_redacted")));
 
     let _ = std::fs::remove_dir_all(run_dir);
     let _ = std::fs::remove_dir_all(out_dir);
