@@ -24,6 +24,33 @@ Goal: reduce heavyweight proof-family validation cost as early as practical
 without changing the canonical WP sequence or weakening governed-tools proof
 claims.
 
+## Parallel Comms Sprint: ACIP Foundation And Specialization
+
+- Comms-01 Promote ACIP v1 general protocol architecture
+- Comms-02 ACIP message envelope schema and identity model
+- Comms-03 ACIP invocation contract and Freedom Gate event binding
+- Comms-04 ACIP validation fixtures and conformance suite
+- Comms-05 Review-agent invocation specialization and SRP policy binding
+- Comms-06 Coding-agent invocation specialization and provider-neutral runner
+- Comms-07 ACIP trace, replay, redaction, and evidence integration
+- Comms-08 ACIP demo and proof coverage
+
+Goal: make agent communication a first-class substrate feature instead of a
+review-only prompt lane, while keeping execution authority under UTS, ACC,
+Freedom Gate, and governed execution.
+
+Sprint boundary:
+
+- Comms-01 is the guaranteed `v0.90.5` planning and prerequisite-alignment
+  slice.
+- Comms-02 through Comms-04 are candidate foundation follow-ons that should be
+  reviewed against the source ACIP split plan before they are treated as kept
+  in `v0.90.5`.
+- Comms-05 through Comms-08 are specialization and proof slices that may stay
+  in `v0.90.5` or defer to `v0.91` depending on milestone pressure.
+- This wave is parallel to, not a replacement for, the governed-tools WP
+  sequence and should not be mistaken for WP-14 scope creep.
+
 ## Sprint 2: ACC, Compiler, And Policy
 
 - WP-06 ACC v1 authority schema

@@ -6,6 +6,7 @@ use crate::tool_registry::{
     bind_tool_registry_v1, ToolBindingDecisionV1, ToolBindingRequestV1,
     ToolBindingSourceV1::RegistryCompiler, ToolRegistryRejectionCodeV1, ToolRegistryV1,
 };
+use crate::trace::Trace;
 use serde_json::Value as JsonValue;
 use sha2::{Digest, Sha256};
 
@@ -107,6 +108,7 @@ fn selected_record(
     action_id: String,
     tool_name: String,
     adapter_id: String,
+    evidence: Vec<String>,
 ) -> GovernedExecutorActionRecordV1 {
     GovernedExecutorActionRecordV1 {
         proposal_id,
@@ -115,7 +117,7 @@ fn selected_record(
         adapter_id,
         outcome: GovernedExecutorActionOutcomeV1::Selected,
         reason_code: "selected".to_string(),
-        evidence: vec!["governed_execution_allowed".to_string()],
+        evidence,
     }
 }
 
@@ -259,6 +261,127 @@ fn map_registry_rejection(code: &ToolRegistryRejectionCodeV1) -> &'static str {
     }
 }
 
+fn trace_link_value<'a>(trace_links: &'a [String], prefix: &str) -> Option<&'a str> {
+    trace_links
+        .iter()
+        .find_map(|link| link.strip_prefix(prefix))
+}
+
+fn gate_decision_label(decision: &FreedomGateToolDecisionV1) -> &'static str {
+    match decision {
+        FreedomGateToolDecisionV1::Allowed => "allowed",
+        FreedomGateToolDecisionV1::Denied => "denied",
+        FreedomGateToolDecisionV1::Deferred => "deferred",
+        FreedomGateToolDecisionV1::Challenged => "challenged",
+        FreedomGateToolDecisionV1::Escalated => "escalated",
+    }
+}
+
+fn gate_boundary_label(gate: &FreedomGateToolDecisionEventV1) -> &'static str {
+    match gate.boundary {
+        crate::freedom_gate::FreedomGateToolBoundaryV1::Policy => "policy",
+        crate::freedom_gate::FreedomGateToolBoundaryV1::Privacy => "privacy",
+        crate::freedom_gate::FreedomGateToolBoundaryV1::OperatorReview => "operator_review",
+        crate::freedom_gate::FreedomGateToolBoundaryV1::CitizenAction => "citizen_action",
+        crate::freedom_gate::FreedomGateToolBoundaryV1::Escalation => "escalation",
+        crate::freedom_gate::FreedomGateToolBoundaryV1::Execution => "execution",
+    }
+}
+
+fn governed_artifact_ref(run_id: &str, file_name: &str) -> String {
+    format!("artifacts/{run_id}/governed/{file_name}")
+}
+
+fn governed_execution_evidence(input: &GovernedExecutorInputV1, action_id: &str) -> Vec<String> {
+    let mut evidence = input.gate_decision.trace_links.clone();
+    evidence.push(format!("execution:{action_id}"));
+    evidence
+}
+
+fn governed_rejection_trace_evidence(
+    input: &GovernedExecutorInputV1,
+    action_id: &str,
+    evidence: &[String],
+) -> Vec<String> {
+    let mut merged = input.gate_decision.trace_links.clone();
+    merged.push(format!("action_id:{action_id}"));
+    for item in evidence {
+        if !merged.iter().any(|existing| existing == item) {
+            merged.push(item.clone());
+        }
+    }
+    merged
+}
+
+fn emit_governed_trace_context(
+    trace: &mut Trace,
+    input: &GovernedExecutorInputV1,
+    tool_name: &str,
+) {
+    let proposal_id = input.proposal_id.as_str();
+    let arguments_ref = governed_artifact_ref(&trace.run_id, "proposal_arguments.redacted.json");
+    trace.governed_proposal_observed(proposal_id, tool_name, &arguments_ref);
+
+    if let Some(normalized_proposal_ref) =
+        trace_link_value(&input.gate_decision.trace_links, "normalized_proposal:")
+    {
+        trace.governed_proposal_normalized(proposal_id, normalized_proposal_ref, &arguments_ref);
+    }
+
+    if let Some(acc) = input.acc.as_ref() {
+        trace.governed_acc_constructed(
+            proposal_id,
+            &acc.contract_id,
+            &acc.trace_replay.replay_posture,
+        );
+        if let Some(policy_evidence_ref) =
+            trace_link_value(&input.gate_decision.trace_links, "policy:")
+        {
+            trace.governed_policy_injected(
+                proposal_id,
+                policy_evidence_ref,
+                match acc.decision {
+                    AccDecisionV1::Allowed => "allowed",
+                    AccDecisionV1::Denied => "denied",
+                    AccDecisionV1::Delegated => "delegated",
+                    AccDecisionV1::Revoked => "revoked",
+                },
+            );
+        }
+        trace.governed_visibility_resolved(
+            proposal_id,
+            &acc.privacy_redaction.visibility.actor_view,
+            &acc.privacy_redaction.visibility.operator_view,
+            &acc.privacy_redaction.visibility.reviewer_view,
+            &acc.privacy_redaction.visibility.public_report_view,
+            &acc.privacy_redaction.visibility.observatory_projection,
+        );
+    }
+
+    let candidate_id =
+        trace_link_value(&input.gate_decision.trace_links, "gate:").unwrap_or("gate.unknown");
+    trace.governed_freedom_gate_decided(
+        proposal_id,
+        candidate_id,
+        gate_decision_label(&input.gate_decision.decision),
+        &input.gate_decision.reason_code,
+        gate_boundary_label(&input.gate_decision),
+        &input.gate_decision.redaction_summary,
+    );
+    trace.governed_redaction_decision(
+        proposal_id,
+        "reviewer",
+        vec![
+            "arguments".to_string(),
+            "results".to_string(),
+            "errors".to_string(),
+            "rejected_alternatives".to_string(),
+        ],
+        "redacted",
+        Some("digest_only"),
+    );
+}
+
 /// Execute one bounded governed action candidate.
 ///
 /// In the governed execution slice, execution is only allowed for:
@@ -272,22 +395,123 @@ fn map_registry_rejection(code: &ToolRegistryRejectionCodeV1) -> &'static str {
 pub fn execute_governed_action_v1(
     input: &GovernedExecutorInputV1,
 ) -> GovernedExecutorExecutionOutcomeV1 {
+    execute_governed_action_with_trace_v1(input, None)
+}
+
+pub fn fixture_safe_read_input_v1() -> GovernedExecutorInputV1 {
+    use crate::freedom_gate::{
+        evaluate_tool_candidate_freedom_gate_v1, FreedomGateToolCandidateV1,
+        FreedomGateToolGateContextV1,
+    };
+    use crate::uts_acc_compiler::{
+        compile_uts_to_acc_v1, wp09_compiler_input_fixture, wp09_compiler_registry_fixture,
+    };
+
+    let input = wp09_compiler_input_fixture("fixture.safe_read");
+    let outcome = compile_uts_to_acc_v1(&input);
+    let acc = outcome.acc.expect("safe-read fixture should compile");
+    let arguments = input
+        .proposal
+        .arguments
+        .iter()
+        .map(|(key, value)| (key.clone(), value.clone()))
+        .collect::<BTreeMap<String, JsonValue>>();
+    let private_argument_digest = compute_private_argument_digest(&arguments);
+
+    let registry = wp09_compiler_registry_fixture();
+    let candidate = FreedomGateToolCandidateV1 {
+        candidate_id: "candidate.safe_read".to_string(),
+        proposal_id: input.proposal.proposal_id.clone(),
+        normalized_proposal_ref: "normalized.proposal".to_string(),
+        acc_contract_id: acc.contract_id.clone(),
+        policy_evidence_ref: "policy.wp11.fixture".to_string(),
+        action_kind: acc.tool.tool_name.clone(),
+        risk_class: "low".to_string(),
+        operator_actor_id: acc.actor.actor_id.clone(),
+        citizen_boundary_ref: "citizen.boundary".to_string(),
+        private_argument_digest,
+    };
+    let gate_context = FreedomGateToolGateContextV1 {
+        policy_decision: "allowed".to_string(),
+        requires_operator_review: false,
+        requires_human_challenge: false,
+        escalation_available: false,
+        citizen_action_boundary_intact: true,
+        operator_action_boundary_intact: true,
+        private_arguments_redacted: true,
+    };
+    let gate_decision = evaluate_tool_candidate_freedom_gate_v1(&candidate, &gate_context);
+
+    GovernedExecutorInputV1 {
+        source: GovernedExecutorSourceV1::RegistryCompiler,
+        action_id: "action.safe_read".to_string(),
+        proposal_id: input.proposal.proposal_id,
+        acc: Some(acc),
+        registry,
+        arguments,
+        gate_decision,
+    }
+}
+
+pub fn emit_fixture_safe_read_trace_v1(trace: &mut Trace) -> GovernedExecutorExecutionOutcomeV1 {
+    let input = fixture_safe_read_input_v1();
+    execute_governed_action_with_trace_v1(&input, Some(trace))
+}
+
+pub fn execute_governed_action_with_trace_v1(
+    input: &GovernedExecutorInputV1,
+    mut trace: Option<&mut Trace>,
+) -> GovernedExecutorExecutionOutcomeV1 {
     let mut selected_actions = Vec::new();
     let mut rejected_actions = Vec::new();
     let proposal_id = input.proposal_id.clone();
-
-    let (action_id, tool_name, adapter_id) = unknown_identity(&input.action_id, input.acc.as_ref());
-
-    match input.source {
-        GovernedExecutorSourceV1::ModelOutput => {
-            rejected_actions.push(rejected_record(
-                proposal_id.clone(),
+    let emit_governed_rejection_trace =
+        |trace: &mut Trace,
+         proposal_id: &str,
+         action_id: &str,
+         tool_name: &str,
+         adapter_id: &str,
+         reason_code: &str,
+         evidence: &[String]| {
+            let governed_evidence = governed_rejection_trace_evidence(input, action_id, evidence);
+            trace.governed_action_rejected(
+                proposal_id,
                 action_id,
                 tool_name,
                 adapter_id,
+                reason_code,
+                governed_evidence.clone(),
+            );
+            trace.governed_refusal(proposal_id, action_id, reason_code, governed_evidence);
+        };
+
+    let (action_id, tool_name, adapter_id) = unknown_identity(&input.action_id, input.acc.as_ref());
+    if let Some(trace) = trace.as_deref_mut() {
+        emit_governed_trace_context(trace, input, &tool_name);
+    }
+
+    match input.source {
+        GovernedExecutorSourceV1::ModelOutput => {
+            let record = rejected_record(
+                proposal_id.clone(),
+                action_id.clone(),
+                tool_name.clone(),
+                adapter_id.clone(),
                 "model_output_execution_denied",
                 vec!["model output cannot bind directly to executor".to_string()],
-            ));
+            );
+            if let Some(trace) = trace.as_deref_mut() {
+                emit_governed_rejection_trace(
+                    trace,
+                    &proposal_id,
+                    &action_id,
+                    &tool_name,
+                    &adapter_id,
+                    &record.reason_code,
+                    &record.evidence,
+                );
+            }
+            rejected_actions.push(record);
             return GovernedExecutorExecutionOutcomeV1 {
                 selected_actions,
                 rejected_actions,
@@ -299,14 +523,26 @@ pub fn execute_governed_action_v1(
 
     let Some(acc) = input.acc.as_ref() else {
         let (action_id, tool_name, adapter_id) = unknown_identity(&input.action_id, None);
-        rejected_actions.push(rejected_record(
+        let record = rejected_record(
             proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
             "malformed_action",
             vec!["missing_acc_contract".to_string()],
-        ));
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -315,14 +551,26 @@ pub fn execute_governed_action_v1(
     };
 
     if let Err(err) = validate_acc_v1(acc) {
-        rejected_actions.push(rejected_record(
+        let record = rejected_record(
             proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
             "malformed_action",
             err.codes().iter().map(|code| code.to_string()).collect(),
-        ));
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -331,14 +579,26 @@ pub fn execute_governed_action_v1(
     }
 
     if acc.decision != AccDecisionV1::Allowed {
-        rejected_actions.push(rejected_record(
+        let record = rejected_record(
             proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
             "acc_not_allowed",
             vec![format!("acc decision is {:?}", acc.decision)],
-        ));
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -347,14 +607,26 @@ pub fn execute_governed_action_v1(
     }
 
     if !acc.execution.approved_for_execution || !acc.execution.dry_run {
-        rejected_actions.push(rejected_record(
+        let record = rejected_record(
             proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
             "acc_not_execution_ready",
             vec!["execution approval or dry-run posture missing".to_string()],
-        ));
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -363,14 +635,26 @@ pub fn execute_governed_action_v1(
     }
 
     if let Some((reason_code, evidence)) = gate_refusal_reason(&input.gate_decision) {
-        rejected_actions.push(rejected_record(
+        let record = rejected_record(
             proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
             reason_code,
             evidence,
-        ));
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -384,14 +668,26 @@ pub fn execute_governed_action_v1(
         &acc.contract_id,
         &acc.tool.tool_name,
     ) {
-        rejected_actions.push(rejected_record(
+        let record = rejected_record(
             proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
             "gate_trace_mismatch",
             evidence,
-        ));
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -403,14 +699,26 @@ pub fn execute_governed_action_v1(
         Some(expected_digest)
             if expected_digest == compute_private_argument_digest(&input.arguments) => {}
         _ => {
-            rejected_actions.push(rejected_record(
+            let record = rejected_record(
                 proposal_id.clone(),
-                action_id,
-                tool_name,
-                adapter_id,
+                action_id.clone(),
+                tool_name.clone(),
+                adapter_id.clone(),
                 "gate_argument_mismatch",
                 vec!["governed executor arguments do not match gate redacted digest".to_string()],
-            ));
+            );
+            if let Some(trace) = trace.as_deref_mut() {
+                emit_governed_rejection_trace(
+                    trace,
+                    &proposal_id,
+                    &action_id,
+                    &tool_name,
+                    &adapter_id,
+                    &record.reason_code,
+                    &record.evidence,
+                );
+            }
+            rejected_actions.push(record);
             return GovernedExecutorExecutionOutcomeV1 {
                 selected_actions,
                 rejected_actions,
@@ -420,14 +728,26 @@ pub fn execute_governed_action_v1(
     }
 
     if !acc.trace_replay.replay_allowed {
-        rejected_actions.push(rejected_record(
+        let record = rejected_record(
             proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
             "replay_unsafe",
             vec!["replay is not allowed by ACC trace policy".to_string()],
-        ));
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -436,14 +756,26 @@ pub fn execute_governed_action_v1(
     }
 
     if let Err(evidence) = gate_invocation_binding(&input.gate_decision) {
-        rejected_actions.push(rejected_record(
+        let record = rejected_record(
             proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
             "gate_invocation_missing",
             evidence,
-        ));
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -452,30 +784,37 @@ pub fn execute_governed_action_v1(
     }
 
     let side_effect = acc.capability.side_effect_class.as_str();
-    if side_effect == "destructive" {
-        rejected_actions.push(rejected_record(
-            proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
-            "destructive_action",
-            vec!["destructive side effects are refused".to_string()],
-        ));
-        return GovernedExecutorExecutionOutcomeV1 {
-            selected_actions,
-            rejected_actions,
-            execution_result: None,
-        };
-    }
-    if side_effect == "exfiltration" {
-        rejected_actions.push(rejected_record(
-            proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+    let dangerous_refusal = match side_effect {
+        "destructive" => Some(("destructive_action", "destructive side effects are refused")),
+        "process" => Some(("process_action", "process side effects are refused")),
+        "network" => Some(("network_action", "network side effects are refused")),
+        "exfiltration" => Some((
             "exfiltrating_action",
-            vec!["exfiltration side effects are refused".to_string()],
-        ));
+            "exfiltration side effects are refused",
+        )),
+        _ => None,
+    };
+    if let Some((reason_code, evidence)) = dangerous_refusal {
+        let record = rejected_record(
+            proposal_id.clone(),
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
+            reason_code,
+            vec![evidence.to_string()],
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -497,14 +836,26 @@ pub fn execute_governed_action_v1(
             .as_ref()
             .map(map_registry_rejection)
             .unwrap_or("unregistered_action");
-        rejected_actions.push(rejected_record(
+        let record = rejected_record(
             proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
             reason_code,
             binding.evidence,
-        ));
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -513,14 +864,26 @@ pub fn execute_governed_action_v1(
     }
 
     if acc.actor.actor_id.is_empty() || acc.actor.actor_id.contains('/') {
-        rejected_actions.push(rejected_record(
+        let record = rejected_record(
             proposal_id.clone(),
-            action_id,
-            tool_name,
-            adapter_id,
+            action_id.clone(),
+            tool_name.clone(),
+            adapter_id.clone(),
             "malformed_action",
             vec!["actor id invalid for governed execution".to_string()],
-        ));
+        );
+        if let Some(trace) = trace.as_deref_mut() {
+            emit_governed_rejection_trace(
+                trace,
+                &proposal_id,
+                &action_id,
+                &tool_name,
+                &adapter_id,
+                &record.reason_code,
+                &record.evidence,
+            );
+        }
+        rejected_actions.push(record);
         return GovernedExecutorExecutionOutcomeV1 {
             selected_actions,
             rejected_actions,
@@ -536,14 +899,26 @@ pub fn execute_governed_action_v1(
             } else {
                 "malformed_action"
             };
-            rejected_actions.push(rejected_record(
+            let record = rejected_record(
                 proposal_id.clone(),
-                action_id,
-                tool_name,
-                adapter_id,
+                action_id.clone(),
+                tool_name.clone(),
+                adapter_id.clone(),
                 reason,
                 vec!["fixture payload could not be evaluated".to_string()],
-            ));
+            );
+            if let Some(trace) = trace.as_deref_mut() {
+                emit_governed_rejection_trace(
+                    trace,
+                    &proposal_id,
+                    &action_id,
+                    &tool_name,
+                    &adapter_id,
+                    &record.reason_code,
+                    &record.evidence,
+                );
+            }
+            rejected_actions.push(record);
             return GovernedExecutorExecutionOutcomeV1 {
                 selected_actions,
                 rejected_actions,
@@ -552,7 +927,31 @@ pub fn execute_governed_action_v1(
         }
     };
 
-    let selected = selected_record(proposal_id, action_id, tool_name, adapter_id);
+    let execution_evidence = governed_execution_evidence(input, &action_id);
+    let selected = selected_record(
+        proposal_id.clone(),
+        action_id.clone(),
+        tool_name.clone(),
+        adapter_id.clone(),
+        execution_evidence.clone(),
+    );
+    if let Some(trace) = trace {
+        trace.governed_action_selected(
+            &proposal_id,
+            &action_id,
+            &tool_name,
+            &adapter_id,
+            execution_evidence,
+        );
+        let result_ref = governed_artifact_ref(&trace.run_id, "result.redacted.json");
+        trace.governed_execution_result(
+            &proposal_id,
+            &action_id,
+            &adapter_id,
+            &result_ref,
+            selected.evidence.clone(),
+        );
+    }
     selected_actions.push(selected);
 
     GovernedExecutorExecutionOutcomeV1 {
@@ -576,55 +975,10 @@ mod tests {
     use super::*;
     use crate::freedom_gate::evaluate_tool_candidate_freedom_gate_v1;
     use crate::tool_registry::wp08_tool_registry_v1_fixture;
-    use crate::uts_acc_compiler::{
-        compile_uts_to_acc_v1, wp09_compiler_input_fixture, wp09_compiler_registry_fixture,
-    };
+    use crate::trace::TraceEvent;
 
     fn safe_read_input() -> GovernedExecutorInputV1 {
-        let input = wp09_compiler_input_fixture("fixture.safe_read");
-        let outcome = compile_uts_to_acc_v1(&input);
-        let acc = outcome.acc.expect("safe-read fixture should compile");
-        let arguments = input
-            .proposal
-            .arguments
-            .iter()
-            .map(|(key, value)| (key.clone(), value.clone()))
-            .collect::<BTreeMap<String, JsonValue>>();
-        let private_argument_digest = compute_private_argument_digest(&arguments);
-
-        let registry = wp09_compiler_registry_fixture();
-        let candidate = crate::freedom_gate::FreedomGateToolCandidateV1 {
-            candidate_id: "candidate.safe_read".to_string(),
-            proposal_id: input.proposal.proposal_id.clone(),
-            normalized_proposal_ref: "normalized.proposal".to_string(),
-            acc_contract_id: acc.contract_id.clone(),
-            policy_evidence_ref: "policy.wp11.fixture".to_string(),
-            action_kind: acc.tool.tool_name.clone(),
-            risk_class: "low".to_string(),
-            operator_actor_id: acc.actor.actor_id.clone(),
-            citizen_boundary_ref: "citizen.boundary".to_string(),
-            private_argument_digest,
-        };
-        let gate_context = crate::freedom_gate::FreedomGateToolGateContextV1 {
-            policy_decision: "allowed".to_string(),
-            requires_operator_review: false,
-            requires_human_challenge: false,
-            escalation_available: false,
-            citizen_action_boundary_intact: true,
-            operator_action_boundary_intact: true,
-            private_arguments_redacted: true,
-        };
-        let gate_decision = evaluate_tool_candidate_freedom_gate_v1(&candidate, &gate_context);
-
-        GovernedExecutorInputV1 {
-            source: GovernedExecutorSourceV1::RegistryCompiler,
-            action_id: "action.safe_read".to_string(),
-            proposal_id: input.proposal.proposal_id,
-            acc: Some(acc),
-            registry,
-            arguments,
-            gate_decision,
-        }
+        fixture_safe_read_input_v1()
     }
 
     fn gate_decision_for(
@@ -687,7 +1041,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_approved_action_is_executed_and_selected() {
+    fn dangerous_negative_suite_wp13_approved_action_is_executed_and_selected() {
         let input = safe_read_input();
         let proposal_id = input.proposal_id.clone();
         let outcome = execute_governed_action_v1(&input);
@@ -709,10 +1063,75 @@ mod tests {
                 .and_then(|value| value.as_str()),
             Some("fixture_read_completed")
         );
+        assert!(outcome.selected_actions[0]
+            .evidence
+            .iter()
+            .any(|value| value == "gate:candidate.safe_read"));
+        assert!(outcome.selected_actions[0]
+            .evidence
+            .iter()
+            .any(|value| value == "policy:policy.wp11.fixture"));
     }
 
     #[test]
-    fn wp13_refuses_malformed_gate_decision_when_inconsistent() {
+    fn dangerous_negative_suite_wp14_governed_executor_trace_is_emitted_from_production_helper() {
+        let input = safe_read_input();
+        let mut trace = Trace::new("run-governed", "wf-governed", "0.90.5");
+
+        let outcome = execute_governed_action_with_trace_v1(&input, Some(&mut trace));
+
+        assert_eq!(outcome.selected_actions.len(), 1);
+        assert!(trace
+            .events
+            .iter()
+            .any(|event| matches!(event, TraceEvent::GovernedProposalObserved { .. })));
+        assert!(trace
+            .events
+            .iter()
+            .any(|event| matches!(event, TraceEvent::GovernedFreedomGateDecided { .. })));
+        assert!(trace.events.iter().any(|event| matches!(
+            event,
+            TraceEvent::GovernedActionSelected { evidence_refs, .. }
+                if evidence_refs.iter().any(|value| value == "gate:candidate.safe_read")
+                    && evidence_refs.iter().any(|value| value == "policy:policy.wp11.fixture")
+                    && evidence_refs.iter().any(|value| value == "execution:action.safe_read")
+        )));
+        assert!(trace.events.iter().any(|event| matches!(
+            event,
+            TraceEvent::GovernedExecutionResultRecorded { evidence_refs, .. }
+                if evidence_refs.iter().any(|value| value == "gate:candidate.safe_read")
+                    && evidence_refs.iter().any(|value| value == "policy:policy.wp11.fixture")
+                    && evidence_refs.iter().any(|value| value == "execution:action.safe_read")
+        )));
+        assert!(trace
+            .events
+            .iter()
+            .any(|event| matches!(event, TraceEvent::GovernedRedactionDecisionRecorded { .. })));
+    }
+
+    #[test]
+    fn dangerous_negative_suite_wp14_governed_rejection_trace_preserves_gate_policy_and_action_lineage(
+    ) {
+        let mut input = safe_read_input();
+        input.source = GovernedExecutorSourceV1::ModelOutput;
+        let mut trace = Trace::new("run-governed-rejection", "wf-governed", "0.90.5");
+
+        let outcome = execute_governed_action_with_trace_v1(&input, Some(&mut trace));
+
+        assert_eq!(outcome.selected_actions.len(), 0);
+        assert_eq!(outcome.rejected_actions.len(), 1);
+        assert!(trace.events.iter().any(|event| matches!(
+            event,
+            TraceEvent::GovernedActionRejected { evidence_refs, .. }
+                if evidence_refs.iter().any(|value| value == "gate:candidate.safe_read")
+                    && evidence_refs.iter().any(|value| value == "policy:policy.wp11.fixture")
+                    && evidence_refs.iter().any(|value| value == "action:fixture.safe_read")
+                    && evidence_refs.iter().any(|value| value == "action_id:action.safe_read")
+        )));
+    }
+
+    #[test]
+    fn dangerous_negative_suite_wp13_refuses_malformed_gate_decision_when_inconsistent() {
         let mut input = safe_read_input();
         input.gate_decision.decision = FreedomGateToolDecisionV1::Allowed;
         input.gate_decision.stopped_before_executor = true;
@@ -727,7 +1146,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_unknown_fixture_adapter() {
+    fn dangerous_negative_suite_wp13_refuses_unknown_fixture_adapter() {
         let mut input = safe_read_input();
         let mut registry = wp08_tool_registry_v1_fixture();
 
@@ -763,7 +1182,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_gate_without_executor_invocation_ref() {
+    fn dangerous_negative_suite_wp13_refuses_gate_without_executor_invocation_ref() {
         let mut input = safe_read_input();
         input.gate_decision.executor_invocation_ref = None;
 
@@ -777,7 +1196,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_direct_model_output_execution_is_refused() {
+    fn dangerous_negative_suite_wp13_direct_model_output_execution_is_refused() {
         let mut input = safe_read_input();
         input.source = GovernedExecutorSourceV1::ModelOutput;
 
@@ -792,7 +1211,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_denied_freedom_gate_decision() {
+    fn dangerous_negative_suite_wp13_refuses_denied_freedom_gate_decision() {
         let mut input = safe_read_input();
         input.gate_decision = gate_decision_for("denied", true, false, false, "policy_denied");
 
@@ -806,7 +1225,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_deferred_freedom_gate_decision() {
+    fn dangerous_negative_suite_wp13_refuses_deferred_freedom_gate_decision() {
         let mut input = safe_read_input();
         input.gate_decision = gate_decision_for("allowed", false, true, false, "policy_deferred");
 
@@ -820,7 +1239,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_challenged_freedom_gate_decision() {
+    fn dangerous_negative_suite_wp13_refuses_challenged_freedom_gate_decision() {
         let mut input = safe_read_input();
         input.gate_decision = gate_decision_for("allowed", false, false, true, "policy_challenged");
 
@@ -834,7 +1253,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_gate_trace_mismatch() {
+    fn dangerous_negative_suite_wp13_refuses_gate_trace_mismatch() {
         let mut input = safe_read_input();
         input.gate_decision.trace_links = vec![
             "proposal:proposal.mismatch".to_string(),
@@ -852,7 +1271,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_gate_argument_mismatch() {
+    fn dangerous_negative_suite_wp13_refuses_gate_argument_mismatch() {
         let mut input = safe_read_input();
         input.arguments.insert(
             "fixture_id".to_string(),
@@ -869,7 +1288,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_unregistered_action() {
+    fn dangerous_negative_suite_wp13_refuses_unregistered_action() {
         let mut input = safe_read_input();
         input
             .acc
@@ -900,7 +1319,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_destructive_action() {
+    fn dangerous_negative_suite_wp13_refuses_destructive_action() {
         let outcome = execute_result_for_side_effect("destructive");
         assert_eq!(
             outcome.rejected_actions[0].reason_code,
@@ -909,7 +1328,19 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_exfiltrating_action() {
+    fn dangerous_negative_suite_wp15_refuses_process_action() {
+        let outcome = execute_result_for_side_effect("process");
+        assert_eq!(outcome.rejected_actions[0].reason_code, "process_action");
+    }
+
+    #[test]
+    fn dangerous_negative_suite_wp15_refuses_network_action() {
+        let outcome = execute_result_for_side_effect("network");
+        assert_eq!(outcome.rejected_actions[0].reason_code, "network_action");
+    }
+
+    #[test]
+    fn dangerous_negative_suite_wp13_refuses_exfiltrating_action() {
         let outcome = execute_result_for_side_effect("exfiltration");
         assert_eq!(
             outcome.rejected_actions[0].reason_code,
@@ -918,7 +1349,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_replay_unsafe_action() {
+    fn dangerous_negative_suite_wp13_refuses_replay_unsafe_action() {
         let mut input = safe_read_input();
         input
             .acc
@@ -934,7 +1365,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_refuses_malformed_action() {
+    fn dangerous_negative_suite_wp13_refuses_malformed_action() {
         let mut input = safe_read_input();
         input.acc = None;
 
@@ -944,7 +1375,7 @@ mod tests {
     }
 
     #[test]
-    fn wp13_uses_fixture_registry_for_binding() {
+    fn dangerous_negative_suite_wp13_uses_fixture_registry_for_binding() {
         let mut input = safe_read_input();
         let registry = wp08_tool_registry_v1_fixture();
         input.registry = registry;

@@ -22,9 +22,9 @@
 - [ ] policy and Freedom Gate mediation implemented
 - [ ] governed executor runs only approved ACC-backed actions
 - [ ] trace, replay, and redaction evidence available
-- [ ] dangerous negative suite passes
-- [ ] model proposal benchmark executed or truthfully skipped by provider
-- [ ] local/Gemma model evaluation recorded
+- [x] dangerous negative suite passes
+- [x] model proposal benchmark executed or truthfully skipped by provider
+- [x] local/Gemma model evaluation recorded
 - [ ] flagship demo proof packet available
 - [ ] demo matrix and feature proof coverage completed before review convergence
 

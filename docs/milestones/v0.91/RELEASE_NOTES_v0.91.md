@@ -8,13 +8,14 @@ landed behavior.
 
 ## Planned Release Theme
 
-v0.91 is planned as the moral governance and wellbeing-foundation milestone for
-ADL.
+v0.91 is planned as the moral governance, wellbeing, and cognitive-being
+foundation milestone for ADL.
 
 If implemented as planned, it should add reviewable moral-evidence surfaces for
 Freedom Gate events, moral trace, event validation, outcome linkage, metrics,
-trajectory review, anti-harm constraints, moral resources, and wellbeing
-diagnostics.
+trajectory review, anti-harm constraints, moral resources, wellbeing
+diagnostics, kindness, bounded reframing, affect-like reasoning control, and
+secure intra-polis agent communication.
 
 ## Planned Highlights
 
@@ -26,6 +27,13 @@ diagnostics.
 - Moral trajectory review.
 - Anti-harm trajectory proof.
 - Wellbeing metrics v0 diagnostic with citizen self-access and redacted views.
+- Kindness, humor/absurdity, affect, cultivated-intelligence, and moral-resource
+  proof surfaces.
+- Secure local Agent Communication and Invocation Protocol evidence, with
+  hardening separated if needed.
+- v0.91.1 implementation lane for capability/aptitude testing, intelligence
+  metric architecture, ANRM/Gemma, ToM, memory/identity, and runtime-v2/polis
+  docs.
 - Handoff into v0.92 birthday and v0.93 constitutional governance.
 
 ## Required Closeout Rewrite
@@ -37,8 +45,12 @@ The final notes must not claim:
 
 - production moral agency
 - legal personhood
+- consciousness or hidden emotion
 - complete constitutional authority
 - the first true birthday
+- durable identity architecture
 - scalar karma, scalar happiness, or final moral judgment
 - public wellbeing diagnostics or public reputation derived from private
   wellbeing state
+- external or cross-polis agent communication without TLS/mTLS-equivalent
+  protection

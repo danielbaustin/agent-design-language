@@ -87,3 +87,21 @@ evidence, candidate action kind, and gate candidate. Gate records keep private
 arguments out of the event body by carrying only a redacted digest summary.
 Unredacted private arguments, unsafe trace identifiers, malformed digests, or
 broken citizen and operator action boundaries fail closed before execution.
+
+## ACIP Alignment
+
+Comms-07 adds the bounded ACIP-side trace packet that governed execution may
+reference without absorbing all of ACIP.
+
+The shared boundary is:
+
+- ACIP records the communication and invocation-side chronology
+- governed execution records the action and adapter-side chronology
+- both surfaces must agree on the Freedom Gate decision link and on the
+  redaction posture for reviewer, public, and observatory evidence
+
+For v0.90.5, this means ACIP trace packets must stay fixture-backed,
+deterministic, and privacy-preserving. They are allowed to prove message,
+invocation, refusal, failure, and output accountability, but they must not
+become a side channel for prompts, raw tool arguments, private state, rejected
+alternatives, or local workstation paths.

@@ -22,7 +22,7 @@ documentation-only planning lane.
 | WP-12 | #2577 | Freedom Gate integration | Evaluate candidate tool actions before execution | decision events and gate tests | WP-11 |
 | WP-13 | #2578 | Governed executor | Execute only approved ACC-backed actions | executor and refusal behavior | WP-12 |
 | WP-14 | #2579 | Trace, replay, redaction, and evidence contract | Emit accountable evidence without leaking private data | trace/redaction contract and tests | WP-13 |
-| WP-15 | #2580 | Dangerous tool negative suite | Prove destructive, process, network, exfiltration, missing actor, unsafe replay, and delegation failures | negative safety suite | WP-08-WP-14 |
+| WP-15 | #2580 | Dangerous tool negative suite | Prove destructive, process, network, exfiltration, missing actor, hidden delegation, unsafe replay, unregistered adapter, and prompt/tool-argument leakage failures fail closed | negative safety suite | WP-08-WP-14 |
 | WP-16 | #2581 | Model proposal benchmark harness | Test model tool proposals against schema, authority, privacy, and bypass rubrics | benchmark runner and report | WP-04, WP-15 |
 | WP-17 | #2582 | Local model and Gemma-focused evaluation | Run a bounded local/Gemma-focused demo without taking on the full comparison suite | simple model demo scorecard and failure notes | WP-16 |
 | WP-18 | #2583 | Governed Tools v1.0 flagship demo | Show proposal, validation, ACC, policy, gate, execution/denial, trace, and redaction | flagship demo proof packet | WP-13-WP-17 |
@@ -76,6 +76,44 @@ Opened get-well wave:
 Do not let the get-well wave replace the core UTS / ACC / compiler / policy /
 executor / demo / review wave. WP-20 owns the final get-well disposition before
 release closeout.
+
+## Parallel Comms Sprint
+
+The Agent Communication and Invocation Protocol work should stay visible in
+`v0.90.5`, but it must remain a parallel Comms wave rather than being mistaken
+for late-governed-tools scope creep or folded into WP-14 by implication.
+
+The parent feature contract is
+`docs/milestones/v0.90.5/features/AGENT_COMMS_v1.md`.
+
+Opened Comms wave:
+
+| Slice | Issue | Title |
+| --- | --- | --- |
+| Comms-01 | #2628 | Promote ACIP v1 general protocol architecture |
+| Comms-02 | #2629 | ACIP message envelope schema and identity model |
+| Comms-03 | #2630 | ACIP invocation contract and Freedom Gate event binding |
+| Comms-04 | #2631 | ACIP validation fixtures and conformance suite |
+| Comms-05 | #2632 | Review-agent invocation specialization and SRP policy binding |
+| Comms-06 | #2627 | Coding-agent invocation specialization and provider-neutral runner |
+| Comms-07 | #2633 | ACIP trace, replay, redaction, and evidence integration |
+| Comms-08 | #2634 | ACIP demo and proof coverage |
+
+Boundary notes:
+
+- Comms-01 is the guaranteed `v0.90.5` planning and prerequisite-alignment
+  slice: terminology, message-not-card boundary, parent envelope shape, local
+  security posture, and relationship to UTS, ACC, Freedom Gate, review, coding,
+  and trace.
+- Comms-02 through Comms-04 are opened as candidate foundation follow-ons, but
+  the source ACIP split plan still treats secure envelope, identity binding,
+  invocation records, and conformance work as default `v0.91` substrate scope
+  unless the milestone boundary explicitly keeps them in `v0.90.5`.
+- Comms-05 through Comms-08 are specialization and proof slices that remain
+  even more deferrable if the milestone boundary favors `v0.91` completion.
+- WP-14 remains the governed-tools trace and redaction contract. ACIP may
+  define message and invocation trace primitives, but it does not silently
+  absorb WP-14 or replace the governed-tools release state machine.
 
 ## Compression Candidate
 

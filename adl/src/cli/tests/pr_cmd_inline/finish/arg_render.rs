@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::pr_cmd::finish_support::real_pr_finish;
 
 #[test]
 fn parse_finish_args_requires_title_and_accepts_finish_flags() {
@@ -756,195 +757,14 @@ fn finish_misc_helpers_cover_section_parsing_fingerprint_and_create_outcomes() {
     );
 }
 
-fn restore_env(key: &str, value: Option<String>) {
-    unsafe {
-        if let Some(value) = value {
-            env::set_var(key, value);
-        } else {
-            env::remove_var(key);
-        }
-    }
-}
-
 #[test]
-fn finish_local_helpers_cover_checkout_and_file_truth_edges() {
+fn real_pr_finish_happy_path_is_covered_in_default_lane() {
     let _guard = env_lock();
-    let temp = unique_temp_dir("adl-finish-support-local-helpers");
-    let left = temp.join("left");
-    fs::create_dir_all(&left).expect("left dir");
-    assert!(same_checkout_root(&left, &left).expect("same path"));
-
-    let linked_target = temp.join("linked-target");
-    let linked_alias = temp.join("linked-alias");
-    fs::create_dir_all(&linked_target).expect("linked target");
-    std::os::unix::fs::symlink(&linked_target, &linked_alias).expect("symlink");
-    assert!(same_checkout_root(&linked_target, &linked_alias).expect("canonical match"));
-
-    let missing = temp.join("missing.txt");
-    assert!(!ensure_nonempty_file_path(&missing).expect("missing path should be false"));
-
-    let whitespace = temp.join("whitespace.txt");
-    fs::write(&whitespace, " \n\t").expect("whitespace file");
-    assert!(!ensure_nonempty_file_path(&whitespace).expect("whitespace file"));
-
-    let text = temp.join("text.txt");
-    fs::write(&text, "ready\n").expect("text file");
-    assert!(ensure_nonempty_file_path(&text).expect("nonempty file"));
-
-    let started = temp.join("started.md");
-    fs::write(&started, "Status: IN_PROGRESS\n").expect("started sor");
-    ensure_output_card_is_started(&started).expect("started sor accepted");
-
-    let bootstrap = temp.join("bootstrap.md");
-    fs::write(&bootstrap, "Status: NOT_STARTED\n").expect("bootstrap sor");
-    let err = ensure_output_card_is_started(&bootstrap).expect_err("bootstrap sor rejected");
-    assert!(err.to_string().contains("Status: NOT_STARTED"));
-}
-
-#[test]
-fn finish_validation_plan_and_runner_cover_docs_focused_full_and_error_paths() {
-    let _guard = env_lock();
-    let temp = unique_temp_dir("adl-finish-support-validation");
-    let repo = temp.join("repo");
-    let adl_dir = repo.join("adl");
-    let tools_dir = adl_dir.join("tools");
-    let target_dir = adl_dir.join("target");
-    let bin_dir = temp.join("bin");
-    fs::create_dir_all(&tools_dir).expect("tools dir");
-    fs::create_dir_all(&target_dir).expect("target dir");
-    fs::create_dir_all(&bin_dir).expect("bin dir");
-    fs::write(
-        adl_dir.join("Cargo.toml"),
-        "[package]\nname='adl'\nversion='0.1.0'\n",
-    )
-    .expect("manifest");
-
-    let guard_log = temp.join("guard.log");
-    let diff_log = temp.join("diff.log");
-    let cargo_log = temp.join("cargo.log");
-    let coverage_log = temp.join("coverage.log");
-    let ci_log = temp.join("ci.log");
-    let validator_log = temp.join("validator.log");
-
-    write_executable(
-        &tools_dir.join("check_no_tracked_adl_issue_record_residue.sh"),
-        &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'guard\\n' >> '{}'\n",
-            guard_log.display()
-        ),
-    );
-    write_executable(
-        &tools_dir.join("test_check_coverage_impact.sh"),
-        &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
-            coverage_log.display()
-        ),
-    );
-    write_executable(
-        &tools_dir.join("test_ci_path_policy.sh"),
-        &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
-            ci_log.display()
-        ),
-    );
-    write_executable(
-        &tools_dir.join("check_coverage_impact.sh"),
-        &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
-            coverage_log.display()
-        ),
-    );
-    write_executable(
-        &tools_dir.join("validate_structured_prompt.sh"),
-        &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\ncase \"$*\" in *broken*) exit 8 ;; *) exit 0 ;; esac\n",
-            validator_log.display()
-        ),
-    );
-    write_executable(
-        &bin_dir.join("git"),
-        &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
-            diff_log.display()
-        ),
-    );
-    write_executable(
-        &bin_dir.join("cargo"),
-        &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2\" = 'nextest --version' ]; then\n  exit 1\nfi\nexit 0\n",
-            cargo_log.display()
-        ),
-    );
-
-    let old_path = env::var("PATH").ok();
-    let mut path_entries = vec![bin_dir.clone()];
-    path_entries.extend(env::split_paths(old_path.as_deref().unwrap_or("")));
-    unsafe {
-        env::set_var("PATH", env::join_paths(path_entries).expect("join PATH"));
-    }
-
-    let docs_plan = select_finish_validation_plan("docs,README.md").expect("docs plan");
-    assert_eq!(docs_plan.mode, FinishValidationMode::DocsOnly);
-    run_finish_validation_rust(&repo, &docs_plan).expect("docs plan runs");
-
-    let focused_plan = select_finish_validation_plan(
-        "adl/src/cli/pr_cmd/finish_support.rs,.github/workflows/ci.yaml,adl/tools/ci_path_policy.sh",
-    )
-    .expect("focused plan");
-    assert_eq!(focused_plan.mode, FinishValidationMode::FocusedLocalCiGated);
-    run_finish_validation_rust(&repo, &focused_plan).expect("focused plan runs");
-
-    let unsupported = FinishValidationPlan {
-        mode: FinishValidationMode::FocusedLocalCiGated,
-        commands: vec![
-            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
-            "git diff --check".to_string(),
-            "unsupported".to_string(),
-        ],
-    };
-    let err = run_finish_validation_rust(&repo, &unsupported).expect_err("unsupported command");
-    assert!(err
-        .to_string()
-        .contains("unsupported focused validation command"));
-
-    let full_plan = select_finish_validation_plan("adl/src/lib.rs").expect("full rust plan");
-    assert_eq!(full_plan.mode, FinishValidationMode::FullRust);
-    run_finish_validation_rust(&repo, &full_plan).expect("full plan runs");
-
-    let completed = temp.join("completed.sor.md");
-    fs::write(&completed, "Status: COMPLETED\n").expect("completed sor");
-    validate_completed_sor(&repo, &completed).expect("validator success");
-
-    let broken = temp.join("broken.sor.md");
-    fs::write(&broken, "Status: COMPLETED\n").expect("broken sor");
-    let err = validate_completed_sor(&repo, &broken).expect_err("validator failure");
-    assert!(err
-        .to_string()
-        .contains("output card failed completed-phase validation"));
-
-    restore_env("PATH", old_path);
-
-    assert!(fs::read_to_string(&guard_log)
-        .expect("guard log")
-        .contains("guard"));
-    assert!(fs::read_to_string(&cargo_log)
-        .expect("cargo log")
-        .contains("test --manifest-path"));
-    assert!(fs::read_to_string(&coverage_log)
-        .expect("coverage log")
-        .contains("--require-summary-for-risk"));
-    assert!(fs::metadata(&ci_log).expect("ci log metadata").len() > 0);
-    assert!(fs::read_to_string(&validator_log)
-        .expect("validator log")
-        .contains("--phase"));
-}
-
-#[test]
-fn finish_surface_helpers_cover_tracking_stage_and_body_rendering() {
-    let _guard = env_lock();
-    let temp = unique_temp_dir("adl-finish-support-surfaces");
+    let temp = unique_temp_dir("adl-pr-finish-default-lane");
+    let origin = temp.join("origin.git");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])
@@ -958,12 +778,11 @@ fn finish_surface_helpers_cover_tracking_stage_and_body_rendering() {
         .status()
         .expect("git config")
         .success());
-    fs::create_dir_all(repo.join(".adl/v0.86/tasks/issue-1153__rust-finish-test"))
-        .expect("task dir");
-    fs::create_dir_all(repo.join("docs")).expect("docs dir");
-    fs::write(repo.join("docs/README.md"), "hello\n").expect("doc");
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
+    fs::create_dir_all(repo.join("adl/src")).expect("adl src");
+    fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write source");
     assert!(Command::new("git")
-        .args(["add", "docs/README.md"])
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
         .current_dir(&repo)
         .status()
         .expect("git add")
@@ -974,74 +793,182 @@ fn finish_surface_helpers_cover_tracking_stage_and_body_rendering() {
         .status()
         .expect("git commit")
         .success());
-
-    let issue_ref = IssueRef::new(1153, "v0.86".to_string(), "rust-finish-test".to_string())
-        .expect("issue ref");
-    let source = issue_ref.issue_prompt_path(&repo);
-    let root_stp = issue_ref.task_bundle_stp_path(&repo);
-    let root_input = issue_ref.task_bundle_input_path(&repo);
-    let root_output = issue_ref.task_bundle_output_path(&repo);
-    fs::create_dir_all(source.parent().expect("source parent")).expect("source parent dir");
-    fs::write(&source, "prompt\n").expect("source");
-    fs::write(&root_stp, "stp\n").expect("stp");
-    fs::write(&root_input, "sip\n").expect("sip");
-    fs::write(
-        &root_output,
-        "Status: COMPLETED\n\n## Summary\nDone\n\n## Artifacts produced\n- a\n",
-    )
-    .expect("sor");
-
-    assert!(stage_selected_paths_rust(&repo, "docs/README.md").is_ok());
-    let tracked =
-        tracked_issue_surface_paths(&repo, &repo, &issue_ref, &source).expect("tracked paths");
-    assert!(tracked.is_empty());
-    assert!(ensure_issue_surfaces_are_local_only(&repo, &repo, &issue_ref, &source).is_ok());
-
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
     assert!(Command::new("git")
         .args([
-            "add",
-            path_relative_to_repo(&repo, &source).as_str(),
-            path_relative_to_repo(&repo, &root_stp).as_str(),
-            path_relative_to_repo(&repo, &root_input).as_str(),
-            path_relative_to_repo(&repo, &root_output).as_str(),
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
         ])
         .current_dir(&repo)
         .status()
-        .expect("git add local surfaces")
+        .expect("git init bare")
         .success());
-    let err = ensure_issue_surfaces_are_local_only(&repo, &repo, &issue_ref, &source)
-        .expect_err("tracked surfaces should fail");
-    assert!(err
-        .to_string()
-        .contains("canonical .adl issue surfaces must remain local-only"));
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "checkout",
+            "-q",
+            "-b",
+            "codex/1153-rust-finish-default-lane"
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
 
-    let input = temp.join("input.md");
-    fs::write(&input, "Status: ACTIVE\n").expect("input");
-    let output = temp.join("output.md");
-    fs::write(
-        &output,
-        "Status: COMPLETED\n\n## Summary\nSummary text\n\n## Validation\ncargo test\n",
+    let issue_ref = IssueRef::new(
+        1153,
+        "v0.86".to_string(),
+        "rust-finish-default-lane".to_string(),
     )
-    .expect("output");
-    let body = render_pr_body(
-        Some("Closes #1153"),
+    .expect("issue ref");
+    fs::create_dir_all(issue_ref.task_bundle_dir_path(&repo)).expect("bundle dir");
+    let stp = issue_ref.task_bundle_stp_path(&repo);
+    let input = issue_ref.task_bundle_input_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish default lane");
+    fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+    write_authored_sip(
         &input,
-        &output,
-        Some("Extra notes"),
-        Some("- fallback validation"),
-        "fingerprint-123",
+        &issue_ref,
+        "[v0.86][tools] Rust finish default lane",
+        "codex/1153-rust-finish-default-lane",
+        &issue_ref.issue_prompt_path(&repo),
         &repo,
+    );
+    write_completed_sor_fixture(&output, "codex/1153-rust-finish-default-lane");
+    fs::write(
+        repo.join("adl/src/lib.rs"),
+        "pub fn placeholder() {}\npub fn changed() {}\n",
     )
-    .expect("pr body");
-    assert!(body.contains("## Summary"));
-    assert!(body.contains("## Validation"));
-    assert!(body.contains("## Notes"));
-    assert!(body.contains("Idempotency-Key: fingerprint-123"));
-    assert_eq!(
-        finish_inputs_fingerprint("Title", "adl", "input.md", "output.md"),
-        finish_inputs_fingerprint("Title", "adl", "input.md", "output.md")
+    .expect("write change");
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    let janitor_log = temp.join("janitor.log");
+    let closeout_log = temp.join("closeout.log");
+    let gh_path = bin_dir.join("gh");
+    let janitor_path = bin_dir.join("janitor");
+    let closeout_path = bin_dir.join("closeout");
+    write_executable(
+        &gh_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2 $3\" = 'repo view --json' ]; then\n  printf 'danielbaustin/agent-design-language\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr list' ]; then\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr create' ]; then\n  printf 'https://github.com/danielbaustin/agent-design-language/pull/1159\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    printf '1153\\n'\n  else\n    printf 'Closes #1153\\n'\n  fi\n  exit 0\nfi\nexit 1\n",
+            gh_log.display()
+        ),
+    );
+    write_executable(
+        &janitor_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            janitor_log.display()
+        ),
+    );
+    write_executable(
+        &closeout_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            closeout_log.display()
+        ),
     );
 
-    let temp_md = write_temp_markdown("finish-support-test", "body").expect("temp markdown");
-    assert_eq!(fs::read_to_string(temp_md).expect("temp body"), "body");
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_janitor_cmd = env::var("ADL_PR_JANITOR_CMD").ok();
+    let old_janitor_disable = env::var("ADL_PR_JANITOR_DISABLE").ok();
+    let old_closeout_cmd = env::var("ADL_POST_MERGE_CLOSEOUT_CMD").ok();
+    let old_closeout_disable = env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE").ok();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("ADL_PR_JANITOR_DISABLE", "0");
+        env::set_var("ADL_PR_JANITOR_CMD", &janitor_path);
+        env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "0");
+        env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", &closeout_path);
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let result = real_pr_finish(&[
+        "1153".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Rust finish default lane".to_string(),
+        "--paths".to_string(),
+        "adl".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &input),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &output),
+        "--no-checks".to_string(),
+        "--no-open".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+        if let Some(value) = old_janitor_cmd {
+            env::set_var("ADL_PR_JANITOR_CMD", value);
+        } else {
+            env::remove_var("ADL_PR_JANITOR_CMD");
+        }
+        if let Some(value) = old_janitor_disable {
+            env::set_var("ADL_PR_JANITOR_DISABLE", value);
+        } else {
+            env::remove_var("ADL_PR_JANITOR_DISABLE");
+        }
+        if let Some(value) = old_closeout_cmd {
+            env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", value);
+        } else {
+            env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
+        }
+        if let Some(value) = old_closeout_disable {
+            env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", value);
+        } else {
+            env::remove_var("ADL_POST_MERGE_CLOSEOUT_DISABLE");
+        }
+    }
+
+    result.expect("real_pr_finish success");
+
+    let head_subject = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(&repo).expect("repo"),
+            "log",
+            "-1",
+            "--format=%s",
+        ],
+    )
+    .expect("head subject");
+    assert!(head_subject.contains("[v0.86][tools] Rust finish default lane (Closes #1153)"));
+    let gh_log = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(gh_log.contains("pr create"));
+    assert!(gh_log.contains("pr view -R danielbaustin/agent-design-language"));
+    let janitor_log = fs::read_to_string(&janitor_log).expect("janitor log");
+    let closeout_log = fs::read_to_string(&closeout_log).expect("closeout log");
+    assert!(janitor_log.contains("--issue 1153"));
+    assert!(closeout_log.contains("--issue 1153"));
 }

@@ -1,0 +1,400 @@
+# Agent Communication And Invocation Protocol v1
+
+## Status
+
+Tracked feature boundary for the v0.90.5 Comms sprint.
+
+This document promotes the prior TBD protocol note into a milestone-facing
+feature surface. It defines the parent communication model that later Comms
+issues implement and specialize. It does not, by itself, grant execution
+authority, create provider transport, or replace Governed Tools.
+
+## Purpose
+
+ADL needs a general communication substrate for agents, not a review-only or
+coding-only side protocol.
+
+ACIP v1 exists so agents can:
+
+- converse naturally
+- consult one another
+- invoke bounded work
+- delegate or hand off responsibility
+- negotiate with multiple parties
+- return reviewable, traceable results
+
+The core rule is stable:
+
+> Agents communicate through messages, not through prompts or cards.
+
+STP, SIP, SOR, SRP, evidence packets, demo packets, and later structured
+artifacts are payloads or references inside messages. They are not the message
+primitive itself.
+
+## Core Boundary
+
+ACIP v1 defines communication and invocation structure.
+
+It does not define:
+
+- execution authority by message alone
+- encrypted external transport as a v1 requirement
+- reputation or karma systems
+- cross-polis federation
+- same-session write-and-bless workflows
+
+Governed action still depends on UTS, ACC, policy evaluation, Freedom Gate, and
+governed execution. A message may request work; it does not authorize the work
+by itself.
+
+## Architectural Layers
+
+### 1. Message Substrate
+
+Every interaction is modeled as:
+
+`message -> interpretation -> optional invocation -> response`
+
+The message substrate must support free-form text, structured payload refs, and
+traceable identity without forcing ordinary conversation into prompt-card form.
+
+### 2. Canonical Envelope
+
+ACIP messages should conform to a stable envelope so they can be traced,
+validated, replayed, and redacted safely.
+
+The minimum stable envelope includes:
+
+- `message_id`
+- `conversation_id`
+- `sender_id`
+- `recipient_id`
+- `timestamp_utc`
+- `monotonic_order`
+- `intent`
+- `visibility`
+- `content`
+- `payload_refs`
+- `artifact_refs`
+- `memory_refs`
+- `authority_scope`
+- `trace_required`
+- `attachments`
+
+Envelope design rules:
+
+- natural-language content is first-class
+- large or sensitive payloads should be referenced instead of inlined
+- identity and ordering must be reconstructable
+- the envelope must not require STP, SIP, SOR, or SRP to exist
+
+### 3. Interaction Modes
+
+ACIP v1 uses one substrate across a small stable mode vocabulary:
+
+- `conversation`
+- `consultation`
+- `invocation`
+- `review`
+- `delegation`
+- `negotiation`
+- `handoff`
+- `broadcast`
+
+Modes may require additional payloads or validation rules, but they should not
+fork the communication universe.
+
+### 4. Invocation Contract
+
+Structured work is represented as an invocation contract embedded in or
+referenced by a message.
+
+The minimum stable invocation shape includes:
+
+- `invocation_id`
+- `conversation_id`
+- `causal_message_id`
+- `caller_id`
+- `target_id`
+- `intent`
+- `purpose`
+- `input_refs`
+- `constraints`
+- `expected_outputs`
+- `stop_policy`
+- `authority_scope`
+- `policy_refs`
+- `decision_event_ref`
+- `response_channel`
+- `trace_required`
+
+Governed invocation rules:
+
+- invocation must be explicit or reconstructable
+- governed invocation must link to a Freedom Gate or equivalent policy decision
+- outputs must satisfy the declared output contract or emit refusal/failure
+  evidence
+- invocation does not imply repository, merge, or tool authority
+
+### 5. Evidence, Trace, And Redaction
+
+ACIP must be accountable without becoming a privacy leak.
+
+The trace model must be able to represent:
+
+- message creation
+- invocation request
+- policy or Freedom Gate decision
+- response, refusal, failure, or partial completion
+- output refs
+- redaction decisions
+
+Audience-specific views should remain possible for actor, operator, reviewer,
+public, and Observatory-style consumers where applicable.
+
+### 6. Specializations
+
+Specializations inherit the core message, identity, visibility, invocation, and
+trace rules instead of redefining transport.
+
+Expected first specializations are:
+
+- reviewer-agent invocation with SRP policy refs
+- coding-agent invocation with patch or proposal outputs
+- delegation and handoff
+- demo or operator invocation
+- multi-agent negotiation
+
+## Relationship To Governed Tools
+
+ACIP is adjacent to, but distinct from, the governed-tools stack.
+
+### UTS
+
+UTS describes tool-call shape and compatibility. It does not define agent
+communication.
+
+### ACC
+
+ACC carries authority, identity, and execution policy for proposed actions. It
+does not replace messages or conversations.
+
+### Freedom Gate
+
+Freedom Gate governs whether a candidate action may proceed. ACIP messages may
+carry invocation requests and decision refs, but they do not bypass the gate.
+
+### Governed Execution And Trace
+
+Governed execution consumes approved authority surfaces. ACIP contributes the
+message and invocation trace primitives that later trace and redaction issues
+can reuse.
+
+## Relationship To Review And Prompt Artifacts
+
+SRP remains a durable review-policy artifact. It is a payload or policy ref
+used by a review specialization, not the transport.
+
+Likewise:
+
+- STP is a structured task payload
+- SIP is a structured input payload
+- SOR is a structured result payload
+
+These artifacts are useful when precision and replayability matter, but ACIP v1
+must still support ordinary conversation without them.
+
+## Security And Privacy Posture
+
+Inside a single polis, ACIP should be treated as local, identity-bound,
+traceable communication.
+
+The v1 posture is:
+
+- communication is private by default and visible by policy
+- sender and recipient identity must be explicit and authenticated
+- local envelopes should be integrity-protected so message identity, ordering,
+  and visibility cannot drift silently
+- sensitive local payloads should travel through encrypted payload refs or
+  encrypted attachments rather than being dumped into public transcript form
+- raw private reasoning should not be made a required envelope field
+
+External or cross-polis transport remains out of scope until stronger transport
+and identity guarantees are accepted.
+
+## v0.90.5 Scope Boundary
+
+Within v0.90.5, ACIP is a governed-tools-adjacent prerequisite feature.
+
+This tranche is intended to stabilize:
+
+- ACIP terminology and message-not-card boundary
+- the parent envelope and invocation shape
+- the local intra-polis security stance
+- the relationship to UTS, ACC, Freedom Gate, review, coding, and trace
+
+This tranche should not claim that the secure communication substrate is fully
+implemented in `v0.90.5`. The default allocation still treats secure envelope,
+identity binding, invocation records, local routing semantics, and conformance
+fixtures as downstream implementation work that may remain in `v0.91` and
+`v0.91.1` unless the milestone boundary deliberately keeps additional Comms
+slices in `v0.90.5`.
+
+## Consumer Map
+
+This feature doc is the parent terminology and scope surface for:
+
+- Comms-02 envelope and identity schema work
+- Comms-03 invocation contract and Freedom Gate linkage
+- Comms-04 conformance fixtures
+- Comms-05 review-agent specialization
+- Comms-06 coding-agent specialization
+- Comms-07 trace, replay, redaction, and evidence integration
+- Comms-08 demo and proof coverage
+- future cross-polis and external-transport planning once TLS or
+  mTLS-equivalent transport is accepted
+
+Later consumers should reference this feature rather than copying protocol prose
+into role-specific docs.
+
+## Comms-04 Fixture Classes
+
+The core conformance suite should prove that ACIP is a general protocol rather
+than a review-only transport. The canonical fixture classes for that proof are:
+
+- valid mode fixtures for `conversation`, `consultation`, `invocation_setup`,
+  `review_request`, `coding_request`, `coding_agent_handoff`, `delegation`,
+  `negotiation`, `operator_request`, `broadcast`,
+  `shared_conversation_thread`, and `governed_invocation_contract`
+- negative fixtures for `identity_drift`, `missing_recipient`,
+  `hidden_invocation`, `malformed_payload_refs`, `unsupported_visibility`,
+  `raw_local_path_refs`, `authority_escalation`, `stale_ordering`, missing
+  Freedom Gate linkage for governed invocation, `ambiguous_stop_policy_rejected`,
+  `unsafe_input_refs_rejected`, `status_refusal_inconsistency_rejected`, and
+  `output_contract_mismatch_rejected`
+
+Those names are part of the reviewer-facing conformance surface for Comms-04
+and later specialization work should inherit them instead of creating ad hoc
+renamings for the same core behaviors.
+
+## Comms-05 Review Specialization
+
+The reviewer-agent specialization inherits the core ACIP invocation contract and
+adds review-specific policy and disposition fields rather than redefining
+transport.
+
+The canonical review specialization surfaces are:
+
+- an ACIP review invocation contract with:
+  `invocation.intent = review_request`
+- `srp_ref` plus matching inclusion in `constraints.policy_refs`
+- `review_packet_ref` and bounded `evidence_packet_refs`
+- reviewer independence policy including distinct writer/reviewer session and
+  model refs
+- explicit prohibition of merge and push authority in
+  `constraints.prohibited_actions`
+- a review disposition contract that maps:
+  `blessed -> allow_pr_finish`
+  `blocked -> fix_findings_and_rerun_review`
+  `non_proving -> operator_waiver_required`
+  `skipped -> operator_waiver_required`
+
+The paired review outcome must preserve the declared reviewer identity, carry a
+gate result, and only allow PR finish for a blessed disposition. Review output
+remains evidence and handoff state only; it does not grant merge authority.
+
+## Comms-06 Coding Specialization
+
+The coding-agent specialization inherits the same ACIP invocation substrate and
+adds provider-lane, edit-boundary, and review-handoff requirements rather than
+creating a second execution protocol.
+
+The canonical coding specialization surfaces are:
+
+- an ACIP coding invocation contract with:
+  `invocation.intent = coding_request`
+- a declared `provider_lane` and `execution_mode`
+- explicit `issue_ref`, `task_bundle_ref`, and bounded `allowed_edit_paths`
+- explicit `validation_commands` and `patch_format`
+- an approval policy that:
+  requires review before PR finish
+  routes to `acip.review.invocation.v1`
+  forbids same-session blessing
+  forbids same-model blessing
+
+The canonical lane boundary is also fixed:
+
+- only `codex_issue_worktree` may use `worktree_edit`
+- all other lanes are proposal-only and return diff or structured-proposal
+  artifacts
+- proposal-only lanes must not claim direct `code_edit` capability
+
+The paired coding outcome must preserve writer identity, emit validation
+evidence plus a `review_handoff_ref`, and classify the result as either
+patch-ready-for-review or proposal-ready-for-review. Like the review outcome,
+the coding outcome is evidence and handoff only; it never grants merge or
+blessing authority.
+
+## Comms-07 Trace, Replay, Redaction, And Evidence Integration
+
+The trace specialization inherits the same ACIP envelope and invocation
+contracts and adds one deterministic, audience-aware evidence layer rather than
+creating a second tracing protocol beside governed execution.
+
+The canonical trace specialization surfaces are:
+
+- an `acip.trace.bundle.v1` packet that records:
+  `message_created`
+  `invocation_contract_declared`
+  `decision_recorded`
+  and exactly one terminal invocation event:
+  `invocation_completed`
+  `invocation_refused`
+  or `invocation_failed`
+- an explicit replay contract that is:
+  fixture-backed
+  deterministic for event order
+  deterministic for redaction views
+  and local-only rather than provider-dependent
+- five canonical audience views:
+  actor
+  operator
+  reviewer
+  public
+  observatory
+
+The redaction boundary is fixed:
+
+- reviewer, public, and observatory views must not expose private payload refs
+- reviewer, public, and observatory views must not expose raw tool arguments
+- reviewer, public, and observatory views must not expose local host paths
+- reviewer, public, and observatory views must not expose rejected alternative
+  details
+
+Trace summaries and trace refs must also stay bounded: they are allowed to
+explain what happened, but they must not dump secrets, raw prompts, raw tool
+arguments, private-state payloads, or workstation-local paths into the evidence
+surface.
+
+## Non-Proving Statements
+
+ACIP v1 does not prove:
+
+- production-ready external transport
+- TLS or mTLS-equivalent federation
+- proof that encrypted payload or attachment handling has been implemented
+  end-to-end
+- cross-polis routing
+- reputation or social-contract systems
+
+Those are future-work or later-milestone concerns unless explicitly implemented
+and separately proved.
+
+## Current Implementation Tranche
+
+For v0.90.5, this feature doc establishes the architecture and boundary needed
+for the Comms wave to proceed in a reviewable way. It exists so later issues can
+implement bounded envelope, invocation, conformance, review, coding, trace, and
+demo slices under one parent contract, while preserving the option to defer the
+secure-local substrate implementation back to `v0.91` if the milestone review
+boundary requires it.
