@@ -335,6 +335,47 @@ patch-ready-for-review or proposal-ready-for-review. Like the review outcome,
 the coding outcome is evidence and handoff only; it never grants merge or
 blessing authority.
 
+## Comms-07 Trace, Replay, Redaction, And Evidence Integration
+
+The trace specialization inherits the same ACIP envelope and invocation
+contracts and adds one deterministic, audience-aware evidence layer rather than
+creating a second tracing protocol beside governed execution.
+
+The canonical trace specialization surfaces are:
+
+- an `acip.trace.bundle.v1` packet that records:
+  `message_created`
+  `invocation_contract_declared`
+  `decision_recorded`
+  and exactly one terminal invocation event:
+  `invocation_completed`
+  `invocation_refused`
+  or `invocation_failed`
+- an explicit replay contract that is:
+  fixture-backed
+  deterministic for event order
+  deterministic for redaction views
+  and local-only rather than provider-dependent
+- five canonical audience views:
+  actor
+  operator
+  reviewer
+  public
+  observatory
+
+The redaction boundary is fixed:
+
+- reviewer, public, and observatory views must not expose private payload refs
+- reviewer, public, and observatory views must not expose raw tool arguments
+- reviewer, public, and observatory views must not expose local host paths
+- reviewer, public, and observatory views must not expose rejected alternative
+  details
+
+Trace summaries and trace refs must also stay bounded: they are allowed to
+explain what happened, but they must not dump secrets, raw prompts, raw tool
+arguments, private-state payloads, or workstation-local paths into the evidence
+surface.
+
 ## Non-Proving Statements
 
 ACIP v1 does not prove:

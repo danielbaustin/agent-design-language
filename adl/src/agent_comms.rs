@@ -19,6 +19,8 @@ const ACIP_REVIEW_FIXTURE_SCHEMA_VERSION: &str = "acip.review.fixture.v1";
 const ACIP_CODING_INVOCATION_SCHEMA_VERSION: &str = "acip.coding.invocation.v1";
 const ACIP_CODING_OUTCOME_SCHEMA_VERSION: &str = "acip.coding.outcome.v1";
 const ACIP_CODING_FIXTURE_SCHEMA_VERSION: &str = "acip.coding.fixture.v1";
+const ACIP_TRACE_BUNDLE_SCHEMA_VERSION: &str = "acip.trace.bundle.v1";
+const ACIP_TRACE_FIXTURE_SCHEMA_VERSION: &str = "acip.trace.fixture.v1";
 const MAX_CONTENT_CHARS: usize = 4_000;
 const MAX_INLINE_SUMMARY_CHARS: usize = 512;
 const MAX_LIST_LEN: usize = 16;
@@ -482,6 +484,104 @@ pub struct AcipCodingFixtureSetV1 {
     pub negative_cases: Vec<AcipCodingNegativeCaseV1>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipTraceEventKindV1 {
+    MessageCreated,
+    InvocationContractDeclared,
+    DecisionRecorded,
+    InvocationCompleted,
+    InvocationRefused,
+    InvocationFailed,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipTraceAudienceV1 {
+    Actor,
+    Operator,
+    Reviewer,
+    Public,
+    Observatory,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipReplayPostureV1 {
+    FixtureBackedDeterministic,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipTraceEventV1 {
+    pub event_id: String,
+    pub conversation_id: String,
+    pub invocation_id: Option<String>,
+    pub event_kind: AcipTraceEventKindV1,
+    pub source_message_id: Option<String>,
+    pub contract_ref: Option<String>,
+    pub decision_event_ref: Option<String>,
+    pub invocation_status: Option<AcipInvocationStatusV1>,
+    pub output_refs: Vec<String>,
+    pub evidence_refs: Vec<String>,
+    pub summary: String,
+    pub requires_redaction: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipTraceAudienceViewV1 {
+    pub audience: AcipTraceAudienceV1,
+    pub narrative_ref: String,
+    pub visible_event_ids: Vec<String>,
+    pub visible_artifact_refs: Vec<String>,
+    pub redacted_elements: Vec<String>,
+    pub allows_private_payload_refs: bool,
+    pub allows_raw_tool_args: bool,
+    pub allows_local_host_paths: bool,
+    pub allows_rejected_alternative_details: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipReplayContractV1 {
+    pub replay_posture: AcipReplayPostureV1,
+    pub fixture_ref: String,
+    pub fixture_case: String,
+    pub deterministic_event_order: bool,
+    pub deterministic_redaction_views: bool,
+    pub remote_provider_required: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipTraceBundleV1 {
+    pub schema_version: String,
+    pub conversation_id: String,
+    pub trace_events: Vec<AcipTraceEventV1>,
+    pub audience_views: Vec<AcipTraceAudienceViewV1>,
+    pub replay_contract: AcipReplayContractV1,
+    pub evidence_packet_refs: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipTraceNegativeCaseV1 {
+    pub name: String,
+    pub expected_error_substring: String,
+    pub bundle: JsonValue,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipTraceFixtureSetV1 {
+    pub schema_version: String,
+    pub valid_completed_bundle: AcipTraceBundleV1,
+    pub valid_refused_bundle: AcipTraceBundleV1,
+    pub valid_failed_bundle: AcipTraceBundleV1,
+    pub negative_cases: Vec<AcipTraceNegativeCaseV1>,
+}
+
 pub fn acip_message_envelope_v1_schema_json() -> Result<String> {
     serde_json::to_string_pretty(&schema_for!(AcipMessageEnvelopeV1))
         .context("serialize ACIP message envelope v1 schema")
@@ -542,6 +642,16 @@ pub fn acip_coding_fixture_set_v1_schema_json() -> Result<String> {
         .context("serialize ACIP coding fixture set v1 schema")
 }
 
+pub fn acip_trace_bundle_v1_schema_json() -> Result<String> {
+    serde_json::to_string_pretty(&schema_for!(AcipTraceBundleV1))
+        .context("serialize ACIP trace bundle v1 schema")
+}
+
+pub fn acip_trace_fixture_set_v1_schema_json() -> Result<String> {
+    serde_json::to_string_pretty(&schema_for!(AcipTraceFixtureSetV1))
+        .context("serialize ACIP trace fixture set v1 schema")
+}
+
 pub fn validate_acip_review_invocation_contract_v1_value(
     value: &JsonValue,
 ) -> Result<AcipReviewInvocationContractV1> {
@@ -578,6 +688,13 @@ pub fn validate_acip_coding_outcome_v1_value(
         serde_json::from_value(value.clone()).context("parse ACIP coding outcome v1")?;
     validate_acip_coding_outcome_v1(contract, &outcome)?;
     Ok(outcome)
+}
+
+pub fn validate_acip_trace_bundle_v1_value(value: &JsonValue) -> Result<AcipTraceBundleV1> {
+    let bundle: AcipTraceBundleV1 =
+        serde_json::from_value(value.clone()).context("parse ACIP trace bundle v1")?;
+    validate_acip_trace_bundle_v1(&bundle)?;
+    Ok(bundle)
 }
 
 pub fn validate_acip_message_envelope_v1_value(value: &JsonValue) -> Result<AcipMessageEnvelopeV1> {
@@ -2892,6 +3009,84 @@ pub fn acip_coding_fixture_set_v1() -> AcipCodingFixtureSetV1 {
     }
 }
 
+pub fn acip_trace_fixture_set_v1() -> AcipTraceFixtureSetV1 {
+    AcipTraceFixtureSetV1 {
+        schema_version: ACIP_TRACE_FIXTURE_SCHEMA_VERSION.to_string(),
+        valid_completed_bundle: sample_trace_bundle(AcipInvocationStatusV1::Completed),
+        valid_refused_bundle: sample_trace_bundle(AcipInvocationStatusV1::Refused),
+        valid_failed_bundle: sample_trace_bundle(AcipInvocationStatusV1::Failed),
+        negative_cases: vec![
+            AcipTraceNegativeCaseV1 {
+                name: "public_view_private_state_leak_rejected".to_string(),
+                expected_error_substring:
+                    "reviewer, public, and observatory views must not allow private payload refs"
+                        .to_string(),
+                bundle: {
+                    let mut value = serde_json::to_value(sample_trace_bundle(
+                        AcipInvocationStatusV1::Completed,
+                    ))
+                    .expect("json");
+                    value["audience_views"][3]["allows_private_payload_refs"] = json!(true);
+                    value
+                },
+            },
+            AcipTraceNegativeCaseV1 {
+                name: "missing_decision_event_rejected".to_string(),
+                expected_error_substring:
+                    "decision_recorded trace event must carry invocation_id, contract_ref, and decision_event_ref"
+                        .to_string(),
+                bundle: {
+                    let mut value = serde_json::to_value(sample_trace_bundle(
+                        AcipInvocationStatusV1::Completed,
+                    ))
+                    .expect("json");
+                    value["trace_events"][2]["decision_event_ref"] = JsonValue::Null;
+                    value
+                },
+            },
+            AcipTraceNegativeCaseV1 {
+                name: "terminal_event_must_require_redaction".to_string(),
+                expected_error_substring: "invocation_refused trace event must require redaction"
+                    .to_string(),
+                bundle: {
+                    let mut value =
+                        serde_json::to_value(sample_trace_bundle(AcipInvocationStatusV1::Refused))
+                            .expect("json");
+                    value["trace_events"][3]["requires_redaction"] = json!(false);
+                    value
+                },
+            },
+            AcipTraceNegativeCaseV1 {
+                name: "host_path_leakage_in_summary_rejected".to_string(),
+                expected_error_substring: "summary must not leak protected trace content '/users/'"
+                    .to_string(),
+                bundle: {
+                    let mut value = serde_json::to_value(sample_trace_bundle(
+                        AcipInvocationStatusV1::Completed,
+                    ))
+                    .expect("json");
+                    value["trace_events"][0]["summary"] =
+                        json!("Captured local path /Users/daniel/private/trace.json for replay.");
+                    value
+                },
+            },
+            AcipTraceNegativeCaseV1 {
+                name: "remote_replay_dependency_rejected".to_string(),
+                expected_error_substring:
+                    "ACIP replay contract must remain fixture-backed and local for v1".to_string(),
+                bundle: {
+                    let mut value = serde_json::to_value(sample_trace_bundle(
+                        AcipInvocationStatusV1::Completed,
+                    ))
+                    .expect("json");
+                    value["replay_contract"]["remote_provider_required"] = json!(true);
+                    value
+                },
+            },
+        ],
+    }
+}
+
 fn sample_message(
     message_id: &str,
     conversation_id: &str,
@@ -3390,6 +3585,569 @@ fn sample_coding_outcome(contract: &AcipCodingInvocationContractV1) -> AcipCodin
     }
 }
 
+fn sample_trace_bundle(status: AcipInvocationStatusV1) -> AcipTraceBundleV1 {
+    let contract = sample_invocation_contract();
+    let terminal_event = match status {
+        AcipInvocationStatusV1::Completed => AcipTraceEventV1 {
+            event_id: "trace-0004".to_string(),
+            conversation_id: contract.conversation_id.clone(),
+            invocation_id: Some(contract.invocation_id.clone()),
+            event_kind: AcipTraceEventKindV1::InvocationCompleted,
+            source_message_id: Some(contract.causal_message_id.clone()),
+            contract_ref: Some("runtime/comms/invocation/contracts/review_request.json".to_string()),
+            decision_event_ref: Some(contract.decision_event_ref.clone()),
+            invocation_status: Some(AcipInvocationStatusV1::Completed),
+            output_refs: vec!["runtime/comms/invocation/review_report.json".to_string()],
+            evidence_refs: vec!["runtime/comms/invocation/evidence/completed_trace.json".to_string()],
+            summary: "Invocation completed with declared review output contract satisfied."
+                .to_string(),
+            requires_redaction: false,
+        },
+        AcipInvocationStatusV1::Refused => AcipTraceEventV1 {
+            event_id: "trace-0004".to_string(),
+            conversation_id: contract.conversation_id.clone(),
+            invocation_id: Some(contract.invocation_id.clone()),
+            event_kind: AcipTraceEventKindV1::InvocationRefused,
+            source_message_id: Some(contract.causal_message_id.clone()),
+            contract_ref: Some("runtime/comms/invocation/contracts/review_request.json".to_string()),
+            decision_event_ref: Some(contract.decision_event_ref.clone()),
+            invocation_status: Some(AcipInvocationStatusV1::Refused),
+            output_refs: Vec::new(),
+            evidence_refs: vec!["runtime/comms/invocation/evidence/refusal_trace.json".to_string()],
+            summary: "Invocation refused at the governed boundary with bounded reviewer-visible evidence."
+                .to_string(),
+            requires_redaction: true,
+        },
+        AcipInvocationStatusV1::Failed => AcipTraceEventV1 {
+            event_id: "trace-0004".to_string(),
+            conversation_id: contract.conversation_id.clone(),
+            invocation_id: Some(contract.invocation_id.clone()),
+            event_kind: AcipTraceEventKindV1::InvocationFailed,
+            source_message_id: Some(contract.causal_message_id.clone()),
+            contract_ref: Some("runtime/comms/invocation/contracts/review_request.json".to_string()),
+            decision_event_ref: Some(contract.decision_event_ref.clone()),
+            invocation_status: Some(AcipInvocationStatusV1::Failed),
+            output_refs: Vec::new(),
+            evidence_refs: vec!["runtime/comms/invocation/evidence/failure_trace.json".to_string()],
+            summary: "Invocation failed after decision with bounded failure evidence and no raw payload leak."
+                .to_string(),
+            requires_redaction: true,
+        },
+        _ => unreachable!("trace fixture only supports terminal statuses"),
+    };
+
+    let visible_artifact_refs = match status {
+        AcipInvocationStatusV1::Completed => vec![
+            "runtime/comms/trace/reviewer_trace.json".to_string(),
+            "runtime/comms/invocation/review_report.json".to_string(),
+        ],
+        AcipInvocationStatusV1::Refused => vec![
+            "runtime/comms/trace/reviewer_trace.json".to_string(),
+            "runtime/comms/invocation/evidence/refusal_trace.json".to_string(),
+        ],
+        AcipInvocationStatusV1::Failed => vec![
+            "runtime/comms/trace/reviewer_trace.json".to_string(),
+            "runtime/comms/invocation/evidence/failure_trace.json".to_string(),
+        ],
+        _ => unreachable!("trace fixture only supports terminal statuses"),
+    };
+
+    AcipTraceBundleV1 {
+        schema_version: ACIP_TRACE_BUNDLE_SCHEMA_VERSION.to_string(),
+        conversation_id: contract.conversation_id.clone(),
+        trace_events: vec![
+            AcipTraceEventV1 {
+                event_id: "trace-0001".to_string(),
+                conversation_id: contract.conversation_id.clone(),
+                invocation_id: None,
+                event_kind: AcipTraceEventKindV1::MessageCreated,
+                source_message_id: Some(contract.causal_message_id.clone()),
+                contract_ref: None,
+                decision_event_ref: None,
+                invocation_status: None,
+                output_refs: Vec::new(),
+                evidence_refs: vec!["runtime/comms/trace/message_anchor.json".to_string()],
+                summary: "Message created with bounded conversation anchor and trace requirement."
+                    .to_string(),
+                requires_redaction: false,
+            },
+            AcipTraceEventV1 {
+                event_id: "trace-0002".to_string(),
+                conversation_id: contract.conversation_id.clone(),
+                invocation_id: Some(contract.invocation_id.clone()),
+                event_kind: AcipTraceEventKindV1::InvocationContractDeclared,
+                source_message_id: Some(contract.causal_message_id.clone()),
+                contract_ref: Some(
+                    "runtime/comms/invocation/contracts/review_request.json".to_string(),
+                ),
+                decision_event_ref: Some(contract.decision_event_ref.clone()),
+                invocation_status: None,
+                output_refs: Vec::new(),
+                evidence_refs: vec!["runtime/comms/trace/contract_anchor.json".to_string()],
+                summary:
+                    "Invocation contract declared with explicit output, stop, and authority bounds."
+                        .to_string(),
+                requires_redaction: false,
+            },
+            AcipTraceEventV1 {
+                event_id: "trace-0003".to_string(),
+                conversation_id: contract.conversation_id.clone(),
+                invocation_id: Some(contract.invocation_id.clone()),
+                event_kind: AcipTraceEventKindV1::DecisionRecorded,
+                source_message_id: Some(contract.causal_message_id.clone()),
+                contract_ref: Some(
+                    "runtime/comms/invocation/contracts/review_request.json".to_string(),
+                ),
+                decision_event_ref: Some(contract.decision_event_ref.clone()),
+                invocation_status: None,
+                output_refs: Vec::new(),
+                evidence_refs: vec!["runtime/comms/trace/gate_result.json".to_string()],
+                summary: "Freedom Gate decision recorded before terminal invocation state."
+                    .to_string(),
+                requires_redaction: false,
+            },
+            terminal_event,
+        ],
+        audience_views: vec![
+            AcipTraceAudienceViewV1 {
+                audience: AcipTraceAudienceV1::Actor,
+                narrative_ref: "runtime/comms/trace/actor_view.json".to_string(),
+                visible_event_ids: vec![
+                    "trace-0001".to_string(),
+                    "trace-0002".to_string(),
+                    "trace-0003".to_string(),
+                    "trace-0004".to_string(),
+                ],
+                visible_artifact_refs: vec![
+                    "runtime/comms/trace/actor_view.json".to_string(),
+                    "runtime/comms/trace/private_payload_summary.json".to_string(),
+                ],
+                redacted_elements: vec!["secret_values".to_string()],
+                allows_private_payload_refs: true,
+                allows_raw_tool_args: false,
+                allows_local_host_paths: false,
+                allows_rejected_alternative_details: false,
+            },
+            AcipTraceAudienceViewV1 {
+                audience: AcipTraceAudienceV1::Operator,
+                narrative_ref: "runtime/comms/trace/operator_view.json".to_string(),
+                visible_event_ids: vec![
+                    "trace-0001".to_string(),
+                    "trace-0002".to_string(),
+                    "trace-0003".to_string(),
+                    "trace-0004".to_string(),
+                ],
+                visible_artifact_refs: vec![
+                    "runtime/comms/trace/operator_view.json".to_string(),
+                    "runtime/comms/trace/redacted_payload_digest.json".to_string(),
+                ],
+                redacted_elements: vec![
+                    "raw_tool_args".to_string(),
+                    "local_host_paths".to_string(),
+                ],
+                allows_private_payload_refs: true,
+                allows_raw_tool_args: false,
+                allows_local_host_paths: false,
+                allows_rejected_alternative_details: false,
+            },
+            AcipTraceAudienceViewV1 {
+                audience: AcipTraceAudienceV1::Reviewer,
+                narrative_ref: "runtime/comms/trace/reviewer_view.json".to_string(),
+                visible_event_ids: vec![
+                    "trace-0002".to_string(),
+                    "trace-0003".to_string(),
+                    "trace-0004".to_string(),
+                ],
+                visible_artifact_refs: visible_artifact_refs.clone(),
+                redacted_elements: vec![
+                    "private_payload_refs".to_string(),
+                    "raw_tool_args".to_string(),
+                    "rejected_alternative_details".to_string(),
+                ],
+                allows_private_payload_refs: false,
+                allows_raw_tool_args: false,
+                allows_local_host_paths: false,
+                allows_rejected_alternative_details: false,
+            },
+            AcipTraceAudienceViewV1 {
+                audience: AcipTraceAudienceV1::Public,
+                narrative_ref: "runtime/comms/trace/public_view.json".to_string(),
+                visible_event_ids: vec!["trace-0003".to_string(), "trace-0004".to_string()],
+                visible_artifact_refs: vec!["runtime/comms/trace/public_summary.json".to_string()],
+                redacted_elements: vec![
+                    "private_payload_refs".to_string(),
+                    "raw_tool_args".to_string(),
+                    "local_host_paths".to_string(),
+                    "rejected_alternative_details".to_string(),
+                ],
+                allows_private_payload_refs: false,
+                allows_raw_tool_args: false,
+                allows_local_host_paths: false,
+                allows_rejected_alternative_details: false,
+            },
+            AcipTraceAudienceViewV1 {
+                audience: AcipTraceAudienceV1::Observatory,
+                narrative_ref: "runtime/comms/trace/observatory_view.json".to_string(),
+                visible_event_ids: vec![
+                    "trace-0001".to_string(),
+                    "trace-0003".to_string(),
+                    "trace-0004".to_string(),
+                ],
+                visible_artifact_refs: vec![
+                    "runtime/comms/trace/observatory_summary.json".to_string(),
+                    "runtime/comms/trace/redacted_payload_digest.json".to_string(),
+                ],
+                redacted_elements: vec![
+                    "private_payload_refs".to_string(),
+                    "raw_tool_args".to_string(),
+                    "rejected_alternative_details".to_string(),
+                ],
+                allows_private_payload_refs: false,
+                allows_raw_tool_args: false,
+                allows_local_host_paths: false,
+                allows_rejected_alternative_details: false,
+            },
+        ],
+        replay_contract: AcipReplayContractV1 {
+            replay_posture: AcipReplayPostureV1::FixtureBackedDeterministic,
+            fixture_ref: "runtime/comms/fixtures/acip_invocation_fixture_set_v1.json".to_string(),
+            fixture_case: match status {
+                AcipInvocationStatusV1::Completed => "completed".to_string(),
+                AcipInvocationStatusV1::Refused => "refused".to_string(),
+                AcipInvocationStatusV1::Failed => "failed".to_string(),
+                _ => unreachable!("trace fixture only supports terminal statuses"),
+            },
+            deterministic_event_order: true,
+            deterministic_redaction_views: true,
+            remote_provider_required: false,
+        },
+        evidence_packet_refs: vec![
+            "runtime/comms/trace/message_anchor.json".to_string(),
+            "runtime/comms/trace/gate_result.json".to_string(),
+            match status {
+                AcipInvocationStatusV1::Completed => {
+                    "runtime/comms/invocation/evidence/completed_trace.json".to_string()
+                }
+                AcipInvocationStatusV1::Refused => {
+                    "runtime/comms/invocation/evidence/refusal_trace.json".to_string()
+                }
+                AcipInvocationStatusV1::Failed => {
+                    "runtime/comms/invocation/evidence/failure_trace.json".to_string()
+                }
+                _ => unreachable!("trace fixture only supports terminal statuses"),
+            },
+        ],
+    }
+}
+
+fn validate_acip_trace_event_v1(
+    event: &AcipTraceEventV1,
+    expected_conversation_id: &str,
+) -> Result<()> {
+    validate_id(&event.event_id, "event_id")?;
+    if event.conversation_id != expected_conversation_id {
+        return Err(anyhow!(
+            "trace event conversation_id must match the bundle conversation_id"
+        ));
+    }
+    if let Some(invocation_id) = &event.invocation_id {
+        validate_id(invocation_id, "invocation_id")?;
+    }
+    if let Some(source_message_id) = &event.source_message_id {
+        validate_id(source_message_id, "source_message_id")?;
+    }
+    if let Some(contract_ref) = &event.contract_ref {
+        validate_repo_relative_ref(contract_ref, "contract_ref")?;
+    }
+    if let Some(decision_event_ref) = &event.decision_event_ref {
+        validate_gate_decision_ref(decision_event_ref, "decision_event_ref")?;
+    }
+    if event.output_refs.len() > MAX_LIST_LEN {
+        return Err(anyhow!("output_refs exceeds bounded list length"));
+    }
+    for reference in &event.output_refs {
+        validate_repo_relative_ref(reference, "output_refs[]")?;
+    }
+    if event.evidence_refs.len() > MAX_LIST_LEN {
+        return Err(anyhow!("evidence_refs exceeds bounded list length"));
+    }
+    for reference in &event.evidence_refs {
+        validate_repo_relative_ref(reference, "evidence_refs[]")?;
+    }
+    validate_non_empty(&event.summary, "summary")?;
+    if event.summary.chars().count() > MAX_INLINE_SUMMARY_CHARS {
+        return Err(anyhow!(
+            "summary exceeds bounded inline posture of {MAX_INLINE_SUMMARY_CHARS} characters"
+        ));
+    }
+    ensure_safe_trace_summary(&event.summary, "summary")?;
+
+    match event.event_kind {
+        AcipTraceEventKindV1::MessageCreated => {
+            if event.source_message_id.is_none() {
+                return Err(anyhow!(
+                    "message_created trace event must carry source_message_id"
+                ));
+            }
+            if event.invocation_id.is_some() || event.contract_ref.is_some() {
+                return Err(anyhow!(
+                    "message_created trace event must not carry invocation-only fields"
+                ));
+            }
+        }
+        AcipTraceEventKindV1::InvocationContractDeclared => {
+            if event.invocation_id.is_none() || event.contract_ref.is_none() {
+                return Err(anyhow!(
+                    "invocation_contract_declared trace event must carry invocation_id and contract_ref"
+                ));
+            }
+            if event.decision_event_ref.is_none() {
+                return Err(anyhow!(
+                    "invocation_contract_declared trace event must carry decision_event_ref"
+                ));
+            }
+        }
+        AcipTraceEventKindV1::DecisionRecorded => {
+            if event.invocation_id.is_none()
+                || event.contract_ref.is_none()
+                || event.decision_event_ref.is_none()
+            {
+                return Err(anyhow!(
+                    "decision_recorded trace event must carry invocation_id, contract_ref, and decision_event_ref"
+                ));
+            }
+        }
+        AcipTraceEventKindV1::InvocationCompleted => {
+            if event.invocation_status != Some(AcipInvocationStatusV1::Completed) {
+                return Err(anyhow!(
+                    "invocation_completed trace event must carry invocation_status 'completed'"
+                ));
+            }
+            if event.invocation_id.is_none()
+                || event.contract_ref.is_none()
+                || event.output_refs.is_empty()
+                || event.decision_event_ref.is_none()
+            {
+                return Err(anyhow!(
+                    "invocation_completed trace event must carry invocation_id, contract_ref, decision_event_ref, and output_refs"
+                ));
+            }
+        }
+        AcipTraceEventKindV1::InvocationRefused => {
+            if event.invocation_status != Some(AcipInvocationStatusV1::Refused) {
+                return Err(anyhow!(
+                    "invocation_refused trace event must carry invocation_status 'refused'"
+                ));
+            }
+            if event.invocation_id.is_none()
+                || event.contract_ref.is_none()
+                || event.evidence_refs.is_empty()
+                || event.decision_event_ref.is_none()
+            {
+                return Err(anyhow!(
+                    "invocation_refused trace event must carry invocation_id, contract_ref, decision_event_ref, and evidence_refs"
+                ));
+            }
+            if !event.output_refs.is_empty() {
+                return Err(anyhow!(
+                    "invocation_refused trace event must not carry output_refs"
+                ));
+            }
+            if !event.requires_redaction {
+                return Err(anyhow!(
+                    "invocation_refused trace event must require redaction"
+                ));
+            }
+        }
+        AcipTraceEventKindV1::InvocationFailed => {
+            if event.invocation_status != Some(AcipInvocationStatusV1::Failed) {
+                return Err(anyhow!(
+                    "invocation_failed trace event must carry invocation_status 'failed'"
+                ));
+            }
+            if event.invocation_id.is_none()
+                || event.contract_ref.is_none()
+                || event.evidence_refs.is_empty()
+                || event.decision_event_ref.is_none()
+            {
+                return Err(anyhow!(
+                    "invocation_failed trace event must carry invocation_id, contract_ref, decision_event_ref, and evidence_refs"
+                ));
+            }
+            if !event.output_refs.is_empty() {
+                return Err(anyhow!(
+                    "invocation_failed trace event must not carry output_refs"
+                ));
+            }
+            if !event.requires_redaction {
+                return Err(anyhow!(
+                    "invocation_failed trace event must require redaction"
+                ));
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn validate_acip_trace_audience_view_v1(
+    view: &AcipTraceAudienceViewV1,
+    known_event_ids: &BTreeSet<String>,
+) -> Result<()> {
+    validate_repo_relative_ref(&view.narrative_ref, "narrative_ref")?;
+    if view.visible_event_ids.is_empty() {
+        return Err(anyhow!("trace audience view must carry visible_event_ids"));
+    }
+    for event_id in &view.visible_event_ids {
+        validate_id(event_id, "visible_event_ids[]")?;
+        if !known_event_ids.contains(event_id) {
+            return Err(anyhow!(
+                "trace audience view references unknown event_id '{}'",
+                event_id
+            ));
+        }
+    }
+    for reference in &view.visible_artifact_refs {
+        validate_repo_relative_ref(reference, "visible_artifact_refs[]")?;
+        if matches!(
+            view.audience,
+            AcipTraceAudienceV1::Reviewer
+                | AcipTraceAudienceV1::Public
+                | AcipTraceAudienceV1::Observatory
+        ) {
+            ensure_redacted_trace_ref(reference, "visible_artifact_refs[]")?;
+        }
+    }
+    if view.redacted_elements.is_empty() {
+        return Err(anyhow!(
+            "trace audience view must declare redacted_elements"
+        ));
+    }
+    for element in &view.redacted_elements {
+        validate_id(element, "redacted_elements[]")?;
+    }
+    match view.audience {
+        AcipTraceAudienceV1::Actor | AcipTraceAudienceV1::Operator => {}
+        AcipTraceAudienceV1::Reviewer
+        | AcipTraceAudienceV1::Public
+        | AcipTraceAudienceV1::Observatory => {
+            ensure_redacted_trace_ref(&view.narrative_ref, "narrative_ref")?;
+            if view.allows_private_payload_refs {
+                return Err(anyhow!(
+                    "reviewer, public, and observatory views must not allow private payload refs"
+                ));
+            }
+            if view.allows_raw_tool_args {
+                return Err(anyhow!(
+                    "reviewer, public, and observatory views must not allow raw tool args"
+                ));
+            }
+            if view.allows_local_host_paths {
+                return Err(anyhow!(
+                    "reviewer, public, and observatory views must not allow local host paths"
+                ));
+            }
+            if view.allows_rejected_alternative_details {
+                return Err(anyhow!(
+                    "reviewer, public, and observatory views must not allow rejected alternative details"
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+fn validate_acip_replay_contract_v1(contract: &AcipReplayContractV1) -> Result<()> {
+    validate_repo_relative_ref(&contract.fixture_ref, "fixture_ref")?;
+    validate_id(&contract.fixture_case, "fixture_case")?;
+    if !contract.deterministic_event_order {
+        return Err(anyhow!(
+            "ACIP replay contract requires deterministic_event_order"
+        ));
+    }
+    if !contract.deterministic_redaction_views {
+        return Err(anyhow!(
+            "ACIP replay contract requires deterministic_redaction_views"
+        ));
+    }
+    if contract.remote_provider_required {
+        return Err(anyhow!(
+            "ACIP replay contract must remain fixture-backed and local for v1"
+        ));
+    }
+    Ok(())
+}
+
+fn ensure_safe_trace_summary(value: &str, field: &str) -> Result<()> {
+    let lowered = value.to_ascii_lowercase();
+    for forbidden in [
+        "secret",
+        "token",
+        "password",
+        "prompt",
+        "tool_args",
+        "raw tool arguments",
+        "raw tool args",
+        "private_state",
+        "private state",
+        "rejected_alternative",
+        "/users/",
+        "/home/",
+        "/tmp/",
+        "/var/folders/",
+        "c:\\",
+    ] {
+        if lowered.contains(forbidden) {
+            return Err(anyhow!(
+                "{field} must not leak protected trace content '{}'",
+                forbidden
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn ensure_redacted_trace_ref(value: &str, field: &str) -> Result<()> {
+    let lowered = value.to_ascii_lowercase();
+    for forbidden in [
+        "private_state",
+        "raw_args",
+        "raw_result",
+        "prompt",
+        "secret",
+        "rejected_alternative",
+    ] {
+        if lowered.contains(forbidden) {
+            return Err(anyhow!(
+                "{field} must not expose unredacted trace ref '{}'",
+                forbidden
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn trace_event_kind_str(kind: &AcipTraceEventKindV1) -> &'static str {
+    match kind {
+        AcipTraceEventKindV1::MessageCreated => "message_created",
+        AcipTraceEventKindV1::InvocationContractDeclared => "invocation_contract_declared",
+        AcipTraceEventKindV1::DecisionRecorded => "decision_recorded",
+        AcipTraceEventKindV1::InvocationCompleted => "invocation_completed",
+        AcipTraceEventKindV1::InvocationRefused => "invocation_refused",
+        AcipTraceEventKindV1::InvocationFailed => "invocation_failed",
+    }
+}
+
+fn trace_audience_str(audience: &AcipTraceAudienceV1) -> &'static str {
+    match audience {
+        AcipTraceAudienceV1::Actor => "actor",
+        AcipTraceAudienceV1::Operator => "operator",
+        AcipTraceAudienceV1::Reviewer => "reviewer",
+        AcipTraceAudienceV1::Public => "public",
+        AcipTraceAudienceV1::Observatory => "observatory",
+    }
+}
+
 fn payload_ref(
     payload_kind: &str,
     payload_ref: &str,
@@ -3543,6 +4301,208 @@ fn validate_message_intent_authority_alignment(
         }
     }
 
+    Ok(())
+}
+
+pub fn validate_acip_trace_bundle_v1(bundle: &AcipTraceBundleV1) -> Result<()> {
+    if bundle.schema_version != ACIP_TRACE_BUNDLE_SCHEMA_VERSION {
+        return Err(anyhow!(
+            "ACIP trace bundle requires schema_version '{}'",
+            ACIP_TRACE_BUNDLE_SCHEMA_VERSION
+        ));
+    }
+    validate_id(&bundle.conversation_id, "conversation_id")?;
+    if bundle.trace_events.is_empty() {
+        return Err(anyhow!("ACIP trace bundle requires trace_events"));
+    }
+    if bundle.trace_events.len() > MAX_LIST_LEN {
+        return Err(anyhow!("trace_events exceeds bounded list length"));
+    }
+    let mut seen_event_ids = BTreeSet::new();
+    let mut seen_event_kinds = BTreeSet::new();
+    let mut terminal_events = 0_usize;
+    let mut canonical_invocation_id: Option<&str> = None;
+    let mut canonical_contract_ref: Option<&str> = None;
+    let mut canonical_decision_ref: Option<&str> = None;
+    for (index, event) in bundle.trace_events.iter().enumerate() {
+        validate_acip_trace_event_v1(event, &bundle.conversation_id)?;
+        if !seen_event_ids.insert(event.event_id.clone()) {
+            return Err(anyhow!(
+                "trace bundle contains duplicate event_id '{}'",
+                event.event_id
+            ));
+        }
+        if !seen_event_kinds.insert(event.event_kind.clone()) {
+            return Err(anyhow!(
+                "trace bundle must not contain duplicate event kind '{}'",
+                trace_event_kind_str(&event.event_kind)
+            ));
+        }
+        match index {
+            0 if event.event_kind != AcipTraceEventKindV1::MessageCreated => {
+                return Err(anyhow!(
+                    "trace bundle must preserve canonical event order: message_created first"
+                ))
+            }
+            1 if event.event_kind != AcipTraceEventKindV1::InvocationContractDeclared => {
+                return Err(anyhow!(
+                    "trace bundle must preserve canonical event order: invocation_contract_declared second"
+                ))
+            }
+            2 if event.event_kind != AcipTraceEventKindV1::DecisionRecorded => {
+                return Err(anyhow!(
+                    "trace bundle must preserve canonical event order: decision_recorded third"
+                ))
+            }
+            _ => {}
+        }
+        if !matches!(event.event_kind, AcipTraceEventKindV1::MessageCreated) {
+            let Some(invocation_id) = event.invocation_id.as_deref() else {
+                return Err(anyhow!(
+                    "trace bundle non-message events must carry invocation_id"
+                ));
+            };
+            let Some(contract_ref) = event.contract_ref.as_deref() else {
+                return Err(anyhow!(
+                    "trace bundle non-message events must carry contract_ref"
+                ));
+            };
+            let Some(decision_ref) = event.decision_event_ref.as_deref() else {
+                return Err(anyhow!(
+                    "trace bundle non-message events must carry decision_event_ref"
+                ));
+            };
+            if let Some(expected) = canonical_invocation_id {
+                if expected != invocation_id {
+                    return Err(anyhow!(
+                        "trace bundle must preserve one canonical invocation_id across non-message events"
+                    ));
+                }
+            } else {
+                canonical_invocation_id = Some(invocation_id);
+            }
+            if let Some(expected) = canonical_contract_ref {
+                if expected != contract_ref {
+                    return Err(anyhow!(
+                        "trace bundle must preserve one canonical contract_ref across non-message events"
+                    ));
+                }
+            } else {
+                canonical_contract_ref = Some(contract_ref);
+            }
+            if let Some(expected) = canonical_decision_ref {
+                if expected != decision_ref {
+                    return Err(anyhow!(
+                        "trace bundle must preserve one canonical decision_event_ref across non-message events"
+                    ));
+                }
+            } else {
+                canonical_decision_ref = Some(decision_ref);
+            }
+        }
+        match event.event_kind {
+            AcipTraceEventKindV1::InvocationCompleted
+            | AcipTraceEventKindV1::InvocationRefused
+            | AcipTraceEventKindV1::InvocationFailed => {
+                terminal_events += 1;
+            }
+            _ => {}
+        }
+    }
+    for required in [
+        AcipTraceEventKindV1::MessageCreated,
+        AcipTraceEventKindV1::InvocationContractDeclared,
+        AcipTraceEventKindV1::DecisionRecorded,
+    ] {
+        if !seen_event_kinds.contains(&required) {
+            return Err(anyhow!(
+                "trace bundle missing required event kind '{}'",
+                trace_event_kind_str(&required)
+            ));
+        }
+    }
+    if terminal_events != 1 {
+        return Err(anyhow!(
+            "trace bundle must contain exactly one terminal event kind"
+        ));
+    }
+    let last_event = bundle
+        .trace_events
+        .last()
+        .expect("trace bundle checked non-empty above");
+    if !matches!(
+        last_event.event_kind,
+        AcipTraceEventKindV1::InvocationCompleted
+            | AcipTraceEventKindV1::InvocationRefused
+            | AcipTraceEventKindV1::InvocationFailed
+    ) {
+        return Err(anyhow!(
+            "trace bundle must preserve canonical event order: terminal invocation event last"
+        ));
+    }
+    validate_acip_replay_contract_v1(&bundle.replay_contract)?;
+    if bundle.evidence_packet_refs.is_empty() {
+        return Err(anyhow!("ACIP trace bundle requires evidence_packet_refs"));
+    }
+    for reference in &bundle.evidence_packet_refs {
+        validate_repo_relative_ref(reference, "evidence_packet_refs[]")?;
+    }
+    if bundle.audience_views.len() != 5 {
+        return Err(anyhow!(
+            "ACIP trace bundle requires exactly five canonical audience_views"
+        ));
+    }
+    let mut seen_audiences = BTreeSet::new();
+    for view in &bundle.audience_views {
+        validate_acip_trace_audience_view_v1(view, &seen_event_ids)?;
+        if !seen_audiences.insert(view.audience.clone()) {
+            return Err(anyhow!(
+                "trace bundle contains duplicate audience view '{}'",
+                trace_audience_str(&view.audience)
+            ));
+        }
+    }
+    for required in [
+        AcipTraceAudienceV1::Actor,
+        AcipTraceAudienceV1::Operator,
+        AcipTraceAudienceV1::Reviewer,
+        AcipTraceAudienceV1::Public,
+        AcipTraceAudienceV1::Observatory,
+    ] {
+        if !seen_audiences.contains(&required) {
+            return Err(anyhow!(
+                "trace bundle missing required audience view '{}'",
+                trace_audience_str(&required)
+            ));
+        }
+    }
+    Ok(())
+}
+
+pub fn validate_acip_trace_fixture_set_v1(fixtures: &AcipTraceFixtureSetV1) -> Result<()> {
+    if fixtures.schema_version != ACIP_TRACE_FIXTURE_SCHEMA_VERSION {
+        return Err(anyhow!(
+            "ACIP trace fixture set requires schema_version '{}'",
+            ACIP_TRACE_FIXTURE_SCHEMA_VERSION
+        ));
+    }
+    if fixtures.negative_cases.is_empty() {
+        return Err(anyhow!("ACIP trace fixture set requires negative_cases"));
+    }
+    validate_acip_trace_bundle_v1(&fixtures.valid_completed_bundle)?;
+    validate_acip_trace_bundle_v1(&fixtures.valid_refused_bundle)?;
+    validate_acip_trace_bundle_v1(&fixtures.valid_failed_bundle)?;
+    for case in &fixtures.negative_cases {
+        validate_negative_case_name(&case.name, "negative_cases[].name")?;
+        validate_non_empty(
+            &case.expected_error_substring,
+            "negative_cases[].expected_error_substring",
+        )?;
+        validate_negative_result(
+            validate_acip_trace_bundle_v1_value(&case.bundle).map(|_| ()),
+            &case.expected_error_substring,
+        )?;
+    }
     Ok(())
 }
 
@@ -4397,6 +5357,133 @@ mod tests {
         assert!(stop_error
             .to_string()
             .contains("requires stop_policy.stop_on_failure to be true"));
+    }
+
+    #[test]
+    fn acip_trace_bundle_schemas_and_fixtures_are_available() {
+        let bundle_schema = acip_trace_bundle_v1_schema_json().expect("bundle schema");
+        assert!(bundle_schema.contains("AcipTraceBundleV1"));
+        let fixture_schema = acip_trace_fixture_set_v1_schema_json().expect("fixture schema");
+        assert!(fixture_schema.contains("AcipTraceFixtureSetV1"));
+
+        let fixtures = acip_trace_fixture_set_v1();
+        validate_acip_trace_fixture_set_v1(&fixtures).expect("trace fixtures should validate");
+        assert_eq!(fixtures.negative_cases.len(), 5);
+    }
+
+    #[test]
+    fn acip_trace_bundle_requires_terminal_mapping_and_replay_posture() {
+        let completed = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        validate_acip_trace_bundle_v1(&completed).expect("completed bundle should validate");
+
+        let refused = sample_trace_bundle(AcipInvocationStatusV1::Refused);
+        validate_acip_trace_bundle_v1(&refused).expect("refused bundle should validate");
+
+        let mut invalid = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        invalid.trace_events[3].event_kind = AcipTraceEventKindV1::InvocationFailed;
+        let terminal_error =
+            validate_acip_trace_bundle_v1(&invalid).expect_err("terminal mismatch should fail");
+        assert!(terminal_error
+            .to_string()
+            .contains("invocation_failed trace event must carry invocation_status 'failed'"));
+
+        let mut duplicate_terminal = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        duplicate_terminal.trace_events.push(AcipTraceEventV1 {
+            event_id: "trace-0005".to_string(),
+            conversation_id: duplicate_terminal.conversation_id.clone(),
+            invocation_id: Some("invoke-0001".to_string()),
+            event_kind: AcipTraceEventKindV1::InvocationCompleted,
+            source_message_id: Some("msg-review-0001".to_string()),
+            contract_ref: Some(
+                "runtime/comms/invocation/contracts/review_request.json".to_string(),
+            ),
+            decision_event_ref: Some("gate.review-0001".to_string()),
+            invocation_status: Some(AcipInvocationStatusV1::Completed),
+            output_refs: vec!["runtime/comms/invocation/review_report.json".to_string()],
+            evidence_refs: vec![
+                "runtime/comms/invocation/evidence/completed_trace.json".to_string()
+            ],
+            summary: "Duplicate terminal event for regression coverage.".to_string(),
+            requires_redaction: false,
+        });
+        let duplicate_error = validate_acip_trace_bundle_v1(&duplicate_terminal)
+            .expect_err("duplicate terminal event should fail");
+        assert!(duplicate_error
+            .to_string()
+            .contains("trace bundle must not contain duplicate event kind 'invocation_completed'"));
+
+        let mut drift_bundle = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        drift_bundle.trace_events[2].decision_event_ref = Some("gate.review-drifted".to_string());
+        let drift_error =
+            validate_acip_trace_bundle_v1(&drift_bundle).expect_err("decision drift should fail");
+        assert!(drift_error.to_string().contains(
+            "trace bundle must preserve one canonical decision_event_ref across non-message events"
+        ));
+
+        let mut missing_contract_bundle = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        missing_contract_bundle.trace_events[2].contract_ref = None;
+        let missing_contract_error = validate_acip_trace_bundle_v1(&missing_contract_bundle)
+            .expect_err("missing contract ref should fail closed");
+        assert!(missing_contract_error.to_string().contains(
+            "decision_recorded trace event must carry invocation_id, contract_ref, and decision_event_ref"
+        ));
+
+        let mut order_bundle = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        order_bundle.trace_events.swap(1, 2);
+        let order_error = validate_acip_trace_bundle_v1(&order_bundle)
+            .expect_err("out-of-order trace event should fail");
+        assert!(order_error
+            .to_string()
+            .contains("trace bundle must preserve canonical event order"));
+
+        let mut replay_invalid = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        replay_invalid.replay_contract.deterministic_redaction_views = false;
+        let replay_error = validate_acip_trace_bundle_v1(&replay_invalid)
+            .expect_err("non-deterministic redaction view should fail");
+        assert!(replay_error
+            .to_string()
+            .contains("ACIP replay contract requires deterministic_redaction_views"));
+    }
+
+    #[test]
+    fn acip_trace_bundle_redaction_views_fail_closed_on_leakage() {
+        let mut bundle = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        bundle.audience_views[2]
+            .visible_artifact_refs
+            .push("runtime/comms/private_state/raw_args.json".to_string());
+        let reviewer_error =
+            validate_acip_trace_bundle_v1(&bundle).expect_err("reviewer leak should fail");
+        assert!(reviewer_error.to_string().contains(
+            "visible_artifact_refs[] must not expose unredacted trace ref 'private_state'"
+        ));
+
+        let mut narrative_bundle = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        narrative_bundle.audience_views[2].narrative_ref =
+            "runtime/comms/trace/private_state_dump.json".to_string();
+        let narrative_error = validate_acip_trace_bundle_v1(&narrative_bundle)
+            .expect_err("narrative leak should fail");
+        assert!(narrative_error
+            .to_string()
+            .contains("narrative_ref must not expose unredacted trace ref 'private_state'"));
+
+        let mut summary_bundle = sample_trace_bundle(AcipInvocationStatusV1::Failed);
+        summary_bundle.trace_events[3].summary =
+            "Failure packet contained secret token and raw operator prompt.".to_string();
+        let summary_error = validate_acip_trace_bundle_v1(&summary_bundle)
+            .expect_err("protected summary leak should fail");
+        assert!(summary_error
+            .to_string()
+            .contains("summary must not leak protected trace content 'secret'"));
+
+        let mut path_bundle = sample_trace_bundle(AcipInvocationStatusV1::Failed);
+        path_bundle.trace_events[3].summary =
+            "Failure packet copied from /var/folders/tmp and raw tool arguments for replay."
+                .to_string();
+        let path_error = validate_acip_trace_bundle_v1(&path_bundle)
+            .expect_err("workstation path leak should fail");
+        assert!(path_error
+            .to_string()
+            .contains("summary must not leak protected trace content 'raw tool arguments'"));
     }
 
     #[test]
