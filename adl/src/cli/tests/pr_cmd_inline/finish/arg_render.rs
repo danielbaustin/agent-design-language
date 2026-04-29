@@ -903,7 +903,9 @@ fn finish_validation_plan_and_runner_cover_docs_focused_full_and_error_paths() {
         ],
     };
     let err = run_finish_validation_rust(&repo, &unsupported).expect_err("unsupported command");
-    assert!(err.to_string().contains("unsupported focused validation command"));
+    assert!(err
+        .to_string()
+        .contains("unsupported focused validation command"));
 
     let full_plan = select_finish_validation_plan("adl/src/lib.rs").expect("full rust plan");
     assert_eq!(full_plan.mode, FinishValidationMode::FullRust);
@@ -973,8 +975,8 @@ fn finish_surface_helpers_cover_tracking_stage_and_body_rendering() {
         .expect("git commit")
         .success());
 
-    let issue_ref =
-        IssueRef::new(1153, "v0.86".to_string(), "rust-finish-test".to_string()).expect("issue ref");
+    let issue_ref = IssueRef::new(1153, "v0.86".to_string(), "rust-finish-test".to_string())
+        .expect("issue ref");
     let source = issue_ref.issue_prompt_path(&repo);
     let root_stp = issue_ref.task_bundle_stp_path(&repo);
     let root_input = issue_ref.task_bundle_input_path(&repo);

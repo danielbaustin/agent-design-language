@@ -260,8 +260,7 @@ fn runtime_v2_private_state_sealing_policy_and_backend_validation_fail_closed() 
     let mut missing_invariant = artifacts.backend_seam.clone();
     missing_invariant.invariants = vec![
         "sealed payload bytes are never accepted as JSON authority".to_string(),
-        "backend substitution must preserve key id, algorithm, and content-hash checks"
-            .to_string(),
+        "backend substitution must preserve key id, algorithm, and content-hash checks".to_string(),
     ];
     assert!(missing_invariant
         .validate()

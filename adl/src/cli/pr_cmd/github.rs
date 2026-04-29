@@ -634,7 +634,10 @@ mod tests {
         let mut path_entries = vec![bin_dir.clone()];
         path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
         unsafe {
-            std::env::set_var("PATH", std::env::join_paths(path_entries).expect("join PATH"));
+            std::env::set_var(
+                "PATH",
+                std::env::join_paths(path_entries).expect("join PATH"),
+            );
         }
 
         assert_eq!(
@@ -643,18 +646,18 @@ mod tests {
                 .as_deref(),
             Some("https://github.com/owner/repo/pull/1159")
         );
-        assert!(
-            pr_has_closing_linkage("owner/repo", "https://github.com/owner/repo/pull/1159", 1153)
-                .expect("linked ref")
-        );
-        assert!(
-            !pr_has_closing_linkage(
-                "owner/repo",
-                "https://github.com/owner/repo/pull/1160",
-                1153
-            )
-            .expect("unlinked")
-        );
+        assert!(pr_has_closing_linkage(
+            "owner/repo",
+            "https://github.com/owner/repo/pull/1159",
+            1153
+        )
+        .expect("linked ref"));
+        assert!(!pr_has_closing_linkage(
+            "owner/repo",
+            "https://github.com/owner/repo/pull/1160",
+            1153
+        )
+        .expect("unlinked"));
         ensure_pr_closing_linkage(
             "owner/repo",
             "https://github.com/owner/repo/pull/1159",
@@ -669,7 +672,9 @@ mod tests {
             false,
         )
         .expect_err("missing linkage should fail");
-        assert!(err.to_string().contains("missing closing linkage to issue #1153"));
+        assert!(err
+            .to_string()
+            .contains("missing closing linkage to issue #1153"));
 
         let repaired = ensure_or_repair_pr_closing_linkage(
             "owner/repo",
@@ -680,15 +685,18 @@ mod tests {
         )
         .expect("repair should succeed");
         assert!(repaired);
-        assert!(
-            pr_has_closing_linkage("owner/repo", "https://github.com/owner/repo/pull/1161", 1153)
-                .expect("linked after repair")
-        );
+        assert!(pr_has_closing_linkage(
+            "owner/repo",
+            "https://github.com/owner/repo/pull/1161",
+            1153
+        )
+        .expect("linked after repair"));
 
         restore_env("PATH", old_path);
 
         let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
-        assert!(gh_calls.contains("pr edit -R owner/repo https://github.com/owner/repo/pull/1161 --body-file"));
+        assert!(gh_calls
+            .contains("pr edit -R owner/repo https://github.com/owner/repo/pull/1161 --body-file"));
     }
 
     #[test]
@@ -833,7 +841,9 @@ mod tests {
             "https://github.com/owner/repo/pull/1159",
         )
         .expect_err("failing closeout should bubble");
-        assert!(err.to_string().contains("post-merge closeout auto-attach failed"));
+        assert!(err
+            .to_string()
+            .contains("post-merge closeout auto-attach failed"));
         assert!(err.to_string().contains("helper stderr"));
         assert!(err.to_string().contains("stdout: helper stdout"));
 
@@ -848,5 +858,89 @@ mod tests {
         assert!(fs::read_to_string(&closeout_success)
             .expect("closeout success log")
             .contains("--pr-url https://github.com/owner/repo/pull/1159"));
+    }
+
+    #[test]
+    fn github_helpers_cover_fallback_and_spawn_failure_paths() {
+        let _guard = env_lock();
+        let temp = unique_temp_dir("adl-github-helper-fallbacks");
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let body_ref = temp.join("body-ref.txt");
+        let body_text = temp.join("body.txt");
+        fs::write(&body_ref, "").expect("empty refs");
+        fs::write(&body_text, "Closes #1153\n").expect("body text");
+        write_executable(
+            &bin_dir.join("gh"),
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    cat '{}'\n    exit 0\n  fi\n  if printf '%s ' \"$@\" | grep -q ' --json body '; then\n    cat '{}'\n    exit 0\n  fi\nfi\nif [ \"$1 $2\" = 'issue view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'labels'; then\n    printf 'track:roadmap\\n'\n  else\n    printf 'Tracking issue without version\\n'\n  fi\n  exit 0\nfi\nexit 1\n",
+                body_ref.display(),
+                body_text.display()
+            ),
+        );
+
+        let old_path = std::env::var("PATH").ok();
+        let mut path_entries = vec![bin_dir.clone()];
+        path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
+        unsafe {
+            std::env::set_var(
+                "PATH",
+                std::env::join_paths(path_entries).expect("join PATH"),
+            );
+        }
+
+        assert!(pr_has_closing_linkage(
+            "owner/repo",
+            "https://github.com/owner/repo/pull/1159",
+            1153
+        )
+        .expect("body fallback should count"));
+        assert_eq!(
+            issue_version(1153, "owner/repo").expect("no inferred version"),
+            None
+        );
+
+        restore_env("PATH", old_path);
+
+        let missing = temp.join("missing-helper.sh");
+        unsafe {
+            std::env::set_var("ADL_PR_JANITOR_CMD", &missing);
+            std::env::set_var("ADL_PR_JANITOR_DISABLE", "0");
+        }
+        let err = attach_pr_janitor(
+            temp.as_path(),
+            "owner/repo",
+            1153,
+            "codex/1153-branch",
+            "https://github.com/owner/repo/pull/1159",
+            "draft",
+        )
+        .expect_err("missing janitor helper should surface spawn failure");
+        assert!(err
+            .to_string()
+            .contains("failed to spawn PR janitor command"));
+
+        unsafe {
+            std::env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", &missing);
+            std::env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "0");
+        }
+        let err = attach_post_merge_closeout(
+            temp.as_path(),
+            "owner/repo",
+            1153,
+            "codex/1153-branch",
+            "https://github.com/owner/repo/pull/1159",
+        )
+        .expect_err("missing closeout helper should surface spawn failure");
+        assert!(err
+            .to_string()
+            .contains("failed to spawn post-merge closeout command"));
+
+        unsafe {
+            std::env::remove_var("ADL_PR_JANITOR_CMD");
+            std::env::remove_var("ADL_PR_JANITOR_DISABLE");
+            std::env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
+            std::env::remove_var("ADL_POST_MERGE_CLOSEOUT_DISABLE");
+        }
     }
 }

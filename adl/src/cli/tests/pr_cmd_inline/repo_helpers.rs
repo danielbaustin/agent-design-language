@@ -663,7 +663,9 @@ fn gh_issue_create_reports_stderr_and_empty_output_failures() {
 
     let err = gh_issue_create("owner/repo", "x", "y", "track:roadmap")
         .expect_err("stderr failure should bubble");
-    assert!(err.to_string().contains("gh issue create failed: create failed"));
+    assert!(err
+        .to_string()
+        .contains("gh issue create failed: create failed"));
 
     fs::write(&mode_file, "empty\n").expect("switch mode");
     let err = gh_issue_create("owner/repo", "x", "y", "track:roadmap")
@@ -723,7 +725,9 @@ fn gh_issue_edit_body_and_metadata_parity_cover_command_shapes() {
     let gh_log = fs::read_to_string(&gh_log).expect("gh log");
     assert!(gh_log.contains("issue view 1153 -R owner/repo --json labels -q .labels[].name"));
     assert!(gh_log.contains("issue edit 1153 -R owner/repo --body-file"));
-    assert!(gh_log.contains("issue edit 1153 -R owner/repo --title [v0.90.5][tools] Coverage blocker repair"));
+    assert!(gh_log.contains(
+        "issue edit 1153 -R owner/repo --title [v0.90.5][tools] Coverage blocker repair"
+    ));
     assert!(gh_log.contains("issue edit 1153 -R owner/repo --add-label"));
     assert!(gh_log.contains("--add-label queue:tools"));
     assert!(gh_log.contains("--add-label version:v0.90.5"));
