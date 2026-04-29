@@ -3889,9 +3889,13 @@ fn validate_acip_trace_event_v1(
                     "message_created trace event must carry source_message_id"
                 ));
             }
-            if event.invocation_id.is_some() || event.contract_ref.is_some() {
+            if event.invocation_id.is_some()
+                || event.contract_ref.is_some()
+                || event.decision_event_ref.is_some()
+                || event.invocation_status.is_some()
+            {
                 return Err(anyhow!(
-                    "message_created trace event must not carry invocation-only fields"
+                    "message_created trace event must not carry post-message invocation fields"
                 ));
             }
         }
@@ -4091,6 +4095,9 @@ fn ensure_safe_trace_summary(value: &str, field: &str) -> Result<()> {
         "private_state",
         "private state",
         "rejected_alternative",
+        "rejected alternative",
+        "rejected-alternative",
+        "alternatives rejected",
         "/users/",
         "/home/",
         "/tmp/",
@@ -4116,6 +4123,9 @@ fn ensure_redacted_trace_ref(value: &str, field: &str) -> Result<()> {
         "prompt",
         "secret",
         "rejected_alternative",
+        "rejected alternative",
+        "rejected-alternative",
+        "alternatives rejected",
     ] {
         if lowered.contains(forbidden) {
             return Err(anyhow!(
@@ -5443,6 +5453,15 @@ mod tests {
         assert!(replay_error
             .to_string()
             .contains("ACIP replay contract requires deterministic_redaction_views"));
+
+        let mut message_boundary_bundle = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        message_boundary_bundle.trace_events[0].decision_event_ref =
+            Some("gate.review-0001".to_string());
+        let message_boundary_error = validate_acip_trace_bundle_v1(&message_boundary_bundle)
+            .expect_err("message_created should reject post-message invocation metadata");
+        assert!(message_boundary_error
+            .to_string()
+            .contains("message_created trace event must not carry post-message invocation fields"));
     }
 
     #[test]
@@ -5484,6 +5503,26 @@ mod tests {
         assert!(path_error
             .to_string()
             .contains("summary must not leak protected trace content 'raw tool arguments'"));
+
+        let mut rejected_alt_ref_bundle = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        rejected_alt_ref_bundle.audience_views[3]
+            .visible_artifact_refs
+            .push("runtime/comms/trace/rejected-alternative-notes.json".to_string());
+        let rejected_alt_ref_error = validate_acip_trace_bundle_v1(&rejected_alt_ref_bundle)
+            .expect_err("rejected alternative refs should fail closed");
+        assert!(rejected_alt_ref_error.to_string().contains(
+            "visible_artifact_refs[] must not expose unredacted trace ref 'rejected-alternative'"
+        ));
+
+        let mut rejected_alt_summary_bundle = sample_trace_bundle(AcipInvocationStatusV1::Failed);
+        rejected_alt_summary_bundle.trace_events[3].summary =
+            "Failure packet included rejected alternative reasoning for reviewers.".to_string();
+        let rejected_alt_summary_error =
+            validate_acip_trace_bundle_v1(&rejected_alt_summary_bundle)
+                .expect_err("rejected alternative summaries should fail closed");
+        assert!(rejected_alt_summary_error
+            .to_string()
+            .contains("summary must not leak protected trace content 'rejected alternative'"));
     }
 
     #[test]
