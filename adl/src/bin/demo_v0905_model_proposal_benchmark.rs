@@ -35,7 +35,7 @@ mod tests {
     }
 
     #[test]
-    fn resolve_out_path_uses_explicit_argument() {
+    fn demo_v0905_model_proposal_benchmark_resolve_out_path_uses_explicit_argument() {
         let path = resolve_out_path(Some("tmp/model-proposal-benchmark.json".to_string()));
         assert_eq!(
             path,
@@ -44,7 +44,7 @@ mod tests {
     }
 
     #[test]
-    fn resolve_out_path_defaults_to_tracked_artifact_path() {
+    fn demo_v0905_model_proposal_benchmark_resolve_out_path_defaults_to_tracked_artifact_path() {
         let path = resolve_out_path(None);
         assert_eq!(
             path,
@@ -55,7 +55,7 @@ mod tests {
     }
 
     #[test]
-    fn write_report_creates_expected_json_artifact() {
+    fn demo_v0905_model_proposal_benchmark_write_report_creates_expected_json_artifact() {
         let path = unique_temp_path("model-proposal-benchmark-bin");
         write_report(&path).expect("write report");
         let body = fs::read_to_string(&path).expect("read report");
