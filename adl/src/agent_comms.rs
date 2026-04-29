@@ -584,7 +584,7 @@ pub struct AcipTraceFixtureSetV1 {
 
 pub mod transport {
     use super::*;
-    include!("agent_comms/transport.rs");
+    include!("agent_comms/transport.inc");
 }
 
 pub mod dispatch {
@@ -592,17 +592,17 @@ pub mod dispatch {
 
     pub mod invocation {
         use super::*;
-        include!("agent_comms/dispatch/invocation.rs");
+        include!("agent_comms/dispatch/invocation.inc");
     }
 
     pub mod review {
         use super::*;
-        include!("agent_comms/dispatch/review.rs");
+        include!("agent_comms/dispatch/review.inc");
     }
 
     pub mod coding {
         use super::*;
-        include!("agent_comms/dispatch/coding.rs");
+        include!("agent_comms/dispatch/coding.inc");
     }
 
     pub use coding::*;
@@ -615,13 +615,13 @@ pub mod orchestrate {
 
     pub mod conformance {
         use super::*;
-        include!("agent_comms/orchestrate/conformance.rs");
+        include!("agent_comms/orchestrate/conformance.inc");
     }
 
     pub mod trace {
         #![allow(dead_code)]
         use super::*;
-        include!("agent_comms/orchestrate/trace.rs");
+        include!("agent_comms/orchestrate/trace.inc");
     }
 
     pub use conformance::*;
@@ -929,5 +929,5 @@ fn validate_repo_relative_ref(value: &str, field: &str) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    include!("agent_comms/tests.rs");
+    include!("agent_comms/tests.inc");
 }
