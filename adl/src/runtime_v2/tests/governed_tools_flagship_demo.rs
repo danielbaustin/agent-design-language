@@ -47,6 +47,10 @@ fn runtime_v2_governed_tools_flagship_demo_review_surfaces_are_stable() {
             && case.gate_decision.as_deref() == Some("deferred")
             && case.executor_outcome == "refused"
             && case.executor_reason_code.as_deref() == Some("acc_not_allowed")
+            && case.result_redaction_ref.as_deref()
+                == Some(
+                    "artifacts/runtime-v2-wp18-delegated-local-write/governed/result.redacted.json",
+                )
     }));
     assert!(artifacts.cases.iter().any(|case| {
         case.case_kind == "denied_low_authority"
@@ -55,6 +59,10 @@ fn runtime_v2_governed_tools_flagship_demo_review_surfaces_are_stable() {
     assert!(artifacts.cases.iter().any(|case| {
         case.case_kind == "denied_exfiltration"
             && case.executor_reason_code.as_deref() == Some("exfiltrating_action")
+            && case.result_redaction_ref.as_deref()
+                == Some(
+                    "artifacts/runtime-v2-wp18-denied-exfiltration/governed/result.redacted.json",
+                )
     }));
 }
 
@@ -82,8 +90,10 @@ fn runtime_v2_governed_tools_flagship_demo_writes_bundle_without_path_leakage() 
         "artifacts/runtime-v2-wp18-allowed-read/governed/result.redacted.json",
         "artifacts/runtime-v2-wp18-delegated-local-write/logs/activation_log.json",
         "artifacts/runtime-v2-wp18-delegated-local-write/governed/proposal_arguments.redacted.json",
+        "artifacts/runtime-v2-wp18-delegated-local-write/governed/result.redacted.json",
         "artifacts/runtime-v2-wp18-denied-exfiltration/logs/activation_log.json",
         "artifacts/runtime-v2-wp18-denied-exfiltration/governed/proposal_arguments.redacted.json",
+        "artifacts/runtime-v2-wp18-denied-exfiltration/governed/result.redacted.json",
     ] {
         assert!(root.join(rel_path).is_file(), "missing {rel_path}");
     }
@@ -156,4 +166,35 @@ fn runtime_v2_governed_tools_flagship_demo_rejects_shape_drift() {
         .expect_err("proposal humility drift should fail")
         .to_string()
         .contains("proposal humility"));
+
+    let mut bad_refusal_artifact = flagship_artifacts().cases[1].clone();
+    bad_refusal_artifact.result_redaction_ref = None;
+    assert!(bad_refusal_artifact
+        .validate()
+        .expect_err("delegated refusal artifact drift should fail")
+        .to_string()
+        .contains("refusal redaction"));
+
+    let mut bad_operator_report = flagship_artifacts().clone();
+    bad_operator_report.operator_report_markdown =
+        bad_operator_report.operator_report_markdown.replace(
+            &bad_operator_report.cases[0].reviewer_visible_outcome,
+            "operator report drifted away from the canonical case narrative",
+        );
+    assert!(bad_operator_report
+        .validate()
+        .expect_err("operator report must preserve case reviewer narrative")
+        .to_string()
+        .contains("operator report must preserve"));
+
+    let mut bad_public_report = flagship_artifacts().clone();
+    bad_public_report.public_report_markdown = bad_public_report.public_report_markdown.replace(
+        &bad_public_report.cases[0].public_redaction_outcome,
+        "public report drifted away from the canonical redaction outcome",
+    );
+    assert!(bad_public_report
+        .validate()
+        .expect_err("public report must preserve case public narrative")
+        .to_string()
+        .contains("public report must preserve"));
 }

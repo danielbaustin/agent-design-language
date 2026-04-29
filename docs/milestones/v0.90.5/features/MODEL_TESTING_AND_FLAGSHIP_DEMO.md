@@ -99,7 +99,7 @@ The reviewer-facing bundle should include:
 - `runtime_v2/governed_tools/flagship_operator_report.md`
 - `runtime_v2/governed_tools/flagship_public_report.md`
 - four named case artifacts for allowed read, delegated local write, denied low authority, and denied exfiltration
-- trace and governed redaction artifacts for the cases that reach gate/executor review
+- trace plus governed proposal/result-or-refusal redaction artifacts for the cases that reach gate/executor review
 - supporting benchmark and dangerous-negative-suite reports as bounded context only
 
 ## ACIP Proof Demo

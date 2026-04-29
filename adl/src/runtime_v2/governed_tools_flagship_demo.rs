@@ -152,10 +152,12 @@ impl RuntimeV2GovernedToolsFlagshipArtifacts {
         self.proof_packet.validate_against(&self.cases)?;
         validate_governed_tools_flagship_operator_report(
             &self.proof_packet,
+            &self.cases,
             &self.operator_report_markdown,
         )?;
         validate_governed_tools_flagship_public_report(
             &self.proof_packet,
+            &self.cases,
             &self.public_report_markdown,
         )
     }
@@ -312,7 +314,7 @@ impl RuntimeV2GovernedToolsFlagshipProofPacket {
                     .to_string(),
             ],
             proof_summary:
-                "D11 proves one bounded governed-tools story end to end: proposal humility stays visible, UTS and ACC reviewable compilation remain explicit, Freedom Gate mediation is recorded, allowed fixture-backed reads execute, delegated local writes remain review-visible without autonomous execution, low-authority proposals fail before execution, exfiltration attempts fail closed, and reviewer/public evidence stays redacted."
+                "D11 proves one bounded governed-tools story end to end: proposal humility stays visible, UTS and ACC reviewable compilation remain explicit, Freedom Gate mediation context is recorded, allowed fixture-backed reads execute, delegated local-write proposals preserve review-visible deferred context but still fail closed with ACC refusal before autonomous execution, low-authority proposals fail before execution, exfiltration attempts fail closed with redacted refusal evidence, and reviewer/public evidence stays redacted."
                     .to_string(),
             proof_classification: "proving".to_string(),
             non_claims: vec![
@@ -603,9 +605,12 @@ impl RuntimeV2GovernedToolsFlagshipCase {
                     self.executor_outcome.as_str(),
                     "refused",
                 )?;
-                if self.trace_ref.is_none() || self.proposal_redaction_ref.is_none() {
+                if self.trace_ref.is_none()
+                    || self.proposal_redaction_ref.is_none()
+                    || self.result_redaction_ref.is_none()
+                {
                     return Err(anyhow!(
-                        "delegated_local_write case must preserve trace and proposal redaction artifacts"
+                        "delegated_local_write case must preserve trace, proposal redaction, and refusal redaction artifacts"
                     ));
                 }
                 if self.gate_reason_code.as_deref() != Some("operator_review_required") {
@@ -661,9 +666,12 @@ impl RuntimeV2GovernedToolsFlagshipCase {
                         "denied_exfiltration case must fail closed with exfiltrating_action"
                     ));
                 }
-                if self.trace_ref.is_none() || self.proposal_redaction_ref.is_none() {
+                if self.trace_ref.is_none()
+                    || self.proposal_redaction_ref.is_none()
+                    || self.result_redaction_ref.is_none()
+                {
                     return Err(anyhow!(
-                        "denied_exfiltration case must preserve trace and proposal redaction artifacts"
+                        "denied_exfiltration case must preserve trace, proposal redaction, and refusal redaction artifacts"
                     ));
                 }
             }
@@ -782,15 +790,17 @@ fn delegated_local_write_case() -> Result<RuntimeV2GovernedToolsFlagshipCaseArti
         proposal_redaction_ref: Some(proposal_redaction_ref_for_run(
             FLAGSHIP_DELEGATED_LOCAL_WRITE_RUN_ID,
         )),
-        result_redaction_ref: None,
+        result_redaction_ref: Some(result_redaction_ref_for_run(
+            FLAGSHIP_DELEGATED_LOCAL_WRITE_RUN_ID,
+        )),
         reviewer_visible_outcome:
-            "Delegated local write compiled to a delegated ACC, preserved deferred-review context for operators, and then failed closed with an acc_not_allowed refusal instead of a write result."
+            "Delegated local write compiled to a delegated ACC, preserved deferred-review context for operators, and then still failed closed with an acc_not_allowed refusal before any autonomous write result."
                 .to_string(),
         public_redaction_outcome:
-            "Public evidence records only the deferred-review context, bounded refusal class, and redacted proposal digest, not writable arguments or local filesystem details."
+            "Public evidence records the deferred-review context, bounded acc_not_allowed refusal record, and redacted proposal/result digests, not writable arguments or local filesystem details."
                 .to_string(),
         claim_boundary:
-            "Delegated local-write case proves that delegation and review stay visible. It does not claim autonomous write authority."
+            "Delegated local-write case proves that delegation and review stay visible while delegated ACC still fails closed before autonomous write execution. It does not claim deferred review alone grants write authority."
                 .to_string(),
     };
     case.validate()?;
@@ -883,7 +893,9 @@ fn denied_exfiltration_case() -> Result<RuntimeV2GovernedToolsFlagshipCaseArtifa
         proposal_redaction_ref: Some(proposal_redaction_ref_for_run(
             FLAGSHIP_DENIED_EXFILTRATION_RUN_ID,
         )),
-        result_redaction_ref: None,
+        result_redaction_ref: Some(result_redaction_ref_for_run(
+            FLAGSHIP_DENIED_EXFILTRATION_RUN_ID,
+        )),
         reviewer_visible_outcome:
             "Exfiltration proposal reached gate review context but the executor still failed closed and recorded a redacted refusal."
                 .to_string(),
@@ -1043,6 +1055,7 @@ fn render_governed_tools_flagship_public_report(
 
 fn validate_governed_tools_flagship_operator_report(
     proof_packet: &RuntimeV2GovernedToolsFlagshipProofPacket,
+    cases: &[RuntimeV2GovernedToolsFlagshipCase],
     report: &str,
 ) -> Result<()> {
     validate_nonempty_text(report, "governed_tools_flagship.operator_report")?;
@@ -1058,11 +1071,24 @@ fn validate_governed_tools_flagship_operator_report(
             ));
         }
     }
+    for case in cases {
+        for required in [
+            case.case_id.as_str(),
+            case.reviewer_visible_outcome.as_str(),
+        ] {
+            if !report.contains(required) {
+                return Err(anyhow!(
+                    "governed-tools flagship operator report must preserve {required}"
+                ));
+            }
+        }
+    }
     Ok(())
 }
 
 fn validate_governed_tools_flagship_public_report(
     proof_packet: &RuntimeV2GovernedToolsFlagshipProofPacket,
+    cases: &[RuntimeV2GovernedToolsFlagshipCase],
     report: &str,
 ) -> Result<()> {
     validate_nonempty_text(report, "governed_tools_flagship.public_report")?;
@@ -1089,6 +1115,18 @@ fn validate_governed_tools_flagship_public_report(
         return Err(anyhow!(
             "governed-tools flagship public report must preserve bounded non-claims"
         ));
+    }
+    for case in cases {
+        for required in [
+            case.case_id.as_str(),
+            case.public_redaction_outcome.as_str(),
+        ] {
+            if !report.contains(required) {
+                return Err(anyhow!(
+                    "governed-tools flagship public report must preserve {required}"
+                ));
+            }
+        }
     }
     Ok(())
 }
@@ -1186,7 +1224,22 @@ fn governed_trace_artifacts_for_run(trace: &Trace) -> (Option<JsonValue>, Option
                     "action_id": action_id,
                     "adapter_id": adapter_id,
                     "result_ref": result_ref,
-                    "result_status": "redacted",
+                    "result_status": "executed_redacted",
+                    "evidence_refs": evidence_refs,
+                }));
+            }
+            TraceEvent::GovernedRefusalRecorded {
+                proposal_id,
+                action_id,
+                reason_code,
+                evidence_refs,
+                ..
+            } => {
+                result_entries.push(json!({
+                    "proposal_id": proposal_id,
+                    "action_id": action_id,
+                    "result_status": "refused_redacted",
+                    "reason_code": reason_code,
                     "evidence_refs": evidence_refs,
                 }));
             }
