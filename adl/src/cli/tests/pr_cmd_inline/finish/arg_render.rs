@@ -755,3 +755,291 @@ fn finish_misc_helpers_cover_section_parsing_fingerprint_and_create_outcomes() {
         "code"
     );
 }
+
+fn restore_env(key: &str, value: Option<String>) {
+    unsafe {
+        if let Some(value) = value {
+            env::set_var(key, value);
+        } else {
+            env::remove_var(key);
+        }
+    }
+}
+
+#[test]
+fn finish_local_helpers_cover_checkout_and_file_truth_edges() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-finish-support-local-helpers");
+    let left = temp.join("left");
+    fs::create_dir_all(&left).expect("left dir");
+    assert!(same_checkout_root(&left, &left).expect("same path"));
+
+    let linked_target = temp.join("linked-target");
+    let linked_alias = temp.join("linked-alias");
+    fs::create_dir_all(&linked_target).expect("linked target");
+    std::os::unix::fs::symlink(&linked_target, &linked_alias).expect("symlink");
+    assert!(same_checkout_root(&linked_target, &linked_alias).expect("canonical match"));
+
+    let missing = temp.join("missing.txt");
+    assert!(!ensure_nonempty_file_path(&missing).expect("missing path should be false"));
+
+    let whitespace = temp.join("whitespace.txt");
+    fs::write(&whitespace, " \n\t").expect("whitespace file");
+    assert!(!ensure_nonempty_file_path(&whitespace).expect("whitespace file"));
+
+    let text = temp.join("text.txt");
+    fs::write(&text, "ready\n").expect("text file");
+    assert!(ensure_nonempty_file_path(&text).expect("nonempty file"));
+
+    let started = temp.join("started.md");
+    fs::write(&started, "Status: IN_PROGRESS\n").expect("started sor");
+    ensure_output_card_is_started(&started).expect("started sor accepted");
+
+    let bootstrap = temp.join("bootstrap.md");
+    fs::write(&bootstrap, "Status: NOT_STARTED\n").expect("bootstrap sor");
+    let err = ensure_output_card_is_started(&bootstrap).expect_err("bootstrap sor rejected");
+    assert!(err.to_string().contains("Status: NOT_STARTED"));
+}
+
+#[test]
+fn finish_validation_plan_and_runner_cover_docs_focused_full_and_error_paths() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-finish-support-validation");
+    let repo = temp.join("repo");
+    let adl_dir = repo.join("adl");
+    let tools_dir = adl_dir.join("tools");
+    let target_dir = adl_dir.join("target");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&tools_dir).expect("tools dir");
+    fs::create_dir_all(&target_dir).expect("target dir");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    fs::write(
+        adl_dir.join("Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("manifest");
+
+    let guard_log = temp.join("guard.log");
+    let diff_log = temp.join("diff.log");
+    let cargo_log = temp.join("cargo.log");
+    let coverage_log = temp.join("coverage.log");
+    let ci_log = temp.join("ci.log");
+    let validator_log = temp.join("validator.log");
+
+    write_executable(
+        &tools_dir.join("check_no_tracked_adl_issue_record_residue.sh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'guard\\n' >> '{}'\n",
+            guard_log.display()
+        ),
+    );
+    write_executable(
+        &tools_dir.join("test_check_coverage_impact.sh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            coverage_log.display()
+        ),
+    );
+    write_executable(
+        &tools_dir.join("test_ci_path_policy.sh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            ci_log.display()
+        ),
+    );
+    write_executable(
+        &tools_dir.join("check_coverage_impact.sh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            coverage_log.display()
+        ),
+    );
+    write_executable(
+        &tools_dir.join("validate_structured_prompt.sh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\ncase \"$*\" in *broken*) exit 8 ;; *) exit 0 ;; esac\n",
+            validator_log.display()
+        ),
+    );
+    write_executable(
+        &bin_dir.join("git"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            diff_log.display()
+        ),
+    );
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2\" = 'nextest --version' ]; then\n  exit 1\nfi\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").ok();
+    let mut path_entries = vec![bin_dir.clone()];
+    path_entries.extend(env::split_paths(old_path.as_deref().unwrap_or("")));
+    unsafe {
+        env::set_var("PATH", env::join_paths(path_entries).expect("join PATH"));
+    }
+
+    let docs_plan = select_finish_validation_plan("docs,README.md").expect("docs plan");
+    assert_eq!(docs_plan.mode, FinishValidationMode::DocsOnly);
+    run_finish_validation_rust(&repo, &docs_plan).expect("docs plan runs");
+
+    let focused_plan = select_finish_validation_plan(
+        "adl/src/cli/pr_cmd/finish_support.rs,.github/workflows/ci.yaml,adl/tools/ci_path_policy.sh",
+    )
+    .expect("focused plan");
+    assert_eq!(focused_plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    run_finish_validation_rust(&repo, &focused_plan).expect("focused plan runs");
+
+    let unsupported = FinishValidationPlan {
+        mode: FinishValidationMode::FocusedLocalCiGated,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "unsupported".to_string(),
+        ],
+    };
+    let err = run_finish_validation_rust(&repo, &unsupported).expect_err("unsupported command");
+    assert!(err.to_string().contains("unsupported focused validation command"));
+
+    let full_plan = select_finish_validation_plan("adl/src/lib.rs").expect("full rust plan");
+    assert_eq!(full_plan.mode, FinishValidationMode::FullRust);
+    run_finish_validation_rust(&repo, &full_plan).expect("full plan runs");
+
+    let completed = temp.join("completed.sor.md");
+    fs::write(&completed, "Status: COMPLETED\n").expect("completed sor");
+    validate_completed_sor(&repo, &completed).expect("validator success");
+
+    let broken = temp.join("broken.sor.md");
+    fs::write(&broken, "Status: COMPLETED\n").expect("broken sor");
+    let err = validate_completed_sor(&repo, &broken).expect_err("validator failure");
+    assert!(err
+        .to_string()
+        .contains("output card failed completed-phase validation"));
+
+    restore_env("PATH", old_path);
+
+    assert!(fs::read_to_string(&guard_log)
+        .expect("guard log")
+        .contains("guard"));
+    assert!(fs::read_to_string(&cargo_log)
+        .expect("cargo log")
+        .contains("test --manifest-path"));
+    assert!(fs::read_to_string(&coverage_log)
+        .expect("coverage log")
+        .contains("--require-summary-for-risk"));
+    assert!(fs::metadata(&ci_log).expect("ci log metadata").len() > 0);
+    assert!(fs::read_to_string(&validator_log)
+        .expect("validator log")
+        .contains("--phase"));
+}
+
+#[test]
+fn finish_surface_helpers_cover_tracking_stage_and_body_rendering() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-finish-support-surfaces");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::create_dir_all(repo.join(".adl/v0.86/tasks/issue-1153__rust-finish-test"))
+        .expect("task dir");
+    fs::create_dir_all(repo.join("docs")).expect("docs dir");
+    fs::write(repo.join("docs/README.md"), "hello\n").expect("doc");
+    assert!(Command::new("git")
+        .args(["add", "docs/README.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+
+    let issue_ref =
+        IssueRef::new(1153, "v0.86".to_string(), "rust-finish-test".to_string()).expect("issue ref");
+    let source = issue_ref.issue_prompt_path(&repo);
+    let root_stp = issue_ref.task_bundle_stp_path(&repo);
+    let root_input = issue_ref.task_bundle_input_path(&repo);
+    let root_output = issue_ref.task_bundle_output_path(&repo);
+    fs::create_dir_all(source.parent().expect("source parent")).expect("source parent dir");
+    fs::write(&source, "prompt\n").expect("source");
+    fs::write(&root_stp, "stp\n").expect("stp");
+    fs::write(&root_input, "sip\n").expect("sip");
+    fs::write(
+        &root_output,
+        "Status: COMPLETED\n\n## Summary\nDone\n\n## Artifacts produced\n- a\n",
+    )
+    .expect("sor");
+
+    assert!(stage_selected_paths_rust(&repo, "docs/README.md").is_ok());
+    let tracked =
+        tracked_issue_surface_paths(&repo, &repo, &issue_ref, &source).expect("tracked paths");
+    assert!(tracked.is_empty());
+    assert!(ensure_issue_surfaces_are_local_only(&repo, &repo, &issue_ref, &source).is_ok());
+
+    assert!(Command::new("git")
+        .args([
+            "add",
+            path_relative_to_repo(&repo, &source).as_str(),
+            path_relative_to_repo(&repo, &root_stp).as_str(),
+            path_relative_to_repo(&repo, &root_input).as_str(),
+            path_relative_to_repo(&repo, &root_output).as_str(),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git add local surfaces")
+        .success());
+    let err = ensure_issue_surfaces_are_local_only(&repo, &repo, &issue_ref, &source)
+        .expect_err("tracked surfaces should fail");
+    assert!(err
+        .to_string()
+        .contains("canonical .adl issue surfaces must remain local-only"));
+
+    let input = temp.join("input.md");
+    fs::write(&input, "Status: ACTIVE\n").expect("input");
+    let output = temp.join("output.md");
+    fs::write(
+        &output,
+        "Status: COMPLETED\n\n## Summary\nSummary text\n\n## Validation\ncargo test\n",
+    )
+    .expect("output");
+    let body = render_pr_body(
+        Some("Closes #1153"),
+        &input,
+        &output,
+        Some("Extra notes"),
+        Some("- fallback validation"),
+        "fingerprint-123",
+        &repo,
+    )
+    .expect("pr body");
+    assert!(body.contains("## Summary"));
+    assert!(body.contains("## Validation"));
+    assert!(body.contains("## Notes"));
+    assert!(body.contains("Idempotency-Key: fingerprint-123"));
+    assert_eq!(
+        finish_inputs_fingerprint("Title", "adl", "input.md", "output.md"),
+        finish_inputs_fingerprint("Title", "adl", "input.md", "output.md")
+    );
+
+    let temp_md = write_temp_markdown("finish-support-test", "body").expect("temp markdown");
+    assert_eq!(fs::read_to_string(temp_md).expect("temp body"), "body");
+}

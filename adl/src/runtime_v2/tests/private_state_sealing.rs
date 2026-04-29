@@ -215,6 +215,62 @@ fn runtime_v2_private_state_sealing_rejects_checkpoint_drift() {
 }
 
 #[test]
+fn runtime_v2_private_state_sealing_rejects_backend_and_key_identity_mismatch() {
+    let artifacts = runtime_v2_private_state_sealing_contract().expect("sealing artifacts");
+    let backend = RuntimeV2DeterministicPrivateStateSealingBackend::fixture_active();
+
+    let mut wrong_backend_seam = artifacts.backend_seam.clone();
+    wrong_backend_seam.selected_backend_kind = "secure_enclave".to_string();
+    assert!(RuntimeV2PrivateStateSealedCheckpoint::seal(
+        &artifacts.envelope_artifacts,
+        &artifacts.key_policy,
+        &wrong_backend_seam,
+        &backend,
+    )
+    .expect_err("backend kind mismatch should fail")
+    .to_string()
+    .contains("backend kind does not match backend seam"));
+
+    let mut wrong_key_id = artifacts.sealed_checkpoint.clone();
+    wrong_key_id.sealing_key_id = "local-seal-key-9999".to_string();
+    assert!(wrong_key_id
+        .open_with_backend(
+            &artifacts.envelope_artifacts,
+            &artifacts.key_policy,
+            &artifacts.backend_seam,
+            &backend,
+        )
+        .expect_err("wrong key id should fail")
+        .to_string()
+        .contains("unknown sealing key id"));
+}
+
+#[test]
+fn runtime_v2_private_state_sealing_policy_and_backend_validation_fail_closed() {
+    let artifacts = runtime_v2_private_state_sealing_contract().expect("sealing artifacts");
+
+    let mut missing_algorithm = artifacts.key_policy.clone();
+    missing_algorithm.allowed_algorithms = vec!["secure_enclave".to_string()];
+    assert!(missing_algorithm
+        .validate()
+        .expect_err("missing deterministic algorithm should fail")
+        .to_string()
+        .contains("must allow deterministic fixture sealing"));
+
+    let mut missing_invariant = artifacts.backend_seam.clone();
+    missing_invariant.invariants = vec![
+        "sealed payload bytes are never accepted as JSON authority".to_string(),
+        "backend substitution must preserve key id, algorithm, and content-hash checks"
+            .to_string(),
+    ];
+    assert!(missing_invariant
+        .validate()
+        .expect_err("missing local-first invariant should fail")
+        .to_string()
+        .contains("must preserve local-first invariant"));
+}
+
+#[test]
 fn runtime_v2_private_state_sealing_payload_is_not_raw_json_or_canonical_bytes() {
     let artifacts = runtime_v2_private_state_sealing_contract().expect("sealing artifacts");
     let sealed_payload = B64

@@ -600,6 +600,137 @@ fn ensure_issue_metadata_parity_errors_when_drift_remains_after_repair() {
 }
 
 #[test]
+fn gh_issue_create_passes_labels_and_returns_created_url() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-gh-issue-create-success");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    write_executable(
+        &bin_dir.join("gh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nprintf 'https://github.com/owner/repo/issues/2625\\n'\n",
+            gh_log.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let created = gh_issue_create(
+        "owner/repo",
+        "[v0.90.5][tools] Coverage blocker repair",
+        "Body text",
+        "track:roadmap, type:task, area:tools, version:v0.90.5",
+    )
+    .expect("issue create");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert_eq!(created, "https://github.com/owner/repo/issues/2625");
+    let gh_log = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(gh_log.contains("issue create -R owner/repo --title [v0.90.5][tools] Coverage blocker repair --body Body text"));
+    assert!(gh_log.contains("--label track:roadmap"));
+    assert!(gh_log.contains("--label type:task"));
+    assert!(gh_log.contains("--label area:tools"));
+    assert!(gh_log.contains("--label version:v0.90.5"));
+}
+
+#[test]
+fn gh_issue_create_reports_stderr_and_empty_output_failures() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-gh-issue-create-failure");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let mode_file = temp.join("mode.txt");
+    fs::write(&mode_file, "stderr\n").expect("seed mode");
+    write_executable(
+        &bin_dir.join("gh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nmode=\"$(cat '{}')\"\ncase \"$mode\" in\n  stderr)\n    echo 'create failed' >&2\n    exit 1\n    ;;\n  empty)\n    exit 0\n    ;;\n  *)\n    printf 'https://github.com/owner/repo/issues/1\\n'\n    ;;\nesac\n",
+            mode_file.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let err = gh_issue_create("owner/repo", "x", "y", "track:roadmap")
+        .expect_err("stderr failure should bubble");
+    assert!(err.to_string().contains("gh issue create failed: create failed"));
+
+    fs::write(&mode_file, "empty\n").expect("switch mode");
+    let err = gh_issue_create("owner/repo", "x", "y", "track:roadmap")
+        .expect_err("empty output should fail");
+    assert!(err
+        .to_string()
+        .contains("gh issue create returned empty output"));
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+}
+
+#[test]
+fn gh_issue_edit_body_and_metadata_parity_cover_command_shapes() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-gh-issue-helper-shapes");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    let title_state = temp.join("title.txt");
+    let labels_state = temp.join("labels.txt");
+    fs::write(&title_state, "[tools] Old title\n").expect("seed title");
+    fs::write(
+        &labels_state,
+        "track:roadmap\narea:tools\nversion:v0.86\nqueue:old\n",
+    )
+    .expect("seed labels");
+    write_executable(
+        &bin_dir.join("gh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nTITLE_FILE='{}'\nLABELS_FILE='{}'\nread_title() {{ cat \"$TITLE_FILE\"; }}\nread_labels() {{ cat \"$LABELS_FILE\"; }}\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title -q .title\"* ]]; then\n  read_title\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels -q .labels[].name\"* ]]; then\n  read_labels\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --title [v0.90.5][tools] Coverage blocker repair\"* ]]; then\n  printf '[v0.90.5][tools] Coverage blocker repair\\n' > \"$TITLE_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--add-label queue:tools\"* && \"$*\" == *\"--add-label version:v0.90.5\"* ]]; then\n  printf 'track:roadmap\\narea:tools\\nversion:v0.86\\nqueue:old\\nversion:v0.90.5\\nqueue:tools\\n' > \"$LABELS_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--remove-label version:v0.86\"* ]]; then\n  printf 'track:roadmap\\narea:tools\\nqueue:old\\nversion:v0.90.5\\nqueue:tools\\n' > \"$LABELS_FILE\"\n  exit 0\nfi\nexit 0\n",
+            gh_log.display(),
+            title_state.display(),
+            labels_state.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    gh_issue_edit_body("owner/repo", 1153, "Updated body").expect("edit body");
+    ensure_issue_metadata_parity(
+        "owner/repo",
+        1153,
+        "[v0.90.5][tools] Coverage blocker repair",
+        "track:roadmap,area:tools,version:v0.90.5,queue:tools",
+    )
+    .expect("metadata parity");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let gh_log = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(gh_log.contains("issue view 1153 -R owner/repo --json labels -q .labels[].name"));
+    assert!(gh_log.contains("issue edit 1153 -R owner/repo --body-file"));
+    assert!(gh_log.contains("issue edit 1153 -R owner/repo --title [v0.90.5][tools] Coverage blocker repair"));
+    assert!(gh_log.contains("issue edit 1153 -R owner/repo --add-label"));
+    assert!(gh_log.contains("--add-label queue:tools"));
+    assert!(gh_log.contains("--add-label version:v0.90.5"));
+    assert!(gh_log.contains("issue edit 1153 -R owner/repo --remove-label version:v0.86"));
+}
+
+#[test]
 fn real_pr_init_requires_explicit_or_inferable_version_for_issue() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-init-missing-version");
