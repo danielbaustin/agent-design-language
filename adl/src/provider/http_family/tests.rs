@@ -123,6 +123,13 @@ fn ollama_provider_spec_with_base_url(base_url: &str) -> adl::ProviderSpec {
     }
 }
 
+fn restore_env_var(key: &str, previous: Option<std::ffi::OsString>) {
+    match previous {
+        Some(value) => env::set_var(key, value),
+        None => env::remove_var(key),
+    }
+}
+
 fn provider_spec(
     kind: &str,
     endpoint: &str,
@@ -263,6 +270,95 @@ fn ollama_http_provider_rejects_missing_response_text() {
     );
 
     let _ = handle.join();
+}
+
+#[test]
+fn ollama_http_provider_uses_adl_timeout_secs_when_config_missing() {
+    let _guard = env_lock();
+    let prev_timeout = env::var_os("ADL_TIMEOUT_SECS");
+    env::set_var("ADL_TIMEOUT_SECS", "321");
+
+    let spec = ollama_provider_spec_with_base_url("http://127.0.0.1:11434");
+    let target = provider_target("ollama", "http://127.0.0.1:11434".to_string(), "phi4-mini");
+    let provider = OllamaHttpProvider::from_target(&spec, &target).expect("provider");
+
+    restore_env_var("ADL_TIMEOUT_SECS", prev_timeout);
+
+    assert_eq!(provider.timeout_secs, Some(321));
+}
+
+#[test]
+fn ollama_http_provider_uses_default_timeout_when_env_missing() {
+    let _guard = env_lock();
+    let prev_timeout = env::var_os("ADL_TIMEOUT_SECS");
+    env::remove_var("ADL_TIMEOUT_SECS");
+
+    let spec = ollama_provider_spec_with_base_url("http://127.0.0.1:11434");
+    let target = provider_target("ollama", "http://127.0.0.1:11434".to_string(), "phi4-mini");
+    let provider = OllamaHttpProvider::from_target(&spec, &target).expect("provider");
+
+    restore_env_var("ADL_TIMEOUT_SECS", prev_timeout);
+
+    assert_eq!(provider.timeout_secs, Some(120));
+}
+
+#[test]
+fn ollama_http_provider_prefers_explicit_config_timeout_over_env() {
+    let _guard = env_lock();
+    let prev_timeout = env::var_os("ADL_TIMEOUT_SECS");
+    env::set_var("ADL_TIMEOUT_SECS", "321");
+
+    let mut spec = ollama_provider_spec_with_base_url("http://127.0.0.1:11434");
+    spec.config.insert("timeout_secs".to_string(), json!(17));
+    let target = provider_target("ollama", "http://127.0.0.1:11434".to_string(), "phi4-mini");
+    let provider = OllamaHttpProvider::from_target(&spec, &target).expect("provider");
+
+    restore_env_var("ADL_TIMEOUT_SECS", prev_timeout);
+
+    assert_eq!(provider.timeout_secs, Some(17));
+}
+
+#[test]
+fn ollama_http_provider_rejects_invalid_explicit_timeout() {
+    let _guard = env_lock();
+    let prev_timeout = env::var_os("ADL_TIMEOUT_SECS");
+    env::set_var("ADL_TIMEOUT_SECS", "321");
+
+    let mut spec = ollama_provider_spec_with_base_url("http://127.0.0.1:11434");
+    spec.config
+        .insert("timeout_secs".to_string(), json!("nope"));
+    let target = provider_target("ollama", "http://127.0.0.1:11434".to_string(), "phi4-mini");
+    let err = OllamaHttpProvider::from_target(&spec, &target)
+        .expect_err("invalid explicit timeout should fail");
+
+    restore_env_var("ADL_TIMEOUT_SECS", prev_timeout);
+
+    assert!(
+        err.to_string()
+            .contains("config.timeout_secs must be a positive integer"),
+        "{err:#}"
+    );
+}
+
+#[test]
+fn ollama_http_provider_rejects_zero_explicit_timeout() {
+    let _guard = env_lock();
+    let prev_timeout = env::var_os("ADL_TIMEOUT_SECS");
+    env::set_var("ADL_TIMEOUT_SECS", "321");
+
+    let mut spec = ollama_provider_spec_with_base_url("http://127.0.0.1:11434");
+    spec.config.insert("timeout_secs".to_string(), json!(0));
+    let target = provider_target("ollama", "http://127.0.0.1:11434".to_string(), "phi4-mini");
+    let err = OllamaHttpProvider::from_target(&spec, &target)
+        .expect_err("zero explicit timeout should fail");
+
+    restore_env_var("ADL_TIMEOUT_SECS", prev_timeout);
+
+    assert!(
+        err.to_string()
+            .contains("config.timeout_secs must be a positive integer"),
+        "{err:#}"
+    );
 }
 
 #[test]

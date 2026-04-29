@@ -212,3 +212,44 @@ pub(crate) fn cfg_u64(cfg: &HashMap<String, Value>, key: &str) -> Option<u64> {
         }
     })
 }
+
+pub(crate) fn cfg_u64_strict(
+    cfg: &HashMap<String, Value>,
+    key: &str,
+    provider_label: &str,
+) -> Result<Option<u64>> {
+    let invalid_value = || {
+        invalid_config(
+            provider_label,
+            format!("config.{key} must be a positive integer when provided"),
+        )
+    };
+    let Some(value) = cfg.get(key) else {
+        return Ok(None);
+    };
+
+    if let Some(u) = value.as_u64() {
+        return if u > 0 {
+            Ok(Some(u))
+        } else {
+            Err(invalid_value())
+        };
+    }
+    if let Some(i) = value.as_i64() {
+        return if i > 0 {
+            Ok(Some(i as u64))
+        } else {
+            Err(invalid_value())
+        };
+    }
+    if let Some(s) = value.as_str() {
+        let parsed = s.parse::<u64>().map_err(|_| invalid_value())?;
+        return if parsed > 0 {
+            Ok(Some(parsed))
+        } else {
+            Err(invalid_value())
+        };
+    }
+
+    Err(invalid_value())
+}
