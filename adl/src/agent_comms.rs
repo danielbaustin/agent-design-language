@@ -12,6 +12,7 @@ const ACIP_FIXTURE_SCHEMA_VERSION: &str = "acip.fixture.v1";
 const ACIP_INVOCATION_CONTRACT_SCHEMA_VERSION: &str = "acip.invocation.contract.v1";
 const ACIP_INVOCATION_EVENT_SCHEMA_VERSION: &str = "acip.invocation.event.v1";
 const ACIP_INVOCATION_FIXTURE_SCHEMA_VERSION: &str = "acip.invocation.fixture.v1";
+const ACIP_CONFORMANCE_REPORT_SCHEMA_VERSION: &str = "acip.conformance.report.v1";
 const MAX_CONTENT_CHARS: usize = 4_000;
 const MAX_INLINE_SUMMARY_CHARS: usize = 512;
 const MAX_LIST_LEN: usize = 16;
@@ -265,6 +266,42 @@ pub struct AcipInvocationFixtureSetV1 {
     pub negative_cases: Vec<AcipInvocationNegativeCaseV1>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipConformanceSurfaceV1 {
+    Message,
+    Conversation,
+    Invocation,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipConformanceFixtureClassV1 {
+    pub fixture_name: String,
+    pub surface: AcipConformanceSurfaceV1,
+    pub mode_label: String,
+    pub proves: String,
+    pub feature_doc_ref: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipConformanceNegativeClassV1 {
+    pub case_name: String,
+    pub surface: AcipConformanceSurfaceV1,
+    pub proves: String,
+    pub expected_error_substring: String,
+    pub feature_doc_ref: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipConformanceReportV1 {
+    pub schema_version: String,
+    pub valid_fixture_classes: Vec<AcipConformanceFixtureClassV1>,
+    pub negative_fixture_classes: Vec<AcipConformanceNegativeClassV1>,
+}
+
 pub fn acip_message_envelope_v1_schema_json() -> Result<String> {
     serde_json::to_string_pretty(&schema_for!(AcipMessageEnvelopeV1))
         .context("serialize ACIP message envelope v1 schema")
@@ -288,6 +325,11 @@ pub fn acip_invocation_event_v1_schema_json() -> Result<String> {
 pub fn acip_invocation_fixture_set_v1_schema_json() -> Result<String> {
     serde_json::to_string_pretty(&schema_for!(AcipInvocationFixtureSetV1))
         .context("serialize ACIP invocation fixture set v1 schema")
+}
+
+pub fn acip_conformance_report_v1_schema_json() -> Result<String> {
+    serde_json::to_string_pretty(&schema_for!(AcipConformanceReportV1))
+        .context("serialize ACIP conformance report v1 schema")
 }
 
 pub fn validate_acip_message_envelope_v1_value(value: &JsonValue) -> Result<AcipMessageEnvelopeV1> {
@@ -354,6 +396,7 @@ pub fn validate_acip_message_envelope_v1(envelope: &AcipMessageEnvelopeV1) -> Re
     }
     if let Some(scope) = &envelope.authority_scope {
         validate_authority_scope(scope)?;
+        validate_message_intent_authority_alignment(&envelope.intent, scope)?;
     }
     Ok(())
 }
@@ -720,6 +763,111 @@ pub fn validate_acip_invocation_fixture_set_v1(
     Ok(())
 }
 
+pub fn validate_acip_conformance_report_v1(report: &AcipConformanceReportV1) -> Result<()> {
+    if report.schema_version != ACIP_CONFORMANCE_REPORT_SCHEMA_VERSION {
+        return Err(anyhow!(
+            "ACIP conformance report requires schema_version '{}'",
+            ACIP_CONFORMANCE_REPORT_SCHEMA_VERSION
+        ));
+    }
+    if report.valid_fixture_classes.is_empty() {
+        return Err(anyhow!(
+            "ACIP conformance report requires valid_fixture_classes"
+        ));
+    }
+    if report.negative_fixture_classes.is_empty() {
+        return Err(anyhow!(
+            "ACIP conformance report requires negative_fixture_classes"
+        ));
+    }
+
+    let mut seen_valid = BTreeSet::new();
+    for class in &report.valid_fixture_classes {
+        validate_id(&class.fixture_name, "valid_fixture_classes[].fixture_name")?;
+        validate_id(&class.mode_label, "valid_fixture_classes[].mode_label")?;
+        validate_non_empty(&class.proves, "valid_fixture_classes[].proves")?;
+        validate_repo_relative_ref(
+            &class.feature_doc_ref,
+            "valid_fixture_classes[].feature_doc_ref",
+        )?;
+        if !seen_valid.insert(class.fixture_name.clone()) {
+            return Err(anyhow!(
+                "ACIP conformance report contains duplicate valid fixture '{}'",
+                class.fixture_name
+            ));
+        }
+    }
+
+    let mut seen_negative = BTreeSet::new();
+    for class in &report.negative_fixture_classes {
+        validate_id(&class.case_name, "negative_fixture_classes[].case_name")?;
+        validate_non_empty(&class.proves, "negative_fixture_classes[].proves")?;
+        validate_non_empty(
+            &class.expected_error_substring,
+            "negative_fixture_classes[].expected_error_substring",
+        )?;
+        validate_repo_relative_ref(
+            &class.feature_doc_ref,
+            "negative_fixture_classes[].feature_doc_ref",
+        )?;
+        if !seen_negative.insert(class.case_name.clone()) {
+            return Err(anyhow!(
+                "ACIP conformance report contains duplicate negative fixture '{}'",
+                class.case_name
+            ));
+        }
+    }
+
+    let required_valid = [
+        "conversation",
+        "consultation",
+        "invocation_setup",
+        "review_request",
+        "coding_request",
+        "coding_agent_handoff",
+        "delegation",
+        "negotiation",
+        "operator_request",
+        "broadcast",
+        "shared_conversation_thread",
+        "governed_invocation_contract",
+    ];
+    for required in required_valid {
+        if !seen_valid.contains(required) {
+            return Err(anyhow!(
+                "ACIP conformance report missing required valid fixture '{}'",
+                required
+            ));
+        }
+    }
+
+    let required_negative = [
+        "identity_drift",
+        "missing_recipient",
+        "hidden_invocation",
+        "malformed_payload_refs",
+        "unsupported_visibility",
+        "raw_local_path_refs",
+        "authority_escalation",
+        "stale_ordering",
+        "missing_gate_rejects_governed_invocation",
+        "ambiguous_stop_policy_rejected",
+        "unsafe_input_refs_rejected",
+        "status_refusal_inconsistency_rejected",
+        "output_contract_mismatch_rejected",
+    ];
+    for required in required_negative {
+        if !seen_negative.contains(required) {
+            return Err(anyhow!(
+                "ACIP conformance report missing required negative fixture '{}'",
+                required
+            ));
+        }
+    }
+
+    Ok(())
+}
+
 pub fn acip_fixture_set_v1() -> AcipFixtureSetV1 {
     let consultation = sample_message(
         "msg-consultation-0001",
@@ -791,6 +939,59 @@ pub fn acip_fixture_set_v1() -> AcipFixtureSetV1 {
         AcipIntentV1::Negotiation,
         "I can take the trace task if you cover conformance fixtures and we keep one shared authority basis.",
     );
+    let mut coding_handoff = sample_message_with_payloads(
+        "msg-handoff-0001",
+        "conv-handoff-001",
+        1,
+        AcipIntentV1::CodingRequest,
+        "Handing this bounded coding task to the implementation lane with explicit artifact return expectations.",
+        vec![payload_ref(
+            "task_bundle",
+            "runtime/comms/coding/handoff_task_bundle.json",
+            "application/json",
+            1_732,
+            Some("Coding handoff bundle plus expected patch outputs."),
+        )],
+    );
+    coding_handoff.recipient.id = "coder.agent".to_string();
+    coding_handoff.correlation_id = Some("handoff-0001".to_string());
+
+    let mut operator_request = sample_message_with_payloads(
+        "msg-operator-0001",
+        "conv-operator-001",
+        1,
+        AcipIntentV1::Consultation,
+        "Operators, please review the bounded demo packet and confirm it is safe to publish internally.",
+        vec![payload_ref(
+            "demo_packet",
+            "runtime/comms/operator/demo_packet.json",
+            "application/json",
+            1_204,
+            Some("Demo packet for operator review without governed invocation."),
+        )],
+    );
+    operator_request.recipient = AcipAddressV1 {
+        kind: AcipAddressKindV1::Group,
+        id: "operators".to_string(),
+    };
+    operator_request.visibility = AcipVisibilityV1::Shared;
+    operator_request.trace_requirement = AcipTraceRequirementV1::Full;
+
+    let mut broadcast = sample_message(
+        "msg-broadcast-0001",
+        "conv-broadcast-001",
+        1,
+        AcipIntentV1::Conversation,
+        "Broadcast: the conformance suite is green and no governed action is requested in this message.",
+    );
+    broadcast.recipient = AcipAddressV1 {
+        kind: AcipAddressKindV1::Group,
+        id: "all_agents".to_string(),
+    };
+    broadcast.visibility = AcipVisibilityV1::Public;
+    broadcast.trace_requirement = AcipTraceRequirementV1::Summary;
+    broadcast.authority_scope = None;
+
     let conversation = AcipConversationEnvelopeV1 {
         schema_version: ACIP_CONVERSATION_SCHEMA_VERSION.to_string(),
         messages: vec![
@@ -862,20 +1063,32 @@ pub fn acip_fixture_set_v1() -> AcipFixtureSetV1 {
                 name: "negotiation".to_string(),
                 message: negotiation,
             },
+            AcipNamedMessageFixtureV1 {
+                name: "coding_agent_handoff".to_string(),
+                message: coding_handoff,
+            },
+            AcipNamedMessageFixtureV1 {
+                name: "operator_request".to_string(),
+                message: operator_request,
+            },
+            AcipNamedMessageFixtureV1 {
+                name: "broadcast".to_string(),
+                message: broadcast,
+            },
         ],
         valid_conversation: conversation,
         invalid_messages: vec![
             AcipNegativeMessageCaseV1 {
-                name: "missing_identity".to_string(),
-                expected_error_substring: "sender.id must not be empty".to_string(),
+                name: "identity_drift".to_string(),
+                expected_error_substring: "sender and recipient must not be identical".to_string(),
                 value: json!({
                     "schema_version": ACIP_MESSAGE_SCHEMA_VERSION,
                     "message_id": "msg-bad-0001",
                     "conversation_id": "conv-bad-001",
                     "timestamp_utc": "2026-04-28T19:00:00Z",
                     "monotonic_order": 1,
-                    "sender": {"kind": "agent", "id": ""},
-                    "recipient": {"kind": "agent", "id": "reviewer.agent"},
+                    "sender": {"kind": "agent", "id": "planner.agent"},
+                    "recipient": {"kind": "agent", "id": "planner.agent"},
                     "intent": "consultation",
                     "visibility": "private",
                     "trace_requirement": "summary",
@@ -889,14 +1102,73 @@ pub fn acip_fixture_set_v1() -> AcipFixtureSetV1 {
                 }),
             },
             AcipNegativeMessageCaseV1 {
-                name: "malformed_refs".to_string(),
-                expected_error_substring: "payload_ref must be a repository-relative path"
-                    .to_string(),
+                name: "missing_recipient".to_string(),
+                expected_error_substring: "recipient.id must not be empty".to_string(),
                 value: json!({
                     "schema_version": ACIP_MESSAGE_SCHEMA_VERSION,
                     "message_id": "msg-bad-0002",
                     "conversation_id": "conv-bad-002",
                     "timestamp_utc": "2026-04-28T19:01:00Z",
+                    "monotonic_order": 1,
+                    "sender": {"kind": "agent", "id": "planner.agent"},
+                    "recipient": {"kind": "agent", "id": ""},
+                    "intent": "conversation",
+                    "visibility": "private",
+                    "trace_requirement": "summary",
+                    "content": "Missing recipient should fail closed.",
+                    "payload_refs": [],
+                    "artifact_refs": [],
+                    "attachments": [],
+                    "authority_scope": null,
+                    "correlation_id": null,
+                    "prior_message_id": null
+                }),
+            },
+            AcipNegativeMessageCaseV1 {
+                name: "hidden_invocation".to_string(),
+                expected_error_substring:
+                    "message intent 'conversation' must not claim authority action 'invoke'"
+                        .to_string(),
+                value: json!({
+                    "schema_version": ACIP_MESSAGE_SCHEMA_VERSION,
+                    "message_id": "msg-bad-0003",
+                    "conversation_id": "conv-bad-003",
+                    "timestamp_utc": "2026-04-28T19:02:00Z",
+                    "monotonic_order": 1,
+                    "sender": {"kind": "agent", "id": "planner.agent"},
+                    "recipient": {"kind": "agent", "id": "coder.agent"},
+                    "intent": "conversation",
+                    "visibility": "private",
+                    "trace_requirement": "summary",
+                    "content": "This looks conversational but is really trying to sneak governed work through.",
+                    "payload_refs": [{
+                        "payload_kind": "task_bundle",
+                        "payload_ref": "runtime/comms/coding/task_bundle.json",
+                        "media_type": "application/json",
+                        "content_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "byte_length": 612,
+                        "inline_summary": "Hidden invocation attempt."
+                    }],
+                    "artifact_refs": [],
+                    "attachments": [],
+                    "authority_scope": {
+                        "allowed_actions": ["invoke", "share_artifact"],
+                        "authority_basis_refs": ["runtime/comms/authority/invocation_basis.json"],
+                        "delegation_permitted": false
+                    },
+                    "correlation_id": null,
+                    "prior_message_id": null
+                }),
+            },
+            AcipNegativeMessageCaseV1 {
+                name: "malformed_payload_refs".to_string(),
+                expected_error_substring:
+                    "content_sha256 must be a 64-character hexadecimal sha256".to_string(),
+                value: json!({
+                    "schema_version": ACIP_MESSAGE_SCHEMA_VERSION,
+                    "message_id": "msg-bad-0004",
+                    "conversation_id": "conv-bad-004",
+                    "timestamp_utc": "2026-04-28T19:03:00Z",
                     "monotonic_order": 1,
                     "sender": {"kind": "agent", "id": "planner.agent"},
                     "recipient": {"kind": "agent", "id": "reviewer.agent"},
@@ -906,27 +1178,31 @@ pub fn acip_fixture_set_v1() -> AcipFixtureSetV1 {
                     "content": "Please review this packet.",
                     "payload_refs": [{
                         "payload_kind": "review_packet",
-                        "payload_ref": "/Users/daniel/private/review_packet.json",
+                        "payload_ref": "runtime/comms/review/review_packet.json",
                         "media_type": "application/json",
-                        "content_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "content_sha256": "not-a-sha",
                         "byte_length": 512,
-                        "inline_summary": "Unsafe path."
+                        "inline_summary": "Malformed payload hash."
                     }],
                     "artifact_refs": [],
                     "attachments": [],
-                    "authority_scope": null,
+                    "authority_scope": {
+                        "allowed_actions": ["review", "share_artifact"],
+                        "authority_basis_refs": ["runtime/comms/authority/review_basis.json"],
+                        "delegation_permitted": false
+                    },
                     "correlation_id": null,
                     "prior_message_id": null
                 }),
             },
             AcipNegativeMessageCaseV1 {
-                name: "unsafe_visibility".to_string(),
+                name: "unsupported_visibility".to_string(),
                 expected_error_substring: "unknown variant".to_string(),
                 value: json!({
                     "schema_version": ACIP_MESSAGE_SCHEMA_VERSION,
-                    "message_id": "msg-bad-0003",
-                    "conversation_id": "conv-bad-003",
-                    "timestamp_utc": "2026-04-28T19:02:00Z",
+                    "message_id": "msg-bad-0005",
+                    "conversation_id": "conv-bad-005",
+                    "timestamp_utc": "2026-04-28T19:04:00Z",
                     "monotonic_order": 1,
                     "sender": {"kind": "agent", "id": "planner.agent"},
                     "recipient": {"kind": "group", "id": "operators"},
@@ -943,14 +1219,14 @@ pub fn acip_fixture_set_v1() -> AcipFixtureSetV1 {
                 }),
             },
             AcipNegativeMessageCaseV1 {
-                name: "overlarge_inline_payload_posture".to_string(),
-                expected_error_substring: "inline_summary exceeds bounded inline posture"
+                name: "raw_local_path_refs".to_string(),
+                expected_error_substring: "artifact_refs[] must be a repository-relative path"
                     .to_string(),
                 value: json!({
                     "schema_version": ACIP_MESSAGE_SCHEMA_VERSION,
-                    "message_id": "msg-bad-0004",
-                    "conversation_id": "conv-bad-004",
-                    "timestamp_utc": "2026-04-28T19:03:00Z",
+                    "message_id": "msg-bad-0006",
+                    "conversation_id": "conv-bad-006",
+                    "timestamp_utc": "2026-04-28T19:05:00Z",
                     "monotonic_order": 1,
                     "sender": {"kind": "agent", "id": "planner.agent"},
                     "recipient": {"kind": "agent", "id": "coder.agent"},
@@ -958,41 +1234,40 @@ pub fn acip_fixture_set_v1() -> AcipFixtureSetV1 {
                     "visibility": "private",
                     "trace_requirement": "summary",
                     "content": "Please implement the change.",
-                    "payload_refs": [{
-                        "payload_kind": "task_bundle",
-                        "payload_ref": "runtime/comms/coding/task_bundle.json",
-                        "media_type": "application/json",
-                        "content_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-                        "byte_length": 2048,
-                        "inline_summary": "X".repeat(MAX_INLINE_SUMMARY_CHARS + 1)
-                    }],
-                    "artifact_refs": [],
+                    "payload_refs": [],
+                    "artifact_refs": ["/Users/daniel/private/runtime_patch.diff"],
                     "attachments": [],
-                    "authority_scope": null,
+                    "authority_scope": {
+                        "allowed_actions": ["invoke", "share_artifact"],
+                        "authority_basis_refs": ["runtime/comms/authority/invocation_basis.json"],
+                        "delegation_permitted": false
+                    },
                     "correlation_id": null,
                     "prior_message_id": null
                 }),
             },
             AcipNegativeMessageCaseV1 {
-                name: "unsupported_authority_assertion".to_string(),
-                expected_error_substring: "unsupported authority_scope.allowed_actions".to_string(),
+                name: "authority_escalation".to_string(),
+                expected_error_substring:
+                    "message intent 'consultation' must not claim authority action 'delegate'"
+                        .to_string(),
                 value: json!({
                     "schema_version": ACIP_MESSAGE_SCHEMA_VERSION,
-                    "message_id": "msg-bad-0005",
-                    "conversation_id": "conv-bad-005",
-                    "timestamp_utc": "2026-04-28T19:04:00Z",
+                    "message_id": "msg-bad-0007",
+                    "conversation_id": "conv-bad-007",
+                    "timestamp_utc": "2026-04-28T19:06:00Z",
                     "monotonic_order": 1,
                     "sender": {"kind": "agent", "id": "planner.agent"},
                     "recipient": {"kind": "agent", "id": "delegate.agent"},
-                    "intent": "delegation",
+                    "intent": "consultation",
                     "visibility": "shared",
                     "trace_requirement": "full",
-                    "content": "Please take this bounded task.",
+                    "content": "This tries to smuggle delegated authority through a consultation surface.",
                     "payload_refs": [],
                     "artifact_refs": ["runtime/comms/delegation/contract.json"],
                     "attachments": [],
                     "authority_scope": {
-                        "allowed_actions": ["root_inspection"],
+                        "allowed_actions": ["delegate", "share_artifact"],
                         "authority_basis_refs": ["runtime/comms/delegation/basis.json"],
                         "delegation_permitted": true
                     },
@@ -1251,6 +1526,143 @@ pub fn acip_invocation_fixture_set_v1() -> AcipInvocationFixtureSetV1 {
     }
 }
 
+pub fn acip_conformance_report_v1() -> AcipConformanceReportV1 {
+    let fixture_set = acip_fixture_set_v1();
+    let invocation_fixture_set = acip_invocation_fixture_set_v1();
+    let feature_doc_ref = "docs/milestones/v0.90.5/features/AGENT_COMMS_v1.md".to_string();
+
+    let mut valid_fixture_classes = fixture_set
+        .valid_messages
+        .iter()
+        .map(|fixture| {
+            let (surface, mode_label, proves) = match fixture.name.as_str() {
+                "conversation" => (
+                    AcipConformanceSurfaceV1::Message,
+                    "conversation",
+                    "ACIP supports bounded non-governed conversation without hidden invocation authority.",
+                ),
+                "consultation" => (
+                    AcipConformanceSurfaceV1::Message,
+                    "consultation",
+                    "ACIP supports advisory consultation with explicit identity and share-only authority.",
+                ),
+                "invocation_setup" => (
+                    AcipConformanceSurfaceV1::Message,
+                    "invocation_setup",
+                    "ACIP can stage governed invocation setup as a first-class mode before contract execution.",
+                ),
+                "review_request" => (
+                    AcipConformanceSurfaceV1::Message,
+                    "review_request",
+                    "ACIP supports reviewer-facing governed requests without collapsing into generic chat.",
+                ),
+                "coding_request" => (
+                    AcipConformanceSurfaceV1::Message,
+                    "coding_request",
+                    "ACIP supports coding-agent requests with bounded task-bundle payloads.",
+                ),
+                "coding_agent_handoff" => (
+                    AcipConformanceSurfaceV1::Message,
+                    "handoff",
+                    "ACIP supports explicit agent-to-agent coding handoff without redefining the core transport.",
+                ),
+                "delegation" => (
+                    AcipConformanceSurfaceV1::Message,
+                    "delegation",
+                    "ACIP supports explicit delegation requests with parent-accountability semantics.",
+                ),
+                "negotiation" => (
+                    AcipConformanceSurfaceV1::Message,
+                    "negotiation",
+                    "ACIP supports negotiation as a first-class communication mode.",
+                ),
+                "operator_request" => (
+                    AcipConformanceSurfaceV1::Message,
+                    "operator_request",
+                    "ACIP supports operator-group requests without requiring live-provider orchestration.",
+                ),
+                "broadcast" => (
+                    AcipConformanceSurfaceV1::Message,
+                    "broadcast",
+                    "ACIP supports group broadcast without smuggling governed authority.",
+                ),
+                other => (
+                    AcipConformanceSurfaceV1::Message,
+                    other,
+                    "ACIP preserves a deterministic valid message fixture.",
+                ),
+            };
+            AcipConformanceFixtureClassV1 {
+                fixture_name: fixture.name.clone(),
+                surface,
+                mode_label: mode_label.to_string(),
+                proves: proves.to_string(),
+                feature_doc_ref: feature_doc_ref.clone(),
+            }
+        })
+        .collect::<Vec<_>>();
+
+    valid_fixture_classes.push(AcipConformanceFixtureClassV1 {
+        fixture_name: "shared_conversation_thread".to_string(),
+        surface: AcipConformanceSurfaceV1::Conversation,
+        mode_label: "conversation_thread".to_string(),
+        proves: "ACIP preserves monotonic multi-message conversation sequencing across mixed conversation, consultation, and review-request turns.".to_string(),
+        feature_doc_ref: feature_doc_ref.clone(),
+    });
+    valid_fixture_classes.push(AcipConformanceFixtureClassV1 {
+        fixture_name: "governed_invocation_contract".to_string(),
+        surface: AcipConformanceSurfaceV1::Invocation,
+        mode_label: "invocation".to_string(),
+        proves: "ACIP preserves governed invocation contract, refusal, failure, and completed-output semantics under explicit Freedom Gate linkage.".to_string(),
+        feature_doc_ref: feature_doc_ref.clone(),
+    });
+
+    let mut negative_fixture_classes = fixture_set
+        .invalid_messages
+        .iter()
+        .map(|case| AcipConformanceNegativeClassV1 {
+            case_name: case.name.clone(),
+            surface: AcipConformanceSurfaceV1::Message,
+            proves: format!(
+                "ACIP fails closed for '{}' without leaking host-local or authority-drift semantics.",
+                case.name
+            ),
+            expected_error_substring: case.expected_error_substring.clone(),
+            feature_doc_ref: feature_doc_ref.clone(),
+        })
+        .collect::<Vec<_>>();
+    negative_fixture_classes.extend(fixture_set.invalid_conversations.iter().map(|case| {
+        AcipConformanceNegativeClassV1 {
+            case_name: case.name.clone(),
+            surface: AcipConformanceSurfaceV1::Conversation,
+            proves: format!(
+                "ACIP conversation sequencing rejects '{}' deterministically.",
+                case.name
+            ),
+            expected_error_substring: case.expected_error_substring.clone(),
+            feature_doc_ref: feature_doc_ref.clone(),
+        }
+    }));
+    negative_fixture_classes.extend(invocation_fixture_set.negative_cases.iter().map(|case| {
+        AcipConformanceNegativeClassV1 {
+            case_name: case.name.clone(),
+            surface: AcipConformanceSurfaceV1::Invocation,
+            proves: format!(
+                "ACIP governed invocation rejects '{}' with a stable failure reason.",
+                case.name
+            ),
+            expected_error_substring: case.expected_error_substring.clone(),
+            feature_doc_ref: feature_doc_ref.clone(),
+        }
+    }));
+
+    AcipConformanceReportV1 {
+        schema_version: ACIP_CONFORMANCE_REPORT_SCHEMA_VERSION.to_string(),
+        valid_fixture_classes,
+        negative_fixture_classes,
+    }
+}
+
 fn sample_message(
     message_id: &str,
     conversation_id: &str,
@@ -1258,6 +1670,7 @@ fn sample_message(
     intent: AcipIntentV1,
     content: &str,
 ) -> AcipMessageEnvelopeV1 {
+    let authority_scope = default_message_authority_scope(&intent);
     AcipMessageEnvelopeV1 {
         schema_version: ACIP_MESSAGE_SCHEMA_VERSION.to_string(),
         message_id: message_id.to_string(),
@@ -1279,13 +1692,7 @@ fn sample_message(
         payload_refs: Vec::new(),
         artifact_refs: vec!["runtime/comms/trace/thread_anchor.json".to_string()],
         attachments: Vec::new(),
-        authority_scope: Some(AcipAuthorityScopeV1 {
-            allowed_actions: vec!["consult".to_string(), "share_artifact".to_string()],
-            authority_basis_refs: vec![
-                "runtime/comms/authority/consultation_basis.json".to_string()
-            ],
-            delegation_permitted: false,
-        }),
+        authority_scope: Some(authority_scope),
         correlation_id: None,
         prior_message_id: None,
     }
@@ -1307,18 +1714,47 @@ fn sample_message_with_payloads(
         content,
     );
     message.payload_refs = payload_refs;
-    message.authority_scope = Some(AcipAuthorityScopeV1 {
-        allowed_actions: vec![
-            "consult".to_string(),
-            "invoke".to_string(),
-            "review".to_string(),
-            "delegate".to_string(),
-            "share_artifact".to_string(),
-        ],
-        authority_basis_refs: vec!["runtime/comms/authority/invocation_basis.json".to_string()],
-        delegation_permitted: true,
-    });
+    message.authority_scope = Some(default_message_authority_scope(&message.intent));
     message
+}
+
+fn default_message_authority_scope(intent: &AcipIntentV1) -> AcipAuthorityScopeV1 {
+    match intent {
+        AcipIntentV1::Conversation => AcipAuthorityScopeV1 {
+            allowed_actions: vec!["consult".to_string(), "share_artifact".to_string()],
+            authority_basis_refs: vec![
+                "runtime/comms/authority/conversation_basis.json".to_string()
+            ],
+            delegation_permitted: false,
+        },
+        AcipIntentV1::Consultation => AcipAuthorityScopeV1 {
+            allowed_actions: vec!["consult".to_string(), "share_artifact".to_string()],
+            authority_basis_refs: vec![
+                "runtime/comms/authority/consultation_basis.json".to_string()
+            ],
+            delegation_permitted: false,
+        },
+        AcipIntentV1::InvocationSetup | AcipIntentV1::CodingRequest => AcipAuthorityScopeV1 {
+            allowed_actions: vec!["invoke".to_string(), "share_artifact".to_string()],
+            authority_basis_refs: vec!["runtime/comms/authority/invocation_basis.json".to_string()],
+            delegation_permitted: false,
+        },
+        AcipIntentV1::ReviewRequest => AcipAuthorityScopeV1 {
+            allowed_actions: vec!["review".to_string(), "share_artifact".to_string()],
+            authority_basis_refs: vec!["runtime/comms/authority/review_basis.json".to_string()],
+            delegation_permitted: false,
+        },
+        AcipIntentV1::Delegation => AcipAuthorityScopeV1 {
+            allowed_actions: vec!["delegate".to_string(), "share_artifact".to_string()],
+            authority_basis_refs: vec!["runtime/comms/authority/delegation_basis.json".to_string()],
+            delegation_permitted: true,
+        },
+        AcipIntentV1::Negotiation => AcipAuthorityScopeV1 {
+            allowed_actions: vec!["negotiate".to_string(), "share_artifact".to_string()],
+            authority_basis_refs: vec!["runtime/comms/authority/negotiation_basis.json".to_string()],
+            delegation_permitted: false,
+        },
+    }
 }
 
 fn sample_invocation_contract() -> AcipInvocationContractV1 {
@@ -1508,6 +1944,67 @@ fn validate_authority_scope(scope: &AcipAuthorityScopeV1) -> Result<()> {
     for basis_ref in &scope.authority_basis_refs {
         validate_repo_relative_ref(basis_ref, "authority_scope.authority_basis_refs[]")?;
     }
+    Ok(())
+}
+
+fn validate_message_intent_authority_alignment(
+    intent: &AcipIntentV1,
+    scope: &AcipAuthorityScopeV1,
+) -> Result<()> {
+    let allow_only = |permitted: &[&str]| -> Result<()> {
+        for action in &scope.allowed_actions {
+            if !permitted.contains(&action.as_str()) {
+                return Err(anyhow!(
+                    "message intent '{}' must not claim authority action '{}'",
+                    intent.as_str(),
+                    action
+                ));
+            }
+        }
+        Ok(())
+    };
+    let requires = |action: &str| -> Result<()> {
+        if !scope
+            .allowed_actions
+            .iter()
+            .any(|allowed| allowed == action)
+        {
+            return Err(anyhow!(
+                "message intent '{}' requires authority_scope.allowed_actions to include '{}'",
+                intent.as_str(),
+                action
+            ));
+        }
+        Ok(())
+    };
+
+    match intent {
+        AcipIntentV1::Conversation => allow_only(&["consult", "share_artifact"])?,
+        AcipIntentV1::Consultation => allow_only(&["consult", "share_artifact"])?,
+        AcipIntentV1::Negotiation => allow_only(&["consult", "negotiate", "share_artifact"])?,
+        AcipIntentV1::InvocationSetup => {
+            allow_only(&["invoke", "share_artifact"])?;
+            requires("invoke")?;
+        }
+        AcipIntentV1::ReviewRequest => {
+            allow_only(&["review", "share_artifact"])?;
+            requires("review")?;
+        }
+        AcipIntentV1::CodingRequest => {
+            allow_only(&["invoke", "share_artifact"])?;
+            requires("invoke")?;
+        }
+        AcipIntentV1::Delegation => {
+            allow_only(&["delegate", "share_artifact"])?;
+            requires("delegate")?;
+            if !scope.delegation_permitted {
+                return Err(anyhow!(
+                    "message intent 'delegation' requires authority_scope.delegation_permitted"
+                ));
+            }
+        }
+    }
+
     Ok(())
 }
 
@@ -1902,7 +2399,10 @@ mod tests {
                 "review_request",
                 "coding_request",
                 "delegation",
-                "negotiation"
+                "negotiation",
+                "coding_agent_handoff",
+                "operator_request",
+                "broadcast"
             ]
         );
 
@@ -1914,11 +2414,13 @@ mod tests {
         assert_eq!(
             invalid_names,
             vec![
-                "missing_identity",
-                "malformed_refs",
-                "unsafe_visibility",
-                "overlarge_inline_payload_posture",
-                "unsupported_authority_assertion"
+                "identity_drift",
+                "missing_recipient",
+                "hidden_invocation",
+                "malformed_payload_refs",
+                "unsupported_visibility",
+                "raw_local_path_refs",
+                "authority_escalation"
             ]
         );
     }
@@ -1958,6 +2460,71 @@ mod tests {
         let event_schema = acip_invocation_event_v1_schema_json().expect("event schema");
         assert!(contract_schema.contains("\"decision_event_ref\""));
         assert!(event_schema.contains("\"stop_reason\""));
+    }
+
+    #[test]
+    fn acip_conformance_report_schema_and_report_are_available() {
+        let schema = acip_conformance_report_v1_schema_json().expect("conformance schema");
+        assert!(schema.contains("\"valid_fixture_classes\""));
+        assert!(schema.contains("\"negative_fixture_classes\""));
+
+        let report = acip_conformance_report_v1();
+        validate_acip_conformance_report_v1(&report).expect("conformance report should validate");
+        assert!(report
+            .valid_fixture_classes
+            .iter()
+            .any(|class| class.fixture_name == "coding_agent_handoff"));
+        assert!(report
+            .valid_fixture_classes
+            .iter()
+            .any(|class| class.fixture_name == "shared_conversation_thread"));
+        assert!(report
+            .valid_fixture_classes
+            .iter()
+            .any(|class| class.fixture_name == "governed_invocation_contract"));
+        assert!(report
+            .negative_fixture_classes
+            .iter()
+            .any(|class| class.case_name == "missing_gate_rejects_governed_invocation"));
+        assert!(report
+            .negative_fixture_classes
+            .iter()
+            .any(|class| class.case_name == "ambiguous_stop_policy_rejected"));
+        assert!(report
+            .negative_fixture_classes
+            .iter()
+            .any(|class| class.case_name == "unsafe_input_refs_rejected"));
+        assert!(report
+            .negative_fixture_classes
+            .iter()
+            .any(|class| class.case_name == "status_refusal_inconsistency_rejected"));
+        assert!(report
+            .negative_fixture_classes
+            .iter()
+            .any(|class| class.case_name == "output_contract_mismatch_rejected"));
+    }
+
+    #[test]
+    fn acip_conformance_report_requires_full_cross_surface_matrix() {
+        let mut report = acip_conformance_report_v1();
+        report
+            .valid_fixture_classes
+            .retain(|class| class.fixture_name != "governed_invocation_contract");
+        let valid_error = validate_acip_conformance_report_v1(&report)
+            .expect_err("missing invocation proof fixture should fail");
+        assert!(valid_error
+            .to_string()
+            .contains("missing required valid fixture 'governed_invocation_contract'"));
+
+        let mut report = acip_conformance_report_v1();
+        report
+            .negative_fixture_classes
+            .retain(|class| class.case_name != "output_contract_mismatch_rejected");
+        let negative_error = validate_acip_conformance_report_v1(&report)
+            .expect_err("missing invocation negative proof should fail");
+        assert!(negative_error
+            .to_string()
+            .contains("missing required negative fixture 'output_contract_mismatch_rejected'"));
     }
 
     #[test]
@@ -2142,5 +2709,31 @@ mod tests {
         message.timestamp_utc = "not-a-timeTstill-badZ".to_string();
         let error = validate_acip_message_envelope_v1(&message).expect_err("timestamp should fail");
         assert!(error.to_string().contains("RFC3339-style UTC timestamp"));
+    }
+
+    #[test]
+    fn acip_message_envelope_rejects_hidden_governed_authority_and_escalation() {
+        let fixtures = acip_fixture_set_v1();
+        let hidden = fixtures
+            .invalid_messages
+            .iter()
+            .find(|case| case.name == "hidden_invocation")
+            .expect("hidden invocation case");
+        let hidden_error = validate_acip_message_envelope_v1_value(&hidden.value)
+            .expect_err("hidden invocation should fail");
+        assert!(hidden_error
+            .to_string()
+            .contains("message intent 'conversation' must not claim authority action 'invoke'"));
+
+        let escalation = fixtures
+            .invalid_messages
+            .iter()
+            .find(|case| case.name == "authority_escalation")
+            .expect("authority escalation case");
+        let escalation_error = validate_acip_message_envelope_v1_value(&escalation.value)
+            .expect_err("authority escalation should fail");
+        assert!(escalation_error
+            .to_string()
+            .contains("message intent 'consultation' must not claim authority action 'delegate'"));
     }
 }
