@@ -24,7 +24,7 @@
 - [ ] trace, replay, and redaction evidence available
 - [x] dangerous negative suite passes
 - [x] model proposal benchmark executed or truthfully skipped by provider
-- [ ] local/Gemma model evaluation recorded
+- [x] local/Gemma model evaluation recorded
 - [ ] flagship demo proof packet available
 - [ ] demo matrix and feature proof coverage completed before review convergence
 
