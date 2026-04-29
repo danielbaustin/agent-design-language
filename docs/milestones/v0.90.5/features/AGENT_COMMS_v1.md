@@ -277,6 +277,32 @@ Those names are part of the reviewer-facing conformance surface for Comms-04
 and later specialization work should inherit them instead of creating ad hoc
 renamings for the same core behaviors.
 
+## Comms-05 Review Specialization
+
+The reviewer-agent specialization inherits the core ACIP invocation contract and
+adds review-specific policy and disposition fields rather than redefining
+transport.
+
+The canonical review specialization surfaces are:
+
+- an ACIP review invocation contract with:
+  `invocation.intent = review_request`
+- `srp_ref` plus matching inclusion in `constraints.policy_refs`
+- `review_packet_ref` and bounded `evidence_packet_refs`
+- reviewer independence policy including distinct writer/reviewer session and
+  model refs
+- explicit prohibition of merge and push authority in
+  `constraints.prohibited_actions`
+- a review disposition contract that maps:
+  `blessed -> allow_pr_finish`
+  `blocked -> fix_findings_and_rerun_review`
+  `non_proving -> operator_waiver_required`
+  `skipped -> operator_waiver_required`
+
+The paired review outcome must preserve the declared reviewer identity, carry a
+gate result, and only allow PR finish for a blessed disposition. Review output
+remains evidence and handoff state only; it does not grant merge authority.
+
 ## Non-Proving Statements
 
 ACIP v1 does not prove:

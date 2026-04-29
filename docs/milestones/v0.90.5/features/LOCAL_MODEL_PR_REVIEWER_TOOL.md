@@ -193,6 +193,29 @@ the tool.
 5. If `pr_open_allowed` is `false`, fix or route the finding before PR creation.
 6. If `pr_open_allowed` is `true`, continue to `pr finish`.
 
+## ACIP Alignment
+
+This reviewer tool should now be understood as a concrete backend and artifact
+producer for the ACIP review specialization rather than as a standalone review
+transport.
+
+The alignment is:
+
+- `srp.md` remains the durable review-policy artifact
+- `review_packet.json` is the bounded review evidence packet
+- the ACIP review invocation contract carries invocation identity, routing,
+  authority boundary, `srp_ref`, and packet refs
+- `review_result.json` and `gate_result.json` are the primary declared review
+  outputs
+- `allow_with_evidence` is equivalent to the blessed review handoff that may
+  proceed to `pr finish`
+- `block_pr_open` is equivalent to a review handoff that must fix findings or
+  route through an operator waiver path
+
+The reviewer remains independent evidence, not merge authority. Human or
+operator merge authority stays outside the reviewer result and outside the ACIP
+review specialization.
+
 ## Current Limits
 
 - The fixture backend proves artifact shape and gate behavior, not semantic code
