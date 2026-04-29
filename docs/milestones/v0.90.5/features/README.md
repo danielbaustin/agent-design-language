@@ -20,3 +20,6 @@ core Governed Tools feature stack in full.
 
 The demo-grade local model PR reviewer tool usage guide lives in
 `LOCAL_MODEL_PR_REVIEWER_TOOL.md`.
+
+The provider-neutral coding-agent runner contract for Comms-06 lives in
+`CODING_AGENT_RUNNER.md`.
