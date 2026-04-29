@@ -17,6 +17,7 @@ mod external_counterparty;
 mod feature_proof_coverage;
 mod freedom_gate_mediation;
 mod governed_episode;
+mod governed_tools_flagship_demo;
 mod hardening;
 mod integrated_csm_run;
 mod invalid_action_rejection;

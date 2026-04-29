@@ -144,6 +144,15 @@ pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationProtot
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }
 
+pub fn runtime_v2_governed_tools_flagship_demo_contract(
+) -> Result<RuntimeV2GovernedToolsFlagshipArtifacts> {
+    static ARTIFACTS: OnceCell<RuntimeV2GovernedToolsFlagshipArtifacts> = OnceCell::new();
+    cached_contract(
+        &ARTIFACTS,
+        RuntimeV2GovernedToolsFlagshipArtifacts::prototype,
+    )
+}
+
 pub fn runtime_v2_private_state_contract() -> Result<RuntimeV2PrivateStateArtifacts> {
     RuntimeV2PrivateStateArtifacts::prototype()
 }
