@@ -23,7 +23,7 @@
 - [ ] governed executor runs only approved ACC-backed actions
 - [ ] trace, replay, and redaction evidence available
 - [x] dangerous negative suite passes
-- [ ] model proposal benchmark executed or truthfully skipped by provider
+- [x] model proposal benchmark executed or truthfully skipped by provider
 - [ ] local/Gemma model evaluation recorded
 - [ ] flagship demo proof packet available
 - [ ] demo matrix and feature proof coverage completed before review convergence

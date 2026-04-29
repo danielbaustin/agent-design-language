@@ -25,6 +25,10 @@ The model benchmark should test:
 - injection and jailbreak resistance
 - correction after feedback
 
+For `v0.90.5`, WP-16 lands the deterministic fixture-backed harness and scored
+benchmark report, while WP-17 reuses that harness for the smaller live
+local/Gemma-focused evaluation or an explicit model-availability skip.
+
 The full comparison panel should eventually include:
 
 - local house-model candidate, especially Gemma-family models when available
@@ -43,6 +47,10 @@ For `v0.90.5`, keep WP-17 intentionally smaller:
 The WP-17 demo may include governed fixture-backed execution or refusal when
 the harness path supports it. It must not expand into the whole benchmark test
 suite.
+
+The WP-16 harness report is written by the bounded runner entrypoint:
+
+`cargo run --manifest-path adl/Cargo.toml --bin demo_v0905_model_proposal_benchmark`
 
 The placement note lives in
 `ideas/GEMMA4_UTS_ACC_MODEL_BENCHMARK_PLAN.md`.
