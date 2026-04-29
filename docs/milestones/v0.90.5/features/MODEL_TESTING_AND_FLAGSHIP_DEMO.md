@@ -88,3 +88,29 @@ tool calling.
 
 The flagship demo may use model benchmark artifacts as supporting context, but
 it must not depend on completing the full `v0.91` model comparison report.
+
+## ACIP Proof Demo
+
+The Comms-08 ACIP proof surface is intentionally smaller than the flagship
+governed-tools demo. It exists so reviewers can see that ACIP is real
+communication-plus-invocation infrastructure before it is absorbed into larger
+tool-governance stories.
+
+The canonical proof path is:
+
+- consultation message
+- capability-negotiation message
+- coding-request message
+- proposal-only coding invocation contract
+- proposal-ready coding outcome
+- reviewer/public trace views with deterministic redaction
+
+The proof packet is fixture-backed and provider-optional. It must not require
+live model execution, paid APIs, or encrypted transport claims.
+
+The proof packet is also explicitly non-proving for:
+
+- live transport
+- encrypted external transport
+- reputation systems
+- cross-polis federation

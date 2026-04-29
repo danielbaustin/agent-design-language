@@ -19,6 +19,7 @@ are not treated as generic release-tail cleanup.
 | D10 | Simple local/Gemma proposal evaluation demo | WP-16-WP-17 | A local/Gemma-focused model output can be scored on proposal shape, authority humility, privacy, unsafe resistance, and any governed fixture-backed execution/refusal path without running the full benchmark suite | `docs/milestones/v0.90.5/review/local-gemma-model-evaluation-report.json`, small scorecard, failure notes, and governed fixture-backed demo evidence, or explicit model-availability skip | LANDED |
 | D11 | Governed Tools v1.0 flagship demo | WP-18 | Reviewer can watch proposal, validation, ACC, policy, gate, execution or denial, trace, and redaction end to end in one coherent governed-tools story | flagship proof packet and report; not blocked on full v0.91 model comparison | PLANNED |
 | D12 | Feature proof coverage record | WP-19 | Every governed-tools feature claim reaches review with proof, fixture, non-proving status, or explicit deferral | proof coverage record | PLANNED |
+| D13 | ACIP proof demo | Comms-08 | Reviewer can inspect one deterministic path from consultation through capability negotiation into governed coding invocation and back into redacted review/public evidence without requiring a live provider | `acip.proof.demo.v1` packet, coding proposal-ready outcome, trace bundle, and explicit non-proving statements | LANDED |
 
 ## Non-Proving Boundaries
 
@@ -28,6 +29,8 @@ are not treated as generic release-tail cleanup.
 - These demos do not prove all future tool adapters.
 - These demos do not prove full local-vs-remote Gemma comparison; that report is
   deferred to `v0.91`.
+- The ACIP proof demo does not prove live transport, encrypted external
+  transport, reputation systems, or cross-polis federation.
 - These demos do not replace citizen standing, access control, or Freedom Gate.
 - These demos do prove that approved fixture-backed actions and denied unsafe
   actions are distinguishable in review evidence.

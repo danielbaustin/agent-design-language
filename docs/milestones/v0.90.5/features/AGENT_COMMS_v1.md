@@ -376,6 +376,40 @@ explain what happened, but they must not dump secrets, raw prompts, raw tool
 arguments, private-state payloads, or workstation-local paths into the evidence
 surface.
 
+## Comms-08 Demo And Proof Coverage
+
+The demo/proof specialization does not add a new runtime transport. It packages
+the already-landed ACIP surfaces into one small, reviewer-facing proof packet
+that later proof coverage can cite directly.
+
+The canonical Comms-08 surface is:
+
+- an `acip.proof.demo.v1` packet that composes:
+  a consultation message
+  a capability-negotiation message
+  a final coding-request message
+  a proposal-only coding invocation contract
+  a proposal-ready coding outcome
+  and an `acip.trace.bundle.v1` reviewer/public evidence surface
+
+The canonical proof path is intentionally small:
+
+- natural consultation remains first-class conversation
+- capability negotiation stays inside the same communication substrate before governance binds work
+- the final `coding_request` becomes the causal message for governed invocation
+- the coding result remains proposal-ready review handoff evidence only
+- reviewer and public views stay redacted and deterministic
+
+The packet must also carry explicit non-proving statements for:
+
+- live transport
+- encrypted external transport
+- reputation systems
+- cross-polis federation
+
+This keeps the Comms-08 proof memorable and citable without implying that ACIP
+v1 has already solved production transport or federation concerns.
+
 ## Non-Proving Statements
 
 ACIP v1 does not prove:
