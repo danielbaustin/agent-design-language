@@ -4,17 +4,22 @@ use serde_json::Value;
 use sha2::Digest;
 use std::collections::BTreeSet;
 use std::fs;
-use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::io::Read;
+use std::path::{Component, Path, PathBuf};
+use std::process::{Command, Stdio};
 use std::time::Duration;
 
-use super::common::{contains_absolute_host_path_in_text, repo_root};
+use super::common::{contains_secret_like_token, repo_root};
 use super::tooling_usage;
 
 const PACKET_SCHEMA: &str = "adl.pr_review_packet.v1";
 const RESULT_SCHEMA: &str = "adl.pr_review_result.v1";
 const GATE_SCHEMA: &str = "adl.pr_review_gate.v1";
 const SUMMARY_SCHEMA: &str = "adl.pr_review_run_summary.v1";
+const DEFAULT_REVIEW_EXCERPT_BYTES: usize = 12_000;
+const MAX_REVIEW_EXCERPT_BYTES: usize = 100_000;
+const MAX_REVIEW_DIFF_FILES: usize = 40;
+const MAX_REVIEW_CONTEXT_FILES: usize = 24;
 
 #[derive(Debug)]
 struct CodeReviewArgs {
@@ -33,6 +38,7 @@ struct CodeReviewArgs {
     include_working_tree: bool,
     fixture_case: FixtureCase,
     max_diff_bytes: usize,
+    include_files: Vec<String>,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -75,6 +81,7 @@ struct ReviewPacket {
     changed_files: Vec<String>,
     diff_summary: DiffSummary,
     focused_diff_hunks: Vec<DiffHunk>,
+    file_contexts: Vec<FileContext>,
     validation_evidence: Vec<ValidationEvidence>,
     static_analysis_evidence: Vec<ValidationEvidence>,
     repo_slice_manifest: RepoSliceManifest,
@@ -88,6 +95,9 @@ struct ReviewPacket {
 struct DiffSummary {
     files_changed: usize,
     max_diff_bytes: usize,
+    max_diff_files: usize,
+    max_context_files: usize,
+    file_limit_truncated: bool,
     truncated_hunks: bool,
 }
 
@@ -96,6 +106,14 @@ struct DiffHunk {
     file: String,
     diff_excerpt: String,
     truncated: bool,
+}
+
+#[derive(Debug, Serialize)]
+struct FileContext {
+    file: String,
+    current_excerpt: String,
+    truncated: bool,
+    read_error: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -253,7 +271,8 @@ fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
         timeout_secs: 120,
         include_working_tree: false,
         fixture_case: FixtureCase::Clean,
-        max_diff_bytes: 12_000,
+        max_diff_bytes: DEFAULT_REVIEW_EXCERPT_BYTES,
+        include_files: Vec::new(),
     };
 
     let mut i = 0usize;
@@ -272,11 +291,11 @@ fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
                 i += 1;
             }
             "--base" => {
-                parsed.base_ref = value_arg(args, i, "--base")?.to_string();
+                parsed.base_ref = validate_git_ref(value_arg(args, i, "--base")?, "--base")?;
                 i += 1;
             }
             "--head" => {
-                parsed.head_ref = value_arg(args, i, "--head")?.to_string();
+                parsed.head_ref = validate_git_ref(value_arg(args, i, "--head")?, "--head")?;
                 i += 1;
             }
             "--issue" => {
@@ -322,6 +341,12 @@ fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
                     .map_err(|_| anyhow!("invalid --max-diff-bytes value"))?;
                 i += 1;
             }
+            "--file" => {
+                parsed
+                    .include_files
+                    .push(validate_include_file(value_arg(args, i, "--file")?)?);
+                i += 1;
+            }
             other => bail!("unknown arg for tooling code-review: {other}"),
         }
         i += 1;
@@ -333,8 +358,8 @@ fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
         "--writer-session must not be empty"
     );
     ensure!(
-        parsed.max_diff_bytes >= 256,
-        "--max-diff-bytes must be at least 256"
+        (256..=MAX_REVIEW_EXCERPT_BYTES).contains(&parsed.max_diff_bytes),
+        "--max-diff-bytes must be between 256 and {MAX_REVIEW_EXCERPT_BYTES}"
     );
     ensure!(
         (1..=900).contains(&parsed.timeout_secs),
@@ -373,17 +398,105 @@ fn parse_fixture_case(raw: &str) -> Result<FixtureCase> {
     }
 }
 
+fn validate_include_file(raw: &str) -> Result<String> {
+    let value = raw.trim();
+    ensure!(!value.is_empty(), "--file must not be empty");
+    let path = Path::new(value);
+    ensure!(!path.is_absolute(), "--file must be repo-relative");
+    ensure!(
+        !path.components().any(|component| matches!(
+            component,
+            Component::ParentDir | Component::RootDir | Component::Prefix(_)
+        )),
+        "--file must not contain traversal or absolute path components"
+    );
+    ensure!(
+        !value.contains('\\'),
+        "--file must use forward-slash repo-relative paths"
+    );
+    ensure!(
+        value
+            .chars()
+            .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, '/' | '.' | '_' | '-')),
+        "--file contains unsupported path characters"
+    );
+    ensure!(
+        !value.contains("..")
+            && !value.contains("//")
+            && !value.starts_with('-')
+            && !value.ends_with('/')
+            && !value.ends_with(".lock"),
+        "--file contains unsupported path patterns"
+    );
+    ensure!(
+        !is_sensitive_review_path(value),
+        "--file points at a sensitive path pattern that must not be sent to a model reviewer"
+    );
+    Ok(value.to_string())
+}
+
+fn is_sensitive_review_path(path: &str) -> bool {
+    let lower = path.to_ascii_lowercase();
+    let file_name = lower.rsplit('/').next().unwrap_or("");
+    let extension = file_name.rsplit_once('.').map(|(_, ext)| ext);
+    file_name == ".env"
+        || file_name.starts_with(".env.")
+        || lower == ".ssh"
+        || lower.starts_with(".ssh/")
+        || lower.contains("/.ssh/")
+        || matches!(extension, Some("pem" | "key" | "p12" | "pfx"))
+}
+
+fn validate_git_ref(raw: &str, flag: &str) -> Result<String> {
+    let value = raw.trim();
+    ensure!(!value.is_empty(), "{flag} must not be empty");
+    ensure!(
+        !value.starts_with('-'),
+        "{flag} must be a revision, not an option"
+    );
+    ensure!(
+        value
+            .chars()
+            .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, '/' | '.' | '_' | '-' | '^' | '~')),
+        "{flag} contains unsupported revision characters"
+    );
+    ensure!(
+        !value.contains(':')
+            && !value.contains("..")
+            && !value.contains("//")
+            && !value.contains("^^")
+            && !value.contains("~~")
+            && !value.contains("^~")
+            && !value.contains("~^")
+            && !value.ends_with('/')
+            && !value.ends_with(".lock"),
+        "{flag} contains unsupported revision characters"
+    );
+    ensure!(
+        !value.ends_with('^') && !value.ends_with('~'),
+        "{flag} contains incomplete parent or ancestor syntax"
+    );
+    Ok(value.to_string())
+}
+
 fn build_packet(root: &Path, args: &CodeReviewArgs) -> Result<ReviewPacket> {
     let branch = git_output(root, &["rev-parse", "--abbrev-ref", "HEAD"])
         .unwrap_or_else(|_| "unknown".to_string());
     let changed_files = changed_files(root, args)?;
     let focused_diff_hunks = diff_hunks(root, args, &changed_files)?;
+    let file_contexts = file_contexts(root, args, &changed_files)?;
     let truncated_hunks = focused_diff_hunks.iter().any(|hunk| hunk.truncated);
+    let file_limit_truncated = changed_files.len() > MAX_REVIEW_DIFF_FILES
+        || changed_files.len() > MAX_REVIEW_CONTEXT_FILES;
     let static_analysis_evidence = static_evidence(root, args);
-    let packet_text = serde_json::to_string(&focused_diff_hunks).unwrap_or_default();
+    let packet_text =
+        serde_json::to_string(&(&focused_diff_hunks, &file_contexts)).unwrap_or_default();
     let redaction_status = RedactionStatus {
-        absolute_host_paths_present: contains_absolute_host_path_in_text(&packet_text),
-        secret_like_values_present: false,
+        absolute_host_paths_present: review_packet_contains_absolute_host_path(
+            &focused_diff_hunks,
+            &file_contexts,
+        ),
+        secret_like_values_present: contains_secret_like_token(&packet_text),
     };
     Ok(ReviewPacket {
         schema_version: PACKET_SCHEMA,
@@ -396,9 +509,13 @@ fn build_packet(root: &Path, args: &CodeReviewArgs) -> Result<ReviewPacket> {
         diff_summary: DiffSummary {
             files_changed: changed_files.len(),
             max_diff_bytes: args.max_diff_bytes,
+            max_diff_files: MAX_REVIEW_DIFF_FILES,
+            max_context_files: MAX_REVIEW_CONTEXT_FILES,
+            file_limit_truncated,
             truncated_hunks,
         },
         focused_diff_hunks,
+        file_contexts,
         validation_evidence: Vec::new(),
         static_analysis_evidence,
         repo_slice_manifest: RepoSliceManifest {
@@ -427,53 +544,80 @@ fn changed_files(root: &Path, args: &CodeReviewArgs) -> Result<Vec<String>> {
         &[
             "diff",
             "--name-only",
+            "--end-of-options",
             &format!("{}...{}", args.base_ref, args.head_ref),
         ],
     ) {
-        files.extend(
-            output
-                .lines()
-                .map(str::trim)
-                .filter(|line| !line.is_empty())
-                .map(str::to_string),
-        );
+        for line in output
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+        {
+            files.insert(validate_include_file(line)?);
+        }
     }
     if args.include_working_tree {
         let output = git_output(root, &["diff", "--name-only"])?;
-        files.extend(
-            output
-                .lines()
-                .map(str::trim)
-                .filter(|line| !line.is_empty())
-                .map(str::to_string),
-        );
+        for line in output
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+        {
+            files.insert(validate_include_file(line)?);
+        }
+    }
+    if !args.include_files.is_empty() {
+        for file in &args.include_files {
+            ensure!(
+                files.contains(file),
+                "--file '{file}' is not in the changed file set for the selected base/head or working tree"
+            );
+        }
+        return Ok(args.include_files.clone());
     }
     Ok(files.into_iter().collect())
 }
 
 fn diff_hunks(root: &Path, args: &CodeReviewArgs, files: &[String]) -> Result<Vec<DiffHunk>> {
     let mut hunks = Vec::new();
-    for file in files.iter().take(40) {
-        let diff = if args.include_working_tree {
-            git_output(root, &["diff", "--", file])
-                .ok()
-                .filter(|text| !text.trim().is_empty())
-        } else {
-            None
-        }
-        .or_else(|| {
-            git_output(
-                root,
-                &[
-                    "diff",
-                    &format!("{}...{}", args.base_ref, args.head_ref),
-                    "--",
-                    file,
-                ],
-            )
-            .ok()
-        })
+    for file in files.iter().take(MAX_REVIEW_DIFF_FILES) {
+        let committed_diff = git_output(
+            root,
+            &[
+                "diff",
+                "--end-of-options",
+                &format!("{}...{}", args.base_ref, args.head_ref),
+                "--",
+                file,
+            ],
+        )
         .unwrap_or_default();
+        let staged_diff = if args.include_working_tree {
+            git_output(root, &["diff", "--cached", "--", file]).unwrap_or_default()
+        } else {
+            String::new()
+        };
+        let unstaged_diff = if args.include_working_tree {
+            git_output(root, &["diff", "--", file]).unwrap_or_default()
+        } else {
+            String::new()
+        };
+        let mut diff_parts = Vec::new();
+        if !committed_diff.trim().is_empty() {
+            diff_parts.push(format!(
+                "--- committed diff ({}...{}) ---\n{}",
+                args.base_ref, args.head_ref, committed_diff
+            ));
+        }
+        if !staged_diff.trim().is_empty() {
+            diff_parts.push(format!("--- staged working tree diff ---\n{staged_diff}"));
+        }
+        if !unstaged_diff.trim().is_empty() {
+            diff_parts.push(format!(
+                "--- unstaged working tree diff ---\n{unstaged_diff}"
+            ));
+        }
+        let diff = diff_parts.join("\n");
         let (diff_excerpt, truncated) = truncate(&diff, args.max_diff_bytes);
         hunks.push(DiffHunk {
             file: file.clone(),
@@ -482,6 +626,94 @@ fn diff_hunks(root: &Path, args: &CodeReviewArgs, files: &[String]) -> Result<Ve
         });
     }
     Ok(hunks)
+}
+
+fn file_contexts(root: &Path, args: &CodeReviewArgs, files: &[String]) -> Result<Vec<FileContext>> {
+    let mut contexts = Vec::new();
+    let max_read_bytes = args.max_diff_bytes.saturating_add(1);
+    let canonical_root = fs::canonicalize(root).context("canonicalize repo root")?;
+    for file in files.iter().take(MAX_REVIEW_CONTEXT_FILES) {
+        let content = if args.include_working_tree {
+            safe_read_worktree_file(root, &canonical_root, file, max_read_bytes)
+                .or_else(|_| git_show_file_prefix(root, &args.head_ref, file, max_read_bytes))
+        } else {
+            git_show_file_prefix(root, &args.head_ref, file, max_read_bytes)
+                .or_else(|_| safe_read_worktree_file(root, &canonical_root, file, max_read_bytes))
+        };
+        match content {
+            Ok(content) => {
+                let (current_excerpt, truncated) = truncate(&content, args.max_diff_bytes);
+                contexts.push(FileContext {
+                    file: file.clone(),
+                    current_excerpt,
+                    truncated,
+                    read_error: None,
+                });
+            }
+            Err(err) if !args.include_files.is_empty() => {
+                bail!("failed to read explicit --file context for '{file}': {err}");
+            }
+            Err(err) => contexts.push(FileContext {
+                file: file.clone(),
+                current_excerpt: String::new(),
+                truncated: false,
+                read_error: Some(truncate(&err.to_string(), 240).0),
+            }),
+        }
+    }
+    Ok(contexts)
+}
+
+fn safe_read_worktree_file(
+    root: &Path,
+    canonical_root: &Path,
+    file: &str,
+    max_bytes: usize,
+) -> Result<String> {
+    let candidate = root.join(file);
+    let canonical_candidate = fs::canonicalize(&candidate)
+        .with_context(|| format!("canonicalize review file '{}'", candidate.display()))?;
+    ensure!(
+        canonical_candidate.starts_with(canonical_root),
+        "review file resolves outside repo root"
+    );
+    read_file_prefix(&canonical_candidate, max_bytes).context("read review file")
+}
+
+fn git_show_file_prefix(
+    root: &Path,
+    head_ref: &str,
+    file: &str,
+    max_bytes: usize,
+) -> Result<String> {
+    let spec = format!("{head_ref}:{file}");
+    let mut child = Command::new("git")
+        .args(["show", "--end-of-options", &spec])
+        .current_dir(root)
+        .stdout(Stdio::piped())
+        .spawn()
+        .with_context(|| format!("spawn git show for '{file}'"))?;
+    let mut stdout = child.stdout.take().context("capture git show stdout")?;
+    let mut bytes = Vec::new();
+    stdout
+        .by_ref()
+        .take(max_bytes as u64)
+        .read_to_end(&mut bytes)
+        .context("read git show stdout")?;
+    drop(stdout);
+    let status = child.wait().context("wait for git show")?;
+    ensure!(
+        status.success() || !bytes.is_empty(),
+        "git show failed for '{file}'"
+    );
+    Ok(String::from_utf8_lossy(&bytes).to_string())
+}
+
+fn read_file_prefix(path: &Path, max_bytes: usize) -> Result<String> {
+    let file = fs::File::open(path)?;
+    let mut bytes = Vec::new();
+    file.take(max_bytes as u64).read_to_end(&mut bytes)?;
+    Ok(String::from_utf8_lossy(&bytes).to_string())
 }
 
 fn static_evidence(root: &Path, args: &CodeReviewArgs) -> Vec<ValidationEvidence> {
@@ -498,6 +730,7 @@ fn static_evidence(root: &Path, args: &CodeReviewArgs) -> Vec<ValidationEvidence
         &[
             "diff",
             "--check",
+            "--end-of-options",
             &format!("{}...{}", args.base_ref, args.head_ref),
         ],
         "committed diff whitespace check",
@@ -547,7 +780,7 @@ fn fixture_review(args: &CodeReviewArgs, packet: &ReviewPacket, packet_id: &str)
         .unwrap_or_else(|| "fixture-reviewer-session".to_string());
     let same_session = reviewer_session == args.writer_session;
     let mut findings = Vec::new();
-    let mut disposition = ReviewDisposition::Blessed;
+    let mut disposition = ReviewDisposition::NonProving;
     if args.fixture_case == FixtureCase::Blocked {
         disposition = ReviewDisposition::Blocked;
         findings.push(ReviewFinding {
@@ -585,7 +818,8 @@ fn fixture_review(args: &CodeReviewArgs, packet: &ReviewPacket, packet_id: &str)
             disposition,
             findings,
             residual_risk: vec![
-                "fixture backend does not perform semantic model review".to_string()
+                "fixture backend proves artifact shape only and cannot bless PR publication"
+                    .to_string(),
             ],
         },
     )
@@ -623,6 +857,29 @@ fn skipped_review_result(
     )
 }
 
+fn non_proving_review_result(
+    args: &CodeReviewArgs,
+    packet: &ReviewPacket,
+    packet_id: &str,
+    reviewer_session: String,
+    model: String,
+    residual_risk: String,
+) -> ReviewResult {
+    review_result(
+        args,
+        packet,
+        packet_id,
+        ReviewResultParts {
+            same_session: reviewer_session == args.writer_session,
+            reviewer_session,
+            reviewer_model: model,
+            disposition: ReviewDisposition::NonProving,
+            findings: Vec::new(),
+            residual_risk: vec![residual_risk],
+        },
+    )
+}
+
 fn ollama_review(
     args: &CodeReviewArgs,
     packet: &ReviewPacket,
@@ -646,6 +903,16 @@ fn ollama_review(
             "live Ollama review requires --allow-live-ollama".to_string(),
         ));
     }
+    if packet.redaction_status.secret_like_values_present {
+        return Ok(non_proving_review_result(
+            args,
+            packet,
+            packet_id,
+            reviewer_session.clone(),
+            model,
+            "live model invocation suppressed because the review packet contains secret-like values".to_string(),
+        ));
+    }
 
     let prompt = reviewer_prompt(packet);
     let endpoint = ollama_generate_url(&args.ollama_url)?;
@@ -659,18 +926,37 @@ fn ollama_review(
         .json(&serde_json::json!({
             "model": model,
             "prompt": prompt,
-            "stream": false
+            "stream": false,
+            "format": "json",
+            "options": {
+                "temperature": 0,
+                "num_predict": 4096
+            }
         }))
         .send();
     let text = match response {
         Ok(resp) if resp.status().is_success() => resp
             .json::<Value>()
             .context("parse Ollama response JSON")?
-            .get("response")
-            .and_then(|v| v.as_str())
-            .unwrap_or("")
-            .trim()
-            .to_string(),
+            .as_object()
+            .map(|object| {
+                let response = object
+                    .get("response")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("")
+                    .trim();
+                if !response.is_empty() {
+                    response.to_string()
+                } else {
+                    object
+                        .get("thinking")
+                        .and_then(|v| v.as_str())
+                        .unwrap_or("")
+                        .trim()
+                        .to_string()
+                }
+            })
+            .unwrap_or_default(),
         Ok(resp) => {
             return Ok(skipped_review_result(
                 args,
@@ -695,7 +981,7 @@ fn ollama_review(
 
     let parsed = parse_model_review_json(&text);
     let (disposition, findings, residual) = match parsed {
-        Some((disposition, findings)) => normalize_model_review(disposition, findings),
+        Some(model_review) => normalize_model_review(model_review, packet),
         None => (
             ReviewDisposition::NonProving,
             Vec::new(),
@@ -736,7 +1022,7 @@ fn review_result(
         same_session_as_writer: parts.same_session,
         visibility_mode: args.visibility_mode,
         repo_access: RepoAccess {
-            read_only: args.visibility_mode == VisibilityMode::ReadOnlyRepo,
+            read_only: false,
             write_allowed: false,
             tool_execution_allowed: false,
         },
@@ -753,6 +1039,7 @@ fn review_result(
         non_claims: vec![
             "review result is not merge authority".to_string(),
             "reviewer did not execute repository writes".to_string(),
+            "reviewer received a bounded packet, not live repository read tools".to_string(),
         ],
     }
 }
@@ -762,6 +1049,15 @@ fn evaluate_gate(result: &ReviewResult, packet: &ReviewPacket) -> GateResult {
     if result.same_session_as_writer {
         reasons.push("reviewer session matches writer session".to_string());
     }
+    if packet.redaction_status.absolute_host_paths_present {
+        reasons.push(
+            "review packet contained absolute host paths; live prompt redaction was required"
+                .to_string(),
+        );
+    }
+    if packet.redaction_status.secret_like_values_present {
+        reasons.push("review packet contained secret-like values".to_string());
+    }
     if packet
         .static_analysis_evidence
         .iter()
@@ -769,12 +1065,14 @@ fn evaluate_gate(result: &ReviewResult, packet: &ReviewPacket) -> GateResult {
     {
         reasons.push("static analysis evidence contains failures".to_string());
     }
-    for finding in &result.findings {
-        if finding.blocking && matches!(finding.priority.as_str(), "P0" | "P1" | "P2") {
-            reasons.push(format!(
-                "blocking {} finding: {}",
-                finding.priority, finding.title
-            ));
+    if result.disposition != ReviewDisposition::NonProving {
+        for finding in &result.findings {
+            if finding.blocking && matches!(finding.priority.as_str(), "P0" | "P1" | "P2") {
+                reasons.push(format!(
+                    "blocking {} finding: {}",
+                    finding.priority, finding.title
+                ));
+            }
         }
     }
     if result.disposition == ReviewDisposition::Blocked {
@@ -804,13 +1102,95 @@ fn evaluate_gate(result: &ReviewResult, packet: &ReviewPacket) -> GateResult {
 }
 
 fn reviewer_prompt(packet: &ReviewPacket) -> String {
+    let packet_json = redact_absolute_host_paths_for_prompt(
+        &serde_json::to_string_pretty(packet).unwrap_or_default(),
+    );
     format!(
-        "You are an ADL code reviewer. Review this bounded packet fairly and meticulously. Return only JSON matching schema_version adl.pr_review_result.v1 with fields disposition (blessed|blocked|non_proving), findings array, and residual_risk array. Findings are only actionable risks, bugs, regressions, missing tests, security issues, or misleading documentation. Do not put praise, confirmations, or already-correct behavior in findings. If you include a finding, every finding must include a specific title, priority (P0|P1|P2|P3), file, body, evidence array, heuristic_ids array, confidence, blocking, and suggested_fix_scope. Do not include placeholder, empty, or non-actionable findings. Packet:\n{}",
-        serde_json::to_string_pretty(packet).unwrap_or_default()
+        "/no_think\nYou are an ADL code reviewer. Return final JSON immediately, with no chain-of-thought, analysis transcript, markdown, or prose. Do not call tools, do not emit action/action_input JSON, and do not request web search or repository commands. Be skeptical, concrete, and adversarial-but-fair. Your job is to find defects before PR publication, not to approve work. Review this bounded packet for correctness, fail-open gates, missing tests, path traversal, packet completeness, unsafe reviewer/session handling, timeout/truncation behavior, misleading docs, and lifecycle drift. Return only compact JSON matching schema_version adl.pr_review_result.v1 with fields disposition (blessed|blocked|non_proving), findings array, and residual_risk array. The top-level JSON object must not contain keys named action, action_input, tool, tool_call, function_call, or arguments. Include at most 5 findings. Keep each title under 12 words, each body under 90 words, and each evidence string under 120 characters. Findings are only actionable risks, bugs, regressions, missing tests, security issues, or misleading documentation. Do not put praise, confirmations, or already-correct behavior in findings. A security finding must cite the exact missing guard or a concrete bypass input; do not report a hypothetical bypass if the packet shows an existing guard that blocks it. Any blocking P0/P1 security finding must include at least one evidence string starting with 'bypass:' followed by the concrete malicious input or state transition. If you include a finding, every finding must include a specific title, priority (P0|P1|P2|P3), file, body, evidence array, heuristic_ids array, confidence, blocking, and suggested_fix_scope. Do not include placeholder, empty, or non-actionable findings. If you find no actionable issues, set disposition to blessed only after checking every included diff hunk, file_context, file-limit flag, and read_error. Residual_risk must list concrete checked invariants or limitations with file/function references. Do not use approval language such as approved, correct, good, sound, aligns, or looks fine as residual rationale. If the packet is truncated or has read errors enough that you cannot review it fairly, set disposition to non_proving. Packet:\n{}",
+        packet_json
     )
 }
 
-fn parse_model_review_json(raw: &str) -> Option<(ReviewDisposition, Vec<ReviewFinding>)> {
+fn redact_absolute_host_paths_for_prompt(text: &str) -> String {
+    redact_windows_absolute_paths(
+        &text
+            .replace("/Users/", "[REDACTED_HOST_PATH]/")
+            .replace("/home/", "[REDACTED_HOST_PATH]/")
+            .replace("/tmp/", "[REDACTED_HOST_PATH]/")
+            .replace("/var/folders/", "[REDACTED_HOST_PATH]/"),
+    )
+}
+
+fn redact_windows_absolute_paths(text: &str) -> String {
+    let mut redacted = String::with_capacity(text.len());
+    let mut chars = text.char_indices().peekable();
+    while let Some((idx, ch)) = chars.next() {
+        if ch.is_ascii_alphabetic()
+            && is_windows_drive_boundary(text, idx)
+            && chars.peek().map(|(_, next)| next) == Some(&':')
+        {
+            chars.next();
+            if chars.peek().map(|(_, next)| next) == Some(&'\\') {
+                redacted.push_str("[REDACTED_HOST_PATH]\\");
+                chars.next();
+                continue;
+            }
+            redacted.push(ch);
+            redacted.push(':');
+            continue;
+        }
+        redacted.push(ch);
+    }
+    redacted
+}
+
+fn review_packet_contains_absolute_host_path(hunks: &[DiffHunk], contexts: &[FileContext]) -> bool {
+    hunks
+        .iter()
+        .any(|hunk| contains_review_absolute_host_path(&hunk.diff_excerpt))
+        || contexts
+            .iter()
+            .any(|context| contains_review_absolute_host_path(&context.current_excerpt))
+}
+
+fn contains_review_absolute_host_path(text: &str) -> bool {
+    ["/Users/", "/home/", "/tmp/", "/var/folders/"]
+        .iter()
+        .any(|needle| text.contains(needle))
+        || contains_windows_absolute_path(text)
+}
+
+fn contains_windows_absolute_path(text: &str) -> bool {
+    let mut chars = text.char_indices().peekable();
+    while let Some((idx, ch)) = chars.next() {
+        if ch.is_ascii_alphabetic()
+            && is_windows_drive_boundary(text, idx)
+            && chars.peek().map(|(_, next)| next) == Some(&':')
+        {
+            chars.next();
+            if chars.peek().map(|(_, next)| next) == Some(&'\\') {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+fn is_windows_drive_boundary(text: &str, idx: usize) -> bool {
+    idx == 0
+        || !text[..idx]
+            .chars()
+            .next_back()
+            .is_some_and(|ch| ch.is_ascii_alphanumeric() || ch == '_')
+}
+
+struct ParsedModelReview {
+    disposition: ReviewDisposition,
+    findings: Vec<ReviewFinding>,
+    residual_risk: Vec<String>,
+}
+
+fn parse_model_review_json(raw: &str) -> Option<ParsedModelReview> {
     let cleaned = raw
         .trim()
         .trim_start_matches("```json")
@@ -873,13 +1253,20 @@ fn parse_model_review_json(raw: &str) -> Option<(ReviewDisposition, Vec<ReviewFi
                 .collect::<Vec<_>>()
         })
         .unwrap_or_default();
-    Some((disposition, findings))
+    let residual_risk = string_array(value.get("residual_risk"));
+    Some(ParsedModelReview {
+        disposition,
+        findings,
+        residual_risk,
+    })
 }
 
 fn normalize_model_review(
-    disposition: ReviewDisposition,
-    findings: Vec<ReviewFinding>,
+    model_review: ParsedModelReview,
+    packet: &ReviewPacket,
 ) -> (ReviewDisposition, Vec<ReviewFinding>, Vec<String>) {
+    let disposition = model_review.disposition;
+    let findings = model_review.findings;
     let mut malformed = Vec::new();
     for (idx, finding) in findings.iter().enumerate() {
         let label = format!("finding {}", idx + 1);
@@ -917,15 +1304,90 @@ fn normalize_model_review(
                 "{label} is non-actionable praise or confirmation, not a review finding"
             ));
         }
+        if finding.blocking
+            && matches!(finding.priority.as_str(), "P0" | "P1")
+            && finding
+                .heuristic_ids
+                .iter()
+                .any(|id| id.to_ascii_uppercase().starts_with("SEC"))
+            && !finding
+                .evidence
+                .iter()
+                .any(|evidence| evidence.trim_start().starts_with("bypass:"))
+        {
+            malformed.push(format!(
+                "{label} is a blocking high-severity security finding without concrete bypass evidence"
+            ));
+        }
+        if finding.evidence.iter().any(|evidence| {
+            evidence
+                .trim_start()
+                .strip_prefix("bypass:")
+                .and_then(classify_rejected_cli_bypass)
+                .is_some()
+        }) {
+            malformed.push(format!(
+                "{label} uses bypass evidence that is rejected by the current CLI validators"
+            ));
+        }
+    }
+
+    if disposition == ReviewDisposition::Blessed {
+        if packet_is_incomplete(packet) {
+            malformed.push(
+                "model blessed an incomplete packet; review is not useful enough".to_string(),
+            );
+        }
+        if model_review.residual_risk.is_empty() {
+            malformed.push("model blessed with no residual-review rationale".to_string());
+        }
+        if model_review
+            .residual_risk
+            .iter()
+            .any(|risk| is_praise_like_rationale(risk))
+        {
+            malformed.push(
+                "model blessed with praise-like residual rationale instead of review evidence"
+                    .to_string(),
+            );
+        }
     }
 
     if malformed.is_empty() {
-        return (disposition, findings, Vec::new());
+        return (disposition, findings, model_review.residual_risk);
     }
 
     let mut residual_risk = vec!["model review output contained malformed findings".to_string()];
     residual_risk.extend(malformed);
     (ReviewDisposition::NonProving, findings, residual_risk)
+}
+
+fn packet_is_incomplete(packet: &ReviewPacket) -> bool {
+    let truncated_context = packet.file_contexts.iter().any(|context| context.truncated);
+    let missing_context = packet
+        .file_contexts
+        .iter()
+        .any(|context| context.read_error.is_some());
+    packet.diff_summary.truncated_hunks
+        || packet.diff_summary.file_limit_truncated
+        || truncated_context
+        || missing_context
+}
+
+fn is_praise_like_rationale(raw: &str) -> bool {
+    let normalized = raw.trim().to_ascii_lowercase();
+    [
+        "approved",
+        "correct",
+        "good",
+        "sound",
+        "aligns",
+        "looks fine",
+        "well implemented",
+        "properly",
+    ]
+    .iter()
+    .any(|needle| normalized.contains(needle))
 }
 
 fn is_non_actionable_fix_scope(raw: &str) -> bool {
@@ -937,6 +1399,32 @@ fn is_non_actionable_fix_scope(raw: &str) -> bool {
         || normalized.starts_with("no fix")
         || normalized.starts_with("no change")
         || normalized.starts_with("no action")
+}
+
+fn classify_rejected_cli_bypass(raw: &str) -> Option<&'static str> {
+    let mut parts = raw.split_whitespace();
+    while let Some(part) = parts.next() {
+        match part {
+            "--file" => {
+                let value = parts.next()?;
+                return validate_include_file(trim_shell_quotes(value))
+                    .is_err()
+                    .then_some("--file");
+            }
+            "--base" | "--head" => {
+                let value = parts.next()?;
+                return validate_git_ref(trim_shell_quotes(value), part)
+                    .is_err()
+                    .then_some("git-ref");
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
+fn trim_shell_quotes(raw: &str) -> &str {
+    raw.trim_matches(|ch| matches!(ch, '\'' | '"' | '`'))
 }
 
 fn string_array(value: Option<&Value>) -> Vec<String> {
@@ -1020,7 +1508,8 @@ mod tests {
             timeout_secs: 120,
             include_working_tree: false,
             fixture_case: FixtureCase::Clean,
-            max_diff_bytes: 12_000,
+            max_diff_bytes: DEFAULT_REVIEW_EXCERPT_BYTES,
+            include_files: Vec::new(),
         }
     }
 
@@ -1035,13 +1524,22 @@ mod tests {
             changed_files: vec!["docs/example.md".to_string()],
             diff_summary: DiffSummary {
                 files_changed: 1,
-                max_diff_bytes: 12_000,
+                max_diff_bytes: DEFAULT_REVIEW_EXCERPT_BYTES,
+                max_diff_files: MAX_REVIEW_DIFF_FILES,
+                max_context_files: MAX_REVIEW_CONTEXT_FILES,
+                file_limit_truncated: false,
                 truncated_hunks: false,
             },
             focused_diff_hunks: vec![DiffHunk {
                 file: "docs/example.md".to_string(),
                 diff_excerpt: "+example".to_string(),
                 truncated: false,
+            }],
+            file_contexts: vec![FileContext {
+                file: "docs/example.md".to_string(),
+                current_excerpt: "example".to_string(),
+                truncated: false,
+                read_error: None,
             }],
             validation_evidence: Vec::new(),
             static_analysis_evidence: Vec::new(),
@@ -1071,11 +1569,17 @@ mod tests {
             "--timeout-secs".to_string(),
             "240".to_string(),
             "--include-working-tree".to_string(),
+            "--file".to_string(),
+            "adl/src/cli/tooling_cmd/code_review.rs".to_string(),
         ];
         let parsed = parse_args(&args).expect("args should parse");
         assert_eq!(parsed.backend, ReviewerBackend::Ollama);
         assert_eq!(parsed.timeout_secs, 240);
         assert!(parsed.include_working_tree);
+        assert_eq!(
+            parsed.include_files,
+            vec!["adl/src/cli/tooling_cmd/code_review.rs"]
+        );
     }
 
     #[test]
@@ -1116,9 +1620,152 @@ mod tests {
             "255".to_string(),
         ])
         .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--max-diff-bytes".to_string(),
+            (MAX_REVIEW_EXCERPT_BYTES + 1).to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--file".to_string(),
+            "../secret.txt".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--file".to_string(),
+            "/tmp/secret.txt".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--file".to_string(),
+            "adl\\src\\lib.rs".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--file".to_string(),
+            "docs/file with spaces.md".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--file".to_string(),
+            "docs/ref:path.md".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--file".to_string(),
+            ".env".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--file".to_string(),
+            "config/private.pem".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--file".to_string(),
+            ".ssh/config".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--head".to_string(),
+            "--help".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--head".to_string(),
+            "HEAD:secret".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--head".to_string(),
+            "HEAD --cached".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--base".to_string(),
+            "origin/main..topic".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--base".to_string(),
+            "953e913f^".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--base".to_string(),
+            "953e913f^^1".to_string(),
+        ])
+        .is_err());
         assert!(parse_args(&["--writer-session".to_string(), "".to_string()]).is_err());
         assert!(parse_args(&["--out".to_string()]).is_err());
         assert!(parse_args(&["--unknown".to_string()]).is_err());
+    }
+
+    #[test]
+    fn parse_args_accepts_safe_parent_and_ancestor_git_refs() {
+        let parsed = parse_args(&[
+            "--out".to_string(),
+            "artifacts/review".to_string(),
+            "--base".to_string(),
+            "953e913f^1".to_string(),
+            "--head".to_string(),
+            "HEAD~1".to_string(),
+        ])
+        .expect("safe parent and ancestor refs should parse");
+        assert_eq!(parsed.base_ref, "953e913f^1");
+        assert_eq!(parsed.head_ref, "HEAD~1");
+    }
+
+    #[test]
+    fn changed_files_rejects_file_filter_outside_changed_set() {
+        let root = repo_root().expect("repo root");
+        let mut args = test_args();
+        args.base_ref = "HEAD".to_string();
+        args.head_ref = "HEAD".to_string();
+        args.include_working_tree = false;
+        args.include_files = vec!["adl/src/cli/tooling_cmd/code_review.rs".to_string()];
+
+        let err = changed_files(&root, &args).expect_err("unchanged file filter should fail");
+        assert!(err.to_string().contains("not in the changed file set"));
+    }
+
+    #[test]
+    fn read_file_prefix_bounds_file_context_memory() {
+        let path =
+            std::env::temp_dir().join(format!("adl-code-review-prefix-{}.txt", std::process::id()));
+        fs::write(&path, "abcdef").expect("write temp");
+        let text = read_file_prefix(&path, 3).expect("read prefix");
+        fs::remove_file(&path).ok();
+        assert_eq!(text, "abc");
     }
 
     #[test]
@@ -1131,6 +1778,11 @@ mod tests {
         let blocked = fixture_review(&blocked_args, &packet, packet_id);
         assert_eq!(blocked.disposition, ReviewDisposition::Blocked);
         assert_eq!(blocked.findings.len(), 1);
+
+        let clean = fixture_review(&test_args(), &packet, packet_id);
+        assert_eq!(clean.disposition, ReviewDisposition::NonProving);
+        let clean_gate = evaluate_gate(&clean, &packet);
+        assert!(!clean_gate.pr_open_allowed);
 
         let mut same_session_args = test_args();
         same_session_args.reviewer_session = Some("writer".to_string());
@@ -1153,6 +1805,26 @@ mod tests {
     }
 
     #[test]
+    fn ollama_live_review_suppresses_redaction_failures() {
+        let mut args = test_args();
+        args.backend = ReviewerBackend::Ollama;
+        args.allow_live_ollama = true;
+        args.model = Some("gemma4:test".to_string());
+        let mut packet = test_packet();
+        packet.redaction_status.secret_like_values_present = true;
+
+        let result =
+            ollama_review(&args, &packet, "packet-id").expect("redaction failure should not call");
+        assert_eq!(result.disposition, ReviewDisposition::NonProving);
+        assert!(result
+            .residual_risk
+            .iter()
+            .any(|risk| { risk.contains("live model invocation suppressed") }));
+        let gate = evaluate_gate(&result, &packet);
+        assert!(!gate.pr_open_allowed);
+    }
+
+    #[test]
     fn evaluate_gate_covers_static_failure_and_blocking_finding() {
         let mut packet = test_packet();
         packet.static_analysis_evidence.push(ValidationEvidence {
@@ -1160,6 +1832,7 @@ mod tests {
             status: "FAIL".to_string(),
             summary: "whitespace error".to_string(),
         });
+        packet.redaction_status.absolute_host_paths_present = true;
         let mut result = review_result(
             &test_args(),
             &packet,
@@ -1194,11 +1867,29 @@ mod tests {
         assert!(gate
             .reasons
             .iter()
+            .any(|reason| reason.contains("absolute host paths")));
+        assert!(gate
+            .reasons
+            .iter()
             .any(|reason| reason.contains("blocking P2 finding")));
         assert!(gate
             .reasons
             .iter()
             .any(|reason| reason.contains("matches writer session")));
+
+        result.disposition = ReviewDisposition::NonProving;
+        result.same_session_as_writer = false;
+        packet.static_analysis_evidence.clear();
+        let non_proving_gate = evaluate_gate(&result, &packet);
+        assert!(!non_proving_gate.pr_open_allowed);
+        assert!(non_proving_gate
+            .reasons
+            .iter()
+            .any(|reason| reason.contains("non_proving")));
+        assert!(!non_proving_gate
+            .reasons
+            .iter()
+            .any(|reason| reason.contains("blocking P2 finding")));
     }
 
     #[test]
@@ -1222,11 +1913,11 @@ mod tests {
   ]
 }
 ```"#;
-        let (disposition, findings) = parse_model_review_json(raw).expect("parse review json");
-        assert_eq!(disposition, ReviewDisposition::Blocked);
-        assert_eq!(findings[0].evidence, vec!["path:docs/example.md"]);
-        assert_eq!(findings[0].heuristic_ids, vec!["D1"]);
-        assert_eq!(findings[0].line, Some(12));
+        let parsed = parse_model_review_json(raw).expect("parse review json");
+        assert_eq!(parsed.disposition, ReviewDisposition::Blocked);
+        assert_eq!(parsed.findings[0].evidence, vec!["path:docs/example.md"]);
+        assert_eq!(parsed.findings[0].heuristic_ids, vec!["D1"]);
+        assert_eq!(parsed.findings[0].line, Some(12));
         assert!(parse_model_review_json("{not-json").is_none());
         assert!(parse_model_review_json(r#"{"disposition":"unexpected"}"#).is_none());
     }
@@ -1246,6 +1937,12 @@ mod tests {
         let prompt = reviewer_prompt(&test_packet());
         assert!(prompt.contains("actionable risks"));
         assert!(prompt.contains("adl.pr_review_result.v1"));
+        assert_eq!(
+            redact_absolute_host_paths_for_prompt("/tmp/secret.txt /Users/alice/repo C:\\secret"),
+            "[REDACTED_HOST_PATH]/secret.txt [REDACTED_HOST_PATH]/alice/repo [REDACTED_HOST_PATH]\\secret"
+        );
+        assert!(!contains_review_absolute_host_path("Expected signal:\\n"));
+        assert!(contains_review_absolute_host_path("C:\\secret"));
 
         let (truncated, was_truncated) = truncate("éclair", 3);
         assert!(was_truncated);
@@ -1267,8 +1964,17 @@ mod tests {
             suggested_fix_scope: "issue_local".to_string(),
         };
 
-        let (disposition, findings, residual) =
-            normalize_model_review(ReviewDisposition::Blessed, vec![finding]);
+        let (disposition, findings, residual) = normalize_model_review(
+            ParsedModelReview {
+                disposition: ReviewDisposition::Blessed,
+                findings: vec![finding],
+                residual_risk: vec![
+                    "Reviewed docs/example.md finding evidence and no packet truncation flags were present."
+                        .to_string(),
+                ],
+            },
+            &test_packet(),
+        );
         assert_eq!(disposition, ReviewDisposition::NonProving);
         assert_eq!(findings.len(), 1);
         assert!(residual
@@ -1294,8 +2000,14 @@ mod tests {
             suggested_fix_scope: "None. This is already correct.".to_string(),
         };
 
-        let (disposition, findings, residual) =
-            normalize_model_review(ReviewDisposition::Blessed, vec![finding]);
+        let (disposition, findings, residual) = normalize_model_review(
+            ParsedModelReview {
+                disposition: ReviewDisposition::Blessed,
+                findings: vec![finding],
+                residual_risk: Vec::new(),
+            },
+            &test_packet(),
+        );
         assert_eq!(disposition, ReviewDisposition::NonProving);
         assert_eq!(findings.len(), 1);
         assert!(residual
@@ -1319,10 +2031,180 @@ mod tests {
             suggested_fix_scope: "issue_local".to_string(),
         };
 
-        let (disposition, findings, residual) =
-            normalize_model_review(ReviewDisposition::Blessed, vec![finding]);
+        let (disposition, findings, residual) = normalize_model_review(
+            ParsedModelReview {
+                disposition: ReviewDisposition::Blessed,
+                findings: vec![finding],
+                residual_risk: vec![
+                    "Reviewed docs/example.md finding evidence and no packet truncation flags were present."
+                        .to_string(),
+                ],
+            },
+            &test_packet(),
+        );
         assert_eq!(disposition, ReviewDisposition::Blessed);
         assert_eq!(findings.len(), 1);
-        assert!(residual.is_empty());
+        assert_eq!(residual.len(), 1);
+    }
+
+    #[test]
+    fn normalize_model_review_requires_bypass_for_blocking_security_findings() {
+        let finding = ReviewFinding {
+            title: "Possible path traversal".to_string(),
+            priority: "P0".to_string(),
+            file: "adl/src/cli/tooling_cmd/code_review.rs".to_string(),
+            line: None,
+            body: "The path might be exploitable without a concrete bypass.".to_string(),
+            evidence: vec!["safe_read_worktree_file".to_string()],
+            heuristic_ids: vec!["SEC-PATH-TRAVERSAL".to_string()],
+            confidence: "medium".to_string(),
+            blocking: true,
+            suggested_fix_scope: "function_local".to_string(),
+        };
+
+        let (disposition, _, residual) = normalize_model_review(
+            ParsedModelReview {
+                disposition: ReviewDisposition::Blocked,
+                findings: vec![finding],
+                residual_risk: Vec::new(),
+            },
+            &test_packet(),
+        );
+
+        assert_eq!(disposition, ReviewDisposition::NonProving);
+        assert!(residual
+            .iter()
+            .any(|risk| risk.contains("without concrete bypass evidence")));
+    }
+
+    #[test]
+    fn normalize_model_review_rejects_bypass_rejected_by_cli_validators() {
+        let finding = ReviewFinding {
+            title: "Path traversal bypass".to_string(),
+            priority: "P1".to_string(),
+            file: "adl/src/cli/tooling_cmd/code_review.rs".to_string(),
+            line: None,
+            body: "The model claims --file traversal is accepted.".to_string(),
+            evidence: vec!["bypass: --file ../../etc/passwd".to_string()],
+            heuristic_ids: vec!["SEC-PATH-TRAVERSAL".to_string()],
+            confidence: "high".to_string(),
+            blocking: true,
+            suggested_fix_scope: "function_local".to_string(),
+        };
+
+        let (disposition, _, residual) = normalize_model_review(
+            ParsedModelReview {
+                disposition: ReviewDisposition::Blocked,
+                findings: vec![finding],
+                residual_risk: Vec::new(),
+            },
+            &test_packet(),
+        );
+
+        assert_eq!(disposition, ReviewDisposition::NonProving);
+        assert!(residual
+            .iter()
+            .any(|risk| risk.contains("rejected by the current CLI validators")));
+    }
+
+    #[test]
+    fn normalize_model_review_rejects_empty_blessing_for_truncated_packet() {
+        let mut packet = test_packet();
+        packet.diff_summary.truncated_hunks = true;
+        packet.focused_diff_hunks[0].truncated = true;
+        packet.file_contexts[0].truncated = true;
+
+        let (disposition, findings, residual) = normalize_model_review(
+            ParsedModelReview {
+                disposition: ReviewDisposition::Blessed,
+                findings: Vec::new(),
+                residual_risk: Vec::new(),
+            },
+            &packet,
+        );
+
+        assert_eq!(disposition, ReviewDisposition::NonProving);
+        assert!(findings.is_empty());
+        assert!(residual
+            .iter()
+            .any(|risk| risk.contains("incomplete packet")));
+        assert!(residual
+            .iter()
+            .any(|risk| risk.contains("no residual-review rationale")));
+    }
+
+    #[test]
+    fn normalize_model_review_accepts_empty_blessing_with_rationale_for_complete_packet() {
+        let (disposition, findings, residual) = normalize_model_review(
+            ParsedModelReview {
+                disposition: ReviewDisposition::Blessed,
+                findings: Vec::new(),
+                residual_risk: vec![
+                    "Reviewed complete docs/example.md diff, including file_contexts and focused_diff_hunks; no actionable defect evidence was present."
+                        .to_string(),
+                ],
+            },
+            &test_packet(),
+        );
+
+        assert_eq!(disposition, ReviewDisposition::Blessed);
+        assert!(findings.is_empty());
+        assert_eq!(residual.len(), 1);
+    }
+
+    #[test]
+    fn normalize_model_review_rejects_blessed_incomplete_packet_with_findings() {
+        let finding = ReviewFinding {
+            title: "Missing reviewer evidence link".to_string(),
+            priority: "P3".to_string(),
+            file: "docs/example.md".to_string(),
+            line: Some(12),
+            body: "The review packet mentions a follow-up but does not link the evidence."
+                .to_string(),
+            evidence: vec!["path:docs/example.md".to_string()],
+            heuristic_ids: vec!["C1".to_string()],
+            confidence: "medium".to_string(),
+            blocking: false,
+            suggested_fix_scope: "issue_local".to_string(),
+        };
+        let mut packet = test_packet();
+        packet.diff_summary.truncated_hunks = true;
+
+        let (disposition, findings, residual) = normalize_model_review(
+            ParsedModelReview {
+                disposition: ReviewDisposition::Blessed,
+                findings: vec![finding],
+                residual_risk: vec![
+                    "Reviewed docs/example.md finding evidence and packet limits.".to_string(),
+                ],
+            },
+            &packet,
+        );
+
+        assert_eq!(disposition, ReviewDisposition::NonProving);
+        assert_eq!(findings.len(), 1);
+        assert!(residual
+            .iter()
+            .any(|risk| risk.contains("incomplete packet")));
+    }
+
+    #[test]
+    fn normalize_model_review_rejects_empty_blessing_with_praise_rationale() {
+        let (disposition, findings, residual) = normalize_model_review(
+            ParsedModelReview {
+                disposition: ReviewDisposition::Blessed,
+                findings: Vec::new(),
+                residual_risk: vec![
+                    "The implementation is logically sound and correctly tested.".to_string(),
+                ],
+            },
+            &test_packet(),
+        );
+
+        assert_eq!(disposition, ReviewDisposition::NonProving);
+        assert!(findings.is_empty());
+        assert!(residual
+            .iter()
+            .any(|risk| risk.contains("praise-like residual rationale")));
     }
 }

@@ -171,22 +171,7 @@ pub(super) fn contains_absolute_host_path_in_text(text: &str) -> bool {
     ["/Users/", "/home/", "/tmp/", "/var/folders/"]
         .iter()
         .any(|needle| text.contains(needle))
-        || contains_windows_absolute_path(text)
-}
-
-fn contains_windows_absolute_path(text: &str) -> bool {
-    let bytes = text.as_bytes();
-    bytes.windows(3).enumerate().any(|(idx, window)| {
-        let drive = window[0].is_ascii_alphabetic();
-        let colon = window[1] == b':';
-        let slash = matches!(window[2], b'\\' | b'/');
-        let boundary = idx == 0
-            || matches!(
-                bytes[idx - 1],
-                b' ' | b'\n' | b'\r' | b'\t' | b'"' | b'\'' | b'(' | b'['
-            );
-        drive && colon && slash && boundary
-    })
+        || text.contains(":\\")
 }
 
 pub(super) fn contains_secret_like_token(text: &str) -> bool {
