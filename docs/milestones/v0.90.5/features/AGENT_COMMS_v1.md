@@ -257,6 +257,26 @@ This feature doc is the parent terminology and scope surface for:
 Later consumers should reference this feature rather than copying protocol prose
 into role-specific docs.
 
+## Comms-04 Fixture Classes
+
+The core conformance suite should prove that ACIP is a general protocol rather
+than a review-only transport. The canonical fixture classes for that proof are:
+
+- valid mode fixtures for `conversation`, `consultation`, `invocation_setup`,
+  `review_request`, `coding_request`, `coding_agent_handoff`, `delegation`,
+  `negotiation`, `operator_request`, `broadcast`,
+  `shared_conversation_thread`, and `governed_invocation_contract`
+- negative fixtures for `identity_drift`, `missing_recipient`,
+  `hidden_invocation`, `malformed_payload_refs`, `unsupported_visibility`,
+  `raw_local_path_refs`, `authority_escalation`, `stale_ordering`, missing
+  Freedom Gate linkage for governed invocation, `ambiguous_stop_policy_rejected`,
+  `unsafe_input_refs_rejected`, `status_refusal_inconsistency_rejected`, and
+  `output_contract_mismatch_rejected`
+
+Those names are part of the reviewer-facing conformance surface for Comms-04
+and later specialization work should inherit them instead of creating ad hoc
+renamings for the same core behaviors.
+
 ## Non-Proving Statements
 
 ACIP v1 does not prove:
