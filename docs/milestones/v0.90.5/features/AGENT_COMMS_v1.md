@@ -303,6 +303,38 @@ The paired review outcome must preserve the declared reviewer identity, carry a
 gate result, and only allow PR finish for a blessed disposition. Review output
 remains evidence and handoff state only; it does not grant merge authority.
 
+## Comms-06 Coding Specialization
+
+The coding-agent specialization inherits the same ACIP invocation substrate and
+adds provider-lane, edit-boundary, and review-handoff requirements rather than
+creating a second execution protocol.
+
+The canonical coding specialization surfaces are:
+
+- an ACIP coding invocation contract with:
+  `invocation.intent = coding_request`
+- a declared `provider_lane` and `execution_mode`
+- explicit `issue_ref`, `task_bundle_ref`, and bounded `allowed_edit_paths`
+- explicit `validation_commands` and `patch_format`
+- an approval policy that:
+  requires review before PR finish
+  routes to `acip.review.invocation.v1`
+  forbids same-session blessing
+  forbids same-model blessing
+
+The canonical lane boundary is also fixed:
+
+- only `codex_issue_worktree` may use `worktree_edit`
+- all other lanes are proposal-only and return diff or structured-proposal
+  artifacts
+- proposal-only lanes must not claim direct `code_edit` capability
+
+The paired coding outcome must preserve writer identity, emit validation
+evidence plus a `review_handoff_ref`, and classify the result as either
+patch-ready-for-review or proposal-ready-for-review. Like the review outcome,
+the coding outcome is evidence and handoff only; it never grants merge or
+blessing authority.
+
 ## Non-Proving Statements
 
 ACIP v1 does not prove:

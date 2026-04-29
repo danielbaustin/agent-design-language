@@ -169,6 +169,7 @@ slice, but still has no write, push, merge, or arbitrary command authority.
 The tool blocks PR opening when:
 
 - the reviewer is the same session as the writer
+- the reviewer is the same model as the writer
 - static diff checks fail
 - a blocking `P0`, `P1`, or `P2` finding is present
 - the reviewer disposition is `blocked`
@@ -215,6 +216,25 @@ The alignment is:
 The reviewer remains independent evidence, not merge authority. Human or
 operator merge authority stays outside the reviewer result and outside the ACIP
 review specialization.
+
+## Coding-Agent Handoff
+
+Comms-06 makes the upstream coding-agent side explicit rather than leaving it
+implicit in issue-worktree practice.
+
+When the reviewer tool is called after coding-agent work, the expected handoff
+is:
+
+- a coding invocation or outcome surface that identifies the writer session and
+  model
+- a bounded patch, patch manifest, or structured proposal artifact
+- validation evidence from the coding lane
+- a review-handoff packet that points at the coding outputs without granting
+  approval
+
+The reviewer tool should therefore be treated as the next governed step after a
+coding-agent runner, not as something the coding lane can collapse into or
+self-satisfy.
 
 ## Current Limits
 
