@@ -140,6 +140,7 @@ Examples:
   adl tooling lint-prompt-spec --issue 761
   adl tooling card-prompt --issue 761 --out /tmp/issue-761.prompt.md
   adl tooling code-review --out artifacts/reviews/pr-review --backend fixture --visibility packet-only
+  adl tooling code-review --out artifacts/reviews/file-review --backend ollama --file adl/src/lib.rs --allow-live-ollama
   adl verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
 

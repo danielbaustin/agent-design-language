@@ -157,6 +157,7 @@ fn code_review_fixture_backend_writes_blocking_gate_artifacts() {
         serde_json::from_str(&fs::read_to_string(out.join("review_result.json")).expect("result"))
             .expect("result json");
     assert_eq!(result["visibility_mode"], "read_only_repo");
+    assert_eq!(result["repo_access"]["read_only"], false);
     assert_eq!(result["repo_access"]["write_allowed"], false);
     assert_eq!(result["repo_access"]["tool_execution_allowed"], false);
 }
@@ -184,10 +185,11 @@ fn code_review_ollama_without_live_gate_records_skipped_blocker() {
         serde_json::from_str(&fs::read_to_string(out.join("gate_result.json")).expect("gate"))
             .expect("gate json");
     assert_eq!(gate["pr_open_allowed"], false);
-    assert!(gate["reasons"][0]
-        .as_str()
-        .expect("reason")
-        .contains("skipped"));
+    assert!(gate["reasons"]
+        .as_array()
+        .expect("reasons")
+        .iter()
+        .any(|reason| reason.as_str().expect("reason").contains("skipped")));
 }
 
 #[test]
