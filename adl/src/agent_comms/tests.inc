@@ -660,6 +660,87 @@
     }
 
     #[test]
+    fn acip_proof_demo_packet_schema_and_fixture_are_available() {
+        let schema = acip_proof_demo_packet_v1_schema_json().expect("proof schema");
+        assert!(schema.contains("AcipProofDemoPacketV1"));
+        assert!(schema.contains("\"represented_modes\""));
+
+        let packet = acip_proof_demo_packet_v1();
+        validate_acip_proof_demo_packet_v1(&packet).expect("proof packet should validate");
+        assert_eq!(
+            packet.represented_modes,
+            vec![
+                AcipIntentV1::Consultation,
+                AcipIntentV1::Negotiation,
+                AcipIntentV1::CodingRequest
+            ]
+        );
+    }
+
+    #[test]
+    fn acip_proof_demo_packet_requires_multi_mode_linkage_and_non_proving_guards() {
+        let mut packet = acip_proof_demo_packet_v1();
+        packet.represented_modes = vec![AcipIntentV1::CodingRequest];
+        let mode_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("single-mode proof packet should fail");
+        assert!(mode_error.to_string().contains(
+            "must carry exactly consultation, negotiation, and coding_request represented_modes"
+        ));
+
+        let mut packet = acip_proof_demo_packet_v1();
+        packet.conversation.messages[1].intent = AcipIntentV1::Conversation;
+        packet.conversation.messages[1].authority_scope =
+            Some(default_message_authority_scope(&AcipIntentV1::Conversation));
+        let negotiation_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("canonical negotiation turn drift should fail");
+        assert!(negotiation_error
+            .to_string()
+            .contains("must keep capability negotiation between consultation and coding_request"));
+
+        let mut packet = acip_proof_demo_packet_v1();
+        packet.coding_invocation.invocation.causal_message_id = "msg-other".to_string();
+        let linkage_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("causal linkage drift should fail");
+        assert!(linkage_error.to_string().contains(
+            "must bind coding invocation causal_message_id to the final coding_request message"
+        ));
+
+        let mut packet = acip_proof_demo_packet_v1();
+        packet.public_visible_artifact_refs =
+            vec!["runtime/comms/trace/private_state_dump.json".to_string()];
+        let public_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("public refs outside public audience view should fail");
+        assert!(public_error.to_string().contains(
+            "public_visible_artifact_refs must be present in the public trace audience view"
+        ));
+
+        let mut packet = acip_proof_demo_packet_v1();
+        packet.validation_commands = vec!["cargo test --lib".to_string()];
+        let command_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("validation command drift should fail");
+        assert!(command_error
+            .to_string()
+            .contains("validation_commands must match coding invocation validation_commands"));
+
+        let mut packet = acip_proof_demo_packet_v1();
+        packet.reviewer_visible_artifact_refs =
+            vec!["runtime/comms/proof/acip_demo_reviewer_trace.json".to_string()];
+        let reviewer_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("reviewer artifact drift should fail");
+        assert!(reviewer_error.to_string().contains(
+            "reviewer_visible_artifact_refs must include reviewer narrative, coding primary output, and review handoff"
+        ));
+
+        let mut packet = acip_proof_demo_packet_v1();
+        packet.non_proving_statements.pop();
+        let non_proving_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("missing non-proving statements should fail");
+        assert!(non_proving_error
+            .to_string()
+            .contains("must carry explicit non_proving_statements"));
+    }
+
+    #[test]
     fn acip_invocation_fixture_set_matches_required_contract_and_negative_cases() {
         let fixtures = acip_invocation_fixture_set_v1();
         validate_acip_invocation_fixture_set_v1(&fixtures)

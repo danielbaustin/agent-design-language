@@ -596,7 +596,7 @@ pub fn acip_fixture_set_v1() -> AcipFixtureSetV1 {
 }
 
 
-fn sample_message(
+pub(crate) fn sample_message(
     message_id: &str,
     conversation_id: &str,
     monotonic_order: u64,
@@ -631,7 +631,7 @@ fn sample_message(
     }
 }
 
-fn sample_message_with_payloads(
+pub(crate) fn sample_message_with_payloads(
     message_id: &str,
     conversation_id: &str,
     monotonic_order: u64,
@@ -651,7 +651,7 @@ fn sample_message_with_payloads(
     message
 }
 
-fn default_message_authority_scope(intent: &AcipIntentV1) -> AcipAuthorityScopeV1 {
+pub(crate) fn default_message_authority_scope(intent: &AcipIntentV1) -> AcipAuthorityScopeV1 {
     match intent {
         AcipIntentV1::Conversation => AcipAuthorityScopeV1 {
             allowed_actions: vec!["consult".to_string(), "share_artifact".to_string()],

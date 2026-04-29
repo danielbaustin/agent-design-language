@@ -21,6 +21,7 @@ const ACIP_CODING_OUTCOME_SCHEMA_VERSION: &str = "acip.coding.outcome.v1";
 const ACIP_CODING_FIXTURE_SCHEMA_VERSION: &str = "acip.coding.fixture.v1";
 const ACIP_TRACE_BUNDLE_SCHEMA_VERSION: &str = "acip.trace.bundle.v1";
 const ACIP_TRACE_FIXTURE_SCHEMA_VERSION: &str = "acip.trace.fixture.v1";
+const ACIP_PROOF_DEMO_SCHEMA_VERSION: &str = "acip.proof.demo.v1";
 const MAX_CONTENT_CHARS: usize = 4_000;
 const MAX_INLINE_SUMMARY_CHARS: usize = 512;
 const MAX_LIST_LEN: usize = 16;
@@ -582,6 +583,33 @@ pub struct AcipTraceFixtureSetV1 {
     pub negative_cases: Vec<AcipTraceNegativeCaseV1>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipProofClassificationV1 {
+    Proving,
+    NonProving,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipProofDemoPacketV1 {
+    pub schema_version: String,
+    pub demo_id: String,
+    pub title: String,
+    pub proof_classification: AcipProofClassificationV1,
+    pub represented_modes: Vec<AcipIntentV1>,
+    pub proves: Vec<String>,
+    pub conversation: AcipConversationEnvelopeV1,
+    pub coding_invocation: AcipCodingInvocationContractV1,
+    pub coding_outcome: AcipCodingOutcomeV1,
+    pub trace_bundle: AcipTraceBundleV1,
+    pub reviewer_visible_artifact_refs: Vec<String>,
+    pub public_visible_artifact_refs: Vec<String>,
+    pub feature_doc_refs: Vec<String>,
+    pub validation_commands: Vec<String>,
+    pub non_proving_statements: Vec<String>,
+}
+
 pub mod transport {
     use super::*;
     include!("agent_comms/transport.inc");
@@ -618,6 +646,11 @@ pub mod orchestrate {
         include!("agent_comms/orchestrate/conformance.inc");
     }
 
+    pub mod proof_demo {
+        use super::*;
+        include!("agent_comms/orchestrate/proof_demo.inc");
+    }
+
     pub mod trace {
         #![allow(dead_code)]
         use super::*;
@@ -625,6 +658,7 @@ pub mod orchestrate {
     }
 
     pub use conformance::*;
+    pub use proof_demo::*;
     pub use trace::*;
 }
 
