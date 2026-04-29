@@ -1,8 +1,8 @@
 use super::*;
 use crate::cli::pr_cmd::github::{
-    current_pr_url, ensure_issue_metadata_parity, gh_issue_create, gh_issue_edit_body,
-    gh_issue_title, pr_has_closing_linkage, ensure_pr_closing_linkage,
-    ensure_or_repair_pr_closing_linkage, OpenPullRequest,
+    current_pr_url, ensure_issue_metadata_parity, ensure_or_repair_pr_closing_linkage,
+    ensure_pr_closing_linkage, gh_issue_create, gh_issue_edit_body, gh_issue_title,
+    pr_has_closing_linkage, OpenPullRequest,
 };
 
 #[test]
@@ -666,7 +666,9 @@ fn github_issue_create_and_metadata_helpers_cover_direct_success_paths() {
     assert!(gh_log.contains(
         "issue create -R owner/repo --title [v0.87.1][tools] Metadata parity --body Seed body"
     ));
-    assert!(gh_log.contains("issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity"));
+    assert!(
+        gh_log.contains("issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity")
+    );
     assert!(gh_log.contains("--add-label version:v0.87.1"));
     assert!(gh_log.contains("--remove-label version:v0.86"));
     assert_eq!(
@@ -713,16 +715,14 @@ fn github_closing_linkage_helpers_cover_body_fallback_and_repair_paths() {
     fs::write(&linkage_state, "repair_needed\n").expect("reset linkage state");
     let desired_body = temp.join("desired-body.md");
     fs::write(&desired_body, "Closes #1153\n").expect("desired body");
-    assert!(
-        ensure_or_repair_pr_closing_linkage(
-            "owner/repo",
-            "https://github.com/owner/repo/pull/1",
-            1153,
-            false,
-            &desired_body,
-        )
-        .expect("repair linkage")
-    );
+    assert!(ensure_or_repair_pr_closing_linkage(
+        "owner/repo",
+        "https://github.com/owner/repo/pull/1",
+        1153,
+        false,
+        &desired_body,
+    )
+    .expect("repair linkage"));
 
     unsafe {
         env::set_var("PATH", old_path);
@@ -730,8 +730,12 @@ fn github_closing_linkage_helpers_cover_body_fallback_and_repair_paths() {
 
     let gh_log = fs::read_to_string(&gh_log).expect("gh log");
     assert!(gh_log.contains("pr view -R owner/repo https://github.com/owner/repo/pull/1 --json closingIssuesReferences --jq .closingIssuesReferences[]?.number"));
-    assert!(gh_log.contains("pr view -R owner/repo https://github.com/owner/repo/pull/1 --json body --jq .body"));
-    assert!(gh_log.contains("pr edit -R owner/repo https://github.com/owner/repo/pull/1 --body-file"));
+    assert!(gh_log.contains(
+        "pr view -R owner/repo https://github.com/owner/repo/pull/1 --json body --jq .body"
+    ));
+    assert!(
+        gh_log.contains("pr edit -R owner/repo https://github.com/owner/repo/pull/1 --body-file")
+    );
 }
 
 #[test]

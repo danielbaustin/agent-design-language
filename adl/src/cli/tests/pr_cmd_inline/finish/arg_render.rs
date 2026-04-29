@@ -800,7 +800,12 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
         .expect("git branch")
         .success());
     assert!(Command::new("git")
-        .args(["init", "--bare", "-q", path_str(&origin).expect("origin path")])
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
         .current_dir(&repo)
         .status()
         .expect("git init bare")
@@ -823,7 +828,12 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
         .expect("git push")
         .success());
     assert!(Command::new("git")
-        .args(["checkout", "-q", "-b", "codex/1153-rust-finish-default-lane"])
+        .args([
+            "checkout",
+            "-q",
+            "-b",
+            "codex/1153-rust-finish-default-lane"
+        ])
         .current_dir(&repo)
         .status()
         .expect("git checkout")
@@ -944,12 +954,16 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
 
     let head_subject = run_capture(
         "git",
-        &["-C", path_str(&repo).expect("repo"), "log", "-1", "--format=%s"],
+        &[
+            "-C",
+            path_str(&repo).expect("repo"),
+            "log",
+            "-1",
+            "--format=%s",
+        ],
     )
     .expect("head subject");
-    assert!(head_subject.contains(
-        "[v0.86][tools] Rust finish default lane (Closes #1153)"
-    ));
+    assert!(head_subject.contains("[v0.86][tools] Rust finish default lane (Closes #1153)"));
     let gh_log = fs::read_to_string(&gh_log).expect("gh log");
     assert!(gh_log.contains("pr create"));
     assert!(gh_log.contains("pr view -R danielbaustin/agent-design-language"));
