@@ -89,6 +89,19 @@ tool calling.
 The flagship demo may use model benchmark artifacts as supporting context, but
 it must not depend on completing the full `v0.91` model comparison report.
 
+The canonical bounded entrypoint is:
+
+`adl runtime-v2 governed-tools-flagship-demo --out artifacts/v0905/demo-d11-governed-tools-flagship`
+
+The reviewer-facing bundle should include:
+
+- `runtime_v2/governed_tools/flagship_proof_packet.json`
+- `runtime_v2/governed_tools/flagship_operator_report.md`
+- `runtime_v2/governed_tools/flagship_public_report.md`
+- four named case artifacts for allowed read, delegated local write, denied low authority, and denied exfiltration
+- trace and governed redaction artifacts for the cases that reach gate/executor review
+- supporting benchmark and dangerous-negative-suite reports as bounded context only
+
 ## ACIP Proof Demo
 
 The Comms-08 ACIP proof surface is intentionally smaller than the flagship

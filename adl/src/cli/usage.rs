@@ -39,6 +39,7 @@ pub fn usage() -> &'static str {
   adl runtime-v2 integrated-csm-run-demo [--out <dir>]
   adl runtime-v2 observatory-flagship-demo [--out <dir>]
   adl runtime-v2 contract-market-demo [--out <dir>]
+  adl runtime-v2 governed-tools-flagship-demo [--out <dir>]
   adl runtime-v2 feature-proof-coverage [--out <path>]
   adl provider setup <family> [--out <dir>] [--force]
   adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>]
@@ -115,6 +116,7 @@ Examples:
   adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run
   adl runtime-v2 observatory-flagship-demo --out artifacts/v0903/demo-d12-observatory-flagship
   adl runtime-v2 contract-market-demo --out artifacts/v0904/demo-d12-contract-market
+  adl runtime-v2 governed-tools-flagship-demo --out artifacts/v0905/demo-d11-governed-tools-flagship
   adl runtime-v2 feature-proof-coverage --out artifacts/v0904/feature-proof-coverage.json
   adl provider setup chatgpt
   adl provider setup claude
