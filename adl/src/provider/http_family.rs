@@ -8,7 +8,7 @@ use std::time::Duration;
 mod config;
 
 use config::{
-    auth_env_for, ollama_generate_endpoint, validate_http_credential_endpoint,
+    auth_env_for, cfg_u64_strict, ollama_generate_endpoint, validate_http_credential_endpoint,
     validate_vendor_credential_endpoint, vendor_endpoint, HttpAuth,
 };
 pub(crate) use config::{cfg_u64, timeout_secs};
@@ -409,11 +409,15 @@ impl OllamaHttpProvider {
         spec: &adl::ProviderSpec,
         target: &ProviderInvocationTargetV1,
     ) -> Result<Self> {
+        let timeout_secs = match cfg_u64_strict(&spec.config, "timeout_secs", "ollama")? {
+            Some(value) => value,
+            None => timeout_secs().map_err(|err| invalid_config("ollama", err.to_string()))?,
+        };
         Ok(Self {
             endpoint: ollama_generate_endpoint(spec)?,
             model: target.provider_model_id.clone(),
             temperature: super::local::cfg_f32(&spec.config, "temperature"),
-            timeout_secs: cfg_u64(&spec.config, "timeout_secs"),
+            timeout_secs: Some(timeout_secs),
         })
     }
 }
