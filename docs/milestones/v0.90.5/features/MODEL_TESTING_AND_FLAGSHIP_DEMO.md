@@ -52,6 +52,20 @@ The WP-16 harness report is written by the bounded runner entrypoint:
 
 `cargo run --manifest-path adl/Cargo.toml --bin demo_v0905_model_proposal_benchmark`
 
+The WP-17 live local/Gemma evaluation is written by the bounded runner
+entrypoint:
+
+`cargo run --manifest-path adl/Cargo.toml --bin demo_v0905_local_gemma_model_evaluation -- --out docs/milestones/v0.90.5/review/local-gemma-model-evaluation-report.json --model gemma4:e2b --model gemma4:e4b --model llama3.1:8b`
+
+The tracked review artifact is
+`docs/milestones/v0.90.5/review/local-gemma-model-evaluation-report.json`.
+That bounded live report is intentionally not a ranking claim: it records the
+current model-specific pass/fail mix for a small local Ollama comparison panel
+covering `gemma4:e2b`, `gemma4:e4b`, and `llama3.1:8b`, including safe-read
+proposal shape, privacy discipline, execution humility, jailbreak resistance,
+and feedback responsiveness, plus any governed fixture-backed execution or
+refusal path the run actually demonstrated.
+
 The placement note lives in
 `ideas/GEMMA4_UTS_ACC_MODEL_BENCHMARK_PLAN.md`.
 
