@@ -660,6 +660,156 @@
     }
 
     #[test]
+    fn acip_trace_bundle_event_and_audience_guardrails_cover_remaining_branches() {
+        let mut conversation_mismatch = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        conversation_mismatch.trace_events[1].conversation_id = "conv-review-drift".to_string();
+        let conversation_error = validate_acip_trace_bundle_v1(&conversation_mismatch)
+            .expect_err("conversation drift should fail");
+        assert!(conversation_error
+            .to_string()
+            .contains("trace event conversation_id must match the bundle conversation_id"));
+
+        let mut missing_message_source = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        missing_message_source.trace_events[0].source_message_id = None;
+        let message_source_error = validate_acip_trace_bundle_v1(&missing_message_source)
+            .expect_err("message_created without source_message_id should fail");
+        assert!(message_source_error
+            .to_string()
+            .contains("message_created trace event must carry source_message_id"));
+
+        let mut missing_declared_decision = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        missing_declared_decision.trace_events[1].decision_event_ref = None;
+        let declared_decision_error = validate_acip_trace_bundle_v1(&missing_declared_decision)
+            .expect_err("invocation contract declaration without decision ref should fail");
+        assert!(declared_decision_error.to_string().contains(
+            "invocation_contract_declared trace event must carry decision_event_ref"
+        ));
+
+        let mut completed_missing_outputs = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        completed_missing_outputs.trace_events[3].output_refs.clear();
+        let completed_error = validate_acip_trace_bundle_v1(&completed_missing_outputs)
+            .expect_err("completed terminal event without outputs should fail");
+        assert!(completed_error.to_string().contains(
+            "invocation_completed trace event must carry invocation_id, contract_ref, decision_event_ref, and output_refs"
+        ));
+
+        let mut refused_with_outputs = sample_trace_bundle(AcipInvocationStatusV1::Refused);
+        refused_with_outputs.trace_events[3]
+            .output_refs
+            .push("runtime/comms/invocation/should_not_exist.json".to_string());
+        let refused_output_error = validate_acip_trace_bundle_v1(&refused_with_outputs)
+            .expect_err("refused terminal event must not expose outputs");
+        assert!(refused_output_error
+            .to_string()
+            .contains("invocation_refused trace event must not carry output_refs"));
+
+        let mut failed_with_outputs = sample_trace_bundle(AcipInvocationStatusV1::Failed);
+        failed_with_outputs.trace_events[3]
+            .output_refs
+            .push("runtime/comms/invocation/should_not_exist.json".to_string());
+        let failed_output_error = validate_acip_trace_bundle_v1(&failed_with_outputs)
+            .expect_err("failed terminal event must not expose outputs");
+        assert!(failed_output_error
+            .to_string()
+            .contains("invocation_failed trace event must not carry output_refs"));
+
+        let mut missing_evidence_refs = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        missing_evidence_refs.evidence_packet_refs.clear();
+        let missing_evidence_error = validate_acip_trace_bundle_v1(&missing_evidence_refs)
+            .expect_err("bundle must require evidence packet refs");
+        assert!(missing_evidence_error
+            .to_string()
+            .contains("ACIP trace bundle requires evidence_packet_refs"));
+
+        let mut empty_visible_events = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        empty_visible_events.audience_views[0].visible_event_ids.clear();
+        let visible_events_error = validate_acip_trace_bundle_v1(&empty_visible_events)
+            .expect_err("audience views must expose visible events");
+        assert!(visible_events_error
+            .to_string()
+            .contains("trace audience view must carry visible_event_ids"));
+
+        let mut unknown_visible_event = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        unknown_visible_event.audience_views[0]
+            .visible_event_ids
+            .push("trace-9999".to_string());
+        let unknown_event_error = validate_acip_trace_bundle_v1(&unknown_visible_event)
+            .expect_err("unknown visible event ids should fail");
+        assert!(unknown_event_error
+            .to_string()
+            .contains("trace audience view references unknown event_id 'trace-9999'"));
+
+        let mut missing_redactions = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        missing_redactions.audience_views[2].redacted_elements.clear();
+        let redaction_error = validate_acip_trace_bundle_v1(&missing_redactions)
+            .expect_err("audience views must declare redactions");
+        assert!(redaction_error
+            .to_string()
+            .contains("trace audience view must declare redacted_elements"));
+
+        let mut local_path_allowed = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        local_path_allowed.audience_views[4].allows_local_host_paths = true;
+        let local_path_error = validate_acip_trace_bundle_v1(&local_path_allowed)
+            .expect_err("review-safe audiences must not allow local host paths");
+        assert!(local_path_error
+            .to_string()
+            .contains("reviewer, public, and observatory views must not allow local host paths"));
+
+        let mut rejected_details_allowed = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        rejected_details_allowed.audience_views[3].allows_rejected_alternative_details = true;
+        let rejected_details_error = validate_acip_trace_bundle_v1(&rejected_details_allowed)
+            .expect_err("review-safe audiences must not allow rejected alternatives");
+        assert!(rejected_details_error.to_string().contains(
+            "reviewer, public, and observatory views must not allow rejected alternative details"
+        ));
+
+        let mut nondeterministic_order = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        nondeterministic_order
+            .replay_contract
+            .deterministic_event_order = false;
+        let replay_order_error = validate_acip_trace_bundle_v1(&nondeterministic_order)
+            .expect_err("replay contract must require deterministic event ordering");
+        assert!(replay_order_error
+            .to_string()
+            .contains("ACIP replay contract requires deterministic_event_order"));
+    }
+
+    #[test]
+    fn acip_trace_fixture_set_fails_closed_on_schema_and_negative_case_drift() {
+        let mut wrong_schema = acip_trace_fixture_set_v1();
+        wrong_schema.schema_version = "acip.trace.fixture-set.v0".to_string();
+        let wrong_schema_error = validate_acip_trace_fixture_set_v1(&wrong_schema)
+            .expect_err("fixture-set schema drift should fail");
+        assert!(wrong_schema_error
+            .to_string()
+            .contains("ACIP trace fixture set requires schema_version"));
+
+        let mut missing_negative_cases = acip_trace_fixture_set_v1();
+        missing_negative_cases.negative_cases.clear();
+        let negative_cases_error = validate_acip_trace_fixture_set_v1(&missing_negative_cases)
+            .expect_err("fixture-set must require negative cases");
+        assert!(negative_cases_error
+            .to_string()
+            .contains("ACIP trace fixture set requires negative_cases"));
+
+        let mut malformed_negative_case = acip_trace_fixture_set_v1();
+        malformed_negative_case.negative_cases[0].name = "../bad".to_string();
+        let malformed_name_error = validate_acip_trace_fixture_set_v1(&malformed_negative_case)
+            .expect_err("negative case names must remain machine-safe");
+        assert!(malformed_name_error
+            .to_string()
+            .contains("negative_cases[].name"));
+
+        let mut empty_expected_error = acip_trace_fixture_set_v1();
+        empty_expected_error.negative_cases[0].expected_error_substring.clear();
+        let expected_error = validate_acip_trace_fixture_set_v1(&empty_expected_error)
+            .expect_err("negative cases must declare the expected error substring");
+        assert!(expected_error
+            .to_string()
+            .contains("negative_cases[].expected_error_substring"));
+    }
+
+    #[test]
     fn acip_proof_demo_packet_schema_and_fixture_are_available() {
         let schema = acip_proof_demo_packet_v1_schema_json().expect("proof schema");
         assert!(schema.contains("AcipProofDemoPacketV1"));
