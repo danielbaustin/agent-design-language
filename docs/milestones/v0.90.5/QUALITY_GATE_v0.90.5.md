@@ -18,6 +18,7 @@ It is the release-truth surface for:
 - the live coverage policy and evidence authority
 - the first-level milestone proof package for Governed Tools v1.0 and the
   landed Comms / ACIP tranche
+- the first-level gap-review and Rust maintainability / Rustdoc watch posture
 - the explicit exception register for still-pending or non-green validation
   posture
 - the get-well wave disposition that must be recorded before release closeout
@@ -44,6 +45,8 @@ The milestone also needs one canonical surface that states:
 - which evidence is authoritative for coverage posture versus runtime-cost
   remeasurement
 - which milestone proof surfaces count as first-level evidence
+- which open release-tail, closeout-drift, and Rust maintainability gaps remain
+  first-level release risks
 - which exceptions remain explicit rather than implied
 
 ## Gate Structure
@@ -61,6 +64,20 @@ The third proves the milestone is backed by reviewer-facing proof surfaces
 rather than scattered feature claims. The fourth keeps unresolved runtime-cost
 and watchdog posture explicit instead of pretending the remaining gaps are
 already solved.
+
+## First-Level Gap and Maintainability Inputs
+
+WP-20 also treats the existing gap-review and Rustdoc tracking surfaces as
+first-level evidence inputs rather than background notes.
+
+Primary inputs:
+
+- `.adl/docs/TBD/retired/gap_reviews/v0.90.5_gap_review.md`
+- `.adl/docs/TBD/RUSTDOC_GAP_ANALYSIS.md`
+- live GitHub issue list for `version:v0.90.5`
+
+These inputs matter because they describe release-tail incompleteness and Rust
+maintainability/documentation debt that CI-green alone does not capture.
 
 ## Required vs Documented Exceptions
 
@@ -180,12 +197,68 @@ Its primary proof surfaces are:
 - `docs/milestones/v0.90.5/features/CODING_AGENT_RUNNER.md`
 - `docs/milestones/v0.90.5/features/LOCAL_MODEL_PR_REVIEWER_TOOL.md`
 
+The landed issue chain is:
+
+- `#2628` Comms-01: promote ACIP v1 general protocol architecture
+- `#2629` Comms-02: canonical ACIP envelope and identity model
+- `#2630` Comms-03: invocation contract and Freedom Gate event binding
+- `#2631` Comms-04: validation fixtures and conformance suite
+- `#2632` Comms-05: review-agent specialization and SRP policy binding
+- `#2627` Comms-06: coding-agent specialization and provider-neutral runner
+- `#2633` Comms-07: trace, replay, redaction, and evidence integration
+- `#2634` Comms-08: ACIP demo and proof coverage
+
+The quality significance of that chain is:
+
+- the milestone now has a stable message substrate rather than role-specific
+  prompt hacks
+- invocation is explicitly bound to policy / Freedom Gate references
+- reviewer-facing conformance, redaction, and evidence surfaces are present
+- coding and review specializations are bounded and do not collapse into
+  same-session write-and-bless authority
+- the final ACIP proof demo is deterministic and reviewable without pretending
+  to prove live transport or federation
+
 The WP-20 interpretation is:
 
 - Comms is first-level milestone work for proof, evidence, and review posture.
 - Comms is not execution authority by message alone.
 - Comms does not bypass UTS, ACC, policy evaluation, Freedom Gate, or governed
   execution.
+- Comms quality is evaluated through its own merged proof and conformance
+  surfaces, not by silently absorbing it into the governed-tools authority
+  stack.
+
+### Comms quality posture
+
+For WP-20, the Comms tranche is treated as substantively landed first-level
+work, not as a speculative future lane.
+
+Evidence used here:
+
+- Comms-08 PR evidence: [#2676](https://github.com/danielbaustin/agent-design-language/pull/2676)
+  merged green with `adl-ci` and `adl-coverage`
+- Comms feature and proof surfaces:
+  - `docs/milestones/v0.90.5/features/AGENT_COMMS_v1.md`
+  - `docs/milestones/v0.90.5/features/CODING_AGENT_RUNNER.md`
+  - `docs/milestones/v0.90.5/features/LOCAL_MODEL_PR_REVIEWER_TOOL.md`
+  - `docs/milestones/v0.90.5/DEMO_MATRIX_v0.90.5.md`
+  - `docs/milestones/v0.90.5/FEATURE_PROOF_COVERAGE_v0.90.5.md`
+
+What WP-20 is willing to say:
+
+- the Comms tranche has first-level milestone proof and conformance visibility
+- the coding and reviewer lanes are bounded enough to participate in reviewable
+  milestone quality evidence
+- the ACIP proof-demo and supporting tests are part of the release-quality
+  story
+
+What WP-20 is not willing to say:
+
+- that ACIP is a production transport layer
+- that ACIP grants execution authority on its own
+- that Comms has erased the need for governed execution, review, or redaction
+  boundaries
 
 ### Proof-package rule
 
@@ -194,13 +267,74 @@ to `v0.90.5`; the landed Comms tranche must remain visible in the same quality
 story. At the same time, later docs must not erase the distinction between
 first-level milestone visibility and core execution-authority semantics.
 
-## 4) Exception Register and Get-Well Disposition
+## 4) Gap Review and Rust Maintainability Watch
+
+### Existing gap-review posture
+
+The existing `v0.90.5` gap review reports that the milestone is not yet ready
+for final closure because the release tail remains open and closeout truth is
+still incomplete.
+
+First-level findings still relevant to WP-20:
+
+- release-tail issues `#2586` through `#2591` are open
+- closeout truth drift remains a known class of risk for some already-closed
+  issues
+- milestone/release docs remain incomplete until later review-tail work lands
+- metadata parity and automation truth still require cleanup
+
+WP-20 does not duplicate the full gap-review report, but it now treats that
+report as a first-level risk surface for release quality.
+
+### Rust maintainability and Rustdoc tracker posture
+
+The existing Rustdoc gap tracker reports that ADL can generate docs today but
+has low public API documentation coverage and no compiler-level `missing_docs`
+enforcement.
+
+Key points from the tracker:
+
+- approximate public-item documentation coverage is about `8.8%`
+- `runtime_v2`, `godel`, `chronosense`, `trace`, and `control_plane` are among
+  the least documented architectural surfaces
+- maintainability/documentation debt is concentrated in the same large Rust
+  subsystems that are important for onboarding and review
+
+This is not a release blocker by itself for WP-20, but it is first-level
+quality context that later docs/review and planning work must not ignore.
+
+### Live open issue watch
+
+The current open issue list reinforces the same release-quality story:
+
+- release-tail work still open:
+  - `#2586` `WP-21`
+  - `#2587` `WP-22`
+  - `#2588` `WP-23`
+  - `#2589` `WP-24`
+  - `#2590` `WP-25`
+  - `#2591` `WP-26`
+- open Rust maintainability / refactor work:
+  - `#2663` split `adl/src/agent_comms.rs`
+  - `#2664` split `adl/src/uts_acc_compiler.rs`
+  - `#2665` / `#2688` split `adl/src/trace.rs`
+  - `#2686` split `adl/src/cli/tooling_cmd/code_review.rs`
+  - `#2687` split `adl/src/runtime_v2/private_state_sanctuary.rs`
+  - `#2690` fix Rust PR control-plane hangs in `pr.sh` lifecycle commands
+
+These issues are not all owned by WP-20, but they are part of the first-level
+quality and maintainability posture that this gate must surface truthfully.
+
+## 5) Exception Register and Get-Well Disposition
 
 ### Exception Register
 
 | Area | State | Owner | Rationale | Disposition |
 | --- | --- | --- | --- | --- |
 | Current `main` authoritative coverage posture | failure | `WP-20` / follow-on quality tail | The latest push-to-main run for head `4087678b` (`25272620889`) completed with `adl-ci` green but `adl-coverage` red at the coverage-policy enforcement step. | Record as an explicit gate exception; release-tail work must not describe current `main` as fully green until the coverage failure is fixed. |
+| Release-tail gap-review posture | open | `WP-21` through `WP-26` | The existing `v0.90.5` gap review still identifies the release tail as incomplete, with review, remediation, planning, and ceremony work not yet executed. | Keep these open issues as first-level release risks; WP-20 does not convert them into completed work. |
+| Closed-issue closeout drift class | explicit gap | `WP-24` / closeout follow-up | The existing `v0.90.5` gap review reports stale closeout truth on some already-closed issues. | Preserve as a named quality risk until later closeout normalization clears the affected records. |
+| Rust maintainability and Rustdoc coverage debt | explicit gap | maintainability backlog / `WP-25` planning | The Rustdoc tracker shows low public API documentation coverage, and multiple large Rust maintainability/refactor issues remain open in `v0.90.5`. | Record as first-level quality context and hand it forward into docs/review/planning rather than implying it is already resolved. |
 | Post-GW runtime-cost remeasurement normalization | explicit gap | `WP-20` / `WP-25` | A post-GW authoritative push run now exists (`25272620889`), but the tracking artifact does not yet record normalized remaining hotspot counts or a reviewed runtime-effect summary, and the run itself failed the coverage gate. | Quality gate is satisfied with an explicit measurement exception; runtime-cost closure remains a follow-on unless later work captures a green authoritative remeasurement. |
 | Nightly coverage watchdog stability | explicit gap | `daily blocker follow-up lane` | Recent `nightly-coverage-ratchet` runs failed before the merged fix in [#2691](https://github.com/danielbaustin/agent-design-language/pull/2691); the watchdog is not itself the canonical release gate. | Keep nightly failures visible, but do not let the watchdog replace the merge gate or milestone proof package. |
 
