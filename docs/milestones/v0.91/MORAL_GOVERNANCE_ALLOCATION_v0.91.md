@@ -115,12 +115,12 @@ this allocation. They are listed as provenance, not as public milestone links.
 | MORAL_TRACE_SCHEMA.md | v0.91 feature source | Defines the trace record linking moral events, outcomes, attribution, and review. |
 | MORAL_TRAJECTORY_REVIEW_PROTOCOL.md | v0.91 review/proof source | Defines how to inspect moral behavior over events, segments, and longitudinal windows. |
 | OUTCOME_LINKAGE_AND_ATTRIBUTION.md | v0.91 feature source | Defines how outcomes connect back to choices while preserving uncertainty. |
-| v0.91planning/WELLBEING_AND_HAPPINESS.md | Primary v0.91 cognitive-being source | Defines wellbeing as decomposed flourishing rather than reward or scalar happiness. |
-| v0.91planning/KINDNESS_MODEL.md | v0.91 feature source | Defines kindness as inspectable support, non-harm, dignity, and autonomy. |
-| v0.91planning/HUMOR_AND_ABSURDITY.md | v0.91 feature source | Defines absurdity detection and bounded reframing. |
-| v0.91planning/AFFECT_MODEL_v0.90.md | v0.91 feature source | Defines affect-like signals as explicit reasoning control. |
-| v0.91planning/CULTIVATING_INTELLIGENCE.md | v0.91 architecture source | Defines formation and moral participation as prerequisites for stronger agency claims. |
-| v0.91planning/MORAL_RESOURCES_SUBSYSTEM.md | v0.91 feature source | Complements the moral-governance moral resources source and should be reconciled during implementation. |
+| docs/milestones/v0.91/features/WELLBEING_AND_HAPPINESS.md | Primary tracked v0.91 cognitive-being source | Defines wellbeing as decomposed flourishing rather than reward or scalar happiness. |
+| docs/milestones/v0.91/features/KINDNESS.md | Primary tracked v0.91 feature source | Defines kindness as inspectable support, non-harm, dignity, and autonomy. |
+| docs/milestones/v0.91/features/HUMOR_AND_ABSURDITY.md | Primary tracked v0.91 feature source | Defines absurdity detection and bounded reframing. |
+| docs/milestones/v0.91/features/AFFECT_REASONING_CONTROL.md | Primary tracked v0.91 feature source | Defines affect-like signals as explicit reasoning control. |
+| docs/milestones/v0.91/features/CULTIVATING_INTELLIGENCE.md | Primary tracked v0.91 architecture source | Defines formation and moral participation as prerequisites for stronger agency claims. |
+| docs/milestones/v0.91/features/MORAL_RESOURCES.md | Primary tracked v0.91 feature source | Complements the deeper moral-governance moral resources substrate with a bounded milestone feature doc. |
 | AGENT_COMMUNICATION_AND_INVOCATION_PROTOCOL.md | v0.91 ACIP source | Defines message envelope, invocation, trace, and local-polis communication boundaries. |
 
 ## Dependency On v0.90.3
@@ -176,9 +176,10 @@ sequence will be authored later.
 - Older references that place anti-harm or harm-prevention work in earlier
   milestones are stale. Treat the current bounded implementation home as v0.91
   unless later planning changes it deliberately.
-- References to FREEDOM_GATE_V2.md and MORAL_RESOURCES_SUBSYSTEM.md should be
-  checked during the feature-doc promotion pass. They appear to be stale names
-  or placeholders rather than current tracked milestone documents.
+- References to FREEDOM_GATE_V2.md should still be checked during later cleanup.
+  The cognitive-being feature-doc promotion has already replaced
+  `MORAL_RESOURCES_SUBSYSTEM.md` as the tracked milestone document with
+  `docs/milestones/v0.91/features/MORAL_RESOURCES.md`.
 - The two Freedom Gate event schema sources overlap. v0.91 should consolidate
   them before implementation rather than shipping parallel schema dialects.
 - The karma source is valuable, but the public plan should frame it as moral
