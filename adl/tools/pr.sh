@@ -235,15 +235,13 @@ delegate_pr_command_to_rust() {
   root="$(rust_pr_delegate_root)"
   manifest="$root/adl/Cargo.toml"
   if [[ -n "${ADL_PR_RUST_BIN:-}" ]]; then
-    "${ADL_PR_RUST_BIN}" pr "$subcommand" "$@"
-    return 0
+    exec "${ADL_PR_RUST_BIN}" pr "$subcommand" "$@"
   fi
   cached_bin="$(rust_pr_delegate_cached_bin || true)"
   if [[ -n "$cached_bin" ]]; then
-    "$cached_bin" pr "$subcommand" "$@"
-    return 0
+    exec "$cached_bin" pr "$subcommand" "$@"
   fi
-  cargo run --quiet --manifest-path "$manifest" --bin adl -- pr "$subcommand" "$@"
+  exec cargo run --quiet --manifest-path "$manifest" --bin adl -- pr "$subcommand" "$@"
 }
 
 require_rust_pr_delegate() {

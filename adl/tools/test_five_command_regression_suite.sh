@@ -14,6 +14,7 @@ run_check() {
 
 run_check adl/tools/test_pr_init.sh
 run_check adl/tools/test_pr_create.sh
+run_check adl/tools/test_pr_delegate_exit_status.sh
 run_check adl/tools/test_pr_ready_prefers_built_binary.sh
 run_check adl/tools/test_pr_finish_delegates_to_rust.sh
 run_check adl/tools/test_pr_start_template_validation.sh
