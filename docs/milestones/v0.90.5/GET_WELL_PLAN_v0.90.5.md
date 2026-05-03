@@ -20,7 +20,8 @@ and must not reorder the Governed Tools v1.0 implementation state machine.
 - GW-01 through GW-05 are the bounded runtime-reduction slices opened from the
   detailed source plan.
 - WP-20, Coverage / quality gate, records final disposition and evidence from
-  the get-well wave before release closeout.
+  the get-well wave before release closeout in
+  `docs/milestones/v0.90.5/QUALITY_GATE_v0.90.5.md`.
 - WP-25 captures any follow-on runtime-reduction work that remains after
   `v0.90.5`.
 
@@ -95,3 +96,7 @@ WP-20 must record one of these outcomes:
 
 No release closeout should claim that the validation-cost problem is solved
 unless the coverage/quality evidence supports that claim.
+
+The canonical WP-20 disposition record now lives in:
+
+- [Quality Gate - v0.90.5](QUALITY_GATE_v0.90.5.md)

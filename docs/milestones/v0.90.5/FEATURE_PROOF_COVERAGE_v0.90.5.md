@@ -6,6 +6,10 @@ WP-19 / D12 is landed. Every core Governed Tools v1.0 feature claim now has
 one explicit proof home before WP-20 quality, WP-21 docs/review, and later
 release convergence.
 
+The landed Comms / ACIP tranche is also first-level milestone work for WP-20
+quality evidence, with its own explicit proof homes and non-proving
+boundaries.
+
 This record is a reviewer map. It does not grant execution authority by itself.
 It binds the demo matrix to the landed feature docs, tracked review artifacts,
 focused tests, bounded demo commands, and explicit non-proving boundaries.
@@ -20,9 +24,10 @@ Each governed-tools feature claim must have one of:
 - documented non-proving status
 - explicit deferral with owner and rationale
 
-For v0.90.5, D1 through D12 are landed. D13 remains an adjacent Comms-sprint
-proof lane that is visible in the same milestone package but is not part of the
-core Governed Tools v1.0 release gate.
+For v0.90.5, D1 through D12 are landed as the core Governed Tools v1.0 release
+rows. D13 is also landed as first-level milestone evidence for the Comms sprint.
+It remains distinct from the governed-execution authority stack even while it
+is included in the WP-20 quality story.
 
 ## Coverage Table
 
@@ -58,16 +63,17 @@ review route.
 | `features/LOCAL_MODEL_PR_REVIEWER_TOOL.md` | deterministic fixture review backend and optional live-local Ollama lane | `cargo run --manifest-path adl/Cargo.toml -- tooling code-review --out artifacts/v0905/local-model-pr-reviewer-fixture --backend fixture --visibility read-only-repo --issue 2603 --writer-session codex-writer --reviewer-session fixture-reviewer` |
 | `features/CODING_AGENT_RUNNER.md` | provider-neutral fixture-mode proof for worktree-edit and proposal-only lanes through the ACIP coding specialization | `cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture` |
 
-## Adjacent Milestone Proof Lanes
+## Companion First-Level Milestone Proof Lanes
 
-The following surfaces are visible in the same milestone package but are not
-part of the core Governed Tools v1.0 D1-D12 release gate:
+The following surfaces are first-level milestone evidence for WP-20 quality
+review, while remaining distinct from the core Governed Tools v1.0 D1-D12
+execution-authority gate:
 
 | Surface | Status | Proof Home | Notes |
 | --- | --- | --- | --- |
-| D13 ACIP proof demo | LANDED | `features/AGENT_COMMS_v1.md`, `adl/src/agent_comms.rs`, `adl/src/agent_comms/orchestrate/proof_demo.inc` | Comms-sprint proof of consultation -> negotiation -> governed coding invocation with deterministic reviewer/public redaction boundaries. |
-| Local model PR reviewer tool | LANDED as demo-grade tool guide | `features/LOCAL_MODEL_PR_REVIEWER_TOOL.md` | Operational review tool guidance and bounded fixture/live-local commands; not a D-row in the governed-tools proof gate. |
-| Coding agent runner | LANDED as provider-neutral contract | `features/CODING_AGENT_RUNNER.md` | Bounded coding invocation/output contract and review-handoff boundary; adjacent to Comms and reviewer flow, not a separate governed-tools D-row. |
+| D13 ACIP proof demo | LANDED | `features/AGENT_COMMS_v1.md`, `adl/src/agent_comms.rs`, `adl/src/agent_comms/orchestrate/proof_demo.inc` | Comms-sprint proof of consultation -> negotiation -> governed coding invocation with deterministic reviewer/public redaction boundaries; first-level milestone evidence for WP-20. |
+| Local model PR reviewer tool | LANDED as demo-grade tool guide | `features/LOCAL_MODEL_PR_REVIEWER_TOOL.md` | Operational review tool guidance and bounded fixture/live-local commands; first-level milestone evidence for review posture, not a D-row in the governed-tools execution gate. |
+| Coding agent runner | LANDED as provider-neutral contract | `features/CODING_AGENT_RUNNER.md` | Bounded coding invocation/output contract and review-handoff boundary; first-level milestone evidence for the Comms tranche, not a separate governed-tools D-row. |
 
 ## Non-Proving Boundaries
 
@@ -103,5 +109,5 @@ D11 evidence surfaces. It does not claim:
 - ACC construction alone is execution approval
 - benchmark or local-model scores are equivalent to runtime permission
 - the flagship demo proves arbitrary filesystem, process, or network execution
-- adjacent Comms or review-tool features have become part of the core governed
-  execution authority stack without their own separate review lanes
+- first-level Comms or review-tool features have become part of the core
+  governed execution authority stack without their own separate review lanes

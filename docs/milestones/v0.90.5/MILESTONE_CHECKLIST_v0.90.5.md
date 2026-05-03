@@ -31,8 +31,9 @@
 ## Review Gates
 
 - [x] demo matrix updated with proof classifications
-- [ ] coverage / quality gate complete
-- [ ] get-well wave disposition recorded by WP-20
+- [x] [coverage / quality gate](QUALITY_GATE_v0.90.5.md) complete, including
+  first-level Comms evidence
+- [x] get-well wave disposition recorded by WP-20
 - [x] feature docs linked and internally consistent
 - [ ] public-spec language checked for overclaiming
 - [ ] UTS validity never described as execution authority
