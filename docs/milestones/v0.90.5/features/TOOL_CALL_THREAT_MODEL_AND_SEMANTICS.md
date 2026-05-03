@@ -157,3 +157,27 @@ Later v0.90.5 work packages should cite this document as the shared boundary:
   replay, and redaction evidence across approved and denied paths.
 - WP-15 through WP-18 must prove dangerous categories fail closed and make the
   proposal/action separation visible in benchmark and demo surfaces.
+
+## Reviewer Demo Path
+
+This feature is primarily a boundary contract, so its demo path is a bounded
+review route rather than a standalone binary. Review it through:
+
+1. the threat-model contract in this file;
+2. the dangerous negative suite for fail-closed behavior; and
+3. the flagship governed-tools demo for proposal-vs-action evidence.
+
+Focused proving commands:
+
+```sh
+cargo test --manifest-path adl/Cargo.toml dangerous_negative_suite -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_governed_tools_flagship_demo -- --nocapture
+```
+
+Expected review signal:
+
+- dangerous categories are still only proposals until later governance checks
+  succeed;
+- destructive, process, network, and exfiltration cases fail closed; and
+- the flagship packet keeps the proposal/action split visible in reviewer
+  evidence.

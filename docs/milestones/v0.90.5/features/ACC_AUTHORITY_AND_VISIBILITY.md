@@ -99,3 +99,20 @@ not as executable tool trace evidence.
   evaluation, Freedom Gate mediation, or governed execution.
 - WP-07 does not implement the later registry, compiler, policy evaluator,
   Freedom Gate mediator, or executor.
+
+## Reviewer Demo Path
+
+The bounded ACC proof path is fixture-backed. Reviewers should inspect the
+typed ACC contract, visibility matrix, and redaction examples together.
+
+Focused proving command:
+
+```sh
+cargo test --manifest-path adl/Cargo.toml acc_v1 -- --nocapture
+```
+
+Expected review signal:
+
+- accountable actor, grantor, and delegation state are explicit;
+- reviewer/public visibility stays redacted by default; and
+- unsafe or hidden delegation fails before later policy or execution phases.

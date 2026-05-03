@@ -410,6 +410,13 @@ The packet must also carry explicit non-proving statements for:
 This keeps the Comms-08 proof memorable and citable without implying that ACIP
 v1 has already solved production transport or federation concerns.
 
+The current implementation exposes that proof through the focused `agent_comms`
+test surface:
+
+```sh
+cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture
+```
+
 ## Non-Proving Statements
 
 ACIP v1 does not prove:

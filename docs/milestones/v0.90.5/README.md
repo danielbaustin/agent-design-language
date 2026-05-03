@@ -123,6 +123,7 @@ Out of scope:
 - Sprint plan: SPRINT_v0.90.5.md
 - Decisions log: DECISIONS_v0.90.5.md
 - Demo matrix: DEMO_MATRIX_v0.90.5.md
+- Feature proof coverage: FEATURE_PROOF_COVERAGE_v0.90.5.md
 - Feature index: FEATURE_DOCS_v0.90.5.md
 - WP execution readiness: WP_EXECUTION_READINESS_v0.90.5.md
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.5.md
