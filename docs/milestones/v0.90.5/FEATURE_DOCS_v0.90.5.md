@@ -19,6 +19,7 @@
 | --- | --- | --- |
 | WBS_v0.90.5.md | execution plan for Governed Tools v1.0 | WP-01 |
 | DEMO_MATRIX_v0.90.5.md | proof matrix, flagship-demo proof boundary, and non-proving classifications | WP-01, WP-19, WP-21 |
+| FEATURE_PROOF_COVERAGE_v0.90.5.md | reviewer map from every governed-tools proof row to its landed evidence home plus explicit adjacent non-claims | WP-19 |
 | WP_ISSUE_WAVE_v0.90.5.yaml | opened issue-wave source of truth for the tracked v0.90.5 band | WP-01 |
 | WP_EXECUTION_READINESS_v0.90.5.md | card-authoring source for concrete WP outputs, validation, non-goals, and proof expectations | WP-01 |
 | GET_WELL_PLAN_v0.90.5.md | milestone-root get-well pointer for validation-cost recovery, the separate GW wave, and runtime-reduction disposition | WP-01, GW-00-GW-05, WP-20, WP-25 |

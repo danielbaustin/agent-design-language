@@ -135,3 +135,23 @@ identical ACC or identical rejection.
 For WP-08, determinism is proven at the registry-binding layer. WP-09 extends
 that proof to deterministic UTS/proposal/registry/policy compilation into ACC
 or rejection records for the fixture-backed governed-tools slice.
+
+## Reviewer Demo Path
+
+This feature has a two-step demo route: registry binding first, compiler and
+argument normalization second.
+
+Focused proving commands:
+
+```sh
+cargo test --manifest-path adl/Cargo.toml wp08 -- --nocapture
+cargo test --manifest-path adl/Cargo.toml wp09 -- --nocapture
+cargo test --manifest-path adl/Cargo.toml wp10 -- --nocapture
+```
+
+Expected review signal:
+
+- unknown or unregistered tools cannot bind;
+- valid bounded proposals compile into ACC deterministically; and
+- malformed, ambiguous, traversal-shaped, or injection-shaped arguments are
+  rejected before policy or execution.

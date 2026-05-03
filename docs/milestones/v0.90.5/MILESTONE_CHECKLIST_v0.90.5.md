@@ -17,23 +17,23 @@
 ## Implementation Gates
 
 - [x] UTS schema and conformance fixtures complete
-- [ ] ACC authority and visibility fixtures complete
-- [ ] compiler rejects unsafe or unsatisfiable proposals
-- [ ] policy and Freedom Gate mediation implemented
-- [ ] governed executor runs only approved ACC-backed actions
-- [ ] trace, replay, and redaction evidence available
+- [x] ACC authority and visibility fixtures complete
+- [x] compiler rejects unsafe or unsatisfiable proposals
+- [x] policy and Freedom Gate mediation implemented
+- [x] governed executor runs only approved ACC-backed actions
+- [x] trace, replay, and redaction evidence available
 - [x] dangerous negative suite passes
 - [x] model proposal benchmark executed or truthfully skipped by provider
 - [x] local/Gemma model evaluation recorded
-- [ ] flagship demo proof packet available
-- [ ] demo matrix and feature proof coverage completed before review convergence
+- [x] flagship demo proof packet available
+- [x] demo matrix and feature proof coverage completed before review convergence
 
 ## Review Gates
 
-- [ ] demo matrix updated with proof classifications
+- [x] demo matrix updated with proof classifications
 - [ ] coverage / quality gate complete
 - [ ] get-well wave disposition recorded by WP-20
-- [ ] feature docs linked and internally consistent
+- [x] feature docs linked and internally consistent
 - [ ] public-spec language checked for overclaiming
 - [ ] UTS validity never described as execution authority
 - [ ] privacy and redaction claims backed by tests or explicit deferrals

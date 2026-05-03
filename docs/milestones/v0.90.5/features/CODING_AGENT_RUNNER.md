@@ -158,6 +158,13 @@ The fixture-mode proof surface is:
 - negative cases proving that non-Codex lanes cannot use worktree-edit and that
   review bypass or writer-identity drift is rejected
 
+The current focused proof command is the shared ACIP test surface that covers
+the coding specialization:
+
+```sh
+cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture
+```
+
 ## Interaction With Reviewer-Agent Work
 
 `LOCAL_MODEL_PR_REVIEWER_TOOL.md` remains the concrete backend for the

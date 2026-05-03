@@ -105,3 +105,27 @@ deterministic, and privacy-preserving. They are allowed to prove message,
 invocation, refusal, failure, and output accountability, but they must not
 become a side channel for prompts, raw tool arguments, private state, rejected
 alternatives, or local workstation paths.
+
+## Reviewer Demo Path
+
+The bounded proof path for this feature is staged:
+
+1. policy-authority evaluation;
+2. Freedom Gate mediation;
+3. governed execution/refusal; and
+4. trace and redaction evidence.
+
+Focused proving commands:
+
+```sh
+cargo test --manifest-path adl/Cargo.toml wp11 -- --nocapture
+cargo test --manifest-path adl/Cargo.toml freedom_gate -- --nocapture
+cargo test --manifest-path adl/Cargo.toml governed_executor -- --nocapture
+cargo test --manifest-path adl/Cargo.toml trace_v1 -- --nocapture
+```
+
+Expected review signal:
+
+- only approved ACC-backed actions reach execution;
+- denials and deferrals remain first-class evidence; and
+- reviewer/public trace views stay redacted and portable.
