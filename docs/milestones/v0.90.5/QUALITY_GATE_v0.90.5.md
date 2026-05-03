@@ -75,6 +75,8 @@ Primary inputs:
 - `.adl/docs/TBD/retired/gap_reviews/v0.90.5_gap_review.md`
 - `.adl/docs/TBD/RUSTDOC_GAP_ANALYSIS.md`
 - live GitHub issue list for `version:v0.90.5`
+- `docs/milestones/v0.90.5/README.md`
+- `docs/milestones/v0.90.5/RELEASE_NOTES_v0.90.5.md`
 
 These inputs matter because they describe release-tail incompleteness and Rust
 maintainability/documentation debt that CI-green alone does not capture.
@@ -325,6 +327,23 @@ The current open issue list reinforces the same release-quality story:
 These issues are not all owned by WP-20, but they are part of the first-level
 quality and maintainability posture that this gate must surface truthfully.
 
+### Planning-package truth still visible at WP-20
+
+The tracked planning package still matters at this stage because it defines
+parallel milestone work that has to remain visible even when WP-20 is focused
+on quality rather than fresh implementation.
+
+That includes:
+
+- the separate get-well runtime-reduction wave
+- the parallel Comms sprint
+- the bounded Python-reduction tranche described in
+  `docs/milestones/v0.90.5/README.md` and `docs/milestones/v0.90.5/WBS_v0.90.5.md`
+
+WP-20 does not claim the Python tranche is fully dispositioned here, but it
+does treat it as milestone truth that later closeout docs must not silently
+erase.
+
 ## 5) Exception Register and Get-Well Disposition
 
 ### Exception Register
@@ -335,6 +354,8 @@ quality and maintainability posture that this gate must surface truthfully.
 | Release-tail gap-review posture | open | `WP-21` through `WP-26` | The existing `v0.90.5` gap review still identifies the release tail as incomplete, with review, remediation, planning, and ceremony work not yet executed. | Keep these open issues as first-level release risks; WP-20 does not convert them into completed work. |
 | Closed-issue closeout drift class | explicit gap | `WP-24` / closeout follow-up | The existing `v0.90.5` gap review reports stale closeout truth on some already-closed issues. | Preserve as a named quality risk until later closeout normalization clears the affected records. |
 | Rust maintainability and Rustdoc coverage debt | explicit gap | maintainability backlog / `WP-25` planning | The Rustdoc tracker shows low public API documentation coverage, and multiple large Rust maintainability/refactor issues remain open in `v0.90.5`. | Record as first-level quality context and hand it forward into docs/review/planning rather than implying it is already resolved. |
+| Release notes and public closeout wording | draft | `WP-21` / `WP-26` | `RELEASE_NOTES_v0.90.5.md` is still explicitly aspirational and not yet aligned to final release evidence. | Keep release-note truth as a first-level release-tail gap until docs/review and release ceremony close it out. |
+| Python-reduction tranche disposition | explicit gap | `WP-25` planning | The milestone planning package reserves a bounded Python-reduction tranche, but WP-20 does not yet record a completed tranche disposition. | Keep the tranche visible as milestone truth and require explicit handoff or deferral in later planning/closeout work. |
 | Post-GW runtime-cost remeasurement normalization | explicit gap | `WP-20` / `WP-25` | A post-GW authoritative push run now exists (`25272620889`), but the tracking artifact does not yet record normalized remaining hotspot counts or a reviewed runtime-effect summary, and the run itself failed the coverage gate. | Quality gate is satisfied with an explicit measurement exception; runtime-cost closure remains a follow-on unless later work captures a green authoritative remeasurement. |
 | Nightly coverage watchdog stability | explicit gap | `daily blocker follow-up lane` | Recent `nightly-coverage-ratchet` runs failed before the merged fix in [#2691](https://github.com/danielbaustin/agent-design-language/pull/2691); the watchdog is not itself the canonical release gate. | Keep nightly failures visible, but do not let the watchdog replace the merge gate or milestone proof package. |
 
