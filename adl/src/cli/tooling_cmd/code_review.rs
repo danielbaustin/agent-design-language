@@ -1,24 +1,24 @@
-mod code_review_types;
 mod code_review_args;
-mod code_review_helpers;
 mod code_review_build;
+mod code_review_helpers;
 mod code_review_reviewer;
+mod code_review_types;
 
 #[cfg(test)]
 mod code_review_tests;
 
-use anyhow::Result;
 use anyhow::Context;
+use anyhow::Result;
 use sha2::{Digest, Sha256};
 use std::fs;
 
-use super::tooling_usage;
 use super::common::repo_root;
+use super::tooling_usage;
 
 use code_review_build::build_packet;
 use code_review_helpers::write_json;
 use code_review_reviewer::{evaluate_gate, run_reviewer};
-use code_review_types::{CODE_REVIEW_SUMMARY_SCHEMA, RunSummary};
+use code_review_types::{RunSummary, CODE_REVIEW_SUMMARY_SCHEMA};
 
 #[cfg(test)]
 pub(crate) use code_review_args::parse_args;
@@ -34,10 +34,10 @@ pub(crate) use code_review_reviewer::{
 };
 #[cfg(test)]
 pub(crate) use code_review_types::{
-    CodeReviewArgs, DiffHunk, DiffSummary, FileContext, FixtureCase, MAX_REVIEW_CONTEXT_FILES,
-    MAX_REVIEW_DIFF_FILES, MAX_REVIEW_EXCERPT_BYTES, PACKET_SCHEMA, RedactionStatus,
+    CodeReviewArgs, DiffHunk, DiffSummary, FileContext, FixtureCase, RedactionStatus,
     RepoSliceManifest, ReviewDisposition, ReviewFinding, ReviewPacket, ReviewerBackend,
-    ValidationEvidence, VisibilityMode, DEFAULT_REVIEW_EXCERPT_BYTES,
+    ValidationEvidence, VisibilityMode, DEFAULT_REVIEW_EXCERPT_BYTES, MAX_REVIEW_CONTEXT_FILES,
+    MAX_REVIEW_DIFF_FILES, MAX_REVIEW_EXCERPT_BYTES, PACKET_SCHEMA,
 };
 
 pub(super) fn real_code_review(args: &[String]) -> Result<()> {

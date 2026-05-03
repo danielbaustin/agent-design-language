@@ -1,18 +1,19 @@
 use std::collections::BTreeSet;
 use std::path::Path;
 
-use anyhow::{ensure, bail, Context};
 use super::code_review_args::validate_include_file;
 use super::code_review_helpers::{git_show_file_prefix, safe_read_worktree_file, truncate};
 use super::code_review_types::{
-    CODE_REVIEW_PACKET_SCHEMA, CodeReviewArgs, DiffHunk, DiffSummary, FileContext,
-    RepoSliceManifest, RedactionStatus, ReviewPacket, ValidationEvidence, VisibilityMode,
+    CodeReviewArgs, DiffHunk, DiffSummary, FileContext, RedactionStatus, RepoSliceManifest,
+    ReviewPacket, ValidationEvidence, VisibilityMode, CODE_REVIEW_PACKET_SCHEMA,
     MAX_REVIEW_CONTEXT_FILES, MAX_REVIEW_DIFF_FILES,
 };
+use anyhow::{bail, ensure, Context};
 
 pub(crate) fn build_packet(root: &Path, args: &CodeReviewArgs) -> anyhow::Result<ReviewPacket> {
-    let branch = super::code_review_helpers::git_output(root, &["rev-parse", "--abbrev-ref", "HEAD"])
-        .unwrap_or_else(|_| "unknown".to_string());
+    let branch =
+        super::code_review_helpers::git_output(root, &["rev-parse", "--abbrev-ref", "HEAD"])
+            .unwrap_or_else(|_| "unknown".to_string());
     let changed_files = changed_files(root, args)?;
     let focused_diff_hunks = diff_hunks(root, args, &changed_files)?;
     let file_contexts = file_contexts(root, args, &changed_files)?;
@@ -79,13 +80,21 @@ pub(crate) fn changed_files(root: &Path, args: &CodeReviewArgs) -> anyhow::Resul
             &format!("{}...{}", args.base_ref, args.head_ref),
         ],
     ) {
-        for line in output.lines().map(str::trim).filter(|line| !line.is_empty()) {
+        for line in output
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+        {
             files.insert(validate_include_file(line)?);
         }
     }
     if args.include_working_tree {
         let output = super::code_review_helpers::git_output(root, &["diff", "--name-only"])?;
-        for line in output.lines().map(str::trim).filter(|line| !line.is_empty()) {
+        for line in output
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+        {
             files.insert(validate_include_file(line)?);
         }
     }
@@ -117,7 +126,8 @@ pub(crate) fn diff_hunks(
         )
         .unwrap_or_default();
         let staged_diff = if args.include_working_tree {
-            super::code_review_helpers::git_output(root, &["diff", "--cached", "--", file]).unwrap_or_default()
+            super::code_review_helpers::git_output(root, &["diff", "--cached", "--", file])
+                .unwrap_or_default()
         } else {
             String::new()
         };
@@ -137,7 +147,9 @@ pub(crate) fn diff_hunks(
             diff_parts.push(format!("--- staged working tree diff ---\\n{staged_diff}"));
         }
         if !unstaged_diff.trim().is_empty() {
-            diff_parts.push(format!("--- unstaged working tree diff ---\\n{unstaged_diff}"));
+            diff_parts.push(format!(
+                "--- unstaged working tree diff ---\\n{unstaged_diff}"
+            ));
         }
         let diff = diff_parts.join("\\n");
         let (diff_excerpt, truncated) = truncate(&diff, args.max_diff_bytes);
@@ -236,8 +248,12 @@ fn command_evidence(root: &Path, git_args: &[&str], label: &str) -> ValidationEv
     }
 }
 
-pub(crate) fn review_packet_contains_absolute_host_path(hunks: &[DiffHunk], contexts: &[FileContext]) -> bool {
-    hunks.iter()
+pub(crate) fn review_packet_contains_absolute_host_path(
+    hunks: &[DiffHunk],
+    contexts: &[FileContext],
+) -> bool {
+    hunks
+        .iter()
         .any(|hunk| contains_review_absolute_host_path(&hunk.diff_excerpt))
         || contexts
             .iter()

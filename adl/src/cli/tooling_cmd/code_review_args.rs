@@ -1,7 +1,9 @@
 use anyhow::{anyhow, bail, ensure, Result};
 use std::path::{Component, Path};
 
-use super::code_review_types::{CodeReviewArgs, FixtureCase, MAX_REVIEW_EXCERPT_BYTES, ReviewerBackend, VisibilityMode};
+use super::code_review_types::{
+    CodeReviewArgs, FixtureCase, ReviewerBackend, VisibilityMode, MAX_REVIEW_EXCERPT_BYTES,
+};
 
 pub(crate) fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
     let mut parsed = CodeReviewArgs {
@@ -61,7 +63,8 @@ pub(crate) fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
                 i += 1;
             }
             "--reviewer-session" => {
-                parsed.reviewer_session = Some(value_arg(args, i, "--reviewer-session")?.to_string());
+                parsed.reviewer_session =
+                    Some(value_arg(args, i, "--reviewer-session")?.to_string());
                 i += 1;
             }
             "--model" => {
@@ -91,7 +94,9 @@ pub(crate) fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
                 i += 1;
             }
             "--file" => {
-                parsed.include_files.push(validate_include_file(value_arg(args, i, "--file")?)?);
+                parsed
+                    .include_files
+                    .push(validate_include_file(value_arg(args, i, "--file")?)?);
                 i += 1;
             }
             other => bail!("unknown arg for tooling code-review: {other}"),
@@ -108,7 +113,10 @@ pub(crate) fn parse_args(args: &[String]) -> Result<CodeReviewArgs> {
         (256..=MAX_REVIEW_EXCERPT_BYTES).contains(&parsed.max_diff_bytes),
         "--max-diff-bytes must be between 256 and {MAX_REVIEW_EXCERPT_BYTES}"
     );
-    ensure!((1..=900).contains(&parsed.timeout_secs), "--timeout-secs must be between 1 and 900");
+    ensure!(
+        (1..=900).contains(&parsed.timeout_secs),
+        "--timeout-secs must be between 1 and 900"
+    );
     Ok(parsed)
 }
 
@@ -148,9 +156,10 @@ pub(crate) fn validate_include_file(raw: &str) -> Result<String> {
     let path = Path::new(value);
     ensure!(!path.is_absolute(), "--file must be repo-relative");
     ensure!(
-        !path
-            .components()
-            .any(|component| matches!(component, Component::ParentDir | Component::RootDir | Component::Prefix(_))),
+        !path.components().any(|component| matches!(
+            component,
+            Component::ParentDir | Component::RootDir | Component::Prefix(_)
+        )),
         "--file must not contain traversal or absolute path components"
     );
     ensure!(
