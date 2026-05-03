@@ -80,12 +80,12 @@ core:
 
 | TBD source or cluster | Planning disposition |
 | --- | --- |
-| `.adl/docs/v0.91planning/WELLBEING_AND_HAPPINESS.md` | Primary v0.91 feature source. |
-| `.adl/docs/v0.91planning/KINDNESS_MODEL.md` | Primary v0.91 feature source. |
-| `.adl/docs/v0.91planning/HUMOR_AND_ABSURDITY.md` | Primary v0.91 feature source. |
-| `.adl/docs/v0.91planning/AFFECT_MODEL_v0.90.md` | Primary v0.91 feature source. |
-| `.adl/docs/v0.91planning/CULTIVATING_INTELLIGENCE.md` | Primary v0.91 architecture source. |
-| `.adl/docs/v0.91planning/MORAL_RESOURCES_SUBSYSTEM.md` | Primary v0.91 moral-resources source; align naming with tracked moral-governance allocation. |
+| `docs/milestones/v0.91/features/WELLBEING_AND_HAPPINESS.md` | Primary tracked v0.91 wellbeing feature doc. |
+| `docs/milestones/v0.91/features/KINDNESS.md` | Primary tracked v0.91 kindness feature doc. |
+| `docs/milestones/v0.91/features/HUMOR_AND_ABSURDITY.md` | Primary tracked v0.91 reframing feature doc. |
+| `docs/milestones/v0.91/features/AFFECT_REASONING_CONTROL.md` | Primary tracked v0.91 affect reasoning-control feature doc. |
+| `docs/milestones/v0.91/features/CULTIVATING_INTELLIGENCE.md` | Primary tracked v0.91 formation feature doc. |
+| `docs/milestones/v0.91/features/MORAL_RESOURCES.md` | Primary tracked v0.91 moral-resources feature doc. |
 | `.adl/docs/TBD/moral_governance/` | Primary v0.91 moral-governance source corpus. |
 | `.adl/docs/TBD/AGENT_COMMUNICATION_AND_INVOCATION_PROTOCOL.md` | Primary ACIP source; split across v0.90.5, v0.91, and v0.91.1. |
 | `.adl/docs/TBD/AGENT_COMMS_1_0_PLAN.md` | Operator planning source for ACIP 1.0 scope and sequencing. |
@@ -111,6 +111,11 @@ Each first-class cognitive-being feature should have:
 No v0.91 core feature should be considered complete if it exists only as
 planning prose, an unimplemented architecture note, or a partial demonstration
 without the corresponding contract and review surface.
+
+The tracked feature docs in `docs/milestones/v0.91/features/` are therefore the
+canonical starting point for the core cognitive-being surfaces. The older
+`.adl/docs/v0.91planning/` notes remain useful as source lineage, but they
+should no longer be treated as the only home of those features.
 
 Likewise, no v0.91.1 adjacent-system feature should be scheduled merely as
 planning-only cleanup. If it belongs in v0.91.1, it should be there to land as

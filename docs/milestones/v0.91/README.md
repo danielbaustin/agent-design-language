@@ -19,6 +19,8 @@ The widened cognitive-being allocation is recorded in
 [COGNITIVE_BEING_FEATURES_v0.91.md](COGNITIVE_BEING_FEATURES_v0.91.md).
 The Agent Communication split is recorded in
 [AGENT_COMMS_SPLIT_PLAN_v0.91.md](AGENT_COMMS_SPLIT_PLAN_v0.91.md).
+The tracked feature-doc index is recorded in
+[features/README.md](features/README.md).
 
 ## Milestone Role
 
