@@ -61,9 +61,9 @@ fn run_code_review_for_root(
     root: &std::path::Path,
     args: &code_review_types::CodeReviewArgs,
 ) -> Result<()> {
-    let packet = build_packet(&root, &args)?;
+    let packet = build_packet(root, args)?;
     let packet_id = packet_id(&packet);
-    let result = run_reviewer(&args, &packet, &packet_id)?;
+    let result = run_reviewer(args, &packet, &packet_id)?;
     let gate = evaluate_gate(&result, &packet);
 
     let packet_path = args.out.join("review_packet.json");
