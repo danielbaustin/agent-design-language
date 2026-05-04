@@ -99,3 +99,11 @@ WP-20 must record the final GW wave outcome before release closeout:
 - deferred slices and rationale
 - updated authoritative coverage wall-time evidence
 - remaining tests over `45s` and over `60s`
+
+Recorded WP-20 disposition:
+
+- `docs/milestones/v0.90.5/QUALITY_GATE_v0.90.5.md`
+- current outcome: merged GW wave is complete, and a post-GW authoritative
+  push run exists for current `main` (`25272620889`), but that run failed the
+  coverage gate and its runtime-effect summary has not yet been normalized into
+  this tracking artifact

@@ -18,7 +18,8 @@ Freedom Gate mediation, and trace.
 - simple bounded local/Gemma evaluation demo or explicit skip
 - flagship demo proof packet
 - feature proof coverage record
-- coverage / quality gate record
+- [coverage / quality gate record](QUALITY_GATE_v0.90.5.md), including
+  first-level Comms / ACIP evidence
 - get-well wave disposition
 - public-spec language audit and boundary note
 - internal and external review notes
@@ -43,7 +44,8 @@ evidence prove that model output cannot bypass governed execution.
 
 Do not move into release review until every feature claim has a proof,
 non-proving classification, or explicit deferral, and the coverage / quality
-gate has recorded the milestone validation posture.
+gate has recorded the milestone validation posture for both Governed Tools v1.0
+and the landed first-level Comms tranche.
 
 Do not describe UTS as a public standard, stable external contract, or
 standalone execution authority unless separate evidence and review approve that
