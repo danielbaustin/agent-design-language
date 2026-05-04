@@ -99,6 +99,32 @@ fn init_temp_git_repo(label: &str) -> std::path::PathBuf {
     root
 }
 
+fn init_temp_git_repo_with_changed_file(
+    label: &str,
+    relative_path: &str,
+    initial: &str,
+    changed: &str,
+) -> std::path::PathBuf {
+    let root = init_temp_git_repo(label);
+    let path = root.join(relative_path);
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).expect("create file parent");
+    }
+    std::fs::write(&path, initial).expect("write initial file");
+    std::process::Command::new("git")
+        .args(["add", "."])
+        .current_dir(&root)
+        .output()
+        .expect("git add initial");
+    std::process::Command::new("git")
+        .args(["commit", "-m", "initial"])
+        .current_dir(&root)
+        .output()
+        .expect("git commit initial");
+    std::fs::write(&path, changed).expect("write changed file");
+    root
+}
+
 #[test]
 fn parse_args_preserves_backend_after_out_and_accepts_timeout() {
     let args = vec![
@@ -287,38 +313,65 @@ fn parse_args_accepts_safe_parent_and_ancestor_git_refs() {
 
 #[test]
 fn changed_files_accepts_file_filter_inside_changed_set() {
-    let root = super::super::common::repo_root().expect("repo root");
+    let root = init_temp_git_repo_with_changed_file(
+        "changed-files-filter",
+        "src/sample.rs",
+        "fn sample() { println!(\"v1\"); }\n",
+        "fn sample() { println!(\"v2\"); }\n",
+    );
     let mut args = test_args();
     args.base_ref = "HEAD".to_string();
     args.head_ref = "HEAD".to_string();
-    args.include_working_tree = false;
-    args.include_files = vec!["adl/src/cli/tooling_cmd/code_review.rs".to_string()];
+    args.include_working_tree = true;
+    args.include_files = vec!["src/sample.rs".to_string()];
 
     let files = changed_files(&root, &args).expect("changed file filter should pass");
-    assert_eq!(
-        files,
-        vec!["adl/src/cli/tooling_cmd/code_review.rs".to_string()]
+    assert_eq!(files, vec!["src/sample.rs".to_string()]);
+    std::fs::remove_dir_all(&root).ok();
+}
+
+#[test]
+fn changed_files_rejects_file_filter_outside_changed_set() {
+    let root = init_temp_git_repo_with_changed_file(
+        "changed-files-reject",
+        "src/sample.rs",
+        "fn sample() { println!(\"v1\"); }\n",
+        "fn sample() { println!(\"v2\"); }\n",
     );
+    let mut args = test_args();
+    args.base_ref = "HEAD".to_string();
+    args.head_ref = "HEAD".to_string();
+    args.include_working_tree = true;
+    args.include_files = vec!["src/other.rs".to_string()];
+
+    let err = changed_files(&root, &args).expect_err("unchanged explicit file should fail");
+    assert!(err
+        .to_string()
+        .contains("--file 'src/other.rs' is not in the changed file set"));
+    std::fs::remove_dir_all(&root).ok();
 }
 
 #[test]
 fn build_packet_covers_repo_slice_context_and_static_evidence() {
-    let root = super::super::common::repo_root().expect("repo root");
+    let root = init_temp_git_repo_with_changed_file(
+        "build-packet-static",
+        "src/sample.rs",
+        "fn sample() { println!(\"v1\"); }\n",
+        "fn sample() { println!(\"v2\"); }\n",
+    );
     let mut args = test_args();
     args.base_ref = "HEAD".to_string();
     args.head_ref = "HEAD".to_string();
+    args.include_working_tree = true;
     args.visibility_mode = VisibilityMode::ReadOnlyRepo;
-    args.include_files = vec!["adl/src/cli/tooling_cmd/code_review.rs".to_string()];
+    args.include_files = vec!["src/sample.rs".to_string()];
 
     let packet = code_review_build::build_packet(&root, &args).expect("build review packet");
     assert_eq!(
         packet.schema_version,
         code_review_types::CODE_REVIEW_PACKET_SCHEMA
     );
-    assert_eq!(
-        packet.changed_files,
-        vec!["adl/src/cli/tooling_cmd/code_review.rs".to_string()]
-    );
+    assert_eq!(packet.changed_files, vec!["src/sample.rs".to_string()]);
     assert_eq!(packet.diff_summary.files_changed, 1);
     assert!(!packet.branch.trim().is_empty());
     assert!(packet
@@ -326,32 +379,25 @@ fn build_packet_covers_repo_slice_context_and_static_evidence() {
         .first()
         .expect("file context")
         .current_excerpt
-        .contains("mod code_review_args;"));
-    assert_eq!(packet.static_analysis_evidence.len(), 1);
+        .contains("println!(\"v2\")"));
+    assert_eq!(packet.static_analysis_evidence.len(), 2);
     assert_eq!(packet.static_analysis_evidence[0].status, "PASS");
+    assert_eq!(packet.static_analysis_evidence[1].status, "PASS");
     assert!(packet.repo_slice_manifest.read_only);
     assert!(!packet.repo_slice_manifest.write_allowed);
     assert!(!packet.redaction_status.absolute_host_paths_present);
+    std::fs::remove_dir_all(&root).ok();
 }
 
 #[test]
 fn build_packet_includes_staged_and_unstaged_worktree_diffs() {
-    let root = init_temp_git_repo("worktree-diff");
-    let source_dir = root.join("src");
-    std::fs::create_dir_all(&source_dir).expect("create src dir");
-    let source_file = source_dir.join("sample.rs");
-    std::fs::write(&source_file, "fn sample() {\n    println!(\"v1\");\n}\n").expect("write v1");
-    std::process::Command::new("git")
-        .args(["add", "."])
-        .current_dir(&root)
-        .output()
-        .expect("git add v1");
-    std::process::Command::new("git")
-        .args(["commit", "-m", "initial"])
-        .current_dir(&root)
-        .output()
-        .expect("git commit v1");
-
+    let root = init_temp_git_repo_with_changed_file(
+        "worktree-diff",
+        "src/sample.rs",
+        "fn sample() {\n    println!(\"v1\");\n}\n",
+        "fn sample() {\n    println!(\"v1 working tree\");\n}\n",
+    );
+    let source_file = root.join("src/sample.rs");
     std::fs::write(
         &source_file,
         "fn sample() {\n    println!(\"v2 staged\");\n}\n",

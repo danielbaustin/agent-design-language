@@ -100,7 +100,10 @@ pub(crate) fn changed_files(root: &Path, args: &CodeReviewArgs) -> anyhow::Resul
     }
     if !args.include_files.is_empty() {
         for file in &args.include_files {
-            ensure!(!files.contains(file), "--file '{file}' is not in the changed file set for the selected base/head or working tree");
+            ensure!(
+                files.contains(file),
+                "--file '{file}' is not in the changed file set for the selected base/head or working tree"
+            );
         }
         return Ok(args.include_files.clone());
     }
