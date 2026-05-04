@@ -280,10 +280,20 @@ still incomplete.
 First-level findings still relevant to WP-20:
 
 - release-tail issues `#2586` through `#2591` are open
-- closeout truth drift remains a known class of risk for some already-closed
-  issues
 - milestone/release docs remain incomplete until later review-tail work lands
 - metadata parity and automation truth still require cleanup
+
+### Post-`#2701` records follow-up update (2026-05-04)
+
+The post-merge records follow-up rerun under `#2706` narrowed the previous
+records-risk picture:
+
+- `bash adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.90.5`
+  now passes after retroactive local closeout normalization for `#2704`
+- `bash adl/tools/check_issue_metadata_parity.sh --version v0.90.5 --root <primary-root>`
+  still fails, with `39` remaining issue-title/metadata mismatches
+- the active records-tail issues are now `#2705`, `#2706`, and `#2707`, with
+  `#2707` holding the remaining metadata-parity cleanup backlog
 
 WP-20 does not duplicate the full gap-review report, but it now treats that
 report as a first-level risk surface for release quality.
@@ -352,7 +362,7 @@ erase.
 | --- | --- | --- | --- | --- |
 | Current `main` authoritative coverage posture | failure | `WP-20` / follow-on quality tail | The latest push-to-main run for head `4087678b` (`25272620889`) completed with `adl-ci` green but `adl-coverage` red at the coverage-policy enforcement step. | Record as an explicit gate exception; release-tail work must not describe current `main` as fully green until the coverage failure is fixed. |
 | Release-tail gap-review posture | open | `WP-21` through `WP-26` | The existing `v0.90.5` gap review still identifies the release tail as incomplete, with review, remediation, planning, and ceremony work not yet executed. | Keep these open issues as first-level release risks; WP-20 does not convert them into completed work. |
-| Closed-issue closeout drift class | explicit gap | `WP-24` / closeout follow-up | The existing `v0.90.5` gap review reports stale closeout truth on some already-closed issues. | Preserve as a named quality risk until later closeout normalization clears the affected records. |
+| Closed-issue closeout drift class | cleared by follow-up rerun | `#2706` | The 2026-05-04 post-`#2701` rerun repaired the last active closed-issue SOR residue (`#2704`) and `check_milestone_closed_issue_sor_truth.sh --version v0.90.5` now passes. | Keep the historical gap visible in the gap review, but treat the failing gate as cleared; remaining records risk is the metadata-parity backlog routed to `#2707`. |
 | Rust maintainability and Rustdoc coverage debt | explicit gap | maintainability backlog / `WP-25` planning | The Rustdoc tracker shows low public API documentation coverage, and multiple large Rust maintainability/refactor issues remain open in `v0.90.5`. | Record as first-level quality context and hand it forward into docs/review/planning rather than implying it is already resolved. |
 | Release notes and public closeout wording | draft | `WP-21` / `WP-26` | `RELEASE_NOTES_v0.90.5.md` is still explicitly aspirational and not yet aligned to final release evidence. | Keep release-note truth as a first-level release-tail gap until docs/review and release ceremony close it out. |
 | Python-reduction tranche disposition | explicit gap | `WP-25` planning | The milestone planning package reserves a bounded Python-reduction tranche, but WP-20 does not yet record a completed tranche disposition. | Keep the tranche visible as milestone truth and require explicit handoff or deferral in later planning/closeout work. |
