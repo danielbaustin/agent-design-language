@@ -796,4 +796,187 @@ mod tests {
             );
         }
     }
+
+    #[test]
+    fn trace_indexed_memory_entry_normalize_dedupes_and_sorts_tags_steps_and_refs() {
+        let mut entry = IndexedMemoryEntry {
+            run_id: "r1".to_string(),
+            workflow_id: "wf".to_string(),
+            status: "success".to_string(),
+            failure_code: Some("provider_error".to_string()),
+            summary: "summary".to_string(),
+            tags: vec![
+                "workflow:wf".to_string(),
+                "workflow:wf".to_string(),
+                "failure:provider_error".to_string(),
+            ],
+            steps: vec![
+                IndexedStepContext {
+                    sequence: 2,
+                    step_id: "b".to_string(),
+                    event_kind: "step_finished".to_string(),
+                    context: "success=true".to_string(),
+                },
+                IndexedStepContext {
+                    sequence: 1,
+                    step_id: "a".to_string(),
+                    event_kind: "step_started".to_string(),
+                    context: "provider=local".to_string(),
+                },
+                IndexedStepContext {
+                    sequence: 1,
+                    step_id: "a".to_string(),
+                    event_kind: "step_started".to_string(),
+                    context: "provider=local".to_string(),
+                },
+            ],
+            trace_event_refs: vec![
+                MemoryTraceRef {
+                    event_sequence: 2,
+                    event_kind: "step_finished".to_string(),
+                    step_id: Some("b".to_string()),
+                    delegation_id: None,
+                },
+                MemoryTraceRef {
+                    event_sequence: 1,
+                    event_kind: "step_started".to_string(),
+                    step_id: Some("a".to_string()),
+                    delegation_id: None,
+                },
+                MemoryTraceRef {
+                    event_sequence: 1,
+                    event_kind: "step_started".to_string(),
+                    step_id: Some("a".to_string()),
+                    delegation_id: None,
+                },
+            ],
+        };
+
+        entry.normalize();
+
+        assert_eq!(
+            entry.tags,
+            vec![
+                "failure:provider_error".to_string(),
+                "workflow:wf".to_string()
+            ]
+        );
+        assert_eq!(entry.steps.len(), 2);
+        assert_eq!(entry.steps[0].sequence, 1);
+        assert_eq!(entry.trace_event_refs.len(), 2);
+        assert_eq!(entry.trace_event_refs[0].event_sequence, 1);
+    }
+
+    #[test]
+    fn trace_indexed_memory_entry_validate_rejects_empty_summary_and_missing_refs_and_tokens() {
+        let base_ref = MemoryTraceRef {
+            event_sequence: 0,
+            event_kind: "step_started".to_string(),
+            step_id: Some("s1".to_string()),
+            delegation_id: None,
+        };
+        let mut entry = IndexedMemoryEntry {
+            run_id: "r1".to_string(),
+            workflow_id: "wf".to_string(),
+            status: "success".to_string(),
+            failure_code: None,
+            summary: String::new(),
+            tags: vec![],
+            steps: vec![],
+            trace_event_refs: vec![base_ref.clone()],
+        };
+        assert!(entry
+            .validate()
+            .expect_err("empty summary should fail")
+            .message
+            .contains("non-empty summary"));
+
+        entry.summary = "ok".to_string();
+        entry.trace_event_refs.clear();
+        assert!(entry
+            .validate()
+            .expect_err("missing trace refs should fail")
+            .message
+            .contains("at least one trace event reference"));
+
+        entry.trace_event_refs.push(base_ref);
+        entry.summary = "gho_secret_like_value".to_string();
+        assert!(entry
+            .validate()
+            .expect_err("gh token-like text should fail")
+            .message
+            .contains("disallowed host-path or token-like content"));
+
+        entry.summary = "safe summary".to_string();
+        entry.tags = vec!["sk-live-token".to_string()];
+        assert!(entry
+            .validate()
+            .expect_err("openai token-like tag should fail")
+            .message
+            .contains("disallowed host-path or token-like content"));
+    }
+
+    #[test]
+    fn trace_obsmem_helper_functions_cover_parse_and_trace_mapping_branches() {
+        let tmp = unique_temp_dir("helper-branches");
+        let bad_json = tmp.join("bad.json");
+        std::fs::write(&bad_json, "{not-json").expect("write malformed json");
+        let parse_err = read_json(&bad_json).expect_err("malformed json should fail");
+        assert!(parse_err.message.contains("failed parsing"));
+
+        assert!(contains_disallowed_text("/home/runner/private"));
+        assert!(contains_disallowed_text("gho_secret"));
+        assert!(contains_disallowed_text("sk-secret"));
+        assert!(!contains_disallowed_text("reviewable summary"));
+
+        let lifecycle = TraceEventNormalized::LifecyclePhaseEntered {
+            phase: "governed".to_string(),
+        };
+        let boundary = TraceEventNormalized::ExecutionBoundaryCrossed {
+            boundary: "scheduler".to_string(),
+            state: "entered".to_string(),
+        };
+        let call_entered = TraceEventNormalized::CallEntered {
+            caller_step_id: "step.call".to_string(),
+            callee_workflow_id: "wf".to_string(),
+            namespace: "ns".to_string(),
+        };
+        let call_exited = TraceEventNormalized::CallExited {
+            caller_step_id: "step.call".to_string(),
+            status: "success".to_string(),
+            namespace: "ns".to_string(),
+        };
+        let chunk = TraceEventNormalized::StepOutputChunk {
+            step_id: "step.chunk".to_string(),
+            chunk_bytes: 42,
+        };
+
+        assert_eq!(
+            to_trace_ref(0, &lifecycle)
+                .expect("lifecycle ref")
+                .event_kind,
+            "lifecycle_phase_entered"
+        );
+        assert_eq!(
+            to_trace_ref(1, &boundary).expect("boundary ref").event_kind,
+            "execution_boundary_crossed"
+        );
+        assert_eq!(
+            to_trace_ref(2, &call_entered)
+                .expect("call entered ref")
+                .event_kind,
+            "call_entered"
+        );
+        assert_eq!(
+            to_trace_ref(3, &call_exited)
+                .expect("call exited ref")
+                .event_kind,
+            "call_exited"
+        );
+
+        let step_context = to_step_context(4, &chunk).expect("chunk context");
+        assert_eq!(step_context.step_id, "step.chunk");
+        assert_eq!(step_context.context, "chunk_bytes=42");
+        assert!(to_step_context(5, &lifecycle).is_none());
+    }
 }

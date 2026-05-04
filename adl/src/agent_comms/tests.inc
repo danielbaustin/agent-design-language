@@ -920,6 +920,127 @@
     }
 
     #[test]
+    fn acip_trace_event_and_audience_helpers_cover_remaining_validation_paths() {
+        let mut duplicate_audience = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        duplicate_audience.audience_views[4].audience = AcipTraceAudienceV1::Public;
+        assert!(validate_acip_trace_bundle_v1(&duplicate_audience)
+            .expect_err("duplicate audiences should fail")
+            .to_string()
+            .contains("trace bundle contains duplicate audience view 'public'"));
+
+        let mut missing_required_event = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        missing_required_event
+            .trace_events
+            .retain(|event| event.event_kind != AcipTraceEventKindV1::DecisionRecorded);
+        assert!(validate_acip_trace_bundle_v1(&missing_required_event)
+            .expect_err("missing required event kind should fail")
+            .to_string()
+            .contains("trace bundle must preserve canonical event order"));
+
+        let mut duplicate_event_id = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        duplicate_event_id.trace_events[3].event_id = "trace-0003".to_string();
+        assert!(validate_acip_trace_bundle_v1(&duplicate_event_id)
+            .expect_err("duplicate event id should fail")
+            .to_string()
+            .contains("trace bundle contains duplicate event_id 'trace-0003'"));
+
+        let mut bad_replay_fixture = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        bad_replay_fixture.replay_contract.fixture_ref = "/tmp/replay.json".to_string();
+        assert!(validate_acip_trace_bundle_v1(&bad_replay_fixture)
+            .expect_err("absolute replay fixture ref should fail")
+            .to_string()
+            .contains("fixture_ref"));
+
+        let mut bad_replay_case = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        bad_replay_case.replay_contract.fixture_case = "../bad".to_string();
+        assert!(validate_acip_trace_bundle_v1(&bad_replay_case)
+            .expect_err("unsafe replay fixture case should fail")
+            .to_string()
+            .contains("fixture_case"));
+
+        let mut prompt_leak = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        prompt_leak.trace_events[3].summary =
+            "Terminal event included prompt fragments for debugging.".to_string();
+        assert!(validate_acip_trace_bundle_v1(&prompt_leak)
+            .expect_err("prompt leak should fail")
+            .to_string()
+            .contains("summary must not leak protected trace content 'prompt'"));
+
+        let mut raw_args_ref = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        raw_args_ref.audience_views[2]
+            .visible_artifact_refs
+            .push("runtime/comms/trace/raw_args.json".to_string());
+        assert!(validate_acip_trace_bundle_v1(&raw_args_ref)
+            .expect_err("raw args ref should fail")
+            .to_string()
+            .contains("visible_artifact_refs[] must not expose unredacted trace ref 'raw_args'"));
+
+        let mut wrong_terminal_position = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        let terminal = wrong_terminal_position.trace_events.pop().expect("terminal event");
+        wrong_terminal_position.trace_events.insert(1, terminal);
+        assert!(validate_acip_trace_bundle_v1(&wrong_terminal_position)
+            .expect_err("terminal event must remain last")
+            .to_string()
+            .contains("trace bundle must preserve canonical event order"));
+    }
+
+    #[test]
+    fn acip_trace_sample_invocation_helpers_cover_event_status_and_value_parsing() {
+        let contract = sample_invocation_contract();
+        let completed = sample_invocation_event(
+            &contract,
+            AcipInvocationStatusV1::Completed,
+            vec!["runtime/comms/invocation/review_report.json".to_string()],
+            "required outputs satisfied".to_string(),
+            None,
+            None,
+            vec!["runtime/comms/invocation/evidence/completed_trace.json".to_string()],
+        );
+        assert_eq!(completed.status, AcipInvocationStatusV1::Completed);
+        assert!(completed.refusal_code.is_none());
+        assert!(completed.failure_code.is_none());
+
+        let refused = sample_invocation_event(
+            &contract,
+            AcipInvocationStatusV1::Refused,
+            Vec::new(),
+            "governed refusal".to_string(),
+            Some("policy_denied".to_string()),
+            None,
+            vec!["runtime/comms/invocation/evidence/refusal_trace.json".to_string()],
+        );
+        assert_eq!(refused.status, AcipInvocationStatusV1::Refused);
+        assert_eq!(refused.refusal_code.as_deref(), Some("policy_denied"));
+
+        let failed = sample_invocation_event(
+            &contract,
+            AcipInvocationStatusV1::Failed,
+            Vec::new(),
+            "execution failure".to_string(),
+            None,
+            Some("provider_error".to_string()),
+            vec!["runtime/comms/invocation/evidence/failure_trace.json".to_string()],
+        );
+        assert_eq!(failed.status, AcipInvocationStatusV1::Failed);
+        assert_eq!(failed.failure_code.as_deref(), Some("provider_error"));
+
+        let completed_value =
+            serde_json::to_value(sample_trace_bundle(AcipInvocationStatusV1::Completed))
+                .expect("serialize bundle");
+        validate_acip_trace_bundle_v1_value(&completed_value)
+            .expect("valid json bundle should parse and validate");
+
+        let parse_error = validate_acip_trace_bundle_v1_value(&serde_json::json!({
+            "schema_version": ACIP_TRACE_BUNDLE_SCHEMA_VERSION,
+            "conversation_id": 7
+        }))
+        .expect_err("malformed bundle json should fail");
+        assert!(parse_error
+            .to_string()
+            .contains("parse ACIP trace bundle v1"));
+    }
+
+    #[test]
     fn acip_proof_demo_packet_schema_and_fixture_are_available() {
         let schema = acip_proof_demo_packet_v1_schema_json().expect("proof schema");
         assert!(schema.contains("AcipProofDemoPacketV1"));
