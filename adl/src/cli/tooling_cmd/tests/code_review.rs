@@ -150,14 +150,14 @@ fn code_review_args_parse_args_preserves_backend_after_out_and_accepts_timeout()
 }
 
 #[test]
-fn parse_args_excludes_working_tree_by_default() {
+fn code_review_args_parse_args_excludes_working_tree_by_default() {
     let args = vec!["--out".to_string(), "artifacts/review".to_string()];
     let parsed = parse_args(&args).expect("args should parse");
     assert!(!parsed.include_working_tree);
 }
 
 #[test]
-fn parse_args_rejects_invalid_values_and_missing_required_out() {
+fn code_review_args_parse_args_rejects_invalid_values_and_missing_required_out() {
     assert!(parse_args(&["--backend".to_string(), "bad".to_string()]).is_err());
     assert!(parse_args(&[
         "--out".to_string(),
@@ -298,7 +298,7 @@ fn parse_args_rejects_invalid_values_and_missing_required_out() {
 }
 
 #[test]
-fn parse_args_accepts_safe_parent_and_ancestor_git_refs() {
+fn code_review_args_parse_args_accepts_safe_parent_and_ancestor_git_refs() {
     let parsed = parse_args(&[
         "--out".to_string(),
         "artifacts/review".to_string(),
@@ -313,7 +313,7 @@ fn parse_args_accepts_safe_parent_and_ancestor_git_refs() {
 }
 
 #[test]
-fn changed_files_accepts_file_filter_inside_changed_set() {
+fn code_review_build_changed_files_accepts_file_filter_inside_changed_set() {
     let root = init_temp_git_repo_with_changed_file(
         "changed-files-filter",
         "src/sample.rs",
@@ -332,7 +332,7 @@ fn changed_files_accepts_file_filter_inside_changed_set() {
 }
 
 #[test]
-fn changed_files_rejects_file_filter_outside_changed_set() {
+fn code_review_build_changed_files_rejects_file_filter_outside_changed_set() {
     let root = init_temp_git_repo_with_changed_file(
         "changed-files-reject",
         "src/sample.rs",
@@ -391,7 +391,7 @@ fn code_review_build_packet_covers_repo_slice_context_and_static_evidence() {
 }
 
 #[test]
-fn build_packet_includes_staged_and_unstaged_worktree_diffs() {
+fn code_review_build_packet_includes_staged_and_unstaged_worktree_diffs() {
     let root = init_temp_git_repo_with_changed_file(
         "worktree-diff",
         "src/sample.rs",
@@ -447,7 +447,7 @@ fn build_packet_includes_staged_and_unstaged_worktree_diffs() {
 }
 
 #[test]
-fn real_code_review_fixture_run_writes_expected_artifacts() {
+fn code_review_reviewer_real_code_review_fixture_run_writes_expected_artifacts() {
     let out = unique_temp_path("fixture-run");
     let args = vec![
         "--out".to_string(),
@@ -529,7 +529,7 @@ fn real_code_review_fixture_run_writes_expected_artifacts() {
 }
 
 #[test]
-fn read_file_prefix_bounds_file_context_memory() {
+fn code_review_helpers_read_file_prefix_bounds_file_context_memory() {
     let path =
         std::env::temp_dir().join(format!("adl-code-review-prefix-{}.txt", std::process::id()));
     std::fs::write(&path, "abcdef").expect("write temp");
@@ -580,7 +580,7 @@ fn code_review_helpers_cover_safe_worktree_git_output_git_show_and_write_json() 
 }
 
 #[test]
-fn fixture_review_covers_blocked_and_same_session_paths() {
+fn code_review_reviewer_fixture_review_covers_blocked_and_same_session_paths() {
     let packet = test_packet();
     let packet_id = "packet-id";
 
@@ -636,7 +636,7 @@ fn code_review_reviewer_result_helpers_cover_skipped_non_proving_and_run_reviewe
 }
 
 #[test]
-fn ollama_without_live_returns_skipped_blocker() {
+fn code_review_reviewer_ollama_without_live_returns_skipped_blocker() {
     let mut args = test_args();
     args.backend = ReviewerBackend::Ollama;
     args.model = Some("gemma4:test".to_string());
@@ -649,7 +649,7 @@ fn ollama_without_live_returns_skipped_blocker() {
 }
 
 #[test]
-fn ollama_live_review_suppresses_redaction_failures() {
+fn code_review_reviewer_ollama_live_review_suppresses_redaction_failures() {
     let mut args = test_args();
     args.backend = ReviewerBackend::Ollama;
     args.allow_live_ollama = true;
@@ -669,7 +669,7 @@ fn ollama_live_review_suppresses_redaction_failures() {
 }
 
 #[test]
-fn evaluate_gate_covers_static_failure_and_blocking_finding() {
+fn code_review_reviewer_evaluate_gate_covers_static_failure_and_blocking_finding() {
     let mut packet = test_packet();
     packet.static_analysis_evidence.push(ValidationEvidence {
         command: "git diff --check".to_string(),
@@ -770,7 +770,7 @@ fn code_review_types_and_gate_cover_enum_and_schema_surfaces() {
 }
 
 #[test]
-fn parse_model_review_json_accepts_fenced_json_and_filters_string_arrays() {
+fn code_review_reviewer_parse_model_review_json_accepts_fenced_json_and_filters_string_arrays() {
     let raw = r#"```json
 {
   "disposition": "blocked",
@@ -800,7 +800,7 @@ fn parse_model_review_json_accepts_fenced_json_and_filters_string_arrays() {
 }
 
 #[test]
-fn helpers_cover_url_normalization_prompt_and_unicode_truncation() {
+fn code_review_helpers_cover_url_normalization_prompt_and_unicode_truncation() {
     assert_eq!(
         ollama_generate_url("http://127.0.0.1:11434").expect("url"),
         "http://127.0.0.1:11434/api/generate"
@@ -828,7 +828,7 @@ fn helpers_cover_url_normalization_prompt_and_unicode_truncation() {
 }
 
 #[test]
-fn normalize_model_review_rejects_placeholder_findings() {
+fn code_review_reviewer_normalize_model_review_rejects_placeholder_findings() {
     let finding = ReviewFinding {
         title: "Untitled model finding".to_string(),
         priority: "P3".to_string(),
@@ -864,7 +864,7 @@ fn normalize_model_review_rejects_placeholder_findings() {
 }
 
 #[test]
-fn normalize_model_review_rejects_praise_as_findings() {
+fn code_review_reviewer_normalize_model_review_rejects_praise_as_findings() {
     let finding = ReviewFinding {
         title: "Correctly separates proposal and execution".to_string(),
         priority: "P3".to_string(),
@@ -894,7 +894,7 @@ fn normalize_model_review_rejects_praise_as_findings() {
 }
 
 #[test]
-fn normalize_model_review_accepts_specific_evidenced_finding() {
+fn code_review_reviewer_normalize_model_review_accepts_specific_evidenced_finding() {
     let finding = ReviewFinding {
         title: "Missing reviewer evidence link".to_string(),
         priority: "P3".to_string(),
@@ -925,7 +925,7 @@ fn normalize_model_review_accepts_specific_evidenced_finding() {
 }
 
 #[test]
-fn normalize_model_review_requires_bypass_for_blocking_security_findings() {
+fn code_review_reviewer_normalize_model_review_requires_bypass_for_blocking_security_findings() {
     let finding = ReviewFinding {
         title: "Possible path traversal".to_string(),
         priority: "P0".to_string(),
@@ -955,7 +955,7 @@ fn normalize_model_review_requires_bypass_for_blocking_security_findings() {
 }
 
 #[test]
-fn normalize_model_review_rejects_bypass_rejected_by_cli_validators() {
+fn code_review_reviewer_normalize_model_review_rejects_bypass_rejected_by_cli_validators() {
     let finding = ReviewFinding {
         title: "Path traversal bypass".to_string(),
         priority: "P1".to_string(),
@@ -985,7 +985,7 @@ fn normalize_model_review_rejects_bypass_rejected_by_cli_validators() {
 }
 
 #[test]
-fn normalize_model_review_rejects_empty_blessing_for_truncated_packet() {
+fn code_review_reviewer_normalize_model_review_rejects_empty_blessing_for_truncated_packet() {
     let mut packet = test_packet();
     packet.diff_summary.truncated_hunks = true;
     packet.focused_diff_hunks[0].truncated = true;
@@ -1011,7 +1011,8 @@ fn normalize_model_review_rejects_empty_blessing_for_truncated_packet() {
 }
 
 #[test]
-fn normalize_model_review_accepts_empty_blessing_with_rationale_for_complete_packet() {
+fn code_review_reviewer_normalize_model_review_accepts_empty_blessing_with_rationale_for_complete_packet(
+) {
     let (disposition, findings, residual) = normalize_model_review(
             ParsedModelReview {
                 disposition: ReviewDisposition::Blessed,
@@ -1030,7 +1031,7 @@ fn normalize_model_review_accepts_empty_blessing_with_rationale_for_complete_pac
 }
 
 #[test]
-fn normalize_model_review_rejects_blessed_incomplete_packet_with_findings() {
+fn code_review_reviewer_normalize_model_review_rejects_blessed_incomplete_packet_with_findings() {
     let finding = ReviewFinding {
         title: "Missing reviewer evidence link".to_string(),
         priority: "P3".to_string(),
@@ -1065,7 +1066,7 @@ fn normalize_model_review_rejects_blessed_incomplete_packet_with_findings() {
 }
 
 #[test]
-fn normalize_model_review_rejects_empty_blessing_with_praise_rationale() {
+fn code_review_reviewer_normalize_model_review_rejects_empty_blessing_with_praise_rationale() {
     let (disposition, findings, residual) = normalize_model_review(
         ParsedModelReview {
             disposition: ReviewDisposition::Blessed,
