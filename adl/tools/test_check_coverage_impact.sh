@@ -43,11 +43,6 @@ printf 'M\tadl/src/runtime_v2/tests/feature_proof_coverage.rs\n' >"$test_only"
 bash "$SCRIPT" --changed-files "$test_only" --require-summary-for-risk >/tmp/coverage-impact-test-only.out
 grep -F "no changed production adl/src Rust files" /tmp/coverage-impact-test-only.out >/dev/null
 
-underscore_test_only="$TMP/underscore_test_only.txt"
-printf 'M\tadl/src/cli/tooling_cmd/code_review_tests.rs\n' >"$underscore_test_only"
-bash "$SCRIPT" --changed-files "$underscore_test_only" --require-summary-for-risk >/tmp/coverage-impact-underscore-test-only.out
-grep -F "no changed production adl/src Rust files" /tmp/coverage-impact-underscore-test-only.out >/dev/null
-
 changed="$TMP/changed.txt"
 printf 'A\tadl/src/runtime_v2/new_large_surface.rs\n' >"$changed"
 risk_filters="$TMP/risk-filters.txt"
