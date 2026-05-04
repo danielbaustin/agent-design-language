@@ -234,6 +234,10 @@ delegate_pr_command_to_rust() {
   local root manifest cached_bin
   root="$(rust_pr_delegate_root)"
   manifest="$root/adl/Cargo.toml"
+  # These Rust-owned delegated paths intentionally install no shell-level
+  # cleanup or trap-driven finalization in the wrapper before transfer. The
+  # wrapper contract here is limited to exact delegation and exit-status
+  # propagation into the Rust control plane.
   if [[ -n "${ADL_PR_RUST_BIN:-}" ]]; then
     exec "${ADL_PR_RUST_BIN}" pr "$subcommand" "$@"
   fi
