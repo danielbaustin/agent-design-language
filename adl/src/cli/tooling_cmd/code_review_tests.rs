@@ -484,7 +484,7 @@ fn reviewer_types_and_gate_cover_enum_and_schema_surfaces() {
 
     let packet_json =
         serde_json::to_string(&test_packet()).expect("serialize packet for schema visibility");
-    assert!(packet_json.contains(CODE_REVIEW_PACKET_SCHEMA));
+    assert!(packet_json.contains(code_review_types::CODE_REVIEW_PACKET_SCHEMA));
 
     let result = review_result(
         &test_args(),
@@ -506,7 +506,7 @@ fn reviewer_types_and_gate_cover_enum_and_schema_surfaces() {
     assert_eq!(gate.gate_disposition, "allow_with_evidence");
 
     let result_json = serde_json::to_string(&result).expect("serialize review result");
-    assert!(result_json.contains(CODE_REVIEW_RESULT_SCHEMA));
+    assert!(result_json.contains(code_review_types::CODE_REVIEW_RESULT_SCHEMA));
     assert!(result_json.contains("\"visibility_mode\":\"packet_only\""));
 }
 
