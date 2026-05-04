@@ -21,8 +21,18 @@ fn env_lock() -> std::sync::MutexGuard<'static, ()> {
     let guard = cli_env_lock();
     unsafe {
         env::set_var("ADL_PR_JANITOR_DISABLE", "1");
+        env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "1");
     }
     guard
+}
+
+#[test]
+fn env_lock_disables_post_merge_closeout_by_default() {
+    let _guard = env_lock();
+    assert_eq!(
+        env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE").ok().as_deref(),
+        Some("1")
+    );
 }
 
 fn write_executable(path: &Path, content: &str) {

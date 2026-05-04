@@ -345,4 +345,10 @@ fn real_pr_finish_allows_deletion_only_cleanup_for_foreign_issue_bundle_residue(
         env::set_var("PATH", old_path);
     }
     result.expect("finish should allow deletion-only foreign bundle cleanup");
+    assert!(
+        !repo
+            .join(".adl/logs/post-merge-closeout/issue-1161")
+            .exists(),
+        "broad finish tests should not spawn post-merge closeout watcher artifacts by default"
+    );
 }
