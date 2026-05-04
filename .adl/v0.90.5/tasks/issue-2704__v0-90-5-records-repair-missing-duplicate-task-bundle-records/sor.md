@@ -50,8 +50,8 @@ Completed the bounded `#2704` records-surgery pass. The issue prompt and root ca
   - `.adl/v0.90.5/tasks/issue-2683__v0-90-5-daily-coverage-blockers-2026-05-02/sip.md`
   - `.adl/v0.90.5/tasks/issue-2683__v0-90-5-daily-coverage-blockers-2026-05-02/sor.md`
   - `.adl/v0.90.5/tasks/issue-2699__v0-90-5-tools-stop-pr-finish-tests-from-leaking-orphaned-post-merge-closeout-watchers/sor.md`
-- Worktree-only paths remaining: the edited records surfaces remain on the issue branch/worktree until publication
-- Integration state: worktree_only
+- Worktree-only paths remaining: none
+- Integration state: pr_open
 - Verification scope: main_repo
 - Integration method used: issue-worktree records normalization followed by bounded local guard reruns; publication has not happened yet
  - Verification performed:
@@ -69,6 +69,8 @@ Completed the bounded `#2704` records-surgery pass. The issue prompt and root ca
     Verified the normalized completed SOR for `#2683`.
   - `bash adl/tools/validate_structured_prompt.sh --type sor --phase completed --input .adl/v0.90.5/tasks/issue-2699__v0-90-5-tools-stop-pr-finish-tests-from-leaking-orphaned-post-merge-closeout-watchers/sor.md`
     Verified the normalized completed SOR for `#2699`.
+  - `gh pr view 2709 --json number,state,isDraft,url,headRefName,baseRefName`
+    Verified draft PR `#2709` is open on the `codex/2704-v0-90-5-records-repair-missing-duplicate-task-bundle-records` branch.
 - Result: PASS
 
 Rules:
@@ -103,6 +105,8 @@ Rules:
     Verified `#2683`'s completed SOR.
   - `bash adl/tools/validate_structured_prompt.sh --type sor --phase completed --input .adl/v0.90.5/tasks/issue-2699__v0-90-5-tools-stop-pr-finish-tests-from-leaking-orphaned-post-merge-closeout-watchers/sor.md`
     Verified `#2699`'s completed SOR.
+  - `gh pr view 2709 --json number,state,isDraft,url,headRefName,baseRefName`
+    Verified the draft PR publication surface for `#2704`.
 - Results:
   - PASS
 
@@ -130,6 +134,7 @@ verification_summary:
       - "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh"
       - "bash adl/tools/validate_structured_prompt.sh --type sor --phase completed --input .adl/v0.90.5/tasks/issue-2683__v0-90-5-daily-coverage-blockers-2026-05-02/sor.md"
       - "bash adl/tools/validate_structured_prompt.sh --type sor --phase completed --input .adl/v0.90.5/tasks/issue-2699__v0-90-5-tools-stop-pr-finish-tests-from-leaking-orphaned-post-merge-closeout-watchers/sor.md"
+      - "gh pr view 2709 --json number,state,isDraft,url,headRefName,baseRefName"
   determinism:
     status: NOT_RUN
     replay_verified: unknown
@@ -182,4 +187,4 @@ verification_summary:
 - Published no runtime or behavior changes; the issue is bounded strictly to local records truth.
 
 ## Follow-ups / Deferred work
-- Normalize this record from `worktree_only` to `pr_open` once the issue branch is published.
+- Monitor draft PR `#2709` through the normal janitor/review path.
