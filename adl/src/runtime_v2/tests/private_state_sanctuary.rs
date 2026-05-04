@@ -1,7 +1,7 @@
 use super::*;
 
 #[test]
-fn runtime_v2_private_state_sanctuary_contract_is_stable() {
+fn runtime_v2_private_state_sanctuary_helpers_contract_is_stable() {
     let artifacts = runtime_v2_private_state_sanctuary_contract().expect("sanctuary artifacts");
     artifacts.validate().expect("valid sanctuary artifacts");
 
@@ -49,7 +49,7 @@ fn runtime_v2_private_state_sanctuary_state_policy_matches_golden_fixture() {
 }
 
 #[test]
-fn runtime_v2_private_state_sanctuary_ambiguous_wake_matches_golden_fixture() {
+fn runtime_v2_private_state_sanctuary_helpers_ambiguous_wake_matches_golden_fixture() {
     let artifacts = runtime_v2_private_state_sanctuary_contract().expect("sanctuary artifacts");
     let json = String::from_utf8(
         artifacts
@@ -69,7 +69,7 @@ fn runtime_v2_private_state_sanctuary_ambiguous_wake_matches_golden_fixture() {
 }
 
 #[test]
-fn runtime_v2_private_state_sanctuary_quarantine_matches_golden_fixture() {
+fn runtime_v2_private_state_sanctuary_reports_quarantine_matches_golden_fixture() {
     let artifacts = runtime_v2_private_state_sanctuary_contract().expect("sanctuary artifacts");
     let json = String::from_utf8(
         artifacts
@@ -89,7 +89,7 @@ fn runtime_v2_private_state_sanctuary_quarantine_matches_golden_fixture() {
 }
 
 #[test]
-fn runtime_v2_private_state_sanctuary_operator_report_matches_golden_fixture() {
+fn runtime_v2_private_state_sanctuary_reports_operator_report_matches_golden_fixture() {
     let artifacts = runtime_v2_private_state_sanctuary_contract().expect("sanctuary artifacts");
     let json = String::from_utf8(
         artifacts
@@ -109,7 +109,7 @@ fn runtime_v2_private_state_sanctuary_operator_report_matches_golden_fixture() {
 }
 
 #[test]
-fn runtime_v2_private_state_sanctuary_negative_cases_match_golden_fixture() {
+fn runtime_v2_private_state_sanctuary_reports_negative_cases_match_golden_fixture() {
     let artifacts = runtime_v2_private_state_sanctuary_contract().expect("sanctuary artifacts");
     let json = String::from_utf8(
         artifacts
@@ -129,7 +129,7 @@ fn runtime_v2_private_state_sanctuary_negative_cases_match_golden_fixture() {
 }
 
 #[test]
-fn runtime_v2_private_state_sanctuary_ambiguous_wake_blocks_activation() {
+fn runtime_v2_private_state_sanctuary_helpers_ambiguous_wake_blocks_activation() {
     let artifacts = runtime_v2_private_state_sanctuary_contract().expect("sanctuary artifacts");
 
     assert!(!artifacts.ambiguous_wake.activation_allowed);
@@ -153,7 +153,8 @@ fn runtime_v2_private_state_sanctuary_ambiguous_wake_blocks_activation() {
 }
 
 #[test]
-fn runtime_v2_private_state_sanctuary_quarantine_preserves_evidence_and_is_not_recovery_success() {
+fn runtime_v2_private_state_sanctuary_reports_quarantine_preserves_evidence_and_is_not_recovery_success(
+) {
     let artifacts = runtime_v2_private_state_sanctuary_contract().expect("sanctuary artifacts");
     let conflict = &artifacts.anti_equivocation_artifacts.conflict;
     let disposition = &artifacts.anti_equivocation_artifacts.disposition;
@@ -202,7 +203,7 @@ fn runtime_v2_private_state_sanctuary_quarantine_preserves_evidence_and_is_not_r
 }
 
 #[test]
-fn runtime_v2_private_state_sanctuary_operator_report_reviews_all_preserved_evidence() {
+fn runtime_v2_private_state_sanctuary_reports_operator_report_reviews_all_preserved_evidence() {
     let artifacts = runtime_v2_private_state_sanctuary_contract().expect("sanctuary artifacts");
     let mut incomplete_report = artifacts.operator_report.clone();
     let last_index = incomplete_report.reviewed_evidence_refs.len() - 1;
@@ -216,9 +217,8 @@ fn runtime_v2_private_state_sanctuary_operator_report_reviews_all_preserved_evid
         .contains("must review preserved evidence"));
 }
 
-#[cfg(feature = "slow-proof-tests")]
 #[test]
-fn runtime_v2_private_state_sanctuary_write_to_root_materializes_fixtures() {
+fn runtime_v2_private_state_sanctuary_reports_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_private_state_sanctuary_contract().expect("sanctuary artifacts");
     let root = common::unique_temp_path("private-state-sanctuary-write");
 
