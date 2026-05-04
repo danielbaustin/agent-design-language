@@ -188,4 +188,4 @@ explicitly not allowed to absorb.
 
 Current docs-review findings may still sharpen wording, rustdoc references, and
 public-spec boundaries, but they should not widen the core milestone scope away
-from governed tools.
+from governed tools. 
