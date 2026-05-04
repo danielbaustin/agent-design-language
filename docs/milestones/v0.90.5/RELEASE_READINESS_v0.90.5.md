@@ -32,6 +32,7 @@ remediation, handoff, and ceremony.
 - `docs/milestones/v0.90.5/MILESTONE_CHECKLIST_v0.90.5.md`
 - `docs/milestones/v0.90.5/RELEASE_PLAN_v0.90.5.md`
 - `docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`
+- `docs/milestones/v0.90.5/ADL_v0.90.5_THIRD_PARTY_REVIEW_HANDOFF.md`
 - `docs/milestones/v0.90.5/RELEASE_NOTES_v0.90.5.md`
 - `docs/milestones/v0.90.5/WP_EXECUTION_READINESS_v0.90.5.md`
 - `docs/milestones/v0.90.5/WP_ISSUE_WAVE_v0.90.5.yaml`
@@ -50,12 +51,10 @@ At WP-21 refresh:
 - WP-22 / #2587 through WP-26 / #2591 remain the internal review,
   third-party review, remediation, next-milestone planning, and release
   ceremony tail.
-- The only additional open v0.90.5 follow-on outside the canonical WP state
-  machine at this moment is #2700, a bounded tooling fix for orphaned
-  post-merge closeout watchers in PR-finish tests.
-- Root `README.md` review-ready active-line cleanup is tracked separately in
-  #2712 so the broad top-level project overview can be reviewed outside the
-  bounded WP-21 milestone-doc convergence package.
+- Root `README.md` review-ready active-line cleanup has already landed through
+  #2712.
+- ADR 0015 for governed tools execution authority has already landed through
+  #2717.
 
 ## Landed Proof Surface
 
