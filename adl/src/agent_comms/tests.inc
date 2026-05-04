@@ -504,6 +504,116 @@
     }
 
     #[test]
+    fn acip_coding_sample_contracts_cover_all_provider_lanes_and_output_modes() {
+        let cases = vec![
+            (
+                AcipCodingProviderLaneV1::CodexIssueWorktree,
+                AcipCodingExecutionModeV1::WorktreeEdit,
+                "writer-session-codex",
+                "gpt-5-codex",
+                "runtime/comms/coding/patch_manifest.json",
+                true,
+            ),
+            (
+                AcipCodingProviderLaneV1::ChatgptApi,
+                AcipCodingExecutionModeV1::UnappliedPatch,
+                "writer-session-openai",
+                "gpt-5-api",
+                "runtime/comms/coding/proposed_changes.diff",
+                false,
+            ),
+            (
+                AcipCodingProviderLaneV1::ClaudeApi,
+                AcipCodingExecutionModeV1::StructuredProposal,
+                "writer-session-anthropic",
+                "claude-api",
+                "runtime/comms/coding/proposal.json",
+                false,
+            ),
+            (
+                AcipCodingProviderLaneV1::LocalOllama,
+                AcipCodingExecutionModeV1::UnappliedPatch,
+                "writer-session-ollama",
+                "gemma3-local",
+                "runtime/comms/coding/proposed_changes.diff",
+                false,
+            ),
+            (
+                AcipCodingProviderLaneV1::OtherProposalOnly,
+                AcipCodingExecutionModeV1::StructuredProposal,
+                "writer-session-other",
+                "other-provider",
+                "runtime/comms/coding/proposal.json",
+                false,
+            ),
+        ];
+
+        for (provider_lane, execution_mode, session_id, model_ref, output_ref, worktree_required) in
+            cases
+        {
+            let contract =
+                sample_coding_invocation_contract(provider_lane.clone(), execution_mode.clone());
+            validate_acip_coding_invocation_contract_v1(&contract)
+                .expect("sample coding contract should validate");
+            assert_eq!(contract.approval_policy.writer_session_id, session_id);
+            assert_eq!(contract.approval_policy.writer_model_ref, model_ref);
+            assert_eq!(contract.issue_worktree_required, worktree_required);
+
+            let outcome = sample_coding_outcome(&contract);
+            validate_acip_coding_outcome_v1(&contract, &outcome)
+                .expect("sample coding outcome should validate");
+            assert_eq!(outcome.primary_output_ref, output_ref);
+            assert_eq!(
+                outcome.writer_session_id,
+                contract.approval_policy.writer_session_id
+            );
+            assert_eq!(
+                outcome.writer_model_ref,
+                contract.approval_policy.writer_model_ref
+            );
+        }
+    }
+
+    #[test]
+    fn acip_trace_sample_helpers_cover_review_and_coding_specialization_branches() {
+        let review_contract = sample_review_invocation_contract();
+        validate_acip_review_invocation_contract_v1(&review_contract)
+            .expect("sample review contract should validate");
+        let dispositions = &review_contract.disposition_contract.allowed_dispositions;
+        assert_eq!(dispositions.len(), 4);
+        assert!(dispositions.contains(&AcipReviewDispositionV1::Blessed));
+        assert!(dispositions.contains(&AcipReviewDispositionV1::Blocked));
+        assert!(dispositions.contains(&AcipReviewDispositionV1::NonProving));
+        assert!(dispositions.contains(&AcipReviewDispositionV1::Skipped));
+
+        let blocked = sample_review_outcome(
+            &review_contract,
+            AcipReviewDispositionV1::Blocked,
+            AcipReviewHandoffOutcomeV1::FixFindingsAndRerunReview,
+            Some("runtime/comms/review/findings/blocker.json".to_string()),
+            vec!["runtime/comms/review/residual_risk/known_gap.json".to_string()],
+            false,
+        );
+        validate_acip_review_outcome_v1(&review_contract, &blocked)
+            .expect("blocked review outcome should validate");
+
+        let skipped = sample_review_outcome(
+            &review_contract,
+            AcipReviewDispositionV1::Skipped,
+            AcipReviewHandoffOutcomeV1::OperatorWaiverRequired,
+            None,
+            vec!["runtime/comms/review/residual_risk/provider_unavailable.json".to_string()],
+            false,
+        );
+        validate_acip_review_outcome_v1(&review_contract, &skipped)
+            .expect("skipped review outcome should validate");
+
+        let failed_trace_bundle = sample_trace_bundle(AcipInvocationStatusV1::Failed);
+        validate_acip_trace_bundle_v1(&failed_trace_bundle)
+            .expect("failed trace bundle helper should validate");
+    }
+
+    #[test]
     fn acip_trace_bundle_schemas_and_fixtures_are_available() {
         let bundle_schema = acip_trace_bundle_v1_schema_json().expect("bundle schema");
         assert!(bundle_schema.contains("AcipTraceBundleV1"));
