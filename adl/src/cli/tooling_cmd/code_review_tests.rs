@@ -454,7 +454,7 @@ fn real_code_review_fixture_run_writes_expected_artifacts() {
         "--backend".to_string(),
         "fixture".to_string(),
         "--base".to_string(),
-        "HEAD".to_string(),
+        "origin/main".to_string(),
         "--head".to_string(),
         "HEAD".to_string(),
         "--file".to_string(),
