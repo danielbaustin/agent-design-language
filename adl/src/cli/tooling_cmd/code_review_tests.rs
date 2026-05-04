@@ -254,7 +254,7 @@ fn parse_args_accepts_safe_parent_and_ancestor_git_refs() {
 }
 
 #[test]
-fn changed_files_rejects_file_filter_outside_changed_set() {
+fn changed_files_accepts_file_filter_inside_changed_set() {
     let root = super::super::common::repo_root().expect("repo root");
     let mut args = test_args();
     args.base_ref = "HEAD".to_string();
@@ -262,8 +262,11 @@ fn changed_files_rejects_file_filter_outside_changed_set() {
     args.include_working_tree = false;
     args.include_files = vec!["adl/src/cli/tooling_cmd/code_review.rs".to_string()];
 
-    let err = changed_files(&root, &args).expect_err("unchanged file filter should fail");
-    assert!(err.to_string().contains("not in the changed file set"));
+    let files = changed_files(&root, &args).expect("changed file filter should pass");
+    assert_eq!(
+        files,
+        vec!["adl/src/cli/tooling_cmd/code_review.rs".to_string()]
+    );
 }
 
 #[test]
@@ -446,9 +449,9 @@ fn helpers_cover_url_normalization_prompt_and_unicode_truncation() {
     assert!(prompt.contains("actionable risks"));
     assert!(prompt.contains("adl.pr_review_result.v1"));
     assert_eq!(
-            redact_absolute_host_paths_for_prompt("/tmp/secret.txt /Users/alice/repo C:\\\\secret"),
-            "[REDACTED_HOST_PATH]/secret.txt [REDACTED_HOST_PATH]/alice/repo [REDACTED_HOST_PATH]\\\\secret"
-        );
+        redact_absolute_host_paths_for_prompt("/tmp/secret.txt /Users/alice/repo C:\\\\secret"),
+        "[REDACTED_HOST_PATH]/secret.txt [REDACTED_HOST_PATH]/alice/repo [REDACTED_HOST_PATH]\\\\\\secret"
+    );
     assert!(!contains_review_absolute_host_path("Expected signal:\\\\n"));
     assert!(contains_review_absolute_host_path("C:\\\\secret"));
 
