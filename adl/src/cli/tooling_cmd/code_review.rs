@@ -54,6 +54,13 @@ pub(super) fn real_code_review(args: &[String]) -> Result<()> {
     fs::create_dir_all(&args.out).context("create code-review output directory")?;
 
     let root = repo_root()?;
+    run_code_review_for_root(&root, &args)
+}
+
+fn run_code_review_for_root(
+    root: &std::path::Path,
+    args: &code_review_types::CodeReviewArgs,
+) -> Result<()> {
     let packet = build_packet(&root, &args)?;
     let packet_id = packet_id(&packet);
     let result = run_reviewer(&args, &packet, &packet_id)?;
@@ -86,6 +93,21 @@ pub(super) fn real_code_review(args: &[String]) -> Result<()> {
         args.out.display()
     );
     Ok(())
+}
+
+#[cfg(test)]
+pub(crate) fn real_code_review_for_root(root: &std::path::Path, args: &[String]) -> Result<()> {
+    if args
+        .iter()
+        .any(|arg| matches!(arg.as_str(), "help" | "--help" | "-h"))
+    {
+        println!("{}", tooling_usage());
+        return Ok(());
+    }
+
+    let args = code_review_args::parse_args(args)?;
+    fs::create_dir_all(&args.out).context("create code-review output directory")?;
+    run_code_review_for_root(root, &args)
 }
 
 fn packet_id(packet: &code_review_types::ReviewPacket) -> String {
