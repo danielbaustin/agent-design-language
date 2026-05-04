@@ -88,7 +88,7 @@ def parse_prompt(path: Path):
     in_labels = False
     for line in lines:
         if line.startswith("title: "):
-            title = line.split(":", 1)[1].strip().strip('"')
+            title = line.split(":", 1)[1].strip().strip("\"'")
             in_labels = False
         elif line.startswith("issue_number: "):
             issue_number = int(line.split(":", 1)[1].strip())
@@ -115,22 +115,22 @@ def parse_prompt_with_fields(path: Path):
     in_labels = False
     for line in lines:
         if line.startswith("title: "):
-            data["title"] = line.split(":", 1)[1].strip().strip('"')
+            data["title"] = line.split(":", 1)[1].strip().strip("\"'")
             in_labels = False
         elif line.startswith("issue_number: "):
             data["issue_number"] = int(line.split(":", 1)[1].strip())
             in_labels = False
         elif line.startswith("slug: "):
-            data["slug"] = line.split(":", 1)[1].strip().strip('"')
+            data["slug"] = line.split(":", 1)[1].strip().strip("\"'")
             in_labels = False
         elif line.startswith("wp: "):
-            data["wp"] = line.split(":", 1)[1].strip().strip('"')
+            data["wp"] = line.split(":", 1)[1].strip().strip("\"'")
             in_labels = False
         elif line.startswith("labels:"):
             in_labels = True
             data["labels"] = []
         elif in_labels and line.startswith("  - "):
-            data["labels"].append(line.split("  - ", 1)[1].strip().strip('"'))
+            data["labels"].append(line.split("  - ", 1)[1].strip().strip("\"'"))
         elif line and not line.startswith(" "):
             in_labels = False
     return data
