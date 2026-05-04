@@ -5,7 +5,8 @@ mod code_review_reviewer;
 mod code_review_types;
 
 #[cfg(test)]
-mod code_review_tests;
+#[path = "tests/code_review.rs"]
+mod tests;
 
 use anyhow::Context;
 use anyhow::Result;
