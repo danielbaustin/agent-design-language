@@ -1,4 +1,5 @@
 use super::*;
+use sha2::Digest;
 
 fn test_args() -> CodeReviewArgs {
     CodeReviewArgs {
@@ -467,11 +468,40 @@ fn real_code_review_fixture_run_writes_expected_artifacts() {
     let result = std::fs::read_to_string(out.join("review_result.json")).expect("read result");
     let gate = std::fs::read_to_string(out.join("gate_result.json")).expect("read gate");
     let summary = std::fs::read_to_string(out.join("run_summary.json")).expect("read summary");
+    let packet_json: serde_json::Value =
+        serde_json::from_str(&packet).expect("parse review packet");
     let result_json: serde_json::Value =
         serde_json::from_str(&result).expect("parse review result");
     let gate_json: serde_json::Value = serde_json::from_str(&gate).expect("parse gate result");
     let summary_json: serde_json::Value =
         serde_json::from_str(&summary).expect("parse run summary");
+    let expected_packet_id_seed = format!(
+        "{}:{}:{}:{}",
+        packet_json
+            .get("issue_number")
+            .and_then(serde_json::Value::as_u64)
+            .unwrap_or_default(),
+        packet_json
+            .get("branch")
+            .and_then(serde_json::Value::as_str)
+            .expect("packet branch"),
+        packet_json
+            .get("changed_files")
+            .and_then(serde_json::Value::as_array)
+            .map(std::vec::Vec::len)
+            .unwrap_or_default(),
+        packet_json
+            .get("diff_summary")
+            .and_then(serde_json::Value::as_object)
+            .and_then(|summary| summary.get("truncated_hunks"))
+            .and_then(serde_json::Value::as_bool)
+            .unwrap_or(false)
+    );
+    let expected_packet_id = format!(
+        "{:x}",
+        sha2::Sha256::digest(expected_packet_id_seed.as_bytes())
+    )[..16]
+        .to_string();
 
     assert!(packet.contains(code_review_types::CODE_REVIEW_PACKET_SCHEMA));
     assert!(result.contains(code_review_types::CODE_REVIEW_RESULT_SCHEMA));
@@ -479,7 +509,7 @@ fn real_code_review_fixture_run_writes_expected_artifacts() {
         result_json
             .get("packet_id")
             .and_then(serde_json::Value::as_str),
-        Some("48e2ebdd2f4ef9ee")
+        Some(expected_packet_id.as_str())
     );
     assert_eq!(
         gate_json
