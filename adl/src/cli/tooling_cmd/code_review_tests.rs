@@ -467,13 +467,33 @@ fn real_code_review_fixture_run_writes_expected_artifacts() {
     let result = std::fs::read_to_string(out.join("review_result.json")).expect("read result");
     let gate = std::fs::read_to_string(out.join("gate_result.json")).expect("read gate");
     let summary = std::fs::read_to_string(out.join("run_summary.json")).expect("read summary");
+    let result_json: serde_json::Value =
+        serde_json::from_str(&result).expect("parse review result");
+    let gate_json: serde_json::Value = serde_json::from_str(&gate).expect("parse gate result");
+    let summary_json: serde_json::Value =
+        serde_json::from_str(&summary).expect("parse run summary");
 
     assert!(packet.contains(code_review_types::CODE_REVIEW_PACKET_SCHEMA));
     assert!(result.contains(code_review_types::CODE_REVIEW_RESULT_SCHEMA));
-    assert!(result.contains("\"packet_id\":\""));
-    assert!(gate.contains("\"pr_open_allowed\":false"));
+    assert_eq!(
+        result_json
+            .get("packet_id")
+            .and_then(serde_json::Value::as_str),
+        Some("48e2ebdd2f4ef9ee")
+    );
+    assert_eq!(
+        gate_json
+            .get("pr_open_allowed")
+            .and_then(serde_json::Value::as_bool),
+        Some(false)
+    );
     assert!(summary.contains(code_review_types::CODE_REVIEW_SUMMARY_SCHEMA));
-    assert!(summary.contains("\"backend\":\"fixture\""));
+    assert_eq!(
+        summary_json
+            .get("backend")
+            .and_then(serde_json::Value::as_str),
+        Some("fixture")
+    );
 
     std::fs::remove_dir_all(&out).ok();
 }
