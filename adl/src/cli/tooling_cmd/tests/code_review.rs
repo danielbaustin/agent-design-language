@@ -458,8 +458,6 @@ fn code_review_reviewer_real_code_review_fixture_run_writes_expected_artifacts()
         "origin/main".to_string(),
         "--head".to_string(),
         "HEAD".to_string(),
-        "--file".to_string(),
-        "adl/src/cli/tooling_cmd/code_review.rs".to_string(),
     ];
 
     real_code_review(&args).expect("run fixture code review");
