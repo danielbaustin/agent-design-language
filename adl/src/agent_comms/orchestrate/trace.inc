@@ -1272,3 +1272,265 @@ pub fn validate_acip_trace_fixture_set_v1(fixtures: &AcipTraceFixtureSetV1) -> R
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod trace_private_tests {
+    use super::*;
+    use std::collections::BTreeSet;
+
+    fn known_event_ids(bundle: &AcipTraceBundleV1) -> BTreeSet<String> {
+        bundle
+            .trace_events
+            .iter()
+            .map(|event| event.event_id.clone())
+            .collect()
+    }
+
+    #[test]
+    fn trace_private_helpers_cover_string_and_enum_branches() {
+        ensure_safe_trace_summary(
+            "Bounded review surface with deterministic replay metadata only.",
+            "summary",
+        )
+        .expect("safe summary");
+        assert!(ensure_safe_trace_summary("contains token material", "summary")
+            .expect_err("token-like summary should fail")
+            .to_string()
+            .contains("must not leak protected trace content 'token'"));
+        assert!(ensure_safe_trace_summary("copied from /tmp/demo", "summary")
+            .expect_err("tmp path should fail")
+            .to_string()
+            .contains("must not leak protected trace content '/tmp/'"));
+
+        ensure_redacted_trace_ref(
+            "runtime/comms/trace/reviewer_view.json",
+            "visible_artifact_refs[]",
+        )
+        .expect("redacted trace ref");
+        assert!(ensure_redacted_trace_ref(
+            "runtime/comms/trace/raw_args.json",
+            "visible_artifact_refs[]",
+        )
+        .expect_err("raw args should fail")
+        .to_string()
+        .contains("must not expose unredacted trace ref 'raw_args'"));
+
+        assert_eq!(trace_event_kind_str(&AcipTraceEventKindV1::MessageCreated), "message_created");
+        assert_eq!(
+            trace_event_kind_str(&AcipTraceEventKindV1::InvocationContractDeclared),
+            "invocation_contract_declared"
+        );
+        assert_eq!(
+            trace_event_kind_str(&AcipTraceEventKindV1::DecisionRecorded),
+            "decision_recorded"
+        );
+        assert_eq!(
+            trace_event_kind_str(&AcipTraceEventKindV1::InvocationCompleted),
+            "invocation_completed"
+        );
+        assert_eq!(
+            trace_event_kind_str(&AcipTraceEventKindV1::InvocationRefused),
+            "invocation_refused"
+        );
+        assert_eq!(
+            trace_event_kind_str(&AcipTraceEventKindV1::InvocationFailed),
+            "invocation_failed"
+        );
+
+        assert_eq!(trace_audience_str(&AcipTraceAudienceV1::Actor), "actor");
+        assert_eq!(trace_audience_str(&AcipTraceAudienceV1::Operator), "operator");
+        assert_eq!(trace_audience_str(&AcipTraceAudienceV1::Reviewer), "reviewer");
+        assert_eq!(trace_audience_str(&AcipTraceAudienceV1::Public), "public");
+        assert_eq!(trace_audience_str(&AcipTraceAudienceV1::Observatory), "observatory");
+    }
+
+    #[test]
+    fn trace_private_helpers_cover_event_audience_and_replay_validators() {
+        let bundle = sample_trace_bundle(AcipInvocationStatusV1::Completed);
+        let known_ids = known_event_ids(&bundle);
+
+        for event in &bundle.trace_events {
+            validate_acip_trace_event_v1(event, &bundle.conversation_id)
+                .expect("sample event should validate");
+        }
+        for view in &bundle.audience_views {
+            validate_acip_trace_audience_view_v1(view, &known_ids)
+                .expect("sample audience should validate");
+        }
+        validate_acip_replay_contract_v1(&bundle.replay_contract)
+            .expect("sample replay contract should validate");
+
+        let mut missing_invocation = bundle.trace_events[1].clone();
+        missing_invocation.invocation_id = None;
+        assert!(validate_acip_trace_event_v1(&missing_invocation, &bundle.conversation_id)
+            .expect_err("non-message event must carry invocation_id")
+            .to_string()
+            .contains("invocation_contract_declared trace event must carry invocation_id and contract_ref"));
+
+        let mut missing_refused_evidence =
+            sample_trace_bundle(AcipInvocationStatusV1::Refused).trace_events[3].clone();
+        missing_refused_evidence.evidence_refs.clear();
+        assert!(validate_acip_trace_event_v1(
+            &missing_refused_evidence,
+            &bundle.conversation_id
+        )
+        .expect_err("refused event must carry evidence")
+        .to_string()
+        .contains("invocation_refused trace event must carry invocation_id, contract_ref, decision_event_ref, and evidence_refs"));
+
+        let mut failed_without_redaction =
+            sample_trace_bundle(AcipInvocationStatusV1::Failed).trace_events[3].clone();
+        failed_without_redaction.requires_redaction = false;
+        assert!(validate_acip_trace_event_v1(&failed_without_redaction, &bundle.conversation_id)
+            .expect_err("failed event must require redaction")
+            .to_string()
+            .contains("invocation_failed trace event must require redaction"));
+
+        let actor_view = bundle.audience_views[0].clone();
+        validate_acip_trace_audience_view_v1(&actor_view, &known_ids)
+            .expect("actor audience may retain private refs");
+
+        let mut bad_reviewer_view = bundle.audience_views[2].clone();
+        bad_reviewer_view
+            .visible_artifact_refs
+            .push("runtime/comms/trace/raw_args.json".to_string());
+        assert!(validate_acip_trace_audience_view_v1(&bad_reviewer_view, &known_ids)
+            .expect_err("reviewer raw args should fail")
+            .to_string()
+            .contains("visible_artifact_refs[] must not expose unredacted trace ref 'raw_args'"));
+
+        let mut bad_replay = bundle.replay_contract.clone();
+        bad_replay.fixture_ref = "/tmp/replay.json".to_string();
+        assert!(validate_acip_replay_contract_v1(&bad_replay)
+            .expect_err("absolute fixture ref should fail")
+            .to_string()
+            .contains("fixture_ref"));
+
+        let mut bad_replay_case = bundle.replay_contract.clone();
+        bad_replay_case.fixture_case = "../bad".to_string();
+        assert!(validate_acip_replay_contract_v1(&bad_replay_case)
+            .expect_err("unsafe fixture case should fail")
+            .to_string()
+            .contains("fixture_case"));
+    }
+
+    #[test]
+    fn trace_private_sample_builders_cover_review_and_coding_variants() {
+        let invocation = sample_invocation_contract();
+        let completed_event = sample_invocation_event(
+            &invocation,
+            AcipInvocationStatusV1::Completed,
+            vec!["runtime/comms/invocation/review_report.json".to_string()],
+            "completed".to_string(),
+            None,
+            None,
+            vec!["runtime/comms/invocation/evidence/completed_trace.json".to_string()],
+        );
+        assert_eq!(completed_event.invocation_id, invocation.invocation_id);
+        assert_eq!(completed_event.status, AcipInvocationStatusV1::Completed);
+        assert_eq!(
+            completed_event.contract_ref.as_deref(),
+            Some("runtime/comms/invocation/contracts/review_request.json")
+        );
+
+        let review_contract = sample_review_invocation_contract();
+        assert_eq!(review_contract.invocation.intent, AcipIntentV1::ReviewRequest);
+        assert_eq!(review_contract.invocation.expected_outputs.len(), 2);
+        assert!(review_contract.disposition_contract.gate_result_required);
+
+        let blocked_outcome = sample_review_outcome(
+            &review_contract,
+            AcipReviewDispositionV1::Blocked,
+            AcipReviewHandoffOutcomeV1::FixFindingsAndRerunReview,
+            Some("runtime/comms/review/findings.json".to_string()),
+            vec!["runtime/comms/review/residual_risk.json".to_string()],
+            false,
+        );
+        assert_eq!(blocked_outcome.invocation_id, review_contract.invocation.invocation_id);
+        assert_eq!(blocked_outcome.disposition, AcipReviewDispositionV1::Blocked);
+        assert!(!blocked_outcome.pr_open_allowed);
+
+        for (provider_lane, expected_session, expected_model, expected_worktree_required) in [
+            (
+                AcipCodingProviderLaneV1::CodexIssueWorktree,
+                "writer-session-codex",
+                "gpt-5-codex",
+                true,
+            ),
+            (
+                AcipCodingProviderLaneV1::ChatgptApi,
+                "writer-session-openai",
+                "gpt-5-api",
+                false,
+            ),
+            (
+                AcipCodingProviderLaneV1::ClaudeApi,
+                "writer-session-anthropic",
+                "claude-api",
+                false,
+            ),
+            (
+                AcipCodingProviderLaneV1::LocalOllama,
+                "writer-session-ollama",
+                "gemma3-local",
+                false,
+            ),
+            (
+                AcipCodingProviderLaneV1::OtherProposalOnly,
+                "writer-session-other",
+                "other-provider",
+                false,
+            ),
+        ] {
+            for (execution_mode, expected_patch_format, expected_output_ref) in [
+                (
+                    AcipCodingExecutionModeV1::WorktreeEdit,
+                    "patch_manifest_v1",
+                    "runtime/comms/coding/patch_manifest.json",
+                ),
+                (
+                    AcipCodingExecutionModeV1::UnappliedPatch,
+                    "unified_diff",
+                    "runtime/comms/coding/proposed_changes.diff",
+                ),
+                (
+                    AcipCodingExecutionModeV1::StructuredProposal,
+                    "structured_proposal_v1",
+                    "runtime/comms/coding/proposal.json",
+                ),
+            ] {
+                let contract =
+                    sample_coding_invocation_contract(provider_lane.clone(), execution_mode.clone());
+                assert_eq!(contract.provider_lane, provider_lane);
+                assert_eq!(contract.execution_mode, execution_mode);
+                assert_eq!(contract.patch_format, expected_patch_format);
+                assert_eq!(
+                    contract.approval_policy.writer_session_id,
+                    expected_session.to_string()
+                );
+                assert_eq!(
+                    contract.approval_policy.writer_model_ref,
+                    expected_model.to_string()
+                );
+                assert_eq!(
+                    contract.issue_worktree_required,
+                    expected_worktree_required
+                );
+
+                let outcome = sample_coding_outcome(&contract);
+                assert_eq!(outcome.invocation_id, contract.invocation.invocation_id);
+                assert_eq!(outcome.provider_lane, provider_lane);
+                assert_eq!(outcome.execution_mode, execution_mode);
+                assert_eq!(outcome.primary_output_ref, expected_output_ref);
+                assert_eq!(
+                    outcome.writer_session_id,
+                    contract.approval_policy.writer_session_id
+                );
+                assert_eq!(
+                    outcome.writer_model_ref,
+                    contract.approval_policy.writer_model_ref
+                );
+            }
+        }
+    }
+}

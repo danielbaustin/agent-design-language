@@ -448,6 +448,12 @@ fn code_review_build_packet_includes_staged_and_unstaged_worktree_diffs() {
 
 #[test]
 fn code_review_reviewer_real_code_review_fixture_run_writes_expected_artifacts() {
+    let root = init_temp_git_repo_with_changed_file(
+        "fixture-run",
+        "adl/src/cli/tooling_cmd/code_review.rs",
+        "pub fn sample() -> u8 { 1 }\n",
+        "pub fn sample() -> u8 { 2 }\n",
+    );
     let out = unique_temp_path("fixture-run");
     let args = vec![
         "--out".to_string(),
@@ -455,12 +461,15 @@ fn code_review_reviewer_real_code_review_fixture_run_writes_expected_artifacts()
         "--backend".to_string(),
         "fixture".to_string(),
         "--base".to_string(),
-        "origin/main".to_string(),
+        "HEAD".to_string(),
         "--head".to_string(),
         "HEAD".to_string(),
+        "--include-working-tree".to_string(),
+        "--file".to_string(),
+        "adl/src/cli/tooling_cmd/code_review.rs".to_string(),
     ];
 
-    real_code_review(&args).expect("run fixture code review");
+    super::real_code_review_for_root(&root, &args).expect("run fixture code review");
 
     let packet = std::fs::read_to_string(out.join("review_packet.json")).expect("read packet");
     let result = std::fs::read_to_string(out.join("review_result.json")).expect("read result");
@@ -523,6 +532,7 @@ fn code_review_reviewer_real_code_review_fixture_run_writes_expected_artifacts()
         Some("fixture")
     );
 
+    std::fs::remove_dir_all(&root).ok();
     std::fs::remove_dir_all(&out).ok();
 }
 

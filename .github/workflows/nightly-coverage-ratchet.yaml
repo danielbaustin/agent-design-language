@@ -68,7 +68,7 @@ jobs:
               echo "- Checks step outcome: **${{ steps.checks.outcome }}**"
               echo
               echo "## Blocker"
-              echo "- `coverage-summary.json` was not produced. Coverage tooling likely failed before report generation."
+              echo '- `coverage-summary.json` was not produced. Coverage tooling likely failed before report generation.'
             } > "$report_path"
             echo "has_below_threshold=true" >> "$GITHUB_OUTPUT"
             echo "total_coverage=unknown" >> "$GITHUB_OUTPUT"
@@ -191,7 +191,7 @@ jobs:
 
           existing="$(gh issue list --state open --search "$title in:title" --json number,title --jq '.[] | select(.title == "'"$title"'") | .number' | head -n 1 || true)"
           if [ -n "${existing:-}" ]; then
-            gh issue comment "$existing" --body-file "$body_file"
+            gh issue edit "$existing" --body-file "$body_file"
           else
             gh issue create --title "$title" --body-file "$body_file"
           fi
