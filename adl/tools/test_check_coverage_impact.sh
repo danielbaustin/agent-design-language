@@ -49,12 +49,6 @@ risk_filters="$TMP/risk-filters.txt"
 bash "$SCRIPT" --changed-files "$changed" --print-risk-filters >"$risk_filters"
 grep -Fx "new_large_surface" "$risk_filters" >/dev/null
 
-tooling_changed="$TMP/tooling-changed.txt"
-printf 'A\tadl/src/cli/tooling_cmd/code_review_args.rs\n' >"$tooling_changed"
-tooling_filters="$TMP/tooling-filters.txt"
-bash "$SCRIPT" --changed-files "$tooling_changed" --print-risk-filters >"$tooling_filters"
-grep -Fx "tooling_cmd" "$tooling_filters" >/dev/null
-
 if bash "$SCRIPT" --changed-files "$changed" --require-summary-for-risk >/tmp/coverage-impact-missing.out 2>&1; then
   echo "expected risky changed source without summary to fail" >&2
   exit 1

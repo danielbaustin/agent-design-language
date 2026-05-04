@@ -127,7 +127,7 @@ fn init_temp_git_repo_with_changed_file(
 }
 
 #[test]
-fn parse_args_preserves_backend_after_out_and_accepts_timeout() {
+fn code_review_args_parse_args_preserves_backend_after_out_and_accepts_timeout() {
     let args = vec![
         "--out".to_string(),
         "artifacts/review".to_string(),
@@ -353,7 +353,7 @@ fn changed_files_rejects_file_filter_outside_changed_set() {
 }
 
 #[test]
-fn build_packet_covers_repo_slice_context_and_static_evidence() {
+fn code_review_build_packet_covers_repo_slice_context_and_static_evidence() {
     let root = init_temp_git_repo_with_changed_file(
         "build-packet-static",
         "src/sample.rs",
@@ -539,7 +539,7 @@ fn read_file_prefix_bounds_file_context_memory() {
 }
 
 #[test]
-fn helpers_cover_safe_worktree_git_output_git_show_and_write_json() {
+fn code_review_helpers_cover_safe_worktree_git_output_git_show_and_write_json() {
     let root = super::super::common::repo_root().expect("repo root");
     let canonical_root = root.canonicalize().expect("canonical root");
     let excerpt = code_review_helpers::safe_read_worktree_file(
@@ -603,7 +603,7 @@ fn fixture_review_covers_blocked_and_same_session_paths() {
 }
 
 #[test]
-fn reviewer_result_helpers_cover_skipped_non_proving_and_run_reviewer() {
+fn code_review_reviewer_result_helpers_cover_skipped_non_proving_and_run_reviewer() {
     let args = test_args();
     let packet = test_packet();
 
@@ -737,7 +737,7 @@ fn evaluate_gate_covers_static_failure_and_blocking_finding() {
 }
 
 #[test]
-fn reviewer_types_and_gate_cover_enum_and_schema_surfaces() {
+fn code_review_types_and_gate_cover_enum_and_schema_surfaces() {
     assert_eq!(ReviewerBackend::Fixture.as_str(), "fixture");
     assert_eq!(ReviewerBackend::Ollama.as_str(), "ollama");
 
