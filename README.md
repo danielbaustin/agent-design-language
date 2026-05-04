@@ -90,17 +90,16 @@ Actually run the same minimal example and emit trace/artifact output:
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
 ```
 
-### If you want the active v0.90.5 review entry package
+### If you want the current v0.90.5 package overview
 
-Read the current reviewer-facing milestone entry surface:
+Read the current milestone package entry surface:
 
 ```text
 docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md
 ```
 
-That document is the fastest way to see what has landed, what is being
-claimed, what is explicitly not being claimed, and what remains in the release
-tail.
+That document is the fastest way to see the current package scope, proof
+surfaces, commands, and milestone boundaries.
 
 ### If you want the current feature-proof coverage packet
 
@@ -137,8 +136,8 @@ bash adl/tools/demo_v0871_suite.sh
 ## Current Status
 
 - Active milestone: **v0.90.5**
-- Current release state: **`v0.90.5` is in the review/release tail; `WP-22`
-  through `WP-26` remain**
+- Current flagship package: **Governed Tools v1.0 plus the first landed
+  Comms / ACIP tranche**
 - Most recently completed milestone: **v0.90.4**
 - Current crate version: **0.90.5**
 - Version note: **`v0.90.5` is the active Governed Tools v1.0 line**
@@ -154,21 +153,22 @@ active review or closeout, what is demoable, and what is still planned.
 ## Current Milestone
 
 `v0.90.5` is the active Governed Tools v1.0 milestone. Its tracked package
-lives under `docs/milestones/v0.90.5/`. The issue wave opened as `#2566`
-through `#2591`, with the current remaining tail in `WP-22` through `WP-26`:
+lives under `docs/milestones/v0.90.5/`. The package brings together:
 
-- internal review
-- external / third-party review
-- accepted-finding remediation
-- next-milestone planning handoff
-- release ceremony
+- governed tool schemas and conformance
+- ADL-native authority, privacy, visibility, and delegation contracts
+- deterministic registry, compiler, normalization, policy, and executor layers
+- trace, replay, redaction, and evidence surfaces
+- bounded benchmark and local/Gemma evaluation lanes
+- the flagship governed-tools demo
+- the first landed Comms / ACIP integration slice
 
 The current reviewer entry surface is:
 
 - `docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`
 
-That document should be treated as the active milestone truth for review-cycle
-work, not as a final release approval.
+That document is the best single package-level entrypoint for the current
+milestone.
 
 `v0.90.4` is the most recently completed milestone. It landed the bounded
 citizen economics and contract-market package and remains the prior completed
