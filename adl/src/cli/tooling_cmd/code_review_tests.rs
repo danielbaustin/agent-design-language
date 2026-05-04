@@ -280,6 +280,47 @@ fn read_file_prefix_bounds_file_context_memory() {
 }
 
 #[test]
+fn helpers_cover_safe_worktree_git_output_git_show_and_write_json() {
+    let root = super::super::common::repo_root().expect("repo root");
+    let canonical_root = root.canonicalize().expect("canonical root");
+    let excerpt = code_review_helpers::safe_read_worktree_file(
+        &root,
+        &canonical_root,
+        "adl/src/cli/tooling_cmd/code_review.rs",
+        96,
+    )
+    .expect("safe read");
+    assert!(excerpt.contains("mod code_review_args;"));
+
+    let head_excerpt = code_review_helpers::git_show_file_prefix(
+        &root,
+        "HEAD",
+        "adl/src/cli/tooling_cmd/code_review.rs",
+        96,
+    )
+    .expect("git show excerpt");
+    assert!(head_excerpt.contains("mod code_review_args;"));
+
+    let head = code_review_helpers::git_output(&root, &["rev-parse", "--abbrev-ref", "HEAD"])
+        .expect("git output");
+    assert!(!head.trim().is_empty());
+
+    let out = std::env::temp_dir().join(format!(
+        "adl-code-review-write-json-{}-{}.json",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("system time")
+            .as_nanos()
+    ));
+    code_review_helpers::write_json(&out, &test_packet()).expect("write review packet");
+    let written = std::fs::read_to_string(&out).expect("read written packet");
+    std::fs::remove_file(&out).ok();
+    assert!(written.contains("\"schema_version\": \"adl.pr_review_packet.v1\""));
+    assert!(written.contains("\"review_scope\": \"test review scope\""));
+}
+
+#[test]
 fn fixture_review_covers_blocked_and_same_session_paths() {
     let packet = test_packet();
     let packet_id = "packet-id";
@@ -300,6 +341,39 @@ fn fixture_review_covers_blocked_and_same_session_paths() {
     let same_session = fixture_review(&same_session_args, &packet, packet_id);
     assert_eq!(same_session.disposition, ReviewDisposition::NonProving);
     assert!(same_session.same_session_as_writer);
+}
+
+#[test]
+fn reviewer_result_helpers_cover_skipped_non_proving_and_run_reviewer() {
+    let args = test_args();
+    let packet = test_packet();
+
+    let skipped = code_review_reviewer::skipped_review_result(
+        &args,
+        &packet,
+        "packet-id",
+        "writer".to_string(),
+        "gemma4:test".to_string(),
+        "live review disabled".to_string(),
+    );
+    assert_eq!(skipped.disposition, ReviewDisposition::Skipped);
+    assert!(skipped.same_session_as_writer);
+    assert_eq!(skipped.reviewer_backend, "fixture");
+
+    let non_proving = code_review_reviewer::non_proving_review_result(
+        &args,
+        &packet,
+        "packet-id",
+        "reviewer".to_string(),
+        "gemma4:test".to_string(),
+        "packet contained redaction risk".to_string(),
+    );
+    assert_eq!(non_proving.disposition, ReviewDisposition::NonProving);
+    assert!(!non_proving.same_session_as_writer);
+
+    let fixture = run_reviewer(&args, &packet, "packet-id").expect("fixture run");
+    assert_eq!(fixture.disposition, ReviewDisposition::NonProving);
+    assert_eq!(fixture.packet_id, "packet-id");
 }
 
 #[test]
@@ -404,6 +478,39 @@ fn evaluate_gate_covers_static_failure_and_blocking_finding() {
 }
 
 #[test]
+fn reviewer_types_and_gate_cover_enum_and_schema_surfaces() {
+    assert_eq!(ReviewerBackend::Fixture.as_str(), "fixture");
+    assert_eq!(ReviewerBackend::Ollama.as_str(), "ollama");
+
+    let packet_json =
+        serde_json::to_string(&test_packet()).expect("serialize packet for schema visibility");
+    assert!(packet_json.contains(CODE_REVIEW_PACKET_SCHEMA));
+
+    let result = review_result(
+        &test_args(),
+        &test_packet(),
+        "packet-id",
+        ReviewResultPartsCompat {
+            reviewer_session: "reviewer".to_string(),
+            reviewer_model: "gemma4:test".to_string(),
+            same_session: false,
+            disposition: ReviewDisposition::Blessed,
+            findings: Vec::new(),
+            residual_risk: vec![
+                "Reviewed docs/example.md context and found no actionable defects.".to_string(),
+            ],
+        },
+    );
+    let gate = evaluate_gate(&result, &test_packet());
+    assert!(gate.pr_open_allowed);
+    assert_eq!(gate.gate_disposition, "allow_with_evidence");
+
+    let result_json = serde_json::to_string(&result).expect("serialize review result");
+    assert!(result_json.contains(CODE_REVIEW_RESULT_SCHEMA));
+    assert!(result_json.contains("\"visibility_mode\":\"packet_only\""));
+}
+
+#[test]
 fn parse_model_review_json_accepts_fenced_json_and_filters_string_arrays() {
     let raw = r#"```json
 {
@@ -454,6 +561,7 @@ fn helpers_cover_url_normalization_prompt_and_unicode_truncation() {
     );
     assert!(!contains_review_absolute_host_path("Expected signal:\\\\n"));
     assert!(contains_review_absolute_host_path("C:\\\\secret"));
+    assert!(!contains_review_absolute_host_path("tokenC:\\\\secret"));
 
     let (truncated, was_truncated) = truncate("éclair", 3);
     assert!(was_truncated);
