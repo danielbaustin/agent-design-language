@@ -113,6 +113,7 @@ changed_source_rows="$(
     | normalize_changed_path \
     | awk -F '\t' '
         $2 ~ /^adl\/src\/.*\.rs$/ &&
+        $2 !~ /^adl\/src\/.*_tests\.rs$/ &&
         $2 !~ /^adl\/src\/(.+\/)?tests\.rs$/ &&
         $2 !~ /^adl\/src\/.*\/tests\/.*\.rs$/ {
           print $1 "\t" $2

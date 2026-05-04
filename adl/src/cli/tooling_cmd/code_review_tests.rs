@@ -67,6 +67,38 @@ fn test_packet() -> ReviewPacket {
     }
 }
 
+fn unique_temp_path(label: &str) -> std::path::PathBuf {
+    std::env::temp_dir().join(format!(
+        "adl-code-review-{label}-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("system time")
+            .as_nanos()
+    ))
+}
+
+fn init_temp_git_repo(label: &str) -> std::path::PathBuf {
+    let root = unique_temp_path(label);
+    std::fs::create_dir_all(&root).expect("create temp repo");
+    std::process::Command::new("git")
+        .arg("init")
+        .current_dir(&root)
+        .output()
+        .expect("git init");
+    std::process::Command::new("git")
+        .args(["config", "user.email", "codex@example.test"])
+        .current_dir(&root)
+        .output()
+        .expect("git config email");
+    std::process::Command::new("git")
+        .args(["config", "user.name", "Codex Test"])
+        .current_dir(&root)
+        .output()
+        .expect("git config name");
+    root
+}
+
 #[test]
 fn parse_args_preserves_backend_after_out_and_accepts_timeout() {
     let args = vec![
@@ -267,6 +299,137 @@ fn changed_files_accepts_file_filter_inside_changed_set() {
         files,
         vec!["adl/src/cli/tooling_cmd/code_review.rs".to_string()]
     );
+}
+
+#[test]
+fn build_packet_covers_repo_slice_context_and_static_evidence() {
+    let root = super::super::common::repo_root().expect("repo root");
+    let mut args = test_args();
+    args.base_ref = "HEAD".to_string();
+    args.head_ref = "HEAD".to_string();
+    args.visibility_mode = VisibilityMode::ReadOnlyRepo;
+    args.include_files = vec!["adl/src/cli/tooling_cmd/code_review.rs".to_string()];
+
+    let packet = code_review_build::build_packet(&root, &args).expect("build review packet");
+    assert_eq!(
+        packet.schema_version,
+        code_review_types::CODE_REVIEW_PACKET_SCHEMA
+    );
+    assert_eq!(
+        packet.changed_files,
+        vec!["adl/src/cli/tooling_cmd/code_review.rs".to_string()]
+    );
+    assert_eq!(packet.diff_summary.files_changed, 1);
+    assert!(!packet.branch.trim().is_empty());
+    assert!(packet
+        .file_contexts
+        .first()
+        .expect("file context")
+        .current_excerpt
+        .contains("mod code_review_args;"));
+    assert_eq!(packet.static_analysis_evidence.len(), 1);
+    assert_eq!(packet.static_analysis_evidence[0].status, "PASS");
+    assert!(packet.repo_slice_manifest.read_only);
+    assert!(!packet.repo_slice_manifest.write_allowed);
+    assert!(!packet.redaction_status.absolute_host_paths_present);
+}
+
+#[test]
+fn build_packet_includes_staged_and_unstaged_worktree_diffs() {
+    let root = init_temp_git_repo("worktree-diff");
+    let source_dir = root.join("src");
+    std::fs::create_dir_all(&source_dir).expect("create src dir");
+    let source_file = source_dir.join("sample.rs");
+    std::fs::write(&source_file, "fn sample() {\n    println!(\"v1\");\n}\n").expect("write v1");
+    std::process::Command::new("git")
+        .args(["add", "."])
+        .current_dir(&root)
+        .output()
+        .expect("git add v1");
+    std::process::Command::new("git")
+        .args(["commit", "-m", "initial"])
+        .current_dir(&root)
+        .output()
+        .expect("git commit v1");
+
+    std::fs::write(
+        &source_file,
+        "fn sample() {\n    println!(\"v2 staged\");\n}\n",
+    )
+    .expect("write staged content");
+    std::process::Command::new("git")
+        .args(["add", "src/sample.rs"])
+        .current_dir(&root)
+        .output()
+        .expect("git add staged content");
+    std::fs::write(
+        &source_file,
+        "fn sample() {\n    println!(\"v2 staged\");\n    println!(\"v3 unstaged\");\n}\n",
+    )
+    .expect("write unstaged content");
+
+    let mut args = test_args();
+    args.base_ref = "HEAD".to_string();
+    args.head_ref = "HEAD".to_string();
+    args.include_working_tree = true;
+    args.include_files = vec!["src/sample.rs".to_string()];
+    args.max_diff_bytes = 4096;
+
+    let packet = code_review_build::build_packet(&root, &args).expect("build review packet");
+    let hunk = packet.focused_diff_hunks.first().expect("diff hunk");
+    assert!(hunk
+        .diff_excerpt
+        .contains("--- staged working tree diff ---"));
+    assert!(hunk
+        .diff_excerpt
+        .contains("--- unstaged working tree diff ---"));
+    assert!(packet.file_contexts[0]
+        .current_excerpt
+        .contains("v3 unstaged"));
+    assert_eq!(packet.static_analysis_evidence.len(), 2);
+    assert_eq!(
+        packet.static_analysis_evidence[0].summary,
+        "working tree whitespace check"
+    );
+    assert_eq!(
+        packet.static_analysis_evidence[1].summary,
+        "committed diff whitespace check"
+    );
+
+    std::fs::remove_dir_all(&root).ok();
+}
+
+#[test]
+fn real_code_review_fixture_run_writes_expected_artifacts() {
+    let out = unique_temp_path("fixture-run");
+    let args = vec![
+        "--out".to_string(),
+        out.display().to_string(),
+        "--backend".to_string(),
+        "fixture".to_string(),
+        "--base".to_string(),
+        "HEAD".to_string(),
+        "--head".to_string(),
+        "HEAD".to_string(),
+        "--file".to_string(),
+        "adl/src/cli/tooling_cmd/code_review.rs".to_string(),
+    ];
+
+    real_code_review(&args).expect("run fixture code review");
+
+    let packet = std::fs::read_to_string(out.join("review_packet.json")).expect("read packet");
+    let result = std::fs::read_to_string(out.join("review_result.json")).expect("read result");
+    let gate = std::fs::read_to_string(out.join("gate_result.json")).expect("read gate");
+    let summary = std::fs::read_to_string(out.join("run_summary.json")).expect("read summary");
+
+    assert!(packet.contains(code_review_types::CODE_REVIEW_PACKET_SCHEMA));
+    assert!(result.contains(code_review_types::CODE_REVIEW_RESULT_SCHEMA));
+    assert!(result.contains("\"packet_id\":\""));
+    assert!(gate.contains("\"pr_open_allowed\":false"));
+    assert!(summary.contains(code_review_types::CODE_REVIEW_SUMMARY_SCHEMA));
+    assert!(summary.contains("\"backend\":\"fixture\""));
+
+    std::fs::remove_dir_all(&out).ok();
 }
 
 #[test]
