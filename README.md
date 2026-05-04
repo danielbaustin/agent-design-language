@@ -1,30 +1,78 @@
 # Agent Design Language (ADL)
 
-Agent Design Language (ADL) is now more than a schema or notation layer. It is a deterministic orchestration system for AI workflows: a language, a reference Rust runtime, a CLI, review surfaces, and milestone proof packages that make agent execution inspectable and falsifiable.
+Agent Design Language (ADL) is a governed execution system for AI workflows.
+It combines:
 
-ADL is built for teams that want AI systems to survive code review, ops review, and postmortem analysis. It turns orchestration into an engineering surface with explicit contracts, bounded runtime behavior, durable artifacts, and repository-visible proof instead of prompt theater.
+- a structured language for workflows, tools, tasks, and agents
+- a Rust runtime and CLI with explicit execution semantics
+- trace, replay, and review surfaces that make claims inspectable
+- milestone proof packages that show what the repository can actually do
 
-ADL still starts from structured artifacts:
-- providers
-- tools
-- agents
-- tasks
-- workflows
-- runs
-
-But those artifacts are not the whole story. In the current repository, they are schema-validated, compiled into a deterministic execution plan, and executed by a real runtime with explicit semantics for concurrency, failure handling, retries, signing, tracing, remote execution boundaries, and artifact emission. Every run leaves behind stable review surfaces under `.adl/`, so execution can be inspected, replayed, and reviewed with confidence.
+ADL is built for teams that want agent systems to survive code review, ops
+review, security review, and postmortem analysis. The goal is not “more agent
+magic.” The goal is turning orchestration into an engineering surface with
+bounded behavior, explicit authority, and durable evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.90.4%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.90.5%20active-blue)
 
-Today, ADL includes:
-- a reference Rust runtime and CLI for deterministic workflow execution
-- explicit planning and execution semantics rather than hidden orchestration logic
-- bounded concurrency, retries, failure policy, and signing/verification surfaces
-- trace, run-manifest, and artifact emission surfaces for replay and review
-- provider and remote-execution boundaries that preserve local scheduler control
-- milestone-specific demo and review packages that make claims inspectable
+## Why This Is Interesting
+
+Most agent stacks are still too hard to trust. They can look impressive in a
+demo while remaining opaque in production.
+
+ADL takes the opposite approach:
+
+- execution authority is explicit instead of hidden in prompts
+- tool use is governed rather than assumed safe by default
+- traces and artifacts are first-class outputs, not debug leftovers
+- replay and review are part of the product surface
+- milestone packages make repo claims falsifiable
+
+That makes ADL interesting not just as a language, but as infrastructure for
+serious agent operations.
+
+## What Ships Today
+
+In the current repository, ADL includes:
+
+- a Rust runtime and CLI for deterministic workflow execution
+- explicit planning and execution semantics instead of hidden orchestration
+  logic
+- bounded concurrency, retries, failure policy, and signing/verification
+  surfaces
+- trace, run-manifest, replay, and artifact emission surfaces
+- provider and remote-execution boundaries that preserve local scheduler
+  control
+- reviewer-facing milestone proof packages and runnable demos
+
+The active milestone, `v0.90.5`, adds the Governed Tools v1.0 package and the
+first landed Comms / ACIP tranche:
+
+- Universal Tool Schema v1.0 public-compatible schema and conformance
+- ADL Capability Contract v1.0 authority, privacy, visibility, delegation,
+  trace, and replay semantics
+- deterministic tool registry, compiler, normalization, policy, and governed
+  executor behavior
+- dangerous negative safety tests that fail closed
+- bounded model-proposal benchmarking and local/Gemma-focused evaluation
+- the Governed Tools v1.0 flagship demo
+- first-level agent communication surfaces for message envelopes, invocation,
+  identity shape, redaction, and review/coding-agent specialization
+
+## Why ADL Feels Different
+
+ADL is not trying to be a vague “agent framework.” Its center of gravity is
+execution truth:
+
+- what runs
+- what authority it had
+- what artifacts were emitted
+- what reviewers can inspect
+- what the repository can prove today
+
+That bias toward evidence and boundedness is the project’s main differentiator.
 
 ## Start Here
 
@@ -42,127 +90,110 @@ Actually run the same minimal example and emit trace/artifact output:
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
 ```
 
-### If you want the completed v0.90 long-lived release proof package
+### If you want the current v0.90.5 package overview
 
-Run the v0.90 readiness and proof surfaces from the completed milestone
-package:
+Read the current milestone package entry surface:
+
+```text
+docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md
+```
+
+That document is the fastest way to see the current package scope, proof
+surfaces, commands, and milestone boundaries.
+
+### If you want the current feature-proof coverage packet
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0905/feature-proof-coverage.json
+```
+
+### If you want the current flagship demo
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- demo demo-v0905-governed-tools-flagship --run --trace --out artifacts/v0905/flagship-demo --no-open
+```
+
+### If you want the bounded local-model PR reviewer fixture lane
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- tooling code-review --out artifacts/v0905/local-model-pr-reviewer-fixture --backend fixture --visibility read-only-repo --issue 2603 --writer-session codex-writer --reviewer-session fixture-reviewer
+```
+
+### If you want a completed milestone proof package
+
+Run the completed `v0.90` long-lived release proof package:
 
 ```bash
 python3 adl/tools/check_v090_milestone_state.py
 ```
 
-This is the best top-level entrypoint if you want to see the milestone-compression drift check and proof graph for the latest completed milestone.
-
-### If you want the latest completed v0.90.2 first-run proof package
-
-Generate the feature-proof coverage packet:
-
-```bash
-cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0902/feature-proof-coverage.json
-```
-
-Run the integrated bounded CSM first-run demo:
-
-```bash
-cargo run --manifest-path adl/Cargo.toml -- runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run
-```
-
-### If you want the flagship v0.90 demo
-
-Run the long-lived stock-league package, the flagship bounded recurring-agent demo carried by the v0.90 release:
-
-```bash
-cargo run --manifest-path adl/Cargo.toml -- demo demo-j-v090-stock-league-recurring --run --trace --out out --no-open
-```
-
-### If you want the previous runtime milestone package
+Or run the previous runtime milestone package:
 
 ```bash
 bash adl/tools/demo_v0871_suite.sh
 ```
 
-## Why ADL
-
-ADL focuses on making agent systems reliable, inspectable, and usable in real engineering workflows.
-
-ADL is built for readers and builders who care about:
-- deterministic orchestration with clear runtime behavior
-- explicit workflow contracts and structured execution surfaces
-- stable proof surfaces that support review and debugging
-- bounded, inspectable agent behavior
-- local and enterprise-ready control over execution behavior
-
-ADL is not trying to be a vague "agent framework." Its center of gravity is execution truth: what runs, what artifacts are emitted, what reviewers can inspect, and what the repository can prove today.
-
-## What ADL Provides
-
-ADL currently provides:
-- a Rust runtime and CLI for deterministic workflow execution
-- structured workflow, task, and provider definitions
-- deterministic planning and execution semantics
-- bounded concurrency, retries, and failure policies
-- signing and verification surfaces for safer execution
-- remote-execution wiring without giving up local scheduler control
-- trace events, run manifests, and replay-friendly artifact roots
-- bounded scientific / Gödel-style execution loops with reviewable artifacts
-- reviewer-facing milestone proof packages and runnable demos that are meant to be inspectable and falsifiable
-
-## Quick Start
-
-For the most common entrypoints, use the `Start Here` section above.
-
-Other useful entrypoints:
-- previous runtime-completion milestone package: `bash adl/tools/demo_v0871_suite.sh`
-- completed substrate milestone package: `bash adl/tools/demo_v087_suite.sh`
-- bounded local operational-skills demo: `bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run`
-- bounded multi-agent discussion demo: `bash adl/tools/demo_v0871_multi_agent_discussion.sh`
-
 ## Current Status
 
-- Active milestone: **v0.90.4**
-- Current release state: **v0.90.3 is released; v0.90.4 has only WP-20 (#2440) remaining in the release tail**
-- Most recently completed milestone: **v0.90.3**
-- Current crate version: **0.90.4**
-- Version note: **v0.90.4 is the active citizen economics and contract-market development line**
-- Previous completed milestone package: **v0.90.2**
-- Previous completed milestone: **v0.90.1**
+- Active milestone: **v0.90.5**
+- Current flagship package: **Governed Tools v1.0 plus the first landed
+  Comms / ACIP tranche**
+- Most recently completed milestone: **v0.90.4**
+- Current crate version: **0.90.5**
+- Version note: **`v0.90.5` is the active Governed Tools v1.0 line**
+- Previous completed milestone package: **v0.90.3**
+- Previous completed milestone: **v0.90.2**
 - Project changelog: `CHANGELOG.md`
 
-ADL is in active development. This repository contains both implemented runtime surfaces and milestone/spec/planning documents. Read the milestone docs as bounded engineering records: they distinguish what has shipped, what is under active review or closeout, what is demoable, and what is still planned.
+ADL is in active development. This repository contains both implemented runtime
+surfaces and milestone/spec/planning documents. Read the milestone docs as
+bounded engineering records: they distinguish what has shipped, what is under
+active review or closeout, what is demoable, and what is still planned.
 
 ## Current Milestone
 
-v0.90.4 is the active citizen economics and contract-market substrate
-milestone. Its tracked package lives under `docs/milestones/v0.90.4/`. The
-issue wave opened as #2420-#2440: WP-01 is #2420, WP-02 through WP-14 are
-#2421-#2433, WP-14A is #2434, WP-15 through WP-19 are now closed as
-#2435-#2439, and WP-20 release ceremony remains open as #2440.
+`v0.90.5` is the active Governed Tools v1.0 milestone. Its tracked package
+lives under `docs/milestones/v0.90.5/`. The package brings together:
 
-v0.90.3 is now the most recently completed citizen-state milestone. The latest
-released tag remains v0.90.3, while the active development crate line is now
-0.90.4 for the open v0.90.4 milestone.
+- governed tool schemas and conformance
+- ADL-native authority, privacy, visibility, and delegation contracts
+- deterministic registry, compiler, normalization, policy, and executor layers
+- trace, replay, redaction, and evidence surfaces
+- bounded benchmark and local/Gemma evaluation lanes
+- the flagship governed-tools demo
+- the first landed Comms / ACIP integration slice
 
-The current release-tail entry surface is
-`docs/milestones/v0.90.4/README.md`. It records the landed feature-proof
-coverage record, closed internal review, completed third-party review, ADR 0014
-architecture remediation, completed next-milestone handoff, and the fact that
-only ceremony remains open.
+The current reviewer entry surface is:
 
-v0.90.3 is the most recently released citizen-state milestone. It turned the
-bounded CSM run from v0.90.2 into safer citizen-state substrate work:
-canonical private state, signed envelopes, local-first sealing, append-only
-lineage, continuity witnesses and receipts, anti-equivocation,
-sanctuary/quarantine behavior, redacted Observatory projections, standing and
-access-control semantics, challenge/appeal flow, threat modeling, and one
-integrated citizen-state proof demo. It does not claim first true Gödel-agent
-birthday, full economics, v0.91 moral/emotional civilization, or v0.92
-migration/birthday scope.
+- `docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`
 
-v0.90.2 is the most recently completed release milestone. Its tracked package
-lives under `docs/milestones/v0.90.2/`. It carries the first bounded CSM run and
-Runtime v2 hardening proof package, including feature-by-feature proof coverage,
-an integrated first-run demo packet, internal review, third-party review,
-accepted-finding remediation, next-milestone handoff, and release evidence.
+That document is the best single package-level entrypoint for the current
+milestone.
+
+`v0.90.4` is the most recently completed milestone. It landed the bounded
+citizen economics and contract-market package and remains the prior completed
+release line for this repo.
+
+`v0.90.3` is the previous completed citizen-state milestone. It turned the
+bounded CSM run from `v0.90.2` into safer citizen-state substrate work:
+
+- canonical private state
+- signed envelopes
+- local-first sealing
+- append-only lineage
+- continuity witnesses and receipts
+- anti-equivocation
+- sanctuary/quarantine behavior
+- redacted Observatory projections
+- standing and access-control semantics
+- challenge/appeal flow
+- one integrated citizen-state proof demo
+
+`v0.90.2` is the previous completed Runtime v2 hardening milestone. It carries
+the first bounded CSM run and Runtime v2 hardening proof package, including
+feature-by-feature proof coverage, an integrated first-run demo packet,
+internal review, third-party review, accepted-finding remediation,
+next-milestone handoff, and release evidence.
 
 v0.90.1 is the completed Runtime v2 foundation prototype milestone. Its issue
 wave opened with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160,
