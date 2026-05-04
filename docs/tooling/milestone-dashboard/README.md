@@ -22,8 +22,8 @@ YAML, milestone docs, task cards, PR checks, or human release ceremony.
 
 ## Current Dataset
 
-The bundled dataset is `v0.90.4`, mirrored in `data/v0.90.4.js` and refreshed
-from:
+The bundled dashboard dataset is still the historical `v0.90.4` snapshot,
+mirrored in `data/v0.90.4.js` and refreshed from:
 
 - `docs/milestones/v0.90.4/README.md`
 - `docs/milestones/v0.90.4/WBS_v0.90.4.md`
@@ -34,8 +34,12 @@ from:
 - `docs/milestones/v0.90/milestone_compression/CANONICAL_MILESTONE_STATE_v0.90.yaml`
 - `docs/milestones/v0.90/milestone_compression/DRIFT_CHECK_REPORT_v0.90.md`
 - `docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md`
-- a bounded read-only GitHub snapshot of the live v0.90.4 issue wave and PR
-  posture taken at refresh time
+- a bounded read-only GitHub snapshot of the then-live v0.90.4 issue wave and
+  PR posture taken at refresh time
+
+The active reviewer entry surface for the current milestone is now:
+
+- `docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`
 
 Unknown, stale, or unverifiable evidence must be marked unknown/stale rather
 than treated as green.
@@ -53,8 +57,10 @@ readiness pass for each new milestone. At minimum, update:
 - validation expectations in `adl/tools/test_milestone_dashboard.sh` when the
   dashboard contract changes
 
-The dashboard may remain static for now, but stale milestone truth should be
-treated as a dashboard bug rather than an acceptable cache state.
+The dashboard may remain static temporarily as a historical visibility surface,
+but it must not be mistaken for the active milestone truth once the current
+milestone has moved on. The next bounded dashboard refresh should either add a
+real `v0.90.5` dataset or explicitly archive this dashboard as historical.
 
 ## Files
 

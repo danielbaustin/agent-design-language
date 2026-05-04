@@ -3,7 +3,7 @@
 ## Purpose
 
 `v0.90.5` must continue the Governed Tools v1.0 implementation, but it also
-must avoid repeating the `v0.90.4` validation-cost failure mode. This get-well
+must avoid repeating the previous milestone's validation-cost failure mode. This get-well
 plan is the milestone-root pointer to the runtime and CI recovery work that
 supports the milestone without replacing its core scope.
 

@@ -21,70 +21,73 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the active v0.90.3 citizen-state substrate package, start with:
+For the active v0.90.5 governed-tools package, start with:
 
-- `docs/milestones/v0.90.3/README.md`
-- `docs/milestones/v0.90.3/WBS_v0.90.3.md`
-- `docs/milestones/v0.90.3/SPRINT_v0.90.3.md`
-- `docs/milestones/v0.90.3/DEMO_MATRIX_v0.90.3.md`
-- `docs/milestones/v0.90.3/FEATURE_DOCS_v0.90.3.md`
-- `docs/milestones/v0.90.3/MILESTONE_CHECKLIST_v0.90.3.md`
-- `docs/milestones/v0.90.3/RELEASE_PLAN_v0.90.3.md`
-- `docs/milestones/v0.90.3/RELEASE_READINESS_v0.90.3.md`
-- `docs/milestones/v0.90.3/RELEASE_NOTES_v0.90.3.md`
-- `docs/milestones/v0.90.3/WP_EXECUTION_READINESS_v0.90.3.md`
-- `docs/milestones/v0.90.3/WP_ISSUE_WAVE_v0.90.3.yaml`
+- `docs/milestones/v0.90.5/README.md`
+- `docs/milestones/v0.90.5/WBS_v0.90.5.md`
+- `docs/milestones/v0.90.5/SPRINT_v0.90.5.md`
+- `docs/milestones/v0.90.5/DEMO_MATRIX_v0.90.5.md`
+- `docs/milestones/v0.90.5/FEATURE_DOCS_v0.90.5.md`
+- `docs/milestones/v0.90.5/FEATURE_PROOF_COVERAGE_v0.90.5.md`
+- `docs/milestones/v0.90.5/MILESTONE_CHECKLIST_v0.90.5.md`
+- `docs/milestones/v0.90.5/QUALITY_GATE_v0.90.5.md`
+- `docs/milestones/v0.90.5/RELEASE_PLAN_v0.90.5.md`
+- `docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`
+- `docs/milestones/v0.90.5/RELEASE_NOTES_v0.90.5.md`
+- `docs/milestones/v0.90.5/WP_EXECUTION_READINESS_v0.90.5.md`
+- `docs/milestones/v0.90.5/WP_ISSUE_WAVE_v0.90.5.yaml`
 - `docs/planning/ADL_FEATURE_LIST.md`
 - `CHANGELOG.md`
-- `README.md`
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
-The current v0.90.3 review posture is release-tail convergence before external
-review. The wave is open as #2327-#2347. WP-01 is #2327, WP-02 through WP-14
-are #2328-#2340, WP-14A is #2341, and WP-15 through WP-20 are #2342-#2347.
-WP-14 has landed the inhabited CSM Observatory flagship demo, and WP-14A has
-landed the explicit feature-proof coverage record.
+The current v0.90.5 review posture is docs/review convergence after feature
+proof coverage and the quality gate, and before the formal WP-22 internal
+review pass. The wave is open as #2566-#2591. WP-01 through WP-20 are closed;
+WP-21 through WP-26 remain open as the docs/review/release tail.
 
-v0.90.3 should produce the citizen-state substrate: canonical private state,
-signed envelopes, local-first sealing, append-only lineage, continuity
-witnesses and receipts, anti-equivocation, sanctuary/quarantine behavior,
-redacted Observatory projections, standing and access-control semantics,
-challenge/appeal flow, threat modeling, and one integrated citizen-state proof
-demo.
+v0.90.5 should produce Governed Tools v1.0 plus the landed first-level Comms /
+ACIP tranche: UTS public-compatible schema and conformance, ACC authority and
+visibility semantics, registry/compiler/normalization/policy/executor behavior,
+trace/replay/redaction evidence, dangerous negative tests, bounded
+model-proposal evaluation, the flagship governed-tools demo, and the bounded
+review/coding-agent communications substrate that was explicitly landed in this
+milestone.
 
-The crate version is `0.90.3` for the active v0.90.3 development line. Reviewers
-should treat any conflicting older version reference as a stale release-truth
-defect.
+The crate version is `0.90.5` for the active v0.90.5 development line.
+Reviewers should treat any conflicting older version reference as a stale
+release-truth defect.
 
-Important v0.90.3 non-claims:
+Important v0.90.5 non-claims:
 
-- v0.90.3 does not birth the first true Gödel agent.
-- v0.90.3 does not complete v0.91 moral, emotional, kindness, humor, or
-  wellbeing substrate.
-- v0.90.3 does not complete v0.92 identity/capability rebinding, migration, or
-  birthday scope.
-- v0.90.3 does not implement full citizen economics, contract markets, payment
-  rails, or inter-polis trade.
-- v0.90.3 does not require cloud enclaves.
+- v0.90.5 does not claim that UTS alone is an execution authority.
+- v0.90.5 does not claim arbitrary shell or network execution merely because a
+  model emitted valid JSON.
+- v0.90.5 does not claim payment rails, legal contracting, billing, or
+  inter-polis economics.
+- v0.90.5 does not claim full v0.91 moral/cognitive-being substrate or full
+  v0.91.1 identity/capability follow-on work.
+- v0.90.5 does not claim production secret-management or cloud-enclave
+  dependence.
 
 During execution, verify that every WP preserves the required outputs and
-validation from `WP_EXECUTION_READINESS_v0.90.3.md` rather than widening into
+validation from `WP_EXECUTION_READINESS_v0.90.5.md` rather than widening into
 generic implementation work.
 
-WP-15 tracker status to preserve during review:
-- coverage truth remains the current tracked `92.40%` workspace line coverage
-  from the recent quality gate, rounded to the intended `93%` tranche; WP-15 is
-  docs-only and does not claim a fresh full coverage run
-- changed-path CI policy is active for docs-heavy closeout PRs; green
-  docs-only `adl-coverage` checks are PR evidence, not release coverage
-  evidence
-- #2409 has also landed the PR-fast validation split that avoids requiring two
-  full Rust test universes for the same PR while preserving release coverage
-  boundaries
-- internal review status is release-tail truth: no P0/P1 blocker has been found
-  in the citizen-state substrate; any remaining review items should be tracked
-  as minor P2/P3 follow-ups or explicit deferrals before third-party review
+WP-21 tracker status to preserve during review:
+- `QUALITY_GATE_v0.90.5.md` is the canonical quality and coverage posture
+  record, including the explicit main-branch coverage exception still carried
+  into the review tail.
+- `RELEASE_READINESS_v0.90.5.md` is the reviewer entry surface for the active
+  milestone package.
+- docs/release-truth surfaces should consistently report v0.90.5 as the active
+  line, v0.90.4 as the most recently completed milestone, and `0.90.5` as the
+  active crate version.
+- root `README.md` cleanup is tracked separately under #2712 and should not be
+  treated as part of the bounded WP-21 reviewer-entry package until that issue
+  lands.
+- internal review has not happened yet; WP-21 prepares the package for WP-22
+  rather than pre-claiming that review outcome.
 
 For the most recently completed v0.90.2 release package, start with:
 
