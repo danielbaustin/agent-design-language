@@ -216,7 +216,6 @@ fn runtime_v2_private_state_sanctuary_operator_report_reviews_all_preserved_evid
         .contains("must review preserved evidence"));
 }
 
-#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_private_state_sanctuary_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_private_state_sanctuary_contract().expect("sanctuary artifacts");
