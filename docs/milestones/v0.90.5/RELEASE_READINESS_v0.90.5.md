@@ -17,7 +17,6 @@ remediation, handoff, and ceremony.
 
 ## Review Entry Points
 
-- `README.md`
 - `CHANGELOG.md`
 - `REVIEW.md`
 - `adl/Cargo.toml`
@@ -54,6 +53,9 @@ At WP-21 refresh:
 - The only additional open v0.90.5 follow-on outside the canonical WP state
   machine at this moment is #2700, a bounded tooling fix for orphaned
   post-merge closeout watchers in PR-finish tests.
+- Root `README.md` review-ready active-line cleanup is tracked separately in
+  #2712 so the broad top-level project overview can be reviewed outside the
+  bounded WP-21 milestone-doc convergence package.
 
 ## Landed Proof Surface
 
@@ -105,7 +107,7 @@ remeasurement, or the final ceremony.
 This convergence pass should remain docs/truth focused:
 
 - version/status scan across README, changelog, review guide, Cargo metadata,
-  active milestone docs, and the reviewer-entry surfaces
+  active milestone docs, and the reviewer-entry surfaces that remain in WP-21
 - local-path scan across touched tracked docs
 - stale-claim scan for overclaims about UTS public-standard status, execution
   authority, unrestricted tool execution, or later-milestone cognitive/identity

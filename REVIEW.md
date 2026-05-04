@@ -38,7 +38,6 @@ For the active v0.90.5 governed-tools package, start with:
 - `docs/milestones/v0.90.5/WP_ISSUE_WAVE_v0.90.5.yaml`
 - `docs/planning/ADL_FEATURE_LIST.md`
 - `CHANGELOG.md`
-- `README.md`
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
@@ -84,6 +83,9 @@ WP-21 tracker status to preserve during review:
 - docs/release-truth surfaces should consistently report v0.90.5 as the active
   line, v0.90.4 as the most recently completed milestone, and `0.90.5` as the
   active crate version.
+- root `README.md` cleanup is tracked separately under #2712 and should not be
+  treated as part of the bounded WP-21 reviewer-entry package until that issue
+  lands.
 - internal review has not happened yet; WP-21 prepares the package for WP-22
   rather than pre-claiming that review outcome.
 
