@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.90.4%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.90.5%20active-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -119,36 +119,33 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.90.4**
-- Current release state: **v0.90.3 is released; v0.90.4 has only WP-20 (#2440) remaining in the release tail**
-- Most recently completed milestone: **v0.90.3**
-- Current crate version: **0.90.4**
-- Version note: **v0.90.4 is the active citizen economics and contract-market development line**
-- Previous completed milestone package: **v0.90.2**
-- Previous completed milestone: **v0.90.1**
+- Active milestone: **v0.90.5**
+- Current release state: **v0.90.4 is complete; v0.90.5 is in the WP-21 through WP-26 docs/review/release tail**
+- Most recently completed milestone: **v0.90.4**
+- Current crate version: **0.90.5**
+- Version note: **v0.90.5 is the active Governed Tools v1.0 development line**
+- Previous completed milestone package: **v0.90.3**
+- Previous completed milestone: **v0.90.2**
 - Project changelog: `CHANGELOG.md`
 
 ADL is in active development. This repository contains both implemented runtime surfaces and milestone/spec/planning documents. Read the milestone docs as bounded engineering records: they distinguish what has shipped, what is under active review or closeout, what is demoable, and what is still planned.
 
 ## Current Milestone
 
-v0.90.4 is the active citizen economics and contract-market substrate
-milestone. Its tracked package lives under `docs/milestones/v0.90.4/`. The
-issue wave opened as #2420-#2440: WP-01 is #2420, WP-02 through WP-14 are
-#2421-#2433, WP-14A is #2434, WP-15 through WP-19 are now closed as
-#2435-#2439, and WP-20 release ceremony remains open as #2440.
+v0.90.5 is the active Governed Tools v1.0 milestone. Its tracked package lives
+under `docs/milestones/v0.90.5/`. The issue wave opened as #2566-#2591:
+WP-01 is #2566, WP-02 through WP-18 are #2567-#2583, WP-19 is #2584, WP-20 is
+#2585, and the remaining active release-tail issues are WP-21 through WP-26 as
+#2586-#2591.
 
-v0.90.3 is now the most recently completed citizen-state milestone. The latest
-released tag remains v0.90.3, while the active development crate line is now
-0.90.4 for the open v0.90.4 milestone.
+v0.90.4 is now the most recently completed milestone.
 
-The current release-tail entry surface is
-`docs/milestones/v0.90.4/README.md`. It records the landed feature-proof
-coverage record, closed internal review, completed third-party review, ADR 0014
-architecture remediation, completed next-milestone handoff, and the fact that
-only ceremony remains open.
+The current release-tail reviewer entry surface is
+`docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`. It records the landed
+feature-proof coverage, quality gate, review-entry package, open tail issues,
+and current non-claims for the governed-tools line.
 
-v0.90.3 is the most recently released citizen-state milestone. It turned the
+v0.90.3 is the previous completed citizen-state milestone. It turned the
 bounded CSM run from v0.90.2 into safer citizen-state substrate work:
 canonical private state, signed envelopes, local-first sealing, append-only
 lineage, continuity witnesses and receipts, anti-equivocation,
@@ -158,7 +155,7 @@ integrated citizen-state proof demo. It does not claim first true Gödel-agent
 birthday, full economics, v0.91 moral/emotional civilization, or v0.92
 migration/birthday scope.
 
-v0.90.2 is the most recently completed release milestone. Its tracked package
+v0.90.2 is the previous completed Runtime v2 hardening milestone. Its tracked package
 lives under `docs/milestones/v0.90.2/`. It carries the first bounded CSM run and
 Runtime v2 hardening proof package, including feature-by-feature proof coverage,
 an integrated first-run demo packet, internal review, third-party review,

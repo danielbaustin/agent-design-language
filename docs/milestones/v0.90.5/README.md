@@ -5,7 +5,7 @@
 Tracked planning package for Governed Tools v1.0. The milestone direction was
 established under planning issue #2350, tightened under #2402, prepared for
 clean execution under #2443, and re-affirmed as the immediate governed-tools
-follow-on during the `v0.90.4` WP-19 handoff pass under #2439.
+follow-on during the previous-milestone handoff pass under #2439.
 
 The issue wave is open under [#2566](https://github.com/danielbaustin/agent-design-language/issues/2566), with [#2567](https://github.com/danielbaustin/agent-design-language/issues/2567) through [#2591](https://github.com/danielbaustin/agent-design-language/issues/2591) carrying the rest of the tracked milestone band. This package is now active execution truth for `v0.90.5`, not a later planning packet.
 
@@ -128,6 +128,7 @@ Out of scope:
 - WP execution readiness: WP_EXECUTION_READINESS_v0.90.5.md
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.5.md
 - Release plan: RELEASE_PLAN_v0.90.5.md
+- Release readiness: RELEASE_READINESS_v0.90.5.md
 - Release notes draft: RELEASE_NOTES_v0.90.5.md
 - Opened issue wave: WP_ISSUE_WAVE_v0.90.5.yaml
 - Get-well plan: GET_WELL_PLAN_v0.90.5.md
@@ -172,19 +173,17 @@ v0.90.5 builds on:
 
 - v0.90.3 citizen-state, standing, access-control, redacted projection, and
   inhabited CSM demo work
-- v0.90.4 contract-market, authority, and citizen-economics lessons that bear
-  on governed delegation and action approval
+- the previous contract-market milestone's authority and bounded-economics
+  lessons that bear on governed delegation and action approval
 
 v0.90.5 should not own the v0.90.3 inhabited CSM demo. It should own the
 Governed Tools v1.0 flagship demo.
 
-It also should not inherit unresolved v0.90.4 ambiguity about whether contract
-tool needs are constraints or execution grants. WP-19 of v0.90.4 is expected to
-hand that boundary off cleanly.
-
-That handoff is now clean: `v0.90.4` leaves no loose issue backlog here. It
-hands off only the governed-tool authority lane that contracts and bids were
-explicitly not allowed to absorb.
+It also should not inherit unresolved ambiguity about whether contract tool
+needs are constraints or execution grants. That earlier boundary is now clean:
+the previous milestone leaves no loose issue backlog here and hands off only
+the governed-tool authority lane that contracts and bids were explicitly not
+allowed to absorb.
 
 Current docs-review findings may still sharpen wording, rustdoc references, and
 public-spec boundaries, but they should not widen the core milestone scope away

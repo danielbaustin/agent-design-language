@@ -35,7 +35,7 @@ work_packages:
     title: Design pass (milestone docs + planning)
     queue: docs
     outcome: tracked docs and issue cards
-    depends_on: v0.90.4 closeout
+    depends_on: previous milestone closeout
   - wp: WP-02
     issue: 2567
     title: Tool-call threat model and semantics

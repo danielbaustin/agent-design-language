@@ -20,6 +20,8 @@ Freedom Gate mediation, and trace.
 - feature proof coverage record
 - [coverage / quality gate record](QUALITY_GATE_v0.90.5.md), including
   first-level Comms / ACIP evidence
+- [release readiness record](RELEASE_READINESS_v0.90.5.md) as the reviewer
+  entry surface for WP-21 through WP-26
 - get-well wave disposition
 - public-spec language audit and boundary note
 - internal and external review notes

@@ -2,20 +2,25 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.90.4 (In development)
+## v0.90.5 (In development)
 
-Status: v0.90.4 is the active citizen economics and contract-market milestone.
-The issue wave opened as #2420-#2440; WP-15 through WP-19 are now closed, WP-20
-release ceremony remains open as #2440, and the active crate/package version
-surface is now `0.90.4` for the live development line even though the latest
-released tag remains v0.90.3 until v0.90.4 closes.
+Status: v0.90.5 is the active Governed Tools v1.0 milestone. The issue wave
+opened as #2566-#2591; WP-01 through WP-20 are closed, WP-21 through WP-26
+remain open, and the active crate/package version surface is now `0.90.5` for
+the live development line.
 
 Scope note:
 - This entry is intentionally bounded during the live release tail.
 - Detailed milestone scope, proof expectations, and release-tail truth live in
-  `docs/milestones/v0.90.4/`.
-- ADR 0014 now records the contract-market architecture boundary for the
-  milestone.
+  `docs/milestones/v0.90.5/`.
+- The canonical reviewer entry surface for the current closeout tail is
+  `docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`.
+
+## v0.90.4 (Completed milestone)
+
+Status: The bounded citizen economics and contract-market milestone is
+complete. Its detailed package, external review packet, and ADR boundary remain
+recorded under `docs/milestones/v0.90.4/`.
 
 ## v0.90.3 (Released 2026-04-23)
 

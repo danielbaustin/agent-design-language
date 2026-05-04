@@ -10,7 +10,7 @@
 - [x] WP issue cards authored from WP_EXECUTION_READINESS_v0.90.5.md
 - [x] get-well plan visible in tracked milestone docs
 - [x] get-well wave opened separately from canonical WP numbering
-- [x] Package is ready to accept v0.90.4 handoff without reopening scope
+- [x] Package is ready to accept the previous-milestone handoff without reopening scope
   confusion about tool authority
 - [x] Demo/proof lane is explicit, including WP-19 before review convergence
 

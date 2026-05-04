@@ -8,7 +8,7 @@ documentation-only planning lane.
 
 | WP | Issue | Title | Purpose | Primary Output | Depends On |
 | --- | --- | --- | --- | --- | --- |
-| WP-01 | #2566 | Design pass (milestone docs + planning) | Finalize this planning package and create the issue wave | tracked docs and issue cards | v0.90.4 closeout |
+| WP-01 | #2566 | Design pass (milestone docs + planning) | Finalize this planning package and create the issue wave | tracked docs and issue cards | previous milestone closeout |
 | WP-02 | #2567 | Tool-call threat model and semantics | Define proposal/action boundary, side effects, dangerous categories, and non-goals | threat model and semantics doc | WP-01 |
 | WP-03 | #2568 | UTS public compatibility and conformance plan | Define compatibility, examples, invalid examples, extension rules, and conformance | UTS conformance plan | WP-02 |
 | WP-04 | #2569 | UTS v1 schema finalization | Finalize portable tool schema and validation rules | UTS schema and tests | WP-03 |
