@@ -1,0 +1,123 @@
+version: "0.5"
+
+providers:
+  chatgpt_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8791/chatgpt"
+      timeout_secs: 10
+  gemini_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8791/gemini"
+      timeout_secs: 10
+
+agents:
+  chatgpt_host:
+    provider: "chatgpt_local"
+    model: "gpt-5.5-demo"
+  gemini_guest:
+    provider: "gemini_local"
+    model: "gemini-2.5-pro-demo"
+
+tasks:
+  chatgpt_opening:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
+        TURN_ID: 01
+        SPEAKER: ChatGPT
+        TOPIC: Bounded direct conversation between ChatGPT and Gemini with explicit identity and stop policy.
+        STOP_RULE: Stop after four explicit turns.
+        INSTRUCTIONS: Open the conversation warmly. Make the bounded stop rule explicit and explain why a short direct exchange is reviewer-friendly.
+  gemini_reply:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
+        TURN_ID: 02
+        SPEAKER: Gemini
+        TOPIC: Bounded direct conversation between ChatGPT and Gemini with explicit identity and stop policy.
+        STOP_RULE: Stop after four explicit turns.
+        PREVIOUS_TURN_START
+        {{turn_01}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Reply directly to ChatGPT, keep identity explicit, and mention why saved artifacts matter.
+  chatgpt_reflection:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
+        TURN_ID: 03
+        SPEAKER: ChatGPT
+        TOPIC: Bounded direct conversation between ChatGPT and Gemini with explicit identity and stop policy.
+        STOP_RULE: Stop after four explicit turns.
+        PREVIOUS_TURN_START
+        {{turn_02}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Reflect on what this bounded exchange does and does not prove without widening into federation or autonomy claims.
+  gemini_close:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
+        TURN_ID: 04
+        SPEAKER: Gemini
+        TOPIC: Bounded direct conversation between ChatGPT and Gemini with explicit identity and stop policy.
+        STOP_RULE: Stop after four explicit turns.
+        PREVIOUS_TURN_START
+        {{turn_03}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Close the conversation explicitly, restate the stop rule, and keep the proof boundary honest.
+
+run:
+  name: "v0-91-chatgpt-gemini-direct-conversation"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "direct.chatgpt.opening"
+        agent: "chatgpt_host"
+        task: "chatgpt_opening"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "chatgpt_gemini_direct"
+        save_as: "turn_01"
+        write_to: "direct/01-chatgpt-opening.md"
+      - id: "direct.gemini.reply"
+        agent: "gemini_guest"
+        task: "gemini_reply"
+        conversation:
+          id: "turn_02"
+          speaker: "Gemini"
+          sequence: 2
+          thread_id: "chatgpt_gemini_direct"
+          responds_to: "turn_01"
+        inputs:
+          turn_01: "@state:turn_01"
+        save_as: "turn_02"
+        write_to: "direct/02-gemini-reply.md"
+      - id: "direct.chatgpt.reflection"
+        agent: "chatgpt_host"
+        task: "chatgpt_reflection"
+        conversation:
+          id: "turn_03"
+          speaker: "ChatGPT"
+          sequence: 3
+          thread_id: "chatgpt_gemini_direct"
+          responds_to: "turn_02"
+        inputs:
+          turn_02: "@state:turn_02"
+        save_as: "turn_03"
+        write_to: "direct/03-chatgpt-reflection.md"
+      - id: "direct.gemini.close"
+        agent: "gemini_guest"
+        task: "gemini_close"
+        conversation:
+          id: "turn_04"
+          speaker: "Gemini"
+          sequence: 4
+          thread_id: "chatgpt_gemini_direct"
+          responds_to: "turn_03"
+        inputs:
+          turn_03: "@state:turn_03"
+        save_as: "turn_04"
+        write_to: "direct/04-gemini-close.md"
