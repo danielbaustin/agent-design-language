@@ -79,7 +79,7 @@ Out of scope for v0.91:
 | Area | v0.91 allocation | Notes |
 |---|---|---|
 | Moral ontology | Context and vocabulary | Use the karma/ontology source as philosophical context, but do not implement a scalar karma score. Rename or clarify the source later because the filename is misleading. |
-| Freedom Gate moral event surface | Primary v0.91 feature | Reconcile the general Freedom Gate event schema and the moral-event schema into one bounded implementation contract. |
+| Freedom Gate moral event surface | Primary v0.91 feature | The tracked WP-02 contract is [features/MORAL_EVENT_CONTRACT.md](features/MORAL_EVENT_CONTRACT.md); reconcile the general Freedom Gate event schema and the moral-event schema into this bounded implementation contract. |
 | Event validation rules | Primary v0.91 feature | Require structural validity, moral legibility, trace linkage, alternatives, rejected options, and reviewable reasons. |
 | Moral trace schema | Primary v0.91 feature | Define the durable evidence record that links moral decisions, alternatives, outcomes, review, and longitudinal trajectory. |
 | Outcome linkage and attribution | Primary v0.91 feature | Link downstream consequences to prior decisions without pretending causality is always certain. |
