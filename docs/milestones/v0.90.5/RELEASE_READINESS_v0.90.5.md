@@ -2,8 +2,8 @@
 
 ## Status
 
-WP-22 internal review completed. This surface remains a reviewer-entry summary,
-not a release approval.
+Internal and third-party review completed. This surface remains a
+reviewer-entry summary, not a release approval.
 
 This document is the reviewer entry surface for the v0.90.5 Governed Tools
 v1.0 milestone after the feature-proof coverage and quality-gate passes. It
@@ -49,15 +49,13 @@ At WP-21 refresh:
 - WP-20 / #2585 records the canonical quality and coverage gate.
 - WP-21 / #2586 is closed and its docs/review pass PR merged.
 - WP-22 / #2587 internal review is now recorded.
-- WP-23 / #2588 through WP-26 / #2591 remain the external review,
-  third-party review, remediation, next-milestone planning, and release
-  ceremony tail.
-- The only additional open v0.90.5 follow-on outside the canonical WP state
-  machine at this moment is #2700, a bounded tooling fix for orphaned
-  post-merge closeout watchers in PR-finish tests.
-- Root `README.md` review-ready active-line cleanup is tracked separately in
-  #2712 so the broad top-level project overview can be reviewed outside the
-  bounded WP-21 milestone-doc convergence package.
+- WP-23 / #2588 external review is now complete with zero findings.
+- WP-24 / #2589 through WP-26 / #2591 remain the remediation/no-op
+  disposition, next-milestone planning, and release ceremony tail.
+- Root `README.md` review-ready active-line cleanup already landed through
+  #2712.
+- ADR 0015 for governed tools execution authority already landed through
+  #2717.
 
 ## Landed Proof Surface
 
@@ -125,9 +123,10 @@ This convergence pass should remain docs/truth focused:
   red main-branch coverage posture that still remains a release-tail exception.
 - Get-well status: the runtime-reduction wave is documented and remains
   explicit rather than being silently treated as solved.
-- Review posture: WP-22 has now issued a findings-first internal review result.
-- Closeout posture: the remaining canonical milestone tail is review,
-  remediation, planning handoff, and ceremony. There is no claim here that the
+- Review posture: internal and third-party review have both completed, and the
+  third-party review reported zero findings.
+- Closeout posture: the remaining canonical milestone tail is accepted-finding
+  disposition, planning handoff, and ceremony. There is no claim here that the
   release is already complete.
 
 ## Version Truth
@@ -135,7 +134,7 @@ This convergence pass should remain docs/truth focused:
 - Active milestone: v0.90.5
 - Crate version: `0.90.5`
 - Most recently completed milestone: v0.90.4
-- Current release-tail stage: WP-23 external review after WP-22 internal review
+- Current release-tail stage: WP-24 accepted-finding disposition after zero-finding external review
 
 Reviewers should treat any conflicting older crate-version statement or claim
 that v0.90.4 is still the active line as stale release-truth drift.
@@ -155,8 +154,6 @@ v0.90.5 does not claim:
 
 ## Remaining Release-Tail Gates
 
-- WP-22 internal review
-- WP-23 external / 3rd-party review
 - WP-24 accepted-finding remediation or explicit deferral
 - WP-25 next-milestone planning handoff
 - WP-26 release ceremony
@@ -164,5 +161,5 @@ v0.90.5 does not claim:
 ## WP-21 Disposition
 
 WP-21 aligned the release-truth and reviewer-entry surfaces. WP-22 records the
-internal review result. Neither step approves the release, replaces external
-review, or declares the milestone complete.
+internal review result. WP-23 records the zero-finding external review result.
+None of those steps declare the milestone complete.
