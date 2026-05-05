@@ -1,0 +1,56 @@
+version: "0.1"
+kind: "adl-skill"
+id: "spp-editor"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "spp_editor.v1"
+    reference_doc: "../docs/SPP_EDITOR_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "normalize_spp"
+      - "tighten_for_review"
+      - "repair_plan_drift"
+  intent:
+    - "spp_edit"
+    - "planning_card_normalization"
+    - "codex_plan_truth_repair"
+  required_inputs:
+    - "repo_root"
+    - "spp_path"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_spp_editor.v1_when_structured_input_is_used"
+    - "target.spp_path_must_be_present"
+    - "policy.stop_after_edit_must_be_true"
+execution:
+  mode: "auto_apply"
+  allow_code_edits: true
+  allow_network: false
+  allow_subagents: false
+  workflow_role: "card_editor"
+  preferred_path: "structured_input_then_direct_card_edit"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - ".adl/**/spp.md"
+  must_not_write:
+    - ".adl/**/stp.md"
+    - ".adl/**/sip.md"
+    - ".adl/**/sor.md"
+    - "implementation source files"
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
