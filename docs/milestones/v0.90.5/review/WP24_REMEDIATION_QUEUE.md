@@ -2,25 +2,29 @@
 
 ## Source
 
-Derived from `WP-22` internal review.
+Derived from `WP-22` internal review and `WP-23` third-party review.
+
+## Disposition
+
+Third-party review returned zero findings, so there are no accepted external
+findings to remediate in `WP-24`.
+
+The internal-review packet carried provisional review-tail prompts into the
+external review, but the third-party result did not convert those prompts into
+accepted release blockers or remediation tasks.
 
 ## Queue
 
-### IR-001 / P1
+No accepted findings.
 
-- Title: authoritative `main` coverage gate still red
-- Required follow-up: remediate or explicitly defer the `main` coverage-policy
-  failure recorded in `QUALITY_GATE_v0.90.5.md`
-- Owner lane: `WP-24`
+## Notes
 
-### IR-002 / P2
-
-- Title: public-spec / privacy review gates still open
-- Required follow-up: produce explicit disposition for overclaiming review,
-  execution-authority wording, and privacy/redaction backing
-- Owner lane: `WP-24` after `WP-23` review feedback
+- `WP-24` is still a meaningful closeout step because it records the
+  no-remediation outcome explicitly rather than implying it by silence.
+- If any later operator-chosen cleanup is desired, it should be routed as
+  follow-on work rather than represented as accepted third-party remediation.
 
 ## Queue Rule
 
-This queue is a routing surface only. `WP-22` does not itself remediate the
-findings.
+This queue is a routing surface only. In `v0.90.5`, the truthful routing result
+is that no accepted remediation items were emitted from third-party review.
