@@ -135,14 +135,16 @@ bash adl/tools/demo_v0871_suite.sh
 
 ## Current Status
 
-- Active milestone: **v0.90.5**
-- Current flagship package: **Governed Tools v1.0 plus the first landed
-  Comms / ACIP tranche**
-- Most recently completed milestone: **v0.90.4**
+- Active milestone package: **v0.91**
+- Current planning focus: **moral governance, cognitive-being, structured
+  planning / SRP, secure Agent Comms, and the reviewed candidate v0.91 WP
+  wave**
+- Most recently completed milestone: **v0.90.5**
 - Current crate version: **0.90.5**
-- Version note: **`v0.90.5` is the active Governed Tools v1.0 line**
-- Previous completed milestone package: **v0.90.3**
-- Previous completed milestone: **v0.90.2**
+- Version note: **`0.90.5` is the completed Governed Tools v1.0 release line
+  while `v0.91` is the next prepared milestone package**
+- Previous completed milestone package: **v0.90.4**
+- Previous completed milestone: **v0.90.3**
 - Project changelog: `CHANGELOG.md`
 
 ADL is in active development. This repository contains both implemented runtime
@@ -152,8 +154,21 @@ active review or closeout, what is demoable, and what is still planned.
 
 ## Current Milestone
 
-`v0.90.5` is the active Governed Tools v1.0 milestone. Its tracked package
-lives under `docs/milestones/v0.90.5/`. The package brings together:
+`v0.91` is the active next-milestone planning package. Its tracked package
+lives under `docs/milestones/v0.91/`, and the reviewed candidate issue wave
+now exists at `docs/milestones/v0.91/WP_ISSUE_WAVE_v0.91.yaml`.
+
+The package now brings together:
+
+- moral governance allocation and evidence boundaries
+- wellbeing and cognitive-being feature surfaces
+- structured planning and `SRP` workflow features
+- secure intra-polis Agent Comms planning
+- A2A as a governed adapter over the comms substrate
+- the explicit `v0.91` / `v0.91.1` split
+
+`v0.90.5` is the most recently completed milestone. Its tracked package lives
+under `docs/milestones/v0.90.5/`. That completed release line brings together:
 
 - governed tool schemas and conformance
 - ADL-native authority, privacy, visibility, and delegation contracts
@@ -163,14 +178,14 @@ lives under `docs/milestones/v0.90.5/`. The package brings together:
 - the flagship governed-tools demo
 - the first landed Comms / ACIP integration slice
 
-The current reviewer entry surface is:
+The completed `v0.90.5` reviewer/release entry surfaces are:
 
 - `docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`
+- `docs/milestones/v0.90.5/RELEASE_EVIDENCE_v0.90.5.md`
 
-That document is the best single package-level entrypoint for the current
-milestone.
+Those documents are the best compact entrypoints for the completed governed-tools release.
 
-`v0.90.4` is the most recently completed milestone. It landed the bounded
+`v0.90.4` is the previous completed milestone. It landed the bounded
 citizen economics and contract-market package and remains the prior completed
 release line for this repo.
 

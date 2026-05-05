@@ -2,19 +2,13 @@
 
 ## Status
 
-Internal and third-party review completed. This surface remains a
-reviewer-entry summary, not a release approval.
+Final release-readiness summary for `v0.90.5`.
 
-This document is the reviewer entry surface for the v0.90.5 Governed Tools
-v1.0 milestone after the feature-proof coverage and quality-gate passes. It
-records the current docs, quality, proof, review-entry, and non-claim posture
-before the formal internal and third-party review steps.
+This document remains the compact reviewer-entry and release-summary surface for
+the completed v0.90.5 Governed Tools v1.0 milestone.
 
-Important boundary: WP-19 / #2584 landed the explicit feature-proof coverage
-record and demo matrix, and WP-20 / #2585 landed the canonical quality gate.
-WP-21 aligns the release-truth and reviewer-entry docs. None of those steps
-approve the release by themselves; WP-22 through WP-26 still own review,
-remediation, handoff, and ceremony.
+Important boundary: the release is complete because the full closeout sequence
+finished, not because any one earlier review-tail artifact approved it alone.
 
 ## Review Entry Points
 
@@ -50,8 +44,9 @@ At WP-21 refresh:
 - WP-21 / #2586 is closed and its docs/review pass PR merged.
 - WP-22 / #2587 internal review is now recorded.
 - WP-23 / #2588 external review is now complete with zero findings.
-- WP-24 / #2589 through WP-26 / #2591 remain the remediation/no-op
-  disposition, next-milestone planning, and release ceremony tail.
+- WP-24 / #2589 no-remediation disposition is complete.
+- WP-25 / #2590 next-milestone planning handoff is complete.
+- WP-26 / #2591 release ceremony is complete.
 - Root `README.md` review-ready active-line cleanup already landed through
   #2712.
 - ADR 0015 for governed tools execution authority already landed through
@@ -125,16 +120,16 @@ This convergence pass should remain docs/truth focused:
   explicit rather than being silently treated as solved.
 - Review posture: internal and third-party review have both completed, and the
   third-party review reported zero findings.
-- Closeout posture: the remaining canonical milestone tail is accepted-finding
-  disposition, planning handoff, and ceremony. There is no claim here that the
-  release is already complete.
+- Closeout posture: accepted-finding disposition, planning handoff, and
+  ceremony are complete.
 
 ## Version Truth
 
-- Active milestone: v0.90.5
+- Active milestone during this release line: v0.90.5
 - Crate version: `0.90.5`
-- Most recently completed milestone: v0.90.4
-- Current release-tail stage: WP-24 accepted-finding disposition after zero-finding external review
+- Most recently completed milestone: v0.90.5
+- Next prepared milestone package: v0.91
+- Current release-tail stage: complete
 
 Reviewers should treat any conflicting older crate-version statement or claim
 that v0.90.4 is still the active line as stale release-truth drift.
@@ -152,14 +147,14 @@ v0.90.5 does not claim:
   follow-on work
 - release completion before WP-22 through WP-26 finish
 
-## Remaining Release-Tail Gates
+## Ceremony Disposition
 
-- WP-24 accepted-finding remediation or explicit deferral
-- WP-25 next-milestone planning handoff
-- WP-26 release ceremony
+The release tail is complete:
 
-## WP-21 Disposition
-
-WP-21 aligned the release-truth and reviewer-entry surfaces. WP-22 records the
-internal review result. WP-23 records the zero-finding external review result.
-None of those steps declare the milestone complete.
+- WP-21 aligned the release-truth and reviewer-entry surfaces
+- WP-22 recorded the internal review result
+- WP-23 recorded the zero-finding external review result
+- WP-24 recorded the explicit no-remediation disposition
+- WP-25 recorded the next-milestone handoff
+- WP-26 closed the milestone with final release notes, release evidence, and
+  the end-of-milestone report

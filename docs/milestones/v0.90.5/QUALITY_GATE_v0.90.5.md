@@ -273,9 +273,9 @@ first-level milestone visibility and core execution-authority semantics.
 
 ### Existing gap-review posture
 
-The existing `v0.90.5` gap review reports that the milestone is not yet ready
-for final closure because the release tail remains open and closeout truth is
-still incomplete.
+The existing `v0.90.5` gap review correctly reported, at WP-20 time, that the
+milestone was not yet ready for final closure because the release tail was
+still open and closeout truth was incomplete.
 
 First-level findings still relevant to WP-20:
 
@@ -361,11 +361,11 @@ erase.
 | Area | State | Owner | Rationale | Disposition |
 | --- | --- | --- | --- | --- |
 | Current `main` authoritative coverage posture | failure | `WP-20` / follow-on quality tail | The latest push-to-main run for head `4087678b` (`25272620889`) completed with `adl-ci` green but `adl-coverage` red at the coverage-policy enforcement step. | Record as an explicit gate exception; release-tail work must not describe current `main` as fully green until the coverage failure is fixed. |
-| Release-tail gap-review posture | open | `WP-21` through `WP-26` | The existing `v0.90.5` gap review still identifies the release tail as incomplete, with review, remediation, planning, and ceremony work not yet executed. | Keep these open issues as first-level release risks; WP-20 does not convert them into completed work. |
+| Release-tail gap-review posture | closed by later closeout | `WP-21` through `WP-26` | The earlier gap review correctly identified the release tail as incomplete at WP-20 time. Those review, remediation, planning, and ceremony steps are now complete. | Preserve this as historical gate context; the open-gap posture was resolved by later closeout work rather than by WP-20 alone. |
 | Closed-issue closeout drift class | cleared by follow-up rerun | `#2706` | The 2026-05-04 post-`#2701` rerun repaired the last active closed-issue SOR residue (`#2704`) and `check_milestone_closed_issue_sor_truth.sh --version v0.90.5` now passes. | Keep the historical gap visible in the gap review, but treat the failing gate as cleared; remaining records risk is the metadata-parity backlog routed to `#2707`. |
 | Rust maintainability and Rustdoc coverage debt | explicit gap | maintainability backlog / `WP-25` planning | The Rustdoc tracker shows low public API documentation coverage, and multiple large Rust maintainability/refactor issues remain open in `v0.90.5`. | Record as first-level quality context and hand it forward into docs/review/planning rather than implying it is already resolved. |
-| Release notes and public closeout wording | draft | `WP-21` / `WP-26` | `RELEASE_NOTES_v0.90.5.md` is still explicitly aspirational and not yet aligned to final release evidence. | Keep release-note truth as a first-level release-tail gap until docs/review and release ceremony close it out. |
-| Python-reduction tranche disposition | explicit gap | `WP-25` planning | The milestone planning package reserves a bounded Python-reduction tranche, but WP-20 does not yet record a completed tranche disposition. | Keep the tranche visible as milestone truth and require explicit handoff or deferral in later planning/closeout work. |
+| Release notes and public closeout wording | closed by ceremony | `WP-21` / `WP-26` | `RELEASE_NOTES_v0.90.5.md` was draft/aspirational at WP-20 time and required final closeout alignment. | Preserve as historical gate context; the release-note gap is resolved by the final ceremony package. |
+| Python-reduction tranche disposition | handed forward explicitly | `WP-25` planning | The milestone planning package reserved a bounded Python-reduction tranche, and WP-20 did not yet record final disposition. | Preserve as historical gate context; the tranche remains explicit future work rather than a silently completed v0.90.5 result. |
 | Post-GW runtime-cost remeasurement normalization | explicit gap | `WP-20` / `WP-25` | A post-GW authoritative push run now exists (`25272620889`), but the tracking artifact does not yet record normalized remaining hotspot counts or a reviewed runtime-effect summary, and the run itself failed the coverage gate. | Quality gate is satisfied with an explicit measurement exception; runtime-cost closure remains a follow-on unless later work captures a green authoritative remeasurement. |
 | Nightly coverage watchdog stability | explicit gap | `daily blocker follow-up lane` | Recent `nightly-coverage-ratchet` runs failed before the merged fix in [#2691](https://github.com/danielbaustin/agent-design-language/pull/2691); the watchdog is not itself the canonical release gate. | Keep nightly failures visible, but do not let the watchdog replace the merge gate or milestone proof package. |
 

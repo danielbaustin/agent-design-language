@@ -22,13 +22,14 @@ Freedom Gate mediation, and trace.
   first-level Comms / ACIP evidence
 - [release readiness record](RELEASE_READINESS_v0.90.5.md) as the reviewer
   entry surface for WP-21 through WP-26
+- [release evidence record](RELEASE_EVIDENCE_v0.90.5.md)
 - get-well wave disposition
 - public-spec language audit and boundary note
 - internal and external review notes
 - accepted-finding disposition record
 - [next milestone planning handoff](NEXT_MILESTONE_HANDOFF_v0.90.5.md)
 - explicit `v0.91` follow-on for the full Gemma/local/remote comparison report
-- end-of-milestone report
+- [end-of-milestone report](END_OF_MILESTONE_REPORT_v0.90.5.md)
 
 ## Release Risks
 

@@ -45,8 +45,8 @@
 
 ## Release Gates
 
-- [ ] README, CHANGELOG, REVIEW, release notes, and release evidence aligned
-- [ ] end-of-milestone report written or refreshed
-- [ ] no stale version references
-- [ ] no local path leaks in tracked docs
-- [ ] release ceremony completed
+- [x] README, CHANGELOG, REVIEW, release notes, and release evidence aligned
+- [x] end-of-milestone report written or refreshed
+- [x] no stale version references
+- [x] no local path leaks in tracked docs
+- [x] release ceremony completed
