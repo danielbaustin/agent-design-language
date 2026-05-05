@@ -2,7 +2,8 @@
 
 ## Status
 
-WP-21 reviewer entry surface, ready for WP-22 internal review.
+Reviewer-entry and external-review package prepared; third-party review now
+complete with zero findings.
 
 This document is the reviewer entry surface for the v0.90.5 Governed Tools
 v1.0 milestone after the feature-proof coverage and quality-gate passes. It
@@ -122,11 +123,11 @@ This convergence pass should remain docs/truth focused:
   red main-branch coverage posture that still remains a release-tail exception.
 - Get-well status: the runtime-reduction wave is documented and remains
   explicit rather than being silently treated as solved.
-- Review posture: the package is now ready for internal review entry, but WP-22
-  has not yet issued a findings-first review result.
-- Closeout posture: the remaining canonical milestone tail is review,
-  remediation, planning handoff, and ceremony. There is no claim here that the
-  release is already complete.
+- Review posture: internal and third-party review have both completed. The
+  third-party review reported zero findings.
+- Closeout posture: the remaining canonical milestone tail is accepted-finding
+  disposition, next-milestone planning handoff, and ceremony. There is no
+  claim here that the release is already complete.
 
 ## Version Truth
 

@@ -39,7 +39,7 @@
 - [x] UTS validity never described as execution authority
 - [x] privacy and redaction claims backed by tests
 - [ ] internal review complete
-- [ ] third-party review handoff prepared and external review complete or explicitly deferred
+- [x] third-party review handoff prepared and external review complete or explicitly deferred
 - [ ] accepted findings fixed or explicitly dispositioned
 - [ ] next milestone planning handoff complete before release ceremony
 
