@@ -158,6 +158,8 @@ The likely `v0.91` tranche is:
   [WP_EXECUTION_READINESS_v0.91.md](WP_EXECUTION_READINESS_v0.91.md)
 - Card bundle readiness:
   [CARD_BUNDLE_READINESS_v0.91.md](CARD_BUNDLE_READINESS_v0.91.md)
+- SPP readiness:
+  [SPP_READINESS_v0.91.md](SPP_READINESS_v0.91.md)
 - Feature planning: [features/README.md](features/README.md)
 - Moral governance allocation:
   [MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md)
