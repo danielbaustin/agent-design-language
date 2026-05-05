@@ -5,12 +5,12 @@ providers:
     type: "http"
     config:
       endpoint: "http://127.0.0.1:8791/openai"
-      timeout_secs: 10
+      timeout_secs: 90
   gemini_local:
     type: "http"
     config:
       endpoint: "http://127.0.0.1:8791/gemini"
-      timeout_secs: 10
+      timeout_secs: 90
 
 agents:
   chatgpt_host:

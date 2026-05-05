@@ -15,8 +15,8 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
-DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
+DEFAULT_OPENAI_MODEL = "gpt-5.2-pro"
+DEFAULT_GEMINI_MODEL = "gemini-2.5-pro"
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
 GEMINI_GENERATE_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
@@ -174,7 +174,10 @@ class LiveAdapter:
                     }
                 ],
                 "generationConfig": {
-                    "maxOutputTokens": 220,
+                    "maxOutputTokens": 1024,
+                    "thinkingConfig": {
+                        "thinkingBudget": 128,
+                    },
                 },
             },
             self.timeout,
