@@ -99,7 +99,8 @@ docs-only path-policy skip from full runtime validation, failed-closed
 classification, and release/main full-validation evidence.
 
 The four editor skills are helper skills:
-- `spp-editor` for truthful `spp.md` planning cleanup
+- `spp-editor` for truthful `spp.md` planning cleanup that preserves the
+  manual sample schema and markdown shape
 - `stp-editor` for bounded `stp.md` cleanup
 - `sip-editor` for truthful `sip.md` cleanup
 - `sor-editor` for truthful `sor.md` cleanup
@@ -1510,6 +1511,8 @@ remediation issues when a finding requires design decisions.
 
 It:
 
+- preserves the canonical manual `SPP` schema shape used by the first v0.91
+  samples
 - keeps `SPP` as a planning artifact rather than an execution log
 - validates `codex_plan` status values and planning-truth boundaries
 - tightens dependencies, assumptions, test strategy, and stop conditions
@@ -1520,6 +1523,7 @@ It:
 Use `spp-editor` when:
 
 - the `SPP` has stale plan structure or weak source references
+- the `SPP` drifts away from the canonical manual sample shape
 - `codex_plan` values drift outside `pending`, `in_progress`, or `completed`
 - a planning artifact starts to read like an execution log
 

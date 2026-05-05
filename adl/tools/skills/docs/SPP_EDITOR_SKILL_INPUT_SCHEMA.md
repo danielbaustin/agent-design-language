@@ -12,6 +12,8 @@ target:
   linked_sip_path: <path or null>
 policy:
   preserve_planning_truth: true
+  preserve_manual_schema_shape: true
+  preserve_manual_markdown_shape: true
   stop_after_edit: true
   allow_execution_claims_without_evidence: false
 ```

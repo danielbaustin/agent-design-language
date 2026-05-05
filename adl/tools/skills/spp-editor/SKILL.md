@@ -9,6 +9,8 @@ This skill owns bounded editing of `spp.md` planning cards.
 
 Its job is to:
 - normalize `SPP` structure and planning truth
+- preserve the canonical manual `SPP` schema shape used by the first v0.91
+  samples
 - preserve `SPP` as a planning artifact rather than an execution log
 - validate and normalize `codex_plan` status values
 - tighten dependencies, assumptions, test strategy, stop conditions, and review
@@ -45,18 +47,32 @@ Useful additional inputs:
 ## Allowed Edits
 
 This skill may:
+- restore the canonical frontmatter shape with fields such as
+  `schema_version`, `artifact_type`, `name`, `run_id`, `milestone_sprint`,
+  `source_refs`, `scope`, `constraints`, `confidence`, `proposed_steps`,
+  `affected_areas`, `invariants_to_preserve`, `risks_and_edge_cases`,
+  `test_strategy`, `execution_handoff`, `required_permissions`,
+  `stop_conditions`, `alternatives_considered`, `review_hooks`, and `notes`
+- normalize `artifact_type` to `structured_planning_prompt`
+- ensure `schema_version` remains `0.1`
+- preserve the canonical markdown section order used by the hand-authored
+  samples: `Plan Summary`, `Codex Plan`, `Assumptions`, `Proposed Steps`,
+  `Affected Areas`, `Invariants To Preserve`, `Risks And Edge Cases`,
+  `Test Strategy`, `Execution Handoff`, `Stop Conditions`, and `Notes`
 - fix invalid `codex_plan` statuses so they are only `pending`,
   `in_progress`, or `completed`
 - demote unsupported completed implementation steps back to pending planning
   state when execution evidence is absent
-- normalize assumptions, dependencies, risks, test strategy, stop conditions,
-  and review hooks
+- normalize assumptions, dependencies, source references, scope, risks, test
+  strategy, stop conditions, and review hooks
 - align `SPP` wording with current pre-execution or plan-review state
 - remove placeholders and stale execution or branch-binding claims
 
 This skill must not:
 - create or bind a branch or worktree
 - claim implementation is complete without explicit execution evidence
+- erase concrete manual planning detail by collapsing issue-specific plans into
+  generic boilerplate
 - rewrite `STP`, `SIP`, or `SOR` instead of handing off
 - widen issue scope
 
