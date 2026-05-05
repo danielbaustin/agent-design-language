@@ -33,12 +33,26 @@ set +e
   ADL_PR_RUST_BIN=/usr/bin/false \
     "$BASH_BIN" adl/tools/pr.sh doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full >/dev/null
 )
-status=$?
+failure_status=$?
 set -e
 
-[[ "$status" -eq 1 ]] || {
-  echo "assertion failed: expected delegated Rust exit status to propagate, got $status" >&2
+[[ "$failure_status" -eq 1 ]] || {
+  echo "assertion failed: expected delegated Rust failure exit status to propagate, got $failure_status" >&2
   exit 1
 }
 
-echo "pr.sh delegated exit status propagation: ok"
+set +e
+(
+  cd "$repo"
+  ADL_PR_RUST_BIN=/usr/bin/true \
+    "$BASH_BIN" adl/tools/pr.sh doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full >/dev/null
+)
+success_status=$?
+set -e
+
+[[ "$success_status" -eq 0 ]] || {
+  echo "assertion failed: expected delegated Rust success exit status to propagate, got $success_status" >&2
+  exit 1
+}
+
+echo "pr.sh delegated success/failure exit status propagation: ok"

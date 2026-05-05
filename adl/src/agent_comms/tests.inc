@@ -1161,6 +1161,41 @@
     }
 
     #[test]
+    fn acip_invocation_event_accepts_exact_required_output_identity() {
+        let contract = sample_invocation_contract();
+        let event = sample_invocation_event(
+            &contract,
+            AcipInvocationStatusV1::Completed,
+            vec!["runtime/comms/invocation/review_report.json".to_string()],
+            "completed_output_contract".to_string(),
+            None,
+            None,
+            vec!["runtime/comms/invocation/evidence/review_trace.json".to_string()],
+        );
+        validate_acip_invocation_event_against_contract(&contract, &event)
+            .expect("exact required output identity should pass");
+    }
+
+    #[test]
+    fn acip_invocation_event_rejects_incidental_required_output_substring_match() {
+        let contract = sample_invocation_contract();
+        let event = sample_invocation_event(
+            &contract,
+            AcipInvocationStatusV1::Completed,
+            vec!["runtime/comms/invocation/review_report_shadow.json".to_string()],
+            "completed_output_contract".to_string(),
+            None,
+            None,
+            vec!["runtime/comms/invocation/evidence/review_trace.json".to_string()],
+        );
+        let error = validate_acip_invocation_event_against_contract(&contract, &event)
+            .expect_err("incidental substring match should fail");
+        assert!(error
+            .to_string()
+            .contains("completed invocation must satisfy declared required output contracts"));
+    }
+
+    #[test]
     fn acip_invocation_event_preserves_contract_input_and_trace_binding() {
         let contract = sample_invocation_contract();
         let mut event = sample_invocation_event(

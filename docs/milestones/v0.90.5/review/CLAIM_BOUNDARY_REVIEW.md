@@ -11,7 +11,7 @@ the milestone checklist:
 
 The scope is intentionally bounded to tracked `v0.90.5` milestone docs and
 existing proof artifacts. It does not reopen the full internal-review packet or
-claim milestone completion.
+claim milestone completion beyond the specific review gates it resolves.
 
 ## Sources Reviewed
 
