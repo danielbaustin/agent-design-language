@@ -4,12 +4,19 @@
 
 This document is the card-authoring source for the v0.91 moral governance,
 cognitive-being, structured workflow, and secure local communication issue wave.
-WP-01 should copy the relevant section into each issue body before
-implementation begins.
+WP-01 should keep the opened issue bodies and local task bundles aligned with
+the relevant section before implementation begins.
 
 The reviewed candidate issue sequence is recorded in
-[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml). Issue numbers are still
-pending until the v0.91 issue wave is opened.
+[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml). The official v0.91
+issue wave is open as #2735 through #2759, with issue numbers assigned in the
+YAML and the local v0.91 issue-card bundles.
+
+The card-bundle readiness proof is recorded in
+[CARD_BUNDLE_READINESS_v0.91.md](CARD_BUNDLE_READINESS_v0.91.md). Live
+STP/SIP/SOR bundles remain in local `.adl/` issue-record storage per the
+repository records policy, while this tracked proof records the validation
+state for review.
 
 ## Global Execution Rules
 
@@ -42,6 +49,8 @@ Required outputs:
 - Issue numbers written back into WBS_v0.91.md and
   WP_ISSUE_WAVE_v0.91.yaml.
 - Issue cards updated with relevant readiness sections from this document.
+- Card-bundle readiness record added after validating all 25 local STP/SIP/SOR
+  bundles.
 
 Required validation:
 
@@ -51,6 +60,8 @@ Required validation:
   non-goals, source docs, and proof expectations.
 - Check tracked milestone docs contain no host paths, unresolved scaffold
   markers, or aspirational shipped claims.
+- Check STP, SIP, and SOR bootstrap validation passes for all 25 local
+  v0.91 task bundles.
 
 ## WP-02: Moral Event Contract
 

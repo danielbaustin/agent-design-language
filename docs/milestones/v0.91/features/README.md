@@ -1,9 +1,9 @@
 # v0.91 Feature Planning
 
 This directory now holds the tracked first-class feature docs for the v0.91
-core cognitive-being milestone. These docs feed the reviewed candidate issue
-wave and WP readiness source, but the issue wave has not been opened yet. WP-01
-owns issue numbering, card authoring, and final promotion into execution.
+core cognitive-being milestone. These docs feed the active v0.91 issue wave,
+WP readiness source, and opened issue-card bundles. WP-01 owns the first
+execution pass over the promoted package.
 
 ## Tracked Feature Docs
 
@@ -26,12 +26,12 @@ owns issue numbering, card authoring, and final promotion into execution.
 | Moral governance allocation | [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md) | Allocation map for moral-event, trace, validation, attribution, metrics, trajectory review, and anti-harm |
 | Agent Communication and Invocation Protocol | [../AGENT_COMMS_SPLIT_PLAN_v0.91.md](../AGENT_COMMS_SPLIT_PLAN_v0.91.md) | Split across v0.90.5, v0.91, v0.91.1 hardening, and v0.92 prerequisites |
 | Cognitive-being allocation | [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | Milestone allocation and v0.91/v0.91.1 boundary doc |
-| Candidate issue wave | [../WP_ISSUE_WAVE_v0.91.yaml](../WP_ISSUE_WAVE_v0.91.yaml) | Reviewed candidate WP sequence; issue numbers pending WP-01 |
+| Active issue wave | [../WP_ISSUE_WAVE_v0.91.yaml](../WP_ISSUE_WAVE_v0.91.yaml) | Active WP sequence; issue numbers assigned as #2735-#2759 |
 | WP execution readiness | [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | Card-authoring source for required outputs, validation, boundaries, and proof expectations |
 
 ## Execution Coverage Map
 
-| Planned workstream | Primary source docs | Candidate WP placement |
+| Planned workstream | Primary source docs | Active WP placement |
 | --- | --- | --- |
 | Milestone setup and card authoring | [../WP_ISSUE_WAVE_v0.91.yaml](../WP_ISSUE_WAVE_v0.91.yaml), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-01 |
 | Moral event, validation, trace, attribution, metrics, trajectory, and anti-harm | [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-02 through WP-08 |
@@ -62,10 +62,9 @@ Those should not be silently folded into the v0.91 core feature list.
 ## Planning Status
 
 The feature docs in this directory define a real implementation bar rather than
-concept-only placeholders. The reviewed candidate WP sequence and
-card-authoring source now exist; the remaining WP-01 step is to open the issue
-wave, assign issue numbers, copy the relevant readiness sections into each
-card, and bind the proof matrix to the opened issues.
+concept-only placeholders. The active WP sequence and card-authoring source now
+exist; WP-01 owns keeping the opened issue cards and proof matrix aligned with
+the promoted package.
 
 That wave should start from an already-promoted package rather than leaving key
 workflow or comms-adapter features stranded in TBD or side worktrees.

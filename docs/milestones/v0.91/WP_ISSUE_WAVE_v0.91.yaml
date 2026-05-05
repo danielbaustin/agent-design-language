@@ -1,178 +1,187 @@
 milestone: v0.91
-status: reviewed_candidate_issue_wave
-issue_wave_opened: false
-owner_issue: pending_wp01
+status: active_issue_wave
+issue_wave_opened: true
+owner_issue: 2735
 planning_source: docs/milestones/v0.91
 tracked_package: docs/milestones/v0.91
 notes:
-  - "This YAML is the reviewed candidate issue wave for v0.91; it is ready for WP-01 promotion but is not opened yet."
-  - "v0.91 is the core moral-governance, cognitive-being, and secure intra-polis communication milestone."
-  - "The package inherits v0.90.3 citizen-state/runtime-v2 foundations and v0.90.5 governed-tools/comms evidence without reopening those milestones."
-  - "Structured planning, plan review, and SRP are first-class workflow features in v0.91, not side tooling notes."
-  - "A2A is planned as a governed adapter over the Agent Comms substrate, not as a parallel communication model."
-  - "v0.91.1 remains the adjacent-systems lane for capability testing, intelligence architecture, ANRM/Gemma, ToM, memory/identity alignment, runtime-v2/polis docs, ACIP hardening, and the full model comparison report."
+- 'Official v0.91 issue wave opened as #2735-#2759 from the reviewed candidate YAML.'
+- v0.91 is the core moral-governance, cognitive-being, and secure intra-polis communication
+  milestone.
+- The package inherits v0.90.3 citizen-state/runtime-v2 foundations and v0.90.5 governed-tools/comms
+  evidence without reopening those milestones.
+- Structured planning, plan review, and SRP are first-class workflow features in v0.91,
+  not side tooling notes.
+- A2A is planned as a governed adapter over the Agent Comms substrate, not as a parallel
+  communication model.
+- v0.91.1 remains the adjacent-systems lane for capability testing, intelligence architecture,
+  ANRM/Gemma, ToM, memory/identity alignment, runtime-v2/polis docs, ACIP hardening,
+  and the full model comparison report.
 card_update_rule:
-  - "WP-01 should copy the relevant section from the reviewed v0.91 readiness sources into each issue body before implementation."
-  - "Cards must include required outputs, required validation, source docs, non-goals, and demo/proof expectations."
-  - "No issue should claim birthday, constitutional citizenship, external transport support, or production moral agency until evidence has landed and validated."
+- WP-01 should keep each opened issue body and local issue-card bundle aligned
+  with the relevant section from the reviewed v0.91 readiness sources.
+- Cards must include required outputs, required validation, source docs, non-goals,
+  and demo/proof expectations.
+- No issue should claim birthday, constitutional citizenship, external transport support,
+  or production moral agency until evidence has landed and validated.
 closeout_sequence:
-  - "WP-17 Cognitive-being flagship demo"
-  - "WP-18 Demo matrix and feature proof coverage"
-  - "WP-19 Coverage / quality gate"
-  - "WP-20 Docs + review pass"
-  - "WP-21 Internal review"
-  - "WP-22 External / 3rd-party review"
-  - "WP-23 Review findings remediation"
-  - "WP-24 Next milestone planning"
-  - "WP-25 Release ceremony"
+- WP-17 Cognitive-being flagship demo
+- WP-18 Demo matrix and feature proof coverage
+- WP-19 Coverage / quality gate
+- WP-20 Docs + review pass
+- WP-21 Internal review
+- WP-22 External / 3rd-party review
+- WP-23 Review findings remediation
+- WP-24 Next milestone planning
+- WP-25 Release ceremony
 work_packages:
-  - wp: WP-01
-    issue: pending
-    title: Design pass (milestone docs + planning)
-    queue: docs
-    outcome: tracked docs, reviewed YAML, and issue cards
-    depends_on: v0.90.5 closeout
-  - wp: WP-02
-    issue: pending
-    title: Moral event contract
-    queue: docs
-    outcome: moral event feature contract and fixtures
-    depends_on: WP-01
-  - wp: WP-03
-    issue: pending
-    title: Moral event validation
-    queue: tools
-    outcome: validation rules and negative fixtures
-    depends_on: WP-02
-  - wp: WP-04
-    issue: pending
-    title: Moral trace schema
-    queue: tools
-    outcome: trace schema and examples
-    depends_on: WP-02, WP-03
-  - wp: WP-05
-    issue: pending
-    title: Outcome linkage and attribution
-    queue: runtime
-    outcome: outcome-linkage record and tests
-    depends_on: WP-04
-  - wp: WP-06
-    issue: pending
-    title: Moral metrics
-    queue: runtime
-    outcome: metric definitions and fixture report
-    depends_on: WP-04, WP-05
-  - wp: WP-07
-    issue: pending
-    title: Moral trajectory review
-    queue: runtime
-    outcome: trajectory review packet
-    depends_on: WP-04-WP-06
-  - wp: WP-08
-    issue: pending
-    title: Anti-harm trajectory constraints
-    queue: runtime
-    outcome: delegated-harm proof packet
-    depends_on: WP-04-WP-07
-  - wp: WP-09
-    issue: pending
-    title: Wellbeing metrics v0
-    queue: runtime
-    outcome: decomposed diagnostic report and policy views
-    depends_on: WP-04-WP-07
-  - wp: WP-10
-    issue: pending
-    title: Moral resources
-    queue: runtime
-    outcome: moral-resources contract, fixtures, and implementation surface
-    depends_on: WP-05-WP-09
-  - wp: WP-11
-    issue: pending
-    title: Kindness model
-    queue: runtime
-    outcome: kindness contract and conflict fixtures
-    depends_on: WP-05-WP-10
-  - wp: WP-12
-    issue: pending
-    title: Humor and absurdity
-    queue: runtime
-    outcome: reframing event and negative fixtures
-    depends_on: WP-05-WP-10
-  - wp: WP-13
-    issue: pending
-    title: Affect reasoning-control surface
-    queue: runtime
-    outcome: affect signal record and policy hooks
-    depends_on: WP-05-WP-10
-  - wp: WP-14
-    issue: pending
-    title: Cultivating intelligence
-    queue: runtime
-    outcome: cultivation contract and review criteria
-    depends_on: WP-05-WP-13
-  - wp: WP-15
-    issue: pending
-    title: Structured planning and SRP workflow surfaces
-    queue: tools
-    outcome: SPP/SRP workflow artifacts, planning skill, and review-readiness checks
-    depends_on: WP-01
-  - wp: WP-16
-    issue: pending
-    title: Secure Agent Comms substrate and A2A boundary
-    queue: runtime
-    outcome: local ACIP substrate slice plus explicit A2A adapter boundary
-    depends_on: WP-04-WP-05, WP-15
-  - wp: WP-17
-    issue: pending
-    title: Cognitive-being flagship demo
-    queue: demo
-    outcome: runnable proof demo and artifacts
-    depends_on: WP-08-WP-16
-  - wp: WP-18
-    issue: pending
-    title: Demo matrix and feature proof coverage
-    queue: demo
-    outcome: demo matrix rows and proof coverage record
-    depends_on: WP-17
-  - wp: WP-19
-    issue: pending
-    title: Coverage / quality gate
-    queue: quality
-    outcome: quality gate and validation posture record
-    depends_on: WP-18
-  - wp: WP-20
-    issue: pending
-    title: Docs + review pass
-    queue: docs
-    outcome: review-ready docs package
-    depends_on: WP-19
-  - wp: WP-21
-    issue: pending
-    title: Internal review
-    queue: review
-    outcome: internal review record
-    depends_on: WP-20
-  - wp: WP-22
-    issue: pending
-    title: External / 3rd-party review
-    queue: review
-    outcome: external review handoff and record
-    depends_on: WP-21
-  - wp: WP-23
-    issue: pending
-    title: Review findings remediation
-    queue: review
-    outcome: remediation record and follow-up issues
-    depends_on: WP-22
-  - wp: WP-24
-    issue: pending
-    title: Next milestone planning
-    queue: docs
-    outcome: v0.91.1/v0.92/v0.93 handoff record and adjacent-systems placement
-    depends_on: WP-23
-  - wp: WP-25
-    issue: pending
-    title: Release ceremony
-    queue: release
-    outcome: release evidence, end-of-milestone report, and next handoff
-    depends_on: WP-24
+- wp: WP-01
+  issue: 2735
+  title: Design pass (milestone docs + planning)
+  queue: docs
+  outcome: tracked docs, reviewed YAML, and issue cards
+  depends_on: v0.90.5 closeout
+- wp: WP-02
+  issue: 2736
+  title: Moral event contract
+  queue: docs
+  outcome: moral event feature contract and fixtures
+  depends_on: WP-01
+- wp: WP-03
+  issue: 2737
+  title: Moral event validation
+  queue: tools
+  outcome: validation rules and negative fixtures
+  depends_on: WP-02
+- wp: WP-04
+  issue: 2738
+  title: Moral trace schema
+  queue: tools
+  outcome: trace schema and examples
+  depends_on: WP-02, WP-03
+- wp: WP-05
+  issue: 2739
+  title: Outcome linkage and attribution
+  queue: runtime
+  outcome: outcome-linkage record and tests
+  depends_on: WP-04
+- wp: WP-06
+  issue: 2740
+  title: Moral metrics
+  queue: runtime
+  outcome: metric definitions and fixture report
+  depends_on: WP-04, WP-05
+- wp: WP-07
+  issue: 2741
+  title: Moral trajectory review
+  queue: runtime
+  outcome: trajectory review packet
+  depends_on: WP-04-WP-06
+- wp: WP-08
+  issue: 2742
+  title: Anti-harm trajectory constraints
+  queue: runtime
+  outcome: delegated-harm proof packet
+  depends_on: WP-04-WP-07
+- wp: WP-09
+  issue: 2743
+  title: Wellbeing metrics
+  queue: runtime
+  outcome: decomposed diagnostic report and policy views
+  depends_on: WP-04-WP-07
+- wp: WP-10
+  issue: 2744
+  title: Moral resources
+  queue: runtime
+  outcome: moral-resources contract, fixtures, and implementation surface
+  depends_on: WP-05-WP-09
+- wp: WP-11
+  issue: 2745
+  title: Kindness model
+  queue: runtime
+  outcome: kindness contract and conflict fixtures
+  depends_on: WP-05-WP-10
+- wp: WP-12
+  issue: 2746
+  title: Humor and absurdity
+  queue: runtime
+  outcome: reframing event and negative fixtures
+  depends_on: WP-05-WP-10
+- wp: WP-13
+  issue: 2747
+  title: Affect reasoning-control surface
+  queue: runtime
+  outcome: affect signal record and policy hooks
+  depends_on: WP-05-WP-10
+- wp: WP-14
+  issue: 2748
+  title: Cultivating intelligence
+  queue: runtime
+  outcome: cultivation contract and review criteria
+  depends_on: WP-05-WP-13
+- wp: WP-15
+  issue: 2749
+  title: Structured planning and SRP workflow surfaces
+  queue: tools
+  outcome: SPP/SRP workflow artifacts, planning skill, and review-readiness checks
+  depends_on: WP-01
+- wp: WP-16
+  issue: 2750
+  title: Secure Agent Comms substrate and A2A boundary
+  queue: runtime
+  outcome: local ACIP substrate slice plus explicit A2A adapter boundary
+  depends_on: WP-04-WP-05, WP-15
+- wp: WP-17
+  issue: 2751
+  title: Cognitive-being flagship demo
+  queue: demo
+  outcome: runnable proof demo and artifacts
+  depends_on: WP-08-WP-16
+- wp: WP-18
+  issue: 2752
+  title: Demo matrix and feature proof coverage
+  queue: demo
+  outcome: demo matrix rows and proof coverage record
+  depends_on: WP-17
+- wp: WP-19
+  issue: 2753
+  title: Coverage / quality gate
+  queue: quality
+  outcome: quality gate and validation posture record
+  depends_on: WP-18
+- wp: WP-20
+  issue: 2754
+  title: Docs + review pass
+  queue: docs
+  outcome: review-ready docs package
+  depends_on: WP-19
+- wp: WP-21
+  issue: 2755
+  title: Internal review
+  queue: review
+  outcome: internal review record
+  depends_on: WP-20
+- wp: WP-22
+  issue: 2756
+  title: External / 3rd-party review
+  queue: review
+  outcome: external review handoff and record
+  depends_on: WP-21
+- wp: WP-23
+  issue: 2757
+  title: Review findings remediation
+  queue: review
+  outcome: remediation record and follow-up issues
+  depends_on: WP-22
+- wp: WP-24
+  issue: 2758
+  title: Next milestone planning
+  queue: docs
+  outcome: v0.91.1/v0.92/v0.93 handoff record and adjacent-systems placement
+  depends_on: WP-23
+- wp: WP-25
+  issue: 2759
+  title: Release ceremony
+  queue: release
+  outcome: release evidence, end-of-milestone report, and next handoff
+  depends_on: WP-24

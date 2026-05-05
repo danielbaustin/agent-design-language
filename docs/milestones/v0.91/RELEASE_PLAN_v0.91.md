@@ -16,7 +16,7 @@ communication, demo, and review story.
 - Moral metrics report with non-verdict interpretation.
 - Moral trajectory review packet.
 - Anti-harm trajectory proof.
-- Wellbeing metrics v0 diagnostic with citizen self-access and redacted views.
+- Wellbeing metrics diagnostic with citizen self-access and redacted views.
 - Kindness, humor/absurdity, affect, cultivated-intelligence, and moral-resource
   contracts, fixtures, and proof surfaces.
 - Secure intra-polis Agent Comms proof, with any v0.91.1 hardening separated.

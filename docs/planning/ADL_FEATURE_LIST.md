@@ -48,9 +48,13 @@ can survive code review, ops review, and postmortem analysis.
 ## Current Repo Status
 
 The current repo truth is:
-- active milestone: `v0.90.3`
-- current crate version on the active release line: `0.90.3`
-- current release-tail state: `WP-20 ceremony remains; WP-19 handoff is complete`
+- active milestone: `v0.91`
+- current crate version on the active release line: `0.90.5`
+- current release-tail state: `v0.90.5` is complete and `v0.91` issue wave
+  `#2735`-`#2759` is open
+- most recently completed governed-tools milestone package: `v0.90.5`
+- most recently completed bounded economics milestone package: `v0.90.4`
+- most recently completed citizen-state substrate milestone package: `v0.90.3`
 - most recently completed Runtime v2 foundation milestone package: `v0.90.1`
 - most recently completed long-lived runtime milestone package: `v0.90`
 - most recently completed adversarial-runtime milestone package before that: `v0.89.1`
@@ -64,12 +68,15 @@ That means the feature story should be read this way:
   Observatory band
 - `v0.90.2` added the implemented first bounded CSM run and Runtime v2
   hardening band
-- `v0.90.3` is the active citizen-state substrate band: private-state authority,
-  signed envelopes, local sealing, lineage, witnesses, standing, access control,
-  redacted projections, challenge/appeal, and the inhabited Observatory demo
-- `v0.90.4` and `v0.90.5` are already prepared as the next immediate planning
-  packages after v0.90.3 ceremony
-- `v0.91` through `v0.95` are the later planned capability bands
+- `v0.90.3` is the completed citizen-state substrate band: private-state
+  authority, signed envelopes, local sealing, lineage, witnesses, standing,
+  access control, redacted projections, challenge/appeal, and the inhabited
+  Observatory demo
+- `v0.90.4` is the completed bounded citizen-economics and contract-market band
+- `v0.90.5` is the completed Governed Tools v1.0 and first Comms / ACIP tranche
+- `v0.91` is the active moral-governance, cognitive-being, structured planning /
+  SRP, and secure Agent Comms milestone
+- `v0.91.1` through `v0.95` are the later planned capability bands
 
 ## ADL at a Glance
 
@@ -319,35 +326,32 @@ practical long-lived runtime supervision:
 The truthful v0.90 story is implemented baseline, with Runtime v2 consuming
 those surfaces rather than replacing them.
 
-## Current Active Milestone: v0.90.3
+## Current Active Milestone: v0.91
 
-`v0.90.3` is the active milestone. Its useful work is concrete: it turns the
-first bounded CSM run and Runtime v2 hardening evidence into safer citizen
-state, standing, private-state, access-control, projection, and continuity
-surfaces.
+`v0.91` is the active milestone. Its useful work is concrete: it turns the
+planned moral-governance, cognitive-being, structured planning / SRP, and secure
+Agent Comms feature set into a bounded issue wave with demos, quality gates,
+review remediation, next-milestone planning, and release ceremony work.
 
 The current active bands are:
-- private citizen-state format and signed continuity envelopes
-- append-only lineage, continuity witnesses, and anti-equivocation
-- citizen and guest standing
-- access-control and projection rules
-- sanctuary and quarantine behavior
-- redacted Observatory evidence
-- inhabited CSM and citizen-state demos
-- forward planning for v0.91 moral trace, v0.92 identity/birthday, v0.93
-  constitutional governance, and v0.90.5 governed tools
+- moral event, trace, attribution, trajectory, and anti-harm governance
+- wellbeing metrics, moral resources, kindness, humor, affect, and cultivating
+  intelligence surfaces
+- structured planning and SRP workflow features
+- secure intra-polis Agent Comms substrate and A2A boundary work
+- cognitive-being flagship demo and demo matrix proof coverage
+- forward planning for `v0.91.1`, `v0.92`, and later identity/governance bands
 
-The first true Gödel-agent birthday remains a v0.92 event. v0.90.3 strengthens
-citizen state and standing; it does not claim full identity, moral
-civilization, production citizenship, legal personhood, or complete
-constitutional authority.
+The first true Gödel-agent birthday remains a later milestone event. `v0.91`
+strengthens the moral and emotional reasoning surfaces needed before that
+event; it does not claim full identity, production citizenship, legal
+personhood, or complete constitutional authority.
 
 ## Current And Upcoming Capability Bands
 
 ### v0.90.3 - Citizen State, Standing, And Private-State Substrate
 
-`v0.90.3` is the current closeout band. Its implementation and review tail have
-already landed through WP-19, leaving only ceremony:
+`v0.90.3` is complete. Its implementation and review surfaces landed:
 - private citizen-state format
 - signed envelopes and continuity witnesses
 - append-only lineage and anti-equivocation rules
@@ -356,24 +360,24 @@ already landed through WP-19, leaving only ceremony:
 - access-control semantics for who may inspect, project, wake, migrate, or
   challenge citizen state
 
-Its remaining release-tail work is ceremony and closeout, not more feature
-scope.
+Its release-tail work is complete; later milestones consume these surfaces
+instead of reopening the band.
 
 ### v0.90.4 - Citizen Economics And Contract Markets
 
-`v0.90.4` is the planned home for citizen economics:
+`v0.90.4` is the completed bounded citizen-economics and contract-market band:
 - resource stewardship
 - contract-market shape
 - accounting and allocation evidence
 - citizen-safe economic boundaries
 - non-payment proof surfaces before any payment rail claims
 
-This milestone should consume the v0.90.3 economics placement bridge rather
-than hiding economics inside citizen-state security work.
+It consumed the v0.90.3 economics placement bridge without hiding economics
+inside citizen-state security work.
 
 ### v0.90.5 - Governed Tools v1.0
 
-`v0.90.5` is the planned home for governed tool calls:
+`v0.90.5` is the completed Governed Tools v1.0 band:
 - Universal Tool Schema
 - ADL Capability Contract
 - capability-to-tool binding
@@ -382,8 +386,8 @@ than hiding economics inside citizen-state security work.
 - model compatibility testing
 
 Tools are first-class ADL primitives, but the current industry pattern is too
-unsafe to treat as a production governance model. This milestone should make
-tool calls policy-mediated, inspectable, and fail-closed.
+unsafe to treat as a production governance model. This milestone made tool
+calls policy-mediated, inspectable, and fail-closed at the completed baseline.
 
 ### v0.91 - Affect and Moral Cognition
 
@@ -397,7 +401,7 @@ normatively legible:
 - moral trace schema, validation, outcome linkage, metrics, and trajectory
   review
 - anti-harm trajectory constraints and bounded harm-prevention proof surfaces
-- wellbeing metrics v0 as a second-half diagnostic report after trace,
+- wellbeing metrics as a second-half diagnostic report after trace,
   validation, outcome-linkage, and trajectory-review foundations
 - moral resources and wellbeing links that remain evidence-grounded rather than
   scalar, reward-channel, or rhetorical

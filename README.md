@@ -15,7 +15,7 @@ bounded behavior, explicit authority, and durable evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.90.5%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.91%20active-blue)
 
 ## Why This Is Interesting
 
@@ -47,19 +47,20 @@ In the current repository, ADL includes:
   control
 - reviewer-facing milestone proof packages and runnable demos
 
-The active milestone, `v0.90.5`, adds the Governed Tools v1.0 package and the
-first landed Comms / ACIP tranche:
+The active milestone, `v0.91`, turns the next feature band into an execution
+wave for moral governance, cognitive-being surfaces, structured planning / SRP,
+secure Agent Comms, and the cognitive-being flagship demo:
 
-- Universal Tool Schema v1.0 public-compatible schema and conformance
-- ADL Capability Contract v1.0 authority, privacy, visibility, delegation,
-  trace, and replay semantics
-- deterministic tool registry, compiler, normalization, policy, and governed
-  executor behavior
-- dangerous negative safety tests that fail closed
-- bounded model-proposal benchmarking and local/Gemma-focused evaluation
-- the Governed Tools v1.0 flagship demo
-- first-level agent communication surfaces for message envelopes, invocation,
-  identity shape, redaction, and review/coding-agent specialization
+- moral events, traces, attribution, trajectory review, and anti-harm
+  constraints
+- wellbeing metrics, moral resources, kindness, humor, affect, and cultivating
+  intelligence surfaces
+- structured planning and SRP workflow mechanics that make issue execution more
+  reviewable before work begins
+- secure intra-polis Agent Comms substrate and A2A boundary planning over that
+  substrate
+- demo, coverage, review, remediation, next-milestone planning, and release
+  ceremony work packages for the full milestone lifecycle
 
 ## Why ADL Feels Different
 
@@ -90,16 +91,19 @@ Actually run the same minimal example and emit trace/artifact output:
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
 ```
 
-### If you want the current v0.90.5 package overview
+### If you want the current v0.91 package overview
 
 Read the current milestone package entry surface:
 
 ```text
-docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md
+docs/milestones/v0.91/README.md
 ```
 
 That document is the fastest way to see the current package scope, proof
-surfaces, commands, and milestone boundaries.
+surfaces, issue wave, and milestone boundaries. The execution package also
+includes `docs/milestones/v0.91/WP_ISSUE_WAVE_v0.91.yaml`,
+`docs/milestones/v0.91/WBS_v0.91.md`, and
+`docs/milestones/v0.91/SPRINT_v0.91.md`.
 
 ### If you want the current feature-proof coverage packet
 
@@ -349,7 +353,7 @@ ADL includes both ordinary demos and heavyweight reviewer or release proof packa
 
 Start here:
 - canonical user-facing demo index: `demos/README.md`
-- active milestone demo matrix: `docs/milestones/v0.90.3/DEMO_MATRIX_v0.90.3.md`
+- active milestone demo matrix: `docs/milestones/v0.91/DEMO_MATRIX_v0.91.md`
 - latest completed CSM first-run demo: `cargo run --manifest-path adl/Cargo.toml -- runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run`
 - latest completed feature-proof coverage packet: `cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0902/feature-proof-coverage.json`
 - latest completed milestone state check: `python3 adl/tools/check_v090_milestone_state.py`

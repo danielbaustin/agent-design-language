@@ -26,7 +26,7 @@ secure intra-polis agent communication.
 - Moral metrics as evidence, not verdicts.
 - Moral trajectory review.
 - Anti-harm trajectory proof.
-- Wellbeing metrics v0 diagnostic with citizen self-access and redacted views.
+- Wellbeing metrics diagnostic with citizen self-access and redacted views.
 - Kindness, humor/absurdity, affect, cultivated-intelligence, and moral-resource
   proof surfaces.
 - Secure local Agent Communication and Invocation Protocol evidence, with
