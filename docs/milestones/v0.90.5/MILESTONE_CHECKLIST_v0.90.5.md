@@ -40,7 +40,7 @@
 - [x] privacy and redaction claims backed by tests
 - [x] internal review complete
 - [x] third-party review handoff prepared and external review complete or explicitly deferred
-- [ ] accepted findings fixed or explicitly dispositioned
+- [x] accepted findings fixed or explicitly dispositioned
 - [ ] next milestone planning handoff complete before release ceremony
 
 ## Release Gates
