@@ -11,7 +11,8 @@ STEP_OUT="$OUT_DIR/out"
 RUN_ID="v0-91-chatgpt-gemini-direct-conversation"
 PORT="${ADL_CHATGPT_GEMINI_DIRECT_PORT:-0}"
 PORT_FILE="$OUT_DIR/provider_server.port"
-SERVER_LOG="$OUT_DIR/provider_server.log"
+SERVER_LOG="$OUT_DIR/provider_adapter.log"
+INVOCATIONS="$OUT_DIR/provider_invocations.json"
 TRANSCRIPT="$OUT_DIR/transcript.md"
 TRANSCRIPT_CONTRACT="$OUT_DIR/transcript_contract.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
@@ -19,13 +20,54 @@ PROOF_NOTE="$OUT_DIR/proof_note.md"
 README_OUT="$OUT_DIR/README.md"
 EXAMPLE="adl/examples/v0-91-chatgpt-gemini-direct-conversation.adl.yaml"
 GENERATED_EXAMPLE="$OUT_DIR/v0-91-chatgpt-gemini-direct-conversation.runtime.adl.yaml"
+OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai2.key}"
+GEMINI_KEY_FILE="${ADL_GEMINI_KEY_FILE:-$HOME/keys/gcp-ace-2023.key}"
+
+load_key() {
+  local env_name="$1"
+  local key_file="$2"
+  if [[ -n "${!env_name:-}" ]]; then
+    return 0
+  fi
+  if [[ ! -s "$key_file" ]]; then
+    echo "missing required key file for $env_name: $key_file" >&2
+    return 1
+  fi
+  local key_value
+  key_value="$(python3 - "$env_name" "$key_file" <<'PY'
+import sys
+env_name, path = sys.argv[1:3]
+raw = open(path, encoding="utf-8").read().strip()
+value = raw
+for line in raw.splitlines():
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#"):
+        continue
+    if stripped.startswith(env_name + "="):
+        value = stripped.split("=", 1)[1].strip().strip("'\"")
+        break
+    value = stripped.strip("'\"")
+    break
+print(value, end="")
+PY
+)"
+  if [[ -z "$key_value" ]]; then
+    echo "empty required key file for $env_name: $key_file" >&2
+    return 1
+  fi
+  export "$env_name=$key_value"
+}
+
+load_key OPENAI_API_KEY "$OPENAI_KEY_FILE"
+load_key GEMINI_API_KEY "$GEMINI_KEY_FILE"
 
 rm -rf "$OUT_DIR"
 mkdir -p "$STEP_OUT"
 
-python3 "$ROOT_DIR/adl/tools/mock_chatgpt_gemini_direct_conversation_provider.py" \
-  "$PORT" \
+python3 "$ROOT_DIR/adl/tools/real_chatgpt_gemini_provider_adapter.py" \
+  --port "$PORT" \
   --port-file "$PORT_FILE" \
+  --metadata "$INVOCATIONS" \
   >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
 cleanup() {
@@ -43,7 +85,7 @@ import sys
 
 source, target, port = sys.argv[1:4]
 text = open(source, encoding="utf-8").read()
-text = text.replace("http://127.0.0.1:8791/chatgpt", f"http://127.0.0.1:{port}/chatgpt")
+text = text.replace("http://127.0.0.1:8791/openai", f"http://127.0.0.1:{port}/openai")
 text = text.replace("http://127.0.0.1:8791/gemini", f"http://127.0.0.1:{port}/gemini")
 with open(target, "w", encoding="utf-8") as fh:
     fh.write(text)
@@ -150,19 +192,20 @@ with open(contract_path, "w", encoding="utf-8") as fh:
     fh.write("\n")
 PY
 
-python3 - "$MANIFEST" "$TRANSCRIPT" "$TRANSCRIPT_CONTRACT" "$PROOF_NOTE" "$RUNS_ROOT/$RUN_ID/run_summary.json" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" <<'PY'
+python3 - "$MANIFEST" "$TRANSCRIPT" "$TRANSCRIPT_CONTRACT" "$PROOF_NOTE" "$INVOCATIONS" "$RUNS_ROOT/$RUN_ID/run_summary.json" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" <<'PY'
 import json
 import sys
 
-manifest_path, transcript, transcript_contract, proof_note, run_summary, trace_path = sys.argv[1:7]
+manifest_path, transcript, transcript_contract, proof_note, invocations, run_summary, trace_path = sys.argv[1:8]
 payload = {
     "demo_id": "v0.91.chatgpt_gemini_direct_conversation",
     "title": "ChatGPT + Gemini direct conversation demo",
-    "execution_mode": "runtime_http_compatibility_demo",
-    "provider_mode": "local_http_compatibility_server",
+    "execution_mode": "runtime_http_live_provider_adapter",
+    "provider_mode": "live_openai_and_gemini",
+    "credential_policy": "operator_env_or_home_keys_no_secret_material_recorded",
     "agents": [
-        {"id": "chatgpt_host", "provider": "chatgpt_local", "model": "gpt-5.5-demo"},
-        {"id": "gemini_guest", "provider": "gemini_local", "model": "gemini-2.5-pro-demo"},
+        {"id": "chatgpt_host", "provider": "live_openai", "family": "openai"},
+        {"id": "gemini_guest", "provider": "live_gemini", "family": "gemini"},
     ],
     "steps": 4,
     "stop_rule": "Stop after four explicit turns.",
@@ -170,6 +213,7 @@ payload = {
         "transcript": transcript,
         "transcript_contract": transcript_contract,
         "proof_note": proof_note,
+        "provider_invocations": invocations,
         "run_summary": run_summary,
         "trace": trace_path,
     },
@@ -191,8 +235,9 @@ cat >"$PROOF_NOTE" <<'EOF'
 
 ## Assumptions
 
-- The local compatibility provider shim stands in for bounded provider behavior.
-- This proof assumes the saved transcript and runtime traces are the authoritative artifact surfaces.
+- The saved transcript, runtime traces, and provider-invocation log are the
+  authoritative proof surfaces.
+- Operator-managed local credentials are available for both providers.
 
 ## Recommendations
 
@@ -209,10 +254,16 @@ Canonical command:
 bash adl/tools/demo_v091_chatgpt_gemini_direct_conversation.sh
 \`\`\`
 
+Credential loading:
+- Uses \`OPENAI_API_KEY\` and \`GEMINI_API_KEY\` when already set.
+- Otherwise reads local operator-managed keys from \`\$HOME/keys/openai2.key\`
+  and \`\$HOME/keys/gcp-ace-2023.key\`.
+- Secret values and raw Authorization headers are not written to generated artifacts.
+
 What this proves:
-- one real ADL runtime workflow with two explicit named agents
+- one ADL runtime workflow with two explicit named live provider families
+- real OpenAI and Gemini calls through ADL's current local HTTP completion adapter boundary
 - four sequential turns with saved-state handoff between steps
-- a bounded direct-conversation transcript between ChatGPT and Gemini
 - an explicit stop rule recorded in the proof surfaces
 
 Primary proof surfaces:
@@ -228,12 +279,13 @@ Secondary proof surfaces:
 - \`$SERVER_LOG\`
 
 Scope note:
-- This is a bounded local compatibility-provider demo, not a claim of general federation.
+- This is a bounded live-provider demo, not a claim of general federation.
 - The proof is about explicit identity, ordered turns, saved artifacts, and bounded stop policy.
 EOF
 
 echo "ChatGPT + Gemini direct conversation proof surface:"
 echo "  $TRANSCRIPT"
 echo "  $PROOF_NOTE"
+echo "  $INVOCATIONS"
 echo "  $RUNS_ROOT/$RUN_ID/run_summary.json"
 echo "  $RUNS_ROOT/$RUN_ID/logs/trace_v1.json"

@@ -4,7 +4,7 @@
 
 This bounded `v0.91` demo runs a four-turn direct conversation workflow
 through the real ADL runtime using explicit `ChatGPT` and `Gemini` participant
-identities.
+identities and live provider calls.
 
 The proof shape is intentionally narrow:
 
@@ -29,8 +29,9 @@ It does **not** claim:
 - production-ready routing or hardening
 - broader triad or review-panel behavior
 
-The provider behavior is served through a deterministic local compatibility
-shim so the proof stays runnable and reviewable without external account setup.
+The runtime still uses a small local adapter boundary, but that adapter calls
+the real OpenAI and Gemini APIs with operator-managed credentials instead of a
+mock provider shim.
 
 ## Canonical Command
 
@@ -43,7 +44,7 @@ bash adl/tools/demo_v091_chatgpt_gemini_direct_conversation.sh
 ## What Runs
 
 - local provider shim:
-  - `adl/tools/mock_chatgpt_gemini_direct_conversation_provider.py`
+  - `adl/tools/real_chatgpt_gemini_provider_adapter.py`
 - runtime workflow:
   - `adl/examples/v0-91-chatgpt-gemini-direct-conversation.adl.yaml`
 - wrapper:
@@ -53,6 +54,7 @@ bash adl/tools/demo_v091_chatgpt_gemini_direct_conversation.sh
 
 - `artifacts/v091/chatgpt_gemini_direct_conversation/transcript.md`
 - `artifacts/v091/chatgpt_gemini_direct_conversation/proof_note.md`
+- `artifacts/v091/chatgpt_gemini_direct_conversation/provider_invocations.json`
 - `artifacts/v091/chatgpt_gemini_direct_conversation/runtime/runs/v0-91-chatgpt-gemini-direct-conversation/run_summary.json`
 
 ## Secondary Proof Surfaces
@@ -61,7 +63,7 @@ bash adl/tools/demo_v091_chatgpt_gemini_direct_conversation.sh
 - `artifacts/v091/chatgpt_gemini_direct_conversation/transcript_contract.json`
 - `artifacts/v091/chatgpt_gemini_direct_conversation/demo_manifest.json`
 - `artifacts/v091/chatgpt_gemini_direct_conversation/run_log.txt`
-- `artifacts/v091/chatgpt_gemini_direct_conversation/provider_server.log`
+- `artifacts/v091/chatgpt_gemini_direct_conversation/provider_adapter.log`
 
 ## Success Signal
 
@@ -70,4 +72,5 @@ The demo is successful when:
 - the transcript contains four explicit turns
 - `ChatGPT` and `Gemini` are explicit and distinguishable in every turn
 - the stop rule is explicit and visible in the proof surfaces
+- provider invocations show one live OpenAI lane and one live Gemini lane
 - the transcript and proof note stay honest about what the demo does not prove

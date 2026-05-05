@@ -4,7 +4,7 @@ providers:
   chatgpt_local:
     type: "http"
     config:
-      endpoint: "http://127.0.0.1:8791/chatgpt"
+      endpoint: "http://127.0.0.1:8791/openai"
       timeout_secs: 10
   gemini_local:
     type: "http"
