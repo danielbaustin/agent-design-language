@@ -4,8 +4,10 @@
 
 First-pass milestone allocation for Agent Communication and Invocation Protocol
 1.0 across v0.90.5, v0.91, v0.91.1 adjacent-system hardening, and the v0.92
-birthday boundary. This is not a final issue wave, but it does set a real
-implementation boundary.
+birthday boundary. The reviewed candidate issue wave is now tracked in
+[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml), with card-authoring
+requirements in [WP_EXECUTION_READINESS_v0.91.md](WP_EXECUTION_READINESS_v0.91.md).
+This plan sets the communication implementation boundary for that wave.
 
 ## Source Inputs
 

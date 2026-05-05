@@ -2,7 +2,9 @@
 
 ## Status
 
-Candidate sprint shape only. v0.91 has no final issue wave yet.
+Reviewed candidate sprint shape aligned with
+[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml). v0.91 has no opened
+GitHub issue wave yet; WP-01 owns that promotion step.
 
 ## Sprint 1: Moral Evidence Foundation
 

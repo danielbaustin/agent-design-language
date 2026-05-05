@@ -3,8 +3,11 @@
 ## Status
 
 First-pass milestone allocation for v0.91 and the v0.91.1 adjacent-systems
-follow-on. This document does not create the final issue wave, but it does set
-an implementation bar rather than a concept-only bar.
+follow-on. The reviewed candidate issue wave is tracked in
+[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml), with card-authoring
+requirements in [WP_EXECUTION_READINESS_v0.91.md](WP_EXECUTION_READINESS_v0.91.md).
+This document sets the cognitive-being implementation bar rather than a
+concept-only bar.
 
 v0.91 remains downstream of Runtime v2 and upstream of the v0.92 identity and
 first-birthday milestone. It should make the cognitive-being prerequisites

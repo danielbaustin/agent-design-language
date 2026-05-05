@@ -2,12 +2,14 @@
 
 ## Status
 
-Reviewed candidate allocation with a tracked candidate issue-wave YAML. v0.91
-still has no opened issue wave yet.
+Reviewed candidate allocation with a tracked candidate issue-wave YAML and
+card-authoring readiness document. v0.91 still has no opened issue wave yet.
 
-The exact WP sequence should be produced by the v0.91 WP-01 planning pass after
-v0.90.3 citizen-state and v0.90.5 governed-tool prerequisites are stable enough
-to consume where relevant.
+The exact candidate WP sequence is recorded in
+[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml). WP-01 should open that
+wave, write issue numbers back into the package, and copy concrete readiness
+sections from [WP_EXECUTION_READINESS_v0.91.md](WP_EXECUTION_READINESS_v0.91.md)
+into the issue bodies.
 
 ## WBS Summary
 
@@ -37,6 +39,36 @@ Theory of Mind milestones.
 | O | Cognitive-being flagship demo | Show moral governance, wellbeing, kindness, affect/reframing, moral resources, and secure local comms as one reviewable proof story. | Runnable proof demo and artifacts. | A through N. |
 | P | Demo matrix and proof coverage | Align demos with milestone claims, non-claims, and the v0.91.1 adjacent-systems completion lane. | Demo matrix rows and validation commands. | O. |
 | Q | Review, docs, and release tail | Align docs, update feature list, run review, fix findings, and close the milestone. | Review handoff, release notes, ceremony evidence. | All prior work. |
+
+## Candidate WP Sequence
+
+| WP | Title | Queue | Primary Deliverable | Dependencies |
+| --- | --- | --- | --- | --- |
+| WP-01 | Design pass (milestone docs + planning) | docs | tracked docs, reviewed YAML, and issue cards | v0.90.5 closeout |
+| WP-02 | Moral event contract | docs | moral event feature contract and fixtures | WP-01 |
+| WP-03 | Moral event validation | tools | validation rules and negative fixtures | WP-02 |
+| WP-04 | Moral trace schema | tools | trace schema and examples | WP-02, WP-03 |
+| WP-05 | Outcome linkage and attribution | runtime | outcome-linkage record and tests | WP-04 |
+| WP-06 | Moral metrics | runtime | metric definitions and fixture report | WP-04, WP-05 |
+| WP-07 | Moral trajectory review | runtime | trajectory review packet | WP-04-WP-06 |
+| WP-08 | Anti-harm trajectory constraints | runtime | delegated-harm proof packet | WP-04-WP-07 |
+| WP-09 | Wellbeing metrics v0 | runtime | decomposed diagnostic report and policy views | WP-04-WP-07 |
+| WP-10 | Moral resources | runtime | moral-resources contract, fixtures, and implementation surface | WP-05-WP-09 |
+| WP-11 | Kindness model | runtime | kindness contract and conflict fixtures | WP-05-WP-10 |
+| WP-12 | Humor and absurdity | runtime | reframing event and negative fixtures | WP-05-WP-10 |
+| WP-13 | Affect reasoning-control surface | runtime | affect signal record and policy hooks | WP-05-WP-10 |
+| WP-14 | Cultivating intelligence | runtime | cultivation contract and review criteria | WP-05-WP-13 |
+| WP-15 | Structured planning and SRP workflow surfaces | tools | SPP/SRP artifacts, planning skill, and review-readiness checks | WP-01 |
+| WP-16 | Secure Agent Comms substrate and A2A boundary | runtime | local ACIP substrate slice plus explicit A2A adapter boundary | WP-04-WP-05, WP-15 |
+| WP-17 | Cognitive-being flagship demo | demo | runnable proof demo and artifacts | WP-08-WP-16 |
+| WP-18 | Demo matrix and feature proof coverage | demo | demo matrix rows and proof coverage record | WP-17 |
+| WP-19 | Coverage / quality gate | quality | quality gate and validation posture record | WP-18 |
+| WP-20 | Docs + review pass | docs | review-ready docs package | WP-19 |
+| WP-21 | Internal review | review | internal review record | WP-20 |
+| WP-22 | External / 3rd-party review | review | external review handoff and record | WP-21 |
+| WP-23 | Review findings remediation | review | remediation record and follow-up issues | WP-22 |
+| WP-24 | Next milestone planning | docs | v0.91.1/v0.92/v0.93 handoff record | WP-23 |
+| WP-25 | Release ceremony | release | release evidence, end-of-milestone report, and next handoff | WP-24 |
 
 ## Sequencing Pressure
 

@@ -154,6 +154,8 @@ The likely `v0.91` tranche is:
 - Release plan: [RELEASE_PLAN_v0.91.md](RELEASE_PLAN_v0.91.md)
 - Release notes: [RELEASE_NOTES_v0.91.md](RELEASE_NOTES_v0.91.md)
 - Candidate issue wave: [WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml)
+- WP execution readiness:
+  [WP_EXECUTION_READINESS_v0.91.md](WP_EXECUTION_READINESS_v0.91.md)
 - Feature planning: [features/README.md](features/README.md)
 - Moral governance allocation:
   [MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md)
@@ -170,7 +172,7 @@ The likely `v0.91` tranche is:
 
 ## Execution Model
 
-Later WP planning should preserve the standard milestone rhythm:
+The reviewed candidate WP sequence preserves the standard milestone rhythm:
 
 - WP-01: promote reviewed milestone docs and issue wave
 - feature WPs: implement moral event, trace, validation, attribution, metrics,
@@ -183,8 +185,9 @@ Later WP planning should preserve the standard milestone rhythm:
 - release WP: close the milestone under the normal ceremony pattern
 
 The reviewed candidate WP sequence now exists in
-[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml), but issue numbers and the
-opened wave are intentionally deferred until the v0.91 WP-01 promotion pass.
+[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml), and the card-authoring
+source exists in [WP_EXECUTION_READINESS_v0.91.md](WP_EXECUTION_READINESS_v0.91.md).
+Issue numbers and the opened wave remain the v0.91 WP-01 promotion step.
 
 ## Success Criteria
 

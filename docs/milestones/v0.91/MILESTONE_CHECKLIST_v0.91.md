@@ -7,6 +7,7 @@
 - [ ] Cognitive-being feature allocation accepted or updated.
 - [ ] Agent Comms split plan accepted or updated.
 - [ ] Reviewed candidate WP YAML authored and accepted.
+- [ ] WP execution-readiness source reviewed.
 - [ ] Structured planning and `SRP` workflow features promoted into tracked milestone docs.
 - [ ] A2A adapter planning promoted into tracked milestone docs with explicit `v0.91` / `v0.91.1` split.
 - [ ] v0.91.1 adjacent-systems boundary accepted or updated explicitly.
