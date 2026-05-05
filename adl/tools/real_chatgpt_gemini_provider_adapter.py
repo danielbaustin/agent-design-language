@@ -15,8 +15,8 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_OPENAI_MODEL = "gpt-5.2-pro"
-DEFAULT_GEMINI_MODEL = "gemini-2.5-pro"
+DEFAULT_OPENAI_MODEL = "gpt-5.5"
+DEFAULT_GEMINI_MODEL = "gemini-3.1-pro-preview"
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
 GEMINI_GENERATE_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 

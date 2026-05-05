@@ -32,7 +32,7 @@ It does **not** claim:
 The runtime still uses a small local adapter boundary, but that adapter calls
 the real OpenAI and Gemini APIs with operator-managed credentials instead of a
 mock provider shim. The current default model choices are the top-tier text
-models for each family: `gpt-5.2-pro` and `gemini-2.5-pro`.
+models for each family: `gpt-5.5` and `gemini-3.1-pro-preview`.
 
 ## Canonical Command
 
