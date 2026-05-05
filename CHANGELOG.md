@@ -2,6 +2,21 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
+## v0.91 (Active development)
+
+Status: Active. The v0.91 issue wave is open as `#2735-#2759`, and the crate
+version has advanced to `0.91.0` for the moral governance, cognitive-being,
+structured planning / SRP, and secure intra-polis Agent Comms development line.
+
+Planning notes:
+- The tracked v0.91 planning package lives under `docs/milestones/v0.91/`.
+- The active issue wave is recorded in
+  `docs/milestones/v0.91/WP_ISSUE_WAVE_v0.91.yaml`.
+- The first SPP-readiness slice is recorded in
+  `docs/milestones/v0.91/SPP_READINESS_v0.91.md`.
+- This is not a release entry; v0.90.5 remains the most recently completed
+  release line.
+
 ## v0.90.5 (Released 2026-05-05)
 
 Status: Released. The Governed Tools v1.0 issue wave opened as `#2566-#2591`

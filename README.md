@@ -144,9 +144,9 @@ bash adl/tools/demo_v0871_suite.sh
   planning / SRP, secure Agent Comms, and the reviewed candidate v0.91 WP
   wave**
 - Most recently completed milestone: **v0.90.5**
-- Current crate version: **0.90.5**
-- Version note: **`0.90.5` is the completed Governed Tools v1.0 release line
-  while `v0.91` is the next prepared milestone package**
+- Current crate version: **0.91.0**
+- Version note: **`0.91.0` is the active v0.91 development line while
+  `v0.90.5` remains the completed Governed Tools v1.0 release line**
 - Previous completed milestone package: **v0.90.4**
 - Previous completed milestone: **v0.90.3**
 - Project changelog: `CHANGELOG.md`
