@@ -2,7 +2,8 @@
 
 ## Status
 
-WP-21 reviewer entry surface, ready for WP-22 internal review.
+WP-22 internal review completed. This surface remains a reviewer-entry summary,
+not a release approval.
 
 This document is the reviewer entry surface for the v0.90.5 Governed Tools
 v1.0 milestone after the feature-proof coverage and quality-gate passes. It
@@ -46,8 +47,9 @@ At WP-21 refresh:
 - WP-19 / #2584 landed the explicit demo-matrix and feature-proof coverage
   record.
 - WP-20 / #2585 records the canonical quality and coverage gate.
-- WP-21 / #2586 is the active docs + review pass.
-- WP-22 / #2587 through WP-26 / #2591 remain the internal review,
+- WP-21 / #2586 is closed and its docs/review pass PR merged.
+- WP-22 / #2587 internal review is now recorded.
+- WP-23 / #2588 through WP-26 / #2591 remain the external review,
   third-party review, remediation, next-milestone planning, and release
   ceremony tail.
 - The only additional open v0.90.5 follow-on outside the canonical WP state
@@ -123,8 +125,7 @@ This convergence pass should remain docs/truth focused:
   red main-branch coverage posture that still remains a release-tail exception.
 - Get-well status: the runtime-reduction wave is documented and remains
   explicit rather than being silently treated as solved.
-- Review posture: the package is now ready for internal review entry, but WP-22
-  has not yet issued a findings-first review result.
+- Review posture: WP-22 has now issued a findings-first internal review result.
 - Closeout posture: the remaining canonical milestone tail is review,
   remediation, planning handoff, and ceremony. There is no claim here that the
   release is already complete.
@@ -134,8 +135,7 @@ This convergence pass should remain docs/truth focused:
 - Active milestone: v0.90.5
 - Crate version: `0.90.5`
 - Most recently completed milestone: v0.90.4
-- Current release-tail stage: WP-21 docs/review convergence before WP-22
-  internal review
+- Current release-tail stage: WP-23 external review after WP-22 internal review
 
 Reviewers should treat any conflicting older crate-version statement or claim
 that v0.90.4 is still the active line as stale release-truth drift.
@@ -163,6 +163,6 @@ v0.90.5 does not claim:
 
 ## WP-21 Disposition
 
-WP-21 aligns the release-truth and reviewer-entry surfaces. It does not
-approve the release, replace internal or third-party review, or declare the
-milestone complete.
+WP-21 aligned the release-truth and reviewer-entry surfaces. WP-22 records the
+internal review result. Neither step approves the release, replaces external
+review, or declares the milestone complete.
