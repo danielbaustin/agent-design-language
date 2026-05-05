@@ -196,8 +196,7 @@ pub fn validate_acip_invocation_event_against_contract(
                 .filter(|expected| expected.required)
             {
                 let matched = event.output_refs.iter().any(|output_ref| {
-                    output_ref.contains(&expected.output_id)
-                        || output_ref.contains(&expected.output_kind)
+                    output_ref_matches_expected_output(output_ref, expected)
                 });
                 if !matched {
                     return Err(anyhow!(
@@ -221,6 +220,20 @@ pub fn validate_acip_invocation_event_against_contract(
         AcipInvocationStatusV1::Refused | AcipInvocationStatusV1::Failed => {}
     }
     Ok(())
+}
+
+fn output_ref_matches_expected_output(
+    output_ref: &str,
+    expected: &AcipExpectedOutputV1,
+) -> bool {
+    let Some(file_name) = output_ref.rsplit('/').next() else {
+        return false;
+    };
+    let stem = file_name
+        .rsplit_once('.')
+        .map(|(stem, _)| stem)
+        .unwrap_or(file_name);
+    stem == expected.output_id || stem == expected.output_kind
 }
 
 

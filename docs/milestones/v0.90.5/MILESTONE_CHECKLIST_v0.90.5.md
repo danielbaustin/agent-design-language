@@ -35,9 +35,9 @@
   first-level Comms evidence
 - [x] get-well wave disposition recorded by WP-20
 - [x] feature docs linked and internally consistent
-- [ ] public-spec language checked for overclaiming
-- [ ] UTS validity never described as execution authority
-- [ ] privacy and redaction claims backed by tests or explicit deferrals
+- [x] public-spec language checked for overclaiming
+- [x] UTS validity never described as execution authority
+- [x] privacy and redaction claims backed by tests
 - [x] internal review complete
 - [ ] third-party review handoff prepared and external review complete or explicitly deferred
 - [ ] accepted findings fixed or explicitly dispositioned
