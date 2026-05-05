@@ -12,6 +12,12 @@ The reviewed candidate issue sequence is recorded in
 issue wave is open as #2735 through #2759, with issue numbers assigned in the
 YAML and the local v0.91 issue-card bundles.
 
+The card-bundle readiness proof is recorded in
+[CARD_BUNDLE_READINESS_v0.91.md](CARD_BUNDLE_READINESS_v0.91.md). Live
+STP/SIP/SOR bundles remain in local `.adl/` issue-record storage per the
+repository records policy, while this tracked proof records the validation
+state for review.
+
 ## Global Execution Rules
 
 - Implement assigned feature surfaces completely for v0.91; do not leave core
@@ -43,6 +49,8 @@ Required outputs:
 - Issue numbers written back into WBS_v0.91.md and
   WP_ISSUE_WAVE_v0.91.yaml.
 - Issue cards updated with relevant readiness sections from this document.
+- Card-bundle readiness record added after validating all 25 local STP/SIP/SOR
+  bundles.
 
 Required validation:
 
@@ -52,6 +60,8 @@ Required validation:
   non-goals, source docs, and proof expectations.
 - Check tracked milestone docs contain no host paths, unresolved scaffold
   markers, or aspirational shipped claims.
+- Check STP, SIP, and SOR bootstrap validation passes for all 25 local
+  v0.91 task bundles.
 
 ## WP-02: Moral Event Contract
 

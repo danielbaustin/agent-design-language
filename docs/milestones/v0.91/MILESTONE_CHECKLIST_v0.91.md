@@ -13,6 +13,7 @@
 - [x] v0.91.1 adjacent-systems boundary accepted or updated explicitly.
 - [x] Issue wave opened from reviewed WP YAML when v0.91 becomes active.
 - [x] WP issue cards authored from concrete readiness sections.
+- [x] STP/SIP/SOR bootstrap validation passed for all 25 local v0.91 task bundles.
 - [x] v0.90.3 citizen-state dependency state confirmed.
 - [x] v0.92 birthday and v0.93 constitutional-governance boundaries accepted.
 
