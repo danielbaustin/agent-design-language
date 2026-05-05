@@ -24,7 +24,7 @@
 | WP_EXECUTION_READINESS_v0.90.5.md | card-authoring source for concrete WP outputs, validation, non-goals, and proof expectations | WP-01 |
 | GET_WELL_PLAN_v0.90.5.md | milestone-root get-well pointer for validation-cost recovery, the separate GW wave, and runtime-reduction disposition | WP-01, GW-00-GW-05, WP-20, WP-25 |
 | RELEASE_PLAN_v0.90.5.md | release evidence, public-spec guardrails, and review-handoff expectations | WP-21-WP-26 |
-| RELEASE_READINESS_v0.90.5.md | reviewer entry surface for the active docs/review/release tail after proof and quality convergence | WP-21-WP-26 |
+| RELEASE_READINESS_v0.90.5.md | reviewer-entry and final release-summary surface after proof, quality, review, remediation, handoff, and ceremony | WP-21-WP-26 |
 | DECISIONS_v0.90.5.md | accepted planning baseline for governed-tools scope and boundaries | WP-01, WP-21 |
 
 ## Context / Idea Docs

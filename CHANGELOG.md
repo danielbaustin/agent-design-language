@@ -2,19 +2,48 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.90.5 (In development)
+## v0.90.5 (Released 2026-05-05)
 
-Status: v0.90.5 is the active Governed Tools v1.0 milestone. The issue wave
-opened as #2566-#2591; WP-01 through WP-20 are closed, WP-21 through WP-26
-remain open, and the active crate/package version surface is now `0.90.5` for
-the live development line.
+Status: Released. The Governed Tools v1.0 issue wave opened as `#2566-#2591`
+and is now fully closed. Internal review, third-party review, explicit
+no-remediation disposition, next-milestone handoff, and release ceremony are
+complete.
 
-Scope note:
-- This entry is intentionally bounded during the live release tail.
-- Detailed milestone scope, proof expectations, and release-tail truth live in
-  `docs/milestones/v0.90.5/`.
-- The canonical reviewer entry surface for the current closeout tail is
-  `docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`.
+Summary:
+- `v0.90.5` is the Governed Tools v1.0 milestone.
+- The milestone landed the tool-call threat model, `UTS` public-compatible
+  schema and conformance, `ACC` authority/visibility/privacy/delegation
+  surfaces, deterministic registry/compiler/normalization/policy/executor
+  behavior, trace/replay/redaction evidence, dangerous negative proofs, bounded
+  model-proposal benchmark and local/Gemma evaluation, and the flagship
+  governed-tools demo.
+- The first landed ACIP / Comms tranche also shipped in this milestone:
+  protocol architecture, canonical envelope and identity shape,
+  invocation/Freedom Gate linkage, conformance fixtures, review/coding
+  specialization, and proof coverage.
+- WP-20 records the canonical quality and coverage posture; WP-23 external
+  review returned zero findings; WP-25 leaves the v0.91 package prepared with a
+  reviewed candidate issue-wave YAML.
+- The crate version for the completed release line remains `0.90.5`.
+
+References:
+- `docs/milestones/v0.90.5/README.md`
+- `docs/milestones/v0.90.5/WBS_v0.90.5.md`
+- `docs/milestones/v0.90.5/SPRINT_v0.90.5.md`
+- `docs/milestones/v0.90.5/DEMO_MATRIX_v0.90.5.md`
+- `docs/milestones/v0.90.5/FEATURE_PROOF_COVERAGE_v0.90.5.md`
+- `docs/milestones/v0.90.5/QUALITY_GATE_v0.90.5.md`
+- `docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`
+- `docs/milestones/v0.90.5/RELEASE_EVIDENCE_v0.90.5.md`
+- `docs/milestones/v0.90.5/RELEASE_NOTES_v0.90.5.md`
+- `docs/milestones/v0.90.5/END_OF_MILESTONE_REPORT_v0.90.5.md`
+
+Not claimed in v0.90.5:
+- `UTS` alone as execution authority
+- arbitrary shell, network, or secret-bearing execution from model output
+- payment rails, billing, legal contracting, or inter-polis economics
+- full `v0.91` moral/cognitive-being substrate
+- full `v0.91.1` adjacent-systems package
 
 ## v0.90.4 (Completed milestone)
 

@@ -2,12 +2,16 @@
 
 ## Status
 
-Tracked planning package for Governed Tools v1.0. The milestone direction was
-established under planning issue #2350, tightened under #2402, prepared for
-clean execution under #2443, and re-affirmed as the immediate governed-tools
-follow-on during the previous-milestone handoff pass under #2439.
+Closed milestone package for Governed Tools v1.0.
 
-The issue wave is open under [#2566](https://github.com/danielbaustin/agent-design-language/issues/2566), with [#2567](https://github.com/danielbaustin/agent-design-language/issues/2567) through [#2591](https://github.com/danielbaustin/agent-design-language/issues/2591) carrying the rest of the tracked milestone band. This package is now active execution truth for `v0.90.5`, not a later planning packet.
+The milestone direction was established under planning issue `#2350`,
+tightened under `#2402`, prepared for clean execution under `#2443`,
+re-affirmed during the previous-milestone handoff under `#2439`, opened by
+`WP-01` issue `#2566`, and closed by `WP-26` issue `#2591`.
+
+The issue wave ran as `#2566` through `#2591`, and all twenty-six work
+packages are now closed. This package is no longer active execution truth; it
+is the final tracked milestone record for `v0.90.5`.
 
 ## Parallel Python Reduction Tranche
 
@@ -130,14 +134,17 @@ Out of scope:
 - Release plan: RELEASE_PLAN_v0.90.5.md
 - Release readiness: RELEASE_READINESS_v0.90.5.md
 - Third-party review handoff: ADL_v0.90.5_THIRD_PARTY_REVIEW_HANDOFF.md
-- Release notes draft: RELEASE_NOTES_v0.90.5.md
+- Release evidence: RELEASE_EVIDENCE_v0.90.5.md
+- Next-milestone handoff: NEXT_MILESTONE_HANDOFF_v0.90.5.md
+- Release notes: RELEASE_NOTES_v0.90.5.md
+- End-of-milestone report: END_OF_MILESTONE_REPORT_v0.90.5.md
 - Opened issue wave: WP_ISSUE_WAVE_v0.90.5.yaml
 - Get-well plan: GET_WELL_PLAN_v0.90.5.md
 - Execution-support idea note: ideas/TEST_RUNTIME_REDUCTION_PLAN_v0.90.5.md
 
 ## Execution Rule
 
-This package is execution truth for the opened `v0.90.5` wave.
+This package is the final tracked record for the closed `v0.90.5` wave.
 
 Issue work should happen in issue worktrees. Root checkout edits are not part
 of the ADL execution model.
@@ -161,6 +168,32 @@ demo:
 - WP-24 review findings remediation
 - WP-25 next milestone planning
 - WP-26 release ceremony
+
+## WP-25 Handoff Result
+
+WP-25 captures the clean handoff into the next milestone band in
+[NEXT_MILESTONE_HANDOFF_v0.90.5.md](NEXT_MILESTONE_HANDOFF_v0.90.5.md).
+
+The important result is not “there is a vague backlog.” The result is:
+
+- `v0.90.5` landed Governed Tools v1.0 and the first ACIP tranche
+- `v0.91` is the immediate full implementation milestone for moral governance,
+  cognitive-being, secure intra-polis comms, structured planning, and SRP
+- `v0.91.1` absorbs the adjacent-systems lane, including the full comparison
+  report and A2A implementation hardening
+
+## WP-26 Ceremony Result
+
+The release ceremony is complete.
+
+The final closeout surfaces are:
+
+- `RELEASE_NOTES_v0.90.5.md`
+- `RELEASE_EVIDENCE_v0.90.5.md`
+- `END_OF_MILESTONE_REPORT_v0.90.5.md`
+
+At close, `v0.90.5` stands as the completed governed-tools release line and
+`v0.91` is the next prepared milestone package.
 
 ## Planning Mirror Rule
 

@@ -419,11 +419,15 @@ Required outputs:
   lane.
 - `v0.91` follow-on for the full Gemma/local/remote UTS + ACC model comparison
   report.
+- Promotion of any already-accepted next-milestone feature docs that still live
+  only in TBD or side worktrees.
 
 Required validation:
 
 - Follow-on work is captured without pretending it shipped in v0.90.5.
 - Next handoff does not reopen completed v0.90.5 scope.
+- The `v0.91` package is stronger after WP-25 than before it, not just
+  described more confidently.
 
 ## WP-26: Release Ceremony
 

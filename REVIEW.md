@@ -21,7 +21,7 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the active v0.90.5 governed-tools package, start with:
+For the most recently completed v0.90.5 governed-tools release package, start with:
 
 - `docs/milestones/v0.90.5/README.md`
 - `docs/milestones/v0.90.5/WBS_v0.90.5.md`
@@ -34,6 +34,8 @@ For the active v0.90.5 governed-tools package, start with:
 - `docs/milestones/v0.90.5/RELEASE_PLAN_v0.90.5.md`
 - `docs/milestones/v0.90.5/RELEASE_READINESS_v0.90.5.md`
 - `docs/milestones/v0.90.5/RELEASE_NOTES_v0.90.5.md`
+- `docs/milestones/v0.90.5/RELEASE_EVIDENCE_v0.90.5.md`
+- `docs/milestones/v0.90.5/END_OF_MILESTONE_REPORT_v0.90.5.md`
 - `docs/milestones/v0.90.5/WP_EXECUTION_READINESS_v0.90.5.md`
 - `docs/milestones/v0.90.5/WP_ISSUE_WAVE_v0.90.5.yaml`
 - `docs/planning/ADL_FEATURE_LIST.md`
@@ -41,10 +43,10 @@ For the active v0.90.5 governed-tools package, start with:
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
-The current v0.90.5 review posture is docs/review convergence after feature
-proof coverage and the quality gate, and before the formal WP-22 internal
-review pass. The wave is open as #2566-#2591. WP-01 through WP-20 are closed;
-WP-21 through WP-26 remain open as the docs/review/release tail.
+The final v0.90.5 review posture is completed release copy. The wave ran as
+`#2566-#2591` and is now fully closed. Docs/review convergence, internal
+review, zero-finding third-party review, explicit no-remediation disposition,
+next-milestone handoff, and release ceremony are complete.
 
 v0.90.5 should produce Governed Tools v1.0 plus the landed first-level Comms /
 ACIP tranche: UTS public-compatible schema and conformance, ACC authority and
@@ -54,9 +56,21 @@ model-proposal evaluation, the flagship governed-tools demo, and the bounded
 review/coding-agent communications substrate that was explicitly landed in this
 milestone.
 
-The crate version is `0.90.5` for the active v0.90.5 development line.
+The crate version is `0.90.5` for the completed v0.90.5 release line.
 Reviewers should treat any conflicting older version reference as a stale
 release-truth defect.
+
+For the active next-milestone planning package, start with:
+
+- `docs/milestones/v0.91/README.md`
+- `docs/milestones/v0.91/WBS_v0.91.md`
+- `docs/milestones/v0.91/SPRINT_v0.91.md`
+- `docs/milestones/v0.91/MILESTONE_CHECKLIST_v0.91.md`
+- `docs/milestones/v0.91/WP_ISSUE_WAVE_v0.91.yaml`
+- `docs/milestones/v0.91/features/README.md`
+
+The current active planning posture is `v0.91`. The reviewed candidate issue
+wave exists, but it is not opened yet.
 
 Important v0.90.5 non-claims:
 

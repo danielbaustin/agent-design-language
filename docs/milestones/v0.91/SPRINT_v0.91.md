@@ -10,6 +10,8 @@ Candidate sprint shape only. v0.91 has no final issue wave yet.
 - Confirm v0.91/v0.91.1 split and the v0.92 identity boundary.
 - Promote the cognitive-being and Agent Comms split plans into tracked milestone
   planning.
+- Promote structured planning, `SRP`, and A2A adapter planning into tracked
+  milestone docs.
 - Moral event contract.
 - Moral event validation.
 - Moral trace schema.
@@ -37,6 +39,8 @@ verdicts.
 - Affect reasoning-control surface.
 - Cultivating-intelligence review criteria.
 - Secure intra-polis Agent Comms substrate slice if prerequisite scope is stable.
+- Structured planning and plan-review artifact slice.
+- Structured Review Policy (`SRP`) slice.
 - Cognitive-being flagship demo.
 - Demo matrix and feature proof coverage.
 
@@ -66,4 +70,6 @@ metrics should wait for trajectory review because they need evidence rather than
 affect theater. Kindness, humor/absurdity, affect, and cultivating-intelligence
 work can proceed in parallel only after the shared evidence and non-claim
 language is stable. ACIP work can proceed beside those slices if it stays local,
-secure, and external-TLS-gated. Release-tail work should remain sequential.
+secure, and external-TLS-gated. A2A planning may proceed only as an adapter
+over that same substrate and should not define a parallel communication model.
+Release-tail work should remain sequential.

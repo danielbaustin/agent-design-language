@@ -2,7 +2,8 @@
 
 ## Status
 
-Candidate allocation only. v0.91 has no final issue wave yet.
+Reviewed candidate allocation with a tracked candidate issue-wave YAML. v0.91
+still has no opened issue wave yet.
 
 The exact WP sequence should be produced by the v0.91 WP-01 planning pass after
 v0.90.3 citizen-state and v0.90.5 governed-tool prerequisites are stable enough
@@ -32,7 +33,7 @@ Theory of Mind milestones.
 | K | Humor and absurdity | Add bounded frame detection and reframing without entertainment or manipulation claims. | Reframing event and negative fixtures. | C through I. |
 | L | Affect reasoning-control surface | Represent affect-like signals as explicit reasoning-control evidence, not hidden emotion claims. | Affect signal record and policy hooks. | C through I. |
 | M | Cultivating intelligence | Define formation evidence for restraint, reasonableness, reality contact, and moral participation. | Cultivation contract and review criteria. | C through L. |
-| N | Secure Agent Comms prerequisites | Implement secure local ACIP envelope, invocation, trace, visibility, and redaction surfaces. | ACIP v1 substrate feature with v0.91.1 hardening continuation if needed. | v0.90.5 governed tools, C through F. |
+| N | Secure Agent Comms prerequisites | Implement secure local ACIP envelope, invocation, trace, visibility, redaction, structured-planning/SRP policy targets, and A2A-adapter planning boundaries. | ACIP v1 substrate feature with v0.91.1 hardening continuation if needed. | v0.90.5 governed tools, C through F. |
 | O | Cognitive-being flagship demo | Show moral governance, wellbeing, kindness, affect/reframing, moral resources, and secure local comms as one reviewable proof story. | Runnable proof demo and artifacts. | A through N. |
 | P | Demo matrix and proof coverage | Align demos with milestone claims, non-claims, and the v0.91.1 adjacent-systems completion lane. | Demo matrix rows and validation commands. | O. |
 | Q | Review, docs, and release tail | Align docs, update feature list, run review, fix findings, and close the milestone. | Review handoff, release notes, ceremony evidence. | All prior work. |
@@ -64,6 +65,10 @@ Theory of Mind milestones.
   features must have implemented contracts, fixtures, and proof surfaces.
 - Agent communication must remain local, authenticated, traceable, redacted, and
   external-TLS-gated.
+- Structured planning and `SRP` must exist as durable issue-bundle workflow
+  artifacts rather than only chat behavior or TBD notes.
+- A2A must remain an adapter over the comms substrate, not a second comms
+  architecture.
 - Capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,
   ToM, memory/identity, and runtime-v2/polis docs should be routed to v0.91.1,
   not absorbed into v0.91.
