@@ -85,7 +85,7 @@ work_packages:
   depends_on: WP-04-WP-07
 - wp: WP-09
   issue: 2743
-  title: Wellbeing metrics v0
+  title: Wellbeing metrics
   queue: runtime
   outcome: decomposed diagnostic report and policy views
   depends_on: WP-04-WP-07

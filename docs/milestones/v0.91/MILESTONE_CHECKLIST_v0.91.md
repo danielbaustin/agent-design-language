@@ -26,7 +26,7 @@
 - [ ] Moral metrics accepted as evidence, not verdicts.
 - [ ] Moral trajectory review accepted.
 - [ ] Anti-harm trajectory proof path accepted.
-- [ ] Wellbeing metrics v0 access policy accepted.
+- [ ] Wellbeing metrics access policy accepted.
 - [ ] Kindness model accepted or explicitly handed off.
 - [ ] Humor/absurdity reframing surface accepted or explicitly handed off.
 - [ ] Affect reasoning-control surface accepted or explicitly handed off.

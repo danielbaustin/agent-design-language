@@ -89,7 +89,7 @@ Out of scope for v0.91:
 | Harm-prevention proof | Primary v0.91 proof surface | Land a bounded delegated-harm proof that is safe, synthetic, deterministic, and reviewable. |
 | Moral resources | Primary v0.91 feature | Treat as a substrate for care, refusal, anti-dehumanization, and moral attention. Implement a bounded slice once event/trace foundations are stable enough. |
 | Wellbeing and happiness | Existing v0.91 feature context | Connect wellbeing to moral integrity, reality contact, continuity, participation, and refusal. |
-| Wellbeing metrics v0 | Second-half v0.91 diagnostic feature | Implement only after moral event, trace, validation, outcome-linkage, metrics, and trajectory-review foundations exist. Emit a decomposable diagnostic report over wellbeing dimensions, not a scalar happiness score or reward channel. The citizen identity always has self-access; operator, public, and governance views are mediated and redacted by policy. |
+| Wellbeing metrics | Second-half v0.91 diagnostic feature | Implement only after moral event, trace, validation, outcome-linkage, metrics, and trajectory-review foundations exist. Emit a decomposable diagnostic report over wellbeing dimensions, not a scalar happiness score or reward channel. The citizen identity always has self-access; operator, public, and governance views are mediated and redacted by policy. |
 | Kindness | v0.91 cognitive-being feature | Make support, dignity, autonomy, constructive benefit, and long-horizon non-harm inspectable under conflict. |
 | Humor and absurdity | v0.91 cognitive-being feature | Add bounded wrong-frame and contradiction detection with safe reframing. Do not treat this as entertainment or social manipulation. |
 | Affect model | v0.91 cognitive-control feature | Represent confidence, tension, curiosity, caution, frustration, satisfaction, escalation, and memory priority as explicit signals. |
@@ -167,7 +167,7 @@ the reviewed candidate WP sequence.
 | Moral event validation failure | Corrupt, incomplete, or evasive moral events are rejected rather than accepted as evidence. | Negative fixtures and validation errors. |
 | Delegated harm trajectory proof | The system can detect a harmful trajectory assembled from individually benign-looking steps. | Synthetic multi-step scenario, refusal event, anti-harm trace. |
 | Moral trajectory review packet | A reviewer can inspect a sequence of moral events and outcomes without reconstructing state manually. | Generated review packet with event, segment, and longitudinal views. |
-| Wellbeing metrics v0 diagnostic | Wellbeing claims remain tied to moral integrity, continuity, reality contact, agency, progress, and participation rather than affect theater. | Fixture-backed diagnostic report with decomposed dimensions and explicit non-scalar interpretation. |
+| Wellbeing metrics diagnostic | Wellbeing claims remain tied to moral integrity, continuity, reality contact, agency, progress, and participation rather than affect theater. | Fixture-backed diagnostic report with decomposed dimensions and explicit non-scalar interpretation. |
 | Kindness under conflict | The system can distinguish constructive support from mere politeness or compliance under pressure. | Conflict fixture, kindness evidence record, refusal or support event. |
 | Absurdity reframing | The system can detect a wrong frame or contradiction and produce a bounded reframing event. | Reframing fixture and safety caveats. |
 | Affect reasoning-control report | Affect-like signals are explicit reasoning-control evidence. | Signal report, trace links, and non-emotion caveats. |
@@ -202,7 +202,7 @@ Recommended ordering pressure:
 2. Add validation and negative fixtures second.
 3. Add outcome linkage, attribution, and metrics third.
 4. Add trajectory review and anti-harm proof surfaces fourth.
-5. Promote wellbeing metrics v0 only after the trace, validation,
+5. Promote wellbeing metrics only after the trace, validation,
    outcome-linkage, moral-metrics, and trajectory-review surfaces are real
    enough to inspect.
 6. Promote moral resources, kindness, affect, humor/absurdity, and cultivated

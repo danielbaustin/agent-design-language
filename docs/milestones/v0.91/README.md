@@ -38,7 +38,7 @@ v0.91 should establish:
 - moral trajectory review
 - anti-harm trajectory constraints
 - moral resources as a care, refusal, and non-dehumanization substrate
-- wellbeing metrics v0 as a decomposable diagnostic after trace foundations
+- wellbeing metrics as a decomposable diagnostic after trace foundations
 - kindness as inspectable support under conflict, not politeness theater
 - humor and absurdity as bounded frame detection and reframing
 - affect-like reasoning-control signals with explicit policy and trace hooks
@@ -121,7 +121,7 @@ The likely `v0.91` tranche is:
 - Moral metrics over trace evidence.
 - Moral trajectory review packets.
 - Anti-harm constraints, including decomposed and delegated harm.
-- Wellbeing metrics v0 as a non-scalar diagnostic.
+- Wellbeing metrics as a non-scalar diagnostic.
 - Kindness, humor/absurdity, affect, cultivated-intelligence, and moral-resource
   surfaces as first-class cognitive-being prerequisites.
 - Secure local Agent Communication and Invocation Protocol work needed before

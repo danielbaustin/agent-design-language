@@ -30,7 +30,7 @@ Theory of Mind milestones.
 | F | Moral trajectory review | Review event sequences over segments and longitudinal windows. | Trajectory review packet. | C, D, E. |
 | G | Anti-harm trajectory constraints | Detect decomposed or delegated harm across steps. | Synthetic delegated-harm proof packet. | C through F. |
 | H | Moral resources | Model care, refusal, attention, and anti-dehumanization as implemented design resources. | Design contract, fixtures, and reviewable implementation surface. | A through G. |
-| I | Wellbeing metrics v0 | Emit a decomposable diagnostic over coherence, agency, continuity, progress, moral integrity, and participation. | Diagnostic report and policy views. | C through F. |
+| I | Wellbeing metrics | Emit a decomposable diagnostic over coherence, agency, continuity, progress, moral integrity, and participation. | Diagnostic report and policy views. | C through F. |
 | J | Kindness model | Make kindness inspectable under conflict as non-harm, dignity, autonomy, constructive benefit, and long-horizon support. | Kindness contract and fixture set. | C through I. |
 | K | Humor and absurdity | Add bounded frame detection and reframing without entertainment or manipulation claims. | Reframing event and negative fixtures. | C through I. |
 | L | Affect reasoning-control surface | Represent affect-like signals as explicit reasoning-control evidence, not hidden emotion claims. | Affect signal record and policy hooks. | C through I. |
@@ -52,7 +52,7 @@ Theory of Mind milestones.
 | WP-06 (#2740) | Moral metrics | runtime | metric definitions and fixture report | WP-04, WP-05 |
 | WP-07 (#2741) | Moral trajectory review | runtime | trajectory review packet | WP-04-WP-06 |
 | WP-08 (#2742) | Anti-harm trajectory constraints | runtime | delegated-harm proof packet | WP-04-WP-07 |
-| WP-09 (#2743) | Wellbeing metrics v0 | runtime | decomposed diagnostic report and policy views | WP-04-WP-07 |
+| WP-09 (#2743) | Wellbeing metrics | runtime | decomposed diagnostic report and policy views | WP-04-WP-07 |
 | WP-10 (#2744) | Moral resources | runtime | moral-resources contract, fixtures, and implementation surface | WP-05-WP-09 |
 | WP-11 (#2745) | Kindness model | runtime | kindness contract and conflict fixtures | WP-05-WP-10 |
 | WP-12 (#2746) | Humor and absurdity | runtime | reframing event and negative fixtures | WP-05-WP-10 |

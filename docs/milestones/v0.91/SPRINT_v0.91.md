@@ -50,7 +50,7 @@ Sprint notes:
 
 | WP | Title | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- |
-| WP-09 (#2743) | Wellbeing metrics v0 | decomposed diagnostic report and policy views | WP-04-WP-07 |
+| WP-09 (#2743) | Wellbeing metrics | decomposed diagnostic report and policy views | WP-04-WP-07 |
 | WP-10 (#2744) | Moral resources | moral-resources contract, fixtures, and implementation surface | WP-05-WP-09 |
 | WP-11 (#2745) | Kindness model | kindness contract and conflict fixtures | WP-05-WP-10 |
 | WP-12 (#2746) | Humor and absurdity | reframing event and negative fixtures | WP-05-WP-10 |

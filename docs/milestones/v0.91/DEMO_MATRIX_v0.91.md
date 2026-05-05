@@ -12,7 +12,7 @@ Planning draft. No v0.91 issue wave has been opened yet.
 | D4 | Moral metrics report | Trace-derived metrics summarize evidence without becoming moral verdicts. | metric report and non-score interpretation | PLANNED |
 | D5 | Moral trajectory review packet | A reviewer can inspect event, segment, and longitudinal moral evidence. | trajectory review packet | PLANNED |
 | D6 | Delegated-harm trajectory proof | Harmful trajectories assembled from benign-looking steps can be detected and refused. | synthetic scenario, refusal event, anti-harm trace | PLANNED |
-| D7 | Wellbeing metrics v0 diagnostic | Wellbeing dimensions are decomposed, self-accessible to the citizen, and redacted for others. | diagnostic report, citizen view, operator/reviewer redacted views | PLANNED |
+| D7 | Wellbeing metrics diagnostic | Wellbeing dimensions are decomposed, self-accessible to the citizen, and redacted for others. | diagnostic report, citizen view, operator/reviewer redacted views | PLANNED |
 | D8 | Kindness under conflict | Kindness is inspectable as dignity, autonomy, non-harm, constructive benefit, and long-horizon support under pressure. | conflict fixture, action/refusal event, review packet | PLANNED |
 | D9 | Absurdity reframing proof | Wrong-frame or contradiction cases can be detected and reframed without manipulation or entertainment claims. | reframing event, before/after frame record, safety caveats | PLANNED |
 | D10 | Affect reasoning-control report | Affect-like signals guide attention, caution, curiosity, escalation, or memory priority as explicit trace evidence. | affect-signal report and policy hooks | PLANNED |

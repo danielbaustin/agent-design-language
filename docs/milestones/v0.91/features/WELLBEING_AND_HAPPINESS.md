@@ -85,7 +85,7 @@ This function should never be treated as a simple reward channel. It exists to g
 
 ## Implementation Placement
 
-Wellbeing metrics v0 belongs in the second half of v0.91, after the moral
+Wellbeing metrics belongs in the second half of v0.91, after the moral
 evidence surfaces are real enough to inspect. The required predecessors are:
 
 - Freedom Gate moral event records
