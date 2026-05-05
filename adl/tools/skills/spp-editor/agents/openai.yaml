@@ -1,0 +1,3 @@
+display_name: SPP Editor
+short_description: Normalize truthful SPP planning cards
+default_prompt: Help me normalize an SPP planning card without turning it into an execution log.

@@ -54,6 +54,7 @@ The tracked skill set is:
 - `records-hygiene`
 - `review-quality-evaluator`
 - `review-to-test-planner`
+- `spp-editor`
 - `sip-editor`
 - `sor-editor`
 - `stp-editor`
@@ -97,7 +98,8 @@ The PR lifecycle skills share the CI runtime interpretation policy in
 docs-only path-policy skip from full runtime validation, failed-closed
 classification, and release/main full-validation evidence.
 
-The three editor skills are helper skills:
+The four editor skills are helper skills:
+- `spp-editor` for truthful `spp.md` planning cleanup
 - `stp-editor` for bounded `stp.md` cleanup
 - `sip-editor` for truthful `sip.md` cleanup
 - `sor-editor` for truthful `sor.md` cleanup
@@ -1500,6 +1502,71 @@ Use `documentation-specialist` for approved fixture text cleanup,
 `gap-analysis` when portability claims need evidence comparison, and focused
 remediation issues when a finding requires design decisions.
 
+## `spp-editor`
+
+### Purpose
+
+`spp-editor` is the bounded helper skill for `spp.md`.
+
+It:
+
+- keeps `SPP` as a planning artifact rather than an execution log
+- validates `codex_plan` status values and planning-truth boundaries
+- tightens dependencies, assumptions, test strategy, and stop conditions
+- stops before lifecycle orchestration or implementation
+
+### When To Use It
+
+Use `spp-editor` when:
+
+- the `SPP` has stale plan structure or weak source references
+- `codex_plan` values drift outside `pending`, `in_progress`, or `completed`
+- a planning artifact starts to read like an execution log
+
+Do not use it for:
+
+- creating branches/worktrees
+- claiming implementation results without evidence
+- rewriting `STP`, `SIP`, or `SOR` content
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- `target.spp_path`
+
+Structured schema:
+
+- `adl/tools/skills/docs/SPP_EDITOR_SKILL_INPUT_SCHEMA.md`
+- schema id: `spp_editor.v1`
+
+### Example Invocation
+
+```yaml
+Use $spp-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/spp-editor/SKILL.md with this validated input:
+
+skill_input_schema: spp_editor.v1
+mode: tighten_for_review
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  spp_path: .adl/v0.91/tasks/issue-2701__example/spp.md
+  issue_number: 2701
+  source_prompt_path: .adl/v0.91/bodies/issue-2701-example.md
+policy:
+  preserve_planning_truth: true
+  stop_after_edit: true
+  allow_execution_claims_without_evidence: false
+```
+
+### Output
+
+The structured result should identify:
+
+- which `SPP` path was edited
+- whether planning truth and `codex_plan` statuses were normalized
+- any remaining blockers that should stop readiness or execution
+
 ## `stp-editor`
 
 ### Purpose
@@ -2506,6 +2573,7 @@ surfaces:
 | `records-hygiene` | `RECORDS_HYGIENE_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | hygiene findings and follow-on recommendations only |
 | `review-quality-evaluator` | `REVIEW_QUALITY_EVALUATOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | review-quality evaluation only |
 | `review-to-test-planner` | `REVIEW_TO_TEST_PLANNER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | test-generation handoff plan only |
+| `spp-editor` | `SPP_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | SPP normalization only |
 | `sip-editor` | `SIP_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | SIP normalization only |
 | `sor-editor` | `SOR_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | SOR normalization only |
 | `stp-editor` | `STP_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | STP normalization only |

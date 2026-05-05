@@ -8,7 +8,7 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in workflow-conductor issue-watcher pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator release-evidence review-readiness-cleanup portable-contract-normalizer medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
+  for skill in workflow-conductor issue-watcher pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator release-evidence review-readiness-cleanup portable-contract-normalizer medium-article-writer arxiv-paper-writer diagram-author spp-editor stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
@@ -58,6 +58,7 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/arxiv-paper-writer/SKILL.md" ]]
   [[ -f "${root}/skills/diagram-author/SKILL.md" ]]
   [[ -x "${root}/skills/diagram-author/scripts/render_diagrams.sh" ]]
+  [[ -f "${root}/skills/spp-editor/SKILL.md" ]]
   [[ -f "${root}/skills/stp-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sip-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sor-editor/SKILL.md" ]]
@@ -89,6 +90,7 @@ assert_skill_bundle() {
   grep -Fq "stopping before publication" "${root}/skills/medium-article-writer/SKILL.md"
   grep -Fq "without submitting, publishing, inventing citations" "${root}/skills/arxiv-paper-writer/SKILL.md"
   grep -Fq "diagram-as-code and model-as-code router" "${root}/skills/diagram-author/SKILL.md"
+  grep -Fq "planning artifact rather than an execution log" "${root}/skills/spp-editor/SKILL.md"
   grep -Fq "bounded editing of \`stp.md\`" "${root}/skills/stp-editor/SKILL.md"
   grep -Fq "truthful lifecycle state" "${root}/skills/sip-editor/SKILL.md"
   grep -Fq "truthful execution and integration state" "${root}/skills/sor-editor/SKILL.md"
@@ -121,6 +123,7 @@ assert_skill_bundle() {
     "${root}/skills/medium-article-writer/SKILL.md" \
     "${root}/skills/arxiv-paper-writer/SKILL.md" \
     "${root}/skills/diagram-author/SKILL.md" \
+    "${root}/skills/spp-editor/SKILL.md" \
     "${root}/skills/stp-editor/SKILL.md" \
     "${root}/skills/sip-editor/SKILL.md" \
     "${root}/skills/sor-editor/SKILL.md"
