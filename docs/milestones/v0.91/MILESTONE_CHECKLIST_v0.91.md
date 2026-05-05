@@ -6,6 +6,9 @@
 - [ ] Moral governance allocation accepted or updated.
 - [ ] Cognitive-being feature allocation accepted or updated.
 - [ ] Agent Comms split plan accepted or updated.
+- [ ] Reviewed candidate WP YAML authored and accepted.
+- [ ] Structured planning and `SRP` workflow features promoted into tracked milestone docs.
+- [ ] A2A adapter planning promoted into tracked milestone docs with explicit `v0.91` / `v0.91.1` split.
 - [ ] v0.91.1 adjacent-systems boundary accepted or updated explicitly.
 - [ ] Issue wave opened from reviewed WP YAML when v0.91 becomes active.
 - [ ] WP issue cards authored from concrete readiness sections.
@@ -29,6 +32,8 @@
 - [ ] Moral resources accepted as a concrete feature, not optional rhetoric.
 - [ ] Secure intra-polis Agent Comms slice accepted, with v0.91.1 hardening
   scope separated if needed.
+- [ ] Structured planning (`SPP`) and plan review are accepted as durable workflow artifacts.
+- [ ] Structured Review Policy (`SRP`) is accepted as a first-class review-policy artifact.
 - [ ] Capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,
   ToM, memory/identity, and runtime-v2/polis docs are routed to v0.91.1.
 - [ ] Demo matrix and feature proof coverage lane preserved before review convergence.

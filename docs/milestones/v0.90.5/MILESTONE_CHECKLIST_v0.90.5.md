@@ -41,7 +41,7 @@
 - [x] internal review complete
 - [x] third-party review handoff prepared and external review complete or explicitly deferred
 - [x] accepted findings fixed or explicitly dispositioned
-- [ ] next milestone planning handoff complete before release ceremony
+- [x] next milestone planning handoff complete before release ceremony
 
 ## Release Gates
 

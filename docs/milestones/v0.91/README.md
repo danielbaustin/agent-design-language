@@ -2,10 +2,11 @@
 
 ## Status
 
-Forward planning. v0.91 is not yet an active implementation milestone and has no
-final issue wave. Its boundary was rechecked during the v0.90.3 and v0.90.4
-WP-19 handoff passes so it stays clearly downstream of the nearer v0.90.4 and
-v0.90.5 milestones without absorbing their implementation leftovers.
+Reviewed next-milestone planning package. v0.91 is not yet an active
+implementation milestone and its issue wave is not opened yet, but the package
+is now promoted and explicitly refreshed by the v0.90.5 WP-25 handoff so
+execution can start from tracked docs and a reviewed candidate issue-wave YAML
+rather than loose TBD notes or side worktrees.
 
 ## Purpose
 
@@ -21,6 +22,9 @@ The Agent Communication split is recorded in
 [AGENT_COMMS_SPLIT_PLAN_v0.91.md](AGENT_COMMS_SPLIT_PLAN_v0.91.md).
 The tracked feature-doc index is recorded in
 [features/README.md](features/README.md).
+
+The `v0.90.5` handoff record is
+[../v0.90.5/NEXT_MILESTONE_HANDOFF_v0.90.5.md](../v0.90.5/NEXT_MILESTONE_HANDOFF_v0.90.5.md).
 
 ## Milestone Role
 
@@ -41,6 +45,8 @@ v0.91 should establish:
 - cultivated intelligence as formation, restraint, reasonableness, and moral
   participation
 - secure intra-polis agent communication and invocation prerequisites
+- durable structured planning and plan review before tracked execution
+- durable structured review policy (`SRP`) before independent review
 
 v0.91 should not claim production moral agency, final constitutional
 citizenship, legal personhood, a scalar karma score, or the first true
@@ -147,6 +153,7 @@ The likely `v0.91` tranche is:
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.91.md](MILESTONE_CHECKLIST_v0.91.md)
 - Release plan: [RELEASE_PLAN_v0.91.md](RELEASE_PLAN_v0.91.md)
 - Release notes: [RELEASE_NOTES_v0.91.md](RELEASE_NOTES_v0.91.md)
+- Candidate issue wave: [WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml)
 - Feature planning: [features/README.md](features/README.md)
 - Moral governance allocation:
   [MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md)
@@ -154,6 +161,12 @@ The likely `v0.91` tranche is:
   [COGNITIVE_BEING_FEATURES_v0.91.md](COGNITIVE_BEING_FEATURES_v0.91.md)
 - Agent Communication split plan:
   [AGENT_COMMS_SPLIT_PLAN_v0.91.md](AGENT_COMMS_SPLIT_PLAN_v0.91.md)
+- Structured planning feature:
+  [features/STRUCTURED_PLANNING_AND_PLAN_REVIEW.md](features/STRUCTURED_PLANNING_AND_PLAN_REVIEW.md)
+- Structured review policy feature:
+  [features/STRUCTURED_REVIEW_POLICY_AND_SRP.md](features/STRUCTURED_REVIEW_POLICY_AND_SRP.md)
+- A2A external adapter feature:
+  [features/A2A_EXTERNAL_AGENT_ADAPTER.md](features/A2A_EXTERNAL_AGENT_ADAPTER.md)
 
 ## Execution Model
 
@@ -169,9 +182,9 @@ Later WP planning should preserve the standard milestone rhythm:
   accepted-finding remediation
 - release WP: close the milestone under the normal ceremony pattern
 
-The exact WP sequence is intentionally deferred until v0.91 planning is active,
-but the milestone is expected to land implemented feature surfaces rather than
-planning-only placeholders.
+The reviewed candidate WP sequence now exists in
+[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml), but issue numbers and the
+opened wave are intentionally deferred until the v0.91 WP-01 promotion pass.
 
 ## Success Criteria
 

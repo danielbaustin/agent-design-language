@@ -90,6 +90,12 @@ full multi-model comparison report before `v0.91`.
 Goal: make the milestone reviewable, publication-safe, and ready to hand off to
 later tool adapters, CodeBuddy automation, and citizen command packets.
 
+WP-25 specifically needs to leave the next milestone in a ready state rather
+than only naming it. That means the tracked `v0.91` package should already
+carry the accepted core feature surfaces, the structured-planning and SRP
+workflow features, and the explicit `v0.91` / `v0.91.1` split for adjacent
+systems such as the full comparison report and A2A hardening.
+
 ## Parallelization Notes
 
 WP-03 and WP-06 can proceed after WP-02 if the proposal/action boundary is

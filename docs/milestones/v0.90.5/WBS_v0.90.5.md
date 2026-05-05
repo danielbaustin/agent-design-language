@@ -32,7 +32,7 @@ documentation-only planning lane.
 | WP-22 | #2587 | Internal review | Perform findings-first internal review against the converged milestone package | internal review record | WP-21 |
 | WP-23 | #2588 | External / 3rd-party review | Prepare and complete external review against a legible package | external review handoff and record | WP-22 |
 | WP-24 | #2589 | Review findings remediation | Fix accepted review findings or record explicit deferrals | remediation record and follow-up issues | WP-23 |
-| WP-25 | #2590 | Next milestone planning | Capture follow-on work before release closeout, including the deferred full model comparison report | next milestone planning handoff | WP-24 |
+| WP-25 | #2590 | Next milestone planning | Capture the clean v0.91 / v0.91.1 handoff before release closeout, including the deferred full model comparison report and promoted next-milestone feature surfaces | next milestone planning handoff and promoted v0.91 package | WP-24 |
 | WP-26 | #2591 | Release ceremony | Complete release closure and next handoff | release evidence, end-of-milestone report, tag/release, and cleanup | WP-25 |
 
 ## Parallel Python Reduction Tranche

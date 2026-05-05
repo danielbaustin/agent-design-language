@@ -63,6 +63,8 @@ v0.91 should make ACIP usable as a real substrate feature:
 - local mailbox or router semantics inside the polis
 - visibility, redaction, and self-access policy
 - sensitive payload references and encryption-policy hooks
+- durable structured planning and `SRP` policy targets for specialized
+  invocation and review flows
 - review-agent and coding-agent specializations only as examples, not as the
   whole feature
 - fixtures for delegation, handoff, consultation, refusal, and review
@@ -77,6 +79,7 @@ v0.91.1 is the home for adjacent-system ACIP completion and hardening:
 - redaction and replay hardening
 - stronger local encryption fixture coverage
 - more invocation specializations
+- A2A external-agent adapter implementation and hardening
 - cross-agent demo variants
 - review finding remediation
 - capability-testing probes for communication behavior
@@ -108,3 +111,16 @@ Before the first birthday, ADL should be able to show that:
 - production remote provider messaging
 - full secure transport implementation before TLS or mTLS-equivalent policy is
   accepted
+
+## A2A Alignment
+
+A2A should be treated as one governed adapter over ACIP rather than a separate
+communications architecture.
+
+That means:
+
+- Agent Cards remain identity and capability claims, not execution grants
+- all external-agent invocation still routes through explicit ADL invocation
+  boundaries
+- A2A planning belongs in `v0.91`
+- runnable A2A adapter implementation and hardening belongs in `v0.91.1`

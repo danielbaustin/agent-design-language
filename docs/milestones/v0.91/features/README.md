@@ -15,6 +15,9 @@ later WP authoring and demo-matrix compression.
 | Affect reasoning-control | [AFFECT_REASONING_CONTROL.md](AFFECT_REASONING_CONTROL.md) | Tracked feature doc |
 | Cultivating intelligence | [CULTIVATING_INTELLIGENCE.md](CULTIVATING_INTELLIGENCE.md) | Tracked feature doc |
 | Moral resources | [MORAL_RESOURCES.md](MORAL_RESOURCES.md) | Tracked feature doc |
+| Structured planning and plan review | [STRUCTURED_PLANNING_AND_PLAN_REVIEW.md](STRUCTURED_PLANNING_AND_PLAN_REVIEW.md) | Tracked workflow feature doc |
+| Structured review policy and SRP | [STRUCTURED_REVIEW_POLICY_AND_SRP.md](STRUCTURED_REVIEW_POLICY_AND_SRP.md) | Tracked workflow feature doc |
+| A2A external agent adapter | [A2A_EXTERNAL_AGENT_ADAPTER.md](A2A_EXTERNAL_AGENT_ADAPTER.md) | Tracked comms-adapter feature doc |
 
 ## Cross-Cutting v0.91 Planning Sources
 
@@ -44,3 +47,6 @@ The feature docs in this directory define a real implementation bar rather than
 concept-only placeholders. The remaining gap is execution planning: the later
 v0.91 WP-01 pass still needs to turn these tracked feature surfaces into the
 final issue wave and proof matrix.
+
+That wave should start from an already-promoted package rather than leaving key
+workflow or comms-adapter features stranded in TBD or side worktrees.
