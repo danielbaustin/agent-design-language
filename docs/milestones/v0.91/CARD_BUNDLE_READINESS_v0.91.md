@@ -3,8 +3,8 @@
 ## Purpose
 
 This record captures the v0.91 issue-card readiness pass performed when the
-official issue wave opened, plus the #2769 repair pass that restored missing
-local card bundles in the primary checkout.
+official issue wave opened, plus the #2769 repair passes that restored and
+normalized local card bundles in the primary checkout.
 
 Live ADL issue records intentionally remain in local `.adl/` bundles. The repo
 guardrail documented in `docs/records/README.md` keeps new tracked `.adl`
@@ -24,7 +24,7 @@ files themselves.
 
 ## Completion State
 
-The v0.91 source prompts and task-bundle cards are present for
+The v0.91 source prompts and task-bundle cards are present and normalized for
 pre-execution readiness:
 
 - STP frontmatter carries concrete issue numbers, sprint placement,
@@ -36,14 +36,22 @@ pre-execution readiness:
 - SORs are truthful pre-run output scaffolds: they do not claim implementation
   work, proof execution, PR publication, merge, or release completion before an
   issue is actually executed.
+- Pre-run SORs for unbound core WPs are marked `NOT_STARTED`, not
+  `IN_PROGRESS`.
+- STP canonical-file lists use issue-local `.adl/v0.91/bodies/issue-*.md` and
+  `.adl/v0.91/tasks/issue-*__*/` paths rather than template placeholders.
+- SOR provenance is normalized to the Rust ADL lifecycle and conductor/editor
+  workflow, not the legacy shell helper.
 - WP-17 and WP-18 are marked as demo-required with explicit demo/proof names.
 - No core WP issue body or card should depend on pending issue numbers or
   placeholder sprint assignment.
+- The WP-04 sample SPP now cites the bootstrapped local STP/SIP bundle instead
+  of saying those cards were absent.
 
 The #2769 repair specifically fixed the local lifecycle-state gap where the
 tracked milestone issue wave existed but most `.adl/v0.91/tasks/issue-*`
 bundles were absent from the primary checkout. The repair used the Rust ADL
-`pr init` lifecycle path; it did not use the legacy shell PR helper.
+`pr init` lifecycle path, followed by editor-style normalization of card truth.
 
 ## Validation
 
@@ -69,16 +77,17 @@ PASS: validated 75 cards
 Additional checks:
 
 ```bash
-rg -n 'Required outcome type: (runtime|tools|quality|review|release)|depends_on: \[\]|repo_inputs: \[\]|canonical_files: \[\]|Pending sprint assignment|issue: pending|PLACEHOLDER|placeholder|pr\.sh|/Users/daniel|/private/var|/private/tmp|/home/runner' .adl/v0.91/tasks .adl/v0.91/bodies
+rg -n '<issue-source-prompt>|<issue-task-bundle>|adl/tools/pr\.sh|Status: IN_PROGRESS|No local STP or SIP bundle was cited|Pending rerun after editor normalization' .adl/v0.91/tasks/issue-27*__* .adl/v0.91/tasks/issue-2769__*
 ```
 
-Result: no core WP bundle was missing STP/SIP/SOR after #2769.
+Result: no matches after the card-truth normalization pass.
 
-Residual note: generated SOR cards still include template provenance text that
-names the legacy shell helper as a historical template consumer. That text is
-not evidence that the repair used the shell helper; the #2769 repair used the
-Rust ADL lifecycle command. Cleaning that generated SOR provenance should be a
-separate template cleanup.
+The WP-04 SPP was also checked separately because the structured prompt
+validator does not yet expose an `spp` type:
+
+```text
+PASS: WP-04 SPP cites STP/SIP and stale note is gone
+```
 
 ## Non-Claims
 
