@@ -4,12 +4,13 @@
 
 This document is the card-authoring source for the v0.91 moral governance,
 cognitive-being, structured workflow, and secure local communication issue wave.
-WP-01 should copy the relevant section into each issue body before
-implementation begins.
+WP-01 should keep the opened issue bodies and local task bundles aligned with
+the relevant section before implementation begins.
 
 The reviewed candidate issue sequence is recorded in
-[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml). Issue numbers are still
-pending until the v0.91 issue wave is opened.
+[WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml). The official v0.91
+issue wave is open as #2735 through #2759, with issue numbers assigned in the
+YAML and the local v0.91 issue-card bundles.
 
 ## Global Execution Rules
 

@@ -2,19 +2,19 @@
 
 ## Planning Readiness
 
-- [ ] v0.91 planning package reviewed.
-- [ ] Moral governance allocation accepted or updated.
-- [ ] Cognitive-being feature allocation accepted or updated.
-- [ ] Agent Comms split plan accepted or updated.
-- [ ] Reviewed candidate WP YAML authored and accepted.
-- [ ] WP execution-readiness source reviewed.
-- [ ] Structured planning and `SRP` workflow features promoted into tracked milestone docs.
-- [ ] A2A adapter planning promoted into tracked milestone docs with explicit `v0.91` / `v0.91.1` split.
-- [ ] v0.91.1 adjacent-systems boundary accepted or updated explicitly.
-- [ ] Issue wave opened from reviewed WP YAML when v0.91 becomes active.
-- [ ] WP issue cards authored from concrete readiness sections.
-- [ ] v0.90.3 citizen-state dependency state confirmed.
-- [ ] v0.92 birthday and v0.93 constitutional-governance boundaries accepted.
+- [x] v0.91 planning package reviewed.
+- [x] Moral governance allocation accepted or updated.
+- [x] Cognitive-being feature allocation accepted or updated.
+- [x] Agent Comms split plan accepted or updated.
+- [x] Reviewed candidate WP YAML authored and accepted.
+- [x] WP execution-readiness source reviewed.
+- [x] Structured planning and `SRP` workflow features promoted into tracked milestone docs.
+- [x] A2A adapter planning promoted into tracked milestone docs with explicit `v0.91` / `v0.91.1` split.
+- [x] v0.91.1 adjacent-systems boundary accepted or updated explicitly.
+- [x] Issue wave opened from reviewed WP YAML when v0.91 becomes active.
+- [x] WP issue cards authored from concrete readiness sections.
+- [x] v0.90.3 citizen-state dependency state confirmed.
+- [x] v0.92 birthday and v0.93 constitutional-governance boundaries accepted.
 
 ## Execution Readiness
 

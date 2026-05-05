@@ -2,11 +2,11 @@
 
 ## Status
 
-Reviewed next-milestone planning package. v0.91 is not yet an active
-implementation milestone and its issue wave is not opened yet, but the package
-is now promoted and explicitly refreshed by the v0.90.5 WP-25 handoff so
-execution can start from tracked docs and a reviewed candidate issue-wave YAML
-rather than loose TBD notes or side worktrees.
+Reviewed next-milestone planning package. v0.91 is now the active
+implementation milestone. The official issue wave is open as #2735-#2759 from
+the reviewed candidate issue-wave YAML, so execution can start from tracked
+docs, source prompts, and card bundles rather than loose TBD notes or side
+worktrees.
 
 ## Purpose
 
@@ -153,7 +153,7 @@ The likely `v0.91` tranche is:
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.91.md](MILESTONE_CHECKLIST_v0.91.md)
 - Release plan: [RELEASE_PLAN_v0.91.md](RELEASE_PLAN_v0.91.md)
 - Release notes: [RELEASE_NOTES_v0.91.md](RELEASE_NOTES_v0.91.md)
-- Candidate issue wave: [WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml)
+- Active issue wave: [WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml)
 - WP execution readiness:
   [WP_EXECUTION_READINESS_v0.91.md](WP_EXECUTION_READINESS_v0.91.md)
 - Feature planning: [features/README.md](features/README.md)
@@ -172,7 +172,7 @@ The likely `v0.91` tranche is:
 
 ## Execution Model
 
-The reviewed candidate WP sequence preserves the standard milestone rhythm:
+The active WP sequence preserves the standard milestone rhythm:
 
 - WP-01: promote reviewed milestone docs and issue wave
 - feature WPs: implement moral event, trace, validation, attribution, metrics,
@@ -184,10 +184,10 @@ The reviewed candidate WP sequence preserves the standard milestone rhythm:
   accepted-finding remediation
 - release WP: close the milestone under the normal ceremony pattern
 
-The reviewed candidate WP sequence now exists in
+The active WP sequence now exists in
 [WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml), and the card-authoring
 source exists in [WP_EXECUTION_READINESS_v0.91.md](WP_EXECUTION_READINESS_v0.91.md).
-Issue numbers and the opened wave remain the v0.91 WP-01 promotion step.
+Issue numbers are now assigned in the YAML and local v0.91 issue-card bundles.
 
 ## Success Criteria
 
