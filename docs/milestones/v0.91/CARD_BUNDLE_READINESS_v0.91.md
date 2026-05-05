@@ -3,7 +3,8 @@
 ## Purpose
 
 This record captures the v0.91 issue-card readiness pass performed when the
-official issue wave opened.
+official issue wave opened, plus the #2769 repair pass that restored missing
+local card bundles in the primary checkout.
 
 Live ADL issue records intentionally remain in local `.adl/` bundles. The repo
 guardrail documented in `docs/records/README.md` keeps new tracked `.adl`
@@ -18,11 +19,12 @@ files themselves.
 - Local task bundles: `.adl/v0.91/tasks/issue-*__*/stp.md`,
   `.adl/v0.91/tasks/issue-*__*/sip.md`, and
   `.adl/v0.91/tasks/issue-*__*/sor.md`.
-- Card count: 25 source prompts and 75 task-bundle cards.
+- Card count after #2769 repair: 25 core WP source prompts and 75 core WP
+  task-bundle cards.
 
 ## Completion State
 
-The v0.91 source prompts and task-bundle cards have been normalized for
+The v0.91 source prompts and task-bundle cards are present for
 pre-execution readiness:
 
 - STP frontmatter carries concrete issue numbers, sprint placement,
@@ -35,12 +37,17 @@ pre-execution readiness:
   work, proof execution, PR publication, merge, or release completion before an
   issue is actually executed.
 - WP-17 and WP-18 are marked as demo-required with explicit demo/proof names.
-- No issue body or card should depend on pending issue numbers, empty
-  dependency/input/canonical-file fields, or placeholder sprint assignment.
+- No core WP issue body or card should depend on pending issue numbers or
+  placeholder sprint assignment.
+
+The #2769 repair specifically fixed the local lifecycle-state gap where the
+tracked milestone issue wave existed but most `.adl/v0.91/tasks/issue-*`
+bundles were absent from the primary checkout. The repair used the Rust ADL
+`pr init` lifecycle path; it did not use the legacy shell PR helper.
 
 ## Validation
 
-Commands run from the v0.91 launch worktree:
+Commands run during the readiness and repair passes:
 
 ```bash
 for t in stp sip sor; do
@@ -52,15 +59,26 @@ done
 
 Result: PASS for all 75 STP/SIP/SOR files.
 
+The #2769 aggregate repair check also produced:
+
+```text
+PASS: all 25 core WP bundles have stp/sip/sor
+PASS: validated 75 cards
+```
+
 Additional checks:
 
 ```bash
 rg -n 'Required outcome type: (runtime|tools|quality|review|release)|depends_on: \[\]|repo_inputs: \[\]|canonical_files: \[\]|Pending sprint assignment|issue: pending|PLACEHOLDER|placeholder|pr\.sh|/Users/daniel|/private/var|/private/tmp|/home/runner' .adl/v0.91/tasks .adl/v0.91/bodies
 ```
 
-Result: no readiness-blocking matches. The only matches from broader scans were
-template-rule text inside SOR files that warns against placeholders; those are
-instructional guardrails, not unresolved placeholders.
+Result: no core WP bundle was missing STP/SIP/SOR after #2769.
+
+Residual note: generated SOR cards still include template provenance text that
+names the legacy shell helper as a historical template consumer. That text is
+not evidence that the repair used the shell helper; the #2769 repair used the
+Rust ADL lifecycle command. Cleaning that generated SOR provenance should be a
+separate template cleanup.
 
 ## Non-Claims
 
@@ -70,4 +88,3 @@ instructional guardrails, not unresolved placeholders.
   publication, or closeout.
 - This readiness pass does not publish local `.adl/` issue records as tracked
   repository artifacts.
-
