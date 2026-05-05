@@ -129,6 +129,7 @@ Out of scope:
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.5.md
 - Release plan: RELEASE_PLAN_v0.90.5.md
 - Release readiness: RELEASE_READINESS_v0.90.5.md
+- Third-party review handoff: ADL_v0.90.5_THIRD_PARTY_REVIEW_HANDOFF.md
 - Release notes draft: RELEASE_NOTES_v0.90.5.md
 - Opened issue wave: WP_ISSUE_WAVE_v0.90.5.yaml
 - Get-well plan: GET_WELL_PLAN_v0.90.5.md
