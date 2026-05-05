@@ -130,6 +130,7 @@ Out of scope:
 - Release plan: RELEASE_PLAN_v0.90.5.md
 - Release readiness: RELEASE_READINESS_v0.90.5.md
 - Third-party review handoff: ADL_v0.90.5_THIRD_PARTY_REVIEW_HANDOFF.md
+- Next-milestone handoff: NEXT_MILESTONE_HANDOFF_v0.90.5.md
 - Release notes draft: RELEASE_NOTES_v0.90.5.md
 - Opened issue wave: WP_ISSUE_WAVE_v0.90.5.yaml
 - Get-well plan: GET_WELL_PLAN_v0.90.5.md
@@ -161,6 +162,19 @@ demo:
 - WP-24 review findings remediation
 - WP-25 next milestone planning
 - WP-26 release ceremony
+
+## WP-25 Handoff Result
+
+WP-25 captures the clean handoff into the next milestone band in
+[NEXT_MILESTONE_HANDOFF_v0.90.5.md](NEXT_MILESTONE_HANDOFF_v0.90.5.md).
+
+The important result is not “there is a vague backlog.” The result is:
+
+- `v0.90.5` landed Governed Tools v1.0 and the first ACIP tranche
+- `v0.91` is the immediate full implementation milestone for moral governance,
+  cognitive-being, secure intra-polis comms, structured planning, and SRP
+- `v0.91.1` absorbs the adjacent-systems lane, including the full comparison
+  report and A2A implementation hardening
 
 ## Planning Mirror Rule
 

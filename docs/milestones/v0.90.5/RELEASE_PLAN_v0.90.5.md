@@ -26,7 +26,7 @@ Freedom Gate mediation, and trace.
 - public-spec language audit and boundary note
 - internal and external review notes
 - accepted-finding disposition record
-- next milestone planning handoff
+- [next milestone planning handoff](NEXT_MILESTONE_HANDOFF_v0.90.5.md)
 - explicit `v0.91` follow-on for the full Gemma/local/remote comparison report
 - end-of-milestone report
 
