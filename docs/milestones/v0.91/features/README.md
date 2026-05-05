@@ -1,9 +1,9 @@
 # v0.91 Feature Planning
 
 This directory now holds the tracked first-class feature docs for the v0.91
-core cognitive-being milestone. These docs are still planning-phase artifacts,
-not a final issue wave, but they are the canonical tracked feature surfaces for
-later WP authoring and demo-matrix compression.
+core cognitive-being milestone. These docs feed the reviewed candidate issue
+wave and WP readiness source, but the issue wave has not been opened yet. WP-01
+owns issue numbering, card authoring, and final promotion into execution.
 
 ## Tracked Feature Docs
 
@@ -26,6 +26,24 @@ later WP authoring and demo-matrix compression.
 | Moral governance allocation | [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md) | Allocation map for moral-event, trace, validation, attribution, metrics, trajectory review, and anti-harm |
 | Agent Communication and Invocation Protocol | [../AGENT_COMMS_SPLIT_PLAN_v0.91.md](../AGENT_COMMS_SPLIT_PLAN_v0.91.md) | Split across v0.90.5, v0.91, v0.91.1 hardening, and v0.92 prerequisites |
 | Cognitive-being allocation | [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | Milestone allocation and v0.91/v0.91.1 boundary doc |
+| Candidate issue wave | [../WP_ISSUE_WAVE_v0.91.yaml](../WP_ISSUE_WAVE_v0.91.yaml) | Reviewed candidate WP sequence; issue numbers pending WP-01 |
+| WP execution readiness | [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | Card-authoring source for required outputs, validation, boundaries, and proof expectations |
+
+## Execution Coverage Map
+
+| Planned workstream | Primary source docs | Candidate WP placement |
+| --- | --- | --- |
+| Milestone setup and card authoring | [../WP_ISSUE_WAVE_v0.91.yaml](../WP_ISSUE_WAVE_v0.91.yaml), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-01 |
+| Moral event, validation, trace, attribution, metrics, trajectory, and anti-harm | [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-02 through WP-08 |
+| Wellbeing and happiness | [WELLBEING_AND_HAPPINESS.md](WELLBEING_AND_HAPPINESS.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-09 |
+| Moral resources | [MORAL_RESOURCES.md](MORAL_RESOURCES.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-10 |
+| Kindness | [KINDNESS.md](KINDNESS.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-11 |
+| Humor and absurdity | [HUMOR_AND_ABSURDITY.md](HUMOR_AND_ABSURDITY.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-12 |
+| Affect reasoning-control | [AFFECT_REASONING_CONTROL.md](AFFECT_REASONING_CONTROL.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-13 |
+| Cultivating intelligence | [CULTIVATING_INTELLIGENCE.md](CULTIVATING_INTELLIGENCE.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-14 |
+| Structured planning, plan review, and SRP | [STRUCTURED_PLANNING_AND_PLAN_REVIEW.md](STRUCTURED_PLANNING_AND_PLAN_REVIEW.md), [STRUCTURED_REVIEW_POLICY_AND_SRP.md](STRUCTURED_REVIEW_POLICY_AND_SRP.md) | WP-15 |
+| Secure Agent Comms and A2A boundary | [../AGENT_COMMS_SPLIT_PLAN_v0.91.md](../AGENT_COMMS_SPLIT_PLAN_v0.91.md), [A2A_EXTERNAL_AGENT_ADAPTER.md](A2A_EXTERNAL_AGENT_ADAPTER.md) | WP-16 |
+| Flagship demo, proof coverage, quality, docs, review, remediation, next planning, and release | [../DEMO_MATRIX_v0.91.md](../DEMO_MATRIX_v0.91.md), [../RELEASE_PLAN_v0.91.md](../RELEASE_PLAN_v0.91.md), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-17 through WP-25 |
 
 ## Boundary Notes
 
@@ -44,9 +62,10 @@ Those should not be silently folded into the v0.91 core feature list.
 ## Planning Status
 
 The feature docs in this directory define a real implementation bar rather than
-concept-only placeholders. The remaining gap is execution planning: the later
-v0.91 WP-01 pass still needs to turn these tracked feature surfaces into the
-final issue wave and proof matrix.
+concept-only placeholders. The reviewed candidate WP sequence and
+card-authoring source now exist; the remaining WP-01 step is to open the issue
+wave, assign issue numbers, copy the relevant readiness sections into each
+card, and bind the proof matrix to the opened issues.
 
 That wave should start from an already-promoted package rather than leaving key
 workflow or comms-adapter features stranded in TBD or side worktrees.

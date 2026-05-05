@@ -2,7 +2,9 @@
 
 ## Status
 
-This is a planning allocation document, not a final work-package sequence.
+This is a planning allocation document for the reviewed candidate work-package
+sequence now tracked in [WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml)
+and [WP_EXECUTION_READINESS_v0.91.md](WP_EXECUTION_READINESS_v0.91.md).
 
 v0.91 should develop the first bounded moral-governance and cognitive-being
 foundation as implemented milestone surfaces: moral trace, Freedom Gate moral
@@ -11,8 +13,8 @@ anti-harm constraints, wellbeing, kindness, humor/absurdity, affect, moral
 resources, secure agent communication prerequisites, and proof surfaces that
 make those features reviewable.
 
-This document does not create the v0.91 issue wave. It records what belongs in
-the milestone so the later v0.91 WP planning pass has a source-backed map.
+This document records what belongs in the milestone so WP-01 can open the
+reviewed candidate wave with a source-backed map instead of loose TBD notes.
 
 ## Purpose
 
@@ -156,8 +158,8 @@ quiet assumptions.
 
 ## Demo And Proof Candidates
 
-These are required proof surfaces for the milestone, even though the final WP
-sequence will be authored later.
+These are required proof surfaces for the milestone and are now reflected in
+the reviewed candidate WP sequence.
 
 | Candidate | What it proves | Expected proof surface |
 |---|---|---|
@@ -188,10 +190,11 @@ sequence will be authored later.
   v0.91 should hand the actual constitutional and social-contract planning to
   v0.93.
 
-## Readiness For Later WP Planning
+## Readiness For WP-01 Promotion
 
-The later v0.91 WP planning pass should turn this allocation into bounded work
-packages only after the v0.90.3 citizen-state foundations are reviewed.
+WP-01 should turn this allocation, the candidate issue-wave YAML, and the WP
+execution-readiness source into opened issues only after the inherited
+citizen-state foundations are reviewed.
 
 Recommended ordering pressure:
 
