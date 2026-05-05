@@ -27,45 +27,45 @@ tasks:
         DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
         TURN_ID: 01
         SPEAKER: ChatGPT
-        TOPIC: Bounded direct conversation between ChatGPT and Gemini with explicit identity and stop policy.
+        TOPIC: What is the smallest honest proof of multi-agent coordination?
         STOP_RULE: Stop after four explicit turns.
-        INSTRUCTIONS: Open the conversation warmly. Make the bounded stop rule explicit and explain why a short direct exchange is reviewer-friendly.
+        INSTRUCTIONS: Open warmly but with substance. Make the four-turn stop rule explicit, then propose one strong candidate answer to the topic. Keep the whole turn under 170 words. Your candidate should be concrete, slightly debatable, and grounded in saved traces rather than vague claims about autonomy.
   gemini_reply:
     prompt:
       user: |
         DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
         TURN_ID: 02
         SPEAKER: Gemini
-        TOPIC: Bounded direct conversation between ChatGPT and Gemini with explicit identity and stop policy.
+        TOPIC: What is the smallest honest proof of multi-agent coordination?
         STOP_RULE: Stop after four explicit turns.
         PREVIOUS_TURN_START
         {{turn_01}}
         PREVIOUS_TURN_END
-        INSTRUCTIONS: Reply directly to ChatGPT, keep identity explicit, and mention why saved artifacts matter.
+        INSTRUCTIONS: Reply directly to ChatGPT, keep identity explicit, and do not just agree. Sharpen or challenge the candidate answer. Explain what would make the proof too weak, and mention why saved artifacts and temporal continuity matter. Keep the whole turn under 190 words.
   chatgpt_reflection:
     prompt:
       user: |
         DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
         TURN_ID: 03
         SPEAKER: ChatGPT
-        TOPIC: Bounded direct conversation between ChatGPT and Gemini with explicit identity and stop policy.
+        TOPIC: What is the smallest honest proof of multi-agent coordination?
         STOP_RULE: Stop after four explicit turns.
         PREVIOUS_TURN_START
         {{turn_02}}
         PREVIOUS_TURN_END
-        INSTRUCTIONS: Reflect on what this bounded exchange does and does not prove without widening into federation or autonomy claims.
+        INSTRUCTIONS: Synthesize the disagreement into a tighter definition. Keep the whole turn under 140 words. Give exactly one setup sentence followed by exactly three numbered criteria, each one sentence long. Keep the proof boundary explicit without widening into federation, autonomy, or persistent teamwork claims.
   gemini_close:
     prompt:
       user: |
         DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
         TURN_ID: 04
         SPEAKER: Gemini
-        TOPIC: Bounded direct conversation between ChatGPT and Gemini with explicit identity and stop policy.
+        TOPIC: What is the smallest honest proof of multi-agent coordination?
         STOP_RULE: Stop after four explicit turns.
         PREVIOUS_TURN_START
         {{turn_03}}
         PREVIOUS_TURN_END
-        INSTRUCTIONS: Close the conversation explicitly, restate the stop rule, and keep the proof boundary honest.
+        INSTRUCTIONS: Close the conversation explicitly. Accept or refine the three criteria, add one memorable final sentence about honest proof versus theatrical proof, and then stop exactly on Turn 4. Keep the whole turn under 140 words.
 
 run:
   name: "v0-91-chatgpt-gemini-direct-conversation"

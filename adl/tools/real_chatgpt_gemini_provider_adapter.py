@@ -141,7 +141,7 @@ class LiveAdapter:
             {
                 "model": self.openai_model,
                 "input": prompt,
-                "max_output_tokens": 220,
+                "max_output_tokens": 600,
             },
             self.timeout,
         )
