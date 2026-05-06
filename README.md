@@ -93,16 +93,22 @@ intelligence can become infrastructure instead of an unreproducible transcript.
 
 ## Quick Start
 
-Print a deterministic plan from a minimal ADL example:
+Inspect a current v0.91 multi-agent workflow plan:
 
 ```bash
-cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --print-plan
+cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-91-chatgpt-gemini-claude-triad-conversation.adl.yaml --print-plan
 ```
 
-Run the same example and emit trace/artifact output:
+Generate a Runtime v2 foundation proof packet:
 
 ```bash
-cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
+cargo run --manifest-path adl/Cargo.toml -- runtime-v2 foundation-demo --out artifacts/quickstart/runtime-v2-foundation
+```
+
+Run the governed-tools flagship demo:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- demo demo-v0905-governed-tools-flagship --run --trace --out artifacts/quickstart/governed-tools-flagship --no-open
 ```
 
 ## Recent Demos And Proofs
