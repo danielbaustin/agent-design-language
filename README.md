@@ -3,9 +3,9 @@
 Agent Design Language is a deterministic cognitive architecture for building
 agent-based systems that are reliable, governable, observable, and reviewable.
 
-ADL is not another prompt wrapper. It is a Rust-backed runtime and documentation
-system for turning agent work into explicit programs, governed tool calls,
-traceable artifacts, review packets, demos, and milestone evidence.
+ADL is a Rust-backed runtime and documentation system for turning agent work
+into explicit programs, governed tool calls, traceable artifacts, review
+packets, demos, and milestone evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
@@ -17,6 +17,7 @@ traceable artifacts, review packets, demos, and milestone evidence.
 
 - [Why ADL Exists](#why-adl-exists)
 - [What ADL Provides](#what-adl-provides)
+- [Core Ideas](#core-ideas)
 - [Quick Start](#quick-start)
 - [Recent Demos And Proofs](#recent-demos-and-proofs)
 - [Recent Milestones](#recent-milestones)
@@ -50,13 +51,33 @@ ADL already has a substantial platform baseline:
 - explicit workflow, task, agent, provider, and tool artifacts
 - bounded concurrency, retry, failure policy, signing, and verification
 - run artifacts, traces, replay-oriented inspection, and review records
-- governed tool calls through UTS and ACC authority contracts
+- governed tool calls through
+  [UTS + ACC](docs/explainers/UTS_AND_ACC.md)
+- traceable agent communication through [ACIP](docs/explainers/ACIP.md)
 - Runtime v2 and CSM Observatory planning and proof surfaces
-- bounded Godel-style experimentation, ObsMem, and cognitive proof paths
+- Godel agents and the
+  [Godel-Hadamard-Bayes algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md)
 - structured PR/control-plane workflow with STP, SIP, SOR, and SPP records
 
 For the full capability matrix, read the canonical feature index:
 [docs/planning/ADL_FEATURE_LIST.md](docs/planning/ADL_FEATURE_LIST.md).
+
+## Core Ideas
+
+ADL separates intelligence from authority. Models may propose, reason, consult,
+and communicate, but governed runtime surfaces decide what can actually execute.
+
+- [UTS + ACC](docs/explainers/UTS_AND_ACC.md) separates portable tool shape
+  from runtime authority, visibility, redaction, and audit evidence.
+- [ACIP](docs/explainers/ACIP.md) gives agents a traceable message and
+  invocation substrate for conversation, consultation, delegation, review,
+  handoff, and negotiation.
+- Godel agents are the long-running ADL direction for self-reference,
+  self-improvement, and reviewable adaptation inside a deterministic envelope.
+- The
+  [Godel-Hadamard-Bayes algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md)
+  is ADL's cognitive loop: structured awareness, controlled hypothesis
+  generation, and evidence-weighted judgment before authorized action.
 
 ## Quick Start
 
@@ -99,6 +120,21 @@ Run the bounded local-model PR reviewer fixture lane:
 ```bash
 cargo run --manifest-path adl/Cargo.toml -- tooling code-review --out artifacts/v0905/local-model-pr-reviewer-fixture --backend fixture --visibility read-only-repo --issue 2603 --writer-session codex-writer --reviewer-session fixture-reviewer
 ```
+
+Review the closed v0.91 multi-agent demo train:
+
+- [ChatGPT + Gemini direct conversation](demos/v0.91/chatgpt_gemini_direct_conversation_demo.md)
+  from issue
+  [#2762](https://github.com/danielbaustin/agent-design-language/issues/2762)
+- [ChatGPT -> Gemini task handoff](demos/v0.91/chatgpt_gemini_task_handoff_demo.md)
+  from issue
+  [#2763](https://github.com/danielbaustin/agent-design-language/issues/2763)
+- [ChatGPT + Gemini + Claude triad conversation](demos/v0.91/chatgpt_gemini_claude_triad_conversation_demo.md)
+  from issue
+  [#2764](https://github.com/danielbaustin/agent-design-language/issues/2764)
+- [ChatGPT + Gemini + Claude review panel](demos/v0.91/chatgpt_gemini_claude_review_panel_demo.md)
+  from issue
+  [#2765](https://github.com/danielbaustin/agent-design-language/issues/2765)
 
 For demo classifications and proof boundaries, use:
 
@@ -156,9 +192,13 @@ Start here:
 
 - [Feature list](docs/planning/ADL_FEATURE_LIST.md): canonical capability
   overview and roadmap truth.
+- [Explainers](docs/explainers/README.md): short entrypoints for UTS + ACC and
+  ACIP.
 - [Docs index](docs/README.md): repository documentation entrypoint.
 - [Changelog](CHANGELOG.md): milestone-level project history.
 - [ADRs](docs/adr/README.md): architecture decisions.
+- [GHB algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md):
+  cognitive loop behind Godel-agent work.
 - [Examples](adl/examples/README.md): runnable ADL examples.
 - [Demos](demos/README.md): demo-oriented proof surfaces.
 
