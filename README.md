@@ -73,6 +73,10 @@ intelligence can become infrastructure instead of an unreproducible transcript.
 - AEE, the Adaptive Execution Engine, is ADL's adaptation lineage: bounded
   strategy selection, recovery, learning, and policy-aware execution without
   hidden magic.
+- The
+  [red/blue adversarial security model](docs/milestones/v0.89.1/features/RED_BLUE_AGENT_ARCHITECTURE.md)
+  makes attack, defense, exploit replay, and purple-team coordination part of
+  the runtime evidence story rather than a separate theater exercise.
 - Gödel agents are the long-running direction for self-reference,
   self-improvement, and reviewable adaptation inside the deterministic runtime.
 - The
