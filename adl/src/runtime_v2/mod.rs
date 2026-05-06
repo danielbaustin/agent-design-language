@@ -53,6 +53,7 @@ mod standing;
 mod transition_authority;
 mod types;
 mod validators;
+mod wellbeing_metrics;
 
 use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
@@ -156,6 +157,8 @@ pub use transition_authority::*;
 pub use types::*;
 #[allow(unused_imports)]
 pub(crate) use validators::*;
+#[allow(unused_imports)]
+pub use wellbeing_metrics::*;
 
 #[cfg(test)]
 mod tests;

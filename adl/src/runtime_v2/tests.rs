@@ -50,3 +50,4 @@ mod snapshot_rehydration;
 mod standing;
 mod transition_authority;
 mod wake_continuity;
+mod wellbeing_metrics;

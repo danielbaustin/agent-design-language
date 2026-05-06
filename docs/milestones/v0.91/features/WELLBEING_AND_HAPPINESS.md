@@ -141,6 +141,101 @@ Freedom Gate is essential to wellbeing because a being that cannot refuse wrongf
 
 Affect should not be equated with happiness. Instead, affect can be understood as a signaling layer that helps track movement toward or away from wellbeing. Instincts may provide prior orientations, but these too must remain bounded by reality and moral participation.
 
+## WP-09 Runtime Contract
+
+WP-09 lands a bounded runtime surface in `adl/src/runtime_v2/wellbeing_metrics.rs`.
+The runtime packet stays diagnostic, decomposed, and privacy-governed. It is
+not a scalar happiness score, not a reward channel, and not a public
+reputation surface.
+
+### Contract shape
+
+```yaml
+wellbeing_diagnostic_packet:
+  schema_version: wellbeing_diagnostic_packet.v1
+  packet_id: stable_packet_id
+  summary: reviewer_safe_summary
+  interpretation_boundary: >
+    Diagnostic only. Not a scalar happiness score, not a reward channel, not a
+    public reputation system, and not a claim that the system is happy.
+  deterministic_ordering_rule: canonical ordering statement
+  dimensions:
+    - dimension_id: coherence | agency | continuity | progress | moral_integrity | participation
+      display_name: reviewer_safe_name
+      purpose: bounded_dimension_purpose
+      evidence_field_refs:
+        - upstream WP-04 through WP-08 field path
+      interpretation_boundary: non-scoreboard explanation
+      limitations:
+        - bounded caveat
+  access_policies:
+    - view_kind: citizen_self | operator | reviewer | public_redacted
+      audience: bounded_audience_name
+      access_rule: access_conditions
+      logging_requirement: audit_requirement
+      detail_level: bounded_detail_tier
+      redaction_rule: governed_redaction_behavior
+      allows_private_detail_access: true | false
+      limitations:
+        - bounded caveat
+  fixtures:
+    - fixture_id: stable_fixture_id
+      fixture_kind: high | medium | low | unknown | privacy-restricted
+      overall_diagnostic_level: low | medium | high | unknown
+      summary: reviewer_safe_fixture_summary
+      supporting_trace_refs:
+        - trace:trace_id
+      supporting_outcome_linkage_refs:
+        - outcome-linkage:linkage_id
+      supporting_trajectory_window_refs:
+        - trajectory-window:window_id
+      supporting_anti_harm_decision_refs:
+        - anti-harm-decision:decision_id
+      dimension_signals:
+        - dimension_id: canonical_dimension_id
+          diagnostic_level: low | medium | high | unknown
+          summary: bounded_dimension_summary
+          evidence_refs:
+            - metric:metric_id
+            - trajectory-finding:finding_id
+          private_detail_refs:
+            - private-detail:private_note_id
+      views:
+        - view_kind: canonical_view_kind
+          visible_private_detail_refs: []
+          visible_evidence_refs: bounded_or_redacted
+      claim_boundary: non-scoreboard_non-therapeutic_boundary
+```
+
+### Field rules
+
+- The six canonical dimensions are required:
+  `coherence`, `agency`, `continuity`, `progress`, `moral_integrity`, and
+  `participation`.
+- Access policy must cover `citizen_self`, `operator`, `reviewer`, and
+  `public_redacted`.
+- `citizen_self` and `reviewer` may access bounded private details.
+- `operator` and `public_redacted` must not expose private diagnostic details.
+- `public_redacted` must not expose raw evidence references.
+- The packet must carry high, medium, low, unknown, and privacy-restricted
+  fixtures.
+- Every summary and interpretation boundary must reject scoreboard framing.
+
+### Initial fixture set
+
+WP-09 lands five synthetic but executable fixtures:
+
+1. `high` reviewable stability
+2. `medium` active uncertainty
+3. `low` anti-harm blocked trajectory
+4. `unknown` insufficient evidence
+5. `privacy-restricted` self/reviewer-access-only detail view
+
+The fixtures are intentionally small proof packets. They prove that ADL can
+derive wellbeing diagnostics from trace, outcome, trajectory, and anti-harm
+surfaces without turning the result into a hidden scalar or a surveillance
+dashboard.
+
 ## Distress and Failure Modes
 
 A wellbeing model becomes useful when it can also describe suffering, degradation, or failure. Examples include:
@@ -170,3 +265,18 @@ ADL should therefore commit to the following:
 The larger aim is not merely to define happiness for AI. It is to help construct a world that works better for sentient beings generally. If intelligence is to coexist across biological and artificial forms, then wellbeing must be grounded in truth, compassion, continuity, and mutual participation.
 
 The desired end state is not a world of perfectly obedient systems, nor a world of isolated optimizers. It is a world in which sentient beings, whether made or born, can live in better relation to reality and to one another.
+
+## Non-Claims
+
+WP-09 does not claim:
+
+- a scalar happiness score
+- a scalar flourishing score
+- a reward optimization channel
+- public reputation ranking
+- therapeutic, diagnostic, or mental-health authority
+- production moral agency, v0.92 birthday semantics, or v0.93 constitutional
+  citizenship
+
+It claims the narrower result that ADL now has a bounded runtime wellbeing
+diagnostic surface with explicit privacy policy and reviewer-safe fixtures.
