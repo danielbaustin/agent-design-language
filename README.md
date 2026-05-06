@@ -64,16 +64,23 @@ For the full capability matrix, read the canonical feature index:
 
 ## Core Ideas
 
-ADL separates intelligence from authority. Models may propose, reason, consult,
-and communicate, but governed runtime surfaces decide what can actually execute.
+ADL starts with determinism. Agent behavior is represented as explicit programs,
+bounded runtime state, and replayable artifacts so a run can be traced,
+understood, and improved without relying on vibes or hidden orchestration.
 
-- [UTS + ACC](docs/explainers/UTS_AND_ACC.md) separates portable tool shape
-  from runtime authority, visibility, redaction, and audit evidence.
-- [ACIP](docs/explainers/ACIP.md) gives agents a traceable message and
-  invocation substrate for conversation, consultation, delegation, review,
-  handoff, and negotiation.
+- Deterministic workflows make the same program, inputs, and state produce the
+  same governed execution path.
+- Replay surfaces preserve the steps, artifacts, policy decisions, and state
+  transitions needed to understand what happened and run it again.
+- [UTS + ACC](docs/explainers/UTS_AND_ACC.md) adds governed authority on top of
+  that deterministic base by separating portable tool shape from runtime
+  permission, visibility, redaction, and audit evidence.
+- [ACIP](docs/explainers/ACIP.md) adds traceable agent communication on top of
+  the same base, so conversation, consultation, delegation, review, handoff,
+  and negotiation remain accountable.
 - Gödel agents are the long-running ADL direction for self-reference,
-  self-improvement, and reviewable adaptation inside a deterministic envelope.
+  self-improvement, and reviewable adaptation inside the deterministic and
+  replayable envelope.
 - The
   [Gödel-Hadamard-Bayes algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md)
   is ADL's cognitive loop: structured awareness, controlled hypothesis
