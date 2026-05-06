@@ -13,6 +13,7 @@ execution pass over the promoted package.
 | Moral trace schema | [MORAL_TRACE_SCHEMA.md](MORAL_TRACE_SCHEMA.md) | Tracked moral-governance trace doc |
 | Outcome linkage and attribution | [OUTCOME_LINKAGE_AND_ATTRIBUTION.md](OUTCOME_LINKAGE_AND_ATTRIBUTION.md) | Tracked moral-governance outcome-linkage doc |
 | Moral metrics | [MORAL_METRICS.md](MORAL_METRICS.md) | Tracked moral-governance metrics doc |
+| Moral trajectory review | [MORAL_TRAJECTORY_REVIEW.md](MORAL_TRAJECTORY_REVIEW.md) | Tracked moral-governance trajectory-review doc |
 | Wellbeing and happiness | [WELLBEING_AND_HAPPINESS.md](WELLBEING_AND_HAPPINESS.md) | Tracked feature doc |
 | Kindness | [KINDNESS.md](KINDNESS.md) | Tracked feature doc |
 | Humor and absurdity | [HUMOR_AND_ABSURDITY.md](HUMOR_AND_ABSURDITY.md) | Tracked feature doc |
@@ -38,7 +39,7 @@ execution pass over the promoted package.
 | Planned workstream | Primary source docs | Active WP placement |
 | --- | --- | --- |
 | Milestone setup and card authoring | [../WP_ISSUE_WAVE_v0.91.yaml](../WP_ISSUE_WAVE_v0.91.yaml), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-01 |
-| Moral event, validation, trace, attribution, metrics, trajectory, and anti-harm | [MORAL_EVENT_CONTRACT.md](MORAL_EVENT_CONTRACT.md), [MORAL_TRACE_SCHEMA.md](MORAL_TRACE_SCHEMA.md), [OUTCOME_LINKAGE_AND_ATTRIBUTION.md](OUTCOME_LINKAGE_AND_ATTRIBUTION.md), [MORAL_METRICS.md](MORAL_METRICS.md), [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-02 through WP-08 |
+| Moral event, validation, trace, attribution, metrics, trajectory, and anti-harm | [MORAL_EVENT_CONTRACT.md](MORAL_EVENT_CONTRACT.md), [MORAL_TRACE_SCHEMA.md](MORAL_TRACE_SCHEMA.md), [OUTCOME_LINKAGE_AND_ATTRIBUTION.md](OUTCOME_LINKAGE_AND_ATTRIBUTION.md), [MORAL_METRICS.md](MORAL_METRICS.md), [MORAL_TRAJECTORY_REVIEW.md](MORAL_TRAJECTORY_REVIEW.md), [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-02 through WP-08 |
 | Wellbeing and happiness | [WELLBEING_AND_HAPPINESS.md](WELLBEING_AND_HAPPINESS.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-09 |
 | Moral resources | [MORAL_RESOURCES.md](MORAL_RESOURCES.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-10 |
 | Kindness | [KINDNESS.md](KINDNESS.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-11 |
