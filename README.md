@@ -105,12 +105,6 @@ Run the same example and emit trace/artifact output:
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
 ```
 
-Explore the active milestone package:
-
-- [v0.91 README](docs/milestones/v0.91/README.md)
-- [v0.91 issue wave](docs/milestones/v0.91/WP_ISSUE_WAVE_v0.91.yaml)
-- [v0.91 demo matrix](docs/milestones/v0.91/DEMO_MATRIX_v0.91.md)
-
 ## Recent Demos And Proofs
 
 These are three high-signal recent demo entrypoints.
