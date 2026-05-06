@@ -32,16 +32,16 @@ infrastructure. To make that transition safely, they need more than fluent
 model output: they need durable programs, explicit authority, governed tools,
 state you can trust, and evidence strong enough for teams to build on.
 
-ADL turns those requirements into first-class architecture:
+ADL turns those requirements into an architecture for dependable agent systems:
 
-- deterministic programs instead of hidden orchestration
-- governed tools instead of unbounded model action
-- Freedom Gate and policy checks before unsafe execution
-- trace, artifact, replay, and review surfaces after execution
-- milestone proof packages that keep repository claims falsifiable
+- deterministic workflows that make agent behavior reproducible
+- governed tools that separate model intent from runtime authority
+- Freedom Gate policy checks before risky action
+- traces, artifacts, and replay surfaces that make outcomes durable
+- milestone proof packages that connect product claims to evidence
 
-The project goal is simple: agent systems should survive code review, ops
-review, security review, and postmortem analysis.
+The project goal is simple: make agent-based systems safe enough to operate,
+clear enough to trust, and structured enough to improve.
 
 ## What ADL Provides
 
