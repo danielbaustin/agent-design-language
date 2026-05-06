@@ -31,9 +31,9 @@ secure intra-polis agent communication.
   proof surfaces.
 - Secure local Agent Communication and Invocation Protocol evidence, with
   hardening separated if needed.
-- v0.91.1 implementation lane for capability/aptitude testing, intelligence
-  metric architecture, ANRM/Gemma, ToM, memory/identity, and runtime-v2/polis
-  docs.
+- v0.91.1 implementation lane for runtime-v2/polis docs, agent lifecycle
+  states, ACIP state eligibility, capability/aptitude testing, intelligence
+  metric architecture, ANRM/Gemma, ToM, and memory/identity.
 - Handoff into v0.92 birthday and v0.93 constitutional governance.
 
 ## Required Closeout Rewrite

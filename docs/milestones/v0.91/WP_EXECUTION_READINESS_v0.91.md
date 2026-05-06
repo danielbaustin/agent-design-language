@@ -391,9 +391,9 @@ Required outputs:
 
 Required validation:
 
-- v0.91.1 owns capability testing, intelligence architecture, ANRM/Gemma, ToM,
-  memory/identity, runtime-v2/polis docs, ACIP hardening, and model comparison
-  report work.
+- v0.91.1 owns runtime-v2/polis docs, agent lifecycle states, ACIP state
+  eligibility, capability testing, intelligence architecture, ANRM/Gemma, ToM,
+  memory/identity, ACIP hardening, and model comparison report work.
 - v0.91.2 owns UTS + ACC multi-model benchmarking, runtime/test-cycle recovery,
   CodeBuddy, Google Workspace CMS, code modernization, publication packets,
   rustdoc/doc cleanup, and workflow guardrails.
