@@ -3,7 +3,9 @@ use crate::cli::pr_cmd_cards::{validate_bootstrap_output_card, write_output_card
 use crate::cli::pr_cmd_prompt::{infer_wp_from_title, render_generated_issue_prompt};
 use crate::cli::pr_cmd_validate::bootstrap_stub_reason;
 use crate::cli::tests::env_lock as cli_env_lock;
-use adl::control_plane::{card_input_path, card_stp_path};
+use adl::control_plane::{
+    card_input_path, card_output_path, card_plan_path, card_review_policy_path, card_stp_path,
+};
 use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
 

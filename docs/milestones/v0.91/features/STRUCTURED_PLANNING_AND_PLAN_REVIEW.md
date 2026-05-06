@@ -59,21 +59,18 @@ The first `v0.91` implementation should make the plan artifact capture:
 
 ## Planning Skill Requirement
 
-This feature should also introduce a first-class planning skill:
+This workflow family should eventually include a first-class planning step.
 
-- `pr-plan`
+The landed `v0.91` slice is narrower:
 
-The skill should:
+- a durable `SPP` template and issue-bundle artifact
+- bootstrap support so `spp.md` exists in root and bound worktree bundles
+- compatibility-link support through `.adl/cards/<issue>/plan_<issue>.md`
+- validator support for `SPP`
+- the existing `spp-editor` skill as the bounded editor surface
 
-- read the issue prompt and existing task bundle
-- generate or revise `spp.md`
-- keep the plan bounded and execution-oriented
-- stop before implementation begins
-
-Later hardening may add:
-
-- `pr-plan-review`
-- `spp-editor`
+Follow-on workflow steps such as `pr-plan` and `pr-plan-review` remain future
+work after the artifact contract is in place.
 
 ## Review Requirement
 
@@ -107,24 +104,30 @@ This keeps planning separate from:
 
 ## Implementation Placement
 
-The first `v0.91` implementation should land:
+The landed `v0.91` implementation slice is:
 
-- an `SPP` template or schema
+- an `SPP` template
 - a canonical issue-bundle save location
+- bundle/bootstrap support in both root and bound worktree surfaces
+- compatibility-link support
+- structured-prompt validation support for `SPP`
+
+Deferred follow-on work includes:
+
 - `pr-plan`
 - a bounded plan review result model
-- workflow awareness of missing, stale, or unreviewed plans
+- workflow awareness of stale or unreviewed plans
 - `SOR` truth fields recording whether execution matched the reviewed plan
 
 ## Evidence Expectations
 
-The proof surface should show that:
+The proof surface for the landed slice should show that:
 
 - plans are saved with the issue bundle
-- reviewed plans improve execution quality
-- stale plans are detectable
-- execution can record whether it followed or deviated from plan
-- delegation and validation are clearer than in the plan-less workflow
+- `SPP` survives bootstrap and worktree binding as a durable local artifact
+- malformed `SPP` surfaces are detectable
+- the planning artifact is reviewable before execution even when plan-review
+  orchestration is not yet mandatory
 
 ## Non-Claims
 

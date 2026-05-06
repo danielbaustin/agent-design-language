@@ -226,9 +226,15 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
     assert!(issue_ref.task_bundle_stp_path(&repo).is_file());
     assert!(issue_ref.task_bundle_input_path(&repo).is_file());
     assert!(issue_ref.task_bundle_output_path(&repo).is_file());
+    assert!(issue_ref.task_bundle_plan_path(&repo).is_file());
+    assert!(issue_ref.task_bundle_review_policy_path(&repo).is_file());
     assert!(issue_ref.task_bundle_stp_path(&worktree).is_file());
     assert!(issue_ref.task_bundle_input_path(&worktree).is_file());
     assert!(issue_ref.task_bundle_output_path(&worktree).is_file());
+    assert!(issue_ref.task_bundle_plan_path(&worktree).is_file());
+    assert!(issue_ref
+        .task_bundle_review_policy_path(&worktree)
+        .is_file());
     assert_eq!(
         fs::read_to_string(worktree.join("docs/templates/README_TEMPLATE.md"))
             .expect("read mirrored template"),
@@ -245,6 +251,10 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
         .symlink_metadata()
         .is_ok());
     assert!(card_output_path(&root_cards, 1152)
+        .symlink_metadata()
+        .is_ok());
+    assert!(card_plan_path(&root_cards, 1152).symlink_metadata().is_ok());
+    assert!(card_review_policy_path(&root_cards, 1152)
         .symlink_metadata()
         .is_ok());
 }

@@ -113,6 +113,16 @@ impl IssueRef {
             .join("sor.md")
     }
 
+    pub fn task_bundle_plan_path(&self, primary_checkout_root: &Path) -> PathBuf {
+        self.task_bundle_dir_path(primary_checkout_root)
+            .join("spp.md")
+    }
+
+    pub fn task_bundle_review_policy_path(&self, primary_checkout_root: &Path) -> PathBuf {
+        self.task_bundle_dir_path(primary_checkout_root)
+            .join("srp.md")
+    }
+
     pub fn branch_name(&self, prefix: &str) -> String {
         format!("{prefix}/{}-{}", self.issue_number, self.slug)
     }
@@ -227,6 +237,14 @@ pub fn card_stp_path(cards_root: &Path, issue_number: u32) -> PathBuf {
 
 pub fn card_output_path(cards_root: &Path, issue_number: u32) -> PathBuf {
     card_dir_path(cards_root, issue_number).join(format!("output_{issue_number}.md"))
+}
+
+pub fn card_plan_path(cards_root: &Path, issue_number: u32) -> PathBuf {
+    card_dir_path(cards_root, issue_number).join(format!("plan_{issue_number}.md"))
+}
+
+pub fn card_review_policy_path(cards_root: &Path, issue_number: u32) -> PathBuf {
+    card_dir_path(cards_root, issue_number).join(format!("srp_{issue_number}.md"))
 }
 
 #[cfg(test)]
@@ -354,6 +372,14 @@ mod tests {
         assert_eq!(
             card_output_path(Path::new("/repo/.adl/cards"), 1125),
             PathBuf::from("/repo/.adl/cards/1125/output_1125.md")
+        );
+        assert_eq!(
+            card_plan_path(Path::new("/repo/.adl/cards"), 1125),
+            PathBuf::from("/repo/.adl/cards/1125/plan_1125.md")
+        );
+        assert_eq!(
+            card_review_policy_path(Path::new("/repo/.adl/cards"), 1125),
+            PathBuf::from("/repo/.adl/cards/1125/srp_1125.md")
         );
     }
 }
