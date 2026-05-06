@@ -70,15 +70,16 @@ intelligence can become infrastructure instead of an unreproducible transcript.
 
 - The ADL runtime is the foundation: it turns agent intent into governed,
   replayable execution with durable traces, artifacts, and state transitions.
-- AEE, the Adaptive Execution Engine, is ADL's adaptation lineage: bounded
-  strategy selection, recovery, learning, and policy-aware execution without
-  hidden magic.
+- [AEE](docs/explainers/AEE.md), the Adaptive Execution Engine, is ADL's
+  adaptation lineage: bounded strategy selection, recovery, learning, and
+  policy-aware execution without hidden magic.
 - The
   [red/blue adversarial security model](docs/milestones/v0.89.1/features/RED_BLUE_AGENT_ARCHITECTURE.md)
   makes attack, defense, exploit replay, and purple-team coordination part of
   the runtime evidence story rather than a separate theater exercise.
-- Gödel agents are the long-running direction for self-reference,
-  self-improvement, and reviewable adaptation inside the deterministic runtime.
+- [Gödel agents](docs/explainers/GODEL_AGENTS.md) are the long-running
+  direction for self-reference, self-improvement, and reviewable adaptation
+  inside the deterministic runtime.
 - The
   [Gödel-Hadamard-Bayes algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md)
   is the cognitive loop behind that work: structured awareness, controlled
@@ -90,6 +91,9 @@ intelligence can become infrastructure instead of an unreproducible transcript.
 - [ACIP](docs/explainers/ACIP.md) gives agents a communication layer for
   conversation, consultation, delegation, review, handoff, and negotiation that
   remains traceable by the runtime.
+- [CSM](docs/explainers/CSM.md), the Cognitive Spacetime Model, is ADL's
+  runtime-world model for persistent agents, governed state, causality,
+  replay, identity continuity, and operator-visible observability.
 
 ## Quick Start
 
@@ -176,8 +180,8 @@ production markets.
 
 - [Feature list](docs/planning/ADL_FEATURE_LIST.md): canonical capability
   overview and roadmap truth.
-- [Explainers](docs/explainers/README.md): short entrypoints for UTS + ACC and
-  ACIP.
+- [Explainers](docs/explainers/README.md): short entrypoints for UTS + ACC,
+  ACIP, AEE, Gödel Agents, and CSM.
 - [Docs index](docs/README.md): repository documentation entrypoint.
 - [Changelog](CHANGELOG.md): milestone-level project history.
 - [ADRs](docs/adr/README.md): architecture decisions.
