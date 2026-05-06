@@ -473,6 +473,206 @@ verification_summary:
     .to_string()
 }
 
+pub(super) fn valid_spp_text(issue: u32) -> String {
+    format!(
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_planning_prompt"
+name: "tooling-test-plan"
+issue: {issue}
+task_id: "issue-{issue:04}"
+run_id: "issue-{issue:04}"
+version: "v0.87"
+title: "tooling test"
+branch: "not bound yet"
+status: "draft"
+plan_revision: 1
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/danielbaustin/agent-design-language/issues/{issue}"
+scope:
+  files:
+    - "adl/src/cli/tooling_cmd/structured_prompt.rs"
+  components:
+    - "tooling"
+  out_of_scope:
+    - "unrelated runtime work"
+constraints:
+  - "read_only_until_execution_is_approved"
+confidence: "medium"
+plan_summary: "Bounded planning surface for tooling test."
+assumptions:
+  - "The linked task bundle remains canonical."
+proposed_steps:
+  - id: "step-1"
+    description: "Review the bundle and tighten the execution sequence."
+    expected_output: ".adl/v0.87/tasks/issue-{issue:04}__tooling-test/spp.md"
+    allowed_mode: "execution_after_approval"
+codex_plan:
+  - step: "Review the bundle and tighten the execution sequence."
+    status: "pending"
+affected_areas:
+  - "adl/src/cli/tooling_cmd"
+invariants_to_preserve:
+  - "Do not claim implementation work inside the plan."
+risks_and_edge_cases:
+  - "Validation commands may need tightening before execution."
+test_strategy:
+  - "Review the proposed validation commands before execution."
+execution_handoff: "Use this artifact as the plan-of-record before execution."
+required_permissions:
+  - "workspace-write after execution approval"
+stop_conditions:
+  - "Stop and re-plan if the touched-file set changes."
+alternatives_considered:
+  - description: "Use transient chat planning only."
+    reason_not_chosen: "That would not leave a durable review surface."
+review_hooks:
+  - "Check scope truthfulness and validation sufficiency."
+notes: "test note"
+---
+
+# Structured Plan Prompt
+
+## Plan Summary
+
+test
+
+## Codex Plan
+
+1. [pending] test
+
+## Assumptions
+
+- test
+
+## Proposed Steps
+
+1. test
+
+## Affected Areas
+
+- test
+
+## Invariants To Preserve
+
+- test
+
+## Risks And Edge Cases
+
+- test
+
+## Test Strategy
+
+- test
+
+## Execution Handoff
+
+test
+
+## Stop Conditions
+
+- test
+
+## Notes
+
+test
+"#
+    )
+}
+
+pub(super) fn valid_srp_text(issue: u32) -> String {
+    format!(
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_review_policy"
+name: "tooling-test-review-policy"
+issue: {issue}
+task_id: "issue-{issue:04}"
+version: "v0.87"
+title: "tooling test"
+branch: "not bound yet"
+status: "draft"
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/danielbaustin/agent-design-language/issues/{issue}"
+review_mode: "pre_pr_independent_review"
+timing: "before_pr_open"
+scope_basis:
+  - ".adl/v0.87/tasks/issue-{issue:04}__tooling-test/stp.md"
+  - ".adl/v0.87/tasks/issue-{issue:04}__tooling-test/sip.md"
+in_scope_surfaces:
+  - "tracked changes for this issue branch"
+evidence_policy:
+  - "Use repository evidence and issue-local validation only."
+validation_inputs:
+  - "Issue-local proofs recorded in the SOR."
+allowed_dispositions:
+  - "PASS"
+  - "BLOCK"
+reviewer_constraints:
+  - "Do not widen issue scope."
+refusal_policy:
+  - "Refuse claims that are unsupported by repository evidence."
+follow_up_routing:
+  - "Route actionable findings back to the issue branch."
+non_claims:
+  - "This policy does not guarantee review quality by itself."
+policy_refs:
+  - ".adl/v0.87/tasks/issue-{issue:04}__tooling-test/stp.md"
+notes: "test note"
+---
+
+# Structured Review Policy
+
+## Review Summary
+
+test
+
+## Scope Basis
+
+- test
+
+## In-Scope Surfaces
+
+- test
+
+## Evidence Rules
+
+- test
+
+## Validation Inputs
+
+- test
+
+## Allowed Dispositions
+
+- PASS
+- BLOCK
+
+## Reviewer Constraints
+
+- test
+
+## Refusal Policy
+
+- test
+
+## Follow-up Routing
+
+- test
+
+## Non-Claims
+
+- test
+
+## Notes
+
+test
+"#
+    )
+}
+
 pub(super) fn valid_review_markdown() -> String {
     r#"# Repo Review
 

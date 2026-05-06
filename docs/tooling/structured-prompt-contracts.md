@@ -2,21 +2,30 @@
 
 ## Purpose
 
-ADL now treats the three core editing artifacts as structured prompt surfaces with machine-checkable contracts:
+ADL now treats the core workflow artifacts as structured prompt surfaces with machine-checkable contracts:
 
 - `Structured Task Prompt` (STP)
 - `Structured Implementation Prompt` (SIP)
 - `Structured Output Record` (SOR)
+- `Structured Plan Prompt` (SPP)
+- `Structured Review Policy` (SRP)
 
 This document defines the first bounded contract layer for those artifacts so tooling can validate stable machine-readable structure without freezing high-value prose too early.
 
 ## Canonical Contract Files
 
+The original schema-backed contract files remain:
+
 - `adl/schemas/structured_task_prompt.contract.yaml`
 - `adl/schemas/structured_implementation_prompt.contract.yaml`
 - `adl/schemas/structured_output_record.contract.yaml`
 
-These files are the machine-readable source of truth for:
+The landed `v0.91` `SPP`/`SRP` slice is validator-backed but not yet represented
+as dedicated tracked schema files. Their bounded contract currently lives in the
+Rust validator entrypoint itself.
+
+These schema files, plus the validator-backed `SPP`/`SRP` rules, are the
+current source of truth for:
 
 - required metadata fields
 - required section presence
@@ -32,6 +41,8 @@ Use:
 adl tooling validate-structured-prompt --type stp --input <path>
 adl tooling validate-structured-prompt --type sip --phase bootstrap --input <path>
 adl tooling validate-structured-prompt --type sor --phase bootstrap --input <path>
+adl tooling validate-structured-prompt --type spp --input <path>
+adl tooling validate-structured-prompt --type srp --input <path>
 ```
 
 The validator currently enforces:
@@ -44,6 +55,7 @@ The validator currently enforces:
 - boolean normalization
 - selected enum vocabularies
 - UTC ISO 8601 / RFC3339 date-time formatting with trailing `Z` for machine-readable timestamp fields (`YYYY-MM-DDTHH:MM:SSZ`)
+- bounded front-matter contracts for durable planning and review-policy artifacts
 
 ## Timestamp Standard
 

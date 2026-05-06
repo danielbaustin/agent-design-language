@@ -73,6 +73,8 @@ pub(super) fn real_validate_structured_prompt(args: &[String]) -> Result<()> {
         "stp" => validate_stp_text(&text)?,
         "sip" => validate_sip_text(&text, &input, phase.as_deref())?,
         "sor" => validate_sor_text(&text, phase.as_deref())?,
+        "spp" => validate_spp_text(&text)?,
+        "srp" => validate_srp_text(&text)?,
         _ => bail!("unsupported --type: {}", prompt_type),
     }
     println!(
@@ -278,6 +280,35 @@ fn ensure_required_sections(text: &str, required_sections: &[&str]) -> Result<()
         "missing required sections: {}",
         missing.join(", ")
     );
+    Ok(())
+}
+
+fn issue_number_from_task_id(task_id: &str) -> Result<u32> {
+    task_id
+        .strip_prefix("issue-")
+        .ok_or_else(|| anyhow!("task id must start with issue-"))?
+        .parse::<u32>()
+        .map_err(|_| anyhow!("task id must end with an integer issue number"))
+}
+
+fn validate_reference_sequence(fm: &serde_yaml::Mapping, key: &str) -> Result<()> {
+    let entries = fm
+        .get(Value::String(key.to_string()))
+        .and_then(Value::as_sequence)
+        .ok_or_else(|| anyhow!("{key} must be a sequence"))?;
+    ensure!(!entries.is_empty(), "{key} must contain at least 1 item(s)");
+    for entry in entries {
+        let entry = entry
+            .as_mapping()
+            .ok_or_else(|| anyhow!("{key} entries must be mappings"))?;
+        let kind = mapping_string(entry, "kind").unwrap_or_default();
+        ensure!(!kind.is_empty(), "{key}.kind must be non-empty");
+        let reference = mapping_string(entry, "ref").unwrap_or_default();
+        ensure!(
+            !reference.is_empty() && valid_reference(&reference),
+            "{key}.ref must be a repo-relative reference or URL"
+        );
+    }
     Ok(())
 }
 
@@ -614,6 +645,291 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
             "completed-phase SOR requires Main Repo Integration.Result"
         );
     }
+    Ok(())
+}
+
+pub(super) fn validate_spp_text(text: &str) -> Result<()> {
+    let (fm_text, body_text) = split_front_matter(text)?;
+    let fm_yaml: Value = serde_yaml::from_str(&fm_text)?;
+    let fm = fm_yaml
+        .as_mapping()
+        .ok_or_else(|| anyhow!("front matter must be a YAML mapping"))?;
+
+    ensure_required_sections(
+        &body_text,
+        &[
+            "Plan Summary",
+            "Codex Plan",
+            "Assumptions",
+            "Proposed Steps",
+            "Affected Areas",
+            "Invariants To Preserve",
+            "Risks And Edge Cases",
+            "Test Strategy",
+            "Execution Handoff",
+            "Stop Conditions",
+            "Notes",
+        ],
+    )?;
+
+    ensure!(
+        mapping_string(fm, "schema_version").as_deref() == Some("0.1"),
+        "schema_version must be 0.1"
+    );
+    ensure!(
+        mapping_string(fm, "artifact_type").as_deref() == Some("structured_planning_prompt"),
+        "artifact_type must be structured_planning_prompt"
+    );
+    ensure!(
+        !mapping_string(fm, "name").unwrap_or_default().is_empty(),
+        "missing required field: name"
+    );
+    ensure!(
+        mapping_string(fm, "issue")
+            .and_then(|v| v.parse::<u32>().ok())
+            .is_some(),
+        "issue must be an integer"
+    );
+    let issue_number = mapping_string(fm, "issue")
+        .and_then(|v| v.parse::<u32>().ok())
+        .ok_or_else(|| anyhow!("issue must be an integer"))?;
+    let task_id = mapping_string(fm, "task_id").unwrap_or_default();
+    ensure!(valid_task_id(&task_id), "task_id must match issue-0000");
+    ensure!(
+        issue_number_from_task_id(&task_id)? == issue_number,
+        "task_id must refer to the same issue number as issue"
+    );
+    let run_id = mapping_string(fm, "run_id").unwrap_or_default();
+    ensure!(valid_task_id(&run_id), "run_id must match issue-0000");
+    ensure!(
+        issue_number_from_task_id(&run_id)? == issue_number,
+        "run_id must refer to the same issue number as issue"
+    );
+    ensure!(
+        valid_version(&mapping_string(fm, "version").unwrap_or_default()),
+        "version must match milestone version format (for example v0.85 or v0.87.1)"
+    );
+    ensure!(
+        !mapping_string(fm, "title").unwrap_or_default().is_empty(),
+        "missing required field: title"
+    );
+    let branch = mapping_string(fm, "branch").unwrap_or_default();
+    ensure!(
+        valid_branch(&branch) || branch.eq_ignore_ascii_case("not bound yet"),
+        "branch must be a codex/ branch or `not bound yet`"
+    );
+    ensure!(
+        ["draft", "reviewed", "approved"]
+            .contains(&mapping_string(fm, "status").unwrap_or_default().as_str()),
+        "status must be one of: draft, reviewed, approved"
+    );
+    ensure!(
+        mapping_string(fm, "plan_revision")
+            .and_then(|v| v.parse::<u32>().ok())
+            .is_some(),
+        "plan_revision must be an integer"
+    );
+    validate_reference_sequence(fm, "source_refs")?;
+    ensure!(
+        mapping_contains(fm, "scope"),
+        "missing required field: scope"
+    );
+    ensure!(
+        mapping_contains(fm, "constraints"),
+        "missing required field: constraints"
+    );
+    let confidence = mapping_string(fm, "confidence").unwrap_or_default();
+    ensure!(
+        ["low", "medium", "high"].contains(&confidence.as_str()),
+        "confidence must be one of: low, medium, high"
+    );
+    ensure!(
+        !mapping_string(fm, "plan_summary")
+            .unwrap_or_default()
+            .is_empty(),
+        "missing required field: plan_summary"
+    );
+    ensure!(
+        mapping_contains(fm, "assumptions"),
+        "missing required field: assumptions"
+    );
+    ensure!(
+        mapping_seq_len(fm, "proposed_steps") >= 1,
+        "proposed_steps must contain at least 1 item(s)"
+    );
+    ensure!(
+        mapping_seq_len(fm, "codex_plan") >= 1,
+        "codex_plan must contain at least 1 item(s)"
+    );
+    ensure!(
+        mapping_contains(fm, "affected_areas"),
+        "missing required field: affected_areas"
+    );
+    ensure!(
+        mapping_contains(fm, "invariants_to_preserve"),
+        "missing required field: invariants_to_preserve"
+    );
+    ensure!(
+        mapping_contains(fm, "risks_and_edge_cases"),
+        "missing required field: risks_and_edge_cases"
+    );
+    ensure!(
+        mapping_contains(fm, "test_strategy"),
+        "missing required field: test_strategy"
+    );
+    ensure!(
+        !mapping_string(fm, "execution_handoff")
+            .unwrap_or_default()
+            .is_empty(),
+        "missing required field: execution_handoff"
+    );
+    ensure!(
+        mapping_contains(fm, "required_permissions"),
+        "missing required field: required_permissions"
+    );
+    ensure!(
+        mapping_contains(fm, "stop_conditions"),
+        "missing required field: stop_conditions"
+    );
+    ensure!(
+        mapping_contains(fm, "alternatives_considered"),
+        "missing required field: alternatives_considered"
+    );
+    ensure!(
+        mapping_contains(fm, "review_hooks"),
+        "missing required field: review_hooks"
+    );
+
+    let codex_plan = fm
+        .get(Value::String("codex_plan".to_string()))
+        .and_then(Value::as_sequence)
+        .ok_or_else(|| anyhow!("codex_plan must be a sequence"))?;
+    for item in codex_plan {
+        let item = item
+            .as_mapping()
+            .ok_or_else(|| anyhow!("codex_plan entries must be mappings"))?;
+        let step = mapping_string(item, "step").unwrap_or_default();
+        ensure!(!step.is_empty(), "codex_plan.step must be non-empty");
+        let status = mapping_string(item, "status").unwrap_or_default();
+        ensure!(
+            ["pending", "in_progress", "completed"].contains(&status.as_str()),
+            "codex_plan.status must be one of: pending, in_progress, completed"
+        );
+    }
+
+    Ok(())
+}
+
+pub(super) fn validate_srp_text(text: &str) -> Result<()> {
+    let (fm_text, body_text) = split_front_matter(text)?;
+    let fm_yaml: Value = serde_yaml::from_str(&fm_text)?;
+    let fm = fm_yaml
+        .as_mapping()
+        .ok_or_else(|| anyhow!("front matter must be a YAML mapping"))?;
+
+    ensure_required_sections(
+        &body_text,
+        &[
+            "Review Summary",
+            "Scope Basis",
+            "In-Scope Surfaces",
+            "Evidence Rules",
+            "Validation Inputs",
+            "Allowed Dispositions",
+            "Reviewer Constraints",
+            "Refusal Policy",
+            "Follow-up Routing",
+            "Non-Claims",
+            "Notes",
+        ],
+    )?;
+
+    ensure!(
+        mapping_string(fm, "schema_version").as_deref() == Some("0.1"),
+        "schema_version must be 0.1"
+    );
+    ensure!(
+        mapping_string(fm, "artifact_type").as_deref() == Some("structured_review_policy"),
+        "artifact_type must be structured_review_policy"
+    );
+    ensure!(
+        !mapping_string(fm, "name").unwrap_or_default().is_empty(),
+        "missing required field: name"
+    );
+    ensure!(
+        mapping_string(fm, "issue")
+            .and_then(|v| v.parse::<u32>().ok())
+            .is_some(),
+        "issue must be an integer"
+    );
+    let issue_number = mapping_string(fm, "issue")
+        .and_then(|v| v.parse::<u32>().ok())
+        .ok_or_else(|| anyhow!("issue must be an integer"))?;
+    let task_id = mapping_string(fm, "task_id").unwrap_or_default();
+    ensure!(valid_task_id(&task_id), "task_id must match issue-0000");
+    ensure!(
+        issue_number_from_task_id(&task_id)? == issue_number,
+        "task_id must refer to the same issue number as issue"
+    );
+    ensure!(
+        valid_version(&mapping_string(fm, "version").unwrap_or_default()),
+        "version must match milestone version format (for example v0.85 or v0.87.1)"
+    );
+    ensure!(
+        !mapping_string(fm, "title").unwrap_or_default().is_empty(),
+        "missing required field: title"
+    );
+    let branch = mapping_string(fm, "branch").unwrap_or_default();
+    ensure!(
+        valid_branch(&branch) || branch.eq_ignore_ascii_case("not bound yet"),
+        "branch must be a codex/ branch or `not bound yet`"
+    );
+    ensure!(
+        ["draft", "ready", "approved"]
+            .contains(&mapping_string(fm, "status").unwrap_or_default().as_str()),
+        "status must be one of: draft, ready, approved"
+    );
+    validate_reference_sequence(fm, "source_refs")?;
+    ensure!(
+        mapping_string(fm, "review_mode").as_deref() == Some("pre_pr_independent_review"),
+        "review_mode must be pre_pr_independent_review"
+    );
+    ensure!(
+        !mapping_string(fm, "timing").unwrap_or_default().is_empty(),
+        "missing required field: timing"
+    );
+    for key in [
+        "scope_basis",
+        "in_scope_surfaces",
+        "evidence_policy",
+        "validation_inputs",
+        "allowed_dispositions",
+        "reviewer_constraints",
+        "refusal_policy",
+        "follow_up_routing",
+        "non_claims",
+        "policy_refs",
+    ] {
+        ensure!(
+            mapping_seq_len(fm, key) >= 1,
+            "{key} must contain at least 1 item(s)"
+        );
+    }
+
+    let allowed = fm
+        .get(Value::String("allowed_dispositions".to_string()))
+        .and_then(Value::as_sequence)
+        .ok_or_else(|| anyhow!("allowed_dispositions must be a sequence"))?;
+    for disposition in allowed {
+        let disposition = disposition
+            .as_str()
+            .ok_or_else(|| anyhow!("allowed_dispositions entries must be strings"))?;
+        ensure!(
+            ["PASS", "BLOCK", "NEEDS_FOLLOWUP"].contains(&disposition),
+            "allowed_dispositions entries must be one of: PASS, BLOCK, NEEDS_FOLLOWUP"
+        );
+    }
+
     Ok(())
 }
 

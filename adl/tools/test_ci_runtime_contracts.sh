@@ -89,6 +89,24 @@ if not runner_test.exists():
         "authoritative coverage runner contract test must exist"
     )
 
+if 'cargo llvm-cov report --json --summary-only --output-path coverage-summary.json' not in workflow:
+    raise SystemExit(
+        "PR fast coverage summary must emit coverage-summary.json at the workflow root; "
+        "workflow is missing that output path"
+    )
+
+if '--summary adl/coverage-summary.json \\' not in workflow:
+    raise SystemExit(
+        "authoritative changed-source coverage gate must read adl/coverage-summary.json from the runner output; "
+        "workflow is missing that summary reference"
+    )
+
+if '--summary coverage-summary.json \\' not in workflow:
+    raise SystemExit(
+        "PR coverage-impact preflight must read the root coverage-summary.json emitted by the fast lane; "
+        "workflow is missing that summary reference"
+    )
+
 gate_if = step_if("Enforce coverage policy gates (workspace + per-file)")
 expected_gate_fragment = "steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'"
 if expected_gate_fragment not in gate_if:

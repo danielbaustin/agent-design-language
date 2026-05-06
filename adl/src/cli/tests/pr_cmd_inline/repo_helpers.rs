@@ -1262,9 +1262,15 @@ fn ensure_bootstrap_cards_creates_bundle_and_compat_links() {
     let compat_stp = card_stp_path(&cards_root, 1153);
     let compat_input = card_input_path(&cards_root, 1153);
     let compat_output = card_output_path(&cards_root, 1153);
+    let compat_plan = card_plan_path(&cards_root, 1153);
+    let compat_review_policy = card_review_policy_path(&cards_root, 1153);
     assert!(compat_stp.symlink_metadata().is_ok());
     assert!(compat_input.symlink_metadata().is_ok());
     assert!(compat_output.symlink_metadata().is_ok());
+    assert!(issue_ref.task_bundle_plan_path(&repo).is_file());
+    assert!(issue_ref.task_bundle_review_policy_path(&repo).is_file());
+    assert!(compat_plan.symlink_metadata().is_ok());
+    assert!(compat_review_policy.symlink_metadata().is_ok());
     assert_eq!(
         field_line_value(&bundle_input, "Branch").expect("input branch"),
         "codex/1153-rust-finish-test"

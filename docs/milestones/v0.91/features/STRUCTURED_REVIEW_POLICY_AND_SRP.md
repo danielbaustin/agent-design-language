@@ -80,14 +80,18 @@ Its job is policy, not transport, packet payload, or findings output.
 
 ## Implementation Placement
 
-The first `v0.91` implementation should land:
+The landed `v0.91` implementation slice is:
 
-- an `SRP` template or schema
+- an `SRP` template
 - bootstrap support so issue bundles can carry `srp.md`
 - structured-prompt validation support for `SRP`
-- compatibility-link support
-- review-readiness checks that know whether required `SRP` state is present
-- integration with reviewer-agent invocation through `srp_ref`
+- compatibility-link support through `.adl/cards/<issue>/srp_<issue>.md`
+- durable policy structure that can be referenced by reviewer invocation
+
+Deferred follow-on work includes:
+
+- review-readiness checks that block on missing or stale `SRP`
+- end-to-end reviewer-agent tooling that consumes the policy automatically
 
 ## Relationship To Agent Comms
 
@@ -102,12 +106,13 @@ discipline and gives the communication substrate a clearer policy target.
 
 ## Evidence Expectations
 
-The proof surface should show that:
+The proof surface for the landed slice should show that:
 
 - review policy is saved with the issue bundle
+- malformed `SRP` surfaces are detectable
 - reviewer invocation can reference `srp_ref`
-- review readiness can detect missing or malformed `SRP`
-- reviewers are governed by explicit scope and disposition policy
+- reviewers have explicit scope, evidence, refusal, and disposition policy to
+  bind against even before full readiness gating is added
 
 ## Non-Claims
 

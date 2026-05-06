@@ -98,7 +98,7 @@ fn structured_prompt_completed_sor_closed_no_pr_still_rejects_non_retrospective_
 }
 
 #[test]
-fn validate_structured_prompt_accepts_all_three_prompt_types() {
+fn validate_structured_prompt_accepts_all_supported_prompt_types() {
     let repo = TempRepo::new("structured");
     let stp = repo.write_rel(".tmp/tooling_cmd_tests/stp.md", &valid_stp_text());
     let sip = repo.write_rel(
@@ -130,4 +130,158 @@ fn validate_structured_prompt_accepts_all_three_prompt_types() {
         "completed".to_string(),
     ])
     .is_ok());
+    let spp = repo.write_rel(".tmp/tooling_cmd_tests/spp.md", &valid_spp_text(1374));
+    let srp = repo.write_rel(".tmp/tooling_cmd_tests/srp.md", &valid_srp_text(1374));
+    assert!(real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        spp.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+    assert!(real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "srp".to_string(),
+        "--input".to_string(),
+        srp.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+}
+
+#[test]
+fn structured_prompt_spp_validator_rejects_invalid_codex_plan_status() {
+    let repo = TempRepo::new("structured-spp-invalid");
+    let spp = repo.write_rel(
+        ".tmp/tooling_cmd_tests/spp-invalid.md",
+        &valid_spp_text(1374).replace("status: \"pending\"", "status: \"queued\""),
+    );
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        spp.to_string_lossy().to_string(),
+    ])
+    .expect_err("invalid codex plan status should fail");
+    assert!(err.to_string().contains("codex_plan.status"));
+}
+
+#[test]
+fn structured_prompt_srp_validator_requires_refusal_policy() {
+    let repo = TempRepo::new("structured-srp-invalid");
+    let srp = repo.write_rel(
+        ".tmp/tooling_cmd_tests/srp-invalid.md",
+        &valid_srp_text(1374).replace(
+            "refusal_policy:\n  - \"Refuse claims that are unsupported by repository evidence.\"\n",
+            "",
+        ),
+    );
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "srp".to_string(),
+        "--input".to_string(),
+        srp.to_string_lossy().to_string(),
+    ])
+    .expect_err("missing refusal policy should fail");
+    assert!(err.to_string().contains("refusal_policy"));
+}
+
+#[test]
+fn structured_prompt_spp_validator_rejects_issue_task_id_mismatch() {
+    let repo = TempRepo::new("structured-spp-identity");
+    let spp = repo.write_rel(
+        ".tmp/tooling_cmd_tests/spp-identity.md",
+        &valid_spp_text(1374).replace("task_id: \"issue-1374\"", "task_id: \"issue-1375\""),
+    );
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        spp.to_string_lossy().to_string(),
+    ])
+    .expect_err("mismatched SPP issue/task identity should fail");
+    assert!(err
+        .to_string()
+        .contains("task_id must refer to the same issue number"));
+}
+
+#[test]
+fn structured_prompt_spp_validator_rejects_issue_run_id_mismatch() {
+    let repo = TempRepo::new("structured-spp-run-identity");
+    let spp = repo.write_rel(
+        ".tmp/tooling_cmd_tests/spp-run-identity.md",
+        &valid_spp_text(1374).replace("run_id: \"issue-1374\"", "run_id: \"issue-1375\""),
+    );
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        spp.to_string_lossy().to_string(),
+    ])
+    .expect_err("mismatched SPP issue/run identity should fail");
+    assert!(err
+        .to_string()
+        .contains("run_id must refer to the same issue number"));
+}
+
+#[test]
+fn structured_prompt_srp_validator_rejects_issue_task_id_mismatch() {
+    let repo = TempRepo::new("structured-srp-identity");
+    let srp = repo.write_rel(
+        ".tmp/tooling_cmd_tests/srp-identity.md",
+        &valid_srp_text(1374).replace("task_id: \"issue-1374\"", "task_id: \"issue-1375\""),
+    );
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "srp".to_string(),
+        "--input".to_string(),
+        srp.to_string_lossy().to_string(),
+    ])
+    .expect_err("mismatched SRP issue/task identity should fail");
+    assert!(err
+        .to_string()
+        .contains("task_id must refer to the same issue number"));
+}
+
+#[test]
+fn structured_prompt_spp_validator_rejects_malformed_source_refs() {
+    let repo = TempRepo::new("structured-spp-source-refs");
+    let spp = repo.write_rel(
+        ".tmp/tooling_cmd_tests/spp-source-refs.md",
+        &valid_spp_text(1374).replace(
+            "source_refs:\n  - kind: \"issue\"\n    ref: \"https://github.com/danielbaustin/agent-design-language/issues/1374\"\n",
+            "source_refs:\n  - 1\n",
+        ),
+    );
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        spp.to_string_lossy().to_string(),
+    ])
+    .expect_err("malformed SPP source refs should fail");
+    assert!(err
+        .to_string()
+        .contains("source_refs entries must be mappings"));
+}
+
+#[test]
+fn structured_prompt_srp_validator_rejects_malformed_source_refs() {
+    let repo = TempRepo::new("structured-srp-source-refs");
+    let srp = repo.write_rel(
+        ".tmp/tooling_cmd_tests/srp-source-refs.md",
+        &valid_srp_text(1374).replace(
+            "source_refs:\n  - kind: \"issue\"\n    ref: \"https://github.com/danielbaustin/agent-design-language/issues/1374\"\n",
+            "source_refs:\n  - 1\n",
+        ),
+    );
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "srp".to_string(),
+        "--input".to_string(),
+        srp.to_string_lossy().to_string(),
+    ])
+    .expect_err("malformed SRP source refs should fail");
+    assert!(err
+        .to_string()
+        .contains("source_refs entries must be mappings"));
 }

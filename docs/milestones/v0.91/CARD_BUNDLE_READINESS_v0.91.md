@@ -82,12 +82,9 @@ rg -n '<issue-source-prompt>|<issue-task-bundle>|adl/tools/pr\.sh|Status: IN_PRO
 
 Result: no matches after the card-truth normalization pass.
 
-The WP-04 SPP was also checked separately because the structured prompt
-validator does not yet expose an `spp` type:
-
-```text
-PASS: WP-04 SPP cites STP/SIP and stale note is gone
-```
+At the time of the original readiness pass, `SPP` still required a separate
+manual check because the structured-prompt validator did not yet expose `spp`
+or `srp` types. WP-15 is the feature slice that closes that validator gap.
 
 ## Non-Claims
 
