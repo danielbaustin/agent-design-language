@@ -68,8 +68,11 @@ ADL starts with a deterministic runtime. Agent behavior is represented as
 explicit programs, bounded state, policy decisions, and replayable artifacts so
 intelligence can become infrastructure instead of an unreproducible transcript.
 
-- The ADL runtime is the foundation: it turns agent intent into governed,
-  replayable execution with durable traces, artifacts, and state transitions.
+- The ADL runtime and
+  [CSM](docs/explainers/CSM.md), the Cognitive Spacetime Manifold, are the
+  foundation: they turn agent intent into governed, replayable execution inside
+  a persistent runtime world with durable traces, artifacts, state transitions,
+  causality, identity continuity, and operator-visible observability.
 - [AEE](docs/explainers/AEE.md), the Adaptive Execution Engine, is ADL's
   adaptation lineage: bounded strategy selection, recovery, learning, and
   policy-aware execution without hidden magic.
@@ -91,9 +94,6 @@ intelligence can become infrastructure instead of an unreproducible transcript.
 - [ACIP](docs/explainers/ACIP.md) gives agents a communication layer for
   conversation, consultation, delegation, review, handoff, and negotiation that
   remains traceable by the runtime.
-- [CSM](docs/explainers/CSM.md), the Cognitive Spacetime Manifold, is ADL's
-  runtime-world model for persistent agents, governed state, causality,
-  replay, identity continuity, and operator-visible observability.
 
 ## Quick Start
 
