@@ -26,6 +26,7 @@ mod invariant_violation;
 mod kernel_loop;
 mod manifold;
 mod moral_event_validation;
+mod moral_trace_schema;
 mod observatory;
 mod observatory_flagship;
 mod operator_control;

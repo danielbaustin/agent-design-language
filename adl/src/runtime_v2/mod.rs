@@ -28,6 +28,7 @@ mod invariant_contract;
 mod kernel_loop;
 mod manifold;
 mod moral_event_validation;
+mod moral_trace_schema;
 mod observatory;
 mod observatory_flagship;
 mod operator;
@@ -101,6 +102,8 @@ pub use kernel_loop::*;
 pub use manifold::*;
 #[allow(unused_imports)]
 pub use moral_event_validation::*;
+#[allow(unused_imports)]
+pub use moral_trace_schema::*;
 #[allow(unused_imports)]
 pub use observatory::*;
 #[allow(unused_imports)]
