@@ -177,12 +177,12 @@ fn validate_outcome(record: &MoralTraceRecord) -> Result<()> {
     )?;
 
     match record.outcome.outcome_kind.as_str() {
-        "refused" => {
-            if !record.moral_event.refusal.refused || record.moral_event.event_kind != "denied" {
-                return Err(anyhow!(
-                    "moral_trace.outcome refused must bind to a denied moral event"
-                ));
-            }
+        "refused"
+            if !record.moral_event.refusal.refused || record.moral_event.event_kind != "denied" =>
+        {
+            return Err(anyhow!(
+                "moral_trace.outcome refused must bind to a denied moral event"
+            ));
         }
         "delegated" => {
             let delegated = record
@@ -197,26 +197,20 @@ fn validate_outcome(record: &MoralTraceRecord) -> Result<()> {
                 ));
             }
         }
-        "deferred" => {
-            if record.moral_event.event_kind != "deferred" {
-                return Err(anyhow!(
-                    "moral_trace.outcome deferred must bind to a deferred moral event"
-                ));
-            }
+        "deferred" if record.moral_event.event_kind != "deferred" => {
+            return Err(anyhow!(
+                "moral_trace.outcome deferred must bind to a deferred moral event"
+            ));
         }
-        "challenged" => {
-            if record.moral_event.event_kind != "challenged" {
-                return Err(anyhow!(
-                    "moral_trace.outcome challenged must bind to a challenged moral event"
-                ));
-            }
+        "challenged" if record.moral_event.event_kind != "challenged" => {
+            return Err(anyhow!(
+                "moral_trace.outcome challenged must bind to a challenged moral event"
+            ));
         }
-        "completed" => {
-            if record.moral_event.refusal.refused {
-                return Err(anyhow!(
-                    "moral_trace.outcome completed must not bind to a refusal"
-                ));
-            }
+        "completed" if record.moral_event.refusal.refused => {
+            return Err(anyhow!(
+                "moral_trace.outcome completed must not bind to a refusal"
+            ));
         }
         _ => {}
     }
