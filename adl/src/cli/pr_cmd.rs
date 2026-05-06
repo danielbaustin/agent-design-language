@@ -17,9 +17,9 @@ use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
     ensure_source_issue_prompt, ensure_symlink, ensure_task_bundle_stp,
     ensure_worktree_task_bundle_materialized, field_line_value,
-    mirror_docs_templates_into_worktree, path_relative_to_repo, sync_root_task_bundle_into_worktree,
-    validate_bootstrap_stp, validate_initialized_cards, validate_issue_body_for_create,
-    validate_ready_cards, write_source_issue_prompt,
+    mirror_docs_templates_into_worktree, path_relative_to_repo,
+    sync_root_task_bundle_into_worktree, validate_bootstrap_stp, validate_initialized_cards,
+    validate_issue_body_for_create, validate_ready_cards, write_source_issue_prompt,
 };
 #[cfg(test)]
 use super::pr_cmd_prompt::load_issue_prompt;

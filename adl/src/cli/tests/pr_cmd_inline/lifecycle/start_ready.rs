@@ -371,9 +371,15 @@ fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
     env::set_current_dir(prev_dir).expect("restore cwd");
 
     assert!(issue_ref.worktree_task_bundle_stp_path(&worktree).is_file());
-    assert!(issue_ref.worktree_task_bundle_input_path(&worktree).is_file());
-    assert!(issue_ref.worktree_task_bundle_output_path(&worktree).is_file());
-    assert!(issue_ref.worktree_task_bundle_plan_path(&worktree).is_file());
+    assert!(issue_ref
+        .worktree_task_bundle_input_path(&worktree)
+        .is_file());
+    assert!(issue_ref
+        .worktree_task_bundle_output_path(&worktree)
+        .is_file());
+    assert!(issue_ref
+        .worktree_task_bundle_plan_path(&worktree)
+        .is_file());
     assert!(issue_ref
         .worktree_task_bundle_review_policy_path(&worktree)
         .is_file());
