@@ -27,12 +27,12 @@ packets, demos, and milestone evidence.
 
 ## Why ADL Exists
 
-Most agent systems are too hard to inspect after the exciting demo ends. The
-model may produce plausible output, but teams still need to know what ran, what
-authority it had, what tools it used, what state changed, and what evidence a
-reviewer can inspect.
+Agent systems are crossing from impressive prototypes into real operational
+infrastructure. To make that transition safely, they need more than fluent
+model output: they need durable programs, explicit authority, governed tools,
+state you can trust, and evidence strong enough for teams to build on.
 
-ADL makes those questions first-class:
+ADL turns those requirements into first-class architecture:
 
 - deterministic programs instead of hidden orchestration
 - governed tools instead of unbounded model action
