@@ -1125,12 +1125,12 @@ fn require_resource_interpretation_boundary(
 ) -> Result<()> {
     let normalized = value.to_ascii_lowercase();
     match resource_id {
-        "care" | "refusal" => {
-            if !(normalized.contains("sentiment") && normalized.contains("coerc")) {
-                return Err(anyhow!(
-                    "{field} for {resource_id} must explicitly reject sentimentality and coercion"
-                ));
-            }
+        "care" | "refusal"
+            if !(normalized.contains("sentiment") && normalized.contains("coerc")) =>
+        {
+            return Err(anyhow!(
+                "{field} for {resource_id} must explicitly reject sentimentality and coercion"
+            ));
         }
         _ => {}
     }
