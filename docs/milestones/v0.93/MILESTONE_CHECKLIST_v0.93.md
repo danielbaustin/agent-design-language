@@ -13,6 +13,8 @@ entered active execution.
 - [ ] Issue wave authored and opened.
 - [ ] Cards reviewed for concrete outputs and non-goals.
 - [ ] Dependencies on v0.90.3, v0.91, v0.92, and governed tools checked.
+- [ ] Six enterprise-security WPs are present in the WBS and mapped to
+  concrete proof surfaces.
 
 ## Scope Integrity
 
@@ -27,6 +29,14 @@ entered active execution.
   explicit.
 - [ ] Economics and payment rails are excluded or explicitly bridged by
   decision.
+- [ ] Zero-trust, IAM, delegation, tool authority, standing, and identity are
+  aligned instead of modeled as separate competing policy systems.
+- [ ] Secrets/key lifecycle, encryption, signing, rotation, revocation, and
+  sealed-state access are explicit.
+- [ ] Audit, compliance, and incident evidence is redaction-safe and does not
+  claim external certification.
+- [ ] Isolation, data-governance, retention, deletion, projection, and privacy
+  controls are explicit.
 
 ## Quality Gates
 
@@ -36,8 +46,13 @@ entered active execution.
   inspection.
 - [ ] Review packets do not expose private ToM or convert it into public
   reputation without authority and redaction.
+- [ ] Security review covers default-deny behavior, least privilege, key/secrets
+  lifecycle, audit integrity, incident evidence, isolation, provenance, and
+  adversarial regression.
 - [ ] Claim-boundary scan finds no production-law, legal-personhood, or
   completed-constitution overclaims.
+- [ ] Claim-boundary scan finds no SOC 2, ISO 27001, FedRAMP, HIPAA, or other
+  external certification overclaims.
 
 ## Review And Release
 
@@ -51,6 +66,6 @@ entered active execution.
 ## Exit Criteria
 
 - Constitutional citizenship, ToM, reputation boundary, shared social memory,
-  standing, review, appeal, delegation, IAM, and proof demos are traceable from
-  docs to PRs and evidence.
+  standing, review, appeal, delegation, IAM, the six enterprise-security WPs,
+  and proof demos are traceable from docs to PRs and evidence.
 - The milestone can be audited without reconstructing intent from chat.
