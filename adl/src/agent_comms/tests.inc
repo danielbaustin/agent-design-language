@@ -242,6 +242,67 @@
     }
 
     #[test]
+    fn acip_a2a_adapter_schemas_and_fixtures_are_available() {
+        let adapter_schema = acip_a2a_adapter_boundary_v1_schema_json().expect("adapter schema");
+        let fixture_schema = acip_a2a_fixture_set_v1_schema_json().expect("fixture schema");
+        assert!(adapter_schema.contains("\"trust_classification\""));
+        assert!(adapter_schema.contains("\"required_entrypoint\""));
+        assert!(fixture_schema.contains("\"valid_adapters\""));
+        assert!(fixture_schema.contains("\"negative_cases\""));
+
+        let fixtures = acip_a2a_fixture_set_v1();
+        validate_acip_a2a_fixture_set_v1(&fixtures).expect("A2A fixtures should validate");
+        assert_eq!(fixtures.valid_adapters.len(), 3);
+        assert_eq!(fixtures.negative_cases.len(), 4);
+    }
+
+    #[test]
+    fn acip_a2a_adapter_requires_all_trust_classifications() {
+        let mut fixtures = acip_a2a_fixture_set_v1();
+        fixtures
+            .valid_adapters
+            .retain(|adapter| adapter.trust_classification.classification != AcipA2aTrustClassV1::Citizen);
+        let error = validate_acip_a2a_fixture_set_v1(&fixtures)
+            .expect_err("missing trust classification coverage should fail");
+        assert!(error
+            .to_string()
+            .contains("ACIP A2A fixture set must cover trust class"));
+    }
+
+    #[test]
+    fn acip_a2a_adapter_rejects_parallel_authority_and_direct_execution() {
+        let fixtures = acip_a2a_fixture_set_v1();
+        for case_name in ["parallel_authority_model", "direct_execution_grant"] {
+            let case = fixtures
+                .negative_cases
+                .iter()
+                .find(|case| case.name == case_name)
+                .expect("negative case");
+            let error = validate_acip_a2a_adapter_boundary_v1_value(&case.value)
+                .expect_err("negative case should fail");
+            assert!(error.to_string().contains(&case.expected_error_substring));
+        }
+    }
+
+    #[test]
+    fn acip_a2a_adapter_rejects_missing_agent_invoke_and_external_transport() {
+        let fixtures = acip_a2a_fixture_set_v1();
+        for case_name in [
+            "missing_agent_invoke_boundary",
+            "external_transport_without_local_gate",
+        ] {
+            let case = fixtures
+                .negative_cases
+                .iter()
+                .find(|case| case.name == case_name)
+                .expect("negative case");
+            let error = validate_acip_a2a_adapter_boundary_v1_value(&case.value)
+                .expect_err("negative case should fail");
+            assert!(error.to_string().contains(&case.expected_error_substring));
+        }
+    }
+
+    #[test]
     fn acip_review_specialization_schemas_and_fixtures_are_available() {
         let contract_schema = acip_review_invocation_v1_schema_json().expect("review schema");
         let outcome_schema = acip_review_outcome_v1_schema_json().expect("outcome schema");
