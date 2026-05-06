@@ -30,6 +30,7 @@ mod moral_trace_schema;
 mod observatory;
 mod observatory_flagship;
 mod operator_control;
+mod outcome_linkage_attribution;
 mod private_state;
 mod private_state_envelope;
 mod private_state_equivocation;
