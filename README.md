@@ -32,6 +32,11 @@ infrastructure. To make that transition safely, they need more than fluent
 model output: they need durable programs, explicit authority, governed tools,
 state you can trust, and evidence strong enough for teams to build on.
 
+This is also the Mythos problem. If frontier vulnerability-finding systems make
+exploit discovery cheap, fast, and continuous, then serious agent platforms
+cannot rely on occasional audits or after-the-fact explanations. They need to
+find, replay, and repair their own weaknesses before external adversaries do.
+
 ADL turns those requirements into an architecture for dependable agent systems:
 
 - deterministic workflows that make agent behavior reproducible

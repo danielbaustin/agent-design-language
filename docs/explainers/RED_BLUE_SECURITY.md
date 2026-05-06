@@ -25,6 +25,11 @@ with bounded authority and visible artifacts.
 Agent systems will be probed continuously. Waiting for external attackers to
 discover failures is too slow and too risky.
 
+This is the Mythos problem: once frontier vulnerability-finding systems make
+discovery cheap and fast, any real weakness should be assumed discoverable by
+someone else. The defensive posture has to change from occasional review to
+continuous, governed, evidence-producing self-examination.
+
 ADL's answer is bounded self-attack:
 
 ```text
@@ -56,4 +61,3 @@ explore, test, evaluate, mitigate, replay, and retain what was learned.
 - [Red / Blue Agent Architecture](../milestones/v0.89.1/features/RED_BLUE_AGENT_ARCHITECTURE.md)
 - [Self-Attacking Systems](../milestones/v0.89.1/features/SELF_ATTACKING_SYSTEMS.md)
 - [Adversarial runtime demo matrix](../milestones/v0.89.1/DEMO_MATRIX_v0.89.1.md)
-
