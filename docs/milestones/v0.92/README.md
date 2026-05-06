@@ -23,6 +23,8 @@ v0.92 should establish:
 - continuity evidence across bounded cycles
 - memory grounding tied to witnessed artifacts
 - capability envelope at birth
+- ACP / cognitive profiles as a bounded runtime profile surface grounded in
+  memory, capability, continuity, ToM, and intelligence evidence
 - inherited moral/governance context from v0.91
 - birth witnesses and citizen-facing receipt
 - reviewer-facing evidence that distinguishes birth from process startup
@@ -55,6 +57,9 @@ v0.92 depends on:
   capability envelopes include tool-mediated actions
 - v0.91 for moral trace, moral trajectory review, outcome linkage, wellbeing,
   moral resources, and anti-harm evidence
+- v0.91.1 for runtime/polis alignment, memory/identity architecture, Theory of
+  Mind foundation, capability/aptitude testing, intelligence metrics, governed
+  learning, and ANRM/Gemma evidence that can feed cognitive profiles
 - v0.93 as a downstream consumer of identity evidence for constitutional
   citizenship and polis governance
 
@@ -80,6 +85,7 @@ The likely `v0.92` tranche is:
 - Continuity record across bounded cycles.
 - Memory grounding.
 - Capability envelope.
+- ACP / cognitive profiles as a runtime-visible profile contract.
 - Birth witnesses and receipt.
 - Birthday review packet.
 - Negative cases that prove startup, wake, snapshot, admission, and copied
@@ -95,6 +101,7 @@ The likely `v0.92` tranche is:
 - Economics, payments, or markets.
 - Governed-tool substrate implementation.
 - Full memory palace implementation.
+- Free-floating cognitive labels that are not grounded in evidence.
 - Replacing v0.90.3 citizen-state/security work.
 - Replacing v0.91 moral trace or moral trajectory review.
 
@@ -118,7 +125,7 @@ Later WP planning should preserve the standard milestone rhythm:
 
 - WP-01: promote reviewed milestone docs and issue wave
 - feature WPs: implement identity, continuity, memory grounding, capability,
-  witness, receipt, and birthday-record surfaces
+  ACP/cognitive profile, witness, receipt, and birthday-record surfaces
 - demo WP: build first-birthday proof demos and negative cases
 - quality/review WPs: validate docs, tests, demo evidence, and review packets
 - release WP: close the milestone under the normal ceremony pattern
@@ -130,7 +137,7 @@ The exact WP sequence is intentionally deferred until v0.92 planning is active.
 v0.92 is ready to execute when:
 
 - every birthday claim maps to name, identity, continuity, memory, capability,
-  witness, receipt, trace, or review evidence
+  cognitive profile, witness, receipt, trace, or review evidence
 - negative cases clearly reject ordinary process startup as birth
 - v0.90.3 and v0.91 prerequisites are named rather than redefined
 - v0.93 governance is downstream rather than absorbed

@@ -1,0 +1,162 @@
+milestone: v0.91.2
+status: candidate_issue_wave
+issue_wave_opened: false
+owner_issue: null
+planning_source: docs/milestones/v0.91.2
+tracked_package: docs/milestones/v0.91.2
+notes:
+- v0.91.2 is the tooling, evaluation, productization, publication, and
+  workflow-hardening pressure-release milestone.
+- The UTS + ACC benchmark must distinguish ADL JSON proposal mode from
+  provider-native tool/function-call mode.
+- Runtime/test-cycle recovery must reduce wasted time without weakening
+  authoritative proof.
+- Workspace, modernization, and publication work must remain review-gated and
+  non-silent.
+card_update_rule:
+- When opened, every WP must receive STP, SIP, SPP, and SOR cards from the
+  accepted readiness section.
+- Cards must name source docs, concrete outputs, validation commands, non-goals,
+  demo/proof expectations, and review dependencies.
+closeout_sequence:
+- WP-15 Demo matrix and proof coverage
+- WP-16 Coverage / quality gate
+- WP-17 Docs + review pass
+- WP-18 Internal review
+- WP-19 External / 3rd-party review
+- WP-20 Review findings remediation
+- WP-21 Next milestone planning
+- WP-22 Release ceremony
+work_packages:
+- wp: WP-01
+  issue: null
+  title: Design pass (milestone docs + planning)
+  queue: docs
+  outcome: tracked docs, reviewed YAML, and issue cards
+  depends_on: v0.91.1 closeout
+- wp: WP-02
+  issue: null
+  title: UTS + ACC multi-model benchmark harness
+  queue: tools
+  outcome: benchmark harness and fixture battery
+  depends_on: WP-01
+- wp: WP-03
+  issue: null
+  title: Provider-native tool-call comparison
+  queue: tools
+  outcome: JSON proposal vs provider-native comparison report
+  depends_on: WP-02
+- wp: WP-04
+  issue: null
+  title: Runtime/test-cycle recovery
+  queue: quality
+  outcome: reduced redundant proof phases and validation report
+  depends_on: WP-01
+- wp: WP-05
+  issue: null
+  title: Coverage gate ergonomics
+  queue: quality
+  outcome: changed-source diagnostics and focused-test guide
+  depends_on: WP-04
+- wp: WP-06
+  issue: null
+  title: CodeBuddy review packet productization
+  queue: tools
+  outcome: review packet and product-report workflow package
+  depends_on: WP-01
+- wp: WP-07
+  issue: null
+  title: Review heuristics skill and demos
+  queue: demo
+  outcome: review heuristics docs, skill/demo updates, proof examples
+  depends_on: WP-06
+- wp: WP-08
+  issue: null
+  title: Google Workspace CMS bridge demo
+  queue: tools
+  outcome: bounded Workspace content-card and promotion demo
+  depends_on: WP-01
+- wp: WP-09
+  issue: null
+  title: Rust-native GWS adapter boundary
+  queue: tools
+  outcome: adapter feasibility and typed contract boundary
+  depends_on: WP-08
+- wp: WP-10
+  issue: null
+  title: Code modernization demo
+  queue: tools
+  outcome: Moderne/code modernization interaction demo
+  depends_on: WP-01
+- wp: WP-11
+  issue: null
+  title: Publication program package
+  queue: docs
+  outcome: arXiv/Medium paper-program backlog and process docs
+  depends_on: WP-01
+- wp: WP-12
+  issue: null
+  title: General intelligence paper packet
+  queue: docs
+  outcome: claim, citation, and review packet
+  depends_on: WP-11
+- wp: WP-13
+  issue: null
+  title: Rustdoc and doc cleanup
+  queue: docs
+  outcome: rustdoc/doc cleanup patches and report
+  depends_on: WP-05
+- wp: WP-14
+  issue: null
+  title: Workflow guardrails hardening
+  queue: tools
+  outcome: main-write, watcher, and safe-report guardrails
+  depends_on: WP-04, WP-05
+- wp: WP-15
+  issue: null
+  title: Demo matrix and proof coverage
+  queue: demo
+  outcome: demo matrix and proof coverage record
+  depends_on: WP-02-WP-14
+- wp: WP-16
+  issue: null
+  title: Coverage / quality gate
+  queue: quality
+  outcome: validation posture and test/coverage record
+  depends_on: WP-15
+- wp: WP-17
+  issue: null
+  title: Docs + review pass
+  queue: docs
+  outcome: review-ready docs package
+  depends_on: WP-16
+- wp: WP-18
+  issue: null
+  title: Internal review
+  queue: review
+  outcome: internal review record
+  depends_on: WP-17
+- wp: WP-19
+  issue: null
+  title: External / 3rd-party review
+  queue: review
+  outcome: external review handoff and record
+  depends_on: WP-18
+- wp: WP-20
+  issue: null
+  title: Review findings remediation
+  queue: review
+  outcome: remediation record and follow-up issues
+  depends_on: WP-19
+- wp: WP-21
+  issue: null
+  title: Next milestone planning
+  queue: docs
+  outcome: v0.92/v0.93 handoff update
+  depends_on: WP-20
+- wp: WP-22
+  issue: null
+  title: Release ceremony
+  queue: release
+  outcome: release evidence and end-of-milestone report
+  depends_on: WP-21

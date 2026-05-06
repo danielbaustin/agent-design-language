@@ -383,6 +383,8 @@ Required validation:
 Required outputs:
 
 - v0.91.1 adjacent-systems handoff.
+- v0.91.2 tooling, evaluation, productization, publication, and
+  workflow-hardening handoff.
 - v0.92 birthday and v0.93 constitutional-governance boundary handoff.
 - TBD/backlog disposition update for any v0.91 findings.
 - Next milestone WP candidate package where appropriate.
@@ -392,6 +394,9 @@ Required validation:
 - v0.91.1 owns capability testing, intelligence architecture, ANRM/Gemma, ToM,
   memory/identity, runtime-v2/polis docs, ACIP hardening, and model comparison
   report work.
+- v0.91.2 owns UTS + ACC multi-model benchmarking, runtime/test-cycle recovery,
+  CodeBuddy, Google Workspace CMS, code modernization, publication packets,
+  rustdoc/doc cleanup, and workflow guardrails.
 - v0.92 and v0.93 remain downstream consumers rather than absorbed scope.
 
 ## WP-25: Release Ceremony

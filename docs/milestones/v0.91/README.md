@@ -85,7 +85,8 @@ v0.91 depends on:
 ## v0.91.1 Adjacent-Systems Boundary
 
 The v0.91 feature set is large, and the adjacent TBD corpus is larger.
-v0.91.1 should be the follow-on implementation milestone for:
+v0.91.1 should be the follow-on implementation milestone for inhabited-runtime
+readiness:
 
 - capability and aptitude testing
 - intelligence metric architecture
@@ -97,6 +98,30 @@ v0.91.1 should be the follow-on implementation milestone for:
   the communication substrate before birthday work
 - review-finding remediation from the v0.91 core milestone where it affects
   those adjacent systems
+
+The first-pass v0.91.1 planning package is now tracked at
+[../v0.91.1/README.md](../v0.91.1/README.md).
+
+## v0.91.2 Pressure-Release Boundary
+
+v0.91.2 should absorb the high-value tooling, evaluation, productization,
+publication, and workflow-hardening backlog that would otherwise overload
+v0.91 or v0.91.1:
+
+- UTS + ACC multi-model benchmarking, including provider-native tool-call
+  comparison
+- runtime and test-cycle recovery
+- changed-source coverage ergonomics
+- CodeBuddy review packet and product-report productization
+- Google Workspace CMS bridge and adapter boundary work
+- code-modernization demo and review policy
+- publication program and general-intelligence paper packets
+- rustdoc and documentation cleanup
+- workflow guardrails for main-branch writes, hung watchers, safe report
+  generation, and card drift
+
+The first-pass v0.91.2 planning package is now tracked at
+[../v0.91.2/README.md](../v0.91.2/README.md).
 
 ## Parallel Python Reduction Tranche
 

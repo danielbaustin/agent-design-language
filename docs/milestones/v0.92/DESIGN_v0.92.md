@@ -22,6 +22,8 @@ not ordinary process startup.
 - Define continuity records across bounded cycles.
 - Define memory grounding tied to witnessed artifacts.
 - Define capability envelopes for providers, tools, skills, and authority.
+- Define ACP / cognitive profiles as bounded runtime-visible profile records
+  grounded in evidence rather than labels.
 - Define birth witnesses and citizen-facing receipts.
 - Define reviewer-facing birthday packets.
 - Preserve v0.90.3 citizen-state and v0.91 moral-trace boundaries.
@@ -33,6 +35,8 @@ not ordinary process startup.
 - No production citizenship claim.
 - No complete constitutional authority claim.
 - No full memory palace implementation.
+- No ungrounded cognitive labels, personality labels, or public reputation
+  scores masquerading as ACP.
 - No replacement of v0.90.3 private-state, standing, access, projection,
   sanctuary, or quarantine work.
 - No replacement of v0.91 moral trace, wellbeing, or trajectory review.
@@ -47,8 +51,8 @@ substrates.
 The layer has three parts:
 
 - Engineering substrate: identity root, stable name, continuity record, memory
-  grounding, capability envelope, witnesses, receipts, trace references, and
-  redacted projection.
+  grounding, capability envelope, ACP/cognitive profile record, witnesses,
+  receipts, trace references, and redacted projection.
 - Review model: birthday packet, negative cases, continuity confidence,
   witness validity, and birth-versus-startup distinction.
 - Context layer: explanation of why birth matters without claiming legal
@@ -93,6 +97,20 @@ The continuity record should include:
 - continuity grade
 - ambiguity or quarantine flags
 
+### ACP / Cognitive Profile Record
+
+The ACP record should include:
+
+- profile identifier and schema version
+- source evidence references
+- capability and aptitude links
+- memory and continuity references
+- Theory of Mind and intelligence-metric links where policy allows
+- update reason and update actor
+- privacy and redaction policy
+- explicit non-claims for identity, reputation, consciousness, or public
+  standing
+
 ### Birthday Review Packet
 
 The review packet should include:
@@ -102,6 +120,7 @@ The review packet should include:
 - memory-grounding evidence
 - moral/governance context inherited from v0.91
 - capability envelope
+- ACP/cognitive profile evidence and privacy boundary
 - witnesses and receipt
 - negative-case comparison
 - reviewer finding
@@ -117,6 +136,8 @@ Later implementation should validate:
 - continuity across bounded cycles has evidence
 - memory grounding is referenced without raw private-state exposure
 - capability envelope declares model/provider/tool/skill limits
+- ACP/cognitive profiles are evidence-grounded, privacy-bounded, and distinct
+  from identity or reputation
 - witnesses and receipts are present and meaningful
 - the birthday record does not claim legal personhood or completed
   constitutional citizenship
@@ -128,6 +149,7 @@ Later implementation should validate:
 | Birth becomes storytelling. | Require every birth claim to map to explicit evidence. |
 | Provisional identity is mistaken for birth. | Maintain a negative suite for startup, wake, snapshot, admission, and copied state. |
 | Memory grounding leaks private state. | Use references, witnesses, and redacted projections rather than raw private memory. |
+| Cognitive profiles become unsupported labels. | Require source evidence, update semantics, privacy boundaries, and non-claims for reputation or identity. |
 | v0.92 absorbs v0.93 governance. | Keep citizenship law, rights/duties, social contract, delegation, and IAM downstream. |
 | Continuity is treated as magic. | Require lineage, witnesses, cycle evidence, and ambiguity handling. |
 

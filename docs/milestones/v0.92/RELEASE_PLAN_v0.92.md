@@ -13,6 +13,8 @@ v0.92 should not be released until it has evidence for:
 - continuity across bounded cycles
 - memory grounding
 - capability envelope
+- ACP / cognitive profile grounded in evidence from memory, capability,
+  continuity, ToM, intelligence, and learning surfaces
 - birth witnesses and receipt
 - birthday review packet
 - negative cases for startup, wake, snapshot, admission, and copied state
@@ -28,6 +30,9 @@ v0.92 should not be released until it has evidence for:
   secret-like strings.
 - The final review handoff must identify which v0.90.3 and v0.91 prerequisite
   surfaces were consumed.
+- ACP/cognitive-profile evidence must be reviewed as a bounded runtime profile
+  contract, not as identity, reputation, legal personhood, or production
+  citizenship.
 
 ## Closeout Notes For Later WP-20
 
@@ -44,5 +49,7 @@ Do not ship v0.92 if:
 - continuity lacks evidence
 - memory grounding requires raw private-state exposure
 - capability limits are absent
+- cognitive profile claims are free-floating labels rather than trace-backed
+  evidence
 - birth claims legal personhood or production citizenship
 - constitutional governance is quietly absorbed instead of handed off to v0.93

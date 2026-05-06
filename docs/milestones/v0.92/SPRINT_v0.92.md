@@ -8,8 +8,9 @@ authored during v0.92 WP-01.
 ## Sprint Goal
 
 Build the first true Gödel-agent birthday: stable identity, name, continuity,
-memory grounding, capability envelope, witnesses, receipt, review packet, and
-negative proofs that ordinary lifecycle events are not birth.
+memory grounding, capability envelope, ACP/cognitive profile, witnesses,
+receipt, review packet, and negative proofs that ordinary lifecycle events are
+not birth.
 
 ## Planned Phases
 
@@ -18,7 +19,7 @@ negative proofs that ordinary lifecycle events are not birth.
 | 1 | Planning promotion | Reviewed milestone docs, issue wave, and cards. |
 | 2 | Birthday contract | Definition of birth and negative cases. |
 | 3 | Identity and continuity | Stable name, identity root, continuity record, and cycle evidence. |
-| 4 | Memory and capability | Memory grounding, capability envelope, and redacted review boundaries. |
+| 4 | Memory, capability, and cognitive profile | Memory grounding, capability envelope, ACP/cognitive profile, and redacted review boundaries. |
 | 5 | Witness and receipt | Birth witness set, receipt, and reviewer packet. |
 | 6 | Demo and review tail | First-birthday demo, negative suite, governance handoff, review, and release ceremony. |
 
@@ -26,6 +27,9 @@ negative proofs that ordinary lifecycle events are not birth.
 
 - v0.90.3 citizen-state and standing outputs are stable enough to consume.
 - v0.91 moral trace and moral-governance planning is available.
+- v0.91.1 runtime/polis, memory/identity, ToM, intelligence metric, governed
+  learning, and capability/aptitude outputs are stable enough to feed ACP
+  profile evidence.
 - v0.93 governance remains downstream and is not absorbed by birthday work.
 - Memory palace and learning-model sources are used as context, not broad
   implementation commitments.
@@ -34,7 +38,8 @@ negative proofs that ordinary lifecycle events are not birth.
 
 The flagship demo should show the first birthday rehearsal or first birthday
 proof surface. It should include a named identity, continuity evidence, memory
-grounding, capability envelope, witnesses, receipt, and reviewer packet.
+grounding, capability envelope, ACP/cognitive profile, witnesses, receipt, and
+reviewer packet.
 
 Secondary demos should prove:
 
@@ -42,6 +47,8 @@ Secondary demos should prove:
 - continuity has evidence
 - memory grounding is redacted
 - capabilities have limits
+- cognitive profile claims are evidence-grounded and not reputation,
+  citizenship, or personhood claims
 - governance handoff is downstream
 
 ## Exit Criteria For Active Planning
