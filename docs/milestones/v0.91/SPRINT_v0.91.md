@@ -96,10 +96,10 @@ Sprint notes:
 
 - Keep the release tail sequential: quality, docs, internal review, external
   review, remediation, next planning, then release ceremony.
-- WP-24 should leave v0.91.1 ready for capability/aptitude testing,
-  intelligence metric architecture, ANRM/Gemma, ToM, memory/identity,
-  runtime-v2/polis docs, ACIP hardening, A2A adapter boundaries, and an
-  observatory-visible inhabitant runtime proof.
+- WP-24 should leave v0.91.1 ready for runtime-v2/polis docs, agent lifecycle
+  states, ACIP state eligibility, capability/aptitude testing, intelligence
+  metric architecture, ANRM/Gemma, ToM, memory/identity, ACIP hardening, A2A
+  adapter boundaries, and an observatory-visible inhabitant runtime proof.
 - WP-24 should leave v0.91.2 ready for UTS + ACC multi-model benchmarking,
   runtime/test-cycle recovery, CodeBuddy, Google Workspace CMS, modernization,
   publication, rustdoc/doc cleanup, and workflow guardrails.

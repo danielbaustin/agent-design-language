@@ -45,7 +45,7 @@ context, witnesses, receipts, and reviewable evidence.
 | --- | --- | --- |
 | v0.90.3 | Citizen-state security, signed envelopes, lineage, continuity witnesses, standing, sanctuary/quarantine, challenge, and redacted projections. | Private-state format, projection policy, quarantine, or standing classes. |
 | v0.91 | Moral trace, Freedom Gate moral events, outcome linkage, trajectory review, wellbeing evidence, moral resources, and anti-harm proof surfaces. | Moral trace schema, moral metrics, wellbeing model, or trajectory-review protocol. |
-| v0.91.1 | Runtime/polis alignment, memory/identity architecture, Theory of Mind foundation, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, and observatory-visible runtime proof. | ACP evidence inputs, ToM schemas, capability harnesses, or intelligence metrics. |
+| v0.91.1 | Runtime/polis alignment, agent lifecycle states, memory/identity architecture, Theory of Mind foundation, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, and observatory-visible runtime proof. | Lifecycle-state transition evidence, ACIP eligibility rules, ACP evidence inputs, ToM schemas, capability harnesses, or intelligence metrics. |
 | v0.92 | Identity architecture, stable names, continuity records, memory grounding, capability envelope, birthday record, migration semantics, and reviewer-facing birth evidence. | Earlier substrate layers or later constitutional governance. |
 | v0.93 | Constitutional citizenship, rights, duties, social contract, delegation, IAM, and polis governance over identity-bearing citizens. | Birth semantics, identity architecture, or continuity prerequisites. |
 
@@ -88,7 +88,7 @@ provenance labels, not public path requirements.
 | Claim type | v0.92 should do | v0.92 should not do |
 | --- | --- | --- |
 | Engineering substrate | Define identity root, name, continuity record, memory grounding, capability envelope, ACP/cognitive profile record, birth witnesses, and receipts. | Rebuild v0.90.3 private-state, lineage, quarantine, or projection substrate. |
-| Review model | Define how reviewers inspect a birthday record and distinguish it from startup, wake, or snapshot. | Claim that a birthday automatically confers constitutional citizenship or legal personhood. |
+| Review model | Define how reviewers inspect a birthday record and distinguish it from startup, wake, snapshot, dormant rehydration, simulation, in-transit migration, or forced suspension. | Claim that a birthday automatically confers constitutional citizenship or legal personhood. |
 | Context/philosophy | Explain why birth matters as a boundary between process and identity-bearing agent. | Treat metaphor, self-story, or memory-palace vocabulary as implemented evidence. |
 
 ## Candidate Birthday Record
@@ -119,7 +119,7 @@ commitments.
 | Candidate | What it proves | Expected proof surface |
 | --- | --- | --- |
 | First birthday rehearsal | A named identity can cross the birth boundary with continuity, memory grounding, capability envelope, witnesses, and receipt. | Birthday record, witness set, receipt, reviewer packet. |
-| Not-a-birthday negative suite | Startup, wake, snapshot, admission, and copied state are rejected as birth claims. | Negative fixtures and validation errors. |
+| Not-a-birthday negative suite | Startup, wake, snapshot, admission, dormant rehydration, simulation, in-transit migration, forced suspension, and copied state are rejected as birth claims. | Negative fixtures and validation errors. |
 | Continuity across bounded cycles | The identity survives more than one bounded cycle with evidence rather than assertion. | Cycle artifacts, continuity record, witness links. |
 | Memory grounding proof | Birth references witnessed memory artifacts without exposing raw private memory. | Memory-grounding fixture and redacted review packet. |
 | Capability envelope proof | The agent's birth record declares model/provider/tool/skill limits and authority context. | Capability envelope fixture and validation report. |

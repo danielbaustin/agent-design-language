@@ -174,6 +174,7 @@ ADL already provides a serious platform baseline:
 | Wellbeing, affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |
 | Secure Agent Communication and Invocation Protocol | Planned | v0.90.5 ACIP planning plus v0.91 secure local Agent Comms and A2A boundary docs | `v0.91` substrate, `v0.91.1` hardening |
 | Inhabited runtime readiness | Planned | `docs/milestones/v0.91.1` candidate WBS, sprint plan, issue-wave YAML, readiness docs, demo matrix, and feature index | `v0.91.1` |
+| Agent lifecycle state model | Planned | `.adl/docs/TBD/ADL_AND_SLEEP.md` and `docs/milestones/v0.91.1/features/AGENT_LIFECYCLE_STATE_MODEL.md` | `v0.91.1` lifecycle/ACIP eligibility WP |
 | CSM Observatory active agent runtime | Planned | v0.91.1 observatory-active and runtime-inhabitant planning docs | `v0.91.1` |
 | Citizen standing and citizen state follow-on | Planned | v0.91.1 standing/state/runtime-polis planning docs | `v0.91.1` |
 | Memory, Theory of Mind, capability testing, intelligence metrics, governed learning, and ANRM/Gemma | Planned | v0.91.1 feature index and readiness docs | `v0.91.1` |
@@ -216,7 +217,7 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.90.4` | Bounded contract-market and resource-stewardship bridge, with explicit deferral of payment rails, legal/billing, inter-polis economics, and governed-tool authority. |
 | `v0.90.5` | Governed Tools v1.0: Universal Tool Schema, ADL Capability Contract, capability-to-tool binding, policy enforcement, audit, privacy, and model compatibility proof. |
 | `v0.91` | Moral governance, wellbeing and happiness, affect, kindness, humor, moral cognition, structured planning / SRP, secure local Agent Comms substrate, A2A boundary planning, cognitive-being flagship demo, and release-tail review. |
-| `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, and observatory-visible agent runtime proof. |
+| `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, agent lifecycle states, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, and observatory-visible agent runtime proof. |
 | `v0.91.2` | Tooling/evaluation/productization/publication pressure release: UTS + ACC multi-model benchmark, provider-native tool-call comparison, runtime/test-cycle recovery, coverage ergonomics, CodeBuddy productization, Google Workspace CMS bridge, modernization demo, publication packets, rustdoc/doc cleanup, and workflow guardrails. |
 | `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
 | `v0.93` | Governance, delegation, IAM, social contract, policy/constitutional surfaces, rights/duties, and accountable multi-agent society boundaries. |
@@ -433,6 +434,8 @@ contract, production moral agency, or the first true Gödel-agent birthday.
 identity/birthday band. Its job is to make the CSM ready for inhabitant-shaped
 runtime proof:
 - Runtime v2 and polis architecture alignment
+- agent lifecycle states for active, quiescent, suspended, dormant,
+  simulation, in-transit, bootstrap, shutdown, and forced-suspension regimes
 - CSM Observatory active packet and projection surfaces
 - citizen standing and citizen state follow-on implementation
 - memory/identity architecture without birthday claims
@@ -442,6 +445,7 @@ runtime proof:
 - governed learning substrate
 - ANRM/Gemma placement, trace extractor, and dataset mapping
 - ACIP conformance, local encryption hardening, and A2A adapter boundary
+- ACIP reception/invocation eligibility by lifecycle state
 - runtime inhabitant integration and observatory-visible agent flagship demo
 
 This milestone should not claim the first true birthday, external federation,

@@ -58,8 +58,9 @@ v0.92 depends on:
 - v0.91 for moral trace, moral trajectory review, outcome linkage, wellbeing,
   moral resources, and anti-harm evidence
 - v0.91.1 for runtime/polis alignment, memory/identity architecture, Theory of
-  Mind foundation, capability/aptitude testing, intelligence metrics, governed
-  learning, and ANRM/Gemma evidence that can feed cognitive profiles
+  Mind foundation, lifecycle-state evidence, capability/aptitude testing,
+  intelligence metrics, governed learning, and ANRM/Gemma evidence that can
+  feed cognitive profiles
 - v0.93 as a downstream consumer of identity evidence for constitutional
   citizenship and polis governance
 
@@ -90,6 +91,8 @@ The likely `v0.92` tranche is:
 - Birthday review packet.
 - Negative cases that prove startup, wake, snapshot, admission, and copied
   state are not birth.
+- Lifecycle-state evidence proving dormant, suspended, simulation, in-transit,
+  bootstrap, shutdown, and forced-suspension states are not birth.
 - Bounded migration and cross-polis continuity planning.
 
 ### Out of scope

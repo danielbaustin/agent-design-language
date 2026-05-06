@@ -101,10 +101,10 @@ Theory of Mind milestones.
   artifacts rather than only chat behavior or TBD notes.
 - A2A must remain an adapter over the comms substrate, not a second comms
   architecture.
-- Capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,
-  ToM, memory/identity, runtime-v2/polis docs, ACIP/A2A hardening, and
-  observatory-visible inhabitant proof should be routed to v0.91.1, not
-  absorbed into v0.91.
+- Runtime-v2/polis docs, agent lifecycle states, ACIP state eligibility,
+  capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,
+  ToM, memory/identity, ACIP/A2A hardening, and observatory-visible inhabitant
+  proof should be routed to v0.91.1, not absorbed into v0.91.
 - UTS + ACC multi-model benchmarking, runtime/test-cycle recovery, CodeBuddy,
   Google Workspace CMS, code modernization, publication packets, rustdoc/doc
   cleanup, and workflow guardrails should be routed to v0.91.2, not absorbed

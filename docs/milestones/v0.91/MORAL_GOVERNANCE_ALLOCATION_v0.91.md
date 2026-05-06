@@ -152,7 +152,7 @@ quiet assumptions.
 |---|---|
 | v0.90.3 | Supplies citizen-state substrate, standing, access control, challenge, quarantine, and redacted projection prerequisites. |
 | v0.91 | Builds moral event, moral trace, validation, outcome linkage, metrics, trajectory review, anti-harm constraints, moral resources, wellbeing links, and first bounded proof surfaces. |
-| v0.91.1 | Adjacent-systems lane for capability/aptitude testing, intelligence metric architecture, ANRM/Gemma, ToM, memory/identity, runtime-v2/polis docs, ACIP hardening, and related review remediation. |
+| v0.91.1 | Adjacent-systems lane for runtime-v2/polis docs, agent lifecycle states, ACIP state eligibility, capability/aptitude testing, intelligence metric architecture, ANRM/Gemma, ToM, memory/identity, ACIP hardening, and related review remediation. |
 | v0.92 | Uses v0.91 moral evidence as part of identity, continuity, capability, and birthday readiness. It should not be backfilled into v0.91. |
 | v0.93 | Turns moral evidence into constitutional citizenship, polis governance, social contract, rights, duties, and review institutions. |
 
