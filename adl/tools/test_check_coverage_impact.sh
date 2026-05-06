@@ -50,7 +50,7 @@ bash "$SCRIPT" --changed-files "$changed" --print-risk-filters >"$risk_filters"
 grep -Fx "new_large_surface" "$risk_filters" >/dev/null
 
 control_plane_changed="$TMP/control-plane-changed.txt"
-printf 'M\tadl/src/cli/pr_cmd_cards.rs\n' >"$control_plane_changed"
+printf 'A\tadl/src/cli/pr_cmd_cards.rs\n' >"$control_plane_changed"
 control_plane_filters="$TMP/control-plane-filters.txt"
 bash "$SCRIPT" --changed-files "$control_plane_changed" --print-risk-filters >"$control_plane_filters"
 grep -Fx "pr_cmd" "$control_plane_filters" >/dev/null
