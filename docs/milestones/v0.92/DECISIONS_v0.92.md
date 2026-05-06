@@ -15,6 +15,7 @@ v0.92 allocation, but they are not implementation closeout decisions.
 | D-04 | v0.92 consumes moral evidence from v0.91 but does not redefine moral trace. | Accepted for planning | Moral trace is prerequisite context for birth readiness. | Prevents duplicate moral schemas. |
 | D-05 | v0.92 prepares identity evidence for v0.93 but does not complete constitutional citizenship. | Accepted for planning | Governance belongs to v0.93. | Keeps birth and citizenship law separate. |
 | D-06 | Memory palace remains context unless bounded into a specific implementation slice. | Accepted for planning | The memory-palace source spans too many layers to ship whole in v0.92. | Allows memory grounding without forcing the full architecture. |
+| D-07 | ACP / cognitive profiles belong in v0.92 as an evidence-grounded runtime profile surface. | Accepted for planning | Profiles need v0.91.1 capability, memory, ToM, intelligence, and learning evidence before they are meaningful. | Keeps profiles tied to identity readiness without turning them into reputation, personality labels, or public standing. |
 
 ## Open Questions
 
@@ -24,6 +25,8 @@ v0.92 allocation, but they are not implementation closeout decisions.
 - What is the first agent's naming ceremony, and how do we keep it evidence
   bearing rather than theatrical?
 - Which v0.93 governance fields should the v0.92 handoff packet reserve?
+- What is the minimum ACP/profile schema that helps birth review without
+  over-modeling identity?
 
 ## Exit Criteria
 

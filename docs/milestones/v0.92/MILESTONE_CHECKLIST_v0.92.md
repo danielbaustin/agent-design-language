@@ -13,12 +13,17 @@ entered active execution.
 - [ ] Issue wave authored and opened.
 - [ ] Cards reviewed for concrete outputs and non-goals.
 - [ ] Dependencies on v0.90.3 citizen state and v0.91 moral trace checked.
+- [ ] Dependencies on v0.91.1 memory/identity, ToM, intelligence metrics,
+  governed learning, and capability/aptitude evidence checked for ACP profile
+  inputs.
 
 ## Scope Integrity
 
 - [ ] v0.92 consumes citizen-state and standing work without redefining it.
 - [ ] v0.92 consumes moral trace and trajectory review without duplicating it.
 - [ ] v0.92 reserves constitutional citizenship and polis governance for v0.93.
+- [ ] ACP/cognitive profiles stay bounded to evidence-grounded runtime profile
+  claims and do not become reputation, rights, personhood, or social standing.
 - [ ] Birthday, startup, wake, snapshot, admission, and copied state are
   distinguished.
 - [ ] Memory palace and learning-model sources are used within bounded scope.
@@ -29,6 +34,8 @@ entered active execution.
 - [ ] Demo matrix commands are runnable where demos are implemented.
 - [ ] Birthday review packets cite evidence and do not depend on raw
   private-state inspection.
+- [ ] ACP/cognitive-profile review packets cite trace-backed inputs and mark
+  unsupported claims explicitly.
 - [ ] Claim-boundary scan finds no legal-personhood, production-citizenship, or
   completed-governance overclaims.
 
@@ -43,7 +50,7 @@ entered active execution.
 
 ## Exit Criteria
 
-- Identity, continuity, memory grounding, capability, witnesses, receipts,
-  first-birthday proof, and negative cases are traceable from docs to PRs and
-  evidence.
+- Identity, continuity, memory grounding, capability, ACP/cognitive profile,
+  witnesses, receipts, first-birthday proof, and negative cases are traceable
+  from docs to PRs and evidence.
 - The milestone can be audited without reconstructing intent from chat.

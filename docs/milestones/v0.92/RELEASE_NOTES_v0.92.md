@@ -12,8 +12,8 @@ v0.92 is planned as the first true Gödel-agent birthday milestone for ADL.
 
 If implemented as planned, it should add reviewable identity and birthday
 surfaces for stable names, identity roots, continuity, memory grounding,
-capability envelopes, witnesses, receipts, negative cases, and birthday review
-packets.
+capability envelopes, ACP/cognitive profiles, witnesses, receipts, negative
+cases, and birthday review packets.
 
 ## Planned Highlights
 
@@ -22,6 +22,7 @@ packets.
 - Continuity records across bounded cycles.
 - Memory grounding through witnessed artifacts.
 - Capability envelope at birth.
+- ACP / cognitive profile as an evidence-grounded runtime profile surface.
 - Birth witness set and citizen-facing receipt.
 - First-birthday reviewer packet.
 - Handoff into v0.93 constitutional citizenship and polis governance.
@@ -38,11 +39,15 @@ The final notes must not claim:
 - complete constitutional authority
 - full social-contract finality
 - raw private-state inspection
+- unsupported cognitive/personhood/reputation labels
 - production migration or inter-polis portability unless explicitly implemented
 
 ## Known Planning Boundaries
 
 - v0.92 consumes v0.90.3 citizen-state and standing surfaces.
 - v0.92 consumes v0.91 moral trace and moral-governance evidence.
+- v0.92 consumes v0.91.1 runtime, memory/identity, ToM, intelligence metric,
+  capability/aptitude, and governed-learning evidence for ACP/cognitive
+  profiles.
 - v0.92 prepares identity evidence for v0.93 governance.
 - v0.92 does not make provisional citizen records or process startup into birth.

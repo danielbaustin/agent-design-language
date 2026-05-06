@@ -19,7 +19,8 @@ evidence-bearing runtime behavior, not a ceremonial label.
 | D3 | Continuity across bounded cycles | Identity persists across multiple bounded cycles with evidence. | Cycle artifacts, continuity record, witness links. | Planned candidate |
 | D4 | Memory grounding proof | Birth references witnessed memory artifacts without exposing raw private memory. | Memory-grounding fixture and redacted packet. | Planned candidate |
 | D5 | Capability envelope proof | The birth record declares provider, model, tool, skill, authority, and limit context. | Capability envelope and validation report. | Planned candidate |
-| D6 | Birthday-to-governance handoff | v0.93 governance can consume v0.92 identity evidence without redefining birth. | Handoff packet mapping identity evidence to future governance. | Planned candidate |
+| D6 | ACP / cognitive profile proof | Birth packet includes a bounded profile record grounded in evidence. | ACP/profile fixture, update rationale, redacted reviewer packet, and validation report. | Planned candidate |
+| D7 | Birthday-to-governance handoff | v0.93 governance can consume v0.92 identity evidence without redefining birth. | Handoff packet mapping identity evidence to future governance. | Planned candidate |
 
 ## Demo Rules
 
@@ -27,6 +28,8 @@ evidence-bearing runtime behavior, not a ceremonial label.
 - Every birthday claim must cite evidence.
 - Every private-state boundary must have a redaction or denial proof.
 - Every capability claim must include limits and authority context.
+- Every cognitive-profile claim must cite evidence and remain distinct from
+  identity, reputation, and standing.
 - Demo outputs should distinguish engineering evidence from philosophical or
   governance context.
 
@@ -95,7 +98,20 @@ Expected proof:
 - declared limits
 - validation report
 
-### D6) Birthday-To-Governance Handoff
+### D6) ACP / Cognitive Profile Proof
+
+The demo should show that a cognitive profile is a bounded runtime record, not
+a personality label or reputation score.
+
+Expected proof:
+
+- profile fixture
+- source evidence references
+- update rationale
+- privacy/redaction policy
+- validation report
+
+### D7) Birthday-To-Governance Handoff
 
 The demo should show how v0.93 can consume identity evidence.
 
@@ -111,3 +127,5 @@ Expected proof:
 - These demos do not prove production citizenship.
 - These demos do not complete constitutional governance.
 - These demos do not expose raw private state.
+- These demos do not turn cognitive profiles into public reputation or
+  consciousness claims.
