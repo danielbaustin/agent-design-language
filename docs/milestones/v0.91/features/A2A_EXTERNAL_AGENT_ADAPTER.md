@@ -50,6 +50,19 @@ The first tracked v0.91 planning boundary should establish:
 - mandatory `agent.invoke(...)` boundary rules
 - trace, refusal, and failure-taxonomy expectations
 
+The tracked v0.91 runtime slice for this boundary is intentionally narrow and
+review-facing:
+
+- `acip.a2a.adapter.v1` adapter-boundary contract
+- `acip.a2a.fixture.v1` fixture set covering `Naked`, `Guest`, and `Citizen`
+  trust classes
+- fail-closed negative fixtures for direct-execution grants, parallel authority,
+  missing `agent.invoke(...)` routing, and non-local transport posture
+
+This is still not a live external transport adapter. It is the governed
+boundary record that proves A2A consumes ADL invocation, trace, and authority
+surfaces instead of inventing a second execution model.
+
 ## v0.91.1 Scope
 
 The first implementation/hardening follow-on should land in `v0.91.1`:

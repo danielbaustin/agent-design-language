@@ -22,6 +22,8 @@ const ACIP_CODING_FIXTURE_SCHEMA_VERSION: &str = "acip.coding.fixture.v1";
 const ACIP_TRACE_BUNDLE_SCHEMA_VERSION: &str = "acip.trace.bundle.v1";
 const ACIP_TRACE_FIXTURE_SCHEMA_VERSION: &str = "acip.trace.fixture.v1";
 const ACIP_PROOF_DEMO_SCHEMA_VERSION: &str = "acip.proof.demo.v1";
+const ACIP_A2A_ADAPTER_SCHEMA_VERSION: &str = "acip.a2a.adapter.v1";
+const ACIP_A2A_FIXTURE_SCHEMA_VERSION: &str = "acip.a2a.fixture.v1";
 const MAX_CONTENT_CHARS: usize = 4_000;
 const MAX_INLINE_SUMMARY_CHARS: usize = 512;
 const MAX_LIST_LEN: usize = 16;
@@ -590,6 +592,104 @@ pub enum AcipProofClassificationV1 {
     NonProving,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipA2aTrustClassV1 {
+    Naked,
+    Guest,
+    Citizen,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipA2aTransportBoundaryStatusV1 {
+    DeferredUntilTlsEquivalent,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipA2aSecurityPostureV1 {
+    TlsEquivalent,
+    MutualTlsEquivalent,
+    TlsOrMutualTlsEquivalent,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipA2aAgentCardClaimV1 {
+    pub agent_card_ref: String,
+    pub agent_id_claim: String,
+    pub display_name_claim: String,
+    pub advertised_capabilities: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipA2aCapabilityMappingV1 {
+    pub external_capability_claim: String,
+    pub adl_capability: String,
+    pub policy_basis_ref: String,
+    pub invocation_required: bool,
+    pub direct_execution_forbidden: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipA2aTrustClassificationV1 {
+    pub classification: AcipA2aTrustClassV1,
+    pub basis_refs: Vec<String>,
+    pub execution_authority_granted: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipA2aInvokeBoundaryV1 {
+    pub required_entrypoint: String,
+    pub invocation_contract_schema_ref: String,
+    pub trace_bundle_schema_ref: String,
+    pub direct_execution_forbidden: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipA2aTransportBoundaryV1 {
+    pub local_scope_only: bool,
+    pub external_transport_status: AcipA2aTransportBoundaryStatusV1,
+    pub required_security_posture: AcipA2aSecurityPostureV1,
+    pub refusal_mode: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipA2aAdapterBoundaryV1 {
+    pub schema_version: String,
+    pub adapter_id: String,
+    pub purpose: String,
+    pub identity_claim: AcipA2aAgentCardClaimV1,
+    pub capability_mappings: Vec<AcipA2aCapabilityMappingV1>,
+    pub trust_classification: AcipA2aTrustClassificationV1,
+    pub invoke_boundary: AcipA2aInvokeBoundaryV1,
+    pub transport_boundary: AcipA2aTransportBoundaryV1,
+    pub trace_evidence_refs: Vec<String>,
+    pub non_claims: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipA2aNegativeCaseV1 {
+    pub name: String,
+    pub expected_error_substring: String,
+    pub value: JsonValue,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipA2aFixtureSetV1 {
+    pub schema_version: String,
+    pub valid_adapters: Vec<AcipA2aAdapterBoundaryV1>,
+    pub negative_cases: Vec<AcipA2aNegativeCaseV1>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct AcipProofDemoPacketV1 {
@@ -662,6 +762,12 @@ pub mod orchestrate {
     pub use trace::*;
 }
 
+pub mod a2a {
+    use super::*;
+    include!("agent_comms/a2a.inc");
+}
+
+pub use a2a::*;
 pub use dispatch::*;
 pub use orchestrate::*;
 pub use transport::*;
