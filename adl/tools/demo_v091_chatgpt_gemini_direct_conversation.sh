@@ -15,6 +15,7 @@ SERVER_LOG="$OUT_DIR/provider_adapter.log"
 INVOCATIONS="$OUT_DIR/provider_invocations.json"
 TRANSCRIPT="$OUT_DIR/transcript.md"
 TRANSCRIPT_CONTRACT="$OUT_DIR/transcript_contract.json"
+OBSERVATORY_PROJECTION="$OUT_DIR/observatory_projection.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 PROOF_NOTE="$OUT_DIR/proof_note.md"
 README_OUT="$OUT_DIR/README.md"
@@ -22,6 +23,8 @@ EXAMPLE="adl/examples/v0-91-chatgpt-gemini-direct-conversation.adl.yaml"
 GENERATED_EXAMPLE="$OUT_DIR/v0-91-chatgpt-gemini-direct-conversation.runtime.adl.yaml"
 OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai2.key}"
 GEMINI_KEY_FILE="${ADL_GEMINI_KEY_FILE:-$HOME/keys/gcp-ace-2023.key}"
+OPENAI_MODEL="${ADL_LIVE_OPENAI_MODEL:-gpt-5.5-pro}"
+GEMINI_MODEL="${ADL_LIVE_GEMINI_MODEL:-gemini-3.1-pro-preview}"
 
 load_key() {
   local env_name="$1"
@@ -68,6 +71,8 @@ python3 "$ROOT_DIR/adl/tools/real_chatgpt_gemini_provider_adapter.py" \
   --port "$PORT" \
   --port-file "$PORT_FILE" \
   --metadata "$INVOCATIONS" \
+  --openai-model "$OPENAI_MODEL" \
+  --gemini-model "$GEMINI_MODEL" \
   >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
 cleanup() {
@@ -182,6 +187,7 @@ payload = {
     ],
     "companion_artifacts": {
         "demo_manifest": "demo_manifest.json",
+        "observatory_projection": "observatory_projection.json",
         "proof_note": "proof_note.md",
         "run_summary": "runtime/runs/v0-91-chatgpt-gemini-direct-conversation/run_summary.json",
         "trace": "runtime/runs/v0-91-chatgpt-gemini-direct-conversation/logs/trace_v1.json",
@@ -192,11 +198,54 @@ with open(contract_path, "w", encoding="utf-8") as fh:
     fh.write("\n")
 PY
 
-python3 - "$MANIFEST" "$TRANSCRIPT" "$TRANSCRIPT_CONTRACT" "$PROOF_NOTE" "$INVOCATIONS" "$RUNS_ROOT/$RUN_ID/run_summary.json" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" <<'PY'
+python3 - "$OBSERVATORY_PROJECTION" "$TRANSCRIPT" "$INVOCATIONS" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+projection_path, transcript_path, invocations_path, trace_path = sys.argv[1:5]
+invocations = json.loads(Path(invocations_path).read_text(encoding="utf-8"))
+trace = json.loads(Path(trace_path).read_text(encoding="utf-8"))
+events = trace.get("events", [])
+
+turns = [
+    {"turn": 1, "speaker": "ChatGPT", "artifact_ref": "out/direct/01-chatgpt-opening.md"},
+    {"turn": 2, "speaker": "Gemini", "artifact_ref": "out/direct/02-gemini-reply.md"},
+    {"turn": 3, "speaker": "ChatGPT", "artifact_ref": "out/direct/03-chatgpt-reflection.md"},
+    {"turn": 4, "speaker": "Gemini", "artifact_ref": "out/direct/04-gemini-close.md"},
+]
+payload = {
+    "schema": "adl.demo.observatory_projection.v1",
+    "demo_id": "v0.91.chatgpt_gemini_direct_conversation",
+    "view_kind": "bounded_agent_runtime_projection",
+    "transcript_ref": transcript_path,
+    "providers": invocations.get("providers", []),
+    "turns": turns,
+    "timeline": [
+        {
+            "event_type": event.get("event_type"),
+            "timestamp": event.get("timestamp"),
+            "actor": event.get("actor", {}).get("id"),
+            "scope": event.get("scope", {}).get("name"),
+            "artifact_ref": event.get("artifact_ref"),
+        }
+        for event in events
+        if event.get("event_type") in {"RUN_START", "STEP_START", "STEP_END"}
+    ],
+    "proof_boundary": [
+        "Shows named provider-backed runtime roles executing a bounded four-turn exchange.",
+        "Shows cross-turn revision pressure and saved trace continuity.",
+        "Does not by itself prove autonomous multi-agent federation or persistent independent agency.",
+    ],
+}
+Path(projection_path).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+PY
+
+python3 - "$MANIFEST" "$TRANSCRIPT" "$TRANSCRIPT_CONTRACT" "$OBSERVATORY_PROJECTION" "$PROOF_NOTE" "$INVOCATIONS" "$RUNS_ROOT/$RUN_ID/run_summary.json" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" <<'PY'
 import json
 import sys
 
-manifest_path, transcript, transcript_contract, proof_note, invocations, run_summary, trace_path = sys.argv[1:8]
+manifest_path, transcript, transcript_contract, observatory_projection, proof_note, invocations, run_summary, trace_path = sys.argv[1:9]
 payload = {
     "demo_id": "v0.91.chatgpt_gemini_direct_conversation",
     "title": "ChatGPT + Gemini direct conversation demo",
@@ -212,6 +261,7 @@ payload = {
     "proof_surfaces": {
         "transcript": transcript,
         "transcript_contract": transcript_contract,
+        "observatory_projection": observatory_projection,
         "proof_note": proof_note,
         "provider_invocations": invocations,
         "run_summary": run_summary,
@@ -231,7 +281,7 @@ cat >"$PROOF_NOTE" <<'EOF'
 - The runtime executed four explicit sequential turns.
 - Every turn preserved named participant identity (`ChatGPT` or `Gemini`).
 - The stop rule was explicit: stop after four turns.
-- The transcript, run summary, and trace were saved automatically.
+- The transcript, observatory-style projection, run summary, and trace were saved automatically.
 
 ## Assumptions
 
@@ -258,6 +308,10 @@ Credential loading:
 - Uses \`OPENAI_API_KEY\` and \`GEMINI_API_KEY\` when already set.
 - Otherwise reads local operator-managed keys from \`\$HOME/keys/openai2.key\`
   and \`\$HOME/keys/gcp-ace-2023.key\`.
+
+Model overrides:
+- Set \`ADL_LIVE_OPENAI_MODEL\` to compare OpenAI variants.
+- Set \`ADL_LIVE_GEMINI_MODEL\` to compare Gemini variants.
 - Secret values and raw Authorization headers are not written to generated artifacts.
 
 What this proves:

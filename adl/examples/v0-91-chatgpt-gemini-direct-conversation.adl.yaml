@@ -29,7 +29,11 @@ tasks:
         SPEAKER: ChatGPT
         TOPIC: What is the smallest honest proof of multi-agent coordination?
         STOP_RULE: Stop after four explicit turns.
-        INSTRUCTIONS: Open warmly but with substance. Make the four-turn stop rule explicit, then propose one strong candidate answer to the topic. Keep the whole turn under 170 words. Your candidate should be concrete, slightly debatable, and grounded in saved traces rather than vague claims about autonomy.
+        PRIVATE_STATE:
+        - You privately know the plan must satisfy a hard deadline and budget ceiling.
+        - You do not know the hidden dependency chain or latent risk register.
+        - Do not reveal the raw private-state bullets verbatim.
+        INSTRUCTIONS: Open warmly but with substance. Make the four-turn stop rule explicit, then propose one strong candidate answer to the topic. Keep the whole turn under 170 words. Your candidate should be concrete, slightly debatable, and grounded in saved traces rather than vague claims about autonomy. End with a one-line `PROVISIONAL_CLAIM:` sentence that Gemini can attack.
   gemini_reply:
     prompt:
       user: |
@@ -38,10 +42,18 @@ tasks:
         SPEAKER: Gemini
         TOPIC: What is the smallest honest proof of multi-agent coordination?
         STOP_RULE: Stop after four explicit turns.
+        PRIVATE_STATE:
+        - You privately know the dependency chain and a latent risk condition.
+        - You do not know the hard deadline or budget ceiling.
+        - Do not reveal the raw private-state bullets verbatim.
         PREVIOUS_TURN_START
         {{turn_01}}
         PREVIOUS_TURN_END
-        INSTRUCTIONS: Reply directly to ChatGPT, keep identity explicit, and do not just agree. Sharpen or challenge the candidate answer. Explain what would make the proof too weak, and mention why saved artifacts and temporal continuity matter. Keep the whole turn under 190 words.
+        INSTRUCTIONS: Reply directly to ChatGPT, keep identity explicit, and do not just agree. Sharpen or challenge the candidate answer. Explain what would make the proof too weak, and mention why saved artifacts and temporal continuity matter. Keep the whole turn under 190 words. Include a compact block at the end exactly in this form:
+        COORDINATION_DELTA:
+        - hidden_conflict: ...
+        - revision_pressure: ...
+        - why_single_agent_fails: ...
   chatgpt_reflection:
     prompt:
       user: |
@@ -53,7 +65,7 @@ tasks:
         PREVIOUS_TURN_START
         {{turn_02}}
         PREVIOUS_TURN_END
-        INSTRUCTIONS: Synthesize the disagreement into a tighter definition. Keep the whole turn under 140 words. Give exactly one setup sentence followed by exactly three numbered criteria, each one sentence long. Keep the proof boundary explicit without widening into federation, autonomy, or persistent teamwork claims.
+        INSTRUCTIONS: Synthesize the disagreement into a tighter definition. Keep the whole turn under 170 words. You must explicitly say that your revised answer changed because of Gemini-only information. Give exactly one setup sentence followed by exactly three numbered criteria, each one sentence long. Keep the proof boundary explicit without widening into federation, autonomy, or persistent teamwork claims.
   gemini_close:
     prompt:
       user: |
@@ -65,7 +77,7 @@ tasks:
         PREVIOUS_TURN_START
         {{turn_03}}
         PREVIOUS_TURN_END
-        INSTRUCTIONS: Close the conversation explicitly. Accept or refine the three criteria, add one memorable final sentence about honest proof versus theatrical proof, and then stop exactly on Turn 4. Keep the whole turn under 140 words.
+        INSTRUCTIONS: Close the conversation explicitly. Accept or refine the three criteria, add one memorable final sentence about honest proof versus theatrical proof, and then stop exactly on Turn 4. Keep the whole turn under 140 words. Name one reason this run is stronger than decorative baton-passing.
 
 run:
   name: "v0-91-chatgpt-gemini-direct-conversation"
