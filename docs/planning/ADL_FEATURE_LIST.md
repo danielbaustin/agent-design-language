@@ -97,6 +97,9 @@ ADL already provides a serious platform baseline:
 - ObsMem indexing, retrieval, and shared-memory substrate
 - bounded cognitive and agency-oriented proof paths
 - operational skills and control-plane workflow substrate
+- Godel agents as the long-running self-reference and adaptation arc
+- Godel-Hadamard-Bayes (GHB) as the cognitive compression and reasoning-control
+  algorithm lineage
 - reviewer-facing milestone packages and demo matrices
 
 ## Feature Status Matrix
@@ -120,6 +123,7 @@ ADL already provides a serious platform baseline:
 | Agency, cognitive loop, and cognitive stack | Implemented baseline | `v0.86` agency/cognition feature package, demos, and review artifacts | Deepen through affect, identity, and governance bands |
 | Fast/slow thinking and cognitive arbitration | Implemented baseline | `v0.86` feature docs and bounded proof package | Deepen through later reasoning and moral-cognition work |
 | Bounded Godel loop | Implemented baseline | `v0.8` runtime artifacts, demos, experiment surfaces, `v0.89` experiment package | Deepen through later reasoning/provenance work |
+| Godel agents and Godel-Hadamard-Bayes algorithm | Partially implemented | `v0.8` bounded Godel loop, `v0.89` Godel experiment system, GHB execution/state-space-compression idea docs, reasoning-pattern substrate, ObsMem, trace, and cognitive proof surfaces | Make the GHB runtime/story explicit through `v0.91.1` intelligence/learning work, `v0.91.2` publication packet, and `v0.92` first true Godel-agent birthday |
 | ObsMem indexing, retrieval, and evidence-aware ranking | Implemented baseline | `v0.8` / `v0.87` proof surfaces plus `v0.89` D6 retrieval/ranking proof | Deeper memory architecture remains later work |
 | Shared ObsMem foundation | Implemented baseline | `v0.87` shared-memory docs and proof surfaces | Deepen with identity/continuity |
 | Trace validation, trace review, and trace-to-memory ingestion | Implemented baseline | `v0.87` trace schema/emission/artifact/review package and trace-ObsMem docs | Deepen through signed trace and query surfaces |
@@ -181,7 +185,7 @@ ADL already provides a serious platform baseline:
 | UTS + ACC multi-model benchmark and provider-native tool-call comparison | Planned | v0.91.2 benchmark and demo planning docs | `v0.91.2` |
 | Runtime/test-cycle recovery and coverage ergonomics | Planned | v0.91.2 quality/recovery planning docs | `v0.91.2` |
 | Google Workspace CMS bridge and Rust-native adapter boundary | Planned | v0.91.2 GWS CMS bridge planning docs | `v0.91.2` |
-| Publication packet program and general-intelligence paper packet | Planned | v0.91.2 publication and general-intelligence packet planning docs | `v0.91.2` |
+| Publication packet program, GHB paper lane, and general-intelligence paper packet | Planned | v0.91.2 publication and general-intelligence packet planning docs plus GHB idea lineage | `v0.91.2` |
 | Rustdoc/doc cleanup and workflow guardrails | Planned | v0.91.2 doc cleanup and workflow guardrail planning docs | `v0.91.2` |
 | ACP / cognitive profiles runtime surface | Planned | local backlog and v0.92 cognitive-profile planning source | `v0.92` |
 | Identity, capability, names, and continuity substrate | Planned | `v0.92` identity, continuity, and birthday allocation plan | `v0.92` |
@@ -202,13 +206,13 @@ has already landed, is landing now, or has explicitly placed on the path to the
 
 | Milestone band | Capability families covered here |
 | --- | --- |
-| `v0.7` through `v0.8` | Deterministic workflow execution, execution plans, bounded concurrency, replayable artifacts, signing/verification, provider/transport foundations, bounded Godel-style experimentation, and early ObsMem indexing/retrieval. |
+| `v0.7` through `v0.8` | Deterministic workflow execution, execution plans, bounded concurrency, replayable artifacts, signing/verification, provider/transport foundations, bounded Godel-style experimentation, the first bounded Godel loop, and early ObsMem indexing/retrieval. |
 | `v0.85` | Runtime/product positioning, demo discipline, and pre-cognitive milestone scaffolding that later milestones consume rather than repeat. |
 | `v0.86` | Agency, bounded cognitive system, cognitive loop/stack, fast/slow thinking, arbitration, Freedom Gate baseline, and local cognitive proof demos. |
 | `v0.87` | Trace schema/emission/artifacts, trace validation, trace review, trace-to-ObsMem ingestion, shared ObsMem, provider substrate, operational skills, and PR/control-plane workflow surfaces. |
 | `v0.87.1` | Runtime environment completion, agent lifecycle, execution boundaries, capability-aware local model execution, local runtime resilience, and Shepherd preservation. |
 | `v0.88` | Chronosense, temporal schema, temporal retrieval/query, identity/continuity semantics, commitments/deadlines, bounded temporal causality, PHI metrics, cost-model hooks, instinct, bounded agency, Paper Sonata, and deep-agents comparative proof. |
-| `v0.89` | AEE 1.0 convergence, Freedom Gate v2, decision/action mediation, skill governance, Godel experiment system, ObsMem evidence ranking, security posture, threat/trust surfaces, ADL Constitution/reasonableness/learning backgrounders, and governed-adaptation proof. |
+| `v0.89` | AEE 1.0 convergence, Freedom Gate v2, decision/action mediation, skill governance, Godel experiment system, GHB algorithm/execution/state-space-compression backgrounders, ObsMem evidence ranking, security posture, threat/trust surfaces, ADL Constitution/reasonableness/learning backgrounders, and governed-adaptation proof. |
 | `v0.89.1` | Adversarial runtime, red/blue proof surfaces, exploit artifacts, replay manifests, continuous verification, self-attack, operational skills, skill composition, delegation/refusal/coordination, provider-extension packaging, demo proof entry points, five-agent Hey Jude, arXiv writing workflow, and quality gate. |
 | `v0.90` | Long-lived supervisor, heartbeat, cycle manifests, artifact contracts, continuity handles, operator safety, status/inspection boundary, stock-league demos, repo visibility, milestone compression, CodeBuddy showcase, architecture-document generation, coverage ratchet, Rust refactoring tracker, ADR remediation, internal review, and third-party review closeout. |
 | `v0.90.1` | Runtime v2 foundation, manifold/snapshot contracts, kernel/control-plane boundaries, provisional citizens, invariant/security-boundary proof, CSM Observatory visibility packet, static console, operator report, CLI bundle, command-packet design, ANRM shepherd experiments, third-party review as WP-15A, Aptitude Atlas planning, and CodeBuddy product-lane planning. |
@@ -217,8 +221,8 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.90.4` | Bounded contract-market and resource-stewardship bridge, with explicit deferral of payment rails, legal/billing, inter-polis economics, and governed-tool authority. |
 | `v0.90.5` | Governed Tools v1.0: Universal Tool Schema, ADL Capability Contract, capability-to-tool binding, policy enforcement, audit, privacy, and model compatibility proof. |
 | `v0.91` | Moral governance, wellbeing and happiness, affect, kindness, humor, moral cognition, structured planning / SRP, secure local Agent Comms substrate, A2A boundary planning, cognitive-being flagship demo, and release-tail review. |
-| `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, agent lifecycle states, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, and observatory-visible agent runtime proof. |
-| `v0.91.2` | Tooling/evaluation/productization/publication pressure release: UTS + ACC multi-model benchmark, provider-native tool-call comparison, runtime/test-cycle recovery, coverage ergonomics, CodeBuddy productization, Google Workspace CMS bridge, modernization demo, publication packets, rustdoc/doc cleanup, and workflow guardrails. |
+| `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, agent lifecycle states, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, GHB-adjacent runtime evidence, and observatory-visible agent runtime proof. |
+| `v0.91.2` | Tooling/evaluation/productization/publication pressure release: UTS + ACC multi-model benchmark, provider-native tool-call comparison, runtime/test-cycle recovery, coverage ergonomics, CodeBuddy productization, Google Workspace CMS bridge, modernization demo, publication packets including GHB/general-intelligence source packets, rustdoc/doc cleanup, and workflow guardrails. |
 | `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
 | `v0.93` | Governance, delegation, IAM, social contract, policy/constitutional surfaces, rights/duties, and accountable multi-agent society boundaries. |
 | `v0.94` | Distributed-substrate integration, cross-band convergence, and dependency closure if promoted into a full milestone package. |
@@ -289,6 +293,26 @@ cognitive proof surfaces:
 
 These are not disconnected demos. Together they form the core of ADL’s claim
 that bounded adaptive systems can be both powerful and reviewable.
+
+### Godel Agents and the GHB Algorithm
+
+Godel agents and the Godel-Hadamard-Bayes algorithm are not decorative research
+terms in ADL. They are the central reasoning-and-adaptation arc tying together
+Godel experiments, reasoning patterns, trace, ObsMem, cognitive compression,
+governed learning, identity, and the later birthday milestone.
+
+The current truth boundary is important:
+- ADL has an implemented bounded Godel loop and Godel experiment system.
+- ADL has GHB execution and state-space-compression design documents that
+  explain how Godel, Hadamard-style exploration, and Bayesian evidence updates
+  fit together.
+- ADL does not yet claim a complete GHB runtime or the first true Godel-agent
+  birthday.
+
+The strategic direction is still clear. GHB is ADL's candidate control loop for
+how agents expand problem structure, explore alternatives, compress evidence
+back into reusable cognitive state, and improve without escaping deterministic
+trace, memory, governance, and review surfaces.
 
 ## Recently Completed Milestone Bands
 
@@ -446,6 +470,8 @@ runtime proof:
 - ANRM/Gemma placement, trace extractor, and dataset mapping
 - ACIP conformance, local encryption hardening, and A2A adapter boundary
 - ACIP reception/invocation eligibility by lifecycle state
+- GHB-adjacent evidence from intelligence metrics, governed learning, and
+  memory/identity architecture
 - runtime inhabitant integration and observatory-visible agent flagship demo
 
 This milestone should not claim the first true birthday, external federation,
@@ -464,6 +490,8 @@ overload v0.91 or v0.91.1:
 - Google Workspace CMS bridge and Rust-native adapter boundary
 - bounded code-modernization demo and review policy
 - publication program and general-intelligence paper packet
+- Godel agents and GHB source-packet lane, including the planned
+  Godel-Hadamard-Bayes paper packet
 - rustdoc/doc cleanup
 - workflow guardrails for main writes, hung watchers, safe reports, and card
   drift
@@ -553,6 +581,8 @@ ADL already has a substantial platform:
 - structured authoring and control-plane workflow
 - operational skills
 - bounded Godel, ObsMem, and cognitive proof paths
+- Godel agents and the Godel-Hadamard-Bayes algorithm as the core
+  self-reference, exploration, evidence-update, and cognitive-compression arc
 - completed temporal, bounded-agency, and governed-adaptation milestone work
 - completed adversarial-runtime, publication-skill, and long-lived runtime
   milestone work
