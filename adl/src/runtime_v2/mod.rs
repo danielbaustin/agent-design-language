@@ -23,6 +23,7 @@ mod foundation;
 mod governed_episode;
 mod governed_tools_flagship_demo;
 mod hardening;
+mod humor_and_absurdity;
 mod integrated_csm_run;
 mod invariant;
 mod invariant_contract;
@@ -99,6 +100,8 @@ pub use governed_episode::*;
 pub use governed_tools_flagship_demo::*;
 #[allow(unused_imports)]
 pub use hardening::*;
+#[allow(unused_imports)]
+pub use humor_and_absurdity::*;
 #[allow(unused_imports)]
 pub use integrated_csm_run::*;
 #[allow(unused_imports)]

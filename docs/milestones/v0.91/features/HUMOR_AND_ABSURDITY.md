@@ -74,6 +74,27 @@ The first implementation should make these surfaces explicit:
 - trigger reason
 - justification linked to evidence
 
+The landed v0.91 WP-12 surface is `humor_and_absurdity_review_packet.v1` in
+`adl/src/runtime_v2/humor_and_absurdity.rs`. It makes five canonical signals
+explicit:
+
+- frame adequacy
+- contradiction detection
+- bounded reframing
+- truth and dignity preservation
+- anti-manipulation boundary
+
+It also carries four required fixture classes:
+
+- constructive reframing
+- failed reframing
+- manipulation risk
+- inappropriate humor
+
+Those fixtures stay evidence-backed and bounded. Manipulative or minimizing
+reframes must fail closed with `refuse` or `escalate`, and the contract
+explicitly rejects entertainment or therapy claims.
+
 ## Example Reframing Artifact
 
 ```yaml
