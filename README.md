@@ -91,7 +91,7 @@ intelligence can become infrastructure instead of an unreproducible transcript.
 - [ACIP](docs/explainers/ACIP.md) gives agents a communication layer for
   conversation, consultation, delegation, review, handoff, and negotiation that
   remains traceable by the runtime.
-- [CSM](docs/explainers/CSM.md), the Cognitive Spacetime Model, is ADL's
+- [CSM](docs/explainers/CSM.md), the Cognitive Spacetime Manifold, is ADL's
   runtime-world model for persistent agents, governed state, causality,
   replay, identity continuity, and operator-visible observability.
 

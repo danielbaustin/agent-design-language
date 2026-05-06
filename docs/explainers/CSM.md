@@ -1,7 +1,7 @@
-# Cognitive Spacetime Model
+# Cognitive Spacetime Manifold
 
-CSM means Cognitive Spacetime Model. It is ADL's model for a governed runtime
-world where agents, state, time, causality, trace, memory, and identity
+CSM means Cognitive Spacetime Manifold. It is ADL's model for a governed
+runtime world where agents, state, time, causality, trace, memory, and identity
 continuity are first-class.
 
 The short version:
@@ -13,8 +13,8 @@ reviewable packets, contracts, demos, and proof surfaces.
 
 ## What CSM Provides
 
-CSM gives ADL a way to talk about agents as inhabitants of a persistent runtime
-rather than temporary prompt executions.
+CSM gives ADL a way to talk about agents as inhabitants of a persistent
+manifold rather than temporary prompt executions.
 
 It includes:
 
@@ -66,4 +66,3 @@ identity, migration, or birthday surface is already finished.
 - [Runtime v2 bounded CSM run ADR](../adr/0012-runtime-v2-bounded-csm-run.md)
 - [Runtime v2 and birthday boundary](../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md)
 - [Glossary: CSM](../GLOSSARY.md)
-
