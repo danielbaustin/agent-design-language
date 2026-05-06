@@ -64,27 +64,28 @@ For the full capability matrix, read the canonical feature index:
 
 ## Core Ideas
 
-ADL starts with determinism. Agent behavior is represented as explicit programs,
-bounded runtime state, and replayable artifacts so a run can be traced,
-understood, and improved without relying on vibes or hidden orchestration.
+ADL starts with a deterministic runtime. Agent behavior is represented as
+explicit programs, bounded state, policy decisions, and replayable artifacts so
+intelligence can become infrastructure instead of an unreproducible transcript.
 
-- Deterministic workflows make the same program, inputs, and state produce the
-  same governed execution path.
-- Replay surfaces preserve the steps, artifacts, policy decisions, and state
-  transitions needed to understand what happened and run it again.
-- [UTS + ACC](docs/explainers/UTS_AND_ACC.md) adds governed authority on top of
-  that deterministic base by separating portable tool shape from runtime
-  permission, visibility, redaction, and audit evidence.
-- [ACIP](docs/explainers/ACIP.md) adds traceable agent communication on top of
-  the same base, so conversation, consultation, delegation, review, handoff,
-  and negotiation remain accountable.
-- Gödel agents are the long-running ADL direction for self-reference,
-  self-improvement, and reviewable adaptation inside the deterministic and
-  replayable envelope.
+- The ADL runtime is the foundation: it turns agent intent into governed,
+  replayable execution with durable traces, artifacts, and state transitions.
+- AEE, the Adaptive Execution Engine, is ADL's adaptation lineage: bounded
+  strategy selection, recovery, learning, and policy-aware execution without
+  hidden magic.
+- Gödel agents are the long-running direction for self-reference,
+  self-improvement, and reviewable adaptation inside the deterministic runtime.
 - The
   [Gödel-Hadamard-Bayes algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md)
-  is ADL's cognitive loop: structured awareness, controlled hypothesis
-  generation, and evidence-weighted judgment before authorized action.
+  is the cognitive loop behind that work: structured awareness, controlled
+  hypothesis generation, and evidence-weighted judgment before authorized
+  action.
+- [UTS + ACC](docs/explainers/UTS_AND_ACC.md) gives the runtime governed tools:
+  portable tool shape stays separate from permission, visibility, redaction,
+  and audit evidence.
+- [ACIP](docs/explainers/ACIP.md) gives agents a communication layer for
+  conversation, consultation, delegation, review, handoff, and negotiation that
+  remains traceable by the runtime.
 
 ## Quick Start
 
