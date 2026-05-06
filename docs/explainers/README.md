@@ -9,6 +9,8 @@ milestone evidence.
 - [ACIP](ACIP.md): how ADL models agent communication and invocation as
   traceable messages rather than hidden prompts.
 - [AEE](AEE.md): how ADL models bounded adaptation, recovery, and convergence.
+- [Red / Blue Security](RED_BLUE_SECURITY.md): how ADL makes adversarial
+  testing, defense, replay, and purple-team coordination runtime-visible.
 - [Gödel Agents](GODEL_AGENTS.md): how ADL approaches self-reference and
   reviewable self-improvement.
 - [CSM](CSM.md): how ADL models a governed runtime world for persistent agents.

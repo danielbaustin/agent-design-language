@@ -77,7 +77,7 @@ intelligence can become infrastructure instead of an unreproducible transcript.
   adaptation lineage: bounded strategy selection, recovery, learning, and
   policy-aware execution without hidden magic.
 - The
-  [red/blue adversarial security model](docs/milestones/v0.89.1/features/RED_BLUE_AGENT_ARCHITECTURE.md)
+  [red/blue adversarial security model](docs/explainers/RED_BLUE_SECURITY.md)
   makes attack, defense, exploit replay, and purple-team coordination part of
   the runtime evidence story rather than a separate theater exercise.
 - [Gödel agents](docs/explainers/GODEL_AGENTS.md) are the long-running
@@ -175,7 +175,7 @@ production markets.
 - [Feature list](docs/planning/ADL_FEATURE_LIST.md): canonical capability
   overview and roadmap truth.
 - [Explainers](docs/explainers/README.md): short entrypoints for UTS + ACC,
-  ACIP, AEE, Gödel Agents, and CSM.
+  ACIP, AEE, red/blue security, Gödel Agents, and CSM.
 - [Docs index](docs/README.md): repository documentation entrypoint.
 - [Changelog](CHANGELOG.md): milestone-level project history.
 - [ADRs](docs/adr/README.md): architecture decisions.
