@@ -76,7 +76,11 @@ That means the feature story should be read this way:
 - `v0.90.5` is the completed Governed Tools v1.0 and first Comms / ACIP tranche
 - `v0.91` is the active moral-governance, cognitive-being, structured planning /
   SRP, and secure Agent Comms milestone
-- `v0.91.1` through `v0.95` are the later planned capability bands
+- `v0.91.1` is the planned inhabited-runtime readiness band
+- `v0.91.2` is the planned tooling, evaluation, productization, publication,
+  and workflow pressure-release band
+- `v0.92` through `v0.95` are the later planned identity, governance,
+  publication, integration, and MVP-convergence bands
 
 ## ADL at a Glance
 
@@ -158,16 +162,27 @@ ADL already provides a serious platform baseline:
 | First bounded CSM run | Implemented baseline | `v0.90.2` integrated first-run demo, feature-proof coverage, CSM run packet, Observatory report | Complete baseline; deepened by v0.90.3 citizen-state work |
 | Third-party review and review-quality gates | Implemented baseline | v0.90.1 WP-15A, v0.90.2 review-tail planning, review handoff packets, finding disposition | Harden through release tails |
 | ANRM / shepherd-model experiments | Partially implemented | v0.90.1 ANRM Gemma scaffold comparison and ten-trial results | Planned shepherd/evaluator work before training |
-| CSM Shepherd model and Gemma training path | Planned | ANRM comparison results and evaluator/scaffold backlog | Future shepherd/evaluator/training lane |
-| Aptitude Atlas model-evaluation platform | Planned | TBD/product planning and backlog issues | Future product/project lane |
-| CodeBuddy repo-review product layer | Planned | CodeBuddy planning, repo-review skills, product-report backlog | Future product/project lane |
-| Governed tool calls and capability contracts | Planned | `docs/milestones/v0.90.5` Governed Tools v1.0 planning, Universal Tool Schema, ADL Capability Contract, and tool-to-capability compiler design | `v0.90.5` |
+| CSM Shepherd model and Gemma training path | Planned | ANRM comparison results, trace-dataset planning, and evaluator/scaffold backlog | `v0.91.1` ANRM/Gemma placement and later training/evaluator work |
+| Aptitude Atlas model-evaluation platform | Planned | capability/aptitude planning and product backlog | `v0.91.1` capability/aptitude foundation; product maturation later |
+| CodeBuddy repo-review product layer | Planned | CodeBuddy planning, repo-review skills, product-report backlog | `v0.91.2` productization and review-skill/demo lane |
+| Governed tool calls and capability contracts | Implemented baseline | `docs/milestones/v0.90.5` Governed Tools v1.0 planning, Universal Tool Schema, ADL Capability Contract, and tool-to-capability compiler design | Completed baseline; benchmark and conformance expansion in `v0.91.2` |
 | Cognitive Compression Cost instrumentation | Implemented first pass | CCC v0 fixture extractor, generated comparison report, validation command, metric draft, and milestone-compression planning | Harden toward real trace ingestion and later Aptitude Atlas/reporting lanes |
-| Automated repository modernization and external refactoring integration | Deferred | backlog note for ADL-to-Moderne or direct modernization workflows | Future product/tooling lane if promoted |
+| Automated repository modernization and external refactoring integration | Planned | ADL-to-Moderne and code-modernization planning docs | `v0.91.2` bounded modernization demo and review-policy lane |
 | Web-based code editor integration | Planned | editor backlog issue and skills-wiring planning | Future editor/operator lane |
 | Reasoning graph baseline | Planned | planning/schema/proof surfaces | Later reasoning/provenance band |
 | Signed trace and trace query | Planned | roadmap and planning docs | Later reasoning/provenance band |
 | Wellbeing, affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |
+| Secure Agent Communication and Invocation Protocol | Planned | v0.90.5 ACIP planning plus v0.91 secure local Agent Comms and A2A boundary docs | `v0.91` substrate, `v0.91.1` hardening |
+| Inhabited runtime readiness | Planned | `docs/milestones/v0.91.1` candidate WBS, sprint plan, issue-wave YAML, readiness docs, demo matrix, and feature index | `v0.91.1` |
+| CSM Observatory active agent runtime | Planned | v0.91.1 observatory-active and runtime-inhabitant planning docs | `v0.91.1` |
+| Citizen standing and citizen state follow-on | Planned | v0.91.1 standing/state/runtime-polis planning docs | `v0.91.1` |
+| Memory, Theory of Mind, capability testing, intelligence metrics, governed learning, and ANRM/Gemma | Planned | v0.91.1 feature index and readiness docs | `v0.91.1` |
+| UTS + ACC multi-model benchmark and provider-native tool-call comparison | Planned | v0.91.2 benchmark and demo planning docs | `v0.91.2` |
+| Runtime/test-cycle recovery and coverage ergonomics | Planned | v0.91.2 quality/recovery planning docs | `v0.91.2` |
+| Google Workspace CMS bridge and Rust-native adapter boundary | Planned | v0.91.2 GWS CMS bridge planning docs | `v0.91.2` |
+| Publication packet program and general-intelligence paper packet | Planned | v0.91.2 publication and general-intelligence packet planning docs | `v0.91.2` |
+| Rustdoc/doc cleanup and workflow guardrails | Planned | v0.91.2 doc cleanup and workflow guardrail planning docs | `v0.91.2` |
+| ACP / cognitive profiles runtime surface | Planned | local backlog and v0.92 cognitive-profile planning source | `v0.92` |
 | Identity, capability, names, and continuity substrate | Planned | `v0.92` identity, continuity, and birthday allocation plan | `v0.92` |
 | First true Gödel-agent birthday | Planned | `v0.92` identity, continuity, and birthday allocation plan plus Runtime v2 birthday boundary roadmap | `v0.92` |
 | Governance, delegation, IAM, social contract | Planned | `v0.93` constitutional citizenship and polis-governance allocation plan | `v0.93` |
@@ -200,8 +215,10 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.90.3` | Citizen state security, standing, canonical private-state authority, signed envelopes, local sealing, append-only lineage, continuity witnesses/receipts, anti-equivocation, sanctuary/quarantine, access control, redacted projections, challenge/appeal/threat-model evidence, inhabited Observatory flagship demo, and forward planning for later governance prerequisites. |
 | `v0.90.4` | Bounded contract-market and resource-stewardship bridge, with explicit deferral of payment rails, legal/billing, inter-polis economics, and governed-tool authority. |
 | `v0.90.5` | Governed Tools v1.0: Universal Tool Schema, ADL Capability Contract, capability-to-tool binding, policy enforcement, audit, privacy, and model compatibility proof. |
-| `v0.91` | Wellbeing and happiness, affect, kindness, humor, moral cognition, and the evaluation surfaces needed for emotionally and normatively legible agents. |
-| `v0.92` | Identity-bearing agent substrate, stable names, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
+| `v0.91` | Moral governance, wellbeing and happiness, affect, kindness, humor, moral cognition, structured planning / SRP, secure local Agent Comms substrate, A2A boundary planning, cognitive-being flagship demo, and release-tail review. |
+| `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, and observatory-visible agent runtime proof. |
+| `v0.91.2` | Tooling/evaluation/productization/publication pressure release: UTS + ACC multi-model benchmark, provider-native tool-call comparison, runtime/test-cycle recovery, coverage ergonomics, CodeBuddy productization, Google Workspace CMS bridge, modernization demo, publication packets, rustdoc/doc cleanup, and workflow guardrails. |
+| `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
 | `v0.93` | Governance, delegation, IAM, social contract, policy/constitutional surfaces, rights/duties, and accountable multi-agent society boundaries. |
 | `v0.94` | Distributed-substrate integration, cross-band convergence, and dependency closure if promoted into a full milestone package. |
 | `v0.95` | MVP convergence, polished demo catalog, coherent reviewer/customer walkthrough, control-plane/tooling hardening, feature freeze, and the 1.0 scope boundary. |
@@ -340,7 +357,8 @@ The current active bands are:
 - structured planning and SRP workflow features
 - secure intra-polis Agent Comms substrate and A2A boundary work
 - cognitive-being flagship demo and demo matrix proof coverage
-- forward planning for `v0.91.1`, `v0.92`, and later identity/governance bands
+- forward planning for `v0.91.1`, `v0.91.2`, `v0.92`, and later
+  identity/governance bands
 
 The first true Gödel-agent birthday remains a later milestone event. `v0.91`
 strengthens the moral and emotional reasoning surfaces needed before that
@@ -409,11 +427,52 @@ normatively legible:
 This milestone should not claim full constitutional citizenship, final social
 contract, production moral agency, or the first true Gödel-agent birthday.
 
+### v0.91.1 - Inhabited Runtime Readiness
+
+`v0.91.1` is the planned bridge between moral/cognitive-being work and the
+identity/birthday band. Its job is to make the CSM ready for inhabitant-shaped
+runtime proof:
+- Runtime v2 and polis architecture alignment
+- CSM Observatory active packet and projection surfaces
+- citizen standing and citizen state follow-on implementation
+- memory/identity architecture without birthday claims
+- Theory of Mind foundation
+- capability and aptitude testing foundation
+- intelligence metric architecture
+- governed learning substrate
+- ANRM/Gemma placement, trace extractor, and dataset mapping
+- ACIP conformance, local encryption hardening, and A2A adapter boundary
+- runtime inhabitant integration and observatory-visible agent flagship demo
+
+This milestone should not claim the first true birthday, external federation,
+legal personhood, or production identity continuity. It prepares the evidence
+v0.92 needs.
+
+### v0.91.2 - Tooling, Evaluation, Productization, Publication, And Workflow Pressure Release
+
+`v0.91.2` is the planned pressure-release milestone for work that should not
+overload v0.91 or v0.91.1:
+- UTS + ACC multi-model benchmark harness
+- provider-native tool/function-call comparison
+- runtime/test-cycle recovery
+- changed-source coverage ergonomics
+- CodeBuddy review-packet productization and review-skill/demo work
+- Google Workspace CMS bridge and Rust-native adapter boundary
+- bounded code-modernization demo and review policy
+- publication program and general-intelligence paper packet
+- rustdoc/doc cleanup
+- workflow guardrails for main writes, hung watchers, safe reports, and card
+  drift
+
+This milestone should reduce operational drag before the v0.92 identity band
+and v0.93 constitutional/social-governance band.
+
 ### v0.92 - Identity, Capability, and Continuity
 
 `v0.92` is the bridge from bounded cognitive behavior to identity-bearing
 agents:
 - first-class identity
+- ACP / cognitive profiles runtime surface
 - provider/model capability contracts
 - stable names
 - continuity hooks across runs
