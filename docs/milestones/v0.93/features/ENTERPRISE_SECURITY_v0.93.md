@@ -18,12 +18,12 @@ adversarial-review surfaces.
 
 | WP | Name | Required work product |
 | --- | --- | --- |
-| WP-S1 | [Zero-trust architecture](SECURITY_WP_S1_ZERO_TRUST_ARCHITECTURE_v0.93.md) | Trust-boundary contract, actor/zone model, default-deny fixtures, and unauthorized-boundary negative cases. |
-| WP-S2 | [Policy enforcement and authorization](SECURITY_WP_S2_POLICY_ENFORCEMENT_AUTHORIZATION_v0.93.md) | IAM/delegation/standing/tool-authority policy decision contract, least-privilege fixtures, and fail-closed tests. |
-| WP-S3 | [Secrets, keys, and cryptographic trust](SECURITY_WP_S3_SECRETS_KEYS_CRYPTOGRAPHIC_TRUST_v0.93.md) | Key/secrets lifecycle contract covering custody, signing, encryption, rotation, revocation, sealed-state access, and internal ACIP encryption requirements. |
-| WP-S4 | [Audit, compliance, and incident evidence](SECURITY_WP_S4_AUDIT_COMPLIANCE_INCIDENT_EVIDENCE_v0.93.md) | Tamper-evident audit schema, compliance-evidence packet, incident record, redacted reviewer report, and non-certification language. |
-| WP-S5 | [Isolation, data governance, and privacy](SECURITY_WP_S5_ISOLATION_DATA_GOVERNANCE_PRIVACY_v0.93.md) | Tenant/polis isolation, data classification, retention, deletion, projection, private-state privacy, and leakage negative cases. |
-| WP-S6 | [Security operations, adversarial regression, and provenance](SECURITY_WP_S6_SECURITY_OPERATIONS_ADVERSARIAL_PROVENANCE_v0.93.md) | Security-ops runbook, threat-board hygiene, red/blue regression checks, supply-chain/provenance checks, runtime-hardening evidence, and incident-response drill. |
+| WP-S1 | Zero-trust architecture | Trust-boundary contract, actor/zone model, default-deny fixtures, and unauthorized-boundary negative cases. |
+| WP-S2 | Policy enforcement and authorization | IAM/delegation/standing/tool-authority policy decision contract, least-privilege fixtures, and fail-closed tests. |
+| WP-S3 | Secrets, keys, and cryptographic trust | Key/secrets lifecycle contract covering custody, signing, encryption, rotation, revocation, sealed-state access, and internal ACIP encryption requirements. |
+| WP-S4 | Audit, compliance, and incident evidence | Tamper-evident audit schema, compliance-evidence packet, incident record, redacted reviewer report, and non-certification language. |
+| WP-S5 | Isolation, data governance, and privacy | Tenant/polis isolation, data classification, retention, deletion, projection, private-state privacy, and leakage negative cases. |
+| WP-S6 | Security operations, adversarial regression, and provenance | Security-ops runbook, threat-board hygiene, red/blue regression checks, supply-chain/provenance checks, runtime-hardening evidence, and incident-response drill. |
 
 ## Dependencies
 
