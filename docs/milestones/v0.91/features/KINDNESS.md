@@ -89,17 +89,21 @@ sensitivities, effective help patterns, prior failures, and relational context.
 
 ## Review Dimensions
 
-The first implementation should make the following dimensions explicit:
+The first implementation should make the following dimensions explicit in the
+runtime contract:
 
 - non-harm
-- positive benefit
-- respect for autonomy
-- dignity preservation
-- effort asymmetry / leverage
-- long-horizon flourishing
+- dignity
+- autonomy
+- constructive benefit
+- long-horizon support
 
 These do not need to collapse into a single scalar. A structured vector with
 explanations is more consistent with ADL's reviewable-evidence model.
+
+Conceptual aliases like "positive benefit," "respect for autonomy," and
+"long-horizon flourishing" still describe the intent, but the canonical
+v0.91 packet surface uses the five IDs above for deterministic validation.
 
 ## Example Evaluation Shape
 
@@ -112,11 +116,10 @@ kindness_evaluation:
     - living_systems
   dimensions:
     non_harm: unknown
-    benefit: unknown
-    autonomy_preservation: unknown
-    dignity_preservation: unknown
-    leverage: unknown
-    long_horizon_flourishing: unknown
+    dignity: unknown
+    autonomy: unknown
+    constructive_benefit: unknown
+    long_horizon_support: unknown
   confidence: unknown
   explanation:
     - why this helps or harms
@@ -142,6 +145,28 @@ The first implementation should land:
 - conflict-focused fixtures
 - refusal/support examples
 - a review packet that distinguishes kindness from mere pleasantness
+
+The landed v0.91 WP-11 surface is `kindness_review_packet.v1` in
+`adl/src/runtime_v2/kindness_model.rs`. It carries five canonical kindness
+dimensions:
+
+- non-harm
+- dignity
+- autonomy
+- constructive benefit
+- long-horizon support
+
+It also carries four conflict fixtures where kindness is visible under pressure:
+
+- refusal
+- delay
+- boundary-setting
+- repair
+
+Those fixtures are intentionally evidence-backed and downstream of WP-04
+through WP-10. Unsafe-accommodation cases must resolve to `escalate` or
+`refuse`; the contract rejects framing kindness as politeness, obedience, or
+universal agreement.
 
 ## Evidence Expectations
 
