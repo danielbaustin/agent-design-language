@@ -8,6 +8,7 @@ mod bid_schema;
 mod boot_admission;
 mod challenge;
 mod citizen_lifecycle;
+mod cognitive_being_flagship_demo;
 mod common;
 mod contract_lifecycle_state;
 mod contract_market_demo;

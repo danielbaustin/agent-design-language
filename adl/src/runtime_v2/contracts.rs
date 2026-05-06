@@ -215,6 +215,15 @@ pub fn runtime_v2_observatory_flagship_contract() -> Result<RuntimeV2Observatory
     cached_contract(&ARTIFACTS, RuntimeV2ObservatoryFlagshipArtifacts::prototype)
 }
 
+pub fn runtime_v2_cognitive_being_flagship_demo_contract(
+) -> Result<RuntimeV2CognitiveBeingFlagshipArtifacts> {
+    static ARTIFACTS: OnceCell<RuntimeV2CognitiveBeingFlagshipArtifacts> = OnceCell::new();
+    cached_contract(
+        &ARTIFACTS,
+        RuntimeV2CognitiveBeingFlagshipArtifacts::prototype,
+    )
+}
+
 pub fn runtime_v2_contract_market_demo_contract() -> Result<RuntimeV2ContractMarketDemoArtifacts> {
     static ARTIFACTS: OnceCell<RuntimeV2ContractMarketDemoArtifacts> = OnceCell::new();
     cached_contract(&ARTIFACTS, RuntimeV2ContractMarketDemoArtifacts::prototype)
