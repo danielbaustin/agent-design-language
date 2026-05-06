@@ -113,13 +113,7 @@ Explore the active milestone package:
 
 ## Recent Demos And Proofs
 
-These are the most useful recent proof entrypoints for reviewers.
-
-Generate the v0.90.5 feature-proof coverage packet:
-
-```bash
-cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0905/feature-proof-coverage.json
-```
+These are three high-signal recent demo entrypoints.
 
 Run the v0.90.5 governed-tools flagship demo:
 
@@ -127,32 +121,16 @@ Run the v0.90.5 governed-tools flagship demo:
 cargo run --manifest-path adl/Cargo.toml -- demo demo-v0905-governed-tools-flagship --run --trace --out artifacts/v0905/flagship-demo --no-open
 ```
 
-Run the bounded local-model PR reviewer fixture lane:
+Run the v0.89.1 adversarial self-attack demo:
 
 ```bash
-cargo run --manifest-path adl/Cargo.toml -- tooling code-review --out artifacts/v0905/local-model-pr-reviewer-fixture --backend fixture --visibility read-only-repo --issue 2603 --writer-session codex-writer --reviewer-session fixture-reviewer
+cargo run --manifest-path adl/Cargo.toml -- demo demo-h-v0891-adversarial-self-attack --run --trace --out .adl/reports/adversarial-demo --no-open
 ```
 
-Review the closed v0.91 multi-agent demo train:
-
-- [ChatGPT + Gemini direct conversation](demos/v0.91/chatgpt_gemini_direct_conversation_demo.md)
-  from issue
-  [#2762](https://github.com/danielbaustin/agent-design-language/issues/2762)
-- [ChatGPT -> Gemini task handoff](demos/v0.91/chatgpt_gemini_task_handoff_demo.md)
-  from issue
-  [#2763](https://github.com/danielbaustin/agent-design-language/issues/2763)
-- [ChatGPT + Gemini + Claude triad conversation](demos/v0.91/chatgpt_gemini_claude_triad_conversation_demo.md)
-  from issue
-  [#2764](https://github.com/danielbaustin/agent-design-language/issues/2764)
-- [ChatGPT + Gemini + Claude review panel](demos/v0.91/chatgpt_gemini_claude_review_panel_demo.md)
-  from issue
-  [#2765](https://github.com/danielbaustin/agent-design-language/issues/2765)
-
-For demo classifications and proof boundaries, use:
-
-- [v0.90.5 demo matrix](docs/milestones/v0.90.5/DEMO_MATRIX_v0.90.5.md)
-- [v0.90.5 feature-proof coverage](docs/milestones/v0.90.5/FEATURE_PROOF_COVERAGE_v0.90.5.md)
-- [v0.91 demo matrix](docs/milestones/v0.91/DEMO_MATRIX_v0.91.md)
+Review the v0.91
+[ChatGPT + Gemini + Claude triad conversation](demos/v0.91/chatgpt_gemini_claude_triad_conversation_demo.md)
+from issue
+[#2764](https://github.com/danielbaustin/agent-design-language/issues/2764).
 
 ## Recent Milestones
 
