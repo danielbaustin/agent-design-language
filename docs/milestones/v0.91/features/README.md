@@ -10,6 +10,7 @@ execution pass over the promoted package.
 | Feature surface | Tracked doc | Status |
 | --- | --- | --- |
 | Moral event contract | [MORAL_EVENT_CONTRACT.md](MORAL_EVENT_CONTRACT.md) | Tracked moral-governance contract doc |
+| Moral trace schema | [MORAL_TRACE_SCHEMA.md](MORAL_TRACE_SCHEMA.md) | Tracked moral-governance trace doc |
 | Wellbeing and happiness | [WELLBEING_AND_HAPPINESS.md](WELLBEING_AND_HAPPINESS.md) | Tracked feature doc |
 | Kindness | [KINDNESS.md](KINDNESS.md) | Tracked feature doc |
 | Humor and absurdity | [HUMOR_AND_ABSURDITY.md](HUMOR_AND_ABSURDITY.md) | Tracked feature doc |
@@ -35,7 +36,7 @@ execution pass over the promoted package.
 | Planned workstream | Primary source docs | Active WP placement |
 | --- | --- | --- |
 | Milestone setup and card authoring | [../WP_ISSUE_WAVE_v0.91.yaml](../WP_ISSUE_WAVE_v0.91.yaml), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-01 |
-| Moral event, validation, trace, attribution, metrics, trajectory, and anti-harm | [MORAL_EVENT_CONTRACT.md](MORAL_EVENT_CONTRACT.md), [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-02 through WP-08 |
+| Moral event, validation, trace, attribution, metrics, trajectory, and anti-harm | [MORAL_EVENT_CONTRACT.md](MORAL_EVENT_CONTRACT.md), [MORAL_TRACE_SCHEMA.md](MORAL_TRACE_SCHEMA.md), [../MORAL_GOVERNANCE_ALLOCATION_v0.91.md](../MORAL_GOVERNANCE_ALLOCATION_v0.91.md), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-02 through WP-08 |
 | Wellbeing and happiness | [WELLBEING_AND_HAPPINESS.md](WELLBEING_AND_HAPPINESS.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-09 |
 | Moral resources | [MORAL_RESOURCES.md](MORAL_RESOURCES.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-10 |
 | Kindness | [KINDNESS.md](KINDNESS.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-11 |
