@@ -260,6 +260,126 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
 }
 
 #[test]
+fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-repair-worktree-bundle");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "repair worktree bundle test\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1153, "v0.86", "repair-worktree-bundle").expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Repair worktree bundle");
+    let branch = "codex/1153-repair-worktree-bundle";
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    assert!(Command::new("git")
+        .args([
+            "worktree",
+            "add",
+            "-b",
+            branch,
+            path_str(&worktree).expect("wt path"),
+            "origin/main",
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git worktree add")
+        .success());
+    assert!(!issue_ref.worktree_task_bundle_dir_path(&worktree).exists());
+
+    real_pr(&[
+        "start".to_string(),
+        "1153".to_string(),
+        "--slug".to_string(),
+        "repair-worktree-bundle".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Repair worktree bundle".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr start");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    assert!(issue_ref.worktree_task_bundle_stp_path(&worktree).is_file());
+    assert!(issue_ref.worktree_task_bundle_input_path(&worktree).is_file());
+    assert!(issue_ref.worktree_task_bundle_output_path(&worktree).is_file());
+    assert!(issue_ref.worktree_task_bundle_plan_path(&worktree).is_file());
+    assert!(issue_ref
+        .worktree_task_bundle_review_policy_path(&worktree)
+        .is_file());
+}
+
+#[test]
 fn real_pr_start_rewrites_unbound_root_input_card_branch() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-start-rewrites-unbound");
