@@ -1,0 +1,182 @@
+version: "0.5"
+
+providers:
+  chatgpt_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8794/openai"
+      timeout_secs: 240
+  gemini_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8794/gemini"
+      timeout_secs: 240
+  claude_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8794/anthropic"
+      timeout_secs: 240
+
+agents:
+  chatgpt_host:
+    provider: "chatgpt_local"
+    model: "chatgpt-live-demo"
+  gemini_guest:
+    provider: "gemini_local"
+    model: "gemini-live-demo"
+  claude_guest:
+    provider: "claude_local"
+    model: "claude-live-demo"
+
+tasks:
+  chatgpt_opening:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-triad-conversation
+        TURN_ID: 01
+        SPEAKER: ChatGPT
+        TOPIC: What does the Apple TV series Pluribus suggest about how many minds connect, compete, and blur together?
+        STOP_RULE: Stop after six explicit turns total.
+        PARTICIPANTS: ChatGPT, Gemini, Claude.
+        INSTRUCTIONS: Open the shared conversation in under 140 words. State the six-turn boundary explicitly. Offer one substantive answer to the topic that is sharp, memorable, and not sterile. Treat Pluribus as the Apple TV series, not the poker system. End with exactly one line beginning `THESIS:` that either Gemini or Claude can challenge.
+  gemini_challenge:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-triad-conversation
+        TURN_ID: 02
+        SPEAKER: Gemini
+        TOPIC: What does the Apple TV series Pluribus suggest about how many minds connect, compete, and blur together?
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_01}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Reply directly to ChatGPT in under 120 words. Accept part of the thesis, challenge part of it, and introduce one pressure or risk that the Apple TV series Pluribus raises about intimacy, identity, or collective life. Make your disagreement precise instead of theatrical.
+  claude_reframe:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-triad-conversation
+        TURN_ID: 03
+        SPEAKER: Claude
+        TOPIC: What does the Apple TV series Pluribus suggest about how many minds connect, compete, and blur together?
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_02}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Enter the shared exchange in under 120 words. Do not simply side with one voice. Reframe the disagreement by naming one thing the Apple TV series Pluribus suggests about shared consciousness or merged perspective and one thing it cannot settle about real human trust. Keep the tone reflective but concrete.
+  chatgpt_revision:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-triad-conversation
+        TURN_ID: 04
+        SPEAKER: ChatGPT
+        TOPIC: What does the Apple TV series Pluribus suggest about how many minds connect, compete, and blur together?
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_03}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Revise your opening claim in light of Gemini and Claude. Keep the turn under 130 words. Explicitly say what changed in your view, and make the revision stronger because three minds are now in the conversation.
+  gemini_deepening:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-triad-conversation
+        TURN_ID: 05
+        SPEAKER: Gemini
+        TOPIC: What does the Apple TV series Pluribus suggest about how many minds connect, compete, and blur together?
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_04}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Deepen the shared answer in under 115 words. Add one paradox or edge case that keeps the answer honest, but do not derail the conversation. This should still feel like one shared exchange, not three disconnected monologues.
+  claude_closure:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-triad-conversation
+        TURN_ID: 06
+        SPEAKER: Claude
+        TOPIC: What does the Apple TV series Pluribus suggest about how many minds connect, compete, and blur together?
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_05}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Close the six-turn triad in under 120 words. Name one insight the three-way exchange made clearer than a two-party exchange would have. End with one memorable final line.
+
+run:
+  name: "v0-91-chatgpt-gemini-claude-triad-conversation"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "triad.chatgpt.opening"
+        agent: "chatgpt_host"
+        task: "chatgpt_opening"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "chatgpt_gemini_claude_triad"
+        save_as: "turn_01"
+        write_to: "triad/01-chatgpt-opening.md"
+      - id: "triad.gemini.challenge"
+        agent: "gemini_guest"
+        task: "gemini_challenge"
+        conversation:
+          id: "turn_02"
+          speaker: "Gemini"
+          sequence: 2
+          thread_id: "chatgpt_gemini_claude_triad"
+          responds_to: "turn_01"
+        inputs:
+          turn_01: "@state:turn_01"
+        save_as: "turn_02"
+        write_to: "triad/02-gemini-challenge.md"
+      - id: "triad.claude.reframe"
+        agent: "claude_guest"
+        task: "claude_reframe"
+        conversation:
+          id: "turn_03"
+          speaker: "Claude"
+          sequence: 3
+          thread_id: "chatgpt_gemini_claude_triad"
+          responds_to: "turn_02"
+        inputs:
+          turn_02: "@state:turn_02"
+        save_as: "turn_03"
+        write_to: "triad/03-claude-reframe.md"
+      - id: "triad.chatgpt.revision"
+        agent: "chatgpt_host"
+        task: "chatgpt_revision"
+        conversation:
+          id: "turn_04"
+          speaker: "ChatGPT"
+          sequence: 4
+          thread_id: "chatgpt_gemini_claude_triad"
+          responds_to: "turn_03"
+        inputs:
+          turn_03: "@state:turn_03"
+        save_as: "turn_04"
+        write_to: "triad/04-chatgpt-revision.md"
+      - id: "triad.gemini.deepening"
+        agent: "gemini_guest"
+        task: "gemini_deepening"
+        conversation:
+          id: "turn_05"
+          speaker: "Gemini"
+          sequence: 5
+          thread_id: "chatgpt_gemini_claude_triad"
+          responds_to: "turn_04"
+        inputs:
+          turn_04: "@state:turn_04"
+        save_as: "turn_05"
+        write_to: "triad/05-gemini-deepening.md"
+      - id: "triad.claude.closure"
+        agent: "claude_guest"
+        task: "claude_closure"
+        conversation:
+          id: "turn_06"
+          speaker: "Claude"
+          sequence: 6
+          thread_id: "chatgpt_gemini_claude_triad"
+          responds_to: "turn_05"
+        inputs:
+          turn_05: "@state:turn_05"
+        save_as: "turn_06"
+        write_to: "triad/06-claude-closure.md"
