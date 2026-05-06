@@ -143,9 +143,11 @@ events = trace.get("events", [])
 
 turn_specs = [
     ("01-chatgpt-opening.md", "ChatGPT", "Opening claim"),
-    ("02-gemini-reply.md", "Gemini", "Challenge and hidden constraint"),
+    ("02-gemini-reply.md", "Gemini", "Challenge and complication"),
     ("03-chatgpt-reflection.md", "ChatGPT", "Revision under pressure"),
-    ("04-gemini-close.md", "Gemini", "Closure and proof boundary"),
+    ("04-gemini-close.md", "Gemini", "Paradox and refusal"),
+    ("05-chatgpt-deepening.md", "ChatGPT", "Deeper synthesis"),
+    ("06-gemini-finale.md", "Gemini", "Closure and final line"),
 ]
 
 step_end_timestamps = []
@@ -153,18 +155,18 @@ for event in events:
     if event.get("event_type") == "STEP_END":
         step_end_timestamps.append(event.get("timestamp"))
 
-question = "What is the smallest honest proof of multi-agent coordination?"
+question = "If two minds never share the same private world, what makes trust possible?"
 conditions = [
-    "Stop after four explicit turns total.",
+    "Stop after six explicit turns total.",
     "Named agents only: ChatGPT and Gemini.",
     "Each side holds partial private state and must react to the other.",
-    "The proof boundary stays bounded to one task-local coordination episode.",
+    "The discussion stays concrete, philosophical, and bounded.",
 ]
 
 lines = [
     "# ChatGPT + Gemini Direct Conversation",
     "",
-    "> A bounded, provider-backed four-turn exchange rendered from runtime artifacts.",
+    "> A bounded, provider-backed six-turn exchange rendered from runtime artifacts.",
     "",
     "## Prompt",
     "",
@@ -214,8 +216,8 @@ contract_path = sys.argv[1]
 payload = {
     "schema_version": "multi_agent_discussion_transcript.v1",
     "transcript_path": "transcript.md",
-    "turn_count": 4,
-    "stop_rule": "Stop after four explicit turns.",
+    "turn_count": 6,
+    "stop_rule": "Stop after six explicit turns.",
     "turns": [
         {
             "turn_id": "turn_01",
@@ -244,6 +246,20 @@ payload = {
             "speaker": "Gemini",
             "heading": "# Turn 4 - Gemini",
             "source_output": "out/direct/04-gemini-close.md",
+        },
+        {
+            "turn_id": "turn_05",
+            "ordinal": 5,
+            "speaker": "ChatGPT",
+            "heading": "# Turn 5 - ChatGPT",
+            "source_output": "out/direct/05-chatgpt-deepening.md",
+        },
+        {
+            "turn_id": "turn_06",
+            "ordinal": 6,
+            "speaker": "Gemini",
+            "heading": "# Turn 6 - Gemini",
+            "source_output": "out/direct/06-gemini-finale.md",
         },
     ],
     "companion_artifacts": {
@@ -274,6 +290,8 @@ turns = [
     {"turn": 2, "speaker": "Gemini", "artifact_ref": "out/direct/02-gemini-reply.md"},
     {"turn": 3, "speaker": "ChatGPT", "artifact_ref": "out/direct/03-chatgpt-reflection.md"},
     {"turn": 4, "speaker": "Gemini", "artifact_ref": "out/direct/04-gemini-close.md"},
+    {"turn": 5, "speaker": "ChatGPT", "artifact_ref": "out/direct/05-chatgpt-deepening.md"},
+    {"turn": 6, "speaker": "Gemini", "artifact_ref": "out/direct/06-gemini-finale.md"},
 ]
 payload = {
     "schema": "adl.demo.observatory_projection.v1",
@@ -294,7 +312,7 @@ payload = {
         if event.get("event_type") in {"RUN_START", "STEP_START", "STEP_END"}
     ],
     "proof_boundary": [
-        "Shows named provider-backed runtime roles executing a bounded four-turn exchange.",
+        "Shows named provider-backed runtime roles executing a bounded six-turn exchange.",
         "Shows cross-turn revision pressure and saved trace continuity.",
         "Does not by itself prove autonomous multi-agent federation or persistent independent agency.",
     ],
@@ -317,8 +335,8 @@ payload = {
         {"id": "chatgpt_host", "provider": "live_openai", "family": "openai"},
         {"id": "gemini_guest", "provider": "live_gemini", "family": "gemini"},
     ],
-    "steps": 4,
-    "stop_rule": "Stop after four explicit turns.",
+    "steps": 6,
+    "stop_rule": "Stop after six explicit turns.",
     "proof_surfaces": {
         "transcript": transcript,
         "transcript_contract": transcript_contract,
@@ -339,9 +357,9 @@ cat >"$PROOF_NOTE" <<'EOF'
 
 ## Facts
 
-- The runtime executed four explicit sequential turns.
+- The runtime executed six explicit sequential turns.
 - Every turn preserved named participant identity (`ChatGPT` or `Gemini`).
-- The stop rule was explicit: stop after four turns.
+- The stop rule was explicit: stop after six turns.
 - The transcript, observatory-style projection, run summary, and trace were saved automatically.
 
 ## Assumptions
@@ -382,7 +400,7 @@ Model overrides:
 What this proves:
 - one ADL runtime workflow with two explicit named live provider families
 - real OpenAI and Gemini calls through ADL's current local HTTP completion adapter boundary
-- four sequential turns with saved-state handoff between steps
+- six sequential turns with saved-state handoff between steps
 - an explicit stop rule recorded in the proof surfaces
 
 Primary proof surfaces:
