@@ -27,6 +27,7 @@ mod integrated_csm_run;
 mod invariant;
 mod invariant_contract;
 mod kernel_loop;
+mod kindness_model;
 mod manifold;
 mod moral_event_validation;
 mod moral_metrics;
@@ -106,6 +107,8 @@ pub use invariant::*;
 pub use invariant_contract::*;
 #[allow(unused_imports)]
 pub use kernel_loop::*;
+#[allow(unused_imports)]
+pub use kindness_model::*;
 #[allow(unused_imports)]
 pub use manifold::*;
 #[allow(unused_imports)]

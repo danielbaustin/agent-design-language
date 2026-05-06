@@ -25,6 +25,7 @@ mod invalid_action_rejection;
 mod invariant_contract;
 mod invariant_violation;
 mod kernel_loop;
+mod kindness_model;
 mod manifold;
 mod moral_event_validation;
 mod moral_metrics;
