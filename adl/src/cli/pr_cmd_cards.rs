@@ -75,6 +75,97 @@ pub(crate) fn ensure_local_issue_prompt_copy(
     Ok(local_source_path)
 }
 
+fn file_exists_nonempty(path: &Path) -> bool {
+    fs::metadata(path)
+        .map(|metadata| metadata.is_file() && metadata.len() > 0)
+        .unwrap_or(false)
+}
+
+pub(crate) fn sync_root_task_bundle_into_worktree(
+    primary_checkout_root: &Path,
+    worktree_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<()> {
+    let worktree_bundle_dir = issue_ref.worktree_task_bundle_dir_path(worktree_root);
+    if let Some(parent) = worktree_bundle_dir.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::create_dir_all(&worktree_bundle_dir)?;
+
+    let bundle_pairs = [
+        (
+            issue_ref.task_bundle_stp_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_stp_path(worktree_root),
+        ),
+        (
+            issue_ref.task_bundle_input_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_input_path(worktree_root),
+        ),
+        (
+            issue_ref.task_bundle_output_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_output_path(worktree_root),
+        ),
+        (
+            issue_ref.task_bundle_plan_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_plan_path(worktree_root),
+        ),
+        (
+            issue_ref.task_bundle_review_policy_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_review_policy_path(worktree_root),
+        ),
+    ];
+
+    for (root_path, worktree_path) in bundle_pairs {
+        if file_exists_nonempty(&worktree_path) {
+            continue;
+        }
+        if !file_exists_nonempty(&root_path) {
+            bail!(
+                "start: cannot materialize missing worktree bundle file '{}' because the canonical root file '{}' is absent",
+                worktree_path.display(),
+                root_path.display()
+            );
+        }
+        if let Some(parent) = worktree_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::copy(&root_path, &worktree_path).with_context(|| {
+            format!(
+                "start: failed to sync canonical bundle file '{}' into worktree path '{}'",
+                root_path.display(),
+                worktree_path.display()
+            )
+        })?;
+    }
+
+    Ok(())
+}
+
+pub(crate) fn ensure_worktree_task_bundle_materialized(
+    worktree_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<()> {
+    let expected = [
+        issue_ref.worktree_task_bundle_stp_path(worktree_root),
+        issue_ref.worktree_task_bundle_input_path(worktree_root),
+        issue_ref.worktree_task_bundle_output_path(worktree_root),
+        issue_ref.worktree_task_bundle_plan_path(worktree_root),
+        issue_ref.worktree_task_bundle_review_policy_path(worktree_root),
+    ];
+    let missing: Vec<String> = expected
+        .iter()
+        .filter(|path| !file_exists_nonempty(path))
+        .map(|path| path.display().to_string())
+        .collect();
+    if !missing.is_empty() {
+        bail!(
+            "start: bound worktree is missing canonical task-bundle surfaces after materialization; refusing partial execution surface:\n{}",
+            missing.join("\n")
+        );
+    }
+    Ok(())
+}
+
 pub(crate) fn mirror_docs_templates_into_worktree(
     repo_root: &Path,
     worktree_root: &Path,

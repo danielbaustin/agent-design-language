@@ -146,6 +146,31 @@ impl IssueRef {
             .join("tasks")
             .join(self.task_bundle_dir_name())
     }
+
+    pub fn worktree_task_bundle_stp_path(&self, worktree_root: &Path) -> PathBuf {
+        self.worktree_task_bundle_dir_path(worktree_root)
+            .join("stp.md")
+    }
+
+    pub fn worktree_task_bundle_input_path(&self, worktree_root: &Path) -> PathBuf {
+        self.worktree_task_bundle_dir_path(worktree_root)
+            .join("sip.md")
+    }
+
+    pub fn worktree_task_bundle_output_path(&self, worktree_root: &Path) -> PathBuf {
+        self.worktree_task_bundle_dir_path(worktree_root)
+            .join("sor.md")
+    }
+
+    pub fn worktree_task_bundle_plan_path(&self, worktree_root: &Path) -> PathBuf {
+        self.worktree_task_bundle_dir_path(worktree_root)
+            .join("spp.md")
+    }
+
+    pub fn worktree_task_bundle_review_policy_path(&self, worktree_root: &Path) -> PathBuf {
+        self.worktree_task_bundle_dir_path(worktree_root)
+            .join("srp.md")
+    }
 }
 
 /// Normalize a human-facing slug into a workflow-safe path segment.

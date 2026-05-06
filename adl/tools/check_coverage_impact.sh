@@ -158,7 +158,17 @@ changed_line_delta_for_path() {
 
 candidate_filter_for_path() {
   local path="$1"
-  basename "$path" .rs
+  case "$path" in
+    adl/src/cli/pr_cmd*|adl/src/cli/tests/pr_cmd*|adl/src/cli/pr_cmd/*|docs/default_workflow.md)
+      printf 'pr_cmd'
+      ;;
+    adl/src/cli/mod.rs|adl/src/cli/tests.rs)
+      printf 'cli'
+      ;;
+    *)
+      basename "$path" .rs
+      ;;
+  esac
 }
 
 file_is_structural_module_barrel() {
