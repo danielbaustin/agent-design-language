@@ -5,10 +5,11 @@ use std::path::{Path, PathBuf};
 
 use super::run_artifacts::write_governed_trace_artifacts_for_run_paths;
 use ::adl::runtime_v2::{
-    runtime_v2_contract_market_demo_contract, runtime_v2_csm_integrated_run_contract,
-    runtime_v2_feature_proof_coverage_contract, runtime_v2_foundation_demo_contract,
-    runtime_v2_governed_tools_flagship_demo_contract, runtime_v2_observatory_flagship_contract,
-    runtime_v2_operator_control_report_contract, runtime_v2_security_boundary_proof_contract,
+    runtime_v2_cognitive_being_flagship_demo_contract, runtime_v2_contract_market_demo_contract,
+    runtime_v2_csm_integrated_run_contract, runtime_v2_feature_proof_coverage_contract,
+    runtime_v2_foundation_demo_contract, runtime_v2_governed_tools_flagship_demo_contract,
+    runtime_v2_observatory_flagship_contract, runtime_v2_operator_control_report_contract,
+    runtime_v2_security_boundary_proof_contract,
 };
 use ::adl::{artifacts, governed_executor, instrumentation, trace};
 
@@ -58,13 +59,23 @@ fn resolve_relative_output_path(
             "runtime-v2 {command} --out path must be repository-relative"
         ));
     }
+    for component in out_path.components() {
+        match component {
+            std::path::Component::Normal(_) | std::path::Component::CurDir => {}
+            _ => {
+                return Err(anyhow!(
+                    "runtime-v2 {command} --out path must stay within the repository"
+                ))
+            }
+        }
+    }
     Ok(repo_root.join(out_path))
 }
 
 fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage"
+            "runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage"
         ));
     };
 
@@ -76,6 +87,9 @@ fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
         "observatory-flagship-demo" => {
             real_runtime_v2_observatory_flagship_demo(repo_root, &args[1..])
         }
+        "cognitive-being-flagship-demo" => {
+            real_runtime_v2_cognitive_being_flagship_demo(repo_root, &args[1..])
+        }
         "contract-market-demo" => real_runtime_v2_contract_market_demo(repo_root, &args[1..]),
         "governed-tools-flagship-demo" => {
             real_runtime_v2_governed_tools_flagship_demo(repo_root, &args[1..])
@@ -86,7 +100,7 @@ fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage)"
+            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage)"
         )),
     }
 }
@@ -359,6 +373,55 @@ fn real_runtime_v2_observatory_flagship_demo(repo_root: &Path, args: &[String]) 
     Ok(())
 }
 
+fn real_runtime_v2_cognitive_being_flagship_demo(repo_root: &Path, args: &[String]) -> Result<()> {
+    let mut out_path: Option<PathBuf> = None;
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out" => {
+                let Some(value) = args.get(i + 1) else {
+                    return Err(anyhow!(
+                        "runtime-v2 cognitive-being-flagship-demo requires --out <dir>"
+                    ));
+                };
+                out_path = Some(PathBuf::from(value));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", super::usage::usage());
+                return Ok(());
+            }
+            other => {
+                return Err(anyhow!(
+                    "unknown arg for runtime-v2 cognitive-being-flagship-demo: {other}"
+                ))
+            }
+        }
+        i += 1;
+    }
+
+    let artifacts = runtime_v2_cognitive_being_flagship_demo_contract()?;
+    let Some(out_path) = out_path else {
+        println!("{}", to_string_pretty(&artifacts.proof_packet)?);
+        return Ok(());
+    };
+    let resolved =
+        resolve_relative_output_path(repo_root, &out_path, "cognitive-being-flagship-demo")?;
+    fs::create_dir_all(&resolved).with_context(|| {
+        format!(
+            "failed to create Runtime v2 cognitive-being flagship demo root {}",
+            resolved.display()
+        )
+    })?;
+    artifacts.write_to_root(&resolved)?;
+    println!("{}", cognitive_being_flagship_demo_stdout_line(&out_path));
+    println!();
+    println!("{}", artifacts.execution_summary()?);
+    println!();
+    println!("{}", artifacts.reviewer_report_markdown);
+    Ok(())
+}
+
 fn real_runtime_v2_feature_proof_coverage(repo_root: &Path, args: &[String]) -> Result<()> {
     let mut out_path: Option<PathBuf> = None;
     let mut i = 0usize;
@@ -508,6 +571,13 @@ fn feature_proof_coverage_stdout_line(out_path: &Path) -> String {
     )
 }
 
+fn cognitive_being_flagship_demo_stdout_line(out_path: &Path) -> String {
+    format!(
+        "RUNTIME_V2_COGNITIVE_BEING_FLAGSHIP_DEMO_ROOT={}",
+        out_path.display()
+    )
+}
+
 fn contract_market_demo_stdout_line(out_path: &Path) -> String {
     format!(
         "RUNTIME_V2_CONTRACT_MARKET_DEMO_ROOT={}",
@@ -542,6 +612,8 @@ mod tests {
         "integrated-csm-run-demo:arg-validation",
         "observatory-flagship-demo:write-bundle",
         "observatory-flagship-demo:arg-validation",
+        "cognitive-being-flagship-demo:write-bundle",
+        "cognitive-being-flagship-demo:arg-validation",
         "feature-proof-coverage:write-json",
         "feature-proof-coverage:arg-validation",
         "contract-market-demo:arg-validation",
@@ -622,7 +694,7 @@ mod tests {
         let err = real_runtime_v2_in_repo(&[], &repo).expect_err("missing subcommand should fail");
         assert!(err
             .to_string()
-            .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage"));
+            .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage"));
 
         let err = real_runtime_v2_in_repo(&["bogus".to_string()], &repo)
             .expect_err("unknown subcommand should fail");
@@ -1050,6 +1122,127 @@ mod tests {
     }
 
     #[test]
+    fn trace_runtime_v2_cognitive_being_flagship_demo_writes_proof_bundle() {
+        let repo = temp_repo("cognitive-being-flagship-demo");
+        let out_dir = repo.join("out/cognitive-being-flagship");
+
+        real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--out".to_string(),
+                "out/cognitive-being-flagship".to_string(),
+            ],
+            &repo,
+        )
+        .expect("cognitive-being flagship demo");
+
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/flagship_proof_packet.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/flagship_sections.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/flagship_reviewer_report.md")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/support/moral_trace_examples.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/support/structured_planning_prompt.md")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/support/acip_a2a_fixture_set_v1.json")
+            .is_file());
+
+        let json: serde_json::Value = serde_json::from_slice(
+            &fs::read(out_dir.join("runtime_v2/cognitive_being/flagship_proof_packet.json"))
+                .expect("proof packet should exist"),
+        )
+        .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.cognitive_being_flagship_proof_packet.v1"
+        );
+        assert_eq!(json["demo_id"], "D13");
+        assert_eq!(json["milestone"], "v0.91");
+        assert_eq!(
+            json["section_ids"].as_array().expect("section ids").len(),
+            6
+        );
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_cognitive_being_flagship_demo_validates_help_and_output_path_rules() {
+        let repo = temp_repo("cognitive-being-flagship-demo-branches");
+
+        real_runtime_v2_in_repo(&["cognitive-being-flagship-demo".to_string()], &repo)
+            .expect("stdout cognitive-being flagship packet");
+        real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--help".to_string(),
+            ],
+            &repo,
+        )
+        .expect("cognitive-being flagship help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/cognitive-being-flagship")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output dir should fail");
+        assert!(err.to_string().contains(
+            "runtime-v2 cognitive-being-flagship-demo --out path must be repository-relative"
+        ));
+        let err = real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--out".to_string(),
+                "../escape".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("parent traversal output dir should fail");
+        assert!(err.to_string().contains(
+            "runtime-v2 cognitive-being-flagship-demo --out path must stay within the repository"
+        ));
+
+        let err = real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--bogus".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 cognitive-being-flagship-demo: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--out".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 cognitive-being-flagship-demo requires --out <dir>"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
     fn trace_runtime_v2_feature_proof_coverage_writes_packet_json() {
         let repo = temp_repo("feature-proof-coverage");
         let out_path = repo.join("out/feature-proof-coverage.json");
@@ -1142,6 +1335,8 @@ mod tests {
             trace_runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules,
             trace_runtime_v2_observatory_flagship_demo_writes_proof_bundle,
             trace_runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_cognitive_being_flagship_demo_writes_proof_bundle,
+            trace_runtime_v2_cognitive_being_flagship_demo_validates_help_and_output_path_rules,
             trace_runtime_v2_feature_proof_coverage_writes_packet_json,
             trace_runtime_v2_feature_proof_coverage_validates_stdout_help_and_output_path_rules,
             trace_runtime_v2_contract_market_demo_validates_stdout_help_and_output_path_rules,
@@ -1162,6 +1357,9 @@ mod tests {
                 "CLI regression smoke is duplicated: {smoke}"
             );
         }
+        assert!(RUNTIME_V2_CLI_REGRESSION_SMOKES
+            .iter()
+            .any(|smoke| smoke.starts_with("cognitive-being-flagship-demo:")));
         assert!(RUNTIME_V2_CLI_REGRESSION_SMOKES
             .iter()
             .any(|smoke| smoke.starts_with("feature-proof-coverage:")));
@@ -1363,6 +1561,19 @@ mod tests {
         assert!(
             !d13_stdout.contains(&cwd),
             "D13 stdout should not expose absolute repo root:\n{d13_stdout}"
+        );
+
+        let d13_flagship_stdout = cognitive_being_flagship_demo_stdout_line(&rel_root);
+        assert_eq!(
+            d13_flagship_stdout,
+            format!(
+                "RUNTIME_V2_COGNITIVE_BEING_FLAGSHIP_DEMO_ROOT={}",
+                rel_root.display()
+            )
+        );
+        assert!(
+            !d13_flagship_stdout.contains(&cwd),
+            "D13 flagship stdout should not expose absolute repo root:\n{d13_flagship_stdout}"
         );
 
         let d11_stdout = governed_tools_flagship_demo_stdout_line(&rel_root);

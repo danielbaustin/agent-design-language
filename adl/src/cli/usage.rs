@@ -38,6 +38,7 @@ pub fn usage() -> &'static str {
   adl runtime-v2 foundation-demo [--out <dir>]
   adl runtime-v2 integrated-csm-run-demo [--out <dir>]
   adl runtime-v2 observatory-flagship-demo [--out <dir>]
+  adl runtime-v2 cognitive-being-flagship-demo [--out <dir>]
   adl runtime-v2 contract-market-demo [--out <dir>]
   adl runtime-v2 governed-tools-flagship-demo [--out <dir>]
   adl runtime-v2 feature-proof-coverage [--out <path>]
@@ -115,6 +116,7 @@ Examples:
   adl runtime-v2 foundation-demo --out artifacts/v0901/demo-l-v0901-runtime-v2-foundation
   adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run
   adl runtime-v2 observatory-flagship-demo --out artifacts/v0903/demo-d12-observatory-flagship
+  adl runtime-v2 cognitive-being-flagship-demo --out artifacts/v091/demo-d13-cognitive-being-flagship
   adl runtime-v2 contract-market-demo --out artifacts/v0904/demo-d12-contract-market
   adl runtime-v2 governed-tools-flagship-demo --out artifacts/v0905/demo-d11-governed-tools-flagship
   adl runtime-v2 feature-proof-coverage --out artifacts/v0904/feature-proof-coverage.json

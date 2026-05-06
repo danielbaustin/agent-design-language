@@ -11,6 +11,7 @@ mod bid_schema;
 mod boot_admission;
 mod challenge;
 mod citizen;
+mod cognitive_being_flagship_demo;
 mod contract_lifecycle_state;
 mod contract_market_demo;
 mod contract_schema;
@@ -78,6 +79,8 @@ pub use boot_admission::*;
 pub use challenge::*;
 #[allow(unused_imports)]
 pub use citizen::*;
+#[allow(unused_imports)]
+pub use cognitive_being_flagship_demo::*;
 #[allow(unused_imports)]
 pub use contract_lifecycle_state::*;
 #[allow(unused_imports)]
