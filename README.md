@@ -109,12 +109,6 @@ Generate a Runtime v2 foundation proof packet:
 cargo run --manifest-path adl/Cargo.toml -- runtime-v2 foundation-demo --out artifacts/quickstart/runtime-v2-foundation
 ```
 
-Run the governed-tools flagship demo:
-
-```bash
-cargo run --manifest-path adl/Cargo.toml -- demo demo-v0905-governed-tools-flagship --run --trace --out artifacts/quickstart/governed-tools-flagship --no-open
-```
-
 ## Recent Demos And Proofs
 
 These are three high-signal recent demo entrypoints.
