@@ -10,7 +10,8 @@ authored during v0.93 WP-01.
 Build the first reviewable constitutional governance and social-cognition layer
 for the ADL polis: citizenship, rights, duties, Theory of Mind, reputation
 boundary, shared social memory, standing, challenge, appeal, delegation, IAM,
-and governance evidence over prior trace and identity substrates.
+enterprise security, and governance evidence over prior trace and identity
+substrates.
 
 ## Planned Phases
 
@@ -21,8 +22,9 @@ and governance evidence over prior trace and identity substrates.
 | 3 | Social cognition | ToM schema, signed update events, reputation boundary, shared social memory, conflict, decay, and projection rules. |
 | 4 | Review and appeal | Constitutional review packet, challenge flow, appeal flow, and evidence rules. |
 | 5 | Delegation and IAM | Authority-chain rules across citizens, guests, operators, services, tools, and external actors. |
-| 6 | Social contract and communication | Bounded social-contract representation and communication-without-inspection proof. |
-| 7 | Demo and review tail | Governance demos, demo matrix, quality gate, review handoff, and release ceremony. |
+| 6 | Enterprise security foundation | Zero-trust architecture, enforcement, key/secrets lifecycle, audit/compliance evidence, isolation/data governance, and security operations. |
+| 7 | Social contract and communication | Bounded social-contract representation and communication-without-inspection proof. |
+| 8 | Demo and review tail | Governance and enterprise-security demos, demo matrix, quality gate, review handoff, and release ceremony. |
 
 ## Dependencies To Check Before WP-01
 
@@ -32,6 +34,9 @@ and governance evidence over prior trace and identity substrates.
   into v0.93.
 - Governed-tool and economics lanes are either available as prerequisites or
   explicitly deferred.
+- v0.91 secure Agent Comms, v0.90.5 governed-tool authority, and v0.92 identity
+  provide enough substrate for zero-trust, key/secrets, and policy-enforcement
+  work.
 - ToM source material is reconciled with v0.90.3 standing/access and no longer
   carries stale late-roadmap-only targeting.
 
@@ -40,7 +45,9 @@ and governance evidence over prior trace and identity substrates.
 At least one later demo should show constitutional review of a challenged
 citizen action. Strong secondary demos include standing restoration, human
 guest versus mediated citizen-mode action, ToM/reputation boundary,
-delegation/IAM, and communication without inspection.
+delegation/IAM, zero-trust deny-by-default behavior, audit/compliance evidence,
+key rotation/revocation, isolation leakage prevention, and communication without
+inspection.
 
 The review packet should make it easy to answer:
 
@@ -51,6 +58,9 @@ The review packet should make it easy to answer:
   challengeable?
 - What was hidden or redacted?
 - What appeal or restoration path remains?
+- Which security boundary was crossed or denied?
+- Which key, policy, audit, isolation, or provenance evidence proves the
+  decision?
 
 ## Exit Criteria For Active Planning
 
@@ -58,4 +68,6 @@ The review packet should make it easy to answer:
 - Every implementation WP has a code, fixture, test, demo, or reviewable docs
   output.
 - Every demo maps to a governance claim.
+- Every security WP maps to a concrete enforcement, fixture, audit, incident,
+  isolation, provenance, or adversarial-regression proof surface.
 - Non-goals prevent overclaiming legal personhood or production citizenship.

@@ -31,6 +31,9 @@ That means:
 - rights and duties are explicit enough to evaluate
 - standing changes are evidence-based and appealable
 - delegation and tool-mediated authority are governed, not improvised
+- zero-trust security is part of polis governance, not a separate ops add-on
+- keys, secrets, encryption, audit, incident evidence, isolation, and
+  provenance are explicit enough to review
 - reviewers can inspect governance evidence without raw private-state access
 
 ## Strategic Pillars
@@ -83,6 +86,17 @@ packets, and demos.
 It should avoid broad claims about production law, complete constitutional
 authority, legal personhood, or final social-contract theory.
 
+### 7. Enterprise Security As Polis Infrastructure
+
+The polis cannot be credible if security is treated as perimeter folklore.
+v0.93 should establish the first explicit enterprise-security tranche for ADL:
+zero-trust boundaries, fail-closed policy enforcement, secrets and key
+lifecycle, tamper-evident audit and incident records, isolation and data
+governance, adversarial regression, provenance, and runtime hardening.
+
+This should be framed as implemented controls and evidence, not as an external
+certification claim.
+
 ## Long-Term Direction
 
 v0.93 should prepare ADL for a polis where citizens can:
@@ -94,6 +108,9 @@ v0.93 should prepare ADL for a polis where citizens can:
 - model one another under bounded ToM rules without losing privacy
 - use shared social memory without collapsing into a scalar reputation culture
 - delegate under bounded authority
+- rely on zero-trust security boundaries and auditable key/policy decisions
+- inspect incident, provenance, and compliance evidence without private-state
+  leakage
 - participate in a shared world with traceable accountability
 
 This is an essential bridge from Runtime v2 and first birthday work toward the
