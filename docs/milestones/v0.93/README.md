@@ -25,9 +25,6 @@ v0.93 should establish:
 - bounded Theory of Mind, reputation, and shared social memory as distinct
   social-cognition surfaces
 - rights, duties, standing, challenge, appeal, delegation, and IAM semantics
-- enterprise-security foundations for zero-trust polis operation
-- cryptographic trust, secrets/key lifecycle, isolation, audit, and incident
-  evidence as first-class governance surfaces
 - reviewer-facing governance evidence that does not expose raw private state
 - a clear boundary between CSM citizen identity and human/operator action
 
@@ -73,13 +70,6 @@ The likely `v0.93` tranche is:
 - Constitutional review packet shape.
 - Challenge and appeal flow.
 - Delegation and IAM policy model.
-- Zero-trust architecture and trust-boundary model.
-- Policy enforcement, authorization, and least-privilege checks.
-- Secrets, key lifecycle, signing, encryption, and rotation boundaries.
-- Tamper-evident audit, compliance, and incident evidence.
-- Tenant/polis isolation, data governance, retention, and privacy controls.
-- Security operations, adversarial regression, provenance, and runtime
-  hardening.
 - Bounded social-contract representation.
 - Reviewer-facing governance proof candidates.
 
@@ -92,10 +82,6 @@ The likely `v0.93` tranche is:
 - Replacing v0.90.3 citizen-state/security work.
 - Replacing v0.91 moral trace.
 - Replacing v0.92 identity and birthday semantics.
-- Claiming complete enterprise certification, SOC 2, ISO 27001, FedRAMP,
-  HIPAA, or other external compliance approval.
-- Production cross-polis networking before the required transport-security
-  prerequisites exist.
 - Treating private Theory of Mind as public reputation or constitutional
   verdict.
 
@@ -115,8 +101,6 @@ The likely `v0.93` tranche is:
   [CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md](CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md)
 - Theory of Mind and social cognition:
   [THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md](features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md)
-- Enterprise security:
-  [ENTERPRISE_SECURITY_v0.93.md](features/ENTERPRISE_SECURITY_v0.93.md)
 
 ## Execution Model
 
@@ -125,8 +109,6 @@ Later WP planning should preserve the standard milestone rhythm:
 - WP-01: promote reviewed milestone docs and issue wave
 - feature WPs: implement constitutional citizenship, ToM/social-cognition,
   standing, review, delegation, IAM, and social-contract surfaces
-- security WPs: implement the six enterprise-security foundations for
-  zero-trust polis operation
 - demo WP: build constitutional/polis proof demos
 - quality/review WPs: validate docs, tests, demo evidence, and review packets
 - release WP: close the milestone under the normal ceremony pattern

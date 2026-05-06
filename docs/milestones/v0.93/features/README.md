@@ -7,5 +7,4 @@ WP-01 issue-wave authoring. They are not implementation closeout records.
 
 ## Feature Documents
 
-- [ENTERPRISE_SECURITY_v0.93.md](ENTERPRISE_SECURITY_v0.93.md)
 - [THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md](THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md)

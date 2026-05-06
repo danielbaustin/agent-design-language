@@ -191,7 +191,6 @@ ADL already provides a serious platform baseline:
 | Identity, capability, names, and continuity substrate | Planned | `v0.92` identity, continuity, and birthday allocation plan | `v0.92` |
 | First true Gödel-agent birthday | Planned | `v0.92` identity, continuity, and birthday allocation plan plus Runtime v2 birthday boundary roadmap | `v0.92` |
 | Governance, delegation, IAM, social contract | Planned | `v0.93` constitutional citizenship and polis-governance allocation plan | `v0.93` |
-| Enterprise security for the ADL polis | Planned | `v0.93` enterprise-security feature plan covering zero trust, policy enforcement, keys/secrets, audit/compliance evidence, isolation/data governance, and security operations | `v0.93` |
 | Bounded contract-market and resource-stewardship bridge | Implemented baseline | `docs/milestones/v0.90.4` contract-market docs, proof coverage, and demo matrix | Complete bounded baseline for the economics slice actually planned in `v0.90.4` |
 | Distributed execution integration | Partially implemented | cluster groundwork plus planning docs | `v0.94` / `v0.95` |
 | Demo catalog and polished MVP walkthrough | Partially implemented | milestone demo matrices and reviewer packages | `v0.95` |
@@ -225,7 +224,7 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, agent lifecycle states, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, GHB-adjacent runtime evidence, and observatory-visible agent runtime proof. |
 | `v0.91.2` | Tooling/evaluation/productization/publication pressure release: UTS + ACC multi-model benchmark, provider-native tool-call comparison, runtime/test-cycle recovery, coverage ergonomics, CodeBuddy productization, Google Workspace CMS bridge, modernization demo, publication packets including GHB/general-intelligence source packets, rustdoc/doc cleanup, and workflow guardrails. |
 | `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
-| `v0.93` | Governance, delegation, IAM, social contract, policy/constitutional surfaces, rights/duties, enterprise security, zero trust, audit/compliance evidence, isolation/data governance, security operations, and accountable multi-agent society boundaries. |
+| `v0.93` | Governance, delegation, IAM, social contract, policy/constitutional surfaces, rights/duties, and accountable multi-agent society boundaries. |
 | `v0.94` | Distributed-substrate integration, cross-band convergence, and dependency closure if promoted into a full milestone package. |
 | `v0.95` | MVP convergence, polished demo catalog, coherent reviewer/customer walkthrough, control-plane/tooling hardening, feature freeze, and the 1.0 scope boundary. |
 
@@ -526,9 +525,6 @@ runtime lifecycle mechanics.
 - delegation
 - policy and constitutional surfaces
 - rights/duties and social contract surfaces
-- enterprise-security foundations:
-  zero-trust architecture, policy enforcement, secrets/key lifecycle,
-  audit/compliance evidence, isolation/data governance, and security operations
 
 ### Later Economics And Payment Substrate
 

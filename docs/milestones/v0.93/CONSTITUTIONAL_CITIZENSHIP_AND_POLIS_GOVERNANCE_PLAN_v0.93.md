@@ -25,9 +25,6 @@ The milestone should answer:
 - how constitutional review consumes trace evidence
 - how delegation and IAM work without turning humans, services, or tools into
   hidden sovereigns
-- how enterprise security works inside the polis as zero-trust, policy
-  enforcement, cryptographic trust, audit/compliance evidence, isolation/data
-  governance, and security operations
 - what reviewer-facing evidence proves that governance is trace-grounded rather
   than rhetorical
 
@@ -49,7 +46,7 @@ Direct out-of-band human action does not count as citizen action.
 | v0.90.5 | Governed tool calls, UTS, ACC, authority evaluation, capability contracts, and tool-call trace. | Tool schemas, tool execution semantics, or public tool conformance. |
 | v0.91 | Freedom Gate moral events, moral trace, validation rules, outcome linkage, metrics, trajectory review, anti-harm constraints, moral resources, and wellbeing evidence. | Moral trace schema, moral metrics, anti-harm proof, or moral-trajectory review foundations. |
 | v0.92 | Durable identity, names, capability envelopes, continuity, memory grounding, and the first true Gödel-agent birthday. | Identity architecture, birth event semantics, or continuity prerequisites. |
-| v0.93 | Constitutional citizenship, Theory of Mind, reputation boundary, shared social memory, polis governance, rights/duties, social contract, constitutional review, delegation/IAM policy, enterprise security, and reviewer-facing governance/security evidence. | Earlier substrate layers. |
+| v0.93 | Constitutional citizenship, Theory of Mind, reputation boundary, shared social memory, polis governance, rights/duties, social contract, constitutional review, delegation/IAM policy, and reviewer-facing governance evidence. | Earlier substrate layers. |
 
 ## Feature And Idea Allocation
 
@@ -63,12 +60,6 @@ Direct out-of-band human action does not count as citizen action.
 | Constitutional review | Primary feature | Review packet shape that consumes moral trace, outcome linkage, allowed ToM projections, reputation, standing evidence, identity records, and policy context. |
 | Challenge and appeal | Primary feature | Flow for challenging a governance finding, preserving evidence, and producing an appeal disposition. |
 | Delegation and IAM | Primary feature | Authority-chain model for citizen, guest, service actor, operator, and tool-mediated action. |
-| Enterprise security WP-S1: zero-trust architecture | Primary feature | Trust-boundary model, actor/zone definitions, default-deny fixtures, and unauthorized-boundary negative cases. |
-| Enterprise security WP-S2: policy enforcement and authorization | Primary feature | IAM/delegation/standing/tool-authority policy decision contract, least-privilege fixtures, and fail-closed tests. |
-| Enterprise security WP-S3: secrets, keys, and cryptographic trust | Primary feature | Key/secrets lifecycle contract covering custody, signing, encryption, rotation, revocation, sealed-state access, and internal ACIP encryption requirements. |
-| Enterprise security WP-S4: audit, compliance, and incident evidence | Primary feature | Tamper-evident audit schema, compliance-evidence packet, incident record, redacted reviewer report, and non-certification language. |
-| Enterprise security WP-S5: isolation, data governance, and privacy | Primary feature | Tenant/polis isolation, data classification, retention, deletion, projection, private-state privacy, and leakage negative cases. |
-| Enterprise security WP-S6: security operations, adversarial regression, and provenance | Primary feature | Security-ops runbook, threat-board hygiene, red/blue regression checks, supply-chain/provenance checks, runtime-hardening evidence, and incident-response drill. |
 | Social contract representation | Design feature | Draft representation of the polis obligations owed to and by citizens; should remain bounded and reviewable. |
 | Polis-level governance evidence | Proof feature | Review packet that summarizes governance health without exposing private state or collapsing into a scalar score. |
 | Human provider boundary | Design feature | Explicit rule that human input is allowed, but citizen action requires identity binding, Freedom Gate mediation, signed trace, and temporal anchoring. |
@@ -93,8 +84,6 @@ They are provenance labels, not public links.
 | Moral resources, wellbeing, anti-harm, and Freedom Gate schemas | v0.91 foundation | These stay in v0.91 as evidence and moral-cognition foundations. v0.93 consumes their outputs. |
 | Economics and contract-market corpus | Context or prerequisite only | Economics belongs to the v0.90.4 lane unless later planning deliberately promotes a narrow governance bridge. |
 | Governed tools corpus | Prerequisite for tool-mediated governance | v0.93 should consume UTS/ACC authority evidence if v0.90.5 lands first; it should not own the governed-tools substrate. |
-| Secure Agent Comms / ACIP corpus | Prerequisite for security-mediated communication | v0.93 should consume secure local comms and ACIP boundaries when defining internal encryption, key lifecycle, and zero-trust message acceptance. |
-| Adversarial runtime and red/blue corpus | Prerequisite for security operations | v0.93 should consume existing adversarial proof surfaces for regression, threat-board hygiene, and incident-response evidence. |
 | ToM source packet | Primary v0.93 social-cognition source | Supplies initial architecture, integration, and draft schema ideas. The tracked v0.93 feature plan supersedes stale late-roadmap targeting and adds standing, privacy, reputation, signed-trace, conflict, decay, and Runtime v2 boundaries. |
 
 ## Engineering, Policy, And Context Boundaries
@@ -104,7 +93,6 @@ They are provenance labels, not public links.
 | Engineering substrate | Consume signed trace, identity, standing, access-control, lineage, projection, and tool-authority records. | Rebuild the runtime substrate or bypass earlier milestone contracts. |
 | Social-cognition model | Define private ToM, public reputation projection, shared social memory, and challengeable evidence boundaries. | Treat private ToM as public standing, reputation, or constitutional judgment. |
 | Policy model | Define bounded constitutional citizenship, rights, duties, governance review, appeals, delegation, and IAM. | Claim production law, legal personhood, or a complete constitution for real-world deployment. |
-| Security model | Define zero-trust, authorization, key/secrets lifecycle, audit, incident, isolation, data governance, adversarial regression, provenance, and runtime hardening as reviewable polis controls. | Claim external certification, hide security in environment folklore, or bypass private-state and projection boundaries. |
 | Philosophical/contextual | Explain why trace-grounded law matters for a polis of agents. | Present speculative moral theory as implemented behavior. |
 
 ## Candidate Constitutional Review Packet
@@ -138,10 +126,6 @@ commitments.
 | Communication without inspection | Citizens can communicate through governed channels without granting private-state access. | Communication event fixture, redacted projection, failed inspection attempt. |
 | ToM and reputation boundary | Private ToM can inform review only through authorized, redacted, evidence-grounded projections. | Private model fixture, signed update event, reputation projection, redaction report, denied unauthorized inspection. |
 | Polis governance health packet | Reviewers can inspect governance health without scalar moral verdicts or private-state leaks. | Generated governance report with evidence references, caveats, and unresolved questions. |
-| Zero-trust denied action | No actor receives implicit trust across citizen, operator, service, tool, polis, communication, or data boundaries. | Deny-by-default fixture, policy decision, boundary record, and redacted explanation. |
-| Key rotation and revocation | Cryptographic trust changes are enforceable and auditable. | Key lifecycle fixture, accepted-before/denied-after cases, and audit record. |
-| Audit and incident evidence packet | Reviewers can inspect security evidence without leaking private state or claiming external certification. | Tamper-evident audit entries, incident record, redaction report, and reviewer packet. |
-| Isolation and data-governance leakage prevention | Cross-polis, cross-tenant, or cross-citizen leakage is blocked or redacted. | Isolation negative case, data-classification record, retention/projection decision, and denial proof. |
 
 ## Non-Goals
 
@@ -156,10 +140,6 @@ commitments.
 - No scalar karma score, reputation shortcut, or moral leaderboard.
 - No private ToM model treated as public reputation, standing, or final
   constitutional judgment.
-- No external enterprise certification or production compliance claim.
-- No hidden environment-only secrets, key, audit, isolation, or incident model.
-- No external or cross-polis communication before transport-security
-  prerequisites exist.
 
 ## Readiness For Later WP Planning
 
@@ -177,7 +157,5 @@ Recommended ordering pressure:
    authorized social-cognition projections.
 5. Add delegation and IAM governance only after tool/capability authority is
    stable enough to consume.
-6. Add the six enterprise-security WPs after identity, IAM, governed-tool, and
-   secure-comms prerequisites are explicit.
-7. Produce demo/proof packets that distinguish engineering substrate, policy
+6. Produce demo/proof packets that distinguish engineering substrate, policy
    model, and philosophical context.

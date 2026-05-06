@@ -30,9 +30,6 @@ that behavior.
   linkage, identity, and standing evidence.
 - Define delegation and IAM rules without giving services, operators, tools, or
   guests hidden sovereign authority.
-- Define enterprise-security foundations for zero-trust, policy enforcement,
-  key/secrets lifecycle, audit/compliance evidence, isolation/data governance,
-  and security operations.
 - Produce reviewer-facing proof candidates that separate engineering substrate,
   policy model, and contextual claims.
 
@@ -49,10 +46,6 @@ that behavior.
 - No scalar reputation, karma score, or moral leaderboard.
 - No private ToM model treated as public reputation, standing, or constitutional
   review outcome.
-- No claim of external enterprise certification or production compliance
-  approval.
-- No external or cross-polis communication without the required transport
-  security and authority prerequisites.
 
 ## Proposed Design
 
@@ -66,10 +59,6 @@ The layer has three parts:
   memory, uncertainty, conflict, decay, and redaction policy.
 - Policy model: constitutional citizenship, rights, duties, standing changes,
   review, appeal, delegation, IAM, and social-contract representation.
-- Security model: zero-trust boundaries, least-privilege policy enforcement,
-  cryptographic trust, secrets/key lifecycle, audit/compliance records,
-  isolation, data governance, incident response, provenance, and adversarial
-  regression.
 - Context layer: philosophical and civic vocabulary that explains why the polis
   needs law, without treating those explanations as implemented behavior.
 
@@ -138,30 +127,6 @@ Human input is allowed, but citizen action requires identity binding, Freedom
 Gate mediation, signed trace, and temporal anchoring. Direct out-of-band human
 action is operator or guest activity, not citizen conduct.
 
-### Enterprise Security Boundary
-
-Enterprise security in v0.93 should be implemented as polis governance, not as
-an afterthought around the edges of the runtime. The security model should make
-every actor, tool, service, citizen, operator, policy decision, key, secret,
-communication, data projection, and audit record part of the same reviewable
-authority surface.
-
-The six planned security WPs are:
-
-- Zero-trust architecture: no implicit trust across citizen, operator, service,
-  tool, polis, communication, or data boundaries.
-- Policy enforcement and authorization: IAM, delegation, standing, tool
-  authority, and capability checks fail closed.
-- Secrets, keys, and cryptographic trust: signing, encryption, key custody,
-  rotation, revocation, and sealed-state access are lifecycle-managed.
-- Audit, compliance, and incident evidence: review packets can prove what
-  happened without leaking private state or claiming external certification.
-- Isolation, data governance, and privacy: tenant/polis boundaries, retention,
-  deletion, projection, and redaction are explicit.
-- Security operations, adversarial regression, and provenance: red/blue tests,
-  supply-chain evidence, runtime hardening, threat-board hygiene, and incident
-  drills feed release review.
-
 ## Validation Plan
 
 Later implementation should validate:
@@ -174,15 +139,6 @@ Later implementation should validate:
 - delegated action is allowed or denied based on explicit authority chain
 - communication does not grant inspection
 - redacted projections do not leak private state
-- zero-trust boundaries deny unauthenticated, unauthorized, stale, or
-  overprivileged actions
-- key rotation and revocation change what signatures, messages, and sealed
-  state can be accepted
-- audit and incident packets are tamper-evident and redaction-safe
-- isolation and data-governance fixtures prevent cross-polis, cross-tenant, and
-  cross-citizen leakage
-- adversarial regression and provenance checks are present in the release
-  evidence
 - a ToM update requires evidence, confidence, signed trace, and authority
 - reputation projection does not expose the private ToM model
 - conflict and decay are explicit rather than silently overwritten
@@ -198,17 +154,11 @@ Later implementation should validate:
 | Privacy is collapsed by review. | Use redacted projections and evidence references instead of raw private-state access. |
 | ToM becomes hidden reputation. | Keep private ToM, public reputation, standing, and constitutional review separate, with authorized projections between them. |
 | Social cognition becomes prompt theater. | Require signed update events, model versions, evidence references, conflict handling, and decay semantics. |
-| Enterprise security becomes a checklist label. | Require each security WP to produce concrete enforcement, fixture, audit, incident, isolation, provenance, or adversarial-regression evidence. |
-| IAM and zero-trust drift apart. | Treat IAM as one enforcement layer inside the broader zero-trust trust-boundary model. |
-| Secrets and keys stay hidden in environment folklore. | Define lifecycle contracts for custody, rotation, revocation, signing, encryption, and sealed-state access. |
-| Compliance language overclaims certification. | Describe evidence packets and controls only; do not claim SOC 2, ISO 27001, FedRAMP, HIPAA, or external approval. |
 
 ## Exit Criteria For Final WP Planning
 
 - The constitutional citizenship contract is specific enough to implement.
 - The prerequisite surfaces from v0.90.3, v0.91, v0.92, and governed tools are
   named.
-- The six enterprise-security WPs are explicit enough to become issue cards
-  with proof surfaces.
 - Demo candidates prove bounded behavior, not just policy prose.
 - Non-goals prevent production-law and personhood overclaims.

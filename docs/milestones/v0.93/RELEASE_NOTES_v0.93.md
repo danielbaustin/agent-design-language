@@ -14,8 +14,7 @@ polis-governance milestone for ADL.
 If implemented as planned, it should add reviewable governance surfaces for
 citizenship, rights, duties, Theory of Mind, reputation boundary, shared social
 memory, standing, constitutional review, challenge, appeal, delegation, IAM, and
-privacy-preserving reviewer evidence, plus the first explicit enterprise-
-security tranche for zero-trust polis operation.
+privacy-preserving reviewer evidence.
 
 ## Planned Highlights
 
@@ -28,9 +27,6 @@ security tranche for zero-trust polis operation.
 - Constitutional review packets over trace and outcome evidence.
 - Challenge and appeal flow.
 - Delegation and IAM authority-chain proof.
-- Enterprise-security proof surfaces for zero trust, policy enforcement,
-  secrets/key lifecycle, audit/compliance evidence, isolation/data governance,
-  and security operations.
 - Governance demos that show behavior and evidence, not just policy prose.
 
 ## Required Closeout Rewrite
@@ -47,9 +43,6 @@ The final notes must not claim:
 - raw private-state inspection
 - raw private-ToM inspection or public reputation derived from private ToM
   without authority and redaction
-- external enterprise certification or production compliance approval
-- production cross-polis networking before transport-security prerequisites
-  exist
 - economics, payments, or markets unless explicitly implemented
 
 ## Known Planning Boundaries
@@ -60,8 +53,5 @@ The final notes must not claim:
   on durable identity.
 - v0.93 may consume governed-tool authority surfaces if they have landed before
   implementation.
-- v0.93 security work depends on v0.90.5 governed tools, v0.91 secure Agent
-  Comms, v0.92 identity/capability envelopes, and v0.89.1 adversarial-runtime
-  evidence.
 - v0.93 must keep private ToM, public reputation, standing, and constitutional
   review distinct.

@@ -9,8 +9,7 @@ v0.93 implementation WPs exist.
 
 The v0.93 demo program should prove that constitutional citizenship, bounded
 social cognition, and polis governance are evidence-bearing runtime behavior,
-not rhetoric. It should also prove that enterprise-security controls are
-reviewable behavior rather than perimeter language.
+not rhetoric.
 
 ## Candidate Coverage Summary
 
@@ -24,10 +23,6 @@ reviewable behavior rather than perimeter language.
 | D6 | ToM and reputation boundary | Private ToM can inform later cognition only through authorized, redacted, evidence-grounded projections; reputation is not the private model. | Private model fixture, signed update event, reputation projection, redaction report, denied unauthorized inspection. | Planned candidate |
 | D7 | Conflict and decay in shared social memory | Stale or contradictory social cognition is marked, downgraded, and reviewable rather than silently overwritten. | Conflict fixture, decay event, social-memory projection, arbitration impact note. | Planned candidate |
 | D8 | Polis governance health packet | Reviewers can inspect governance health without scalar moral verdicts, private ToM leakage, or raw private-state exposure. | Governance report with evidence references, caveats, and redactions. | Planned candidate |
-| D9 | Zero-trust denied action | A citizen, service, tool, or operator action crossing a trust boundary is denied without identity, standing, capability, and policy authority. | Deny-by-default fixture with policy decision, boundary record, and redacted explanation. | Planned candidate |
-| D10 | Key rotation and revocation | Cryptographic trust changes when a key is rotated or revoked, and stale signatures/messages/sealed-state access fail. | Key lifecycle fixture, accepted-before/denied-after cases, and audit record. | Planned candidate |
-| D11 | Audit and incident evidence packet | Security review can inspect what happened without leaking private state or claiming external certification. | Tamper-evident audit entries, incident record, redaction report, and reviewer packet. | Planned candidate |
-| D12 | Isolation and data-governance leakage prevention | Cross-polis, cross-tenant, or cross-citizen data access is blocked or redacted according to classification and retention policy. | Isolation negative case, data-classification record, retention/projection decision, and denial proof. | Planned candidate |
 
 ## Demo Rules
 
@@ -37,8 +32,6 @@ reviewable behavior rather than perimeter language.
 - Every private-state boundary must have a redaction or denial proof.
 - Every private-ToM boundary must have a redaction or denial proof.
 - Every denial must explain authority and policy without leaking protected data.
-- Every security demo must cite the trust boundary, policy decision, key or
-  secret lifecycle state where relevant, audit evidence, and redaction outcome.
 - Demo outputs should distinguish engineering evidence from policy
   interpretation.
 
@@ -146,55 +139,6 @@ Expected proof:
 - redaction report
 - caveats and unresolved risks
 
-### D9) Zero-Trust Denied Action
-
-The demo should show that no actor receives implicit trust merely because it is
-inside the polis.
-
-Expected proof:
-
-- actor identity and standing
-- requested boundary crossing
-- required capability, IAM, delegation, or tool authority
-- deny-by-default decision
-- redacted explanation that does not leak protected state
-
-### D10) Key Rotation And Revocation
-
-The demo should show that cryptographic trust is lifecycle-managed.
-
-Expected proof:
-
-- initial accepted signed or encrypted action
-- key rotation or revocation record
-- stale signature, message, or sealed-state access denied after revocation
-- audit record connecting the trust change to the denial
-
-### D11) Audit And Incident Evidence Packet
-
-The demo should generate a security review packet for a synthetic incident.
-
-Expected proof:
-
-- tamper-evident audit entries
-- incident scope and actor boundary
-- policy, key, isolation, or provenance evidence
-- redaction report
-- explicit non-certification language
-
-### D12) Isolation And Data-Governance Leakage Prevention
-
-The demo should show a blocked or redacted data access across a protected
-boundary.
-
-Expected proof:
-
-- data classification
-- tenant/polis/citizen boundary
-- retention, deletion, or projection rule
-- denied or redacted access result
-- leakage-prevention assertion
-
 ## Non-Claims
 
 - These demos do not prove production citizenship.
@@ -204,5 +148,3 @@ Expected proof:
 - These demos do not expose raw private ToM.
 - These demos do not make reputation, standing, or constitutional judgment from
   private ToM without authority and redaction.
-- These demos do not prove external enterprise certification or production
-  compliance approval.
