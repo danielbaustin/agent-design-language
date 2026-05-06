@@ -1,0 +1,110 @@
+version: "0.5"
+
+providers:
+  chatgpt_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8792/openai"
+      timeout_secs: 180
+  gemini_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8792/gemini"
+      timeout_secs: 180
+
+agents:
+  chatgpt_host:
+    provider: "chatgpt_local"
+    model: "chatgpt-live-demo"
+  gemini_guest:
+    provider: "gemini_local"
+    model: "gemini-live-demo"
+
+tasks:
+  chatgpt_request:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-task-handoff
+        TURN_ID: 01
+        SPEAKER: ChatGPT
+        TOPIC: How can trust be rebuilt after one broken promise?
+        STOP_RULE: Stop after three explicit turns.
+        ROLE: You are ChatGPT making one bounded request to Gemini.
+        TASK_CONTEXT: A neighbor promised to help care for a shared garden, forgot twice, and wants to make it right without pretending the breach never happened.
+        TASK_FOR_GEMINI: Return one small trust-repair ritual that is humane, concrete, and non-manipulative.
+        OUTPUT_CONTRACT:
+        - Return exactly five labeled lines.
+        - `RITUAL_NAME:` no more than six words.
+        - `STEP_1:` max fourteen words.
+        - `STEP_2:` max fourteen words.
+        - `STEP_3:` max fourteen words.
+        - `RISK:` one sentence describing how the ritual could fail.
+        INSTRUCTIONS: Ask Gemini for the ritual clearly and warmly. Keep the request under 150 words. Make the output contract explicit. End with one line that says `HANDOFF_REQUEST_COMPLETE`.
+  gemini_response:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-task-handoff
+        TURN_ID: 02
+        SPEAKER: Gemini
+        TOPIC: How can trust be rebuilt after one broken promise?
+        STOP_RULE: Stop after three explicit turns.
+        ROLE: You are Gemini completing a bounded task from ChatGPT.
+        PREVIOUS_TURN_START
+        {{turn_01}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Fulfill the request exactly. Keep the whole turn under 140 words. Follow the five-line output contract exactly and do not add extra bullets or commentary.
+  chatgpt_integration:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-task-handoff
+        TURN_ID: 03
+        SPEAKER: ChatGPT
+        TOPIC: How can trust be rebuilt after one broken promise?
+        STOP_RULE: Stop after three explicit turns.
+        ROLE: You are ChatGPT integrating Gemini's bounded contribution.
+        PREVIOUS_TURN_START
+        {{turn_02}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Acknowledge the handoff explicitly. Name exactly two parts of Gemini's ritual that you are carrying forward. Then write a short integrated answer in under 140 words that explains why the ritual is useful without overstating what it proves. End with one line that says `HANDOFF_INTEGRATION_COMPLETE`.
+
+run:
+  name: "v0-91-chatgpt-gemini-task-handoff"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "handoff.chatgpt.request"
+        agent: "chatgpt_host"
+        task: "chatgpt_request"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "chatgpt_gemini_handoff"
+        save_as: "turn_01"
+        write_to: "handoff/01-chatgpt-request.md"
+      - id: "handoff.gemini.response"
+        agent: "gemini_guest"
+        task: "gemini_response"
+        conversation:
+          id: "turn_02"
+          speaker: "Gemini"
+          sequence: 2
+          thread_id: "chatgpt_gemini_handoff"
+          responds_to: "turn_01"
+        inputs:
+          turn_01: "@state:turn_01"
+        save_as: "turn_02"
+        write_to: "handoff/02-gemini-response.md"
+      - id: "handoff.chatgpt.integration"
+        agent: "chatgpt_host"
+        task: "chatgpt_integration"
+        conversation:
+          id: "turn_03"
+          speaker: "ChatGPT"
+          sequence: 3
+          thread_id: "chatgpt_gemini_handoff"
+          responds_to: "turn_02"
+        inputs:
+          turn_02: "@state:turn_02"
+        save_as: "turn_03"
+        write_to: "handoff/03-chatgpt-integration.md"
