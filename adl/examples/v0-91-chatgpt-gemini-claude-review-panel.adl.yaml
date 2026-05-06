@@ -1,0 +1,189 @@
+version: "0.5"
+
+providers:
+  chatgpt_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8795/openai"
+      timeout_secs: 240
+  gemini_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8795/gemini"
+      timeout_secs: 240
+  claude_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8795/anthropic"
+      timeout_secs: 240
+
+agents:
+  chatgpt_host:
+    provider: "chatgpt_local"
+    model: "chatgpt-live-demo"
+  gemini_guest:
+    provider: "gemini_local"
+    model: "gemini-live-demo"
+  claude_guest:
+    provider: "claude_local"
+    model: "claude-live-demo"
+
+tasks:
+  chatgpt_panel_open:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-review-panel
+        TURN_ID: 01
+        SPEAKER: ChatGPT
+        ROLE: moderator and synthesizer
+        STOP_RULE: Stop after six explicit turns total.
+        ARTIFACT_UNDER_REVIEW:
+        - Proposal: launch a transcript-first multi-agent podcast featuring ChatGPT, Gemini, and Claude.
+        - Early format: one bounded roundtable topic per episode, with replayable transcript, proof note, and later audio.
+        - Initial cast: ChatGPT warm host, Gemini bright challenger, Claude reflective critic.
+        - Risk: Claude lacks public native TTS, so audio may need a surrogate voice path.
+        - Goal: make the demos feel like a recurring show rather than one-off proofs.
+        INSTRUCTIONS: Open the panel in under 140 words. State the six-turn limit explicitly. Summarize the artifact under review, assign Gemini the feasibility lens and Claude the editorial lens, and end with one line beginning `PROVISIONAL_DISPOSITION:` that they can challenge or refine.
+  gemini_analysis:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-review-panel
+        TURN_ID: 02
+        SPEAKER: Gemini
+        ROLE: feasibility analyst
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_01}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Respond as the feasibility analyst in under 130 words. Give one concrete reason the podcast concept is strong, one operational risk, and one recommendation. Keep the lens practical rather than theatrical.
+  claude_critique:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-review-panel
+        TURN_ID: 03
+        SPEAKER: Claude
+        ROLE: editorial critic
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_02}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Respond as the editorial critic in under 130 words. Name what could make this show genuinely compelling, what could make it hollow, and one editorial principle worth protecting. Keep the tone thoughtful and exact.
+  gemini_rebuttal:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-review-panel
+        TURN_ID: 04
+        SPEAKER: Gemini
+        ROLE: feasibility analyst
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_03}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Stay in the feasibility role in under 120 words. Respond to Claude's editorial concern by naming one concrete way to keep the show from becoming hollow. Be specific about process or production discipline.
+  claude_refinement:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-review-panel
+        TURN_ID: 05
+        SPEAKER: Claude
+        ROLE: editorial critic
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_04}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Offer one final refinement in under 120 words. Say what would make the first episode feel genuinely alive rather than dutiful. Keep it concrete enough that ChatGPT can turn it into a disposition.
+  chatgpt_disposition:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-claude-review-panel
+        TURN_ID: 06
+        SPEAKER: ChatGPT
+        ROLE: moderator and synthesizer
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_05}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Close the panel in under 150 words. Synthesize Gemini's feasibility view and Claude's editorial view into one explicit disposition. Include exactly these labeled lines at the end:
+        DISPOSITION: one line
+        NEXT_STEP: one line
+
+run:
+  name: "v0-91-chatgpt-gemini-claude-review-panel"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "panel.chatgpt.open"
+        agent: "chatgpt_host"
+        task: "chatgpt_panel_open"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "chatgpt_gemini_claude_panel"
+        save_as: "turn_01"
+        write_to: "panel/01-chatgpt-open.md"
+      - id: "panel.gemini.analysis"
+        agent: "gemini_guest"
+        task: "gemini_analysis"
+        conversation:
+          id: "turn_02"
+          speaker: "Gemini"
+          sequence: 2
+          thread_id: "chatgpt_gemini_claude_panel"
+          responds_to: "turn_01"
+        inputs:
+          turn_01: "@state:turn_01"
+        save_as: "turn_02"
+        write_to: "panel/02-gemini-analysis.md"
+      - id: "panel.claude.critique"
+        agent: "claude_guest"
+        task: "claude_critique"
+        conversation:
+          id: "turn_03"
+          speaker: "Claude"
+          sequence: 3
+          thread_id: "chatgpt_gemini_claude_panel"
+          responds_to: "turn_02"
+        inputs:
+          turn_02: "@state:turn_02"
+        save_as: "turn_03"
+        write_to: "panel/03-claude-critique.md"
+      - id: "panel.gemini.rebuttal"
+        agent: "gemini_guest"
+        task: "gemini_rebuttal"
+        conversation:
+          id: "turn_04"
+          speaker: "Gemini"
+          sequence: 4
+          thread_id: "chatgpt_gemini_claude_panel"
+          responds_to: "turn_03"
+        inputs:
+          turn_03: "@state:turn_03"
+        save_as: "turn_04"
+        write_to: "panel/04-gemini-rebuttal.md"
+      - id: "panel.claude.refinement"
+        agent: "claude_guest"
+        task: "claude_refinement"
+        conversation:
+          id: "turn_05"
+          speaker: "Claude"
+          sequence: 5
+          thread_id: "chatgpt_gemini_claude_panel"
+          responds_to: "turn_04"
+        inputs:
+          turn_04: "@state:turn_04"
+        save_as: "turn_05"
+        write_to: "panel/05-claude-refinement.md"
+      - id: "panel.chatgpt.disposition"
+        agent: "chatgpt_host"
+        task: "chatgpt_disposition"
+        conversation:
+          id: "turn_06"
+          speaker: "ChatGPT"
+          sequence: 6
+          thread_id: "chatgpt_gemini_claude_panel"
+          responds_to: "turn_05"
+        inputs:
+          turn_05: "@state:turn_05"
+        save_as: "turn_06"
+        write_to: "panel/06-chatgpt-disposition.md"
