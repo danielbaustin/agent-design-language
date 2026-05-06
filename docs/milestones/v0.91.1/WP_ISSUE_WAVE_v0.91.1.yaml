@@ -1,0 +1,169 @@
+milestone: v0.91.1
+status: candidate_issue_wave
+issue_wave_opened: false
+owner_issue: null
+planning_source: docs/milestones/v0.91.1
+tracked_package: docs/milestones/v0.91.1
+notes:
+- v0.91.1 is the inhabited-runtime readiness milestone between v0.91 moral
+  governance and v0.92 identity/birthday work.
+- The hard exit criterion is an observatory-visible agent-shaped runtime proof
+  inside the CSM/polis boundary.
+- ACIP/A2A work remains local, authenticated, traceable, redacted, and
+  external-TLS-gated.
+- v0.92 owns the first true birthday; v0.91.1 prepares evidence but must not
+  claim birth.
+card_update_rule:
+- When opened, every WP must receive STP, SIP, SOR, and SPP cards from the
+  accepted readiness section.
+- Cards must name source docs, concrete outputs, validation commands, non-goals,
+  demo/proof expectations, and review dependencies.
+closeout_sequence:
+- WP-15 Observatory-visible agent flagship demo
+- WP-16 Demo matrix and proof coverage
+- WP-17 Coverage / quality gate
+- WP-18 Docs + review pass
+- WP-19 Internal review
+- WP-20 External / 3rd-party review
+- WP-21 Review findings remediation
+- WP-22 v0.92 birthday readiness handoff
+- WP-23 Release ceremony
+work_packages:
+- wp: WP-01
+  issue: null
+  title: Design pass (milestone docs + planning)
+  queue: docs
+  outcome: tracked docs, reviewed YAML, and issue cards
+  depends_on: v0.91 closeout
+- wp: WP-02
+  issue: null
+  title: Runtime and polis architecture alignment
+  queue: docs
+  outcome: runtime/polis architecture package
+  depends_on: WP-01
+- wp: WP-03
+  issue: null
+  title: CSM observatory active surface
+  queue: runtime
+  outcome: active packet and projection surface
+  depends_on: WP-02
+- wp: WP-04
+  issue: null
+  title: Citizen standing model
+  queue: runtime
+  outcome: standing contract and fixtures
+  depends_on: WP-02
+- wp: WP-05
+  issue: null
+  title: Citizen state substrate
+  queue: runtime
+  outcome: state format, security, and projection slice
+  depends_on: WP-04
+- wp: WP-06
+  issue: null
+  title: Memory and identity architecture
+  queue: runtime
+  outcome: memory/identity architecture and fixtures
+  depends_on: WP-05
+- wp: WP-07
+  issue: null
+  title: Theory of Mind foundation
+  queue: runtime
+  outcome: ToM schemas, update events, and tests
+  depends_on: WP-05, WP-06
+- wp: WP-08
+  issue: null
+  title: Capability and aptitude testing foundation
+  queue: tools
+  outcome: first executable capability harness and report
+  depends_on: WP-02, WP-05
+- wp: WP-09
+  issue: null
+  title: Intelligence metric architecture
+  queue: runtime
+  outcome: evidence-bound metric architecture
+  depends_on: WP-08
+- wp: WP-10
+  issue: null
+  title: Governed learning substrate
+  queue: runtime
+  outcome: learning update and feedback contract
+  depends_on: WP-06, WP-08, WP-09
+- wp: WP-11
+  issue: null
+  title: ANRM/Gemma placement and trace dataset
+  queue: tools
+  outcome: ANRM placement, trace extractor, dataset mapping
+  depends_on: WP-08-WP-10
+- wp: WP-12
+  issue: null
+  title: ACIP conformance and local encryption hardening
+  queue: runtime
+  outcome: secure local comms envelope and conformance fixtures
+  depends_on: WP-02, WP-05
+- wp: WP-13
+  issue: null
+  title: A2A adapter boundary and compatibility plan
+  queue: runtime
+  outcome: A2A-over-ACIP adapter slice and non-claims
+  depends_on: WP-12
+- wp: WP-14
+  issue: null
+  title: Runtime inhabitant integration
+  queue: runtime
+  outcome: integrated agent-shaped run surface
+  depends_on: WP-03-WP-13
+- wp: WP-15
+  issue: null
+  title: Observatory-visible agent flagship demo
+  queue: demo
+  outcome: runnable CSM inhabitant proof demo
+  depends_on: WP-14
+- wp: WP-16
+  issue: null
+  title: Demo matrix and proof coverage
+  queue: demo
+  outcome: demo matrix and proof coverage record
+  depends_on: WP-15
+- wp: WP-17
+  issue: null
+  title: Coverage / quality gate
+  queue: quality
+  outcome: validation posture and test/coverage record
+  depends_on: WP-16
+- wp: WP-18
+  issue: null
+  title: Docs + review pass
+  queue: docs
+  outcome: review-ready docs package
+  depends_on: WP-17
+- wp: WP-19
+  issue: null
+  title: Internal review
+  queue: review
+  outcome: internal review record
+  depends_on: WP-18
+- wp: WP-20
+  issue: null
+  title: External / 3rd-party review
+  queue: review
+  outcome: external review handoff and record
+  depends_on: WP-19
+- wp: WP-21
+  issue: null
+  title: Review findings remediation
+  queue: review
+  outcome: remediation record and follow-up issues
+  depends_on: WP-20
+- wp: WP-22
+  issue: null
+  title: v0.92 birthday readiness handoff
+  queue: docs
+  outcome: identity/birthday handoff record
+  depends_on: WP-21
+- wp: WP-23
+  issue: null
+  title: Release ceremony
+  queue: release
+  outcome: release evidence and end-of-milestone report
+  depends_on: WP-22

@@ -87,7 +87,7 @@ Sprint notes:
 | WP-21 (#2755) | Internal review | internal review record | WP-20 (#2754) |
 | WP-22 (#2756) | External / 3rd-party review | external review handoff and record | WP-21 (#2755) |
 | WP-23 (#2757) | Review findings remediation | remediation record and follow-up issues | WP-22 (#2756) |
-| WP-24 (#2758) | Next milestone planning | v0.91.1/v0.92/v0.93 handoff record | WP-23 (#2757) |
+| WP-24 (#2758) | Next milestone planning | v0.91.1/v0.91.2/v0.92/v0.93 handoff record | WP-23 (#2757) |
 | WP-25 (#2759) | Release ceremony | release evidence, end-of-milestone report, and next handoff | WP-24 (#2758) |
 
 Goal: close the milestone with truthful review, release, and handoff evidence.
@@ -98,7 +98,11 @@ Sprint notes:
   review, remediation, next planning, then release ceremony.
 - WP-24 should leave v0.91.1 ready for capability/aptitude testing,
   intelligence metric architecture, ANRM/Gemma, ToM, memory/identity,
-  runtime-v2/polis docs, and ACIP hardening.
+  runtime-v2/polis docs, ACIP hardening, A2A adapter boundaries, and an
+  observatory-visible inhabitant runtime proof.
+- WP-24 should leave v0.91.2 ready for UTS + ACC multi-model benchmarking,
+  runtime/test-cycle recovery, CodeBuddy, Google Workspace CMS, modernization,
+  publication, rustdoc/doc cleanup, and workflow guardrails.
 - WP-24 should also keep v0.92 birthday work and v0.93 constitutional
   governance downstream instead of pulling them into v0.91.
 

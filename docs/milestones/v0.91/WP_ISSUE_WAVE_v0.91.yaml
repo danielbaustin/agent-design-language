@@ -17,6 +17,9 @@ notes:
 - v0.91.1 remains the adjacent-systems lane for capability testing, intelligence architecture,
   ANRM/Gemma, ToM, memory/identity alignment, runtime-v2/polis docs, ACIP hardening,
   and the full model comparison report.
+- v0.91.2 is the pressure-release lane for UTS + ACC benchmarking, runtime/test-cycle
+  recovery, CodeBuddy, Google Workspace CMS, code modernization, publication packets,
+  rustdoc/doc cleanup, and workflow guardrails.
 card_update_rule:
 - WP-01 should keep each opened issue body and local issue-card bundle aligned
   with the relevant section from the reviewed v0.91 readiness sources.
@@ -177,7 +180,7 @@ work_packages:
   issue: 2758
   title: Next milestone planning
   queue: docs
-  outcome: v0.91.1/v0.92/v0.93 handoff record and adjacent-systems placement
+  outcome: v0.91.1/v0.91.2/v0.92/v0.93 handoff record and adjacent-systems placement
   depends_on: WP-23
 - wp: WP-25
   issue: 2759
