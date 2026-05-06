@@ -18,6 +18,8 @@ issues are opened.
 - Preserve private state and private diagnostic boundaries in observatory and
   review artifacts.
 - Keep A2A as an adapter over ACIP, never a parallel communication substrate.
+- Lifecycle state must be checked before ACIP receipt, wake, invocation,
+  execution, simulation, migration, or Observatory projection.
 
 ## WP-01: Design Pass
 
@@ -46,7 +48,29 @@ Required validation:
 - Architecture claims cite repo evidence or are marked as planned.
 - No absolute host paths or stale v0.90.x claims leak into tracked docs.
 
-## WP-03: CSM Observatory Active Surface
+## WP-03: Agent Lifecycle State Model
+
+Required outputs:
+
+- Runtime lifecycle state contract covering `ACTIVE`, `QUIESCENT`,
+  `SUSPENDED`, `DORMANT`, `SIMULATION`, `IN_TRANSIT`, `BOOTSTRAP`, `SHUTDOWN`,
+  `FORCED_SUSPENSION`, `QUARANTINED`, `REJECTED`, and `ORPHANED`.
+- Transition matrix for normal, denied, failure, quarantine, rejection, and
+  orphaned paths.
+- Per-state capability flags for Freedom Gate, AEE, memory, chronosense, ACIP
+  receipt, ACIP invocation, and Observatory visibility.
+- Fixtures proving simulation has no external action, dormant preserves
+  continuity without active cognition, in-transit cannot exercise agency, and
+  forced suspension is a failure mode.
+
+Required validation:
+
+- ACIP messages are received, queued, rejected, or limited by state; invocation
+  is impossible without an allowed active agency path.
+- No state allows ACIP to bypass Freedom Gate, ACC, trace, or lifecycle checks.
+- Chronosense and trace events record transition evidence and failure reasons.
+
+## WP-04: CSM Observatory Active Surface
 
 Required outputs:
 
@@ -59,7 +83,7 @@ Required validation:
 - Private fields remain hidden from public/reviewer views.
 - Projection output is deterministic for identical input.
 
-## WP-04: Citizen Standing Model
+## WP-05: Citizen Standing Model
 
 Required outputs:
 
@@ -73,7 +97,7 @@ Required validation:
 - Naked actors cannot gain authority by omission.
 - Standing changes preserve traceable authority and review evidence.
 
-## WP-05: Citizen State Substrate
+## WP-06: Citizen State Substrate
 
 Required outputs:
 
@@ -86,7 +110,7 @@ Required validation:
 - State validation fails closed for malformed or unsafe records.
 - Projection never exposes private state without policy permission.
 
-## WP-06: Memory And Identity Architecture
+## WP-07: Memory And Identity Architecture
 
 Required outputs:
 
@@ -99,7 +123,7 @@ Required validation:
 - Architecture does not claim full identity continuity.
 - Memory references are traceable and reviewable.
 
-## WP-07: Theory Of Mind Foundation
+## WP-08: Theory Of Mind Foundation
 
 Required outputs:
 
@@ -112,7 +136,7 @@ Required validation:
 - ToM records preserve uncertainty and do not claim mind-reading.
 - Updates cite observable evidence or policy-authorized state.
 
-## WP-08: Capability And Aptitude Testing Foundation
+## WP-09: Capability And Aptitude Testing Foundation
 
 Required outputs:
 
@@ -125,7 +149,7 @@ Required validation:
 - Results distinguish capability evidence from ranking or reputation.
 - Harness output is deterministic in fixture mode.
 
-## WP-09: Intelligence Metric Architecture
+## WP-10: Intelligence Metric Architecture
 
 Required outputs:
 
@@ -138,7 +162,7 @@ Required validation:
 - Metrics derive from explicit traces or test artifacts.
 - Output avoids punitive productivity or reputation framing.
 
-## WP-10: Governed Learning Substrate
+## WP-11: Governed Learning Substrate
 
 Required outputs:
 
@@ -151,7 +175,7 @@ Required validation:
 - Hidden self-modification is rejected.
 - Learning updates preserve evidence and rollback references.
 
-## WP-11: ANRM/Gemma Placement And Trace Dataset
+## WP-12: ANRM/Gemma Placement And Trace Dataset
 
 Required outputs:
 
@@ -164,7 +188,7 @@ Required validation:
 - Dataset generation is deterministic in fixture mode.
 - Docs do not claim training or benchmark success before evidence exists.
 
-## WP-12: ACIP Conformance And Local Encryption Hardening
+## WP-13: ACIP Conformance And Local Encryption Hardening
 
 Required outputs:
 
@@ -172,13 +196,18 @@ Required outputs:
 - Encryption/authentication/redaction design for intra-polis comms.
 - Rejection cases for malformed, unsigned, unauthorized, or overexposed
   messages.
+- State-specific receipt and invocation cases for active, quiescent,
+  suspended, dormant, simulation, in-transit, bootstrap, shutdown, forced
+  suspension, quarantine, rejected, and orphaned agents.
 
 Required validation:
 
 - Messages are authenticated, traceable, redacted, and policy-bound.
+- Lifecycle state determines whether a message may be processed, queued,
+  rejected, limited to custody/recovery, or used as an authorized wake trigger.
 - External transport remains explicitly out of scope without TLS.
 
-## WP-13: A2A Adapter Boundary And Compatibility Plan
+## WP-14: A2A Adapter Boundary And Compatibility Plan
 
 Required outputs:
 
@@ -191,12 +220,12 @@ Required validation:
 - Adapter cannot bypass ACIP or ACC authority.
 - Compatibility docs do not create a second communication model.
 
-## WP-14: Runtime Inhabitant Integration
+## WP-15: Runtime Inhabitant Integration
 
 Required outputs:
 
-- Integrated agent-shaped runtime path using standing, state, memory, comms,
-  observatory, and trace evidence.
+- Integrated agent-shaped runtime path using standing, state, lifecycle,
+  memory, comms, observatory, and trace evidence.
 - Deterministic fixture run and operator report.
 
 Required validation:
@@ -204,13 +233,13 @@ Required validation:
 - Integration proves runtime execution shape, not birthday or autonomy.
 - Artifacts are repo-relative and reviewable.
 
-## WP-15: Observatory-Visible Agent Flagship Demo
+## WP-16: Observatory-Visible Agent Flagship Demo
 
 Required outputs:
 
 - Runnable demo showing an agent-shaped CSM run.
-- Runtime state, communication, trace, observatory projection, and redaction
-  artifacts.
+- Runtime lifecycle state, communication, trace, observatory projection, and
+  redaction artifacts.
 - Operator-facing proof report.
 
 Required validation:
@@ -218,7 +247,7 @@ Required validation:
 - Demo can be rerun deterministically in fixture mode.
 - Report states proof claims and non-claims.
 
-## WP-16 Through WP-23: Release Tail
+## WP-17 Through WP-24: Release Tail
 
 Required outputs:
 

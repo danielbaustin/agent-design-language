@@ -20,9 +20,9 @@ communication, demo, and review story.
 - Kindness, humor/absurdity, affect, cultivated-intelligence, and moral-resource
   contracts, fixtures, and proof surfaces.
 - Secure intra-polis Agent Comms proof, with any v0.91.1 hardening separated.
-- v0.91.1 adjacent-systems implementation plan for capability/aptitude testing,
-  intelligence metric architecture, ANRM/Gemma, ToM, memory/identity, and
-  runtime-v2/polis docs.
+- v0.91.1 adjacent-systems implementation plan for runtime-v2/polis docs,
+  agent lifecycle states, ACIP state eligibility, capability/aptitude testing,
+  intelligence metric architecture, ANRM/Gemma, ToM, and memory/identity.
 - Demo matrix and feature proof coverage record.
 - Internal and third-party review notes.
 - Accepted-finding disposition record.
@@ -54,8 +54,8 @@ The closeout should hand off:
 
 - moral trace evidence needed by v0.92 birthday review
 - wellbeing and moral trajectory evidence needed by v0.93 governance
-- v0.91.1 adjacent-systems plan for capability/aptitude testing, intelligence
-  metric architecture, ANRM/Gemma, ToM, memory/identity, runtime-v2/polis docs,
-  and any ACIP hardening
+- v0.91.1 adjacent-systems plan for runtime-v2/polis docs, agent lifecycle
+  states, ACIP state eligibility, capability/aptitude testing, intelligence
+  metric architecture, ANRM/Gemma, ToM, memory/identity, and any ACIP hardening
 - secure communication evidence needed by v0.92 identity and birthday review
 - any anti-harm or redaction findings that need later follow-up

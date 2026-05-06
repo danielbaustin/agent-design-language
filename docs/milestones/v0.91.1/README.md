@@ -10,9 +10,9 @@ cards after v0.91 closes and the operator accepts the final scope.
 
 v0.91.1 is the adjacent-systems implementation milestone that makes the CSM
 ready for inhabited runtime work before the v0.92 identity and birthday band.
-It turns the remaining Runtime v2, polis, observatory, communication,
-capability, intelligence, memory, learning, Theory of Mind, and ANRM/Gemma
-source packets into concrete implementation work.
+It turns the remaining Runtime v2, polis, lifecycle-state, observatory,
+communication, capability, intelligence, memory, learning, Theory of Mind, and
+ANRM/Gemma source packets into concrete implementation work.
 
 The milestone should end with an observatory-visible agent runtime proof
 surface: agents should be able to run inside the CSM/polis boundary with
@@ -25,6 +25,9 @@ but it must give v0.92 enough real runtime evidence to build on.
 v0.91.1 should establish:
 
 - CSM/polis runtime documentation aligned with the current Runtime v2 substrate.
+- Agent lifecycle states that distinguish active, quiescent, suspended,
+  dormant, simulation, in-transit, bootstrap, shutdown, and forced-suspension
+  regimes.
 - Citizen standing and citizen state as concrete runtime-facing contracts.
 - Memory and identity architecture strong enough to feed v0.92 without claiming
   full identity continuity yet.
@@ -40,6 +43,8 @@ v0.91.1 should establish:
   evidence work.
 - ACIP/A2A hardening needed for secure intra-polis communication before
   external transport work expands.
+- ACIP reception and invocation rules for each lifecycle state so messages
+  cannot wake, invoke, or commit an agent outside policy.
 - Observatory-visible agent runtime proof that is concrete enough for human
   review.
 
@@ -61,6 +66,7 @@ v0.91.1 should not claim:
 This package is grounded in the local TBD planning corpus:
 
 - `.adl/docs/TBD/v0.91_1_runtime_observatory_dependency_note.md`
+- `.adl/docs/TBD/ADL_AND_SLEEP.md`
 - `.adl/docs/TBD/runtime_v2/`
 - `.adl/docs/TBD/csm_observatory/`
 - `.adl/docs/TBD/citizen_state/`
@@ -87,10 +93,10 @@ This package is grounded in the local TBD planning corpus:
 
 ## Success Criteria
 
-v0.91.1 is ready to close when the runtime, standing, state, memory, ToM,
-capability, intelligence, learning, ANRM/Gemma, ACIP/A2A, and observatory work
-have landed as implemented, validated, reviewable surfaces rather than
-planning-only notes.
+v0.91.1 is ready to close when the runtime, lifecycle-state, standing, state,
+memory, ToM, capability, intelligence, learning, ANRM/Gemma, ACIP/A2A, and
+observatory work have landed as implemented, validated, reviewable surfaces
+rather than planning-only notes.
 
 The strongest closeout proof should be a real agent-shaped run inside the CSM
 boundary with observatory-visible evidence, secure local communication, runtime
