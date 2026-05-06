@@ -367,7 +367,7 @@ fn validate_reviewability(record: &MoralTraceRecord) -> Result<()> {
     Ok(())
 }
 
-fn canonicalize_moral_trace_record(record: &mut MoralTraceRecord) {
+pub(crate) fn canonicalize_moral_trace_record(record: &mut MoralTraceRecord) {
     record.moral_event.choice.decision_basis.sort();
     record
         .moral_event

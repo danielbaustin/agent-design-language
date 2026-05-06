@@ -32,6 +32,7 @@ mod moral_trace_schema;
 mod observatory;
 mod observatory_flagship;
 mod operator;
+mod outcome_linkage_attribution;
 mod private_state;
 mod private_state_envelope;
 mod private_state_equivocation;
@@ -110,6 +111,8 @@ pub use observatory::*;
 pub use observatory_flagship::*;
 #[allow(unused_imports)]
 pub use operator::*;
+#[allow(unused_imports)]
+pub use outcome_linkage_attribution::*;
 #[allow(unused_imports)]
 pub use private_state::*;
 #[allow(unused_imports)]
