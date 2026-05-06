@@ -23,7 +23,6 @@ packets, demos, and milestone evidence.
 - [Recent Milestones](#recent-milestones)
 - [Documentation Map](#documentation-map)
 - [Project Status](#project-status)
-- [Claim Boundaries](#claim-boundaries)
 
 ## Why ADL Exists
 
@@ -202,13 +201,3 @@ surfaces, completed milestone evidence, active milestone docs, and forward
 planning. Treat milestone documents as bounded engineering records: they say
 what is implemented, what is demoable, what is under active execution, and what
 remains planned.
-
-## Claim Boundaries
-
-ADL does not currently claim production moral agency, legal personhood,
-external enterprise certification, payment rails, production markets, or the
-first true Gödel-agent birthday.
-
-The project is deliberately evidence-first: new capability claims should point
-to code, fixtures, demos, review packets, release evidence, or explicit planned
-scope.
