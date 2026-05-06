@@ -1,0 +1,181 @@
+version: "0.5"
+
+providers:
+  chatgpt_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8791/openai"
+      timeout_secs: 180
+  gemini_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8791/gemini"
+      timeout_secs: 180
+
+agents:
+  chatgpt_host:
+    provider: "chatgpt_local"
+    model: "gpt-5.5-demo"
+  gemini_guest:
+    provider: "gemini_local"
+    model: "gemini-2.5-pro-demo"
+
+tasks:
+  chatgpt_opening:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
+        TURN_ID: 01
+        SPEAKER: ChatGPT
+        TOPIC: If two minds never share the same private world, what makes trust possible?
+        STOP_RULE: Stop after six explicit turns.
+        PRIVATE_STATE:
+        - You privately think trust begins with dependable action before full understanding.
+        - You do not know Gemini's hidden reason for distrusting that framing.
+        - Do not reveal the raw private-state bullets verbatim.
+        INSTRUCTIONS: Open warmly but with substance. Make the six-turn stop rule explicit, then offer one vivid candidate answer to the topic. Keep the whole turn under 150 words. Be elegant, memorable, and humanly interesting rather than technical. End with exactly one `PROVISIONAL_CLAIM:` line of no more than 20 words that Gemini can challenge.
+  gemini_reply:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
+        TURN_ID: 02
+        SPEAKER: Gemini
+        TOPIC: If two minds never share the same private world, what makes trust possible?
+        STOP_RULE: Stop after six explicit turns.
+        PRIVATE_STATE:
+        - You privately think trust without interpretable risk is sentimental and brittle.
+        - You do not know ChatGPT's hidden reason for privileging action first.
+        - Do not reveal the raw private-state bullets verbatim.
+        PREVIOUS_TURN_START
+        {{turn_01}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Reply directly to ChatGPT, keep identity explicit, and do not just agree. Keep the whole turn under 110 words. Use exactly three sentences and no bullets. Sentence 1: identify the precise weakness in ChatGPT's claim. Sentence 2: introduce one deeper condition or risk that trust must survive. Sentence 3: leave ChatGPT with a sharper question, not a conclusion.
+  chatgpt_reflection:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
+        TURN_ID: 03
+        SPEAKER: ChatGPT
+        TOPIC: If two minds never share the same private world, what makes trust possible?
+        STOP_RULE: Stop after six explicit turns.
+        PREVIOUS_TURN_START
+        {{turn_02}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Revise your answer in light of Gemini's challenge. Keep the whole turn under 120 words. Explicitly say what changed in your view. Give a three-part answer using exactly three numbered lines. Make it feel philosophical but precise.
+  gemini_close:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
+        TURN_ID: 04
+        SPEAKER: Gemini
+        TOPIC: If two minds never share the same private world, what makes trust possible?
+        STOP_RULE: Stop after six explicit turns.
+        PREVIOUS_TURN_START
+        {{turn_03}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Do not close yet. Keep the whole turn under 110 words. Accept part of ChatGPT's revision, refuse part of it, and introduce one paradox or tension that deepens the conversation.
+  chatgpt_deepening:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
+        TURN_ID: 05
+        SPEAKER: ChatGPT
+        TOPIC: If two minds never share the same private world, what makes trust possible?
+        STOP_RULE: Stop after six explicit turns.
+        PREVIOUS_TURN_START
+        {{turn_04}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Deepen the discussion without becoming abstract mush. Keep the whole turn under 120 words. Resolve some of Gemini's paradox by naming one concrete thing trust can rest on when understanding is incomplete. Make the answer quotable.
+  gemini_finale:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation
+        TURN_ID: 06
+        SPEAKER: Gemini
+        TOPIC: If two minds never share the same private world, what makes trust possible?
+        STOP_RULE: Stop after six explicit turns.
+        PREVIOUS_TURN_START
+        {{turn_05}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Close the six-turn exchange explicitly. Keep the whole turn under 110 words. End with one memorable final line that sounds wise rather than theatrical.
+
+run:
+  name: "v0-91-chatgpt-gemini-direct-conversation"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "direct.chatgpt.opening"
+        agent: "chatgpt_host"
+        task: "chatgpt_opening"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "chatgpt_gemini_direct"
+        save_as: "turn_01"
+        write_to: "direct/01-chatgpt-opening.md"
+      - id: "direct.gemini.reply"
+        agent: "gemini_guest"
+        task: "gemini_reply"
+        conversation:
+          id: "turn_02"
+          speaker: "Gemini"
+          sequence: 2
+          thread_id: "chatgpt_gemini_direct"
+          responds_to: "turn_01"
+        inputs:
+          turn_01: "@state:turn_01"
+        save_as: "turn_02"
+        write_to: "direct/02-gemini-reply.md"
+      - id: "direct.chatgpt.reflection"
+        agent: "chatgpt_host"
+        task: "chatgpt_reflection"
+        conversation:
+          id: "turn_03"
+          speaker: "ChatGPT"
+          sequence: 3
+          thread_id: "chatgpt_gemini_direct"
+          responds_to: "turn_02"
+        inputs:
+          turn_02: "@state:turn_02"
+        save_as: "turn_03"
+        write_to: "direct/03-chatgpt-reflection.md"
+      - id: "direct.gemini.close"
+        agent: "gemini_guest"
+        task: "gemini_close"
+        conversation:
+          id: "turn_04"
+          speaker: "Gemini"
+          sequence: 4
+          thread_id: "chatgpt_gemini_direct"
+          responds_to: "turn_03"
+        inputs:
+          turn_03: "@state:turn_03"
+        save_as: "turn_04"
+        write_to: "direct/04-gemini-close.md"
+      - id: "direct.chatgpt.deepening"
+        agent: "chatgpt_host"
+        task: "chatgpt_deepening"
+        conversation:
+          id: "turn_05"
+          speaker: "ChatGPT"
+          sequence: 5
+          thread_id: "chatgpt_gemini_direct"
+          responds_to: "turn_04"
+        inputs:
+          turn_04: "@state:turn_04"
+        save_as: "turn_05"
+        write_to: "direct/05-chatgpt-deepening.md"
+      - id: "direct.gemini.finale"
+        agent: "gemini_guest"
+        task: "gemini_finale"
+        conversation:
+          id: "turn_06"
+          speaker: "Gemini"
+          sequence: 6
+          thread_id: "chatgpt_gemini_direct"
+          responds_to: "turn_05"
+        inputs:
+          turn_05: "@state:turn_05"
+        save_as: "turn_06"
+        write_to: "direct/06-gemini-finale.md"
