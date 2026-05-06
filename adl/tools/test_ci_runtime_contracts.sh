@@ -24,6 +24,17 @@ def step_run(name: str) -> str:
         raise SystemExit(f"missing workflow step: {name}")
     return match.group(1).strip()
 
+def step_block(name: str) -> str:
+    pattern = re.compile(
+        rf"^\s*-\s+name:\s+{re.escape(name)}\s*$"
+        rf"((?:\n^\s+.*$)*?)(?=\n^\s*-\s+name:|\Z)",
+        re.MULTILINE,
+    )
+    match = pattern.search(workflow)
+    if not match:
+        raise SystemExit(f"missing workflow step block: {name}")
+    return match.group(1)
+
 def step_if(name: str) -> str:
     pattern = re.compile(
         rf"^\s*-\s+name:\s+{re.escape(name)}\s*$"
@@ -89,21 +100,24 @@ if not runner_test.exists():
         "authoritative coverage runner contract test must exist"
     )
 
-if 'cargo llvm-cov report --json --summary-only --output-path coverage-summary.json' not in workflow:
+fast_summary_step = step_block("PR fast coverage summary (json)")
+if 'cargo llvm-cov report --json --summary-only --output-path coverage-summary.json' not in fast_summary_step:
     raise SystemExit(
-        "PR fast coverage summary must emit coverage-summary.json at the workflow root; "
+        "PR fast coverage summary must emit coverage-summary.json inside the adl working directory; "
         "workflow is missing that output path"
     )
 
-if '--summary adl/coverage-summary.json \\' not in workflow:
+authoritative_gate_step = step_block("Coverage-impact changed-source gate")
+if '--summary adl/coverage-summary.json \\' not in authoritative_gate_step:
     raise SystemExit(
         "authoritative changed-source coverage gate must read adl/coverage-summary.json from the runner output; "
         "workflow is missing that summary reference"
     )
 
-if '--summary coverage-summary.json \\' not in workflow:
+pr_preflight_step = step_block("PR coverage-impact preflight")
+if '--summary adl/coverage-summary.json \\' not in pr_preflight_step:
     raise SystemExit(
-        "PR coverage-impact preflight must read the root coverage-summary.json emitted by the fast lane; "
+        "PR coverage-impact preflight must read adl/coverage-summary.json emitted by the fast lane working directory; "
         "workflow is missing that summary reference"
     )
 
