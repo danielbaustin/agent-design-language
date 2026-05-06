@@ -55,8 +55,8 @@ ADL already has a substantial platform baseline:
   [UTS + ACC](docs/explainers/UTS_AND_ACC.md)
 - traceable agent communication through [ACIP](docs/explainers/ACIP.md)
 - Runtime v2 and CSM Observatory planning and proof surfaces
-- Godel agents and the
-  [Godel-Hadamard-Bayes algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md)
+- Gödel agents and the
+  [Gödel-Hadamard-Bayes algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md)
 - structured PR/control-plane workflow with STP, SIP, SOR, and SPP records
 
 For the full capability matrix, read the canonical feature index:
@@ -72,10 +72,10 @@ and communicate, but governed runtime surfaces decide what can actually execute.
 - [ACIP](docs/explainers/ACIP.md) gives agents a traceable message and
   invocation substrate for conversation, consultation, delegation, review,
   handoff, and negotiation.
-- Godel agents are the long-running ADL direction for self-reference,
+- Gödel agents are the long-running ADL direction for self-reference,
   self-improvement, and reviewable adaptation inside a deterministic envelope.
 - The
-  [Godel-Hadamard-Bayes algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md)
+  [Gödel-Hadamard-Bayes algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md)
   is ADL's cognitive loop: structured awareness, controlled hypothesis
   generation, and evidence-weighted judgment before authorized action.
 
@@ -198,7 +198,7 @@ Start here:
 - [Changelog](CHANGELOG.md): milestone-level project history.
 - [ADRs](docs/adr/README.md): architecture decisions.
 - [GHB algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md):
-  cognitive loop behind Godel-agent work.
+  cognitive loop behind Gödel-agent work.
 - [Examples](adl/examples/README.md): runnable ADL examples.
 - [Demos](demos/README.md): demo-oriented proof surfaces.
 
@@ -220,7 +220,7 @@ remains planned.
 
 ADL does not currently claim production moral agency, legal personhood,
 external enterprise certification, payment rails, production markets, or the
-first true Godel-agent birthday.
+first true Gödel-agent birthday.
 
 The project is deliberately evidence-first: new capability claims should point
 to code, fixtures, demos, review packets, release evidence, or explicit planned
