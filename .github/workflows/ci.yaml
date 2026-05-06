@@ -349,7 +349,7 @@ jobs:
             bash adl/tools/check_coverage_impact.sh \
               --base "${{ github.event.pull_request.base.sha }}" \
               --head "${{ github.event.pull_request.head.sha }}" \
-              --summary adl/coverage-summary.json \
+              --summary coverage-summary.json \
               --require-summary-for-risk \
               --threshold "$PER_FILE_LINE_THRESHOLD"
           else
