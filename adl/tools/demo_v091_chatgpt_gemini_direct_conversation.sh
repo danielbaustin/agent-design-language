@@ -19,13 +19,15 @@ OBSERVATORY_PROJECTION="$OUT_DIR/observatory_projection.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 PROOF_NOTE="$OUT_DIR/proof_note.md"
 README_OUT="$OUT_DIR/README.md"
-EXAMPLE="adl/examples/v0-91-chatgpt-gemini-direct-conversation.adl.yaml"
 GENERATED_EXAMPLE="$OUT_DIR/v0-91-chatgpt-gemini-direct-conversation.runtime.adl.yaml"
 OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai2.key}"
 GEMINI_KEY_FILE="${ADL_GEMINI_KEY_FILE:-$HOME/keys/gcp-ace-2023.key}"
 OPENAI_MODEL="${ADL_LIVE_OPENAI_MODEL:-gpt-5.5-pro}"
 GEMINI_MODEL="${ADL_LIVE_GEMINI_MODEL:-gemini-3.1-pro-preview}"
 LIVE_PROVIDER_TIMEOUT_SECS="${ADL_LIVE_PROVIDER_TIMEOUT_SECS:-180}"
+PRESET="${ADL_DEMO_PRESET:-trust_possible}"
+QUESTION="${ADL_DEMO_QUESTION:-If two minds never share the same private world, what makes trust possible?}"
+TURN_COUNT="${ADL_DEMO_TURNS:-6}"
 
 load_key() {
   local env_name="$1"
@@ -87,15 +89,233 @@ trap cleanup EXIT
 
 PORT="$(provider_demo_wait_for_port "$PORT_FILE")"
 
-python3 - "$EXAMPLE" "$GENERATED_EXAMPLE" "$PORT" <<'PY'
+python3 - "$GENERATED_EXAMPLE" "$PORT" "$QUESTION" "$TURN_COUNT" "$PRESET" <<'PY'
 import sys
+from pathlib import Path
 
-source, target, port = sys.argv[1:4]
-text = open(source, encoding="utf-8").read()
-text = text.replace("http://127.0.0.1:8791/openai", f"http://127.0.0.1:{port}/openai")
-text = text.replace("http://127.0.0.1:8791/gemini", f"http://127.0.0.1:{port}/gemini")
-with open(target, "w", encoding="utf-8") as fh:
-    fh.write(text)
+target, port, question, turn_count_raw, preset = sys.argv[1:6]
+turn_count = int(turn_count_raw)
+if turn_count < 2 or turn_count % 2 != 0:
+    raise SystemExit("ADL_DEMO_TURNS must be an even integer >= 2")
+
+PRESETS = {
+    "trust_possible": {
+        "question": "If two minds never share the same private world, what makes trust possible?",
+        "private_chatgpt": [
+            "You privately think trust begins with dependable action before full understanding.",
+            "You do not know Gemini's hidden reason for distrusting that framing.",
+            "Do not reveal the raw private-state bullets verbatim.",
+        ],
+        "private_gemini": [
+            "You privately think trust without interpretable risk is sentimental and brittle.",
+            "You do not know ChatGPT's hidden reason for privileging action first.",
+            "Do not reveal the raw private-state bullets verbatim.",
+        ],
+        "condition_line": "The discussion stays concrete, philosophical, and bounded.",
+    },
+    "coordination_proof": {
+        "question": "What is the smallest honest proof of multi-agent coordination?",
+        "private_chatgpt": [
+            "You privately know the plan must satisfy a hard deadline and budget ceiling.",
+            "You do not know the hidden dependency chain or latent risk register.",
+            "Do not reveal the raw private-state bullets verbatim.",
+        ],
+        "private_gemini": [
+            "You privately know the dependency chain and a latent risk condition.",
+            "You do not know the hard deadline or budget ceiling.",
+            "Do not reveal the raw private-state bullets verbatim.",
+        ],
+        "condition_line": "The proof boundary stays bounded to one task-local coordination episode.",
+    },
+}
+
+if preset not in PRESETS:
+    raise SystemExit(f"unknown ADL_DEMO_PRESET '{preset}' (expected one of: {', '.join(sorted(PRESETS))})")
+
+defaults = PRESETS[preset]
+if question == PRESETS["trust_possible"]["question"] and preset == "coordination_proof":
+    question = defaults["question"]
+
+def prompt_for_turn(turn: int, total: int) -> str:
+    if preset == "coordination_proof":
+        if turn == 1:
+            return (
+                "Open warmly but with substance. State the stop rule explicitly. "
+                "Offer one vivid candidate answer to the topic in under 150 words. "
+                "Ground the claim in saved traces, constraints, and visible revisions rather than vague autonomy language. "
+                "End with exactly one PROVISIONAL_CLAIM line of no more than 22 words that Gemini can challenge."
+            )
+        if turn == 2:
+            return (
+                "Reply directly to ChatGPT and do not just agree. Keep the whole turn under 120 words. "
+                "Name the weak point, then introduce one hidden conflict or latent risk only you can see, and end by pressing for a stronger proof condition."
+            )
+        if turn == total:
+            return (
+                f"Close the {total}-turn exchange explicitly. Keep the whole turn under 110 words. "
+                "Name one reason this run is stronger than decorative baton-passing and end with one memorable line."
+            )
+        if turn % 2 == 1:
+            return (
+                "Revise the answer under pressure in under 120 words. Explicitly say what changed because of Gemini-only information. "
+                "Use either three numbered criteria or one tight synthesis paragraph, whichever is sharper."
+            )
+        return (
+            "Deepen the challenge in under 110 words. Accept one piece, reject one piece, and introduce one paradox, dependency, or ablation condition that raises the bar."
+        )
+    if turn == 1:
+        return (
+            "Open warmly but with substance. State the stop rule explicitly. "
+            "Offer one vivid candidate answer to the topic in under 150 words. "
+            "Be elegant, memorable, and humanly interesting rather than technical. "
+            "End with exactly one PROVISIONAL_CLAIM line of no more than 20 words that Gemini can challenge."
+        )
+    if turn == 2:
+        return (
+            "Reply directly to ChatGPT and do not just agree. Keep the whole turn under 110 words. "
+            "Use exactly three sentences and no bullets. Sentence 1: identify the precise weakness in ChatGPT's claim. "
+            "Sentence 2: introduce one deeper condition or risk that trust must survive. "
+            "Sentence 3: leave ChatGPT with a sharper question, not a conclusion."
+        )
+    if turn == total:
+        return (
+            f"Close the {total}-turn exchange explicitly. Keep the whole turn under 110 words. "
+            "Land on one clear insight rather than summary mush. End with one memorable final line that sounds wise rather than theatrical."
+        )
+    if turn % 2 == 1:
+        return (
+            "Deepen or revise the position in under 120 words. Explicitly say what changed in your view because of the prior turn. "
+            "Use concrete language, not vague abstraction. Add one quotable line if it comes naturally."
+        )
+    return (
+        "Press on the weak point in under 110 words. Accept part of the prior turn, reject part of it, and introduce one paradox, stake, or tension that forces a better answer."
+    )
+
+def title_for_turn(turn: int, total: int) -> str:
+    if turn == 1:
+        return "Opening claim"
+    if turn == 2:
+        return "Challenge and complication"
+    if turn == total:
+        return "Closure and final line"
+    return "Revision under pressure" if turn % 2 == 1 else "Paradox and pressure"
+
+def speaker_for_turn(turn: int) -> str:
+    return "ChatGPT" if turn % 2 == 1 else "Gemini"
+
+def agent_for_turn(turn: int) -> str:
+    return "chatgpt_host" if turn % 2 == 1 else "gemini_guest"
+
+def task_id(turn: int) -> str:
+    stem = {
+        1: "opening",
+        2: "reply",
+        3: "reflection",
+    }.get(turn, f"turn_{turn:02d}")
+    prefix = "chatgpt" if turn % 2 == 1 else "gemini"
+    return f"{prefix}_{stem}"
+
+lines = [
+    'version: "0.5"',
+    "",
+    "providers:",
+    '  chatgpt_local:',
+    '    type: "http"',
+    "    config:",
+    f'      endpoint: "http://127.0.0.1:{port}/openai"',
+    "      timeout_secs: 180",
+    '  gemini_local:',
+    '    type: "http"',
+    "    config:",
+    f'      endpoint: "http://127.0.0.1:{port}/gemini"',
+    "      timeout_secs: 180",
+    "",
+    "agents:",
+    '  chatgpt_host:',
+    '    provider: "chatgpt_local"',
+    '    model: "chatgpt-live-demo"',
+    '  gemini_guest:',
+    '    provider: "gemini_local"',
+    '    model: "gemini-live-demo"',
+    "",
+    "tasks:",
+]
+
+for turn in range(1, turn_count + 1):
+    task = task_id(turn)
+    speaker = speaker_for_turn(turn)
+    private_state = defaults["private_chatgpt"] if speaker == "ChatGPT" else defaults["private_gemini"]
+    lines.extend(
+        [
+            f"  {task}:",
+            "    prompt:",
+            "      user: |",
+            "        DEMO_ID: v0-91-chatgpt-gemini-direct-conversation",
+            f"        TURN_ID: {turn:02d}",
+            f"        SPEAKER: {speaker}",
+            f"        TOPIC: {question}",
+            f"        STOP_RULE: Stop after {turn_count} explicit turns.",
+            "        PRIVATE_STATE:",
+        ]
+    )
+    for item in private_state:
+        lines.append(f"        - {item}")
+    if turn > 1:
+        prev = f"turn_{turn - 1:02d}"
+        lines.extend(
+            [
+                "        PREVIOUS_TURN_START",
+                f"        {{{{{prev}}}}}",
+                "        PREVIOUS_TURN_END",
+            ]
+        )
+    lines.append(f"        INSTRUCTIONS: {prompt_for_turn(turn, turn_count)}")
+
+lines.extend(
+    [
+        "",
+        "run:",
+        '  name: "v0-91-chatgpt-gemini-direct-conversation"',
+        "  workflow:",
+        "    kind: sequential",
+        "    steps:",
+    ]
+)
+
+for turn in range(1, turn_count + 1):
+    task = task_id(turn)
+    speaker = speaker_for_turn(turn)
+    agent = agent_for_turn(turn)
+    step_id = f"direct.{task.replace('_', '.')}"
+    save_as = f"turn_{turn:02d}"
+    lines.extend(
+        [
+            f'      - id: "{step_id}"',
+            f'        agent: "{agent}"',
+            f'        task: "{task}"',
+            "        conversation:",
+            f'          id: "{save_as}"',
+            f'          speaker: "{speaker}"',
+            f"          sequence: {turn}",
+            '          thread_id: "chatgpt_gemini_direct"',
+        ]
+    )
+    if turn > 1:
+        lines.append(f'          responds_to: "turn_{turn - 1:02d}"')
+        lines.extend(
+            [
+                "        inputs:",
+                f'          turn_{turn - 1:02d}: "@state:turn_{turn - 1:02d}"',
+            ]
+        )
+    lines.extend(
+        [
+            f'        save_as: "{save_as}"',
+            f'        write_to: "direct/{turn:02d}-{speaker.lower()}-{title_for_turn(turn, turn_count).lower().replace(" ", "-")}.md"',
+        ]
+    )
+
+Path(target).write_text("\n".join(lines) + "\n", encoding="utf-8")
 PY
 
 python3 - "$PORT" <<'PY'
@@ -132,41 +352,44 @@ cargo run --quiet --manifest-path adl/Cargo.toml --bin adl -- \
   --out "$STEP_OUT" \
   >"$OUT_DIR/run_log.txt" 2>&1
 
-python3 - "$TRANSCRIPT" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" "$STEP_OUT" "$OPENAI_MODEL" "$GEMINI_MODEL" <<'PY'
+python3 - "$TRANSCRIPT" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" "$STEP_OUT" "$OPENAI_MODEL" "$GEMINI_MODEL" "$QUESTION" "$TURN_COUNT" <<'PY'
 import json
 import sys
 from pathlib import Path
 
-transcript_path, trace_path, step_out, openai_model, gemini_model = sys.argv[1:6]
+transcript_path, trace_path, step_out, openai_model, gemini_model, question, turn_count = sys.argv[1:8]
 trace = json.loads(Path(trace_path).read_text(encoding="utf-8"))
 events = trace.get("events", [])
 
-turn_specs = [
-    ("01-chatgpt-opening.md", "ChatGPT", "Opening claim"),
-    ("02-gemini-reply.md", "Gemini", "Challenge and complication"),
-    ("03-chatgpt-reflection.md", "ChatGPT", "Revision under pressure"),
-    ("04-gemini-close.md", "Gemini", "Paradox and refusal"),
-    ("05-chatgpt-deepening.md", "ChatGPT", "Deeper synthesis"),
-    ("06-gemini-finale.md", "Gemini", "Closure and final line"),
-]
+turn_count = int(Path(sys.argv[1]).stem and 0)  # unused sentinel for lintless editing
+generated_example = Path(step_out).parent / "v0-91-chatgpt-gemini-direct-conversation.runtime.adl.yaml"
+example_text = generated_example.read_text(encoding="utf-8")
+turn_specs = []
+for line in example_text.splitlines():
+    stripped = line.strip()
+    if stripped.startswith('write_to: "direct/'):
+        filename = stripped.split('write_to: "direct/', 1)[1].rstrip('"')
+        ordinal = int(filename.split("-", 1)[0])
+        speaker = "ChatGPT" if ordinal % 2 == 1 else "Gemini"
+        label = filename.split("-", 2)[2].rsplit(".", 1)[0].replace("-", " ").title()
+        turn_specs.append((filename, speaker, label))
 
 step_end_timestamps = []
 for event in events:
     if event.get("event_type") == "STEP_END":
         step_end_timestamps.append(event.get("timestamp"))
 
-question = "If two minds never share the same private world, what makes trust possible?"
 conditions = [
-    "Stop after six explicit turns total.",
+    f"Stop after {turn_count} explicit turns total.",
     "Named agents only: ChatGPT and Gemini.",
     "Each side holds partial private state and must react to the other.",
-    "The discussion stays concrete, philosophical, and bounded.",
+    defaults["condition_line"],
 ]
 
 lines = [
     "# ChatGPT + Gemini Direct Conversation",
     "",
-    "> A bounded, provider-backed six-turn exchange rendered from runtime artifacts.",
+    f"> A bounded, provider-backed {turn_count}-turn exchange rendered from runtime artifacts.",
     "",
     "## Prompt",
     "",
@@ -208,59 +431,36 @@ for index, (filename, speaker, label) in enumerate(turn_specs, start=1):
 Path(transcript_path).write_text("\n".join(lines) + "\n", encoding="utf-8")
 PY
 
-python3 - "$TRANSCRIPT_CONTRACT" <<'PY'
+python3 - "$TRANSCRIPT_CONTRACT" "$GENERATED_EXAMPLE" <<'PY'
 import json
 import sys
+from pathlib import Path
 
-contract_path = sys.argv[1]
+contract_path, generated_example = sys.argv[1:3]
+example_text = Path(generated_example).read_text(encoding="utf-8")
+turn_specs = []
+for line in example_text.splitlines():
+    stripped = line.strip()
+    if stripped.startswith('write_to: "direct/'):
+        filename = stripped.split('write_to: "direct/', 1)[1].rstrip('"')
+        ordinal = int(filename.split("-", 1)[0])
+        speaker = "ChatGPT" if ordinal % 2 == 1 else "Gemini"
+        turn_specs.append((filename, speaker))
+
 payload = {
     "schema_version": "multi_agent_discussion_transcript.v1",
     "transcript_path": "transcript.md",
-    "turn_count": 6,
-    "stop_rule": "Stop after six explicit turns.",
+    "turn_count": len(turn_specs),
+    "stop_rule": f"Stop after {len(turn_specs)} explicit turns.",
     "turns": [
         {
-            "turn_id": "turn_01",
-            "ordinal": 1,
-            "speaker": "ChatGPT",
-            "heading": "# Turn 1 - ChatGPT",
-            "source_output": "out/direct/01-chatgpt-opening.md",
-        },
-        {
-            "turn_id": "turn_02",
-            "ordinal": 2,
-            "speaker": "Gemini",
-            "heading": "# Turn 2 - Gemini",
-            "source_output": "out/direct/02-gemini-reply.md",
-        },
-        {
-            "turn_id": "turn_03",
-            "ordinal": 3,
-            "speaker": "ChatGPT",
-            "heading": "# Turn 3 - ChatGPT",
-            "source_output": "out/direct/03-chatgpt-reflection.md",
-        },
-        {
-            "turn_id": "turn_04",
-            "ordinal": 4,
-            "speaker": "Gemini",
-            "heading": "# Turn 4 - Gemini",
-            "source_output": "out/direct/04-gemini-close.md",
-        },
-        {
-            "turn_id": "turn_05",
-            "ordinal": 5,
-            "speaker": "ChatGPT",
-            "heading": "# Turn 5 - ChatGPT",
-            "source_output": "out/direct/05-chatgpt-deepening.md",
-        },
-        {
-            "turn_id": "turn_06",
-            "ordinal": 6,
-            "speaker": "Gemini",
-            "heading": "# Turn 6 - Gemini",
-            "source_output": "out/direct/06-gemini-finale.md",
-        },
+            "turn_id": f"turn_{ordinal:02d}",
+            "ordinal": ordinal,
+            "speaker": speaker,
+            "heading": f"# Turn {ordinal} - {speaker}",
+            "source_output": f"out/direct/{filename}",
+        }
+        for ordinal, (filename, speaker) in enumerate(turn_specs, start=1)
     ],
     "companion_artifacts": {
         "demo_manifest": "demo_manifest.json",
@@ -275,23 +475,28 @@ with open(contract_path, "w", encoding="utf-8") as fh:
     fh.write("\n")
 PY
 
-python3 - "$OBSERVATORY_PROJECTION" "$TRANSCRIPT" "$INVOCATIONS" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" <<'PY'
+python3 - "$OBSERVATORY_PROJECTION" "$TRANSCRIPT" "$INVOCATIONS" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" "$GENERATED_EXAMPLE" <<'PY'
 import json
 import sys
 from pathlib import Path
 
-projection_path, transcript_path, invocations_path, trace_path = sys.argv[1:5]
+projection_path, transcript_path, invocations_path, trace_path, generated_example = sys.argv[1:6]
 invocations = json.loads(Path(invocations_path).read_text(encoding="utf-8"))
 trace = json.loads(Path(trace_path).read_text(encoding="utf-8"))
 events = trace.get("events", [])
+example_text = Path(generated_example).read_text(encoding="utf-8")
+turn_specs = []
+for line in example_text.splitlines():
+    stripped = line.strip()
+    if stripped.startswith('write_to: "direct/'):
+        filename = stripped.split('write_to: "direct/', 1)[1].rstrip('"')
+        ordinal = int(filename.split("-", 1)[0])
+        speaker = "ChatGPT" if ordinal % 2 == 1 else "Gemini"
+        turn_specs.append((ordinal, filename, speaker))
 
 turns = [
-    {"turn": 1, "speaker": "ChatGPT", "artifact_ref": "out/direct/01-chatgpt-opening.md"},
-    {"turn": 2, "speaker": "Gemini", "artifact_ref": "out/direct/02-gemini-reply.md"},
-    {"turn": 3, "speaker": "ChatGPT", "artifact_ref": "out/direct/03-chatgpt-reflection.md"},
-    {"turn": 4, "speaker": "Gemini", "artifact_ref": "out/direct/04-gemini-close.md"},
-    {"turn": 5, "speaker": "ChatGPT", "artifact_ref": "out/direct/05-chatgpt-deepening.md"},
-    {"turn": 6, "speaker": "Gemini", "artifact_ref": "out/direct/06-gemini-finale.md"},
+    {"turn": ordinal, "speaker": speaker, "artifact_ref": f"out/direct/{filename}"}
+    for ordinal, filename, speaker in turn_specs
 ]
 payload = {
     "schema": "adl.demo.observatory_projection.v1",
@@ -312,7 +517,7 @@ payload = {
         if event.get("event_type") in {"RUN_START", "STEP_START", "STEP_END"}
     ],
     "proof_boundary": [
-        "Shows named provider-backed runtime roles executing a bounded six-turn exchange.",
+        f"Shows named provider-backed runtime roles executing a bounded {len(turns)}-turn exchange.",
         "Shows cross-turn revision pressure and saved trace continuity.",
         "Does not by itself prove autonomous multi-agent federation or persistent independent agency.",
     ],
@@ -320,11 +525,11 @@ payload = {
 Path(projection_path).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 PY
 
-python3 - "$MANIFEST" "$TRANSCRIPT" "$TRANSCRIPT_CONTRACT" "$OBSERVATORY_PROJECTION" "$PROOF_NOTE" "$INVOCATIONS" "$RUNS_ROOT/$RUN_ID/run_summary.json" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" <<'PY'
+python3 - "$MANIFEST" "$TRANSCRIPT" "$TRANSCRIPT_CONTRACT" "$OBSERVATORY_PROJECTION" "$PROOF_NOTE" "$INVOCATIONS" "$RUNS_ROOT/$RUN_ID/run_summary.json" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" "$TURN_COUNT" <<'PY'
 import json
 import sys
 
-manifest_path, transcript, transcript_contract, observatory_projection, proof_note, invocations, run_summary, trace_path = sys.argv[1:9]
+manifest_path, transcript, transcript_contract, observatory_projection, proof_note, invocations, run_summary, trace_path, turn_count = sys.argv[1:10]
 payload = {
     "demo_id": "v0.91.chatgpt_gemini_direct_conversation",
     "title": "ChatGPT + Gemini direct conversation demo",
@@ -335,8 +540,8 @@ payload = {
         {"id": "chatgpt_host", "provider": "live_openai", "family": "openai"},
         {"id": "gemini_guest", "provider": "live_gemini", "family": "gemini"},
     ],
-    "steps": 6,
-    "stop_rule": "Stop after six explicit turns.",
+    "steps": int(turn_count),
+    "stop_rule": f"Stop after {turn_count} explicit turns.",
     "proof_surfaces": {
         "transcript": transcript,
         "transcript_contract": transcript_contract,
@@ -357,9 +562,9 @@ cat >"$PROOF_NOTE" <<'EOF'
 
 ## Facts
 
-- The runtime executed six explicit sequential turns.
+- The runtime executed __TURN_COUNT__ explicit sequential turns.
 - Every turn preserved named participant identity (`ChatGPT` or `Gemini`).
-- The stop rule was explicit: stop after six turns.
+- The stop rule was explicit and matched the configured turn limit.
 - The transcript, observatory-style projection, run summary, and trace were saved automatically.
 
 ## Assumptions
@@ -373,6 +578,16 @@ cat >"$PROOF_NOTE" <<'EOF'
 - Use this proof as the pairwise baseline before attempting task handoff or triad demos.
 - Do not overclaim federation, autonomy, or production-hardening from this artifact alone.
 EOF
+
+python3 - "$PROOF_NOTE" "$TURN_COUNT" <<'PY'
+from pathlib import Path
+import sys
+
+path, turn_count = sys.argv[1:3]
+text = Path(path).read_text(encoding="utf-8")
+text = text.replace("__TURN_COUNT__", turn_count)
+Path(path).write_text(text, encoding="utf-8")
+PY
 
 cat >"$README_OUT" <<EOF
 # v0.91 Demo - ChatGPT + Gemini Direct Conversation
@@ -391,6 +606,9 @@ Credential loading:
 Model overrides:
 - Set \`ADL_LIVE_OPENAI_MODEL\` to compare OpenAI variants.
 - Set \`ADL_LIVE_GEMINI_MODEL\` to compare Gemini variants.
+- Set \`ADL_DEMO_PRESET\` to switch between built-in prompt families such as
+  \`trust_possible\` and \`coordination_proof\`.
+- Set \`ADL_DEMO_QUESTION\` and \`ADL_DEMO_TURNS\` to override the preset.
 - Default quality mode is tuned for \`gpt-5.5-pro\` plus
   \`gemini-3.1-pro-preview\`.
 - Set \`ADL_LIVE_PROVIDER_TIMEOUT_SECS\` to override the provider-adapter read
@@ -400,7 +618,7 @@ Model overrides:
 What this proves:
 - one ADL runtime workflow with two explicit named live provider families
 - real OpenAI and Gemini calls through ADL's current local HTTP completion adapter boundary
-- six sequential turns with saved-state handoff between steps
+- the configured turn sequence with saved-state handoff between steps
 - an explicit stop rule recorded in the proof surfaces
 
 Primary proof surfaces:
