@@ -172,12 +172,6 @@ transition authority, external counterparty boundaries, delegation, and one
 bounded contract-market proof legible without claiming payment rails or
 production markets.
 
-Start here:
-
-- [v0.90.4 README](docs/milestones/v0.90.4/README.md)
-- [v0.90.4 demo matrix](docs/milestones/v0.90.4/DEMO_MATRIX_v0.90.4.md)
-- [v0.90.4 release notes](docs/milestones/v0.90.4/RELEASE_NOTES_v0.90.4.md)
-
 ## Documentation Map
 
 - [Feature list](docs/planning/ADL_FEATURE_LIST.md): canonical capability
