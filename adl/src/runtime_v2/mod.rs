@@ -30,6 +30,7 @@ mod kernel_loop;
 mod manifold;
 mod moral_event_validation;
 mod moral_metrics;
+mod moral_resources;
 mod moral_trace_schema;
 mod moral_trajectory_review;
 mod observatory;
@@ -111,6 +112,8 @@ pub use manifold::*;
 pub use moral_event_validation::*;
 #[allow(unused_imports)]
 pub use moral_metrics::*;
+#[allow(unused_imports)]
+pub use moral_resources::*;
 #[allow(unused_imports)]
 pub use moral_trace_schema::*;
 #[allow(unused_imports)]

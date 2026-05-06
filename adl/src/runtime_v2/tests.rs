@@ -28,6 +28,7 @@ mod kernel_loop;
 mod manifold;
 mod moral_event_validation;
 mod moral_metrics;
+mod moral_resources;
 mod moral_trace_schema;
 mod moral_trajectory_review;
 mod observatory;
