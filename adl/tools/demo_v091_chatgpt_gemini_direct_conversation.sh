@@ -25,6 +25,7 @@ OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai2.key}"
 GEMINI_KEY_FILE="${ADL_GEMINI_KEY_FILE:-$HOME/keys/gcp-ace-2023.key}"
 OPENAI_MODEL="${ADL_LIVE_OPENAI_MODEL:-gpt-5.5-pro}"
 GEMINI_MODEL="${ADL_LIVE_GEMINI_MODEL:-gemini-3.1-pro-preview}"
+LIVE_PROVIDER_TIMEOUT_SECS="${ADL_LIVE_PROVIDER_TIMEOUT_SECS:-180}"
 
 load_key() {
   local env_name="$1"
@@ -73,6 +74,7 @@ python3 "$ROOT_DIR/adl/tools/real_chatgpt_gemini_provider_adapter.py" \
   --metadata "$INVOCATIONS" \
   --openai-model "$OPENAI_MODEL" \
   --gemini-model "$GEMINI_MODEL" \
+  --timeout "$LIVE_PROVIDER_TIMEOUT_SECS" \
   >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
 cleanup() {
@@ -130,20 +132,79 @@ cargo run --quiet --manifest-path adl/Cargo.toml --bin adl -- \
   --out "$STEP_OUT" \
   >"$OUT_DIR/run_log.txt" 2>&1
 
-cat >"$TRANSCRIPT" <<'EOF'
-# ChatGPT + Gemini Direct Conversation Transcript
+python3 - "$TRANSCRIPT" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" "$STEP_OUT" "$OPENAI_MODEL" "$GEMINI_MODEL" <<'PY'
+import json
+import sys
+from pathlib import Path
 
-This transcript is assembled from the runtime-written step outputs under `out/direct/`.
-EOF
+transcript_path, trace_path, step_out, openai_model, gemini_model = sys.argv[1:6]
+trace = json.loads(Path(trace_path).read_text(encoding="utf-8"))
+events = trace.get("events", [])
 
-for file in \
-  "$STEP_OUT/direct/01-chatgpt-opening.md" \
-  "$STEP_OUT/direct/02-gemini-reply.md" \
-  "$STEP_OUT/direct/03-chatgpt-reflection.md" \
-  "$STEP_OUT/direct/04-gemini-close.md"; do
-  printf '\n\n---\n\n' >>"$TRANSCRIPT"
-  cat "$file" >>"$TRANSCRIPT"
-done
+turn_specs = [
+    ("01-chatgpt-opening.md", "ChatGPT", "Opening claim"),
+    ("02-gemini-reply.md", "Gemini", "Challenge and hidden constraint"),
+    ("03-chatgpt-reflection.md", "ChatGPT", "Revision under pressure"),
+    ("04-gemini-close.md", "Gemini", "Closure and proof boundary"),
+]
+
+step_end_timestamps = []
+for event in events:
+    if event.get("event_type") == "STEP_END":
+        step_end_timestamps.append(event.get("timestamp"))
+
+question = "What is the smallest honest proof of multi-agent coordination?"
+conditions = [
+    "Stop after four explicit turns total.",
+    "Named agents only: ChatGPT and Gemini.",
+    "Each side holds partial private state and must react to the other.",
+    "The proof boundary stays bounded to one task-local coordination episode.",
+]
+
+lines = [
+    "# ChatGPT + Gemini Direct Conversation",
+    "",
+    "> A bounded, provider-backed four-turn exchange rendered from runtime artifacts.",
+    "",
+    "## Prompt",
+    "",
+    f"**Question:** {question}",
+    "",
+    "## Run Conditions",
+    "",
+]
+for item in conditions:
+    lines.append(f"- {item}")
+
+lines.extend(
+    [
+        "",
+        "## Providers",
+        "",
+        f"- `ChatGPT`: `{openai_model}`",
+        f"- `Gemini`: `{gemini_model}`",
+        "",
+        "## Transcript",
+    ]
+)
+
+for index, (filename, speaker, label) in enumerate(turn_specs, start=1):
+    body = (Path(step_out) / "direct" / filename).read_text(encoding="utf-8").strip()
+    timestamp = step_end_timestamps[index - 1] if index - 1 < len(step_end_timestamps) else "unknown"
+    lines.extend(
+        [
+            "",
+            f"### Turn {index} · {speaker}",
+            "",
+            f"- Label: {label}",
+            f"- Timestamp: `{timestamp}`",
+            "",
+            body,
+        ]
+    )
+
+Path(transcript_path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+PY
 
 python3 - "$TRANSCRIPT_CONTRACT" <<'PY'
 import json
@@ -312,6 +373,10 @@ Credential loading:
 Model overrides:
 - Set \`ADL_LIVE_OPENAI_MODEL\` to compare OpenAI variants.
 - Set \`ADL_LIVE_GEMINI_MODEL\` to compare Gemini variants.
+- Default quality mode is tuned for \`gpt-5.5-pro\` plus
+  \`gemini-3.1-pro-preview\`.
+- Set \`ADL_LIVE_PROVIDER_TIMEOUT_SECS\` to override the provider-adapter read
+  timeout when experimenting with slower flagship models.
 - Secret values and raw Authorization headers are not written to generated artifacts.
 
 What this proves:
