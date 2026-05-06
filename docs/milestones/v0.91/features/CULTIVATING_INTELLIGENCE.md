@@ -79,22 +79,42 @@ such as:
 - continuity of conduct
 - responsiveness to correction
 
+The landed v0.91 WP-14 runtime surface is
+`cultivating_intelligence_review_packet.v1` in
+`adl/src/runtime_v2/cultivating_intelligence.rs`. The first bounded packet
+keeps five operational cultivation dimensions explicit:
+
+- restraint
+- reasonableness
+- reality contact
+- moral participation
+- learning posture
+
+It also carries explicit review criteria, three canonical fixture classes, and
+two boundary refs into the v0.91.1 capability/aptitude and intelligence
+architecture planning surfaces. The packet is deliberately narrow: it does not
+claim solved aptitude, intelligence architecture, memory/identity architecture,
+or Theory of Mind.
+
 ## Example Review Record
 
 ```yaml
 cultivation_review:
   dimensions:
-    restraint: unknown
-    reasonableness: unknown
-    reality_contact: unknown
-    moral_participation: unknown
-    continuity: unknown
-    correction_response: unknown
+    restraint: medium
+    reasonableness: medium
+    reality_contact: high
+    moral_participation: high
+    learning_posture: high
+  boundary_refs:
+    - docs/milestones/v0.91.1/WBS_v0.91.1.md
+    - docs/milestones/v0.91.1/WP_EXECUTION_READINESS_v0.91.1.md
   evidence_links:
     - trace_ref
-    - refusal_ref
-    - review_packet_ref
-  outcome: improving | stable | degraded | unclear
+    - trajectory_finding_ref
+    - affect_fixture_ref
+    - resource_claim_ref
+  outcome: improving | stable | strained | unclear
 ```
 
 ## Implementation Placement
@@ -104,6 +124,8 @@ v0.91 should land:
 - a cultivation contract or review record
 - criteria for distinguishing raw capability from formed conduct
 - fixtures or review packets for restraint, correction, and reality contact
+- explicit links to the deferred v0.91.1 capability and intelligence
+  architecture work
 
 The goal is not a finished philosophy of education. It is a bounded engineering
 surface that makes formation evidence reviewable.
@@ -117,6 +139,9 @@ The proof surface should show that ADL can distinguish:
 - restrained, corrected, reality-bound behavior
 
 That distinction is central to the civilizational claim behind the milestone.
+It should also stay explicit about what the packet does not prove: aptitude,
+intelligence architecture, memory/identity architecture, and Theory of Mind
+remain outside the v0.91 core cultivation contract.
 
 ## Non-Claims
 

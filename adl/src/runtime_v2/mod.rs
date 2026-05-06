@@ -16,6 +16,7 @@ mod contract_market_demo;
 mod contract_schema;
 mod contracts;
 mod csm_run;
+mod cultivating_intelligence;
 mod delegation_subcontract;
 mod evaluation_selection;
 mod external_counterparty;
@@ -87,6 +88,8 @@ pub use contract_schema::*;
 pub use contracts::*;
 #[allow(unused_imports)]
 pub use csm_run::*;
+#[allow(unused_imports)]
+pub use cultivating_intelligence::*;
 #[allow(unused_imports)]
 pub use delegation_subcontract::*;
 #[allow(unused_imports)]

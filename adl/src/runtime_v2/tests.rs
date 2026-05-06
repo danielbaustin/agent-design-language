@@ -13,6 +13,7 @@ mod contract_lifecycle_state;
 mod contract_market_demo;
 mod contract_schema;
 mod csm_run_packet;
+mod cultivating_intelligence;
 mod delegation_subcontract;
 mod evaluation_selection;
 mod external_counterparty;
