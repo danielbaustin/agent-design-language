@@ -5,6 +5,7 @@
 //! and proof-bearing contracts used by downstream review tooling.
 
 mod access_control;
+mod affect_reasoning_control;
 mod anti_harm_trajectory_constraints;
 mod bid_schema;
 mod boot_admission;
@@ -64,6 +65,8 @@ use std::path::{Path, PathBuf};
 
 #[allow(unused_imports)]
 pub use access_control::*;
+#[allow(unused_imports)]
+pub use affect_reasoning_control::*;
 #[allow(unused_imports)]
 pub use anti_harm_trajectory_constraints::*;
 #[allow(unused_imports)]

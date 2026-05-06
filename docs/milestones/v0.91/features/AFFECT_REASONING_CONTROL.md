@@ -37,41 +37,51 @@ This matters because a flat confidence score often misses important dynamics:
 
 The initial v0.91 affect surface should stay compact and machine-useful:
 
-- confidence
-- tension
-- curiosity
-- caution
-- frustration
-- satisfaction
+- uncertainty
+- urgency
+- attention
+- friction
+- deferral
+
+The landed v0.91 WP-13 surface is `affect_reasoning_control_packet.v1` in
+`adl/src/runtime_v2/affect_reasoning_control.rs`. The first bounded contract
+keeps five operational control signals explicit:
+
+- uncertainty
+- urgency
+- attention
+- friction
+- deferral
+
+It also exposes explicit policy effects for review-depth increases, escalation,
+attention retention, candidate shifts, and staged deferral. The surface is
+operational only: it does not claim hidden emotions, consciousness, or
+subjective experience.
 
 These are functional dimensions, not claims of subjective feeling.
 
 ## Operational Meaning
 
-### Confidence
+### Uncertainty
 
-How strongly the system believes a candidate plan or reasoning line is sound.
+Signal that the current branch remains unresolved and needs stronger review.
 
-### Tension
+### Urgency
 
-Signal that something is unresolved, contradictory, unstable, or under-justified.
+Signal that consequence or timing pressure should bias toward escalation or
+faster governed action.
 
-### Curiosity
+### Attention
 
-Bias toward exploring underexamined but potentially valuable branches.
+Signal that a branch or evidence set should remain salient.
 
-### Caution
+### Friction
 
-Bias toward risk management, reversibility, and stronger proof under higher
-consequence.
+Signal that effort is accumulating without adequate progress or coherence.
 
-### Frustration
+### Deferral
 
-Signal that effort is being spent without meaningful progress.
-
-### Satisfaction
-
-Signal that a branch has reached stable and reviewable closure.
+Signal that staged review or delay is safer than false closure.
 
 ## Source Signals
 
@@ -92,21 +102,20 @@ Affect-like state should be derived from measurable runtime evidence such as:
 
 ```yaml
 affect_reasoning_control:
-  confidence: unknown
-  tension: unknown
-  curiosity: unknown
-  caution: unknown
-  frustration: unknown
-  satisfaction: unknown
+  uncertainty: unknown
+  urgency: unknown
+  attention: unknown
+  friction: unknown
+  deferral: unknown
   evidence_links:
     - metric_ref
     - trace_ref
   effects:
-    - branch_expand
-    - branch_prune
+    - raise_review_depth
     - escalate
-    - ask_for_help
-    - retain_in_memory
+    - retain_attention
+    - shift_candidate
+    - defer
 ```
 
 ## Relationship To Reasoning
