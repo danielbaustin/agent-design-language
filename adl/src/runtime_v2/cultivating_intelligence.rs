@@ -14,13 +14,10 @@ mod cultivating_intelligence_builder;
 #[path = "cultivating_intelligence_parts/validation.rs"]
 mod cultivating_intelligence_validation;
 
-pub use cultivating_intelligence_models::*;
 pub use cultivating_intelligence_builder::*;
+pub use cultivating_intelligence_models::*;
 pub use cultivating_intelligence_validation::*;
 pub(crate) use cultivating_intelligence_validation::{
-    cultivation_assessment,
-    cultivation_criterion,
-    cultivation_dimension,
-    ordered_outcome_refs,
+    cultivation_assessment, cultivation_criterion, cultivation_dimension, ordered_outcome_refs,
     ordered_trace_refs,
 };

@@ -3,14 +3,14 @@ use serde_yaml::Value;
 use std::fs;
 use std::path::Path;
 
-use ::adl::control_plane::IssueRef;
-use super::shared::{default_repo, run_capture_allow_failure, write_temp_markdown};
 use super::super::pr_cmd_prompt::{
     infer_required_outcome_type, infer_workflow_queue, infer_wp_from_title, normalize_labels_csv,
     render_generated_issue_prompt,
 };
 use super::super::pr_cmd_validate::{bootstrap_stub_reason, PromptSurfaceKind};
+use super::shared::{default_repo, run_capture_allow_failure, write_temp_markdown};
 use super::validation::validate_bootstrap_stp;
+use ::adl::control_plane::IssueRef;
 
 pub(crate) fn write_source_issue_prompt(
     repo_root: &Path,
@@ -77,7 +77,10 @@ pub(crate) fn ensure_source_issue_prompt(
         normalize_labels_csv(&baseline, version)
     };
 
-    let issue_url = format!("https://github.com/{repo}/issues/{}", issue_ref.issue_number());
+    let issue_url = format!(
+        "https://github.com/{repo}/issues/{}",
+        issue_ref.issue_number()
+    );
     let generated_prompt = render_generated_issue_prompt(
         issue_ref.issue_number(),
         issue_ref.slug(),

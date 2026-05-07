@@ -14,12 +14,9 @@ mod wellbeing_builder;
 #[path = "wellbeing_metrics_parts/validation.rs"]
 mod wellbeing_validation;
 
-pub use wellbeing_models::*;
 pub use wellbeing_builder::*;
+pub use wellbeing_models::*;
 pub use wellbeing_validation::*;
 pub(crate) use wellbeing_validation::{
-    build_wellbeing_fixture,
-    dimension_signal,
-    ordered_outcome_refs,
-    ordered_trace_refs,
+    build_wellbeing_fixture, dimension_signal, ordered_outcome_refs, ordered_trace_refs,
 };
