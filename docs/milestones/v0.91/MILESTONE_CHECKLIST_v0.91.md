@@ -39,6 +39,7 @@
 - [ ] Capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,
   ToM, memory/identity, and runtime-v2/polis docs are routed to v0.91.1.
 - [x] Demo matrix and feature proof coverage lane preserved before review convergence.
+- [x] Coverage / quality gate record created with pass/fail/skip truth and known exceptions.
 
 ## Review Readiness
 
@@ -51,6 +52,8 @@
 - [ ] External or cross-polis communication is absent or explicitly TLS/mTLS
   gated.
 - [ ] Release notes avoid aspirational shipped language until closeout.
+- [x] Current main CI and coverage posture recorded after WP-18 merge.
+- [x] Closed-issue SOR truth drift recorded as an explicit release-tail exception.
 
 ## Release Readiness
 

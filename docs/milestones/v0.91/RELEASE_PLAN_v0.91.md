@@ -24,6 +24,7 @@ communication, demo, and review story.
   agent lifecycle states, ACIP state eligibility, capability/aptitude testing,
   intelligence metric architecture, ANRM/Gemma, ToM, and memory/identity.
 - Demo matrix and feature proof coverage record.
+- Coverage and quality gate record.
 - Internal and third-party review notes.
 - Accepted-finding disposition record.
 
@@ -39,6 +40,8 @@ communication, demo, and review story.
   birthday semantics.
 - Agent Comms work could accidentally imply external communication readiness
   before TLS/mTLS-equivalent transport exists.
+- Local lifecycle records could drift from merged issue truth if closed-issue
+  `SOR` repair is not completed before ceremony.
 
 ## Release Rule
 
@@ -47,6 +50,11 @@ moral evidence and explicitly preserve the non-claims: no production moral
 agency, no scalar moral verdict, no public wellbeing surveillance, no
 consciousness claim, no birthday, no constitutional citizenship, and no external
 agent communication without TLS/mTLS-equivalent protection.
+
+The release also must not treat a green repository merge gate as sufficient
+while local closed-issue lifecycle truth remains red. The `WP-19` quality gate
+records the current exception register in
+[QUALITY_GATE_v0.91.md](QUALITY_GATE_v0.91.md).
 
 ## Handoff
 
