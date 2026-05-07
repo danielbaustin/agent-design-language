@@ -157,19 +157,6 @@ pub(crate) fn replace_exact_line(text: &mut String, from: &str, to: &str) {
     }
 }
 
-pub(crate) fn remove_exact_line(text: &mut String, target: &str) {
-    let mut out = Vec::new();
-    for line in text.lines() {
-        if line != target {
-            out.push(line.to_string());
-        }
-    }
-    *text = out.join("\n");
-    if !text.ends_with('\n') {
-        text.push('\n');
-    }
-}
-
 pub(crate) fn deduplicate_exact_line(text: &mut String, target: &str) {
     let mut seen = false;
     let mut out = Vec::new();
@@ -221,17 +208,6 @@ pub(crate) fn run_status(program: &str, args: &[&str]) -> Result<()> {
         bail!("{program} failed with status {:?}", status.code());
     }
     Ok(())
-}
-
-pub(crate) fn run_capture(program: &str, args: &[&str]) -> Result<String> {
-    let output = Command::new(program)
-        .args(args)
-        .output()
-        .with_context(|| format!("failed to spawn '{program}'"))?;
-    if !output.status.success() {
-        bail!("{program} failed");
-    }
-    Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
 pub(crate) fn write_temp_markdown(prefix: &str, body: &str) -> Result<PathBuf> {

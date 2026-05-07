@@ -31,6 +31,27 @@ focused_control_plane_output="$(bash "$SCRIPT" --changed-files "$focused_control
 assert_has "$focused_control_plane_output" "mode=focused"
 assert_has "$focused_control_plane_output" "filter_tokens=pr_cmd"
 
+split_control_plane="$TMP/split_control_plane.txt"
+printf 'M\tadl/src/cli/pr_cmd_cards/cards.rs\n' >"$split_control_plane"
+split_control_plane_output="$(bash "$SCRIPT" --changed-files "$split_control_plane" --print-plan)"
+assert_has "$split_control_plane_output" "mode=focused"
+assert_has "$split_control_plane_output" "filter_tokens=pr_cmd"
+assert_has "$split_control_plane_output" "filter_expression=test(pr_cmd)"
+
+split_runtime="$TMP/split_runtime.txt"
+printf 'M\tadl/src/runtime_v2/cultivating_intelligence_parts/builder.rs\n' >"$split_runtime"
+split_runtime_output="$(bash "$SCRIPT" --changed-files "$split_runtime" --print-plan)"
+assert_has "$split_runtime_output" "mode=focused"
+assert_has "$split_runtime_output" "filter_tokens=cultivating_intelligence"
+assert_has "$split_runtime_output" "filter_expression=test(cultivating_intelligence)"
+
+split_wellbeing="$TMP/split_wellbeing.txt"
+printf 'M\tadl/src/runtime_v2/wellbeing_metrics_parts/validation.rs\n' >"$split_wellbeing"
+split_wellbeing_output="$(bash "$SCRIPT" --changed-files "$split_wellbeing" --print-plan)"
+assert_has "$split_wellbeing_output" "mode=focused"
+assert_has "$split_wellbeing_output" "filter_tokens=wellbeing_metrics"
+assert_has "$split_wellbeing_output" "filter_expression=test(wellbeing_metrics)"
+
 broad_runtime="$TMP/broad_runtime.txt"
 printf 'M\tadl/src/lib.rs\n' >"$broad_runtime"
 broad_runtime_output="$(bash "$SCRIPT" --changed-files "$broad_runtime" --print-plan)"

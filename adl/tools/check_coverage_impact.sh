@@ -159,8 +159,14 @@ changed_line_delta_for_path() {
 candidate_filter_for_path() {
   local path="$1"
   case "$path" in
-    adl/src/cli/pr_cmd*|adl/src/cli/tests/pr_cmd*|adl/src/cli/pr_cmd/*|docs/default_workflow.md)
+    adl/src/cli/pr_cmd*|adl/src/cli/tests/pr_cmd*|adl/src/cli/pr_cmd/*|adl/src/cli/pr_cmd_cards.rs|adl/src/cli/pr_cmd_cards/*.rs|docs/default_workflow.md)
       printf 'pr_cmd'
+      ;;
+    adl/src/runtime_v2/cultivating_intelligence.rs|adl/src/runtime_v2/cultivating_intelligence_parts/*.rs)
+      printf 'cultivating_intelligence'
+      ;;
+    adl/src/runtime_v2/wellbeing_metrics.rs|adl/src/runtime_v2/wellbeing_metrics_parts/*.rs)
+      printf 'wellbeing_metrics'
       ;;
     adl/src/cli/mod.rs|adl/src/cli/tests.rs)
       printf 'cli'
@@ -174,10 +180,6 @@ candidate_filter_for_path() {
 file_is_structural_module_barrel() {
   local path="$1"
   [ -f "$ROOT/$path" ] || return 1
-  case "$(basename "$path")" in
-    mod.rs|lib.rs) ;;
-    *) return 1 ;;
-  esac
 
   awk '
     /^[[:space:]]*$/ { next }
@@ -187,6 +189,13 @@ file_is_structural_module_barrel() {
     /^[[:space:]]*(pub([[:space:]]*\([^)]*\))?[[:space:]]+)?use[[:space:]].*;[[:space:]]*$/ { next }
     { exit 1 }
   ' "$ROOT/$path"
+}
+
+file_has_no_executable_surface() {
+  local path="$1"
+  [ -f "$ROOT/$path" ] || return 1
+
+  ! grep -Eq '^[[:space:]]*(pub[[:space:]]+)?fn[[:space:]]+|^[[:space:]]*impl([[:space:][:alnum:]_<>,:&]+)?[[:space:]]*\{' "$ROOT/$path"
 }
 
 risk_rows=""
@@ -244,7 +253,7 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
         end
     ' "$SUMMARY")"
     if [ -z "$row" ]; then
-      if file_is_structural_module_barrel "$path"; then
+      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path"; then
         continue
       fi
       missing="${missing}  - ${path} (no coverage row in ${SUMMARY})"$'\n'

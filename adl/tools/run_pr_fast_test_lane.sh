@@ -140,6 +140,14 @@ filter_token_for_path() {
       printf 'runtime_v2'
       return 0
       ;;
+    adl/src/runtime_v2/cultivating_intelligence.rs|adl/src/runtime_v2/cultivating_intelligence_parts/*.rs)
+      printf 'cultivating_intelligence'
+      return 0
+      ;;
+    adl/src/runtime_v2/wellbeing_metrics.rs|adl/src/runtime_v2/wellbeing_metrics_parts/*.rs)
+      printf 'wellbeing_metrics'
+      return 0
+      ;;
     adl/src/runtime_v2/governed_episode/*.rs)
       printf 'governed_episode'
       return 0
@@ -176,6 +184,10 @@ filter_token_for_path() {
       return 0
       ;;
     adl/src/cli/tests/pr_cmd_inline/*/*|adl/src/cli/tests/pr_cmd_inline/*)
+      printf 'pr_cmd'
+      return 0
+      ;;
+    adl/src/cli/pr_cmd_cards.rs|adl/src/cli/pr_cmd_cards/*.rs)
       printf 'pr_cmd'
       return 0
       ;;
