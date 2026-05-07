@@ -83,3 +83,85 @@ fn runtime_v2_cultivating_intelligence_rejects_finding_dimension_drift() {
         .to_string();
     assert!(err.contains("must exist on the same fixture"));
 }
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_dimension_without_evidence_fields() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.dimensions[0].evidence_field_refs.clear();
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("dimension evidence fields")
+        .to_string();
+    assert!(err.contains("must include evidence_field_refs"));
+}
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_duplicate_criterion_ids() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.review_criteria[1].criterion_id = packet.review_criteria[0].criterion_id.clone();
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("duplicate criterion")
+        .to_string();
+    assert!(err.contains("duplicate cultivation_review_criterion.criterion_id"));
+}
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_boundary_refs_without_v0911_citation() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.boundary_refs[0].summary = "Capability boundaries matter.".to_string();
+    packet.boundary_refs[0].deferred_work = "Deferred capability work remains pending.".to_string();
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("missing v0.91.1 citation")
+        .to_string();
+    assert!(err.contains("must explicitly cite v0.91.1"));
+}
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_capability_boundary_without_capability_language() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.boundary_refs[0].summary =
+        "v0.91.1 keeps adjacent work deferred without naming the governing boundary.".to_string();
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("capability language")
+        .to_string();
+    assert!(err.contains("must describe capability or aptitude deferral"));
+}
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_invalid_fixture_outcome() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.fixtures[0].overall_outcome = "excellent".to_string();
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("overall outcome")
+        .to_string();
+    assert!(err.contains("must be one of improving, stable, strained, or unclear"));
+}
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_invalid_supporting_trace_ref_prefix() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.fixtures[0].supporting_trace_refs = vec!["bogus:trace-1".to_string()];
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("trace ref prefix")
+        .to_string();
+    assert!(err.contains("must start with trace:"));
+}
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_invalid_review_status() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.review_findings[0].review_status = "resolved".to_string();
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("review status")
+        .to_string();
+    assert!(err.contains("must be one of supported, guarded, or contested"));
+}
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_missing_fixture_finding_coverage() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.review_findings.pop();
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("missing fixture finding")
+        .to_string();
+    assert!(err.contains("must contain exactly one finding per cultivation fixture"));
+}
