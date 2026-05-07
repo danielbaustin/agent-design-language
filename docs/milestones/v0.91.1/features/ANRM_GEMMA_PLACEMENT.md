@@ -5,7 +5,7 @@
 - Feature Name: ANRM/Gemma Placement And Trace Dataset
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-11
+- Planned WP Home: WP-12
 - Source Docs: `.adl/docs/TBD/anrm/`
 - Proof Modes: dataset, fixtures, review
 

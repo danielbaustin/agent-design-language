@@ -17,7 +17,7 @@ notes:
 - v0.92 owns the first true birthday; v0.91.1 prepares evidence but must not
   claim birth.
 card_update_rule:
-- When opened, every WP must receive STP, SIP, SOR, and SPP cards from the
+- When opened, every WP must receive STP, SIP, SPP, SRP, and SOR cards from the
   accepted readiness section.
 - Cards must name source docs, concrete outputs, validation commands, non-goals,
   demo/proof expectations, and review dependencies.
@@ -103,7 +103,7 @@ work_packages:
   title: ANRM/Gemma placement and trace dataset
   queue: tools
   outcome: ANRM placement, trace extractor, dataset mapping
-  depends_on: WP-09-WP-11
+  depends_on: WP-09, WP-10, WP-11
 - wp: WP-13
   issue: null
   title: ACIP conformance and local encryption hardening
@@ -121,7 +121,7 @@ work_packages:
   title: Runtime inhabitant integration
   queue: runtime
   outcome: integrated agent-shaped run surface
-  depends_on: WP-04-WP-14
+  depends_on: WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14
 - wp: WP-16
   issue: null
   title: Observatory-visible agent flagship demo

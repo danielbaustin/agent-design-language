@@ -48,10 +48,10 @@ and cognition implementation wave.
 | WP-09 | Capability and aptitude testing foundation | tools | first executable capability harness and report | WP-02, WP-03, WP-06 |
 | WP-10 | Intelligence metric architecture | runtime | evidence-bound metric architecture | WP-09 |
 | WP-11 | Governed learning substrate | runtime | learning update and feedback contract | WP-07, WP-09, WP-10 |
-| WP-12 | ANRM/Gemma placement and trace dataset | tools | ANRM placement, trace extractor, dataset mapping | WP-09-WP-11 |
+| WP-12 | ANRM/Gemma placement and trace dataset | tools | ANRM placement, trace extractor, dataset mapping | WP-09, WP-10, WP-11 |
 | WP-13 | ACIP conformance and local encryption hardening | runtime | secure local comms envelope and conformance fixtures | WP-03, WP-06 |
 | WP-14 | A2A adapter boundary and compatibility plan | runtime | A2A-over-ACIP adapter slice and non-claims | WP-13 |
-| WP-15 | Runtime inhabitant integration | runtime | integrated agent-shaped run surface | WP-04-WP-14 |
+| WP-15 | Runtime inhabitant integration | runtime | integrated agent-shaped run surface | WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14 |
 | WP-16 | Observatory-visible agent flagship demo | demo | runnable CSM inhabitant proof demo | WP-15 |
 | WP-17 | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-16 |
 | WP-18 | Coverage / quality gate | quality | validation posture and test/coverage record | WP-17 |

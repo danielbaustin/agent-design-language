@@ -5,7 +5,7 @@
 - Feature Name: Memory and Identity Architecture
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-06
+- Planned WP Home: WP-07
 - Source Docs: `.adl/docs/TBD/memory_identity/`
 - Proof Modes: architecture, fixtures, review
 

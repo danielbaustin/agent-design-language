@@ -5,7 +5,7 @@
 - Feature Name: CSM Observatory Active Surface
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-03
+- Planned WP Home: WP-04
 - Source Docs: `.adl/docs/TBD/csm_observatory/`
 - Proof Modes: demo, fixtures, review
 

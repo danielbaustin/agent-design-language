@@ -5,7 +5,7 @@
 - Feature Name: Theory of Mind Foundation
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-07
+- Planned WP Home: WP-08
 - Source Docs: `.adl/docs/TBD/ToM/`
 - Proof Modes: schema, fixtures, review
 

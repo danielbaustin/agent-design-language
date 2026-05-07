@@ -5,7 +5,7 @@
 - Feature Name: A2A Adapter Boundary And Compatibility Plan
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-13
+- Planned WP Home: WP-14
 - Source Docs: `.adl/docs/TBD/a2a/`
 - Proof Modes: architecture, fixtures, review
 
