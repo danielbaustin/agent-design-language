@@ -38,11 +38,11 @@
 - [ ] Structured Review Policy (`SRP`) is accepted as a first-class review-policy artifact.
 - [ ] Capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,
   ToM, memory/identity, and runtime-v2/polis docs are routed to v0.91.1.
-- [ ] Demo matrix and feature proof coverage lane preserved before review convergence.
+- [x] Demo matrix and feature proof coverage lane preserved before review convergence.
 
 ## Review Readiness
 
-- [ ] Demo matrix reflects actual proof status.
+- [x] Demo matrix reflects actual proof status.
 - [ ] Feature docs match implemented artifacts.
 - [ ] Private wellbeing diagnostics are not exposed as public reputation.
 - [ ] Moral metrics and karma language avoid scoreboard framing.
