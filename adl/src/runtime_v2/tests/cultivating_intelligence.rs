@@ -165,3 +165,47 @@ fn runtime_v2_cultivating_intelligence_rejects_missing_fixture_finding_coverage(
         .to_string();
     assert!(err.contains("must contain exactly one finding per cultivation fixture"));
 }
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_unknown_supporting_trace_ref() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.fixtures[0].supporting_trace_refs = vec!["trace:not-a-known-example".to_string()];
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("unknown trace ref")
+        .to_string();
+    assert!(err.contains("must come from known WP-04 trace examples"));
+}
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_invalid_assessment_level() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.fixtures[0].dimension_assessments[0].cultivation_level = "rising".to_string();
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("assessment level")
+        .to_string();
+    assert!(err.contains("must be one of high, medium, or low"));
+}
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_unknown_fixture_kind() {
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.fixtures[0].fixture_kind = "invented-kind".to_string();
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("fixture kind")
+        .to_string();
+    assert!(err.contains("cultivation fixture kinds must be canonical"));
+}
+
+#[test]
+fn runtime_v2_cultivating_intelligence_rejects_intelligence_boundary_without_intelligence_language()
+{
+    let mut packet = cultivating_intelligence_review_packet().expect("packet");
+    packet.boundary_refs[1].summary =
+        "v0.91.1 keeps adjacent architecture work deferred.".to_string();
+    packet.boundary_refs[1].deferred_work =
+        "Deferred work remains not implemented until the later milestone.".to_string();
+    let err = validate_cultivating_intelligence_review_packet(&packet)
+        .expect_err("intelligence language")
+        .to_string();
+    assert!(err.contains("must describe intelligence/memory/ToM deferral"));
+}
