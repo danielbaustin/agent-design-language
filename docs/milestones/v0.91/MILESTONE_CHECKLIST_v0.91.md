@@ -19,23 +19,23 @@
 
 ## Execution Readiness
 
-- [ ] Moral event contract accepted.
-- [ ] Moral event validation accepted.
-- [ ] Moral trace schema accepted.
-- [ ] Outcome linkage and attribution accepted.
-- [ ] Moral metrics accepted as evidence, not verdicts.
-- [ ] Moral trajectory review accepted.
-- [ ] Anti-harm trajectory proof path accepted.
-- [ ] Wellbeing metrics access policy accepted.
-- [ ] Kindness model accepted or explicitly handed off.
-- [ ] Humor/absurdity reframing surface accepted or explicitly handed off.
-- [ ] Affect reasoning-control surface accepted or explicitly handed off.
-- [ ] Cultivating-intelligence review criteria accepted or explicitly handed off.
-- [ ] Moral resources accepted as a concrete feature, not optional rhetoric.
-- [ ] Secure intra-polis Agent Comms slice accepted, with v0.91.1 hardening
+- [x] Moral event contract accepted.
+- [x] Moral event validation accepted.
+- [x] Moral trace schema accepted.
+- [x] Outcome linkage and attribution accepted.
+- [x] Moral metrics accepted as evidence, not verdicts.
+- [x] Moral trajectory review accepted.
+- [x] Anti-harm trajectory proof path accepted.
+- [x] Wellbeing metrics access policy accepted.
+- [x] Kindness model accepted or explicitly handed off.
+- [x] Humor/absurdity reframing surface accepted or explicitly handed off.
+- [x] Affect reasoning-control surface accepted or explicitly handed off.
+- [x] Cultivating-intelligence review criteria accepted or explicitly handed off.
+- [x] Moral resources accepted as a concrete feature, not optional rhetoric.
+- [x] Secure intra-polis Agent Comms slice accepted, with v0.91.1 hardening
   scope separated if needed.
-- [ ] Structured planning (`SPP`) and plan review are accepted as durable workflow artifacts.
-- [ ] Structured Review Policy (`SRP`) is accepted as a first-class review-policy artifact.
+- [x] Structured planning (`SPP`) and plan review are accepted as durable workflow artifacts.
+- [x] Structured Review Policy (`SRP`) is accepted as a first-class review-policy artifact.
 - [ ] Capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,
   ToM, memory/identity, and runtime-v2/polis docs are routed to v0.91.1.
 - [x] Demo matrix and feature proof coverage lane preserved before review convergence.
@@ -51,9 +51,9 @@
 - [ ] v0.92 identity and birthday work remains downstream.
 - [ ] External or cross-polis communication is absent or explicitly TLS/mTLS
   gated.
-- [ ] Release notes avoid aspirational shipped language until closeout.
+- [x] Release notes avoid aspirational shipped language until closeout.
 - [x] Current main CI and coverage posture recorded after WP-18 merge.
-- [x] Closed-issue SOR truth drift recorded as an explicit release-tail exception.
+- [x] Closed-issue SOR truth drift repaired and validator pass recorded.
 
 ## Release Readiness
 

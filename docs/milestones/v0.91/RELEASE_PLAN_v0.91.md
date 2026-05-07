@@ -52,9 +52,9 @@ consciousness claim, no birthday, no constitutional citizenship, and no external
 agent communication without TLS/mTLS-equivalent protection.
 
 The release also must not treat a green repository merge gate as sufficient
-while local closed-issue lifecycle truth remains red. The `WP-19` quality gate
-records the current exception register in
-[QUALITY_GATE_v0.91.md](QUALITY_GATE_v0.91.md).
+unless local closed-issue lifecycle truth is green. The `WP-19` quality gate
+records the repaired closeout-truth posture and the remaining release-tail
+exception register in [QUALITY_GATE_v0.91.md](QUALITY_GATE_v0.91.md).
 
 ## Handoff
 

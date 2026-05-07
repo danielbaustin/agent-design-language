@@ -29,8 +29,7 @@ milestone docs, and gap-review evidence currently say.
 
 ## Gate Summary
 
-`v0.91` has a strong implementation and proof posture through `WP-18`, but it
-is not release-closeout-ready yet.
+`v0.91` has a strong implementation and proof posture through `WP-18`.
 
 The current main-branch merge gate is green after `WP-18`:
 
@@ -44,11 +43,14 @@ The remaining blockers are release-tail blockers, not hidden implementation
 passes:
 
 - `WP-20` through `WP-25` remain open.
-- Local closed-issue SOR truth currently fails for `#2751`, `#2752`, and
-  `#2797`.
-- Release notes remain a draft placeholder pending closeout rewrite.
 - Internal review, third-party review, accepted-finding remediation, next
   milestone planning, and ceremony are not complete yet.
+
+The two concrete quality-gate gaps found during `WP-19` are now repaired:
+
+- local closed-issue SOR truth passes for the current `v0.91` closed issue set
+- release notes now describe landed behavior instead of remaining a draft
+  placeholder
 
 ## Required vs Documented Exceptions
 
@@ -151,11 +153,11 @@ Current tracked docs evidence:
 - `docs/milestones/v0.91/SPP_READINESS_v0.91.md` records the bounded SPP
   readiness slice and defers mass SPP generation to the editor-skill path.
 
-Known docs exception:
+Release-note posture:
 
-- `docs/milestones/v0.91/RELEASE_NOTES_v0.91.md` is still a draft placeholder.
-  This is assigned to `WP-20` / closeout docs and must not be treated as final
-  release notes.
+- `docs/milestones/v0.91/RELEASE_NOTES_v0.91.md` has been rewritten from a
+  planned placeholder into landed-behavior notes with explicit remaining
+  release-tail status.
 
 ## 4) Demo and Feature-Proof Gate
 
@@ -198,8 +200,9 @@ Disposition:
 | --- | --- |
 | `WP-18` proof convergence | Resolved by merged PR `#2806`; demo matrix and feature-proof coverage are now tracked. |
 | `WP-19` quality gate missing | Resolved by this document. |
+| Closed-issue SOR truth drift | Resolved locally for `#2751`, `#2752`, and `#2797`; validator now passes for 27 closed `v0.91` issues. |
+| Draft release notes | Resolved by rewriting release notes to landed behavior and retaining explicit release-tail status. |
 | `WP-20` through `WP-25` still open | Active release-tail blockers; proceed in sequence. |
-| Draft release notes | Assigned to `WP-20`; not release-ready. |
 | Internal/external review absent | Assigned to `WP-21` and `WP-22`; not release-ready. |
 | Accepted-finding remediation absent | Assigned to `WP-23`; not release-ready. |
 | Next milestone and ceremony incomplete | Assigned to `WP-24` and `WP-25`; not release-ready. |
@@ -208,9 +211,9 @@ Disposition:
 
 | ID | Severity | Exception | Owner / Next WP | Release impact |
 | --- | --- | --- | --- | --- |
-| QG-001 | P1 | Closed-issue SOR truth validator fails for `#2751`, `#2752`, and `#2797`. | `WP-20` docs/review pass or a bounded records repair before release. | Blocks release-closeout truth until fixed or explicitly no-op-dispositioned. |
+| QG-001 | RESOLVED | Closed-issue SOR truth validator previously failed for `#2751`, `#2752`, and `#2797`; local records now validate and the milestone closed-issue validator passes. | WP-19 | No remaining release impact. |
 | QG-002 | P1 | `WP-20` through `WP-25` remain open. | Release-tail train. | Blocks release ceremony. |
-| QG-003 | P1 | Release notes are still draft/planned-language notes. | `WP-20`. | Blocks public release notes. |
+| QG-003 | RESOLVED | Release notes previously described intended behavior; they now describe landed behavior and remaining review-tail status. | WP-19 | No remaining release impact beyond normal WP-20 review polish. |
 | QG-004 | P2 | Internal and third-party review have not yet run. | `WP-21`, `WP-22`. | Blocks final assurance. |
 | QG-005 | P2 | Review-finding remediation is not yet known. | `WP-23`. | Blocks final release if accepted findings exist. |
 
@@ -222,17 +225,19 @@ Command:
 bash adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.91
 ```
 
-Current result: FAIL.
+Current result: PASS.
 
-Current failing local records:
+The repaired local records are:
 
 - `.adl/v0.91/tasks/issue-2751__v0-91-wp-17-demo-cognitive-being-flagship-demo/sor.md`
 - `.adl/v0.91/tasks/issue-2752__v0-91-wp-18-demo-demo-matrix-and-feature-proof-coverage/sor.md`
 - `.adl/v0.91/tasks/issue-2797__v0-91-tools-fix-worktree-task-bundle-materialization/sor.md`
 
-This is a local lifecycle-record truth failure, not evidence that the merged
-tracked artifacts are absent. It must still be repaired before closeout because
-release truth depends on both tracked artifacts and lifecycle records.
+The validator now reports:
+
+```text
+PASS check_milestone_closed_issue_sor_truth version=v0.91 checked=27
+```
 
 ## 7) Review Readiness
 
@@ -245,23 +250,24 @@ Ready:
 - feature-proof coverage exists
 - latest main CI and coverage are green
 - non-claims are explicit in proof docs
+- release notes describe landed behavior and retain release-tail status
+- closed-issue SOR truth is green
 
 Not ready:
 
-- release notes are not final
 - internal review has not run
 - third-party review has not run
 - accepted-finding remediation is not complete
-- local closed-issue SOR truth is not green
 
 ## Final WP-19 Judgment
 
 `v0.91` currently passes the main repository merge and coverage gates after
-`WP-18`.
+`WP-18`, and the local closed-issue SOR truth gap identified during `WP-19` is
+repaired.
 
 It does not yet pass the release-closeout gate.
 
 The next required work is not broad feature reimplementation. It is the
 release-tail sequence: docs/review pass, internal review, external review,
-accepted-finding remediation, next-milestone planning, and ceremony, with the
-closed-issue SOR truth exception fixed before final release.
+accepted-finding remediation, next-milestone planning, and ceremony. The
+closed-issue SOR truth exception found during `WP-19` is already fixed.
