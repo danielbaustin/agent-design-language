@@ -21,3 +21,7 @@ promoted.
 - `0012-runtime-v2-bounded-csm-run.md`
 - `0013-runtime-v2-citizen-state-continuity-substrate.md`
 - `0014-contract-market-architecture.md`
+- `0015-governed-tools-execution-authority-architecture.md`
+- `0016-moral-evidence-and-cognitive-being-substrate.md`
+- `0017-secure-local-agent-comms-and-a2a-boundary.md`
+- `0018-structured-planning-and-review-policy-artifacts.md`

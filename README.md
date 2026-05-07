@@ -101,21 +101,27 @@ intelligence can become infrastructure instead of an unreproducible transcript.
 
 ## Quick Start
 
+Generate the current v0.91 cognitive-being flagship proof packet:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- runtime-v2 cognitive-being-flagship-demo --out artifacts/quickstart/cognitive-being-flagship
+```
+
 Inspect a current v0.91 multi-agent workflow plan:
 
 ```bash
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-91-chatgpt-gemini-claude-triad-conversation.adl.yaml --print-plan
 ```
 
-Generate a Runtime v2 foundation proof packet:
-
-```bash
-cargo run --manifest-path adl/Cargo.toml -- runtime-v2 foundation-demo --out artifacts/quickstart/runtime-v2-foundation
-```
-
 ## Recent Demos And Proofs
 
 These are three high-signal recent demo entrypoints.
+
+Generate the v0.91 cognitive-being flagship proof bundle:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- runtime-v2 cognitive-being-flagship-demo --out artifacts/v091/demo-d13-cognitive-being-flagship
+```
 
 Run the v0.90.5 governed-tools flagship demo:
 
@@ -138,13 +144,14 @@ from issue
 
 ### v0.91 - Active Moral Governance And Cognitive-Being Milestone
 
-v0.91 is the active implementation milestone. It is building the moral
-governance, wellbeing, kindness, humor, affect, cultivated-intelligence,
-structured planning, SRP, and secure intra-polis Agent Comms band.
+v0.91 is the active implementation milestone. Its core `0.91.0` line has landed
+the moral governance, wellbeing, kindness, humor, affect,
+cultivated-intelligence, structured planning, SRP, and secure intra-polis Agent
+Comms band, and is now in release-tail review.
 
 It should not be read as a completed release yet. Its issue wave is open, and
-its docs distinguish active implementation from planned downstream identity,
-birthday, and constitutional-governance work.
+its docs distinguish the landed `v0.91.0` evidence substrate from downstream
+identity, birthday, and constitutional-governance work.
 
 Start here:
 
