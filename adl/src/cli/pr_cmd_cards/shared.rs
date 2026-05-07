@@ -104,7 +104,7 @@ pub(crate) fn default_repo(repo_root: &Path) -> Result<String> {
     .unwrap_or_default();
     let inferred = inferred.trim();
     if !inferred.is_empty() {
-        return Ok(inferred);
+        return Ok(inferred.to_string());
     }
 
     let base = repo_root

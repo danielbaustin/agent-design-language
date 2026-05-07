@@ -1,20 +1,21 @@
-use anyhow::Result;
+use anyhow::{bail, Context, Result};
 use chrono::Utc;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
-use ::adl::control_plane::{
-    card_input_path, card_output_path, card_stp_path, resolve_cards_root, IssueRef,
-};
-use super::shared::{
-    branch_indicates_unbound_state, copy_directory_contents, default_repo, deduplicate_exact_line,
-    ensure_symlink, field_line_value, output_card_title_matches_slug, path_relative_to_repo,
-    replace_exact_line, replace_field_line, replace_field_line_in_file,
-};
-use super::super::pr_cmd_validate::{bootstrap_stub_reason, PromptSurfaceKind};
 use super::super::pr_cmd_validate::validate_authored_prompt_surface;
-use super::validation::validate_bootstrap_stp;
-use super::validation::validate_bootstrap_cards;
+use super::super::pr_cmd_validate::{bootstrap_stub_reason, PromptSurfaceKind};
+use super::shared::{
+    branch_indicates_unbound_state, copy_directory_contents, deduplicate_exact_line, default_repo,
+    ensure_symlink, field_line_value, output_card_title_matches_slug, path_relative_to_repo,
+    path_str, replace_exact_line, replace_field_line, replace_field_line_in_file,
+};
+use super::validation::{validate_bootstrap_cards, validate_bootstrap_stp};
+use ::adl::control_plane::{
+    card_input_path, card_output_path, card_plan_path, card_review_policy_path, card_stp_path,
+    resolve_cards_root, IssueRef,
+};
 
 pub(crate) fn ensure_task_bundle_stp(
     root: &Path,
@@ -47,6 +48,97 @@ pub(crate) fn ensure_local_issue_prompt_copy(
     Ok(local_source_path)
 }
 
+fn file_exists_nonempty(path: &Path) -> bool {
+    fs::metadata(path)
+        .map(|metadata| metadata.is_file() && metadata.len() > 0)
+        .unwrap_or(false)
+}
+
+pub(crate) fn sync_root_task_bundle_into_worktree(
+    primary_checkout_root: &Path,
+    worktree_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<()> {
+    let worktree_bundle_dir = issue_ref.worktree_task_bundle_dir_path(worktree_root);
+    if let Some(parent) = worktree_bundle_dir.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::create_dir_all(&worktree_bundle_dir)?;
+
+    let bundle_pairs = [
+        (
+            issue_ref.task_bundle_stp_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_stp_path(worktree_root),
+        ),
+        (
+            issue_ref.task_bundle_input_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_input_path(worktree_root),
+        ),
+        (
+            issue_ref.task_bundle_output_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_output_path(worktree_root),
+        ),
+        (
+            issue_ref.task_bundle_plan_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_plan_path(worktree_root),
+        ),
+        (
+            issue_ref.task_bundle_review_policy_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_review_policy_path(worktree_root),
+        ),
+    ];
+
+    for (root_path, worktree_path) in bundle_pairs {
+        if file_exists_nonempty(&worktree_path) {
+            continue;
+        }
+        if !file_exists_nonempty(&root_path) {
+            bail!(
+                "start: cannot materialize missing worktree bundle file '{}' because the canonical root file '{}' is absent",
+                worktree_path.display(),
+                root_path.display()
+            );
+        }
+        if let Some(parent) = worktree_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::copy(&root_path, &worktree_path).with_context(|| {
+            format!(
+                "start: failed to sync canonical bundle file '{}' into worktree path '{}'",
+                root_path.display(),
+                worktree_path.display()
+            )
+        })?;
+    }
+
+    Ok(())
+}
+
+pub(crate) fn ensure_worktree_task_bundle_materialized(
+    worktree_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<()> {
+    let expected = [
+        issue_ref.worktree_task_bundle_stp_path(worktree_root),
+        issue_ref.worktree_task_bundle_input_path(worktree_root),
+        issue_ref.worktree_task_bundle_output_path(worktree_root),
+        issue_ref.worktree_task_bundle_plan_path(worktree_root),
+        issue_ref.worktree_task_bundle_review_policy_path(worktree_root),
+    ];
+    let missing: Vec<String> = expected
+        .iter()
+        .filter(|path| !file_exists_nonempty(path))
+        .map(|path| path.display().to_string())
+        .collect();
+    if !missing.is_empty() {
+        bail!(
+            "start: bound worktree is missing canonical task-bundle surfaces after materialization; refusing partial execution surface:\n{}",
+            missing.join("\n")
+        );
+    }
+    Ok(())
+}
+
 pub(crate) fn mirror_docs_templates_into_worktree(
     repo_root: &Path,
     worktree_root: &Path,
@@ -69,6 +161,8 @@ pub(crate) fn ensure_bootstrap_cards(
     let bundle_stp = issue_ref.task_bundle_stp_path(root);
     let bundle_input = issue_ref.task_bundle_input_path(root);
     let bundle_output = issue_ref.task_bundle_output_path(root);
+    let bundle_plan = issue_ref.task_bundle_plan_path(root);
+    let bundle_review_policy = issue_ref.task_bundle_review_policy_path(root);
     let bundle_stp_created = !bundle_stp.is_file();
     if let Some(parent) = bundle_input.parent() {
         fs::create_dir_all(parent)?;
@@ -76,7 +170,9 @@ pub(crate) fn ensure_bootstrap_cards(
     if bundle_stp_created {
         validate_authored_prompt_surface("start", &bundle_stp, PromptSurfaceKind::Stp)?;
     }
-    if !bundle_input.is_file() || prompt_surface_is_bootstrap_stub(&bundle_input, PromptSurfaceKind::Sip)? {
+    if !bundle_input.is_file()
+        || prompt_surface_is_bootstrap_stub(&bundle_input, PromptSurfaceKind::Sip)?
+    {
         write_input_card(
             root,
             &bundle_input,
@@ -89,19 +185,31 @@ pub(crate) fn ensure_bootstrap_cards(
     } else if field_line_value(&bundle_input, "Branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_input, "Branch", branch)?;
     }
-    if !bundle_output.is_file() || !output_card_title_matches_slug(&bundle_output, issue_ref.slug())? {
+    if !bundle_output.is_file()
+        || !output_card_title_matches_slug(&bundle_output, issue_ref.slug())?
+    {
         write_output_card(root, &bundle_output, issue_ref, title, branch)?;
     } else if field_line_value(&bundle_output, "Branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_output, "Branch", branch)?;
+    }
+    if !bundle_plan.is_file() {
+        write_plan_card(root, &bundle_plan, issue_ref, title, branch)?;
+    }
+    if !bundle_review_policy.is_file() {
+        write_review_policy_card(root, &bundle_review_policy, issue_ref, title, branch)?;
     }
 
     let cards_root = resolve_cards_root(root, None);
     let compat_stp = card_stp_path(&cards_root, issue_ref.issue_number());
     let compat_input = card_input_path(&cards_root, issue_ref.issue_number());
     let compat_output = card_output_path(&cards_root, issue_ref.issue_number());
+    let compat_plan = card_plan_path(&cards_root, issue_ref.issue_number());
+    let compat_review_policy = card_review_policy_path(&cards_root, issue_ref.issue_number());
     ensure_symlink(&compat_stp, &bundle_stp)?;
     ensure_symlink(&compat_input, &bundle_input)?;
     ensure_symlink(&compat_output, &bundle_output)?;
+    ensure_symlink(&compat_plan, &bundle_plan)?;
+    ensure_symlink(&compat_review_policy, &bundle_review_policy)?;
 
     validate_bootstrap_cards(
         root,
@@ -112,7 +220,41 @@ pub(crate) fn ensure_bootstrap_cards(
         &bundle_output,
     )?;
     validate_authored_prompt_surface("start", &bundle_input, PromptSurfaceKind::Sip)?;
+    validate_structured_bundle_artifacts(root, &bundle_plan, &bundle_review_policy)?;
     Ok((bundle_stp, bundle_input, bundle_output))
+}
+
+fn validate_structured_bundle_artifacts(
+    repo_root: &Path,
+    bundle_plan: &Path,
+    bundle_review_policy: &Path,
+) -> Result<()> {
+    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
+    for (kind, path) in [("spp", bundle_plan), ("srp", bundle_review_policy)] {
+        let output = Command::new("bash")
+            .args([
+                path_str(&validator)?,
+                "--type",
+                kind,
+                "--input",
+                path_str(path)?,
+            ])
+            .output()
+            .with_context(|| "failed to spawn 'bash'")?;
+        if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+            let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            let detail = if !stderr.is_empty() {
+                stderr
+            } else if !stdout.is_empty() {
+                stdout
+            } else {
+                format!("bash failed with status {:?}", output.status.code())
+            };
+            bail!("{kind}: failed validation: {}: {detail}", path.display());
+        }
+    }
+    Ok(())
 }
 
 pub(crate) fn write_output_card(
@@ -123,6 +265,30 @@ pub(crate) fn write_output_card(
     branch: &str,
 ) -> Result<()> {
     let text = render_bootstrap_output_card(repo_root, issue_ref, title, branch);
+    fs::write(path, text)?;
+    Ok(())
+}
+
+pub(crate) fn write_plan_card(
+    repo_root: &Path,
+    path: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+) -> Result<()> {
+    let text = render_bootstrap_plan_card(repo_root, issue_ref, title, branch);
+    fs::write(path, text)?;
+    Ok(())
+}
+
+pub(crate) fn write_review_policy_card(
+    repo_root: &Path,
+    path: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+) -> Result<()> {
+    let text = render_bootstrap_review_policy_card(repo_root, issue_ref, title, branch);
     fs::write(path, text)?;
     Ok(())
 }
@@ -307,7 +473,8 @@ fn render_bootstrap_output_card(
     title: &str,
     branch: &str,
 ) -> String {
-    let output_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_output_path(repo_root));
+    let output_rel =
+        path_relative_to_repo(repo_root, &issue_ref.task_bundle_output_path(repo_root));
     let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%SZ");
     format!(
         r#"# {slug}
@@ -456,5 +623,265 @@ verification_summary:
         branch = branch,
         output_rel = output_rel,
         timestamp = timestamp,
+    )
+}
+
+fn render_bootstrap_plan_card(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+) -> String {
+    let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
+    let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
+    let spp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_plan_path(repo_root));
+    format!(
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_planning_prompt"
+name: "{slug}-execution-plan"
+issue: {issue}
+task_id: "issue-{issue_padded}"
+run_id: "issue-{issue_padded}"
+version: "{version}"
+title: "{title}"
+branch: "{branch}"
+status: "draft"
+plan_revision: 1
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/{repo}/issues/{issue}"
+  - kind: "stp"
+    ref: "{stp_rel}"
+  - kind: "sip"
+    ref: "{sip_rel}"
+scope:
+  files:
+    - "{stp_rel}"
+    - "{sip_rel}"
+  components:
+    - "{slug}"
+  out_of_scope:
+    - "implementation beyond the approved issue scope"
+constraints:
+  - "read_only_until_execution_is_approved"
+  - "no_hidden_scope_expansion"
+confidence: "medium"
+plan_summary: "Bootstrap planning surface for {title}; revise it before tracked execution if this issue needs an explicit reviewed execution plan."
+assumptions:
+  - "The linked STP and SIP remain the canonical issue-intent and execution-context inputs."
+proposed_steps:
+  - id: "step-1"
+    description: "Review the linked STP and SIP, then tighten the planned execution sequence."
+    expected_output: "{spp_rel}"
+    allowed_mode: "execution_after_approval"
+codex_plan:
+  - step: "Review the issue bundle and tighten the planned execution sequence."
+    status: "pending"
+affected_areas:
+  - "{slug}"
+invariants_to_preserve:
+  - "Do not claim implementation work inside the plan."
+  - "Do not expand touched files or validation beyond issue-local evidence without recording why."
+risks_and_edge_cases:
+  - "The planned files or validations may drift if the issue prompt changes materially before execution."
+test_strategy:
+  - "Review the proposed validation commands before tracked execution."
+execution_handoff: "Use this artifact as the durable plan-of-record when planning is required before execution."
+required_permissions:
+  - "workspace-write after execution approval"
+stop_conditions:
+  - "Stop and re-plan if the touched-file set or proving commands change materially."
+alternatives_considered:
+  - description: "Rely only on transient chat planning."
+    reason_not_chosen: "Chat-only planning is not durable or reviewable enough for this workflow surface."
+review_hooks:
+  - "Check scope truthfulness, touched-file truthfulness, validation sufficiency, and re-plan triggers."
+notes: "Bootstrap-generated SPP; revise before use if planning review is required."
+---
+
+# Structured Plan Prompt
+
+## Plan Summary
+
+Bootstrap planning surface for this issue. Tighten the plan before tracked execution if plan review is required.
+
+## Codex Plan
+
+1. [pending] Review the issue bundle and tighten the planned execution sequence.
+
+## Assumptions
+
+- The linked STP and SIP remain the canonical issue-local inputs.
+
+## Proposed Steps
+
+1. Review the linked STP and SIP, then tighten the planned execution sequence.
+
+## Affected Areas
+
+- {slug}
+
+## Invariants To Preserve
+
+- Do not claim implementation work inside the plan.
+- Do not expand touched files or validations without recording why.
+
+## Risks And Edge Cases
+
+- The planned files or validations may drift if the issue prompt changes materially before execution.
+
+## Test Strategy
+
+- Review the proposed validation commands before tracked execution.
+
+## Execution Handoff
+
+Use this artifact as the durable plan-of-record when planning is required before execution.
+
+## Stop Conditions
+
+- Stop and re-plan if the touched-file set or proving commands change materially.
+
+## Notes
+
+Bootstrap-generated SPP; revise before use if planning review is required.
+"#,
+        slug = issue_ref.slug(),
+        issue = issue_ref.issue_number(),
+        issue_padded = issue_ref.padded_issue_number(),
+        version = issue_ref.scope(),
+        title = title,
+        branch = branch,
+        repo = default_repo(repo_root)
+            .unwrap_or_else(|_| "danielbaustin/agent-design-language".to_string()),
+        stp_rel = stp_rel,
+        sip_rel = sip_rel,
+        spp_rel = spp_rel,
+    )
+}
+
+fn render_bootstrap_review_policy_card(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+) -> String {
+    let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
+    let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
+    let sor_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_output_path(repo_root));
+    format!(
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_review_policy"
+name: "{slug}-review-policy"
+issue: {issue}
+task_id: "issue-{issue_padded}"
+version: "{version}"
+title: "{title}"
+branch: "{branch}"
+status: "draft"
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/{repo}/issues/{issue}"
+  - kind: "stp"
+    ref: "{stp_rel}"
+  - kind: "sip"
+    ref: "{sip_rel}"
+  - kind: "sor"
+    ref: "{sor_rel}"
+review_mode: "pre_pr_independent_review"
+timing: "before_pr_open"
+scope_basis:
+  - "{stp_rel}"
+  - "{sip_rel}"
+in_scope_surfaces:
+  - "tracked changes for this issue branch"
+evidence_policy:
+  - "Use repository evidence, targeted validation output, and linked issue-bundle artifacts only."
+validation_inputs:
+  - "Issue-local proofs recorded in the SOR."
+allowed_dispositions:
+  - "PASS"
+  - "BLOCK"
+  - "NEEDS_FOLLOWUP"
+reviewer_constraints:
+  - "Do not widen issue scope."
+  - "Do not merge, publish, or close the issue."
+refusal_policy:
+  - "Refuse claims that are unsupported by repository evidence."
+  - "Refuse approving behavior outside the recorded issue scope."
+follow_up_routing:
+  - "Route actionable defects back to the issue branch before PR publication."
+non_claims:
+  - "This policy does not guarantee review quality by itself."
+policy_refs:
+  - "{stp_rel}"
+  - "{sip_rel}"
+notes: "Bootstrap-generated SRP; revise before use if the review policy needs issue-specific constraints."
+---
+
+# Structured Review Policy
+
+## Review Summary
+
+Use this policy to govern the independent pre-PR review for this issue.
+
+## Scope Basis
+
+- {stp_rel}
+- {sip_rel}
+
+## In-Scope Surfaces
+
+- tracked changes for this issue branch
+
+## Evidence Rules
+
+- Use repository evidence, targeted validation output, and linked issue-bundle artifacts only.
+
+## Validation Inputs
+
+- Issue-local proofs recorded in the SOR.
+
+## Allowed Dispositions
+
+- PASS
+- BLOCK
+- NEEDS_FOLLOWUP
+
+## Reviewer Constraints
+
+- Do not widen issue scope.
+- Do not merge, publish, or close the issue.
+
+## Refusal Policy
+
+- Refuse claims that are unsupported by repository evidence.
+- Refuse approving behavior outside the recorded issue scope.
+
+## Follow-up Routing
+
+- Route actionable defects back to the issue branch before PR publication.
+
+## Non-Claims
+
+- This policy does not guarantee review quality by itself.
+
+## Notes
+
+Bootstrap-generated SRP; revise before use if the review policy needs issue-specific constraints.
+"#,
+        slug = issue_ref.slug(),
+        issue = issue_ref.issue_number(),
+        issue_padded = issue_ref.padded_issue_number(),
+        version = issue_ref.scope(),
+        title = title,
+        branch = branch,
+        repo = default_repo(repo_root)
+            .unwrap_or_else(|_| "danielbaustin/agent-design-language".to_string()),
+        stp_rel = stp_rel,
+        sip_rel = sip_rel,
+        sor_rel = sor_rel,
     )
 }
