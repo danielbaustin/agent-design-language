@@ -152,6 +152,10 @@ Current tracked docs evidence:
   post-repair card-bundle readiness proof.
 - `docs/milestones/v0.91/SPP_READINESS_v0.91.md` records the bounded SPP
   readiness slice and defers mass SPP generation to the editor-skill path.
+- `docs/adr/0016-moral-evidence-and-cognitive-being-substrate.md`,
+  `docs/adr/0017-secure-local-agent-comms-and-a2a-boundary.md`, and
+  `docs/adr/0018-structured-planning-and-review-policy-artifacts.md` record the
+  accepted `v0.91.0` architecture decisions for the review cycle.
 
 Release-note posture:
 
@@ -171,6 +175,9 @@ Current proof surfaces:
 - `demos/v0.91/cognitive_being_flagship_demo.md`
 - `adl/src/runtime_v2/cognitive_being_flagship_demo.rs`
 - `adl/src/runtime_v2/tests/cognitive_being_flagship_demo.rs`
+- `docs/adr/0016-moral-evidence-and-cognitive-being-substrate.md`
+- `docs/adr/0017-secure-local-agent-comms-and-a2a-boundary.md`
+- `docs/adr/0018-structured-planning-and-review-policy-artifacts.md`
 
 Gate interpretation:
 

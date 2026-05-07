@@ -51,7 +51,8 @@ The current repo truth is:
 - active milestone: `v0.91`
 - current crate version on the active release line: `0.91.0`
 - current release-tail state: `v0.90.5` is complete and `v0.91` issue wave
-  `#2735`-`#2759` is open
+  `#2735`-`#2759` is in release-tail review after the core implementation,
+  demo, feature-proof, and quality-gate WPs
 - most recently completed governed-tools milestone package: `v0.90.5`
 - most recently completed bounded economics milestone package: `v0.90.4`
 - most recently completed citizen-state substrate milestone package: `v0.90.3`
@@ -175,8 +176,8 @@ ADL already provides a serious platform baseline:
 | Web-based code editor integration | Planned | editor backlog issue and skills-wiring planning | Future editor/operator lane |
 | Reasoning graph baseline | Planned | planning/schema/proof surfaces | Later reasoning/provenance band |
 | Signed trace and trace query | Planned | roadmap and planning docs | Later reasoning/provenance band |
-| Wellbeing, affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |
-| Secure Agent Communication and Invocation Protocol | Planned | v0.90.5 ACIP planning plus v0.91 secure local Agent Comms and A2A boundary docs | `v0.91` substrate, `v0.91.1` hardening |
+| Wellbeing, affect, kindness, moral cognition, humor | Active milestone | `v0.91` feature docs, Runtime v2 proof surfaces, demo matrix, feature-proof coverage, and ADR 0016 | `v0.91.0` release-tail closeout |
+| Secure Agent Communication and Invocation Protocol | Active milestone | v0.90.5 ACIP planning plus v0.91 secure local Agent Comms, A2A boundary docs, proof coverage, and ADR 0017 | `v0.91.0` substrate, `v0.91.1` hardening |
 | Inhabited runtime readiness | Planned | `docs/milestones/v0.91.1` candidate WBS, sprint plan, issue-wave YAML, readiness docs, demo matrix, and feature index | `v0.91.1` |
 | Agent lifecycle state model | Planned | `.adl/docs/TBD/ADL_AND_SLEEP.md` and `docs/milestones/v0.91.1/features/AGENT_LIFECYCLE_STATE_MODEL.md` | `v0.91.1` lifecycle/ACIP eligibility WP |
 | CSM Observatory active agent runtime | Planned | v0.91.1 observatory-active and runtime-inhabitant planning docs | `v0.91.1` |
@@ -371,9 +372,9 @@ those surfaces rather than replacing them.
 
 ## Current Active Milestone: v0.91
 
-`v0.91` is the active milestone. Its useful work is concrete: it turns the
-planned moral-governance, cognitive-being, structured planning / SRP, and secure
-Agent Comms feature set into a bounded issue wave with demos, quality gates,
+`v0.91` is the active milestone. Its useful work is concrete: it has turned the
+moral-governance, cognitive-being, structured planning / SRP, and secure Agent
+Comms feature set into bounded runtime surfaces, demos, quality gates, ADRs,
 review remediation, next-milestone planning, and release ceremony work.
 
 The current active bands are:
@@ -385,6 +386,8 @@ The current active bands are:
 - cognitive-being flagship demo and demo matrix proof coverage
 - forward planning for `v0.91.1`, `v0.91.2`, `v0.92`, and later
   identity/governance bands
+- accepted architecture records for the `v0.91.0` moral evidence,
+  secure-comms, and structured workflow decisions
 
 The first true Gödel-agent birthday remains a later milestone event. `v0.91`
 strengthens the moral and emotional reasoning surfaces needed before that
@@ -436,7 +439,7 @@ calls policy-mediated, inspectable, and fail-closed at the completed baseline.
 ### v0.91 - Affect and Moral Cognition
 
 `v0.91` is where ADL’s cognitive architecture becomes more emotionally and
-normatively legible:
+normatively legible on the active `v0.91.0` release line:
 - affect
 - kindness
 - humor/absurdity
@@ -450,7 +453,7 @@ normatively legible:
 - moral resources and wellbeing links that remain evidence-grounded rather than
   scalar, reward-channel, or rhetorical
 
-This milestone should not claim full constitutional citizenship, final social
+This milestone does not claim full constitutional citizenship, final social
 contract, production moral agency, or the first true Gödel-agent birthday.
 
 ### v0.91.1 - Inhabited Runtime Readiness

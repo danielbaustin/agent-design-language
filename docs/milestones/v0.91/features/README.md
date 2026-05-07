@@ -1,29 +1,29 @@
-# v0.91 Feature Planning
+# v0.91 Feature Package
 
-This directory now holds the tracked first-class feature docs for the v0.91
-core cognitive-being milestone. These docs feed the active v0.91 issue wave,
-WP readiness source, and opened issue-card bundles. WP-01 owns the first
-execution pass over the promoted package.
+This directory holds the tracked first-class feature docs for the v0.91 core
+cognitive-being milestone. These docs now feed the active v0.91 issue wave, WP
+readiness source, opened issue-card bundles, demo matrix, feature-proof
+coverage map, and `v0.91.0` architecture decisions.
 
 ## Tracked Feature Docs
 
 | Feature surface | Tracked doc | Status |
 | --- | --- | --- |
-| Moral event contract | [MORAL_EVENT_CONTRACT.md](MORAL_EVENT_CONTRACT.md) | Tracked moral-governance contract doc |
-| Moral trace schema | [MORAL_TRACE_SCHEMA.md](MORAL_TRACE_SCHEMA.md) | Tracked moral-governance trace doc |
-| Outcome linkage and attribution | [OUTCOME_LINKAGE_AND_ATTRIBUTION.md](OUTCOME_LINKAGE_AND_ATTRIBUTION.md) | Tracked moral-governance outcome-linkage doc |
-| Moral metrics | [MORAL_METRICS.md](MORAL_METRICS.md) | Tracked moral-governance metrics doc |
-| Moral trajectory review | [MORAL_TRAJECTORY_REVIEW.md](MORAL_TRAJECTORY_REVIEW.md) | Tracked moral-governance trajectory-review doc |
-| Anti-harm trajectory constraints | [ANTI_HARM_TRAJECTORY_CONSTRAINTS.md](ANTI_HARM_TRAJECTORY_CONSTRAINTS.md) | Tracked moral-governance anti-harm doc |
-| Wellbeing and happiness | [WELLBEING_AND_HAPPINESS.md](WELLBEING_AND_HAPPINESS.md) | Tracked feature doc |
-| Kindness | [KINDNESS.md](KINDNESS.md) | Tracked feature doc |
-| Humor and absurdity | [HUMOR_AND_ABSURDITY.md](HUMOR_AND_ABSURDITY.md) | Tracked feature doc |
-| Affect reasoning-control | [AFFECT_REASONING_CONTROL.md](AFFECT_REASONING_CONTROL.md) | Tracked feature doc |
-| Cultivating intelligence | [CULTIVATING_INTELLIGENCE.md](CULTIVATING_INTELLIGENCE.md) | Tracked feature doc |
-| Moral resources | [MORAL_RESOURCES.md](MORAL_RESOURCES.md) | Tracked feature doc |
-| Structured planning and plan review | [STRUCTURED_PLANNING_AND_PLAN_REVIEW.md](STRUCTURED_PLANNING_AND_PLAN_REVIEW.md) | Tracked workflow feature doc |
-| Structured review policy and SRP | [STRUCTURED_REVIEW_POLICY_AND_SRP.md](STRUCTURED_REVIEW_POLICY_AND_SRP.md) | Tracked workflow feature doc |
-| A2A external agent adapter | [A2A_EXTERNAL_AGENT_ADAPTER.md](A2A_EXTERNAL_AGENT_ADAPTER.md) | Tracked comms-adapter feature doc |
+| Moral event contract | [MORAL_EVENT_CONTRACT.md](MORAL_EVENT_CONTRACT.md) | Implemented and proof-mapped |
+| Moral trace schema | [MORAL_TRACE_SCHEMA.md](MORAL_TRACE_SCHEMA.md) | Implemented and proof-mapped |
+| Outcome linkage and attribution | [OUTCOME_LINKAGE_AND_ATTRIBUTION.md](OUTCOME_LINKAGE_AND_ATTRIBUTION.md) | Implemented and proof-mapped |
+| Moral metrics | [MORAL_METRICS.md](MORAL_METRICS.md) | Implemented and proof-mapped |
+| Moral trajectory review | [MORAL_TRAJECTORY_REVIEW.md](MORAL_TRAJECTORY_REVIEW.md) | Implemented and proof-mapped |
+| Anti-harm trajectory constraints | [ANTI_HARM_TRAJECTORY_CONSTRAINTS.md](ANTI_HARM_TRAJECTORY_CONSTRAINTS.md) | Implemented and proof-mapped |
+| Wellbeing and happiness | [WELLBEING_AND_HAPPINESS.md](WELLBEING_AND_HAPPINESS.md) | Implemented and proof-mapped |
+| Kindness | [KINDNESS.md](KINDNESS.md) | Implemented and proof-mapped |
+| Humor and absurdity | [HUMOR_AND_ABSURDITY.md](HUMOR_AND_ABSURDITY.md) | Implemented and proof-mapped |
+| Affect reasoning-control | [AFFECT_REASONING_CONTROL.md](AFFECT_REASONING_CONTROL.md) | Implemented and proof-mapped |
+| Cultivating intelligence | [CULTIVATING_INTELLIGENCE.md](CULTIVATING_INTELLIGENCE.md) | Implemented and proof-mapped |
+| Moral resources | [MORAL_RESOURCES.md](MORAL_RESOURCES.md) | Implemented and proof-mapped |
+| Structured planning and plan review | [STRUCTURED_PLANNING_AND_PLAN_REVIEW.md](STRUCTURED_PLANNING_AND_PLAN_REVIEW.md) | Implemented baseline and proof-mapped |
+| Structured review policy and SRP | [STRUCTURED_REVIEW_POLICY_AND_SRP.md](STRUCTURED_REVIEW_POLICY_AND_SRP.md) | Implemented baseline and proof-mapped |
+| A2A external agent adapter | [A2A_EXTERNAL_AGENT_ADAPTER.md](A2A_EXTERNAL_AGENT_ADAPTER.md) | Bounded adapter boundary proof-mapped |
 
 ## Cross-Cutting v0.91 Planning Sources
 
@@ -34,6 +34,7 @@ execution pass over the promoted package.
 | Cognitive-being allocation | [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | Milestone allocation and v0.91/v0.91.1 boundary doc |
 | Active issue wave | [../WP_ISSUE_WAVE_v0.91.yaml](../WP_ISSUE_WAVE_v0.91.yaml) | Active WP sequence; issue numbers assigned as #2735-#2759 |
 | WP execution readiness | [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | Card-authoring source for required outputs, validation, boundaries, and proof expectations |
+| Architecture decisions | [../../adr/0016-moral-evidence-and-cognitive-being-substrate.md](../../adr/0016-moral-evidence-and-cognitive-being-substrate.md), [../../adr/0017-secure-local-agent-comms-and-a2a-boundary.md](../../adr/0017-secure-local-agent-comms-and-a2a-boundary.md), [../../adr/0018-structured-planning-and-review-policy-artifacts.md](../../adr/0018-structured-planning-and-review-policy-artifacts.md) | Accepted `v0.91.0` decision records |
 
 ## Execution Coverage Map
 
@@ -65,12 +66,13 @@ v0.91.1 should separately absorb adjacent source groups:
 
 Those should not be silently folded into the v0.91 core feature list.
 
-## Planning Status
+## Implementation And Proof Status
 
-The feature docs in this directory define a real implementation bar rather than
-concept-only placeholders. The active WP sequence and card-authoring source now
-exist; WP-01 owns keeping the opened issue cards and proof matrix aligned with
-the promoted package.
+The feature docs in this directory define the landed `v0.91.0` implementation
+bar rather than concept-only placeholders. The demo matrix and feature-proof
+coverage record now map each tracked feature surface to concrete proof routes,
+fixture-backed validation, integrated flagship evidence, or explicit deferral.
 
-That wave should start from an already-promoted package rather than leaving key
-workflow or comms-adapter features stranded in TBD or side worktrees.
+The remaining milestone work is release-tail review: docs polish, internal
+review, third-party review, accepted-finding remediation, next-milestone
+handoff, and ceremony.

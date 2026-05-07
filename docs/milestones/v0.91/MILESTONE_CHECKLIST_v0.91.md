@@ -36,7 +36,7 @@
   scope separated if needed.
 - [x] Structured planning (`SPP`) and plan review are accepted as durable workflow artifacts.
 - [x] Structured Review Policy (`SRP`) is accepted as a first-class review-policy artifact.
-- [ ] Capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,
+- [x] Capability/aptitude testing, intelligence metric architecture, ANRM/Gemma,
   ToM, memory/identity, and runtime-v2/polis docs are routed to v0.91.1.
 - [x] Demo matrix and feature proof coverage lane preserved before review convergence.
 - [x] Coverage / quality gate record created with pass/fail/skip truth and known exceptions.
@@ -44,12 +44,12 @@
 ## Review Readiness
 
 - [x] Demo matrix reflects actual proof status.
-- [ ] Feature docs match implemented artifacts.
-- [ ] Private wellbeing diagnostics are not exposed as public reputation.
-- [ ] Moral metrics and karma language avoid scoreboard framing.
-- [ ] Runtime v2 remains inherited and is not reopened by v0.91 docs.
-- [ ] v0.92 identity and birthday work remains downstream.
-- [ ] External or cross-polis communication is absent or explicitly TLS/mTLS
+- [x] Feature docs match implemented artifacts.
+- [x] Private wellbeing diagnostics are not exposed as public reputation.
+- [x] Moral metrics and karma language avoid scoreboard framing.
+- [x] Runtime v2 remains inherited and is not reopened by v0.91 docs.
+- [x] v0.92 identity and birthday work remains downstream.
+- [x] External or cross-polis communication is absent or explicitly TLS/mTLS
   gated.
 - [x] Release notes avoid aspirational shipped language until closeout.
 - [x] Current main CI and coverage posture recorded after WP-18 merge.
@@ -60,5 +60,5 @@
 - [ ] Internal review complete.
 - [ ] Third-party review complete or explicitly deferred.
 - [ ] Accepted findings fixed or dispositioned.
-- [ ] Changelog, README, Cargo metadata, feature list, and milestone docs aligned.
+- [x] Changelog, README, Cargo metadata, feature list, and milestone docs aligned.
 - [ ] Ceremony completed.

@@ -60,6 +60,9 @@ proof/demo evidence.
   deferral.
 - Coverage and quality gate record after `WP-18`, with current main CI and
   coverage green and closed-issue SOR truth repaired.
+- Accepted `v0.91.0` ADRs for moral evidence and cognitive-being substrate,
+  secure local Agent Comms and A2A boundary, and structured planning / review
+  policy artifacts.
 
 ## Evidence
 
@@ -70,6 +73,9 @@ Primary milestone evidence:
 - `docs/milestones/v0.91/QUALITY_GATE_v0.91.md`
 - `docs/milestones/v0.91/features/README.md`
 - `demos/v0.91/cognitive_being_flagship_demo.md`
+- `docs/adr/0016-moral-evidence-and-cognitive-being-substrate.md`
+- `docs/adr/0017-secure-local-agent-comms-and-a2a-boundary.md`
+- `docs/adr/0018-structured-planning-and-review-policy-artifacts.md`
 
 Current quality evidence:
 

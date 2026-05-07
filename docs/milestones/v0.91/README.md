@@ -2,17 +2,17 @@
 
 ## Status
 
-Reviewed next-milestone planning package. v0.91 is now the active
-implementation milestone. The official issue wave is open as #2735-#2759 from
-the reviewed candidate issue-wave YAML, so execution can start from tracked
-docs, source prompts, and card bundles rather than loose TBD notes or side
-worktrees.
+Active release-tail milestone package. The `v0.91.0` core implementation,
+flagship demo, feature-proof coverage, and quality-gate lanes have landed. The
+official issue wave remains open as #2735-#2759 while WP-20 through WP-25 finish
+docs review, internal review, third-party review, accepted-finding remediation,
+next-milestone handoff, and ceremony.
 
 ## Purpose
 
-v0.91 is the planned moral governance, wellbeing, and cognitive-being foundation
-milestone. The intent is full milestone implementation of the assigned feature
-set, not concept-only promotion.
+v0.91 is the moral governance, wellbeing, and cognitive-being foundation
+milestone for the `v0.91.0` release line. The intent is full milestone
+implementation of the assigned feature set, not concept-only promotion.
 
 The canonical allocation is recorded in
 [MORAL_GOVERNANCE_ALLOCATION_v0.91.md](MORAL_GOVERNANCE_ALLOCATION_v0.91.md).
@@ -28,7 +28,7 @@ The `v0.90.5` handoff record is
 
 ## Milestone Role
 
-v0.91 should establish:
+v0.91 establishes:
 
 - Freedom Gate moral event records
 - moral event validation rules
@@ -48,9 +48,17 @@ v0.91 should establish:
 - durable structured planning and plan review before tracked execution
 - durable structured review policy (`SRP`) before independent review
 
-v0.91 should not claim production moral agency, final constitutional
+v0.91 does not claim production moral agency, final constitutional
 citizenship, legal personhood, a scalar karma score, or the first true
 Gödel-agent birthday.
+
+## Architecture Decisions
+
+The accepted `v0.91.0` architecture decisions are:
+
+- [ADR 0016: Moral Evidence And Cognitive-Being Substrate](../../adr/0016-moral-evidence-and-cognitive-being-substrate.md)
+- [ADR 0017: Secure Local Agent Comms And A2A Boundary](../../adr/0017-secure-local-agent-comms-and-a2a-boundary.md)
+- [ADR 0018: Structured Planning And Review Policy Artifacts](../../adr/0018-structured-planning-and-review-policy-artifacts.md)
 
 ## Runtime v2 Inheritance Boundary
 
@@ -155,7 +163,7 @@ The likely `v0.91` tranche is:
 
 ### Out of scope
 
-- Runtime implementation in this planning pass.
+- Reopening Runtime v2 foundations as part of this milestone.
 - Full constitutional citizenship or final social contract.
 - First true Gödel-agent birthday.
 - Production moral agency.
@@ -174,6 +182,12 @@ The likely `v0.91` tranche is:
 - WBS: [WBS_v0.91.md](WBS_v0.91.md)
 - Sprint plan: [SPRINT_v0.91.md](SPRINT_v0.91.md)
 - Decisions: [DECISIONS_v0.91.md](DECISIONS_v0.91.md)
+- ADR 0016:
+  [Moral Evidence And Cognitive-Being Substrate](../../adr/0016-moral-evidence-and-cognitive-being-substrate.md)
+- ADR 0017:
+  [Secure Local Agent Comms And A2A Boundary](../../adr/0017-secure-local-agent-comms-and-a2a-boundary.md)
+- ADR 0018:
+  [Structured Planning And Review Policy Artifacts](../../adr/0018-structured-planning-and-review-policy-artifacts.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.md](DEMO_MATRIX_v0.91.md)
 - Feature proof coverage:
   [FEATURE_PROOF_COVERAGE_v0.91.md](FEATURE_PROOF_COVERAGE_v0.91.md)
