@@ -4,7 +4,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TMP="$(mktemp -d)"
 BARREL_DIR="$ROOT/adl/src/runtime_v2/__coverage_impact_test__"
-trap 'rm -rf "$TMP" "$BARREL_DIR"' EXIT
+NONEXEC_DIR="$ROOT/adl/src/runtime_v2/__coverage_nonexec_test__"
+trap 'rm -rf "$TMP" "$BARREL_DIR" "$NONEXEC_DIR"' EXIT
 
 SCRIPT="$ROOT/adl/tools/check_coverage_impact.sh"
 
@@ -55,6 +56,18 @@ control_plane_filters="$TMP/control-plane-filters.txt"
 bash "$SCRIPT" --changed-files "$control_plane_changed" --print-risk-filters >"$control_plane_filters"
 grep -Fx "pr_cmd" "$control_plane_filters" >/dev/null
 
+split_runtime_changed="$TMP/split-runtime-changed.txt"
+printf 'A\tadl/src/runtime_v2/cultivating_intelligence_parts/builder.rs\n' >"$split_runtime_changed"
+split_runtime_filters="$TMP/split-runtime-filters.txt"
+bash "$SCRIPT" --changed-files "$split_runtime_changed" --print-risk-filters >"$split_runtime_filters"
+grep -Fx "cultivating_intelligence" "$split_runtime_filters" >/dev/null
+
+split_wellbeing_changed="$TMP/split-wellbeing-changed.txt"
+printf 'A\tadl/src/runtime_v2/wellbeing_metrics_parts/validation.rs\n' >"$split_wellbeing_changed"
+split_wellbeing_filters="$TMP/split-wellbeing-filters.txt"
+bash "$SCRIPT" --changed-files "$split_wellbeing_changed" --print-risk-filters >"$split_wellbeing_filters"
+grep -Fx "wellbeing_metrics" "$split_wellbeing_filters" >/dev/null
+
 if bash "$SCRIPT" --changed-files "$changed" --require-summary-for-risk >/tmp/coverage-impact-missing.out 2>&1; then
   echo "expected risky changed source without summary to fail" >&2
   exit 1
@@ -104,6 +117,18 @@ lib_barrel_changed="$TMP/lib-barrel-changed.txt"
 printf 'M\tadl/src/runtime_v2/__coverage_impact_test__/lib.rs\n' >"$lib_barrel_changed"
 bash "$SCRIPT" --changed-files "$lib_barrel_changed" --summary "$missing_summary" >/tmp/coverage-impact-lib-barrel-pass.out
 grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-lib-barrel-pass.out >/dev/null
+
+mkdir -p "$NONEXEC_DIR"
+cat >"$NONEXEC_DIR/models.rs" <<'EOF'
+pub struct ExampleModel {
+    pub field: String,
+}
+EOF
+
+nonexec_changed="$TMP/nonexec-changed.txt"
+printf 'M\tadl/src/runtime_v2/__coverage_nonexec_test__/models.rs\n' >"$nonexec_changed"
+bash "$SCRIPT" --changed-files "$nonexec_changed" --summary "$missing_summary" >/tmp/coverage-impact-nonexec-pass.out
+grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-nonexec-pass.out >/dev/null
 
 passing_summary="$TMP/passing-summary.json"
 make_summary "/private/tmp/repo/adl/src/runtime_v2/new_large_surface.rs" 88 100 "$passing_summary"
