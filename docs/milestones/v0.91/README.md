@@ -177,6 +177,7 @@ The likely `v0.91` tranche is:
 - Demo matrix: [DEMO_MATRIX_v0.91.md](DEMO_MATRIX_v0.91.md)
 - Feature proof coverage:
   [FEATURE_PROOF_COVERAGE_v0.91.md](FEATURE_PROOF_COVERAGE_v0.91.md)
+- Quality gate: [QUALITY_GATE_v0.91.md](QUALITY_GATE_v0.91.md)
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.91.md](MILESTONE_CHECKLIST_v0.91.md)
 - Release plan: [RELEASE_PLAN_v0.91.md](RELEASE_PLAN_v0.91.md)
 - Release notes: [RELEASE_NOTES_v0.91.md](RELEASE_NOTES_v0.91.md)
