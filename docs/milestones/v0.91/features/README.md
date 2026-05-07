@@ -49,7 +49,7 @@ execution pass over the promoted package.
 | Cultivating intelligence | [CULTIVATING_INTELLIGENCE.md](CULTIVATING_INTELLIGENCE.md), [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | WP-14 |
 | Structured planning, plan review, and SRP | [STRUCTURED_PLANNING_AND_PLAN_REVIEW.md](STRUCTURED_PLANNING_AND_PLAN_REVIEW.md), [STRUCTURED_REVIEW_POLICY_AND_SRP.md](STRUCTURED_REVIEW_POLICY_AND_SRP.md) | WP-15 |
 | Secure Agent Comms and A2A boundary | [../AGENT_COMMS_SPLIT_PLAN_v0.91.md](../AGENT_COMMS_SPLIT_PLAN_v0.91.md), [A2A_EXTERNAL_AGENT_ADAPTER.md](A2A_EXTERNAL_AGENT_ADAPTER.md) | WP-16 |
-| Flagship demo, proof coverage, quality, docs, review, remediation, next planning, and release | [../DEMO_MATRIX_v0.91.md](../DEMO_MATRIX_v0.91.md), [../RELEASE_PLAN_v0.91.md](../RELEASE_PLAN_v0.91.md), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-17 through WP-25 |
+| Flagship demo, proof coverage, quality, docs, review, remediation, next planning, and release | [../DEMO_MATRIX_v0.91.md](../DEMO_MATRIX_v0.91.md), [../FEATURE_PROOF_COVERAGE_v0.91.md](../FEATURE_PROOF_COVERAGE_v0.91.md), [../RELEASE_PLAN_v0.91.md](../RELEASE_PLAN_v0.91.md), [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | WP-17 through WP-25 |
 
 ## Boundary Notes
 

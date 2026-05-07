@@ -175,6 +175,8 @@ The likely `v0.91` tranche is:
 - Sprint plan: [SPRINT_v0.91.md](SPRINT_v0.91.md)
 - Decisions: [DECISIONS_v0.91.md](DECISIONS_v0.91.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.md](DEMO_MATRIX_v0.91.md)
+- Feature proof coverage:
+  [FEATURE_PROOF_COVERAGE_v0.91.md](FEATURE_PROOF_COVERAGE_v0.91.md)
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.91.md](MILESTONE_CHECKLIST_v0.91.md)
 - Release plan: [RELEASE_PLAN_v0.91.md](RELEASE_PLAN_v0.91.md)
 - Release notes: [RELEASE_NOTES_v0.91.md](RELEASE_NOTES_v0.91.md)
