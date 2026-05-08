@@ -167,22 +167,40 @@ fn ensure_worktree_for_branch_rejects_branch_checked_out_elsewhere() {
     let temp = unique_temp_dir("adl-pr-worktree-conflict");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join(".git")).expect("repo git dir");
     write_executable(
             &bin_dir.join("git"),
-            "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  cat <<'EOF'\nworktree /tmp/main\nHEAD deadbeef\nbranch refs/heads/main\n\nworktree /tmp/existing\nHEAD cafefood\nbranch refs/heads/codex/1153-test\nEOF\n  exit 0\nfi\nexit 1\n",
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'rev-parse --show-toplevel' ]; then\n  printf '%s\\n' '{0}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'rev-parse --git-common-dir' ]; then\n  printf '%s\\n' '{1}'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  cat <<'EOF'\nworktree {0}\nHEAD deadbeef\nbranch refs/heads/main\n\nworktree {0}/.worktrees/existing\nHEAD cafefood\nbranch refs/heads/codex/1153-test\nEOF\n  exit 0\nfi\nexit 1\n",
+                repo.display(),
+                repo.join(".git").display(),
+            ),
         );
 
     let old_path = env::var("PATH").unwrap_or_default();
+    let old_pwd = env::current_dir().expect("cwd");
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
     }
-    let err = ensure_worktree_for_branch(Path::new("/tmp/requested"), "codex/1153-test")
-        .expect_err("conflicting worktree should fail");
+    env::set_current_dir(&repo).expect("chdir");
+    let err = ensure_worktree_for_branch(
+        &repo.join(".worktrees").join("requested"),
+        "codex/1153-test",
+    )
+    .expect_err("conflicting worktree should fail");
+    env::set_current_dir(old_pwd).expect("restore cwd");
     unsafe {
         env::set_var("PATH", old_path);
     }
     assert!(err.to_string().contains("already checked out in worktree"));
-    assert!(err.to_string().contains("/tmp/existing"));
+    assert!(err.to_string().contains(
+        &repo
+            .join(".worktrees")
+            .join("existing")
+            .display()
+            .to_string()
+    ));
 }
 
 #[test]
@@ -875,22 +893,135 @@ fn branch_checked_out_worktree_path_returns_none_without_match() {
     let temp = unique_temp_dir("adl-pr-worktree-none");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join(".git")).expect("repo git dir");
     write_executable(
             &bin_dir.join("git"),
-            "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  cat <<'EOF'\nworktree /tmp/main\nHEAD deadbeef\nbranch refs/heads/main\nEOF\n  exit 0\nfi\nexit 1\n",
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'rev-parse --show-toplevel' ]; then\n  printf '%s\\n' '{0}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'rev-parse --git-common-dir' ]; then\n  printf '%s\\n' '{1}'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  cat <<'EOF'\nworktree {0}\nHEAD deadbeef\nbranch refs/heads/main\nEOF\n  exit 0\nfi\nexit 1\n",
+                repo.display(),
+                repo.join(".git").display(),
+            ),
         );
 
     let old_path = env::var("PATH").unwrap_or_default();
+    let old_pwd = env::current_dir().expect("cwd");
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
     }
+    env::set_current_dir(&repo).expect("chdir");
     assert_eq!(
         branch_checked_out_worktree_path("codex/missing").expect("none"),
         None
     );
+    env::set_current_dir(old_pwd).expect("restore cwd");
     unsafe {
         env::set_var("PATH", old_path);
     }
+}
+
+#[test]
+fn branch_checked_out_worktree_path_ignores_unrelated_noncanonical_worktrees() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-worktree-ignore-external");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join(".git")).expect("repo git dir");
+    write_executable(
+            &bin_dir.join("git"),
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'rev-parse --show-toplevel' ]; then\n  printf '%s\\n' '{0}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'rev-parse --git-common-dir' ]; then\n  printf '%s\\n' '{1}'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  cat <<'EOF'\nworktree /Users/daniel/.codex/worktrees/abcd/agent-design-language\nHEAD deadbeef\nbranch refs/heads/codex/external\n\nworktree {0}/.worktrees/adl-wp-1153\nHEAD cafefood\nbranch refs/heads/codex/1153-test\nEOF\n  exit 0\nfi\nexit 1\n",
+                repo.display(),
+                repo.join(".git").display(),
+            ),
+        );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_pwd = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    let resolved =
+        branch_checked_out_worktree_path("codex/1153-test").expect("canonical worktree resolved");
+    env::set_current_dir(old_pwd).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    assert_eq!(resolved, Some(repo.join(".worktrees").join("adl-wp-1153")));
+}
+
+#[test]
+fn branch_checked_out_worktree_path_rejects_noncanonical_matching_branch() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-worktree-reject-external");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join(".git")).expect("repo git dir");
+    write_executable(
+            &bin_dir.join("git"),
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'rev-parse --show-toplevel' ]; then\n  printf '%s\\n' '{0}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'rev-parse --git-common-dir' ]; then\n  printf '%s\\n' '{1}'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  cat <<'EOF'\nworktree /Users/daniel/.codex/worktrees/abcd/agent-design-language\nHEAD deadbeef\nbranch refs/heads/codex/1153-test\nEOF\n  exit 0\nfi\nexit 1\n",
+                repo.display(),
+                repo.join(".git").display()
+            ),
+        );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_pwd = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    let err = branch_checked_out_worktree_path("codex/1153-test")
+        .expect_err("non-canonical matching branch should fail");
+    env::set_current_dir(old_pwd).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    assert!(err.to_string().contains("non-canonical worktree"));
+    assert!(err
+        .to_string()
+        .contains("/Users/daniel/.codex/worktrees/abcd/agent-design-language"));
+}
+
+#[test]
+fn branch_checked_out_worktree_path_accepts_explicit_managed_worktree_root() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-worktree-managed-root");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let repo = temp.join("repo");
+    let managed_root = temp.join("managed");
+    fs::create_dir_all(repo.join(".git")).expect("repo git dir");
+    fs::create_dir_all(&managed_root).expect("managed root");
+    write_executable(
+            &bin_dir.join("git"),
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'rev-parse --show-toplevel' ]; then\n  printf '%s\\n' '{0}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'rev-parse --git-common-dir' ]; then\n  printf '%s\\n' '{1}'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  cat <<'EOF'\nworktree {2}/adl-wp-1153\nHEAD deadbeef\nbranch refs/heads/codex/1153-test\nEOF\n  exit 0\nfi\nexit 1\n",
+                repo.display(),
+                repo.join(".git").display(),
+                managed_root.display()
+            ),
+        );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_pwd = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("ADL_WORKTREE_ROOT", &managed_root);
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    let resolved =
+        branch_checked_out_worktree_path("codex/1153-test").expect("managed worktree resolved");
+    env::set_current_dir(old_pwd).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+        env::remove_var("ADL_WORKTREE_ROOT");
+    }
+    assert_eq!(resolved, Some(managed_root.join("adl-wp-1153")));
 }
 
 #[test]
@@ -900,34 +1031,45 @@ fn ensure_worktree_for_branch_reuses_matching_path_and_creates_new_one() {
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
     let git_log = temp.join("git.log");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join(".git")).expect("repo git dir");
     write_executable(
             &bin_dir.join("git"),
             &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  if [ \"${{WT_MODE:-reuse}}\" = 'reuse' ]; then\n    cat <<'EOF'\nworktree /tmp/reuse-me\nHEAD deadbeef\nbranch refs/heads/codex/reuse\nEOF\n    exit 0\n  fi\n  printf 'worktree /tmp/main\\nHEAD deadbeef\\nbranch refs/heads/main\\n'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree add /tmp/create-me' ]; then\n  mkdir -p /tmp/create-me\n  exit 0\nfi\nexit 1\n",
-                git_log.display()
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{0}'\nif [ \"$1 $2\" = 'rev-parse --show-toplevel' ]; then\n  printf '%s\\n' '{1}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'rev-parse --git-common-dir' ]; then\n  printf '%s\\n' '{2}'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  if [ \"${{WT_MODE:-reuse}}\" = 'reuse' ]; then\n    cat <<'EOF'\nworktree {1}/.worktrees/reuse-me\nHEAD deadbeef\nbranch refs/heads/codex/reuse\nEOF\n    exit 0\n  fi\n  printf 'worktree {1}\\nHEAD deadbeef\\nbranch refs/heads/main\\n'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree add {1}/.worktrees/create-me' ]; then\n  mkdir -p {1}/.worktrees/create-me\n  exit 0\nfi\nexit 1\n",
+                git_log.display(),
+                repo.display(),
+                repo.join(".git").display()
             ),
         );
 
     let old_path = env::var("PATH").unwrap_or_default();
+    let old_pwd = env::current_dir().expect("cwd");
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
         env::set_var("WT_MODE", "reuse");
     }
-    ensure_worktree_for_branch(Path::new("/tmp/reuse-me"), "codex/reuse").expect("reuse");
+    env::set_current_dir(&repo).expect("chdir");
+    ensure_worktree_for_branch(&repo.join(".worktrees").join("reuse-me"), "codex/reuse")
+        .expect("reuse");
 
     unsafe {
         env::set_var("WT_MODE", "create");
     }
-    let create_path = Path::new("/tmp/create-me");
-    let _ = fs::remove_dir_all(create_path);
-    ensure_worktree_for_branch(create_path, "codex/create").expect("create");
+    let create_path = repo.join(".worktrees").join("create-me");
+    let _ = fs::remove_dir_all(&create_path);
+    ensure_worktree_for_branch(&create_path, "codex/create").expect("create");
 
+    env::set_current_dir(old_pwd).expect("restore cwd");
     unsafe {
         env::set_var("PATH", old_path);
         env::remove_var("WT_MODE");
     }
     let log = fs::read_to_string(&git_log).expect("git log");
-    assert!(log.contains("worktree add /tmp/create-me codex/create"));
+    assert!(log.contains(&format!(
+        "worktree add {} codex/create",
+        create_path.display()
+    )));
 }
 
 #[test]

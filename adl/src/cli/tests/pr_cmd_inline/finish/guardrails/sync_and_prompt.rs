@@ -6,7 +6,6 @@ fn real_pr_finish_syncs_completed_output_to_root_bundle_and_cards_surface() {
     let temp = unique_temp_dir("adl-pr-finish-sync-output");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
-    let worktree = temp.join("worktree");
     fs::create_dir_all(&repo).expect("repo dir");
     copy_bootstrap_support_files(&repo);
     init_git_repo(&repo);
@@ -70,6 +69,9 @@ fn real_pr_finish_syncs_completed_output_to_root_bundle_and_cards_surface() {
         .status()
         .expect("git push")
         .success());
+    let issue_ref =
+        IssueRef::new(1153, "v0.86".to_string(), "rust-finish-sync".to_string()).expect("ref");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
     assert!(Command::new("git")
         .args([
             "worktree",
@@ -83,9 +85,6 @@ fn real_pr_finish_syncs_completed_output_to_root_bundle_and_cards_surface() {
         .status()
         .expect("git worktree add")
         .success());
-
-    let issue_ref =
-        IssueRef::new(1153, "v0.86".to_string(), "rust-finish-sync".to_string()).expect("ref");
     let root_bundle_dir = issue_ref.task_bundle_dir_path(&repo);
     let wt_bundle_dir = issue_ref.task_bundle_dir_path(&worktree);
     fs::create_dir_all(&root_bundle_dir).expect("root bundle dir");
@@ -195,7 +194,6 @@ fn real_pr_finish_accepts_primary_checkout_issue_prompt_without_worktree_local_c
     let temp = unique_temp_dir("adl-pr-finish-primary-prompt");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
-    let worktree = temp.join("worktree");
     fs::create_dir_all(&repo).expect("repo dir");
     copy_bootstrap_support_files(&repo);
     init_git_repo(&repo);
@@ -259,6 +257,13 @@ fn real_pr_finish_accepts_primary_checkout_issue_prompt_without_worktree_local_c
         .status()
         .expect("git push")
         .success());
+    let issue_ref = IssueRef::new(
+        1241,
+        "v0.86".to_string(),
+        "finish-primary-prompt".to_string(),
+    )
+    .expect("ref");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
     assert!(Command::new("git")
         .args([
             "worktree",
@@ -272,13 +277,6 @@ fn real_pr_finish_accepts_primary_checkout_issue_prompt_without_worktree_local_c
         .status()
         .expect("git worktree add")
         .success());
-
-    let issue_ref = IssueRef::new(
-        1241,
-        "v0.86".to_string(),
-        "finish-primary-prompt".to_string(),
-    )
-    .expect("ref");
     let root_bundle_dir = issue_ref.task_bundle_dir_path(&repo);
     let wt_bundle_dir = issue_ref.task_bundle_dir_path(&worktree);
     fs::create_dir_all(&root_bundle_dir).expect("root bundle dir");

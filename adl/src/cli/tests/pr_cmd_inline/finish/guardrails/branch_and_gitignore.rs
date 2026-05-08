@@ -4,7 +4,6 @@ use super::*;
 fn real_pr_finish_rejects_primary_checkout_when_issue_branch_is_bound_elsewhere() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-bound-worktree-guard");
-    let worktree = temp.join("issue-worktree");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
     copy_bootstrap_support_files(&repo);
@@ -42,6 +41,8 @@ fn real_pr_finish_rejects_primary_checkout_when_issue_branch_is_bound_elsewhere(
         .status()
         .expect("git branch")
         .success());
+    let issue_ref = IssueRef::new(1153, "v0.86", "rust-finish-bound").expect("issue ref");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
     assert!(Command::new("git")
         .args([
             "worktree",
@@ -55,8 +56,6 @@ fn real_pr_finish_rejects_primary_checkout_when_issue_branch_is_bound_elsewhere(
         .status()
         .expect("git worktree add")
         .success());
-
-    let issue_ref = IssueRef::new(1153, "v0.86", "rust-finish-bound").expect("issue ref");
     let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
     fs::create_dir_all(&bundle_dir).expect("bundle dir");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish bound");
