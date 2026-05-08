@@ -2,14 +2,15 @@
 
 ## Status
 
-Closeout-candidate release notes for the landed `v0.91` implementation through
-`WP-20`.
+Closeout-candidate release notes for the landed `v0.91` implementation and
+review evidence through `WP-22`.
 
 These notes describe behavior and evidence that exists in the repository after
 the core implementation and proof lanes. They do not imply that the release
-ceremony is complete. Internal review, third-party review, accepted-finding
-remediation, next-milestone handoff, and final ceremony remain assigned to the
-standard release-tail WPs.
+ceremony is complete. Internal review, third-party review, and
+accepted-finding remediation are complete or explicitly dispositioned.
+Next-milestone handoff and final ceremony remain assigned to the standard
+release-tail WPs.
 
 ## Theme
 
@@ -87,6 +88,17 @@ Current quality evidence:
 - Closed-issue SOR truth validator: PASS for 27 closed `v0.91` issues after
   local record repair.
 
+Current review evidence:
+
+- Internal review is complete.
+- Accepted internal-remediation issues `#2813`, `#2814`, and `#2815` are
+  closed.
+- External review artifacts are recorded at
+  `.adl/docs/reviews/v0.91/ADL_v0.91_3RD_PARTY_REVIEW_SUMMARY.md` and
+  `.adl/docs/reviews/v0.91/ADL_v0.91_Comprehensive_Review.pdf`.
+- The external review summary reports `A+` / `100/100` and zero `P0`, `P1`,
+  `P2`, or `P3` findings.
+
 ## Explicit Deferrals
 
 The following work is intentionally not claimed as complete in `v0.91`:
@@ -121,10 +133,7 @@ The following work is intentionally not claimed as complete in `v0.91`:
 
 ## Remaining Release Tail
 
-The remaining release-tail WPs still need to complete before ceremony:
+The remaining release-tail WPs still need to complete before release closeout:
 
-- `WP-21`: internal review
-- `WP-22`: external / third-party review
-- `WP-23`: accepted-finding remediation
 - `WP-24`: next milestone planning
 - `WP-25`: release ceremony

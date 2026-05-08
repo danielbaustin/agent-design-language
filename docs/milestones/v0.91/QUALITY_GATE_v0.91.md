@@ -42,9 +42,10 @@ The current main-branch merge gate is green after `WP-18`:
 The remaining blockers are release-tail blockers, not hidden implementation
 passes:
 
-- `WP-21` through `WP-25` remain open.
-- Internal review, third-party review, accepted-finding remediation, next
-  milestone planning, and ceremony are not complete yet.
+- `WP-24` and `WP-25` remain open.
+- Internal review, third-party review, and accepted-finding remediation are
+  complete or explicitly dispositioned.
+- Next-milestone planning and release ceremony are not complete yet.
 
 The two concrete quality-gate gaps found during `WP-19` are now repaired:
 
@@ -209,9 +210,10 @@ Disposition:
 | `WP-19` quality gate missing | Resolved by this document. |
 | Closed-issue SOR truth drift | Resolved locally for `#2751`, `#2752`, and `#2797`; validator now passes for 27 closed `v0.91` issues. |
 | Draft release notes | Resolved by rewriting release notes to landed behavior and retaining explicit release-tail status. |
-| `WP-21` through `WP-25` still open | Active release-tail blockers; proceed in sequence. |
-| Internal/external review absent | Assigned to `WP-21` and `WP-22`; not release-ready. |
-| Accepted-finding remediation absent | Assigned to `WP-23`; not release-ready. |
+| `WP-21` through `WP-23` still open | Resolved; `#2755` and `#2757` are closed, and WP-22 records the external review result. |
+| Internal/external review absent | Resolved; internal review is complete and the external review summary reports zero findings. |
+| Accepted-finding remediation absent | Resolved; WP-23 and the accepted internal-remediation issues `#2813`, `#2814`, and `#2815` are closed. |
+| `WP-24` and `WP-25` still open | Active release-tail blockers; proceed in sequence. |
 | Next milestone and ceremony incomplete | Assigned to `WP-24` and `WP-25`; not release-ready. |
 
 ## 6) Exception Register
@@ -219,10 +221,10 @@ Disposition:
 | ID | Severity | Exception | Owner / Next WP | Release impact |
 | --- | --- | --- | --- | --- |
 | QG-001 | RESOLVED | Closed-issue SOR truth validator previously failed for `#2751`, `#2752`, and `#2797`; local records now validate and the milestone closed-issue validator passes. | WP-19 | No remaining release impact. |
-| QG-002 | P1 | `WP-21` through `WP-25` remain open. | Release-tail train. | Blocks release ceremony. |
+| QG-002 | P1 | `WP-24` and `WP-25` remain open. | Release-tail train. | Blocks release ceremony. |
 | QG-003 | RESOLVED | Release notes previously described intended behavior; they now describe landed behavior and remaining review-tail status. | WP-19 and WP-20 | No remaining release impact beyond normal review-tail work. |
-| QG-004 | P2 | Internal and third-party review have not yet run. | `WP-21`, `WP-22`. | Blocks final assurance. |
-| QG-005 | P2 | Review-finding remediation is not yet known. | `WP-23`. | Blocks final release if accepted findings exist. |
+| QG-004 | RESOLVED | Internal and third-party review are complete; the external review summary reports zero P0/P1/P2/P3 findings. | `WP-21`, `WP-22`. | No remaining review-readiness impact. |
+| QG-005 | RESOLVED | Review-finding remediation is dispositioned; WP-23 and accepted internal-remediation child issues are closed, and the external review produced no accepted findings. | `WP-23`. | No remaining finding-remediation impact. |
 
 ### Closed-issue SOR truth evidence
 
@@ -248,7 +250,7 @@ PASS check_milestone_closed_issue_sor_truth version=v0.91 checked=27
 
 ## 7) Review Readiness
 
-Review readiness is partial.
+Review readiness is complete for the internal and external review gates.
 
 Ready:
 
@@ -259,22 +261,22 @@ Ready:
 - non-claims are explicit in proof docs
 - release notes describe landed behavior and retain release-tail status
 - closed-issue SOR truth is green
+- internal review is complete
+- third-party review artifacts are recorded at
+  `.adl/docs/reviews/v0.91/ADL_v0.91_3RD_PARTY_REVIEW_SUMMARY.md` and
+  `.adl/docs/reviews/v0.91/ADL_v0.91_Comprehensive_Review.pdf`
+- the external review summary reports `A+` / `100/100` and zero `P0`, `P1`,
+  `P2`, or `P3` findings
+- accepted findings are fixed or explicitly dispositioned
 
-Not ready:
-
-- internal review has not run
-- third-party review has not run
-- accepted-finding remediation is not complete
-
-## Final WP-19 Judgment
+## Final Quality-Gate Judgment
 
 `v0.91` currently passes the main repository merge and coverage gates after
 `WP-18`, and the local closed-issue SOR truth gap identified during `WP-19` is
-repaired.
+repaired. Internal review, third-party review, and accepted-finding remediation
+are now complete or explicitly dispositioned.
 
 It does not yet pass the release-closeout gate.
 
-The next required work is not broad feature reimplementation. It is the
-release-tail sequence: docs/review pass, internal review, external review,
-accepted-finding remediation, next-milestone planning, and ceremony. The
-closed-issue SOR truth exception found during `WP-19` is already fixed.
+The next required work is not broad feature reimplementation. It is the final
+release-tail sequence: next-milestone planning and ceremony.

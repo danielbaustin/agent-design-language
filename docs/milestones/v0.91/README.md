@@ -3,10 +3,11 @@
 ## Status
 
 Active release-tail milestone package. The `v0.91.0` core implementation,
-flagship demo, feature-proof coverage, quality-gate lane, docs/review pass, and
-ADR pass have landed. The official issue wave remains open as #2735-#2759 while
-WP-21 through WP-25 finish internal review, third-party review,
-accepted-finding remediation, next-milestone handoff, and ceremony.
+flagship demo, feature-proof coverage, quality-gate lane, docs/review pass, ADR
+pass, internal review, external review, and accepted-finding remediation have
+landed or been explicitly dispositioned. The official issue wave remains open
+as #2735-#2759 while WP-24 and WP-25 finish next-milestone handoff and
+ceremony.
 
 ## Purpose
 

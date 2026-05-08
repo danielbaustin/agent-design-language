@@ -57,8 +57,8 @@
 
 ## Release Readiness
 
-- [ ] Internal review complete.
-- [ ] Third-party review complete or explicitly deferred.
-- [ ] Accepted findings fixed or dispositioned.
+- [x] Internal review complete.
+- [x] Third-party review complete or explicitly deferred.
+- [x] Accepted findings fixed or dispositioned.
 - [x] Changelog, README, Cargo metadata, feature list, and milestone docs aligned.
 - [ ] Ceremony completed.

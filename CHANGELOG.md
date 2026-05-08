@@ -8,8 +8,9 @@ Status: Active. The v0.91 issue wave is open as `#2735-#2759`, and the crate
 version has advanced to `0.91.0` for the moral governance, cognitive-being,
 structured planning / SRP, and secure intra-polis Agent Comms development line.
 The core implementation, flagship demo, feature-proof coverage, quality gate,
-docs/review pass, README refresh, and ADR pass have landed through `WP-20`; the
-milestone is now in release-tail review.
+docs/review pass, README refresh, ADR pass, internal review, external review,
+and accepted-finding remediation have landed or been explicitly dispositioned;
+the milestone is now in final release-tail closeout.
 
 Planning notes:
 - The tracked v0.91 planning package lives under `docs/milestones/v0.91/`.
