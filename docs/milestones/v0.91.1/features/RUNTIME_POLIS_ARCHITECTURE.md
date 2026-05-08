@@ -25,6 +25,10 @@ In scope:
 - Drift report for older source docs that no longer match repo truth.
 - Reviewable architecture package that later WPs can cite.
 
+Tracked package:
+
+- `docs/milestones/v0.91.1/RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md`
+
 Out of scope:
 
 - Full identity or birthday semantics.

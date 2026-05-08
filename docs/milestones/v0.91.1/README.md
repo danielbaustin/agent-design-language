@@ -99,6 +99,8 @@ not import the broad provider-native benchmark planning surface.
 - Active issue wave: [WP_ISSUE_WAVE_v0.91.1.yaml](WP_ISSUE_WAVE_v0.91.1.yaml)
 - Execution readiness:
   [WP_EXECUTION_READINESS_v0.91.1.md](WP_EXECUTION_READINESS_v0.91.1.md)
+- Runtime/polis architecture package:
+  [RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md](RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.1.md](DEMO_MATRIX_v0.91.1.md)
 - Feature index: [features/README.md](features/README.md)
 - Card bundle readiness:
