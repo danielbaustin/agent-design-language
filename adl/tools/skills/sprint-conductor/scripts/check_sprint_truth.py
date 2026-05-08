@@ -18,6 +18,7 @@ def main() -> int:
     parser.add_argument('--repo-root', required=True)
     parser.add_argument('--state', required=True)
     parser.add_argument('--print-json', action='store_true')
+    parser.add_argument('--require-match', action='store_true')
     args = parser.parse_args()
 
     state_path = Path(args.state)
@@ -55,6 +56,7 @@ def main() -> int:
     truth_check = {
         'status': 'drift_detected' if drift else 'matched',
         'source': 'github_live',
+        'gate_passed': not drift,
         'checked_issue_numbers': issue_numbers,
         'checked_pr_urls': pr_urls,
         'notes': notes,
@@ -66,6 +68,8 @@ def main() -> int:
         print(json.dumps(truth_check, indent=2, sort_keys=True))
     else:
         print(state_path)
+    if args.require_match and drift:
+        return 2
     return 0
 
 

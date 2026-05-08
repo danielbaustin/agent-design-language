@@ -27,7 +27,7 @@ Optional:
 ## Core Loop
 
 1. Load or create sprint-state.
-2. Re-check live GitHub truth for the current sprint-state when possible.
+2. Re-check live GitHub truth for the current sprint-state and require a matched result before any sprint-state transition.
 3. Choose the earliest child issue in the ordered list that is not yet closed
    out.
 4. Route that child issue through `workflow-conductor`.
@@ -43,7 +43,7 @@ Optional:
 10. If any blocker is encountered, stop and report the blocker in sprint-state.
 
 Preferred live-truth helper:
-- `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path>`
+- `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match`
 
 ## Editor-Skill Rule
 
@@ -136,7 +136,7 @@ Do not:
 
 If `sprint-conductor` becomes a normal operating path rather than a narrow
 trial, the next hardening step should be:
-- make GitHub truth-checks mandatory before and after each child issue handoff
+- preserve the mandatory GitHub truth gate before and after each child issue handoff while reducing operator friction around it
 - require one explicit routing artifact per child issue
 - fail review startup when more than the allowed bounded reviewer-subagent set
   is declared

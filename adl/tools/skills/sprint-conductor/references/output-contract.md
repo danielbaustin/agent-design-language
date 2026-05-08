@@ -24,6 +24,7 @@ sequence:
 truth_check:
   status: not_run | matched | drift_detected | blocked
   source: github_live | sprint_state_only | mixed
+  gate_passed: true | false
   checked_issue_numbers:
     - <u32>
   checked_pr_urls:

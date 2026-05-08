@@ -28,6 +28,7 @@ admission:
       - "allow_review_subagent_exception"
       - "max_review_subagents_when_exception_enabled"
       - "require_github_truth_recheck"
+      - "github_truth_gate_blocks_progress"
       - "capture_coverage_at_closeout"
       - "capture_rust_tracker_at_closeout"
       - "stop_on_blocker"
@@ -80,6 +81,7 @@ admission:
     - "policy.require_existing_issue_skills_must_be_true"
     - "policy.require_editor_skills_must_be_true"
     - "policy.require_github_truth_recheck_must_be_true"
+    - "policy.github_truth_gate_blocks_progress_must_be_true"
     - "policy.stop_on_blocker_must_be_true"
 execution:
   mode: "orchestrate_existing_skills_sequentially"
@@ -88,7 +90,7 @@ execution:
   allow_subagents: true
   workflow_role: "sprint_orchestrator"
   preferred_commands:
-    - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path>"
+    - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match"
     - "python3 adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py --state <path> --sprint-issue <n> --ordered-issues <csv>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/validate_review_subagent_policy.py --allow-review-subagent-exception <bool> --max-review-subagents 1"
     - "workflow-conductor for issue routing"
