@@ -26,6 +26,8 @@ admission:
       - "require_editor_skills"
       - "require_code_review"
       - "allow_review_subagent_exception"
+      - "max_review_subagents_when_exception_enabled"
+      - "require_github_truth_recheck"
       - "capture_coverage_at_closeout"
       - "capture_rust_tracker_at_closeout"
       - "stop_on_blocker"
@@ -63,6 +65,8 @@ admission:
     - "sprint.review_paths"
     - "sprint.closeout_paths"
     - "sprint.issue_records"
+    - "sprint.truth_check"
+    - "review_subagent_ids"
   stop_if_missing:
     - "repo_root"
     - "sprint.issue_number"
@@ -75,6 +79,7 @@ admission:
     - "policy.require_sequential_closeout_must_be_true"
     - "policy.require_existing_issue_skills_must_be_true"
     - "policy.require_editor_skills_must_be_true"
+    - "policy.require_github_truth_recheck_must_be_true"
     - "policy.stop_on_blocker_must_be_true"
 execution:
   mode: "orchestrate_existing_skills_sequentially"
@@ -83,7 +88,9 @@ execution:
   allow_subagents: true
   workflow_role: "sprint_orchestrator"
   preferred_commands:
+    - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py --state <path> --sprint-issue <n> --ordered-issues <csv>"
+    - "python3 adl/tools/skills/sprint-conductor/scripts/validate_review_subagent_policy.py --allow-review-subagent-exception <bool> --max-review-subagents 1"
     - "workflow-conductor for issue routing"
     - "pr-init/pr-ready/pr-run/pr-finish/pr-janitor/pr-closeout for child issue lifecycle"
     - "repo-packet-builder and review specialist skills for sprint-end review"
@@ -108,6 +115,7 @@ outputs:
     - "status"
     - "sprint"
     - "sequence"
+    - "truth_check"
     - "current_state"
     - "review"
     - "closeout"

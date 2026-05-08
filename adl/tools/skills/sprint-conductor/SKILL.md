@@ -59,7 +59,9 @@ At the moment, the key repo references are:
 Within this bundle, the operational details live in:
 - `references/conductor-playbook.md`
 - `references/output-contract.md`
+- `scripts/check_sprint_truth.py`
 - `scripts/update_sprint_state.py`
+- `scripts/validate_review_subagent_policy.py`
 
 ## Entry Conditions
 
@@ -108,12 +110,13 @@ If there is no concrete sprint issue or ordered issue list, stop and report
 2. Create or load the sprint-state artifact.
 3. Confirm the current issue is the earliest not-yet-closed issue in the list.
 4. Route that issue through `workflow-conductor`.
-5. Run only the selected downstream lifecycle or editor skill.
-6. Re-check issue truth until the issue is fully closed out.
-7. Only then advance to the next ordered issue.
-8. After the final issue closes, assemble sprint review evidence.
-9. Record sprint closeout metrics including coverage and Rust tracker counts.
-10. Stop with one bounded sprint review/closeout result.
+5. Re-check live issue and PR truth before acting.
+6. Run only the selected downstream lifecycle or editor skill.
+7. Re-check issue truth until the issue is fully closed out.
+8. Only then advance to the next ordered issue.
+9. After the final issue closes, assemble sprint review evidence.
+10. Record sprint closeout metrics including coverage and Rust tracker counts.
+11. Stop with one bounded sprint review/closeout result.
 
 ## Execution Model
 
@@ -166,6 +169,7 @@ Bounded review-subagent exception:
   explicitly enables that exception
 - if the exception is disabled, the sprint review must remain local and record
   that no review subagent was used
+- the bundle should validate this boundary mechanically before review execution
 
 The sprint review must not claim that docs/cards alone are sufficient when the
 sprint changed implementation code.
@@ -225,6 +229,7 @@ Return a concise structured result including:
 - ordered issue list
 - completed issues
 - blocked/current issue state
+- truth-check status and source
 - review status and review artifact paths
 - coverage status
 - Rust tracker status

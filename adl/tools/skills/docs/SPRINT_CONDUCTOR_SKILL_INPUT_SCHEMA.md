@@ -26,14 +26,24 @@ sprint:
       pr_url: <url or null>
       artifact_paths:
         - /absolute/or/repo-relative/path
+  truth_check:
+    source: github_live | sprint_state_only | mixed
+    checked_issue_numbers:
+      - <u32>
+    checked_pr_urls:
+      - <url>
 policy:
   require_sequential_closeout: true
   require_existing_issue_skills: true
   require_editor_skills: true
   require_code_review: true
   allow_review_subagent_exception: true
+  max_review_subagents_when_exception_enabled: 1
+  require_github_truth_recheck: true
   capture_coverage_at_closeout: true
   capture_rust_tracker_at_closeout: true
   stop_on_blocker: true
+review_subagent_ids:
+  - <id>
 resume_from_state_path: /absolute/or/repo-relative/path/to/sprint_state.md
 ```

@@ -21,6 +21,15 @@ sequence:
   deferred_issue_numbers:
     - <u32>
   continuation: continue | stop | ask_operator | waiting_for_review
+truth_check:
+  status: not_run | matched | drift_detected | blocked
+  source: github_live | sprint_state_only | mixed
+  checked_issue_numbers:
+    - <u32>
+  checked_pr_urls:
+    - <url>
+  notes:
+    - <bounded text>
 current_state:
   selected_skill: workflow-conductor | pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis | none
   current_phase: intake | issue_loop | review | closeout | waiting | blocked
@@ -29,6 +38,8 @@ review:
   status: not_started | in_progress | done | blocked
   selected_skills:
     - repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis
+  review_subagent_ids:
+    - <id>
   packet_path: <path or null>
   code_review_path: <path or null>
   test_review_path: <path or null>
