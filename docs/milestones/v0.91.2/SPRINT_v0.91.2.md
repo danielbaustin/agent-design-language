@@ -9,7 +9,7 @@ Candidate sprint plan for review.
 | WP | Title | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- |
 | WP-01 | Design pass (milestone docs + planning) | tracked docs, reviewed YAML, and issue cards | v0.91.1 closeout |
-| WP-02 | UTS + ACC multi-model benchmark harness | benchmark harness and fixture battery | WP-01 |
+| WP-02 | UTS + ACC multi-model benchmark harness | benchmark harness and fixture battery | WP-01; governed-tools baseline; ACIP substrate |
 | WP-03 | Provider-native tool-call comparison | JSON proposal vs provider-native comparison report | WP-02 |
 | WP-04 | Runtime/test-cycle recovery | reduced redundant proof phases and validation report | WP-01 |
 | WP-05 | Coverage gate ergonomics | changed-source diagnostics and focused-test guide | WP-04 |
@@ -21,9 +21,9 @@ expensive, confusing test cycles.
 
 | WP | Title | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- |
-| WP-06 | CodeBuddy review packet productization | review packet and product-report workflow package | WP-01 |
+| WP-06 | CodeBuddy review packet productization | review packet and product-report workflow package | WP-01; review skills and evidence-packet substrate |
 | WP-07 | Review heuristics skill and demos | review heuristics docs, skill/demo updates, proof examples | WP-06 |
-| WP-08 | Google Workspace CMS bridge demo | bounded Workspace content-card and promotion demo | WP-01 |
+| WP-08 | Google Workspace CMS bridge demo | bounded Workspace content-card and promotion demo | WP-01; governed-tools authority and adapter boundary |
 | WP-09 | Rust-native GWS adapter boundary | adapter feasibility and typed contract boundary | WP-08 |
 | WP-10 | Code modernization demo | Moderne/code modernization interaction demo | WP-01 |
 
@@ -34,7 +34,7 @@ product surfaces without granting silent authority over canonical repo truth.
 
 | WP | Title | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- |
-| WP-11 | Publication program package | arXiv/Medium paper-program backlog and process docs | WP-01 |
+| WP-11 | Publication program package | arXiv/Medium paper-program backlog and process docs | WP-01; review/evidence docs and publication process notes |
 | WP-12 | General intelligence paper packet | claim, citation, and review packet | WP-11 |
 | WP-13 | Rustdoc and doc cleanup | rustdoc/doc cleanup patches and report | WP-05 |
 | WP-14 | Workflow guardrails hardening | main-write, watcher, and safe-report guardrails | WP-04, WP-05 |

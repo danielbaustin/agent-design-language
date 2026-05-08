@@ -39,6 +39,11 @@ Required outputs:
 - Model panel configuration and prompt version record.
 - Report schema for scoring proposal discipline.
 
+Source dependencies:
+
+- Governed-tools baseline from `v0.90.5`.
+- Secure local ACIP substrate and A2A boundary evidence from `v0.91`.
+
 Required validation:
 
 - Harness does not execute real tools from model output.
@@ -93,6 +98,11 @@ Required outputs:
 - Product report template and evidence requirements.
 - Skill/demo roadmap alignment.
 
+Source dependencies:
+
+- Repo review skills and evidence-packet workflow.
+- Product-report and review-quality surfaces.
+
 Required validation:
 
 - Reports cite source evidence and preserve uncertainty.
@@ -118,6 +128,11 @@ Required outputs:
 - Bounded Workspace content-card and promotion packet demo.
 - Fixture mode and live-gated mode boundary.
 - Revision mismatch and canonical-repo authority rules.
+
+Source dependencies:
+
+- Governed-tools authority model.
+- Google Workspace CMS bridge planning corpus.
 
 Required validation:
 
@@ -157,6 +172,11 @@ Required outputs:
 - arXiv and Medium publication backlog.
 - Paper authoring process notes and review gates.
 - Backlog item for "Gödel Agents and the Gödel-Hadamard-Bayes Algorithm".
+
+Source dependencies:
+
+- Review/evidence docs.
+- arXiv and Medium authoring process notes.
 
 Required validation:
 

@@ -40,6 +40,14 @@ work_packages:
   queue: tools
   outcome: benchmark harness and fixture battery
   depends_on: WP-01
+  source_dependencies:
+  - governed-tools baseline from v0.90.5
+  - secure local ACIP substrate and A2A boundary evidence from v0.91
+  issue_graph_notes:
+  - Do not treat model proposal quality as ACC authority or executable tool
+    permission.
+  - Preserve the split between ADL JSON proposal mode and provider-native
+    tool/function-call mode.
 - wp: WP-03
   issue: null
   title: Provider-native tool-call comparison
@@ -64,6 +72,12 @@ work_packages:
   queue: tools
   outcome: review packet and product-report workflow package
   depends_on: WP-01
+  source_dependencies:
+  - repo review skills and evidence-packet workflow
+  - product-report and review-quality surfaces
+  issue_graph_notes:
+  - Product language must preserve evidence, uncertainty, and reviewer
+    responsibility.
 - wp: WP-07
   issue: null
   title: Review heuristics skill and demos
@@ -76,6 +90,12 @@ work_packages:
   queue: tools
   outcome: bounded Workspace content-card and promotion demo
   depends_on: WP-01
+  source_dependencies:
+  - governed-tools authority model
+  - Google Workspace CMS bridge planning corpus
+  issue_graph_notes:
+  - Google Workspace remains collaborative draft infrastructure and must not
+    override canonical Git truth without reviewed issue/PR authority.
 - wp: WP-09
   issue: null
   title: Rust-native GWS adapter boundary
@@ -94,6 +114,12 @@ work_packages:
   queue: docs
   outcome: arXiv/Medium paper-program backlog and process docs
   depends_on: WP-01
+  source_dependencies:
+  - review/evidence docs
+  - arXiv and Medium authoring process notes
+  issue_graph_notes:
+  - Publication packets must separate claims, citations, speculation, review
+    status, and publication status.
 - wp: WP-12
   issue: null
   title: General intelligence paper packet
