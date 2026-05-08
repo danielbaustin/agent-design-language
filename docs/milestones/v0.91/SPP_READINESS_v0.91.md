@@ -8,8 +8,8 @@ packages before generating the rest of the milestone wave.
 
 The local SPP files remain workflow records under `.adl/` and are not published
 as tracked repository artifacts. This tracked record exists so reviewers can see
-what was tested, what was intentionally deferred, and what remains blocked on
-the planned SPP editor skill.
+what was tested, what was intentionally deferred, and what still remains beyond
+this first readiness slice.
 
 ## Scope
 
@@ -47,9 +47,13 @@ why the rest of the wave should not be mass-generated without an editor skill:
 
 ## Deferred Work
 
-The remaining v0.91 SPPs are intentionally deferred until the SPP editor skill
-exists. Follow-on issue #2766 should create a bounded editor skill that can
+The remaining v0.91 SPPs were intentionally deferred during this first
+readiness slice. That deferral is no longer blocked on a missing editor skill:
+issue `#2766` has landed the bounded `spp-editor` workflow surface that can
 normalize SPPs the same way STP, SIP, and SOR cards are edited today.
+
+What remains deferred is broader wave generation and stronger orchestration
+around reviewed planning state, not the existence of the editor itself.
 
 The editor skill should preserve:
 
@@ -59,6 +63,12 @@ The editor skill should preserve:
 - stop conditions and non-goals
 - review hooks
 - no implementation or branch-binding claims before execution
+
+Still-deferred follow-on workflow steps include:
+
+- wider v0.91 SPP generation beyond the first sample set
+- stronger plan-review orchestration
+- later workflow steps such as `pr-plan` and `pr-plan-review`
 
 ## Non-Claims
 

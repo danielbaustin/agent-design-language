@@ -2,14 +2,14 @@
 
 ## Summary
 
-This bounded `v0.91` demo runs a four-turn direct conversation workflow
+This bounded `v0.91` demo runs a preset-driven direct conversation workflow
 through the real ADL runtime using explicit `ChatGPT` and `Gemini` participant
 identities and live provider calls.
 
-The proof shape is intentionally narrow:
+The default shipped path is the `trust_possible` preset:
 
 - two named agents
-- four explicit sequential turns
+- six explicit sequential turns
 - one bounded stop rule
 - saved transcript, run summary, trace, and proof note
 
@@ -31,8 +31,9 @@ It does **not** claim:
 
 The runtime still uses a small local adapter boundary, but that adapter calls
 the real OpenAI and Gemini APIs with operator-managed credentials instead of a
-mock provider shim. The current default model choices are the top-tier text
-models for each family: `gpt-5.5` and `gemini-3.1-pro-preview`.
+mock provider shim. The current default model posture is quality-first:
+`gpt-5.5-pro` and `gemini-3.1-pro-preview`, with operator overrides available
+through environment variables.
 
 ## Canonical Command
 
@@ -41,6 +42,14 @@ From repository root:
 ```bash
 bash adl/tools/demo_v091_chatgpt_gemini_direct_conversation.sh
 ```
+
+The wrapper also supports bounded overrides such as:
+
+- `ADL_DEMO_PRESET`
+- `ADL_DEMO_QUESTION`
+- `ADL_DEMO_TURNS`
+- `ADL_LIVE_OPENAI_MODEL`
+- `ADL_LIVE_GEMINI_MODEL`
 
 ## What Runs
 
@@ -52,6 +61,10 @@ bash adl/tools/demo_v091_chatgpt_gemini_direct_conversation.sh
   - `adl/tools/demo_v091_chatgpt_gemini_direct_conversation.sh`
 
 ## Primary Proof Surfaces
+
+The paths below are operator-generated runtime outputs. They are written when
+the canonical command is executed and are not tracked artifacts in the primary
+checkout.
 
 - `artifacts/v091/chatgpt_gemini_direct_conversation/transcript.md`
 - `artifacts/v091/chatgpt_gemini_direct_conversation/proof_note.md`
@@ -70,7 +83,7 @@ bash adl/tools/demo_v091_chatgpt_gemini_direct_conversation.sh
 
 The demo is successful when:
 
-- the transcript contains four explicit turns
+- the transcript contains one explicit bounded turn sequence
 - `ChatGPT` and `Gemini` are explicit and distinguishable in every turn
 - the stop rule is explicit and visible in the proof surfaces
 - provider invocations show one live OpenAI lane and one live Gemini lane

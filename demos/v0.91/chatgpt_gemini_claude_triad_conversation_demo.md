@@ -42,6 +42,10 @@ bash adl/tools/demo_v091_chatgpt_gemini_claude_triad_conversation.sh
 
 ## Primary Proof Surfaces
 
+The paths below are operator-generated runtime outputs. They are written when
+the canonical command is executed and are not tracked artifacts in the primary
+checkout.
+
 - `artifacts/v091/chatgpt_gemini_claude_triad_conversation/transcript.md`
 - `artifacts/v091/chatgpt_gemini_claude_triad_conversation/proof_note.md`
 - `artifacts/v091/chatgpt_gemini_claude_triad_conversation/provider_invocations.json`
