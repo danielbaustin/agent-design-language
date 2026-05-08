@@ -297,15 +297,15 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             schema_version: RUNTIME_V2_OBSERVATORY_FLAGSHIP_PROOF_SCHEMA.to_string(),
             proof_id: "d12-inhabited-csm-observatory-flagship-proof-0001".to_string(),
             demo_id: "D12".to_string(),
-            milestone: "v0.90.3".to_string(),
+            milestone: "v0.91.1".to_string(),
             artifact_path: RUNTIME_V2_OBSERVATORY_FLAGSHIP_PROOF_PATH.to_string(),
             operator_report_ref: RUNTIME_V2_OBSERVATORY_FLAGSHIP_REPORT_PATH.to_string(),
             walkthrough_ref: RUNTIME_V2_OBSERVATORY_FLAGSHIP_WALKTHROUGH_PATH.to_string(),
             source_docs: vec![
-                "docs/milestones/v0.90.3/OBSERVATORY_FLAGSHIP_DEMO_v0.90.3.md".to_string(),
-                "docs/milestones/v0.90.3/OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md".to_string(),
-                "docs/milestones/v0.90.3/DEMO_MATRIX_v0.90.3.md".to_string(),
-                "docs/milestones/v0.90.3/REDACTED_OBSERVATORY_PROJECTIONS_v0.90.3.md"
+                "docs/milestones/v0.91.1/README.md".to_string(),
+                "docs/milestones/v0.91.1/DEMO_MATRIX_v0.91.1.md".to_string(),
+                "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md".to_string(),
+                "docs/milestones/v0.91.1/RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md"
                     .to_string(),
             ],
             actor_roster: vec![
@@ -370,19 +370,19 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             operator_report_refs,
             lens_sequence,
             reviewer_command:
-                "adl runtime-v2 observatory-flagship-demo --out artifacts/v0903/demo-d12-observatory-flagship"
+                "adl runtime-v2 observatory-flagship-demo --out artifacts/v0911/demo-d12-observatory-flagship"
                     .to_string(),
             validation_commands: vec![
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_observatory_flagship -- --nocapture"
                     .to_string(),
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_observatory_flagship_demo -- --nocapture"
                     .to_string(),
-                "adl runtime-v2 observatory-flagship-demo --out artifacts/v0903/demo-d12-observatory-flagship"
+                "adl runtime-v2 observatory-flagship-demo --out artifacts/v0911/demo-d12-observatory-flagship"
                     .to_string(),
                 "git diff --check".to_string(),
             ],
             proof_summary:
-                "D12 integrates WP-03 through WP-13 into one bounded inhabited CSM Observatory proof: citizen private-state continuity, witness and receipt evidence, redacted projection, standing and communication boundary, access-control denial, continuity challenge, sanctuary quarantine, appeal review, operator report, and room/lens walkthrough."
+                "D12 integrates WP-05 through WP-16 into one bounded v0.91.1 inhabited CSM Observatory proof: citizen private-state continuity, witness and receipt evidence, redacted projection, standing and communication boundary, access-control denial, continuity challenge, sanctuary quarantine, appeal review, operator report, and room/lens walkthrough."
                     .to_string(),
             proof_classification: "proving".to_string(),
             non_claims: vec![
@@ -390,10 +390,10 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
                 "does not claim first true Godel-agent birthday".to_string(),
                 "does not expose canonical private citizen state".to_string(),
                 "does not implement unbounded live CSM execution".to_string(),
-                "does not implement v0.91 civic markets or v0.92 migration semantics".to_string(),
+                "does not implement cross-polis federation or external transport semantics".to_string(),
             ],
             claim_boundary:
-                "This packet proves the bounded local D12 citizen-state Observatory evidence package and that the artifact is reviewable as a unique continuation scenario; it does not prove personhood, a first true Godel-agent birthday, raw private-state inspection, or unbounded live Runtime v2 execution."
+                "This packet proves the bounded local D12 v0.91.1 runtime inhabitant Observatory evidence package and that the artifact is reviewable as a unique continuation scenario; it does not prove personhood, a first true Godel-agent birthday, raw private-state inspection, or unbounded live Runtime v2 execution."
                     .to_string(),
         };
         packet.validate_against(challenge, operator)?;
@@ -488,8 +488,8 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
                 "observatory flagship proof must map to demo matrix row D12"
             ));
         }
-        if self.milestone != "v0.90.3" {
-            return Err(anyhow!("observatory flagship proof must target v0.90.3"));
+        if self.milestone != "v0.91.1" {
+            return Err(anyhow!("observatory flagship proof must target v0.91.1"));
         }
         normalize_id(self.proof_id.clone(), "observatory_flagship.proof_id")?;
         validate_relative_path(&self.artifact_path, "observatory_flagship.artifact_path")?;
@@ -563,8 +563,8 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
         }
         validate_nonempty_text(&self.proof_summary, "observatory_flagship.proof_summary")?;
         for required_phrase in [
-            "WP-03",
-            "WP-13",
+            "WP-05",
+            "WP-16",
             "witness",
             "receipt",
             "redacted projection",
@@ -595,7 +595,7 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
         }
         if !self
             .claim_boundary
-            .contains("bounded local D12 citizen-state Observatory evidence package")
+            .contains("bounded local D12 v0.91.1 runtime inhabitant Observatory evidence package")
         {
             return Err(anyhow!(
                 "observatory flagship proof must preserve its bounded D12 claim boundary"

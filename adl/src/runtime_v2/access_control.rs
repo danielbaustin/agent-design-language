@@ -191,7 +191,7 @@ impl RuntimeV2AccessAuthorityMatrix {
         validate_access_control_inputs(standing, observatory)?;
         let matrix = Self {
             schema_version: RUNTIME_V2_ACCESS_AUTHORITY_MATRIX_SCHEMA.to_string(),
-            matrix_id: "access-authority-matrix-v0-90-3".to_string(),
+            matrix_id: "access-authority-matrix-v0-91-1".to_string(),
             demo_id: "D10".to_string(),
             artifact_path: RUNTIME_V2_ACCESS_AUTHORITY_MATRIX_PATH.to_string(),
             standing_policy_ref: standing.policy.artifact_path.clone(),
@@ -202,13 +202,13 @@ impl RuntimeV2AccessAuthorityMatrix {
                 "denied access never discloses raw private state",
                 "denied access never mutates citizen continuity",
                 "redacted projection is not raw private-state inspection",
-                "WP-12 access control remains bounded to v0.90.3 citizen-state substrate semantics",
+                "access control remains bounded to the v0.91.1 citizen-state substrate and review-safe observatory projections",
             ]),
             validation_command:
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture"
                     .to_string(),
             claim_boundary:
-                "WP-12 proves D10 access-control semantics for authority, events, and denials; WP-13 owns challenge/appeal due-process behavior."
+                "D10 access control proves standing-mediated authority, event emission, and denial safety for the v0.91.1 citizen-state substrate; challenge and appeal remain review-governed evidence paths rather than raw private-state authority."
                     .to_string(),
         };
         matrix.validate_against(standing, observatory)?;
@@ -268,7 +268,7 @@ impl RuntimeV2AccessAuthorityMatrix {
                 "denied access never discloses raw private state",
                 "denied access never mutates citizen continuity",
                 "redacted projection is not raw private-state inspection",
-                "WP-12 access control remains bounded to v0.90.3 citizen-state substrate semantics",
+                "access control remains bounded to the v0.91.1 citizen-state substrate and review-safe observatory projections",
             ],
         )?;
         if !self
@@ -279,9 +279,12 @@ impl RuntimeV2AccessAuthorityMatrix {
                 "access matrix validation command must target focused tests"
             ));
         }
-        if !self.claim_boundary.contains("WP-12") || !self.claim_boundary.contains("WP-13") {
+        if !self.claim_boundary.contains("challenge")
+            || !self.claim_boundary.contains("appeal")
+            || !self.claim_boundary.contains("denial safety")
+        {
             return Err(anyhow!(
-                "access matrix claim boundary must preserve WP-12/WP-13 split"
+                "access matrix claim boundary must preserve challenge, appeal, and denial-safety limits"
             ));
         }
         Ok(())
@@ -303,7 +306,7 @@ impl RuntimeV2AccessEventPacket {
         observatory.projection_packet.validate_shape()?;
         let mut packet = Self {
             schema_version: RUNTIME_V2_ACCESS_EVENT_PACKET_SCHEMA.to_string(),
-            packet_id: "access-events-v0-90-3".to_string(),
+            packet_id: "access-events-v0-91-1".to_string(),
             demo_id: "D10".to_string(),
             generated_at: "2026-04-21T00:00:00Z".to_string(),
             artifact_path: RUNTIME_V2_ACCESS_EVENT_PACKET_PATH.to_string(),
@@ -313,7 +316,7 @@ impl RuntimeV2AccessEventPacket {
             events: prototype_access_events(),
             packet_hash: String::new(),
             claim_boundary:
-                "D10 WP-12 event evidence proves access-control event emission and denial safety; WP-13 owns procedural challenge behavior."
+                "D10 event evidence proves access-control event emission and denial safety while keeping challenge and appeal on review-governed paths."
                     .to_string(),
         };
         packet.packet_hash = packet.computed_hash();
@@ -374,9 +377,12 @@ impl RuntimeV2AccessEventPacket {
             event.validate_shape()?;
         }
         validate_sha256_hex(&self.packet_hash, "access_event.packet_hash")?;
-        if !self.claim_boundary.contains("WP-12") || !self.claim_boundary.contains("WP-13") {
+        if !self.claim_boundary.contains("challenge")
+            || !self.claim_boundary.contains("appeal")
+            || !self.claim_boundary.contains("denial safety")
+        {
             return Err(anyhow!(
-                "access event packet claim boundary must preserve WP-12/WP-13 split"
+                "access event packet claim boundary must preserve challenge, appeal, and denial-safety limits"
             ));
         }
         Ok(())
@@ -448,7 +454,7 @@ impl RuntimeV2AccessDenialFixtures {
     pub fn prototype() -> Self {
         Self {
             schema_version: RUNTIME_V2_ACCESS_DENIAL_FIXTURES_SCHEMA.to_string(),
-            proof_id: "access-denial-fixtures-v0-90-3".to_string(),
+            proof_id: "access-denial-fixtures-v0-91-1".to_string(),
             demo_id: "D10".to_string(),
             matrix_ref: RUNTIME_V2_ACCESS_AUTHORITY_MATRIX_PATH.to_string(),
             event_packet_ref: RUNTIME_V2_ACCESS_EVENT_PACKET_PATH.to_string(),
@@ -494,7 +500,7 @@ impl RuntimeV2AccessDenialFixtures {
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture"
                     .to_string(),
             claim_boundary:
-                "WP-12 denial fixtures prove event emission and denial safety without implementing WP-13 due-process behavior."
+                "Access denial fixtures prove event emission and denial safety without granting challenge or appeal authority as raw private-state power."
                     .to_string(),
         }
     }
@@ -555,9 +561,12 @@ impl RuntimeV2AccessDenialFixtures {
                 "access denial fixtures validation command must target focused tests"
             ));
         }
-        if !self.claim_boundary.contains("WP-12") || !self.claim_boundary.contains("WP-13") {
+        if !self.claim_boundary.contains("challenge")
+            || !self.claim_boundary.contains("appeal")
+            || !self.claim_boundary.contains("denial safety")
+        {
             return Err(anyhow!(
-                "access denial fixtures must preserve the WP-12/WP-13 split"
+                "access denial fixtures must preserve challenge, appeal, and denial-safety limits"
             ));
         }
         Ok(())
@@ -726,7 +735,7 @@ fn prototype_access_events() -> Vec<RuntimeV2AccessEvent> {
             evidence_refs: &[RUNTIME_V2_PRIVATE_STATE_OBSERVATORY_POLICY_PATH],
             continuity_sequence_before: 7,
             continuity_sequence_after: 7,
-            rationale: "decryption is denied in v0.90.3 without exposing cleartext or raw state",
+            rationale: "decryption is denied without exposing cleartext or raw state",
         }),
         access_event(AccessEventSpec {
             event_id: "access-event-projection-001",
@@ -816,7 +825,7 @@ fn prototype_access_events() -> Vec<RuntimeV2AccessEvent> {
             evidence_refs: &[RUNTIME_V2_STANDING_EVENT_PACKET_PATH],
             continuity_sequence_before: 7,
             continuity_sequence_after: 7,
-            rationale: "appeal records due-process intent without implementing WP-13 review-resolution behavior",
+            rationale: "appeal records due-process intent without granting raw-state authority or automatic review resolution",
         }),
         access_event(AccessEventSpec {
             event_id: "access-event-release-001",
@@ -831,7 +840,7 @@ fn prototype_access_events() -> Vec<RuntimeV2AccessEvent> {
             evidence_refs: &[RUNTIME_V2_PRIVATE_STATE_OBSERVATORY_PACKET_PATH],
             continuity_sequence_before: 7,
             continuity_sequence_after: 7,
-            rationale: "release is denied until WP-13 review-resolution evidence exists",
+            rationale: "release is denied until review-resolution evidence exists",
         }),
     ]
 }
@@ -927,12 +936,12 @@ fn validate_authority_rule(rule: &RuntimeV2AccessAuthorityRule) -> Result<()> {
     }
     if rule.raw_private_state_allowed {
         return Err(anyhow!(
-            "WP-12 access matrix must not grant raw private state"
+            "access matrix must not grant raw private state"
         ));
     }
     if rule.continuity_mutation_allowed {
         return Err(anyhow!(
-            "WP-12 access matrix must not grant continuity mutation"
+            "access matrix must not grant continuity mutation"
         ));
     }
     if rule.allowed_standing_classes.is_empty() && rule.denied_standing_classes.is_empty() {

@@ -1,6 +1,6 @@
 {
   "schema_version": "runtime_v2.access_denial_fixtures.v1",
-  "proof_id": "access-denial-fixtures-v0-90-3",
+  "proof_id": "access-denial-fixtures-v0-91-1",
   "demo_id": "D10",
   "matrix_ref": "runtime_v2/access_control/authority_matrix.json",
   "event_packet_ref": "runtime_v2/access_control/access_events.json",
@@ -43,5 +43,5 @@
     }
   ],
   "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture",
-  "claim_boundary": "WP-12 denial fixtures prove event emission and denial safety without implementing WP-13 due-process behavior."
+  "claim_boundary": "Access denial fixtures prove event emission and denial safety without granting challenge or appeal authority as raw private-state power."
 }
