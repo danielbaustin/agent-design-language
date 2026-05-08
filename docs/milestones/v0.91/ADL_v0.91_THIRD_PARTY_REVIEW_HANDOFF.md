@@ -9,36 +9,35 @@
 - Prepared during: v0.91 review tail
 - Prepared from issue: #2812
 - Prepared from branch: codex/2812-v0-91-review-create-third-party-review-handoff
-- Current packet status: pre-review handoff staged; internal and external review
-  are not yet complete
+- Current packet status: external review complete; zero external findings
+  recorded; release ceremony is not yet complete
 - Date: 2026-05-07
 - Publication attempted: false
 - Release approval claimed: false
 - Review approval claimed: false
 
-## Update Before Review
+## Review Result Update
 
-This handoff is intentionally staged before WP-21 and WP-22 close so the
-external review can begin without losing context. Before sending it to the
-reviewer, refresh this file from clean root `main` after WP-21 merges.
+WP-22 imported the external review result after WP-21 internal review and WP-23
+accepted-finding remediation closed. The external review summary reports an
+`A+` / `100/100` verdict and zero `P0`, `P1`, `P2`, or `P3` findings.
 
-Minimum final refresh checks:
+The tracked release docs record the artifact paths and disposition. The review
+PDF and Markdown summary remain local review-corpus artifacts rather than
+tracked release docs.
 
-- Confirm WP-20 is closed, WP-21 has either closed or has an explicitly
-  attached internal-review packet, and WP-22 is the active external review lane.
-- Confirm root `main` has been fast-forwarded after the final WP-21 merge or
-  after any internal-review corrections accepted before third-party review.
-- Confirm `README.md`, `CHANGELOG.md`, `adl/Cargo.toml`, `adl/Cargo.lock`,
-  `docs/planning/ADL_FEATURE_LIST.md`, and `docs/milestones/v0.91` still agree
-  on active milestone `v0.91` and active crate version `0.91.0`.
-- Confirm v0.91 review artifacts, if added under the local review directory,
-  are labeled as internal or external review artifacts and are not confused
-  with tracked release docs.
-- Confirm this handoff does not point at branch-only artifacts unless it
-  explicitly says they are pending.
-- Confirm no host-local paths, ignored control-plane paths, temporary worktree
-  paths, raw tool traces, or copied terminal-output roots appear in the final
-  packet.
+Final refresh checks completed for this update:
+
+- WP-20, WP-21, and WP-23 are closed; WP-22 is the active external-review
+  record lane.
+- `README.md`, `CHANGELOG.md`, `adl/Cargo.toml`, `adl/Cargo.lock`,
+  `docs/planning/ADL_FEATURE_LIST.md`, and `docs/milestones/v0.91` continue to
+  describe active milestone `v0.91` and active crate version `0.91.0`.
+- External review artifacts are labeled under the v0.91 review area and are not
+  confused with tracked release docs.
+- This handoff does not point at branch-only artifacts.
+- No host-local paths, temporary worktree paths, raw tool traces, or copied
+  terminal-output roots are required by the tracked handoff packet.
 
 ## Purpose
 
@@ -74,9 +73,19 @@ release ceremony.
 
 ## Review Artifacts
 
-At the time this handoff was prepared, v0.91 third-party review artifacts had
-not yet been imported. If the reviewer produces artifacts, attach them under
-the v0.91 review area and record them in WP-22 before WP-23 remediation begins.
+WP-22 recorded these v0.91 external review artifacts:
+
+- `.adl/docs/reviews/v0.91/ADL_v0.91_3RD_PARTY_REVIEW_SUMMARY.md`
+- `.adl/docs/reviews/v0.91/ADL_v0.91_Comprehensive_Review.pdf`
+
+External review disposition:
+
+- Overall verdict: `A+` / `100/100`
+- `P0` findings: `0`
+- `P1` findings: `0`
+- `P2` findings: `0`
+- `P3` findings: `0`
+- Accepted external findings requiring WP-23 remediation: none
 
 Previous review artifacts that may help calibrate the review pattern:
 
@@ -140,16 +149,18 @@ The reviewer should treat the release tail as active until Daniel confirms the
 final branch under review is clean root `main` after all intended review-tail
 PRs merge.
 
-Known review-tail gates:
+Current review-tail gates:
 
 - WP-20 docs and review pass is closed.
-- WP-21 internal review remains the local findings-first review pass.
-- WP-22 external / 3rd-party review is the lane this handoff supports.
-- WP-23 owns accepted finding remediation or explicit deferral.
-- WP-24 owns next-milestone planning and handoff.
-- WP-25 owns final release ceremony.
+- WP-21 internal review is closed.
+- WP-22 external / 3rd-party review is complete with zero findings recorded.
+- WP-23 accepted-finding remediation is closed; no additional external-review
+  remediation is required.
+- WP-24 next-milestone planning and handoff remains open.
+- WP-25 final release ceremony remains open.
 
-This handoff prepares WP-22. It is not itself the WP-22 review result.
+This handoff now records the WP-22 review result. It is not a release approval
+or release ceremony record.
 
 ## Previous Review Mistakes To Avoid
 
@@ -386,19 +397,23 @@ The third-party reviewer should return:
 - validation commands run and commands intentionally not run
 - residual-risk note for release ceremony
 
-Accepted findings should route to WP-23. Non-actionable observations should be
-recorded as notes or backlog candidates, not silently treated as blockers.
+Accepted findings should route to WP-23. WP-22 recorded zero accepted external
+findings, so no additional external-review remediation issue is required.
+Non-actionable observations should be recorded as notes or backlog candidates,
+not silently treated as blockers.
 
 ## Final Pre-Review Pass
 
-This handoff issue also performed a final pre-review pass over the packet. The
-bounded repairs made here were:
+This handoff issue performed the final pre-review and post-review record pass
+over the packet. The bounded repairs made here were:
 
 - added this canonical handoff file
 - linked the handoff from the v0.91 milestone README document map
 - refreshed review-tail wording now that WP-20 is closed
 - removed range shorthand from the v0.91 WP dependency tables and YAML where
   explicit dependencies are clearer for reviewers and automation
+- recorded the imported external review artifacts and zero-findings disposition
+- updated release-tail docs to show WP-21, WP-22, and WP-23 review/remediation
+  truth before WP-24 and WP-25
 
-The pass did not perform internal review, third-party review, finding
-remediation, or release ceremony work.
+The pass did not perform release ceremony work.
