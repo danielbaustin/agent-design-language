@@ -44,6 +44,10 @@ bash adl/tools/demo_v091_chatgpt_gemini_claude_review_panel.sh
 
 ## Primary Proof Surfaces
 
+The paths below are operator-generated runtime outputs. They are written when
+the canonical command is executed and are not tracked artifacts in the primary
+checkout.
+
 - `artifacts/v091/chatgpt_gemini_claude_review_panel/transcript.md`
 - `artifacts/v091/chatgpt_gemini_claude_review_panel/panel_register.json`
 - `artifacts/v091/chatgpt_gemini_claude_review_panel/proof_note.md`

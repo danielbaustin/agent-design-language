@@ -4,6 +4,11 @@
 
 Active proof matrix for the landed `v0.91` core feature set.
 
+For the multi-agent demo wave, reviewer-facing docs may cite runtime output
+paths under `artifacts/v091/...`. Those are operator-generated proof surfaces
+written by the canonical demo commands; they are not tracked artifacts in the
+primary checkout unless separately published.
+
 Rows `D1` through `D13` now point to concrete demo or proof homes from
 `WP-02` through `WP-17`. `D14` is the reviewer-facing coverage map added by
 `WP-18` so every tracked `v0.91` feature has one explicit proof route or

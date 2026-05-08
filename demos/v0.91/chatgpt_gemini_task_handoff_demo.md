@@ -44,6 +44,10 @@ bash adl/tools/demo_v091_chatgpt_gemini_task_handoff.sh
 
 ## Primary Proof Surfaces
 
+The paths below are operator-generated runtime outputs. They are written when
+the canonical command is executed and are not tracked artifacts in the primary
+checkout.
+
 - `artifacts/v091/chatgpt_gemini_task_handoff/transcript.md`
 - `artifacts/v091/chatgpt_gemini_task_handoff/task_handoff_summary.json`
 - `artifacts/v091/chatgpt_gemini_task_handoff/proof_note.md`
