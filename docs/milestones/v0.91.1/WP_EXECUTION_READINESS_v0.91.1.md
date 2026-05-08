@@ -2,14 +2,22 @@
 
 ## Purpose
 
-This document is the candidate card-authoring source for the v0.91.1
-inhabited-runtime readiness wave. It should be reviewed and tightened before
-issues are opened.
+This document is the card-authoring source for the v0.91.1 inhabited-runtime
+readiness wave. WP-01 / #2823 opened the milestone, and WP-02 through WP-24
+are now open as #2824 through #2846 with prepared STP, SIP, SPP, SRP, and SOR
+bundles.
 
 ## Global Execution Rules
 
 - Implement substantial work products; do not close WPs with planning-only
   surfaces unless the WP is explicitly a design or review WP.
+- Treat "foundation" as "first implemented and validated slice", not as
+  permission to stop at planning, naming, or architecture prose. A foundation
+  WP must leave code, schemas, fixtures, demos, tests, review records, or
+  executable tooling that downstream WPs can actually consume.
+- Design, docs, review, and release-tail WPs must still produce concrete
+  reviewable artifacts, accepted records, validation output, or issue-graph
+  changes. They are not placeholders for future implementation.
 - Keep v0.92 identity and birthday claims downstream.
 - Keep external and cross-polis communication gated on TLS or mutual-TLS
   equivalent protection.
@@ -31,7 +39,7 @@ Required outputs:
 
 Required validation:
 
-- Candidate issue wave matches the sprint and WBS.
+- Issue wave matches the sprint and WBS.
 - No WP has placeholder outputs, missing validation, or unclear non-goals.
 
 ## WP-02: Runtime And Polis Architecture Alignment

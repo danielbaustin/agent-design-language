@@ -2,16 +2,30 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.91 (Active development)
+## v0.91.1 (Active development)
 
-Status: Active. The v0.91 issue wave is open as `#2735-#2759`, and the crate
-version has advanced to `0.91.0` for the moral governance, cognitive-being,
-structured planning / SRP, and secure intra-polis Agent Comms development line.
+Status: Active. The v0.91.1 issue wave has started with `WP-01` / `#2823`,
+and the crate version has advanced to `0.91.1` for the inhabited-runtime
+readiness line.
+
+Planning notes:
+- The tracked v0.91.1 package lives under `docs/milestones/v0.91.1/`.
+- WP-01 is responsible for accepting the issue wave, validating the card
+  bundle, and opening the remaining WPs without reducing them to planning-only
+  work.
+- This is not a release entry; v0.91 remains the most recently completed
+  release line.
+
+## v0.91 (Released 2026-05-07)
+
+Status: Released. The v0.91 issue wave opened as `#2735-#2759`, and the crate
+version was `0.91.0` for the moral governance, cognitive-being, structured
+planning / SRP, and secure intra-polis Agent Comms release line.
 The core implementation, flagship demo, feature-proof coverage, quality gate,
 docs/review pass, README refresh, ADR pass, internal review, external review,
 accepted-finding remediation, and next-milestone handoff have landed or been
-explicitly dispositioned; the milestone is now ceremony-ready with final
-release ceremony pending.
+explicitly dispositioned. Release ceremony, tag, and GitHub release
+publication are complete.
 
 Planning notes:
 - The tracked v0.91 planning package lives under `docs/milestones/v0.91/`.
@@ -23,8 +37,7 @@ Planning notes:
   ADR 0018 under `docs/adr/`.
 - The current release notes candidate is
   `docs/milestones/v0.91/RELEASE_NOTES_v0.91.md`.
-- This is not a release entry; v0.90.5 remains the most recently completed
-  release line.
+- Release: https://github.com/danielbaustin/agent-design-language/releases/tag/v0.91
 
 ## v0.90.5 (Released 2026-05-05)
 

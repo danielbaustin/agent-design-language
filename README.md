@@ -9,7 +9,7 @@ packets, demos, and milestone evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.91%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.91.1%20active-blue)
 
 ![ADL deterministic cognitive architecture overview](docs/assets/ADL-overview.png)
 
@@ -142,19 +142,34 @@ from issue
 
 ## Recent Milestones
 
-### v0.91 - Ceremony-Ready Moral Governance And Cognitive-Being Milestone
+### v0.91.1 - Active Inhabited Runtime Readiness Milestone
 
-v0.91 is the active ceremony-ready milestone. Its core `0.91.0` line has landed
+v0.91.1 is the active implementation milestone. WP-01 is open as
+[#2823](https://github.com/danielbaustin/agent-design-language/issues/2823)
+to turn the prepared inhabited-runtime readiness package into the active issue
+wave and validated card set.
+
+It should end with an observatory-visible agent runtime proof inside the CSM
+boundary: lifecycle state, citizen standing/state, memory/identity
+architecture, Theory of Mind, capability testing, intelligence metrics,
+governed learning, secure ACIP/A2A hardening, and an agent-shaped runtime run
+that remains explicit about non-claims for birthday, identity continuity, and
+external federation.
+
+Start here:
+
+- [v0.91.1 README](docs/milestones/v0.91.1/README.md)
+- [v0.91.1 issue wave](docs/milestones/v0.91.1/WP_ISSUE_WAVE_v0.91.1.yaml)
+- [v0.91.1 execution readiness](docs/milestones/v0.91.1/WP_EXECUTION_READINESS_v0.91.1.md)
+
+### v0.91 - Released Moral Governance And Cognitive-Being Milestone
+
+v0.91 is the completed `0.91.0` milestone. Its core line landed
 the moral governance, wellbeing, kindness, humor, affect, cultivated
 intelligence, structured planning, SRP, and secure intra-polis Agent Comms
-band. Internal review, third-party review, accepted-finding remediation, and
-next-milestone handoff are complete; final release ceremony is the remaining
-closeout action.
-
-It should not be read as a completed release until the ceremony script, tag,
-and release disposition are verified. Its docs distinguish the landed `v0.91.0`
-evidence substrate from downstream identity, birthday, and
-constitutional-governance work.
+band. Internal review, third-party review, accepted-finding remediation,
+next-milestone handoff, release ceremony, tag, and release publication are
+complete.
 
 Start here:
 
@@ -201,11 +216,11 @@ production markets.
 
 ## Project Status
 
-- Active milestone: v0.91
-- Current crate version: 0.91.0
-- Most recently completed milestone: v0.90.5
-- Current release-tail state: v0.91 ceremony-ready; release ceremony pending
-- Previous completed milestone: v0.90.4
+- Active milestone: v0.91.1
+- Current crate version: 0.91.1
+- Most recently completed milestone: v0.91
+- Current release-tail state: v0.91 released; v0.91.1 WP-01 active
+- Previous completed milestone: v0.90.5
 - Primary implementation language: Rust
 
 ADL is under active development. The repository contains implemented runtime

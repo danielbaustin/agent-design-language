@@ -2,9 +2,9 @@
 
 ## Status
 
-Candidate WBS for review. Issue numbers are intentionally not assigned yet.
-This document should become the card-authoring basis only after v0.91 closes
-and the candidate issue wave is accepted.
+Active WBS. The complete v0.91.1 issue wave is open as `#2823` through
+`#2846`, and every WP has a prepared local STP, SIP, SPP, SRP, and SOR bundle
+before execution binding.
 
 ## WBS Summary
 
@@ -33,34 +33,34 @@ and cognition implementation wave.
 | O | Observatory-visible agent demo | Prove an agent-shaped CSM run with operator projection and reviewable traces. | flagship runtime demo artifacts | N |
 | P | Review, quality, and release | Validate docs, demos, issue evidence, review findings, and release ceremony. | review-ready release package | O |
 
-## Candidate WP Sequence
+## WP Sequence
 
 | WP | Title | Queue | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
-| WP-01 | Design pass (milestone docs + planning) | docs | tracked docs, reviewed YAML, and issue cards | v0.91 closeout |
-| WP-02 | Runtime and polis architecture alignment | docs | runtime/polis architecture package | WP-01 |
-| WP-03 | Agent lifecycle state model | runtime | lifecycle state contract, transition matrix, ACIP eligibility, and fixtures | WP-02 |
-| WP-04 | CSM observatory active surface | runtime | active packet and projection surface | WP-02, WP-03 |
-| WP-05 | Citizen standing model | runtime | standing contract and fixtures | WP-02, WP-03 |
-| WP-06 | Citizen state substrate | runtime | state format, security, and projection slice | WP-05 |
-| WP-07 | Memory and identity architecture | runtime | memory/identity architecture and fixtures | WP-06 |
-| WP-08 | Theory of Mind foundation | runtime | ToM schemas, update events, and tests | WP-06, WP-07 |
-| WP-09 | Capability and aptitude testing foundation | tools | first executable capability harness and report | WP-02, WP-03, WP-06 |
-| WP-10 | Intelligence metric architecture | runtime | evidence-bound metric architecture | WP-09 |
-| WP-11 | Governed learning substrate | runtime | learning update and feedback contract | WP-07, WP-09, WP-10 |
-| WP-12 | ANRM/Gemma placement and trace dataset | tools | ANRM placement, trace extractor, dataset mapping | WP-09, WP-10, WP-11 |
-| WP-13 | ACIP conformance and local encryption hardening | runtime | secure local comms envelope and conformance fixtures | WP-03, WP-06 |
-| WP-14 | A2A adapter boundary and compatibility plan | runtime | A2A-over-ACIP adapter slice and non-claims | WP-13 |
-| WP-15 | Runtime inhabitant integration | runtime | integrated agent-shaped run surface | WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14 |
-| WP-16 | Observatory-visible agent flagship demo | demo | runnable CSM inhabitant proof demo | WP-15 |
-| WP-17 | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-16 |
-| WP-18 | Coverage / quality gate | quality | validation posture and test/coverage record | WP-17 |
-| WP-19 | Docs + review pass | docs | review-ready docs package | WP-18 |
-| WP-20 | Internal review | review | internal review record | WP-19 |
-| WP-21 | External / 3rd-party review | review | external review handoff and record | WP-20 |
-| WP-22 | Review findings remediation | review | remediation record and follow-up issues | WP-21 |
-| WP-23 | v0.92 birthday readiness handoff | docs | identity/birthday handoff record | WP-22 |
-| WP-24 | Release ceremony | release | release evidence and end-of-milestone report | WP-23 |
+| WP-01 (#2823) | Design pass (milestone docs + planning) | docs | tracked docs, reviewed YAML, and issue cards | v0.91 closeout |
+| WP-02 (#2824) | Runtime and polis architecture alignment | docs | runtime/polis architecture package | WP-01 |
+| WP-03 (#2825) | Agent lifecycle state model | runtime | lifecycle state contract, transition matrix, ACIP eligibility, and fixtures | WP-02 |
+| WP-04 (#2826) | CSM observatory active surface | runtime | active packet and projection surface | WP-02, WP-03 |
+| WP-05 (#2827) | Citizen standing model | runtime | standing contract and fixtures | WP-02, WP-03 |
+| WP-06 (#2828) | Citizen state substrate | runtime | state format, security, and projection slice | WP-05 |
+| WP-07 (#2829) | Memory and identity architecture | runtime | memory/identity architecture and fixtures | WP-06 |
+| WP-08 (#2830) | Theory of Mind foundation | runtime | ToM schemas, update events, and tests | WP-06, WP-07 |
+| WP-09 (#2831) | Capability and aptitude testing foundation | tools | first executable capability harness and report | WP-02, WP-03, WP-06 |
+| WP-10 (#2832) | Intelligence metric architecture | runtime | evidence-bound metric architecture | WP-09 |
+| WP-11 (#2833) | Governed learning substrate | runtime | learning update and feedback contract | WP-07, WP-09, WP-10 |
+| WP-12 (#2834) | ANRM/Gemma placement and trace dataset | tools | ANRM placement, trace extractor, dataset mapping | WP-09, WP-10, WP-11 |
+| WP-13 (#2835) | ACIP conformance and local encryption hardening | runtime | secure local comms envelope and conformance fixtures | WP-03, WP-06 |
+| WP-14 (#2836) | A2A adapter boundary and compatibility plan | runtime | A2A-over-ACIP adapter slice and non-claims | WP-13 |
+| WP-15 (#2837) | Runtime inhabitant integration | runtime | integrated agent-shaped run surface | WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14 |
+| WP-16 (#2838) | Observatory-visible agent flagship demo | demo | runnable CSM inhabitant proof demo | WP-15 |
+| WP-17 (#2839) | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-16 |
+| WP-18 (#2840) | Coverage / quality gate | quality | validation posture and test/coverage record | WP-17 |
+| WP-19 (#2841) | Docs + review pass | docs | review-ready docs package | WP-18 |
+| WP-20 (#2842) | Internal review | review | internal review record | WP-19 |
+| WP-21 (#2843) | External / 3rd-party review | review | external review handoff and record | WP-20 |
+| WP-22 (#2844) | Review findings remediation | review | remediation record and follow-up issues | WP-21 |
+| WP-23 (#2845) | v0.92 birthday readiness handoff | docs | identity/birthday handoff record | WP-22 |
+| WP-24 (#2846) | Release ceremony | release | release evidence and end-of-milestone report | WP-23 |
 
 ## Sequencing Pressure
 
