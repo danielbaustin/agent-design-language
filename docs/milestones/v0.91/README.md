@@ -3,10 +3,10 @@
 ## Status
 
 Active release-tail milestone package. The `v0.91.0` core implementation,
-flagship demo, feature-proof coverage, and quality-gate lanes have landed. The
-official issue wave remains open as #2735-#2759 while WP-20 through WP-25 finish
-docs review, internal review, third-party review, accepted-finding remediation,
-next-milestone handoff, and ceremony.
+flagship demo, feature-proof coverage, quality-gate lane, docs/review pass, and
+ADR pass have landed. The official issue wave remains open as #2735-#2759 while
+WP-21 through WP-25 finish internal review, third-party review,
+accepted-finding remediation, next-milestone handoff, and ceremony.
 
 ## Purpose
 
@@ -195,6 +195,8 @@ The likely `v0.91` tranche is:
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.91.md](MILESTONE_CHECKLIST_v0.91.md)
 - Release plan: [RELEASE_PLAN_v0.91.md](RELEASE_PLAN_v0.91.md)
 - Release notes: [RELEASE_NOTES_v0.91.md](RELEASE_NOTES_v0.91.md)
+- Third-party review handoff:
+  [ADL_v0.91_THIRD_PARTY_REVIEW_HANDOFF.md](ADL_v0.91_THIRD_PARTY_REVIEW_HANDOFF.md)
 - Active issue wave: [WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml)
 - WP execution readiness:
   [WP_EXECUTION_READINESS_v0.91.md](WP_EXECUTION_READINESS_v0.91.md)
