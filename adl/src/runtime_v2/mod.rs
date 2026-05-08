@@ -6,6 +6,7 @@
 
 mod access_control;
 mod affect_reasoning_control;
+mod agent_lifecycle_state;
 mod anti_harm_trajectory_constraints;
 mod bid_schema;
 mod boot_admission;
@@ -69,6 +70,7 @@ use std::path::{Path, PathBuf};
 pub use access_control::*;
 #[allow(unused_imports)]
 pub use affect_reasoning_control::*;
+pub use agent_lifecycle_state::*;
 #[allow(unused_imports)]
 pub use anti_harm_trajectory_constraints::*;
 #[allow(unused_imports)]
