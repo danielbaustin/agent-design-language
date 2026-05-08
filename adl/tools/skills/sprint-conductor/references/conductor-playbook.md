@@ -105,6 +105,7 @@ Record:
 - coverage snapshot
 - Rust tracker counts
 - next action
+- sprint-management issue closeout
 
 Preferred metrics sources:
 - coverage when a fresh local snapshot is required by sprint policy:
@@ -122,11 +123,17 @@ fresh local run, say so explicitly.
 `not_applicable` is also a normal outcome for docs-only, workflow-only,
 planning-only, or similarly light sprint surfaces.
 
+Final sprint-management issue closeout:
+- keep the sprint-management issue open until all child issues are closed out
+- keep it open until sprint review and sprint closeout are complete
+- close it last through the bundled helper:
+  - `python3 adl/tools/skills/sprint-conductor/scripts/close_sprint_issue.py --state <path> --summary <text>`
+
 ## Stop Conditions
 
 Stop when:
-- all ordered child issues are fully closed out and the sprint review/closeout
-  artifacts are written
+- all ordered child issues are fully closed out, the sprint review/closeout
+  artifacts are written, and the sprint-management issue is closed
 - a child issue blocks and the operator must decide how to proceed
 - sprint scope changes materially and requires operator approval
 

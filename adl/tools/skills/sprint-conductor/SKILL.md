@@ -17,6 +17,8 @@ Its job is to:
 - preserve resumable sprint state in one lightweight local artifact
 - assemble a robust sprint-end review with code-facing review expectations
 - record sprint-end closeout truth including coverage and Rust tracker numbers
+- manage the sprint-management issue to completion, including closing it only
+  after the sprint review and closeout are truly complete
 - stop immediately on blocker rather than wandering across adjacent issue work
 
 This skill must remain lightweight.
@@ -196,6 +198,7 @@ Sprint closeout must record:
 - current code coverage snapshot
 - current Rust tracker counts
 - recommended next sprint or remediation action
+- final sprint-management issue closure state
 
 Preferred metrics capture surfaces:
 - coverage command when the sprint surface warrants a fresh local snapshot:
@@ -223,6 +226,7 @@ This skill must stop after:
 - sequential issue orchestration through the existing skill family
 - one bounded sprint review result
 - one bounded sprint closeout result
+- final sprint-management issue closure when the sprint is truly complete
 - surfacing any blocker that prevents safe continuation
 
 It must not:
@@ -230,6 +234,7 @@ It must not:
 - absorb the underlying issue lifecycle logic
 - skip issue closeout to save time
 - invent coverage or Rust tracker numbers
+- close the sprint-management issue early
 - reopen completed child issues without explicit operator direction
 
 ## Output

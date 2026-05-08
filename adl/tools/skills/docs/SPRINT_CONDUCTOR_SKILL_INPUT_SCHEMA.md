@@ -34,6 +34,7 @@ sprint:
       - <u32>
     checked_pr_urls:
       - <url>
+  issue_closed: true | false
 policy:
   require_sequential_closeout: true
   require_existing_issue_skills: true

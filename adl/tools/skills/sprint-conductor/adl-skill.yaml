@@ -90,6 +90,7 @@ execution:
   workflow_role: "sprint_orchestrator"
   preferred_commands:
     - "python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <goal> --state <path>"
+    - "python3 adl/tools/skills/sprint-conductor/scripts/close_sprint_issue.py --state <path> --summary <text>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match"
     - "python3 adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py --state <path> --sprint-issue <n> --ordered-issues <csv>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/validate_review_subagent_policy.py --allow-review-subagent-exception <bool> --max-review-subagents 1"

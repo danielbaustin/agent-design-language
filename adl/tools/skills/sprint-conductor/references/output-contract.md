@@ -6,6 +6,7 @@ sprint:
   issue_number: <u32 or null>
   issue_url: <url or null>
   issue_created_by_skill: true | false
+  issue_closed: true | false
   goal: <string or null>
   ordered_issue_numbers:
     - <u32>
@@ -55,6 +56,7 @@ review:
 closeout:
   status: not_started | in_progress | done | blocked
   closeout_note_path: <path or null>
+  sprint_issue_close_summary: <bounded text or null>
   coverage:
     source: local_run | ci | existing_quality_gate | not_applicable | missing
     summary: <bounded text>
