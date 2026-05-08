@@ -5,7 +5,7 @@
 - Feature Name: Google Workspace CMS Bridge
 - Milestone Target: `v0.91.2`
 - Status: planned
-- Planned WP Home: WP-08 and WP-09
+- Planned WP Home: WP-08, WP-09
 - Source Docs: `.adl/docs/TBD/google_workspace_cms/`
 - Proof Modes: fixture demo, adapter boundary, review
 

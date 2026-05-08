@@ -14,7 +14,7 @@ notes:
 - Workspace, modernization, and publication work must remain review-gated and
   non-silent.
 card_update_rule:
-- When opened, every WP must receive STP, SIP, SPP, and SOR cards from the
+- When opened, every WP must receive STP, SIP, SPP, SRP, and SOR cards from the
   accepted readiness section.
 - Cards must name source docs, concrete outputs, validation commands, non-goals,
   demo/proof expectations, and review dependencies.
@@ -117,7 +117,7 @@ work_packages:
   title: Demo matrix and proof coverage
   queue: demo
   outcome: demo matrix and proof coverage record
-  depends_on: WP-02-WP-14
+  depends_on: WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14
 - wp: WP-16
   issue: null
   title: Coverage / quality gate

@@ -5,7 +5,7 @@
 - Feature Name: UTS + ACC Multi-Model Benchmark
 - Milestone Target: `v0.91.2`
 - Status: planned
-- Planned WP Home: WP-02 and WP-03
+- Planned WP Home: WP-02, WP-03
 - Source Docs: `.adl/docs/TBD/tools/UTS_ACC_MULTI_MODEL_BENCHMARK_PLAN.md`
 - Proof Modes: harness, fixtures, report
 

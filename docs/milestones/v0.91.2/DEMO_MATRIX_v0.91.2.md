@@ -16,8 +16,11 @@ and summarized again during WP-15.
 | Google Workspace CMS bridge demo | WP-08 | Show draft content-card and promotion packet workflow. | fixture/live-gated bridge artifact | does not make Workspace canonical |
 | Rust-native GWS adapter boundary demo | WP-09 | Show typed adapter boundary or justified deferral. | adapter feasibility report | does not require live secrets |
 | Code modernization demo | WP-10 | Show modernization plan and bounded transformation surface. | modernization packet and dry-run evidence | does not mass-rewrite by default |
-| Publication packet demo | WP-11-WP-12 | Show claim/citation/review packet readiness. | paper packet and review checklist | does not publish |
+| Publication program package | WP-11 | Show arXiv/Medium backlog, authoring process, and review-gate readiness. | publication backlog, process docs, and review checklist | does not publish |
+| General intelligence paper packet | WP-12 | Show claim/citation/review packet readiness for the general-intelligence manuscript. | claim packet, citation packet, unsupported-claim register, and reviewer handoff | does not claim proof or publish |
+| Rustdoc/doc cleanup proof | WP-13 | Show rustdoc and documentation cleanup patches remain source-grounded. | rustdoc/doc cleanup report, changed docs, and validation record | does not rewrite broad docs outside issue scope |
 | Workflow guardrails demo | WP-14 | Show main-write, watcher, and safe-report protections. | guardrail fixtures and failure examples | does not claim all operator error eliminated |
+| Feature proof coverage record | WP-15 | Map every WP-02 through WP-14 implementation or docs/productization slice to an explicit proof route or deferral. | demo matrix, proof coverage record, source-doc linkage, and validation commands | does not replace implementation proof |
 
 ## Flagship Acceptance
 

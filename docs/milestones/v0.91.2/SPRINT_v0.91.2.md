@@ -46,7 +46,7 @@ fragile, less ambiguous, and easier for other humans to review.
 
 | WP | Title | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- |
-| WP-15 | Demo matrix and proof coverage | demo matrix and proof coverage record | WP-02-WP-14 |
+| WP-15 | Demo matrix and proof coverage | demo matrix and proof coverage record | WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14 |
 | WP-16 | Coverage / quality gate | validation posture and test/coverage record | WP-15 |
 | WP-17 | Docs + review pass | review-ready docs package | WP-16 |
 | WP-18 | Internal review | internal review record | WP-17 |
