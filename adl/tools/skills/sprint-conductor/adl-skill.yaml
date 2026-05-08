@@ -25,6 +25,7 @@ admission:
       - "require_existing_issue_skills"
       - "require_editor_skills"
       - "require_code_review"
+      - "allow_review_subagent_exception"
       - "capture_coverage_at_closeout"
       - "capture_rust_tracker_at_closeout"
       - "stop_on_blocker"
@@ -61,6 +62,7 @@ admission:
     - "resume_from_state_path"
     - "sprint.review_paths"
     - "sprint.closeout_paths"
+    - "sprint.issue_records"
   stop_if_missing:
     - "repo_root"
     - "sprint.issue_number"
@@ -78,9 +80,10 @@ execution:
   mode: "orchestrate_existing_skills_sequentially"
   allow_code_edits: true
   allow_network: true
-  allow_subagents: false
+  allow_subagents: true
   workflow_role: "sprint_orchestrator"
   preferred_commands:
+    - "python3 adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py --state <path> --sprint-issue <n> --ordered-issues <csv>"
     - "workflow-conductor for issue routing"
     - "pr-init/pr-ready/pr-run/pr-finish/pr-janitor/pr-closeout for child issue lifecycle"
     - "repo-packet-builder and review specialist skills for sprint-end review"
@@ -100,7 +103,7 @@ boundaries:
 outputs:
   default_format: "markdown"
   structured_contract: "references/output-contract.md"
-  artifact_path_pattern: ".adl/reviews/<timestamp>-sprint-conductor.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-sprint-<issue>-conductor.md"
   required_sections:
     - "status"
     - "sprint"

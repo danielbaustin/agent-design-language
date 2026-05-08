@@ -20,11 +20,18 @@ sprint:
     - /absolute/or/repo-relative/path
   closeout_paths:
     - /absolute/or/repo-relative/path
+  issue_records:
+    - issue_number: <u32>
+      status: pending | active | waiting_for_review | closed_out | blocked | deferred
+      pr_url: <url or null>
+      artifact_paths:
+        - /absolute/or/repo-relative/path
 policy:
   require_sequential_closeout: true
   require_existing_issue_skills: true
   require_editor_skills: true
   require_code_review: true
+  allow_review_subagent_exception: true
   capture_coverage_at_closeout: true
   capture_rust_tracker_at_closeout: true
   stop_on_blocker: true
