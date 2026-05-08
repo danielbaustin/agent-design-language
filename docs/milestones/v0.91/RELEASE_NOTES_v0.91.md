@@ -3,7 +3,7 @@
 ## Status
 
 Closeout-candidate release notes for the landed `v0.91` implementation through
-`WP-19`.
+`WP-20`.
 
 These notes describe behavior and evidence that exists in the repository after
 the core implementation and proof lanes. They do not imply that the release
@@ -123,7 +123,6 @@ The following work is intentionally not claimed as complete in `v0.91`:
 
 The remaining release-tail WPs still need to complete before ceremony:
 
-- `WP-20`: docs and review pass
 - `WP-21`: internal review
 - `WP-22`: external / third-party review
 - `WP-23`: accepted-finding remediation

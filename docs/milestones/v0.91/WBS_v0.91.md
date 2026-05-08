@@ -50,17 +50,17 @@ Theory of Mind milestones.
 | WP-04 (#2738) | Moral trace schema | tools | trace schema and examples | WP-02, WP-03 |
 | WP-05 (#2739) | Outcome linkage and attribution | runtime | outcome-linkage record and tests | WP-04 (#2738) |
 | WP-06 (#2740) | Moral metrics | runtime | metric definitions and fixture report | WP-04, WP-05 |
-| WP-07 (#2741) | Moral trajectory review | runtime | trajectory review packet | WP-04-WP-06 |
-| WP-08 (#2742) | Anti-harm trajectory constraints | runtime | delegated-harm proof packet | WP-04-WP-07 |
-| WP-09 (#2743) | Wellbeing metrics | runtime | decomposed diagnostic report and policy views | WP-04-WP-07 |
-| WP-10 (#2744) | Moral resources | runtime | moral-resources contract, fixtures, and implementation surface | WP-05-WP-09 |
-| WP-11 (#2745) | Kindness model | runtime | kindness contract and conflict fixtures | WP-05-WP-10 |
-| WP-12 (#2746) | Humor and absurdity | runtime | reframing event and negative fixtures | WP-05-WP-10 |
-| WP-13 (#2747) | Affect reasoning-control surface | runtime | affect signal record and policy hooks | WP-05-WP-10 |
-| WP-14 (#2748) | Cultivating intelligence | runtime | cultivation contract and review criteria | WP-05-WP-13 |
+| WP-07 (#2741) | Moral trajectory review | runtime | trajectory review packet | WP-04, WP-05, WP-06 |
+| WP-08 (#2742) | Anti-harm trajectory constraints | runtime | delegated-harm proof packet | WP-04, WP-05, WP-06, WP-07 |
+| WP-09 (#2743) | Wellbeing metrics | runtime | decomposed diagnostic report and policy views | WP-04, WP-05, WP-06, WP-07 |
+| WP-10 (#2744) | Moral resources | runtime | moral-resources contract, fixtures, and implementation surface | WP-05, WP-06, WP-07, WP-08, WP-09 |
+| WP-11 (#2745) | Kindness model | runtime | kindness contract and conflict fixtures | WP-05, WP-06, WP-07, WP-08, WP-09, WP-10 |
+| WP-12 (#2746) | Humor and absurdity | runtime | reframing event and negative fixtures | WP-05, WP-06, WP-07, WP-08, WP-09, WP-10 |
+| WP-13 (#2747) | Affect reasoning-control surface | runtime | affect signal record and policy hooks | WP-05, WP-06, WP-07, WP-08, WP-09, WP-10 |
+| WP-14 (#2748) | Cultivating intelligence | runtime | cultivation contract and review criteria | WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13 |
 | WP-15 (#2749) | Structured planning and SRP workflow surfaces | tools | SPP/SRP artifacts, planning skill, and review-readiness checks | WP-01 (#2735) |
 | WP-16 (#2750) | Secure Agent Comms substrate and A2A boundary | runtime | local ACIP substrate slice plus explicit A2A adapter boundary | WP-04-WP-05, WP-15 |
-| WP-17 (#2751) | Cognitive-being flagship demo | demo | runnable proof demo and artifacts | WP-08-WP-16 |
+| WP-17 (#2751) | Cognitive-being flagship demo | demo | runnable proof demo and artifacts | WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16 |
 | WP-18 (#2752) | Demo matrix and feature proof coverage | demo | demo matrix rows and proof coverage record | WP-17 (#2751) |
 | WP-19 (#2753) | Coverage / quality gate | quality | quality gate and validation posture record | WP-18 (#2752) |
 | WP-20 (#2754) | Docs + review pass | docs | review-ready docs package | WP-19 (#2753) |

@@ -32,8 +32,8 @@ Sprint notes:
 | WP | Title | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- |
 | WP-06 (#2740) | Moral metrics | metric definitions and fixture report | WP-04, WP-05 |
-| WP-07 (#2741) | Moral trajectory review | trajectory review packet | WP-04-WP-06 |
-| WP-08 (#2742) | Anti-harm trajectory constraints | delegated-harm proof packet | WP-04-WP-07 |
+| WP-07 (#2741) | Moral trajectory review | trajectory review packet | WP-04, WP-05, WP-06 |
+| WP-08 (#2742) | Anti-harm trajectory constraints | delegated-harm proof packet | WP-04, WP-05, WP-06, WP-07 |
 
 Goal: make moral behavior reviewable over time without turning metrics into
 verdicts.
@@ -50,15 +50,15 @@ Sprint notes:
 
 | WP | Title | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- |
-| WP-09 (#2743) | Wellbeing metrics | decomposed diagnostic report and policy views | WP-04-WP-07 |
-| WP-10 (#2744) | Moral resources | moral-resources contract, fixtures, and implementation surface | WP-05-WP-09 |
-| WP-11 (#2745) | Kindness model | kindness contract and conflict fixtures | WP-05-WP-10 |
-| WP-12 (#2746) | Humor and absurdity | reframing event and negative fixtures | WP-05-WP-10 |
-| WP-13 (#2747) | Affect reasoning-control surface | affect signal record and policy hooks | WP-05-WP-10 |
-| WP-14 (#2748) | Cultivating intelligence | cultivation contract and review criteria | WP-05-WP-13 |
+| WP-09 (#2743) | Wellbeing metrics | decomposed diagnostic report and policy views | WP-04, WP-05, WP-06, WP-07 |
+| WP-10 (#2744) | Moral resources | moral-resources contract, fixtures, and implementation surface | WP-05, WP-06, WP-07, WP-08, WP-09 |
+| WP-11 (#2745) | Kindness model | kindness contract and conflict fixtures | WP-05, WP-06, WP-07, WP-08, WP-09, WP-10 |
+| WP-12 (#2746) | Humor and absurdity | reframing event and negative fixtures | WP-05, WP-06, WP-07, WP-08, WP-09, WP-10 |
+| WP-13 (#2747) | Affect reasoning-control surface | affect signal record and policy hooks | WP-05, WP-06, WP-07, WP-08, WP-09, WP-10 |
+| WP-14 (#2748) | Cultivating intelligence | cultivation contract and review criteria | WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13 |
 | WP-15 (#2749) | Structured planning and SRP workflow surfaces | SPP/SRP artifacts, planning skill, and review-readiness checks | WP-01 (#2735) |
 | WP-16 (#2750) | Secure Agent Comms substrate and A2A boundary | local ACIP substrate slice plus explicit A2A adapter boundary | WP-04-WP-05, WP-15 |
-| WP-17 (#2751) | Cognitive-being flagship demo | runnable proof demo and artifacts | WP-08-WP-16 |
+| WP-17 (#2751) | Cognitive-being flagship demo | runnable proof demo and artifacts | WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16 |
 | WP-18 (#2752) | Demo matrix and feature proof coverage | demo matrix rows and proof coverage record | WP-17 (#2751) |
 
 Goal: make the evidence visible to citizens and reviewers without exposing

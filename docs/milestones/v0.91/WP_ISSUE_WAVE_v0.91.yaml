@@ -80,49 +80,49 @@ work_packages:
   title: Moral trajectory review
   queue: runtime
   outcome: trajectory review packet
-  depends_on: WP-04-WP-06
+  depends_on: WP-04, WP-05, WP-06
 - wp: WP-08
   issue: 2742
   title: Anti-harm trajectory constraints
   queue: runtime
   outcome: delegated-harm proof packet
-  depends_on: WP-04-WP-07
+  depends_on: WP-04, WP-05, WP-06, WP-07
 - wp: WP-09
   issue: 2743
   title: Wellbeing metrics
   queue: runtime
   outcome: decomposed diagnostic report and policy views
-  depends_on: WP-04-WP-07
+  depends_on: WP-04, WP-05, WP-06, WP-07
 - wp: WP-10
   issue: 2744
   title: Moral resources
   queue: runtime
   outcome: moral-resources contract, fixtures, and implementation surface
-  depends_on: WP-05-WP-09
+  depends_on: WP-05, WP-06, WP-07, WP-08, WP-09
 - wp: WP-11
   issue: 2745
   title: Kindness model
   queue: runtime
   outcome: kindness contract and conflict fixtures
-  depends_on: WP-05-WP-10
+  depends_on: WP-05, WP-06, WP-07, WP-08, WP-09, WP-10
 - wp: WP-12
   issue: 2746
   title: Humor and absurdity
   queue: runtime
   outcome: reframing event and negative fixtures
-  depends_on: WP-05-WP-10
+  depends_on: WP-05, WP-06, WP-07, WP-08, WP-09, WP-10
 - wp: WP-13
   issue: 2747
   title: Affect reasoning-control surface
   queue: runtime
   outcome: affect signal record and policy hooks
-  depends_on: WP-05-WP-10
+  depends_on: WP-05, WP-06, WP-07, WP-08, WP-09, WP-10
 - wp: WP-14
   issue: 2748
   title: Cultivating intelligence
   queue: runtime
   outcome: cultivation contract and review criteria
-  depends_on: WP-05-WP-13
+  depends_on: WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13
 - wp: WP-15
   issue: 2749
   title: Structured planning and SRP workflow surfaces
@@ -140,7 +140,7 @@ work_packages:
   title: Cognitive-being flagship demo
   queue: demo
   outcome: runnable proof demo and artifacts
-  depends_on: WP-08-WP-16
+  depends_on: WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16
 - wp: WP-18
   issue: 2752
   title: Demo matrix and feature proof coverage

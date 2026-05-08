@@ -42,7 +42,7 @@ The current main-branch merge gate is green after `WP-18`:
 The remaining blockers are release-tail blockers, not hidden implementation
 passes:
 
-- `WP-20` through `WP-25` remain open.
+- `WP-21` through `WP-25` remain open.
 - Internal review, third-party review, accepted-finding remediation, next
   milestone planning, and ceremony are not complete yet.
 
@@ -209,7 +209,7 @@ Disposition:
 | `WP-19` quality gate missing | Resolved by this document. |
 | Closed-issue SOR truth drift | Resolved locally for `#2751`, `#2752`, and `#2797`; validator now passes for 27 closed `v0.91` issues. |
 | Draft release notes | Resolved by rewriting release notes to landed behavior and retaining explicit release-tail status. |
-| `WP-20` through `WP-25` still open | Active release-tail blockers; proceed in sequence. |
+| `WP-21` through `WP-25` still open | Active release-tail blockers; proceed in sequence. |
 | Internal/external review absent | Assigned to `WP-21` and `WP-22`; not release-ready. |
 | Accepted-finding remediation absent | Assigned to `WP-23`; not release-ready. |
 | Next milestone and ceremony incomplete | Assigned to `WP-24` and `WP-25`; not release-ready. |
@@ -219,8 +219,8 @@ Disposition:
 | ID | Severity | Exception | Owner / Next WP | Release impact |
 | --- | --- | --- | --- | --- |
 | QG-001 | RESOLVED | Closed-issue SOR truth validator previously failed for `#2751`, `#2752`, and `#2797`; local records now validate and the milestone closed-issue validator passes. | WP-19 | No remaining release impact. |
-| QG-002 | P1 | `WP-20` through `WP-25` remain open. | Release-tail train. | Blocks release ceremony. |
-| QG-003 | RESOLVED | Release notes previously described intended behavior; they now describe landed behavior and remaining review-tail status. | WP-19 | No remaining release impact beyond normal WP-20 review polish. |
+| QG-002 | P1 | `WP-21` through `WP-25` remain open. | Release-tail train. | Blocks release ceremony. |
+| QG-003 | RESOLVED | Release notes previously described intended behavior; they now describe landed behavior and remaining review-tail status. | WP-19 and WP-20 | No remaining release impact beyond normal review-tail work. |
 | QG-004 | P2 | Internal and third-party review have not yet run. | `WP-21`, `WP-22`. | Blocks final assurance. |
 | QG-005 | P2 | Review-finding remediation is not yet known. | `WP-23`. | Blocks final release if accepted findings exist. |
 
