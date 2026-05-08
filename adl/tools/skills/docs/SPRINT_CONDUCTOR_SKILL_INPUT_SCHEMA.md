@@ -27,7 +27,9 @@ sprint:
       artifact_paths:
         - /absolute/or/repo-relative/path
   truth_check:
+    status: not_run | matched | drift_detected | blocked
     source: github_live | sprint_state_only | mixed
+    gate_passed: true | false
     checked_issue_numbers:
       - <u32>
     checked_pr_urls:
@@ -40,6 +42,7 @@ policy:
   allow_review_subagent_exception: true
   max_review_subagents_when_exception_enabled: 1
   require_github_truth_recheck: true
+  github_truth_gate_blocks_progress: true
   capture_coverage_at_closeout: true
   capture_rust_tracker_at_closeout: true
   stop_on_blocker: true

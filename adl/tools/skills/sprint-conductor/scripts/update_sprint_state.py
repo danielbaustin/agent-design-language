@@ -40,6 +40,14 @@ def load_state(path: Path, sprint_issue: int, ordered: list[int]) -> dict[str, A
         'blocked_issue_number': None,
         'continuation': 'continue',
         'issue_records': default_issue_records(ordered),
+        'truth_check': {
+            'status': 'not_run',
+            'source': 'sprint_state_only',
+            'gate_passed': False,
+            'checked_issue_numbers': [],
+            'checked_pr_urls': [],
+            'notes': ['Run live GitHub truth check before the first sprint-state transition.'],
+        },
     }
 
 
@@ -87,6 +95,39 @@ def select_next_issue(state: dict[str, Any]) -> None:
     state['continuation'] = 'stop'
 
 
+def mutation_requested(args: argparse.Namespace) -> bool:
+    return any(
+        [
+            args.current_issue is not None,
+            args.mark_status is not None,
+            args.pr_url is not None,
+            bool(args.artifact_path),
+            args.blocked_issue is not None,
+            args.clear_blocked,
+        ]
+    )
+
+
+def require_truth_gate(state: dict[str, Any]) -> None:
+    truth_check = state.get('truth_check') or {}
+    if truth_check.get('status') == 'matched' and truth_check.get('gate_passed') is True:
+        return
+    raise SystemExit(
+        'Refusing to advance sprint state without a fresh matched GitHub truth check. '
+        'Run check_sprint_truth.py --require-match before calling update_sprint_state.py.'
+    )
+
+
+def consume_truth_gate(state: dict[str, Any]) -> None:
+    truth_check = state.setdefault('truth_check', {})
+    truth_check['gate_passed'] = False
+    notes = [note for note in truth_check.get('notes', []) if isinstance(note, str)]
+    reminder = 'Truth gate consumed; rerun live GitHub truth check before the next sprint-state transition.'
+    if reminder not in notes:
+        notes.append(reminder)
+    truth_check['notes'] = notes
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--state', required=True)
@@ -102,10 +143,13 @@ def main() -> int:
     args = parser.parse_args()
 
     state_path = Path(args.state)
+    state_preexisted = state_path.exists()
     ordered = parse_csv_ints(args.ordered_issues)
     state = load_state(state_path, args.sprint_issue, ordered)
     state['sprint_issue_number'] = args.sprint_issue
     state['ordered_issue_numbers'] = ordered
+    if state_preexisted and mutation_requested(args):
+        require_truth_gate(state)
 
     issue_number = args.current_issue or state.get('current_issue_number') or (ordered[0] if ordered else None)
     if issue_number is not None:
@@ -135,6 +179,8 @@ def main() -> int:
         state['blocked_issue_number'] = None
 
     select_next_issue(state)
+    if state_preexisted and mutation_requested(args):
+        consume_truth_gate(state)
     state_path.parent.mkdir(parents=True, exist_ok=True)
     state_path.write_text(json.dumps(state, indent=2, sort_keys=True) + '\n')
     if args.print_json:

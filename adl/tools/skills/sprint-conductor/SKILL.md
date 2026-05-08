@@ -110,9 +110,9 @@ If there is no concrete sprint issue or ordered issue list, stop and report
 2. Create or load the sprint-state artifact.
 3. Confirm the current issue is the earliest not-yet-closed issue in the list.
 4. Route that issue through `workflow-conductor`.
-5. Re-check live issue and PR truth before acting.
+5. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
 6. Run only the selected downstream lifecycle or editor skill.
-7. Re-check issue truth until the issue is fully closed out.
+7. Re-check issue truth until the issue is fully closed out. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
 8. Only then advance to the next ordered issue.
 9. After the final issue closes, assemble sprint review evidence.
 10. Record sprint closeout metrics including coverage and Rust tracker counts.
@@ -127,6 +127,7 @@ This skill enforces:
 - immediate stop on blocker
 - no silent creation of extra sprint-management issues
 - resumable per-issue state with PR URLs and artifact links when available
+- no sprint-state advancement without a fresh matched live GitHub truth check
 
 Preferred per-issue routing model:
 - bootstrap missing -> `pr-init`
