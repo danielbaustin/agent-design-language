@@ -79,7 +79,11 @@ This package is grounded in the local TBD planning corpus:
 - `.adl/docs/TBD/anrm/`
 - `.adl/docs/TBD/acip/`
 - `.adl/docs/TBD/a2a/`
-- `.adl/docs/TBD/tools/UTS_ACC_MULTI_MODEL_BENCHMARK_PLAN.md`
+
+The UTS + ACC multi-model benchmark plan is intentionally excluded from this
+source map because it belongs to the `v0.91.2` tooling/evaluation milestone.
+v0.91.1 may depend on governed tools and ACIP substrate evidence, but it should
+not import the broad provider-native benchmark planning surface.
 
 ## Document Map
 

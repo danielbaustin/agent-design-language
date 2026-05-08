@@ -33,16 +33,16 @@ productize, publish, and maintain.
 | WP | Title | Queue | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
 | WP-01 | Design pass (milestone docs + planning) | docs | tracked docs, reviewed YAML, and issue cards | v0.91.1 closeout |
-| WP-02 | UTS + ACC multi-model benchmark harness | tools | benchmark harness and fixture battery | WP-01 |
+| WP-02 | UTS + ACC multi-model benchmark harness | tools | benchmark harness and fixture battery | WP-01; governed-tools baseline; ACIP substrate |
 | WP-03 | Provider-native tool-call comparison | tools | JSON proposal vs provider-native comparison report | WP-02 |
 | WP-04 | Runtime/test-cycle recovery | quality | reduced redundant proof phases and validation report | WP-01 |
 | WP-05 | Coverage gate ergonomics | quality | changed-source diagnostics and focused-test guide | WP-04 |
-| WP-06 | CodeBuddy review packet productization | tools | review packet and product-report workflow package | WP-01 |
+| WP-06 | CodeBuddy review packet productization | tools | review packet and product-report workflow package | WP-01; review skills and evidence-packet substrate |
 | WP-07 | Review heuristics skill and demos | demo | review heuristics docs, skill/demo updates, proof examples | WP-06 |
-| WP-08 | Google Workspace CMS bridge demo | tools | bounded Workspace content-card and promotion demo | WP-01 |
+| WP-08 | Google Workspace CMS bridge demo | tools | bounded Workspace content-card and promotion demo | WP-01; governed-tools authority and adapter boundary |
 | WP-09 | Rust-native GWS adapter boundary | tools | adapter feasibility and typed contract boundary | WP-08 |
 | WP-10 | Code modernization demo | tools | Moderne/code modernization interaction demo | WP-01 |
-| WP-11 | Publication program package | docs | arXiv/Medium paper-program backlog and process docs | WP-01 |
+| WP-11 | Publication program package | docs | arXiv/Medium paper-program backlog and process docs | WP-01; review/evidence docs and publication process notes |
 | WP-12 | General intelligence paper packet | docs | claim, citation, and review packet | WP-11 |
 | WP-13 | Rustdoc and doc cleanup | docs | rustdoc/doc cleanup patches and report | WP-05 |
 | WP-14 | Workflow guardrails hardening | tools | main-write, watcher, and safe-report guardrails | WP-04, WP-05 |
