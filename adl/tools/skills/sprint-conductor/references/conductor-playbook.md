@@ -27,19 +27,23 @@ Optional:
 ## Core Loop
 
 1. Load or create sprint-state.
-2. Choose the earliest child issue in the ordered list that is not yet closed
+2. Re-check live GitHub truth for the current sprint-state when possible.
+3. Choose the earliest child issue in the ordered list that is not yet closed
    out.
-3. Route that child issue through `workflow-conductor`.
-4. Run only the selected downstream lifecycle or editor skill.
-5. Re-check issue truth.
-6. If the issue is not fully closed out, repeat the routing loop for the same
+4. Route that child issue through `workflow-conductor`.
+5. Run only the selected downstream lifecycle or editor skill.
+6. Re-check issue truth.
+7. If the issue is not fully closed out, repeat the routing loop for the same
    issue.
-7. If the issue is in a healthy PR-open waiting state, pause on that issue and
+8. If the issue is in a healthy PR-open waiting state, pause on that issue and
    surface `ask_operator` rather than re-driving execution or janitoring a
    non-blocked PR.
-8. If the issue is fully closed out, mark it complete in sprint-state and move
+9. If the issue is fully closed out, mark it complete in sprint-state and move
    to the next issue.
-9. If any blocker is encountered, stop and report the blocker in sprint-state.
+10. If any blocker is encountered, stop and report the blocker in sprint-state.
+
+Preferred live-truth helper:
+- `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path>`
 
 ## Editor-Skill Rule
 
@@ -79,6 +83,8 @@ Bounded review-subagent exception:
 - one bounded reviewer subagent may be used during sprint review when sprint
   policy explicitly enables it
 - if disabled, record that no review subagent was used
+- validate the declared reviewer-subagent set before review execution:
+  - `python3 adl/tools/skills/sprint-conductor/scripts/validate_review_subagent_policy.py --allow-review-subagent-exception <bool> --max-review-subagents 1`
 
 ## Closeout Phase
 
@@ -125,3 +131,12 @@ Do not:
 - skip child issue closeout to save time
 - silently create additional sprint-management issues
 - widen the sprint because nearby work looks tempting
+
+## Standard-Path Guardrails
+
+If `sprint-conductor` becomes a normal operating path rather than a narrow
+trial, the next hardening step should be:
+- make GitHub truth-checks mandatory before and after each child issue handoff
+- require one explicit routing artifact per child issue
+- fail review startup when more than the allowed bounded reviewer-subagent set
+  is declared
