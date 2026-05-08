@@ -1,6 +1,6 @@
 {
   "schema_version": "runtime_v2.standing_negative_cases.v1",
-  "proof_id": "standing-negative-cases-v0-90-3",
+  "proof_id": "citizen-standing-negative-cases-v0-91-1-wp-05",
   "demo_id": "D10",
   "policy_ref": "runtime_v2/standing/standing_policy.json",
   "event_packet_ref": "runtime_v2/standing/standing_events.json",
@@ -28,5 +28,5 @@
     }
   ],
   "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_standing -- --nocapture",
-  "claim_boundary": "Negative cases cover WP-11 standing and communication only; WP-12 owns complete access-control proof."
+  "claim_boundary": "Negative cases cover WP-05 standing denials only; WP-06 owns citizen-state validation, projection, and overexposure proof."
 }

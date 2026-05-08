@@ -1,6 +1,6 @@
 {
   "schema_version": "runtime_v2.standing_communication_examples.v1",
-  "examples_id": "standing-communication-examples-v0-90-3",
+  "examples_id": "citizen-standing-communication-examples-v0-91-1-wp-05",
   "demo_id": "D10",
   "artifact_path": "runtime_v2/standing/communication_examples.json",
   "policy_ref": "runtime_v2/standing/standing_policy.json",
@@ -61,5 +61,5 @@
       "boundary_note": "naked actors are rejected before communication, observation, or effect"
     }
   ],
-  "claim_boundary": "D10 WP-11 communication examples prove communication boundaries only; WP-12 owns complete access-control events."
+  "claim_boundary": "D10 WP-05 communication examples prove standing-gated communication implications only; WP-06 owns citizen-state projection and overexposure boundaries."
 }
