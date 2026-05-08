@@ -5,7 +5,7 @@
 - Feature Name: Citizen Standing Model
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-04
+- Planned WP Home: WP-05
 - Source Docs: `.adl/docs/TBD/citizen_standing/`
 - Proof Modes: fixtures, tests, review
 

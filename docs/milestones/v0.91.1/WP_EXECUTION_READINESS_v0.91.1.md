@@ -26,7 +26,7 @@ issues are opened.
 Required outputs:
 
 - Accepted milestone docs and issue wave.
-- Opened issue cards with STP, SIP, SPP, and SOR bundles.
+- Opened issue cards with STP, SIP, SPP, SRP, and SOR bundles.
 - Validation record showing all cards are structurally complete.
 
 Required validation:

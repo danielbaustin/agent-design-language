@@ -1,16 +1,13 @@
 # Agent Lifecycle State Model
 
-## Status
+## Metadata
 
-Planned v0.91.1 feature.
-
-## Source
-
-- Local source doc: `.adl/docs/TBD/ADL_AND_SLEEP.md`
-- Related runtime source cluster: `.adl/docs/TBD/runtime_v2/`
-- Related implementation surfaces: Runtime v2 citizen lifecycle, wake
-  continuity, chronosense, trace lifecycle events, ACIP, and Observatory
-  projection.
+- Feature Name: Agent Lifecycle State Model
+- Milestone Target: `v0.91.1`
+- Status: planned
+- Planned WP Home: WP-03
+- Source Docs: `.adl/docs/TBD/ADL_AND_SLEEP.md`, `.adl/docs/TBD/runtime_v2/`
+- Proof Modes: schema, fixtures, tests, review
 
 ## Purpose
 

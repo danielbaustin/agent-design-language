@@ -5,7 +5,7 @@
 - Feature Name: ACIP Conformance And Local Encryption Hardening
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-12
+- Planned WP Home: WP-13
 - Source Docs: `.adl/docs/TBD/acip/`
 - Proof Modes: fixtures, schema, tests, review
 

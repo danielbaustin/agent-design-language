@@ -20,7 +20,7 @@ wave opens, but this index records the intended implementation homes.
 | ANRM/Gemma | [ANRM_GEMMA_PLACEMENT.md](ANRM_GEMMA_PLACEMENT.md) | `.adl/docs/TBD/anrm/` | WP-12 | ANRM placement, trace extractor, and dataset mapping |
 | ACIP hardening | [ACIP_HARDENING.md](ACIP_HARDENING.md) | `.adl/docs/TBD/acip/` | WP-13 | local encrypted/authenticated envelope, redaction, conformance |
 | A2A adapter | [A2A_ADAPTER_BOUNDARY.md](A2A_ADAPTER_BOUNDARY.md) | `.adl/docs/TBD/a2a/` | WP-14 | adapter over ACIP, not a parallel comms architecture |
-| Runtime inhabitant proof | [RUNTIME_INHABITANT_PROOF.md](RUNTIME_INHABITANT_PROOF.md) | `.adl/docs/TBD/v0.91_1_runtime_observatory_dependency_note.md` | WP-15-WP-16 | observatory-visible agent-shaped run |
+| Runtime inhabitant proof | [RUNTIME_INHABITANT_PROOF.md](RUNTIME_INHABITANT_PROOF.md) | `.adl/docs/TBD/v0.91_1_runtime_observatory_dependency_note.md` | WP-15, WP-16 | observatory-visible agent-shaped run |
 
 ## Promotion Rule
 

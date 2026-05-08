@@ -5,7 +5,7 @@
 - Feature Name: Governed Learning Substrate
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-10
+- Planned WP Home: WP-11
 - Source Docs: `.adl/docs/TBD/learning_model/`
 - Proof Modes: fixtures, policy, review
 

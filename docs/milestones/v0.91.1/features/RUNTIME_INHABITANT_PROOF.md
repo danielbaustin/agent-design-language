@@ -5,7 +5,7 @@
 - Feature Name: Runtime Inhabitant Integration And Observatory Proof
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-14 and WP-15
+- Planned WP Home: WP-15 and WP-16
 - Source Docs: `.adl/docs/TBD/v0.91_1_runtime_observatory_dependency_note.md`
 - Proof Modes: demo, trace, artifacts, review
 

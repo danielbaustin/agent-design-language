@@ -5,7 +5,7 @@
 - Feature Name: Citizen State Substrate
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-05
+- Planned WP Home: WP-06
 - Source Docs: `.adl/docs/TBD/citizen_state/`
 - Proof Modes: schema, fixtures, tests, review
 

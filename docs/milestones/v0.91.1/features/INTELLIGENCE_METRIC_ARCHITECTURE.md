@@ -5,7 +5,7 @@
 - Feature Name: Intelligence Metric Architecture
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-09
+- Planned WP Home: WP-10
 - Source Docs: `.adl/docs/TBD/intelligence/`
 - Proof Modes: architecture, fixtures, report
 

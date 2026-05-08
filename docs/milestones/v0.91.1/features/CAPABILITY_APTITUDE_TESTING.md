@@ -5,7 +5,7 @@
 - Feature Name: Capability and Aptitude Testing Foundation
 - Milestone Target: `v0.91.1`
 - Status: planned
-- Planned WP Home: WP-08
+- Planned WP Home: WP-09
 - Source Docs: `.adl/docs/TBD/capability_testing/`
 - Proof Modes: harness, fixtures, report
 
