@@ -66,8 +66,20 @@ def select_next_issue(state: dict[str, Any]) -> None:
         state['current_issue_number'] = blocked
         state['continuation'] = 'ask_operator'
         return
+    record_by_issue = {
+        record.get('issue_number'): record for record in state.get('issue_records', [])
+    }
     for issue in state.get('ordered_issue_numbers', []):
         if issue not in completed:
+            record = record_by_issue.get(issue, {})
+            if record.get('status') == 'waiting_for_review':
+                state['current_issue_number'] = issue
+                state['continuation'] = 'waiting_for_review'
+                return
+            if record.get('status') in {'blocked', 'deferred'}:
+                state['current_issue_number'] = issue
+                state['continuation'] = 'ask_operator'
+                return
             state['current_issue_number'] = issue
             state['continuation'] = 'continue'
             return
