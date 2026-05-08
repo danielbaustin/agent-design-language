@@ -108,6 +108,7 @@ The four editor skills are helper skills:
 - `sor-editor` for truthful `sor.md` cleanup
 
 `sprint-conductor` is a bounded orchestration helper rather than an editor skill. It sequences one sprint issue across ordered child issues using the existing lifecycle/editor stack, then assembles sprint review and sprint closeout evidence.
+It now includes a small deterministic sprint-state helper, supports a bounded review-subagent exception when policy enables it, and should be installed or synced into the active Codex skills directory before live use.
 
 ## Where The Skills Live
 

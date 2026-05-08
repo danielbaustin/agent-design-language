@@ -41,6 +41,8 @@ Important execution-boundary rule:
 - it may orchestrate child issues that legitimately edit tracked implementation
   files through `pr-run`, `pr-finish`, and the normal issue lifecycle in the
   bound issue worktree
+- it may use a bounded review subagent exception during sprint review when the
+  sprint policy explicitly enables that path
 
 ## Design Basis
 
@@ -57,6 +59,7 @@ At the moment, the key repo references are:
 Within this bundle, the operational details live in:
 - `references/conductor-playbook.md`
 - `references/output-contract.md`
+- `scripts/update_sprint_state.py`
 
 ## Entry Conditions
 
@@ -93,6 +96,7 @@ Useful additional inputs:
 - `sprint.blocked_issue_number`
 - `sprint.review_paths`
 - `sprint.closeout_paths`
+- `sprint.issue_records`
 - `resume_from_state_path`
 
 If there is no concrete sprint issue or ordered issue list, stop and report
@@ -119,6 +123,7 @@ This skill enforces:
 - editor-skill routing when cards drift
 - immediate stop on blocker
 - no silent creation of extra sprint-management issues
+- resumable per-issue state with PR URLs and artifact links when available
 
 Preferred per-issue routing model:
 - bootstrap missing -> `pr-init`
@@ -155,6 +160,13 @@ Recommended review-skill stack:
 - `repo-review-security` when trust boundaries or execution authority changed
 - `repo-review-synthesis`
 
+Bounded review-subagent exception:
+- child issue execution remains issue-skill driven rather than subagent driven
+- sprint review may use one bounded reviewer subagent when sprint policy
+  explicitly enables that exception
+- if the exception is disabled, the sprint review must remain local and record
+  that no review subagent was used
+
 The sprint review must not claim that docs/cards alone are sufficient when the
 sprint changed implementation code.
 
@@ -164,6 +176,8 @@ Sprint closeout must record:
 - sprint issue identity
 - ordered issue list and completion status
 - blocked/deferred/carryover state if any
+- per-issue PR URLs when they exist
+- per-issue artifact links needed to resume or audit the sprint
 - sprint review result
 - current code coverage snapshot
 - current Rust tracker counts

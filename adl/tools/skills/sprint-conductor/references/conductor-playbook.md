@@ -21,6 +21,7 @@ Optional:
 - current issue
 - completed issues
 - blocked issue
+- issue records with PR URLs and artifact links
 - prior sprint-state artifact
 
 ## Core Loop
@@ -73,6 +74,12 @@ Recommended review stack:
 - `repo-review-security` when needed
 - `repo-review-synthesis`
 
+Bounded review-subagent exception:
+- child issue execution stays local to the normal issue skill path
+- one bounded reviewer subagent may be used during sprint review when sprint
+  policy explicitly enables it
+- if disabled, record that no review subagent was used
+
 ## Closeout Phase
 
 Record:
@@ -80,6 +87,8 @@ Record:
 - ordered issue list
 - completed issues
 - blocked/deferred/carryover state
+- per-issue PR URLs
+- per-issue artifact links
 - sprint review result
 - coverage snapshot
 - Rust tracker counts

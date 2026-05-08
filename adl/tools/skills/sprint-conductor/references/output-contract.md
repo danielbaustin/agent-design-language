@@ -7,6 +7,12 @@ sprint:
   goal: <string or null>
   ordered_issue_numbers:
     - <u32>
+  issue_records:
+    - issue_number: <u32>
+      status: pending | active | waiting_for_review | closed_out | blocked | deferred
+      pr_url: <url or null>
+      artifact_paths:
+        - <path>
 sequence:
   current_issue_number: <u32 or null>
   completed_issue_numbers:
@@ -47,6 +53,7 @@ actions_taken:
   - <bounded step>
 artifact:
   sprint_state_path: <path or null>
+  sprint_review_url: <url or null>
   review_artifact_paths:
     - <path>
   closeout_artifact_paths:

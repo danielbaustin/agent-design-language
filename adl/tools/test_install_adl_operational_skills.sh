@@ -60,6 +60,7 @@ assert_skill_bundle() {
   [[ -x "${root}/skills/diagram-author/scripts/render_diagrams.sh" ]]
   [[ -f "${root}/skills/spp-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sprint-conductor/SKILL.md" ]]
+  [[ -x "${root}/skills/sprint-conductor/scripts/update_sprint_state.py" ]]
   [[ -f "${root}/skills/stp-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sip-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sor-editor/SKILL.md" ]]
