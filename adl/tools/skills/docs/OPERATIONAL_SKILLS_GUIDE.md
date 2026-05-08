@@ -57,6 +57,7 @@ The tracked skill set is:
 - `spp-editor`
 - `sip-editor`
 - `sor-editor`
+- `sprint-conductor`
 - `stp-editor`
 - `test-generator`
 - `use-case-writer`
@@ -84,6 +85,7 @@ The normal workflow is:
 `arxiv-paper-writer` is a bounded helper skill for turning one concrete scholarly source packet into a reviewer-friendly arXiv-style manuscript packet without submitting, publishing, or inventing citations.
 `diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
+`sprint-conductor` is a slow-path sprint orchestrator that sequences issues through the existing lifecycle and editor skills, then finishes with sprint review and closeout.
 `issue-folding` is a bounded issue-disposition helper for classifying duplicate, superseded, absorbed, already-satisfied, obsolete, or still-actionable issues before closeout.
 `issue-splitter` is a bounded issue-scope helper for deciding whether one issue should stay intact, split now, defer splitting, or stop for operator review.
 `issue-watcher` is a bounded wait-window helper for watching one issue, PR, branch, or dependency gate and routing blockers without mutating state.
@@ -104,6 +106,8 @@ The four editor skills are helper skills:
 - `stp-editor` for bounded `stp.md` cleanup
 - `sip-editor` for truthful `sip.md` cleanup
 - `sor-editor` for truthful `sor.md` cleanup
+
+`sprint-conductor` is a bounded orchestration helper rather than an editor skill. It sequences one sprint issue across ordered child issues using the existing lifecycle/editor stack, then assembles sprint review and sprint closeout evidence.
 
 ## Where The Skills Live
 

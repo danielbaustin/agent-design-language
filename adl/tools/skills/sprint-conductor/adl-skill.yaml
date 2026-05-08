@@ -1,0 +1,114 @@
+version: "0.1"
+kind: "adl-skill"
+id: "sprint-conductor"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "sprint_conductor.v1"
+    reference_doc: "../docs/SPRINT_CONDUCTOR_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "sprint"
+      - "policy"
+    mode_enum:
+      - "run_sprint_slow_path"
+      - "resume_sprint_slow_path"
+      - "review_and_closeout_sprint"
+    policy_fields:
+      - "require_sequential_closeout"
+      - "require_existing_issue_skills"
+      - "require_editor_skills"
+      - "require_code_review"
+      - "capture_coverage_at_closeout"
+      - "capture_rust_tracker_at_closeout"
+      - "stop_on_blocker"
+    mode_requirements:
+      run_sprint_slow_path:
+        required_sprint_fields:
+          - "issue_number"
+          - "ordered_issue_numbers"
+          - "goal"
+      resume_sprint_slow_path:
+        required_sprint_fields:
+          - "issue_number"
+          - "ordered_issue_numbers"
+      review_and_closeout_sprint:
+        required_sprint_fields:
+          - "issue_number"
+          - "ordered_issue_numbers"
+  intent:
+    - "sprint_orchestration"
+    - "sequential_issue_execution"
+    - "review_and_closeout"
+  required_inputs:
+    - "repo_root"
+    - "sprint.issue_number"
+    - "sprint.ordered_issue_numbers"
+  optional_inputs:
+    - "sprint.goal"
+    - "sprint.version"
+    - "sprint.slug"
+    - "sprint.stop_date"
+    - "sprint.current_issue_number"
+    - "sprint.completed_issue_numbers"
+    - "sprint.blocked_issue_number"
+    - "resume_from_state_path"
+    - "sprint.review_paths"
+    - "sprint.closeout_paths"
+  stop_if_missing:
+    - "repo_root"
+    - "sprint.issue_number"
+    - "sprint.ordered_issue_numbers"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_sprint_conductor.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "ordered_issue_numbers_must_be_nonempty_and_explicitly_ordered"
+    - "policy.require_sequential_closeout_must_be_true"
+    - "policy.require_existing_issue_skills_must_be_true"
+    - "policy.require_editor_skills_must_be_true"
+    - "policy.stop_on_blocker_must_be_true"
+execution:
+  mode: "orchestrate_existing_skills_sequentially"
+  allow_code_edits: true
+  allow_network: true
+  allow_subagents: false
+  workflow_role: "sprint_orchestrator"
+  preferred_commands:
+    - "workflow-conductor for issue routing"
+    - "pr-init/pr-ready/pr-run/pr-finish/pr-janitor/pr-closeout for child issue lifecycle"
+    - "repo-packet-builder and review specialist skills for sprint-end review"
+    - "cargo llvm-cov --workspace --all-features --summary-only"
+    - "bash adl/tools/report_large_rust_modules.sh --format tsv"
+  preferred_path: "sequential_child_issue_closeout_then_review_then_sprint_closeout"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - ".adl/**"
+    - "sprint review artifacts"
+    - "sprint closeout artifacts"
+  must_not_write:
+    - "tracked implementation source files directly outside the selected child issue lifecycle path"
+    - "unrelated issue bundles"
+  stop_on_partial_failure: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-sprint-conductor.md"
+  required_sections:
+    - "status"
+    - "sprint"
+    - "sequence"
+    - "current_state"
+    - "review"
+    - "closeout"
+    - "artifact"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true

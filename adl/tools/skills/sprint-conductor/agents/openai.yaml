@@ -1,0 +1,3 @@
+display_name: Sprint Conductor
+short_description: Orchestrate one sprint issue through ordered child issues, review, and closeout
+default_prompt: Help me run this sprint sequentially through the existing ADL skills and finish with a robust sprint review and closeout.
