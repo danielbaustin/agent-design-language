@@ -156,7 +156,7 @@ Current review-tail gates:
 - WP-22 external / 3rd-party review is complete with zero findings recorded.
 - WP-23 accepted-finding remediation is closed; no additional external-review
   remediation is required.
-- WP-24 next-milestone planning and handoff remains open.
+- WP-24 next-milestone planning and handoff is closed.
 - WP-25 final release ceremony remains open.
 
 This handoff now records the WP-22 review result. It is not a release approval
@@ -316,7 +316,7 @@ At minimum, ask the reviewer to verify:
 - `DEMO_MATRIX_v0.91.md` and `FEATURE_PROOF_COVERAGE_v0.91.md` agree on demo
   and proof status.
 - `QUALITY_GATE_v0.91.md` truthfully distinguishes green main-branch evidence
-  from the still-open release-tail review gates.
+  from the still-open final ceremony gate.
 - `RELEASE_NOTES_v0.91.md` describes landed behavior without claiming release
   ceremony completion.
 - ADR 0016, ADR 0017, and ADR 0018 match the implemented boundaries they
@@ -413,7 +413,7 @@ over the packet. The bounded repairs made here were:
 - removed range shorthand from the v0.91 WP dependency tables and YAML where
   explicit dependencies are clearer for reviewers and automation
 - recorded the imported external review artifacts and zero-findings disposition
-- updated release-tail docs to show WP-21, WP-22, and WP-23 review/remediation
-  truth before WP-24 and WP-25
+- updated release-tail docs to show WP-21, WP-22, WP-23, and WP-24
+  review/remediation/handoff truth before WP-25
 
 The pass did not perform release ceremony work.

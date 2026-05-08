@@ -2,12 +2,12 @@
 
 ## Status
 
-Active release-tail milestone package. The `v0.91.0` core implementation,
-flagship demo, feature-proof coverage, quality-gate lane, docs/review pass, ADR
-pass, internal review, external review, and accepted-finding remediation have
-landed or been explicitly dispositioned. The official issue wave remains open
-as #2735-#2759 while WP-24 and WP-25 finish next-milestone handoff and
-ceremony.
+Ceremony-ready milestone package. The `v0.91.0` core implementation, flagship
+demo, feature-proof coverage, quality-gate lane, docs/review pass, ADR pass,
+internal review, external review, accepted-finding remediation, and
+next-milestone handoff have landed or been explicitly dispositioned. The
+official issue wave is closed through `WP-24` / `#2758`; `WP-25` / `#2759` is
+the active release-ceremony lane.
 
 ## Purpose
 
@@ -195,7 +195,15 @@ The likely `v0.91` tranche is:
 - Quality gate: [QUALITY_GATE_v0.91.md](QUALITY_GATE_v0.91.md)
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.91.md](MILESTONE_CHECKLIST_v0.91.md)
 - Release plan: [RELEASE_PLAN_v0.91.md](RELEASE_PLAN_v0.91.md)
+- Release readiness:
+  [RELEASE_READINESS_v0.91.md](RELEASE_READINESS_v0.91.md)
+- Release evidence:
+  [RELEASE_EVIDENCE_v0.91.md](RELEASE_EVIDENCE_v0.91.md)
 - Release notes: [RELEASE_NOTES_v0.91.md](RELEASE_NOTES_v0.91.md)
+- End-of-milestone report:
+  [END_OF_MILESTONE_REPORT_v0.91.md](END_OF_MILESTONE_REPORT_v0.91.md)
+- Next milestone handoff:
+  [NEXT_MILESTONE_HANDOFF_v0.91.md](NEXT_MILESTONE_HANDOFF_v0.91.md)
 - Third-party review handoff:
   [ADL_v0.91_THIRD_PARTY_REVIEW_HANDOFF.md](ADL_v0.91_THIRD_PARTY_REVIEW_HANDOFF.md)
 - Active issue wave: [WP_ISSUE_WAVE_v0.91.yaml](WP_ISSUE_WAVE_v0.91.yaml)

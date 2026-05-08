@@ -51,8 +51,9 @@ The current repo truth is:
 - active milestone: `v0.91`
 - current crate version on the active release line: `0.91.0`
 - current release-tail state: `v0.90.5` is complete and `v0.91` issue wave
-  `#2735`-`#2759` is in release-tail review after the core implementation,
-  demo, feature-proof, and quality-gate WPs
+  `#2735`-`#2758` is closed; `#2759` is the active release-ceremony lane after
+  implementation, demo, proof, quality, review, remediation, and
+  next-milestone planning
 - most recently completed governed-tools milestone package: `v0.90.5`
 - most recently completed bounded economics milestone package: `v0.90.4`
 - most recently completed citizen-state substrate milestone package: `v0.90.3`
@@ -176,8 +177,8 @@ ADL already provides a serious platform baseline:
 | Web-based code editor integration | Planned | editor backlog issue and skills-wiring planning | Future editor/operator lane |
 | Reasoning graph baseline | Planned | planning/schema/proof surfaces | Later reasoning/provenance band |
 | Signed trace and trace query | Planned | roadmap and planning docs | Later reasoning/provenance band |
-| Wellbeing, affect, kindness, moral cognition, humor | Active milestone | `v0.91` feature docs, Runtime v2 proof surfaces, demo matrix, feature-proof coverage, and ADR 0016 | `v0.91.0` release-tail closeout |
-| Secure Agent Communication and Invocation Protocol | Active milestone | v0.90.5 ACIP planning plus v0.91 secure local Agent Comms, A2A boundary docs, proof coverage, and ADR 0017 | `v0.91.0` substrate, `v0.91.1` hardening |
+| Wellbeing, affect, kindness, moral cognition, humor | Ceremony-ready milestone | `v0.91` feature docs, Runtime v2 proof surfaces, demo matrix, feature-proof coverage, and ADR 0016 | `v0.91.0` ceremony pending |
+| Secure Agent Communication and Invocation Protocol | Ceremony-ready milestone | v0.90.5 ACIP planning plus v0.91 secure local Agent Comms, A2A boundary docs, proof coverage, and ADR 0017 | `v0.91.0` substrate, `v0.91.1` hardening |
 | Inhabited runtime readiness | Planned | `docs/milestones/v0.91.1` candidate WBS, sprint plan, issue-wave YAML, readiness docs, demo matrix, and feature index | `v0.91.1` |
 | Agent lifecycle state model | Planned | `.adl/docs/TBD/ADL_AND_SLEEP.md` and `docs/milestones/v0.91.1/features/AGENT_LIFECYCLE_STATE_MODEL.md` | `v0.91.1` lifecycle/ACIP eligibility WP |
 | CSM Observatory active agent runtime | Planned | v0.91.1 observatory-active and runtime-inhabitant planning docs | `v0.91.1` |
@@ -222,7 +223,7 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.90.3` | Citizen state security, standing, canonical private-state authority, signed envelopes, local sealing, append-only lineage, continuity witnesses/receipts, anti-equivocation, sanctuary/quarantine, access control, redacted projections, challenge/appeal/threat-model evidence, inhabited Observatory flagship demo, and forward planning for later governance prerequisites. |
 | `v0.90.4` | Bounded contract-market and resource-stewardship bridge, with explicit deferral of payment rails, legal/billing, inter-polis economics, and governed-tool authority. |
 | `v0.90.5` | Governed Tools v1.0: Universal Tool Schema, ADL Capability Contract, capability-to-tool binding, policy enforcement, audit, privacy, and model compatibility proof. |
-| `v0.91` | Moral governance, wellbeing and happiness, affect, kindness, humor, moral cognition, structured planning / SRP, secure local Agent Comms substrate, A2A boundary planning, cognitive-being flagship demo, and release-tail review. |
+| `v0.91` | Moral governance, wellbeing and happiness, affect, kindness, humor, moral cognition, structured planning / SRP, secure local Agent Comms substrate, A2A boundary planning, cognitive-being flagship demo, review/remediation, next-milestone handoff, and final ceremony preparation. |
 | `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, agent lifecycle states, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, GHB-adjacent runtime evidence, and observatory-visible agent runtime proof. |
 | `v0.91.2` | Tooling/evaluation/productization/publication pressure release: UTS + ACC multi-model benchmark, provider-native tool-call comparison, runtime/test-cycle recovery, coverage ergonomics, CodeBuddy productization, Google Workspace CMS bridge, modernization demo, publication packets including GHB/general-intelligence source packets, rustdoc/doc cleanup, and workflow guardrails. |
 | `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |

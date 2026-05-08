@@ -2,15 +2,13 @@
 
 ## Status
 
-Closeout-candidate release notes for the landed `v0.91` implementation and
-review evidence through `WP-22`.
+Ceremony-ready release notes for the landed `v0.91` implementation, review,
+remediation, and next-milestone handoff evidence through `WP-24`.
 
 These notes describe behavior and evidence that exists in the repository after
-the core implementation and proof lanes. They do not imply that the release
-ceremony is complete. Internal review, third-party review, and
-accepted-finding remediation are complete or explicitly dispositioned.
-Next-milestone handoff and final ceremony remain assigned to the standard
-release-tail WPs.
+the core implementation, proof lanes, review tail, and next-milestone planning.
+They do not imply that the release ceremony is complete. The final ceremony,
+tag, and release publication remain assigned to `WP-25`.
 
 ## Theme
 
@@ -133,7 +131,7 @@ The following work is intentionally not claimed as complete in `v0.91`:
 
 ## Remaining Release Tail
 
-The remaining release-tail WPs still need to complete before release closeout:
+The remaining release-tail action before release closeout is:
 
-- `WP-24`: next milestone planning
-- `WP-25`: release ceremony
+- `WP-25`: run the release ceremony script, verify tag/release disposition, and
+  record the ceremony result.
