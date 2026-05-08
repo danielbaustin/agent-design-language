@@ -29,7 +29,9 @@ milestone docs, and gap-review evidence currently say.
 
 ## Gate Summary
 
-`v0.91` has a strong implementation and proof posture through `WP-18`.
+`v0.91` has a strong implementation and proof posture through `WP-18`, plus a
+completed review, remediation, and next-milestone planning tail through
+`WP-24`.
 
 The current main-branch merge gate is green after `WP-18`:
 
@@ -39,13 +41,13 @@ The current main-branch merge gate is green after `WP-18`:
 - `adl-ci`: success
 - `adl-coverage`: success
 
-The remaining blockers are release-tail blockers, not hidden implementation
-passes:
+The remaining blocker is a release ceremony blocker, not a hidden
+implementation pass:
 
-- `WP-24` and `WP-25` remain open.
-- Internal review, third-party review, and accepted-finding remediation are
-  complete or explicitly dispositioned.
-- Next-milestone planning and release ceremony are not complete yet.
+- `WP-25` remains open.
+- Internal review, third-party review, accepted-finding remediation, and
+  next-milestone planning are complete or explicitly dispositioned.
+- The release ceremony is not complete yet.
 
 The two concrete quality-gate gaps found during `WP-19` are now repaired:
 
@@ -213,15 +215,15 @@ Disposition:
 | `WP-21` through `WP-23` still open | Resolved; `#2755` and `#2757` are closed, and WP-22 records the external review result. |
 | Internal/external review absent | Resolved; internal review is complete and the external review summary reports zero findings. |
 | Accepted-finding remediation absent | Resolved; WP-23 and the accepted internal-remediation issues `#2813`, `#2814`, and `#2815` are closed. |
-| `WP-24` and `WP-25` still open | Active release-tail blockers; proceed in sequence. |
-| Next milestone and ceremony incomplete | Assigned to `WP-24` and `WP-25`; not release-ready. |
+| `WP-24` and `WP-25` still open | Partly resolved; `WP-24` is closed and `WP-25` remains the active ceremony lane. |
+| Next milestone and ceremony incomplete | Partly resolved; next-milestone planning is complete and the ceremony remains assigned to `WP-25`. |
 
 ## 6) Exception Register
 
 | ID | Severity | Exception | Owner / Next WP | Release impact |
 | --- | --- | --- | --- | --- |
 | QG-001 | RESOLVED | Closed-issue SOR truth validator previously failed for `#2751`, `#2752`, and `#2797`; local records now validate and the milestone closed-issue validator passes. | WP-19 | No remaining release impact. |
-| QG-002 | P1 | `WP-24` and `WP-25` remain open. | Release-tail train. | Blocks release ceremony. |
+| QG-002 | P1 | `WP-25` remains open. | Release ceremony lane. | Blocks release completion until the ceremony script, tag, and release disposition are verified. |
 | QG-003 | RESOLVED | Release notes previously described intended behavior; they now describe landed behavior and remaining review-tail status. | WP-19 and WP-20 | No remaining release impact beyond normal review-tail work. |
 | QG-004 | RESOLVED | Internal and third-party review are complete; the external review summary reports zero P0/P1/P2/P3 findings. | `WP-21`, `WP-22`. | No remaining review-readiness impact. |
 | QG-005 | RESOLVED | Review-finding remediation is dispositioned; WP-23 and accepted internal-remediation child issues are closed, and the external review produced no accepted findings. | `WP-23`. | No remaining finding-remediation impact. |
@@ -268,15 +270,17 @@ Ready:
 - the external review summary reports `A+` / `100/100` and zero `P0`, `P1`,
   `P2`, or `P3` findings
 - accepted findings are fixed or explicitly dispositioned
+- next-milestone planning is complete and recorded for `v0.91.1` and
+  `v0.91.2`
 
 ## Final Quality-Gate Judgment
 
 `v0.91` currently passes the main repository merge and coverage gates after
 `WP-18`, and the local closed-issue SOR truth gap identified during `WP-19` is
-repaired. Internal review, third-party review, and accepted-finding remediation
-are now complete or explicitly dispositioned.
+repaired. Internal review, third-party review, accepted-finding remediation,
+and next-milestone planning are now complete or explicitly dispositioned.
 
 It does not yet pass the release-closeout gate.
 
 The next required work is not broad feature reimplementation. It is the final
-release-tail sequence: next-milestone planning and ceremony.
+release ceremony.

@@ -61,4 +61,6 @@
 - [x] Third-party review complete or explicitly deferred.
 - [x] Accepted findings fixed or dispositioned.
 - [x] Changelog, README, Cargo metadata, feature list, and milestone docs aligned.
+- [x] Next milestone handoff prepared for v0.91.1 and v0.91.2.
+- [x] Release readiness, release evidence, and end-of-milestone report prepared.
 - [ ] Ceremony completed.

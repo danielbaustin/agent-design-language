@@ -73,6 +73,6 @@ bar rather than concept-only placeholders. The demo matrix and feature-proof
 coverage record now map each tracked feature surface to concrete proof routes,
 fixture-backed validation, integrated flagship evidence, or explicit deferral.
 
-The remaining milestone work is release-tail closeout: next-milestone handoff
-and ceremony. Internal review, third-party review, and accepted-finding
-remediation are complete or explicitly dispositioned.
+The remaining milestone work is the final release ceremony. Internal review,
+third-party review, accepted-finding remediation, and next-milestone planning
+are complete or explicitly dispositioned.

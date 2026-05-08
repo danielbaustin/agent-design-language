@@ -142,22 +142,26 @@ from issue
 
 ## Recent Milestones
 
-### v0.91 - Active Moral Governance And Cognitive-Being Milestone
+### v0.91 - Ceremony-Ready Moral Governance And Cognitive-Being Milestone
 
-v0.91 is the active implementation milestone. Its core `0.91.0` line has landed
-the moral governance, wellbeing, kindness, humor, affect,
-cultivated-intelligence, structured planning, SRP, and secure intra-polis Agent
-Comms band, and is now in release-tail review.
+v0.91 is the active ceremony-ready milestone. Its core `0.91.0` line has landed
+the moral governance, wellbeing, kindness, humor, affect, cultivated
+intelligence, structured planning, SRP, and secure intra-polis Agent Comms
+band. Internal review, third-party review, accepted-finding remediation, and
+next-milestone handoff are complete; final release ceremony is the remaining
+closeout action.
 
-It should not be read as a completed release yet. Its issue wave is open, and
-its docs distinguish the landed `v0.91.0` evidence substrate from downstream
-identity, birthday, and constitutional-governance work.
+It should not be read as a completed release until the ceremony script, tag,
+and release disposition are verified. Its docs distinguish the landed `v0.91.0`
+evidence substrate from downstream identity, birthday, and
+constitutional-governance work.
 
 Start here:
 
 - [v0.91 README](docs/milestones/v0.91/README.md)
 - [v0.91 feature index](docs/milestones/v0.91/features/README.md)
 - [v0.91 release plan](docs/milestones/v0.91/RELEASE_PLAN_v0.91.md)
+- [v0.91 release readiness](docs/milestones/v0.91/RELEASE_READINESS_v0.91.md)
 
 ### v0.90.5 - Completed Governed Tools v1.0
 
@@ -200,6 +204,7 @@ production markets.
 - Active milestone: v0.91
 - Current crate version: 0.91.0
 - Most recently completed milestone: v0.90.5
+- Current release-tail state: v0.91 ceremony-ready; release ceremony pending
 - Previous completed milestone: v0.90.4
 - Primary implementation language: Rust
 

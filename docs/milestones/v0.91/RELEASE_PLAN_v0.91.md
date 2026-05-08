@@ -67,3 +67,14 @@ The closeout should hand off:
   metric architecture, ANRM/Gemma, ToM, memory/identity, and any ACIP hardening
 - secure communication evidence needed by v0.92 identity and birthday review
 - any anti-harm or redaction findings that need later follow-up
+
+The handoff is now recorded in
+[NEXT_MILESTONE_HANDOFF_v0.91.md](NEXT_MILESTONE_HANDOFF_v0.91.md). Release
+readiness and evidence are recorded in
+[RELEASE_READINESS_v0.91.md](RELEASE_READINESS_v0.91.md) and
+[RELEASE_EVIDENCE_v0.91.md](RELEASE_EVIDENCE_v0.91.md). The final milestone
+summary is recorded in
+[END_OF_MILESTONE_REPORT_v0.91.md](END_OF_MILESTONE_REPORT_v0.91.md).
+
+The release is not complete until the ceremony script passes in its final
+release mode and the tag/release disposition is verified.
