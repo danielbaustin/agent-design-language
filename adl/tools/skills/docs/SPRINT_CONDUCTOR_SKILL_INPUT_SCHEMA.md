@@ -16,6 +16,10 @@ sprint:
   completed_issue_numbers:
     - <u32>
   blocked_issue_number: <u32 or null>
+  review_paths:
+    - /absolute/or/repo-relative/path
+  closeout_paths:
+    - /absolute/or/repo-relative/path
 policy:
   require_sequential_closeout: true
   require_existing_issue_skills: true
