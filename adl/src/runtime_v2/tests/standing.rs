@@ -14,6 +14,10 @@ fn runtime_v2_standing_contract_is_stable() {
         RUNTIME_V2_STANDING_EVENT_PACKET_SCHEMA
     );
     assert_eq!(artifacts.policy.demo_id, "D10");
+    assert_eq!(
+        artifacts.policy.policy_id,
+        "citizen-standing-policy-v0-91-1-wp-05"
+    );
     assert_eq!(artifacts.event_packet.events.len(), 5);
     assert_eq!(artifacts.communication_examples.examples.len(), 5);
 }
@@ -202,7 +206,7 @@ fn runtime_v2_standing_write_to_root_materializes_fixtures() {
     ] {
         let text = std::fs::read_to_string(root.join(rel_path)).expect("artifact text");
         assert!(text.contains("D10"));
-        assert!(text.contains("WP-11") || text.contains("standing"));
+        assert!(text.contains("WP-05") || text.contains("standing"));
         assert!(!text.contains(root.to_string_lossy().as_ref()));
     }
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "runtime_v2.standing_event_packet.v1",
-  "packet_id": "standing-events-v0-90-3",
+  "packet_id": "citizen-standing-events-v0-91-1-wp-05",
   "demo_id": "D10",
   "generated_at": "2026-04-21T00:00:00Z",
   "artifact_path": "runtime_v2/standing/standing_events.json",
@@ -119,6 +119,6 @@
       "rationale": "unclassified naked actors are rejected before effect"
     }
   ],
-  "packet_hash": "8ab01fda2d7a9b6a650bc44857ce3651ef90b614b31b0f8c7cfb6a48f18cf752",
-  "claim_boundary": "D10 WP-11 event evidence proves standing and communication boundaries; WP-12 adds full access-denial semantics."
+  "packet_hash": "f70b6762bff67a763aa6c72e67beca89e9b2500d54acaafe093f2745440ae681",
+  "claim_boundary": "D10 WP-05 event evidence proves standing transitions and denials only; WP-06 adds citizen-state projection and privacy semantics."
 }

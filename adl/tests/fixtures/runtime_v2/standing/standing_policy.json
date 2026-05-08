@@ -1,9 +1,9 @@
 {
   "schema_version": "runtime_v2.standing_policy.v1",
-  "policy_id": "standing-communication-policy-v0-90-3",
+  "policy_id": "citizen-standing-policy-v0-91-1-wp-05",
   "demo_id": "D10",
   "artifact_path": "runtime_v2/standing/standing_policy.json",
-  "source_feature_doc": "docs/milestones/v0.90.3/features/STANDING_COMMUNICATION_AND_ACCESS.md",
+  "source_feature_doc": "docs/milestones/v0.91.1/features/CITIZEN_STANDING_MODEL.md",
   "standing_classes": [
     {
       "standing_class": "citizen",
@@ -129,8 +129,8 @@
     "guest standing never upgrades to citizen standing without an explicit identity-binding event",
     "service actors may operate privileged mechanisms but cannot become hidden social actors",
     "communication is a governed action and never grants inspection rights",
-    "full access-control semantics remain owned by WP-12"
+    "citizen-state format and safe projection remain owned by WP-06"
   ],
   "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_standing -- --nocapture",
-  "claim_boundary": "WP-11 proves standing and communication boundaries for D10; WP-12 still owns full access-control semantics."
+  "claim_boundary": "WP-05 proves citizen standing classes, transition denials, and communication implications for D10; WP-06 owns citizen-state format, projection, and privacy surfaces."
 }

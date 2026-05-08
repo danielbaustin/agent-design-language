@@ -189,12 +189,11 @@ impl RuntimeV2StandingPolicy {
     pub fn prototype() -> Result<Self> {
         let policy = Self {
             schema_version: RUNTIME_V2_STANDING_POLICY_SCHEMA.to_string(),
-            policy_id: "standing-communication-policy-v0-90-3".to_string(),
+            policy_id: "citizen-standing-policy-v0-91-1-wp-05".to_string(),
             demo_id: "D10".to_string(),
             artifact_path: RUNTIME_V2_STANDING_POLICY_PATH.to_string(),
-            source_feature_doc:
-                "docs/milestones/v0.90.3/features/STANDING_COMMUNICATION_AND_ACCESS.md"
-                    .to_string(),
+            source_feature_doc: "docs/milestones/v0.91.1/features/CITIZEN_STANDING_MODEL.md"
+                .to_string(),
             standing_classes: vec![
                 standing_class(StandingClassSpec {
                     standing_class: "citizen",
@@ -301,13 +300,13 @@ impl RuntimeV2StandingPolicy {
                 "guest standing never upgrades to citizen standing without an explicit identity-binding event",
                 "service actors may operate privileged mechanisms but cannot become hidden social actors",
                 "communication is a governed action and never grants inspection rights",
-                "full access-control semantics remain owned by WP-12",
+                "citizen-state format and safe projection remain owned by WP-06",
             ]),
             validation_command:
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_standing -- --nocapture"
                     .to_string(),
             claim_boundary:
-                "WP-11 proves standing and communication boundaries for D10; WP-12 still owns full access-control semantics."
+                "WP-05 proves citizen standing classes, transition denials, and communication implications for D10; WP-06 owns citizen-state format, projection, and privacy surfaces."
                     .to_string(),
         };
         policy.validate()?;
@@ -338,7 +337,7 @@ impl RuntimeV2StandingPolicy {
                 "guest standing never upgrades to citizen standing without an explicit identity-binding event",
                 "service actors may operate privileged mechanisms but cannot become hidden social actors",
                 "communication is a governed action and never grants inspection rights",
-                "full access-control semantics remain owned by WP-12",
+                "citizen-state format and safe projection remain owned by WP-06",
             ],
         )?;
         if !self.validation_command.contains("runtime_v2_standing") {
@@ -346,9 +345,9 @@ impl RuntimeV2StandingPolicy {
                 "standing policy validation command must target focused tests"
             ));
         }
-        if !self.claim_boundary.contains("WP-11") || !self.claim_boundary.contains("WP-12") {
+        if !self.claim_boundary.contains("WP-05") || !self.claim_boundary.contains("WP-06") {
             return Err(anyhow!(
-                "standing policy claim boundary must preserve WP-11/WP-12 split"
+                "standing policy claim boundary must preserve the WP-05/WP-06 split"
             ));
         }
         Ok(())
@@ -365,7 +364,7 @@ impl RuntimeV2StandingEventPacket {
         policy.validate()?;
         let mut packet = Self {
             schema_version: RUNTIME_V2_STANDING_EVENT_PACKET_SCHEMA.to_string(),
-            packet_id: "standing-events-v0-90-3".to_string(),
+            packet_id: "citizen-standing-events-v0-91-1-wp-05".to_string(),
             demo_id: "D10".to_string(),
             generated_at: "2026-04-21T00:00:00Z".to_string(),
             artifact_path: RUNTIME_V2_STANDING_EVENT_PACKET_PATH.to_string(),
@@ -373,7 +372,7 @@ impl RuntimeV2StandingEventPacket {
             events: prototype_events(),
             packet_hash: String::new(),
             claim_boundary:
-                "D10 WP-11 event evidence proves standing and communication boundaries; WP-12 adds full access-denial semantics."
+                "D10 WP-05 event evidence proves standing transitions and denials only; WP-06 adds citizen-state projection and privacy semantics."
                     .to_string(),
         };
         packet.packet_hash = packet.computed_hash()?;
@@ -420,9 +419,9 @@ impl RuntimeV2StandingEventPacket {
             event.validate_shape()?;
         }
         validate_sha256_hex(&self.packet_hash, "standing_event.packet_hash")?;
-        if !self.claim_boundary.contains("WP-11") || !self.claim_boundary.contains("WP-12") {
+        if !self.claim_boundary.contains("WP-05") || !self.claim_boundary.contains("WP-06") {
             return Err(anyhow!(
-                "standing event packet claim boundary must preserve WP split"
+                "standing event packet claim boundary must preserve the WP-05/WP-06 split"
             ));
         }
         Ok(())
@@ -478,13 +477,13 @@ impl RuntimeV2StandingCommunicationExamples {
         policy.validate()?;
         let examples = Self {
             schema_version: RUNTIME_V2_STANDING_COMMUNICATION_EXAMPLES_SCHEMA.to_string(),
-            examples_id: "standing-communication-examples-v0-90-3".to_string(),
+            examples_id: "citizen-standing-communication-examples-v0-91-1-wp-05".to_string(),
             demo_id: "D10".to_string(),
             artifact_path: RUNTIME_V2_STANDING_COMMUNICATION_EXAMPLES_PATH.to_string(),
             policy_ref: policy.artifact_path.clone(),
             examples: prototype_communication_examples(),
             claim_boundary:
-                "D10 WP-11 communication examples prove communication boundaries only; WP-12 owns complete access-control events."
+                "D10 WP-05 communication examples prove standing-gated communication implications only; WP-06 owns citizen-state projection and overexposure boundaries."
                     .to_string(),
         };
         examples.validate_against(policy)?;
@@ -525,9 +524,9 @@ impl RuntimeV2StandingCommunicationExamples {
         for example in &self.examples {
             example.validate_shape()?;
         }
-        if !self.claim_boundary.contains("WP-11") || !self.claim_boundary.contains("WP-12") {
+        if !self.claim_boundary.contains("WP-05") || !self.claim_boundary.contains("WP-06") {
             return Err(anyhow!(
-                "communication examples claim boundary must preserve WP split"
+                "communication examples claim boundary must preserve the WP-05/WP-06 split"
             ));
         }
         Ok(())
@@ -556,7 +555,7 @@ impl RuntimeV2StandingNegativeCases {
     pub fn prototype() -> Self {
         Self {
             schema_version: RUNTIME_V2_STANDING_NEGATIVE_CASES_SCHEMA.to_string(),
-            proof_id: "standing-negative-cases-v0-90-3".to_string(),
+            proof_id: "citizen-standing-negative-cases-v0-91-1-wp-05".to_string(),
             demo_id: "D10".to_string(),
             policy_ref: RUNTIME_V2_STANDING_POLICY_PATH.to_string(),
             event_packet_ref: RUNTIME_V2_STANDING_EVENT_PACKET_PATH.to_string(),
@@ -587,7 +586,7 @@ impl RuntimeV2StandingNegativeCases {
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_standing -- --nocapture"
                     .to_string(),
             claim_boundary:
-                "Negative cases cover WP-11 standing and communication only; WP-12 owns complete access-control proof."
+                "Negative cases cover WP-05 standing denials only; WP-06 owns citizen-state validation, projection, and overexposure proof."
                     .to_string(),
         }
     }
@@ -631,9 +630,9 @@ impl RuntimeV2StandingNegativeCases {
                 "standing negative cases validation command must target focused tests"
             ));
         }
-        if !self.claim_boundary.contains("WP-11") || !self.claim_boundary.contains("WP-12") {
+        if !self.claim_boundary.contains("WP-05") || !self.claim_boundary.contains("WP-06") {
             return Err(anyhow!(
-                "standing negative cases must preserve the WP-12 access-control boundary"
+                "standing negative cases must preserve the WP-05/WP-06 boundary"
             ));
         }
         Ok(())
@@ -1150,7 +1149,7 @@ fn validate_expected_negative_cases(cases: &[RuntimeV2StandingNegativeCase]) -> 
     ];
     if cases.len() != expected.len() {
         return Err(anyhow!(
-            "standing negative cases must include the required WP-11 cases"
+            "standing negative cases must include the required WP-05 cases"
         ));
     }
     for (case, (expected_id, expected_error)) in cases.iter().zip(expected) {
