@@ -46,7 +46,7 @@ productize, publish, and maintain.
 | WP-12 | General intelligence paper packet | docs | claim, citation, and review packet | WP-11 |
 | WP-13 | Rustdoc and doc cleanup | docs | rustdoc/doc cleanup patches and report | WP-05 |
 | WP-14 | Workflow guardrails hardening | tools | main-write, watcher, and safe-report guardrails | WP-04, WP-05 |
-| WP-15 | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-02-WP-14 |
+| WP-15 | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14 |
 | WP-16 | Coverage / quality gate | quality | validation posture and test/coverage record | WP-15 |
 | WP-17 | Docs + review pass | docs | review-ready docs package | WP-16 |
 | WP-18 | Internal review | review | internal review record | WP-17 |

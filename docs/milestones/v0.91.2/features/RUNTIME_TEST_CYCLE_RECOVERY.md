@@ -5,7 +5,7 @@
 - Feature Name: Runtime/Test-Cycle Recovery And Coverage Ergonomics
 - Milestone Target: `v0.91.2`
 - Status: planned
-- Planned WP Home: WP-04 and WP-05
+- Planned WP Home: WP-04, WP-05
 - Source Docs: `.adl/docs/TBD/tools/RUNTIME_V2_TEST_CYCLE_RECOVERY_PLAN.md`; `.adl/docs/TBD/v0.90.5_TEST_RUNTIME_REDUCTION_PLAN.md`
 - Proof Modes: CI evidence, tests, report
 

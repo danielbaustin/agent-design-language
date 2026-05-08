@@ -22,7 +22,7 @@ evaluation, productization, publication, and workflow-hardening wave.
 Required outputs:
 
 - Accepted milestone docs and issue wave.
-- Opened issue cards with STP, SIP, SPP, and SOR bundles.
+- Opened issue cards with STP, SIP, SPP, SRP, and SOR bundles.
 - Card validation record.
 
 Required validation:
@@ -223,3 +223,5 @@ Required validation:
 - Release tail follows the standard sequence.
 - Review findings are resolved or explicitly carried with owner, issue, and
   residual-risk statement.
+- WP-15 explicitly maps every implementation and docs/productization slice from
+  WP-02 through WP-14 to a proof row, fixture route, report, or named deferral.
