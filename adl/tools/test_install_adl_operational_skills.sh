@@ -186,4 +186,6 @@ if ADL_OPERATIONAL_SKILLS_INSTALL_MODE=bogus bash "${repo_root}/adl/tools/instal
   exit 1
 fi
 
+bash "${repo_root}/adl/tools/test_sprint_conductor_helpers.sh"
+
 echo "PASS test_install_adl_operational_skills"
