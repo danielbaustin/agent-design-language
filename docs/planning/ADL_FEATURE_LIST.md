@@ -163,7 +163,7 @@ ADL already provides a serious platform baseline:
 | CodeBuddy review showcase and architecture-document generation | Implemented baseline | `v0.90` repo-review, diagram, product-report, and architecture-doc skill/demo package | Productization completion target: `v0.91.2`; MVP completion target: `v0.95` |
 | Coverage ratchet, test tracker, and quality tracking | Implemented baseline | `v0.90` coverage/test tracker updates and quality-gate docs | Runtime/test-cycle recovery target: `v0.91.2`; MVP quality target: `v0.95` |
 | Rust refactoring tracker and evidence-driven maintenance | Implemented baseline | `v0.90` refactoring tracker, ADR remediation, and follow-on maintenance planning | Rustdoc/tooling cleanup target: `v0.91.2`; MVP hardening target: `v0.95` |
-| Milestone compression and repo visibility prototypes | Implemented baseline | `v0.90` compression and repo-visibility docs/proofs | Repo-visibility completion target: `v0.95` |
+| Milestone compression and repo visibility prototypes | Implemented baseline | `v0.90` compression and repo-visibility docs/proofs | Repo-visibility follow-on target: `v0.91.2`; fuller repo-cognition convergence target: `v0.95` |
 | HTML milestone dashboard and compression reporting | MVP-scoped | backlog item and milestone-compression planning surfaces | Dashboard/compression completion target: `v0.95` |
 | Runtime v2 foundation prototype | Implemented baseline | `v0.90.1` feature contracts, Runtime v2 WPs, integrated demo, and proof packet | Foundation complete; hardened by `v0.90.2` |
 | CSM Observatory visibility and operator-report surfaces | Implemented baseline | visibility packet, static console, operator report, CLI bundle, command packet design, v0.90.2 operator report integration, v0.90.3 redacted projections, multimode UI architecture, and inhabited flagship demo | Active agent surface completion target: `v0.91.1` |
@@ -190,6 +190,7 @@ ADL already provides a serious platform baseline:
 | UTS + ACC multi-model benchmark and provider-native tool-call comparison | Planned | v0.91.2 benchmark and demo planning docs | `v0.91.2` |
 | Runtime/test-cycle recovery and coverage ergonomics | Planned | v0.91.2 quality/recovery planning docs | `v0.91.2` |
 | Google Workspace CMS bridge and Rust-native adapter boundary | Planned | v0.91.2 GWS CMS bridge planning docs | `v0.91.2` |
+| Generic speculative decoding runtime acceleration | Planned | `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md` and `docs/milestones/v0.91.2/features/SPECULATIVE_DECODING_PROTOTYPE.md` | `v0.91.2` bounded evaluation lane |
 | Publication packet program, GHB paper lane, and general-intelligence paper packet | Planned | v0.91.2 publication and general-intelligence packet planning docs plus GHB idea lineage | `v0.91.2` |
 | Rustdoc/doc cleanup and workflow guardrails | Planned | v0.91.2 doc cleanup and workflow guardrail planning docs | `v0.91.2` |
 | ACP / cognitive profiles runtime surface | Planned | local backlog and v0.92 cognitive-profile planning source | `v0.92` |
