@@ -935,14 +935,10 @@ fn validate_authority_rule(rule: &RuntimeV2AccessAuthorityRule) -> Result<()> {
         ));
     }
     if rule.raw_private_state_allowed {
-        return Err(anyhow!(
-            "access matrix must not grant raw private state"
-        ));
+        return Err(anyhow!("access matrix must not grant raw private state"));
     }
     if rule.continuity_mutation_allowed {
-        return Err(anyhow!(
-            "access matrix must not grant continuity mutation"
-        ));
+        return Err(anyhow!("access matrix must not grant continuity mutation"));
     }
     if rule.allowed_standing_classes.is_empty() && rule.denied_standing_classes.is_empty() {
         return Err(anyhow!(
