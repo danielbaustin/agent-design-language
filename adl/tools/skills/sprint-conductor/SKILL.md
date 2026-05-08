@@ -66,7 +66,8 @@ Within this bundle, the operational details live in:
 ## Entry Conditions
 
 Use this skill when all of the following are true:
-- there is one concrete sprint-management issue
+- there is one concrete sprint-management issue, or sprint policy explicitly
+  allows the skill to create the missing sprint-management issue first
 - the sprint has an explicit ordered list of issue numbers
 - the operator wants slow-path sequential execution rather than manual
   issue-by-issue orchestration
@@ -84,7 +85,7 @@ Do not use this skill for:
 
 At minimum, gather:
 - `repo_root`
-- `sprint.issue_number`
+- `sprint.issue_number` when it already exists
 - `sprint.ordered_issue_numbers`
 - `sprint.goal`
 - one explicit policy block
@@ -102,11 +103,14 @@ Useful additional inputs:
 - `resume_from_state_path`
 
 If there is no concrete sprint issue or ordered issue list, stop and report
-`blocked`.
+`blocked`, unless sprint policy explicitly allows the skill to create the
+missing sprint-management issue first.
 
 ## Quick Start
 
-1. Resolve the concrete sprint issue and ordered child issue list.
+1. Resolve the concrete sprint issue and ordered child issue list. If the sprint
+   issue is missing and policy allows creation, create it through the bundled
+   helper first.
 2. Create or load the sprint-state artifact.
 3. Confirm the current issue is the earliest not-yet-closed issue in the list.
 4. Route that issue through `workflow-conductor`.
@@ -126,10 +130,15 @@ This skill enforces:
 - editor-skill routing when cards drift
 - immediate stop on blocker
 - no silent creation of extra sprint-management issues
+- no missing sprint-management issue workaround outside the skill when sprint
+  policy allows the skill to create it directly
 - resumable per-issue state with PR URLs and artifact links when available
 - no sprint-state advancement without a fresh matched live GitHub truth check
 
 Preferred per-issue routing model:
+- missing sprint-management issue and policy allows creation ->
+  `create_missing_sprint_issue.py`, then continue with the ordered child issue
+  flow from the created sprint anchor
 - bootstrap missing -> `pr-init`
 - card-local STP issue -> `stp-editor`
 - card-local SIP issue -> `sip-editor`

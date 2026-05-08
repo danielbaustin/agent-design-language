@@ -60,6 +60,7 @@ assert_skill_bundle() {
   [[ -x "${root}/skills/diagram-author/scripts/render_diagrams.sh" ]]
   [[ -f "${root}/skills/spp-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sprint-conductor/SKILL.md" ]]
+  [[ -x "${root}/skills/sprint-conductor/scripts/create_missing_sprint_issue.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/update_sprint_state.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/check_sprint_truth.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/validate_review_subagent_policy.py" ]]
