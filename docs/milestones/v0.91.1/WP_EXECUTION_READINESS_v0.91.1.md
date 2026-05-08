@@ -2,9 +2,10 @@
 
 ## Purpose
 
-This document is the candidate card-authoring source for the v0.91.1
-inhabited-runtime readiness wave. It should be reviewed and tightened before
-issues are opened.
+This document is the card-authoring source for the v0.91.1 inhabited-runtime
+readiness wave. WP-01 / #2823 opened the milestone, and WP-02 through WP-24
+are now open as #2824 through #2846 with prepared STP, SIP, SPP, SRP, and SOR
+bundles.
 
 ## Global Execution Rules
 
@@ -31,7 +32,7 @@ Required outputs:
 
 Required validation:
 
-- Candidate issue wave matches the sprint and WBS.
+- Issue wave matches the sprint and WBS.
 - No WP has placeholder outputs, missing validation, or unclear non-goals.
 
 ## WP-02: Runtime And Polis Architecture Alignment

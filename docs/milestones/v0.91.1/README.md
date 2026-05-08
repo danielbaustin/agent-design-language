@@ -2,9 +2,10 @@
 
 ## Status
 
-First-pass planning package. v0.91.1 is not open for execution yet; the issue
-wave in this directory is the reviewable candidate shape that should become
-cards after v0.91 closes and the operator accepts the final scope.
+Active milestone execution package. v0.91.1 is open for execution through
+the complete issue wave: `WP-01` / `#2823` through `WP-24` / `#2846`.
+Every WP has a prepared STP, SIP, SPP, SRP, and SOR bundle before execution
+binding.
 
 ## Purpose
 
@@ -89,11 +90,13 @@ not import the broad provider-native benchmark planning surface.
 
 - WBS: [WBS_v0.91.1.md](WBS_v0.91.1.md)
 - Sprint plan: [SPRINT_v0.91.1.md](SPRINT_v0.91.1.md)
-- Candidate issue wave: [WP_ISSUE_WAVE_v0.91.1.yaml](WP_ISSUE_WAVE_v0.91.1.yaml)
+- Active issue wave: [WP_ISSUE_WAVE_v0.91.1.yaml](WP_ISSUE_WAVE_v0.91.1.yaml)
 - Execution readiness:
   [WP_EXECUTION_READINESS_v0.91.1.md](WP_EXECUTION_READINESS_v0.91.1.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.1.md](DEMO_MATRIX_v0.91.1.md)
 - Feature index: [features/README.md](features/README.md)
+- Card bundle readiness:
+  [CARD_BUNDLE_READINESS_v0.91.1.md](CARD_BUNDLE_READINESS_v0.91.1.md)
 
 ## Success Criteria
 
