@@ -11,6 +11,13 @@ bundles.
 
 - Implement substantial work products; do not close WPs with planning-only
   surfaces unless the WP is explicitly a design or review WP.
+- Treat "foundation" as "first implemented and validated slice", not as
+  permission to stop at planning, naming, or architecture prose. A foundation
+  WP must leave code, schemas, fixtures, demos, tests, review records, or
+  executable tooling that downstream WPs can actually consume.
+- Design, docs, review, and release-tail WPs must still produce concrete
+  reviewable artifacts, accepted records, validation output, or issue-graph
+  changes. They are not placeholders for future implementation.
 - Keep v0.92 identity and birthday claims downstream.
 - Keep external and cross-polis communication gated on TLS or mutual-TLS
   equivalent protection.

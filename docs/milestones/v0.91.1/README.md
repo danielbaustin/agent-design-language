@@ -49,6 +49,12 @@ v0.91.1 should establish:
 - Observatory-visible agent runtime proof that is concrete enough for human
   review.
 
+"Foundation" in this milestone means the first implemented, validated,
+downstream-consumable slice. A foundation WP is not complete if it only leaves
+planning prose behind; it must produce schemas, fixtures, tests, executable
+tooling, demo evidence, review records, or other durable work product that a
+later WP can use directly.
+
 ## Boundaries
 
 v0.91.1 should not claim:

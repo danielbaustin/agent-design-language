@@ -19,6 +19,8 @@ notes:
 - Agent lifecycle state determines whether an agent may receive, queue, reject,
   or invoke ACIP messages; ACIP must not bypass lifecycle, Freedom Gate, ACC, or
   trace checks.
+- WPs with "foundation" in the title still require implemented, validated,
+  downstream-consumable work products. They are not planning-only placeholders.
 - v0.92 owns the first true birthday; v0.91.1 prepares evidence but must not
   claim birth.
 card_update_rule:
