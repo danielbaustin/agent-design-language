@@ -179,7 +179,8 @@ fn runtime_v2_agent_lifecycle_validation_rejects_state_or_fixture_drift() {
 }
 
 #[test]
-fn runtime_v2_agent_lifecycle_state_contract_registry_accessors_cover_runtime_v2_contracts_module() {
+fn runtime_v2_agent_lifecycle_state_contract_registry_accessors_cover_runtime_v2_contracts_module()
+{
     runtime_v2_contract_schema_contract().expect("contract schema");
     runtime_v2_manifold_contract().expect("manifold");
     runtime_v2_kernel_loop_contract().expect("kernel loop");
