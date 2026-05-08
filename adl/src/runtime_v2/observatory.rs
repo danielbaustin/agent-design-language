@@ -15,6 +15,10 @@ use super::*;
 pub const RUNTIME_V2_CSM_OBSERVATORY_PACKET_PATH: &str =
     "runtime_v2/observatory/visibility_packet.json";
 pub const RUNTIME_V2_CSM_OPERATOR_REPORT_PATH: &str = "runtime_v2/observatory/operator_report.md";
+pub const RUNTIME_V2_CSM_OBSERVATORY_ACTIVE_PACKET_ID: &str =
+    "runtime-v2-csm-observatory-active-packet-0001";
+pub const RUNTIME_V2_CSM_OBSERVATORY_ACTIVE_SURFACE_ID: &str =
+    "wp04-observatory-active-surface-0001";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RuntimeV2CsmObservatoryArtifacts {
@@ -29,17 +33,20 @@ impl RuntimeV2CsmObservatoryArtifacts {
         let run_packet = runtime_v2_csm_run_packet_contract()?;
         let boot_admission = runtime_v2_csm_boot_admission_contract()?;
         let wake_continuity = runtime_v2_csm_wake_continuity_contract()?;
-        Self::from_contracts(&run_packet, &boot_admission, &wake_continuity)
+        let lifecycle = runtime_v2_agent_lifecycle_state_contract()?;
+        Self::from_contracts(&run_packet, &boot_admission, &wake_continuity, &lifecycle)
     }
 
     pub fn from_contracts(
         run_packet: &RuntimeV2CsmRunPacketContract,
         boot_admission: &RuntimeV2CsmBootAdmissionArtifacts,
         wake_continuity: &RuntimeV2CsmWakeContinuityArtifacts,
+        lifecycle: &RuntimeV2AgentLifecycleArtifacts,
     ) -> Result<Self> {
         run_packet.validate()?;
         boot_admission.validate()?;
         wake_continuity.validate()?;
+        lifecycle.validate()?;
         if run_packet.manifold_id != boot_admission.boot_manifest.manifold_id
             || run_packet.manifold_id != wake_continuity.wake_continuity_proof.manifold_id
         {
@@ -47,9 +54,14 @@ impl RuntimeV2CsmObservatoryArtifacts {
                 "CSM Observatory inputs must share the same manifold id"
             ));
         }
+        validate_lifecycle_alignment_for_observatory(lifecycle, wake_continuity)?;
 
-        let visibility_packet =
-            runtime_v2_csm_visibility_packet(run_packet, boot_admission, wake_continuity)?;
+        let visibility_packet = runtime_v2_csm_visibility_packet(
+            run_packet,
+            boot_admission,
+            wake_continuity,
+            lifecycle,
+        )?;
         let operator_report_markdown = render_operator_report(&visibility_packet);
         let artifacts = Self {
             visibility_packet,
@@ -72,12 +84,12 @@ impl RuntimeV2CsmObservatoryArtifacts {
         )?;
         if self.visibility_packet_path != RUNTIME_V2_CSM_OBSERVATORY_PACKET_PATH {
             return Err(anyhow!(
-                "CSM Observatory visibility packet must use the WP-10 artifact path"
+                "CSM Observatory visibility packet must use the WP-04 artifact path"
             ));
         }
         if self.operator_report_path != RUNTIME_V2_CSM_OPERATOR_REPORT_PATH {
             return Err(anyhow!(
-                "CSM Observatory operator report must use the WP-10 artifact path"
+                "CSM Observatory operator report must use the WP-04 artifact path"
             ));
         }
         validate_visibility_packet(&self.visibility_packet)?;
@@ -113,7 +125,20 @@ fn runtime_v2_csm_visibility_packet(
     run_packet: &RuntimeV2CsmRunPacketContract,
     boot_admission: &RuntimeV2CsmBootAdmissionArtifacts,
     wake_continuity: &RuntimeV2CsmWakeContinuityArtifacts,
+    lifecycle: &RuntimeV2AgentLifecycleArtifacts,
 ) -> Result<Value> {
+    let active_state = lifecycle
+        .state_contract
+        .states
+        .iter()
+        .find(|state| state.state == "ACTIVE")
+        .ok_or_else(|| anyhow!("agent lifecycle contract must define ACTIVE"))?;
+    let quiescent_state = lifecycle
+        .state_contract
+        .states
+        .iter()
+        .find(|state| state.state == "QUIESCENT")
+        .ok_or_else(|| anyhow!("agent lifecycle contract must define QUIESCENT"))?;
     let trace_tail = wake_continuity
         .first_run_trace
         .iter()
@@ -139,6 +164,11 @@ fn runtime_v2_csm_visibility_packet(
                 .find(|receipt| receipt.citizen_id == entry.citizen_id)
                 .map(|receipt| receipt.can_execute_episodes)
                 .unwrap_or(false);
+            let reviewed_state = if executable {
+                active_state
+            } else {
+                quiescent_state
+            };
             let lifecycle_state = if wake_continuity
                 .wake_continuity_proof
                 .restored_active_citizens
@@ -153,14 +183,18 @@ fn runtime_v2_csm_visibility_packet(
                 "display_name": entry.display_name,
                 "role": entry.role,
                 "lifecycle_state": lifecycle_state,
+                "reviewed_lifecycle_state": reviewed_state.state,
+                "runtime_binding_state": reviewed_state.runtime_binding_state,
+                "observatory_visibility": reviewed_state.capabilities.observatory_visibility,
+                "lifecycle_contract_ref": lifecycle.state_contract.artifact_path,
                 "continuity_status": if lifecycle_state == "active" { "unique_successor_active_head" } else { "admitted_non_active_projection" },
                 "current_episode": if executable { "episode-0001" } else { "none" },
                 "resource_balance": {
                     "compute_units": if executable { 6 } else { 0 },
-                    "scarcity_note": "WP-10 reports the bounded first-run artifact truth; it does not allocate live resources."
+                    "scarcity_note": "WP-04 reports an active-surface projection from bounded first-run artifacts; it does not allocate live resources."
                 },
                 "recent_decisions": [{
-                    "decision_id": "wp10-observatory-continuity-0001",
+                    "decision_id": "wp04-observatory-active-surface-0001",
                     "decision": if executable { "allow" } else { "defer" },
                     "summary": if executable { "Citizen appears in the duplicate-safe wake proof." } else { "Citizen remains admitted but not the active awakened worker." },
                     "evidence_ref": wake_continuity.wake_continuity_proof.artifact_path
@@ -178,14 +212,14 @@ fn runtime_v2_csm_visibility_packet(
 
     let packet = json!({
         "schema": VISIBILITY_PACKET_SCHEMA,
-        "packet_id": "runtime-v2-csm-observatory-packet-0001",
+        "packet_id": RUNTIME_V2_CSM_OBSERVATORY_ACTIVE_PACKET_ID,
         "generated_at": "2026-04-20T00:00:00Z",
         "source": {
             "mode": "fixture",
             "evidence_level": "artifact_backed_fixture",
             "fixture": true,
             "runtime_artifact_root": "runtime_v2",
-            "claim_boundary": "Artifact-backed fixture projection. This is not a live Runtime v2 capture, not a first true Godel-agent birthday, and not v0.92 identity rebinding.",
+            "claim_boundary": "Artifact-backed active-surface projection for WP-04. This packet projects active and quiescent runtime work from bounded artifacts without exposing private state. It is not a live Runtime v2 capture, not authority for state mutation, and not v0.92 identity rebinding.",
             "source_refs": [
                 run_packet.artifact_path,
                 boot_admission.boot_manifest.artifact_path,
@@ -194,13 +228,24 @@ fn runtime_v2_csm_visibility_packet(
                 wake_continuity.snapshot_rehydration.snapshot.snapshot_path,
                 wake_continuity.snapshot_rehydration.rehydration_report.report_path,
                 wake_continuity.wake_continuity_proof.artifact_path,
+                lifecycle.state_contract.artifact_path,
             ]
+        },
+        "active_surface": {
+            "surface_id": RUNTIME_V2_CSM_OBSERVATORY_ACTIVE_SURFACE_ID,
+            "projection_kind": "operator_visible_active_runtime_packet",
+            "lifecycle_contract_ref": lifecycle.state_contract.artifact_path,
+            "visibility_packet_path": RUNTIME_V2_CSM_OBSERVATORY_PACKET_PATH,
+            "operator_report_path": RUNTIME_V2_CSM_OPERATOR_REPORT_PATH,
+            "projection_determinism": "deterministic_for_identical_inputs",
+            "reviewer_public_redaction": "enforced",
+            "supported_audiences": ["operator", "reviewer", "public"]
         },
         "manifold": {
             "manifold_id": run_packet.manifold_id,
             "display_name": "Prototype CSM 01",
             "state": "wake_continuity_proved",
-            "lifecycle": "bounded_v0_90_2_first_run_projection",
+            "lifecycle": "wp04_active_surface_projection",
             "current_tick": 9,
             "uptime": "fixture_artifact_projection",
             "policy_profile": "runtime_v2_minimal_csm_run",
@@ -208,19 +253,21 @@ fn runtime_v2_csm_visibility_packet(
                 "state": "rehydrated",
                 "latest_snapshot_id": wake_continuity.snapshot_rehydration.snapshot.snapshot_id,
                 "rehydration_report_ref": wake_continuity.snapshot_rehydration.rehydration_report.report_path,
-                "note": "WP-09 wake continuity proof is linked before WP-10 operator visibility."
+                "note": "WP-03 lifecycle truth and wake continuity proof are linked before WP-04 operator visibility."
             },
             "health": {
-                "summary": "bounded first-run artifacts visible to operator review",
+                "summary": "bounded active-runtime artifacts visible through the WP-04 observatory surface",
                 "level": "nominal",
                 "attention_items": [
                     "operator report is generated from the same visibility packet",
+                    "WP-03 lifecycle truth constrains every active-surface projection",
                     "live execution and first true Godel-agent birthday remain non-claims"
                 ]
             },
             "evidence_refs": [
                 run_packet.artifact_path,
                 wake_continuity.wake_continuity_proof.artifact_path,
+                lifecycle.state_contract.artifact_path,
                 RUNTIME_V2_CSM_OBSERVATORY_PACKET_PATH
             ]
         },
@@ -338,14 +385,14 @@ fn runtime_v2_csm_visibility_packet(
         },
         "operator_actions": {
             "available_actions": [
-                {"action": "inspect_visibility_packet", "mode": "read_only", "status": "available_from_wp10_packet"},
-                {"action": "open_operator_report", "mode": "read_only", "status": "available_from_wp10_report"},
+                {"action": "inspect_visibility_packet", "mode": "read_only", "status": "available_from_wp04_active_packet"},
+                {"action": "open_operator_report", "mode": "read_only", "status": "available_from_wp04_active_report"},
                 {"action": "inspect_wake_continuity_proof", "mode": "read_only", "status": "available_from_wp09_proof"}
             ],
             "disabled_actions": [
                 {
                     "action": "promote_to_live_birthday",
-                    "reason": "WP-10 does not claim first true Godel-agent birth.",
+                    "reason": "WP-04 does not claim first true Godel-agent birth.",
                     "future_issue": 2258
                 },
                 {
@@ -366,6 +413,7 @@ fn runtime_v2_csm_visibility_packet(
             "primary_artifacts": [
                 RUNTIME_V2_CSM_OBSERVATORY_PACKET_PATH,
                 RUNTIME_V2_CSM_OPERATOR_REPORT_PATH,
+                lifecycle.state_contract.artifact_path,
                 wake_continuity.wake_continuity_proof.artifact_path,
                 wake_continuity.first_run_trace_path
             ],
@@ -378,8 +426,9 @@ fn runtime_v2_csm_visibility_packet(
             ],
             "demo_classification": "fixture_backed",
             "caveats": [
-                "This packet is artifact-backed fixture evidence and does not prove a live CSM run.",
+                "This packet is artifact-backed active-surface evidence and does not prove a live CSM run.",
                 "The operator report is generated from this packet and must not claim more than the packet.",
+                "WP-03 lifecycle truth is linked explicitly; public and reviewer views remain redacted.",
                 "Citizen identity remains provisional and does not claim v0.92 rebinding semantics.",
                 "This is not the first true Godel-agent birthday."
             ],
@@ -396,11 +445,62 @@ fn runtime_v2_csm_visibility_packet(
     Ok(packet)
 }
 
+fn validate_lifecycle_alignment_for_observatory(
+    lifecycle: &RuntimeV2AgentLifecycleArtifacts,
+    wake_continuity: &RuntimeV2CsmWakeContinuityArtifacts,
+) -> Result<()> {
+    let active_state = lifecycle
+        .state_contract
+        .states
+        .iter()
+        .find(|state| state.state == "ACTIVE")
+        .ok_or_else(|| anyhow!("agent lifecycle contract must define ACTIVE"))?;
+    let quiescent_state = lifecycle
+        .state_contract
+        .states
+        .iter()
+        .find(|state| state.state == "QUIESCENT")
+        .ok_or_else(|| anyhow!("agent lifecycle contract must define QUIESCENT"))?;
+    if lifecycle.state_contract.artifact_path != RUNTIME_V2_AGENT_LIFECYCLE_STATE_CONTRACT_PATH {
+        return Err(anyhow!(
+            "CSM Observatory lifecycle contract must use the canonical WP-03 artifact path"
+        ));
+    }
+    if lifecycle.state_contract.wp_id != "WP-03" || lifecycle.state_contract.demo_id != "D3" {
+        return Err(anyhow!(
+            "CSM Observatory lifecycle input must remain bound to the reviewed WP-03 lifecycle contract"
+        ));
+    }
+    if active_state.runtime_binding_state != "active"
+        || active_state.capabilities.observatory_visibility != "projection_safe"
+        || !active_state
+            .required_evidence_refs
+            .contains(&wake_continuity.first_run_trace_path)
+    {
+        return Err(anyhow!(
+            "CSM Observatory ACTIVE lifecycle linkage must remain aligned with wake continuity proof inputs"
+        ));
+    }
+    if quiescent_state.runtime_binding_state != "paused"
+        || quiescent_state.capabilities.observatory_visibility != "projection_safe"
+        || !quiescent_state
+            .required_evidence_refs
+            .contains(&RUNTIME_V2_CSM_OBSERVATORY_PACKET_PATH.to_string())
+    {
+        return Err(anyhow!(
+            "CSM Observatory QUIESCENT lifecycle linkage must remain aligned with the reviewed observatory projection contract"
+        ));
+    }
+    Ok(())
+}
+
 fn validate_runtime_v2_observatory_packet(packet: &Value) -> Result<()> {
     if packet.pointer("/packet_id").and_then(Value::as_str)
-        != Some("runtime-v2-csm-observatory-packet-0001")
+        != Some(RUNTIME_V2_CSM_OBSERVATORY_ACTIVE_PACKET_ID)
     {
-        return Err(anyhow!("CSM Observatory packet id is not the WP-10 packet"));
+        return Err(anyhow!(
+            "CSM Observatory packet id is not the WP-04 active packet"
+        ));
     }
     if packet
         .pointer("/manifold/manifold_id")
@@ -408,6 +508,33 @@ fn validate_runtime_v2_observatory_packet(packet: &Value) -> Result<()> {
         != Some("proto-csm-01")
     {
         return Err(anyhow!("CSM Observatory packet must target proto-csm-01"));
+    }
+    if packet
+        .pointer("/active_surface/surface_id")
+        .and_then(Value::as_str)
+        != Some(RUNTIME_V2_CSM_OBSERVATORY_ACTIVE_SURFACE_ID)
+    {
+        return Err(anyhow!(
+            "CSM Observatory packet must expose the WP-04 active-surface identity"
+        ));
+    }
+    if packet
+        .pointer("/active_surface/lifecycle_contract_ref")
+        .and_then(Value::as_str)
+        != Some(RUNTIME_V2_AGENT_LIFECYCLE_STATE_CONTRACT_PATH)
+    {
+        return Err(anyhow!(
+            "CSM Observatory packet must link to the WP-03 lifecycle contract"
+        ));
+    }
+    if packet
+        .pointer("/active_surface/projection_determinism")
+        .and_then(Value::as_str)
+        != Some("deterministic_for_identical_inputs")
+    {
+        return Err(anyhow!(
+            "CSM Observatory active surface must declare deterministic projection"
+        ));
     }
     if packet
         .pointer("/kernel/pulse/completed_through_event_sequence")
@@ -436,6 +563,7 @@ fn validate_runtime_v2_observatory_packet(packet: &Value) -> Result<()> {
         "runtime_v2/csm_run/boot_manifest.json",
         "runtime_v2/csm_run/wake_continuity_proof.json",
         "runtime_v2/csm_run/first_run_trace.jsonl",
+        RUNTIME_V2_AGENT_LIFECYCLE_STATE_CONTRACT_PATH,
     ] {
         if !source_refs
             .iter()
@@ -453,6 +581,7 @@ fn validate_runtime_v2_observatory_packet(packet: &Value) -> Result<()> {
     for required in [
         RUNTIME_V2_CSM_OBSERVATORY_PACKET_PATH,
         RUNTIME_V2_CSM_OPERATOR_REPORT_PATH,
+        RUNTIME_V2_AGENT_LIFECYCLE_STATE_CONTRACT_PATH,
     ] {
         if !primary.iter().any(|value| value.as_str() == Some(required)) {
             return Err(anyhow!(
@@ -480,7 +609,9 @@ fn validate_operator_report_matches_packet(packet: &Value, report: &str) -> Resu
             .pointer("/source/claim_boundary")
             .and_then(Value::as_str)
             .unwrap_or_default(),
+        RUNTIME_V2_CSM_OBSERVATORY_ACTIVE_SURFACE_ID,
         "Counts: allow 1, defer 0, refuse 1.",
+        "runtime_v2/agent_lifecycle/state_contract.json",
         "runtime_v2/csm_run/wake_continuity_proof.json",
         "This is not the first true Godel-agent birthday.",
     ] {

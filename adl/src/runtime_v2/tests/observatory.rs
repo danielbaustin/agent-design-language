@@ -15,7 +15,15 @@ fn runtime_v2_csm_observatory_contract_is_stable() {
     );
     assert_eq!(
         artifacts.visibility_packet["packet_id"],
-        "runtime-v2-csm-observatory-packet-0001"
+        "runtime-v2-csm-observatory-active-packet-0001"
+    );
+    assert_eq!(
+        artifacts.visibility_packet["active_surface"]["surface_id"],
+        "wp04-observatory-active-surface-0001"
+    );
+    assert_eq!(
+        artifacts.visibility_packet["active_surface"]["lifecycle_contract_ref"],
+        "runtime_v2/agent_lifecycle/state_contract.json"
     );
     assert_eq!(
         artifacts.visibility_packet["review"]["demo_classification"],
@@ -42,7 +50,10 @@ fn runtime_v2_csm_observatory_contract_is_stable() {
         .contains("Counts: allow 1, defer 0, refuse 1."));
     assert!(artifacts
         .operator_report_markdown
-        .contains("This is not the first true Godel-agent birthday."));
+        .contains("wp04-observatory-active-surface-0001"));
+    assert!(artifacts
+        .operator_report_markdown
+        .contains("runtime_v2/agent_lifecycle/state_contract.json"));
 }
 
 #[cfg(feature = "slow-proof-tests")]
@@ -66,7 +77,7 @@ fn runtime_v2_csm_observatory_writes_without_path_leakage() {
     assert!(!report_text.contains(temp_root_text.as_ref()));
     assert!(packet_text.contains("\"schema\": \"adl.csm_visibility_packet.v1\""));
     assert!(packet_text.contains("runtime_v2/csm_run/wake_continuity_proof.json"));
-    assert!(report_text.contains("runtime-v2-csm-observatory-packet-0001"));
+    assert!(report_text.contains("runtime-v2-csm-observatory-active-packet-0001"));
 
     fs::remove_dir_all(temp_root).ok();
 }
@@ -122,6 +133,15 @@ fn runtime_v2_csm_observatory_validation_rejects_unsafe_or_ambiguous_state() {
         .contains("source ref"));
 
     let mut artifacts = runtime_v2_csm_observatory_contract().expect("observatory artifacts");
+    artifacts.visibility_packet["active_surface"]["lifecycle_contract_ref"] =
+        serde_json::json!("runtime_v2/agent_lifecycle/state_contract.v0.json");
+    assert!(artifacts
+        .validate()
+        .expect_err("lifecycle linkage drift should fail")
+        .to_string()
+        .contains("WP-03 lifecycle contract"));
+
+    let mut artifacts = runtime_v2_csm_observatory_contract().expect("observatory artifacts");
     artifacts.operator_report_markdown = artifacts.operator_report_markdown.replace(
         "Counts: allow 1, defer 0, refuse 1.",
         "Counts: allow 0, defer 0, refuse 0.",
@@ -131,4 +151,22 @@ fn runtime_v2_csm_observatory_validation_rejects_unsafe_or_ambiguous_state() {
         .expect_err("report drift should fail")
         .to_string()
         .contains("operator report"));
+
+    let run_packet = runtime_v2_csm_run_packet_contract().expect("run packet");
+    let boot_admission = runtime_v2_csm_boot_admission_contract().expect("boot admission");
+    let mut wake_continuity = runtime_v2_csm_wake_continuity_contract().expect("wake continuity");
+    let lifecycle = runtime_v2_agent_lifecycle_state_contract().expect("lifecycle");
+    wake_continuity.first_run_trace_path =
+        "runtime_v2/csm_run/alternate_first_run_trace.jsonl".to_string();
+    wake_continuity.wake_continuity_proof.source_trace_ref =
+        wake_continuity.first_run_trace_path.clone();
+    assert!(RuntimeV2CsmObservatoryArtifacts::from_contracts(
+        &run_packet,
+        &boot_admission,
+        &wake_continuity,
+        &lifecycle
+    )
+    .expect_err("lifecycle linkage drift should fail")
+    .to_string()
+    .contains("ACTIVE lifecycle linkage"));
 }

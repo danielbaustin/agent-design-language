@@ -1,4 +1,18 @@
 {
+  "active_surface": {
+    "lifecycle_contract_ref": "runtime_v2/agent_lifecycle/state_contract.json",
+    "operator_report_path": "runtime_v2/observatory/operator_report.md",
+    "projection_determinism": "deterministic_for_identical_inputs",
+    "projection_kind": "operator_visible_active_runtime_packet",
+    "reviewer_public_redaction": "enforced",
+    "supported_audiences": [
+      "operator",
+      "reviewer",
+      "public"
+    ],
+    "surface_id": "wp04-observatory-active-surface-0001",
+    "visibility_packet_path": "runtime_v2/observatory/visibility_packet.json"
+  },
   "citizens": [
     {
       "alerts": [],
@@ -21,20 +35,24 @@
         "runtime_v2/citizens/proto-citizen-alpha.json",
         "runtime_v2/traces/admission/proto-citizen-alpha.json"
       ],
+      "lifecycle_contract_ref": "runtime_v2/agent_lifecycle/state_contract.json",
       "lifecycle_state": "active",
+      "observatory_visibility": "projection_safe",
       "recent_decisions": [
         {
           "decision": "allow",
-          "decision_id": "wp10-observatory-continuity-0001",
+          "decision_id": "wp04-observatory-active-surface-0001",
           "evidence_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
           "summary": "Citizen appears in the duplicate-safe wake proof."
         }
       ],
       "resource_balance": {
         "compute_units": 6,
-        "scarcity_note": "WP-10 reports the bounded first-run artifact truth; it does not allocate live resources."
+        "scarcity_note": "WP-04 reports an active-surface projection from bounded first-run artifacts; it does not allocate live resources."
       },
-      "role": "worker"
+      "reviewed_lifecycle_state": "ACTIVE",
+      "role": "worker",
+      "runtime_binding_state": "active"
     },
     {
       "alerts": [],
@@ -57,20 +75,24 @@
         "runtime_v2/citizens/proto-citizen-beta.json",
         "runtime_v2/traces/admission/proto-citizen-beta.json"
       ],
+      "lifecycle_contract_ref": "runtime_v2/agent_lifecycle/state_contract.json",
       "lifecycle_state": "paused",
+      "observatory_visibility": "projection_safe",
       "recent_decisions": [
         {
           "decision": "defer",
-          "decision_id": "wp10-observatory-continuity-0001",
+          "decision_id": "wp04-observatory-active-surface-0001",
           "evidence_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
           "summary": "Citizen remains admitted but not the active awakened worker."
         }
       ],
       "resource_balance": {
         "compute_units": 0,
-        "scarcity_note": "WP-10 reports the bounded first-run artifact truth; it does not allocate live resources."
+        "scarcity_note": "WP-04 reports an active-surface projection from bounded first-run artifacts; it does not allocate live resources."
       },
-      "role": "worker"
+      "reviewed_lifecycle_state": "QUIESCENT",
+      "role": "worker",
+      "runtime_binding_state": "paused"
     }
   ],
   "episodes": [
@@ -185,22 +207,24 @@
     "evidence_refs": [
       "runtime_v2/csm_run/run_packet_contract.json",
       "runtime_v2/csm_run/wake_continuity_proof.json",
+      "runtime_v2/agent_lifecycle/state_contract.json",
       "runtime_v2/observatory/visibility_packet.json"
     ],
     "health": {
       "attention_items": [
         "operator report is generated from the same visibility packet",
+        "WP-03 lifecycle truth constrains every active-surface projection",
         "live execution and first true Godel-agent birthday remain non-claims"
       ],
       "level": "nominal",
-      "summary": "bounded first-run artifacts visible to operator review"
+      "summary": "bounded active-runtime artifacts visible through the WP-04 observatory surface"
     },
-    "lifecycle": "bounded_v0_90_2_first_run_projection",
+    "lifecycle": "wp04_active_surface_projection",
     "manifold_id": "proto-csm-01",
     "policy_profile": "runtime_v2_minimal_csm_run",
     "snapshot_status": {
       "latest_snapshot_id": "snapshot-0001",
-      "note": "WP-09 wake continuity proof is linked before WP-10 operator visibility.",
+      "note": "WP-03 lifecycle truth and wake continuity proof are linked before WP-04 operator visibility.",
       "rehydration_report_ref": "runtime_v2/rehydration_report.json",
       "state": "rehydrated"
     },
@@ -212,12 +236,12 @@
       {
         "action": "inspect_visibility_packet",
         "mode": "read_only",
-        "status": "available_from_wp10_packet"
+        "status": "available_from_wp04_active_packet"
       },
       {
         "action": "open_operator_report",
         "mode": "read_only",
-        "status": "available_from_wp10_report"
+        "status": "available_from_wp04_active_report"
       },
       {
         "action": "inspect_wake_continuity_proof",
@@ -229,7 +253,7 @@
       {
         "action": "promote_to_live_birthday",
         "future_issue": 2258,
-        "reason": "WP-10 does not claim first true Godel-agent birth."
+        "reason": "WP-04 does not claim first true Godel-agent birth."
       },
       {
         "action": "perform_identity_rebinding",
@@ -245,7 +269,7 @@
       "No operator action mutates Runtime v2 state from this packet."
     ]
   },
-  "packet_id": "runtime-v2-csm-observatory-packet-0001",
+  "packet_id": "runtime-v2-csm-observatory-active-packet-0001",
   "resources": {
     "compute_units": {
       "allocated": 640,
@@ -267,8 +291,9 @@
   },
   "review": {
     "caveats": [
-      "This packet is artifact-backed fixture evidence and does not prove a live CSM run.",
+      "This packet is artifact-backed active-surface evidence and does not prove a live CSM run.",
       "The operator report is generated from this packet and must not claim more than the packet.",
+      "WP-03 lifecycle truth is linked explicitly; public and reviewer views remain redacted.",
       "Citizen identity remains provisional and does not claim v0.92 rebinding semantics.",
       "This is not the first true Godel-agent birthday."
     ],
@@ -305,13 +330,14 @@
     "primary_artifacts": [
       "runtime_v2/observatory/visibility_packet.json",
       "runtime_v2/observatory/operator_report.md",
+      "runtime_v2/agent_lifecycle/state_contract.json",
       "runtime_v2/csm_run/wake_continuity_proof.json",
       "runtime_v2/csm_run/first_run_trace.jsonl"
     ]
   },
   "schema": "adl.csm_visibility_packet.v1",
   "source": {
-    "claim_boundary": "Artifact-backed fixture projection. This is not a live Runtime v2 capture, not a first true Godel-agent birthday, and not v0.92 identity rebinding.",
+    "claim_boundary": "Artifact-backed active-surface projection for WP-04. This packet projects active and quiescent runtime work from bounded artifacts without exposing private state. It is not a live Runtime v2 capture, not authority for state mutation, and not v0.92 identity rebinding.",
     "evidence_level": "artifact_backed_fixture",
     "fixture": true,
     "mode": "fixture",
@@ -323,7 +349,8 @@
       "runtime_v2/csm_run/first_run_trace.jsonl",
       "runtime_v2/snapshots/snapshot-0001.json",
       "runtime_v2/rehydration_report.json",
-      "runtime_v2/csm_run/wake_continuity_proof.json"
+      "runtime_v2/csm_run/wake_continuity_proof.json",
+      "runtime_v2/agent_lifecycle/state_contract.json"
     ]
   },
   "trace": {

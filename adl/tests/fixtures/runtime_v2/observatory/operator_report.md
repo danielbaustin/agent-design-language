@@ -3,22 +3,24 @@
 ## Report Identity
 | Field | Value |
 | --- | --- |
-| Packet | runtime-v2-csm-observatory-packet-0001 |
+| Packet | runtime-v2-csm-observatory-active-packet-0001 |
 | Schema | adl.csm_visibility_packet.v1 |
+| Active surface | wp04-observatory-active-surface-0001 |
 | Generated | 2026-04-20T00:00:00Z |
 | Source mode | fixture |
 | Evidence level | artifact_backed_fixture |
 | Demo classification | fixture_backed |
 
 ## Operator Summary
-The manifold is wake_continuity_proved at tick 9. The kernel pulse is bounded_run_projected through event sequence 9. Current evidence is artifact_backed_fixture; claim boundary: Artifact-backed fixture projection. This is not a live Runtime v2 capture, not a first true Godel-agent birthday, and not v0.92 identity rebinding.
+The manifold is wake_continuity_proved at tick 9. The kernel pulse is bounded_run_projected through event sequence 9. Current evidence is artifact_backed_fixture; claim boundary: Artifact-backed active-surface projection for WP-04. This packet projects active and quiescent runtime work from bounded artifacts without exposing private state. It is not a live Runtime v2 capture, not authority for state mutation, and not v0.92 identity rebinding.
 
 ## Attention Items
 - Prototype Citizen Beta is paused, not active; continuity is admitted_non_active_projection.
 - Live execution and first true Godel-agent birthday remain non-claims
 - Operator action perform_identity_rebinding remains disabled: v0.92 identity and capability rebinding is explicitly out of scope. Future issue: #2258.
-- Operator action promote_to_live_birthday remains disabled: WP-10 does not claim first true Godel-agent birth. Future issue: #2258.
+- Operator action promote_to_live_birthday remains disabled: WP-04 does not claim first true Godel-agent birth. Future issue: #2258.
 - Operator report is generated from the same visibility packet
+- WP-03 lifecycle truth constrains every active-surface projection
 
 ## Citizens
 | Citizen | State | Continuity | Episode | Capability |
@@ -43,12 +45,12 @@ Counts: allow 1, defer 0, refuse 1.
 
 ## Operator Action Boundary
 Available read-only actions:
-- inspect_visibility_packet: available_from_wp10_packet
-- open_operator_report: available_from_wp10_report
+- inspect_visibility_packet: available_from_wp04_active_packet
+- open_operator_report: available_from_wp04_active_report
 - inspect_wake_continuity_proof: available_from_wp09_proof
 
 Disabled mutation actions:
-- promote_to_live_birthday: WP-10 does not claim first true Godel-agent birth.
+- promote_to_live_birthday: WP-04 does not claim first true Godel-agent birth.
 - perform_identity_rebinding: v0.92 identity and capability rebinding is explicitly out of scope.
 
 ## Evidence And Caveats
@@ -60,15 +62,16 @@ Primary evidence references:
 - runtime_v2/snapshots/snapshot-0001.json
 - runtime_v2/rehydration_report.json
 - runtime_v2/csm_run/wake_continuity_proof.json
+- runtime_v2/agent_lifecycle/state_contract.json
 - runtime_v2/observatory/visibility_packet.json
 - runtime_v2/observatory/operator_report.md
 
 Caveats:
-- This packet is artifact-backed fixture evidence and does not prove a live CSM run.
+- This packet is artifact-backed active-surface evidence and does not prove a live CSM run.
 - The operator report is generated from this packet and must not claim more than the packet.
+- WP-03 lifecycle truth is linked explicitly; public and reviewer views remain redacted.
 - Citizen identity remains provisional and does not claim v0.92 rebinding semantics.
 - This is not the first true Godel-agent birthday.
 
 ## Reviewer Use
 This report is a proof surface for the packet-to-operator-report path. It is useful for reviewing visibility semantics, attention routing, claim boundaries, and evidence coverage without opening the HTML console.
-
