@@ -157,6 +157,7 @@ pub fn validate_visibility_packet(packet: &Value) -> Result<()> {
     validate_invariants(packet)?;
     validate_operator_actions(packet)?;
     validate_review(packet)?;
+    validate_runtime_v2_active_surface(packet)?;
     validate_refs_and_leakage(packet)?;
     Ok(())
 }
@@ -212,6 +213,46 @@ fn validate_source(packet: &Value) -> Result<()> {
         {
             bail!("fixture CSM Observatory packets must be classified as fixture_backed");
         }
+    }
+    Ok(())
+}
+
+fn validate_runtime_v2_active_surface(packet: &Value) -> Result<()> {
+    let source_refs = packet
+        .pointer("/source/source_refs")
+        .and_then(Value::as_array)
+        .map(|refs| refs.iter().filter_map(Value::as_str).collect::<Vec<_>>())
+        .unwrap_or_default();
+    let requires_active_surface = packet
+        .pointer("/packet_id")
+        .and_then(Value::as_str)
+        .map(|id| id.starts_with("runtime-v2-csm-observatory-active-"))
+        .unwrap_or(false)
+        || source_refs.contains(&"runtime_v2/agent_lifecycle/state_contract.json");
+    if !requires_active_surface {
+        return Ok(());
+    }
+    require_section_fields(
+        packet,
+        "/active_surface",
+        "active_surface",
+        &[
+            "surface_id",
+            "projection_kind",
+            "lifecycle_contract_ref",
+            "visibility_packet_path",
+            "operator_report_path",
+            "projection_determinism",
+            "reviewer_public_redaction",
+            "supported_audiences",
+        ],
+    )?;
+    if packet
+        .pointer("/active_surface/lifecycle_contract_ref")
+        .and_then(Value::as_str)
+        != Some("runtime_v2/agent_lifecycle/state_contract.json")
+    {
+        bail!("runtime-v2 active Observatory packets must link the WP-03 lifecycle contract");
     }
     Ok(())
 }
@@ -637,6 +678,12 @@ pub fn render_operator_report(packet: &Value) -> String {
     lines.push(table_row(&["---", "---"]));
     lines.push(table_row(&["Packet", &str_at(packet, "/packet_id")]));
     lines.push(table_row(&["Schema", &str_at(packet, "/schema")]));
+    if let Some(surface_id) = packet
+        .pointer("/active_surface/surface_id")
+        .and_then(Value::as_str)
+    {
+        lines.push(table_row(&["Active surface", surface_id]));
+    }
     lines.push(table_row(&["Generated", &str_at(packet, "/generated_at")]));
     lines.push(table_row(&["Source mode", &str_at(source, "/mode")]));
     lines.push(table_row(&[
@@ -960,5 +1007,33 @@ mod tests {
         assert!(report.contains(
             "This packet is a fixture-backed contract and does not prove a live CSM run."
         ));
+    }
+
+    #[test]
+    fn runtime_v2_active_surface_packet_requires_active_surface_block() {
+        let mut packet = crate::runtime_v2::runtime_v2_csm_observatory_contract()
+            .expect("runtime packet")
+            .visibility_packet;
+        packet
+            .as_object_mut()
+            .expect("packet object")
+            .remove("active_surface");
+        let temp_root = std::env::temp_dir().join(format!(
+            "adl-observatory-active-surface-{}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&temp_root).expect("temp root");
+        let packet_path = temp_root.join("packet.json");
+        fs::write(
+            &packet_path,
+            serde_json::to_string_pretty(&packet).expect("json") + "\n",
+        )
+        .expect("write packet");
+        assert!(load_visibility_packet(&packet_path)
+            .expect_err("missing active surface should fail")
+            .to_string()
+            .contains("active_surface"));
+        fs::remove_file(packet_path).ok();
+        fs::remove_dir_all(temp_root).ok();
     }
 }

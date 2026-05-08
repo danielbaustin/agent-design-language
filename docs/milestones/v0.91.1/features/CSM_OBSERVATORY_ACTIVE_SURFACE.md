@@ -4,7 +4,7 @@
 
 - Feature Name: CSM Observatory Active Surface
 - Milestone Target: `v0.91.1`
-- Status: planned
+- Status: landed
 - Planned WP Home: WP-04
 - Source Docs: `.adl/docs/TBD/csm_observatory/`
 - Proof Modes: demo, fixtures, review
@@ -37,3 +37,11 @@ Out of scope:
 - Redaction rules are explicit and testable.
 - Operator-visible output distinguishes proof evidence from private data.
 - The flagship demo can cite Observatory artifacts as proof surfaces.
+
+## Landed Surfaces
+
+- Runtime contract and validators in `adl/src/runtime_v2/observatory.rs`.
+- Operator-report rendering compatibility in `adl/src/csm_observatory.rs`.
+- Focused regression coverage in `adl/src/runtime_v2/tests/observatory.rs`.
+- Golden observatory packet and report fixtures in
+  `adl/tests/fixtures/runtime_v2/observatory/`.
