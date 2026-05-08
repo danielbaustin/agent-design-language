@@ -25,6 +25,7 @@ admission:
       - "require_existing_issue_skills"
       - "require_editor_skills"
       - "require_code_review"
+      - "allow_create_missing_sprint_issue"
       - "allow_review_subagent_exception"
       - "max_review_subagents_when_exception_enabled"
       - "require_github_truth_recheck"
@@ -35,12 +36,10 @@ admission:
     mode_requirements:
       run_sprint_slow_path:
         required_sprint_fields:
-          - "issue_number"
           - "ordered_issue_numbers"
           - "goal"
       resume_sprint_slow_path:
         required_sprint_fields:
-          - "issue_number"
           - "ordered_issue_numbers"
       review_and_closeout_sprint:
         required_sprint_fields:
@@ -52,9 +51,9 @@ admission:
     - "review_and_closeout"
   required_inputs:
     - "repo_root"
-    - "sprint.issue_number"
     - "sprint.ordered_issue_numbers"
   optional_inputs:
+    - "sprint.issue_number"
     - "sprint.goal"
     - "sprint.version"
     - "sprint.slug"
@@ -70,7 +69,6 @@ admission:
     - "review_subagent_ids"
   stop_if_missing:
     - "repo_root"
-    - "sprint.issue_number"
     - "sprint.ordered_issue_numbers"
   prevalidation_rules:
     - "repo_root_must_be_absolute"
@@ -83,6 +81,7 @@ admission:
     - "policy.require_github_truth_recheck_must_be_true"
     - "policy.github_truth_gate_blocks_progress_must_be_true"
     - "policy.stop_on_blocker_must_be_true"
+    - "when_sprint.issue_number_is_missing_policy.allow_create_missing_sprint_issue_must_be_true_or_stop_blocked"
 execution:
   mode: "orchestrate_existing_skills_sequentially"
   allow_code_edits: true
@@ -90,6 +89,8 @@ execution:
   allow_subagents: true
   workflow_role: "sprint_orchestrator"
   preferred_commands:
+    - "python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <goal> --state <path>"
+    - "python3 adl/tools/skills/sprint-conductor/scripts/close_sprint_issue.py --state <path> --summary <text>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match"
     - "python3 adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py --state <path> --sprint-issue <n> --ordered-issues <csv>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/validate_review_subagent_policy.py --allow-review-subagent-exception <bool> --max-review-subagents 1"

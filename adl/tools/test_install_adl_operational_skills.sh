@@ -60,6 +60,8 @@ assert_skill_bundle() {
   [[ -x "${root}/skills/diagram-author/scripts/render_diagrams.sh" ]]
   [[ -f "${root}/skills/spp-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sprint-conductor/SKILL.md" ]]
+  [[ -x "${root}/skills/sprint-conductor/scripts/create_missing_sprint_issue.py" ]]
+  [[ -x "${root}/skills/sprint-conductor/scripts/close_sprint_issue.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/update_sprint_state.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/check_sprint_truth.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/validate_review_subagent_policy.py" ]]
@@ -183,5 +185,7 @@ if ADL_OPERATIONAL_SKILLS_INSTALL_MODE=bogus bash "${repo_root}/adl/tools/instal
   echo "expected invalid install mode to fail" >&2
   exit 1
 fi
+
+bash "${repo_root}/adl/tools/test_sprint_conductor_helpers.sh"
 
 echo "PASS test_install_adl_operational_skills"

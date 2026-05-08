@@ -12,7 +12,7 @@ No parallel child issue execution.
 ## Inputs
 
 Required:
-- one sprint-management issue
+- one sprint-management issue, or policy authority to let the skill create it
 - ordered child issue list
 - sprint goal
 - explicit policy block
@@ -27,20 +27,26 @@ Optional:
 ## Core Loop
 
 1. Load or create sprint-state.
-2. Re-check live GitHub truth for the current sprint-state and require a matched result before any sprint-state transition.
-3. Choose the earliest child issue in the ordered list that is not yet closed
+2. If the sprint-management issue is missing:
+   - create it through the bundled helper when policy allows, then continue
+   - otherwise stop and report `missing_sprint_issue`
+3. Re-check live GitHub truth for the current sprint-state and require a matched result before any sprint-state transition.
+4. Choose the earliest child issue in the ordered list that is not yet closed
    out.
-4. Route that child issue through `workflow-conductor`.
-5. Run only the selected downstream lifecycle or editor skill.
-6. Re-check issue truth.
-7. If the issue is not fully closed out, repeat the routing loop for the same
+5. Route that child issue through `workflow-conductor`.
+6. Run only the selected downstream lifecycle or editor skill.
+7. Re-check issue truth.
+8. If the issue is not fully closed out, repeat the routing loop for the same
    issue.
-8. If the issue is in a healthy PR-open waiting state, pause on that issue and
+9. If the issue is in a healthy PR-open waiting state, pause on that issue and
    surface `ask_operator` rather than re-driving execution or janitoring a
    non-blocked PR.
-9. If the issue is fully closed out, mark it complete in sprint-state and move
+10. If the issue is fully closed out, mark it complete in sprint-state and move
    to the next issue.
-10. If any blocker is encountered, stop and report the blocker in sprint-state.
+11. If any blocker is encountered, stop and report the blocker in sprint-state.
+
+Preferred missing-sprint-issue helper:
+- `python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <goal> --state <path>`
 
 Preferred live-truth helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match`
@@ -99,6 +105,7 @@ Record:
 - coverage snapshot
 - Rust tracker counts
 - next action
+- sprint-management issue closeout
 
 Preferred metrics sources:
 - coverage when a fresh local snapshot is required by sprint policy:
@@ -116,11 +123,17 @@ fresh local run, say so explicitly.
 `not_applicable` is also a normal outcome for docs-only, workflow-only,
 planning-only, or similarly light sprint surfaces.
 
+Final sprint-management issue closeout:
+- keep the sprint-management issue open until all child issues are closed out
+- keep it open until sprint review and sprint closeout are complete
+- close it last through the bundled helper:
+  - `python3 adl/tools/skills/sprint-conductor/scripts/close_sprint_issue.py --state <path> --summary <text>`
+
 ## Stop Conditions
 
 Stop when:
-- all ordered child issues are fully closed out and the sprint review/closeout
-  artifacts are written
+- all ordered child issues are fully closed out, the sprint review/closeout
+  artifacts are written, and the sprint-management issue is closed
 - a child issue blocks and the operator must decide how to proceed
 - sprint scope changes materially and requires operator approval
 
@@ -129,7 +142,7 @@ Stop when:
 Do not:
 - parallelize child issues
 - skip child issue closeout to save time
-- silently create additional sprint-management issues
+- silently create additional sprint-management issues when policy does not allow it
 - widen the sprint because nearby work looks tempting
 
 ## Standard-Path Guardrails

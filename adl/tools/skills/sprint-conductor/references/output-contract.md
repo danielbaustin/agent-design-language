@@ -3,7 +3,10 @@
 ```yaml
 status: done | waiting | blocked | failed
 sprint:
-  issue_number: <u32>
+  issue_number: <u32 or null>
+  issue_url: <url or null>
+  issue_created_by_skill: true | false
+  issue_closed: true | false
   goal: <string or null>
   ordered_issue_numbers:
     - <u32>
@@ -34,7 +37,7 @@ truth_check:
 current_state:
   selected_skill: workflow-conductor | pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis | none
   current_phase: intake | issue_loop | review | closeout | waiting | blocked
-  blocker_reason: none | child_issue_blocked | malformed_cards | review_findings_blocking | missing_metrics | operator_scope_decision | healthy_pr_waiting_for_review | unknown
+  blocker_reason: none | child_issue_blocked | malformed_cards | review_findings_blocking | missing_metrics | operator_scope_decision | healthy_pr_waiting_for_review | missing_sprint_issue | unknown
 review:
   status: not_started | in_progress | done | blocked
   selected_skills:
@@ -53,6 +56,7 @@ review:
 closeout:
   status: not_started | in_progress | done | blocked
   closeout_note_path: <path or null>
+  sprint_issue_close_summary: <bounded text or null>
   coverage:
     source: local_run | ci | existing_quality_gate | not_applicable | missing
     summary: <bounded text>

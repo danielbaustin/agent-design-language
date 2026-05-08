@@ -5,7 +5,7 @@ skill_input_schema: sprint_conductor.v1
 mode: run_sprint_slow_path | resume_sprint_slow_path | review_and_closeout_sprint
 repo_root: /absolute/path
 sprint:
-  issue_number: <u32>
+  issue_number: <u32 or null>
   ordered_issue_numbers:
     - <u32>
   goal: <string or null>
@@ -34,11 +34,13 @@ sprint:
       - <u32>
     checked_pr_urls:
       - <url>
+  issue_closed: true | false
 policy:
   require_sequential_closeout: true
   require_existing_issue_skills: true
   require_editor_skills: true
   require_code_review: true
+  allow_create_missing_sprint_issue: true | false
   allow_review_subagent_exception: true
   max_review_subagents_when_exception_enabled: 1
   require_github_truth_recheck: true
