@@ -76,7 +76,7 @@ admission:
     - "policy.stop_on_blocker_must_be_true"
 execution:
   mode: "orchestrate_existing_skills_sequentially"
-  allow_code_edits: false
+  allow_code_edits: true
   allow_network: true
   allow_subagents: false
   workflow_role: "sprint_orchestrator"
@@ -94,7 +94,7 @@ boundaries:
     - "sprint review artifacts"
     - "sprint closeout artifacts"
   must_not_write:
-    - "tracked implementation source files directly"
+    - "tracked implementation source files directly outside the selected child issue lifecycle path"
     - "unrelated issue bundles"
   stop_on_partial_failure: true
 outputs:

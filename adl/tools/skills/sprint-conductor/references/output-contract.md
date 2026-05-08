@@ -14,11 +14,11 @@ sequence:
   blocked_issue_number: <u32 or null>
   deferred_issue_numbers:
     - <u32>
-  continuation: continue | stop | ask_operator
+  continuation: continue | stop | ask_operator | waiting_for_review
 current_state:
   selected_skill: workflow-conductor | pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | none
-  current_phase: intake | issue_loop | review | closeout | blocked
-  blocker_reason: none | child_issue_blocked | malformed_cards | review_findings_blocking | missing_metrics | operator_scope_decision | unknown
+  current_phase: intake | issue_loop | review | closeout | waiting | blocked
+  blocker_reason: none | child_issue_blocked | malformed_cards | review_findings_blocking | missing_metrics | operator_scope_decision | healthy_pr_waiting_for_review | unknown
 review:
   status: not_started | in_progress | done | blocked
   packet_path: <path or null>
@@ -34,10 +34,10 @@ closeout:
   status: not_started | in_progress | done | blocked
   closeout_note_path: <path or null>
   coverage:
-    source: local_run | ci | existing_quality_gate | missing
+    source: local_run | ci | existing_quality_gate | not_applicable | missing
     summary: <bounded text>
   rust_tracker:
-    source: local_run | ci | existing_quality_gate | missing
+    source: local_run | ci | existing_quality_gate | not_applicable | missing
     watch_count: <int or null>
     review_count: <int or null>
     rationale_count: <int or null>

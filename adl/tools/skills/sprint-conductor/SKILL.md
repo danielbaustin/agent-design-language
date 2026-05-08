@@ -36,6 +36,12 @@ It must not replace:
 
 It is a sprint orchestrator, not a second execution engine.
 
+Important execution-boundary rule:
+- the sprint conductor itself should not directly implement child issue code
+- it may orchestrate child issues that legitimately edit tracked implementation
+  files through `pr-run`, `pr-finish`, and the normal issue lifecycle in the
+  bound issue worktree
+
 ## Design Basis
 
 This skill should track the repository's canonical operational skill family and
@@ -124,6 +130,8 @@ Preferred per-issue routing model:
 - execution complete, needs publication -> `pr-finish`
 - PR in flight with actual blockers -> `pr-janitor`
 - merged or intentionally closed -> `pr-closeout`
+- healthy PR open and awaiting human review or merge -> remain paused on the
+  current issue in a non-blocked waiting state
 
 ## Sprint Review Requirement
 
@@ -162,13 +170,24 @@ Sprint closeout must record:
 - recommended next sprint or remediation action
 
 Preferred metrics capture surfaces:
-- coverage command:
+- coverage command when the sprint surface warrants a fresh local snapshot:
   - `cargo llvm-cov --workspace --all-features --summary-only`
 - Rust tracker report:
   - `bash adl/tools/report_large_rust_modules.sh --format tsv`
 
-If those commands are not run, the closeout must say whether the numbers came
-from CI, an existing quality gate artifact, or are still missing.
+Coverage capture must be policy-driven rather than reflexive.
+
+Normal closeout sources include:
+- fresh local run when the sprint materially changed implementation surfaces and
+  the sprint policy requires it
+- CI evidence
+- an existing quality-gate or release-evidence artifact
+- `not_applicable` for docs-only, workflow-only, planning-only, or similarly
+  light sprint surfaces
+
+If local metrics commands are not run, the closeout must say whether the
+numbers came from CI, an existing quality gate artifact, or are not applicable
+for the sprint surface.
 
 ## Stop Boundary
 

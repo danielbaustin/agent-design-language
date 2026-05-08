@@ -33,9 +33,12 @@ Optional:
 5. Re-check issue truth.
 6. If the issue is not fully closed out, repeat the routing loop for the same
    issue.
-7. If the issue is fully closed out, mark it complete in sprint-state and move
+7. If the issue is in a healthy PR-open waiting state, pause on that issue and
+   surface `ask_operator` rather than re-driving execution or janitoring a
+   non-blocked PR.
+8. If the issue is fully closed out, mark it complete in sprint-state and move
    to the next issue.
-8. If any blocker is encountered, stop and report the blocker in sprint-state.
+9. If any blocker is encountered, stop and report the blocker in sprint-state.
 
 ## Editor-Skill Rule
 
@@ -83,7 +86,7 @@ Record:
 - next action
 
 Preferred metrics sources:
-- coverage:
+- coverage when a fresh local snapshot is required by sprint policy:
   - `cargo llvm-cov --workspace --all-features --summary-only`
 - Rust tracker:
   - `bash adl/tools/report_large_rust_modules.sh --format tsv`
@@ -95,6 +98,8 @@ For the Rust tracker report, count the number of rows at each level:
 
 If metrics are taken from CI or an existing quality-gate artifact instead of a
 fresh local run, say so explicitly.
+`not_applicable` is also a normal outcome for docs-only, workflow-only,
+planning-only, or similarly light sprint surfaces.
 
 ## Stop Conditions
 
