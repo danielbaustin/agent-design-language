@@ -22,6 +22,10 @@ reviewable systems:
 - CodeBuddy/review packet productization.
 - Google Workspace CMS bridge planning and bounded demo work.
 - Moderne/code-modernization workflow support.
+- Bounded speculative-decoding evaluation inside ADL's deterministic runtime
+  posture.
+- Repo-visibility follow-on work so canonical-source and linkage surfaces
+  become more operationally useful.
 - Publication program artifacts, including the general-intelligence paper
   packet and future Gödel Agents paper backlog.
 - Rustdoc and documentation cleanup.
@@ -57,6 +61,8 @@ This package is grounded in:
 - `.adl/docs/TBD/codebuddy_ai/`
 - `.adl/docs/TBD/google_workspace_cms/`
 - `.adl/docs/TBD/code_modernization/`
+- `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`
+- `.adl/docs/TBD/repo_visibility/`
 - `.adl/docs/TBD/publication/`
 - `.adl/docs/TBD/general-intelligence-paper/`
 - `.adl/docs/TBD/RUSTDOC_GAP_ANALYSIS.md`

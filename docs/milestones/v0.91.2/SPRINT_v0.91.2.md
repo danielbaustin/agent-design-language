@@ -30,30 +30,34 @@ expensive, confusing test cycles.
 Goal: turn review, collaborative docs, and modernization ideas into bounded
 product surfaces without granting silent authority over canonical repo truth.
 
-## Sprint 3: Publication, Docs, And Workflow Guardrails
+## Sprint 3: Runtime Ergonomics, Publication, Docs, And Workflow Guardrails
 
 | WP | Title | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- |
-| WP-11 | Publication program package | arXiv/Medium paper-program backlog and process docs | WP-01; review/evidence docs and publication process notes |
-| WP-12 | General intelligence paper packet | claim, citation, and review packet | WP-11 |
-| WP-13 | Rustdoc and doc cleanup | rustdoc/doc cleanup patches and report | WP-05 |
-| WP-14 | Workflow guardrails hardening | main-write, watcher, and safe-report guardrails | WP-04, WP-05 |
+| WP-11 | Speculative decoding prototype | bounded speculative-decoding architecture and proof posture | WP-02, WP-04 |
+| WP-12 | Repo visibility follow-on | manifest/linkage follow-on package | WP-06, WP-07 |
+| WP-13 | Publication program package | arXiv/Medium paper-program backlog and process docs | WP-01; review/evidence docs and publication process notes |
+| WP-14 | General intelligence paper packet | claim, citation, and review packet | WP-13 |
+| WP-15 | Rustdoc and doc cleanup | rustdoc/doc cleanup patches and report | WP-05 |
+| WP-16 | Workflow guardrails hardening | main-write, watcher, and safe-report guardrails | WP-04, WP-05 |
 
 Goal: make the project’s public intellectual surface and daily workflow less
-fragile, less ambiguous, and easier for other humans to review.
+fragile, less ambiguous, easier for other humans to review, and more honest
+about which runtime accelerations and repo-cognition surfaces are actually
+worth carrying forward.
 
 ## Sprint 4: Review, Remediation, And Release
 
 | WP | Title | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- |
-| WP-15 | Demo matrix and proof coverage | demo matrix and proof coverage record | WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14 |
-| WP-16 | Coverage / quality gate | validation posture and test/coverage record | WP-15 |
-| WP-17 | Docs + review pass | review-ready docs package | WP-16 |
-| WP-18 | Internal review | internal review record | WP-17 |
-| WP-19 | External / 3rd-party review | external review handoff and record | WP-18 |
-| WP-20 | Review findings remediation | remediation record and follow-up issues | WP-19 |
-| WP-21 | Next milestone planning | v0.92/v0.93 handoff update | WP-20 |
-| WP-22 | Release ceremony | release evidence and end-of-milestone report | WP-21 |
+| WP-17 | Demo matrix and proof coverage | demo matrix and proof coverage record | WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16 |
+| WP-18 | Coverage / quality gate | validation posture and test/coverage record | WP-17 |
+| WP-19 | Docs + review pass | review-ready docs package | WP-18 |
+| WP-20 | Internal review | internal review record | WP-19 |
+| WP-21 | External / 3rd-party review | external review handoff and record | WP-20 |
+| WP-22 | Review findings remediation | remediation record and follow-up issues | WP-21 |
+| WP-23 | Next milestone planning | v0.92/v0.93 handoff update | WP-22 |
+| WP-24 | Release ceremony | release evidence and end-of-milestone report | WP-23 |
 
 Goal: leave the next identity/governance milestones with cleaner test cycles,
 clearer publication and product surfaces, and fewer workflow foot-guns.
@@ -63,4 +67,8 @@ clearer publication and product surfaces, and fewer workflow foot-guns.
 UTS+ACC benchmark work and runtime/test-cycle recovery can proceed in parallel.
 CodeBuddy and review-skill work can proceed beside the Google Workspace bridge
 if both preserve canonical repo authority. Publication packet work can proceed
-beside doc cleanup, but no public release should happen before review.
+beside doc cleanup. Speculative decoding can proceed beside publication and doc
+cleanup once the benchmark and recovery surfaces define the bounded runtime
+constraints. Repo visibility can proceed beside review productization because
+it is meant to help reviewer navigation rather than bypass it. No public
+release should happen before review.
