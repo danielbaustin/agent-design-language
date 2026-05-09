@@ -223,8 +223,12 @@ pub(super) fn run_doctor_ready(
     let wt_stp = issue_ref.task_bundle_stp_path(&worktree_path);
     let root_bundle_input = issue_ref.task_bundle_input_path(repo_root);
     let root_bundle_output = issue_ref.task_bundle_output_path(repo_root);
+    let root_bundle_plan = issue_ref.task_bundle_plan_path(repo_root);
+    let root_bundle_review_policy = issue_ref.task_bundle_review_policy_path(repo_root);
     let wt_bundle_input = issue_ref.task_bundle_input_path(&worktree_path);
     let wt_bundle_output = issue_ref.task_bundle_output_path(&worktree_path);
+    let wt_bundle_plan = issue_ref.task_bundle_plan_path(&worktree_path);
+    let wt_bundle_review_policy = issue_ref.task_bundle_review_policy_path(&worktree_path);
     let closed_completed =
         lifecycle::issue_is_closed_and_completed(issue_ref.issue_number(), repo)?;
 
@@ -250,6 +254,9 @@ pub(super) fn run_doctor_ready(
             issue_ref.slug(),
             &root_bundle_input,
             &root_bundle_output,
+            repo_root,
+            &root_bundle_plan,
+            &root_bundle_review_policy,
         )?;
         return Ok(DoctorReadyResult {
             lifecycle_state: "closed",
@@ -269,6 +276,9 @@ pub(super) fn run_doctor_ready(
         issue_ref.slug(),
         &root_bundle_input,
         &root_bundle_output,
+        repo_root,
+        &root_bundle_plan,
+        &root_bundle_review_policy,
     )?;
     let root_input_body = fs::read_to_string(&root_bundle_input).with_context(|| {
         format!(
@@ -353,6 +363,8 @@ pub(super) fn run_doctor_ready(
         wt_branch.trim(),
         &root_bundle_input,
         &root_bundle_output,
+        &root_bundle_plan,
+        &root_bundle_review_policy,
     )?;
     validate_ready_cards(
         &worktree_path,
@@ -361,6 +373,8 @@ pub(super) fn run_doctor_ready(
         wt_branch.trim(),
         &wt_bundle_input,
         &wt_bundle_output,
+        &wt_bundle_plan,
+        &wt_bundle_review_policy,
     )?;
 
     Ok(DoctorReadyResult {

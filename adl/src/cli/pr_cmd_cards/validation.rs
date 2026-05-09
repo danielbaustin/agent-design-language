@@ -1,4 +1,5 @@
 use anyhow::{bail, Context, Result};
+use serde_yaml::Value;
 use std::path::Path;
 use std::process::Command;
 
@@ -36,12 +37,14 @@ pub(crate) fn validate_bootstrap_stp(repo_root: &Path, path: &Path) -> Result<()
 }
 
 pub(crate) fn validate_ready_cards(
-    _repo_root: &Path,
+    repo_root: &Path,
     issue: u32,
     slug: &str,
     actual_branch: &str,
     input_path: &Path,
     output_path: &Path,
+    plan_path: &Path,
+    review_policy_path: &Path,
 ) -> Result<()> {
     let expected = format!("issue-{:04}", issue);
     if field_line_value(input_path, "Task ID")? != expected {
@@ -65,6 +68,14 @@ pub(crate) fn validate_ready_cards(
     if !output_card_title_matches_slug(output_path, slug)? {
         bail!("ready: output card title mismatch");
     }
+    validate_started_structured_artifact(repo_root, "ready", plan_path, "spp", actual_branch)?;
+    validate_started_structured_artifact(
+        repo_root,
+        "ready",
+        review_policy_path,
+        "srp",
+        actual_branch,
+    )?;
     super::super::pr_cmd_validate::validate_authored_prompt_surface(
         "ready",
         input_path,
@@ -78,6 +89,9 @@ pub(crate) fn validate_initialized_cards(
     slug: &str,
     input_path: &Path,
     output_path: &Path,
+    repo_root: &Path,
+    plan_path: &Path,
+    review_policy_path: &Path,
 ) -> Result<()> {
     let expected = format!("issue-{:04}", issue);
     if field_line_value(input_path, "Task ID")? != expected {
@@ -95,6 +109,8 @@ pub(crate) fn validate_initialized_cards(
     if !output_card_title_matches_slug(output_path, slug)? {
         bail!("doctor: output card title mismatch");
     }
+    validate_structured_artifact(repo_root, "doctor", plan_path, "spp")?;
+    validate_structured_artifact(repo_root, "doctor", review_policy_path, "srp")?;
     super::super::pr_cmd_validate::validate_authored_prompt_surface(
         "doctor",
         input_path,
@@ -110,6 +126,8 @@ pub(crate) fn validate_bootstrap_cards(
     branch: &str,
     input_path: &Path,
     output_path: &Path,
+    plan_path: &Path,
+    review_policy_path: &Path,
 ) -> Result<()> {
     let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
     run_status(
@@ -164,6 +182,8 @@ pub(crate) fn validate_bootstrap_cards(
     if !output_card_title_matches_slug(output_path, slug)? {
         bail!("start: output card title mismatch");
     }
+    validate_structured_artifact(repo_root, "start", plan_path, "spp")?;
+    validate_structured_artifact(repo_root, "start", review_policy_path, "srp")?;
     Ok(())
 }
 
@@ -209,4 +229,83 @@ fn branch_matches_started_state(recorded: &str, actual_branch: &str) -> bool {
         return true;
     }
     recorded.starts_with("TBD (run pr.sh start ")
+}
+
+pub(crate) fn validate_structured_artifact(
+    repo_root: &Path,
+    phase: &str,
+    path: &Path,
+    kind: &str,
+) -> Result<()> {
+    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
+    let output = Command::new("bash")
+        .args([
+            path_str(&validator)?,
+            "--type",
+            kind,
+            "--input",
+            path_str(path)?,
+        ])
+        .output()
+        .with_context(|| "failed to spawn 'bash'")?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+        let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
+        let detail = if !stderr.is_empty() {
+            stderr
+        } else if !stdout.is_empty() {
+            stdout
+        } else {
+            format!("bash failed with status {:?}", output.status.code())
+        };
+        bail!(
+            "{phase}: {kind} failed validation: {}: {detail}",
+            path.display()
+        );
+    }
+    Ok(())
+}
+
+fn validate_started_structured_artifact(
+    repo_root: &Path,
+    phase: &str,
+    path: &Path,
+    kind: &str,
+    actual_branch: &str,
+) -> Result<()> {
+    validate_structured_artifact(repo_root, phase, path, kind)?;
+    let text = std::fs::read_to_string(path)?;
+    let front_matter = text
+        .strip_prefix("---\n")
+        .and_then(|rest| rest.split_once("\n---\n").map(|(fm, _)| fm))
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "{phase}: {kind} missing YAML front matter: {}",
+                path.display()
+            )
+        })?;
+    let yaml: Value = serde_yaml::from_str(front_matter)?;
+    let mapping = yaml.as_mapping().ok_or_else(|| {
+        anyhow::anyhow!(
+            "{phase}: {kind} front matter must be a mapping: {}",
+            path.display()
+        )
+    })?;
+    let branch = mapping
+        .get(Value::String("branch".to_string()))
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        .trim()
+        .to_string();
+    if branch != actual_branch {
+        bail!(
+            "{phase}: {kind} branch mismatch (expected {actual_branch}, found {})",
+            if branch.is_empty() {
+                "<empty>"
+            } else {
+                branch.as_str()
+            }
+        );
+    }
+    Ok(())
 }

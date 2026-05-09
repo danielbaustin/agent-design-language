@@ -15,7 +15,9 @@ use super::github::{
 use super::lifecycle;
 use super::DEFAULT_VERSION;
 use crate::cli::pr_cmd_args::parse_finish_args;
-use crate::cli::pr_cmd_cards::{path_relative_to_repo, validate_bootstrap_stp};
+use crate::cli::pr_cmd_cards::{
+    path_relative_to_repo, validate_bootstrap_stp, validate_structured_artifact,
+};
 use crate::cli::pr_cmd_prompt::{
     resolve_issue_prompt_path, resolve_issue_scope_and_slug_from_local_state,
     validate_issue_prompt_exists,
@@ -64,6 +66,8 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         .output_path
         .clone()
         .unwrap_or_else(|| issue_ref.task_bundle_output_path(&repo_root));
+    let plan_path = issue_ref.task_bundle_plan_path(&repo_root);
+    let review_policy_path = issue_ref.task_bundle_review_policy_path(&repo_root);
 
     if !ensure_nonempty_file_path(&input_path)? {
         bail!("finish: missing input card: {}", input_path.display());
@@ -80,6 +84,8 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     validate_authored_prompt_surface("finish", &source_path, PromptSurfaceKind::IssuePrompt)?;
     validate_authored_prompt_surface("finish", &stp_path, PromptSurfaceKind::Stp)?;
     validate_authored_prompt_surface("finish", &input_path, PromptSurfaceKind::Sip)?;
+    validate_structured_artifact(&repo_root, "finish", &plan_path, "spp")?;
+    validate_structured_artifact(&repo_root, "finish", &review_policy_path, "srp")?;
     validate_completed_sor(&repo_root, &output_path)?;
     ensure_issue_surfaces_are_local_only(&repo_root, &primary_root, &issue_ref, &source_path)?;
 
