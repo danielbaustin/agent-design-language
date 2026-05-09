@@ -106,6 +106,6 @@ The audio follow-on is successful when:
 - per-turn audio segments exist with explicit speaker routing
 - the manifest shows which provider/voice rendered each speaker
 - Claude's surrogate rendering is disclosed instead of implied away
-- each segment begins with a natural spoken self-introduction such as `I'm ChatGPT`
+- each speaker introduces themselves naturally only on their first turn, for example `I'm ChatGPT`
 - overall segment volume is normalized enough that the episode does not feel
   erratic or lopsided
