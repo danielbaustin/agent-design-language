@@ -1,0 +1,173 @@
+{
+  "schema_version": "runtime_v2.memory_identity_architecture_packet.v1",
+  "architecture_id": "memory-identity-architecture-v0-91-1-wp-07",
+  "demo_id": "memory_tom_evidence_demo",
+  "milestone": "v0.91.1",
+  "wp": "WP-07",
+  "artifact_path": "runtime_v2/memory_identity/memory_identity_architecture.json",
+  "source_feature_doc": "docs/milestones/v0.91.1/features/MEMORY_IDENTITY_ARCHITECTURE.md",
+  "state_dependency_ref": "runtime_v2/citizen_state/citizen_state_substrate.json",
+  "identity_evidence_refs": [
+    "runtime_v2/csm_run/citizen_roster.json",
+    "runtime_v2/private_state/lineage_ledger.json",
+    "runtime_v2/private_state/continuity_witnesses.json",
+    "runtime_v2/private_state/citizen_receipts.json",
+    "runtime_v2/observatory/private_state_projection_packet.json"
+  ],
+  "memory_surfaces": [
+    {
+      "surface_kind": "citizen_roster_memory_roots",
+      "artifact_ref": "runtime_v2/csm_run/citizen_roster.json",
+      "authority_status": "provisional_boot_identity",
+      "evidence_role": "declares runtime-v2 identity handles and citizen memory-root references for admitted workers",
+      "allows_private_state_inspection": false,
+      "notes": "Boot identity is provisional and bounded; it does not constitute birthday or final continuity proof."
+    },
+    {
+      "surface_kind": "private_state_lineage_ledger",
+      "artifact_ref": "runtime_v2/private_state/lineage_ledger.json",
+      "authority_status": "authoritative_continuity_record",
+      "evidence_role": "append-only continuity ledger that later memory and identity surfaces must cite rather than replace",
+      "allows_private_state_inspection": false,
+      "notes": "Lineage proves bounded state succession only; it does not prove metaphysical identity or the first true birthday."
+    },
+    {
+      "surface_kind": "continuity_witness_set",
+      "artifact_ref": "runtime_v2/private_state/continuity_witnesses.json",
+      "authority_status": "reviewable_transition_evidence",
+      "evidence_role": "witnesses tie cited continuity transitions back to ledger, envelope, and checkpoint evidence",
+      "allows_private_state_inspection": false,
+      "notes": "Witnesses support review and replay; they do not reveal canonical private state."
+    },
+    {
+      "surface_kind": "citizen_receipt_set",
+      "artifact_ref": "runtime_v2/private_state/citizen_receipts.json",
+      "authority_status": "citizen_visible_continuity_explanation",
+      "evidence_role": "citizen-facing continuity explanations and privacy-bound evidence summaries",
+      "allows_private_state_inspection": false,
+      "notes": "Receipts explain continuity without converting privacy-bound evidence into final identity claims."
+    },
+    {
+      "surface_kind": "observatory_projection_packet",
+      "artifact_ref": "runtime_v2/observatory/private_state_projection_packet.json",
+      "authority_status": "read_only_projection_not_authority",
+      "evidence_role": "operator/reviewer/public observatory packet that keeps continuity visible without raw private-state inspection",
+      "allows_private_state_inspection": false,
+      "notes": "Projection packets are visibility surfaces only and cannot rebind identity or mutate state."
+    },
+    {
+      "surface_kind": "obsmem_write_contract",
+      "artifact_ref": "adl/src/obsmem_contract/models.rs",
+      "authority_status": "memory_citation_contract",
+      "evidence_role": "normalized memory write/query contract requiring explicit citations and trace-event references",
+      "allows_private_state_inspection": false,
+      "notes": "ObsMem memory writes are evidence-bound summaries, not hidden identity or continuity authority."
+    },
+    {
+      "surface_kind": "indexed_memory_entry",
+      "artifact_ref": "adl/src/obsmem_indexing.rs",
+      "authority_status": "derived_trace_memory_projection",
+      "evidence_role": "trace-derived memory indexing surface that preserves step and event references for replayable review",
+      "allows_private_state_inspection": false,
+      "notes": "Indexed memory entries summarize traces with explicit refs; they do not create hidden continuity claims."
+    }
+  ],
+  "memory_write_example": {
+    "contract_version": 1,
+    "run_id": "memory-identity-architecture-0001",
+    "workflow_id": "runtime_v2_memory_identity_architecture",
+    "trace_bundle_rel_path": "runtime_v2/csm_run/boot_admission_trace.jsonl",
+    "activation_log_rel_path": "runtime_v2/csm_run/boot_admission_trace.jsonl",
+    "failure_code": null,
+    "summary": "bounded memory/identity evidence cites roster, witness, and observatory artifacts without claiming full identity continuity",
+    "tags": [
+      "continuity",
+      "memory-identity",
+      "reviewable-evidence"
+    ],
+    "citations": [
+      {
+        "path": "runtime_v2/csm_run/citizen_roster.json",
+        "hash": "boot-roster-hash-0001"
+      },
+      {
+        "path": "runtime_v2/observatory/private_state_projection_packet.json",
+        "hash": "observatory-projection-hash-0001"
+      },
+      {
+        "path": "runtime_v2/private_state/continuity_witnesses.json",
+        "hash": "continuity-witness-hash-0001"
+      }
+    ],
+    "trace_event_refs": [
+      {
+        "event_sequence": 2,
+        "event_kind": "admit_worker_citizen",
+        "step_id": null,
+        "delegation_id": null
+      },
+      {
+        "event_sequence": 4,
+        "event_kind": "record_boot_manifest",
+        "step_id": null,
+        "delegation_id": null
+      }
+    ]
+  },
+  "memory_query_example": {
+    "contract_version": 1,
+    "workflow_id": "runtime_v2_memory_identity_architecture",
+    "failure_code": null,
+    "tags": [
+      "continuity",
+      "memory-identity",
+      "reviewable-evidence"
+    ],
+    "limit": 5
+  },
+  "fixture_matrix": [
+    {
+      "fixture_kind": "memory_root_binding",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/csm_run/citizen_roster.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture",
+      "summary": "Boot admission exposes reviewable identity handles and memory-root refs without claiming final identity."
+    },
+    {
+      "fixture_kind": "continuity_witness_evidence",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/private_state/continuity_witnesses.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_witness -- --nocapture",
+      "summary": "Continuity witnesses cite ledger and checkpoint evidence instead of hiding continuity claims."
+    },
+    {
+      "fixture_kind": "citizen_receipt_evidence",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/private_state/citizen_receipts.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_witness -- --nocapture",
+      "summary": "Citizen receipts remain privacy-bound and explain continuity without escalating into final identity proof."
+    },
+    {
+      "fixture_kind": "observatory_projection_evidence",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/observatory/private_state_projection_packet.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_observatory -- --nocapture",
+      "summary": "Observatory projections keep memory/continuity evidence visible without raw private-state exposure."
+    }
+  ],
+  "handoff_targets": [
+    "WP-08",
+    "WP-11",
+    "WP-23"
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_memory_identity_architecture -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml obsmem_contract -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_witness -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_observatory -- --nocapture",
+    "git diff --check"
+  ],
+  "claim_boundary": "WP-07 proves one bounded v0.91.1 memory/identity architecture packet over existing boot admission, state, continuity witness, citizen receipt, observatory, and ObsMem citation surfaces. It does not prove full identity continuity, first true birthday semantics, metaphysical personhood, or hidden memory authority.",
+  "non_claims": [
+    "does not prove full identity continuity",
+    "does not prove the first true birthday or rebinding event",
+    "does not permit raw private-state or hidden memory inspection",
+    "does not turn memory citations or receipts into final metaphysical identity claims"
+  ]
+}

@@ -35,6 +35,7 @@ mod invariant_contract;
 mod kernel_loop;
 mod kindness_model;
 mod manifold;
+mod memory_identity_architecture;
 mod moral_event_validation;
 mod moral_metrics;
 mod moral_resources;
@@ -128,6 +129,8 @@ pub use kernel_loop::*;
 pub use kindness_model::*;
 #[allow(unused_imports)]
 pub use manifold::*;
+#[allow(unused_imports)]
+pub use memory_identity_architecture::*;
 #[allow(unused_imports)]
 pub use moral_event_validation::*;
 #[allow(unused_imports)]

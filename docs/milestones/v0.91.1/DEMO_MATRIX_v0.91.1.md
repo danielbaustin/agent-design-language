@@ -11,7 +11,7 @@ supporting work packages land.
 | Agent lifecycle state demo | WP-03 | Show lifecycle states, transitions, and ACIP receipt/invocation eligibility. | transition matrix, lifecycle fixtures, and denied-invocation report | does not claim consciousness or birthday |
 | Observatory active packet demo | WP-04 | Show operator-visible projection from active runtime packet data. | projection artifact and redaction check | does not expose private state |
 | Citizen standing/state fixture demo | WP-05, WP-06 | Show standing and state transitions with safe projection. | valid/invalid fixtures, citizen-state substrate packet, and validation output | does not claim constitutional citizenship |
-| Memory/ToM evidence demo | WP-07, WP-08 | Show bounded memory and agent-model updates from explicit evidence. | schemas, fixtures, and deterministic update report | does not claim mind-reading or final identity |
+| Memory/ToM evidence demo | WP-07, WP-08 | Show bounded memory and agent-model updates from explicit evidence. | memory/identity architecture packet, ToM packet, fixtures, and deterministic update report | does not claim mind-reading or final identity |
 | Capability/intelligence report demo | WP-09, WP-10 | Show capability and intelligence signals from executable fixtures. | report artifact with limitations | does not create reputation scoreboard |
 | Governed learning demo | WP-11 | Show feedback/update boundaries under policy. | learning update fixture and denial cases | does not allow hidden self-modification |
 | ANRM/Gemma trace dataset demo | WP-12 | Show trace extraction and dataset mapping. | extractor fixture and dataset schema report | does not claim model training success |
