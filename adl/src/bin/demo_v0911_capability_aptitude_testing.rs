@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 
 fn parse_args(args: &[String]) -> Result<PathBuf> {
     let mut out_path =
-        PathBuf::from(adl::capability_aptitude_testing::CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT);
+        adl::capability_aptitude_testing::capability_aptitude_testing_default_output_root();
     let mut idx = 0;
     while idx < args.len() {
         match args[idx].as_str() {
@@ -65,10 +65,41 @@ mod tests {
         let out_path = parse_args(&[]).expect("default args");
         assert_eq!(
             out_path,
-            PathBuf::from(
-                adl::capability_aptitude_testing::CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT
-            )
+            adl::capability_aptitude_testing::capability_aptitude_testing_default_output_root()
         );
+    }
+
+    #[test]
+    fn demo_v0911_capability_aptitude_testing_parse_args_accepts_explicit_out() {
+        let out_path = parse_args(&["--out".to_string(), "tmp/custom-bundle".to_string()])
+            .expect("explicit out path");
+        assert_eq!(out_path, PathBuf::from("tmp/custom-bundle"));
+    }
+
+    #[test]
+    fn demo_v0911_capability_aptitude_testing_parse_args_rejects_missing_out_value() {
+        let err = parse_args(&["--out".to_string()]).expect_err("missing out value should fail");
+        assert!(err.to_string().contains("--out requires a path"));
+    }
+
+    #[test]
+    fn demo_v0911_capability_aptitude_testing_parse_args_rejects_unknown_arg() {
+        let err = parse_args(&["--bogus".to_string()]).expect_err("unknown arg should be rejected");
+        assert!(err.to_string().contains("unknown arg: --bogus"));
+    }
+
+    #[test]
+    fn demo_v0911_capability_aptitude_testing_default_path_is_cwd_independent() {
+        let original_dir = std::env::current_dir().expect("current dir");
+        let temp = unique_temp_dir("capability-aptitude-cwd");
+        std::env::set_current_dir(&temp).expect("set temp cwd");
+        let out_path = parse_args(&[]).expect("default args from temp cwd");
+        std::env::set_current_dir(original_dir).expect("restore cwd");
+        assert_eq!(
+            out_path,
+            adl::capability_aptitude_testing::capability_aptitude_testing_default_output_root()
+        );
+        assert!(out_path.is_absolute());
     }
 
     #[test]

@@ -2,11 +2,18 @@ use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub const CAPABILITY_APTITUDE_TESTING_SCHEMA_VERSION: &str = "capability_aptitude_testing.v1";
 pub const CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT: &str =
     "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture";
+
+pub fn capability_aptitude_testing_default_output_root() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("repo root parent")
+        .join(CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT)
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CapabilitySubjectManifest {
@@ -605,8 +612,9 @@ fn write_pretty_json<T: Serialize>(path: impl AsRef<Path>, value: &T) -> Result<
 #[cfg(test)]
 mod tests {
     use super::{
-        build_capability_aptitude_artifact_bundle, write_capability_aptitude_artifact_bundle,
-        CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT, CAPABILITY_APTITUDE_TESTING_SCHEMA_VERSION,
+        build_capability_aptitude_artifact_bundle, capability_aptitude_testing_default_output_root,
+        write_capability_aptitude_artifact_bundle, CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT,
+        CAPABILITY_APTITUDE_TESTING_SCHEMA_VERSION,
     };
     use std::collections::BTreeMap;
     use std::fs;
@@ -711,6 +719,13 @@ mod tests {
     fn capability_aptitude_testing_artifact_root_is_repo_relative() {
         assert!(CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT.starts_with("docs/"));
         assert!(!CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT.starts_with('/'));
+    }
+
+    #[test]
+    fn capability_aptitude_testing_default_output_root_targets_repo_review_bundle() {
+        let output_root = capability_aptitude_testing_default_output_root();
+        assert!(output_root.ends_with(CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT));
+        assert!(output_root.is_absolute());
     }
 
     #[test]
