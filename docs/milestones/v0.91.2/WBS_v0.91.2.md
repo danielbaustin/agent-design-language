@@ -22,11 +22,13 @@ productize, publish, and maintain.
 | F | Review skill and demo suite | Add review heuristics, skill demos, and repeatable review proof surfaces. | review demo matrix and skill docs | E |
 | G | Google Workspace CMS bridge | Build bounded bridge/demo for draft docs, comments, and promotion packets. | GWS CMS demo and adapter boundary | governed tools |
 | H | Code modernization | Define and prove Moderne/OpenRewrite-style modernization workflow. | modernization demo packet | C, E |
-| I | Publication program | Prepare arXiv/Medium paper packets without direct publication. | publication backlog and first packets | review/evidence docs |
-| J | General intelligence paper packet | Advance the Mathematical Theory of General Intelligence source packet. | claim/citation/review-ready paper packet | I |
-| K | Rustdoc and documentation cleanup | Address rustdoc gaps and tracked doc hygiene debt. | doc cleanup report and patches | D |
-| L | Workflow guardrails | Prevent main writes, unsafe shell report generation, hung watchers, and card drift. | guardrail implementation and process docs | C, D |
-| M | Review, quality, and release | Validate the milestone, remediate findings, and hand off later work. | review-ready release package | all prior work |
+| I | Speculative decoding | Evaluate bounded runtime acceleration without weakening deterministic commit semantics. | feature contract, prototype plan, and proof posture | B, C |
+| J | Repo visibility follow-on | Turn the v0.90 prototype into a practical manifest/linkage follow-on for reviewers and planners. | manifest/linkage follow-on package | E, F |
+| K | Publication program | Prepare arXiv/Medium paper packets without direct publication. | publication backlog and first packets | review/evidence docs |
+| L | General intelligence paper packet | Advance the Mathematical Theory of General Intelligence source packet. | claim/citation/review-ready paper packet | K |
+| M | Rustdoc and documentation cleanup | Address rustdoc gaps and tracked doc hygiene debt. | doc cleanup report and patches | D |
+| N | Workflow guardrails | Prevent main writes, unsafe shell report generation, hung watchers, and card drift. | guardrail implementation and process docs | C, D |
+| O | Review, quality, and release | Validate the milestone, remediate findings, and hand off later work. | review-ready release package | all prior work |
 
 ## Candidate WP Sequence
 
@@ -42,23 +44,28 @@ productize, publish, and maintain.
 | WP-08 | Google Workspace CMS bridge demo | tools | bounded Workspace content-card and promotion demo | WP-01; governed-tools authority and adapter boundary |
 | WP-09 | Rust-native GWS adapter boundary | tools | adapter feasibility and typed contract boundary | WP-08 |
 | WP-10 | Code modernization demo | tools | Moderne/code modernization interaction demo | WP-01 |
-| WP-11 | Publication program package | docs | arXiv/Medium paper-program backlog and process docs | WP-01; review/evidence docs and publication process notes |
-| WP-12 | General intelligence paper packet | docs | claim, citation, and review packet | WP-11 |
-| WP-13 | Rustdoc and doc cleanup | docs | rustdoc/doc cleanup patches and report | WP-05 |
-| WP-14 | Workflow guardrails hardening | tools | main-write, watcher, and safe-report guardrails | WP-04, WP-05 |
-| WP-15 | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14 |
-| WP-16 | Coverage / quality gate | quality | validation posture and test/coverage record | WP-15 |
-| WP-17 | Docs + review pass | docs | review-ready docs package | WP-16 |
-| WP-18 | Internal review | review | internal review record | WP-17 |
-| WP-19 | External / 3rd-party review | review | external review handoff and record | WP-18 |
-| WP-20 | Review findings remediation | review | remediation record and follow-up issues | WP-19 |
-| WP-21 | Next milestone planning | docs | v0.92/v0.93 handoff update | WP-20 |
-| WP-22 | Release ceremony | release | release evidence and end-of-milestone report | WP-21 |
+| WP-11 | Speculative decoding prototype | runtime | bounded speculative-decoding architecture and proof posture | WP-02, WP-04 |
+| WP-12 | Repo visibility follow-on | docs | manifest/linkage follow-on package | WP-06, WP-07 |
+| WP-13 | Publication program package | docs | arXiv/Medium paper-program backlog and process docs | WP-01; review/evidence docs and publication process notes |
+| WP-14 | General intelligence paper packet | docs | claim, citation, and review packet | WP-13 |
+| WP-15 | Rustdoc and doc cleanup | docs | rustdoc/doc cleanup patches and report | WP-05 |
+| WP-16 | Workflow guardrails hardening | tools | main-write, watcher, and safe-report guardrails | WP-04, WP-05 |
+| WP-17 | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16 |
+| WP-18 | Coverage / quality gate | quality | validation posture and test/coverage record | WP-17 |
+| WP-19 | Docs + review pass | docs | review-ready docs package | WP-18 |
+| WP-20 | Internal review | review | internal review record | WP-19 |
+| WP-21 | External / 3rd-party review | review | external review handoff and record | WP-20 |
+| WP-22 | Review findings remediation | review | remediation record and follow-up issues | WP-21 |
+| WP-23 | Next milestone planning | docs | v0.92/v0.93 handoff update | WP-22 |
+| WP-24 | Release ceremony | release | release evidence and end-of-milestone report | WP-23 |
 
 ## Sequencing Pressure
 
 Runtime/test-cycle recovery should begin early because every later milestone
 benefits from it. UTS+ACC benchmark work should separate model proposal quality
 from execution authority. Google Workspace and modernization demos must stay
-operator-gated and bounded. Publication work should produce packets and review
-surfaces, not direct publishing.
+operator-gated and bounded. Speculative decoding should stay bounded to
+deterministic commit semantics and must not smuggle in opaque runtime behavior
+under the banner of acceleration. Repo visibility should consume the delivered
+v0.90 baseline rather than pretending it never landed. Publication work should
+produce packets and review surfaces, not direct publishing.
