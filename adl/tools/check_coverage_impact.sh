@@ -168,8 +168,14 @@ candidate_filter_for_path() {
     adl/src/runtime_v2/wellbeing_metrics.rs|adl/src/runtime_v2/wellbeing_metrics_parts/*.rs)
       printf 'wellbeing_metrics'
       ;;
+    adl/src/runtime_v2/private_state_sanctuary/*.rs)
+      printf 'private_state_sanctuary'
+      ;;
     adl/src/cli/mod.rs|adl/src/cli/tests.rs)
       printf 'cli'
+      ;;
+    adl/src/cli/run_artifacts/runtime/*.rs)
+      printf 'run_state'
       ;;
     *)
       basename "$path" .rs

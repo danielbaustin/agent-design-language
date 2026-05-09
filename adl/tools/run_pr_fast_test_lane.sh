@@ -152,6 +152,10 @@ filter_token_for_path() {
       printf 'governed_episode'
       return 0
       ;;
+    adl/src/runtime_v2/private_state_sanctuary/*.rs)
+      printf 'private_state_sanctuary'
+      return 0
+      ;;
     adl/src/runtime_v2/*/*.rs|adl/src/runtime_v2/*/*/*.rs|adl/src/runtime_v2/*/*/*/*.rs)
       return 1
       ;;
@@ -180,6 +184,10 @@ filter_token_for_path() {
       return 0
       ;;
     adl/src/cli/tests/run_state/*.rs)
+      printf 'run_state'
+      return 0
+      ;;
+    adl/src/cli/run_artifacts/runtime/*.rs)
       printf 'run_state'
       return 0
       ;;
