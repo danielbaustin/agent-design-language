@@ -13,6 +13,15 @@ This contract defines the smallest truthful recurring episode shape for the
 - stop rule: fixed turn count, visible in the saved transcript
 - proof boundary: bounded attributable conversation, not identity continuity
 
+## Recurring Cadence
+
+- target cadence: one episode per week
+- release shape: one bounded episode packet at a time
+- repeatability requirement: each episode should be runnable from the same
+  canonical wrapper with only bounded topic/title overrides
+- operations constraint: weekly repetition must not require a new bespoke
+  workflow per episode
+
 ## Stable Pilot Roles
 
 - `ChatGPT`: host / synthesizer
@@ -44,6 +53,13 @@ A reviewer should be able to answer all of the following from the packet alone:
 - what the episode proved
 - what the episode did not prove
 
+For the recurring weekly format, a reviewer should also be able to answer:
+
+- whether this episode follows the same stable packet shape as the prior one
+- which parts changed episode-to-episode: topic, title, models, or operator
+  overrides
+- whether the episode still stayed inside the same proof boundary
+
 ## Audio Boundary
 
 Audio is optional in the pilot.
@@ -61,3 +77,4 @@ This episode contract does not imply:
 - native audio support from every provider
 - persistent long-term identity continuity
 - autonomous federation or social cognition beyond the saved run
+- daily or continuous publishing pressure beyond the bounded weekly cadence

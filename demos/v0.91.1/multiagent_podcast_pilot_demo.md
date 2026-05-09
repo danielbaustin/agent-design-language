@@ -12,6 +12,7 @@ pilot is an actual episode run with:
 - one stable three-participant role split
 - one explicit episode contract
 - one reusable packet shape for future episodes
+- one intended recurring weekly cadence
 
 ## Scope Boundary
 
@@ -62,6 +63,18 @@ Useful bounded overrides:
 - `Gemini`: challenger / systems analyst
 - `Claude`: refiner / moral stylist
 
+## Recurring Series Intention
+
+This pilot is designed as the first bounded episode in a repeatable series:
+
+- target cadence: `1 episode / week`
+- stable infrastructure: same canonical wrapper and packet shape
+- bounded per-episode variation: topic, title, model overrides, and later audio
+  rendering choices
+
+The point is to make the format regularly repeatable without turning the pilot
+into a broad media-platform commitment.
+
 ## Tracked Episode Contract
 
 - `demos/v0.91.1/multiagent_podcast_episode_contract.md`
@@ -98,6 +111,9 @@ That topic was chosen because it is:
 - broad enough to invite disagreement
 - concrete enough to avoid abstract drift
 
+Later weekly episodes can rotate topics while preserving the same packet and
+proof structure.
+
 ## Success Signal
 
 The pilot is successful when:
@@ -106,3 +122,5 @@ The pilot is successful when:
 - all three participants remain explicit and easy to distinguish
 - the episode reads like one coherent show segment rather than three detached monologues
 - the proof note remains honest about what the pilot does not prove
+- the packet shape is stable enough to be run again next week without bespoke
+  redesign
