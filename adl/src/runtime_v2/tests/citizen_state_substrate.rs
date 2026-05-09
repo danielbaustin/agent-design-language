@@ -103,6 +103,28 @@ fn runtime_v2_citizen_state_substrate_validation_rejects_drift() {
 
     let mut packet =
         runtime_v2_citizen_state_substrate_contract().expect("citizen-state substrate packet");
+    packet
+        .validation_commands
+        .retain(|command| !command.contains("runtime_v2_private_state_lineage"));
+    assert!(packet
+        .validate()
+        .expect_err("missing stale-state validation command should fail")
+        .to_string()
+        .contains("fixture_kind 'stale_state'"));
+
+    let mut packet =
+        runtime_v2_citizen_state_substrate_contract().expect("citizen-state substrate packet");
+    packet
+        .validation_commands
+        .retain(|command| !command.contains("runtime_v2_private_state_envelope"));
+    assert!(packet
+        .validate()
+        .expect_err("missing malformed-state validation command should fail")
+        .to_string()
+        .contains("fixture_kind 'malformed_state'"));
+
+    let mut packet =
+        runtime_v2_citizen_state_substrate_contract().expect("citizen-state substrate packet");
     packet.fixture_matrix[0].artifact_ref = "/tmp/leak.json".to_string();
     assert!(packet
         .validate()
@@ -248,7 +270,7 @@ fn runtime_v2_citizen_state_substrate_validate_against_rejects_dependency_and_vi
         .validate()
         .expect_err("missing observatory validation command should fail")
         .to_string()
-        .contains("observatory validation"));
+        .contains("fixture_kind 'overexposed_projection'"));
 
     let mut packet =
         runtime_v2_citizen_state_substrate_contract().expect("citizen-state substrate packet");
