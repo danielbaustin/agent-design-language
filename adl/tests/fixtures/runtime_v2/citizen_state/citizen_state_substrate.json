@@ -1,0 +1,110 @@
+{
+  "schema_version": "runtime_v2.citizen_state_substrate_packet.v1",
+  "substrate_id": "citizen-state-substrate-v0-91-1-wp-06",
+  "demo_id": "D10",
+  "milestone": "v0.91.1",
+  "wp": "WP-06",
+  "artifact_path": "runtime_v2/citizen_state/citizen_state_substrate.json",
+  "source_feature_doc": "docs/milestones/v0.91.1/features/CITIZEN_STATE_SUBSTRATE.md",
+  "inherited_private_state_decision_id": "v0-90-3-wp-03-private-state-format",
+  "inherited_private_state_milestone": "v0.90.3",
+  "inherited_private_state_refs": [
+    "docs/milestones/v0.90.3/CITIZEN_STATE_INHERITANCE_AUDIT_v0.90.3.md",
+    "docs/milestones/v0.90.3/features/CITIZEN_STATE_SECURITY_AND_FORMAT.md"
+  ],
+  "audience_views": [
+    {
+      "audience": "runtime",
+      "surface_kind": "derived_runtime_projection",
+      "artifact_ref": "runtime_v2/private_state/proto-citizen-alpha.projection.json",
+      "projection_selector": "root",
+      "authority_status": "projection_not_authority",
+      "raw_private_state_allowed": false,
+      "intended_use": "runtime may consume only the derived projection while canonical binary private state remains the authority surface",
+      "denied_actions": [
+        "promote_projection_to_authority",
+        "inspect_raw_private_state"
+      ]
+    },
+    {
+      "audience": "operator",
+      "surface_kind": "observatory_projection",
+      "artifact_ref": "runtime_v2/observatory/private_state_projection_packet.json",
+      "projection_selector": "operator",
+      "authority_status": "non_authoritative_review_projection",
+      "raw_private_state_allowed": false,
+      "intended_use": "operators review continuity and quarantine-safe state summaries without raw private-state inspection",
+      "denied_actions": [
+        "inspect_raw_private_state",
+        "mutate_canonical_state"
+      ]
+    },
+    {
+      "audience": "reviewer",
+      "surface_kind": "observatory_projection",
+      "artifact_ref": "runtime_v2/observatory/private_state_projection_packet.json",
+      "projection_selector": "reviewer",
+      "authority_status": "non_authoritative_review_projection",
+      "raw_private_state_allowed": false,
+      "intended_use": "reviewers inspect evidence-linked continuity summaries and claim boundaries without raw private-state release",
+      "denied_actions": [
+        "inspect_raw_private_state",
+        "treat_projection_as_authority"
+      ]
+    },
+    {
+      "audience": "public",
+      "surface_kind": "observatory_projection",
+      "artifact_ref": "runtime_v2/observatory/private_state_projection_packet.json",
+      "projection_selector": "public",
+      "authority_status": "non_authoritative_review_projection",
+      "raw_private_state_allowed": false,
+      "intended_use": "public visibility stays minimal and privacy-safe; it cannot reveal lineage internals or private-state hashes",
+      "denied_actions": [
+        "inspect_raw_private_state",
+        "expose_lineage_internals"
+      ]
+    }
+  ],
+  "fixture_matrix": [
+    {
+      "fixture_kind": "valid_state",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/private_state/proto-citizen-alpha.projection.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state -- --nocapture",
+      "summary": "Valid state projection is hash-linked to canonical private-state authority and remains non-authoritative."
+    },
+    {
+      "fixture_kind": "malformed_state",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/private_state/envelope_negative_cases.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_envelope -- --nocapture",
+      "summary": "Malformed or unsafe state mutations fail closed rather than being accepted as citizen-state authority."
+    },
+    {
+      "fixture_kind": "stale_state",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/private_state/lineage_negative_cases.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_lineage -- --nocapture",
+      "summary": "Stale or disagreeing materialized state enters recovery_or_quarantine instead of silently winning."
+    },
+    {
+      "fixture_kind": "overexposed_projection",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/observatory/private_state_projection_negative_cases.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_observatory -- --nocapture",
+      "summary": "Overexposed public or operator projections are rejected before raw private-state leakage can occur."
+    }
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_citizen_state_substrate -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_envelope -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_lineage -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_observatory -- --nocapture",
+    "git diff --check"
+  ],
+  "claim_boundary": "WP-06 proves one v0.91.1 citizen-state substrate by truthfully consuming the inherited v0.90.3 canonical private-state baseline, fail-closed lineage/recovery evidence, and runtime/operator/reviewer/public projection boundaries. It does not claim birthday, full identity continuity, public release of private diagnostics, or new external transport guarantees.",
+  "non_claims": [
+    "does not replace the inherited v0.90.3 canonical private-state format with a newly authored v0.91.1 authority surface",
+    "does not permit raw private-state inspection from runtime, operator, reviewer, or public projections",
+    "does not prove full v0.92 identity continuity or first true birthday semantics",
+    "does not prove external communication readiness without later TLS or mutual-TLS-equivalent work"
+  ]
+}

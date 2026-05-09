@@ -4,7 +4,7 @@
 
 - Feature Name: Citizen State Substrate
 - Milestone Target: `v0.91.1`
-- Status: planned
+- Status: landed
 - Planned WP Home: WP-06
 - Source Docs: `.adl/docs/TBD/citizen_state/`
 - Proof Modes: schema, fixtures, tests, review
@@ -41,3 +41,13 @@ Out of scope:
 - Invalid citizen-state records fail closed.
 - Projection never exposes private state without policy permission.
 - v0.92 identity work can consume the resulting state evidence.
+
+## Proof Route
+
+- `adl/src/runtime_v2/citizen_state_substrate.rs`
+- `adl/src/runtime_v2/tests/citizen_state_substrate.rs`
+- `adl/tests/fixtures/runtime_v2/citizen_state/citizen_state_substrate.json`
+- inherited baseline and projection evidence:
+  - `adl/src/runtime_v2/private_state.rs`
+  - `adl/src/runtime_v2/private_state_lineage.rs`
+  - `adl/src/runtime_v2/private_state_observatory.rs`

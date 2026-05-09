@@ -21,7 +21,7 @@ Each feature should have one truthful proof route:
 | Agent lifecycle state model | WP-03 | feature doc + landed runtime/tests | landed |
 | CSM observatory active surface | WP-04 | feature doc + landed runtime/tests | landed |
 | Citizen standing | WP-05 | feature doc + landed runtime/tests | landed |
-| Citizen state | WP-06 | feature doc only; execution pending | pending |
+| Citizen state | WP-06 | feature doc + landed citizen-state substrate packet, fixtures, and focused runtime/private-state tests | landed |
 | Memory/identity architecture | WP-07 | feature doc only; execution pending | pending |
 | Theory of Mind foundation | WP-08 | feature doc only; execution pending | pending |
 | Capability/aptitude testing | WP-09 | feature doc only; execution pending | pending |
@@ -44,4 +44,3 @@ Each feature should have one truthful proof route:
 - full milestone proof coverage is not complete yet
 - the flagship demo is not yet landed
 - review and release convergence have not happened yet
-

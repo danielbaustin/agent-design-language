@@ -196,6 +196,12 @@ pub fn runtime_v2_private_state_observatory_contract(
     )
 }
 
+pub fn runtime_v2_citizen_state_substrate_contract() -> Result<RuntimeV2CitizenStateSubstratePacket>
+{
+    static PACKET: OnceCell<RuntimeV2CitizenStateSubstratePacket> = OnceCell::new();
+    cached_contract(&PACKET, RuntimeV2CitizenStateSubstratePacket::prototype)
+}
+
 pub fn runtime_v2_standing_contract() -> Result<RuntimeV2StandingArtifacts> {
     RuntimeV2StandingArtifacts::prototype()
 }
