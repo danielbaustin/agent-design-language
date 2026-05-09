@@ -26,6 +26,7 @@ trap 'rm -rf "$tmp_dir"' EXIT
 
   mkdir -p adl/src docs
   printf 'pub fn baseline() -> bool { true }\n' > adl/src/lib.rs
+  mkdir -p .github/workflows
   cat > adl/Cargo.toml <<'EOF'
 [package]
 name = "adl"
@@ -40,6 +41,23 @@ name = "adl"
 version = "0.90.3"
 EOF
   printf '# baseline\n' > docs/readme.md
+  cat > .github/workflows/ci.yaml <<'EOF'
+jobs:
+  adl-coverage:
+    steps:
+      - name: Coverage run and summary (json)
+        run: bash tools/run_authoritative_coverage_lane.sh
+      - name: Coverage summary (text)
+        run: cargo llvm-cov report --summary-only | tee coverage-summary.txt
+      - name: Upload coverage artifact
+        with:
+          path: |
+            adl/coverage-summary.txt
+      - name: Upload coverage to Codecov
+        with:
+          files: adl/lcov.info
+          flags: adl
+EOF
   git add .
   git commit -q -m baseline
   base_sha="$(git rev-parse HEAD)"
@@ -169,6 +187,47 @@ EOF
   assert_has "$policy_surface_output" "coverage_lane=authoritative_full"
   assert_has "$policy_surface_output" "coverage_authority=pr_policy_surface_tooling_only"
   assert_has "$policy_surface_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
+
+  git checkout -q -b workflow-reporting-only-change "$base_sha"
+  python3 - <<'PY'
+from pathlib import Path
+
+path = Path(".github/workflows/ci.yaml")
+path.write_text(path.read_text().replace("            adl/coverage-summary.txt\n", "            adl/coverage-summary.txt\n            adl/coverage-summary.json\n", 1))
+PY
+  git add .github/workflows/ci.yaml
+  git commit -q -m workflow-reporting-only-change
+  workflow_reporting_head="$(git rev-parse HEAD)"
+
+  workflow_reporting_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$workflow_reporting_head" --ref "refs/pull/1/merge")"
+  assert_has "$workflow_reporting_output" "rust_required=false"
+  assert_has "$workflow_reporting_output" "coverage_required=false"
+  assert_has "$workflow_reporting_output" "full_coverage_required=false"
+  assert_has "$workflow_reporting_output" "demo_smoke_required=false"
+  assert_has "$workflow_reporting_output" "release_version_only=false"
+  assert_has "$workflow_reporting_output" "coverage_lane=skip"
+  assert_has "$workflow_reporting_output" "coverage_authority=not_required"
+  assert_has "$workflow_reporting_output" "reason=coverage_reporting_workflow_change_skips_authoritative_coverage"
+
+  git checkout -q -b workflow-authoritative-policy-change "$base_sha"
+  python3 - <<'PY'
+from pathlib import Path
+
+path = Path(".github/workflows/ci.yaml")
+path.write_text(path.read_text().replace("run: bash tools/run_authoritative_coverage_lane.sh", "run: bash tools/run_authoritative_coverage_lane.sh --strict", 1))
+PY
+  git add .github/workflows/ci.yaml
+  git commit -q -m workflow-authoritative-policy-change
+  workflow_policy_head="$(git rev-parse HEAD)"
+
+  workflow_policy_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$workflow_policy_head" --ref "refs/pull/1/merge")"
+  assert_has "$workflow_policy_output" "rust_required=false"
+  assert_has "$workflow_policy_output" "coverage_required=false"
+  assert_has "$workflow_policy_output" "full_coverage_required=true"
+  assert_has "$workflow_policy_output" "demo_smoke_required=false"
+  assert_has "$workflow_policy_output" "coverage_lane=authoritative_full"
+  assert_has "$workflow_policy_output" "coverage_authority=pr_policy_surface_tooling_only"
+  assert_has "$workflow_policy_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
 
   git checkout -q -b runtime-policy-surface-change "$base_sha"
   mkdir -p adl/tools
