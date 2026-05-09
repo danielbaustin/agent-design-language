@@ -87,6 +87,13 @@ def select_next_issue(state: dict[str, Any]) -> None:
         if issue not in completed:
             record = record_by_issue.get(issue, {})
             if record.get('status') == 'waiting_for_review':
+                later_issues = [
+                    later
+                    for later in state.get('ordered_issue_numbers', [])
+                    if later != issue and later not in completed
+                ]
+                if record.get('pr_url') and later_issues:
+                    continue
                 state['current_issue_number'] = issue
                 state['continuation'] = 'waiting_for_review'
                 return

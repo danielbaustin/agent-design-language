@@ -72,6 +72,12 @@ EOF
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/sor.md" <<'EOF'
 Status: NOT_STARTED
 EOF
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/spp.md" <<'EOF'
+issue: 2827
+EOF
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/srp.md" <<'EOF'
+issue: 2827
+EOF
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/stp.md" <<'EOF'
 stp
 EOF
@@ -80,6 +86,12 @@ sip
 EOF
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/sor.md" <<'EOF'
 Status: NOT_STARTED
+EOF
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF'
+issue: 2828
+EOF
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/srp.md" <<'EOF'
+issue: 2828
 EOF
 
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py" \
@@ -102,7 +114,14 @@ assert state["current_issue_number"] == 2827
 assert len(state["issue_records"]) == 2
 assert state["truth_check"]["status"] == "not_run"
 assert state["truth_check"]["gate_passed"] is False
+bundle = state["local_bundle"]
+assert bundle["bundle_dir"].endswith("issue-3001__sprint-1-management-trial-sprint")
 PY
+
+test -f "${fake_repo}/.adl/v0.91.1/bodies/issue-3001-sprint-1-management-trial-sprint.md"
+test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/stp.md"
+test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/sip.md"
+test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/sor.md"
 
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py" \
   --repo-root "${fake_repo}" \
@@ -117,8 +136,10 @@ from pathlib import Path
 state = json.loads(Path(sys.argv[1]).read_text())
 preflight = state["structured_prompt_preflight"]
 assert preflight["status"] == "ready"
+assert preflight["required_card_types"] == ["stp.md", "sip.md", "sor.md", "spp.md", "srp.md"]
 assert len(preflight["issue_results"]) == 2
 assert all(result["status"] == "ready" for result in preflight["issue_results"])
+assert all(result["canonical_slug"] for result in preflight["issue_results"])
 PY
 
 if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py" \
@@ -155,7 +176,8 @@ assert record["status"] == "waiting_for_review"
 assert record["pr_url"] == "https://github.com/danielbaustin/agent-design-language/pull/4001"
 assert state["truth_check"]["status"] == "matched"
 assert state["truth_check"]["gate_passed"] is False
-assert state["continuation"] == "waiting_for_review"
+assert state["current_issue_number"] == 2828
+assert state["continuation"] == "continue"
 PY
 
 if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py" \

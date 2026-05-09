@@ -31,6 +31,7 @@ structured_prompt_preflight:
   issue_results:
     - issue_number: <u32>
       bundle_path: <path or null>
+      canonical_slug: <slug or null>
       status: ready | needs_editor_repair | blocked
       missing_cards:
         - <filename>

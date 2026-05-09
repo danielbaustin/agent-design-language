@@ -28,6 +28,14 @@ def find_bundle_dir(repo_root: Path, issue_number: int) -> tuple[Path | None, li
     return matches[0], []
 
 
+def canonical_slug_from_bundle_dir(bundle_dir: Path) -> str:
+    name = bundle_dir.name
+    marker = '__'
+    if marker in name:
+        return name.split(marker, 1)[1]
+    return name
+
+
 def inspect_issue(
     repo_root: Path,
     issue_number: int,
@@ -39,6 +47,7 @@ def inspect_issue(
         return {
             'issue_number': issue_number,
             'bundle_path': None,
+            'canonical_slug': None,
             'status': 'blocked',
             'missing_cards': [],
             'contradictory_cards': [],
@@ -87,6 +96,7 @@ def inspect_issue(
     return {
         'issue_number': issue_number,
         'bundle_path': str(bundle_dir),
+        'canonical_slug': canonical_slug_from_bundle_dir(bundle_dir),
         'status': status,
         'missing_cards': missing_cards,
         'contradictory_cards': contradictory_cards,
@@ -100,8 +110,10 @@ def main() -> int:
     parser.add_argument('--repo-root', required=True)
     parser.add_argument('--ordered-issues', required=True)
     parser.add_argument('--state')
-    parser.add_argument('--require-spp', action='store_true')
-    parser.add_argument('--require-srp', action='store_true')
+    parser.add_argument('--require-spp', dest='require_spp', action='store_true', default=True)
+    parser.add_argument('--skip-spp', dest='require_spp', action='store_false')
+    parser.add_argument('--require-srp', dest='require_srp', action='store_true', default=True)
+    parser.add_argument('--skip-srp', dest='require_srp', action='store_false')
     parser.add_argument('--print-json', action='store_true')
     args = parser.parse_args()
 
