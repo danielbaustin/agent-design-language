@@ -224,6 +224,11 @@ compression_threshold = 11000
 compression_ratio = 2.25
 final_mix_target_rms = 3350.0
 final_mix_ceiling = 26500
+speaker_tone_profiles = {
+    'ChatGPT': {'low_gain': -0.05, 'high_gain': 0.09, 'makeup_gain': 1.02},
+    'Gemini': {'low_gain': -0.02, 'high_gain': -0.03, 'makeup_gain': 0.99},
+    'Claude': {'low_gain': -0.08, 'high_gain': 0.05, 'makeup_gain': 1.01},
+}
 
 def compress_pcm_16le(frames: bytes) -> bytes:
     samples = array('h')
@@ -271,6 +276,37 @@ def measure_pcm_16le(frames: bytes) -> tuple[float, int]:
     peak = max(abs(int(s)) for s in samples)
     return rms, peak
 
+def shape_voice_pcm_16le(frames: bytes, speaker: str) -> bytes:
+    profile = speaker_tone_profiles.get(speaker)
+    if profile is None:
+        return frames
+    samples = array('h')
+    samples.frombytes(frames)
+    if sys.byteorder != 'little':
+        samples.byteswap()
+    if not samples:
+        return frames
+
+    low_state = 0.0
+    low_alpha = 0.075
+    for i, sample in enumerate(samples):
+        x = float(sample)
+        low_state += low_alpha * (x - low_state)
+        low = low_state
+        high = x - low
+        shaped = x + (profile['low_gain'] * low) + (profile['high_gain'] * high)
+        shaped *= profile['makeup_gain']
+        value = int(round(shaped))
+        if value > 32767:
+            value = 32767
+        elif value < -32768:
+            value = -32768
+        samples[i] = value
+
+    if sys.byteorder != 'little':
+        samples.byteswap()
+    return samples.tobytes()
+
 def normalize_pcm_16le(frames: bytes, target_rms: float, rate: int, duck_intro: bool) -> bytes:
     samples = array('h')
     samples.frombytes(frames)
@@ -317,6 +353,7 @@ for entry in segments:
     if current_params[1] == 2:
         target_rms = speaker_target_rms.get(entry['speaker'], 3800.0)
         duck_intro = entry['speaker'] not in seen_speakers
+        frames = shape_voice_pcm_16le(frames, entry['speaker'])
         frames = normalize_pcm_16le(frames, target_rms, current_params[2], duck_intro)
         frames = compress_pcm_16le(frames)
         frames = limit_pcm_16le(frames, final_mix_ceiling)
@@ -360,6 +397,7 @@ manifest = {
     'episode_audio': Path(episode_audio_path).name,
     'mastering': {
         'segment_target_rms': speaker_target_rms,
+        'speaker_tone_profiles': speaker_tone_profiles,
         'final_mix_target_rms': final_mix_target_rms,
         'final_mix_ceiling': final_mix_ceiling,
         'compression_threshold': compression_threshold,
