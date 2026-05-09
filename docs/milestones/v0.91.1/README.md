@@ -99,6 +99,9 @@ not import the broad provider-native benchmark planning surface.
 ## Document Map
 
 - WBS: [WBS_v0.91.1.md](WBS_v0.91.1.md)
+- Vision: [VISION_v0.91.1.md](VISION_v0.91.1.md)
+- Design: [DESIGN_v0.91.1.md](DESIGN_v0.91.1.md)
+- Decisions: [DECISIONS_v0.91.1.md](DECISIONS_v0.91.1.md)
 - Sprint plan: [SPRINT_v0.91.1.md](SPRINT_v0.91.1.md)
 - Active issue wave: [WP_ISSUE_WAVE_v0.91.1.yaml](WP_ISSUE_WAVE_v0.91.1.yaml)
 - Execution readiness:
@@ -106,9 +109,23 @@ not import the broad provider-native benchmark planning surface.
 - Runtime/polis architecture package:
   [RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md](RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.1.md](DEMO_MATRIX_v0.91.1.md)
+- Feature proof coverage:
+  [FEATURE_PROOF_COVERAGE_v0.91.1.md](FEATURE_PROOF_COVERAGE_v0.91.1.md)
+- Quality gate: [QUALITY_GATE_v0.91.1.md](QUALITY_GATE_v0.91.1.md)
 - Feature index: [features/README.md](features/README.md)
 - Card bundle readiness:
   [CARD_BUNDLE_READINESS_v0.91.1.md](CARD_BUNDLE_READINESS_v0.91.1.md)
+- SPP readiness: [SPP_READINESS_v0.91.1.md](SPP_READINESS_v0.91.1.md)
+- Milestone checklist:
+  [MILESTONE_CHECKLIST_v0.91.1.md](MILESTONE_CHECKLIST_v0.91.1.md)
+- Release plan: [RELEASE_PLAN_v0.91.1.md](RELEASE_PLAN_v0.91.1.md)
+- Release readiness: [RELEASE_READINESS_v0.91.1.md](RELEASE_READINESS_v0.91.1.md)
+- Release evidence: [RELEASE_EVIDENCE_v0.91.1.md](RELEASE_EVIDENCE_v0.91.1.md)
+- Release notes: [RELEASE_NOTES_v0.91.1.md](RELEASE_NOTES_v0.91.1.md)
+- Next milestone handoff:
+  [NEXT_MILESTONE_HANDOFF_v0.91.1.md](NEXT_MILESTONE_HANDOFF_v0.91.1.md)
+- End-of-milestone report:
+  [END_OF_MILESTONE_REPORT_v0.91.1.md](END_OF_MILESTONE_REPORT_v0.91.1.md)
 
 ## Success Criteria
 
