@@ -137,5 +137,19 @@ if expected_deferred_fragment not in deferred_policy_step:
         f"found: {deferred_policy_step}"
     )
 
+for step_name in (
+    "Coverage (ADL Rust workspace lcov)",
+    "Coverage summary (text)",
+    "Verify generated lcov file",
+    "Verify lcov path from repository root",
+    "Upload coverage artifact",
+):
+    step_condition = step_if(step_name)
+    if "github.event_name != 'pull_request'" not in step_condition:
+        raise SystemExit(
+            f"{step_name} must be skipped for pull_request authoritative coverage runs so PRs avoid nonessential reporting tail; "
+            f"found: {step_condition}"
+        )
+
 print("PASS test_ci_runtime_contracts")
 PY

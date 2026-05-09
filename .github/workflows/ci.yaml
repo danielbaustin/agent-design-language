@@ -392,24 +392,24 @@ jobs:
           echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
 
       - name: Coverage (ADL Rust workspace lcov)
-        if: steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
+        if: github.event_name != 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
         run: cargo llvm-cov report --lcov --output-path lcov.info
 
       - name: Coverage summary (text)
-        if: steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
+        if: github.event_name != 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
         run: cargo llvm-cov report --summary-only | tee coverage-summary.txt
 
       - name: Verify generated lcov file
-        if: steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
+        if: github.event_name != 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
         run: test -s lcov.info && ls -l lcov.info
 
       - name: Verify lcov path from repository root
-        if: steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
+        if: github.event_name != 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
         run: test -s adl/lcov.info && ls -l adl/lcov.info
         working-directory: .
 
       - name: Upload coverage artifact
-        if: steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
+        if: github.event_name != 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: adl-coverage-lcov
