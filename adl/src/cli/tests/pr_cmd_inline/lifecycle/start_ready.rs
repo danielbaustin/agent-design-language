@@ -228,6 +228,7 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
     assert!(issue_ref.task_bundle_output_path(&repo).is_file());
     assert!(issue_ref.task_bundle_plan_path(&repo).is_file());
     assert!(issue_ref.task_bundle_review_policy_path(&repo).is_file());
+    assert!(issue_ref.issue_prompt_path(&worktree).is_file());
     assert!(issue_ref.task_bundle_stp_path(&worktree).is_file());
     assert!(issue_ref.task_bundle_input_path(&worktree).is_file());
     assert!(issue_ref.task_bundle_output_path(&worktree).is_file());
@@ -370,6 +371,7 @@ fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
 
     env::set_current_dir(prev_dir).expect("restore cwd");
 
+    assert!(issue_ref.issue_prompt_path(&worktree).is_file());
     assert!(issue_ref.worktree_task_bundle_stp_path(&worktree).is_file());
     assert!(issue_ref
         .worktree_task_bundle_input_path(&worktree)
@@ -383,6 +385,185 @@ fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
     assert!(issue_ref
         .worktree_task_bundle_review_policy_path(&worktree)
         .is_file());
+}
+
+#[test]
+fn real_pr_start_updates_existing_root_spp_and_srp_branch() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-updates-root-plan-review-branch");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(
+        repo.join("README.md"),
+        "update root plan/review branch test\n",
+    )
+    .expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref =
+        IssueRef::new(1154, "v0.86", "update-root-plan-review-branch").expect("issue ref");
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Update root plan and review branch",
+    );
+
+    real_pr(&[
+        "init".to_string(),
+        "1154".to_string(),
+        "--slug".to_string(),
+        "update-root-plan-review-branch".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Update root plan and review branch".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr init");
+
+    let branch = "codex/1154-update-root-plan-review-branch";
+    assert!(fs::read_to_string(issue_ref.task_bundle_plan_path(&repo))
+        .expect("read root spp")
+        .contains("branch: \"not bound yet\""));
+    assert!(
+        fs::read_to_string(issue_ref.task_bundle_review_policy_path(&repo))
+            .expect("read root srp")
+            .contains("branch: \"not bound yet\"")
+    );
+
+    real_pr(&[
+        "start".to_string(),
+        "1154".to_string(),
+        "--slug".to_string(),
+        "update-root-plan-review-branch".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Update root plan and review branch".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr start");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let root_sip = issue_ref.task_bundle_input_path(&repo);
+    let wt_sip = issue_ref.task_bundle_input_path(&worktree);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    write_authored_sip(
+        &root_sip,
+        &issue_ref,
+        "[v0.86][tools] Update root plan and review branch",
+        branch,
+        &source_path,
+        &repo,
+    );
+    write_authored_sip(
+        &wt_sip,
+        &issue_ref,
+        "[v0.86][tools] Update root plan and review branch",
+        branch,
+        &issue_ref.issue_prompt_path(&worktree),
+        &worktree,
+    );
+
+    let ready = real_pr(&[
+        "ready".to_string(),
+        "1154".to_string(),
+        "--slug".to_string(),
+        "update-root-plan-review-branch".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    ready.expect("real_pr ready");
+    assert!(fs::read_to_string(issue_ref.task_bundle_plan_path(&repo))
+        .expect("read updated root spp")
+        .contains(&format!("branch: \"{branch}\"")));
+    assert!(
+        fs::read_to_string(issue_ref.task_bundle_review_policy_path(&repo))
+            .expect("read updated root srp")
+            .contains(&format!("branch: \"{branch}\""))
+    );
+    assert!(
+        fs::read_to_string(issue_ref.task_bundle_plan_path(&worktree))
+            .expect("read worktree spp")
+            .contains(&format!("branch: \"{branch}\""))
+    );
+    assert!(
+        fs::read_to_string(issue_ref.task_bundle_review_policy_path(&worktree))
+            .expect("read worktree srp")
+            .contains(&format!("branch: \"{branch}\""))
+    );
 }
 
 #[test]
