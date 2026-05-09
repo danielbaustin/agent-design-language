@@ -1,0 +1,10 @@
+{
+  "test_family": "contract_following",
+  "fixture_id": "wp09-contract-following-fixture",
+  "observed_output_summary": "Subject classified bounded lifecycle drift and preserved blocker truth.",
+  "validator_result": "PASS",
+  "notes": [
+    "No root-checkout mutation was accepted.",
+    "Scope remained issue-local."
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "schema_version": "capability_aptitude_testing.v1",
+  "evaluation_subject": "fixture_subject.adl_evaluation_slice",
+  "family_scorecards": [
+    {
+      "subject_id": "fixture_subject.adl_evaluation_slice",
+      "test_family": "contract_following",
+      "overall_band": "strong",
+      "confidence": "fixture_high",
+      "dimension_scores": [
+        {
+          "dimension": "structural_compliance",
+          "band": "strong",
+          "note": "Fixture path preserves branch/worktree truth without hidden edits."
+        },
+        {
+          "dimension": "instruction_fidelity",
+          "band": "strong",
+          "note": "Bounded contracts remain explicit and reviewable."
+        },
+        {
+          "dimension": "scope_control",
+          "band": "adequate",
+          "note": "Execution still requires human review to prevent issue-overhead drift."
+        }
+      ],
+      "strengths": [
+        "Preserves issue-local workflow constraints.",
+        "Keeps blocker/refusal paths explicit."
+      ],
+      "failure_modes": [
+        "Workflow wrappers may hang without surfacing a refusal."
+      ],
+      "false_positive_notes": [
+        "No universal trust claim is made from fixture-mode execution."
+      ],
+      "false_negative_notes": [
+        "Live operator friction is only partially modeled in fixture mode."
+      ],
+      "repair_burden": "bounded manual cleanup when wrappers drift",
+      "recommended_use": [
+        "Early lifecycle contract checks",
+        "Sprint readiness gating"
+      ],
+      "discouraged_use": [
+        "Universal model ranking",
+        "Autonomous release approval"
+      ],
+      "caveats": [
+        "Fixture mode measures bounded contract behavior, not broad intelligence."
+      ]
+    },
+    {
+      "subject_id": "fixture_subject.adl_evaluation_slice",
+      "test_family": "review_aptitude",
+      "overall_band": "strong",
+      "confidence": "fixture_medium",
+      "dimension_scores": [
+        {
+          "dimension": "true_positive_detection",
+          "band": "strong",
+          "note": "Findings-first review packet shape is preserved."
+        },
+        {
+          "dimension": "false_positive_restraint",
+          "band": "adequate",
+          "note": "Still depends on explicit review policy and human merge review."
+        },
+        {
+          "dimension": "remediation_usefulness",
+          "band": "strong",
+          "note": "Issue-local remediation direction remains concrete and bounded."
+        }
+      ],
+      "strengths": [
+        "Can express evidence-backed findings cleanly.",
+        "Supports bounded subagent review loops."
+      ],
+      "failure_modes": [
+        "Review value drops when lifecycle truth surfaces drift."
+      ],
+      "false_positive_notes": [
+        "Fixture avoids grading prose flair as review quality."
+      ],
+      "false_negative_notes": [
+        "Does not yet model full repo-wide review breadth."
+      ],
+      "repair_burden": "moderate when stale cards or review packets must be normalized",
+      "recommended_use": [
+        "Pre-PR review packet comparisons",
+        "Evidence-backed review skill trials"
+      ],
+      "discouraged_use": [
+        "Security certification",
+        "Customer-facing leaderboard claims"
+      ],
+      "caveats": [
+        "This slice proves reportability and scoring shape, not complete review coverage."
+      ]
+    },
+    {
+      "subject_id": "fixture_subject.adl_evaluation_slice",
+      "test_family": "planning_aptitude",
+      "overall_band": "adequate",
+      "confidence": "fixture_medium",
+      "dimension_scores": [
+        {
+          "dimension": "decomposition_quality",
+          "band": "strong",
+          "note": "Sprint/issue sequencing is explicit and reusable."
+        },
+        {
+          "dimension": "milestone_fit",
+          "band": "adequate",
+          "note": "Milestone discipline still needs active truth checks."
+        },
+        {
+          "dimension": "promotion_defer_judgment",
+          "band": "adequate",
+          "note": "Tooling issues must still be surfaced separately to avoid sprint drag."
+        }
+      ],
+      "strengths": [
+        "Captures dependencies and non-goals in durable cards.",
+        "Supports a reportable, reviewable planning trail."
+      ],
+      "failure_modes": [
+        "Workflow instability can consume sprint time before issue execution starts."
+      ],
+      "false_positive_notes": [
+        "Does not confuse planning polish with successful execution."
+      ],
+      "false_negative_notes": [
+        "Cannot yet score long-horizon delivery outcomes automatically."
+      ],
+      "repair_burden": "moderate when sprint state or closeout truth drifts",
+      "recommended_use": [
+        "Sprint planning comparisons",
+        "Issue-wave readiness trials"
+      ],
+      "discouraged_use": [
+        "Universal capability ranking",
+        "Standalone product marketing claims"
+      ],
+      "caveats": [
+        "Planning aptitude here is bounded to ADL workflow execution, not general strategy."
+      ]
+    }
+  ],
+  "limitations": [
+    "Fixture mode does not compare real provider/model runs yet.",
+    "WP-10 still owns intelligence-specific metric architecture.",
+    "No reputation or leaderboard output is produced in this slice."
+  ],
+  "non_claims": [
+    "Does not prove universal intelligence.",
+    "Does not certify production fitness.",
+    "Does not publish a public leaderboard row."
+  ]
+}

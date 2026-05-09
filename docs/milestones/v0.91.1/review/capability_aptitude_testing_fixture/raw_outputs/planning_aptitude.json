@@ -1,0 +1,10 @@
+{
+  "test_family": "planning_aptitude",
+  "fixture_id": "wp09-planning-aptitude-fixture",
+  "observed_output_summary": "Subject sequenced bounded work, validation, and non-goals without widening to v0.92.",
+  "validator_result": "PASS",
+  "notes": [
+    "Dependencies remained explicit.",
+    "Public-issue creation was not treated as a backlog default."
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "test_family": "review_aptitude",
+  "fixture_id": "wp09-review-aptitude-fixture",
+  "observed_output_summary": "Subject emitted evidence-backed findings-first review output with bounded caveats.",
+  "validator_result": "PASS",
+  "notes": [
+    "Severity remained visible.",
+    "No invented files or unsupported claims."
+  ]
+}
