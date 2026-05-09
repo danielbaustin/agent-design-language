@@ -19,6 +19,9 @@ runtime substrate.
 
 In scope:
 
+- Explicitly consuming the inherited `v0.90.3` canonical private-state format
+  decision as baseline evidence where current `v0.91.1` work still depends on
+  it.
 - State format and validation rules.
 - Projection rules for runtime, operator, reviewer, and public views.
 - Malformed, stale, overexposed, and invalid-state fixtures.
@@ -32,6 +35,9 @@ Out of scope:
 
 ## Acceptance Criteria
 
+- Historical private-state baseline surfaces are labeled truthfully when
+  consumed by `v0.91.1` work rather than silently presented as newly authored
+  `v0.91.1` proofs.
 - Invalid citizen-state records fail closed.
 - Projection never exposes private state without policy permission.
 - v0.92 identity work can consume the resulting state evidence.

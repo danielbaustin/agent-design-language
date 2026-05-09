@@ -190,7 +190,7 @@ fn runtime_v2_access_control_write_to_root_materializes_fixtures() {
     ] {
         let text = std::fs::read_to_string(root.join(rel_path)).expect("artifact text");
         assert!(text.contains("D10"));
-        assert!(text.contains("WP-12") || text.contains("access"));
+        assert!(text.contains("challenge") || text.contains("access"));
         assert!(!text.contains(root.to_string_lossy().as_ref()));
     }
 

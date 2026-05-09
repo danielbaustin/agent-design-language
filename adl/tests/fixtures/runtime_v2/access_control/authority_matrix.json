@@ -1,6 +1,6 @@
 {
   "schema_version": "runtime_v2.access_authority_matrix.v1",
-  "matrix_id": "access-authority-matrix-v0-90-3",
+  "matrix_id": "access-authority-matrix-v0-91-1",
   "demo_id": "D10",
   "artifact_path": "runtime_v2/access_control/authority_matrix.json",
   "standing_policy_ref": "runtime_v2/standing/standing_policy.json",
@@ -191,8 +191,8 @@
     "denied access never discloses raw private state",
     "denied access never mutates citizen continuity",
     "redacted projection is not raw private-state inspection",
-    "WP-12 access control remains bounded to v0.90.3 citizen-state substrate semantics"
+    "access control remains bounded to the v0.91.1 citizen-state substrate and review-safe observatory projections"
   ],
   "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture",
-  "claim_boundary": "WP-12 proves D10 access-control semantics for authority, events, and denials; WP-13 owns challenge/appeal due-process behavior."
+  "claim_boundary": "D10 access control proves standing-mediated authority, event emission, and denial safety for the v0.91.1 citizen-state substrate; challenge and appeal remain review-governed evidence paths rather than raw private-state authority."
 }

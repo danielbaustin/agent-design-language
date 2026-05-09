@@ -30,6 +30,10 @@ v0.91.1 should establish:
   dormant, simulation, in-transit, bootstrap, shutdown, and forced-suspension
   regimes.
 - Citizen standing and citizen state as concrete runtime-facing contracts.
+  The citizen-state band may still consume inherited `v0.90.3` canonical
+  private-state baseline artifacts where current `v0.91.1` work has not
+  renumbered the historical proof identity; that inheritance should be
+  explicit, not silent.
 - Memory and identity architecture strong enough to feed v0.92 without claiming
   full identity continuity yet.
 - Theory of Mind foundations tied to citizen state, memory, and communication

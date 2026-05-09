@@ -24,7 +24,7 @@ fn runtime_v2_observatory_flagship_review_surfaces_are_stable_and_serializable()
         RUNTIME_V2_OBSERVATORY_FLAGSHIP_PROOF_SCHEMA
     );
     assert_eq!(artifacts.proof_packet.demo_id, "D12");
-    assert_eq!(artifacts.proof_packet.milestone, "v0.90.3");
+    assert_eq!(artifacts.proof_packet.milestone, "v0.91.1");
     assert_eq!(
         artifacts.proof_packet.artifact_path,
         "runtime_v2/observatory/flagship_proof_packet.json"
@@ -182,7 +182,7 @@ fn runtime_v2_observatory_flagship_rejects_shape_and_boundary_drift() {
         .validate_shape()
         .expect_err("bad milestone should fail")
         .to_string()
-        .contains("must target v0.90.3"));
+        .contains("must target v0.91.1"));
 
     let mut absolute_path = packet.clone();
     absolute_path.artifact_path = "/tmp/flagship.json".to_string();
@@ -220,7 +220,7 @@ fn runtime_v2_observatory_flagship_rejects_shape_and_boundary_drift() {
         .validate_shape()
         .expect_err("missing WP phrase should fail")
         .to_string()
-        .contains("must mention WP-03"));
+        .contains("must mention WP-05"));
 
     let mut missing_personhood_non_claim = packet.clone();
     missing_personhood_non_claim.non_claims = vec![

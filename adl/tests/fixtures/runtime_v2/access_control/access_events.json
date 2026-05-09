@@ -1,6 +1,6 @@
 {
   "schema_version": "runtime_v2.access_event_packet.v1",
-  "packet_id": "access-events-v0-90-3",
+  "packet_id": "access-events-v0-91-1",
   "demo_id": "D10",
   "generated_at": "2026-04-21T00:00:00Z",
   "artifact_path": "runtime_v2/access_control/access_events.json",
@@ -53,7 +53,7 @@
       "continuity_mutated": false,
       "continuity_sequence_before": 7,
       "continuity_sequence_after": 7,
-      "rationale": "decryption is denied in v0.90.3 without exposing cleartext or raw state"
+      "rationale": "decryption is denied without exposing cleartext or raw state"
     },
     {
       "event_id": "access-event-projection-001",
@@ -203,7 +203,7 @@
       "continuity_mutated": false,
       "continuity_sequence_before": 7,
       "continuity_sequence_after": 7,
-      "rationale": "appeal records due-process intent without implementing WP-13 review-resolution behavior"
+      "rationale": "appeal records due-process intent without granting raw-state authority or automatic review resolution"
     },
     {
       "event_id": "access-event-release-001",
@@ -227,9 +227,9 @@
       "continuity_mutated": false,
       "continuity_sequence_before": 7,
       "continuity_sequence_after": 7,
-      "rationale": "release is denied until WP-13 review-resolution evidence exists"
+      "rationale": "release is denied until review-resolution evidence exists"
     }
   ],
-  "packet_hash": "c226cf131edf8dcaae3a06846b67118cd6f31fb79fd8f78c01287ee5bef15329",
-  "claim_boundary": "D10 WP-12 event evidence proves access-control event emission and denial safety; WP-13 owns procedural challenge behavior."
+  "packet_hash": "7370417581e77d819dda204e8980fad1c25ccf1713509f438dfa7fac329a602f",
+  "claim_boundary": "D10 event evidence proves access-control event emission and denial safety while keeping challenge and appeal on review-governed paths."
 }
