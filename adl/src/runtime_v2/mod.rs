@@ -59,6 +59,7 @@ mod resource_stewardship_bridge;
 mod security;
 mod snapshot;
 mod standing;
+mod theory_of_mind_foundation;
 mod transition_authority;
 mod types;
 mod validators;
@@ -177,6 +178,8 @@ pub use security::*;
 pub use snapshot::*;
 #[allow(unused_imports)]
 pub use standing::*;
+#[allow(unused_imports)]
+pub use theory_of_mind_foundation::*;
 #[allow(unused_imports)]
 pub use transition_authority::*;
 #[allow(unused_imports)]

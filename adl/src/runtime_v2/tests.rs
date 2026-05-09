@@ -57,6 +57,7 @@ mod resource_stewardship_bridge;
 mod security_boundary;
 mod snapshot_rehydration;
 mod standing;
+mod theory_of_mind_foundation;
 mod transition_authority;
 mod wake_continuity;
 mod wellbeing_metrics;

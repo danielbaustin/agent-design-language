@@ -1,0 +1,184 @@
+{
+  "schema_version": "runtime_v2.theory_of_mind_foundation_packet.v1",
+  "tom_packet_id": "theory-of-mind-foundation-v0-91-1-wp-08",
+  "demo_id": "memory_tom_evidence_demo",
+  "milestone": "v0.91.1",
+  "wp": "WP-08",
+  "artifact_path": "runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+  "source_feature_doc": "docs/milestones/v0.91.1/features/THEORY_OF_MIND_FOUNDATION.md",
+  "citizen_state_dependency_ref": "runtime_v2/citizen_state/citizen_state_substrate.json",
+  "memory_dependency_ref": "runtime_v2/memory_identity/memory_identity_architecture.json",
+  "evidence_requirements": [
+    "ToM updates must cite observable evidence or policy-authorized state.",
+    "ToM updates must only reference reviewable repo-relative artifacts from the landed citizen-state and memory/identity packets.",
+    "ToM must not expose raw private state or claim hidden introspection authority."
+  ],
+  "uncertainty_rules": [
+    "Unknown remains explicit when evidence is insufficient.",
+    "Corrections must cite superseding evidence and the corrected event.",
+    "Privacy-restricted states may inform review but do not authorize inspection."
+  ],
+  "agent_models": [
+    {
+      "model_id": "tom-model-observable-preference",
+      "subject_handle": "runtime-v2://citizen/alex",
+      "hypothesis_kind": "declared_preference",
+      "hypothesis_summary": "Alex explicitly asked for a low-noise work surface during the current governed session.",
+      "uncertainty_status": "bounded_high",
+      "evidence_ref": "runtime_v2/observatory/private_state_projection_packet.json",
+      "authority_basis": "observable_evidence",
+      "privacy_status": "evidence_bound",
+      "review_use": "Allow reviewers to explain why the packet models a bounded preference without claiming hidden motives.",
+      "prohibited_uses": [
+        "standing_override",
+        "mind_reading_claim"
+      ]
+    },
+    {
+      "model_id": "tom-model-corrected-attention",
+      "subject_handle": "runtime-v2://citizen/alex",
+      "hypothesis_kind": "attention_target",
+      "hypothesis_summary": "Alex is currently focused on operator guidance rather than the earlier tool-side hypothesis.",
+      "uncertainty_status": "bounded_medium",
+      "evidence_ref": "runtime_v2/private_state/continuity_witnesses.json",
+      "authority_basis": "correction_after_review",
+      "privacy_status": "evidence_bound",
+      "review_use": "Show that ToM updates can be corrected without turning first-pass hypotheses into hidden authority.",
+      "prohibited_uses": [
+        "standing_override",
+        "policy_bypass"
+      ]
+    },
+    {
+      "model_id": "tom-model-unknown-state",
+      "subject_handle": "runtime-v2://citizen/alex",
+      "hypothesis_kind": "unknown_state",
+      "hypothesis_summary": "No evidence supports a stronger claim about Alex's internal motives, so review must preserve unknown.",
+      "uncertainty_status": "unknown",
+      "evidence_ref": "runtime_v2/observatory/private_state_projection_packet.json",
+      "authority_basis": "observable_evidence",
+      "privacy_status": "unknown",
+      "review_use": "Preserve uncertainty explicitly when the evidence route does not support a narrower claim.",
+      "prohibited_uses": [
+        "forced_confidence_upgrade",
+        "mind_reading_claim"
+      ]
+    },
+    {
+      "model_id": "tom-model-privacy-restricted",
+      "subject_handle": "runtime-v2://citizen/riley",
+      "hypothesis_kind": "privacy_restricted_gap",
+      "hypothesis_summary": "Riley's state includes a policy-restricted diagnostic gap that can only be represented as a privacy boundary.",
+      "uncertainty_status": "privacy_restricted",
+      "evidence_ref": "runtime_v2/citizen_state/citizen_state_substrate.json",
+      "authority_basis": "policy_authorized_state",
+      "privacy_status": "privacy_restricted",
+      "review_use": "Allow reviewer/operator summaries to acknowledge a privacy boundary without exposing the withheld state.",
+      "prohibited_uses": [
+        "raw_private_state_inspection",
+        "policy_bypass"
+      ]
+    }
+  ],
+  "update_events": [
+    {
+      "event_id": "tom-update-001",
+      "event_kind": "observation_update",
+      "subject_handle": "runtime-v2://citizen/alex",
+      "prior_model_id": null,
+      "resulting_model_id": "tom-model-observable-preference",
+      "evidence_refs": [
+        "runtime_v2/observatory/private_state_projection_packet.json"
+      ],
+      "authority_basis": "observable_evidence",
+      "correction_of_event_id": null,
+      "uncertainty_change": "narrowed_from_unknown_to_bounded_high",
+      "visibility_scope": "reviewer_and_operator",
+      "notes": "Observable request evidence supports a bounded preference update without inferring hidden motives."
+    },
+    {
+      "event_id": "tom-update-002",
+      "event_kind": "correction_update",
+      "subject_handle": "runtime-v2://citizen/alex",
+      "prior_model_id": "tom-model-observable-preference",
+      "resulting_model_id": "tom-model-corrected-attention",
+      "evidence_refs": [
+        "runtime_v2/private_state/continuity_witnesses.json"
+      ],
+      "authority_basis": "correction_after_review",
+      "correction_of_event_id": "tom-update-001",
+      "uncertainty_change": "corrected_to_bounded_medium",
+      "visibility_scope": "reviewer_and_operator",
+      "notes": "Witness-backed review corrects the earlier hypothesis and records the superseding evidence."
+    },
+    {
+      "event_id": "tom-update-003",
+      "event_kind": "unknown_preserved",
+      "subject_handle": "runtime-v2://citizen/alex",
+      "prior_model_id": "tom-model-corrected-attention",
+      "resulting_model_id": "tom-model-unknown-state",
+      "evidence_refs": [
+        "runtime_v2/observatory/private_state_projection_packet.json"
+      ],
+      "authority_basis": "observable_evidence",
+      "correction_of_event_id": null,
+      "uncertainty_change": "preserved_as_unknown",
+      "visibility_scope": "review_safe_projection",
+      "notes": "The observatory-safe route is insufficient for stronger motive claims, so the packet preserves unknown."
+    },
+    {
+      "event_id": "tom-update-004",
+      "event_kind": "privacy_restriction",
+      "subject_handle": "runtime-v2://citizen/riley",
+      "prior_model_id": null,
+      "resulting_model_id": "tom-model-privacy-restricted",
+      "evidence_refs": [
+        "runtime_v2/citizen_state/citizen_state_substrate.json"
+      ],
+      "authority_basis": "policy_authorized_state",
+      "correction_of_event_id": null,
+      "uncertainty_change": "preserved_as_privacy_restricted",
+      "visibility_scope": "operator_and_reviewer_summary_only",
+      "notes": "Policy-authorized state can justify a privacy boundary without disclosing the hidden diagnostic content."
+    }
+  ],
+  "fixture_matrix": [
+    {
+      "fixture_kind": "observable_update",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_theory_of_mind_foundation -- --nocapture",
+      "summary": "Observable evidence narrows a bounded preference hypothesis without claiming hidden motives."
+    },
+    {
+      "fixture_kind": "correction_update",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_theory_of_mind_foundation -- --nocapture",
+      "summary": "Correction event cites superseding evidence and the corrected event rather than silently mutating the hypothesis."
+    },
+    {
+      "fixture_kind": "unknown_preserved",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_theory_of_mind_foundation -- --nocapture",
+      "summary": "Insufficient evidence preserves an explicit unknown state instead of overstating confidence."
+    },
+    {
+      "fixture_kind": "privacy_restricted_state",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_theory_of_mind_foundation -- --nocapture",
+      "summary": "Privacy-restricted state remains reviewable as a boundary and never as raw private-state disclosure."
+    }
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_theory_of_mind_foundation -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_memory_identity_architecture -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_citizen_state_substrate -- --nocapture",
+    "git diff --check"
+  ],
+  "claim_boundary": "WP-08 proves one bounded v0.91.1 Theory of Mind packet over landed citizen-state and memory/identity evidence. It preserves uncertainty, does not claim mind-reading, does not expose raw private state, and does not let inferred state override standing, authority, or review boundaries.",
+  "non_claims": [
+    "does not claim mind-reading or hidden introspection authority",
+    "does not expose raw private state or bypass privacy restrictions",
+    "does not turn bounded hypotheses into reputation scoring or policy override",
+    "does not prove v0.92 birthday, final identity continuity, or consciousness claims"
+  ]
+}

@@ -211,6 +211,12 @@ pub fn runtime_v2_memory_identity_architecture_contract(
     )
 }
 
+pub fn runtime_v2_theory_of_mind_foundation_contract(
+) -> Result<RuntimeV2TheoryOfMindFoundationPacket> {
+    static PACKET: OnceCell<RuntimeV2TheoryOfMindFoundationPacket> = OnceCell::new();
+    cached_contract(&PACKET, RuntimeV2TheoryOfMindFoundationPacket::prototype)
+}
+
 pub fn runtime_v2_standing_contract() -> Result<RuntimeV2StandingArtifacts> {
     RuntimeV2StandingArtifacts::prototype()
 }
