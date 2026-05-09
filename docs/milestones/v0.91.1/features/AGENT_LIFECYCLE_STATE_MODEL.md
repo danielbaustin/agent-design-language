@@ -4,7 +4,7 @@
 
 - Feature Name: Agent Lifecycle State Model
 - Milestone Target: `v0.91.1`
-- Status: planned
+- Status: landed
 - Planned WP Home: WP-03
 - Source Docs: `.adl/docs/TBD/ADL_AND_SLEEP.md`, `.adl/docs/TBD/runtime_v2/`
 - Proof Modes: schema, fixtures, tests, review
@@ -86,6 +86,15 @@ or execution bypass.
 - Fixtures for active, quiescent, suspended, dormant, simulation, in-transit,
   forced-suspension, quarantine, rejection, and orphaned states.
 - Validation errors for invalid transitions and forbidden invocation attempts.
+
+## Landed Surfaces
+
+- Lifecycle contract and transition-matrix implementation in
+  `adl/src/runtime_v2/agent_lifecycle_state.rs`
+- Focused regression coverage in
+  `adl/src/runtime_v2/tests/agent_lifecycle_state.rs`
+- Lifecycle feature status recorded as landed in
+  `docs/milestones/v0.91.1/FEATURE_PROOF_COVERAGE_v0.91.1.md`
 
 ## Demo / Proof Expectations
 
