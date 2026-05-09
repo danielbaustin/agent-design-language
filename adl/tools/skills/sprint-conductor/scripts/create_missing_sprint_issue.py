@@ -25,6 +25,152 @@ def run_json(cmd: list[str]) -> Any:
     return json.loads(out)
 
 
+def sanitize_slug(raw: str) -> str:
+    slug = raw.strip().lower()
+    slug = re.sub(r'^\[[^\]]+\]', '', slug).strip()
+    slug = re.sub(r'[^a-z0-9]+', '-', slug)
+    slug = re.sub(r'-{2,}', '-', slug).strip('-')
+    return slug or 'sprint-management-issue'
+
+
+def infer_version_from_title(title: str) -> str:
+    match = re.search(r'\[(v[0-9][^\]]*)\]', title)
+    if not match:
+        raise SystemExit(
+            f'Unable to infer milestone version from sprint title: {title!r}'
+        )
+    return match.group(1)
+
+
+def issue_prompt_path(repo_root: Path, version: str, issue_number: int, slug: str) -> Path:
+    return repo_root / '.adl' / version / 'bodies' / f'issue-{issue_number:04d}-{slug}.md'
+
+
+def task_bundle_dir(repo_root: Path, version: str, issue_number: int, slug: str) -> Path:
+    return repo_root / '.adl' / version / 'tasks' / f'issue-{issue_number:04d}__{slug}'
+
+
+def write_file(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content)
+
+
+def fallback_bootstrap_local_bundle(
+    repo_root: Path,
+    sprint_issue_number: int,
+    title: str,
+    issue_url: str,
+    body: str,
+) -> dict[str, str]:
+    version = infer_version_from_title(title)
+    slug = sanitize_slug(title)
+    source_path = issue_prompt_path(repo_root, version, sprint_issue_number, slug)
+    bundle_dir = task_bundle_dir(repo_root, version, sprint_issue_number, slug)
+    stp_path = bundle_dir / 'stp.md'
+    sip_path = bundle_dir / 'sip.md'
+    sor_path = bundle_dir / 'sor.md'
+    spp_path = bundle_dir / 'spp.md'
+    srp_path = bundle_dir / 'srp.md'
+
+    write_file(source_path, body + '\n')
+    write_file(stp_path, body + '\n')
+    write_file(
+        sip_path,
+        (
+            "# ADL Input Card\n\n"
+            f"Task ID: issue-{sprint_issue_number}\n"
+            f"Run ID: issue-{sprint_issue_number}\n"
+            f"Version: {version}\n"
+            f"Title: {title}\n"
+            "Branch: not bound yet\n\n"
+            "Context:\n"
+            f"- Issue: {issue_url}\n"
+            f"- Source Issue Prompt: {source_path.relative_to(repo_root)}\n\n"
+            "## Agent Execution Rules\n"
+            "- This issue is not started yet; do not assume a branch or worktree already exists.\n"
+        ),
+    )
+    write_file(
+        sor_path,
+        (
+            f"# issue-{sprint_issue_number}\n\n"
+            f"Task ID: issue-{sprint_issue_number}\n"
+            f"Run ID: issue-{sprint_issue_number}\n"
+            f"Version: {version}\n"
+            f"Title: {title}\n"
+            "Branch: not bound yet\n"
+            "Status: NOT_STARTED\n"
+        ),
+    )
+    write_file(
+        spp_path,
+        (
+            "issue: {issue}\n"
+            "task_id: \"issue-{issue}\"\n"
+            "run_id: \"issue-{issue}\"\n"
+            "codex_plan:\n"
+            "  status: pending\n"
+            "  step: \"Sprint management issue created; detailed plan pending execution.\"\n"
+        ).format(issue=sprint_issue_number),
+    )
+    write_file(
+        srp_path,
+        (
+            "issue: {issue}\n"
+            "task_id: \"issue-{issue}\"\n"
+            "review_status: pending\n"
+            "notes:\n"
+            "  - \"Sprint management issue created; review policy pending execution.\"\n"
+        ).format(issue=sprint_issue_number),
+    )
+    return {
+        'version': version,
+        'slug': slug,
+        'source_path': str(source_path),
+        'bundle_dir': str(bundle_dir),
+        'stp_path': str(stp_path),
+        'sip_path': str(sip_path),
+        'sor_path': str(sor_path),
+        'spp_path': str(spp_path),
+        'srp_path': str(srp_path),
+    }
+
+
+def bootstrap_local_bundle(
+    repo_root: Path,
+    sprint_issue_number: int,
+    title: str,
+    issue_url: str,
+    body: str,
+) -> dict[str, str]:
+    init_script = repo_root / 'adl' / 'tools' / 'pr.sh'
+    if init_script.is_file():
+        subprocess.check_call(
+            [
+                'bash',
+                str(init_script),
+                'init',
+                str(sprint_issue_number),
+            ],
+            cwd=repo_root,
+        )
+        version = infer_version_from_title(title)
+        slug = sanitize_slug(title)
+        bundle_dir = task_bundle_dir(repo_root, version, sprint_issue_number, slug)
+        return {
+            'version': version,
+            'slug': slug,
+            'source_path': str(issue_prompt_path(repo_root, version, sprint_issue_number, slug)),
+            'bundle_dir': str(bundle_dir),
+            'stp_path': str(bundle_dir / 'stp.md'),
+            'sip_path': str(bundle_dir / 'sip.md'),
+            'sor_path': str(bundle_dir / 'sor.md'),
+            'spp_path': str(bundle_dir / 'spp.md'),
+            'srp_path': str(bundle_dir / 'srp.md'),
+        }
+    return fallback_bootstrap_local_bundle(repo_root, sprint_issue_number, title, issue_url, body)
+
+
 def default_issue_records(ordered: list[int]) -> list[dict[str, Any]]:
     return [
         {
@@ -89,6 +235,7 @@ def main() -> int:
     parser.add_argument('--print-json', action='store_true')
     args = parser.parse_args()
 
+    repo_root = Path(args.repo_root)
     ordered = parse_csv_ints(args.ordered_issues)
     child_titles: dict[int, str] = {}
     for issue in ordered:
@@ -108,12 +255,14 @@ def main() -> int:
     if not match:
         raise SystemExit(f'Unable to parse created issue number from URL: {issue_url}')
     sprint_issue_number = int(match.group(1))
+    local_bundle = bootstrap_local_bundle(repo_root, sprint_issue_number, args.title, issue_url, body)
 
     result = {
         'created': True,
         'sprint_issue_number': sprint_issue_number,
         'sprint_issue_url': issue_url,
         'ordered_issue_numbers': ordered,
+        'local_bundle': local_bundle,
     }
 
     if args.state:
@@ -128,6 +277,7 @@ def main() -> int:
             'completed_issue_numbers': [],
             'blocked_issue_number': None,
             'continuation': 'continue',
+            'local_bundle': local_bundle,
             'issue_records': default_issue_records(ordered),
             'truth_check': {
                 'status': 'not_run',

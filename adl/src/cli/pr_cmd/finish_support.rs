@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use super::git_support::{
     branch_checked_out_worktree_path, commits_ahead_of_origin_main, current_branch, default_repo,
     ensure_not_on_main_branch, has_uncommitted_changes, path_str, primary_checkout_root, repo_root,
-    run_capture, run_status, run_status_allow_failure,
+    run_capture, run_capture_allow_failure, run_status, run_status_allow_failure,
 };
 use super::github::{
     attach_post_merge_closeout, attach_pr_janitor, current_pr_url,
@@ -703,7 +703,7 @@ pub(super) fn tracked_issue_surface_paths(
         else {
             continue;
         };
-        if run_status_allow_failure(
+        if run_capture_allow_failure(
             "git",
             &[
                 "-C",
@@ -713,7 +713,9 @@ pub(super) fn tracked_issue_surface_paths(
                 "--",
                 &repo_relative,
             ],
-        )? {
+        )?
+        .is_some()
+        {
             tracked.insert(repo_relative);
         }
     }
@@ -729,8 +731,31 @@ pub(super) fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<(
     if paths.is_empty() {
         bail!("finish: --paths resolved to empty");
     }
+    let mut stageable = Vec::new();
+    for path in paths {
+        if path.starts_with(".adl/") {
+            let tracked = run_status_allow_failure(
+                "git",
+                &[
+                    "-C",
+                    path_str(repo_root)?,
+                    "ls-files",
+                    "--error-unmatch",
+                    "--",
+                    path,
+                ],
+            )?;
+            if !tracked {
+                continue;
+            }
+        }
+        stageable.push(path);
+    }
+    if stageable.is_empty() {
+        bail!("finish: --paths resolved only to local-only .adl issue surfaces; no tracked repo paths remain to stage");
+    }
     let mut args = vec!["-C", path_str(repo_root)?, "add", "--"];
-    args.extend(paths);
+    args.extend(stageable);
     run_status("git", &args)?;
     Ok(())
 }
