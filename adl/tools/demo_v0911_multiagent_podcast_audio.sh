@@ -222,6 +222,8 @@ speaker_target_rms = {
 intro_duck_ms = 425
 compression_threshold = 11000
 compression_ratio = 2.25
+final_mix_target_rms = 3350.0
+final_mix_ceiling = 26500
 
 def compress_pcm_16le(frames: bytes) -> bytes:
     samples = array('h')
@@ -243,6 +245,31 @@ def compress_pcm_16le(frames: bytes) -> bytes:
     if sys.byteorder != 'little':
         samples.byteswap()
     return samples.tobytes()
+
+def limit_pcm_16le(frames: bytes, ceiling: int) -> bytes:
+    samples = array('h')
+    samples.frombytes(frames)
+    if sys.byteorder != 'little':
+        samples.byteswap()
+    for i, sample in enumerate(samples):
+        if sample > ceiling:
+            samples[i] = ceiling
+        elif sample < -ceiling:
+            samples[i] = -ceiling
+    if sys.byteorder != 'little':
+        samples.byteswap()
+    return samples.tobytes()
+
+def measure_pcm_16le(frames: bytes) -> tuple[float, int]:
+    samples = array('h')
+    samples.frombytes(frames)
+    if sys.byteorder != 'little':
+        samples.byteswap()
+    if not samples:
+        return 0.0, 0
+    rms = math.sqrt(sum(int(s) * int(s) for s in samples) / len(samples))
+    peak = max(abs(int(s)) for s in samples)
+    return rms, peak
 
 def normalize_pcm_16le(frames: bytes, target_rms: float, rate: int, duck_intro: bool) -> bytes:
     samples = array('h')
@@ -292,27 +319,59 @@ for entry in segments:
         duck_intro = entry['speaker'] not in seen_speakers
         frames = normalize_pcm_16le(frames, target_rms, current_params[2], duck_intro)
         frames = compress_pcm_16le(frames)
+        frames = limit_pcm_16le(frames, final_mix_ceiling)
         with wave.open(str(segment_path), 'wb') as out_segment:
             out_segment.setnchannels(current_params[0])
             out_segment.setsampwidth(current_params[1])
             out_segment.setframerate(current_params[2])
             out_segment.writeframes(frames)
+        segment_rms, segment_peak = measure_pcm_16le(frames)
+        entry['segment_metrics'] = {
+            'rms': round(segment_rms, 1),
+            'peak': segment_peak,
+        }
     combined.append(frames)
     seen_speakers.add(entry['speaker'])
 channels, width, rate = params
 silence = b'\x00' * int(rate * width * channels * (GAP_MS / 1000.0))
+assembled_frames = b''
+for idx, frames in enumerate(combined):
+    assembled_frames += frames
+    if idx != len(combined) - 1:
+        assembled_frames += silence
+pre_mix_rms = None
+pre_mix_peak = None
+post_mix_rms = None
+post_mix_peak = None
+if width == 2:
+    pre_mix_rms, pre_mix_peak = measure_pcm_16le(assembled_frames)
+    assembled_frames = normalize_pcm_16le(assembled_frames, final_mix_target_rms, rate, False)
+    assembled_frames = compress_pcm_16le(assembled_frames)
+    assembled_frames = limit_pcm_16le(assembled_frames, final_mix_ceiling)
+    post_mix_rms, post_mix_peak = measure_pcm_16le(assembled_frames)
 with wave.open(episode_audio_path, 'wb') as out:
     out.setnchannels(channels)
     out.setsampwidth(width)
     out.setframerate(rate)
-    for idx, frames in enumerate(combined):
-        out.writeframes(compress_pcm_16le(frames) if width == 2 else frames)
-        if idx != len(combined) - 1:
-            out.writeframes(silence)
+    out.writeframes(assembled_frames)
 manifest = {
     'schema_version': 'adl.demo.multiagent_podcast_audio_manifest.v1',
     'source_episode_root': str(Path(source_dir)),
     'episode_audio': Path(episode_audio_path).name,
+    'mastering': {
+        'segment_target_rms': speaker_target_rms,
+        'final_mix_target_rms': final_mix_target_rms,
+        'final_mix_ceiling': final_mix_ceiling,
+        'compression_threshold': compression_threshold,
+        'compression_ratio': compression_ratio,
+        'intro_duck_ms': intro_duck_ms,
+        'final_mix_metrics': {
+            'pre_rms': round(pre_mix_rms, 1) if pre_mix_rms is not None else None,
+            'pre_peak': pre_mix_peak,
+            'post_rms': round(post_mix_rms, 1) if post_mix_rms is not None else None,
+            'post_peak': post_mix_peak,
+        },
+    },
     'segments': segments,
 }
 Path(manifest_path).write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
@@ -331,8 +390,9 @@ packet = [
     '',
     '## Audio Presentation',
     '',
-    '- each speaker says their own name at the start of each segment',
+    '- each speaker says their own name only on their first appearance',
     '- segment loudness is normalized toward a shared target so the episode is easier to follow',
+    '- the final episode mix gets one more mastering pass for overall loudness consistency and peak control',
     '',
     '## Proof Boundary',
     '',
