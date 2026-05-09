@@ -125,7 +125,7 @@
       "detection_artifacts": [
         "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
         "runtime_v2/challenge/appeal_review_artifact.json",
-        "access-denial-fixtures-v0-90-3"
+        "access-denial-fixtures-v0-91-1"
       ],
       "fail_closed_behavior": "release is denied and the citizen remains in sanctuary/quarantine pending review",
       "covered_by_wp13": true
