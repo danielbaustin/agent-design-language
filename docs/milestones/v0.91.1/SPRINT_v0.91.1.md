@@ -100,6 +100,8 @@ Sprint outcome:
   named GW hotspot collapses were already complete
 - the sprint-conductor trial exposed follow-on skill and lifecycle gaps now
   tracked in `#2901` and `#2907`
+- the tracked closeout note lives in
+  `docs/milestones/v0.91.1/TEST_CYCLE_MINI_SPRINT_CLOSEOUT_v0.91.1.md`
 
 ## Parallelization Notes
 
