@@ -114,6 +114,15 @@ That topic was chosen because it is:
 Later weekly episodes can rotate topics while preserving the same packet and
 proof structure.
 
+## Audio Follow-on
+
+A bounded audio follow-on exists in:
+
+- `demos/v0.91.1/multiagent_podcast_audio_demo.md`
+
+It adds a listenable weekly-episode rendering path while keeping transcript
+authorship and audio-renderer identity explicitly separable.
+
 ## Success Signal
 
 The pilot is successful when:
