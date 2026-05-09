@@ -83,6 +83,8 @@ fn real_pr_finish_rejects_not_started_output_card_before_publication() {
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Output card guard");
     fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
     write_authored_sip(
@@ -91,6 +93,20 @@ fn real_pr_finish_rejects_not_started_output_card_before_publication() {
         "[v0.86][tools] Output card guard",
         "codex/1156-output-card-guard",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Output card guard",
+        "codex/1156-output-card-guard",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Output card guard",
+        "codex/1156-output-card-guard",
         &repo,
     );
     fs::write(
@@ -252,6 +268,8 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_sor_truth() {
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish closed stale");
     if let Some(parent) = stp.parent() {
         fs::create_dir_all(parent).expect("bundle dir");
@@ -263,6 +281,20 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_sor_truth() {
         "[v0.86][tools] Rust finish closed stale",
         "codex/1158-rust-finish-closed-stale",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish closed stale",
+        "codex/1158-rust-finish-closed-stale",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish closed stale",
+        "codex/1158-rust-finish-closed-stale",
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1158-rust-finish-closed-stale");

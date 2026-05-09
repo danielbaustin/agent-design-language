@@ -92,6 +92,8 @@ fn real_pr_finish_refuses_to_publish_local_only_bundle_without_tracked_changes()
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     write_authored_issue_prompt(
         &repo,
         &issue_ref,
@@ -104,6 +106,20 @@ fn real_pr_finish_refuses_to_publish_local_only_bundle_without_tracked_changes()
         "[v0.86][tools] Rust finish ignored bundle",
         "codex/1157-rust-finish-ignored-bundle",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish ignored bundle",
+        "codex/1157-rust-finish-ignored-bundle",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish ignored bundle",
+        "codex/1157-rust-finish-ignored-bundle",
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1157-rust-finish-ignored-bundle");
@@ -259,6 +275,8 @@ fn real_pr_finish_refuses_when_canonical_issue_surfaces_are_tracked() {
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     write_authored_issue_prompt(
         &repo,
         &issue_ref,
@@ -271,6 +289,20 @@ fn real_pr_finish_refuses_when_canonical_issue_surfaces_are_tracked() {
         "[v0.86][tools] Rust finish tracked bundle",
         "codex/1158-rust-finish-tracked-bundle",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish tracked bundle",
+        "codex/1158-rust-finish-tracked-bundle",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish tracked bundle",
+        "codex/1158-rust-finish-tracked-bundle",
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1158-rust-finish-tracked-bundle");

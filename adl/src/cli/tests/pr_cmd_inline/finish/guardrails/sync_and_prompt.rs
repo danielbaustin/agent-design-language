@@ -291,6 +291,10 @@ fn real_pr_finish_accepts_primary_checkout_issue_prompt_without_worktree_local_c
 
     let root_input = issue_ref.task_bundle_input_path(&repo);
     let wt_input = issue_ref.task_bundle_input_path(&worktree);
+    let root_plan = issue_ref.task_bundle_plan_path(&repo);
+    let wt_plan = issue_ref.task_bundle_plan_path(&worktree);
+    let root_review_policy = issue_ref.task_bundle_review_policy_path(&repo);
+    let wt_review_policy = issue_ref.task_bundle_review_policy_path(&worktree);
     write_authored_sip(
         &root_input,
         &issue_ref,
@@ -299,12 +303,40 @@ fn real_pr_finish_accepts_primary_checkout_issue_prompt_without_worktree_local_c
         &issue_ref.issue_prompt_path(&repo),
         &repo,
     );
+    write_authored_spp(
+        &root_plan,
+        &issue_ref,
+        "[v0.86][tools] Finish primary prompt",
+        "codex/1241-finish-primary-prompt",
+        &repo,
+    );
+    write_authored_srp(
+        &root_review_policy,
+        &issue_ref,
+        "[v0.86][tools] Finish primary prompt",
+        "codex/1241-finish-primary-prompt",
+        &repo,
+    );
     write_authored_sip(
         &wt_input,
         &issue_ref,
         "[v0.86][tools] Finish primary prompt",
         "codex/1241-finish-primary-prompt",
         &issue_ref.issue_prompt_path(&repo),
+        &worktree,
+    );
+    write_authored_spp(
+        &wt_plan,
+        &issue_ref,
+        "[v0.86][tools] Finish primary prompt",
+        "codex/1241-finish-primary-prompt",
+        &worktree,
+    );
+    write_authored_srp(
+        &wt_review_policy,
+        &issue_ref,
+        "[v0.86][tools] Finish primary prompt",
+        "codex/1241-finish-primary-prompt",
         &worktree,
     );
 

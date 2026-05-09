@@ -93,6 +93,8 @@ fn real_pr_finish_rejects_staged_foreign_issue_bundle_mutations() {
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     write_authored_issue_prompt(
         &repo,
         &issue_ref,
@@ -105,6 +107,20 @@ fn real_pr_finish_rejects_staged_foreign_issue_bundle_mutations() {
         "[v0.86][tools] Rust finish foreign bundle",
         "codex/1161-rust-finish-foreign-bundle",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish foreign bundle",
+        "codex/1161-rust-finish-foreign-bundle",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish foreign bundle",
+        "codex/1161-rust-finish-foreign-bundle",
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1161-rust-finish-foreign-bundle");
@@ -258,6 +274,8 @@ fn real_pr_finish_allows_deletion_only_cleanup_for_foreign_issue_bundle_residue(
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     let source = issue_ref.issue_prompt_path(&repo);
     write_authored_issue_prompt(
         &repo,
@@ -272,6 +290,20 @@ fn real_pr_finish_allows_deletion_only_cleanup_for_foreign_issue_bundle_residue(
         "[v0.86][tools] Rust finish foreign bundle delete",
         "codex/1161-rust-finish-foreign-bundle-delete",
         &source,
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish foreign bundle delete",
+        "codex/1161-rust-finish-foreign-bundle-delete",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish foreign bundle delete",
+        "codex/1161-rust-finish-foreign-bundle-delete",
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1161-rust-finish-foreign-bundle-delete");
