@@ -10,6 +10,10 @@ notes:
   issue-wave and card-readiness pass."
 - Every opened WP has a local STP, SIP, SPP, SRP, and SOR bundle prepared and
   structurally validated before execution binding.
+- Supplemental mini-sprint umbrella `#2897` tracks the bounded v0.91.1
+  test-cycle recovery train outside the canonical WP-01..WP-24 sequence.
+- The supplemental mini-sprint child order is `#2867 -> #2864 -> #2865 ->
+  #2866 -> #2868`.
 - v0.91.1 is the inhabited-runtime readiness milestone between v0.91 moral
   governance and v0.92 identity/birthday work.
 - The hard exit criterion is an observatory-visible agent-shaped runtime proof

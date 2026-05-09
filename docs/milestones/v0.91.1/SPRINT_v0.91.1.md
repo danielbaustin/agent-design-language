@@ -64,6 +64,22 @@ authenticated local communication and observatory-visible evidence.
 Goal: leave v0.92 with a clean, evidence-backed path to identity and birthday
 work rather than another loose planning backlog.
 
+## Supplemental Mini-Sprint: Test-Cycle Recovery
+
+| Issue | Title | Primary Deliverable | Dependencies |
+| --- | --- | --- | --- |
+| #2897 | Sprint umbrella: test-cycle recovery mini-sprint | ordered sprint-management umbrella with review/closeout tracking | none |
+| #2867 | Test-cycle recovery mini-sprint plan | bounded execution plan and sequencing truth for the mini-sprint | #2897 |
+| #2864 | Tighten coverage path-policy escalation | narrower fail-closed escalation policy with tests | #2867 |
+| #2865 | Trim authoritative coverage reporting tail | reduced authoritative coverage post-pass overhead | #2864 |
+| #2866 | Expand PR-fast and coverage-impact filter mappings | broader truthful focused-lane routing coverage | #2865 |
+| #2868 | Collapse remaining heavyweight proof-test families | bounded hotspot proof-family collapse with timing evidence | #2866 |
+
+Goal: cut avoidable CI and authoritative-coverage wall time in v0.91.1 without
+weakening proof posture, coverage policy, or review integrity. This
+mini-sprint is supplemental to the main WP wave and should run through the
+sprint-conductor slow path with one active child issue at a time.
+
 ## Parallelization Notes
 
 Capability testing can proceed beside citizen-state work once the runtime
