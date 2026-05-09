@@ -23,6 +23,8 @@ This audio follow-on proves:
 - the audio can be presented in a listener-friendly way with spoken speaker
   intros, saved loudness metrics, bounded mastering/limiting, and mild
   per-speaker tonal shaping
+- turn handoff pacing can be tuned deterministically rather than using a single
+  fixed gap between every speaker segment
 
 It does **not** prove:
 
@@ -108,6 +110,7 @@ The audio follow-on is successful when:
 - the manifest shows which provider/voice rendered each speaker
 - the manifest records usable loudness/mastering metrics for the final mix
 - the manifest records the bounded per-speaker tone-profile settings used for the run
+- the manifest records the deterministic timing policy used for handoff gaps
 - Claude's surrogate rendering is disclosed instead of implied away
 - each speaker introduces themselves naturally only on their first turn, for example `I'm ChatGPT`
 - overall segment volume is normalized enough that the episode does not feel
