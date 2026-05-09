@@ -161,14 +161,24 @@ impl RuntimeV2CitizenStateSubstratePacket {
                 "citizen-state substrate must include its focused validation command"
             ));
         }
-        if !self
-            .validation_commands
-            .iter()
-            .any(|command| command.contains("runtime_v2_private_state_observatory"))
-        {
-            return Err(anyhow!(
-                "citizen-state substrate must preserve private-state observatory validation"
-            ));
+        for fixture in &self.fixture_matrix {
+            let expected_marker = proving_surface_marker(&fixture.proving_surface).ok_or_else(|| {
+                anyhow!(
+                    "citizen-state substrate fixture_kind '{}' must use a parseable proving surface",
+                    fixture.fixture_kind
+                )
+            })?;
+            if !self
+                .validation_commands
+                .iter()
+                .filter_map(|command| proving_surface_marker(command))
+                .any(|marker| marker == expected_marker)
+            {
+                return Err(anyhow!(
+                    "citizen-state substrate must preserve proving-surface validation for fixture_kind '{}'",
+                    fixture.fixture_kind
+                ));
+            }
         }
         if !self
             .claim_boundary
@@ -485,6 +495,16 @@ fn fixture_matrix() -> Vec<RuntimeV2CitizenStateSubstrateFixture> {
                     .to_string(),
         },
     ]
+}
+
+fn proving_surface_marker(command: &str) -> Option<&str> {
+    let tokens = command.split_whitespace().collect::<Vec<_>>();
+    let separator = tokens.iter().position(|token| *token == "--")?;
+    tokens[..separator]
+        .iter()
+        .rev()
+        .find(|token| !token.starts_with('-') && **token != "test" && **token != "cargo")
+        .copied()
 }
 
 fn validate_audience_views(
