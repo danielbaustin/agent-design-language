@@ -168,7 +168,7 @@ SEGMENT_MANIFEST_TMP="$OUT_DIR/segment_manifest.jsonl"
 for spec in "${TURN_FILES[@]}"; do
   IFS='|' read -r filename speaker role voice provider surrogate instructions <<< "$spec"
   original_text="$(cat "$SOURCE_DIR/out/podcast/$filename")"
-  text="${speaker}. ${original_text}"
+  text="I'm ${speaker}. ${original_text}"
   out_wav="$SEGMENTS_DIR/${filename%.md}.wav"
   if [[ "$provider" == "openai" ]]; then
     render_openai_wav "$text" "$voice" "$instructions" "$out_wav"
