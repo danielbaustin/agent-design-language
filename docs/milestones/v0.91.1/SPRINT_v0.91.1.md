@@ -87,6 +87,20 @@ delivered in the merged GW-01 through GW-05 runtime-reduction wave recorded in
 action is therefore closeout-by-evidence rather than reopening those runtime
 family rewrites under a new issue number.
 
+Closeout status: complete. The mini-sprint child lane merged through:
+- `#2867` via `#2902`
+- `#2864` via `#2903`
+- `#2865` via `#2904`
+- `#2866` via `#2905`
+- `#2868` via `#2906`
+
+Sprint outcome:
+- the planned lane-shape and policy fixes landed
+- the final residual runtime-heavy family issue closed by evidence because the
+  named GW hotspot collapses were already complete
+- the sprint-conductor trial exposed follow-on skill and lifecycle gaps now
+  tracked in `#2901` and `#2907`
+
 ## Parallelization Notes
 
 Capability testing can proceed beside citizen-state work once the runtime
