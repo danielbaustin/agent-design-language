@@ -507,6 +507,249 @@ fn real_pr_start_rewrites_unbound_root_input_card_branch() {
 }
 
 #[test]
+fn real_pr_start_uses_canonical_local_slug_when_title_slug_drift_exists() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-canonical-local-slug");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "canonical local slug\n").expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref =
+        IssueRef::new(1288, "v0.86", "canonical-bind-slug").expect("canonical issue ref");
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Canonical bind slug issue",
+    );
+    real_pr(&[
+        "init".to_string(),
+        "1288".to_string(),
+        "--slug".to_string(),
+        "canonical-bind-slug".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Canonical bind slug issue".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("init canonical bundle");
+
+    real_pr(&[
+        "start".to_string(),
+        "1288".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Title changed after bundle bootstrap".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("start should honor canonical local slug");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    assert!(worktree.is_dir());
+    assert_eq!(
+        run_capture(
+            "git",
+            &[
+                "-C",
+                path_str(&worktree).expect("wt path"),
+                "rev-parse",
+                "--abbrev-ref",
+                "HEAD"
+            ]
+        )
+        .expect("branch")
+        .trim(),
+        "codex/1288-canonical-bind-slug"
+    );
+    assert!(issue_ref.task_bundle_stp_path(&repo).is_file());
+    assert!(issue_ref.task_bundle_stp_path(&worktree).is_file());
+}
+
+#[test]
+fn real_pr_start_still_fails_closed_when_real_duplicate_bundle_exists() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-real-duplicate-bundle");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "duplicate bind test\n").expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1289, "v0.86", "canonical-duplicate-bind").expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Canonical duplicate bind");
+    real_pr(&[
+        "init".to_string(),
+        "1289".to_string(),
+        "--slug".to_string(),
+        "canonical-duplicate-bind".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Canonical duplicate bind".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("init canonical bundle");
+    let duplicate_task = repo.join(".adl/v0.86/tasks/issue-1289__legacy-duplicate-bind");
+    fs::create_dir_all(&duplicate_task).expect("duplicate task dir");
+
+    let err = real_pr(&[
+        "start".to_string(),
+        "1289".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Canonical duplicate bind".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("real duplicate should still fail closed");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    let text = err.to_string();
+    assert!(text.contains("duplicate local task-bundle identities detected"));
+    assert!(text.contains("legacy-duplicate-bind"));
+}
+
+#[test]
 fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-ready-worktree-cwd");
