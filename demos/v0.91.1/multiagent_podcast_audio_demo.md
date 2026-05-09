@@ -52,6 +52,13 @@ Default routing:
 - `Gemini`: native Gemini TTS
 - `Claude`: surrogate OpenAI TTS
 
+Default native Gemini voice:
+
+- `Kore`
+
+This follows the official Gemini TTS examples more closely than the earlier
+experimental voice choice.
+
 Operational override:
 
 - if Gemini native TTS preview is unavailable or too unstable for a scheduled
@@ -66,6 +73,9 @@ Current practical truth:
 - the preferred default is still native Gemini TTS for `Gemini`
 - the verified fallback path may render `Gemini` through the explicit OpenAI
   override when the native Gemini preview lane is unavailable or unstable
+- a minimal official-shape Gemini TTS sample succeeded locally during
+  development, so the remaining risk appears to be full-episode preview-lane
+  reliability rather than total incompatibility
 
 This keeps the authorship claim honest:
 
