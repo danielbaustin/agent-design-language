@@ -20,6 +20,8 @@ This audio follow-on proves:
 - `ChatGPT` and `Gemini` can use native/provider-specific TTS-capable paths
 - `Claude` can be rendered truthfully through a surrogate TTS lane while
   preserving Claude transcript authorship identity
+- the audio can be presented in a listener-friendly way with spoken speaker
+  intros and simple loudness normalization
 
 It does **not** prove:
 
@@ -94,3 +96,6 @@ The audio follow-on is successful when:
 - per-turn audio segments exist with explicit speaker routing
 - the manifest shows which provider/voice rendered each speaker
 - Claude's surrogate rendering is disclosed instead of implied away
+- each segment begins by naming the speaker
+- overall segment volume is normalized enough that the episode does not feel
+  erratic or lopsided

@@ -124,6 +124,8 @@ PY
   python3 - "$response_json" "$out_path" <<'PY'
 import base64
 import json
+import math
+import sys
 import sys
 import wave
 from pathlib import Path
@@ -165,7 +167,8 @@ SEGMENT_MANIFEST_TMP="$OUT_DIR/segment_manifest.jsonl"
 
 for spec in "${TURN_FILES[@]}"; do
   IFS='|' read -r filename speaker role voice provider surrogate instructions <<< "$spec"
-  text="$(cat "$SOURCE_DIR/out/podcast/$filename")"
+  original_text="$(cat "$SOURCE_DIR/out/podcast/$filename")"
+  text="${speaker}. ${original_text}"
   out_wav="$SEGMENTS_DIR/${filename%.md}.wav"
   if [[ "$provider" == "openai" ]]; then
     render_openai_wav "$text" "$voice" "$instructions" "$out_wav"
@@ -192,9 +195,11 @@ PY
 done
 
 python3 - "$SEGMENT_MANIFEST_TMP" "$AUDIO_MANIFEST" "$AUDIO_PACKET" "$EPISODE_AUDIO" "$SEGMENTS_DIR" "$SOURCE_DIR" "$CHATGPT_VOICE" "$GEMINI_AUDIO_PROVIDER" "$GEMINI_VOICE" "$GEMINI_OPENAI_SURROGATE_VOICE" "$CLAUDE_SURROGATE_PROVIDER" "$CLAUDE_SURROGATE_VOICE" <<'PY'
+from array import array
 import json
-import sys
+import math
 import wave
+import sys
 from pathlib import Path
 
 segment_manifest_tmp, manifest_path, packet_path, episode_audio_path, segments_dir, source_dir, chatgpt_voice, gemini_provider, gemini_voice, gemini_openai_voice, claude_provider, claude_voice = sys.argv[1:13]
@@ -202,6 +207,34 @@ segments = [json.loads(line) for line in Path(segment_manifest_tmp).read_text(en
 GAP_MS = 350
 params = None
 combined = []
+target_rms = 7000.0
+
+def normalize_pcm_16le(frames: bytes) -> bytes:
+    samples = array('h')
+    samples.frombytes(frames)
+    if sys.byteorder != 'little':
+        samples.byteswap()
+    if not samples:
+        return frames
+    rms = math.sqrt(sum(int(s) * int(s) for s in samples) / len(samples))
+    if rms <= 1.0:
+        return frames
+    scale = target_rms / rms
+    if scale > 2.0:
+        scale = 2.0
+    if scale < 0.5:
+        scale = 0.5
+    for i, sample in enumerate(samples):
+        value = int(round(sample * scale))
+        if value > 32767:
+            value = 32767
+        elif value < -32768:
+            value = -32768
+        samples[i] = value
+    if sys.byteorder != 'little':
+        samples.byteswap()
+    return samples.tobytes()
+
 for entry in segments:
     with wave.open(str(Path(segments_dir) / entry['audio_file']), 'rb') as wf:
         current_params = (wf.getnchannels(), wf.getsampwidth(), wf.getframerate())
@@ -210,6 +243,8 @@ for entry in segments:
         params = current_params
     elif current_params != params:
         raise SystemExit(f"mismatched wav params: expected {params}, got {current_params} for {entry['audio_file']}")
+    if current_params[1] == 2:
+        frames = normalize_pcm_16le(frames)
     combined.append(frames)
 channels, width, rate = params
 silence = b'\x00' * int(rate * width * channels * (GAP_MS / 1000.0))
@@ -240,6 +275,11 @@ packet = [
     f'- `ChatGPT`: native OpenAI TTS via `{chatgpt_voice}`',
     f'- `Gemini`: {"native Gemini TTS" if gemini_provider == "gemini" else "surrogate OpenAI TTS"} via `{gemini_voice if gemini_provider == "gemini" else gemini_openai_voice}`',
     f'- `Claude`: surrogate `{claude_provider}` TTS via `{claude_voice}`',
+    '',
+    '## Audio Presentation',
+    '',
+    '- each speaker says their own name at the start of each segment',
+    '- segment loudness is normalized toward a shared target so the episode is easier to follow',
     '',
     '## Proof Boundary',
     '',
