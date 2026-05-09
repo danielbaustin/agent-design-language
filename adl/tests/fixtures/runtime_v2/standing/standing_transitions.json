@@ -1,0 +1,81 @@
+{
+  "schema_version": "runtime_v2.standing_transition_packet.v1",
+  "packet_id": "citizen-standing-transitions-v0-91-1-wp-05",
+  "demo_id": "D10",
+  "artifact_path": "runtime_v2/standing/standing_transitions.json",
+  "policy_ref": "runtime_v2/standing/standing_policy.json",
+  "transitions": [
+    {
+      "transition_id": "standing-transition-guest-to-citizen-001",
+      "actor_id": "guest-human-001",
+      "from_standing_class": "guest",
+      "to_standing_class": "citizen",
+      "requested_rights": [
+        "communicate",
+        "claim_citizen_rights",
+        "continuity_rights"
+      ],
+      "granted_rights": [
+        "communicate",
+        "claim_citizen_rights",
+        "continuity_rights"
+      ],
+      "denied_rights": [
+        "inspect_raw_private_state"
+      ],
+      "required_evidence_refs": [
+        "identity_binding_event",
+        "continuity_authorization_ref",
+        "signed_trace"
+      ],
+      "outcome": "allowed_with_trace",
+      "rationale": "guest-to-citizen elevation is only allowed when identity binding and continuity authority are explicit and trace-bound"
+    },
+    {
+      "transition_id": "standing-transition-service-to-citizen-001",
+      "actor_id": "service-indexer-001",
+      "from_standing_class": "service_actor",
+      "to_standing_class": "citizen",
+      "requested_rights": [
+        "claim_citizen_rights",
+        "continuity_rights"
+      ],
+      "granted_rights": [],
+      "denied_rights": [
+        "claim_citizen_rights",
+        "continuity_rights",
+        "act_as_social_actor"
+      ],
+      "required_evidence_refs": [
+        "service_authority_ref",
+        "signed_trace"
+      ],
+      "outcome": "denied",
+      "rationale": "service authority can operate mechanisms but cannot silently transition into citizen standing"
+    },
+    {
+      "transition_id": "standing-transition-external-to-guest-001",
+      "actor_id": "external-reviewer-001",
+      "from_standing_class": "external_actor",
+      "to_standing_class": "guest",
+      "requested_rights": [
+        "communicate"
+      ],
+      "granted_rights": [
+        "communicate"
+      ],
+      "denied_rights": [
+        "claim_citizen_rights"
+      ],
+      "required_evidence_refs": [
+        "gateway_receipt",
+        "sponsor_attestation",
+        "operator_review_required"
+      ],
+      "outcome": "requires_review",
+      "rationale": "external-to-guest admission is review-gated until gateway sponsorship establishes bounded guest authority"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_standing -- --nocapture",
+  "claim_boundary": "D10 WP-05 standing transitions prove allowed, denied, and review-gated authority-preserving standing changes only; WP-06 owns citizen-state payload and privacy semantics."
+}

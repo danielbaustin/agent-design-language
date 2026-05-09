@@ -12,12 +12,16 @@ pub const RUNTIME_V2_STANDING_POLICY_SCHEMA: &str = "runtime_v2.standing_policy.
 pub const RUNTIME_V2_STANDING_EVENT_PACKET_SCHEMA: &str = "runtime_v2.standing_event_packet.v1";
 pub const RUNTIME_V2_STANDING_COMMUNICATION_EXAMPLES_SCHEMA: &str =
     "runtime_v2.standing_communication_examples.v1";
+pub const RUNTIME_V2_STANDING_TRANSITION_PACKET_SCHEMA: &str =
+    "runtime_v2.standing_transition_packet.v1";
 pub const RUNTIME_V2_STANDING_NEGATIVE_CASES_SCHEMA: &str = "runtime_v2.standing_negative_cases.v1";
 
 pub const RUNTIME_V2_STANDING_POLICY_PATH: &str = "runtime_v2/standing/standing_policy.json";
 pub const RUNTIME_V2_STANDING_EVENT_PACKET_PATH: &str = "runtime_v2/standing/standing_events.json";
 pub const RUNTIME_V2_STANDING_COMMUNICATION_EXAMPLES_PATH: &str =
     "runtime_v2/standing/communication_examples.json";
+pub const RUNTIME_V2_STANDING_TRANSITION_PACKET_PATH: &str =
+    "runtime_v2/standing/standing_transitions.json";
 pub const RUNTIME_V2_STANDING_NEGATIVE_CASES_PATH: &str =
     "runtime_v2/standing/standing_negative_cases.json";
 
@@ -104,6 +108,32 @@ pub struct RuntimeV2StandingCommunicationExamples {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2StandingTransition {
+    pub transition_id: String,
+    pub actor_id: String,
+    pub from_standing_class: String,
+    pub to_standing_class: String,
+    pub requested_rights: Vec<String>,
+    pub granted_rights: Vec<String>,
+    pub denied_rights: Vec<String>,
+    pub required_evidence_refs: Vec<String>,
+    pub outcome: String,
+    pub rationale: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2StandingTransitionPacket {
+    pub schema_version: String,
+    pub packet_id: String,
+    pub demo_id: String,
+    pub artifact_path: String,
+    pub policy_ref: String,
+    pub transitions: Vec<RuntimeV2StandingTransition>,
+    pub validation_command: String,
+    pub claim_boundary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RuntimeV2StandingNegativeCase {
     pub case_id: String,
     pub mutation: String,
@@ -128,6 +158,7 @@ pub struct RuntimeV2StandingArtifacts {
     pub policy: RuntimeV2StandingPolicy,
     pub event_packet: RuntimeV2StandingEventPacket,
     pub communication_examples: RuntimeV2StandingCommunicationExamples,
+    pub transition_packet: RuntimeV2StandingTransitionPacket,
     pub negative_cases: RuntimeV2StandingNegativeCases,
 }
 
@@ -136,11 +167,13 @@ impl RuntimeV2StandingArtifacts {
         let policy = RuntimeV2StandingPolicy::prototype()?;
         let event_packet = RuntimeV2StandingEventPacket::prototype(&policy)?;
         let communication_examples = RuntimeV2StandingCommunicationExamples::prototype(&policy)?;
+        let transition_packet = RuntimeV2StandingTransitionPacket::prototype(&policy)?;
         let negative_cases = RuntimeV2StandingNegativeCases::prototype();
         let artifacts = Self {
             policy,
             event_packet,
             communication_examples,
+            transition_packet,
             negative_cases,
         };
         artifacts.validate()?;
@@ -151,6 +184,7 @@ impl RuntimeV2StandingArtifacts {
         self.policy.validate()?;
         self.event_packet.validate_against(&self.policy)?;
         self.communication_examples.validate_against(&self.policy)?;
+        self.transition_packet.validate_against(&self.policy)?;
         self.negative_cases.validate_against(
             &self.policy,
             &self.event_packet,
@@ -175,6 +209,11 @@ impl RuntimeV2StandingArtifacts {
             root,
             RUNTIME_V2_STANDING_COMMUNICATION_EXAMPLES_PATH,
             self.communication_examples.pretty_json_bytes()?,
+        )?;
+        write_relative(
+            root,
+            RUNTIME_V2_STANDING_TRANSITION_PACKET_PATH,
+            self.transition_packet.pretty_json_bytes()?,
         )?;
         write_relative(
             root,
@@ -551,6 +590,115 @@ impl RuntimeV2CommunicationExample {
     }
 }
 
+impl RuntimeV2StandingTransitionPacket {
+    pub fn prototype(policy: &RuntimeV2StandingPolicy) -> Result<Self> {
+        policy.validate()?;
+        let packet = Self {
+            schema_version: RUNTIME_V2_STANDING_TRANSITION_PACKET_SCHEMA.to_string(),
+            packet_id: "citizen-standing-transitions-v0-91-1-wp-05".to_string(),
+            demo_id: "D10".to_string(),
+            artifact_path: RUNTIME_V2_STANDING_TRANSITION_PACKET_PATH.to_string(),
+            policy_ref: policy.artifact_path.clone(),
+            transitions: prototype_standing_transitions(),
+            validation_command:
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_standing -- --nocapture"
+                    .to_string(),
+            claim_boundary:
+                "D10 WP-05 standing transitions prove allowed, denied, and review-gated authority-preserving standing changes only; WP-06 owns citizen-state payload and privacy semantics."
+                    .to_string(),
+        };
+        packet.validate_against(policy)?;
+        Ok(packet)
+    }
+
+    pub fn validate_against(&self, policy: &RuntimeV2StandingPolicy) -> Result<()> {
+        self.validate_shape()?;
+        policy.validate()?;
+        if self.policy_ref != policy.artifact_path {
+            return Err(anyhow!(
+                "standing transition packet must bind to standing policy"
+            ));
+        }
+        validate_required_transition_coverage(&self.transitions)?;
+        for transition in &self.transitions {
+            validate_transition_against_policy(transition, policy)?;
+        }
+        Ok(())
+    }
+
+    pub fn validate_shape(&self) -> Result<()> {
+        if self.schema_version != RUNTIME_V2_STANDING_TRANSITION_PACKET_SCHEMA {
+            return Err(anyhow!(
+                "unsupported Runtime v2 standing transition packet schema '{}'",
+                self.schema_version
+            ));
+        }
+        normalize_id(self.packet_id.clone(), "standing_transition.packet_id")?;
+        validate_demo_id(&self.demo_id, "standing_transition.demo_id")?;
+        validate_relative_path(&self.artifact_path, "standing_transition.artifact_path")?;
+        validate_relative_path(&self.policy_ref, "standing_transition.policy_ref")?;
+        if self.transitions.len() != 3 {
+            return Err(anyhow!(
+                "standing transition packet must include allowed, denied, and review-gated fixtures"
+            ));
+        }
+        for transition in &self.transitions {
+            transition.validate_shape()?;
+        }
+        if !self.validation_command.contains("runtime_v2_standing") {
+            return Err(anyhow!(
+                "standing transition packet validation command must target focused tests"
+            ));
+        }
+        if !self.claim_boundary.contains("WP-05") || !self.claim_boundary.contains("WP-06") {
+            return Err(anyhow!(
+                "standing transition packet claim boundary must preserve the WP-05/WP-06 split"
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        let policy = RuntimeV2StandingPolicy::prototype()?;
+        self.validate_against(&policy)?;
+        serde_json::to_vec_pretty(self).context("serialize Runtime v2 standing transitions")
+    }
+}
+
+impl RuntimeV2StandingTransition {
+    pub fn validate_shape(&self) -> Result<()> {
+        normalize_id(
+            self.transition_id.clone(),
+            "standing_transition.transition_id",
+        )?;
+        normalize_id(self.actor_id.clone(), "standing_transition.actor_id")?;
+        validate_standing_class(
+            &self.from_standing_class,
+            "standing_transition.from_standing_class",
+        )?;
+        validate_standing_class(
+            &self.to_standing_class,
+            "standing_transition.to_standing_class",
+        )?;
+        require_text_list(
+            &self.requested_rights,
+            "standing_transition.requested_rights",
+            1,
+        )?;
+        for right in &self.granted_rights {
+            validate_nonempty_text(right, "standing_transition.granted_rights")?;
+        }
+        require_text_list(&self.denied_rights, "standing_transition.denied_rights", 1)?;
+        require_text_list(
+            &self.required_evidence_refs,
+            "standing_transition.required_evidence_refs",
+            1,
+        )?;
+        validate_standing_transition_outcome(&self.outcome)?;
+        validate_nonempty_text(&self.rationale, "standing_transition.rationale")
+    }
+}
+
 impl RuntimeV2StandingNegativeCases {
     pub fn prototype() -> Self {
         Self {
@@ -804,6 +952,62 @@ fn prototype_communication_examples() -> Vec<RuntimeV2CommunicationExample> {
     ]
 }
 
+fn prototype_standing_transitions() -> Vec<RuntimeV2StandingTransition> {
+    vec![
+        standing_transition(StandingTransitionSpec {
+            transition_id: "standing-transition-guest-to-citizen-001",
+            actor_id: "guest-human-001",
+            from_standing_class: "guest",
+            to_standing_class: "citizen",
+            requested_rights: &["communicate", "claim_citizen_rights", "continuity_rights"],
+            granted_rights: &["communicate", "claim_citizen_rights", "continuity_rights"],
+            denied_rights: &["inspect_raw_private_state"],
+            required_evidence_refs: &[
+                "identity_binding_event",
+                "continuity_authorization_ref",
+                "signed_trace",
+            ],
+            outcome: "allowed_with_trace",
+            rationale:
+                "guest-to-citizen elevation is only allowed when identity binding and continuity authority are explicit and trace-bound",
+        }),
+        standing_transition(StandingTransitionSpec {
+            transition_id: "standing-transition-service-to-citizen-001",
+            actor_id: "service-indexer-001",
+            from_standing_class: "service_actor",
+            to_standing_class: "citizen",
+            requested_rights: &["claim_citizen_rights", "continuity_rights"],
+            granted_rights: &[],
+            denied_rights: &[
+                "claim_citizen_rights",
+                "continuity_rights",
+                "act_as_social_actor",
+            ],
+            required_evidence_refs: &["service_authority_ref", "signed_trace"],
+            outcome: "denied",
+            rationale:
+                "service authority can operate mechanisms but cannot silently transition into citizen standing",
+        }),
+        standing_transition(StandingTransitionSpec {
+            transition_id: "standing-transition-external-to-guest-001",
+            actor_id: "external-reviewer-001",
+            from_standing_class: "external_actor",
+            to_standing_class: "guest",
+            requested_rights: &["communicate"],
+            granted_rights: &["communicate"],
+            denied_rights: &["claim_citizen_rights"],
+            required_evidence_refs: &[
+                "gateway_receipt",
+                "sponsor_attestation",
+                "operator_review_required",
+            ],
+            outcome: "requires_review",
+            rationale:
+                "external-to-guest admission is review-gated until gateway sponsorship establishes bounded guest authority",
+        }),
+    ]
+}
+
 struct StandingClassSpec<'a> {
     standing_class: &'a str,
     description: &'a str,
@@ -890,6 +1094,34 @@ fn communication_example(spec: CommunicationExampleSpec<'_>) -> RuntimeV2Communi
         inspection_rights_granted: false,
         summary: spec.summary.to_string(),
         boundary_note: spec.boundary_note.to_string(),
+    }
+}
+
+struct StandingTransitionSpec<'a> {
+    transition_id: &'a str,
+    actor_id: &'a str,
+    from_standing_class: &'a str,
+    to_standing_class: &'a str,
+    requested_rights: &'a [&'a str],
+    granted_rights: &'a [&'a str],
+    denied_rights: &'a [&'a str],
+    required_evidence_refs: &'a [&'a str],
+    outcome: &'a str,
+    rationale: &'a str,
+}
+
+fn standing_transition(spec: StandingTransitionSpec<'_>) -> RuntimeV2StandingTransition {
+    RuntimeV2StandingTransition {
+        transition_id: spec.transition_id.to_string(),
+        actor_id: spec.actor_id.to_string(),
+        from_standing_class: spec.from_standing_class.to_string(),
+        to_standing_class: spec.to_standing_class.to_string(),
+        requested_rights: strings(spec.requested_rights),
+        granted_rights: strings(spec.granted_rights),
+        denied_rights: strings(spec.denied_rights),
+        required_evidence_refs: strings(spec.required_evidence_refs),
+        outcome: spec.outcome.to_string(),
+        rationale: spec.rationale.to_string(),
     }
 }
 
@@ -1014,6 +1246,35 @@ fn validate_required_communication_coverage(
     )
 }
 
+fn validate_required_transition_coverage(
+    transitions: &[RuntimeV2StandingTransition],
+) -> Result<()> {
+    let expected = [
+        (
+            "standing-transition-guest-to-citizen-001",
+            "allowed_with_trace",
+        ),
+        ("standing-transition-service-to-citizen-001", "denied"),
+        (
+            "standing-transition-external-to-guest-001",
+            "requires_review",
+        ),
+    ];
+    if transitions.len() != expected.len() {
+        return Err(anyhow!(
+            "standing transition packet must preserve the required deterministic fixtures"
+        ));
+    }
+    for (transition, (expected_id, expected_outcome)) in transitions.iter().zip(expected) {
+        if transition.transition_id != expected_id || transition.outcome != expected_outcome {
+            return Err(anyhow!(
+                "standing transition packet must preserve deterministic order and outcomes"
+            ));
+        }
+    }
+    Ok(())
+}
+
 fn validate_class_coverage<'a>(classes: impl Iterator<Item = &'a str>, label: &str) -> Result<()> {
     let mut seen = BTreeSet::new();
     for class in classes {
@@ -1031,6 +1292,123 @@ fn validate_class_coverage<'a>(classes: impl Iterator<Item = &'a str>, label: &s
         if !seen.contains(required) {
             return Err(anyhow!("{label} missing class '{required}'"));
         }
+    }
+    Ok(())
+}
+
+fn validate_transition_against_policy(
+    transition: &RuntimeV2StandingTransition,
+    policy: &RuntimeV2StandingPolicy,
+) -> Result<()> {
+    let from_policy = find_class_policy(policy, &transition.from_standing_class)?;
+    let to_policy = find_class_policy(policy, &transition.to_standing_class)?;
+    if transition.from_standing_class == transition.to_standing_class {
+        return Err(anyhow!(
+            "standing transition must change the actor standing class"
+        ));
+    }
+    if transition
+        .granted_rights
+        .iter()
+        .any(|right| right == "inspect_raw_private_state")
+    {
+        return Err(anyhow!(
+            "standing transition cannot grant inspection rights"
+        ));
+    }
+    for requested_right in &transition.requested_rights {
+        if !transition
+            .granted_rights
+            .iter()
+            .chain(transition.denied_rights.iter())
+            .any(|right| right == requested_right)
+        {
+            return Err(anyhow!(
+                "standing transition must account for every requested right with an explicit grant or denial"
+            ));
+        }
+    }
+    if from_policy.prohibited && transition.outcome != "denied" {
+        return Err(anyhow!(
+            "prohibited source standing must be rejected before effect"
+        ));
+    }
+    match transition.outcome.as_str() {
+        "allowed_with_trace" => {
+            if !transition
+                .required_evidence_refs
+                .iter()
+                .any(|evidence| evidence == "signed_trace")
+            {
+                return Err(anyhow!(
+                    "allowed standing transitions must carry signed trace evidence"
+                ));
+            }
+            if transition.from_standing_class == "guest"
+                && transition.to_standing_class == "citizen"
+            {
+                for required in ["identity_binding_event", "continuity_authorization_ref"] {
+                    if !transition
+                        .required_evidence_refs
+                        .iter()
+                        .any(|evidence| evidence == required)
+                    {
+                        return Err(anyhow!(
+                            "guest-to-citizen transition must preserve explicit identity binding and continuity authority"
+                        ));
+                    }
+                }
+            }
+            if transition
+                .granted_rights
+                .iter()
+                .any(|right| right == "claim_citizen_rights")
+                && !to_policy.citizen_rights_allowed
+            {
+                return Err(anyhow!(
+                    "standing transition cannot grant citizen rights to a non-citizen target"
+                ));
+            }
+            if transition
+                .granted_rights
+                .iter()
+                .any(|right| right == "continuity_rights")
+                && !to_policy.continuity_rights_allowed
+            {
+                return Err(anyhow!(
+                    "standing transition cannot grant continuity rights to a target that disallows them"
+                ));
+            }
+        }
+        "denied" => {
+            if !transition.granted_rights.is_empty() {
+                return Err(anyhow!("denied standing transitions must not grant rights"));
+            }
+        }
+        "requires_review" => {
+            if !transition
+                .required_evidence_refs
+                .iter()
+                .any(|evidence| evidence == "operator_review_required")
+            {
+                return Err(anyhow!(
+                    "review-gated standing transitions must record the operator review requirement"
+                ));
+            }
+            if transition
+                .granted_rights
+                .iter()
+                .any(|right| right == "claim_citizen_rights" || right == "continuity_rights")
+            {
+                return Err(anyhow!(
+                    "review-gated standing transitions must not silently grant citizen or continuity rights"
+                ));
+            }
+        }
+        _ => unreachable!("unsupported transition outcome should be rejected"),
+    }
+    if to_policy.prohibited && transition.outcome != "denied" {
+        return Err(anyhow!("prohibited standing targets must remain denied"));
     }
     Ok(())
 }
@@ -1189,6 +1567,13 @@ fn validate_event_outcome(value: &str) -> Result<()> {
     match value {
         "allowed" | "partially_allowed_with_denial" | "denied" => Ok(()),
         other => Err(anyhow!("unsupported standing event outcome '{other}'")),
+    }
+}
+
+fn validate_standing_transition_outcome(value: &str) -> Result<()> {
+    match value {
+        "allowed_with_trace" | "denied" | "requires_review" => Ok(()),
+        other => Err(anyhow!("unsupported standing transition outcome '{other}'")),
     }
 }
 

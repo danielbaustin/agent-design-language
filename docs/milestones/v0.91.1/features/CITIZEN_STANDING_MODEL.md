@@ -42,5 +42,6 @@ Out of scope:
 - Runtime contract in `adl/src/runtime_v2/standing.rs`
 - Focused regression coverage in `adl/src/runtime_v2/tests/standing.rs`
 - Golden standing fixtures in `adl/tests/fixtures/runtime_v2/standing/`
+- Explicit standing transition packet for allowed, denied, and review-gated authority-preserving changes in `adl/tests/fixtures/runtime_v2/standing/standing_transitions.json`
 - Landed proof-route status in
   `docs/milestones/v0.91.1/FEATURE_PROOF_COVERAGE_v0.91.1.md`

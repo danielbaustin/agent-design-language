@@ -13,6 +13,10 @@ fn runtime_v2_standing_contract_is_stable() {
         artifacts.event_packet.schema_version,
         RUNTIME_V2_STANDING_EVENT_PACKET_SCHEMA
     );
+    assert_eq!(
+        artifacts.transition_packet.schema_version,
+        RUNTIME_V2_STANDING_TRANSITION_PACKET_SCHEMA
+    );
     assert_eq!(artifacts.policy.demo_id, "D10");
     assert_eq!(
         artifacts.policy.policy_id,
@@ -20,6 +24,7 @@ fn runtime_v2_standing_contract_is_stable() {
     );
     assert_eq!(artifacts.event_packet.events.len(), 5);
     assert_eq!(artifacts.communication_examples.examples.len(), 5);
+    assert_eq!(artifacts.transition_packet.transitions.len(), 3);
 }
 
 #[test]
@@ -83,6 +88,24 @@ fn runtime_v2_standing_negative_cases_match_golden_fixture() {
     assert_eq!(
         json,
         include_str!("../../../tests/fixtures/runtime_v2/standing/standing_negative_cases.json")
+            .trim_end()
+    );
+}
+
+#[test]
+fn runtime_v2_standing_transitions_match_golden_fixture() {
+    let artifacts = runtime_v2_standing_contract().expect("standing artifacts");
+    let json = String::from_utf8(
+        artifacts
+            .transition_packet
+            .pretty_json_bytes()
+            .expect("transition json"),
+    )
+    .expect("utf8 transitions");
+
+    assert_eq!(
+        json,
+        include_str!("../../../tests/fixtures/runtime_v2/standing/standing_transitions.json")
             .trim_end()
     );
 }
@@ -188,6 +211,104 @@ fn runtime_v2_standing_rejects_naked_actor_effects() {
         .contains("naked actor must be rejected before effect"));
 }
 
+#[test]
+fn runtime_v2_standing_rejects_guest_to_citizen_transition_without_identity_binding() {
+    let artifacts = runtime_v2_standing_contract().expect("standing artifacts");
+    let mut packet = artifacts.transition_packet.clone();
+    let guest_to_citizen = packet
+        .transitions
+        .iter_mut()
+        .find(|transition| transition.transition_id == "standing-transition-guest-to-citizen-001")
+        .expect("guest-to-citizen transition");
+    guest_to_citizen
+        .required_evidence_refs
+        .retain(|evidence| evidence != "identity_binding_event");
+
+    assert!(packet
+        .validate_against(&artifacts.policy)
+        .expect_err("guest-to-citizen transition should require identity binding")
+        .to_string()
+        .contains("guest-to-citizen transition must preserve explicit identity binding and continuity authority"));
+}
+
+#[test]
+fn runtime_v2_standing_rejects_denied_transition_that_grants_citizen_rights() {
+    let artifacts = runtime_v2_standing_contract().expect("standing artifacts");
+    let mut packet = artifacts.transition_packet.clone();
+    let service_to_citizen = packet
+        .transitions
+        .iter_mut()
+        .find(|transition| transition.transition_id == "standing-transition-service-to-citizen-001")
+        .expect("service-to-citizen transition");
+    service_to_citizen
+        .granted_rights
+        .push("claim_citizen_rights".to_string());
+
+    assert!(packet
+        .validate_against(&artifacts.policy)
+        .expect_err("denied transition should not grant rights")
+        .to_string()
+        .contains("denied standing transitions must not grant rights"));
+}
+
+#[test]
+fn runtime_v2_standing_rejects_review_gated_transition_that_grants_continuity_rights() {
+    let artifacts = runtime_v2_standing_contract().expect("standing artifacts");
+    let mut packet = artifacts.transition_packet.clone();
+    let external_to_guest = packet
+        .transitions
+        .iter_mut()
+        .find(|transition| transition.transition_id == "standing-transition-external-to-guest-001")
+        .expect("external-to-guest transition");
+    external_to_guest
+        .granted_rights
+        .push("continuity_rights".to_string());
+
+    assert!(packet
+        .validate_against(&artifacts.policy)
+        .expect_err("review-gated transition should not grant continuity rights")
+        .to_string()
+        .contains("review-gated standing transitions must not silently grant citizen or continuity rights"));
+}
+
+#[test]
+fn runtime_v2_standing_rejects_transition_from_prohibited_source() {
+    let artifacts = runtime_v2_standing_contract().expect("standing artifacts");
+    let mut packet = artifacts.transition_packet.clone();
+    let external_to_guest = packet
+        .transitions
+        .iter_mut()
+        .find(|transition| transition.transition_id == "standing-transition-external-to-guest-001")
+        .expect("external-to-guest transition");
+    external_to_guest.from_standing_class = "naked_actor".to_string();
+
+    assert!(packet
+        .validate_against(&artifacts.policy)
+        .expect_err("prohibited source transition should fail")
+        .to_string()
+        .contains("prohibited source standing must be rejected before effect"));
+}
+
+#[test]
+fn runtime_v2_standing_rejects_transition_with_unaccounted_requested_right() {
+    let artifacts = runtime_v2_standing_contract().expect("standing artifacts");
+    let mut packet = artifacts.transition_packet.clone();
+    let external_to_guest = packet
+        .transitions
+        .iter_mut()
+        .find(|transition| transition.transition_id == "standing-transition-external-to-guest-001")
+        .expect("external-to-guest transition");
+    external_to_guest
+        .requested_rights
+        .push("continuity_rights".to_string());
+
+    assert!(packet
+        .validate_against(&artifacts.policy)
+        .expect_err("unaccounted requested right should fail")
+        .to_string()
+        .contains("standing transition must account for every requested right with an explicit grant or denial"));
+}
+
 #[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_standing_write_to_root_materializes_fixtures() {
@@ -202,6 +323,7 @@ fn runtime_v2_standing_write_to_root_materializes_fixtures() {
         RUNTIME_V2_STANDING_POLICY_PATH,
         RUNTIME_V2_STANDING_EVENT_PACKET_PATH,
         RUNTIME_V2_STANDING_COMMUNICATION_EXAMPLES_PATH,
+        RUNTIME_V2_STANDING_TRANSITION_PACKET_PATH,
         RUNTIME_V2_STANDING_NEGATIVE_CASES_PATH,
     ] {
         let text = std::fs::read_to_string(root.join(rel_path)).expect("artifact text");
