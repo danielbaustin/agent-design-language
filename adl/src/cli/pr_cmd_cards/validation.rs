@@ -1,9 +1,10 @@
+use super::shared::{
+    field_line_value, output_card_title_matches_slug, path_str, run_output_with_adl_tooling_bin,
+    run_status_with_adl_tooling_bin,
+};
 use anyhow::{bail, Context, Result};
 use serde_yaml::Value;
 use std::path::Path;
-use std::process::Command;
-
-use super::shared::{field_line_value, output_card_title_matches_slug, path_str, run_status};
 
 pub(crate) struct StructuredBundlePaths<'a> {
     pub(crate) plan_path: &'a Path,
@@ -12,16 +13,16 @@ pub(crate) struct StructuredBundlePaths<'a> {
 
 pub(crate) fn validate_bootstrap_stp(repo_root: &Path, path: &Path) -> Result<()> {
     let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    let output = Command::new("bash")
-        .args([
+    let output = run_output_with_adl_tooling_bin(
+        "bash",
+        &[
             path_str(&validator)?,
             "--type",
             "stp",
             "--input",
             path_str(path)?,
-        ])
-        .output()
-        .with_context(|| "failed to spawn 'bash'")?;
+        ],
+    )?;
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
         let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
@@ -143,7 +144,7 @@ pub(crate) fn validate_bootstrap_cards(
     structured_paths: StructuredBundlePaths<'_>,
 ) -> Result<()> {
     let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    run_status(
+    run_status_with_adl_tooling_bin(
         "bash",
         &[
             path_str(&validator)?,
@@ -155,7 +156,7 @@ pub(crate) fn validate_bootstrap_cards(
             path_str(input_path)?,
         ],
     )?;
-    run_status(
+    run_status_with_adl_tooling_bin(
         "bash",
         &[
             path_str(&validator)?,
@@ -213,7 +214,7 @@ pub(crate) fn validate_bootstrap_output_card(
     output_path: &Path,
 ) -> Result<()> {
     let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    run_status(
+    run_status_with_adl_tooling_bin(
         "bash",
         &[
             path_str(&validator)?,
@@ -256,16 +257,16 @@ pub(crate) fn validate_structured_artifact(
     kind: &str,
 ) -> Result<()> {
     let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    let output = Command::new("bash")
-        .args([
+    let output = run_output_with_adl_tooling_bin(
+        "bash",
+        &[
             path_str(&validator)?,
             "--type",
             kind,
             "--input",
             path_str(path)?,
-        ])
-        .output()
-        .with_context(|| "failed to spawn 'bash'")?;
+        ],
+    )?;
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
         let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();

@@ -1,7 +1,7 @@
 use anyhow::{anyhow, bail, Context, Result};
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::process::{Command, Output};
 
 #[cfg(unix)]
 use std::os::unix::fs as unix_fs;
@@ -199,15 +199,39 @@ pub(crate) fn run_capture_allow_failure(program: &str, args: &[&str]) -> Result<
     }
 }
 
-pub(crate) fn run_status(program: &str, args: &[&str]) -> Result<()> {
-    let status = Command::new(program)
-        .args(args)
+fn current_adl_tooling_bin() -> Option<PathBuf> {
+    let current = std::env::current_exe().ok()?;
+    let file_name = current.file_name()?.to_str()?;
+    if file_name != "adl" {
+        return None;
+    }
+    Some(current)
+}
+
+pub(crate) fn run_status_with_adl_tooling_bin(program: &str, args: &[&str]) -> Result<()> {
+    let mut command = Command::new(program);
+    command.args(args);
+    if let Some(bin) = current_adl_tooling_bin() {
+        command.env("ADL_TOOLING_RUST_BIN", bin);
+    }
+    let status = command
         .status()
         .with_context(|| format!("failed to spawn '{program}'"))?;
     if !status.success() {
         bail!("{program} failed with status {:?}", status.code());
     }
     Ok(())
+}
+
+pub(crate) fn run_output_with_adl_tooling_bin(program: &str, args: &[&str]) -> Result<Output> {
+    let mut command = Command::new(program);
+    command.args(args);
+    if let Some(bin) = current_adl_tooling_bin() {
+        command.env("ADL_TOOLING_RUST_BIN", bin);
+    }
+    command
+        .output()
+        .with_context(|| format!("failed to spawn '{program}'"))
 }
 
 pub(crate) fn write_temp_markdown(prefix: &str, body: &str) -> Result<PathBuf> {

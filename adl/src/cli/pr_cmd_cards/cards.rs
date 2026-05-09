@@ -193,9 +193,13 @@ pub(crate) fn ensure_bootstrap_cards(
     }
     if !bundle_plan.is_file() {
         write_plan_card(root, &bundle_plan, issue_ref, title, branch)?;
+    } else if field_line_value(&bundle_plan, "branch")?.trim() != branch {
+        replace_field_line_in_file(&bundle_plan, "branch", &format!("\"{branch}\""))?;
     }
     if !bundle_review_policy.is_file() {
         write_review_policy_card(root, &bundle_review_policy, issue_ref, title, branch)?;
+    } else if field_line_value(&bundle_review_policy, "branch")?.trim() != branch {
+        replace_field_line_in_file(&bundle_review_policy, "branch", &format!("\"{branch}\""))?;
     }
 
     let cards_root = resolve_cards_root(root, None);

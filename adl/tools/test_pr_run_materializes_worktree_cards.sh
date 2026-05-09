@@ -52,8 +52,108 @@ chmod +x "$repo/adl/tools/pr.sh" "$repo/adl/tools/lint_prompt_spec.sh" "$repo/ad
 
 (
   cd "$repo"
+  mkdir -p .adl/v0.86/bodies
+  cat > .adl/v0.86/bodies/issue-910-validation-pass.md <<'EOF'
+---
+issue_card_schema: adl.issue.v1
+wp: "unassigned"
+queue: "tools"
+slug: "validation-pass"
+title: "[v0.86][tools] Validation pass"
+labels:
+  - "track:roadmap"
+  - "type:task"
+  - "area:tools"
+  - "version:v0.86"
+issue_number: 910
+status: "draft"
+action: "edit"
+depends_on: []
+milestone_sprint: "Test sprint"
+required_outcome_type:
+  - "code"
+repo_inputs:
+  - "adl/tools/pr.sh"
+canonical_files:
+  - "adl/tools/pr.sh"
+demo_required: false
+demo_names: []
+issue_graph_notes:
+  - "Regression proof for worktree-local bundle materialization."
+pr_start:
+  enabled: false
+  slug: "validation-pass"
+---
+
+## Summary
+
+Regression proof for issue-mode run bundle materialization.
+
+## Goal
+
+Make the issue-mode run binder leave a complete local worktree issue surface.
+
+## Required Outcome
+
+- local issue prompt copy exists in the worktree
+- local task bundle cards exist in the worktree
+
+## Deliverables
+
+- local issue prompt copy
+- local `stp.md`, `sip.md`, `sor.md`, `spp.md`, and `srp.md`
+
+## Acceptance Criteria
+
+- `pr run <issue>` creates the local issue prompt copy
+- `pr run <issue>` creates `stp.md`, `sip.md`, `sor.md`, `spp.md`, and `srp.md`
+
+## Repo Inputs
+
+- `adl/tools/pr.sh`
+
+## Dependencies
+
+None.
+
+## Target Files / Surfaces
+
+- issue-mode bind lifecycle
+
+## Validation Plan
+
+- run `adl/tools/pr.sh run 910 ...`
+
+## Demo / Proof Requirements
+
+None.
+
+## Demo Expectations
+
+None.
+
+## Non-goals
+
+- none
+
+## Issue-Graph Notes
+
+- shell regression only
+
+## Notes
+
+- authored issue prompt required
+
+## Tooling Notes
+
+- keep the proof focused
+EOF
   export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
   "$BASH_BIN" adl/tools/pr.sh run 910 --slug validation-pass --no-fetch-issue --version v0.86 --allow-open-pr-wave >/dev/null
+  [[ -f ".worktrees/adl-wp-910/.adl/v0.86/bodies/issue-910-validation-pass.md" ]] || {
+    echo "assertion failed: expected run to materialize worktree-local issue prompt" >&2
+    exit 1
+  }
   [[ -f ".worktrees/adl-wp-910/.adl/v0.86/tasks/issue-0910__validation-pass/stp.md" ]] || {
     echo "assertion failed: expected run to materialize worktree-local stp.md" >&2
     exit 1
@@ -64,6 +164,14 @@ chmod +x "$repo/adl/tools/pr.sh" "$repo/adl/tools/lint_prompt_spec.sh" "$repo/ad
   }
   [[ -f ".worktrees/adl-wp-910/.adl/v0.86/tasks/issue-0910__validation-pass/sor.md" ]] || {
     echo "assertion failed: expected run to materialize worktree-local sor.md" >&2
+    exit 1
+  }
+  [[ -f ".worktrees/adl-wp-910/.adl/v0.86/tasks/issue-0910__validation-pass/spp.md" ]] || {
+    echo "assertion failed: expected run to materialize worktree-local spp.md" >&2
+    exit 1
+  }
+  [[ -f ".worktrees/adl-wp-910/.adl/v0.86/tasks/issue-0910__validation-pass/srp.md" ]] || {
+    echo "assertion failed: expected run to materialize worktree-local srp.md" >&2
     exit 1
   }
 )
