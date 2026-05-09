@@ -18,6 +18,7 @@ supporting work packages land.
 | ACIP/A2A hardening demo | WP-13, WP-14 | Show authenticated local comms, redaction, adapter boundary, and state-gated invocation. | conformance fixture and trace artifact | does not claim external transport readiness |
 | Runtime inhabitant integration proof | WP-15 | Show standing, state, lifecycle, memory, comms, capability, learning, and observatory surfaces integrated into one agent-shaped run surface. | integrated run packet, dependency checklist, trace/projection fixture, and redaction check | does not claim birthday, full identity continuity, or flagship completeness |
 | Observatory-visible agent flagship demo | WP-16 | Show an agent-shaped run inside the CSM boundary with operator projection. | run artifacts, trace, lifecycle state, comms evidence, projection | does not claim birthday or autonomous federation |
+| Multi-agent podcast pilot | supplemental demo follow-on | Turn the earlier multi-agent transcript wave into one recurring transcript-first episode format. | episode contract, pilot transcript, role register, and proof note | does not claim long-term identity continuity, native audio production, or a broad media platform |
 
 ## Flagship Acceptance
 

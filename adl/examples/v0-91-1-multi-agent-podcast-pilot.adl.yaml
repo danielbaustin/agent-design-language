@@ -1,0 +1,190 @@
+version: "0.5"
+
+providers:
+  chatgpt_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8796/openai"
+      timeout_secs: 240
+  gemini_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8796/gemini"
+      timeout_secs: 240
+  claude_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8796/anthropic"
+      timeout_secs: 240
+
+agents:
+  chatgpt_host:
+    provider: "chatgpt_local"
+    model: "chatgpt-live-demo"
+  gemini_guest:
+    provider: "gemini_local"
+    model: "gemini-live-demo"
+  claude_guest:
+    provider: "claude_local"
+    model: "claude-live-demo"
+
+tasks:
+  host_opening:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-1-multi-agent-podcast-pilot
+        TURN_ID: 01
+        SPEAKER: ChatGPT
+        ROLE: host_and_synthesizer
+        SERIES_NAME: ADL Multi-Agent Podcast
+        EPISODE_TITLE: Episode 1
+        TOPIC: __PODCAST_TOPIC__
+        STOP_RULE: Stop after six explicit turns total.
+        PARTICIPANTS: ChatGPT, Gemini, Claude.
+        INSTRUCTIONS: Open the episode in under 135 words. State the topic and the six-turn boundary explicitly. Sound like a thoughtful host rather than a moderator reading a checklist. End with exactly one line beginning `THESIS:` that presents a debatable position.
+  gemini_challenge:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-1-multi-agent-podcast-pilot
+        TURN_ID: 02
+        SPEAKER: Gemini
+        ROLE: challenger_and_systems_analyst
+        TOPIC: __PODCAST_TOPIC__
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_01}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Reply directly to ChatGPT in under 120 words. Challenge the thesis precisely. Add one systems-level pressure, tradeoff, or edge case. Keep it sharp, not theatrical.
+  claude_reframe:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-1-multi-agent-podcast-pilot
+        TURN_ID: 03
+        SPEAKER: Claude
+        ROLE: refiner_and_moral_stylist
+        TOPIC: __PODCAST_TOPIC__
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_02}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Enter in under 120 words. Reframe the disagreement by naming one human or moral stake the prior turns are circling. Do not merely agree with either voice.
+  chatgpt_bridge:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-1-multi-agent-podcast-pilot
+        TURN_ID: 04
+        SPEAKER: ChatGPT
+        ROLE: host_and_synthesizer
+        TOPIC: __PODCAST_TOPIC__
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_03}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Bridge the discussion in under 125 words. Explicitly say what changed in your view after hearing Gemini and Claude. Make the synthesis stronger, not vaguer.
+  gemini_deepening:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-1-multi-agent-podcast-pilot
+        TURN_ID: 05
+        SPEAKER: Gemini
+        ROLE: challenger_and_systems_analyst
+        TOPIC: __PODCAST_TOPIC__
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_04}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Deepen the answer in under 115 words. Add one paradox, failure mode, or implementation wrinkle that keeps the episode honest.
+  claude_closure:
+    prompt:
+      user: |
+        DEMO_ID: v0-91-1-multi-agent-podcast-pilot
+        TURN_ID: 06
+        SPEAKER: Claude
+        ROLE: refiner_and_moral_stylist
+        TOPIC: __PODCAST_TOPIC__
+        STOP_RULE: Stop after six explicit turns total.
+        PREVIOUS_TURN_START
+        {{turn_05}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Close the episode in under 120 words. Name one insight that became clearer because three minds were in the conversation rather than two. Do not refer to yourself in the third person, and do not contrast `Claude` with `my` perspective. End with one memorable final line.
+
+run:
+  name: "v0-91-1-multi-agent-podcast-pilot"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "podcast.chatgpt.opening"
+        agent: "chatgpt_host"
+        task: "host_opening"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "adl_multiagent_podcast"
+        save_as: "turn_01"
+        write_to: "podcast/01-chatgpt-opening.md"
+      - id: "podcast.gemini.challenge"
+        agent: "gemini_guest"
+        task: "gemini_challenge"
+        conversation:
+          id: "turn_02"
+          speaker: "Gemini"
+          sequence: 2
+          thread_id: "adl_multiagent_podcast"
+          responds_to: "turn_01"
+        inputs:
+          turn_01: "@state:turn_01"
+        save_as: "turn_02"
+        write_to: "podcast/02-gemini-challenge.md"
+      - id: "podcast.claude.reframe"
+        agent: "claude_guest"
+        task: "claude_reframe"
+        conversation:
+          id: "turn_03"
+          speaker: "Claude"
+          sequence: 3
+          thread_id: "adl_multiagent_podcast"
+          responds_to: "turn_02"
+        inputs:
+          turn_02: "@state:turn_02"
+        save_as: "turn_03"
+        write_to: "podcast/03-claude-reframe.md"
+      - id: "podcast.chatgpt.bridge"
+        agent: "chatgpt_host"
+        task: "chatgpt_bridge"
+        conversation:
+          id: "turn_04"
+          speaker: "ChatGPT"
+          sequence: 4
+          thread_id: "adl_multiagent_podcast"
+          responds_to: "turn_03"
+        inputs:
+          turn_03: "@state:turn_03"
+        save_as: "turn_04"
+        write_to: "podcast/04-chatgpt-bridge.md"
+      - id: "podcast.gemini.deepening"
+        agent: "gemini_guest"
+        task: "gemini_deepening"
+        conversation:
+          id: "turn_05"
+          speaker: "Gemini"
+          sequence: 5
+          thread_id: "adl_multiagent_podcast"
+          responds_to: "turn_04"
+        inputs:
+          turn_04: "@state:turn_04"
+        save_as: "turn_05"
+        write_to: "podcast/05-gemini-deepening.md"
+      - id: "podcast.claude.closure"
+        agent: "claude_guest"
+        task: "claude_closure"
+        conversation:
+          id: "turn_06"
+          speaker: "Claude"
+          sequence: 6
+          thread_id: "adl_multiagent_podcast"
+          responds_to: "turn_05"
+        inputs:
+          turn_05: "@state:turn_05"
+        save_as: "turn_06"
+        write_to: "podcast/06-claude-closure.md"
