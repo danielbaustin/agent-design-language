@@ -210,7 +210,18 @@ from pathlib import Path
 
 segment_manifest_tmp, manifest_path, packet_path, episode_audio_path, segments_dir, source_dir, chatgpt_voice, gemini_provider, gemini_voice, gemini_openai_voice, claude_provider, claude_voice = sys.argv[1:13]
 segments = [json.loads(line) for line in Path(segment_manifest_tmp).read_text(encoding='utf-8').splitlines() if line.strip()]
-GAP_MS = 350
+BASE_GAP_MS = 240
+SAME_SPEAKER_GAP_MS = 180
+INTRO_GAP_MS = 320
+CLOSING_GAP_MS = 420
+TRANSITION_GAP_MS = {
+    ('ChatGPT', 'Gemini'): 220,
+    ('Gemini', 'Claude'): 280,
+    ('Claude', 'ChatGPT'): 260,
+    ('ChatGPT', 'Claude'): 300,
+    ('Gemini', 'ChatGPT'): 230,
+    ('Claude', 'Gemini'): 250,
+}
 params = None
 combined = []
 peak_headroom = 30000.0
@@ -275,6 +286,19 @@ def measure_pcm_16le(frames: bytes) -> tuple[float, int]:
     rms = math.sqrt(sum(int(s) * int(s) for s in samples) / len(samples))
     peak = max(abs(int(s)) for s in samples)
     return rms, peak
+
+def transition_gap_ms(segments: list[dict], idx: int) -> int:
+    if idx >= len(segments) - 1:
+        return 0
+    current = segments[idx]
+    nxt = segments[idx + 1]
+    if idx == len(segments) - 2:
+        return CLOSING_GAP_MS
+    if idx == 0:
+        return INTRO_GAP_MS
+    if current['speaker'] == nxt['speaker']:
+        return SAME_SPEAKER_GAP_MS
+    return TRANSITION_GAP_MS.get((current['speaker'], nxt['speaker']), BASE_GAP_MS)
 
 def shape_voice_pcm_16le(frames: bytes, speaker: str) -> bytes:
     profile = speaker_tone_profiles.get(speaker)
@@ -370,11 +394,12 @@ for entry in segments:
     combined.append(frames)
     seen_speakers.add(entry['speaker'])
 channels, width, rate = params
-silence = b'\x00' * int(rate * width * channels * (GAP_MS / 1000.0))
 assembled_frames = b''
 for idx, frames in enumerate(combined):
     assembled_frames += frames
     if idx != len(combined) - 1:
+        gap_ms = transition_gap_ms(segments, idx)
+        silence = b'\x00' * int(rate * width * channels * (gap_ms / 1000.0))
         assembled_frames += silence
 pre_mix_rms = None
 pre_mix_peak = None
@@ -410,6 +435,15 @@ manifest = {
             'post_peak': post_mix_peak,
         },
     },
+    'timing': {
+        'base_gap_ms': BASE_GAP_MS,
+        'same_speaker_gap_ms': SAME_SPEAKER_GAP_MS,
+        'intro_gap_ms': INTRO_GAP_MS,
+        'closing_gap_ms': CLOSING_GAP_MS,
+        'transition_gap_ms': {
+            f'{left}->{right}': gap for (left, right), gap in TRANSITION_GAP_MS.items()
+        },
+    },
     'segments': segments,
 }
 Path(manifest_path).write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
@@ -431,6 +465,7 @@ packet = [
     '- each speaker says their own name only on their first appearance',
     '- segment loudness is normalized toward a shared target so the episode is easier to follow',
     '- the final episode mix gets one more mastering pass for overall loudness consistency and peak control',
+    '- pause timing is deterministic but no longer one-size-fits-all; handoff gaps vary by speaker transition and closing position',
     '',
     '## Proof Boundary',
     '',
