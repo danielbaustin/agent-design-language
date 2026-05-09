@@ -77,7 +77,7 @@ pub(super) fn reconcile_closed_completed_issue_bundle(
         fs::create_dir_all(&bundle_dir)?;
     }
 
-    for relative in ["stp.md", "sip.md", "sor.md"] {
+    for relative in ["stp.md", "sip.md", "spp.md", "srp.md", "sor.md"] {
         let canonical_path = bundle_dir.join(relative);
         if ensure_nonempty_file_path(&canonical_path)? {
             continue;

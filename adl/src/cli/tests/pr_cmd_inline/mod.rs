@@ -171,6 +171,253 @@ fn write_authored_sip(
     fs::write(path, content).expect("write authored sip");
 }
 
+fn write_authored_spp(
+    path: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+    repo_root: &Path,
+) {
+    let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
+    let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
+    let spp_rel = path_relative_to_repo(repo_root, path);
+    let content = format!(
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_planning_prompt"
+name: "{slug}-execution-plan"
+issue: {issue}
+task_id: "{task_id}"
+run_id: "{task_id}"
+version: v0.86
+title: "{title}"
+branch: "{branch}"
+status: "draft"
+plan_revision: 1
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/example/repo/issues/{issue}"
+  - kind: "stp"
+    ref: "{stp_rel}"
+  - kind: "sip"
+    ref: "{sip_rel}"
+scope:
+  files:
+    - "{stp_rel}"
+    - "{sip_rel}"
+  components:
+    - "{slug}"
+  out_of_scope:
+    - "implementation beyond the approved issue scope"
+constraints:
+  - "read_only_until_execution_is_approved"
+confidence: "medium"
+plan_summary: "Authored planning surface for finish-path tests."
+assumptions:
+  - "The linked STP and SIP remain canonical."
+proposed_steps:
+  - id: "step-1"
+    description: "Review the bundle and tighten the execution sequence."
+    expected_output: "{spp_rel}"
+    allowed_mode: "execution_after_approval"
+codex_plan:
+  - step: "Review the bundle and tighten the execution sequence."
+    status: "pending"
+affected_areas:
+  - "{slug}"
+invariants_to_preserve:
+  - "Do not claim implementation work inside the plan."
+risks_and_edge_cases:
+  - "Validation inputs may need tightening before execution."
+test_strategy:
+  - "Review the proposed validation commands before execution."
+execution_handoff: "Use this artifact as the durable plan-of-record before execution."
+required_permissions:
+  - "workspace-write after execution approval"
+stop_conditions:
+  - "Stop and re-plan if the touched-file set changes."
+alternatives_considered:
+  - description: "Use transient chat planning only."
+    reason_not_chosen: "That would not leave a durable review surface."
+review_hooks:
+  - "Check scope truthfulness and validation sufficiency."
+notes: "test note"
+---
+
+# Structured Plan Prompt
+
+## Plan Summary
+
+test
+
+## Codex Plan
+
+1. [pending] test
+
+## Assumptions
+
+- test
+
+## Proposed Steps
+
+1. test
+
+## Affected Areas
+
+- test
+
+## Invariants To Preserve
+
+- test
+
+## Risks And Edge Cases
+
+- test
+
+## Test Strategy
+
+- test
+
+## Execution Handoff
+
+test
+
+## Stop Conditions
+
+- test
+
+## Notes
+
+test
+"#,
+        slug = issue_ref.slug(),
+        issue = issue_ref.issue_number(),
+        task_id = issue_ref.task_issue_id(),
+        title = title,
+        branch = branch,
+        stp_rel = stp_rel,
+        sip_rel = sip_rel,
+        spp_rel = spp_rel,
+    );
+    fs::write(path, content).expect("write authored spp");
+}
+
+fn write_authored_srp(
+    path: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+    repo_root: &Path,
+) {
+    let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
+    let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
+    let sor_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_output_path(repo_root));
+    let content = format!(
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_review_policy"
+name: "{slug}-review-policy"
+issue: {issue}
+task_id: "{task_id}"
+version: v0.86
+title: "{title}"
+branch: "{branch}"
+status: "draft"
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/example/repo/issues/{issue}"
+  - kind: "stp"
+    ref: "{stp_rel}"
+  - kind: "sip"
+    ref: "{sip_rel}"
+  - kind: "sor"
+    ref: "{sor_rel}"
+review_mode: "pre_pr_independent_review"
+timing: "before_pr_open"
+scope_basis:
+  - "{stp_rel}"
+  - "{sip_rel}"
+in_scope_surfaces:
+  - "tracked changes for this issue branch"
+evidence_policy:
+  - "Use repository evidence and issue-local validation only."
+validation_inputs:
+  - "Issue-local proofs recorded in the SOR."
+allowed_dispositions:
+  - "PASS"
+  - "BLOCK"
+reviewer_constraints:
+  - "Do not widen issue scope."
+refusal_policy:
+  - "Refuse claims that are unsupported by repository evidence."
+follow_up_routing:
+  - "Route actionable findings back to the issue branch."
+non_claims:
+  - "This policy does not guarantee review quality by itself."
+policy_refs:
+  - "{stp_rel}"
+notes: "test note"
+---
+
+# Structured Review Policy
+
+## Review Summary
+
+test
+
+## Scope Basis
+
+- test
+
+## In-Scope Surfaces
+
+- test
+
+## Evidence Rules
+
+- test
+
+## Validation Inputs
+
+- test
+
+## Allowed Dispositions
+
+- PASS
+- BLOCK
+
+## Reviewer Constraints
+
+- test
+
+## Refusal Policy
+
+- test
+
+## Follow-up Routing
+
+- test
+
+## Non-Claims
+
+- test
+
+## Notes
+
+test
+"#,
+        slug = issue_ref.slug(),
+        issue = issue_ref.issue_number(),
+        task_id = issue_ref.task_issue_id(),
+        title = title,
+        branch = branch,
+        stp_rel = stp_rel,
+        sip_rel = sip_rel,
+        sor_rel = sor_rel,
+    );
+    fs::write(path, content).expect("write authored srp");
+}
+
 fn write_completed_sor_fixture(path: &Path, branch: &str) {
     let body = format!(
         r#"# rust-finish-test

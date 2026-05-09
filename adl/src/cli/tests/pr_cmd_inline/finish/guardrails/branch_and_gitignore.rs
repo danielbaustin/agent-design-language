@@ -190,6 +190,20 @@ fn real_pr_finish_rejects_main_and_reports_no_pr_when_only_local_bundle_sync_cha
         &issue_ref.issue_prompt_path(&repo),
         &repo,
     );
+    write_authored_spp(
+        &issue_ref.task_bundle_plan_path(&repo),
+        &issue_ref,
+        "Example",
+        "codex/1153-rust-finish-test",
+        &repo,
+    );
+    write_authored_srp(
+        &issue_ref.task_bundle_review_policy_path(&repo),
+        &issue_ref,
+        "Example",
+        "codex/1153-rust-finish-test",
+        &repo,
+    );
     write_completed_sor_fixture(&output, "codex/1153-rust-finish-test");
     let cards_root = resolve_cards_root(&repo, None);
     let compat_output = card_output_path(&cards_root, 1153);
@@ -321,6 +335,20 @@ fn real_pr_finish_rejects_staged_gitignore_changes_without_allow_flag() {
         "Example",
         "codex/1153-rust-finish-test",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &issue_ref.task_bundle_plan_path(&repo),
+        &issue_ref,
+        "Example",
+        "codex/1153-rust-finish-test",
+        &repo,
+    );
+    write_authored_srp(
+        &issue_ref.task_bundle_review_policy_path(&repo),
+        &issue_ref,
+        "Example",
+        "codex/1153-rust-finish-test",
         &repo,
     );
     write_completed_sor_fixture(

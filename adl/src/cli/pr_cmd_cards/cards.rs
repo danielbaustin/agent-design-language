@@ -2,16 +2,15 @@ use anyhow::{bail, Context, Result};
 use chrono::Utc;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 use super::super::pr_cmd_validate::validate_authored_prompt_surface;
 use super::super::pr_cmd_validate::{bootstrap_stub_reason, PromptSurfaceKind};
 use super::shared::{
     branch_indicates_unbound_state, copy_directory_contents, deduplicate_exact_line, default_repo,
     ensure_symlink, field_line_value, output_card_title_matches_slug, path_relative_to_repo,
-    path_str, replace_exact_line, replace_field_line, replace_field_line_in_file,
+    replace_exact_line, replace_field_line, replace_field_line_in_file,
 };
-use super::validation::{validate_bootstrap_cards, validate_bootstrap_stp};
+use super::validation::{validate_bootstrap_cards, validate_bootstrap_stp, StructuredBundlePaths};
 use ::adl::control_plane::{
     card_input_path, card_output_path, card_plan_path, card_review_policy_path, card_stp_path,
     resolve_cards_root, IssueRef,
@@ -218,43 +217,13 @@ pub(crate) fn ensure_bootstrap_cards(
         branch,
         &bundle_input,
         &bundle_output,
+        StructuredBundlePaths {
+            plan_path: &bundle_plan,
+            review_policy_path: &bundle_review_policy,
+        },
     )?;
     validate_authored_prompt_surface("start", &bundle_input, PromptSurfaceKind::Sip)?;
-    validate_structured_bundle_artifacts(root, &bundle_plan, &bundle_review_policy)?;
     Ok((bundle_stp, bundle_input, bundle_output))
-}
-
-fn validate_structured_bundle_artifacts(
-    repo_root: &Path,
-    bundle_plan: &Path,
-    bundle_review_policy: &Path,
-) -> Result<()> {
-    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    for (kind, path) in [("spp", bundle_plan), ("srp", bundle_review_policy)] {
-        let output = Command::new("bash")
-            .args([
-                path_str(&validator)?,
-                "--type",
-                kind,
-                "--input",
-                path_str(path)?,
-            ])
-            .output()
-            .with_context(|| "failed to spawn 'bash'")?;
-        if !output.status.success() {
-            let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
-            let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
-            let detail = if !stderr.is_empty() {
-                stderr
-            } else if !stdout.is_empty() {
-                stdout
-            } else {
-                format!("bash failed with status {:?}", output.status.code())
-            };
-            bail!("{kind}: failed validation: {}: {detail}", path.display());
-        }
-    }
-    Ok(())
 }
 
 pub(crate) fn write_output_card(

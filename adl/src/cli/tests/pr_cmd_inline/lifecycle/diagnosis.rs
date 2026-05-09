@@ -394,6 +394,134 @@ fn real_pr_doctor_full_blocks_invalid_root_bootstrap_output_card() {
 }
 
 #[test]
+fn real_pr_doctor_full_blocks_invalid_root_spp() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-doctor-invalid-root-spp");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "doctor invalid spp\n").expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1916, "v0.86", "doctor-invalid-spp").expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Doctor invalid spp");
+    real_pr(&[
+        "init".to_string(),
+        "1916".to_string(),
+        "--slug".to_string(),
+        "doctor-invalid-spp".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Doctor invalid spp".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr init");
+
+    let root_sip = issue_ref.task_bundle_input_path(&repo);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    write_authored_sip(
+        &root_sip,
+        &issue_ref,
+        "[v0.86][tools] Doctor invalid spp",
+        "not bound yet",
+        &source_path,
+        &repo,
+    );
+
+    let root_spp = issue_ref.task_bundle_plan_path(&repo);
+    let invalid_spp = fs::read_to_string(&root_spp)
+        .expect("read root spp")
+        .replace("status: \"draft\"", "status: \"queued\"");
+    fs::write(&root_spp, invalid_spp).expect("write invalid root spp");
+
+    let err = real_pr(&[
+        "doctor".to_string(),
+        "1916".to_string(),
+        "--slug".to_string(),
+        "doctor-invalid-spp".to_string(),
+        "--mode".to_string(),
+        "full".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("doctor should reject invalid root spp");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    let err = err.to_string();
+    assert!(err.contains("doctor: spp failed validation"));
+    assert!(err.contains("status must be one of: draft, reviewed, approved"));
+}
+
+#[test]
 fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-doctor-worktree-cwd");
@@ -789,12 +917,28 @@ fn real_pr_doctor_reconciles_closed_completed_issue_bundle_without_worktree() {
     fs::rename(&canonical_bundle, &duplicate_bundle).expect("move bundle to duplicate");
 
     let duplicate_sip = duplicate_bundle.join("sip.md");
+    let duplicate_spp = duplicate_bundle.join("spp.md");
+    let duplicate_srp = duplicate_bundle.join("srp.md");
     write_authored_sip(
         &duplicate_sip,
         &issue_ref,
         "[v0.87][tools] Finalize local task-bundle closeout when issues are actually closed",
         "codex/1410-v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &duplicate_spp,
+        &issue_ref,
+        "[v0.87][tools] Finalize local task-bundle closeout when issues are actually closed",
+        "codex/1410-v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed",
+        &repo,
+    );
+    write_authored_srp(
+        &duplicate_srp,
+        &issue_ref,
+        "[v0.87][tools] Finalize local task-bundle closeout when issues are actually closed",
+        "codex/1410-v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed",
         &repo,
     );
 

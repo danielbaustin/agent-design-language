@@ -386,6 +386,148 @@ fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
 }
 
 #[test]
+fn real_pr_ready_blocks_invalid_worktree_srp() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-ready-invalid-worktree-srp");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "ready invalid srp\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1917, "v0.86", "ready-invalid-worktree-srp").expect("issue ref");
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Ready invalid worktree srp",
+    );
+
+    real_pr(&[
+        "start".to_string(),
+        "1917".to_string(),
+        "--slug".to_string(),
+        "ready-invalid-worktree-srp".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Ready invalid worktree srp".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr start");
+
+    let root_sip = issue_ref.task_bundle_input_path(&repo);
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let wt_sip = issue_ref.task_bundle_input_path(&worktree);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    let branch = "codex/1917-ready-invalid-worktree-srp";
+    write_authored_sip(
+        &root_sip,
+        &issue_ref,
+        "[v0.86][tools] Ready invalid worktree srp",
+        branch,
+        &source_path,
+        &repo,
+    );
+    write_authored_sip(
+        &wt_sip,
+        &issue_ref,
+        "[v0.86][tools] Ready invalid worktree srp",
+        branch,
+        &issue_ref.issue_prompt_path(&worktree),
+        &worktree,
+    );
+
+    let wt_srp = issue_ref.task_bundle_review_policy_path(&worktree);
+    let invalid_srp = fs::read_to_string(&wt_srp)
+        .expect("read worktree srp")
+        .replace("status: \"draft\"", "status: \"queued\"");
+    fs::write(&wt_srp, invalid_srp).expect("write invalid worktree srp");
+
+    let err = real_pr(&[
+        "ready".to_string(),
+        "1917".to_string(),
+        "--slug".to_string(),
+        "ready-invalid-worktree-srp".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("ready should reject invalid worktree srp");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    let err = err.to_string();
+    assert!(err.contains("ready: srp failed validation"));
+    assert!(err.contains("status must be one of: draft, ready, approved"));
+}
+
+#[test]
 fn real_pr_start_rewrites_unbound_root_input_card_branch() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-start-rewrites-unbound");
