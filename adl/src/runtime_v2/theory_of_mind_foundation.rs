@@ -705,31 +705,27 @@ fn validate_update_events(
             validate_relative_path(evidence_ref, "theory_of_mind.event_evidence_ref")?;
         }
         match event.event_kind.as_str() {
-            "correction_update" => {
+            "correction_update"
                 if event.correction_of_event_id.is_none()
                     || event.prior_model_id.is_none()
-                    || event.authority_basis != "correction_after_review"
-                {
-                    return Err(anyhow!(
-                        "correction_update events must cite the corrected event, preserve the prior model, and remain review-authorized"
-                    ));
-                }
+                    || event.authority_basis != "correction_after_review" =>
+            {
+                return Err(anyhow!(
+                    "correction_update events must cite the corrected event, preserve the prior model, and remain review-authorized"
+                ));
             }
-            "unknown_preserved" => {
-                if !event.uncertainty_change.contains("unknown") {
-                    return Err(anyhow!(
-                        "unknown_preserved events must preserve unknown in the uncertainty delta"
-                    ));
-                }
+            "unknown_preserved" if !event.uncertainty_change.contains("unknown") => {
+                return Err(anyhow!(
+                    "unknown_preserved events must preserve unknown in the uncertainty delta"
+                ));
             }
-            "privacy_restriction" => {
+            "privacy_restriction"
                 if event.authority_basis != "policy_authorized_state"
-                    || event.visibility_scope != "operator_and_reviewer_summary_only"
-                {
-                    return Err(anyhow!(
-                        "privacy_restriction events must remain policy-authorized summary surfaces"
-                    ));
-                }
+                    || event.visibility_scope != "operator_and_reviewer_summary_only" =>
+            {
+                return Err(anyhow!(
+                    "privacy_restriction events must remain policy-authorized summary surfaces"
+                ));
             }
             _ => {}
         }
