@@ -21,7 +21,7 @@ This audio follow-on proves:
 - `Claude` can be rendered truthfully through a surrogate TTS lane while
   preserving Claude transcript authorship identity
 - the audio can be presented in a listener-friendly way with spoken speaker
-  intros and simple loudness normalization
+  intros, saved loudness metrics, and bounded mastering/limiting
 
 It does **not** prove:
 
@@ -105,7 +105,10 @@ The audio follow-on is successful when:
 - one listenable combined episode audio file exists
 - per-turn audio segments exist with explicit speaker routing
 - the manifest shows which provider/voice rendered each speaker
+- the manifest records usable loudness/mastering metrics for the final mix
 - Claude's surrogate rendering is disclosed instead of implied away
 - each speaker introduces themselves naturally only on their first turn, for example `I'm ChatGPT`
 - overall segment volume is normalized enough that the episode does not feel
   erratic or lopsided
+- the final mix has a bounded mastering pass that tightens loudness spread and
+  controls peaks without introducing a heavyweight external production pipeline
