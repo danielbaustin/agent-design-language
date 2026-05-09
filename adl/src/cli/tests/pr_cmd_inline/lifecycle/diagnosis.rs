@@ -917,12 +917,28 @@ fn real_pr_doctor_reconciles_closed_completed_issue_bundle_without_worktree() {
     fs::rename(&canonical_bundle, &duplicate_bundle).expect("move bundle to duplicate");
 
     let duplicate_sip = duplicate_bundle.join("sip.md");
+    let duplicate_spp = duplicate_bundle.join("spp.md");
+    let duplicate_srp = duplicate_bundle.join("srp.md");
     write_authored_sip(
         &duplicate_sip,
         &issue_ref,
         "[v0.87][tools] Finalize local task-bundle closeout when issues are actually closed",
         "codex/1410-v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &duplicate_spp,
+        &issue_ref,
+        "[v0.87][tools] Finalize local task-bundle closeout when issues are actually closed",
+        "codex/1410-v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed",
+        &repo,
+    );
+    write_authored_srp(
+        &duplicate_srp,
+        &issue_ref,
+        "[v0.87][tools] Finalize local task-bundle closeout when issues are actually closed",
+        "codex/1410-v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed",
         &repo,
     );
 

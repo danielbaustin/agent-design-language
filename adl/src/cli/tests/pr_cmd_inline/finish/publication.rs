@@ -88,6 +88,8 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish test");
     fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
     write_authored_sip(
@@ -96,6 +98,20 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
         "[v0.86][tools] Rust finish test",
         "codex/1153-rust-finish-test",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish test",
+        "codex/1153-rust-finish-test",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish test",
+        "codex/1153-rust-finish-test",
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1153-rust-finish-test");
@@ -331,6 +347,8 @@ fn real_pr_finish_fails_when_pr_janitor_auto_attach_fails() {
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish test");
     fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
     write_authored_sip(
@@ -339,6 +357,20 @@ fn real_pr_finish_fails_when_pr_janitor_auto_attach_fails() {
         "[v0.86][tools] Rust finish test",
         "codex/1154-rust-finish-test",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish test",
+        "codex/1154-rust-finish-test",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish test",
+        "codex/1154-rust-finish-test",
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1154-rust-finish-test");
@@ -509,6 +541,8 @@ fn real_pr_finish_fails_when_post_merge_closeout_auto_attach_fails() {
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish test");
     fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
     write_authored_sip(
@@ -517,6 +551,20 @@ fn real_pr_finish_fails_when_post_merge_closeout_auto_attach_fails() {
         "[v0.86][tools] Rust finish test",
         "codex/1161-rust-finish-test",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish test",
+        "codex/1161-rust-finish-test",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish test",
+        "codex/1161-rust-finish-test",
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1161-rust-finish-test");
@@ -690,6 +738,8 @@ fn real_pr_finish_updates_existing_pr_and_marks_ready() {
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish test edit");
     fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
     write_authored_sip(
@@ -698,6 +748,20 @@ fn real_pr_finish_updates_existing_pr_and_marks_ready() {
         "[v0.86][tools] Rust finish test edit",
         "codex/1153-rust-finish-test-edit",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish test edit",
+        "codex/1153-rust-finish-test-edit",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish test edit",
+        "codex/1153-rust-finish-test-edit",
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1153-rust-finish-test-edit");

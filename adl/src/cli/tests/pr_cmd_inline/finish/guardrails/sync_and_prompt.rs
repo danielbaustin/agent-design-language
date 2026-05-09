@@ -102,6 +102,10 @@ fn real_pr_finish_syncs_completed_output_to_root_bundle_and_cards_surface() {
 
     let root_input = issue_ref.task_bundle_input_path(&repo);
     let wt_input = issue_ref.task_bundle_input_path(&worktree);
+    let root_plan = issue_ref.task_bundle_plan_path(&repo);
+    let wt_plan = issue_ref.task_bundle_plan_path(&worktree);
+    let root_review_policy = issue_ref.task_bundle_review_policy_path(&repo);
+    let wt_review_policy = issue_ref.task_bundle_review_policy_path(&worktree);
     write_authored_sip(
         &root_input,
         &issue_ref,
@@ -110,12 +114,40 @@ fn real_pr_finish_syncs_completed_output_to_root_bundle_and_cards_surface() {
         &issue_ref.issue_prompt_path(&repo),
         &repo,
     );
+    write_authored_spp(
+        &root_plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish sync",
+        "codex/1153-rust-finish-sync",
+        &repo,
+    );
+    write_authored_srp(
+        &root_review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish sync",
+        "codex/1153-rust-finish-sync",
+        &repo,
+    );
     write_authored_sip(
         &wt_input,
         &issue_ref,
         "[v0.86][tools] Rust finish sync",
         "codex/1153-rust-finish-sync",
         &wt_issue_prompt,
+        &worktree,
+    );
+    write_authored_spp(
+        &wt_plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish sync",
+        "codex/1153-rust-finish-sync",
+        &worktree,
+    );
+    write_authored_srp(
+        &wt_review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish sync",
+        "codex/1153-rust-finish-sync",
         &worktree,
     );
 
