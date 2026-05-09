@@ -164,14 +164,14 @@ TURN_FILES=(
 
 SEGMENT_MANIFEST_TMP="$OUT_DIR/segment_manifest.jsonl"
 : > "$SEGMENT_MANIFEST_TMP"
-declare -A SPEAKER_INTRODUCED=()
+SPEAKERS_INTRODUCED="|"
 
 for spec in "${TURN_FILES[@]}"; do
   IFS='|' read -r filename speaker role voice provider surrogate instructions <<< "$spec"
   original_text="$(cat "$SOURCE_DIR/out/podcast/$filename")"
-  if [[ -z "${SPEAKER_INTRODUCED[$speaker]:-}" ]]; then
+  if [[ "$SPEAKERS_INTRODUCED" != *"|$speaker|"* ]]; then
     text="I'm ${speaker}. ${original_text}"
-    SPEAKER_INTRODUCED[$speaker]=1
+    SPEAKERS_INTRODUCED="${SPEAKERS_INTRODUCED}${speaker}|"
   else
     text="$original_text"
   fi
@@ -213,7 +213,8 @@ segments = [json.loads(line) for line in Path(segment_manifest_tmp).read_text(en
 GAP_MS = 350
 params = None
 combined = []
-target_rms = 7000.0
+target_rms = 5000.0
+peak_headroom = 30000.0
 
 def normalize_pcm_16le(frames: bytes) -> bytes:
     samples = array('h')
@@ -223,13 +224,16 @@ def normalize_pcm_16le(frames: bytes) -> bytes:
     if not samples:
         return frames
     rms = math.sqrt(sum(int(s) * int(s) for s in samples) / len(samples))
+    peak = max(abs(int(s)) for s in samples)
     if rms <= 1.0:
         return frames
-    scale = target_rms / rms
-    if scale > 2.0:
-        scale = 2.0
-    if scale < 0.5:
-        scale = 0.5
+    scale_rms = target_rms / rms
+    scale_peak = peak_headroom / peak if peak > 0 else scale_rms
+    scale = min(scale_rms, scale_peak)
+    if scale > 6.0:
+        scale = 6.0
+    if scale < 0.35:
+        scale = 0.35
     for i, sample in enumerate(samples):
         value = int(round(sample * scale))
         if value > 32767:
@@ -242,7 +246,8 @@ def normalize_pcm_16le(frames: bytes) -> bytes:
     return samples.tobytes()
 
 for entry in segments:
-    with wave.open(str(Path(segments_dir) / entry['audio_file']), 'rb') as wf:
+    segment_path = Path(segments_dir) / entry['audio_file']
+    with wave.open(str(segment_path), 'rb') as wf:
         current_params = (wf.getnchannels(), wf.getsampwidth(), wf.getframerate())
         frames = wf.readframes(wf.getnframes())
     if params is None:
@@ -251,6 +256,11 @@ for entry in segments:
         raise SystemExit(f"mismatched wav params: expected {params}, got {current_params} for {entry['audio_file']}")
     if current_params[1] == 2:
         frames = normalize_pcm_16le(frames)
+        with wave.open(str(segment_path), 'wb') as out_segment:
+            out_segment.setnchannels(current_params[0])
+            out_segment.setsampwidth(current_params[1])
+            out_segment.setframerate(current_params[2])
+            out_segment.writeframes(frames)
     combined.append(frames)
 channels, width, rate = params
 silence = b'\x00' * int(rate * width * channels * (GAP_MS / 1000.0))
