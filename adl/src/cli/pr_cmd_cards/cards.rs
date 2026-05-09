@@ -10,7 +10,7 @@ use super::shared::{
     ensure_symlink, field_line_value, output_card_title_matches_slug, path_relative_to_repo,
     replace_exact_line, replace_field_line, replace_field_line_in_file,
 };
-use super::validation::{validate_bootstrap_cards, validate_bootstrap_stp};
+use super::validation::{validate_bootstrap_cards, validate_bootstrap_stp, StructuredBundlePaths};
 use ::adl::control_plane::{
     card_input_path, card_output_path, card_plan_path, card_review_policy_path, card_stp_path,
     resolve_cards_root, IssueRef,
@@ -217,8 +217,10 @@ pub(crate) fn ensure_bootstrap_cards(
         branch,
         &bundle_input,
         &bundle_output,
-        &bundle_plan,
-        &bundle_review_policy,
+        StructuredBundlePaths {
+            plan_path: &bundle_plan,
+            review_policy_path: &bundle_review_policy,
+        },
     )?;
     validate_authored_prompt_surface("start", &bundle_input, PromptSurfaceKind::Sip)?;
     Ok((bundle_stp, bundle_input, bundle_output))

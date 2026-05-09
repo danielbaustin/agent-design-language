@@ -5,6 +5,11 @@ use std::process::Command;
 
 use super::shared::{field_line_value, output_card_title_matches_slug, path_str, run_status};
 
+pub(crate) struct StructuredBundlePaths<'a> {
+    pub(crate) plan_path: &'a Path,
+    pub(crate) review_policy_path: &'a Path,
+}
+
 pub(crate) fn validate_bootstrap_stp(repo_root: &Path, path: &Path) -> Result<()> {
     let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
     let output = Command::new("bash")
@@ -43,8 +48,7 @@ pub(crate) fn validate_ready_cards(
     actual_branch: &str,
     input_path: &Path,
     output_path: &Path,
-    plan_path: &Path,
-    review_policy_path: &Path,
+    structured_paths: StructuredBundlePaths<'_>,
 ) -> Result<()> {
     let expected = format!("issue-{:04}", issue);
     if field_line_value(input_path, "Task ID")? != expected {
@@ -68,11 +72,17 @@ pub(crate) fn validate_ready_cards(
     if !output_card_title_matches_slug(output_path, slug)? {
         bail!("ready: output card title mismatch");
     }
-    validate_started_structured_artifact(repo_root, "ready", plan_path, "spp", actual_branch)?;
     validate_started_structured_artifact(
         repo_root,
         "ready",
-        review_policy_path,
+        structured_paths.plan_path,
+        "spp",
+        actual_branch,
+    )?;
+    validate_started_structured_artifact(
+        repo_root,
+        "ready",
+        structured_paths.review_policy_path,
         "srp",
         actual_branch,
     )?;
@@ -90,8 +100,7 @@ pub(crate) fn validate_initialized_cards(
     input_path: &Path,
     output_path: &Path,
     repo_root: &Path,
-    plan_path: &Path,
-    review_policy_path: &Path,
+    structured_paths: StructuredBundlePaths<'_>,
 ) -> Result<()> {
     let expected = format!("issue-{:04}", issue);
     if field_line_value(input_path, "Task ID")? != expected {
@@ -109,8 +118,13 @@ pub(crate) fn validate_initialized_cards(
     if !output_card_title_matches_slug(output_path, slug)? {
         bail!("doctor: output card title mismatch");
     }
-    validate_structured_artifact(repo_root, "doctor", plan_path, "spp")?;
-    validate_structured_artifact(repo_root, "doctor", review_policy_path, "srp")?;
+    validate_structured_artifact(repo_root, "doctor", structured_paths.plan_path, "spp")?;
+    validate_structured_artifact(
+        repo_root,
+        "doctor",
+        structured_paths.review_policy_path,
+        "srp",
+    )?;
     super::super::pr_cmd_validate::validate_authored_prompt_surface(
         "doctor",
         input_path,
@@ -126,8 +140,7 @@ pub(crate) fn validate_bootstrap_cards(
     branch: &str,
     input_path: &Path,
     output_path: &Path,
-    plan_path: &Path,
-    review_policy_path: &Path,
+    structured_paths: StructuredBundlePaths<'_>,
 ) -> Result<()> {
     let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
     run_status(
@@ -182,8 +195,13 @@ pub(crate) fn validate_bootstrap_cards(
     if !output_card_title_matches_slug(output_path, slug)? {
         bail!("start: output card title mismatch");
     }
-    validate_structured_artifact(repo_root, "start", plan_path, "spp")?;
-    validate_structured_artifact(repo_root, "start", review_policy_path, "srp")?;
+    validate_structured_artifact(repo_root, "start", structured_paths.plan_path, "spp")?;
+    validate_structured_artifact(
+        repo_root,
+        "start",
+        structured_paths.review_policy_path,
+        "srp",
+    )?;
     Ok(())
 }
 

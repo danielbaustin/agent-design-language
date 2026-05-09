@@ -1,5 +1,6 @@
 use super::*;
 use crate::cli::pr_cmd_cards::validate_bootstrap_output_card;
+use crate::cli::pr_cmd_cards::StructuredBundlePaths;
 use serde::Serialize;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -255,8 +256,10 @@ pub(super) fn run_doctor_ready(
             &root_bundle_input,
             &root_bundle_output,
             repo_root,
-            &root_bundle_plan,
-            &root_bundle_review_policy,
+            StructuredBundlePaths {
+                plan_path: &root_bundle_plan,
+                review_policy_path: &root_bundle_review_policy,
+            },
         )?;
         return Ok(DoctorReadyResult {
             lifecycle_state: "closed",
@@ -277,8 +280,10 @@ pub(super) fn run_doctor_ready(
         &root_bundle_input,
         &root_bundle_output,
         repo_root,
-        &root_bundle_plan,
-        &root_bundle_review_policy,
+        StructuredBundlePaths {
+            plan_path: &root_bundle_plan,
+            review_policy_path: &root_bundle_review_policy,
+        },
     )?;
     let root_input_body = fs::read_to_string(&root_bundle_input).with_context(|| {
         format!(
@@ -363,8 +368,10 @@ pub(super) fn run_doctor_ready(
         wt_branch.trim(),
         &root_bundle_input,
         &root_bundle_output,
-        &root_bundle_plan,
-        &root_bundle_review_policy,
+        StructuredBundlePaths {
+            plan_path: &root_bundle_plan,
+            review_policy_path: &root_bundle_review_policy,
+        },
     )?;
     validate_ready_cards(
         &worktree_path,
@@ -373,8 +380,10 @@ pub(super) fn run_doctor_ready(
         wt_branch.trim(),
         &wt_bundle_input,
         &wt_bundle_output,
-        &wt_bundle_plan,
-        &wt_bundle_review_policy,
+        StructuredBundlePaths {
+            plan_path: &wt_bundle_plan,
+            review_policy_path: &wt_bundle_review_policy,
+        },
     )?;
 
     Ok(DoctorReadyResult {

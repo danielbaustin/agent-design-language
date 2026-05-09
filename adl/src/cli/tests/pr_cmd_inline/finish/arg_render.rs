@@ -849,6 +849,8 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
     let stp = issue_ref.task_bundle_stp_path(&repo);
     let input = issue_ref.task_bundle_input_path(&repo);
     let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish default lane");
     fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
     write_authored_sip(
@@ -857,6 +859,20 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
         "[v0.86][tools] Rust finish default lane",
         "codex/1153-rust-finish-default-lane",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Rust finish default lane",
+        "codex/1153-rust-finish-default-lane",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Rust finish default lane",
+        "codex/1153-rust-finish-default-lane",
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1153-rust-finish-default-lane");
