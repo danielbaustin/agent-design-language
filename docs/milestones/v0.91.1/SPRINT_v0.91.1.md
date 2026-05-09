@@ -73,12 +73,19 @@ work rather than another loose planning backlog.
 | #2864 | Tighten coverage path-policy escalation | narrower fail-closed escalation policy with tests | #2867 |
 | #2865 | Trim authoritative coverage reporting tail | reduced authoritative coverage post-pass overhead | #2864 |
 | #2866 | Expand PR-fast and coverage-impact filter mappings | broader truthful focused-lane routing coverage | #2865 |
-| #2868 | Collapse remaining heavyweight proof-test families | bounded hotspot proof-family collapse with timing evidence | #2866 |
+| #2868 | Collapse remaining heavyweight proof-test families | sprint-level residual disposition confirming the named hotspot wave already landed via GW-01..GW-05 | #2866 |
 
 Goal: cut avoidable CI and authoritative-coverage wall time in v0.91.1 without
 weakening proof posture, coverage policy, or review integrity. This
 mini-sprint is supplemental to the main WP wave and should run through the
 sprint-conductor slow path with one active child issue at a time.
+
+Disposition note: `#2868` remained in the mini-sprint as the implementation-heavy
+tail check, but the original heavyweight proof-family collapses were already
+delivered in the merged GW-01 through GW-05 runtime-reduction wave recorded in
+`docs/milestones/v0.90.5/GET_WELL_TRACKING_v0.90.5.md`. The truthful v0.91.1
+action is therefore closeout-by-evidence rather than reopening those runtime
+family rewrites under a new issue number.
 
 ## Parallelization Notes
 
