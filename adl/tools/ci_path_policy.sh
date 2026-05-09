@@ -162,6 +162,40 @@ is_full_coverage_policy_surface() {
   return 1
 }
 
+is_reporting_only_coverage_workflow_change() {
+  local path="$1"
+  [ "$path" = ".github/workflows/ci.yaml" ] || return 1
+  git diff --unified=0 "$base_sha" "$head_sha" -- "$path" 2>/dev/null \
+    | while IFS= read -r line; do
+        case "$line" in
+          diff\ --git*|index\ *|@@*|---*|+++*)
+            continue
+            ;;
+          +*|-*)
+            local content="${line#?}"
+            case "$content" in
+              *"Coverage summary (text)"*|\
+              *"Verify generated lcov file"*|\
+              *"Verify lcov path from repository root"*|\
+              *"Upload coverage artifact"*|\
+              *"Upload coverage to Codecov"*|\
+              *"adl/lcov.info"*|\
+              *"adl/coverage-summary.json"*|\
+              *"adl/coverage-summary.txt"*|\
+              *"coverage-summary.txt"*|\
+              *"coverage-summary.json"*|\
+              *"files: adl/lcov.info"*|\
+              *"flags: adl"*)
+                ;;
+              *)
+                return 1
+                ;;
+            esac
+            ;;
+        esac
+      done
+}
+
 is_release_truth_doc_surface() {
   local path="$1"
   case "$path" in
@@ -358,6 +392,10 @@ EOF
     while IFS=$'\t' read -r _status path; do
       [ -n "$path" ] || continue
       if is_full_coverage_policy_surface "$path"; then
+        if is_reporting_only_coverage_workflow_change "$path"; then
+          reason="coverage_reporting_workflow_change_skips_authoritative_coverage"
+          continue
+        fi
         if [ "$coverage_required" = true ] || [ "$demo_smoke_required" = true ]; then
           mark_policy_surface_full_coverage \
             "pr_policy_surface_runtime_mixed" \
