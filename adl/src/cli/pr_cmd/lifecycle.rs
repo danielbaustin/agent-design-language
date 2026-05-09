@@ -169,6 +169,9 @@ pub(super) fn closeout_closed_completed_issue_bundle(
             .map(PathBuf::from)
             .as_deref(),
     );
+    if worktree_path.is_dir() {
+        scrub_noncanonical_issue_bundle_residue(&worktree_path, issue_ref)?;
+    }
     if worktree_path.is_dir() && has_uncommitted_or_untracked_changes(&worktree_path)? {
         let name = worktree_display_name(&worktree_path);
         record_worktree_prune_result(canonical_output, &format!("blocked_dirty: retained {name}"))?;
@@ -723,6 +726,68 @@ fn replace_worktree_only_paths_remaining(path: &Path, value: &str) -> Result<()>
         &format!("- Worktree-only paths remaining: {value}"),
     );
     fs::write(path, text)?;
+    Ok(())
+}
+
+fn scrub_noncanonical_issue_bundle_residue(
+    worktree_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<()> {
+    let adl_root = worktree_root.join(".adl");
+    if !adl_root.is_dir() {
+        return Ok(());
+    }
+
+    let canonical_body = issue_ref.issue_prompt_path(worktree_root);
+    let canonical_bundle = issue_ref.task_bundle_dir_path(worktree_root);
+    let body_prefix = format!("issue-{:04}-", issue_ref.issue_number());
+    let task_prefix = format!("issue-{:04}__", issue_ref.issue_number());
+
+    for scope_entry in fs::read_dir(&adl_root)? {
+        let scope_entry = scope_entry?;
+        let scope_path = scope_entry.path();
+
+        let bodies = scope_path.join("bodies");
+        if bodies.is_dir() {
+            for entry in fs::read_dir(&bodies)? {
+                let entry = entry?;
+                let path = entry.path();
+                let name = entry.file_name().to_string_lossy().to_string();
+                if name.starts_with("issue-")
+                    && (name.starts_with(&body_prefix) && path != canonical_body
+                        || !name.starts_with(&body_prefix))
+                {
+                    fs::remove_file(&path).with_context(|| {
+                        format!(
+                            "closeout: failed to scrub noncanonical local issue prompt residue '{}'",
+                            path.display()
+                        )
+                    })?;
+                }
+            }
+        }
+
+        let tasks = scope_path.join("tasks");
+        if tasks.is_dir() {
+            for entry in fs::read_dir(&tasks)? {
+                let entry = entry?;
+                let path = entry.path();
+                let name = entry.file_name().to_string_lossy().to_string();
+                if name.starts_with("issue-")
+                    && (name.starts_with(&task_prefix) && path != canonical_bundle
+                        || !name.starts_with(&task_prefix))
+                {
+                    fs::remove_dir_all(&path).with_context(|| {
+                        format!(
+                            "closeout: failed to scrub noncanonical local task-bundle residue '{}'",
+                            path.display()
+                        )
+                    })?;
+                }
+            }
+        }
+    }
+
     Ok(())
 }
 
@@ -1357,6 +1422,55 @@ mod tests {
 
         prune_issue_worktree(&repo, &repo, &issue_ref).expect_err("dirty worktree rejected");
         assert!(worktree.is_dir());
+    }
+
+    #[test]
+    fn scrub_noncanonical_issue_bundle_residue_keeps_only_canonical_issue_bundle() {
+        let _guard = env_lock();
+        let temp = temp_dir("adl-pr-lifecycle-scrub-foreign-bundles");
+        let repo = temp.join("repo");
+        let origin = temp.join("origin.git");
+        init_repo_with_origin(&repo, &origin);
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let foreign_ref = IssueRef::new(1411, "v0.87", "foreign-slug").expect("foreign issue ref");
+        let drift_ref =
+            IssueRef::new(1410, "v0.87", "stale-drift-slug").expect("same issue drift ref");
+        let worktree = issue_ref.default_worktree_path(&repo, None);
+        fs::create_dir_all(worktree.join(".adl").join("v0.87").join("bodies")).expect("bodies");
+        fs::create_dir_all(worktree.join(".adl").join("v0.87").join("tasks")).expect("tasks");
+
+        let canonical_body = issue_ref.issue_prompt_path(&worktree);
+        let canonical_bundle = issue_ref.task_bundle_dir_path(&worktree);
+        fs::create_dir_all(canonical_bundle.parent().expect("canonical bundle parent"))
+            .expect("canonical bundle parent mkdir");
+        fs::create_dir_all(&canonical_bundle).expect("canonical bundle");
+        fs::write(&canonical_body, "canonical body\n").expect("canonical body");
+        fs::write(canonical_bundle.join("stp.md"), "canonical stp\n").expect("canonical stp");
+
+        let foreign_body = foreign_ref.issue_prompt_path(&worktree);
+        let foreign_bundle = foreign_ref.task_bundle_dir_path(&worktree);
+        fs::create_dir_all(foreign_bundle.parent().expect("foreign bundle parent"))
+            .expect("foreign bundle parent mkdir");
+        fs::create_dir_all(&foreign_bundle).expect("foreign bundle");
+        fs::write(&foreign_body, "foreign body\n").expect("foreign body");
+        fs::write(foreign_bundle.join("stp.md"), "foreign stp\n").expect("foreign stp");
+
+        let drift_body = drift_ref.issue_prompt_path(&worktree);
+        let drift_bundle = drift_ref.task_bundle_dir_path(&worktree);
+        fs::create_dir_all(drift_bundle.parent().expect("drift bundle parent"))
+            .expect("drift bundle parent mkdir");
+        fs::create_dir_all(&drift_bundle).expect("drift bundle");
+        fs::write(&drift_body, "drift body\n").expect("drift body");
+        fs::write(drift_bundle.join("stp.md"), "drift stp\n").expect("drift stp");
+
+        scrub_noncanonical_issue_bundle_residue(&worktree, &issue_ref).expect("scrub");
+
+        assert!(canonical_body.is_file());
+        assert!(canonical_bundle.is_dir());
+        assert!(!foreign_body.exists());
+        assert!(!foreign_bundle.exists());
+        assert!(!drift_body.exists());
+        assert!(!drift_bundle.exists());
     }
 
     #[test]

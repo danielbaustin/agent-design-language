@@ -252,6 +252,20 @@ pub(super) fn ensure_local_branch_exists(branch: &str) -> Result<()> {
 }
 
 pub(super) fn branch_checked_out_worktree_path(branch: &str) -> Result<Option<PathBuf>> {
+    let primary_root = primary_checkout_root()?;
+    let normalized_primary_root = normalize_existing_worktree_path(&primary_root);
+    let canonical_worktrees_root = primary_root.join(".worktrees");
+    let normalized_canonical_worktrees_root =
+        normalize_existing_worktree_path(&canonical_worktrees_root);
+    let managed_worktree_root = std::env::var_os("ADL_WORKTREE_ROOT")
+        .map(PathBuf::from)
+        .map(|path| {
+            if path.is_absolute() {
+                path
+            } else {
+                primary_root.join(path)
+            }
+        });
     let out = run_capture_allow_failure("git", &["worktree", "list", "--porcelain"])?;
     let Some(out) = out else { return Ok(None) };
     let mut current_worktree: Option<PathBuf> = None;
@@ -260,11 +274,36 @@ pub(super) fn branch_checked_out_worktree_path(branch: &str) -> Result<Option<Pa
             current_worktree = Some(PathBuf::from(path.trim()));
         } else if let Some(head_branch) = line.strip_prefix("branch refs/heads/") {
             if head_branch.trim() == branch {
-                return Ok(current_worktree);
+                let Some(candidate) = current_worktree.clone() else {
+                    continue;
+                };
+                let normalized_candidate = normalize_existing_worktree_path(&candidate);
+                let managed_root_matches = managed_worktree_root.as_ref().is_some_and(|root| {
+                    let normalized_root = normalize_existing_worktree_path(root);
+                    candidate.starts_with(root)
+                        || normalized_candidate.starts_with(&normalized_root)
+                });
+                if candidate == primary_root
+                    || normalized_candidate == normalized_primary_root
+                    || candidate.starts_with(&canonical_worktrees_root)
+                    || normalized_candidate.starts_with(&normalized_canonical_worktrees_root)
+                    || managed_root_matches
+                {
+                    return Ok(Some(candidate));
+                }
+                bail!(
+                    "start: branch '{}' is already checked out in non-canonical worktree '{}'. ADL only permits the primary checkout and repo-local '.worktrees/' worktrees. Remediation: remove or migrate the external worktree before rerunning.",
+                    branch,
+                    candidate.display()
+                );
             }
         }
     }
     Ok(None)
+}
+
+fn normalize_existing_worktree_path(path: &Path) -> PathBuf {
+    fs::canonicalize(path).unwrap_or_else(|_| path.to_path_buf())
 }
 
 pub(super) fn ensure_worktree_for_branch(worktree_path: &Path, branch: &str) -> Result<()> {
