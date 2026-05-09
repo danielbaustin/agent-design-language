@@ -400,7 +400,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
             )
         })
         .unwrap_or(false);
-    if !(parsed.allow_open_pr_wave || sprint_wave_override) && !unresolved.is_empty() {
+    if !(parsed.allow_open_pr_wave || sprint_wave_override || unresolved.is_empty()) {
         bail!(
             "start: unresolved open PR queue detected for {} [{}:{}]. Resolve or merge these PRs first, or rerun with --allow-open-pr-wave if you are deliberately overriding the guard:\n{}",
             version,
