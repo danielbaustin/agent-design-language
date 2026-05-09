@@ -26,6 +26,7 @@ admission:
       - "require_editor_skills"
       - "require_code_review"
       - "allow_create_missing_sprint_issue"
+      - "require_full_sprint_structured_prompt_readiness"
       - "allow_review_subagent_exception"
       - "max_review_subagents_when_exception_enabled"
       - "require_github_truth_recheck"
@@ -65,6 +66,7 @@ admission:
     - "sprint.review_paths"
     - "sprint.closeout_paths"
     - "sprint.issue_records"
+    - "sprint.structured_prompt_preflight"
     - "sprint.truth_check"
     - "review_subagent_ids"
   stop_if_missing:
@@ -78,6 +80,7 @@ admission:
     - "policy.require_sequential_closeout_must_be_true"
     - "policy.require_existing_issue_skills_must_be_true"
     - "policy.require_editor_skills_must_be_true"
+    - "policy.require_full_sprint_structured_prompt_readiness_must_be_true"
     - "policy.require_github_truth_recheck_must_be_true"
     - "policy.github_truth_gate_blocks_progress_must_be_true"
     - "policy.stop_on_blocker_must_be_true"
@@ -89,6 +92,7 @@ execution:
   allow_subagents: true
   workflow_role: "sprint_orchestrator"
   preferred_commands:
+    - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py --repo-root <repo> --ordered-issues <csv> --state <path>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <goal> --state <path>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/close_sprint_issue.py --state <path> --summary <text>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match"

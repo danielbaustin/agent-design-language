@@ -26,6 +26,20 @@ sprint:
       pr_url: <url or null>
       artifact_paths:
         - /absolute/or/repo-relative/path
+  structured_prompt_preflight:
+    status: not_run | ready | needs_editor_repair | blocked
+    required_card_types:
+      - stp.md | sip.md | sor.md | spp.md | srp.md
+    issue_results:
+      - issue_number: <u32>
+        bundle_path: /absolute/or/repo-relative/path | null
+        status: ready | needs_editor_repair | blocked
+        missing_cards:
+          - <filename>
+        contradictory_cards:
+          - <filename>
+        required_editor_skills:
+          - stp-editor | sip-editor | sor-editor | spp-editor
   truth_check:
     status: not_run | matched | drift_detected | blocked
     source: github_live | sprint_state_only | mixed
@@ -41,6 +55,7 @@ policy:
   require_editor_skills: true
   require_code_review: true
   allow_create_missing_sprint_issue: true | false
+  require_full_sprint_structured_prompt_readiness: true
   allow_review_subagent_exception: true
   max_review_subagents_when_exception_enabled: 1
   require_github_truth_recheck: true

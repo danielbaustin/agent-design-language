@@ -15,6 +15,8 @@ Its job is to:
 - route each issue through the existing lifecycle and editor skills rather than
   reimplementing them
 - preserve resumable sprint state in one lightweight local artifact
+- verify and, when needed, repair structured prompt readiness across the entire
+  sprint before issue execution begins
 - assemble a robust sprint-end review with code-facing review expectations
 - record sprint-end closeout truth including coverage and Rust tracker numbers
 - manage the sprint-management issue to completion, including closing it only
@@ -114,20 +116,23 @@ missing sprint-management issue first.
    issue is missing and policy allows creation, create it through the bundled
    helper first.
 2. Create or load the sprint-state artifact.
-3. Confirm the current issue is the earliest not-yet-closed issue in the list.
-4. Route that issue through `workflow-conductor`.
-5. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
-6. Run only the selected downstream lifecycle or editor skill.
-7. Re-check issue truth until the issue is fully closed out. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
-8. Only then advance to the next ordered issue.
-9. After the final issue closes, assemble sprint review evidence.
-10. Record sprint closeout metrics including coverage and Rust tracker counts.
-11. Stop with one bounded sprint review/closeout result.
+3. Run sprint-wide structured prompt review before issue execution begins.
+4. If any child issue cards are not ready, repair them through the editor skills first.
+5. Confirm the current issue is the earliest not-yet-closed issue in the list.
+6. Route that issue through `workflow-conductor`.
+7. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
+8. Run only the selected downstream lifecycle or editor skill.
+9. Re-check issue truth until the issue is fully closed out. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
+10. Only then advance to the next ordered issue.
+11. After the final issue closes, assemble sprint review evidence.
+12. Record sprint closeout metrics including coverage and Rust tracker counts.
+13. Stop with one bounded sprint review/closeout result.
 
 ## Execution Model
 
 This skill enforces:
 - exactly one active child issue at a time
+- no child issue execution before the whole sprint batch passes structured prompt review
 - no issue `N+1` work before issue `N` is fully closed out
 - editor-skill routing when cards drift
 - immediate stop on blocker
@@ -138,6 +143,9 @@ This skill enforces:
 - no sprint-state advancement without a fresh matched live GitHub truth check
 
 Preferred per-issue routing model:
+- sprint-wide structured prompt preflight not ready ->
+  `check_sprint_structured_prompt_readiness.py`, then route flagged child issues
+  through the matching editor skills before starting issue execution
 - missing sprint-management issue and policy allows creation ->
   `create_missing_sprint_issue.py`, then continue with the ordered child issue
   flow from the created sprint anchor
