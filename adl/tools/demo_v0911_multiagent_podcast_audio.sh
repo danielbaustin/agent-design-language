@@ -213,29 +213,28 @@ segments = [json.loads(line) for line in Path(segment_manifest_tmp).read_text(en
 GAP_MS = 350
 params = None
 combined = []
-target_rms = 5000.0
 peak_headroom = 30000.0
+speaker_target_rms = {
+    'ChatGPT': 4200.0,
+    'Gemini': 3600.0,
+    'Claude': 3600.0,
+}
+intro_duck_ms = 425
+compression_threshold = 11000
+compression_ratio = 2.25
 
-def normalize_pcm_16le(frames: bytes) -> bytes:
+def compress_pcm_16le(frames: bytes) -> bytes:
     samples = array('h')
     samples.frombytes(frames)
     if sys.byteorder != 'little':
         samples.byteswap()
-    if not samples:
-        return frames
-    rms = math.sqrt(sum(int(s) * int(s) for s in samples) / len(samples))
-    peak = max(abs(int(s)) for s in samples)
-    if rms <= 1.0:
-        return frames
-    scale_rms = target_rms / rms
-    scale_peak = peak_headroom / peak if peak > 0 else scale_rms
-    scale = min(scale_rms, scale_peak)
-    if scale > 6.0:
-        scale = 6.0
-    if scale < 0.35:
-        scale = 0.35
     for i, sample in enumerate(samples):
-        value = int(round(sample * scale))
+        sign = 1 if sample >= 0 else -1
+        magnitude = abs(int(sample))
+        if magnitude > compression_threshold:
+            excess = magnitude - compression_threshold
+            magnitude = compression_threshold + int(round(excess / compression_ratio))
+        value = sign * magnitude
         if value > 32767:
             value = 32767
         elif value < -32768:
@@ -245,6 +244,40 @@ def normalize_pcm_16le(frames: bytes) -> bytes:
         samples.byteswap()
     return samples.tobytes()
 
+def normalize_pcm_16le(frames: bytes, target_rms: float, rate: int, duck_intro: bool) -> bytes:
+    samples = array('h')
+    samples.frombytes(frames)
+    if sys.byteorder != 'little':
+        samples.byteswap()
+    if not samples:
+        return frames
+    rms = math.sqrt(sum(int(s) * int(s) for s in samples) / len(samples))
+    peak = max(abs(int(s)) for s in samples)
+    if rms > 1.0:
+        scale_rms = target_rms / rms
+        scale_peak = peak_headroom / peak if peak > 0 else scale_rms
+        scale = min(scale_rms, scale_peak)
+        if scale > 6.0:
+            scale = 6.0
+        if scale < 0.35:
+            scale = 0.35
+        for i, sample in enumerate(samples):
+            value = int(round(sample * scale))
+            if value > 32767:
+                value = 32767
+            elif value < -32768:
+                value = -32768
+            samples[i] = value
+    if duck_intro:
+        intro_samples = min(len(samples), int(rate * (intro_duck_ms / 1000.0)))
+        for i in range(intro_samples):
+            value = int(round(samples[i] * 0.82))
+            samples[i] = max(-32768, min(32767, value))
+    if sys.byteorder != 'little':
+        samples.byteswap()
+    return samples.tobytes()
+
+seen_speakers = set()
 for entry in segments:
     segment_path = Path(segments_dir) / entry['audio_file']
     with wave.open(str(segment_path), 'rb') as wf:
@@ -255,13 +288,17 @@ for entry in segments:
     elif current_params != params:
         raise SystemExit(f"mismatched wav params: expected {params}, got {current_params} for {entry['audio_file']}")
     if current_params[1] == 2:
-        frames = normalize_pcm_16le(frames)
+        target_rms = speaker_target_rms.get(entry['speaker'], 3800.0)
+        duck_intro = entry['speaker'] not in seen_speakers
+        frames = normalize_pcm_16le(frames, target_rms, current_params[2], duck_intro)
+        frames = compress_pcm_16le(frames)
         with wave.open(str(segment_path), 'wb') as out_segment:
             out_segment.setnchannels(current_params[0])
             out_segment.setsampwidth(current_params[1])
             out_segment.setframerate(current_params[2])
             out_segment.writeframes(frames)
     combined.append(frames)
+    seen_speakers.add(entry['speaker'])
 channels, width, rate = params
 silence = b'\x00' * int(rate * width * channels * (GAP_MS / 1000.0))
 with wave.open(episode_audio_path, 'wb') as out:
@@ -269,7 +306,7 @@ with wave.open(episode_audio_path, 'wb') as out:
     out.setsampwidth(width)
     out.setframerate(rate)
     for idx, frames in enumerate(combined):
-        out.writeframes(frames)
+        out.writeframes(compress_pcm_16le(frames) if width == 2 else frames)
         if idx != len(combined) - 1:
             out.writeframes(silence)
 manifest = {
