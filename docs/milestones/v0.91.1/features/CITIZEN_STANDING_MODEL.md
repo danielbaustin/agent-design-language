@@ -4,7 +4,7 @@
 
 - Feature Name: Citizen Standing Model
 - Milestone Target: `v0.91.1`
-- Status: planned
+- Status: landed
 - Planned WP Home: WP-05
 - Source Docs: `.adl/docs/TBD/citizen_standing/`
 - Proof Modes: fixtures, tests, review
@@ -36,3 +36,11 @@ Out of scope:
 - Standing changes preserve traceable authority.
 - Citizen-state, communication, and Observatory WPs can consume standing
   without redefining it.
+
+## Landed Surfaces
+
+- Runtime contract in `adl/src/runtime_v2/standing.rs`
+- Focused regression coverage in `adl/src/runtime_v2/tests/standing.rs`
+- Golden standing fixtures in `adl/tests/fixtures/runtime_v2/standing/`
+- Landed proof-route status in
+  `docs/milestones/v0.91.1/FEATURE_PROOF_COVERAGE_v0.91.1.md`

@@ -4,7 +4,7 @@
 
 - Feature Name: Runtime and Polis Architecture Alignment
 - Milestone Target: `v0.91.1`
-- Status: planned
+- Status: landed
 - Planned WP Home: WP-02
 - Source Docs: `.adl/docs/TBD/runtime_v2/`
 - Proof Modes: review, docs, source inventory
@@ -41,3 +41,14 @@ Out of scope:
 - Runtime/polis terminology is consistent across v0.91.1 docs.
 - No feature WP depends on an unstated runtime assumption.
 - Reviewers can trace runtime claims back to code, artifacts, or source docs.
+
+## Landed Surfaces
+
+- Tracked architecture package:
+  `docs/milestones/v0.91.1/RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md`
+- Sprint-planning and dependency alignment across:
+  - `docs/milestones/v0.91.1/README.md`
+  - `docs/milestones/v0.91.1/WBS_v0.91.1.md`
+  - `docs/milestones/v0.91.1/SPRINT_v0.91.1.md`
+  - `docs/milestones/v0.91.1/WP_ISSUE_WAVE_v0.91.1.yaml`
+  - `docs/milestones/v0.91.1/WP_EXECUTION_READINESS_v0.91.1.md`
