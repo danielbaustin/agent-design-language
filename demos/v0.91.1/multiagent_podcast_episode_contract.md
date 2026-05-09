@@ -78,3 +78,15 @@ This episode contract does not imply:
 - persistent long-term identity continuity
 - autonomous federation or social cognition beyond the saved run
 - daily or continuous publishing pressure beyond the bounded weekly cadence
+
+
+## Audio Follow-on Boundary
+
+A later audio path may render the same episode with provider-specific or surrogate
+TTS lanes.
+
+The contract must preserve:
+
+- transcript author identity
+- audio renderer identity
+- explicit disclosure when a surrogate voice path is used
