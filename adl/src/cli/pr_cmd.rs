@@ -130,6 +130,10 @@ fn resolve_version_for_existing_issue(
     })
 }
 
+fn resolve_local_issue_identity(repo_root: &Path, issue: u32) -> Result<Option<(String, String)>> {
+    resolve_issue_scope_and_slug_from_local_state(repo_root, issue)
+}
+
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
@@ -270,6 +274,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     let parsed = parse_start_args(args)?;
     let repo_root = repo_root()?;
     let repo = default_repo(&repo_root)?;
+    let local_identity = resolve_local_issue_identity(&repo_root, parsed.issue)?;
 
     eprintln!(
         "• Deprecated compatibility path: prefer `adl/tools/pr.sh run {}` for execution-context binding.",
@@ -278,42 +283,53 @@ fn real_pr_start(args: &[String]) -> Result<()> {
 
     let mut title = parsed.title_arg.clone().unwrap_or_default();
     let mut slug = parsed.slug.clone().unwrap_or_default();
-    if slug.is_empty() && !title.is_empty() {
-        slug = sanitize_slug(&title);
-        if slug.is_empty() {
-            bail!("start: --title produced empty slug after sanitization");
-        }
-    }
+    let mut slug_from_local_identity = false;
     if title.is_empty() && !parsed.no_fetch_issue {
         eprintln!("• Fetching issue title via gh…");
         title = gh_issue_title(parsed.issue, &repo)?.unwrap_or_default();
     }
     if slug.is_empty() {
-        if parsed.no_fetch_issue {
+        if let Some((_, local_slug)) = local_identity.as_ref() {
+            slug = local_slug.clone();
+            slug_from_local_identity = true;
+        } else if !title.is_empty() {
+            slug = sanitize_slug(&title);
+            if slug.is_empty() {
+                bail!("start: --title produced empty slug after sanitization");
+            }
+        } else if parsed.no_fetch_issue {
             bail!("start: --slug is required when --no-fetch-issue is set");
         }
-        if title.is_empty() {
+        if slug.is_empty() && title.is_empty() {
             bail!(
                 "Could not fetch issue #{} title. Pass --slug or check gh auth/repo.",
                 parsed.issue
             );
         }
-        slug = sanitize_slug(&title);
+        if slug.is_empty() {
+            slug = sanitize_slug(&title);
+        }
     }
     if title.is_empty() {
         title = slug.clone();
     }
 
-    let version = resolve_version_for_existing_issue(
-        &repo_root,
-        &repo,
-        parsed.issue,
-        parsed.version.clone(),
-        parsed.no_fetch_issue,
-        "start",
-    )?;
+    let version = if let Some(version) = parsed.version.clone() {
+        version
+    } else if let Some((local_version, _)) = local_identity.as_ref() {
+        local_version.clone()
+    } else {
+        resolve_version_for_existing_issue(
+            &repo_root,
+            &repo,
+            parsed.issue,
+            None,
+            parsed.no_fetch_issue,
+            "start",
+        )?
+    };
     title = normalize_issue_title_for_version(&title, &version);
-    if parsed.slug.as_deref().unwrap_or_default().trim().is_empty() {
+    if parsed.slug.as_deref().unwrap_or_default().trim().is_empty() && !slug_from_local_identity {
         slug = sanitize_slug(&title);
         if slug.is_empty() {
             bail!("start: title produced empty slug after normalization");
@@ -568,47 +584,59 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     let parsed = parse_init_args(args)?;
     let repo_root = repo_root()?;
     let repo = default_repo(&repo_root)?;
+    let local_identity = resolve_local_issue_identity(&repo_root, parsed.issue)?;
 
     let issue = parsed.issue;
     let mut title = parsed.title_arg.clone().unwrap_or_default();
     let mut slug = parsed.slug.clone().unwrap_or_default();
-    if slug.is_empty() && !title.is_empty() {
-        slug = sanitize_slug(&title);
-        if slug.is_empty() {
-            bail!("init: --title produced empty slug after sanitization");
-        }
-    }
+    let mut slug_from_local_identity = false;
 
     if title.is_empty() && !parsed.no_fetch_issue {
         eprintln!("• Fetching issue title via gh…");
         title = gh_issue_title(issue, &repo)?.unwrap_or_default();
     }
     if slug.is_empty() {
-        if parsed.no_fetch_issue {
+        if let Some((_, local_slug)) = local_identity.as_ref() {
+            slug = local_slug.clone();
+            slug_from_local_identity = true;
+        } else if !title.is_empty() {
+            slug = sanitize_slug(&title);
+            if slug.is_empty() {
+                bail!("init: --title produced empty slug after sanitization");
+            }
+        } else if parsed.no_fetch_issue {
             bail!("init: --slug is required when --no-fetch-issue is set");
         }
-        if title.is_empty() {
+        if slug.is_empty() && title.is_empty() {
             bail!(
                 "Could not fetch issue #{} title. Pass --slug or check gh auth/repo.",
                 issue
             );
         }
-        slug = sanitize_slug(&title);
+        if slug.is_empty() {
+            slug = sanitize_slug(&title);
+        }
     }
     if title.is_empty() {
         title = slug.clone();
     }
 
-    let version = resolve_version_for_existing_issue(
-        &repo_root,
-        &repo,
-        issue,
-        parsed.version.clone(),
-        parsed.no_fetch_issue,
-        "init",
-    )?;
+    let version = if let Some(version) = parsed.version.clone() {
+        version
+    } else if let Some((local_version, _)) = local_identity.as_ref() {
+        local_version.clone()
+    } else {
+        resolve_version_for_existing_issue(
+            &repo_root,
+            &repo,
+            issue,
+            None,
+            parsed.no_fetch_issue,
+            "init",
+        )?
+    };
     title = normalize_issue_title_for_version(&title, &version);
-    if parsed.slug.as_deref().unwrap_or_default().trim().is_empty() {
+    if parsed.slug.as_deref().unwrap_or_default().trim().is_empty() && !slug_from_local_identity {
         slug = sanitize_slug(&title);
         if slug.is_empty() {
             bail!("init: title produced empty slug after normalization");
