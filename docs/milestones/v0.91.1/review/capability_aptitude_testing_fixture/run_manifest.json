@@ -1,0 +1,27 @@
+{
+  "run_id": "wp09-capability-aptitude-fixture-run-v1",
+  "started_at": "2026-05-09T00:00:00Z",
+  "completed_at": "2026-05-09T00:00:00Z",
+  "operator": "codex",
+  "subject_id": "fixture_subject.adl_evaluation_slice",
+  "test_manifest": "test_manifest.json",
+  "output_paths": [
+    "subject_manifest.json",
+    "test_manifest.json",
+    "run_manifest.json",
+    "scorecard.json",
+    "final_report.md",
+    "evaluator_notes.md",
+    "redaction_report.md",
+    "raw_outputs/contract_following.json",
+    "raw_outputs/review_aptitude.json",
+    "raw_outputs/planning_aptitude.json"
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml capability_aptitude_testing -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml demo_v0911_capability_aptitude_testing -- --nocapture",
+    "git diff --check"
+  ],
+  "evaluator": "adl.wp09.fixture_harness",
+  "rerun_of": null
+}

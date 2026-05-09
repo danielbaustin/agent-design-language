@@ -1,0 +1,68 @@
+{
+  "schema_version": "capability_aptitude_testing.v1",
+  "manifests": [
+    {
+      "test_family": "contract_following",
+      "fixture_id": "wp09-contract-following-fixture",
+      "fixture_version": "v1",
+      "task_contract": "Correct or classify bounded card-state drift without inventing progress.",
+      "expected_evidence": [
+        "structured card normalization",
+        "blocked-state honesty",
+        "scope restraint"
+      ],
+      "trap_cases": [
+        "dirty root checkout temptation",
+        "merged-claim without PR"
+      ],
+      "scoring_dimensions": [
+        "structural_compliance",
+        "instruction_fidelity",
+        "scope_control"
+      ],
+      "publication_status": "internal_only"
+    },
+    {
+      "test_family": "review_aptitude",
+      "fixture_id": "wp09-review-aptitude-fixture",
+      "fixture_version": "v1",
+      "task_contract": "Produce findings-first review output with evidence and restrained false positives.",
+      "expected_evidence": [
+        "severity calibration",
+        "evidence backed findings",
+        "non-finding restraint"
+      ],
+      "trap_cases": [
+        "intentional false trail",
+        "clean file should emit no findings"
+      ],
+      "scoring_dimensions": [
+        "true_positive_detection",
+        "false_positive_restraint",
+        "remediation_usefulness"
+      ],
+      "publication_status": "internal_only"
+    },
+    {
+      "test_family": "planning_aptitude",
+      "fixture_id": "wp09-planning-aptitude-fixture",
+      "fixture_version": "v1",
+      "task_contract": "Decompose bounded work into sequenced execution without widening scope.",
+      "expected_evidence": [
+        "dependency recognition",
+        "non-goal clarity",
+        "validation planning"
+      ],
+      "trap_cases": [
+        "backlog-only request should not create public issues",
+        "v0.92 scope should remain deferred"
+      ],
+      "scoring_dimensions": [
+        "decomposition_quality",
+        "milestone_fit",
+        "promotion_defer_judgment"
+      ],
+      "publication_status": "internal_only"
+    }
+  ]
+}

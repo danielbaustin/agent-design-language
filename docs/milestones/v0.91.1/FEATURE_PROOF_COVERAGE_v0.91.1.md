@@ -23,8 +23,8 @@ Each feature should have one truthful proof route:
 | Citizen standing | WP-05 | feature doc + landed runtime/tests | landed |
 | Citizen state | WP-06 | feature doc + landed citizen-state substrate packet, fixtures, and focused runtime/private-state tests | landed |
 | Memory/identity architecture | WP-07 | feature doc + landed memory/identity architecture packet, fixtures, and focused runtime/private-state tests | landed |
-| Theory of Mind foundation | WP-08 | feature doc only; execution pending | pending |
-| Capability/aptitude testing | WP-09 | feature doc only; execution pending | pending |
+| Theory of Mind foundation | WP-08 | feature doc + landed ToM packet, fixtures, and focused runtime tests | landed |
+| Capability/aptitude testing | WP-09 | feature doc + landed fixture-mode harness, review bundle, and focused harness/demo tests | landed |
 | Intelligence metric architecture | WP-10 | feature doc only; execution pending | pending |
 | Governed learning | WP-11 | feature doc only; execution pending | pending |
 | ANRM/Gemma placement | WP-12 | feature doc only; execution pending | pending |

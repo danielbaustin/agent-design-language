@@ -1,0 +1,20 @@
+{
+  "subject_id": "fixture_subject.adl_evaluation_slice",
+  "subject_type": "fixture_mode_harness",
+  "model": "not_applicable",
+  "provider": "deterministic_fixture",
+  "model_version_or_tag": "wp09-fixture-v1",
+  "runtime_environment": "repo_local_fixture_mode",
+  "tool_access": [
+    "repo_shell",
+    "structured_prompt_validators",
+    "focused_tests"
+  ],
+  "skill_scaffolding": [
+    "workflow-conductor",
+    "sprint-conductor",
+    "review-subagent-policy"
+  ],
+  "context_limits": "bounded_issue_local_fixture_inputs",
+  "privacy_mode": "redacted_fixture_only"
+}
