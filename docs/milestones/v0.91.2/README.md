@@ -67,12 +67,31 @@ This package is grounded in:
 ## Document Map
 
 - WBS: [WBS_v0.91.2.md](WBS_v0.91.2.md)
+- Vision: [VISION_v0.91.2.md](VISION_v0.91.2.md)
+- Design: [DESIGN_v0.91.2.md](DESIGN_v0.91.2.md)
+- Decisions: [DECISIONS_v0.91.2.md](DECISIONS_v0.91.2.md)
 - Sprint plan: [SPRINT_v0.91.2.md](SPRINT_v0.91.2.md)
 - Candidate issue wave: [WP_ISSUE_WAVE_v0.91.2.yaml](WP_ISSUE_WAVE_v0.91.2.yaml)
 - Execution readiness:
   [WP_EXECUTION_READINESS_v0.91.2.md](WP_EXECUTION_READINESS_v0.91.2.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.2.md](DEMO_MATRIX_v0.91.2.md)
+- Feature proof coverage:
+  [FEATURE_PROOF_COVERAGE_v0.91.2.md](FEATURE_PROOF_COVERAGE_v0.91.2.md)
+- Quality gate: [QUALITY_GATE_v0.91.2.md](QUALITY_GATE_v0.91.2.md)
 - Feature index: [features/README.md](features/README.md)
+- Card bundle readiness:
+  [CARD_BUNDLE_READINESS_v0.91.2.md](CARD_BUNDLE_READINESS_v0.91.2.md)
+- SPP readiness: [SPP_READINESS_v0.91.2.md](SPP_READINESS_v0.91.2.md)
+- Milestone checklist:
+  [MILESTONE_CHECKLIST_v0.91.2.md](MILESTONE_CHECKLIST_v0.91.2.md)
+- Release plan: [RELEASE_PLAN_v0.91.2.md](RELEASE_PLAN_v0.91.2.md)
+- Release readiness: [RELEASE_READINESS_v0.91.2.md](RELEASE_READINESS_v0.91.2.md)
+- Release evidence: [RELEASE_EVIDENCE_v0.91.2.md](RELEASE_EVIDENCE_v0.91.2.md)
+- Release notes: [RELEASE_NOTES_v0.91.2.md](RELEASE_NOTES_v0.91.2.md)
+- Next milestone handoff:
+  [NEXT_MILESTONE_HANDOFF_v0.91.2.md](NEXT_MILESTONE_HANDOFF_v0.91.2.md)
+- End-of-milestone report:
+  [END_OF_MILESTONE_REPORT_v0.91.2.md](END_OF_MILESTONE_REPORT_v0.91.2.md)
 
 ## Success Criteria
 
