@@ -68,6 +68,18 @@ split_wellbeing_filters="$TMP/split-wellbeing-filters.txt"
 bash "$SCRIPT" --changed-files "$split_wellbeing_changed" --print-risk-filters >"$split_wellbeing_filters"
 grep -Fx "wellbeing_metrics" "$split_wellbeing_filters" >/dev/null
 
+private_state_sanctuary_changed="$TMP/private-state-sanctuary-changed.txt"
+printf 'A\tadl/src/runtime_v2/private_state_sanctuary/helpers.rs\n' >"$private_state_sanctuary_changed"
+private_state_sanctuary_filters="$TMP/private-state-sanctuary-filters.txt"
+bash "$SCRIPT" --changed-files "$private_state_sanctuary_changed" --print-risk-filters >"$private_state_sanctuary_filters"
+grep -Fx "private_state_sanctuary" "$private_state_sanctuary_filters" >/dev/null
+
+run_artifacts_runtime_changed="$TMP/run-artifacts-runtime-changed.txt"
+printf 'A\tadl/src/cli/run_artifacts/runtime/trace_validation.rs\n' >"$run_artifacts_runtime_changed"
+run_artifacts_runtime_filters="$TMP/run-artifacts-runtime-filters.txt"
+bash "$SCRIPT" --changed-files "$run_artifacts_runtime_changed" --print-risk-filters >"$run_artifacts_runtime_filters"
+grep -Fx "run_state" "$run_artifacts_runtime_filters" >/dev/null
+
 if bash "$SCRIPT" --changed-files "$changed" --require-summary-for-risk >/tmp/coverage-impact-missing.out 2>&1; then
   echo "expected risky changed source without summary to fail" >&2
   exit 1
