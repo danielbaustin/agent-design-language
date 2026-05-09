@@ -24,6 +24,22 @@ sequence:
   deferred_issue_numbers:
     - <u32>
   continuation: continue | stop | ask_operator | waiting_for_review
+structured_prompt_preflight:
+  status: not_run | ready | needs_editor_repair | blocked
+  required_card_types:
+    - stp.md | sip.md | sor.md | spp.md | srp.md
+  issue_results:
+    - issue_number: <u32>
+      bundle_path: <path or null>
+      status: ready | needs_editor_repair | blocked
+      missing_cards:
+        - <filename>
+      contradictory_cards:
+        - <filename>
+      required_editor_skills:
+        - stp-editor | sip-editor | sor-editor | spp-editor
+      notes:
+        - <bounded text>
 truth_check:
   status: not_run | matched | drift_detected | blocked
   source: github_live | sprint_state_only | mixed

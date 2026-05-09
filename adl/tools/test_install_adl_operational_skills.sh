@@ -61,6 +61,7 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/spp-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sprint-conductor/SKILL.md" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/create_missing_sprint_issue.py" ]]
+  [[ -x "${root}/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/close_sprint_issue.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/update_sprint_state.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/check_sprint_truth.py" ]]

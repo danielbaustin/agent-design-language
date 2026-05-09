@@ -40,6 +40,12 @@ def load_state(path: Path, sprint_issue: int, ordered: list[int]) -> dict[str, A
         'blocked_issue_number': None,
         'continuation': 'continue',
         'issue_records': default_issue_records(ordered),
+        'structured_prompt_preflight': {
+            'status': 'not_run',
+            'required_card_types': ['stp.md', 'sip.md', 'sor.md'],
+            'issue_results': [],
+            'notes': ['Run sprint-wide structured prompt preflight before starting issue execution.'],
+        },
         'truth_check': {
             'status': 'not_run',
             'source': 'sprint_state_only',
@@ -118,6 +124,16 @@ def require_truth_gate(state: dict[str, Any]) -> None:
     )
 
 
+def require_structured_prompt_preflight(state: dict[str, Any]) -> None:
+    preflight = state.get('structured_prompt_preflight') or {}
+    if preflight.get('status') == 'ready':
+        return
+    raise SystemExit(
+        'Refusing to advance sprint state before sprint-wide structured prompt review and repair is complete. '
+        'Run check_sprint_structured_prompt_readiness.py and fix any flagged child issue cards first.'
+    )
+
+
 def consume_truth_gate(state: dict[str, Any]) -> None:
     truth_check = state.setdefault('truth_check', {})
     truth_check['gate_passed'] = False
@@ -149,6 +165,7 @@ def main() -> int:
     state['sprint_issue_number'] = args.sprint_issue
     state['ordered_issue_numbers'] = ordered
     if state_preexisted and mutation_requested(args):
+        require_structured_prompt_preflight(state)
         require_truth_gate(state)
 
     issue_number = args.current_issue or state.get('current_issue_number') or (ordered[0] if ordered else None)

@@ -59,9 +59,31 @@ export PATH="${fakebin}:${PATH}"
 export FAKE_GH_LOG="${log_path}"
 
 state_path="${tmpdir}/sprint-state.json"
+fake_repo="${tmpdir}/fake-repo"
+mkdir -p "${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05"
+mkdir -p "${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06"
+
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/stp.md" <<'EOF'
+stp
+EOF
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/sip.md" <<'EOF'
+sip
+EOF
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/sor.md" <<'EOF'
+Status: NOT_STARTED
+EOF
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/stp.md" <<'EOF'
+stp
+EOF
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/sip.md" <<'EOF'
+sip
+EOF
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/sor.md" <<'EOF'
+Status: NOT_STARTED
+EOF
 
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py" \
-  --repo-root "${repo_root}" \
+  --repo-root "${fake_repo}" \
   --ordered-issues "2827,2828" \
   --title "[v0.91.1][sprint-1][management] Trial sprint" \
   --goal "Run the narrow sprint-conductor trial" \
@@ -82,6 +104,23 @@ assert state["truth_check"]["status"] == "not_run"
 assert state["truth_check"]["gate_passed"] is False
 PY
 
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --state "${state_path}" >/dev/null
+
+python3 - "${state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+preflight = state["structured_prompt_preflight"]
+assert preflight["status"] == "ready"
+assert len(preflight["issue_results"]) == 2
+assert all(result["status"] == "ready" for result in preflight["issue_results"])
+PY
+
 if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py" \
   --state "${state_path}" \
   --sprint-issue 3001 \
@@ -93,7 +132,7 @@ if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint
 fi
 
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
-  --repo-root "${repo_root}" \
+  --repo-root "${fake_repo}" \
   --state "${state_path}" \
   --require-match >/dev/null
 
@@ -130,7 +169,7 @@ if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint
 fi
 
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
-  --repo-root "${repo_root}" \
+  --repo-root "${fake_repo}" \
   --state "${state_path}" \
   --require-match >/dev/null
 
@@ -151,5 +190,29 @@ PY
 grep -Fq "issue create" "${log_path}"
 grep -Fq "issue close 3001 --comment Sprint completed cleanly." "${log_path}"
 grep -Fq "pr view https://github.com/danielbaustin/agent-design-language/pull/4001 --json state,isDraft,url" "${log_path}"
+
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/sor.md" <<'EOF'
+Status: IN_PROGRESS
+No implementation has started yet
+EOF
+broken_state_path="${tmpdir}/sprint-state-broken.json"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --state "${broken_state_path}" >/dev/null
+
+python3 - "${broken_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+preflight = state["structured_prompt_preflight"]
+assert preflight["status"] == "needs_editor_repair"
+problem = next(result for result in preflight["issue_results"] if result["issue_number"] == 2828)
+assert problem["status"] == "needs_editor_repair"
+assert "sor.md" in problem["contradictory_cards"]
+assert "sor-editor" in problem["required_editor_skills"]
+PY
 
 echo "PASS test_sprint_conductor_helpers"

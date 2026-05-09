@@ -27,23 +27,30 @@ Optional:
 ## Core Loop
 
 1. Load or create sprint-state.
-2. If the sprint-management issue is missing:
+2. Run sprint-wide structured prompt review before starting issue execution:
+   - if every child issue is ready, continue
+   - if any child issue needs repair, route the matching editor skill before issue execution
+   - if any child issue is blocked, stop and report it
+3. If the sprint-management issue is missing:
    - create it through the bundled helper when policy allows, then continue
    - otherwise stop and report `missing_sprint_issue`
-3. Re-check live GitHub truth for the current sprint-state and require a matched result before any sprint-state transition.
-4. Choose the earliest child issue in the ordered list that is not yet closed
+4. Re-check live GitHub truth for the current sprint-state and require a matched result before any sprint-state transition.
+5. Choose the earliest child issue in the ordered list that is not yet closed
    out.
-5. Route that child issue through `workflow-conductor`.
-6. Run only the selected downstream lifecycle or editor skill.
-7. Re-check issue truth.
-8. If the issue is not fully closed out, repeat the routing loop for the same
+6. Route that child issue through `workflow-conductor`.
+7. Run only the selected downstream lifecycle or editor skill.
+8. Re-check issue truth.
+9. If the issue is not fully closed out, repeat the routing loop for the same
    issue.
-9. If the issue is in a healthy PR-open waiting state, pause on that issue and
+10. If the issue is in a healthy PR-open waiting state, pause on that issue and
    surface `ask_operator` rather than re-driving execution or janitoring a
    non-blocked PR.
-10. If the issue is fully closed out, mark it complete in sprint-state and move
+11. If the issue is fully closed out, mark it complete in sprint-state and move
    to the next issue.
-11. If any blocker is encountered, stop and report the blocker in sprint-state.
+12. If any blocker is encountered, stop and report the blocker in sprint-state.
+
+Preferred structured-prompt preflight helper:
+- `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py --repo-root <repo> --ordered-issues <csv> --state <path>`
 
 Preferred missing-sprint-issue helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <goal> --state <path>`
@@ -60,6 +67,7 @@ If `workflow-conductor` selects:
 
 then the sprint conductor must run that editor skill first and must not try to
 work around malformed cards by hand.
+That rule applies both to sprint-wide preflight repair and to later issue-local drift.
 
 ## Review Phase
 
