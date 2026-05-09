@@ -106,7 +106,7 @@ tasks:
         PREVIOUS_TURN_START
         {{turn_05}}
         PREVIOUS_TURN_END
-        INSTRUCTIONS: Close the episode in under 120 words. Name one insight that became clearer because three minds were in the conversation rather than two. End with one memorable final line.
+        INSTRUCTIONS: Close the episode in under 120 words. Name one insight that became clearer because three minds were in the conversation rather than two. Do not refer to yourself in the third person, and do not contrast `Claude` with `my` perspective. End with one memorable final line.
 
 run:
   name: "v0-91-1-multi-agent-podcast-pilot"
