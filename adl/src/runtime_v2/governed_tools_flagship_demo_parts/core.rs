@@ -5,7 +5,15 @@
 
 use super::*;
 
-#[path = "governed_tools_flagship_demo_parts/core.rs"]
-mod governed_tools_flagship_demo_core;
+mod cases;
+mod constants;
+mod helpers;
+mod models;
+mod reports;
+mod trace_support;
 
-pub use governed_tools_flagship_demo_core::*;
+pub(crate) use cases::*;
+pub use constants::*;
+pub use models::*;
+pub(crate) use reports::*;
+pub(crate) use trace_support::*;
