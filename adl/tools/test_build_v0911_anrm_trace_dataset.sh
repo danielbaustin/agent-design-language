@@ -7,6 +7,7 @@ trap 'rm -rf "$TMPDIR_ROOT"' EXIT
 
 OUT_A="$TMPDIR_ROOT/out-a"
 OUT_B="$TMPDIR_ROOT/out-b"
+TRACKED_REVIEW_DIR="$ROOT_DIR/docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset"
 HOST_PATH_PATTERN='/'"Users/"'|/'"private/"'|/'"tmp/"'|[A-Za-z]:\\'
 
 (
@@ -19,6 +20,15 @@ cmp "$OUT_A/anrm_trace_dataset.json" "$OUT_B/anrm_trace_dataset.json"
 cmp "$OUT_A/anrm_trace_extractor_spec.json" "$OUT_B/anrm_trace_extractor_spec.json"
 cmp "$OUT_A/anrm_gemma_placement_package.json" "$OUT_B/anrm_gemma_placement_package.json"
 cmp "$OUT_A/anrm_trace_dataset_limitations.md" "$OUT_B/anrm_trace_dataset_limitations.md"
+
+cmp "$OUT_A/anrm_trace_dataset.json" \
+  "$TRACKED_REVIEW_DIR/anrm_trace_dataset.json"
+cmp "$OUT_A/anrm_trace_extractor_spec.json" \
+  "$TRACKED_REVIEW_DIR/anrm_trace_extractor_spec.json"
+cmp "$OUT_A/anrm_gemma_placement_package.json" \
+  "$TRACKED_REVIEW_DIR/anrm_gemma_placement_package.json"
+cmp "$OUT_A/anrm_trace_dataset_limitations.md" \
+  "$TRACKED_REVIEW_DIR/anrm_trace_dataset_limitations.md"
 
 python3 - "$OUT_A/anrm_trace_dataset.json" "$OUT_A/anrm_trace_extractor_spec.json" "$OUT_A/anrm_gemma_placement_package.json" <<'PY'
 import json
