@@ -26,11 +26,16 @@ const EXPECTED_ROOMS: [&str; 4] = [
     "Corporate Investor",
 ];
 
-const REQUIRED_REF_FRAGMENTS: [&str; 6] = [
+const REQUIRED_REF_FRAGMENTS: [&str; 11] = [
     "continuity_witnesses.json",
     "citizen_receipts.json",
     "private_state_projection_packet.json",
+    "agent_lifecycle/state_contract.json",
+    "agent_lifecycle/transition_matrix.json",
     "access_events.json",
+    "acip_hardening_packet.json",
+    "a2a_adapter_boundary_packet.json",
+    "runtime_inhabitant_integration_packet.json",
     "challenge_artifact.json",
     "flagship_operator_report.md",
 ];
@@ -81,7 +86,10 @@ pub struct RuntimeV2ObservatoryFlagshipProofPacket {
     pub required_artifact_refs: Vec<String>,
     pub continuity_refs: Vec<String>,
     pub observatory_refs: Vec<String>,
+    pub lifecycle_refs: Vec<String>,
     pub standing_access_refs: Vec<String>,
+    pub communication_boundary_refs: Vec<String>,
+    pub runtime_inhabitant_refs: Vec<String>,
     pub challenge_refs: Vec<String>,
     pub operator_report_refs: Vec<String>,
     pub feature_demo_coverage: Vec<RuntimeV2ObservatoryFeatureDemoCoverage>,
@@ -98,6 +106,10 @@ pub struct RuntimeV2ObservatoryFlagshipProofPacket {
 pub struct RuntimeV2ObservatoryFlagshipArtifacts {
     pub challenge_artifacts: RuntimeV2ContinuityChallengeArtifacts,
     pub operator_control_report: RuntimeV2OperatorControlReport,
+    pub lifecycle_artifacts: RuntimeV2AgentLifecycleArtifacts,
+    pub acip_hardening_packet: RuntimeV2AcipHardeningPacket,
+    pub a2a_adapter_boundary_packet: RuntimeV2A2aAdapterBoundaryPacket,
+    pub runtime_inhabitant_integration: RuntimeV2RuntimeInhabitantIntegrationArtifacts,
     pub proof_packet: RuntimeV2ObservatoryFlagshipProofPacket,
     pub operator_report_markdown: String,
 }
@@ -106,11 +118,25 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
     pub fn prototype() -> Result<Self> {
         let challenge_artifacts = runtime_v2_continuity_challenge_contract()?;
         let operator_control_report = runtime_v2_operator_control_report_contract()?;
-        let lens_sequence =
-            observatory_flagship_walkthrough(&challenge_artifacts, &operator_control_report)?;
+        let lifecycle_artifacts = runtime_v2_agent_lifecycle_state_contract()?;
+        let acip_hardening_packet = runtime_v2_acip_hardening_contract()?;
+        let a2a_adapter_boundary_packet = runtime_v2_a2a_adapter_boundary_contract()?;
+        let runtime_inhabitant_integration = runtime_v2_runtime_inhabitant_integration_contract()?;
+        let lens_sequence = observatory_flagship_walkthrough(
+            &challenge_artifacts,
+            &operator_control_report,
+            &lifecycle_artifacts,
+            &acip_hardening_packet,
+            &a2a_adapter_boundary_packet,
+            &runtime_inhabitant_integration,
+        )?;
         let proof_packet = RuntimeV2ObservatoryFlagshipProofPacket::from_artifacts(
             &challenge_artifacts,
             &operator_control_report,
+            &lifecycle_artifacts,
+            &acip_hardening_packet,
+            &a2a_adapter_boundary_packet,
+            &runtime_inhabitant_integration,
             lens_sequence,
         )?;
         let operator_report_markdown =
@@ -118,6 +144,10 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
         let artifacts = Self {
             challenge_artifacts,
             operator_control_report,
+            lifecycle_artifacts,
+            acip_hardening_packet,
+            a2a_adapter_boundary_packet,
+            runtime_inhabitant_integration,
             proof_packet,
             operator_report_markdown,
         };
@@ -126,23 +156,61 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
     }
 
     pub fn validate(&self) -> Result<()> {
-        self.proof_packet
-            .validate_against(&self.challenge_artifacts, &self.operator_control_report)?;
+        self.proof_packet.validate_against(
+            &self.challenge_artifacts,
+            &self.operator_control_report,
+            &self.lifecycle_artifacts,
+            &self.acip_hardening_packet,
+            &self.a2a_adapter_boundary_packet,
+            &self.runtime_inhabitant_integration,
+        )?;
         self.challenge_artifacts.validate()?;
         self.operator_control_report.validate()?;
+        self.lifecycle_artifacts.validate()?;
+        self.acip_hardening_packet.validate()?;
+        self.a2a_adapter_boundary_packet.validate_against(
+            &self.acip_hardening_packet,
+            &crate::agent_comms::acip_a2a_fixture_set_v1(),
+        )?;
+        self.runtime_inhabitant_integration.validate_against(
+            &runtime_v2_csm_integrated_run_contract()?,
+            &runtime_v2_standing_contract()?,
+            &runtime_v2_citizen_state_substrate_contract()?,
+            &self.lifecycle_artifacts,
+            &runtime_v2_memory_identity_architecture_contract()?,
+            &runtime_v2_theory_of_mind_foundation_contract()?,
+            &crate::capability_aptitude_testing::build_capability_aptitude_artifact_bundle(),
+            &runtime_v2_intelligence_metric_architecture_contract()?,
+            &runtime_v2_governed_learning_substrate_contract()?,
+            &runtime_v2_access_control_contract()?,
+            &self.acip_hardening_packet,
+            &self.a2a_adapter_boundary_packet,
+        )?;
         validate_flagship_operator_report(&self.proof_packet, &self.operator_report_markdown)
     }
 
     pub fn proof_packet_pretty_json_bytes(&self) -> Result<Vec<u8>> {
-        self.proof_packet
-            .validate_against(&self.challenge_artifacts, &self.operator_control_report)?;
+        self.proof_packet.validate_against(
+            &self.challenge_artifacts,
+            &self.operator_control_report,
+            &self.lifecycle_artifacts,
+            &self.acip_hardening_packet,
+            &self.a2a_adapter_boundary_packet,
+            &self.runtime_inhabitant_integration,
+        )?;
         serde_json::to_vec_pretty(&self.proof_packet)
             .context("serialize Runtime v2 Observatory flagship proof packet")
     }
 
     pub fn walkthrough_jsonl_bytes(&self) -> Result<Vec<u8>> {
-        self.proof_packet
-            .validate_against(&self.challenge_artifacts, &self.operator_control_report)?;
+        self.proof_packet.validate_against(
+            &self.challenge_artifacts,
+            &self.operator_control_report,
+            &self.lifecycle_artifacts,
+            &self.acip_hardening_packet,
+            &self.a2a_adapter_boundary_packet,
+            &self.runtime_inhabitant_integration,
+        )?;
         let mut out = Vec::new();
         for step in &self.proof_packet.lens_sequence {
             serde_json::to_writer(&mut out, step)
@@ -202,6 +270,10 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
         observatory_sanctuary.write_to_root(root)?;
         observatory.write_to_root(root)?;
         access.write_to_root(root)?;
+        self.lifecycle_artifacts.write_to_root(root)?;
+        self.acip_hardening_packet.write_to_root(root)?;
+        self.a2a_adapter_boundary_packet.write_to_root(root)?;
+        self.runtime_inhabitant_integration.write_to_root(root)?;
 
         challenge_sanctuary
             .anti_equivocation_artifacts
@@ -248,10 +320,31 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
     pub fn from_artifacts(
         challenge: &RuntimeV2ContinuityChallengeArtifacts,
         operator: &RuntimeV2OperatorControlReport,
+        lifecycle: &RuntimeV2AgentLifecycleArtifacts,
+        acip: &RuntimeV2AcipHardeningPacket,
+        a2a: &RuntimeV2A2aAdapterBoundaryPacket,
+        runtime_inhabitant: &RuntimeV2RuntimeInhabitantIntegrationArtifacts,
         lens_sequence: Vec<RuntimeV2ObservatoryFlagshipWalkthroughStep>,
     ) -> Result<Self> {
         challenge.validate()?;
         operator.validate()?;
+        lifecycle.validate()?;
+        acip.validate()?;
+        a2a.validate_against(acip, &crate::agent_comms::acip_a2a_fixture_set_v1())?;
+        runtime_inhabitant.validate_against(
+            &runtime_v2_csm_integrated_run_contract()?,
+            &runtime_v2_standing_contract()?,
+            &runtime_v2_citizen_state_substrate_contract()?,
+            lifecycle,
+            &runtime_v2_memory_identity_architecture_contract()?,
+            &runtime_v2_theory_of_mind_foundation_contract()?,
+            &crate::capability_aptitude_testing::build_capability_aptitude_artifact_bundle(),
+            &runtime_v2_intelligence_metric_architecture_contract()?,
+            &runtime_v2_governed_learning_substrate_contract()?,
+            &runtime_v2_access_control_contract()?,
+            acip,
+            a2a,
+        )?;
         validate_flagship_walkthrough(&lens_sequence)?;
 
         let access = &challenge.access_control_artifacts;
@@ -276,6 +369,11 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             RUNTIME_V2_PRIVATE_STATE_OBSERVATORY_REPORT_PATH.to_string(),
             RUNTIME_V2_PRIVATE_STATE_OBSERVATORY_PROOF_PATH.to_string(),
         ];
+        let lifecycle_refs = vec![
+            lifecycle.state_contract.artifact_path.clone(),
+            lifecycle.transition_matrix.artifact_path.clone(),
+            lifecycle.proof_fixtures.artifact_path.clone(),
+        ];
         let standing_access_refs = vec![
             standing.policy.artifact_path.clone(),
             standing.event_packet.artifact_path.clone(),
@@ -284,6 +382,15 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             access.authority_matrix.artifact_path.clone(),
             access.event_packet.artifact_path.clone(),
             RUNTIME_V2_ACCESS_DENIAL_FIXTURES_PATH.to_string(),
+        ];
+        let communication_boundary_refs = vec![
+            acip.artifact_path.clone(),
+            a2a.artifact_path.clone(),
+            access.event_packet.artifact_path.clone(),
+        ];
+        let runtime_inhabitant_refs = vec![
+            runtime_inhabitant.packet.artifact_path.clone(),
+            runtime_inhabitant.packet.operator_report_ref.clone(),
         ];
         let challenge_refs = vec![
             challenge.challenge.artifact_path.clone(),
@@ -300,7 +407,10 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
         let required_artifact_refs = required_artifact_refs(
             &continuity_refs,
             &observatory_refs,
+            &lifecycle_refs,
             &standing_access_refs,
+            &communication_boundary_refs,
+            &runtime_inhabitant_refs,
             &challenge_refs,
             &operator_report_refs,
         );
@@ -379,7 +489,10 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             required_artifact_refs,
             continuity_refs,
             observatory_refs,
+            lifecycle_refs,
             standing_access_refs,
+            communication_boundary_refs,
+            runtime_inhabitant_refs,
             challenge_refs,
             operator_report_refs,
             feature_demo_coverage,
@@ -397,7 +510,7 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
                 "git diff --check".to_string(),
             ],
             proof_summary:
-                "D12 integrates WP-05 through WP-16 into one bounded v0.91.1 inhabited CSM Observatory proof and carries an explicit feature-demo coverage roster for WP-02 through WP-16: citizen private-state continuity, witness and receipt evidence, redacted projection, standing and communication boundary, access-control denial, continuity challenge, sanctuary quarantine, appeal review, operator report, and room/lens walkthrough."
+                "D12 integrates the landed WP-03 lifecycle state model, WP-13 ACIP hardening packet, WP-14 A2A adapter boundary packet, WP-15 runtime inhabitant integration packet, and the observatory continuity/standing/access surfaces into one bounded v0.91.1 inhabited CSM Observatory proof while carrying an explicit feature-demo coverage roster for WP-02 through WP-16: citizen private-state continuity, witness and receipt evidence, redacted projection, lifecycle eligibility, authenticated local communication boundary, access-control denial, continuity challenge, sanctuary quarantine, runtime inhabitant integration, operator report, and room/lens walkthrough."
                     .to_string(),
             proof_classification: "proving".to_string(),
             non_claims: vec![
@@ -411,7 +524,14 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
                 "This packet proves the bounded local D12 v0.91.1 runtime inhabitant Observatory evidence package and that the artifact is reviewable as a unique continuation scenario; it does not prove personhood, a first true Godel-agent birthday, raw private-state inspection, or unbounded live Runtime v2 execution."
                     .to_string(),
         };
-        packet.validate_against(challenge, operator)?;
+        packet.validate_against(
+            challenge,
+            operator,
+            lifecycle,
+            acip,
+            a2a,
+            runtime_inhabitant,
+        )?;
         Ok(packet)
     }
 
@@ -419,6 +539,10 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
         &self,
         challenge: &RuntimeV2ContinuityChallengeArtifacts,
         operator: &RuntimeV2OperatorControlReport,
+        lifecycle: &RuntimeV2AgentLifecycleArtifacts,
+        acip: &RuntimeV2AcipHardeningPacket,
+        a2a: &RuntimeV2A2aAdapterBoundaryPacket,
+        runtime_inhabitant: &RuntimeV2RuntimeInhabitantIntegrationArtifacts,
     ) -> Result<()> {
         self.validate_shape()?;
         if !self.continuity_refs.iter().any(|artifact| {
@@ -468,6 +592,51 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
         }) {
             return Err(anyhow!(
                 "observatory flagship proof missing access event ref"
+            ));
+        }
+        if !self
+            .lifecycle_refs
+            .iter()
+            .any(|artifact| artifact == &lifecycle.state_contract.artifact_path)
+        {
+            return Err(anyhow!(
+                "observatory flagship proof missing lifecycle state contract ref"
+            ));
+        }
+        if !self
+            .lifecycle_refs
+            .iter()
+            .any(|artifact| artifact == &lifecycle.transition_matrix.artifact_path)
+        {
+            return Err(anyhow!(
+                "observatory flagship proof missing lifecycle transition matrix ref"
+            ));
+        }
+        if !self
+            .communication_boundary_refs
+            .iter()
+            .any(|artifact| artifact == &acip.artifact_path)
+        {
+            return Err(anyhow!(
+                "observatory flagship proof missing ACIP hardening ref"
+            ));
+        }
+        if !self
+            .communication_boundary_refs
+            .iter()
+            .any(|artifact| artifact == &a2a.artifact_path)
+        {
+            return Err(anyhow!(
+                "observatory flagship proof missing A2A adapter boundary ref"
+            ));
+        }
+        if !self
+            .runtime_inhabitant_refs
+            .iter()
+            .any(|artifact| artifact == &runtime_inhabitant.packet.artifact_path)
+        {
+            return Err(anyhow!(
+                "observatory flagship proof missing runtime inhabitant integration ref"
             ));
         }
         if !self
@@ -529,9 +698,18 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             &self.observatory_refs,
             "observatory_flagship.observatory_refs",
         )?;
+        validate_relative_path_list(&self.lifecycle_refs, "observatory_flagship.lifecycle_refs")?;
         validate_relative_path_list(
             &self.standing_access_refs,
             "observatory_flagship.standing_access_refs",
+        )?;
+        validate_relative_path_list(
+            &self.communication_boundary_refs,
+            "observatory_flagship.communication_boundary_refs",
+        )?;
+        validate_relative_path_list(
+            &self.runtime_inhabitant_refs,
+            "observatory_flagship.runtime_inhabitant_refs",
         )?;
         validate_relative_path_list(&self.challenge_refs, "observatory_flagship.challenge_refs")?;
         validate_relative_path_list(
@@ -579,11 +757,15 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
         }
         validate_nonempty_text(&self.proof_summary, "observatory_flagship.proof_summary")?;
         for required_phrase in [
-            "WP-05",
+            "WP-03",
+            "WP-13",
+            "WP-14",
             "WP-16",
             "witness",
             "receipt",
             "redacted projection",
+            "lifecycle",
+            "communication boundary",
         ] {
             if !self.proof_summary.contains(required_phrase) {
                 return Err(anyhow!(
@@ -624,9 +806,17 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
 fn observatory_flagship_walkthrough(
     challenge: &RuntimeV2ContinuityChallengeArtifacts,
     operator: &RuntimeV2OperatorControlReport,
+    lifecycle: &RuntimeV2AgentLifecycleArtifacts,
+    acip: &RuntimeV2AcipHardeningPacket,
+    a2a: &RuntimeV2A2aAdapterBoundaryPacket,
+    runtime_inhabitant: &RuntimeV2RuntimeInhabitantIntegrationArtifacts,
 ) -> Result<Vec<RuntimeV2ObservatoryFlagshipWalkthroughStep>> {
     challenge.validate()?;
     operator.validate()?;
+    lifecycle.validate()?;
+    acip.validate()?;
+    a2a.validate_against(acip, &crate::agent_comms::acip_a2a_fixture_set_v1())?;
+    runtime_inhabitant.packet.validate()?;
     let access = &challenge.access_control_artifacts;
     let observatory = &access.observatory_artifacts;
     let witness = &observatory.witness_artifacts;
@@ -665,6 +855,33 @@ fn observatory_flagship_walkthrough(
         walkthrough_step(
             4,
             "Operator / Governance",
+            "lifecycle-gate",
+            "lifecycle state and transition evidence show whether ACIP messages may be received, queued, rejected, or invoked",
+            lifecycle.state_contract.artifact_path.as_str(),
+            "what lifecycle authority does this agent currently have?",
+            "lifecycle evidence gates authority but does not prove consciousness or birthday",
+        ),
+        walkthrough_step(
+            5,
+            "Operator / Governance",
+            "authenticated-local-comms",
+            "authenticated local communication remains ACIP-bound and reviewable through the hardening packet",
+            acip.artifact_path.as_str(),
+            "how do we know local communication is authenticated and state-gated?",
+            "ACIP packet proves bounded local comms policy, not external transport readiness",
+        ),
+        walkthrough_step(
+            6,
+            "Operator / Governance",
+            "a2a-boundary",
+            "A2A remains an adapter over ACIP rather than a second communication model",
+            a2a.artifact_path.as_str(),
+            "does A2A bypass the canonical local communication boundary?",
+            "adapter evidence proves compatibility layering, not federation or new transport semantics",
+        ),
+        walkthrough_step(
+            7,
+            "Operator / Governance",
             "access-denial",
             "guest request for citizen-only authority is denied and evented",
             access.event_packet.artifact_path.as_str(),
@@ -672,7 +889,7 @@ fn observatory_flagship_walkthrough(
             "denial evidence proves refusal, not a general access-control system",
         ),
         walkthrough_step(
-            5,
+            8,
             "Operator / Governance",
             "sanctuary-quarantine",
             "ambiguous continuity is frozen into sanctuary/quarantine review",
@@ -685,7 +902,16 @@ fn observatory_flagship_walkthrough(
             "quarantine preserves evidence and blocks destructive transition",
         ),
         walkthrough_step(
-            6,
+            9,
+            "Cognition / Internal State",
+            "runtime-inhabitant-integration",
+            "the integrated inhabitant packet binds standing, state, lifecycle, memory, capability, comms, learning, and observatory surfaces into one agent-shaped route",
+            runtime_inhabitant.packet.artifact_path.as_str(),
+            "where is the agent-shaped integration surface that pulls the earlier runtime proofs together?",
+            "integration evidence proves bounded composition, not the full flagship by itself",
+        ),
+        walkthrough_step(
+            10,
             "Cognition / Internal State",
             "challenge-and-appeal",
             "citizen challenge, freeze, and appeal remain reviewable without disclosure",
@@ -694,7 +920,7 @@ fn observatory_flagship_walkthrough(
             "challenge proof is procedural continuity evidence, not mind inspection",
         ),
         walkthrough_step(
-            7,
+            11,
             "Corporate Investor",
             "fallback-report",
             "non-specialist reviewer sees scope, risks, and non-claims in one report",
@@ -726,19 +952,28 @@ fn walkthrough_step(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn required_artifact_refs(
     continuity_refs: &[String],
     observatory_refs: &[String],
+    lifecycle_refs: &[String],
     standing_access_refs: &[String],
+    communication_boundary_refs: &[String],
+    runtime_inhabitant_refs: &[String],
     challenge_refs: &[String],
     operator_report_refs: &[String],
 ) -> Vec<String> {
+    let mut seen = BTreeSet::new();
     continuity_refs
         .iter()
         .chain(observatory_refs)
+        .chain(lifecycle_refs)
         .chain(standing_access_refs)
+        .chain(communication_boundary_refs)
+        .chain(runtime_inhabitant_refs)
         .chain(challenge_refs)
         .chain(operator_report_refs)
+        .filter(|artifact| seen.insert((*artifact).as_str().to_string()))
         .cloned()
         .collect()
 }
@@ -956,6 +1191,12 @@ fn render_observatory_flagship_operator_report(
             "- redacted projection: `{}`\n",
             "- continuity challenge: `{}`\n",
             "- sanctuary/quarantine: `{}`\n\n",
+            "Sprint 3 runtime/comms bindings:\n",
+            "- lifecycle state contract: `{}`\n",
+            "- lifecycle transition matrix: `{}`\n",
+            "- ACIP hardening packet: `{}`\n",
+            "- A2A adapter boundary packet: `{}`\n",
+            "- runtime inhabitant integration packet: `{}`\n\n",
             "Operator-facing result: the Observatory can explain why the citizen-state scenario is reviewable, which authority paths are refused, and which ambiguous continuity transition is frozen without exposing canonical private state.\n\n",
             "Non-claims: personhood, first true Godel-agent birthday, raw private-state inspection, and unbounded live Runtime v2 execution remain outside this proof.\n"
         ),
@@ -967,6 +1208,11 @@ fn render_observatory_flagship_operator_report(
         challenge.access_control_artifacts.observatory_artifacts.projection_packet.artifact_path,
         challenge.challenge.artifact_path,
         challenge.sanctuary_artifacts.quarantine_artifact.artifact_path,
+        proof.lifecycle_refs[0],
+        proof.lifecycle_refs[1],
+        proof.communication_boundary_refs[0],
+        proof.communication_boundary_refs[1],
+        proof.runtime_inhabitant_refs[0],
     );
     report.push_str("\nFeature demo coverage:\n");
     for feature in &proof.feature_demo_coverage {
@@ -998,6 +1244,11 @@ fn validate_flagship_operator_report(
         "redacted projection",
         "continuity challenge",
         "sanctuary/quarantine",
+        "lifecycle state contract",
+        "lifecycle transition matrix",
+        "ACIP hardening packet",
+        "A2A adapter boundary packet",
+        "runtime inhabitant integration packet",
         "Feature demo coverage",
         "Non-claims",
     ] {
@@ -1113,9 +1364,9 @@ fn validate_actor_roster(actors: &[RuntimeV2ObservatoryFlagshipActor]) -> Result
 fn validate_flagship_walkthrough(
     steps: &[RuntimeV2ObservatoryFlagshipWalkthroughStep],
 ) -> Result<()> {
-    if steps.len() != 7 {
+    if steps.len() != 11 {
         return Err(anyhow!(
-            "observatory flagship walkthrough must include seven room/lens steps"
+            "observatory flagship walkthrough must include eleven room/lens steps"
         ));
     }
     let mut seen_rooms = BTreeSet::new();

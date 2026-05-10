@@ -73,6 +73,9 @@
     "runtime_v2/observatory/private_state_projection_packet.json",
     "runtime_v2/observatory/private_state_projection_report.md",
     "runtime_v2/observatory/private_state_projection_negative_cases.json",
+    "runtime_v2/agent_lifecycle/state_contract.json",
+    "runtime_v2/agent_lifecycle/transition_matrix.json",
+    "runtime_v2/agent_lifecycle/proof_fixtures.json",
     "runtime_v2/standing/standing_policy.json",
     "runtime_v2/standing/standing_events.json",
     "runtime_v2/standing/communication_examples.json",
@@ -80,6 +83,10 @@
     "runtime_v2/access_control/authority_matrix.json",
     "runtime_v2/access_control/access_events.json",
     "runtime_v2/access_control/denial_fixtures.json",
+    "runtime_v2/acip/acip_hardening_packet.json",
+    "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+    "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json",
+    "runtime_v2/inhabitant/runtime_inhabitant_operator_report.md",
     "runtime_v2/challenge/challenge_artifact.json",
     "runtime_v2/challenge/freeze_artifact.json",
     "runtime_v2/challenge/appeal_review_artifact.json",
@@ -102,6 +109,11 @@
     "runtime_v2/observatory/private_state_projection_report.md",
     "runtime_v2/observatory/private_state_projection_negative_cases.json"
   ],
+  "lifecycle_refs": [
+    "runtime_v2/agent_lifecycle/state_contract.json",
+    "runtime_v2/agent_lifecycle/transition_matrix.json",
+    "runtime_v2/agent_lifecycle/proof_fixtures.json"
+  ],
   "standing_access_refs": [
     "runtime_v2/standing/standing_policy.json",
     "runtime_v2/standing/standing_events.json",
@@ -110,6 +122,15 @@
     "runtime_v2/access_control/authority_matrix.json",
     "runtime_v2/access_control/access_events.json",
     "runtime_v2/access_control/denial_fixtures.json"
+  ],
+  "communication_boundary_refs": [
+    "runtime_v2/acip/acip_hardening_packet.json",
+    "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+    "runtime_v2/access_control/access_events.json"
+  ],
+  "runtime_inhabitant_refs": [
+    "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json",
+    "runtime_v2/inhabitant/runtime_inhabitant_operator_report.md"
   ],
   "challenge_refs": [
     "runtime_v2/challenge/challenge_artifact.json",
@@ -343,6 +364,36 @@
       "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
       "sequence": 4,
       "room": "Operator / Governance",
+      "lens_or_memory_dot": "lifecycle-gate",
+      "visible_surface": "lifecycle state and transition evidence show whether ACIP messages may be received, queued, rejected, or invoked",
+      "artifact_ref": "runtime_v2/agent_lifecycle/state_contract.json",
+      "continuity_question_answered": "what lifecycle authority does this agent currently have?",
+      "proof_boundary": "lifecycle evidence gates authority but does not prove consciousness or birthday"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 5,
+      "room": "Operator / Governance",
+      "lens_or_memory_dot": "authenticated-local-comms",
+      "visible_surface": "authenticated local communication remains ACIP-bound and reviewable through the hardening packet",
+      "artifact_ref": "runtime_v2/acip/acip_hardening_packet.json",
+      "continuity_question_answered": "how do we know local communication is authenticated and state-gated?",
+      "proof_boundary": "ACIP packet proves bounded local comms policy, not external transport readiness"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 6,
+      "room": "Operator / Governance",
+      "lens_or_memory_dot": "a2a-boundary",
+      "visible_surface": "A2A remains an adapter over ACIP rather than a second communication model",
+      "artifact_ref": "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+      "continuity_question_answered": "does A2A bypass the canonical local communication boundary?",
+      "proof_boundary": "adapter evidence proves compatibility layering, not federation or new transport semantics"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 7,
+      "room": "Operator / Governance",
       "lens_or_memory_dot": "access-denial",
       "visible_surface": "guest request for citizen-only authority is denied and evented",
       "artifact_ref": "runtime_v2/access_control/access_events.json",
@@ -351,7 +402,7 @@
     },
     {
       "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
-      "sequence": 5,
+      "sequence": 8,
       "room": "Operator / Governance",
       "lens_or_memory_dot": "sanctuary-quarantine",
       "visible_surface": "ambiguous continuity is frozen into sanctuary/quarantine review",
@@ -361,7 +412,17 @@
     },
     {
       "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
-      "sequence": 6,
+      "sequence": 9,
+      "room": "Cognition / Internal State",
+      "lens_or_memory_dot": "runtime-inhabitant-integration",
+      "visible_surface": "the integrated inhabitant packet binds standing, state, lifecycle, memory, capability, comms, learning, and observatory surfaces into one agent-shaped route",
+      "artifact_ref": "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json",
+      "continuity_question_answered": "where is the agent-shaped integration surface that pulls the earlier runtime proofs together?",
+      "proof_boundary": "integration evidence proves bounded composition, not the full flagship by itself"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 10,
       "room": "Cognition / Internal State",
       "lens_or_memory_dot": "challenge-and-appeal",
       "visible_surface": "citizen challenge, freeze, and appeal remain reviewable without disclosure",
@@ -371,7 +432,7 @@
     },
     {
       "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
-      "sequence": 7,
+      "sequence": 11,
       "room": "Corporate Investor",
       "lens_or_memory_dot": "fallback-report",
       "visible_surface": "non-specialist reviewer sees scope, risks, and non-claims in one report",
@@ -387,7 +448,7 @@
     "adl runtime-v2 observatory-flagship-demo --out artifacts/v0911/demo-d12-observatory-flagship",
     "git diff --check"
   ],
-  "proof_summary": "D12 integrates WP-05 through WP-16 into one bounded v0.91.1 inhabited CSM Observatory proof and carries an explicit feature-demo coverage roster for WP-02 through WP-16: citizen private-state continuity, witness and receipt evidence, redacted projection, standing and communication boundary, access-control denial, continuity challenge, sanctuary quarantine, appeal review, operator report, and room/lens walkthrough.",
+  "proof_summary": "D12 integrates the landed WP-03 lifecycle state model, WP-13 ACIP hardening packet, WP-14 A2A adapter boundary packet, WP-15 runtime inhabitant integration packet, and the observatory continuity/standing/access surfaces into one bounded v0.91.1 inhabited CSM Observatory proof while carrying an explicit feature-demo coverage roster for WP-02 through WP-16: citizen private-state continuity, witness and receipt evidence, redacted projection, lifecycle eligibility, authenticated local communication boundary, access-control denial, continuity challenge, sanctuary quarantine, runtime inhabitant integration, operator report, and room/lens walkthrough.",
   "proof_classification": "proving",
   "non_claims": [
     "does not prove personhood",

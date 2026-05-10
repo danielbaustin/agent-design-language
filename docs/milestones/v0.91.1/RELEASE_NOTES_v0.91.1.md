@@ -26,9 +26,14 @@ Inhabited-runtime readiness inside the CSM/polis boundary.
 - A2A adapter boundary and compatibility plan
 - runtime inhabitant integration
 
+Sprint state:
+- Sprint 1 runtime foundations are landed through citizen state
+- Sprint 2 cognition, learning, and trace surfaces are landed through ANRM/Gemma placement
+- Sprint 3 runtime/comms integration is landed through runtime inhabitant integration
+
 ## Still Pending
 
-- observatory-visible flagship demo
+- observatory-visible flagship demo, including direct lifecycle/comms/inhabitant proof binding
 - milestone demo matrix / proof coverage closeout
 - milestone review, remediation, and release ceremony
 

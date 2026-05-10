@@ -13,6 +13,13 @@ Citizen continuity basis:
 - continuity challenge: `runtime_v2/challenge/challenge_artifact.json`
 - sanctuary/quarantine: `runtime_v2/private_state/sanctuary_quarantine_artifact.json`
 
+Sprint 3 runtime/comms bindings:
+- lifecycle state contract: `runtime_v2/agent_lifecycle/state_contract.json`
+- lifecycle transition matrix: `runtime_v2/agent_lifecycle/transition_matrix.json`
+- ACIP hardening packet: `runtime_v2/acip/acip_hardening_packet.json`
+- A2A adapter boundary packet: `runtime_v2/acip/a2a_adapter_boundary_packet.json`
+- runtime inhabitant integration packet: `runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json`
+
 Operator-facing result: the Observatory can explain why the citizen-state scenario is reviewable, which authority paths are refused, and which ambiguous continuity transition is frozen without exposing canonical private state.
 
 Non-claims: personhood, first true Godel-agent birthday, raw private-state inspection, and unbounded live Runtime v2 execution remain outside this proof.

@@ -34,7 +34,7 @@ fn runtime_v2_observatory_flagship_review_surfaces_are_stable_and_serializable()
         "runtime_v2/observatory/flagship_operator_report.md"
     );
     assert_eq!(artifacts.proof_packet.proof_classification, "proving");
-    assert_eq!(artifacts.proof_packet.lens_sequence.len(), 7);
+    assert_eq!(artifacts.proof_packet.lens_sequence.len(), 11);
     assert_eq!(artifacts.proof_packet.feature_demo_coverage.len(), 15);
     assert!(artifacts
         .proof_packet
@@ -70,7 +70,33 @@ fn runtime_v2_observatory_flagship_review_surfaces_are_stable_and_serializable()
         .proof_packet
         .required_artifact_refs
         .iter()
+        .any(|artifact| artifact == "runtime_v2/agent_lifecycle/state_contract.json"));
+    assert!(artifacts
+        .proof_packet
+        .required_artifact_refs
+        .iter()
+        .any(|artifact| artifact == "runtime_v2/agent_lifecycle/transition_matrix.json"));
+    assert!(artifacts
+        .proof_packet
+        .required_artifact_refs
+        .iter()
         .any(|artifact| artifact == "runtime_v2/access_control/access_events.json"));
+    assert!(artifacts
+        .proof_packet
+        .required_artifact_refs
+        .iter()
+        .any(|artifact| artifact == "runtime_v2/acip/acip_hardening_packet.json"));
+    assert!(artifacts
+        .proof_packet
+        .required_artifact_refs
+        .iter()
+        .any(|artifact| artifact == "runtime_v2/acip/a2a_adapter_boundary_packet.json"));
+    assert!(artifacts
+        .proof_packet
+        .required_artifact_refs
+        .iter()
+        .any(|artifact| artifact
+            == "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json"));
     assert!(artifacts
         .proof_packet
         .required_artifact_refs
@@ -86,6 +112,9 @@ fn runtime_v2_observatory_flagship_review_surfaces_are_stable_and_serializable()
     assert!(artifacts
         .operator_report_markdown
         .contains("Feature demo coverage"));
+    assert!(artifacts
+        .operator_report_markdown
+        .contains("Sprint 3 runtime/comms bindings"));
     assert!(artifacts
         .operator_report_markdown
         .contains("runtime-polis-architecture"));
@@ -114,9 +143,25 @@ fn runtime_v2_observatory_flagship_review_surfaces_are_stable_and_serializable()
         .lines()
         .map(|line| serde_json::from_str(line).expect("walkthrough step json"))
         .collect();
-    assert_eq!(steps.len(), 7);
+    assert_eq!(steps.len(), 11);
     assert_eq!(steps[0].room, "World / Reality");
-    assert_eq!(steps[6].room, "Corporate Investor");
+    assert_eq!(
+        steps[3].artifact_ref,
+        "runtime_v2/agent_lifecycle/state_contract.json"
+    );
+    assert_eq!(
+        steps[4].artifact_ref,
+        "runtime_v2/acip/acip_hardening_packet.json"
+    );
+    assert_eq!(
+        steps[5].artifact_ref,
+        "runtime_v2/acip/a2a_adapter_boundary_packet.json"
+    );
+    assert_eq!(
+        steps[8].artifact_ref,
+        "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json"
+    );
+    assert_eq!(steps[10].room, "Corporate Investor");
 
     let summary = artifacts.execution_summary().expect("execution summary");
     assert!(summary.contains("D12 inhabited CSM Observatory flagship proof"));
@@ -164,11 +209,19 @@ fn runtime_v2_observatory_flagship_writes_integrated_artifacts_without_path_leak
         .contains("\"schema_version\": \"runtime_v2.observatory_flagship_proof_packet.v1\""));
     assert!(proof_text.contains("\"demo_id\": \"D12\""));
     assert!(proof_text.contains("bounded local D12 citizen-state Observatory evidence package"));
+    assert!(proof_text.contains("runtime_v2/agent_lifecycle/state_contract.json"));
+    assert!(proof_text.contains("runtime_v2/acip/acip_hardening_packet.json"));
+    assert!(proof_text.contains("runtime_v2/acip/a2a_adapter_boundary_packet.json"));
+    assert!(proof_text.contains("runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json"));
 
     let report_text =
         fs::read_to_string(temp_root.join("runtime_v2/observatory/flagship_operator_report.md"))
             .expect("report text");
     assert!(report_text.contains("citizen receipt set"));
+    assert!(report_text.contains("lifecycle state contract"));
+    assert!(report_text.contains("ACIP hardening packet"));
+    assert!(report_text.contains("A2A adapter boundary packet"));
+    assert!(report_text.contains("runtime inhabitant integration packet"));
     assert!(report_text.contains("Feature demo coverage"));
     assert!(report_text.contains("Non-claims"));
     assert!(!report_text.contains("private_payload_b64"));
@@ -281,7 +334,7 @@ fn runtime_v2_observatory_flagship_rejects_shape_and_boundary_drift() {
         .validate_shape()
         .expect_err("missing WP phrase should fail")
         .to_string()
-        .contains("must mention WP-05"));
+        .contains("must mention WP-03"));
 
     let mut missing_feature_coverage = packet.clone();
     missing_feature_coverage.feature_demo_coverage.pop();
@@ -344,12 +397,55 @@ fn runtime_v2_observatory_flagship_rejects_shape_and_boundary_drift() {
         .contains("sequence must be contiguous"));
 
     let mut missing_room = packet.clone();
-    missing_room.lens_sequence[6].room = "Operator / Governance".to_string();
+    missing_room.lens_sequence[10].room = "Operator / Governance".to_string();
     assert!(missing_room
         .validate_shape()
         .expect_err("missing room should fail")
         .to_string()
         .contains("missing expected room 'Corporate Investor'"));
+
+    let challenge = runtime_v2_continuity_challenge_contract().expect("challenge");
+    let operator = runtime_v2_operator_control_report_contract().expect("operator report");
+    let lifecycle = runtime_v2_agent_lifecycle_state_contract().expect("lifecycle");
+    let acip = runtime_v2_acip_hardening_contract().expect("acip");
+    let a2a = runtime_v2_a2a_adapter_boundary_contract().expect("a2a");
+    let inhabitant = runtime_v2_runtime_inhabitant_integration_contract().expect("inhabitant");
+
+    let mut missing_lifecycle = packet.clone();
+    missing_lifecycle.lifecycle_refs.clear();
+    assert!(missing_lifecycle
+        .validate_against(&challenge, &operator, &lifecycle, &acip, &a2a, &inhabitant)
+        .expect_err("missing lifecycle refs should fail")
+        .to_string()
+        .contains("observatory_flagship.lifecycle_refs"));
+
+    let mut missing_acip = packet.clone();
+    missing_acip
+        .communication_boundary_refs
+        .retain(|artifact| artifact != "runtime_v2/acip/acip_hardening_packet.json");
+    assert!(missing_acip
+        .validate_against(&challenge, &operator, &lifecycle, &acip, &a2a, &inhabitant)
+        .expect_err("missing ACIP ref should fail")
+        .to_string()
+        .contains("missing ACIP hardening ref"));
+
+    let mut missing_a2a = packet.clone();
+    missing_a2a
+        .communication_boundary_refs
+        .retain(|artifact| artifact != "runtime_v2/acip/a2a_adapter_boundary_packet.json");
+    assert!(missing_a2a
+        .validate_against(&challenge, &operator, &lifecycle, &acip, &a2a, &inhabitant)
+        .expect_err("missing A2A ref should fail")
+        .to_string()
+        .contains("missing A2A adapter boundary ref"));
+
+    let mut missing_inhabitant = packet.clone();
+    missing_inhabitant.runtime_inhabitant_refs.clear();
+    assert!(missing_inhabitant
+        .validate_against(&challenge, &operator, &lifecycle, &acip, &a2a, &inhabitant)
+        .expect_err("missing runtime inhabitant ref should fail")
+        .to_string()
+        .contains("observatory_flagship.runtime_inhabitant_refs"));
 
     let mut artifacts = flagship_artifacts();
     artifacts.proof_packet.proof_classification = "non_proving".to_string();
