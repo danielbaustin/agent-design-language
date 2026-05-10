@@ -4,6 +4,7 @@
 //! manifold state, kernel control, citizen lifecycle, private-state pathways,
 //! and proof-bearing contracts used by downstream review tooling.
 
+mod a2a_adapter_boundary;
 mod access_control;
 mod acip_hardening;
 mod affect_reasoning_control;
@@ -72,6 +73,8 @@ use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
+#[allow(unused_imports)]
+pub use a2a_adapter_boundary::*;
 #[allow(unused_imports)]
 pub use access_control::*;
 #[allow(unused_imports)]

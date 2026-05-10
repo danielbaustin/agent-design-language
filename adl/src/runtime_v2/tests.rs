@@ -1,5 +1,6 @@
 use super::*;
 
+mod a2a_adapter_boundary;
 #[cfg(feature = "slow-proof-tests")]
 mod access_control;
 mod acip_hardening;

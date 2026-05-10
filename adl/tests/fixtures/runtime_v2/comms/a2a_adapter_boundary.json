@@ -1,0 +1,112 @@
+{
+  "schema_version": "runtime_v2.a2a_adapter_boundary_packet.v1",
+  "packet_id": "a2a-adapter-boundary-v0-91-1-wp-14",
+  "milestone": "v0.91.1",
+  "wp": "WP-14",
+  "artifact_path": "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+  "source_feature_doc": "docs/milestones/v0.91.1/features/A2A_ADAPTER_BOUNDARY.md",
+  "acip_hardening_ref": "runtime_v2/acip/acip_hardening_packet.json",
+  "adapter_fixture_schema_ref": "acip.a2a.fixture.v1",
+  "invocation_contract_schema_ref": "acip.invocation.contract.v1",
+  "trace_bundle_schema_ref": "acip.trace.bundle.v1",
+  "adapter_lanes": [
+    {
+      "adapter_id": "a2a_naked_boundary",
+      "trust_classification": "naked",
+      "agent_card_ref": "runtime/comms/a2a/agent-card-alpha.json",
+      "external_capability_claim": "request_consultation",
+      "adl_capability": "consult",
+      "policy_basis_ref": "docs/milestones/v0.91/features/A2A_EXTERNAL_AGENT_ADAPTER.md",
+      "required_entrypoint": "agent.invoke",
+      "invocation_contract_schema_ref": "acip.invocation.contract.v1",
+      "trace_bundle_schema_ref": "acip.trace.bundle.v1",
+      "local_scope_only": true,
+      "external_transport_status": "deferred_until_tls_equivalent",
+      "refusal_mode": "refuse",
+      "trace_evidence_refs": [
+        "runtime/comms/trace/a2a-local-boundary-trace.json"
+      ],
+      "non_claims": [
+        "No direct execution authority is granted from Agent Card claims.",
+        "External transport remains deferred in v0.91."
+      ]
+    },
+    {
+      "adapter_id": "a2a_guest_boundary",
+      "trust_classification": "guest",
+      "agent_card_ref": "runtime/comms/a2a/agent-card-alpha.json",
+      "external_capability_claim": "review_source_tree",
+      "adl_capability": "review",
+      "policy_basis_ref": "docs/milestones/v0.91/features/A2A_EXTERNAL_AGENT_ADAPTER.md",
+      "required_entrypoint": "agent.invoke",
+      "invocation_contract_schema_ref": "acip.invocation.contract.v1",
+      "trace_bundle_schema_ref": "acip.trace.bundle.v1",
+      "local_scope_only": true,
+      "external_transport_status": "deferred_until_tls_equivalent",
+      "refusal_mode": "refuse",
+      "trace_evidence_refs": [
+        "runtime/comms/trace/a2a-local-boundary-trace.json"
+      ],
+      "non_claims": [
+        "No direct execution authority is granted from Agent Card claims.",
+        "External transport remains deferred in v0.91."
+      ]
+    },
+    {
+      "adapter_id": "a2a_citizen_boundary",
+      "trust_classification": "citizen",
+      "agent_card_ref": "runtime/comms/a2a/agent-card-alpha.json",
+      "external_capability_claim": "submit_patch_proposal",
+      "adl_capability": "delegate",
+      "policy_basis_ref": "docs/milestones/v0.91/features/A2A_EXTERNAL_AGENT_ADAPTER.md",
+      "required_entrypoint": "agent.invoke",
+      "invocation_contract_schema_ref": "acip.invocation.contract.v1",
+      "trace_bundle_schema_ref": "acip.trace.bundle.v1",
+      "local_scope_only": true,
+      "external_transport_status": "deferred_until_tls_equivalent",
+      "refusal_mode": "refuse",
+      "trace_evidence_refs": [
+        "runtime/comms/trace/a2a-local-boundary-trace.json"
+      ],
+      "non_claims": [
+        "No direct execution authority is granted from Agent Card claims.",
+        "External transport remains deferred in v0.91."
+      ]
+    }
+  ],
+  "negative_cases": [
+    {
+      "case_id": "parallel_authority_model",
+      "expected_error_substring": "trust_classification must not grant execution authority directly",
+      "proves": "A2A identity or capability claims cannot create parallel execution authority."
+    },
+    {
+      "case_id": "direct_execution_grant",
+      "expected_error_substring": "A2A capability mappings must route through agent.invoke and forbid direct execution",
+      "proves": "A2A capability claims must route through agent.invoke and cannot directly execute work."
+    },
+    {
+      "case_id": "missing_agent_invoke_boundary",
+      "expected_error_substring": "A2A invoke boundary must route through agent.invoke",
+      "proves": "A2A adapters must preserve the agent.invoke boundary over ACIP invocation contracts."
+    },
+    {
+      "case_id": "external_transport_without_local_gate",
+      "expected_error_substring": "A2A transport boundary must remain local-only in v0.91",
+      "proves": "A2A external transport remains explicitly deferred until TLS-equivalent protection exists."
+    }
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_a2a_adapter_boundary -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml acip_a2a_adapter -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_acip_hardening -- --nocapture",
+    "git diff --check"
+  ],
+  "non_claims": [
+    "does not prove external federation or cross-polis routing",
+    "does not create a second canonical internal communication model",
+    "does not grant execution authority from Agent Card claims",
+    "does not bypass ACIP, ACC, lifecycle, trace, or redaction boundaries"
+  ],
+  "claim_boundary": "WP-14 proves one bounded A2A-over-ACIP adapter boundary packet over the landed WP-13 ACIP hardening surface and the existing ACIP A2A fixture layer. It proves that A2A capability claims stay identity-bound, route through agent.invoke, preserve local-only transport, and remain denied for direct execution or external transport in v0.91.1. It does not prove external federation, transport readiness, or a second canonical communication architecture."
+}
