@@ -156,7 +156,7 @@ Required validation:
 
 Required outputs:
 
-- Moderne/OpenRewrite-style modernization interaction plan.
+- Moderne/OpenRewrite LST and recipe-driven modernization interaction plan.
 - Bounded demo with dry-run evidence.
 - Reversibility and review policy.
 

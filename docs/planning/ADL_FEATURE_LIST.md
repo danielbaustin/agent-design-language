@@ -195,7 +195,7 @@ ADL already provides a serious platform baseline:
 | CodeBuddy repo-review product layer | Planned | `docs/milestones/v0.91.2/features/CODEBUDDY_PRODUCTIZATION.md` plus existing CodeBuddy proof baseline | `v0.91.2` productization lane |
 | Review heuristics and reviewer demo lane | Planned | `docs/milestones/v0.91.2/features/REVIEW_HEURISTICS_AND_DEMOS.md` | `v0.91.2` |
 | Google Workspace CMS bridge and Rust-native adapter boundary | Planned | `docs/milestones/v0.91.2/features/GOOGLE_WORKSPACE_CMS_BRIDGE.md` | `v0.91.2` |
-| Automated repository modernization and external refactoring integration | Planned | `docs/milestones/v0.91.2/features/CODE_MODERNIZATION_DEMO.md` plus existing modernization planning docs | `v0.91.2` bounded modernization demo lane |
+| Automated repository modernization and external refactoring integration | Planned | `docs/milestones/v0.91.2/features/CODE_MODERNIZATION_DEMO.md` plus existing Moderne/OpenRewrite and code-modernization planning docs | `v0.91.2` bounded Moderne/OpenRewrite LST demo lane |
 | Generic speculative decoding runtime acceleration | Planned | `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`, `.adl/docs/TBD/ADL_AND_SPECULATIVE_CODING_REPLAY.md`, and `docs/milestones/v0.91.2/features/SPECULATIVE_DECODING_PROTOTYPE.md` | `v0.91.2` |
 | Repo visibility follow-on | Planned | `docs/milestones/v0.91.2/features/REPO_VISIBILITY_FOLLOW_ON.md` plus the `v0.90` repo-visibility baseline | `v0.91.2` |
 | Publication packet program and GHB paper lane | Planned | `docs/milestones/v0.91.2/features/PUBLICATION_PROGRAM.md` plus GHB paper lineage docs | `v0.91.2` |

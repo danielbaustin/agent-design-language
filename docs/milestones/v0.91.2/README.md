@@ -21,7 +21,7 @@ reviewable systems:
   entire days.
 - CodeBuddy/review packet productization.
 - Google Workspace CMS bridge planning and bounded demo work.
-- Moderne/code-modernization workflow support.
+- Moderne / OpenRewrite LST modernization workflow support.
 - Bounded speculative-decoding evaluation inside ADL's deterministic runtime
   posture.
 - Repo-visibility follow-on work so canonical-source and linkage surfaces
@@ -48,7 +48,7 @@ v0.91.2 should not:
 - claim production external tool execution based on model output
 - silently move canonical docs into Google Workspace
 - publish papers or customer reports without review
-- treat code modernization as automatic mass rewrite
+- treat Moderne or OpenRewrite recipe execution as automatic mass rewrite
 - use test-cycle recovery as an excuse to weaken proof obligations
 
 ## Source Map
@@ -104,6 +104,6 @@ This package is grounded in:
 
 v0.91.2 is ready to close when the project has credible multi-model UTS+ACC
 evidence, a healthier test/runtime gate strategy, a review/productization path,
-a bounded Workspace CMS bridge demo, modernization and publication packages,
+a bounded Workspace CMS bridge demo, Moderne/OpenRewrite LST modernization and publication packages,
 and workflow guardrails that reduce the operational failures that slowed
 v0.90.5 and v0.91.

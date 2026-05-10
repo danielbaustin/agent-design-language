@@ -25,9 +25,9 @@ expensive, confusing test cycles.
 | WP-07 | Review heuristics skill and demos | review heuristics docs, skill/demo updates, proof examples | WP-06 |
 | WP-08 | Google Workspace CMS bridge demo | bounded Workspace content-card and promotion demo | WP-01; governed-tools authority and adapter boundary |
 | WP-09 | Rust-native GWS adapter boundary | adapter feasibility and typed contract boundary | WP-08 |
-| WP-10 | Code modernization demo | Moderne/code modernization interaction demo | WP-01 |
+| WP-10 | Moderne / OpenRewrite LST modernization demo | ADL-governed Moderne/OpenRewrite interaction demo | WP-01 |
 
-Goal: turn review, collaborative docs, and modernization ideas into bounded
+Goal: turn review, collaborative docs, and Moderne/OpenRewrite LST modernization ideas into bounded
 product surfaces without granting silent authority over canonical repo truth.
 
 ## Sprint 3: Runtime Ergonomics, Publication, Docs, And Workflow Guardrails

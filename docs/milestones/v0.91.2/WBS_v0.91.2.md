@@ -21,7 +21,7 @@ productize, publish, and maintain.
 | E | CodeBuddy productization | Promote review packet, product report, skill, and demo surfaces. | CodeBuddy product/review package | review skills |
 | F | Review skill and demo suite | Add review heuristics, skill demos, and repeatable review proof surfaces. | review demo matrix and skill docs | E |
 | G | Google Workspace CMS bridge | Build bounded bridge/demo for draft docs, comments, and promotion packets. | GWS CMS demo and adapter boundary | governed tools |
-| H | Code modernization | Define and prove Moderne/OpenRewrite-style modernization workflow. | modernization demo packet | C, E |
+| H | Code modernization | Define and prove a bounded Moderne/OpenRewrite modernization workflow grounded in deterministic recipes over the Lossless Semantic Tree (LST). | modernization demo packet | C, E |
 | I | Speculative decoding | Evaluate bounded runtime acceleration without weakening deterministic commit semantics. | feature contract, prototype plan, and proof posture | B, C |
 | J | Repo visibility follow-on | Turn the v0.90 prototype into a practical manifest/linkage follow-on for reviewers and planners. | manifest/linkage follow-on package | E, F |
 | K | Publication program | Prepare arXiv/Medium paper packets without direct publication. | publication backlog and first packets | review/evidence docs |
@@ -43,7 +43,7 @@ productize, publish, and maintain.
 | WP-07 | Review heuristics skill and demos | demo | review heuristics docs, skill/demo updates, proof examples | WP-06 |
 | WP-08 | Google Workspace CMS bridge demo | tools | bounded Workspace content-card and promotion demo | WP-01; governed-tools authority and adapter boundary |
 | WP-09 | Rust-native GWS adapter boundary | tools | adapter feasibility and typed contract boundary | WP-08 |
-| WP-10 | Code modernization demo | tools | Moderne/code modernization interaction demo | WP-01 |
+| WP-10 | Moderne / OpenRewrite LST modernization demo | tools | ADL-governed Moderne/OpenRewrite interaction demo | WP-01 |
 | WP-11 | Speculative decoding prototype | runtime | bounded speculative-decoding architecture and proof posture | WP-02, WP-04 |
 | WP-12 | Repo visibility follow-on | docs | manifest/linkage follow-on package | WP-06, WP-07 |
 | WP-13 | Publication program package | docs | arXiv/Medium paper-program backlog and process docs | WP-01; review/evidence docs and publication process notes |
