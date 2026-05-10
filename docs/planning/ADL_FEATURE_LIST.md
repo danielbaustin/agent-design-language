@@ -206,10 +206,13 @@ ADL already provides a serious platform baseline:
 | Identity, stable name, and continuity substrate | Planned | `v0.92` identity, continuity, and birthday allocation plan | `v0.92` |
 | Memory grounding, capability envelope, and birth witnesses/receipt | Planned | `v0.92` identity/birthday planning docs and Runtime v2 birthday boundary roadmap | `v0.92` |
 | First true Gödel-agent birthday | Planned | `v0.92` identity, continuity, and birthday allocation plan plus Runtime v2 birthday boundary roadmap | `v0.92` |
-| Constitutional citizenship, rights/duties, and governance review | Planned | `v0.93` constitutional citizenship and polis-governance allocation plan | `v0.93` |
-| Bounded Theory of Mind, reputation, and shared social memory boundary | Planned | `docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md` | `v0.93` |
+| Constitutional citizenship, rights/duties, and governance review | Planned | `docs/milestones/v0.93/features/CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md` plus the `v0.93` citizenship/governance allocation plan | `v0.93` |
+| Bounded Theory of Mind, relationship, reputation, and shared social memory boundary | Planned | `docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md` and `docs/milestones/v0.93/features/SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md` | `v0.93` |
 | Delegation, IAM, standing transition, and challenge/appeal governance | Planned | `v0.93` constitutional citizenship and polis-governance allocation plan | `v0.93` |
 | Enterprise security for the ADL polis | Planned | `docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md` and the `v0.93` zero-trust/security work breakdown | `v0.93` |
+| Secure execution, policy, identity/auth, isolation, and provider-trust convergence | Planned | `docs/milestones/v0.94/features/SECURE_EXECUTION_AND_TRUST_CONVERGENCE_v0.94.md` and the tracked `v0.94` milestone package | `v0.94` |
+| Mental time travel / temporal self-projection | Planned | `docs/milestones/v0.94/features/MENTAL_TIME_TRAVEL_v0.94.md` plus the `MTT-v1` source note | `v0.94` |
+| Payments, settlement, economic agency, and `x402` / Lightning adapters | Planned | `docs/milestones/v0.94.1/features/PAYMENTS_SETTLEMENT_AND_X402_v0.94.1.md` and the tracked `v0.94.1` milestone package | `v0.94.1` |
 | Bounded contract-market and resource-stewardship bridge | Implemented baseline | `docs/milestones/v0.90.4` contract-market docs, proof coverage, and demo matrix | Completed bounded baseline by `v0.90.4` |
 | Distributed execution integration | Partially implemented | cluster groundwork plus planning docs | Integration completion target: `v0.94`; MVP hardening target: `v0.95` |
 | Demo catalog and polished MVP walkthrough | Partially implemented | milestone demo matrices and reviewer packages | `v0.95` |
@@ -243,9 +246,10 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, agent lifecycle states, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, GHB-adjacent runtime evidence, and observatory-visible agent runtime proof. |
 | `v0.91.2` | Tooling/evaluation/productization/publication pressure release: UTS + ACC multi-model benchmark, provider-native tool-call comparison, runtime/test-cycle recovery, coverage ergonomics, CodeBuddy productization, Google Workspace CMS bridge, modernization demo, publication packets including GHB/general-intelligence source packets, rustdoc/doc cleanup, and workflow guardrails. |
 | `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
-| `v0.93` | Governance, delegation, IAM, social contract, policy/constitutional surfaces, rights/duties, enterprise security, zero trust, audit/compliance evidence, isolation/data governance, security operations, and accountable multi-agent society boundaries. |
-| `v0.94` | Distributed-substrate integration, reasoning/provenance closure, signed/queryable trace, cross-band convergence, and dependency cleanup before MVP freeze. |
-| `v0.95` | MVP convergence, polished demo catalog, coherent reviewer/customer walkthrough, control-plane/tooling hardening, feature freeze, and the 1.0 scope boundary. |
+| `v0.93` | Constitutional citizenship, rights/duties, social contract, delegation/IAM, standing/challenge/appeal governance, relationship model, reputation/trust, shared social memory, ToM/social cognition, and enterprise security for the ADL polis. |
+| `v0.94` | Secure execution, policy-engine and identity/auth convergence, provider trust and isolation, secrets/data governance, signed/queryable trace and reasoning/provenance closure, bounded mental time travel / temporal self-projection, and cross-band convergence before MVP freeze. |
+| `v0.94.1` | Payments, settlement, accounting/ledger/economic trace, economic agency, and `x402` / Lightning adapter follow-on work. |
+| `v0.95` | MVP convergence, distributed-substrate integration, polished demo catalog, coherent reviewer/customer walkthrough, control-plane/tooling hardening, feature freeze, and the 1.0 scope boundary. |
 
 ## Implemented Platform Highlights
 

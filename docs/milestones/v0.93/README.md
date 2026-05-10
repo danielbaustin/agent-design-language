@@ -22,8 +22,8 @@ The canonical allocation is recorded in
 v0.93 should establish:
 
 - constitutional citizenship as a trace-grounded policy model
-- bounded Theory of Mind, reputation, and shared social memory as distinct
-  social-cognition surfaces
+- bounded Theory of Mind, relationship, reputation, and shared social memory as
+  distinct social-cognition surfaces
 - rights, duties, standing, challenge, appeal, delegation, and IAM semantics
 - enterprise-security foundations for zero-trust polis operation
 - cryptographic trust, secrets/key lifecycle, isolation, audit, and incident
@@ -115,6 +115,10 @@ The likely `v0.93` tranche is:
   [CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md](CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md)
 - Theory of Mind and social cognition:
   [THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md](features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md)
+- Social relationship, reputation, and shared memory:
+  [SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md](features/SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md)
+- Citizenship, rights/duties, and social contract:
+  [CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md](features/CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md)
 - Enterprise security:
   [ENTERPRISE_SECURITY_v0.93.md](features/ENTERPRISE_SECURITY_v0.93.md)
 
