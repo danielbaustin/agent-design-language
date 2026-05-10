@@ -62,6 +62,7 @@ This package is grounded in:
 - `.adl/docs/TBD/google_workspace_cms/`
 - `.adl/docs/TBD/code_modernization/`
 - `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`
+- `.adl/docs/TBD/ADL_AND_SPECULATIVE_CODING_REPLAY.md`
 - `.adl/docs/TBD/repo_visibility/`
 - `.adl/docs/TBD/publication/`
 - `.adl/docs/TBD/general-intelligence-paper/`

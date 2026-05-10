@@ -4,7 +4,7 @@
 
 - Milestone: `v0.91.2`
 - Status: pending
-- Canonical gate WP: `WP-16`
+- Canonical gate WP: `WP-18`
 
 ## Purpose
 
@@ -29,4 +29,3 @@ execution.
 ## Current Judgment
 
 `NOT_READY`
-

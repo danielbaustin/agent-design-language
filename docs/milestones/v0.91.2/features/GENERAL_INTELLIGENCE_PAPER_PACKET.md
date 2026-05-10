@@ -5,7 +5,7 @@
 - Feature Name: General Intelligence Paper Packet
 - Milestone Target: `v0.91.2`
 - Status: planned
-- Planned WP Home: WP-12
+- Planned WP Home: WP-14
 - Source Docs: `.adl/docs/TBD/general-intelligence-paper/`
 - Proof Modes: claim packet, citation packet, review
 
