@@ -121,6 +121,7 @@ ADL already provides a serious platform baseline:
 | Remote execution baseline | Implemented baseline | bounded remote execution surfaces and docs | Runtime/security completion target: `v0.93` |
 | Human-in-the-loop pause/resume | Implemented baseline | runtime/control surfaces and review docs | MVP completion target: `v0.95` |
 | Structured authoring model | Implemented baseline | STP/SIP/SOR contracts and prompt tooling | MVP completion target: `v0.95` |
+| Structured planning and Structured Review Policy workflow | Implemented baseline | `v0.91` SPP/SRP feature docs, readiness records, validation tooling, and issue-bundle workflow surfaces | Completed baseline by `v0.91.0`; validator/closeout hardening continues in `v0.91.1` |
 | Control-plane lifecycle | Implemented baseline | `pr init/create/start/run/finish`, doctor, janitor, closeout surfaces | MVP completion target: `v0.95` |
 | Editor and command-adapter surfaces | Implemented baseline | editor docs, demos, bounded command adapters | MVP completion target: `v0.95` |
 | Review and validation surfaces | Implemented baseline | reviewer contracts, validation tools, review packages | MVP completion target: `v0.95` |
@@ -201,11 +202,14 @@ ADL already provides a serious platform baseline:
 | General-intelligence paper packet | Planned | `docs/milestones/v0.91.2/features/GENERAL_INTELLIGENCE_PAPER_PACKET.md` | `v0.91.2` |
 | Rustdoc/doc cleanup | Planned | `docs/milestones/v0.91.2/features/RUSTDOC_DOC_CLEANUP.md` | `v0.91.2` |
 | Workflow guardrails | Planned | `docs/milestones/v0.91.2/features/WORKFLOW_GUARDRAILS.md` | `v0.91.2` |
-| ACP / cognitive profiles runtime surface | Planned | local backlog and v0.92 cognitive-profile planning source | `v0.92` |
-| Identity, capability, names, and continuity substrate | Planned | `v0.92` identity, continuity, and birthday allocation plan | `v0.92` |
+| ACP / cognitive profiles runtime surface | Planned | `v0.92` identity/birthday allocation plan and cognitive-profile planning source | `v0.92` |
+| Identity, stable name, and continuity substrate | Planned | `v0.92` identity, continuity, and birthday allocation plan | `v0.92` |
+| Memory grounding, capability envelope, and birth witnesses/receipt | Planned | `v0.92` identity/birthday planning docs and Runtime v2 birthday boundary roadmap | `v0.92` |
 | First true Gödel-agent birthday | Planned | `v0.92` identity, continuity, and birthday allocation plan plus Runtime v2 birthday boundary roadmap | `v0.92` |
-| Governance, delegation, IAM, social contract | Planned | `v0.93` constitutional citizenship and polis-governance allocation plan | `v0.93` |
-| Enterprise security for the ADL polis | Planned | `v0.93` enterprise-security feature plan covering zero trust, policy enforcement, keys/secrets, audit/compliance evidence, isolation/data governance, and security operations | `v0.93` |
+| Constitutional citizenship, rights/duties, and governance review | Planned | `v0.93` constitutional citizenship and polis-governance allocation plan | `v0.93` |
+| Bounded Theory of Mind, reputation, and shared social memory boundary | Planned | `docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md` | `v0.93` |
+| Delegation, IAM, standing transition, and challenge/appeal governance | Planned | `v0.93` constitutional citizenship and polis-governance allocation plan | `v0.93` |
+| Enterprise security for the ADL polis | Planned | `docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md` and the `v0.93` zero-trust/security work breakdown | `v0.93` |
 | Bounded contract-market and resource-stewardship bridge | Implemented baseline | `docs/milestones/v0.90.4` contract-market docs, proof coverage, and demo matrix | Completed bounded baseline by `v0.90.4` |
 | Distributed execution integration | Partially implemented | cluster groundwork plus planning docs | Integration completion target: `v0.94`; MVP hardening target: `v0.95` |
 | Demo catalog and polished MVP walkthrough | Partially implemented | milestone demo matrices and reviewer packages | `v0.95` |
