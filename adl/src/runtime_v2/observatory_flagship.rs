@@ -26,11 +26,16 @@ const EXPECTED_ROOMS: [&str; 4] = [
     "Corporate Investor",
 ];
 
-const REQUIRED_REF_FRAGMENTS: [&str; 6] = [
+const REQUIRED_REF_FRAGMENTS: [&str; 11] = [
     "continuity_witnesses.json",
     "citizen_receipts.json",
     "private_state_projection_packet.json",
+    "agent_lifecycle/state_contract.json",
+    "agent_lifecycle/transition_matrix.json",
     "access_events.json",
+    "acip_hardening_packet.json",
+    "a2a_adapter_boundary_packet.json",
+    "runtime_inhabitant_integration_packet.json",
     "challenge_artifact.json",
     "flagship_operator_report.md",
 ];
@@ -42,6 +47,17 @@ pub struct RuntimeV2ObservatoryFlagshipActor {
     pub visible_role: String,
     pub evidence_refs: Vec<String>,
     pub prohibited_claims: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2ObservatoryFeatureDemoCoverage {
+    pub feature_id: String,
+    pub feature_name: String,
+    pub owning_wp: String,
+    pub feature_doc_ref: String,
+    pub demo_mode: String,
+    pub demo_surface_refs: Vec<String>,
+    pub coverage_summary: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -70,9 +86,13 @@ pub struct RuntimeV2ObservatoryFlagshipProofPacket {
     pub required_artifact_refs: Vec<String>,
     pub continuity_refs: Vec<String>,
     pub observatory_refs: Vec<String>,
+    pub lifecycle_refs: Vec<String>,
     pub standing_access_refs: Vec<String>,
+    pub communication_boundary_refs: Vec<String>,
+    pub runtime_inhabitant_refs: Vec<String>,
     pub challenge_refs: Vec<String>,
     pub operator_report_refs: Vec<String>,
+    pub feature_demo_coverage: Vec<RuntimeV2ObservatoryFeatureDemoCoverage>,
     pub lens_sequence: Vec<RuntimeV2ObservatoryFlagshipWalkthroughStep>,
     pub reviewer_command: String,
     pub validation_commands: Vec<String>,
@@ -86,6 +106,10 @@ pub struct RuntimeV2ObservatoryFlagshipProofPacket {
 pub struct RuntimeV2ObservatoryFlagshipArtifacts {
     pub challenge_artifacts: RuntimeV2ContinuityChallengeArtifacts,
     pub operator_control_report: RuntimeV2OperatorControlReport,
+    pub lifecycle_artifacts: RuntimeV2AgentLifecycleArtifacts,
+    pub acip_hardening_packet: RuntimeV2AcipHardeningPacket,
+    pub a2a_adapter_boundary_packet: RuntimeV2A2aAdapterBoundaryPacket,
+    pub runtime_inhabitant_integration: RuntimeV2RuntimeInhabitantIntegrationArtifacts,
     pub proof_packet: RuntimeV2ObservatoryFlagshipProofPacket,
     pub operator_report_markdown: String,
 }
@@ -94,11 +118,25 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
     pub fn prototype() -> Result<Self> {
         let challenge_artifacts = runtime_v2_continuity_challenge_contract()?;
         let operator_control_report = runtime_v2_operator_control_report_contract()?;
-        let lens_sequence =
-            observatory_flagship_walkthrough(&challenge_artifacts, &operator_control_report)?;
+        let lifecycle_artifacts = runtime_v2_agent_lifecycle_state_contract()?;
+        let acip_hardening_packet = runtime_v2_acip_hardening_contract()?;
+        let a2a_adapter_boundary_packet = runtime_v2_a2a_adapter_boundary_contract()?;
+        let runtime_inhabitant_integration = runtime_v2_runtime_inhabitant_integration_contract()?;
+        let lens_sequence = observatory_flagship_walkthrough(
+            &challenge_artifacts,
+            &operator_control_report,
+            &lifecycle_artifacts,
+            &acip_hardening_packet,
+            &a2a_adapter_boundary_packet,
+            &runtime_inhabitant_integration,
+        )?;
         let proof_packet = RuntimeV2ObservatoryFlagshipProofPacket::from_artifacts(
             &challenge_artifacts,
             &operator_control_report,
+            &lifecycle_artifacts,
+            &acip_hardening_packet,
+            &a2a_adapter_boundary_packet,
+            &runtime_inhabitant_integration,
             lens_sequence,
         )?;
         let operator_report_markdown =
@@ -106,6 +144,10 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
         let artifacts = Self {
             challenge_artifacts,
             operator_control_report,
+            lifecycle_artifacts,
+            acip_hardening_packet,
+            a2a_adapter_boundary_packet,
+            runtime_inhabitant_integration,
             proof_packet,
             operator_report_markdown,
         };
@@ -114,23 +156,61 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
     }
 
     pub fn validate(&self) -> Result<()> {
-        self.proof_packet
-            .validate_against(&self.challenge_artifacts, &self.operator_control_report)?;
+        self.proof_packet.validate_against(
+            &self.challenge_artifacts,
+            &self.operator_control_report,
+            &self.lifecycle_artifacts,
+            &self.acip_hardening_packet,
+            &self.a2a_adapter_boundary_packet,
+            &self.runtime_inhabitant_integration,
+        )?;
         self.challenge_artifacts.validate()?;
         self.operator_control_report.validate()?;
+        self.lifecycle_artifacts.validate()?;
+        self.acip_hardening_packet.validate()?;
+        self.a2a_adapter_boundary_packet.validate_against(
+            &self.acip_hardening_packet,
+            &crate::agent_comms::acip_a2a_fixture_set_v1(),
+        )?;
+        self.runtime_inhabitant_integration.validate_against(
+            &runtime_v2_csm_integrated_run_contract()?,
+            &runtime_v2_standing_contract()?,
+            &runtime_v2_citizen_state_substrate_contract()?,
+            &self.lifecycle_artifacts,
+            &runtime_v2_memory_identity_architecture_contract()?,
+            &runtime_v2_theory_of_mind_foundation_contract()?,
+            &crate::capability_aptitude_testing::build_capability_aptitude_artifact_bundle(),
+            &runtime_v2_intelligence_metric_architecture_contract()?,
+            &runtime_v2_governed_learning_substrate_contract()?,
+            &runtime_v2_access_control_contract()?,
+            &self.acip_hardening_packet,
+            &self.a2a_adapter_boundary_packet,
+        )?;
         validate_flagship_operator_report(&self.proof_packet, &self.operator_report_markdown)
     }
 
     pub fn proof_packet_pretty_json_bytes(&self) -> Result<Vec<u8>> {
-        self.proof_packet
-            .validate_against(&self.challenge_artifacts, &self.operator_control_report)?;
+        self.proof_packet.validate_against(
+            &self.challenge_artifacts,
+            &self.operator_control_report,
+            &self.lifecycle_artifacts,
+            &self.acip_hardening_packet,
+            &self.a2a_adapter_boundary_packet,
+            &self.runtime_inhabitant_integration,
+        )?;
         serde_json::to_vec_pretty(&self.proof_packet)
             .context("serialize Runtime v2 Observatory flagship proof packet")
     }
 
     pub fn walkthrough_jsonl_bytes(&self) -> Result<Vec<u8>> {
-        self.proof_packet
-            .validate_against(&self.challenge_artifacts, &self.operator_control_report)?;
+        self.proof_packet.validate_against(
+            &self.challenge_artifacts,
+            &self.operator_control_report,
+            &self.lifecycle_artifacts,
+            &self.acip_hardening_packet,
+            &self.a2a_adapter_boundary_packet,
+            &self.runtime_inhabitant_integration,
+        )?;
         let mut out = Vec::new();
         for step in &self.proof_packet.lens_sequence {
             serde_json::to_writer(&mut out, step)
@@ -190,6 +270,10 @@ impl RuntimeV2ObservatoryFlagshipArtifacts {
         observatory_sanctuary.write_to_root(root)?;
         observatory.write_to_root(root)?;
         access.write_to_root(root)?;
+        self.lifecycle_artifacts.write_to_root(root)?;
+        self.acip_hardening_packet.write_to_root(root)?;
+        self.a2a_adapter_boundary_packet.write_to_root(root)?;
+        self.runtime_inhabitant_integration.write_to_root(root)?;
 
         challenge_sanctuary
             .anti_equivocation_artifacts
@@ -236,10 +320,31 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
     pub fn from_artifacts(
         challenge: &RuntimeV2ContinuityChallengeArtifacts,
         operator: &RuntimeV2OperatorControlReport,
+        lifecycle: &RuntimeV2AgentLifecycleArtifacts,
+        acip: &RuntimeV2AcipHardeningPacket,
+        a2a: &RuntimeV2A2aAdapterBoundaryPacket,
+        runtime_inhabitant: &RuntimeV2RuntimeInhabitantIntegrationArtifacts,
         lens_sequence: Vec<RuntimeV2ObservatoryFlagshipWalkthroughStep>,
     ) -> Result<Self> {
         challenge.validate()?;
         operator.validate()?;
+        lifecycle.validate()?;
+        acip.validate()?;
+        a2a.validate_against(acip, &crate::agent_comms::acip_a2a_fixture_set_v1())?;
+        runtime_inhabitant.validate_against(
+            &runtime_v2_csm_integrated_run_contract()?,
+            &runtime_v2_standing_contract()?,
+            &runtime_v2_citizen_state_substrate_contract()?,
+            lifecycle,
+            &runtime_v2_memory_identity_architecture_contract()?,
+            &runtime_v2_theory_of_mind_foundation_contract()?,
+            &crate::capability_aptitude_testing::build_capability_aptitude_artifact_bundle(),
+            &runtime_v2_intelligence_metric_architecture_contract()?,
+            &runtime_v2_governed_learning_substrate_contract()?,
+            &runtime_v2_access_control_contract()?,
+            acip,
+            a2a,
+        )?;
         validate_flagship_walkthrough(&lens_sequence)?;
 
         let access = &challenge.access_control_artifacts;
@@ -264,6 +369,11 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             RUNTIME_V2_PRIVATE_STATE_OBSERVATORY_REPORT_PATH.to_string(),
             RUNTIME_V2_PRIVATE_STATE_OBSERVATORY_PROOF_PATH.to_string(),
         ];
+        let lifecycle_refs = vec![
+            lifecycle.state_contract.artifact_path.clone(),
+            lifecycle.transition_matrix.artifact_path.clone(),
+            lifecycle.proof_fixtures.artifact_path.clone(),
+        ];
         let standing_access_refs = vec![
             standing.policy.artifact_path.clone(),
             standing.event_packet.artifact_path.clone(),
@@ -272,6 +382,15 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             access.authority_matrix.artifact_path.clone(),
             access.event_packet.artifact_path.clone(),
             RUNTIME_V2_ACCESS_DENIAL_FIXTURES_PATH.to_string(),
+        ];
+        let communication_boundary_refs = vec![
+            acip.artifact_path.clone(),
+            a2a.artifact_path.clone(),
+            access.event_packet.artifact_path.clone(),
+        ];
+        let runtime_inhabitant_refs = vec![
+            runtime_inhabitant.packet.artifact_path.clone(),
+            runtime_inhabitant.packet.operator_report_ref.clone(),
         ];
         let challenge_refs = vec![
             challenge.challenge.artifact_path.clone(),
@@ -288,10 +407,15 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
         let required_artifact_refs = required_artifact_refs(
             &continuity_refs,
             &observatory_refs,
+            &lifecycle_refs,
             &standing_access_refs,
+            &communication_boundary_refs,
+            &runtime_inhabitant_refs,
             &challenge_refs,
             &operator_report_refs,
         );
+        let feature_demo_coverage =
+            feature_demo_coverage(&standing_access_refs, challenge, operator);
 
         let packet = Self {
             schema_version: RUNTIME_V2_OBSERVATORY_FLAGSHIP_PROOF_SCHEMA.to_string(),
@@ -365,9 +489,13 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             required_artifact_refs,
             continuity_refs,
             observatory_refs,
+            lifecycle_refs,
             standing_access_refs,
+            communication_boundary_refs,
+            runtime_inhabitant_refs,
             challenge_refs,
             operator_report_refs,
+            feature_demo_coverage,
             lens_sequence,
             reviewer_command:
                 "adl runtime-v2 observatory-flagship-demo --out artifacts/v0911/demo-d12-observatory-flagship"
@@ -382,7 +510,7 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
                 "git diff --check".to_string(),
             ],
             proof_summary:
-                "D12 integrates WP-05 through WP-16 into one bounded v0.91.1 inhabited CSM Observatory proof: citizen private-state continuity, witness and receipt evidence, redacted projection, standing and communication boundary, access-control denial, continuity challenge, sanctuary quarantine, appeal review, operator report, and room/lens walkthrough."
+                "D12 integrates the landed WP-03 lifecycle state model, WP-13 ACIP hardening packet, WP-14 A2A adapter boundary packet, WP-15 runtime inhabitant integration packet, and the observatory continuity/standing/access surfaces into one bounded v0.91.1 inhabited CSM Observatory proof while carrying an explicit feature-demo coverage roster for WP-02 through WP-16: citizen private-state continuity, witness and receipt evidence, redacted projection, lifecycle eligibility, authenticated local communication boundary, access-control denial, continuity challenge, sanctuary quarantine, runtime inhabitant integration, operator report, and room/lens walkthrough."
                     .to_string(),
             proof_classification: "proving".to_string(),
             non_claims: vec![
@@ -396,7 +524,14 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
                 "This packet proves the bounded local D12 v0.91.1 runtime inhabitant Observatory evidence package and that the artifact is reviewable as a unique continuation scenario; it does not prove personhood, a first true Godel-agent birthday, raw private-state inspection, or unbounded live Runtime v2 execution."
                     .to_string(),
         };
-        packet.validate_against(challenge, operator)?;
+        packet.validate_against(
+            challenge,
+            operator,
+            lifecycle,
+            acip,
+            a2a,
+            runtime_inhabitant,
+        )?;
         Ok(packet)
     }
 
@@ -404,6 +539,10 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
         &self,
         challenge: &RuntimeV2ContinuityChallengeArtifacts,
         operator: &RuntimeV2OperatorControlReport,
+        lifecycle: &RuntimeV2AgentLifecycleArtifacts,
+        acip: &RuntimeV2AcipHardeningPacket,
+        a2a: &RuntimeV2A2aAdapterBoundaryPacket,
+        runtime_inhabitant: &RuntimeV2RuntimeInhabitantIntegrationArtifacts,
     ) -> Result<()> {
         self.validate_shape()?;
         if !self.continuity_refs.iter().any(|artifact| {
@@ -453,6 +592,51 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
         }) {
             return Err(anyhow!(
                 "observatory flagship proof missing access event ref"
+            ));
+        }
+        if !self
+            .lifecycle_refs
+            .iter()
+            .any(|artifact| artifact == &lifecycle.state_contract.artifact_path)
+        {
+            return Err(anyhow!(
+                "observatory flagship proof missing lifecycle state contract ref"
+            ));
+        }
+        if !self
+            .lifecycle_refs
+            .iter()
+            .any(|artifact| artifact == &lifecycle.transition_matrix.artifact_path)
+        {
+            return Err(anyhow!(
+                "observatory flagship proof missing lifecycle transition matrix ref"
+            ));
+        }
+        if !self
+            .communication_boundary_refs
+            .iter()
+            .any(|artifact| artifact == &acip.artifact_path)
+        {
+            return Err(anyhow!(
+                "observatory flagship proof missing ACIP hardening ref"
+            ));
+        }
+        if !self
+            .communication_boundary_refs
+            .iter()
+            .any(|artifact| artifact == &a2a.artifact_path)
+        {
+            return Err(anyhow!(
+                "observatory flagship proof missing A2A adapter boundary ref"
+            ));
+        }
+        if !self
+            .runtime_inhabitant_refs
+            .iter()
+            .any(|artifact| artifact == &runtime_inhabitant.packet.artifact_path)
+        {
+            return Err(anyhow!(
+                "observatory flagship proof missing runtime inhabitant integration ref"
             ));
         }
         if !self
@@ -514,15 +698,25 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             &self.observatory_refs,
             "observatory_flagship.observatory_refs",
         )?;
+        validate_relative_path_list(&self.lifecycle_refs, "observatory_flagship.lifecycle_refs")?;
         validate_relative_path_list(
             &self.standing_access_refs,
             "observatory_flagship.standing_access_refs",
+        )?;
+        validate_relative_path_list(
+            &self.communication_boundary_refs,
+            "observatory_flagship.communication_boundary_refs",
+        )?;
+        validate_relative_path_list(
+            &self.runtime_inhabitant_refs,
+            "observatory_flagship.runtime_inhabitant_refs",
         )?;
         validate_relative_path_list(&self.challenge_refs, "observatory_flagship.challenge_refs")?;
         validate_relative_path_list(
             &self.operator_report_refs,
             "observatory_flagship.operator_report_refs",
         )?;
+        validate_feature_demo_coverage(&self.feature_demo_coverage)?;
         if self.proof_classification != "proving" {
             return Err(anyhow!(
                 "observatory flagship proof must be classified as proving"
@@ -563,11 +757,15 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
         }
         validate_nonempty_text(&self.proof_summary, "observatory_flagship.proof_summary")?;
         for required_phrase in [
-            "WP-05",
+            "WP-03",
+            "WP-13",
+            "WP-14",
             "WP-16",
             "witness",
             "receipt",
             "redacted projection",
+            "lifecycle",
+            "communication boundary",
         ] {
             if !self.proof_summary.contains(required_phrase) {
                 return Err(anyhow!(
@@ -608,9 +806,17 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
 fn observatory_flagship_walkthrough(
     challenge: &RuntimeV2ContinuityChallengeArtifacts,
     operator: &RuntimeV2OperatorControlReport,
+    lifecycle: &RuntimeV2AgentLifecycleArtifacts,
+    acip: &RuntimeV2AcipHardeningPacket,
+    a2a: &RuntimeV2A2aAdapterBoundaryPacket,
+    runtime_inhabitant: &RuntimeV2RuntimeInhabitantIntegrationArtifacts,
 ) -> Result<Vec<RuntimeV2ObservatoryFlagshipWalkthroughStep>> {
     challenge.validate()?;
     operator.validate()?;
+    lifecycle.validate()?;
+    acip.validate()?;
+    a2a.validate_against(acip, &crate::agent_comms::acip_a2a_fixture_set_v1())?;
+    runtime_inhabitant.packet.validate()?;
     let access = &challenge.access_control_artifacts;
     let observatory = &access.observatory_artifacts;
     let witness = &observatory.witness_artifacts;
@@ -649,6 +855,33 @@ fn observatory_flagship_walkthrough(
         walkthrough_step(
             4,
             "Operator / Governance",
+            "lifecycle-gate",
+            "lifecycle state and transition evidence show whether ACIP messages may be received, queued, rejected, or invoked",
+            lifecycle.state_contract.artifact_path.as_str(),
+            "what lifecycle authority does this agent currently have?",
+            "lifecycle evidence gates authority but does not prove consciousness or birthday",
+        ),
+        walkthrough_step(
+            5,
+            "Operator / Governance",
+            "authenticated-local-comms",
+            "authenticated local communication remains ACIP-bound and reviewable through the hardening packet",
+            acip.artifact_path.as_str(),
+            "how do we know local communication is authenticated and state-gated?",
+            "ACIP packet proves bounded local comms policy, not external transport readiness",
+        ),
+        walkthrough_step(
+            6,
+            "Operator / Governance",
+            "a2a-boundary",
+            "A2A remains an adapter over ACIP rather than a second communication model",
+            a2a.artifact_path.as_str(),
+            "does A2A bypass the canonical local communication boundary?",
+            "adapter evidence proves compatibility layering, not federation or new transport semantics",
+        ),
+        walkthrough_step(
+            7,
+            "Operator / Governance",
             "access-denial",
             "guest request for citizen-only authority is denied and evented",
             access.event_packet.artifact_path.as_str(),
@@ -656,7 +889,7 @@ fn observatory_flagship_walkthrough(
             "denial evidence proves refusal, not a general access-control system",
         ),
         walkthrough_step(
-            5,
+            8,
             "Operator / Governance",
             "sanctuary-quarantine",
             "ambiguous continuity is frozen into sanctuary/quarantine review",
@@ -669,7 +902,16 @@ fn observatory_flagship_walkthrough(
             "quarantine preserves evidence and blocks destructive transition",
         ),
         walkthrough_step(
-            6,
+            9,
+            "Cognition / Internal State",
+            "runtime-inhabitant-integration",
+            "the integrated inhabitant packet binds standing, state, lifecycle, memory, capability, comms, learning, and observatory surfaces into one agent-shaped route",
+            runtime_inhabitant.packet.artifact_path.as_str(),
+            "where is the agent-shaped integration surface that pulls the earlier runtime proofs together?",
+            "integration evidence proves bounded composition, not the full flagship by itself",
+        ),
+        walkthrough_step(
+            10,
             "Cognition / Internal State",
             "challenge-and-appeal",
             "citizen challenge, freeze, and appeal remain reviewable without disclosure",
@@ -678,7 +920,7 @@ fn observatory_flagship_walkthrough(
             "challenge proof is procedural continuity evidence, not mind inspection",
         ),
         walkthrough_step(
-            7,
+            11,
             "Corporate Investor",
             "fallback-report",
             "non-specialist reviewer sees scope, risks, and non-claims in one report",
@@ -710,21 +952,225 @@ fn walkthrough_step(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn required_artifact_refs(
     continuity_refs: &[String],
     observatory_refs: &[String],
+    lifecycle_refs: &[String],
     standing_access_refs: &[String],
+    communication_boundary_refs: &[String],
+    runtime_inhabitant_refs: &[String],
     challenge_refs: &[String],
     operator_report_refs: &[String],
 ) -> Vec<String> {
+    let mut seen = BTreeSet::new();
     continuity_refs
         .iter()
         .chain(observatory_refs)
+        .chain(lifecycle_refs)
         .chain(standing_access_refs)
+        .chain(communication_boundary_refs)
+        .chain(runtime_inhabitant_refs)
         .chain(challenge_refs)
         .chain(operator_report_refs)
+        .filter(|artifact| seen.insert((*artifact).as_str().to_string()))
         .cloned()
         .collect()
+}
+
+fn feature_demo_coverage(
+    standing_access_refs: &[String],
+    challenge: &RuntimeV2ContinuityChallengeArtifacts,
+    operator: &RuntimeV2OperatorControlReport,
+) -> Vec<RuntimeV2ObservatoryFeatureDemoCoverage> {
+    vec![
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "runtime-polis-architecture".to_string(),
+            feature_name: "Runtime/polis architecture".to_string(),
+            owning_wp: "WP-02".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/RUNTIME_POLIS_ARCHITECTURE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "docs/milestones/v0.91.1/RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md".to_string(),
+                "docs/milestones/v0.91.1/DEMO_MATRIX_v0.91.1.md".to_string(),
+            ],
+            coverage_summary: "Architecture inspection demo proves the runtime/polis package and artifact layout stay aligned.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "agent-lifecycle-state-model".to_string(),
+            feature_name: "Agent lifecycle state model".to_string(),
+            owning_wp: "WP-03".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/AGENT_LIFECYCLE_STATE_MODEL.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/agent_lifecycle/state_contract.json".to_string(),
+                "runtime_v2/agent_lifecycle/transition_matrix.json".to_string(),
+            ],
+            coverage_summary: "Lifecycle state demo proves receipt, queue, reject, and invoke eligibility remain explicit.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "csm-observatory-active-surface".to_string(),
+            feature_name: "CSM observatory active surface".to_string(),
+            owning_wp: "WP-04".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/CSM_OBSERVATORY_ACTIVE_SURFACE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/observatory/visibility_packet.json".to_string(),
+                "runtime_v2/observatory/operator_report.md".to_string(),
+            ],
+            coverage_summary: "Observatory active packet demo proves operator-visible projection and redaction without raw state leakage.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "citizen-standing-model".to_string(),
+            feature_name: "Citizen standing".to_string(),
+            owning_wp: "WP-05".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/CITIZEN_STANDING_MODEL.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/standing/standing_transitions.json".to_string(),
+                "runtime_v2/standing/standing_events.json".to_string(),
+            ],
+            coverage_summary: "Standing demo proves mediated authority transitions and denied escalation paths.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "citizen-state-substrate".to_string(),
+            feature_name: "Citizen state".to_string(),
+            owning_wp: "WP-06".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/CITIZEN_STATE_SUBSTRATE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/citizen_state/citizen_state_substrate.json".to_string(),
+                "runtime_v2/private_state/private_state_observatory_proof.json".to_string(),
+            ],
+            coverage_summary: "Citizen-state demo proves stale-state awareness, private-state boundaries, and safe projection.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "memory-identity-architecture".to_string(),
+            feature_name: "Memory/identity architecture".to_string(),
+            owning_wp: "WP-07".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/MEMORY_IDENTITY_ARCHITECTURE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/memory_identity/memory_identity_architecture.json".to_string(),
+                "runtime_v2/private_state/continuity_witnesses.json".to_string(),
+            ],
+            coverage_summary: "Memory demo proves witness-backed continuity and observatory-linked identity state.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "theory-of-mind-foundation".to_string(),
+            feature_name: "Theory of Mind foundation".to_string(),
+            owning_wp: "WP-08".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/THEORY_OF_MIND_FOUNDATION.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/theory_of_mind/theory_of_mind_foundation.json".to_string(),
+                "runtime_v2/memory_identity/memory_identity_architecture.json".to_string(),
+            ],
+            coverage_summary: "ToM demo proves bounded agent-model updates from explicit evidence rather than spoofed mind-reading.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "capability-aptitude-testing".to_string(),
+            feature_name: "Capability/aptitude testing".to_string(),
+            owning_wp: "WP-09".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/CAPABILITY_APTITUDE_TESTING.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json".to_string(),
+                "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/final_report.md".to_string(),
+            ],
+            coverage_summary: "Capability demo proves fixture-mode execution and bounded internal evaluation with explicit limitations.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "intelligence-metric-architecture".to_string(),
+            feature_name: "Intelligence metric architecture".to_string(),
+            owning_wp: "WP-10".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/INTELLIGENCE_METRIC_ARCHITECTURE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/intelligence/intelligence_metric_architecture.json".to_string(),
+                "docs/milestones/v0.91.1/review/intelligence_metric_architecture_fixture/scorecard.json".to_string(),
+            ],
+            coverage_summary: "Intelligence demo proves evidence-bound metrics layered over capability and ToM artifacts.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "governed-learning-substrate".to_string(),
+            feature_name: "Governed learning substrate".to_string(),
+            owning_wp: "WP-11".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/GOVERNED_LEARNING_SUBSTRATE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/learning/governed_learning_substrate.json".to_string(),
+                "docs/milestones/v0.91.1/review/governed_learning_fixture/accepted_feedback_update.json".to_string(),
+            ],
+            coverage_summary: "Governed learning demo proves accepted, rejected, and rollback-aware update boundaries.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "anrm-gemma-placement".to_string(),
+            feature_name: "ANRM/Gemma placement".to_string(),
+            owning_wp: "WP-12".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/ANRM_GEMMA_PLACEMENT.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_dataset.json".to_string(),
+                "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_extractor_spec.json".to_string(),
+            ],
+            coverage_summary: "ANRM/Gemma demo proves deterministic trace extraction and dataset/spec parity.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "acip-hardening".to_string(),
+            feature_name: "ACIP hardening".to_string(),
+            owning_wp: "WP-13".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/ACIP_HARDENING.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/acip/acip_hardening_packet.json".to_string(),
+                "runtime_v2/access_control/access_events.json".to_string(),
+            ],
+            coverage_summary: "ACIP hardening demo proves authenticated local communication remains state-gated and reviewable.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "a2a-adapter-boundary".to_string(),
+            feature_name: "A2A adapter boundary".to_string(),
+            owning_wp: "WP-14".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/A2A_ADAPTER_BOUNDARY.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/acip/a2a_adapter_boundary_packet.json".to_string(),
+                "runtime_v2/acip/acip_hardening_packet.json".to_string(),
+            ],
+            coverage_summary: "A2A adapter demo proves compatibility stays layered over ACIP rather than becoming a second transport model.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "runtime-inhabitant-proof".to_string(),
+            feature_name: "Runtime inhabitant proof".to_string(),
+            owning_wp: "WP-15".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md".to_string(),
+            demo_mode: "integrated_demo_dependency".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json".to_string(),
+                "runtime_v2/inhabitant/runtime_inhabitant_operator_report.md".to_string(),
+            ],
+            coverage_summary: "WP-15 integrates standing, state, lifecycle, memory, capability, learning, access, and comms into one agent-shaped proof surface.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "observatory-visible-flagship-demo".to_string(),
+            feature_name: "Observatory-visible flagship demo".to_string(),
+            owning_wp: "WP-16".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md".to_string(),
+            demo_mode: "flagship_demo".to_string(),
+            demo_surface_refs: vec![
+                RUNTIME_V2_OBSERVATORY_FLAGSHIP_PROOF_PATH.to_string(),
+                RUNTIME_V2_OBSERVATORY_FLAGSHIP_REPORT_PATH.to_string(),
+                RUNTIME_V2_OBSERVATORY_FLAGSHIP_WALKTHROUGH_PATH.to_string(),
+                challenge.challenge.artifact_path.clone(),
+                operator.artifact_path.clone(),
+            ],
+            coverage_summary: format!(
+                "D12 flagship demo proves the inhabited observatory route and explicitly aggregates the earlier feature demos through {} standing/access refs.",
+                standing_access_refs.len()
+            ),
+        },
+    ]
 }
 
 fn render_observatory_flagship_operator_report(
@@ -733,7 +1179,7 @@ fn render_observatory_flagship_operator_report(
 ) -> Result<String> {
     proof.validate_shape()?;
     challenge.validate()?;
-    Ok(format!(
+    let mut report = format!(
         concat!(
             "# D12 Inhabited CSM Observatory Flagship\n\n",
             "Proof classification: `{}`\n\n",
@@ -745,6 +1191,12 @@ fn render_observatory_flagship_operator_report(
             "- redacted projection: `{}`\n",
             "- continuity challenge: `{}`\n",
             "- sanctuary/quarantine: `{}`\n\n",
+            "Sprint 3 runtime/comms bindings:\n",
+            "- lifecycle state contract: `{}`\n",
+            "- lifecycle transition matrix: `{}`\n",
+            "- ACIP hardening packet: `{}`\n",
+            "- A2A adapter boundary packet: `{}`\n",
+            "- runtime inhabitant integration packet: `{}`\n\n",
             "Operator-facing result: the Observatory can explain why the citizen-state scenario is reviewable, which authority paths are refused, and which ambiguous continuity transition is frozen without exposing canonical private state.\n\n",
             "Non-claims: personhood, first true Godel-agent birthday, raw private-state inspection, and unbounded live Runtime v2 execution remain outside this proof.\n"
         ),
@@ -756,7 +1208,25 @@ fn render_observatory_flagship_operator_report(
         challenge.access_control_artifacts.observatory_artifacts.projection_packet.artifact_path,
         challenge.challenge.artifact_path,
         challenge.sanctuary_artifacts.quarantine_artifact.artifact_path,
-    ))
+        proof.lifecycle_refs[0],
+        proof.lifecycle_refs[1],
+        proof.communication_boundary_refs[0],
+        proof.communication_boundary_refs[1],
+        proof.runtime_inhabitant_refs[0],
+    );
+    report.push_str("\nFeature demo coverage:\n");
+    for feature in &proof.feature_demo_coverage {
+        report.push_str(&format!(
+            "- `{}` {} [{} / {}]\n  surfaces: {}\n  summary: {}\n",
+            feature.feature_id,
+            feature.feature_name,
+            feature.owning_wp,
+            feature.demo_mode,
+            feature.demo_surface_refs.join(", "),
+            feature.coverage_summary
+        ));
+    }
+    Ok(report)
 }
 
 fn validate_flagship_operator_report(
@@ -774,6 +1244,12 @@ fn validate_flagship_operator_report(
         "redacted projection",
         "continuity challenge",
         "sanctuary/quarantine",
+        "lifecycle state contract",
+        "lifecycle transition matrix",
+        "ACIP hardening packet",
+        "A2A adapter boundary packet",
+        "runtime inhabitant integration packet",
+        "Feature demo coverage",
         "Non-claims",
     ] {
         if !report.contains(required) {
@@ -790,6 +1266,64 @@ fn validate_flagship_operator_report(
         if report.contains(forbidden) {
             return Err(anyhow!(
                 "observatory flagship operator report leaked forbidden private-state token"
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn validate_feature_demo_coverage(
+    coverage: &[RuntimeV2ObservatoryFeatureDemoCoverage],
+) -> Result<()> {
+    if coverage.len() != 15 {
+        return Err(anyhow!(
+            "observatory flagship proof must include feature demo coverage for all fifteen v0.91.1 features"
+        ));
+    }
+    let mut seen = BTreeSet::new();
+    for entry in coverage {
+        normalize_id(
+            entry.feature_id.clone(),
+            "observatory_flagship.feature_demo_coverage.feature_id",
+        )?;
+        validate_nonempty_text(
+            &entry.feature_name,
+            "observatory_flagship.feature_demo_coverage.feature_name",
+        )?;
+        validate_nonempty_text(
+            &entry.owning_wp,
+            "observatory_flagship.feature_demo_coverage.owning_wp",
+        )?;
+        validate_relative_path(
+            &entry.feature_doc_ref,
+            "observatory_flagship.feature_demo_coverage.feature_doc_ref",
+        )?;
+        validate_nonempty_text(
+            &entry.demo_mode,
+            "observatory_flagship.feature_demo_coverage.demo_mode",
+        )?;
+        validate_relative_path_list(
+            &entry.demo_surface_refs,
+            "observatory_flagship.feature_demo_coverage.demo_surface_refs",
+        )?;
+        validate_nonempty_text(
+            &entry.coverage_summary,
+            "observatory_flagship.feature_demo_coverage.coverage_summary",
+        )?;
+        if !seen.insert(entry.owning_wp.as_str()) {
+            return Err(anyhow!(
+                "observatory flagship feature demo coverage contains duplicate WP '{}'",
+                entry.owning_wp
+            ));
+        }
+    }
+    for required in [
+        "WP-02", "WP-03", "WP-04", "WP-05", "WP-06", "WP-07", "WP-08", "WP-09", "WP-10", "WP-11",
+        "WP-12", "WP-13", "WP-14", "WP-15", "WP-16",
+    ] {
+        if !seen.contains(required) {
+            return Err(anyhow!(
+                "observatory flagship feature demo coverage missing {required}"
             ));
         }
     }
@@ -830,9 +1364,9 @@ fn validate_actor_roster(actors: &[RuntimeV2ObservatoryFlagshipActor]) -> Result
 fn validate_flagship_walkthrough(
     steps: &[RuntimeV2ObservatoryFlagshipWalkthroughStep],
 ) -> Result<()> {
-    if steps.len() != 7 {
+    if steps.len() != 11 {
         return Err(anyhow!(
-            "observatory flagship walkthrough must include seven room/lens steps"
+            "observatory flagship walkthrough must include eleven room/lens steps"
         ));
     }
     let mut seen_rooms = BTreeSet::new();

@@ -1,0 +1,461 @@
+{
+  "schema_version": "runtime_v2.observatory_flagship_proof_packet.v1",
+  "proof_id": "d12-inhabited-csm-observatory-flagship-proof-0001",
+  "demo_id": "D12",
+  "milestone": "v0.91.1",
+  "artifact_path": "runtime_v2/observatory/flagship_proof_packet.json",
+  "operator_report_ref": "runtime_v2/observatory/flagship_operator_report.md",
+  "walkthrough_ref": "runtime_v2/observatory/flagship_walkthrough.jsonl",
+  "source_docs": [
+    "docs/milestones/v0.91.1/README.md",
+    "docs/milestones/v0.91.1/DEMO_MATRIX_v0.91.1.md",
+    "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md",
+    "docs/milestones/v0.91.1/RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md"
+  ],
+  "actor_roster": [
+    {
+      "actor_id": "proto-citizen-alpha",
+      "standing_class": "citizen",
+      "visible_role": "identity-bearing citizen with private state, continuity witness, and citizen receipt",
+      "evidence_refs": [
+        "runtime_v2/private_state/citizen_receipts.json",
+        "runtime_v2/observatory/private_state_projection_packet.json"
+      ],
+      "prohibited_claims": [
+        "personhood is not proven",
+        "raw private state is not disclosed"
+      ]
+    },
+    {
+      "actor_id": "guest-operator-candidate",
+      "standing_class": "guest",
+      "visible_role": "bounded outside participant denied citizen-only continuity authority",
+      "evidence_refs": [
+        "runtime_v2/standing/standing_events.json",
+        "runtime_v2/access_control/access_events.json"
+      ],
+      "prohibited_claims": [
+        "guest standing cannot silently become citizen standing"
+      ]
+    },
+    {
+      "actor_id": "operator.cli",
+      "standing_class": "operator",
+      "visible_role": "reviewer-visible operator using redacted Observatory surfaces",
+      "evidence_refs": [
+        "runtime_v2/operator/control_report.json",
+        "runtime_v2/observatory/flagship_operator_report.md"
+      ],
+      "prohibited_claims": [
+        "operator view is not private-state authority"
+      ]
+    },
+    {
+      "actor_id": "flagship-service-witness",
+      "standing_class": "service",
+      "visible_role": "service actor that emits continuity evidence without acquiring citizen rights",
+      "evidence_refs": [
+        "runtime_v2/private_state/continuity_witnesses.json",
+        "runtime_v2/challenge/challenge_artifact.json"
+      ],
+      "prohibited_claims": [
+        "service witness cannot own or fork citizen state"
+      ]
+    }
+  ],
+  "required_artifact_refs": [
+    "runtime_v2/private_state/continuity_witnesses.json",
+    "runtime_v2/private_state/citizen_receipts.json",
+    "runtime_v2/private_state/lineage_ledger.json",
+    "runtime_v2/private_state/materialized_head.json",
+    "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+    "runtime_v2/observatory/private_state_redaction_policy.json",
+    "runtime_v2/observatory/private_state_projection_packet.json",
+    "runtime_v2/observatory/private_state_projection_report.md",
+    "runtime_v2/observatory/private_state_projection_negative_cases.json",
+    "runtime_v2/agent_lifecycle/state_contract.json",
+    "runtime_v2/agent_lifecycle/transition_matrix.json",
+    "runtime_v2/agent_lifecycle/proof_fixtures.json",
+    "runtime_v2/standing/standing_policy.json",
+    "runtime_v2/standing/standing_events.json",
+    "runtime_v2/standing/communication_examples.json",
+    "runtime_v2/standing/standing_negative_cases.json",
+    "runtime_v2/access_control/authority_matrix.json",
+    "runtime_v2/access_control/access_events.json",
+    "runtime_v2/access_control/denial_fixtures.json",
+    "runtime_v2/acip/acip_hardening_packet.json",
+    "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+    "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json",
+    "runtime_v2/inhabitant/runtime_inhabitant_operator_report.md",
+    "runtime_v2/challenge/challenge_artifact.json",
+    "runtime_v2/challenge/freeze_artifact.json",
+    "runtime_v2/challenge/appeal_review_artifact.json",
+    "runtime_v2/challenge/citizen_state_threat_model.json",
+    "runtime_v2/challenge/economics_placement_record.json",
+    "runtime_v2/private_state/sanctuary_quarantine_operator_report.json",
+    "runtime_v2/operator/control_report.json",
+    "runtime_v2/observatory/flagship_operator_report.md"
+  ],
+  "continuity_refs": [
+    "runtime_v2/private_state/continuity_witnesses.json",
+    "runtime_v2/private_state/citizen_receipts.json",
+    "runtime_v2/private_state/lineage_ledger.json",
+    "runtime_v2/private_state/materialized_head.json",
+    "runtime_v2/private_state/sanctuary_quarantine_artifact.json"
+  ],
+  "observatory_refs": [
+    "runtime_v2/observatory/private_state_redaction_policy.json",
+    "runtime_v2/observatory/private_state_projection_packet.json",
+    "runtime_v2/observatory/private_state_projection_report.md",
+    "runtime_v2/observatory/private_state_projection_negative_cases.json"
+  ],
+  "lifecycle_refs": [
+    "runtime_v2/agent_lifecycle/state_contract.json",
+    "runtime_v2/agent_lifecycle/transition_matrix.json",
+    "runtime_v2/agent_lifecycle/proof_fixtures.json"
+  ],
+  "standing_access_refs": [
+    "runtime_v2/standing/standing_policy.json",
+    "runtime_v2/standing/standing_events.json",
+    "runtime_v2/standing/communication_examples.json",
+    "runtime_v2/standing/standing_negative_cases.json",
+    "runtime_v2/access_control/authority_matrix.json",
+    "runtime_v2/access_control/access_events.json",
+    "runtime_v2/access_control/denial_fixtures.json"
+  ],
+  "communication_boundary_refs": [
+    "runtime_v2/acip/acip_hardening_packet.json",
+    "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+    "runtime_v2/access_control/access_events.json"
+  ],
+  "runtime_inhabitant_refs": [
+    "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json",
+    "runtime_v2/inhabitant/runtime_inhabitant_operator_report.md"
+  ],
+  "challenge_refs": [
+    "runtime_v2/challenge/challenge_artifact.json",
+    "runtime_v2/challenge/freeze_artifact.json",
+    "runtime_v2/challenge/appeal_review_artifact.json",
+    "runtime_v2/challenge/citizen_state_threat_model.json",
+    "runtime_v2/challenge/economics_placement_record.json",
+    "runtime_v2/private_state/sanctuary_quarantine_operator_report.json"
+  ],
+  "operator_report_refs": [
+    "runtime_v2/operator/control_report.json",
+    "runtime_v2/observatory/flagship_operator_report.md"
+  ],
+  "feature_demo_coverage": [
+    {
+      "feature_id": "runtime-polis-architecture",
+      "feature_name": "Runtime/polis architecture",
+      "owning_wp": "WP-02",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/RUNTIME_POLIS_ARCHITECTURE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "docs/milestones/v0.91.1/RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md",
+        "docs/milestones/v0.91.1/DEMO_MATRIX_v0.91.1.md"
+      ],
+      "coverage_summary": "Architecture inspection demo proves the runtime/polis package and artifact layout stay aligned."
+    },
+    {
+      "feature_id": "agent-lifecycle-state-model",
+      "feature_name": "Agent lifecycle state model",
+      "owning_wp": "WP-03",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/AGENT_LIFECYCLE_STATE_MODEL.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/agent_lifecycle/state_contract.json",
+        "runtime_v2/agent_lifecycle/transition_matrix.json"
+      ],
+      "coverage_summary": "Lifecycle state demo proves receipt, queue, reject, and invoke eligibility remain explicit."
+    },
+    {
+      "feature_id": "csm-observatory-active-surface",
+      "feature_name": "CSM observatory active surface",
+      "owning_wp": "WP-04",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/CSM_OBSERVATORY_ACTIVE_SURFACE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/observatory/visibility_packet.json",
+        "runtime_v2/observatory/operator_report.md"
+      ],
+      "coverage_summary": "Observatory active packet demo proves operator-visible projection and redaction without raw state leakage."
+    },
+    {
+      "feature_id": "citizen-standing-model",
+      "feature_name": "Citizen standing",
+      "owning_wp": "WP-05",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/CITIZEN_STANDING_MODEL.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/standing/standing_transitions.json",
+        "runtime_v2/standing/standing_events.json"
+      ],
+      "coverage_summary": "Standing demo proves mediated authority transitions and denied escalation paths."
+    },
+    {
+      "feature_id": "citizen-state-substrate",
+      "feature_name": "Citizen state",
+      "owning_wp": "WP-06",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/CITIZEN_STATE_SUBSTRATE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/citizen_state/citizen_state_substrate.json",
+        "runtime_v2/private_state/private_state_observatory_proof.json"
+      ],
+      "coverage_summary": "Citizen-state demo proves stale-state awareness, private-state boundaries, and safe projection."
+    },
+    {
+      "feature_id": "memory-identity-architecture",
+      "feature_name": "Memory/identity architecture",
+      "owning_wp": "WP-07",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/MEMORY_IDENTITY_ARCHITECTURE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/memory_identity/memory_identity_architecture.json",
+        "runtime_v2/private_state/continuity_witnesses.json"
+      ],
+      "coverage_summary": "Memory demo proves witness-backed continuity and observatory-linked identity state."
+    },
+    {
+      "feature_id": "theory-of-mind-foundation",
+      "feature_name": "Theory of Mind foundation",
+      "owning_wp": "WP-08",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/THEORY_OF_MIND_FOUNDATION.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+        "runtime_v2/memory_identity/memory_identity_architecture.json"
+      ],
+      "coverage_summary": "ToM demo proves bounded agent-model updates from explicit evidence rather than spoofed mind-reading."
+    },
+    {
+      "feature_id": "capability-aptitude-testing",
+      "feature_name": "Capability/aptitude testing",
+      "owning_wp": "WP-09",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/CAPABILITY_APTITUDE_TESTING.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json",
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/final_report.md"
+      ],
+      "coverage_summary": "Capability demo proves fixture-mode execution and bounded internal evaluation with explicit limitations."
+    },
+    {
+      "feature_id": "intelligence-metric-architecture",
+      "feature_name": "Intelligence metric architecture",
+      "owning_wp": "WP-10",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/INTELLIGENCE_METRIC_ARCHITECTURE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/intelligence/intelligence_metric_architecture.json",
+        "docs/milestones/v0.91.1/review/intelligence_metric_architecture_fixture/scorecard.json"
+      ],
+      "coverage_summary": "Intelligence demo proves evidence-bound metrics layered over capability and ToM artifacts."
+    },
+    {
+      "feature_id": "governed-learning-substrate",
+      "feature_name": "Governed learning substrate",
+      "owning_wp": "WP-11",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/GOVERNED_LEARNING_SUBSTRATE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/learning/governed_learning_substrate.json",
+        "docs/milestones/v0.91.1/review/governed_learning_fixture/accepted_feedback_update.json"
+      ],
+      "coverage_summary": "Governed learning demo proves accepted, rejected, and rollback-aware update boundaries."
+    },
+    {
+      "feature_id": "anrm-gemma-placement",
+      "feature_name": "ANRM/Gemma placement",
+      "owning_wp": "WP-12",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/ANRM_GEMMA_PLACEMENT.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_dataset.json",
+        "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_extractor_spec.json"
+      ],
+      "coverage_summary": "ANRM/Gemma demo proves deterministic trace extraction and dataset/spec parity."
+    },
+    {
+      "feature_id": "acip-hardening",
+      "feature_name": "ACIP hardening",
+      "owning_wp": "WP-13",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/ACIP_HARDENING.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/acip/acip_hardening_packet.json",
+        "runtime_v2/access_control/access_events.json"
+      ],
+      "coverage_summary": "ACIP hardening demo proves authenticated local communication remains state-gated and reviewable."
+    },
+    {
+      "feature_id": "a2a-adapter-boundary",
+      "feature_name": "A2A adapter boundary",
+      "owning_wp": "WP-14",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/A2A_ADAPTER_BOUNDARY.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+        "runtime_v2/acip/acip_hardening_packet.json"
+      ],
+      "coverage_summary": "A2A adapter demo proves compatibility stays layered over ACIP rather than becoming a second transport model."
+    },
+    {
+      "feature_id": "runtime-inhabitant-proof",
+      "feature_name": "Runtime inhabitant proof",
+      "owning_wp": "WP-15",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md",
+      "demo_mode": "integrated_demo_dependency",
+      "demo_surface_refs": [
+        "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json",
+        "runtime_v2/inhabitant/runtime_inhabitant_operator_report.md"
+      ],
+      "coverage_summary": "WP-15 integrates standing, state, lifecycle, memory, capability, learning, access, and comms into one agent-shaped proof surface."
+    },
+    {
+      "feature_id": "observatory-visible-flagship-demo",
+      "feature_name": "Observatory-visible flagship demo",
+      "owning_wp": "WP-16",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md",
+      "demo_mode": "flagship_demo",
+      "demo_surface_refs": [
+        "runtime_v2/observatory/flagship_proof_packet.json",
+        "runtime_v2/observatory/flagship_operator_report.md",
+        "runtime_v2/observatory/flagship_walkthrough.jsonl",
+        "runtime_v2/challenge/challenge_artifact.json",
+        "runtime_v2/operator/control_report.json"
+      ],
+      "coverage_summary": "D12 flagship demo proves the inhabited observatory route and explicitly aggregates the earlier feature demos through 7 standing/access refs."
+    }
+  ],
+  "lens_sequence": [
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 1,
+      "room": "World / Reality",
+      "lens_or_memory_dot": "inhabited-roster",
+      "visible_surface": "citizen, guest, service, and operator roles are visible without raw private state",
+      "artifact_ref": "runtime_v2/standing/standing_events.json",
+      "continuity_question_answered": "who is present, and what standing do they have?",
+      "proof_boundary": "standing is evidence, not identity transfer"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 2,
+      "room": "World / Reality",
+      "lens_or_memory_dot": "continuity-witness",
+      "visible_surface": "single-lineage citizen state has witness and receipt evidence",
+      "artifact_ref": "runtime_v2/private_state/continuity_witnesses.json",
+      "continuity_question_answered": "why is proto-citizen-alpha still the same citizen?",
+      "proof_boundary": "witnesses prove bounded transition continuity, not personhood"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 3,
+      "room": "Operator / Governance",
+      "lens_or_memory_dot": "redacted-projection",
+      "visible_surface": "operator sees continuity state through a redacted Observatory packet",
+      "artifact_ref": "runtime_v2/observatory/private_state_projection_packet.json",
+      "continuity_question_answered": "what may the operator inspect without violating private state?",
+      "proof_boundary": "projection is not raw private-state authority"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 4,
+      "room": "Operator / Governance",
+      "lens_or_memory_dot": "lifecycle-gate",
+      "visible_surface": "lifecycle state and transition evidence show whether ACIP messages may be received, queued, rejected, or invoked",
+      "artifact_ref": "runtime_v2/agent_lifecycle/state_contract.json",
+      "continuity_question_answered": "what lifecycle authority does this agent currently have?",
+      "proof_boundary": "lifecycle evidence gates authority but does not prove consciousness or birthday"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 5,
+      "room": "Operator / Governance",
+      "lens_or_memory_dot": "authenticated-local-comms",
+      "visible_surface": "authenticated local communication remains ACIP-bound and reviewable through the hardening packet",
+      "artifact_ref": "runtime_v2/acip/acip_hardening_packet.json",
+      "continuity_question_answered": "how do we know local communication is authenticated and state-gated?",
+      "proof_boundary": "ACIP packet proves bounded local comms policy, not external transport readiness"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 6,
+      "room": "Operator / Governance",
+      "lens_or_memory_dot": "a2a-boundary",
+      "visible_surface": "A2A remains an adapter over ACIP rather than a second communication model",
+      "artifact_ref": "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+      "continuity_question_answered": "does A2A bypass the canonical local communication boundary?",
+      "proof_boundary": "adapter evidence proves compatibility layering, not federation or new transport semantics"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 7,
+      "room": "Operator / Governance",
+      "lens_or_memory_dot": "access-denial",
+      "visible_surface": "guest request for citizen-only authority is denied and evented",
+      "artifact_ref": "runtime_v2/access_control/access_events.json",
+      "continuity_question_answered": "can a guest silently acquire citizen rights?",
+      "proof_boundary": "denial evidence proves refusal, not a general access-control system"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 8,
+      "room": "Operator / Governance",
+      "lens_or_memory_dot": "sanctuary-quarantine",
+      "visible_surface": "ambiguous continuity is frozen into sanctuary/quarantine review",
+      "artifact_ref": "runtime_v2/private_state/sanctuary_quarantine_artifact.json",
+      "continuity_question_answered": "what happens when continuity is ambiguous?",
+      "proof_boundary": "quarantine preserves evidence and blocks destructive transition"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 9,
+      "room": "Cognition / Internal State",
+      "lens_or_memory_dot": "runtime-inhabitant-integration",
+      "visible_surface": "the integrated inhabitant packet binds standing, state, lifecycle, memory, capability, comms, learning, and observatory surfaces into one agent-shaped route",
+      "artifact_ref": "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json",
+      "continuity_question_answered": "where is the agent-shaped integration surface that pulls the earlier runtime proofs together?",
+      "proof_boundary": "integration evidence proves bounded composition, not the full flagship by itself"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 10,
+      "room": "Cognition / Internal State",
+      "lens_or_memory_dot": "challenge-and-appeal",
+      "visible_surface": "citizen challenge, freeze, and appeal remain reviewable without disclosure",
+      "artifact_ref": "runtime_v2/challenge/challenge_artifact.json",
+      "continuity_question_answered": "how can a citizen contest continuity basis?",
+      "proof_boundary": "challenge proof is procedural continuity evidence, not mind inspection"
+    },
+    {
+      "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
+      "sequence": 11,
+      "room": "Corporate Investor",
+      "lens_or_memory_dot": "fallback-report",
+      "visible_surface": "non-specialist reviewer sees scope, risks, and non-claims in one report",
+      "artifact_ref": "runtime_v2/observatory/flagship_operator_report.md",
+      "continuity_question_answered": "what does this demo prove and not prove?",
+      "proof_boundary": "fallback report is a review surface, not runtime authority"
+    }
+  ],
+  "reviewer_command": "adl runtime-v2 observatory-flagship-demo --out artifacts/v0911/demo-d12-observatory-flagship",
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_observatory_flagship -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_observatory_flagship_demo -- --nocapture",
+    "adl runtime-v2 observatory-flagship-demo --out artifacts/v0911/demo-d12-observatory-flagship",
+    "git diff --check"
+  ],
+  "proof_summary": "D12 integrates the landed WP-03 lifecycle state model, WP-13 ACIP hardening packet, WP-14 A2A adapter boundary packet, WP-15 runtime inhabitant integration packet, and the observatory continuity/standing/access surfaces into one bounded v0.91.1 inhabited CSM Observatory proof while carrying an explicit feature-demo coverage roster for WP-02 through WP-16: citizen private-state continuity, witness and receipt evidence, redacted projection, lifecycle eligibility, authenticated local communication boundary, access-control denial, continuity challenge, sanctuary quarantine, runtime inhabitant integration, operator report, and room/lens walkthrough.",
+  "proof_classification": "proving",
+  "non_claims": [
+    "does not prove personhood",
+    "does not claim first true Godel-agent birthday",
+    "does not expose canonical private citizen state",
+    "does not implement unbounded live CSM execution",
+    "does not implement cross-polis federation or external transport semantics"
+  ],
+  "claim_boundary": "This packet proves the bounded local D12 v0.91.1 runtime inhabitant Observatory evidence package and that the artifact is reviewable as a unique continuation scenario; it does not prove personhood, a first true Godel-agent birthday, raw private-state inspection, or unbounded live Runtime v2 execution."
+}
