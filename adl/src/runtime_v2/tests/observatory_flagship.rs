@@ -35,6 +35,17 @@ fn runtime_v2_observatory_flagship_review_surfaces_are_stable_and_serializable()
     );
     assert_eq!(artifacts.proof_packet.proof_classification, "proving");
     assert_eq!(artifacts.proof_packet.lens_sequence.len(), 7);
+    assert_eq!(artifacts.proof_packet.feature_demo_coverage.len(), 15);
+    assert!(artifacts
+        .proof_packet
+        .feature_demo_coverage
+        .iter()
+        .any(|feature| feature.owning_wp == "WP-02"));
+    assert!(artifacts
+        .proof_packet
+        .feature_demo_coverage
+        .iter()
+        .any(|feature| feature.owning_wp == "WP-16"));
     assert!(artifacts
         .proof_packet
         .actor_roster
@@ -72,6 +83,15 @@ fn runtime_v2_observatory_flagship_review_surfaces_are_stable_and_serializable()
     assert!(artifacts
         .operator_report_markdown
         .contains("D12 Inhabited CSM Observatory Flagship"));
+    assert!(artifacts
+        .operator_report_markdown
+        .contains("Feature demo coverage"));
+    assert!(artifacts
+        .operator_report_markdown
+        .contains("runtime-polis-architecture"));
+    assert!(artifacts
+        .operator_report_markdown
+        .contains("observatory-visible-flagship-demo"));
     let proof_json: serde_json::Value = serde_json::from_slice(
         &artifacts
             .proof_packet_pretty_json_bytes()
@@ -149,6 +169,7 @@ fn runtime_v2_observatory_flagship_writes_integrated_artifacts_without_path_leak
         fs::read_to_string(temp_root.join("runtime_v2/observatory/flagship_operator_report.md"))
             .expect("report text");
     assert!(report_text.contains("citizen receipt set"));
+    assert!(report_text.contains("Feature demo coverage"));
     assert!(report_text.contains("Non-claims"));
     assert!(!report_text.contains("private_payload_b64"));
     assert!(!report_text.contains("sealed_payload_b64"));
@@ -261,6 +282,14 @@ fn runtime_v2_observatory_flagship_rejects_shape_and_boundary_drift() {
         .expect_err("missing WP phrase should fail")
         .to_string()
         .contains("must mention WP-05"));
+
+    let mut missing_feature_coverage = packet.clone();
+    missing_feature_coverage.feature_demo_coverage.pop();
+    assert!(missing_feature_coverage
+        .validate_shape()
+        .expect_err("missing feature demo coverage should fail")
+        .to_string()
+        .contains("all fifteen v0.91.1 features"));
 
     let mut missing_personhood_non_claim = packet.clone();
     missing_personhood_non_claim.non_claims = vec![

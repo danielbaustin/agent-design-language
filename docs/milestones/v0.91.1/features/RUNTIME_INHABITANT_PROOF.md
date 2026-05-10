@@ -67,6 +67,8 @@ Out of scope:
   - deterministic flagship proof packet, operator report, and walkthrough
   - tracked review bundle parity under
     `docs/milestones/v0.91.1/review/observatory_flagship_demo/`
+  - explicit feature-demo coverage for every landed `v0.91.1` feature from
+    WP-02 through WP-16
   - explicit non-claims around personhood, first birthday, raw private-state
     inspection, and autonomous federation
 

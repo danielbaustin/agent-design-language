@@ -123,6 +123,191 @@
     "runtime_v2/operator/control_report.json",
     "runtime_v2/observatory/flagship_operator_report.md"
   ],
+  "feature_demo_coverage": [
+    {
+      "feature_id": "runtime-polis-architecture",
+      "feature_name": "Runtime/polis architecture",
+      "owning_wp": "WP-02",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/RUNTIME_POLIS_ARCHITECTURE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "docs/milestones/v0.91.1/RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md",
+        "docs/milestones/v0.91.1/DEMO_MATRIX_v0.91.1.md"
+      ],
+      "coverage_summary": "Architecture inspection demo proves the runtime/polis package and artifact layout stay aligned."
+    },
+    {
+      "feature_id": "agent-lifecycle-state-model",
+      "feature_name": "Agent lifecycle state model",
+      "owning_wp": "WP-03",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/AGENT_LIFECYCLE_STATE_MODEL.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/agent_lifecycle/state_contract.json",
+        "runtime_v2/agent_lifecycle/transition_matrix.json"
+      ],
+      "coverage_summary": "Lifecycle state demo proves receipt, queue, reject, and invoke eligibility remain explicit."
+    },
+    {
+      "feature_id": "csm-observatory-active-surface",
+      "feature_name": "CSM observatory active surface",
+      "owning_wp": "WP-04",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/CSM_OBSERVATORY_ACTIVE_SURFACE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/observatory/visibility_packet.json",
+        "runtime_v2/observatory/operator_report.md"
+      ],
+      "coverage_summary": "Observatory active packet demo proves operator-visible projection and redaction without raw state leakage."
+    },
+    {
+      "feature_id": "citizen-standing-model",
+      "feature_name": "Citizen standing",
+      "owning_wp": "WP-05",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/CITIZEN_STANDING_MODEL.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/standing/standing_transitions.json",
+        "runtime_v2/standing/standing_events.json"
+      ],
+      "coverage_summary": "Standing demo proves mediated authority transitions and denied escalation paths."
+    },
+    {
+      "feature_id": "citizen-state-substrate",
+      "feature_name": "Citizen state",
+      "owning_wp": "WP-06",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/CITIZEN_STATE_SUBSTRATE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/citizen_state/citizen_state_substrate.json",
+        "runtime_v2/private_state/private_state_observatory_proof.json"
+      ],
+      "coverage_summary": "Citizen-state demo proves stale-state awareness, private-state boundaries, and safe projection."
+    },
+    {
+      "feature_id": "memory-identity-architecture",
+      "feature_name": "Memory/identity architecture",
+      "owning_wp": "WP-07",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/MEMORY_IDENTITY_ARCHITECTURE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/memory_identity/memory_identity_architecture.json",
+        "runtime_v2/private_state/continuity_witnesses.json"
+      ],
+      "coverage_summary": "Memory demo proves witness-backed continuity and observatory-linked identity state."
+    },
+    {
+      "feature_id": "theory-of-mind-foundation",
+      "feature_name": "Theory of Mind foundation",
+      "owning_wp": "WP-08",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/THEORY_OF_MIND_FOUNDATION.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+        "runtime_v2/memory_identity/memory_identity_architecture.json"
+      ],
+      "coverage_summary": "ToM demo proves bounded agent-model updates from explicit evidence rather than spoofed mind-reading."
+    },
+    {
+      "feature_id": "capability-aptitude-testing",
+      "feature_name": "Capability/aptitude testing",
+      "owning_wp": "WP-09",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/CAPABILITY_APTITUDE_TESTING.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json",
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/final_report.md"
+      ],
+      "coverage_summary": "Capability demo proves fixture-mode execution and bounded internal evaluation with explicit limitations."
+    },
+    {
+      "feature_id": "intelligence-metric-architecture",
+      "feature_name": "Intelligence metric architecture",
+      "owning_wp": "WP-10",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/INTELLIGENCE_METRIC_ARCHITECTURE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/intelligence/intelligence_metric_architecture.json",
+        "docs/milestones/v0.91.1/review/intelligence_metric_architecture_fixture/scorecard.json"
+      ],
+      "coverage_summary": "Intelligence demo proves evidence-bound metrics layered over capability and ToM artifacts."
+    },
+    {
+      "feature_id": "governed-learning-substrate",
+      "feature_name": "Governed learning substrate",
+      "owning_wp": "WP-11",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/GOVERNED_LEARNING_SUBSTRATE.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/learning/governed_learning_substrate.json",
+        "docs/milestones/v0.91.1/review/governed_learning_fixture/accepted_feedback_update.json"
+      ],
+      "coverage_summary": "Governed learning demo proves accepted, rejected, and rollback-aware update boundaries."
+    },
+    {
+      "feature_id": "anrm-gemma-placement",
+      "feature_name": "ANRM/Gemma placement",
+      "owning_wp": "WP-12",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/ANRM_GEMMA_PLACEMENT.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_dataset.json",
+        "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_extractor_spec.json"
+      ],
+      "coverage_summary": "ANRM/Gemma demo proves deterministic trace extraction and dataset/spec parity."
+    },
+    {
+      "feature_id": "acip-hardening",
+      "feature_name": "ACIP hardening",
+      "owning_wp": "WP-13",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/ACIP_HARDENING.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/acip/acip_hardening_packet.json",
+        "runtime_v2/access_control/access_events.json"
+      ],
+      "coverage_summary": "ACIP hardening demo proves authenticated local communication remains state-gated and reviewable."
+    },
+    {
+      "feature_id": "a2a-adapter-boundary",
+      "feature_name": "A2A adapter boundary",
+      "owning_wp": "WP-14",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/A2A_ADAPTER_BOUNDARY.md",
+      "demo_mode": "dedicated_demo",
+      "demo_surface_refs": [
+        "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+        "runtime_v2/acip/acip_hardening_packet.json"
+      ],
+      "coverage_summary": "A2A adapter demo proves compatibility stays layered over ACIP rather than becoming a second transport model."
+    },
+    {
+      "feature_id": "runtime-inhabitant-proof",
+      "feature_name": "Runtime inhabitant proof",
+      "owning_wp": "WP-15",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md",
+      "demo_mode": "integrated_demo_dependency",
+      "demo_surface_refs": [
+        "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json",
+        "runtime_v2/inhabitant/runtime_inhabitant_operator_report.md"
+      ],
+      "coverage_summary": "WP-15 integrates standing, state, lifecycle, memory, capability, learning, access, and comms into one agent-shaped proof surface."
+    },
+    {
+      "feature_id": "observatory-visible-flagship-demo",
+      "feature_name": "Observatory-visible flagship demo",
+      "owning_wp": "WP-16",
+      "feature_doc_ref": "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md",
+      "demo_mode": "flagship_demo",
+      "demo_surface_refs": [
+        "runtime_v2/observatory/flagship_proof_packet.json",
+        "runtime_v2/observatory/flagship_operator_report.md",
+        "runtime_v2/observatory/flagship_walkthrough.jsonl",
+        "runtime_v2/challenge/challenge_artifact.json",
+        "runtime_v2/operator/control_report.json"
+      ],
+      "coverage_summary": "D12 flagship demo proves the inhabited observatory route and explicitly aggregates the earlier feature demos through 7 standing/access refs."
+    }
+  ],
   "lens_sequence": [
     {
       "schema_version": "runtime_v2.observatory_flagship_walkthrough_step.v1",
@@ -202,7 +387,7 @@
     "adl runtime-v2 observatory-flagship-demo --out artifacts/v0911/demo-d12-observatory-flagship",
     "git diff --check"
   ],
-  "proof_summary": "D12 integrates WP-05 through WP-16 into one bounded v0.91.1 inhabited CSM Observatory proof: citizen private-state continuity, witness and receipt evidence, redacted projection, standing and communication boundary, access-control denial, continuity challenge, sanctuary quarantine, appeal review, operator report, and room/lens walkthrough.",
+  "proof_summary": "D12 integrates WP-05 through WP-16 into one bounded v0.91.1 inhabited CSM Observatory proof and carries an explicit feature-demo coverage roster for WP-02 through WP-16: citizen private-state continuity, witness and receipt evidence, redacted projection, standing and communication boundary, access-control denial, continuity challenge, sanctuary quarantine, appeal review, operator report, and room/lens walkthrough.",
   "proof_classification": "proving",
   "non_claims": [
     "does not prove personhood",

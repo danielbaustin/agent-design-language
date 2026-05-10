@@ -45,6 +45,17 @@ pub struct RuntimeV2ObservatoryFlagshipActor {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2ObservatoryFeatureDemoCoverage {
+    pub feature_id: String,
+    pub feature_name: String,
+    pub owning_wp: String,
+    pub feature_doc_ref: String,
+    pub demo_mode: String,
+    pub demo_surface_refs: Vec<String>,
+    pub coverage_summary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RuntimeV2ObservatoryFlagshipWalkthroughStep {
     pub schema_version: String,
     pub sequence: u32,
@@ -73,6 +84,7 @@ pub struct RuntimeV2ObservatoryFlagshipProofPacket {
     pub standing_access_refs: Vec<String>,
     pub challenge_refs: Vec<String>,
     pub operator_report_refs: Vec<String>,
+    pub feature_demo_coverage: Vec<RuntimeV2ObservatoryFeatureDemoCoverage>,
     pub lens_sequence: Vec<RuntimeV2ObservatoryFlagshipWalkthroughStep>,
     pub reviewer_command: String,
     pub validation_commands: Vec<String>,
@@ -292,6 +304,8 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             &challenge_refs,
             &operator_report_refs,
         );
+        let feature_demo_coverage =
+            feature_demo_coverage(&standing_access_refs, challenge, operator);
 
         let packet = Self {
             schema_version: RUNTIME_V2_OBSERVATORY_FLAGSHIP_PROOF_SCHEMA.to_string(),
@@ -368,6 +382,7 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             standing_access_refs,
             challenge_refs,
             operator_report_refs,
+            feature_demo_coverage,
             lens_sequence,
             reviewer_command:
                 "adl runtime-v2 observatory-flagship-demo --out artifacts/v0911/demo-d12-observatory-flagship"
@@ -382,7 +397,7 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
                 "git diff --check".to_string(),
             ],
             proof_summary:
-                "D12 integrates WP-05 through WP-16 into one bounded v0.91.1 inhabited CSM Observatory proof: citizen private-state continuity, witness and receipt evidence, redacted projection, standing and communication boundary, access-control denial, continuity challenge, sanctuary quarantine, appeal review, operator report, and room/lens walkthrough."
+                "D12 integrates WP-05 through WP-16 into one bounded v0.91.1 inhabited CSM Observatory proof and carries an explicit feature-demo coverage roster for WP-02 through WP-16: citizen private-state continuity, witness and receipt evidence, redacted projection, standing and communication boundary, access-control denial, continuity challenge, sanctuary quarantine, appeal review, operator report, and room/lens walkthrough."
                     .to_string(),
             proof_classification: "proving".to_string(),
             non_claims: vec![
@@ -523,6 +538,7 @@ impl RuntimeV2ObservatoryFlagshipProofPacket {
             &self.operator_report_refs,
             "observatory_flagship.operator_report_refs",
         )?;
+        validate_feature_demo_coverage(&self.feature_demo_coverage)?;
         if self.proof_classification != "proving" {
             return Err(anyhow!(
                 "observatory flagship proof must be classified as proving"
@@ -727,13 +743,208 @@ fn required_artifact_refs(
         .collect()
 }
 
+fn feature_demo_coverage(
+    standing_access_refs: &[String],
+    challenge: &RuntimeV2ContinuityChallengeArtifacts,
+    operator: &RuntimeV2OperatorControlReport,
+) -> Vec<RuntimeV2ObservatoryFeatureDemoCoverage> {
+    vec![
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "runtime-polis-architecture".to_string(),
+            feature_name: "Runtime/polis architecture".to_string(),
+            owning_wp: "WP-02".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/RUNTIME_POLIS_ARCHITECTURE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "docs/milestones/v0.91.1/RUNTIME_POLIS_ARCHITECTURE_PACKAGE_v0.91.1.md".to_string(),
+                "docs/milestones/v0.91.1/DEMO_MATRIX_v0.91.1.md".to_string(),
+            ],
+            coverage_summary: "Architecture inspection demo proves the runtime/polis package and artifact layout stay aligned.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "agent-lifecycle-state-model".to_string(),
+            feature_name: "Agent lifecycle state model".to_string(),
+            owning_wp: "WP-03".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/AGENT_LIFECYCLE_STATE_MODEL.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/agent_lifecycle/state_contract.json".to_string(),
+                "runtime_v2/agent_lifecycle/transition_matrix.json".to_string(),
+            ],
+            coverage_summary: "Lifecycle state demo proves receipt, queue, reject, and invoke eligibility remain explicit.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "csm-observatory-active-surface".to_string(),
+            feature_name: "CSM observatory active surface".to_string(),
+            owning_wp: "WP-04".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/CSM_OBSERVATORY_ACTIVE_SURFACE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/observatory/visibility_packet.json".to_string(),
+                "runtime_v2/observatory/operator_report.md".to_string(),
+            ],
+            coverage_summary: "Observatory active packet demo proves operator-visible projection and redaction without raw state leakage.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "citizen-standing-model".to_string(),
+            feature_name: "Citizen standing".to_string(),
+            owning_wp: "WP-05".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/CITIZEN_STANDING_MODEL.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/standing/standing_transitions.json".to_string(),
+                "runtime_v2/standing/standing_events.json".to_string(),
+            ],
+            coverage_summary: "Standing demo proves mediated authority transitions and denied escalation paths.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "citizen-state-substrate".to_string(),
+            feature_name: "Citizen state".to_string(),
+            owning_wp: "WP-06".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/CITIZEN_STATE_SUBSTRATE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/citizen_state/citizen_state_substrate.json".to_string(),
+                "runtime_v2/private_state/private_state_observatory_proof.json".to_string(),
+            ],
+            coverage_summary: "Citizen-state demo proves stale-state awareness, private-state boundaries, and safe projection.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "memory-identity-architecture".to_string(),
+            feature_name: "Memory/identity architecture".to_string(),
+            owning_wp: "WP-07".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/MEMORY_IDENTITY_ARCHITECTURE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/memory_identity/memory_identity_architecture.json".to_string(),
+                "runtime_v2/private_state/continuity_witnesses.json".to_string(),
+            ],
+            coverage_summary: "Memory demo proves witness-backed continuity and observatory-linked identity state.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "theory-of-mind-foundation".to_string(),
+            feature_name: "Theory of Mind foundation".to_string(),
+            owning_wp: "WP-08".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/THEORY_OF_MIND_FOUNDATION.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/theory_of_mind/theory_of_mind_foundation.json".to_string(),
+                "runtime_v2/memory_identity/memory_identity_architecture.json".to_string(),
+            ],
+            coverage_summary: "ToM demo proves bounded agent-model updates from explicit evidence rather than spoofed mind-reading.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "capability-aptitude-testing".to_string(),
+            feature_name: "Capability/aptitude testing".to_string(),
+            owning_wp: "WP-09".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/CAPABILITY_APTITUDE_TESTING.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json".to_string(),
+                "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/final_report.md".to_string(),
+            ],
+            coverage_summary: "Capability demo proves fixture-mode execution and bounded internal evaluation with explicit limitations.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "intelligence-metric-architecture".to_string(),
+            feature_name: "Intelligence metric architecture".to_string(),
+            owning_wp: "WP-10".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/INTELLIGENCE_METRIC_ARCHITECTURE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/intelligence/intelligence_metric_architecture.json".to_string(),
+                "docs/milestones/v0.91.1/review/intelligence_metric_architecture_fixture/scorecard.json".to_string(),
+            ],
+            coverage_summary: "Intelligence demo proves evidence-bound metrics layered over capability and ToM artifacts.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "governed-learning-substrate".to_string(),
+            feature_name: "Governed learning substrate".to_string(),
+            owning_wp: "WP-11".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/GOVERNED_LEARNING_SUBSTRATE.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/learning/governed_learning_substrate.json".to_string(),
+                "docs/milestones/v0.91.1/review/governed_learning_fixture/accepted_feedback_update.json".to_string(),
+            ],
+            coverage_summary: "Governed learning demo proves accepted, rejected, and rollback-aware update boundaries.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "anrm-gemma-placement".to_string(),
+            feature_name: "ANRM/Gemma placement".to_string(),
+            owning_wp: "WP-12".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/ANRM_GEMMA_PLACEMENT.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_dataset.json".to_string(),
+                "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_extractor_spec.json".to_string(),
+            ],
+            coverage_summary: "ANRM/Gemma demo proves deterministic trace extraction and dataset/spec parity.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "acip-hardening".to_string(),
+            feature_name: "ACIP hardening".to_string(),
+            owning_wp: "WP-13".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/ACIP_HARDENING.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/acip/acip_hardening_packet.json".to_string(),
+                "runtime_v2/access_control/access_events.json".to_string(),
+            ],
+            coverage_summary: "ACIP hardening demo proves authenticated local communication remains state-gated and reviewable.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "a2a-adapter-boundary".to_string(),
+            feature_name: "A2A adapter boundary".to_string(),
+            owning_wp: "WP-14".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/A2A_ADAPTER_BOUNDARY.md".to_string(),
+            demo_mode: "dedicated_demo".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/acip/a2a_adapter_boundary_packet.json".to_string(),
+                "runtime_v2/acip/acip_hardening_packet.json".to_string(),
+            ],
+            coverage_summary: "A2A adapter demo proves compatibility stays layered over ACIP rather than becoming a second transport model.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "runtime-inhabitant-proof".to_string(),
+            feature_name: "Runtime inhabitant proof".to_string(),
+            owning_wp: "WP-15".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md".to_string(),
+            demo_mode: "integrated_demo_dependency".to_string(),
+            demo_surface_refs: vec![
+                "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json".to_string(),
+                "runtime_v2/inhabitant/runtime_inhabitant_operator_report.md".to_string(),
+            ],
+            coverage_summary: "WP-15 integrates standing, state, lifecycle, memory, capability, learning, access, and comms into one agent-shaped proof surface.".to_string(),
+        },
+        RuntimeV2ObservatoryFeatureDemoCoverage {
+            feature_id: "observatory-visible-flagship-demo".to_string(),
+            feature_name: "Observatory-visible flagship demo".to_string(),
+            owning_wp: "WP-16".to_string(),
+            feature_doc_ref: "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md".to_string(),
+            demo_mode: "flagship_demo".to_string(),
+            demo_surface_refs: vec![
+                RUNTIME_V2_OBSERVATORY_FLAGSHIP_PROOF_PATH.to_string(),
+                RUNTIME_V2_OBSERVATORY_FLAGSHIP_REPORT_PATH.to_string(),
+                RUNTIME_V2_OBSERVATORY_FLAGSHIP_WALKTHROUGH_PATH.to_string(),
+                challenge.challenge.artifact_path.clone(),
+                operator.artifact_path.clone(),
+            ],
+            coverage_summary: format!(
+                "D12 flagship demo proves the inhabited observatory route and explicitly aggregates the earlier feature demos through {} standing/access refs.",
+                standing_access_refs.len()
+            ),
+        },
+    ]
+}
+
 fn render_observatory_flagship_operator_report(
     proof: &RuntimeV2ObservatoryFlagshipProofPacket,
     challenge: &RuntimeV2ContinuityChallengeArtifacts,
 ) -> Result<String> {
     proof.validate_shape()?;
     challenge.validate()?;
-    Ok(format!(
+    let mut report = format!(
         concat!(
             "# D12 Inhabited CSM Observatory Flagship\n\n",
             "Proof classification: `{}`\n\n",
@@ -756,7 +967,20 @@ fn render_observatory_flagship_operator_report(
         challenge.access_control_artifacts.observatory_artifacts.projection_packet.artifact_path,
         challenge.challenge.artifact_path,
         challenge.sanctuary_artifacts.quarantine_artifact.artifact_path,
-    ))
+    );
+    report.push_str("\nFeature demo coverage:\n");
+    for feature in &proof.feature_demo_coverage {
+        report.push_str(&format!(
+            "- `{}` {} [{} / {}]\n  surfaces: {}\n  summary: {}\n",
+            feature.feature_id,
+            feature.feature_name,
+            feature.owning_wp,
+            feature.demo_mode,
+            feature.demo_surface_refs.join(", "),
+            feature.coverage_summary
+        ));
+    }
+    Ok(report)
 }
 
 fn validate_flagship_operator_report(
@@ -774,6 +998,7 @@ fn validate_flagship_operator_report(
         "redacted projection",
         "continuity challenge",
         "sanctuary/quarantine",
+        "Feature demo coverage",
         "Non-claims",
     ] {
         if !report.contains(required) {
@@ -790,6 +1015,64 @@ fn validate_flagship_operator_report(
         if report.contains(forbidden) {
             return Err(anyhow!(
                 "observatory flagship operator report leaked forbidden private-state token"
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn validate_feature_demo_coverage(
+    coverage: &[RuntimeV2ObservatoryFeatureDemoCoverage],
+) -> Result<()> {
+    if coverage.len() != 15 {
+        return Err(anyhow!(
+            "observatory flagship proof must include feature demo coverage for all fifteen v0.91.1 features"
+        ));
+    }
+    let mut seen = BTreeSet::new();
+    for entry in coverage {
+        normalize_id(
+            entry.feature_id.clone(),
+            "observatory_flagship.feature_demo_coverage.feature_id",
+        )?;
+        validate_nonempty_text(
+            &entry.feature_name,
+            "observatory_flagship.feature_demo_coverage.feature_name",
+        )?;
+        validate_nonempty_text(
+            &entry.owning_wp,
+            "observatory_flagship.feature_demo_coverage.owning_wp",
+        )?;
+        validate_relative_path(
+            &entry.feature_doc_ref,
+            "observatory_flagship.feature_demo_coverage.feature_doc_ref",
+        )?;
+        validate_nonempty_text(
+            &entry.demo_mode,
+            "observatory_flagship.feature_demo_coverage.demo_mode",
+        )?;
+        validate_relative_path_list(
+            &entry.demo_surface_refs,
+            "observatory_flagship.feature_demo_coverage.demo_surface_refs",
+        )?;
+        validate_nonempty_text(
+            &entry.coverage_summary,
+            "observatory_flagship.feature_demo_coverage.coverage_summary",
+        )?;
+        if !seen.insert(entry.owning_wp.as_str()) {
+            return Err(anyhow!(
+                "observatory flagship feature demo coverage contains duplicate WP '{}'",
+                entry.owning_wp
+            ));
+        }
+    }
+    for required in [
+        "WP-02", "WP-03", "WP-04", "WP-05", "WP-06", "WP-07", "WP-08", "WP-09", "WP-10", "WP-11",
+        "WP-12", "WP-13", "WP-14", "WP-15", "WP-16",
+    ] {
+        if !seen.contains(required) {
+            return Err(anyhow!(
+                "observatory flagship feature demo coverage missing {required}"
             ));
         }
     }
