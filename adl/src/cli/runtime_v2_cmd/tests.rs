@@ -1,0 +1,1009 @@
+#[cfg(test)]
+mod tests {
+    use crate::cli::runtime_v2_cmd::{
+        commands::{
+            cognitive_being_flagship_demo_stdout_line, contract_market_demo_stdout_line,
+            feature_proof_coverage_stdout_line, governed_tools_flagship_demo_stdout_line,
+        },
+        helpers::{real_runtime_v2, real_runtime_v2_in_repo},
+    };
+    use adl::runtime_v2::runtime_v2_csm_integrated_run_contract;
+    use std::{
+        fs,
+        path::PathBuf,
+        time::{SystemTime, UNIX_EPOCH},
+    };
+
+    const RUNTIME_V2_CLI_REGRESSION_SMOKES: &[&str] = &[
+        "operator-controls:write-json",
+        "operator-controls:arg-validation",
+        "runtime-v2:dispatch",
+        "operator-controls:absolute-output",
+        "runtime-v2:public-current-dir",
+        "security-boundary:write-json",
+        "security-boundary:arg-validation",
+        "security-boundary:absolute-output",
+        "foundation-demo:write-bundle",
+        "foundation-demo:arg-validation",
+        "integrated-csm-run-demo:write-bundle",
+        "integrated-csm-run-demo:arg-validation",
+        "observatory-flagship-demo:write-bundle",
+        "observatory-flagship-demo:arg-validation",
+        "cognitive-being-flagship-demo:write-bundle",
+        "cognitive-being-flagship-demo:arg-validation",
+        "feature-proof-coverage:write-json",
+        "feature-proof-coverage:arg-validation",
+        "contract-market-demo:arg-validation",
+        "governed-tools-flagship-demo:write-bundle",
+        "governed-tools-flagship-demo:arg-validation",
+        "runtime-v2:path-hygiene",
+    ];
+
+    fn temp_repo(label: &str) -> PathBuf {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time went backwards")
+            .as_nanos();
+        std::env::temp_dir().join(format!(
+            "adl-runtime-v2-cli-{label}-{}-{nanos}",
+            std::process::id()
+        ))
+    }
+
+    #[test]
+    fn trace_runtime_v2_operator_controls_writes_report_json() {
+        let repo = temp_repo("operator-controls");
+        let out_path = repo.join("out/operator_report.json");
+
+        real_runtime_v2_in_repo(
+            &[
+                "operator-controls".to_string(),
+                "--out".to_string(),
+                "out/operator_report.json".to_string(),
+            ],
+            &repo,
+        )
+        .expect("operator controls");
+
+        let json: serde_json::Value = serde_json::from_slice(
+            &fs::read(&out_path).expect("operator controls report should be written"),
+        )
+        .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.operator_control_report.v1"
+        );
+        assert_eq!(json["commands"].as_array().expect("commands").len(), 7);
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_operator_controls_validates_unknown_args_and_missing_out_value() {
+        let repo = temp_repo("operator-controls-errors");
+
+        let err = real_runtime_v2_in_repo(
+            &["operator-controls".to_string(), "--bogus".to_string()],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 operator-controls: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &["operator-controls".to_string(), "--out".to_string()],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 operator-controls requires --out <path>"));
+    }
+
+    #[test]
+    fn trace_runtime_v2_dispatch_covers_help_and_subcommand_errors() {
+        let repo = temp_repo("dispatch");
+
+        real_runtime_v2_in_repo(&["--help".to_string()], &repo).expect("top-level help");
+        real_runtime_v2_in_repo(&["help".to_string()], &repo).expect("help alias");
+
+        let err = real_runtime_v2_in_repo(&[], &repo).expect_err("missing subcommand should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage"));
+
+        let err = real_runtime_v2_in_repo(&["bogus".to_string()], &repo)
+            .expect_err("unknown subcommand should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown runtime-v2 subcommand 'bogus'"));
+    }
+
+    #[test]
+    fn trace_runtime_v2_operator_controls_rejects_absolute_output() {
+        let repo = temp_repo("operator-controls-branches");
+
+        real_runtime_v2_in_repo(&["operator-controls".to_string()], &repo).expect("stdout report");
+        real_runtime_v2_in_repo(
+            &["operator-controls".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("operator controls help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "operator-controls".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/operator_report.json")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output path should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 operator-controls --out path must be repository-relative"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_public_dispatch_uses_current_directory() {
+        real_runtime_v2(&["operator-controls".to_string()]).expect("public dispatch stdout");
+    }
+
+    #[test]
+    fn trace_runtime_v2_security_boundary_writes_proof_json() {
+        let repo = temp_repo("security-boundary");
+        let out_path = repo.join("out/security_boundary.json");
+
+        real_runtime_v2_in_repo(
+            &[
+                "security-boundary".to_string(),
+                "--out".to_string(),
+                "out/security_boundary.json".to_string(),
+            ],
+            &repo,
+        )
+        .expect("security boundary");
+
+        let json: serde_json::Value = serde_json::from_slice(
+            &fs::read(&out_path).expect("security boundary proof should be written"),
+        )
+        .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.security_boundary_proof.v1"
+        );
+        assert_eq!(json["result"]["allowed"], false);
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_security_boundary_validates_unknown_args_and_missing_out_value() {
+        let repo = temp_repo("security-boundary-errors");
+
+        let err = real_runtime_v2_in_repo(
+            &["security-boundary".to_string(), "--bogus".to_string()],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 security-boundary: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &["security-boundary".to_string(), "--out".to_string()],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 security-boundary requires --out <path>"));
+    }
+
+    #[test]
+    fn trace_runtime_v2_security_boundary_rejects_absolute_output() {
+        let repo = temp_repo("security-boundary-branches");
+
+        real_runtime_v2_in_repo(&["security-boundary".to_string()], &repo).expect("stdout proof");
+        real_runtime_v2_in_repo(
+            &["security-boundary".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("security boundary help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "security-boundary".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/security_boundary.json")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output path should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 security-boundary --out path must be repository-relative"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_foundation_demo_writes_integrated_bundle() {
+        let repo = temp_repo("foundation-demo");
+        let out_dir = repo.join("out/foundation");
+
+        real_runtime_v2_in_repo(
+            &[
+                "foundation-demo".to_string(),
+                "--out".to_string(),
+                "out/foundation".to_string(),
+            ],
+            &repo,
+        )
+        .expect("foundation demo");
+
+        let proof_path = out_dir.join("runtime_v2/proof_packet.json");
+        assert!(proof_path.is_file());
+        assert!(out_dir.join("runtime_v2/manifold.json").is_file());
+        assert!(out_dir
+            .join("runtime_v2/security_boundary/proof_packet.json")
+            .is_file());
+        let json: serde_json::Value =
+            serde_json::from_slice(&fs::read(&proof_path).expect("proof packet should exist"))
+                .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.foundation_proof_packet.v1"
+        );
+        assert_eq!(json["classification"], "proving");
+        assert_eq!(json["demo_id"], "D7");
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_foundation_demo_validates_stdout_help_and_output_path_rules() {
+        let repo = temp_repo("foundation-demo-branches");
+
+        real_runtime_v2_in_repo(&["foundation-demo".to_string()], &repo)
+            .expect("stdout proof packet");
+        real_runtime_v2_in_repo(
+            &["foundation-demo".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("foundation demo help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "foundation-demo".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/foundation")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output dir should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 foundation-demo --out path must be repository-relative"));
+
+        let err = real_runtime_v2_in_repo(
+            &["foundation-demo".to_string(), "--bogus".to_string()],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 foundation-demo: --bogus"));
+
+        let err =
+            real_runtime_v2_in_repo(&["foundation-demo".to_string(), "--out".to_string()], &repo)
+                .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 foundation-demo requires --out <dir>"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_integrated_csm_run_demo_writes_proof_bundle() {
+        let repo = temp_repo("integrated-csm-run-demo");
+        let out_dir = repo.join("out/integrated-csm");
+
+        real_runtime_v2_in_repo(
+            &[
+                "integrated-csm-run-demo".to_string(),
+                "--out".to_string(),
+                "out/integrated-csm".to_string(),
+            ],
+            &repo,
+        )
+        .expect("integrated CSM run demo");
+
+        let proof_path = out_dir.join("runtime_v2/csm_run/integrated_first_run_proof_packet.json");
+        assert!(proof_path.is_file());
+        assert!(out_dir
+            .join("runtime_v2/observatory/visibility_packet.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/csm_run/integrated_first_run_transcript.jsonl")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/hardening/hardening_proof_packet.json")
+            .is_file());
+        assert!(out_dir
+            .join("artifacts/runtime-v2-governed-demo-run/logs/activation_log.json")
+            .is_file());
+        assert!(out_dir
+            .join(
+                "artifacts/runtime-v2-governed-demo-run/governed/proposal_arguments.redacted.json"
+            )
+            .is_file());
+        assert!(out_dir
+            .join("artifacts/runtime-v2-governed-demo-run/governed/result.redacted.json")
+            .is_file());
+        let json: serde_json::Value =
+            serde_json::from_slice(&fs::read(&proof_path).expect("proof packet should exist"))
+                .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.csm_integrated_run_proof_packet.v1"
+        );
+        assert_eq!(json["proof_classification"], "proving");
+        assert_eq!(json["demo_id"], "D10");
+        let governed_trace_json: serde_json::Value = serde_json::from_slice(
+            &fs::read(
+                out_dir.join("artifacts/runtime-v2-governed-demo-run/logs/activation_log.json"),
+            )
+            .expect("governed activation log should exist"),
+        )
+        .expect("valid governed activation log json");
+        assert_eq!(governed_trace_json["activation_log_version"], 2);
+        let observatory_console = runtime_v2_csm_integrated_run_contract()
+            .expect("integrated artifacts")
+            .observatory_console_markdown()
+            .expect("observatory console");
+        assert!(observatory_console.contains("D10 Integrated CSM Run Observatory"));
+        assert!(observatory_console.contains("CSM Observatory Operator Report"));
+        assert!(observatory_console.contains("runtime_v2/observatory/visibility_packet.json"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules() {
+        let repo = temp_repo("integrated-csm-run-demo-branches");
+
+        real_runtime_v2_in_repo(&["integrated-csm-run-demo".to_string()], &repo)
+            .expect("stdout proof packet");
+        real_runtime_v2_in_repo(
+            &["integrated-csm-run-demo".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("integrated CSM run demo help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "integrated-csm-run-demo".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/integrated-csm")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output dir should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 integrated-csm-run-demo --out path must be repository-relative"));
+
+        let err = real_runtime_v2_in_repo(
+            &["integrated-csm-run-demo".to_string(), "--bogus".to_string()],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 integrated-csm-run-demo: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &["integrated-csm-run-demo".to_string(), "--out".to_string()],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 integrated-csm-run-demo requires --out <dir>"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    #[ignore = "full D12 CLI filesystem smoke is validated by the explicit observatory-flagship-demo command; keep always-on coverage bounded"]
+    fn trace_runtime_v2_observatory_flagship_demo_writes_proof_bundle() {
+        let repo = temp_repo("observatory-flagship-demo");
+        let out_dir = repo.join("out/observatory-flagship");
+
+        real_runtime_v2_in_repo(
+            &[
+                "observatory-flagship-demo".to_string(),
+                "--out".to_string(),
+                "out/observatory-flagship".to_string(),
+            ],
+            &repo,
+        )
+        .expect("observatory flagship demo");
+
+        let proof_path = out_dir.join("runtime_v2/observatory/flagship_proof_packet.json");
+        assert!(proof_path.is_file());
+        assert!(out_dir
+            .join("runtime_v2/private_state/continuity_witnesses.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/private_state/citizen_receipts.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/observatory/private_state_projection_packet.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/access_control/access_events.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/challenge/challenge_artifact.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/observatory/flagship_operator_report.md")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/observatory/flagship_walkthrough.jsonl")
+            .is_file());
+        let json: serde_json::Value =
+            serde_json::from_slice(&fs::read(&proof_path).expect("proof packet should exist"))
+                .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.observatory_flagship_proof_packet.v1"
+        );
+        assert_eq!(json["proof_classification"], "proving");
+        assert_eq!(json["demo_id"], "D12");
+        let lens_sequence = json["lens_sequence"].as_array().expect("lens sequence");
+        assert!(lens_sequence
+            .iter()
+            .any(|step| step["room"] == "World / Reality"));
+        assert!(lens_sequence
+            .iter()
+            .any(|step| step["room"] == "Corporate Investor"));
+        let report =
+            fs::read_to_string(out_dir.join("runtime_v2/observatory/flagship_operator_report.md"))
+                .expect("operator report should exist");
+        assert!(report.contains("D12 Inhabited CSM Observatory Flagship"));
+        assert!(report.contains("Citizen continuity basis"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules() {
+        let repo = temp_repo("observatory-flagship-demo-branches");
+
+        real_runtime_v2_in_repo(
+            &[
+                "observatory-flagship-demo".to_string(),
+                "--help".to_string(),
+            ],
+            &repo,
+        )
+        .expect("observatory flagship demo help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "observatory-flagship-demo".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/observatory-flagship")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output dir should fail");
+        assert!(err.to_string().contains(
+            "runtime-v2 observatory-flagship-demo --out path must be repository-relative"
+        ));
+
+        let err = real_runtime_v2_in_repo(
+            &[
+                "observatory-flagship-demo".to_string(),
+                "--bogus".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 observatory-flagship-demo: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &["observatory-flagship-demo".to_string(), "--out".to_string()],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 observatory-flagship-demo requires --out <dir>"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_cognitive_being_flagship_demo_writes_proof_bundle() {
+        let repo = temp_repo("cognitive-being-flagship-demo");
+        let out_dir = repo.join("out/cognitive-being-flagship");
+
+        real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--out".to_string(),
+                "out/cognitive-being-flagship".to_string(),
+            ],
+            &repo,
+        )
+        .expect("cognitive-being flagship demo");
+
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/flagship_proof_packet.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/flagship_sections.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/flagship_reviewer_report.md")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/support/moral_trace_examples.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/support/structured_planning_prompt.md")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/cognitive_being/support/acip_a2a_fixture_set_v1.json")
+            .is_file());
+
+        let json: serde_json::Value = serde_json::from_slice(
+            &fs::read(out_dir.join("runtime_v2/cognitive_being/flagship_proof_packet.json"))
+                .expect("proof packet should exist"),
+        )
+        .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.cognitive_being_flagship_proof_packet.v1"
+        );
+        assert_eq!(json["demo_id"], "D13");
+        assert_eq!(json["milestone"], "v0.91");
+        assert_eq!(
+            json["section_ids"].as_array().expect("section ids").len(),
+            6
+        );
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_cognitive_being_flagship_demo_validates_help_and_output_path_rules() {
+        let repo = temp_repo("cognitive-being-flagship-demo-branches");
+
+        real_runtime_v2_in_repo(&["cognitive-being-flagship-demo".to_string()], &repo)
+            .expect("stdout cognitive-being flagship packet");
+        real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--help".to_string(),
+            ],
+            &repo,
+        )
+        .expect("cognitive-being flagship help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/cognitive-being-flagship")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output dir should fail");
+        assert!(err.to_string().contains(
+            "runtime-v2 cognitive-being-flagship-demo --out path must be repository-relative"
+        ));
+        let err = real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--out".to_string(),
+                "../escape".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("parent traversal output dir should fail");
+        assert!(err.to_string().contains(
+            "runtime-v2 cognitive-being-flagship-demo --out path must stay within the repository"
+        ));
+
+        let err = real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--bogus".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 cognitive-being-flagship-demo: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &[
+                "cognitive-being-flagship-demo".to_string(),
+                "--out".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 cognitive-being-flagship-demo requires --out <dir>"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_feature_proof_coverage_writes_packet_json() {
+        let repo = temp_repo("feature-proof-coverage");
+        let out_path = repo.join("out/feature-proof-coverage.json");
+
+        real_runtime_v2_in_repo(
+            &[
+                "feature-proof-coverage".to_string(),
+                "--out".to_string(),
+                "out/feature-proof-coverage.json".to_string(),
+            ],
+            &repo,
+        )
+        .expect("feature proof coverage");
+
+        let json: serde_json::Value =
+            serde_json::from_slice(&fs::read(&out_path).expect("coverage packet should exist"))
+                .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.feature_proof_coverage.v2"
+        );
+        assert_eq!(json["demo_id"], "D13");
+        assert_eq!(json["milestone"], "v0.90.4");
+        assert_eq!(json["entries"].as_array().expect("entries").len(), 13);
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_feature_proof_coverage_validates_stdout_help_and_output_path_rules() {
+        let repo = temp_repo("feature-proof-coverage-branches");
+
+        real_runtime_v2_in_repo(&["feature-proof-coverage".to_string()], &repo)
+            .expect("stdout coverage packet");
+        real_runtime_v2_in_repo(
+            &["feature-proof-coverage".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("feature proof coverage help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "feature-proof-coverage".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/feature-proof-coverage.json")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output path should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 feature-proof-coverage --out path must be repository-relative"));
+
+        let err = real_runtime_v2_in_repo(
+            &["feature-proof-coverage".to_string(), "--bogus".to_string()],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 feature-proof-coverage: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &["feature-proof-coverage".to_string(), "--out".to_string()],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 feature-proof-coverage requires --out <path>"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_feature_proof_coverage_validates_runtime_v2_cli_regression_registry() {
+        let proof_surfaces: &[fn()] = &[
+            trace_runtime_v2_operator_controls_writes_report_json,
+            trace_runtime_v2_operator_controls_validates_unknown_args_and_missing_out_value,
+            trace_runtime_v2_dispatch_covers_help_and_subcommand_errors,
+            trace_runtime_v2_operator_controls_rejects_absolute_output,
+            trace_runtime_v2_public_dispatch_uses_current_directory,
+            trace_runtime_v2_security_boundary_writes_proof_json,
+            trace_runtime_v2_security_boundary_validates_unknown_args_and_missing_out_value,
+            trace_runtime_v2_security_boundary_rejects_absolute_output,
+            trace_runtime_v2_foundation_demo_writes_integrated_bundle,
+            trace_runtime_v2_foundation_demo_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_integrated_csm_run_demo_writes_proof_bundle,
+            trace_runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_observatory_flagship_demo_writes_proof_bundle,
+            trace_runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_cognitive_being_flagship_demo_writes_proof_bundle,
+            trace_runtime_v2_cognitive_being_flagship_demo_validates_help_and_output_path_rules,
+            trace_runtime_v2_feature_proof_coverage_writes_packet_json,
+            trace_runtime_v2_feature_proof_coverage_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_contract_market_demo_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_governed_tools_flagship_demo_writes_proof_bundle,
+            trace_runtime_v2_governed_tools_flagship_demo_validates_stdout_help_and_output_path_rules,
+            trace_runtime_v2_demo_stdout_lines_preserve_requested_relative_paths,
+        ];
+        assert_eq!(proof_surfaces.len(), RUNTIME_V2_CLI_REGRESSION_SMOKES.len());
+        for (index, smoke) in RUNTIME_V2_CLI_REGRESSION_SMOKES.iter().enumerate() {
+            assert!(
+                !smoke.trim().is_empty(),
+                "CLI regression smoke {index} must be named"
+            );
+            assert!(
+                RUNTIME_V2_CLI_REGRESSION_SMOKES[index + 1..]
+                    .iter()
+                    .all(|candidate| candidate != smoke),
+                "CLI regression smoke is duplicated: {smoke}"
+            );
+        }
+        assert!(RUNTIME_V2_CLI_REGRESSION_SMOKES
+            .iter()
+            .any(|smoke| smoke.starts_with("cognitive-being-flagship-demo:")));
+        assert!(RUNTIME_V2_CLI_REGRESSION_SMOKES
+            .iter()
+            .any(|smoke| smoke.starts_with("feature-proof-coverage:")));
+        assert!(RUNTIME_V2_CLI_REGRESSION_SMOKES
+            .iter()
+            .any(|smoke| smoke.starts_with("contract-market-demo:")));
+        assert!(RUNTIME_V2_CLI_REGRESSION_SMOKES
+            .iter()
+            .any(|smoke| smoke.starts_with("governed-tools-flagship-demo:")));
+    }
+
+    #[test]
+    fn trace_runtime_v2_contract_market_demo_validates_stdout_help_and_output_path_rules() {
+        let repo = temp_repo("contract-market-demo-branches");
+
+        real_runtime_v2_in_repo(&["contract-market-demo".to_string()], &repo)
+            .expect("stdout contract-market demo");
+        real_runtime_v2_in_repo(
+            &["contract-market-demo".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("contract-market demo help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "contract-market-demo".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/contract-market-demo")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output path should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 contract-market-demo --out path must be repository-relative"));
+
+        let err = real_runtime_v2_in_repo(
+            &["contract-market-demo".to_string(), "--bogus".to_string()],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 contract-market-demo: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &["contract-market-demo".to_string(), "--out".to_string()],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 contract-market-demo requires --out <dir>"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_governed_tools_flagship_demo_writes_proof_bundle() {
+        let repo = temp_repo("governed-tools-flagship-demo");
+        let out_dir = repo.join("out/governed-tools-flagship");
+
+        real_runtime_v2_in_repo(
+            &[
+                "governed-tools-flagship-demo".to_string(),
+                "--out".to_string(),
+                "out/governed-tools-flagship".to_string(),
+            ],
+            &repo,
+        )
+        .expect("governed-tools flagship demo");
+
+        assert!(out_dir
+            .join("runtime_v2/governed_tools/flagship_proof_packet.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/governed_tools/flagship_operator_report.md")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/governed_tools/flagship_public_report.md")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/governed_tools/support/model_proposal_benchmark_report.json")
+            .is_file());
+        assert!(out_dir
+            .join("runtime_v2/governed_tools/support/dangerous_negative_suite_report.json")
+            .is_file());
+        assert!(out_dir
+            .join("artifacts/runtime-v2-wp18-allowed-read/logs/activation_log.json")
+            .is_file());
+        assert!(out_dir
+            .join(
+                "artifacts/runtime-v2-wp18-allowed-read/governed/proposal_arguments.redacted.json"
+            )
+            .is_file());
+
+        let json: serde_json::Value = serde_json::from_slice(
+            &fs::read(out_dir.join("runtime_v2/governed_tools/flagship_proof_packet.json"))
+                .expect("proof packet should exist"),
+        )
+        .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.governed_tools_flagship_proof_packet.v1"
+        );
+        assert_eq!(json["demo_id"], "D11");
+        assert_eq!(json["proof_classification"], "proving");
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_governed_tools_flagship_demo_validates_stdout_help_and_output_path_rules() {
+        let repo = temp_repo("governed-tools-flagship-demo-branches");
+
+        real_runtime_v2_in_repo(&["governed-tools-flagship-demo".to_string()], &repo)
+            .expect("stdout governed-tools flagship demo");
+        real_runtime_v2_in_repo(
+            &[
+                "governed-tools-flagship-demo".to_string(),
+                "--help".to_string(),
+            ],
+            &repo,
+        )
+        .expect("governed-tools flagship demo help");
+        let err = real_runtime_v2_in_repo(
+            &[
+                "governed-tools-flagship-demo".to_string(),
+                "--out".to_string(),
+                repo.join("absolute/governed-tools-flagship")
+                    .to_string_lossy()
+                    .to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("absolute output path should fail");
+        assert!(err.to_string().contains(
+            "runtime-v2 governed-tools-flagship-demo --out path must be repository-relative"
+        ));
+
+        let err = real_runtime_v2_in_repo(
+            &[
+                "governed-tools-flagship-demo".to_string(),
+                "--bogus".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 governed-tools-flagship-demo: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &[
+                "governed-tools-flagship-demo".to_string(),
+                "--out".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 governed-tools-flagship-demo requires --out <dir>"));
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn trace_runtime_v2_demo_stdout_lines_preserve_requested_relative_paths() {
+        let rel_root = PathBuf::from("target/v0904-path-hygiene-demo");
+        let rel_file = rel_root.join("feature-proof-coverage.json");
+        let cwd = std::env::current_dir()
+            .expect("current dir")
+            .display()
+            .to_string();
+
+        let d12_stdout = contract_market_demo_stdout_line(&rel_root);
+        assert_eq!(
+            d12_stdout,
+            format!(
+                "RUNTIME_V2_CONTRACT_MARKET_DEMO_ROOT={}",
+                rel_root.display()
+            )
+        );
+        assert!(
+            !d12_stdout.contains(&cwd),
+            "D12 stdout should not expose absolute repo root:\n{d12_stdout}"
+        );
+
+        let d13_stdout = feature_proof_coverage_stdout_line(&rel_file);
+        assert_eq!(
+            d13_stdout,
+            format!(
+                "RUNTIME_V2_FEATURE_PROOF_COVERAGE_PATH={}",
+                rel_file.display()
+            )
+        );
+        assert!(
+            !d13_stdout.contains(&cwd),
+            "D13 stdout should not expose absolute repo root:\n{d13_stdout}"
+        );
+
+        let d13_flagship_stdout = cognitive_being_flagship_demo_stdout_line(&rel_root);
+        assert_eq!(
+            d13_flagship_stdout,
+            format!(
+                "RUNTIME_V2_COGNITIVE_BEING_FLAGSHIP_DEMO_ROOT={}",
+                rel_root.display()
+            )
+        );
+        assert!(
+            !d13_flagship_stdout.contains(&cwd),
+            "D13 flagship stdout should not expose absolute repo root:\n{d13_flagship_stdout}"
+        );
+
+        let d11_stdout = governed_tools_flagship_demo_stdout_line(&rel_root);
+        assert_eq!(
+            d11_stdout,
+            format!(
+                "RUNTIME_V2_GOVERNED_TOOLS_FLAGSHIP_DEMO_ROOT={}",
+                rel_root.display()
+            )
+        );
+        assert!(
+            !d11_stdout.contains(&cwd),
+            "D11 stdout should not expose absolute repo root:\n{d11_stdout}"
+        );
+    }
+}
