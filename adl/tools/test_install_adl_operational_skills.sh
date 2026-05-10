@@ -188,5 +188,6 @@ if ADL_OPERATIONAL_SKILLS_INSTALL_MODE=bogus bash "${repo_root}/adl/tools/instal
 fi
 
 bash "${repo_root}/adl/tools/test_sprint_conductor_helpers.sh"
+bash "${repo_root}/adl/tools/test_multiagent_podcast_audio_policy.sh"
 
 echo "PASS test_install_adl_operational_skills"
