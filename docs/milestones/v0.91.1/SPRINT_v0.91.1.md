@@ -36,6 +36,17 @@ which can invoke actions, and which must queue, reject, or quarantine requests.
 Goal: implement the bounded cognitive and evaluation surfaces that v0.92 needs
 without claiming completed identity, intelligence, or learning theory.
 
+Closeout status: complete. The Sprint 2 child lane merged through:
+- `#2829` via `#2908`
+- `#2830` via `#2920`
+- `#2831` via `#2929`
+- `#2832` via `#2935`
+- `#2833` via `#2938`
+- `#2834` via `#2941`
+
+The tracked closeout note lives in
+`docs/milestones/v0.91.1/SPRINT_2_CLOSEOUT_v0.91.1.md`.
+
 ## Sprint 3: Secure Comms And Inhabitant Runtime Proof
 
 | WP | Title | Primary Deliverable | Dependencies |
