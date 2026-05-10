@@ -21,7 +21,7 @@ milestones.
 | B | Human, guest, operator, and citizen-mode boundary | Make guest-by-default human entry and mediated citizen action explicit. | Boundary doc, policy fixtures, negative cases. | v0.90.3 standing, v0.91 Freedom Gate, v0.92 identity. |
 | C | Rights and duties model | Define what the polis owes citizens and what citizens owe the polis. | Rights/duties schema or contract. | v0.91 moral resources and wellbeing context. |
 | D | Theory of Mind contract | Define private evidence-grounded models of other participants without turning them into public verdicts. | ToM schema, update event contract, evidence/confidence rules, conflict and decay fixtures. | v0.90.3 standing/access, v0.91 moral trace, v0.92 identity. |
-| E | Reputation and shared social memory boundary | Define public or governance-facing summaries that remain redacted, challengeable, and distinct from private ToM. | Reputation projection and shared social memory contract. | D plus v0.91 review evidence. |
+| E | Relationship, reputation, and shared social memory boundary | Define durable relationship context plus public or governance-facing summaries that remain redacted, challengeable, and distinct from private ToM. | Relationship model, reputation projection, and shared social memory contract. | D plus v0.91 review evidence. |
 | F | Standing maintenance and degradation | Define evidence-based transitions among good standing, monitored, restricted, suspended, restored, and revoked. | Standing transition tests and review packet. | v0.90.3 standing and challenge flow. |
 | G | Constitutional review packet | Consume trace, outcome, attribution, policy, ToM projections where allowed, reputation, and standing evidence. | Review packet schema and fixtures. | v0.91 moral trace and trajectory review. |
 | H | Challenge and appeal flow | Preserve evidence, allow challenge, record appeal disposition, and avoid arbitrary punishment. | Challenge/appeal state machine and proof fixture. | v0.90.3 challenge/quarantine, v0.91 review evidence. |
@@ -58,8 +58,9 @@ milestones.
   CSM identity mediates the action as citizen conduct.
 - Constitutional review must cite trace/outcome/standing evidence.
 - Standing changes must be evidence-based, reviewable, and appealable.
-- Private ToM must not become public reputation, standing, or constitutional
-  judgment without redaction, authority, and evidence.
+- Private ToM must not become public relationship verdict, reputation,
+  standing, or constitutional judgment without redaction, authority, and
+  evidence.
 - Delegation and IAM must fail closed when authority is missing.
 - Zero-trust policy must default deny at every polis, tool, service, operator,
   communication, and data boundary.
