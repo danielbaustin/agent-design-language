@@ -131,6 +131,10 @@ jobs:
         run: bash adl/tools/test_arxiv_paper_writer_skill_contracts.sh
         working-directory: .
 
+      - name: ANRM/Gemma trace dataset tooling check
+        run: bash adl/tools/test_build_v0911_anrm_trace_dataset.sh
+        working-directory: .
+
       - name: fmt
         if: steps.path-policy.outputs.rust_required == 'true'
         run: cargo fmt --all -- --check

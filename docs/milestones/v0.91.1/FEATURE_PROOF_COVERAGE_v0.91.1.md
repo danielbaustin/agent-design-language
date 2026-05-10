@@ -27,7 +27,7 @@ Each feature should have one truthful proof route:
 | Capability/aptitude testing | WP-09 | feature doc + landed fixture-mode harness, review bundle, and focused harness/demo tests | landed |
 | Intelligence metric architecture | WP-10 | feature doc + landed intelligence metric architecture packet, fixture bundle, and focused runtime tests | landed |
 | Governed learning | WP-11 | feature doc + landed governed-learning packet, tracked review fixtures, and focused runtime tests | landed |
-| ANRM/Gemma placement | WP-12 | feature doc only; execution pending | pending |
+| ANRM/Gemma placement | WP-12 | feature doc + landed deterministic extractor, tracked dataset/spec/placement artifacts, and focused tooling test | landed |
 | ACIP hardening | WP-13 | feature doc only; execution pending | pending |
 | A2A adapter boundary | WP-14 | feature doc only; execution pending | pending |
 | Runtime inhabitant proof | WP-15 | integrated proof route planned | pending |
