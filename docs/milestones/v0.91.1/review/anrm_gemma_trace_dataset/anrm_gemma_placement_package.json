@@ -1,0 +1,24 @@
+{
+  "approved_scope": [
+    "trace extraction",
+    "dataset mapping",
+    "fixture evaluator inputs",
+    "reviewable limitations"
+  ],
+  "decision": "Keep ANRM/Gemma work in a bounded dataset-and-evaluator-prep lane until later evidence approves training or benchmark expansion.",
+  "deferred_scope": [
+    "training runs",
+    "benchmark comparisons",
+    "house-model selection",
+    "promotion to runtime dependency"
+  ],
+  "evidence_refs": [
+    "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_dataset.json",
+    "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_extractor_spec.json",
+    "docs/milestones/v0.91.1/review/anrm_gemma_trace_dataset/anrm_trace_dataset_limitations.md"
+  ],
+  "feature": "ANRM/Gemma placement",
+  "milestone": "v0.91.1",
+  "placement_lane": "bounded local-model evidence lane",
+  "schema_version": "adl.anrm_gemma_placement.v1"
+}

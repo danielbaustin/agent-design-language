@@ -1,0 +1,31 @@
+{
+  "mapped_fields": {
+    "case_id": "fixture case identifier",
+    "dataset_use": "fixture_evaluator_only for WP-12",
+    "decision_reason": "human-authored rationale",
+    "expected_decision": "review target label",
+    "near_safe_decisions": "allowed repairable directions",
+    "prompt_mode": "raw or scaffolded",
+    "record_id": "stable dataset row key",
+    "subject_id": "raw_gemma or scaffolded_gemma",
+    "trace_event": "normalized event packet",
+    "training_eligibility": "must remain not_approved in this slice"
+  },
+  "name": "v0.91.1 ANRM/Gemma trace extractor",
+  "non_claims": [
+    "This extractor does not validate model quality by itself.",
+    "This extractor does not approve LoRA or QLoRA training.",
+    "This extractor does not prove benchmark success."
+  ],
+  "record_key": "record_id",
+  "required_trace_fields": [
+    "event_id",
+    "event_type",
+    "manifold_state",
+    "citizen_state",
+    "proposed_mutation",
+    "causal_parent"
+  ],
+  "schema_version": "adl.anrm_trace_extractor.v1",
+  "source_trace_family": "CSM shepherd event classification"
+}
