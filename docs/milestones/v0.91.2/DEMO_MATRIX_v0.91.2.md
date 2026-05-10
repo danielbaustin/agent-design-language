@@ -15,7 +15,7 @@ and summarized again during WP-17.
 | Review heuristics demo | WP-07 | Show review heuristics and skills produce bounded review artifacts. | skill demo output and acceptance checklist | does not invent source evidence |
 | Google Workspace CMS bridge demo | WP-08 | Show draft content-card and promotion packet workflow. | fixture/live-gated bridge artifact | does not make Workspace canonical |
 | Rust-native GWS adapter boundary demo | WP-09 | Show typed adapter boundary or justified deferral. | adapter feasibility report | does not require live secrets |
-| Code modernization demo | WP-10 | Show modernization plan and bounded transformation surface. | modernization packet and dry-run evidence | does not mass-rewrite by default |
+| Moderne / OpenRewrite LST modernization demo | WP-10 | Show a bounded ADL-governed modernization plan around Moderne/OpenRewrite, deterministic recipes, and LST-based transformation. | modernization packet and dry-run evidence | does not mass-rewrite by default |
 | Speculative decoding prototype | WP-11 | Show bounded acceleration posture without weakening deterministic commit semantics. | prototype/evaluation packet and non-claim record | does not grant execution authority |
 | Repo visibility follow-on | WP-12 | Show reviewer/planner navigation improvements from bounded manifest/linkage follow-on work. | manifest/linkage packet and source-map evidence | does not claim full repo cognition |
 | Publication program package | WP-13 | Show arXiv/Medium backlog, authoring process, and review-gate readiness. | publication backlog, process docs, and review checklist | does not publish |
