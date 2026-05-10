@@ -25,3 +25,4 @@ promoted.
 - `0016-moral-evidence-and-cognitive-being-substrate.md`
 - `0017-secure-local-agent-comms-and-a2a-boundary.md`
 - `0018-structured-planning-and-review-policy-artifacts.md`
+- `0019-theory-of-mind-foundation.md`
