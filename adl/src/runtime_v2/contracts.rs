@@ -217,6 +217,15 @@ pub fn runtime_v2_theory_of_mind_foundation_contract(
     cached_contract(&PACKET, RuntimeV2TheoryOfMindFoundationPacket::prototype)
 }
 
+pub fn runtime_v2_intelligence_metric_architecture_contract(
+) -> Result<RuntimeV2IntelligenceMetricArchitecturePacket> {
+    static PACKET: OnceCell<RuntimeV2IntelligenceMetricArchitecturePacket> = OnceCell::new();
+    cached_contract(
+        &PACKET,
+        RuntimeV2IntelligenceMetricArchitecturePacket::prototype,
+    )
+}
+
 pub fn runtime_v2_standing_contract() -> Result<RuntimeV2StandingArtifacts> {
     RuntimeV2StandingArtifacts::prototype()
 }

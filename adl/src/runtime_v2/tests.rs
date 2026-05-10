@@ -27,6 +27,7 @@ mod governed_tools_flagship_demo;
 mod hardening;
 mod humor_and_absurdity;
 mod integrated_csm_run;
+mod intelligence_metric_architecture;
 mod invalid_action_rejection;
 mod invariant_contract;
 mod invariant_violation;
