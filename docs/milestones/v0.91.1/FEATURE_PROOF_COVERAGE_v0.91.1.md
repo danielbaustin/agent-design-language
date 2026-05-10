@@ -28,7 +28,7 @@ Each feature should have one truthful proof route:
 | Intelligence metric architecture | WP-10 | feature doc + landed intelligence metric architecture packet, fixture bundle, and focused runtime tests | landed |
 | Governed learning | WP-11 | feature doc + landed governed-learning packet, tracked review fixtures, and focused runtime tests | landed |
 | ANRM/Gemma placement | WP-12 | feature doc + landed deterministic extractor, tracked dataset/spec/placement artifacts, and focused tooling test | landed |
-| ACIP hardening | WP-13 | feature doc only; execution pending | pending |
+| ACIP hardening | WP-13 | `adl/src/runtime_v2/acip_hardening.rs`; `adl/src/runtime_v2/tests/acip_hardening.rs`; `adl/src/agent_comms/orchestrate/conformance.inc`; `docs/milestones/v0.91.1/features/ACIP_HARDENING.md` | focused runtime packet + conformance/lifecycle proof |
 | A2A adapter boundary | WP-14 | feature doc only; execution pending | pending |
 | Runtime inhabitant proof | WP-15 | integrated proof route planned | pending |
 | Observatory-visible flagship demo | WP-16 | demo route planned in [DEMO_MATRIX_v0.91.1.md](DEMO_MATRIX_v0.91.1.md) | pending |

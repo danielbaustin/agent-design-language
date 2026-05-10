@@ -2,6 +2,7 @@ use super::*;
 
 #[cfg(feature = "slow-proof-tests")]
 mod access_control;
+mod acip_hardening;
 mod affect_reasoning_control;
 mod agent_lifecycle_state;
 mod anti_harm_trajectory_constraints;

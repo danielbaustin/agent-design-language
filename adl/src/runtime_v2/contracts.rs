@@ -241,6 +241,11 @@ pub fn runtime_v2_access_control_contract() -> Result<RuntimeV2AccessControlArti
     cached_contract(&ARTIFACTS, RuntimeV2AccessControlArtifacts::prototype)
 }
 
+pub fn runtime_v2_acip_hardening_contract() -> Result<RuntimeV2AcipHardeningPacket> {
+    static PACKET: OnceCell<RuntimeV2AcipHardeningPacket> = OnceCell::new();
+    cached_contract(&PACKET, RuntimeV2AcipHardeningPacket::prototype)
+}
+
 pub fn runtime_v2_agent_lifecycle_state_contract() -> Result<RuntimeV2AgentLifecycleArtifacts> {
     static ARTIFACTS: OnceCell<RuntimeV2AgentLifecycleArtifacts> = OnceCell::new();
     cached_contract(&ARTIFACTS, RuntimeV2AgentLifecycleArtifacts::prototype)
