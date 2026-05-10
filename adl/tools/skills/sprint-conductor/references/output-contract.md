@@ -7,6 +7,7 @@ sprint:
   issue_url: <url or null>
   issue_created_by_skill: true | false
   issue_closed: true | false
+  follow_up_issue_policy: post_sprint_follow_on | must_land_before_sprint_close
   goal: <string or null>
   ordered_issue_numbers:
     - <u32>
@@ -16,6 +17,16 @@ sprint:
       pr_url: <url or null>
       artifact_paths:
         - <path>
+      closeout_gate:
+        issue_closed: true | false
+        pr_state: merged | closed_no_merge | not_applicable | unknown
+        root_sor_status: done | failed | unknown
+        worktree_status: pruned | retained_with_reason | not_applicable | unknown
+        worktree_note: <bounded text or null>
+  follow_up_issues:
+    - issue_number: <u32>
+      disposition: post_sprint_follow_on | must_land_before_sprint_close
+      summary: <bounded text>
 sequence:
   current_issue_number: <u32 or null>
   completed_issue_numbers:
@@ -41,6 +52,18 @@ structured_prompt_preflight:
         - stp-editor | sip-editor | sor-editor | spp-editor
       notes:
         - <bounded text>
+installed_skill_parity:
+  status: not_run | matched | drift_detected | blocked
+  tracked_skill_dir: <path or null>
+  installed_skill_dir: <path or null>
+  left_only:
+    - <path>
+  right_only:
+    - <path>
+  diff_files:
+    - <path>
+  notes:
+    - <bounded text>
 truth_check:
   status: not_run | matched | drift_detected | blocked
   source: github_live | sprint_state_only | mixed
@@ -73,7 +96,9 @@ review:
 closeout:
   status: not_started | in_progress | done | blocked
   closeout_note_path: <path or null>
+  closeout_artifact_path: <path or null>
   sprint_issue_close_summary: <bounded text or null>
+  closure_cleanliness: clean | clean_with_post_sprint_followups | residual_debt | unknown
   coverage:
     source: local_run | ci | existing_quality_gate | not_applicable | missing
     summary: <bounded text>

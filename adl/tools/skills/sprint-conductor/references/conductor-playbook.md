@@ -27,27 +27,32 @@ Optional:
 ## Core Loop
 
 1. Load or create sprint-state.
-2. Run sprint-wide structured prompt review before starting issue execution:
+2. Before live issue execution begins, run the installed-skill parity/readiness gate when sprint policy requires it:
+   - if parity matches, continue
+   - if installed skill drift is detected, stop and repair the live install before running the sprint
+3. Run sprint-wide structured prompt review before starting issue execution:
    - if every child issue is ready, continue
    - if any child issue needs repair, route the matching editor skill before issue execution
    - if any child issue is blocked, stop and report it
-3. If the sprint-management issue is missing:
+4. If the sprint-management issue is missing:
    - create it through the bundled helper when policy allows, then continue
    - otherwise stop and report `missing_sprint_issue`
-4. Re-check live GitHub truth for the current sprint-state and require a matched result before any sprint-state transition.
-5. Choose the earliest child issue in the ordered list that is not yet closed
+5. Re-check live GitHub truth for the current sprint-state and require a matched result before any sprint-state transition.
+6. Choose the earliest child issue in the ordered list that is not yet closed
    out.
-6. Route that child issue through `workflow-conductor`.
-7. Run only the selected downstream lifecycle or editor skill.
-8. Re-check issue truth.
-9. If the issue is not fully closed out, repeat the routing loop for the same
+7. Route that child issue through `workflow-conductor`.
+8. Run only the selected downstream lifecycle or editor skill.
+9. Re-check issue truth.
+10. If the issue is not fully closed out, repeat the routing loop for the same
    issue.
-10. If the issue is in a healthy PR-open waiting state, pause on that issue and
+11. If the issue is in a healthy PR-open waiting state, pause on that issue and
    surface `ask_operator` rather than re-driving execution or janitoring a
    non-blocked PR.
-11. If the issue is fully closed out, mark it complete in sprint-state and move
-   to the next issue.
-12. If any blocker is encountered, stop and report the blocker in sprint-state.
+12. If the issue is fully closed out, use the deterministic child-closeout helper to mark it complete and move to the next issue.
+13. If any blocker is encountered, stop and report the blocker in sprint-state.
+
+Preferred installed-skill parity helper:
+- `python3 adl/tools/skills/sprint-conductor/scripts/check_installed_skill_parity.py --repo-root <repo> --state <path>`
 
 Preferred structured-prompt preflight helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py --repo-root <repo> --ordered-issues <csv> --state <path>`
@@ -57,6 +62,9 @@ Preferred missing-sprint-issue helper:
 
 Preferred live-truth helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match`
+
+Preferred child-closeout advancement helper:
+- `python3 adl/tools/skills/sprint-conductor/scripts/record_child_issue_closeout.py --state <path> --issue-number <n> --issue-closed true --pr-state <merged|closed_no_merge|not_applicable> --root-sor-status <done|failed> --worktree-status <pruned|retained_with_reason|not_applicable>`
 
 ## Editor-Skill Rule
 
@@ -131,9 +139,18 @@ fresh local run, say so explicitly.
 `not_applicable` is also a normal outcome for docs-only, workflow-only,
 planning-only, or similarly light sprint surfaces.
 
+Follow-up issue policy:
+- default follow-up disposition should be `post_sprint_follow_on`
+- those issues are recorded in sprint state and the closeout artifact
+- they do not block sprint closure unless the explicit sprint policy marks them
+  `must_land_before_sprint_close`
+- blocking follow-ups should be visible in the sprint closeout cleanliness field
+
 Final sprint-management issue closeout:
 - keep the sprint-management issue open until all child issues are closed out
 - keep it open until sprint review and sprint closeout are complete
+- write one bounded closeout artifact before closing the sprint issue:
+  - `python3 adl/tools/skills/sprint-conductor/scripts/write_sprint_closeout_artifact.py --state <path> --out <path>`
 - close it last through the bundled helper:
   - `python3 adl/tools/skills/sprint-conductor/scripts/close_sprint_issue.py --state <path> --summary <text>`
 
