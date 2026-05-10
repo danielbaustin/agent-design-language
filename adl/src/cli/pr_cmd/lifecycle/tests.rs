@@ -1,5 +1,9 @@
 use super::super::{path_str, IssueRef};
 use super::*;
+use crate::cli::pr_cmd::lifecycle::cleanup::{
+    record_worktree_prune_result, replace_worktree_only_paths_remaining,
+};
+use crate::cli::pr_cmd::{card_output_path, resolve_cards_root};
 use crate::cli::tests::env_lock;
 use std::env;
 use std::fs;
@@ -17,6 +21,64 @@ fn temp_dir(prefix: &str) -> PathBuf {
     path.push(format!("{prefix}-{}-{nanos}", std::process::id()));
     fs::create_dir_all(&path).expect("create temp dir");
     path
+}
+
+struct EnvVarGuard {
+    key: String,
+    old: Option<std::ffi::OsString>,
+}
+
+impl EnvVarGuard {
+    fn set(key: &str, value: &str) -> Self {
+        let old = env::var_os(key);
+        unsafe {
+            env::set_var(key, value);
+        }
+        Self {
+            key: key.to_string(),
+            old,
+        }
+    }
+}
+
+impl Drop for EnvVarGuard {
+    fn drop(&mut self) {
+        unsafe {
+            match &self.old {
+                Some(value) => env::set_var(&self.key, value),
+                None => env::remove_var(&self.key),
+            }
+        }
+    }
+}
+
+fn ensure_validate_structured_prompt_script(repo_root: &Path) {
+    let validator = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tools")
+        .join("validate_structured_prompt.sh");
+    let destination_parent = repo_root.join("adl").join("tools");
+    let destination = destination_parent.join("validate_structured_prompt.sh");
+    if destination.exists() {
+        return;
+    }
+
+    fs::create_dir_all(&destination_parent).expect("create tools dir");
+    fs::copy(&validator, &destination).expect("copy validator script");
+    let mut perms = fs::metadata(&destination)
+        .expect("metadata validator")
+        .permissions();
+    perms.set_mode(0o755);
+    fs::set_permissions(&destination, perms).expect("chmod validator");
+}
+
+fn set_tooling_manifest_root_to_workspace() -> EnvVarGuard {
+    let workspace_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("manifest parent");
+    EnvVarGuard::set(
+        "ADL_TOOLING_MANIFEST_ROOT",
+        workspace_root.to_string_lossy().as_ref(),
+    )
 }
 
 fn write_executable(path: &Path, body: &str) {
@@ -58,6 +120,7 @@ fn init_repo_with_origin(repo: &Path, origin: &Path) {
         .expect("git config email")
         .success());
     fs::write(repo.join("README.md"), "seed\n").expect("seed readme");
+    ensure_validate_structured_prompt_script(repo);
     assert!(Command::new("git")
         .args(["add", "-A"])
         .current_dir(repo)
@@ -654,4 +717,184 @@ fn prune_issue_worktree_removes_clean_issue_worktree() {
         IssueWorktreePruneResult::Pruned("adl-wp-1410".to_string())
     );
     assert!(!worktree.exists());
+}
+
+#[test]
+fn sync_completed_output_surfaces_copies_completed_output_to_canonical_output_and_link() {
+    let _guard = env_lock();
+    let _manifest_guard = set_tooling_manifest_root_to_workspace();
+    let temp = temp_dir("adl-pr-lifecycle-sync-completed-output-copy");
+    let repo = temp.join("repo");
+    let origin = temp.join("origin.git");
+    init_repo_with_origin(&repo, &origin);
+    let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+
+    let completed_output = temp.join("completed").join("worktree-output.md");
+    fs::create_dir_all(completed_output.parent().expect("completed output parent"))
+        .expect("create completed output parent");
+    let expected_sor = issue_ref_sync_completed_output_content();
+    fs::write(&completed_output, &expected_sor).expect("write completed output");
+
+    let synced = sync_completed_output_surfaces(&repo, &repo, &issue_ref, &completed_output)
+        .expect("sync should copy completed output");
+    let expected_output = issue_ref.task_bundle_output_path(&repo);
+    assert_eq!(synced, expected_output);
+    assert_eq!(
+        fs::read_to_string(&synced).expect("read synced output"),
+        expected_sor
+    );
+
+    let cards_root = resolve_cards_root(&repo, None);
+    let review_output = card_output_path(&cards_root, issue_ref.issue_number());
+    assert!(fs::symlink_metadata(&review_output)
+        .expect("read review output metadata")
+        .file_type()
+        .is_symlink());
+    assert_eq!(
+        fs::read_link(&review_output).expect("review output symlink target"),
+        expected_output
+    );
+}
+
+#[test]
+fn sync_completed_output_surfaces_skips_copy_when_output_already_canonical() {
+    let _guard = env_lock();
+    let _manifest_guard = set_tooling_manifest_root_to_workspace();
+    let temp = temp_dir("adl-pr-lifecycle-sync-completed-output-no-copy");
+    let repo = temp.join("repo");
+    let origin = temp.join("origin.git");
+    init_repo_with_origin(&repo, &origin);
+    let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+
+    let completed_output = issue_ref.task_bundle_output_path(&repo);
+    fs::create_dir_all(completed_output.parent().expect("completed output parent"))
+        .expect("create output parent");
+    let expected_sor = issue_ref_sync_completed_output_content();
+    fs::write(&completed_output, &expected_sor).expect("write completed output");
+
+    let synced = sync_completed_output_surfaces(&repo, &repo, &issue_ref, &completed_output)
+        .expect("sync should skip canonical copy");
+    assert_eq!(synced, completed_output);
+    assert_eq!(
+        fs::read_to_string(&synced).expect("read canonical output"),
+        expected_sor
+    );
+}
+
+#[test]
+fn record_worktree_prune_result_inserts_result_line_after_worktree_only_value() {
+    let temp = temp_dir("adl-pr-lifecycle-record-worktree-prune-result");
+    let output = temp.join("sor.md");
+    fs::write(
+        &output,
+        "Task ID: issue-1410\n- Worktree-only paths remaining: adl/src/legacy.rs\n",
+    )
+    .expect("write output");
+
+    record_worktree_prune_result(&output, "pruned: adl-wp-1410").expect("record prune result");
+
+    let text = fs::read_to_string(&output).expect("read output");
+    assert!(
+        text.contains("Task ID: issue-1410"),
+        "task id should remain"
+    );
+    assert!(
+        text.contains("- Worktree prune result: pruned: adl-wp-1410"),
+        "prune result should be added"
+    );
+}
+
+#[test]
+fn replace_worktree_only_paths_remaining_rewrites_existing_line() {
+    let temp = temp_dir("adl-pr-lifecycle-replace-worktree-only");
+    let output = temp.join("sor.md");
+    fs::write(
+        &output,
+        "- Worktree-only paths remaining: adl/src/legacy.rs\nFollow-up: none\n",
+    )
+    .expect("write output");
+
+    replace_worktree_only_paths_remaining(&output, "none").expect("replace worktree paths");
+
+    assert_eq!(
+        fs::read_to_string(&output).expect("read output"),
+        "- Worktree-only paths remaining: none\nFollow-up: none\n"
+    );
+}
+
+#[test]
+fn same_filesystem_target_detects_exact_match() {
+    let temp = temp_dir("adl-pr-lifecycle-same-target-exact");
+    let path = temp.join("output.md");
+    fs::write(&path, "content\n").expect("write output");
+
+    assert!(same_filesystem_target(&path, &path).expect("compare same target"));
+}
+
+fn issue_ref_sync_completed_output_content() -> String {
+    [
+        "# issue-1410-canonical-slug",
+        "",
+        "Task ID: issue-1410",
+        "Run ID: issue-1410",
+        "Version: v0.87",
+        "Title: PR Command Sync Coverage",
+        "Branch: codex/1410-canonical-slug",
+        "Status: DONE",
+        "",
+        "Execution:",
+        "- Actor: adl",
+        "- Model: codl",
+        "- Provider: local",
+        "- Start Time: 2026-01-01T00:00:00Z",
+        "- End Time: 2026-01-01T00:00:10Z",
+        "",
+        "## Summary",
+        "- Completed output sync surfaces successfully.",
+        "",
+        "## Artifacts produced",
+        "- `.adl/v0.87/tasks/issue-1410__canonical-slug/sor.md`",
+        "",
+        "## Actions taken",
+        "- Synced output card from worktree path to canonical task bundle output.",
+        "",
+        "## Main Repo Integration (REQUIRED)",
+        "- Main-repo paths updated: `.adl/v0.87/tasks/issue-1410__canonical-slug/sor.md`",
+        "- Worktree-only paths remaining: none",
+        "- Integration state: merged",
+        "- Verification scope: main_repo",
+        "- Integration method used:",
+        "- Verification performed:",
+        "  - `git status`",
+        "- Result: PASS",
+        "",
+        "## Validation",
+        "- Validation commands and their purpose:",
+        "  - `bash adl/tools/validate_structured_prompt.sh --type sor --phase completed --input ...`",
+        "Results:",
+        "  - PASS",
+        "",
+        "## Verification Summary",
+        "- Validation status: PASS",
+        "",
+        "## Determinism Evidence",
+        "- Determinism: same inputs emit same output path format.",
+        "",
+        "## Security / Privacy Checks",
+        "- Secret leakage scan: PASS",
+        "",
+        "## Replay Artifacts",
+        "- Replay command: `git checkout main && cargo run -- adl ...`",
+        "",
+        "## Artifact Verification",
+        "- Output artifact exists at `.adl/v0.87/tasks/issue-1410__canonical-slug/sor.md`.",
+        "",
+        "## Decisions / Deviations",
+        "- No deviations.",
+        "",
+        "## Follow-ups / Deferred work",
+        "- None.",
+        "",
+    ]
+    .join("\n")
 }
