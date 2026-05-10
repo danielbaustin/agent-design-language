@@ -7,6 +7,10 @@
 use std::path::Path;
 
 use super::*;
+use crate::capability_aptitude_testing::{
+    build_capability_aptitude_artifact_bundle, CapabilityAptitudeArtifactBundle,
+    CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT,
+};
 
 pub const RUNTIME_V2_RUNTIME_INHABITANT_INTEGRATION_PACKET_SCHEMA: &str =
     "runtime_v2.runtime_inhabitant_integration_packet.v1";
@@ -38,6 +42,7 @@ pub struct RuntimeV2RuntimeInhabitantIntegrationPacket {
     pub lifecycle_state_ref: String,
     pub memory_identity_ref: String,
     pub theory_of_mind_ref: String,
+    pub capability_dependency_ref: String,
     pub intelligence_metric_ref: String,
     pub governed_learning_ref: String,
     pub access_control_ref: String,
@@ -69,6 +74,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationArtifacts {
         let lifecycle = runtime_v2_agent_lifecycle_state_contract()?;
         let memory = runtime_v2_memory_identity_architecture_contract()?;
         let tom = runtime_v2_theory_of_mind_foundation_contract()?;
+        let capability = build_capability_aptitude_artifact_bundle();
         let intelligence = runtime_v2_intelligence_metric_architecture_contract()?;
         let learning = runtime_v2_governed_learning_substrate_contract()?;
         let access = runtime_v2_access_control_contract()?;
@@ -82,6 +88,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationArtifacts {
             &lifecycle,
             &memory,
             &tom,
+            &capability,
             &intelligence,
             &learning,
             &access,
@@ -100,6 +107,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationArtifacts {
             &lifecycle,
             &memory,
             &tom,
+            &capability,
             &intelligence,
             &learning,
             &access,
@@ -118,6 +126,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationArtifacts {
         lifecycle: &RuntimeV2AgentLifecycleArtifacts,
         memory: &RuntimeV2MemoryIdentityArchitecturePacket,
         tom: &RuntimeV2TheoryOfMindFoundationPacket,
+        capability: &CapabilityAptitudeArtifactBundle,
         intelligence: &RuntimeV2IntelligenceMetricArchitecturePacket,
         learning: &RuntimeV2GovernedLearningSubstratePacket,
         access: &RuntimeV2AccessControlArtifacts,
@@ -135,6 +144,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationArtifacts {
         lifecycle.validate()?;
         memory.validate_against(citizen_state, &boot, &lineage, &witness, &observatory)?;
         tom.validate_against(citizen_state, memory)?;
+        validate_runtime_inhabitant_capability_bundle(capability)?;
         intelligence.validate_against(tom)?;
         learning.validate_against(intelligence, tom)?;
         access.validate()?;
@@ -147,6 +157,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationArtifacts {
             lifecycle,
             memory,
             tom,
+            capability,
             intelligence,
             learning,
             access,
@@ -186,6 +197,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
         lifecycle: &RuntimeV2AgentLifecycleArtifacts,
         memory: &RuntimeV2MemoryIdentityArchitecturePacket,
         tom: &RuntimeV2TheoryOfMindFoundationPacket,
+        capability: &CapabilityAptitudeArtifactBundle,
         intelligence: &RuntimeV2IntelligenceMetricArchitecturePacket,
         learning: &RuntimeV2GovernedLearningSubstratePacket,
         access: &RuntimeV2AccessControlArtifacts,
@@ -207,6 +219,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
             lifecycle_state_ref: lifecycle.state_contract.artifact_path.clone(),
             memory_identity_ref: memory.artifact_path.clone(),
             theory_of_mind_ref: tom.artifact_path.clone(),
+            capability_dependency_ref: CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT.to_string(),
             intelligence_metric_ref: intelligence.artifact_path.clone(),
             governed_learning_ref: learning.artifact_path.clone(),
             access_control_ref: access.event_packet.artifact_path.clone(),
@@ -226,6 +239,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
                 lifecycle,
                 memory,
                 tom,
+                capability,
                 intelligence,
                 learning,
                 access,
@@ -237,11 +251,13 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
                     .to_string(),
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture"
                     .to_string(),
+                "cargo test --manifest-path adl/Cargo.toml capability_aptitude_testing -- --nocapture"
+                    .to_string(),
                 "cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture"
                     .to_string(),
                 "git diff --check".to_string(),
             ],
-            proof_summary: "WP-15 integrates standing, citizen state, lifecycle, memory identity, theory-of-mind, intelligence metric, governed learning, access control, ACIP/A2A communication boundary, and the bounded integrated CSM run into one agent-shaped runtime proof packet and deterministic operator report.".to_string(),
+            proof_summary: "WP-15 integrates standing, citizen state, lifecycle, memory identity, theory-of-mind, the landed capability harness bundle, intelligence metric, governed learning, access control, ACIP/A2A communication boundary, and the bounded integrated CSM run into one agent-shaped runtime proof packet and deterministic operator report.".to_string(),
             proof_classification: "proving".to_string(),
             non_claims: vec![
                 "does not claim a first true birthday or personhood event".to_string(),
@@ -250,7 +266,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
                 "does not bypass lifecycle state, Freedom Gate, ACC, trace, redaction, or review boundaries".to_string(),
                 "does not replace the WP-16 observatory-visible flagship demo".to_string(),
             ],
-            claim_boundary: "This packet proves one bounded v0.91.1 integrated agent-shaped runtime surface by connecting the already-landed standing, state, lifecycle, memory, communication, access, observatory, and trace artifacts into one deterministic proof/report route. It does not prove birthday completion, personhood, unbounded autonomy, or the full WP-16 flagship demo.".to_string(),
+            claim_boundary: "This packet proves one bounded v0.91.1 integrated agent-shaped runtime surface by connecting the already-landed standing, state, lifecycle, memory, capability, communication, access, observatory, and trace artifacts into one deterministic proof/report route. It does not prove birthday completion, personhood, unbounded autonomy, or the full WP-16 flagship demo.".to_string(),
         };
         packet.validate_against(
             integrated_run,
@@ -259,6 +275,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
             lifecycle,
             memory,
             tom,
+            capability,
             intelligence,
             learning,
             access,
@@ -331,6 +348,15 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
             &self.theory_of_mind_ref,
             "runtime_inhabitant_integration.theory_of_mind_ref",
         )?;
+        if self.capability_dependency_ref != CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT {
+            return Err(anyhow!(
+                "runtime inhabitant integration packet must preserve the landed capability harness artifact root"
+            ));
+        }
+        validate_relative_path(
+            &self.capability_dependency_ref,
+            "runtime_inhabitant_integration.capability_dependency_ref",
+        )?;
         validate_relative_path(
             &self.intelligence_metric_ref,
             "runtime_inhabitant_integration.intelligence_metric_ref",
@@ -373,6 +399,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
         let expected_commands = [
             "cargo test --manifest-path adl/Cargo.toml runtime_v2_runtime_inhabitant_integration -- --nocapture",
             "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture",
+            "cargo test --manifest-path adl/Cargo.toml capability_aptitude_testing -- --nocapture",
             "cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture",
             "git diff --check",
         ];
@@ -421,6 +448,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
         lifecycle: &RuntimeV2AgentLifecycleArtifacts,
         memory: &RuntimeV2MemoryIdentityArchitecturePacket,
         tom: &RuntimeV2TheoryOfMindFoundationPacket,
+        capability: &CapabilityAptitudeArtifactBundle,
         intelligence: &RuntimeV2IntelligenceMetricArchitecturePacket,
         learning: &RuntimeV2GovernedLearningSubstratePacket,
         access: &RuntimeV2AccessControlArtifacts,
@@ -444,6 +472,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
             || self.lifecycle_state_ref != lifecycle.state_contract.artifact_path
             || self.memory_identity_ref != memory.artifact_path
             || self.theory_of_mind_ref != tom.artifact_path
+            || self.capability_dependency_ref != CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT
             || self.intelligence_metric_ref != intelligence.artifact_path
             || self.governed_learning_ref != learning.artifact_path
         {
@@ -480,6 +509,7 @@ impl RuntimeV2RuntimeInhabitantIntegrationPacket {
             lifecycle,
             memory,
             tom,
+            capability,
             intelligence,
             learning,
             access,
@@ -516,6 +546,7 @@ fn expected_stage_refs(
     lifecycle: &RuntimeV2AgentLifecycleArtifacts,
     memory: &RuntimeV2MemoryIdentityArchitecturePacket,
     tom: &RuntimeV2TheoryOfMindFoundationPacket,
+    capability: &CapabilityAptitudeArtifactBundle,
     intelligence: &RuntimeV2IntelligenceMetricArchitecturePacket,
     learning: &RuntimeV2GovernedLearningSubstratePacket,
     access: &RuntimeV2AccessControlArtifacts,
@@ -555,36 +586,45 @@ fn expected_stage_refs(
         },
         RuntimeV2RuntimeInhabitantStageRef {
             sequence: 6,
-            stage_id: "intelligence-metric-surface".to_string(),
-            artifact_ref: intelligence.artifact_path.clone(),
-            proves: "Runtime capability claims remain tied to reviewed intelligence metrics rather than self-assertion.".to_string(),
+            stage_id: "capability-harness-surface".to_string(),
+            artifact_ref: format!("{CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT}/scorecard.json"),
+            proves: format!(
+                "Capability claims remain grounded in the landed harness outputs for subject '{}', not self-description.",
+                capability.scorecard.evaluation_subject
+            ),
         },
         RuntimeV2RuntimeInhabitantStageRef {
             sequence: 7,
+            stage_id: "intelligence-metric-surface".to_string(),
+            artifact_ref: intelligence.artifact_path.clone(),
+            proves: "Intelligence metrics remain downstream of reviewed capability and theory-of-mind evidence rather than self-assertion.".to_string(),
+        },
+        RuntimeV2RuntimeInhabitantStageRef {
+            sequence: 8,
             stage_id: "governed-learning-surface".to_string(),
             artifact_ref: learning.artifact_path.clone(),
             proves: "Learning remains governed, rollback-aware, and dependent on reviewed cognition surfaces.".to_string(),
         },
         RuntimeV2RuntimeInhabitantStageRef {
-            sequence: 8,
+            sequence: 9,
             stage_id: "access-and-observatory-projection".to_string(),
             artifact_ref: access.event_packet.artifact_path.clone(),
             proves: "Access control and observatory projection remain redacted, authority-scoped, and reviewable.".to_string(),
         },
         RuntimeV2RuntimeInhabitantStageRef {
-            sequence: 9,
+            sequence: 10,
             stage_id: "acip-hardening".to_string(),
             artifact_ref: acip.artifact_path.clone(),
             proves: "Communication remains bound to ACIP hardening and local authenticated-envelope policy.".to_string(),
         },
         RuntimeV2RuntimeInhabitantStageRef {
-            sequence: 10,
+            sequence: 11,
             stage_id: "a2a-adapter-boundary".to_string(),
             artifact_ref: a2a.artifact_path.clone(),
             proves: "A2A remains an adapter over ACIP rather than a second communication model.".to_string(),
         },
         RuntimeV2RuntimeInhabitantStageRef {
-            sequence: 11,
+            sequence: 12,
             stage_id: "integrated-csm-run-spine".to_string(),
             artifact_ref: integrated_run.proof_packet.execution_transcript_ref.clone(),
             proves: "The bounded integrated CSM run provides the deterministic agent-shaped execution spine for the inhabitant proof.".to_string(),
@@ -607,9 +647,9 @@ fn validate_runtime_inhabitant_trace_refs(trace_refs: &[String]) -> Result<()> {
 fn validate_runtime_inhabitant_stage_refs(
     stage_refs: &[RuntimeV2RuntimeInhabitantStageRef],
 ) -> Result<()> {
-    if stage_refs.len() != 11 {
+    if stage_refs.len() != 12 {
         return Err(anyhow!(
-            "runtime inhabitant integration packet must preserve exactly eleven reviewed stage refs"
+            "runtime inhabitant integration packet must preserve exactly twelve reviewed stage refs"
         ));
     }
     for (idx, stage) in stage_refs.iter().enumerate() {
@@ -630,6 +670,24 @@ fn validate_runtime_inhabitant_stage_refs(
             &stage.proves,
             "runtime_inhabitant_integration.integration_stage_refs[].proves",
         )?;
+    }
+    Ok(())
+}
+
+fn validate_runtime_inhabitant_capability_bundle(
+    capability: &CapabilityAptitudeArtifactBundle,
+) -> Result<()> {
+    if capability.scorecard.schema_version
+        != crate::capability_aptitude_testing::CAPABILITY_APTITUDE_TESTING_SCHEMA_VERSION
+    {
+        return Err(anyhow!(
+            "runtime inhabitant integration packet must bind the landed capability harness schema"
+        ));
+    }
+    if capability.scorecard.evaluation_subject != capability.subject_manifest.subject_id {
+        return Err(anyhow!(
+            "runtime inhabitant integration packet capability dependency must preserve subject identity parity"
+        ));
     }
     Ok(())
 }

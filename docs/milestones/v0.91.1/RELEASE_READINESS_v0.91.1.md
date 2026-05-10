@@ -18,15 +18,13 @@ Not release ready.
 
 ## Current Issue State
 
-- `WP-01` through `WP-05` are closed
-- `WP-06` through `WP-24` are open
+- `WP-01` through `WP-15` are closed
+- `WP-16` through `WP-24` are open
 - the final proof/demo/review/release band has not run yet
 
 ## Current Blockers
 
-- citizen state and later runtime slices are still open
-- integrated runtime inhabitant proof is not landed
-- flagship demo is not landed
+- citizen state and runtime inhabitant proof are landed, but the observatory-visible flagship demo is still open
 - quality gate is pending
 - internal review, external review, remediation, handoff, and ceremony are pending
 
@@ -35,4 +33,3 @@ Not release ready.
 - active milestone package: `v0.91.1`
 - `v0.91` is prior and structurally complete
 - `v0.91.2` is the follow-on tooling/productization milestone
-

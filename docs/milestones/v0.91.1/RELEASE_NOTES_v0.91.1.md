@@ -15,12 +15,21 @@ Inhabited-runtime readiness inside the CSM/polis boundary.
 - agent lifecycle state model
 - CSM observatory active surface
 - citizen standing model
+- citizen state substrate
+- memory and identity architecture
+- Theory of Mind foundation
+- capability and aptitude testing foundation
+- intelligence metric architecture
+- governed learning substrate
+- ANRM/Gemma placement and trace dataset
+- ACIP conformance and local encryption hardening
+- A2A adapter boundary and compatibility plan
+- runtime inhabitant integration
 
 ## Still Pending
 
-- citizen state and later runtime surfaces
-- integrated runtime inhabitant proof
-- flagship observatory demo
+- observatory-visible flagship demo
+- milestone demo matrix / proof coverage closeout
 - milestone review, remediation, and release ceremony
 
 ## Not Claimed
@@ -29,4 +38,3 @@ Inhabited-runtime readiness inside the CSM/polis boundary.
 - birthday or identity continuity
 - constitutional citizenship
 - external transport readiness
-
