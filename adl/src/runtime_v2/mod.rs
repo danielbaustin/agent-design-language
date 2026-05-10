@@ -5,6 +5,7 @@
 //! and proof-bearing contracts used by downstream review tooling.
 
 mod access_control;
+mod acip_hardening;
 mod affect_reasoning_control;
 mod agent_lifecycle_state;
 mod anti_harm_trajectory_constraints;
@@ -73,6 +74,8 @@ use std::path::{Path, PathBuf};
 
 #[allow(unused_imports)]
 pub use access_control::*;
+#[allow(unused_imports)]
+pub use acip_hardening::*;
 #[allow(unused_imports)]
 pub use affect_reasoning_control::*;
 pub use agent_lifecycle_state::*;
