@@ -150,7 +150,8 @@ fn runtime_v2_a2a_adapter_boundary_validation_rejects_packet_metadata_drift() {
         .contains("unsupported A2A adapter boundary schema"));
 
     let mut packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary");
-    packet.source_feature_doc = "docs/milestones/v0.91/features/A2A_EXTERNAL_AGENT_ADAPTER.md".to_string();
+    packet.source_feature_doc =
+        "docs/milestones/v0.91/features/A2A_EXTERNAL_AGENT_ADAPTER.md".to_string();
     assert!(packet
         .validate()
         .expect_err("feature-doc drift should fail")
