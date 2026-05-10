@@ -25,22 +25,30 @@ fn write_temp_adl_yaml() -> PathBuf {
 }
 
 fn run_adl(args: &[&str]) -> std::process::Output {
-    // This env var is provided by Cargo for integration tests.
-    let exe = env!("CARGO_BIN_EXE_adl");
-    Command::new(exe)
+    Command::new(resolve_adl_exe())
         .args(args)
         .output()
         .expect("run adl binary")
 }
 
 fn run_adl_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_adl");
-    let mut cmd = Command::new(exe);
+    let mut cmd = Command::new(resolve_adl_exe());
     cmd.args(args);
     for (k, v) in envs {
         cmd.env(k, v);
     }
     cmd.output().expect("run adl binary")
+}
+
+fn resolve_adl_exe() -> PathBuf {
+    let raw = std::env::var("CARGO_BIN_EXE_adl")
+        .unwrap_or_else(|_| env!("CARGO_BIN_EXE_adl").to_string());
+    let path = PathBuf::from(raw);
+    if path.is_absolute() {
+        path
+    } else {
+        Path::new(env!("CARGO_MANIFEST_DIR")).join(path)
+    }
 }
 
 fn assert_failure_contains(out: &std::process::Output, needle: &str) {

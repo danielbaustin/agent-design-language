@@ -8,6 +8,7 @@ sprint:
   issue_number: <u32 or null>
   ordered_issue_numbers:
     - <u32>
+  follow_up_issue_policy: post_sprint_follow_on | must_land_before_sprint_close
   goal: <string or null>
   version: <string or null>
   slug: <string or null>
@@ -26,6 +27,16 @@ sprint:
       pr_url: <url or null>
       artifact_paths:
         - /absolute/or/repo-relative/path
+      closeout_gate:
+        issue_closed: true | false
+        pr_state: merged | closed_no_merge | not_applicable | unknown
+        root_sor_status: done | failed | unknown
+        worktree_status: pruned | retained_with_reason | not_applicable | unknown
+        worktree_note: <bounded text or null>
+  follow_up_issues:
+    - issue_number: <u32>
+      disposition: post_sprint_follow_on | must_land_before_sprint_close
+      summary: <bounded text>
   structured_prompt_preflight:
     status: not_run | ready | needs_editor_repair | blocked
     required_card_types:
@@ -48,6 +59,16 @@ sprint:
       - <u32>
     checked_pr_urls:
       - <url>
+  installed_skill_parity:
+    status: not_run | matched | drift_detected | blocked
+    tracked_skill_dir: /absolute/or/repo-relative/path | null
+    installed_skill_dir: /absolute/or/repo-relative/path | null
+    left_only:
+      - <path>
+    right_only:
+      - <path>
+    diff_files:
+      - <path>
   issue_closed: true | false
 policy:
   require_sequential_closeout: true
@@ -58,8 +79,10 @@ policy:
   require_full_sprint_structured_prompt_readiness: true
   allow_review_subagent_exception: true
   max_review_subagents_when_exception_enabled: 1
+  follow_up_issue_policy: post_sprint_follow_on | must_land_before_sprint_close
   require_github_truth_recheck: true
   github_truth_gate_blocks_progress: true
+  require_installed_skill_parity_before_live_run: true | false
   capture_coverage_at_closeout: true
   capture_rust_tracker_at_closeout: true
   stop_on_blocker: true

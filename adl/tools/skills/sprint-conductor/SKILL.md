@@ -63,8 +63,11 @@ At the moment, the key repo references are:
 Within this bundle, the operational details live in:
 - `references/conductor-playbook.md`
 - `references/output-contract.md`
+- `scripts/check_installed_skill_parity.py`
 - `scripts/check_sprint_truth.py`
+- `scripts/record_child_issue_closeout.py`
 - `scripts/update_sprint_state.py`
+- `scripts/write_sprint_closeout_artifact.py`
 - `scripts/validate_review_subagent_policy.py`
 
 ## Entry Conditions
@@ -116,17 +119,20 @@ missing sprint-management issue first.
    issue is missing and policy allows creation, create it through the bundled
    helper first.
 2. Create or load the sprint-state artifact.
-3. Run sprint-wide structured prompt review before issue execution begins.
-4. If any child issue cards are not ready, repair them through the editor skills first.
-5. Confirm the current issue is the earliest not-yet-closed issue in the list.
-6. Route that issue through `workflow-conductor`.
-7. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
-8. Run only the selected downstream lifecycle or editor skill.
-9. Re-check issue truth until the issue is fully closed out. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
-10. Only then advance to the next ordered issue.
-11. After the final issue closes, assemble sprint review evidence.
-12. Record sprint closeout metrics including coverage and Rust tracker counts.
-13. Stop with one bounded sprint review/closeout result.
+3. When live execution is about to begin, run the installed-skill parity/readiness gate first.
+4. Run sprint-wide structured prompt review before issue execution begins.
+5. If any child issue cards are not ready, repair them through the editor skills first.
+6. Confirm the current issue is the earliest not-yet-closed issue in the list.
+7. Route that issue through `workflow-conductor`.
+8. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
+9. Run only the selected downstream lifecycle or editor skill.
+10. Re-check issue truth until the issue is fully closed out. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
+11. Use the deterministic child-closeout helper path to advance sprint state only after closeout truth is satisfied.
+12. Only then advance to the next ordered issue.
+13. After the final issue closes, assemble sprint review evidence.
+14. Record sprint closeout metrics including coverage and Rust tracker counts.
+15. Write the bounded sprint closeout artifact before closing the sprint-management issue.
+16. Stop with one bounded sprint review/closeout result.
 
 ## Execution Model
 
@@ -141,6 +147,8 @@ This skill enforces:
   policy allows the skill to create it directly
 - resumable per-issue state with PR URLs and artifact links when available
 - no sprint-state advancement without a fresh matched live GitHub truth check
+- no next-child advancement without explicit child-closeout gate satisfaction
+- no live sprint execution without an explicit installed-skill parity/readiness result when sprint policy requires it
 
 Preferred per-issue routing model:
 - sprint-wide structured prompt preflight not ready ->
@@ -160,6 +168,7 @@ Preferred per-issue routing model:
 - merged or intentionally closed -> `pr-closeout`
 - healthy PR open and awaiting human review or merge -> remain paused on the
   current issue in a non-blocked waiting state
+- child issue fully closed out and ready to advance -> `record_child_issue_closeout.py`
 
 ## Sprint Review Requirement
 
@@ -193,6 +202,21 @@ Bounded review-subagent exception:
 
 The sprint review must not claim that docs/cards alone are sufficient when the
 sprint changed implementation code.
+
+## Sprint Follow-up Policy
+
+This skill must use one explicit policy for sprint-discovered follow-up issues.
+
+Recommended default:
+- bounded follow-up issues discovered during sprint review are recorded as
+  `post_sprint_follow_on`
+- they do not block sprint closure unless the sprint policy explicitly marks
+  them `must_land_before_sprint_close`
+
+That policy must be:
+- explicit in the structured input/policy contract
+- recorded in sprint state and closeout artifacts
+- reflected in any discovered follow-up issue records written by the skill
 
 ## Sprint Closeout Requirement
 
