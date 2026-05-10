@@ -140,6 +140,84 @@ fn runtime_v2_a2a_adapter_boundary_validate_against_rejects_dependency_drift() {
 }
 
 #[test]
+fn runtime_v2_a2a_adapter_boundary_validation_rejects_packet_metadata_drift() {
+    let mut packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary");
+    packet.schema_version = "runtime_v2.a2a_adapter_boundary_packet.v0".to_string();
+    assert!(packet
+        .validate()
+        .expect_err("schema drift should fail")
+        .to_string()
+        .contains("unsupported A2A adapter boundary schema"));
+
+    let mut packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary");
+    packet.source_feature_doc = "docs/milestones/v0.91/features/A2A_EXTERNAL_AGENT_ADAPTER.md".to_string();
+    assert!(packet
+        .validate()
+        .expect_err("feature-doc drift should fail")
+        .to_string()
+        .contains("v0.91.1 feature doc"));
+
+    let mut packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary");
+    packet.validation_commands.pop();
+    assert!(packet
+        .validate()
+        .expect_err("validation command drift should fail")
+        .to_string()
+        .contains("validation command set"));
+
+    let mut packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary");
+    packet.claim_boundary = "bounded adapter proof".to_string();
+    assert!(packet
+        .validate()
+        .expect_err("claim boundary drift should fail")
+        .to_string()
+        .contains("external-federation non-claim boundary"));
+
+    let mut packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary");
+    packet.non_claims = vec!["does not prove external federation".to_string()];
+    assert!(packet
+        .validate()
+        .expect_err("non-claim drift should fail")
+        .to_string()
+        .contains("one-communication-model non-claim"));
+}
+
+#[test]
+fn runtime_v2_a2a_adapter_boundary_validation_rejects_lane_and_negative_case_gaps() {
+    let mut packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary");
+    packet.adapter_lanes[0].trace_evidence_refs.clear();
+    assert!(packet
+        .validate()
+        .expect_err("missing trace evidence should fail")
+        .to_string()
+        .contains("trace evidence references"));
+
+    let mut packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary");
+    packet.adapter_lanes[1].non_claims = vec!["single".to_string()];
+    assert!(packet
+        .validate()
+        .expect_err("missing lane non-claims should fail")
+        .to_string()
+        .contains("non-claim coverage"));
+
+    let mut packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary");
+    packet.negative_cases[0].expected_error_substring.clear();
+    assert!(packet
+        .validate()
+        .expect_err("missing negative-case error substring should fail")
+        .to_string()
+        .contains("expected_error_substring"));
+
+    let mut packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary");
+    packet.negative_cases[1].proves.clear();
+    assert!(packet
+        .validate()
+        .expect_err("missing negative-case proves text should fail")
+        .to_string()
+        .contains("negative_cases[].proves"));
+}
+
+#[test]
 fn runtime_v2_a2a_adapter_boundary_proof_route_paths_exist() {
     let packet = runtime_v2_a2a_adapter_boundary_contract().expect("A2A adapter boundary packet");
     let repo_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
