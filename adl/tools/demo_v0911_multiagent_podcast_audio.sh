@@ -181,13 +181,55 @@ for spec in "${TURN_FILES[@]}"; do
   IFS='|' read -r filename speaker role voice provider surrogate instructions <<< "$spec"
   original_text="$(cat "$SOURCE_DIR/out/podcast/$filename")"
   if [[ "$SPEAKERS_INTRODUCED" != *"|$speaker|"* ]]; then
-    text="I'm ${speaker}. ${original_text}"
+    if python3 - "$speaker" "$original_text" <<'PY'
+import re
+import sys
+
+speaker = sys.argv[1].strip().lower()
+text = sys.argv[2].strip().lower().replace("’", "'").replace("‘", "'")
+pattern = r"^['\"“”‘’\s-]*(i\s*'m|i\s+am)\s+" + re.escape(speaker) + r"([\s\.,;:!?-]|$)"
+sys.exit(0 if re.match(pattern, text) else 1)
+PY
+    then
+      text="$original_text"
+    else
+      text="I'm ${speaker}. ${original_text}"
+    fi
     SPEAKERS_INTRODUCED="${SPEAKERS_INTRODUCED}${speaker}|"
   else
     text="$original_text"
   fi
   out_wav="$SEGMENTS_DIR/${filename%.md}.wav"
-  if [[ "$provider" == "openai" ]]; then
+  if [[ "${ADL_PODCAST_AUDIO_TEST_TONES:-0}" == "1" ]]; then
+    python3 - "$out_wav" "$speaker" <<'PY'
+import math
+import struct
+import sys
+import wave
+
+out_path, speaker = sys.argv[1:3]
+rate = 24000
+duration = 1.2
+freq_map = {
+    'ChatGPT': 220.0,
+    'Gemini': 330.0,
+    'Claude': 262.0,
+}
+freq = freq_map.get(speaker, 247.0)
+amplitude = 9800
+frame_count = int(rate * duration)
+
+with wave.open(out_path, 'wb') as wf:
+    wf.setnchannels(1)
+    wf.setsampwidth(2)
+    wf.setframerate(rate)
+    frames = bytearray()
+    for i in range(frame_count):
+        sample = int(round(amplitude * math.sin(2.0 * math.pi * freq * (i / rate))))
+        frames.extend(struct.pack('<h', sample))
+    wf.writeframes(bytes(frames))
+PY
+  elif [[ "$provider" == "openai" ]]; then
     render_openai_wav "$text" "$voice" "$instructions" "$out_wav"
   elif [[ "$provider" == "gemini" ]]; then
     render_gemini_wav "$text" "$voice" "$out_wav"
@@ -421,6 +463,9 @@ for entry in segments:
     combined.append(frames)
     seen_speakers.add(entry['speaker'])
 channels, width, rate = params
+speech_only_rms = None
+speech_only_peak = None
+speech_only_frames = b''.join(combined)
 assembled_frames = b''
 for idx, frames in enumerate(combined):
     assembled_frames += frames
@@ -433,6 +478,7 @@ pre_mix_peak = None
 post_mix_rms = None
 post_mix_peak = None
 if width == 2:
+    speech_only_rms, speech_only_peak = measure_pcm_16le(speech_only_frames)
     pre_mix_rms, pre_mix_peak = measure_pcm_16le(assembled_frames)
     assembled_frames = normalize_pcm_16le(assembled_frames, final_mix_target_rms, rate, False)
     assembled_frames = compress_pcm_16le(assembled_frames)
@@ -450,15 +496,24 @@ manifest = {
     'mastering': {
         'segment_target_rms': speaker_target_rms,
         'speaker_tone_profiles': speaker_tone_profiles,
-        'fallback_casting': {
+        'active_rendering': {
+            'ChatGPT': {'provider': 'openai', 'voice': chatgpt_voice, 'mode': 'native'},
+            'Gemini': {
+                'provider': gemini_provider,
+                'voice': gemini_voice if gemini_provider == 'gemini' else gemini_openai_voice,
+                'mode': 'native' if gemini_provider == 'gemini' else 'surrogate',
+            },
+            'Claude': {'provider': claude_provider, 'voice': claude_voice, 'mode': 'surrogate'},
+        },
+        'available_fallback_casting': {
             'ChatGPT': {
                 'native': {'provider': 'openai', 'voice': chatgpt_voice},
             },
             'Gemini': {
                 'native': {'provider': 'gemini', 'voice': gemini_voice},
                 'surrogate': {
-                    'provider': gemini_provider,
-                    'voice': gemini_openai_voice if gemini_provider == 'openai' else gemini_voice,
+                    'provider': 'openai',
+                    'voice': gemini_openai_voice,
                     'intent': 'bright, quick, lightly androgynous analytical contrast',
                 },
             },
@@ -475,7 +530,11 @@ manifest = {
         'compression_threshold': compression_threshold,
         'compression_ratio': compression_ratio,
         'intro_duck_ms': intro_duck_ms,
-        'final_mix_metrics': {
+        'speech_only_input_metrics': {
+            'rms': round(speech_only_rms, 1) if speech_only_rms is not None else None,
+            'peak': speech_only_peak,
+        },
+        'full_episode_mix_metrics': {
             'pre_rms': round(pre_mix_rms, 1) if pre_mix_rms is not None else None,
             'pre_peak': pre_mix_peak,
             'post_rms': round(post_mix_rms, 1) if post_mix_rms is not None else None,
@@ -511,9 +570,9 @@ packet = [
     '',
     '- each speaker says their own name only on their first appearance',
     '- segment loudness is normalized toward a shared target so the episode is easier to follow',
+    '- the manifest separates speech-only input metrics from full-episode mix metrics so silence padding does not silently dilute the mastering story',
     '- the final episode mix gets one more mastering pass for overall loudness consistency and peak control',
     '- pause timing is deterministic but no longer one-size-fits-all; handoff gaps vary by speaker transition and closing position',
-    '- fallback casting is deliberately contrastive so Gemini stays brighter and quicker while Claude stays lower and more resonant',
     '',
     '## Proof Boundary',
     '',
@@ -521,6 +580,10 @@ packet = [
     '- Claude remains the transcript author for Claude turns even though the audio is rendered by a surrogate TTS lane',
     '- audio does not prove long-term identity continuity',
 ]
+if gemini_provider == 'gemini':
+    packet.insert(-5, '- Gemini rendered natively in this run, so the surrogate fallback casting lane remained available but inactive')
+else:
+    packet.insert(-5, '- fallback casting is active in this run so Gemini stays brighter and quicker while Claude stays lower and more resonant')
 Path(packet_path).write_text('\n'.join(packet).rstrip() + '\n', encoding='utf-8')
 PY
 rm -f "$SEGMENT_MANIFEST_TMP"

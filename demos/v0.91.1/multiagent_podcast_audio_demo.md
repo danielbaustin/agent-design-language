@@ -107,10 +107,10 @@ The audio follow-on is successful when:
 
 - one listenable combined episode audio file exists
 - per-turn audio segments exist with explicit speaker routing
-- the manifest shows which provider/voice rendered each speaker
-- the manifest records usable loudness/mastering metrics for the final mix
+- the manifest shows the active provider/voice route used for each speaker in the run
+- the manifest separates speech-only input metrics from full-episode final-mix metrics
 - the manifest records the bounded per-speaker tone-profile settings used for the run
-- the manifest records the fallback casting map used when surrogate rendering is active
+- the manifest records the available fallback-casting map without implying it was active when Gemini native TTS was used
 - the manifest records the deterministic timing policy used for handoff gaps
 - Claude's surrogate rendering is disclosed instead of implied away
 - each speaker introduces themselves naturally only on their first turn, for example `I'm ChatGPT`
