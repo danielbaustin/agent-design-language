@@ -51,6 +51,7 @@ Out of scope:
   - lifecycle state contract
   - memory identity
   - theory-of-mind
+  - landed capability harness bundle
   - intelligence metric
   - governed learning
   - access and observatory evidence

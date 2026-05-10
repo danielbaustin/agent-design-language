@@ -1,4 +1,7 @@
 use super::*;
+use crate::capability_aptitude_testing::{
+    build_capability_aptitude_artifact_bundle, CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT,
+};
 
 #[test]
 fn runtime_v2_runtime_inhabitant_integration_contract_is_stable() {
@@ -15,7 +18,11 @@ fn runtime_v2_runtime_inhabitant_integration_contract_is_stable() {
     );
     assert_eq!(artifacts.packet.milestone, "v0.91.1");
     assert_eq!(artifacts.packet.wp, "WP-15");
-    assert_eq!(artifacts.packet.integration_stage_refs.len(), 11);
+    assert_eq!(
+        artifacts.packet.capability_dependency_ref,
+        CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT
+    );
+    assert_eq!(artifacts.packet.integration_stage_refs.len(), 12);
     assert_eq!(artifacts.packet.trace_refs.len(), 4);
     assert!(artifacts
         .packet
@@ -32,6 +39,7 @@ fn runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_acce
     runtime_v2_agent_lifecycle_state_contract().expect("lifecycle");
     runtime_v2_memory_identity_architecture_contract().expect("memory");
     runtime_v2_theory_of_mind_foundation_contract().expect("theory of mind");
+    build_capability_aptitude_artifact_bundle();
     runtime_v2_intelligence_metric_architecture_contract().expect("intelligence");
     runtime_v2_governed_learning_substrate_contract().expect("learning");
     runtime_v2_access_control_contract().expect("access control");
@@ -186,6 +194,7 @@ fn runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency
     let lifecycle = runtime_v2_agent_lifecycle_state_contract().expect("lifecycle");
     let memory = runtime_v2_memory_identity_architecture_contract().expect("memory");
     let tom = runtime_v2_theory_of_mind_foundation_contract().expect("tom");
+    let capability = build_capability_aptitude_artifact_bundle();
     let intelligence =
         runtime_v2_intelligence_metric_architecture_contract().expect("intelligence");
     let learning = runtime_v2_governed_learning_substrate_contract().expect("learning");
@@ -205,6 +214,7 @@ fn runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency
             &lifecycle,
             &memory,
             &tom,
+            &capability,
             &intelligence,
             &learning,
             &access,
@@ -214,6 +224,30 @@ fn runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency
         .expect_err("integrated-run drift should fail")
         .to_string()
         .contains("integrated CSM run proof packet"));
+
+    let mut artifacts = runtime_v2_runtime_inhabitant_integration_contract()
+        .expect("runtime inhabitant integration artifacts");
+    artifacts.packet.capability_dependency_ref =
+        "docs/milestones/v0.91.1/review/drifted".to_string();
+    assert!(artifacts
+        .packet
+        .validate_against(
+            &integrated_run,
+            &standing,
+            &citizen_state,
+            &lifecycle,
+            &memory,
+            &tom,
+            &capability,
+            &intelligence,
+            &learning,
+            &access,
+            &acip,
+            &a2a,
+        )
+        .expect_err("capability drift should fail")
+        .to_string()
+        .contains("capability harness artifact root"));
 
     let mut artifacts = runtime_v2_runtime_inhabitant_integration_contract()
         .expect("runtime inhabitant integration artifacts");
@@ -227,6 +261,7 @@ fn runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency
             &lifecycle,
             &memory,
             &tom,
+            &capability,
             &intelligence,
             &learning,
             &access,
