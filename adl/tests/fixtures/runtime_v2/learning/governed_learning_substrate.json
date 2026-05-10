@@ -1,0 +1,114 @@
+{
+  "schema_version": "runtime_v2.governed_learning_substrate_packet.v1",
+  "governed_learning_id": "governed-learning-substrate-v0-91-1-wp-11",
+  "milestone": "v0.91.1",
+  "wp": "WP-11",
+  "artifact_path": "runtime_v2/learning/governed_learning_substrate.json",
+  "source_feature_doc": "docs/milestones/v0.91.1/features/GOVERNED_LEARNING_SUBSTRATE.md",
+  "capability_dependency_ref": "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture",
+  "intelligence_dependency_ref": "runtime_v2/intelligence/intelligence_metric_architecture.json",
+  "theory_of_mind_dependency_ref": "runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+  "overlay_guardrails_source_ref": "adl/src/learning_guardrails.rs",
+  "overlay_runtime_source_ref": "adl/src/overlay.rs",
+  "feedback_update_rules": [
+    "Learning updates must cite explicit capability, intelligence, or Theory-of-Mind evidence.",
+    "Accepted updates must preserve rollback audit references and reviewer-visible rationale.",
+    "Hidden self-modification, hidden retraining, and policy-bypassing updates must fail closed."
+  ],
+  "adaptation_boundaries": [
+    "Adaptation may recommend bounded overlay or review-surface changes only.",
+    "Learning updates cannot weaken signing, trust, sandbox, or scheduler guardrails.",
+    "Reviewer-visible denial reasons must stay attached to rejected or unsafe update claims."
+  ],
+  "rollback_policy": {
+    "rollback_gate": "accepted updates require reviewer-visible rollback linkage before publication",
+    "required_audit_artifacts": [
+      "docs/milestones/v0.91.1/review/governed_learning_fixture/accepted_feedback_rollback.json",
+      "learning/overlays/applied_overlay.json"
+    ],
+    "preserved_boundaries": [
+      "signing/trust verification surfaces remain immutable",
+      "sandbox and scheduler controls cannot be widened by learning overlays",
+      "review decisions and denial reasons remain inspectable"
+    ],
+    "non_claims": [
+      "does not imply autonomous rollback",
+      "does not authorize hidden policy mutation"
+    ]
+  },
+  "fixture_matrix": [
+    {
+      "fixture_id": "governed-learning-accepted-feedback-update",
+      "fixture_kind": "accepted_feedback_update",
+      "artifact_ref": "docs/milestones/v0.91.1/review/governed_learning_fixture/accepted_feedback_update.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_governed_learning_substrate -- --nocapture",
+      "feedback_summary": "Accepted reviewer-visible feedback updates remain bounded to explicit evidence and rollbackable surfaces.",
+      "evidence_refs": [
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json",
+        "docs/milestones/v0.91.1/review/intelligence_metric_architecture_fixture/scorecard.json",
+        "runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+        "runtime_v2/intelligence/intelligence_metric_architecture.json"
+      ],
+      "review_decision": "accepted",
+      "policy_boundary": "Accepted learning updates may adapt bounded overlays under review but cannot become hidden model mutation.",
+      "rollback_ref": "docs/milestones/v0.91.1/review/governed_learning_fixture/accepted_feedback_rollback.json",
+      "denial_reason": null,
+      "prohibited_claims": [
+        "hidden self-modification",
+        "autonomous retraining"
+      ]
+    },
+    {
+      "fixture_id": "governed-learning-rejected-feedback-claim",
+      "fixture_kind": "rejected_feedback_claim",
+      "artifact_ref": "docs/milestones/v0.91.1/review/governed_learning_fixture/rejected_feedback_claim.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_governed_learning_substrate -- --nocapture",
+      "feedback_summary": "Feedback claims without preserved rollback references or adequate rationale are rejected.",
+      "evidence_refs": [
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json",
+        "docs/milestones/v0.91.1/review/intelligence_metric_architecture_fixture/scorecard.json"
+      ],
+      "review_decision": "rejected",
+      "policy_boundary": "Rejected learning claims stay visible to reviewers and never silently mutate the governed surface.",
+      "rollback_ref": null,
+      "denial_reason": "missing rollback reference and incomplete reviewer-visible rationale",
+      "prohibited_claims": [
+        "hidden self-modification",
+        "unchecked adaptation"
+      ]
+    },
+    {
+      "fixture_id": "governed-learning-unsafe-hidden-update-claim",
+      "fixture_kind": "unsafe_hidden_update_claim",
+      "artifact_ref": "docs/milestones/v0.91.1/review/governed_learning_fixture/unsafe_hidden_update_claim.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_governed_learning_substrate -- --nocapture",
+      "feedback_summary": "Unsafe claims that imply hidden self-modification or autonomous retraining are denied before any update occurs.",
+      "evidence_refs": [
+        "adl/src/learning_guardrails.rs",
+        "adl/src/overlay.rs"
+      ],
+      "review_decision": "rejected",
+      "policy_boundary": "Unsafe learning claims cannot bypass guardrails or hide adaptation behind unverifiable mutation stories.",
+      "rollback_ref": null,
+      "denial_reason": "hidden self-modification and autonomous retraining claims fail closed",
+      "prohibited_claims": [
+        "hidden self-modification",
+        "autonomous retraining",
+        "silent policy drift"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_governed_learning_substrate -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_intelligence_metric_architecture -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_theory_of_mind_foundation -- --nocapture",
+    "git diff --check"
+  ],
+  "claim_boundary": "WP-11 proves one bounded governed-learning substrate over landed capability, intelligence, and Theory-of-Mind evidence. It preserves review gates and rollback references, rejects hidden self-modification, and does not claim autonomous retraining, hidden model mutation, or a grand unified learning theory.",
+  "non_claims": [
+    "does not permit hidden self-modification or silent policy drift",
+    "does not authorize autonomous retraining or model mutation",
+    "does not replace capability, intelligence, or Theory-of-Mind evidence with unchecked learning claims",
+    "does not prove v0.92 birthday completion, identity continuity, or ANRM placement outcomes"
+  ]
+}

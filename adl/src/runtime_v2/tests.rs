@@ -23,6 +23,7 @@ mod external_counterparty;
 mod feature_proof_coverage;
 mod freedom_gate_mediation;
 mod governed_episode;
+mod governed_learning_substrate;
 mod governed_tools_flagship_demo;
 mod hardening;
 mod humor_and_absurdity;

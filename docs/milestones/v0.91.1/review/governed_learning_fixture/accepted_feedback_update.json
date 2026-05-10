@@ -1,0 +1,12 @@
+{
+  "fixture_id": "governed-learning-accepted-feedback-update",
+  "review_decision": "accepted",
+  "evidence_refs": [
+    "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json",
+    "docs/milestones/v0.91.1/review/intelligence_metric_architecture_fixture/scorecard.json",
+    "adl/tests/fixtures/runtime_v2/theory_of_mind/theory_of_mind_foundation.json"
+  ],
+  "rollback_ref": "docs/milestones/v0.91.1/review/governed_learning_fixture/accepted_feedback_rollback.json",
+  "policy_boundary": "Accepted feedback remains bounded to reviewer-visible overlay suggestions with rollback audit linkage.",
+  "notes": "This accepted case proves adaptation under review, not hidden retraining or silent self-modification."
+}

@@ -226,6 +226,12 @@ pub fn runtime_v2_intelligence_metric_architecture_contract(
     )
 }
 
+pub fn runtime_v2_governed_learning_substrate_contract(
+) -> Result<RuntimeV2GovernedLearningSubstratePacket> {
+    static PACKET: OnceCell<RuntimeV2GovernedLearningSubstratePacket> = OnceCell::new();
+    cached_contract(&PACKET, RuntimeV2GovernedLearningSubstratePacket::prototype)
+}
+
 pub fn runtime_v2_standing_contract() -> Result<RuntimeV2StandingArtifacts> {
     RuntimeV2StandingArtifacts::prototype()
 }

@@ -1,0 +1,11 @@
+{
+  "fixture_id": "governed-learning-accepted-feedback-rollback",
+  "review_decision": "rollback_ready",
+  "evidence_refs": [
+    "adl/src/learning_guardrails.rs",
+    "adl/src/overlay.rs"
+  ],
+  "rollback_ref": "learning/overlays/applied_overlay.json",
+  "policy_boundary": "Rollback remains mandatory for accepted update surfaces so a reviewed adaptation can be unwound deterministically.",
+  "notes": "This rollback audit fixture proves reference preservation only; it does not imply autonomous rollback or policy bypass."
+}

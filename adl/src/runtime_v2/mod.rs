@@ -26,6 +26,7 @@ mod external_counterparty;
 mod feature_proof_coverage;
 mod foundation;
 mod governed_episode;
+mod governed_learning_substrate;
 mod governed_tools_flagship_demo;
 mod hardening;
 mod humor_and_absurdity;
@@ -113,6 +114,8 @@ pub use feature_proof_coverage::*;
 pub use foundation::*;
 #[allow(unused_imports)]
 pub use governed_episode::*;
+#[allow(unused_imports)]
+pub use governed_learning_substrate::*;
 #[allow(unused_imports)]
 pub use governed_tools_flagship_demo::*;
 #[allow(unused_imports)]
