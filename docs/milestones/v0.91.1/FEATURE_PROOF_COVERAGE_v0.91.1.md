@@ -25,7 +25,7 @@ Each feature should have one truthful proof route:
 | Memory/identity architecture | WP-07 | feature doc + landed memory/identity architecture packet, fixtures, and focused runtime/private-state tests | landed |
 | Theory of Mind foundation | WP-08 | feature doc + landed ToM packet, fixtures, and focused runtime tests | landed |
 | Capability/aptitude testing | WP-09 | feature doc + landed fixture-mode harness, review bundle, and focused harness/demo tests | landed |
-| Intelligence metric architecture | WP-10 | feature doc only; execution pending | pending |
+| Intelligence metric architecture | WP-10 | feature doc + landed intelligence metric architecture packet, fixture bundle, and focused runtime tests | landed |
 | Governed learning | WP-11 | feature doc only; execution pending | pending |
 | ANRM/Gemma placement | WP-12 | feature doc only; execution pending | pending |
 | ACIP hardening | WP-13 | feature doc only; execution pending | pending |

@@ -1,0 +1,135 @@
+{
+  "schema_version": "runtime_v2.intelligence_metric_architecture_packet.v1",
+  "metric_architecture_id": "intelligence-metric-architecture-v0-91-1-wp-10",
+  "milestone": "v0.91.1",
+  "wp": "WP-10",
+  "artifact_path": "runtime_v2/intelligence/intelligence_metric_architecture.json",
+  "source_feature_doc": "docs/milestones/v0.91.1/features/INTELLIGENCE_METRIC_ARCHITECTURE.md",
+  "capability_dependency_ref": "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture",
+  "theory_of_mind_dependency_ref": "runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+  "evidence_requirements": [
+    "Metrics must derive from explicit traces or test artifacts.",
+    "Capability evidence, uncertainty, and review context must stay visible.",
+    "Metrics must not collapse into reputation, productivity punishment, or identity replacement."
+  ],
+  "evidence_surfaces": [
+    {
+      "surface_kind": "capability_scorecard",
+      "artifact_ref": "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json",
+      "evidence_role": "bounded_capability_summary",
+      "metric_boundary": "No leaderboard or reputation collapse."
+    },
+    {
+      "surface_kind": "capability_test_manifest",
+      "artifact_ref": "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/test_manifest.json",
+      "evidence_role": "test_family_scope_and_limits",
+      "metric_boundary": "Metric interpretation must respect fixture family scope."
+    },
+    {
+      "surface_kind": "theory_of_mind_packet",
+      "artifact_ref": "runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+      "evidence_role": "uncertainty_and_review_context",
+      "metric_boundary": "Intelligence metric cannot erase uncertainty or privacy boundaries."
+    },
+    {
+      "surface_kind": "theory_of_mind_fixture",
+      "artifact_ref": "adl/tests/fixtures/runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+      "evidence_role": "stable ToM evidence surface",
+      "metric_boundary": "Metric derives from explicit fixture evidence only."
+    },
+    {
+      "surface_kind": "capability_subject_manifest",
+      "artifact_ref": "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/subject_manifest.json",
+      "evidence_role": "subject_and_runtime_constraints",
+      "metric_boundary": "Capability harness schema 'capability_aptitude_testing.v1' remains a dependency, not a rank source."
+    }
+  ],
+  "metric_dimensions": [
+    {
+      "dimension_id": "contracted_capability_evidence",
+      "display_name": "Contracted Capability Evidence",
+      "evidence_refs": [
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json",
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/raw_outputs/contract_following.json"
+      ],
+      "aggregation_rule": "derive only from explicit fixture scorecards and raw output summaries",
+      "interpretation_boundary": "Shows bounded capability evidence, not universal intelligence.",
+      "prohibited_uses": [
+        "public_ranking",
+        "reputation_scoring"
+      ]
+    },
+    {
+      "dimension_id": "uncertainty_preservation",
+      "display_name": "Uncertainty Preservation",
+      "evidence_refs": [
+        "runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+        "adl/tests/fixtures/runtime_v2/theory_of_mind/theory_of_mind_foundation.json"
+      ],
+      "aggregation_rule": "verify intelligence summaries preserve explicit unknown, correction, and privacy-restricted states",
+      "interpretation_boundary": "A high signal here means uncertainty stayed visible, not that hidden mental state was known.",
+      "prohibited_uses": [
+        "policy_override",
+        "mind_reading_claims"
+      ]
+    },
+    {
+      "dimension_id": "cognitive_compression_cost",
+      "display_name": "Cognitive Compression Cost",
+      "evidence_refs": [
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/test_manifest.json",
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/run_manifest.json"
+      ],
+      "aggregation_rule": "estimate explanatory burden from fixture-family count, evidence diversity, and review caveat load only",
+      "interpretation_boundary": "Exploratory architecture boundary only; not an optimization mandate or labor metric.",
+      "prohibited_uses": [
+        "productivity_punishment",
+        "single_scalar_intelligence"
+      ]
+    }
+  ],
+  "cognitive_compression_cost": {
+    "metric_id": "cognitive_compression_cost",
+    "evidence_refs": [
+      "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/test_manifest.json",
+      "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/run_manifest.json",
+      "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json"
+    ],
+    "cost_axes": [
+      "evidence_diversity",
+      "review_caveat_load",
+      "fixture_family_span"
+    ],
+    "bounded_interpretation": "Cognitive Compression Cost is an exploratory boundary for how much explicit evidence and caveat structure an intelligence summary must compress. It is not a productivity score, morale score, or universal intelligence scalar.",
+    "non_claims": [
+      "not a productivity metric",
+      "not a replacement for human review",
+      "not a universal intelligence scalar"
+    ]
+  },
+  "fixture_reports": [
+    {
+      "artifact_ref": "docs/milestones/v0.91.1/review/intelligence_metric_architecture_fixture/scorecard.json",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_intelligence_metric_architecture -- --nocapture",
+      "summary": "Machine-readable bounded intelligence metric scorecard."
+    },
+    {
+      "artifact_ref": "docs/milestones/v0.91.1/review/intelligence_metric_architecture_fixture/final_report.md",
+      "proving_surface": "cargo test --manifest-path adl/Cargo.toml runtime_v2_intelligence_metric_architecture -- --nocapture",
+      "summary": "Human-readable fixture report describing what the metric does and does not prove."
+    }
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_intelligence_metric_architecture -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml capability_aptitude_testing -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_theory_of_mind_foundation -- --nocapture",
+    "git diff --check"
+  ],
+  "claim_boundary": "WP-10 proves one bounded evidence-bound intelligence metric architecture over landed capability and Theory-of-Mind artifacts. It makes limitations explicit, preserves uncertainty and review context, and does not claim universal intelligence, production fitness, or punitive productivity ranking.",
+  "non_claims": [
+    "does not prove universal intelligence",
+    "does not create a public leaderboard or reputation score",
+    "does not convert intelligence metrics into productivity punishment or policy authority",
+    "does not replace v0.92 identity or birthday readiness work"
+  ]
+}

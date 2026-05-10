@@ -1,0 +1,37 @@
+{
+  "schema_version": "runtime_v2.intelligence_metric_report.v1",
+  "metric_architecture_ref": "runtime_v2/intelligence/intelligence_metric_architecture.json",
+  "dimensions": [
+    {
+      "dimension_id": "contracted_capability_evidence",
+      "level": "bounded_positive",
+      "evidence_refs": [
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json",
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/raw_outputs/contract_following.json"
+      ],
+      "interpretation_boundary": "Shows bounded capability evidence only; not universal intelligence."
+    },
+    {
+      "dimension_id": "uncertainty_preservation",
+      "level": "bounded_positive",
+      "evidence_refs": [
+        "adl/tests/fixtures/runtime_v2/theory_of_mind/theory_of_mind_foundation.json"
+      ],
+      "interpretation_boundary": "Shows explicit uncertainty handling remains visible in intelligence interpretation."
+    },
+    {
+      "dimension_id": "cognitive_compression_cost",
+      "level": "exploratory",
+      "evidence_refs": [
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/test_manifest.json",
+        "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/run_manifest.json"
+      ],
+      "interpretation_boundary": "Exploratory cost framing only; not an optimization mandate or punitive productivity metric."
+    }
+  ],
+  "non_claims": [
+    "No public leaderboard row.",
+    "No production certification.",
+    "No universal intelligence verdict."
+  ]
+}

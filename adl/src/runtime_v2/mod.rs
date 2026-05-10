@@ -30,6 +30,7 @@ mod governed_tools_flagship_demo;
 mod hardening;
 mod humor_and_absurdity;
 mod integrated_csm_run;
+mod intelligence_metric_architecture;
 mod invariant;
 mod invariant_contract;
 mod kernel_loop;
@@ -120,6 +121,8 @@ pub use hardening::*;
 pub use humor_and_absurdity::*;
 #[allow(unused_imports)]
 pub use integrated_csm_run::*;
+#[allow(unused_imports)]
+pub use intelligence_metric_architecture::*;
 #[allow(unused_imports)]
 pub use invariant::*;
 #[allow(unused_imports)]
