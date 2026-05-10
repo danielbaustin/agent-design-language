@@ -4,7 +4,7 @@
 
 - Feature Name: Runtime Inhabitant Integration And Observatory Proof
 - Milestone Target: `v0.91.1`
-- Status: planned
+- Status: landed
 - Planned WP Home: WP-15 and WP-16
 - Source Docs: `.adl/docs/TBD/v0.91_1_runtime_observatory_dependency_note.md`
 - Proof Modes: demo, trace, artifacts, review
@@ -34,4 +34,36 @@ Out of scope:
 
 - Demo is deterministic in fixture mode.
 - Artifacts are repo-relative and reviewable.
+
+## Landed Surface
+
+- `adl/src/runtime_v2/runtime_inhabitant_integration.rs`
+- `adl/src/runtime_v2/tests/runtime_inhabitant_integration.rs`
+- `adl/tests/fixtures/runtime_v2/inhabitant/runtime_inhabitant_integration.json`
+- `adl/tests/fixtures/runtime_v2/inhabitant/runtime_inhabitant_operator_report.md`
+
+## Proof Route
+
+- WP-15 lands a bounded runtime inhabitant integration packet plus deterministic
+  operator report that bind:
+  - standing transition/event mediation
+  - citizen state substrate
+  - lifecycle state contract
+  - memory identity
+  - theory-of-mind
+  - intelligence metric
+  - governed learning
+  - access and observatory evidence
+  - ACIP hardening and A2A boundary
+  - integrated CSM run trace spine
+- WP-16 remains the observatory-visible flagship demo follow-on and is not
+  absorbed by the WP-15 packet.
+
+## Non-Claims
+
+- Does not claim first true birthday or personhood.
+- Does not claim unbounded autonomy or external federation readiness.
+- Does not bypass lifecycle, Freedom Gate, ACC, trace, redaction, or review
+  boundaries.
+- Does not replace the WP-16 flagship demo.
 - Proof report states exactly what was proven and what remains downstream.

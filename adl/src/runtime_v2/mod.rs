@@ -60,6 +60,7 @@ mod private_state_witness;
 mod quarantine;
 mod recovery;
 mod resource_stewardship_bridge;
+mod runtime_inhabitant_integration;
 mod security;
 mod snapshot;
 mod standing;
@@ -184,6 +185,8 @@ pub use quarantine::*;
 pub use recovery::*;
 #[allow(unused_imports)]
 pub use resource_stewardship_bridge::*;
+#[allow(unused_imports)]
+pub use runtime_inhabitant_integration::*;
 #[allow(unused_imports)]
 pub use security::*;
 #[allow(unused_imports)]

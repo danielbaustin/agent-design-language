@@ -58,6 +58,7 @@ mod private_state_witness;
 mod quarantine;
 mod recovery_eligibility;
 mod resource_stewardship_bridge;
+mod runtime_inhabitant_integration;
 mod security_boundary;
 mod snapshot_rehydration;
 mod standing;
