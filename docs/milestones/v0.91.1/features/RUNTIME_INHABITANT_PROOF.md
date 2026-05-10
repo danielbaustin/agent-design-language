@@ -41,6 +41,11 @@ Out of scope:
 - `adl/src/runtime_v2/tests/runtime_inhabitant_integration.rs`
 - `adl/tests/fixtures/runtime_v2/inhabitant/runtime_inhabitant_integration.json`
 - `adl/tests/fixtures/runtime_v2/inhabitant/runtime_inhabitant_operator_report.md`
+- `adl/src/runtime_v2/observatory_flagship.rs`
+- `adl/src/runtime_v2/tests/observatory_flagship.rs`
+- `docs/milestones/v0.91.1/review/observatory_flagship_demo/flagship_proof_packet.json`
+- `docs/milestones/v0.91.1/review/observatory_flagship_demo/flagship_operator_report.md`
+- `docs/milestones/v0.91.1/review/observatory_flagship_demo/flagship_walkthrough.jsonl`
 
 ## Proof Route
 
@@ -57,8 +62,13 @@ Out of scope:
   - access and observatory evidence
   - ACIP hardening and A2A boundary
   - integrated CSM run trace spine
-- WP-16 remains the observatory-visible flagship demo follow-on and is not
-  absorbed by the WP-15 packet.
+- WP-16 lands the runnable observatory-visible D12 flagship demo surface:
+  - `adl runtime-v2 observatory-flagship-demo --out artifacts/v0911/demo-d12-observatory-flagship`
+  - deterministic flagship proof packet, operator report, and walkthrough
+  - tracked review bundle parity under
+    `docs/milestones/v0.91.1/review/observatory_flagship_demo/`
+  - explicit non-claims around personhood, first birthday, raw private-state
+    inspection, and autonomous federation
 
 ## Non-Claims
 

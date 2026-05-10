@@ -157,6 +157,46 @@ fn runtime_v2_observatory_flagship_writes_integrated_artifacts_without_path_leak
 }
 
 #[test]
+fn runtime_v2_observatory_flagship_review_bundle_matches_tracked_artifacts() {
+    let artifacts = flagship_artifacts();
+    let repo_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("repo root");
+    let tracked_root = repo_root.join("docs/milestones/v0.91.1/review/observatory_flagship_demo");
+
+    let tracked_proof = std::fs::read_to_string(tracked_root.join("flagship_proof_packet.json"))
+        .expect("read tracked flagship proof packet");
+    let rendered_proof = String::from_utf8(
+        artifacts
+            .proof_packet_pretty_json_bytes()
+            .expect("render flagship proof packet"),
+    )
+    .expect("utf8 flagship proof packet");
+    assert_eq!(tracked_proof.trim_end(), rendered_proof.trim_end());
+
+    let tracked_report = std::fs::read_to_string(tracked_root.join("flagship_operator_report.md"))
+        .expect("read tracked flagship report");
+    assert_eq!(
+        tracked_report.trim_end(),
+        artifacts.operator_report_markdown.trim_end()
+    );
+
+    let tracked_walkthrough =
+        std::fs::read_to_string(tracked_root.join("flagship_walkthrough.jsonl"))
+            .expect("read tracked flagship walkthrough");
+    let rendered_walkthrough = String::from_utf8(
+        artifacts
+            .walkthrough_jsonl_bytes()
+            .expect("render flagship walkthrough"),
+    )
+    .expect("utf8 flagship walkthrough");
+    assert_eq!(
+        tracked_walkthrough.trim_end(),
+        rendered_walkthrough.trim_end()
+    );
+}
+
+#[test]
 fn runtime_v2_observatory_flagship_rejects_shape_and_boundary_drift() {
     let packet = flagship_artifacts().proof_packet;
 
