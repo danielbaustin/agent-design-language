@@ -15,9 +15,9 @@
 - [x] WP-03 Agent lifecycle state model
 - [x] WP-04 CSM observatory active surface
 - [x] WP-05 Citizen standing model
-- [ ] WP-06 Citizen state substrate
-- [ ] WP-07 through WP-16 implementation and flagship proof band
-- [ ] WP-17 Demo matrix and proof coverage closeout
+- [x] WP-06 Citizen state substrate
+- [x] WP-07 through WP-16 implementation and flagship proof band
+- [x] WP-17 Demo matrix and proof coverage closeout
 - [ ] WP-18 Coverage / quality gate
 - [ ] WP-19 Docs + review pass
 - [ ] WP-20 Internal review
@@ -28,11 +28,10 @@
 
 ## Review And Release Readiness
 
-- [ ] Feature-proof coverage is complete for the whole milestone.
+- [x] Feature-proof coverage is complete for the implementation/demo band through WP-16.
 - [ ] Quality gate is recorded.
 - [ ] Internal review is complete.
 - [ ] External review is complete or explicitly deferred.
 - [ ] Accepted findings are fixed or dispositioned.
 - [ ] Release evidence and release readiness are complete.
 - [ ] Ceremony completed.
-

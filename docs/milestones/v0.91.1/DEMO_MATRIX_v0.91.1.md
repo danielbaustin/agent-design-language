@@ -2,8 +2,18 @@
 
 ## Status
 
-Candidate demo matrix. These demos should be implemented only after the
-supporting work packages land.
+Active landed demo matrix through `WP-16`. The implementation/demo band for
+`WP-02` through `WP-16` is now recorded here as the truthful proof route for
+the inhabited-runtime milestone surface. Review/release-tail work remains
+pending.
+
+## Coverage Guarantee
+
+Every landed `v0.91.1` feature from `WP-02` through `WP-16` now has one
+explicit demo or proof route recorded in this matrix or in the paired feature
+proof coverage map. The milestone does not yet claim review/release completion,
+but it does claim that the implementation/demo band has concrete reviewable
+surfaces for each landed feature.
 
 | Demo | Owning WP | Purpose | Proving Surface | Non-Claims |
 | --- | --- | --- | --- | --- |

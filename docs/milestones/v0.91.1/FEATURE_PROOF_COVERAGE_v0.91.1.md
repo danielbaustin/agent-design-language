@@ -2,8 +2,8 @@
 
 ## Status
 
-Active milestone coverage map. Some early runtime surfaces are landed; the
-broader proof and demo convergence band is still pending.
+Active milestone coverage map. The bounded implementation/demo convergence band
+through `WP-16` is landed; review and release convergence remain pending.
 
 ## Coverage Rule
 
@@ -12,6 +12,13 @@ Each feature should have one truthful proof route:
 - landed implementation and focused validation
 - integrated demo route
 - explicit pending owner in the issue wave
+
+## Current Guarantee
+
+For the landed implementation/demo band, every `v0.91.1` feature from `WP-02`
+through `WP-16` now has an explicit proof route below. Some routes are focused
+feature demos, some are runtime proof packets, and some are integrated flagship
+surfaces, but none of the landed features are left implicit.
 
 ## Feature Coverage Map
 
@@ -41,5 +48,5 @@ Each feature should have one truthful proof route:
 
 ## Non-Claims
 
-- full milestone proof coverage is not complete yet
+- full milestone review and release closure is not complete yet
 - review and release convergence have not happened yet
