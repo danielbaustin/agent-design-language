@@ -110,6 +110,7 @@ The audio follow-on is successful when:
 - the manifest shows which provider/voice rendered each speaker
 - the manifest records usable loudness/mastering metrics for the final mix
 - the manifest records the bounded per-speaker tone-profile settings used for the run
+- the manifest records the fallback casting map used when surrogate rendering is active
 - the manifest records the deterministic timing policy used for handoff gaps
 - Claude's surrogate rendering is disclosed instead of implied away
 - each speaker introduces themselves naturally only on their first turn, for example `I'm ChatGPT`
@@ -117,3 +118,6 @@ The audio follow-on is successful when:
   erratic or lopsided
 - the final mix has a bounded mastering pass that tightens loudness spread and
   controls peaks without introducing a heavyweight external production pipeline
+- fallback-rendered `Gemini` and `Claude` turns remain easier to distinguish
+  because the rendering instructions and tonal shaping deliberately push them
+  toward different vocal textures

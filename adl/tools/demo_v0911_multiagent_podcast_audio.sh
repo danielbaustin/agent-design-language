@@ -15,9 +15,9 @@ GEMINI_TTS_MODEL="${ADL_PODCAST_GEMINI_TTS_MODEL:-gemini-2.5-flash-preview-tts}"
 CHATGPT_VOICE="${ADL_PODCAST_CHATGPT_VOICE:-coral}"
 GEMINI_VOICE="${ADL_PODCAST_GEMINI_VOICE:-Kore}"
 GEMINI_AUDIO_PROVIDER="${ADL_PODCAST_GEMINI_AUDIO_PROVIDER:-gemini}"
-GEMINI_OPENAI_SURROGATE_VOICE="${ADL_PODCAST_GEMINI_OPENAI_SURROGATE_VOICE:-alloy}"
+GEMINI_OPENAI_SURROGATE_VOICE="${ADL_PODCAST_GEMINI_OPENAI_SURROGATE_VOICE:-echo}"
 CLAUDE_SURROGATE_PROVIDER="${ADL_PODCAST_CLAUDE_SURROGATE_PROVIDER:-openai}"
-CLAUDE_SURROGATE_VOICE="${ADL_PODCAST_CLAUDE_SURROGATE_VOICE:-alloy}"
+CLAUDE_SURROGATE_VOICE="${ADL_PODCAST_CLAUDE_SURROGATE_VOICE:-onyx}"
 
 if [[ "$GEMINI_AUDIO_PROVIDER" == "openai" ]]; then
   GEMINI_RENDER_VOICE="$GEMINI_OPENAI_SURROGATE_VOICE"
@@ -25,6 +25,17 @@ if [[ "$GEMINI_AUDIO_PROVIDER" == "openai" ]]; then
 else
   GEMINI_RENDER_VOICE="$GEMINI_VOICE"
   GEMINI_SURROGATE="false"
+fi
+
+CHATGPT_INSTRUCTIONS="Speak warmly, thoughtfully, and with grounded podcast-host clarity."
+if [[ "$GEMINI_SURROGATE" == "true" ]]; then
+  GEMINI_INSTRUCTIONS="Speak with bright, quick, lightly androgynous analytical precision. Keep the cadence brisk, the consonants crisp, and the energy forward so you sound clearly distinct from the other speakers."
+else
+  GEMINI_INSTRUCTIONS="Speak brightly, clearly, and incisively, like a fast systems analyst on a podcast."
+fi
+CLAUDE_INSTRUCTIONS="Speak reflectively and slightly formally, with calm measured emphasis."
+if [[ "$CLAUDE_SURROGATE_PROVIDER" == "openai" ]]; then
+  CLAUDE_INSTRUCTIONS="Speak lower, slower, and more resonantly than the other speakers, with reflective pauses, formal diction, and calm measured emphasis."
 fi
 
 load_key() {
@@ -154,12 +165,12 @@ if [[ ! -f "$SOURCE_DIR/transcript.md" ]]; then
 fi
 
 TURN_FILES=(
-  "01-chatgpt-opening.md|ChatGPT|host / synthesizer|$CHATGPT_VOICE|openai|false|Speak warmly, thoughtfully, and with grounded podcast-host clarity."
-  "02-gemini-challenge.md|Gemini|challenger / systems analyst|$GEMINI_RENDER_VOICE|$GEMINI_AUDIO_PROVIDER|$GEMINI_SURROGATE|Speak brightly, clearly, and incisively, like a fast systems analyst on a podcast."
-  "03-claude-reframe.md|Claude|refiner / moral stylist|$CLAUDE_SURROGATE_VOICE|$CLAUDE_SURROGATE_PROVIDER|true|Speak reflectively and slightly formally, with calm measured emphasis."
-  "04-chatgpt-bridge.md|ChatGPT|host / synthesizer|$CHATGPT_VOICE|openai|false|Speak warmly, thoughtfully, and with grounded podcast-host clarity."
-  "05-gemini-deepening.md|Gemini|challenger / systems analyst|$GEMINI_RENDER_VOICE|$GEMINI_AUDIO_PROVIDER|$GEMINI_SURROGATE|Speak brightly, clearly, and incisively, like a fast systems analyst on a podcast."
-  "06-claude-closure.md|Claude|refiner / moral stylist|$CLAUDE_SURROGATE_VOICE|$CLAUDE_SURROGATE_PROVIDER|true|Speak reflectively and slightly formally, with calm measured emphasis."
+  "01-chatgpt-opening.md|ChatGPT|host / synthesizer|$CHATGPT_VOICE|openai|false|$CHATGPT_INSTRUCTIONS"
+  "02-gemini-challenge.md|Gemini|challenger / systems analyst|$GEMINI_RENDER_VOICE|$GEMINI_AUDIO_PROVIDER|$GEMINI_SURROGATE|$GEMINI_INSTRUCTIONS"
+  "03-claude-reframe.md|Claude|refiner / moral stylist|$CLAUDE_SURROGATE_VOICE|$CLAUDE_SURROGATE_PROVIDER|true|$CLAUDE_INSTRUCTIONS"
+  "04-chatgpt-bridge.md|ChatGPT|host / synthesizer|$CHATGPT_VOICE|openai|false|$CHATGPT_INSTRUCTIONS"
+  "05-gemini-deepening.md|Gemini|challenger / systems analyst|$GEMINI_RENDER_VOICE|$GEMINI_AUDIO_PROVIDER|$GEMINI_SURROGATE|$GEMINI_INSTRUCTIONS"
+  "06-claude-closure.md|Claude|refiner / moral stylist|$CLAUDE_SURROGATE_VOICE|$CLAUDE_SURROGATE_PROVIDER|true|$CLAUDE_INSTRUCTIONS"
 )
 
 SEGMENT_MANIFEST_TMP="$OUT_DIR/segment_manifest.jsonl"
@@ -236,9 +247,18 @@ compression_ratio = 2.25
 final_mix_target_rms = 3350.0
 final_mix_ceiling = 26500
 speaker_tone_profiles = {
-    'ChatGPT': {'low_gain': -0.05, 'high_gain': 0.09, 'makeup_gain': 1.02},
-    'Gemini': {'low_gain': -0.02, 'high_gain': -0.03, 'makeup_gain': 0.99},
-    'Claude': {'low_gain': -0.08, 'high_gain': 0.05, 'makeup_gain': 1.01},
+    'ChatGPT': {
+        'native': {'low_gain': -0.05, 'high_gain': 0.09, 'makeup_gain': 1.02},
+        'surrogate': {'low_gain': -0.05, 'high_gain': 0.09, 'makeup_gain': 1.02},
+    },
+    'Gemini': {
+        'native': {'low_gain': -0.02, 'high_gain': -0.03, 'makeup_gain': 0.99},
+        'surrogate': {'low_gain': -0.16, 'high_gain': 0.22, 'makeup_gain': 0.97},
+    },
+    'Claude': {
+        'native': {'low_gain': -0.08, 'high_gain': 0.05, 'makeup_gain': 1.01},
+        'surrogate': {'low_gain': 0.16, 'high_gain': -0.14, 'makeup_gain': 1.03},
+    },
 }
 
 def compress_pcm_16le(frames: bytes) -> bytes:
@@ -300,8 +320,15 @@ def transition_gap_ms(segments: list[dict], idx: int) -> int:
         return SAME_SPEAKER_GAP_MS
     return TRANSITION_GAP_MS.get((current['speaker'], nxt['speaker']), BASE_GAP_MS)
 
-def shape_voice_pcm_16le(frames: bytes, speaker: str) -> bytes:
-    profile = speaker_tone_profiles.get(speaker)
+def tone_profile_for(entry: dict) -> dict | None:
+    profile = speaker_tone_profiles.get(entry['speaker'])
+    if profile is None:
+        return None
+    variant = 'surrogate' if entry.get('surrogate_render') else 'native'
+    return profile.get(variant, profile.get('native'))
+
+def shape_voice_pcm_16le(frames: bytes, entry: dict) -> bytes:
+    profile = tone_profile_for(entry)
     if profile is None:
         return frames
     samples = array('h')
@@ -377,7 +404,7 @@ for entry in segments:
     if current_params[1] == 2:
         target_rms = speaker_target_rms.get(entry['speaker'], 3800.0)
         duck_intro = entry['speaker'] not in seen_speakers
-        frames = shape_voice_pcm_16le(frames, entry['speaker'])
+        frames = shape_voice_pcm_16le(frames, entry)
         frames = normalize_pcm_16le(frames, target_rms, current_params[2], duck_intro)
         frames = compress_pcm_16le(frames)
         frames = limit_pcm_16le(frames, final_mix_ceiling)
@@ -423,6 +450,26 @@ manifest = {
     'mastering': {
         'segment_target_rms': speaker_target_rms,
         'speaker_tone_profiles': speaker_tone_profiles,
+        'fallback_casting': {
+            'ChatGPT': {
+                'native': {'provider': 'openai', 'voice': chatgpt_voice},
+            },
+            'Gemini': {
+                'native': {'provider': 'gemini', 'voice': gemini_voice},
+                'surrogate': {
+                    'provider': gemini_provider,
+                    'voice': gemini_openai_voice if gemini_provider == 'openai' else gemini_voice,
+                    'intent': 'bright, quick, lightly androgynous analytical contrast',
+                },
+            },
+            'Claude': {
+                'surrogate': {
+                    'provider': claude_provider,
+                    'voice': claude_voice,
+                    'intent': 'lower, slower, resonant reflective contrast',
+                },
+            },
+        },
         'final_mix_target_rms': final_mix_target_rms,
         'final_mix_ceiling': final_mix_ceiling,
         'compression_threshold': compression_threshold,
@@ -466,6 +513,7 @@ packet = [
     '- segment loudness is normalized toward a shared target so the episode is easier to follow',
     '- the final episode mix gets one more mastering pass for overall loudness consistency and peak control',
     '- pause timing is deterministic but no longer one-size-fits-all; handoff gaps vary by speaker transition and closing position',
+    '- fallback casting is deliberately contrastive so Gemini stays brighter and quicker while Claude stays lower and more resonant',
     '',
     '## Proof Boundary',
     '',
