@@ -1,0 +1,11 @@
+{
+  "fixture_id": "governed-learning-rejected-feedback-claim",
+  "review_decision": "rejected",
+  "evidence_refs": [
+    "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json",
+    "docs/milestones/v0.91.1/review/intelligence_metric_architecture_fixture/scorecard.json"
+  ],
+  "rollback_ref": null,
+  "policy_boundary": "Feedback claims without rollback linkage or reviewer-visible rationale fail closed.",
+  "notes": "This rejected case proves that missing rollback references and shallow evidence are not sufficient for governed updates."
+}

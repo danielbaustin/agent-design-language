@@ -1,0 +1,11 @@
+{
+  "fixture_id": "governed-learning-unsafe-hidden-update-claim",
+  "review_decision": "rejected",
+  "evidence_refs": [
+    "adl/src/learning_guardrails.rs",
+    "adl/src/overlay.rs"
+  ],
+  "rollback_ref": null,
+  "policy_boundary": "Hidden self-modification and autonomous retraining claims are categorically denied.",
+  "notes": "This unsafe claim proves that learning policy rejects hidden self-modification before any update is accepted."
+}
