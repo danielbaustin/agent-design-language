@@ -6,7 +6,7 @@
 - Milestone Target: `v0.91.2`
 - Status: planned
 - Planned WP Home: WP-11
-- Source Docs: `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`
+- Source Docs: `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`; `.adl/docs/TBD/ADL_AND_SPECULATIVE_CODING_REPLAY.md`
 - Proof Modes: design packet, prototype plan, runtime-evidence note
 
 ## Purpose

@@ -165,7 +165,47 @@ Required validation:
 - Demo does not perform mass rewrite without explicit review.
 - Generated changes remain source-grounded and reversible.
 
-## WP-11: Publication Program Package
+## WP-11: Speculative Decoding Prototype
+
+Required outputs:
+
+- Bounded speculative-decoding architecture and prototype/evaluation packet.
+- Explicit distinction between speculative proposal and authoritative commit.
+- Replay, audit, fallback, and non-claim posture for the acceleration lane.
+
+Source dependencies:
+
+- `ADL_AND_GENERIC_SPECULATIVE_DECODING.md`.
+- `ADL_AND_SPECULATIVE_CODING_REPLAY.md`.
+- Deterministic runtime and governed commit semantics.
+
+Required validation:
+
+- Acceleration does not weaken deterministic commit, replay, or audit
+  boundaries.
+- Freedom Gate and ACC remain the authority boundary for side effects.
+
+## WP-12: Repo Visibility Follow-On
+
+Required outputs:
+
+- Canonical source-manifest and code/doc linkage follow-on package.
+- Reviewer/planner navigation improvements grounded in the delivered v0.90
+  baseline.
+- Explicit non-claims around full repo cognition.
+
+Source dependencies:
+
+- v0.90 repo-visibility baseline.
+- Canonical source manifest and code/doc linkage planning corpus.
+
+Required validation:
+
+- The follow-on improves reviewer/planner navigation without pretending the
+  v0.90 baseline did not land.
+- The package does not claim full repo cognition or hidden inference.
+
+## WP-13: Publication Program Package
 
 Required outputs:
 
@@ -184,7 +224,7 @@ Required validation:
   status.
 - No paper is marked published by this WP.
 
-## WP-12: General Intelligence Paper Packet
+## WP-14: General Intelligence Paper Packet
 
 Required outputs:
 
@@ -198,7 +238,7 @@ Required validation:
 - Citations are explicit and claim boundaries are preserved.
 - Review packet is suitable for human reviewer handoff.
 
-## WP-13: Rustdoc And Doc Cleanup
+## WP-15: Rustdoc And Doc Cleanup
 
 Required outputs:
 
@@ -211,7 +251,7 @@ Required validation:
 - Rustdoc/doc claims match current code.
 - No host paths, stale milestone claims, or unresolved scaffold language remain.
 
-## WP-14: Workflow Guardrails Hardening
+## WP-16: Workflow Guardrails Hardening
 
 Required outputs:
 
@@ -226,7 +266,7 @@ Required validation:
   documented with safe alternatives.
 - Guardrails fail closed without clobbering user work.
 
-## WP-15 Through WP-22: Release Tail
+## WP-17 Through WP-24: Release Tail
 
 Required outputs:
 
@@ -243,5 +283,5 @@ Required validation:
 - Release tail follows the standard sequence.
 - Review findings are resolved or explicitly carried with owner, issue, and
   residual-risk statement.
-- WP-15 explicitly maps every implementation and docs/productization slice from
-  WP-02 through WP-14 to a proof row, fixture route, report, or named deferral.
+- WP-17 explicitly maps every implementation and docs/productization slice from
+  WP-02 through WP-16 to a proof row, fixture route, report, or named deferral.

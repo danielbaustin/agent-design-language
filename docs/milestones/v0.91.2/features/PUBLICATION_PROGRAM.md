@@ -5,7 +5,7 @@
 - Feature Name: Publication Program Package
 - Milestone Target: `v0.91.2`
 - Status: planned
-- Planned WP Home: WP-11
+- Planned WP Home: WP-13
 - Source Docs: `.adl/docs/TBD/publication/`; `.adl/docs/TBD/ARXIV_AUTHORING_PROCESS_NOTES.md`
 - Proof Modes: packet, review, checklist
 

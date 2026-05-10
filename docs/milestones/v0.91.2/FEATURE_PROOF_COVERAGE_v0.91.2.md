@@ -24,14 +24,15 @@ Each feature should eventually have one truthful proof route:
 | Review heuristics and demos | WP-07 | skill/demo packet | planned |
 | Workspace CMS bridge | WP-08, WP-09 | bounded demo + adapter-boundary packet | planned |
 | Code modernization | WP-10 | dry-run modernization demo | planned |
-| Publication program | WP-11 | backlog/process packet | planned |
-| General intelligence paper packet | WP-12 | claim/citation/review packet | planned |
-| Rustdoc/doc cleanup | WP-13 | cleanup report + doc patch set | planned |
-| Workflow guardrails | WP-14 | guardrail proofs + runbook | planned |
-| Demo/proof convergence | WP-15 | demo matrix and proof coverage | planned |
+| Speculative decoding | WP-11 | prototype/evaluation packet + non-claim record | planned |
+| Repo visibility follow-on | WP-12 | manifest/linkage packet + source-map evidence | planned |
+| Publication program | WP-13 | backlog/process packet | planned |
+| General intelligence paper packet | WP-14 | claim/citation/review packet | planned |
+| Rustdoc/doc cleanup | WP-15 | cleanup report + doc patch set | planned |
+| Workflow guardrails | WP-16 | guardrail proofs + runbook | planned |
+| Demo/proof convergence | WP-17 | demo matrix and proof coverage | planned |
 
 ## Non-Claims
 
 - no feature in this milestone is landed yet through this document alone
 - this file is not evidence that the issue wave has opened
-
