@@ -251,6 +251,15 @@ pub fn runtime_v2_a2a_adapter_boundary_contract() -> Result<RuntimeV2A2aAdapterB
     cached_contract(&PACKET, RuntimeV2A2aAdapterBoundaryPacket::prototype)
 }
 
+pub fn runtime_v2_runtime_inhabitant_integration_contract(
+) -> Result<RuntimeV2RuntimeInhabitantIntegrationArtifacts> {
+    static ARTIFACTS: OnceCell<RuntimeV2RuntimeInhabitantIntegrationArtifacts> = OnceCell::new();
+    cached_contract(
+        &ARTIFACTS,
+        RuntimeV2RuntimeInhabitantIntegrationArtifacts::prototype,
+    )
+}
+
 pub fn runtime_v2_agent_lifecycle_state_contract() -> Result<RuntimeV2AgentLifecycleArtifacts> {
     static ARTIFACTS: OnceCell<RuntimeV2AgentLifecycleArtifacts> = OnceCell::new();
     cached_contract(&ARTIFACTS, RuntimeV2AgentLifecycleArtifacts::prototype)

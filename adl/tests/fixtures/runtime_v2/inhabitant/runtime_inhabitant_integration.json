@@ -1,0 +1,112 @@
+{
+  "schema_version": "runtime_v2.runtime_inhabitant_integration_packet.v1",
+  "packet_id": "runtime-inhabitant-integration-v0-91-1-wp-15",
+  "milestone": "v0.91.1",
+  "wp": "WP-15",
+  "artifact_path": "runtime_v2/inhabitant/runtime_inhabitant_integration_packet.json",
+  "source_feature_doc": "docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md",
+  "integrated_run_ref": "runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+  "standing_transition_ref": "runtime_v2/standing/standing_transitions.json",
+  "standing_event_ref": "runtime_v2/standing/standing_events.json",
+  "citizen_state_ref": "runtime_v2/citizen_state/citizen_state_substrate.json",
+  "lifecycle_state_ref": "runtime_v2/agent_lifecycle/state_contract.json",
+  "memory_identity_ref": "runtime_v2/memory_identity/memory_identity_architecture.json",
+  "theory_of_mind_ref": "runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+  "intelligence_metric_ref": "runtime_v2/intelligence/intelligence_metric_architecture.json",
+  "governed_learning_ref": "runtime_v2/learning/governed_learning_substrate.json",
+  "access_control_ref": "runtime_v2/access_control/access_events.json",
+  "acip_hardening_ref": "runtime_v2/acip/acip_hardening_packet.json",
+  "a2a_adapter_boundary_ref": "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+  "observatory_packet_ref": "runtime_v2/observatory/visibility_packet.json",
+  "observatory_operator_dependency_ref": "runtime_v2/observatory/operator_report.md",
+  "operator_report_ref": "runtime_v2/inhabitant/runtime_inhabitant_operator_report.md",
+  "trace_refs": [
+    "runtime_v2/standing/standing_events.json",
+    "runtime_v2/csm_run/first_run_trace.jsonl",
+    "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+    "runtime_v2/access_control/access_events.json"
+  ],
+  "integration_stage_refs": [
+    {
+      "sequence": 1,
+      "stage_id": "standing-mediated-action",
+      "artifact_ref": "runtime_v2/standing/standing_transitions.json",
+      "proves": "Standing remains mediated, trace-bound, and authority-preserving for the inhabitant runtime."
+    },
+    {
+      "sequence": 2,
+      "stage_id": "citizen-state-substrate",
+      "artifact_ref": "runtime_v2/citizen_state/citizen_state_substrate.json",
+      "proves": "Citizen state remains private, stale-state aware, and projection-bounded."
+    },
+    {
+      "sequence": 3,
+      "stage_id": "lifecycle-binding",
+      "artifact_ref": "runtime_v2/agent_lifecycle/state_contract.json",
+      "proves": "Lifecycle state remains explicit and reviewable before inhabitant execution claims."
+    },
+    {
+      "sequence": 4,
+      "stage_id": "memory-identity-binding",
+      "artifact_ref": "runtime_v2/memory_identity/memory_identity_architecture.json",
+      "proves": "Memory and identity stay witness-backed and observatory-linked instead of theatrical."
+    },
+    {
+      "sequence": 5,
+      "stage_id": "theory-of-mind-boundary",
+      "artifact_ref": "runtime_v2/theory_of_mind/theory_of_mind_foundation.json",
+      "proves": "Theory-of-mind reasoning remains bounded to reviewable, non-spoofed surfaces."
+    },
+    {
+      "sequence": 6,
+      "stage_id": "intelligence-metric-surface",
+      "artifact_ref": "runtime_v2/intelligence/intelligence_metric_architecture.json",
+      "proves": "Runtime capability claims remain tied to reviewed intelligence metrics rather than self-assertion."
+    },
+    {
+      "sequence": 7,
+      "stage_id": "governed-learning-surface",
+      "artifact_ref": "runtime_v2/learning/governed_learning_substrate.json",
+      "proves": "Learning remains governed, rollback-aware, and dependent on reviewed cognition surfaces."
+    },
+    {
+      "sequence": 8,
+      "stage_id": "access-and-observatory-projection",
+      "artifact_ref": "runtime_v2/access_control/access_events.json",
+      "proves": "Access control and observatory projection remain redacted, authority-scoped, and reviewable."
+    },
+    {
+      "sequence": 9,
+      "stage_id": "acip-hardening",
+      "artifact_ref": "runtime_v2/acip/acip_hardening_packet.json",
+      "proves": "Communication remains bound to ACIP hardening and local authenticated-envelope policy."
+    },
+    {
+      "sequence": 10,
+      "stage_id": "a2a-adapter-boundary",
+      "artifact_ref": "runtime_v2/acip/a2a_adapter_boundary_packet.json",
+      "proves": "A2A remains an adapter over ACIP rather than a second communication model."
+    },
+    {
+      "sequence": 11,
+      "stage_id": "integrated-csm-run-spine",
+      "artifact_ref": "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+      "proves": "The bounded integrated CSM run provides the deterministic agent-shaped execution spine for the inhabitant proof."
+    }
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_runtime_inhabitant_integration -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_access_control -- --nocapture",
+    "git diff --check"
+  ],
+  "proof_summary": "WP-15 integrates standing, citizen state, lifecycle, memory identity, theory-of-mind, intelligence metric, governed learning, access control, ACIP/A2A communication boundary, and the bounded integrated CSM run into one agent-shaped runtime proof packet and deterministic operator report.",
+  "proof_classification": "proving",
+  "non_claims": [
+    "does not claim a first true birthday or personhood event",
+    "does not claim autonomous federation or external communication readiness",
+    "does not bypass lifecycle state, Freedom Gate, ACC, trace, redaction, or review boundaries",
+    "does not replace the WP-16 observatory-visible flagship demo"
+  ],
+  "claim_boundary": "This packet proves one bounded v0.91.1 integrated agent-shaped runtime surface by connecting the already-landed standing, state, lifecycle, memory, communication, access, observatory, and trace artifacts into one deterministic proof/report route. It does not prove birthday completion, personhood, unbounded autonomy, or the full WP-16 flagship demo."
+}
