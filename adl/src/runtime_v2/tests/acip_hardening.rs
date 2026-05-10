@@ -60,7 +60,8 @@ fn runtime_v2_acip_hardening_contract_registry_smoke_covers_accessors() {
     runtime_v2_citizen_state_substrate_contract().expect("citizen state substrate");
     runtime_v2_memory_identity_architecture_contract().expect("memory identity architecture");
     runtime_v2_theory_of_mind_foundation_contract().expect("theory of mind foundation");
-    runtime_v2_intelligence_metric_architecture_contract().expect("intelligence metric architecture");
+    runtime_v2_intelligence_metric_architecture_contract()
+        .expect("intelligence metric architecture");
     runtime_v2_governed_learning_substrate_contract().expect("governed learning substrate");
     runtime_v2_standing_contract().expect("standing");
     runtime_v2_access_control_contract().expect("access control");
