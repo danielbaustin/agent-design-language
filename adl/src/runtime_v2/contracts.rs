@@ -246,6 +246,11 @@ pub fn runtime_v2_acip_hardening_contract() -> Result<RuntimeV2AcipHardeningPack
     cached_contract(&PACKET, RuntimeV2AcipHardeningPacket::prototype)
 }
 
+pub fn runtime_v2_a2a_adapter_boundary_contract() -> Result<RuntimeV2A2aAdapterBoundaryPacket> {
+    static PACKET: OnceCell<RuntimeV2A2aAdapterBoundaryPacket> = OnceCell::new();
+    cached_contract(&PACKET, RuntimeV2A2aAdapterBoundaryPacket::prototype)
+}
+
 pub fn runtime_v2_agent_lifecycle_state_contract() -> Result<RuntimeV2AgentLifecycleArtifacts> {
     static ARTIFACTS: OnceCell<RuntimeV2AgentLifecycleArtifacts> = OnceCell::new();
     cached_contract(&ARTIFACTS, RuntimeV2AgentLifecycleArtifacts::prototype)
