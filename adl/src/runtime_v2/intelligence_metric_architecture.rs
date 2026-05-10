@@ -8,7 +8,6 @@ use super::*;
 use crate::capability_aptitude_testing::{
     build_capability_aptitude_artifact_bundle, CAPABILITY_APTITUDE_TESTING_ARTIFACT_ROOT,
 };
-use serde_json::json;
 use std::fs;
 use std::path::Path;
 
@@ -270,44 +269,67 @@ pub struct RuntimeV2IntelligenceMetricFixtureBundle {
     pub final_report_md: String,
 }
 
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+struct RuntimeV2IntelligenceMetricFixtureScorecard {
+    schema_version: String,
+    metric_architecture_ref: String,
+    dimensions: Vec<RuntimeV2IntelligenceMetricFixtureDimension>,
+    non_claims: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+struct RuntimeV2IntelligenceMetricFixtureDimension {
+    dimension_id: String,
+    level: String,
+    evidence_refs: Vec<String>,
+    interpretation_boundary: String,
+}
+
 pub fn build_intelligence_metric_fixture_bundle() -> RuntimeV2IntelligenceMetricFixtureBundle {
-    let scorecard_json = serde_json::to_string_pretty(&json!({
-        "schema_version": "runtime_v2.intelligence_metric_report.v1",
-        "metric_architecture_ref": RUNTIME_V2_INTELLIGENCE_METRIC_ARCHITECTURE_PATH,
-        "dimensions": [
-            {
-                "dimension_id": "contracted_capability_evidence",
-                "level": "bounded_positive",
-                "evidence_refs": [
-                    "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json",
-                    "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/raw_outputs/contract_following.json"
+    let scorecard_json = serde_json::to_string_pretty(&RuntimeV2IntelligenceMetricFixtureScorecard {
+        schema_version: "runtime_v2.intelligence_metric_report.v1".to_string(),
+        metric_architecture_ref: RUNTIME_V2_INTELLIGENCE_METRIC_ARCHITECTURE_PATH.to_string(),
+        dimensions: vec![
+            RuntimeV2IntelligenceMetricFixtureDimension {
+                dimension_id: "contracted_capability_evidence".to_string(),
+                level: "bounded_positive".to_string(),
+                evidence_refs: vec![
+                    "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/scorecard.json".to_string(),
+                    "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/raw_outputs/contract_following.json".to_string(),
                 ],
-                "interpretation_boundary": "Shows bounded capability evidence only; not universal intelligence."
+                interpretation_boundary:
+                    "Shows bounded capability evidence only; not universal intelligence."
+                        .to_string(),
             },
-            {
-                "dimension_id": "uncertainty_preservation",
-                "level": "bounded_positive",
-                "evidence_refs": [
+            RuntimeV2IntelligenceMetricFixtureDimension {
+                dimension_id: "uncertainty_preservation".to_string(),
+                level: "bounded_positive".to_string(),
+                evidence_refs: vec![
                     "adl/tests/fixtures/runtime_v2/theory_of_mind/theory_of_mind_foundation.json"
+                        .to_string(),
                 ],
-                "interpretation_boundary": "Shows explicit uncertainty handling remains visible in intelligence interpretation."
+                interpretation_boundary:
+                    "Shows explicit uncertainty handling remains visible in intelligence interpretation."
+                        .to_string(),
             },
-            {
-                "dimension_id": "cognitive_compression_cost",
-                "level": "exploratory",
-                "evidence_refs": [
-                    "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/test_manifest.json",
-                    "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/run_manifest.json"
+            RuntimeV2IntelligenceMetricFixtureDimension {
+                dimension_id: "cognitive_compression_cost".to_string(),
+                level: "exploratory".to_string(),
+                evidence_refs: vec![
+                    "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/test_manifest.json".to_string(),
+                    "docs/milestones/v0.91.1/review/capability_aptitude_testing_fixture/run_manifest.json".to_string(),
                 ],
-                "interpretation_boundary": "Exploratory cost framing only; not an optimization mandate or punitive productivity metric."
-            }
+                interpretation_boundary:
+                    "Exploratory cost framing only; not an optimization mandate or punitive productivity metric."
+                        .to_string(),
+            },
         ],
-        "non_claims": [
-            "No public leaderboard row.",
-            "No production certification.",
-            "No universal intelligence verdict."
-        ]
-    }))
+        non_claims: vec![
+            "No public leaderboard row.".to_string(),
+            "No production certification.".to_string(),
+            "No universal intelligence verdict.".to_string(),
+        ],
+    })
     .expect("serialize intelligence scorecard");
 
     let final_report_md = [
