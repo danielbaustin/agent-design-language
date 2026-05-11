@@ -265,7 +265,7 @@ that the runtime is not improvising hidden orchestration logic.
 The Rust runtime is not a placeholder. ADL already has a reference runtime and
 CLI capable of plan printing, execution, tracing, signing, verification,
 artifact emission, and bounded remote/provider interaction. That is the
-difference between “a language idea” and “a platform you can actually run.”
+difference between "a language idea" and "a platform you can actually run."
 
 ### Bounded Workflow Coordination
 
@@ -302,7 +302,7 @@ execution spine instead of relying on vague contributor habit.
 
 ### Operational Skills as System Intelligence
 
-Operational skills are now part of ADL’s real platform story. They reduce
+Operational skills are now part of ADL's real platform story. They reduce
 error, improve determinism, and turn repeated repo operations into bounded,
 reviewable execution surfaces rather than free-form prompting.
 
@@ -314,7 +314,7 @@ cognitive proof surfaces:
 - `v0.86` established the first working bounded cognitive-system proof package
 - `v0.87` strengthened trace/provider/shared-memory/skills substrate
 
-These are not disconnected demos. Together they form the core of ADL’s claim
+These are not disconnected demos. Together they form the core of ADL's claim
 that bounded adaptive systems can be both powerful and reviewable.
 
 ### Godel Agents and the GHB Algorithm
@@ -460,7 +460,7 @@ calls policy-mediated, inspectable, and fail-closed at the completed baseline.
 
 ### v0.91 - Affect and Moral Cognition
 
-`v0.91` is where ADL’s cognitive architecture became more emotionally and
+`v0.91` is where ADL's cognitive architecture became more emotionally and
 normatively legible on the released `v0.91.0` line:
 - affect
 - kindness

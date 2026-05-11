@@ -81,7 +81,7 @@ than planning-only claims.
 - an explicit A2A boundary proving adapter-only behavior over ACIP
 - an integrated inhabitant runtime proof surface
 - an observatory-visible flagship review bundle strong enough to serve as the
-  milestone’s inhabited-runtime proof surface
+  milestone's inhabited-runtime proof surface
 - milestone-level demo/proof coverage truth through `WP-16`
 
 ## What Sprint 3 Did Not Complete
@@ -114,7 +114,7 @@ Truthful final read:
 - the planned secure-comms and runtime-proof issue wave landed through `WP-16`
 - the milestone demo matrix and proof coverage map now reflect that landed
   state
-- the flagship observatory packet is strong enough to act as the milestone’s
+- the flagship observatory packet is strong enough to act as the milestone's
   concrete inhabited-runtime proof surface
 - the remaining work is quality/review/release tail work, not Sprint 3
   incompleteness
