@@ -64,11 +64,21 @@ clearer publication and product surfaces, and fewer workflow foot-guns.
 
 ## Parallelization Notes
 
-UTS+ACC benchmark work and runtime/test-cycle recovery can proceed in parallel.
-CodeBuddy and review-skill work can proceed beside the Google Workspace bridge
-if both preserve canonical repo authority. Publication packet work can proceed
-beside doc cleanup. Speculative decoding can proceed beside publication and doc
-cleanup once the benchmark and recovery surfaces define the bounded runtime
-constraints. Repo visibility can proceed beside review productization because
-it is meant to help reviewer navigation rather than bypass it. No public
-release should happen before review.
+Each sprint umbrella is expected to run sequentially under `sprint-conductor`:
+one active child issue at a time, with no `N+1` start before `N` closeout.
+Parallelization, if any, should happen only at the umbrella level as an
+explicit operator choice after `WP-01` has opened the milestone cleanly.
+
+That means the intended parallelization shape is:
+
+- Sprint 1 may proceed before Sprint 2 only if the milestone owner chooses to
+  overlap umbrellas and the dependency truth still holds
+- Sprint 2 may proceed beside Sprint 3A or Sprint 3B only as separate
+  umbrellas, not as parallel child issues inside one umbrella
+- Publication packet work may sit beside doc cleanup only when they are carried
+  as distinct umbrellas or distinct sequential child issues in the same
+  umbrella
+- Repo visibility may be clustered with review productization in one umbrella,
+  but it should still execute as one child issue at a time
+
+No public release should happen before review.

@@ -78,6 +78,8 @@ This package is grounded in:
 - Design: [DESIGN_v0.91.2.md](DESIGN_v0.91.2.md)
 - Decisions: [DECISIONS_v0.91.2.md](DECISIONS_v0.91.2.md)
 - Sprint plan: [SPRINT_v0.91.2.md](SPRINT_v0.91.2.md)
+- Sprint-conductor execution plan:
+  [SPRINT_CONDUCTOR_EXECUTION_PLAN_v0.91.2.md](SPRINT_CONDUCTOR_EXECUTION_PLAN_v0.91.2.md)
 - Candidate issue wave: [WP_ISSUE_WAVE_v0.91.2.yaml](WP_ISSUE_WAVE_v0.91.2.yaml)
 - Execution readiness:
   [WP_EXECUTION_READINESS_v0.91.2.md](WP_EXECUTION_READINESS_v0.91.2.md)
