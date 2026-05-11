@@ -18,16 +18,20 @@ Not release ready.
 
 ## Current Issue State
 
-- `WP-01` through `WP-15` are closed and landed
-- `WP-16` is the active flagship demo proof issue
-- `WP-17` through `WP-24` remain open for the final review/release band
-- Sprint 2 is complete, Sprint 3 runtime/comms/inhabitant work is landed through `WP-15`, and the remaining milestone-critical runtime proof surface is the WP-16 flagship demo
+- `WP-01` through `WP-18` are closed and landed
+- `WP-19` through `WP-24` remain open for the final docs/review/release band
+- Sprint 2 is complete
+- Sprint 3 runtime/comms/inhabitant work is complete through `WP-17`
+- `WP-18` now records the milestone quality-gate posture rather than leaving it
+  implicit
 
 ## Current Blockers
 
-- the observatory-visible flagship demo is still open and is being tightened to directly bind lifecycle-state, ACIP, A2A, and runtime-inhabitant evidence
-- quality gate is pending
-- internal review, external review, remediation, handoff, and ceremony are pending
+- docs + review pass is pending
+- internal review is pending
+- external review is pending
+- review-findings remediation is pending
+- v0.92 handoff and release ceremony are pending
 
 ## Version Truth
 

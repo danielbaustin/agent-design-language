@@ -7,11 +7,13 @@ structurally complete, but the milestone itself is still in progress.
 
 ## Current Partial Outcome
 
-As of the current package repair:
+As of the current quality-gate pass:
 
-- `WP-01` through `WP-05` are closed
-- `WP-06` through `WP-24` remain open
-- the runtime proof and review/release tail are not complete
+- `WP-01` through `WP-18` are closed and landed
+- the implementation/demo band through `WP-17` is complete
+- the quality gate is now recorded
+- the docs/review/remediation/handoff/ceremony tail (`WP-19` through `WP-24`)
+  remains open
 
 ## What This Report Must Eventually Cover
 
@@ -24,4 +26,3 @@ As of the current package repair:
 ## Current Judgment
 
 Do not treat this report as release closure.
-

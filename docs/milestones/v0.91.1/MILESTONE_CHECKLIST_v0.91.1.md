@@ -18,7 +18,7 @@
 - [x] WP-06 Citizen state substrate
 - [x] WP-07 through WP-16 implementation and flagship proof band
 - [x] WP-17 Demo matrix and proof coverage closeout
-- [ ] WP-18 Coverage / quality gate
+- [x] WP-18 Coverage / quality gate
 - [ ] WP-19 Docs + review pass
 - [ ] WP-20 Internal review
 - [ ] WP-21 External / 3rd-party review
@@ -29,7 +29,7 @@
 ## Review And Release Readiness
 
 - [x] Feature-proof coverage is complete for the implementation/demo band through WP-16.
-- [ ] Quality gate is recorded.
+- [x] Quality gate is recorded.
 - [ ] Internal review is complete.
 - [ ] External review is complete or explicitly deferred.
 - [ ] Accepted findings are fixed or dispositioned.
