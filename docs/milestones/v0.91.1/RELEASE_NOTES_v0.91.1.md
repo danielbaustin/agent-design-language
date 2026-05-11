@@ -36,8 +36,9 @@ Sprint state:
   demo/proof coverage closeout
 - Sprint 4 quality/review/release tail now has the recorded quality gate,
   review-ready docs package, internal review record, and external review
-  record, the explicit zero-findings remediation disposition, and the `v0.92`
-  birthday-readiness handoff, but release closure remains open
+  record, the explicit zero-findings remediation disposition, the
+  next-milestone planning/handoff record, and the final next-milestone review
+  pass, but release closure remains open
 
 ## Still Pending
 

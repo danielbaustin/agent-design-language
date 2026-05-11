@@ -27,7 +27,8 @@ Known execution truth today:
 - `WP-19` aligned the reviewer-entry docs and active version/status surfaces
 - `WP-20` through `WP-22` now provide the internal review, external review,
   and explicit zero-findings remediation disposition
-- `WP-23` now provides the birthday-readiness handoff
+- `WP-23` now provides next-milestone planning and downstream handoff truth
+- supplemental `WP-23A` is carrying the final next-milestone review pass in PR `#2996`
 - `WP-24` remains open for release ceremony
 
 ## Current Validation Posture
@@ -62,6 +63,7 @@ Known execution truth today:
 - docs review pass is complete
 - internal review, external review, and remediation disposition are complete
 - handoff is complete
+- next-milestone review pass is pending merge of PR `#2996`
 - release ceremony is still pending
 
 ## Required Inputs Before Final Pass/Fail Judgment

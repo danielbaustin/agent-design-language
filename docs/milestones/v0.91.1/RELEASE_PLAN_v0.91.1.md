@@ -27,8 +27,9 @@ without overclaiming birthday, identity, or external-transport completion.
 
 Do not mark `v0.91.1` releasable until:
 
-- `WP-16` through `WP-24` are completed or dispositioned truthfully
+- `WP-16` through `WP-23` are completed or dispositioned truthfully
+- supplemental `WP-23A` is merged truthfully as the final next-milestone review pass
+- `WP-24` ceremony is complete
 - the quality gate is recorded
 - internal/external review state is explicit
 - release readiness and release evidence are complete
-
