@@ -213,6 +213,7 @@ production markets.
   cognitive loop behind Gödel-agent work.
 - [Examples](adl/examples/README.md): runnable ADL examples.
 - [Demos](demos/README.md): demo-oriented proof surfaces.
+- [AGENTS.md](AGENTS.md): repository-local operating contract for coding agents.
 
 ## Project Status
 
