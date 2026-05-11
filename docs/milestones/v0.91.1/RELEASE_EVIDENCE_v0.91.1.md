@@ -48,7 +48,10 @@ truthful `v0.91.1` release decision.
 - `WP-21` external / third-party review handoff and zero-finding record
 - `WP-22` accepted-finding disposition record with zero accepted findings
 - `WP-23` next-milestone planning and downstream handoff record
-- supplemental `WP-23A` next-milestone review-pass record
+
+## In-Flight Evidence
+
+- supplemental `WP-23A` next-milestone review-pass record in PR `#2996`
 
 ## Evidence Still Missing
 
