@@ -5,9 +5,9 @@
 Not release ready.
 
 This document is the compact reviewer-entry surface for the active `v0.91.1`
-release tail. The milestone is not complete until internal review, third-party
-review, accepted-finding remediation, the `v0.92` handoff, and the release
-ceremony all finish.
+release tail. Internal review and third-party review are complete. The
+milestone is not complete until accepted-finding remediation, the `v0.92`
+handoff, and the release ceremony all finish.
 
 ## Review Entry Points
 
@@ -25,6 +25,7 @@ ceremony all finish.
 - [RELEASE_PLAN_v0.91.1.md](RELEASE_PLAN_v0.91.1.md)
 - [RELEASE_EVIDENCE_v0.91.1.md](RELEASE_EVIDENCE_v0.91.1.md)
 - [RELEASE_NOTES_v0.91.1.md](RELEASE_NOTES_v0.91.1.md)
+- [ADL_v0.91.1_THIRD_PARTY_REVIEW_HANDOFF.md](ADL_v0.91.1_THIRD_PARTY_REVIEW_HANDOFF.md)
 - [END_OF_MILESTONE_REPORT_v0.91.1.md](END_OF_MILESTONE_REPORT_v0.91.1.md)
 - [NEXT_MILESTONE_HANDOFF_v0.91.1.md](NEXT_MILESTONE_HANDOFF_v0.91.1.md)
 - [SPRINT_2_CLOSEOUT_v0.91.1.md](SPRINT_2_CLOSEOUT_v0.91.1.md)
@@ -33,7 +34,7 @@ ceremony all finish.
 ## Current Issue State
 
 - `WP-01` through `WP-19` are closed or ready to close with landed docs truth
-- `WP-20` through `WP-24` remain open for the final review/remediation/release band
+- `WP-22` through `WP-24` remain open for the final remediation/release band
 - Sprint 2 is complete
 - Sprint 3 runtime/comms/inhabitant work is complete through `WP-17`
 - `WP-18` records the milestone quality-gate posture
@@ -42,8 +43,8 @@ ceremony all finish.
 
 ## Current Blockers
 
-- internal review is pending
-- external review is pending
+- internal review is complete
+- external review is complete
 - review-findings remediation is pending
 - v0.92 handoff and release ceremony are pending
 

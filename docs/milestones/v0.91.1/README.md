@@ -126,6 +126,8 @@ not import the broad provider-native benchmark planning surface.
 - Release readiness: [RELEASE_READINESS_v0.91.1.md](RELEASE_READINESS_v0.91.1.md)
 - Release evidence: [RELEASE_EVIDENCE_v0.91.1.md](RELEASE_EVIDENCE_v0.91.1.md)
 - Release notes: [RELEASE_NOTES_v0.91.1.md](RELEASE_NOTES_v0.91.1.md)
+- Third-party review handoff:
+  [ADL_v0.91.1_THIRD_PARTY_REVIEW_HANDOFF.md](ADL_v0.91.1_THIRD_PARTY_REVIEW_HANDOFF.md)
 - Next milestone handoff:
   [NEXT_MILESTONE_HANDOFF_v0.91.1.md](NEXT_MILESTONE_HANDOFF_v0.91.1.md)
 - End-of-milestone report:
