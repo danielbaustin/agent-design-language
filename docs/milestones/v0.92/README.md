@@ -119,6 +119,7 @@ The likely `v0.92` tranche is:
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.92.md](MILESTONE_CHECKLIST_v0.92.md)
 - Release plan: [RELEASE_PLAN_v0.92.md](RELEASE_PLAN_v0.92.md)
 - Release notes: [RELEASE_NOTES_v0.92.md](RELEASE_NOTES_v0.92.md)
+- Feature plans: [features/README.md](features/README.md)
 - Identity, continuity, and birthday allocation:
   [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md)
 

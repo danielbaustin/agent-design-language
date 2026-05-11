@@ -1,130 +1,91 @@
-# Milestone README Template
+# v0.95 Milestone README
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+## Status
+
+Forward planning. `v0.95` is not yet an active implementation milestone and
+has no final issue wave.
 
 ## Purpose
-Provide a single entry point for the milestone: what it is, why it matters, what is included, and how to navigate the canonical documents and artifacts.
 
-## How To Use
-- Start here before reading individual milestone documents.
-- Use this README to locate the canonical design, execution, and validation surfaces.
-- Keep this document concise and navigational; detailed content belongs in the linked docs.
-- Keep links up to date as files move or are renamed.
+`v0.95` is the planned MVP convergence and feature-freeze milestone.
 
-## Overview
+It should give ADL one coherent launch-shape platform story by finishing:
 
-`{{milestone}}` represents the stage where `{{project_name}}` moves from `{{previous_state}}` to `{{target_state}}`.
+- HTML milestone dashboard and compression reporting
+- CSM Shepherd and Gemma evaluation/training closure
+- Aptitude Atlas as the bounded model-evaluation platform
+- distributed-substrate integration
+- polished demo catalog and MVP walkthrough
+- control-plane/tooling hardening
+- web-based code-editor integration
+- the explicit MVP editor decision boundary, including Zed
 
-This milestone focuses on:
-- {{focus_1}}
-- {{focus_2}}
-- {{focus_3}}
+## Milestone Role
 
-Key outcomes:
-- {{outcome_1}}
-- {{outcome_2}}
-- {{outcome_3}}
+`v0.95` should establish:
+
+- converged milestone, dashboard, and compression-reporting surfaces for review
+- a bounded evaluator/training lane for Shepherd/Gemma and adjacent model work
+- one coherent model-evaluation platform story through Aptitude Atlas
+- converged user-facing and reviewer-facing walkthrough surfaces
+- explicit integration closure across the platform bands already scheduled
+- final high-value control-plane migration and hardening work
+- a truth-preserving MVP boundary for editor capability, web editing, and
+  optional Zed carry-in
+
+`v0.95` should not silently admit new architectural domains after the
+`v0.94`/`v0.94.1` closure bands.
 
 ## Scope Summary
 
 ### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
-- {{in_scope_3}}
+
+- HTML milestone dashboard and compression reporting
+- CSM Shepherd and Gemma training/evaluation follow-on
+- Aptitude Atlas model-evaluation platform closure
+- distributed execution integration closure
+- demo catalog and polished MVP walkthrough
+- control-plane Rust migration and tooling hardening
+- web-based code-editor integration baseline
+- bounded Zed integration decision or explicit deferral
+- MVP feature-freeze and 1.0 scope-boundary preparation
 
 ### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
+
+- silent post-`v0.95` deferral of must-have roadmap bands
+- introducing new greenfield platform domains
+- pretending optional editor-host preference is already a must-have requirement
 
 ## Document Map
 
-Canonical milestone documents:
+- Vision: [VISION_v0.95.md](VISION_v0.95.md)
+- Design: [DESIGN_v0.95.md](DESIGN_v0.95.md)
+- WBS: [WBS_v0.95.md](WBS_v0.95.md)
+- Sprint plan: [SPRINT_v0.95.md](SPRINT_v0.95.md)
+- Decisions: [DECISIONS_v0.95.md](DECISIONS_v0.95.md)
+- Demo matrix: [DEMO_MATRIX_v0.95.md](DEMO_MATRIX_v0.95.md)
+- Milestone checklist: [MILESTONE_CHECKLIST_v0.95.md](MILESTONE_CHECKLIST_v0.95.md)
+- Release plan: [RELEASE_PLAN_v0.95.md](RELEASE_PLAN_v0.95.md)
+- Release notes: [RELEASE_NOTES_v0.95.md](RELEASE_NOTES_v0.95.md)
+- Feature plans: [features/README.md](features/README.md)
 
-- Vision: `{{vision_doc}}`
-- Design: `{{design_doc}}`
-- Work Breakdown Structure (WBS): `{{wbs_doc}}`
-- Sprint plan: `{{sprint_doc}}`
-- Decisions log: `{{decisions_doc}}`
-- Demo matrix: `{{demo_matrix_doc}}`
-- Milestone checklist: `{{checklist_doc}}`
-- Release plan / process: `{{release_process_doc}}`
-- Release notes: `{{release_notes_doc}}`
+## Dependency Boundary
 
-Supporting / domain-specific docs:
-- {{supporting_doc_1}}
-- {{supporting_doc_2}}
-- {{supporting_doc_3}}
+`v0.95` depends on:
 
-## Execution Model
+- earlier implemented baseline work through `v0.91.2`
+- `v0.92` identity/birthday completion
+- `v0.93` governance and enterprise-security completion
+- `v0.94` secure-execution and reasoning/provenance closure
+- `v0.94.1` payments/economic follow-on closure where those surfaces are
+  declared part of MVP
 
-This milestone is executed as a sequence of work packages (WPs):
+## Success Criteria
 
-- WP-01: Design pass (docs + planning)
-- WP-02 - WP-12: Feature and system work
-- WP-13: Demo matrix and integration demos
-- WP-14: Coverage / quality gate
-- WP-15: Docs and review convergence
-- WP-16: Release ceremony
-
-Execution expectations:
-- Each WP is tracked by an issue and implemented via PRs.
-- Each issue produces structured artifacts (input/output cards, reports).
-- All work merges under green CI and passes quality gates.
-
-## Demo and Validation Surface
-
-Primary validation is defined in:
-- Demo matrix: `{{demo_matrix_doc}}`
-
-Additional validation surfaces:
-- Test suite results
-- Generated artifacts under `.adl/runs/`
-- Trace and replay outputs
-
-Success criteria:
-- {{success_criteria_1}}
-- {{success_criteria_2}}
-- {{success_criteria_3}}
-
-## Determinism and Reproducibility
-
-The milestone should demonstrate:
-- Deterministic or bounded-repeatable execution where required
-- Replayable traces and inspectable artifacts
-- Stable command entry points for demos
-
-Evidence locations:
-- {{determinism_evidence_path_1}}
-- {{determinism_evidence_path_2}}
-
-## Risks and Open Questions
-
-Known risks:
-- {{risk_1}}
-- {{risk_2}}
-
-Open questions:
-- {{open_question_1}}
-- {{open_question_2}}
-
-## Status
-
-Current status: {{status}}
-
-- Planning: {{planning_status}}
-- Execution: {{execution_status}}
-- Validation: {{validation_status}}
-- Release readiness: {{release_status}}
-
-## Exit Criteria
-
-- All canonical milestone documents are complete and internally consistent.
-- All WBS items are implemented or explicitly deferred.
-- Demo matrix is runnable and validated.
-- Quality gates (fmt, clippy, test, CI) are passing.
-- Milestone checklist is complete or exceptions are documented.
-- Release artifacts (notes, tag, docs) are ready.
+- every MVP-scoped feature row has a canonical tracked home
+- the dashboard/compression and evaluation-platform surfaces are explicit rather
+  than implied by older backlog language
+- distributed execution remains bounded and reviewable
+- the demo catalog and walkthrough tell one coherent platform story
+- the control plane is hardened enough for the MVP review posture
+- the editor story is explicit across web baseline and Zed decision boundary
