@@ -249,7 +249,7 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.93` | Constitutional citizenship, rights/duties, social contract, delegation/IAM, standing/challenge/appeal governance, relationship model, reputation/trust, shared social memory, ToM/social cognition, and enterprise security for the ADL polis. |
 | `v0.94` | Secure execution, policy-engine and identity/auth convergence, provider trust and isolation, secrets/data governance, signed/queryable trace and reasoning/provenance closure, bounded mental time travel / temporal self-projection, and cross-band convergence before MVP freeze. |
 | `v0.94.1` | Payments, settlement, accounting/ledger/economic trace, economic agency, and `x402` / Lightning adapter follow-on work. |
-| `v0.95` | MVP convergence, distributed-substrate integration, polished demo catalog, coherent reviewer/customer walkthrough, control-plane/tooling hardening, feature freeze, and the 1.0 scope boundary. |
+| `v0.95` | MVP convergence, dashboard/compression reporting, Shepherd/Gemma and Aptitude Atlas evaluation surfaces, distributed-substrate integration, polished demo catalog, coherent reviewer/customer walkthrough, control-plane/tooling hardening, web-editor baseline, explicit Zed decision boundary, feature freeze, and the 1.0 scope boundary. |
 
 ## Implemented Platform Highlights
 

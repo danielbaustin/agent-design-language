@@ -50,3 +50,5 @@ are in place.
 - Release plan: [RELEASE_PLAN_v0.94.1.md](RELEASE_PLAN_v0.94.1.md)
 - Release notes: [RELEASE_NOTES_v0.94.1.md](RELEASE_NOTES_v0.94.1.md)
 - Feature plans: [features/README.md](features/README.md)
+- Payments, settlement, and `x402`:
+  [PAYMENTS_SETTLEMENT_AND_X402_v0.94.1.md](features/PAYMENTS_SETTLEMENT_AND_X402_v0.94.1.md)

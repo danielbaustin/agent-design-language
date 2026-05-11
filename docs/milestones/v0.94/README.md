@@ -73,6 +73,14 @@ integration. Those belong to `v0.94.1`.
 - Release plan: [RELEASE_PLAN_v0.94.md](RELEASE_PLAN_v0.94.md)
 - Release notes: [RELEASE_NOTES_v0.94.md](RELEASE_NOTES_v0.94.md)
 - Feature plans: [features/README.md](features/README.md)
+- Reasoning graph baseline:
+  [REASONING_GRAPH_BASELINE_v0.94.md](features/REASONING_GRAPH_BASELINE_v0.94.md)
+- Secure execution and trust convergence:
+  [SECURE_EXECUTION_AND_TRUST_CONVERGENCE_v0.94.md](features/SECURE_EXECUTION_AND_TRUST_CONVERGENCE_v0.94.md)
+- Signed trace and trace query:
+  [SIGNED_TRACE_AND_TRACE_QUERY_v0.94.md](features/SIGNED_TRACE_AND_TRACE_QUERY_v0.94.md)
+- Mental time travel:
+  [MENTAL_TIME_TRAVEL_v0.94.md](features/MENTAL_TIME_TRAVEL_v0.94.md)
 
 ## Success Criteria
 

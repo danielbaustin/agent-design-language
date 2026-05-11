@@ -1,74 +1,85 @@
-# Design Template
+# v0.95 Milestone Design
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues: {{issues}}
+## Status
 
-## Purpose
-Define what we are building, why, and how we validate it — concisely, with links to issues/PRs.
+Forward planning. This document defines the intended MVP-convergence shape of
+`v0.95`.
 
 ## Problem Statement
-{{problem_statement}}
+
+The roadmap now contains strong later-band feature contracts, but without a
+coherent convergence milestone those surfaces risk staying legible only to
+people who already know the project history.
+
+`v0.95` must solve the integration problem:
+
+- make the MVP legible
+- make the proof surfaces discoverable
+- keep the control plane and editor/operator surfaces truthful
+- avoid adding new architecture while closing the story
 
 ## Goals
-- {{goal_1}}
-- {{goal_2}}
 
-## Non-Goals
-- {{non_goal_1}}
-- {{non_goal_2}}
+- converge the later roadmap bands into one reviewable MVP package
+- make dashboard, evaluation, distributed execution, walkthrough, and editor
+  surfaces mutually consistent
+- preserve explicit dependency and non-goal boundaries
+
+## Non-goals
+
+- building a new substrate below the already planned governance/security layers
+- pretending optional editor choices are architectural necessities
+- using `v0.95` as a catch-all for unfinished earlier work
 
 ## Scope
+
 ### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
+
+- dashboard/compression reporting
+- Shepherd/Gemma evaluator/training closure
+- Aptitude Atlas evaluation-platform story
+- distributed execution integration closure
+- walkthrough/catalog convergence
+- control-plane Rust migration and tooling hardening
+- web editor baseline and Zed decision boundary
 
 ### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
 
-## Requirements
-### Functional
-- {{functional_requirement_1}}
-- {{functional_requirement_2}}
-
-### Non-functional
-- Deterministic behavior and reproducible outputs.
-- Clear failure semantics and observability.
-- {{non_functional_requirement_1}}
+- new greenfield platform domains
+- payment-rail expansion beyond what `v0.94.1` already owns
+- revisiting earlier milestone fundamentals unless a contradiction is found
 
 ## Proposed Design
-### Overview
-{{architecture_summary}}
 
-### Interfaces / Data contracts
-- {{interface_or_contract_1}}
-- {{interface_or_contract_2}}
+The milestone should be structured as one convergence package with four linked
+lanes:
 
-### Execution semantics
-{{execution_semantics}}
+1. Operator/read-only surfaces:
+   dashboard, compression reporting, and reviewer entrypoints.
+2. Evaluation surfaces:
+   Shepherd/Gemma follow-on and Aptitude Atlas product lane.
+3. Platform integration surfaces:
+   distributed execution plus control-plane hardening.
+4. User/editor surfaces:
+   walkthrough/catalog, web editor baseline, and Zed decision.
+
+The key design rule is that all four lanes must remain subordinate to the same
+deterministic execution and review truth model.
 
 ## Risks and Mitigations
-- Risk: {{risk_1}}
-  - Mitigation: {{mitigation_1}}
-- Risk: {{risk_2}}
-  - Mitigation: {{mitigation_2}}
 
-## Alternatives Considered
-- Option: {{alternative_1}}
-  - Tradeoff: {{tradeoff_1}}
-- Option: {{alternative_2}}
-  - Tradeoff: {{tradeoff_2}}
+- Risk: `v0.95` becomes a vague “everything else” milestone.
+  - Mitigation: keep every work area tied to one existing tracked feature doc.
+- Risk: dashboard/editor polish gets ahead of control-plane truth.
+  - Mitigation: treat workflow and lifecycle correctness as a dependency, not a
+    follow-on.
+- Risk: reviewer and customer narratives diverge.
+  - Mitigation: require one coherent walkthrough/catalog package plus explicit
+    proof surfaces.
 
 ## Validation Plan
-- Checks/tests: {{validation_checks}}
-- Success metrics: {{success_metrics}}
-- Rollback/fallback: {{rollback_plan}}
 
-## Exit Criteria
-- Goals/non-goals and scope boundaries are explicit.
-- Validation plan is actionable and referenced by the milestone checklist.
-- Major open questions are resolved or tracked in the decision log.
+- verify every `v0.95` feature row maps to the milestone package
+- verify the demo matrix and checklist cover the same feature set
+- verify no `v0.95` planning file remains a raw template
+- verify the milestone remains bounded by `v0.94` / `v0.94.1` dependencies

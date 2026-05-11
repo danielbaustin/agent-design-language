@@ -1,242 +1,60 @@
-# Vision Template
+# v0.95 Milestone Vision
 
-## Metadata
-- Project: `{{project_name}}`
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues: {{issues}}
+## Status
 
-## Purpose
-Define the milestone-level vision for the project: what changes at this stage, why it matters, and which strategic pillars it advances.
-
-## How To Use
-- Write this as a milestone vision, not a full design spec.
-- Focus on direction, priorities, and intended outcomes rather than implementation details.
-- Keep the structure stable across milestones so changes in emphasis are easy to compare over time.
-- Prefer concrete milestone framing over vague aspiration.
-- Keep section titles stable unless there is a strong reason to change them.
-- If a section is not relevant, state that briefly rather than deleting the section.
+Forward planning. This is a milestone-vision document, not an implementation
+closeout record.
 
 ## Overview
 
-Version `{{version}}` is the milestone where `{{project_name}}` evolves from `{{previous_state}}` into `{{target_state}}`.
+`v0.95` is the milestone where ADL should stop feeling like a collection of
+strong subsystems and start feeling like one coherent MVP platform.
 
-This release should establish or strengthen the foundation for:
+Earlier milestones established:
 
-- {{foundation_1}}
-- {{foundation_2}}
-- {{foundation_3}}
+- deterministic runtime and review surfaces
+- citizen state, governance, secure execution, and payments allocation bands
+- evaluation, publication, and productization pressure-release work
 
-`{{version}}` focuses on **{{primary_focus}}**.
+`v0.95` should turn those bands into one launch-shape story with clear proof,
+clear boundaries, and clear operator/reviewer entrypoints.
 
-The goal is to make the project more useful to:
+## Strategic Focus
 
-- {{audience_1}}
-- {{audience_2}}
-- {{audience_3}}
+`v0.95` should strengthen five pillars:
 
-This milestone should strengthen the architectural or strategic pillars of:
+1. MVP convergence rather than new scope growth.
+2. Reviewer/customer legibility through walkthroughs, dashboards, and explicit
+   proof posture.
+3. Model-evaluation maturity through Aptitude Atlas and Shepherd/Gemma
+   follow-on work.
+4. Hardened execution/control-plane substrate suitable for the MVP boundary.
+5. Explicit editor/operator story across the web baseline and the Zed decision.
 
-- {{pillar_1}}
-- {{pillar_2}}
-- {{pillar_3}}
-- {{pillar_4}}
+## Intended Outcome
 
-{{overview_close}}
+After `v0.95`, ADL should be able to say:
 
----
+- what the MVP is
+- what surfaces prove it
+- which operator/editor path is required
+- which optional integrations remain optional
+- how the runtime, governance, execution, evaluation, and demo layers fit
+  together
 
-# Core Goals
+## Non-goals
 
-`{{version}}` advances `{{project_name}}` in five major areas:
+`v0.95` should not:
 
-1. {{goal_area_1}}
-2. {{goal_area_2}}
-3. {{goal_area_3}}
-4. {{goal_area_4}}
-5. {{goal_area_5}}
+- add a new greenfield architectural domain
+- quietly absorb unfinished `v0.94` or `v0.94.1` foundation work
+- treat polish alone as proof
+- let optional host/editor preference masquerade as MVP necessity
 
----
+## Long-Term Direction
 
-# 1. {{goal_area_1}}
+The point of `v0.95` is not just “more features.” It is coherence.
 
-`{{version}}` improves `{{goal_area_1}}` so the project can `{{outcome_1}}`.
-
-Key objectives:
-
-- {{objective_1a}}
-- {{objective_1b}}
-- {{objective_1c}}
-- {{objective_1d}}
-
-These capabilities move the project toward **{{strategic_effect_1}}**.
-
-The system or product should guarantee:
-
-- {{guarantee_1a}}
-- {{guarantee_1b}}
-- {{guarantee_1c}}
-
----
-
-# 2. {{goal_area_2}}
-
-`{{goal_area_2}}` must improve without sacrificing `{{constraint_2}}`.
-
-`{{version}}` introduces or improves:
-
-- {{improvement_2a}}
-- {{improvement_2b}}
-- {{improvement_2c}}
-- {{improvement_2d}}
-
-The goal is to move from `{{before_state_2}}` toward **{{after_state_2}}**.
-
-These changes should help users:
-
-- {{user_benefit_2a}}
-- {{user_benefit_2b}}
-
----
-
-# 3. {{goal_area_3}}
-
-A central principle of `{{project_name}}` is **{{principle_3}}**.
-
-The project must not merely `{{anti_goal_3}}`. It must `{{desired_behavior_3}}`.
-
-`{{version}}` strengthens this pillar with:
-
-- {{capability_3a}}
-- {{capability_3b}}
-- {{capability_3c}}
-- {{capability_3d}}
-
-This work supports the broader principle of **{{broader_principle_3}}**.
-
-The result should make the project more:
-
-- {{quality_3a}}
-- {{quality_3b}}
-- {{quality_3c}}
-
----
-
-# 4. {{goal_area_4}}
-
-`{{version}}` continues development of `{{goal_area_4}}`.
-
-The focus remains on **{{focus_4}}**, not `{{non_goal_4}}`.
-
-Key capabilities:
-
-- {{capability_4a}}
-- {{capability_4b}}
-- {{capability_4c}}
-- {{capability_4d}}
-
-This milestone should help the project better represent or support:
-
-- {{support_4a}}
-- {{support_4b}}
-- {{support_4c}}
-
-These improvements should guide the system toward `{{desired_state_4}}`.
-
----
-
-# 5. {{goal_area_5}}
-
-To support real-world use, `{{version}}` must improve `{{goal_area_5}}`.
-
-Important targets include:
-
-- {{target_5a}}
-- {{target_5b}}
-- {{target_5c}}
-- {{target_5d}}
-
-This work should strengthen the development and operating workflow by improving:
-
-- {{workflow_benefit_5a}}
-- {{workflow_benefit_5b}}
-- {{workflow_benefit_5c}}
-
-{{close_5}}
-
----
-
-# Special Focus: `{{special_focus_title}}`
-
-`{{special_focus_title}}` becomes a central focus of `{{version}}`.
-
-Previous releases `{{previous_special_focus_state}}`.
-
-`{{version}}` advances this area with:
-
-- {{special_focus_1}}
-- {{special_focus_2}}
-- {{special_focus_3}}
-- {{special_focus_4}}
-
-This area is responsible for ensuring that `{{special_focus_scope}}` remain:
-
-- {{special_quality_1}}
-- {{special_quality_2}}
-- {{special_quality_3}}
-
-This keeps the project aligned with `{{alignment_principle}}`.
-
----
-
-# Milestone Context
-
-`{{previous_milestone}}` represents `{{previous_milestone_significance}}`.
-
-From `{{next_phase_start}}` onward the project will likely shift toward:
-
-- {{next_phase_item_1}}
-- {{next_phase_item_2}}
-- {{next_phase_item_3}}
-
-The goal is to have `{{future_goal}}` by **{{future_target_milestone}}**.
-
-`{{version}}` therefore focuses on `{{contextual_focus}}` before that stage.
-
----
-
-# Long-Term Direction
-
-`{{project_name}}` is being designed as `{{long_term_identity}}`.
-
-Its long-term goals include:
-
-- {{long_term_goal_1}}
-- {{long_term_goal_2}}
-- {{long_term_goal_3}}
-- {{long_term_goal_4}}
-
-These principles aim to move the project beyond `{{old_mode}}` toward `{{new_mode}}`.
-
----
-
-# Summary
-
-`{{version}}` is the milestone where `{{project_name}}` becomes:
-
-- {{summary_quality_1}}
-- {{summary_quality_2}}
-- {{summary_quality_3}}
-- {{summary_quality_4}}
-
-It strengthens `{{summary_strength_1}}`, advances `{{summary_strength_2}}`, improves `{{summary_strength_3}}`, and stabilizes `{{summary_strength_4}}`.
-
-These improvements prepare the project for `{{next_stage}}`.
-
-## Exit Criteria
-- The milestone's strategic priorities are explicit and internally consistent.
-- The five core goal areas and special focus section are filled with milestone-specific content.
-- The vision can be read without requiring implementation details from the design document.
-- The long-term direction clearly connects this milestone to the next phase of the roadmap.
+This milestone should prepare the platform for a later public-facing phase by
+making the system understandable as one bounded product: deterministic,
+governable, observable, secure, evaluable, and demoable.

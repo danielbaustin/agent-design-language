@@ -1,65 +1,53 @@
-# Work Breakdown Structure (WBS) Template
+# v0.95 Candidate Work Breakdown Structure
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+## Status
 
-## How To Use
-- Break work into independently-mergeable issues.
-- Keep each item measurable and testable.
-- Include deliverables + dependencies + issue links.
-- `WP-01` is **always** the milestone **design pass** (canonical docs + WBS + decisions + sprint plan + checklist).
-- Reserve the final WPs for the release tail in this order: `WP-13` demos, `WP-14` quality/coverage gate, `WP-15` docs/review convergence, `WP-16` release ceremony.
+Candidate allocation only. `v0.95` has no final issue wave yet.
 
 ## WBS Summary
-{{wbs_summary}}
 
-## Work Packages
-| ID | Work Package | Description | Deliverable | Dependencies | Issue |
-|---|---|---|---|---|---|
-| WP-01 | Design pass (milestone docs + planning) | {{description_01}} | {{deliverable_01}} | {{deps_01}} | {{issue_01}} |
-| WP-02 | {{package_02}} | {{description_02}} | {{deliverable_02}} | {{deps_02}} | {{issue_02}} |
-| WP-03 | {{package_03}} | {{description_03}} | {{deliverable_03}} | {{deps_03}} | {{issue_03}} |
-| WP-04 | {{package_04}} | {{description_04}} | {{deliverable_04}} | {{deps_04}} | {{issue_04}} |
-| WP-05 | {{package_05}} | {{description_05}} | {{deliverable_05}} | {{deps_05}} | {{issue_05}} |
-| WP-06 | {{package_06}} | {{description_06}} | {{deliverable_06}} | {{deps_06}} | {{issue_06}} |
-| WP-07 | {{package_07}} | {{description_07}} | {{deliverable_07}} | {{deps_07}} | {{issue_07}} |
-| WP-08 | {{package_08}} | {{description_08}} | {{deliverable_08}} | {{deps_08}} | {{issue_08}} |
-| WP-09 | {{package_09}} | {{description_09}} | {{deliverable_09}} | {{deps_09}} | {{issue_09}} |
-| WP-10 | {{package_10}} | {{description_10}} | {{deliverable_10}} | {{deps_10}} | {{issue_10}} |
-| WP-11 | {{package_11}} | {{description_11}} | {{deliverable_11}} | {{deps_11}} | {{issue_11}} |
-| WP-12 | {{package_12}} | {{description_12}} | {{deliverable_12}} | {{deps_12}} | {{issue_12}} |
-| WP-13 | Demo matrix + integration demos | {{description_13}} | {{deliverable_13}} | {{deps_13}} | {{issue_13}} |
-| WP-14 | Coverage / quality gate (ratchet + exclusions) | {{description_14}} | {{deliverable_14}} | {{deps_14}} | {{issue_14}} |
-| WP-15 | Docs + review pass (repo-wide alignment) | {{description_15}} | {{deliverable_15}} | {{deps_15}} | {{issue_15}} |
-| WP-16 | Release ceremony (final validation + tag + notes + cleanup) | {{description_16}} | {{deliverable_16}} | {{deps_16}} | {{issue_16}} |
+`v0.95` should be the MVP convergence and feature-freeze milestone. It should
+close the remaining user-facing, evaluator-facing, editor-facing, and
+control-plane-facing gaps without silently admitting a new architectural band.
 
-## Sequencing
-- Phase 1: {{phase_1}}
-- Phase 2: {{phase_2}}
-- Phase 3: {{phase_3}}
+## Candidate Work Areas
+
+| Candidate | Work Area | Description | Primary deliverable | Key dependencies |
+| --- | --- | --- | --- | --- |
+| A | HTML milestone dashboard and compression reporting | Converge milestone dashboard and compression surfaces into one maintained operator/reviewer entrypoint. | HTML dashboard/reporting package and refresh rules. | `v0.90` milestone compression baseline, `v0.95` milestone docs. |
+| B | Shepherd/Gemma training and evaluator path | Finish the MVP-facing training/evaluation lane for the Shepherd/Gemma line. | Training/evaluation plan, artifact expectations, and proof posture. | `v0.91.1` ANRM/Gemma placement, later evaluation surfaces. |
+| C | Aptitude Atlas product lane | Turn the harness/evaluation groundwork into a coherent model-evaluation platform story. | Product-facing evaluation contract and reporting boundary. | `v0.90.1` Aptitude Atlas planning, `v0.91.1` capability harness, `v0.91.2` productization/evaluation work. |
+| D | Distributed execution integration | Close the bounded distributed-execution story without sacrificing deterministic reviewability. | Integration contract and reviewable placement boundary. | ADR 0003, remote/cluster groundwork, `v0.94` secure-execution boundary. |
+| E | Demo catalog and MVP walkthrough | Turn the landed demo families into one reviewer/customer-facing catalog and walkthrough. | Catalog, classification rules, and flagship walkthrough package. | Earlier milestone demo matrices, productization/publication surfaces. |
+| F | Control-plane Rust migration and tooling hardening | Finish the highest-value migration/hardening tranche for the MVP control plane. | Hardened control-plane package and residual-language boundary. | Python-elimination staged plan, workflow guardrails, review tooling. |
+| G | Web-based code editor integration | Establish the minimum required web editor/operator baseline for the MVP. | Web editor integration contract and lifecycle coupling rules. | HTA editor planning, control-plane lifecycle, `v0.95` convergence package. |
+| H | Zed decision boundary | Decide whether Zed ships as part of MVP or remains explicitly outside the must-have set. | Decision record and success/defer/drop criteria. | Web editor baseline, MVP boundary planning, control-plane workflow truth. |
+| I | MVP convergence packet | Integrate the milestone rows above into one explicit MVP boundary and launch-shape story. | Convergence packet tying demos, tooling, editor, and evaluation surfaces together. | A through H. |
+| J | Demo matrix and proof program | Define the bounded demos that prove MVP convergence rather than isolated feature fragments. | Demo matrix and candidate proof surfaces. | D, E, G, I. |
+| K | Quality gate and release readiness | Define the v0.95 quality/readiness evidence needed before ceremony. | Checklist, quality gate, and release-readiness plan. | I and J. |
+| L | Docs, review, and release tail | Run the final alignment, review, and ceremony package for MVP closeout. | Review package, release notes, and ceremony evidence. | All prior work. |
+
+## Sequencing Pressure
+
+1. Start with the non-user-facing convergence surfaces: dashboard/reporting,
+   evaluator/training, and distributed execution.
+2. Land the walkthrough/catalog and control-plane hardening before making the
+   editor decision final.
+3. Treat the web editor as the required baseline and Zed as an explicit
+   decision boundary rather than an implicit default.
+4. Build the final MVP convergence packet before the demo/review/release tail.
 
 ## Acceptance Mapping
-- WP-01 (Design pass) -> {{acceptance_criteria_01}}
-- WP-02 -> {{acceptance_criteria_02}}
-- WP-03 -> {{acceptance_criteria_03}}
-- WP-04 -> {{acceptance_criteria_04}}
-- WP-05 -> {{acceptance_criteria_05}}
-- WP-06 -> {{acceptance_criteria_06}}
-- WP-07 -> {{acceptance_criteria_07}}
-- WP-08 -> {{acceptance_criteria_08}}
-- WP-09 -> {{acceptance_criteria_09}}
-- WP-10 -> {{acceptance_criteria_10}}
-- WP-11 -> {{acceptance_criteria_11}}
-- WP-12 -> {{acceptance_criteria_12}}
-- WP-13 (Demos) -> {{acceptance_criteria_13}}
-- WP-14 (Quality gate) -> {{acceptance_criteria_14}}
-- WP-15 (Docs/review) -> {{acceptance_criteria_15}}
-- WP-16 (Release ceremony) -> {{acceptance_criteria_16}}
 
-## Exit Criteria
-- Every in-scope requirement maps to at least one WBS item.
-- Every WBS item has an owner, issue reference, and concrete deliverable.
-- Dependency order is explicit enough to execute deterministically.
+- Every `v0.95` feature row in the feature list maps to a candidate work area
+  in this WBS.
+- Dashboard/reporting, evaluator/training, and evaluation-platform work are
+  explicit rather than buried in backlog language.
+- Distributed execution remains bounded and subordinate to secure-execution
+  truth from `v0.94`.
+- Demo/walkthrough work proves the integrated MVP story rather than only
+  isolated feature claims.
+- The editor story remains explicit across required web baseline and optional
+  Zed decision boundary.
+- The milestone remains an MVP convergence band, not a new greenfield platform
+  expansion.
