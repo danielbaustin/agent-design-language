@@ -4,15 +4,17 @@ All notable project-level changes are summarized here by milestone/release.
 
 ## v0.91.1 (Active development)
 
-Status: Active. The v0.91.1 issue wave has started with `WP-01` / `#2823`,
-and the crate version has advanced to `0.91.1` for the inhabited-runtime
-readiness line.
+Status: Active. The v0.91.1 issue wave is open as `#2823-#2846`, the crate
+version has advanced to `0.91.1` for the inhabited-runtime readiness line, and
+the milestone is entering internal and third-party review after the docs pass.
 
 Planning notes:
 - The tracked v0.91.1 package lives under `docs/milestones/v0.91.1/`.
-- WP-01 is responsible for accepting the issue wave, validating the card
-  bundle, and opening the remaining WPs without reducing them to planning-only
-  work.
+- Sprints 1 through 3 are landed through the observatory-visible runtime
+  flagship proof and the milestone demo/proof coverage closeout.
+- WP-18 records the milestone quality gate.
+- WP-19 aligns the reviewer-entry docs, release surfaces, changelog, and root
+  README before internal and third-party review.
 - This is not a release entry; v0.91 remains the most recently completed
   release line.
 

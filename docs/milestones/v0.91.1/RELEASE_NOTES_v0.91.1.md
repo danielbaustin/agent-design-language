@@ -34,12 +34,12 @@ Sprint state:
 - Sprint 2 cognition, learning, and trace surfaces are landed through ANRM/Gemma placement
 - Sprint 3 runtime/comms integration and flagship proof band are landed through
   demo/proof coverage closeout
-- Sprint 4 quality/review/release tail has started with the recorded quality
-  gate, but review/remediation/release closure remains open
+- Sprint 4 quality/review/release tail now has the recorded quality gate and
+  review-ready docs package, but review/remediation/release closure remains
+  open
 
 ## Still Pending
 
-- docs + review pass
 - internal review
 - external / 3rd-party review
 - accepted-finding remediation

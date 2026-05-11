@@ -7,6 +7,9 @@ truthful `v0.91.1` release decision.
 
 ## Current Core Package
 
+- [../../../CHANGELOG.md](../../../CHANGELOG.md)
+- [../../../README.md](../../../README.md)
+- [../../../adl/Cargo.toml](../../../adl/Cargo.toml)
 - [README.md](README.md)
 - [WBS_v0.91.1.md](WBS_v0.91.1.md)
 - [SPRINT_v0.91.1.md](SPRINT_v0.91.1.md)
@@ -15,6 +18,12 @@ truthful `v0.91.1` release decision.
 - [DEMO_MATRIX_v0.91.1.md](DEMO_MATRIX_v0.91.1.md)
 - [FEATURE_PROOF_COVERAGE_v0.91.1.md](FEATURE_PROOF_COVERAGE_v0.91.1.md)
 - [QUALITY_GATE_v0.91.1.md](QUALITY_GATE_v0.91.1.md)
+- [MILESTONE_CHECKLIST_v0.91.1.md](MILESTONE_CHECKLIST_v0.91.1.md)
+- [RELEASE_NOTES_v0.91.1.md](RELEASE_NOTES_v0.91.1.md)
+- [END_OF_MILESTONE_REPORT_v0.91.1.md](END_OF_MILESTONE_REPORT_v0.91.1.md)
+- [NEXT_MILESTONE_HANDOFF_v0.91.1.md](NEXT_MILESTONE_HANDOFF_v0.91.1.md)
+- [SPRINT_2_CLOSEOUT_v0.91.1.md](SPRINT_2_CLOSEOUT_v0.91.1.md)
+- [SPRINT_3_CLOSEOUT_v0.91.1.md](SPRINT_3_CLOSEOUT_v0.91.1.md)
 
 ## Current Landed Evidence
 
@@ -31,10 +40,10 @@ truthful `v0.91.1` release decision.
 - `WP-16` observatory-visible flagship demo
 - `WP-17` milestone demo matrix and feature-proof coverage closeout
 - `WP-18` milestone quality-gate record
+- `WP-19` review-ready docs package and reviewer-entry surface alignment
 
 ## Evidence Still Missing
 
-- docs/review pass package
 - internal review record
 - external review handoff and record
 - accepted-finding remediation record
