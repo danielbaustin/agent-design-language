@@ -97,10 +97,20 @@ It is not:
 
 ## Source Baseline Used
 
-This file was shaped from two OpenAI-adjacent baselines plus ADL-specific
-workflow policy:
+This file was shaped from the OpenAI/source baselines named by `#2986`, plus
+ADL-specific workflow policy:
 
-- the open `agents.md` project framing of `AGENTS.md` as a predictable
-  repository-local instruction surface
-- OpenAI Cookbook's practical repository-guidelines-style `AGENTS.md`
+- issue-named OpenAI `agents.md` GitHub baseline:
+  `https://github.com/openai/agents.md`
+- official OpenAI guide for `AGENTS.md` in Codex:
+  `https://developers.openai.com/codex/guides/agents-md`
+- practical OpenAI repository example:
+  `https://github.com/openai/openai-cookbook/blob/main/AGENTS.md`
+- broader open-format companion reference:
+  `https://agents.md/`
 - ADL's conductor, worktree, review, and closeout discipline
+
+The issue named the GitHub `openai/agents.md` baseline explicitly. That
+repository now routes into the broader `agents.md` effort, so this file keeps
+both the issue-named GitHub source and the live `agents.md` reference visible
+for traceability.
