@@ -2,12 +2,13 @@
 
 ## Status
 
-Not release ready.
+Release-closeout package in progress.
 
-This document is the compact reviewer-entry surface for the active `v0.91.1`
-release tail. Internal review and third-party review are complete. The
-accepted-finding remediation disposition is also complete. The milestone is not
-complete until the release ceremony finishes.
+This document is the compact reviewer-entry surface for the `v0.91.1` release
+ceremony package. Internal review, third-party review, accepted-finding
+remediation, next-milestone planning, and the final next-milestone review pass
+are complete. The remaining milestone-closeout work is the `WP-24` ceremony
+package itself.
 
 ## Review Entry Points
 
@@ -36,7 +37,7 @@ complete until the release ceremony finishes.
 ## Current Issue State
 
 - `WP-01` through `WP-23A` are closed with landed docs truth
-- `WP-24` remains open for the final ceremony band
+- `WP-24` is carrying the release-ceremony and end-of-milestone closeout package
 - Sprint 2 is complete
 - Sprint 3 runtime/comms/inhabitant work is complete through `WP-17`
 - `WP-18` records the milestone quality-gate posture
@@ -45,7 +46,7 @@ complete until the release ceremony finishes.
 
 ## Current Blockers
 
-- release ceremony is pending
+- release ceremony closeout is in progress in `WP-24`
 
 ## Ceremony Gate Status
 
@@ -55,7 +56,7 @@ complete until the release ceremony finishes.
   now passes against the full closed `v0.91.1` issue set
 - from the bound `WP-24` worktree on
   `codex/2846-v0-91-1-wp-24-release-ceremony`,
-  `bash adl/tools/release_ceremony.sh --version v0.91.1 --target-branch codex/2846-v0-91-1-wp-24-release-ceremony --allow-dirty`
+  `bash adl/tools/release_ceremony.sh --version v0.91.1 --target-branch codex/2846-v0-91-1-wp-24-release-ceremony`
   now passes its full preflight without `--skip-sor-gate`
 - the remaining release-tail dependency is the ceremony itself, not stale local
   lifecycle-record truth

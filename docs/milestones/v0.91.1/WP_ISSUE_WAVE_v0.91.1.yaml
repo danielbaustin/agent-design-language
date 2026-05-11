@@ -40,7 +40,8 @@ closeout_sequence:
 - WP-20 Internal review
 - WP-21 External / 3rd-party review
 - WP-22 Review findings remediation
-- WP-23 v0.92 birthday readiness handoff
+- WP-23 Next milestone planning
+- WP-23A Next milestone review pass
 - WP-24 Release ceremony
 work_packages:
 - wp: WP-01
@@ -219,15 +220,22 @@ work_packages:
   - WP-21
 - wp: WP-23
   issue: 2845
-  title: v0.92 birthday readiness handoff
+  title: Next milestone planning
   queue: docs
-  outcome: identity/birthday handoff record
+  outcome: downstream milestone handoff record
   depends_on:
   - WP-22
+- wp: WP-23A
+  issue: 2985
+  title: Next milestone review pass
+  queue: docs
+  outcome: final pre-ceremony next-milestone review-pass record
+  depends_on:
+  - WP-23
 - wp: WP-24
   issue: 2846
   title: Release ceremony
   queue: release
   outcome: release evidence and end-of-milestone report
   depends_on:
-  - WP-23
+  - WP-23A

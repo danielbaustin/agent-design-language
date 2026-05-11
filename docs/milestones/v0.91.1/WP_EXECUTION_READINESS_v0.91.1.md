@@ -264,7 +264,8 @@ Required outputs:
 - Docs review package.
 - Internal and external review records.
 - Accepted-finding remediation.
-- v0.92 birthday readiness handoff.
+- Next milestone planning and downstream handoff.
+- Final next-milestone review pass.
 - Release ceremony and end-of-milestone report.
 
 Required validation:

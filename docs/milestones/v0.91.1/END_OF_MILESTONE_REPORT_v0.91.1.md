@@ -2,31 +2,33 @@
 
 ## Status
 
-Not complete. This is a milestone report scaffold restored so the package is
-structurally complete, but the milestone itself is still in progress.
+Ceremony candidate. This report records the `v0.91.1` closeout package being
+prepared by `WP-24`; it becomes canonical when the ceremony branch merges.
 
-## Current Partial Outcome
+## Closeout Summary
 
-As of the current docs/review pass:
+`v0.91.1` delivered the inhabited-runtime readiness milestone as a bounded,
+reviewable package:
 
-- `WP-01` through `WP-23` are closed or ready to close with landed docs truth
-- the implementation/demo band through `WP-17` is complete
-- the quality gate is now recorded
-- the review/remediation band is now recorded through explicit zero-findings
-  disposition
-- the next-milestone handoff is now recorded
-- the final next-milestone review pass is published in PR `#2996` and pending merge
-- the remaining open tail is now `WP-24`
+- the implementation/demo band landed through `WP-17`
+- the quality gate is recorded at `WP-18`
+- the docs/review/remediation band is complete through `WP-22`
+- next-milestone planning and downstream handoff landed at `WP-23`
+- the final next-milestone review pass landed at `WP-23A`
+- `WP-24` now records the final release-ceremony closeout package
 
-## What This Report Must Eventually Cover
+## Ceremony Package Contents
 
 - inhabited-runtime proof outcome
 - flagship demo outcome
 - quality and coverage outcome
-- docs/review-pass outcome
-- review/remediation outcome
-- handoff and ceremony outcome
+- docs/review/remediation outcome
+- next-milestone planning and review-pass outcome
+- release-closeout judgment and residual non-claims
 
 ## Current Judgment
 
-Do not treat this report as release closure.
+Do not treat this report as final merged release closure until `WP-24` lands.
+The ceremony package itself is structurally in place, but the full ceremony
+preflight still reports historical closed-issue `SOR` truth residue outside the
+scope of this branch.

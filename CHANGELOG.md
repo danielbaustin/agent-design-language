@@ -2,11 +2,13 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.91.1 (Active development)
+## v0.91.1 (Release closeout in progress)
 
-Status: Active. The v0.91.1 issue wave is open as `#2823-#2846`, the crate
-version has advanced to `0.91.1` for the inhabited-runtime readiness line, and
-the milestone is entering internal and third-party review after the docs pass.
+Status: Release closeout in progress. The v0.91.1 issue wave is open as
+`#2823-#2846`, the crate version has advanced to `0.91.1` for the
+inhabited-runtime readiness line, and the milestone has completed its review,
+remediation, handoff, and next-milestone review-pass stages. `WP-24` is now
+recording the final ceremony package.
 
 Planning notes:
 - The tracked v0.91.1 package lives under `docs/milestones/v0.91.1/`.
@@ -15,6 +17,8 @@ Planning notes:
 - WP-18 records the milestone quality gate.
 - WP-19 aligns the reviewer-entry docs, release surfaces, changelog, and root
   README before internal and third-party review.
+- WP-20 through WP-22 are complete with explicit zero-findings remediation truth.
+- WP-23 and WP-23A now leave the downstream milestone package planned and reviewed before ceremony.
 - This is not a release entry; v0.91 remains the most recently completed
   release line.
 

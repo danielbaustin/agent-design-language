@@ -28,8 +28,8 @@ Known execution truth today:
 - `WP-20` through `WP-22` now provide the internal review, external review,
   and explicit zero-findings remediation disposition
 - `WP-23` now provides next-milestone planning and downstream handoff truth
-- supplemental `WP-23A` is carrying the final next-milestone review pass in PR `#2996`
-- `WP-24` remains open for release ceremony
+- supplemental `WP-23A` completed the final next-milestone review pass
+- `WP-24` is now carrying the release-ceremony closeout package
 
 ## Current Validation Posture
 
@@ -63,8 +63,10 @@ Known execution truth today:
 - docs review pass is complete
 - internal review, external review, and remediation disposition are complete
 - handoff is complete
-- next-milestone review pass is pending merge of PR `#2996`
-- release ceremony is still pending
+- next-milestone review pass is complete
+- release ceremony closeout is in progress
+- full ceremony preflight still reports historical closed-issue `SOR` truth
+  residue outside `WP-24`; skip-gate preflight passes
 
 ## Required Inputs Before Final Pass/Fail Judgment
 

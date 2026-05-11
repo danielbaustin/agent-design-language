@@ -24,7 +24,7 @@
 - [x] WP-21 External / 3rd-party review
 - [x] WP-22 Review findings remediation
 - [x] WP-23 Next milestone planning
-- [ ] WP-23A Next milestone review pass
+- [x] WP-23A Next milestone review pass
 - [ ] WP-24 Release ceremony
 
 ## Review And Release Readiness
@@ -35,6 +35,6 @@
 - [x] Internal review is complete.
 - [x] External review is complete or explicitly deferred.
 - [x] Accepted findings are fixed or dispositioned.
-- [ ] Final next-milestone review pass is complete.
+- [x] Final next-milestone review pass is complete.
 - [ ] Release evidence and release readiness are complete.
 - [ ] Ceremony completed.

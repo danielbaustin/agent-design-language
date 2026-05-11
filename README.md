@@ -9,7 +9,7 @@ packets, demos, and milestone evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.91.1%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.91.1%20closeout-blue)
 
 ![ADL deterministic cognitive architecture overview](docs/assets/ADL-overview.png)
 
@@ -142,11 +142,12 @@ from issue
 
 ## Recent Milestones
 
-### v0.91.1 - Active Inhabited Runtime Readiness Milestone
+### v0.91.1 - Inhabited Runtime Readiness Closeout
 
-v0.91.1 is the active implementation milestone. The core implementation wave
-through the inhabited-runtime flagship proof is landed, and the milestone is
-now in its review cycle heading into internal review and third-party review.
+v0.91.1 is in release closeout. The core implementation, review,
+next-milestone handoff, and final next-milestone review-pass wave are landed,
+and `WP-24` is now carrying the ceremony package that closes the milestone
+cleanly before `v0.91.2`.
 
 It should end with an observatory-visible agent runtime proof inside the CSM
 boundary: lifecycle state, citizen standing/state, memory/identity
@@ -220,7 +221,7 @@ production markets.
 - Active milestone: v0.91.1
 - Current crate version: 0.91.1
 - Most recently completed milestone: v0.91
-- Current release-tail state: v0.91 released; v0.91.1 docs pass complete and review cycle active
+- Current release-tail state: v0.91 released; v0.91.1 is in final ceremony closeout before v0.91.2
 - Previous completed milestone: v0.90.5
 - Primary implementation language: Rust
 
