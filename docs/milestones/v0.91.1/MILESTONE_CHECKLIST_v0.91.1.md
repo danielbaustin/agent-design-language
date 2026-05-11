@@ -19,7 +19,7 @@
 - [x] WP-07 through WP-16 implementation and flagship proof band
 - [x] WP-17 Demo matrix and proof coverage closeout
 - [x] WP-18 Coverage / quality gate
-- [ ] WP-19 Docs + review pass
+- [x] WP-19 Docs + review pass
 - [ ] WP-20 Internal review
 - [ ] WP-21 External / 3rd-party review
 - [ ] WP-22 Review findings remediation
@@ -30,6 +30,7 @@
 
 - [x] Feature-proof coverage is complete for the implementation/demo band through WP-16.
 - [x] Quality gate is recorded.
+- [x] Review-ready docs package is aligned.
 - [ ] Internal review is complete.
 - [ ] External review is complete or explicitly deferred.
 - [ ] Accepted findings are fixed or dispositioned.

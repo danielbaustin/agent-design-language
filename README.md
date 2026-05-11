@@ -144,10 +144,9 @@ from issue
 
 ### v0.91.1 - Active Inhabited Runtime Readiness Milestone
 
-v0.91.1 is the active implementation milestone. WP-01 is open as
-[#2823](https://github.com/danielbaustin/agent-design-language/issues/2823)
-to turn the prepared inhabited-runtime readiness package into the active issue
-wave and validated card set.
+v0.91.1 is the active implementation milestone. The core implementation wave
+through the inhabited-runtime flagship proof is landed, and the milestone is
+now in its review cycle heading into internal review and third-party review.
 
 It should end with an observatory-visible agent runtime proof inside the CSM
 boundary: lifecycle state, citizen standing/state, memory/identity
@@ -161,6 +160,7 @@ Start here:
 - [v0.91.1 README](docs/milestones/v0.91.1/README.md)
 - [v0.91.1 issue wave](docs/milestones/v0.91.1/WP_ISSUE_WAVE_v0.91.1.yaml)
 - [v0.91.1 execution readiness](docs/milestones/v0.91.1/WP_EXECUTION_READINESS_v0.91.1.md)
+- [v0.91.1 release readiness](docs/milestones/v0.91.1/RELEASE_READINESS_v0.91.1.md)
 
 ### v0.91 - Released Moral Governance And Cognitive-Being Milestone
 
@@ -219,7 +219,7 @@ production markets.
 - Active milestone: v0.91.1
 - Current crate version: 0.91.1
 - Most recently completed milestone: v0.91
-- Current release-tail state: v0.91 released; v0.91.1 WP-01 active
+- Current release-tail state: v0.91 released; v0.91.1 docs pass complete and review cycle active
 - Previous completed milestone: v0.90.5
 - Primary implementation language: Rust
 

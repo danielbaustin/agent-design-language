@@ -18,14 +18,15 @@ The quality gate record now exists, but the milestone is not release-ready yet.
 
 Known execution truth today:
 
-- `WP-01` through `WP-17` are closed and landed
+- `WP-01` through `WP-19` are closed or ready to close with landed docs truth
 - the implementation/demo convergence band through `WP-16` is landed
 - `WP-17` recorded the final demo/proof coverage truth for the landed runtime
   band
 - this issue records the quality gate posture for the milestone package before
   the review/remediation/release tail
-- `WP-19` through `WP-24` remain open for docs review, internal review,
-  external review, remediation, handoff, and release ceremony
+- `WP-19` aligned the reviewer-entry docs and active version/status surfaces
+- `WP-20` through `WP-24` remain open for internal review, external review,
+  remediation, handoff, and release ceremony
 
 ## Current Validation Posture
 
@@ -56,14 +57,14 @@ Known execution truth today:
 
 - milestone planning, feature, demo, and proof-coverage surfaces exist and are
   coherent enough to enter the review tail
-- docs review, internal review, external review, remediation, and release
-  ceremony are still pending
+- docs review pass is complete
+- internal review, external review, remediation, and release ceremony are still
+  pending
 
 ## Required Inputs Before Final Pass/Fail Judgment
 
 - demo matrix and feature-proof coverage
 - final milestone CI and coverage evidence
-- docs + review pass outputs
 - internal and external review records
 - findings remediation record
 - release evidence and release readiness package
@@ -74,12 +75,12 @@ Known execution truth today:
 
 ## Why The Gate Is Still Not Ready
 
-- the docs/review pass (`WP-19`) is not complete yet
 - internal review (`WP-20`) is not complete yet
 - external review (`WP-21`) is not complete yet
 - accepted-finding remediation (`WP-22`) is not complete yet
 - release evidence, handoff, and ceremony (`WP-23` and `WP-24`) are not
   complete yet
+
 
 ## Gate Value Provided By WP-18
 
