@@ -25,17 +25,26 @@ Inhabited-runtime readiness inside the CSM/polis boundary.
 - ACIP conformance and local encryption hardening
 - A2A adapter boundary and compatibility plan
 - runtime inhabitant integration
+- observatory-visible flagship demo
+- milestone demo matrix / proof coverage closeout
+- milestone quality-gate record
 
 Sprint state:
 - Sprint 1 runtime foundations are landed through citizen state
 - Sprint 2 cognition, learning, and trace surfaces are landed through ANRM/Gemma placement
-- Sprint 3 runtime/comms integration is landed through runtime inhabitant integration
+- Sprint 3 runtime/comms integration and flagship proof band are landed through
+  demo/proof coverage closeout
+- Sprint 4 quality/review/release tail has started with the recorded quality
+  gate, but review/remediation/release closure remains open
 
 ## Still Pending
 
-- observatory-visible flagship demo, including direct lifecycle/comms/inhabitant proof binding
-- milestone demo matrix / proof coverage closeout
-- milestone review, remediation, and release ceremony
+- docs + review pass
+- internal review
+- external / 3rd-party review
+- accepted-finding remediation
+- v0.92 birthday-readiness handoff
+- release ceremony and end-of-milestone report
 
 ## Not Claimed
 

@@ -22,13 +22,21 @@ truthful `v0.91.1` release decision.
 - `WP-03` lifecycle-state implementation
 - `WP-04` observatory active surface implementation
 - `WP-05` citizen standing implementation
+- `WP-06` citizen state substrate
+- `WP-07` through `WP-12` memory, ToM, capability, intelligence, governed
+  learning, and ANRM/Gemma runtime proof surfaces
+- `WP-13` ACIP hardening
+- `WP-14` A2A adapter boundary
+- `WP-15` runtime inhabitant proof
+- `WP-16` observatory-visible flagship demo
+- `WP-17` milestone demo matrix and feature-proof coverage closeout
+- `WP-18` milestone quality-gate record
 
 ## Evidence Still Missing
 
-- citizen-state implementation and later runtime slices
-- integrated runtime inhabitant proof
-- observatory-visible flagship demo
-- final quality gate
-- internal/external review records
-- remediation and ceremony records
-
+- docs/review pass package
+- internal review record
+- external review handoff and record
+- accepted-finding remediation record
+- v0.92 birthday-readiness handoff
+- release ceremony and end-of-milestone report

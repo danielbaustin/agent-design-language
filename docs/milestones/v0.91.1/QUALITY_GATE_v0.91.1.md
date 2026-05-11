@@ -3,7 +3,7 @@
 ## Metadata
 
 - Milestone: `v0.91.1`
-- Status: pending
+- Status: recorded / not yet release-ready
 - Canonical gate WP: `WP-18`
 
 ## Purpose
@@ -14,17 +14,52 @@ milestone reaches its quality phase.
 
 ## Current State
 
-The quality gate is not complete yet.
+The quality gate record now exists, but the milestone is not release-ready yet.
 
 Known execution truth today:
 
-- `WP-01` through `WP-05` are closed
-- `WP-06` through `WP-24` remain open
-- the flagship demo and final proof-convergence band are not complete
-- internal review, external review, remediation, and release ceremony are not
-  complete
+- `WP-01` through `WP-17` are closed and landed
+- the implementation/demo convergence band through `WP-16` is landed
+- `WP-17` recorded the final demo/proof coverage truth for the landed runtime
+  band
+- this issue records the quality gate posture for the milestone package before
+  the review/remediation/release tail
+- `WP-19` through `WP-24` remain open for docs review, internal review,
+  external review, remediation, handoff, and release ceremony
 
-## Required Inputs Before Pass/Fail Judgment
+## Current Validation Posture
+
+### Demo and proof coverage
+
+- [DEMO_MATRIX_v0.91.1.md](DEMO_MATRIX_v0.91.1.md) and
+  [FEATURE_PROOF_COVERAGE_v0.91.1.md](FEATURE_PROOF_COVERAGE_v0.91.1.md)
+  now record one truthful proof route for every landed `WP-02` through `WP-16`
+  feature.
+- [SPRINT_3_CLOSEOUT_v0.91.1.md](SPRINT_3_CLOSEOUT_v0.91.1.md) records the
+  merged secure-comms and inhabited-runtime proof wave through `WP-17`.
+
+### CI and coverage evidence
+
+- The milestone already has a focused test-cycle and coverage-policy record in
+  [TEST_CYCLE_MINI_SPRINT_CLOSEOUT_v0.91.1.md](TEST_CYCLE_MINI_SPRINT_CLOSEOUT_v0.91.1.md).
+- That closeout records the pre/post authoritative-coverage evidence currently
+  available:
+  - baseline authoritative `main` run `25567349404`
+  - baseline coverage runtime `525.078s`
+  - first post-sprint authoritative `main` run `25610627099`
+  - truthful conclusion: useful routing/reporting wins landed, but no clean
+    full-authoritative wall-time reduction was proven yet
+- That means the quality gate may cite real coverage-policy and runtime
+  evidence, but it must not overclaim a solved test-time story.
+
+### Docs and review posture
+
+- milestone planning, feature, demo, and proof-coverage surfaces exist and are
+  coherent enough to enter the review tail
+- docs review, internal review, external review, remediation, and release
+  ceremony are still pending
+
+## Required Inputs Before Final Pass/Fail Judgment
 
 - demo matrix and feature-proof coverage
 - final milestone CI and coverage evidence
@@ -37,3 +72,20 @@ Known execution truth today:
 
 `NOT_READY`
 
+## Why The Gate Is Still Not Ready
+
+- the docs/review pass (`WP-19`) is not complete yet
+- internal review (`WP-20`) is not complete yet
+- external review (`WP-21`) is not complete yet
+- accepted-finding remediation (`WP-22`) is not complete yet
+- release evidence, handoff, and ceremony (`WP-23` and `WP-24`) are not
+  complete yet
+
+## Gate Value Provided By WP-18
+
+This issue does still deliver a real release-tail work product:
+
+- it converts the milestone-wide quality gate from a placeholder into a
+  truthful status record
+- it binds the current proof-coverage state to the current CI/coverage state
+- it makes the remaining blockers explicit before the review tail begins
