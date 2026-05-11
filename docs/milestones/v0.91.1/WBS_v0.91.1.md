@@ -59,8 +59,13 @@ and cognition implementation wave.
 | WP-20 (#2842) | Internal review | review | internal review record | WP-19 |
 | WP-21 (#2843) | External / 3rd-party review | review | external review handoff and record | WP-20 |
 | WP-22 (#2844) | Review findings remediation | review | remediation record and follow-up issues | WP-21 |
-| WP-23 (#2845) | v0.92 birthday readiness handoff | docs | identity/birthday handoff record | WP-22 |
+| WP-23 (#2845) | Next milestone planning | docs | downstream milestone handoff record | WP-22 |
 | WP-24 (#2846) | Release ceremony | release | release evidence and end-of-milestone report | WP-23 |
+
+Supplemental pre-ceremony review step:
+- `WP-23A` / `#2985` performs the final next-milestone review pass after
+  `WP-23` and before `WP-24` without renumbering the canonical release-tail
+  sequence.
 
 ## Sequencing Pressure
 

@@ -69,11 +69,17 @@ authenticated local communication and observatory-visible evidence.
 | WP-20 (#2842) | Internal review | internal review record | WP-19 |
 | WP-21 (#2843) | External / 3rd-party review | external review handoff and record | WP-20 |
 | WP-22 (#2844) | Review findings remediation | remediation record and follow-up issues | WP-21 |
-| WP-23 (#2845) | v0.92 birthday readiness handoff | identity/birthday handoff record | WP-22 |
+| WP-23 (#2845) | Next milestone planning | downstream milestone handoff record | WP-22 |
 | WP-24 (#2846) | Release ceremony | release evidence and end-of-milestone report | WP-23 |
 
-Goal: leave v0.92 with a clean, evidence-backed path to identity and birthday
-work rather than another loose planning backlog.
+Goal: leave the downstream milestone package with a clean, evidence-backed path
+for immediate `v0.91.2` execution and later `v0.92` birthday/identity
+consumption rather than another loose planning backlog.
+
+Supplemental pre-ceremony review step:
+- `WP-23A` / `#2985` performs the final next-milestone review pass after
+  `WP-23` planning and before `WP-24` ceremony without renumbering the core
+  release-tail sequence.
 
 ## Supplemental Mini-Sprint: Test-Cycle Recovery
 

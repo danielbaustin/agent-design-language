@@ -15,6 +15,7 @@ As of the current docs/review pass:
 - the review/remediation band is now recorded through explicit zero-findings
   disposition
 - the next-milestone handoff is now recorded
+- the final next-milestone review pass is now recorded
 - the remaining open tail is now `WP-24`
 
 ## What This Report Must Eventually Cover

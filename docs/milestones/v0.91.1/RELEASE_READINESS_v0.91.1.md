@@ -29,12 +29,14 @@ complete until the release ceremony finishes.
 - [review/WP22_REMEDIATION_QUEUE.md](review/WP22_REMEDIATION_QUEUE.md)
 - [END_OF_MILESTONE_REPORT_v0.91.1.md](END_OF_MILESTONE_REPORT_v0.91.1.md)
 - [NEXT_MILESTONE_HANDOFF_v0.91.1.md](NEXT_MILESTONE_HANDOFF_v0.91.1.md)
+- [NEXT_MILESTONE_REVIEW_PASS_v0.91.1.md](NEXT_MILESTONE_REVIEW_PASS_v0.91.1.md)
 - [SPRINT_2_CLOSEOUT_v0.91.1.md](SPRINT_2_CLOSEOUT_v0.91.1.md)
 - [SPRINT_3_CLOSEOUT_v0.91.1.md](SPRINT_3_CLOSEOUT_v0.91.1.md)
 
 ## Current Issue State
 
 - `WP-01` through `WP-23` are closed or ready to close with landed docs truth
+- supplemental `WP-23A` next-milestone review pass is complete
 - `WP-24` remains open for the final ceremony band
 - Sprint 2 is complete
 - Sprint 3 runtime/comms/inhabitant work is complete through `WP-17`
@@ -44,10 +46,6 @@ complete until the release ceremony finishes.
 
 ## Current Blockers
 
-- internal review is complete
-- external review is complete
-- review-findings remediation is complete as explicit zero-findings disposition
-- `v0.92` handoff is complete
 - release ceremony is pending
 
 ## Version Truth
