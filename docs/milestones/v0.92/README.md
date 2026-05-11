@@ -122,6 +122,14 @@ The likely `v0.92` tranche is:
 - Feature plans: [features/README.md](features/README.md)
 - Identity, continuity, and birthday allocation:
   [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md)
+- ACP / cognitive profiles:
+  [ACP_COGNITIVE_PROFILES_v0.92.md](features/ACP_COGNITIVE_PROFILES_v0.92.md)
+- Identity, stable name, and continuity:
+  [IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md](features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md)
+- Memory grounding, capability, and witnesses:
+  [MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md](features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md)
+- First true Gödel-agent birthday:
+  [FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md](features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md)
 
 ## Execution Model
 

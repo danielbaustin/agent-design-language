@@ -1,57 +1,29 @@
-# Release Notes Template
+# v0.95 Release Notes
 
-## Metadata
-- Product: `{{product_name}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Tag: `{{tag_name}}`
+## Status
 
-## How To Use
-- Keep statements implementation-accurate and test-validated.
-- Prefer concise bullets over marketing language.
-- Explicitly separate shipped behavior from "What's Next."
+Forward-planning placeholder.
 
-# `{{product_name}}` `{{version}}` Release Notes
+## Intended Release Story
 
-## Summary
-{{summary_paragraph}}
+When `v0.95` is eventually released, the notes should be able to say:
 
-## Highlights
-- {{highlight_1}}
-- {{highlight_2}}
-- {{highlight_3}}
+- ADL has one coherent MVP platform story
+- the dashboard/reporting and evaluation-platform surfaces are explicit
+- distributed execution, walkthrough, control-plane hardening, and editor
+  boundary all fit together
+- the MVP scope boundary is explicit rather than implied
 
-## What's New In Detail
+## Planned Highlight Areas
 
-### {{area_1}}
-- {{detail_1a}}
-- {{detail_1b}}
+- dashboard/compression and reviewer entrypoints
+- Shepherd/Gemma and Aptitude Atlas evaluation story
+- distributed execution integration
+- demo catalog and flagship MVP walkthrough
+- control-plane hardening
+- web editor baseline and Zed decision boundary
 
-### {{area_2}}
-- {{detail_2a}}
-- {{detail_2b}}
+## Note Boundary
 
-### {{area_3}}
-- {{detail_3a}}
-- {{detail_3b}}
-
-## Upgrade Notes
-- {{upgrade_note_1}}
-- {{upgrade_note_2}}
-
-## Known Limitations
-- {{limitation_1}}
-- {{limitation_2}}
-
-## Validation Notes
-- {{validation_note_1}}
-- {{validation_note_2}}
-
-## What's Next
-- {{next_1}}
-- {{next_2}}
-
-## Exit Criteria
-- Notes reflect only shipped behavior.
-- Known limitations and future work are explicitly separated.
-- Final text is ready to paste into GitHub Release UI without further editing.
+These notes should remain empty of shipped claims until `v0.95` is an active
+implementation milestone with real evidence to report.

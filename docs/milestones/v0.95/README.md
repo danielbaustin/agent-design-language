@@ -68,6 +68,22 @@ It should give ADL one coherent launch-shape platform story by finishing:
 - Release plan: [RELEASE_PLAN_v0.95.md](RELEASE_PLAN_v0.95.md)
 - Release notes: [RELEASE_NOTES_v0.95.md](RELEASE_NOTES_v0.95.md)
 - Feature plans: [features/README.md](features/README.md)
+- HTML dashboard and compression reporting:
+  [HTML_MILESTONE_DASHBOARD_AND_COMPRESSION_REPORTING_v0.95.md](features/HTML_MILESTONE_DASHBOARD_AND_COMPRESSION_REPORTING_v0.95.md)
+- Shepherd/Gemma training path:
+  [CSM_SHEPHERD_AND_GEMMA_TRAINING_PATH_v0.95.md](features/CSM_SHEPHERD_AND_GEMMA_TRAINING_PATH_v0.95.md)
+- Aptitude Atlas evaluation platform:
+  [APTITUDE_ATLAS_MODEL_EVALUATION_PLATFORM_v0.95.md](features/APTITUDE_ATLAS_MODEL_EVALUATION_PLATFORM_v0.95.md)
+- Distributed execution integration:
+  [DISTRIBUTED_EXECUTION_INTEGRATION_v0.95.md](features/DISTRIBUTED_EXECUTION_INTEGRATION_v0.95.md)
+- Demo catalog and MVP walkthrough:
+  [DEMO_CATALOG_AND_MVP_WALKTHROUGH_v0.95.md](features/DEMO_CATALOG_AND_MVP_WALKTHROUGH_v0.95.md)
+- Control-plane Rust migration and tooling hardening:
+  [CONTROL_PLANE_RUST_MIGRATION_AND_TOOLING_HARDENING_v0.95.md](features/CONTROL_PLANE_RUST_MIGRATION_AND_TOOLING_HARDENING_v0.95.md)
+- Web-based code editor integration:
+  [WEB_BASED_CODE_EDITOR_INTEGRATION_v0.95.md](features/WEB_BASED_CODE_EDITOR_INTEGRATION_v0.95.md)
+- Zed integration:
+  [ZED_INTEGRATION_v0.95.md](features/ZED_INTEGRATION_v0.95.md)
 
 ## Dependency Boundary
 
