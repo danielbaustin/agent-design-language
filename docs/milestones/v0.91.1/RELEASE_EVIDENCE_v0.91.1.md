@@ -46,8 +46,8 @@ truthful `v0.91.1` release decision.
 - `WP-20` internal review packet
 - `WP-21` external / third-party review handoff and zero-finding record
 - `WP-22` accepted-finding disposition record with zero accepted findings
+- `WP-23` `v0.92` birthday-readiness handoff record
 
 ## Evidence Still Missing
 
-- v0.92 birthday-readiness handoff
 - release ceremony and end-of-milestone report

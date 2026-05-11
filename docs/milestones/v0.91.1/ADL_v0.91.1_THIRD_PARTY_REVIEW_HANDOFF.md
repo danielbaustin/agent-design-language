@@ -93,6 +93,7 @@ review-entry package:
 
 The milestone does not yet claim:
 
+- accepted-finding remediation completion
 - `v0.92` birthday-readiness handoff completion
 - release ceremony completion
 
@@ -112,8 +113,8 @@ The returned review explicitly records:
 - `P3`: `0`
 
 The review therefore leaves no accepted findings for `WP-22` to remediate.
-`WP-22` records a truthful zero-findings remediation disposition rather than
-inventing cleanup work.
+`WP-22` should record a truthful zero-findings remediation disposition rather
+than inventing cleanup work.
 
 ## Review-Tail State To Consider
 
@@ -121,7 +122,7 @@ At the time of this issue:
 
 - `WP-20` internal review is complete
 - `WP-21` external / third-party review is complete
-- `WP-22` records the zero-findings remediation disposition
+- `WP-22` should record the zero-findings remediation disposition
 - `WP-23` remains the birthday-readiness handoff
 - `WP-24` remains the release ceremony
 

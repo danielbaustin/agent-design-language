@@ -27,7 +27,8 @@ Known execution truth today:
 - `WP-19` aligned the reviewer-entry docs and active version/status surfaces
 - `WP-20` through `WP-22` now provide the internal review, external review,
   and explicit zero-findings remediation disposition
-- `WP-23` and `WP-24` remain open for handoff and release ceremony
+- `WP-23` now provides the birthday-readiness handoff
+- `WP-24` remains open for release ceremony
 
 ## Current Validation Posture
 
@@ -60,7 +61,8 @@ Known execution truth today:
   coherent enough to enter the review tail
 - docs review pass is complete
 - internal review, external review, and remediation disposition are complete
-- handoff and release ceremony are still pending
+- handoff is complete
+- release ceremony is still pending
 
 ## Required Inputs Before Final Pass/Fail Judgment
 
@@ -76,8 +78,7 @@ Known execution truth today:
 
 ## Why The Gate Is Still Not Ready
 
-- release evidence, handoff, and ceremony (`WP-23` and `WP-24`) are not
-  complete yet
+- release evidence and ceremony (`WP-24`) are not complete yet
 
 
 ## Gate Value Provided By WP-18

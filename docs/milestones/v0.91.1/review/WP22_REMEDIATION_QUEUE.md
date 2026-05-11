@@ -24,8 +24,8 @@ No accepted findings.
   no-remediation outcome explicitly rather than implying it by silence.
 - If any later operator-chosen cleanup is desired, it should be routed as
   follow-on work rather than represented as accepted release-tail remediation.
-- `WP-23` remains the next-milestone planning and birthday-readiness handoff
-  step; `WP-22` does not claim that work.
+- `WP-23` owns the next-milestone planning and birthday-readiness handoff step;
+  `WP-22` does not claim that work.
 
 ## Queue Rule
 

@@ -23,7 +23,7 @@
 - [x] WP-20 Internal review
 - [x] WP-21 External / 3rd-party review
 - [x] WP-22 Review findings remediation
-- [ ] WP-23 v0.92 birthday readiness handoff
+- [x] WP-23 v0.92 birthday readiness handoff
 - [ ] WP-24 Release ceremony
 
 ## Review And Release Readiness
