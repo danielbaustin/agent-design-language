@@ -309,9 +309,8 @@ fn runtime_v2_standing_rejects_transition_with_unaccounted_requested_right() {
         .contains("standing transition must account for every requested right with an explicit grant or denial"));
 }
 
-#[cfg(feature = "slow-proof-tests")]
 #[test]
-fn runtime_v2_standing_write_to_root_materializes_fixtures() {
+fn runtime_v2_standing_artifacts_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_standing_contract().expect("standing artifacts");
     let root = common::unique_temp_path("standing-write");
 
