@@ -25,8 +25,9 @@ Known execution truth today:
 - this issue records the quality gate posture for the milestone package before
   the review/remediation/release tail
 - `WP-19` aligned the reviewer-entry docs and active version/status surfaces
-- `WP-20` through `WP-24` remain open for internal review, external review,
-  remediation, handoff, and release ceremony
+- `WP-20` through `WP-22` now provide the internal review, external review,
+  and explicit zero-findings remediation disposition
+- `WP-23` and `WP-24` remain open for handoff and release ceremony
 
 ## Current Validation Posture
 
@@ -58,8 +59,8 @@ Known execution truth today:
 - milestone planning, feature, demo, and proof-coverage surfaces exist and are
   coherent enough to enter the review tail
 - docs review pass is complete
-- internal review, external review, remediation, and release ceremony are still
-  pending
+- internal review, external review, and remediation disposition are complete
+- handoff and release ceremony are still pending
 
 ## Required Inputs Before Final Pass/Fail Judgment
 
@@ -75,9 +76,6 @@ Known execution truth today:
 
 ## Why The Gate Is Still Not Ready
 
-- internal review (`WP-20`) is not complete yet
-- external review (`WP-21`) is not complete yet
-- accepted-finding remediation (`WP-22`) is not complete yet
 - release evidence, handoff, and ceremony (`WP-23` and `WP-24`) are not
   complete yet
 
