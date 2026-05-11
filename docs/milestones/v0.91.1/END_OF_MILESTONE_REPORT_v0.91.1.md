@@ -9,11 +9,12 @@ structurally complete, but the milestone itself is still in progress.
 
 As of the current docs/review pass:
 
-- `WP-01` through `WP-19` are closed or ready to close with landed docs truth
+- `WP-01` through `WP-22` are closed or ready to close with landed docs truth
 - the implementation/demo band through `WP-17` is complete
 - the quality gate is now recorded
-- the review/remediation/handoff/ceremony tail (`WP-20` through `WP-24`)
-  remains open
+- the review/remediation band is now recorded through explicit zero-findings
+  disposition
+- the remaining open tail is now `WP-23` and `WP-24`
 
 ## What This Report Must Eventually Cover
 

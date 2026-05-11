@@ -22,7 +22,7 @@
 - [x] WP-19 Docs + review pass
 - [x] WP-20 Internal review
 - [x] WP-21 External / 3rd-party review
-- [ ] WP-22 Review findings remediation
+- [x] WP-22 Review findings remediation
 - [ ] WP-23 v0.92 birthday readiness handoff
 - [ ] WP-24 Release ceremony
 
@@ -33,6 +33,6 @@
 - [x] Review-ready docs package is aligned.
 - [x] Internal review is complete.
 - [x] External review is complete or explicitly deferred.
-- [ ] Accepted findings are fixed or dispositioned.
+- [x] Accepted findings are fixed or dispositioned.
 - [ ] Release evidence and release readiness are complete.
 - [ ] Ceremony completed.

@@ -21,6 +21,7 @@ truthful `v0.91.1` release decision.
 - [MILESTONE_CHECKLIST_v0.91.1.md](MILESTONE_CHECKLIST_v0.91.1.md)
 - [RELEASE_NOTES_v0.91.1.md](RELEASE_NOTES_v0.91.1.md)
 - [ADL_v0.91.1_THIRD_PARTY_REVIEW_HANDOFF.md](ADL_v0.91.1_THIRD_PARTY_REVIEW_HANDOFF.md)
+- [review/WP22_REMEDIATION_QUEUE.md](review/WP22_REMEDIATION_QUEUE.md)
 - [END_OF_MILESTONE_REPORT_v0.91.1.md](END_OF_MILESTONE_REPORT_v0.91.1.md)
 - [NEXT_MILESTONE_HANDOFF_v0.91.1.md](NEXT_MILESTONE_HANDOFF_v0.91.1.md)
 - [SPRINT_2_CLOSEOUT_v0.91.1.md](SPRINT_2_CLOSEOUT_v0.91.1.md)
@@ -44,9 +45,9 @@ truthful `v0.91.1` release decision.
 - `WP-19` review-ready docs package and reviewer-entry surface alignment
 - `WP-20` internal review packet
 - `WP-21` external / third-party review handoff and zero-finding record
+- `WP-22` accepted-finding disposition record with zero accepted findings
 
 ## Evidence Still Missing
 
-- accepted-finding remediation record
 - v0.92 birthday-readiness handoff
 - release ceremony and end-of-milestone report
