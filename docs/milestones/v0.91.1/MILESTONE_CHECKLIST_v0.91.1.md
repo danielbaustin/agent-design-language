@@ -20,8 +20,8 @@
 - [x] WP-17 Demo matrix and proof coverage closeout
 - [x] WP-18 Coverage / quality gate
 - [x] WP-19 Docs + review pass
-- [ ] WP-20 Internal review
-- [ ] WP-21 External / 3rd-party review
+- [x] WP-20 Internal review
+- [x] WP-21 External / 3rd-party review
 - [ ] WP-22 Review findings remediation
 - [ ] WP-23 v0.92 birthday readiness handoff
 - [ ] WP-24 Release ceremony
@@ -31,8 +31,8 @@
 - [x] Feature-proof coverage is complete for the implementation/demo band through WP-16.
 - [x] Quality gate is recorded.
 - [x] Review-ready docs package is aligned.
-- [ ] Internal review is complete.
-- [ ] External review is complete or explicitly deferred.
+- [x] Internal review is complete.
+- [x] External review is complete or explicitly deferred.
 - [ ] Accepted findings are fixed or dispositioned.
 - [ ] Release evidence and release readiness are complete.
 - [ ] Ceremony completed.
