@@ -36,7 +36,7 @@ complete until the release ceremony finishes.
 ## Current Issue State
 
 - `WP-01` through `WP-23` are closed or ready to close with landed docs truth
-- supplemental `WP-23A` next-milestone review pass is complete
+- supplemental `WP-23A` next-milestone review pass is in progress via PR `#2996`
 - `WP-24` remains open for the final ceremony band
 - Sprint 2 is complete
 - Sprint 3 runtime/comms/inhabitant work is complete through `WP-17`

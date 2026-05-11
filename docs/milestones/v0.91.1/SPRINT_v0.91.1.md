@@ -70,7 +70,8 @@ authenticated local communication and observatory-visible evidence.
 | WP-21 (#2843) | External / 3rd-party review | external review handoff and record | WP-20 |
 | WP-22 (#2844) | Review findings remediation | remediation record and follow-up issues | WP-21 |
 | WP-23 (#2845) | Next milestone planning | downstream milestone handoff record | WP-22 |
-| WP-24 (#2846) | Release ceremony | release evidence and end-of-milestone report | WP-23 |
+| WP-23A (#2985) | Next milestone review pass | final pre-ceremony next-milestone review-pass record | WP-23 |
+| WP-24 (#2846) | Release ceremony | release evidence and end-of-milestone report | WP-23A |
 
 Goal: leave the downstream milestone package with a clean, evidence-backed path
 for immediate `v0.91.2` execution and later `v0.92` birthday/identity
