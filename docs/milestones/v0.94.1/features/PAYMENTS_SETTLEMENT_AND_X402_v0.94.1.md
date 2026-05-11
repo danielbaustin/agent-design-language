@@ -4,24 +4,40 @@
 
 Forward-planning feature contract for `v0.94.1`.
 
+## Purpose
+
+Give payments, settlement, accounting, and adapter work one explicit milestone
+home after governance and secure-execution foundations are in place. This band
+should turn the earlier bounded-economics baseline and later `x402` /
+Lightning planning into a coherent, reviewable payment-lane contract.
+
 ## Source Inputs
 
-- `.adl/docs/v0.93planning/COUNTERPARTY_MARKET_MODEL.md`
-- `.adl/docs/v0.93planning/ECONOMIC_ACCOUNTING_SCHEMA.md`
-- `.adl/docs/v0.93planning/ECONOMIC_AGENCY.md`
-- `.adl/docs/v0.93planning/ECONOMIC_GOVERNANCE_RULES.md`
-- `.adl/docs/v0.93planning/ECONOMIC_TRACE_EVENTS.md`
-- `.adl/docs/v0.93planning/LEDGER_ENTRY_FAMILIES.md`
-- `.adl/docs/v0.93planning/SELF_PERFORMANCE_POSITION_SCHEMA.md`
-- `.adl/docs/v0.93planning/AGENT_PERFORMANCE_SCORE.md`
-- `.adl/docs/v0.93planning/OQS_SUBSCORING_FUNCTIONS.md`
-- `.adl/docs/v0.93.1planning/LIGHTNING_ADAPTER_SPEC.md`
-- `.adl/docs/v0.93.1planning/X402_ADAPTER_SPEC.md`
-- `.adl/docs/v0.93.1planning/PAYMENT_ADAPTER_INTERFACE.md`
-- `.adl/docs/v0.93.1planning/SELF_PERFORMANCE_SETTLEMENT_RULES.md`
-- `.adl/docs/v0.94.1planning/ACCELERANDO_FINANCIAL_INSTRUMENTS_DEMO.md`
-- `.adl/docs/v0.94.1planning/ECONOMIC_AGENCY_DEMO.md`
-- `.adl/docs/v0.94.1planning/X402_LIGHTNING_PAYMENTS_DEMO.md`
+- `docs/milestones/v0.94.1/README.md`
+- `docs/milestones/v0.94.1/features/README.md`
+- `docs/milestones/v0.94/features/SECURE_EXECUTION_AND_TRUST_CONVERGENCE_v0.94.md`
+- `docs/milestones/v0.90.4/README.md`
+- `docs/planning/ADL_FEATURE_LIST.md`
+
+## Scope
+
+This feature should establish:
+
+- the bounded payment-adapter interface and settlement-rule home for MVP
+- explicit relationship among accounting schema, economic trace events, ledger
+  families, and payment authorization
+- adapter-level planning for `x402` and Lightning without collapsing the whole
+  polis into a payments product
+- reviewer-facing truth boundaries for demos, settlement, and non-claims
+
+## Non-goals
+
+- claiming production payments are already live
+- collapsing bounded economics, contract-market work, and payment rails into
+  one undifferentiated “market” story
+- external financial, regulatory, or custody claims beyond the bounded adapter
+  and settlement architecture
+- silent expansion into unrestricted market-making or billing infrastructure
 
 ## Completion Target
 

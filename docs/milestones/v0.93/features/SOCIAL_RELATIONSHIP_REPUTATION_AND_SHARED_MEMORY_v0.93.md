@@ -18,10 +18,11 @@ verdicts.
 
 ## Source Inputs
 
-- `.adl/docs/v0.93planning/RELATIONSHIP_MODEL.md`
-- `.adl/docs/v0.93planning/REPUTATION_AND_TRUST.md`
-- `.adl/docs/v0.93planning/SHARED_SOCIAL_MEMORY.md`
-- `.adl/docs/v0.93planning/SOCIAL_DEMO_PLANNING.md`
+- `docs/milestones/v0.93/README.md`
+- `docs/milestones/v0.93/CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md`
+- `docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md`
+- `docs/milestones/v0.93/features/README.md`
+- `docs/planning/ADL_FEATURE_LIST.md`
 
 ## Scope
 

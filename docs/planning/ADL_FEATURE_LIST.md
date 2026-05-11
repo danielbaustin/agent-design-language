@@ -165,20 +165,20 @@ ADL already provides a serious platform baseline:
 | Coverage ratchet, test tracker, and quality tracking | Implemented baseline | `v0.90` coverage/test tracker updates and quality-gate docs | Runtime/test-cycle recovery target: `v0.91.2`; MVP quality target: `v0.95` |
 | Rust refactoring tracker and evidence-driven maintenance | Implemented baseline | `v0.90` refactoring tracker, ADR remediation, and follow-on maintenance planning | Rustdoc/tooling cleanup target: `v0.91.2`; MVP hardening target: `v0.95` |
 | Milestone compression and repo visibility prototypes | Implemented baseline | `v0.90` compression and repo-visibility docs/proofs | Repo-visibility follow-on target: `v0.91.2`; fuller repo-cognition convergence target: `v0.95` |
-| HTML milestone dashboard and compression reporting | MVP-scoped | backlog item and milestone-compression planning surfaces | Dashboard/compression completion target: `v0.95` |
+| HTML milestone dashboard and compression reporting | MVP-scoped | `docs/milestones/v0.95/features/HTML_MILESTONE_DASHBOARD_AND_COMPRESSION_REPORTING_v0.95.md` plus the milestone-dashboard tooling baseline | Dashboard/compression completion target: `v0.95` |
 | Runtime v2 foundation prototype | Implemented baseline | `v0.90.1` feature contracts, Runtime v2 WPs, integrated demo, and proof packet | Foundation complete; hardened by `v0.90.2` |
 | CSM Observatory visibility and operator-report surfaces | Implemented baseline | visibility packet, static console, operator report, CLI bundle, command packet design, v0.90.2 operator report integration, v0.90.3 redacted projections, multimode UI architecture, and inhabited flagship demo | Active agent surface completion target: `v0.91.1` |
 | Runtime v2 hardening, recovery, quarantine, and expanded invariants | Implemented baseline | `v0.90.2` implementation docs, proof packets, tests, and demo matrix | Completed baseline by `v0.90.2` |
 | First bounded CSM run | Implemented baseline | `v0.90.2` integrated first-run demo, feature-proof coverage, CSM run packet, Observatory report | Completed baseline by `v0.90.2` |
 | Third-party review and review-quality gates | Implemented baseline | v0.90.1 WP-15A, v0.90.2 review-tail planning, review handoff packets, finding disposition | Release-tail completion target: every milestone through `v0.95` |
 | ANRM / shepherd-model experiments | Partially implemented | v0.90.1 ANRM Gemma scaffold comparison and ten-trial results | Placement complete in `v0.91.1`; evaluator/training path complete by `v0.95` |
-| CSM Shepherd model and Gemma training path | MVP-scoped | ANRM comparison results, trace-dataset planning, and evaluator/scaffold backlog | Placement and trace dataset complete in `v0.91.1`; training/evaluator MVP complete by `v0.95` |
-| Aptitude Atlas model-evaluation platform | MVP-scoped | capability/aptitude planning and product backlog | Harness complete in `v0.91.1`; productized evaluation complete by `v0.95` |
+| CSM Shepherd model and Gemma training path | MVP-scoped | `docs/milestones/v0.95/features/CSM_SHEPHERD_AND_GEMMA_TRAINING_PATH_v0.95.md` plus ANRM comparison/trace-dataset foundations | Placement and trace dataset complete in `v0.91.1`; training/evaluator MVP complete by `v0.95` |
+| Aptitude Atlas model-evaluation platform | MVP-scoped | `docs/milestones/v0.95/features/APTITUDE_ATLAS_MODEL_EVALUATION_PLATFORM_v0.95.md` plus the capability/aptitude harness baseline | Harness complete in `v0.91.1`; productized evaluation complete by `v0.95` |
 | Governed tool calls and capability contracts | Implemented baseline | `docs/milestones/v0.90.5` Governed Tools v1.0 planning, Universal Tool Schema, ADL Capability Contract, and tool-to-capability compiler design | Completed baseline; benchmark and conformance expansion in `v0.91.2` |
 | Cognitive Compression Cost instrumentation | Implemented first pass | CCC v0 fixture extractor, generated comparison report, validation command, metric draft, and milestone-compression planning | Trace-backed metric completion target: `v0.91.1`; reporting completion target: `v0.95` |
-| Web-based code editor integration | MVP-scoped | editor backlog issue and skills-wiring planning | Editor/operator completion target: `v0.95` |
-| Reasoning graph baseline | MVP-scoped | planning/schema/proof surfaces | Reasoning/provenance completion target: `v0.94` |
-| Signed trace and trace query | MVP-scoped | roadmap and planning docs | Reasoning/provenance completion target: `v0.94` |
+| Web-based code editor integration | MVP-scoped | `docs/milestones/v0.95/features/WEB_BASED_CODE_EDITOR_INTEGRATION_v0.95.md` plus the HTA editor-planning baseline | Editor/operator completion target: `v0.95` |
+| Reasoning graph baseline | MVP-scoped | `docs/milestones/v0.94/features/REASONING_GRAPH_BASELINE_v0.94.md` | Reasoning/provenance completion target: `v0.94` |
+| Signed trace and trace query | MVP-scoped | `docs/milestones/v0.94/features/SIGNED_TRACE_AND_TRACE_QUERY_v0.94.md` | Reasoning/provenance completion target: `v0.94` |
 | Wellbeing, affect, kindness, moral cognition, humor | Implemented baseline | `v0.91` feature docs, Runtime v2 proof surfaces, demo matrix, feature-proof coverage, release evidence, and ADR 0016 | Completed `v0.91.0` baseline; consumed by `v0.91.1` inhabited-runtime work |
 | Secure Agent Communication and Invocation Protocol | Implemented baseline plus active hardening | v0.90.5 ACIP planning plus v0.91 secure local Agent Comms, A2A boundary docs, proof coverage, and ADR 0017 | `v0.91.0` substrate complete; local hardening baseline completes in `v0.91.1` |
 | Inhabited runtime readiness | Active milestone | `docs/milestones/v0.91.1` WBS, sprint plan, issue-wave YAML, readiness docs, demo matrix, feature index, and WP-01 issue #2823 | `v0.91.1` |
@@ -202,22 +202,22 @@ ADL already provides a serious platform baseline:
 | General-intelligence paper packet | Planned | `docs/milestones/v0.91.2/features/GENERAL_INTELLIGENCE_PAPER_PACKET.md` | `v0.91.2` |
 | Rustdoc/doc cleanup | Planned | `docs/milestones/v0.91.2/features/RUSTDOC_DOC_CLEANUP.md` | `v0.91.2` |
 | Workflow guardrails | Planned | `docs/milestones/v0.91.2/features/WORKFLOW_GUARDRAILS.md` | `v0.91.2` |
-| ACP / cognitive profiles runtime surface | Planned | `v0.92` identity/birthday allocation plan and cognitive-profile planning source | `v0.92` |
-| Identity, stable name, and continuity substrate | Planned | `v0.92` identity, continuity, and birthday allocation plan | `v0.92` |
-| Memory grounding, capability envelope, and birth witnesses/receipt | Planned | `v0.92` identity/birthday planning docs and Runtime v2 birthday boundary roadmap | `v0.92` |
-| First true Gödel-agent birthday | Planned | `v0.92` identity, continuity, and birthday allocation plan plus Runtime v2 birthday boundary roadmap | `v0.92` |
+| ACP / cognitive profiles runtime surface | Planned | `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md` | `v0.92` |
+| Identity, stable name, and continuity substrate | Planned | `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md` | `v0.92` |
+| Memory grounding, capability envelope, and birth witnesses/receipt | Planned | `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md` | `v0.92` |
+| First true Gödel-agent birthday | Planned | `docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md` | `v0.92` |
 | Constitutional citizenship, rights/duties, and governance review | Planned | `docs/milestones/v0.93/features/CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md` plus the `v0.93` citizenship/governance allocation plan | `v0.93` |
 | Bounded Theory of Mind, relationship, reputation, and shared social memory boundary | Planned | `docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md` and `docs/milestones/v0.93/features/SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md` | `v0.93` |
-| Delegation, IAM, standing transition, and challenge/appeal governance | Planned | `v0.93` constitutional citizenship and polis-governance allocation plan | `v0.93` |
+| Delegation, IAM, standing transition, and challenge/appeal governance | Planned | `docs/milestones/v0.93/features/DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md` | `v0.93` |
 | Enterprise security for the ADL polis | Planned | `docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md` and the `v0.93` zero-trust/security work breakdown | `v0.93` |
 | Secure execution, policy, identity/auth, isolation, and provider-trust convergence | Planned | `docs/milestones/v0.94/features/SECURE_EXECUTION_AND_TRUST_CONVERGENCE_v0.94.md` and the tracked `v0.94` milestone package | `v0.94` |
 | Mental time travel / temporal self-projection | Planned | `docs/milestones/v0.94/features/MENTAL_TIME_TRAVEL_v0.94.md` plus the `MTT-v1` source note | `v0.94` |
 | Payments, settlement, economic agency, and `x402` / Lightning adapters | Planned | `docs/milestones/v0.94.1/features/PAYMENTS_SETTLEMENT_AND_X402_v0.94.1.md` and the tracked `v0.94.1` milestone package | `v0.94.1` |
 | Bounded contract-market and resource-stewardship bridge | Implemented baseline | `docs/milestones/v0.90.4` contract-market docs, proof coverage, and demo matrix | Completed bounded baseline by `v0.90.4` |
-| Distributed execution integration | Partially implemented | cluster groundwork plus planning docs | Integration completion target: `v0.94`; MVP hardening target: `v0.95` |
-| Demo catalog and polished MVP walkthrough | Partially implemented | milestone demo matrices and reviewer packages | `v0.95` |
-| Control-plane Rust migration / tooling hardening | Partially implemented | mixed Rust/shell control plane and active tooling hardening | `v0.95` |
-| Zed integration | MVP-scoped decision | planning docs only | Complete the adapter or explicitly remove it from MVP scope by `v0.95` |
+| Distributed execution integration | Partially implemented | `docs/milestones/v0.95/features/DISTRIBUTED_EXECUTION_INTEGRATION_v0.95.md`, ADR 0003, and cluster-execution groundwork docs | `v0.95` |
+| Demo catalog and polished MVP walkthrough | Partially implemented | `docs/milestones/v0.95/features/DEMO_CATALOG_AND_MVP_WALKTHROUGH_v0.95.md` plus milestone demo matrices and reviewer packages | `v0.95` |
+| Control-plane Rust migration / tooling hardening | Partially implemented | `docs/milestones/v0.95/features/CONTROL_PLANE_RUST_MIGRATION_AND_TOOLING_HARDENING_v0.95.md` and Python-elimination/tooling-hardening planning | `v0.95` |
+| Zed integration | MVP-scoped decision | `docs/milestones/v0.95/features/ZED_INTEGRATION_v0.95.md` plus the v0.85 MVP-boundary/editor-planning notes | Complete the adapter or explicitly remove it from MVP scope by `v0.95` |
 
 ## Milestone Coverage Crosswalk
 

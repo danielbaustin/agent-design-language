@@ -15,10 +15,10 @@ Define the governance-facing citizenship layer for the ADL polis:
 
 ## Source Inputs
 
-- `.adl/docs/v0.93planning/CITIZENSHIP_MODEL.md`
-- `.adl/docs/v0.93planning/ADL_AGENT_RIGHTS_AND_DUTIES.md`
-- `.adl/docs/v0.93planning/ADL_AGENT_SOCIAL_CONTRACT.md`
-- `.adl/docs/v0.93planning/ADL_CONSTITUTIONAL_DELEGATION.md`
+- `docs/milestones/v0.93/README.md`
+- `docs/milestones/v0.93/CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md`
+- `docs/milestones/v0.93/features/README.md`
+- `docs/planning/ADL_FEATURE_LIST.md`
 
 ## Scope
 

@@ -14,6 +14,26 @@ hidden environment configuration. It should be represented through explicit
 identity, authority, policy, key, audit, isolation, incident, provenance, and
 adversarial-review surfaces.
 
+## Source Inputs
+
+- `docs/milestones/v0.93/README.md`
+- `docs/milestones/v0.93/WBS_v0.93.md`
+- `docs/milestones/v0.93/CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md`
+- `docs/milestones/v0.93/features/README.md`
+- `docs/planning/ADL_FEATURE_LIST.md`
+
+## Scope
+
+This feature should establish:
+
+- the canonical `v0.93` enterprise-security contract for the ADL polis
+- an explicit split of the security band into bounded zero-trust, policy,
+  cryptographic-trust, audit, isolation/privacy, and adversarial-ops tranches
+- reviewer-facing proof expectations and demo obligations for the security
+  milestone
+- a clear truth boundary between internal architecture/security claims and
+  external compliance claims
+
 ## Six Security WPs
 
 | WP | Name | Required work product |
@@ -34,7 +54,7 @@ adversarial-review surfaces.
 - v0.91 moral trace, secure Agent Comms, and ACIP planning.
 - v0.92 identity, continuity, capability envelopes, and birthday semantics.
 
-## Non-Goals
+## Non-goals
 
 - No external certification claim.
 - No production SOC 2, ISO 27001, FedRAMP, HIPAA, or legal-compliance claim.
@@ -78,3 +98,7 @@ The review packet should answer:
 - Which audit, incident, provenance, or adversarial evidence exists?
 - What was redacted, retained, deleted, or isolated?
 - Which certification or production-security claims are explicitly not made?
+
+## Completion Target
+
+`v0.93`

@@ -30,7 +30,7 @@ hidden authority surface. ToM may inform arbitration, Freedom Gate evaluation,
 delegation, communication, and constitutional review, but it must remain
 bounded by standing, access control, redaction, signed trace, and policy.
 
-## Source Dependencies
+## Source Inputs
 
 | Source | Role in ToM |
 | --- | --- |
@@ -42,7 +42,7 @@ bounded by standing, access control, redaction, signed trace, and policy.
 | [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](../../v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md) | Durable identity, capability envelope, memory grounding, and birth evidence consumed by v0.93 social cognition. |
 | [CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md](../CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md) | Governance layer that consumes ToM without collapsing it into public verdicts. |
 
-## Core Boundary
+## Scope
 
 ToM is private, evidence-grounded social cognition. Reputation is a public or
 governance-facing summary. Standing is recognition by the polis. Constitutional
@@ -56,6 +56,14 @@ Those four surfaces must not collapse into one another.
 | Reputation | Public or governance-facing summary derived from trace and reviewable evidence. | Must be redacted, challengeable, and distinct from private ToM. |
 | Standing | Determine who may participate and under what class of recognition. | Supplied by v0.90.3 standing/access work and later governance rules. |
 | Constitutional review | Interpret conduct under rights, duties, policy, trace, standing, and appeal context. | Consumes ToM only as evidence input or contextual signal, never as unreviewable verdict. |
+
+## Non-goals
+
+- mind-reading or consciousness claims
+- public exposure of private ToM by default
+- collapsing ToM, reputation, standing, and constitutional verdict into one
+  scalar trust label
+- hidden governance overrides justified only by an opaque model-of-other
 
 ## Privacy And Standing Rules
 
@@ -237,6 +245,10 @@ Later v0.93 WP planning should split this work into bounded pieces:
    without override.
 6. Reviewer-facing demo packet showing evidence, redaction, challengeability,
    and non-claims.
+
+## Completion Target
+
+`v0.93`
 
 ## Demo Candidates
 
