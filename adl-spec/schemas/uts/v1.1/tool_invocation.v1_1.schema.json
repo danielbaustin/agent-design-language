@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "adl://schemas/uts/v1.1/tool_invocation.v1_1.schema.json",
-  "title": "UTS v1.1 Tool Invocation Proposal",
+  "$id": "https://raw.githubusercontent.com/danielbaustin/agent-design-language/main/adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json",
+  "title": "UTS v1.1 Tool Invocation Metadata",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -11,7 +11,7 @@
     "intent",
     "purpose",
     "side_effect_expectations",
-    "replayability",
+    "replay_safety",
     "observability"
   ],
   "properties": {
@@ -26,12 +26,9 @@
     "tool": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "version"
-      ],
+      "required": ["name", "version"],
       "properties": {
-        "id": {
+        "name": {
           "type": "string",
           "pattern": "^[a-z][a-z0-9._-]{2,79}$"
         },
@@ -65,10 +62,7 @@
     "retry": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "max_attempts",
-        "strategy"
-      ],
+      "required": ["max_attempts", "strategy"],
       "properties": {
         "max_attempts": {
           "type": "integer",
@@ -76,12 +70,7 @@
         },
         "strategy": {
           "type": "string",
-          "enum": [
-            "none",
-            "immediate",
-            "fixed_delay",
-            "exponential_backoff"
-          ]
+          "enum": ["none", "immediate", "fixed_delay", "exponential_backoff"]
         }
       }
     },
@@ -101,22 +90,13 @@
       },
       "uniqueItems": true
     },
-    "replayability": {
+    "replay_safety": {
       "type": "string",
-      "enum": [
-        "deterministic",
-        "observational",
-        "non_replayable"
-      ]
+      "enum": ["replay_safe", "replay_requires_approval", "not_replay_safe"]
     },
     "observability": {
       "type": "string",
-      "enum": [
-        "none",
-        "basic",
-        "full",
-        "governance"
-      ]
+      "enum": ["none", "basic", "full", "governance"]
     }
   }
 }

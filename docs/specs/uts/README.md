@@ -11,6 +11,17 @@ This directory now uses the following framing:
 - `UTS v1.1`
   - an additive evolution path and future standardization direction
 
+Primary narrative specification:
+
+- [`ADL_UNIVERSAL_TOOL_SCHEMA.md`](./ADL_UNIVERSAL_TOOL_SCHEMA.md)
+
+Why a consumer should care:
+
+If your current tool definitions stop at a name, description, and parameter
+schema, UTS gives you a way to also express side effects, replay safety,
+idempotence, data sensitivity, exfiltration risk, and execution posture so a
+runtime can make better decisions before execution rather than after.
+
 Unless a section explicitly says otherwise, statements in this note should be
 read as describing the current `UTS v1` posture. The guaranteed formal current
 baseline for `UTS v1` is the narrower
@@ -130,6 +141,7 @@ The proposal direction does three things:
 
 The tracked proposal documents are:
 
+- [`ADL_UNIVERSAL_TOOL_SCHEMA.md`](./ADL_UNIVERSAL_TOOL_SCHEMA.md)
 - [`UTS_V1.1_SCHEMA.md`](./UTS_V1.1_SCHEMA.md)
 - [`universal_tool_schema.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json)
 - [`tool_invocation.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json)

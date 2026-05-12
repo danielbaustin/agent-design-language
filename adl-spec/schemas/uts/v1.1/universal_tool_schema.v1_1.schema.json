@@ -1,36 +1,46 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "adl://schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json",
-  "title": "Universal Tool Schema v1.1 Proposal",
+  "$id": "https://raw.githubusercontent.com/danielbaustin/agent-design-language/main/adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json",
+  "title": "Universal Tool Schema v1.1",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "uts_version",
+    "schema_version",
     "compatible_versions",
-    "id",
+    "name",
     "version",
+    "description",
     "input_schema",
     "output_schema",
-    "side_effects"
+    "side_effect_class",
+    "determinism",
+    "replay_safety",
+    "idempotence",
+    "resources",
+    "authentication",
+    "data_sensitivity",
+    "exfiltration_risk",
+    "execution_environment",
+    "errors"
   ],
   "properties": {
-    "uts_version": {
+    "schema_version": {
       "type": "string",
-      "const": "1.1"
+      "const": "uts.v1.1"
     },
     "compatible_versions": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "string",
-        "enum": [
-          "1.0",
-          "1.1"
-        ]
+        "enum": ["uts.v1", "uts.v1.1"]
       },
-      "uniqueItems": true
+      "uniqueItems": true,
+      "contains": {
+        "const": "uts.v1.1"
+      }
     },
-    "id": {
+    "name": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9._-]{2,79}$"
     },
@@ -38,7 +48,11 @@
       "type": "string",
       "minLength": 1
     },
-    "category": {
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "categories": {
       "type": "array",
       "items": {
         "type": "string",
@@ -62,6 +76,19 @@
     "output_schema": {
       "$ref": "#/$defs/jsonSchemaFragment"
     },
+    "side_effect_class": {
+      "type": "string",
+      "enum": [
+        "read",
+        "local_write",
+        "external_read",
+        "external_write",
+        "process",
+        "network",
+        "destructive",
+        "exfiltration"
+      ]
+    },
     "side_effects": {
       "type": "array",
       "minItems": 1,
@@ -78,45 +105,92 @@
       },
       "uniqueItems": true
     },
-    "replayability": {
+    "determinism": {
       "type": "string",
       "enum": [
         "deterministic",
-        "observational",
-        "non_replayable"
+        "bounded_nondeterministic",
+        "nondeterministic"
       ]
+    },
+    "replay_safety": {
+      "type": "string",
+      "enum": [
+        "replay_safe",
+        "replay_requires_approval",
+        "not_replay_safe"
+      ]
+    },
+    "idempotence": {
+      "type": "string",
+      "enum": [
+        "idempotent",
+        "conditionally_idempotent",
+        "not_idempotent"
+      ]
+    },
+    "resources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/resourceBoundary"
+      }
+    },
+    "authentication": {
+      "$ref": "#/$defs/authentication"
+    },
+    "data_sensitivity": {
+      "type": "string",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "secret",
+        "protected_prompt",
+        "private_state"
+      ]
+    },
+    "exfiltration_risk": {
+      "type": "string",
+      "enum": ["none", "low", "medium", "high"]
+    },
+    "execution_environment": {
+      "$ref": "#/$defs/executionEnvironment"
+    },
+    "errors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/errorModel"
+      }
     },
     "observability": {
       "type": "string",
-      "enum": [
-        "none",
-        "basic",
-        "full",
-        "governance"
-      ]
+      "enum": ["none", "basic", "full", "governance"]
     },
     "planning": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "high_risk": {
-          "type": "boolean"
-        },
-        "irreversible": {
-          "type": "boolean"
-        },
-        "review_required": {
-          "type": "boolean"
-        }
+        "high_risk": { "type": "boolean" },
+        "irreversible": { "type": "boolean" },
+        "expensive": { "type": "boolean" },
+        "slow": { "type": "boolean" },
+        "review_recommended": { "type": "boolean" }
       }
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^x-[a-z0-9._-]+$"
+      },
+      "additionalProperties": true
     }
   },
   "$defs": {
     "jsonSchemaFragment": {
       "type": "object",
-      "required": [
-        "type"
-      ],
+      "required": ["type"],
       "properties": {
         "type": {
           "type": "string",
@@ -124,6 +198,52 @@
         }
       },
       "additionalProperties": true
+    },
+    "resourceBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resource_type", "scope"],
+      "properties": {
+        "resource_type": { "type": "string", "minLength": 1 },
+        "scope": { "type": "string", "minLength": 1 }
+      }
+    },
+    "authentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "required"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["none", "api_key", "oauth", "user_delegated", "service_account"]
+        },
+        "required": { "type": "boolean" }
+      }
+    },
+    "executionEnvironment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "isolation"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["fixture", "dry_run", "local", "external_service", "process", "network"]
+        },
+        "isolation": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "errorModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "retryable"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "retryable": { "type": "boolean" }
+      }
     }
   }
 }

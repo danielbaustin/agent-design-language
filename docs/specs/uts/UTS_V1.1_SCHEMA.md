@@ -2,17 +2,23 @@
 
 ## Status
 
-Draft additive schema evolution proposal for Universal Tool Schema.
+Tracked normative next-version specification for the Universal Tool Schema.
 
 Status note:
 
-> This document describes the proposed `UTS v1.1` additive schema evolution.
-> It is not the canonical current ADL `UTS v1` wire contract.
+> This document defines the `UTS v1.1` adoption target.
+> The current implemented runtime baseline remains `UTS v1.0` until follow-on
+> code adoption lands.
 
-Matching machine-readable proposal artifacts:
+Matching machine-readable schema artifacts:
 
 - [`adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json)
 - [`adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json)
+
+Implementation-facing baseline reference:
+
+- [`adl/src/uts.rs`](../../../adl/src/uts.rs)
+- [`UTS_V1.0_SCHEMA.md`](./UTS_V1.0_SCHEMA.md)
 
 ## Normative Language
 
@@ -33,285 +39,356 @@ are to be interpreted as described in RFC 2119.
 
 ## 1. Purpose
 
-This document defines the proposed machine-readable structure for:
+This document defines the normative machine-readable structure for `UTS v1.1`
+as an evolutionary successor to the current implemented `UTS v1.0` baseline.
 
-- `UTS v1.1` tool definitions
-- invocation metadata
-- replayability metadata
-- observability metadata
-- planning-aware metadata
+`UTS v1.1` preserves the strongest parts of `v1.0` while adding explicit
+compatibility, richer side-effect expression, and clearer invocation metadata.
 
-The goal is not to replace ACC or runtime governance. The goal is to make the
-schema layer more explicit, transportable, and reviewable.
+## 2. Evolution From UTS v1.0
 
-## 2. Design Principles
+`UTS v1.1` is additive, not a rename-driven redesign.
 
-`UTS v1.1` SHOULD remain:
+It preserves the current field families from `UTS v1.0`:
 
-- transport-neutral
-- provider-neutral
-- runtime-neutral
-- JSON-compatible
-- human-reviewable
-- machine-validatable
+- `schema_version`
+- `name`
+- `version`
+- `description`
+- `input_schema`
+- `output_schema`
+- `side_effect_class`
+- `determinism`
+- `replay_safety`
+- `idempotence`
+- `resources`
+- `authentication`
+- `data_sensitivity`
+- `exfiltration_risk`
+- `execution_environment`
+- `errors`
+- `extensions`
 
-`UTS v1.1` intentionally avoids embedding:
+It adds only bounded new metadata:
 
-- governance policy
-- authorization semantics
-- runtime approval semantics
-- orchestration topology
-
-For ADL, that higher-layer authority/governance companion is ACC:
-
-- `UTS v1.1` defines schema and invocation semantics
-- `ACC` defines approval, authority, and execution governance
-
-UTS validity alone does not authorize execution or replay.
-
-## 3. Schema Layers
-
-### Core Tool Schema
-
-Defines:
-
-- identifier
-- version
-- compatibility metadata
-- input schema
-- output schema
-- side effects
-
-### Invocation Metadata
-
-Defines:
-
-- invocation semantics
-- intent
-- optional timeout/retry posture
-- replay posture
-
-### Replayability Metadata
-
-Defines:
-
-- deterministic replay posture
-- observational replay posture
-- non-replayable semantics
-
-### Observability Metadata
-
-Defines:
-
-- runtime visibility posture
-- audit expectations
-- governance-sensitive visibility
-
-Observability metadata describes visibility posture, not surveillance posture.
-It does not require centralized monitoring, and it remains compatible with:
-
-- local runtimes
-- private runtimes
-- operator-owned observability systems
-- bounded audit surfaces
-
-### Planning Metadata
-
-Defines:
-
-- high-risk indicators
-- irreversible-action indicators
-- review recommendations
-
-## 4. Canonical Minimal Tool Object
-
-Minimal proposal example:
-
-```yaml
-uts_version: "1.1"
-compatible_versions:
-  - "1.0"
-  - "1.1"
-id: filesystem.search
-version: "1.1"
-input_schema:
-  type: object
-output_schema:
-  type: object
-side_effects:
-  - none
-```
-
-Equivalent JSON example:
-
-```json
-{
-  "uts_version": "1.1",
-  "compatible_versions": ["1.0", "1.1"],
-  "id": "filesystem.search",
-  "version": "1.1",
-  "input_schema": {
-    "type": "object"
-  },
-  "output_schema": {
-    "type": "object"
-  },
-  "side_effects": ["none"]
-}
-```
-
-These are proposal examples for `UTS v1.1`, not guaranteed `UTS v1` fixtures.
-
-## 5. Extended Tool Object
-
-Illustrative proposal example:
-
-```yaml
-uts_version: "1.1"
-compatible_versions:
-  - "1.0"
-  - "1.1"
-id: github.create_issue
-version: "1.1"
-category:
-  - external_network
-  - governance_sensitive
-  - human_visible
-input_schema:
-  type: object
-  required:
-    - repository
-    - title
-output_schema:
-  type: object
-  required:
-    - issue_url
-side_effects:
-  - external_state
-  - human_visible
-  - governance_relevant
-replayability: observational
-observability: governance
-planning:
-  high_risk: true
-  irreversible: false
-  review_required: true
-```
-
-## 6. Version Negotiation
-
-`UTS v1.1` SHOULD make compatibility posture explicit.
-
-Suggested fields:
-
-- `uts_version`
 - `compatible_versions`
+- `categories`
+- `side_effects`
+- `observability`
+- `planning`
+
+`v1.1` therefore remains consumable by a `v1.0`-aware implementation that
+ignores unknown additive fields, while still letting newer runtimes act on the
+new metadata.
+
+## 3. Compatibility And Version Negotiation
+
+`UTS v1.1` makes compatibility posture explicit.
+
+Required fields:
+
+- `schema_version: uts.v1.1`
+- `compatible_versions`
+
+`compatible_versions` semantics:
+
+- a tool definition MUST be structurally valid under the `v1.1` schema
+- `compatible_versions` declares the set of UTS schema versions, including the
+  current `uts.v1.1` version, that the author expects a runtime to consume
+  compatibly
+- a runtime SHOULD validate against the highest version it supports
+- a runtime that only supports an earlier compatible version MAY ignore unknown
+  additive `v1.1` fields rather than rejecting the definition outright
+- compatibility does not permit renaming or removing the preserved `v1.0`
+  fields
 
 Example:
 
 ```yaml
-uts_version: "1.1"
+schema_version: uts.v1.1
 compatible_versions:
-  - "1.0"
-  - "1.1"
+  - uts.v1
+  - uts.v1.1
 ```
 
-This makes migration strategy concrete and lets runtimes distinguish:
+## 4. Preserved Core Tool Schema
 
-- canonical current support
-- additive forward support
-- compatibility fallback posture
+All `UTS v1.0` core schema semantics carry forward into `v1.1`.
 
-## 7. Replayability Taxonomy
+### Required preserved fields
 
-Allowed proposal values:
+- `schema_version`
+- `compatible_versions`
+- `name`
+- `version`
+- `description`
+- `input_schema`
+- `output_schema`
+- `side_effect_class`
+- `determinism`
+- `replay_safety`
+- `idempotence`
+- `resources`
+- `authentication`
+- `data_sensitivity`
+- `exfiltration_risk`
+- `execution_environment`
+- `errors`
 
-- `deterministic`
-- `observational`
-- `non_replayable`
+### Optional preserved field
 
-## 8. Observability Taxonomy
+- `extensions`
 
-Allowed proposal values:
+## 5. Additive v1.1 Fields
+
+### `categories`
+
+`categories` is an illustrative tagging/search taxonomy.
+
+It is not the primary normative governance surface. Typed fields such as
+`side_effect_class`, `data_sensitivity`, and `exfiltration_risk` remain the
+stronger machine-readable signals.
+
+Suggested values:
+
+- `read_only`
+- `computational`
+- `state_mutating`
+- `external_network`
+- `human_visible`
+- `governance_sensitive`
+- `identity_sensitive`
+- `continuity_sensitive`
+- `observability_sensitive`
+
+### `side_effects`
+
+`side_effects` is an additive richer representation of side-effect posture.
+
+It complements rather than replaces `side_effect_class`.
+
+Suggested values:
+
+- `none`
+- `local_state`
+- `external_state`
+- `irreversible`
+- `human_visible`
+- `governance_relevant`
+
+This allows multi-dimensional expression that `side_effect_class` alone cannot
+capture.
+
+### `observability`
+
+Suggested values:
 
 - `none`
 - `basic`
 - `full`
 - `governance`
 
-The observability taxonomy is metadata, not surveillance.
+Definitions:
 
-## 9. Invocation Schema
+- `none`: no specific runtime visibility expectations beyond local control
+- `basic`: invocation recorded with timestamp and result status
+- `full`: invocation metadata, arguments posture, and outputs posture are fully
+  reviewable in the runtime's normal trace model
+- `governance`: elevated audit/review posture is expected before or around
+  execution
 
-Canonical proposal invocation metadata SHOULD include:
+Observability metadata is metadata, not surveillance. It does not require
+centralized monitoring or centralized orchestration.
 
-```yaml
-invocation_id: inv-1001
-caller: runtime.review_agent
-tool:
-  id: github.create_issue
-  version: "1.1"
-intent: remediation
-purpose: |
-  Create remediation issue from failed review findings.
-timeout_ms: 5000
-retry:
-  max_attempts: 1
-  strategy: fixed_delay
-side_effect_expectations:
-  - external_state
-  - human_visible
-replayability: observational
-observability: governance
-```
+### `planning`
 
-## 10. Invocation Intent Taxonomy
+Suggested fields:
 
-Suggested invocation intents:
+- `high_risk`
+- `irreversible`
+- `expensive`
+- `slow`
+- `review_recommended`
 
-- `informational_query`
-- `planning`
-- `simulation`
-- `review`
-- `mutation`
-- `governance_action`
-- `observability_action`
-- `remediation`
+Planning metadata is descriptive execution-planning metadata only.
 
-Runtimes MAY extend this taxonomy.
-
-## 11. Threat Model
-
-`UTS v1.1` is intended to reduce:
-
-- hidden side effects
-- replay ambiguity
-- weak observability
-- unsafe planning/execution coupling
-- ambiguous invocation semantics
-
-This is an operational goal, not a claim that schema alone eliminates runtime
-risk.
-
-## 12. Non-Claims
-
-`UTS v1.1` does not by itself grant:
+It MUST NOT imply:
 
 - authority
+- approval
 - execution permission
 - replay permission
 
-Those remain ACC and runtime concerns.
+## 6. Side-Effect Migration Note
 
-## 13. Summary
+`UTS v1.0` used a single `side_effect_class` enum.
 
-`UTS v1.1` is the additive standards-facing direction:
+`UTS v1.1` keeps that field and adds `side_effects` for richer expression.
 
-- cleaner invocation semantics
-- explicit replayability
-- explicit observability
-- explicit version negotiation
-- clean separation from ACC authority/governance
+Suggested mapping examples:
 
-It is a proposal surface, not a claim that the current code already implements
-the full model.
+- `read` -> `side_effects: [none]`
+- `local_write` -> `side_effects: [local_state]`
+- `external_write` -> `side_effects: [external_state]`
+- `destructive` -> `side_effects: [external_state, irreversible]`
+- `exfiltration` -> `side_effects: [external_state, governance_relevant]`
+
+This is a design improvement, not a replacement of the scalar field.
+
+## 7. Canonical Extended Tool Object
+
+Illustrative complete `UTS v1.1` example:
+
+```yaml
+schema_version: uts.v1.1
+compatible_versions:
+  - uts.v1
+  - uts.v1.1
+name: github.create_issue
+version: 1.1.0
+description: Create a GitHub issue in a bounded repository under governed runtime control.
+categories:
+  - external_network
+  - human_visible
+  - governance_sensitive
+input_schema:
+  type: object
+  required:
+    - repository
+    - title
+  properties:
+    repository:
+      type: string
+    title:
+      type: string
+    body:
+      type: string
+output_schema:
+  type: object
+  required:
+    - issue_url
+  properties:
+    issue_url:
+      type: string
+      format: uri
+side_effect_class: external_write
+side_effects:
+  - external_state
+  - human_visible
+  - governance_relevant
+determinism: bounded_nondeterministic
+replay_safety: replay_requires_approval
+idempotence: conditionally_idempotent
+resources:
+  - resource_type: github_issue
+    scope: repository
+authentication:
+  mode: user_delegated
+  required: true
+data_sensitivity: internal
+exfiltration_risk: medium
+execution_environment:
+  kind: external_service
+  isolation: provider_controlled
+errors:
+  - code: permission_denied
+    message: Caller lacks permission to create issues in the target repository.
+    retryable: false
+observability: governance
+planning:
+  high_risk: true
+  irreversible: false
+  expensive: false
+  slow: false
+  review_recommended: true
+extensions:
+  x-adl-human-impact: issue_creation
+```
+
+## 8. Invocation Schema Relationship
+
+The invocation schema is a companion metadata contract, not a replacement for
+actual tool arguments.
+
+It is intended to capture:
+
+- invocation metadata
+- intent
+- reviewable execution posture
+- correspondence to the tool definition
+
+It is not, by itself, a full execution payload unless a runtime chooses to pair
+it with argument/result bodies elsewhere.
+
+Invocation correspondence rules:
+
+- `tool.name` and `tool.version` MUST refer to a tool definition
+- `side_effect_expectations` SHOULD be consistent with the tool definition and
+  MAY express a subset of the declared `side_effects` when a particular call is
+  narrower than the tool's full capability surface
+- `replay_safety` and `observability` SHOULD match or refine the tool
+  definition's posture; they MUST NOT silently weaken it
+
+## 9. Canonical Invocation Example
+
+```yaml
+invocation_id: inv-1842
+caller: runtime.review_agent
+
+tool:
+  name: github.create_issue
+  version: 1.1.0
+
+intent: remediation
+purpose: |
+  Create remediation issue from failed review findings.
+
+side_effect_expectations:
+  - external_state
+  - human_visible
+
+replay_safety: replay_requires_approval
+observability: governance
+
+timeout_ms: 30000
+retry:
+  max_attempts: 1
+  strategy: fixed_delay
+```
+
+## 10. Conformance Expectations
+
+A conformant `UTS v1.1` implementation SHOULD:
+
+- validate preserved `v1.0` fields using the same core baseline rules
+- validate additive `v1.1` fields when present
+- ignore unknown additive higher-version fields only when a compatible earlier
+  version is explicitly declared and the runtime supports that compatibility
+- reject malformed structural definitions
+
+The repository already contains implementation-facing conformance work in the
+Rust codebase. That test posture should be treated as the current reference
+implementation of UTS conformance until a standalone portable conformance suite
+is published.
+
+## 11. Transport Binding Note
+
+`UTS v1.1` remains transport-neutral.
+
+A future non-normative appendix may show example bindings for:
+
+- MCP-style tool registries
+- HTTP/REST tool catalogs
+- OpenAI-compatible tool/function wrappers
+- local runtime registries
+
+Those bindings should preserve UTS semantics rather than redefine them.
+
+## 12. Summary
+
+`UTS v1.1` is the next UTS target, built directly on the existing `UTS v1.0`
+model.
+
+It stays additive by preserving the current core field vocabulary and semantics
+while adding explicit compatibility, richer side-effect expression,
+observability metadata, planning metadata, and invocation-companion structure.
