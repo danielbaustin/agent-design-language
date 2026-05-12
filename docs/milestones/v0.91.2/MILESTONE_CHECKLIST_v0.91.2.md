@@ -5,8 +5,8 @@
 - [x] README, WBS, sprint plan, issue wave, execution readiness, and demo matrix exist.
 - [x] Feature index exists and names concrete WP homes.
 - [x] Missing milestone-planning package surfaces have been restored.
-- [ ] Candidate issue wave opened into tracked GitHub issues.
-- [ ] Local STP/SIP/SPP/SRP/SOR bundle wave generated for every WP.
+- [x] Issue wave opened into tracked GitHub issues.
+- [x] Local STP/SIP/SPP/SRP/SOR bundle wave generated for every WP and sprint umbrella.
 
 ## Execution Readiness
 
@@ -24,4 +24,3 @@
 - [ ] Accepted findings are fixed or dispositioned.
 - [ ] Release evidence and release readiness are complete.
 - [ ] Ceremony completed.
-

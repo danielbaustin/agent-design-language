@@ -19,14 +19,13 @@ Not release ready.
 
 ## Current State
 
-- `v0.91.2` is a proposed follow-on milestone
-- the issue wave is still candidate/planned
+- `v0.91.2` is an active follow-on milestone
+- the WP issue wave is open as `#3000` through `#3023`
+- sprint-conductor umbrella issues are open as `#3025` through `#3028`
 - no final release proof, review, or ceremony state exists yet
 
 ## Current Blockers
 
-- issue wave not opened
 - no executed WPs
 - no quality gate
 - no review or remediation state
-

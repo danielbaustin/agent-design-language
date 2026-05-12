@@ -2,9 +2,9 @@
 
 ## Status
 
-Planned operating model for `v0.91.2`. This document does not open the
-milestone by itself. It defines how the milestone should be executed once the
-issue wave is seeded.
+Active operating model for `v0.91.2`. This document did not open the milestone
+by itself; WP-01 opened the issue wave and sprint umbrellas from the canonical
+milestone package.
 
 ## Purpose
 
@@ -68,7 +68,7 @@ the `v0.91.2` conductor experiment.
 Before relying on this operating model:
 
 - `WP-01` must land first as the milestone-opening design/docs/planning pass
-- the `v0.91.2` issue wave should be opened and carded
+- the `v0.91.2` issue wave is opened and carded
 - child issues should have truthful `STP`, `SIP`, `SPP`, `SRP`, and `SOR`
   surfaces
 - docs-only issues should preserve docs-only validation/finish paths
@@ -82,13 +82,15 @@ how sprint-conductor should execute it.
 
 ### Sprint 1: Benchmark And Test-Cycle Recovery
 
+Sprint umbrella: `#3025`
+
 Child issues:
 
-- `WP-01` Design pass (milestone docs + planning)
-- `WP-02` UTS + ACC multi-model benchmark harness
-- `WP-03` Provider-native tool-call comparison
-- `WP-04` Runtime/test-cycle recovery
-- `WP-05` Coverage gate ergonomics
+- `WP-01` / `#3000` Design pass (milestone docs + planning)
+- `WP-02` / `#3001` UTS + ACC multi-model benchmark harness
+- `WP-03` / `#3002` Provider-native tool-call comparison
+- `WP-04` / `#3003` Runtime/test-cycle recovery
+- `WP-05` / `#3004` Coverage gate ergonomics
 
 Why this sprint exists:
 
@@ -100,13 +102,15 @@ Why this sprint exists:
 
 ### Sprint 2: Review Product, Workspace Bridge, And Modernization
 
+Sprint umbrella: `#3026`
+
 Child issues:
 
-- `WP-06` CodeBuddy review packet productization
-- `WP-07` Review heuristics skill and demos
-- `WP-08` Google Workspace CMS bridge demo
-- `WP-09` Rust-native GWS adapter boundary
-- `WP-10` Moderne / OpenRewrite LST modernization demo
+- `WP-06` / `#3005` CodeBuddy review packet productization
+- `WP-07` / `#3006` Review heuristics skill and demos
+- `WP-08` / `#3007` Google Workspace CMS bridge demo
+- `WP-09` / `#3008` Rust-native GWS adapter boundary
+- `WP-10` / `#3009` Moderne / OpenRewrite LST modernization demo
 
 Why this sprint exists:
 
@@ -117,14 +121,16 @@ Why this sprint exists:
 
 ### Sprint 3: Runtime Ergonomics, Publication, Docs, And Workflow Guardrails
 
+Sprint umbrella: `#3027`
+
 Child issues:
 
-- `WP-11` Speculative decoding prototype
-- `WP-12` Repo visibility follow-on
-- `WP-13` Publication program package
-- `WP-14` General intelligence paper packet
-- `WP-15` Rustdoc and doc cleanup
-- `WP-16` Workflow guardrails hardening
+- `WP-11` / `#3010` Speculative decoding prototype
+- `WP-12` / `#3011` Repo visibility follow-on
+- `WP-13` / `#3012` Publication program package
+- `WP-14` / `#3013` General intelligence paper packet
+- `WP-15` / `#3014` Rustdoc and doc cleanup
+- `WP-16` / `#3015` Workflow guardrails hardening
 
 Why this sprint exists:
 
@@ -137,16 +143,18 @@ Why this sprint exists:
 
 ### Sprint 4: Review, Remediation, Planning, And Release
 
+Sprint umbrella: `#3028`
+
 Child issues:
 
-- `WP-17` Demo matrix and proof coverage
-- `WP-18` Coverage / quality gate
-- `WP-19` Docs + review pass
-- `WP-20` Internal review
-- `WP-21` External / 3rd-party review
-- `WP-22` Review findings remediation
-- `WP-23` Next milestone planning
-- `WP-24` Release ceremony
+- `WP-17` / `#3016` Demo matrix and proof coverage
+- `WP-18` / `#3017` Coverage / quality gate
+- `WP-19` / `#3018` Docs + review pass
+- `WP-20` / `#3019` Internal review
+- `WP-21` / `#3020` External / 3rd-party review
+- `WP-22` / `#3021` Review findings remediation
+- `WP-23` / `#3022` Next milestone planning
+- `WP-24` / `#3023` Release ceremony
 
 Release-tail notes:
 

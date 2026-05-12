@@ -2,8 +2,8 @@
 
 ## Status
 
-Planned milestone coverage map. `v0.91.2` is not open for execution yet, so
-these are intended proof routes rather than landed proofs.
+Active milestone coverage map. `v0.91.2` is open for execution, but these are
+still intended proof routes rather than landed proofs until the named WPs close.
 
 ## Coverage Rule
 
@@ -35,4 +35,4 @@ Each feature should eventually have one truthful proof route:
 ## Non-Claims
 
 - no feature in this milestone is landed yet through this document alone
-- this file is not evidence that the issue wave has opened
+- this file is not evidence that any feature implementation has landed

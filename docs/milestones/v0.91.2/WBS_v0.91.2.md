@@ -2,7 +2,10 @@
 
 ## Status
 
-Candidate WBS for review. Issue numbers are intentionally not assigned yet.
+Active WBS. The complete v0.91.2 WP issue wave is open as `#3000` through
+`#3023`, with sprint-conductor umbrella issues `#3025` through `#3028`.
+Every WP and sprint umbrella has a prepared primary-checkout local STP, SIP,
+SPP, SRP, and SOR bundle before execution binding.
 
 ## WBS Summary
 
@@ -34,30 +37,39 @@ productize, publish, and maintain.
 
 | WP | Title | Queue | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
-| WP-01 | Design pass (milestone docs + planning) | docs | tracked docs, reviewed YAML, and issue cards | v0.91.1 closeout |
-| WP-02 | UTS + ACC multi-model benchmark harness | tools | benchmark harness and fixture battery | WP-01; governed-tools baseline; ACIP substrate |
-| WP-03 | Provider-native tool-call comparison | tools | JSON proposal vs provider-native comparison report | WP-02 |
-| WP-04 | Runtime/test-cycle recovery | quality | reduced redundant proof phases and validation report | WP-01 |
-| WP-05 | Coverage gate ergonomics | quality | changed-source diagnostics and focused-test guide | WP-04 |
-| WP-06 | CodeBuddy review packet productization | tools | review packet and product-report workflow package | WP-01; review skills and evidence-packet substrate |
-| WP-07 | Review heuristics skill and demos | demo | review heuristics docs, skill/demo updates, proof examples | WP-06 |
-| WP-08 | Google Workspace CMS bridge demo | tools | bounded Workspace content-card and promotion demo | WP-01; governed-tools authority and adapter boundary |
-| WP-09 | Rust-native GWS adapter boundary | tools | adapter feasibility and typed contract boundary | WP-08 |
-| WP-10 | Moderne / OpenRewrite LST modernization demo | tools | ADL-governed Moderne/OpenRewrite interaction demo | WP-01 |
-| WP-11 | Speculative decoding prototype | runtime | bounded speculative-decoding architecture and proof posture | WP-02, WP-04 |
-| WP-12 | Repo visibility follow-on | docs | manifest/linkage follow-on package | WP-06, WP-07 |
-| WP-13 | Publication program package | docs | arXiv/Medium paper-program backlog and process docs | WP-01; review/evidence docs and publication process notes |
-| WP-14 | General intelligence paper packet | docs | claim, citation, and review packet | WP-13 |
-| WP-15 | Rustdoc and doc cleanup | docs | rustdoc/doc cleanup patches and report | WP-05 |
-| WP-16 | Workflow guardrails hardening | tools | main-write, watcher, and safe-report guardrails | WP-04, WP-05 |
-| WP-17 | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16 |
-| WP-18 | Coverage / quality gate | quality | validation posture and test/coverage record | WP-17 |
-| WP-19 | Docs + review pass | docs | review-ready docs package | WP-18 |
-| WP-20 | Internal review | review | internal review record | WP-19 |
-| WP-21 | External / 3rd-party review | review | external review handoff and record | WP-20 |
-| WP-22 | Review findings remediation | review | remediation record and follow-up issues | WP-21 |
-| WP-23 | Next milestone planning | docs | v0.92/v0.93 handoff update | WP-22 |
-| WP-24 | Release ceremony | release | release evidence and end-of-milestone report | WP-23 |
+| WP-01 (#3000) | Design pass (milestone docs + planning) | docs | tracked docs, reviewed YAML, and issue cards | v0.91.1 closeout |
+| WP-02 (#3001) | UTS + ACC multi-model benchmark harness | tools | benchmark harness and fixture battery | WP-01; governed-tools baseline; ACIP substrate |
+| WP-03 (#3002) | Provider-native tool-call comparison | tools | JSON proposal vs provider-native comparison report | WP-02 |
+| WP-04 (#3003) | Runtime/test-cycle recovery | quality | reduced redundant proof phases and validation report | WP-01 |
+| WP-05 (#3004) | Coverage gate ergonomics | quality | changed-source diagnostics and focused-test guide | WP-04 |
+| WP-06 (#3005) | CodeBuddy review packet productization | tools | review packet and product-report workflow package | WP-01; review skills and evidence-packet substrate |
+| WP-07 (#3006) | Review heuristics skill and demos | demo | review heuristics docs, skill/demo updates, proof examples | WP-06 |
+| WP-08 (#3007) | Google Workspace CMS bridge demo | tools | bounded Workspace content-card and promotion demo | WP-01; governed-tools authority and adapter boundary |
+| WP-09 (#3008) | Rust-native GWS adapter boundary | tools | adapter feasibility and typed contract boundary | WP-08 |
+| WP-10 (#3009) | Moderne / OpenRewrite LST modernization demo | tools | ADL-governed Moderne/OpenRewrite interaction demo | WP-01 |
+| WP-11 (#3010) | Speculative decoding prototype | runtime | bounded speculative-decoding architecture and proof posture | WP-02, WP-04 |
+| WP-12 (#3011) | Repo visibility follow-on | docs | manifest/linkage follow-on package | WP-06, WP-07 |
+| WP-13 (#3012) | Publication program package | docs | arXiv/Medium paper-program backlog and process docs | WP-01; review/evidence docs and publication process notes |
+| WP-14 (#3013) | General intelligence paper packet | docs | claim, citation, and review packet | WP-13 |
+| WP-15 (#3014) | Rustdoc and doc cleanup | docs | rustdoc/doc cleanup patches and report | WP-05 |
+| WP-16 (#3015) | Workflow guardrails hardening | tools | main-write, watcher, and safe-report guardrails | WP-04, WP-05 |
+| WP-17 (#3016) | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16 |
+| WP-18 (#3017) | Coverage / quality gate | quality | validation posture and test/coverage record | WP-17 |
+| WP-19 (#3018) | Docs + review pass | docs | review-ready docs package | WP-18 |
+| WP-20 (#3019) | Internal review | review | internal review record | WP-19 |
+| WP-21 (#3020) | External / 3rd-party review | review | external review handoff and record | WP-20 |
+| WP-22 (#3021) | Review findings remediation | review | remediation record and follow-up issues | WP-21 |
+| WP-23 (#3022) | Next milestone planning | docs | v0.92/v0.93 handoff update | WP-22 |
+| WP-24 (#3023) | Release ceremony | release | release evidence and end-of-milestone report | WP-23 |
+
+## Sprint Umbrellas
+
+| Sprint | Issue | Title | Ordered Children |
+| --- | --- | --- | --- |
+| Sprint 1 | #3025 | Benchmark And Test-Cycle Recovery | WP-01, WP-02, WP-03, WP-04, WP-05 |
+| Sprint 2 | #3026 | Review Product, Workspace Bridge, And Modernization | WP-06, WP-07, WP-08, WP-09, WP-10 |
+| Sprint 3 | #3027 | Runtime Ergonomics, Publication, Docs, And Workflow Guardrails | WP-11, WP-12, WP-13, WP-14, WP-15, WP-16 |
+| Sprint 4 | #3028 | Review, Remediation, Planning, And Release | WP-17, WP-18, WP-19, WP-20, WP-21, WP-22, WP-23, WP-24 |
 
 ## Sequencing Pressure
 

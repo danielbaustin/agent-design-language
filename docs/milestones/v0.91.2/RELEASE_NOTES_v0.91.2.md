@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft scaffold only. `v0.91.2` is not open for execution and does not yet have
+Draft scaffold only. `v0.91.2` is open for execution, but it does not yet have
 release-ready notes.
 
 ## Theme
@@ -21,4 +21,3 @@ Tooling, evaluation, productization, publication, and workflow guardrails.
 - executed milestone completion
 - final review or release state
 - any benchmark or tooling result not yet produced
-

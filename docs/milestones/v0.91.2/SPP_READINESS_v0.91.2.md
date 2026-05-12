@@ -3,27 +3,28 @@
 ## Purpose
 
 Record the planning-surface readiness of Structured Plan Prompt (`SPP`)
-artifacts for the future `v0.91.2` issue wave.
+artifacts for the active `v0.91.2` issue wave.
 
 ## Current State
 
-`v0.91.2` is not yet open for execution, so `SPP` readiness here is package
-policy/readiness rather than a claim that all issue-local `spp.md` files
-already exist.
+`v0.91.2` is open for execution. Issue-local `spp.md` files exist in the
+durable primary-checkout local bundle root for WP-01 through WP-24 and for
+Sprint 1 through Sprint 4 umbrella issues before child execution binding.
 
 ## What Is Ready
 
 - the milestone package recognizes `SPP` as a required issue-wave artifact
 - issue-wave and execution-readiness docs already call for `SPP` when the wave
   opens
+- WP and sprint umbrella `SPP` cards were generated, normalized, and validated
+  during WP-01
 
 ## Remaining Gaps
 
-- the actual issue-wave bundle generation is still pending
-- per-issue SPP quality cannot be claimed before that wave exists
+- per-issue `SPP` cards remain pre-execution plans and must be revised through
+  `spp-editor` if execution scope changes materially
 
 ## Non-Claims
 
-- this doc does not claim opened issue execution
-- this doc does not claim generated per-WP `SPP` files
-
+- this doc does not claim child issue execution has started
+- this doc does not claim `SPP` cards are implementation evidence

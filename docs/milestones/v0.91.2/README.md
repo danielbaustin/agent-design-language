@@ -2,8 +2,9 @@
 
 ## Status
 
-First-pass planning package. v0.91.2 is the proposed follow-on pressure-release
-milestone after v0.91.1. It is not open for execution yet.
+Active milestone package. v0.91.2 is the follow-on pressure-release milestone
+after v0.91.1. The WP issue wave is open as `#3000` through `#3023`, and the
+sprint-conductor umbrella issues are open as `#3025` through `#3028`.
 
 ## Purpose
 
@@ -80,7 +81,7 @@ This package is grounded in:
 - Sprint plan: [SPRINT_v0.91.2.md](SPRINT_v0.91.2.md)
 - Sprint-conductor execution plan:
   [SPRINT_CONDUCTOR_EXECUTION_PLAN_v0.91.2.md](SPRINT_CONDUCTOR_EXECUTION_PLAN_v0.91.2.md)
-- Candidate issue wave: [WP_ISSUE_WAVE_v0.91.2.yaml](WP_ISSUE_WAVE_v0.91.2.yaml)
+- Active issue wave: [WP_ISSUE_WAVE_v0.91.2.yaml](WP_ISSUE_WAVE_v0.91.2.yaml)
 - Execution readiness:
   [WP_EXECUTION_READINESS_v0.91.2.md](WP_EXECUTION_READINESS_v0.91.2.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.2.md](DEMO_MATRIX_v0.91.2.md)
@@ -109,3 +110,7 @@ evidence, a healthier test/runtime gate strategy, a review/productization path,
 a bounded Workspace CMS bridge demo, Moderne/OpenRewrite LST modernization and publication packages,
 and workflow guardrails that reduce the operational failures that slowed
 v0.90.5 and v0.91.
+
+Execution note: WP-01 opened and carded the issue wave. Feature implementation
+has not started until the relevant WP is routed through `workflow-conductor`,
+bound with `pr run`, reviewed before PR publication, and closed out after merge.
