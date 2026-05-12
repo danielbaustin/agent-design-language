@@ -3,6 +3,7 @@
   "$id": "https://raw.githubusercontent.com/danielbaustin/agent-design-language/main/adl-spec/schemas/acc/v1.0/adl_capability_contract.v1.schema.json",
   "title": "ADL Capability Contract v1.0",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "schema_version",
     "contract_id",
