@@ -48,12 +48,14 @@ truthful `v0.91.1` release decision.
 - `WP-21` external / third-party review handoff and zero-finding record
 - `WP-22` accepted-finding disposition record with zero accepted findings
 - `WP-23` next-milestone planning and downstream handoff record
+- `WP-23A` next-milestone review-pass record
 
 ## In-Flight Evidence
 
 - merged `WP-23A` next-milestone review-pass record from PR `#2996`
 - `#2998` closeout-truth normalization evidence for the historical
   release-ceremony blocker
+- `WP-24` release-ceremony candidate package and end-of-milestone report
 
 ## Ceremony Preflight Evidence
 
@@ -62,11 +64,11 @@ truthful `v0.91.1` release decision.
   completed-phase `SIP`/`SOR` truth
 - from the bound `WP-24` worktree on
   `codex/2846-v0-91-1-wp-24-release-ceremony`,
-  `bash adl/tools/release_ceremony.sh --version v0.91.1 --target-branch codex/2846-v0-91-1-wp-24-release-ceremony --allow-dirty`
+  `bash adl/tools/release_ceremony.sh --version v0.91.1 --target-branch codex/2846-v0-91-1-wp-24-release-ceremony`
   now passes preflight without `--skip-sor-gate`
 - the prior blocker was historical root-bundle reconciliation drift, not
   missing landed milestone work
 
 ## Evidence Still Missing
 
-- release ceremony and end-of-milestone report
+- final merge of the `WP-24` ceremony package

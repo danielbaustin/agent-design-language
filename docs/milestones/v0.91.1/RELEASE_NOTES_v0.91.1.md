@@ -2,8 +2,8 @@
 
 ## Status
 
-Draft only. `v0.91.1` is still in active execution and is not ready for final
-release notes.
+Ceremony candidate. This document is the `v0.91.1` release-notes candidate
+being finalized by `WP-24`.
 
 ## Theme
 
@@ -28,6 +28,8 @@ Inhabited-runtime readiness inside the CSM/polis boundary.
 - observatory-visible flagship demo
 - milestone demo matrix / proof coverage closeout
 - milestone quality-gate record
+- next-milestone planning and downstream handoff
+- final next-milestone review pass
 
 Sprint state:
 - Sprint 1 runtime foundations are landed through citizen state
@@ -38,15 +40,17 @@ Sprint state:
   review-ready docs package, internal review record, and external review
   record, the explicit zero-findings remediation disposition, the
   next-milestone planning/handoff record, and the final next-milestone review
-  pass, but release closure remains open
+  pass. `WP-24` is now carrying the release-ceremony closeout package.
 
 ## Still Pending
 
-- release ceremony and end-of-milestone report
+- merge of the `WP-24` release-ceremony closeout package
+- resolution or explicit acceptance of historical closed-issue `SOR` truth
+  residue currently surfaced by the full ceremony preflight
 
 ## Not Claimed
 
-- final release completion
+- final merged release completion
 - birthday or identity continuity
 - constitutional citizenship
 - external transport readiness

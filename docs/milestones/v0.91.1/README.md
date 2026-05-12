@@ -2,10 +2,9 @@
 
 ## Status
 
-Active milestone execution package. v0.91.1 is open for execution through
-the complete issue wave: `WP-01` / `#2823` through `WP-24` / `#2846`.
-Every WP has a prepared STP, SIP, SPP, SRP, and SOR bundle before execution
-binding.
+Release-closeout package in progress. v0.91.1 implementation, review,
+handoff, and next-milestone review work are landed through `WP-23A`; `WP-24`
+is recording the final release-ceremony and end-of-milestone closeout package.
 
 ## Purpose
 
@@ -147,3 +146,8 @@ rather than planning-only notes.
 The strongest closeout proof should be a real agent-shaped run inside the CSM
 boundary with observatory-visible evidence, secure local communication, runtime
 state, and explicit non-claims for identity, birthday, and external transport.
+
+At the current release-tail stage, the remaining task is not additional
+implementation work. It is the final ceremony closeout package: release
+evidence, release notes candidate, readiness truth, and the end-of-milestone
+report that will carry `v0.91.1` cleanly into `v0.91.2`.
