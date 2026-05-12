@@ -35,8 +35,7 @@ complete until the release ceremony finishes.
 
 ## Current Issue State
 
-- `WP-01` through `WP-23` are closed or ready to close with landed docs truth
-- supplemental `WP-23A` next-milestone review pass is in progress via PR `#2996`
+- `WP-01` through `WP-23A` are closed with landed docs truth
 - `WP-24` remains open for the final ceremony band
 - Sprint 2 is complete
 - Sprint 3 runtime/comms/inhabitant work is complete through `WP-17`
@@ -47,6 +46,19 @@ complete until the release ceremony finishes.
 ## Current Blockers
 
 - release ceremony is pending
+
+## Ceremony Gate Status
+
+- historical closed-issue closeout residue that previously blocked `WP-24`
+  has been normalized in `#2998`
+- `bash adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.91.1`
+  now passes against the full closed `v0.91.1` issue set
+- from the bound `WP-24` worktree on
+  `codex/2846-v0-91-1-wp-24-release-ceremony`,
+  `bash adl/tools/release_ceremony.sh --version v0.91.1 --target-branch codex/2846-v0-91-1-wp-24-release-ceremony --allow-dirty`
+  now passes its full preflight without `--skip-sor-gate`
+- the remaining release-tail dependency is the ceremony itself, not stale local
+  lifecycle-record truth
 
 ## Version Truth
 
