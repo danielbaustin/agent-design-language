@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "adl://schemas/uts/v1.1/tool_invocation.v1_1.schema.json",
+  "title": "UTS v1.1 Tool Invocation Proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "invocation_id",
+    "caller",
+    "tool",
+    "intent",
+    "purpose",
+    "side_effect_expectations",
+    "replayability",
+    "observability"
+  ],
+  "properties": {
+    "invocation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "caller": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._-]{2,79}$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "intent": {
+      "type": "string",
+      "enum": [
+        "informational_query",
+        "planning",
+        "simulation",
+        "review",
+        "mutation",
+        "governance_action",
+        "observability_action",
+        "remediation"
+      ]
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "retry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_attempts",
+        "strategy"
+      ],
+      "properties": {
+        "max_attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "none",
+            "immediate",
+            "fixed_delay",
+            "exponential_backoff"
+          ]
+        }
+      }
+    },
+    "side_effect_expectations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "none",
+          "local_state",
+          "external_state",
+          "irreversible",
+          "human_visible",
+          "governance_relevant"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "replayability": {
+      "type": "string",
+      "enum": [
+        "deterministic",
+        "observational",
+        "non_replayable"
+      ]
+    },
+    "observability": {
+      "type": "string",
+      "enum": [
+        "none",
+        "basic",
+        "full",
+        "governance"
+      ]
+    }
+  }
+}

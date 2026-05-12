@@ -1,0 +1,311 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "adl://schemas/uts/v1.0/universal_tool_schema.v1.schema.json",
+  "title": "Universal Tool Schema v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "name",
+    "version",
+    "description",
+    "input_schema",
+    "output_schema",
+    "side_effect_class",
+    "determinism",
+    "replay_safety",
+    "idempotence",
+    "resources",
+    "authentication",
+    "data_sensitivity",
+    "exfiltration_risk",
+    "execution_environment",
+    "errors"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "uts.v1"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9._-]{2,79}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 12
+    },
+    "input_schema": {
+      "$ref": "#/$defs/jsonSchemaFragment"
+    },
+    "output_schema": {
+      "$ref": "#/$defs/jsonSchemaFragment"
+    },
+    "side_effect_class": {
+      "type": "string",
+      "enum": [
+        "read",
+        "local_write",
+        "external_read",
+        "external_write",
+        "process",
+        "network",
+        "destructive",
+        "exfiltration"
+      ]
+    },
+    "determinism": {
+      "type": "string",
+      "enum": [
+        "deterministic",
+        "bounded_nondeterministic",
+        "nondeterministic"
+      ]
+    },
+    "replay_safety": {
+      "type": "string",
+      "enum": [
+        "replay_safe",
+        "replay_requires_approval",
+        "not_replay_safe"
+      ]
+    },
+    "idempotence": {
+      "type": "string",
+      "enum": [
+        "idempotent",
+        "conditionally_idempotent",
+        "not_idempotent"
+      ]
+    },
+    "resources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/resourceRequirement"
+      }
+    },
+    "authentication": {
+      "$ref": "#/$defs/authenticationRequirement"
+    },
+    "data_sensitivity": {
+      "type": "string",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "secret",
+        "protected_prompt",
+        "private_state"
+      ]
+    },
+    "exfiltration_risk": {
+      "type": "string",
+      "enum": [
+        "none",
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "execution_environment": {
+      "$ref": "#/$defs/executionEnvironment"
+    },
+    "errors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/errorModel"
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^x-(?!.*(?:authority|grant|freedom_gate|acc|execute|permission))[a-z0-9._-]+$"
+      },
+      "additionalProperties": {
+        "not": {
+          "type": "object",
+          "required": [
+            "required"
+          ],
+          "properties": {
+            "required": {
+              "const": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "jsonSchemaFragment": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "resourceRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resource_type",
+        "scope"
+      ],
+      "properties": {
+        "resource_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9._-]+$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "authenticationRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "required"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "none",
+            "api_key",
+            "oauth",
+            "user_delegated",
+            "service_account"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "executionEnvironment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "isolation"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "fixture",
+            "dry_run",
+            "local",
+            "external_service",
+            "process",
+            "network"
+          ]
+        },
+        "isolation": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "errorModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[a-z0-9._-]+$"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retryable": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "authentication": {
+            "properties": {
+              "required": {
+                "const": true
+              }
+            },
+            "required": [
+              "required"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "authentication": {
+            "properties": {
+              "mode": {
+                "not": {
+                  "const": "none"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "side_effect_class": {
+            "const": "exfiltration"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "exfiltration_risk": {
+            "const": "high"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "exfiltration_risk": {
+            "const": "high"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "side_effect_class": {
+            "const": "exfiltration"
+          }
+        }
+      }
+    }
+  ]
+}
