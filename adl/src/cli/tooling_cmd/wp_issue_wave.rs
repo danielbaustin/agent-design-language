@@ -43,6 +43,7 @@ struct WaveEntry {
 struct WbsRow {
     wp: String,
     work_package: String,
+    queue: Option<String>,
     description: String,
     deliverable: String,
     dependencies: Vec<String>,
@@ -184,9 +185,16 @@ fn build_entry(
         bail!("no sprint mapping found for {}", row.wp);
     };
     let is_closeout = is_closeout_row(&row.work_package, &row.issue_column);
-    let area = infer_area(&row.work_package, is_closeout);
-    let queue = infer_queue(&row.work_package, area);
-    let outcome = infer_outcome(&row.work_package, area);
+    let inferred_area = infer_area(&row.work_package, is_closeout);
+    let explicit_queue = row
+        .queue
+        .as_deref()
+        .filter(|value| !value.trim().is_empty());
+    let queue = explicit_queue.unwrap_or_else(|| infer_queue(&row.work_package, inferred_area));
+    let area = area_for_queue(queue).unwrap_or(inferred_area);
+    let outcome = explicit_queue
+        .and_then(outcome_for_queue)
+        .unwrap_or_else(|| infer_outcome(&row.work_package, area));
     let slug = format!(
         "{}-{}-{}",
         slugify(version),
@@ -313,6 +321,31 @@ fn infer_outcome(work_package: &str, area: &str) -> &'static str {
     }
 }
 
+fn area_for_queue(queue: &str) -> Option<&'static str> {
+    match queue.trim() {
+        "demo" => Some("demo"),
+        "docs" => Some("docs"),
+        "quality" => Some("quality"),
+        "release" => Some("release"),
+        "review" => Some("review"),
+        "runtime" => Some("runtime"),
+        "tools" => Some("tools"),
+        _ => None,
+    }
+}
+
+fn outcome_for_queue(queue: &str) -> Option<&'static str> {
+    match queue.trim() {
+        "demo" => Some("demo"),
+        "docs" => Some("docs"),
+        "quality" => Some("tests"),
+        "release" => Some("release"),
+        "review" => Some("review"),
+        "runtime" | "tools" => Some("code"),
+        _ => None,
+    }
+}
+
 fn parse_wbs_rows(text: &str) -> Result<Vec<WbsRow>> {
     let mut rows = Vec::new();
     let table = extract_wbs_table(text)?;
@@ -320,6 +353,9 @@ fn parse_wbs_rows(text: &str) -> Result<Vec<WbsRow>> {
     let issue_second_shape = header_cols
         .get(1)
         .is_some_and(|value| value.eq_ignore_ascii_case("Issue"));
+    let current_queue_shape = header_cols
+        .get(2)
+        .is_some_and(|value| value.eq_ignore_ascii_case("Queue"));
     for line in table.into_iter().skip(2) {
         let cols = split_markdown_row(&line);
         if cols.len() != 5 && cols.len() != 6 {
@@ -328,10 +364,11 @@ fn parse_wbs_rows(text: &str) -> Result<Vec<WbsRow>> {
                 cols.len()
             );
         }
-        let (work_package, description, deliverable, dependencies, issue_column) =
+        let (work_package, queue, description, deliverable, dependencies, issue_column) =
             if cols.len() == 6 && issue_second_shape {
                 (
                     cols[2].to_string(),
+                    None,
                     cols[3].to_string(),
                     cols[4].to_string(),
                     cols[5].to_string(),
@@ -340,14 +377,25 @@ fn parse_wbs_rows(text: &str) -> Result<Vec<WbsRow>> {
             } else if cols.len() == 6 {
                 (
                     cols[1].to_string(),
+                    None,
                     cols[2].to_string(),
                     cols[3].to_string(),
                     cols[4].to_string(),
                     cols[5].to_string(),
                 )
+            } else if current_queue_shape {
+                (
+                    cols[1].to_string(),
+                    Some(cols[2].to_string()),
+                    cols[1].to_string(),
+                    cols[3].to_string(),
+                    cols[4].to_string(),
+                    "issue to be seeded".to_string(),
+                )
             } else {
                 (
                     cols[1].to_string(),
+                    None,
                     cols[2].to_string(),
                     cols[3].to_string(),
                     cols[4].to_string(),
@@ -359,9 +407,14 @@ fn parse_wbs_rows(text: &str) -> Result<Vec<WbsRow>> {
         } else {
             extract_wp_refs(cols[4])
         };
+        let wp = extract_wp_refs(cols[0])
+            .into_iter()
+            .next()
+            .unwrap_or_else(|| cols[0].to_string());
         rows.push(WbsRow {
-            wp: cols[0].to_string(),
+            wp,
             work_package,
+            queue,
             description,
             deliverable,
             dependencies: dependency_refs,
@@ -375,6 +428,7 @@ fn parse_wbs_rows(text: &str) -> Result<Vec<WbsRow>> {
 fn extract_wbs_table(text: &str) -> Result<Vec<String>> {
     extract_markdown_table(text, "## Work Packages")
         .or_else(|_| extract_markdown_table(text, "## Work Package Shape"))
+        .or_else(|_| extract_markdown_table(text, "## Candidate WP Sequence"))
 }
 
 fn parse_sprint_overview(version: &str, text: &str) -> Result<BTreeMap<String, (String, String)>> {
@@ -415,7 +469,16 @@ fn parse_sprint_sections(version: &str, text: &str) -> Result<BTreeMap<String, (
                 .take_while(|ch| ch.is_ascii_digit())
                 .collect::<String>();
             if !number.is_empty() {
-                current = Some((format!("{version}-s{number}"), format!("Sprint {number}")));
+                let label_suffix = rest[number.len()..]
+                    .trim()
+                    .trim_start_matches(['-', ':'])
+                    .trim();
+                let sprint_label = if label_suffix.is_empty() {
+                    format!("Sprint {number}")
+                } else {
+                    format!("Sprint {number}: {label_suffix}")
+                };
+                current = Some((format!("{version}-s{number}"), sprint_label));
                 continue;
             }
         }
@@ -431,6 +494,17 @@ fn parse_sprint_sections(version: &str, text: &str) -> Result<BTreeMap<String, (
             continue;
         }
         if !line.starts_with("- ") {
+            if line.starts_with('|') {
+                let Some((sprint_id, sprint_label)) = &current else {
+                    continue;
+                };
+                let cols = split_markdown_row(line);
+                if let Some(first_col) = cols.first() {
+                    for wp in extract_wp_refs(first_col) {
+                        mapping.insert(wp, (sprint_id.clone(), sprint_label.clone()));
+                    }
+                }
+            }
             continue;
         }
         let Some((sprint_id, sprint_label)) = &current else {
@@ -653,7 +727,7 @@ mod tests {
         );
         assert_eq!(wp02.queue, "tools");
         assert_eq!(wp02.outcome, "docs");
-        assert_eq!(wp02.milestone_sprint, "Sprint 1");
+        assert_eq!(wp02.milestone_sprint, "Sprint 1: Compression Enablement");
         assert_eq!(wp02.sprint_id, "v0.90.1-s1");
         assert_eq!(wp02.dependencies, vec!["WP-01"]);
 
@@ -701,7 +775,57 @@ mod tests {
             .expect("wp15a present");
         assert_eq!(wp15a.queue, "review");
         assert_eq!(wp15a.outcome, "review");
-        assert_eq!(wp15a.milestone_sprint, "Sprint 4");
+        assert_eq!(wp15a.milestone_sprint, "Sprint 4: Review And Remediation");
         assert_eq!(wp15a.dependencies, vec!["WP-15"]);
+    }
+
+    #[test]
+    fn generate_wave_doc_accepts_v0912_active_tables_with_issue_numbers_and_queues() {
+        let wbs = include_str!("../../../../docs/milestones/v0.91.2/WBS_v0.91.2.md");
+        let sprint = include_str!("../../../../docs/milestones/v0.91.2/SPRINT_v0.91.2.md");
+
+        let wave = generate_wave_doc(
+            "v0.91.2",
+            wbs,
+            sprint,
+            "docs/milestones/v0.91.2/WBS_v0.91.2.md",
+            "docs/milestones/v0.91.2/SPRINT_v0.91.2.md",
+        )
+        .expect("generate active v0.91.2 wave");
+
+        assert_eq!(wave.entries.len(), 23);
+
+        let wp02 = &wave.entries[0];
+        assert_eq!(wp02.wp, "WP-02");
+        assert_eq!(wp02.queue, "tools");
+        assert_eq!(wp02.labels[2], "area:tools");
+        assert_eq!(wp02.summary, "UTS + ACC multi-model benchmark harness");
+        assert_eq!(
+            wp02.milestone_sprint,
+            "Sprint 1: Benchmark And Test-Cycle Recovery"
+        );
+        assert_eq!(wp02.dependencies, vec!["WP-01"]);
+
+        let wp10 = wave
+            .entries
+            .iter()
+            .find(|entry| entry.wp == "WP-10")
+            .expect("wp10 present");
+        assert_eq!(
+            wp10.work_package,
+            "Moderne / OpenRewrite LST modernization demo"
+        );
+        assert_eq!(wp10.queue, "tools");
+        assert_eq!(wp10.summary, wp10.work_package);
+
+        let wp24 = wave.entries.last().expect("wp24 present");
+        assert_eq!(wp24.wp, "WP-24");
+        assert_eq!(wp24.queue, "release");
+        assert_eq!(wp24.outcome, "release");
+        assert_eq!(
+            wp24.milestone_sprint,
+            "Sprint 4: Review, Remediation, And Release"
+        );
+        assert_eq!(wp24.dependencies, vec!["WP-23"]);
     }
 }
