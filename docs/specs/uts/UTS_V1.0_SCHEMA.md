@@ -8,11 +8,11 @@ surface.
 This document describes the canonical current `UTS v1` baseline as implemented
 in:
 
-- [`adl/src/uts.rs`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl/src/uts.rs)
+- [`adl/src/uts.rs`](../../../adl/src/uts.rs)
 
 Matching machine-readable schema:
 
-- [`adl-spec/schemas/uts/v1.0/universal_tool_schema.v1.schema.json`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl-spec/schemas/uts/v1.0/universal_tool_schema.v1.schema.json)
+- [`adl-spec/schemas/uts/v1.0/universal_tool_schema.v1.schema.json`](../../../adl-spec/schemas/uts/v1.0/universal_tool_schema.v1.schema.json)
 
 ## 1. Purpose
 

@@ -11,8 +11,8 @@ Status note:
 
 Matching machine-readable proposal artifacts:
 
-- [`adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json)
-- [`adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json)
+- [`adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json)
+- [`adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json)
 
 ## Normative Language
 

@@ -20,9 +20,9 @@ separately and must not be treated as guaranteed current runtime behavior.
 
 Machine-readable companions:
 
-- [`adl-spec/schemas/uts/v1.0/universal_tool_schema.v1.schema.json`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl-spec/schemas/uts/v1.0/universal_tool_schema.v1.schema.json)
-- [`adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json)
-- [`adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json)
+- [`adl-spec/schemas/uts/v1.0/universal_tool_schema.v1.schema.json`](../../../adl-spec/schemas/uts/v1.0/universal_tool_schema.v1.schema.json)
+- [`adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json)
+- [`adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json)
 
 Authority/governance companion:
 
@@ -86,7 +86,7 @@ UTS itself.
 
 The current implemented baseline lives in Rust today at:
 
-- [`adl/src/uts.rs`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl/src/uts.rs)
+- [`adl/src/uts.rs`](../../../adl/src/uts.rs)
 
 That baseline is expressed as `UniversalToolSchemaV1` and validated by
 `validate_uts_v1`.
@@ -115,7 +115,7 @@ current implemented surface already includes:
 The authoritative tracked baseline for that shape is:
 
 - [`UTS_V1.0_SCHEMA.md`](./UTS_V1.0_SCHEMA.md)
-- [`universal_tool_schema.v1.schema.json`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl-spec/schemas/uts/v1.0/universal_tool_schema.v1.schema.json)
+- [`universal_tool_schema.v1.schema.json`](../../../adl-spec/schemas/uts/v1.0/universal_tool_schema.v1.schema.json)
 
 ## 4. Additive Proposal Direction (`UTS v1.1`)
 
@@ -131,8 +131,8 @@ The proposal direction does three things:
 The tracked proposal documents are:
 
 - [`UTS_V1.1_SCHEMA.md`](./UTS_V1.1_SCHEMA.md)
-- [`universal_tool_schema.v1_1.schema.json`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json)
-- [`tool_invocation.v1_1.schema.json`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json)
+- [`universal_tool_schema.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json)
+- [`tool_invocation.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json)
 
 Proposal examples in the `v1.1` surfaces are illustrative. They are not
 guaranteed `v1` fixtures.
@@ -153,7 +153,7 @@ a valid portable schema, but neither fact grants execution authority.
 
 See also:
 
-- [`docs/explainers/UTS_AND_ACC.md`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-3029/docs/explainers/UTS_AND_ACC.md)
+- [`docs/explainers/UTS_AND_ACC.md`](../../explainers/UTS_AND_ACC.md)
 
 ## 6. Invocation Semantics Versus Approval
 
