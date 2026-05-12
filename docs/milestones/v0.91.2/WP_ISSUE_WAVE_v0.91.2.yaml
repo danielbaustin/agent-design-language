@@ -26,7 +26,7 @@ notes:
   SPP, SRP, and SOR bundle prepared and structurally validated before execution
   binding.
 - "Issue #3024 is an unscheduled v0.91.2 sidecar docs cleanup issue for stale
-  legacy swarm references; it is not part of the canonical WP or sprint wave."
+  terminology references; it is not part of the canonical WP or sprint wave."
 card_update_rule:
 - When opened, every WP must receive STP, SIP, SPP, SRP, and SOR cards from the
   accepted readiness section.
