@@ -14,8 +14,8 @@ milestone reaches its quality phase.
 
 ## Current State
 
-The quality gate is not complete yet, and the milestone is not open for
-execution.
+The quality gate is not complete yet. The milestone is open for execution, but
+WP-18 has not run.
 
 ## Required Inputs Before Pass/Fail Judgment
 

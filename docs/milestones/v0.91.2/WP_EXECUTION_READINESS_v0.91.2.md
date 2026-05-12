@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document is the candidate card-authoring source for the v0.91.2 tooling,
+This document is the accepted card-authoring source for the v0.91.2 tooling,
 evaluation, productization, publication, and workflow-hardening wave.
 
 ## Global Execution Rules
@@ -27,7 +27,7 @@ Required outputs:
 
 Required validation:
 
-- Candidate issue wave matches sprint, WBS, and feature index.
+- Active issue wave matches sprint, WBS, and feature index.
 - Every WP has outputs, validation, source docs, and non-goals.
 
 ## WP-02: UTS + ACC Multi-Model Benchmark Harness

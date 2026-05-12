@@ -1,7 +1,7 @@
 milestone: v0.91.2
-status: candidate_issue_wave
-issue_wave_opened: false
-owner_issue: null
+status: active_issue_wave_open
+issue_wave_opened: true
+owner_issue: 3000
 planning_source: docs/milestones/v0.91.2
 tracked_package: docs/milestones/v0.91.2
 notes:
@@ -17,6 +17,16 @@ notes:
   runtime evidence rather than speed theater.
 - Repo visibility should consume the delivered v0.90 baseline and extend it
   through a bounded follow-on instead of pretending the substrate is unstarted.
+- "WP-01 opened as issue #3000 after the v0.91.1 release ceremony completed."
+- "WP-02 through WP-24 opened as issues #3001 through #3023 during the WP-01
+  issue-wave and card-readiness pass."
+- "Sprint-conductor umbrella issues were opened as #3025 through #3028 from the
+  canonical sprint plan and execution overlay."
+- Every opened WP and sprint umbrella has a primary-checkout local STP, SIP,
+  SPP, SRP, and SOR bundle prepared and structurally validated before execution
+  binding.
+- "Issue #3024 is an unscheduled v0.91.2 sidecar docs cleanup issue for stale
+  terminology references; it is not part of the canonical WP or sprint wave."
 card_update_rule:
 - When opened, every WP must receive STP, SIP, SPP, SRP, and SOR cards from the
   accepted readiness section.
@@ -33,13 +43,13 @@ closeout_sequence:
 - WP-24 Release ceremony
 work_packages:
 - wp: WP-01
-  issue: null
+  issue: 3000
   title: Design pass (milestone docs + planning)
   queue: docs
   outcome: tracked docs, reviewed YAML, and issue cards
   depends_on: v0.91.1 closeout
 - wp: WP-02
-  issue: null
+  issue: 3001
   title: UTS + ACC multi-model benchmark harness
   queue: tools
   outcome: benchmark harness and fixture battery
@@ -53,25 +63,25 @@ work_packages:
   - Preserve the split between ADL JSON proposal mode and provider-native
     tool/function-call mode.
 - wp: WP-03
-  issue: null
+  issue: 3002
   title: Provider-native tool-call comparison
   queue: tools
   outcome: JSON proposal vs provider-native comparison report
   depends_on: WP-02
 - wp: WP-04
-  issue: null
+  issue: 3003
   title: Runtime/test-cycle recovery
   queue: quality
   outcome: reduced redundant proof phases and validation report
   depends_on: WP-01
 - wp: WP-05
-  issue: null
+  issue: 3004
   title: Coverage gate ergonomics
   queue: quality
   outcome: changed-source diagnostics and focused-test guide
   depends_on: WP-04
 - wp: WP-06
-  issue: null
+  issue: 3005
   title: CodeBuddy review packet productization
   queue: tools
   outcome: review packet and product-report workflow package
@@ -83,13 +93,13 @@ work_packages:
   - Product language must preserve evidence, uncertainty, and reviewer
     responsibility.
 - wp: WP-07
-  issue: null
+  issue: 3006
   title: Review heuristics skill and demos
   queue: demo
   outcome: review heuristics docs, skill/demo updates, proof examples
   depends_on: WP-06
 - wp: WP-08
-  issue: null
+  issue: 3007
   title: Google Workspace CMS bridge demo
   queue: tools
   outcome: bounded Workspace content-card and promotion demo
@@ -101,19 +111,19 @@ work_packages:
   - Google Workspace remains collaborative draft infrastructure and must not
     override canonical Git truth without reviewed issue/PR authority.
 - wp: WP-09
-  issue: null
+  issue: 3008
   title: Rust-native GWS adapter boundary
   queue: tools
   outcome: adapter feasibility and typed contract boundary
   depends_on: WP-08
 - wp: WP-10
-  issue: null
-  title: Code modernization demo
+  issue: 3009
+  title: Moderne / OpenRewrite LST modernization demo
   queue: tools
-  outcome: Moderne/code modernization interaction demo
+  outcome: ADL-governed Moderne/OpenRewrite interaction demo
   depends_on: WP-01
 - wp: WP-11
-  issue: null
+  issue: 3010
   title: Speculative decoding prototype
   queue: runtime
   outcome: bounded speculative-decoding architecture and proof posture
@@ -127,7 +137,7 @@ work_packages:
   - Freedom Gate and ACC remain authority for side effects; token acceleration
     is not execution authority.
 - wp: WP-12
-  issue: null
+  issue: 3011
   title: Repo visibility follow-on
   queue: docs
   outcome: manifest/linkage follow-on package
@@ -140,7 +150,7 @@ work_packages:
   - The follow-on must improve reviewer/planner navigation without claiming full
     repo cognition.
 - wp: WP-13
-  issue: null
+  issue: 3012
   title: Publication program package
   queue: docs
   outcome: arXiv/Medium paper-program backlog and process docs
@@ -152,68 +162,109 @@ work_packages:
   - Publication packets must separate claims, citations, speculation, review
     status, and publication status.
 - wp: WP-14
-  issue: null
+  issue: 3013
   title: General intelligence paper packet
   queue: docs
   outcome: claim, citation, and review packet
   depends_on: WP-13
 - wp: WP-15
-  issue: null
+  issue: 3014
   title: Rustdoc and doc cleanup
   queue: docs
   outcome: rustdoc/doc cleanup patches and report
   depends_on: WP-05
 - wp: WP-16
-  issue: null
+  issue: 3015
   title: Workflow guardrails hardening
   queue: tools
   outcome: main-write, watcher, and safe-report guardrails
   depends_on: WP-04, WP-05
 - wp: WP-17
-  issue: null
+  issue: 3016
   title: Demo matrix and proof coverage
   queue: demo
   outcome: demo matrix and proof coverage record
   depends_on: WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16
 - wp: WP-18
-  issue: null
+  issue: 3017
   title: Coverage / quality gate
   queue: quality
   outcome: validation posture and test/coverage record
   depends_on: WP-17
 - wp: WP-19
-  issue: null
+  issue: 3018
   title: Docs + review pass
   queue: docs
   outcome: review-ready docs package
   depends_on: WP-18
 - wp: WP-20
-  issue: null
+  issue: 3019
   title: Internal review
   queue: review
   outcome: internal review record
   depends_on: WP-19
 - wp: WP-21
-  issue: null
+  issue: 3020
   title: External / 3rd-party review
   queue: review
   outcome: external review handoff and record
   depends_on: WP-20
 - wp: WP-22
-  issue: null
+  issue: 3021
   title: Review findings remediation
   queue: review
   outcome: remediation record and follow-up issues
   depends_on: WP-21
 - wp: WP-23
-  issue: null
+  issue: 3022
   title: Next milestone planning
   queue: docs
   outcome: v0.92/v0.93 handoff update
   depends_on: WP-22
 - wp: WP-24
-  issue: null
+  issue: 3023
   title: Release ceremony
   queue: release
   outcome: release evidence and end-of-milestone report
   depends_on: WP-23
+sprint_umbrellas:
+- sprint: Sprint 1
+  issue: 3025
+  title: Benchmark And Test-Cycle Recovery
+  ordered_children:
+  - WP-01
+  - WP-02
+  - WP-03
+  - WP-04
+  - WP-05
+- sprint: Sprint 2
+  issue: 3026
+  title: Review Product, Workspace Bridge, And Modernization
+  ordered_children:
+  - WP-06
+  - WP-07
+  - WP-08
+  - WP-09
+  - WP-10
+- sprint: Sprint 3
+  issue: 3027
+  title: Runtime Ergonomics, Publication, Docs, And Workflow Guardrails
+  ordered_children:
+  - WP-11
+  - WP-12
+  - WP-13
+  - WP-14
+  - WP-15
+  - WP-16
+- sprint: Sprint 4
+  issue: 3028
+  title: Review, Remediation, Planning, And Release
+  ordered_children:
+  - WP-17
+  - WP-18
+  - WP-19
+  - WP-20
+  - WP-21
+  - WP-22
+  - WP-23
+  - WP-24
