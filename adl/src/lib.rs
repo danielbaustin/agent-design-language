@@ -70,4 +70,5 @@ pub mod trace;
 pub mod trace_schema_v1;
 pub mod uts;
 pub mod uts_acc_compiler;
+pub mod uts_acc_multi_model_benchmark;
 pub mod uts_conformance;
