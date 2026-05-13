@@ -721,10 +721,7 @@ pub fn validate_uts_v1_1(schema: &UniversalToolSchemaV1_1) -> Result<(), UtsVali
 pub fn upgrade_uts_v1_to_v1_1(schema: UniversalToolSchemaV1) -> UniversalToolSchemaV1_1 {
     UniversalToolSchemaV1_1 {
         schema_version: UTS_SCHEMA_VERSION_V1_1.to_string(),
-        compatible_versions: vec![
-            UtsCompatibleVersionV1::V1,
-            UtsCompatibleVersionV1::V1_1,
-        ],
+        compatible_versions: vec![UtsCompatibleVersionV1::V1, UtsCompatibleVersionV1::V1_1],
         name: schema.name,
         version: schema.version,
         description: schema.description,
@@ -1001,8 +998,8 @@ mod tests {
         value["compatible_versions"] = json!(["uts.v1"]);
 
         let schema = parse_valid_v1_1(value);
-        let err =
-            validate_uts_v1_1(&schema).expect_err("v1.1 schema without current version should fail");
+        let err = validate_uts_v1_1(&schema)
+            .expect_err("v1.1 schema without current version should fail");
 
         assert!(err.codes().contains(&"missing_current_compatible_version"));
     }

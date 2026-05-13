@@ -5,11 +5,11 @@ use crate::tool_registry::{
 };
 use crate::uts::{
     UniversalToolSchemaV1_1, UtsAuthenticationModeV1, UtsAuthenticationRequirementV1,
-    UtsCategoryV1, UtsCompatibleVersionV1, UtsDataSensitivityV1, UtsDeterminismV1,
-    UtsErrorModelV1, UtsExecutionEnvironmentKindV1, UtsExecutionEnvironmentV1,
-    UtsExfiltrationRiskV1, UtsIdempotenceV1, UtsJsonSchemaFragmentV1, UtsObservabilityV1,
-    UtsPlanningMetadataV1, UtsReplaySafetyV1, UtsResourceRequirementV1, UtsSideEffectClassV1,
-    UtsSideEffectTagV1, UTS_SCHEMA_VERSION_V1_1,
+    UtsCategoryV1, UtsCompatibleVersionV1, UtsDataSensitivityV1, UtsDeterminismV1, UtsErrorModelV1,
+    UtsExecutionEnvironmentKindV1, UtsExecutionEnvironmentV1, UtsExfiltrationRiskV1,
+    UtsIdempotenceV1, UtsJsonSchemaFragmentV1, UtsObservabilityV1, UtsPlanningMetadataV1,
+    UtsReplaySafetyV1, UtsResourceRequirementV1, UtsSideEffectClassV1, UtsSideEffectTagV1,
+    UTS_SCHEMA_VERSION_V1_1,
 };
 use serde_json::json;
 use std::collections::BTreeMap;
@@ -126,10 +126,7 @@ fn schema_for_tool(
 
     UniversalToolSchemaV1_1 {
         schema_version: UTS_SCHEMA_VERSION_V1_1.to_string(),
-        compatible_versions: vec![
-            UtsCompatibleVersionV1::V1,
-            UtsCompatibleVersionV1::V1_1,
-        ],
+        compatible_versions: vec![UtsCompatibleVersionV1::V1, UtsCompatibleVersionV1::V1_1],
         name: name.to_string(),
         version: "1.0.0".to_string(),
         description: format!("Fixture schema for compiler mapping case {name}."),

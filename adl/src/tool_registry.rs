@@ -1,10 +1,9 @@
 use crate::uts::{
     upgrade_uts_v1_to_v1_1, validate_uts_v1_1, UniversalToolSchemaV1, UniversalToolSchemaV1_1,
-    UtsAuthenticationModeV1,
-    UtsAuthenticationRequirementV1, UtsDataSensitivityV1, UtsDeterminismV1, UtsErrorModelV1,
-    UtsCategoryV1, UtsCompatibleVersionV1, UtsObservabilityV1, UtsPlanningMetadataV1,
-    UtsExecutionEnvironmentKindV1, UtsExecutionEnvironmentV1, UtsExfiltrationRiskV1,
-    UtsIdempotenceV1, UtsJsonSchemaFragmentV1, UtsReplaySafetyV1, UtsResourceRequirementV1,
+    UtsAuthenticationModeV1, UtsAuthenticationRequirementV1, UtsCategoryV1, UtsCompatibleVersionV1,
+    UtsDataSensitivityV1, UtsDeterminismV1, UtsErrorModelV1, UtsExecutionEnvironmentKindV1,
+    UtsExecutionEnvironmentV1, UtsExfiltrationRiskV1, UtsIdempotenceV1, UtsJsonSchemaFragmentV1,
+    UtsObservabilityV1, UtsPlanningMetadataV1, UtsReplaySafetyV1, UtsResourceRequirementV1,
     UtsSideEffectClassV1, UtsSideEffectTagV1, UTS_SCHEMA_VERSION_V1_1,
 };
 use schemars::JsonSchema;
@@ -395,10 +394,7 @@ pub fn bind_tool_registry_v1(
 fn safe_read_uts() -> UniversalToolSchemaV1_1 {
     UniversalToolSchemaV1_1 {
         schema_version: UTS_SCHEMA_VERSION_V1_1.to_string(),
-        compatible_versions: vec![
-            UtsCompatibleVersionV1::V1,
-            UtsCompatibleVersionV1::V1_1,
-        ],
+        compatible_versions: vec![UtsCompatibleVersionV1::V1, UtsCompatibleVersionV1::V1_1],
         name: "fixture.safe_read".to_string(),
         version: "1.0.0".to_string(),
         description: "Read a bounded local fixture for registry binding tests.".to_string(),
@@ -680,7 +676,10 @@ mod tests {
         }))
         .expect("legacy uts.v1 registry fixture should deserialize");
 
-        assert_eq!(registry.tools[0].uts.schema_version, UTS_SCHEMA_VERSION_V1_1);
+        assert_eq!(
+            registry.tools[0].uts.schema_version,
+            UTS_SCHEMA_VERSION_V1_1
+        );
         assert_eq!(
             registry.tools[0].uts.compatible_versions,
             vec![UtsCompatibleVersionV1::V1, UtsCompatibleVersionV1::V1_1]
