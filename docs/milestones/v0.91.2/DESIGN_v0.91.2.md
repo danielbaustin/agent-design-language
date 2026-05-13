@@ -19,7 +19,7 @@ Key design rules:
 
 - benchmark harness and comparison report
 - runtime/test-cycle recovery packet
-- CodeBuddy/review packet productization
+- CodeFriend/review packet productization
 - Workspace bridge and adapter-boundary packet
 - modernization demo packet
 - publication packet and paper backlog
@@ -41,4 +41,3 @@ The milestone should converge toward:
 - no repo-truth replacement through external doc systems
 - no publication claims without review
 - no mass rewrite claims through modernization demos
-

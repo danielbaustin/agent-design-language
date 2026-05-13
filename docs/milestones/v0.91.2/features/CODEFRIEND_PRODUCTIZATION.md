@@ -1,17 +1,18 @@
-# CodeBuddy Productization
+# CodeFriend Productization
 
 ## Metadata
 
-- Feature Name: CodeBuddy Review Packet Productization
+- Feature Name: CodeFriend Review Packet Productization
 - Milestone Target: `v0.91.2`
 - Status: planned
 - Planned WP Home: WP-06
-- Source Docs: `.adl/docs/TBD/codebuddy_ai/`
+- Source Docs: `.adl/docs/TBD/codebuddy_ai/` legacy working-name source cluster
 - Proof Modes: review packet, product report, demo
+- Current Product/Domain Name: `CodeFriend.ai`
 
 ## Purpose
 
-Promote CodeBuddy from a set of review skills and demos into a coherent
+Promote CodeFriend from a set of review skills and demos into a coherent
 productizable review-packet workflow with evidence, diagrams, findings,
 remediation planning, and customer-grade reports.
 

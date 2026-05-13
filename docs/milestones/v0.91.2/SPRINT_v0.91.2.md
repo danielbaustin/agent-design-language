@@ -24,7 +24,7 @@ expensive, confusing test cycles.
 
 | WP | Title | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- |
-| WP-06 (#3005) | CodeBuddy review packet productization | review packet and product-report workflow package | WP-01; review skills and evidence-packet substrate |
+| WP-06 (#3005) | CodeFriend review packet productization | review packet and product-report workflow package | WP-01; review skills and evidence-packet substrate |
 | WP-07 (#3006) | Review heuristics skill and demos | review heuristics docs, skill/demo updates, proof examples | WP-06 |
 | WP-08 (#3007) | Google Workspace CMS bridge demo | bounded Workspace content-card and promotion demo | WP-01; governed-tools authority and adapter boundary |
 | WP-09 (#3008) | Rust-native GWS adapter boundary | adapter feasibility and typed contract boundary | WP-08 |

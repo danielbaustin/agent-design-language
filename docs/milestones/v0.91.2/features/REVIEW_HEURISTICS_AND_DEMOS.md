@@ -11,7 +11,7 @@
 
 ## Purpose
 
-Make ADL review heuristics repeatable enough to support CodeBuddy, internal
+Make ADL review heuristics repeatable enough to support CodeFriend, internal
 review, external review, and review-quality evaluation without inventing source
 evidence.
 
