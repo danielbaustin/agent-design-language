@@ -169,6 +169,7 @@ fn runtime_v2_theory_of_mind_foundation_write_to_path_materializes_fixture() {
     );
 }
 
+#[cfg(feature = "slow-proof-tests")]
 #[test]
 fn runtime_v2_theory_of_mind_foundation_write_to_root_materializes_fixture() {
     let packet =
