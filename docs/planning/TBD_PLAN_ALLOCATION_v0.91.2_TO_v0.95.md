@@ -50,7 +50,7 @@ source notes to tracked execution homes.
 | `memory_identity/` | `v0.92` identity, stable name, memory grounding, and witness features | Partially allocated. The identity-continuity slice is scheduled, but `ADL_MEMORY_PALACE_ARCHITECTURE.md` remains deferred provenance until a bounded runtime, replay, visualization, or identity-continuity slice explicitly consumes it. |
 | `moral_governance/` | `v0.91` moral baseline; `v0.93` constitutional citizenship and polis governance | Allocated. |
 | `multiagent_demos/` | `v0.95` demo catalog and MVP walkthrough | Allocated. Keep as source candidates until the demo catalog issue chooses what ships. |
-| `planning/` | Operator-edited GTM/business planning | Excluded from this allocation pass. These docs are still being edited and should not be treated as unallocated technical execution work. |
+| `planning/` | Operator-edited planning material | Excluded from this allocation pass. Ignore `TBD/planning/` for now. |
 | `publication/` | `v0.91.2` publication program and paper packet lane; `v0.95` publication polish | Allocated. |
 | `repo_visibility/` | `v0.91.2` repo visibility follow-on; `v0.95` repo-cognition convergence | Allocated. |
 | `retired/` | Local archive | Allocated as archive. Do not treat as active execution scope. |
@@ -69,7 +69,7 @@ source notes to tracked execution homes.
 | `ADL_DOC_CLEANUP_LEDGER.md` | `v0.91.2` WP-15 rustdoc/doc cleanup | Allocated. |
 | `AI_CHARACTER_AUDIT.md` | None before `v0.95` | Unallocated/deferred. Candidate home is a CodeFriend/product-voice or docs-style issue. |
 | `ARXIV_AUTHORING_PROCESS_NOTES.md` | `v0.91.2` publication program | Allocated. |
-| `AXIOM_OF_CONSTRUCTABILITY.md` | None before `v0.95` | Unallocated/deferred. Candidate home is a future paper/source-philosophy issue. |
+| `AXIOM_OF_CONSTRUCTABILITY.md` | Local backlog `LB-097` | Deferred/candidate. Preserve for a future architecture, publication, runtime validation, or CSM ontology lane. |
 | `BROADCAST_AUDIO_ROADMAP_v0911.md` | `v0.91.1` broadcast-audio sprint provenance | Delivered/provenance. Preserve in place per operator direction. |
 | `CODEFRIEND_PLANNING.md` | `v0.91.2` CodeFriend productization; `v0.95` MVP polish | Allocated. |
 | `HEY_JUDE_AUDIO_UPGRADE_PLAN.md` | Delivered audio/demo provenance; `v0.95` demo catalog if reused | Allocated as demo source material. |
@@ -101,19 +101,16 @@ source notes to tracked execution homes.
 
 ## Not Yet Allocated For Execution Before v0.95
 
-The current audit found three root plan notes that are not clearly
+The current audit found two root plan notes that are not clearly
 allocated to execution before or through `v0.95`:
 
 - `AI_CHARACTER_AUDIT.md`: useful style/product signal, but no milestone issue
   currently owns it.
-- `AXIOM_OF_CONSTRUCTABILITY.md`: research/philosophy source note, but no
-  tracked paper or feature issue currently consumes it.
 - `V0912_ADR_PLAN_2026-05-13.md`: process-planning note for ADRs that should
   become tracked ADR authoring issues before it is counted as scheduled work.
 
-The `planning/` subdirectory and the root startup-grants note are explicitly
-out of scope for this pass because the operator is still editing the GTM and
-business-planning material.
+The `planning/` subdirectory is explicitly out of scope for this pass. Ignore
+`TBD/planning/` for now.
 
 ## Cleanup Recommendations
 
