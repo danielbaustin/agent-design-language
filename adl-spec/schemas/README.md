@@ -7,6 +7,9 @@ Place versioned schema outputs here and keep narrative documentation in parent d
 
 - `adl_constitution.yaml` — constitutional governance artifact for delegation/runtime planning
 - `freedom_gate_event.yaml` — Freedom Gate event schema
+- `uts/v1.0/universal_tool_schema.v1.schema.json` — machine-readable current UTS baseline
+- `uts/v1.1/universal_tool_schema.v1_1.schema.json` — additive UTS v1.1 proposal tool schema
+- `uts/v1.1/tool_invocation.v1_1.schema.json` — additive UTS v1.1 proposal invocation schema
 - future schema artifacts for ADL language versions
 
 ## See Also / Canonical Docs
