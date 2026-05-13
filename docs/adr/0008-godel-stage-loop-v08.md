@@ -6,20 +6,20 @@ Accepted (v0.8).
 
 ## Context
 
-v0.8 introduces a real bounded Gödel runtime surface under `swarm/src/godel/`
+v0.8 introduces a real bounded Gödel runtime surface under `adl/src/godel/`
 with deterministic tests, canonical artifacts, and runnable demos. Review
 feedback highlighted that the implementation is now substantial enough to need
 an explicit architecture decision record, not just milestone prose.
 
 The shipped runtime surfaces are centered on:
-- `swarm/src/godel/stage_loop.rs`
-- `swarm/src/godel/hypothesis.rs`
-- `swarm/src/godel/mutation.rs`
-- `swarm/src/godel/evaluation.rs`
-- `swarm/src/godel/experiment_record.rs`
-- `swarm/src/godel/obsmem_index.rs`
-- `swarm/src/godel/workflow_template.rs`
-- `swarm/src/demo.rs` (`demo-c-godel-runtime`, `demo-d-godel-obsmem-loop`)
+- `adl/src/godel/stage_loop.rs`
+- `adl/src/godel/hypothesis.rs`
+- `adl/src/godel/mutation.rs`
+- `adl/src/godel/evaluation.rs`
+- `adl/src/godel/experiment_record.rs`
+- `adl/src/godel/obsmem_index.rs`
+- `adl/src/godel/workflow_template.rs`
+- `adl/src/demo.rs` (`demo-c-godel-runtime`, `demo-d-godel-obsmem-loop`)
 
 The main architectural question for v0.8 is not whether ADL has a full
 autonomous self-improvement agent. It does not. The question is how to expose a
