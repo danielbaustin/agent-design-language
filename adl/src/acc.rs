@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 
 pub const ACC_SCHEMA_VERSION_V1: &str = "acc.v1";
+pub const ACC_SCHEMA_VERSION_V1_0: &str = ACC_SCHEMA_VERSION_V1;
+pub const ACC_SCHEMA_VERSION_V1_1: &str = "acc.v1.1";
 pub const ACC_MAX_DELEGATION_DEPTH_V1: u8 = 8;
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -266,6 +268,42 @@ pub struct AdlCapabilityContractV1 {
     pub decision: AccDecisionV1,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct AccDelegationConstraintsV1_1 {
+    pub max_depth: u8,
+    pub allow_redelegation: bool,
+    #[serde(default)]
+    pub scope_ceiling: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct AdlCapabilityContractV1_1 {
+    pub schema_version: String,
+    #[serde(default)]
+    pub compatible_versions: Option<Vec<String>>,
+    #[serde(default)]
+    pub governance_profile: Option<String>,
+    pub contract_id: String,
+    pub tool: AccToolReferenceV1,
+    pub actor: AccActorIdentityV1,
+    pub authority_grant: AccAuthorityGrantV1,
+    pub role_standing: AccRoleStandingV1,
+    pub delegation_chain: Vec<AccDelegationStepV1>,
+    #[serde(default)]
+    pub delegation_constraints: Option<AccDelegationConstraintsV1_1>,
+    pub capability: AccCapabilityRequirementV1,
+    pub policy_checks: Vec<AccPolicyCheckV1>,
+    pub confirmation: AccConfirmationRequirementV1,
+    pub freedom_gate: AccFreedomGateRequirementV1,
+    pub execution: AccExecutionSemanticsV1,
+    pub trace_replay: AccTraceReplayV1,
+    pub privacy_redaction: AccPrivacyRedactionV1,
+    pub failure_policy: AccFailurePolicyV1,
+    pub decision: AccDecisionV1,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AccValidationError {
     pub code: &'static str,
@@ -408,6 +446,27 @@ fn policy_evidence_ref_is_known(contract: &AdlCapabilityContractV1, evidence_ref
             .delegation_chain
             .iter()
             .any(|step| step.delegation_id == evidence_ref)
+}
+
+fn project_acc_v1_1_to_v1(contract: &AdlCapabilityContractV1_1) -> AdlCapabilityContractV1 {
+    AdlCapabilityContractV1 {
+        schema_version: ACC_SCHEMA_VERSION_V1.to_string(),
+        contract_id: contract.contract_id.clone(),
+        tool: contract.tool.clone(),
+        actor: contract.actor.clone(),
+        authority_grant: contract.authority_grant.clone(),
+        role_standing: contract.role_standing.clone(),
+        delegation_chain: contract.delegation_chain.clone(),
+        capability: contract.capability.clone(),
+        policy_checks: contract.policy_checks.clone(),
+        confirmation: contract.confirmation.clone(),
+        freedom_gate: contract.freedom_gate.clone(),
+        execution: contract.execution.clone(),
+        trace_replay: contract.trace_replay.clone(),
+        privacy_redaction: contract.privacy_redaction.clone(),
+        failure_policy: contract.failure_policy.clone(),
+        decision: contract.decision.clone(),
+    }
 }
 
 pub fn validate_acc_v1(contract: &AdlCapabilityContractV1) -> Result<(), AccValidationReport> {
@@ -755,9 +814,148 @@ pub fn validate_acc_v1(contract: &AdlCapabilityContractV1) -> Result<(), AccVali
     }
 }
 
+pub fn upgrade_acc_v1_to_v1_1(contract: AdlCapabilityContractV1) -> AdlCapabilityContractV1_1 {
+    AdlCapabilityContractV1_1 {
+        schema_version: ACC_SCHEMA_VERSION_V1_1.to_string(),
+        compatible_versions: Some(vec![
+            ACC_SCHEMA_VERSION_V1.to_string(),
+            ACC_SCHEMA_VERSION_V1_1.to_string(),
+        ]),
+        governance_profile: Some("standard_reviewed_runtime".to_string()),
+        contract_id: contract.contract_id,
+        tool: contract.tool,
+        actor: contract.actor,
+        authority_grant: contract.authority_grant,
+        role_standing: contract.role_standing,
+        delegation_chain: contract.delegation_chain,
+        delegation_constraints: None,
+        capability: contract.capability,
+        policy_checks: contract.policy_checks,
+        confirmation: contract.confirmation,
+        freedom_gate: contract.freedom_gate,
+        execution: contract.execution,
+        trace_replay: contract.trace_replay,
+        privacy_redaction: contract.privacy_redaction,
+        failure_policy: contract.failure_policy,
+        decision: contract.decision,
+    }
+}
+
+impl From<AdlCapabilityContractV1> for AdlCapabilityContractV1_1 {
+    fn from(contract: AdlCapabilityContractV1) -> Self {
+        upgrade_acc_v1_to_v1_1(contract)
+    }
+}
+
+pub fn validate_acc_v1_1(contract: &AdlCapabilityContractV1_1) -> Result<(), AccValidationReport> {
+    let mut projected = project_acc_v1_1_to_v1(contract);
+    projected.schema_version = ACC_SCHEMA_VERSION_V1.to_string();
+    let mut errors = match validate_acc_v1(&projected) {
+        Ok(()) => Vec::new(),
+        Err(report) => report.errors,
+    };
+
+    if contract.schema_version != ACC_SCHEMA_VERSION_V1_1 {
+        push_error(
+            &mut errors,
+            "unsupported_schema_version",
+            "schema_version",
+            format!("schema_version must be {ACC_SCHEMA_VERSION_V1_1}"),
+        );
+    }
+
+    if let Some(compatible_versions) = &contract.compatible_versions {
+        if compatible_versions.is_empty() {
+            push_error(
+                &mut errors,
+                "invalid_compatible_versions",
+                "compatible_versions",
+                "compatible_versions must not be empty when present",
+            );
+        } else if !compatible_versions
+            .iter()
+            .any(|version| version == ACC_SCHEMA_VERSION_V1_1)
+        {
+            push_error(
+                &mut errors,
+                "missing_self_compatible_version",
+                "compatible_versions",
+                "compatible_versions must include acc.v1.1 when present",
+            );
+        }
+    }
+
+    if contract
+        .governance_profile
+        .as_deref()
+        .is_some_and(|profile| !valid_token(profile))
+    {
+        push_error(
+            &mut errors,
+            "invalid_governance_profile",
+            "governance_profile",
+            "governance_profile must be a non-empty token",
+        );
+    }
+
+    if let Some(constraints) = &contract.delegation_constraints {
+        if constraints.max_depth == 0 || constraints.max_depth > ACC_MAX_DELEGATION_DEPTH_V1 {
+            push_error(
+                &mut errors,
+                "invalid_delegation_constraints",
+                "delegation_constraints.max_depth",
+                "delegation_constraints.max_depth must stay within the ACC delegation bound",
+            );
+        }
+        if constraints
+            .scope_ceiling
+            .as_deref()
+            .is_some_and(|scope| scope.trim().is_empty())
+        {
+            push_error(
+                &mut errors,
+                "invalid_delegation_constraints",
+                "delegation_constraints.scope_ceiling",
+                "delegation_constraints.scope_ceiling must be omitted or non-empty",
+            );
+        }
+        if contract
+            .delegation_chain
+            .iter()
+            .any(|step| step.depth > constraints.max_depth)
+        {
+            push_error(
+                &mut errors,
+                "delegation_constraints_exceeded",
+                "delegation_constraints.max_depth",
+                "delegation chain depth must not exceed delegation_constraints.max_depth",
+            );
+        }
+        if !constraints.allow_redelegation && contract.delegation_chain.len() > 1 {
+            push_error(
+                &mut errors,
+                "redelegation_not_allowed",
+                "delegation_constraints.allow_redelegation",
+                "delegation chain cannot redelegate when allow_redelegation is false",
+            );
+        }
+    }
+
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(AccValidationReport { errors })
+    }
+}
+
 pub fn acc_v1_schema_json() -> JsonValue {
     serde_json::to_value(schema_for!(AdlCapabilityContractV1))
         .expect("ACC v1 schema should serialize")
+}
+
+pub fn acc_v1_1_schema_json() -> JsonValue {
+    serde_json::to_value(schema_for!(AdlCapabilityContractV1_1))
+        .expect("ACC v1.1 schema should serialize")
 }
 
 fn base_contract(id: &'static str) -> AdlCapabilityContractV1 {
@@ -1006,6 +1204,21 @@ mod tests {
         validate_acc_v1(&contract).expect("allowed authority fixture should pass");
         assert_eq!(contract.decision, AccDecisionV1::Allowed);
         assert!(contract.execution.approved_for_execution);
+    }
+
+    #[test]
+    fn acc_v1_1_upgraded_allowed_authority_fixture_passes() {
+        let contract = upgrade_acc_v1_to_v1_1(base_contract("acc.fixture.allowed_safe_read"));
+
+        validate_acc_v1_1(&contract).expect("upgraded authority fixture should pass");
+        assert_eq!(contract.schema_version, ACC_SCHEMA_VERSION_V1_1);
+        assert_eq!(
+            contract
+                .compatible_versions
+                .as_ref()
+                .expect("compatible versions"),
+            &vec!["acc.v1".to_string(), "acc.v1.1".to_string()]
+        );
     }
 
     #[test]
@@ -1327,6 +1540,27 @@ mod tests {
             assert!(
                 properties.contains_key(key),
                 "ACC schema missing property {key}"
+            );
+        }
+    }
+
+    #[test]
+    fn acc_v1_1_schema_generation_exposes_additive_governance_surface() {
+        let schema = acc_v1_1_schema_json();
+        let properties = schema
+            .get("properties")
+            .and_then(JsonValue::as_object)
+            .expect("generated ACC v1.1 schema should expose properties");
+
+        for key in [
+            "schema_version",
+            "compatible_versions",
+            "governance_profile",
+            "delegation_constraints",
+        ] {
+            assert!(
+                properties.contains_key(key),
+                "ACC v1.1 schema missing property {key}"
             );
         }
     }

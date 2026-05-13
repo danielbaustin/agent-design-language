@@ -1,5 +1,8 @@
 use super::*;
-use crate::acc::{validate_acc_v1, AccDecisionV1};
+use crate::acc::{
+    validate_acc_v1, validate_acc_v1_1, AccDecisionV1, ACC_SCHEMA_VERSION_V1,
+    ACC_SCHEMA_VERSION_V1_1,
+};
 use crate::uts::{UtsCategoryV1, UtsObservabilityV1, UtsResourceRequirementV1, UtsSideEffectTagV1};
 use serde_json::json;
 use std::collections::BTreeMap;
@@ -57,6 +60,7 @@ fn wp09_maps_safe_read_to_allowed_acc() {
     assert_eq!(acc.decision, AccDecisionV1::Allowed);
     assert_eq!(acc.tool.tool_name, "fixture.safe_read");
     validate_acc_v1(&acc).expect("compiled safe-read ACC should validate");
+    assert_eq!(acc.schema_version, ACC_SCHEMA_VERSION_V1);
 }
 
 #[test]
@@ -191,6 +195,25 @@ fn wp09_maps_delegated_local_write_to_delegated_acc() {
     assert!(!acc.execution.approved_for_execution);
     assert_eq!(acc.delegation_chain.len(), 1);
     validate_acc_v1(&acc).expect("compiled delegated ACC should validate");
+}
+
+#[test]
+fn wp09_maps_safe_read_to_allowed_acc_v1_1() {
+    let input = wp09_compiler_input_fixture("fixture.safe_read");
+    let outcome = compile_uts_to_acc_v1_1(&input);
+
+    assert_eq!(outcome.decision, UtsAccCompilerDecisionV1::AccEmitted);
+    let acc = outcome.acc.expect("safe read should compile to ACC v1.1");
+    assert_eq!(acc.decision, AccDecisionV1::Allowed);
+    validate_acc_v1_1(&acc).expect("compiled safe-read ACC v1.1 should validate");
+    assert_eq!(acc.schema_version, ACC_SCHEMA_VERSION_V1_1);
+    assert_eq!(
+        acc.compatible_versions
+            .as_ref()
+            .expect("compatible versions"),
+        &vec!["acc.v1".to_string(), "acc.v1.1".to_string()]
+    );
+    assert!(acc.delegation_constraints.is_some());
 }
 
 #[test]
