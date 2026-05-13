@@ -9,7 +9,7 @@ packets, demos, and milestone evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.91.1%20closeout-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.91.2%20active-blue)
 
 ![ADL deterministic cognitive architecture overview](docs/assets/ADL-overview.png)
 
@@ -142,14 +142,29 @@ from issue
 
 ## Recent Milestones
 
-### v0.91.1 - Inhabited Runtime Readiness Closeout
+### v0.91.2 - Active Tooling, Evaluation, Productization, And Workflow Pressure Release
 
-v0.91.1 is in release closeout. The core implementation, review,
-next-milestone handoff, and final next-milestone review-pass wave are landed,
-and `WP-24` is now carrying the ceremony package that closes the milestone
-cleanly before `v0.91.2`.
+v0.91.2 is the active pressure-release milestone. Its issue wave is open as
+`#3000` through `#3023`, with sprint-conductor umbrella issues `#3025` through
+`#3028`. The milestone focuses on UTS + ACC benchmarking, runtime/test-cycle
+recovery, CodeFriend productization, Workspace bridge work, modernization,
+publication packets, rustdoc/doc cleanup, repo-visibility follow-on work, and
+workflow guardrails.
 
-It should end with an observatory-visible agent runtime proof inside the CSM
+Start here:
+
+- [v0.91.2 README](docs/milestones/v0.91.2/README.md)
+- [v0.91.2 issue wave](docs/milestones/v0.91.2/WP_ISSUE_WAVE_v0.91.2.yaml)
+- [v0.91.2 sprint plan](docs/milestones/v0.91.2/SPRINT_v0.91.2.md)
+- [v0.91.2 sprint-conductor plan](docs/milestones/v0.91.2/SPRINT_CONDUCTOR_EXECUTION_PLAN_v0.91.2.md)
+
+### v0.91.1 - Completed Inhabited Runtime Readiness Milestone
+
+v0.91.1 is complete. The core implementation, review, next-milestone handoff,
+final next-milestone review-pass wave, and release ceremony package landed
+before v0.91.2 opened.
+
+It ended with an observatory-visible agent runtime proof inside the CSM
 boundary: lifecycle state, citizen standing/state, memory/identity
 architecture, Theory of Mind, capability testing, intelligence metrics,
 governed learning, secure ACIP/A2A hardening, and an agent-shaped runtime run
@@ -181,7 +196,7 @@ Start here:
 
 ### v0.90.5 - Completed Governed Tools v1.0
 
-v0.90.5 is the most recently completed milestone. It landed Governed Tools v1.0:
+v0.90.5 is the completed Governed Tools v1.0 milestone. It landed:
 Universal Tool Schema, ADL Capability Contract, deterministic registry and
 compiler surfaces, governed execution policy, trace/replay/redaction evidence,
 dangerous negative proofs, model compatibility work, and the first ACIP/Comms
@@ -218,10 +233,10 @@ production markets.
 
 ## Project Status
 
-- Active milestone: v0.91.1
-- Current crate version: 0.91.1
-- Most recently completed milestone: v0.91
-- Current release-tail state: v0.91 released; v0.91.1 is in final ceremony closeout before v0.91.2
+- Active milestone: v0.91.2
+- Current crate version: 0.91.2
+- Most recently completed milestone: v0.91.1
+- Current release-tail state: v0.91.1 complete; v0.91.2 active issue wave open
 - Previous completed milestone: v0.90.5
 - Primary implementation language: Rust
 
