@@ -16,6 +16,8 @@ mod cognitive_being_flagship_demo;
 mod common;
 mod contract_lifecycle_state;
 mod contract_market_demo;
+#[cfg(feature = "slow-proof-tests")]
+mod contract_registry_accessors;
 mod contract_schema;
 mod csm_run_packet;
 mod cultivating_intelligence;
