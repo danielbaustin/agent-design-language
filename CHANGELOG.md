@@ -2,13 +2,28 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.91.1 (Release closeout in progress)
+## v0.91.2 (Active milestone)
 
-Status: Release closeout in progress. The v0.91.1 issue wave is open as
-`#2823-#2846`, the crate version has advanced to `0.91.1` for the
-inhabited-runtime readiness line, and the milestone has completed its review,
-remediation, handoff, and next-milestone review-pass stages. `WP-24` is now
-recording the final ceremony package.
+Status: Active. The v0.91.2 issue wave is open as `#3000-#3023`, the
+sprint-conductor umbrellas are open as `#3025-#3028`, and the crate version has
+advanced to `0.91.2` for the tooling, evaluation, productization, publication,
+and workflow pressure-release line.
+
+Planning notes:
+- The tracked v0.91.2 package lives under `docs/milestones/v0.91.2/`.
+- WP-01 opened the issue wave and prepared the milestone execution surfaces.
+- The milestone includes UTS + ACC benchmark work, runtime/test-cycle recovery,
+  CodeFriend productization, Workspace bridge work, modernization, publication
+  packets, rustdoc/doc cleanup, repo-visibility follow-on work, and workflow
+  guardrails.
+- This is an active milestone entry, not a release entry.
+
+## v0.91.1 (Completed milestone)
+
+Status: Completed. The v0.91.1 issue wave opened as `#2823-#2846`, the crate
+version advanced to `0.91.1` for the inhabited-runtime readiness line, and the
+milestone completed implementation, review, remediation, handoff,
+next-milestone review-pass, and release ceremony stages.
 
 Planning notes:
 - The tracked v0.91.1 package lives under `docs/milestones/v0.91.1/`.
@@ -18,8 +33,9 @@ Planning notes:
 - WP-19 aligns the reviewer-entry docs, release surfaces, changelog, and root
   README before internal and third-party review.
 - WP-20 through WP-22 are complete with explicit zero-findings remediation truth.
-- WP-23 and WP-23A now leave the downstream milestone package planned and reviewed before ceremony.
-- This is not a release entry; v0.91 remains the most recently completed
+- WP-23 and WP-23A left the downstream milestone package planned and reviewed
+  before ceremony.
+- This is not a release entry; v0.91 remains the most recently published
   release line.
 
 ## v0.91 (Released 2026-05-07)
