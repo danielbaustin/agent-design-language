@@ -75,4 +75,27 @@ mod tests {
         assert!(body.contains("provider_native_tool_call_comparison.v1"));
         fs::remove_file(&path).expect("remove report");
     }
+
+    #[test]
+    fn demo_v0912_provider_native_tool_call_comparison_write_report_adds_context_on_failure() {
+        let dir = std::env::temp_dir().join(format!(
+            "provider-native-tool-call-comparison-dir-{}",
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("system time should be valid")
+                .as_nanos()
+        ));
+        fs::create_dir_all(&dir).expect("create temp dir");
+
+        let error = write_report(&dir).expect_err("directory path should fail");
+        let message = error.to_string();
+        let context = error
+            .source()
+            .map(|source| source.to_string())
+            .unwrap_or_default();
+        assert!(message.contains("write provider-native tool-call comparison report"));
+        assert!(message.contains(&dir.display().to_string()) || context.contains("Is a directory"));
+
+        fs::remove_dir_all(&dir).expect("remove temp dir");
+    }
 }
