@@ -1,12 +1,14 @@
 use crate::uts::{
-    validate_uts_v1, UniversalToolSchemaV1, UtsAuthenticationModeV1,
+    upgrade_uts_v1_to_v1_1, validate_uts_v1_1, UniversalToolSchemaV1, UniversalToolSchemaV1_1,
+    UtsAuthenticationModeV1,
     UtsAuthenticationRequirementV1, UtsDataSensitivityV1, UtsDeterminismV1, UtsErrorModelV1,
+    UtsCategoryV1, UtsCompatibleVersionV1, UtsObservabilityV1, UtsPlanningMetadataV1,
     UtsExecutionEnvironmentKindV1, UtsExecutionEnvironmentV1, UtsExfiltrationRiskV1,
     UtsIdempotenceV1, UtsJsonSchemaFragmentV1, UtsReplaySafetyV1, UtsResourceRequirementV1,
-    UtsSideEffectClassV1, UTS_SCHEMA_VERSION_V1,
+    UtsSideEffectClassV1, UtsSideEffectTagV1, UTS_SCHEMA_VERSION_V1_1,
 };
 use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::json;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -46,8 +48,49 @@ pub struct RegisteredToolV1 {
     pub tool_name: String,
     pub tool_version: String,
     pub active: bool,
-    pub uts: UniversalToolSchemaV1,
+    #[serde(deserialize_with = "deserialize_registered_tool_uts")]
+    pub uts: UniversalToolSchemaV1_1,
     pub approved_adapter_ids: Vec<String>,
+}
+
+impl RegisteredToolV1 {
+    pub fn new(
+        registry_tool_id: String,
+        tool_name: String,
+        tool_version: String,
+        active: bool,
+        uts: impl Into<UniversalToolSchemaV1_1>,
+        approved_adapter_ids: Vec<String>,
+    ) -> Self {
+        Self {
+            registry_tool_id,
+            tool_name,
+            tool_version,
+            active,
+            uts: uts.into(),
+            approved_adapter_ids,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, PartialEq)]
+#[serde(untagged)]
+enum RegisteredToolUtsWireV1 {
+    V1(UniversalToolSchemaV1),
+    V1_1(UniversalToolSchemaV1_1),
+}
+
+fn deserialize_registered_tool_uts<'de, D>(
+    deserializer: D,
+) -> Result<UniversalToolSchemaV1_1, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let wire = RegisteredToolUtsWireV1::deserialize(deserializer)?;
+    Ok(match wire {
+        RegisteredToolUtsWireV1::V1(schema) => upgrade_uts_v1_to_v1_1(schema),
+        RegisteredToolUtsWireV1::V1_1(schema) => schema,
+    })
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -181,7 +224,7 @@ pub fn validate_tool_registry_v1(
                 )],
             )));
         }
-        if let Err(report) = validate_uts_v1(&tool.uts) {
+        if let Err(report) = validate_uts_v1_1(&tool.uts) {
             return Err(Box::new(reject(
                 ToolRegistryRejectionCodeV1::InvalidUts,
                 report
@@ -349,12 +392,17 @@ pub fn bind_tool_registry_v1(
     }
 }
 
-fn safe_read_uts() -> UniversalToolSchemaV1 {
-    UniversalToolSchemaV1 {
-        schema_version: UTS_SCHEMA_VERSION_V1.to_string(),
+fn safe_read_uts() -> UniversalToolSchemaV1_1 {
+    UniversalToolSchemaV1_1 {
+        schema_version: UTS_SCHEMA_VERSION_V1_1.to_string(),
+        compatible_versions: vec![
+            UtsCompatibleVersionV1::V1,
+            UtsCompatibleVersionV1::V1_1,
+        ],
         name: "fixture.safe_read".to_string(),
         version: "1.0.0".to_string(),
         description: "Read a bounded local fixture for registry binding tests.".to_string(),
+        categories: Some(vec![UtsCategoryV1::ReadOnly]),
         input_schema: UtsJsonSchemaFragmentV1 {
             schema_type: "object".to_string(),
             keywords: BTreeMap::from([
@@ -378,6 +426,7 @@ fn safe_read_uts() -> UniversalToolSchemaV1 {
             ]),
         },
         side_effect_class: UtsSideEffectClassV1::Read,
+        side_effects: Some(vec![UtsSideEffectTagV1::None]),
         determinism: UtsDeterminismV1::Deterministic,
         replay_safety: UtsReplaySafetyV1::ReplaySafe,
         idempotence: UtsIdempotenceV1::Idempotent,
@@ -400,6 +449,11 @@ fn safe_read_uts() -> UniversalToolSchemaV1 {
             message: "The requested fixture is not available.".to_string(),
             retryable: false,
         }],
+        observability: Some(UtsObservabilityV1::Basic),
+        planning: Some(UtsPlanningMetadataV1 {
+            review_recommended: Some(false),
+            ..UtsPlanningMetadataV1::default()
+        }),
         extensions: BTreeMap::new(),
     }
 }
@@ -426,6 +480,8 @@ pub fn wp08_tool_registry_v1_fixture() -> ToolRegistryV1 {
                     let mut uts = safe_read_uts();
                     uts.name = "fixture.disabled_write".to_string();
                     uts.side_effect_class = UtsSideEffectClassV1::LocalWrite;
+                    uts.categories = Some(vec![UtsCategoryV1::StateMutating]);
+                    uts.side_effects = Some(vec![UtsSideEffectTagV1::LocalState]);
                     uts.resources = vec![UtsResourceRequirementV1 {
                         resource_type: "fixture".to_string(),
                         scope: "local-disabled-write".to_string(),
@@ -535,6 +591,7 @@ pub fn wp08_registry_rejection_fixtures(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::json;
 
     fn valid_request() -> ToolBindingRequestV1 {
         ToolBindingRequestV1 {
@@ -560,6 +617,132 @@ mod tests {
             .evidence
             .iter()
             .any(|entry| entry.contains(TOOL_REGISTRY_SCHEMA_VERSION_V1)));
+    }
+
+    #[test]
+    fn wp08_registry_deserialize_accepts_legacy_uts_v1_and_upgrades_for_binding() {
+        let registry = serde_json::from_value::<ToolRegistryV1>(json!({
+            "schema_version": "tool_registry.v1",
+            "registry_id": "registry.legacy.fixture",
+            "tools": [{
+                "registry_tool_id": "registry.fixture.safe_read",
+                "tool_name": "fixture.safe_read",
+                "tool_version": "1.0.0",
+                "active": true,
+                "uts": {
+                    "schema_version": "uts.v1",
+                    "name": "fixture.safe_read",
+                    "version": "1.0.0",
+                    "description": "Read a bounded local fixture for registry binding tests.",
+                    "input_schema": {
+                        "type": "object",
+                        "properties": { "fixture_id": { "type": "string" } },
+                        "required": ["fixture_id"],
+                        "additionalProperties": false
+                    },
+                    "output_schema": {
+                        "type": "object",
+                        "properties": { "content": { "type": "string" } },
+                        "required": ["content"],
+                        "additionalProperties": false
+                    },
+                    "side_effect_class": "read",
+                    "determinism": "deterministic",
+                    "replay_safety": "replay_safe",
+                    "idempotence": "idempotent",
+                    "resources": [{ "resource_type": "fixture", "scope": "local-readonly" }],
+                    "authentication": { "mode": "none", "required": false },
+                    "data_sensitivity": "internal",
+                    "exfiltration_risk": "none",
+                    "execution_environment": {
+                        "kind": "dry_run",
+                        "isolation": "deterministic fixture dry run only"
+                    },
+                    "errors": [{
+                        "code": "fixture_not_found",
+                        "message": "The requested fixture is not available.",
+                        "retryable": false
+                    }],
+                    "extensions": {}
+                },
+                "approved_adapter_ids": ["adapter.fixture.safe_read.dry_run"]
+            }],
+            "adapters": [{
+                "adapter_id": "adapter.fixture.safe_read.dry_run",
+                "tool_name": "fixture.safe_read",
+                "tool_version": "1.0.0",
+                "capability_id": "capability.fixture.safe-read",
+                "side_effect_class": "read",
+                "execution_environment": "dry_run",
+                "supports_dry_run": true,
+                "approved_for_binding": true
+            }]
+        }))
+        .expect("legacy uts.v1 registry fixture should deserialize");
+
+        assert_eq!(registry.tools[0].uts.schema_version, UTS_SCHEMA_VERSION_V1_1);
+        assert_eq!(
+            registry.tools[0].uts.compatible_versions,
+            vec![UtsCompatibleVersionV1::V1, UtsCompatibleVersionV1::V1_1]
+        );
+        validate_tool_registry_v1(&registry).expect("upgraded legacy registry should validate");
+    }
+
+    #[test]
+    fn wp08_registered_tool_constructor_accepts_programmatic_legacy_uts_v1() {
+        let legacy = UniversalToolSchemaV1 {
+            schema_version: "uts.v1".to_string(),
+            name: "fixture.safe_read".to_string(),
+            version: "1.0.0".to_string(),
+            description: "Read a bounded local fixture for registry binding tests.".to_string(),
+            input_schema: UtsJsonSchemaFragmentV1 {
+                schema_type: "object".to_string(),
+                keywords: BTreeMap::new(),
+            },
+            output_schema: UtsJsonSchemaFragmentV1 {
+                schema_type: "object".to_string(),
+                keywords: BTreeMap::new(),
+            },
+            side_effect_class: UtsSideEffectClassV1::Read,
+            determinism: UtsDeterminismV1::Deterministic,
+            replay_safety: UtsReplaySafetyV1::ReplaySafe,
+            idempotence: UtsIdempotenceV1::Idempotent,
+            resources: vec![UtsResourceRequirementV1 {
+                resource_type: "fixture".to_string(),
+                scope: "local-readonly".to_string(),
+            }],
+            authentication: UtsAuthenticationRequirementV1 {
+                mode: UtsAuthenticationModeV1::None,
+                required: false,
+            },
+            data_sensitivity: UtsDataSensitivityV1::Internal,
+            exfiltration_risk: UtsExfiltrationRiskV1::None,
+            execution_environment: UtsExecutionEnvironmentV1 {
+                kind: UtsExecutionEnvironmentKindV1::DryRun,
+                isolation: "deterministic fixture dry run only".to_string(),
+            },
+            errors: vec![UtsErrorModelV1 {
+                code: "fixture_not_found".to_string(),
+                message: "The requested fixture is not available.".to_string(),
+                retryable: false,
+            }],
+            extensions: BTreeMap::new(),
+        };
+
+        let tool = RegisteredToolV1::new(
+            "registry.fixture.safe_read".to_string(),
+            "fixture.safe_read".to_string(),
+            "1.0.0".to_string(),
+            true,
+            legacy,
+            vec!["adapter.fixture.safe_read.dry_run".to_string()],
+        );
+
+        assert_eq!(tool.uts.schema_version, UTS_SCHEMA_VERSION_V1_1);
+        assert_eq!(
+            tool.uts.compatible_versions,
+            vec![UtsCompatibleVersionV1::V1, UtsCompatibleVersionV1::V1_1]
+        );
     }
 
     #[test]

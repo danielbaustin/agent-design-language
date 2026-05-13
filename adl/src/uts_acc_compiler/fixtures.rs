@@ -4,10 +4,12 @@ use crate::tool_registry::{
     wp08_tool_registry_v1_fixture, RegisteredToolV1, ToolAdapterCapabilityV1, ToolRegistryV1,
 };
 use crate::uts::{
-    UniversalToolSchemaV1, UtsAuthenticationModeV1, UtsAuthenticationRequirementV1,
-    UtsDataSensitivityV1, UtsDeterminismV1, UtsErrorModelV1, UtsExecutionEnvironmentKindV1,
-    UtsExecutionEnvironmentV1, UtsExfiltrationRiskV1, UtsIdempotenceV1, UtsJsonSchemaFragmentV1,
-    UtsReplaySafetyV1, UtsResourceRequirementV1, UtsSideEffectClassV1, UTS_SCHEMA_VERSION_V1,
+    UniversalToolSchemaV1_1, UtsAuthenticationModeV1, UtsAuthenticationRequirementV1,
+    UtsCategoryV1, UtsCompatibleVersionV1, UtsDataSensitivityV1, UtsDeterminismV1,
+    UtsErrorModelV1, UtsExecutionEnvironmentKindV1, UtsExecutionEnvironmentV1,
+    UtsExfiltrationRiskV1, UtsIdempotenceV1, UtsJsonSchemaFragmentV1, UtsObservabilityV1,
+    UtsPlanningMetadataV1, UtsReplaySafetyV1, UtsResourceRequirementV1, UtsSideEffectClassV1,
+    UtsSideEffectTagV1, UTS_SCHEMA_VERSION_V1_1,
 };
 use serde_json::json;
 use std::collections::BTreeMap;
@@ -18,12 +20,120 @@ fn schema_for_tool(
     resource_scope: &str,
     data_sensitivity: UtsDataSensitivityV1,
     exfiltration_risk: UtsExfiltrationRiskV1,
-) -> UniversalToolSchemaV1 {
-    UniversalToolSchemaV1 {
-        schema_version: UTS_SCHEMA_VERSION_V1.to_string(),
+) -> UniversalToolSchemaV1_1 {
+    let (categories, side_effects, observability, planning) = match side_effect {
+        UtsSideEffectClassV1::Read => (
+            vec![UtsCategoryV1::ReadOnly],
+            vec![UtsSideEffectTagV1::None],
+            UtsObservabilityV1::Basic,
+            UtsPlanningMetadataV1 {
+                review_recommended: Some(false),
+                ..UtsPlanningMetadataV1::default()
+            },
+        ),
+        UtsSideEffectClassV1::LocalWrite => (
+            vec![UtsCategoryV1::StateMutating],
+            vec![UtsSideEffectTagV1::LocalState],
+            UtsObservabilityV1::Full,
+            UtsPlanningMetadataV1 {
+                review_recommended: Some(true),
+                ..UtsPlanningMetadataV1::default()
+            },
+        ),
+        UtsSideEffectClassV1::ExternalRead => (
+            vec![UtsCategoryV1::ExternalNetwork],
+            vec![UtsSideEffectTagV1::ExternalState],
+            UtsObservabilityV1::Full,
+            UtsPlanningMetadataV1 {
+                expensive: Some(true),
+                ..UtsPlanningMetadataV1::default()
+            },
+        ),
+        UtsSideEffectClassV1::ExternalWrite => (
+            vec![
+                UtsCategoryV1::ExternalNetwork,
+                UtsCategoryV1::StateMutating,
+                UtsCategoryV1::HumanVisible,
+            ],
+            vec![
+                UtsSideEffectTagV1::ExternalState,
+                UtsSideEffectTagV1::HumanVisible,
+            ],
+            UtsObservabilityV1::Governance,
+            UtsPlanningMetadataV1 {
+                high_risk: Some(true),
+                review_recommended: Some(true),
+                ..UtsPlanningMetadataV1::default()
+            },
+        ),
+        UtsSideEffectClassV1::Process => (
+            vec![UtsCategoryV1::StateMutating],
+            vec![UtsSideEffectTagV1::Irreversible],
+            UtsObservabilityV1::Governance,
+            UtsPlanningMetadataV1 {
+                high_risk: Some(true),
+                slow: Some(true),
+                review_recommended: Some(true),
+                ..UtsPlanningMetadataV1::default()
+            },
+        ),
+        UtsSideEffectClassV1::Network => (
+            vec![UtsCategoryV1::ExternalNetwork],
+            vec![UtsSideEffectTagV1::ExternalState],
+            UtsObservabilityV1::Full,
+            UtsPlanningMetadataV1 {
+                slow: Some(true),
+                ..UtsPlanningMetadataV1::default()
+            },
+        ),
+        UtsSideEffectClassV1::Destructive => (
+            vec![
+                UtsCategoryV1::StateMutating,
+                UtsCategoryV1::GovernanceSensitive,
+            ],
+            vec![
+                UtsSideEffectTagV1::Irreversible,
+                UtsSideEffectTagV1::GovernanceRelevant,
+            ],
+            UtsObservabilityV1::Governance,
+            UtsPlanningMetadataV1 {
+                high_risk: Some(true),
+                irreversible: Some(true),
+                review_recommended: Some(true),
+                ..UtsPlanningMetadataV1::default()
+            },
+        ),
+        UtsSideEffectClassV1::Exfiltration => (
+            vec![
+                UtsCategoryV1::ExternalNetwork,
+                UtsCategoryV1::GovernanceSensitive,
+                UtsCategoryV1::ObservabilitySensitive,
+            ],
+            vec![
+                UtsSideEffectTagV1::ExternalState,
+                UtsSideEffectTagV1::GovernanceRelevant,
+            ],
+            UtsObservabilityV1::Governance,
+            UtsPlanningMetadataV1 {
+                high_risk: Some(true),
+                irreversible: Some(true),
+                expensive: Some(true),
+                review_recommended: Some(true),
+                ..UtsPlanningMetadataV1::default()
+            },
+        ),
+    };
+
+    UniversalToolSchemaV1_1 {
+        schema_version: UTS_SCHEMA_VERSION_V1_1.to_string(),
+        compatible_versions: vec![
+            UtsCompatibleVersionV1::V1,
+            UtsCompatibleVersionV1::V1_1,
+        ],
         name: name.to_string(),
         version: "1.0.0".to_string(),
         description: format!("Fixture schema for compiler mapping case {name}."),
+        categories: Some(categories),
         input_schema: UtsJsonSchemaFragmentV1 {
             schema_type: "object".to_string(),
             keywords: BTreeMap::from([
@@ -47,6 +157,7 @@ fn schema_for_tool(
             ]),
         },
         side_effect_class: side_effect,
+        side_effects: Some(side_effects),
         determinism: UtsDeterminismV1::Deterministic,
         replay_safety: UtsReplaySafetyV1::ReplaySafe,
         idempotence: UtsIdempotenceV1::Idempotent,
@@ -69,6 +180,8 @@ fn schema_for_tool(
             message: "The requested compiler fixture is not available.".to_string(),
             retryable: false,
         }],
+        observability: Some(observability),
+        planning: Some(planning),
         extensions: BTreeMap::new(),
     }
 }

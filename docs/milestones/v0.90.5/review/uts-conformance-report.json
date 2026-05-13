@@ -1,5 +1,5 @@
 {
-  "schema_version": "uts.v1",
+  "schema_version": "uts.v1.1",
   "fixture_count": 21,
   "passed": true,
   "cases": [

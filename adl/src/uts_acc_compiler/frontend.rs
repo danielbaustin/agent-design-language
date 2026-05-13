@@ -3,7 +3,7 @@ use super::{
     UtsArgumentNormalizationReportV1, WP10_MAX_ARGUMENT_BYTES_V1, WP10_MAX_STRING_BYTES_V1,
 };
 use crate::tool_registry::{registry_state_fingerprint_v1, ToolRegistryV1};
-use crate::uts::UniversalToolSchemaV1;
+use crate::uts::UniversalToolSchemaV1_1;
 use serde_json::Value as JsonValue;
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
@@ -37,7 +37,7 @@ pub(crate) fn registry_evidence(registry: &ToolRegistryV1) -> String {
     format!("registry_state_digest={}", evidence_digest(&fingerprint))
 }
 
-fn schema_properties(schema: &UniversalToolSchemaV1) -> BTreeMap<String, JsonValue> {
+fn schema_properties(schema: &UniversalToolSchemaV1_1) -> BTreeMap<String, JsonValue> {
     schema
         .input_schema
         .keywords
@@ -52,7 +52,7 @@ fn schema_properties(schema: &UniversalToolSchemaV1) -> BTreeMap<String, JsonVal
         .unwrap_or_default()
 }
 
-fn schema_required_fields(schema: &UniversalToolSchemaV1) -> BTreeSet<String> {
+fn schema_required_fields(schema: &UniversalToolSchemaV1_1) -> BTreeSet<String> {
     schema
         .input_schema
         .keywords
@@ -65,7 +65,7 @@ fn schema_required_fields(schema: &UniversalToolSchemaV1) -> BTreeSet<String> {
         .collect()
 }
 
-fn schema_allows_additional_fields(schema: &UniversalToolSchemaV1) -> bool {
+fn schema_allows_additional_fields(schema: &UniversalToolSchemaV1_1) -> bool {
     schema
         .input_schema
         .keywords
@@ -195,7 +195,7 @@ fn scan_value_safety(
 }
 
 pub fn normalize_tool_proposal_arguments_v1(
-    schema: &UniversalToolSchemaV1,
+    schema: &UniversalToolSchemaV1_1,
     arguments: &BTreeMap<String, JsonValue>,
 ) -> Result<BTreeMap<String, JsonValue>, UtsArgumentNormalizationReportV1> {
     let mut errors = Vec::new();
