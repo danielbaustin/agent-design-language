@@ -10,6 +10,9 @@ Active planning docs:
 
 - `ADL_FEATURE_LIST.md` - full feature list, current status, implemented gaps,
   and target completion milestones through `v0.95`
+- `TBD_PLAN_ALLOCATION_v0.91.2_TO_v0.95.md` - tracked allocation map from the
+  local-only `.adl/docs/TBD/` planning corpus to milestone execution homes,
+  archive/provenance buckets, or explicit deferred status through `v0.95`
 - `PYTHON_ELIMINATION_STAGED_PLAN.md` - cross-milestone staged reduction plan
   for retiring tracked Python without turning the roadmap into a stop-the-world
   rewrite
