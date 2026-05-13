@@ -11,6 +11,13 @@ This document describes:
 - the architectural separation between UTS schema semantics and ACC runtime
   governance
 
+Authority hierarchy:
+
+- [`UTS_V1.1_SCHEMA.md`](./UTS_V1.1_SCHEMA.md) is the normative technical
+  specification for the `v1.1` target
+- this document is the narrative companion specification
+- [`README.md`](./README.md) is the entrypoint and orientation surface
+
 ## Normative Language
 
 The key words:
@@ -316,6 +323,22 @@ Suggested values:
 - `continuity_sensitive`
 - `observability_sensitive`
 
+Suggested meanings:
+
+- `read_only`: no intended state mutation as the primary capability
+- `computational`: primarily transforms or computes over supplied inputs
+- `state_mutating`: intended to change local or remote state
+- `external_network`: expected to cross a network boundary
+- `human_visible`: expected to create or alter something a human will directly
+  see
+- `governance_sensitive`: likely to require elevated review or approval posture
+- `identity_sensitive`: touches identity, identity-bearing data, or identity
+  policy surfaces
+- `continuity_sensitive`: ADL-origin category for continuity, memory, or
+  identity-preservation surfaces; non-ADL runtimes may adapt or replace this
+  term
+- `observability_sensitive`: affects traces, metrics, logs, or review surfaces
+
 These tags support:
 
 - planning
@@ -376,6 +399,17 @@ It MUST NOT imply:
 
 That boundary keeps UTS out of ACC territory.
 
+Intent examples:
+
+- `informational_query`: look up a user profile
+- `planning`: generate an execution plan without acting
+- `simulation`: dry-run a migration or deployment
+- `review`: inspect a code diff or packet for findings
+- `mutation`: create or update a normal remote object
+- `governance_action`: approve or deny a governed action
+- `observability_action`: query traces, logs, or metrics
+- `remediation`: create or apply a targeted follow-up repair step
+
 ## 14. Invocation Companion Schema
 
 The `v1.1` invocation schema is a companion metadata contract.
@@ -402,6 +436,10 @@ Invocation companion rules:
 - `replay_safety` and `observability` MUST NOT silently weaken the tool
   definition's declared posture
 
+The invocation companion schema also supports constrained `x-` prefixed
+extensions for runtime-specific metadata that should not fragment the portable
+core contract.
+
 ## 15. Conformance
 
 A conformant `UTS` implementation SHOULD be able to validate:
@@ -417,6 +455,9 @@ The repository already contains implementation-facing conformance work in Rust.
 That code should be treated as the current reference implementation of UTS
 conformance until a standalone portable conformance suite is published.
 
+A future portable conformance package should include valid, invalid, and
+dangerous fixtures for both tool definitions and invocation companion records.
+
 ## 16. Transport Binding Note
 
 UTS is transport-neutral, but not transport-agnostic in the sense of ignoring
@@ -430,6 +471,13 @@ Future non-normative bindings may show how UTS maps onto:
 - local runtime registries
 
 Those bindings should preserve UTS semantics rather than redefine them.
+
+Illustrative sketch directions:
+
+- MCP-style: publish the UTS object as registry metadata alongside the tool
+  callable surface
+- OpenAI-compatible: wrap the UTS definition into the provider's function/tool
+  envelope while preserving richer metadata in side channels or extensions
 
 ## 17. Summary
 
@@ -448,6 +496,17 @@ The important structural truths are:
 - UTS keeps schema semantics separate from runtime authority
 - replayability, idempotence, determinism, data sensitivity, and exfiltration
   risk remain first-class fields
+
+Likely future optional registry field:
+
+- `lifecycle`
+  - `experimental`
+  - `active`
+  - `deprecated`
+  - `sunset`
+
+This is not yet part of the canonical `v1.1` schema, but it is a natural next
+optional field for tool catalogs and registries.
 
 That combination is what makes UTS stronger than ordinary tool-definition
 schemas.

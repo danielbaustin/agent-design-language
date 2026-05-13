@@ -22,6 +22,17 @@ schema, UTS gives you a way to also express side effects, replay safety,
 idempotence, data sensitivity, exfiltration risk, and execution posture so a
 runtime can make better decisions before execution rather than after.
 
+Document authority hierarchy:
+
+- [`UTS_V1.1_SCHEMA.md`](./UTS_V1.1_SCHEMA.md) is the normative technical
+  specification for the `v1.1` target
+- [`ADL_UNIVERSAL_TOOL_SCHEMA.md`](./ADL_UNIVERSAL_TOOL_SCHEMA.md) is the
+  narrative companion specification
+- this `README.md` is the entrypoint and orientation surface
+
+If those documents ever disagree, the narrower normative technical spec wins
+over the narrative companion, and the narrative companion wins over the README.
+
 Unless a section explicitly says otherwise, statements in this note should be
 read as describing the current `UTS v1` posture. The guaranteed formal current
 baseline for `UTS v1` is the narrower

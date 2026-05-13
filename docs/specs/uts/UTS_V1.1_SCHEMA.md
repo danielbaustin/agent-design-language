@@ -15,6 +15,13 @@ Matching machine-readable schema artifacts:
 - [`adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/universal_tool_schema.v1_1.schema.json)
 - [`adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json`](../../../adl-spec/schemas/uts/v1.1/tool_invocation.v1_1.schema.json)
 
+Authority hierarchy:
+
+- this document is the normative technical specification for `UTS v1.1`
+- [`ADL_UNIVERSAL_TOOL_SCHEMA.md`](./ADL_UNIVERSAL_TOOL_SCHEMA.md) is the
+  narrative companion specification
+- [`README.md`](./README.md) is the entrypoint and orientation surface
+
 Implementation-facing baseline reference:
 
 - [`adl/src/uts.rs`](../../../adl/src/uts.rs)
@@ -161,6 +168,22 @@ Suggested values:
 - `continuity_sensitive`
 - `observability_sensitive`
 
+Suggested meanings:
+
+- `read_only`: no intended state mutation as the primary capability
+- `computational`: primarily transforms or computes over supplied inputs
+- `state_mutating`: intended to change local or remote state
+- `external_network`: expected to cross a network boundary
+- `human_visible`: expected to create or alter something a human will directly
+  see
+- `governance_sensitive`: likely to require elevated review or approval posture
+- `identity_sensitive`: touches identity, identity-bearing data, or identity
+  policy surfaces
+- `continuity_sensitive`: ADL-origin category for tools that affect continuity,
+  memory, or identity-preservation surfaces; non-ADL runtimes may adapt or
+  replace this term
+- `observability_sensitive`: affects traces, metrics, logs, or review surfaces
+
 ### `side_effects`
 
 `side_effects` is an additive richer representation of side-effect posture.
@@ -218,6 +241,17 @@ It MUST NOT imply:
 - approval
 - execution permission
 - replay permission
+
+Intent examples:
+
+- `informational_query`: look up a user profile
+- `planning`: generate an execution plan without acting
+- `simulation`: dry-run a migration or deployment
+- `review`: inspect a code diff or packet for findings
+- `mutation`: create or update a normal remote object
+- `governance_action`: approve or deny a governed action
+- `observability_action`: query traces, logs, or metrics
+- `remediation`: create or apply a targeted follow-up repair step
 
 ## 6. Side-Effect Migration Note
 
@@ -329,6 +363,9 @@ Invocation correspondence rules:
 - `replay_safety` and `observability` SHOULD match or refine the tool
   definition's posture; they MUST NOT silently weaken it
 
+The invocation companion schema also supports constrained extensions using the
+same `x-` prefix pattern as the tool-definition schema.
+
 ## 9. Canonical Invocation Example
 
 ```yaml
@@ -366,6 +403,15 @@ A conformant `UTS v1.1` implementation SHOULD:
   version is explicitly declared and the runtime supports that compatibility
 - reject malformed structural definitions
 
+A portable future conformance package SHOULD include:
+
+- valid tool definitions
+- invalid structural definitions
+- invalid semantic definitions
+- dangerous-but-well-formed definitions for policy testing
+- valid invocation companion records
+- invalid invocation companion records
+
 The repository already contains implementation-facing conformance work in the
 Rust codebase. That test posture should be treated as the current reference
 implementation of UTS conformance until a standalone portable conformance suite
@@ -384,6 +430,14 @@ A future non-normative appendix may show example bindings for:
 
 Those bindings should preserve UTS semantics rather than redefine them.
 
+Illustrative sketch directions:
+
+- MCP-style: publish the UTS object as registry metadata alongside the tool
+  callable surface
+- OpenAI-compatible: wrap the UTS tool definition into the provider's
+  function/tool envelope while preserving the richer metadata in side channels
+  or extension fields
+
 ## 12. Summary
 
 `UTS v1.1` is the next UTS target, built directly on the existing `UTS v1.0`
@@ -392,3 +446,14 @@ model.
 It stays additive by preserving the current core field vocabulary and semantics
 while adding explicit compatibility, richer side-effect expression,
 observability metadata, planning metadata, and invocation-companion structure.
+
+Suggested future optional field:
+
+- `lifecycle`
+  - `experimental`
+  - `active`
+  - `deprecated`
+  - `sunset`
+
+This is not yet part of the canonical `v1.1` schema, but it is a natural next
+optional field for registry/catalog use.

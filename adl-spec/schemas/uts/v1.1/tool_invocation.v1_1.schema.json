@@ -97,6 +97,26 @@
     "observability": {
       "type": "string",
       "enum": ["none", "basic", "full", "governance"]
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^x-[a-z0-9._-]+$"
+      },
+      "additionalProperties": true
     }
-  }
+  },
+  "allOf": [
+    {
+      "not": {
+        "properties": {
+          "side_effect_expectations": {
+            "contains": { "const": "none" },
+            "minItems": 2
+          }
+        },
+        "required": ["side_effect_expectations"]
+      }
+    }
+  ]
 }
