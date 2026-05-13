@@ -1,5 +1,5 @@
 use crate::uts::{
-    validate_uts_v1, UniversalToolSchemaV1, UtsSideEffectClassV1, UTS_SCHEMA_VERSION_V1,
+    validate_uts_v1_1, UniversalToolSchemaV1_1, UtsSideEffectClassV1, UTS_SCHEMA_VERSION_V1_1,
 };
 use serde::Serialize;
 use serde_json::{json, Value as JsonValue};
@@ -128,10 +128,22 @@ fn base_fixture(id: &'static str, side_effect: UtsSideEffectClassV1) -> JsonValu
     };
 
     json!({
-        "schema_version": UTS_SCHEMA_VERSION_V1,
+        "schema_version": UTS_SCHEMA_VERSION_V1_1,
+        "compatible_versions": ["uts.v1", "uts.v1.1"],
         "name": id,
         "version": "1.0.0",
-        "description": format!("{id} fixture for deterministic UTS v1 conformance review."),
+        "description": format!("{id} fixture for deterministic UTS v1.1 conformance review."),
+        "categories": [
+            match side_effect {
+                UtsSideEffectClassV1::Read => "read_only",
+                UtsSideEffectClassV1::LocalWrite => "state_mutating",
+                UtsSideEffectClassV1::ExternalRead | UtsSideEffectClassV1::ExternalWrite => "external_network",
+                UtsSideEffectClassV1::Process => "state_mutating",
+                UtsSideEffectClassV1::Network => "external_network",
+                UtsSideEffectClassV1::Destructive => "governance_sensitive",
+                UtsSideEffectClassV1::Exfiltration => "observability_sensitive"
+            }
+        ],
         "input_schema": {
             "type": "object",
             "properties": {
@@ -149,6 +161,15 @@ fn base_fixture(id: &'static str, side_effect: UtsSideEffectClassV1) -> JsonValu
             "additionalProperties": false
         },
         "side_effect_class": side_effect_wire(side_effect),
+        "side_effects": [
+            match side_effect {
+                UtsSideEffectClassV1::Read => "none",
+                UtsSideEffectClassV1::LocalWrite => "local_state",
+                UtsSideEffectClassV1::ExternalRead | UtsSideEffectClassV1::ExternalWrite | UtsSideEffectClassV1::Network => "external_state",
+                UtsSideEffectClassV1::Process | UtsSideEffectClassV1::Destructive => "irreversible",
+                UtsSideEffectClassV1::Exfiltration => "governance_relevant"
+            }
+        ],
         "determinism": "deterministic",
         "replay_safety": replay_safety,
         "idempotence": idempotence,
@@ -169,6 +190,20 @@ fn base_fixture(id: &'static str, side_effect: UtsSideEffectClassV1) -> JsonValu
                 "retryable": false
             }
         ],
+        "observability": match side_effect {
+            UtsSideEffectClassV1::Read => "basic",
+            UtsSideEffectClassV1::LocalWrite
+            | UtsSideEffectClassV1::ExternalRead
+            | UtsSideEffectClassV1::ExternalWrite
+            | UtsSideEffectClassV1::Network => "full",
+            UtsSideEffectClassV1::Process
+            | UtsSideEffectClassV1::Destructive
+            | UtsSideEffectClassV1::Exfiltration => "governance"
+        },
+        "planning": {
+            "review_recommended": matches!(side_effect, UtsSideEffectClassV1::LocalWrite | UtsSideEffectClassV1::ExternalWrite | UtsSideEffectClassV1::Process | UtsSideEffectClassV1::Destructive | UtsSideEffectClassV1::Exfiltration),
+            "high_risk": matches!(side_effect, UtsSideEffectClassV1::Process | UtsSideEffectClassV1::Destructive | UtsSideEffectClassV1::Exfiltration)
+        },
         "extensions": {
             "x-adl-conformance-note": "schema compatibility only; no runtime authority"
         }
@@ -228,7 +263,7 @@ pub fn uts_conformance_fixtures() -> Vec<UtsConformanceFixture> {
     missing_semantics
         .as_object_mut()
         .expect("fixture should be an object")
-        .remove("side_effect_class");
+        .remove("compatible_versions");
 
     let mut missing_security = base_fixture(
         "invalid.missing_security_metadata",
@@ -357,6 +392,7 @@ pub fn uts_conformance_fixtures() -> Vec<UtsConformanceFixture> {
 fn missing_required_reason(document: &JsonValue) -> Option<&'static str> {
     let object = document.as_object()?;
     if [
+        "compatible_versions",
         "side_effect_class",
         "determinism",
         "replay_safety",
@@ -432,9 +468,9 @@ fn evaluate_fixture(fixture: &UtsConformanceFixture) -> UtsConformanceCaseResult
         };
     }
 
-    let parsed = serde_json::from_value::<UniversalToolSchemaV1>(fixture.document.clone());
+    let parsed = serde_json::from_value::<UniversalToolSchemaV1_1>(fixture.document.clone());
     let (accepted, reason, side_effect_class) = match parsed {
-        Ok(schema) => match validate_uts_v1(&schema) {
+        Ok(schema) => match validate_uts_v1_1(&schema) {
             Ok(()) => (true, "accepted", Some(schema.side_effect_class)),
             Err(report) => (
                 false,
@@ -500,7 +536,7 @@ pub fn run_uts_conformance_suite() -> UtsConformanceReport {
     let passed = cases.iter().all(|case| case.passed);
 
     UtsConformanceReport {
-        schema_version: UTS_SCHEMA_VERSION_V1,
+        schema_version: UTS_SCHEMA_VERSION_V1_1,
         fixture_count: fixtures.len(),
         passed,
         cases,
@@ -555,7 +591,7 @@ mod tests {
     fn uts_conformance_suite_passes_all_expected_outcomes() {
         let report = run_uts_conformance_suite();
 
-        assert_eq!(report.schema_version, UTS_SCHEMA_VERSION_V1);
+        assert_eq!(report.schema_version, UTS_SCHEMA_VERSION_V1_1);
         assert_eq!(report.fixture_count, EXPECTED_IDS.len());
         let failed: Vec<&UtsConformanceCaseResult> =
             report.cases.iter().filter(|case| !case.passed).collect();
@@ -672,7 +708,7 @@ mod tests {
 
         assert!(report.passed);
         assert_eq!(report.fixture_count, EXPECTED_IDS.len());
-        assert_eq!(parsed["schema_version"], json!(UTS_SCHEMA_VERSION_V1));
+        assert_eq!(parsed["schema_version"], json!(UTS_SCHEMA_VERSION_V1_1));
         assert_eq!(parsed["fixture_count"], json!(EXPECTED_IDS.len()));
         assert!(parsed["passed"].as_bool().unwrap_or(false));
         assert!(body.ends_with('\n'));

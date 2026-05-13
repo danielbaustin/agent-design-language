@@ -20,8 +20,9 @@ use crate::tool_registry::{
     ToolBindingSourceV1, ToolBindingV1, ToolRegistryV1,
 };
 use crate::uts::{
-    validate_uts_v1, UniversalToolSchemaV1, UtsDataSensitivityV1, UtsExecutionEnvironmentKindV1,
-    UtsExfiltrationRiskV1, UtsReplaySafetyV1, UtsResourceRequirementV1, UtsSideEffectClassV1,
+    validate_uts_v1_1, UniversalToolSchemaV1_1, UtsDataSensitivityV1,
+    UtsExecutionEnvironmentKindV1, UtsExfiltrationRiskV1, UtsReplaySafetyV1,
+    UtsResourceRequirementV1, UtsSideEffectClassV1,
 };
 
 fn side_effect_label(side_effect: &UtsSideEffectClassV1) -> &'static str {
@@ -48,7 +49,7 @@ fn environment_label(environment: &UtsExecutionEnvironmentKindV1) -> &'static st
     }
 }
 
-fn first_resource(schema: &UniversalToolSchemaV1) -> Option<&UtsResourceRequirementV1> {
+fn first_resource(schema: &UniversalToolSchemaV1_1) -> Option<&UtsResourceRequirementV1> {
     schema.resources.first()
 }
 
@@ -293,7 +294,7 @@ pub fn compile_uts_to_acc_v1(input: &UtsAccCompilerInputV1) -> UtsAccCompilerOut
         );
     };
 
-    if let Err(report) = validate_uts_v1(&tool.uts) {
+    if let Err(report) = validate_uts_v1_1(&tool.uts) {
         evidence_log.push(evidence(
             UtsAccCompilerEvidenceStageV1::Validation,
             format!("UTS validation errors: {:?}", report.codes()),
