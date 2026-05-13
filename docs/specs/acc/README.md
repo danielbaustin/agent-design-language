@@ -11,6 +11,20 @@ This directory now uses the following framing:
 - `ACC v1.1`
   - the tracked additive evolution target for subsequent code adoption
 
+Primary narrative specification:
+
+- [`ADL_ACC_SPECIFICATION.md`](./ADL_ACC_SPECIFICATION.md)
+
+Document authority hierarchy:
+
+- [`ACC_V1.0_SPEC.md`](./ACC_V1.0_SPEC.md) is the normative baseline spec for
+  the current implemented `ACC v1.0` contract
+- [`ACC_V1.1_SPEC.md`](./ACC_V1.1_SPEC.md) is the normative next-version spec
+  for the tracked `ACC v1.1` target
+- [`ADL_ACC_SPECIFICATION.md`](./ADL_ACC_SPECIFICATION.md) is the cross-version
+  narrative companion specification
+- this `README.md` is the entrypoint and orientation surface
+
 Unlike UTS, ACC is not positioned here as a public, provider-neutral standard.
 ACC is intentionally scoped to ADL-governed runtimes.
 
