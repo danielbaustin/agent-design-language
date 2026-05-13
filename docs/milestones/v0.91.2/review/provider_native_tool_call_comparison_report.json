@@ -1,0 +1,349 @@
+{
+  "schema_version": "provider_native_tool_call_comparison.v1",
+  "prompt_record": {
+    "prompt_version": "wp03.provider_native_tool_call_comparison.v1",
+    "issue_number": 3002,
+    "comparison_boundary_summary": "WP-03 compares ADL JSON proposal mode against provider-native or provider-adjacent tool-call surfaces without treating native success as ACC authority."
+  },
+  "compared_provider_count": 6,
+  "direct_native_supported_count": 3,
+  "compatibility_supported_count": 2,
+  "skipped_provider_count": 5,
+  "unsupported_provider_count": 1,
+  "json_proposal_baseline": {
+    "interface_mode": "adl_json_proposal",
+    "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1",
+    "tracked_report_artifact_path": "docs/milestones/v0.91.2/review/uts_acc_multi_model_benchmark_report.json",
+    "evaluated_fixture_panel_count": 3,
+    "task_count": 8,
+    "summary": "WP-02 already proves the bounded ADL JSON proposal harness against deterministic fixture candidates; WP-03 compares that interface boundary to provider-native or provider-adjacent tool-call surfaces."
+  },
+  "providers": [
+    {
+      "candidate_id": "openai_native_gpt_4_1_mini",
+      "provider_family": "openai",
+      "surface_class": "direct_native_vendor_adapter",
+      "run_status": "skipped_missing_credentials",
+      "skip_reason": "bounded tracked artifact does not assume OPENAI_API_KEY; direct native OpenAI tool-call execution remains skipped until credentials are supplied",
+      "required_env_vars": [
+        "OPENAI_API_KEY"
+      ],
+      "invocation_target": {
+        "provider_id": "openai_primary",
+        "provider_kind": "openai",
+        "vendor": "openai",
+        "transport": "http",
+        "profile": null,
+        "endpoint": null,
+        "base_url": null,
+        "model_ref": "reasoning/default",
+        "provider_model_id": "gpt-4.1-mini",
+        "capabilities": {
+          "tool_calling": {
+            "supported": true,
+            "mode": "native"
+          },
+          "structured_json": {
+            "supported": true,
+            "mode": "native"
+          },
+          "semantic_tool_fallback": {
+            "supported": false,
+            "mode": "none"
+          }
+        }
+      },
+      "tool_calling": {
+        "supported": true,
+        "mode": "native"
+      },
+      "structured_json": {
+        "supported": true,
+        "mode": "native"
+      },
+      "semantic_tool_fallback": {
+        "supported": false,
+        "mode": "none"
+      },
+      "limitations": [
+        "This entry records the native OpenAI adapter surface, not a completed live provider run.",
+        "Provider-native tool-call success would still feed proposal output into governed ADL review surfaces; it would not replace ACC authority."
+      ],
+      "comparison_notes": [
+        "OpenAI's first-class adapter is the clearest direct native tool-call comparison target for WP-03.",
+        "Native structured output support is interface capability evidence, not execution authority evidence."
+      ]
+    },
+    {
+      "candidate_id": "anthropic_native_claude_haiku_4_5",
+      "provider_family": "anthropic",
+      "surface_class": "direct_native_vendor_adapter",
+      "run_status": "skipped_missing_credentials",
+      "skip_reason": "bounded tracked artifact does not assume ANTHROPIC_API_KEY; direct native Anthropic tool-call execution remains skipped until credentials are supplied",
+      "required_env_vars": [
+        "ANTHROPIC_API_KEY"
+      ],
+      "invocation_target": {
+        "provider_id": "anthropic_primary",
+        "provider_kind": "anthropic",
+        "vendor": "anthropic",
+        "transport": "http",
+        "profile": null,
+        "endpoint": null,
+        "base_url": null,
+        "model_ref": "reasoning/default",
+        "provider_model_id": "claude-haiku-4-5-20251001",
+        "capabilities": {
+          "tool_calling": {
+            "supported": true,
+            "mode": "native"
+          },
+          "structured_json": {
+            "supported": true,
+            "mode": "native"
+          },
+          "semantic_tool_fallback": {
+            "supported": false,
+            "mode": "none"
+          }
+        }
+      },
+      "tool_calling": {
+        "supported": true,
+        "mode": "native"
+      },
+      "structured_json": {
+        "supported": true,
+        "mode": "native"
+      },
+      "semantic_tool_fallback": {
+        "supported": false,
+        "mode": "none"
+      },
+      "limitations": [
+        "This entry records the native Anthropic adapter surface, not a completed live provider run.",
+        "Anthropic native tool-call behavior would still require downstream ACC and Freedom Gate review before any side effect."
+      ],
+      "comparison_notes": [
+        "Anthropic is tracked separately from generic HTTP profiles because WP-03 needs a truthful native-vendor comparison route."
+      ]
+    },
+    {
+      "candidate_id": "gemini_http_compat_flash",
+      "provider_family": "gemini",
+      "surface_class": "compatibility_http_profile",
+      "run_status": "skipped_unconfigured_endpoint",
+      "skip_reason": "the canonical Gemini profile in this bounded report still uses a placeholder compatibility endpoint; no raw vendor-native tool-call run is claimed",
+      "required_env_vars": [
+        "GEMINI_API_KEY"
+      ],
+      "invocation_target": {
+        "provider_id": "gemini_primary",
+        "provider_kind": "http",
+        "vendor": "generic_http",
+        "transport": "http",
+        "profile": "http:gemini-2.0-flash",
+        "endpoint": "https://api.example.invalid/v1/complete",
+        "base_url": null,
+        "model_ref": "reasoning/default",
+        "provider_model_id": "gemini-2.0-flash",
+        "capabilities": {
+          "tool_calling": {
+            "supported": true,
+            "mode": "native"
+          },
+          "structured_json": {
+            "supported": true,
+            "mode": "native"
+          },
+          "semantic_tool_fallback": {
+            "supported": false,
+            "mode": "none"
+          }
+        }
+      },
+      "tool_calling": {
+        "supported": true,
+        "mode": "native"
+      },
+      "structured_json": {
+        "supported": true,
+        "mode": "native"
+      },
+      "semantic_tool_fallback": {
+        "supported": false,
+        "mode": "none"
+      },
+      "limitations": [
+        "The `http:gemini-2.0-flash` profile is a compatibility HTTP surface, not a proof of raw vendor-native Gemini tool-call semantics.",
+        "A real run would require a trusted ADL-compatible endpoint and explicit credential injection."
+      ],
+      "comparison_notes": [
+        "This entry exists to make provider-adjacent compatibility surfaces visible instead of letting them silently masquerade as native-vendor coverage."
+      ]
+    },
+    {
+      "candidate_id": "deepseek_http_compat_chat",
+      "provider_family": "deepseek",
+      "surface_class": "compatibility_http_profile",
+      "run_status": "skipped_unconfigured_endpoint",
+      "skip_reason": "the canonical DeepSeek profile in this bounded report still uses a placeholder compatibility endpoint; no raw vendor-native tool-call run is claimed",
+      "required_env_vars": [
+        "DEEPSEEK_API_KEY"
+      ],
+      "invocation_target": {
+        "provider_id": "deepseek_primary",
+        "provider_kind": "http",
+        "vendor": "generic_http",
+        "transport": "http",
+        "profile": "http:deepseek-chat",
+        "endpoint": "https://api.example.invalid/v1/complete",
+        "base_url": null,
+        "model_ref": "reasoning/default",
+        "provider_model_id": "deepseek-chat",
+        "capabilities": {
+          "tool_calling": {
+            "supported": true,
+            "mode": "native"
+          },
+          "structured_json": {
+            "supported": true,
+            "mode": "native"
+          },
+          "semantic_tool_fallback": {
+            "supported": false,
+            "mode": "none"
+          }
+        }
+      },
+      "tool_calling": {
+        "supported": true,
+        "mode": "native"
+      },
+      "structured_json": {
+        "supported": true,
+        "mode": "native"
+      },
+      "semantic_tool_fallback": {
+        "supported": false,
+        "mode": "none"
+      },
+      "limitations": [
+        "The `http:deepseek-chat` profile is a compatibility HTTP surface, not a proof of raw vendor-native DeepSeek tool-call semantics.",
+        "A real run would require a trusted ADL-compatible endpoint and explicit credential injection."
+      ],
+      "comparison_notes": [
+        "DeepSeek remains visible in the panel because the milestone docs name provider-native comparison, not just OpenAI/Anthropic."
+      ]
+    },
+    {
+      "candidate_id": "ollama_local_gpt_oss_native_candidate",
+      "provider_family": "ollama",
+      "surface_class": "local_native_candidate",
+      "run_status": "skipped_local_runtime_unavailable",
+      "skip_reason": "tracked artifact does not assume a local Ollama runtime or model pull; native-capable local validation remains an operator-run follow-on",
+      "required_env_vars": [],
+      "invocation_target": {
+        "provider_id": "local_ollama",
+        "provider_kind": "local_ollama",
+        "vendor": "ollama",
+        "transport": "local_cli",
+        "profile": null,
+        "endpoint": null,
+        "base_url": null,
+        "model_ref": "gpt-oss",
+        "provider_model_id": "gpt-oss",
+        "capabilities": {
+          "tool_calling": {
+            "supported": true,
+            "mode": "native"
+          },
+          "structured_json": {
+            "supported": true,
+            "mode": "native"
+          },
+          "semantic_tool_fallback": {
+            "supported": true,
+            "mode": "semantic_fallback"
+          }
+        }
+      },
+      "tool_calling": {
+        "supported": true,
+        "mode": "native"
+      },
+      "structured_json": {
+        "supported": true,
+        "mode": "native"
+      },
+      "semantic_tool_fallback": {
+        "supported": true,
+        "mode": "semantic_fallback"
+      },
+      "limitations": [
+        "This entry captures the local native-candidate path only; the tracked report does not claim a live local Ollama run.",
+        "Local native capability still does not bypass UTS/ACC proposal and authority boundaries."
+      ],
+      "comparison_notes": [
+        "The provider substrate marks GPT-OSS-style Ollama models as native tool-capable, which makes this the strongest local native candidate surface for later live runs."
+      ]
+    },
+    {
+      "candidate_id": "ollama_local_deepseek_semantic_fallback",
+      "provider_family": "ollama",
+      "surface_class": "semantic_fallback_only",
+      "run_status": "unsupported_surface",
+      "skip_reason": "the DeepSeek local Ollama path is semantic-fallback only in the current provider substrate and is not a native tool-call comparison surface",
+      "required_env_vars": [],
+      "invocation_target": {
+        "provider_id": "local_ollama",
+        "provider_kind": "local_ollama",
+        "vendor": "ollama",
+        "transport": "local_cli",
+        "profile": null,
+        "endpoint": null,
+        "base_url": null,
+        "model_ref": "deepseek-r1",
+        "provider_model_id": "deepseek-r1",
+        "capabilities": {
+          "tool_calling": {
+            "supported": false,
+            "mode": "none"
+          },
+          "structured_json": {
+            "supported": true,
+            "mode": "prompt_based"
+          },
+          "semantic_tool_fallback": {
+            "supported": true,
+            "mode": "semantic_fallback"
+          }
+        }
+      },
+      "tool_calling": {
+        "supported": false,
+        "mode": "none"
+      },
+      "structured_json": {
+        "supported": true,
+        "mode": "prompt_based"
+      },
+      "semantic_tool_fallback": {
+        "supported": true,
+        "mode": "semantic_fallback"
+      },
+      "limitations": [
+        "Semantic fallback can remain useful for proposal generation, but it is not equivalent to a native tool/function-call interface.",
+        "This path must not be counted as provider-native success in release or milestone claims."
+      ],
+      "comparison_notes": [
+        "Including one explicit unsupported local surface prevents the report from overstating local-provider coverage."
+      ]
+    }
+  ],
+  "non_claims": [
+    "Provider-native or provider-adjacent interface support does not grant execution authority; ACC, policy, and Freedom Gate remain authoritative.",
+    "This tracked report compares interface surfaces and skip states; it does not claim a complete live hosted-provider ranking.",
+    "Compatibility HTTP profiles must not be mistaken for raw vendor-native tool/function-call proof."
+  ]
+}

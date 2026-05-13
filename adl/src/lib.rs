@@ -54,6 +54,7 @@ pub mod policy_authority;
 pub mod prompt;
 pub mod provider;
 pub mod provider_extension_packaging;
+pub mod provider_native_tool_call_comparison;
 pub mod provider_substrate;
 pub mod red_blue_agent_architecture;
 pub mod remote_exec;
