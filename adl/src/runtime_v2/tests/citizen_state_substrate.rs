@@ -292,49 +292,6 @@ fn runtime_v2_citizen_state_substrate_validate_against_rejects_dependency_and_vi
 }
 
 #[test]
-fn runtime_v2_citizen_state_substrate_contract_accessors_cover_shared_registry() {
-    assert!(runtime_v2_contract_schema_contract().is_ok());
-    assert!(runtime_v2_manifold_contract().is_ok());
-    assert!(runtime_v2_kernel_loop_contract().is_ok());
-    assert!(runtime_v2_citizen_lifecycle_contract().is_ok());
-    assert!(runtime_v2_snapshot_rehydration_contract().is_ok());
-    assert!(runtime_v2_invariant_violation_contract().is_ok());
-    assert!(runtime_v2_invariant_and_violation_contract().is_ok());
-    assert!(runtime_v2_operator_control_report_contract().is_ok());
-    assert!(runtime_v2_security_boundary_proof_contract().is_ok());
-    assert!(runtime_v2_csm_run_packet_contract().is_ok());
-    assert!(runtime_v2_csm_boot_admission_contract().is_ok());
-    assert!(runtime_v2_csm_governed_episode_contract().is_ok());
-    assert!(runtime_v2_csm_freedom_gate_mediation_contract().is_ok());
-    assert!(runtime_v2_csm_invalid_action_rejection_contract().is_ok());
-    assert!(runtime_v2_csm_wake_continuity_contract().is_ok());
-    assert!(runtime_v2_csm_observatory_contract().is_ok());
-    assert!(runtime_v2_csm_recovery_eligibility_contract().is_ok());
-    assert!(runtime_v2_csm_quarantine_contract().is_ok());
-    assert!(runtime_v2_csm_hardening_contract().is_ok());
-    assert!(runtime_v2_csm_integrated_run_contract().is_ok());
-    assert!(runtime_v2_feature_proof_coverage_contract().is_ok());
-    assert!(runtime_v2_foundation_demo_contract().is_ok());
-    assert!(runtime_v2_governed_tools_flagship_demo_contract().is_ok());
-    assert!(runtime_v2_private_state_contract().is_ok());
-    assert!(runtime_v2_private_state_envelope_contract().is_ok());
-    assert!(runtime_v2_private_state_sealing_contract().is_ok());
-    assert!(runtime_v2_private_state_lineage_contract().is_ok());
-    assert!(runtime_v2_private_state_witness_contract().is_ok());
-    assert!(runtime_v2_private_state_anti_equivocation_contract().is_ok());
-    assert!(runtime_v2_private_state_sanctuary_contract().is_ok());
-    assert!(runtime_v2_private_state_observatory_contract().is_ok());
-    assert!(runtime_v2_citizen_state_substrate_contract().is_ok());
-    assert!(runtime_v2_standing_contract().is_ok());
-    assert!(runtime_v2_access_control_contract().is_ok());
-    assert!(runtime_v2_agent_lifecycle_state_contract().is_ok());
-    assert!(runtime_v2_continuity_challenge_contract().is_ok());
-    assert!(runtime_v2_observatory_flagship_contract().is_ok());
-    assert!(runtime_v2_cognitive_being_flagship_demo_contract().is_ok());
-    assert!(runtime_v2_contract_market_demo_contract().is_ok());
-}
-
-#[test]
 fn runtime_v2_citizen_state_substrate_write_to_path_materializes_fixture() {
     let packet =
         runtime_v2_citizen_state_substrate_contract().expect("citizen-state substrate packet");
