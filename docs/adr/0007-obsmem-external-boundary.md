@@ -12,10 +12,10 @@ architectural documentation for why ObsMem is kept outside core runtime logic
 and how versioned contracts should be treated.
 
 Current runtime integration points are:
-- `swarm::obsmem_contract` (`ObsMemClient` trait and request/response types)
-- `swarm::obsmem_adapter` (runtime-facing adapter to contract client)
-- `swarm::obsmem_indexing` and `swarm::obsmem_retrieval_policy` (deterministic
-  indexing/query policy behavior)
+- `adl/src/obsmem_contract/` (`ObsMemClient` trait and request/response types)
+- `adl/src/obsmem_adapter.rs` (runtime-facing adapter to contract client)
+- `adl/src/obsmem_indexing.rs` and `adl/src/obsmem_retrieval_policy.rs`
+  (deterministic indexing/query policy behavior)
 
 ## Decision
 

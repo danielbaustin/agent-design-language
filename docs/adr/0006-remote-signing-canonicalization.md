@@ -42,6 +42,6 @@ Both client and server must use the same routine:
 
 ## References
 
-- `swarm/src/remote_exec.rs`
-- `swarm/tools/demo_d11_signed_remote.sh`
+- `adl/src/remote_exec.rs`
+- `adl/tools/demo_d11_signed_remote.sh`
 - `docs/milestones/v0.7/DEMOS_v0.7.md`

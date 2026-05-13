@@ -63,17 +63,17 @@ performed.
 
 ## CLI / Config Surface
 Canonical v0.6 resume surface:
-- `swarm resume <run_id>`
+- `adl resume <run_id>`
   - loads `.adl/runs/<run_id>/pause_state.json`
   - enforces strict validation before resuming
 
 ## Compatibility / Deprecated
 Legacy compatibility path (deprecated, internal/back-compat only):
-- `swarm <adl.yaml> --run --resume <run.json>`
+- `adl <adl.yaml> --run --resume <run.json>`
 
 This path is not part of the stable public v0.6 contract and may be removed
 without notice. Operational and documentation guidance should use
-`swarm resume <run_id>`.
+`adl resume <run_id>`.
 
 
 ## Determinism And Safety Considerations
