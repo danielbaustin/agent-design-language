@@ -21,7 +21,7 @@ productize, publish, and maintain.
 | B | UTS + ACC multi-model benchmark | Test JSON proposal and provider-native tool-call behavior across models. | benchmark harness, fixtures, and comparison report | governed tools, ACIP |
 | C | Runtime/test-cycle recovery | Reduce redundant or overbroad proof phases without weakening release truth. | test-cycle recovery implementation and report | current CI evidence |
 | D | Coverage and quality ergonomics | Make changed-source and workspace coverage gates actionable and less surprising. | coverage diagnostics and focused-test guidance | C |
-| E | CodeBuddy productization | Promote review packet, product report, skill, and demo surfaces. | CodeBuddy product/review package | review skills |
+| E | CodeFriend productization | Promote review packet, product report, skill, and demo surfaces. | CodeFriend product/review package | review skills |
 | F | Review skill and demo suite | Add review heuristics, skill demos, and repeatable review proof surfaces. | review demo matrix and skill docs | E |
 | G | Google Workspace CMS bridge | Build bounded bridge/demo for draft docs, comments, and promotion packets. | GWS CMS demo and adapter boundary | governed tools |
 | H | Code modernization | Define and prove a bounded Moderne/OpenRewrite modernization workflow grounded in deterministic recipes over the Lossless Semantic Tree (LST). | modernization demo packet | C, E |
@@ -42,7 +42,7 @@ productize, publish, and maintain.
 | WP-03 (#3002) | Provider-native tool-call comparison | tools | JSON proposal vs provider-native comparison report | WP-02 |
 | WP-04 (#3003) | Runtime/test-cycle recovery | quality | reduced redundant proof phases and validation report | WP-01 |
 | WP-05 (#3004) | Coverage gate ergonomics | quality | changed-source diagnostics and focused-test guide | WP-04 |
-| WP-06 (#3005) | CodeBuddy review packet productization | tools | review packet and product-report workflow package | WP-01; review skills and evidence-packet substrate |
+| WP-06 (#3005) | CodeFriend review packet productization | tools | review packet and product-report workflow package | WP-01; review skills and evidence-packet substrate |
 | WP-07 (#3006) | Review heuristics skill and demos | demo | review heuristics docs, skill/demo updates, proof examples | WP-06 |
 | WP-08 (#3007) | Google Workspace CMS bridge demo | tools | bounded Workspace content-card and promotion demo | WP-01; governed-tools authority and adapter boundary |
 | WP-09 (#3008) | Rust-native GWS adapter boundary | tools | adapter feasibility and typed contract boundary | WP-08 |

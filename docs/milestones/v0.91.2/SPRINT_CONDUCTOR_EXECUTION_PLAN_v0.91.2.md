@@ -106,7 +106,7 @@ Sprint umbrella: `#3026`
 
 Child issues:
 
-- `WP-06` / `#3005` CodeBuddy review packet productization
+- `WP-06` / `#3005` CodeFriend review packet productization
 - `WP-07` / `#3006` Review heuristics skill and demos
 - `WP-08` / `#3007` Google Workspace CMS bridge demo
 - `WP-09` / `#3008` Rust-native GWS adapter boundary

@@ -13,7 +13,7 @@ products:
 
 - UTS + ACC multi-model benchmarking with explicit authority boundaries
 - runtime/test-cycle recovery that reduces wasted time without weakening proof
-- CodeBuddy review-product surfaces
+- CodeFriend review-product surfaces
 - Workspace bridge and modernization demos that stay bounded and review-gated
 - publication packets that stop before unreviewed public claims
 - workflow guardrails that prevent the repo/process failures we have been
@@ -46,4 +46,3 @@ At closeout, reviewers should be able to inspect:
 - authority transfer from provider-native tool calls
 - silent canonical-source movement into external systems
 - public release or publication without explicit review
-

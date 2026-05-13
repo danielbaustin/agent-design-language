@@ -33,7 +33,7 @@ In scope:
 - Explicit LST and recipe framing in the demo packet.
 - Dry-run evidence.
 - Reversibility and review policy.
-- Relationship to CodeBuddy and Google Workspace surfaces.
+- Relationship to CodeFriend and Google Workspace surfaces.
 
 Out of scope:
 

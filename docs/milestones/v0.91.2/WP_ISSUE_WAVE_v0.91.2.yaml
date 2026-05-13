@@ -82,7 +82,7 @@ work_packages:
   depends_on: WP-04
 - wp: WP-06
   issue: 3005
-  title: CodeBuddy review packet productization
+  title: CodeFriend review packet productization
   queue: tools
   outcome: review packet and product-report workflow package
   depends_on: WP-01

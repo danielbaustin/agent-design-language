@@ -20,7 +20,7 @@ reviewable systems:
   from provider-native tool/function-call mode.
 - Runtime and test-cycle recovery so coverage and proof gates stop burning
   entire days.
-- CodeBuddy/review packet productization.
+- CodeFriend/review packet productization.
 - Google Workspace CMS bridge planning and bounded demo work.
 - Moderne / OpenRewrite LST modernization workflow support.
 - Bounded speculative-decoding evaluation inside ADL's deterministic runtime
@@ -59,7 +59,7 @@ This package is grounded in:
 - `.adl/docs/TBD/tools/UTS_ACC_MULTI_MODEL_BENCHMARK_PLAN.md`
 - `.adl/docs/TBD/tools/RUNTIME_V2_TEST_CYCLE_RECOVERY_PLAN.md`
 - `.adl/docs/TBD/v0.90.5_TEST_RUNTIME_REDUCTION_PLAN.md`
-- `.adl/docs/TBD/codebuddy_ai/`
+- `.adl/docs/TBD/codebuddy_ai/` legacy working-name source cluster for CodeFriend productization
 - `.adl/docs/TBD/google_workspace_cms/`
 - `.adl/docs/TBD/code_modernization/`
 - `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`

@@ -90,7 +90,7 @@ Required validation:
 - Coverage failures point to actionable files/tests.
 - Threshold behavior remains explicit and non-silent.
 
-## WP-06: CodeBuddy Review Packet Productization
+## WP-06: CodeFriend Review Packet Productization
 
 Required outputs:
 
