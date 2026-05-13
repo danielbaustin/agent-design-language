@@ -1,6 +1,6 @@
 use super::*;
 use crate::acc::{validate_acc_v1, AccDecisionV1};
-use crate::uts::UtsResourceRequirementV1;
+use crate::uts::{UtsCategoryV1, UtsObservabilityV1, UtsResourceRequirementV1, UtsSideEffectTagV1};
 use serde_json::json;
 use std::collections::BTreeMap;
 
@@ -57,6 +57,118 @@ fn wp09_maps_safe_read_to_allowed_acc() {
     assert_eq!(acc.decision, AccDecisionV1::Allowed);
     assert_eq!(acc.tool.tool_name, "fixture.safe_read");
     validate_acc_v1(&acc).expect("compiled safe-read ACC should validate");
+}
+
+#[test]
+fn wp09_registry_fixture_covers_v1_1_metadata_for_all_side_effect_lanes() {
+    let registry = wp09_compiler_registry_fixture();
+
+    let external_read = registry
+        .tools
+        .iter()
+        .find(|tool| tool.tool_name == "fixture.external_read")
+        .expect("external read fixture should exist");
+    assert_eq!(
+        external_read.uts.categories.as_ref().expect("categories"),
+        &vec![UtsCategoryV1::ExternalNetwork]
+    );
+    assert_eq!(
+        external_read
+            .uts
+            .side_effects
+            .as_ref()
+            .expect("side effects"),
+        &vec![UtsSideEffectTagV1::ExternalState]
+    );
+    assert_eq!(
+        external_read.uts.observability,
+        Some(UtsObservabilityV1::Full)
+    );
+    assert_eq!(
+        external_read
+            .uts
+            .planning
+            .as_ref()
+            .and_then(|p| p.expensive),
+        Some(true)
+    );
+
+    let external_write = registry
+        .tools
+        .iter()
+        .find(|tool| tool.tool_name == "fixture.external_write")
+        .expect("external write fixture should exist");
+    assert!(external_write
+        .uts
+        .categories
+        .as_ref()
+        .expect("categories")
+        .contains(&UtsCategoryV1::HumanVisible));
+    assert!(external_write
+        .uts
+        .side_effects
+        .as_ref()
+        .expect("side effects")
+        .contains(&UtsSideEffectTagV1::HumanVisible));
+    assert_eq!(
+        external_write.uts.observability,
+        Some(UtsObservabilityV1::Governance)
+    );
+    assert_eq!(
+        external_write
+            .uts
+            .planning
+            .as_ref()
+            .and_then(|p| p.high_risk),
+        Some(true)
+    );
+
+    let process = registry
+        .tools
+        .iter()
+        .find(|tool| tool.tool_name == "fixture.process")
+        .expect("process fixture should exist");
+    assert_eq!(
+        process.uts.side_effects.as_ref().expect("side effects"),
+        &vec![UtsSideEffectTagV1::Irreversible]
+    );
+    assert_eq!(
+        process.uts.planning.as_ref().and_then(|p| p.slow),
+        Some(true)
+    );
+
+    let network = registry
+        .tools
+        .iter()
+        .find(|tool| tool.tool_name == "fixture.network")
+        .expect("network fixture should exist");
+    assert_eq!(network.uts.observability, Some(UtsObservabilityV1::Full));
+    assert_eq!(
+        network.uts.planning.as_ref().and_then(|p| p.slow),
+        Some(true)
+    );
+}
+
+#[test]
+fn wp09_fixture_helpers_emit_expected_policy_and_proposal_defaults() {
+    let policy = wp09_policy_context_fixture();
+    assert_eq!(policy.actor_id, "actor.operator.alice");
+    assert!(policy.authenticated);
+    assert!(policy.execution_approved);
+    assert!(policy.replay_allowed);
+    assert!(policy.visibility_constructible);
+    assert!(policy.allow_sensitive_data);
+
+    let proposal = wp09_proposal_fixture("fixture.safe_read");
+    assert_eq!(proposal.tool_name, "fixture.safe_read");
+    assert_eq!(proposal.tool_version, "1.0.0");
+    assert_eq!(proposal.adapter_id, "adapter.fixture.safe_read.dry_run");
+    assert_eq!(
+        proposal.arguments.get("fixture_id"),
+        Some(&json!("fixture-a"))
+    );
+    assert!(proposal.dry_run_requested);
+    assert!(!proposal.ambiguous);
 }
 
 #[test]

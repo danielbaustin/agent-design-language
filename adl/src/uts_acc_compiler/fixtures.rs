@@ -187,11 +187,39 @@ pub fn wp09_compiler_registry_fixture() -> ToolRegistryV1 {
     let mut registry = wp08_tool_registry_v1_fixture();
     for (name, side_effect, scope, sensitivity, exfiltration) in [
         (
+            "fixture.external_read",
+            UtsSideEffectClassV1::ExternalRead,
+            "external-read",
+            UtsDataSensitivityV1::Confidential,
+            UtsExfiltrationRiskV1::Low,
+        ),
+        (
+            "fixture.external_write",
+            UtsSideEffectClassV1::ExternalWrite,
+            "external-write",
+            UtsDataSensitivityV1::Confidential,
+            UtsExfiltrationRiskV1::Medium,
+        ),
+        (
             "fixture.local_write",
             UtsSideEffectClassV1::LocalWrite,
             "local-write",
             UtsDataSensitivityV1::Internal,
             UtsExfiltrationRiskV1::None,
+        ),
+        (
+            "fixture.process",
+            UtsSideEffectClassV1::Process,
+            "process-fixture",
+            UtsDataSensitivityV1::Confidential,
+            UtsExfiltrationRiskV1::Medium,
+        ),
+        (
+            "fixture.network",
+            UtsSideEffectClassV1::Network,
+            "network-fixture",
+            UtsDataSensitivityV1::Confidential,
+            UtsExfiltrationRiskV1::Medium,
         ),
         (
             "fixture.destructive",
