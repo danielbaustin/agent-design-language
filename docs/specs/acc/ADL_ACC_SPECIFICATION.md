@@ -31,7 +31,7 @@ ACC does NOT standardize:
 - model cognition
 - universal identity systems
 
-ACC is intentionally scoped to governance-aware runtimes.
+ACC is scoped to governance-aware runtimes.
 
 ---
 
@@ -45,7 +45,7 @@ respective contract surfaces.
 
 All new ADL runtime governance work SHOULD target ACC semantics.
 
-ACC intentionally assumes:
+ACC assumes:
 - governance-aware runtimes
 - replay-aware infrastructure
 - observability-aware orchestration
@@ -106,7 +106,8 @@ The specification prioritizes:
 - inspectable delegation
 - continuity-aware execution
 
-ACC is intentionally ADL-runtime-oriented and is not currently proposed as a general ecosystem standard.
+ACC is ADL-runtime-oriented and is not currently proposed as a general
+ecosystem standard.
 
 The specification assumes:
 - continuity-aware runtimes
@@ -132,7 +133,7 @@ UTS intentionally remains:
 - transport-neutral
 - runtime-neutral
 
-ACC is intentionally:
+ACC is:
 - ADL-runtime-aware
 - governance-aware
 - standing-aware
@@ -224,9 +225,9 @@ Authority MUST NOT originate solely from:
 
 ---
 
-# 4. Core ACC Object
+# 4. Core ACC Governance Model
 
-A canonical ACC object SHOULD include:
+Across the cross-version governance model, ACC may discuss:
 
 - contract identifier
 - version
@@ -245,6 +246,14 @@ A canonical ACC object SHOULD include:
 - retention policy
 - runtime constraints
 - governance consistency metadata
+
+The version-specific normative wire surfaces remain:
+
+- [`ACC_V1.0_SPEC.md`](./ACC_V1.0_SPEC.md)
+- [`ACC_V1.1_SPEC.md`](./ACC_V1.1_SPEC.md)
+
+So fields such as invocation mode remain conceptual or future additive design
+space unless they appear in a versioned schema/spec.
 
 ---
 
@@ -290,23 +299,24 @@ Advanced implementations may add:
 
 ## ACC-Lite Compatibility
 
-A minimal ACC integration MAY support only:
+A minimal ACC integration MAY focus operationally on:
 
-- capability reference
-- authority scope
+- accountable actor identity
+- authority grant
+- top-level decision
+- execution approval posture
 - replay posture
-- observability posture
+- observability / privacy posture
 
 This profile is intended for:
 - incremental runtime adoption
 - lightweight governance integration
 - compatibility layers
 
-Advanced runtimes MAY additionally support:
-- delegation lineage
-- continuity-aware replay
-- governance routing
-- standing-aware execution
+This does not define a separate wire contract.
+
+It describes a runtime adoption profile that still targets the canonical ACC
+schema while enforcing the most important governance fields first.
 
 ---
 
@@ -354,55 +364,17 @@ Standing models MAY differ across runtimes.
 
 ---
 
-# 6. Invocation Modes
+# 6. Invocation Metadata Boundary
 
-ACC SHOULD support explicit invocation modes.
+Invocation mode and invocation intent are useful governance concepts, but they
+are not part of the current `ACC v1.0` or `ACC v1.1` wire contract.
 
-Suggested modes:
+Runtimes MAY use local invocation-mode or invocation-intent overlays for
+planning, review routing, or debugging, but those overlays remain out of scope
+for the current canonical schema surfaces.
 
-- direct_invocation
-- delegated_invocation
-- review_only
-- planning_only
-- simulation_only
-- governance_mediated
-
-Different invocation modes may imply different:
-- authority boundaries
-- review requirements
-- observability requirements
-- replay posture
-- escalation rules
-
----
-
-## Invocation Intent
-
-ACC invocation MAY include explicit invocation intent.
-
-Suggested intents:
-- informational_query
-- planning
-- simulation
-- review
-- mutation
-- governance_action
-- remediation
-
-Intent metadata is intended to improve:
-- reviewability
-- planning-aware execution
-- operational debugging
-- governance routing
-- replay interpretation
-
-Intent metadata is descriptive governance metadata only.
-
-Intent metadata MUST NOT imply:
-- execution approval
-- authority
-- replay authorization
-- runtime permission
+If standardized later, they should be introduced as explicit additive fields
+rather than treated as implied current requirements.
 
 ---
 
@@ -632,7 +604,7 @@ An ACC-aware runtime SHOULD be able to validate:
 - authority scope declarations
 - replay posture declarations
 - observability declarations
-- invocation mode declarations
+- runtime-local invocation metadata overlays when present
 - standing requirements
 
 ## Cross-Field Validation Expectations
@@ -677,10 +649,12 @@ Instead, it provides explicit runtime semantics supporting:
 ACC is designed for incremental adoption inside governance-aware runtimes.
 
 Implementations MAY initially adopt only:
-- authority scope metadata
-- standing-aware invocation
+- accountable actor identity
+- authority grant
+- top-level decision
+- execution approval posture
 - replay posture
-- observability posture
+- observability / privacy posture
 
 without implementing:
 - full delegation semantics
@@ -692,7 +666,7 @@ This allows progressive runtime adoption.
 
 ---
 
-# 17. Compatibility And Evolution
+# 15. Compatibility And Evolution
 
 ACC serves as the canonical governance schema baseline for future ADL runtime evolution.
 
@@ -706,11 +680,12 @@ ACC implementations MAY expose compatibility profiles.
 
 ---
 
-# 18. Future Work
+# 16. Future Work
 
 Possible future work:
 
-- formal JSON Schema definitions
+- standardized invocation modes
+- standardized invocation intents
 - protobuf bindings
 - delegation lineage schemas
 - cross-polis capability semantics
@@ -725,7 +700,7 @@ Possible future work:
 
 ---
 
-# 19. Summary
+# 17. Summary
 
 ACC defines the governance and authority layer surrounding capability invocation inside ADL.
 

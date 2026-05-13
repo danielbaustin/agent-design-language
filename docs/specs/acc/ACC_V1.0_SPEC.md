@@ -32,8 +32,11 @@ first-order coherence constraints. The runtime validator in
 [`adl/src/acc.rs`](../../../adl/src/acc.rs) remains the normative source for
 deeper semantic checks such as:
 
+- actor / grant / capability identity equality
 - known-evidence linkage for `policy_checks.evidence_ref`
 - delegated-chain attribution against the grantor / grantee pair
+- execution adapter equality against the declared tool adapter
+- top-level / policy-check decision equality
 - visibility-matrix audience coverage
 - fail-closed public/projection visibility posture
 - full redaction-surface coverage
@@ -127,6 +130,17 @@ contract shape and about several high-value cross-field constraints:
 It does not fully encode every semantic rule currently enforced by
 `validate_acc_v1`. Where exact runtime linkage matters, the runtime validator
 remains the stronger proving surface.
+
+This includes several invariants that a second implementation SHOULD carry
+forward explicitly:
+
+- `authority_grant.grantee_actor_id == actor.actor_id`
+- `authority_grant.capability_id == capability.capability_id`
+- `execution.adapter_id == tool.adapter_id`
+- every `policy_checks[].decision == decision`
+- every `policy_checks[].evidence_ref` resolves to known evidence, grant, or
+  delegation lineage
+- visibility, redaction, and trace privacy checks fail closed
 
 ## 5. Canonical JSON Example
 

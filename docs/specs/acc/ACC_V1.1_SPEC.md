@@ -162,6 +162,9 @@ This does not define a separate wire contract.
 It means a runtime may begin by enforcing the most important governance fields
 first while still targeting the canonical `ACC v1.1` schema and semantics.
 
+`ACC-Lite` is therefore a runtime adoption profile, not a distinct schema
+variant.
+
 ## 6. Canonical Minimal ACC Object
 
 Minimal `ACC v1.1` adoption-target example:
@@ -169,131 +172,165 @@ Minimal `ACC v1.1` adoption-target example:
 This is the canonical next-version fixture for schema and docs review.
 It is not a current runtime fixture until follow-on code adoption lands.
 
-```yaml
-schema_version: acc.v1.1
-contract_id: acc.basic.1001
-compatible_versions:
-  - acc.v1
-  - acc.v1.1
-governance_profile: standard_reviewed_runtime
-
-tool:
-  tool_name: filesystem.search
-  tool_version: "1.0"
-  registry_tool_id: filesystem.search
-  adapter_id: local.filesystem
-
-actor:
-  actor_id: runtime.review_agent
-  actor_kind: agent
-  authenticated: true
-  authority_evidence:
-    - evidence_id: credential.runtime.review_agent
-      kind: credential
-      issuer: adl.runtime
-
-authority_grant:
-  grant_id: grant.readonly.1001
-  grantor_actor_id: operator.primary
-  grantee_actor_id: runtime.review_agent
-  capability_id: filesystem.search.read
-  scope: local-readonly
-  status: active
-
-role_standing:
-  role: review_agent
-  standing: service_actor
-
-delegation_chain: []
-
-capability:
-  capability_id: filesystem.search.read
-  side_effect_class: read
-  resource_type: filesystem
-  resource_scope: local
-
-policy_checks:
-  - policy_id: policy.local.readonly
-    decision: allowed
-    evidence_ref: grant.readonly.1001
-
-confirmation:
-  required: false
-  confirmed_by_actor_id: null
-  confirmation_id: null
-
-freedom_gate:
-  required: false
-  decision: not_required
-  event_id: null
-
-execution:
-  adapter_id: local.filesystem
-  environment: local
-  dry_run: false
-  approved_for_execution: true
-
-trace_replay:
-  trace_id: trace.local.readonly.1001
-  replay_allowed: true
-  replay_posture: reviewable
-  evidence_refs:
-    - credential.runtime.review_agent
-    - grant.readonly.1001
-
-privacy_redaction:
-  data_sensitivity: internal
-  visibility:
-    actor_view: full
-    operator_view: full
-    reviewer_view: redacted
-    public_report_view: aggregate
-    observatory_projection: aggregate
-  redaction_rules:
-    - redact_private_state
-  visibility_matrix:
-    - audience: actor
-      level: full
-      rationale: actor requires full local context
-    - audience: operator
-      level: full
-      rationale: operator owns authority review
-    - audience: reviewer
-      level: redacted
-      rationale: reviewer sees review-safe trace surfaces
-    - audience: public_report
-      level: aggregate
-      rationale: public report must fail closed
-    - audience: observatory_projection
-      level: aggregate
-      rationale: projection must avoid full trace disclosure
-  redaction_examples:
-    - surface: arguments
-      source_shape: path=/srv/secret.txt
-      redacted_shape: path=/srv/[REDACTED]
-    - surface: results
-      source_shape: content=secret
-      redacted_shape: content=[REDACTED]
-    - surface: errors
-      source_shape: permission denied for secret path
-      redacted_shape: permission denied for protected path
-    - surface: traces
-      source_shape: trace local secret path
-      redacted_shape: trace local protected path
-    - surface: projections
-      source_shape: projected citizen.private.record
-      redacted_shape: projected protected record
-  trace_privacy:
-    exposes_citizen_private_state: false
-    protected_state_refs:
-      - protected.record
-
-failure_policy:
-  failure_code: readonly_access_denied
-  message: deny execution when authority or standing is insufficient
-  retryable: false
-
-decision: allowed
+```json
+{
+  "schema_version": "acc.v1.1",
+  "contract_id": "acc.basic.1001",
+  "compatible_versions": [
+    "acc.v1",
+    "acc.v1.1"
+  ],
+  "governance_profile": "standard_reviewed_runtime",
+  "tool": {
+    "tool_name": "filesystem.search",
+    "tool_version": "1.0",
+    "registry_tool_id": "filesystem.search",
+    "adapter_id": "local.filesystem"
+  },
+  "actor": {
+    "actor_id": "runtime.review_agent",
+    "actor_kind": "agent",
+    "authenticated": true,
+    "authority_evidence": [
+      {
+        "evidence_id": "credential.runtime.review_agent",
+        "kind": "credential",
+        "issuer": "adl.runtime"
+      }
+    ]
+  },
+  "authority_grant": {
+    "grant_id": "grant.readonly.1001",
+    "grantor_actor_id": "operator.primary",
+    "grantee_actor_id": "runtime.review_agent",
+    "capability_id": "filesystem.search.read",
+    "scope": "local-readonly",
+    "status": "active",
+    "revocation_reason": null
+  },
+  "role_standing": {
+    "role": "review_agent",
+    "standing": "service_actor"
+  },
+  "delegation_chain": [],
+  "capability": {
+    "capability_id": "filesystem.search.read",
+    "side_effect_class": "read",
+    "resource_type": "filesystem",
+    "resource_scope": "local"
+  },
+  "policy_checks": [
+    {
+      "policy_id": "policy.local.readonly",
+      "decision": "allowed",
+      "evidence_ref": "grant.readonly.1001"
+    }
+  ],
+  "confirmation": {
+    "required": false,
+    "confirmed_by_actor_id": null,
+    "confirmation_id": null
+  },
+  "freedom_gate": {
+    "required": false,
+    "decision": "not_required",
+    "event_id": null
+  },
+  "execution": {
+    "adapter_id": "local.filesystem",
+    "environment": "local",
+    "dry_run": false,
+    "approved_for_execution": true
+  },
+  "trace_replay": {
+    "trace_id": "trace.local.readonly.1001",
+    "replay_allowed": true,
+    "replay_posture": "reviewable",
+    "evidence_refs": [
+      "credential.runtime.review_agent",
+      "grant.readonly.1001"
+    ]
+  },
+  "privacy_redaction": {
+    "data_sensitivity": "internal",
+    "visibility": {
+      "actor_view": "full",
+      "operator_view": "full",
+      "reviewer_view": "redacted",
+      "public_report_view": "aggregate",
+      "observatory_projection": "aggregate"
+    },
+    "redaction_rules": [
+      "redact_private_state"
+    ],
+    "visibility_matrix": [
+      {
+        "audience": "actor",
+        "level": "full",
+        "rationale": "actor requires full local context"
+      },
+      {
+        "audience": "operator",
+        "level": "full",
+        "rationale": "operator owns authority review"
+      },
+      {
+        "audience": "reviewer",
+        "level": "redacted",
+        "rationale": "reviewer sees review-safe trace surfaces"
+      },
+      {
+        "audience": "public_report",
+        "level": "aggregate",
+        "rationale": "public report must fail closed"
+      },
+      {
+        "audience": "observatory_projection",
+        "level": "aggregate",
+        "rationale": "projection must avoid full trace disclosure"
+      }
+    ],
+    "redaction_examples": [
+      {
+        "surface": "arguments",
+        "source_shape": "path=/srv/secret.txt",
+        "redacted_shape": "path=/srv/[REDACTED]"
+      },
+      {
+        "surface": "results",
+        "source_shape": "content=secret",
+        "redacted_shape": "content=[REDACTED]"
+      },
+      {
+        "surface": "errors",
+        "source_shape": "permission denied for secret path",
+        "redacted_shape": "permission denied for protected path"
+      },
+      {
+        "surface": "traces",
+        "source_shape": "trace local secret path",
+        "redacted_shape": "trace local protected path"
+      },
+      {
+        "surface": "projections",
+        "source_shape": "projected citizen.private.record",
+        "redacted_shape": "projected protected record"
+      }
+    ],
+    "trace_privacy": {
+      "exposes_citizen_private_state": false,
+      "protected_state_refs": [
+        "protected.record"
+      ]
+    }
+  },
+  "failure_policy": {
+    "failure_code": "readonly_access_denied",
+    "message": "deny execution when authority or standing is insufficient",
+    "retryable": false
+  },
+  "decision": "allowed"
+}
 ```
 
 ## 7. Authority Scope Semantics
@@ -330,6 +367,12 @@ An ACC object MUST NOT simultaneously represent:
 - required Freedom Gate mediation with a `not_required` decision
 
 Runtime validation SHOULD reject contradictory governance states.
+
+`policy_checks[].decision` intentionally reuses the top-level decision enum as
+a coherence echo rather than an independent policy-only decision vocabulary.
+
+In other words, policy checks in `ACC v1.1` are recorded as reviewable evidence
+that the final governance decision was consistently applied.
 
 ## 9. Delegation Constraints
 
@@ -388,9 +431,51 @@ It captures:
   confirmation, and Freedom Gate semantics
 
 It does not yet encode every deeper runtime semantic already enforced by the
-current validator, such as exact evidence-reference linkage or full privacy
-coverage analysis. Those remain runtime-validator responsibilities unless and
+current validator. Those remain runtime-validator responsibilities unless and
 until a later schema/tooling pass encodes them more completely.
+
+### Validator-only invariants that still govern `ACC v1.1`
+
+Implementations targeting `ACC v1.1` SHOULD enforce the following invariants in
+addition to JSON Schema validation:
+
+- `authority_grant.grantee_actor_id` MUST equal `actor.actor_id`
+- `authority_grant.capability_id` MUST equal `capability.capability_id`
+- allowed decisions MUST carry an active grant
+- revoked decisions MUST carry a revoked grant
+- delegated grants MUST carry a delegation chain
+- delegated chains MUST bind the authority grant's grantor/grantee pair
+- every `policy_checks[].decision` MUST equal the top-level `decision`
+- every `policy_checks[].evidence_ref` MUST resolve to known actor evidence,
+  the authority grant, or a delegation record
+- required confirmations MUST carry both confirming actor and confirmation id
+- required Freedom Gate mediation MUST not leave the decision at
+  `not_required`
+- `execution.adapter_id` MUST equal `tool.adapter_id`
+- non-allowed decisions MUST NOT approve execution
+- `trace_replay.trace_id` and `trace_replay.evidence_refs` MUST be present
+- visibility policy MUST be complete before execution
+- visibility matrix MUST cover all required audiences and fail closed for
+  `public_report` and `observatory_projection`
+- redaction examples MUST cover arguments, results, errors, traces, and
+  projections
+- redacted examples, trace metadata, and replay metadata MUST NOT leak
+  citizen/private-state markers
+
+The JSON Schema is therefore a structural contract plus first-order coherence
+checks, while the runtime validator remains the stronger proving surface for
+equality, linkage, attribution, and privacy invariants.
+
+### Validator-backed privacy assertions
+
+Two schema surfaces are intentionally stricter than generic booleans or free
+claims might suggest:
+
+- `actor.authority_evidence` enumerates `model_claim` so runtimes can emit
+  precise diagnostics, but `model_claim` MUST NOT establish authority
+- `trace_privacy.exposes_citizen_private_state` is fixed at `false` as a
+  positive compliance assertion; contracts that would expose citizen private
+  state are invalid rather than merely risky
 
 Observability metadata in ACC describes governance visibility posture. It does
 not imply centralized logging, centralized monitoring, or centralized
