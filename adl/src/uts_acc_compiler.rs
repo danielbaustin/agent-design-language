@@ -1,4 +1,4 @@
-use crate::acc::{AccGrantStatusV1, AdlCapabilityContractV1};
+use crate::acc::{AccGrantStatusV1, AdlCapabilityContractV1, AdlCapabilityContractV1_1};
 use crate::tool_registry::ToolRegistryV1;
 use crate::uts::UtsSideEffectClassV1;
 use schemars::JsonSchema;
@@ -12,7 +12,7 @@ mod frontend;
 #[cfg(test)]
 mod tests;
 
-pub use core::compile_uts_to_acc_v1;
+pub use core::{compile_uts_to_acc_v1, compile_uts_to_acc_v1_1};
 pub use fixtures::{
     wp09_compiler_input_fixture, wp09_compiler_registry_fixture, wp09_policy_context_fixture,
     wp09_proposal_fixture,
@@ -136,6 +136,17 @@ pub struct UtsAccCompilerOutcomeV1 {
     pub decision: UtsAccCompilerDecisionV1,
     #[serde(default)]
     pub acc: Option<AdlCapabilityContractV1>,
+    #[serde(default)]
+    pub rejection: Option<UtsAccRejectionRecordV1>,
+    pub evidence: Vec<UtsAccCompilerEvidenceV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct UtsAccCompilerOutcomeV1_1 {
+    pub decision: UtsAccCompilerDecisionV1,
+    #[serde(default)]
+    pub acc: Option<AdlCapabilityContractV1_1>,
     #[serde(default)]
     pub rejection: Option<UtsAccRejectionRecordV1>,
     pub evidence: Vec<UtsAccCompilerEvidenceV1>,

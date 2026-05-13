@@ -3,17 +3,19 @@ use super::frontend::{
 };
 use super::{
     evidence, reject, UtsAccCompilerDecisionV1, UtsAccCompilerEvidenceStageV1,
-    UtsAccCompilerInputV1, UtsAccCompilerOutcomeV1, UtsAccCompilerRejectionCodeV1,
-    UtsAccPolicyContextV1,
+    UtsAccCompilerInputV1, UtsAccCompilerOutcomeV1, UtsAccCompilerOutcomeV1_1,
+    UtsAccCompilerRejectionCodeV1, UtsAccPolicyContextV1,
 };
 use crate::acc::{
-    acc_v1_redaction_examples, acc_v1_visibility_matrix, validate_acc_v1, AccActorIdentityV1,
-    AccActorKindV1, AccAuthorityEvidenceKindV1, AccAuthorityEvidenceV1, AccAuthorityGrantV1,
-    AccCapabilityRequirementV1, AccConfirmationRequirementV1, AccDecisionV1, AccDelegationStepV1,
+    acc_v1_redaction_examples, acc_v1_visibility_matrix, upgrade_acc_v1_to_v1_1, validate_acc_v1,
+    validate_acc_v1_1, AccActorIdentityV1, AccActorKindV1, AccAuthorityEvidenceKindV1,
+    AccAuthorityEvidenceV1, AccAuthorityGrantV1, AccCapabilityRequirementV1,
+    AccConfirmationRequirementV1, AccDecisionV1, AccDelegationConstraintsV1_1, AccDelegationStepV1,
     AccExecutionSemanticsV1, AccFailurePolicyV1, AccFreedomGateDecisionV1,
     AccFreedomGateRequirementV1, AccGrantStatusV1, AccPolicyCheckV1, AccPrivacyRedactionV1,
     AccRoleStandingV1, AccToolReferenceV1, AccTracePrivacyPolicyV1, AccTraceReplayV1,
-    AccVisibilityPolicyV1, AdlCapabilityContractV1, ACC_SCHEMA_VERSION_V1,
+    AccVisibilityPolicyV1, AdlCapabilityContractV1, ACC_MAX_DELEGATION_DEPTH_V1,
+    ACC_SCHEMA_VERSION_V1,
 };
 use crate::tool_registry::{
     bind_tool_registry_v1, RegisteredToolV1, ToolBindingDecisionV1, ToolBindingRequestV1,
@@ -466,5 +468,30 @@ pub fn compile_uts_to_acc_v1(input: &UtsAccCompilerInputV1) -> UtsAccCompilerOut
         acc: Some(acc),
         rejection: None,
         evidence: evidence_log,
+    }
+}
+
+pub fn compile_uts_to_acc_v1_1(input: &UtsAccCompilerInputV1) -> UtsAccCompilerOutcomeV1_1 {
+    let outcome = compile_uts_to_acc_v1(input);
+    let upgraded_acc = outcome.acc.map(|acc| {
+        let mut upgraded = upgrade_acc_v1_to_v1_1(acc);
+        upgraded.governance_profile = Some("standard_reviewed_runtime".to_string());
+        upgraded.delegation_constraints = Some(AccDelegationConstraintsV1_1 {
+            max_depth: ACC_MAX_DELEGATION_DEPTH_V1,
+            allow_redelegation: false,
+            scope_ceiling: Some(upgraded.capability.resource_scope.clone()),
+        });
+        upgraded
+    });
+
+    if let Some(ref acc) = upgraded_acc {
+        validate_acc_v1_1(acc).expect("upgraded ACC v1.1 compiler output should validate");
+    }
+
+    UtsAccCompilerOutcomeV1_1 {
+        decision: outcome.decision,
+        acc: upgraded_acc,
+        rejection: outcome.rejection,
+        evidence: outcome.evidence,
     }
 }
