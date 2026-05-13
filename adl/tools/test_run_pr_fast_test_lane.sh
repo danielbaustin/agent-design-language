@@ -100,6 +100,43 @@ assert_has "$identity_family_output" "mode=focused"
 assert_has "$identity_family_output" "filter_tokens=identity_cmd"
 assert_has "$identity_family_output" "filter_expression=test(identity_cmd)"
 
+runtime_test_files="$TMP/runtime_test_files.txt"
+cat >"$runtime_test_files" <<'EOF'
+M	adl/src/runtime_v2/tests/theory_of_mind_foundation.rs
+M	adl/src/runtime_v2/tests/intelligence_metric_architecture.rs
+M	adl/src/runtime_v2/tests/governed_learning_substrate.rs
+EOF
+runtime_test_files_output="$(bash "$SCRIPT" --changed-files "$runtime_test_files" --print-plan)"
+assert_has "$runtime_test_files_output" "mode=focused"
+assert_has "$runtime_test_files_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$runtime_test_files_output" "filter_tokens=theory_of_mind_foundation,intelligence_metric_architecture,governed_learning_substrate"
+assert_has "$runtime_test_files_output" "filter_expression=test(theory_of_mind_foundation) or test(intelligence_metric_architecture) or test(governed_learning_substrate)"
+
+runtime_test_helper="$TMP/runtime_test_helper.txt"
+printf 'M\tadl/src/runtime_v2/tests/common.rs\n' >"$runtime_test_helper"
+runtime_test_helper_output="$(bash "$SCRIPT" --changed-files "$runtime_test_helper" --print-plan)"
+assert_has "$runtime_test_helper_output" "mode=family"
+assert_has "$runtime_test_helper_output" "reason=bounded_family_surface_runs_family_nextest"
+assert_has "$runtime_test_helper_output" "filter_tokens=runtime_v2"
+assert_has "$runtime_test_helper_output" "filter_expression=test(runtime_v2)"
+
+uts_compiler_adoption="$TMP/uts_compiler_adoption.txt"
+cat >"$uts_compiler_adoption" <<'EOF'
+M	adl/src/tool_registry.rs
+M	adl/src/uts.rs
+M	adl/src/uts_acc_compiler/core.rs
+M	adl/src/uts_acc_compiler/fixtures.rs
+M	adl/src/uts_acc_compiler/frontend.rs
+M	adl/src/uts_acc_compiler/tests.rs
+M	adl/src/uts_conformance.rs
+M	docs/milestones/v0.90.5/review/uts-conformance-report.json
+EOF
+uts_compiler_adoption_output="$(bash "$SCRIPT" --changed-files "$uts_compiler_adoption" --print-plan)"
+assert_has "$uts_compiler_adoption_output" "mode=focused"
+assert_has "$uts_compiler_adoption_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$uts_compiler_adoption_output" "filter_tokens=tool_registry,uts,uts_acc_compiler,uts_conformance"
+assert_has "$uts_compiler_adoption_output" "filter_expression=test(tool_registry) or test(uts) or test(uts_acc_compiler) or test(uts_conformance)"
+
 too_many="$TMP/too_many.txt"
 cat >"$too_many" <<'EOF'
 M	adl/src/runtime_v2/contract_schema.rs

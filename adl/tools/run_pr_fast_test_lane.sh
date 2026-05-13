@@ -156,12 +156,15 @@ filter_token_for_path() {
       printf 'private_state_sanctuary'
       return 0
       ;;
-    adl/src/runtime_v2/*/*.rs|adl/src/runtime_v2/*/*/*.rs|adl/src/runtime_v2/*/*/*/*.rs)
+    adl/src/runtime_v2/tests/common.rs)
       return 1
       ;;
     adl/src/runtime_v2/tests/*)
       basename "$path" .rs
       return 0
+      ;;
+    adl/src/runtime_v2/*/*.rs|adl/src/runtime_v2/*/*/*.rs|adl/src/runtime_v2/*/*/*/*.rs)
+      return 1
       ;;
     adl/src/runtime_v2/[^/]*.rs)
       basename "$path" .rs
@@ -213,6 +216,10 @@ filter_token_for_path() {
       ;;
     adl/src/cli/*/*/*.rs|adl/src/cli/*/*/*/*.rs)
       return 1
+      ;;
+    adl/src/uts_acc_compiler.rs|adl/src/uts_acc_compiler/*.rs)
+      printf 'uts_acc_compiler'
+      return 0
       ;;
     adl/src/cli/[^/]*.rs|adl/src/cli/[^/]*/[^/]*.rs)
       basename "$path" .rs
