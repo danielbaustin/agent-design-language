@@ -164,7 +164,10 @@ first while still targeting the canonical `ACC v1.1` schema and semantics.
 
 ## 6. Canonical Minimal ACC Object
 
-Minimal `ACC v1.1` example:
+Minimal `ACC v1.1` adoption-target example:
+
+This is the canonical next-version fixture for schema and docs review.
+It is not a current runtime fixture until follow-on code adoption lands.
 
 ```yaml
 schema_version: acc.v1.1

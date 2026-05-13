@@ -248,9 +248,9 @@ A canonical ACC object SHOULD include:
 
 ---
 
-## Canonical Minimal ACC Object
+## Conceptual Minimal ACC Sketch
 
-A minimal ACC object may look like:
+A conceptual ACC authority sketch may look like:
 
 ```yaml
 contract_id: acc-basic-1001
@@ -263,11 +263,21 @@ authority_scope:
   - read_only
 ```
 
-This minimal structure is sufficient for:
-- lightweight governance integration
-- authority classification
-- standing-aware execution
-- runtime validation
+This sketch is intentionally not a schema-valid ACC runtime object.
+
+It is useful only as a compact conceptual summary of:
+- contract identity
+- capability intent
+- authority narrowing
+
+For a schema-valid minimal fixture, use the canonical minimal examples in:
+- [`ACC_V1.0_SPEC.md`](./ACC_V1.0_SPEC.md)
+- [`ACC_V1.1_SPEC.md`](./ACC_V1.1_SPEC.md)
+
+A runtime-valid ACC object must carry the full accountable contract shape,
+including actor identity, authority grant, standing, policy checks, execution
+posture, replay posture, privacy posture, failure policy, and top-level
+decision.
 
 Advanced implementations may add:
 - replay posture
