@@ -1,0 +1,352 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/danielbaustin/agent-design-language/main/adl-spec/schemas/acc/v1.1/adl_capability_contract.v1_1.schema.json",
+  "title": "ADL Capability Contract v1.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_id",
+    "tool",
+    "actor",
+    "authority_grant",
+    "role_standing",
+    "delegation_chain",
+    "capability",
+    "policy_checks",
+    "confirmation",
+    "freedom_gate",
+    "execution",
+    "trace_replay",
+    "privacy_redaction",
+    "failure_policy",
+    "decision"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "acc.v1.1" },
+    "compatible_versions": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["acc.v1", "acc.v1.1"] },
+      "uniqueItems": true
+    },
+    "governance_profile": { "type": "string", "pattern": "^[a-z0-9._-]+$", "minLength": 1 },
+    "contract_id": { "type": "string", "pattern": "^[a-z0-9._-]+$", "minLength": 1 },
+    "tool": { "$ref": "#/$defs/toolReference" },
+    "actor": { "$ref": "#/$defs/actorIdentity" },
+    "authority_grant": { "$ref": "#/$defs/authorityGrant" },
+    "role_standing": { "$ref": "#/$defs/roleStanding" },
+    "delegation_chain": { "type": "array", "items": { "$ref": "#/$defs/delegationStep" } },
+    "delegation_constraints": { "$ref": "#/$defs/delegationConstraints" },
+    "capability": { "$ref": "#/$defs/capabilityRequirement" },
+    "policy_checks": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/policyCheck" } },
+    "confirmation": { "$ref": "#/$defs/confirmationRequirement" },
+    "freedom_gate": { "$ref": "#/$defs/freedomGateRequirement" },
+    "execution": { "$ref": "#/$defs/executionSemantics" },
+    "trace_replay": { "$ref": "#/$defs/traceReplay" },
+    "privacy_redaction": { "$ref": "#/$defs/privacyRedaction" },
+    "failure_policy": { "$ref": "#/$defs/failurePolicy" },
+    "decision": { "$ref": "#/$defs/decision" }
+  },
+  "allOf": [
+    {
+      "if": { "required": ["compatible_versions"] },
+      "then": {
+        "properties": {
+          "compatible_versions": {
+            "allOf": [
+              { "contains": { "const": "acc.v1.1" } }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "decision": { "const": "allowed" } }, "required": ["decision"] },
+      "then": {
+        "properties": {
+          "authority_grant": { "properties": { "status": { "const": "active" } }, "required": ["status"] },
+          "execution": { "properties": { "approved_for_execution": { "const": true } }, "required": ["approved_for_execution"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "decision": { "const": "revoked" } }, "required": ["decision"] },
+      "then": {
+        "properties": {
+          "authority_grant": { "properties": { "status": { "const": "revoked" } }, "required": ["status"] },
+          "execution": { "properties": { "approved_for_execution": { "const": false } }, "required": ["approved_for_execution"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "decision": { "enum": ["denied", "delegated"] } }, "required": ["decision"] },
+      "then": {
+        "properties": {
+          "execution": { "properties": { "approved_for_execution": { "const": false } }, "required": ["approved_for_execution"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "authority_grant": { "properties": { "status": { "const": "delegated" } }, "required": ["status"] } }, "required": ["authority_grant"] },
+      "then": {
+        "properties": {
+          "delegation_chain": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "confirmation": { "properties": { "required": { "const": true } }, "required": ["required"] } }, "required": ["confirmation"] },
+      "then": {
+        "properties": {
+          "confirmation": {
+            "required": ["required", "confirmed_by_actor_id", "confirmation_id"],
+            "properties": {
+              "confirmed_by_actor_id": { "type": "string", "minLength": 1 },
+              "confirmation_id": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "freedom_gate": { "properties": { "required": { "const": true } }, "required": ["required"] } }, "required": ["freedom_gate"] },
+      "then": {
+        "properties": {
+          "freedom_gate": {
+            "properties": {
+              "decision": { "not": { "const": "not_required" } }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "decision": {
+      "type": "string",
+      "enum": ["allowed", "denied", "delegated", "revoked"]
+    },
+    "toolReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool_name", "tool_version", "registry_tool_id", "adapter_id"],
+      "properties": {
+        "tool_name": { "type": "string", "pattern": "^[a-z0-9._-]+$", "minLength": 1 },
+        "tool_version": { "type": "string", "minLength": 1 },
+        "registry_tool_id": { "type": "string", "pattern": "^[a-z0-9._-]+$", "minLength": 1 },
+        "adapter_id": { "type": "string", "pattern": "^[a-z0-9._-]+$", "minLength": 1 }
+      }
+    },
+    "authorityEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "kind", "issuer"],
+      "properties": {
+        "evidence_id": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "enum": ["credential", "operator_grant", "registry_grant", "policy_record", "delegation_record", "model_claim"] },
+        "issuer": { "type": "string", "minLength": 1 }
+      }
+    },
+    "actorIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actor_id", "actor_kind", "authenticated", "authority_evidence"],
+      "properties": {
+        "actor_id": { "type": "string", "minLength": 1 },
+        "actor_kind": { "type": "string", "enum": ["human", "agent", "service", "operator"] },
+        "authenticated": { "const": true },
+        "authority_evidence": {
+          "description": "Reviewable authority evidence. `model_claim` is enumerated for diagnostic clarity but is not allowed to establish authority in valid ACC contracts.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/authorityEvidence" },
+          "not": {
+            "contains": {
+              "type": "object",
+              "properties": { "kind": { "const": "model_claim" } },
+              "required": ["kind"]
+            }
+          }
+        }
+      }
+    },
+    "authorityGrant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grant_id", "grantor_actor_id", "grantee_actor_id", "capability_id", "scope", "status"],
+      "properties": {
+        "grant_id": { "type": "string", "minLength": 1 },
+        "grantor_actor_id": { "type": "string", "minLength": 1 },
+        "grantee_actor_id": { "type": "string", "minLength": 1 },
+        "capability_id": { "type": "string", "minLength": 1 },
+        "scope": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["active", "denied", "delegated", "revoked"] },
+        "revocation_reason": { "type": ["string", "null"] }
+      }
+    },
+    "roleStanding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "standing"],
+      "properties": {
+        "role": { "type": "string", "minLength": 1 },
+        "standing": { "type": "string", "minLength": 1 }
+      }
+    },
+    "delegationStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["delegation_id", "grantor_actor_id", "delegate_actor_id", "grant_id", "depth"],
+      "properties": {
+        "delegation_id": { "type": "string", "minLength": 1 },
+        "grantor_actor_id": { "type": "string", "minLength": 1 },
+        "delegate_actor_id": { "type": "string", "minLength": 1 },
+        "grant_id": { "type": "string", "minLength": 1 },
+        "depth": { "type": "integer", "minimum": 1, "maximum": 8 }
+      }
+    },
+    "delegationConstraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_depth", "allow_redelegation"],
+      "properties": {
+        "max_depth": { "type": "integer", "minimum": 1, "maximum": 8 },
+        "allow_redelegation": { "type": "boolean" },
+        "scope_ceiling": { "type": ["string", "null"], "minLength": 1 }
+      }
+    },
+    "capabilityRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "side_effect_class", "resource_type", "resource_scope"],
+      "properties": {
+        "capability_id": { "type": "string", "minLength": 1 },
+        "side_effect_class": { "type": "string", "minLength": 1 },
+        "resource_type": { "type": "string", "minLength": 1 },
+        "resource_scope": { "type": "string", "minLength": 1 }
+      }
+    },
+    "policyCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "decision", "evidence_ref"],
+      "properties": {
+        "policy_id": { "type": "string", "minLength": 1 },
+        "decision": {
+          "description": "Coherence echo of the top-level ACC decision, recorded per policy check rather than serving as an independent policy-only decision vocabulary.",
+          "$ref": "#/$defs/decision"
+        },
+        "evidence_ref": { "type": "string", "minLength": 1 }
+      }
+    },
+    "confirmationRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "confirmed_by_actor_id": { "type": ["string", "null"] },
+        "confirmation_id": { "type": ["string", "null"] }
+      }
+    },
+    "freedomGateRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "decision"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "decision": { "type": "string", "enum": ["not_required", "allowed", "denied", "deferred", "challenged", "escalated"] },
+        "event_id": { "type": ["string", "null"] }
+      }
+    },
+    "executionSemantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adapter_id", "environment", "dry_run", "approved_for_execution"],
+      "properties": {
+        "adapter_id": { "type": "string", "minLength": 1 },
+        "environment": { "type": "string", "minLength": 1 },
+        "dry_run": { "type": "boolean" },
+        "approved_for_execution": { "type": "boolean" }
+      }
+    },
+    "traceReplay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trace_id", "replay_allowed", "replay_posture", "evidence_refs"],
+      "properties": {
+        "trace_id": { "type": "string", "minLength": 1 },
+        "replay_allowed": { "type": "boolean" },
+        "replay_posture": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "visibilityPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actor_view", "operator_view", "reviewer_view", "public_report_view", "observatory_projection"],
+      "properties": {
+        "actor_view": { "type": "string", "minLength": 1, "description": "Human-readable summary of what the actor may see; machine-actionable visibility levels live in `visibility_matrix`." },
+        "operator_view": { "type": "string", "minLength": 1, "description": "Human-readable summary of what the operator may see; machine-actionable visibility levels live in `visibility_matrix`." },
+        "reviewer_view": { "type": "string", "minLength": 1, "description": "Human-readable summary of what the reviewer may see; machine-actionable visibility levels live in `visibility_matrix`." },
+        "public_report_view": { "type": "string", "minLength": 1, "description": "Human-readable summary of what public reporting may expose; machine-actionable visibility levels live in `visibility_matrix`." },
+        "observatory_projection": { "type": "string", "minLength": 1, "description": "Human-readable summary of what observatory projections may expose; machine-actionable visibility levels live in `visibility_matrix`." }
+      }
+    },
+    "visibilityMatrixEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["audience", "level", "rationale"],
+      "properties": {
+        "audience": { "type": "string", "enum": ["actor", "operator", "reviewer", "public_report", "observatory_projection"] },
+        "level": { "type": "string", "enum": ["full", "redacted", "aggregate", "denied"] },
+        "rationale": { "type": "string", "minLength": 1 }
+      }
+    },
+    "redactionExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["surface", "source_shape", "redacted_shape"],
+      "properties": {
+        "surface": { "type": "string", "enum": ["arguments", "results", "errors", "traces", "projections"] },
+        "source_shape": { "type": "string", "minLength": 1 },
+        "redacted_shape": { "type": "string", "minLength": 1 }
+      }
+    },
+    "tracePrivacyPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exposes_citizen_private_state", "protected_state_refs"],
+      "properties": {
+        "exposes_citizen_private_state": {
+          "const": false,
+          "description": "Positive compliance assertion. Valid ACC contracts must not expose citizen/private state through trace or replay surfaces."
+        },
+        "protected_state_refs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "privacyRedaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_sensitivity", "visibility", "redaction_rules", "visibility_matrix", "redaction_examples", "trace_privacy"],
+      "properties": {
+        "data_sensitivity": { "type": "string", "minLength": 1 },
+        "visibility": { "$ref": "#/$defs/visibilityPolicy" },
+        "redaction_rules": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "visibility_matrix": { "type": "array", "minItems": 5, "items": { "$ref": "#/$defs/visibilityMatrixEntry" } },
+        "redaction_examples": { "type": "array", "minItems": 5, "items": { "$ref": "#/$defs/redactionExample" } },
+        "trace_privacy": { "$ref": "#/$defs/tracePrivacyPolicy" }
+      }
+    },
+    "failurePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["failure_code", "message", "retryable"],
+      "properties": {
+        "failure_code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "retryable": { "type": "boolean" }
+      }
+    }
+  }
+}
