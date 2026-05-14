@@ -4,13 +4,22 @@
 
 ADL now treats the core workflow artifacts as structured prompt surfaces with machine-checkable contracts:
 
+- `Structured Issue Prompt` (SIP)
 - `Structured Task Prompt` (STP)
-- `Structured Implementation Prompt` (SIP)
-- `Structured Output Record` (SOR)
 - `Structured Plan Prompt` (SPP)
-- `Structured Review Policy` (SRP)
+- `Structured Review Prompt` (SRP)
+- `Structured Outcome Record` (SOR)
+
+The canonical semantic lifecycle is:
+
+```text
+SIP -> STP -> SPP -> SRP -> SOR
+```
 
 This document defines the first bounded contract layer for those artifacts so tooling can validate stable machine-readable structure without freezing high-value prose too early.
+
+See `card-lifecycle.md` for the card roles and the distinction between file
+creation order and lifecycle activation order.
 
 ## Canonical Contract Files
 
@@ -20,9 +29,11 @@ The original schema-backed contract files remain:
 - `adl/schemas/structured_implementation_prompt.contract.yaml`
 - `adl/schemas/structured_output_record.contract.yaml`
 
-The landed `v0.91` `SPP`/`SRP` slice is validator-backed but not yet represented
-as dedicated tracked schema files. Their bounded contract currently lives in the
-Rust validator entrypoint itself.
+The historical `structured_implementation_prompt` schema name is retained as a
+compatibility surface while the semantic `SIP` meaning moves to Structured
+Issue Prompt. The landed `v0.91` `SPP`/`SRP` slice is validator-backed but not
+yet represented as dedicated tracked schema files. Their bounded contract
+currently lives in the Rust validator entrypoint itself.
 
 These schema files, plus the validator-backed `SPP`/`SRP` rules, are the
 current source of truth for:
@@ -55,7 +66,7 @@ The validator currently enforces:
 - boolean normalization
 - selected enum vocabularies
 - UTC ISO 8601 / RFC3339 date-time formatting with trailing `Z` for machine-readable timestamp fields (`YYYY-MM-DDTHH:MM:SSZ`)
-- bounded front-matter contracts for durable planning and review-policy artifacts
+- bounded front-matter contracts for durable planning and review-prompt artifacts
 
 ## Timestamp Standard
 
@@ -97,9 +108,9 @@ Examples of enum-constrained values now treated as stable:
 - SOR `Verification scope`
 - SOR `Main Repo Integration.Result`
 
-## Output-Record Integration Semantics
+## Outcome-Record Integration Semantics
 
-Structured Output Records intentionally separate three related ideas:
+Structured Outcome Records intentionally separate three related ideas:
 
 - `Integration state`
   - lifecycle state of the integrated artifact set (`worktree_only`, `pr_open`, `merged`)
@@ -119,7 +130,7 @@ In particular:
 
 ## Execution-Record Quality Expectations
 
-Structured Output Records are machine-auditable execution records, not narrative summaries.
+Structured Outcome Records are machine-auditable execution records, not narrative summaries.
 
 In practice that means:
 
@@ -132,7 +143,7 @@ In practice that means:
 
 ## Absolute-Path Policy
 
-Output records should prefer repository-relative paths in validation commands and artifact references.
+Outcome records should prefer repository-relative paths in validation commands and artifact references.
 
 The intended rule is:
 

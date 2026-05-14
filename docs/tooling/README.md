@@ -7,6 +7,7 @@ The goal of this directory is to make ADL’s tooling surfaces understandable an
 ## Start Here
 
 - Prompt-spec and structured prompt surfaces: `prompt-spec.md`
+- Canonical issue-card lifecycle: `card-lifecycle.md`
 - Structured prompt contracts: `structured-prompt-contracts.md`
 - Default contributor workflow: `../default_workflow.md`
 - Editor and authoring proof surfaces: `editor/README.md`
@@ -16,9 +17,10 @@ The goal of this directory is to make ADL’s tooling surfaces understandable an
 
 ### Prompt and Card Surfaces
 
-These docs describe the structured prompt surfaces used to shape issues, input cards, output cards, and deterministic reviewer flows.
+These docs describe the structured prompt surfaces used to shape issues, issue-card lifecycle state, outcome records, and deterministic reviewer flows.
 
 - [Prompt Spec](prompt-spec.md)
+- [ADL Card Lifecycle](card-lifecycle.md)
 - [Structured Prompt Contracts](structured-prompt-contracts.md)
 - [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md)
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings)

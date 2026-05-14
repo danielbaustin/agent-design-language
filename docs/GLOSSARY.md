@@ -189,9 +189,12 @@ Primary public source surfaces include:
 | Issue card | Machine-readable or structured issue definition used to create, review, or track an issue's scope, labels, dependencies, and required outcome. |
 | Prompt spec | Contract describing required prompt sections, supported fields, ordering, automation hints, and reviewer expectations for structured ADL prompts. |
 | Structured prompt | Prompt artifact with explicit goal, inputs, acceptance criteria, validation, constraints, non-goals, and output expectations instead of free-form instructions. |
-| STP | Structured Task Prompt: the source task prompt defining scope, goal, required outcome, acceptance criteria, inputs, target files, validation, and non-goals. |
-| SIP | Structured Input Prompt: execution input card that tells the agent how to run the already-scoped issue in the correct worktree and lifecycle context. |
-| SOR | Structured Output Record: output card recording what was done, artifacts produced, validation run, integration state, privacy checks, deviations, and follow-ups. |
+| SIP | Structured Issue Prompt: issue-intent card defining the problem, context, scope, acceptance boundary, dependencies, and issue-graph truth. |
+| STP | Structured Task Prompt: selected task or solution card defining the chosen transformation, changed surfaces, invariants, expected behavior, proof shape, and non-goals. |
+| SPP | Structured Plan Prompt: execution-plan card defining sequencing, dependencies, validation, review handoff, stop conditions, risks, and worktree/branch constraints. |
+| SRP | Structured Review Prompt: review card containing both review instructions/policy and review results, including findings, dispositions, residual risks, and recommended outcome. |
+| SOR | Structured Outcome Record: outcome card recording actual changes, validation actually run, review performed, PR/merge/closeout state, unresolved follow-ups, and final issue truth. |
+| Card lifecycle | Canonical issue-card order `SIP -> STP -> SPP -> SRP -> SOR`; file stubs may exist early, but stage activation and completion follow this semantic order. |
 | PR lifecycle | ADL issue workflow from issue creation/bootstrap through readiness, run binding, implementation, finish/PR publication, janitoring, merge, and closeout. |
 | Conductor | Lightweight workflow-routing skill that chooses the next lifecycle or editor skill and stops at the routing/dispatch boundary rather than absorbing implementation work. |
 | Worktree-first execution | ADL process rule that tracked implementation work happens in issue worktrees, while the root checkout remains clean main. |
