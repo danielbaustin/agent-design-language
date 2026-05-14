@@ -4,10 +4,11 @@
 
 - Feature Name: Runtime/Test-Cycle Recovery And Coverage Ergonomics
 - Milestone Target: `v0.91.2`
-- Status: planned
+- Status: WP-04 landed; WP-05 pending
 - Planned WP Home: WP-04, WP-05
 - Source Docs: `.adl/docs/TBD/tools/RUNTIME_V2_TEST_CYCLE_RECOVERY_PLAN.md`; `.adl/docs/TBD/v0.90.5_TEST_RUNTIME_REDUCTION_PLAN.md`
 - Proof Modes: CI evidence, tests, report
+- Current WP-04 proof surface: `docs/milestones/v0.91.2/review/runtime_test_cycle_recovery_report.md`
 
 ## Purpose
 
@@ -35,3 +36,18 @@ Out of scope:
 - Runtime reductions preserve required proof coverage.
 - Coverage failures point to actionable files and tests.
 - Before/after runtime evidence is recorded.
+
+## Current State
+
+The WP-04 runtime/test-cycle recovery slice is now landed via:
+
+- `#3042` / PR `#3048` shared-registry slow-test consolidation
+- `#3043` / PR `#3049` proof-materialization slow-lane split
+- `#3044` / PR `#3050` PR-fast selector tightening
+- `docs/milestones/v0.91.2/review/runtime_test_cycle_recovery_report.md`
+
+Supporting sibling evidence from `WP-05A`:
+
+- `#3045` / PR `#3052` nextest timing diagnostics
+
+`WP-05` remains responsible for the follow-on coverage ergonomics surface.

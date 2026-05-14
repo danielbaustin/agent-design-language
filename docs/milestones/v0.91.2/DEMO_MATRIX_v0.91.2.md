@@ -9,7 +9,7 @@ and summarized again during WP-17.
 | --- | --- | --- | --- | --- |
 | UTS + ACC JSON proposal benchmark | WP-02 | Test model proposal discipline against fixture tools. | benchmark report and fixtures | does not execute real tools |
 | Provider-native tool-call comparison | WP-03 | Compare native tool-call interfaces with ADL JSON proposal mode. | comparison report by model/provider | does not claim provider-wide conformance |
-| Runtime/test-cycle recovery proof | WP-04 | Show redundant proof phases are reduced safely. | before/after runtime and coverage evidence | does not weaken authoritative coverage |
+| Runtime/test-cycle recovery proof | WP-04 | Show redundant proof phases are reduced safely. | `review/runtime_test_cycle_recovery_report.md` with landed `#3042`-`#3044` proof surfaces; `SLOW_TEST_TIMING_DIAGNOSTICS_v0.91.2.md` is supporting sibling evidence from `WP-05A` | does not weaken authoritative coverage |
 | Coverage ergonomics demo | WP-05 | Show changed-source coverage failures point to actionable tests. | diagnostic output and focused-test guide | does not waive thresholds silently |
 | CodeFriend review packet demo | WP-06 | Show repeatable packet-to-report review workflow. | packet, findings, product report | does not replace human review |
 | Review heuristics demo | WP-07 | Show review heuristics and skills produce bounded review artifacts. | skill demo output and acceptance checklist | does not invent source evidence |
