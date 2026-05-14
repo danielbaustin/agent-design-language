@@ -86,6 +86,17 @@ if bash "$SCRIPT" --changed-files "$changed" --require-summary-for-risk >/tmp/co
 fi
 grep -F "Coverage-impact preflight needs coverage evidence" /tmp/coverage-impact-missing.out >/dev/null
 grep -F "new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
+grep -F "candidate filter: new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
+grep -F "Then rerun: bash adl/tools/check_coverage_impact.sh --base origin/main --changed-files $changed --summary adl/target/coverage-impact-summary.json --require-summary-for-risk" /tmp/coverage-impact-missing.out >/dev/null
+
+branch_diff_changed="$TMP/branch-diff-changed.txt"
+printf 'A\tadl/src/runtime_v2/branch_mode_surface.rs\n' >"$branch_diff_changed"
+if bash "$SCRIPT" --base release/base --head feature/head --changed-files "$branch_diff_changed" --require-summary-for-risk >/tmp/coverage-impact-branch-mode.out 2>&1; then
+  echo "expected branch-diff guidance to fail without summary" >&2
+  exit 1
+fi
+grep -F "Then rerun: bash adl/tools/check_coverage_impact.sh --base release/base --changed-files $branch_diff_changed --summary adl/target/coverage-impact-summary.json --require-summary-for-risk" /tmp/coverage-impact-branch-mode.out >/dev/null
 
 docs_filters="$TMP/docs-filters.txt"
 bash "$SCRIPT" --changed-files "$docs_only" --print-risk-filters >"$docs_filters"
@@ -98,6 +109,9 @@ if bash "$SCRIPT" --changed-files "$changed" --summary "$low_summary" >/tmp/cove
   exit 1
 fi
 grep -F "77.00% < 80%" /tmp/coverage-impact-low.out >/dev/null
+grep -F "Actionable next steps:" /tmp/coverage-impact-low.out >/dev/null
+grep -F "refresh focused summary after adding or expanding tests: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- new_large_surface" /tmp/coverage-impact-low.out >/dev/null
+grep -F "Common failure modes:" /tmp/coverage-impact-low.out >/dev/null
 
 missing_summary="$TMP/missing-row-summary.json"
 make_summary "adl/src/runtime_v2/other.rs" 100 100 "$missing_summary"
@@ -106,6 +120,7 @@ if bash "$SCRIPT" --changed-files "$changed" --summary "$missing_summary" >/tmp/
   exit 1
 fi
 grep -F "no coverage row" /tmp/coverage-impact-missing-row.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- new_large_surface" /tmp/coverage-impact-missing-row.out >/dev/null
 
 mkdir -p "$BARREL_DIR"
 cat >"$BARREL_DIR/mod.rs" <<'EOF'

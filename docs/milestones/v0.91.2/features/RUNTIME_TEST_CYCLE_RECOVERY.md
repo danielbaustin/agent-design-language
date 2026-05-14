@@ -4,11 +4,11 @@
 
 - Feature Name: Runtime/Test-Cycle Recovery And Coverage Ergonomics
 - Milestone Target: `v0.91.2`
-- Status: WP-04 landed; WP-05 pending
+- Status: WP-04 and WP-05 landed
 - Planned WP Home: WP-04, WP-05
 - Source Docs: `.adl/docs/TBD/tools/RUNTIME_V2_TEST_CYCLE_RECOVERY_PLAN.md`; `.adl/docs/TBD/v0.90.5_TEST_RUNTIME_REDUCTION_PLAN.md`
 - Proof Modes: CI evidence, tests, report
-- Current WP-04 proof surface: `docs/milestones/v0.91.2/review/runtime_test_cycle_recovery_report.md`
+- Current proof surfaces: `docs/milestones/v0.91.2/review/runtime_test_cycle_recovery_report.md`; `docs/milestones/v0.91.2/review/coverage_gate_ergonomics_report.md`
 
 ## Purpose
 
@@ -50,4 +50,8 @@ Supporting sibling evidence from `WP-05A`:
 
 - `#3045` / PR `#3052` nextest timing diagnostics
 
-`WP-05` remains responsible for the follow-on coverage ergonomics surface.
+The `WP-05` coverage ergonomics slice is now landed via:
+
+- improved actionable next-step diagnostics in `adl/tools/check_coverage_impact.sh`
+- focused regression coverage in `adl/tools/test_check_coverage_impact.sh`
+- `docs/milestones/v0.91.2/review/coverage_gate_ergonomics_report.md`

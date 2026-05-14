@@ -183,6 +183,33 @@ candidate_filter_for_path() {
   esac
 }
 
+focused_summary_command_for_filter() {
+  local filter="$1"
+  printf 'cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- %s' "$filter"
+}
+
+rerun_preflight_command() {
+  printf 'bash adl/tools/check_coverage_impact.sh --base %s' "$BASE"
+  if [ -n "$CHANGED_FILES_FILE" ]; then
+    printf ' --changed-files %s' "$CHANGED_FILES_FILE"
+  elif [ "$INCLUDE_WORKTREE" = true ]; then
+    printf ' --include-working-tree'
+  else
+    printf ' --head %s' "$HEAD"
+  fi
+  printf ' --summary adl/target/coverage-impact-summary.json'
+}
+
+print_next_actions_for_path() {
+  local path="$1"
+  local context="$2"
+  local filter
+  filter="$(candidate_filter_for_path "$path")"
+  echo "    candidate filter: ${filter}"
+  echo "    ${context}: $(focused_summary_command_for_filter "$filter")"
+  echo "    rerun preflight: $(rerun_preflight_command)"
+}
+
 file_is_structural_module_barrel() {
   local path="$1"
   [ -f "$ROOT/$path" ] || return 1
@@ -230,6 +257,7 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
   fi
   failures=""
   missing=""
+  guidance=""
   while IFS=$'\t' read -r _status path; do
     [ -n "$path" ] || continue
     row="$(jq -r --arg path "$path" '
@@ -263,6 +291,8 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
         continue
       fi
       missing="${missing}  - ${path} (no coverage row in ${SUMMARY})"$'\n'
+      guidance="${guidance}  - ${path}"$'\n'
+      guidance="${guidance}$(print_next_actions_for_path "$path" "generate focused summary")"$'\n'
       continue
     fi
     pct="$(printf '%s\n' "$row" | awk -F '\t' '{ printf "%.2f", $3 + 0 }')"
@@ -271,6 +301,8 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
       continue
     fi
     failures="${failures}  - ${path} (${covered_count}, ${pct}% < ${THRESHOLD}%)"$'\n'
+    guidance="${guidance}  - ${path}"$'\n'
+    guidance="${guidance}$(print_next_actions_for_path "$path" "refresh focused summary after adding or expanding tests")"$'\n'
   done <<EOF
 $changed_source_rows
 EOF
@@ -279,6 +311,13 @@ EOF
     echo "Coverage-impact preflight failed for changed Rust source files:"
     [ -z "$missing" ] || printf '%s' "$missing"
     [ -z "$failures" ] || printf '%s' "$failures"
+    if [ -n "$guidance" ]; then
+      echo "Actionable next steps:"
+      printf '%s' "$guidance"
+      echo "Common failure modes:"
+      echo "  - no coverage row: your focused summary filter did not exercise the changed file"
+      echo "  - below threshold: add or extend focused tests, then refresh the summary and rerun the preflight"
+    fi
     echo "Full adl-coverage remains authoritative; fix or add focused tests before publication."
     exit 1
   fi
@@ -303,13 +342,12 @@ if [ "$REQUIRE_SUMMARY_FOR_RISK" = true ] && [ -n "$risk_rows" ]; then
   echo "Coverage-impact preflight needs coverage evidence for risky changed Rust source files:"
   while IFS=$'\t' read -r _status path lines delta reason; do
     [ -n "$path" ] || continue
-    filter="$(candidate_filter_for_path "$path")"
     echo "  - ${path} (${reason}; ${lines} lines, ${delta} changed)"
-    echo "    next action: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- ${filter}"
+    print_next_actions_for_path "$path" "generate focused summary"
   done <<EOF
 $risk_rows
 EOF
-  echo "Then rerun: bash adl/tools/check_coverage_impact.sh --base ${BASE} --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk"
+  echo "Then rerun: $(rerun_preflight_command) --require-summary-for-risk"
   exit 1
 fi
 
