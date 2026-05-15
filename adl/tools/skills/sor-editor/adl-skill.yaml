@@ -33,14 +33,14 @@ admission:
     - "target.sor_path_must_be_present"
     - "policy.stop_after_edit_must_be_true"
     - "evidence.commands_run_must_be_explicit_when_validation_claims_are_changed"
-  execution:
-    mode: "auto_apply"
-    allow_code_edits: true
-    allow_network: false
-    allow_subagents: false
-    workflow_role: "card_editor"
-    preferred_path: "structured_input_then_direct_card_edit"
-    invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+execution:
+  mode: "auto_apply"
+  allow_code_edits: true
+  allow_network: false
+  allow_subagents: false
+  workflow_role: "card_editor"
+  preferred_path: "structured_input_then_direct_card_edit"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:
   writes_limited_to:
     - ".adl/**/sor.md"
