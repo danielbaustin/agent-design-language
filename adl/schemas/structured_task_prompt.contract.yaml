@@ -2,6 +2,9 @@ version: adl.prompt_contract.v1
 artifact: structured_task_prompt
 description: >
   Machine-checkable contract for authored Structured Task Prompts (STPs).
+  In the canonical v0.91.2 lifecycle, STP records the selected task or
+  solution after SIP defines issue intent and before SPP records the execution
+  plan.
 fields:
   issue_card_schema:
     type: enum
@@ -62,6 +65,14 @@ fields:
   pr_start.slug:
     type: slug
     required: true
+  lifecycle_stage:
+    type: enum
+    values: [STP]
+    required: false
+  activation_state:
+    type: enum
+    values: [scaffold, draft, active, complete, superseded, legacy_compatible]
+    required: false
 required_sections:
   - Summary
   - Goal
@@ -75,3 +86,21 @@ required_sections:
   - Issue-Graph Notes
   - Notes
   - Tooling Notes
+phases:
+  scaffold:
+    notes: >
+      File exists or issue body has been mirrored, but selected task truth has
+      not been reviewed.
+  draft:
+    notes: >
+      Selected task is being authored or reviewed.
+  active:
+    notes: >
+      STP is the current task/solution source for execution planning.
+  complete:
+    notes: >
+      STP has served its issue and is retained for audit.
+  legacy_compatible:
+    notes: >
+      Historical STP shape remains readable while migration tooling is rolled
+      out.

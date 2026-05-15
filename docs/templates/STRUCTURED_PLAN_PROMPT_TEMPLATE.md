@@ -3,8 +3,18 @@
 ## Purpose
 
 Use this template for ADL `SPP` artifacts. An `SPP` is an issue-local,
-read-only planning artifact created after `STP`, `SIP`, and `SOR` exist and
-before execution is bound.
+reviewable planning artifact used after `SIP` and `STP` are complete enough to
+define the issue and selected task, and before implementation proceeds.
+
+The canonical card lifecycle is:
+
+```text
+SIP -> STP -> SPP -> SRP -> SOR
+```
+
+Tooling may create `spp.md` as an early scaffold for path stability. That file
+is not lifecycle-active until the plan has been tightened for the current issue
+and is ready to guide execution.
 
 This template is compatible with Codex plan mode by carrying a simple
 `codex_plan` list. Each item has:
@@ -14,6 +24,15 @@ This template is compatible with Codex plan mode by carrying a simple
 
 For pre-execution plans, all implementation steps should normally remain
 `pending`. Do not mark work `completed` unless it has actually happened.
+
+Recommended status semantics:
+
+- `scaffold`: file exists but has not been tailored to the issue.
+- `draft`: issue-specific plan is being authored or reviewed.
+- `active`: plan is the current execution guide.
+- `superseded`: plan was replaced by a later revision.
+- `legacy_compatible`: historical plan shape retained for compatibility and
+  detectable migration.
 
 ## File Location
 
@@ -37,11 +56,15 @@ run_id: "issue-<n>"
 version: "<version>"
 title: "<issue title>"
 branch: "not bound yet"
+lifecycle_stage: "SPP"
 status: "draft"
+activation_state: "scaffold | draft | active | superseded | legacy_compatible"
 plan_revision: 1
 source_refs:
   - kind: "issue"
     ref: "<issue URL or number>"
+  - kind: "sip"
+    ref: ".adl/<version>/tasks/issue-<n>__<slug>/sip.md"
   - kind: "stp"
     ref: ".adl/<version>/tasks/issue-<n>__<slug>/stp.md"
 scope:
@@ -135,3 +158,12 @@ notes: "<optional note>"
 <Optional notes.>
 ```
 
+## Compatibility Notes
+
+- Existing `SPP` artifacts that only use `status: "draft"` remain
+  compatibility-valid until validator enforcement changes land.
+- New templates should prefer explicit `lifecycle_stage` and
+  `activation_state` fields so doctor/readiness tooling can distinguish
+  scaffold presence from active plan truth.
+- Sprint-scoped planning remains out of scope for this issue-level template
+  unless a future schema adds an explicit sprint-plan card type.

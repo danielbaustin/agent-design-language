@@ -1,7 +1,10 @@
 version: adl.prompt_contract.v1
 artifact: structured_output_record
 description: >
-  Machine-checkable contract for Structured Output Records (SORs).
+  Compatibility contract for Structured Outcome Records (SORs). The historical
+  artifact identifier remains `structured_output_record`, but the canonical
+  v0.91.2 semantic role is outcome truth in the
+  `SIP -> STP -> SPP -> SRP -> SOR` lifecycle.
 fields:
   Task ID:
     type: task_id
@@ -40,6 +43,14 @@ fields:
     type: enum
     values: [PASS, FAIL]
     required: false
+  Lifecycle stage:
+    type: enum
+    values: [SOR]
+    required: false
+  Activation state:
+    type: enum
+    values: [scaffold, active, pr_open, merged, closed_no_pr, legacy_compatible]
+    required: false
 required_sections:
   - Summary
   - Artifacts produced
@@ -54,6 +65,26 @@ required_sections:
   - Decisions / Deviations
   - Follow-ups / Deferred work
 phases:
+  scaffold:
+    notes: >
+      File exists for path stability before execution produces outcome truth.
+  active:
+    notes: >
+      SOR is being updated with current execution outcome truth.
+  pr_open:
+    notes: >
+      Branch artifacts are represented by an open PR; merge and closeout are not
+      yet final.
+  merged:
+    notes: >
+      Issue artifacts are merged and closeout truth should be final.
+  closed_no_pr:
+    notes: >
+      Issue closed intentionally without a PR, with the disposition recorded.
+  legacy_compatible:
+    notes: >
+      Historical SOR shape remains readable while migration tooling is rolled
+      out.
   bootstrap:
     allow_blank:
       - Execution.Actor
