@@ -36,6 +36,8 @@ checkout just because the primary checkout is where the conductor was invoked.
 - missing bootstrap/root bundle -> `pr-init`
 - STP-only card defect -> `stp-editor`
 - SIP-only card defect -> `sip-editor`
+- SPP-only card defect -> `spp-editor`
+- SRP-only card defect -> `srp-editor`
 - SOR-only card defect -> `sor-editor`
 - issue structurally pre-run -> `pr-ready`
 - issue ready for execution or binding -> `pr-run`

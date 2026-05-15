@@ -12,6 +12,8 @@ def editor_for(blocker: str) -> str:
     return {
         "stp": "stp-editor",
         "sip": "sip-editor",
+        "spp": "spp-editor",
+        "srp": "srp-editor",
         "sor": "sor-editor",
     }.get(blocker, "none")
 
@@ -43,7 +45,7 @@ def evaluate(payload):
         skill_name = "pr-init"
         continuation = "continue"
         escalation_reason = "none"
-    elif card_blocker in ("stp", "sip", "sor"):
+    elif card_blocker in ("stp", "sip", "spp", "srp", "sor"):
         detected_phase = "card_local_blocker"
         selected_phase = "editor"
         skill_name = editor_for(card_blocker)
@@ -186,7 +188,7 @@ def evaluate(payload):
         blocked_by_policy = True
         bypasses.append({"component": "required_card_skill_by_type", "reason": "selected_editor_mismatch"})
 
-    if card_blocker in ("stp", "sip", "sor") and policy.get("card_editor_skills_required", True) and editor_skill == "none":
+    if card_blocker in ("stp", "sip", "spp", "srp", "sor") and policy.get("card_editor_skills_required", True) and editor_skill == "none":
         policy_result = "FAIL"
         blocked_by_policy = True
         bypasses.append({"component": "card_editor_skills_required", "reason": "card_blocker_not_routed_to_editor"})

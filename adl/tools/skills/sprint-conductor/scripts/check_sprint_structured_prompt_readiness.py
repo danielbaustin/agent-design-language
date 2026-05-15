@@ -63,7 +63,7 @@ def inspect_issue(
     if require_spp:
         required_cards['spp.md'] = 'spp-editor'
     if require_srp:
-        required_cards['srp.md'] = 'spp-editor'
+        required_cards['srp.md'] = 'srp-editor'
 
     missing_cards: list[str] = []
     contradictory_cards: list[str] = []

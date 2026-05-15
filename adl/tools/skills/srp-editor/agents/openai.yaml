@@ -1,0 +1,3 @@
+display_name: SRP Editor
+short_description: Normalize truthful SRP review cards
+default_prompt: Help me normalize an SRP review card without inventing review results or hiding unresolved findings.

@@ -27,6 +27,8 @@ SKILL_FILES = {
     "pr-closeout": "adl/tools/skills/pr-closeout/SKILL.md",
     "stp-editor": "adl/tools/skills/stp-editor/SKILL.md",
     "sip-editor": "adl/tools/skills/sip-editor/SKILL.md",
+    "spp-editor": "adl/tools/skills/spp-editor/SKILL.md",
+    "srp-editor": "adl/tools/skills/srp-editor/SKILL.md",
     "sor-editor": "adl/tools/skills/sor-editor/SKILL.md",
 }
 
@@ -444,15 +446,45 @@ def classify_pr_state(pr):
     return pr_state, blocker_class
 
 
-def infer_card_blocker(bundle: Path):
+def expects_extended_card_lifecycle(target: dict, bundle: Path) -> bool:
+    if target.get("spp_path") or target.get("srp_path"):
+        return True
+    return (bundle / "spp.md").exists() or (bundle / "srp.md").exists()
+
+
+def infer_card_blocker(bundle: Path, target: dict | None = None):
+    target = target or {}
     expected = {
-        "stp": bundle / "stp.md",
         "sip": bundle / "sip.md",
-        "sor": bundle / "sor.md",
+        "stp": bundle / "stp.md",
     }
+    if expects_extended_card_lifecycle(target, bundle):
+        if target.get("spp_path") or (bundle / "spp.md").exists():
+            expected["spp"] = Path(target.get("spp_path") or bundle / "spp.md")
+        if target.get("srp_path") or (bundle / "srp.md").exists():
+            expected["srp"] = Path(target.get("srp_path") or bundle / "srp.md")
+    expected["sor"] = bundle / "sor.md"
     for blocker, path in expected.items():
         if not path.exists():
             return blocker
+    return "none"
+
+
+def infer_doctor_card_blocker(doctor):
+    lifecycle = doctor.get("card_lifecycle") if isinstance(doctor, dict) else None
+    if not isinstance(lifecycle, dict):
+        return "none"
+    for stage in lifecycle.get("stages", []) or []:
+        if not isinstance(stage, dict):
+            continue
+        editor = stage.get("next_editor")
+        if editor not in {"spp-editor", "srp-editor"}:
+            continue
+        if stage.get("complete") is True:
+            continue
+        stage_name = str(stage.get("stage", "")).lower()
+        if stage_name in {"spp", "srp"}:
+            return stage_name
     return "none"
 
 
@@ -498,7 +530,7 @@ def collect_route_issue(repo_root: Path, payload):
     bundle, source_prompt, identity = gather_issue_surface(repo_root, issue_number)
 
     bootstrap_present = bool(bundle and source_prompt)
-    card_blocker = infer_card_blocker(bundle) if bundle else "none"
+    card_blocker = infer_card_blocker(bundle, target) if bundle else "none"
     workflow = {
         "bootstrap_present": bootstrap_present,
         "card_blocker": card_blocker,
@@ -562,6 +594,10 @@ def collect_route_issue(repo_root: Path, payload):
     if doctor:
         workflow["lifecycle_state"] = doctor.get("lifecycle_state", "unknown")
         workflow["ready_state"] = doctor.get("ready_status", "unknown").lower()
+        doctor_card_blocker = infer_doctor_card_blocker(doctor)
+        if doctor_card_blocker != "none":
+            workflow["card_blocker"] = doctor_card_blocker
+            workflow["evidence_used"].append("doctor_card_lifecycle")
         doctor_blocker = classify_doctor_state(doctor)
         if workflow["blocker_class"] == "none":
             workflow["blocker_class"] = doctor_blocker
@@ -601,7 +637,7 @@ def collect_route_task_bundle(repo_root: Path, payload):
     observed = payload.get("observed_state", {})
     workflow = {
         "bootstrap_present": bool(bundle.exists() and source_prompt),
-        "card_blocker": infer_card_blocker(bundle) if bundle.exists() else "stp",
+        "card_blocker": infer_card_blocker(bundle, target) if bundle.exists() else "stp",
         "lifecycle_state": "pre_run",
         "ready_state": "unknown",
         "pr_state": "none",
@@ -646,7 +682,7 @@ def collect_route_branch(repo_root: Path, payload):
     bundle, source_prompt, bundle_identity = gather_issue_surface(repo_root, identity["issue_number"])
     workflow = {
         "bootstrap_present": bool(bundle and source_prompt),
-        "card_blocker": infer_card_blocker(bundle) if bundle else "none",
+        "card_blocker": infer_card_blocker(bundle, target) if bundle else "none",
         "lifecycle_state": "pre_run",
         "ready_state": "unknown",
         "pr_state": "none",
@@ -665,6 +701,10 @@ def collect_route_branch(repo_root: Path, payload):
     if doctor:
         workflow["lifecycle_state"] = doctor.get("lifecycle_state", "unknown")
         workflow["ready_state"] = doctor.get("ready_status", "unknown").lower()
+        doctor_card_blocker = infer_doctor_card_blocker(doctor)
+        if doctor_card_blocker != "none":
+            workflow["card_blocker"] = doctor_card_blocker
+            workflow["evidence_used"].append("doctor_card_lifecycle")
         workflow["blocker_class"] = classify_doctor_state(doctor)
         workflow["evidence_used"].append("doctor_json")
     if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
@@ -723,7 +763,7 @@ def collect_route_worktree(repo_root: Path, payload):
         resolved_target.setdefault("source_prompt_path", str(source_prompt))
     workflow = {
         "bootstrap_present": bool(source_prompt),
-        "card_blocker": infer_card_blocker(bundle),
+        "card_blocker": infer_card_blocker(bundle, target),
         "lifecycle_state": "run_bound",
         "ready_state": "pass",
         "pr_state": "none",
@@ -740,6 +780,10 @@ def collect_route_worktree(repo_root: Path, payload):
         if workflow["lifecycle_state"] != "execution_done" or doctor_lifecycle == "execution_done":
             workflow["lifecycle_state"] = doctor_lifecycle
         workflow["ready_state"] = doctor.get("ready_status", "unknown").lower()
+        doctor_card_blocker = infer_doctor_card_blocker(doctor)
+        if doctor_card_blocker != "none":
+            workflow["card_blocker"] = doctor_card_blocker
+            workflow["evidence_used"].append("doctor_card_lifecycle")
         workflow["blocker_class"] = classify_doctor_state(doctor)
         workflow["evidence_used"].append("doctor_json")
     if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):

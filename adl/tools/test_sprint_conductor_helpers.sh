@@ -333,4 +333,24 @@ assert "sor.md" in problem["contradictory_cards"]
 assert "sor-editor" in problem["required_editor_skills"]
 PY
 
+rm -f "${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/srp.md"
+missing_srp_state_path="${tmpdir}/sprint-state-missing-srp.json"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --state "${missing_srp_state_path}" >/dev/null
+
+python3 - "${missing_srp_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+preflight = state["structured_prompt_preflight"]
+assert preflight["status"] == "needs_editor_repair"
+problem = next(result for result in preflight["issue_results"] if result["issue_number"] == 2828)
+assert "srp.md" in problem["missing_cards"]
+assert "srp-editor" in problem["required_editor_skills"]
+PY
+
 echo "PASS test_sprint_conductor_helpers"

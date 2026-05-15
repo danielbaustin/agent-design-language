@@ -28,6 +28,8 @@ It must not replace:
 - `pr-closeout`
 - `stp-editor`
 - `sip-editor`
+- `spp-editor`
+- `srp-editor`
 - `sor-editor`
 
 It must stop at the routing/dispatch boundary rather than reimplementing the selected skill's underlying work.
@@ -84,6 +86,8 @@ Useful additional inputs:
 - `stp_path`
 - `sip_path`
 - `sor_path`
+- `spp_path`
+- `srp_path`
 - current `pr_state`
 - requested `stop_boundary`
 
@@ -114,6 +118,8 @@ Preferred next-skill mapping:
 - bootstrap missing -> `pr-init`
 - card-local STP issue -> `stp-editor`
 - card-local SIP issue -> `sip-editor`
+- card-local SPP issue -> `spp-editor`
+- card-local SRP issue -> `srp-editor`
 - card-local SOR issue -> `sor-editor`
 - structurally ready but not bound -> `pr-ready`
 - ready for execution bind -> `pr-run`
