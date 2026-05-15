@@ -21,6 +21,7 @@ These docs describe the structured prompt surfaces used to shape issues, issue-c
 
 - [Prompt Spec](prompt-spec.md)
 - [ADL Card Lifecycle](card-lifecycle.md)
+- [Active Card Lifecycle Migration Readiness](active-card-lifecycle-migration-readiness-v0.91.2.md)
 - [Structured Prompt Contracts](structured-prompt-contracts.md)
 - [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md)
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings)
