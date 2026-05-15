@@ -1195,6 +1195,56 @@ mod tests {
     }
 
     #[test]
+    fn gws_live_content_card_roundtrip_env_helpers_cover_execute_disabled_and_missing_scope() {
+        let _lock = TEST_ENV_LOCK.lock().expect("lock env");
+        let _mode = EnvVarGuard::set(GWS_LIVE_ENABLE_ENV, "enabled");
+
+        unsafe {
+            std::env::remove_var(GWS_DRIVE_FOLDER_ID_ENV);
+            std::env::remove_var(GWS_DOC_ID_ENV);
+            std::env::remove_var(GWS_SHEET_ID_ENV);
+            std::env::remove_var(GWS_SHEET_RANGE_ENV);
+        }
+
+        assert_eq!(parse_live_mode_from_env(), GwsLiveMode::Execute);
+        assert_eq!(parse_scope_binding_from_env(), None);
+
+        let _mode = EnvVarGuard::set(GWS_LIVE_ENABLE_ENV, "not-a-mode");
+        assert_eq!(parse_live_mode_from_env(), GwsLiveMode::Disabled);
+    }
+
+    #[test]
+    fn gws_live_content_card_roundtrip_disabled_and_missing_scope_paths_are_skipped() {
+        let disabled = run_roundtrip_with_runner(
+            GwsLiveMode::Disabled,
+            Some(scope()),
+            &QueueRunner::new(vec![]),
+        )
+        .expect("run disabled report");
+        assert_eq!(
+            disabled.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::LiveModeDisabled)
+        );
+        assert!(disabled.command_traces.is_empty());
+
+        let dry_run_missing_scope =
+            run_roundtrip_with_runner(GwsLiveMode::DryRun, None, &QueueRunner::new(vec![]))
+                .expect("run dry-run missing-scope report");
+        assert_eq!(
+            dry_run_missing_scope.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::MissingScopeBinding)
+        );
+
+        let execute_missing_scope =
+            run_roundtrip_with_runner(GwsLiveMode::Execute, None, &QueueRunner::new(vec![]))
+                .expect("run execute missing-scope report");
+        assert_eq!(
+            execute_missing_scope.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::MissingScopeBinding)
+        );
+    }
+
+    #[test]
     fn gws_live_content_card_roundtrip_dry_run_records_preview_without_live_mutation() {
         let report = run_roundtrip_with_runner(
             GwsLiveMode::DryRun,
@@ -1217,6 +1267,77 @@ mod tests {
             Some("pending://issue-3093/gws-live-roundtrip")
         );
         assert_eq!(report.command_traces.len(), 3);
+    }
+
+    #[test]
+    fn gws_live_content_card_roundtrip_execute_mode_classifies_doc_step_failures() {
+        let doc_runner_error = QueueRunner::new(vec![Err(anyhow::anyhow!(
+            "oauth login required before docs read"
+        ))]);
+        let doc_runner_error_report =
+            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &doc_runner_error)
+                .expect("run doc runner error report");
+        assert_eq!(
+            doc_runner_error_report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::MissingAuth)
+        );
+
+        let doc_scope_failure = QueueRunner::new(vec![Ok(GwsCommandOutput {
+            exit_code: 7,
+            stdout: String::new(),
+            stderr: "insufficient scope for docs get".to_string(),
+        })]);
+        let doc_scope_failure_report =
+            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &doc_scope_failure)
+                .expect("run doc scope failure report");
+        assert_eq!(
+            doc_scope_failure_report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::MissingScopes)
+        );
+
+        let doc_unavailable = QueueRunner::new(vec![Err(anyhow::anyhow!("gws binary missing"))]);
+        let doc_unavailable_report =
+            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &doc_unavailable)
+                .expect("run doc unavailable report");
+        assert_eq!(
+            doc_unavailable_report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::GwsUnavailable)
+        );
+    }
+
+    #[test]
+    fn gws_live_content_card_roundtrip_execute_mode_classifies_sheet_step_failures() {
+        let sheet_runner_error = QueueRunner::new(vec![
+            success_output(
+                r#"{"documentId":"doc-review-packet-demo","title":"CodeFriend Review Packet Draft","revisionId":"workspace-revision-42"}"#,
+            ),
+            Err(anyhow::anyhow!("oauth token expired for sheets read")),
+        ]);
+        let sheet_runner_error_report =
+            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &sheet_runner_error)
+                .expect("run sheet runner error report");
+        assert_eq!(
+            sheet_runner_error_report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::MissingAuth)
+        );
+
+        let sheet_scope_failure = QueueRunner::new(vec![
+            success_output(
+                r#"{"documentId":"doc-review-packet-demo","title":"CodeFriend Review Packet Draft","revisionId":"workspace-revision-42"}"#,
+            ),
+            Ok(GwsCommandOutput {
+                exit_code: 9,
+                stdout: String::new(),
+                stderr: "permission denied by sheet scope".to_string(),
+            }),
+        ]);
+        let sheet_scope_failure_report =
+            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &sheet_scope_failure)
+                .expect("run sheet scope failure report");
+        assert_eq!(
+            sheet_scope_failure_report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::MissingScopes)
+        );
     }
 
     #[test]
@@ -1280,6 +1401,70 @@ mod tests {
         );
         assert_eq!(report.apply_outcome.update_range, "ContentCards!A3:F3");
         assert_eq!(report.command_traces.len(), 3);
+    }
+
+    #[test]
+    fn gws_live_content_card_roundtrip_execute_mode_stops_when_target_row_missing() {
+        let runner = QueueRunner::new(vec![
+            success_output(
+                r#"{"documentId":"doc-review-packet-demo","title":"CodeFriend Review Packet Draft","revisionId":"workspace-revision-42"}"#,
+            ),
+            success_output(
+                r#"{"range":"ContentCards!A1:F5","values":[["doc_id","status"],["another-doc","blocked"]]}"#,
+            ),
+        ]);
+
+        let report = run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &runner)
+            .expect("run missing-row report");
+        assert_eq!(
+            report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::TargetContentCardMissing)
+        );
+        assert_eq!(
+            report.apply_outcome.skipped_reason,
+            Some(GwsRoundtripSkipReason::TargetContentCardMissing)
+        );
+    }
+
+    #[test]
+    fn gws_live_content_card_roundtrip_execute_mode_classifies_update_step_failures() {
+        let update_runner_error = QueueRunner::new(vec![
+            success_output(
+                r#"{"documentId":"doc-review-packet-demo","title":"CodeFriend Review Packet Draft","revisionId":"workspace-revision-42"}"#,
+            ),
+            success_output(
+                r#"{"range":"ContentCards!A1:F5","values":[["doc_id","status"],["doc-review-packet-demo","ready_for_repo_promotion"]]}"#,
+            ),
+            Err(anyhow::anyhow!("oauth token expired for sheets update")),
+        ]);
+        let update_runner_error_report =
+            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &update_runner_error)
+                .expect("run update runner error report");
+        assert_eq!(
+            update_runner_error_report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::MissingAuth)
+        );
+
+        let update_scope_failure = QueueRunner::new(vec![
+            success_output(
+                r#"{"documentId":"doc-review-packet-demo","title":"CodeFriend Review Packet Draft","revisionId":"workspace-revision-42"}"#,
+            ),
+            success_output(
+                r#"{"range":"ContentCards!A1:F5","values":[["doc_id","status"],["doc-review-packet-demo","ready_for_repo_promotion"]]}"#,
+            ),
+            Ok(GwsCommandOutput {
+                exit_code: 13,
+                stdout: String::new(),
+                stderr: "forbidden: missing sheet scope".to_string(),
+            }),
+        ]);
+        let update_scope_failure_report =
+            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &update_scope_failure)
+                .expect("run update scope failure report");
+        assert_eq!(
+            update_scope_failure_report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::MissingScopes)
+        );
     }
 
     #[test]
@@ -1356,6 +1541,12 @@ mod tests {
             derive_update_range("ContentCards!A1:F5"),
             "ContentCards!A2:F2"
         );
+        assert_eq!(
+            derive_update_range("ContentCards!malformed"),
+            "ContentCards!malformed"
+        );
         assert_eq!(split_cell_ref("A12"), (Some("A".to_string()), Some(12)));
+        assert_eq!(split_cell_ref("12"), (None, Some(12)));
+        assert_eq!(split_cell_ref("A"), (Some("A".to_string()), None));
     }
 }
