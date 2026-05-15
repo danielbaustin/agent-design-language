@@ -849,14 +849,42 @@ pub fn write_gws_live_capability_execution_artifacts(
 #[cfg(test)]
 mod tests {
     use super::{
-        build_report, drive_inventory_args, parse_doc, parse_drive_inventory, parse_sheet,
+        build_report, drive_inventory_args, parse_doc, parse_drive_inventory,
+        parse_live_mode_from_env, parse_scope_binding_from_env, parse_sheet,
         run_live_snapshot_with_runner, write_gws_live_capability_execution_artifacts,
         GwsCapabilityResult, GwsCommandOutput, GwsCommandRunner, GwsLiveMode, GwsLiveScopeBinding,
-        GwsLiveSkipReason, HOST_PATH_MARKER,
+        GwsLiveSkipReason, GWS_DOC_ID_ENV, GWS_DRIVE_FOLDER_ID_ENV, GWS_LIVE_ENABLE_ENV,
+        GWS_SHEET_ID_ENV, GWS_SHEET_RANGE_ENV, HOST_PATH_MARKER,
     };
     use std::collections::VecDeque;
     use std::fs;
+    use std::sync::Mutex;
     use std::time::{SystemTime, UNIX_EPOCH};
+
+    static TEST_ENV_LOCK: Mutex<()> = Mutex::new(());
+
+    struct EnvVarGuard {
+        key: &'static str,
+        old: Option<String>,
+    }
+
+    impl EnvVarGuard {
+        fn set(key: &'static str, value: impl Into<String>) -> Self {
+            let old = std::env::var(key).ok();
+            std::env::set_var(key, value.into());
+            Self { key, old }
+        }
+    }
+
+    impl Drop for EnvVarGuard {
+        fn drop(&mut self) {
+            if let Some(value) = self.old.as_ref() {
+                std::env::set_var(self.key, value);
+            } else {
+                std::env::remove_var(self.key);
+            }
+        }
+    }
 
     #[derive(Default)]
     struct FakeRunner {
@@ -906,6 +934,27 @@ mod tests {
             .expect("system time should be valid")
             .as_nanos();
         std::env::temp_dir().join(format!("{prefix}-{nanos}.json"))
+    }
+
+    #[test]
+    fn gws_live_capability_execution_env_helpers_cover_aliases_and_scope_binding() {
+        let _lock = TEST_ENV_LOCK.lock().expect("env lock");
+        let _mode = EnvVarGuard::set(GWS_LIVE_ENABLE_ENV, "enabled");
+        let _drive = EnvVarGuard::set(GWS_DRIVE_FOLDER_ID_ENV, "folder-live");
+        let _doc = EnvVarGuard::set(GWS_DOC_ID_ENV, "doc-live");
+        let _sheet = EnvVarGuard::set(GWS_SHEET_ID_ENV, "sheet-live");
+        let _range = EnvVarGuard::set(GWS_SHEET_RANGE_ENV, "ContentCards!A1:F5");
+
+        assert_eq!(parse_live_mode_from_env(), GwsLiveMode::Execute);
+        assert_eq!(
+            parse_scope_binding_from_env(),
+            Some(GwsLiveScopeBinding {
+                drive_folder_id: "folder-live".to_string(),
+                doc_id: "doc-live".to_string(),
+                sheet_id: "sheet-live".to_string(),
+                sheet_range: "ContentCards!A1:F5".to_string(),
+            })
+        );
     }
 
     #[test]
