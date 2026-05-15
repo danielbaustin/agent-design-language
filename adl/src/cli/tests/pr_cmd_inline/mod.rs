@@ -315,8 +315,8 @@ fn write_authored_srp(
     let content = format!(
         r#"---
 schema_version: "0.1"
-artifact_type: "structured_review_policy"
-name: "{slug}-review-policy"
+artifact_type: "structured_review_prompt"
+name: "{slug}-review-prompt"
 issue: {issue}
 task_id: "{task_id}"
 version: v0.86
@@ -353,13 +353,15 @@ refusal_policy:
 follow_up_routing:
   - "Route actionable findings back to the issue branch."
 non_claims:
-  - "This policy does not guarantee review quality by itself."
+  - "This prompt does not claim review has already run."
+  - "This prompt does not guarantee review quality by itself."
 policy_refs:
   - "{stp_rel}"
+review_results_exception: "explicit policy exception: fixture review results are not run."
 notes: "test note"
 ---
 
-# Structured Review Policy
+# Structured Review Prompt
 
 ## Review Summary
 
@@ -399,6 +401,20 @@ test
 - test
 
 ## Non-Claims
+
+- test
+
+## Review Results
+
+### Findings
+
+- test
+
+### Dispositions
+
+- test
+
+### Recommended Outcome
 
 - test
 

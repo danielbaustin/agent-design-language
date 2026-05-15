@@ -658,6 +658,12 @@ fn ensure_bootstrap_cards_creates_bundle_and_compat_links() {
     assert!(issue_ref.task_bundle_review_policy_path(&repo).is_file());
     assert!(compat_plan.symlink_metadata().is_ok());
     assert!(compat_review_policy.symlink_metadata().is_ok());
+    let review_prompt_text =
+        fs::read_to_string(issue_ref.task_bundle_review_policy_path(&repo)).expect("review prompt");
+    assert!(review_prompt_text.contains("artifact_type: \"structured_review_prompt\""));
+    assert!(review_prompt_text.contains("# Structured Review Prompt"));
+    assert!(review_prompt_text.contains("review_results_exception:"));
+    assert!(!review_prompt_text.contains("# Structured Review Policy"));
     assert_eq!(
         field_line_value(&bundle_input, "Branch").expect("input branch"),
         "codex/1153-rust-finish-test"

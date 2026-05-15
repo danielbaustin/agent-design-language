@@ -41,7 +41,7 @@ resolve. Its semantic role is now Structured Review Prompt.
 ```markdown
 ---
 schema_version: "0.1"
-artifact_type: "structured_review_policy"
+artifact_type: "structured_review_prompt"
 name: "<short review-prompt name>"
 issue: <issue number>
 task_id: "issue-<n>"
@@ -94,7 +94,7 @@ refusal_policy:
 follow_up_routing:
   - "<how findings route back into execution>"
 non_claims:
-  - "<what this policy does not claim>"
+  - "<what this prompt does not claim>"
 policy_refs:
   - ".adl/<version>/tasks/issue-<n>__<slug>/stp.md"
 notes: "<optional note>"
@@ -163,9 +163,9 @@ notes: "<optional note>"
 
 ## Compatibility Notes
 
-- The `artifact_type` value remains `structured_review_policy` until the
-  validator and generator changes land in a later child issue.
-- New SRP content should use the Structured Review Prompt sections above even
-  while the compatibility artifact type remains stable.
+- New SRP content should use `artifact_type: "structured_review_prompt"` and
+  the Structured Review Prompt sections above.
+- The validator remains backward-compatible with historical
+  `structured_review_policy` cards while new scaffolds use the prompt type.
 - Historical policy-only SRPs are legacy-compatible scaffolds, not final
   review-result truth.

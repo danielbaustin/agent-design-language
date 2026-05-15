@@ -746,8 +746,8 @@ fn render_bootstrap_review_policy_card(
     format!(
         r#"---
 schema_version: "0.1"
-artifact_type: "structured_review_policy"
-name: "{slug}-review-policy"
+artifact_type: "structured_review_prompt"
+name: "{slug}-review-prompt"
 issue: {issue}
 task_id: "issue-{issue_padded}"
 version: "{version}"
@@ -787,18 +787,20 @@ refusal_policy:
 follow_up_routing:
   - "Route actionable defects back to the issue branch before PR publication."
 non_claims:
-  - "This policy does not guarantee review quality by itself."
+  - "This prompt does not claim review has already run."
+  - "This prompt does not guarantee review quality by itself."
 policy_refs:
   - "{stp_rel}"
   - "{sip_rel}"
-notes: "Bootstrap-generated SRP; revise before use if the review policy needs issue-specific constraints."
+review_results_exception: "explicit policy exception: pre-execution review results are absent until implementation exists; finalize this SRP with actual review findings before PR publication."
+notes: "Bootstrap-generated Structured Review Prompt; revise before use if issue-specific review constraints are needed."
 ---
 
-# Structured Review Policy
+# Structured Review Prompt
 
 ## Review Summary
 
-Use this policy to govern the independent pre-PR review for this issue.
+Use this prompt to govern the independent pre-PR review for this issue. Review results are intentionally absent before implementation exists and must be finalized before PR publication.
 
 ## Scope Basis
 
@@ -839,11 +841,26 @@ Use this policy to govern the independent pre-PR review for this issue.
 
 ## Non-Claims
 
-- This policy does not guarantee review quality by itself.
+- This prompt does not claim review has already run.
+- This prompt does not guarantee review quality by itself.
+
+## Review Results
+
+### Findings
+
+- Not run yet; implementation has not been bound.
+
+### Dispositions
+
+- Not applicable until review runs.
+
+### Recommended Outcome
+
+- Not run yet.
 
 ## Notes
 
-Bootstrap-generated SRP; revise before use if the review policy needs issue-specific constraints.
+Bootstrap-generated Structured Review Prompt; revise before use if issue-specific review constraints are needed.
 "#,
         slug = issue_ref.slug(),
         issue = issue_ref.issue_number(),

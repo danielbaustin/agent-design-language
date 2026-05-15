@@ -126,10 +126,10 @@ Compatibility surfaces:
 - current file: `srp.md`
 - current template filename:
   `docs/templates/STRUCTURED_REVIEW_POLICY_TEMPLATE.md`
-- current artifact type: `structured_review_policy`
+- current artifact type: `structured_review_prompt`
 
-The compatibility name is legacy scaffolding. New content should use the
-Structured Review Prompt sections and include review results.
+The template filename remains legacy-compatible, but new content should use the
+Structured Review Prompt artifact type, sections, and review-result fields.
 
 ## SOR Target
 
