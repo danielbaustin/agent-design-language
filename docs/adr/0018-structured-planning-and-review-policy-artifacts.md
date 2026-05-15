@@ -8,12 +8,24 @@
 
 ## Context
 
-ADL already treats task intent, execution input, and output truth as durable
-issue-bundle artifacts through `STP`, `SIP`, and `SOR`. v0.91 adds two adjacent
-workflow artifacts:
+ADL already treats issue intent, selected task intent, and outcome truth as
+durable issue-bundle artifacts through `SIP`, `STP`, and `SOR`. v0.91 adds two
+adjacent workflow artifacts:
 
 - `SPP`, the Structured Plan Prompt, for saved execution planning
 - `SRP`, the Structured Review Prompt, for durable review policy
+
+v0.91.2 refines the issue-card semantics into the canonical lifecycle:
+
+```text
+SIP -> STP -> SPP -> SRP -> SOR
+```
+
+In that refined lifecycle, `SIP` is the Structured Issue Prompt, `STP` is the
+selected task/solution prompt, and `SRP` remains Structured Review Prompt while
+expanding from policy-only into both review instructions and review results.
+This is a lifecycle clarification rather than a rejection of the v0.91 decision
+to make `SPP` and `SRP` durable workflow artifacts.
 
 This ADR is grounded in:
 
@@ -48,15 +60,16 @@ This decision requires:
    evidence classes, validation context, allowed dispositions, constraints, and
    follow-up routing.
 
-3. `SPP` and `SRP` complement rather than replace `STP`, `SIP`, and `SOR`.
+3. `SPP` and `SRP` complement rather than replace `SIP`, `STP`, and `SOR`.
 
-   `STP` remains source task intent, `SIP` remains execution input context, and
-   `SOR` remains output truth. `SPP` records intended execution discipline.
-   `SRP` records review policy.
+   In the refined lifecycle, `SIP` records issue intent, `STP` records the
+   selected task or solution, and `SOR` remains outcome truth. `SPP` records
+   intended execution discipline. `SRP` records review instructions and the
+   resulting findings, dispositions, residual risks, and recommended outcome.
 
 4. The artifacts must be validator-visible and editor-safe.
 
-   Malformed planning or review-policy artifacts should be detectable by the
+   Malformed planning or review-prompt artifacts should be detectable by the
    structured-prompt validation path, and editor skills should be able to
    normalize them without inventing execution progress.
 

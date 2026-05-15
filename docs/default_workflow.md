@@ -14,6 +14,16 @@ Install or resync the local skill with:
 bash adl/tools/install_adl_pr_cycle_skill.sh
 ```
 
+The canonical issue-card lifecycle is:
+
+```text
+SIP -> STP -> SPP -> SRP -> SOR
+```
+
+See `docs/tooling/card-lifecycle.md` for the role of each card and the
+creation-order versus activation-order distinction. Tooling may create card
+stubs early, but new issue work should follow this semantic order only.
+
 The active control-plane surface is:
 
 - `pr init`
@@ -26,21 +36,29 @@ The browser/editor adapter remains narrower:
 - browser-direct adapter support remains narrower than the full repo-native control plane
 - direct browser/editor execution of `pr ready`, `pr run`, and `pr finish` is not the canonical workflow surface
 
-## 1) Initialize Canonical STP
+## 1) Bootstrap Canonical Issue Bundle
 
 ```bash
 bash ./adl/tools/pr.sh init <issue_num> --slug <slug> --version v0.87
 ```
 
 Canonical local task bundle:
+- `.adl/<scope>/tasks/<task-id>__<slug>/sip.md`
 - `.adl/<scope>/tasks/<task-id>__<slug>/stp.md`
+- `.adl/<scope>/tasks/<task-id>__<slug>/spp.md`
+- `.adl/<scope>/tasks/<task-id>__<slug>/srp.md`
+- `.adl/<scope>/tasks/<task-id>__<slug>/sor.md`
 - `.adl/<scope>/tasks/<task-id>__<slug>/`
 
 Minimum init contract:
 - canonical task-bundle directory
-- validated `stp.md`
-- validated root `sip.md`
-- validated root `sor.md`
+- validated issue-card scaffold surfaces
+- `SIP` as issue-intent truth
+- `STP` as selected task/solution truth
+- `SPP` as execution-plan truth before implementation proceeds
+- `SRP` as review prompt truth before PR publication, then review-result truth
+- `SOR` as final outcome truth after execution, publication, merge or closure,
+  and closeout
 
 ## 2) Confirm GitHub Issue Exists
 
@@ -65,11 +83,11 @@ Preferred execution clone:
 - `.worktrees/adl-wp-<issue_num>`
 
 Structured Card Templates v2 (required sections):
-- Input card:
+- SIP/SPP card surfaces:
   - `System Invariants (must remain true)`
   - `Reviewer Checklist (machine-readable hints)`
   - `Card Automation Hooks (prompt generation)`
-- Output card:
+- SOR card surface:
   - `Determinism Evidence`
   - `Security / Privacy Checks`
   - `Replay Artifacts`
@@ -80,7 +98,7 @@ machine-parsable prompt automation.
 
 ## 4) Implement
 
-Read the input card, stay inside the issue edit fence, and make the tracked repo changes.
+Read the active issue cards, stay inside the issue edit fence, and make the tracked repo changes.
 
 ## 5) Run (when the issue requires a bounded runtime proof surface)
 
@@ -89,7 +107,7 @@ bash ./adl/tools/pr.sh run <adl-file> [run arguments...]
 ```
 
 Use `pr run` when the issue's proof surface requires emitted run artifacts, replay, or bounded runtime execution.
-For docs-only or non-runtime issues, skip `pr run` truthfully and record that in the output card/report rather than inventing a hidden step.
+For docs-only or non-runtime issues, skip `pr run` truthfully and record that in the SOR or report rather than inventing a hidden step.
 
 ## 6) Validate
 
@@ -187,7 +205,9 @@ bash ./adl/tools/pr.sh finish <issue_num> \
   --output-card .adl/cards/<issue_num>/output_<issue_num>.md
 ```
 
-Finish should only open or update the PR after the SOR is finalized, and the finalized output record should be synced to the canonical task bundle under:
+Finish should only open or update the PR after review truth is captured or
+explicitly deferred according to policy. The current publication-time `SOR`
+should be synced to the canonical task bundle under:
 
 - `.adl/<scope>/tasks/issue-<padded_issue>__<slug>/sor.md`
 
