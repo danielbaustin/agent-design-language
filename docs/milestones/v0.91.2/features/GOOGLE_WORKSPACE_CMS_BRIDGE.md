@@ -6,7 +6,12 @@
 - Milestone Target: `v0.91.2`
 - Status: in_flight
 - Planned WP Home: WP-08, WP-09
-- Source Docs: `.adl/docs/TBD/google_workspace_cms/`
+- Source Docs:
+  - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_cms_bridge_demo_packet.md`
+  - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_revision_mismatch_and_authority_rules.md`
+  - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/gws_live_safety_runbook.md`
+  - `.adl/docs/TBD/google_workspace_cms/GWS_TOOLING_DEPENDENCY_AND_SEQUENCING.md`
+  - `.adl/docs/TBD/google_workspace_cms/RUST_NATIVE_GWS_ADAPTER_PLAN.md`
 - Proof Modes: fixture demo, adapter boundary, review
 
 ## Purpose
@@ -47,6 +52,8 @@ Out of scope:
 - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_demo_manifest.json`
 - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_tool_capability_trace.json`
 - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/rust_native_gws_adapter_boundary_report.json`
+- `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/gws_live_safety_package_report.json`
+- `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/gws_live_safety_runbook.md`
 
 ## Non-Claims
 
@@ -55,3 +62,4 @@ Out of scope:
 - `WP-08` does not authorize direct tracked repo edits from Workspace state.
 - `WP-09` does not claim live authenticated Workspace writes are enabled by
   default.
+- The live-safety package does not authorize ambient broad Workspace authority.
