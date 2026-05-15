@@ -174,8 +174,26 @@ The normal gate order is:
 5. `SOR` complete enough to record final issue truth after execution,
    publication, merge or closure, and closeout.
 
-Future validators and doctor output should report both file existence and
-stage readiness. Existing file presence is not enough.
+Validators and doctor output should report both file existence and stage
+readiness. Existing file presence is not enough.
+
+`pr doctor` now exposes a bounded lifecycle-readiness summary in both text and
+JSON output:
+
+- `CARD_LIFECYCLE_ACTIVE_STAGE` / `card_lifecycle.active_stage`
+- `CARD_LIFECYCLE_NEXT_REQUIRED_STAGE` /
+  `card_lifecycle.next_required_stage`
+- `CARD_LIFECYCLE_PR_RUN_READINESS` /
+  `card_lifecycle.pr_run_readiness`
+- `CARD_LIFECYCLE_PR_FINISH_READINESS` /
+  `card_lifecycle.pr_finish_readiness`
+- one per-card stage row/object for `SIP`, `STP`, `SPP`, `SRP`, and `SOR`
+
+The stage classifier distinguishes `scaffold`, `active`, `complete`, `final`,
+and `legacy_compatible` states. In particular, legacy
+`Structured Review Policy` SRP scaffolds remain compatibility-valid, but they
+are not final `Structured Review Prompt` truth until review results or an
+explicit policy exception are recorded.
 
 ## Memory Handoff
 
