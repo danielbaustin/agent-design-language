@@ -1,0 +1,76 @@
+{
+  "schema_version": "gws_live_capability_execution_surface.v1",
+  "prompt_record": {
+    "prompt_version": "wp3091.gws_live_capability_execution_surface.v1",
+    "issue_number": 3091,
+    "depends_on_issue_number": 3008,
+    "summary": "WP-3091 promotes the bounded Workspace CMS bridge into a live-capable governed `gws` surface for one explicit folder/doc/sheet scope while preserving fixture-first proof and truthful skipped-state behavior."
+  },
+  "live_mode": "dry_run",
+  "fixture_snapshot_artifact_path": "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_cms_snapshot.json",
+  "safety_package_artifact_path": "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/gws_live_safety_package_report.json",
+  "live_snapshot_artifact_path": "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/gws_live_capability_execution_snapshot.json",
+  "scope_binding": {
+    "drive_folder_id": "demo-v0912-workspace-cms",
+    "doc_id": "doc-review-packet-demo",
+    "sheet_id": "sheet-content-cards-demo",
+    "sheet_range": "ContentCards!A1:F5"
+  },
+  "command_traces": [
+    {
+      "capability_name": "gws.drive.folder_inventory",
+      "argv": [
+        "drive",
+        "files",
+        "list",
+        "--params",
+        "{\"fields\":\"files(id,name,mimeType,modifiedTime,webViewLink)\",\"pageSize\":100,\"q\":\"'demo-v0912-workspace-cms' in parents and trashed = false\"}"
+      ],
+      "mode": "dry_run",
+      "result": "skipped",
+      "skipped_reason": "dry_run_only",
+      "exit_code": null,
+      "summary": "Dry-run posture records the bounded Drive inventory command plan without executing live Workspace reads."
+    },
+    {
+      "capability_name": "gws.docs.read_snapshot",
+      "argv": [
+        "docs",
+        "documents",
+        "get",
+        "--params",
+        "{\"documentId\":\"doc-review-packet-demo\"}"
+      ],
+      "mode": "dry_run",
+      "result": "skipped",
+      "skipped_reason": "dry_run_only",
+      "exit_code": null,
+      "summary": "Dry-run posture records the bounded document snapshot command plan without executing a live Workspace read."
+    },
+    {
+      "capability_name": "gws.sheets.read_content_cards",
+      "argv": [
+        "sheets",
+        "spreadsheets",
+        "values",
+        "get",
+        "--params",
+        "{\"range\":\"ContentCards!A1:F5\",\"spreadsheetId\":\"sheet-content-cards-demo\"}"
+      ],
+      "mode": "dry_run",
+      "result": "skipped",
+      "skipped_reason": "dry_run_only",
+      "exit_code": null,
+      "summary": "Dry-run posture records the bounded sheet-read command plan without executing a live Workspace read."
+    }
+  ],
+  "live_snapshot_result": "skipped",
+  "live_snapshot_skipped_reason": "dry_run_only",
+  "fixture_mode_remains_canonical": true,
+  "dry_run_posture_supported": true,
+  "non_claims": [
+    "This report does not prove live Workspace writes.",
+    "This report does not require live secrets for ordinary validation.",
+    "This report does not override the bounded authority and revision-mismatch rules already recorded by the bridge feature."
+  ]
+}

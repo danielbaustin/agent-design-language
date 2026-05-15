@@ -154,6 +154,23 @@ Required validation:
 - No live secrets are required for fixture validation.
 - Adapter boundary preserves ACC/tool authority semantics.
 
+## Follow-On: Live Bounded GWS Capability Execution (`#3091`)
+
+Required outputs:
+
+- `gws`-backed live bounded read surface for one explicit Drive folder, Google
+  Doc, and Google Sheet range.
+- Normalized live Workspace snapshot artifact that preserves bounded scope and
+  skips cleanly when live auth or `gws` availability is absent.
+- Explicit dry-run versus execute posture in the live adapter report.
+
+Required validation:
+
+- Live unavailability is recorded as `skipped`, not silent success or generic
+  bridge failure.
+- Live execution remains bounded to the declared folder/doc/sheet scope.
+- No Workspace action mutates canonical tracked repo truth.
+
 ## WP-10: Code Modernization Demo
 
 Required outputs:

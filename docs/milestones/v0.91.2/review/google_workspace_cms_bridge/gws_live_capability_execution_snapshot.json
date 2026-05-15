@@ -1,0 +1,24 @@
+{
+  "schema_version": "workspace_cms_live_snapshot.v1",
+  "mode": "dry_run",
+  "cms_root": {
+    "display_name": "Live bounded Workspace CMS scope",
+    "folder_ref": "gws://drive/folders/demo-v0912-workspace-cms",
+    "authority": "draft_only"
+  },
+  "scope_binding": {
+    "drive_folder_id": "demo-v0912-workspace-cms",
+    "doc_id": "doc-review-packet-demo",
+    "sheet_id": "sheet-content-cards-demo",
+    "sheet_range": "ContentCards!A1:F5"
+  },
+  "folder_inventory": [],
+  "selected_doc": null,
+  "content_card_sheet": null,
+  "skipped_reason": "dry_run_only",
+  "non_claims": [
+    "This surface does not make Google Workspace canonical repo truth.",
+    "This surface does not authorize direct tracked repository mutation from Workspace state.",
+    "Fixture mode remains the proving path for ordinary CI and PR validation."
+  ]
+}
