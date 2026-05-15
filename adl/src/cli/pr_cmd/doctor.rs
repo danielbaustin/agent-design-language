@@ -624,9 +624,7 @@ fn classify_srp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
     let Some(text) = read_card_text(path) else {
         return missing_stage(repo_root, "SRP", path, "srp-editor");
     };
-    let has_review_results = text.contains("review_results:")
-        || text.contains("## Review Results")
-        || text.contains("### Recommended Outcome");
+    let has_review_results = srp_has_final_review_results(&text);
     let has_policy_exception = text.contains("explicit policy exception")
         || text.contains("review_results_exception:")
         || text.contains("policy_exception:");
@@ -671,6 +669,40 @@ fn classify_srp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             Some("srp-editor"),
             "SRP exists but still needs review results or an explicit policy exception.",
         ),
+    )
+}
+
+fn srp_has_final_review_results(text: &str) -> bool {
+    if !text.contains("review_results:") {
+        return false;
+    }
+    let findings_status = line_value_after_prefix(text, "findings_status:");
+    let recommended_outcome = line_value_after_prefix(text, "recommended_outcome:");
+    matches_final_findings_status(findings_status.as_deref())
+        && matches_final_recommended_outcome(recommended_outcome.as_deref())
+}
+
+fn normalized_review_value(value: Option<&str>) -> Option<String> {
+    value.map(|value| {
+        value
+            .trim()
+            .trim_matches('"')
+            .trim_matches('\'')
+            .to_ascii_lowercase()
+    })
+}
+
+fn matches_final_findings_status(value: Option<&str>) -> bool {
+    matches!(
+        normalized_review_value(value).as_deref(),
+        Some("no_findings" | "findings_present")
+    )
+}
+
+fn matches_final_recommended_outcome(value: Option<&str>) -> bool {
+    matches!(
+        normalized_review_value(value).as_deref(),
+        Some("pass" | "block" | "needs_followup")
     )
 }
 
@@ -922,6 +954,75 @@ mod tests {
         assert_eq!(lifecycle.pr_finish_readiness, "blocked");
         assert_stage(&lifecycle, "SRP", "legacy_compatible", false, false);
         assert_stage(&lifecycle, "SOR", "complete", true, false);
+    }
+
+    #[test]
+    fn card_lifecycle_does_not_treat_placeholder_srp_results_as_final() {
+        let repo = lifecycle_temp_repo("placeholder-srp-results");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Branch: codex/3065-test\n",
+                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\nreview_results:\n  findings_status: \"not_run | findings_present | no_findings\"\n  recommended_outcome: \"pass | block | needs_followup | not_run\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- <pass, block, needs_followup, or not_run>\n",
+                sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_eq!(lifecycle.active_stage, "SRP");
+        assert_eq!(lifecycle.next_required_stage, Some("SRP"));
+        assert_eq!(lifecycle.pr_finish_readiness, "blocked");
+        assert_stage(&lifecycle, "SRP", "legacy_compatible", false, false);
+    }
+
+    #[test]
+    fn card_lifecycle_does_not_treat_unknown_srp_result_values_as_final() {
+        let repo = lifecycle_temp_repo("unknown-srp-results");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Branch: codex/3065-test\n",
+                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"todo\"\n  recommended_outcome: \"ship_it\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- ship_it\n",
+                sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_eq!(lifecycle.active_stage, "SRP");
+        assert_eq!(lifecycle.pr_finish_readiness, "blocked");
+        assert_stage(&lifecycle, "SRP", "legacy_compatible", false, false);
+    }
+
+    #[test]
+    fn card_lifecycle_allows_explicit_srp_policy_exception() {
+        let repo = lifecycle_temp_repo("srp-policy-exception");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Branch: codex/3065-test\n",
+                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results_exception: \"explicit policy exception: docs-only no-op review\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\nexplicit policy exception recorded\n",
+                sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_stage(&lifecycle, "SRP", "final", true, true);
+        assert_eq!(lifecycle.pr_finish_readiness, "ready");
     }
 
     #[test]
