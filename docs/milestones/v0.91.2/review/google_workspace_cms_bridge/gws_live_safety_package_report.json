@@ -1,0 +1,213 @@
+{
+  "schema_version": "gws_live_safety_package.v1",
+  "prompt_record": {
+    "prompt_version": "wp3092.gws_live_safety_package.v1",
+    "issue_number": 3092,
+    "depends_on_issue_number": 3008,
+    "summary": "WP-3092 defines the auth, scope, redaction, trace, and skipped-state contract required to use the bounded Workspace CMS bridge safely on real projects."
+  },
+  "auth_profiles": [
+    {
+      "auth_mode": "fixture_only",
+      "permitted_for_live_project_use": false,
+      "secret_recording_policy": "no live credentials are used or recorded",
+      "notes": [
+        "Fixture mode remains the default proof path for CI and PR validation.",
+        "Fixture mode is proving for schema and workflow truth, not for live Workspace reachability."
+      ]
+    },
+    {
+      "auth_mode": "operator_oauth_user",
+      "permitted_for_live_project_use": true,
+      "secret_recording_policy": "record auth mode only; never persist tokens, refresh tokens, or raw credential files",
+      "notes": [
+        "Use when one human operator is performing a bounded project workflow.",
+        "Prefer a narrowly scoped Workspace identity rather than a broad personal account."
+      ]
+    },
+    {
+      "auth_mode": "service_account_scoped",
+      "permitted_for_live_project_use": true,
+      "secret_recording_policy": "record service-account mode and issuing system only; never persist key material",
+      "notes": [
+        "Use only when the project can prove the account is narrowed to the exact Drive/Docs/Sheets scope.",
+        "Treat service-account write scopes as higher risk than read-only bounded demos."
+      ]
+    },
+    {
+      "auth_mode": "external_cli_credential_store",
+      "permitted_for_live_project_use": true,
+      "secret_recording_policy": "record that external CLI credential storage was used without copying any secret-bearing path or content",
+      "notes": [
+        "This is the likely first live adapter posture for `gws`-backed project use.",
+        "The bridge may rely on the operator-visible CLI auth flow, but ADL must still record only the mode, not the secret."
+      ]
+    }
+  ],
+  "scope_policies": [
+    {
+      "capability_name": "workspace.drive.list_folder",
+      "scope_kind": "drive_folder_inventory_read",
+      "minimum_scope_summary": "one explicit Drive folder inventory scope",
+      "write_capability": false,
+      "operator_approval_required": false
+    },
+    {
+      "capability_name": "workspace.drive.read_file_metadata",
+      "scope_kind": "drive_file_metadata_read",
+      "minimum_scope_summary": "metadata read for files already inside the bounded folder scope",
+      "write_capability": false,
+      "operator_approval_required": false
+    },
+    {
+      "capability_name": "workspace.docs.read_snapshot",
+      "scope_kind": "docs_read_snapshot",
+      "minimum_scope_summary": "one explicit document snapshot read scope",
+      "write_capability": false,
+      "operator_approval_required": false
+    },
+    {
+      "capability_name": "workspace.sheets.read_content_cards",
+      "scope_kind": "sheets_read_content_cards",
+      "minimum_scope_summary": "one explicit sheet range read scope for content cards only",
+      "write_capability": false,
+      "operator_approval_required": false
+    },
+    {
+      "capability_name": "workspace.sheets.preview_content_card_update",
+      "scope_kind": "sheets_preview_content_card_update",
+      "minimum_scope_summary": "one explicit sheet range preview scope with no live mutation",
+      "write_capability": false,
+      "operator_approval_required": false
+    },
+    {
+      "capability_name": "workspace.sheets.apply_content_card_update",
+      "scope_kind": "sheets_apply_content_card_update",
+      "minimum_scope_summary": "one explicit sheet range write scope for one bounded content-card update",
+      "write_capability": true,
+      "operator_approval_required": true
+    },
+    {
+      "capability_name": "workspace.drive.record_revision_anchor",
+      "scope_kind": "drive_record_revision_anchor",
+      "minimum_scope_summary": "one bounded revision-anchor recording scope tied to the reviewed source doc",
+      "write_capability": false,
+      "operator_approval_required": false
+    }
+  ],
+  "redaction_rules": [
+    {
+      "scenario": "drive folder inventory",
+      "data_sensitivity": "metadata_only",
+      "trace_posture": "metadata_only",
+      "default_public_artifact_behavior": "record folder ref, document ids, and bounded metadata only"
+    },
+    {
+      "scenario": "docs snapshot read",
+      "data_sensitivity": "private_body",
+      "trace_posture": "redacted_content_only",
+      "default_public_artifact_behavior": "publish only redacted excerpts or issue-scoped references, never full private document bodies"
+    },
+    {
+      "scenario": "sheet content-card read",
+      "data_sensitivity": "metadata_only",
+      "trace_posture": "metadata_only",
+      "default_public_artifact_behavior": "publish only lifecycle/status rows that are already intended for repo-facing management"
+    },
+    {
+      "scenario": "comments and suggestions",
+      "data_sensitivity": "private_body",
+      "trace_posture": "issue_scoped_link_only",
+      "default_public_artifact_behavior": "record that collaboration state exists without copying private discussion into public artifacts"
+    },
+    {
+      "scenario": "promotion packet preparation",
+      "data_sensitivity": "redacted_excerpt",
+      "trace_posture": "metadata_only",
+      "default_public_artifact_behavior": "record title, revision anchor, target repo path, and issue/PR linkage without body-level leakage"
+    }
+  ],
+  "skipped_states": [
+    {
+      "reason": "live_mode_disabled",
+      "classification": "skipped",
+      "operator_message": "Live Workspace execution is disabled for this run; fixture proof remains valid."
+    },
+    {
+      "reason": "gws_unavailable",
+      "classification": "skipped",
+      "operator_message": "The `gws` adapter is unavailable; do not fail fixture-backed validation because live execution could not start."
+    },
+    {
+      "reason": "missing_auth",
+      "classification": "skipped",
+      "operator_message": "No live Workspace credentials are available; record the missing auth posture without retrying ambient authority."
+    },
+    {
+      "reason": "missing_scopes",
+      "classification": "skipped",
+      "operator_message": "The available Workspace credentials do not cover the bounded requested capability scope."
+    },
+    {
+      "reason": "network_unavailable",
+      "classification": "skipped",
+      "operator_message": "Workspace live execution is unreachable; preserve fixture proof and record the network unavailability separately."
+    },
+    {
+      "reason": "operator_declined",
+      "classification": "skipped",
+      "operator_message": "The operator declined a live write or wider scope escalation; stop cleanly without treating that as a bridge defect."
+    }
+  ],
+  "stop_conditions": [
+    {
+      "condition": "revision_mismatch",
+      "classification": "stop",
+      "operator_message": "The recorded Workspace revision anchor no longer matches the reviewed source state; stop before preview, apply, or promotion work continues."
+    },
+    {
+      "condition": "authority_drift",
+      "classification": "stop",
+      "operator_message": "The requested live Workspace action exceeds the declared issue-scoped authority or bounded folder/doc/sheet scope."
+    }
+  ],
+  "operator_runbook": [
+    {
+      "stage": "preflight",
+      "required_actions": [
+        "Confirm the project really needs live Workspace access rather than fixture proof.",
+        "Declare one explicit folder/doc/sheet scope before proposing any live capability call.",
+        "Record the intended auth mode and verify that secrets themselves will not enter repo artifacts or cards."
+      ]
+    },
+    {
+      "stage": "live read path",
+      "required_actions": [
+        "Use inventory and snapshot reads first, with metadata-only or redacted trace posture.",
+        "Treat private document bodies as withheld by default unless the operator explicitly approves a redacted excerpt.",
+        "If auth, scope, or `gws` availability is missing, classify the live path as skipped and keep fixture proof separate."
+      ]
+    },
+    {
+      "stage": "live write path",
+      "required_actions": [
+        "Require preview before any content-card mutation apply step.",
+        "Require explicit operator approval for bounded sheet-range writes.",
+        "Record revision anchors and issue/PR linkage before any promotion-oriented action."
+      ]
+    },
+    {
+      "stage": "promotion boundary",
+      "required_actions": [
+        "Prepare promotion packets as metadata-rich handoff artifacts, not as direct tracked-file edits.",
+        "Keep GitHub issue and PR flow as canonical authority after promotion.",
+        "Stop before any silent repo mutation from Workspace state."
+      ]
+    }
+  ],
+  "non_claims": [
+    "This package does not enable broad ambient Google Workspace authority.",
+    "This package does not make Google Workspace canonical repo truth.",
+    "This package does not authorize private document body export into public artifacts by default."
+  ]
+}
