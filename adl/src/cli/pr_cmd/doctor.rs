@@ -517,22 +517,26 @@ fn classify_sip_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             repo_root,
             "SIP",
             path,
-            "scaffold",
-            false,
-            false,
-            Some("sip-editor"),
-            "SIP is still a pre-run scaffold; branch/worktree execution has not been bound.",
+            stage_truth(
+                "scaffold",
+                false,
+                false,
+                Some("sip-editor"),
+                "SIP is still a pre-run scaffold; branch/worktree execution has not been bound.",
+            ),
         );
     }
     card_stage(
         repo_root,
         "SIP",
         path,
-        "complete",
-        true,
-        false,
-        None,
-        "SIP is branch-bound and complete enough for execution planning.",
+        stage_truth(
+            "complete",
+            true,
+            false,
+            None,
+            "SIP is branch-bound and complete enough for execution planning.",
+        ),
     )
 }
 
@@ -545,22 +549,26 @@ fn classify_stp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             repo_root,
             "STP",
             path,
-            "complete",
-            true,
-            false,
-            None,
-            "STP has the required task intent and acceptance surfaces.",
+            stage_truth(
+                "complete",
+                true,
+                false,
+                None,
+                "STP has the required task intent and acceptance surfaces.",
+            ),
         );
     }
     card_stage(
         repo_root,
         "STP",
         path,
-        "active",
-        false,
-        false,
-        Some("stp-editor"),
-        "STP exists but is not complete enough to anchor execution.",
+        stage_truth(
+            "active",
+            false,
+            false,
+            Some("stp-editor"),
+            "STP exists but is not complete enough to anchor execution.",
+        ),
     )
 }
 
@@ -575,11 +583,13 @@ fn classify_spp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             repo_root,
             "SPP",
             path,
-            "scaffold",
-            false,
-            false,
-            Some("spp-editor"),
-            "SPP is still bootstrap/pre-run planning scaffold and needs issue-specific plan truth.",
+            stage_truth(
+                "scaffold",
+                false,
+                false,
+                Some("spp-editor"),
+                "SPP is still bootstrap/pre-run planning scaffold and needs issue-specific plan truth.",
+            ),
         );
     }
     if ["reviewed", "approved"].contains(&status.trim_matches('"')) {
@@ -587,22 +597,26 @@ fn classify_spp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             repo_root,
             "SPP",
             path,
-            "complete",
-            true,
-            false,
-            None,
-            "SPP has reviewed or approved planning state.",
+            stage_truth(
+                "complete",
+                true,
+                false,
+                None,
+                "SPP has reviewed or approved planning state.",
+            ),
         );
     }
     card_stage(
         repo_root,
         "SPP",
         path,
-        "active",
-        false,
-        false,
-        Some("spp-editor"),
-        "SPP is branch-bound but not yet marked reviewed or approved.",
+        stage_truth(
+            "active",
+            false,
+            false,
+            Some("spp-editor"),
+            "SPP is branch-bound but not yet marked reviewed or approved.",
+        ),
     )
 }
 
@@ -623,11 +637,13 @@ fn classify_srp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             repo_root,
             "SRP",
             path,
-            "final",
-            true,
-            true,
-            None,
-            "SRP contains review results or an explicit policy exception for final review truth.",
+            stage_truth(
+                "final",
+                true,
+                true,
+                None,
+                "SRP contains review results or an explicit policy exception for final review truth.",
+            ),
         );
     }
     if legacy_policy_only {
@@ -635,22 +651,26 @@ fn classify_srp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             repo_root,
             "SRP",
             path,
-            "legacy_compatible",
-            false,
-            false,
-            Some("srp-editor"),
-            "SRP validates as the legacy review-policy scaffold but is not final Structured Review Prompt truth.",
+            stage_truth(
+                "legacy_compatible",
+                false,
+                false,
+                Some("srp-editor"),
+                "SRP validates as the legacy review-policy scaffold but is not final Structured Review Prompt truth.",
+            ),
         );
     }
     card_stage(
         repo_root,
         "SRP",
         path,
-        "active",
-        false,
-        false,
-        Some("srp-editor"),
-        "SRP exists but still needs review results or an explicit policy exception.",
+        stage_truth(
+            "active",
+            false,
+            false,
+            Some("srp-editor"),
+            "SRP exists but still needs review results or an explicit policy exception.",
+        ),
     )
 }
 
@@ -669,11 +689,13 @@ fn classify_sor_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             repo_root,
             "SOR",
             path,
-            "scaffold",
-            false,
-            false,
-            Some("sor-editor"),
-            "SOR is still the pre-execution output scaffold.",
+            stage_truth(
+                "scaffold",
+                false,
+                false,
+                Some("sor-editor"),
+                "SOR is still the pre-execution output scaffold.",
+            ),
         );
     }
     if ["merged", "closed_no_pr"].contains(&integration_state.as_str())
@@ -688,11 +710,13 @@ fn classify_sor_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             repo_root,
             "SOR",
             path,
-            "final",
-            true,
-            true,
-            None,
-            "SOR records terminal integration, validation, closeout, and artifact truth.",
+            stage_truth(
+                "final",
+                true,
+                true,
+                None,
+                "SOR records terminal integration, validation, closeout, and artifact truth.",
+            ),
         );
     }
     if integration_state == "pr_open" && status == "DONE" && result == "PASS" {
@@ -700,22 +724,26 @@ fn classify_sor_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             repo_root,
             "SOR",
             path,
-            "complete",
-            true,
-            false,
-            Some("sor-editor"),
-            "SOR is complete enough for PR publication but is not terminal closeout truth.",
+            stage_truth(
+                "complete",
+                true,
+                false,
+                Some("sor-editor"),
+                "SOR is complete enough for PR publication but is not terminal closeout truth.",
+            ),
         );
     }
     card_stage(
         repo_root,
         "SOR",
         path,
-        "active",
-        false,
-        false,
-        Some("sor-editor"),
-        "SOR exists but does not yet satisfy PR publication or terminal closeout readiness.",
+        stage_truth(
+            "active",
+            false,
+            false,
+            Some("sor-editor"),
+            "SOR exists but does not yet satisfy PR publication or terminal closeout readiness.",
+        ),
     )
 }
 
@@ -729,32 +757,54 @@ fn missing_stage(
         repo_root,
         stage,
         path,
-        "missing",
-        false,
-        false,
-        Some(editor),
-        "Required lifecycle card is missing.",
+        stage_truth(
+            "missing",
+            false,
+            false,
+            Some(editor),
+            "Required lifecycle card is missing.",
+        ),
     )
+}
+
+struct DoctorCardStageTruth {
+    state: &'static str,
+    complete: bool,
+    final_ready: bool,
+    next_editor: Option<&'static str>,
+    detail: &'static str,
+}
+
+fn stage_truth(
+    state: &'static str,
+    complete: bool,
+    final_ready: bool,
+    next_editor: Option<&'static str>,
+    detail: &'static str,
+) -> DoctorCardStageTruth {
+    DoctorCardStageTruth {
+        state,
+        complete,
+        final_ready,
+        next_editor,
+        detail,
+    }
 }
 
 fn card_stage(
     repo_root: &Path,
     stage: &'static str,
     path: &Path,
-    state: &'static str,
-    complete: bool,
-    final_ready: bool,
-    next_editor: Option<&'static str>,
-    detail: &str,
+    truth: DoctorCardStageTruth,
 ) -> DoctorCardStageJson {
     DoctorCardStageJson {
         stage,
         path: path_relative_to_repo(repo_root, path),
-        state,
-        complete,
-        final_ready,
-        next_editor,
-        detail: detail.to_string(),
+        state: truth.state,
+        complete: truth.complete,
+        final_ready: truth.final_ready,
+        next_editor: truth.next_editor,
+        detail: truth.detail.to_string(),
     }
 }
 
