@@ -66,6 +66,13 @@ Typical choices:
 - `policy.body_source: generated` when you want the control plane to generate the first readable body
 - `policy.label_source: explicit` for tracked issue creation
 
+Use `issue.version` for the issue's active lifecycle/control-plane band, not
+necessarily the future milestone named by the work product. For example, an
+active `v0.91.2` issue that authors `v0.91.3` milestone docs should usually use
+`issue.version: "v0.91.2"` and a `version:v0.91.2` label, while naming the
+future documentation target in the title, body, deliverables, and acceptance
+criteria.
+
 If you provide an authored issue body with `issue.body` or `issue.body_file`,
 start from the scaffold below. The create path validates authored bodies against
 the source-prompt contract before it calls GitHub, so missing sections should be

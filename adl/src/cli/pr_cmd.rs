@@ -251,6 +251,17 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         path_relative_to_repo(&repo_root, &stp_path)
     );
     println!(
+        "  SPP        {}",
+        path_relative_to_repo(&repo_root, &issue_ref.task_bundle_plan_path(&repo_root))
+    );
+    println!(
+        "  SRP        {}",
+        path_relative_to_repo(
+            &repo_root,
+            &issue_ref.task_bundle_review_policy_path(&repo_root),
+        )
+    );
+    println!(
         "  READ       {}",
         path_relative_to_repo(&repo_root, &bundle_input)
     );
@@ -704,6 +715,17 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     println!(
         "  STP      {}",
         path_relative_to_repo(&repo_root, &stp_path)
+    );
+    println!(
+        "  SPP      {}",
+        path_relative_to_repo(&repo_root, &issue_ref.task_bundle_plan_path(&repo_root))
+    );
+    println!(
+        "  SRP      {}",
+        path_relative_to_repo(
+            &repo_root,
+            &issue_ref.task_bundle_review_policy_path(&repo_root),
+        )
     );
     println!(
         "  READ     {}",

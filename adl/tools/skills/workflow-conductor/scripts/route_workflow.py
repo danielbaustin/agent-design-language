@@ -480,6 +480,8 @@ def infer_doctor_card_blocker(doctor):
         editor = stage.get("next_editor")
         if editor not in {"spp-editor", "srp-editor"}:
             continue
+        if stage.get("state") == "pre_run":
+            continue
         if stage.get("complete") is True:
             continue
         stage_name = str(stage.get("stage", "")).lower()
