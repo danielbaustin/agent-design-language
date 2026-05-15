@@ -1,10 +1,21 @@
-# Structured Review Policy Template
+# Structured Review Prompt Template
 
 ## Purpose
 
-Use this template for ADL `SRP` artifacts. An `SRP` is an issue-local,
-review-policy artifact that governs independent pre-PR review without acting as
-the transport protocol or the review findings output.
+Use this template for ADL `SRP` artifacts. An `SRP` is an issue-local
+Structured Review Prompt. It carries both the review instructions/policy and
+the review results: findings, dispositions, residual risks, and recommended
+outcome.
+
+The canonical card lifecycle is:
+
+```text
+SIP -> STP -> SPP -> SRP -> SOR
+```
+
+Tooling may create `srp.md` as an early scaffold for path stability. That file
+is not review-complete until the review instructions have been applied and the
+review results have been recorded.
 
 ## File Location
 
@@ -21,22 +32,36 @@ Compatibility surface:
 Live `.adl/` issue records remain local workflow artifacts. Tracked milestone
 docs may record SRP readiness evidence without publishing the local SRP files.
 
+Filename compatibility note: this template currently remains at
+`STRUCTURED_REVIEW_POLICY_TEMPLATE.md` so older docs and references continue to
+resolve. Its semantic role is now Structured Review Prompt.
+
 ## Template
 
 ```markdown
 ---
 schema_version: "0.1"
 artifact_type: "structured_review_policy"
-name: "<short review-policy name>"
+name: "<short review-prompt name>"
 issue: <issue number>
 task_id: "issue-<n>"
 version: "<version>"
 title: "<issue title>"
 branch: "not bound yet"
+lifecycle_stage: "SRP"
 status: "draft"
+activation_state: "scaffold | draft | active | reviewed | legacy_compatible"
 source_refs:
   - kind: "issue"
     ref: "<issue URL or number>"
+  - kind: "sip"
+    ref: ".adl/<version>/tasks/issue-<n>__<slug>/sip.md"
+  - kind: "stp"
+    ref: ".adl/<version>/tasks/issue-<n>__<slug>/stp.md"
+  - kind: "spp"
+    ref: ".adl/<version>/tasks/issue-<n>__<slug>/spp.md"
+  - kind: "sor"
+    ref: ".adl/<version>/tasks/issue-<n>__<slug>/sor.md"
 review_mode: "pre_pr_independent_review"
 timing: "before_pr_open"
 scope_basis:
@@ -52,6 +77,16 @@ allowed_dispositions:
   - "PASS"
   - "BLOCK"
   - "NEEDS_FOLLOWUP"
+review_results:
+  findings_status: "not_run | findings_present | no_findings"
+  recommended_outcome: "pass | block | needs_followup | not_run"
+  findings:
+    - severity: "P0 | P1 | P2 | P3"
+      summary: "<finding summary>"
+      evidence: "<repo-relative evidence reference>"
+      disposition: "open | fixed | deferred | not_applicable"
+  residual_risks:
+    - "<risk or 'none'>"
 reviewer_constraints:
   - "<prohibited reviewer action>"
 refusal_policy:
@@ -65,11 +100,11 @@ policy_refs:
 notes: "<optional note>"
 ---
 
-# Structured Review Policy
+# Structured Review Prompt
 
 ## Review Summary
 
-<Human-readable summary.>
+<Human-readable review instruction and result summary.>
 
 ## Scope Basis
 
@@ -103,6 +138,20 @@ notes: "<optional note>"
 
 - <route>
 
+## Review Results
+
+### Findings
+
+- <finding, severity, evidence, and disposition; use `none` when no findings remain>
+
+### Residual Risks
+
+- <risk or `none`>
+
+### Recommended Outcome
+
+- <pass, block, needs_followup, or not_run>
+
 ## Non-Claims
 
 - <non-claim>
@@ -111,3 +160,12 @@ notes: "<optional note>"
 
 <Optional notes.>
 ```
+
+## Compatibility Notes
+
+- The `artifact_type` value remains `structured_review_policy` until the
+  validator and generator changes land in a later child issue.
+- New SRP content should use the Structured Review Prompt sections above even
+  while the compatibility artifact type remains stable.
+- Historical policy-only SRPs are legacy-compatible scaffolds, not final
+  review-result truth.

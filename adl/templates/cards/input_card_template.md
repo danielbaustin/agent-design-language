@@ -1,5 +1,10 @@
 # ADL Input Card
 
+Semantic role: Structured Issue Prompt (`SIP`).
+Compatibility note: this template filename and header remain stable for current
+tooling, but generated `sip.md` files are issue-intent cards in the canonical
+`SIP -> STP -> SPP -> SRP -> SOR` lifecycle.
+
 Task ID:
 Run ID:
 Version:
@@ -23,6 +28,14 @@ Context:
 - Use repository-relative paths; avoid absolute host paths.
 - Write the output record to the paired local task bundle `sor.md` path.
 - If repository state is unexpected, stop and ask before attempting repository repair.
+
+## Lifecycle Semantics
+- Lifecycle stage: `SIP`
+- Activation state: scaffold before issue-intent review; active when the issue
+  scope, dependencies, acceptance criteria, and boundaries are truthful.
+- Next stage: `STP`, where the selected task or solution is made explicit.
+- Legacy compatibility: older references may call this an input card, but new
+  issue work should treat it as the Structured Issue Prompt.
 
 ## Prompt Spec
 ```yaml
@@ -92,7 +105,7 @@ Prepare the linked issue prompt and review surfaces for truthful pre-run review 
 
 ## Required Outcome
 
-- Keep the linked issue prompt, input card, and output record aligned for review.
+- Keep the linked issue prompt, SIP, and SOR aligned for review.
 - Preserve truthful lifecycle state until `pr run` binds the branch and worktree.
 
 ## Acceptance Criteria
@@ -103,7 +116,7 @@ Prepare the linked issue prompt and review surfaces for truthful pre-run review 
 
 ## Inputs
 - linked source issue prompt
-- root task bundle cards
+- root task bundle cards in `SIP -> STP -> SPP -> SRP -> SOR` order
 - current repository state before execution binding
 
 ## Target Files / Surfaces
@@ -114,12 +127,12 @@ Prepare the linked issue prompt and review surfaces for truthful pre-run review 
 - Commands to run during execution: derive the exact command set from the linked issue prompt and repo state after `pr run` binds the worktree.
 - Tests to run: execute the smallest proving test set for the required outcome during execution.
 - Artifacts or traces: produce or update the proof surfaces required by the linked issue prompt during execution.
-- Reviewer checks: capture any manual review or demo checks in the output card after execution.
+- Reviewer checks: capture review instructions and results in SRP, then summarize outcome truth in SOR.
 
 ## Demo / Proof Requirements
 - Demo set: follow the linked issue prompt.
-- Proof surfaces: use the proof surfaces named by the linked issue prompt and output card once execution is bound.
-- No-demo rationale: if no demo is required, explain why in the output card during execution.
+- Proof surfaces: use the proof surfaces named by the linked issue prompt and SOR once execution is bound.
+- No-demo rationale: if no demo is required, explain why in the SOR during execution.
 
 ## Constraints / Policies
 - Determinism: keep behavior stable for identical inputs unless the issue explicitly changes semantics.
@@ -156,7 +169,7 @@ ci_validation_required: true
   - System Invariants
   - Reviewer Checklist
 - Generation requirements:
-  - Deterministic output for identical input card content
+  - Deterministic output for identical SIP content
   - No secrets, tokens, or absolute host paths in generated prompt text
   - Preserve traceability back to the source issue prompt
   - Preserve explicit required-outcome and demo/proof requirements
@@ -175,4 +188,4 @@ ci_validation_required: true
 - Read the linked source issue prompt before starting work.
 - Do not create a branch or worktree from this card alone.
 - When execution is approved, run the repo-native issue-mode `pr run` flow and then perform the work described above.
-- Write results to the paired output card file during execution.
+- Write execution outcome truth to the paired `sor.md` file during execution.

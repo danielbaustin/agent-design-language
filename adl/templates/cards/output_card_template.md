@@ -4,10 +4,15 @@ Canonical Template Source: `adl/templates/cards/output_card_template.md`
 Consumed by: `adl/tools/pr.sh` (`OUTPUT_TEMPLATE`) with legacy fallback support for `.adl/templates/output_card_template.md`.
 
 Execution Record Requirements:
-- The output card is a machine-auditable execution record.
+- The SOR is a machine-auditable Structured Outcome Record.
 - All sections must be fully populated. Empty sections, placeholders, or implicit claims are not allowed.
 - Every command listed must include both what was run and what it verified.
 - If something is not applicable, include a one-line justification.
+
+Semantic role: Structured Outcome Record (`SOR`).
+Compatibility note: this template filename remains stable for current tooling,
+but generated `sor.md` files are outcome-truth cards in the canonical
+`SIP -> STP -> SPP -> SRP -> SOR` lifecycle.
 
 Task ID:
 Run ID:
@@ -15,6 +20,8 @@ Version:
 Title:
 Branch:
 Status: IN_PROGRESS
+Lifecycle stage: SOR
+Activation state: scaffold | active | pr_open | merged | closed_no_pr | legacy_compatible
 
 Execution:
 - Actor:
@@ -25,16 +32,26 @@ Execution:
 
 ## Summary
 
+Summarize final or current outcome truth. Do not absorb the full SIP, STP, SPP,
+or SRP content; link or summarize those surfaces when needed.
+
 ## Artifacts produced
 - 
 
 ## Actions taken
 - 
 
+## Review Handoff
+- SRP path:
+- Review performed:
+- Findings disposition:
+- Residual risks:
+- Recommended outcome:
+
 ## Main Repo Integration (REQUIRED)
 - Main-repo paths updated:
 - Worktree-only paths remaining: none | list explicitly
-- Integration state: worktree_only | pr_open | merged
+- Integration state: worktree_only | pr_open | merged | closed_no_pr
 - Verification scope: worktree | pr_branch | main_repo
 - Integration method used:
 - Verification performed:

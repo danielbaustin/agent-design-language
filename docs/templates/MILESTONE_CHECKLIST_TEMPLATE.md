@@ -17,7 +17,9 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 - [ ] Sprint plan created (`{{sprint_plan_link}}`)
 
 ## Execution Discipline
-- [ ] Each issue has input/output cards under `.adl/cards/<issue>/`
+- [ ] New issue bundles use the target lifecycle
+  `SIP -> STP -> SPP -> SRP -> SOR`, or legacy compatibility exceptions are
+  explicitly documented
 - [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp>/`
 - [ ] Draft PR opened for each issue before merge
 - [ ] Transient failures retried and documented

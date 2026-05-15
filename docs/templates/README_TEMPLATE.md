@@ -74,7 +74,8 @@ This milestone is executed as a sequence of work packages (WPs):
 
 Execution expectations:
 - Each WP is tracked by an issue and implemented via PRs.
-- Each issue produces structured artifacts (input/output cards, reports).
+- Each issue follows the structured card lifecycle
+  `SIP -> STP -> SPP -> SRP -> SOR`, plus any required reports.
 - All work merges under green CI and passes quality gates.
 
 ## Demo and Validation Surface

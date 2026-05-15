@@ -1,8 +1,11 @@
 version: adl.prompt_contract.v1
 artifact: structured_implementation_prompt
 description: >
-  Machine-checkable contract for Structured Implementation Prompts (SIPs)
-  generated before `pr run` and edited after execution binding.
+  Compatibility contract for SIP files generated before `pr run` and edited
+  after execution binding. The historical artifact identifier remains
+  `structured_implementation_prompt`, but the canonical v0.91.2 semantic role
+  is Structured Issue Prompt in the `SIP -> STP -> SPP -> SRP -> SOR`
+  lifecycle.
 fields:
   Task ID:
     type: task_id
@@ -53,6 +56,17 @@ required_sections:
   - Notes / Risks
   - Instructions to the Agent
 phases:
+  scaffold:
+    notes: >
+      File exists for path stability but is not yet issue-intent truth.
+  active:
+    notes: >
+      SIP is the authoritative issue-intent surface for scope, dependencies,
+      acceptance criteria, and boundaries.
+  legacy_compatible:
+    notes: >
+      Historical SIP shape remains readable while migration tooling is rolled
+      out.
   bootstrap:
     allow_blank:
       - Context.PR
