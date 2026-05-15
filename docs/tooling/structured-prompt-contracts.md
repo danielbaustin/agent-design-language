@@ -214,6 +214,28 @@ progress, but doctor output must classify them as `legacy_compatible` rather
 than final review readiness unless review results or an explicit policy
 exception are present.
 
+## SRP/SOR Finish And Closeout Handoff
+
+`pr finish` and `pr closeout` should treat `SRP` and `SOR` as paired but
+separate readiness surfaces:
+
+- `SRP` supplies review instructions, findings, dispositions, residual risk, and
+  recommended outcome.
+- `SOR` supplies changed paths, validation, integration state, closeout state,
+  unresolved follow-ups, and final issue truth.
+
+A finish-ready issue should not treat file presence alone as review readiness.
+The final `SRP` needs review results or an explicit review-policy exception, and
+the `SOR` needs truthful publication-state output such as `pr_open`.
+
+A closeout-ready issue should preserve the final `SRP` as review-learning
+evidence while updating the `SOR` to the terminal GitHub and local closeout
+state. Future `ObsMem` ingestion should receive those as distinct memory inputs,
+not as one collapsed summary.
+
+See `srp-sor-obsmem-handoff-v0.91.2.md` for the bounded `v0.91.2` handoff
+model and follow-on enforcement routing.
+
 ## Intentionally Deferred
 
 This first contract layer does not attempt to solve all editing-control-plane validation.
