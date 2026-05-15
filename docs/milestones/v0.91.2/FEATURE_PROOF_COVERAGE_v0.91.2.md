@@ -3,7 +3,8 @@
 ## Status
 
 Active milestone coverage map. `v0.91.2` is open for execution, and rows may
-advance from planned to landed as their owning WPs close.
+advance from planned to in_flight to landed as their owning WPs move from
+active branch work to closeout.
 
 ## Coverage Rule
 
@@ -20,7 +21,7 @@ Each feature should eventually have one truthful proof route:
 | --- | --- | --- | --- |
 | UTS + ACC multi-model benchmark | WP-02, WP-03 | harness + comparison report | planned |
 | Runtime/test-cycle recovery | WP-04, WP-05 | WP-04 runtime recovery report plus WP-05 coverage ergonomics evidence | landed |
-| CodeFriend productization | WP-06 | review packet + product-report package | planned |
+| CodeFriend productization | WP-06 | review packet workflow package + product-report template + evidence rules | in_flight |
 | Review heuristics and demos | WP-07 | skill/demo packet | planned |
 | Workspace CMS bridge | WP-08, WP-09 | bounded demo + adapter-boundary packet | planned |
 | Code modernization | WP-10 | dry-run modernization demo | planned |
