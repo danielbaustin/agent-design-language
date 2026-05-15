@@ -209,6 +209,10 @@ Both should be eligible for `ObsMem` ingestion when the issue is complete.
 Together they let future ADL agents learn from intent, plan, review, and
 outcome instead of reconstructing truth from raw PR comments or chat history.
 
+See `srp-sor-obsmem-handoff-v0.91.2.md` for the bounded `v0.91.2`
+finish, closeout, review-skill, and future `ObsMem` handoff model. That model
+keeps `SRP` review cognition and `SOR` outcome truth linked but distinct.
+
 ## Non-Goals
 
 This document does not implement validators, templates, editor-skill behavior,
