@@ -74,6 +74,40 @@ state_path="${tmpdir}/sprint-state.json"
 fake_repo="${tmpdir}/fake-repo"
 mkdir -p "${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05"
 mkdir -p "${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06"
+mkdir -p "${fake_repo}/adl/tools"
+
+cat >"${fake_repo}/adl/tools/pr.sh" <<'PR_EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "$1" != "init" ]]; then
+  echo "unexpected fake pr.sh invocation: $*" >&2
+  exit 1
+fi
+
+issue_number="$2"
+mkdir -p ".adl/v0.91.1/bodies"
+mkdir -p ".adl/v0.91.1/tasks/issue-${issue_number}__sprint-1-management-trial-sprint"
+cat >".adl/v0.91.1/bodies/issue-${issue_number}-sprint-1-management-trial-sprint.md" <<'EOF2'
+generic pr init source stub
+EOF2
+cat >".adl/v0.91.1/tasks/issue-${issue_number}__sprint-1-management-trial-sprint/stp.md" <<'EOF2'
+generic pr init stp stub
+EOF2
+cat >".adl/v0.91.1/tasks/issue-${issue_number}__sprint-1-management-trial-sprint/sip.md" <<'EOF2'
+sip
+EOF2
+cat >".adl/v0.91.1/tasks/issue-${issue_number}__sprint-1-management-trial-sprint/sor.md" <<'EOF2'
+Status: NOT_STARTED
+EOF2
+cat >".adl/v0.91.1/tasks/issue-${issue_number}__sprint-1-management-trial-sprint/spp.md" <<'EOF2'
+issue: 3001
+EOF2
+cat >".adl/v0.91.1/tasks/issue-${issue_number}__sprint-1-management-trial-sprint/srp.md" <<'EOF2'
+issue: 3001
+EOF2
+PR_EOF
+chmod +x "${fake_repo}/adl/tools/pr.sh"
 
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/stp.md" <<'EOF2'
 stp
@@ -134,6 +168,12 @@ test -f "${fake_repo}/.adl/v0.91.1/bodies/issue-3001-sprint-1-management-trial-s
 test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/stp.md"
 test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/sip.md"
 test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/sor.md"
+grep -q "Run the narrow sprint-conductor trial" "${fake_repo}/.adl/v0.91.1/bodies/issue-3001-sprint-1-management-trial-sprint.md"
+grep -q "Run the narrow sprint-conductor trial" "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/stp.md"
+if grep -q "generic pr init" "${fake_repo}/.adl/v0.91.1/bodies/issue-3001-sprint-1-management-trial-sprint.md"; then
+  echo "expected preferred-path bootstrap to replace generic local source prompt" >&2
+  exit 1
+fi
 
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py" \
   --repo-root "${fake_repo}" \
@@ -188,8 +228,8 @@ assert record["status"] == "waiting_for_review"
 assert record["pr_url"] == "https://github.com/danielbaustin/agent-design-language/pull/4001"
 assert state["truth_check"]["status"] == "matched"
 assert state["truth_check"]["gate_passed"] is False
-assert state["current_issue_number"] == 2828
-assert state["continuation"] == "continue"
+assert state["current_issue_number"] == 2827
+assert state["continuation"] == "waiting_for_review"
 PY
 
 printf 'CLOSED\n' > "${issue_2827_state_file}"

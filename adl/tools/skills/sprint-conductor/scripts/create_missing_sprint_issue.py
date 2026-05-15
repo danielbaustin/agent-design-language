@@ -156,13 +156,17 @@ def bootstrap_local_bundle(
         )
         version = infer_version_from_title(title)
         slug = sanitize_slug(title)
+        source_path = issue_prompt_path(repo_root, version, sprint_issue_number, slug)
         bundle_dir = task_bundle_dir(repo_root, version, sprint_issue_number, slug)
+        stp_path = bundle_dir / 'stp.md'
+        write_file(source_path, body + '\n')
+        write_file(stp_path, body + '\n')
         return {
             'version': version,
             'slug': slug,
-            'source_path': str(issue_prompt_path(repo_root, version, sprint_issue_number, slug)),
+            'source_path': str(source_path),
             'bundle_dir': str(bundle_dir),
-            'stp_path': str(bundle_dir / 'stp.md'),
+            'stp_path': str(stp_path),
             'sip_path': str(bundle_dir / 'sip.md'),
             'sor_path': str(bundle_dir / 'sor.md'),
             'spp_path': str(bundle_dir / 'spp.md'),
