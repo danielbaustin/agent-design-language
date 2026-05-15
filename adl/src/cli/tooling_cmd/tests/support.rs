@@ -585,8 +585,8 @@ pub(super) fn valid_srp_text(issue: u32) -> String {
     format!(
         r#"---
 schema_version: "0.1"
-artifact_type: "structured_review_policy"
-name: "tooling-test-review-policy"
+artifact_type: "structured_review_prompt"
+name: "tooling-test-review-prompt"
 issue: {issue}
 task_id: "issue-{issue:04}"
 version: "v0.87"
@@ -617,13 +617,15 @@ refusal_policy:
 follow_up_routing:
   - "Route actionable findings back to the issue branch."
 non_claims:
-  - "This policy does not guarantee review quality by itself."
+  - "This prompt does not claim review has already run."
+  - "This prompt does not guarantee review quality by itself."
 policy_refs:
   - ".adl/v0.87/tasks/issue-{issue:04}__tooling-test/stp.md"
+review_results_exception: "explicit policy exception: fixture review results are not run."
 notes: "test note"
 ---
 
-# Structured Review Policy
+# Structured Review Prompt
 
 ## Review Summary
 
@@ -663,6 +665,20 @@ test
 - test
 
 ## Non-Claims
+
+- test
+
+## Review Results
+
+### Findings
+
+- test
+
+### Dispositions
+
+- test
+
+### Recommended Outcome
 
 - test
 
