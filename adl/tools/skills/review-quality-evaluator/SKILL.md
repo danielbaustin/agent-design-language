@@ -9,6 +9,10 @@ Evaluate a CodeBuddy review packet or product report before it becomes a
 customer-facing artifact. This skill is a quality gate, not a specialist
 reviewer, not a remediator, not a publisher, and not an approval authority.
 
+For the bounded `v0.91.2` heuristics/demo proof surface, see:
+
+- `docs/milestones/v0.91.2/review/review_heuristics_demo/`
+
 Use this skill after packet building, specialist reviews, synthesis, redaction,
 diagram review, test planning, issue planning, and report writing have produced
 the artifacts that need to be judged.
