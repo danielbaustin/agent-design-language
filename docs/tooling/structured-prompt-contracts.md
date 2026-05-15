@@ -206,8 +206,15 @@ text lines, includes:
 - `pr_run_readiness`, based on complete-enough `SIP`, `STP`, and `SPP`
 - `pr_finish_readiness`, based on final SRP review truth plus complete or final
   SOR output truth
-- per-card state values for `scaffold`, `active`, `complete`, `final`, and
-  `legacy_compatible`
+- per-card state values for `pre_run`, `scaffold`, `active`, `complete`,
+  `final`, and `legacy_compatible`
+
+Freshly bootstrapped issues may report `SIP` and `SPP` as `pre_run` while the
+branch/worktree is still unbound. That state is not an editor-fixable defect by
+itself; it records that the issue is structurally ready for `pr run`, where the
+execution branch and worktree make those cards concrete. In contrast,
+branch-bound SPP/SRP drift with a `next_editor` remains a real card-local
+blocker and must be routed through the matching editor skill.
 
 Legacy SRP policy scaffolds remain validator-compatible while migration is in
 progress, but doctor output must classify them as `legacy_compatible` rather

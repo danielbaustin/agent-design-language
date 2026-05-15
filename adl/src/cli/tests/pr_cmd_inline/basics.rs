@@ -715,6 +715,16 @@ fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
         "create should bootstrap the root sip"
     );
     assert!(
+        repo.join(".adl/v0.86/tasks/issue-1202__v0-86-tools-simplified-init-path/spp.md")
+            .is_file(),
+        "create should bootstrap the root spp"
+    );
+    assert!(
+        repo.join(".adl/v0.86/tasks/issue-1202__v0-86-tools-simplified-init-path/srp.md")
+            .is_file(),
+        "create should bootstrap the root srp"
+    );
+    assert!(
         repo.join(".adl/v0.86/tasks/issue-1202__v0-86-tools-simplified-init-path/sor.md")
             .is_file(),
         "create should bootstrap the root sor"

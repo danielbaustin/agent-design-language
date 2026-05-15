@@ -480,7 +480,7 @@ fn build_doctor_card_lifecycle(
     let pr_run_readiness = if stages
         .iter()
         .filter(|stage| ["SIP", "STP", "SPP"].contains(&stage.stage))
-        .all(|stage| stage.complete)
+        .all(|stage| stage.complete || stage.state == "pre_run")
     {
         "ready"
     } else {
@@ -518,11 +518,11 @@ fn classify_sip_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             "SIP",
             path,
             stage_truth(
-                "scaffold",
+                "pre_run",
                 false,
                 false,
-                Some("sip-editor"),
-                "SIP is still a pre-run scaffold; branch/worktree execution has not been bound.",
+                None,
+                "SIP is a truthful pre-run card; branch/worktree execution has not been bound yet.",
             ),
         );
     }
@@ -578,7 +578,21 @@ fn classify_spp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
     };
     let status = line_value_after_prefix(&text, "status:").unwrap_or_default();
     let branch = line_value_after_prefix(&text, "branch:").unwrap_or_default();
-    if text.contains("Bootstrap-generated SPP") || branch_indicates_unbound_state(&branch) {
+    if branch_indicates_unbound_state(&branch) {
+        return card_stage(
+            repo_root,
+            "SPP",
+            path,
+            stage_truth(
+                "pre_run",
+                false,
+                false,
+                None,
+                "SPP is a truthful pre-run planning card; branch/worktree execution has not been bound yet.",
+            ),
+        );
+    }
+    if text.contains("Bootstrap-generated SPP") {
         return card_stage(
             repo_root,
             "SPP",
@@ -1023,6 +1037,45 @@ mod tests {
 
         assert_stage(&lifecycle, "SRP", "final", true, true);
         assert_eq!(lifecycle.pr_finish_readiness, "ready");
+    }
+
+    #[test]
+    fn card_lifecycle_treats_unbound_sip_and_spp_as_pre_run_not_editor_defects() {
+        let repo = lifecycle_temp_repo("fresh-pre-run-cards");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Branch: not bound yet\n",
+                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                spp: "---\nbranch: \"not bound yet\"\nstatus: \"draft\"\n---\n\nBootstrap-generated SPP; revise before use if planning review is required.\n",
+                srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
+                sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_eq!(lifecycle.pr_run_readiness, "ready");
+        assert_stage(&lifecycle, "SIP", "pre_run", false, false);
+        assert_stage(&lifecycle, "SPP", "pre_run", false, false);
+        assert_eq!(
+            lifecycle
+                .stages
+                .iter()
+                .find(|stage| stage.stage == "SIP")
+                .and_then(|stage| stage.next_editor),
+            None
+        );
+        assert_eq!(
+            lifecycle
+                .stages
+                .iter()
+                .find(|stage| stage.stage == "SPP")
+                .and_then(|stage| stage.next_editor),
+            None
+        );
     }
 
     #[test]
