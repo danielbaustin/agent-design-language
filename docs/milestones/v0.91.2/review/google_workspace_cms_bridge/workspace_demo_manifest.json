@@ -1,0 +1,23 @@
+{
+  "schema_version": "workspace_cms_demo_manifest.v1",
+  "mode": "fixture",
+  "cms_root_ref": "gws://drive/folders/demo-v0912-workspace-cms",
+  "artifact_refs": [
+    "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_cms_snapshot.json",
+    "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_cms_bridge_demo_packet.md",
+    "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_promotion_packet.md",
+    "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_revision_mismatch_and_authority_rules.md",
+    "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_management_report.md",
+    "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_tool_capability_trace.json"
+  ],
+  "privacy_boundary": {
+    "copies_private_workspace_bodies": false,
+    "stores_only_demo_refs_and_operator_facing_summary": true
+  },
+  "sync_direction": "workspace_to_promotion_packet_only",
+  "non_claims": [
+    "This manifest is not a sync engine.",
+    "This manifest does not authorize canonical repo edits.",
+    "This manifest does not prove live gws execution."
+  ]
+}
