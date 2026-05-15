@@ -1,0 +1,18 @@
+{
+  "status": "partial",
+  "mode": "evaluate_synthesis",
+  "target": "docs/milestones/v0.91.2/review/review_heuristics_demo/",
+  "publication_intent": "internal_fixture_demo",
+  "blockers": [],
+  "warnings": [
+    "Only the docs specialist lane is present in this deterministic fixture packet."
+  ],
+  "evidence_notes": [
+    "The fixture docs review records a no-finding result instead of inventing findings.",
+    "The synthesis artifact preserves skipped-lane truth rather than implying full review coverage."
+  ],
+  "residual_risk": [
+    "This packet is a bounded demo, not a full multi-role review packet.",
+    "Customer-facing publication would still require the complete required-role and redaction path."
+  ]
+}

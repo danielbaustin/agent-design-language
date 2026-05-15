@@ -10,6 +10,15 @@ Use the existing `repo-code-review` skill when one bounded monolithic review is
 enough. Use this suite when the operator wants distinct role artifacts, deeper
 coverage, or an explicit multi-agent review demo/proof surface.
 
+The current review-domain baseline for this suite lives in:
+
+- `.adl/docs/TBD/workflow_tooling/ADL_REVIEW_HEURISTICS.md`
+
+The bounded `v0.91.2` proof packet that shows how those heuristics map into the
+active suite surface lives in:
+
+- `docs/milestones/v0.91.2/review/review_heuristics_demo/`
+
 ## Skills
 
 - `repo-review-code`
