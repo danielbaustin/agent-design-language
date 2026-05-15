@@ -41,7 +41,7 @@ authority.
 3. Synthesize the specialist artifact without hiding disagreement, missing
    coverage, or residual risk.
 4. Run the review-quality gate on the packet/report candidate.
-5. Stop before publication, approval claims, remediation, issue creation, or
+5. Stop before publication, publication-decision claims, remediation, issue creation, or
    repository mutation.
 
 ## Deterministic Proving Surface
@@ -60,6 +60,6 @@ not a hypothetical output shape and not a live provider execution.
 ## What The Demo Does Not Prove
 
 - that any single fixture review run is complete by default
-- that the review suite is equivalent to human approval
+- that the review suite is equivalent to human sign-off
 - that the heuristics are fully automated
-- that customer-facing publication is approved
+- that customer-facing publication has already been authorized

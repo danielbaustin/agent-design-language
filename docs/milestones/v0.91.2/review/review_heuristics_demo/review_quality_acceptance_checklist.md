@@ -8,7 +8,7 @@ meets the `WP-07` quality bar.
 - Every finding cites concrete source evidence.
 - Impact is explained, not implied.
 - Severity is justified by the observed failure mode.
-- Unsupported approval, compliance, publication, or remediation claims are
+- Unsupported publication-decision, compliance, publication, or remediation claims are
   absent.
 
 ## Coverage And Structure
@@ -41,4 +41,4 @@ For `WP-07`, the checklist is proving only when:
 - the result stays consistent with the review-quality-evaluator contract
 - the packet remains deterministic in fixture mode
 
-This checklist is not itself a publication approval or release approval.
+This checklist is not itself a publication decision or release decision.
