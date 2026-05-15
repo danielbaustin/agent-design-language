@@ -1,0 +1,115 @@
+{
+  "schema_version": "gws_live_content_card_roundtrip.v1",
+  "prompt_record": {
+    "prompt_version": "wp3093.gws_live_content_card_roundtrip.v1",
+    "issue_number": 3093,
+    "depends_on_issue_number": 3091,
+    "summary": "WP-3093 extends the bounded live Workspace bridge into one governed content-card mutation and promotion-packet roundtrip with revision-anchor enforcement and explicit Git/PR stop boundaries."
+  },
+  "live_mode": "dry_run",
+  "live_scope_binding": {
+    "drive_folder_id": "demo-v0912-workspace-cms",
+    "doc_id": "doc-review-packet-demo",
+    "sheet_id": "sheet-content-cards-demo",
+    "sheet_range": "ContentCards!A1:F5"
+  },
+  "expected_content_card_doc_id": "doc-review-packet-demo",
+  "content_card_sheet_preview": null,
+  "revision_anchor": {
+    "expected_revision_anchor": "workspace-revision-42",
+    "live_revision_anchor": null,
+    "check_status": "skipped"
+  },
+  "live_doc_snapshot": null,
+  "apply_outcome": {
+    "result": "skipped",
+    "skipped_reason": "dry_run_only",
+    "update_range": "ContentCards!A2:F2",
+    "preview": {
+      "doc_id": "doc-review-packet-demo",
+      "previous_status": "ready_for_repo_promotion",
+      "next_status": "promotion_packet_prepared",
+      "previous_promotion_pr": null,
+      "next_promotion_pr": "pending://issue-3093/gws-live-roundtrip",
+      "issue_number": 3093,
+      "live_write_requires_operator_approval": true,
+      "can_apply_to_fixture": true
+    },
+    "apply_result": {
+      "doc_id": "doc-review-packet-demo",
+      "applied_to_fixture": false,
+      "resulting_status": "ready_for_repo_promotion",
+      "resulting_promotion_pr": null,
+      "persisted_to_live_workspace": false
+    }
+  },
+  "promotion_packet_handoff": {
+    "doc_id": "doc-review-packet-demo",
+    "title": "CodeFriend Review Packet Draft",
+    "target_repo_path": "docs/milestones/v0.91.2/review/codefriend_productization/review_packet_workflow_package.md",
+    "workspace_revision_anchor": "workspace-revision-42",
+    "issue_route": "issue://3093",
+    "pr_route": "pr://pending",
+    "canonical_authority": "Git + PR review + merge history",
+    "stop_boundary": "stop before editing tracked repository files directly from Workspace state",
+    "tracked_packet_consistent": true
+  },
+  "command_traces": [
+    {
+      "capability_name": "gws.docs.read_snapshot",
+      "argv": [
+        "docs",
+        "documents",
+        "get",
+        "--params",
+        "{\"documentId\":\"doc-review-packet-demo\"}"
+      ],
+      "mode": "dry_run",
+      "result": "skipped",
+      "skipped_reason": "dry_run_only",
+      "exit_code": null,
+      "summary": "Dry-run posture records the bounded document snapshot command plan without executing a live read."
+    },
+    {
+      "capability_name": "gws.sheets.read_content_cards",
+      "argv": [
+        "sheets",
+        "spreadsheets",
+        "values",
+        "get",
+        "--params",
+        "{\"range\":\"ContentCards!A1:F5\",\"spreadsheetId\":\"sheet-content-cards-demo\"}"
+      ],
+      "mode": "dry_run",
+      "result": "skipped",
+      "skipped_reason": "dry_run_only",
+      "exit_code": null,
+      "summary": "Dry-run posture records the bounded content-card read command plan without executing a live sheet read."
+    },
+    {
+      "capability_name": "gws.sheets.write_content_cards",
+      "argv": [
+        "sheets",
+        "spreadsheets",
+        "values",
+        "update",
+        "--params",
+        "{\"range\":\"ContentCards!A2:F2\",\"spreadsheetId\":\"sheet-content-cards-demo\",\"valueInputOption\":\"USER_ENTERED\"}",
+        "--data",
+        "{\"values\":[[\"doc-review-packet-demo\",\"promotion_packet_prepared\",\"issue://3093\",\"pending://issue-3093/gws-live-roundtrip\",\"workspace-revision-42\",\"bounded-live-roundtrip\"]]}"
+      ],
+      "mode": "dry_run",
+      "result": "skipped",
+      "skipped_reason": "dry_run_only",
+      "exit_code": null,
+      "summary": "Dry-run posture records the bounded content-card write command plan without executing a live Workspace mutation."
+    }
+  ],
+  "roundtrip_result": "skipped",
+  "roundtrip_skipped_reason": "dry_run_only",
+  "non_claims": [
+    "This surface does not make Google Workspace canonical repo truth.",
+    "This surface does not authorize direct tracked repository mutation from Workspace state.",
+    "This surface does not create bidirectional Git and Workspace sync."
+  ]
+}
