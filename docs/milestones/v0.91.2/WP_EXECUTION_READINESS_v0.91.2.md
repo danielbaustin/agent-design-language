@@ -143,9 +143,11 @@ Required validation:
 
 Required outputs:
 
-- Feasibility packet for Rust-native adapter vs `gws` wrapper.
-- Typed contract boundary and credential/security constraints.
-- Recommendation for implementation, deferral, or no-go.
+- Typed native Workspace CMS capability surface for fixture-backed inventory,
+  snapshot, promotion, preview, and bounded apply flows.
+- Credential/security constraints and explicit live-write gate.
+- Recommendation for fixture-first implementation versus later live-write
+  expansion.
 
 Required validation:
 

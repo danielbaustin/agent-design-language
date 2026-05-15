@@ -1,0 +1,209 @@
+{
+  "schema_version": "rust_native_gws_adapter_boundary.v1",
+  "prompt_record": {
+    "prompt_version": "wp09.rust_native_gws_adapter_boundary.v3",
+    "issue_number": 3008,
+    "depends_on_issue_number": 3007,
+    "boundary_summary": "WP-09 exposes callable fixture-first native Workspace CMS operations for inventory, snapshot, promotion, preview, and bounded apply flows while keeping live authenticated writes gated."
+  },
+  "snapshot_artifact_path": "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_cms_snapshot.json",
+  "promotion_packet_artifact_path": "docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_promotion_packet.md",
+  "cms_root": {
+    "display_name": "v0.91.2 Workspace CMS Demo",
+    "folder_ref": "gws://drive/folders/demo-v0912-workspace-cms",
+    "authority": "draft_only"
+  },
+  "content_cards": [
+    {
+      "doc_id": "doc-review-packet-demo",
+      "title": "CodeFriend Review Packet Draft",
+      "source_url": "https://workspace.example/review-packet-demo",
+      "workspace_folder": "review-drafts",
+      "content_type": "doc",
+      "status": "ready_for_repo_promotion",
+      "owner": "operator",
+      "target_repo_path": "docs/milestones/v0.91.2/review/codefriend_productization/review_packet_workflow_package.md",
+      "readiness": "bounded_promotion_packet_ready",
+      "blockers": [],
+      "last_reviewed": "2026-05-14T00:00:00Z",
+      "github_issue": 3007,
+      "promotion_pr": null,
+      "revision_anchor": "workspace-revision-42",
+      "notes": "Fixture document used to demonstrate promotion packet generation only."
+    },
+    {
+      "doc_id": "doc-sprint-retro-demo",
+      "title": "Sprint 2 Workspace Draft Notes",
+      "source_url": "https://workspace.example/sprint-retro-demo",
+      "workspace_folder": "planning-drafts",
+      "content_type": "doc",
+      "status": "blocked",
+      "owner": "operator",
+      "target_repo_path": "docs/milestones/v0.91.2/README.md",
+      "readiness": "blocked_revision_mismatch",
+      "blockers": [
+        "workspace_revision_drift_after_repo_target_changed",
+        "post_start_planning_edit_requires_issue_backed_pr"
+      ],
+      "last_reviewed": "2026-05-14T00:00:00Z",
+      "github_issue": null,
+      "promotion_pr": null,
+      "revision_anchor": "workspace-revision-77",
+      "notes": "Fixture demonstrates explicit mismatch handling instead of silent sync."
+    }
+  ],
+  "typed_contracts": [
+    {
+      "contract_name": "WorkspaceCmsRootRef",
+      "purpose": "name one bounded Drive-rooted CMS inventory surface",
+      "carries_repo_truth": false
+    },
+    {
+      "contract_name": "WorkspaceContentCard",
+      "purpose": "normalize one draft lifecycle row for operator review and promotion",
+      "carries_repo_truth": false
+    },
+    {
+      "contract_name": "WorkspaceDocSnapshot",
+      "purpose": "capture one bounded reviewable document snapshot without exporting live secrets",
+      "carries_repo_truth": false
+    },
+    {
+      "contract_name": "WorkspacePromotionPacket",
+      "purpose": "prepare one Git-backed promotion handoff without directly mutating tracked files",
+      "carries_repo_truth": false
+    },
+    {
+      "contract_name": "WorkspaceContentCardUpdatePreview",
+      "purpose": "preview one content-card state transition before any live write",
+      "carries_repo_truth": false
+    },
+    {
+      "contract_name": "WorkspaceCmsUpdateOutcome",
+      "purpose": "apply one bounded fixture-backed content-card update while keeping live writes gated",
+      "carries_repo_truth": false
+    }
+  ],
+  "doc_snapshot_demo": {
+    "doc_id": "doc-review-packet-demo",
+    "title": "CodeFriend Review Packet Draft",
+    "source_url": "https://workspace.example/review-packet-demo",
+    "revision_anchor": "workspace-revision-42",
+    "readiness": "bounded_promotion_packet_ready",
+    "status": "ready_for_repo_promotion",
+    "note_excerpt": "Fixture document used to demonstrate promotion packet generation only."
+  },
+  "promotion_packet_demo": {
+    "doc_id": "doc-review-packet-demo",
+    "title": "CodeFriend Review Packet Draft",
+    "target_repo_path": "docs/milestones/v0.91.2/review/codefriend_productization/review_packet_workflow_package.md",
+    "revision_anchor": "workspace-revision-42",
+    "canonical_authority": "Git + PR review + merge history",
+    "tracked_packet_consistent": true,
+    "required_checks": [
+      "confirm the Workspace source is still at the recorded revision anchor",
+      "confirm the target repo path is correct and still in scope",
+      "confirm promotion remains issue-backed and PR-reviewed"
+    ],
+    "stop_boundary": "stop before editing tracked repository files directly from Workspace state"
+  },
+  "content_card_update_preview": {
+    "doc_id": "doc-review-packet-demo",
+    "previous_status": "ready_for_repo_promotion",
+    "next_status": "promotion_packet_prepared",
+    "previous_promotion_pr": null,
+    "next_promotion_pr": "pending://issue-3008/native-cms-boundary",
+    "issue_number": 3008,
+    "live_write_requires_operator_approval": true,
+    "can_apply_to_fixture": true
+  },
+  "fixture_apply_result": {
+    "doc_id": "doc-review-packet-demo",
+    "applied_to_fixture": true,
+    "resulting_status": "promotion_packet_prepared",
+    "resulting_promotion_pr": "pending://issue-3008/native-cms-boundary",
+    "persisted_to_live_workspace": false
+  },
+  "capability_results": [
+    {
+      "capability_name": "workspace.drive.list_folder",
+      "operation": "folder_inventory",
+      "execution_mode": "fixture_backed",
+      "result": "proving",
+      "summary": "Inventoried 'gws://drive/folders/demo-v0912-workspace-cms' with 2 bounded content cards."
+    },
+    {
+      "capability_name": "workspace.docs.read_snapshot",
+      "operation": "read_doc_snapshot",
+      "execution_mode": "fixture_backed",
+      "result": "proving",
+      "summary": "Read callable fixture snapshot for 'CodeFriend Review Packet Draft' at revision 'workspace-revision-42'."
+    },
+    {
+      "capability_name": "workspace.sheets.read_content_cards",
+      "operation": "read_content_cards",
+      "execution_mode": "fixture_backed",
+      "result": "proving",
+      "summary": "Loaded the tracked content-card set through the native fixture API without requiring live Workspace access."
+    },
+    {
+      "capability_name": "workspace.promotion.prepare_packet",
+      "operation": "prepare_promotion_packet",
+      "execution_mode": "fixture_backed",
+      "result": "proving",
+      "summary": "Prepared a Git-backed promotion handoff for 'CodeFriend Review Packet Draft' with exact tracked packet consistency=true."
+    },
+    {
+      "capability_name": "workspace.sheets.preview_content_card_update",
+      "operation": "preview_content_card_update",
+      "execution_mode": "fixture_backed",
+      "result": "proving",
+      "summary": "Previewed callable status transition 'ReadyForRepoPromotion' -> 'PromotionPacketPrepared'."
+    },
+    {
+      "capability_name": "workspace.sheets.apply_content_card_update",
+      "operation": "apply_content_card_update",
+      "execution_mode": "fixture_backed_only",
+      "result": "proving",
+      "summary": "Applied callable fixture-only update for 'doc-review-packet-demo' with live persistence=false."
+    },
+    {
+      "capability_name": "workspace.sheets.apply_content_card_update",
+      "operation": "live_write_boundary",
+      "execution_mode": "live_gated",
+      "result": "skipped",
+      "summary": "Live Workspace writes remain gated behind explicit operator approval and governed-tools semantics."
+    }
+  ],
+  "credential_boundary": {
+    "secrets_required_for_fixture_validation": false,
+    "read_scope_summary": [
+      "bounded Drive metadata read scope",
+      "single-document snapshot read scope",
+      "single-range content-card read scope"
+    ],
+    "write_scope_summary": [
+      "single-range content-card write scope only after preview and operator approval",
+      "no ambient broad Workspace authority"
+    ],
+    "prohibited_default_behaviors": [
+      "No live Workspace write during fixture validation.",
+      "No direct tracked repo edits from Workspace state.",
+      "No private document body export into public artifacts by default."
+    ]
+  },
+  "recommendation": {
+    "decision": "implement_fixture_first_cms_boundary",
+    "summary": "Implement the callable typed fixture-first CMS boundary now, and keep live secret-bearing Workspace writes deferred behind governed-tools semantics.",
+    "rationale": [
+      "WP-09 now exposes callable native operations for folder inventory, document snapshot, content-card reads, promotion packet preparation, preview, and bounded fixture apply.",
+      "This gives ADL a bounded CMS capability for draft lifecycle management without promoting Workspace to canonical truth.",
+      "Live external writes remain the only intentionally deferred part of the CMS capability surface."
+    ]
+  },
+  "non_claims": [
+    "This report does not prove live authenticated Google Workspace execution.",
+    "This report does not make Google Workspace canonical repo truth.",
+    "This report does not authorize direct tracked repository mutation from Workspace state."
+  ]
+}
