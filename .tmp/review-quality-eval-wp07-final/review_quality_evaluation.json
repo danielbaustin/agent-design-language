@@ -1,0 +1,72 @@
+{
+  "blocking_issues": [],
+  "created_at": "2026-05-15T02:58:21Z",
+  "publication_boundary": {
+    "approval_claimed": false,
+    "compliance_claimed": false,
+    "privacy_mode": "not recorded",
+    "publication_allowed_by_source": false,
+    "publication_intent": "internal_review",
+    "published_by_skill": false,
+    "remediation_complete_claimed": false
+  },
+  "publication_intent": "internal_review",
+  "recommended_handoffs": [
+    "human review"
+  ],
+  "repo_name": "review_heuristics_demo",
+  "repo_ref": "not recorded",
+  "residual_risk_clarity": {
+    "non_reviewed_surfaces": [
+      "code review lane",
+      "security review lane",
+      "test review lane",
+      "architecture review lane",
+      "dependency review lane"
+    ],
+    "status": "pass"
+  },
+  "run_id": "review_heuristics_demo",
+  "schema": "codebuddy.review_quality_evaluation.v1",
+  "score": 90,
+  "scorecard": {
+    "actionability": "pass",
+    "duplication": "pass",
+    "evidence_quality": "pass",
+    "redaction_status": "partial",
+    "residual_risk_clarity": "pass",
+    "severity_accuracy": "pass",
+    "specialist_coverage": "pass",
+    "template_compliance": "pass",
+    "unsupported_claims": "pass"
+  },
+  "specialist_coverage": {
+    "missing_roles": [],
+    "present_roles": [
+      "docs"
+    ],
+    "required_roles": [
+      "docs"
+    ],
+    "source_artifacts": [
+      "final_report.md"
+    ]
+  },
+  "status": "pass",
+  "template_compliance": {
+    "missing_sections": [],
+    "required_sections": [
+      "Executive Summary",
+      "Review Scope",
+      "Top Findings",
+      "Architecture Summary",
+      "Security And Privacy Notes",
+      "Test Recommendations",
+      "Remediation Sequence",
+      "Residual Risks"
+    ],
+    "status": "pass"
+  },
+  "unsupported_claims": [],
+  "warnings": []
+}
