@@ -43,13 +43,19 @@ Optional:
 7. Route that child issue through `workflow-conductor`.
 8. Run only the selected downstream lifecycle or editor skill.
 9. Re-check issue truth.
-10. If the issue is not fully closed out, repeat the routing loop for the same
-   issue.
-11. If the issue is in a healthy PR-open waiting state, pause on that issue and
-   surface `ask_operator` rather than re-driving execution or janitoring a
-   non-blocked PR.
-12. If the issue is fully closed out, use the deterministic child-closeout helper to mark it complete and move to the next issue.
-13. If any blocker is encountered, stop and report the blocker in sprint-state.
+10. If the issue is in a healthy PR-open waiting state, route `issue-watcher`
+   so the sprint remains attached to the active child without turning healthy
+   waiting into a default conversational stop.
+11. If the watcher finds failed checks, conflicts, requested changes, or
+   ambiguous path-policy state, route `pr-janitor`.
+12. If the watcher finds that the PR merged or the issue otherwise closed,
+   immediately route `pr-closeout`.
+13. If the issue is fully closed out, use the deterministic child-closeout
+   helper to mark it complete and move to the next issue.
+14. If the issue is still active after the fresh truth check, repeat the
+   routing loop for the same issue.
+15. If any true blocker is encountered, stop and report the blocker in
+   sprint-state.
 
 Preferred installed-skill parity helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/check_installed_skill_parity.py --repo-root <repo> --state <path>`
@@ -161,6 +167,11 @@ Stop when:
   artifacts are written, and the sprint-management issue is closed
 - a child issue blocks and the operator must decide how to proceed
 - sprint scope changes materially and requires operator approval
+
+Do not stop merely because:
+- a healthy PR is open and still waiting on checks or review
+- checks are rerunning without a concrete blocker
+- a merge already happened but local closeout still needs to run
 
 ## Non-Goals
 

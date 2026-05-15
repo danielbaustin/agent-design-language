@@ -32,6 +32,7 @@ It must not replace:
 - `pr-run`
 - `pr-finish`
 - `pr-janitor`
+- `issue-watcher`
 - `pr-closeout`
 - `stp-editor`
 - `sip-editor`
@@ -126,13 +127,16 @@ missing sprint-management issue first.
 7. Route that issue through `workflow-conductor`.
 8. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
 9. Run only the selected downstream lifecycle or editor skill.
-10. Re-check issue truth until the issue is fully closed out. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
-11. Use the deterministic child-closeout helper path to advance sprint state only after closeout truth is satisfied.
-12. Only then advance to the next ordered issue.
-13. After the final issue closes, assemble sprint review evidence.
-14. Record sprint closeout metrics including coverage and Rust tracker counts.
-15. Write the bounded sprint closeout artifact before closing the sprint-management issue.
-16. Stop with one bounded sprint review/closeout result.
+10. Re-check issue truth. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
+11. If the issue is healthy but waiting on review, checks, or merge, route it into the bounded watch/janitor path rather than surfacing that healthy waiting state as a default sprint stop.
+12. If the issue is merged or otherwise closed but not locally closeouted yet, immediately route `pr-closeout` and finish the child-closeout gate.
+13. If the issue is fully closed out, use the deterministic child-closeout helper path to advance sprint state.
+14. If the issue is still active after the fresh truth check, repeat the routing loop for the same issue.
+15. Only after child-closeout truth is satisfied may the sprint advance to the next ordered issue.
+16. After the final issue closes, assemble sprint review evidence.
+17. Record sprint closeout metrics including coverage and Rust tracker counts.
+18. Write the bounded sprint closeout artifact before closing the sprint-management issue.
+19. Stop with one bounded sprint review/closeout result.
 
 ## Execution Model
 
@@ -141,7 +145,7 @@ This skill enforces:
 - no child issue execution before the whole sprint batch passes structured prompt review
 - no issue `N+1` work before issue `N` is fully closed out
 - editor-skill routing when cards drift
-- immediate stop on blocker
+- immediate stop on true blocker
 - no silent creation of extra sprint-management issues
 - no missing sprint-management issue workaround outside the skill when sprint
   policy allows the skill to create it directly
@@ -149,6 +153,8 @@ This skill enforces:
 - no sprint-state advancement without a fresh matched live GitHub truth check
 - no next-child advancement without explicit child-closeout gate satisfaction
 - no live sprint execution without an explicit installed-skill parity/readiness result when sprint policy requires it
+- healthy child waiting states are monitored issue-local lifecycle states, not default operator stop states
+- merged-but-not-closeouted children are immediate closeout work, not natural pause points
 
 Preferred per-issue routing model:
 - sprint-wide structured prompt preflight not ready ->
@@ -164,11 +170,20 @@ Preferred per-issue routing model:
 - structurally ready but not bound -> `pr-ready`
 - ready for execution bind -> `pr-run`
 - execution complete, needs publication -> `pr-finish`
+- healthy PR open and awaiting human review, checks, or merge -> `issue-watcher`
 - PR in flight with actual blockers -> `pr-janitor`
 - merged or intentionally closed -> `pr-closeout`
-- healthy PR open and awaiting human review or merge -> remain paused on the
-  current issue in a non-blocked waiting state
 - child issue fully closed out and ready to advance -> `record_child_issue_closeout.py`
+
+Auto-advance rules:
+- do not treat `pr_open`, `checks_rerunning`, `waiting_for_review`, or
+  `merged_pending_closeout` as default sprint stop boundaries
+- treat those as active issue-local lifecycle states that still have a known
+  next routing step
+- only surface `ask_operator` when there is a real blocker, scope decision, or
+  ambiguity that the existing lifecycle skills cannot resolve truthfully
+- keep operator updates short and do not convert normal lifecycle narration into
+  a sprint-level halt
 
 ## Sprint Review Requirement
 

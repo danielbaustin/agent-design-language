@@ -180,17 +180,25 @@ Every canonical `v0.91.2` sprint should follow these rules under
 - one active child issue at a time
 - if an active child issue has a healthy open PR, classify it as
   `waiting_for_review` rather than as an automatic failure state
-- while a child issue is in `waiting_for_review`, the sprint is paused at that
-  child; do not start issue `N+1`
+- while a child issue is in `waiting_for_review`, the sprint remains attached
+  to that child through a monitored watch/janitor path; do not start issue
+  `N+1`, but also do not treat the healthy waiting state as a default operator
+  stop
+- if checks fail, merge conflicts appear, or review blockers materialize, route
+  the current child through `pr-janitor`
+- if the child PR merges or the issue otherwise closes, route `pr-closeout`
+  immediately and finish local closeout before advancing
 - start issue `N+1` only after issue `N` is merged or otherwise closed and
   then fully closeouted locally
 - use `sprint-conductor` for orchestration only, not as a replacement for the
   issue lifecycle skills
 - use the normal issue lifecycle for the child work:
-  `workflow-conductor`, `pr-ready`, `pr-run`, `pr-finish`, `pr-janitor`,
-  `pr-closeout`
+  `workflow-conductor`, `pr-ready`, `pr-run`, `pr-finish`, `issue-watcher`,
+  `pr-janitor`, `pr-closeout`
 - stop immediately on scope drift or dependency ambiguity instead of widening
   the sprint implicitly
+- keep operator narration short and do not let status updates become sprint
+  halts when the next lifecycle handoff is already deterministic
 
 ## Preflight Rules
 

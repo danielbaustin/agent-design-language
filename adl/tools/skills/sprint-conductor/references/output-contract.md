@@ -34,7 +34,7 @@ sequence:
   blocked_issue_number: <u32 or null>
   deferred_issue_numbers:
     - <u32>
-  continuation: continue | stop | ask_operator | waiting_for_review
+  continuation: continue | stop | ask_operator
 structured_prompt_preflight:
   status: not_run | ready | needs_editor_repair | blocked
   required_card_types:
@@ -75,9 +75,9 @@ truth_check:
   notes:
     - <bounded text>
 current_state:
-  selected_skill: workflow-conductor | pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis | none
-  current_phase: intake | issue_loop | review | closeout | waiting | blocked
-  blocker_reason: none | child_issue_blocked | malformed_cards | review_findings_blocking | missing_metrics | operator_scope_decision | healthy_pr_waiting_for_review | missing_sprint_issue | unknown
+  selected_skill: workflow-conductor | pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis | none
+  current_phase: intake | issue_loop | review | closeout | waiting | watching | blocked
+  blocker_reason: none | child_issue_blocked | malformed_cards | review_findings_blocking | missing_metrics | operator_scope_decision | missing_sprint_issue | unknown
 review:
   status: not_started | in_progress | done | blocked
   selected_skills:
@@ -109,6 +109,12 @@ closeout:
     rationale_count: <int or null>
 actions_taken:
   - <bounded step>
+next_handoff:
+  status: continue | wait_and_recheck | ask_operator | stop
+  target_issue_number: <u32 or null>
+  target_pr_url: <url or null>
+  next_skill: workflow-conductor | pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis | none
+  rationale: <bounded text>
 artifact:
   sprint_state_path: <path or null>
   sprint_review_url: <url or null>
