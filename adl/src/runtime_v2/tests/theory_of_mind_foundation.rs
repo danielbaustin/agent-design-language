@@ -120,6 +120,54 @@ fn runtime_v2_theory_of_mind_foundation_validate_against_rejects_dependency_drif
 }
 
 #[test]
+fn runtime_v2_theory_of_mind_foundation_rejects_additional_model_and_event_drift() {
+    let mut packet =
+        runtime_v2_theory_of_mind_foundation_contract().expect("theory-of-mind foundation packet");
+    packet.agent_models[2].uncertainty_status = "bounded_high".to_string();
+    assert!(packet
+        .validate()
+        .expect_err("unknown_state uncertainty drift should fail")
+        .to_string()
+        .contains("unknown_state hypotheses must preserve unknown uncertainty"));
+
+    let mut packet =
+        runtime_v2_theory_of_mind_foundation_contract().expect("theory-of-mind foundation packet");
+    packet.agent_models[3].privacy_status = "evidence_bound".to_string();
+    assert!(packet
+        .validate()
+        .expect_err("privacy-restricted gap privacy drift should fail")
+        .to_string()
+        .contains("privacy_restricted_gap hypotheses"));
+
+    let mut packet =
+        runtime_v2_theory_of_mind_foundation_contract().expect("theory-of-mind foundation packet");
+    packet.update_events[2].uncertainty_change = "state clarified".to_string();
+    assert!(packet
+        .validate()
+        .expect_err("unknown_preserved uncertainty drift should fail")
+        .to_string()
+        .contains("unknown_preserved events must preserve unknown"));
+
+    let mut packet =
+        runtime_v2_theory_of_mind_foundation_contract().expect("theory-of-mind foundation packet");
+    packet.update_events[3].visibility_scope = "reviewer_and_operator".to_string();
+    assert!(packet
+        .validate()
+        .expect_err("privacy restriction visibility drift should fail")
+        .to_string()
+        .contains("privacy_restriction events must remain policy-authorized summary surfaces"));
+
+    let mut packet =
+        runtime_v2_theory_of_mind_foundation_contract().expect("theory-of-mind foundation packet");
+    packet.fixture_matrix[1].fixture_kind = packet.fixture_matrix[0].fixture_kind.clone();
+    assert!(packet
+        .validate()
+        .expect_err("duplicate fixture kind should fail")
+        .to_string()
+        .contains("fixture kinds must be unique"));
+}
+
+#[test]
 fn runtime_v2_theory_of_mind_foundation_proof_route_paths_exist() {
     let packet =
         runtime_v2_theory_of_mind_foundation_contract().expect("theory-of-mind foundation packet");
