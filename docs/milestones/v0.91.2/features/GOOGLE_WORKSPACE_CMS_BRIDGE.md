@@ -21,13 +21,15 @@ In scope:
 - Workspace content-card and promotion-packet demo.
 - Fixture mode and live-gated mode boundary.
 - Revision mismatch handling.
+- Rust-native fixture-first CMS capability surface for inventory, snapshot,
+  promotion, preview, and bounded apply flows.
 
 Out of scope:
 
 - Workspace as canonical source of truth.
 - Silent repo edits from Drive state.
 - Live secrets in fixture validation.
-- Rust-native adapter feasibility and typed boundary.
+- Ambient live Workspace authority.
 
 ## Acceptance Criteria
 
@@ -44,9 +46,12 @@ Out of scope:
 - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_management_report.md`
 - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_demo_manifest.json`
 - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_tool_capability_trace.json`
+- `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/rust_native_gws_adapter_boundary_report.json`
 
 ## Non-Claims
 
 - `WP-08` does not claim Google Workspace is canonical repo truth.
 - `WP-08` does not claim live `gws` execution is required for fixture proof.
 - `WP-08` does not authorize direct tracked repo edits from Workspace state.
+- `WP-09` does not claim live authenticated Workspace writes are enabled by
+  default.

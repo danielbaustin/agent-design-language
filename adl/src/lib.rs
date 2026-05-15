@@ -61,6 +61,7 @@ pub mod remote_exec;
 pub mod resolve;
 pub mod runtime_environment;
 pub mod runtime_v2;
+pub mod rust_native_gws_adapter_boundary;
 pub mod sandbox;
 pub mod schema;
 pub mod signing;
