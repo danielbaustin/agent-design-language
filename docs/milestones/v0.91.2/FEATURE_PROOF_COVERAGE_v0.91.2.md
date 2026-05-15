@@ -19,7 +19,7 @@ Each feature should eventually have one truthful proof route:
 | Feature | WP | Intended Route | Status |
 | --- | --- | --- | --- |
 | UTS + ACC multi-model benchmark | WP-02, WP-03 | harness + comparison report | planned |
-| Runtime/test-cycle recovery | WP-04, WP-05 | WP-04 runtime recovery report plus WP-05 coverage ergonomics evidence | WP-04 landed; WP-05 planned |
+| Runtime/test-cycle recovery | WP-04, WP-05 | WP-04 runtime recovery report plus WP-05 coverage ergonomics evidence | landed |
 | CodeFriend productization | WP-06 | review packet + product-report package | planned |
 | Review heuristics and demos | WP-07 | skill/demo packet | planned |
 | Workspace CMS bridge | WP-08, WP-09 | bounded demo + adapter-boundary packet | planned |
