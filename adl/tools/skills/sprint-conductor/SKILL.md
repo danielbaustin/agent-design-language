@@ -36,6 +36,8 @@ It must not replace:
 - `pr-closeout`
 - `stp-editor`
 - `sip-editor`
+- `spp-editor`
+- `srp-editor`
 - `sor-editor`
 - review specialist skills
 
@@ -166,6 +168,8 @@ Preferred per-issue routing model:
 - bootstrap missing -> `pr-init`
 - card-local STP issue -> `stp-editor`
 - card-local SIP issue -> `sip-editor`
+- card-local SPP issue -> `spp-editor`
+- card-local SRP issue -> `srp-editor`
 - card-local SOR issue -> `sor-editor`
 - structurally ready but not bound -> `pr-ready`
 - ready for execution bind -> `pr-run`

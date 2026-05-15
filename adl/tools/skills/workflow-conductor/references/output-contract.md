@@ -15,8 +15,8 @@ workflow_state:
     - <doctor_json_or_path_or_state_surface>
 selected_skill:
   phase: init | ready | run | finish | janitor | closeout | editor | blocked
-  skill_name: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | none
-  editor_skill: stp-editor | sip-editor | sor-editor | none
+  skill_name: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | none
+  editor_skill: stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | none
 workflow_compliance:
   skills_required: true | false
   card_editor_skills_required: true | false
@@ -31,12 +31,12 @@ workflow_compliance:
 actions_taken:
   - <routing or policy action>
 handoff_state:
-  next_phase: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | human_review | blocked
+  next_phase: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | human_review | blocked
   continuation: continue | ask_operator | stop
   escalation_reason: none | operator_override_required | ambiguous_live_state | healthy_pr_waiting | manual_review_required | policy_block | child_issue_wave_satisfied | related_issue_ref_satisfied | sibling_issue_artifact_satisfied | child_issue_wave_active | related_issue_ref_active | repo_policy_residue | unsafe_root_checkout_execution | mismatched_publication_surface | rebind_to_issue_worktree_required
 dispatch:
   mode: route_only | plan_subtask | invoke_subtask
-  selected_skill: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | none
+  selected_skill: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | none
   skill_file: <absolute skill path or null>
   command_source: none | builtin | override
   command: <argv array or null>

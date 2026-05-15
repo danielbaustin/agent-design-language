@@ -50,7 +50,7 @@ sprint:
         contradictory_cards:
           - <filename>
         required_editor_skills:
-          - stp-editor | sip-editor | sor-editor | spp-editor
+          - stp-editor | sip-editor | spp-editor | srp-editor | sor-editor
   truth_check:
     status: not_run | matched | drift_detected | blocked
     source: github_live | sprint_state_only | mixed

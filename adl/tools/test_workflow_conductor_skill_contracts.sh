@@ -14,6 +14,7 @@ trap 'rm -rf "${tmpdir}"' EXIT
 [[ -f "${skills_root}/workflow-conductor/scripts/route_workflow.py" ]]
 [[ -f "${skills_root}/workflow-conductor/scripts/select_next_skill.py" ]]
 [[ -f "${skills_root}/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md" ]]
+[[ -f "${skills_root}/srp-editor/SKILL.md" ]]
 
 grep -Fq "thin orchestrator" "${skills_root}/workflow-conductor/SKILL.md"
 grep -Fq "dispatch one bounded downstream skill subtask" "${skills_root}/workflow-conductor/SKILL.md"
@@ -36,6 +37,9 @@ grep -Fq "preserve bound issue worktree identity" "${skills_root}/workflow-condu
 grep -Fq "unsafe_root_checkout_execution" "${skills_root}/workflow-conductor/references/output-contract.md"
 grep -Fq "mismatched_publication_surface" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq "rebind_to_issue_worktree_required" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
+grep -Fq "card-local SPP issue -> \`spp-editor\`" "${skills_root}/workflow-conductor/SKILL.md"
+grep -Fq "card-local SRP issue -> \`srp-editor\`" "${skills_root}/workflow-conductor/SKILL.md"
+grep -Fq "srp-editor" "${skills_root}/workflow-conductor/references/output-contract.md"
 
 cat >"${tmpdir}/bootstrap_missing.json" <<'EOF'
 {
@@ -67,6 +71,46 @@ cat >"${tmpdir}/stp_blocker.json" <<'EOF'
     "pr_state": "none",
     "subagent_assigned": false,
     "evidence_used": ["stp_path"]
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional"
+  }
+}
+EOF
+
+cat >"${tmpdir}/spp_blocker.json" <<'EOF'
+{
+  "target": {"issue_number": 1647},
+  "workflow_state": {
+    "bootstrap_present": true,
+    "card_blocker": "spp",
+    "lifecycle_state": "pre_run",
+    "ready_state": "unknown",
+    "pr_state": "none",
+    "subagent_assigned": false,
+    "evidence_used": ["doctor_card_lifecycle"]
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional"
+  }
+}
+EOF
+
+cat >"${tmpdir}/srp_blocker.json" <<'EOF'
+{
+  "target": {"issue_number": 1647},
+  "workflow_state": {
+    "bootstrap_present": true,
+    "card_blocker": "srp",
+    "lifecycle_state": "pre_run",
+    "ready_state": "unknown",
+    "pr_state": "none",
+    "subagent_assigned": false,
+    "evidence_used": ["doctor_card_lifecycle"]
   },
   "policy": {
     "skills_required": true,
@@ -155,6 +199,8 @@ EOF
 
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/bootstrap_missing.json" >"${tmpdir}/bootstrap_missing.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/stp_blocker.json" >"${tmpdir}/stp_blocker.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/spp_blocker.json" >"${tmpdir}/spp_blocker.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/srp_blocker.json" >"${tmpdir}/srp_blocker.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/resume_to_run.json" >"${tmpdir}/resume_to_run.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/pr_in_flight.json" >"${tmpdir}/pr_in_flight.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/required_subagent_missing.json" >"${tmpdir}/required_subagent_missing.out.json"
@@ -176,6 +222,14 @@ assert bootstrap["selected_skill"]["skill_name"] == "pr-init"
 stp = load("stp_blocker.out.json")
 assert stp["selected_skill"]["skill_name"] == "stp-editor"
 assert stp["selected_skill"]["editor_skill"] == "stp-editor"
+
+spp = load("spp_blocker.out.json")
+assert spp["selected_skill"]["skill_name"] == "spp-editor"
+assert spp["selected_skill"]["editor_skill"] == "spp-editor"
+
+srp = load("srp_blocker.out.json")
+assert srp["selected_skill"]["skill_name"] == "srp-editor"
+assert srp["selected_skill"]["editor_skill"] == "srp-editor"
 
 resume = load("resume_to_run.out.json")
 assert resume["selected_skill"]["skill_name"] == "pr-run"
@@ -510,6 +564,32 @@ cat >"${tmpdir}/route_task_bundle_dispatch.json" <<EOF
         "-lc",
         "printf 'EDITOR:%s\\n' \"{issue_number}\" >> \"${tmpdir}/editor-dispatch.log\""
       ]
+    }
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
+cat >"${tmpdir}/route_task_bundle_missing_srp.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_task_bundle",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "task_bundle_path": ".adl/v0.88/tasks/issue-2001__route-run",
+    "srp_path": ".adl/v0.88/tasks/issue-2001__route-run/srp.md"
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true,
+    "required_card_skill_by_type": {
+      "srp": "srp-editor"
     }
   },
   "observed_state": {
@@ -965,6 +1045,7 @@ python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "$
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue_dispatch.json" --artifact-path ".adl/reviews/route-issue-dispatch.md" >"${tmpdir}/route_issue_dispatch.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_task_bundle.json" --artifact-path ".adl/reviews/route-task-bundle.md" >"${tmpdir}/route_task_bundle.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_task_bundle_dispatch.json" --artifact-path ".adl/reviews/route-task-bundle-dispatch.md" >"${tmpdir}/route_task_bundle_dispatch.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_task_bundle_missing_srp.json" --artifact-path ".adl/reviews/route-task-bundle-missing-srp.md" >"${tmpdir}/route_task_bundle_missing_srp.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_finish.json" --artifact-path ".adl/reviews/route-finish.md" >"${tmpdir}/route_finish.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_worktree_finish.json" --artifact-path ".adl/reviews/route-worktree-finish.md" >"${tmpdir}/route_worktree_finish.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_worktree_disambiguated.json" --artifact-path ".adl/reviews/route-worktree-disambiguated.md" >"${tmpdir}/route_worktree_disambiguated.out.json"
@@ -1019,6 +1100,13 @@ assert route_editor_dispatch["dispatch"]["command_source"] == "override"
 assert route_editor_dispatch["dispatch"]["status"] == "invoked"
 assert route_editor_dispatch["dispatch"]["result"] == "success"
 assert (tmp / "editor-dispatch.log").read_text().strip() == "EDITOR:2003"
+
+route_missing_srp = load("route_task_bundle_missing_srp.out.json")
+assert route_missing_srp["selected_skill"]["skill_name"] == "srp-editor"
+assert route_missing_srp["selected_skill"]["editor_skill"] == "srp-editor"
+assert route_missing_srp["workflow_state"]["detected_phase"] == "card_local_blocker"
+assert route_missing_srp["workflow_compliance"]["policy_result"] == "PASS"
+assert (repo / ".adl/reviews/route-task-bundle-missing-srp.md").exists()
 
 route_finish = load("route_finish.out.json")
 assert route_finish["selected_skill"]["skill_name"] == "pr-finish"

@@ -64,6 +64,8 @@ admission:
     - "source_prompt_path"
     - "stp_path"
     - "sip_path"
+    - "spp_path"
+    - "srp_path"
     - "sor_path"
     - "pr_state"
     - "stop_boundary"

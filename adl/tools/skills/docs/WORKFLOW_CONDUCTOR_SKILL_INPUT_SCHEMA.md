@@ -15,6 +15,8 @@ target:
   source_prompt_path: <path optional>
   stp_path: <path optional>
   sip_path: <path optional>
+  spp_path: <path optional>
+  srp_path: <path optional>
   sor_path: <path optional>
   doctor_result: <path_or_summary optional>
   pr_state: <state optional>
@@ -40,6 +42,8 @@ dispatch:
     pr-closeout: [<argv token>, ...] optional
     stp-editor: [<argv token>, ...] optional
     sip-editor: [<argv token>, ...] optional
+    spp-editor: [<argv token>, ...] optional
+    srp-editor: [<argv token>, ...] optional
     sor-editor: [<argv token>, ...] optional
 ```
 
@@ -100,6 +104,8 @@ Exactly one primary target should drive the mode.
 If editor skills are required, the conductor should prefer:
 - `stp-editor`
 - `sip-editor`
+- `spp-editor`
+- `srp-editor`
 - `sor-editor`
 
 when the blocker is card-local.

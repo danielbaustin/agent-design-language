@@ -55,6 +55,7 @@ The tracked skill set is:
 - `review-quality-evaluator`
 - `review-to-test-planner`
 - `spp-editor`
+- `srp-editor`
 - `sip-editor`
 - `sor-editor`
 - `sprint-conductor`
@@ -100,9 +101,11 @@ The PR lifecycle skills share the CI runtime interpretation policy in
 docs-only path-policy skip from full runtime validation, failed-closed
 classification, and release/main full-validation evidence.
 
-The four editor skills are helper skills:
+The five card editor skills are helper skills:
 - `spp-editor` for truthful `spp.md` planning cleanup that preserves the
   manual sample schema and markdown shape
+- `srp-editor` for truthful `srp.md` review-prompt cleanup that preserves
+  review policy, review results, finding dispositions, and residual risk
 - `stp-editor` for bounded `stp.md` cleanup
 - `sip-editor` for truthful `sip.md` cleanup
 - `sor-editor` for truthful `sor.md` cleanup
@@ -254,8 +257,8 @@ Default policy:
   or PR surgery
 - keep the primary checkout on clean `main`; tracked implementation and repair
   edits happen in the bound issue worktree
-- use `stp-editor`, `sip-editor`, or `sor-editor` when those cards need
-  normalization
+- use `stp-editor`, `sip-editor`, `spp-editor`, `srp-editor`, or `sor-editor`
+  when those cards need normalization
 - attach `pr-janitor` after PR publication for check, conflict, and review
   monitoring
 - record policy compliance, validation profile, commands, and any bypasses in
@@ -456,6 +459,13 @@ reduce recurring card failures:
 - `sip-editor`
   - normalizes truthful lifecycle state in `sip.md`
   - does not create the branch/worktree itself or claim execution completion
+- `spp-editor`
+  - normalizes truthful planning state in `spp.md`
+  - does not turn planning into execution history or widen issue scope
+- `srp-editor`
+  - normalizes review policy, review results, findings, dispositions, and
+    residual risk in `srp.md`
+  - does not invent review evidence or resolve findings without proof
 - `sor-editor`
   - normalizes truthful execution and integration state in `sor.md`
   - does not invent validation or publish the PR itself
@@ -1576,6 +1586,84 @@ The structured result should identify:
 - whether planning truth and `codex_plan` statuses were normalized
 - any remaining blockers that should stop readiness or execution
 
+## `srp-editor`
+
+### Purpose
+
+`srp-editor` is the bounded helper skill for `srp.md`.
+
+It:
+
+- preserves `SRP` as Structured Review Prompt, not just legacy Structured
+  Review Policy
+- keeps review instructions, review scope, findings, dispositions, and residual
+  risk together in the same card
+- normalizes review-result truth after bounded human or subagent review
+- stops before implementation, publication, merge, or output-card authoring
+
+### When To Use It
+
+Use `srp-editor` when:
+
+- the `SRP` is missing, stale, or still policy-only scaffolding
+- review results need to be recorded after a bounded review
+- findings, dispositions, or residual risk are incomplete or overstated
+- doctor/card lifecycle evidence reports incomplete SRP truth
+
+Do not use it for:
+
+- inventing review results or claiming no findings without a review
+- resolving findings without evidence
+- rewriting `STP`, `SIP`, `SPP`, or `SOR` content
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- `target.srp_path`
+
+Structured schema:
+
+- `adl/tools/skills/docs/SRP_EDITOR_SKILL_INPUT_SCHEMA.md`
+- schema id: `srp_editor.v1`
+
+### Example Invocation
+
+```yaml
+Use $srp-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/srp-editor/SKILL.md with this validated input:
+
+skill_input_schema: srp_editor.v1
+mode: record_review_results
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  srp_path: .adl/v0.91.2/tasks/issue-3066__example/srp.md
+  issue_number: 3066
+  source_prompt_path: .adl/v0.91.2/bodies/issue-3066-example.md
+evidence:
+  review_performed: true
+  reviewer: bounded-review-subagent
+  review_artifact_paths:
+    - .adl/reviews/issue-3066-review.md
+  findings: []
+policy:
+  preserve_review_policy: true
+  preserve_review_result_truth: true
+  stop_after_edit: true
+  allow_review_claims_without_evidence: false
+```
+
+### Output
+
+The structured result should identify:
+
+- which `SRP` path was edited
+- whether Structured Review Prompt semantics were normalized
+- whether review results, findings, dispositions, and residual risk are
+  truthful
+- any remaining blockers that should stop finish or require implementation
+  repair
+
 ## `stp-editor`
 
 ### Purpose
@@ -2583,6 +2671,7 @@ surfaces:
 | `review-quality-evaluator` | `REVIEW_QUALITY_EVALUATOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | review-quality evaluation only |
 | `review-to-test-planner` | `REVIEW_TO_TEST_PLANNER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | test-generation handoff plan only |
 | `spp-editor` | `SPP_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | SPP normalization only |
+| `srp-editor` | `SRP_EDITOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | SRP review truth normalization only |
 | `sip-editor` | `SIP_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | SIP normalization only |
 | `sor-editor` | `SOR_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | SOR normalization only |
 | `stp-editor` | `STP_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | STP normalization only |

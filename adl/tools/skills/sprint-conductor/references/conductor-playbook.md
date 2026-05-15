@@ -77,11 +77,16 @@ Preferred child-closeout advancement helper:
 If `workflow-conductor` selects:
 - `stp-editor`
 - `sip-editor`
+- `spp-editor`
+- `srp-editor`
 - `sor-editor`
 
 then the sprint conductor must run that editor skill first and must not try to
 work around malformed cards by hand.
 That rule applies both to sprint-wide preflight repair and to later issue-local drift.
+Sprint-scoped `spp.md` surfaces are not mandatory unless the sprint schema
+explicitly declares them; do not widen issue-level `spp-editor` into a
+sprint-level planning editor by accident.
 
 ## Review Phase
 
