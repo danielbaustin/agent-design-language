@@ -35,6 +35,7 @@ pub mod failure_taxonomy;
 pub mod freedom_gate;
 pub mod godel;
 pub mod governed_executor;
+pub mod gws_live_capability_execution_surface;
 pub mod gws_live_safety_package;
 pub mod instrumentation;
 pub mod learning_export;
