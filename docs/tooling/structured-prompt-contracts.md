@@ -192,7 +192,27 @@ authoritative lifecycle truth:
   migration.
 
 These values are template targets for the migration wave. Enforcement belongs
-to the follow-on validator and doctor-readiness issue.
+to the validator and doctor-readiness surface introduced by the C-SDLC
+card-lifecycle migration.
+
+## Doctor Lifecycle Readiness
+
+`pr doctor` reports lifecycle readiness separately from ordinary card
+existence. Its `card_lifecycle` JSON object, mirrored by `CARD_LIFECYCLE_*`
+text lines, includes:
+
+- the canonical order `SIP -> STP -> SPP -> SRP -> SOR`
+- the active stage and next required stage
+- `pr_run_readiness`, based on complete-enough `SIP`, `STP`, and `SPP`
+- `pr_finish_readiness`, based on final SRP review truth plus complete or final
+  SOR output truth
+- per-card state values for `scaffold`, `active`, `complete`, `final`, and
+  `legacy_compatible`
+
+Legacy SRP policy scaffolds remain validator-compatible while migration is in
+progress, but doctor output must classify them as `legacy_compatible` rather
+than final review readiness unless review results or an explicit policy
+exception are present.
 
 ## Intentionally Deferred
 
