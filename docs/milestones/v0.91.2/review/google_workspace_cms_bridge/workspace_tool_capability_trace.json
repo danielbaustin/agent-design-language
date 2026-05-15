@@ -1,0 +1,47 @@
+{
+  "schema_version": "workspace_tool_capability_trace.v1",
+  "mode": "fixture",
+  "actions": [
+    {
+      "action": "folder_inventory",
+      "capability": "gws.drive.folder_inventory",
+      "execution_mode": "fixture_backed",
+      "result": "proving"
+    },
+    {
+      "action": "read_content_cards",
+      "capability": "gws.sheets.read_content_cards",
+      "execution_mode": "fixture_backed",
+      "result": "proving"
+    },
+    {
+      "action": "prepare_promotion_packet",
+      "capability": "gws.docs.prepare_promotion_packet",
+      "execution_mode": "fixture_backed",
+      "result": "proving"
+    },
+    {
+      "action": "record_revision_anchor",
+      "capability": "gws.drive.record_revision_anchor",
+      "execution_mode": "fixture_backed",
+      "result": "proving"
+    },
+    {
+      "action": "write_content_cards",
+      "capability": "gws.sheets.write_content_cards",
+      "execution_mode": "live_gated",
+      "result": "skipped"
+    },
+    {
+      "action": "docs_read_snapshot",
+      "capability": "gws.docs.read_snapshot",
+      "execution_mode": "live_gated",
+      "result": "skipped"
+    }
+  ],
+  "non_claims": [
+    "Skipped live-gated actions were not executed.",
+    "No workspace secret or auth material is required for this fixture trace.",
+    "The trace does not authorize direct repository mutation."
+  ]
+}

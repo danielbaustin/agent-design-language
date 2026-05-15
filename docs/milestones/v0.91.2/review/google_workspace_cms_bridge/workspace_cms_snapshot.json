@@ -1,0 +1,61 @@
+{
+  "schema_version": "workspace_cms_snapshot.v1",
+  "mode": "fixture",
+  "cms_root": {
+    "display_name": "v0.91.2 Workspace CMS Demo",
+    "folder_ref": "gws://drive/folders/demo-v0912-workspace-cms",
+    "authority": "draft_only"
+  },
+  "content_cards": [
+    {
+      "doc_id": "doc-review-packet-demo",
+      "title": "CodeFriend Review Packet Draft",
+      "source_url": "https://workspace.example/review-packet-demo",
+      "workspace_folder": "review-drafts",
+      "content_type": "doc",
+      "status": "ready_for_repo_promotion",
+      "owner": "operator",
+      "target_repo_path": "docs/milestones/v0.91.2/review/codefriend_productization/review_packet_workflow_package.md",
+      "readiness": "bounded_promotion_packet_ready",
+      "blockers": [],
+      "last_reviewed": "2026-05-14T00:00:00Z",
+      "github_issue": 3007,
+      "promotion_pr": null,
+      "revision_anchor": "workspace-revision-42",
+      "notes": "Fixture document used to demonstrate promotion packet generation only."
+    },
+    {
+      "doc_id": "doc-sprint-retro-demo",
+      "title": "Sprint 2 Workspace Draft Notes",
+      "source_url": "https://workspace.example/sprint-retro-demo",
+      "workspace_folder": "planning-drafts",
+      "content_type": "doc",
+      "status": "blocked",
+      "owner": "operator",
+      "target_repo_path": "docs/milestones/v0.91.2/README.md",
+      "readiness": "blocked_revision_mismatch",
+      "blockers": [
+        "workspace_revision_drift_after_repo_target_changed",
+        "post_start_planning_edit_requires_issue_backed_pr"
+      ],
+      "last_reviewed": "2026-05-14T00:00:00Z",
+      "github_issue": null,
+      "promotion_pr": null,
+      "revision_anchor": "workspace-revision-77",
+      "notes": "Fixture demonstrates explicit mismatch handling instead of silent sync."
+    }
+  ],
+  "live_gated_capabilities": [
+    "gws.drive.folder_inventory",
+    "gws.docs.read_snapshot",
+    "gws.sheets.read_content_cards",
+    "gws.sheets.write_content_cards",
+    "gws.docs.prepare_promotion_packet",
+    "gws.drive.record_revision_anchor"
+  ],
+  "non_claims": [
+    "Workspace is not canonical repo truth.",
+    "No direct repository write happens from this fixture artifact.",
+    "Live mode requires explicit operator-visible auth and bounded scope."
+  ]
+}
