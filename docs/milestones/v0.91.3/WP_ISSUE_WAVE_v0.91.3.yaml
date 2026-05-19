@@ -1,0 +1,117 @@
+milestone: v0.91.3
+status: planned_issue_wave_not_open
+issue_wave_opened: false
+owner_issue: 3099
+planning_source: docs/milestones/v0.91.3
+tracked_package: docs/milestones/v0.91.3
+notes:
+  - v0.91.3 is the first Cognitive SDLC implementation slice.
+  - Issue numbers remain pending until the issue wave is created through the
+    normal conductor lifecycle.
+  - The milestone proves one bounded Cognitive State Transition, not full
+    C-SDLC adoption.
+  - v0.91.4 owns repeatable operation, hardening, enforcement, and default
+    adoption.
+card_update_rule:
+  - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
+  - SRP means Structured Review Prompt and must include review results before
+    PR publication or an explicit pre-execution exception.
+  - SOR must record final outcome truth after merge/closeout, not only branch
+    execution truth.
+closeout_sequence:
+  - WP-10 Internal review
+  - WP-11 Review findings remediation
+  - WP-12 v0.91.4 completion planning
+  - WP-13 Release ceremony
+work_packages:
+  - wp: WP-01
+    issue: pending
+    title: Design pass and issue-wave readiness
+    queue: docs
+    outcome: v0.91.3 issue wave, sprint umbrellas, and validated cards
+    depends_on: v0.91.2 closeout
+  - wp: WP-02
+    issue: pending
+    title: Cognitive Transition schema
+    queue: docs_tools
+    outcome: manifest schema, states, fixtures, and validation plan
+    depends_on: WP-01
+  - wp: WP-03
+    issue: pending
+    title: Card lifecycle integration
+    queue: tools
+    outcome: lifecycle validator and doctor expectations for the slice
+    depends_on: WP-02
+  - wp: WP-04
+    issue: pending
+    title: Transition DAG and shard plan
+    queue: docs_tools
+    outcome: DAG fixture, shard boundaries, and barrier model
+    depends_on: WP-02, WP-03
+  - wp: WP-05
+    issue: pending
+    title: Evidence bundle and review synthesis
+    queue: docs_tools
+    outcome: evidence bundle schema and review-packet surface
+    depends_on: WP-04
+  - wp: WP-06
+    issue: pending
+    title: Governed merge-readiness gate
+    queue: tools
+    outcome: merge gate record preserving issue, PR, CI, and review truth
+    depends_on: WP-05
+  - wp: WP-07
+    issue: pending
+    title: SRP/SOR ObsMem handoff
+    queue: docs_tools
+    outcome: memory handoff contract for review and outcome truth
+    depends_on: WP-05, WP-06
+  - wp: WP-08
+    issue: pending
+    title: GWS/C-SDLC expansion lessons
+    queue: docs_tools
+    outcome: combined-lane and closeout-truth lessons applied to C-SDLC proof
+    depends_on: WP-02, WP-03, WP-04, WP-05, WP-06, WP-07
+  - wp: WP-09
+    issue: pending
+    title: Five-minute-sprint first proof demo
+    queue: demo
+    outcome: bounded transition demo and metrics snapshot
+    depends_on: WP-08
+  - wp: WP-10
+    issue: pending
+    title: Internal review
+    queue: review
+    outcome: code, docs, and test review packet
+    depends_on: WP-09
+  - wp: WP-11
+    issue: pending
+    title: Review findings remediation
+    queue: review
+    outcome: fixes and follow-on routing
+    depends_on: WP-10
+  - wp: WP-12
+    issue: pending
+    title: v0.91.4 completion planning
+    queue: docs
+    outcome: concrete v0.91.4 hardening backlog and handoff
+    depends_on: WP-11
+  - wp: WP-13
+    issue: pending
+    title: Release ceremony
+    queue: release
+    outcome: evidence package and closeout record
+    depends_on: WP-12
+sprint_umbrellas:
+  - sprint: Sprint 1
+    issue: pending
+    title: Transition Substrate
+    ordered_children: [WP-01, WP-02, WP-03, WP-04]
+  - sprint: Sprint 2
+    issue: pending
+    title: Evidence, Review, And Memory
+    ordered_children: [WP-05, WP-06, WP-07]
+  - sprint: Sprint 3
+    issue: pending
+    title: First Proof And Handoff
+    ordered_children: [WP-08, WP-09, WP-10, WP-11, WP-12, WP-13]
