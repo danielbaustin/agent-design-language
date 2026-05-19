@@ -32,8 +32,8 @@ These rules are mandatory for ADL issue work.
    - Do not bypass the conductor for issue execution, review routing,
      publication, janitor work, or closeout.
 2. Edit cards only with editor skills.
-   - Use `stp-editor`, `sip-editor`, `spp-editor`, `sor-editor`, or other
-     issue-card editor skills when card surfaces need normalization.
+   - Use `sip-editor`, `stp-editor`, `spp-editor`, `srp-editor`, `sor-editor`,
+     or other issue-card editor skills when card surfaces need normalization.
    - Do not hand-edit cards opportunistically.
 3. Always work in a bound worktree on a specific branch.
    - Never do tracked issue work on `main`.
@@ -53,6 +53,9 @@ These rules are mandatory for ADL issue work.
 - Keep milestone claims, proof claims, and review claims evidence-bound.
 - Prefer repo-relative paths in artifacts and records.
 - Do not silently widen issue scope.
+- Preserve the canonical card lifecycle: `SIP -> STP -> SPP -> SRP -> SOR`.
+  `SRP` is the Structured Review Prompt and review-result surface; `SOR` is the
+  truthful execution and integration record.
 
 ## Where To Start
 
@@ -65,7 +68,7 @@ For a normal tracked issue:
 5. make the bounded change in the issue worktree
 6. run the smallest meaningful validation for the touched surface
 7. run a pre-PR subagent review and fix findings
-8. publish through the normal PR workflow
+8. verify PR base/stack topology, then publish through the normal PR workflow
 9. perform closeout after merge/closure
 
 ## Validation Expectations
@@ -78,6 +81,8 @@ For a normal tracked issue:
 ## Review And Publication Rules
 
 - No PR should open before the work has had bounded subagent review.
+- Verify the intended base branch before publication and verify the actual PR
+  base immediately after creation, especially for stacked issue work.
 - Findings come before summary.
 - Fixes should stay within the issue's scope unless the operator explicitly
   widens it.
@@ -96,6 +101,8 @@ It is not:
 - the final word on nested package-specific agent guidance
 
 ## Source Baseline Used
+
+Last reviewed: 2026-05-19.
 
 This file was shaped from the OpenAI/source baselines named by `#2986`, plus
 ADL-specific workflow policy:
