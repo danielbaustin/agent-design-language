@@ -9,10 +9,10 @@
 - Source Docs:
   - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_cms_bridge_demo_packet.md`
   - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/workspace_revision_mismatch_and_authority_rules.md`
-- `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/gws_live_safety_runbook.md`
-- `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/codefriend_gws_operational_package.md`
-- `.adl/docs/TBD/google_workspace_cms/GWS_TOOLING_DEPENDENCY_AND_SEQUENCING.md`
-- `.adl/docs/TBD/google_workspace_cms/RUST_NATIVE_GWS_ADAPTER_PLAN.md`
+  - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/gws_live_safety_runbook.md`
+  - `docs/milestones/v0.91.2/review/google_workspace_cms_bridge/codefriend_gws_operational_package.md`
+  - `.adl/docs/TBD/google_workspace_cms/GWS_TOOLING_DEPENDENCY_AND_SEQUENCING.md`
+  - `.adl/docs/TBD/google_workspace_cms/RUST_NATIVE_GWS_ADAPTER_PLAN.md`
 - Proof Modes: fixture demo, adapter boundary, live bounded execution, review
 
 ## Purpose
