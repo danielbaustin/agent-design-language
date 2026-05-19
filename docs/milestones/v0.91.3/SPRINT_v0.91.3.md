@@ -5,7 +5,7 @@
 Planned sprint map. Sprint issue numbers are `pending` until the issue wave is
 opened.
 
-## Sprint Goals
+## Sprint Overview
 
 v0.91.3 should execute as three bounded sprints:
 
@@ -14,6 +14,12 @@ v0.91.3 should execute as three bounded sprints:
 | Sprint 1 | Transition Substrate | WP-01, WP-02, WP-03, WP-04 | Establish the schema, lifecycle, and DAG needed for one transition. |
 | Sprint 2 | Evidence, Review, And Memory | WP-05, WP-06, WP-07 | Make evidence, review, merge readiness, and ObsMem handoff explicit. |
 | Sprint 3 | First Proof And Handoff | WP-08, WP-09, WP-10, WP-11, WP-12, WP-13 | Apply expansion lessons, run the proof demo, review it, remediate findings, and hand v0.91.4 the hardening plan. |
+
+## Sprint Goals
+
+The sprint overview table above is the generator-facing sprint map. The goals
+below explain the intended execution posture for each sprint without replacing
+that canonical table.
 
 ## Execution Policy
 
