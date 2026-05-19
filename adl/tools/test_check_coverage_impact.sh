@@ -80,6 +80,19 @@ run_artifacts_runtime_filters="$TMP/run-artifacts-runtime-filters.txt"
 bash "$SCRIPT" --changed-files "$run_artifacts_runtime_changed" --print-risk-filters >"$run_artifacts_runtime_filters"
 grep -Fx "run_state" "$run_artifacts_runtime_filters" >/dev/null
 
+gws_live_changed="$TMP/gws-live-changed.txt"
+cat >"$gws_live_changed" <<'EOF'
+A	adl/src/gws_live_capability_execution_surface.rs
+M	adl/src/gws_live_content_card_roundtrip.rs
+EOF
+gws_live_filters="$TMP/gws-live-filters.txt"
+bash "$SCRIPT" --changed-files "$gws_live_changed" --print-risk-filters >"$gws_live_filters"
+grep -Fx "gws_live" "$gws_live_filters" >/dev/null
+if [ "$(wc -l <"$gws_live_filters" | tr -d ' ')" -ne 1 ]; then
+  echo "expected shared gws_live filter to deduplicate runtime GWS surfaces" >&2
+  exit 1
+fi
+
 if bash "$SCRIPT" --changed-files "$changed" --require-summary-for-risk >/tmp/coverage-impact-missing.out 2>&1; then
   echo "expected risky changed source without summary to fail" >&2
   exit 1
