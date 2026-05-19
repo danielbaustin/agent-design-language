@@ -136,6 +136,14 @@ struct GwsCommandOutput {
     stderr: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct GwsSheetUpdateConfirmation {
+    updated_range: String,
+    updated_rows: Option<u64>,
+    updated_columns: Option<u64>,
+    updated_cells: Option<u64>,
+}
+
 trait GwsCommandRunner {
     fn run(&self, argv: &[String]) -> Result<GwsCommandOutput>;
 }
@@ -374,6 +382,93 @@ fn parse_sheet(stdout: &str, scope: &GwsLiveScopeBinding) -> Result<GwsLiveConte
         header_row,
         values: parsed_values,
     })
+}
+
+fn parse_sheet_update_confirmation(stdout: &str) -> Result<GwsSheetUpdateConfirmation> {
+    let value: Value = serde_json::from_str(stdout).context("parse sheets values update json")?;
+    Ok(GwsSheetUpdateConfirmation {
+        updated_range: value
+            .get("updatedRange")
+            .and_then(Value::as_str)
+            .ok_or_else(|| anyhow!("sheets values update missing updatedRange"))?
+            .to_string(),
+        updated_rows: value.get("updatedRows").and_then(Value::as_u64),
+        updated_columns: value.get("updatedColumns").and_then(Value::as_u64),
+        updated_cells: value.get("updatedCells").and_then(Value::as_u64),
+    })
+}
+
+fn range_dimensions(range: &str) -> Option<(u64, u64)> {
+    let (_, cells) = range.split_once('!')?;
+    let (start, end) = cells.split_once(':')?;
+    let (start_col, start_row) = split_cell_ref(start);
+    let (end_col, end_row) = split_cell_ref(end);
+    Some((
+        u64::from(end_row?.saturating_sub(start_row?).saturating_add(1)),
+        column_label_to_index(&end_col?)?
+            .saturating_sub(column_label_to_index(&start_col?)?)
+            .saturating_add(1),
+    ))
+}
+
+fn column_label_to_index(label: &str) -> Option<u64> {
+    if label.is_empty() {
+        return None;
+    }
+    let mut value = 0u64;
+    for ch in label.chars() {
+        if !ch.is_ascii_alphabetic() {
+            return None;
+        }
+        let digit = u64::from(ch.to_ascii_uppercase() as u8 - b'A' + 1);
+        value = value.checked_mul(26)?.checked_add(digit)?;
+    }
+    Some(value)
+}
+
+fn confirm_live_sheet_update(
+    stdout: &str,
+    expected_range: &str,
+) -> Result<GwsSheetUpdateConfirmation> {
+    let confirmation = parse_sheet_update_confirmation(stdout)?;
+    if confirmation.updated_range != expected_range {
+        anyhow::bail!(
+            "sheets values update confirmed wrong range: expected '{}' got '{}'",
+            expected_range,
+            confirmation.updated_range
+        );
+    }
+    let (expected_rows, expected_columns) =
+        range_dimensions(expected_range).ok_or_else(|| anyhow!("invalid expected update range"))?;
+    if let Some(updated_rows) = confirmation.updated_rows {
+        if updated_rows == 0 || updated_rows != expected_rows {
+            anyhow::bail!(
+                "sheets values update confirmed wrong row count: expected {} got {}",
+                expected_rows,
+                updated_rows
+            );
+        }
+    }
+    if let Some(updated_columns) = confirmation.updated_columns {
+        if updated_columns == 0 || updated_columns != expected_columns {
+            anyhow::bail!(
+                "sheets values update confirmed wrong column count: expected {} got {}",
+                expected_columns,
+                updated_columns
+            );
+        }
+    }
+    if let Some(updated_cells) = confirmation.updated_cells {
+        let expected_cells = expected_rows.saturating_mul(expected_columns);
+        if updated_cells == 0 || updated_cells != expected_cells {
+            anyhow::bail!(
+                "sheets values update confirmed wrong cell count: expected {} got {}",
+                expected_cells,
+                updated_cells
+            );
+        }
+    }
+    Ok(confirmation)
 }
 
 fn skipped_trace(
@@ -1105,6 +1200,48 @@ fn run_roundtrip_with_runner_with_approval(
                     non_claims: default_non_claims(),
                 });
             }
+            let update_confirmation = match confirm_live_sheet_update(
+                &update_output.stdout,
+                &update_range,
+            ) {
+                Ok(confirmation) => confirmation,
+                Err(error) => {
+                    let reason = GwsRoundtripSkipReason::GwsUnavailable;
+                    traces.push(skipped_trace(
+                        "gws.sheets.write_content_cards",
+                        update_args,
+                        GwsLiveMode::Execute,
+                        reason.clone(),
+                        format!(
+                            "The bounded content-card write returned exit code 0 but did not confirm the expected live Sheets mutation: {error}"
+                        ),
+                    ));
+                    return Ok(GwsLiveContentCardRoundtripReport {
+                        schema_version: GWS_LIVE_CONTENT_CARD_ROUNDTRIP_SCHEMA_VERSION,
+                        prompt_record: prompt_record(),
+                        live_mode,
+                        live_scope_binding: Some(scope),
+                        write_approval: write_approval.clone(),
+                        expected_content_card_doc_id: expected_doc_id,
+                        content_card_sheet_preview: Some(sheet_preview),
+                        revision_anchor: GwsRevisionAnchorRecord {
+                            expected_revision_anchor,
+                            live_revision_anchor,
+                            check_status: GwsRevisionCheckStatus::Matched,
+                        },
+                        live_doc_snapshot: Some(live_doc),
+                        apply_outcome: {
+                            apply_outcome.skipped_reason = Some(reason.clone());
+                            apply_outcome
+                        },
+                        promotion_packet_handoff: promotion_handoff,
+                        command_traces: traces,
+                        roundtrip_result: GwsCapabilityResult::Skipped,
+                        roundtrip_skipped_reason: Some(reason),
+                        non_claims: default_non_claims(),
+                    });
+                }
+            };
             let fixture = load_workspace_cms_fixture()?;
             let mut apply_result =
                 apply_workspace_content_card_update(&fixture, &preview)?.apply_result;
@@ -1114,7 +1251,10 @@ fn run_roundtrip_with_runner_with_approval(
                 update_args,
                 GwsLiveMode::Execute,
                 update_output.exit_code,
-                "Applied one bounded live content-card mutation after preview and revision-anchor match.",
+                format!(
+                    "Applied one bounded live content-card mutation after preview and revision-anchor match; confirmed persisted range {}.",
+                    update_confirmation.updated_range
+                ),
             ));
             GwsLiveContentCardRoundtripReport {
                 schema_version: GWS_LIVE_CONTENT_CARD_ROUNDTRIP_SCHEMA_VERSION,
@@ -1207,13 +1347,14 @@ pub fn write_gws_live_content_card_roundtrip_report(
 #[cfg(test)]
 mod tests {
     use super::{
-        derive_update_range, locate_doc_update_range, parse_doc, parse_live_mode_from_env,
-        parse_scope_binding_from_env, parse_sheet, parse_write_approval_from_env,
-        run_roundtrip_with_runner, run_roundtrip_with_runner_with_approval, split_cell_ref,
-        write_gws_live_content_card_roundtrip_report, GwsCommandOutput, GwsCommandRunner,
-        GwsLiveMode, GwsLiveScopeBinding, GwsRevisionCheckStatus, GwsRoundtripSkipReason,
-        GWS_DOC_ID_ENV, GWS_DRIVE_FOLDER_ID_ENV, GWS_LIVE_ENABLE_ENV, GWS_SHEET_ID_ENV,
-        GWS_SHEET_RANGE_ENV, GWS_WRITE_APPROVAL_ENV, HOST_PATH_MARKER,
+        column_label_to_index, confirm_live_sheet_update, derive_update_range,
+        locate_doc_update_range, parse_doc, parse_live_mode_from_env, parse_scope_binding_from_env,
+        parse_sheet, parse_sheet_update_confirmation, parse_write_approval_from_env,
+        range_dimensions, run_roundtrip_with_runner, run_roundtrip_with_runner_with_approval,
+        split_cell_ref, write_gws_live_content_card_roundtrip_report, GwsCommandOutput,
+        GwsCommandRunner, GwsLiveMode, GwsLiveScopeBinding, GwsRevisionCheckStatus,
+        GwsRoundtripSkipReason, GWS_DOC_ID_ENV, GWS_DRIVE_FOLDER_ID_ENV, GWS_LIVE_ENABLE_ENV,
+        GWS_SHEET_ID_ENV, GWS_SHEET_RANGE_ENV, GWS_WRITE_APPROVAL_ENV, HOST_PATH_MARKER,
     };
     use crate::gws_live_test_support::{lock_gws_live_test_env, EnvVarGuard};
     use crate::rust_native_gws_adapter_boundary::WorkspaceContentStatus;
@@ -1519,6 +1660,67 @@ mod tests {
     }
 
     #[test]
+    fn gws_live_content_card_roundtrip_execute_mode_requires_confirmed_update_response() {
+        let wrong_range_runner = QueueRunner::new(vec![
+            success_output(
+                r#"{"documentId":"doc-review-packet-demo","title":"CodeFriend Review Packet Draft","revisionId":"workspace-revision-42"}"#,
+            ),
+            success_output(
+                r#"{"range":"ContentCards!A1:F5","values":[["doc_id","status"],["another-doc","blocked"],["doc-review-packet-demo","ready_for_repo_promotion"]]}"#,
+            ),
+            success_output(
+                r#"{"updatedRange":"ContentCards!A2:F2","updatedRows":1,"updatedColumns":6,"updatedCells":6}"#,
+            ),
+        ]);
+        let wrong_range_report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &wrong_range_runner,
+        )
+        .expect("run wrong-range report");
+        assert_eq!(
+            wrong_range_report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::GwsUnavailable)
+        );
+        assert!(
+            !wrong_range_report
+                .apply_outcome
+                .apply_result
+                .persisted_to_live_workspace
+        );
+
+        let zero_cells_runner = QueueRunner::new(vec![
+            success_output(
+                r#"{"documentId":"doc-review-packet-demo","title":"CodeFriend Review Packet Draft","revisionId":"workspace-revision-42"}"#,
+            ),
+            success_output(
+                r#"{"range":"ContentCards!A1:F5","values":[["doc_id","status"],["another-doc","blocked"],["doc-review-packet-demo","ready_for_repo_promotion"]]}"#,
+            ),
+            success_output(
+                r#"{"updatedRange":"ContentCards!A3:F3","updatedRows":1,"updatedColumns":6,"updatedCells":0}"#,
+            ),
+        ]);
+        let zero_cells_report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &zero_cells_runner,
+        )
+        .expect("run zero-cells report");
+        assert_eq!(
+            zero_cells_report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::GwsUnavailable)
+        );
+        assert!(
+            !zero_cells_report
+                .apply_outcome
+                .apply_result
+                .persisted_to_live_workspace
+        );
+    }
+
+    #[test]
     fn gws_live_content_card_roundtrip_execute_mode_requires_explicit_write_approval() {
         let runner = QueueRunner::new(vec![
             success_output(
@@ -1708,6 +1910,24 @@ mod tests {
             derive_update_range("ContentCards!A1:F5"),
             "ContentCards!A2:F2"
         );
+        let confirmation = parse_sheet_update_confirmation(
+            r#"{"updatedRange":"ContentCards!A3:F3","updatedRows":1,"updatedColumns":6,"updatedCells":6}"#,
+        )
+        .expect("parse update confirmation");
+        assert_eq!(confirmation.updated_range, "ContentCards!A3:F3");
+        assert_eq!(range_dimensions("ContentCards!A3:F3"), Some((1, 6)));
+        assert_eq!(column_label_to_index("A"), Some(1));
+        assert_eq!(column_label_to_index("F"), Some(6));
+        confirm_live_sheet_update(
+            r#"{"updatedRange":"ContentCards!A3:F3","updatedRows":1,"updatedColumns":6,"updatedCells":6}"#,
+            "ContentCards!A3:F3",
+        )
+        .expect("confirm good update");
+        assert!(confirm_live_sheet_update(
+            r#"{"updatedRange":"ContentCards!A2:F2","updatedRows":1,"updatedColumns":6,"updatedCells":6}"#,
+            "ContentCards!A3:F3",
+        )
+        .is_err());
         assert_eq!(
             derive_update_range("ContentCards!malformed"),
             "ContentCards!malformed"
