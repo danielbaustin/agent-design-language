@@ -204,6 +204,7 @@ ADL already provides a serious platform baseline:
 | Rustdoc/doc cleanup | Planned | `docs/milestones/v0.91.2/features/RUSTDOC_DOC_CLEANUP.md` | `v0.91.2` |
 | Workflow guardrails | Planned | `docs/milestones/v0.91.2/features/WORKFLOW_GUARDRAILS.md` | `v0.91.2` |
 | Cognitive SDLC first slice and transition manifest | Planned | `docs/milestones/v0.91.3/features/COGNITIVE_SDLC_FIRST_SLICE.md`, `docs/milestones/v0.91.3/features/COGNITIVE_TRANSITION_MANIFEST.md`, and `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md` | `v0.91.3` proves one bounded Cognitive State Transition; `v0.91.4` hardens repeatable/default operation |
+| Cognitive SDLC default operation and five-minute-sprint repeatability | Planned | `docs/milestones/v0.91.4/features/COGNITIVE_SDLC_DEFAULT_OPERATION.md`, `docs/milestones/v0.91.4/features/CSDL_VALIDATION_AND_ROUTING_HARDENING.md`, and `docs/milestones/v0.91.4/features/FIVE_MINUTE_SPRINT_REPEATABILITY.md` | `v0.91.4` completes the C-SDLC rollout and makes it the default software-development path |
 | ACP / cognitive profiles runtime surface | Planned | `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md` | `v0.92` |
 | Identity, stable name, and continuity substrate | Planned | `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md` | `v0.92` |
 | Memory grounding, capability envelope, and birth witnesses/receipt | Planned | `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md` | `v0.92` |
