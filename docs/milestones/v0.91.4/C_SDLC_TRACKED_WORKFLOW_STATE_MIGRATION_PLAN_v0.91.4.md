@@ -18,9 +18,9 @@ The canonical C-SDLC record is:
 - tracked workflow records
 - tracked proof, review, trace, and release evidence
 
-Local `.adl` state may remain for ephemeral execution support only. Google
-Workspace, if used at all, is optional scratch/staging; it is not part of
-C-SDLC and is not canonical lifecycle truth.
+Local `.adl` state may remain for ephemeral execution support only. External
+collaboration workspaces, if used at all, are optional scratch/staging; they
+are not part of C-SDLC and are not canonical lifecycle truth.
 
 ## Durable Records That Must Be Tracked
 
@@ -114,7 +114,8 @@ longer silently local-only:
 - release evidence omits tracked proof packets
 - signed trace bundles are absent for durable C-SDLC proof
 - ObsMem ingestion depends on untracked local evidence
-- GWS or any other external scratch surface is treated as canonical C-SDLC truth
+- any external scratch or collaboration surface is treated as canonical C-SDLC
+  truth
 
 ## Non-Claims
 
@@ -122,5 +123,5 @@ This plan does not require:
 
 - full historical `.adl` backfill
 - full TQL / trace-query implementation
-- Google Workspace
+- external collaboration workspaces
 - replacing GitHub issues, PRs, CI, branch protection, or human review

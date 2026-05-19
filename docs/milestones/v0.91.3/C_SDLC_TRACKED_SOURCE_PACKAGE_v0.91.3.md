@@ -27,7 +27,7 @@ The v0.91.3 first slice is grounded in these source topics:
 | C-SDLC metrics | Defines coordination, review, replay, throughput, and governance metrics. |
 | Issue card sequence note | Explains why each card has one job and feeds later review/recovery/memory. |
 | Sprint and issue SPP note | Keeps issue-local `SPP` authoritative while treating sprint-scoped planning as future extension. |
-| Mini-sprint issue bodies | Provide migration lessons for templates, validators, editors, conductor routing, active-bundle readiness, and ObsMem handoff. |
+| Process mini-sprint issue bodies | Provide migration lessons for templates, validators, editors, conductor routing, active-bundle readiness, and ObsMem handoff. |
 
 ## Canonical First-Slice Contract
 
@@ -99,7 +99,7 @@ This tracked source package does not claim:
 - sprint-scoped `SPP` is mandatory today
 - signed trace verification is complete in v0.91.3
 - trace query/TQL is required before first-slice proof
-- Google Workspace is required infrastructure
+- any external collaboration workspace is required infrastructure
 
 `v0.91.4` owns default operation, tracked durable workflow records, signed trace
 proof, repeatability, and active-issue migration.

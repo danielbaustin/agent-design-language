@@ -50,7 +50,7 @@ Out of scope:
 - broad autonomous engineering
 - replacing GitHub pull requests, CI, branch protection, or human review
 - solving the full Software Development Polis
-- depending on the Google Workspace CMS bridge as required infrastructure
+- depending on any external collaboration workspace as required infrastructure
 - treating speed as a reason to weaken review, replay, or closeout truth
 
 ## Source Map
@@ -61,7 +61,6 @@ This package is grounded in:
 - `docs/tooling/card-lifecycle.md`
 - `docs/tooling/structured-prompt-contracts.md`
 - `docs/tooling/srp-sor-obsmem-handoff-v0.91.2.md`
-- `docs/milestones/v0.91.2/features/GOOGLE_WORKSPACE_CMS_BRIDGE.md`
 
 The local `.adl/docs/TBD/cognitive-sdlc/` notes are drafting history. The
 tracked source package is the branch-verifiable source map for the milestone.

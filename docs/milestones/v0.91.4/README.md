@@ -43,7 +43,7 @@ v0.91.4 should not:
 - weaken AGENTS.md requirements for conductor use, editor-only card edits,
   worktrees, review, or closeout
 - replace GitHub issues, PRs, CI, branch protection, or human review
-- treat Workspace/GWS as required infrastructure
+- treat any external collaboration workspace as required infrastructure
 - turn five-minute-sprint speed into permission to skip governance
 - hide remaining legacy card drift as acceptable default behavior
 - leave durable C-SDLC cards, review, closeout, trace, proof, or release
@@ -61,6 +61,11 @@ This package is grounded in:
 - `docs/milestones/v0.91.3/QUALITY_GATE_v0.91.3.md`
 - `docs/milestones/v0.91.3/features/COGNITIVE_SDLC_FIRST_SLICE.md`
 - `docs/milestones/v0.91.3/features/COGNITIVE_TRANSITION_MANIFEST.md`
+- `docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md`
+- `docs/milestones/v0.91.3/features/TRANSITION_DAG_AND_SHARD_COORDINATION.md`
+- `docs/milestones/v0.91.3/features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md`
+- `docs/milestones/v0.91.3/features/GOVERNED_MERGE_READINESS_GATE.md`
+- `docs/milestones/v0.91.3/features/SRP_SOR_OBSMEM_HANDOFF.md`
 - `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md`
 - `docs/milestones/v0.91.3/C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md`
 - `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md`

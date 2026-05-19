@@ -34,10 +34,11 @@ The first-slice work must additionally prove:
 - trace/proof references are repo-relative and shaped so v0.91.4 can add
   signed trace bundles without redesigning the first-slice manifest
 
-## Lessons From v0.91.2 GWS Mini-Sprint
+## Lessons From v0.91.2 Process Mini-Sprints
 
-The GWS mini-sprint showed that expansion work can be real while still leaving
-workflow risks. v0.91.3 must therefore treat these as readiness requirements:
+The v0.91.2 process mini-sprints showed that expansion work can be real while
+still leaving workflow risks. v0.91.3 must therefore treat these as readiness
+requirements:
 
 - combined-lane validation must be run when multiple modules share process
   state, env vars, fixtures, or global resources

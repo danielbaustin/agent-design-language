@@ -70,9 +70,9 @@ work_packages:
     depends_on: WP-05, WP-06
   - wp: WP-08
     issue: pending
-    title: GWS/C-SDLC expansion lessons
+    title: Integrated process lessons and proof readiness
     queue: docs_tools
-    outcome: combined-lane and closeout-truth lessons applied to C-SDLC proof
+    outcome: combined-lane validation and closeout-truth lessons applied to C-SDLC proof
     depends_on: WP-02, WP-03, WP-04, WP-05, WP-06, WP-07
   - wp: WP-09
     issue: pending
