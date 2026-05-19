@@ -52,3 +52,20 @@ are not accepted ADRs until reviewed and promoted.
   control or artifact truth.
 - Evidence: `adl/src/long_lived_agent.rs`,
   `docs/milestones/v0.90/DESIGN_v0.90.md`.
+
+## v0.91.2 Candidate ADR Packet
+
+These candidate records were created for the v0.91.2 ADR authoring pass. They
+are not accepted decisions until reviewed and promoted.
+
+| Candidate | File | Summary |
+| --- | --- | --- |
+| ADR 0020 | `0020-universal-tool-schema-portable-tool-description-standard.md` | UTS is portable tool description, not execution authority. |
+| ADR 0021 | `0021-adl-capability-contract-runtime-authority-boundary.md` | ACC is ADL-native governed runtime authority. |
+| ADR 0022 | `0022-speculative-decoding-deterministic-commit-boundary.md` | Speculative decoding may accelerate proposals, not commits. |
+| ADR 0023 | `0023-google-workspace-cms-bridge-canonical-promotion-boundary.md` | GWS is collaboration infrastructure, not canonical repo truth. |
+| ADR 0024 | `0024-workflow-guardrails-issue-lifecycle-control-plane.md` | ADL issue lifecycle discipline is architecture policy. |
+| ADR 0025 | `0025-codefriend-review-packet-product-boundary.md` | CodeFriend is evidence-bound review/report workflow. |
+| ADR 0026 | `0026-repo-visibility-manifest-linkage-layer.md` | Repo visibility is manifest/linkage support, not full repo cognition. |
+| ADR 0027 | `0027-governed-code-modernization-moderne-openrewrite-lst.md` | Modernization remains dry-run/review/approval bounded. |
+| ADR 0028 | `0028-c-sdlc-tracked-workflow-state-and-signed-trace.md` | C-SDLC durable workflow truth becomes tracked and signed-trace-backed. |

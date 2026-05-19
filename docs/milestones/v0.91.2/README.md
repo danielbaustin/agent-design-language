@@ -22,8 +22,8 @@ reviewable systems:
   entire days.
 - CodeFriend/review packet productization.
 - Google Workspace CMS bridge implementation, bounded live-safety surfaces, and
-  a reusable migration path from local `.adl` workflow truth into GWS-backed
-  draft/review collaboration.
+  reusable operational package, while keeping C-SDLC workflow truth separate
+  from GWS.
 - Moderne / OpenRewrite LST modernization workflow support.
 - Bounded speculative-decoding evaluation inside ADL's deterministic runtime
   posture.
@@ -34,6 +34,9 @@ reviewable systems:
 - Rustdoc and documentation cleanup.
 - Workflow guardrails that prevent main-branch writes, hung closeout watchers,
   and unsafe report-generation shell behavior from recurring.
+- ADR candidates that make the milestone's durable architecture boundaries
+  explicit before closeout, including the C-SDLC tracked-state and signed-trace
+  direction for v0.91.3/v0.91.4.
 
 ## Milestone Role
 
@@ -73,6 +76,8 @@ This package is grounded in:
 - `.adl/docs/TBD/ADL_DOC_CLEANUP_LEDGER.md`
 - `.adl/docs/TBD/workflow_tooling/`
 - `.adl/docs/TBD/ARXIV_AUTHORING_PROCESS_NOTES.md`
+- `.adl/docs/TBD/V0912_ADR_PLAN_2026-05-13.md`
+- `.adl/docs/TBD/C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_2026-05-19.md`
 
 ## Document Map
 
@@ -80,6 +85,7 @@ This package is grounded in:
 - Vision: [VISION_v0.91.2.md](VISION_v0.91.2.md)
 - Design: [DESIGN_v0.91.2.md](DESIGN_v0.91.2.md)
 - Decisions: [DECISIONS_v0.91.2.md](DECISIONS_v0.91.2.md)
+- ADR plan: [ADR_PLAN_v0.91.2.md](ADR_PLAN_v0.91.2.md)
 - Sprint plan: [SPRINT_v0.91.2.md](SPRINT_v0.91.2.md)
 - Sprint-conductor execution plan:
   [SPRINT_CONDUCTOR_EXECUTION_PLAN_v0.91.2.md](SPRINT_CONDUCTOR_EXECUTION_PLAN_v0.91.2.md)
@@ -109,10 +115,11 @@ This package is grounded in:
 
 v0.91.2 is ready to close when the project has credible multi-model UTS+ACC
 evidence, a healthier test/runtime gate strategy, a review/productization path,
-a bounded Workspace CMS bridge with reusable operational and migration
-guidance, Moderne/OpenRewrite LST modernization and publication packages, and
+a bounded Workspace CMS bridge with reusable operational guidance,
+Moderne/OpenRewrite LST modernization and publication packages, and
 workflow guardrails that reduce the operational failures that slowed v0.90.5
-and v0.91.
+and v0.91, plus a reviewable ADR candidate packet for the durable architecture
+decisions introduced or clarified by the milestone.
 
 Execution note: WP-01 opened and carded the issue wave. Feature implementation
 has not started until the relevant WP is routed through `workflow-conductor`,
