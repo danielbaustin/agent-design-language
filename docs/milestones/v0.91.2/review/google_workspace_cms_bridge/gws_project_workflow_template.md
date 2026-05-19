@@ -14,7 +14,7 @@ planning and content-card management.
    posture:
    - dry-run is acceptable for initial adoption and stop-boundary proof
    - execute mode is appropriate only after the project intentionally enables
-     live mutation
+     live mutation and sets explicit write approval
 7. Route actual canonical doc or repo changes through GitHub issue/PR flow.
 
 ## Suggested Stage Map
@@ -58,6 +58,7 @@ Stop and review before:
 
 - widening folder/doc/sheet scope
 - turning on execute mode for the first time
+- setting explicit write approval for the first live mutation attempt
 - treating Workspace as canonical source
 - allowing Workspace-originated tracked file edits without GitHub review
 

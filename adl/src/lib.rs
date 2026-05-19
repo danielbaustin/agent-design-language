@@ -38,6 +38,8 @@ pub mod governed_executor;
 pub mod gws_live_capability_execution_surface;
 pub mod gws_live_content_card_roundtrip;
 pub mod gws_live_safety_package;
+#[cfg(test)]
+pub mod gws_live_test_support;
 pub mod instrumentation;
 pub mod learning_export;
 pub mod learning_guardrails;

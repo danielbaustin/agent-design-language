@@ -22,12 +22,15 @@ The current bounded bridge expects these env vars:
 - `ADL_GWS_DOC_ID`
 - `ADL_GWS_SHEET_ID`
 - `ADL_GWS_SHEET_RANGE`
+- `ADL_GWS_WRITE_APPROVAL` when a bounded live sheet update is intentionally allowed
 
 Recommended initial posture:
 
 - `ADL_GWS_LIVE_MODE=dry_run`
 
 Do not start a project in execute mode by default.
+Do not set `ADL_GWS_WRITE_APPROVAL` by default; add it only immediately before
+an intentionally bounded live write.
 
 Auth is required for live bounded use, not for fixture-first or dry-run-only
 adoption proof.

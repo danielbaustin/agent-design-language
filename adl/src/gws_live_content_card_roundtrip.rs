@@ -19,6 +19,7 @@ pub const GWS_LIVE_CONTENT_CARD_ROUNDTRIP_SCHEMA_VERSION: &str =
     "gws_live_content_card_roundtrip.v1";
 pub const GWS_LIVE_CONTENT_CARD_ROUNDTRIP_PROMPT_VERSION: &str =
     "wp3093.gws_live_content_card_roundtrip.v1";
+pub const GWS_WRITE_APPROVAL_ENV: &str = "ADL_GWS_WRITE_APPROVAL";
 #[cfg(test)]
 const HOST_PATH_MARKER: &str = "/Users/daniel/";
 
@@ -39,6 +40,7 @@ pub enum GwsRoundtripSkipReason {
     MissingScopeBinding,
     MissingAuth,
     MissingScopes,
+    MissingWriteApproval,
     RevisionMismatch,
     TargetContentCardMissing,
 }
@@ -88,6 +90,14 @@ pub struct GwsLiveApplyOutcomeRecord {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct GwsLiveWriteApprovalRecord {
+    pub approval_required: bool,
+    pub approval_checked: bool,
+    pub approval_present: bool,
+    pub approval_env_var: &'static str,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct GwsPromotionPacketHandoffRecord {
     pub doc_id: String,
     pub title: String,
@@ -106,6 +116,7 @@ pub struct GwsLiveContentCardRoundtripReport {
     pub prompt_record: GwsLiveRoundtripPromptRecord,
     pub live_mode: GwsLiveMode,
     pub live_scope_binding: Option<GwsLiveScopeBinding>,
+    pub write_approval: GwsLiveWriteApprovalRecord,
     pub expected_content_card_doc_id: String,
     pub content_card_sheet_preview: Option<GwsLiveContentCardSheetRecord>,
     pub revision_anchor: GwsRevisionAnchorRecord,
@@ -178,6 +189,28 @@ fn parse_scope_binding_from_env() -> Option<GwsLiveScopeBinding> {
         sheet_id,
         sheet_range,
     })
+}
+
+fn parse_write_approval_from_env() -> bool {
+    matches!(
+        env::var(GWS_WRITE_APPROVAL_ENV)
+            .unwrap_or_default()
+            .to_ascii_lowercase()
+            .as_str(),
+        "1" | "true" | "yes" | "approve" | "approved"
+    )
+}
+
+fn write_approval_record(
+    live_mode: GwsLiveMode,
+    approval_present: bool,
+) -> GwsLiveWriteApprovalRecord {
+    GwsLiveWriteApprovalRecord {
+        approval_required: true,
+        approval_checked: matches!(live_mode, GwsLiveMode::Execute),
+        approval_present,
+        approval_env_var: GWS_WRITE_APPROVAL_ENV,
+    }
 }
 
 fn docs_get_args(scope: &GwsLiveScopeBinding) -> Vec<String> {
@@ -493,9 +526,10 @@ fn promotion_handoff_record(
     }
 }
 
-fn run_roundtrip_with_runner(
+fn run_roundtrip_with_runner_with_approval(
     live_mode: GwsLiveMode,
     scope_binding: Option<GwsLiveScopeBinding>,
+    write_approval_present: bool,
     runner: &dyn GwsCommandRunner,
 ) -> Result<GwsLiveContentCardRoundtripReport> {
     let (preview, packet, expected_revision_anchor) = build_preview_and_handoff()?;
@@ -507,6 +541,7 @@ fn run_roundtrip_with_runner(
     let mut apply_outcome = default_apply_outcome(preview.clone(), update_range.clone(), None);
     let mut traces = Vec::new();
     let promotion_handoff = promotion_handoff_record(&packet, &expected_revision_anchor);
+    let write_approval = write_approval_record(live_mode.clone(), write_approval_present);
 
     let report = match live_mode {
         GwsLiveMode::Disabled => GwsLiveContentCardRoundtripReport {
@@ -514,6 +549,7 @@ fn run_roundtrip_with_runner(
             prompt_record: prompt_record(),
             live_mode,
             live_scope_binding: scope_binding,
+            write_approval: write_approval.clone(),
             expected_content_card_doc_id: expected_doc_id,
             content_card_sheet_preview: None,
             revision_anchor: GwsRevisionAnchorRecord {
@@ -541,6 +577,7 @@ fn run_roundtrip_with_runner(
                         prompt_record: prompt_record(),
                         live_mode,
                         live_scope_binding: None,
+                        write_approval: write_approval.clone(),
                         expected_content_card_doc_id: expected_doc_id,
                         content_card_sheet_preview: None,
                         revision_anchor: GwsRevisionAnchorRecord {
@@ -588,6 +625,7 @@ fn run_roundtrip_with_runner(
                 prompt_record: prompt_record(),
                 live_mode,
                 live_scope_binding: Some(scope),
+                write_approval: write_approval.clone(),
                 expected_content_card_doc_id: expected_doc_id,
                 content_card_sheet_preview: None,
                 revision_anchor: GwsRevisionAnchorRecord {
@@ -616,6 +654,7 @@ fn run_roundtrip_with_runner(
                         prompt_record: prompt_record(),
                         live_mode,
                         live_scope_binding: None,
+                        write_approval: write_approval.clone(),
                         expected_content_card_doc_id: expected_doc_id,
                         content_card_sheet_preview: None,
                         revision_anchor: GwsRevisionAnchorRecord {
@@ -655,6 +694,7 @@ fn run_roundtrip_with_runner(
                         prompt_record: prompt_record(),
                         live_mode,
                         live_scope_binding: Some(scope),
+                        write_approval: write_approval.clone(),
                         expected_content_card_doc_id: expected_doc_id,
                         content_card_sheet_preview: None,
                         revision_anchor: GwsRevisionAnchorRecord {
@@ -689,6 +729,7 @@ fn run_roundtrip_with_runner(
                     prompt_record: prompt_record(),
                     live_mode,
                     live_scope_binding: Some(scope),
+                    write_approval: write_approval.clone(),
                     expected_content_card_doc_id: expected_doc_id,
                     content_card_sheet_preview: None,
                     revision_anchor: GwsRevisionAnchorRecord {
@@ -741,6 +782,7 @@ fn run_roundtrip_with_runner(
                         prompt_record: prompt_record(),
                         live_mode,
                         live_scope_binding: Some(scope),
+                        write_approval: write_approval.clone(),
                         expected_content_card_doc_id: expected_doc_id,
                         content_card_sheet_preview: None,
                         revision_anchor: GwsRevisionAnchorRecord {
@@ -775,6 +817,7 @@ fn run_roundtrip_with_runner(
                     prompt_record: prompt_record(),
                     live_mode,
                     live_scope_binding: Some(scope),
+                    write_approval: write_approval.clone(),
                     expected_content_card_doc_id: expected_doc_id,
                     content_card_sheet_preview: None,
                     revision_anchor: GwsRevisionAnchorRecord {
@@ -825,6 +868,7 @@ fn run_roundtrip_with_runner(
                     prompt_record: prompt_record(),
                     live_mode,
                     live_scope_binding: Some(scope),
+                    write_approval: write_approval.clone(),
                     expected_content_card_doc_id: expected_doc_id,
                     content_card_sheet_preview: Some(sheet_preview),
                     revision_anchor: GwsRevisionAnchorRecord {
@@ -872,6 +916,7 @@ fn run_roundtrip_with_runner(
                     prompt_record: prompt_record(),
                     live_mode,
                     live_scope_binding: Some(scope),
+                    write_approval: write_approval.clone(),
                     expected_content_card_doc_id: expected_doc_id,
                     content_card_sheet_preview: Some(sheet_preview),
                     revision_anchor: GwsRevisionAnchorRecord {
@@ -914,6 +959,7 @@ fn run_roundtrip_with_runner(
                         prompt_record: prompt_record(),
                         live_mode,
                         live_scope_binding: Some(scope),
+                        write_approval: write_approval.clone(),
                         expected_content_card_doc_id: expected_doc_id,
                         content_card_sheet_preview: Some(sheet_preview),
                         revision_anchor: GwsRevisionAnchorRecord {
@@ -938,6 +984,50 @@ fn run_roundtrip_with_runner(
                 }
             };
 
+            if !write_approval_present {
+                let skipped_update_args = sheets_values_update_args(
+                    &scope,
+                    &update_range,
+                    &preview,
+                    &expected_revision_anchor,
+                );
+                traces.push(skipped_trace(
+                    "gws.sheets.write_content_cards",
+                    skipped_update_args,
+                    GwsLiveMode::Execute,
+                    GwsRoundtripSkipReason::MissingWriteApproval,
+                    format!(
+                        "Execute mode alone does not authorize live Workspace mutation; set {} explicitly before the bounded write path may proceed.",
+                        GWS_WRITE_APPROVAL_ENV
+                    ),
+                ));
+                return Ok(GwsLiveContentCardRoundtripReport {
+                    schema_version: GWS_LIVE_CONTENT_CARD_ROUNDTRIP_SCHEMA_VERSION,
+                    prompt_record: prompt_record(),
+                    live_mode,
+                    live_scope_binding: Some(scope),
+                    write_approval: write_approval.clone(),
+                    expected_content_card_doc_id: expected_doc_id,
+                    content_card_sheet_preview: Some(sheet_preview),
+                    revision_anchor: GwsRevisionAnchorRecord {
+                        expected_revision_anchor,
+                        live_revision_anchor,
+                        check_status: GwsRevisionCheckStatus::Matched,
+                    },
+                    live_doc_snapshot: Some(live_doc),
+                    apply_outcome: {
+                        apply_outcome.skipped_reason =
+                            Some(GwsRoundtripSkipReason::MissingWriteApproval);
+                        apply_outcome
+                    },
+                    promotion_packet_handoff: promotion_handoff,
+                    command_traces: traces,
+                    roundtrip_result: GwsCapabilityResult::Skipped,
+                    roundtrip_skipped_reason: Some(GwsRoundtripSkipReason::MissingWriteApproval),
+                    non_claims: default_non_claims(),
+                });
+            }
+
             let update_args = sheets_values_update_args(
                 &scope,
                 &update_range,
@@ -960,6 +1050,7 @@ fn run_roundtrip_with_runner(
                         prompt_record: prompt_record(),
                         live_mode,
                         live_scope_binding: Some(scope),
+                        write_approval: write_approval.clone(),
                         expected_content_card_doc_id: expected_doc_id,
                         content_card_sheet_preview: Some(sheet_preview),
                         revision_anchor: GwsRevisionAnchorRecord {
@@ -994,6 +1085,7 @@ fn run_roundtrip_with_runner(
                     prompt_record: prompt_record(),
                     live_mode,
                     live_scope_binding: Some(scope),
+                    write_approval: write_approval.clone(),
                     expected_content_card_doc_id: expected_doc_id,
                     content_card_sheet_preview: Some(sheet_preview),
                     revision_anchor: GwsRevisionAnchorRecord {
@@ -1029,6 +1121,7 @@ fn run_roundtrip_with_runner(
                 prompt_record: prompt_record(),
                 live_mode,
                 live_scope_binding: Some(scope),
+                write_approval,
                 expected_content_card_doc_id: expected_doc_id,
                 content_card_sheet_preview: Some(sheet_preview),
                 revision_anchor: GwsRevisionAnchorRecord {
@@ -1065,8 +1158,26 @@ fn default_non_claims() -> Vec<&'static str> {
     vec![
         "This surface does not make Google Workspace canonical repo truth.",
         "This surface does not authorize direct tracked repository mutation from Workspace state.",
+        "This surface does not treat execute mode alone as approval for live Workspace writes.",
         "This surface does not create bidirectional Git and Workspace sync.",
     ]
+}
+
+fn run_roundtrip_with_runner(
+    live_mode: GwsLiveMode,
+    scope_binding: Option<GwsLiveScopeBinding>,
+    runner: &dyn GwsCommandRunner,
+) -> Result<GwsLiveContentCardRoundtripReport> {
+    let write_approval_present = match live_mode {
+        GwsLiveMode::Execute => parse_write_approval_from_env(),
+        _ => false,
+    };
+    run_roundtrip_with_runner_with_approval(
+        live_mode,
+        scope_binding,
+        write_approval_present,
+        runner,
+    )
 }
 
 pub fn run_gws_live_content_card_roundtrip_report() -> Result<GwsLiveContentCardRoundtripReport> {
@@ -1097,46 +1208,18 @@ pub fn write_gws_live_content_card_roundtrip_report(
 mod tests {
     use super::{
         derive_update_range, locate_doc_update_range, parse_doc, parse_live_mode_from_env,
-        parse_scope_binding_from_env, parse_sheet, run_roundtrip_with_runner, split_cell_ref,
+        parse_scope_binding_from_env, parse_sheet, parse_write_approval_from_env,
+        run_roundtrip_with_runner, run_roundtrip_with_runner_with_approval, split_cell_ref,
         write_gws_live_content_card_roundtrip_report, GwsCommandOutput, GwsCommandRunner,
         GwsLiveMode, GwsLiveScopeBinding, GwsRevisionCheckStatus, GwsRoundtripSkipReason,
         GWS_DOC_ID_ENV, GWS_DRIVE_FOLDER_ID_ENV, GWS_LIVE_ENABLE_ENV, GWS_SHEET_ID_ENV,
-        GWS_SHEET_RANGE_ENV, HOST_PATH_MARKER,
+        GWS_SHEET_RANGE_ENV, GWS_WRITE_APPROVAL_ENV, HOST_PATH_MARKER,
     };
+    use crate::gws_live_test_support::{lock_gws_live_test_env, EnvVarGuard};
     use crate::rust_native_gws_adapter_boundary::WorkspaceContentStatus;
     use std::collections::VecDeque;
     use std::fs;
     use std::sync::Mutex;
-
-    static TEST_ENV_LOCK: Mutex<()> = Mutex::new(());
-
-    struct EnvVarGuard {
-        key: &'static str,
-        original: Option<String>,
-    }
-
-    impl EnvVarGuard {
-        fn set(key: &'static str, value: &str) -> Self {
-            let original = std::env::var(key).ok();
-            unsafe {
-                std::env::set_var(key, value);
-            }
-            Self { key, original }
-        }
-    }
-
-    impl Drop for EnvVarGuard {
-        fn drop(&mut self) {
-            match &self.original {
-                Some(value) => unsafe {
-                    std::env::set_var(self.key, value);
-                },
-                None => unsafe {
-                    std::env::remove_var(self.key);
-                },
-            }
-        }
-    }
 
     struct QueueRunner {
         outputs: Mutex<VecDeque<anyhow::Result<GwsCommandOutput>>>,
@@ -1179,14 +1262,16 @@ mod tests {
 
     #[test]
     fn gws_live_content_card_roundtrip_env_helpers_cover_aliases_and_scope_binding() {
-        let _lock = TEST_ENV_LOCK.lock().expect("lock env");
+        let _lock = lock_gws_live_test_env();
         let _mode = EnvVarGuard::set(GWS_LIVE_ENABLE_ENV, "dry-run");
         let _drive = EnvVarGuard::set(GWS_DRIVE_FOLDER_ID_ENV, "folder");
         let _doc = EnvVarGuard::set(GWS_DOC_ID_ENV, "doc");
         let _sheet = EnvVarGuard::set(GWS_SHEET_ID_ENV, "sheet");
         let _range = EnvVarGuard::set(GWS_SHEET_RANGE_ENV, "ContentCards!A1:F5");
+        let _approval = EnvVarGuard::set(GWS_WRITE_APPROVAL_ENV, "approved");
 
         assert_eq!(parse_live_mode_from_env(), GwsLiveMode::DryRun);
+        assert!(parse_write_approval_from_env());
         let scope = parse_scope_binding_from_env().expect("scope binding");
         assert_eq!(scope.drive_folder_id, "folder");
         assert_eq!(scope.doc_id, "doc");
@@ -1196,18 +1281,17 @@ mod tests {
 
     #[test]
     fn gws_live_content_card_roundtrip_env_helpers_cover_execute_disabled_and_missing_scope() {
-        let _lock = TEST_ENV_LOCK.lock().expect("lock env");
+        let _lock = lock_gws_live_test_env();
         let _mode = EnvVarGuard::set(GWS_LIVE_ENABLE_ENV, "enabled");
-
-        unsafe {
-            std::env::remove_var(GWS_DRIVE_FOLDER_ID_ENV);
-            std::env::remove_var(GWS_DOC_ID_ENV);
-            std::env::remove_var(GWS_SHEET_ID_ENV);
-            std::env::remove_var(GWS_SHEET_RANGE_ENV);
-        }
+        let _drive = EnvVarGuard::remove(GWS_DRIVE_FOLDER_ID_ENV);
+        let _doc = EnvVarGuard::remove(GWS_DOC_ID_ENV);
+        let _sheet = EnvVarGuard::remove(GWS_SHEET_ID_ENV);
+        let _range = EnvVarGuard::remove(GWS_SHEET_RANGE_ENV);
+        let _approval = EnvVarGuard::remove(GWS_WRITE_APPROVAL_ENV);
 
         assert_eq!(parse_live_mode_from_env(), GwsLiveMode::Execute);
         assert_eq!(parse_scope_binding_from_env(), None);
+        assert!(!parse_write_approval_from_env());
 
         let _mode = EnvVarGuard::set(GWS_LIVE_ENABLE_ENV, "not-a-mode");
         assert_eq!(parse_live_mode_from_env(), GwsLiveMode::Disabled);
@@ -1274,9 +1358,13 @@ mod tests {
         let doc_runner_error = QueueRunner::new(vec![Err(anyhow::anyhow!(
             "oauth login required before docs read"
         ))]);
-        let doc_runner_error_report =
-            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &doc_runner_error)
-                .expect("run doc runner error report");
+        let doc_runner_error_report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &doc_runner_error,
+        )
+        .expect("run doc runner error report");
         assert_eq!(
             doc_runner_error_report.roundtrip_skipped_reason,
             Some(GwsRoundtripSkipReason::MissingAuth)
@@ -1287,18 +1375,26 @@ mod tests {
             stdout: String::new(),
             stderr: "insufficient scope for docs get".to_string(),
         })]);
-        let doc_scope_failure_report =
-            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &doc_scope_failure)
-                .expect("run doc scope failure report");
+        let doc_scope_failure_report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &doc_scope_failure,
+        )
+        .expect("run doc scope failure report");
         assert_eq!(
             doc_scope_failure_report.roundtrip_skipped_reason,
             Some(GwsRoundtripSkipReason::MissingScopes)
         );
 
         let doc_unavailable = QueueRunner::new(vec![Err(anyhow::anyhow!("gws binary missing"))]);
-        let doc_unavailable_report =
-            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &doc_unavailable)
-                .expect("run doc unavailable report");
+        let doc_unavailable_report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &doc_unavailable,
+        )
+        .expect("run doc unavailable report");
         assert_eq!(
             doc_unavailable_report.roundtrip_skipped_reason,
             Some(GwsRoundtripSkipReason::GwsUnavailable)
@@ -1313,9 +1409,13 @@ mod tests {
             ),
             Err(anyhow::anyhow!("oauth token expired for sheets read")),
         ]);
-        let sheet_runner_error_report =
-            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &sheet_runner_error)
-                .expect("run sheet runner error report");
+        let sheet_runner_error_report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &sheet_runner_error,
+        )
+        .expect("run sheet runner error report");
         assert_eq!(
             sheet_runner_error_report.roundtrip_skipped_reason,
             Some(GwsRoundtripSkipReason::MissingAuth)
@@ -1331,9 +1431,13 @@ mod tests {
                 stderr: "permission denied by sheet scope".to_string(),
             }),
         ]);
-        let sheet_scope_failure_report =
-            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &sheet_scope_failure)
-                .expect("run sheet scope failure report");
+        let sheet_scope_failure_report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &sheet_scope_failure,
+        )
+        .expect("run sheet scope failure report");
         assert_eq!(
             sheet_scope_failure_report.roundtrip_skipped_reason,
             Some(GwsRoundtripSkipReason::MissingScopes)
@@ -1351,8 +1455,13 @@ mod tests {
             ),
         ]);
 
-        let report = run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &runner)
-            .expect("run mismatch report");
+        let report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &runner,
+        )
+        .expect("run mismatch report");
 
         assert_eq!(
             report.revision_anchor.check_status,
@@ -1381,14 +1490,20 @@ mod tests {
             success_output(r#"{"updatedRange":"ContentCards!A3:F3"}"#),
         ]);
 
-        let report = run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &runner)
-            .expect("run successful report");
+        let report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &runner,
+        )
+        .expect("run successful report");
 
         assert_eq!(
             report.revision_anchor.check_status,
             GwsRevisionCheckStatus::Matched
         );
         assert_eq!(report.roundtrip_skipped_reason, None);
+        assert!(report.write_approval.approval_present);
         assert!(
             report
                 .apply_outcome
@@ -1404,6 +1519,38 @@ mod tests {
     }
 
     #[test]
+    fn gws_live_content_card_roundtrip_execute_mode_requires_explicit_write_approval() {
+        let runner = QueueRunner::new(vec![
+            success_output(
+                r#"{"documentId":"doc-review-packet-demo","title":"CodeFriend Review Packet Draft","revisionId":"workspace-revision-42"}"#,
+            ),
+            success_output(
+                r#"{"range":"ContentCards!A1:F5","values":[["doc_id","status"],["doc-review-packet-demo","ready_for_repo_promotion"]]}"#,
+            ),
+        ]);
+
+        let report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            false,
+            &runner,
+        )
+        .expect("run approval-missing report");
+
+        assert_eq!(
+            report.roundtrip_skipped_reason,
+            Some(GwsRoundtripSkipReason::MissingWriteApproval)
+        );
+        assert_eq!(
+            report.apply_outcome.skipped_reason,
+            Some(GwsRoundtripSkipReason::MissingWriteApproval)
+        );
+        assert!(report.write_approval.approval_checked);
+        assert!(!report.write_approval.approval_present);
+        assert_eq!(report.command_traces.len(), 3);
+    }
+
+    #[test]
     fn gws_live_content_card_roundtrip_execute_mode_stops_when_target_row_missing() {
         let runner = QueueRunner::new(vec![
             success_output(
@@ -1414,8 +1561,13 @@ mod tests {
             ),
         ]);
 
-        let report = run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &runner)
-            .expect("run missing-row report");
+        let report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &runner,
+        )
+        .expect("run missing-row report");
         assert_eq!(
             report.roundtrip_skipped_reason,
             Some(GwsRoundtripSkipReason::TargetContentCardMissing)
@@ -1437,9 +1589,13 @@ mod tests {
             ),
             Err(anyhow::anyhow!("oauth token expired for sheets update")),
         ]);
-        let update_runner_error_report =
-            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &update_runner_error)
-                .expect("run update runner error report");
+        let update_runner_error_report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &update_runner_error,
+        )
+        .expect("run update runner error report");
         assert_eq!(
             update_runner_error_report.roundtrip_skipped_reason,
             Some(GwsRoundtripSkipReason::MissingAuth)
@@ -1458,9 +1614,13 @@ mod tests {
                 stderr: "forbidden: missing sheet scope".to_string(),
             }),
         ]);
-        let update_scope_failure_report =
-            run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &update_scope_failure)
-                .expect("run update scope failure report");
+        let update_scope_failure_report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &update_scope_failure,
+        )
+        .expect("run update scope failure report");
         assert_eq!(
             update_scope_failure_report.roundtrip_skipped_reason,
             Some(GwsRoundtripSkipReason::MissingScopes)
@@ -1478,8 +1638,13 @@ mod tests {
             ),
         ]);
 
-        let report = run_roundtrip_with_runner(GwsLiveMode::Execute, Some(scope()), &runner)
-            .expect("run provenance mismatch report");
+        let report = run_roundtrip_with_runner_with_approval(
+            GwsLiveMode::Execute,
+            Some(scope()),
+            true,
+            &runner,
+        )
+        .expect("run provenance mismatch report");
 
         assert_eq!(
             report.revision_anchor.check_status,
@@ -1497,12 +1662,13 @@ mod tests {
 
     #[test]
     fn gws_live_content_card_roundtrip_report_writer_emits_portable_json() {
-        let _lock = TEST_ENV_LOCK.lock().expect("lock env");
+        let _lock = lock_gws_live_test_env();
         let _mode = EnvVarGuard::set(GWS_LIVE_ENABLE_ENV, "dry_run");
         let _drive = EnvVarGuard::set(GWS_DRIVE_FOLDER_ID_ENV, "demo-v0912-workspace-cms");
         let _doc = EnvVarGuard::set(GWS_DOC_ID_ENV, "doc-review-packet-demo");
         let _sheet = EnvVarGuard::set(GWS_SHEET_ID_ENV, "sheet-content-cards-demo");
         let _range = EnvVarGuard::set(GWS_SHEET_RANGE_ENV, "ContentCards!A1:F5");
+        let _approval = EnvVarGuard::set(GWS_WRITE_APPROVAL_ENV, "approved");
 
         let report_path = std::env::temp_dir().join("gws-live-content-card-roundtrip-report.json");
         let report =
@@ -1511,6 +1677,7 @@ mod tests {
         assert!(body.contains("gws_live_content_card_roundtrip.v1"));
         assert!(!body.contains(HOST_PATH_MARKER));
         assert_eq!(report.apply_outcome.preview.issue_number, 3093);
+        assert!(!report.write_approval.approval_checked);
         fs::remove_file(&report_path).expect("remove report");
     }
 

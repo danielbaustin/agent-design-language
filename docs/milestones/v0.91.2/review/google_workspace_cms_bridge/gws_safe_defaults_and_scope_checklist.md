@@ -10,6 +10,7 @@ Use these defaults unless the project has an explicit reason to widen them:
 - one bounded sheet range only
 - `dry_run` first
 - execute mode only after bounded proof surfaces are already in place
+- explicit write approval only for one intentionally bounded live mutation
 
 ## Scope Checklist
 
@@ -26,6 +27,7 @@ Use these defaults unless the project has an explicit reason to widen them:
 - Missing scopes are recorded as skipped, not hidden.
 - Unavailable tooling is recorded as skipped, not hidden.
 - Dry-run and execute postures are visibly different in the proof artifacts.
+- Execute mode alone does not authorize live writes.
 - Live mutation stops on revision mismatch.
 - Live mutation stops on doc/content-card binding mismatch.
 - Workspace output does not silently mutate tracked repo truth.
