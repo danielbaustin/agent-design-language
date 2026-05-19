@@ -22,6 +22,8 @@ Where v0.91.3 proves the crown jewel, v0.91.4 makes it operational:
 - robust review, merge-readiness, closeout, and ObsMem handoff
 - metrics for coordination latency and five-minute-sprint repeatability
 - migration of future ADL software-development issues onto the C-SDLC default
+- tracked durable workflow records for all C-SDLC truth
+- minimal signed trace proof for durable C-SDLC runs
 
 ## Milestone Role
 
@@ -44,6 +46,8 @@ v0.91.4 should not:
 - treat Workspace/GWS as required infrastructure
 - turn five-minute-sprint speed into permission to skip governance
 - hide remaining legacy card drift as acceptable default behavior
+- leave durable C-SDLC cards, review, closeout, trace, proof, or release
+  evidence local-only
 
 ## Source Map
 
@@ -58,12 +62,14 @@ This package is grounded in:
 - `docs/milestones/v0.91.3/features/COGNITIVE_SDLC_FIRST_SLICE.md`
 - `docs/milestones/v0.91.3/features/COGNITIVE_TRANSITION_MANIFEST.md`
 - `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md`
+- `docs/milestones/v0.91.3/C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md`
+- `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md`
 - `docs/tooling/card-lifecycle.md`
 - `docs/tooling/structured-prompt-contracts.md`
 
-The broader `.adl/docs/TBD/cognitive-sdlc/` and `.adl/docs/TBD/workflow_tooling/`
-planning notes informed this package through `#3100`, but this source map lists
-branch-verifiable review inputs only.
+The broader `.adl/docs/TBD/cognitive-sdlc/` planning notes are drafting history.
+The tracked v0.91.3 source package and this v0.91.4 migration plan are the
+branch-verifiable C-SDLC planning surfaces for review.
 
 ## Document Map
 
@@ -76,6 +82,8 @@ branch-verifiable review inputs only.
   [FEATURE_PROOF_COVERAGE_v0.91.4.md](FEATURE_PROOF_COVERAGE_v0.91.4.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.4.md](DEMO_MATRIX_v0.91.4.md)
 - Quality gate: [QUALITY_GATE_v0.91.4.md](QUALITY_GATE_v0.91.4.md)
+- Tracked workflow-state migration plan:
+  [C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md](C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md)
 - Feature index: [features/README.md](features/README.md)
 
 ## Success Criteria
@@ -87,6 +95,11 @@ v0.91.4 is ready to close when:
 - sprint closeout cannot truthfully complete while child issue closeout is stale
 - SRP review results and SOR outcome truth feed the memory handoff boundary
 - evidence bundles and merge gates are repeatable
+- durable C-SDLC cards, sprint state, closeout, review, proof, trace, and
+  release evidence are tracked in Git
+- durable C-SDLC proof includes minimal signed trace bundles and verification
+  results
+- ObsMem ingestion consumes tracked evidence, not untracked local lore
 - five-minute-sprint metrics are recorded across more than one transition
 - legacy card/process drift is either migrated, blocked, or explicitly routed
   as follow-on work

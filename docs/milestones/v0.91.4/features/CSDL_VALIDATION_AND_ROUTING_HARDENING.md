@@ -19,4 +19,6 @@ execution.
 - Workflow-conductor routes to the correct lifecycle or editor skill.
 - Sprint-conductor cannot advance past stale child closeout.
 - Combined-lane validation catches shared-state hazards.
-
+- Validators or readiness checks reject durable C-SDLC evidence that remains
+  only in ignored local paths.
+- Signed trace verification is part of the durable-proof lane.

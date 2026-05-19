@@ -19,8 +19,12 @@ Make C-SDLC the normal software-development path for future ADL issues.
 - Card editors repair drift without hand edits.
 - PR publication requires review truth.
 - Closeout records merge/main truth and memory handoff.
+- Durable cards, sprint state, review, proof, trace, and release evidence are
+  tracked in Git.
+- Durable proof includes minimal signed trace bundles before default operation
+  is claimed.
+- ObsMem consumes tracked evidence, not untracked local artifacts.
 
 ## Non-Claims
 
 This feature does not remove human review or protected branch controls.
-

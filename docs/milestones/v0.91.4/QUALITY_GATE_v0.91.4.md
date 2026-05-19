@@ -22,6 +22,10 @@ The milestone must run:
 - docs/adoption review for operator, skill, and onboarding surfaces
 - release evidence packet covering feature proof, tail-work proof, residual
   risks, and follow-on routing
+- tracked workflow-record path checks for durable C-SDLC cards, sprint state,
+  closeout, reviews, proof packets, traces, and release evidence
+- signed trace bundle verification for durable C-SDLC proof
+- ObsMem ingestion check over tracked evidence
 
 ## Blockers
 
@@ -39,3 +43,6 @@ The milestone is blocked if:
   v0.91.3 and v0.91.4
 - docs and release evidence can claim milestone completion without `WP-11`,
   `WP-12`, `WP-15`, and `WP-16` proof
+- durable C-SDLC records remain only in ignored `.adl` or `artifacts/` paths
+- signed trace bundles are missing or unverifiable for durable C-SDLC proof
+- ObsMem ingestion depends on untracked local evidence

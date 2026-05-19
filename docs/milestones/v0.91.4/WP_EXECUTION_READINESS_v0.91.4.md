@@ -19,6 +19,8 @@ Before any WP starts:
 - editor skills own card edits
 - pre-PR review is scheduled before publication
 - closeout responsibility is explicit
+- durable workflow records are expected to be tracked, not left only in local
+  `.adl` state
 
 ## Completion-Specific Readiness
 
@@ -29,4 +31,6 @@ Every implementation WP must identify:
 - which regression fixture proves old drift does not recur
 - whether combined-lane validation is required
 - how SRP/SOR truth flows into memory handoff
-
+- how durable proof is tracked in Git
+- whether the WP must emit or verify a signed trace bundle
+- how tracked evidence feeds ObsMem

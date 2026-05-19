@@ -12,6 +12,9 @@ notes:
     lifecycle.
   - v0.91.4 should make C-SDLC the default path for future ADL
     software-development issues.
+  - By milestone closeout, all durable C-SDLC truth must be tracked in Git.
+  - Durable C-SDLC proof must include minimal signed trace bundles and ObsMem
+    ingestion from tracked evidence.
 card_update_rule:
   - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
   - Card edits must use editor skills.
@@ -44,7 +47,7 @@ work_packages:
     depends_on: [WP-03]
   - wp: WP-06
     issue: pending
-    title: Evidence convergence and review synthesis
+    title: Evidence convergence, review synthesis, and signed trace proof
     queue: tools
     depends_on: [WP-05]
   - wp: WP-07
