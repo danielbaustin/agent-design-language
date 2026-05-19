@@ -195,7 +195,7 @@ ADL already provides a serious platform baseline:
 | Runtime/test-cycle recovery and coverage ergonomics | Planned | `docs/milestones/v0.91.2/features/RUNTIME_TEST_CYCLE_RECOVERY.md` | `v0.91.2` |
 | CodeFriend repo-review product layer | Planned | `docs/milestones/v0.91.2/features/CODEFRIEND_PRODUCTIZATION.md` plus existing review-product proof baseline | `v0.91.2` productization lane |
 | Review heuristics and reviewer demo lane | Planned | `docs/milestones/v0.91.2/features/REVIEW_HEURISTICS_AND_DEMOS.md` | `v0.91.2` |
-| Google Workspace CMS bridge and Rust-native adapter boundary | Planned | `docs/milestones/v0.91.2/features/GOOGLE_WORKSPACE_CMS_BRIDGE.md` | `v0.91.2` |
+| Google Workspace CMS bridge and Rust-native adapter boundary | Implemented baseline plus active hardening | `docs/milestones/v0.91.2/features/GOOGLE_WORKSPACE_CMS_BRIDGE.md` | Completed bounded baseline in `v0.91.2`; live hardening and future project operational use continue as follow-on work |
 | Automated repository modernization and external refactoring integration | Planned | `docs/milestones/v0.91.2/features/CODE_MODERNIZATION_DEMO.md` plus existing Moderne/OpenRewrite and code-modernization planning docs | `v0.91.2` bounded Moderne/OpenRewrite LST demo lane |
 | Generic speculative decoding runtime acceleration | Planned | `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`, `.adl/docs/TBD/ADL_AND_SPECULATIVE_CODING_REPLAY.md`, and `docs/milestones/v0.91.2/features/SPECULATIVE_DECODING_PROTOTYPE.md` | `v0.91.2` |
 | Repo visibility follow-on | Planned | `docs/milestones/v0.91.2/features/REPO_VISIBILITY_FOLLOW_ON.md` plus the `v0.90` repo-visibility baseline | `v0.91.2` |

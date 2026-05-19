@@ -21,7 +21,9 @@ reviewable systems:
 - Runtime and test-cycle recovery so coverage and proof gates stop burning
   entire days.
 - CodeFriend/review packet productization.
-- Google Workspace CMS bridge planning and bounded demo work.
+- Google Workspace CMS bridge implementation, bounded live-safety surfaces, and
+  a reusable migration path from local `.adl` workflow truth into GWS-backed
+  draft/review collaboration.
 - Moderne / OpenRewrite LST modernization workflow support.
 - Bounded speculative-decoding evaluation inside ADL's deterministic runtime
   posture.
@@ -107,9 +109,10 @@ This package is grounded in:
 
 v0.91.2 is ready to close when the project has credible multi-model UTS+ACC
 evidence, a healthier test/runtime gate strategy, a review/productization path,
-a bounded Workspace CMS bridge demo, Moderne/OpenRewrite LST modernization and publication packages,
-and workflow guardrails that reduce the operational failures that slowed
-v0.90.5 and v0.91.
+a bounded Workspace CMS bridge with reusable operational and migration
+guidance, Moderne/OpenRewrite LST modernization and publication packages, and
+workflow guardrails that reduce the operational failures that slowed v0.90.5
+and v0.91.
 
 Execution note: WP-01 opened and carded the issue wave. Feature implementation
 has not started until the relevant WP is routed through `workflow-conductor`,
