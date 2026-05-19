@@ -30,7 +30,7 @@ platform rewrite.
 
 | WP | Title | Queue | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
-| WP-01 | Design pass and issue-wave readiness | docs | v0.91.3 issue wave, sprint umbrellas, validated cards | v0.91.2 closeout |
+| WP-01 | Design pass and issue-wave readiness | docs | v0.91.3 issue wave, sprint umbrellas, tracked C-SDLC source package, validated cards | v0.91.2 closeout |
 | WP-02 | Cognitive Transition schema | docs/tools | manifest schema, states, fixtures, validation plan | WP-01 |
 | WP-03 | Card lifecycle integration | tools | lifecycle validator/doctor expectations for the slice | WP-02; v0.91.2 card migration |
 | WP-04 | Transition DAG and shard plan | tools/docs | DAG fixture, shard boundaries, barrier model | WP-02, WP-03 |

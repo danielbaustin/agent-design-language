@@ -5,7 +5,7 @@
 - Feature Name: Five-Minute Sprint First Proof
 - Milestone Target: `v0.91.3`
 - Status: planned
-- Planned WP Home: WP-08
+- Planned WP Home: WP-09
 
 ## Purpose
 
@@ -38,10 +38,10 @@ The demo should record:
 - parallelizable shard count
 - synchronization barriers
 - evidence convergence result
+- tracked source/proof references
 - skipped or deferred work, if any
 
 ## Non-Claims
 
 The demo does not claim unrestricted autonomous engineering, replacement of
 human review, or bypass of GitHub issue/PR/CI controls.
-

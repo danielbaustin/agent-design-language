@@ -16,6 +16,8 @@ Required validation categories:
 - DAG/shard fixture tests
 - evidence bundle serialization or snapshot validation
 - merge-readiness gate tests
+- tracked C-SDLC source-package path checks
+- trace/proof reference path checks for future signed trace promotion
 - docs path/reference checks for the milestone package
 - combined-lane test for shared state, env vars, fixtures, and closeout truth
 
@@ -36,5 +38,8 @@ The milestone is blocked if:
 - SRP semantics drift back to Structured Review Policy
 - SORs overclaim merge or closeout truth
 - the demo bypasses issue/PR/CI/human review discipline
+- the milestone depends on local-only `.adl/docs/TBD` notes as canonical
+  planning evidence
+- trace/proof references are absolute, local-only, or incompatible with
+  v0.91.4 signed trace bundles
 - v0.91.3 claims full C-SDLC adoption instead of first-slice proof
-

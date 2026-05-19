@@ -29,6 +29,10 @@ The first-slice work must additionally prove:
 - merge-readiness gate preserves GitHub issue, PR, CI, branch, and human review
   truth
 - SRP review results and SOR outcome truth have an ObsMem handoff boundary
+- the tracked C-SDLC source package is used instead of local-only TBD notes as
+  milestone planning evidence
+- trace/proof references are repo-relative and shaped so v0.91.4 can add
+  signed trace bundles without redesigning the first-slice manifest
 
 ## Lessons From v0.91.2 GWS Mini-Sprint
 
@@ -43,4 +47,3 @@ workflow risks. v0.91.3 must therefore treat these as readiness requirements:
   `pr_open` language
 - dry-run proof is acceptable only when the docs state exactly what it proves
   and what it does not prove
-

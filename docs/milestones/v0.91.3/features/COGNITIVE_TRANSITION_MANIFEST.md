@@ -24,6 +24,7 @@ The initial manifest should record:
 - SIP, STP, SPP, SRP, and SOR paths
 - DAG and shard plan paths
 - evidence bundle path
+- trace/proof manifest path
 - review synthesis path
 - merge-readiness gate result
 - ObsMem handoff boundary
@@ -34,6 +35,6 @@ The initial manifest should record:
 - Repo-relative paths are used.
 - Missing cards, stale branch state, and missing review results are rejected or
   classified clearly.
+- Trace/proof references are repo-relative and not local-only.
 - The manifest does not replace GitHub PRs; it describes and governs the
   transition around them.
-

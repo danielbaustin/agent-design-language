@@ -12,6 +12,8 @@ notes:
     C-SDLC adoption.
   - v0.91.4 owns repeatable operation, hardening, enforcement, and default
     adoption.
+  - The C-SDLC source package is tracked in this milestone package; local TBD
+    notes are drafting history, not canonical review inputs.
 card_update_rule:
   - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
   - SRP means Structured Review Prompt and must include review results before
@@ -28,7 +30,7 @@ work_packages:
     issue: pending
     title: Design pass and issue-wave readiness
     queue: docs
-    outcome: v0.91.3 issue wave, sprint umbrellas, and validated cards
+    outcome: v0.91.3 issue wave, sprint umbrellas, tracked C-SDLC source package, and validated cards
     depends_on: v0.91.2 closeout
   - wp: WP-02
     issue: pending

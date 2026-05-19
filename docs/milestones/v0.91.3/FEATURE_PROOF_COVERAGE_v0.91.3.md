@@ -22,6 +22,9 @@ The milestone proof package should include:
 - SOR outcome record
 - ObsMem handoff record or explicit deferred boundary
 - timing and coordination metrics snapshot
+- tracked C-SDLC source package
+- repo-relative trace/proof references suitable for v0.91.4 signed trace
+  bundles
 
 ## Non-Claims
 
@@ -31,4 +34,3 @@ v0.91.3 does not prove:
 - unrestricted autonomous engineering
 - replacement of GitHub PRs or human review
 - broad parallel execution without shard ownership and synchronization rules
-

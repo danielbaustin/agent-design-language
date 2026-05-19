@@ -57,19 +57,14 @@ Out of scope:
 
 This package is grounded in:
 
-- `.adl/docs/TBD/cognitive-sdlc/ADL_COGNITIVE_SDLC.md`
-- `.adl/docs/TBD/cognitive-sdlc/CARD_LIFECYCLE_PROCESS_MIGRATION_PLAN_2026-05-14.md`
-- `.adl/docs/TBD/cognitive-sdlc/COGNITIVE_SDLC_V1_PLAN.md`
-- `.adl/docs/TBD/cognitive-sdlc/COGNITIVE_TRANSITION_SCHEMA.md`
-- `.adl/docs/TBD/cognitive-sdlc/FIVE_MINUTE_SPRINT_DEMO.md`
-- `.adl/docs/TBD/cognitive-sdlc/COGNITIVE_SDLC_METRICS.md`
-- `.adl/docs/TBD/cognitive-sdlc/ISSUE_CARD_SEQUENCE_NOTE_2026-05-14.md`
-- `.adl/docs/TBD/cognitive-sdlc/SPRINT_AND_ISSUE_SPP_NOTE_2026-05-14.md`
-- `.adl/docs/TBD/cognitive-sdlc/mini-sprint-issue-bodies/`
+- `C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md`
 - `docs/tooling/card-lifecycle.md`
 - `docs/tooling/structured-prompt-contracts.md`
 - `docs/tooling/srp-sor-obsmem-handoff-v0.91.2.md`
 - `docs/milestones/v0.91.2/features/GOOGLE_WORKSPACE_CMS_BRIDGE.md`
+
+The local `.adl/docs/TBD/cognitive-sdlc/` notes are drafting history. The
+tracked source package is the branch-verifiable source map for the milestone.
 
 ## Document Map
 
@@ -84,6 +79,8 @@ This package is grounded in:
 - Quality gate: [QUALITY_GATE_v0.91.3.md](QUALITY_GATE_v0.91.3.md)
 - Next milestone handoff:
   [NEXT_MILESTONE_HANDOFF_v0.91.3.md](NEXT_MILESTONE_HANDOFF_v0.91.3.md)
+- Tracked C-SDLC source package:
+  [C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md](C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md)
 - Feature index: [features/README.md](features/README.md)
 
 ## Success Criteria
@@ -98,6 +95,8 @@ Cognitive State Transition that:
 - records SRP review results and SOR outcome truth
 - preserves GitHub issue, PR, CI, branch, human review, and closeout discipline
 - records an ObsMem handoff boundary
+- keeps the C-SDLC planning sources public, tracked, and auditable
+- records trace/proof references that can become signed trace bundles in
+  v0.91.4
 - demonstrates measurable coordination and review behavior without claiming
   full C-SDLC adoption
-

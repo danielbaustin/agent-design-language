@@ -30,6 +30,7 @@ The transition must show:
 - evidence bundle
 - merge-readiness gate
 - memory handoff boundary
+- tracked source package and trace/proof references
 
 ## Acceptance Criteria
 
@@ -38,9 +39,12 @@ The transition must show:
 - Review results and residual risks are recorded before PR publication.
 - SOR outcome truth is normalized after merge or intentional closure.
 - GitHub issue/PR/CI/human review remains authoritative for repository change.
+- C-SDLC planning evidence is tracked in the milestone package, not only in
+  local `.adl/docs/TBD` notes.
+- Trace/proof references are repo-relative and ready for v0.91.4 signed trace
+  bundles.
 
 ## Non-Claims
 
 This feature does not claim all future ADL development uses C-SDLC by default.
 That belongs to v0.91.4.
-
