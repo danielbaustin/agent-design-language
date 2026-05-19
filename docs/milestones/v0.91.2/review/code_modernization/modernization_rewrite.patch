@@ -1,0 +1,15 @@
+diff --git a/docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/src/main/java/demo/UseDiamondOperatorExample.java b/docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/src/main/java/demo/UseDiamondOperatorExample.java
+index 527d367..a190f63 100644
+--- a/docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/src/main/java/demo/UseDiamondOperatorExample.java
++++ b/docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/src/main/java/demo/UseDiamondOperatorExample.java
+@@ -7,8 +7,8 @@ org.openrewrite.staticanalysis.UseDiamondOperator
+ 
+ class UseDiamondOperatorExample<X, Y> {
+     void buildCollections() {
+-        List<String> messages = new ArrayList<String>();
+-        Map<X, Y> values = new HashMap<X, Y>();
++        List<String> messages = new ArrayList<>();
++        Map<X, Y> values = new HashMap<>();
+ 
+         messages.add("hello");
+         values.size();
