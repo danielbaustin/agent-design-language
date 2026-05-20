@@ -1,0 +1,145 @@
+{
+  "schema_version": "uts_benchmark_provider_status.v1",
+  "source_results": "/private/tmp/uts-hosted-core-v2.json",
+  "models": [
+    {
+      "candidate_id": "gpt-5.4",
+      "provider": "openai-hosted",
+      "lane_status": {
+        "regular": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_only": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_acc": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        }
+      },
+      "provider_events": []
+    },
+    {
+      "candidate_id": "gpt-5.5",
+      "provider": "openai-hosted",
+      "lane_status": {
+        "regular": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_only": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_acc": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        }
+      },
+      "provider_events": []
+    },
+    {
+      "candidate_id": "gpt-5.3-codex",
+      "provider": "openai-hosted",
+      "lane_status": {
+        "regular": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_only": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_acc": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        }
+      },
+      "provider_events": []
+    },
+    {
+      "candidate_id": "gpt-5.3-codex-spark",
+      "provider": "openai-hosted",
+      "lane_status": {
+        "regular": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_only": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_acc": {
+          "status": "evaluated",
+          "provider_failure_kind": "provider_model_unavailable",
+          "note": "provider_model_unavailable: provider completion failed: provider ollama runtime error (retryable): kind=server_error status=502 Bad Gateway body={\n  \"error\": \"OpenAI request failed with status 400: The requested model 'gpt-5.3-codex-spark' does not exist.\"\n}"
+        }
+      },
+      "provider_events": [
+        {
+          "lane": "uts_acc",
+          "status": "evaluated",
+          "provider_failure_kind": "provider_model_unavailable",
+          "note": "provider_model_unavailable: provider completion failed: provider ollama runtime error (retryable): kind=server_error status=502 Bad Gateway body={\n  \"error\": \"OpenAI request failed with status 400: The requested model 'gpt-5.3-codex-spark' does not exist.\"\n}"
+        }
+      ]
+    },
+    {
+      "candidate_id": "gemini-2.5-pro",
+      "provider": "google-hosted",
+      "lane_status": {
+        "regular": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_only": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_acc": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        }
+      },
+      "provider_events": []
+    },
+    {
+      "candidate_id": "claude-opus-4-1-20250805",
+      "provider": "anthropic-hosted",
+      "lane_status": {
+        "regular": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_only": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        },
+        "uts_acc": {
+          "status": "evaluated",
+          "provider_failure_kind": null,
+          "note": null
+        }
+      },
+      "provider_events": []
+    }
+  ]
+}

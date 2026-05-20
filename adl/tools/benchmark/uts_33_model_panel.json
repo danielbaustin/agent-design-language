@@ -1,0 +1,187 @@
+{
+  "schema_version": "uts_33_model_panel.v1",
+  "models": [
+    {
+      "id": "Qwen3.5:35b-a3b",
+      "tier": "tier1",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "Qwen3.5:35b-a3b",
+      "disallowed_hosts": ["wuji", "wuji.local"],
+      "notes": "Frontier-ish open reasoning model"
+    },
+    {
+      "id": "llama3.3:70b",
+      "tier": "tier1",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "llama3.3:70b",
+      "disallowed_hosts": ["wuji", "wuji.local"],
+      "notes": "Critical Meta baseline"
+    },
+    {
+      "id": "deepseek-r1:32b",
+      "tier": "tier1",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "deepseek-r1:32b",
+      "disallowed_hosts": ["wuji", "wuji.local"],
+      "notes": "Reasoning-oriented governance test"
+    },
+    {
+      "id": "qwq:32b",
+      "tier": "tier1",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "qwq:32b",
+      "disallowed_hosts": ["wuji", "wuji.local"],
+      "notes": "Boundedness and governance stress test"
+    },
+    {
+      "id": "qwen2.5-coder:32b",
+      "tier": "tier1",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "qwen2.5-coder:32b",
+      "disallowed_hosts": ["wuji", "wuji.local"],
+      "notes": "Coding/tool-specialized governance surface"
+    },
+    {
+      "id": "qwen3-coder:30b",
+      "tier": "tier1",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "qwen3-coder:30b",
+      "disallowed_hosts": ["wuji", "wuji.local"],
+      "notes": "Next-generation coder comparison"
+    },
+    {
+      "id": "gemma4:31b",
+      "tier": "tier1",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "gemma4:31b",
+      "disallowed_hosts": ["wuji", "wuji.local"],
+      "notes": "Large Gemma comparison"
+    },
+    {
+      "id": "gemma4:26b",
+      "tier": "tier1",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "gemma4:26b",
+      "disallowed_hosts": ["wuji", "wuji.local"],
+      "notes": "In-family Gemma scaling comparison"
+    },
+    {
+      "id": "mistral-small3.2:24b",
+      "tier": "tier2",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "mistral-small3.2:24b",
+      "notes": "Deployable enterprise-profile candidate"
+    },
+    {
+      "id": "qwen3.6:27b",
+      "tier": "tier2",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "qwen3.6:27b",
+      "notes": "Current-generation Qwen baseline"
+    },
+    {
+      "id": "gpt-oss:latest",
+      "tier": "tier2",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "gpt-oss:latest",
+      "notes": "Portability/governance comparison"
+    },
+    {
+      "id": "phi4-reasoning:latest",
+      "tier": "tier2",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "phi4-reasoning:latest",
+      "notes": "Reasoning-vs-governance comparison"
+    },
+    {
+      "id": "gemma4:e4b",
+      "tier": "tier3",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "gemma4:e4b",
+      "notes": "Small governed cognition comparison"
+    },
+    {
+      "id": "gemma4:e2b",
+      "tier": "tier3",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "gemma4:e2b",
+      "notes": "Very small governed cognition datapoint"
+    },
+    {
+      "id": "phi4-mini:latest",
+      "tier": "tier3",
+      "provider_kind": "local",
+      "provider": "ollama-local",
+      "model_id": "phi4-mini:latest",
+      "notes": "Small-model bounded execution comparison"
+    },
+    {
+      "id": "gpt-5.4",
+      "tier": "hosted",
+      "provider_kind": "hosted",
+      "provider": "openai-hosted",
+      "route": "openai",
+      "model_id": "gpt-5.4",
+      "notes": "Frontier general model"
+    },
+    {
+      "id": "gpt-5.5",
+      "tier": "hosted",
+      "provider_kind": "hosted",
+      "provider": "openai-hosted",
+      "route": "openai",
+      "model_id": "gpt-5.5",
+      "notes": "Newer frontier general model"
+    },
+    {
+      "id": "gpt-5.3-codex",
+      "tier": "hosted",
+      "provider_kind": "hosted",
+      "provider": "openai-hosted",
+      "route": "openai",
+      "model_id": "gpt-5.3-codex",
+      "notes": "Codex-specialized comparison"
+    },
+    {
+      "id": "gpt-5.3-codex-spark",
+      "tier": "hosted",
+      "provider_kind": "hosted",
+      "provider": "openai-hosted",
+      "route": "openai",
+      "model_id": "gpt-5.3-codex-spark",
+      "notes": "Faster cheaper Codex comparison"
+    },
+    {
+      "id": "gemini-2.5-pro",
+      "tier": "hosted",
+      "provider_kind": "hosted",
+      "provider": "google-hosted",
+      "route": "gemini",
+      "model_id": "gemini-2.5-pro",
+      "notes": "Frontier Gemini comparison"
+    },
+    {
+      "id": "claude-opus-4-1-20250805",
+      "tier": "hosted",
+      "provider_kind": "hosted",
+      "provider": "anthropic-hosted",
+      "route": "anthropic",
+      "model_id": "claude-opus-4-1-20250805",
+      "notes": "Frontier Claude comparison"
+    }
+  ]
+}

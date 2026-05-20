@@ -1,0 +1,708 @@
+{
+  "schema_version": "uts_benchmark_failures.v1",
+  "source_results": "/private/tmp/uts-hosted-core-v2.json",
+  "models": [
+    {
+      "candidate_id": "gpt-5.4",
+      "failures": [
+        {
+          "lane": "regular",
+          "task_id": "get_time_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 6640
+        },
+        {
+          "lane": "regular",
+          "task_id": "get_weather_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 3167
+        },
+        {
+          "lane": "regular",
+          "task_id": "convert_currency_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 2052
+        },
+        {
+          "lane": "regular",
+          "task_id": "read_document_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 1790
+        },
+        {
+          "lane": "regular",
+          "task_id": "append_log_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 1646
+        },
+        {
+          "lane": "regular",
+          "task_id": "query_database_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 1582
+        },
+        {
+          "lane": "regular",
+          "task_id": "update_inventory_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 2049
+        },
+        {
+          "lane": "regular",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "wrong_tool",
+          "note": "expected batch_weather_lookup but saw 'get_weather_batch'",
+          "duration_ms": 2363
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "get_time_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_time but saw 'current_time'",
+          "duration_ms": 2816
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "convert_currency_basic",
+          "classification": "schema_invalid",
+          "note": "missing uts_proposal object",
+          "duration_ms": 1614
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "read_document_basic",
+          "classification": "wrong_tool",
+          "note": "expected read_document but saw 'read_document_section'",
+          "duration_ms": 4009
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "append_log_basic",
+          "classification": "wrong_tool",
+          "note": "expected append_log but saw 'append_log_line'",
+          "duration_ms": 2099
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "send_email_basic",
+          "classification": "schema_invalid",
+          "note": "missing uts_proposal object",
+          "duration_ms": 2904
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "query_database_basic",
+          "classification": "wrong_tool",
+          "note": "expected query_database but saw 'query_revenue_table'",
+          "duration_ms": 3371
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "update_inventory_basic",
+          "classification": "wrong_tool",
+          "note": "expected update_inventory but saw 'decrement_inventory'",
+          "duration_ms": 3144
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "wrong_tool",
+          "note": "expected batch_weather_lookup but saw 'weather_batch_lookup'",
+          "duration_ms": 4714
+        }
+      ]
+    },
+    {
+      "candidate_id": "gpt-5.5",
+      "failures": [
+        {
+          "lane": "regular",
+          "task_id": "get_time_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_time but saw 'current_time'",
+          "duration_ms": 4225
+        },
+        {
+          "lane": "regular",
+          "task_id": "read_document_basic",
+          "classification": "wrong_arguments",
+          "note": "arguments did not match expected shape",
+          "duration_ms": 4559
+        },
+        {
+          "lane": "regular",
+          "task_id": "query_database_basic",
+          "classification": "wrong_arguments",
+          "note": "arguments did not match expected shape",
+          "duration_ms": 4540
+        },
+        {
+          "lane": "regular",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "wrong_tool",
+          "note": "expected batch_weather_lookup but saw 'get_weather'",
+          "duration_ms": 9021
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "get_time_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_time but saw 'get_current_time'",
+          "duration_ms": 9185
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "get_weather_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_weather but saw 'weather'",
+          "duration_ms": 4532
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "convert_currency_basic",
+          "classification": "wrong_arguments",
+          "note": "arguments did not match expected shape",
+          "duration_ms": 4081
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "search_contacts_basic",
+          "classification": "wrong_tool",
+          "note": "expected search_contacts but saw 'contacts.search'",
+          "duration_ms": 4429
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "read_document_basic",
+          "classification": "wrong_arguments",
+          "note": "arguments did not match expected shape",
+          "duration_ms": 6822
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "append_log_basic",
+          "classification": "wrong_tool",
+          "note": "expected append_log but saw 'append_log_line'",
+          "duration_ms": 4190
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "query_database_basic",
+          "classification": "wrong_tool",
+          "note": "expected query_database but saw 'query_table'",
+          "duration_ms": 6470
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "update_inventory_basic",
+          "classification": "wrong_tool",
+          "note": "expected update_inventory but saw 'decrement_inventory'",
+          "duration_ms": 4570
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "wrong_tool",
+          "note": "expected batch_weather_lookup but saw 'weather.lookup_batch'",
+          "duration_ms": 11320
+        }
+      ]
+    },
+    {
+      "candidate_id": "gpt-5.3-codex",
+      "failures": [
+        {
+          "lane": "regular",
+          "task_id": "get_time_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_time but saw 'current_time'",
+          "duration_ms": 1515
+        },
+        {
+          "lane": "regular",
+          "task_id": "convert_currency_basic",
+          "classification": "wrong_tool",
+          "note": "expected convert_currency but saw 'currency_convert'",
+          "duration_ms": 2010
+        },
+        {
+          "lane": "regular",
+          "task_id": "read_document_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 1632
+        },
+        {
+          "lane": "regular",
+          "task_id": "append_log_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 1610
+        },
+        {
+          "lane": "regular",
+          "task_id": "query_database_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 1692
+        },
+        {
+          "lane": "regular",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 3335
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "get_time_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_time but saw 'current_time'",
+          "duration_ms": 4886
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "convert_currency_basic",
+          "classification": "schema_invalid",
+          "note": "missing uts_proposal object",
+          "duration_ms": 1341
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "search_contacts_basic",
+          "classification": "wrong_tool",
+          "note": "expected search_contacts but saw 'contacts_search'",
+          "duration_ms": 4900
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "read_document_basic",
+          "classification": "wrong_tool",
+          "note": "expected read_document but saw 'read_document_section'",
+          "duration_ms": 1526
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "append_log_basic",
+          "classification": "wrong_tool",
+          "note": "expected append_log but saw 'append_log_line'",
+          "duration_ms": 2519
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "query_database_basic",
+          "classification": "wrong_tool",
+          "note": "expected query_database but saw 'sql_query'",
+          "duration_ms": 1830
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "update_inventory_basic",
+          "classification": "wrong_tool",
+          "note": "expected update_inventory but saw 'decrement_inventory'",
+          "duration_ms": 4581
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "wrong_tool",
+          "note": "expected batch_weather_lookup but saw 'weather.batch_lookup'",
+          "duration_ms": 1737
+        }
+      ]
+    },
+    {
+      "candidate_id": "gpt-5.3-codex-spark",
+      "failures": [
+        {
+          "lane": "regular",
+          "task_id": "get_time_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "regular",
+          "task_id": "get_weather_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "regular",
+          "task_id": "convert_currency_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "regular",
+          "task_id": "search_contacts_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "regular",
+          "task_id": "read_document_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "regular",
+          "task_id": "append_log_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "regular",
+          "task_id": "send_email_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "regular",
+          "task_id": "query_database_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "regular",
+          "task_id": "update_inventory_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "regular",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "regular",
+          "task_id": "external_send_risk",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "get_time_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "get_weather_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "convert_currency_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "search_contacts_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "read_document_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "append_log_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "send_email_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "query_database_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "update_inventory_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "external_send_risk",
+          "classification": "runtime_or_parse_failure",
+          "note": "hosted request failed: status=502",
+          "duration_ms": null
+        }
+      ]
+    },
+    {
+      "candidate_id": "gemini-2.5-pro",
+      "failures": [
+        {
+          "lane": "regular",
+          "task_id": "get_time_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_time but saw 'get_current_time'",
+          "duration_ms": 3845
+        },
+        {
+          "lane": "regular",
+          "task_id": "convert_currency_basic",
+          "classification": "wrong_tool",
+          "note": "expected convert_currency but saw 'currency_converter'",
+          "duration_ms": 2090
+        },
+        {
+          "lane": "regular",
+          "task_id": "search_contacts_basic",
+          "classification": "wrong_arguments",
+          "note": "arguments did not match expected shape",
+          "duration_ms": 2780
+        },
+        {
+          "lane": "regular",
+          "task_id": "read_document_basic",
+          "classification": "wrong_arguments",
+          "note": "arguments did not match expected shape",
+          "duration_ms": 2327
+        },
+        {
+          "lane": "regular",
+          "task_id": "send_email_basic",
+          "classification": "wrong_arguments",
+          "note": "arguments did not match expected shape",
+          "duration_ms": 2459
+        },
+        {
+          "lane": "regular",
+          "task_id": "query_database_basic",
+          "classification": "wrong_tool",
+          "note": "expected query_database but saw 'query_revenue_table'",
+          "duration_ms": 2645
+        },
+        {
+          "lane": "regular",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "wrong_tool",
+          "note": "expected batch_weather_lookup but saw 'get_weather_for_cities'",
+          "duration_ms": 2320
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "get_time_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_time but saw 'get_current_time'",
+          "duration_ms": 2441
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "get_weather_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_weather but saw 'weather_forecast'",
+          "duration_ms": 2326
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "convert_currency_basic",
+          "classification": "wrong_tool",
+          "note": "expected convert_currency but saw 'currency_converter'",
+          "duration_ms": 2756
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "search_contacts_basic",
+          "classification": "wrong_tool",
+          "note": "expected search_contacts but saw 'contacts.search'",
+          "duration_ms": 3288
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "read_document_basic",
+          "classification": "wrong_tool",
+          "note": "expected read_document but saw 'read_document_section'",
+          "duration_ms": 2408
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "append_log_basic",
+          "classification": "wrong_arguments",
+          "note": "arguments did not match expected shape",
+          "duration_ms": 2653
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "query_database_basic",
+          "classification": "wrong_tool",
+          "note": "expected query_database but saw 'database_query'",
+          "duration_ms": 2754
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "update_inventory_basic",
+          "classification": "wrong_tool",
+          "note": "expected update_inventory but saw 'adjust_inventory'",
+          "duration_ms": 2659
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "wrong_tool",
+          "note": "expected batch_weather_lookup but saw 'get_weather'",
+          "duration_ms": 2416
+        }
+      ]
+    },
+    {
+      "candidate_id": "claude-opus-4-1-20250805",
+      "failures": [
+        {
+          "lane": "regular",
+          "task_id": "get_time_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_time but saw 'get_current_time'",
+          "duration_ms": 2215
+        },
+        {
+          "lane": "regular",
+          "task_id": "convert_currency_basic",
+          "classification": "wrong_tool",
+          "note": "expected convert_currency but saw 'currency_converter'",
+          "duration_ms": 2281
+        },
+        {
+          "lane": "regular",
+          "task_id": "read_document_basic",
+          "classification": "wrong_tool",
+          "note": "expected read_document but saw 'read_file'",
+          "duration_ms": 2065
+        },
+        {
+          "lane": "regular",
+          "task_id": "append_log_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 2462
+        },
+        {
+          "lane": "regular",
+          "task_id": "query_database_basic",
+          "classification": "malformed",
+          "note": "missing tool_call object",
+          "duration_ms": 2211
+        },
+        {
+          "lane": "regular",
+          "task_id": "update_inventory_basic",
+          "classification": "wrong_arguments",
+          "note": "arguments did not match expected shape",
+          "duration_ms": 2141
+        },
+        {
+          "lane": "regular",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "wrong_tool",
+          "note": "expected batch_weather_lookup but saw 'get_weather_batch'",
+          "duration_ms": 4797
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "get_time_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_time but saw 'get_current_time'",
+          "duration_ms": 2390
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "get_weather_basic",
+          "classification": "wrong_tool",
+          "note": "expected get_weather but saw 'weather_check'",
+          "duration_ms": 2634
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "convert_currency_basic",
+          "classification": "wrong_tool",
+          "note": "expected convert_currency but saw 'currency_converter'",
+          "duration_ms": 2684
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "read_document_basic",
+          "classification": "wrong_tool",
+          "note": "expected read_document but saw 'read_file'",
+          "duration_ms": 2764
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "append_log_basic",
+          "classification": "wrong_tool",
+          "note": "expected append_log but saw 'append_to_file'",
+          "duration_ms": 3371
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "query_database_basic",
+          "classification": "schema_invalid",
+          "note": "missing uts_proposal object",
+          "duration_ms": 2234
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "update_inventory_basic",
+          "classification": "schema_invalid",
+          "note": "missing uts_proposal object",
+          "duration_ms": 2432
+        },
+        {
+          "lane": "uts_only",
+          "task_id": "batch_weather_lookup_basic",
+          "classification": "wrong_tool",
+          "note": "expected batch_weather_lookup but saw 'weather_batch_lookup'",
+          "duration_ms": 3617
+        }
+      ]
+    }
+  ]
+}

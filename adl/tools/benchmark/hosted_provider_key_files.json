@@ -1,0 +1,8 @@
+{
+  "schema_version": "adl.hosted_provider_key_files.v1",
+  "keys": {
+    "OPENAI_API_KEY": "/Users/daniel/keys/openai2.key",
+    "GEMINI_API_KEY": "/Users/daniel/keys/gcp-ace-2023.key",
+    "ANTHROPIC_API_KEY": "/Users/daniel/keys/ADL_demo_ref_04.txt"
+  }
+}

@@ -105,6 +105,17 @@ def _extract_anthropic_text(payload: dict[str, Any]) -> str:
     return "\n".join(chunks).strip()
 
 
+def _family_for_model(model: str) -> str:
+    normalized = model.strip().lower()
+    if normalized.startswith("gpt-"):
+        return "openai"
+    if normalized.startswith("gemini-"):
+        return "gemini"
+    if normalized.startswith("claude-"):
+        return "anthropic"
+    raise ValueError(f"unsupported hosted model for live adapter: {model}")
+
+
 class LiveAdapter:
     def __init__(self, metadata_path: Path, openai_model: str, gemini_model: str, anthropic_model: str, timeout: int) -> None:
         self.metadata_path = metadata_path
@@ -128,17 +139,18 @@ class LiveAdapter:
         }
         self.metadata_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
-    def complete_openai(self, prompt: str) -> str:
+    def complete_openai(self, prompt: str, model_override: str | None = None) -> str:
         api_key = os.environ["OPENAI_API_KEY"]
+        model = model_override or self.openai_model
         started = time.time()
         status, headers, payload = _post_json(
             OPENAI_RESPONSES_URL,
             {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-            {"model": self.openai_model, "input": prompt, "max_output_tokens": 900},
+            {"model": model, "input": prompt, "max_output_tokens": 900},
             self.timeout,
         )
         text = _extract_openai_text(payload)
-        self._record("openai", self.openai_model, status, headers, prompt, text, started)
+        self._record("openai", model, status, headers, prompt, text, started)
         if status < 200 or status >= 300:
             message = payload.get("error", {}).get("message", "OpenAI request failed")
             raise RuntimeError(f"OpenAI request failed with status {status}: {message}")
@@ -146,10 +158,11 @@ class LiveAdapter:
             raise RuntimeError("OpenAI response did not contain text output")
         return text
 
-    def complete_gemini(self, prompt: str) -> str:
+    def complete_gemini(self, prompt: str, model_override: str | None = None) -> str:
         api_key = os.environ["GEMINI_API_KEY"]
+        model = model_override or self.gemini_model
         started = time.time()
-        endpoint = GEMINI_GENERATE_URL.format(model=urllib.parse.quote(self.gemini_model, safe=""))
+        endpoint = GEMINI_GENERATE_URL.format(model=urllib.parse.quote(model, safe=""))
         status, headers, payload = _post_json(
             endpoint,
             {"x-goog-api-key": api_key, "Content-Type": "application/json"},
@@ -163,7 +176,7 @@ class LiveAdapter:
             self.timeout,
         )
         text = _extract_gemini_text(payload)
-        self._record("gemini", self.gemini_model, status, headers, prompt, text, started)
+        self._record("gemini", model, status, headers, prompt, text, started)
         if status < 200 or status >= 300:
             message = payload.get("error", {}).get("message", "Gemini request failed")
             raise RuntimeError(f"Gemini request failed with status {status}: {message}")
@@ -171,8 +184,9 @@ class LiveAdapter:
             raise RuntimeError("Gemini response did not contain text output")
         return text
 
-    def complete_anthropic(self, prompt: str) -> str:
+    def complete_anthropic(self, prompt: str, model_override: str | None = None) -> str:
         api_key = os.environ["ANTHROPIC_API_KEY"]
+        model = model_override or self.anthropic_model
         started = time.time()
         status, headers, payload = _post_json(
             ANTHROPIC_MESSAGES_URL,
@@ -182,14 +196,14 @@ class LiveAdapter:
                 "Content-Type": "application/json",
             },
             {
-                "model": self.anthropic_model,
+                "model": model,
                 "max_tokens": 900,
                 "messages": [{"role": "user", "content": prompt}],
             },
             self.timeout,
         )
         text = _extract_anthropic_text(payload)
-        self._record("anthropic", self.anthropic_model, status, headers, prompt, text, started)
+        self._record("anthropic", model, status, headers, prompt, text, started)
         if status < 200 or status >= 300:
             message = payload.get("error", {}).get("message", "Anthropic request failed")
             raise RuntimeError(f"Anthropic request failed with status {status}: {message}")
@@ -237,15 +251,33 @@ def make_handler(adapter: LiveAdapter) -> type[http.server.BaseHTTPRequestHandle
             try:
                 payload = _read_json_request(self)
                 prompt = payload.get("prompt", "")
+                model_override = payload.get("model")
                 if not isinstance(prompt, str) or not prompt.strip():
                     _write_json(self, 400, {"error": "prompt must be a non-empty string"})
                     return
+                if model_override is not None and not isinstance(model_override, str):
+                    _write_json(self, 400, {"error": "model must be a string when supplied"})
+                    return
                 if self.path == "/openai":
-                    output = adapter.complete_openai(prompt)
+                    output = adapter.complete_openai(prompt, model_override)
                 elif self.path == "/gemini":
-                    output = adapter.complete_gemini(prompt)
+                    output = adapter.complete_gemini(prompt, model_override)
                 elif self.path == "/anthropic":
-                    output = adapter.complete_anthropic(prompt)
+                    output = adapter.complete_anthropic(prompt, model_override)
+                elif self.path == "/api/generate":
+                    model_name = payload.get("model")
+                    if not isinstance(model_name, str) or not model_name.strip():
+                        _write_json(self, 400, {"error": "model must be a non-empty string"})
+                        return
+                    family = _family_for_model(model_name)
+                    if family == "openai":
+                        output = adapter.complete_openai(prompt, model_name)
+                    elif family == "gemini":
+                        output = adapter.complete_gemini(prompt, model_name)
+                    else:
+                        output = adapter.complete_anthropic(prompt, model_name)
+                    _write_json(self, 200, {"response": output, "done": True})
+                    return
                 else:
                     _write_json(self, 404, {"error": "not found"})
                     return
@@ -269,10 +301,6 @@ def main() -> int:
     parser.add_argument("--anthropic-model", default=os.getenv("ADL_LIVE_ANTHROPIC_MODEL", DEFAULT_ANTHROPIC_MODEL))
     parser.add_argument("--timeout", type=int, default=int(os.getenv("ADL_LIVE_PROVIDER_TIMEOUT_SECS", "240")))
     args = parser.parse_args()
-
-    missing = [name for name in ("OPENAI_API_KEY", "GEMINI_API_KEY", "ANTHROPIC_API_KEY") if not os.getenv(name)]
-    if missing:
-        raise SystemExit(f"missing required environment variables: {', '.join(missing)}")
 
     adapter = LiveAdapter(
         metadata_path=args.metadata,

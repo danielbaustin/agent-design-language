@@ -1,0 +1,18 @@
+{
+  "schema_version": "uts_benchmark_deterministic_self_check.v1",
+  "passed": true,
+  "selection": {
+    "panel_file": "adl/tools/benchmark/uts_33_model_panel.json",
+    "task_panel_file": "adl/tools/benchmark/uts_33_task_panel.json"
+  },
+  "model_count": 21,
+  "task_count": 11,
+  "fixture_count": 22,
+  "checks": [
+    "model panel schema",
+    "task panel schema",
+    "regular fixtures for all canonical tasks",
+    "UTS-only fixtures for all canonical tasks"
+  ],
+  "failures": []
+}

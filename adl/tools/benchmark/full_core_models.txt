@@ -1,0 +1,13 @@
+gpt-5.4
+gpt-5.5
+gpt-5.3-codex
+gpt-5.3-codex-spark
+gemini-2.5-pro
+claude-opus-4-1-20250805
+deepseek-r1:32b
+qwen3-coder:30b
+gemma4:31b
+gemma4:26b
+gpt-oss:latest
+gemma4:e4b
+gemma4:e2b

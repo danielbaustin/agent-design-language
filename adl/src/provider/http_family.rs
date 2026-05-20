@@ -2,6 +2,7 @@
 //!
 //! Supports OpenAI, Anthropic, generic HTTP, and Ollama-HTTP style backends.
 use super::*;
+use std::env;
 use std::thread;
 use std::time::Duration;
 
@@ -437,9 +438,24 @@ impl Provider for OllamaHttpProvider {
             "model": self.model,
             "prompt": prompt,
             "stream": false,
+            "think": false,
         });
+        let mut options = serde_json::Map::new();
         if let Some(temperature) = self.temperature {
-            body["options"] = serde_json::json!({ "temperature": temperature });
+            options.insert("temperature".to_string(), serde_json::json!(temperature));
+        }
+        if let Ok(value) = env::var("ADL_UTS_LOCAL_NUM_PREDICT") {
+            if let Ok(parsed) = value.parse::<u64>() {
+                options.insert("num_predict".to_string(), serde_json::json!(parsed));
+            }
+        }
+        if let Ok(value) = env::var("ADL_UTS_LOCAL_NUM_CTX") {
+            if let Ok(parsed) = value.parse::<u64>() {
+                options.insert("num_ctx".to_string(), serde_json::json!(parsed));
+            }
+        }
+        if !options.is_empty() {
+            body["options"] = serde_json::Value::Object(options);
         }
 
         let req = client
