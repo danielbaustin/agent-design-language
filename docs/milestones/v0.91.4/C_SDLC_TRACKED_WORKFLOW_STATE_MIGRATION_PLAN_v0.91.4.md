@@ -22,6 +22,54 @@ Local `.adl` state may remain for ephemeral execution support only. External
 collaboration workspaces, if used at all, are optional scratch/staging; they
 are not part of C-SDLC and are not canonical lifecycle truth.
 
+## Canonical Namespace
+
+By default operation, durable C-SDLC records should live under this repo-local
+tracked namespace:
+
+```text
+workflow/c-sdlc/
+  <version>/
+    issues/
+    sprints/
+    evidence/
+    traces/
+```
+
+For `v0.91.4`, new durable workflow records should use
+`workflow/c-sdlc/v0.91.4/` unless a future migration issue deliberately changes
+the namespace contract.
+
+Issue-local records should use a predictable issue directory such as:
+
+```text
+workflow/c-sdlc/v0.91.4/issues/<issue-number>-<slug>/
+  sip.md
+  stp.md
+  spp.md
+  srp.md
+  sor.md
+  plan-history.md
+  evidence/
+  traces/
+```
+
+Sprint records should use the matching sprint namespace:
+
+```text
+workflow/c-sdlc/v0.91.4/sprints/<sprint-id>/
+```
+
+The namespace is intentionally repo-local. In a large organization with many
+repositories, every repo can keep its own public, inspectable workflow truth
+under `workflow/c-sdlc/`, while organization-level systems index, mirror,
+summarize, or feed ObsMem from those tracked records. The org-level system
+should not replace the repo-local source of truth.
+
+Local `.adl/` paths may still exist as execution cache, local staging, or tool
+scratch space. They are not sufficient as the canonical durable record once
+C-SDLC default operation is claimed.
+
 ## Durable Records That Must Be Tracked
 
 The tracked C-SDLC record includes:
@@ -121,18 +169,23 @@ Do not migrate every historical `.adl` artifact just because it exists.
 longer silently local-only:
 
 - workflow skills classify durable versus ephemeral artifacts
-- editor skills understand tracked card records
+- editor skills write, normalize, or mirror durable card records under
+  `workflow/c-sdlc/<version>/issues/`
 - `spp-editor` preserves issue-local operative plan truth and refuses to widen
   `SPP` into sprint orchestration
-- sprint tooling writes canonical tracked sprint artifacts by default
+- sprint tooling writes canonical tracked sprint artifacts under
+  `workflow/c-sdlc/<version>/sprints/` by default
 - closeout enforces durable record integration truth
-- SORs reference tracked signed trace bundles when proof is durable
+- SORs reference tracked signed trace bundles under the durable namespace when
+  proof is durable
 - ObsMem ingestion consumes tracked evidence, not local lore
 
 ## Completion Bar
 
 `v0.91.4` cannot honestly close if:
 
+- the durable workflow namespace remains undefined or unused for new C-SDLC
+  records
 - durable C-SDLC cards remain local-only
 - sprint closeout truth remains local-only
 - review findings/dispositions remain local-only
