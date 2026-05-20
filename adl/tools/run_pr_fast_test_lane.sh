@@ -107,11 +107,35 @@ is_relevant_fast_lane_surface() {
   return 1
 }
 
+file_is_structural_module_barrel() {
+  local path="$1"
+  [ -f "$ROOT_DIR/$path" ] || return 1
+
+  awk '
+    /^[[:space:]]*$/ { next }
+    /^[[:space:]]*\/\// { next }
+    /^[[:space:]]*#\[/ { next }
+    /^[[:space:]]*(pub[[:space:]]+)?mod[[:space:]]+[A-Za-z_][A-Za-z0-9_]*;[[:space:]]*$/ { next }
+    /^[[:space:]]*(pub([[:space:]]*\([^)]*\))?[[:space:]]+)?use[[:space:]].*;[[:space:]]*$/ { next }
+    { exit 1 }
+  ' "$ROOT_DIR/$path"
+}
+
+is_structural_companion_surface() {
+  local path="$1"
+  case "$path" in
+    adl/src/lib.rs)
+      file_is_structural_module_barrel "$path"
+      return $?
+      ;;
+  esac
+  return 1
+}
+
 is_broad_rust_surface() {
   local path="$1"
   case "$path" in
     adl/build.rs|\
-    adl/src/lib.rs|\
     adl/src/main.rs|\
     adl/src/adl.rs|\
     adl/src/schema.rs|\
@@ -136,6 +160,9 @@ is_broad_rust_surface() {
 filter_token_for_path() {
   local path="$1"
   case "$path" in
+    adl/src/lib.rs)
+      return 1
+      ;;
     adl/src/runtime_v2/mod.rs|adl/src/runtime_v2/tests.rs|adl/src/runtime_v2/validators.rs)
       printf 'runtime_v2'
       return 0
@@ -250,6 +277,9 @@ filter_token_for_path() {
 family_token_for_path() {
   local path="$1"
   case "$path" in
+    adl/src/lib.rs)
+      return 1
+      ;;
     adl/src/runtime_v2/*)
       printf 'runtime_v2'
       return 0
@@ -304,6 +334,7 @@ reason="ordinary_pr_fast_lane_fails_closed_to_full_nextest"
 filter_tokens=""
 filter_expression=""
 rust_surface_count=0
+structural_surface_count=0
 all_paths_have_precise_token=true
 all_paths_have_family_token=true
 classification_locked=false
@@ -314,6 +345,10 @@ declare -a family_tokens=()
 while IFS= read -r path; do
   [ -n "$path" ] || continue
   if ! is_relevant_fast_lane_surface "$path"; then
+    continue
+  fi
+  if is_structural_companion_surface "$path"; then
+    structural_surface_count=$((structural_surface_count + 1))
     continue
   fi
   rust_surface_count=$((rust_surface_count + 1))
@@ -383,6 +418,7 @@ fi
 emit "mode" "$mode"
 emit "reason" "$reason"
 emit "rust_surface_count" "$rust_surface_count"
+emit "structural_surface_count" "$structural_surface_count"
 emit "filter_tokens" "$filter_tokens"
 emit "filter_expression" "$filter_expression"
 

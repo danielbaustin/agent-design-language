@@ -56,7 +56,20 @@ broad_runtime="$TMP/broad_runtime.txt"
 printf 'M\tadl/src/lib.rs\n' >"$broad_runtime"
 broad_runtime_output="$(bash "$SCRIPT" --changed-files "$broad_runtime" --print-plan)"
 assert_has "$broad_runtime_output" "mode=full"
-assert_has "$broad_runtime_output" "reason=broad_rust_surface_requires_full_nextest"
+assert_has "$broad_runtime_output" "reason=no_relevant_rust_surface_detected_for_fast_lane"
+assert_has "$broad_runtime_output" "structural_surface_count=1"
+
+structural_companion_runtime="$TMP/structural_companion_runtime.txt"
+cat >"$structural_companion_runtime" <<'EOF'
+M	adl/src/lib.rs
+M	adl/src/speculative_decoding_prototype.rs
+EOF
+structural_companion_runtime_output="$(bash "$SCRIPT" --changed-files "$structural_companion_runtime" --print-plan)"
+assert_has "$structural_companion_runtime_output" "mode=focused"
+assert_has "$structural_companion_runtime_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$structural_companion_runtime_output" "structural_surface_count=1"
+assert_has "$structural_companion_runtime_output" "filter_tokens=speculative_decoding_prototype"
+assert_has "$structural_companion_runtime_output" "filter_expression=test(speculative_decoding_prototype)"
 
 runtime_family="$TMP/runtime_family.txt"
 printf 'M\tadl/src/runtime_v2/mod.rs\n' >"$runtime_family"

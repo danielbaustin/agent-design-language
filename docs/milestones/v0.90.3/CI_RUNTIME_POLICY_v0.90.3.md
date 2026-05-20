@@ -77,6 +77,14 @@ Runtime/source PRs:
 - defer full instrumented coverage to main/nightly/release evidence unless the
   path classifier fails closed
 
+Selector note:
+
+- structural module-barrel edits such as `adl/src/lib.rs` should not
+  automatically force the full PR-fast nextest lane when the rest of the diff
+  is a clearly bounded mapped module change
+- those structural surfaces remain fail-closed when they appear without another
+  bounded companion surface that supplies the proving token plan
+
 Pushes to `main`:
 
 - run full validation and full coverage
