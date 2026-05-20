@@ -1,0 +1,119 @@
+milestone: v0.91.4
+status: planned_issue_wave_not_open
+issue_wave_opened: false
+owner_issue: 3100
+planning_source: docs/milestones/v0.91.4
+tracked_package: docs/milestones/v0.91.4
+depends_on:
+  - docs/milestones/v0.91.3
+notes:
+  - v0.91.4 completes and hardens the Cognitive SDLC rollout.
+  - Issue numbers remain pending until seeded through the normal conductor
+    lifecycle.
+  - v0.91.4 should make C-SDLC the default path for future ADL
+    software-development issues.
+  - By milestone closeout, all durable C-SDLC truth must be tracked in Git.
+  - Durable C-SDLC proof must include minimal signed trace bundles and ObsMem
+    ingestion from tracked evidence.
+card_update_rule:
+  - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
+  - Card edits must use editor skills.
+  - SOR closeout must match GitHub issue/PR truth.
+work_packages:
+  - wp: WP-01
+    issue: pending
+    title: Design pass and issue-wave readiness
+    queue: docs
+    depends_on: [v0.91.3 closeout]
+  - wp: WP-02
+    issue: pending
+    title: Lifecycle validator hardening
+    queue: tools
+    depends_on: [WP-01]
+  - wp: WP-03
+    issue: pending
+    title: Doctor and conductor state truth
+    queue: tools
+    depends_on: [WP-02]
+  - wp: WP-04
+    issue: pending
+    title: Editor skill repair reliability
+    queue: tools
+    depends_on: [WP-02]
+  - wp: WP-05
+    issue: pending
+    title: Shard ownership and interface freeze
+    queue: docs_tools
+    depends_on: [WP-03]
+  - wp: WP-06
+    issue: pending
+    title: Evidence convergence, review synthesis, and signed trace proof
+    queue: tools
+    depends_on: [WP-05]
+  - wp: WP-07
+    issue: pending
+    title: Merge-readiness and PR gate hardening
+    queue: tools
+    depends_on: [WP-06]
+  - wp: WP-08
+    issue: pending
+    title: ObsMem transition memory integration
+    queue: docs_tools
+    depends_on: [WP-06, WP-07]
+  - wp: WP-09
+    issue: pending
+    title: Sprint conductor default C-SDLC lane
+    queue: tools
+    depends_on: [WP-03, WP-04]
+  - wp: WP-10
+    issue: pending
+    title: Five-minute-sprint repeatability metrics
+    queue: demo_tools
+    depends_on: [WP-05, WP-06, WP-07, WP-08, WP-09]
+  - wp: WP-11
+    issue: pending
+    title: Active issue migration policy
+    queue: docs_tools
+    depends_on: [WP-02, WP-03, WP-04, WP-09]
+  - wp: WP-12
+    issue: pending
+    title: Regression fixtures for process drift
+    queue: tests_tools
+    depends_on: [WP-10, WP-11]
+  - wp: WP-13
+    issue: pending
+    title: Internal review
+    queue: review
+    depends_on: [WP-12]
+  - wp: WP-14
+    issue: pending
+    title: Review findings remediation
+    queue: review
+    depends_on: [WP-13]
+  - wp: WP-15
+    issue: pending
+    title: Docs and adoption pass
+    queue: docs
+    depends_on: [WP-14]
+  - wp: WP-16
+    issue: pending
+    title: Release ceremony
+    queue: release
+    depends_on: [WP-15]
+sprint_umbrellas:
+  - sprint: Sprint 1
+    issue: pending
+    title: Lifecycle And Routing Hardening
+    ordered_children: [WP-01, WP-02, WP-03, WP-04]
+  - sprint: Sprint 2
+    issue: pending
+    title: Transition Operation
+    ordered_children: [WP-05, WP-06, WP-07, WP-08]
+  - sprint: Sprint 3
+    issue: pending
+    title: Sprint Default And Metrics
+    ordered_children: [WP-09, WP-10, WP-11, WP-12]
+  - sprint: Sprint 4
+    issue: pending
+    title: Review, Adoption, And Release
+    ordered_children: [WP-13, WP-14, WP-15, WP-16]
