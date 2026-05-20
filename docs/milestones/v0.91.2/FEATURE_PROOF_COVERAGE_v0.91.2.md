@@ -28,7 +28,7 @@ Each feature should eventually have one truthful proof route:
 | Speculative decoding | WP-11 | `review/speculative_decoding/speculative_decoding_prototype_report.json` + `review/speculative_decoding/speculative_decoding_prototype_packet.md` | in_flight |
 | Repo visibility follow-on | WP-12 | tracked manifest packet + linkage report + reviewer-navigation packet | in_flight |
 | Publication program | WP-13 | tracked backlog packet + review-gates packet + Godel/GHB backlog note | in_flight |
-| General intelligence paper packet | WP-14 | claim/citation/review packet | planned |
+| General intelligence paper packet | WP-14 | tracked claim/citation packet + review handoff + residual-risk register + next-authoring-steps packet | in_flight |
 | Rustdoc/doc cleanup | WP-15 | cleanup report + doc patch set | planned |
 | Workflow guardrails | WP-16 | guardrail proofs + runbook | planned |
 | Demo/proof convergence | WP-17 | demo matrix and proof coverage | planned |

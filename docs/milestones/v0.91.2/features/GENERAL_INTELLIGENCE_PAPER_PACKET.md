@@ -4,15 +4,16 @@
 
 - Feature Name: General Intelligence Paper Packet
 - Milestone Target: `v0.91.2`
-- Status: planned
+- Status: in_flight
 - Planned WP Home: WP-14
-- Source Docs: `.adl/docs/TBD/general-intelligence-paper/`
+- Source Docs: `.adl/docs/TBD/general-intelligence-paper/`; separate `general-intelligence-paper` repo; `docs/milestones/v0.91.2/review/general_intelligence_paper/`
 - Proof Modes: claim packet, citation packet, review
 
 ## Purpose
 
-Advance the Mathematical Theory of General Intelligence source packet into a
-reviewable claim/citation/review artifact without publishing or overclaiming.
+Advance the Mathematical Theory of General Intelligence into a tracked
+reviewable claim/citation/review artifact while acknowledging that the active
+canonical manuscript now lives in a separate paper repository.
 
 ## Scope
 
@@ -22,6 +23,7 @@ In scope:
 - Unsupported-claim register.
 - Review packet suitable for human handoff.
 - Next authoring steps.
+- Explicit source-boundary note for the separate paper repository.
 
 Out of scope:
 
@@ -34,3 +36,4 @@ Out of scope:
 - Every major claim has citation status or unsupported-claim status.
 - Review packet preserves residual risk.
 - Human reviewers can inspect the source boundary.
+- The packet does not pretend the older local `.adl` draft copy is canonical.
