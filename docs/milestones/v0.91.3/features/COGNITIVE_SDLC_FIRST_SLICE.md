@@ -24,7 +24,7 @@ The transition must show:
 
 - issue intent
 - task transformation
-- process plan
+- issue-local operative execution plan
 - review prompt and review results
 - outcome truth
 - evidence bundle
@@ -41,6 +41,8 @@ The transition must show:
 - GitHub issue/PR/CI/human review remains authoritative for repository change.
 - C-SDLC planning evidence is tracked in the milestone package, not only in
   local `.adl/docs/TBD` notes.
+- The operative `SPP` contract is public/tracked and issue-local; sprint
+  orchestration remains outside the `SPP` role.
 - Trace/proof references are repo-relative and ready for v0.91.4 signed trace
   bundles.
 

@@ -23,6 +23,11 @@ The milestone should turn the v0.91.2 card-lifecycle repair work into a real
 vertical slice: transition manifest, transition DAG, shard plan, evidence
 bundle, review result, merge gate, outcome truth, and ObsMem handoff.
 
+In this milestone, `SPP` means the issue-local operative execution plan. It is
+the tracked equivalent of `/plan` for one issue or transition: current step,
+next step, required proof, stop/replan conditions, and explicit bounds. It is
+not sprint orchestration, review-result truth, or output truth.
+
 ## Milestone Role
 
 v0.91.3 proves the crown jewel.
@@ -92,6 +97,7 @@ Cognitive State Transition that:
 - separates serial work, parallel shards, and synchronization barriers
 - produces a reviewable evidence bundle
 - records SRP review results and SOR outcome truth
+- treats `SPP` as public/tracked issue-local operative plan truth
 - preserves GitHub issue, PR, CI, branch, human review, and closeout discipline
 - records an ObsMem handoff boundary
 - keeps the C-SDLC planning sources public, tracked, and auditable
