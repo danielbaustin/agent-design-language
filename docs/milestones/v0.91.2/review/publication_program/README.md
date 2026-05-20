@@ -26,7 +26,9 @@ This packet covers:
 - the repeatable review gates required before anything is treated as ready for
   public release,
 - one explicit backlog note for `Godel Agents and the Godel-Hadamard-Bayes
-  Algorithm`.
+  Algorithm`,
+- and the C-SDLC paper lane as a later follow-on that depends on v0.91.3 and
+  v0.91.4 implementation evidence before technical/results claims.
 
 It does not cover:
 
