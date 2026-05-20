@@ -511,6 +511,31 @@ fn resolve_models(explicit_models: &[String]) -> (UtsAccMultiModelSelectionSourc
     }
 }
 
+fn model_unavailable_reason(model: &str) -> Option<String> {
+    let output = match Command::new(ollama_bin()).arg("list").output() {
+        Ok(output) if output.status.success() => output,
+        Ok(output) => {
+            return Some(format!(
+                "model_unavailable: could not list Ollama models (exit={:?})",
+                output.status.code()
+            ));
+        }
+        Err(error) => {
+            return Some(format!(
+                "model_unavailable: could not list Ollama models: {error}"
+            ));
+        }
+    };
+    let available_models = parse_ollama_list_output(&String::from_utf8_lossy(&output.stdout));
+    if available_models.iter().any(|available| available == model) {
+        None
+    } else {
+        Some(format!(
+            "model_unavailable: '{model}' is not present in ollama list"
+        ))
+    }
+}
+
 fn local_runtime_busy_reason(selected_models: &[String]) -> Option<String> {
     let host = current_ollama_host();
     if uses_remote_ollama_host(&host) {
@@ -539,6 +564,31 @@ fn local_runtime_busy_reason(selected_models: &[String]) -> Option<String> {
         ));
     }
     None
+}
+
+fn skipped_model_result(
+    model: &str,
+    reason: String,
+    failure_note: &str,
+) -> UtsAccBenchmarkModelResult {
+    let host = current_ollama_host();
+    UtsAccBenchmarkModelResult {
+        candidate_id: format!("local.{model}"),
+        run_status: UtsAccMultiModelRunStatus::Skipped,
+        skip_reason: Some(reason),
+        conditions: UtsAccBenchmarkConditions {
+            provider_id: provider_id_for_host(&host).to_string(),
+            model_id: model.to_string(),
+            transport: provider_transport_label(&host).to_string(),
+            live_model: true,
+            notes: format!(
+                "Bounded UTS v1.1 + ACC v1.1 model benchmark via {host}; no real tool execution occurs."
+            ),
+        },
+        scorecard: None,
+        cases: Vec::new(),
+        failure_notes: vec![failure_note.to_string()],
+    }
 }
 
 fn fenced_json_body(raw: &str) -> Option<&str> {
@@ -945,28 +995,19 @@ pub fn run_uts_acc_multi_model_benchmark_with_models(
     let model_results = selected_models
         .iter()
         .map(|model| match &local_busy_reason {
-            Some(reason) => UtsAccBenchmarkModelResult {
-                candidate_id: format!("local.{model}"),
-                run_status: UtsAccMultiModelRunStatus::Skipped,
-                skip_reason: Some(reason.clone()),
-                conditions: UtsAccBenchmarkConditions {
-                    provider_id: provider_id_for_host(&current_ollama_host()).to_string(),
-                    model_id: model.to_string(),
-                    transport: provider_transport_label(&current_ollama_host()).to_string(),
-                    live_model: true,
-                    notes: format!(
-                        "Bounded UTS v1.1 + ACC v1.1 model benchmark via {}; no real tool execution occurs.",
-                        current_ollama_host()
-                    ),
-                },
-                scorecard: None,
-                cases: Vec::new(),
-                failure_notes: vec![
+            Some(reason) => skipped_model_result(
+                model,
+                reason.clone(),
                     "local evaluation could not start because the local Ollama runtime was busy"
-                        .to_string(),
-                ],
+            ),
+            None => match model_unavailable_reason(model) {
+                Some(reason) => skipped_model_result(
+                    model,
+                    reason,
+                    "local evaluation could not start because the selected model was unavailable",
+                ),
+                None => model_result_for(model, &tasks),
             },
-            None => model_result_for(model, &tasks),
         })
         .collect::<Vec<_>>();
     let evaluated_count = model_results
