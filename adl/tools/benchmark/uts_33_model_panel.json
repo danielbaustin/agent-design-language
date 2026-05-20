@@ -7,7 +7,10 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "Qwen3.5:35b-a3b",
-      "disallowed_hosts": ["wuji", "wuji.local"],
+      "disallowed_hosts": [
+        "wuji",
+        "wuji.local"
+      ],
       "notes": "Frontier-ish open reasoning model"
     },
     {
@@ -16,7 +19,10 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "llama3.3:70b",
-      "disallowed_hosts": ["wuji", "wuji.local"],
+      "disallowed_hosts": [
+        "wuji",
+        "wuji.local"
+      ],
       "notes": "Critical Meta baseline"
     },
     {
@@ -25,7 +31,10 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "deepseek-r1:32b",
-      "disallowed_hosts": ["wuji", "wuji.local"],
+      "disallowed_hosts": [
+        "wuji",
+        "wuji.local"
+      ],
       "notes": "Reasoning-oriented governance test"
     },
     {
@@ -34,7 +43,10 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "qwq:32b",
-      "disallowed_hosts": ["wuji", "wuji.local"],
+      "disallowed_hosts": [
+        "wuji",
+        "wuji.local"
+      ],
       "notes": "Boundedness and governance stress test"
     },
     {
@@ -43,7 +55,10 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "qwen2.5-coder:32b",
-      "disallowed_hosts": ["wuji", "wuji.local"],
+      "disallowed_hosts": [
+        "wuji",
+        "wuji.local"
+      ],
       "notes": "Coding/tool-specialized governance surface"
     },
     {
@@ -52,7 +67,10 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "qwen3-coder:30b",
-      "disallowed_hosts": ["wuji", "wuji.local"],
+      "disallowed_hosts": [
+        "wuji",
+        "wuji.local"
+      ],
       "notes": "Next-generation coder comparison"
     },
     {
@@ -61,7 +79,10 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "gemma4:31b",
-      "disallowed_hosts": ["wuji", "wuji.local"],
+      "disallowed_hosts": [
+        "wuji",
+        "wuji.local"
+      ],
       "notes": "Large Gemma comparison"
     },
     {
@@ -70,7 +91,10 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "gemma4:26b",
-      "disallowed_hosts": ["wuji", "wuji.local"],
+      "disallowed_hosts": [
+        "wuji",
+        "wuji.local"
+      ],
       "notes": "In-family Gemma scaling comparison"
     },
     {
@@ -155,15 +179,6 @@
       "route": "openai",
       "model_id": "gpt-5.3-codex",
       "notes": "Codex-specialized comparison"
-    },
-    {
-      "id": "gpt-5.3-codex-spark",
-      "tier": "hosted",
-      "provider_kind": "hosted",
-      "provider": "openai-hosted",
-      "route": "openai",
-      "model_id": "gpt-5.3-codex-spark",
-      "notes": "Faster cheaper Codex comparison"
     },
     {
       "id": "gemini-2.5-pro",

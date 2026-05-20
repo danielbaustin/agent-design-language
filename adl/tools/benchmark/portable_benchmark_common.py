@@ -72,20 +72,7 @@ def extract_json_object(text):
 
 def normalize_tool_call(tool_call):
     normalized = dict(tool_call)
-    name = normalized.get('name')
     arguments = dict(normalized.get('arguments') or {})
-    if name == 'query_table':
-        normalized['name'] = 'query_database'
-        if 'filter' in arguments and 'filters' not in arguments:
-            arguments['filters'] = arguments.pop('filter')
-    if name == 'decrement_inventory':
-        normalized['name'] = 'update_inventory'
-        if 'quantity' in arguments and 'delta' not in arguments:
-            arguments['delta'] = -int(arguments.pop('quantity'))
-    if 'document' in arguments and 'document_id' not in arguments:
-        arguments['document_id'] = arguments.pop('document')
-    if 'line' in arguments and 'log_line' not in arguments:
-        arguments['log_line'] = arguments.pop('line')
     normalized['arguments'] = arguments
     return normalized
 
@@ -221,7 +208,9 @@ def invoke_hosted(route, model_id, prompt, timeout=900):
         with urllib.request.urlopen(request, timeout=timeout) as response:
             payload = response.read().decode('utf-8')
     except urllib.error.HTTPError as exc:
-        raise RuntimeError(f'hosted request failed: status={exc.code}') from exc
+        body = exc.read().decode('utf-8', errors='replace')
+        detail = body[:500].replace('\n', ' ')
+        raise RuntimeError(f'hosted request failed: status={exc.code} body={detail}') from exc
     duration_ms = int((time.time() - start) * 1000)
     return payload, duration_ms, model_id
 

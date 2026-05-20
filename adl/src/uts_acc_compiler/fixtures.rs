@@ -162,7 +162,11 @@ fn schema_for_tool(
             json!(["fixture_id"]),
             false,
         ),
-        output_schema: object_schema(json!({"content": {"type": "string"}}), json!(["content"]), false),
+        output_schema: object_schema(
+            json!({"content": {"type": "string"}}),
+            json!(["content"]),
+            false,
+        ),
         side_effect_class: side_effect,
         side_effects: Some(side_effects),
         determinism: UtsDeterminismV1::Deterministic,
