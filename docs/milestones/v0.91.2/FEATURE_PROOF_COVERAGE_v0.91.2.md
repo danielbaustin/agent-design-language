@@ -27,7 +27,7 @@ Each feature should eventually have one truthful proof route:
 | Code modernization | WP-10 | modernization interaction plan + dry-run evidence + reversibility/review policy + demo packet | active bounded packet |
 | Speculative decoding | WP-11 | `review/speculative_decoding/speculative_decoding_prototype_report.json` + `review/speculative_decoding/speculative_decoding_prototype_packet.md` | in_flight |
 | Repo visibility follow-on | WP-12 | tracked manifest packet + linkage report + reviewer-navigation packet | in_flight |
-| Publication program | WP-13 | backlog/process packet | planned |
+| Publication program | WP-13 | tracked backlog packet + review-gates packet + Godel/GHB backlog note | in_flight |
 | General intelligence paper packet | WP-14 | claim/citation/review packet | planned |
 | Rustdoc/doc cleanup | WP-15 | cleanup report + doc patch set | planned |
 | Workflow guardrails | WP-16 | guardrail proofs + runbook | planned |
