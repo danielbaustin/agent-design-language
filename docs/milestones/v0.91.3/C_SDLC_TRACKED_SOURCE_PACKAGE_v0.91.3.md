@@ -79,6 +79,32 @@ The first slice does not need to complete signed trace verification, but it must
 not design itself into a corner where durable C-SDLC proof remains local-only or
 unsigned forever.
 
+## Provisional Durable Workflow Namespace
+
+`v0.91.3` should define and, where practical, prove durable C-SDLC records under
+this repo-local tracked namespace:
+
+```text
+workflow/c-sdlc/v0.91.3/
+  issues/
+  sprints/
+  evidence/
+  traces/
+```
+
+The namespace is intentionally repo-local. In a larger organization, every repo
+can keep its own inspectable C-SDLC truth under `workflow/c-sdlc/`, while
+company-level indexing, dashboards, or ObsMem ingestion can crawl those tracked
+records across repositories without replacing the repo-local source of truth.
+
+For the first slice, `.adl/` may remain an execution cache, staging area, or
+local authoring surface. It must not be the only authoritative home for durable
+C-SDLC state once a record is part of the public proof packet.
+
+`v0.91.3` does not need to migrate every active card bundle into this namespace.
+It does need to prove the path shape clearly enough that `v0.91.4` can make it
+the default durable workflow record location.
+
 ## SPP Operative Plan Rule
 
 For `v0.91.3`, `SPP` is the issue-local operative execution plan.

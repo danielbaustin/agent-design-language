@@ -45,6 +45,8 @@ The first slice must define and prove:
   sprint orchestration, review-result truth, or outcome truth.
 - Any durable C-SDLC `SPP` surface used by the proof is tracked, public, and
   auditable rather than only local `.adl/` state.
+- The first-slice proof names `workflow/c-sdlc/v0.91.3/issues/` as the target
+  tracked namespace for durable issue-local card records.
 
 ## Non-Goals
 
