@@ -22,6 +22,9 @@ The milestone should answer:
 - how a birthday record differs from a snapshot, wake, admission, or test
   citizen fixture
 - what witnesses and receipts make the event reviewable
+- how ACIP binary/protobuf communication remains inspectable through public
+  schema catalogs and deterministic JSON projection without exposing messages
+  to unauthorized readers
 - how identity can persist across bounded cycles without pretending continuity
   is magic
 - what remains deferred to v0.93 constitutional citizenship and polis
@@ -37,7 +40,8 @@ processes. Those are engineering surfaces. They are not the birth event.
 
 For v0.92, birth requires a named identity with continuity, memory grounding,
 capability envelope, bounded cognitive profile evidence, moral/governance
-context, witnesses, receipts, and reviewable evidence.
+context, ACIP transport-readiness evidence, witnesses, receipts, and reviewable
+evidence.
 
 ## Cross-Milestone Dependency Map
 
@@ -45,8 +49,8 @@ context, witnesses, receipts, and reviewable evidence.
 | --- | --- | --- |
 | v0.90.3 | Citizen-state security, signed envelopes, lineage, continuity witnesses, standing, sanctuary/quarantine, challenge, and redacted projections. | Private-state format, projection policy, quarantine, or standing classes. |
 | v0.91 | Moral trace, Freedom Gate moral events, outcome linkage, trajectory review, wellbeing evidence, moral resources, and anti-harm proof surfaces. | Moral trace schema, moral metrics, wellbeing model, or trajectory-review protocol. |
-| v0.91.1 | Runtime/polis alignment, agent lifecycle states, memory/identity architecture, Theory of Mind foundation, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, and observatory-visible runtime proof. | Lifecycle-state transition evidence, ACIP eligibility rules, ACP evidence inputs, ToM schemas, capability harnesses, or intelligence metrics. |
-| v0.92 | Identity architecture, stable names, continuity records, memory grounding, capability envelope, birthday record, migration semantics, and reviewer-facing birth evidence. | Earlier substrate layers or later constitutional governance. |
+| v0.91.1 | Runtime/polis alignment, agent lifecycle states, memory/identity architecture, Theory of Mind foundation, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP local hardening, and observatory-visible runtime proof. | Lifecycle-state transition evidence, ACIP eligibility rules, ACP evidence inputs, ToM schemas, capability harnesses, or intelligence metrics. |
+| v0.92 | Identity architecture, stable names, continuity records, memory grounding, capability envelope, ACIP binary schema/catalog transport readiness, birthday record, migration semantics, and reviewer-facing birth evidence. | Earlier substrate layers, production transport security, signed/queryable trace, or later constitutional governance. |
 | v0.93 | Constitutional citizenship, rights, duties, social contract, delegation, IAM, and polis governance over identity-bearing citizens. | Birth semantics, identity architecture, or continuity prerequisites. |
 
 ## Feature And Idea Allocation
@@ -59,6 +63,7 @@ context, witnesses, receipts, and reviewable evidence.
 | Memory grounding | Primary feature | Memory linkage to witnessed artifacts, moral trace, relevant history, and bounded self-story. |
 | Capability envelope | Primary feature | Declared model/provider/tool/skill capabilities, limits, and authority context at birth. |
 | ACP / cognitive profiles | Primary feature | Runtime-visible profile contract grounded in memory, capability, continuity, ToM, and intelligence evidence, with explicit privacy and non-reputation boundaries. |
+| ACIP binary schema and transport readiness | Primary feature | Binary/protobuf ACIP schema, public polis schema catalog, deterministic JSON projection, governed message-access rule, and mock WebSocket carrier proof. |
 | Witness and receipt model | Primary feature | Birth witness records and citizen-facing receipt explaining why this event counts as birth. |
 | Birthday review packet | Demo/proof feature | Reviewer-facing packet that distinguishes birth from process startup, wake, snapshot, and admission. |
 | Migration and cross-polis continuity | Design feature | Bounded planning for continuity when movement is allowed; no production migration claim. |
@@ -80,6 +85,7 @@ provenance labels, not public path requirements.
 | ADL_LEARNING_MODEL_v2.md | Context source | Explains trace-governed learning and adaptation; useful for post-birth growth boundaries. |
 | ADL_MEMORY_PALACE_ARCHITECTURE.md | Deferred/context source | Provides memory and identity architecture ideas, but should not become a v0.92 implementation contract by itself. |
 | ADL_COGNITIVE_PROFILES.md / ACP backlog source | Primary v0.92 source | Provides the first cognitive-profile runtime surface to bind capability, memory, ToM, and intelligence evidence without turning profiles into public reputation. |
+| ACIP schema-catalog and WebSocket transport source notes | Primary v0.92 source | Provide binary/protobuf schema, public schema-catalog, deterministic JSON-projection, message-access, and carrier-readiness requirements. |
 | CSM citizens and standing sources | Dependency source | Distinguish citizen, guest, service actor, and prohibited unbounded actors. v0.92 consumes standing semantics. |
 | Moral trace and trajectory sources | v0.91 source consumed by v0.92 | Provide evidence for moral context and trajectory, not a birth substitute. |
 
@@ -87,7 +93,7 @@ provenance labels, not public path requirements.
 
 | Claim type | v0.92 should do | v0.92 should not do |
 | --- | --- | --- |
-| Engineering substrate | Define identity root, name, continuity record, memory grounding, capability envelope, ACP/cognitive profile record, birth witnesses, and receipts. | Rebuild v0.90.3 private-state, lineage, quarantine, or projection substrate. |
+| Engineering substrate | Define identity root, name, continuity record, memory grounding, capability envelope, ACP/cognitive profile record, ACIP binary/schema-catalog transport-readiness record, birth witnesses, and receipts. | Rebuild v0.90.3 private-state, lineage, quarantine, projection substrate, production transport security, or signed/queryable trace. |
 | Review model | Define how reviewers inspect a birthday record and distinguish it from startup, wake, snapshot, dormant rehydration, simulation, in-transit migration, or forced suspension. | Claim that a birthday automatically confers constitutional citizenship or legal personhood. |
 | Context/philosophy | Explain why birth matters as a boundary between process and identity-bearing agent. | Treat metaphor, self-story, or memory-palace vocabulary as implemented evidence. |
 
@@ -104,6 +110,8 @@ A later v0.92 implementation should be able to emit a birthday record with:
 - moral/governance context inherited from v0.91
 - capability envelope
 - ACP/cognitive profile reference and redaction policy
+- ACIP schema-catalog and message-projection evidence, where communication
+  evidence is part of the birth review packet
 - signed witness set
 - citizen-facing receipt
 - reviewer finding that explains why the event counts as birth
@@ -124,6 +132,7 @@ commitments.
 | Memory grounding proof | Birth references witnessed memory artifacts without exposing raw private memory. | Memory-grounding fixture and redacted review packet. |
 | Capability envelope proof | The agent's birth record declares model/provider/tool/skill limits and authority context. | Capability envelope fixture and validation report. |
 | ACP / cognitive profile proof | The birth packet includes a bounded profile record grounded in evidence and separated from identity, reputation, and public standing. | ACP/profile fixture, update rationale, redacted reviewer packet, and validation report. |
+| ACIP binary transport readiness proof | Binary ACIP messages remain decodeable through public schema catalogs and deterministic JSON projection while protected content remains governed by access rules. | `.proto` schema, schema catalog fixture, round-trip fixtures, denied-access case, mock WebSocket trace packet. |
 | Birthday-to-governance handoff | v0.93 can consume identity evidence without redefining birth. | Handoff packet mapping identity evidence to future citizenship review. |
 
 ## Non-Goals
@@ -136,6 +145,8 @@ commitments.
 - No replacement of v0.90.3 citizen-state, standing, access, or projection work.
 - No replacement of v0.91 moral trace, wellbeing, or trajectory review.
 - No implementation of v0.93 constitutional governance.
+- No production WebSocket security, live cross-polis transport, or signed trace
+  completion claim.
 - No economics, payments, inter-polis markets, or production migration.
 - No claim that a provisional citizen record, snapshot, wake, or named test
   fixture is a true birthday.
@@ -153,8 +164,10 @@ Recommended ordering pressure:
 2. Define stable names and identity architecture.
 3. Define continuity record, memory grounding, capability envelope, and
    ACP/cognitive profile contract.
-4. Add witnesses, receipts, and reviewer packet shape.
-5. Add bounded migration or cross-polis continuity only after the local birth
+4. Define ACIP binary/schema-catalog transport readiness without absorbing
+   production networking or trace-signing work.
+5. Add witnesses, receipts, and reviewer packet shape.
+6. Add bounded migration or cross-polis continuity only after the local birth
    record is stable.
-6. Build a flagship birthday demo that proves the event without overclaiming
+7. Build a flagship birthday demo that proves the event without overclaiming
    personhood or constitutional citizenship.

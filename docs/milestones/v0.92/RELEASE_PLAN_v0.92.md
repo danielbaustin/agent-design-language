@@ -15,6 +15,8 @@ v0.92 should not be released until it has evidence for:
 - capability envelope
 - ACP / cognitive profile grounded in evidence from memory, capability,
   continuity, ToM, intelligence, and learning surfaces
+- ACIP binary schema, public schema catalog, deterministic JSON projection, and
+  mock/loopback WebSocket carrier proof
 - birth witnesses and receipt
 - birthday review packet
 - negative cases for startup, wake, snapshot, admission, and copied state
@@ -33,6 +35,9 @@ v0.92 should not be released until it has evidence for:
 - ACP/cognitive-profile evidence must be reviewed as a bounded runtime profile
   contract, not as identity, reputation, legal personhood, or production
   citizenship.
+- ACIP binary transport evidence must prove schema-public decodeability and
+  governed message-content access without claiming production transport
+  security.
 
 ## Closeout Notes For Later WP-20
 
@@ -51,5 +56,7 @@ Do not ship v0.92 if:
 - capability limits are absent
 - cognitive profile claims are free-floating labels rather than trace-backed
   evidence
+- binary ACIP cannot be decoded through public schemas into deterministic JSON
+- schema access grants unauthorized message-content inspection
 - birth claims legal personhood or production citizenship
 - constitutional governance is quietly absorbed instead of handed off to v0.93

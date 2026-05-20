@@ -24,6 +24,7 @@ milestones.
 | D | Memory grounding | Bind identity to witnessed artifacts and memory references without raw private-state exposure. | Memory-grounding contract and redacted packet. | ObsMem/trace baseline and v0.90.3 projection policy. |
 | E | Capability envelope | Declare provider, model, tool, skill, authority, and limit context at birth. | Capability envelope and validation fixtures. | Provider/skill substrate and v0.90.5 governed-tool evidence where tool actions are in scope. |
 | E2 | ACP / cognitive profiles | Define runtime-visible cognitive profile records grounded in memory, capability, continuity, ToM, and intelligence evidence. | ACP/profile contract, update rules, privacy boundary, and fixtures. | v0.91.1 capability, memory, ToM, intelligence, and governed-learning evidence. |
+| E3 | ACIP binary schema and WebSocket carrier | Define protobuf ACIP wire schema, public schema catalog, deterministic JSON projection, and an optional binary ACIP-over-WebSocket mock proof. | ACIP `.proto`, schema catalog rules, JSON/protobuf fixtures, mock WebSocket carrier proof. | v0.91 ACIP substrate, v0.91.1 ACIP hardening, provider/transport substrate, trace/replay baseline. |
 | F | Birth witnesses and receipts | Define witness set and citizen-facing receipt for the birthday event. | Witness schema, receipt schema, validation. | v0.90.3 continuity witnesses. |
 | G | Birthday review packet | Assemble identity, continuity, memory, capability, witness, and moral context into one review surface. | Reviewer packet and fixture. | A through F and v0.91 moral trace. |
 | H | Migration and cross-polis continuity planning | Define bounded design notes for future movement without production migration claims. | Design note and non-goals. | Identity record and continuity contract. |
@@ -36,8 +37,8 @@ milestones.
 
 1. Start with the birthday contract and negative cases.
 2. Add stable name and identity architecture.
-3. Add continuity, memory grounding, capability envelope, and ACP/cognitive
-   profile contract.
+3. Add continuity, memory grounding, capability envelope, ACP/cognitive profile
+   contract, and ACIP binary/schema-catalog transport readiness.
 4. Add witnesses, receipts, and review packets.
 5. Add migration planning only after local birth semantics are stable.
 6. Build the flagship birthday demo and governance handoff last.
@@ -53,5 +54,8 @@ milestones.
 - Capability envelope must record limits and authority context.
 - Cognitive profiles must be evidence-grounded, privacy-bounded, and distinct
   from identity, reputation, and public standing.
+- Binary ACIP must remain inspectable through public schemas and deterministic
+  JSON projection while message contents remain governed by authority and
+  visibility policy.
 - v0.93 governance must consume v0.92 evidence rather than redefine birth.
 - Demos must show behavior and artifacts, not just narrative.

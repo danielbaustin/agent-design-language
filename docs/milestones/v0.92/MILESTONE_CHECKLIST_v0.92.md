@@ -16,6 +16,8 @@ entered active execution.
 - [ ] Dependencies on v0.91.1 memory/identity, ToM, intelligence metrics,
   governed learning, and capability/aptitude evidence checked for ACP profile
   inputs.
+- [ ] Dependencies on v0.91/v0.91.1 ACIP substrate and hardening evidence
+  checked for binary schema/catalog transport readiness.
 
 ## Scope Integrity
 
@@ -24,6 +26,8 @@ entered active execution.
 - [ ] v0.92 reserves constitutional citizenship and polis governance for v0.93.
 - [ ] ACP/cognitive profiles stay bounded to evidence-grounded runtime profile
   claims and do not become reputation, rights, personhood, or social standing.
+- [ ] Binary ACIP stays inspectable through public schemas while
+  message-content access remains governed.
 - [ ] Birthday, startup, wake, snapshot, admission, and copied state are
   distinguished.
 - [ ] Memory palace and learning-model sources are used within bounded scope.
@@ -36,6 +40,9 @@ entered active execution.
   private-state inspection.
 - [ ] ACP/cognitive-profile review packets cite trace-backed inputs and mark
   unsupported claims explicitly.
+- [ ] ACIP binary transport proof includes JSON/protobuf round-trip,
+  public-schema lookup, denied-access, malformed-payload, and event-ordering
+  cases.
 - [ ] Claim-boundary scan finds no legal-personhood, production-citizenship, or
   completed-governance overclaims.
 
@@ -51,6 +58,6 @@ entered active execution.
 ## Exit Criteria
 
 - Identity, continuity, memory grounding, capability, ACP/cognitive profile,
-  witnesses, receipts, first-birthday proof, and negative cases are traceable
-  from docs to PRs and evidence.
+  ACIP binary transport readiness, witnesses, receipts, first-birthday proof,
+  and negative cases are traceable from docs to PRs and evidence.
 - The milestone can be audited without reconstructing intent from chat.

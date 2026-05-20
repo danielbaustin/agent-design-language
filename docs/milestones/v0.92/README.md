@@ -25,6 +25,9 @@ v0.92 should establish:
 - capability envelope at birth
 - ACP / cognitive profiles as a bounded runtime profile surface grounded in
   memory, capability, continuity, ToM, and intelligence evidence
+- ACIP binary schema, public schema catalog, deterministic JSON projection, and
+  optional WebSocket carrier proof as the transport-readiness slice that
+  follows the v0.91/v0.91.1 ACIP baseline
 - inherited moral/governance context from v0.91
 - birth witnesses and citizen-facing receipt
 - reviewer-facing evidence that distinguishes birth from process startup
@@ -61,6 +64,9 @@ v0.92 depends on:
   Mind foundation, lifecycle-state evidence, capability/aptitude testing,
   intelligence metrics, governed learning, and ANRM/Gemma evidence that can
   feed cognitive profiles
+- v0.91.1 ACIP hardening for local authenticated envelope policy, fail-closed
+  rejection classes, state-specific routing semantics, and explicit
+  external-transport non-claims
 - v0.93 as a downstream consumer of identity evidence for constitutional
   citizenship and polis governance
 
@@ -87,6 +93,8 @@ The likely `v0.92` tranche is:
 - Memory grounding.
 - Capability envelope.
 - ACP / cognitive profiles as a runtime-visible profile contract.
+- ACIP binary schema, public schema catalog, deterministic JSON projection, and
+  mock/loopback WebSocket carrier proof.
 - Birth witnesses and receipt.
 - Birthday review packet.
 - Negative cases that prove startup, wake, snapshot, admission, and copied
@@ -104,6 +112,9 @@ The likely `v0.92` tranche is:
 - Economics, payments, or markets.
 - Governed-tool substrate implementation.
 - Full memory palace implementation.
+- Production WebSocket or cross-polis transport security.
+- v0.93 ACIP key lifecycle, encryption, signing, rotation, or revocation.
+- v0.94 signed/queryable trace completion.
 - Free-floating cognitive labels that are not grounded in evidence.
 - Replacing v0.90.3 citizen-state/security work.
 - Replacing v0.91 moral trace or moral trajectory review.
@@ -124,6 +135,8 @@ The likely `v0.92` tranche is:
   [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md)
 - ACP / cognitive profiles:
   [ACP_COGNITIVE_PROFILES_v0.92.md](features/ACP_COGNITIVE_PROFILES_v0.92.md)
+- ACIP binary schema and WebSocket transport:
+  [ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md](features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md)
 - Identity, stable name, and continuity:
   [IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md](features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md)
 - Memory grounding, capability, and witnesses:
@@ -137,7 +150,8 @@ Later WP planning should preserve the standard milestone rhythm:
 
 - WP-01: promote reviewed milestone docs and issue wave
 - feature WPs: implement identity, continuity, memory grounding, capability,
-  ACP/cognitive profile, witness, receipt, and birthday-record surfaces
+  ACP/cognitive profile, ACIP binary transport-readiness, witness, receipt, and
+  birthday-record surfaces
 - demo WP: build first-birthday proof demos and negative cases
 - quality/review WPs: validate docs, tests, demo evidence, and review packets
 - release WP: close the milestone under the normal ceremony pattern

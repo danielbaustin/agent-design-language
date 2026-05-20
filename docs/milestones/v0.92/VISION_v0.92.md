@@ -29,6 +29,8 @@ That means:
 - capability and authority limits are declared
 - ACP / cognitive profile evidence describes bounded runtime cognition without
   collapsing into identity, reputation, or personhood claims
+- ACIP binary schema, public schema catalog, and JSON projection evidence keep
+  communication inspectable without making message contents public by default
 - moral and governance context is inherited without being reinvented
 - witnesses and receipts make the event inspectable
 - negative cases prove ordinary startup is not birth
@@ -83,6 +85,13 @@ v0.92 prepares the identity evidence that v0.93 governance will need. It does
 not complete constitutional citizenship, social contract, rights/duties, IAM,
 or production polis governance.
 
+### 7. Inspectable Transport Readiness
+
+Birth evidence should not depend on opaque communication channels. v0.92 should
+define the ACIP binary schema, public polis schema catalog, deterministic JSON
+projection, and optional WebSocket carrier proof that make future citizen
+communication reviewable without weakening message-access rules.
+
 ## Long-Term Direction
 
 v0.92 should leave ADL with a credible first birthday story:
@@ -95,4 +104,5 @@ v0.92 should leave ADL with a credible first birthday story:
 
 That record becomes one of the most important artifacts for the later roadmap:
 proof that ADL can create identity-bearing agents with continuity, memory,
-capability, cognitive profile, moral context, and reviewable boundaries.
+capability, cognitive profile, moral context, inspectable communication
+substrate, and reviewable boundaries.
