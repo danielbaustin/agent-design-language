@@ -24,6 +24,9 @@ not ordinary process startup.
 - Define capability envelopes for providers, tools, skills, and authority.
 - Define ACP / cognitive profiles as bounded runtime-visible profile records
   grounded in evidence rather than labels.
+- Define the ACIP binary schema, public schema catalog, deterministic JSON
+  projection, and optional WebSocket carrier proof needed for inspectable
+  session transport.
 - Define birth witnesses and citizen-facing receipts.
 - Define reviewer-facing birthday packets.
 - Preserve v0.90.3 citizen-state and v0.91 moral-trace boundaries.
@@ -42,6 +45,10 @@ not ordinary process startup.
 - No replacement of v0.91 moral trace, wellbeing, or trajectory review.
 - No implementation of v0.93 constitutional governance.
 - No production migration or inter-polis portability claim.
+- No production WebSocket security or cross-polis ACIP networking claim.
+- No replacement of v0.93 key lifecycle, encryption, signing, revocation, or
+  zero-trust message-acceptance work.
+- No replacement of v0.94 signed/queryable trace closure.
 
 ## Proposed Design
 
@@ -52,7 +59,8 @@ The layer has three parts:
 
 - Engineering substrate: identity root, stable name, continuity record, memory
   grounding, capability envelope, ACP/cognitive profile record, witnesses,
-  receipts, trace references, and redacted projection.
+  receipts, ACIP binary schema/catalog surfaces, trace references, and
+  redacted projection.
 - Review model: birthday packet, negative cases, continuity confidence,
   witness validity, and birth-versus-startup distinction.
 - Context layer: explanation of why birth matters without claiming legal
@@ -111,6 +119,19 @@ The ACP record should include:
 - explicit non-claims for identity, reputation, consciousness, or public
   standing
 
+### ACIP Binary Transport Readiness
+
+The ACIP transport-readiness record should include:
+
+- protobuf schema family and version
+- payload type and compatibility profile
+- public schema catalog entry
+- deterministic JSON projection contract
+- governed message-content access boundary
+- mock or loopback WebSocket carrier proof
+- trace/replay references
+- explicit handoff to v0.93 transport security and v0.94 signed trace
+
 ### Birthday Review Packet
 
 The review packet should include:
@@ -138,6 +159,8 @@ Later implementation should validate:
 - capability envelope declares model/provider/tool/skill limits
 - ACP/cognitive profiles are evidence-grounded, privacy-bounded, and distinct
   from identity or reputation
+- binary ACIP events can be decoded through public schemas into deterministic
+  JSON without granting unauthorized message-content access
 - witnesses and receipts are present and meaningful
 - the birthday record does not claim legal personhood or completed
   constitutional citizenship
@@ -150,6 +173,7 @@ Later implementation should validate:
 | Provisional identity is mistaken for birth. | Maintain a negative suite for startup, wake, snapshot, admission, and copied state. |
 | Memory grounding leaks private state. | Use references, witnesses, and redacted projections rather than raw private memory. |
 | Cognitive profiles become unsupported labels. | Require source evidence, update semantics, privacy boundaries, and non-claims for reputation or identity. |
+| Binary ACIP becomes opaque transport authority. | Require public schema catalogs, deterministic JSON projection, and separate message-content access checks. |
 | v0.92 absorbs v0.93 governance. | Keep citizenship law, rights/duties, social contract, delegation, and IAM downstream. |
 | Continuity is treated as magic. | Require lineage, witnesses, cycle evidence, and ambiguity handling. |
 

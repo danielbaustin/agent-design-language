@@ -20,7 +20,8 @@ evidence-bearing runtime behavior, not a ceremonial label.
 | D4 | Memory grounding proof | Birth references witnessed memory artifacts without exposing raw private memory. | Memory-grounding fixture and redacted packet. | Planned candidate |
 | D5 | Capability envelope proof | The birth record declares provider, model, tool, skill, authority, and limit context. | Capability envelope and validation report. | Planned candidate |
 | D6 | ACP / cognitive profile proof | Birth packet includes a bounded profile record grounded in evidence. | ACP/profile fixture, update rationale, redacted reviewer packet, and validation report. | Planned candidate |
-| D7 | Birthday-to-governance handoff | v0.93 governance can consume v0.92 identity evidence without redefining birth. | Handoff packet mapping identity evidence to future governance. | Planned candidate |
+| D7 | ACIP binary schema and WebSocket carrier proof | Binary ACIP remains inspectable through public schemas while message contents remain governed. | ACIP `.proto`, schema catalog fixture, JSON projection report, denied-access case, mock WebSocket trace packet. | Planned candidate |
+| D8 | Birthday-to-governance handoff | v0.93 governance can consume v0.92 identity evidence without redefining birth. | Handoff packet mapping identity evidence to future governance. | Planned candidate |
 
 ## Demo Rules
 
@@ -30,6 +31,8 @@ evidence-bearing runtime behavior, not a ceremonial label.
 - Every capability claim must include limits and authority context.
 - Every cognitive-profile claim must cite evidence and remain distinct from
   identity, reputation, and standing.
+- Every binary ACIP claim must prove public-schema decodeability, deterministic
+  JSON projection, and separate message-content authorization.
 - Demo outputs should distinguish engineering evidence from philosophical or
   governance context.
 
@@ -111,7 +114,21 @@ Expected proof:
 - privacy/redaction policy
 - validation report
 
-### D7) Birthday-To-Governance Handoff
+### D7) ACIP Binary Schema And WebSocket Carrier Proof
+
+The demo should show that binary ACIP is efficient without becoming opaque or
+authority-conferring.
+
+Expected proof:
+
+- ACIP protobuf schema
+- public schema catalog fixture
+- deterministic JSON projection
+- governed message-content access decision
+- denied unauthorized inspection case
+- mock WebSocket session trace packet
+
+### D8) Birthday-To-Governance Handoff
 
 The demo should show how v0.93 can consume identity evidence.
 
@@ -129,3 +146,5 @@ Expected proof:
 - These demos do not expose raw private state.
 - These demos do not turn cognitive profiles into public reputation or
   consciousness claims.
+- These demos do not prove production WebSocket security, cross-polis
+  networking, or signed/queryable trace completion.

@@ -18,6 +18,9 @@ Active planning docs:
 - `TBD_PLAN_ALLOCATION_v0.91.2_TO_v0.95.md` - tracked allocation map from the
   local-only `.adl/docs/TBD/` planning corpus to milestone execution homes,
   archive/provenance buckets, or explicit deferred status through `v0.95`
+- `TBD_CLEANUP_DISPOSITION_v0.91.2_3150.md` - cleanup disposition from issue
+  `#3150`, including local-only TBD hygiene decisions that should not be
+  promoted into tracked docs merely to make deletion visible
 - `PYTHON_ELIMINATION_STAGED_PLAN.md` - cross-milestone staged reduction plan
   for retiring tracked Python without turning the roadmap into a stop-the-world
   rewrite
