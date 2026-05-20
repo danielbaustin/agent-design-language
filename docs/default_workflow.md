@@ -39,7 +39,7 @@ The browser/editor adapter remains narrower:
 ## 1) Bootstrap Canonical Issue Bundle
 
 ```bash
-bash ./adl/tools/pr.sh init <issue_num> --slug <slug> --version v0.87
+bash ./adl/tools/pr.sh init <issue_num> --slug <slug> --version <milestone_version>
 ```
 
 Canonical local task bundle:
@@ -71,13 +71,17 @@ gh issue view <issue_num>
 ## 3) Confirm Readiness And Bind Run Phase
 
 ```bash
-bash ./adl/tools/pr.sh ready <issue_num> --slug <slug> --version v0.87
-bash ./adl/tools/pr.sh run <issue_num> --slug <slug> --version v0.87
+bash ./adl/tools/pr.sh ready <issue_num> --slug <slug> --version <milestone_version>
+bash ./adl/tools/pr.sh run <issue_num> --slug <slug> --version <milestone_version>
 ```
 
-Compatibility card paths:
+Legacy compatibility card paths:
 - `.adl/cards/<issue_num>/input_<issue_num>.md`
 - `.adl/cards/<issue_num>/output_<issue_num>.md`
+
+These legacy paths still appear in some older records and tools, but the
+canonical issue bundle for current work is the task-bundle directory under
+`.adl/<scope>/tasks/`.
 
 Preferred execution clone:
 - `.worktrees/adl-wp-<issue_num>`
@@ -123,9 +127,8 @@ Canonical regression proof surface for the implemented editing story:
 bash adl/tools/test_five_command_regression_suite.sh
 ```
 
-Bounded lifecycle proof/demo:
-
-- `docs/tooling/editor/five_command_demo.md`
+Bounded lifecycle proof/demo surfaces should come from the current issue or
+milestone packet rather than a legacy one-size-fits-all demo note.
 
 ### Compression-Safe Validation
 
@@ -200,9 +203,7 @@ surface needs it.
 ```bash
 bash ./adl/tools/pr.sh finish <issue_num> \
   --title "<title>" \
-  --paths "<comma-separated paths>" \
-  -f .adl/cards/<issue_num>/input_<issue_num>.md \
-  --output-card .adl/cards/<issue_num>/output_<issue_num>.md
+  --paths "<comma-separated repo paths>"
 ```
 
 Finish should only open or update the PR after review truth is captured or
@@ -210,6 +211,9 @@ explicitly deferred according to policy. The current publication-time `SOR`
 should be synced to the canonical task bundle under:
 
 - `.adl/<scope>/tasks/issue-<padded_issue>__<slug>/sor.md`
+
+Do not treat legacy `.adl/cards/<issue_num>/...` paths as the canonical finish
+surface for new issue work.
 
 ## 8) Report
 
@@ -224,7 +228,7 @@ Write a per-issue report under:
 - Wrong paths at `finish`:
   - Ensure `--paths` only includes intended repo paths; do not include local `.adl` artifacts.
 - Missing canonical STP:
-  - Re-run `pr.sh init <issue_num> --slug <slug> --version v0.87`.
+  - Re-run `pr.sh init <issue_num> --slug <slug> --version <milestone_version>`.
 - Stale GitHub issue body:
   - Reconcile the GitHub issue outside `pr.sh`, then re-run `pr.sh init <issue_num>` if the local root bundle must be reseeded.
 - Missing card files:
