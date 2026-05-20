@@ -24,7 +24,7 @@ Each feature should eventually have one truthful proof route:
 | CodeFriend productization | WP-06 | review packet workflow package + product-report template + evidence rules | landed |
 | Review heuristics and demos | WP-07 | heuristics promotion packet + bounded review demo packet + fixture review outputs + review-quality checklist | in_flight |
 | Workspace CMS bridge | WP-08, WP-09, #3091, #3092, #3093, #3094 | bounded demo + native CMS capability packet + live safety package + live bounded execution report + live content-card roundtrip report + project-ready operational package + `.adl` to GWS migration plan | landed baseline plus active hardening |
-| Code modernization | WP-10 | dry-run modernization demo | planned |
+| Code modernization | WP-10 | modernization interaction plan + dry-run evidence + reversibility/review policy + demo packet | active bounded packet |
 | Speculative decoding | WP-11 | prototype/evaluation packet + non-claim record | planned |
 | Repo visibility follow-on | WP-12 | manifest/linkage packet + source-map evidence | planned |
 | Publication program | WP-13 | backlog/process packet | planned |

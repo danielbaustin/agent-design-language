@@ -1,0 +1,43 @@
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ------------< com.agentlogic.adl:use-diamond-operator-demo >------------
+[INFO] Building use-diamond-operator-demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] >>> rewrite:6.39.0:dryRun (default-cli) > process-test-classes @ use-diamond-operator-demo >>>
+[INFO]
+[INFO] --- resources:3.4.0:resources (default-resources) @ use-diamond-operator-demo ---
+[INFO] skip non existing resourceDirectory docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/src/main/resources
+[INFO]
+[INFO] --- compiler:3.15.0:compile (default-compile) @ use-diamond-operator-demo ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO]
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ use-diamond-operator-demo ---
+[INFO] skip non existing resourceDirectory docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/src/test/resources
+[INFO]
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ use-diamond-operator-demo ---
+[INFO] No sources to compile
+[INFO]
+[INFO] <<< rewrite:6.39.0:dryRun (default-cli) < process-test-classes @ use-diamond-operator-demo <<<
+[INFO]
+[INFO] --- rewrite:6.39.0:dryRun (default-cli) @ use-diamond-operator-demo ---
+[INFO] Using active recipe(s) [org.openrewrite.staticanalysis.UseDiamondOperator]
+[INFO] Using active styles(s) []
+[INFO] Validating active recipes...
+[INFO] Project [use-diamond-operator-demo] Resolving Poms...
+[INFO] Project [use-diamond-operator-demo] Parsing source files
+[INFO] Running recipe(s)...
+[INFO] Printing available datatables to: target/rewrite/datatables/2026-05-19_12-23-18-924
+[WARNING] These recipes would make changes to docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/src/main/java/demo/UseDiamondOperatorExample.java:
+[WARNING]     org.openrewrite.staticanalysis.UseDiamondOperator
+[WARNING] Patch file available:
+[WARNING]     docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/target/rewrite/rewrite.patch
+[WARNING] Estimate time saved: 1m
+[WARNING] Run 'mvn rewrite:run' to apply the recipes.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:24 min
+[INFO] Finished at: 2026-05-19T12:23:18-07:00
+[INFO] ------------------------------------------------------------------------
