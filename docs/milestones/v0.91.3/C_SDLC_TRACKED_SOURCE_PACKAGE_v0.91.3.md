@@ -26,7 +26,7 @@ The v0.91.3 first slice is grounded in these source topics:
 | Five-minute sprint demo | Defines the flagship first proof while preserving review, replay, merge, and closeout discipline. |
 | C-SDLC metrics | Defines coordination, review, replay, throughput, and governance metrics. |
 | Issue card sequence note | Explains why each card has one job and feeds later review/recovery/memory. |
-| Sprint and issue SPP note | Keeps issue-local `SPP` authoritative while treating sprint-scoped planning as future extension. |
+| Sprint and issue SPP note | Historical design exploration. The accepted `v0.91.3` rule is stricter: `SPP` is issue-local operative execution-plan truth, not sprint orchestration. |
 | Process mini-sprint issue bodies | Provide migration lessons for templates, validators, editors, conductor routing, active-bundle readiness, and ObsMem handoff. |
 
 ## Canonical First-Slice Contract
@@ -55,7 +55,7 @@ The cards mean:
 | --- | --- |
 | `SIP` | Structured Issue Prompt: issue intent, scope, acceptance boundary, and dependencies. |
 | `STP` | Structured Task Prompt: selected task or solution. |
-| `SPP` | Structured Plan Prompt: issue-local execution plan. |
+| `SPP` | Structured Plan Prompt: issue-local operative execution plan. |
 | `SRP` | Structured Review Prompt: review instructions plus findings, dispositions, and residual risk. |
 | `SOR` | Structured Outcome Record: actual changes, validation, integration state, and final issue truth. |
 
@@ -79,6 +79,38 @@ The first slice does not need to complete signed trace verification, but it must
 not design itself into a corner where durable C-SDLC proof remains local-only or
 unsigned forever.
 
+## SPP Operative Plan Rule
+
+For `v0.91.3`, `SPP` is the issue-local operative execution plan.
+
+It answers:
+
+- what step is active now
+- what step comes next
+- what proof is required before proceeding
+- what condition forces a material replan
+- what is explicitly out of bounds for this issue
+
+It must not become:
+
+- sprint orchestration
+- milestone strategy
+- review-result truth
+- output or closeout truth
+
+The tracked milestone package treats sprint-scoped `SPP` as superseded design
+exploration unless a future issue deliberately creates a separate sprint-planning
+artifact with its own schema, validator, and editor route.
+
+During the C-SDLC rollout, durable operative `SPP` truth must become tracked,
+public, and auditable. Local `.adl/` copies may remain execution caches or
+staging surfaces, but they are not sufficient as the only authoritative home for
+C-SDLC planning truth.
+
+If a material replan changes execution order, proof path, issue scope, or
+review/CI-driven next steps, execution must pause long enough to update the
+tracked operative `SPP` or its tracked revision history before continuing.
+
 ## Relationship To Tooling Docs
 
 The first slice must remain aligned with:
@@ -96,7 +128,7 @@ to review or remediation before claiming the first slice is complete.
 This tracked source package does not claim:
 
 - C-SDLC is already default operation
-- sprint-scoped `SPP` is mandatory today
+- sprint-scoped `SPP` is mandatory or accepted as current target truth
 - signed trace verification is complete in v0.91.3
 - trace query/TQL is required before first-slice proof
 - any external collaboration workspace is required infrastructure
