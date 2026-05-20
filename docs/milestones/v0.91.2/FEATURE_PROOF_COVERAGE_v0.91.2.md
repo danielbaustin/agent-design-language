@@ -29,8 +29,8 @@ Each feature should eventually have one truthful proof route:
 | Repo visibility follow-on | WP-12 | tracked manifest packet + linkage report + reviewer-navigation packet | in_flight |
 | Publication program | WP-13 | tracked backlog packet + review-gates packet + Godel/GHB backlog note | in_flight |
 | General intelligence paper packet | WP-14 | tracked claim/citation packet + review handoff + residual-risk register + next-authoring-steps packet + canonical paper-repo migration truth | implemented |
-| Rustdoc/doc cleanup | WP-15 | cleanup report + doc patch set | planned |
-| Workflow guardrails | WP-16 | guardrail proofs + runbook | planned |
+| Rustdoc/doc cleanup | WP-15 | cleanup report + doc patch set | in_flight |
+| Workflow guardrails | WP-16 | `adl/tools/workflow_guardrails.sh` + `adl/tools/test_workflow_guardrails.sh` + workflow-guardrails runbook/proof packet | in_flight |
 | Demo/proof convergence | WP-17 | demo matrix and proof coverage | planned |
 
 ## Non-Claims
