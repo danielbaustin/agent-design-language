@@ -4,10 +4,10 @@
 
 - Feature Name: Speculative Decoding Prototype
 - Milestone Target: `v0.91.2`
-- Status: planned
+- Status: in_flight
 - Planned WP Home: WP-11
 - Source Docs: `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`; `.adl/docs/TBD/ADL_AND_SPECULATIVE_CODING_REPLAY.md`
-- Proof Modes: design packet, prototype plan, runtime-evidence note
+- Proof Modes: design packet, deterministic prototype report, reviewer evaluation packet
 
 ## Purpose
 
@@ -22,7 +22,7 @@ pattern can live inside ADL honestly.
 
 In scope:
 
-- A bounded architecture and proof posture for speculative decoding in ADL.
+- A bounded architecture and executable proof posture for speculative decoding in ADL.
 - Explicit separation between speculative proposal and authoritative commit.
 - Runtime evidence requirements for acceptance, rejection, and fallback.
 - Non-claims around side effects, Freedom Gate, ACC, and external authority.
@@ -41,3 +41,14 @@ Out of scope:
 - Freedom Gate and ACC remain the authority boundary for side effects.
 - The milestone leaves behind a bounded prototype/evaluation packet rather than
   a vague runtime-performance aspiration.
+
+## Current Proof Route
+
+- `docs/milestones/v0.91.2/review/speculative_decoding/speculative_decoding_prototype_report.json`
+- `docs/milestones/v0.91.2/review/speculative_decoding/speculative_decoding_prototype_packet.md`
+
+The current `WP-11` branch-local proof posture is:
+
+- worth continuing for same-family local backends when acceptance stays high
+- not worth continuing for poor-draft or tokenizer-mismatch pairings
+- still explicitly non-proving for production provider-side acceleration claims
