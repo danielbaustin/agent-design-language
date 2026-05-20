@@ -55,3 +55,8 @@ The `WP-05` coverage ergonomics slice is now landed via:
 - improved actionable next-step diagnostics in `adl/tools/check_coverage_impact.sh`
 - focused regression coverage in `adl/tools/test_check_coverage_impact.sh`
 - `docs/milestones/v0.91.2/review/coverage_gate_ergonomics_report.md`
+
+Post-sprint follow-on `#3133` continues this line by tightening the ordinary
+PR-fast nextest selector so structural module-barrel wiring, such as
+`adl/src/lib.rs`, does not force a full nextest sweep when the real changed
+runtime surface is still narrowly mapped.
