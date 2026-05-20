@@ -4,14 +4,15 @@
 
 Tracked source package for the first Cognitive SDLC implementation slice.
 
-This document promotes the durable planning truth that originally lived in
-local `.adl/docs/TBD/cognitive-sdlc/` notes into the reviewable milestone
-package for `v0.91.3`.
+This document consumes the durable planning truth that originally lived in local
+`.adl/docs/TBD/cognitive-sdlc/` notes and is now promoted into
+`docs/cognitive-sdlc/`, then maps it into the reviewable milestone package for
+`v0.91.3`.
 
 The source notes remain useful as drafting history, but they are not the
 canonical public/auditable planning surface for the milestone. Reviewers should
-use this tracked package, the v0.91.3 milestone docs, and the tracked tooling
-docs as the branch-verifiable source set.
+use `docs/cognitive-sdlc/`, this tracked package, the v0.91.3 milestone docs,
+and the tracked tooling docs as the branch-verifiable source set.
 
 ## Source Notes Promoted
 
@@ -19,6 +20,7 @@ The v0.91.3 first slice is grounded in these source topics:
 
 | Source topic | Tracked v0.91.3 role |
 | --- | --- |
+| Tracked C-SDLC docs home | Public/auditable process, lifecycle, transition, metrics, demo, and workflow-state canon under `docs/cognitive-sdlc/`. |
 | ADL Cognitive SDLC architecture | Defines C-SDLC as governed cognitive state transition, not a PR shortcut. |
 | Card lifecycle migration plan | Establishes `SIP -> STP -> SPP -> SRP -> SOR` as the canonical issue flow. |
 | Cognitive SDLC v1 plan | Bounds the implementation slice to transition schema, evidence, review, gate, and memory handoff. |

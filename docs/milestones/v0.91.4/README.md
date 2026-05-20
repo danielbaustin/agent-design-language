@@ -62,6 +62,7 @@ v0.91.4 should not:
 
 This package is grounded in:
 
+- `docs/cognitive-sdlc/README.md`
 - `docs/milestones/v0.91.3/README.md`
 - `docs/milestones/v0.91.3/NEXT_MILESTONE_HANDOFF_v0.91.3.md`
 - `docs/milestones/v0.91.3/WBS_v0.91.3.md`
@@ -82,8 +83,9 @@ This package is grounded in:
 - `docs/tooling/structured-prompt-contracts.md`
 
 The broader `.adl/docs/TBD/cognitive-sdlc/` planning notes are drafting history.
-The tracked v0.91.3 source package and this v0.91.4 migration plan are the
-branch-verifiable C-SDLC planning surfaces for review.
+The tracked C-SDLC docs home, the tracked v0.91.3 source package, and this
+v0.91.4 migration plan are the branch-verifiable C-SDLC planning surfaces for
+review.
 
 ## Document Map
 
@@ -98,6 +100,8 @@ branch-verifiable C-SDLC planning surfaces for review.
 - Quality gate: [QUALITY_GATE_v0.91.4.md](QUALITY_GATE_v0.91.4.md)
 - Tracked workflow-state migration plan:
   [C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md](C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md)
+- C-SDLC canonical docs:
+  [../../cognitive-sdlc/README.md](../../cognitive-sdlc/README.md)
 - Feature index: [features/README.md](features/README.md)
 
 ## Success Criteria
