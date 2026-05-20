@@ -14,6 +14,12 @@ path or replace the argument with the path to the captured log under review.
 This diagnostic path is evidence only. It does not replace passing tests,
 coverage gates, release proof, or authoritative slow-proof obligations.
 
+For job/step-level GitHub Actions runtime diagnosis, use the companion budget
+surface:
+
+- `docs/milestones/v0.91.2/CI_RUNTIME_BUDGETS_v0.91.2.md`
+- `adl/tools/summarize_ci_runtime.py`
+
 ## Operator Command
 
 ```bash

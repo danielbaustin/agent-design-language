@@ -8,7 +8,7 @@
 - Planned WP Home: WP-04, WP-05
 - Source Docs: `.adl/docs/TBD/tools/RUNTIME_V2_TEST_CYCLE_RECOVERY_PLAN.md`; `.adl/docs/TBD/v0.90.5_TEST_RUNTIME_REDUCTION_PLAN.md`
 - Proof Modes: CI evidence, tests, report
-- Current proof surfaces: `docs/milestones/v0.91.2/review/runtime_test_cycle_recovery_report.md`; `docs/milestones/v0.91.2/review/coverage_gate_ergonomics_report.md`
+- Current proof surfaces: `docs/milestones/v0.91.2/review/runtime_test_cycle_recovery_report.md`; `docs/milestones/v0.91.2/review/coverage_gate_ergonomics_report.md`; `docs/milestones/v0.91.2/CI_RUNTIME_BUDGETS_v0.91.2.md`
 
 ## Purpose
 
@@ -60,3 +60,8 @@ Post-sprint follow-on `#3133` continues this line by tightening the ordinary
 PR-fast nextest selector so structural module-barrel wiring, such as
 `adl/src/lib.rs`, does not force a full nextest sweep when the real changed
 runtime surface is still narrowly mapped.
+
+Post-sprint follow-on `#3134` adds job/step-level CI runtime budget
+observability so future slowdowns can be routed to lane selection, setup/cache,
+Rust test execution, coverage execution, tooling contracts, or reporting
+instead of being treated as anecdotal PR pain.

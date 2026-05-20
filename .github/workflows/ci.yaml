@@ -149,6 +149,10 @@ jobs:
       - name: ci runtime contract check
         run: bash tools/test_ci_runtime_contracts.sh
 
+      - name: ci runtime budget report contract check
+        run: bash adl/tools/test_summarize_ci_runtime.sh
+        working-directory: .
+
       - name: ci cache/linker contract check
         run: bash tools/test_ci_cache_linker_contracts.sh
 
