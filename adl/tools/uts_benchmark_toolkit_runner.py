@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -313,6 +314,14 @@ def invalid_lane_result(note: str, failure_kind: str):
     }
 
 
+def governed_backend_unavailable_note():
+    if shutil.which('cargo') is None:
+        return 'governed lane skipped: optional Rust cargo backend is not installed'
+    if not (CURRENT_DIR.parent / 'Cargo.toml').is_file():
+        return 'governed lane skipped: optional Rust cargo backend manifest is missing'
+    return None
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--profile-file')
@@ -430,6 +439,9 @@ def main():
         runner_log,
         f"run_start profile={display_path(args.profile_file)} models_file={display_path(models_file)} panel={display_path(panel_file)} task_panel={display_task_panel_path(task_panel_file)} include_governed={str(include_governed).lower()} self_check_passed={str(self_check['passed']).lower()} selected_models={','.join(entry['id'] for entry in selected)} resume={str(not args.no_resume).lower()}",
     )
+    governed_unavailable_note = governed_backend_unavailable_note() if include_governed else None
+    if governed_unavailable_note:
+        append_runner_log(runner_log, governed_unavailable_note)
 
     with tempfile.TemporaryDirectory(prefix='uts-toolkit-run-') as tmp_dir:
         tmp = Path(tmp_dir)
@@ -493,7 +505,17 @@ def main():
                                 os.environ['ADL_HOSTED_BASE_URL'] = previous_hosted_base_url
                     governed = None
                     if include_governed:
-                        if entry.get('provider_kind') in {'local', 'hosted'}:
+                        if governed_unavailable_note:
+                            governed = {
+                                'status': 'skipped',
+                                'passed_count': 0,
+                                'total_cases': 0,
+                                'full_support': False,
+                                'cases': [],
+                                'note': governed_unavailable_note,
+                            }
+                            append_runner_log(runner_log, f"lane_complete id={entry['id']} lane=uts_acc skipped=true reason=governed_backend_unavailable")
+                        elif entry.get('provider_kind') in {'local', 'hosted'}:
                             governed_out = tmp / 'uts_acc.json'
                             command = [
                                 'python3',
