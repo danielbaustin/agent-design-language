@@ -5,7 +5,6 @@
 use anyhow::{anyhow, Context, Result};
 use serde_json::Value;
 use std::collections::{BTreeMap, HashMap};
-use std::env;
 use std::error::Error as StdError;
 use std::fmt;
 use std::fs;

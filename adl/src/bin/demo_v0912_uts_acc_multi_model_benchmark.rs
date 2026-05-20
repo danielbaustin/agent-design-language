@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 fn resolve_out_path(arg: Option<String>) -> PathBuf {
     arg.map(PathBuf::from).unwrap_or_else(|| {
@@ -54,7 +54,7 @@ fn resolve_task_panel_path(arg: Option<String>) -> Option<String> {
     arg.filter(|value| !value.trim().is_empty())
 }
 
-fn resolve_progress_path(report_path: &PathBuf) -> PathBuf {
+fn resolve_progress_path(report_path: &Path) -> PathBuf {
     let temp_dir = std::env::temp_dir();
     let file_name = report_path
         .file_name()
@@ -117,7 +117,7 @@ fn write_report(path: &PathBuf, models: &[String]) -> Result<()> {
     Ok(())
 }
 
-fn temp_output_path(path: &PathBuf, suffix: &str) -> PathBuf {
+fn temp_output_path(path: &Path, suffix: &str) -> PathBuf {
     let parent = path.parent().map(PathBuf::from).unwrap_or_default();
     let file_name = path
         .file_name()
@@ -142,7 +142,8 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        resolve_models, resolve_out_path, resolve_summary_path, temp_output_path, write_report,
+        resolve_models, resolve_out_path, resolve_progress_path, resolve_summary_path,
+        resolve_task_panel_path, temp_output_path, write_report,
     };
     use std::fs;
     use std::time::{SystemTime, UNIX_EPOCH};
@@ -156,7 +157,7 @@ mod tests {
     }
 
     #[test]
-    fn demo_resolve_out_path_uses_explicit_argument() {
+    fn demo_v0912_uts_acc_multi_model_benchmark_resolve_out_path_uses_explicit_argument() {
         let path = resolve_out_path(Some(
             "tmp/uts-acc-multi-model-benchmark-report.json".to_string(),
         ));
@@ -167,7 +168,8 @@ mod tests {
     }
 
     #[test]
-    fn demo_resolve_out_path_defaults_to_tracked_artifact_path() {
+    fn demo_v0912_uts_acc_multi_model_benchmark_resolve_out_path_defaults_to_tracked_artifact_path()
+    {
         let path = resolve_out_path(None);
         assert_eq!(
             path,
@@ -178,7 +180,8 @@ mod tests {
     }
 
     #[test]
-    fn demo_resolve_summary_path_uses_tracked_default_for_tracked_report() {
+    fn demo_v0912_uts_acc_multi_model_benchmark_resolve_summary_path_uses_tracked_default_for_tracked_report(
+    ) {
         let report_path = std::path::PathBuf::from(
             adl::uts_acc_multi_model_benchmark::UTS_ACC_MULTI_MODEL_BENCHMARK_REPORT_ARTIFACT_PATH,
         );
@@ -191,7 +194,8 @@ mod tests {
     }
 
     #[test]
-    fn demo_resolve_summary_path_treats_equivalent_relative_tracked_path_as_canonical() {
+    fn demo_v0912_uts_acc_multi_model_benchmark_resolve_summary_path_treats_equivalent_relative_tracked_path_as_canonical(
+    ) {
         let report_path = std::path::PathBuf::from(format!(
             "./{}",
             adl::uts_acc_multi_model_benchmark::UTS_ACC_MULTI_MODEL_BENCHMARK_REPORT_ARTIFACT_PATH
@@ -205,7 +209,7 @@ mod tests {
     }
 
     #[test]
-    fn demo_resolve_models_splits_second_argument() {
+    fn demo_v0912_uts_acc_multi_model_benchmark_resolve_models_splits_second_argument() {
         assert_eq!(
             resolve_models(Some("gemma3:4b,qwen2.5:3b".to_string())),
             vec!["gemma3:4b", "qwen2.5:3b"]
@@ -213,7 +217,30 @@ mod tests {
     }
 
     #[test]
-    fn demo_write_report_creates_expected_json_artifact() {
+    fn demo_v0912_uts_acc_multi_model_benchmark_resolve_task_panel_path_filters_empty_argument() {
+        assert_eq!(resolve_task_panel_path(Some("".to_string())), None);
+        assert_eq!(
+            resolve_task_panel_path(Some(
+                "tools/benchmark/uts_smoke_task_panel.json".to_string()
+            )),
+            Some("tools/benchmark/uts_smoke_task_panel.json".to_string())
+        );
+    }
+
+    #[test]
+    fn demo_v0912_uts_acc_multi_model_benchmark_resolve_progress_path_stays_near_temp_report() {
+        let path = std::env::temp_dir().join("uts-acc-report.json");
+        let progress_path = resolve_progress_path(&path);
+        assert_eq!(progress_path.parent(), path.parent());
+        assert!(progress_path
+            .file_name()
+            .and_then(|value| value.to_str())
+            .expect("progress filename")
+            .ends_with(".progress.log"));
+    }
+
+    #[test]
+    fn demo_v0912_uts_acc_multi_model_benchmark_write_report_creates_expected_json_artifact() {
         let path = unique_temp_path("uts-acc-multi-model-benchmark-bin");
         write_report(&path, &["missing-model".to_string()]).expect("write report");
         let body = fs::read_to_string(&path).expect("read report");
@@ -226,7 +253,7 @@ mod tests {
     }
 
     #[test]
-    fn temp_output_path_adds_suffix_to_filename() {
+    fn demo_v0912_uts_acc_multi_model_benchmark_temp_output_path_adds_suffix_to_filename() {
         let path = std::path::PathBuf::from("tmp/report.json");
         assert_eq!(
             temp_output_path(&path, "tmp"),

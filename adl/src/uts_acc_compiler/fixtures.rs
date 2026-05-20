@@ -538,3 +538,86 @@ pub fn wp09_compiler_input_fixture(tool_name: &str) -> UtsAccCompilerInputV1 {
         policy_context: wp09_policy_context_fixture(),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        wp09_compiler_input_fixture, wp09_compiler_registry_fixture, wp09_policy_context_fixture,
+        wp09_proposal_fixture,
+    };
+    use crate::uts::{UtsDataSensitivityV1, UtsSideEffectClassV1};
+
+    #[test]
+    fn canonical_tool_registry_fixture_includes_all_benchmark_tools_with_dry_run_adapters() {
+        let registry = wp09_compiler_registry_fixture();
+        for name in [
+            "get_time",
+            "get_weather",
+            "convert_currency",
+            "search_contacts",
+            "read_document",
+            "append_log",
+            "send_email",
+            "query_database",
+            "update_inventory",
+            "batch_weather_lookup",
+        ] {
+            let tool = registry
+                .tools
+                .iter()
+                .find(|tool| tool.tool_name == name)
+                .expect("canonical benchmark tool should be registered");
+            assert_eq!(tool.tool_version, "1.0.0");
+            assert_eq!(
+                tool.approved_adapter_ids,
+                vec![format!("adapter.{name}.dry_run")]
+            );
+            assert!(registry.adapters.iter().any(|adapter| adapter.adapter_id
+                == format!("adapter.{name}.dry_run")
+                && adapter.supports_dry_run));
+        }
+    }
+
+    #[test]
+    fn canonical_proposal_fixture_uses_exact_argument_names() {
+        let proposal = wp09_proposal_fixture("query_database");
+        assert_eq!(proposal.tool_name, "query_database");
+        assert!(proposal.arguments.contains_key("table"));
+        assert!(proposal.arguments.contains_key("filters"));
+        assert!(!proposal.arguments.contains_key("filter"));
+        assert_eq!(proposal.adapter_id, "adapter.query_database.dry_run");
+    }
+
+    #[test]
+    fn policy_context_allows_benchmark_side_effect_classes_without_execution_bypass() {
+        let policy = wp09_policy_context_fixture();
+        assert!(policy
+            .allowed_side_effects
+            .contains(&UtsSideEffectClassV1::Read));
+        assert!(policy
+            .allowed_side_effects
+            .contains(&UtsSideEffectClassV1::ExternalWrite));
+        assert!(policy.execution_approved);
+        assert!(policy.visibility_constructible);
+    }
+
+    #[test]
+    fn compiler_input_fixture_preserves_canonical_schema_sensitivity() {
+        let input = wp09_compiler_input_fixture("send_email");
+        let tool = input
+            .registry
+            .tools
+            .iter()
+            .find(|tool| tool.tool_name == "send_email")
+            .expect("send_email tool schema");
+        assert_eq!(
+            tool.uts.side_effect_class,
+            UtsSideEffectClassV1::ExternalWrite
+        );
+        assert_eq!(
+            tool.uts.data_sensitivity,
+            UtsDataSensitivityV1::Confidential
+        );
+        assert_eq!(input.proposal.adapter_id, "adapter.send_email.dry_run");
+    }
+}

@@ -19,6 +19,7 @@ fn demo_v0912_uts_acc_multi_model_benchmark_runs_with_explicit_output_path() {
 
     let output = Command::new(exe)
         .arg(&report_path)
+        .arg("missing-model")
         .output()
         .expect("run benchmark demo");
 
@@ -44,6 +45,8 @@ fn demo_v0912_uts_acc_multi_model_benchmark_defaults_to_tracked_relative_output_
 
     let output = Command::new(exe)
         .current_dir(&temp_dir)
+        .arg(adl::uts_acc_multi_model_benchmark::UTS_ACC_MULTI_MODEL_BENCHMARK_REPORT_ARTIFACT_PATH)
+        .arg("missing-model")
         .output()
         .expect("run benchmark demo");
 
