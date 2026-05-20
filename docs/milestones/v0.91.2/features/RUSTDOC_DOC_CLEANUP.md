@@ -4,7 +4,7 @@
 
 - Feature Name: Rustdoc And Documentation Cleanup
 - Milestone Target: `v0.91.2`
-- Status: planned
+- Status: in_flight
 - Planned WP Home: WP-15
 - Source Docs: `.adl/docs/TBD/RUSTDOC_GAP_ANALYSIS.md`; `.adl/docs/TBD/ADL_DOC_CLEANUP_LEDGER.md`
 - Proof Modes: docs, checks, review
@@ -22,6 +22,8 @@ In scope:
 - Doc cleanup ledger update.
 - Stale milestone claim cleanup.
 - Validation for changed docs.
+- Top-level docs navigation and workflow-surface truth cleanup where those
+  surfaces still point at stale milestone or control-plane behavior.
 
 Out of scope:
 

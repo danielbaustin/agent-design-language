@@ -6,6 +6,11 @@ survive individual milestone closeout.
 Use this directory for living planning surfaces that are updated as each
 milestone completes.
 
+These docs are durable planning truth, not the live execution/control-plane
+surface for a currently running milestone. For active issue-wave, sprint, and
+release-state truth, start in the relevant `docs/milestones/<version>/`
+package.
+
 Active planning docs:
 
 - `ADL_FEATURE_LIST.md` - full feature list, current status, implemented gaps,
@@ -36,6 +41,15 @@ Planning provenance docs:
   active next-sprint commitments
 - `DOC_CLEANUP_RECONCILIATION_1762.md` - historical cleanup reconciliation for
   issue `1762`; keep as provenance, not as live cleanup backlog
+
+## How To Read This Directory
+
+- Use this directory when the question is cross-milestone strategy, sequencing,
+  or long-horizon allocation.
+- Use milestone packages when the question is "what is active, proving, or
+  closing right now?"
+- Use local `.adl/docs/TBD/` only for local planning/control surfaces that have
+  not yet been promoted into tracked repo truth.
 
 ## Directory Boundaries
 
