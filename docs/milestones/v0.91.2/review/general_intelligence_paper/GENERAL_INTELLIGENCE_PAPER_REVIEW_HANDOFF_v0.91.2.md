@@ -13,6 +13,8 @@ state in the separate `general-intelligence-paper` repository.
 - The bibliography has been repaired enough to support a clean citation build.
 - The paper now has retained claim/citation and review packet surfaces that are
   self-consistent with the separate repo home.
+- The separate repo's own workflow and readiness docs now point at the current
+  root manuscript rather than an obsolete historical build path.
 
 ## Review Focus
 
@@ -52,3 +54,4 @@ Suggested reviewer packet from the separate repo:
 - This handoff is not publication approval.
 - This handoff is not proof that all mathematics is correct.
 - This handoff does not imply the paper should be uploaded publicly now.
+- This handoff does not claim that broad public timing has been settled.

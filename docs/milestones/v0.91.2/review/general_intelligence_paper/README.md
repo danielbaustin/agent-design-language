@@ -2,12 +2,13 @@
 
 ## Purpose
 
-This packet records the `WP-14` milestone proof surface for the separate
-general-intelligence paper repository.
+This packet records the strengthened `WP-14` milestone proof surface for the
+separate general-intelligence paper repository.
 
 It does not duplicate the full manuscript repository. It gives `v0.91.2` a
 tracked handoff packet that captures:
 
+- the completion of the canonical repo migration
 - the current claim and citation posture
 - the current reviewer handoff surface
 - the remaining unsupported-claim and residual-risk register
@@ -26,6 +27,10 @@ The active source-of-truth manuscript home is the separate
 - bibliography: `A_MATHEMATICAL_THEORY_OF_GENERAL_INTELLIGENCE.bib`
 - built PDF: `A_MATHEMATICAL_THEORY_OF_GENERAL_INTELLIGENCE.pdf`
 
+The migration question for `WP-14` is now settled: the separate paper repo is
+the canonical manuscript home, and this ADL packet is the milestone review and
+handoff surface.
+
 ## Packet Contents
 
 - [GENERAL_INTELLIGENCE_PAPER_CLAIM_AND_CITATION_PACKET_v0.91.2.md](GENERAL_INTELLIGENCE_PAPER_CLAIM_AND_CITATION_PACKET_v0.91.2.md)
@@ -39,5 +44,6 @@ The active source-of-truth manuscript home is the separate
 - This packet does not certify the mathematics as externally reviewed.
 - This packet does not make the manuscript canonical inside
   `agent-design-language`.
-- This packet does not claim arXiv readiness beyond a bounded internal review
-  handoff.
+- This packet does not claim broad public-release readiness.
+- This packet does not collapse long-horizon publication timing into a short
+  milestone deliverable.

@@ -11,6 +11,8 @@
   explicit discussion.
 - Task-encoding and task-distribution dependence still need careful reviewer
   framing to avoid accidental overclaim.
+- Broad public-release timing is still a strategic decision, not a `v0.91.2`
+  completion criterion.
 
 ## Unsupported Or Weakened Claim Areas
 
@@ -40,3 +42,5 @@
 - stale old-repo path references inside the active paper packet docs have been
   reduced
 - the manuscript source is no longer split ambiguously between two active homes
+- the separate paper repo now identifies the current root manuscript as the
+  active canonical build surface

@@ -3,7 +3,7 @@
 ## Status
 
 Tracked `WP-14` claim/citation packet for the separate
-`general-intelligence-paper` repository.
+`general-intelligence-paper` repository after canonical migration.
 
 ## Source Boundary
 
@@ -80,9 +80,13 @@ Primary citation backbone already identified:
 - PDF build: succeeds in the separate repo
 - remaining build warnings: layout-level warnings may remain, but not the prior
   missing-citation failure mode
+- repo-level workflow docs now point at the separate repo's root LaTeX source
+  rather than an obsolete `v0.3` build path
 
 ## Non-Claims
 
 - This packet does not claim external peer review.
 - This packet does not claim the theorem set is fully audited for correctness.
-- This packet does not promote the paper to publication-ready canonical status.
+- This packet does not promote the paper to immediate public-release status.
+- This packet does not collapse a long-horizon publication strategy into a
+  short milestone proof claim.

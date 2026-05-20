@@ -13,6 +13,8 @@
    - edge-case handling for score degeneracies
    - computability/approximation discussion for `CCC`
    - one or more toy examples or sanity-check constructions
+5. Keep public-release timing separate from manuscript-quality work so the
+   paper can continue to mature without pressure to publish prematurely.
 
 ## Before Any Public Submission
 
@@ -30,6 +32,7 @@
 `WP-14` is complete when the milestone has a truthful tracked packet that:
 
 - points to the separate canonical manuscript repo
+- records that the repo migration is complete
 - preserves claim and citation posture
 - records residual risks
 - provides a clear human review handoff
