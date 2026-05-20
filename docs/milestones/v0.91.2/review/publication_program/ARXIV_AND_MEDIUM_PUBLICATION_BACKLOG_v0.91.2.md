@@ -38,6 +38,14 @@ work rather than being silently folded into the first publication wave:
 2. `State Space Compression, ADL, and Problem Solving`
 3. `Godel Agents and the Godel-Hadamard-Bayes Algorithm`
 4. `Determinism in the ADL Runtime`
+5. `A Governed Cognitive SDLC for AI-Native Software Development`
+
+The C-SDLC paper lane is tracked as local backlog item `LB-098` and public
+issue lineage `#3132`. It should not enter active drafting until the C-SDLC
+implementation has v0.91.3 first-slice proof and v0.91.4 repeatability/default
+operation evidence. The technical/results version should draw from signed
+trace verification, ObsMem handoff evidence, five-minute-sprint demo metrics,
+the formal transition model, limitations, and future-work notes.
 
 ## Medium Article Program
 
@@ -67,6 +75,7 @@ The tracked planning corpus implies a practical order:
 5. `State Space Compression, ADL, and Problem Solving`
 6. `Godel Agents and the Godel-Hadamard-Bayes Algorithm`
 7. `Determinism in the ADL Runtime`
+8. `A Governed Cognitive SDLC for AI-Native Software Development`
 
 This issue does not endorse that order as a hard release commitment; it records
 it as the current planning posture.
@@ -79,6 +88,7 @@ A later writing issue should be able to start from this packet and answer:
 - which article lanes are launch-story candidates;
 - which items are intentionally not yet publication-ready;
 - where Godel/GHB fits without being silently dropped.
+- where the C-SDLC paper fits after v0.91.3/v0.91.4 evidence exists.
 
 ## Non-Claims
 
