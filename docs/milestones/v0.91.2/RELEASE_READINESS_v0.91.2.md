@@ -11,6 +11,7 @@ Not release ready.
 - [SPRINT_v0.91.2.md](SPRINT_v0.91.2.md)
 - [WP_ISSUE_WAVE_v0.91.2.yaml](WP_ISSUE_WAVE_v0.91.2.yaml)
 - [WP_EXECUTION_READINESS_v0.91.2.md](WP_EXECUTION_READINESS_v0.91.2.md)
+- [ADR_PLAN_v0.91.2.md](ADR_PLAN_v0.91.2.md)
 - [DEMO_MATRIX_v0.91.2.md](DEMO_MATRIX_v0.91.2.md)
 - [FEATURE_PROOF_COVERAGE_v0.91.2.md](FEATURE_PROOF_COVERAGE_v0.91.2.md)
 - [QUALITY_GATE_v0.91.2.md](QUALITY_GATE_v0.91.2.md)
@@ -29,3 +30,5 @@ Not release ready.
 - no executed WPs
 - no quality gate
 - no review or remediation state
+- ADR candidates exist for review, but they are not accepted release decisions
+  until promoted or explicitly carried forward
