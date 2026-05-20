@@ -1,0 +1,71 @@
+version: 1
+milestone: v0.91.2
+issue: 3011
+work_package: WP-12
+slice: reviewer_planner_repo_visibility_follow_on
+
+canonical:
+  - path: docs/milestones/v0.91.2/README.md
+    role: milestone-entry
+  - path: docs/milestones/v0.91.2/WBS_v0.91.2.md
+    role: milestone-wbs
+  - path: docs/milestones/v0.91.2/WP_EXECUTION_READINESS_v0.91.2.md
+    role: execution-readiness
+  - path: docs/milestones/v0.91.2/DEMO_MATRIX_v0.91.2.md
+    role: milestone-proof-map
+  - path: docs/milestones/v0.91.2/FEATURE_PROOF_COVERAGE_v0.91.2.md
+    role: milestone-proof-coverage
+  - path: docs/milestones/v0.91.2/features/CODEFRIEND_PRODUCTIZATION.md
+    role: feature-owner
+  - path: docs/milestones/v0.91.2/features/REVIEW_HEURISTICS_AND_DEMOS.md
+    role: feature-owner
+  - path: docs/milestones/v0.91.2/features/REPO_VISIBILITY_FOLLOW_ON.md
+    role: feature-owner
+
+supporting:
+  - path: docs/milestones/v0.90/repo_visibility/README.md
+    role: prior-baseline
+  - path: docs/milestones/v0.90/repo_visibility/CANONICAL_SOURCE_MANIFEST_v0.90.yaml
+    role: prior-baseline
+  - path: docs/milestones/v0.90/repo_visibility/CODE_DOC_DEMO_LINKAGE_REPORT_v0.90.md
+    role: prior-baseline
+  - path: docs/milestones/v0.91.2/review/codefriend_productization/review_packet_workflow_package.md
+    role: review-proof
+  - path: docs/milestones/v0.91.2/review/codefriend_productization/product_report_template.md
+    role: review-proof
+  - path: docs/milestones/v0.91.2/review/codefriend_productization/evidence_requirements.md
+    role: review-proof
+  - path: docs/milestones/v0.91.2/review/codefriend_productization/skill_demo_alignment.md
+    role: review-proof
+  - path: docs/milestones/v0.91.2/review/review_heuristics_demo/review_heuristics_promotion.md
+    role: review-proof
+  - path: docs/milestones/v0.91.2/review/review_heuristics_demo/bounded_review_demo_packet.md
+    role: review-proof
+  - path: docs/milestones/v0.91.2/review/review_heuristics_demo/review_quality_acceptance_checklist.md
+    role: review-proof
+  - path: docs/milestones/v0.91.2/review/review_heuristics_demo/fixture_review_synthesis.md
+    role: fixture-proof
+  - path: docs/milestones/v0.91.2/review/review_heuristics_demo/fixture_docs_review.md
+    role: fixture-proof
+  - path: docs/milestones/v0.91.2/review/review_heuristics_demo/fixture_review_quality_evaluation.md
+    role: fixture-proof
+  - path: docs/milestones/v0.91.2/review/repo_visibility/README.md
+    role: packet-entry
+  - path: docs/milestones/v0.91.2/review/repo_visibility/CODE_DOC_LINKAGE_REPORT_v0.91.2.md
+    role: linkage-report
+  - path: docs/milestones/v0.91.2/review/repo_visibility/REVIEWER_NAVIGATION_PACKET_v0.91.2.md
+    role: reviewer-navigation
+
+non_canonical:
+  - path: .adl/docs/TBD/repo_visibility/REPO_VISIBILITY_LAYER.md
+    role: local-source-material
+  - path: .adl/docs/TBD/repo_visibility/CANONICAL_SOURCE_MANIFEST.md
+    role: local-source-material
+  - path: .adl/docs/TBD/repo_visibility/CODE_DOC_LINKAGE_REPORT.md
+    role: local-source-material
+
+non_claims:
+  - full repo cognition
+  - hidden retrieval or indexing authority
+  - automatic code ownership inference
+  - replacement of milestone docs by local planning notes

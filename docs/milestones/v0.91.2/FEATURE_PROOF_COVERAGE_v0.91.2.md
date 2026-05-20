@@ -26,7 +26,7 @@ Each feature should eventually have one truthful proof route:
 | Workspace CMS bridge | WP-08, WP-09, #3091, #3092, #3093, #3094 | bounded demo + native CMS capability packet + live safety package + live bounded execution report + live content-card roundtrip report + project-ready operational package + `.adl` to GWS migration plan | landed baseline plus active hardening |
 | Code modernization | WP-10 | modernization interaction plan + dry-run evidence + reversibility/review policy + demo packet | active bounded packet |
 | Speculative decoding | WP-11 | `review/speculative_decoding/speculative_decoding_prototype_report.json` + `review/speculative_decoding/speculative_decoding_prototype_packet.md` | in_flight |
-| Repo visibility follow-on | WP-12 | manifest/linkage packet + source-map evidence | planned |
+| Repo visibility follow-on | WP-12 | tracked manifest packet + linkage report + reviewer-navigation packet | in_flight |
 | Publication program | WP-13 | backlog/process packet | planned |
 | General intelligence paper packet | WP-14 | claim/citation/review packet | planned |
 | Rustdoc/doc cleanup | WP-15 | cleanup report + doc patch set | planned |
