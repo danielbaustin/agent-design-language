@@ -119,7 +119,7 @@ cmd_safe_report_command() {
   fi
   [[ -n "$command_text" ]] || die "safe-report-command: provide --command or --file"
 
-  if grep -Eq '\$\(|`' <<<"$command_text"; then
+  if has_unsafe_command_substitution "$command_text"; then
     echo "BLOCKED safe-report-command" >&2
     echo "Unsafe command substitution detected in report-generation command." >&2
     echo "Use a quoted heredoc (for example, <<'EOF') or a language-native writer instead." >&2
@@ -127,6 +127,47 @@ cmd_safe_report_command() {
   fi
 
   echo "PASS safe-report-command"
+}
+
+has_unsafe_command_substitution() {
+  local command_text="$1"
+  local heredoc_end=""
+  local single_marker="<<'"
+  local double_marker='<<"'
+  local slash_marker="<<\\"
+  local line scan after delimiter
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    if [[ -n "$heredoc_end" ]]; then
+      if [[ "$line" == "$heredoc_end" ]]; then
+        heredoc_end=""
+      fi
+      continue
+    fi
+
+    scan="$line"
+    if [[ "$line" == *"$single_marker"* ]]; then
+      scan="${line%%${single_marker}*}"
+      after="${line#*${single_marker}}"
+      delimiter="${after%%\'*}"
+      [[ -n "$delimiter" ]] && heredoc_end="$delimiter"
+    elif [[ "$line" == *"$double_marker"* ]]; then
+      scan="${line%%${double_marker}*}"
+      after="${line#*${double_marker}}"
+      delimiter="${after%%\"*}"
+      [[ -n "$delimiter" ]] && heredoc_end="$delimiter"
+    elif [[ "$line" == *"$slash_marker"* ]]; then
+      scan="${line%%${slash_marker}*}"
+      after="${line#*${slash_marker}}"
+      delimiter="${after%%[[:space:]]*}"
+      [[ -n "$delimiter" ]] && heredoc_end="$delimiter"
+    fi
+
+    if grep -Eq '\$\(|`' <<<"$scan"; then
+      return 0
+    fi
+  done <<<"$command_text"
+
+  return 1
 }
 
 cmd_card_drift() {

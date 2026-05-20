@@ -4,7 +4,7 @@
 
 - Feature Name: Publication Program Package
 - Milestone Target: `v0.91.2`
-- Status: in_flight
+- Status: implemented
 - Planned WP Home: WP-13
 - Source Docs: `.adl/docs/TBD/publication/`; `.adl/docs/TBD/ARXIV_AUTHORING_PROCESS_NOTES.md`; `adl/tools/skills/docs/ARXIV_PAPER_WRITER_SKILL_INPUT_SCHEMA.md`; `adl/tools/skills/docs/MEDIUM_ARTICLE_WRITER_SKILL_INPUT_SCHEMA.md`
 - Proof Modes: tracked backlog packet, review-gates packet, backlog-note packet

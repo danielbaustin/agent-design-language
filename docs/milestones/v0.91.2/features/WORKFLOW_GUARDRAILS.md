@@ -4,7 +4,7 @@
 
 - Feature Name: Workflow Guardrails Hardening
 - Milestone Target: `v0.91.2`
-- Status: in_flight
+- Status: implemented
 - Planned WP Home: WP-16
 - Source Docs: `.adl/docs/TBD/workflow_tooling/`
 - Proof Modes: scripts, fixtures, runbooks, review packet

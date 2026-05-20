@@ -4,7 +4,7 @@
 
 - Feature Name: Rustdoc And Documentation Cleanup
 - Milestone Target: `v0.91.2`
-- Status: in_flight
+- Status: implemented
 - Planned WP Home: WP-15
 - Source Docs: `.adl/docs/TBD/RUSTDOC_GAP_ANALYSIS.md`; `.adl/docs/TBD/ADL_DOC_CLEANUP_LEDGER.md`
 - Proof Modes: docs, checks, review
