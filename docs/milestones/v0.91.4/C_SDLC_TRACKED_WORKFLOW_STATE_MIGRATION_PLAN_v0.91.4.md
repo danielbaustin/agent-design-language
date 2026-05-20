@@ -5,7 +5,11 @@
 Tracked migration plan for completing the Cognitive SDLC rollout.
 
 This document promotes the durable workflow-state migration plan from local
-planning notes into the public/auditable `v0.91.4` milestone package.
+planning notes into the public/auditable C-SDLC docs and `v0.91.4` milestone
+package.
+
+The canonical cross-milestone workflow-state summary is
+[`docs/cognitive-sdlc/tracked-workflow-state.md`](../../cognitive-sdlc/tracked-workflow-state.md).
 
 ## Decision
 

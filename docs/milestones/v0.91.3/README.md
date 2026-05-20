@@ -62,13 +62,15 @@ Out of scope:
 
 This package is grounded in:
 
+- `docs/cognitive-sdlc/README.md`
 - `C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md`
 - `docs/tooling/card-lifecycle.md`
 - `docs/tooling/structured-prompt-contracts.md`
 - `docs/tooling/srp-sor-obsmem-handoff-v0.91.2.md`
 
 The local `.adl/docs/TBD/cognitive-sdlc/` notes are drafting history. The
-tracked source package is the branch-verifiable source map for the milestone.
+tracked C-SDLC docs home and tracked source package are the branch-verifiable
+source map for the milestone.
 When durable workflow records are introduced, the first-slice target namespace
 is `workflow/c-sdlc/v0.91.3/`; local `.adl/` copies remain execution cache or
 staging state, not sufficient public proof by themselves.
@@ -88,6 +90,8 @@ staging state, not sufficient public proof by themselves.
   [NEXT_MILESTONE_HANDOFF_v0.91.3.md](NEXT_MILESTONE_HANDOFF_v0.91.3.md)
 - Tracked C-SDLC source package:
   [C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md](C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md)
+- C-SDLC canonical docs:
+  [../../cognitive-sdlc/README.md](../../cognitive-sdlc/README.md)
 - Feature index: [features/README.md](features/README.md)
 
 ## Success Criteria
