@@ -1,0 +1,446 @@
+{
+  "schema_version": "speculative_decoding_prototype.v1",
+  "prompt_record": {
+    "prompt_version": "wp11.speculative_decoding_prototype.v1",
+    "issue_number": 3010,
+    "decision_question": "Is speculative decoding worth continuing for ADL workloads under deterministic commit semantics?",
+    "boundary_summary": "WP-11 evaluates bounded draft/verify/commit acceleration posture only; speculative proposal never grants execution authority and Freedom Gate plus ACC remain the side-effect boundary."
+  },
+  "worthwhile_for_adl": true,
+  "recommendation": "continue_for_same_family_local_backends",
+  "scenarios": [
+    {
+      "scenario_id": "adl_card_generation_mixed_quality",
+      "workload_class": "adl_card_generation",
+      "draft_profile": "same_family_mixed_acceptance",
+      "status": "proving_worth_continuing",
+      "worthwhile": true,
+      "baseline_total_ms": 108,
+      "speculative_total_ms": 84,
+      "baseline_tokens_per_sec": 83.33,
+      "speculative_tokens_per_sec": 107.14,
+      "speedup_tps_ratio": 1.29,
+      "draft_tokens_proposed": 9,
+      "draft_tokens_accepted": 4,
+      "acceptance_rate": 0.44,
+      "baseline_target_forward_passes": 9,
+      "speculative_target_forward_passes": 6,
+      "replay_safe": true,
+      "authority_boundary": "Speculative proposal accelerates only token suggestion. Authoritative commit remains target-verified, and Freedom Gate plus ACC remain the only side-effect boundary.",
+      "evaluation_summary": "adl_card_generation_mixed_quality shows a 1.29x throughput improvement with acceptance rate 0.44; worthwhile for bounded same-family ADL evaluation without changing commit authority.",
+      "committed_output": [
+        "goal",
+        "required",
+        "outcome",
+        "acceptance",
+        "criteria",
+        "validation",
+        "plan",
+        "proof",
+        "boundary"
+      ],
+      "trace_steps": [
+        {
+          "step_index": 1,
+          "proposed_tokens": [
+            "goal",
+            "required",
+            "outcome"
+          ],
+          "accepted_tokens": [
+            "goal",
+            "required",
+            "outcome"
+          ],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 3,
+          "fallback_reason": null
+        },
+        {
+          "step_index": 2,
+          "proposed_tokens": [
+            "acceptance",
+            "criterion",
+            "validation"
+          ],
+          "accepted_tokens": [
+            "acceptance"
+          ],
+          "rejected_token": "criterion",
+          "authoritative_token": "criteria",
+          "target_tokens_verified": 3,
+          "fallback_reason": "target verifier rejected speculative token and supplied authoritative fallback"
+        },
+        {
+          "step_index": 3,
+          "proposed_tokens": [
+            "plan",
+            "proof",
+            "boundary"
+          ],
+          "accepted_tokens": [],
+          "rejected_token": "plan",
+          "authoritative_token": "validation",
+          "target_tokens_verified": 3,
+          "fallback_reason": "target verifier rejected speculative token and supplied authoritative fallback"
+        },
+        {
+          "step_index": 4,
+          "proposed_tokens": [],
+          "accepted_tokens": [],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 0,
+          "fallback_reason": "draft budget exhausted; baseline target-only fallback finished the sequence"
+        }
+      ]
+    },
+    {
+      "scenario_id": "cross_family_tokenizer_mismatch",
+      "workload_class": "cross_family_evaluation",
+      "draft_profile": "tokenizer_mismatch",
+      "status": "non_proving_tokenizer_mismatch",
+      "worthwhile": false,
+      "baseline_total_ms": 0,
+      "speculative_total_ms": 0,
+      "baseline_tokens_per_sec": 0.0,
+      "speculative_tokens_per_sec": 0.0,
+      "speedup_tps_ratio": 0.0,
+      "draft_tokens_proposed": 0,
+      "draft_tokens_accepted": 0,
+      "acceptance_rate": 0.0,
+      "baseline_target_forward_passes": 0,
+      "speculative_target_forward_passes": 0,
+      "replay_safe": false,
+      "authority_boundary": "Tokenizer mismatch fails before any accepted speculative token can claim target-authoritative commit.",
+      "evaluation_summary": "Cross-family or tokenizer-mismatch pairings are non-proving for WP-11. ADL should reject them before treating speculative acceleration as worth continuing.",
+      "committed_output": [],
+      "trace_steps": []
+    },
+    {
+      "scenario_id": "perfect_long_form_generation",
+      "workload_class": "long_form_generation",
+      "draft_profile": "perfect_mock_draft",
+      "status": "proving_worth_continuing",
+      "worthwhile": true,
+      "baseline_total_ms": 144,
+      "speculative_total_ms": 64,
+      "baseline_tokens_per_sec": 83.33,
+      "speculative_tokens_per_sec": 187.5,
+      "speedup_tps_ratio": 2.25,
+      "draft_tokens_proposed": 12,
+      "draft_tokens_accepted": 12,
+      "acceptance_rate": 1.0,
+      "baseline_target_forward_passes": 12,
+      "speculative_target_forward_passes": 4,
+      "replay_safe": true,
+      "authority_boundary": "Speculative proposal accelerates only token suggestion. Authoritative commit remains target-verified, and Freedom Gate plus ACC remain the only side-effect boundary.",
+      "evaluation_summary": "perfect_long_form_generation shows a 2.25x throughput improvement with acceptance rate 1.00; worthwhile for bounded same-family ADL evaluation without changing commit authority.",
+      "committed_output": [
+        "bounded",
+        "speculative",
+        "reasoning",
+        "stays",
+        "provisional",
+        "until",
+        "verified",
+        "and",
+        "committed",
+        "by",
+        "the",
+        "target"
+      ],
+      "trace_steps": [
+        {
+          "step_index": 1,
+          "proposed_tokens": [
+            "bounded",
+            "speculative",
+            "reasoning"
+          ],
+          "accepted_tokens": [
+            "bounded",
+            "speculative",
+            "reasoning"
+          ],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 3,
+          "fallback_reason": null
+        },
+        {
+          "step_index": 2,
+          "proposed_tokens": [
+            "stays",
+            "provisional",
+            "until"
+          ],
+          "accepted_tokens": [
+            "stays",
+            "provisional",
+            "until"
+          ],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 3,
+          "fallback_reason": null
+        },
+        {
+          "step_index": 3,
+          "proposed_tokens": [
+            "verified",
+            "and",
+            "committed"
+          ],
+          "accepted_tokens": [
+            "verified",
+            "and",
+            "committed"
+          ],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 3,
+          "fallback_reason": null
+        },
+        {
+          "step_index": 4,
+          "proposed_tokens": [
+            "by",
+            "the",
+            "target"
+          ],
+          "accepted_tokens": [
+            "by",
+            "the",
+            "target"
+          ],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 3,
+          "fallback_reason": null
+        }
+      ]
+    },
+    {
+      "scenario_id": "poor_draft_short_chat",
+      "workload_class": "short_chat",
+      "draft_profile": "poor_mock_draft",
+      "status": "proving_not_worth_continuing",
+      "worthwhile": false,
+      "baseline_total_ms": 72,
+      "speculative_total_ms": 75,
+      "baseline_tokens_per_sec": 83.33,
+      "speculative_tokens_per_sec": 80.0,
+      "speedup_tps_ratio": 0.96,
+      "draft_tokens_proposed": 10,
+      "draft_tokens_accepted": 2,
+      "acceptance_rate": 0.2,
+      "baseline_target_forward_passes": 6,
+      "speculative_target_forward_passes": 5,
+      "replay_safe": true,
+      "authority_boundary": "Speculative proposal accelerates only token suggestion. Authoritative commit remains target-verified, and Freedom Gate plus ACC remain the only side-effect boundary.",
+      "evaluation_summary": "poor_draft_short_chat shows only a 0.96x throughput ratio with acceptance rate 0.20; draft overhead overwhelms savings and this configuration is not worth continuing.",
+      "committed_output": [
+        "safe",
+        "answers",
+        "stay",
+        "reviewable",
+        "and",
+        "bounded"
+      ],
+      "trace_steps": [
+        {
+          "step_index": 1,
+          "proposed_tokens": [
+            "unsafe",
+            "answers"
+          ],
+          "accepted_tokens": [],
+          "rejected_token": "unsafe",
+          "authoritative_token": "safe",
+          "target_tokens_verified": 2,
+          "fallback_reason": "target verifier rejected speculative token and supplied authoritative fallback"
+        },
+        {
+          "step_index": 2,
+          "proposed_tokens": [
+            "stops",
+            "here"
+          ],
+          "accepted_tokens": [],
+          "rejected_token": "stops",
+          "authoritative_token": "answers",
+          "target_tokens_verified": 2,
+          "fallback_reason": "target verifier rejected speculative token and supplied authoritative fallback"
+        },
+        {
+          "step_index": 3,
+          "proposed_tokens": [
+            "drift",
+            "again"
+          ],
+          "accepted_tokens": [],
+          "rejected_token": "drift",
+          "authoritative_token": "stay",
+          "target_tokens_verified": 2,
+          "fallback_reason": "target verifier rejected speculative token and supplied authoritative fallback"
+        },
+        {
+          "step_index": 4,
+          "proposed_tokens": [
+            "wrong",
+            "token"
+          ],
+          "accepted_tokens": [],
+          "rejected_token": "wrong",
+          "authoritative_token": "reviewable",
+          "target_tokens_verified": 2,
+          "fallback_reason": "target verifier rejected speculative token and supplied authoritative fallback"
+        },
+        {
+          "step_index": 5,
+          "proposed_tokens": [
+            "and",
+            "bounded"
+          ],
+          "accepted_tokens": [
+            "and",
+            "bounded"
+          ],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 2,
+          "fallback_reason": null
+        }
+      ]
+    },
+    {
+      "scenario_id": "same_family_code_generation",
+      "workload_class": "code_generation",
+      "draft_profile": "same_family_high_acceptance",
+      "status": "proving_worth_continuing",
+      "worthwhile": true,
+      "baseline_total_ms": 144,
+      "speculative_total_ms": 64,
+      "baseline_tokens_per_sec": 83.33,
+      "speculative_tokens_per_sec": 187.5,
+      "speedup_tps_ratio": 2.25,
+      "draft_tokens_proposed": 12,
+      "draft_tokens_accepted": 12,
+      "acceptance_rate": 1.0,
+      "baseline_target_forward_passes": 12,
+      "speculative_target_forward_passes": 4,
+      "replay_safe": true,
+      "authority_boundary": "Speculative proposal accelerates only token suggestion. Authoritative commit remains target-verified, and Freedom Gate plus ACC remain the only side-effect boundary.",
+      "evaluation_summary": "same_family_code_generation shows a 2.25x throughput improvement with acceptance rate 1.00; worthwhile for bounded same-family ADL evaluation without changing commit authority.",
+      "committed_output": [
+        "fn",
+        "add",
+        "(",
+        "a",
+        ",",
+        "b",
+        ")",
+        "{",
+        "a",
+        "+",
+        "b",
+        "}"
+      ],
+      "trace_steps": [
+        {
+          "step_index": 1,
+          "proposed_tokens": [
+            "fn",
+            "add",
+            "("
+          ],
+          "accepted_tokens": [
+            "fn",
+            "add",
+            "("
+          ],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 3,
+          "fallback_reason": null
+        },
+        {
+          "step_index": 2,
+          "proposed_tokens": [
+            "a",
+            ",",
+            "b"
+          ],
+          "accepted_tokens": [
+            "a",
+            ",",
+            "b"
+          ],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 3,
+          "fallback_reason": null
+        },
+        {
+          "step_index": 3,
+          "proposed_tokens": [
+            ")",
+            "{",
+            "a"
+          ],
+          "accepted_tokens": [
+            ")",
+            "{",
+            "a"
+          ],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 3,
+          "fallback_reason": null
+        },
+        {
+          "step_index": 4,
+          "proposed_tokens": [
+            "+",
+            "b",
+            "}"
+          ],
+          "accepted_tokens": [
+            "+",
+            "b",
+            "}"
+          ],
+          "rejected_token": null,
+          "authoritative_token": null,
+          "target_tokens_verified": 3,
+          "fallback_reason": null
+        }
+      ]
+    }
+  ],
+  "commit_authority_rules": [
+    "Speculative draft tokens are provisional until target verification accepts them.",
+    "Rejected speculative tokens are discarded and replaced only by target-authoritative fallback tokens.",
+    "Freedom Gate and ACC remain the authority boundary for any non-token side effects."
+  ],
+  "fallback_rules": [
+    "Tokenizer mismatch must fail before speculative acceptance claims.",
+    "Poor acceptance configurations remain valid negative evidence and should not be smuggled into positive worthiness claims.",
+    "If speculative efficiency collapses, baseline target-only generation remains the truthful fallback."
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml speculative_decoding_prototype -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml demo_v0912_speculative_decoding_prototype -- --nocapture",
+    "cargo run --manifest-path adl/Cargo.toml --bin demo_v0912_speculative_decoding_prototype",
+    "git diff --check"
+  ],
+  "non_claims": [
+    "does not prove production backend speedups on live provider infrastructure",
+    "does not grant tool or side-effect execution authority through speculative proposal",
+    "does not claim cross-family tokenizer-mismatch pairings are worthwhile",
+    "does not replace replay, audit, Freedom Gate, or ACC boundaries with throughput claims"
+  ],
+  "claim_boundary": "WP-11 proves a bounded speculative draft/verify/commit prototype and a worthiness decision for ADL-style workloads. It shows same-family local acceleration can be worth continuing when acceptance is high, shows poor-draft and tokenizer-mismatch failure cases explicitly, and does not claim production serving gains or execution authority expansion."
+}
