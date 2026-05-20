@@ -82,4 +82,6 @@ This prototype does not weaken ADL governance:
 This is still a deterministic prototype, not a production backend integration.
 The next truthful follow-on would be a same-family local-model backend spike if
 we want to test whether the worthiness signal survives contact with real model
-runtime costs.
+runtime costs. That follow-on should be treated as optional future product work,
+not as an implied requirement for closing `v0.91.2`, and it may fit better as a
+post-`v0.95` capability experiment unless roadmap priorities change.

@@ -52,3 +52,14 @@ The current `WP-11` branch-local proof posture is:
 - worth continuing for same-family local backends when acceptance stays high
 - not worth continuing for poor-draft or tokenizer-mismatch pairings
 - still explicitly non-proving for production provider-side acceleration claims
+
+## Follow-On Direction
+
+The current proof does not say speculative decoding is a bad idea. It says the
+idea is conditionally good and still needs a real same-family serving-stack
+trial before ADL should productize it.
+
+That makes the most truthful next step a follow-on backend experiment rather
+than more synthetic optimism. Unless roadmap priorities change, that follow-on
+is likely better placed after `v0.95` than mixed into the current
+`v0.91.x` C-SDLC and sprint-completion work.
