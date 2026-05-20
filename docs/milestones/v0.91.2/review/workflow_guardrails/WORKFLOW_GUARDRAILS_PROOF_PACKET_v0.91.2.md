@@ -29,6 +29,8 @@ Covered failure behavior:
 - dirty tracked `main` checkout blocks
 - pending closeout-wave candidates block
 - unsafe report-generation command strings block
+- safe quoted-heredoc Markdown code fences pass without being mistaken for
+  executable command substitution
 - card-drift wrapper delegates to `pr doctor`
 
 ## Design Notes
@@ -44,6 +46,7 @@ Covered failure behavior:
 - `closeout-watch` still depends on `gh` availability and truthful GitHub
   state.
 - `safe-report-command` is a command-shape guardrail, not a complete shell
-  sandbox.
+  sandbox; it ignores literal quoted-heredoc bodies so Markdown fences and
+  explanatory command text can be written safely.
 - Card drift still requires the underlying doctor/editor lifecycle to repair
   the issue; this tool only routes and surfaces the condition.

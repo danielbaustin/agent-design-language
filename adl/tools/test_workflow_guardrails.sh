@@ -59,6 +59,31 @@ UNSAFE
   fi
   assert_contains "Unsafe command substitution detected" "$out" "unsafe report command"
 
+  local unsafe_backtick="$TMP/unsafe-report-backtick.txt"
+  cat >"$unsafe_backtick" <<'UNSAFE_BACKTICK'
+echo `pwd` > report.md
+UNSAFE_BACKTICK
+  if out="$(bash "$ROOT/adl/tools/workflow_guardrails.sh" safe-report-command --file "$unsafe_backtick" 2>&1)"; then
+    echo "expected unsafe backtick report command to fail" >&2
+    exit 1
+  fi
+  assert_contains "Unsafe command substitution detected" "$out" "unsafe backtick command"
+
+  local safe_markdown="$TMP/safe-markdown-report-command.txt"
+  cat >"$safe_markdown" <<'SAFE_MARKDOWN'
+cat > report.md <<'MD'
+# Report
+
+```bash
+echo safe
+```
+
+Literal text may mention $(pwd) without executing because this heredoc is quoted.
+MD
+SAFE_MARKDOWN
+  out="$(bash "$ROOT/adl/tools/workflow_guardrails.sh" safe-report-command --file "$safe_markdown")"
+  assert_contains "PASS safe-report-command" "$out" "safe markdown report command"
+
   out="$(bash "$ROOT/adl/tools/workflow_guardrails.sh" safe-report-command --command "python3 - <<'PY'\nprint('# Report')\nPY")"
   assert_contains "PASS safe-report-command" "$out" "safe report command"
 }

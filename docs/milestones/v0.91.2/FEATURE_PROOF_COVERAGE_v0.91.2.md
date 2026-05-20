@@ -25,15 +25,16 @@ Each feature should eventually have one truthful proof route:
 | Review heuristics and demos | WP-07 | heuristics promotion packet + bounded review demo packet + fixture review outputs + review-quality checklist | in_flight |
 | Workspace CMS bridge | WP-08, WP-09, #3091, #3092, #3093, #3094 | bounded demo + native CMS capability packet + live safety package + live bounded execution report + live content-card roundtrip report + project-ready operational package + `.adl` to GWS migration plan | landed baseline plus active hardening |
 | Code modernization | WP-10 | modernization interaction plan + dry-run evidence + reversibility/review policy + demo packet | active bounded packet |
-| Speculative decoding | WP-11 | `review/speculative_decoding/speculative_decoding_prototype_report.json` + `review/speculative_decoding/speculative_decoding_prototype_packet.md` | in_flight |
-| Repo visibility follow-on | WP-12 | tracked manifest packet + linkage report + reviewer-navigation packet | in_flight |
-| Publication program | WP-13 | tracked backlog packet + review-gates packet + Godel/GHB backlog note | in_flight |
+| Speculative decoding | WP-11 | `review/speculative_decoding/speculative_decoding_prototype_report.json` + `review/speculative_decoding/speculative_decoding_prototype_packet.md` | implemented |
+| Repo visibility follow-on | WP-12 | tracked manifest packet + linkage report + reviewer-navigation packet | implemented |
+| Publication program | WP-13 | tracked backlog packet + review-gates packet + Godel/GHB backlog note | implemented |
 | General intelligence paper packet | WP-14 | tracked claim/citation packet + review handoff + residual-risk register + next-authoring-steps packet + canonical paper-repo migration truth | implemented |
-| Rustdoc/doc cleanup | WP-15 | cleanup report + doc patch set | in_flight |
-| Workflow guardrails | WP-16 | `adl/tools/workflow_guardrails.sh` + `adl/tools/test_workflow_guardrails.sh` + workflow-guardrails runbook/proof packet | in_flight |
+| Rustdoc/doc cleanup | WP-15 | cleanup report + doc patch set | implemented |
+| Workflow guardrails | WP-16 | `adl/tools/workflow_guardrails.sh` + `adl/tools/test_workflow_guardrails.sh` + workflow-guardrails runbook/proof packet | implemented |
 | Demo/proof convergence | WP-17 | demo matrix and proof coverage | planned |
 
 ## Non-Claims
 
-- no feature in this milestone is landed yet through this document alone
-- this file is not evidence that any feature implementation has landed
+- this file alone is not evidence that a feature implementation has landed
+- implemented rows must remain backed by their named proof routes and merged
+  issue/PR evidence

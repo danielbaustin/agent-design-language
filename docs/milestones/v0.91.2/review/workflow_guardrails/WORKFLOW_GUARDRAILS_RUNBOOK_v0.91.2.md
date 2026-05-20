@@ -64,13 +64,15 @@ artifacts.
 Fail-closed behavior:
 
 - blocks shell command strings that use command substitution via `` `...` `` or
-  `$(...)`
+  `$(...)` outside literal quoted heredoc bodies
 - recommends safer alternatives:
   - quoted heredocs such as `<<'EOF'`
   - language-native file writers
 
 This guardrail is intentionally about command shape, not Markdown content. It
 does not forbid normal Markdown backticks inside the generated report itself.
+Quoted heredoc bodies are treated as literal report content, so Markdown code
+fences and explanatory command examples are allowed there.
 
 ### `card-drift`
 

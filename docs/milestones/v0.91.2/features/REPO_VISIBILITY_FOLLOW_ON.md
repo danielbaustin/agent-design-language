@@ -4,7 +4,7 @@
 
 - Feature Name: Repo Visibility Follow-On
 - Milestone Target: `v0.91.2`
-- Status: in_flight
+- Status: implemented
 - Planned WP Home: WP-12
 - Source Docs: `docs/milestones/v0.90/repo_visibility/README.md`; `docs/milestones/v0.90/repo_visibility/CANONICAL_SOURCE_MANIFEST_v0.90.yaml`; `docs/milestones/v0.90/repo_visibility/CODE_DOC_DEMO_LINKAGE_REPORT_v0.90.md`; `.adl/docs/TBD/repo_visibility/REPO_VISIBILITY_LAYER.md`; `.adl/docs/TBD/repo_visibility/CANONICAL_SOURCE_MANIFEST.md`; `.adl/docs/TBD/repo_visibility/CODE_DOC_LINKAGE_REPORT.md`
 - Proof Modes: tracked manifest packet, reviewer-navigation packet, feature/proof doc crosswalk

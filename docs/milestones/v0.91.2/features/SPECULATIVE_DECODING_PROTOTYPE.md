@@ -4,7 +4,7 @@
 
 - Feature Name: Speculative Decoding Prototype
 - Milestone Target: `v0.91.2`
-- Status: in_flight
+- Status: implemented
 - Planned WP Home: WP-11
 - Source Docs: `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`; `.adl/docs/TBD/ADL_AND_SPECULATIVE_CODING_REPLAY.md`
 - Proof Modes: design packet, deterministic prototype report, reviewer evaluation packet
