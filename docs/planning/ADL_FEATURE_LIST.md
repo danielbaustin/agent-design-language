@@ -122,7 +122,7 @@ ADL already provides a serious platform baseline:
 | Remote execution baseline | Implemented baseline | bounded remote execution surfaces and docs | Runtime/security completion target: `v0.93` |
 | Human-in-the-loop pause/resume | Implemented baseline | runtime/control surfaces and review docs | MVP completion target: `v0.95` |
 | Structured authoring model | Implemented baseline | STP/SIP/SOR contracts and prompt tooling | MVP completion target: `v0.95` |
-| Structured planning and Structured Review Policy workflow | Implemented baseline | `v0.91` SPP/SRP feature docs, readiness records, validation tooling, and issue-bundle workflow surfaces | Completed baseline by `v0.91.0`; validator/closeout hardening continues in `v0.91.1` |
+| Structured planning and Structured Review Prompt workflow | Implemented baseline | `v0.91` SPP/SRP feature docs, readiness records, validation tooling, and issue-bundle workflow surfaces; historical records may still mention the older Structured Review Policy wording | Completed baseline by `v0.91.0`; validator/closeout hardening continues in `v0.91.1` |
 | Control-plane lifecycle | Implemented baseline | `pr init/create/start/run/finish`, doctor, janitor, closeout surfaces | MVP completion target: `v0.95` |
 | Editor and command-adapter surfaces | Implemented baseline | editor docs, demos, bounded command adapters | MVP completion target: `v0.95` |
 | Review and validation surfaces | Implemented baseline | reviewer contracts, validation tools, review packages | MVP completion target: `v0.95` |
@@ -203,6 +203,7 @@ ADL already provides a serious platform baseline:
 | General-intelligence paper packet | Planned | `docs/milestones/v0.91.2/features/GENERAL_INTELLIGENCE_PAPER_PACKET.md` | `v0.91.2` |
 | Rustdoc/doc cleanup | Planned | `docs/milestones/v0.91.2/features/RUSTDOC_DOC_CLEANUP.md` | `v0.91.2` |
 | Workflow guardrails | Planned | `docs/milestones/v0.91.2/features/WORKFLOW_GUARDRAILS.md` | `v0.91.2` |
+| Cognitive SDLC first slice and transition manifest | Planned | `docs/milestones/v0.91.3/features/COGNITIVE_SDLC_FIRST_SLICE.md`, `docs/milestones/v0.91.3/features/COGNITIVE_TRANSITION_MANIFEST.md`, `docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md`, `docs/milestones/v0.91.3/features/TRANSITION_DAG_AND_SHARD_COORDINATION.md`, `docs/milestones/v0.91.3/features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md`, `docs/milestones/v0.91.3/features/GOVERNED_MERGE_READINESS_GATE.md`, `docs/milestones/v0.91.3/features/SRP_SOR_OBSMEM_HANDOFF.md`, and `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md` | `v0.91.3` proves one bounded Cognitive State Transition; `v0.91.4` hardens repeatable/default operation |
 | ACP / cognitive profiles runtime surface | Planned | `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md` | `v0.92` |
 | Identity, stable name, and continuity substrate | Planned | `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md` | `v0.92` |
 | Memory grounding, capability envelope, and birth witnesses/receipt | Planned | `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md` | `v0.92` |
