@@ -40,6 +40,29 @@ The only things that should remain untracked are genuinely ephemeral local
 cache, temporary helper files, secrets, machine-local scratch, and generated
 artifacts explicitly declared non-durable.
 
+## SPP Tracking Contract
+
+By default operation, durable `SPP` truth must be public, tracked, and
+issue-local.
+
+`SPP` is the operative execution plan for one issue or transition. It records:
+
+- current step
+- next step
+- required proof before proceeding
+- material replan triggers
+- explicit out-of-bounds work
+
+`SPP` must not become the home for sprint orchestration, review findings, or
+outcome truth. Sprint state belongs to sprint-conductor state and closeout
+artifacts. Review truth belongs in `SRP`. Output and integration truth belongs
+in `SOR`.
+
+If the execution path materially changes, the tracked `SPP` or tracked
+plan-history surface must be updated before execution continues against the new
+plan. Local `.adl` mirrors may support execution, but they cannot be the only
+authoritative C-SDLC `SPP` record after the default-operation cutover.
+
 ## Signed Trace Requirement
 
 Signed trace proof should not wait for full trace query.
@@ -99,6 +122,8 @@ longer silently local-only:
 
 - workflow skills classify durable versus ephemeral artifacts
 - editor skills understand tracked card records
+- `spp-editor` preserves issue-local operative plan truth and refuses to widen
+  `SPP` into sprint orchestration
 - sprint tooling writes canonical tracked sprint artifacts by default
 - closeout enforces durable record integration truth
 - SORs reference tracked signed trace bundles when proof is durable

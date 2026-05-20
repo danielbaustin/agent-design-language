@@ -15,6 +15,8 @@ Make C-SDLC the normal software-development path for future ADL issues.
 
 - New software-development issues receive correct SIP, STP, SPP, SRP, and SOR
   cards.
+- `SPP` is tracked as the issue-local operative execution plan, not as sprint
+  orchestration, review truth, or output truth.
 - Workflow-conductor routes each lifecycle stage.
 - Card editors repair drift without hand edits.
 - PR publication requires review truth.

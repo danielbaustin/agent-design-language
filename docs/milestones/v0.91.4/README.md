@@ -36,6 +36,11 @@ SIP -> STP -> SPP -> SRP -> SOR
 wrapped by Cognitive State Transition identity, evidence, review, merge gates,
 and memory.
 
+In that default model, `SPP` is the issue-local operative execution plan. It
+records the current step, next step, required proof, stop/replan conditions, and
+issue bounds. It is public/tracked C-SDLC truth, but it is not sprint
+orchestration, review-result truth, or output truth.
+
 ## Boundaries
 
 v0.91.4 should not:
@@ -96,6 +101,8 @@ branch-verifiable C-SDLC planning surfaces for review.
 v0.91.4 is ready to close when:
 
 - new ADL software-development issues default to the C-SDLC lifecycle
+- durable `SPP` records are tracked, issue-local, and operative before they are
+  used to guide execution
 - conductor/editor/doctor/validator tooling agrees on lifecycle state
 - sprint closeout cannot truthfully complete while child issue closeout is stale
 - SRP review results and SOR outcome truth feed the memory handoff boundary

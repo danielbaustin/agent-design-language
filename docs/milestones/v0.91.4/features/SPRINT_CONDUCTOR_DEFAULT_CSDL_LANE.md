@@ -26,6 +26,8 @@ This feature covers:
 
 - The sprint conductor cannot advance to the next child while the current
   child is only waiting for review or missing closeout truth.
+- Sprint orchestration stays in sprint-conductor state, child issue state, and
+  closeout artifacts; it does not redefine `SPP` as a sprint-level control card.
 - Umbrella closeout requires current sprint state, child issue truth, review
   truth, and evidence paths.
 - Combined-lane validation is required where process state crosses issue
