@@ -812,6 +812,33 @@ def write_artifacts(report: dict[str, Any], out_path: Path) -> None:
     out_path.with_name(f"{out_path.stem}_provider_status.json").write_text(json.dumps(provider, indent=2) + "\n", encoding="utf-8")
 
 
+def required_lane_names(include_governed: bool) -> list[str]:
+    names = ["regular", "uts_only"]
+    if include_governed:
+        names.append("uts_acc")
+    return names
+
+
+def benchmark_exit_status(report: dict[str, Any]) -> tuple[int, list[str]]:
+    failures: list[str] = []
+    if not (report.get("deterministic_self_check") or {}).get("passed", False):
+        failures.append("deterministic self-check did not pass")
+    models = report.get("models") or []
+    if not models:
+        failures.append("no model results were recorded")
+    required_lanes = required_lane_names(bool(report.get("include_governed", False)))
+    for model in models:
+        candidate_id = model.get("candidate_id", "<unknown>")
+        lanes = model.get("lanes") or {}
+        for lane_name in required_lanes:
+            status = (lanes.get(lane_name) or {}).get("status")
+            if status != "evaluated":
+                failures.append(
+                    f"{candidate_id} lane {lane_name} did not evaluate successfully (status={status})"
+                )
+    return (1 if failures else 0, failures)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run the self-contained UTS benchmark suite.")
     parser.add_argument("provider_kind", choices=("hosted", "local"))
@@ -858,8 +885,13 @@ def main() -> int:
         write_artifacts(report, out_path)
     report["completed_at"] = utc_timestamp()
     write_artifacts(report, out_path)
+    exit_code, failures = benchmark_exit_status(report)
+    if failures:
+        print("Benchmark run is non-proving:", file=sys.stderr)
+        for failure in failures:
+            print(f"- {failure}", file=sys.stderr)
     print(f"Wrote {out_path}")
-    return 0
+    return exit_code
 
 
 if __name__ == "__main__":

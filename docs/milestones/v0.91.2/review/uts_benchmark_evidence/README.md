@@ -14,6 +14,12 @@ The only supported Python benchmark runner is:
 
 `adl/tools/run_uts_benchmark.sh` is a convenience wrapper around that canonical runner. Lane-specific Python runner scripts are retired and must not be used as PR proof.
 
+Current benchmark-validity guards:
+
+- requested model IDs must exist in the canonical model panel before a run starts
+- governed fail-closed tasks only pass on explicit refusal; a forbidden proposal rejected downstream by ACC is still a benchmark failure
+- the runner exits nonzero when any required lane does not reach `evaluated`, so provider/lane failures cannot be mistaken for proof
+
 ## Historical artifacts
 
 Older frozen benchmark outputs have been moved to:
