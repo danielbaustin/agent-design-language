@@ -24,7 +24,8 @@ the serial coordination fraction while preserving governance.
 A credible demo must show:
 
 - transition identity
-- issue-local `SIP -> STP -> SPP -> SRP -> SOR`
+- issue-local `SIP -> STP -> SPP -> SRP -> SOR`, with `SPP` as Structured
+  Plan Prompt
 - shard plan or transition DAG
 - explicit writable-path ownership
 - evidence bundle
@@ -53,4 +54,3 @@ One successful demo is not enough for default operation.
 Before C-SDLC is claimed as operationally reliable, the five-minute sprint lane
 should run more than once, record metrics for each run, and preserve residual
 risks when the process needs repair.
-

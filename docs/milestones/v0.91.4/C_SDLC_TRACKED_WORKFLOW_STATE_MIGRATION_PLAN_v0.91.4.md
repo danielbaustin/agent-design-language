@@ -13,7 +13,12 @@ The canonical cross-milestone workflow-state summary is
 
 ## Decision
 
-By the end of `v0.91.4`, all durable C-SDLC truth must be tracked in Git.
+By the end of `v0.91.4`, ADL's durable C-SDLC truth must be tracked in Git.
+
+The general C-SDLC theory requires durable, replayable workflow state rather
+than a specific storage backend. ADL uses tracked Git state for this migration
+because it is the clearest currently available substrate for observable
+repository-state transitions.
 
 The canonical C-SDLC record is:
 
@@ -22,9 +27,9 @@ The canonical C-SDLC record is:
 - tracked workflow records
 - tracked proof, review, trace, and release evidence
 
-Local `.adl` state may remain for ephemeral execution support only. External
-collaboration workspaces, if used at all, are optional scratch/staging; they
-are not part of C-SDLC and are not canonical lifecycle truth.
+Local `.adl` state may remain for ephemeral execution support only. Durable
+C-SDLC lifecycle truth must not depend on an untracked or private scratch
+surface.
 
 ## Canonical Namespace
 
@@ -196,8 +201,7 @@ longer silently local-only:
 - release evidence omits tracked proof packets
 - signed trace bundles are absent for durable C-SDLC proof
 - ObsMem ingestion depends on untracked local evidence
-- any external scratch or collaboration surface is treated as canonical C-SDLC
-  truth
+- any untracked or private scratch surface is treated as canonical C-SDLC truth
 
 ## Non-Claims
 
@@ -205,5 +209,4 @@ This plan does not require:
 
 - full historical `.adl` backfill
 - full TQL / trace-query implementation
-- external collaboration workspaces
 - replacing GitHub issues, PRs, CI, branch protection, or human review

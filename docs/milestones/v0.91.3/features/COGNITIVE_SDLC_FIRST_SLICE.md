@@ -5,12 +5,16 @@
 - Feature Name: Cognitive SDLC First Slice
 - Milestone Target: `v0.91.3`
 - Status: planned
-- Planned WP Home: WP-01 through WP-13
+- Planned WP Home: WP-01 through WP-13 / #3199 through #3211
 
 ## Purpose
 
 Prove one governance-complete Cognitive State Transition inside ADL's existing
 GitHub issue/PR workflow.
+
+This slice is the first practical ADL implementation of the C-SDLC model. It
+uses Git as the observable state substrate, structured prompts as transition
+instructions, and typed work packets to make coordination explicit.
 
 ## Core Contract
 

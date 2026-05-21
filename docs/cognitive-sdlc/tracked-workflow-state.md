@@ -9,7 +9,12 @@ The milestone-specific migration plan is
 
 ## Decision
 
-Durable C-SDLC truth must be tracked in Git.
+The general C-SDLC model requires durable, replayable workflow state. It does
+not require a specific storage backend.
+
+For ADL's current implementation, tracked Git state is the clearest available
+substrate for observable workflow transitions because it is inspectable,
+versioned, reviewable, and tied to the repository changes it governs.
 
 The local `.adl/` workflow surface was useful as a startup shortcut, but it is
 not a sufficient final home for governed workflow records. If an artifact is
@@ -57,14 +62,6 @@ Local `.adl/` may remain for:
 It must not be the only authoritative record for durable C-SDLC truth after
 the default-operation cutover.
 
-### External Collaboration
-
-Google Workspace or other collaboration systems may be used for scratch,
-drafting, or staging. They are optional and non-canonical unless their outputs
-are promoted into Git/GitHub.
-
-GWS is not part of C-SDLC.
-
 ## Track First
 
 The first durable surfaces to track are:
@@ -82,4 +79,3 @@ The first durable surfaces to track are:
 
 C-SDLC cannot be the default ADL software-development path while durable
 workflow truth remains local-only.
-

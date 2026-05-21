@@ -5,7 +5,7 @@
 - Feature Name: Cognitive Transition Manifest
 - Milestone Target: `v0.91.3`
 - Status: planned
-- Planned WP Home: WP-02 through WP-07
+- Planned WP Home: WP-02 through WP-07 / #3200 through #3205
 
 ## Purpose
 
@@ -22,7 +22,7 @@ The initial manifest should record:
 - issue and branch/worktree identity
 - actor and role references for material participants
 - base and candidate repository state
-- SIP, STP, SPP, SRP, and SOR paths
+- SIP, STP, SPP, SRP, and SOR paths, where SPP means Structured Plan Prompt
 - DAG and shard plan paths
 - evidence bundle path
 - trace/proof manifest path

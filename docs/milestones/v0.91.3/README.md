@@ -2,11 +2,10 @@
 
 ## Status
 
-Planned milestone package authored from `#3099`.
+Active milestone package authored from `#3099` and opened by `WP-01` / `#3199`.
 
-The milestone issue wave is not open yet. Work package issue numbers and sprint
-umbrella issue numbers remain `pending` until the v0.91.3 issue wave is seeded
-through the normal conductor lifecycle.
+The v0.91.3 issue wave is open as `#3199` through `#3214`. Work package issues
+are `#3199` through `#3211`; sprint umbrella issues are `#3212` through `#3214`.
 
 ## Purpose
 
@@ -55,7 +54,6 @@ Out of scope:
 - broad autonomous engineering
 - replacing GitHub pull requests, CI, branch protection, or human review
 - solving the full Software Development Polis
-- depending on any external collaboration workspace as required infrastructure
 - treating speed as a reason to weaken review, replay, or closeout truth
 
 ## Source Map
@@ -79,7 +77,7 @@ staging state, not sufficient public proof by themselves.
 
 - WBS: [WBS_v0.91.3.md](WBS_v0.91.3.md)
 - Sprint plan: [SPRINT_v0.91.3.md](SPRINT_v0.91.3.md)
-- Planned issue wave: [WP_ISSUE_WAVE_v0.91.3.yaml](WP_ISSUE_WAVE_v0.91.3.yaml)
+- Active issue wave: [WP_ISSUE_WAVE_v0.91.3.yaml](WP_ISSUE_WAVE_v0.91.3.yaml)
 - Execution readiness:
   [WP_EXECUTION_READINESS_v0.91.3.md](WP_EXECUTION_READINESS_v0.91.3.md)
 - Feature proof coverage:

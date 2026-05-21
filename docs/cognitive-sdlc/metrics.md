@@ -12,6 +12,11 @@ success metric.
 The key question is whether C-SDLC reduces coordination latency while
 preserving review, replay, merge, closeout, and memory integrity.
 
+C-SDLC should measure the serial coordination fraction. More agents or more
+hardware help only when the remaining work is decomposable, bounded,
+inspectable, and mergeable. Typed work packets should be treated as throughput
+infrastructure because they make coordination explicit.
+
 ## Metric Families
 
 ### Throughput
@@ -80,4 +85,3 @@ C-SDLC metrics do not claim:
 - speed is more important than governance
 - more agents always means better throughput
 - a single successful run proves repeatability
-

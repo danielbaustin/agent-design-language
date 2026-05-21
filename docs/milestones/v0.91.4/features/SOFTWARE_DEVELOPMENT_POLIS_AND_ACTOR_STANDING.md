@@ -55,5 +55,3 @@ This feature covers:
   organizational authority.
 - This feature does not replace human review, branch protection, or operator
   judgment.
-- This feature does not turn optional external collaboration workspaces into
-  canonical C-SDLC state.

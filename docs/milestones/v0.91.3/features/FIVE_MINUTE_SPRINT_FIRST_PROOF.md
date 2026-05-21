@@ -5,7 +5,7 @@
 - Feature Name: Five-Minute Sprint First Proof
 - Milestone Target: `v0.91.3`
 - Status: planned
-- Planned WP Home: WP-09
+- Planned WP Home: WP-09 / #3207
 
 ## Purpose
 
@@ -30,6 +30,8 @@ run C-SDLC.
 
 The demo should record:
 
+- issue-local `SIP -> STP -> SPP -> SRP -> SOR` lifecycle proof, with `SPP`
+  as Structured Plan Prompt
 - transition latency
 - planning latency
 - review latency

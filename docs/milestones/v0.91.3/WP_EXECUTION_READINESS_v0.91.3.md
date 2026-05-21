@@ -2,8 +2,9 @@
 
 ## Status
 
-Planned readiness surface. No v0.91.3 work packages are executable until the
-issue wave is opened and card bundles are generated.
+Active readiness surface. The v0.91.3 issue wave is open as `#3199` through
+`#3214`; child execution remains blocked until `WP-01` / `#3199` is merged and
+closed out with validated issue cards.
 
 ## Readiness Requirements
 

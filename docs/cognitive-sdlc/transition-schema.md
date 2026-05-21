@@ -20,7 +20,8 @@ A transition record should include:
 - branch and worktree identity
 - pull request URL
 - actor and role references
-- card record paths for `SIP`, `STP`, `SPP`, `SRP`, and `SOR`
+- card record paths for `SIP`, `STP`, `SPP`, `SRP`, and `SOR`, where `SPP`
+  means Structured Plan Prompt
 - transition DAG or shard plan
 - evidence bundle references
 - review synthesis reference
@@ -94,4 +95,3 @@ The merge-readiness gate should fail closed when:
 `SRP`, `SOR`, evidence bundles, and signed trace references are the primary
 inputs for ObsMem. Memory should be derived from tracked evidence, not from
 local lore or chat-only context.
-

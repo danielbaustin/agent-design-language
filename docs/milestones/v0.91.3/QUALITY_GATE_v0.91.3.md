@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned quality gate.
+Active quality gate for the opened v0.91.3 issue wave.
 
 ## Required Validation
 

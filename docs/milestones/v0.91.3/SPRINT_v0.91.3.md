@@ -2,18 +2,18 @@
 
 ## Status
 
-Planned sprint map. Sprint issue numbers are `pending` until the issue wave is
-opened.
+Active sprint map. Sprint umbrella issues are open as `#3212` through `#3214`;
+Sprint 1 must not execute until `WP-01` / `#3199` is merged and closed out.
 
 ## Sprint Overview
 
 v0.91.3 should execute as three bounded sprints:
 
-| Sprint | Title | Ordered Children | Goal |
-| --- | --- | --- | --- |
-| Sprint 1 | Transition Substrate | WP-01, WP-02, WP-03, WP-04 | Establish the schema, actor-role seed, lifecycle, and DAG needed for one transition. |
-| Sprint 2 | Evidence, Review, And Memory | WP-05, WP-06, WP-07 | Make evidence, review, merge readiness, and ObsMem handoff explicit. |
-| Sprint 3 | First Proof And Handoff | WP-08, WP-09, WP-10, WP-11, WP-12, WP-13 | Apply process-readiness lessons, run the proof demo, review it, remediate findings, and hand v0.91.4 the hardening plan. |
+| Sprint | Issue | Title | Ordered Children | Goal |
+| --- | --- | --- | --- | --- |
+| Sprint 1 | #3212 | Transition Substrate | WP-01 / #3199, WP-02 / #3200, WP-03 / #3201, WP-04 / #3202 | Establish the schema, actor-role seed, lifecycle, and DAG needed for one transition. |
+| Sprint 2 | #3213 | Evidence, Review, And Memory | WP-05 / #3203, WP-06 / #3204, WP-07 / #3205 | Make evidence, review, merge readiness, and ObsMem handoff explicit. |
+| Sprint 3 | #3214 | First Proof And Handoff | WP-08 / #3206, WP-09 / #3207, WP-10 / #3208, WP-11 / #3209, WP-12 / #3210, WP-13 / #3211 | Apply process-readiness lessons, run the proof demo, review it, remediate findings, and hand v0.91.4 the hardening plan. |
 
 ## Sprint Goals
 
