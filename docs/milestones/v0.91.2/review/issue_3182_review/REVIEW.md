@@ -8,7 +8,7 @@ Branch: `codex/3182-v0912-review-handoff-truth`
 
 ## Verdict
 
-Not PR-ready yet.
+PR-ready after follow-up card normalization.
 
 The documentation changes are directionally correct and satisfy the major
 review-truth goals: `WP-20B` is made controlling, the old `WP-20` packet is
@@ -16,14 +16,16 @@ marked historical, the new top-level third-party handoff exists, and `WP-21`
 external review is blocked until accepted `WP-20B` findings are fixed and
 rechecked.
 
-The blocker is lifecycle-card truth. The implementation and SOR say the issue
-is complete, but the SIP and SRP still contain scaffold/pre-review language.
-That creates exactly the kind of review-tail truth drift this issue is meant to
-eliminate.
+The initial blocker was lifecycle-card truth. After this review, the SIP, SRP,
+and SOR were normalized with the corresponding editor skills and validated
+successfully. The remaining scope is external review and `WP-20B` remediation
+work, not this handoff-truth repair.
 
 ## Findings
 
 ### P1: Issue cards contradict the completed worktree and would make publication truth unsafe
+
+Disposition: Fixed after review.
 
 Evidence:
 
@@ -34,17 +36,24 @@ Evidence:
 - `.adl/v0.91.2/tasks/issue-3182__v0912-review-handoff-truth/sor.md:127`
 - `.adl/v0.91.2/tasks/issue-3182__v0912-review-handoff-truth/sor.md:136`
 
-The SOR records `Status: DONE`, validation commands, and `Result: PASS`, but
-the SIP still says the issue is not started and the SRP still says review has
-not run because implementation has not been bound. That is a publication
-blocker for this issue because its purpose is to make reviewer-facing truth
-boring and consistent.
+At the time of this review, the SOR recorded `Status: DONE`, validation
+commands, and `Result: PASS`, but the SIP and SRP still carried pre-execution
+scaffold language. That was a publication blocker for this issue because its
+purpose is to make reviewer-facing truth boring and consistent. The blocker was
+then fixed with the editor-skill normalization recorded below.
 
 Recommended fix:
 
 - Normalize the SIP with `sip-editor`.
 - Normalize the SRP with `srp-editor` after this review result is incorporated.
 - Keep the SOR truth aligned with the final review disposition.
+
+Resolution evidence:
+
+- `bash adl/tools/validate_structured_prompt.sh --type sip --phase final --input .adl/v0.91.2/tasks/issue-3182__v0912-review-handoff-truth/sip.md`
+- `bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input .adl/v0.91.2/tasks/issue-3182__v0912-review-handoff-truth/srp.md`
+- `bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input .adl/v0.91.2/tasks/issue-3182__v0912-review-handoff-truth/sor.md`
+- Result: all three validators passed after normalization.
 
 ## Passing Checks
 
