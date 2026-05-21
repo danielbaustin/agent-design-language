@@ -7,7 +7,7 @@
   },
   "compared_provider_count": 6,
   "direct_native_supported_count": 3,
-  "compatibility_supported_count": 2,
+  "compatibility_supported_count": 0,
   "skipped_provider_count": 5,
   "unsupported_provider_count": 1,
   "json_proposal_baseline": {
@@ -149,12 +149,12 @@
         "provider_model_id": "gemini-2.0-flash",
         "capabilities": {
           "tool_calling": {
-            "supported": true,
-            "mode": "native"
+            "supported": false,
+            "mode": "none"
           },
           "structured_json": {
             "supported": true,
-            "mode": "native"
+            "mode": "prompt_based"
           },
           "semantic_tool_fallback": {
             "supported": false,
@@ -163,12 +163,12 @@
         }
       },
       "tool_calling": {
-        "supported": true,
-        "mode": "native"
+        "supported": false,
+        "mode": "none"
       },
       "structured_json": {
         "supported": true,
-        "mode": "native"
+        "mode": "prompt_based"
       },
       "semantic_tool_fallback": {
         "supported": false,
@@ -203,12 +203,12 @@
         "provider_model_id": "deepseek-chat",
         "capabilities": {
           "tool_calling": {
-            "supported": true,
-            "mode": "native"
+            "supported": false,
+            "mode": "none"
           },
           "structured_json": {
             "supported": true,
-            "mode": "native"
+            "mode": "prompt_based"
           },
           "semantic_tool_fallback": {
             "supported": false,
@@ -217,12 +217,12 @@
         }
       },
       "tool_calling": {
-        "supported": true,
-        "mode": "native"
+        "supported": false,
+        "mode": "none"
       },
       "structured_json": {
         "supported": true,
-        "mode": "native"
+        "mode": "prompt_based"
       },
       "semantic_tool_fallback": {
         "supported": false,

@@ -591,7 +591,28 @@ mod tests {
     fn provider_native_tool_call_comparison_splits_direct_native_from_compatibility_counts() {
         let report = run_provider_native_tool_call_comparison();
         assert_eq!(report.direct_native_supported_count, 3);
-        assert_eq!(report.compatibility_supported_count, 2);
+        assert_eq!(report.compatibility_supported_count, 0);
+    }
+
+    #[test]
+    fn provider_native_tool_call_comparison_compatibility_profiles_do_not_report_native_tool_support(
+    ) {
+        let report = run_provider_native_tool_call_comparison();
+        for candidate_id in ["gemini_http_compat_flash", "deepseek_http_compat_chat"] {
+            let entry = report
+                .providers
+                .iter()
+                .find(|entry| entry.candidate_id == candidate_id)
+                .expect("compatibility entry");
+            assert_eq!(
+                entry.surface_class,
+                ProviderNativeSurfaceClass::CompatibilityHttpProfile
+            );
+            assert!(!entry.tool_calling.supported);
+            assert_eq!(entry.tool_calling.mode, CapabilityModeV1::None);
+            assert!(entry.structured_json.supported);
+            assert_eq!(entry.structured_json.mode, CapabilityModeV1::PromptBased);
+        }
     }
 
     #[test]
