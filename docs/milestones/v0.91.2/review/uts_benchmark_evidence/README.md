@@ -12,7 +12,7 @@ The only supported Python benchmark runner is:
 
 - `adl/tools/uts_benchmark_runner.py`
 
-`adl/tools/run_uts_pack.sh` is a convenience wrapper around that canonical runner. Lane-specific Python runner scripts are retired and must not be used as PR proof.
+`adl/tools/run_uts_benchmark.sh` is a convenience wrapper around that canonical runner. Lane-specific Python runner scripts are retired and must not be used as PR proof.
 
 ## Historical artifacts
 

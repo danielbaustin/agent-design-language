@@ -10,7 +10,7 @@ Use exactly one Python runner for benchmark execution:
 python3 adl/tools/uts_benchmark_runner.py <provider-kind> <models-file> <out-json> [options]
 ```
 
-`adl/tools/run_uts_pack.sh` is only a convenience wrapper around the canonical runner. The old lane-specific Python scripts are retired and are not supported entrypoints.
+`adl/tools/run_uts_benchmark.sh` is only a convenience wrapper around the canonical runner. The old lane-specific Python scripts are retired and are not supported entrypoints.
 
 ## Required panels
 
