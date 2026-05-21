@@ -3,7 +3,8 @@
 ## Status
 
 Active WBS. The v0.91.3 work package issue wave is open as `#3199` through
-`#3211`, with sprint umbrellas open as `#3212` through `#3214`.
+`#3211` plus corrective tail issues `#3226` through `#3230`, with sprint
+umbrellas open as `#3212` through `#3214` plus Sprint 4 / `#3231`.
 
 ## WBS Summary
 
@@ -39,10 +40,15 @@ platform rewrite.
 | WP-07 / #3205 | SRP/SOR ObsMem handoff | docs/tools | memory handoff contract for review and outcome truth | WP-05, WP-06 |
 | WP-08 / #3206 | Integrated process lessons and proof readiness | docs/tools | combined-lane validation and closeout-truth lessons applied to C-SDLC proof criteria | WP-02 through WP-07 |
 | WP-09 / #3207 | Five-minute-sprint first proof demo | demo | bounded transition demo and metrics snapshot | WP-08 |
-| WP-10 / #3208 | Internal review | review | code/docs/test review packet | WP-09 |
-| WP-11 / #3209 | Review findings remediation | review | fixes and follow-on routing | WP-10 |
-| WP-12 / #3210 | v0.91.4 completion planning | docs | concrete v0.91.4 handoff and hardening backlog | WP-11 |
-| WP-13 / #3211 | Release ceremony | release | evidence package and closeout record | WP-12 |
+| WP-10 / #3226 | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-09 |
+| WP-11 / #3227 | Coverage / quality gate | quality | validation posture and quality gate record | WP-10 |
+| WP-12 / #3228 | Docs + review pass | docs | review-entry documentation package | WP-11 |
+| WP-13 / #3208 | Internal review | review | code/docs/test/demo/process review packet | WP-12 |
+| WP-14 / #3229 | External / 3rd-party review | review | external review handoff and record | WP-13 |
+| WP-15 / #3209 | Review findings remediation | review | fixes and follow-on routing | WP-14 |
+| WP-16 / #3210 | Next milestone planning | docs | concrete v0.91.4 handoff and hardening backlog | WP-15 |
+| WP-17 / #3230 | Next milestone review pass | docs | final pre-ceremony v0.91.4 review-pass record | WP-16 |
+| WP-18 / #3211 | Release ceremony | release | evidence package and closeout record | WP-17 |
 
 ## Sequencing Notes
 
@@ -55,3 +61,6 @@ Recent process mini-sprints exposed two important C-SDLC lessons:
   integration hazards
 - sprint umbrella closeout truth must be treated as part of the product, not an
   optional bookkeeping layer
+- the release tail must include proof coverage, quality gate, docs review pass,
+  internal review, external review, remediation, next milestone planning, final
+  next milestone review pass, and ceremony

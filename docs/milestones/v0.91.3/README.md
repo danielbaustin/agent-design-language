@@ -4,8 +4,9 @@
 
 Active milestone package authored from `#3099` and opened by `WP-01` / `#3199`.
 
-The v0.91.3 issue wave is open as `#3199` through `#3214`. Work package issues
-are `#3199` through `#3211`; sprint umbrella issues are `#3212` through `#3214`.
+The v0.91.3 issue wave is open. The initial wave opened `#3199` through
+`#3214`; follow-up correction `#3225` added the missing closeout-tail gates as
+`#3226` through `#3230` and Sprint 4 as `#3231`.
 
 ## Purpose
 
@@ -45,6 +46,9 @@ In scope:
 - one governed merge-readiness gate that preserves GitHub issue/PR/CI truth
 - one ObsMem handoff contract for SRP review results and SOR outcome truth
 - one five-minute-sprint first proof surface over a bounded change
+- the complete closeout tail: proof coverage, quality gate, docs review pass,
+  internal review, external review, remediation, next milestone planning, final
+  next milestone review pass, and release ceremony
 - validators and demos sufficient to prove the first slice
 - docs that let future agents execute the slice without rediscovering TBD notes
 

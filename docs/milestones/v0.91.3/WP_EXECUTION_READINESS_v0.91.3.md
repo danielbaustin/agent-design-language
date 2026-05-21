@@ -2,9 +2,11 @@
 
 ## Status
 
-Active readiness surface. The v0.91.3 issue wave is open as `#3199` through
-`#3214`; child execution remains blocked until `WP-01` / `#3199` is merged and
-closed out with validated issue cards.
+Active readiness surface. The v0.91.3 issue wave is open. The initial wave
+opened `#3199` through `#3214`; correction `#3225` added the missing closeout
+tail as `#3226` through `#3231`. Sprint 1 starts at `WP-02` / `#3200` because
+`WP-01` / `#3199` is already merged and recorded as closed out in Sprint 1
+state.
 
 ## Readiness Requirements
 

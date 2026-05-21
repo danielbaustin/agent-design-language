@@ -7,7 +7,8 @@ planning_source: docs/milestones/v0.91.3
 tracked_package: docs/milestones/v0.91.3
 notes:
 - v0.91.3 is the first Cognitive SDLC implementation slice.
-- 'Issue wave opened by WP-01 / #3199 as #3199 through #3214.'
+- 'Initial issue wave opened by WP-01 / #3199 as #3199 through #3214.'
+- 'Closeout-tail correction added by #3225: missing WP gates opened as #3226 through #3230, with Sprint 4 opened as #3231.'
 - The milestone proves one bounded Cognitive State Transition, not full C-SDLC adoption.
 - The first slice must seed actor/role references without claiming full Software Development
   Polis standing enforcement.
@@ -21,10 +22,15 @@ card_update_rule:
 - SOR must record final outcome truth after merge/closeout, not only branch execution
   truth.
 closeout_sequence:
-- WP-10 Internal review
-- WP-11 Review findings remediation
-- WP-12 v0.91.4 completion planning
-- WP-13 Release ceremony
+- WP-10 Demo matrix and proof coverage
+- WP-11 Coverage / quality gate
+- WP-12 Docs + review pass
+- WP-13 Internal review
+- WP-14 External / 3rd-party review
+- WP-15 Review findings remediation
+- WP-16 Next milestone planning
+- WP-17 Next milestone review pass
+- WP-18 Release ceremony
 work_packages:
 - wp: WP-01
   issue: 3199
@@ -82,29 +88,59 @@ work_packages:
   outcome: bounded transition demo and metrics snapshot
   depends_on: WP-08
 - wp: WP-10
+  issue: 3226
+  title: Demo matrix and proof coverage
+  queue: demo
+  outcome: demo matrix and proof coverage record
+  depends_on: WP-09
+- wp: WP-11
+  issue: 3227
+  title: Coverage / quality gate
+  queue: quality
+  outcome: validation posture and quality gate record
+  depends_on: WP-10
+- wp: WP-12
+  issue: 3228
+  title: Docs + review pass
+  queue: docs
+  outcome: review-entry documentation package
+  depends_on: WP-11
+- wp: WP-13
   issue: 3208
   title: Internal review
   queue: review
-  outcome: code, docs, and test review packet
-  depends_on: WP-09
-- wp: WP-11
+  outcome: code, docs, test, demo, and process review packet
+  depends_on: WP-12
+- wp: WP-14
+  issue: 3229
+  title: External / 3rd-party review
+  queue: review
+  outcome: external review handoff and record
+  depends_on: WP-13
+- wp: WP-15
   issue: 3209
   title: Review findings remediation
   queue: review
   outcome: fixes and follow-on routing
-  depends_on: WP-10
-- wp: WP-12
+  depends_on: WP-14
+- wp: WP-16
   issue: 3210
-  title: v0.91.4 completion planning
+  title: Next milestone planning
   queue: docs
-  outcome: concrete v0.91.4 hardening backlog and handoff
-  depends_on: WP-11
-- wp: WP-13
+  outcome: concrete v0.91.4 handoff, issue-wave expectations, sprint shape, and hardening backlog
+  depends_on: WP-15
+- wp: WP-17
+  issue: 3230
+  title: Next milestone review pass
+  queue: docs
+  outcome: final pre-ceremony v0.91.4 review-pass record
+  depends_on: WP-16
+- wp: WP-18
   issue: 3211
   title: Release ceremony
   queue: release
-  outcome: evidence package and closeout record
-  depends_on: WP-12
+  outcome: release evidence and end-of-milestone report
+  depends_on: WP-17
 sprint_umbrellas:
 - sprint: Sprint 1
   issue: 3212
@@ -123,12 +159,22 @@ sprint_umbrellas:
   - WP-07
 - sprint: Sprint 3
   issue: 3214
-  title: First Proof And Handoff
+  title: First Proof
   ordered_children:
   - WP-08
   - WP-09
+- sprint: Sprint 4
+  issue: 3231
+  title: Review, Remediation, Planning, And Release
+  ordered_children:
   - WP-10
   - WP-11
   - WP-12
   - WP-13
+  - WP-14
+  - WP-15
+  - WP-16
+  - WP-17
+  - WP-18
 opened_by_issue: 3199
+corrected_by_issue: 3225
