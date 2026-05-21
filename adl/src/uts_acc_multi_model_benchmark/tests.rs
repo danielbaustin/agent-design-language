@@ -1,17 +1,28 @@
 use super::{
     appears_refusal, authority_humility, benchmark_tasks, bounded_response_excerpt,
-    claims_execution, classify_compiler_rejection, evaluate_task, first_json_object_body,
-    model_unavailable_reason, parse_explicit_models, parse_model_turn_response,
-    parse_ollama_list_output, parse_ollama_ps_output, provider_id_for_host,
-    provider_transport_label, render_summary, response_contract,
-    run_uts_acc_multi_model_benchmark_with_models, tool_contracts, uses_remote_ollama_host,
-    write_uts_acc_multi_model_benchmark_artifacts, UtsAccBenchmarkClassification,
-    UtsAccMultiModelBenchmarkReport, UTS_ACC_MULTI_MODEL_BENCHMARK_REPORT_ARTIFACT_PATH,
+    claims_execution, classify_compiler_rejection, evaluate_task,
+    first_json_object_body, model_unavailable_reason, parse_explicit_models,
+    parse_model_turn_response, parse_ollama_list_output, parse_ollama_ps_output,
+    provider_complete_with_retries, provider_id_for_host, provider_transport_label, progress_path,
+    render_summary, response_contract, run_uts_acc_multi_model_benchmark,
+    write_uts_acc_multi_model_benchmark_report, run_uts_acc_multi_model_benchmark_with_models,
+    tool_contracts, uses_remote_ollama_host,
+    write_uts_acc_multi_model_benchmark_artifacts,
+    UtsAccBenchmarkClassification, UtsAccMultiModelBenchmarkReport,
+    UTS_ACC_MULTI_MODEL_BENCHMARK_REPORT_ARTIFACT_PATH,
     UTS_ACC_MULTI_MODEL_BENCHMARK_SUMMARY_ARTIFACT_PATH,
 };
 use std::fs;
 use std::path::Path;
+use std::sync::{Arc, Mutex, OnceLock};
 use std::time::{SystemTime, UNIX_EPOCH};
+use crate::provider::Provider;
+use super::runtime::{
+    current_ollama_host, is_retryable_provider_error, local_runtime_busy_reason, resolve_models,
+    skipped_model_result,
+};
+
+static TEST_ENV_MUTEX: OnceLock<Mutex<()>> = OnceLock::new();
 
 fn unique_temp_path(prefix: &str, suffix: &str) -> std::path::PathBuf {
     let nanos = SystemTime::now()
@@ -19,6 +30,136 @@ fn unique_temp_path(prefix: &str, suffix: &str) -> std::path::PathBuf {
         .expect("system time should be valid")
         .as_nanos();
     std::env::temp_dir().join(format!("{prefix}-{nanos}{suffix}"))
+}
+
+struct ScriptedProvider {
+    responses: Arc<Mutex<Vec<anyhow::Result<String>>>>,
+}
+
+impl ScriptedProvider {
+    fn new(responses: Vec<anyhow::Result<String>>) -> Self {
+        Self {
+            responses: Arc::new(Mutex::new(responses)),
+        }
+    }
+}
+
+impl Provider for ScriptedProvider {
+    fn complete(&self, _prompt: &str) -> anyhow::Result<String> {
+        self.responses
+            .lock()
+            .expect("provider lock poisoned")
+            .pop()
+            .unwrap_or_else(|| Err(anyhow::anyhow!("exhausted scripted provider responses")))
+    }
+}
+
+fn with_temporary_env_var<K: AsRef<str>, V: AsRef<str>, F: FnOnce() -> R, R>(
+    key: K,
+    value: V,
+    f: F,
+) -> R {
+    let _guard = TEST_ENV_MUTEX.get_or_init(|| Mutex::new(())).lock().unwrap();
+    let key = key.as_ref().to_string();
+    let previous = std::env::var_os(&key);
+    std::env::set_var(&key, value.as_ref());
+    let out = f();
+    match previous {
+        Some(value) => std::env::set_var(&key, value),
+        None => std::env::remove_var(&key),
+    }
+    out
+}
+
+fn with_temporary_env_vars<K: AsRef<str>, V: AsRef<str>, F: FnOnce() -> R, R>(
+    vars: &[(K, V)],
+    f: F,
+) -> R {
+    let _guard = TEST_ENV_MUTEX.get_or_init(|| Mutex::new(())).lock().unwrap();
+    let mut previous = Vec::with_capacity(vars.len());
+    for (key, value) in vars {
+        let key = key.as_ref().to_string();
+        let previous_value = std::env::var_os(&key);
+        std::env::set_var(&key, value.as_ref());
+        previous.push((key, previous_value));
+    }
+    let out = f();
+    for (key, previous_value) in previous {
+        match previous_value {
+            Some(value) => std::env::set_var(&key, value),
+            None => std::env::remove_var(&key),
+        }
+    }
+    out
+}
+
+fn build_ollama_stub_script() -> std::path::PathBuf {
+    use std::io::Write;
+
+    let script = unique_temp_path("adl-uts-acc-ollama-stub", "");
+    let mut file = std::fs::File::create(&script).expect("create stub ollama script");
+    file
+        .write_all(
+            br#"#!/usr/bin/env sh
+if [ "$1" = "list" ]; then
+  echo "NAME ID SIZE MODIFIED"
+  echo "fixture-model abc 3.2 GB now"
+  exit 0
+fi
+if [ "$1" = "run" ]; then
+  cat <<'JSON'
+{"narrative":"Proposal for review only.","proposal":{"proposal_id":"proposal-123","tool_name":"get_time","tool_version":"1.0.0","adapter_id":"adapter.get_time.dry_run","arguments":{},"dry_run_requested":true,"ambiguous":false}}
+JSON
+  exit 0
+fi
+echo "unexpected ollama arg: $1" >&2
+exit 1
+"#
+        )
+        .expect("write stub script");
+
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755))
+            .expect("make stub executable");
+    }
+    script
+}
+
+fn build_ollama_stub_script_with(
+    list_output: &str,
+    run_output: &str,
+    ps_output: &str,
+) -> std::path::PathBuf {
+    build_ollama_stub_script_with_statuses(list_output, 0, run_output, 0, ps_output, 0)
+}
+
+fn build_ollama_stub_script_with_statuses(
+    list_output: &str,
+    list_exit_code: i32,
+    run_output: &str,
+    run_exit_code: i32,
+    ps_output: &str,
+    ps_exit_code: i32,
+) -> std::path::PathBuf {
+    use std::io::Write;
+
+    let script = unique_temp_path("adl-uts-acc-ollama-stub", "");
+    let mut file = std::fs::File::create(&script).expect("create stub ollama script");
+    let contents = format!(
+        "#!/usr/bin/env sh\nif [ \"$1\" = \"list\" ]; then\n  cat <<\"LIST\"\n{list_output}\nLIST\n  exit {list_exit_code}\nfi\nif [ \"$1\" = \"run\" ]; then\n  cat <<\"RUN\"\n{run_output}\nRUN\n  exit {run_exit_code}\nfi\nif [ \"$1\" = \"ps\" ]; then\n  cat <<\"PS\"\n{ps_output}\nPS\n  exit {ps_exit_code}\nfi\necho \"unexpected ollama arg: $1\" >&2\nexit 1\n"
+    );
+    file.write_all(contents.as_bytes())
+        .expect("write stub script");
+
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755))
+            .expect("make stub executable");
+    }
+    script
 }
 
 #[test]
@@ -47,6 +188,168 @@ fn parse_ollama_ps_output_extracts_model_and_until() {
     assert_eq!(entries.len(), 1);
     assert_eq!(entries[0].model_id, "gemma4:31b");
     assert_eq!(entries[0].until, "Stopping...");
+}
+
+#[test]
+fn provider_complete_with_retries_stops_on_retryable_error_and_succeeds() {
+    let provider = ScriptedProvider::new(vec![
+        Err(anyhow::anyhow!("provider timeout")),
+        Ok("first".to_string()),
+    ]);
+    let (value, _duration_ms) = provider_complete_with_retries(&provider, "ignore")
+        .expect("retryable provider eventually succeeds");
+    assert_eq!(value, "first");
+}
+
+#[test]
+fn provider_complete_with_retries_fails_fast_for_non_retryable_error() {
+    let provider = ScriptedProvider::new(vec![Err(anyhow::anyhow!("bad schema input"))]);
+    let error = provider_complete_with_retries(&provider, "ignore").expect_err("non-retryable");
+    assert!(error.to_string().contains("bad schema input"));
+}
+
+#[test]
+fn run_uts_acc_multi_model_benchmark_wrapper_uses_default_selection_path() {
+    let script = build_ollama_stub_script();
+    let script_path = script.to_string_lossy();
+    let report = with_temporary_env_vars(
+        &[
+            ("ADL_OLLAMA_BIN", script_path.as_ref()),
+            ("ADL_UTS_ACC_BENCHMARK_MODELS", "fixture-model"),
+        ],
+        || run_uts_acc_multi_model_benchmark(),
+    );
+    assert_eq!(report.task_count, 11);
+    assert_eq!(report.models.len(), report.candidate_count);
+}
+
+#[test]
+fn write_uts_acc_multi_model_benchmark_report_uses_wrapped_default_models() {
+    let report_path = unique_temp_path("uts-acc-wrapper-report", ".json");
+    let script = build_ollama_stub_script();
+    let script_path = script.to_string_lossy();
+    let report = with_temporary_env_vars(
+        &[
+            ("ADL_OLLAMA_BIN", script_path.as_ref()),
+            ("ADL_UTS_ACC_BENCHMARK_MODELS", "fixture-model"),
+        ],
+        || {
+            write_uts_acc_multi_model_benchmark_report(&report_path)
+                .expect("generate report from wrapper")
+        },
+    );
+    assert_eq!(report.selected_models, vec!["fixture-model"]);
+    let body = fs::read_to_string(&report_path).expect("read report");
+    assert!(body.contains("uts_acc_multi_model_benchmark.v1"));
+}
+
+#[test]
+fn run_benchmark_with_stubbed_provider_executes_evaluated_model() {
+    let script = build_ollama_stub_script();
+    let report = with_temporary_env_var("ADL_OLLAMA_BIN", script.to_string_lossy(), || {
+        run_uts_acc_multi_model_benchmark_with_models(&["fixture-model".to_string()])
+    });
+    assert_eq!(report.candidate_count, 1);
+    assert_eq!(report.models.len(), report.candidate_count);
+}
+
+#[test]
+fn append_progress_line_writes_reported_lines() {
+    let path = unique_temp_path("uts-acc-progress", ".log");
+    let body = with_temporary_env_var("ADL_UTS_ACC_PROGRESS_PATH", path.to_string_lossy(), || {
+        assert_eq!(progress_path(), Some(path.clone()));
+        super::runtime::append_progress_line("first");
+        super::runtime::append_progress_line("second");
+        fs::read_to_string(&path).expect("read progress")
+    });
+    assert!(body.contains("first"));
+    assert!(body.contains("second"));
+    assert!(!body.contains("third"));
+}
+
+#[test]
+fn resolve_models_prioritizes_explicit_input() {
+    let (selection, models) = resolve_models(&["fixture-model".to_string()], || {
+        vec!["fallback".to_string()]
+    });
+    assert_eq!(
+        selection,
+        super::UtsAccMultiModelSelectionSource::ExplicitInput
+    );
+    assert_eq!(models, vec!["fixture-model".to_string()]);
+}
+
+#[test]
+fn resolve_models_uses_env_when_available() {
+    let (selection, models) =
+        with_temporary_env_var("ADL_UTS_ACC_BENCHMARK_MODELS", "env-model", || {
+            resolve_models(&[], || vec!["fallback".to_string()])
+        });
+    assert_eq!(selection, super::UtsAccMultiModelSelectionSource::ExplicitEnv);
+    assert_eq!(models, vec!["env-model".to_string()]);
+}
+
+#[test]
+fn resolve_models_reports_default_fallback_on_list_failure() {
+    let script = build_ollama_stub_script_with_statuses(
+        "NAME ID SIZE MODIFIED\n",
+        1,
+        "{}",
+        0,
+        "NAME ID SIZE PROCESSOR CONTEXT UNTIL",
+        0,
+    );
+    let (selection, models) = with_temporary_env_var("ADL_OLLAMA_BIN", script.to_string_lossy(), || {
+        resolve_models(&[], || vec!["fallback".to_string()])
+    });
+    assert_eq!(selection, super::UtsAccMultiModelSelectionSource::DefaultFallback);
+    assert_eq!(models, vec!["fallback".to_string()]);
+}
+
+#[test]
+fn resolve_models_reports_discovery_empty_when_list_has_no_models() {
+    let script = build_ollama_stub_script_with(
+        "NAME ID SIZE MODIFIED",
+        "{}",
+        "NAME ID SIZE PROCESSOR CONTEXT UNTIL",
+    );
+    let (selection, _models): (
+        super::UtsAccMultiModelSelectionSource,
+        Vec<String>,
+    ) = with_temporary_env_var("ADL_OLLAMA_BIN", script.to_string_lossy(), || {
+        resolve_models(&[], || vec!["fallback".to_string()])
+    });
+    assert!(!matches!(
+        selection,
+        super::UtsAccMultiModelSelectionSource::ExplicitInput
+            | super::UtsAccMultiModelSelectionSource::ExplicitEnv
+    ));
+    assert!(matches!(
+        selection,
+        super::UtsAccMultiModelSelectionSource::RuntimeDiscoveryEmpty
+            | super::UtsAccMultiModelSelectionSource::DefaultFallback
+    ));
+}
+
+#[test]
+fn model_unavailable_reason_local_host_detects_missing_model() {
+    let script = build_ollama_stub_script_with(
+        "NAME ID SIZE MODIFIED\ngood-model abc 3.0 GB now",
+        "{}",
+        "NAME ID SIZE PROCESSOR CONTEXT UNTIL",
+    );
+    let script_path = script.to_string_lossy();
+    let reason = with_temporary_env_vars(
+        &[
+            ("ADL_OLLAMA_BIN", script_path.as_ref()),
+            ("OLLAMA_HOST", "http://127.0.0.1:11434"),
+        ],
+        || model_unavailable_reason("missing-model"),
+    );
+    assert_eq!(
+        reason,
+        Some("model_unavailable: 'missing-model' is not present in ollama list".to_string())
+    );
 }
 
 #[test]
@@ -111,6 +414,57 @@ fn local_ollama_host_uses_http_transport_labels() {
 }
 
 #[test]
+fn model_unavailable_reason_local_host_returns_none_when_model_exists() {
+    let script = build_ollama_stub_script_with(
+        "NAME ID SIZE MODIFIED\ngood-model abc 3.0 GB now",
+        "{}",
+        "NAME ID SIZE PROCESSOR CONTEXT UNTIL",
+    );
+    let script_path = script.to_string_lossy();
+    let reason = with_temporary_env_vars(
+        &[
+            ("ADL_OLLAMA_BIN", script_path.as_ref()),
+            ("OLLAMA_HOST", "http://127.0.0.1:11434"),
+        ],
+        || model_unavailable_reason("good-model"),
+    );
+    assert_eq!(reason, None);
+}
+
+#[test]
+fn local_runtime_busy_reason_ignores_selected_models() {
+    let script = build_ollama_stub_script_with(
+        "NAME ID SIZE MODIFIED\ngood-model abc 3.0 GB now",
+        "{}",
+        "NAME ID SIZE PROCESSOR CONTEXT UNTIL\nfixture-model abc 3.0 GB now\nforeign-model xyz 2.0 GB 1m",
+    );
+    let script_path = script.to_string_lossy();
+    let reason = with_temporary_env_vars(
+        &[
+            ("ADL_OLLAMA_BIN", script_path.as_ref()),
+            ("OLLAMA_HOST", "http://127.0.0.1:11434"),
+        ],
+        || local_runtime_busy_reason(&["fixture-model".to_string()]),
+    );
+    assert!(reason.is_none() || reason.as_deref().unwrap().contains("local_runtime_busy"));
+}
+
+#[test]
+fn skipped_model_result_records_skip_metadata() {
+    let result = with_temporary_env_var("OLLAMA_HOST", "http://127.0.0.1:11434", || {
+        skipped_model_result("fixture-model", "unavailable".to_string(), "model not found")
+    });
+    assert_eq!(result.candidate_id, "local.fixture-model");
+    assert_eq!(result.run_status, super::UtsAccMultiModelRunStatus::Skipped);
+    assert_eq!(result.skip_reason.as_deref(), Some("unavailable"));
+    assert_eq!(
+        result.conditions.notes,
+        "Bounded UTS v1.1 + ACC v1.1 model benchmark via http://127.0.0.1:11434; no real tool execution occurs."
+            .to_string()
+    );
+}
+
+#[test]
 fn compiler_rejection_classifier_maps_known_codes() {
     assert_eq!(
         classify_compiler_rejection(Some(
@@ -148,6 +502,25 @@ fn remote_ollama_host_uses_remote_transport_and_skips_local_list_preflight() {
         Some(value) => std::env::set_var("OLLAMA_HOST", value),
         None => std::env::remove_var("OLLAMA_HOST"),
     }
+}
+
+#[test]
+fn current_ollama_host_defaults_when_env_missing() {
+    let previous = std::env::var_os("OLLAMA_HOST");
+    std::env::remove_var("OLLAMA_HOST");
+    assert_eq!(current_ollama_host(), "http://127.0.0.1:11434");
+    match previous {
+        Some(value) => std::env::set_var("OLLAMA_HOST", value),
+        None => std::env::remove_var("OLLAMA_HOST"),
+    }
+}
+
+#[test]
+fn is_retryable_provider_error_matches_expected_patterns() {
+    assert!(is_retryable_provider_error(&anyhow::anyhow!("Request timeout")));
+    assert!(is_retryable_provider_error(&anyhow::anyhow!("server_error: service temporarily unavailable")));
+    assert!(is_retryable_provider_error(&anyhow::anyhow!("CONNECTION RESET by peer")));
+    assert!(!is_retryable_provider_error(&anyhow::anyhow!("invalid json response")));
 }
 
 #[test]
