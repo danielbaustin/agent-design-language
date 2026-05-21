@@ -31,13 +31,18 @@ Track the milestone package and proof surfaces required for a truthful
 
 ## Current Judgment
 
-This is an in-progress release evidence index. It records substantial landed
-evidence through `WP-19` plus corrective `WP-20B` internal-review findings, but
-it is not a final release verdict.
+This release evidence index records the landed v0.91.2 evidence needed for
+`WP-24` release ceremony review. It is still evidence, not a substitute for the
+ceremony record itself.
 
 The thin `WP-20` packet under `review/internal_review/` is retained for
 historical context, but it is not the controlling review packet for this
 release-tail path. Accepted `WP-20B` remediation issues have closed, `WP-21`
-external review has closed, and `WP-22` remediation has closed. `WP-23`
-next-milestone planning is in review through PR `#3192`; `WP-24` release
-ceremony work must still finish before closeout.
+external review has closed, `WP-22` remediation has closed, and `WP-23`
+next-milestone planning has closed. `WP-24` release ceremony work is the final
+end-of-milestone evidence gate.
+
+Sidecar `#3193` UTS evidence cleanup is closed and moved out of the ADL
+release gate into the standalone UTS repo path. ADL v0.91.2 keeps the reviewed
+bounded UTS+ACC milestone evidence; standalone UTS publication polish belongs
+to the UTS repo.

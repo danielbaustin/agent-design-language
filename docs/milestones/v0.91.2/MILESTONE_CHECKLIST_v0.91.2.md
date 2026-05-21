@@ -14,15 +14,15 @@
 - [x] Benchmark harness scope accepted.
 - [x] Runtime/test-cycle recovery scope accepted.
 - [x] Review-product, Workspace, modernization, publication, rustdoc, and guardrail scopes accepted.
-- [ ] Quality/review/release tail accepted.
+- [x] Quality/review/release tail accepted through `WP-23`; `WP-24` owns final ceremony.
 
 ## Review And Release Readiness
 
 - [x] Feature-proof coverage is complete through the landed implementation and quality-gate band.
 - [x] Quality gate is recorded.
-- [ ] Internal review is complete.
-- [ ] External review is complete or explicitly deferred.
-- [ ] Accepted findings are fixed or dispositioned.
+- [x] Internal review is complete.
+- [x] External review is complete.
+- [x] Accepted findings are fixed or dispositioned.
 - [ ] ADR candidates are reviewed, promoted, deferred, or explicitly carried forward.
-- [ ] Release evidence and release readiness are complete.
+- [x] Release evidence and release readiness are prepared for ceremony.
 - [ ] Ceremony completed.

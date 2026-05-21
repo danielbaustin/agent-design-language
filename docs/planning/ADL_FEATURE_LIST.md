@@ -59,9 +59,9 @@ The current repo truth is:
   4 has closed `WP-17`, `WP-17A`, `WP-18`, and `WP-19`; the initial `WP-20`
   internal review is superseded for handoff truth by `WP-20B`; accepted
   `WP-20B` remediation issues have closed; `WP-21` external review and `WP-22`
-  review remediation have closed; `WP-23` next-milestone planning is represented
-  by this `v0.91.3` / `v0.91.4` planning package; and `WP-24` remains the
-  release-ceremony and release-approval gate
+  review remediation have closed; `WP-23` next-milestone planning has closed
+  with the `v0.91.3` / `v0.91.4` planning package; and `WP-24` is the release
+  ceremony and final end-of-milestone evidence gate
 - most recently completed inhabited-runtime milestone package: `v0.91.1`
 - most recently completed moral-governance milestone package: `v0.91`
 - most recently completed governed-tools milestone package: `v0.90.5`
