@@ -12,7 +12,7 @@
   "unsupported_provider_count": 1,
   "json_proposal_baseline": {
     "interface_mode": "adl_json_proposal",
-    "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1",
+    "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1.1",
     "tracked_report_artifact_path": "docs/milestones/v0.91.2/review/uts_acc_multi_model_benchmark_report.json",
     "evaluated_fixture_panel_count": 3,
     "task_count": 8,

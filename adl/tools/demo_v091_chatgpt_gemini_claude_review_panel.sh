@@ -76,9 +76,30 @@ OBSERVATORY_PROJECTION="$OUT_DIR/observatory_projection.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 PROOF_NOTE="$OUT_DIR/proof_note.md"
 GENERATED_EXAMPLE="$OUT_DIR/v0-91-chatgpt-gemini-claude-review-panel.runtime.adl.yaml"
-OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai2.key}"
-GEMINI_KEY_FILE="${ADL_GEMINI_KEY_FILE:-$HOME/keys/gcp-ace-2023.key}"
-ANTHROPIC_KEY_FILE="${ADL_ANTHROPIC_KEY_FILE:-$HOME/keys/ADL_demo_ref_04.txt}"
+HOSTED_KEYS_FILE="${ADL_HOSTED_PROVIDER_KEYS_FILE:-$ROOT_DIR/adl/tools/benchmark/hosted_provider_key_files.json}"
+resolve_key_file() {
+  local env_name="$1"
+  local explicit_path="${2:-}"
+  if [[ -n "$explicit_path" ]]; then
+    printf '%s\n' "$explicit_path"
+    return 0
+  fi
+  python3 - "$HOSTED_KEYS_FILE" "$env_name" <<'PY'
+import json
+import sys
+from pathlib import Path
+path = Path(sys.argv[1])
+env_name = sys.argv[2]
+if not path.is_file():
+    raise SystemExit(1)
+doc = json.loads(path.read_text(encoding="utf-8"))
+value = (doc.get("keys") or {}).get(env_name, "")
+print(value, end="")
+PY
+}
+OPENAI_KEY_FILE="$(resolve_key_file OPENAI_API_KEY "${ADL_OPENAI_KEY_FILE:-}")"
+GEMINI_KEY_FILE="$(resolve_key_file GEMINI_API_KEY "${ADL_GEMINI_KEY_FILE:-}")"
+ANTHROPIC_KEY_FILE="$(resolve_key_file ANTHROPIC_API_KEY "${ADL_ANTHROPIC_KEY_FILE:-}")"
 OPENAI_MODEL="${ADL_LIVE_OPENAI_MODEL:-gpt-5.5}"
 GEMINI_MODEL="${ADL_LIVE_GEMINI_MODEL:-gemini-3.1-pro-preview}"
 ANTHROPIC_MODEL="${ADL_LIVE_ANTHROPIC_MODEL:-claude-opus-4-1-20250805}"
