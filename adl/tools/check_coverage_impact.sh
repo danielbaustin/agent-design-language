@@ -177,6 +177,9 @@ candidate_filter_for_path() {
     adl/src/gws_live_capability_execution_surface.rs|adl/src/gws_live_content_card_roundtrip.rs|adl/src/gws_live_content_card_roundtrip/*.rs|adl/src/gws_live_safety_package.rs|adl/src/gws_live_test_support.rs)
       printf 'gws_live'
       ;;
+    adl/src/uts_acc_multi_model_benchmark.rs|adl/src/uts_acc_multi_model_benchmark/*.rs|adl/src/uts_acc_multi_model_benchmark/*/*.rs)
+      printf 'uts_acc_multi_model_benchmark::'
+      ;;
     adl/src/cli/mod.rs|adl/src/cli/tests.rs)
       printf 'cli'
       ;;
