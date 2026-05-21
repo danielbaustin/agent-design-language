@@ -1528,6 +1528,9 @@ It:
 
 - preserves the canonical manual `SPP` schema shape used by the first v0.91
   samples
+- supports design-time `SPP` plans generated during issue bootstrap from the
+  source issue prompt, dependencies, deliverables, acceptance criteria,
+  validation expectations, and non-goals
 - keeps `SPP` as a planning artifact rather than an execution log
 - validates `codex_plan` status values and planning-truth boundaries
 - tightens dependencies, assumptions, test strategy, and stop conditions
@@ -1538,6 +1541,7 @@ It:
 Use `spp-editor` when:
 
 - the `SPP` has stale plan structure or weak source references
+- the design-time `SPP` needs review tightening before execution
 - the `SPP` drifts away from the canonical manual sample shape
 - `codex_plan` values drift outside `pending`, `in_progress`, or `completed`
 - a planning artifact starts to read like an execution log

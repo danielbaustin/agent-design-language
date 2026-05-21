@@ -90,6 +90,16 @@ docs at it without changing validators in this issue.
 
 The `SPP` is the execution-plan surface.
 
+At issue creation, bootstrap tooling should generate an initial design-time
+`SPP` from the source issue prompt, `STP`/`SIP` context, dependencies,
+deliverables, acceptance criteria, validation expectations, and non-goals. This
+makes the plan reviewable before execution rather than leaving a generic
+placeholder.
+
+At runtime, the `SPP` is still live operative plan truth. If the real execution
+sequence, touched files, proof gates, dependencies, or validation commands
+change materially, update the `SPP` before continuing and record why.
+
 It records:
 
 - execution sequence
@@ -99,6 +109,7 @@ It records:
 - stop conditions
 - risks and fallback path
 - worktree, branch, and scope constraints
+- replan triggers
 
 For issue scope, `SPP` remains issue-local. Sprint-scoped planning is a
 separate workflow extension and must use an explicit scope or separate editor

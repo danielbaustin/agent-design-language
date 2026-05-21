@@ -36,6 +36,14 @@ It answers: what are we going to do?
 
 `SPP` records the issue-local operative execution plan.
 
+The first `SPP` should be generated during issue/card bootstrap as a
+design-time plan. It should be concrete enough for review before execution:
+steps, proof gates, dependency assumptions, stop conditions, out-of-scope
+boundaries, and validation strategy.
+
+Runtime execution must treat that plan as live truth rather than a historical
+memo. If execution diverges, update `SPP` first.
+
 It answers:
 
 - what step is active now
@@ -74,4 +82,3 @@ C-SDLC depends on the cards staying separate:
 - `SOR` preserves outcome truth.
 
 Collapsing those roles recreates the drift C-SDLC is designed to remove.
-

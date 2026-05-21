@@ -53,6 +53,17 @@ fn file_exists_nonempty(path: &Path) -> bool {
         .unwrap_or(false)
 }
 
+fn plan_card_needs_design_time_refresh(path: &Path) -> Result<bool> {
+    if !path.is_file() {
+        return Ok(true);
+    }
+    let text = fs::read_to_string(path)
+        .with_context(|| format!("failed to read SPP at {}", path.display()))?;
+    Ok(text.contains("Bootstrap-generated SPP")
+        || text.contains("Bootstrap planning surface for this issue")
+        || text.contains("Review the issue bundle and tighten the planned execution sequence."))
+}
+
 pub(crate) fn sync_root_task_bundle_into_worktree(
     primary_checkout_root: &Path,
     worktree_root: &Path,
@@ -191,8 +202,8 @@ pub(crate) fn ensure_bootstrap_cards(
     } else if field_line_value(&bundle_output, "Branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_output, "Branch", branch)?;
     }
-    if !bundle_plan.is_file() {
-        write_plan_card(root, &bundle_plan, issue_ref, title, branch)?;
+    if !bundle_plan.is_file() || plan_card_needs_design_time_refresh(&bundle_plan)? {
+        write_plan_card(root, &bundle_plan, issue_ref, title, branch, source_path)?;
     } else if field_line_value(&bundle_plan, "branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_plan, "branch", &format!("\"{branch}\""))?;
     }
@@ -248,8 +259,9 @@ pub(crate) fn write_plan_card(
     issue_ref: &IssueRef,
     title: &str,
     branch: &str,
+    source_path: &Path,
 ) -> Result<()> {
-    let text = render_bootstrap_plan_card(repo_root, issue_ref, title, branch);
+    let text = render_bootstrap_plan_card(repo_root, issue_ref, title, branch, source_path);
     fs::write(path, text)?;
     Ok(())
 }
@@ -604,10 +616,48 @@ fn render_bootstrap_plan_card(
     issue_ref: &IssueRef,
     title: &str,
     branch: &str,
+    source_path: &Path,
 ) -> String {
     let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
     let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
     let spp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_plan_path(repo_root));
+    let source_rel = path_relative_to_repo(repo_root, source_path);
+    let prompt = fs::read_to_string(source_path).unwrap_or_default();
+    let dependencies = issue_prompt_section(&prompt, "Dependencies")
+        .map(|value| one_line_summary(&value))
+        .unwrap_or_else(|| "Review the source issue prompt for dependency truth.".to_string());
+    let deliverables = issue_prompt_section(&prompt, "Deliverables")
+        .map(|value| one_line_summary(&value))
+        .unwrap_or_else(|| {
+            "Produce the deliverables named by the source issue prompt.".to_string()
+        });
+    let acceptance = issue_prompt_section(&prompt, "Acceptance Criteria")
+        .map(|value| one_line_summary(&value))
+        .unwrap_or_else(|| {
+            "Satisfy the acceptance criteria named by the source issue prompt.".to_string()
+        });
+    let repo_inputs = issue_prompt_section(&prompt, "Repo Inputs")
+        .map(|value| one_line_summary(&value))
+        .unwrap_or_else(|| "Use the repo inputs named by the source issue prompt.".to_string());
+    let non_goals = issue_prompt_section(&prompt, "Non-goals")
+        .map(|value| one_line_summary(&value))
+        .unwrap_or_else(|| "Preserve the non-goals named by the source issue prompt.".to_string());
+    let demo_expectations = issue_prompt_section(&prompt, "Demo Expectations")
+        .map(|value| one_line_summary(&value))
+        .unwrap_or_else(|| "Follow demo expectations from the source issue prompt.".to_string());
+    let validation_strategy = issue_prompt_section(&prompt, "Tooling Notes")
+        .or_else(|| issue_prompt_section(&prompt, "Acceptance Criteria"))
+        .map(|value| one_line_summary(&value))
+        .unwrap_or_else(|| {
+            "Run the smallest proving validation for the touched surface.".to_string()
+        });
+    let dependency_step = yaml_inline(&dependencies);
+    let deliverable_step = yaml_inline(&deliverables);
+    let acceptance_step = yaml_inline(&acceptance);
+    let repo_inputs_step = yaml_inline(&repo_inputs);
+    let non_goals_step = yaml_inline(&non_goals);
+    let demo_step = yaml_inline(&demo_expectations);
+    let validation_step = yaml_inline(&validation_strategy);
     format!(
         r#"---
 schema_version: "0.1"
@@ -624,72 +674,116 @@ plan_revision: 1
 source_refs:
   - kind: "issue"
     ref: "https://github.com/{repo}/issues/{issue}"
+  - kind: "source_issue_prompt"
+    ref: "{source_rel}"
   - kind: "stp"
     ref: "{stp_rel}"
   - kind: "sip"
     ref: "{sip_rel}"
 scope:
   files:
+    - "{source_rel}"
     - "{stp_rel}"
     - "{sip_rel}"
+    - "{spp_rel}"
   components:
     - "{slug}"
   out_of_scope:
-    - "implementation beyond the approved issue scope"
+    - "{non_goals_step}"
 constraints:
-  - "read_only_until_execution_is_approved"
+  - "design_time_plan_must_be_reviewed_before_execution"
+  - "runtime_execution_must_update_spp_if_plan_changes"
   - "no_hidden_scope_expansion"
 confidence: "medium"
-plan_summary: "Bootstrap planning surface for {title}; revise it before tracked execution if this issue needs an explicit reviewed execution plan."
+plan_summary: "Design-time operative plan for {title}; generated from source issue prompt, STP/SIP surfaces, dependencies, deliverables, acceptance criteria, and validation expectations."
 assumptions:
-  - "The linked STP and SIP remain the canonical issue-intent and execution-context inputs."
+  - "The linked source issue prompt, STP, and SIP remain the canonical design-time inputs."
+  - "Dependency details may need refresh when earlier issues land."
 proposed_steps:
   - id: "step-1"
-    description: "Review the linked STP and SIP, then tighten the planned execution sequence."
-    expected_output: "{spp_rel}"
+    description: "Confirm dependency readiness and starting state: {dependency_step}"
+    expected_output: "{sip_rel}"
+    allowed_mode: "design_review_then_execution"
+  - id: "step-2"
+    description: "Review repo inputs and scoped surfaces before editing: {repo_inputs_step}"
+    expected_output: "{stp_rel}"
+    allowed_mode: "design_review_then_execution"
+  - id: "step-3"
+    description: "Implement only the bounded deliverables: {deliverable_step}"
+    expected_output: "tracked issue work product"
+    allowed_mode: "execution_after_approval"
+  - id: "step-4"
+    description: "Run focused proof gates for acceptance: {acceptance_step}"
+    expected_output: "validation evidence recorded in SOR"
+    allowed_mode: "execution_after_approval"
+  - id: "step-5"
+    description: "Record review in SRP, outcome truth in SOR, and refresh this SPP if execution diverges."
+    expected_output: "reviewed SRP and truthful SOR"
     allowed_mode: "execution_after_approval"
 codex_plan:
-  - step: "Review the issue bundle and tighten the planned execution sequence."
+  - step: "Confirm dependencies and starting state from the source issue prompt."
+    status: "pending"
+  - step: "Inspect repo inputs and target surfaces before editing."
+    status: "pending"
+  - step: "Implement the bounded deliverables only."
+    status: "pending"
+  - step: "Run focused validation and proof gates."
+    status: "pending"
+  - step: "Record SRP review results and SOR outcome truth."
     status: "pending"
 affected_areas:
   - "{slug}"
 invariants_to_preserve:
-  - "Do not claim implementation work inside the plan."
-  - "Do not expand touched files or validation beyond issue-local evidence without recording why."
+  - "Keep SPP issue-local; do not turn it into sprint orchestration."
+  - "Keep SRP as review-result truth and SOR as output truth."
+  - "Do not expand touched files or validation beyond issue-local evidence without updating this plan."
 risks_and_edge_cases:
-  - "The planned files or validations may drift if the issue prompt changes materially before execution."
+  - "Earlier dependency output may change the correct execution sequence."
+  - "Generated design-time plans can be incomplete; runtime must update SPP before continuing if reality changes."
 test_strategy:
-  - "Review the proposed validation commands before tracked execution."
-execution_handoff: "Use this artifact as the durable plan-of-record when planning is required before execution."
+  - "{validation_step}"
+  - "{demo_step}"
+execution_handoff: "Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes."
 required_permissions:
   - "workspace-write after execution approval"
 stop_conditions:
-  - "Stop and re-plan if the touched-file set or proving commands change materially."
+  - "Stop and re-plan if dependencies are unmet or materially different from this design-time plan."
+  - "Stop and update SPP if touched files, proof gates, or validation commands change materially."
+  - "Stop and route follow-on work if acceptance requires scope outside this issue."
 alternatives_considered:
   - description: "Rely only on transient chat planning."
     reason_not_chosen: "Chat-only planning is not durable or reviewable enough for this workflow surface."
 review_hooks:
-  - "Check scope truthfulness, touched-file truthfulness, validation sufficiency, and re-plan triggers."
-notes: "Bootstrap-generated SPP; revise before use if planning review is required."
+  - "Check dependency truth, scope truthfulness, touched-file truthfulness, validation sufficiency, and re-plan triggers."
+notes: "Design-time generated SPP; review before execution and update during runtime if the plan changes."
 ---
 
 # Structured Plan Prompt
 
 ## Plan Summary
 
-Bootstrap planning surface for this issue. Tighten the plan before tracked execution if plan review is required.
+Design-time operative plan for this issue. Review this SPP before execution; during runtime, update it before continuing if the actual execution sequence changes.
 
 ## Codex Plan
 
-1. [pending] Review the issue bundle and tighten the planned execution sequence.
+1. [pending] Confirm dependencies and starting state from the source issue prompt.
+2. [pending] Inspect repo inputs and target surfaces before editing.
+3. [pending] Implement the bounded deliverables only.
+4. [pending] Run focused validation and proof gates.
+5. [pending] Record SRP review results and SOR outcome truth.
 
 ## Assumptions
 
-- The linked STP and SIP remain the canonical issue-local inputs.
+- The linked source issue prompt, STP, and SIP remain the canonical design-time inputs.
+- Dependency details may need refresh when earlier issues land.
 
 ## Proposed Steps
 
-1. Review the linked STP and SIP, then tighten the planned execution sequence.
+1. Confirm dependency readiness and starting state: {dependencies_md}
+2. Review repo inputs and scoped surfaces before editing: {repo_inputs_md}
+3. Implement only the bounded deliverables: {deliverables_md}
+4. Run focused proof gates for acceptance: {acceptance_md}
+5. Record review in SRP, outcome truth in SOR, and refresh this SPP if execution diverges.
 
 ## Affected Areas
 
@@ -697,28 +791,33 @@ Bootstrap planning surface for this issue. Tighten the plan before tracked execu
 
 ## Invariants To Preserve
 
-- Do not claim implementation work inside the plan.
-- Do not expand touched files or validations without recording why.
+- Keep SPP issue-local; do not turn it into sprint orchestration.
+- Keep SRP as review-result truth and SOR as output truth.
+- Do not expand touched files or validations without updating this plan.
 
 ## Risks And Edge Cases
 
-- The planned files or validations may drift if the issue prompt changes materially before execution.
+- Earlier dependency output may change the correct execution sequence.
+- Generated design-time plans can be incomplete; runtime must update SPP before continuing if reality changes.
 
 ## Test Strategy
 
-- Review the proposed validation commands before tracked execution.
+- {validation_md}
+- {demo_md}
 
 ## Execution Handoff
 
-Use this artifact as the durable plan-of-record when planning is required before execution.
+Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes.
 
 ## Stop Conditions
 
-- Stop and re-plan if the touched-file set or proving commands change materially.
+- Stop and re-plan if dependencies are unmet or materially different from this design-time plan.
+- Stop and update SPP if touched files, proof gates, or validation commands change materially.
+- Stop and route follow-on work if acceptance requires scope outside this issue.
 
 ## Notes
 
-Bootstrap-generated SPP; revise before use if planning review is required.
+Design-time generated SPP; review before execution and update during runtime if the plan changes.
 "#,
         slug = issue_ref.slug(),
         issue = issue_ref.issue_number(),
@@ -728,10 +827,70 @@ Bootstrap-generated SPP; revise before use if planning review is required.
         branch = branch,
         repo = default_repo(repo_root)
             .unwrap_or_else(|_| "danielbaustin/agent-design-language".to_string()),
+        source_rel = source_rel,
         stp_rel = stp_rel,
         sip_rel = sip_rel,
         spp_rel = spp_rel,
+        dependency_step = dependency_step,
+        deliverable_step = deliverable_step,
+        acceptance_step = acceptance_step,
+        repo_inputs_step = repo_inputs_step,
+        non_goals_step = non_goals_step,
+        demo_step = demo_step,
+        validation_step = validation_step,
+        dependencies_md = dependencies,
+        deliverables_md = deliverables,
+        acceptance_md = acceptance,
+        repo_inputs_md = repo_inputs,
+        demo_md = demo_expectations,
+        validation_md = validation_strategy,
     )
+}
+
+fn issue_prompt_section(text: &str, heading: &str) -> Option<String> {
+    let wanted = format!("## {heading}");
+    let mut in_section = false;
+    let mut lines = Vec::new();
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if trimmed == wanted {
+            in_section = true;
+            continue;
+        }
+        if in_section && trimmed.starts_with("## ") {
+            break;
+        }
+        if in_section {
+            lines.push(line);
+        }
+    }
+    let value = lines.join("\n").trim().to_string();
+    if value.is_empty() {
+        None
+    } else {
+        Some(value)
+    }
+}
+
+fn one_line_summary(text: &str) -> String {
+    const MAX_LEN: usize = 220;
+    let out = text
+        .lines()
+        .map(|line| line.trim().trim_start_matches("- ").trim())
+        .filter(|line| !line.is_empty())
+        .collect::<Vec<_>>()
+        .join("; ");
+    if out.chars().count() > MAX_LEN {
+        let mut truncated = out.chars().take(MAX_LEN).collect::<String>();
+        truncated.push_str("...");
+        truncated
+    } else {
+        out
+    }
+}
+
+fn yaml_inline(text: &str) -> String {
+    text.replace('\\', "\\\\").replace('"', "'")
 }
 
 fn render_bootstrap_review_policy_card(
