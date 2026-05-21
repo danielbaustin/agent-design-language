@@ -2,8 +2,10 @@
 
 ## Status
 
-Candidate demo matrix. These demos should be implemented by their owning WPs
-and summarized again during WP-17.
+Release-tail convergence matrix. The owning WPs have now landed their bounded
+demo or proof surfaces, and WP-17 is responsible for making the strongest
+truthful showcase path explicit rather than leaving the milestone in candidate
+demo language.
 
 | Demo | Owning WP | Purpose | Proving Surface | Non-Claims |
 | --- | --- | --- | --- | --- |
@@ -19,14 +21,14 @@ and summarized again during WP-17.
 | Live bounded content-card mutation roundtrip | #3093 | Show one bounded content-card preview/apply contract with revision-anchor enforcement, truthful skipped live behavior, and promotion-packet handoff discipline. | `review/google_workspace_cms_bridge/gws_live_content_card_roundtrip_report.json` | does not allow silent repo edits, claim bidirectional sync, or prove live mutation without auth/scopes |
 | Project-ready GWS CMS operational package | #3094 | Show the bridge can be reused on future CodeFriend/ADL projects with bounded setup, safe defaults, workflow templates, and GitHub boundary rules. | `review/google_workspace_cms_bridge/codefriend_gws_operational_package.md`, `review/google_workspace_cms_bridge/gws_project_setup_and_onboarding.md`, `review/google_workspace_cms_bridge/gws_safe_defaults_and_scope_checklist.md`, `review/google_workspace_cms_bridge/gws_project_workflow_template.md`, `review/google_workspace_cms_bridge/codefriend_gws_git_workspace_boundary_runbook.md`, and `review/google_workspace_cms_bridge/gws_reusable_proof_packet_template.md` | does not claim broad enterprise Workspace administration or canonical Git replacement |
 | `.adl` to GWS migration plan | #3112 | Record how future projects should use GWS as bounded collaboration infrastructure without replacing local `.adl` workflow truth or GitHub-tracked canonical truth. | `features/GOOGLE_WORKSPACE_CMS_BRIDGE.md` migration-plan section plus the GWS operational package docs | does not retire `.adl` cards in `v0.91.2` or make Workspace canonical |
-| Moderne / OpenRewrite LST modernization demo | WP-10 | Show a bounded ADL-governed modernization plan around Moderne/OpenRewrite, deterministic recipes, and LST-based transformation. | `review/code_modernization/modernization_demo_packet.md`, `review/code_modernization/modernization_interaction_plan.md`, `review/code_modernization/modernization_dry_run_evidence.md`, and `review/code_modernization/modernization_reversibility_and_review_policy.md` | does not mass-rewrite by default or claim repo-local OpenRewrite execution where no Java/Maven target exists |
+| Moderne / OpenRewrite LST modernization demo | WP-10 | Show a bounded ADL-governed modernization plan around Moderne/OpenRewrite, deterministic recipes, and LST-based transformation. | `review/code_modernization/modernization_demo_packet.md`, `review/code_modernization/modernization_interaction_plan.md`, `review/code_modernization/modernization_dry_run_evidence.md`, `review/code_modernization/modernization_reversibility_and_review_policy.md`, `review/code_modernization/modernization_execution_command.md`, `review/code_modernization/modernization_execution_log.txt`, and `review/code_modernization/modernization_rewrite.patch` | does not mass-rewrite by default or claim broad production modernization readiness from one bounded recipe run |
 | Speculative decoding prototype | WP-11 | Show whether speculative decoding is worth continuing for ADL workloads without weakening deterministic commit semantics. | `review/speculative_decoding/speculative_decoding_prototype_report.json` and `review/speculative_decoding/speculative_decoding_prototype_packet.md` | does not grant execution authority or claim production provider speedups |
 | Repo visibility follow-on | WP-12 | Show reviewer/planner navigation improvements from bounded manifest/linkage follow-on work. | `review/repo_visibility/CANONICAL_SOURCE_MANIFEST_v0.91.2.yaml`, `review/repo_visibility/CODE_DOC_LINKAGE_REPORT_v0.91.2.md`, and `review/repo_visibility/REVIEWER_NAVIGATION_PACKET_v0.91.2.md` | does not claim full repo cognition or hidden indexing |
 | Publication program package | WP-13 | Show arXiv/Medium backlog, authoring process, and review-gate readiness. | `review/publication_program/ARXIV_AND_MEDIUM_PUBLICATION_BACKLOG_v0.91.2.md`, `review/publication_program/PUBLICATION_REVIEW_GATES_v0.91.2.md`, and `review/publication_program/GODEL_AGENTS_GHB_BACKLOG_NOTE_v0.91.2.md` | does not publish or imply submission approval |
 | General intelligence paper packet | WP-14 | Show claim/citation/review packet readiness for the general-intelligence manuscript while keeping the separate paper repo as canonical manuscript home. | `review/general_intelligence_paper/GENERAL_INTELLIGENCE_PAPER_CLAIM_AND_CITATION_PACKET_v0.91.2.md`, `review/general_intelligence_paper/GENERAL_INTELLIGENCE_PAPER_REVIEW_HANDOFF_v0.91.2.md`, `review/general_intelligence_paper/GENERAL_INTELLIGENCE_PAPER_RESIDUAL_RISK_AND_UNSUPPORTED_CLAIMS_v0.91.2.md`, and `review/general_intelligence_paper/GENERAL_INTELLIGENCE_PAPER_NEXT_AUTHORING_STEPS_v0.91.2.md` | does not claim proof, publication, or canonical manuscript ownership inside this repo |
-| Rustdoc/doc cleanup proof | WP-15 | Show rustdoc and documentation cleanup patches remain source-grounded. | rustdoc/doc cleanup report, changed docs, and validation record | does not rewrite broad docs outside issue scope |
+| Rustdoc/doc cleanup proof | WP-15 | Show rustdoc and documentation cleanup patches remain source-grounded. | `features/RUSTDOC_DOC_CLEANUP.md`, the tracked docs updates landed by WP-15, and the WP-17 convergence packet that records the cleanup proof route and boundary | does not rewrite broad docs outside issue scope |
 | Workflow guardrails demo | WP-16 | Show main-write, closeout-watch, safe-report-command, and card-drift protections. | `adl/tools/workflow_guardrails.sh`, `adl/tools/test_workflow_guardrails.sh`, and `review/workflow_guardrails/` | does not claim all operator error eliminated |
-| Feature proof coverage record | WP-17 | Map every WP-02 through WP-16 implementation or docs/productization slice to an explicit proof route or deferral. | demo matrix, proof coverage record, source-doc linkage, and validation commands | does not replace implementation proof |
+| Feature proof coverage record | WP-17 | Map every WP-02 through WP-16 implementation or docs/productization slice to an explicit proof route or deferral. | demo matrix, proof coverage record, and `review/demo_proof_convergence/DEMO_PROOF_CONVERGENCE_PACKET_v0.91.2.md` | does not replace implementation proof or fabricate missing live demos |
 
 ## Flagship Acceptance
 
@@ -36,3 +38,13 @@ The milestone should have at least two flagship proof surfaces:
   proposal behavior and execution authority
 - a workflow/test-cycle recovery proof that demonstrates faster, safer
   milestone execution without weakening review or coverage truth
+
+The strongest additional showcase paths now are:
+
+- the Google Workspace CMS bridge stack (`WP-08`, `WP-09`, `#3091`, `#3093`,
+  `#3094`) as the milestone's richest bounded collaboration and live-safety
+  demo lane
+- the Moderne / OpenRewrite bounded dry-run with retained patch/log evidence
+  as the milestone's most concrete external modernization proof
+- the workflow guardrails tool/test/runbook packet as the milestone's clearest
+  operator-safety demo
