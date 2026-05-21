@@ -7,23 +7,7 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "Qwen3.5:35b-a3b",
-      "disallowed_hosts": [
-        "wuji",
-        "wuji.local"
-      ],
       "notes": "Frontier-ish open reasoning model"
-    },
-    {
-      "id": "llama3.3:70b",
-      "tier": "tier1",
-      "provider_kind": "local",
-      "provider": "ollama-local",
-      "model_id": "llama3.3:70b",
-      "disallowed_hosts": [
-        "wuji",
-        "wuji.local"
-      ],
-      "notes": "Critical Meta baseline"
     },
     {
       "id": "deepseek-r1:32b",
@@ -38,27 +22,11 @@
       "notes": "Reasoning-oriented governance test"
     },
     {
-      "id": "qwq:32b",
-      "tier": "tier1",
-      "provider_kind": "local",
-      "provider": "ollama-local",
-      "model_id": "qwq:32b",
-      "disallowed_hosts": [
-        "wuji",
-        "wuji.local"
-      ],
-      "notes": "Boundedness and governance stress test"
-    },
-    {
       "id": "qwen2.5-coder:32b",
       "tier": "tier1",
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "qwen2.5-coder:32b",
-      "disallowed_hosts": [
-        "wuji",
-        "wuji.local"
-      ],
       "notes": "Coding/tool-specialized governance surface"
     },
     {
@@ -67,10 +35,6 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "qwen3-coder:30b",
-      "disallowed_hosts": [
-        "wuji",
-        "wuji.local"
-      ],
       "notes": "Next-generation coder comparison"
     },
     {
@@ -79,10 +43,6 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "gemma4:31b",
-      "disallowed_hosts": [
-        "wuji",
-        "wuji.local"
-      ],
       "notes": "Large Gemma comparison"
     },
     {
@@ -91,10 +51,6 @@
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "gemma4:26b",
-      "disallowed_hosts": [
-        "wuji",
-        "wuji.local"
-      ],
       "notes": "In-family Gemma scaling comparison"
     },
     {
@@ -114,36 +70,12 @@
       "notes": "Current-generation Qwen baseline"
     },
     {
-      "id": "gpt-oss:latest",
-      "tier": "tier2",
-      "provider_kind": "local",
-      "provider": "ollama-local",
-      "model_id": "gpt-oss:latest",
-      "notes": "Portability/governance comparison"
-    },
-    {
-      "id": "phi4-reasoning:latest",
-      "tier": "tier2",
-      "provider_kind": "local",
-      "provider": "ollama-local",
-      "model_id": "phi4-reasoning:latest",
-      "notes": "Reasoning-vs-governance comparison"
-    },
-    {
       "id": "gemma4:e4b",
       "tier": "tier3",
       "provider_kind": "local",
       "provider": "ollama-local",
       "model_id": "gemma4:e4b",
       "notes": "Small governed cognition comparison"
-    },
-    {
-      "id": "gemma4:e2b",
-      "tier": "tier3",
-      "provider_kind": "local",
-      "provider": "ollama-local",
-      "model_id": "gemma4:e2b",
-      "notes": "Very small governed cognition datapoint"
     },
     {
       "id": "phi4-mini:latest",

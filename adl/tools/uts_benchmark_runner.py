@@ -57,7 +57,7 @@ TOOL_CONTRACTS = [
     "read_document(document_id, section)",
     "append_log(log_line)",
     "send_email(to, subject, body)",
-    "query_database(table, filters)",
+    "query_database(table, filters) where filters.product is the product key",
     "update_inventory(sku, delta, reason)",
     "batch_weather_lookup(locations)",
 ]
@@ -340,7 +340,39 @@ def current_ollama_base_url() -> str:
     return os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434").rstrip("/")
 
 
+def ollama_resident_models() -> list[str]:
+    request = urllib.request.Request(f"{current_ollama_base_url()}/api/ps", method="GET")
+    with urllib.request.urlopen(request, timeout=5) as response:  # noqa: S310
+        doc = json.loads(response.read().decode("utf-8"))
+    names: list[str] = []
+    for row in doc.get("models", []):
+        name = row.get("name") or row.get("model")
+        if isinstance(name, str) and name:
+            names.append(name)
+    return names
+
+
+def local_runtime_busy_note(entry: dict[str, Any]) -> str | None:
+    if entry.get("provider_kind") != "local":
+        return None
+    try:
+        resident = ollama_resident_models()
+    except Exception as exc:  # noqa: BLE001
+        return f"local_runtime_unverified: could not inspect Ollama residency: {exc}"
+    expected = entry["model_id"]
+    foreign = [name for name in resident if name != expected]
+    if foreign:
+        return (
+            "local_runtime_busy: Ollama has non-target model(s) loaded while "
+            f"testing {expected}: {', '.join(foreign)}"
+        )
+    return None
+
+
 def invoke_local(entry: dict[str, Any], prompt: str) -> tuple[str, int]:
+    busy_note = local_runtime_busy_note(entry)
+    if busy_note:
+        raise RuntimeError(busy_note)
     payload = {
         "model": entry["model_id"],
         "prompt": prompt,
@@ -470,6 +502,9 @@ def skipped_lane(note: str) -> dict[str, Any]:
 def host_policy_note(entry: dict[str, Any]) -> str | None:
     if entry.get("provider_kind") != "local":
         return None
+    normalized_host = current_ollama_base_url()
+    if normalized_host not in {"http://127.0.0.1:11434", "http://localhost:11434"}:
+        return None
     current_names = {socket.gethostname(), socket.getfqdn()}
     short_names = {name.split(".", 1)[0] for name in current_names if name}
     current_names |= short_names
@@ -490,6 +525,9 @@ def run_lane(entry: dict[str, Any], tasks: list[dict[str, Any]], lane: str) -> d
         print(f"{lane}:{entry['id']} task {index}/{len(tasks)} {task['id']}", file=sys.stderr, flush=True)
         prompt = regular_prompt(task) if lane == "regular" else uts_prompt(task)
         try:
+            busy_note = local_runtime_busy_note(entry)
+            if busy_note:
+                raise RuntimeError(busy_note)
             raw, duration_ms = invoke_model(entry, prompt)
             parsed = extract_json_object(raw)
             classification, passed, note = classify_regular(task, parsed) if lane == "regular" else classify_uts(task, parsed)
@@ -700,6 +738,68 @@ def write_artifacts(report: dict[str, Any], out_path: Path) -> None:
         governed_avg, _ = duration_stats(governed.get("cases", []))
         lines.append(f"| `{model['candidate_id']}` | `{model['tier']}` | `{model['provider']}` | `{lane_text(reg)}` | `{lane_text(uts)}` | `{lane_text(governed)}` | `{elapsed_seconds(reg.get('started_at'), reg.get('completed_at'))}` | `{elapsed_seconds(uts.get('started_at'), uts.get('completed_at'))}` | `{elapsed_seconds(governed.get('started_at'), governed.get('completed_at'))}` | `{reg_avg}` | `{uts_avg}` | `{governed_avg}` |")
     summary.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    detailed = out_path.with_name(f"{out_path.stem}_details.md")
+    detail_lines = [
+        "# UTS Benchmark Detailed Results",
+        "",
+        f"- Source artifact: `{display_path(out_path)}`",
+        f"- Runner: `{report.get('runner', 'unknown')}`",
+        f"- Started: `{report.get('started_at', 'unknown')}`",
+        f"- Completed: `{report.get('completed_at', 'in_progress')}`",
+        f"- Governed lane included: `{str(report.get('include_governed', False)).lower()}`",
+        "",
+    ]
+    self_check = report.get("deterministic_self_check") or {}
+    if self_check:
+        detail_lines.extend([
+            "## Deterministic Self-Check",
+            "",
+            f"- Artifact: `{self_check.get('artifact')}`",
+            f"- Passed: `{self_check.get('passed')}`",
+            f"- Failures: `{len(self_check.get('failures') or [])}`",
+            "",
+        ])
+        for failure in self_check.get("failures") or []:
+            detail_lines.append(f"- `{failure}`")
+        if self_check.get("failures"):
+            detail_lines.append("")
+    for model in report["models"]:
+        detail_lines.extend([
+            f"## Model `{model['candidate_id']}`",
+            "",
+            f"- Tier: `{model.get('tier')}`",
+            f"- Provider: `{model.get('provider')}`",
+            f"- Provider model id: `{model.get('model_id')}`",
+            f"- Started: `{model.get('started_at')}`",
+            f"- Completed: `{model.get('completed_at')}`",
+            "",
+        ])
+        for lane_name in ("regular", "uts_only", "uts_acc"):
+            lane = model["lanes"][lane_name]
+            detail_lines.extend([
+                f"### Lane `{lane_name}`",
+                "",
+                f"- Status: `{lane.get('status')}`",
+                f"- Result: `{lane_text(lane)}`",
+                f"- Started: `{lane.get('started_at')}`",
+                f"- Completed: `{lane.get('completed_at')}`",
+                f"- Note: `{lane.get('note', '')}`",
+                "",
+                "| Task | Passed | Classification | Duration ms | Note | Raw response excerpt |",
+                "|---|---:|---|---:|---|---|",
+            ])
+            cases = lane.get("cases", [])
+            if not cases:
+                detail_lines.append("| `_none_` |  |  |  |  |  |")
+            for case in cases:
+                raw = str(case.get("raw_response_excerpt") or "")
+                raw = raw.replace("\r", "\\r").replace("\n", "\\n").replace("|", "\\|")
+                note = str(case.get("note") or "").replace("\r", "\\r").replace("\n", "\\n").replace("|", "\\|")
+                detail_lines.append(
+                    f"| `{case.get('task_id')}` | `{case.get('passed')}` | `{case.get('classification')}` | `{case.get('duration_ms')}` | {note} | `{raw}` |"
+                )
+            detail_lines.append("")
+    detailed.write_text("\n".join(detail_lines) + "\n", encoding="utf-8")
     provider = {"schema_version": "uts_benchmark_provider_status.v1", "source_results": str(out_path), "models": []}
     for model in report["models"]:
         statuses = {}
@@ -744,7 +844,7 @@ def main() -> int:
     governed_raw_dir = out_path.with_name(f"{out_path.stem}_governed_raw")
     for entry in selected:
         model_started_at = utc_timestamp()
-        blocked_note = host_policy_note(entry)
+        blocked_note = host_policy_note(entry) or local_runtime_busy_note(entry)
         if blocked_note:
             regular = skipped_lane(blocked_note)
             uts_only = skipped_lane(blocked_note)

@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
+import argparse
 import json
+import sys
 from pathlib import Path
 
 from uts_benchmark_panel import display_path, load_panel
-from uts_benchmark_tasks import display_task_panel_path, panel_tasks
+from uts_benchmark_panel import default_panel_path
+from uts_benchmark_tasks import default_task_panel_path, display_task_panel_path, panel_tasks
+
+TOOLS_DIR = Path(__file__).resolve().parents[1]
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
 
 
 def _require(condition, message: str, failures: list[str]):
@@ -88,8 +95,7 @@ def run_deterministic_self_check(panel_file: str, task_panel_file: str) -> dict:
     }
     _require(set(task_ids) == required_task_ids, "task panel ids do not match the canonical 11-task set", failures)
 
-    from regular_tool_call_baseline import classify_case as classify_regular_case
-    from uts_only_toolkit_runner import classify_case as classify_uts_case
+    from uts_benchmark_runner import classify_regular, classify_uts
 
     fixture_count = 0
     for task in tasks:
@@ -134,13 +140,13 @@ def run_deterministic_self_check(panel_file: str, task_panel_file: str) -> dict:
             expected_uts = "valid_uts_proposal"
             expected_governed = "valid_governed_proposal"
 
-        classification, passed, _ = classify_regular_case(task, regular_fixture)
+        classification, passed, _ = classify_regular(task, regular_fixture)
         _require(
             classification == expected_regular and passed,
             f"regular lane deterministic fixture failed for {task['id']}",
             failures,
         )
-        classification, passed, _ = classify_uts_case(task, uts_fixture)
+        classification, passed, _ = classify_uts(task, uts_fixture)
         _require(
             classification == expected_uts and passed,
             f"UTS-only lane deterministic fixture failed for {task['id']}",
@@ -177,3 +183,24 @@ def run_deterministic_self_check(panel_file: str, task_panel_file: str) -> dict:
 
 def self_check_path_for(out_path: Path) -> Path:
     return out_path.with_name(f"{out_path.stem}_self_check.json")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Run the deterministic UTS benchmark self-check.")
+    parser.add_argument("--panel-file", default=str(default_panel_path()))
+    parser.add_argument("--task-panel-file", default=str(default_task_panel_path()))
+    parser.add_argument("--out")
+    args = parser.parse_args()
+
+    result = run_deterministic_self_check(args.panel_file, args.task_panel_file)
+    rendered = json.dumps(result, indent=2, sort_keys=True)
+    if args.out:
+        out_path = Path(args.out)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(rendered + "\n", encoding="utf-8")
+    print(rendered)
+    return 0 if result["passed"] else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

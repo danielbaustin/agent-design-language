@@ -1,33 +1,41 @@
 # UTS Benchmark Evidence Artifacts
 
-These artifacts preserve benchmark outputs gathered during the `#3121` UTS
-benchmark-toolkit work.
+This directory holds review evidence and run instructions for the `#3121` UTS benchmark harness.
 
-## Review Status
+## Current proof path
 
-The artifacts in this directory are historical evidence, not final publication
-proof.
+The supported execution path is documented in:
 
-After these rows were gathered, review found that earlier scored prompts were
-too assisted:
+- `docs/milestones/v0.91.2/review/uts_benchmark_evidence/RUNBOOK.md`
 
-- earlier `UTS-only` prompts included task-specific answer examples
-- earlier governed `UTS+ACC` prompts embedded proposal templates generated from
-  the expected tool
+The only supported Python benchmark runner is:
 
-Those prompt surfaces have since been tightened. Therefore, any row produced
-before the tightened prompt contract should be treated as provisional or stale
-until rerun with the current harness.
+- `adl/tools/uts_benchmark_runner.py`
 
-## Current Use
+`adl/tools/run_uts_pack.sh` is a convenience wrapper around that canonical runner. Lane-specific Python runner scripts are retired and must not be used as PR proof.
 
-Use this directory to inspect what was run, how failures were classified, and
-which rows motivated further work. Do not use these artifacts alone as external
-benchmark claims.
+## Historical artifacts
 
-Publication-grade evidence must come from a fresh run using:
+Older frozen benchmark outputs have been moved to:
 
-- `adl/tools/run_uts_pack.sh`
-- `adl/tools/benchmark/hosted_core_models.txt`
-- `adl/tools/benchmark/remote_open_core_models.txt`
-- `adl/tools/benchmark/uts_33_task_panel.json`
+- `docs/milestones/v0.91.2/review/uts_benchmark_evidence/historical/`
+
+Those artifacts are useful for review history only. They are not current publication proof because they predate the tightened prompt contract, 33-fixture self-check, one-runner harness, local isolation guard, and current canonical model list.
+
+## Required validation
+
+Before treating benchmark output as evidence, run:
+
+```bash
+python3 adl/tools/benchmark/deterministic_self_check.py
+```
+
+Expected output includes:
+
+```text
+"passed": true
+"fixture_count": 33
+"task_count": 11
+```
+
+Fresh benchmark rows should be produced under `artifacts/uts_runs/` and must include JSON, summary, details, provider status, and self-check artifacts as described in the runbook.

@@ -1,7 +1,7 @@
 {
   "schema_version": "uts_acc_multi_model_benchmark.v1",
   "prompt_record": {
-    "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1",
+    "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1.1",
     "issue_number": 3001,
     "interface_mode": "adl_json_proposal",
     "prompt_contract_summary": "Models may only propose UTS-shaped tool actions for review; ACC authority is separate and no real tool execution may occur."
@@ -116,7 +116,7 @@
       "model_id": "strict-governed-v1",
       "placement": "offline_fixture",
       "interface_mode": "adl_json_proposal",
-      "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1",
+      "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1.1",
       "decoding_settings": {
         "max_output_tokens": "fixture",
         "temperature": "0.0",
@@ -131,7 +131,7 @@
       "model_id": "partial-boundary-v1",
       "placement": "offline_fixture",
       "interface_mode": "adl_json_proposal",
-      "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1",
+      "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1.1",
       "decoding_settings": {
         "max_output_tokens": "fixture",
         "temperature": "0.0",
@@ -146,7 +146,7 @@
       "model_id": "bypass-prone-v1",
       "placement": "offline_fixture",
       "interface_mode": "adl_json_proposal",
-      "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1",
+      "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1.1",
       "decoding_settings": {
         "max_output_tokens": "fixture",
         "temperature": "0.0",
@@ -165,7 +165,7 @@
         "model_id": "strict-governed-v1",
         "placement": "offline_fixture",
         "interface_mode": "adl_json_proposal",
-        "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1",
+        "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1.1",
         "decoding_settings": {
           "max_output_tokens": "fixture",
           "temperature": "0.0",
@@ -342,7 +342,7 @@
         "model_id": "partial-boundary-v1",
         "placement": "offline_fixture",
         "interface_mode": "adl_json_proposal",
-        "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1",
+        "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1.1",
         "decoding_settings": {
           "max_output_tokens": "fixture",
           "temperature": "0.0",
@@ -519,7 +519,7 @@
         "model_id": "bypass-prone-v1",
         "placement": "offline_fixture",
         "interface_mode": "adl_json_proposal",
-        "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1",
+        "prompt_version": "wp02.uts_acc_multi_model_benchmark.v1.1",
         "decoding_settings": {
           "max_output_tokens": "fixture",
           "temperature": "0.0",
