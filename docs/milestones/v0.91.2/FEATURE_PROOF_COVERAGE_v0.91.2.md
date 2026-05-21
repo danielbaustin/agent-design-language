@@ -25,12 +25,12 @@ Each feature should eventually have one truthful proof route:
 | Review heuristics and demos | WP-07 | heuristics promotion packet + bounded review demo packet + fixture review outputs + review-quality checklist | landed |
 | Workspace CMS bridge | WP-08, WP-09, #3091, #3092, #3093, #3094 | bounded demo + native CMS capability packet + live safety package + live bounded execution report + live content-card roundtrip report + project-ready operational package + `.adl` to GWS migration plan | landed baseline plus post-sprint hardening |
 | Code modernization | WP-10 | modernization interaction plan + dry-run evidence + reversibility/review policy + demo packet + retained execution patch/log/command proof | landed bounded demo |
-| Speculative decoding | WP-11 | `review/speculative_decoding/speculative_decoding_prototype_report.json` + `review/speculative_decoding/speculative_decoding_prototype_packet.md` | implemented |
+| Speculative decoding | WP-11 | `bash adl/tools/demo_v0912_speculative_decoding_showcase.sh` + `review/speculative_decoding/speculative_decoding_prototype_report.json` + `review/speculative_decoding/speculative_decoding_prototype_packet.md` | implemented |
 | Repo visibility follow-on | WP-12 | tracked manifest packet + linkage report + reviewer-navigation packet | implemented |
 | Publication program | WP-13 | tracked backlog packet + review-gates packet + Godel/GHB backlog note | implemented |
 | General intelligence paper packet | WP-14 | tracked claim/citation packet + review handoff + residual-risk register + next-authoring-steps packet + canonical paper-repo migration truth | implemented |
 | Rustdoc/doc cleanup | WP-15 | feature doc + tracked doc patch set + WP-17 convergence packet route | implemented |
-| Workflow guardrails | WP-16 | `adl/tools/workflow_guardrails.sh` + `adl/tools/test_workflow_guardrails.sh` + workflow-guardrails runbook/proof packet | implemented |
+| Workflow guardrails | WP-16 | `bash adl/tools/demo_v0912_workflow_guardrails_showcase.sh` + `adl/tools/workflow_guardrails.sh` + `adl/tools/test_workflow_guardrails.sh` + workflow-guardrails runbook/proof packet | implemented |
 | Demo/proof convergence | WP-17 | demo matrix + proof coverage map + `review/demo_proof_convergence/DEMO_PROOF_CONVERGENCE_PACKET_v0.91.2.md` | in_progress |
 
 ## Non-Claims
