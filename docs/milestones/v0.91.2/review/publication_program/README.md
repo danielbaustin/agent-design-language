@@ -2,7 +2,8 @@
 
 ## Status
 
-WP-13 publication-program packet for `#3012`.
+WP-13 publication-program packet for `#3012`, with the Medium launch-series
+inventory refreshed by `#3051`.
 
 ## Purpose
 
@@ -27,6 +28,7 @@ This packet covers:
   public release,
 - one explicit backlog note for `Godel Agents and the Godel-Hadamard-Bayes
   Algorithm`,
+- the refreshed `v0.95`-oriented Medium launch sequence,
 - and the C-SDLC paper lane as a later follow-on that depends on v0.91.3 and
   v0.91.4 implementation evidence before technical/results claims.
 
@@ -51,4 +53,6 @@ It does not cover:
 - This packet is a backlog/process packet, not a publication surface.
 - Local `.adl/docs/TBD/publication/` materials remain source inputs, not
   canonical milestone truth by themselves.
+- The Medium launch sequence is a planning inventory, not a claim that any
+  article is already drafted, approved, scheduled, or published.
 - No item in this packet is implicitly approved for submission or publication.

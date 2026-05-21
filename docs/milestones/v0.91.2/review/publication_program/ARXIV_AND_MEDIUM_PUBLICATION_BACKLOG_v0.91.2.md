@@ -49,20 +49,34 @@ the formal transition model, limitations, and future-work notes.
 
 ## Medium Article Program
 
-The local planning corpus still describes a ten-article launch-style series.
-For `v0.91.2`, the useful tracked outcome is not all article prose. It is a
-bounded backlog shape reviewers can inspect:
+The local planning corpus still describes a ten-article launch-style series,
+but the center of gravity has moved from the older `v0.88` launch arc to the
+`v0.95` MVP convergence story. For `v0.91.2`, the useful tracked outcome is not
+all article prose. It is a bounded backlog shape reviewers can inspect and later
+turn into article-drafting issues.
 
-1. `What ADL Is Actually Trying To Build`
-2. `Why Most Agent Systems Are Still Too Opaque`
-3. `Trace As Ground Truth`
-4. `Chronosense: Why Time Has To Become Architecture`
-5. `Compute Policy: Efficient, Fast, Deterministic, Exploratory`
-6. `Instinct And Bounded Agency`
-7. `Paper Sonata / flagship writing workflow story`
-8. `Deeper algorithmic direction`
-9. `Broader philosophical / architectural frame`
-10. `Where ADL is headed next`
+Current ten-article launch inventory:
+
+1. `What ADL Is Now`
+2. `Why Agent Systems Need Runtime Truth`
+3. `The ADL Control Plane`
+4. `CodeFriend: Repository Review As A Product Surface`
+5. `Aptitude Atlas And The Future Of Model Evaluation`
+6. `Cognitive Spacetime: Time, Memory, Identity, And Continuity`
+7. `Governance, Citizenship, And Social Cognition`
+8. `Secure Execution, Trust, And Economic Agency`
+9. `Godel Agents, GHB, And Mental Time Travel`
+10. `The v0.95 MVP: What We Can Finally Show`
+
+The older article ideas remain usable as supporting examples:
+
+- Paper Sonata belongs inside artifact-truth, publication-workflow, or demo
+  evidence rather than as the flagship center of the whole launch sequence.
+- Chronosense belongs inside the broader cognitive-spacetime article.
+- Instinct and bounded agency belong inside governance and secure-execution
+  context.
+- Early GHB/cognitive-spacetime framing belongs inside the Godel/GHB/MTT article
+  and later paper source packets.
 
 ## Priority Order For Writing Work
 
@@ -89,6 +103,8 @@ A later writing issue should be able to start from this packet and answer:
 - which items are intentionally not yet publication-ready;
 - where Godel/GHB fits without being silently dropped.
 - where the C-SDLC paper fits after v0.91.3/v0.91.4 evidence exists.
+- where the refreshed `v0.95` Medium sequence supersedes the older `v0.88`
+  launch framing without deleting its useful examples.
 
 ## Non-Claims
 
