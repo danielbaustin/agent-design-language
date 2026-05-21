@@ -11,6 +11,7 @@ The milestone must run:
 - lifecycle validator fixture tests
 - doctor/conductor routing tests
 - editor-skill repair tests
+- actor-standing and authority-boundary fixture tests
 - sprint-conductor closeout tests
 - evidence bundle and review synthesis tests
 - ObsMem handoff validation
@@ -35,6 +36,8 @@ The milestone is blocked if:
 - new issue cards can still bootstrap with legacy SRP semantics
 - conductor routing skips required editor/lifecycle stages
 - sprint state can advance past unclosed child truth
+- actor standing, role authority, or shard ownership can be claimed from
+  chat-only or local-only evidence
 - SOR closeout can overclaim merge/main truth
 - memory handoff can consume stale SRP or SOR records
 - five-minute-sprint evidence weakens governance or review

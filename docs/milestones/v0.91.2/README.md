@@ -5,13 +5,11 @@
 Active milestone package. v0.91.2 is the follow-on pressure-release milestone
 after v0.91.1. The WP issue wave was opened as `#3000` through `#3023`, and the
 sprint-conductor umbrella issues were opened as `#3025` through `#3028`. Sprint
-4 is in external-review entry: `WP-17`, the bounded `WP-17A` demo
-follow-on, `WP-18`, and `WP-19` are closed; the first `WP-20` internal review
-packet was too thin for external handoff; `WP-20B` is the controlling full
-internal review packet; accepted `WP-20B` remediation issues have closed; and
-`WP-21` external review can start from the refreshed handoff packet. External
-review, any accepted-finding remediation, next-milestone planning, and ceremony
-work remain.
+4 has passed demo/proof coverage, quality gate, docs pass, internal review,
+third-party review, and accepted-finding remediation. The release tail is now
+in final next-milestone planning and ceremony work: `WP-23` records the
+handoff into `v0.91.3`, and `WP-24` owns release ceremony and end-of-milestone
+evidence.
 
 ## Purpose
 

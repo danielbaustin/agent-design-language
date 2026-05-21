@@ -59,7 +59,7 @@ worth carrying forward.
 | WP-20 (#3019) | Internal review | internal review record; first packet superseded for handoff by `WP-20B` | WP-19 |
 | WP-21 (#3020) | External / 3rd-party review | external review handoff and record after accepted `WP-20B` remediation closure | WP-20 plus completed corrective `WP-20B` gate |
 | WP-22 (#3021) | Review findings remediation | remediation record and follow-up issues | WP-21 |
-| WP-23 (#3022) | Next milestone planning | v0.92/v0.93 handoff update | WP-22 |
+| WP-23 (#3022) | Next milestone planning | v0.91.3 handoff update with v0.91.4 completion context | WP-22 |
 | WP-24 (#3023) | Release ceremony | release evidence and end-of-milestone report | WP-23 |
 
 Corrective review note: `WP-20B` was added after the original Sprint 4 plan

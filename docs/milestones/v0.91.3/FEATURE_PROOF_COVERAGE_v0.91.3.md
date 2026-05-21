@@ -7,7 +7,7 @@ Planned proof map for the first C-SDLC slice.
 | Feature | Proof Surface | Expected Result | Status |
 | --- | --- | --- | --- |
 | Cognitive SDLC first slice | `features/COGNITIVE_SDLC_FIRST_SLICE.md` | One bounded transition is reviewable end to end. | planned |
-| Cognitive Transition manifest | `features/COGNITIVE_TRANSITION_MANIFEST.md` | Manifest schema and fixtures link cards, DAG, evidence, gate, and memory handoff. | planned |
+| Cognitive Transition manifest | `features/COGNITIVE_TRANSITION_MANIFEST.md` | Manifest schema and fixtures link cards, actor roles, DAG, evidence, gate, and memory handoff. | planned |
 | Card lifecycle integration | `features/CARD_LIFECYCLE_INTEGRATION.md` | New C-SDLC bundles preserve `SIP -> STP -> SPP -> SRP -> SOR` semantics. | planned |
 | Transition DAG and shard coordination | `features/TRANSITION_DAG_AND_SHARD_COORDINATION.md` | Serial work, shards, barriers, and interface-freeze rules are explicit. | planned |
 | Evidence bundle and review synthesis | `features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md` | Review inputs, findings, validation, and residual risks converge into a tracked proof surface. | planned |
@@ -20,6 +20,7 @@ Planned proof map for the first C-SDLC slice.
 The milestone proof package should include:
 
 - transition manifest fixture
+- actor-role reference fixture or manifest section
 - transition DAG fixture
 - evidence bundle fixture
 - review synthesis output
@@ -39,3 +40,4 @@ v0.91.3 does not prove:
 - unrestricted autonomous engineering
 - replacement of GitHub PRs or human review
 - broad parallel execution without shard ownership and synchronization rules
+- full Software Development Polis actor-standing enforcement

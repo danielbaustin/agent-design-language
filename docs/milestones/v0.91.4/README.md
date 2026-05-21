@@ -17,6 +17,7 @@ Where v0.91.3 proves the crown jewel, v0.91.4 makes it operational:
 
 - stricter lifecycle validators
 - reliable conductor and editor routing
+- Software Development Polis roles and actor standing
 - enforceable shard ownership and interface-freeze rules
 - repeatable evidence convergence
 - robust review, merge-readiness, closeout, and ObsMem handoff
@@ -79,6 +80,8 @@ This package is grounded in:
 - `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md`
 - `docs/milestones/v0.91.3/C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md`
 - `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md`
+- `docs/cognitive-sdlc/architecture.md`
+- `docs/cognitive-sdlc/transition-schema.md`
 - `docs/tooling/card-lifecycle.md`
 - `docs/tooling/structured-prompt-contracts.md`
 
@@ -112,6 +115,8 @@ v0.91.4 is ready to close when:
 - durable `SPP` records are tracked, issue-local, and operative before they are
   used to guide execution
 - conductor/editor/doctor/validator tooling agrees on lifecycle state
+- transition records preserve actor-role and standing truth for human and AI
+  participants
 - sprint closeout cannot truthfully complete while child issue closeout is stale
 - SRP review results and SOR outcome truth feed the memory handoff boundary
 - evidence bundles and merge gates are repeatable

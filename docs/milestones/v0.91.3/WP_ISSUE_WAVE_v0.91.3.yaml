@@ -10,6 +10,8 @@ notes:
     normal conductor lifecycle.
   - The milestone proves one bounded Cognitive State Transition, not full
     C-SDLC adoption.
+  - The first slice must seed actor/role references without claiming full
+    Software Development Polis standing enforcement.
   - v0.91.4 owns repeatable operation, hardening, enforcement, and default
     adoption.
   - The C-SDLC source package is tracked in this milestone package; local TBD
@@ -36,7 +38,7 @@ work_packages:
     issue: pending
     title: Cognitive Transition schema
     queue: docs_tools
-    outcome: manifest schema, states, fixtures, and validation plan
+    outcome: manifest schema, actor-role seed, states, fixtures, and validation plan
     depends_on: WP-01
   - wp: WP-03
     issue: pending

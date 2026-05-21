@@ -16,7 +16,7 @@ platform rewrite.
 | Area | Work Area | Description | Primary Deliverable | Key Dependencies |
 | --- | --- | --- | --- | --- |
 | A | Milestone design pass | Promote the v0.91.3 plan into issue cards and sprint umbrellas. | issue wave, cards, and readiness record | v0.91.2 closeout |
-| B | Transition schema | Define the initial Cognitive State Transition manifest and state model. | schema doc, fixtures, validator plan | C-SDLC TBD docs |
+| B | Transition schema | Define the initial Cognitive State Transition manifest, state model, and actor-role seed. | schema doc, fixtures, validator plan | tracked C-SDLC docs |
 | C | Artifact lifecycle | Preserve corrected `SIP -> STP -> SPP -> SRP -> SOR` semantics in the slice. | templates, validator expectations, docs | v0.91.2 card migration |
 | D | Transition DAG | Represent serial steps, shards, barriers, review, and merge gates. | DAG fixture and proof artifact | B, C |
 | E | Shard coordination | Define bounded shard ownership and interface-freeze rules. | shard plan and conflict rules | D |
@@ -31,7 +31,7 @@ platform rewrite.
 | WP | Title | Queue | Primary Deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
 | WP-01 | Design pass and issue-wave readiness | docs | v0.91.3 issue wave, sprint umbrellas, tracked C-SDLC source package, validated cards | v0.91.2 closeout |
-| WP-02 | Cognitive Transition schema | docs/tools | manifest schema, states, fixtures, validation plan | WP-01 |
+| WP-02 | Cognitive Transition schema | docs/tools | manifest schema, actor-role seed, states, fixtures, validation plan | WP-01 |
 | WP-03 | Card lifecycle integration | tools | lifecycle validator/doctor expectations for the slice | WP-02; v0.91.2 card migration |
 | WP-04 | Transition DAG and shard plan | tools/docs | DAG fixture, shard boundaries, barrier model | WP-02, WP-03 |
 | WP-05 | Evidence bundle and review synthesis | tools/docs | evidence bundle schema and review-packet surface | WP-04 |

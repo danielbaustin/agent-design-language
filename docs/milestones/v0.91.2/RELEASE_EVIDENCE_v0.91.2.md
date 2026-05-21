@@ -37,7 +37,7 @@ it is not a final release verdict.
 
 The thin `WP-20` packet under `review/internal_review/` is retained for
 historical context, but it is not the controlling review packet for this
-release-tail path. Accepted `WP-20B` remediation issues have closed, so
-external review can start from the refreshed handoff packet. External review,
-any accepted remediation, handoff, release evidence, and ceremony work must
-complete before closeout.
+release-tail path. Accepted `WP-20B` remediation issues have closed, `WP-21`
+external review has closed, and `WP-22` remediation has closed. `WP-23`
+next-milestone planning is in review through PR `#3192`; `WP-24` release
+ceremony work must still finish before closeout.

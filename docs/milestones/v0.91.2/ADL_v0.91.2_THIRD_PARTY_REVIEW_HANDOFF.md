@@ -10,10 +10,10 @@
 - Prepared during: `v0.91.2` review tail
 - Prepared for issue: `#3020`
 - Controlling internal review source: `#3173`
-- Current packet status: live `WP-21` external / 3rd-party review handoff;
+- Current packet status: `WP-21` external / 3rd-party review is closed;
   accepted `WP-20B` remediation issues `#3175` through `#3179` are closed,
-  and this document has been corrected after live reviewer feedback found stale
-  review-entry text
+  `WP-22` remediation is closed, and `WP-23` next-milestone planning is in
+  review through PR `#3192`
 - Date: 2026-05-21
 - Publication attempted: false
 - Release approval claimed: false
@@ -21,10 +21,10 @@
 
 ## Review Entry Check
 
-This handoff is the canonical tracked third-party review surface for `v0.91.2`.
-It has been refreshed from clean `main` after accepted `WP-20B` remediation
-issues closed and corrected again during live `WP-21` review after a reviewer
-found stale handoff truth.
+This handoff was the canonical tracked third-party review surface for
+`v0.91.2`. It has been refreshed from clean `main` after accepted `WP-20B`
+remediation issues closed and corrected again after reviewer feedback found
+stale handoff truth.
 
 During review, confirm:
 
@@ -34,9 +34,8 @@ During review, confirm:
   surface, not the earlier thin `WP-20` packet.
 - accepted `WP-20B` remediation issues `#3175`, `#3176`, `#3177`, `#3178`,
   and `#3179` are closed
-- `WP-22` remediation routing remains visible for all accepted `WP-20B`
-  findings
-- findings from `WP-21` external review are routed through `WP-22`
+- `WP-22` remediation routing remains visible for accepted review findings
+- findings from `WP-21` external review were routed through closed `WP-22`
   remediation before release closeout
 - No host-local paths, temporary paths, worktree-only artifacts, raw credential
   paths, or branch-only claims appear in the packet.
@@ -79,8 +78,8 @@ release ceremony.
 
 The milestone has landed substantial implementation, documentation, planning,
 and review work, but it is not release-ready. The release-tail quality gate is
-still `NOT_READY` until external review, remediation, next-milestone planning,
-and release ceremony work finish.
+still `NOT_READY` until `WP-23` next-milestone planning is reviewed/merged and
+`WP-24` release ceremony work finishes.
 
 Current review-tail truth:
 
@@ -91,11 +90,10 @@ Current review-tail truth:
   the sole review handoff.
 - `WP-20B` / `#3173` produced the controlling full internal review packet.
 - Accepted `WP-20B` remediation issues `#3175` through `#3179` have closed.
-- `WP-21` external review is active and should use this corrected handoff
-  packet rather than the earlier stale refresh.
-- `WP-22` remains the route for any findings accepted from the external review.
-- `WP-23` remains next-milestone planning.
-- `WP-24` remains release ceremony.
+- `WP-21` external review is closed.
+- `WP-22` remediation is closed.
+- `WP-23` next-milestone planning is open in PR `#3192`.
+- `WP-24` remains release ceremony and is not complete.
 
 This handoff does not claim that the milestone is ready to close.
 
@@ -265,9 +263,8 @@ The external review should verify:
   paths or assume a private machine layout
 - benchmark reports and evidence do not persist unsafe raw excerpts or absolute
   outside paths
-- release readiness remains honest while live `WP-21` findings are being
-  dispositioned and before any required `WP-22` remediation, `WP-23`
-  next-milestone planning, and `WP-24` release ceremony work finishes
+- release readiness remains honest while `WP-23` next-milestone planning is in
+  review and before `WP-24` release ceremony work finishes
 - GWS, C-SDLC, UTS, ACC, CodeFriend, and publication-program claims stay in
   their correct lanes
 - docs distinguish completed work, planned work, evidence, caveats, and
@@ -295,8 +292,8 @@ Expected reviewer output:
 
 - severity-ranked findings with file and line references
 - explicit non-findings for surfaces that are clean
-- recommended `WP-22` routing for any accepted external-review findings
-- a list of findings that must be fixed before `WP-24` release ceremony
+- recommended routing for any accepted external-review findings
+- a list of findings that had to be fixed before `WP-24` release ceremony
 - a list of findings that may be explicitly deferred without misleading the
   release
 - clear notes on any claims that depend on local-only evidence, branch-only
@@ -308,8 +305,8 @@ This handoff does not claim:
 
 - release readiness
 - release ceremony completion
-- external review approval
-- accepted external-review finding remediation completion
+- release approval
+- `WP-24` release ceremony completion
 - public UTS benchmark superiority
 - provider/model conformance beyond the evidence reviewed
 - production-grade hosted-provider adapter security

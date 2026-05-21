@@ -24,6 +24,7 @@ The transition must show:
 
 - issue intent
 - task transformation
+- actor and role references for material participants
 - issue-local operative execution plan
 - review prompt and review results
 - outcome truth
@@ -35,6 +36,9 @@ The transition must show:
 ## Acceptance Criteria
 
 - The transition is reviewable end to end.
+- The transition identifies material human and AI actors by role so v0.91.4 can
+  harden actor-standing and polis semantics without redesigning the first
+  slice.
 - Serial work, parallel shards, and synchronization barriers are explicit.
 - Review results and residual risks are recorded before PR publication.
 - SOR outcome truth is normalized after merge or intentional closure.
@@ -50,3 +54,7 @@ The transition must show:
 
 This feature does not claim all future ADL development uses C-SDLC by default.
 That belongs to v0.91.4.
+
+This feature also does not claim the full Software Development Polis or
+actor-standing model is complete. v0.91.3 records the first-slice actor/role
+seed; v0.91.4 owns default-operation standing and enforcement.

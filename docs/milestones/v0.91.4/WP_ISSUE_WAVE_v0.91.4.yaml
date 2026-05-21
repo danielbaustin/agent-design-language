@@ -12,6 +12,8 @@ notes:
     lifecycle.
   - v0.91.4 should make C-SDLC the default path for future ADL
     software-development issues.
+  - v0.91.4 must make Software Development Polis roles and actor standing
+    explicit enough for repeated C-SDLC execution.
   - By milestone closeout, all durable C-SDLC truth must be tracked in Git.
   - Durable C-SDLC proof must include minimal signed trace bundles and ObsMem
     ingestion from tracked evidence.
@@ -42,7 +44,7 @@ work_packages:
     depends_on: [WP-02]
   - wp: WP-05
     issue: pending
-    title: Shard ownership and interface freeze
+    title: Software Development Polis, shard ownership, and interface freeze
     queue: docs_tools
     depends_on: [WP-03]
   - wp: WP-06

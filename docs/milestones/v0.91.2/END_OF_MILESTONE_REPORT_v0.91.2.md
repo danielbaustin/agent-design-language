@@ -16,10 +16,9 @@ for final closeout.
 ## Current Judgment
 
 Do not treat this report as release closure. `v0.91.2` has real execution
-through the `WP-19` docs/review-entry band plus the bounded `WP-17A` demo
-follow-on, and it has a corrective `WP-20B` full internal review packet. The
-first `WP-20` packet is superseded for handoff truth. Sprint 4 remediation,
-external review, handoff, evidence, and ceremony work are still incomplete.
-Accepted `WP-20B` remediation issues have closed, so `WP-21` external review
-can start from the refreshed handoff packet, but this report cannot become a
-closeout record until the remaining release-tail work completes.
+through `WP-22` plus the bounded `WP-17A` demo follow-on, and it has a
+corrective `WP-20B` full internal review packet. The first `WP-20` packet is
+superseded for handoff truth. `WP-21` external review is closed and `WP-22`
+remediation is closed. `WP-23` next-milestone planning is in review through PR
+`#3192`, and `WP-24` release ceremony is still incomplete. This report cannot
+become a closeout record until the remaining release-tail work completes.
