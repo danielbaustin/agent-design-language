@@ -22,6 +22,8 @@ rather than hidden environment folklore.
 - v0.90.3 signed envelopes, local sealing, private state, and witnesses.
 - v0.91 secure Agent Comms and ACIP planning.
 - v0.92 identity and capability envelopes.
+- v0.92 ACIP binary schema, public schema catalog, and optional WebSocket
+  carrier planning.
 
 ## Required Work Products
 
@@ -29,6 +31,8 @@ rather than hidden environment folklore.
   rotation, revocation, expiration, and destruction.
 - Signing and encryption acceptance rules tied to identity, standing, policy,
   and lifecycle state.
+- Cryptographic acceptance rules for WebSocket-carried ACIP messages, including
+  message signing, sequence/replay handling, and encrypted payload boundaries.
 - Fixtures for accepted current keys and denied stale, revoked, malformed, or
   wrong-scope keys.
 - Internal ACIP encryption and message-acceptance proof surface.
@@ -41,6 +45,8 @@ rather than hidden environment folklore.
 - Secrets are never emitted into review packets or public projections.
 - Encryption does not replace authorization.
 - Signature validity does not imply policy permission.
+- WebSocket session encryption does not replace ACIP message signing,
+  authorization, replay protection, or trace evidence.
 
 ## Demo Candidate
 
@@ -48,12 +54,17 @@ Show an internal ACIP message or sealed-state access accepted before key
 rotation and denied after revocation, with audit evidence linking the lifecycle
 change to the disposition.
 
+For WebSocket-carried ACIP, include a signed/encrypted message accepted under a
+current key and denied after replay, revocation, or wrong-scope key use.
+
 ## Acceptance Criteria
 
 - Key lifecycle events are deterministic artifacts.
 - Rotation and revocation have explicit negative cases.
 - Review output cites key identity and lifecycle state without exposing secret
   material.
+- WebSocket-carried ACIP proofs show message-level crypto decisions rather than
+  relying only on transport-level security.
 - The feature composes with audit, incident, and zero-trust evidence.
 
 ## Non-Goals

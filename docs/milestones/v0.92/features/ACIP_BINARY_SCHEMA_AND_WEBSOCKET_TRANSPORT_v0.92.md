@@ -35,6 +35,8 @@ In scope:
   events.
 - Optional WebSocket carrier for binary ACIP session events.
 - Mock or loopback transport proof before any live-provider proof.
+- Optional server-side OpenAI Realtime WebSocket adapter spike only after the
+  mock/loopback proof is stable.
 - Fail-closed behavior for missing, unknown, unavailable, private, deprecated,
   or mismatched schemas.
 
@@ -43,6 +45,7 @@ Out of scope:
 - Production cross-polis networking.
 - Live provider WebSocket dependency as the first proof.
 - Browser WebRTC.
+- Browser/mobile realtime client implementation.
 - Replacing HTTP/local providers.
 - Treating provider session state as ADL memory, identity, trace, or truth.
 - Runtime implementation of v0.93 key lifecycle, encryption, rotation, or
@@ -85,6 +88,30 @@ and trace/audit requirements.
 - The proof records trace/replay-compatible session event evidence without
   claiming v0.94 signed/queryable trace completion.
 
+## Optional OpenAI Realtime Spike
+
+After the mock or loopback WebSocket carrier proof passes, v0.92 may add a
+bounded server-side OpenAI Realtime WebSocket spike when credentials and
+environment are available.
+
+Scope:
+
+- server-to-server only
+- provider JSON events normalized into ADL transport/session events
+- no browser WebRTC or mobile-client claim
+- no production availability, security, latency, or provider-state-trust claim
+- no bypass of ACIP, ACC, Freedom Gate, policy, trace, or replay boundaries
+
+Proof expectation:
+
+- connection opens and closes deterministically enough for a bounded spike
+- session update or equivalent provider event can be sent
+- provider events are recorded as untrusted inputs before ADL normalization
+- failures are classified as provider/auth/network/environment versus ADL
+  normalization failures
+- trace evidence records session lifecycle and event ordering without depending
+  on hidden provider state
+
 ## Demo Candidate
 
 Run a boring binary ACIP session:
@@ -116,9 +143,9 @@ What it does not prove:
 ## Downstream Handoff
 
 - `v0.93` should own ACIP transport security, internal encryption, key custody,
-  signing, rotation, revocation, and zero-trust message acceptance.
+  signing, rotation, revocation, WebSocket upgrade/session hardening,
+  per-message authorization, and zero-trust message acceptance.
 - `v0.94` should own signed/queryable trace and replay closure for
-  WebSocket-carried ACIP events.
+  WebSocket-carried ACIP events and normalized provider session events.
 - `v0.95` can consume the stable carrier as part of MVP provider/operator
   hardening only after the prior security and trace gates are satisfied.
-

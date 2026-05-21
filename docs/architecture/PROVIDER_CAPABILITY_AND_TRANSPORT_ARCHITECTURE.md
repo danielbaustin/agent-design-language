@@ -77,7 +77,8 @@ ADL should model provider execution with four explicit layers:
 4. provider-native `provider_model_id`
 
 Key capabilities:
-- define first-class provider adapters for OpenAI, Anthropic, Gemini, Ollama, compatible HTTP, and mock
+- define first-class provider adapters for OpenAI, Anthropic, Gemini, Ollama,
+  compatible HTTP, optional WebSocket, and mock
 - isolate unstable provider model names behind stable ADL-facing references
 - provide a configuration surface that lets agents target vendors and models without brittle string coupling
 - integrate cleanly with declared, observed, and effective capability envelopes
@@ -92,7 +93,8 @@ Current runtime clarification:
 ### Core Concepts
 
 - `transport`
-  - how ADL communicates with a backend
+  - how ADL communicates with a backend, such as HTTP, WebSocket, local CLI,
+    in-process, or mock transport
 - `vendor`
   - the provider/runtime family whose semantics ADL is integrating
 - `model_ref`
@@ -128,6 +130,8 @@ evidence:
   - ADL-facing configuration uses stable `model_ref` values
   - provider-native model strings remain isolated in catalogs or adapters
   - capability-aware selection remains explicit and inspectable
+  - WebSocket support remains an optional transport capability, not a hidden
+    provider switch or an authority source
 
 ### Data / Artifacts
 
@@ -155,6 +159,8 @@ evidence:
   - capability-aware routing must remain policy-bound and replayable
 - Constraints:
   - no hidden runtime vendor switching
+  - no hidden transport switching from HTTP/local execution into WebSocket
+    execution
   - no hard dependency on unstable provider model strings outside catalogs/adapters
   - compatibility adapters must not silently claim first-party semantics they cannot verify
 
@@ -188,6 +194,8 @@ Declared Proof Modes for this feature:
 - Replay requirements:
   - provider selection must be reconstructable from config, catalog, and capability artifacts
   - a trace should be able to record the resolved vendor, transport, `model_ref`, and `provider_model_id`
+  - WebSocket sessions must be reconstructable from ADL transport/session events,
+    not from provider-private session state
 - Determinism guarantees:
   - the same config and catalog version must resolve to the same provider binding
 
@@ -220,7 +228,8 @@ Declared Proof Modes for this feature:
 
 - Functional correctness:
   - ADL has a documented provider model where vendor, transport, stable `model_ref`, and provider-native model identifiers are separate and well-defined
-  - the model supports first-class OpenAI, Anthropic, Gemini, Ollama, compatible HTTP, and mock adapter families
+  - the model supports first-class OpenAI, Anthropic, Gemini, Ollama, compatible
+    HTTP, optional WebSocket, and mock adapter families
 - Determinism / replay correctness:
   - provider selection can be reconstructed from config, catalogs, and capability artifacts without relying on ad hoc string interpretation
 - Validation completeness:
