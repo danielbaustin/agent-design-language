@@ -55,12 +55,16 @@ worth carrying forward.
 | --- | --- | --- | --- |
 | WP-17 (#3016) | Demo matrix and proof coverage | demo matrix and proof coverage record | WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16 |
 | WP-18 (#3017) | Coverage / quality gate | validation posture and test/coverage record | WP-17 |
-| WP-19 (#3018) | Docs + review pass | review-ready docs package | WP-18 |
-| WP-20 (#3019) | Internal review | internal review record | WP-19 |
-| WP-21 (#3020) | External / 3rd-party review | external review handoff and record | WP-20 |
+| WP-19 (#3018) | Docs + review pass | docs review-entry package; later corrected by WP-20B truth updates | WP-18 |
+| WP-20 (#3019) | Internal review | internal review record; first packet superseded for handoff by `WP-20B` | WP-19 |
+| WP-21 (#3020) | External / 3rd-party review | external review handoff and record after accepted `WP-20B` findings are fixed and rechecked | WP-20 plus corrective `WP-20B` gate |
 | WP-22 (#3021) | Review findings remediation | remediation record and follow-up issues | WP-21 |
 | WP-23 (#3022) | Next milestone planning | v0.92/v0.93 handoff update | WP-22 |
 | WP-24 (#3023) | Release ceremony | release evidence and end-of-milestone report | WP-23 |
+
+Corrective review note: `WP-20B` was added after the original Sprint 4 plan
+because the first `WP-20` packet was too thin for external handoff. The sprint
+must treat `WP-20B` accepted findings as a hard gate before `WP-21`.
 
 Goal: leave the next identity/governance milestones with cleaner test cycles,
 clearer publication and product surfaces, and fewer workflow foot-guns.

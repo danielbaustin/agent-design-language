@@ -4,7 +4,8 @@
 
 Tracked feature index for the active `v0.91.2` pressure-release milestone.
 `WP-01` through `WP-19` have closed, the `WP-17A` follow-on is closed, and
-`WP-20` is the next internal-review step.
+`WP-20B` is the controlling corrective internal-review packet. External review
+must wait until accepted `WP-20B` findings are fixed and rechecked.
 
 | Feature Area | Feature Doc | Source Cluster | Planned WP Home | Required Outcome |
 | --- | --- | --- | --- |

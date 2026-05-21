@@ -1,8 +1,16 @@
 # v0.91.2 WP-20 Internal Review Packet Docs Review
 
+## Supersession Status
+
+This file is historical `WP-20` review context. The first `WP-20` packet was
+too thin for external handoff and is superseded for readiness decisions by
+`docs/milestones/v0.91.2/review/internal_review_full/`. Do not use this file as
+standalone approval to start `WP-21`.
+
 ## Findings
 
-No docs-blocking findings found in the WP-20 internal review packet.
+This first pass reported no docs-blocking findings, but that judgment was
+incomplete. `WP-20B` found additional blockers and is now controlling.
 
 ## Reviewed Surfaces
 
@@ -21,7 +29,8 @@ No docs-blocking findings found in the WP-20 internal review packet.
 
 ## Claims Checked
 
-- WP-20 says v0.91.2 is ready for WP-21 external review, not release-ready.
+- The original WP-20 packet claimed external-review readiness, but that
+  conclusion is superseded by `WP-20B`.
 - WP-20 routes retained `#3121` closeout residue to WP-22/follow-on handling.
 - WP-20 preserves non-claims around UTS provider conformance, Workspace authority, publication approval, and release readiness.
 - WP-20 links its conclusion to existing WP-17/WP-18/WP-19 milestone evidence instead of inventing new demo proof.
@@ -33,4 +42,6 @@ No docs-blocking findings found in the WP-20 internal review packet.
 
 ## Residual Risk
 
-This is a local docs-review pass, not the required independent subagent review before PR publication. The PR should still receive bounded review before merge.
+This is a local historical docs-review pass, not the controlling review packet.
+Use `docs/milestones/v0.91.2/review/internal_review_full/` and the tracked
+top-level third-party review handoff for any current review decision.

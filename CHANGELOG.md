@@ -16,10 +16,13 @@ Planning notes:
   CodeFriend productization, Workspace bridge work, modernization, publication
   packets, rustdoc/doc cleanup, repo-visibility follow-on work, and workflow
   guardrails.
-- Sprint 4 release-tail work has landed through `WP-18`: demo/proof
-  convergence, the bounded `WP-17A` code-feature demo follow-on, and the
-  quality-gate packet are closed. `WP-19` closes the docs review pass and
-  prepares main for `WP-20` internal review.
+- Sprint 4 release-tail work has landed through the docs/review-entry band:
+  demo/proof convergence, the bounded `WP-17A` code-feature demo follow-on,
+  the quality-gate packet, and the `WP-19` docs review pass are closed.
+- The first `WP-20` internal review packet was too thin for external handoff.
+  `WP-20B` is now the controlling full internal review packet, and accepted
+  `WP-20B` findings must be fixed and rechecked before `WP-21` external
+  review.
 - This is an active milestone entry, not a release entry.
 
 ## v0.91.1 (Completed milestone)

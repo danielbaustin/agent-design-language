@@ -2,9 +2,11 @@
 
 ## Status
 
-Working draft. `v0.91.2` has substantial executed content through `WP-18` plus
-the bounded `WP-17A` demo follow-on, but it does not yet have final
-release-ready notes.
+Working draft. `v0.91.2` has substantial executed content through the `WP-19`
+docs/review-entry band plus the bounded `WP-17A` demo follow-on, and it now has
+a corrective `WP-20B` full internal review packet. It does not yet have final
+release-ready notes: accepted `WP-20B` findings still need to be fixed and
+rechecked before clean external review or release ceremony claims.
 
 ## Theme
 
@@ -18,9 +20,13 @@ Tooling, evaluation, productization, publication, and workflow guardrails.
 - modernization, publication, rustdoc/doc cleanup, and workflow guardrails
 - demo/proof convergence, code-feature demo follow-ons, and quality-gate
   evidence
+- corrective `WP-20B` internal-review findings and remediation
 
 ## Not Claimed
 
-- executed milestone completion beyond the currently landed pre-release band
-- final review or release state
-- any benchmark or tooling result not yet produced
+- executed milestone completion beyond the currently landed pre-release and
+  corrective-review band
+- final external review or release state
+- clean external-review readiness while accepted `WP-20B` findings remain
+  unresolved
+- any benchmark or tooling result not yet produced, fixed, and reviewed

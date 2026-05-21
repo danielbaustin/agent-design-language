@@ -23,7 +23,11 @@ Not release ready.
 - `v0.91.2` is an active in-flight milestone with substantial executed work
 - `WP-01` through `WP-19` are closed, and `WP-17A` is also closed as a bounded follow-on demo pass
 - Sprint 1 `#3025`, Sprint 2 `#3026`, and Sprint 3 `#3027` are closed
-- Sprint 4 umbrella `#3028` remains open; `WP-20` through `WP-24` remain pending
+- Sprint 4 umbrella `#3028` remains open
+- the first `WP-20` internal review packet was too thin for external handoff
+- `WP-20B` / `#3173` is the controlling full internal review packet
+- accepted `WP-20B` findings must be fixed and rechecked before `WP-21`
+  external review
 - no final release proof, review, or ceremony state exists yet
 - the controlling internal-review packet for the remaining handoff/remediation path is `docs/milestones/v0.91.2/review/internal_review_full/`
 - the older thin `WP-20` packet remains background context only and is not sufficient as the release-tail handoff surface by itself
@@ -31,7 +35,10 @@ Not release ready.
 ## Current Blockers
 
 - Sprint 4 and the remaining review/release-tail work are not complete
+- accepted `WP-20B` findings are not yet recorded here as fixed and rechecked
+- external review is blocked until the corrective review/remediation state is
+  clean
 - release evidence and release ceremony surfaces are not complete
-- internal/external review, remediation, release evidence, and ceremony surfaces still need completion after the docs review pass
+- internal/external review, remediation, release evidence, and ceremony surfaces still need completion after the corrective internal-review pass
 - ADR candidates exist for review, but they are not accepted release decisions
   until promoted or explicitly carried forward

@@ -1,5 +1,12 @@
 # v0.91.2 WP-20 Internal Review Findings Register
 
+## Supersession Status
+
+This file is historical `WP-20` review context. The first `WP-20` packet was
+too thin for external handoff and is superseded for readiness decisions by
+`docs/milestones/v0.91.2/review/internal_review_full/`. Do not use this file as
+standalone approval to start `WP-21`.
+
 ## Findings
 
 ### P2-1 Retained `#3121` closeout residue remains an explicit release-tail truth gap
@@ -21,16 +28,21 @@ Route to WP-22 remediation or a bounded follow-on issue before release ceremony.
 
 Evidence:
 
-- `docs/milestones/v0.91.2/RELEASE_READINESS_v0.91.2.md` says WP-20 through WP-24 remain pending.
+- `docs/milestones/v0.91.2/RELEASE_READINESS_v0.91.2.md` says accepted
+  `WP-20B` findings must be fixed and rechecked before external review.
 - `docs/milestones/v0.91.2/QUALITY_GATE_v0.91.2.md` says the current judgment is `NOT_READY`.
 
 Impact:
 
-This is correct lifecycle truth, not a defect. The risk is that external review or remediation compresses into release approval without preserving the expected boundaries.
+This was correct lifecycle truth for the first `WP-20` packet, but it is no
+longer sufficient. `WP-20B` found accepted blockers that must be fixed and
+rechecked before clean external review.
 
 Recommended route:
 
-Carry this finding into `WP21_EXTERNAL_REVIEW_HANDOFF.md` and `WP22_REMEDIATION_QUEUE.md` as a release-tail guardrail.
+Carry this finding into the top-level
+`docs/milestones/v0.91.2/ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md` and
+`WP-22` remediation records as a release-tail guardrail.
 
 ## Non-Findings Worth Preserving
 

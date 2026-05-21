@@ -1,5 +1,11 @@
 # v0.91.2 WP-20 Internal Review Run Manifest
 
+## Supersession Status
+
+This manifest records the first `WP-20` internal review run. That packet was
+too thin for external handoff and is superseded for readiness decisions by
+`docs/milestones/v0.91.2/review/internal_review_full/`.
+
 ## Target
 
 - Issue: `#3019`

@@ -1,9 +1,17 @@
 # v0.91.2 WP-21 External Review Handoff
 
+## Supersession Status
+
+This nested handoff is historical `WP-20` review context. The first `WP-20`
+packet was too thin for external handoff and is superseded for readiness
+decisions by `docs/milestones/v0.91.2/review/internal_review_full/` and the
+top-level `docs/milestones/v0.91.2/ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md`.
+Do not send this nested file as the current external review handoff.
+
 ## Recommended Status
 
-Proceed only with the `WP-20B` full internal review packet as the controlling
-evidence surface.
+Blocked. Do not proceed to WP-21 external / third-party review until accepted
+`WP-20B` findings are fixed and rechecked.
 
 The older thin `WP-20` packet remains useful as background context, but it is
 not the controlling readiness surface for this handoff.
@@ -32,6 +40,7 @@ not the controlling readiness surface for this handoff.
 - workflow guardrail proof strength
 - retained `#3121` closeout-truth gap routing
 - the `WP-20B` findings register and its grouped remediation routes
+- accepted `WP-20B` finding fixes and re-review truth
 
 ## Do Not Ask External Review To Accept
 

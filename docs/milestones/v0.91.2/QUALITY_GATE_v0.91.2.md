@@ -17,11 +17,15 @@ Sprint 4 work lands.
 
 ## Current State
 
-- `WP-01` through `WP-18` are closed, and `WP-17A` is also closed as a bounded
+- `WP-01` through `WP-19` are closed, and `WP-17A` is also closed as a bounded
   demo follow-on.
 - Sprint 1, Sprint 2, and Sprint 3 are closed; Sprint 4 is still open.
 - The milestone now has a converged demo/proof map, a release-tail doc set, and
   a passing closed-issue `SOR` truth checker.
+- The first `WP-20` internal review packet was too thin for external handoff;
+  `WP-20B` is the controlling full internal review packet.
+- Accepted `WP-20B` findings must be fixed and rechecked before `WP-21`
+  external review.
 - The milestone does not yet have a final review/remediation/ceremony outcome,
   so this gate is not the final release verdict.
 
@@ -33,7 +37,7 @@ Sprint 4 work lands.
 | CI/coverage policy contract | `pass` | `adl/tools/test_ci_path_policy.sh`, `adl/tools/test_ci_runtime_contracts.sh`, `adl/tools/test_run_authoritative_coverage_lane.sh`, and `adl/tools/test_check_coverage_impact.sh` | A green policy/contract surface proves the current CI split is internally consistent, not that full release coverage has already been rerun for this milestone. |
 | Closed-issue closeout truth | `partial` | Sprint 1 through Sprint 3 closeout truth is materially cleaner; known retained `#3121` residue remains explicitly deferred out of this issue | This keeps the milestone honest about one deferred closeout-truth gap instead of pretending the whole retained layer is clean. |
 | Full authoritative coverage evidence | `pass` | `bash adl/tools/run_authoritative_coverage_lane.sh` completed during WP-18 with `2066` tests passed, `2` skipped, and `coverage-summary.json` emitted | Full release coverage has now been captured explicitly for the current milestone state; this still does not replace later Sprint 4 review/remediation/ceremony work. |
-| Release-tail review/remediation/ceremony | `not_ready` | `WP-19` docs review is closed; `WP-20` through `WP-24` remain open in Sprint 4 | The milestone cannot close from WP-18 alone. |
+| Release-tail review/remediation/ceremony | `not_ready` | `WP-19` docs review is closed; `WP-20B` is the controlling internal review packet; accepted `WP-20B` findings remain release-tail blockers until fixed and rechecked | The milestone cannot proceed to clean external review or release ceremony from the thin `WP-20` packet. |
 
 ## Controlling Review Packet Note
 
@@ -53,6 +57,7 @@ external-review or remediation handoff surface.
 - closeout-truth status, including any explicitly deferred retained-card residue
 - review records
 - remediation record
+- `WP-20B` accepted-finding fixes and re-review outcome
 - release evidence and release readiness package
 - release ceremony and end-of-milestone report
 
@@ -92,5 +97,7 @@ ADL_V0912_QUALITY_GATE_RUN_HEAVY=1 bash adl/tools/demo_v0912_quality_gate.sh
   coverage evidence.
 - This gate does not replace the later Sprint 4 review, remediation, release
   evidence, or ceremony surfaces.
+- This gate does not allow external review to proceed from the superseded thin
+  `WP-20` packet while accepted `WP-20B` findings remain unresolved.
 - This gate does not claim the entire retained local closeout-truth layer is
   clean while `#3121` remains explicitly deferred.

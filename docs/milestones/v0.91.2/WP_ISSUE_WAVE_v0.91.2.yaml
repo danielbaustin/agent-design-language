@@ -41,6 +41,10 @@ closeout_sequence:
 - WP-22 Review findings remediation
 - WP-23 Next milestone planning
 - WP-24 Release ceremony
+- "Corrective review note: the original wave did not include WP-20B. WP-20B now
+  controls external-review handoff truth because the first WP-20 packet was too
+  thin. WP-21 must not start until accepted WP-20B findings are fixed and
+  rechecked."
 work_packages:
 - wp: WP-01
   issue: 3000
@@ -195,19 +199,19 @@ work_packages:
   issue: 3018
   title: Docs + review pass
   queue: docs
-  outcome: review-ready docs package
+  outcome: docs review-entry package; later corrected by WP-20B truth updates
   depends_on: WP-18
 - wp: WP-20
   issue: 3019
   title: Internal review
   queue: review
-  outcome: internal review record
+  outcome: internal review record; first packet superseded for external handoff by WP-20B
   depends_on: WP-19
 - wp: WP-21
   issue: 3020
   title: External / 3rd-party review
   queue: review
-  outcome: external review handoff and record
+  outcome: external review handoff and record after accepted WP-20B findings are fixed and rechecked
   depends_on: WP-20
 - wp: WP-22
   issue: 3021

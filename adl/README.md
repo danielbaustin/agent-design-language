@@ -24,7 +24,9 @@ It provides:
 ## Current Status
 
 - Current active milestone in the main repo: **v0.91.2**
-- Current release state: **Sprint 4 internal-review handoff (`WP-20` next)**
+- Current release state: **Sprint 4 corrective review/remediation after
+  `WP-20B`; external review is blocked until accepted findings are fixed and
+  rechecked**
 - Most recently completed milestone in the main repo: **v0.91.1**
 - Current crate version on the active release line: **0.91.2**
 
@@ -37,8 +39,10 @@ This README describes the runtime as it exists on the current `main` branch and 
 v0.91.2 is the active milestone. The runtime-adjacent work has landed through
 UTS + ACC benchmark expansion, runtime/test-cycle recovery, quality-gate
 ergonomics, workflow guardrails, and release-tail proof/quality surfaces.
-Sprint 4 is moving to `WP-20` internal review after the closed `WP-19` docs
-review pass.
+Sprint 4 is now in corrective review/remediation: the first `WP-20` internal
+review packet was too thin for external handoff, `WP-20B` is the controlling
+full internal review, and external review should not proceed until accepted
+`WP-20B` findings are fixed and rechecked.
 
 Highlights:
 - standalone and governed UTS/ACC benchmark evidence

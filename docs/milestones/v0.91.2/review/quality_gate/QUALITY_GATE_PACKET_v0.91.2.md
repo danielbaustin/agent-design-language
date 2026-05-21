@@ -23,7 +23,7 @@ review surface:
 | CI path-policy and coverage-lane contract | PASS | `bash adl/tools/test_ci_path_policy.sh`, `bash adl/tools/test_ci_runtime_contracts.sh`, `bash adl/tools/test_run_authoritative_coverage_lane.sh`, and `bash adl/tools/test_check_coverage_impact.sh` | Shows the current CI split remains internally coherent after the runtime/coverage recovery work. | Contract checks are not the same thing as a fresh full release coverage run. |
 | Retained closeout truth | PARTIAL | Sprint 1 through Sprint 3 closeout truth is materially cleaner; known retained `#3121` residue is explicitly deferred out of this issue | Keeps the packet honest about one remaining deferred retained-card gap. | This is a truth-hygiene gate, not feature proof. |
 | Full authoritative coverage evidence | PASS | `bash adl/tools/run_authoritative_coverage_lane.sh` completed during WP-18 with `2066` tests passed, `2` skipped, and `coverage-summary.json` written | Proves the heavyweight authoritative coverage lane still runs cleanly at the current milestone state. | This is strong release-tail evidence, but it still does not by itself approve the milestone for release. |
-| Release-tail review, remediation, and ceremony | NOT_READY | `WP-19` docs review is closed; `WP-20` through `WP-24` remain open in Sprint 4 | Preserves the real remaining path to closeout. | WP-18 cannot close the milestone by itself. |
+| Release-tail review, remediation, and ceremony | NOT_READY | `WP-19` docs review is closed; the first `WP-20` packet is superseded for handoff truth by `WP-20B`; accepted `WP-20B` findings must be fixed and rechecked before `WP-21` external review | Preserves the real remaining path to closeout. | WP-18 and the thin WP-20 packet cannot close the milestone or justify clean external review by themselves. |
 
 ## Command Surfaces
 
@@ -53,7 +53,9 @@ ADL_V0912_QUALITY_GATE_RUN_HEAVY=1 bash adl/tools/demo_v0912_quality_gate.sh
 
 The milestone still lacks:
 
-- final review records
+- fixed and rechecked accepted `WP-20B` findings
+- clean external-review handoff truth
+- final external review records
 - remediation truth
 - release evidence completion
 - ceremony and end-of-milestone closeout
@@ -65,4 +67,6 @@ The milestone still lacks:
 - This packet does not say `adl-ci` or `adl-coverage` on a docs-only or
   contract-only path are enough for release.
 - This packet does not claim `v0.91.2` is ready to ship.
+- This packet does not claim the first `WP-20` internal review packet is
+  sufficient for external handoff after the corrective `WP-20B` review.
 - This packet does not collapse remaining Sprint 4 work into “administrivia.”

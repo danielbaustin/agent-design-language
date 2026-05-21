@@ -158,6 +158,10 @@ Child issues:
 
 Release-tail notes:
 
+- corrective gate: the original Sprint 4 list did not include `WP-20B`, but
+  `WP-20B` now controls external-review handoff truth because the first
+  `WP-20` packet was too thin; do not advance to `WP-21` until accepted
+  `WP-20B` findings are fixed and rechecked
 - if we later decide to preserve the extra pre-ceremony next-milestone review
   pass pattern from `v0.91.1`, add that step explicitly to the `v0.91.2`
   WBS, sprint plan, and issue wave before execution rather than silently

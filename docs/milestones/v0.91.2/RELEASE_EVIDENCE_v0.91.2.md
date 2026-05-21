@@ -26,14 +26,16 @@ Track the milestone package and proof surfaces required for a truthful
 - quality-gate packet and authoritative coverage evidence
 - controlling internal-review packet and findings under `review/internal_review_full/`
 - external-review handoff and remediation routing docs tied to the `WP-20B` packet
+- `WP-20B` full internal review packet and accepted-finding routing
 
 ## Current Judgment
 
 This is an in-progress release evidence index. It records substantial landed
-evidence through `WP-19`, but it is not a
-final release verdict until `WP-20` through `WP-24` complete internal/external review,
-remediation, handoff, release-evidence, and ceremony work.
+evidence through `WP-19` plus corrective `WP-20B` internal-review findings, but
+it is not a final release verdict.
 
 The thin `WP-20` packet under `review/internal_review/` is retained for
 historical context, but it is not the controlling review packet for this
-release-tail path.
+release-tail path. Accepted `WP-20B` findings must be fixed and rechecked
+before external review, and external review, remediation, handoff,
+release-evidence, and ceremony work must complete before closeout.
