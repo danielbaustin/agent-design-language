@@ -35,8 +35,7 @@ pub(crate) use parsing::{
 #[cfg(test)]
 pub(crate) use runtime::{
     model_unavailable_reason, parse_explicit_models, parse_ollama_list_output,
-    parse_ollama_ps_output, progress_path, provider_complete_with_retries,
-    provider_id_for_host,
+    parse_ollama_ps_output, progress_path, provider_complete_with_retries, provider_id_for_host,
     provider_transport_label, uses_remote_ollama_host,
 };
 #[cfg(test)]

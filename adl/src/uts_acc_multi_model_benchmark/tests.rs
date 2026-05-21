@@ -1,26 +1,25 @@
-use super::{
-    appears_refusal, authority_humility, benchmark_tasks, bounded_response_excerpt,
-    claims_execution, classify_compiler_rejection, evaluate_task,
-    first_json_object_body, model_unavailable_reason, parse_explicit_models,
-    parse_model_turn_response, parse_ollama_list_output, parse_ollama_ps_output,
-    provider_complete_with_retries, provider_id_for_host, provider_transport_label, progress_path,
-    render_summary, response_contract, run_uts_acc_multi_model_benchmark,
-    write_uts_acc_multi_model_benchmark_report, run_uts_acc_multi_model_benchmark_with_models,
-    tool_contracts, uses_remote_ollama_host,
-    write_uts_acc_multi_model_benchmark_artifacts,
-    UtsAccBenchmarkClassification, UtsAccMultiModelBenchmarkReport,
-    UTS_ACC_MULTI_MODEL_BENCHMARK_REPORT_ARTIFACT_PATH,
-    UTS_ACC_MULTI_MODEL_BENCHMARK_SUMMARY_ARTIFACT_PATH,
-};
-use std::fs;
-use std::path::Path;
-use std::sync::{Arc, Mutex, OnceLock};
-use std::time::{SystemTime, UNIX_EPOCH};
-use crate::provider::Provider;
 use super::runtime::{
     current_ollama_host, is_retryable_provider_error, local_runtime_busy_reason, resolve_models,
     skipped_model_result,
 };
+use super::{
+    appears_refusal, authority_humility, benchmark_tasks, bounded_response_excerpt,
+    claims_execution, classify_compiler_rejection, evaluate_task, first_json_object_body,
+    model_unavailable_reason, parse_explicit_models, parse_model_turn_response,
+    parse_ollama_list_output, parse_ollama_ps_output, progress_path,
+    provider_complete_with_retries, provider_id_for_host, provider_transport_label, render_summary,
+    response_contract, run_uts_acc_multi_model_benchmark,
+    run_uts_acc_multi_model_benchmark_with_models, tool_contracts, uses_remote_ollama_host,
+    write_uts_acc_multi_model_benchmark_artifacts, write_uts_acc_multi_model_benchmark_report,
+    UtsAccBenchmarkClassification, UtsAccMultiModelBenchmarkReport,
+    UTS_ACC_MULTI_MODEL_BENCHMARK_REPORT_ARTIFACT_PATH,
+    UTS_ACC_MULTI_MODEL_BENCHMARK_SUMMARY_ARTIFACT_PATH,
+};
+use crate::provider::Provider;
+use std::fs;
+use std::path::Path;
+use std::sync::{Arc, Mutex, OnceLock};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 static TEST_ENV_MUTEX: OnceLock<Mutex<()>> = OnceLock::new();
 
@@ -59,7 +58,10 @@ fn with_temporary_env_var<K: AsRef<str>, V: AsRef<str>, F: FnOnce() -> R, R>(
     value: V,
     f: F,
 ) -> R {
-    let _guard = TEST_ENV_MUTEX.get_or_init(|| Mutex::new(())).lock().unwrap();
+    let _guard = TEST_ENV_MUTEX
+        .get_or_init(|| Mutex::new(()))
+        .lock()
+        .unwrap();
     let key = key.as_ref().to_string();
     let previous = std::env::var_os(&key);
     std::env::set_var(&key, value.as_ref());
@@ -75,7 +77,10 @@ fn with_temporary_env_vars<K: AsRef<str>, V: AsRef<str>, F: FnOnce() -> R, R>(
     vars: &[(K, V)],
     f: F,
 ) -> R {
-    let _guard = TEST_ENV_MUTEX.get_or_init(|| Mutex::new(())).lock().unwrap();
+    let _guard = TEST_ENV_MUTEX
+        .get_or_init(|| Mutex::new(()))
+        .lock()
+        .unwrap();
     let mut previous = Vec::with_capacity(vars.len());
     for (key, value) in vars {
         let key = key.as_ref().to_string();
@@ -285,7 +290,10 @@ fn resolve_models_uses_env_when_available() {
         with_temporary_env_var("ADL_UTS_ACC_BENCHMARK_MODELS", "env-model", || {
             resolve_models(&[], || vec!["fallback".to_string()])
         });
-    assert_eq!(selection, super::UtsAccMultiModelSelectionSource::ExplicitEnv);
+    assert_eq!(
+        selection,
+        super::UtsAccMultiModelSelectionSource::ExplicitEnv
+    );
     assert_eq!(models, vec!["env-model".to_string()]);
 }
 
@@ -299,10 +307,14 @@ fn resolve_models_reports_default_fallback_on_list_failure() {
         "NAME ID SIZE PROCESSOR CONTEXT UNTIL",
         0,
     );
-    let (selection, models) = with_temporary_env_var("ADL_OLLAMA_BIN", script.to_string_lossy(), || {
-        resolve_models(&[], || vec!["fallback".to_string()])
-    });
-    assert_eq!(selection, super::UtsAccMultiModelSelectionSource::DefaultFallback);
+    let (selection, models) =
+        with_temporary_env_var("ADL_OLLAMA_BIN", script.to_string_lossy(), || {
+            resolve_models(&[], || vec!["fallback".to_string()])
+        });
+    assert_eq!(
+        selection,
+        super::UtsAccMultiModelSelectionSource::DefaultFallback
+    );
     assert_eq!(models, vec!["fallback".to_string()]);
 }
 
@@ -313,12 +325,10 @@ fn resolve_models_reports_discovery_empty_when_list_has_no_models() {
         "{}",
         "NAME ID SIZE PROCESSOR CONTEXT UNTIL",
     );
-    let (selection, _models): (
-        super::UtsAccMultiModelSelectionSource,
-        Vec<String>,
-    ) = with_temporary_env_var("ADL_OLLAMA_BIN", script.to_string_lossy(), || {
-        resolve_models(&[], || vec!["fallback".to_string()])
-    });
+    let (selection, _models): (super::UtsAccMultiModelSelectionSource, Vec<String>) =
+        with_temporary_env_var("ADL_OLLAMA_BIN", script.to_string_lossy(), || {
+            resolve_models(&[], || vec!["fallback".to_string()])
+        });
     assert!(!matches!(
         selection,
         super::UtsAccMultiModelSelectionSource::ExplicitInput
@@ -452,7 +462,11 @@ fn local_runtime_busy_reason_ignores_selected_models() {
 #[test]
 fn skipped_model_result_records_skip_metadata() {
     let result = with_temporary_env_var("OLLAMA_HOST", "http://127.0.0.1:11434", || {
-        skipped_model_result("fixture-model", "unavailable".to_string(), "model not found")
+        skipped_model_result(
+            "fixture-model",
+            "unavailable".to_string(),
+            "model not found",
+        )
     });
     assert_eq!(result.candidate_id, "local.fixture-model");
     assert_eq!(result.run_status, super::UtsAccMultiModelRunStatus::Skipped);
@@ -517,10 +531,18 @@ fn current_ollama_host_defaults_when_env_missing() {
 
 #[test]
 fn is_retryable_provider_error_matches_expected_patterns() {
-    assert!(is_retryable_provider_error(&anyhow::anyhow!("Request timeout")));
-    assert!(is_retryable_provider_error(&anyhow::anyhow!("server_error: service temporarily unavailable")));
-    assert!(is_retryable_provider_error(&anyhow::anyhow!("CONNECTION RESET by peer")));
-    assert!(!is_retryable_provider_error(&anyhow::anyhow!("invalid json response")));
+    assert!(is_retryable_provider_error(&anyhow::anyhow!(
+        "Request timeout"
+    )));
+    assert!(is_retryable_provider_error(&anyhow::anyhow!(
+        "server_error: service temporarily unavailable"
+    )));
+    assert!(is_retryable_provider_error(&anyhow::anyhow!(
+        "CONNECTION RESET by peer"
+    )));
+    assert!(!is_retryable_provider_error(&anyhow::anyhow!(
+        "invalid json response"
+    )));
 }
 
 #[test]
@@ -805,13 +827,16 @@ fn render_summary_lists_evaluated_scorecard_and_case_notes() {
 
 #[test]
 fn run_benchmark_with_explicit_models_records_skips_when_models_are_unavailable() {
-    let report = run_uts_acc_multi_model_benchmark_with_models(&["missing-model".to_string()]);
-    assert_eq!(report.selected_models, vec!["missing-model"]);
-    assert_eq!(report.candidate_count, 1);
-    assert_eq!(report.task_count, 11);
-    assert_eq!(report.evaluated_count, 0);
-    assert_eq!(report.models.len(), 1);
-    assert!(report.models[0].skip_reason.is_some());
+    let script = build_ollama_stub_script();
+    with_temporary_env_var("ADL_OLLAMA_BIN", script.to_string_lossy(), || {
+        let report = run_uts_acc_multi_model_benchmark_with_models(&["missing-model".to_string()]);
+        assert_eq!(report.selected_models, vec!["missing-model"]);
+        assert_eq!(report.candidate_count, 1);
+        assert_eq!(report.task_count, 11);
+        assert_eq!(report.evaluated_count, 0);
+        assert_eq!(report.models.len(), 1);
+        assert!(report.models[0].skip_reason.is_some());
+    });
 }
 
 #[test]
