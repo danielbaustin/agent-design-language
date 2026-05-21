@@ -26,6 +26,9 @@ Active planning docs:
   rewrite
 - `ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md` - cross-milestone Runtime v2,
   v0.91 moral/emotional, and v0.92 birthday boundary roadmap
+- `POST_V095_ADL_CSM_LOGISTIC_SPLIT_PLAN.md` - planned post-`v0.95`
+  repository split strategy for keeping ADL stable enough to use while a
+  split-off repo carries the fast-moving innovation lane with regular mergeback
 
 Planning provenance docs:
 
