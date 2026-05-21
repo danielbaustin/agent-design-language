@@ -11,7 +11,7 @@ Planned sprint map. Sprint issue numbers are `pending`.
 | Sprint 1 | Lifecycle And Routing Hardening | WP-01, WP-02, WP-03, WP-04 | Make validators, doctor, conductor, and editor skills agree on C-SDLC state. |
 | Sprint 2 | Transition Operation | WP-05, WP-06, WP-07, WP-08 | Make actor standing, shards, evidence, merge gates, and memory handoff repeatable. |
 | Sprint 3 | Sprint Default And Metrics | WP-09, WP-10, WP-11, WP-12 | Make sprint execution default-safe and measure repeatability. |
-| Sprint 4 | Review, Adoption, And Release | WP-13, WP-14, WP-15, WP-16 | Review, remediate, document, and close the completion milestone. |
+| Sprint 4 | Review, Remediation, Planning, And Release | WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-20, WP-21 | Prove, gate, review, remediate, plan the next milestone, re-review the handoff, and close the completion milestone. |
 
 ## Sprint Goals
 
@@ -29,6 +29,9 @@ Every sprint must preserve:
 - pre-PR review before publication
 - closeout after issue closure
 - combined-lane validation where integration risk exists
+- proof coverage, quality gate, docs/adoption review, internal review,
+  external review, remediation, next-milestone planning, next-milestone review
+  pass, and release ceremony remain separate ordered tail issues
 
 ## Closeout Bar
 

@@ -26,10 +26,15 @@ The goal is not more theory; it is a dependable development control plane.
 | WP-10 | Five-minute-sprint repeatability metrics | demo/tools | repeated transition metrics and coordination-latency report | WP-05 through WP-09 |
 | WP-11 | Active issue migration policy | docs/tools | policy for existing open cards and future issue defaults | WP-02 through WP-09 |
 | WP-12 | Regression fixtures for process drift | tests/tools | fixtures for SRP drift, stale SORs, skipped closeout, and env/global-state hazards | WP-10, WP-11 |
-| WP-13 | Internal review | review | code/docs/tests/process review packet | WP-12 |
-| WP-14 | Review findings remediation | review | fixes and follow-on routing | WP-13 |
-| WP-15 | Docs and adoption pass | docs | C-SDLC default-operation docs, tracked-source docs, and onboarding updates | WP-14 |
-| WP-16 | Release ceremony | release | evidence package, signed-trace proof, and closeout record | WP-15 |
+| WP-13 | Demo matrix and proof coverage | demo | demo matrix, feature-proof coverage, and proof-evidence map | WP-12 |
+| WP-14 | Coverage / quality gate | quality | validation gate covering lifecycle, tools, tests, traces, and release blockers | WP-13 |
+| WP-15 | Docs + adoption review pass | docs | C-SDLC default-operation docs, tracked-source docs, onboarding updates, and docs-review findings | WP-14 |
+| WP-16 | Internal review | review | code/docs/tests/process review packet | WP-15 |
+| WP-17 | External / 3rd-party review | review | independent review packet and handoff surface | WP-16 |
+| WP-18 | Review findings remediation | review | fixes, finding dispositions, and follow-on routing | WP-17 |
+| WP-19 | Next milestone planning | docs | next-milestone handoff and downstream planning update | WP-18 |
+| WP-20 | Next milestone review pass | docs | final review pass over next-milestone planning before ceremony | WP-19 |
+| WP-21 | Release ceremony | release | evidence package, signed-trace proof, and closeout record | WP-20 |
 
 ## Sequencing Notes
 
@@ -47,3 +52,6 @@ lessons:
 - no durable C-SDLC proof without tracked signed trace evidence
 - no default operation while durable workflow records still live only in local
   `.adl` state
+- no release ceremony before proof coverage, quality gate, docs/adoption review,
+  internal review, external review, remediation, next-milestone planning, and
+  next-milestone review pass have completed in order

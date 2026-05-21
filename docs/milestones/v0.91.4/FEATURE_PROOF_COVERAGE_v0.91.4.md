@@ -22,15 +22,20 @@ Planned proof map for C-SDLC completion.
 ## Completion Work Proof
 
 The feature rows above cover the feature and hardening work through `WP-12`.
-Milestone completion also requires proof for the review, remediation, adoption,
-and release tail:
+Milestone completion also requires proof for the demo/proof, quality, review,
+remediation, planning, and release tail:
 
 | WBS Work | Required Proof Surface | Expected Result | Status |
 | --- | --- | --- | --- |
-| `WP-13` Internal review | code/docs/tests/process review packet | The completed C-SDLC default-operation package is reviewed for behavior, docs, tests, process truth, and demo credibility. | planned |
-| `WP-14` Review findings remediation | finding disposition record and follow-on routing | Actionable review findings are fixed or routed before adoption and release claims. | planned |
-| `WP-15` Docs and adoption pass | updated operator docs, skill docs, and onboarding references | The default C-SDLC path is teachable from the docs without relying on oral context. | planned |
-| `WP-16` Release ceremony | release evidence packet, signed trace proof, and closeout record | Release truth includes feature proof, tail-work proof, signed trace verification, residual risks, and follow-on routing. | planned |
+| `WP-13` Demo matrix and proof coverage | demo matrix, feature-proof coverage, and proof-evidence map | The completed C-SDLC default-operation package has explicit proof and demo coverage before review begins. | planned |
+| `WP-14` Coverage / quality gate | validation gate record | Lifecycle, tooling, trace, evidence, memory, docs, and release blockers are checked before docs/review claims. | planned |
+| `WP-15` Docs + adoption review pass | updated operator docs, skill docs, onboarding references, and docs-review findings | The default C-SDLC path is teachable from the docs without relying on oral context. | planned |
+| `WP-16` Internal review | code/docs/tests/process review packet | The completed C-SDLC default-operation package is reviewed for behavior, docs, tests, process truth, and demo credibility. | planned |
+| `WP-17` External / 3rd-party review | independent review handoff and resulting review packet | Outside reviewers receive the right evidence and review the fully corrected package, not a thin or stale handoff. | planned |
+| `WP-18` Review findings remediation | finding disposition record and follow-on routing | Actionable review findings are fixed or routed before release claims. | planned |
+| `WP-19` Next milestone planning | next-milestone handoff and downstream planning update | The next milestone is planned before the release ceremony, preserving the established release cycle. | planned |
+| `WP-20` Next milestone review pass | final review of next-milestone planning | The handoff is re-reviewed after the short break and before ceremony. | planned |
+| `WP-21` Release ceremony | release evidence packet, signed trace proof, and closeout record | Release truth includes feature proof, tail-work proof, signed trace verification, residual risks, and follow-on routing. | planned |
 
 ## Required Evidence
 

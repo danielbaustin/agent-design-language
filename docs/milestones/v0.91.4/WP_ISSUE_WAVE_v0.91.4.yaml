@@ -84,24 +84,59 @@ work_packages:
     depends_on: [WP-10, WP-11]
   - wp: WP-13
     issue: pending
-    title: Internal review
-    queue: review
+    title: Demo matrix and proof coverage
+    queue: demo
     depends_on: [WP-12]
   - wp: WP-14
     issue: pending
-    title: Review findings remediation
-    queue: review
+    title: Coverage / quality gate
+    queue: quality
     depends_on: [WP-13]
   - wp: WP-15
     issue: pending
-    title: Docs and adoption pass
+    title: Docs + adoption review pass
     queue: docs
     depends_on: [WP-14]
   - wp: WP-16
     issue: pending
+    title: Internal review
+    queue: review
+    depends_on: [WP-15]
+  - wp: WP-17
+    issue: pending
+    title: External / 3rd-party review
+    queue: review
+    depends_on: [WP-16]
+  - wp: WP-18
+    issue: pending
+    title: Review findings remediation
+    queue: review
+    depends_on: [WP-17]
+  - wp: WP-19
+    issue: pending
+    title: Next milestone planning
+    queue: docs
+    depends_on: [WP-18]
+  - wp: WP-20
+    issue: pending
+    title: Next milestone review pass
+    queue: docs
+    depends_on: [WP-19]
+  - wp: WP-21
+    issue: pending
     title: Release ceremony
     queue: release
-    depends_on: [WP-15]
+    depends_on: [WP-20]
+closeout_sequence:
+  - WP-13: Demo matrix and proof coverage
+  - WP-14: Coverage / quality gate
+  - WP-15: Docs + adoption review pass
+  - WP-16: Internal review
+  - WP-17: External / 3rd-party review
+  - WP-18: Review findings remediation
+  - WP-19: Next milestone planning
+  - WP-20: Next milestone review pass
+  - WP-21: Release ceremony
 sprint_umbrellas:
   - sprint: Sprint 1
     issue: pending
@@ -117,5 +152,5 @@ sprint_umbrellas:
     ordered_children: [WP-09, WP-10, WP-11, WP-12]
   - sprint: Sprint 4
     issue: pending
-    title: Review, Adoption, And Release
-    ordered_children: [WP-13, WP-14, WP-15, WP-16]
+    title: Review, Remediation, Planning, And Release
+    ordered_children: [WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-20, WP-21]
