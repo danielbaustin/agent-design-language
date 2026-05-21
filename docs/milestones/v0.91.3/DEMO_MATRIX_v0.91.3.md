@@ -7,7 +7,7 @@ packages execute.
 
 | Demo | WP | Purpose | Expected Proof | Status |
 | --- | --- | --- | --- | --- |
-| Cognitive Transition manifest validation | WP-02 / #3200 | Show a transition manifest links issue, actor roles, cards, DAG, evidence, gate, and memory. | valid/invalid fixture results | planned |
+| Cognitive Transition manifest validation | WP-02 / #3200 | Show a transition manifest links issue, actor roles, cards, DAG, evidence, gate, and memory. | validator-backed valid/invalid fixture test results | in_flight |
 | Card lifecycle integration | WP-03 / #3201 | Show the issue bundle preserves `SIP -> STP -> SPP -> SRP -> SOR` semantics. | card validation fixture/report | planned |
 | Transition DAG and shard plan | WP-04 / #3202 | Show serial work, parallel shards, and barriers are explicit. | DAG fixture and rendered/reviewable summary | planned |
 | Evidence bundle and review synthesis | WP-05 / #3203 | Show review inputs and findings converge into a bounded packet. | evidence bundle plus synthesis output | planned |
