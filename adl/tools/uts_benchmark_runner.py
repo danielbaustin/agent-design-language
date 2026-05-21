@@ -800,7 +800,7 @@ def write_artifacts(report: dict[str, Any], out_path: Path) -> None:
                 )
             detail_lines.append("")
     detailed.write_text("\n".join(detail_lines) + "\n", encoding="utf-8")
-    provider = {"schema_version": "uts_benchmark_provider_status.v1", "source_results": str(out_path), "models": []}
+    provider = {"schema_version": "uts_benchmark_provider_status.v1", "source_results": display_path(out_path), "models": []}
     for model in report["models"]:
         statuses = {}
         events = []
