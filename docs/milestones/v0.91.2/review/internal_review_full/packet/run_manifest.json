@@ -1,0 +1,17 @@
+{
+  "artifact_root": "docs/milestones/v0.91.2/review/internal_review_full/packet",
+  "completed_at": "2026-05-21T10:20:51Z",
+  "is_worktree": true,
+  "privacy_mode": "local_only",
+  "publication_allowed": false,
+  "repo_name": "agent-design-language",
+  "repo_ref": "f529d63c",
+  "review_mode": "build_repository_packet",
+  "run_id": "20260521-102050-repo-packet",
+  "schema": "codebuddy.repo_packet.run_manifest.v1",
+  "skills_used": [
+    "repo-packet-builder"
+  ],
+  "started_at": "2026-05-21T10:20:51Z",
+  "worktree_name": "adl-wp-3173"
+}
