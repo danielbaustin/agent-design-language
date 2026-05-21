@@ -29,7 +29,7 @@ and release tail:
 | --- | --- | --- | --- |
 | `WP-13` Internal review | code/docs/tests/process review packet | The completed C-SDLC default-operation package is reviewed for behavior, docs, tests, process truth, and demo credibility. | planned |
 | `WP-14` Review findings remediation | finding disposition record and follow-on routing | Actionable review findings are fixed or routed before adoption and release claims. | planned |
-| `WP-15` Docs + adoption pass | updated operator docs, skill docs, and onboarding references | The default C-SDLC path is teachable from the docs without relying on oral context. | planned |
+| `WP-15` Docs and adoption pass | updated operator docs, skill docs, and onboarding references | The default C-SDLC path is teachable from the docs without relying on oral context. | planned |
 | `WP-16` Release ceremony | release evidence packet, signed trace proof, and closeout record | Release truth includes feature proof, tail-work proof, signed trace verification, residual risks, and follow-on routing. | planned |
 
 ## Required Evidence

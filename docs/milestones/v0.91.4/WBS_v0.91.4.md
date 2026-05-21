@@ -28,7 +28,7 @@ The goal is not more theory; it is a dependable development control plane.
 | WP-12 | Regression fixtures for process drift | tests/tools | fixtures for SRP drift, stale SORs, skipped closeout, and env/global-state hazards | WP-10, WP-11 |
 | WP-13 | Internal review | review | code/docs/tests/process review packet | WP-12 |
 | WP-14 | Review findings remediation | review | fixes and follow-on routing | WP-13 |
-| WP-15 | Docs + adoption pass | docs | C-SDLC default-operation docs, tracked-source docs, and onboarding updates | WP-14 |
+| WP-15 | Docs and adoption pass | docs | C-SDLC default-operation docs, tracked-source docs, and onboarding updates | WP-14 |
 | WP-16 | Release ceremony | release | evidence package, signed-trace proof, and closeout record | WP-15 |
 
 ## Sequencing Notes

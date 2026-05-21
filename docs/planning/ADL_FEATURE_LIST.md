@@ -58,8 +58,10 @@ The current repo truth is:
   full `WP-01` / `#3000` through `WP-24` / `#3023` issue wave is opened, Sprint
   4 has closed `WP-17`, `WP-17A`, `WP-18`, and `WP-19`; the initial `WP-20`
   internal review is superseded for handoff truth by `WP-20B`; accepted
-  `WP-20B` remediation issues have closed; and `WP-21` external review is
-  ready to start from the refreshed handoff packet
+  `WP-20B` remediation issues have closed; `WP-21` external review and `WP-22`
+  review remediation have closed; `WP-23` next-milestone planning is represented
+  by this `v0.91.3` / `v0.91.4` planning package; and `WP-24` remains the
+  release-ceremony and release-approval gate
 - most recently completed inhabited-runtime milestone package: `v0.91.1`
 - most recently completed moral-governance milestone package: `v0.91`
 - most recently completed governed-tools milestone package: `v0.90.5`
@@ -253,6 +255,8 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.91` | Moral governance, wellbeing and happiness, affect, kindness, humor, moral cognition, structured planning / SRP, secure local Agent Comms substrate, A2A boundary planning, cognitive-being flagship demo, review/remediation, next-milestone handoff, and release ceremony. |
 | `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, agent lifecycle states, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, GHB-adjacent runtime evidence, and observatory-visible agent runtime proof. |
 | `v0.91.2` | Tooling/evaluation/productization/publication pressure release: UTS + ACC multi-model benchmark, provider-native tool-call comparison, runtime/test-cycle recovery, coverage ergonomics, CodeFriend productization, Google Workspace CMS bridge, modernization demo, publication packets including GHB/general-intelligence source packets, rustdoc/doc cleanup, and workflow guardrails. |
+| `v0.91.3` | Planned first Cognitive SDLC implementation slice: one bounded Cognitive State Transition, issue-local operative `SPP`, transition manifest, transition DAG, evidence bundle, governed merge-readiness gate, SRP/SOR memory handoff, and first five-minute-sprint proof surface. |
+| `v0.91.4` | Planned Cognitive SDLC completion and hardening milestone: default-operation lifecycle, validator/doctor/conductor/editor alignment, Software Development Polis actor standing, shard ownership, tracked durable workflow records, signed trace proof, ObsMem handoff, repeatability metrics, and active-issue migration policy. |
 | `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
 | `v0.93` | Constitutional citizenship, rights/duties, social contract, delegation/IAM, standing/challenge/appeal governance, relationship model, reputation/trust, shared social memory, ToM/social cognition, and enterprise security for the ADL polis. |
 | `v0.94` | Secure execution, policy-engine and identity/auth convergence, provider trust and isolation, secrets/data governance, signed/queryable trace and reasoning/provenance closure, bounded mental time travel / temporal self-projection, and cross-band convergence before MVP freeze. |
