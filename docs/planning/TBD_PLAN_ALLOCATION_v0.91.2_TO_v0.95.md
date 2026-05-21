@@ -100,7 +100,7 @@ source notes to tracked execution homes.
 | `V0911_SPRINT1_REVIEW_FINDINGS_2026-05-09.md` | `v0.91.1` sprint-review evidence | Archive/provenance. |
 | `V0911_V0912_DOCS_REVIEW_REPORT_2026-05-07.md` | `v0.91.2` docs package source evidence | Archive after v0.91.2 planning stabilization. |
 | `V0911_WP19_REVIEW_FINDINGS_2026-05-10.md` | `v0.91.1` docs cleanup evidence | Archive after remediation. |
-| `V0912_ADR_PLAN_2026-05-13.md` | No tracked ADR-authoring issue yet | Deferred/process-planning. It should become one or more ADR issues before being treated as allocated execution work. |
+| `V0912_ADR_PLAN_2026-05-13.md` | `v0.91.2` ADR plan and issue `#3124` | Allocated/executed. The tracked plan is `docs/milestones/v0.91.2/ADR_PLAN_v0.91.2.md`; candidate ADRs live in `docs/architecture/adr/` and remain candidates until human review and explicit promotion. |
 | `V0912_DOCS_REVIEW_FINDINGS_2026-05-09.md` | `v0.91.2` docs package review evidence | Archive after remediation. |
 | `V0912_ISSUE_3121_REVIEW_FINDINGS_2026-05-20.md` | `v0.91.2` UTS benchmark cleanup/review lane | Active remediation evidence for `#3121`; archive after closeout. |
 | `V0912_ISSUE_3121_TEST_SUITE_ARCHITECTURE_2026-05-20.md` | `v0.91.2` UTS benchmark cleanup/review lane and future standalone UTS repo | Allocated as test-suite architecture source material. |
@@ -118,7 +118,7 @@ source notes to tracked execution homes.
 
 ## Not Yet Execution-Scheduled Before v0.95
 
-The current audit found four root plan notes that are not execution-scheduled
+The current audit found three root plan notes that are not execution-scheduled
 before or through `v0.95`:
 
 - `ADL_AND_WILDCLAW.md`: useful external-benchmark pressure test, but no
@@ -130,11 +130,12 @@ before or through `v0.95`:
   remains explicitly post-`v0.95` and is not current MVP execution scope.
 - `AI_CHARACTER_AUDIT.md`: useful style/product signal, but no milestone issue
   currently owns it.
-- `V0912_ADR_PLAN_2026-05-13.md`: process-planning note for ADRs that should
-  become tracked ADR authoring issues before it is counted as scheduled work.
-
 The C-SDLC workflow-state, SPP live-planning, and v0.91.3/v0.91.4 doc-review
 notes are allocated to the tracked C-SDLC milestone-planning lane, not GWS.
+
+The `V0912_ADR_PLAN_2026-05-13.md` note is now allocated through `#3124`.
+The tracked ADR plan and candidate ADR packet exist; review and explicit
+promotion remain release-tail work rather than untracked TBD scope.
 
 The UTS benchmark plan, model panel, task panel, and `#3121` review notes are
 allocated to the active `v0.91.2` UTS benchmark lane and future standalone UTS

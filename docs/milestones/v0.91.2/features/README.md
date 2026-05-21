@@ -2,7 +2,9 @@
 
 ## Status
 
-First-pass feature index for the proposed v0.91.2 pressure-release milestone.
+Tracked feature index for the active `v0.91.2` pressure-release milestone.
+`WP-01` through `WP-19` have closed, the `WP-17A` follow-on is closed, and
+`WP-20` is the next internal-review step.
 
 | Feature Area | Feature Doc | Source Cluster | Planned WP Home | Required Outcome |
 | --- | --- | --- | --- |
@@ -21,6 +23,7 @@ First-pass feature index for the proposed v0.91.2 pressure-release milestone.
 
 ## Promotion Rule
 
-Each row now has a tracked feature doc. When this milestone opens, WP cards
-should consume these docs directly and tighten them with issue numbers,
-validation commands, and implementation-specific proof surfaces.
+Each row has a tracked feature doc. Closed WP lanes should keep their feature
+docs truthful to landed evidence, while remaining release-tail work should use
+these docs as the milestone feature contract during review, remediation, and
+release evidence assembly.

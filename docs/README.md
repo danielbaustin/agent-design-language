@@ -50,5 +50,7 @@ Milestone docs should be read as bounded engineering records. They distinguish
 what has shipped, what is currently being implemented, what is demoable, and
 what is planned for later milestones. At the moment, `v0.91.2` is the active
 tooling, evaluation, productization, publication, and repo-health milestone;
-`v0.91.1` is the most recently completed inhabited-runtime readiness package;
-and `v0.91` remains the earlier moral-governance wave.
+its Sprint 4 release tail moves to `WP-20` internal review after closed
+`WP-17`, `WP-17A`, `WP-18`, and `WP-19` release-tail work. `v0.91.1` is the most
+recently completed inhabited-runtime readiness package, and `v0.91` remains the
+earlier moral-governance wave.

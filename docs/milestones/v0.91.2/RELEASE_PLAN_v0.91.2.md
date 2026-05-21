@@ -30,6 +30,6 @@ more reviewable without weakening proof or authority boundaries.
 
 Do not mark `v0.91.2` releasable until:
 
-- the remaining Sprint 4 work finishes cleanly beyond the already-executed `WP-01` through `WP-17A` band
+- the remaining Sprint 4 work finishes cleanly beyond the already-executed `WP-01` through `WP-18` band plus bounded `WP-17A` follow-on
 - quality, review, remediation, and ceremony surfaces are complete
 - release readiness and release evidence are complete

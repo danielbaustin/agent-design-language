@@ -4,7 +4,7 @@
 
 - Feature Name: Moderne / OpenRewrite LST Modernization Demo
 - Milestone Target: `v0.91.2`
-- Status: active bounded packet
+- Status: implemented bounded packet
 - Planned WP Home: WP-10
 - Source Docs:
   - `.adl/docs/TBD/code_modernization/ADL_MODERNE_INTERACTION_PLAN.md`

@@ -4,7 +4,7 @@
 
 - Feature Name: Review Heuristics And Demos
 - Milestone Target: `v0.91.2`
-- Status: in_flight
+- Status: implemented
 - Planned WP Home: WP-07
 - Source Docs: `.adl/docs/TBD/workflow_tooling/ADL_REVIEW_HEURISTICS.md`
 - Proof Modes: skill docs, demos, review packet

@@ -3,8 +3,11 @@
 ## Status
 
 Active milestone package. v0.91.2 is the follow-on pressure-release milestone
-after v0.91.1. The WP issue wave is open as `#3000` through `#3023`, and the
-sprint-conductor umbrella issues are open as `#3025` through `#3028`.
+after v0.91.1. The WP issue wave was opened as `#3000` through `#3023`, and the
+sprint-conductor umbrella issues were opened as `#3025` through `#3028`. Sprint
+4 is moving to `WP-20` internal review: `WP-17`, the bounded `WP-17A` demo
+follow-on, `WP-18`, and `WP-19` are closed; external review, remediation, next-milestone
+planning, and ceremony work remain.
 
 ## Purpose
 
@@ -121,6 +124,6 @@ workflow guardrails that reduce the operational failures that slowed v0.90.5
 and v0.91, plus a reviewable ADR candidate packet for the durable architecture
 decisions introduced or clarified by the milestone.
 
-Execution note: WP-01 opened and carded the issue wave. Feature implementation
-has not started until the relevant WP is routed through `workflow-conductor`,
-bound with `pr run`, reviewed before PR publication, and closed out after merge.
+Execution note: WP-01 opened and carded the issue wave. Each WP starts only
+when routed through `workflow-conductor`, bound with `pr run`, reviewed before
+PR publication, and closed out after merge.

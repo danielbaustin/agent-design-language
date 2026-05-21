@@ -11,15 +11,15 @@
 
 ## Execution Readiness
 
-- [ ] Benchmark harness scope accepted.
-- [ ] Runtime/test-cycle recovery scope accepted.
-- [ ] Review-product, Workspace, modernization, publication, rustdoc, and guardrail scopes accepted.
+- [x] Benchmark harness scope accepted.
+- [x] Runtime/test-cycle recovery scope accepted.
+- [x] Review-product, Workspace, modernization, publication, rustdoc, and guardrail scopes accepted.
 - [ ] Quality/review/release tail accepted.
 
 ## Review And Release Readiness
 
-- [ ] Feature-proof coverage is complete for the whole milestone.
-- [ ] Quality gate is recorded.
+- [x] Feature-proof coverage is complete through the landed implementation and quality-gate band.
+- [x] Quality gate is recorded.
 - [ ] Internal review is complete.
 - [ ] External review is complete or explicitly deferred.
 - [ ] Accepted findings are fixed or dispositioned.

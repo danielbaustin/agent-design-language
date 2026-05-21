@@ -4,10 +4,10 @@ All notable project-level changes are summarized here by milestone/release.
 
 ## v0.91.2 (Active milestone)
 
-Status: Active. The v0.91.2 issue wave is open as `#3000-#3023`, the
-sprint-conductor umbrellas are open as `#3025-#3028`, and the crate version has
-advanced to `0.91.2` for the tooling, evaluation, productization, publication,
-and workflow pressure-release line.
+Status: Active. The v0.91.2 issue wave was opened as `#3000-#3023`, the
+sprint-conductor umbrellas were opened as `#3025-#3028`, and the crate version
+has advanced to `0.91.2` for the tooling, evaluation, productization,
+publication, and workflow pressure-release line.
 
 Planning notes:
 - The tracked v0.91.2 package lives under `docs/milestones/v0.91.2/`.
@@ -16,6 +16,10 @@ Planning notes:
   CodeFriend productization, Workspace bridge work, modernization, publication
   packets, rustdoc/doc cleanup, repo-visibility follow-on work, and workflow
   guardrails.
+- Sprint 4 release-tail work has landed through `WP-18`: demo/proof
+  convergence, the bounded `WP-17A` code-feature demo follow-on, and the
+  quality-gate packet are closed. `WP-19` closes the docs review pass and
+  prepares main for `WP-20` internal review.
 - This is an active milestone entry, not a release entry.
 
 ## v0.91.1 (Completed milestone)

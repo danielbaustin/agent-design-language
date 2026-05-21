@@ -54,8 +54,10 @@ completion targets in this list.
 The current repo truth is:
 - active milestone: `v0.91.2`
 - current crate version on the active release line: `0.91.2`
-- current milestone state: `v0.91.1` is complete and `v0.91.2` is active with
-  the full `WP-01` / `#3000` through `WP-24` / `#3023` issue wave open
+- current milestone state: `v0.91.1` is complete and `v0.91.2` is active; the
+  full `WP-01` / `#3000` through `WP-24` / `#3023` issue wave is opened, Sprint
+  4 has closed `WP-17`, `WP-17A`, `WP-18`, and `WP-19`, leaving `WP-20` as the
+  next internal-review step
 - most recently completed inhabited-runtime milestone package: `v0.91.1`
 - most recently completed moral-governance milestone package: `v0.91`
 - most recently completed governed-tools milestone package: `v0.90.5`
@@ -191,18 +193,18 @@ ADL already provides a serious platform baseline:
 | ACIP hardening and local encryption boundary | Implemented baseline | `docs/milestones/v0.91.1/features/ACIP_HARDENING.md` plus landed hardening/conformance work from closed `WP-13` / `#2835` | Completed local hardening baseline by `v0.91.1` |
 | A2A adapter boundary | Implemented baseline | `docs/milestones/v0.91.1/features/A2A_ADAPTER_BOUNDARY.md` and closed `WP-14` / `#2836` | Completed baseline by `v0.91.1` |
 | Runtime inhabitant proof | Implemented baseline | `docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md` and closed `WP-15` / `#2837` | Completed baseline by `v0.91.1` |
-| UTS + ACC multi-model benchmark and provider-native tool-call comparison | Planned | `docs/milestones/v0.91.2/features/UTS_ACC_MULTI_MODEL_BENCHMARK.md` | `v0.91.2` |
-| Runtime/test-cycle recovery and coverage ergonomics | Planned | `docs/milestones/v0.91.2/features/RUNTIME_TEST_CYCLE_RECOVERY.md` | `v0.91.2` |
-| CodeFriend repo-review product layer | Planned | `docs/milestones/v0.91.2/features/CODEFRIEND_PRODUCTIZATION.md` plus existing review-product proof baseline | `v0.91.2` productization lane |
-| Review heuristics and reviewer demo lane | Planned | `docs/milestones/v0.91.2/features/REVIEW_HEURISTICS_AND_DEMOS.md` | `v0.91.2` |
+| UTS + ACC multi-model benchmark and provider-native tool-call comparison | Implemented baseline | `docs/milestones/v0.91.2/features/UTS_ACC_MULTI_MODEL_BENCHMARK.md` plus `docs/milestones/v0.91.2/review/uts_benchmark_evidence/` | `v0.91.2` ADL benchmark baseline complete; standalone UTS repo migration continues under `#3107` |
+| Runtime/test-cycle recovery and coverage ergonomics | Implemented baseline | `docs/milestones/v0.91.2/features/RUNTIME_TEST_CYCLE_RECOVERY.md`, runtime recovery reports, coverage ergonomics report, and CI runtime budget docs | `v0.91.2` baseline complete with follow-on observability/hardening continuing as needed |
+| CodeFriend repo-review product layer | Implemented baseline | `docs/milestones/v0.91.2/features/CODEFRIEND_PRODUCTIZATION.md` plus existing review-product proof baseline | `v0.91.2` productization lane complete; MVP polish continues by `v0.95` |
+| Review heuristics and reviewer demo lane | Implemented baseline | `docs/milestones/v0.91.2/features/REVIEW_HEURISTICS_AND_DEMOS.md` | `v0.91.2` review/demo baseline complete |
 | Google Workspace CMS bridge and Rust-native adapter boundary | Implemented baseline plus active hardening | `docs/milestones/v0.91.2/features/GOOGLE_WORKSPACE_CMS_BRIDGE.md` | Completed bounded baseline in `v0.91.2`; live hardening and future project operational use continue as follow-on work |
-| Automated repository modernization and external refactoring integration | Planned | `docs/milestones/v0.91.2/features/CODE_MODERNIZATION_DEMO.md` plus existing Moderne/OpenRewrite and code-modernization planning docs | `v0.91.2` bounded Moderne/OpenRewrite LST demo lane |
-| Generic speculative decoding runtime acceleration | Planned | `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`, `.adl/docs/TBD/ADL_AND_SPECULATIVE_CODING_REPLAY.md`, and `docs/milestones/v0.91.2/features/SPECULATIVE_DECODING_PROTOTYPE.md` | `v0.91.2` |
-| Repo visibility follow-on | Planned | `docs/milestones/v0.91.2/features/REPO_VISIBILITY_FOLLOW_ON.md` plus the `v0.90` repo-visibility baseline | `v0.91.2` |
-| Publication packet program and GHB paper lane | Planned | `docs/milestones/v0.91.2/features/PUBLICATION_PROGRAM.md` plus GHB paper lineage docs | `v0.91.2` |
-| General-intelligence paper packet | Planned | `docs/milestones/v0.91.2/features/GENERAL_INTELLIGENCE_PAPER_PACKET.md` | `v0.91.2` |
-| Rustdoc/doc cleanup | Planned | `docs/milestones/v0.91.2/features/RUSTDOC_DOC_CLEANUP.md` | `v0.91.2` |
-| Workflow guardrails | Planned | `docs/milestones/v0.91.2/features/WORKFLOW_GUARDRAILS.md` | `v0.91.2` |
+| Automated repository modernization and external refactoring integration | Implemented bounded packet | `docs/milestones/v0.91.2/features/CODE_MODERNIZATION_DEMO.md` plus existing Moderne/OpenRewrite and code-modernization planning docs | `v0.91.2` bounded Moderne/OpenRewrite LST demo lane complete |
+| Generic speculative decoding runtime acceleration | Implemented evaluation packet | `.adl/docs/TBD/ADL_AND_GENERIC_SPECULATIVE_DECODING.md`, `.adl/docs/TBD/ADL_AND_SPECULATIVE_CODING_REPLAY.md`, and `docs/milestones/v0.91.2/features/SPECULATIVE_DECODING_PROTOTYPE.md` | `v0.91.2` bounded evaluation complete; productization deferred pending real backend follow-on |
+| Repo visibility follow-on | Implemented baseline | `docs/milestones/v0.91.2/features/REPO_VISIBILITY_FOLLOW_ON.md` plus the `v0.90` repo-visibility baseline | `v0.91.2` follow-on packet complete |
+| Publication packet program and GHB paper lane | Implemented packet | `docs/milestones/v0.91.2/features/PUBLICATION_PROGRAM.md` plus GHB paper lineage docs | `v0.91.2` publication-planning packet complete; no publication approval claimed |
+| General-intelligence paper packet | Implemented packet | `docs/milestones/v0.91.2/features/GENERAL_INTELLIGENCE_PAPER_PACKET.md` | `v0.91.2` paper packet complete with canonical paper repo as source of manuscript truth |
+| Rustdoc/doc cleanup | Implemented baseline | `docs/milestones/v0.91.2/features/RUSTDOC_DOC_CLEANUP.md` | `v0.91.2` cleanup baseline complete |
+| Workflow guardrails | Implemented baseline | `docs/milestones/v0.91.2/features/WORKFLOW_GUARDRAILS.md` | `v0.91.2` guardrail baseline complete |
 | Cognitive SDLC first slice and transition manifest | Planned | `docs/milestones/v0.91.3/features/COGNITIVE_SDLC_FIRST_SLICE.md`, `docs/milestones/v0.91.3/features/COGNITIVE_TRANSITION_MANIFEST.md`, `docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md`, `docs/milestones/v0.91.3/features/TRANSITION_DAG_AND_SHARD_COORDINATION.md`, `docs/milestones/v0.91.3/features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md`, `docs/milestones/v0.91.3/features/GOVERNED_MERGE_READINESS_GATE.md`, `docs/milestones/v0.91.3/features/SRP_SOR_OBSMEM_HANDOFF.md`, and `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md` | `v0.91.3` proves one bounded Cognitive State Transition; `v0.91.4` hardens repeatable/default operation |
 | Cognitive SDLC default operation and five-minute-sprint repeatability | Planned | `docs/milestones/v0.91.4/features/COGNITIVE_SDLC_DEFAULT_OPERATION.md`, `docs/milestones/v0.91.4/features/CSDL_VALIDATION_AND_ROUTING_HARDENING.md`, `docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md`, `docs/milestones/v0.91.4/features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md`, `docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md`, `docs/milestones/v0.91.4/features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md`, `docs/milestones/v0.91.4/features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md`, `docs/milestones/v0.91.4/features/FIVE_MINUTE_SPRINT_REPEATABILITY.md`, `docs/milestones/v0.91.4/features/ACTIVE_ISSUE_MIGRATION_POLICY.md`, and `docs/milestones/v0.91.4/features/PROCESS_DRIFT_REGRESSION_FIXTURES.md` | `v0.91.4` completes the C-SDLC rollout and makes it the default software-development path |
 | ACP / cognitive profiles runtime surface | Planned | `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md` | `v0.92` |

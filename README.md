@@ -61,7 +61,7 @@ ADL already has a substantial platform baseline:
 - Runtime v2 and CSM Observatory planning and proof surfaces
 - Gödel agents and the
   [Gödel-Hadamard-Bayes algorithm](docs/milestones/v0.86/features/GODEL_HADAMARD_BAYES_ALGORITHM.md)
-- structured PR/control-plane workflow with STP, SIP, SOR, and SPP records
+- structured PR/control-plane workflow with SIP, STP, SPP, SRP, and SOR records
 
 For the full capability matrix, read the canonical feature index:
 [docs/planning/ADL_FEATURE_LIST.md](docs/planning/ADL_FEATURE_LIST.md).
@@ -144,12 +144,14 @@ from issue
 
 ### v0.91.2 - Active Tooling, Evaluation, Productization, And Workflow Pressure Release
 
-v0.91.2 is the active pressure-release milestone. Its issue wave is open as
+v0.91.2 is the active pressure-release milestone. Its issue wave was opened as
 `#3000` through `#3023`, with sprint-conductor umbrella issues `#3025` through
-`#3028`. The milestone focuses on UTS + ACC benchmarking, runtime/test-cycle
-recovery, CodeFriend productization, Workspace bridge work, modernization,
-publication packets, rustdoc/doc cleanup, repo-visibility follow-on work, and
-workflow guardrails.
+`#3028`. Sprint 4 is now moving from release-tail documentation cleanup into
+internal review: `WP-17`, `WP-17A`, `WP-18`, and `WP-19` are closed, and
+`WP-20` through `WP-24` remain before release closeout. The milestone
+focuses on UTS + ACC benchmarking, runtime/test-cycle recovery, CodeFriend
+productization, Workspace bridge work, modernization, publication packets,
+rustdoc/doc cleanup, repo-visibility follow-on work, and workflow guardrails.
 
 Start here:
 
@@ -236,7 +238,8 @@ production markets.
 - Active milestone: v0.91.2
 - Current crate version: 0.91.2
 - Most recently completed milestone: v0.91.1
-- Current release-tail state: v0.91.1 complete; v0.91.2 active issue wave open
+- Current release-tail state: v0.91.2 Sprint 4 moves to WP-20 internal review
+  after closed WP-17/WP-17A/WP-18/WP-19 release-tail work
 - Previous completed milestone: v0.90.5
 - Primary implementation language: Rust
 

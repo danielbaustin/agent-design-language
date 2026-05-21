@@ -4,7 +4,7 @@
 
 - Feature Name: CodeFriend Review Packet Productization
 - Milestone Target: `v0.91.2`
-- Status: in flight on `WP-06` branch; lands at issue closeout
+- Status: implemented
 - Planned WP Home: WP-06
 - Source Docs: `.adl/docs/TBD/codebuddy_ai/` legacy working-name source cluster
 - Proof Modes: review packet, product report, demo

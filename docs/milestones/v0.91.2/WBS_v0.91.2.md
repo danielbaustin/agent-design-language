@@ -2,7 +2,7 @@
 
 ## Status
 
-Active WBS. The complete v0.91.2 WP issue wave is open as `#3000` through
+Active WBS. The complete v0.91.2 WP issue wave was opened as `#3000` through
 `#3023`, with sprint-conductor umbrella issues `#3025` through `#3028`.
 Every WP and sprint umbrella has a prepared primary-checkout local STP, SIP,
 SPP, SRP, and SOR bundle before execution binding.

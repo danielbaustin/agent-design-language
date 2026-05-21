@@ -16,5 +16,5 @@ for final closeout.
 ## Current Judgment
 
 Do not treat this report as release closure. `v0.91.2` has real execution
-through `WP-17` plus the bounded `WP-17A` demo follow-on, but Sprint 4 and the
-release-tail proof/ceremony work are still incomplete.
+through `WP-18` plus the bounded `WP-17A` demo follow-on, but Sprint 4 review,
+remediation, handoff, evidence, and ceremony work are still incomplete.
