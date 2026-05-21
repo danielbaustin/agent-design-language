@@ -182,7 +182,6 @@ This tracked source package does not claim:
 - the full Software Development Polis or actor-standing model is complete
 - signed trace verification is complete in v0.91.3
 - trace query/TQL is required before first-slice proof
-- any external collaboration workspace is required infrastructure
 
 `v0.91.4` owns default operation, tracked durable workflow records, signed trace
 proof, repeatability, and active-issue migration.

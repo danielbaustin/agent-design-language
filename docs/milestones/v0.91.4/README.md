@@ -53,7 +53,6 @@ v0.91.4 should not:
 - weaken AGENTS.md requirements for conductor use, editor-only card edits,
   worktrees, review, or closeout
 - replace GitHub issues, PRs, CI, branch protection, or human review
-- treat any external collaboration workspace as required infrastructure
 - turn five-minute-sprint speed into permission to skip governance
 - hide remaining legacy card drift as acceptable default behavior
 - leave durable C-SDLC cards, review, closeout, trace, proof, or release

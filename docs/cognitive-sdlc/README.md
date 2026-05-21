@@ -44,9 +44,13 @@ orchestration, review-result truth, or output truth.
 
 ## Durable Workflow Truth
 
-C-SDLC governing docs and durable workflow records must be tracked in Git when
-they are needed for governance, review, closeout, release evidence, signed
-trace proof, or ObsMem ingestion.
+C-SDLC requires durable, replayable workflow state when records are needed for
+governance, review, closeout, release evidence, signed trace proof, or ObsMem
+ingestion. The general theory does not require a specific storage backend.
+
+ADL's current implementation uses tracked Git state as the clearest substrate
+for observable workflow transitions because it is public to the repo,
+versioned, reviewable, and tied to the code and docs it governs.
 
 Local `.adl/` state may remain for execution cache, staging, and machine-local
 helper files. It is not sufficient as the only authoritative home for durable
@@ -87,6 +91,3 @@ This tracked docs home does not claim:
 - Signed trace verification is complete.
 - ObsMem ingestion is fully wired.
 - Sprint-scoped `SPP` is part of the live contract.
-- Google Workspace or any external collaboration system is canonical lifecycle
-  truth.
-
