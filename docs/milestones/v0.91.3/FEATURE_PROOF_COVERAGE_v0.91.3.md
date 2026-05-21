@@ -8,7 +8,7 @@ their owning work packages execute.
 | Feature | Proof Surface | Expected Result | Status |
 | --- | --- | --- | --- |
 | Cognitive SDLC first slice | `features/COGNITIVE_SDLC_FIRST_SLICE.md` | One bounded transition is reviewable end to end. | planned under WP-01 through WP-18 (`#3199`-`#3211` plus `#3226`-`#3230`) |
-| Cognitive Transition manifest | `features/COGNITIVE_TRANSITION_MANIFEST.md` | Manifest schema and fixtures link cards, actor roles, DAG, evidence, gate, and memory handoff. | planned under #3200-#3205 |
+| Cognitive Transition manifest | `features/COGNITIVE_TRANSITION_MANIFEST.md` | Manifest schema and fixtures link cards, actor roles, DAG, evidence, gate, and memory handoff. | in_flight under #3200; later enriched under #3201-#3205 |
 | Card lifecycle integration | `features/CARD_LIFECYCLE_INTEGRATION.md` | New C-SDLC bundles preserve `SIP -> STP -> SPP -> SRP -> SOR` semantics. | planned under #3201 |
 | Transition DAG and shard coordination | `features/TRANSITION_DAG_AND_SHARD_COORDINATION.md` | Serial work, shards, barriers, and interface-freeze rules are explicit. | planned under #3202 |
 | Evidence bundle and review synthesis | `features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md` | Review inputs, findings, validation, and residual risks converge into a tracked proof surface. | planned under #3203 |
@@ -20,7 +20,7 @@ their owning work packages execute.
 
 The milestone proof package should include:
 
-- transition manifest fixture
+- transition manifest fixture and validator output
 - actor-role reference fixture or manifest section
 - transition DAG fixture
 - evidence bundle fixture

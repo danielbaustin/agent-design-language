@@ -20,6 +20,7 @@ pub mod artifacts;
 pub mod bounded_executor;
 pub mod capability_aptitude_testing;
 pub mod chronosense;
+pub mod cognitive_transition_schema;
 pub mod continuous_verification_self_attack;
 pub mod control_plane;
 pub mod csm_observatory;

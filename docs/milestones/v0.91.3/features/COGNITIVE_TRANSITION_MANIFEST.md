@@ -4,7 +4,7 @@
 
 - Feature Name: Cognitive Transition Manifest
 - Milestone Target: `v0.91.3`
-- Status: planned
+- Status: in_flight
 - Planned WP Home: WP-02 through WP-07 / #3200 through #3205
 
 ## Purpose
@@ -30,6 +30,10 @@ The initial manifest should record:
 - merge-readiness gate result
 - ObsMem handoff boundary
 
+`WP-02` now establishes the first machine-checkable contract surface at:
+
+- `adl/src/cognitive_transition_schema.rs`
+
 ## Acceptance Criteria
 
 - Valid and invalid fixtures exist.
@@ -44,3 +48,25 @@ The initial manifest should record:
   transition around them.
 - The manifest seeds, but does not complete, the v0.91.4 Software Development
   Polis and actor-standing model.
+
+## Current WP-02 Proof Surface
+
+`WP-02` owns the first bounded schema slice:
+
+- schema id: `cognitive_transition_manifest.v1`
+- required seed roles:
+  - `operator`
+  - `lifecycle_router`
+  - `implementation_owner`
+- validator:
+  - `validate_cognitive_transition_manifest_v1(...)`
+- fixture helper:
+  - `wp02_cognitive_transition_manifest_valid_fixture()`
+- tracked JSON fixtures:
+  - `docs/milestones/v0.91.3/review/transition_manifest/fixtures/valid_cognitive_transition_manifest_v1.json`
+  - `docs/milestones/v0.91.3/review/transition_manifest/fixtures/invalid_cognitive_transition_manifest_v1_missing_seed_role.json`
+- focused proof command:
+  - `cargo test --manifest-path adl/Cargo.toml cognitive_transition_schema -- --nocapture`
+
+This is intentionally bounded. DAG convergence, evidence-bundle richness,
+merge-readiness enforcement, and ObsMem handoff hardening stay with later WPs.

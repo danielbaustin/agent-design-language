@@ -1,0 +1,42 @@
+{
+  "schema_version": "cognitive_transition_manifest.v1",
+  "transition_id": "cts.v0_91_3.issue_3200.ct_demo_001",
+  "issue_number": 3200,
+  "issue_url": "https://github.com/danielbaustin/agent-design-language/issues/3200",
+  "milestone_version": "v0.91.3",
+  "branch_ref": "codex/3200-v0-91-3-wp-02-cognitive-transition-schema",
+  "worktree_ref": ".worktrees/adl-wp-3200",
+  "lifecycle_state": "planned",
+  "actor_roles": [
+    {
+      "actor_id": "human.operator",
+      "role": "operator",
+      "responsibility": "approves scope and sprint progression"
+    },
+    {
+      "actor_id": "adl.workflow_conductor",
+      "role": "lifecycle_router",
+      "responsibility": "routes lifecycle stage changes through bounded skills"
+    },
+    {
+      "actor_id": "codex.issue_3200",
+      "role": "implementation_owner",
+      "responsibility": "owns the bounded WP-02 implementation slice"
+    }
+  ],
+  "cards": {
+    "sip_rel_path": ".adl/v0.91.3/tasks/issue-3200__v0-91-3-wp-02-cognitive-transition-schema/sip.md",
+    "stp_rel_path": ".adl/v0.91.3/tasks/issue-3200__v0-91-3-wp-02-cognitive-transition-schema/stp.md",
+    "spp_rel_path": ".adl/v0.91.3/tasks/issue-3200__v0-91-3-wp-02-cognitive-transition-schema/spp.md",
+    "srp_rel_path": ".adl/v0.91.3/tasks/issue-3200__v0-91-3-wp-02-cognitive-transition-schema/srp.md",
+    "sor_rel_path": ".adl/v0.91.3/tasks/issue-3200__v0-91-3-wp-02-cognitive-transition-schema/sor.md"
+  },
+  "dag_rel_path": "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_transition_dag.md",
+  "shard_plan_rel_path": "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_shard_plan.md",
+  "evidence_bundle_rel_path": "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
+  "merge_readiness_gate_rel_path": "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md",
+  "obsmem_handoff_rel_path": "docs/milestones/v0.91.3/review/obsmem/ct_demo_001_handoff.md",
+  "trace_proof_rel_paths": [
+    "workflow/c-sdlc/v0.91.3/trace/ct_demo_001_trace_manifest.json"
+  ]
+}
