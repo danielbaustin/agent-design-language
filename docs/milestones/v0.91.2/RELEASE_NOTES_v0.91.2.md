@@ -2,7 +2,7 @@
 
 ## Status
 
-Working draft. `v0.91.2` has substantial executed content through `WP-17` plus
+Working draft. `v0.91.2` has substantial executed content through `WP-18` plus
 the bounded `WP-17A` demo follow-on, but it does not yet have final
 release-ready notes.
 
@@ -16,6 +16,8 @@ Tooling, evaluation, productization, publication, and workflow guardrails.
 - runtime/test-cycle recovery
 - review-product and Workspace bridge work
 - modernization, publication, rustdoc/doc cleanup, and workflow guardrails
+- demo/proof convergence, code-feature demo follow-ons, and quality-gate
+  evidence
 
 ## Not Claimed
 

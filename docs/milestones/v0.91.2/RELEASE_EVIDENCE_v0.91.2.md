@@ -2,8 +2,8 @@
 
 ## Purpose
 
-Track the milestone package and intended proof surfaces required for a truthful
-`v0.91.2` release decision once the milestone is actually executed.
+Track the milestone package and proof surfaces required for a truthful
+`v0.91.2` release decision as the active milestone moves through Sprint 4.
 
 ## Current Core Package
 
@@ -16,16 +16,18 @@ Track the milestone package and intended proof surfaces required for a truthful
 - [FEATURE_PROOF_COVERAGE_v0.91.2.md](FEATURE_PROOF_COVERAGE_v0.91.2.md)
 - [QUALITY_GATE_v0.91.2.md](QUALITY_GATE_v0.91.2.md)
 
-## Planned Evidence Families
+## Current Evidence Families
 
 - benchmark and comparison reports
 - runtime/test-cycle recovery reports
 - review-product surfaces
 - Workspace/modernization/publication/doc/guardrail packets
-- release-tail quality and review records
+- demo/proof convergence and bounded code-feature demo follow-on packets
+- quality-gate packet and authoritative coverage evidence
 
 ## Current Judgment
 
-This is a package scaffold only. It is not evidence that the milestone has
-executed.
-
+This is an in-progress release evidence index. It records substantial landed
+evidence through `WP-19`, but it is not a
+final release verdict until `WP-20` through `WP-24` complete internal/external review,
+remediation, handoff, release-evidence, and ceremony work.

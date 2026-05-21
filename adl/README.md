@@ -23,18 +23,65 @@ It provides:
 
 ## Current Status
 
-- Current active milestone in the main repo: **v0.90**
-- Current release state: **pre-third-party-review readiness**
-- Most recently completed milestone in the main repo: **v0.89.1**
-- Current crate version in the v0.90 release-readiness branch: **0.90.0**
+- Current active milestone in the main repo: **v0.91.2**
+- Current release state: **Sprint 4 internal-review handoff (`WP-20` next)**
+- Most recently completed milestone in the main repo: **v0.91.1**
+- Current crate version on the active release line: **0.91.2**
 
 This README describes the runtime as it exists on the current `main` branch and points to the relevant milestone and demo surfaces in the parent repository.
 
 ## Recent Runtime Milestones
 
+### v0.91.2 — Tooling, Evaluation, Productization, And Workflow Pressure Release
+
+v0.91.2 is the active milestone. The runtime-adjacent work has landed through
+UTS + ACC benchmark expansion, runtime/test-cycle recovery, quality-gate
+ergonomics, workflow guardrails, and release-tail proof/quality surfaces.
+Sprint 4 is moving to `WP-20` internal review after the closed `WP-19` docs
+review pass.
+
+Highlights:
+- standalone and governed UTS/ACC benchmark evidence
+- faster validation policy surfaces for avoiding unnecessary broad test cycles
+- workflow guardrails around main-branch writes, closeout truth, and shell
+  report generation
+- quality-gate packet with authoritative coverage evidence captured during
+  `WP-18`
+
+### v0.91.1 — Inhabited Runtime Readiness
+
+v0.91.1 is the completed inhabited-runtime readiness milestone. It connected
+Runtime v2, polis/citizen surfaces, memory/identity architecture, Theory of
+Mind, capability and intelligence metrics, governed learning, ACIP/A2A
+hardening, and observatory-visible runtime proof into a closed milestone
+package.
+
+Highlights:
+- runtime/polis architecture alignment and agent lifecycle state surfaces
+- citizen standing/state substrate and memory/identity architecture
+- bounded Theory of Mind, capability testing, intelligence metrics, governed
+  learning, and ANRM/Gemma placement
+- ACIP hardening, A2A adapter boundary, and runtime inhabitant proof
+
+### v0.91 — Moral Governance And Cognitive-Being Milestone
+
+v0.91 is the completed moral-governance and cognitive-being milestone. It
+landed wellbeing, affect, kindness, moral cognition, humor, structured
+planning/SRP surfaces, and secure intra-polis Agent Comms as a bounded release
+line.
+
+Highlights:
+- cognitive-being flagship demo and proof coverage
+- moral, wellbeing, affect, humor, and kindness proof surfaces
+- structured planning and Structured Review Prompt workflow baseline
+- secure local Agent Comms substrate and A2A boundary planning
+
 ### v0.90 — Long-Lived Runtime And Reviewer-Facing Proof Package
 
-v0.90 is the active runtime milestone. The implementation and proof wave has landed through the long-lived runtime, stock-league demo, demo-extension lane, milestone compression pilot, repo visibility prototype, coverage ratchet, Rust refactoring pass, docs pass, and internal review. The release tail still requires third-party review, any findings remediation, next planning, and ceremony before release.
+v0.90 is the completed long-lived runtime milestone. The implementation and
+proof wave landed the long-lived runtime, stock-league demo, demo-extension
+lane, milestone compression pilot, repo visibility prototype, coverage ratchet,
+Rust refactoring pass, docs pass, review, and release closeout.
 
 Highlights:
 - supervised long-lived agents with heartbeat, lease, status, tick/run/stop controls, and bounded cycle records

@@ -23,7 +23,7 @@ review surface:
 | CI path-policy and coverage-lane contract | PASS | `bash adl/tools/test_ci_path_policy.sh`, `bash adl/tools/test_ci_runtime_contracts.sh`, `bash adl/tools/test_run_authoritative_coverage_lane.sh`, and `bash adl/tools/test_check_coverage_impact.sh` | Shows the current CI split remains internally coherent after the runtime/coverage recovery work. | Contract checks are not the same thing as a fresh full release coverage run. |
 | Retained closeout truth | PARTIAL | Sprint 1 through Sprint 3 closeout truth is materially cleaner; known retained `#3121` residue is explicitly deferred out of this issue | Keeps the packet honest about one remaining deferred retained-card gap. | This is a truth-hygiene gate, not feature proof. |
 | Full authoritative coverage evidence | PASS | `bash adl/tools/run_authoritative_coverage_lane.sh` completed during WP-18 with `2066` tests passed, `2` skipped, and `coverage-summary.json` written | Proves the heavyweight authoritative coverage lane still runs cleanly at the current milestone state. | This is strong release-tail evidence, but it still does not by itself approve the milestone for release. |
-| Release-tail review, remediation, and ceremony | NOT_READY | `WP-19` through `WP-24` remain open in Sprint 4 | Preserves the real remaining path to closeout. | WP-18 cannot close the milestone by itself. |
+| Release-tail review, remediation, and ceremony | NOT_READY | `WP-19` docs review is closed; `WP-20` through `WP-24` remain open in Sprint 4 | Preserves the real remaining path to closeout. | WP-18 cannot close the milestone by itself. |
 
 ## Command Surfaces
 
