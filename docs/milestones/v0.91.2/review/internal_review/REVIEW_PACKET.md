@@ -1,10 +1,15 @@
 # v0.91.2 WP-20 Internal Review Packet
 
+Status: superseded as the controlling handoff surface by
+`docs/milestones/v0.91.2/review/internal_review_full/`.
+
 ## Verdict
 
-`v0.91.2` is ready to proceed to WP-21 external / third-party review.
+This thinner `WP-20` packet is no longer the controlling readiness or handoff
+surface for `WP-21`.
 
-It is not release-ready yet, and the docs correctly say so.
+Use the `WP-20B` full internal review packet and its findings as the controlling
+input for external-review handoff and `WP-22` remediation routing.
 
 ## What Passed Internal Review
 
@@ -22,4 +27,7 @@ It is not release-ready yet, and the docs correctly say so.
 
 ## Recommendation
 
-Proceed to WP-21 external review with the findings and non-claims in this packet. Route accepted findings to WP-22 or explicit follow-on issues before WP-24 release ceremony.
+Do not treat this packet alone as authorization to proceed. If `WP-21`
+continues, it must do so using the `WP-20B` full packet, its findings register,
+and its non-claims as the controlling evidence surface. Route accepted findings
+to `WP-22` or explicit follow-on issues before the `WP-24` release ceremony.

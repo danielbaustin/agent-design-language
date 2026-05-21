@@ -35,6 +35,17 @@ Sprint 4 work lands.
 | Full authoritative coverage evidence | `pass` | `bash adl/tools/run_authoritative_coverage_lane.sh` completed during WP-18 with `2066` tests passed, `2` skipped, and `coverage-summary.json` emitted | Full release coverage has now been captured explicitly for the current milestone state; this still does not replace later Sprint 4 review/remediation/ceremony work. |
 | Release-tail review/remediation/ceremony | `not_ready` | `WP-19` docs review is closed; `WP-20` through `WP-24` remain open in Sprint 4 | The milestone cannot close from WP-18 alone. |
 
+## Controlling Review Packet Note
+
+For Sprint 4 review and remediation routing, the controlling internal-review
+surface is:
+
+- `docs/milestones/v0.91.2/review/internal_review_full/`
+
+The older thin `WP-20` packet under `review/internal_review/` remains
+background context only and must not be treated as the controlling
+external-review or remediation handoff surface.
+
 ## Required Inputs Before Final Pass/Fail Judgment
 
 - demo matrix and feature-proof coverage

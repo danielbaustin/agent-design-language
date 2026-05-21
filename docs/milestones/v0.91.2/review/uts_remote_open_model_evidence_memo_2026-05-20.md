@@ -103,19 +103,20 @@ Before making a stronger public claim, the benchmark should add more remote rows
 
 ## Evidence sources used
 
-Main remote row artifacts:
+This memo currently depends on historical non-portable working artifacts rather
+than tracked benchmark evidence. Treat the strongest rows here as
+historical/non-public support, not as the canonical release-facing proof path.
 
-- `/private/tmp/uts-toolkit-gemma431-remote-v1.json`
-- `/private/tmp/uts-acc-gemma431-remote-v3.json`
-- `/private/tmp/uts-toolkit-gemma426-remote-v1.json`
-- `/private/tmp/uts-toolkit-gemma327b-remote-v1.json`
-- `/private/tmp/uts-toolkit-qwen3coder30b-remote-v1.json`
-- `/private/tmp/uts-toolkit-gemma4e4b-remote-v1.json`
-- `/private/tmp/uts-toolkit-gemma4e2b-remote-v1.json`
-- `/private/tmp/uts-toolkit-deepseek32-remote-v3.json`
-- `/private/tmp/uts-acc-deepseek32-remote-v4.json`
-- `/private/tmp/uts-toolkit-gptoss-remote-v1.json`
-- `/private/tmp/uts-toolkit-qwen330b-remote-v1.json`
+Historical working evidence families used:
+
+- Gemma 4 31B remote toolkit and governed working rows
+- Gemma 4 26B and 27B remote toolkit working rows
+- Qwen3 Coder 30B and Qwen3 30B remote toolkit working rows
+- DeepSeek 32B remote toolkit and governed working rows
+- GPT-OSS remote toolkit working row
+
+Canonical release-facing benchmark proof should instead route through the
+tracked benchmark runbook and the current supported benchmark evidence packet.
 
 ## Bottom line
 

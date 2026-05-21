@@ -25,6 +25,8 @@ Not release ready.
 - Sprint 1 `#3025`, Sprint 2 `#3026`, and Sprint 3 `#3027` are closed
 - Sprint 4 umbrella `#3028` remains open; `WP-20` through `WP-24` remain pending
 - no final release proof, review, or ceremony state exists yet
+- the controlling internal-review packet for the remaining handoff/remediation path is `docs/milestones/v0.91.2/review/internal_review_full/`
+- the older thin `WP-20` packet remains background context only and is not sufficient as the release-tail handoff surface by itself
 
 ## Current Blockers
 

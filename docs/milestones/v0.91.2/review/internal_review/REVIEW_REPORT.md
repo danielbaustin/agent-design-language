@@ -1,8 +1,11 @@
 # v0.91.2 WP-20 Internal Review Report
 
+Status: superseded as the controlling `WP-21` handoff surface by
+`docs/milestones/v0.91.2/review/internal_review_full/`.
+
 ## Verdict
 
-Proceed to WP-21 external review.
+Do not treat this thin `WP-20` report as the controlling go-forward signal.
 
 Do not claim release readiness yet.
 
@@ -19,4 +22,5 @@ Do not claim release readiness yet.
 
 ## Next Step
 
-Start WP-21 external / third-party review using `WP21_EXTERNAL_REVIEW_HANDOFF.md`.
+If `WP-21` continues, use `WP21_EXTERNAL_REVIEW_HANDOFF.md` together with the
+`WP-20B` full internal review packet as the controlling evidence surface.
