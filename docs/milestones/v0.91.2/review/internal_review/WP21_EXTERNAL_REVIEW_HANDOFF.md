@@ -10,8 +10,9 @@ Do not send this nested file as the current external review handoff.
 
 ## Recommended Status
 
-Blocked. Do not proceed to WP-21 external / third-party review until accepted
-`WP-20B` findings are fixed and rechecked.
+Superseded. This nested handoff was blocked after `WP-20B`; accepted `WP-20B`
+remediation issues have now closed. Use the refreshed top-level handoff for
+current `WP-21` external / third-party review entry.
 
 The older thin `WP-20` packet remains useful as background context, but it is
 not the controlling readiness surface for this handoff.

@@ -1,7 +1,9 @@
 # WP-20B Full Internal Review Synthesis
 
-Verdict: not release-ready; not external-review-ready until accepted WP-20B
-findings are fixed and rechecked.
+Verdict at review time: not release-ready, with external-review entry gated on
+accepted WP-20B remediation. Follow-up remediation issues `#3175` through
+`#3179` have now closed; release readiness remains false until external review
+and release-tail work complete.
 
 This full internal review found no P0s, but it found multiple P1/P2 risks that materially affect benchmark credibility, hosted-provider portability, security hygiene, and review handoff truth.
 
@@ -16,10 +18,12 @@ Most important findings:
 Release interpretation:
 
 - v0.91.2 can continue internal remediation.
-- WP-21 external review must wait until accepted WP-20B findings are fixed and
-  rechecked; when it starts, it must receive this packet, not the thin WP-20
-  packet alone.
+- WP-21 external review starts from the refreshed top-level handoff after
+  accepted WP-20B remediation closure; it must receive this packet, not the thin
+  WP-20 packet alone.
 - WP-22 must prioritize benchmark validity, redaction/portability, and handoff truth.
-- UTS benchmark superiority claims remain non-publication claims until the P1/P2 benchmark-methodology findings are fixed or explicitly bounded.
+- UTS benchmark superiority claims remain non-publication claims; reviewers
+  should inspect the remediated benchmark methodology and evidence boundaries
+  directly.
 
 No P0 findings were found.

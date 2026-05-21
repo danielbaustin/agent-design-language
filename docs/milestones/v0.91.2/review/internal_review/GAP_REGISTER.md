@@ -25,8 +25,8 @@ External review should still be asked to inspect:
 ## Gaps Before Release Closeout
 
 - disposition retained `#3121` closeout residue
-- fix or explicitly disposition accepted `WP-20B` findings
-- recheck the corrected handoff packet before external review
+- keep accepted `WP-20B` remediation closure visible in the handoff packet
+- use the corrected handoff packet for external review
 - complete WP-21 external review
 - complete WP-22 remediation or explicit deferrals
 - complete WP-23 next-milestone planning

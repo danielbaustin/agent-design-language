@@ -27,6 +27,6 @@ Tooling, evaluation, productization, publication, and workflow guardrails.
 - executed milestone completion beyond the currently landed pre-release and
   corrective-review band
 - final external review or release state
-- clean external-review readiness while accepted `WP-20B` findings remain
-  unresolved
+- release readiness or release approval before external review and any accepted
+  external-review remediation complete
 - any benchmark or tooling result not yet produced, fixed, and reviewed

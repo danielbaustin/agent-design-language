@@ -20,8 +20,10 @@ is not the controlling handoff after `WP-20B`.
 ## Review Judgment
 
 The gate correctly reports `NOT_READY`. After `WP-20B`, the strongest review
-truth is that accepted `WP-20B` findings must be fixed and rechecked before
-clean external review or release ceremony claims.
+truth was that accepted `WP-20B` findings needed remediation before clean
+external review or release ceremony claims. Those remediation issues have now
+closed; release ceremony claims still require external review and release-tail
+completion.
 
 ## Finding Link
 

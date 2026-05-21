@@ -10,18 +10,18 @@
 - Prepared during: `v0.91.2` review tail
 - Prepared for issue: `#3020`
 - Controlling internal review source: `#3173`
-- Current packet status: draft handoff prepared; not sendable until accepted
-  `WP-20B` findings are fixed and rechecked
+- Current packet status: ready to begin `WP-21` external / 3rd-party review;
+  accepted `WP-20B` remediation issues `#3175` through `#3179` are closed
 - Date: 2026-05-21
 - Publication attempted: false
 - Release approval claimed: false
 - Review approval claimed: false
 
-## Update Before Review
+## Review Entry Check
 
 This handoff is the canonical tracked third-party review surface for `v0.91.2`,
-but it is not yet a sendable external-review packet. It must be refreshed from
-clean root `main` after accepted `WP-20B` findings are fixed and rechecked.
+and it has been refreshed from clean `main` after accepted `WP-20B` remediation
+issues closed.
 
 Before review, confirm:
 
@@ -29,11 +29,12 @@ Before review, confirm:
   `adl/Cargo.lock`, and `docs/milestones/v0.91.2/` agree on `v0.91.2`.
 - The `WP-20B` full internal review packet is the controlling internal review
   surface, not the earlier thin `WP-20` packet.
-- accepted `WP-20B` findings are fixed or explicitly dispositioned and the
-  fixes have been rechecked
-- `WP-22` remediation routing is visible for all accepted `WP-20B` findings
-- any open remediation issues are clearly labeled as fixed, deferred, or out of
-  scope before the packet is sent
+- accepted `WP-20B` remediation issues `#3175`, `#3176`, `#3177`, `#3178`,
+  and `#3179` are closed
+- `WP-22` remediation routing remains visible for all accepted `WP-20B`
+  findings
+- any future findings from `WP-21` external review are routed through `WP-22`
+  remediation before release closeout
 - No host-local paths, temporary paths, worktree-only artifacts, raw credential
   paths, or branch-only claims appear in the packet.
 - UTS benchmark claims are still bounded by the current benchmark-methodology
@@ -45,9 +46,9 @@ private workstation paths to understand the milestone truth.
 
 ## Purpose
 
-Once the corrective findings are fixed and rechecked, this handoff gives a
-third-party reviewer a bounded `v0.91.2` review packet. Review `v0.91.2` as the
-pressure-release and productization milestone after `v0.91.1`.
+This handoff gives a third-party reviewer a bounded `v0.91.2` review packet.
+Review `v0.91.2` as the pressure-release and productization milestone after
+`v0.91.1`.
 
 The review should cover:
 
@@ -86,10 +87,9 @@ Current review-tail truth:
 - The first `WP-20` internal review packet was too thin and must not be used as
   the sole review handoff.
 - `WP-20B` / `#3173` produced the controlling full internal review packet.
-- `WP-21` external review is blocked until accepted `WP-20B` findings are fixed
-  and rechecked.
-- `WP-22` remediation must route and resolve or explicitly defer the accepted
-  `WP-20B` findings before this handoff is sent.
+- Accepted `WP-20B` remediation issues `#3175` through `#3179` have closed.
+- `WP-21` external review can start from this refreshed handoff packet.
+- `WP-22` remains the route for any findings accepted from the external review.
 - `WP-23` remains next-milestone planning.
 - `WP-24` remains release ceremony.
 
@@ -137,17 +137,17 @@ Recommended remediation routing from the full review packet:
 - Tooling and supply-chain hygiene: `P2-9`, `P2-10`, `P3-2`
 - Provider native-tool capability reporting: `P2-1`
 
-Current planned child remediation issues:
+Closed child remediation issues:
 
-- `#3175`: benchmark scoring and failure gates
-- `#3176`: hosted benchmark adapter and artifact hardening
-- `#3177`: make `WP-20B` the controlling review packet
-- `#3178`: CI pinning and validation reproducibility
-- `#3179`: provider native-tool capability reporting
+- `#3175`: benchmark scoring and failure gates: closed
+- `#3176`: hosted benchmark adapter and artifact hardening: closed
+- `#3177`: make `WP-20B` the controlling review packet: closed
+- `#3178`: CI pinning and validation reproducibility: closed
+- `#3179`: provider native-tool capability reporting: closed
 
-If any of these issues remain open or unreviewed, external review should not
-begin. The reviewer should treat the relevant findings as unresolved unless the
-issue record proves otherwise.
+The external reviewer should treat those accepted `WP-20B` findings as
+remediated for review-entry purposes, while still reviewing the resulting
+implementation, evidence, and non-claims independently.
 
 ## Previous Review Mistakes To Avoid
 
@@ -157,8 +157,8 @@ issue record proves otherwise.
 - Do not claim branch-only artifacts, local `.adl` notes, temporary files, or
   workstation paths as release truth.
 - Do not treat internal-review completion as release readiness.
-- Do not treat UTS benchmark results as public superiority claims while
-  benchmark-methodology findings remain open or only partially resolved.
+- Do not treat UTS benchmark results as public superiority claims; review the
+  remediated benchmark methodology and evidence boundaries directly.
 - Do not hide docs-only, planning-only, fixture-only, or demo-only boundaries.
 - Do not mix ADL-governed UTS + ACC evidence with standalone UTS claims without
   labeling the boundary.

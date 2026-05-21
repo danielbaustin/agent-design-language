@@ -29,8 +29,8 @@ more reviewable without weakening proof or authority boundaries.
 - guardrail docs could understate the severity of workflow failures
 - the thin `WP-20` internal review packet could be mistaken for controlling
   review truth after `WP-20B`
-- external review could start before accepted `WP-20B` findings are fixed and
-  rechecked
+- external review could start from a stale packet instead of the refreshed
+  post-`WP-20B` remediation handoff
 
 ## Release Rule
 
@@ -38,7 +38,8 @@ Do not mark `v0.91.2` releasable until:
 
 - the remaining Sprint 4 work finishes cleanly beyond the already-executed
   `WP-01` through `WP-19` band plus bounded `WP-17A` follow-on
-- the corrective `WP-20B` findings are fixed or explicitly dispositioned and
-  rechecked
-- quality, review, remediation, and ceremony surfaces are complete
+- the corrective `WP-20B` remediation closure remains visible in the review
+  packet
+- external review, any accepted external-review remediation, quality, and
+  ceremony surfaces are complete
 - release readiness and release evidence are complete

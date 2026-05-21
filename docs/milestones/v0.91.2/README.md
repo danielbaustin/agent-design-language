@@ -5,12 +5,13 @@
 Active milestone package. v0.91.2 is the follow-on pressure-release milestone
 after v0.91.1. The WP issue wave was opened as `#3000` through `#3023`, and the
 sprint-conductor umbrella issues were opened as `#3025` through `#3028`. Sprint
-4 is in corrective review/remediation: `WP-17`, the bounded `WP-17A` demo
+4 is in external-review entry: `WP-17`, the bounded `WP-17A` demo
 follow-on, `WP-18`, and `WP-19` are closed; the first `WP-20` internal review
 packet was too thin for external handoff; `WP-20B` is the controlling full
-internal review packet; and accepted `WP-20B` findings must be fixed and
-rechecked before `WP-21` external review. External review, remediation,
-next-milestone planning, and ceremony work remain.
+internal review packet; accepted `WP-20B` remediation issues have closed; and
+`WP-21` external review can start from the refreshed handoff packet. External
+review, any accepted-finding remediation, next-milestone planning, and ceremony
+work remain.
 
 ## Purpose
 
@@ -128,8 +129,9 @@ operational guidance, Moderne/OpenRewrite LST modernization and publication
 packages, workflow guardrails that reduce the operational failures that slowed
 v0.90.5 and v0.91, a reviewable ADR candidate packet for the durable
 architecture decisions introduced or clarified by the milestone, and completed
-review/remediation/ceremony truth. Accepted `WP-20B` findings must be fixed or
-explicitly dispositioned before external review or release ceremony claims.
+review/remediation/ceremony truth. Accepted `WP-20B` remediation issues have
+closed before external review entry, but external review and release ceremony
+claims still require their own evidence.
 
 Execution note: WP-01 opened and carded the issue wave. Each WP starts only
 when routed through `workflow-conductor`, bound with `pr run`, reviewed before

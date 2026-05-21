@@ -57,7 +57,7 @@ worth carrying forward.
 | WP-18 (#3017) | Coverage / quality gate | validation posture and test/coverage record | WP-17 |
 | WP-19 (#3018) | Docs + review pass | docs review-entry package; later corrected by WP-20B truth updates | WP-18 |
 | WP-20 (#3019) | Internal review | internal review record; first packet superseded for handoff by `WP-20B` | WP-19 |
-| WP-21 (#3020) | External / 3rd-party review | external review handoff and record after accepted `WP-20B` findings are fixed and rechecked | WP-20 plus corrective `WP-20B` gate |
+| WP-21 (#3020) | External / 3rd-party review | external review handoff and record after accepted `WP-20B` remediation closure | WP-20 plus completed corrective `WP-20B` gate |
 | WP-22 (#3021) | Review findings remediation | remediation record and follow-up issues | WP-21 |
 | WP-23 (#3022) | Next milestone planning | v0.92/v0.93 handoff update | WP-22 |
 | WP-24 (#3023) | Release ceremony | release evidence and end-of-milestone report | WP-23 |

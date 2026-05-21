@@ -26,8 +26,8 @@ Not release ready.
 - Sprint 4 umbrella `#3028` remains open
 - the first `WP-20` internal review packet was too thin for external handoff
 - `WP-20B` / `#3173` is the controlling full internal review packet
-- accepted `WP-20B` findings must be fixed and rechecked before `WP-21`
-  external review
+- accepted `WP-20B` remediation issues are closed, and `WP-21` external review
+  can start from the refreshed handoff packet
 - no final release proof, review, or ceremony state exists yet
 - the controlling internal-review packet for the remaining handoff/remediation path is `docs/milestones/v0.91.2/review/internal_review_full/`
 - the older thin `WP-20` packet remains background context only and is not sufficient as the release-tail handoff surface by itself
@@ -35,9 +35,10 @@ Not release ready.
 ## Current Blockers
 
 - Sprint 4 and the remaining review/release-tail work are not complete
-- accepted `WP-20B` findings are not yet recorded here as fixed and rechecked
-- external review is blocked until the corrective review/remediation state is
-  clean
+- accepted `WP-20B` remediation issues are recorded as closed, but external
+  review has not completed
+- any accepted findings from external review must be remediated or explicitly
+  dispositioned before release closeout
 - release evidence and release ceremony surfaces are not complete
 - internal/external review, remediation, release evidence, and ceremony surfaces still need completion after the corrective internal-review pass
 - ADR candidates exist for review, but they are not accepted release decisions
