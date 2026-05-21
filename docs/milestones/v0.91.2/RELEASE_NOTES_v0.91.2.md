@@ -2,12 +2,11 @@
 
 ## Status
 
-Working draft. `v0.91.2` has substantial executed content through `WP-22`,
+Working draft. `v0.91.2` has substantial executed content through `WP-23`,
 including the bounded `WP-17A` demo follow-on, corrective `WP-20B` full
-internal review packet, `WP-21` external review, and `WP-22` remediation. It
-does not yet have final release-ready notes: `WP-23` next-milestone planning is
-in review through PR `#3192`, and `WP-24` release ceremony has not approved the
-release.
+internal review packet, `WP-21` external review, `WP-22` remediation, and
+`WP-23` next-milestone planning. `WP-24` records the release ceremony and final
+end-of-milestone evidence gate.
 
 ## Theme
 
@@ -28,5 +27,5 @@ Tooling, evaluation, productization, publication, and workflow guardrails.
 ## Not Claimed
 
 - executed milestone completion beyond the current release-tail state
-- release readiness or release approval before `WP-23` and `WP-24` complete
+- release approval outside the `WP-24` release ceremony record
 - any benchmark or tooling result not yet produced, fixed, and reviewed

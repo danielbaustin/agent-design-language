@@ -3,7 +3,7 @@
 ## Metadata
 
 - Milestone: `v0.91.2`
-- Status: `recorded_not_release_ready`
+- Status: `recorded_ceremony_ready`
 - Canonical gate WP: `WP-18`
 - Tracked packet: `docs/milestones/v0.91.2/review/quality_gate/QUALITY_GATE_PACKET_v0.91.2.md`
 - Repro command: `bash adl/tools/demo_v0912_quality_gate.sh`
@@ -19,17 +19,18 @@ Sprint 4 work lands.
 
 - `WP-01` through `WP-22` are closed, and `WP-17A` is also closed as a bounded
   demo follow-on.
-- Sprint 1, Sprint 2, and Sprint 3 are closed; Sprint 4 is still open.
+- Sprint 1, Sprint 2, and Sprint 3 are closed; Sprint 4 is in final ceremony
+  closeout.
 - The milestone now has a converged demo/proof map, a release-tail doc set, and
   a passing closed-issue `SOR` truth checker.
 - The first `WP-20` internal review packet was too thin for external handoff;
   `WP-20B` is the controlling full internal review packet.
 - Accepted `WP-20B` remediation issues are closed, `WP-21` external review is
   closed, and `WP-22` remediation is closed.
-- `WP-23` next-milestone planning is in review through PR `#3192`; `WP-24`
-  release ceremony remains open and has not approved the release.
-- The milestone does not yet have a final ceremony outcome,
-  so this gate is not the final release verdict.
+- `WP-23` next-milestone planning is closed; `WP-24` is the release ceremony
+  and final end-of-milestone evidence gate.
+- Sidecar UTS benchmark-evidence polish was moved out of the ADL v0.91.2
+  release gate and into the standalone UTS repo path.
 
 ## Current Gate Dimensions
 
@@ -39,7 +40,7 @@ Sprint 4 work lands.
 | CI/coverage policy contract | `pass` | `adl/tools/test_ci_path_policy.sh`, `adl/tools/test_ci_runtime_contracts.sh`, `adl/tools/test_run_authoritative_coverage_lane.sh`, and `adl/tools/test_check_coverage_impact.sh` | A green policy/contract surface proves the current CI split is internally consistent, not that full release coverage has already been rerun for this milestone. |
 | Closed-issue closeout truth | `partial` | Sprint 1 through Sprint 3 closeout truth is materially cleaner; known retained `#3121` residue remains explicitly deferred out of this issue | This keeps the milestone honest about one deferred closeout-truth gap instead of pretending the whole retained layer is clean. |
 | Full authoritative coverage evidence | `pass` | `bash adl/tools/run_authoritative_coverage_lane.sh` completed during WP-18 with `2066` tests passed, `2` skipped, and `coverage-summary.json` emitted | Full release coverage has now been captured explicitly for the current milestone state; this still does not replace later Sprint 4 review/remediation/ceremony work. |
-| Release-tail review/remediation/ceremony | `not_ready` | `WP-19` docs review is closed; `WP-20B` is the controlling internal review packet; accepted `WP-20B` remediation issues are closed; `WP-21` external review is closed; `WP-22` remediation is closed; `WP-23` next-milestone planning is in review through PR `#3192` | The milestone cannot proceed to release ceremony until `WP-23` is reviewed/merged and `WP-24` release ceremony completes. |
+| Release-tail review/remediation/ceremony | `ceremony_ready` | `WP-19` docs review is closed; `WP-20B` is the controlling internal review packet; accepted `WP-20B` remediation issues are closed; `WP-21` external review is closed; `WP-22` remediation is closed; `WP-23` next-milestone planning is closed | `WP-24` is the release ceremony and final end-of-milestone evidence gate. |
 
 ## Controlling Review Packet Note
 
@@ -90,15 +91,14 @@ ADL_V0912_QUALITY_GATE_RUN_HEAVY=1 bash adl/tools/demo_v0912_quality_gate.sh
 
 ## Current Judgment
 
-`NOT_READY`
+`CEREMONY_READY`
 
 ## Non-Claims
 
-- This gate does not claim `v0.91.2` is release-ready yet.
+- This gate does not replace the `WP-24` release ceremony record.
 - This gate does not treat docs-only or contract-only checks as full release
   coverage evidence.
-- This gate does not replace the later Sprint 4 review, remediation, release
-  evidence, or ceremony surfaces.
+- This gate does not replace the Sprint 4 closeout record.
 - This gate does not allow external review to proceed from the superseded thin
   `WP-20` packet. `WP-21` starts from the refreshed handoff after accepted
   `WP-20B` remediation issues closed.

@@ -12,8 +12,7 @@
 - Controlling internal review source: `#3173`
 - Current packet status: `WP-21` external / 3rd-party review is closed;
   accepted `WP-20B` remediation issues `#3175` through `#3179` are closed,
-  `WP-22` remediation is closed, and `WP-23` next-milestone planning is in
-  review through PR `#3192`
+  `WP-22` remediation is closed, and `WP-23` next-milestone planning is closed
 - Date: 2026-05-21
 - Publication attempted: false
 - Release approval claimed: false
@@ -77,9 +76,9 @@ release ceremony.
 `v0.91.2` is active and the crate version is `0.91.2`.
 
 The milestone has landed substantial implementation, documentation, planning,
-and review work, but it is not release-ready. The release-tail quality gate is
-still `NOT_READY` until `WP-23` next-milestone planning is reviewed/merged and
-`WP-24` release ceremony work finishes.
+and review work. The release-tail quality gate is ceremony-ready after `WP-23`
+next-milestone planning closed, while `WP-24` remains the final release
+ceremony and end-of-milestone evidence gate.
 
 Current review-tail truth:
 
@@ -92,8 +91,10 @@ Current review-tail truth:
 - Accepted `WP-20B` remediation issues `#3175` through `#3179` have closed.
 - `WP-21` external review is closed.
 - `WP-22` remediation is closed.
-- `WP-23` next-milestone planning is open in PR `#3192`.
-- `WP-24` remains release ceremony and is not complete.
+- `WP-23` next-milestone planning is closed.
+- `#3193` UTS evidence cleanup is closed and moved out of the ADL release gate
+  into the standalone UTS repo path.
+- `WP-24` is the release ceremony and final end-of-milestone evidence gate.
 
 This handoff does not claim that the milestone is ready to close.
 
@@ -263,8 +264,8 @@ The external review should verify:
   paths or assume a private machine layout
 - benchmark reports and evidence do not persist unsafe raw excerpts or absolute
   outside paths
-- release readiness remains honest while `WP-23` next-milestone planning is in
-  review and before `WP-24` release ceremony work finishes
+- release readiness remains honest before `WP-24` release ceremony work
+  finishes
 - GWS, C-SDLC, UTS, ACC, CodeFriend, and publication-program claims stay in
   their correct lanes
 - docs distinguish completed work, planned work, evidence, caveats, and
