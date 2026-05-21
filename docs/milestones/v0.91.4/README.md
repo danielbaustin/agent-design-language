@@ -128,3 +128,6 @@ v0.91.4 is ready to close when:
 - five-minute-sprint metrics are recorded across more than one transition
 - legacy card/process drift is either migrated, blocked, or explicitly routed
   as follow-on work
+- closeout follows the full proof, quality, docs/adoption review, internal
+  review, external review, remediation, next-milestone planning,
+  next-milestone review, and release ceremony sequence

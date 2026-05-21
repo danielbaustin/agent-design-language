@@ -23,6 +23,10 @@ Before any WP starts:
   `.adl` state
 - new durable C-SDLC records target `workflow/c-sdlc/v0.91.4/` unless a WP
   explicitly documents a narrower migration boundary
+- the planned closeout tail preserves separate ordered work for proof coverage,
+  quality gate, docs/adoption review, internal review, external review,
+  remediation, next-milestone planning, next-milestone review, and release
+  ceremony
 
 ## Completion-Specific Readiness
 

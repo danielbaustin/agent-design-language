@@ -5,7 +5,7 @@
 - Feature Name: Cognitive SDLC Default Operation
 - Milestone Target: `v0.91.4`
 - Status: planned
-- Planned WP Home: WP-01 through WP-16
+- Planned WP Home: WP-01 through WP-21
 
 ## Purpose
 

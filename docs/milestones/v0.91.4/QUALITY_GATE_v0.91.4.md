@@ -21,6 +21,9 @@ The milestone must run:
 - process-drift regression fixture results for legacy SRP, stale SOR, skipped
   closeout, and unsafe state advancement
 - docs/adoption review for operator, skill, and onboarding surfaces
+- internal review and external / 3rd-party review over the corrected package
+- review-finding remediation with explicit finding dispositions
+- next-milestone planning and final next-milestone review pass before ceremony
 - release evidence packet covering feature proof, tail-work proof, residual
   risks, and follow-on routing
 - tracked workflow-record path checks for durable C-SDLC cards, sprint state,
@@ -45,8 +48,10 @@ The milestone is blocked if:
   migrate/defer/no-op decision
 - regression fixtures do not cover the process-drift failures that motivated
   v0.91.3 and v0.91.4
-- docs and release evidence can claim milestone completion without `WP-11`,
-  `WP-12`, `WP-15`, and `WP-16` proof
+- docs and release evidence can claim milestone completion without migration,
+  regression, proof coverage, quality gate, docs/adoption review, internal
+  review, external review, remediation, next-milestone planning,
+  next-milestone review, and release proof
 - durable C-SDLC records remain only in ignored `.adl` or `artifacts/` paths
   instead of the documented `workflow/c-sdlc/v0.91.4/` namespace
 - signed trace bundles are missing or unverifiable for durable C-SDLC proof
