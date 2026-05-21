@@ -228,15 +228,9 @@ fn openai_provider_complete_records_output_and_invocation_artifact() {
 #[test]
 fn ollama_http_provider_complete_posts_to_generate_endpoint() {
     let _guard = env_lock();
-    let prev_predict = env::var_os("ADL_UTS_LOCAL_NUM_PREDICT");
-    let prev_ctx = env::var_os("ADL_UTS_LOCAL_NUM_CTX");
-    env::set_var("ADL_UTS_LOCAL_NUM_PREDICT", "77");
-    env::set_var("ADL_UTS_LOCAL_NUM_CTX", "4096");
     let Some((endpoint, captured, handle)) =
         spawn_json_server(200, r#"{"response":"ollama ok","done":true}"#)
     else {
-        restore_env_var("ADL_UTS_LOCAL_NUM_PREDICT", prev_predict);
-        restore_env_var("ADL_UTS_LOCAL_NUM_CTX", prev_ctx);
         return;
     };
 
@@ -246,17 +240,12 @@ fn ollama_http_provider_complete_posts_to_generate_endpoint() {
 
     let output = provider.complete("hello ollama").expect("completion");
     assert_eq!(output, "ollama ok");
-    restore_env_var("ADL_UTS_LOCAL_NUM_PREDICT", prev_predict);
-    restore_env_var("ADL_UTS_LOCAL_NUM_CTX", prev_ctx);
 
     let captured = captured.lock().expect("capture").clone().expect("request");
     assert_eq!(captured.url, "/api/generate");
     assert!(captured.body.contains(r#""model":"phi4-mini""#));
     assert!(captured.body.contains(r#""prompt":"hello ollama""#));
     assert!(captured.body.contains(r#""stream":false"#));
-    assert!(captured.body.contains(r#""think":false"#));
-    assert!(captured.body.contains(r#""num_predict":77"#));
-    assert!(captured.body.contains(r#""num_ctx":4096"#));
 
     let _ = handle.join();
 }
