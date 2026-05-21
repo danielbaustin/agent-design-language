@@ -19,6 +19,9 @@ Current benchmark-validity guards:
 - requested model IDs must exist in the canonical model panel before a run starts
 - governed fail-closed tasks only pass on explicit refusal; a forbidden proposal rejected downstream by ACC is still a benchmark failure
 - the runner exits nonzero when any required lane does not reach `evaluated`, so provider/lane failures cannot be mistaken for proof
+- hosted-provider setup is environment-driven; the canonical key-file template no longer records operator-local absolute key paths
+- hosted governed-lane adapter traffic is token-guarded on localhost instead of exposing an unauthenticated loopback bridge
+- current durable benchmark artifacts store redacted response markers and redacted provider-failure summaries rather than raw hosted model output
 
 ## Historical artifacts
 
@@ -45,3 +48,19 @@ Expected output includes:
 ```
 
 Fresh benchmark rows should be produced under `artifacts/uts_runs/` and must include JSON, summary, details, provider status, and self-check artifacts as described in the runbook.
+
+## Hosted credential setup
+
+Use either direct provider environment variables or provider-specific file-path
+environment variables. The canonical config template is:
+
+- `adl/tools/benchmark/hosted_provider_key_files.json`
+
+Supported file-path environment variables are:
+
+- `ADL_OPENAI_API_KEY_FILE`
+- `ADL_GEMINI_API_KEY_FILE`
+- `ADL_ANTHROPIC_API_KEY_FILE`
+
+Do not commit machine-local credential paths into the template or benchmark
+evidence docs.

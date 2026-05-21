@@ -1,8 +1,23 @@
 {
-  "schema_version": "adl.hosted_provider_key_files.v1",
+  "schema_version": "adl.hosted_provider_key_files.v2",
   "keys": {
-    "OPENAI_API_KEY": "/Users/daniel/keys/openai2.key",
-    "GEMINI_API_KEY": "/Users/daniel/keys/gcp-ace-2023.key",
-    "ANTHROPIC_API_KEY": "/Users/daniel/keys/ADL_demo_ref_04.txt"
+    "OPENAI_API_KEY": {
+      "source": "environment_or_file_env",
+      "env_var": "OPENAI_API_KEY",
+      "file_env_var": "ADL_OPENAI_API_KEY_FILE",
+      "example_rel_path": "secrets/openai_api_key.txt"
+    },
+    "GEMINI_API_KEY": {
+      "source": "environment_or_file_env",
+      "env_var": "GEMINI_API_KEY",
+      "file_env_var": "ADL_GEMINI_API_KEY_FILE",
+      "example_rel_path": "secrets/gemini_api_key.txt"
+    },
+    "ANTHROPIC_API_KEY": {
+      "source": "environment_or_file_env",
+      "env_var": "ANTHROPIC_API_KEY",
+      "file_env_var": "ADL_ANTHROPIC_API_KEY_FILE",
+      "example_rel_path": "secrets/anthropic_api_key.txt"
+    }
   }
 }

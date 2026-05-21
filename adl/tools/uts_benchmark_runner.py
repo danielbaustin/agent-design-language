@@ -15,9 +15,11 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
 import http.server
 import json
 import os
+import secrets
 import socket
 import shutil
 import subprocess
@@ -92,10 +94,12 @@ def load_json(path: Path) -> dict[str, Any]:
 
 
 def display_path(path: Path) -> str:
+    resolved = path.resolve()
     try:
-        return str(path.resolve().relative_to(REPO_ROOT))
+        return str(resolved.relative_to(REPO_ROOT))
     except ValueError:
-        return str(path)
+        name = resolved.name or "external-path"
+        return f"external/{safe_name(name)}"
 
 
 def utc_timestamp() -> str:
@@ -124,6 +128,38 @@ def select_models(panel: dict[str, Any], provider_kind: str, wanted_ids: list[st
 
 def safe_name(value: str) -> str:
     return "".join(char if char.isalnum() or char in "-._" else "_" for char in value)
+
+
+def redact_artifact_excerpt(raw: Any) -> str:
+    text = str(raw or "").strip()
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()[:12]
+    return f"[redacted response len={len(text)} sha256={digest}]"
+
+
+def sanitize_artifact_note(note: Any, failure_kind: str | None = None) -> str:
+    text = " ".join(str(note or "").split())
+    if not text:
+        return ""
+    kind = failure_kind or provider_failure_kind(text)
+    if kind:
+        return f"{kind} (redacted provider detail)"
+    redaction_markers = (
+        "/Users/",
+        "/private/",
+        ".key",
+        "api key",
+        "x-api-key",
+        "x-goog-api-key",
+        "authorization",
+        "bearer ",
+    )
+    lowered = text.lower()
+    if any(marker.lower() in lowered for marker in redaction_markers):
+        digest = hashlib.sha256(text.encode("utf-8")).hexdigest()[:12]
+        return f"[redacted diagnostic len={len(text)} sha256={digest}]"
+    if len(text) > 160:
+        return text[:157] + "..."
+    return text
 
 
 def task_rows(task_panel: dict[str, Any]) -> list[dict[str, Any]]:
@@ -204,12 +240,12 @@ def matches_expected_arguments(args: dict[str, Any], task: dict[str, Any]) -> bo
     return True
 
 
-def read_key_file_map() -> dict[str, str]:
+def read_key_file_map() -> dict[str, Any]:
     path = Path(os.getenv("ADL_HOSTED_PROVIDER_KEYS_FILE", str(DEFAULT_KEY_FILES))).expanduser()
     if not path.is_file():
         return {}
     doc = load_json(path)
-    return {str(k): str(v) for k, v in (doc.get("keys") or {}).items()}
+    return {str(k): v for k, v in (doc.get("keys") or {}).items()}
 
 
 def extract_key_value(env_name: str, path: Path) -> str:
@@ -224,12 +260,28 @@ def extract_key_value(env_name: str, path: Path) -> str:
     return ""
 
 
+def hosted_key_file_env_var(env_name: str, entry: Any) -> str:
+    if isinstance(entry, dict):
+        file_env = entry.get("file_env_var")
+        if isinstance(file_env, str) and file_env:
+            return file_env
+    return f"ADL_{env_name}_FILE"
+
+
 def hosted_key(env_name: str) -> str:
     if os.getenv(env_name):
         return os.environ[env_name]
-    key_path = read_key_file_map().get(env_name)
-    if not key_path:
-        raise RuntimeError(f"missing required environment variable or key-file mapping: {env_name}")
+    entry = read_key_file_map().get(env_name)
+    key_path: str | None
+    if isinstance(entry, str):
+        key_path = entry
+    else:
+        file_env_var = hosted_key_file_env_var(env_name, entry)
+        key_path = os.getenv(file_env_var)
+        if not key_path:
+            raise RuntimeError(
+                f"missing required environment variable {env_name} or hosted key-file env {file_env_var}"
+            )
     path = Path(key_path).expanduser()
     if not path.is_file() or path.stat().st_size == 0:
         raise RuntimeError(f"configured key file is missing or empty for {env_name}")
@@ -473,12 +525,14 @@ def classify_uts(task: dict[str, Any], parsed: Any) -> tuple[str, bool, str]:
 
 def provider_failure_kind(note: str) -> str | None:
     lower = note.lower()
+    if "api_key" in lower or "api key" in lower or "unauthorized" in lower or "missing required environment variable" in lower:
+        return "provider_auth_missing"
+    if "missing or empty" in lower and "key file" in lower:
+        return "provider_auth_missing"
     if "does not exist" in lower or "model" in lower and "not" in lower and "found" in lower:
         return "provider_model_unavailable"
     if "credit balance" in lower or "billing" in lower:
         return "provider_billing_blocked"
-    if "api_key" in lower or "api key" in lower or "unauthorized" in lower:
-        return "provider_auth_missing"
     if "timed out" in lower:
         return "provider_timeout"
     if "provider_" in lower or "status=" in lower:
@@ -536,7 +590,10 @@ def run_lane(entry: dict[str, Any], tasks: list[dict[str, Any]], lane: str) -> d
             duration_ms = None
             classification = "runtime_or_parse_failure"
             passed = False
-            note = str(exc)
+            failure_kind = provider_failure_kind(raw)
+            note = sanitize_artifact_note(raw, failure_kind)
+        else:
+            failure_kind = None
         cases.append({
             "task_id": task["id"],
             "started_at": case_started_at,
@@ -544,10 +601,11 @@ def run_lane(entry: dict[str, Any], tasks: list[dict[str, Any]], lane: str) -> d
             "classification": classification,
             "passed": passed,
             "duration_ms": duration_ms,
-            "raw_response_excerpt": raw[:400],
+            "raw_response_excerpt": redact_artifact_excerpt(raw),
+            "provider_failure_kind": failure_kind,
             "note": note,
         })
-    failure_kinds = [provider_failure_kind(str(case["note"])) for case in cases if case["classification"] == "runtime_or_parse_failure"]
+    failure_kinds = [case.get("provider_failure_kind") for case in cases if case["classification"] == "runtime_or_parse_failure"]
     if len(failure_kinds) == len(cases) and failure_kinds and all(kind == failure_kinds[0] and kind for kind in failure_kinds):
         return {"status": "provider_failed", "provider_failure_kind": failure_kinds[0], "started_at": lane_started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": cases[0]["note"]}
     passed_count = sum(1 for case in cases if case["passed"])
@@ -594,10 +652,24 @@ def free_port() -> int:
 
 @contextlib.contextmanager
 def hosted_ollama_adapter(entry: dict[str, Any]):
+    token = secrets.token_urlsafe(18)
+    prefix = f"/adapter/{token}"
+
     class Handler(http.server.BaseHTTPRequestHandler):
+        def _authorized_path(self, suffix: str) -> bool:
+            return self.path == f"{prefix}{suffix}"
+
+        def _write_json(self, status: int, payload: dict[str, Any]) -> None:
+            body = json.dumps(payload).encode("utf-8")
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
         def do_GET(self) -> None:
-            if self.path == "/api/tags":
-                body = json.dumps({
+            if self._authorized_path("/api/tags") or self._authorized_path("/api/ps"):
+                self._write_json(200, {
                     "models": [
                         {
                             "name": entry["model_id"],
@@ -608,21 +680,14 @@ def hosted_ollama_adapter(entry: dict[str, Any]):
                             "details": {"family": "hosted"},
                         }
                     ]
-                }).encode("utf-8")
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Content-Length", str(len(body)))
-                self.end_headers()
-                self.wfile.write(body)
+                })
                 return
-            body = json.dumps({"error": "not found"}).encode("utf-8")
-            self.send_response(404)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
+            self._write_json(403, {"error": "adapter token required"})
 
         def do_POST(self) -> None:
+            if not self._authorized_path("/api/generate"):
+                self._write_json(403, {"error": "adapter token required"})
+                return
             try:
                 length = int(self.headers.get("Content-Length", "0"))
                 payload = json.loads(self.rfile.read(length).decode("utf-8")) if length else {}
@@ -631,19 +696,10 @@ def hosted_ollama_adapter(entry: dict[str, Any]):
                 routed = dict(entry)
                 routed["model_id"] = model
                 output, _ = invoke_hosted(routed, prompt)
-                body = json.dumps({"response": output, "done": True}).encode("utf-8")
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Content-Length", str(len(body)))
-                self.end_headers()
-                self.wfile.write(body)
+                self._write_json(200, {"response": output, "done": True})
             except Exception as exc:  # noqa: BLE001
-                body = json.dumps({"error": str(exc)}).encode("utf-8")
-                self.send_response(502)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Content-Length", str(len(body)))
-                self.end_headers()
-                self.wfile.write(body)
+                failure_kind = provider_failure_kind(str(exc))
+                self._write_json(502, {"error": sanitize_artifact_note(str(exc), failure_kind)})
 
         def log_message(self, _format: str, *args: Any) -> None:
             return
@@ -653,7 +709,7 @@ def hosted_ollama_adapter(entry: dict[str, Any]):
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     try:
-        yield f"http://127.0.0.1:{port}"
+        yield f"http://127.0.0.1:{port}{prefix}"
     finally:
         server.shutdown()
         server.server_close()
@@ -663,7 +719,14 @@ def hosted_ollama_adapter(entry: dict[str, Any]):
 def simplify_governed_result(entry: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
     cases = []
     for case in result.get("cases", []):
-        cases.append({"task_id": case.get("task_id"), "classification": case.get("classification"), "passed": bool(case.get("passed")), "duration_ms": case.get("duration_ms"), "raw_response_excerpt": case.get("raw_response_excerpt"), "note": "; ".join(case.get("notes", []))})
+        cases.append({
+            "task_id": case.get("task_id"),
+            "classification": case.get("classification"),
+            "passed": bool(case.get("passed")),
+            "duration_ms": case.get("duration_ms"),
+            "raw_response_excerpt": redact_artifact_excerpt(case.get("raw_response_excerpt")),
+            "note": sanitize_artifact_note("; ".join(case.get("notes", []))),
+        })
     scorecard = result.get("scorecard") or {}
     run_status = str(result.get("run_status", "")).lower()
     if run_status == "skipped":
@@ -679,6 +742,17 @@ def simplify_governed_result(entry: dict[str, Any], result: dict[str, Any]) -> d
             "note": "governed runner returned no scorecard and no cases",
         }
     return {"status": "evaluated", "passed_count": scorecard.get("passed_count", 0), "total_cases": scorecard.get("total_cases", len(cases)), "full_support": bool(scorecard.get("supports_governed_tool_use", False)), "cases": cases}
+
+
+def sanitize_governed_raw_artifact(doc: dict[str, Any]) -> dict[str, Any]:
+    for model in doc.get("models", []):
+        for case in model.get("cases", []):
+            if "raw_response_excerpt" in case:
+                case["raw_response_excerpt"] = redact_artifact_excerpt(case.get("raw_response_excerpt"))
+            notes = case.get("notes")
+            if isinstance(notes, list):
+                case["notes"] = [sanitize_artifact_note(note) for note in notes]
+    return doc
 
 
 def run_governed_lane(entry: dict[str, Any], task_panel_file: Path, raw_path: Path) -> dict[str, Any]:
@@ -704,16 +778,17 @@ def run_governed_lane(entry: dict[str, Any], task_panel_file: Path, raw_path: Pa
         note = f"governed subprocess timed out after {timeout}s"
         if exc.stderr:
             note += f": {str(exc.stderr)[:300]}"
-        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_timeout", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": note, "raw_artifact": display_path(raw_path)}
+        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_timeout", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": sanitize_artifact_note(note, "governed_runner_timeout"), "raw_artifact": display_path(raw_path)}
     except Exception as exc:  # noqa: BLE001
-        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_failed", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": str(exc), "raw_artifact": display_path(raw_path)}
+        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_failed", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": sanitize_artifact_note(str(exc), "governed_runner_failed"), "raw_artifact": display_path(raw_path)}
     if completed.returncode != 0:
         note = (completed.stderr or completed.stdout or "governed subprocess failed")[:500].replace("\n", " ")
-        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_failed", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": note, "raw_artifact": display_path(raw_path)}
+        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_failed", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": sanitize_artifact_note(note, "governed_runner_failed"), "raw_artifact": display_path(raw_path)}
     try:
-        doc = load_json(raw_path)
+        doc = sanitize_governed_raw_artifact(load_json(raw_path))
+        raw_path.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
     except Exception as exc:  # noqa: BLE001
-        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_bad_output", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": str(exc), "raw_artifact": display_path(raw_path)}
+        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_bad_output", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": sanitize_artifact_note(str(exc), "governed_runner_bad_output"), "raw_artifact": display_path(raw_path)}
     models = doc.get("models", [])
     if not models:
         return {"status": "provider_failed", "provider_failure_kind": "governed_runner_empty", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": "governed runner wrote no model results", "raw_artifact": display_path(raw_path)}
@@ -785,7 +860,7 @@ def write_artifacts(report: dict[str, Any], out_path: Path) -> None:
                 f"- Completed: `{lane.get('completed_at')}`",
                 f"- Note: `{lane.get('note', '')}`",
                 "",
-                "| Task | Passed | Classification | Duration ms | Note | Raw response excerpt |",
+                "| Task | Passed | Classification | Duration ms | Note | Redacted response marker |",
                 "|---|---:|---|---:|---|---|",
             ])
             cases = lane.get("cases", [])
