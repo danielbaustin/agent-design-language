@@ -51,7 +51,7 @@ the project's capacity for rapid discovery.
 
 ## Source Inputs
 
-- `.adl/docs/TBD/ADL_LOGISTIC_SPLIT.md`
+- `docs/planning/ADL_LOGISTIC_SPLIT.md`
 - `docs/planning/ADL_FEATURE_LIST.md`
 - `docs/planning/TBD_PLAN_ALLOCATION_v0.91.2_TO_v0.95.md`
 - `docs/explainers/CSM.md`

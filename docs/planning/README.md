@@ -32,6 +32,8 @@ Active planning docs:
 
 Planning provenance docs:
 
+- `ADL_LOGISTIC_SPLIT.md` - tracked provenance copy of the original logistic
+  split thesis that feeds the post-`v0.95` repository split plan
 - `DEEP_AGENTS_COMPARATIVE_WAVE.md` - delivered/provenance planning note for
   the comparative wave that fed later bounded demos and remains useful only if
   a new public-positioning issue is opened
