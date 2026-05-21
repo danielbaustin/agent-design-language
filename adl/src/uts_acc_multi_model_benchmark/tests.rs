@@ -222,7 +222,7 @@ fn run_uts_acc_multi_model_benchmark_wrapper_uses_default_selection_path() {
             ("ADL_OLLAMA_BIN", script_path.as_ref()),
             ("ADL_UTS_ACC_BENCHMARK_MODELS", "fixture-model"),
         ],
-        || run_uts_acc_multi_model_benchmark(),
+        run_uts_acc_multi_model_benchmark,
     );
     assert_eq!(report.task_count, 11);
     assert_eq!(report.models.len(), report.candidate_count);
