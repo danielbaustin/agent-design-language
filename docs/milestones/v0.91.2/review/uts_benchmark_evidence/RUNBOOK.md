@@ -11,6 +11,8 @@ python3 adl/tools/uts_benchmark_runner.py <provider-kind> <models-file> <out-jso
 ```
 
 `adl/tools/run_uts_benchmark.sh` is only a convenience wrapper around the canonical runner. The old lane-specific Python scripts are retired and are not supported entrypoints.
+`adl/tools/benchmark/portable_benchmark_common.py` is an internal support
+module only and must not be treated as a second runner or review-proof command.
 
 ## Hosted provider credentials
 

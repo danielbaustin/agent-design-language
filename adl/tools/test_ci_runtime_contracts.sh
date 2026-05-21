@@ -9,8 +9,10 @@ import pathlib
 import re
 import sys
 
-workflow = pathlib.Path(sys.argv[1]).read_text()
+workflow_path = pathlib.Path(sys.argv[1])
+workflow = workflow_path.read_text()
 runner_test = pathlib.Path(sys.argv[2])
+workflow_root = workflow_path.parent
 
 def step_run(name: str) -> str:
     pattern = re.compile(
@@ -46,6 +48,17 @@ def step_if(name: str) -> str:
     if not match:
         raise SystemExit(f"missing workflow if condition for step: {name}")
     return match.group(1).strip()
+
+checkout_sha = "actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5"
+for candidate in sorted(workflow_root.glob("*.y*ml")):
+    text = candidate.read_text()
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("uses: actions/checkout@") and checkout_sha not in stripped:
+            raise SystemExit(
+                f"workflow must pin actions/checkout to the canonical SHA; "
+                f"found {stripped!r} in {candidate.name}"
+            )
 
 ordinary_test = step_run("test")
 expected_ordinary_test = (
