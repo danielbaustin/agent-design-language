@@ -11,7 +11,7 @@ v0.91.3 should execute as three bounded sprints:
 
 | Sprint | Title | Ordered Children | Goal |
 | --- | --- | --- | --- |
-| Sprint 1 | Transition Substrate | WP-01, WP-02, WP-03, WP-04 | Establish the schema, lifecycle, and DAG needed for one transition. |
+| Sprint 1 | Transition Substrate | WP-01, WP-02, WP-03, WP-04 | Establish the schema, actor-role seed, lifecycle, and DAG needed for one transition. |
 | Sprint 2 | Evidence, Review, And Memory | WP-05, WP-06, WP-07 | Make evidence, review, merge readiness, and ObsMem handoff explicit. |
 | Sprint 3 | First Proof And Handoff | WP-08, WP-09, WP-10, WP-11, WP-12, WP-13 | Apply process-readiness lessons, run the proof demo, review it, remediate findings, and hand v0.91.4 the hardening plan. |
 
@@ -39,6 +39,7 @@ Transition.
 Exit criteria:
 
 - transition manifest shape exists
+- actor and role references are present for material transition participants
 - card lifecycle semantics are preserved
 - transition DAG fixture exists
 - shard and barrier vocabulary is explicit

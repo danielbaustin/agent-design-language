@@ -33,6 +33,8 @@ Every implementation WP must identify:
 - which regression fixture proves old drift does not recur
 - whether combined-lane validation is required
 - how SRP/SOR truth flows into memory handoff
+- which actors participate, which roles they hold, and what evidence supports
+  their transition standing
 - how durable proof is tracked in Git under `workflow/c-sdlc/v0.91.4/`
 - whether the WP must emit or verify a signed trace bundle
 - how tracked evidence feeds ObsMem

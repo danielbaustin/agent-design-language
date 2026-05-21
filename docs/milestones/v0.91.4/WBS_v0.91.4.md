@@ -18,7 +18,7 @@ The goal is not more theory; it is a dependable development control plane.
 | WP-02 | Lifecycle validator hardening | tools | strict card and transition lifecycle validators | WP-01 |
 | WP-03 | Doctor and conductor state truth | tools | `pr doctor`, workflow-conductor, and sprint-conductor aligned on C-SDLC stages | WP-02 |
 | WP-04 | Editor skill repair reliability | tools | card editor skills repair drift without hand edits | WP-02 |
-| WP-05 | Shard ownership and interface freeze | tools/docs | enforceable shard write boundaries and synchronization rules | WP-03 |
+| WP-05 | Software Development Polis, shard ownership, and interface freeze | tools/docs | actor standing, enforceable shard write boundaries, and synchronization rules | WP-03 |
 | WP-06 | Evidence convergence, review synthesis, and signed trace proof | tools | repeatable evidence bundle, review synthesis flow, and minimal signed trace bundle | WP-05 |
 | WP-07 | Merge-readiness and PR gate hardening | tools | transition-aware merge gate preserving GitHub truth | WP-06 |
 | WP-08 | ObsMem transition memory integration | tools/docs | SRP/SOR/signed-trace memory handoff write/read contract | WP-06, WP-07 |
@@ -43,6 +43,7 @@ lessons:
 - no umbrella closeout without sprint review and state artifact truth
 - no isolated-test pass when combined-lane validation is the risk
 - no SRP/SOR memory handoff over stale card semantics
+- no actor-standing or shard-ownership claim without tracked transition evidence
 - no durable C-SDLC proof without tracked signed trace evidence
 - no default operation while durable workflow records still live only in local
   `.adl` state

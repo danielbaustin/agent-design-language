@@ -9,6 +9,7 @@ Planned demo surface.
 | Lifecycle validator hardening | WP-02 | Show invalid/stale lifecycle states are blocked or routed. | valid/invalid fixture report | planned |
 | Doctor/conductor routing | WP-03 | Show workflow state maps to the correct skill. | routing report | planned |
 | Editor repair lane | WP-04 | Show card drift repair without hand edits. | editor repair examples | planned |
+| Software Development Polis actor standing | WP-05 | Show transition actors have explicit roles, standing, authority boundaries, and proof duties. | actor-standing fixture and authority-boundary report | planned |
 | Shard ownership and interface freeze | WP-05 | Show parallel shards have explicit write boundaries and synchronization barriers. | shard ownership fixture and conflict report | planned |
 | Evidence convergence and review synthesis | WP-06 | Show transition evidence, review findings, and residual risks converge into a tracked proof packet. | evidence bundle and synthesis output | planned |
 | Merge-readiness and PR gate hardening | WP-07 | Show PR readiness preserves issue, branch, CI, review, evidence, trace, and closeout truth. | merge-readiness gate fixture/report | planned |

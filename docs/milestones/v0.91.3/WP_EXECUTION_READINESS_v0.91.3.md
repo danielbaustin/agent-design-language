@@ -23,6 +23,8 @@ The first-slice work must additionally prove:
 
 - transition identity is stable and repo-relative
 - transition manifest links all five cards
+- transition manifest or evidence identifies material actor roles without
+  claiming the full v0.91.4 actor-standing model
 - transition DAG identifies serial steps, shards, and barriers
 - shard ownership prevents overlapping writes unless explicitly synchronized
 - evidence bundle records commands, artifacts, review results, and residual risk

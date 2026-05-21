@@ -223,7 +223,7 @@ work_packages:
   issue: 3022
   title: Next milestone planning
   queue: docs
-  outcome: v0.92/v0.93 handoff update
+  outcome: v0.91.3 handoff update with v0.91.4 completion context
   depends_on: WP-22
 - wp: WP-24
   issue: 3023

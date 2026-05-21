@@ -6,6 +6,7 @@ Feature docs:
 
 - [Cognitive SDLC Default Operation](COGNITIVE_SDLC_DEFAULT_OPERATION.md)
 - [C-SDLC Validation And Routing Hardening](CSDL_VALIDATION_AND_ROUTING_HARDENING.md)
+- [Software Development Polis And Actor Standing](SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md)
 - [Shard Ownership And Interface Freeze](SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md)
 - [Evidence Convergence, Review Synthesis, And Signed Trace Proof](EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md)
 - [Merge-Readiness And PR Gate Hardening](MERGE_READINESS_AND_PR_GATE_HARDENING.md)

@@ -12,6 +12,7 @@ surface, plus one combined C-SDLC lane before closeout.
 Required validation categories:
 
 - schema/fixture validation for transition manifests
+- actor-role reference checks for material transition participants
 - validator tests for valid and invalid lifecycle states
 - DAG/shard fixture tests
 - evidence bundle serialization or snapshot validation
@@ -35,6 +36,8 @@ Before release-tail closeout:
 The milestone is blocked if:
 
 - a combined C-SDLC validation lane fails
+- first-slice manifest or evidence omits material actor/role references or
+  overclaims full actor-standing enforcement before v0.91.4
 - SRP semantics drift back to Structured Review Policy
 - SORs overclaim merge or closeout truth
 - the demo bypasses issue/PR/CI/human review discipline

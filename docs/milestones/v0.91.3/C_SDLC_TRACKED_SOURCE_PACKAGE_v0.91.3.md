@@ -24,7 +24,8 @@ The v0.91.3 first slice is grounded in these source topics:
 | ADL Cognitive SDLC architecture | Defines C-SDLC as governed cognitive state transition, not a PR shortcut. |
 | Card lifecycle migration plan | Establishes `SIP -> STP -> SPP -> SRP -> SOR` as the canonical issue flow. |
 | Cognitive SDLC v1 plan | Bounds the implementation slice to transition schema, evidence, review, gate, and memory handoff. |
-| Cognitive Transition schema | Defines transition identity, manifest, DAG/shard model, evidence bundle, merge gate, and memory boundary. |
+| Cognitive Transition schema | Defines transition identity, manifest, actor/role references, DAG/shard model, evidence bundle, merge gate, and memory boundary. |
+| Software Development Polis architecture | Seeds actor/role references and authority boundaries for the first slice without claiming the full actor-standing model is complete. |
 | Five-minute sprint demo | Defines the flagship first proof while preserving review, replay, merge, and closeout discipline. |
 | C-SDLC metrics | Defines coordination, review, replay, throughput, and governance metrics. |
 | Issue card sequence note | Explains why each card has one job and feeds later review/recovery/memory. |
@@ -39,6 +40,7 @@ The transition must preserve:
 
 - GitHub issue and PR truth
 - branch/worktree truth
+- actor and role references for material human and AI participants
 - CI and validation truth
 - human review truth
 - the canonical card lifecycle
@@ -80,6 +82,26 @@ For `v0.91.3`, the first slice should produce or define tracked surfaces for:
 The first slice does not need to complete signed trace verification, but it must
 not design itself into a corner where durable C-SDLC proof remains local-only or
 unsigned forever.
+
+## First-Slice Actor And Role Boundary
+
+The first slice must identify the actors and roles that materially participate
+in the transition, but it must not pretend to solve the full Software
+Development Polis.
+
+At minimum, the transition manifest or evidence bundle should identify:
+
+- issue owner or operator
+- conductor or lifecycle router
+- implementation actor or shard owner
+- reviewer
+- verifier or validation owner
+- closeout owner
+
+These references are the first-slice seed for `v0.91.4` actor-standing work.
+They establish who did what, under which authority boundary, and with which
+proof obligation. Full standing classes, standing transitions, repeated sprint
+actor governance, and default-operation enforcement belong to `v0.91.4`.
 
 ## Provisional Durable Workflow Namespace
 
@@ -157,6 +179,7 @@ This tracked source package does not claim:
 
 - C-SDLC is already default operation
 - sprint-scoped `SPP` is mandatory or accepted as current target truth
+- the full Software Development Polis or actor-standing model is complete
 - signed trace verification is complete in v0.91.3
 - trace query/TQL is required before first-slice proof
 - any external collaboration workspace is required infrastructure
