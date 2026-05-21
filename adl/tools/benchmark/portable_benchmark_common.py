@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""Internal UTS benchmark support helpers.
+
+This module is import-only support for the canonical runner
+`adl/tools/uts_benchmark_runner.py`. It is not a supported execution entrypoint
+or release-proof surface by itself.
+"""
 import json
 import os
 import time
@@ -331,3 +337,11 @@ def write_markdown_reports(report, lane_title, support_key, out_path: Path):
 def write_markdown_report(report, lane_title, support_key, out_path: Path):
     summary_path, _ = write_markdown_reports(report, lane_title, support_key, out_path)
     return summary_path
+
+
+if __name__ == '__main__':
+    raise SystemExit(
+        'portable_benchmark_common.py is an internal support module; use '
+        'python3 adl/tools/uts_benchmark_runner.py or '
+        'adl/tools/run_uts_benchmark.sh instead.'
+    )

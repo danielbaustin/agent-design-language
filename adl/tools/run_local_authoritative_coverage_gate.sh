@@ -36,6 +36,7 @@ while [ "$#" -gt 0 ]; do
 done
 
 if [ "$PRINT_PLAN" = true ]; then
+  printf 'prereq_install=adl/tools/install_local_authoritative_coverage_prereqs.sh\n'
   printf 'runner=adl/tools/run_authoritative_coverage_lane.sh\n'
   printf 'gate=adl/tools/enforce_coverage_gates.sh coverage-summary.json\n'
   printf 'summary_copy=adl/target/local-authoritative-coverage-summary.json\n'
@@ -54,20 +55,11 @@ cargo llvm-cov --version >/dev/null 2>&1 || {
   echo "cargo-llvm-cov is required for local authoritative coverage validation" >&2
   exit 1
 }
-
-ensure_cargo_nextest() {
-  if cargo nextest --version >/dev/null 2>&1; then
-    return 0
-  fi
-  echo "cargo-nextest not found; installing it locally for authoritative coverage validation..."
-  cargo install cargo-nextest --locked
-  cargo nextest --version >/dev/null 2>&1 || {
-    echo "cargo-nextest installation did not produce a runnable cargo nextest command" >&2
-    exit 1
-  }
+cargo nextest --version >/dev/null 2>&1 || {
+  echo "cargo-nextest is required for local authoritative coverage validation" >&2
+  echo "Run adl/tools/install_local_authoritative_coverage_prereqs.sh or install cargo-nextest explicitly before rerunning this gate." >&2
+  exit 1
 }
-
-ensure_cargo_nextest
 
 rm -f "$TMP_SUMMARY" "$SUMMARY_PATH"
 trap 'rm -f "$TMP_SUMMARY"' EXIT
