@@ -29,6 +29,9 @@ This feature should establish:
   sandbox/runtime isolation, provider trust, and secrets/data governance
 - explicit integration boundaries with signed trace/query, reasoning graphs,
   and later distributed execution rather than leaving security as a sidecar
+- convergence of binary ACIP, WebSocket transport, public schema catalogs,
+  per-message authorization, cryptographic trust, and signed/queryable trace
+  into one auditable secure-execution path
 - a reviewer-facing truth boundary for what `v0.94` does and does not claim
 
 ## Non-goals
@@ -39,6 +42,20 @@ This feature should establish:
   trace consequences
 - pushing core trust-boundary decisions back into undocumented environment
   folklore
+- treating provider WebSocket sessions or transport connectivity as execution
+  authority without ADL schema, policy, crypto, trace, and replay evidence
+
+## WebSocket/ACIP Convergence
+
+By `v0.94`, ADL's secure-execution story should be able to explain a
+WebSocket-carried ACIP message end to end: public schema lookup, binary decode,
+identity and policy evaluation, cryptographic acceptance, replay/sequence
+handling, execution admission or denial, signed trace emission, and queryable
+review evidence.
+
+This does not require WebSocket to be the only transport. It means WebSocket is
+no longer a sidecar experiment if used: it must obey the same public schema,
+authority, trace, and review rules as every other ADL communication path.
 
 ## Completion Target
 
