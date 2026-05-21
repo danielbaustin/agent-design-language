@@ -5,9 +5,12 @@
 Active milestone package. v0.91.2 is the follow-on pressure-release milestone
 after v0.91.1. The WP issue wave was opened as `#3000` through `#3023`, and the
 sprint-conductor umbrella issues were opened as `#3025` through `#3028`. Sprint
-4 is moving to `WP-20` internal review: `WP-17`, the bounded `WP-17A` demo
-follow-on, `WP-18`, and `WP-19` are closed; external review, remediation, next-milestone
-planning, and ceremony work remain.
+4 is in corrective review/remediation: `WP-17`, the bounded `WP-17A` demo
+follow-on, `WP-18`, and `WP-19` are closed; the first `WP-20` internal review
+packet was too thin for external handoff; `WP-20B` is the controlling full
+internal review packet; and accepted `WP-20B` findings must be fixed and
+rechecked before `WP-21` external review. External review, remediation,
+next-milestone planning, and ceremony work remain.
 
 ## Purpose
 
@@ -109,6 +112,8 @@ This package is grounded in:
 - Release readiness: [RELEASE_READINESS_v0.91.2.md](RELEASE_READINESS_v0.91.2.md)
 - Release evidence: [RELEASE_EVIDENCE_v0.91.2.md](RELEASE_EVIDENCE_v0.91.2.md)
 - Release notes: [RELEASE_NOTES_v0.91.2.md](RELEASE_NOTES_v0.91.2.md)
+- Third-party review handoff:
+  [ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md](ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md)
 - Next milestone handoff:
   [NEXT_MILESTONE_HANDOFF_v0.91.2.md](NEXT_MILESTONE_HANDOFF_v0.91.2.md)
 - End-of-milestone report:
@@ -116,13 +121,15 @@ This package is grounded in:
 
 ## Success Criteria
 
-v0.91.2 is ready to close when the project has credible multi-model UTS+ACC
-evidence, a healthier test/runtime gate strategy, a review/productization path,
-a bounded Workspace CMS bridge with reusable operational guidance,
-Moderne/OpenRewrite LST modernization and publication packages, and
-workflow guardrails that reduce the operational failures that slowed v0.90.5
-and v0.91, plus a reviewable ADR candidate packet for the durable architecture
-decisions introduced or clarified by the milestone.
+v0.91.2 is ready to close only when the project has credible multi-model
+UTS+ACC evidence, a healthier test/runtime gate strategy, a
+review/productization path, a bounded Workspace CMS bridge with reusable
+operational guidance, Moderne/OpenRewrite LST modernization and publication
+packages, workflow guardrails that reduce the operational failures that slowed
+v0.90.5 and v0.91, a reviewable ADR candidate packet for the durable
+architecture decisions introduced or clarified by the milestone, and completed
+review/remediation/ceremony truth. Accepted `WP-20B` findings must be fixed or
+explicitly dispositioned before external review or release ceremony claims.
 
 Execution note: WP-01 opened and carded the issue wave. Each WP starts only
 when routed through `workflow-conductor`, bound with `pr run`, reviewed before

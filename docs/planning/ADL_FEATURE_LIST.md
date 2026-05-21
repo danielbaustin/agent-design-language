@@ -56,8 +56,9 @@ The current repo truth is:
 - current crate version on the active release line: `0.91.2`
 - current milestone state: `v0.91.1` is complete and `v0.91.2` is active; the
   full `WP-01` / `#3000` through `WP-24` / `#3023` issue wave is opened, Sprint
-  4 has closed `WP-17`, `WP-17A`, `WP-18`, and `WP-19`, leaving `WP-20` as the
-  next internal-review step
+  4 has closed `WP-17`, `WP-17A`, `WP-18`, and `WP-19`; the initial `WP-20`
+  internal review is superseded for handoff truth by `WP-20B`, and external
+  review is blocked until accepted `WP-20B` findings are fixed and rechecked
 - most recently completed inhabited-runtime milestone package: `v0.91.1`
 - most recently completed moral-governance milestone package: `v0.91`
 - most recently completed governed-tools milestone package: `v0.90.5`

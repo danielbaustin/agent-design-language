@@ -146,12 +146,14 @@ from issue
 
 v0.91.2 is the active pressure-release milestone. Its issue wave was opened as
 `#3000` through `#3023`, with sprint-conductor umbrella issues `#3025` through
-`#3028`. Sprint 4 is now moving from release-tail documentation cleanup into
-internal review: `WP-17`, `WP-17A`, `WP-18`, and `WP-19` are closed, and
-`WP-20` through `WP-24` remain before release closeout. The milestone
-focuses on UTS + ACC benchmarking, runtime/test-cycle recovery, CodeFriend
-productization, Workspace bridge work, modernization, publication packets,
-rustdoc/doc cleanup, repo-visibility follow-on work, and workflow guardrails.
+`#3028`. Sprint 4 is in the review/remediation tail: `WP-17`, `WP-17A`,
+`WP-18`, and `WP-19` are closed; the initial `WP-20` internal review has been
+superseded for handoff truth by the corrective `WP-20B` full internal review;
+and accepted `WP-20B` findings must be fixed and rechecked before `WP-21`
+external review. The milestone focuses on UTS + ACC benchmarking,
+runtime/test-cycle recovery, CodeFriend productization, Workspace bridge work,
+modernization, publication packets, rustdoc/doc cleanup, repo-visibility
+follow-on work, and workflow guardrails.
 
 Start here:
 
@@ -159,6 +161,7 @@ Start here:
 - [v0.91.2 issue wave](docs/milestones/v0.91.2/WP_ISSUE_WAVE_v0.91.2.yaml)
 - [v0.91.2 sprint plan](docs/milestones/v0.91.2/SPRINT_v0.91.2.md)
 - [v0.91.2 sprint-conductor plan](docs/milestones/v0.91.2/SPRINT_CONDUCTOR_EXECUTION_PLAN_v0.91.2.md)
+- [v0.91.2 third-party review handoff](docs/milestones/v0.91.2/ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md)
 
 ### v0.91.1 - Completed Inhabited Runtime Readiness Milestone
 
@@ -238,8 +241,9 @@ production markets.
 - Active milestone: v0.91.2
 - Current crate version: 0.91.2
 - Most recently completed milestone: v0.91.1
-- Current release-tail state: v0.91.2 Sprint 4 moves to WP-20 internal review
-  after closed WP-17/WP-17A/WP-18/WP-19 release-tail work
+- Current release-tail state: v0.91.2 Sprint 4 is in corrective
+  review/remediation after WP-20B; external review should wait until the
+  accepted WP-20B findings are fixed and rechecked
 - Previous completed milestone: v0.90.5
 - Primary implementation language: Rust
 

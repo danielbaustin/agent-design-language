@@ -1,11 +1,17 @@
 # v0.91.2 WP-20 Internal Review Report
 
-Status: superseded as the controlling `WP-21` handoff surface by
-`docs/milestones/v0.91.2/review/internal_review_full/`.
+## Supersession Status
+
+This file is historical `WP-20` review context. The first `WP-20` packet was
+too thin for external handoff and is superseded for readiness decisions by
+`docs/milestones/v0.91.2/review/internal_review_full/`. Do not use this file as
+standalone approval to start `WP-21`.
 
 ## Verdict
 
 Do not treat this thin `WP-20` report as the controlling go-forward signal.
+External review should wait until accepted `WP-20B` findings are fixed and
+rechecked.
 
 Do not claim release readiness yet.
 
@@ -22,5 +28,7 @@ Do not claim release readiness yet.
 
 ## Next Step
 
-If `WP-21` continues, use `WP21_EXTERNAL_REVIEW_HANDOFF.md` together with the
-`WP-20B` full internal review packet as the controlling evidence surface.
+Do not start WP-21 from this report or the nested
+`WP21_EXTERNAL_REVIEW_HANDOFF.md`. Use the top-level
+`docs/milestones/v0.91.2/ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md` after the
+accepted `WP-20B` findings are fixed and rechecked.

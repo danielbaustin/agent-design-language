@@ -31,7 +31,7 @@ productize, publish, and maintain.
 | L | General intelligence paper packet | Advance the Mathematical Theory of General Intelligence source packet. | claim/citation/review-ready paper packet | K |
 | M | Rustdoc and documentation cleanup | Address rustdoc gaps and tracked doc hygiene debt. | doc cleanup report and patches | D |
 | N | Workflow guardrails | Prevent main writes, unsafe shell report generation, hung watchers, and card drift. | guardrail implementation and process docs | C, D |
-| O | Review, quality, and release | Validate the milestone, remediate findings, and hand off later work. | review-ready release package | all prior work |
+| O | Review, quality, and release | Validate the milestone, remediate findings, and hand off later work. | review/remediation/release package with WP-20B truth preserved | all prior work |
 
 ## Candidate WP Sequence
 
@@ -55,9 +55,9 @@ productize, publish, and maintain.
 | WP-16 (#3015) | Workflow guardrails hardening | tools | main-write, watcher, and safe-report guardrails | WP-04, WP-05 |
 | WP-17 (#3016) | Demo matrix and proof coverage | demo | demo matrix and proof coverage record | WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16 |
 | WP-18 (#3017) | Coverage / quality gate | quality | validation posture and test/coverage record | WP-17 |
-| WP-19 (#3018) | Docs + review pass | docs | review-ready docs package | WP-18 |
-| WP-20 (#3019) | Internal review | review | internal review record | WP-19 |
-| WP-21 (#3020) | External / 3rd-party review | review | external review handoff and record | WP-20 |
+| WP-19 (#3018) | Docs + review pass | docs | docs review-entry package; later corrected by WP-20B truth updates | WP-18 |
+| WP-20 (#3019) | Internal review | review | internal review record; first packet superseded for handoff by `WP-20B` | WP-19 |
+| WP-21 (#3020) | External / 3rd-party review | review | external review handoff and record after accepted `WP-20B` findings are fixed and rechecked | WP-20 plus corrective `WP-20B` gate |
 | WP-22 (#3021) | Review findings remediation | review | remediation record and follow-up issues | WP-21 |
 | WP-23 (#3022) | Next milestone planning | docs | v0.92/v0.93 handoff update | WP-22 |
 | WP-24 (#3023) | Release ceremony | release | release evidence and end-of-milestone report | WP-23 |
@@ -70,6 +70,11 @@ productize, publish, and maintain.
 | Sprint 2 | #3026 | Review Product, Workspace Bridge, And Modernization | WP-06, WP-07, WP-08, WP-09, WP-10 |
 | Sprint 3 | #3027 | Runtime Ergonomics, Publication, Docs, And Workflow Guardrails | WP-11, WP-12, WP-13, WP-14, WP-15, WP-16 |
 | Sprint 4 | #3028 | Review, Remediation, Planning, And Release | WP-17, WP-18, WP-19, WP-20, WP-21, WP-22, WP-23, WP-24 |
+
+Corrective review note: the original issue wave did not include `WP-20B`.
+`WP-20B` now controls handoff truth because the first `WP-20` packet was too
+thin for external review. `WP-21` must not start until accepted `WP-20B`
+findings are fixed and rechecked.
 
 ## Sequencing Pressure
 

@@ -1,5 +1,12 @@
 # v0.91.2 WP-20 Demo And Proof Register
 
+## Supersession Status
+
+This file is historical `WP-20` review context. The first `WP-20` packet was
+too thin for external handoff and is superseded for readiness decisions by
+`docs/milestones/v0.91.2/review/internal_review_full/`. Do not use this file as
+standalone approval to start `WP-21`.
+
 ## Result
 
 The milestone has a reviewable demo/proof map.
@@ -13,4 +20,5 @@ The milestone has a reviewable demo/proof map.
 
 ## Review Judgment
 
-The proof map is sufficient for external review. It is not a release ceremony substitute.
+The proof map is useful review input. It is not sufficient by itself for clean
+external review after `WP-20B`, and it is not a release ceremony substitute.

@@ -71,9 +71,13 @@ Evidence:
 - `docs/milestones/v0.91.2/review/internal_review/REVIEW_PACKET.md:5`
 - `docs/milestones/v0.91.2/review/internal_review/WP21_EXTERNAL_REVIEW_HANDOFF.md:5`
 
-The older WP-20 packet still says to proceed to WP-21, while WP-20B exists specifically because that review was incomplete.
+At WP-20B review time, the older WP-20 packet still said to proceed to WP-21,
+while WP-20B existed specifically because that review was incomplete. Current
+handoff docs must keep the older packet marked as superseded and keep WP-21
+blocked until accepted WP-20B findings are fixed and rechecked.
 
-Impact: external reviewers may be handed a stale readiness story unless WP-20B findings are made controlling.
+Impact: external reviewers may be handed a stale readiness story unless WP-20B
+findings remain controlling and the accepted fixes are rechecked before review.
 
 Route: WP-21/WP-22 handoff update.
 
