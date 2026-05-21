@@ -644,6 +644,66 @@ fn real_pr_init_existing_stp_is_left_untouched() {
 }
 
 #[test]
+fn real_pr_init_refreshes_legacy_bootstrap_spp() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-real-init-refresh-spp");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    let issue_ref = IssueRef::new(
+        1151,
+        "v0.86".to_string(),
+        "v0-86-tools-init-refresh-spp".to_string(),
+    )
+    .expect("issue ref");
+    let spp_path = issue_ref.task_bundle_plan_path(&repo);
+    fs::create_dir_all(spp_path.parent().expect("parent")).expect("bundle dir");
+    fs::write(
+        &spp_path,
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_planning_prompt"
+branch: "not bound yet"
+---
+
+# Structured Plan Prompt
+
+Bootstrap-generated SPP.
+
+Bootstrap planning surface for this issue.
+
+Review the issue bundle and tighten the planned execution sequence.
+"#,
+    )
+    .expect("write legacy spp");
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let result = real_pr(&[
+        "init".to_string(),
+        "1151".to_string(),
+        "--slug".to_string(),
+        "v0-86-tools-init-refresh-spp".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Init refresh SPP".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ]);
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    result.expect("real_pr init refresh spp");
+
+    let spp = fs::read_to_string(&spp_path).expect("read refreshed spp");
+    assert!(
+        spp.contains("Design-time operative plan"),
+        "legacy SPP should be replaced with a design-time plan"
+    );
+    assert!(
+        !spp.contains("Bootstrap-generated SPP"),
+        "legacy bootstrap wording should be removed"
+    );
+}
+
+#[test]
 fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-create");
@@ -718,6 +778,32 @@ fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
         repo.join(".adl/v0.86/tasks/issue-1202__v0-86-tools-simplified-init-path/spp.md")
             .is_file(),
         "create should bootstrap the root spp"
+    );
+    let spp = fs::read_to_string(
+        repo.join(".adl/v0.86/tasks/issue-1202__v0-86-tools-simplified-init-path/spp.md"),
+    )
+    .expect("read generated spp");
+    assert!(
+        spp.contains("Design-time operative plan"),
+        "create should generate a reviewable design-time SPP"
+    );
+    assert!(
+        spp.contains("Implement only the bounded deliverables: create-path validation"),
+        "SPP should derive implementation steps from source deliverables"
+    );
+    assert!(
+        spp.contains(
+            "Run focused proof gates for acceptance: invalid issue bodies are rejected early"
+        ),
+        "SPP should derive proof gates from acceptance criteria"
+    );
+    assert!(
+        spp.contains("Stop and update SPP if touched files, proof gates, or validation commands change materially."),
+        "SPP should include runtime replan triggers"
+    );
+    assert!(
+        !spp.contains("Bootstrap-generated SPP"),
+        "SPP should not be the legacy generic scaffold"
     );
     assert!(
         repo.join(".adl/v0.86/tasks/issue-1202__v0-86-tools-simplified-init-path/srp.md")

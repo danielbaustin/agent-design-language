@@ -11,6 +11,9 @@ Its job is to:
 - normalize `SPP` structure and planning truth
 - preserve the canonical manual `SPP` schema shape used by the first v0.91
   samples
+- preserve and tighten design-time `SPP` plans generated during issue bootstrap
+  from the source issue prompt, dependencies, deliverables, acceptance criteria,
+  validation expectations, and non-goals
 - preserve `SPP` as a planning artifact rather than an execution log
 - validate and normalize `codex_plan` status values
 - tighten dependencies, assumptions, test strategy, stop conditions, and review
@@ -66,6 +69,8 @@ This skill may:
 - normalize assumptions, dependencies, source references, scope, risks, test
   strategy, stop conditions, and review hooks
 - align `SPP` wording with current pre-execution or plan-review state
+- tighten generated design-time plan steps, proof gates, stop conditions, and
+  replan triggers when explicit issue evidence supports the change
 - remove placeholders and stale execution or branch-binding claims
 
 This skill must not:

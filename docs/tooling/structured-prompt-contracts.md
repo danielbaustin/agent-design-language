@@ -212,9 +212,14 @@ text lines, includes:
 Freshly bootstrapped issues may report `SIP` and `SPP` as `pre_run` while the
 branch/worktree is still unbound. That state is not an editor-fixable defect by
 itself; it records that the issue is structurally ready for `pr run`, where the
-execution branch and worktree make those cards concrete. In contrast,
-branch-bound SPP/SRP drift with a `next_editor` remains a real card-local
-blocker and must be routed through the matching editor skill.
+execution branch and worktree make those cards concrete.
+
+The bootstrapped `SPP` should still be useful design-time plan truth. It should
+be generated from source issue context rather than from a generic placeholder,
+so reviewers can inspect the execution sequence, proof gates, and replan
+triggers before work starts. In contrast, branch-bound SPP/SRP drift with a
+`next_editor` remains a real card-local blocker and must be routed through the
+matching editor skill.
 
 Legacy SRP policy scaffolds remain validator-compatible while migration is in
 progress, but doctor output must classify them as `legacy_compatible` rather

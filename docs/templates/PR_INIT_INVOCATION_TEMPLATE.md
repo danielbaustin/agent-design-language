@@ -207,6 +207,13 @@ It must stop after:
 - root bundle creation
 - bootstrap validation
 
+The created bundle includes an initial `SPP`. That `SPP` is not a generic
+placeholder: it should be a deterministic design-time execution plan generated
+from the source issue prompt, dependencies, deliverables, acceptance criteria,
+validation expectations, and non-goals. Reviewers may tighten it before
+execution. Runtime agents must update it before continuing if the real execution
+sequence changes.
+
 It must not continue into:
 - qualitative card review
 - branch creation
