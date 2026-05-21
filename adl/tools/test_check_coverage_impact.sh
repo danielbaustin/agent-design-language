@@ -84,6 +84,8 @@ gws_live_changed="$TMP/gws-live-changed.txt"
 cat >"$gws_live_changed" <<'EOF'
 A	adl/src/gws_live_capability_execution_surface.rs
 M	adl/src/gws_live_content_card_roundtrip.rs
+M	adl/src/gws_live_content_card_roundtrip/logic.rs
+M	adl/src/gws_live_content_card_roundtrip/types.rs
 EOF
 gws_live_filters="$TMP/gws-live-filters.txt"
 bash "$SCRIPT" --changed-files "$gws_live_changed" --print-risk-filters >"$gws_live_filters"

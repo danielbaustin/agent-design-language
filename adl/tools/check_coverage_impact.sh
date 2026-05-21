@@ -171,7 +171,7 @@ candidate_filter_for_path() {
     adl/src/runtime_v2/private_state_sanctuary/*.rs)
       printf 'private_state_sanctuary'
       ;;
-    adl/src/gws_live_capability_execution_surface.rs|adl/src/gws_live_content_card_roundtrip.rs|adl/src/gws_live_safety_package.rs|adl/src/gws_live_test_support.rs)
+    adl/src/gws_live_capability_execution_surface.rs|adl/src/gws_live_content_card_roundtrip.rs|adl/src/gws_live_content_card_roundtrip/*.rs|adl/src/gws_live_safety_package.rs|adl/src/gws_live_test_support.rs)
       printf 'gws_live'
       ;;
     adl/src/cli/mod.rs|adl/src/cli/tests.rs)
@@ -336,6 +336,7 @@ if [ "$PRINT_RISK_FILTERS" = true ]; then
     | while IFS=$'\t' read -r _status path _lines _delta _reason; do
         [ -n "$path" ] || continue
         candidate_filter_for_path "$path"
+        printf '\n'
       done \
     | awk '!seen[$0]++'
   exit 0
