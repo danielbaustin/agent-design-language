@@ -12,10 +12,9 @@
 Prove one governance-complete Cognitive State Transition inside ADL's existing
 GitHub issue/PR workflow.
 
-The slice is implementation evidence for a broader theory, not the theory
-itself. C-SDLC remains implementation-independent: ADL uses Git as the current
-state substrate, structured prompts as state-transition operators, and typed
-work packets to reduce coordination entropy.
+This slice is the first practical ADL implementation of the C-SDLC model. It
+uses Git as the observable state substrate, structured prompts as transition
+instructions, and typed work packets to make coordination explicit.
 
 ## Core Contract
 

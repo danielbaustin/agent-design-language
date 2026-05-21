@@ -23,24 +23,24 @@ The goal is not faster unchecked code generation. The goal is higher software
 throughput while preserving reviewability, auditability, replay, and
 governance.
 
-## Theory Framing
+## Implementation Framing
 
-C-SDLC is implementation-independent. ADL's Git/GitHub workflow is an
-implementation and evidence source, not the theory itself.
+The general C-SDLC idea is portable, but this docs set describes the ADL
+implementation we are building in `v0.91.3` and `v0.91.4`.
 
-The theory treats software work as explicit state transition:
+For this implementation:
 
-- Git can serve as a state substrate because branches, commits, diffs, pull
-  requests, and merges expose observable lifecycle transitions.
-- Structured prompts are state-transition operators: they bind role, intent,
-  context, constraints, proof obligations, and stop conditions to the next
-  bounded move.
+- Git and GitHub provide the observable state substrate: branches, commits,
+  diffs, pull requests, and merges expose the lifecycle transitions we can
+  review.
+- Structured prompts are the transition instructions for each bounded step:
+  they bind role, intent, context, constraints, proof obligations, and stop
+  conditions.
 - Typed work packets such as issue cards, review packets, evidence bundles, and
-  closeout records reduce coordination entropy by making implicit human
-  coordination explicit and inspectable.
-- Amdahl-style reasoning matters because agentic throughput improves only when
-  the serial coordination fraction is reduced and the remaining work is
-  bounded, parallelizable, reviewable, and mergeable.
+  closeout records make coordination explicit and inspectable.
+- Throughput work must track the serial coordination fraction, because more
+  agents help only when work is bounded, parallelizable, reviewable, and
+  mergeable.
 
 ## Canonical Lifecycle
 
@@ -65,7 +65,7 @@ orchestration, review-result truth, or output truth.
 
 C-SDLC requires durable, replayable workflow state when records are needed for
 governance, review, closeout, release evidence, signed trace proof, or ObsMem
-ingestion. The general theory does not require a specific storage backend.
+ingestion. The general model does not require a specific storage backend.
 
 ADL's current implementation uses tracked Git state as the clearest substrate
 for observable workflow transitions because it is public to the repo,

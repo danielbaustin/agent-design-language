@@ -9,7 +9,7 @@ The milestone-specific migration plan is
 
 ## Decision
 
-The general C-SDLC theory requires durable, replayable workflow state. It does
+The general C-SDLC model requires durable, replayable workflow state. It does
 not require a specific storage backend.
 
 For ADL's current implementation, tracked Git state is the clearest available

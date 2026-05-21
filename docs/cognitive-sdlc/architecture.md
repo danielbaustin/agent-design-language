@@ -14,15 +14,15 @@ unit for AI-native software work. A C-SDLC transition wraps ordinary GitHub
 workflow with structured issue intent, selected task, operative plan, review,
 evidence, outcome truth, trace, and memory handoff.
 
-## Implementation Independence
+## Implementation Boundary
 
-C-SDLC is a lifecycle model, not a single tool or repository convention. ADL
-uses Git, GitHub issues, worktrees, pull requests, structured prompts, and
-review packets as the first implementation substrate because they already make
-many software-state transitions observable.
+The general C-SDLC model is portable, but ADL is building it first on top of
+Git, GitHub issues, worktrees, pull requests, structured prompts, and review
+packets. These surfaces already expose the state transitions ADL needs to
+govern.
 
-Other implementations can use different storage or coordination mechanics if
-they preserve the same properties:
+A different implementation can use different storage or coordination mechanics
+if it preserves the same properties:
 
 - durable state
 - bounded role-specific work
@@ -45,10 +45,9 @@ C-SDLC amplifies the existing repository workflow. It does not replace it.
 | C-SDLC records | Structured lifecycle, evidence, trace, and memory truth. |
 | Human review | Authority boundary for merge and governance judgment. |
 
-In this framing, Git is a state substrate rather than the whole lifecycle.
-Structured prompts act as state-transition operators over that substrate, and
-typed work packets reduce coordination entropy by turning hidden coordination
-into reviewable artifacts.
+In ADL's implementation, Git is a state substrate rather than the whole
+lifecycle. Structured prompts are transition instructions over that substrate,
+and typed work packets turn hidden coordination into reviewable artifacts.
 
 ## Software Development Polis
 

@@ -12,11 +12,10 @@ success metric.
 The key question is whether C-SDLC reduces coordination latency while
 preserving review, replay, merge, closeout, and memory integrity.
 
-C-SDLC should be evaluated with an Amdahl-style scaling lens. More agents or
-more hardware help only when the serial coordination fraction is reduced and
-the remaining work is decomposable, bounded, inspectable, and mergeable.
-Typed work packets are therefore not administrative overhead; they are part of
-the mechanism for reducing coordination entropy.
+C-SDLC should measure the serial coordination fraction. More agents or more
+hardware help only when the remaining work is decomposable, bounded,
+inspectable, and mergeable. Typed work packets should be treated as throughput
+infrastructure because they make coordination explicit.
 
 ## Metric Families
 
