@@ -163,6 +163,10 @@ filter_token_for_path() {
     adl/src/lib.rs)
       return 1
       ;;
+    adl/src/acc.rs|adl/src/acc/*.rs)
+      printf 'acc'
+      return 0
+      ;;
     adl/src/runtime_v2/mod.rs|adl/src/runtime_v2/tests.rs|adl/src/runtime_v2/validators.rs)
       printf 'runtime_v2'
       return 0

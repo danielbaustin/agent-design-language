@@ -159,6 +159,9 @@ changed_line_delta_for_path() {
 candidate_filter_for_path() {
   local path="$1"
   case "$path" in
+    adl/src/acc.rs|adl/src/acc/*.rs)
+      printf 'acc'
+      ;;
     adl/src/cli/pr_cmd*|adl/src/cli/tests/pr_cmd*|adl/src/cli/pr_cmd/*|adl/src/cli/pr_cmd_cards.rs|adl/src/cli/pr_cmd_cards/*.rs|docs/default_workflow.md)
       printf 'pr_cmd'
       ;;

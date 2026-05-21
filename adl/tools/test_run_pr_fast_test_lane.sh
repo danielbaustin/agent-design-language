@@ -52,6 +52,13 @@ assert_has "$split_wellbeing_output" "mode=focused"
 assert_has "$split_wellbeing_output" "filter_tokens=wellbeing_metrics"
 assert_has "$split_wellbeing_output" "filter_expression=test(wellbeing_metrics)"
 
+split_acc="$TMP/split_acc.txt"
+printf 'M\tadl/src/acc/validation.rs\n' >"$split_acc"
+split_acc_output="$(bash "$SCRIPT" --changed-files "$split_acc" --print-plan)"
+assert_has "$split_acc_output" "mode=focused"
+assert_has "$split_acc_output" "filter_tokens=acc"
+assert_has "$split_acc_output" "filter_expression=test(acc)"
+
 broad_runtime="$TMP/broad_runtime.txt"
 printf 'M\tadl/src/lib.rs\n' >"$broad_runtime"
 broad_runtime_output="$(bash "$SCRIPT" --changed-files "$broad_runtime" --print-plan)"
