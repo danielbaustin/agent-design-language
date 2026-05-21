@@ -5,7 +5,7 @@
 - Feature Name: Five-Minute Sprint First Proof
 - Milestone Target: `v0.91.3`
 - Status: planned
-- Planned WP Home: WP-09
+- Planned WP Home: WP-09 / #3207
 
 ## Purpose
 

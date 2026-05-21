@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned `v0.91.3` feature.
+Planned `v0.91.3` feature under `WP-06` / `#3204`.
 
 ## Purpose
 

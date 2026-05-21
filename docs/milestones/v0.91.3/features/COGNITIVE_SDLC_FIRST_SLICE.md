@@ -5,7 +5,7 @@
 - Feature Name: Cognitive SDLC First Slice
 - Milestone Target: `v0.91.3`
 - Status: planned
-- Planned WP Home: WP-01 through WP-13
+- Planned WP Home: WP-01 through WP-13 / #3199 through #3211
 
 ## Purpose
 

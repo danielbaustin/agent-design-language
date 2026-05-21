@@ -5,7 +5,7 @@
 - Feature Name: Cognitive Transition Manifest
 - Milestone Target: `v0.91.3`
 - Status: planned
-- Planned WP Home: WP-02 through WP-07
+- Planned WP Home: WP-02 through WP-07 / #3200 through #3205
 
 ## Purpose
 
