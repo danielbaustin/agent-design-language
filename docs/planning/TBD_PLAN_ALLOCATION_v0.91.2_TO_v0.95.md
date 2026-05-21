@@ -69,7 +69,7 @@ source notes to tracked execution homes.
 | `ADL_AND_SLEEP.md` | `v0.91.1` agent lifecycle/wellbeing provenance | Delivered/provenance, not an unowned future feature. |
 | `ADL_AND_SPECULATIVE_CODING_REPLAY.md` | `v0.91.2` WP-11 speculative decoding/replay lane | Allocated. |
 | `ADL_AND_WILDCLAW.md` | None before `v0.95` | Unallocated/deferred. Candidate home is a future external-benchmark or substrate-evidence lane after the current UTS benchmark and MVP proof surfaces stabilize. |
-| `ADL_LOGISTIC_SPLIT.md` | Post-`v0.95` strategic planning | Deferred. Preserve as roadmap strategy input; do not treat as active execution scope before MVP closure. |
+| `ADL_LOGISTIC_SPLIT.md` | `docs/planning/ADL_LOGISTIC_SPLIT.md` and `docs/planning/POST_V095_ADL_CSM_LOGISTIC_SPLIT_PLAN.md` | Promoted to tracked planning provenance plus a tracked post-`v0.95` repository split plan. The direction is to keep ADL stable enough to use while a split-off repo carries fast-moving work with regular mergeback. This is still not active execution scope before MVP closure and does not authorize code movement before the stable baseline. |
 | `ADL_WORKFLOW_STATE_HOME_DECISION_MEMO_2026-05-19.md` | `v0.91.3` / `v0.91.4` C-SDLC tracked workflow state planning | Allocated as planning source for the C-SDLC tracked workflow state migration. |
 | `ACIP_SCHEMA_CATALOG_AND_MESSAGE_ACCESS_RULES_2026-05-20.md` | `v0.92` ACIP binary schema and WebSocket transport feature | Allocated through `docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md`. |
 | `ADL_DOC_CLEANUP_LEDGER.md` | `v0.91.2` WP-15 rustdoc/doc cleanup | Allocated. |
@@ -124,8 +124,10 @@ before or through `v0.95`:
 - `ADL_AND_WILDCLAW.md`: useful external-benchmark pressure test, but no
   milestone issue currently owns a WildClawBench run or substrate-evidence
   interpretation.
-- `ADL_LOGISTIC_SPLIT.md`: explicitly post-`v0.95` strategy input, not current
-  MVP execution scope.
+- `ADL_LOGISTIC_SPLIT.md`: now has a tracked provenance copy at
+  `docs/planning/ADL_LOGISTIC_SPLIT.md` and a tracked post-`v0.95` repository
+  split plan at `docs/planning/POST_V095_ADL_CSM_LOGISTIC_SPLIT_PLAN.md`, but
+  remains explicitly post-`v0.95` and is not current MVP execution scope.
 - `AI_CHARACTER_AUDIT.md`: useful style/product signal, but no milestone issue
   currently owns it.
 - `V0912_ADR_PLAN_2026-05-13.md`: process-planning note for ADRs that should

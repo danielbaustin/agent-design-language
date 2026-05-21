@@ -26,9 +26,14 @@ Active planning docs:
   rewrite
 - `ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md` - cross-milestone Runtime v2,
   v0.91 moral/emotional, and v0.92 birthday boundary roadmap
+- `POST_V095_ADL_CSM_LOGISTIC_SPLIT_PLAN.md` - planned post-`v0.95`
+  repository split strategy for keeping ADL stable enough to use while a
+  split-off repo carries the fast-moving innovation lane with regular mergeback
 
 Planning provenance docs:
 
+- `ADL_LOGISTIC_SPLIT.md` - tracked provenance copy of the original logistic
+  split thesis that feeds the post-`v0.95` repository split plan
 - `DEEP_AGENTS_COMPARATIVE_WAVE.md` - delivered/provenance planning note for
   the comparative wave that fed later bounded demos and remains useful only if
   a new public-positioning issue is opened
