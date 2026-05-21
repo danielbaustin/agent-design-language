@@ -98,4 +98,3 @@ pub(super) fn validate_flagship_operator_report(
     }
     Ok(())
 }
-

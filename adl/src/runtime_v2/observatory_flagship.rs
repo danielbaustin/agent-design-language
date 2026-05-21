@@ -12,9 +12,7 @@ mod validation;
 
 pub use types::*;
 
-use report::{
-    render_observatory_flagship_operator_report, validate_flagship_operator_report,
-};
+use report::{render_observatory_flagship_operator_report, validate_flagship_operator_report};
 use validation::{
     validate_actor_roster, validate_feature_demo_coverage, validate_flagship_walkthrough,
     validate_relative_path_list, validate_required_flagship_refs,
