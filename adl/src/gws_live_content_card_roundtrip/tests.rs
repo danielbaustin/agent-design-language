@@ -12,10 +12,10 @@ use crate::gws_live_capability_execution_surface::{
 };
 use crate::gws_live_test_support::{lock_gws_live_test_env, EnvVarGuard};
 use crate::rust_native_gws_adapter_boundary::WorkspaceContentStatus;
-#[cfg(unix)]
-use std::os::unix::fs::PermissionsExt;
 use std::collections::VecDeque;
 use std::fs;
+#[cfg(unix)]
+use std::os::unix::fs::PermissionsExt;
 use std::sync::Mutex;
 
 struct QueueRunner {
@@ -590,7 +590,7 @@ fn gws_live_content_card_roundtrip_env_parser_edges() {
     let _scope_doc = EnvVarGuard::set(GWS_DOC_ID_ENV, "doc");
     let _scope_sheet = EnvVarGuard::set(GWS_SHEET_ID_ENV, "sheet");
     let _scope_range = EnvVarGuard::set(GWS_SHEET_RANGE_ENV, "ContentCards!A1:F5");
-    assert_eq!(parse_scope_binding_from_env().is_none(), false);
+    assert!(parse_scope_binding_from_env().is_some());
 
     let _scope_missing_doc = EnvVarGuard::remove(GWS_DOC_ID_ENV);
     assert!(parse_scope_binding_from_env().is_none());
@@ -752,12 +752,18 @@ fn gws_live_content_card_roundtrip_range_helpers_cover_invalid_inputs() {
     assert_eq!(column_label_to_index("12"), None);
     assert_eq!(column_label_to_index("A-"), None);
 
-    assert_eq!(derive_update_range("ContentCards:A1:F5"), "ContentCards:A1:F5");
+    assert_eq!(
+        derive_update_range("ContentCards:A1:F5"),
+        "ContentCards:A1:F5"
+    );
     assert_eq!(
         derive_update_range("ContentCards!A1:F"),
         "ContentCards!A2:F2"
     );
-    assert_eq!(derive_update_range("ContentCards!A:F5"), "ContentCards!A:F5");
+    assert_eq!(
+        derive_update_range("ContentCards!A:F5"),
+        "ContentCards!A:F5"
+    );
 }
 
 #[test]
@@ -828,7 +834,9 @@ fn gws_live_content_card_roundtrip_report_writer_creates_parent_dirs_with_system
         ),
     )
     .expect("write gws shim");
-    let mut permissions = fs::metadata(&script).expect("script metadata").permissions();
+    let mut permissions = fs::metadata(&script)
+        .expect("script metadata")
+        .permissions();
     permissions.set_mode(0o755);
     fs::set_permissions(&script, permissions).expect("chmod gws shim");
 
@@ -846,8 +854,13 @@ fn gws_live_content_card_roundtrip_report_writer_creates_parent_dirs_with_system
         .expect("write gws live content card roundtrip report");
 
     assert_eq!(report.roundtrip_skipped_reason, None);
-    assert!(report.apply_outcome.apply_result.persisted_to_live_workspace);
-    assert_eq!(report.write_approval.approval_checked, true);
+    assert!(
+        report
+            .apply_outcome
+            .apply_result
+            .persisted_to_live_workspace
+    );
+    assert!(report.write_approval.approval_checked);
 }
 
 #[test]
