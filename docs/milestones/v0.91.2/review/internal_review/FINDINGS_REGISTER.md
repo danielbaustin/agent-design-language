@@ -28,15 +28,15 @@ Route to WP-22 remediation or a bounded follow-on issue before release ceremony.
 
 Evidence:
 
-- `docs/milestones/v0.91.2/RELEASE_READINESS_v0.91.2.md` says accepted
-  `WP-20B` findings must be fixed and rechecked before external review.
+- `docs/milestones/v0.91.2/RELEASE_READINESS_v0.91.2.md` now says accepted
+  `WP-20B` remediation issues are closed while release readiness remains false.
 - `docs/milestones/v0.91.2/QUALITY_GATE_v0.91.2.md` says the current judgment is `NOT_READY`.
 
 Impact:
 
 This was correct lifecycle truth for the first `WP-20` packet, but it is no
-longer sufficient. `WP-20B` found accepted blockers that must be fixed and
-rechecked before clean external review.
+longer sufficient. `WP-20B` found accepted blockers that were routed through
+`#3175` through `#3179` and are now closed before external review entry.
 
 Recommended route:
 

@@ -149,8 +149,9 @@ v0.91.2 is the active pressure-release milestone. Its issue wave was opened as
 `#3028`. Sprint 4 is in the review/remediation tail: `WP-17`, `WP-17A`,
 `WP-18`, and `WP-19` are closed; the initial `WP-20` internal review has been
 superseded for handoff truth by the corrective `WP-20B` full internal review;
-and accepted `WP-20B` findings must be fixed and rechecked before `WP-21`
-external review. The milestone focuses on UTS + ACC benchmarking,
+the accepted `WP-20B` remediation issues have closed; and `WP-21` external
+review is ready to start from the refreshed handoff packet. The milestone
+focuses on UTS + ACC benchmarking,
 runtime/test-cycle recovery, CodeFriend productization, Workspace bridge work,
 modernization, publication packets, rustdoc/doc cleanup, repo-visibility
 follow-on work, and workflow guardrails.
@@ -241,9 +242,10 @@ production markets.
 - Active milestone: v0.91.2
 - Current crate version: 0.91.2
 - Most recently completed milestone: v0.91.1
-- Current release-tail state: v0.91.2 Sprint 4 is in corrective
-  review/remediation after WP-20B; external review should wait until the
-  accepted WP-20B findings are fixed and rechecked
+- Current release-tail state: v0.91.2 Sprint 4 is ready for `WP-21`
+  external review after corrective `WP-20B` remediation; release readiness
+  still waits on external review, any accepted-finding remediation,
+  next-milestone planning, and release ceremony
 - Previous completed milestone: v0.90.5
 - Primary implementation language: Rust
 

@@ -73,11 +73,13 @@ Evidence:
 
 At WP-20B review time, the older WP-20 packet still said to proceed to WP-21,
 while WP-20B existed specifically because that review was incomplete. Current
-handoff docs must keep the older packet marked as superseded and keep WP-21
-blocked until accepted WP-20B findings are fixed and rechecked.
+handoff docs must keep the older packet marked as superseded and route WP-21
+through the refreshed top-level handoff after accepted WP-20B remediation
+closure.
 
 Impact: external reviewers may be handed a stale readiness story unless WP-20B
-findings remain controlling and the accepted fixes are rechecked before review.
+findings remain controlling and the accepted remediation closure is visible
+before review.
 
 Route: WP-21/WP-22 handoff update.
 

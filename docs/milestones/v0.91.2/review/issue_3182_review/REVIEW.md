@@ -13,13 +13,13 @@ PR-ready after follow-up card normalization.
 The documentation changes are directionally correct and satisfy the major
 review-truth goals: `WP-20B` is made controlling, the old `WP-20` packet is
 marked historical, the new top-level third-party handoff exists, and `WP-21`
-external review is blocked until accepted `WP-20B` findings are fixed and
-rechecked.
+external review is gated on accepted `WP-20B` remediation closure. That
+remediation closure is now recorded by the follow-up handoff refresh.
 
 The initial blocker was lifecycle-card truth. After this review, the SIP, SRP,
 and SOR were normalized with the corresponding editor skills and validated
-successfully. The remaining scope is external review and `WP-20B` remediation
-work, not this handoff-truth repair.
+successfully. The remaining scope is external review and any findings accepted
+from that review, not this handoff-truth repair.
 
 ## Findings
 
@@ -58,8 +58,8 @@ Resolution evidence:
 ## Passing Checks
 
 - `docs/milestones/v0.91.2/ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md` exists
-  and clearly says the packet is draft/not sendable until accepted `WP-20B`
-  findings are fixed and rechecked.
+  and now records that accepted `WP-20B` remediation issues have closed before
+  `WP-21` review entry.
 - Every markdown file under
   `docs/milestones/v0.91.2/review/internal_review/` has a
   `Supersession Status` section.
@@ -71,8 +71,8 @@ Resolution evidence:
   caveated as blocked, superseded, or historical rather than active readiness
   language.
 - The remediation issue references in the handoff are real: `#3175`, `#3176`,
-  and `#3177` are closed; `#3178` and `#3179` are open and correctly remain
-  blockers for external review.
+  `#3177`, `#3178`, and `#3179` are now closed; the final handoff refresh
+  moves `WP-21` into external-review entry while preserving release non-claims.
 
 ## Reviewed Surfaces
 

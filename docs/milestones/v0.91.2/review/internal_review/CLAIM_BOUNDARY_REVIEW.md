@@ -5,7 +5,9 @@
 This file is historical `WP-20` review context. The first `WP-20` packet was
 too thin for external handoff and is superseded for readiness decisions by
 `docs/milestones/v0.91.2/review/internal_review_full/`. Do not use this file as
-standalone approval to start `WP-21`.
+standalone approval to start `WP-21`. The later `#3175` through `#3179`
+remediation issues have closed; use the refreshed top-level handoff for current
+review-entry truth.
 
 ## Result
 
@@ -20,6 +22,6 @@ external-review gate after `WP-20B`.
 - Publication packets do not publish papers or approve submissions.
 - General-intelligence paper packets do not prove the paper's claims.
 - Workflow guardrails reduce operator failure modes; they do not eliminate all operator error.
-- `v0.91.2` is not release-ready until accepted `WP-20B` findings are fixed or
-  dispositioned, external review completes, remediation truth is recorded, and
-  release ceremony work completes.
+- `v0.91.2` is not release-ready until external review completes, any accepted
+  external-review findings are remediated or dispositioned, release evidence is
+  finalized, and release ceremony work completes.

@@ -19,6 +19,7 @@ Do not treat this report as release closure. `v0.91.2` has real execution
 through the `WP-19` docs/review-entry band plus the bounded `WP-17A` demo
 follow-on, and it has a corrective `WP-20B` full internal review packet. The
 first `WP-20` packet is superseded for handoff truth. Sprint 4 remediation,
-external review, handoff, evidence, and ceremony work are still incomplete, and
-accepted `WP-20B` findings must be fixed and rechecked before this report can
-become a closeout record.
+external review, handoff, evidence, and ceremony work are still incomplete.
+Accepted `WP-20B` remediation issues have closed, so `WP-21` external review
+can start from the refreshed handoff packet, but this report cannot become a
+closeout record until the remaining release-tail work completes.

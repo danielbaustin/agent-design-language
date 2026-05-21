@@ -26,7 +26,8 @@ Track the milestone package and proof surfaces required for a truthful
 - quality-gate packet and authoritative coverage evidence
 - controlling internal-review packet and findings under `review/internal_review_full/`
 - external-review handoff and remediation routing docs tied to the `WP-20B` packet
-- `WP-20B` full internal review packet and accepted-finding routing
+- `WP-20B` full internal review packet and closed accepted-finding remediation
+  routing
 
 ## Current Judgment
 
@@ -36,6 +37,7 @@ it is not a final release verdict.
 
 The thin `WP-20` packet under `review/internal_review/` is retained for
 historical context, but it is not the controlling review packet for this
-release-tail path. Accepted `WP-20B` findings must be fixed and rechecked
-before external review, and external review, remediation, handoff,
-release-evidence, and ceremony work must complete before closeout.
+release-tail path. Accepted `WP-20B` remediation issues have closed, so
+external review can start from the refreshed handoff packet. External review,
+any accepted remediation, handoff, release evidence, and ceremony work must
+complete before closeout.

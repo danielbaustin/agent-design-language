@@ -10,8 +10,9 @@ standalone approval to start `WP-21`.
 ## Verdict
 
 Superseded. This packet originally claimed external-review readiness, but
-`WP-20B` later found accepted blockers. External review should not proceed
-until those findings are fixed and rechecked.
+`WP-20B` later found accepted blockers. Those blockers were routed through
+`#3175` through `#3179`, which are now closed; external review should proceed
+from the refreshed top-level handoff, not this packet alone.
 
 Use the `WP-20B` full internal review packet and its findings as the controlling
 input for external-review handoff and `WP-22` remediation routing.
@@ -35,6 +36,6 @@ input for external-review handoff and `WP-22` remediation routing.
 Do not treat this packet alone as authorization to proceed. If `WP-21`
 continues, it must do so using the `WP-20B` full packet, its findings register,
 and its non-claims as the controlling evidence surface. Use
-`docs/milestones/v0.91.2/review/internal_review_full/`,
-`docs/milestones/v0.91.2/ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md`, and fix or
-explicitly disposition accepted `WP-20B` findings before external review.
+`docs/milestones/v0.91.2/review/internal_review_full/` and
+`docs/milestones/v0.91.2/ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md`, which now
+records accepted `WP-20B` remediation issues as closed.

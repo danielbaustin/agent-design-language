@@ -9,25 +9,25 @@ current remediation planning by the `WP-20B` full internal review packet under
 Controlling upstream packet:
 - `docs/milestones/v0.91.2/review/internal_review_full/`
 
-## Accepted Internal Review Items To Route
+## Accepted Internal Review Items Routed
 
 1. Retained `#3121` closeout residue must be fixed or explicitly deferred with final release-tail owner.
 2. WP-21/WP-22 handoff must preserve release non-claims and prevent review/remediation from being mistaken for release approval.
-3. Accepted `WP-20B` findings must be fixed or explicitly dispositioned and
-   rechecked before external review.
+3. Accepted `WP-20B` findings were routed through `#3175` through `#3179`,
+   which are now closed before external review entry.
 
 ## Grouped Remediation Routing
 
 - Benchmark validity and failure-gate truth:
-  - `#3175`
+  - `#3175` closed
 - Hosted-provider security and artifact portability:
-  - `#3176`
+  - `#3176` closed
 - Controlling packet, handoff truth, and release-tail evidence routing:
-  - `#3177`
+  - `#3177` closed
 - CI pinning and validation reproducibility:
-  - `#3178`
+  - `#3178` closed
 - Provider native-tool capability reporting:
-  - `#3179`
+  - `#3179` closed
 
 ## Candidate Follow-On Routing
 

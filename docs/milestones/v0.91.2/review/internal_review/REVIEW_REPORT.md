@@ -5,13 +5,15 @@
 This file is historical `WP-20` review context. The first `WP-20` packet was
 too thin for external handoff and is superseded for readiness decisions by
 `docs/milestones/v0.91.2/review/internal_review_full/`. Do not use this file as
-standalone approval to start `WP-21`.
+standalone approval to start `WP-21`. The later `#3175` through `#3179`
+remediation issues have closed; use the refreshed top-level handoff for current
+review-entry truth.
 
 ## Verdict
 
 Do not treat this thin `WP-20` report as the controlling go-forward signal.
-External review should wait until accepted `WP-20B` findings are fixed and
-rechecked.
+External review should use the refreshed top-level handoff after accepted
+`WP-20B` remediation closure.
 
 Do not claim release readiness yet.
 
@@ -30,5 +32,5 @@ Do not claim release readiness yet.
 
 Do not start WP-21 from this report or the nested
 `WP21_EXTERNAL_REVIEW_HANDOFF.md`. Use the top-level
-`docs/milestones/v0.91.2/ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md` after the
-accepted `WP-20B` findings are fixed and rechecked.
+`docs/milestones/v0.91.2/ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md`, which now
+records accepted `WP-20B` remediation closure.
