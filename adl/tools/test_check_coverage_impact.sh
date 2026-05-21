@@ -68,6 +68,12 @@ split_wellbeing_filters="$TMP/split-wellbeing-filters.txt"
 bash "$SCRIPT" --changed-files "$split_wellbeing_changed" --print-risk-filters >"$split_wellbeing_filters"
 grep -Fx "wellbeing_metrics" "$split_wellbeing_filters" >/dev/null
 
+split_acc_changed="$TMP/split-acc-changed.txt"
+printf 'A\tadl/src/acc/validation.rs\n' >"$split_acc_changed"
+split_acc_filters="$TMP/split-acc-filters.txt"
+bash "$SCRIPT" --changed-files "$split_acc_changed" --print-risk-filters >"$split_acc_filters"
+grep -Fx "acc" "$split_acc_filters" >/dev/null
+
 private_state_sanctuary_changed="$TMP/private-state-sanctuary-changed.txt"
 printf 'A\tadl/src/runtime_v2/private_state_sanctuary/helpers.rs\n' >"$private_state_sanctuary_changed"
 private_state_sanctuary_filters="$TMP/private-state-sanctuary-filters.txt"
