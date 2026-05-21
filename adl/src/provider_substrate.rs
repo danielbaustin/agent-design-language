@@ -226,6 +226,23 @@ fn infer_capability_defaults(
         };
     }
 
+    if matches!(transport, ProviderTransportV1::Http) && vendor == "generic_http" {
+        return ProviderCapabilitiesV1 {
+            tool_calling: CapabilitySupportV1 {
+                supported: false,
+                mode: CapabilityModeV1::None,
+            },
+            structured_json: CapabilitySupportV1 {
+                supported: true,
+                mode: CapabilityModeV1::PromptBased,
+            },
+            semantic_tool_fallback: CapabilitySupportV1 {
+                supported: false,
+                mode: CapabilityModeV1::None,
+            },
+        };
+    }
+
     let native_tool_calling = match transport {
         ProviderTransportV1::Http | ProviderTransportV1::InProcess => CapabilitySupportV1 {
             supported: true,
@@ -590,6 +607,64 @@ mod tests {
             CapabilityModeV1::Native
         );
         assert!(!substrate.capabilities.semantic_tool_fallback.supported);
+    }
+
+    #[test]
+    fn provider_substrate_marks_generic_http_profiles_as_compatibility_by_default() {
+        let mut spec = provider_spec("http");
+        spec.profile = Some("http:gemini-2.0-flash".to_string());
+        spec.default_model = Some("reasoning/default".to_string());
+        spec.config.insert(
+            "endpoint".to_string(),
+            json!("https://api.example.invalid/v1/complete"),
+        );
+        spec.config
+            .insert("provider_model_id".to_string(), json!("gemini-2.0-flash"));
+
+        let substrate = provider_substrate_v1("generic_http_profile", &spec).expect("substrate");
+        assert_eq!(substrate.vendor, "generic_http");
+        assert_eq!(substrate.transport, ProviderTransportV1::Http);
+        assert!(!substrate.capabilities.tool_calling.supported);
+        assert_eq!(
+            substrate.capabilities.tool_calling.mode,
+            CapabilityModeV1::None
+        );
+        assert!(substrate.capabilities.structured_json.supported);
+        assert_eq!(
+            substrate.capabilities.structured_json.mode,
+            CapabilityModeV1::PromptBased
+        );
+    }
+
+    #[test]
+    fn provider_substrate_allows_explicit_native_override_for_generic_http_profiles() {
+        let mut spec = provider_spec("http");
+        spec.profile = Some("http:gemini-2.0-flash".to_string());
+        spec.default_model = Some("reasoning/default".to_string());
+        spec.config.insert(
+            "endpoint".to_string(),
+            json!("https://api.example.invalid/v1/complete"),
+        );
+        spec.config
+            .insert("provider_model_id".to_string(), json!("gemini-2.0-flash"));
+        spec.config.insert(
+            "capabilities".to_string(),
+            json!({
+                "tool_calling": { "supported": true, "mode": "native" },
+                "structured_json": { "supported": true, "mode": "native" }
+            }),
+        );
+
+        let substrate = provider_substrate_v1("generic_http_profile", &spec).expect("substrate");
+        assert!(substrate.capabilities.tool_calling.supported);
+        assert_eq!(
+            substrate.capabilities.tool_calling.mode,
+            CapabilityModeV1::Native
+        );
+        assert_eq!(
+            substrate.capabilities.structured_json.mode,
+            CapabilityModeV1::Native
+        );
     }
 
     #[test]
