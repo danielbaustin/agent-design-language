@@ -23,6 +23,25 @@ The goal is not faster unchecked code generation. The goal is higher software
 throughput while preserving reviewability, auditability, replay, and
 governance.
 
+## Theory Framing
+
+C-SDLC is implementation-independent. ADL's Git/GitHub workflow is an
+implementation and evidence source, not the theory itself.
+
+The theory treats software work as explicit state transition:
+
+- Git can serve as a state substrate because branches, commits, diffs, pull
+  requests, and merges expose observable lifecycle transitions.
+- Structured prompts are state-transition operators: they bind role, intent,
+  context, constraints, proof obligations, and stop conditions to the next
+  bounded move.
+- Typed work packets such as issue cards, review packets, evidence bundles, and
+  closeout records reduce coordination entropy by making implicit human
+  coordination explicit and inspectable.
+- Amdahl-style reasoning matters because agentic throughput improves only when
+  the serial coordination fraction is reduced and the remaining work is
+  bounded, parallelizable, reviewable, and mergeable.
+
 ## Canonical Lifecycle
 
 Issue-local C-SDLC work uses this lifecycle:
