@@ -30,6 +30,8 @@ run C-SDLC.
 
 The demo should record:
 
+- issue-local `SIP -> STP -> SPP -> SRP -> SOR` lifecycle proof, with `SPP`
+  as Structured Plan Prompt
 - transition latency
 - planning latency
 - review latency

@@ -22,7 +22,7 @@ The initial manifest should record:
 - issue and branch/worktree identity
 - actor and role references for material participants
 - base and candidate repository state
-- SIP, STP, SPP, SRP, and SOR paths
+- SIP, STP, SPP, SRP, and SOR paths, where SPP means Structured Plan Prompt
 - DAG and shard plan paths
 - evidence bundle path
 - trace/proof manifest path
