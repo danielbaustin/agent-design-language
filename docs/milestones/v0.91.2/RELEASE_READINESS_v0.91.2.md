@@ -21,25 +21,25 @@ Not release ready.
 ## Current State
 
 - `v0.91.2` is an active in-flight milestone with substantial executed work
-- `WP-01` through `WP-19` are closed, and `WP-17A` is also closed as a bounded follow-on demo pass
+- `WP-01` through `WP-22` are closed, and `WP-17A` is also closed as a bounded follow-on demo pass
 - Sprint 1 `#3025`, Sprint 2 `#3026`, and Sprint 3 `#3027` are closed
 - Sprint 4 umbrella `#3028` remains open
 - the first `WP-20` internal review packet was too thin for external handoff
 - `WP-20B` / `#3173` is the controlling full internal review packet
-- accepted `WP-20B` remediation issues are closed, and `WP-21` external review
-  can start from the refreshed handoff packet
-- no final release proof, review, or ceremony state exists yet
+- `WP-21` external review is closed
+- `WP-22` review findings remediation is closed
+- `WP-23` next-milestone planning is in review through PR `#3192`
+- `WP-24` release ceremony remains open and has not approved the release
+- no final release proof or ceremony state exists yet
 - the controlling internal-review packet for the remaining handoff/remediation path is `docs/milestones/v0.91.2/review/internal_review_full/`
 - the older thin `WP-20` packet remains background context only and is not sufficient as the release-tail handoff surface by itself
 
 ## Current Blockers
 
 - Sprint 4 and the remaining review/release-tail work are not complete
-- accepted `WP-20B` remediation issues are recorded as closed, but external
-  review has not completed
-- any accepted findings from external review must be remediated or explicitly
-  dispositioned before release closeout
+- `WP-23` next-milestone planning must be reviewed and merged before release
+  ceremony
 - release evidence and release ceremony surfaces are not complete
-- internal/external review, remediation, release evidence, and ceremony surfaces still need completion after the corrective internal-review pass
+- `WP-24` must still perform release ceremony and final closeout
 - ADR candidates exist for review, but they are not accepted release decisions
   until promoted or explicitly carried forward
