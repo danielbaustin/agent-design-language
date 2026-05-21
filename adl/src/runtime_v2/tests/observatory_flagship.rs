@@ -13,6 +13,13 @@ fn flagship_artifacts() -> RuntimeV2ObservatoryFlagshipArtifacts {
 }
 
 #[test]
+fn runtime_v2_observatory_flagship_builders_report_types_validation_coverage_smoke() {
+    runtime_v2_observatory_flagship_review_surfaces_are_stable_and_serializable();
+    runtime_v2_observatory_flagship_review_bundle_matches_tracked_artifacts();
+    runtime_v2_observatory_flagship_rejects_shape_and_boundary_drift();
+}
+
+#[test]
 fn runtime_v2_observatory_flagship_review_surfaces_are_stable_and_serializable() {
     let artifacts = flagship_artifacts();
     artifacts
