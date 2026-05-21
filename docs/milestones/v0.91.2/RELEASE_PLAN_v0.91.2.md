@@ -14,6 +14,7 @@ more reviewable without weakening proof or authority boundaries.
 - modernization demo packet
 - publication and rustdoc/doc packets
 - workflow guardrails packet
+- demo-proof convergence plus missing code-feature demo follow-ons
 - feature-proof coverage and quality gate
 - review and remediation records
 
@@ -29,7 +30,6 @@ more reviewable without weakening proof or authority boundaries.
 
 Do not mark `v0.91.2` releasable until:
 
-- the issue wave is actually opened and executed
+- the remaining Sprint 4 work finishes cleanly beyond the already-executed `WP-01` through `WP-17A` band
 - quality, review, remediation, and ceremony surfaces are complete
 - release readiness and release evidence are complete
-

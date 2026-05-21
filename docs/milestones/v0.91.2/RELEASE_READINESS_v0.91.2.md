@@ -20,15 +20,16 @@ Not release ready.
 
 ## Current State
 
-- `v0.91.2` is an active follow-on milestone
-- the WP issue wave is open as `#3000` through `#3023`
-- sprint-conductor umbrella issues are open as `#3025` through `#3028`
+- `v0.91.2` is an active in-flight milestone with substantial executed work
+- `WP-01` through `WP-17` are closed, and `WP-17A` is also closed as a bounded follow-on demo pass
+- Sprint 1 `#3025`, Sprint 2 `#3026`, and Sprint 3 `#3027` are closed
+- Sprint 4 umbrella `#3028` remains open, with `WP-18` next and `WP-19+` still pending
 - no final release proof, review, or ceremony state exists yet
 
 ## Current Blockers
 
-- no executed WPs
-- no quality gate
-- no review or remediation state
+- Sprint 4 and the remaining review/release-tail work are not complete
+- the final quality gate, release evidence, and release ceremony surfaces are not complete
+- release-tail review, release evidence, and ceremony surfaces still need completion beyond the already-repaired closeout-truth band
 - ADR candidates exist for review, but they are not accepted release decisions
   until promoted or explicitly carried forward
