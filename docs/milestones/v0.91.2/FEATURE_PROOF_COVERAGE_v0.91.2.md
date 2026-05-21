@@ -31,7 +31,8 @@ Each feature should eventually have one truthful proof route:
 | General intelligence paper packet | WP-14 | tracked claim/citation packet + review handoff + residual-risk register + next-authoring-steps packet + canonical paper-repo migration truth | implemented |
 | Rustdoc/doc cleanup | WP-15 | feature doc + tracked doc patch set + WP-17 convergence packet route | implemented |
 | Workflow guardrails | WP-16 | `bash adl/tools/demo_v0912_workflow_guardrails_showcase.sh` + `adl/tools/workflow_guardrails.sh` + `adl/tools/test_workflow_guardrails.sh` + workflow-guardrails runbook/proof packet | implemented |
-| Demo/proof convergence | WP-17 | demo matrix + proof coverage map + `review/demo_proof_convergence/DEMO_PROOF_CONVERGENCE_PACKET_v0.91.2.md` | in_progress |
+| Demo/proof convergence | WP-17 | demo matrix + proof coverage map + `review/demo_proof_convergence/DEMO_PROOF_CONVERGENCE_PACKET_v0.91.2.md` | landed |
+| Coverage / quality gate | WP-18 | `QUALITY_GATE_v0.91.2.md` + `review/quality_gate/QUALITY_GATE_PACKET_v0.91.2.md` + `bash adl/tools/demo_v0912_quality_gate.sh` | in_progress |
 
 ## Non-Claims
 
