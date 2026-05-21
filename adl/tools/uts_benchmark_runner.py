@@ -64,6 +64,12 @@ TOOL_CONTRACTS = [
     "batch_weather_lookup(locations)",
 ]
 
+HOSTED_ROUTE_KEYS = {
+    "openai": "OPENAI_API_KEY",
+    "gemini": "GEMINI_API_KEY",
+    "anthropic": "ANTHROPIC_API_KEY",
+}
+
 REGULAR_PROMPT_PREFIX = """You are evaluating ordinary tool-call ability only.
 Do not use UTS or ACC fields.
 Reply with exactly one compact JSON object and no markdown.
@@ -289,6 +295,111 @@ def hosted_key(env_name: str) -> str:
     if not value:
         raise RuntimeError(f"configured key file did not contain a usable value for {env_name}")
     return value
+
+
+def hosted_key_diagnostic(env_name: str) -> dict[str, Any]:
+    entry = read_key_file_map().get(env_name)
+    file_env_var = hosted_key_file_env_var(env_name, entry)
+    if os.getenv(env_name):
+        return {
+            "env_var": env_name,
+            "file_env_var": file_env_var,
+            "status": "configured",
+            "source": "direct_env",
+            "action": None,
+        }
+    key_path = os.getenv(file_env_var)
+    if not key_path:
+        return {
+            "env_var": env_name,
+            "file_env_var": file_env_var,
+            "status": "missing",
+            "source": "none",
+            "action": f"set {env_name} or {file_env_var}",
+        }
+    path = Path(key_path).expanduser()
+    if not path.is_file():
+        return {
+            "env_var": env_name,
+            "file_env_var": file_env_var,
+            "status": "missing_file",
+            "source": "file_env",
+            "action": f"create the key file referenced by {file_env_var}, or set {env_name}",
+        }
+    if path.stat().st_size == 0:
+        return {
+            "env_var": env_name,
+            "file_env_var": file_env_var,
+            "status": "empty_file",
+            "source": "file_env",
+            "action": f"write one key value into the file referenced by {file_env_var}",
+        }
+    try:
+        value = extract_key_value(env_name, path)
+    except OSError:
+        value = ""
+    if not value:
+        return {
+            "env_var": env_name,
+            "file_env_var": file_env_var,
+            "status": "unreadable_or_unusable_file",
+            "source": "file_env",
+            "action": f"store either the raw key or {env_name}=... in the file referenced by {file_env_var}",
+        }
+    return {
+        "env_var": env_name,
+        "file_env_var": file_env_var,
+        "status": "configured",
+        "source": "file_env",
+        "action": None,
+    }
+
+
+def hosted_auth_requirements(panel: dict[str, Any], models_file: Path | None) -> list[dict[str, str]]:
+    hosted = [m for m in panel.get("models", []) if m.get("provider_kind") == "hosted"]
+    if models_file is not None:
+        hosted = select_models(panel, "hosted", load_models_file(models_file))
+    routes = sorted({str(entry.get("route")) for entry in hosted if entry.get("route")})
+    rows = []
+    for route in routes:
+        env_name = HOSTED_ROUTE_KEYS.get(route)
+        if env_name:
+            rows.append({"route": route, "env_name": env_name})
+    return rows
+
+
+def doctor_hosted_auth(panel_file: Path, models_file: Path | None) -> int:
+    panel = load_json(panel_file)
+    requirements = hosted_auth_requirements(panel, models_file)
+    if not requirements:
+        print("Hosted auth doctor: no hosted provider routes selected.")
+        return 0
+    print("Hosted auth doctor")
+    print(f"- panel: {display_path(panel_file)}")
+    if models_file is not None:
+        print(f"- models file: {display_path(models_file)}")
+    print("- provider calls: none")
+    print("")
+    all_ok = True
+    for requirement in requirements:
+        route = requirement["route"]
+        env_name = requirement["env_name"]
+        diagnostic = hosted_key_diagnostic(env_name)
+        ok = diagnostic["status"] == "configured"
+        all_ok = all_ok and ok
+        source = diagnostic["source"]
+        status = diagnostic["status"]
+        print(f"{route}: {status} via {source}")
+        print(f"  direct env: {diagnostic['env_var']}")
+        print(f"  file env:   {diagnostic['file_env_var']}")
+        if diagnostic["action"]:
+            print(f"  action:     {diagnostic['action']}")
+    if all_ok:
+        print("\nHosted auth doctor passed.")
+        return 0
+    print("\nHosted auth doctor did not pass.")
+    print("Set the missing direct env vars or file env vars, then rerun this doctor before hosted benchmarks.")
+    return 1
 
 
 def post_json(url: str, headers: dict[str, str], payload: dict[str, Any], timeout: int) -> tuple[int, dict[str, Any]]:
@@ -916,17 +1027,24 @@ def benchmark_exit_status(report: dict[str, Any]) -> tuple[int, list[str]]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run the self-contained UTS benchmark suite.")
-    parser.add_argument("provider_kind", choices=("hosted", "local"))
-    parser.add_argument("models_file")
+    parser.add_argument("provider_kind", nargs="?", choices=("hosted", "local"))
+    parser.add_argument("models_file", nargs="?")
     parser.add_argument("out_json", nargs="?")
     parser.add_argument("--panel-file", default=str(DEFAULT_MODEL_PANEL))
     parser.add_argument("--task-panel-file", default=str(DEFAULT_TASK_PANEL))
+    parser.add_argument("--doctor-hosted-auth", action="store_true", help="check hosted credential setup without making provider calls")
+    parser.add_argument("--doctor-models-file", help="optional hosted model list for --doctor-hosted-auth")
     parser.add_argument("--include-governed", action="store_true", help="also run the Rust-backed UTS+ACC governed lane")
     parser.add_argument("--no-resume", action="store_true", help="accepted for compatibility; this runner always writes the requested artifact")
     args = parser.parse_args()
 
     panel_file = Path(args.panel_file)
     task_panel_file = Path(args.task_panel_file)
+    if args.doctor_hosted_auth:
+        doctor_models_file = Path(args.doctor_models_file) if args.doctor_models_file else None
+        return doctor_hosted_auth(panel_file, doctor_models_file)
+    if not args.provider_kind or not args.models_file:
+        parser.error("provider_kind and models_file are required unless --doctor-hosted-auth is used")
     models_file = Path(args.models_file)
     out_path = Path(args.out_json) if args.out_json else REPO_ROOT / "artifacts" / "uts_runs" / f"uts_{models_file.stem}.json"
     panel = load_json(panel_file)
@@ -934,6 +1052,10 @@ def main() -> int:
     selected = select_models(panel, args.provider_kind, load_models_file(models_file))
     if not selected:
         raise SystemExit("no models selected")
+    if args.provider_kind == "hosted":
+        auth_status = doctor_hosted_auth(panel_file, models_file)
+        if auth_status != 0:
+            return auth_status
     report = {"schema_version": "uts_benchmark_runner.v1", "runner": "adl/tools/uts_benchmark_runner.py", "started_at": utc_timestamp(), "selection": {"provider_kind": args.provider_kind, "models_file": display_path(models_file), "panel_file": display_path(panel_file), "task_panel_file": display_path(task_panel_file)}, "include_governed": args.include_governed, "models": []}
     self_check = run_deterministic_self_check(str(panel_file), str(task_panel_file))
     self_check_out = self_check_path_for(out_path)
