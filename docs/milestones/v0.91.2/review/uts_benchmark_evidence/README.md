@@ -53,6 +53,12 @@ Fresh benchmark rows should be produced under `artifacts/uts_runs/` and must inc
 
 ## Hosted credential setup
 
+Run the credential doctor before hosted benchmarks:
+
+```bash
+python3 adl/tools/uts_benchmark_runner.py --doctor-hosted-auth
+```
+
 Use either direct provider environment variables or provider-specific file-path
 environment variables. The canonical config template is:
 
@@ -63,6 +69,12 @@ Supported file-path environment variables are:
 - `ADL_OPENAI_API_KEY_FILE`
 - `ADL_GEMINI_API_KEY_FILE`
 - `ADL_ANTHROPIC_API_KEY_FILE`
+
+Supported direct environment variables are:
+
+- `OPENAI_API_KEY`
+- `GEMINI_API_KEY`
+- `ANTHROPIC_API_KEY`
 
 Do not commit machine-local credential paths into the template or benchmark
 evidence docs.

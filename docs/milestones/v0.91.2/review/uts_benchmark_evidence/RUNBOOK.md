@@ -16,6 +16,24 @@ module only and must not be treated as a second runner or review-proof command.
 
 ## Hosted provider credentials
 
+Always run the hosted auth doctor before any hosted benchmark:
+
+```bash
+python3 adl/tools/uts_benchmark_runner.py --doctor-hosted-auth
+```
+
+For a specific hosted model list:
+
+```bash
+python3 adl/tools/uts_benchmark_runner.py \
+  --doctor-hosted-auth \
+  --doctor-models-file adl/tools/benchmark/hosted_core_models.txt
+```
+
+The doctor makes no provider calls. It only checks whether the required direct
+environment variables or file-backed key environment variables are configured
+for the selected hosted provider routes.
+
 Use provider environment variables directly when possible:
 
 - `OPENAI_API_KEY`
@@ -37,6 +55,15 @@ adl/tools/benchmark/hosted_provider_key_files.json
 
 That template is intentionally portable and must not contain operator-local
 absolute paths.
+
+File-backed key files may contain either the raw key value or one assignment
+line such as:
+
+```text
+OPENAI_API_KEY=...
+```
+
+Do not commit key files, secret values, or operator-local absolute paths.
 
 ## Required panels
 
@@ -75,6 +102,10 @@ Hosted smoke without the governed Rust lane:
 
 ```bash
 python3 adl/tools/uts_benchmark_runner.py \
+  --doctor-hosted-auth \
+  --doctor-models-file adl/tools/benchmark/hosted_smoke_models.txt
+
+python3 adl/tools/uts_benchmark_runner.py \
   hosted \
   adl/tools/benchmark/hosted_smoke_models.txt \
   artifacts/uts_runs/utsbench_smoke_hosted.json \
@@ -84,6 +115,10 @@ python3 adl/tools/uts_benchmark_runner.py \
 Hosted Claude-only smoke:
 
 ```bash
+python3 adl/tools/uts_benchmark_runner.py \
+  --doctor-hosted-auth \
+  --doctor-models-file adl/tools/benchmark/hosted_claude_smoke_models.txt
+
 python3 adl/tools/uts_benchmark_runner.py \
   hosted \
   adl/tools/benchmark/hosted_claude_smoke_models.txt \
@@ -132,6 +167,10 @@ backing hosted provider.
 ## Full hosted run
 
 ```bash
+python3 adl/tools/uts_benchmark_runner.py \
+  --doctor-hosted-auth \
+  --doctor-models-file adl/tools/benchmark/hosted_core_models.txt
+
 python3 adl/tools/uts_benchmark_runner.py \
   hosted \
   adl/tools/benchmark/hosted_core_models.txt \
