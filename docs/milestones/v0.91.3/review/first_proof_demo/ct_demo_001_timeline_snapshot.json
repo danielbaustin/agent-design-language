@@ -1,0 +1,167 @@
+{
+  "schema_version": "v0.91.3.first_proof_timeline.v1",
+  "transition_id": "cts.v0_91_3.issue_3200.ct_demo_001",
+  "milestone_version": "v0.91.3",
+  "tracked_refs": [
+    "docs/milestones/v0.91.3/review/transition_manifest/fixtures/valid_cognitive_transition_manifest_v1.json",
+    "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md",
+    "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_transition_dag.md",
+    "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_shard_plan.md",
+    "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
+    "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md",
+    "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md",
+    "docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.md",
+    "docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json",
+    "docs/milestones/v0.91.3/review/first_proof_readiness/FIRST_PROOF_READINESS_PACKET_v0.91.3.md",
+    "docs/milestones/v0.91.3/review/first_proof_readiness/ct_demo_001_first_proof_readiness.md"
+  ],
+  "work_package_chain": [
+    {
+      "wp": "WP-02",
+      "issue": {
+        "number": 3200,
+        "title": "[v0.91.3][WP-02][docs/tools] Cognitive Transition schema",
+        "state": "CLOSED",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/3200",
+        "createdAt": "2026-05-21T20:19:03Z",
+        "closedAt": "2026-05-21T23:50:18Z"
+      },
+      "pr": {
+        "number": 3235,
+        "state": "MERGED",
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/3235",
+        "baseRefName": "main",
+        "headRefName": "codex/3200-v0-91-3-wp-02-cognitive-transition-schema",
+        "isDraft": false,
+        "createdAt": "2026-05-21T23:25:02Z",
+        "mergedAt": "2026-05-21T23:50:16Z"
+      }
+    },
+    {
+      "wp": "WP-03",
+      "issue": {
+        "number": 3201,
+        "title": "[v0.91.3][WP-03][tools] Card lifecycle integration",
+        "state": "CLOSED",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/3201",
+        "createdAt": "2026-05-21T20:19:08Z",
+        "closedAt": "2026-05-22T00:36:48Z"
+      },
+      "pr": {
+        "number": 3236,
+        "state": "MERGED",
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/3236",
+        "baseRefName": "main",
+        "headRefName": "codex/3201-v0-91-3-wp-03-card-lifecycle-integration",
+        "isDraft": false,
+        "createdAt": "2026-05-22T00:04:40Z",
+        "mergedAt": "2026-05-22T00:36:47Z"
+      }
+    },
+    {
+      "wp": "WP-04",
+      "issue": {
+        "number": 3202,
+        "title": "[v0.91.3][WP-04][docs/tools] Transition DAG and shard plan",
+        "state": "CLOSED",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/3202",
+        "createdAt": "2026-05-21T20:19:12Z",
+        "closedAt": "2026-05-22T00:59:57Z"
+      },
+      "pr": {
+        "number": 3239,
+        "state": "MERGED",
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/3239",
+        "baseRefName": "main",
+        "headRefName": "codex/3202-v0-91-3-wp-04-transition-dag-and-shard-plan",
+        "isDraft": false,
+        "createdAt": "2026-05-22T00:48:08Z",
+        "mergedAt": "2026-05-22T00:59:56Z"
+      }
+    },
+    {
+      "wp": "WP-05",
+      "issue": {
+        "number": 3203,
+        "title": "[v0.91.3][WP-05][docs/tools] Evidence bundle and review synthesis",
+        "state": "CLOSED",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/3203",
+        "createdAt": "2026-05-21T20:19:17Z",
+        "closedAt": "2026-05-22T01:50:45Z"
+      },
+      "pr": {
+        "number": 3243,
+        "state": "MERGED",
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/3243",
+        "baseRefName": "main",
+        "headRefName": "codex/3203-v0-91-3-wp-05-evidence-bundle-and-review-synthesis",
+        "isDraft": false,
+        "createdAt": "2026-05-22T01:46:17Z",
+        "mergedAt": "2026-05-22T01:50:43Z"
+      }
+    },
+    {
+      "wp": "WP-06",
+      "issue": {
+        "number": 3204,
+        "title": "[v0.91.3][WP-06][tools] Governed merge-readiness gate",
+        "state": "CLOSED",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/3204",
+        "createdAt": "2026-05-21T20:19:21Z",
+        "closedAt": "2026-05-22T02:06:19Z"
+      },
+      "pr": {
+        "number": 3244,
+        "state": "MERGED",
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/3244",
+        "baseRefName": "main",
+        "headRefName": "codex/3204-v0-91-3-wp-06-governed-merge-readiness-gate",
+        "isDraft": false,
+        "createdAt": "2026-05-22T02:00:42Z",
+        "mergedAt": "2026-05-22T02:06:18Z"
+      }
+    },
+    {
+      "wp": "WP-07",
+      "issue": {
+        "number": 3205,
+        "title": "[v0.91.3][WP-07][docs/tools] SRP/SOR ObsMem handoff",
+        "state": "CLOSED",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/3205",
+        "createdAt": "2026-05-21T20:19:27Z",
+        "closedAt": "2026-05-22T02:47:21Z"
+      },
+      "pr": {
+        "number": 3247,
+        "state": "MERGED",
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/3247",
+        "baseRefName": "main",
+        "headRefName": "codex/3205-v0-91-3-wp-07-srp-sor-obsmem-handoff",
+        "isDraft": false,
+        "createdAt": "2026-05-22T02:42:23Z",
+        "mergedAt": "2026-05-22T02:47:20Z"
+      }
+    },
+    {
+      "wp": "WP-08",
+      "issue": {
+        "number": 3206,
+        "title": "[v0.91.3][WP-08][docs/tools] Integrated process lessons and proof readiness",
+        "state": "CLOSED",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/3206",
+        "createdAt": "2026-05-21T20:19:31Z",
+        "closedAt": "2026-05-22T03:12:24Z"
+      },
+      "pr": {
+        "number": 3249,
+        "state": "MERGED",
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/3249",
+        "baseRefName": "main",
+        "headRefName": "codex/3206-v0-91-3-wp-08-integrated-process-lessons-and-proof-readiness",
+        "isDraft": false,
+        "createdAt": "2026-05-22T03:11:32Z",
+        "mergedAt": "2026-05-22T03:12:22Z"
+      }
+    }
+  ]
+}

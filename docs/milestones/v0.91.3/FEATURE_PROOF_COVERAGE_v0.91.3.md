@@ -14,8 +14,8 @@ their owning work packages execute.
 | Evidence bundle and review synthesis | `features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md` | Review inputs, findings, validation, and residual risks converge into a tracked proof surface. | proven under #3203 with `review/evidence_bundle/` packet and focused validator/test proof |
 | Governed merge-readiness gate | `features/GOVERNED_MERGE_READINESS_GATE.md` | Merge readiness preserves issue, PR, CI, branch, review, and closeout truth. | proven under #3204 with `review/merge_readiness/` packet and focused validator/test proof |
 | SRP/SOR ObsMem handoff | `features/SRP_SOR_OBSMEM_HANDOFF.md` | Review results and outcome truth have a memory handoff shape. | proven under #3205 with `review/obsmem_handoff/` packet and focused validator/test proof |
-| Integrated process lessons and proof readiness | `features/INTEGRATED_PROCESS_LESSONS_AND_PROOF_READINESS.md` | Combined-lane validation and closeout-truth lessons are applied before the first proof run. | in_flight under #3206 with `review/first_proof_readiness/` packet and focused validator/test proof |
-| Five-minute-sprint first proof | `features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md` | Bounded demo records transition timing and coordination behavior. | planned under #3207 |
+| Integrated process lessons and proof readiness | `features/INTEGRATED_PROCESS_LESSONS_AND_PROOF_READINESS.md` | Combined-lane validation and closeout-truth lessons are applied before the first proof run. | proven under #3206 with `review/first_proof_readiness/` packet and focused validator/test proof |
+| Five-minute-sprint first proof | `features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md` | Bounded demo records transition timing and coordination behavior. | in_flight under #3207 with `review/first_proof_demo/` packet, deterministic demo command, and metrics snapshot |
 
 ## Required Evidence
 

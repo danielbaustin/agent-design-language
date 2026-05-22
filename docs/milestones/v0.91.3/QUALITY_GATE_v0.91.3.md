@@ -18,6 +18,7 @@ Required validation categories:
 - evidence bundle serialization or snapshot validation
 - merge-readiness gate tests
 - first-proof readiness validator tests
+- first-proof demo packet validator and deterministic generator replay
 - tracked C-SDLC source-package path checks
 - trace/proof reference path checks for future signed trace promotion
 - docs path/reference checks for the milestone package
