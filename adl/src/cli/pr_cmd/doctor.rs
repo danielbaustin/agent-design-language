@@ -461,7 +461,7 @@ pub(super) fn run_doctor_ready(
 pub(super) fn ensure_pr_run_design_time_ready(
     repo_root: &Path,
     issue_ref: &IssueRef,
-    expected_branch: &str,
+    _expected_branch: &str,
 ) -> Result<()> {
     let root_stp = issue_ref.task_bundle_stp_path(repo_root);
     let root_bundle_input = issue_ref.task_bundle_input_path(repo_root);
@@ -474,18 +474,6 @@ pub(super) fn ensure_pr_run_design_time_ready(
         &root_bundle_input,
         &root_bundle_output,
         repo_root,
-        StructuredBundlePaths {
-            plan_path: &root_bundle_plan,
-            review_policy_path: &root_bundle_review_policy,
-        },
-    )?;
-    validate_ready_cards(
-        repo_root,
-        issue_ref.issue_number(),
-        issue_ref.slug(),
-        expected_branch,
-        &root_bundle_input,
-        &root_bundle_output,
         StructuredBundlePaths {
             plan_path: &root_bundle_plan,
             review_policy_path: &root_bundle_review_policy,

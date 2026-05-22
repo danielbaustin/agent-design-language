@@ -126,6 +126,20 @@ fn real_pr_start_blocks_before_worktree_when_design_time_cards_are_not_ready() {
         !repo.join(".worktrees/adl-wp-1154").exists(),
         "design-time card gate should block before worktree creation"
     );
+    let branch = "codex/1154-v0-86-tools-design-time-card-gate";
+    let root_sip = fs::read_to_string(issue_ref.task_bundle_input_path(&repo)).expect("read sip");
+    let root_sor = fs::read_to_string(issue_ref.task_bundle_output_path(&repo)).expect("read sor");
+    let root_spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
+    let root_srp =
+        fs::read_to_string(issue_ref.task_bundle_review_policy_path(&repo)).expect("read srp");
+    assert!(root_sip.contains("Branch: not bound yet"));
+    assert!(root_sor.contains("Branch: not bound yet"));
+    assert!(root_sor.contains("Status: NOT_STARTED"));
+    assert!(!root_sor.contains("Status: IN_PROGRESS"));
+    assert!(!root_sip.contains(&format!("Branch: {branch}")));
+    assert!(!root_sor.contains(&format!("Branch: {branch}")));
+    assert!(!root_spp.contains(&format!("branch: \"{branch}\"")));
+    assert!(!root_srp.contains(&format!("branch: \"{branch}\"")));
 }
 
 #[test]

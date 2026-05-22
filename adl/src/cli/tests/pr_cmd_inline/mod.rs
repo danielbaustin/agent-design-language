@@ -653,6 +653,7 @@ fn write_output_card_emits_truthful_pre_run_scaffold() {
     .expect("bootstrap output should validate");
 
     let text = fs::read_to_string(&output).expect("read output");
+    assert!(text.contains("Status: IN_PROGRESS"));
     assert!(text.contains("Pre-run output scaffold initialized during issue-wave opening."));
     assert!(text.contains("Local ignored output-card scaffold"));
     assert!(text.contains("Integration method used: direct write in main repo for the local ignored pre-run record; tracked implementation artifacts do not exist yet"));
