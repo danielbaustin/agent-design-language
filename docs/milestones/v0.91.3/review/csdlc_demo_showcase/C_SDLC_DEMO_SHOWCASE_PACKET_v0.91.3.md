@@ -5,7 +5,7 @@
 - packet name: `C-SDLC Demo Showcase`
 - issue / WP: `demo WP-05 / #3224`
 - milestone version: `v0.91.3`
-- purpose: package the completed demo mini-sprint into one review surface
+- purpose: package the merged demo mini-sprint evidence into one review surface
 
 ## Bounded Purpose
 
@@ -33,8 +33,8 @@ without claiming more than the current artifacts support.
 | Demo | Issue / PR | Primary run path | Strongest bounded claim | Current bounded result | Important non-claim |
 | --- | --- | --- | --- | --- | --- |
 | Demo proof contract | `#3220 / #3251` | packet contract only | the demo wave shares one vocabulary and proof contract | `passed` | not itself a visible creative-production demo |
-| Starharvest HTML game | `#3221 / #3252` | `bash adl/tools/demo_v0913_starharvest_html_game.sh --print-url` | a bounded C-SDLC creative slice can yield a real playable browser artifact | `passed` | not a proof of universal five-minute delivery |
-| Five-minute sprint console | `#3222 / #3253` | `bash adl/tools/demo_v0913_five_minute_sprint_console.sh --print-url` | the mini-sprint process can be made legible on one visual governed surface | `passed` | not a proof of measured five-minute engineering or hidden full automation |
+| Starharvest HTML game | `#3221 / #3252` | `bash adl/tools/demo_v0913_starharvest_html_game.sh` | a bounded C-SDLC creative slice can yield a real playable browser artifact | `passed` | not a proof of universal five-minute delivery |
+| Five-minute sprint console | `#3222 / #3253` | `bash adl/tools/demo_v0913_five_minute_sprint_console.sh` | the mini-sprint process can be made legible on one visual governed surface | `passed` | not a proof of measured five-minute engineering or hidden full automation |
 | Podcast Studio v2 | `#3223 / #3256` | `bash adl/tools/demo_v0913_podcast_studio_v2.sh` | a deterministic recurring production packet can stay inspectable and truthful without hidden credentials | `passed` | not a proof of live provider-backed generation or final rendered audio |
 | First proof demo | `#3207 / #3250` | `python3 adl/tools/demo_v0913_first_proof_demo.py` | the bounded C-SDLC first proof is real and reviewable | `passed` for governed proof, `non_proving` for literal five-minute target | not a proof that real five-minute sprints already exist |
 

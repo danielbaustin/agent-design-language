@@ -28,7 +28,7 @@ legible in one visual console.
 
 ## Run Path
 
-- primary command: `bash adl/tools/demo_v0913_five_minute_sprint_console.sh --print-url`
+- primary command: `bash adl/tools/demo_v0913_five_minute_sprint_console.sh`
 - operator prerequisites: static local repo checkout only
 - run status: `passed`
 
@@ -47,7 +47,7 @@ legible in one visual console.
 node --check demos/v0.91.3/five_minute_sprint_console_demo.js
 bash adl/tools/test_five_minute_sprint_console_packet.sh
 bash adl/tools/demo_v0913_five_minute_sprint_console.sh --print-path
-bash adl/tools/demo_v0913_five_minute_sprint_console.sh --print-url
+bash adl/tools/demo_v0913_five_minute_sprint_console.sh
 ```
 
 Validation not run:

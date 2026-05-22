@@ -115,13 +115,13 @@ bash adl/tools/demo_v0901_csm_observatory.sh
 If you want the current C-SDLC mini-sprint HTML game demo:
 
 ```bash
-bash adl/tools/demo_v0913_starharvest_html_game.sh --print-url
+bash adl/tools/demo_v0913_starharvest_html_game.sh
 ```
 
 If you want the current C-SDLC sprint-console replay demo:
 
 ```bash
-bash adl/tools/demo_v0913_five_minute_sprint_console.sh --print-url
+bash adl/tools/demo_v0913_five_minute_sprint_console.sh
 ```
 
 If you want the current C-SDLC podcast-studio production packet:

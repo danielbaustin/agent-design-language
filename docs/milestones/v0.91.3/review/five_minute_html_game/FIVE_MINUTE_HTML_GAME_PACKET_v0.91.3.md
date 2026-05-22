@@ -49,7 +49,7 @@ This packet uses the shared C-SDLC demo proof contract result vocabulary:
 
 ## Primary Demo Command
 
-- `bash adl/tools/demo_v0913_starharvest_html_game.sh --print-url`
+- `bash adl/tools/demo_v0913_starharvest_html_game.sh`
 
 ## Executable Run Status
 
