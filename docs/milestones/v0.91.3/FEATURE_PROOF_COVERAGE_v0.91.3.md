@@ -12,7 +12,7 @@ their owning work packages execute.
 | Card lifecycle integration | `features/CARD_LIFECYCLE_INTEGRATION.md` | New C-SDLC bundles preserve `SIP -> STP -> SPP -> SRP -> SOR` semantics. | in_flight under #3201 with tracked public bundle proof |
 | Transition DAG and shard coordination | `features/TRANSITION_DAG_AND_SHARD_COORDINATION.md` | Serial work, shards, barriers, and interface-freeze rules are explicit. | in_flight under #3202 with `review/transition_dag/` packet and focused validator/test proof |
 | Evidence bundle and review synthesis | `features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md` | Review inputs, findings, validation, and residual risks converge into a tracked proof surface. | in_flight under #3203 with `review/evidence_bundle/` packet and focused validator/test proof |
-| Governed merge-readiness gate | `features/GOVERNED_MERGE_READINESS_GATE.md` | Merge readiness preserves issue, PR, CI, branch, review, and closeout truth. | planned under #3204 |
+| Governed merge-readiness gate | `features/GOVERNED_MERGE_READINESS_GATE.md` | Merge readiness preserves issue, PR, CI, branch, review, and closeout truth. | in_flight under #3204 with `review/merge_readiness/` packet and focused validator/test proof |
 | SRP/SOR ObsMem handoff | `features/SRP_SOR_OBSMEM_HANDOFF.md` | Review results and outcome truth have a memory handoff shape. | planned under #3205 |
 | Five-minute-sprint first proof | `features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md` | Bounded demo records transition timing and coordination behavior. | planned under #3207 |
 

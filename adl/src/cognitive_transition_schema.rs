@@ -271,6 +271,9 @@ mod tests {
     const WP05_REVIEW_SYNTHESIS_PACKET: &str = include_str!(
         "../../docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md"
     );
+    const WP06_MERGE_GATE_PACKET: &str = include_str!(
+        "../../docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md"
+    );
 
     #[test]
     fn cognitive_transition_manifest_valid_fixture_passes_validation() {
@@ -437,6 +440,33 @@ mod tests {
             assert!(
                 WP05_REVIEW_SYNTHESIS_PACKET.contains(snippet),
                 "review synthesis packet missing `{snippet}`"
+            );
+        }
+    }
+
+    #[test]
+    fn cognitive_transition_manifest_fixture_points_at_wp06_merge_gate() {
+        let manifest = wp02_cognitive_transition_manifest_valid_fixture();
+
+        assert_eq!(
+            manifest.merge_readiness_gate_rel_path.as_deref(),
+            Some("docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md")
+        );
+
+        for snippet in [
+            "## Gate Identity",
+            "## Issue / Branch / Worktree Truth",
+            "## PR / CI Truth",
+            "## Review Truth",
+            "## Evidence Bundle Link",
+            "## Blocked Conditions",
+            "## Decision",
+            "human merge review remains required",
+            "`merge_ready`",
+        ] {
+            assert!(
+                WP06_MERGE_GATE_PACKET.contains(snippet),
+                "merge gate packet missing `{snippet}`"
             );
         }
     }

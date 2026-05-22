@@ -11,7 +11,7 @@ packages execute.
 | Card lifecycle integration | WP-03 / #3201 | Show a tracked public issue bundle preserves `SIP -> STP -> SPP -> SRP -> SOR` semantics. | tracked card bundle plus validator/doctor proof | in_flight |
 | Transition DAG and shard plan | WP-04 / #3202 | Show serial work, parallel shards, and barriers are explicit. | DAG packet, shard plan, and validator-backed summary | in_flight |
 | Evidence bundle and review synthesis | WP-05 / #3203 | Show review inputs and findings converge into a bounded packet. | evidence bundle plus synthesis output and validator-backed packet proof | in_flight |
-| Governed merge-readiness gate | WP-06 / #3204 | Show C-SDLC preserves issue, PR, CI, branch, and human review truth. | gate result fixture | planned |
+| Governed merge-readiness gate | WP-06 / #3204 | Show C-SDLC preserves issue, PR, CI, branch, and human review truth. | gate result fixture and validator-backed packet proof | in_flight |
 | SRP/SOR ObsMem handoff | WP-07 / #3205 | Show review results and outcome truth have a memory handoff shape. | memory handoff fixture | planned |
 | Five-minute-sprint first proof | WP-09 / #3207 | Show one bounded transition can execute with measurable coordination behavior. | planned demo report and metrics snapshot | planned |
 
