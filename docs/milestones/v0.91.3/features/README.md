@@ -5,6 +5,7 @@ v0.91.3 contains the first Cognitive SDLC implementation slice.
 Feature docs:
 
 - [C-SDLC Demo Proof Contract](C_SDLC_DEMO_PROOF_CONTRACT.md)
+- [Five-Minute HTML Game Sprint Demo](FIVE_MINUTE_HTML_GAME_SPRINT_DEMO.md)
 - [Cognitive SDLC First Slice](COGNITIVE_SDLC_FIRST_SLICE.md)
 - [Cognitive Transition Manifest](COGNITIVE_TRANSITION_MANIFEST.md)
 - [Card Lifecycle Integration](CARD_LIFECYCLE_INTEGRATION.md)
