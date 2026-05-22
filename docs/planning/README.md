@@ -32,6 +32,9 @@ Active planning docs:
 - `ACCOUNT_SWITCH_HANDOFF_2026-05-22.md` - cross-account continuity handoff for
   preserving v0.91.3/v0.91.4 context, active issue/PR state, and workflow
   guardrails while account credits are low
+- `DESIGN_TIME_CARD_COMPLETION_PLAN.md` - process plan for making `SIP`, `STP`,
+  and `SPP` complete and reviewable before issue execution, while preserving
+  runtime truth boundaries for `SRP` and `SOR`
 - `codefriend/` - single tracked home for current CodeFriend planning,
   including product setup, naming migration, source inventory, and links back to
   historical milestone proof
