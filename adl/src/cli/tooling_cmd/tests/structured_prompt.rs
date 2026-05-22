@@ -285,3 +285,49 @@ fn structured_prompt_srp_validator_rejects_malformed_source_refs() {
         .to_string()
         .contains("source_refs entries must be mappings"));
 }
+
+#[test]
+fn tracked_csdlc_card_bundle_validates() {
+    let repo_root = repo_root_for_tests();
+    let bundle_root =
+        repo_root.join("workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards");
+    let sip = bundle_root.join("sip.md");
+    let stp = bundle_root.join("stp.md");
+    let spp = bundle_root.join("spp.md");
+    let srp = bundle_root.join("srp.md");
+    let sor = bundle_root.join("sor.md");
+
+    let sip_text = std::fs::read_to_string(&sip).expect("read tracked bundle SIP");
+    let stp_text = std::fs::read_to_string(&stp).expect("read tracked bundle STP");
+    let sor_text = std::fs::read_to_string(&sor).expect("read tracked bundle SOR");
+
+    validate_sip_text(&sip_text, &sip, Some("bootstrap"))
+        .expect("tracked public SIP should validate");
+    validate_stp_text(&stp_text).expect("tracked public STP should validate");
+    validate_sor_text(&sor_text, Some("completed")).expect("tracked public SOR should validate");
+
+    assert!(real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        spp.to_string_lossy().to_string(),
+        "--phase".to_string(),
+        "final".to_string(),
+    ])
+    .is_ok());
+    assert!(real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "srp".to_string(),
+        "--input".to_string(),
+        srp.to_string_lossy().to_string(),
+        "--phase".to_string(),
+        "final".to_string(),
+    ])
+    .is_ok());
+    assert!(markdown_has_heading(&sip_text, "Validation Plan"));
+    assert!(markdown_has_heading(&stp_text, "Required Outcome"));
+    assert!(markdown_has_heading(
+        &sor_text,
+        "Main Repo Integration (REQUIRED)"
+    ));
+}

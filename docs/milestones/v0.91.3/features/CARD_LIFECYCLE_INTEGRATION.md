@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned `v0.91.3` feature under `WP-03` / `#3201`.
+In-flight `v0.91.3` feature under `WP-03` / `#3201`.
 
 ## Purpose
 
@@ -47,6 +47,23 @@ The first slice must define and prove:
   auditable rather than only local `.adl/` state.
 - The first-slice proof names `workflow/c-sdlc/v0.91.3/issues/` as the target
   tracked namespace for durable issue-local card records.
+
+## Current WP-03 Proof Surface
+
+`WP-03` now anchors the first tracked public proof bundle at:
+
+- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/`
+
+That bundle contains:
+
+- tracked `SIP`, `STP`, `SPP`, `SRP`, and `SOR` cards
+- focused validator-backed proof
+- focused doctor lifecycle expectations proving the tracked bundle is accepted
+  as final review/output truth
+
+The proof packet lives under:
+
+- `docs/milestones/v0.91.3/review/card_lifecycle_integration/`
 
 ## Non-Goals
 
