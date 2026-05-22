@@ -1,0 +1,35 @@
+{
+  "schema": "adl.podcast_studio_v2.audio_manifest.v1",
+  "series_name": "ADL Podcast Studio",
+  "episode_title": "Episode 04: Can governed creative production feel alive?",
+  "episode_slug": "episode-04-governed-creative-production",
+  "render_status": "manifest_only",
+  "rendered_audio_present": false,
+  "canonical_command": "bash adl/tools/demo_v0913_podcast_studio_v2.sh",
+  "render_policy": {
+    "live_audio_required": false,
+    "hidden_credentials_required": false,
+    "truth_boundary": "This bounded demo records routing and intended render posture without claiming a final audio artifact."
+  },
+  "speaker_routes": [
+    {
+      "speaker": "ChatGPT",
+      "transcript_identity": "ChatGPT",
+      "intended_voice_style": "warm, direct, high-clarity host energy",
+      "render_path": "not_run_manifest_only"
+    },
+    {
+      "speaker": "Gemini",
+      "transcript_identity": "Gemini",
+      "intended_voice_style": "bright, incisive, operationally sharp",
+      "render_path": "not_run_manifest_only"
+    },
+    {
+      "speaker": "Claude",
+      "transcript_identity": "Claude",
+      "intended_voice_style": "measured, reflective, emotionally precise",
+      "render_path": "not_run_manifest_only"
+    }
+  ],
+  "reason_not_rendered": "The bounded v0.91.3 demo proves recurring packet production without requiring hidden credentials or claiming a final audio render."
+}

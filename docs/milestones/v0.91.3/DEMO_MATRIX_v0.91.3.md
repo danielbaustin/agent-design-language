@@ -18,6 +18,7 @@ packages execute.
 | Five-minute-sprint first proof | WP-09 / #3207 | Show one bounded transition can execute with measurable coordination behavior. | `review/first_proof_demo/` packet, deterministic demo command, and metrics snapshot that separately classify process success versus literal five-minute success | in_flight |
 | Five-minute HTML game sprint demo | demo WP-02 / #3221 | Build the first visible C-SDLC creative-production demo as a playable browser game with explicit proof notes. | `demos/v0.91.3/starharvest_five_minute_sprint_demo.html`, `review/five_minute_html_game/` packet, and validator-backed packet proof | in_flight |
 | Five-minute sprint console demo | demo WP-03 / #3222 | Make the Starharvest mini-sprint legible as a governed process with roles, work states, review events, and launch truth on one visual surface. | `demos/v0.91.3/five_minute_sprint_console_demo.html`, `review/five_minute_sprint_console/` packet, and validator-backed packet proof | in_flight |
+| Podcast Studio v2 demo | demo WP-04 / #3223 | Turn the older podcast pilot into a deterministic recurring production-system packet with inspectable roles, transcript, and truthful audio status. | `demos/v0.91.3/adl_podcast_studio_v2_episode_card.html`, `review/podcast_studio_v2/` packet, and validator-backed packet proof | local_pass_pending_pr |
 
 ## Demo Rules
 
