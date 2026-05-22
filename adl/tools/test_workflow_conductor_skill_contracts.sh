@@ -80,6 +80,26 @@ cat >"${tmpdir}/stp_blocker.json" <<'EOF'
 }
 EOF
 
+cat >"${tmpdir}/sip_blocker.json" <<'EOF'
+{
+  "target": {"issue_number": 1647},
+  "workflow_state": {
+    "bootstrap_present": true,
+    "card_blocker": "sip",
+    "lifecycle_state": "pre_run",
+    "ready_state": "unknown",
+    "pr_state": "none",
+    "subagent_assigned": false,
+    "evidence_used": ["doctor_card_lifecycle"]
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional"
+  }
+}
+EOF
+
 cat >"${tmpdir}/spp_blocker.json" <<'EOF'
 {
   "target": {"issue_number": 1647},
@@ -199,6 +219,7 @@ EOF
 
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/bootstrap_missing.json" >"${tmpdir}/bootstrap_missing.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/stp_blocker.json" >"${tmpdir}/stp_blocker.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/sip_blocker.json" >"${tmpdir}/sip_blocker.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/spp_blocker.json" >"${tmpdir}/spp_blocker.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/srp_blocker.json" >"${tmpdir}/srp_blocker.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/resume_to_run.json" >"${tmpdir}/resume_to_run.out.json"
@@ -222,6 +243,10 @@ assert bootstrap["selected_skill"]["skill_name"] == "pr-init"
 stp = load("stp_blocker.out.json")
 assert stp["selected_skill"]["skill_name"] == "stp-editor"
 assert stp["selected_skill"]["editor_skill"] == "stp-editor"
+
+sip = load("sip_blocker.out.json")
+assert sip["selected_skill"]["skill_name"] == "sip-editor"
+assert sip["selected_skill"]["editor_skill"] == "sip-editor"
 
 spp = load("spp_blocker.out.json")
 assert spp["selected_skill"]["skill_name"] == "spp-editor"
@@ -295,7 +320,7 @@ fi
 case "$issue" in
   2001)
     cat <<'JSON'
-{"schema":"adl.pr.doctor.v1","issue":2001,"version":"v0.88","slug":"route-run","branch":"codex/2001-route-run","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"pre_run","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2001-route-run.md","root_stp":".adl/v0.88/tasks/issue-2001__route-run/stp.md","root_input":".adl/v0.88/tasks/issue-2001__route-run/sip.md","root_output":".adl/v0.88/tasks/issue-2001__route-run/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"card_lifecycle":{"order":["SIP","STP","SPP","SRP","SOR"],"active_stage":"SIP","next_required_stage":"SIP","pr_run_readiness":"ready","pr_finish_readiness":"blocked","stages":[{"stage":"SIP","path":".adl/v0.88/tasks/issue-2001__route-run/sip.md","state":"pre_run","complete":false,"final_ready":false,"next_editor":null,"detail":"pre-run"},{"stage":"STP","path":".adl/v0.88/tasks/issue-2001__route-run/stp.md","state":"complete","complete":true,"final_ready":false,"next_editor":null,"detail":"complete"},{"stage":"SPP","path":".adl/v0.88/tasks/issue-2001__route-run/spp.md","state":"pre_run","complete":false,"final_ready":false,"next_editor":"spp-editor","detail":"pre-run compatibility fixture"},{"stage":"SRP","path":".adl/v0.88/tasks/issue-2001__route-run/srp.md","state":"final","complete":true,"final_ready":true,"next_editor":null,"detail":"policy exception"},{"stage":"SOR","path":".adl/v0.88/tasks/issue-2001__route-run/sor.md","state":"scaffold","complete":false,"final_ready":false,"next_editor":"sor-editor","detail":"pre-execution"}]},"doctor_status":"PASS"}
+{"schema":"adl.pr.doctor.v1","issue":2001,"version":"v0.88","slug":"route-run","branch":"codex/2001-route-run","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"pre_run","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2001-route-run.md","root_stp":".adl/v0.88/tasks/issue-2001__route-run/stp.md","root_input":".adl/v0.88/tasks/issue-2001__route-run/sip.md","root_output":".adl/v0.88/tasks/issue-2001__route-run/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"card_lifecycle":{"order":["SIP","STP","SPP","SRP","SOR"],"active_stage":"SOR","next_required_stage":"SOR","pr_run_readiness":"ready","pr_finish_readiness":"blocked","stages":[{"stage":"SIP","path":".adl/v0.88/tasks/issue-2001__route-run/sip.md","state":"complete","complete":true,"design_time_complete":true,"final_ready":false,"next_editor":null,"detail":"design-time complete"},{"stage":"STP","path":".adl/v0.88/tasks/issue-2001__route-run/stp.md","state":"complete","complete":true,"design_time_complete":true,"final_ready":false,"next_editor":null,"detail":"complete"},{"stage":"SPP","path":".adl/v0.88/tasks/issue-2001__route-run/spp.md","state":"complete","complete":true,"design_time_complete":true,"final_ready":false,"next_editor":null,"detail":"design-time complete"},{"stage":"SRP","path":".adl/v0.88/tasks/issue-2001__route-run/srp.md","state":"final","complete":true,"design_time_complete":false,"final_ready":true,"next_editor":null,"detail":"policy exception"},{"stage":"SOR","path":".adl/v0.88/tasks/issue-2001__route-run/sor.md","state":"scaffold","complete":false,"design_time_complete":false,"final_ready":false,"next_editor":"sor-editor","detail":"pre-execution"}]},"doctor_status":"PASS"}
 JSON
     ;;
   2004)

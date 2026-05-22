@@ -8,8 +8,10 @@ This document records the target template shape for all five ADL issue cards:
 SIP -> STP -> SPP -> SRP -> SOR
 ```
 
-It is a template and schema planning surface only. It does not enforce the new
-lifecycle, migrate active bundles, or change conductor/editor routing.
+It is a template and schema planning surface. Enforcement now belongs to the
+workflow tooling: doctor reports card-stage truth, workflow-conductor routes
+card defects to editor skills, and sprint-conductor must run sprint-wide card
+preflight before child execution starts.
 
 ## Compatibility Policy
 
@@ -42,7 +44,10 @@ Recommended activation states are:
 - `scaffold`: file exists for path stability but is not authoritative.
 - `draft`: issue-specific content is being authored or reviewed.
 - `active`: card is the current authoritative lifecycle surface.
-- `reviewed`: review has been applied and results are recorded.
+- `reviewed`: card has passed design-time review and is ready to guide its
+  lifecycle stage.
+- `approved`: card has explicit operator or reviewer approval for the next
+  lifecycle transition.
 - `pr_open`: outcome is represented by an open PR.
 - `merged`: outcome has landed on `main`.
 - `closed_no_pr`: issue closed intentionally without a merged PR.
@@ -100,6 +105,8 @@ Target responsibility:
 - review handoff plan
 - branch/worktree constraints
 - risks and fallback path
+- proof gates before proceeding
+- replan triggers when execution diverges
 
 Compatibility surfaces:
 
@@ -120,6 +127,14 @@ Target responsibility:
 - dispositions
 - residual risks
 - recommended outcome
+
+Design-time responsibility:
+
+- before review, `SRP` should be a complete Structured Review Prompt with
+  review scope and evidence rules
+- before review, `SRP` must not invent findings, dispositions, or recommended
+  outcome
+- after review, `SRP` records review results and finding dispositions
 
 Compatibility surfaces:
 

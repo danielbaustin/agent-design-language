@@ -16,6 +16,13 @@ Tooling may create `spp.md` as an early scaffold for path stability. That file
 is not lifecycle-active until the plan has been tightened for the current issue
 and is ready to guide execution.
 
+For C-SDLC issue execution, a generic or truncated `SPP` is not enough.
+`pr doctor` and sprint-conductor preflight should treat an issue-local `SPP` as
+design-time complete only after it is issue-specific and marked `reviewed` or
+`approved`. A truthful pre-execution `SPP` is a decomposition artifact: it lets
+the milestone split work into smaller, inspectable, reviewable packets before
+agents start executing them.
+
 This template is compatible with Codex plan mode by carrying a simple
 `codex_plan` list. Each item has:
 
@@ -29,7 +36,9 @@ Recommended status semantics:
 
 - `scaffold`: file exists but has not been tailored to the issue.
 - `draft`: issue-specific plan is being authored or reviewed.
-- `active`: plan is the current execution guide.
+- `reviewed`: plan has passed design-time review and may guide execution.
+- `approved`: plan has explicit operator or reviewer approval for execution.
+- `active`: plan is the current execution guide after execution has started.
 - `superseded`: plan was replaced by a later revision.
 - `legacy_compatible`: historical plan shape retained for compatibility and
   detectable migration.
@@ -58,7 +67,7 @@ title: "<issue title>"
 branch: "not bound yet"
 lifecycle_stage: "SPP"
 status: "draft"
-activation_state: "scaffold | draft | active | superseded | legacy_compatible"
+activation_state: "scaffold | draft | reviewed | approved | active | superseded | legacy_compatible"
 plan_revision: 1
 source_refs:
   - kind: "issue"
@@ -165,5 +174,9 @@ notes: "<optional note>"
 - New templates should prefer explicit `lifecycle_stage` and
   `activation_state` fields so doctor/readiness tooling can distinguish
   scaffold presence from active plan truth.
+- New issue bundles should set `status` / `activation_state` to `reviewed` or
+  `approved` before execution begins. Generic scaffold text, known truncation
+  sentinels, and unreviewed `draft` status should block sprint start and route
+  back to `spp-editor`.
 - Sprint-scoped planning remains out of scope for this issue-level template
   unless a future schema adds an explicit sprint-plan card type.

@@ -208,11 +208,13 @@ It must stop after:
 - bootstrap validation
 
 The created bundle includes an initial `SPP`. That `SPP` is not a generic
-placeholder: it should be a deterministic design-time execution plan generated
-from the source issue prompt, dependencies, deliverables, acceptance criteria,
-validation expectations, and non-goals. Reviewers may tighten it before
-execution. Runtime agents must update it before continuing if the real execution
-sequence changes.
+placeholder: it should be a deterministic design-time execution-plan draft
+generated from the source issue prompt, dependencies, deliverables, acceptance
+criteria, validation expectations, and non-goals. It should not claim human or
+subagent review merely because the generator produced it. Before execution
+starts, the plan must pass design-time review or editor repair and be marked
+`reviewed` or `approved`. Runtime agents must update it before continuing if
+the real execution sequence changes.
 
 It must not continue into:
 - qualitative card review

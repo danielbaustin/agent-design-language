@@ -48,6 +48,9 @@ This skill may:
 - normalize `artifact_type` to `structured_review_prompt`
 - update headings and wording from legacy Structured Review Policy scaffolding
   to Structured Review Prompt semantics
+- prepare a complete review prompt before review while explicitly preserving
+  that findings, dispositions, and recommended outcome are absent until review
+  actually runs
 - add or tighten sections for review scope, review instructions, findings,
   dispositions, reviewer notes, residual risks, and recommended outcome
 - record review findings only when explicit review evidence is supplied

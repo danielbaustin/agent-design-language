@@ -46,6 +46,9 @@ This skill may:
 - fix integration wording such as `worktree_only`, `pr_open`, or main-repo claims
 - replace placeholders with concrete paths or commands when evidence is supplied
 - normalize validation sections to reflect only checks actually run
+- preserve the design-time boundary between a pre-execution scaffold and a
+  post-execution output record; do not mark output, validation, PR, merge, or
+  closeout truth as complete before it exists
 - tighten artifact and determinism wording for truthfulness
 
 This skill must not:

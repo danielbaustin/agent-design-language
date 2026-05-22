@@ -145,6 +145,8 @@ missing sprint-management issue first.
 This skill enforces:
 - exactly one active child issue at a time
 - no child issue execution before the whole sprint batch passes structured prompt review
+- no child issue execution before the whole sprint batch passes design-time
+  card-completion review for `SIP`, `STP`, `SPP`, and `SRP`
 - no issue `N+1` work before issue `N` is fully closed out
 - editor-skill routing when cards drift
 - immediate stop on true blocker
@@ -162,6 +164,10 @@ Preferred per-issue routing model:
 - sprint-wide structured prompt preflight not ready ->
   `check_sprint_structured_prompt_readiness.py`, then route flagged child issues
   through the matching editor skills before starting issue execution
+- sprint-wide design-time card preflight not ready -> route generic `SIP`,
+  incomplete `STP`, generic/truncated or unreviewed `SPP`, and legacy/incomplete
+  `SRP` cards through their matching editor skills before starting issue
+  execution
 - missing sprint-management issue and policy allows creation ->
   `create_missing_sprint_issue.py`, then continue with the ordered child issue
   flow from the created sprint anchor

@@ -600,6 +600,12 @@ fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1197, "v0.86", "doctor-worktree-cwd").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Doctor worktree cwd");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Doctor worktree cwd",
+        "codex/1197-doctor-worktree-cwd",
+    );
     real_pr(&[
         "start".to_string(),
         "1197".to_string(),

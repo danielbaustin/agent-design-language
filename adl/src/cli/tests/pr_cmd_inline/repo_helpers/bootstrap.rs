@@ -43,6 +43,92 @@ fn real_pr_start_requires_explicit_version_when_no_fetch_issue_has_no_local_bund
 }
 
 #[test]
+fn real_pr_start_blocks_before_worktree_when_design_time_cards_are_not_ready() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-start-design-time-card-gate");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "design-time gate fixture\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    let issue_ref = IssueRef::new(
+        1154,
+        "v0.86".to_string(),
+        "v0-86-tools-design-time-card-gate".to_string(),
+    )
+    .expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Design-time card gate");
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            "https://github.com/owner/repo.git",
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "start".to_string(),
+        "1154".to_string(),
+        "--slug".to_string(),
+        "v0-86-tools-design-time-card-gate".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Design-time card gate".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("start should block before worktree binding when generated SPP is not reviewed");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    let err_text = err.to_string();
+    assert!(
+        err_text.contains("design-time card completion gate failed"),
+        "unexpected error: {err_text}"
+    );
+    assert!(err_text.contains("SPP"));
+    assert!(
+        !repo.join(".worktrees/adl-wp-1154").exists(),
+        "design-time card gate should block before worktree creation"
+    );
+}
+
+#[test]
 fn real_pr_init_requires_explicit_or_inferable_version_for_issue() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-init-missing-version");
@@ -483,6 +569,12 @@ fn real_pr_ready_accepts_started_issue_when_output_branch_is_bootstrap_placehold
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1198, "v0.86", "ready-branch-placeholder").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Ready branch placeholder");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Ready branch placeholder",
+        "codex/1198-ready-branch-placeholder",
+    );
 
     real_pr(&[
         "start".to_string(),
@@ -662,7 +754,8 @@ fn ensure_bootstrap_cards_creates_bundle_and_compat_links() {
         fs::read_to_string(issue_ref.task_bundle_review_policy_path(&repo)).expect("review prompt");
     assert!(review_prompt_text.contains("artifact_type: \"structured_review_prompt\""));
     assert!(review_prompt_text.contains("# Structured Review Prompt"));
-    assert!(review_prompt_text.contains("review_results_exception:"));
+    assert!(!review_prompt_text.contains("review_results_exception:"));
+    assert!(review_prompt_text.contains("Review results are intentionally absent"));
     assert!(!review_prompt_text.contains("# Structured Review Policy"));
     assert_eq!(
         field_line_value(&bundle_input, "Branch").expect("input branch"),

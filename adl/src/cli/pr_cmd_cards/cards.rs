@@ -670,6 +670,7 @@ version: "{version}"
 title: "{title}"
 branch: "{branch}"
 status: "draft"
+activation_state: "draft"
 plan_revision: 1
 source_refs:
   - kind: "issue"
@@ -695,7 +696,7 @@ constraints:
   - "runtime_execution_must_update_spp_if_plan_changes"
   - "no_hidden_scope_expansion"
 confidence: "medium"
-plan_summary: "Design-time operative plan for {title}; generated from source issue prompt, STP/SIP surfaces, dependencies, deliverables, acceptance criteria, and validation expectations."
+plan_summary: "Design-time operative plan for {title}; derived from the authored issue prompt, STP/SIP surfaces, dependencies, deliverables, acceptance criteria, and validation expectations."
 assumptions:
   - "The linked source issue prompt, STP, and SIP remain the canonical design-time inputs."
   - "Dependency details may need refresh when earlier issues land."
@@ -755,14 +756,14 @@ alternatives_considered:
     reason_not_chosen: "Chat-only planning is not durable or reviewable enough for this workflow surface."
 review_hooks:
   - "Check dependency truth, scope truthfulness, touched-file truthfulness, validation sufficiency, and re-plan triggers."
-notes: "Design-time generated SPP; review before execution and update during runtime if the plan changes."
+notes: "Design-time SPP derived from the authored issue prompt; update during runtime if the plan changes."
 ---
 
 # Structured Plan Prompt
 
 ## Plan Summary
 
-Design-time operative plan for this issue. Review this SPP before execution; during runtime, update it before continuing if the actual execution sequence changes.
+Design-time operative plan for this issue. Use this SPP to guide execution; during runtime, update it before continuing if the actual execution sequence changes.
 
 ## Codex Plan
 
@@ -817,7 +818,7 @@ Use this SPP as the design-time plan-of-record, then update it at runtime whenev
 
 ## Notes
 
-Design-time generated SPP; review before execution and update during runtime if the plan changes.
+Design-time SPP derived from the authored issue prompt; update during runtime if the plan changes.
 "#,
         slug = issue_ref.slug(),
         issue = issue_ref.issue_number(),
@@ -873,7 +874,7 @@ fn issue_prompt_section(text: &str, heading: &str) -> Option<String> {
 }
 
 fn one_line_summary(text: &str) -> String {
-    const MAX_LEN: usize = 220;
+    const MAX_LEN: usize = 420;
     let out = text
         .lines()
         .map(|line| line.trim().trim_start_matches("- ").trim())
@@ -882,7 +883,7 @@ fn one_line_summary(text: &str) -> String {
         .join("; ");
     if out.chars().count() > MAX_LEN {
         let mut truncated = out.chars().take(MAX_LEN).collect::<String>();
-        truncated.push_str("...");
+        truncated.push_str(" [summary truncated]");
         truncated
     } else {
         out
@@ -951,8 +952,7 @@ non_claims:
 policy_refs:
   - "{stp_rel}"
   - "{sip_rel}"
-review_results_exception: "explicit policy exception: pre-execution review results are absent until implementation exists; finalize this SRP with actual review findings before PR publication."
-notes: "Bootstrap-generated Structured Review Prompt; revise before use if issue-specific review constraints are needed."
+notes: "Structured Review Prompt prepared before execution; finalize with actual review findings before PR publication."
 ---
 
 # Structured Review Prompt
@@ -1019,7 +1019,7 @@ Use this prompt to govern the independent pre-PR review for this issue. Review r
 
 ## Notes
 
-Bootstrap-generated Structured Review Prompt; revise before use if issue-specific review constraints are needed.
+Structured Review Prompt prepared before execution; finalize with actual review findings before PR publication.
 "#,
         slug = issue_ref.slug(),
         issue = issue_ref.issue_number(),

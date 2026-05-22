@@ -2,12 +2,13 @@
 
 ## Status
 
-Planning document for issue `#3264`.
+Planning document for issue `#3264`; operational enforcement is implemented
+by issue `#3267`.
 
 This plan institutionalizes the rule that milestone issue waves should not be
 treated as ready merely because card files exist. Before execution starts,
-`SIP`, `STP`, and `SPP` should already be detailed, issue-specific,
-reviewable, and useful.
+`SIP`, `STP`, `SPP`, and the pre-review `SRP` should already be detailed,
+issue-specific, reviewable, and useful.
 
 This plan does not generate v0.91.4 cards. It defines the contract WP-17 should
 use when preparing the v0.91.4 core issue wave, sprint umbrellas, and
@@ -28,8 +29,31 @@ source issue prompt, the issue bundle should be prepared as follows:
   during run, finish, merge or closure, and closeout.
 
 The goal is not to pretend execution already happened. The goal is to make the
-next agent start from reviewed intent, selected task, and operative plan rather
-than from generic bootstrap text.
+next agent start from reviewed intent, selected task, operative plan, and
+review instructions rather than from generic bootstrap text.
+
+## Operational Automation
+
+Design-time completion is now a first-class C-SDLC automation target, not a
+human reminder.
+
+The deterministic enforcement path should be:
+
+1. `pr create` / `pr init` seed complete design-time cards where possible.
+2. `pr doctor` reports card-stage truth and blocks execution when design-time
+   cards are generic, incomplete, or stale.
+3. `workflow-conductor` routes card defects to the matching editor skill rather
+   than improvising fixes.
+4. `sprint-conductor` runs sprint-wide structured prompt and design-time card
+   preflight before the first child issue starts.
+5. Editor skills repair cards within their own card boundary.
+6. `SRP` records review results only after review; `SOR` records output truth
+   only after execution, publication, or closeout truth exists.
+
+This gives ADL a deterministic decomposition step before execution: the issue
+wave is split into reviewed issue-local work packets, each with its own
+operative plan and review prompt. That is how C-SDLC supports parallel work
+without returning to hidden chat memory or vague handoffs.
 
 ## Why This Matters
 
@@ -43,6 +67,8 @@ not semantically ready. Generic cards create several failure modes:
 - `SRP` review prompts are too generic to produce useful findings
 - `SOR` cards overclaim or remain stale because the expected proof surface was
   never clear
+- sprint umbrellas start child execution before the batch has passed a
+  deterministic card-readiness gate
 
 Design-time card completion moves more cognition into tracked, inspectable
 state. That supports C-SDLC, ObsMem, sprint resumption, and cross-session
@@ -162,8 +188,13 @@ For each core WP, sprint umbrella, and approved sidecar issue:
 7. Review the bundle before the issue is allowed to execute.
 8. Fix card findings with editor skills only.
 
-The wave is not execution-ready if `SIP`, `STP`, or `SPP` still read like
-generic bootstrap text.
+Generated `SPP` files may start as `draft` plans. They become execution-ready
+only after the design-time review/editor pass marks them `reviewed` or
+`approved`; raw `pr run` should block before worktree binding until that is
+true.
+
+The wave is not execution-ready if `SIP`, `STP`, `SPP`, or `SRP` still read
+like generic bootstrap text.
 
 ## v0.91.4 WP-17 Card Preparation Checklist
 
@@ -208,7 +239,9 @@ If the answer is no, the issue is not ready to execute.
 
 ## Tooling Implications
 
-This plan can be implemented incrementally.
+This plan can be implemented incrementally, but v0.91.3/v0.91.4 execution
+should treat the following as the operational minimum before relying on the new
+process.
 
 Near-term human/process changes:
 
@@ -224,13 +257,13 @@ Required tooling changes before relying on this process:
 - `pr doctor` should distinguish generic bootstrap text from design-time
   complete cards.
 - validator or doctor output should expose a `design_time_complete` status for
-  `SIP`, `STP`, and `SPP`.
+  `SIP`, `STP`, `SPP`, and pre-review `SRP`.
 - `workflow-conductor` should route generic or incomplete design-time cards to
   the matching editor skill before allowing execution or publication to
   continue.
 - `sprint-conductor` should run a sprint-wide design-time card preflight before
   the first child starts, and it should stop or repair through editor skills
-  when `SIP`, `STP`, or `SPP` remain generic.
+  when `SIP`, `STP`, `SPP`, or `SRP` remain generic or incomplete.
 - `sip-editor`, `stp-editor`, and `spp-editor` should know the
   design-time-complete bar for their own card types, not only mechanical
   formatting and branch truth.
@@ -241,18 +274,38 @@ Required tooling changes before relying on this process:
 - sprint setup should fail or warn when a child issue has generic design-time
   cards.
 
-These tooling changes should be routed as separate implementation issues, but
-they are not optional. The design-time card-completion rule should not become a
-trusted v0.91.3/v0.91.4 operating practice until the conductor, sprint
-conductor, and editor/tooling surfaces enforce or at least explicitly report the
-new readiness bar.
+The first enforcement slice is issue `#3267`, which wires this rule into doctor,
+workflow-conductor, sprint-conductor, and editor-skill contracts. Any remaining
+tooling gaps should be routed as bounded follow-on issues, but they are not
+optional. The design-time card-completion rule should not become a trusted
+v0.91.3/v0.91.4 operating practice until the conductor, sprint conductor, and
+editor/tooling surfaces enforce or at least explicitly report the new readiness
+bar.
+
+## Catch-Up Requirement
+
+After the enforcement tooling lands, issue `#3268` covers the bounded catch-up
+pass for the remaining open `v0.91.3` issue bundles.
+
+That issue should:
+
+- inspect all remaining `v0.91.3` core WPs, sprint umbrellas, and sidecars
+- run the doctor / sprint-preflight gates introduced by this process change
+- repair generic or incomplete `SIP`, `STP`, `SPP`, and `SRP` cards through the
+  matching editor skills
+- leave `SOR` as a truthful scaffold or truthful output record depending on
+  each issue's actual lifecycle state
+- stop before changing unrelated implementation scope
+
+The catch-up issue exists because automation only helps if the already-created
+issue wave is brought into the new contract before the milestone continues.
 
 ## Non-Goals
 
 This plan does not:
 
 - generate the v0.91.4 card wave
-- edit tooling implementation
+- generate the remaining v0.91.3 catch-up cards
 - change the `SIP -> STP -> SPP -> SRP -> SOR` lifecycle
 - make `SRP` review results available before review
 - make `SOR` outcome truth available before execution

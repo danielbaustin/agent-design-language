@@ -275,7 +275,7 @@ fn real_pr_create(args: &[String]) -> Result<()> {
     );
     println!("  READY      {}", ready.status);
     println!("  LIFECYCLE  {}", ready.lifecycle_state);
-    println!("  NEXT       qualitative STP/SIP review, then adl/tools/pr.sh run {issue} --slug {slug} --version {version}");
+    println!("  NEXT       qualitative SIP/STP/SPP/SRP design-time review, then adl/tools/pr.sh run {issue} --slug {slug} --version {version}");
     println!("  STATE      ISSUE_AND_BUNDLE_READY");
     eprintln!("• Done.");
     Ok(())
@@ -426,11 +426,6 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     eprintln!("• Target branch: {branch}");
     eprintln!("• Target worktree: {}", worktree_path.display());
 
-    ensure_git_metadata_writable()?;
-    fetch_origin_main_with_fallback()?;
-    ensure_local_branch_exists(&branch)?;
-    ensure_worktree_for_branch(&worktree_path, &branch)?;
-
     let source_path = ensure_source_issue_prompt(
         &repo_root,
         &repo,
@@ -445,13 +440,21 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     validate_authored_prompt_surface("start", &source_path, PromptSurfaceKind::IssuePrompt)?;
 
     let root_stp = ensure_task_bundle_stp(&repo_root, &issue_ref, &source_path)?;
+    validate_authored_prompt_surface("start", &root_stp, PromptSurfaceKind::Stp)?;
+
+    let root_paths = ensure_bootstrap_cards(&repo_root, &issue_ref, &title, &branch, &source_path)?;
+    doctor::ensure_pr_run_design_time_ready(&repo_root, &issue_ref, &branch)?;
+
+    ensure_git_metadata_writable()?;
+    fetch_origin_main_with_fallback()?;
+    ensure_local_branch_exists(&branch)?;
+    ensure_worktree_for_branch(&worktree_path, &branch)?;
+
     let worktree_source = ensure_local_issue_prompt_copy(&worktree_path, &issue_ref, &source_path)?;
     mirror_docs_templates_into_worktree(&repo_root, &worktree_path)?;
     let worktree_stp = ensure_task_bundle_stp(&worktree_path, &issue_ref, &worktree_source)?;
-    validate_authored_prompt_surface("start", &root_stp, PromptSurfaceKind::Stp)?;
     validate_authored_prompt_surface("start", &worktree_stp, PromptSurfaceKind::Stp)?;
 
-    let root_paths = ensure_bootstrap_cards(&repo_root, &issue_ref, &title, &branch, &source_path)?;
     sync_root_task_bundle_into_worktree(&repo_root, &worktree_path, &issue_ref)?;
     let worktree_paths = ensure_bootstrap_cards(
         &worktree_path,
