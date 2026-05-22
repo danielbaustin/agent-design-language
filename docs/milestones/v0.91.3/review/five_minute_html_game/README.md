@@ -16,5 +16,4 @@ This directory contains the bounded review packet for demo `WP-02` / `#3221`.
 
 ## Primary Demo Command
 
-- `bash adl/tools/demo_v0913_starharvest_html_game.sh --print-url`
-
+- `bash adl/tools/demo_v0913_starharvest_html_game.sh`

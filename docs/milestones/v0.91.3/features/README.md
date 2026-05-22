@@ -5,6 +5,7 @@ v0.91.3 contains the first Cognitive SDLC implementation slice.
 Feature docs:
 
 - [C-SDLC Demo Proof Contract](C_SDLC_DEMO_PROOF_CONTRACT.md)
+- [C-SDLC Demo Showcase](C_SDLC_DEMO_SHOWCASE.md)
 - [Five-Minute HTML Game Sprint Demo](FIVE_MINUTE_HTML_GAME_SPRINT_DEMO.md)
 - [Five-Minute Sprint Console Demo](FIVE_MINUTE_SPRINT_CONSOLE_DEMO.md)
 - [Podcast Studio v2 Demo](PODCAST_STUDIO_V2_DEMO.md)
