@@ -6,7 +6,32 @@ Planning document for issue `#3254`.
 
 This plan does not create the CodeFriend repository, touch AWS, publish DNS, or
 claim CodeFriend alpha readiness. It defines a bounded pre-alpha mini-sprint
-that can be executed before the full `v0.93.x` CodeFriend alpha milestone.
+that should be scheduled for execution in `v0.91.4`, before the full
+`v0.93.x` CodeFriend alpha milestone.
+
+`v0.91.3` scope is planning only. Do not expand the current milestone by
+opening or executing the CodeFriend pre-alpha site issue wave here.
+
+## Execution Schedule
+
+Recommended execution placement:
+
+- Milestone: `v0.91.4`
+- Shape: one mini-sprint umbrella plus four child issues
+- Exit posture: CodeFriend has a private product/site repo and a verified
+  S3-backed, CloudFront-served, HTTPS landing page, or a truthful blocked
+  handoff if AWS/DNS approval prevents launch
+
+Recommended `v0.91.4` issue wave:
+
+1. CodeFriend pre-alpha site mini-sprint umbrella.
+2. Product repo bootstrap.
+3. Static welcome page.
+4. AWS S3, CloudFront, ACM, and Route 53 machinery.
+5. Publication safety, verification, and handoff.
+
+This plan is the design input for that wave. It is not itself the execution
+wave.
 
 ## Relationship To Existing CodeFriend Plan
 
