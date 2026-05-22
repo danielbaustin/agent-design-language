@@ -46,6 +46,7 @@ The milestone proof package should include:
 - visual sprint-console replay that keeps process truth adjacent to the creative artifact
 - deterministic podcast-studio packet with explicit role surfaces and truthful audio manifest
 - one reviewer-facing feature-to-demo map that makes the best run path for every feature obvious
+- one reviewer-facing quality-gate lane that aggregates the strongest landed first-slice proof surfaces before later Sprint 4 review/remediation work
 
 ## Non-Claims
 
