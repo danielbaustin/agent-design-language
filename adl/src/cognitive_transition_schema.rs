@@ -259,6 +259,13 @@ fn validate_repo_relative(
 mod tests {
     use super::*;
 
+    const WP04_TRANSITION_DAG_PACKET: &str = include_str!(
+        "../../docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_transition_dag.md"
+    );
+    const WP04_SHARD_PLAN_PACKET: &str = include_str!(
+        "../../docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_shard_plan.md"
+    );
+
     #[test]
     fn cognitive_transition_manifest_valid_fixture_passes_validation() {
         let manifest = wp02_cognitive_transition_manifest_valid_fixture();
@@ -345,5 +352,48 @@ mod tests {
             .expect_err("unknown lifecycle state should fail");
         assert_eq!(err.code, "unsupported_lifecycle_state");
         assert_eq!(err.field, "lifecycle_state");
+    }
+
+    #[test]
+    fn cognitive_transition_manifest_fixture_points_at_wp04_transition_packet() {
+        let manifest = wp02_cognitive_transition_manifest_valid_fixture();
+
+        assert_eq!(
+            manifest.dag_rel_path,
+            "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_transition_dag.md"
+        );
+        assert_eq!(
+            manifest.shard_plan_rel_path.as_deref(),
+            Some("docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_shard_plan.md")
+        );
+
+        for snippet in [
+            "## Serial Nodes",
+            "## Shard Nodes",
+            "## Barrier Nodes",
+            "barrier.review_barrier",
+            "barrier.merge_readiness_barrier",
+            "barrier.closeout_barrier",
+            "coordination latency",
+            "implementation time",
+        ] {
+            assert!(
+                WP04_TRANSITION_DAG_PACKET.contains(snippet),
+                "transition DAG packet missing `{snippet}`"
+            );
+        }
+
+        for snippet in [
+            "## Shards",
+            "## Interface Freeze Rules",
+            "## Handoff Contracts",
+            "## Barrier Contracts",
+            "## Coordination Metrics Split",
+        ] {
+            assert!(
+                WP04_SHARD_PLAN_PACKET.contains(snippet),
+                "shard plan packet missing `{snippet}`"
+            );
+        }
     }
 }
