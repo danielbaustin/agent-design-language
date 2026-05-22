@@ -36,6 +36,59 @@ def canonical_slug_from_bundle_dir(bundle_dir: Path) -> str:
     return name
 
 
+GENERIC_SIP_MARKERS = [
+    'Prepare the linked issue prompt and review surfaces for truthful pre-run review before execution is bound.',
+    'Keep the linked issue prompt, SIP, and SOR aligned for review.',
+    'The linked source issue prompt is reviewable and structurally valid.',
+    'files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt',
+    'derive the exact command set from the linked issue prompt',
+]
+
+GENERIC_SPP_MARKERS = [
+    'Bootstrap-generated SPP',
+    'Design-time generated SPP; review before execution',
+    'Review this SPP before execution; during runtime, update it before continuing if the actual execution sequence changes.',
+    'generated from source issue prompt, STP/SIP surfaces',
+]
+
+
+def contains_any(text: str, markers: list[str]) -> bool:
+    return any(marker in text for marker in markers)
+
+
+def has_truncation_sentinel_line(text: str) -> bool:
+    sentinels = {'...', '- ...', '* ...', '<...>'}
+    return any(line.strip() in sentinels for line in text.splitlines())
+
+
+def line_value_after_prefix(text: str, prefix: str) -> str:
+    for raw in text.splitlines():
+        line = raw.strip()
+        if line.startswith(prefix):
+            return line.split(':', 1)[1].strip().strip('"').strip("'")
+    return ''
+
+
+def design_time_defect(card_name: str, text: str) -> str | None:
+    if card_name == 'sip.md' and contains_any(text, GENERIC_SIP_MARKERS):
+        return 'generic design-time SIP scaffold'
+    if card_name == 'stp.md':
+        if '## Required Outcome' not in text or '## Acceptance Criteria' not in text:
+            return 'incomplete design-time STP acceptance surface'
+    if card_name == 'spp.md':
+        status = line_value_after_prefix(text, 'status:')
+        if contains_any(text, GENERIC_SPP_MARKERS) or has_truncation_sentinel_line(text):
+            return 'generic or truncated design-time SPP scaffold'
+        if status not in {'reviewed', 'approved'}:
+            return 'SPP is not reviewed or approved for design-time execution'
+    if card_name == 'srp.md':
+        if '# Structured Review Policy' in text or 'artifact_type: "structured_review_policy"' in text:
+            return 'legacy SRP policy scaffold'
+        if '# Structured Review Prompt' not in text or 'artifact_type: "structured_review_prompt"' not in text:
+            return 'missing Structured Review Prompt semantics'
+    return None
+
+
 def inspect_issue(
     repo_root: Path,
     issue_number: int,
@@ -67,12 +120,19 @@ def inspect_issue(
 
     missing_cards: list[str] = []
     contradictory_cards: list[str] = []
+    design_time_defects: list[str] = []
     required_editor_skills: list[str] = []
 
     for card_name, editor_skill in required_cards.items():
         card_path = bundle_dir / card_name
         if not card_path.exists():
             missing_cards.append(card_name)
+            if editor_skill not in required_editor_skills:
+                required_editor_skills.append(editor_skill)
+            continue
+        defect = design_time_defect(card_name, card_path.read_text())
+        if defect:
+            design_time_defects.append(f'{card_name}: {defect}')
             if editor_skill not in required_editor_skills:
                 required_editor_skills.append(editor_skill)
 
@@ -85,12 +145,13 @@ def inspect_issue(
                 required_editor_skills.append('sor-editor')
 
     status = 'ready'
-    if contradictory_cards or missing_cards:
+    if contradictory_cards or missing_cards or design_time_defects:
         status = 'needs_editor_repair'
 
     notes.extend(
         [f'Missing {name}' for name in missing_cards] +
-        [f'Contradictory bootstrap residue in {name}' for name in contradictory_cards]
+        [f'Contradictory bootstrap residue in {name}' for name in contradictory_cards] +
+        [f'Design-time card defect in {defect}' for defect in design_time_defects]
     )
 
     return {
@@ -100,6 +161,7 @@ def inspect_issue(
         'status': status,
         'missing_cards': missing_cards,
         'contradictory_cards': contradictory_cards,
+        'design_time_defects': design_time_defects,
         'required_editor_skills': required_editor_skills,
         'notes': notes,
     }

@@ -1858,10 +1858,10 @@ Usage:
   adl/tools/pr.sh create --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v>]
 
 Notes:
-- Creates the GitHub issue and bootstraps the local root STP/SIP/SOR bundle.
+- Creates the GitHub issue and bootstraps the local root STP/SIP/SPP/SRP/SOR bundle.
 - Runs the doctor-ready structural check immediately after bootstrap and fails if the new issue is not ready for the next step.
 - Does not create the branch or worktree execution context.
-- After create, do qualitative STP/SIP review and then run `adl/tools/pr.sh run <issue> ...`.
+- After create, do qualitative SIP/STP/SPP/SRP design-time review and then run `adl/tools/pr.sh run <issue> ...`.
 EOF
 }
 

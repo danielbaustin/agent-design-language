@@ -788,6 +788,14 @@ fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
         "create should generate a reviewable design-time SPP"
     );
     assert!(
+        spp.contains("status: \"draft\""),
+        "create should not claim generated design-time SPPs were reviewed"
+    );
+    assert!(
+        spp.contains("activation_state: \"draft\""),
+        "create should leave generated SPPs in design-review state"
+    );
+    assert!(
         spp.contains("Implement only the bounded deliverables: create-path validation"),
         "SPP should derive implementation steps from source deliverables"
     );
@@ -804,6 +812,10 @@ fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
     assert!(
         !spp.contains("Bootstrap-generated SPP"),
         "SPP should not be the legacy generic scaffold"
+    );
+    assert!(
+        !spp.contains("Design-time generated SPP; review before execution"),
+        "SPP should not carry generic review-before-use marker text"
     );
     assert!(
         repo.join(".adl/v0.86/tasks/issue-1202__v0-86-tools-simplified-init-path/srp.md")

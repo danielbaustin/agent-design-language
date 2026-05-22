@@ -71,6 +71,9 @@ This skill may:
 - align `SPP` wording with current pre-execution or plan-review state
 - tighten generated design-time plan steps, proof gates, stop conditions, and
   replan triggers when explicit issue evidence supports the change
+- mark an SPP `reviewed` or `approved` only after the issue-local plan is
+  specific enough to execute from tracked state; generic or truncated generated
+  plans remain editor blockers
 - remove placeholders and stale execution or branch-binding claims
 
 This skill must not:

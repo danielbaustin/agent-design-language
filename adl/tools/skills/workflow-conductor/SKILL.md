@@ -136,6 +136,10 @@ Important rule:
 - explicit `covered by #<n>` / `satisfied by #<n>` style references should block fresh execution when the referenced issue is already closed
 - repo-policy residue such as tracked legacy `.adl` issue records should escalate as a mechanical blocker rather than being mistaken for issue-local implementation work
 - linkage-only PR failures should route as a bounded janitor case rather than a generic merge-blocked state
+- design-time card-completion blockers from `pr doctor` should route to the
+  matching card editor before execution or publication continues; generic
+  `SIP`, incomplete `STP`, generic/truncated `SPP`, and legacy/incomplete
+  `SRP` surfaces are not safe to treat as ready merely because the files exist
 
 ## Policy Model
 

@@ -10,7 +10,10 @@ use super::shared::{
     ensure_symlink, field_line_value, output_card_title_matches_slug, path_relative_to_repo,
     replace_exact_line, replace_field_line, replace_field_line_in_file,
 };
-use super::validation::{validate_bootstrap_cards, validate_bootstrap_stp, StructuredBundlePaths};
+use super::validation::{
+    validate_bootstrap_cards, validate_bootstrap_stp, validate_initialized_cards,
+    StructuredBundlePaths,
+};
 use ::adl::control_plane::{
     card_input_path, card_output_path, card_plan_path, card_review_policy_path, card_stp_path,
     resolve_cards_root, IssueRef,
@@ -168,6 +171,26 @@ pub(crate) fn ensure_bootstrap_cards(
     branch: &str,
     source_path: &Path,
 ) -> Result<(PathBuf, PathBuf, PathBuf)> {
+    ensure_bootstrap_cards_with_mode(root, issue_ref, title, branch, source_path, true)
+}
+
+pub(crate) fn ensure_pre_run_bootstrap_cards(
+    root: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    source_path: &Path,
+) -> Result<(PathBuf, PathBuf, PathBuf)> {
+    ensure_bootstrap_cards_with_mode(root, issue_ref, title, "not bound yet", source_path, false)
+}
+
+fn ensure_bootstrap_cards_with_mode(
+    root: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+    source_path: &Path,
+    bind_existing_cards: bool,
+) -> Result<(PathBuf, PathBuf, PathBuf)> {
     let bundle_stp = issue_ref.task_bundle_stp_path(root);
     let bundle_input = issue_ref.task_bundle_input_path(root);
     let bundle_output = issue_ref.task_bundle_output_path(root);
@@ -192,24 +215,26 @@ pub(crate) fn ensure_bootstrap_cards(
             source_path,
             &bundle_output,
         )?;
-    } else if field_line_value(&bundle_input, "Branch")?.trim() != branch {
+    } else if bind_existing_cards && field_line_value(&bundle_input, "Branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_input, "Branch", branch)?;
     }
     if !bundle_output.is_file()
         || !output_card_title_matches_slug(&bundle_output, issue_ref.slug())?
     {
         write_output_card(root, &bundle_output, issue_ref, title, branch)?;
-    } else if field_line_value(&bundle_output, "Branch")?.trim() != branch {
+    } else if bind_existing_cards && field_line_value(&bundle_output, "Branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_output, "Branch", branch)?;
     }
     if !bundle_plan.is_file() || plan_card_needs_design_time_refresh(&bundle_plan)? {
         write_plan_card(root, &bundle_plan, issue_ref, title, branch, source_path)?;
-    } else if field_line_value(&bundle_plan, "branch")?.trim() != branch {
+    } else if bind_existing_cards && field_line_value(&bundle_plan, "branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_plan, "branch", &format!("\"{branch}\""))?;
     }
     if !bundle_review_policy.is_file() {
         write_review_policy_card(root, &bundle_review_policy, issue_ref, title, branch)?;
-    } else if field_line_value(&bundle_review_policy, "branch")?.trim() != branch {
+    } else if bind_existing_cards
+        && field_line_value(&bundle_review_policy, "branch")?.trim() != branch
+    {
         replace_field_line_in_file(&bundle_review_policy, "branch", &format!("\"{branch}\""))?;
     }
 
@@ -225,18 +250,30 @@ pub(crate) fn ensure_bootstrap_cards(
     ensure_symlink(&compat_plan, &bundle_plan)?;
     ensure_symlink(&compat_review_policy, &bundle_review_policy)?;
 
-    validate_bootstrap_cards(
-        root,
-        issue_ref.issue_number(),
-        issue_ref.slug(),
-        branch,
-        &bundle_input,
-        &bundle_output,
-        StructuredBundlePaths {
-            plan_path: &bundle_plan,
-            review_policy_path: &bundle_review_policy,
-        },
-    )?;
+    let structured_paths = StructuredBundlePaths {
+        plan_path: &bundle_plan,
+        review_policy_path: &bundle_review_policy,
+    };
+    if bind_existing_cards {
+        validate_bootstrap_cards(
+            root,
+            issue_ref.issue_number(),
+            issue_ref.slug(),
+            branch,
+            &bundle_input,
+            &bundle_output,
+            structured_paths,
+        )?;
+    } else {
+        validate_initialized_cards(
+            issue_ref.issue_number(),
+            issue_ref.slug(),
+            &bundle_input,
+            &bundle_output,
+            root,
+            structured_paths,
+        )?;
+    }
     validate_authored_prompt_surface("start", &bundle_input, PromptSurfaceKind::Sip)?;
     Ok((bundle_stp, bundle_input, bundle_output))
 }
@@ -461,6 +498,17 @@ fn render_bootstrap_output_card(
     let output_rel =
         path_relative_to_repo(repo_root, &issue_ref.task_bundle_output_path(repo_root));
     let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%SZ");
+    let pre_run_unbound = branch_indicates_unbound_state(branch);
+    let status = if pre_run_unbound {
+        "NOT_STARTED"
+    } else {
+        "IN_PROGRESS"
+    };
+    let branch_action = if pre_run_unbound {
+        "Preserved pre-run branch truth; no execution branch or worktree is bound yet."
+    } else {
+        "Reserved the execution branch for later implementation."
+    };
     format!(
         r#"# {slug}
 
@@ -478,7 +526,7 @@ Run ID: issue-{issue}
 Version: {version}
 Title: {title}
 Branch: {branch}
-Status: IN_PROGRESS
+Status: {status}
 
 Execution:
 - Actor: issue-wave bootstrap
@@ -497,7 +545,7 @@ Pre-run output scaffold initialized during issue-wave opening. No implementation
 
 ## Actions taken
 - Opened the local issue bundle and wrote a truthful pre-run output scaffold.
-- Reserved the execution branch `{branch}` for later implementation.
+- {branch_action}
 - Deferred implementation, proof capture, and release integration to the execution lifecycle and PR publication.
 
 ## Main Repo Integration (REQUIRED)
@@ -606,6 +654,8 @@ verification_summary:
         version = issue_ref.scope(),
         title = title,
         branch = branch,
+        status = status,
+        branch_action = branch_action,
         output_rel = output_rel,
         timestamp = timestamp,
     )
@@ -670,6 +720,7 @@ version: "{version}"
 title: "{title}"
 branch: "{branch}"
 status: "draft"
+activation_state: "draft"
 plan_revision: 1
 source_refs:
   - kind: "issue"
@@ -695,7 +746,7 @@ constraints:
   - "runtime_execution_must_update_spp_if_plan_changes"
   - "no_hidden_scope_expansion"
 confidence: "medium"
-plan_summary: "Design-time operative plan for {title}; generated from source issue prompt, STP/SIP surfaces, dependencies, deliverables, acceptance criteria, and validation expectations."
+plan_summary: "Design-time operative plan for {title}; derived from the authored issue prompt, STP/SIP surfaces, dependencies, deliverables, acceptance criteria, and validation expectations."
 assumptions:
   - "The linked source issue prompt, STP, and SIP remain the canonical design-time inputs."
   - "Dependency details may need refresh when earlier issues land."
@@ -755,14 +806,14 @@ alternatives_considered:
     reason_not_chosen: "Chat-only planning is not durable or reviewable enough for this workflow surface."
 review_hooks:
   - "Check dependency truth, scope truthfulness, touched-file truthfulness, validation sufficiency, and re-plan triggers."
-notes: "Design-time generated SPP; review before execution and update during runtime if the plan changes."
+notes: "Design-time SPP derived from the authored issue prompt; update during runtime if the plan changes."
 ---
 
 # Structured Plan Prompt
 
 ## Plan Summary
 
-Design-time operative plan for this issue. Review this SPP before execution; during runtime, update it before continuing if the actual execution sequence changes.
+Design-time operative plan for this issue. Use this SPP to guide execution; during runtime, update it before continuing if the actual execution sequence changes.
 
 ## Codex Plan
 
@@ -817,7 +868,7 @@ Use this SPP as the design-time plan-of-record, then update it at runtime whenev
 
 ## Notes
 
-Design-time generated SPP; review before execution and update during runtime if the plan changes.
+Design-time SPP derived from the authored issue prompt; update during runtime if the plan changes.
 "#,
         slug = issue_ref.slug(),
         issue = issue_ref.issue_number(),
@@ -873,7 +924,7 @@ fn issue_prompt_section(text: &str, heading: &str) -> Option<String> {
 }
 
 fn one_line_summary(text: &str) -> String {
-    const MAX_LEN: usize = 220;
+    const MAX_LEN: usize = 420;
     let out = text
         .lines()
         .map(|line| line.trim().trim_start_matches("- ").trim())
@@ -882,7 +933,7 @@ fn one_line_summary(text: &str) -> String {
         .join("; ");
     if out.chars().count() > MAX_LEN {
         let mut truncated = out.chars().take(MAX_LEN).collect::<String>();
-        truncated.push_str("...");
+        truncated.push_str(" [summary truncated]");
         truncated
     } else {
         out
@@ -951,8 +1002,7 @@ non_claims:
 policy_refs:
   - "{stp_rel}"
   - "{sip_rel}"
-review_results_exception: "explicit policy exception: pre-execution review results are absent until implementation exists; finalize this SRP with actual review findings before PR publication."
-notes: "Bootstrap-generated Structured Review Prompt; revise before use if issue-specific review constraints are needed."
+notes: "Structured Review Prompt prepared before execution; finalize with actual review findings before PR publication."
 ---
 
 # Structured Review Prompt
@@ -1019,7 +1069,7 @@ Use this prompt to govern the independent pre-PR review for this issue. Review r
 
 ## Notes
 
-Bootstrap-generated Structured Review Prompt; revise before use if issue-specific review constraints are needed.
+Structured Review Prompt prepared before execution; finalize with actual review findings before PR publication.
 "#,
         slug = issue_ref.slug(),
         issue = issue_ref.issue_number(),

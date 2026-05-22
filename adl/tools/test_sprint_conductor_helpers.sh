@@ -110,34 +110,99 @@ PR_EOF
 chmod +x "${fake_repo}/adl/tools/pr.sh"
 
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/stp.md" <<'EOF2'
-stp
+## Required Outcome
+
+Complete WP-05 sprint trial work.
+
+## Acceptance Criteria
+
+- focused trial proof recorded
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/sip.md" <<'EOF2'
-sip
+Branch: not bound yet
+
+## Goal
+
+Execute WP-05 as the first child in the trial sprint.
+
+## Acceptance Criteria
+
+- issue-local proof remains bounded
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/sor.md" <<'EOF2'
 Status: NOT_STARTED
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/spp.md" <<'EOF2'
+---
 issue: 2827
+status: approved
+---
+
+# Structured Plan Prompt
+
+## Codex Plan
+
+1. [pending] Execute the bounded WP-05 task.
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/srp.md" <<'EOF2'
+---
+artifact_type: "structured_review_prompt"
 issue: 2827
+---
+
+# Structured Review Prompt
+
+## Review Results
+
+- Not run yet.
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/stp.md" <<'EOF2'
-stp
+## Required Outcome
+
+Complete WP-06 sprint trial work.
+
+## Acceptance Criteria
+
+- focused trial proof recorded
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/sip.md" <<'EOF2'
-sip
+Branch: not bound yet
+
+## Goal
+
+Execute WP-06 after WP-05 closeout.
+
+## Acceptance Criteria
+
+- issue-local proof remains bounded
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/sor.md" <<'EOF2'
 Status: NOT_STARTED
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'
+---
 issue: 2828
+status: approved
+---
+
+# Structured Plan Prompt
+
+## Codex Plan
+
+1. [pending] Execute the bounded WP-06 task.
+2. [pending] Inspect provider output such as `downloading... done` without treating prose ellipsis as truncation.
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/srp.md" <<'EOF2'
+---
+artifact_type: "structured_review_prompt"
 issue: 2828
+---
+
+# Structured Review Prompt
+
+## Review Results
+
+- Not run yet.
 EOF2
 
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py" \
@@ -193,6 +258,94 @@ assert len(preflight["issue_results"]) == 2
 assert all(result["status"] == "ready" for result in preflight["issue_results"])
 assert all(result["canonical_slug"] for result in preflight["issue_results"])
 PY
+
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/srp.md" <<'EOF2'
+---
+issue: 2828
+---
+
+# Structured Review Prompt
+
+## Review Results
+
+- Not run yet.
+EOF2
+
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --state "${state_path}" >/dev/null
+
+python3 - "${state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+preflight = state["structured_prompt_preflight"]
+assert preflight["status"] == "needs_editor_repair"
+wp06 = [result for result in preflight["issue_results"] if result["issue_number"] == 2828][0]
+assert "srp-editor" in wp06["required_editor_skills"]
+assert any("srp.md" in defect for defect in wp06["design_time_defects"])
+PY
+
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/srp.md" <<'EOF2'
+---
+artifact_type: "structured_review_prompt"
+issue: 2828
+---
+
+# Structured Review Prompt
+
+## Review Results
+
+- Not run yet.
+EOF2
+
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'
+---
+issue: 2828
+status: draft
+---
+
+Design-time generated SPP; review before execution.
+EOF2
+
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --state "${state_path}" >/dev/null
+
+python3 - "${state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+preflight = state["structured_prompt_preflight"]
+assert preflight["status"] == "needs_editor_repair"
+wp06 = [result for result in preflight["issue_results"] if result["issue_number"] == 2828][0]
+assert "spp-editor" in wp06["required_editor_skills"]
+assert any("spp.md" in defect for defect in wp06["design_time_defects"])
+PY
+
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'
+---
+issue: 2828
+status: approved
+---
+
+# Structured Plan Prompt
+
+## Codex Plan
+
+1. [pending] Execute the bounded WP-06 task.
+EOF2
+
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --state "${state_path}" >/dev/null
 
 if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py" \
   --state "${state_path}" \

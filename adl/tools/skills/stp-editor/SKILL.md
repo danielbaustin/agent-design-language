@@ -43,6 +43,8 @@ Useful additional inputs:
 This skill may:
 - improve goal wording without changing intent
 - tighten required outcome and acceptance criteria
+- make the selected task explicit enough for design-time readiness, including
+  deliverables, touched surfaces, proof shape, invariants, and non-goals
 - normalize inputs, targets, validation plan, and constraints sections
 - remove template placeholders and contradictory notes
 - align STP wording with the tracked issue prompt and current lifecycle phase

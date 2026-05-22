@@ -146,6 +146,12 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1152, "v0.86", "rust-start-ready-test").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust start ready test");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Rust start ready test",
+        "codex/1152-rust-start-ready-test",
+    );
     let local_templates = repo.join("docs/templates");
     fs::create_dir_all(local_templates.join("nested")).expect("create local templates");
     fs::write(
@@ -339,6 +345,12 @@ fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1153, "v0.86", "repair-worktree-bundle").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Repair worktree bundle");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Repair worktree bundle",
+        "codex/1153-repair-worktree-bundle",
+    );
     let branch = "codex/1153-repair-worktree-bundle";
     let worktree = issue_ref.default_worktree_path(&repo, None);
     assert!(Command::new("git")
@@ -498,6 +510,12 @@ fn real_pr_start_updates_existing_root_spp_and_srp_branch() {
             .expect("read root srp")
             .contains("branch: \"not bound yet\"")
     );
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Update root plan and review branch",
+        "not bound yet",
+    );
 
     real_pr(&[
         "start".to_string(),
@@ -649,6 +667,12 @@ fn real_pr_ready_blocks_invalid_worktree_srp() {
         &issue_ref,
         "[v0.86][tools] Ready invalid worktree srp",
     );
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Ready invalid worktree srp",
+        "codex/1917-ready-invalid-worktree-srp",
+    );
 
     real_pr(&[
         "start".to_string(),
@@ -799,6 +823,12 @@ fn real_pr_start_rewrites_unbound_root_input_card_branch() {
         "v0.86".to_string(),
     ])
     .expect("real_pr init");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Start rewrites unbound",
+        "not bound yet",
+    );
 
     let root_sip = issue_ref.task_bundle_input_path(&repo);
     assert_eq!(
@@ -925,6 +955,12 @@ fn real_pr_start_uses_canonical_local_slug_when_title_slug_drift_exists() {
         "v0.86".to_string(),
     ])
     .expect("init canonical bundle");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Canonical bind slug issue",
+        "not bound yet",
+    );
 
     real_pr(&[
         "start".to_string(),
@@ -1151,6 +1187,12 @@ fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1198, "v0.86", "ready-worktree-cwd").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Ready worktree cwd");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Ready worktree cwd",
+        "codex/1198-ready-worktree-cwd",
+    );
     real_pr(&[
         "start".to_string(),
         "1198".to_string(),

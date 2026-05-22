@@ -478,14 +478,12 @@ def infer_doctor_card_blocker(doctor):
         if not isinstance(stage, dict):
             continue
         editor = stage.get("next_editor")
-        if editor not in {"spp-editor", "srp-editor"}:
-            continue
-        if stage.get("state") == "pre_run":
+        if editor not in {"sip-editor", "stp-editor", "spp-editor", "srp-editor"}:
             continue
         if stage.get("complete") is True:
             continue
         stage_name = str(stage.get("stage", "")).lower()
-        if stage_name in {"spp", "srp"}:
+        if stage_name in {"sip", "stp", "spp", "srp"}:
             return stage_name
     return "none"
 

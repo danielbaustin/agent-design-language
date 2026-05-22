@@ -45,6 +45,9 @@ This skill may:
 - fix truthful `Branch` state such as `not bound yet` vs bound execution branch
 - normalize target-file and validation-plan sections
 - align SIP wording with current lifecycle state
+- replace generic bootstrap intent with issue-specific design-time intent,
+  including concrete scope, dependencies, acceptance criteria, validation
+  expectations, and non-goals drawn from the source issue prompt
 - remove placeholders and stale review/execution notes
 
 This skill must not:
