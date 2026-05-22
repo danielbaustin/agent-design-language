@@ -19,6 +19,7 @@ their owning work packages execute.
 | Five-minute-sprint first proof | `features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md` | Bounded demo records transition timing and coordination behavior. | in_flight under #3207 with `review/first_proof_demo/` packet, deterministic demo command, and metrics snapshot |
 | Five-minute HTML game sprint demo | `features/FIVE_MINUTE_HTML_GAME_SPRINT_DEMO.md` | A bounded C-SDLC creative-production slice yields a runnable visible browser artifact plus proof packet. | in_flight under demo #3221 with `demos/v0.91.3/` artifact, `review/five_minute_html_game/` packet, and focused validator/test proof |
 | Five-minute sprint console demo | `features/FIVE_MINUTE_SPRINT_CONSOLE_DEMO.md` | A bounded mission-control replay makes the Starharvest mini-sprint legible through timer, roles, work-state, review, artifact, and launch surfaces. | in_flight under demo #3222 with `demos/v0.91.3/` console artifact, `review/five_minute_sprint_console/` packet, and focused validator/test proof |
+| Podcast Studio v2 demo | `features/PODCAST_STUDIO_V2_DEMO.md` | A bounded media-production system emits a recurring episode packet, polished episode card, and truthful audio manifest without hidden credentials. | local pass under demo #3223 with `demos/v0.91.3/` episode card, `review/podcast_studio_v2/` packet, and focused validator/test proof; PR publication still pending |
 
 ## Required Evidence
 
@@ -41,6 +42,7 @@ The milestone proof package should include:
 - shared C-SDLC demo proof contract for later mini-sprint demo packets
 - visible creative-production demo artifact with review packet and truthful run path
 - visual sprint-console replay that keeps process truth adjacent to the creative artifact
+- deterministic podcast-studio packet with explicit role surfaces and truthful audio manifest
 
 ## Non-Claims
 

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>Episode 04: Can governed creative production feel alive?</title>
+          <style>
+            :root {
+              --bg: #130f0c;
+              --panel: rgba(34, 24, 18, 0.88);
+              --panel-strong: rgba(47, 32, 24, 0.96);
+              --text: #f8efe6;
+              --muted: #d1b8a5;
+              --line: rgba(255, 214, 170, 0.16);
+              --accent: #f59e0b;
+              --accent-2: #14b8a6;
+            }
+            * { box-sizing: border-box; }
+            body {
+              margin: 0;
+              font-family: "Georgia", "Times New Roman", serif;
+              color: var(--text);
+              background:
+                radial-gradient(circle at top, rgba(245, 158, 11, 0.18), transparent 32%),
+                linear-gradient(180deg, #1b140f 0%, #100b08 54%, #090706 100%);
+            }
+            .page {
+              max-width: 1200px;
+              margin: 0 auto;
+              padding: 40px 24px 72px;
+            }
+            .hero {
+              display: grid;
+              gap: 24px;
+              grid-template-columns: 1.2fr 0.8fr;
+              align-items: end;
+            }
+            .hero-copy h1 {
+              margin: 0;
+              font-size: clamp(2.8rem, 6vw, 5.4rem);
+              line-height: 0.95;
+              letter-spacing: -0.04em;
+            }
+            .hero-copy p {
+              max-width: 42rem;
+              font-size: 1.1rem;
+              line-height: 1.6;
+              color: var(--muted);
+            }
+            .eyebrow {
+              margin: 0 0 10px;
+              text-transform: uppercase;
+              letter-spacing: 0.18em;
+              font-size: 0.78rem;
+              color: #fcd34d;
+            }
+            .hero-card,
+            .panel {
+              background: var(--panel);
+              border: 1px solid var(--line);
+              border-radius: 28px;
+              box-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+              backdrop-filter: blur(14px);
+            }
+            .hero-card {
+              padding: 24px;
+            }
+            .hero-card dl {
+              margin: 0;
+              display: grid;
+              gap: 14px;
+            }
+            .hero-card dt {
+              font-size: 0.72rem;
+              text-transform: uppercase;
+              letter-spacing: 0.16em;
+              color: #fdba74;
+            }
+            .hero-card dd {
+              margin: 4px 0 0;
+              color: var(--muted);
+            }
+            .grid {
+              margin-top: 28px;
+              display: grid;
+              gap: 24px;
+              grid-template-columns: 1.1fr 0.9fr;
+            }
+            .panel {
+              padding: 24px;
+            }
+            .panel h2 {
+              margin-top: 0;
+              font-size: 1.5rem;
+            }
+            .host-grid {
+              display: grid;
+              gap: 16px;
+            }
+            .host-card {
+              border: 1px solid color-mix(in srgb, var(--host-color) 38%, transparent);
+              background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+              border-radius: 22px;
+              padding: 18px;
+            }
+            .host-card h3 {
+              margin: 0 0 6px;
+              font-size: 1.35rem;
+            }
+            .host-card .voice {
+              color: color-mix(in srgb, var(--host-color) 58%, white);
+            }
+            .turn-card {
+              padding: 18px 0;
+              border-top: 1px solid var(--line);
+            }
+            .turn-card:first-of-type {
+              border-top: 0;
+              padding-top: 0;
+            }
+            .turn-meta {
+              display: flex;
+              gap: 12px;
+              align-items: baseline;
+              flex-wrap: wrap;
+              margin-bottom: 10px;
+            }
+            .turn-speaker {
+              font-size: 1.1rem;
+              font-weight: 700;
+            }
+            .turn-label {
+              color: #fdba74;
+              text-transform: uppercase;
+              letter-spacing: 0.14em;
+              font-size: 0.76rem;
+            }
+            .status-strip {
+              display: flex;
+              gap: 12px;
+              flex-wrap: wrap;
+              margin-top: 12px;
+            }
+            .pill {
+              padding: 10px 14px;
+              border-radius: 999px;
+              border: 1px solid var(--line);
+              background: rgba(255, 255, 255, 0.04);
+              color: var(--muted);
+              font-size: 0.92rem;
+            }
+            ul {
+              padding-left: 20px;
+            }
+            @media (max-width: 900px) {
+              .hero,
+              .grid {
+                grid-template-columns: 1fr;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <main class="page">
+            <section class="hero">
+              <div class="hero-copy">
+                <p class="eyebrow">ADL Podcast Studio v2</p>
+                <h1>Episode 04: Can governed creative production feel alive?</h1>
+                <p>
+                  A deterministic, no-secrets-needed production-system demo for the C-SDLC mini-sprint.
+                  This artifact packages the topic, cast, transcript, best lines, and exact audio truth
+                  without pretending that live final rendering has already been solved.
+                </p>
+                <div class="status-strip">
+                  <span class="pill">Packet status: local pass</span>
+                  <span class="pill">Audio status: manifest only</span>
+                  <span class="pill">Credentials: not required</span>
+                </div>
+              </div>
+              <aside class="hero-card">
+                <dl>
+                  <div>
+                    <dt>Topic</dt>
+                    <dd>What would make a governed five-minute sprint feel genuinely alive instead of merely fast?</dd>
+                  </div>
+                  <div>
+                    <dt>Bounded claim</dt>
+                    <dd>Show a repeatable, inspectable media-production system that turns a bounded topic into a full episode packet without hidden credentials or fake audio claims.</dd>
+                  </div>
+                  <div>
+                    <dt>Non-claim</dt>
+                    <dd>Real rendered episode audio and literal five-minute end-to-end proof are not claimed here.</dd>
+                  </div>
+                </dl>
+              </aside>
+            </section>
+
+            <section class="grid">
+              <section class="panel">
+                <p class="eyebrow">Cast</p>
+                <h2>Stable Host Lineup</h2>
+                <div class="host-grid">
+                  <article class="host-card" style="--host-color: #f97316;">
+  <p class="eyebrow">Host / framing synthesizer</p>
+  <h3>ChatGPT</h3>
+  <p>opens the question, keeps the cadence human, and closes with the governing thesis</p>
+  <p class="voice">Voice target: warm, direct, high-clarity host energy</p>
+</article>
+<article class="host-card" style="--host-color: #14b8a6;">
+  <p class="eyebrow">Systems producer / counter-pressure</p>
+  <h3>Gemini</h3>
+  <p>stress-tests the process, points out latency and orchestration debt, and names the engineering bottlenecks</p>
+  <p class="voice">Voice target: bright, incisive, operationally sharp</p>
+</article>
+<article class="host-card" style="--host-color: #60a5fa;">
+  <p class="eyebrow">Story editor / moral ballast</p>
+  <h3>Claude</h3>
+  <p>rescues the human meaning, protects truth boundaries, and keeps the show from collapsing into sterile workflow worship</p>
+  <p class="voice">Voice target: measured, reflective, emotionally precise</p>
+</article>
+                </div>
+              </section>
+
+              <section class="panel">
+                <p class="eyebrow">Production Truth</p>
+                <h2>Render Status</h2>
+                <p>
+                  This bounded demo keeps transcript authorship and audio render status separate.
+                  The packet records routing intent and studio posture, but it does not claim a real final audio file.
+                </p>
+                <div class="status-strip">
+                  <span class="pill">render_status: manifest_only</span>
+                  <span class="pill">rendered_audio_present: false</span>
+                  <span class="pill">truth boundary: exact</span>
+                </div>
+              </section>
+            </section>
+
+            <section class="grid">
+              <section class="panel">
+                <p class="eyebrow">Episode</p>
+                <h2>Transcript</h2>
+                <article class="turn-card">
+  <div class="turn-meta">
+    <span class="turn-speaker">ChatGPT</span>
+    <span class="turn-label">Opening frame</span>
+  </div>
+  <p>Welcome back to ADL Podcast Studio. Today&#x27;s question is uncomfortable on purpose: what would make a governed five-minute sprint feel alive instead of merely fast? We have a beautiful proof chain, we have visible artifacts, and we have enough scars now to know that speed theater is cheap. The real bar is whether governance can support a creative act without draining it of pulse. THESIS: a five-minute sprint only matters if it can preserve surprise, taste, and truth at the same time.</p>
+</article>
+<article class="turn-card">
+  <div class="turn-meta">
+    <span class="turn-speaker">Gemini</span>
+    <span class="turn-label">Counter-pressure</span>
+  </div>
+  <p>The engineering answer is that life disappears when the system spends its budget on synchronization rather than production. If cards, PRs, proofs, and validation lanes all require manual re-assembly, you get governance without flow. That does not mean the model is wrong. It means the active gates are still too post-hoc, the validation path is too heavy, and too much of the packet is authored after the work rather than emitted as part of the work.</p>
+</article>
+<article class="turn-card">
+  <div class="turn-meta">
+    <span class="turn-speaker">Claude</span>
+    <span class="turn-label">Human meaning check</span>
+  </div>
+  <p>And yet raw speed is not the thing people actually crave. They want to feel that something worth caring about came into being. A lifeless sprint can be fast and still empty. The governed version only earns its keep if it protects authorship, keeps claims honest, and leaves behind an artifact someone can love or dispute. In that sense, bureaucracy is not the enemy; dead language is.</p>
+</article>
+<article class="turn-card">
+  <div class="turn-meta">
+    <span class="turn-speaker">ChatGPT</span>
+    <span class="turn-label">Bridge</span>
+  </div>
+  <p>So the real upgrade path is not &#x27;delete governance.&#x27; It is to move more of the truth production into the artifact itself. The demo should carry its own packet. The review surface should read like a coherent show dossier. The operator should not need secret context to understand what happened. When the artifact tells the story cleanly, governance starts to feel less like drag and more like stagecraft.</p>
+</article>
+<article class="turn-card">
+  <div class="turn-meta">
+    <span class="turn-speaker">Gemini</span>
+    <span class="turn-label">Operational deepening</span>
+  </div>
+  <p>Exactly. If the one-command path yields a topic brief, role map, transcript, best-lines cut, audio manifest, and episode card every time, then the system starts acting like a production line rather than an aspiration. The remaining non-proof is also clear: we are not yet rendering real final audio here, and we are not yet collapsing all review latency into five minutes. But the machinery becomes inspectable, reproducible, and improvable instead of mythic.</p>
+</article>
+<article class="turn-card">
+  <div class="turn-meta">
+    <span class="turn-speaker">Claude</span>
+    <span class="turn-label">Closure</span>
+  </div>
+  <p>Then perhaps aliveness comes from proportion. Let automation handle the packet geometry, let governance hold the truth boundary, and let human judgment preserve taste. If those pieces stay in the right order, speed becomes a consequence rather than an idol. The show feels alive when the artifact still has a soul after the process has finished touching it.</p>
+</article>
+              </section>
+
+              <section class="panel">
+                <p class="eyebrow">Highlights</p>
+                <h2>Best Lines</h2>
+                <ul>
+                  <li>A five-minute sprint only matters if it can preserve surprise, taste, and truth at the same time.</li>
+<li>The active gates are still too post-hoc, the validation path is too heavy, and too much of the packet is authored after the work rather than emitted as part of the work.</li>
+<li>Bureaucracy is not the enemy; dead language is.</li>
+<li>When the artifact tells the story cleanly, governance starts to feel less like drag and more like stagecraft.</li>
+<li>The show feels alive when the artifact still has a soul after the process has finished touching it.</li>
+                </ul>
+              </section>
+            </section>
+          </main>
+        </body>
+        </html>

@@ -124,6 +124,12 @@ If you want the current C-SDLC sprint-console replay demo:
 bash adl/tools/demo_v0913_five_minute_sprint_console.sh --print-url
 ```
 
+If you want the current C-SDLC podcast-studio production packet:
+
+```bash
+bash adl/tools/demo_v0913_podcast_studio_v2.sh
+```
+
 If you want the integrated Runtime v2 foundation proof demo:
 
 ```bash
