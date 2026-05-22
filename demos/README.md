@@ -118,6 +118,12 @@ If you want the current C-SDLC mini-sprint HTML game demo:
 bash adl/tools/demo_v0913_starharvest_html_game.sh --print-url
 ```
 
+If you want the current C-SDLC sprint-console replay demo:
+
+```bash
+bash adl/tools/demo_v0913_five_minute_sprint_console.sh --print-url
+```
+
 If you want the integrated Runtime v2 foundation proof demo:
 
 ```bash
