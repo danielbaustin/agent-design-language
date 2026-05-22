@@ -4,6 +4,11 @@
 
 Tracked planning home for current CodeFriend work.
 
+Current milestone planning assumption: CodeFriend alpha should become a
+dedicated product milestone, likely in the `v0.93.x` band. The exit bar for
+that milestone is a fully working alpha version of CodeFriend ready for
+operator/customer-style testing.
+
 CodeFriend is the current product name. `CodeFriend.ai` is the current domain
 name. Older `CodeBuddy` / `codebuddy` references are historical working-name
 lineage unless a later issue explicitly promotes them to current product copy.
@@ -52,5 +57,5 @@ operators have one durable CodeFriend entry point.
 ## Boundary
 
 This home does not claim CodeFriend is a shipped product. It records planning
-for product setup, naming cleanup, architecture-cognition positioning, and
-follow-on execution.
+for product setup, naming cleanup, architecture-cognition positioning, and a
+future `v0.93.x` alpha milestone whose goal is a working testable product.

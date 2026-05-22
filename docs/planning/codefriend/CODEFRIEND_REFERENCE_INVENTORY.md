@@ -13,6 +13,10 @@ repo-wide string replacement.
 - Current product name: `CodeFriend`
 - Current domain name: `CodeFriend.ai`
 - Legacy working name: `CodeBuddy`
+- Candidate alpha milestone band: `v0.93.x`
+
+The naming migration should support a future CodeFriend alpha milestone whose
+exit bar is a fully working alpha ready for testing.
 
 ## Current Tracked CodeFriend Surfaces
 

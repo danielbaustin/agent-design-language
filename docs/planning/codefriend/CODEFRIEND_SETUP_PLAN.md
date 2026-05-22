@@ -4,9 +4,13 @@
 
 Planning surface for issue `#3238`.
 
-This document prepares near-term CodeFriend setup work. It does not implement
-the product application, rename all historical identifiers, or claim external
-delivery readiness.
+This document prepares CodeFriend setup work for a future product milestone.
+Current planning assumption: CodeFriend alpha is large enough to own a whole
+milestone, likely in the `v0.93.x` band. That milestone should end with a fully
+working alpha version of CodeFriend ready for testing.
+
+This document does not implement the product application, rename all historical
+identifiers, or claim external delivery readiness.
 
 ## Product Name
 
@@ -33,9 +37,26 @@ evidence-bound review packets, specialist reviews, diagrams, remediation plans,
 redaction checks, and customer-grade report templates. The next step is to turn
 that proof into a clearer product setup path.
 
+## Milestone Target
+
+Candidate milestone: `v0.93.x`.
+
+Alpha exit bar:
+
+- CodeFriend has a working alpha flow ready for testing.
+- The alpha can run a repository review packet through evidence collection,
+  specialist review lanes, synthesis, redaction/publication checks, and a
+  human-friendly report.
+- The alpha has clear setup docs, runbooks, sample inputs, sample outputs, and
+  review boundaries.
+- The alpha demonstrates architecture-cognition value, not just generic code
+  review.
+- Naming, docs, product boundaries, and demo material use `CodeFriend` /
+  `CodeFriend.ai` consistently.
+
 ## Near-Term Setup Goals
 
-Over the next few days, CodeFriend work should prepare:
+Before the product milestone starts, CodeFriend work should prepare:
 
 - a single tracked planning home for product docs
 - a naming migration plan from legacy `CodeBuddy` surfaces to `CodeFriend`
@@ -43,6 +64,7 @@ Over the next few days, CodeFriend work should prepare:
 - a roadmap from useful review automation toward architectural cognition
 - a setup sequence for any future product repo, site, demo, or customer-facing
   package
+- candidate WBS / sprint shape for the `v0.93.x` CodeFriend alpha milestone
 - follow-on issues for execution instead of hidden scope expansion
 
 ## Workstreams
@@ -117,19 +139,46 @@ Candidate fitness-function lanes:
 This should start small. The alpha needs low-friction governance that developers
 trust before more advanced architectural cognition is attempted.
 
-### 5. Product Setup Sequence
+### 5. Product Milestone Shape
 
-The likely near-term setup sequence is:
+Goal: prepare a whole CodeFriend alpha milestone instead of scattering alpha
+setup across unrelated issues.
+
+Candidate `v0.93.x` work bands:
+
+- design pass and issue-wave readiness
+- user-facing naming migration
+- alpha product boundary and README/runbook
+- review-packet runner polish
+- specialist lane packaging
+- architecture-cognition first slice
+- architecture fitness-function first slice
+- sample repo / sample packet / sample report
+- redaction and publication-safety gate
+- demo and testing handoff
+- internal review
+- external review
+- remediation
+- release/alpha readiness ceremony
+
+The alpha milestone should prove one complete path, not every future
+architecture-cognition capability.
+
+### 6. Product Setup Sequence
+
+The likely setup sequence is:
 
 1. Finish this planning home and reference inventory.
 2. Open a naming-migration issue for user-facing docs and obvious product copy.
-3. Open a product setup issue for the CodeFriend alpha package.
-4. Decide whether CodeFriend gets a separate repo, a product subdirectory, or a
+3. Create a `v0.93.x` CodeFriend alpha milestone plan and issue wave.
+4. Open product setup issues for the CodeFriend alpha package.
+5. Decide whether CodeFriend gets a separate repo, a product subdirectory, or a
    staged external package after the alpha package is clear.
-5. Prepare a polished sample review packet and product report.
-6. Prepare a public-facing README or landing-page brief after product boundary
+6. Prepare a polished sample review packet and product report.
+7. Prepare a public-facing README or landing-page brief after product boundary
    language is reviewed.
-7. Review redaction, evidence, and publication safety before any external use.
+8. Review redaction, evidence, and publication safety before any external use.
+9. Close the alpha milestone only when the working alpha is ready for testing.
 
 ## Follow-On Issue Candidates
 
@@ -188,6 +237,22 @@ Validation:
 - review redaction and publication boundaries
 - verify no private local paths or unpublished customer-like claims leak
 
+### CodeFriend Alpha Milestone Plan
+
+Scope:
+
+- author the `v0.93.x` CodeFriend alpha milestone package
+- define WBS, sprint plan, feature docs, demo matrix, quality gate, and review
+  tail
+- set the alpha exit bar as "fully working alpha ready for testing"
+
+Validation:
+
+- compare the package against this planning home and v0.91.2 productization
+  proof
+- verify naming, evidence, redaction, and review boundaries
+- review before issue seeding
+
 ## Non-Goals
 
 - Do not implement the product app in this planning issue.
@@ -197,6 +262,8 @@ Validation:
 - Do not depend on C-SDLC completion as a prerequisite for the alpha review
   packet product lane.
 - Do not use unfinished investigation notes as source truth.
+- Do not treat scattered cleanup as a substitute for a dedicated CodeFriend
+  alpha milestone.
 
 ## Review Checklist
 
@@ -207,3 +274,5 @@ Validation:
 - Product claims stay evidence-bound.
 - Follow-on issues are bounded and do not hide implementation work in this
   planning issue.
+- The plan frames CodeFriend alpha as a likely `v0.93.x` milestone with a
+  working alpha ready for testing as the exit bar.
