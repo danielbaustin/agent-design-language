@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>C-SDLC / Five-Minute Sprint Console Demo</title>
+    <link rel="stylesheet" href="./five_minute_sprint_console_demo.css">
+  </head>
+  <body>
+    <main class="console-shell" data-demo-id="ct_demo_003_sprint_console">
+      <section class="console-hero" aria-labelledby="console-title">
+        <header class="masthead">
+          <div class="masthead__copy">
+            <p class="kicker">C-SDLC Demo / Sprint Console</p>
+            <h1 id="console-title">Five-Minute Sprint Console</h1>
+            <p class="lede">
+              A governed mission-control replay of the Starharvest mini-sprint: roles, work states,
+              review friction, artifacts, and final launch made legible in one bounded screen.
+            </p>
+          </div>
+          <div class="truth-strip" aria-label="Truth boundary">
+            <span>Compressed storyboard clock</span>
+            <span>Manual governed wave</span>
+            <span>No hidden scheduler</span>
+            <span>Launches real Starharvest artifact</span>
+          </div>
+        </header>
+
+        <section class="headline-grid" aria-label="Sprint summary">
+          <article class="headline-panel headline-panel--timer">
+            <p class="eyebrow">Storyboard Clock</p>
+            <div class="timer-stack">
+              <strong id="timer-readout">00:00</strong>
+              <span id="phase-label">Brief accepted</span>
+            </div>
+            <p id="phase-summary" class="panel-copy">
+              The bounded mini-sprint starts by accepting the creative brief and naming the proof boundary.
+            </p>
+          </article>
+
+          <article class="headline-panel">
+            <p class="eyebrow">Bounded Claim</p>
+            <strong class="verdict verdict--pass">Proving</strong>
+            <p class="panel-copy">
+              The console demonstrates that the C-SDLC can present a governed creative-production chain
+              clearly and truthfully around a real artifact.
+            </p>
+          </article>
+
+          <article class="headline-panel">
+            <p class="eyebrow">Literal Timebox</p>
+            <strong class="verdict verdict--partial">Partial</strong>
+            <p class="panel-copy">
+              The five-minute readout is a compressed explanatory replay, not measured proof that the full
+              engineering wave completed in five real minutes.
+            </p>
+          </article>
+
+          <article class="headline-panel">
+            <p class="eyebrow">Current Focus</p>
+            <strong id="focus-label" class="focus-label">Creative brief and proof contract</strong>
+            <p id="focus-copy" class="panel-copy">
+              Roles, constraints, and proof vocabulary are set before implementation broadens.
+            </p>
+          </article>
+        </section>
+
+        <section class="main-grid" aria-label="Sprint control room">
+          <section class="timeline-panel panel" aria-labelledby="timeline-heading">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Replay Sequence</p>
+                <h2 id="timeline-heading">Issue wave and work-state choreography</h2>
+              </div>
+              <div class="transport">
+                <button id="play-toggle" class="ghost-button" type="button" aria-pressed="true">Pause replay</button>
+                <button id="restart-replay" class="ghost-button" type="button">Restart</button>
+              </div>
+            </div>
+
+            <div class="progress-rail" aria-hidden="true">
+              <div id="progress-fill" class="progress-rail__fill"></div>
+            </div>
+
+            <div class="timeline-grid">
+              <article class="subpanel">
+                <div class="subpanel__head">
+                  <p class="eyebrow">Issue Wave</p>
+                  <h3>Governed mini-sprint flow</h3>
+                </div>
+                <ol id="issue-wave" class="issue-wave"></ol>
+              </article>
+
+              <article class="subpanel">
+                <div class="subpanel__head">
+                  <p class="eyebrow">Work Items</p>
+                  <h3>Stateful production board</h3>
+                </div>
+                <div id="work-items" class="work-items"></div>
+              </article>
+            </div>
+          </section>
+
+          <aside class="launch-panel panel" aria-labelledby="launch-heading">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Launch Deck</p>
+                <h2 id="launch-heading">Starharvest outcome</h2>
+              </div>
+              <a class="primary-button" href="./starharvest_five_minute_sprint_demo.html" target="_blank" rel="noopener noreferrer">Launch full demo</a>
+            </div>
+
+            <div class="preview-frame">
+              <iframe
+                title="Starharvest demo preview"
+                src="./starharvest_five_minute_sprint_demo.html"
+                loading="lazy"
+              ></iframe>
+            </div>
+
+            <div class="launch-summary">
+              <div>
+                <p class="eyebrow">Artifact state</p>
+                <strong id="artifact-state">Awaiting launch window</strong>
+              </div>
+              <p id="artifact-summary" class="panel-copy">
+                The final artifact stays linked to the governed mini-sprint instead of appearing as an isolated demo file.
+              </p>
+            </div>
+          </aside>
+
+          <section class="roles-panel panel" aria-labelledby="roles-heading">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Role Assignments</p>
+                <h2 id="roles-heading">Named responsibilities</h2>
+              </div>
+            </div>
+            <div id="role-grid" class="role-grid"></div>
+          </section>
+
+          <section class="artifact-panel panel" aria-labelledby="artifact-heading">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Tracked Artifacts</p>
+                <h2 id="artifact-heading">Repo-relative proof surfaces</h2>
+              </div>
+            </div>
+            <ul id="artifact-list" class="artifact-list"></ul>
+          </section>
+
+          <section class="review-panel panel" aria-labelledby="review-heading">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Review And Friction</p>
+                <h2 id="review-heading">Findings, blocks, and truth boundaries</h2>
+              </div>
+            </div>
+            <ol id="review-events" class="review-events"></ol>
+          </section>
+
+          <section class="verdict-panel panel" aria-labelledby="verdict-heading">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Proof Verdict</p>
+                <h2 id="verdict-heading">What this demo proves</h2>
+              </div>
+            </div>
+            <div class="claim-grid">
+              <article>
+                <span class="claim-badge claim-badge--pass">Proves</span>
+                <p>
+                  C-SDLC can make a creative-production wave inspectable through roles, states, review events,
+                  and final launch surfaces without hiding its governance constraints.
+                </p>
+              </article>
+              <article>
+                <span class="claim-badge claim-badge--partial">Suggests</span>
+                <p>
+                  The sprint console format is strong for screenshots, videos, and milestone storytelling because
+                  it keeps process and artifact visible together.
+                </p>
+              </article>
+              <article>
+                <span class="claim-badge claim-badge--block">Does not prove</span>
+                <p>
+                  Universal five-minute software delivery, full scheduler automation, or production readiness beyond
+                  this bounded demo lane.
+                </p>
+              </article>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="./five_minute_sprint_console_demo.js"></script>
+  </body>
+</html>
