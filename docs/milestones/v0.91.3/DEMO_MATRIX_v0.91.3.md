@@ -7,6 +7,7 @@ packages execute.
 
 | Demo | WP | Purpose | Expected Proof | Status |
 | --- | --- | --- | --- | --- |
+| C-SDLC demo proof contract | demo WP-01 / #3220 | Define the shared claim, timebox, validation, and review contract for later demo packets. | `review/csdlc_demo_proof_contract/` packet, reusable packet template, and validator-backed packet proof | in_flight |
 | Cognitive Transition manifest validation | WP-02 / #3200 | Show a transition manifest links issue, actor roles, cards, DAG, evidence, gate, and memory. | validator-backed valid/invalid fixture test results | proven |
 | Card lifecycle integration | WP-03 / #3201 | Show a tracked public issue bundle preserves `SIP -> STP -> SPP -> SRP -> SOR` semantics. | tracked card bundle plus validator/doctor proof | proven |
 | Transition DAG and shard plan | WP-04 / #3202 | Show serial work, parallel shards, and barriers are explicit. | DAG packet, shard plan, and validator-backed summary | proven |
@@ -20,5 +21,6 @@ packages execute.
 
 - Demos must be fixture-backed unless live execution is explicitly approved.
 - Demos must record skipped states truthfully.
+- Demos must use the shared C-SDLC demo proof contract before claiming success.
 - Demos must not bypass GitHub, CI, branch protection, or human review.
 - Demos must distinguish speed evidence from governance evidence.
