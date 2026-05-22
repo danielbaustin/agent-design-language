@@ -2,7 +2,8 @@
 
 ## Status
 
-Planned `v0.91.3` feature under `WP-05` / `#3203`.
+In flight under `WP-05` / `#3203` with a tracked evidence-bundle packet,
+review synthesis companion, and focused validator/test proof.
 
 ## Purpose
 
@@ -33,6 +34,22 @@ The first slice must define:
 - The `SOR` links the final outcome back to the evidence bundle.
 - The bundle is tracked in Git or represented by a tracked fixture during the
   first proof.
+
+## Current Proof Surfaces
+
+- `docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md`
+- `docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md`
+- `docs/milestones/v0.91.3/review/evidence_bundle/EVIDENCE_BUNDLE_PROOF_PACKET_v0.91.3.md`
+- `adl/tools/validate_evidence_bundle_packet.py`
+- `adl/tools/test_evidence_bundle_packet.sh`
+
+## Focused Validation
+
+```bash
+python3 adl/tools/validate_evidence_bundle_packet.py docs/milestones/v0.91.3/review/evidence_bundle
+bash adl/tools/test_evidence_bundle_packet.sh
+cargo test --manifest-path adl/Cargo.toml cognitive_transition_manifest_fixture_points_at_wp05_evidence_bundle -- --nocapture
+```
 
 ## Non-Goals
 

@@ -265,6 +265,12 @@ mod tests {
     const WP04_SHARD_PLAN_PACKET: &str = include_str!(
         "../../docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_shard_plan.md"
     );
+    const WP05_EVIDENCE_BUNDLE_PACKET: &str = include_str!(
+        "../../docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md"
+    );
+    const WP05_REVIEW_SYNTHESIS_PACKET: &str = include_str!(
+        "../../docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md"
+    );
 
     #[test]
     fn cognitive_transition_manifest_valid_fixture_passes_validation() {
@@ -393,6 +399,44 @@ mod tests {
             assert!(
                 WP04_SHARD_PLAN_PACKET.contains(snippet),
                 "shard plan packet missing `{snippet}`"
+            );
+        }
+    }
+    #[test]
+    fn cognitive_transition_manifest_fixture_points_at_wp05_evidence_bundle() {
+        let manifest = wp02_cognitive_transition_manifest_valid_fixture();
+
+        assert_eq!(
+            manifest.evidence_bundle_rel_path.as_deref(),
+            Some("docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md")
+        );
+
+        for snippet in [
+            "## Transition Identity",
+            "## Changed Artifact Inventory",
+            "## Validation Record",
+            "## Validation Not Run",
+            "## Review Inputs",
+            "## Review Findings",
+            "## Finding Dispositions",
+            "## Trace / Proof References",
+            "## Residual Risks",
+        ] {
+            assert!(
+                WP05_EVIDENCE_BUNDLE_PACKET.contains(snippet),
+                "evidence bundle packet missing `{snippet}`"
+            );
+        }
+
+        for snippet in [
+            "## Conclusion",
+            "## Confirmed Findings",
+            "## Deferred Findings",
+            "## Recommended Outcome",
+        ] {
+            assert!(
+                WP05_REVIEW_SYNTHESIS_PACKET.contains(snippet),
+                "review synthesis packet missing `{snippet}`"
             );
         }
     }
