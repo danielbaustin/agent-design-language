@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned `v0.91.3` feature under `WP-06` / `#3204`.
+In-flight `v0.91.3` feature under `WP-06` / `#3204`.
 
 ## Purpose
 
@@ -34,6 +34,16 @@ The first slice must define a gate record that captures:
   them.
 - The gate fails closed when evidence is missing, stale, or local-only.
 - The first proof includes a gate fixture or output record.
+
+## Proof Surface
+
+Tracked first-slice proof:
+
+- `docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md`
+- `adl/tools/validate_merge_readiness_packet.py`
+- `adl/tools/test_merge_readiness_packet.sh`
+
+This is a governed gate record, not an automatic merge action.
 
 ## Non-Goals
 
