@@ -13,8 +13,8 @@ packages execute.
 | Evidence bundle and review synthesis | WP-05 / #3203 | Show review inputs and findings converge into a bounded packet. | evidence bundle plus synthesis output and validator-backed packet proof | proven |
 | Governed merge-readiness gate | WP-06 / #3204 | Show C-SDLC preserves issue, PR, CI, branch, and human review truth. | gate result fixture and validator-backed packet proof | proven |
 | SRP/SOR ObsMem handoff | WP-07 / #3205 | Show review results and outcome truth have a memory handoff shape. | tracked handoff record plus validator-backed packet proof | proven |
-| Integrated process lessons and proof readiness | WP-08 / #3206 | Show the upstream proof chain is ready for the first bounded proof run. | readiness packet plus combined-lane validator/test proof | in_flight |
-| Five-minute-sprint first proof | WP-09 / #3207 | Show one bounded transition can execute with measurable coordination behavior. | planned demo report and metrics snapshot | planned |
+| Integrated process lessons and proof readiness | WP-08 / #3206 | Show the upstream proof chain is ready for the first bounded proof run. | readiness packet plus combined-lane validator/test proof | proven |
+| Five-minute-sprint first proof | WP-09 / #3207 | Show one bounded transition can execute with measurable coordination behavior. | `review/first_proof_demo/` packet, deterministic demo command, and metrics snapshot that separately classify process success versus literal five-minute success | in_flight |
 
 ## Demo Rules
 

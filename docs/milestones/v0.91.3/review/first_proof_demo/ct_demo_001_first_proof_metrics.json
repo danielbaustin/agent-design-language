@@ -1,0 +1,154 @@
+{
+  "schema_version": "v0.91.3.first_proof_metrics.v1",
+  "transition_id": "cts.v0_91_3.issue_3200.ct_demo_001",
+  "milestone_version": "v0.91.3",
+  "demo_name": "ct_demo_001_first_proof",
+  "demo_command": "python3 adl/tools/demo_v0913_first_proof_demo.py --timeline docs/milestones/v0.91.3/review/first_proof_demo/ct_demo_001_timeline_snapshot.json --out docs/milestones/v0.91.3/review/first_proof_demo",
+  "source_scope": {
+    "start_wp": "WP-02",
+    "end_wp": "WP-08",
+    "issue_count": 7,
+    "pr_count": 7
+  },
+  "timing_metrics": {
+    "baseline_sequential_estimate_minutes": 2228.71,
+    "actual_transition_elapsed_minutes": 413.32,
+    "review_ready_minutes": 412.48,
+    "aggregate_pr_cycle_minutes": 84.96,
+    "overlap_reduction_minutes": 1815.39,
+    "realized_serial_fraction_upper_bound": 0.1855,
+    "realized_parallelizable_fraction_lower_bound": 0.8145
+  },
+  "coordination_metrics": {
+    "serial_node_count": 5,
+    "parallel_shard_count": 2,
+    "synchronization_barrier_count": 3,
+    "replan_count": 0,
+    "cross_shard_conflict_count": 0
+  },
+  "governance_metrics": {
+    "unresolved_findings_at_pr_open": 0,
+    "unresolved_findings_at_merge": 0,
+    "validation_gaps": [],
+    "stale_card_detections": [],
+    "closeout_truth_corrections": [
+      "WP-08 sprint-state and SOR truth required post-merge normalization before WP-09 execution."
+    ],
+    "local_only_durable_record_detections": []
+  },
+  "evidence_quality": {
+    "evidence_bundle_completeness": "complete",
+    "trace_signed_ready_status": "signed_trace_ready_not_proven",
+    "artifact_path_portability": "repo_relative",
+    "review_synthesis_completeness": "complete"
+  },
+  "memory_metrics": {
+    "srp_findings_ingested_shape": "tracked_packet_present",
+    "sor_outcome_truth_ingested_shape": "tracked_packet_present",
+    "trace_evidence_refs_ingested_shape": "tracked_packet_present",
+    "future_agent_recovery_usefulness": "high"
+  },
+  "classification": {
+    "csdlc_first_proof": "proving",
+    "literal_five_minute_target": "non_proving",
+    "governance_preservation": "proving",
+    "evidence_memory_chain": "proving"
+  },
+  "per_work_package": [
+    {
+      "wp": "WP-02",
+      "issue_number": 3200,
+      "pr_number": 3235,
+      "issue_created_at": "2026-05-21T20:19:03Z",
+      "pr_created_at": "2026-05-21T23:25:02Z",
+      "pr_merged_at": "2026-05-21T23:50:16Z",
+      "issue_to_pr_minutes": 185.98,
+      "pr_cycle_minutes": 25.23,
+      "issue_to_merge_minutes": 211.22
+    },
+    {
+      "wp": "WP-03",
+      "issue_number": 3201,
+      "pr_number": 3236,
+      "issue_created_at": "2026-05-21T20:19:08Z",
+      "pr_created_at": "2026-05-22T00:04:40Z",
+      "pr_merged_at": "2026-05-22T00:36:47Z",
+      "issue_to_pr_minutes": 225.53,
+      "pr_cycle_minutes": 32.12,
+      "issue_to_merge_minutes": 257.65
+    },
+    {
+      "wp": "WP-04",
+      "issue_number": 3202,
+      "pr_number": 3239,
+      "issue_created_at": "2026-05-21T20:19:12Z",
+      "pr_created_at": "2026-05-22T00:48:08Z",
+      "pr_merged_at": "2026-05-22T00:59:56Z",
+      "issue_to_pr_minutes": 268.93,
+      "pr_cycle_minutes": 11.8,
+      "issue_to_merge_minutes": 280.73
+    },
+    {
+      "wp": "WP-05",
+      "issue_number": 3203,
+      "pr_number": 3243,
+      "issue_created_at": "2026-05-21T20:19:17Z",
+      "pr_created_at": "2026-05-22T01:46:17Z",
+      "pr_merged_at": "2026-05-22T01:50:43Z",
+      "issue_to_pr_minutes": 327.0,
+      "pr_cycle_minutes": 4.43,
+      "issue_to_merge_minutes": 331.43
+    },
+    {
+      "wp": "WP-06",
+      "issue_number": 3204,
+      "pr_number": 3244,
+      "issue_created_at": "2026-05-21T20:19:21Z",
+      "pr_created_at": "2026-05-22T02:00:42Z",
+      "pr_merged_at": "2026-05-22T02:06:18Z",
+      "issue_to_pr_minutes": 341.35,
+      "pr_cycle_minutes": 5.6,
+      "issue_to_merge_minutes": 346.95
+    },
+    {
+      "wp": "WP-07",
+      "issue_number": 3205,
+      "pr_number": 3247,
+      "issue_created_at": "2026-05-21T20:19:27Z",
+      "pr_created_at": "2026-05-22T02:42:23Z",
+      "pr_merged_at": "2026-05-22T02:47:20Z",
+      "issue_to_pr_minutes": 382.93,
+      "pr_cycle_minutes": 4.95,
+      "issue_to_merge_minutes": 387.88
+    },
+    {
+      "wp": "WP-08",
+      "issue_number": 3206,
+      "pr_number": 3249,
+      "issue_created_at": "2026-05-21T20:19:31Z",
+      "pr_created_at": "2026-05-22T03:11:32Z",
+      "pr_merged_at": "2026-05-22T03:12:22Z",
+      "issue_to_pr_minutes": 412.02,
+      "pr_cycle_minutes": 0.83,
+      "issue_to_merge_minutes": 412.85
+    }
+  ],
+  "tracked_refs": [
+    "docs/milestones/v0.91.3/review/transition_manifest/fixtures/valid_cognitive_transition_manifest_v1.json",
+    "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md",
+    "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_transition_dag.md",
+    "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_shard_plan.md",
+    "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
+    "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md",
+    "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md",
+    "docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.md",
+    "docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json",
+    "docs/milestones/v0.91.3/review/first_proof_readiness/FIRST_PROOF_READINESS_PACKET_v0.91.3.md",
+    "docs/milestones/v0.91.3/review/first_proof_readiness/ct_demo_001_first_proof_readiness.md"
+  ],
+  "non_claims": [
+    "This packet does not claim literal five-minute execution success unless the measured elapsed time is five minutes or less.",
+    "This packet does not claim live ObsMem ingestion or signed-trace verification.",
+    "This packet does not claim unrestricted autonomous engineering or bypass of human review."
+  ]
+}

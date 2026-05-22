@@ -18,5 +18,6 @@ Tracked planning source:
 
 - [v0.91.3 C-SDLC Tracked Source Package](../C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md)
 
-These features are planned for v0.91.3. They are not complete until the
-milestone issue wave is opened, executed, reviewed, and closed out.
+These features are tracked in the opened `v0.91.3` issue wave. Some are already
+proven, some are in flight, and the milestone is not complete until the full
+wave is executed, reviewed, and closed out.
