@@ -112,6 +112,12 @@ If you want the command-driven CSM Observatory demo bundle:
 bash adl/tools/demo_v0901_csm_observatory.sh
 ```
 
+If you want the current C-SDLC mini-sprint HTML game demo:
+
+```bash
+bash adl/tools/demo_v0913_starharvest_html_game.sh --print-url
+```
+
 If you want the integrated Runtime v2 foundation proof demo:
 
 ```bash

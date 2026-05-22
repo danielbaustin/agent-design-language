@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Starharvest / Five-Minute Sprint Demo</title>
+    <link rel="stylesheet" href="./starharvest_five_minute_sprint_demo.css">
+  </head>
+  <body>
+    <main class="starharvest-shell" data-demo-id="ct_demo_002_starharvest">
+      <section class="starharvest-hero" aria-labelledby="starharvest-title">
+        <header class="masthead">
+          <div class="masthead__copy">
+            <p class="kicker">C-SDLC Demo / HTML Game Sprint</p>
+            <h1 id="starharvest-title">Starharvest</h1>
+            <p class="lede">
+              A cozy asteroid farming run where one tiny ship plants glowing plots, tends orbital gardens, and harvests stardust before oxygen runs dry.
+            </p>
+          </div>
+          <div class="truth-panel" aria-label="Demo truth boundary">
+            <span>Static HTML / CSS / JS</span>
+            <span>Open-file runnable</span>
+            <span>Bounded proof demo</span>
+          </div>
+        </header>
+
+        <section class="hud-strip" aria-label="Primary run status">
+          <div class="hud-pill">
+            <span class="hud-pill__label">Timer</span>
+            <strong id="hud-timer">03:00</strong>
+          </div>
+          <div class="hud-pill">
+            <span class="hud-pill__label">Stardust</span>
+            <strong id="hud-score">0 / 180</strong>
+          </div>
+          <div class="hud-pill">
+            <span class="hud-pill__label">Seeds</span>
+            <strong id="hud-seeds">4</strong>
+          </div>
+          <div class="hud-pill">
+            <span class="hud-pill__label">Hull</span>
+            <strong id="hud-hull">100%</strong>
+          </div>
+          <div class="hud-pill">
+            <span class="hud-pill__label">Combo</span>
+            <strong id="hud-combo">x1.0</strong>
+          </div>
+        </section>
+
+        <section class="game-layout" aria-label="Starharvest gameplay surface">
+          <section class="playfield-panel">
+            <div class="playfield-backdrop" aria-hidden="true">
+              <div class="nebula nebula--left"></div>
+              <div class="nebula nebula--right"></div>
+              <div class="parallax-stars parallax-stars--far"></div>
+              <div class="parallax-stars parallax-stars--mid"></div>
+            </div>
+
+            <div class="status-banner" id="status-banner" aria-live="polite">
+              Glide to an asteroid, then press <kbd>Space</kbd> to plant, tend, or harvest.
+            </div>
+
+            <div class="playfield" id="playfield" aria-label="Asteroid garden field">
+              <svg class="orbit-lines" viewBox="0 0 1000 680" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M174 112C256 142 336 216 382 310" />
+                <path d="M382 310C488 286 624 240 724 188" />
+                <path d="M382 310C476 392 560 474 608 542" />
+                <path d="M608 542C700 502 782 414 830 332" />
+                <path d="M262 516C336 470 388 398 382 310" />
+              </svg>
+              <div id="asteroid-layer"></div>
+              <div id="hazard-layer"></div>
+              <div id="ship" class="ship" aria-label="Harvest skiff">
+                <div class="ship__trail"></div>
+                <div class="ship__core"></div>
+                <div class="ship__beam" id="ship-beam"></div>
+              </div>
+              <div id="toast-layer" class="toast-layer" aria-hidden="true"></div>
+            </div>
+
+            <footer class="hint-bar">
+              <span><kbd>WASD</kbd> / <kbd>Arrows</kbd> drift the skiff</span>
+              <span><kbd>Space</kbd> plant, tend, or harvest</span>
+              <span><kbd>Shift</kbd> boost through calm space</span>
+              <span><kbd>R</kbd> restart the run</span>
+            </footer>
+          </section>
+
+          <aside class="control-rail">
+            <section class="rail-panel rail-panel--objective">
+              <p class="rail-label">Current Objective</p>
+              <h2>Bring home 180 stardust before the air or the hull gives out.</h2>
+              <ul id="objective-list" class="objective-list"></ul>
+            </section>
+
+            <section class="rail-panel">
+              <div class="rail-panel__heading">
+                <p class="rail-label">Selected Asteroid</p>
+                <h3 id="selected-name">Drift close to inspect a garden</h3>
+              </div>
+              <p id="selected-summary" class="rail-copy">
+                Empty plots can be planted, growing plots can be tended, and ripe plots can be harvested for stardust and seeds.
+              </p>
+              <dl class="stat-grid">
+                <div>
+                  <dt>State</dt>
+                  <dd id="selected-state">Awaiting orbit</dd>
+                </div>
+                <div>
+                  <dt>Yield</dt>
+                  <dd id="selected-yield">-</dd>
+                </div>
+                <div>
+                  <dt>Care Window</dt>
+                  <dd id="selected-window">-</dd>
+                </div>
+                <div>
+                  <dt>Risk</dt>
+                  <dd id="selected-risk">Low</dd>
+                </div>
+              </dl>
+            </section>
+
+            <section class="rail-panel">
+              <div class="rail-panel__heading">
+                <p class="rail-label">Shop</p>
+                <h3>Field upgrades</h3>
+              </div>
+              <div id="upgrade-list" class="upgrade-list"></div>
+            </section>
+
+            <section class="rail-panel rail-panel--compact">
+              <div class="rail-panel__heading">
+                <p class="rail-label">Run Outcome</p>
+                <h3 id="result-title">In progress</h3>
+              </div>
+              <p id="result-body" class="rail-copy">
+                The current run is proving a bounded, inspectable C-SDLC game artifact, not universal five-minute delivery.
+              </p>
+              <button id="restart-button" class="primary-button" type="button">Restart run</button>
+            </section>
+          </aside>
+        </section>
+      </section>
+    </main>
+
+    <script src="./starharvest_five_minute_sprint_demo.js"></script>
+  </body>
+</html>
