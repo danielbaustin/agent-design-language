@@ -19,6 +19,11 @@ Feature docs:
 - [Integrated Process Lessons And Proof Readiness](INTEGRATED_PROCESS_LESSONS_AND_PROOF_READINESS.md)
 - [Five-Minute Sprint First Proof](FIVE_MINUTE_SPRINT_FIRST_PROOF.md)
 
+Review/demo entrypoint:
+
+- [Feature-to-demo map](../review/demo_coverage/ct_demo_006_feature_demo_map.md)
+- [Demo coverage packet](../review/demo_coverage/DEMO_COVERAGE_PACKET_v0.91.3.md)
+
 Tracked planning source:
 
 - [v0.91.3 C-SDLC Tracked Source Package](../C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md)
