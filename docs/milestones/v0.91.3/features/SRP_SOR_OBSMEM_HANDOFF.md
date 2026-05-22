@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned `v0.91.3` feature under `WP-07` / `#3205`.
+In-flight `v0.91.3` feature under `WP-07` / `#3205`.
 
 ## Purpose
 
@@ -33,6 +33,17 @@ The first slice must define:
   follow-on work.
 - The handoff is repo-relative and ready for `v0.91.4` tracked ObsMem
   ingestion.
+
+## Proof Surface
+
+Tracked first-slice proof:
+
+- `docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json`
+- `docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.md`
+- `adl/tools/validate_obsmem_handoff_packet.py`
+- `adl/tools/test_obsmem_handoff_packet.sh`
+
+This is a tracked handoff contract, not a live ObsMem backend integration.
 
 ## Non-Goals
 

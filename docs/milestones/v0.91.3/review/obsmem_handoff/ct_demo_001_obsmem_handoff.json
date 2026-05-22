@@ -1,0 +1,91 @@
+{
+  "schema_version": "srp_sor_obsmem_handoff.v1",
+  "handoff_id": "obsmem_handoff.ct_demo_001.v0_91_3",
+  "transition_id": "cts.v0_91_3.issue_3200.ct_demo_001",
+  "milestone_version": "v0.91.3",
+  "source_issue_number": 3203,
+  "source_issue_url": "https://github.com/danielbaustin/agent-design-language/issues/3203",
+  "source_pr_url": "https://github.com/danielbaustin/agent-design-language/pull/3243",
+  "source_pr_state": "merged",
+  "branch_ref": "codex/3203-v0-91-3-wp-05-evidence-bundle-and-review-synthesis",
+  "tracked_supporting_artifacts": {
+    "evidence_bundle_rel_path": "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
+    "review_synthesis_rel_path": "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md",
+    "merge_readiness_gate_rel_path": "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md"
+  },
+  "srp_memory_entry": {
+    "entry_kind": "srp_review_learning",
+    "source_truth": "derived_from_final_srp",
+    "summary": "The bounded pre-PR review outcome for ct_demo_001 preserved no blocking findings at publication while keeping later merge, memory, and timing work explicitly deferred.",
+    "review_judgments": [
+      {
+        "finding_id": "F-001",
+        "severity": "none",
+        "disposition": "accepted_as_proven",
+        "summary": "The bounded packet surfaces for manifest, lifecycle, and DAG proof converged into one tracked evidence bundle."
+      },
+      {
+        "finding_id": "F-002",
+        "severity": "residual",
+        "disposition": "deferred_to_planned_follow_on",
+        "summary": "Merge-readiness, ObsMem handoff, and measured timing remained intentionally deferred when WP-05 closed."
+      }
+    ],
+    "residual_risks": [
+      "review learning is packet-first rather than retrieved from a live ObsMem backend",
+      "signed trace proof remains out of scope for v0.91.3"
+    ],
+    "follow_on_work": [
+      "WP-06 merge-readiness gate",
+      "WP-07 ObsMem handoff",
+      "WP-09 five-minute-sprint timing metrics"
+    ],
+    "citations": [
+      "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
+      "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md",
+      "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md"
+    ]
+  },
+  "sor_memory_entry": {
+    "entry_kind": "sor_outcome_truth",
+    "source_truth": "derived_from_final_sor",
+    "summary": "The first tracked evidence-bundle and review-synthesis packet for ct_demo_001 merged through PR #3243 after focused validator-backed proof.",
+    "facts": [
+      "source issue state at publication outcome was CLOSED",
+      "PR #3243 merged on base branch main",
+      "the merge-readiness gate later recorded adl-ci and adl-coverage as SUCCESS"
+    ],
+    "changed_tracked_paths": [
+      "docs/milestones/v0.91.3/review/evidence_bundle/README.md",
+      "docs/milestones/v0.91.3/review/evidence_bundle/EVIDENCE_BUNDLE_PROOF_PACKET_v0.91.3.md",
+      "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
+      "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md"
+    ],
+    "validation_record": [
+      {
+        "command": "python3 adl/tools/validate_evidence_bundle_packet.py docs/milestones/v0.91.3/review/evidence_bundle",
+        "status": "pass"
+      },
+      {
+        "command": "bash adl/tools/test_evidence_bundle_packet.sh",
+        "status": "pass"
+      },
+      {
+        "command": "cargo test --manifest-path adl/Cargo.toml cognitive_transition_manifest_fixture_points_at_wp05_evidence_bundle -- --nocapture",
+        "status": "pass"
+      }
+    ],
+    "integration_state": "merged",
+    "closeout_state": "closed_out",
+    "citations": [
+      "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
+      "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md",
+      "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md"
+    ]
+  },
+  "outside_memory": [
+    "local .adl issue-card paths remain derivation inputs only and are not canonical ObsMem citations in v0.91.3",
+    "trace proof and signed-trace bundles remain deferred until later work packages land",
+    "unresolved hypothetical future findings are excluded until they are recorded in final review or outcome truth"
+  ]
+}

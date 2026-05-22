@@ -221,8 +221,13 @@ pub fn wp02_cognitive_transition_manifest_valid_fixture() -> CognitiveTransition
             "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md"
                 .to_string(),
         ),
-        merge_readiness_gate_rel_path: None,
-        obsmem_handoff_rel_path: None,
+        merge_readiness_gate_rel_path: Some(
+            "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md".to_string(),
+        ),
+        obsmem_handoff_rel_path: Some(
+            "docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json"
+                .to_string(),
+        ),
         trace_proof_rel_paths: vec![],
     }
 }
@@ -276,6 +281,15 @@ mod tests {
     );
     const WP05_REVIEW_SYNTHESIS_PACKET: &str = include_str!(
         "../../docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md"
+    );
+    const WP06_MERGE_GATE_PACKET: &str = include_str!(
+        "../../docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md"
+    );
+    const WP07_OBSMEM_HANDOFF_RECORD: &str = include_str!(
+        "../../docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json"
+    );
+    const WP07_OBSMEM_HANDOFF_PACKET: &str = include_str!(
+        "../../docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.md"
     );
 
     #[test]
@@ -354,14 +368,20 @@ mod tests {
     }
 
     #[test]
-    fn wp02_valid_fixture_defers_future_proof_paths() {
+    fn wp02_valid_fixture_defers_future_trace_proof_paths_only() {
         let manifest = wp02_cognitive_transition_manifest_valid_fixture();
 
-        assert_eq!(manifest.merge_readiness_gate_rel_path, None);
-        assert_eq!(manifest.obsmem_handoff_rel_path, None);
+        assert_eq!(
+            manifest.merge_readiness_gate_rel_path.as_deref(),
+            Some("docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md")
+        );
+        assert_eq!(
+            manifest.obsmem_handoff_rel_path.as_deref(),
+            Some("docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json")
+        );
         assert!(
             manifest.trace_proof_rel_paths.is_empty(),
-            "Sprint 1 fixture should not claim future trace proof artifacts"
+            "v0.91.3 fixture should not claim future trace proof artifacts"
         );
     }
 
@@ -471,9 +491,60 @@ mod tests {
     }
 
     #[test]
-    fn cognitive_transition_manifest_fixture_defers_wp06_merge_gate() {
+    fn cognitive_transition_manifest_fixture_points_at_wp06_merge_gate() {
         let manifest = wp02_cognitive_transition_manifest_valid_fixture();
 
-        assert_eq!(manifest.merge_readiness_gate_rel_path, None);
+        assert_eq!(
+            manifest.merge_readiness_gate_rel_path.as_deref(),
+            Some("docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md")
+        );
+
+        for snippet in [
+            "## Gate Identity",
+            "## PR / CI Truth",
+            "## Review Truth",
+            "## Decision",
+            "`merge_ready`",
+        ] {
+            assert!(
+                WP06_MERGE_GATE_PACKET.contains(snippet),
+                "merge gate packet missing `{snippet}`"
+            );
+        }
+    }
+
+    #[test]
+    fn cognitive_transition_manifest_fixture_points_at_wp07_obsmem_handoff() {
+        let manifest = wp02_cognitive_transition_manifest_valid_fixture();
+
+        assert_eq!(
+            manifest.obsmem_handoff_rel_path.as_deref(),
+            Some("docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json")
+        );
+
+        for snippet in [
+            "\"schema_version\": \"srp_sor_obsmem_handoff.v1\"",
+            "\"entry_kind\": \"srp_review_learning\"",
+            "\"entry_kind\": \"sor_outcome_truth\"",
+            "\"source_truth\": \"derived_from_final_srp\"",
+            "\"source_truth\": \"derived_from_final_sor\"",
+        ] {
+            assert!(
+                WP07_OBSMEM_HANDOFF_RECORD.contains(snippet),
+                "obsmem handoff record missing `{snippet}`"
+            );
+        }
+
+        for snippet in [
+            "## Source Truth Boundary",
+            "## SRP Review Learning Memory",
+            "## SOR Outcome Truth Memory",
+            "## Deferred / Outside Memory",
+        ] {
+            assert!(
+                WP07_OBSMEM_HANDOFF_PACKET.contains(snippet),
+                "obsmem handoff packet missing `{snippet}`"
+            );
+        }
     }
 }
