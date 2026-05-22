@@ -91,6 +91,9 @@ review.
 
 ## Document Map
 
+- Vision: [VISION_v0.91.4.md](VISION_v0.91.4.md)
+- Design: [DESIGN_v0.91.4.md](DESIGN_v0.91.4.md)
+- Decisions: [DECISIONS_v0.91.4.md](DECISIONS_v0.91.4.md)
 - WBS: [WBS_v0.91.4.md](WBS_v0.91.4.md)
 - Sprint plan: [SPRINT_v0.91.4.md](SPRINT_v0.91.4.md)
 - Planned issue wave: [WP_ISSUE_WAVE_v0.91.4.yaml](WP_ISSUE_WAVE_v0.91.4.yaml)
@@ -100,6 +103,10 @@ review.
   [FEATURE_PROOF_COVERAGE_v0.91.4.md](FEATURE_PROOF_COVERAGE_v0.91.4.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.4.md](DEMO_MATRIX_v0.91.4.md)
 - Quality gate: [QUALITY_GATE_v0.91.4.md](QUALITY_GATE_v0.91.4.md)
+- Release plan: [RELEASE_PLAN_v0.91.4.md](RELEASE_PLAN_v0.91.4.md)
+- Release notes: [RELEASE_NOTES_v0.91.4.md](RELEASE_NOTES_v0.91.4.md)
+- Milestone checklist:
+  [MILESTONE_CHECKLIST_v0.91.4.md](MILESTONE_CHECKLIST_v0.91.4.md)
 - Tracked workflow-state migration plan:
   [C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md](C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md)
 - C-SDLC canonical docs:
