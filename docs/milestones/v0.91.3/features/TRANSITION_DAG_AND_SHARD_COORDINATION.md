@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned `v0.91.3` feature under `WP-04` / `#3202`.
+In-flight `v0.91.3` feature under `WP-04` / `#3202`.
 
 ## Purpose
 
@@ -32,6 +32,20 @@ The first slice must define:
 - Review can determine whether parallel work respected shard boundaries.
 - The first proof reports coordination latency separately from implementation
   time.
+
+## Current WP-04 Proof Surface
+
+`WP-04` now anchors the first tracked DAG/shard packet at:
+
+- `docs/milestones/v0.91.3/review/transition_dag/`
+
+That packet contains:
+
+- one transition DAG fixture with explicit serial, shard, and barrier nodes
+- one shard plan with bounded ownership and interface-freeze rules
+- one validator/test lane proving the packet contract is present and stable
+- one schema-level proof that the `WP-02` manifest fixture still points at the
+  tracked `WP-04` DAG and shard-plan paths
 
 ## Non-Goals
 
