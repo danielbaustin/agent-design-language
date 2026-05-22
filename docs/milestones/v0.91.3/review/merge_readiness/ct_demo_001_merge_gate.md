@@ -61,6 +61,6 @@ The gate would fail closed if any of the following were true:
 
 ## Residual Risks
 
-- this is a first bounded gate record, not the full default merge-gate runtime
+- this is a first bounded post-hoc gate record, not yet an operative pre-merge enforcement gate
 - Sprint 4 still owns the broader milestone quality gate
-- `WP-07` still needs to turn review/result truth into an ObsMem handoff surface
+- live ObsMem ingestion and signed-trace proof remain later work
