@@ -1174,6 +1174,34 @@ mod tests {
         assert_stage(&lifecycle, "SOR", "active", false, false);
     }
 
+    #[test]
+    fn card_lifecycle_accepts_tracked_csdlc_bundle() {
+        let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .expect("adl crate lives under repo root")
+            .to_path_buf();
+        let bundle =
+            repo_root.join("workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards");
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo_root,
+            &bundle.join("sip.md"),
+            &bundle.join("stp.md"),
+            &bundle.join("spp.md"),
+            &bundle.join("srp.md"),
+            &bundle.join("sor.md"),
+        );
+
+        assert_eq!(lifecycle.active_stage, "SOR");
+        assert_eq!(lifecycle.next_required_stage, None);
+        assert_eq!(lifecycle.pr_run_readiness, "ready");
+        assert_eq!(lifecycle.pr_finish_readiness, "ready");
+        assert_stage(&lifecycle, "SIP", "complete", true, false);
+        assert_stage(&lifecycle, "STP", "complete", true, false);
+        assert_stage(&lifecycle, "SPP", "complete", true, false);
+        assert_stage(&lifecycle, "SRP", "final", true, true);
+        assert_stage(&lifecycle, "SOR", "final", true, true);
+    }
+
     struct LifecycleFixture<'a> {
         sip: &'a str,
         stp: &'a str,
