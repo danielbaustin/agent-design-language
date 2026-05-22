@@ -17,6 +17,7 @@ Required validation categories:
 - DAG/shard fixture tests
 - evidence bundle serialization or snapshot validation
 - merge-readiness gate tests
+- first-proof readiness validator tests
 - tracked C-SDLC source-package path checks
 - trace/proof reference path checks for future signed trace promotion
 - docs path/reference checks for the milestone package

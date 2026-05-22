@@ -11,6 +11,7 @@ Feature docs:
 - [Evidence Bundle And Review Synthesis](EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md)
 - [Governed Merge-Readiness Gate](GOVERNED_MERGE_READINESS_GATE.md)
 - [SRP/SOR ObsMem Handoff](SRP_SOR_OBSMEM_HANDOFF.md)
+- [Integrated Process Lessons And Proof Readiness](INTEGRATED_PROCESS_LESSONS_AND_PROOF_READINESS.md)
 - [Five-Minute Sprint First Proof](FIVE_MINUTE_SPRINT_FIRST_PROOF.md)
 
 Tracked planning source:
