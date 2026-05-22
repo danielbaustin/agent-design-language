@@ -95,6 +95,8 @@ staging state, not sufficient public proof by themselves.
 - Demo coverage review surface:
   [review/demo_coverage/README.md](review/demo_coverage/README.md)
 - Quality gate: [QUALITY_GATE_v0.91.3.md](QUALITY_GATE_v0.91.3.md)
+- Quality-gate review surface:
+  [review/quality_gate/README.md](review/quality_gate/README.md)
 - Release plan: [RELEASE_PLAN_v0.91.3.md](RELEASE_PLAN_v0.91.3.md)
 - Release notes: [RELEASE_NOTES_v0.91.3.md](RELEASE_NOTES_v0.91.3.md)
 - Milestone checklist:
