@@ -90,6 +90,8 @@ staging state, not sufficient public proof by themselves.
 - Feature proof coverage:
   [FEATURE_PROOF_COVERAGE_v0.91.3.md](FEATURE_PROOF_COVERAGE_v0.91.3.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.3.md](DEMO_MATRIX_v0.91.3.md)
+- Demo showcase review surface:
+  [review/csdlc_demo_showcase/README.md](review/csdlc_demo_showcase/README.md)
 - Quality gate: [QUALITY_GATE_v0.91.3.md](QUALITY_GATE_v0.91.3.md)
 - Release plan: [RELEASE_PLAN_v0.91.3.md](RELEASE_PLAN_v0.91.3.md)
 - Release notes: [RELEASE_NOTES_v0.91.3.md](RELEASE_NOTES_v0.91.3.md)
