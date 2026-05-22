@@ -9,6 +9,11 @@ dedicated product milestone, likely in the `v0.93.x` band. The exit bar for
 that milestone is a fully working alpha version of CodeFriend ready for
 operator/customer-style testing.
 
+Near-term setup assumption: the CodeFriend pre-alpha repo and S3-backed
+CloudFront landing-page mini-sprint should execute in `v0.91.4`, not
+`v0.91.3`. The `v0.91.3` work records the plan only so the current milestone
+does not expand at close.
+
 Planning must also extend beyond `v0.93.x`: the alpha milestone should prove a
 usable first product, while later CodeFriend roadmap bands add the remaining
 structural-intelligence, architecture-governance, fitness-function,
@@ -28,6 +33,7 @@ and local-only notes.
 
 - [CodeFriend setup plan](CODEFRIEND_SETUP_PLAN.md)
 - [CodeFriend reference inventory](CODEFRIEND_REFERENCE_INVENTORY.md)
+- [CodeFriend pre-alpha repo and S3 welcome mini-sprint](CODEFRIEND_PRE_ALPHA_REPO_AND_S3_WELCOME_MINI_SPRINT.md)
 
 ## Source Baseline
 
