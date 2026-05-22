@@ -33,9 +33,18 @@ remediation, planning, and release tail:
 | `WP-16` Internal review | code/docs/tests/process review packet | The completed C-SDLC default-operation package is reviewed for behavior, docs, tests, process truth, and demo credibility. | planned |
 | `WP-17` External / 3rd-party review | independent review handoff and resulting review packet | Outside reviewers receive the right evidence and review the fully corrected package, not a thin or stale handoff. | planned |
 | `WP-18` Review findings remediation | finding disposition record and follow-on routing | Actionable review findings are fixed or routed before release claims. | planned |
-| `WP-19` Next milestone planning | next-milestone handoff and downstream planning update | The next milestone is planned before the release ceremony, preserving the established release cycle. | planned |
+| `WP-19` Next milestone planning | `NEXT_MILESTONE_HANDOFF_v0.91.4.md` and downstream planning update | The next milestone is planned before the release ceremony, preserving the established release cycle. | planned |
 | `WP-20` Next milestone review pass | final review of next-milestone planning | The handoff is re-reviewed after the short break and before ceremony. | planned |
 | `WP-21` Release ceremony | release evidence packet, signed trace proof, and closeout record | Release truth includes feature proof, tail-work proof, signed trace verification, residual risks, and follow-on routing. | planned |
+
+## Sidecar Proof
+
+The CodeFriend pre-alpha setup sidecar is not C-SDLC core proof, but it must
+still have a truthful completion or blocked-state record before release:
+
+| Sidecar Work | Required Proof Surface | Expected Result | Status |
+| --- | --- | --- | --- |
+| CodeFriend pre-alpha repo/S3 welcome-page setup | sidecar sprint state, repo/source-map proof, static page proof, AWS/DNS/HTTPS verification or blocked handoff | CodeFriend has a private product/site repo and verified welcome-page path, or a truthful blocked handoff if AWS/DNS approval prevents launch. | planned |
 
 ## Required Evidence
 
@@ -55,3 +64,5 @@ remediation, planning, and release tail:
   release evidence paths
 - signed trace bundle and verification result for durable C-SDLC proof
 - ObsMem ingestion evidence derived from tracked records
+- CodeFriend sidecar completion or blocked handoff evidence, without treating
+  CodeFriend as C-SDLC core proof

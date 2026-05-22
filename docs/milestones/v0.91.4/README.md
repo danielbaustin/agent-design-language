@@ -26,6 +26,13 @@ Where v0.91.3 proves the crown jewel, v0.91.4 makes it operational:
 - tracked durable workflow records for all C-SDLC truth
 - minimal signed trace proof for durable C-SDLC runs
 
+v0.91.4 also carries one bounded product sidecar: the CodeFriend pre-alpha
+repo/S3 welcome-page setup mini-sprint described in
+`docs/planning/codefriend/CODEFRIEND_PRE_ALPHA_REPO_AND_S3_WELCOME_MINI_SPRINT.md`.
+That sidecar is part of v0.91.4 scheduling, but it is not C-SDLC core
+machinery and must not be used as proof that C-SDLC default operation is
+complete.
+
 ## Milestone Role
 
 v0.91.4 should leave ADL with one default issue execution model:
@@ -57,6 +64,7 @@ v0.91.4 should not:
 - hide remaining legacy card drift as acceptable default behavior
 - leave durable C-SDLC cards, review, closeout, trace, proof, or release
   evidence local-only
+- treat CodeFriend product setup as a required C-SDLC dependency
 
 ## Source Map
 
@@ -107,11 +115,31 @@ review.
 - Release notes: [RELEASE_NOTES_v0.91.4.md](RELEASE_NOTES_v0.91.4.md)
 - Milestone checklist:
   [MILESTONE_CHECKLIST_v0.91.4.md](MILESTONE_CHECKLIST_v0.91.4.md)
+- Next milestone handoff:
+  [NEXT_MILESTONE_HANDOFF_v0.91.4.md](NEXT_MILESTONE_HANDOFF_v0.91.4.md)
 - Tracked workflow-state migration plan:
   [C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md](C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md)
 - C-SDLC canonical docs:
   [../../cognitive-sdlc/README.md](../../cognitive-sdlc/README.md)
 - Feature index: [features/README.md](features/README.md)
+
+## CodeFriend Sidecar
+
+The CodeFriend sidecar should remain bounded to the previously planned
+pre-alpha setup lane:
+
+- private product/site repository bootstrap
+- minimal static welcome page
+- AWS S3 asset origin in `us-west-2`
+- CloudFront HTTPS delivery
+- ACM certificate handling in `us-east-1`
+- Route 53 DNS for `codefriend.ai` and `www.codefriend.ai`
+- publication safety, verification, rollback, and handoff
+
+The sidecar must not create customer-data systems, application runtime,
+analytics, signup flows, alpha-product claims, or C-SDLC dependencies. It can
+finish as completed or truthfully blocked by AWS/DNS approval, but it must not
+alter the required C-SDLC closeout tail.
 
 ## Success Criteria
 
@@ -138,3 +166,5 @@ v0.91.4 is ready to close when:
 - closeout follows the full proof, quality, docs/adoption review, internal
   review, external review, remediation, next-milestone planning,
   next-milestone review, and release ceremony sequence
+- the CodeFriend sidecar setup is either complete, truthfully blocked with a
+  handoff, or explicitly routed before release

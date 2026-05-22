@@ -21,6 +21,9 @@ evidence exists.
 - [x] Sprint plan created: [SPRINT](SPRINT_v0.91.4.md)
 - [x] Planned issue wave drafted:
   [WP_ISSUE_WAVE](WP_ISSUE_WAVE_v0.91.4.yaml)
+- [x] Next-milestone handoff scaffold present:
+  [NEXT_MILESTONE_HANDOFF](NEXT_MILESTONE_HANDOFF_v0.91.4.md)
+- [x] CodeFriend sidecar setup plan represented in the milestone package.
 
 ## Execution Discipline
 
@@ -45,11 +48,14 @@ evidence exists.
 - [ ] CI is green on merged code changes.
 - [ ] No unresolved P1/P0 findings remain.
 - [ ] Deferred issues have owners and follow-on routing.
+- [ ] CodeFriend sidecar setup is complete or truthfully blocked/routed.
 
 ## Release Packaging
 
 - [ ] Release plan complete: [RELEASE_PLAN](RELEASE_PLAN_v0.91.4.md)
 - [ ] Release notes finalized: [RELEASE_NOTES](RELEASE_NOTES_v0.91.4.md)
+- [ ] Next-milestone handoff refreshed:
+  [NEXT_MILESTONE_HANDOFF](NEXT_MILESTONE_HANDOFF_v0.91.4.md)
 - [ ] Durable workflow-state migration proof complete:
   [C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN](C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md)
 - [ ] Release tag verified: `v0.91.4`

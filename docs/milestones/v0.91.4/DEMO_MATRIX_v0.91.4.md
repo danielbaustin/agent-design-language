@@ -19,3 +19,4 @@ Planned demo surface.
 | Repeatable five-minute sprint | WP-10 | Show repeated bounded transitions with metrics. | metrics report | planned |
 | Active issue migration policy | WP-11 | Show active issues classify into migrate, defer, leave, fold, or block outcomes. | sampled migration audit | planned |
 | Process-drift regression fixtures | WP-12 | Show legacy SRP drift, stale SOR truth, skipped closeout, and shared-state hazards are caught. | regression fixture report | planned |
+| CodeFriend pre-alpha welcome page sidecar | CF-PRE-02 through CF-PRE-04 | Show the bounded product sidecar has a static welcome page and verified HTTPS path, or a truthful blocked handoff. | CodeFriend repo/source-map proof, page proof, CloudFront/DNS verification or blocked handoff | planned |

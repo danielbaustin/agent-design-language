@@ -31,6 +31,8 @@ repeatable default development lane for future ADL software work.
 - Adds signed trace proof and verification evidence.
 - Integrates SRP/SOR outcome truth with ObsMem handoff.
 - Measures repeatable five-minute-sprint behavior.
+- Carries a bounded CodeFriend pre-alpha repo/S3 welcome-page setup sidecar,
+  if completed or truthfully blocked by release time.
 
 ## What's New In Detail
 
@@ -63,8 +65,9 @@ repeatable default development lane for future ADL software work.
 
 ## Known Limitations
 
-- Broader CodeFriend product work remains separate from this C-SDLC completion
-  milestone.
+- Broader CodeFriend alpha product work remains separate from this C-SDLC
+  completion milestone; only the bounded repo/S3 welcome-page sidecar is
+  scheduled here.
 - Wider Software Development Polis feature expansion beyond execution standing
   may be scheduled later.
 - External product packaging remains outside the release unless explicitly

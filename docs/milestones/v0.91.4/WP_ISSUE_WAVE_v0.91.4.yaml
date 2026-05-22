@@ -8,6 +8,8 @@ depends_on:
   - docs/milestones/v0.91.3
 notes:
   - v0.91.4 completes and hardens the Cognitive SDLC rollout.
+  - v0.91.4 also carries the bounded CodeFriend pre-alpha repo/S3 welcome-page
+    setup sidecar mini-sprint.
   - Issue numbers remain pending until seeded through the normal conductor
     lifecycle.
   - v0.91.4 should make C-SDLC the default path for future ADL
@@ -17,6 +19,7 @@ notes:
   - By milestone closeout, all durable C-SDLC truth must be tracked in Git.
   - Durable C-SDLC proof must include minimal signed trace bundles and ObsMem
     ingestion from tracked evidence.
+  - CodeFriend sidecar work is product setup, not C-SDLC core proof.
 card_update_rule:
   - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
   - Card edits must use editor skills.
@@ -137,6 +140,40 @@ closeout_sequence:
   - WP-19: Next milestone planning
   - WP-20: Next milestone review pass
   - WP-21: Release ceremony
+sidecar_issue_waves:
+  - id: CF-PRE-00
+    issue: pending
+    title: CodeFriend pre-alpha site mini-sprint umbrella
+    queue: product_docs
+    source_plan: docs/planning/codefriend/CODEFRIEND_PRE_ALPHA_REPO_AND_S3_WELCOME_MINI_SPRINT.md
+    depends_on: [WP-01]
+    non_core: true
+    notes:
+      - This sidecar does not add release-tail steps.
+      - This sidecar does not make CodeFriend a C-SDLC dependency.
+      - Exit posture is either verified HTTPS welcome page or truthful blocked
+        handoff if AWS/DNS approval prevents launch.
+    ordered_children:
+      - id: CF-PRE-01
+        issue: pending
+        title: Product repo bootstrap
+        queue: product_docs
+        depends_on: [CF-PRE-00]
+      - id: CF-PRE-02
+        issue: pending
+        title: Static welcome page
+        queue: product_frontend
+        depends_on: [CF-PRE-01]
+      - id: CF-PRE-03
+        issue: pending
+        title: AWS S3, CloudFront, ACM, and Route 53 machinery
+        queue: product_infra
+        depends_on: [CF-PRE-02]
+      - id: CF-PRE-04
+        issue: pending
+        title: Publication safety, verification, and handoff
+        queue: product_docs
+        depends_on: [CF-PRE-03]
 sprint_umbrellas:
   - sprint: Sprint 1
     issue: pending
