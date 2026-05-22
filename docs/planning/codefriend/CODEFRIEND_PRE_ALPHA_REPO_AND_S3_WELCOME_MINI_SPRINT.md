@@ -17,8 +17,8 @@ testing as the exit bar. This mini-sprint is smaller than that alpha milestone.
 It pulls forward one safe setup lane:
 
 - establish the product repository
-- establish the AWS S3, CloudFront, ACM, and Route 53 static-site machinery
-- connect the already-owned domain through Route 53
+- establish the AWS S3-backed static-site machinery
+- add the CloudFront distribution, ACM certificate, and Route 53 DNS setup
 - publish or prepare a minimal welcome page for `CodeFriend.ai`
 - keep the claim boundary clear: "coming soon", not "product available"
 
@@ -40,13 +40,15 @@ the product real enough to point at without pretending the alpha exists yet.
 
 This is pre-alpha product work, but it is not throwaway infrastructure.
 
-From day one, the CodeFriend site should be treated as a first-class product
-operation:
+The first CodeFriend site should be treated as a real product surface while
+staying deliberately small:
 
-- HTTPS is required for public exposure.
+- S3 stores the landing page assets.
 - CloudFront is the public delivery layer.
-- Route 53 is the DNS source of truth.
-- S3 is the static asset origin, not an ad hoc public bucket.
+- ACM provides the public HTTPS certificate.
+- Route 53 provides DNS for the already-owned domain.
+- No application runtime, forms, analytics, signup machinery, or customer data
+  is required for this slice.
 - Deployment, rollback, and verification steps are documented.
 - Public copy is reviewed before launch.
 - Deployment records are auditable and free of secrets or local paths.
@@ -62,11 +64,13 @@ credible enough to keep using as CodeFriend grows.
 - Add a minimal repo scaffold with README, license posture, contribution note,
   site source, deployment docs, and no ADL runtime dependency.
 - Add a static welcome page with the approved coming-soon copy.
-- Add AWS S3 static-site origin machinery.
-- Add CloudFront HTTPS delivery with ACM certificate support.
-- Add Route 53 DNS setup for the already-owned `CodeFriend.ai` domain.
+- Add AWS S3 static-site asset hosting machinery in `us-west-2`.
+- Add CloudFront distribution planning and deployment machinery.
+- Add ACM certificate planning for CloudFront HTTPS, with certificate material
+  in `us-east-1`.
+- Add Route 53 DNS planning for `codefriend.ai` and `www.codefriend.ai`.
 - Add deployment and rollback runbooks.
-- Add review and publication-safety checks before any DNS/public exposure.
+- Add review and publication-safety checks before any public exposure.
 - Record provenance back to ADL planning docs and ADR 0025.
 
 ### Out Of Scope
@@ -80,6 +84,9 @@ credible enough to keep using as CodeFriend grows.
 - Publishing secrets, AWS account IDs, private local paths, or operator-specific
   credential paths.
 - Broad marketing site design beyond the minimal welcome page.
+- Building AWS resources beyond the static-site path: no application runtime,
+  database, forms, analytics, signup machinery, queues, or customer-data
+  systems.
 
 ## Recommended Repository Shape
 
@@ -119,7 +126,8 @@ infra/
   aws/
     README.md
     s3-origin-bucket-policy.template.json
-    cloudfront-oac-notes.md
+    cloudfront-distribution-notes.md
+    acm-certificate-notes.md
     route53-records.md
 scripts/
   deploy_s3.sh
@@ -156,18 +164,18 @@ Non-claims:
 
 First-pass hosting shape:
 
-- S3 bucket stores the static welcome page assets.
-- S3 and other regional AWS resources should default to `us-west-2` unless the
-  existing Agent Logic hosting baseline proves a different region.
-- S3 Block Public Access remains enabled.
-- CloudFront serves the site over HTTPS.
-- CloudFront uses Origin Access Control to read from S3.
-- ACM certificate covers `codefriend.ai` and `www.codefriend.ai`.
+- An S3 bucket in `us-west-2` stores the static welcome page assets.
+- CloudFront serves the public site over HTTPS.
+- CloudFront uses the S3 bucket as the static asset origin.
+- ACM provides the CloudFront viewer certificate.
 - The CloudFront viewer certificate is requested or imported in `us-east-1`
   because CloudFront requires ACM certificates for alternate-domain HTTPS in
   AWS US East / N. Virginia.
 - Route 53 owns the DNS records for `codefriend.ai` and `www.codefriend.ai`.
 - Route 53 aliases the domain records to the CloudFront distribution.
+- No application runtime, database, form handler, analytics service, signup
+  machinery, customer workflow, or customer data is created in this
+  mini-sprint.
 - The page contains no forms, scripts, analytics, customer data, or sensitive
   content.
 
@@ -176,16 +184,15 @@ application, no authentication, no user data, and no customer workflow.
 
 Important first-pass requirement:
 
-- HTTPS must be configured before the public page is treated as live.
-- The first public DNS cutover should use CloudFront, not a direct S3 website
-  endpoint.
+- The first public proof surface should be the CloudFront HTTPS URL or the
+  custom domain after Route 53 cutover.
+- The S3 bucket is the asset origin; it is not the final public proof surface.
 
 Fallback only:
 
-- If DNS is not live yet, staged proof should use the CloudFront distribution
-  domain or an explicit "not publicly reachable yet" blocker.
-- Direct S3 website hosting is not a public or staging proof surface for this
-  mini-sprint.
+- If DNS is not live yet, record the CloudFront distribution URL or an explicit
+  "not publicly reachable yet" blocker.
+- Do not route reviewers to a direct S3 website endpoint as the launch proof.
 
 Recommended environment variables for deployment scripts:
 
@@ -254,13 +261,12 @@ Validation:
 Outcome:
 
 - deployment docs and scripts describe how to publish the static page
-- private S3 origin bucket setup is represented in docs or lightweight
-  templates
-- CloudFront distribution and Origin Access Control setup are represented in
-  docs or lightweight templates
+- S3 static asset bucket setup is represented in docs or lightweight templates
+- CloudFront distribution setup is represented in docs or lightweight templates
 - ACM certificate requirements are documented
 - ACM certificate region requirements for CloudFront are documented
 - Route 53 records for `codefriend.ai` and `www.codefriend.ai` are documented
+- `us-west-2` is the regional default for S3
 - deployment remains credential-path-free and operator-configurable
 
 Acceptance:
@@ -270,19 +276,20 @@ Acceptance:
 - rollback command is documented
 - CloudFront invalidation command is documented
 - Route 53 record values are documented before DNS mutation
-- S3 public access remains blocked
-- CloudFront/OAC is the public access path
+- S3 bucket is the static asset origin
+- CloudFront is the public access path
 - CloudFront alternate-domain HTTPS uses an ACM certificate in `us-east-1`
-- HTTPS is configured before public DNS cutover
+- no application runtime, analytics, forms, signup resources, or customer-data
+  systems are created
 
 Validation:
 
 - shell syntax check for scripts
 - dry-run or no-op validation where available
 - AWS identity/account check before any live mutation
-- AWS region check, defaulting regional resources to `us-west-2` unless the
-  existing Agent Logic hosting baseline proves a different region
+- AWS region check, defaulting S3 to `us-west-2`
 - deployment log captured outside secrets
+- S3 bucket existence/configuration check
 - ACM certificate status check
 - ACM certificate region check for CloudFront HTTPS
 - CloudFront distribution status check
@@ -319,11 +326,11 @@ Validation:
 3. Add the minimal repo scaffold.
 4. Add welcome page source.
 5. Add S3 origin deployment docs and scripts.
-6. Add CloudFront/OAC and ACM setup docs.
+6. Add CloudFront distribution and ACM setup docs.
 7. Add Route 53 DNS setup docs and record plan.
 8. Review copy, redaction, and claim boundary.
 9. Deploy assets to S3 or stop at deployment-ready if AWS approval is pending.
-10. Create or update CloudFront distribution and invalidate the cache.
+10. Create or update the CloudFront distribution and invalidate the cache.
 11. Point Route 53 to CloudFront if public exposure is approved.
 12. Verify the live or staged HTTPS page.
 13. Record the handoff and next alpha tasks.
@@ -339,13 +346,12 @@ Before repository creation:
 Before AWS mutation:
 
 - confirm AWS account/profile
-- confirm regional resource region, defaulting to `us-west-2` unless the
-  existing Agent Logic hosting baseline proves a different region
+- confirm S3 region is `us-west-2`
 - confirm bucket name
-- confirm Route 53 hosted zone
 - confirm ACM certificate request/validation path
 - confirm CloudFront viewer certificate is in `us-east-1`
 - confirm CloudFront distribution naming and aliases
+- confirm Route 53 hosted zone and intended records
 
 Before public exposure:
 
@@ -366,9 +372,8 @@ Minimum validation for the mini-sprint:
 - local render check for `site/index.html`
 - secret/path scan
 - AWS CLI identity check before live deployment
-- AWS regional-resource check, defaulting to `us-west-2` unless the Agent Logic
-  hosting baseline proves a different region
-- S3 bucket configuration and access-block check
+- AWS S3 region check for `us-west-2`
+- S3 bucket configuration check
 - CloudFront distribution status check
 - ACM certificate status check
 - ACM `us-east-1` certificate check for CloudFront alternate-domain HTTPS
@@ -384,8 +389,7 @@ static-site setup work, not ADL runtime work.
 - Final repository name: `codefriend`, `codefriend-ai`, or another approved
   name.
 - License posture: private all-rights-reserved draft vs open-source license.
-- AWS region and account. Regional resources should default to `us-west-2`
-  unless the existing Agent Logic hosting baseline proves a different region.
+- AWS account.
 - S3 bucket name.
 - ACM certificate ARN or certificate-request path, with CloudFront viewer
   certificates kept in `us-east-1`.
@@ -402,7 +406,6 @@ The mini-sprint is complete when:
 - The repo contains a minimal, reviewable static welcome page.
 - AWS S3, CloudFront, ACM, and Route 53 deployment machinery is documented and
   tested or ready to execute.
-- Route 53 DNS setup is documented and either live or explicitly pending.
 - If deployment is approved, the welcome page is live over HTTPS and verified.
 - The public claim boundary remains "coming soon".
 - The handoff points back to the full CodeFriend alpha milestone plan.
