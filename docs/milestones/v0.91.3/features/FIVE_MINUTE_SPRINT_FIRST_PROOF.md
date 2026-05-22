@@ -43,6 +43,11 @@ The demo should record:
 - tracked source/proof references
 - skipped or deferred work, if any
 
+Before the demo runs, `WP-08` should provide one tracked readiness packet under
+`docs/milestones/v0.91.3/review/first_proof_readiness/` so the proof run does
+not spend its time rediscovering missing manifest/evidence/gate/handoff
+prerequisites.
+
 ## Non-Claims
 
 The demo does not claim unrestricted autonomous engineering, replacement of
