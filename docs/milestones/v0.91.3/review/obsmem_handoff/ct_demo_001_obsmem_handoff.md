@@ -60,6 +60,6 @@
 
 ## Follow-On Work
 
-- `WP-06` merge-readiness gate
-- `WP-07` ObsMem handoff
 - `WP-09` five-minute-sprint timing metrics
+- live ObsMem ingestion and retrieval against the tracked handoff packet
+- signed-trace proof and later trace-linked memory hardening

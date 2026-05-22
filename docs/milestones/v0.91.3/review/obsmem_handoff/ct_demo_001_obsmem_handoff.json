@@ -36,9 +36,9 @@
       "signed trace proof remains out of scope for v0.91.3"
     ],
     "follow_on_work": [
-      "WP-06 merge-readiness gate",
-      "WP-07 ObsMem handoff",
-      "WP-09 five-minute-sprint timing metrics"
+      "WP-09 five-minute-sprint timing metrics",
+      "live ObsMem ingestion and retrieval against the tracked handoff packet",
+      "signed-trace proof and later trace-linked memory hardening"
     ],
     "citations": [
       "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",

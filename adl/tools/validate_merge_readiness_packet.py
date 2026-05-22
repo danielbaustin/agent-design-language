@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+Validate the tracked merge-readiness packet contract.
+
+This validator is intentionally shape-oriented for Sprint 2: it checks required
+files and required packet sections/snippets. It does not yet query live GitHub
+truth, CI status, or linked artifact existence beyond packet-local files.
+"""
 import sys
 from pathlib import Path
 
