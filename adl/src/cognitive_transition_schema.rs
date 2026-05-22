@@ -1,7 +1,7 @@
 use schemars::{schema_for, JsonSchema};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
-use std::path::Path;
+use std::path::{Component, Path};
 
 pub const COGNITIVE_TRANSITION_MANIFEST_SCHEMA: &str = "cognitive_transition_manifest.v1";
 
@@ -221,15 +221,9 @@ pub fn wp02_cognitive_transition_manifest_valid_fixture() -> CognitiveTransition
             "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md"
                 .to_string(),
         ),
-        merge_readiness_gate_rel_path: Some(
-            "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md".to_string(),
-        ),
-        obsmem_handoff_rel_path: Some(
-            "docs/milestones/v0.91.3/review/obsmem/ct_demo_001_handoff.md".to_string(),
-        ),
-        trace_proof_rel_paths: vec![
-            "workflow/c-sdlc/v0.91.3/trace/ct_demo_001_trace_manifest.json".to_string(),
-        ],
+        merge_readiness_gate_rel_path: None,
+        obsmem_handoff_rel_path: None,
+        trace_proof_rel_paths: vec![],
     }
 }
 
@@ -252,6 +246,18 @@ fn validate_repo_relative(
             format!("{field} must be repository-relative"),
         ));
     }
+    if path.components().any(|component| {
+        matches!(
+            component,
+            Component::ParentDir | Component::RootDir | Component::Prefix(_)
+        )
+    }) {
+        return Err(CognitiveTransitionSchemaError::new(
+            "non_repo_relative_path",
+            field,
+            format!("{field} must be repository-relative without traversal components"),
+        ));
+    }
     Ok(())
 }
 
@@ -270,9 +276,6 @@ mod tests {
     );
     const WP05_REVIEW_SYNTHESIS_PACKET: &str = include_str!(
         "../../docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md"
-    );
-    const WP06_MERGE_GATE_PACKET: &str = include_str!(
-        "../../docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md"
     );
 
     #[test]
@@ -337,6 +340,29 @@ mod tests {
             .expect_err("absolute path should fail");
         assert_eq!(err.code, "non_repo_relative_path");
         assert_eq!(err.field, "cards.sip_rel_path");
+    }
+
+    #[test]
+    fn cognitive_transition_manifest_rejects_traversal_components() {
+        let mut manifest = wp02_cognitive_transition_manifest_valid_fixture();
+        manifest.dag_rel_path = "docs/../outside/ct_demo_001_transition_dag.md".to_string();
+
+        let err = validate_cognitive_transition_manifest_v1(&manifest)
+            .expect_err("traversal-shaped path should fail");
+        assert_eq!(err.code, "non_repo_relative_path");
+        assert_eq!(err.field, "dag_rel_path");
+    }
+
+    #[test]
+    fn wp02_valid_fixture_defers_future_proof_paths() {
+        let manifest = wp02_cognitive_transition_manifest_valid_fixture();
+
+        assert_eq!(manifest.merge_readiness_gate_rel_path, None);
+        assert_eq!(manifest.obsmem_handoff_rel_path, None);
+        assert!(
+            manifest.trace_proof_rel_paths.is_empty(),
+            "Sprint 1 fixture should not claim future trace proof artifacts"
+        );
     }
 
     #[test]
@@ -445,29 +471,9 @@ mod tests {
     }
 
     #[test]
-    fn cognitive_transition_manifest_fixture_points_at_wp06_merge_gate() {
+    fn cognitive_transition_manifest_fixture_defers_wp06_merge_gate() {
         let manifest = wp02_cognitive_transition_manifest_valid_fixture();
 
-        assert_eq!(
-            manifest.merge_readiness_gate_rel_path.as_deref(),
-            Some("docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md")
-        );
-
-        for snippet in [
-            "## Gate Identity",
-            "## Issue / Branch / Worktree Truth",
-            "## PR / CI Truth",
-            "## Review Truth",
-            "## Evidence Bundle Link",
-            "## Blocked Conditions",
-            "## Decision",
-            "human merge review remains required",
-            "`merge_ready`",
-        ] {
-            assert!(
-                WP06_MERGE_GATE_PACKET.contains(snippet),
-                "merge gate packet missing `{snippet}`"
-            );
-        }
+        assert_eq!(manifest.merge_readiness_gate_rel_path, None);
     }
 }
