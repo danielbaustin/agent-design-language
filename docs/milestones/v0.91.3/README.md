@@ -79,6 +79,9 @@ staging state, not sufficient public proof by themselves.
 
 ## Document Map
 
+- Vision: [VISION_v0.91.3.md](VISION_v0.91.3.md)
+- Design: [DESIGN_v0.91.3.md](DESIGN_v0.91.3.md)
+- Decisions: [DECISIONS_v0.91.3.md](DECISIONS_v0.91.3.md)
 - WBS: [WBS_v0.91.3.md](WBS_v0.91.3.md)
 - Sprint plan: [SPRINT_v0.91.3.md](SPRINT_v0.91.3.md)
 - Active issue wave: [WP_ISSUE_WAVE_v0.91.3.yaml](WP_ISSUE_WAVE_v0.91.3.yaml)
@@ -88,6 +91,10 @@ staging state, not sufficient public proof by themselves.
   [FEATURE_PROOF_COVERAGE_v0.91.3.md](FEATURE_PROOF_COVERAGE_v0.91.3.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.3.md](DEMO_MATRIX_v0.91.3.md)
 - Quality gate: [QUALITY_GATE_v0.91.3.md](QUALITY_GATE_v0.91.3.md)
+- Release plan: [RELEASE_PLAN_v0.91.3.md](RELEASE_PLAN_v0.91.3.md)
+- Release notes: [RELEASE_NOTES_v0.91.3.md](RELEASE_NOTES_v0.91.3.md)
+- Milestone checklist:
+  [MILESTONE_CHECKLIST_v0.91.3.md](MILESTONE_CHECKLIST_v0.91.3.md)
 - Next milestone handoff:
   [NEXT_MILESTONE_HANDOFF_v0.91.3.md](NEXT_MILESTONE_HANDOFF_v0.91.3.md)
 - Tracked C-SDLC source package:
