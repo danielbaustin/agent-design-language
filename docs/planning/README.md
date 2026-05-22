@@ -29,6 +29,9 @@ Active planning docs:
 - `POST_V095_ADL_CSM_LOGISTIC_SPLIT_PLAN.md` - planned post-`v0.95`
   repository split strategy for keeping ADL stable enough to use while a
   split-off repo carries the fast-moving innovation lane with regular mergeback
+- `ACCOUNT_SWITCH_HANDOFF_2026-05-22.md` - cross-account continuity handoff for
+  preserving v0.91.3/v0.91.4 context, active issue/PR state, and workflow
+  guardrails while account credits are low
 - `codefriend/` - single tracked home for current CodeFriend planning,
   including product setup, naming migration, source inventory, and links back to
   historical milestone proof
