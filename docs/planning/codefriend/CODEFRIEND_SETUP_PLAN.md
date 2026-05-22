@@ -54,6 +54,112 @@ Alpha exit bar:
 - Naming, docs, product boundaries, and demo material use `CodeFriend` /
   `CodeFriend.ai` consistently.
 
+The alpha milestone is not the whole CodeFriend roadmap. It should make
+CodeFriend real enough to test. Later roadmap bands should add the remaining
+architecture-intelligence, governance, memory, integration, and product-delivery
+features.
+
+## Post-Alpha Roadmap
+
+These bands are product-roadmap planning buckets, not final ADL milestone
+commitments. They should be translated into concrete milestone packages after
+the `v0.93.x` alpha plan is reviewed.
+
+### `v0.93.x`: Working Alpha
+
+Goal: one complete, testable product path.
+
+Expected capability:
+
+- repository review packet creation
+- specialist review lane execution
+- review synthesis
+- product-report generation
+- redaction/publication-safety check
+- architecture-aware findings and diagrams
+- sample repo, sample packet, sample report, and runbook
+- clear product boundary and human-review requirement
+
+Exit bar:
+
+- CodeFriend is ready for operator/customer-style alpha testing.
+
+### Post-Alpha Band 1: Structural Intelligence
+
+Goal: move beyond packetized review into architecture understanding.
+
+Candidate features:
+
+- dependency graph intelligence
+- coupling and cohesion analysis
+- connascence analysis
+- architectural quantum detection
+- blast-radius prediction
+- PR architectural impact summaries
+- architectural drift scoring
+- longitudinal trend reports
+
+Exit bar:
+
+- CodeFriend can explain structural risk and drift over time, not just produce
+  one-time review findings.
+
+### Post-Alpha Band 2: Executable Governance
+
+Goal: turn architectural policy into repeatable fitness functions.
+
+Candidate features:
+
+- architecture fitness-function authoring
+- layer and boundary violation checks
+- ADR-required-change detection
+- evidence completeness gates
+- review-packet publication gates
+- policy exceptions with explicit rationale
+- CI-friendly governance reports
+
+Exit bar:
+
+- CodeFriend can help teams define and run architecture governance checks
+  without turning governance into vague advice.
+
+### Post-Alpha Band 3: Architectural Memory
+
+Goal: preserve rationale, tradeoffs, and engineering history.
+
+Candidate features:
+
+- ADR timeline generation
+- stale ADR detection
+- PR-to-ADR linkage
+- rationale extraction from issues, PRs, and reviews
+- architectural trajectory summaries
+- trace-linked decision history
+- queryable product/repo memory
+
+Exit bar:
+
+- CodeFriend can answer why the architecture changed, not only what changed.
+
+### Post-Alpha Band 4: Productization And Delivery
+
+Goal: make CodeFriend practical for repeated external testing and eventual
+customer use.
+
+Candidate features:
+
+- product repo or product package decision
+- polished public-facing README and examples
+- sample customer-style reports
+- onboarding flow
+- pricing/packaging assumptions, if needed later
+- redaction and legal/publication review gates
+- repeatable demo and trial workflow
+
+Exit bar:
+
+- CodeFriend has a repeatable delivery surface suitable for broader testing.
+
 ## Near-Term Setup Goals
 
 Before the product milestone starts, CodeFriend work should prepare:
@@ -65,6 +171,7 @@ Before the product milestone starts, CodeFriend work should prepare:
 - a setup sequence for any future product repo, site, demo, or customer-facing
   package
 - candidate WBS / sprint shape for the `v0.93.x` CodeFriend alpha milestone
+- post-alpha roadmap bands for the remaining CodeFriend feature set
 - follow-on issues for execution instead of hidden scope expansion
 
 ## Workstreams
@@ -164,6 +271,10 @@ Candidate `v0.93.x` work bands:
 The alpha milestone should prove one complete path, not every future
 architecture-cognition capability.
 
+The remaining feature set should be planned after the alpha milestone as
+separate roadmap bands for structural intelligence, executable governance,
+architectural memory, and product delivery.
+
 ### 6. Product Setup Sequence
 
 The likely setup sequence is:
@@ -253,6 +364,23 @@ Validation:
 - verify naming, evidence, redaction, and review boundaries
 - review before issue seeding
 
+### CodeFriend Post-Alpha Roadmap Plan
+
+Scope:
+
+- turn the post-alpha bands in this document into concrete future milestone
+  candidates
+- decide which features belong immediately after the alpha and which should wait
+  until later product testing
+- keep structural intelligence, executable governance, architectural memory,
+  and product-delivery work separate enough to review
+
+Validation:
+
+- verify the roadmap does not overclaim alpha scope
+- check against the CodeFriend notes, ADR 0025, and current feature list
+- route any schedule conflicts back to milestone planning before issue seeding
+
 ## Non-Goals
 
 - Do not implement the product app in this planning issue.
@@ -264,6 +392,7 @@ Validation:
 - Do not use unfinished investigation notes as source truth.
 - Do not treat scattered cleanup as a substitute for a dedicated CodeFriend
   alpha milestone.
+- Do not treat the `v0.93.x` alpha as the final CodeFriend feature set.
 
 ## Review Checklist
 
@@ -276,3 +405,5 @@ Validation:
   planning issue.
 - The plan frames CodeFriend alpha as a likely `v0.93.x` milestone with a
   working alpha ready for testing as the exit bar.
+- The plan includes post-alpha roadmap bands for the rest of the CodeFriend
+  feature set.

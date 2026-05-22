@@ -9,6 +9,11 @@ dedicated product milestone, likely in the `v0.93.x` band. The exit bar for
 that milestone is a fully working alpha version of CodeFriend ready for
 operator/customer-style testing.
 
+Planning must also extend beyond `v0.93.x`: the alpha milestone should prove a
+usable first product, while later CodeFriend roadmap bands add the remaining
+structural-intelligence, architecture-governance, fitness-function,
+organizational-memory, and product-delivery features.
+
 CodeFriend is the current product name. `CodeFriend.ai` is the current domain
 name. Older `CodeBuddy` / `codebuddy` references are historical working-name
 lineage unless a later issue explicitly promotes them to current product copy.
@@ -58,4 +63,6 @@ operators have one durable CodeFriend entry point.
 
 This home does not claim CodeFriend is a shipped product. It records planning
 for product setup, naming cleanup, architecture-cognition positioning, and a
-future `v0.93.x` alpha milestone whose goal is a working testable product.
+future `v0.93.x` alpha milestone whose goal is a working testable product. It
+also records that later CodeFriend planning must continue past the alpha to
+complete the full feature set.

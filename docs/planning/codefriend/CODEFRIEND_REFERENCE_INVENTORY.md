@@ -18,6 +18,10 @@ repo-wide string replacement.
 The naming migration should support a future CodeFriend alpha milestone whose
 exit bar is a fully working alpha ready for testing.
 
+The alpha milestone is not the end state. Future CodeFriend planning must also
+cover the remaining structural-intelligence, executable-governance,
+architectural-memory, and product-delivery features after `v0.93.x`.
+
 ## Current Tracked CodeFriend Surfaces
 
 These surfaces already use current product naming and should remain primary
