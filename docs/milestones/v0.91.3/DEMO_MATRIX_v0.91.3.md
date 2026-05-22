@@ -12,7 +12,7 @@ packages execute.
 | Transition DAG and shard plan | WP-04 / #3202 | Show serial work, parallel shards, and barriers are explicit. | DAG packet, shard plan, and validator-backed summary | in_flight |
 | Evidence bundle and review synthesis | WP-05 / #3203 | Show review inputs and findings converge into a bounded packet. | evidence bundle plus synthesis output and validator-backed packet proof | in_flight |
 | Governed merge-readiness gate | WP-06 / #3204 | Show C-SDLC preserves issue, PR, CI, branch, and human review truth. | gate result fixture and validator-backed packet proof | in_flight |
-| SRP/SOR ObsMem handoff | WP-07 / #3205 | Show review results and outcome truth have a memory handoff shape. | memory handoff fixture | planned |
+| SRP/SOR ObsMem handoff | WP-07 / #3205 | Show review results and outcome truth have a memory handoff shape. | tracked handoff record plus validator-backed packet proof | in_flight |
 | Five-minute-sprint first proof | WP-09 / #3207 | Show one bounded transition can execute with measurable coordination behavior. | planned demo report and metrics snapshot | planned |
 
 ## Demo Rules

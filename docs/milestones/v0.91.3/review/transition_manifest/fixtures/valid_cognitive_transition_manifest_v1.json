@@ -35,8 +35,6 @@
   "shard_plan_rel_path": "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_shard_plan.md",
   "evidence_bundle_rel_path": "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
   "merge_readiness_gate_rel_path": "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md",
-  "obsmem_handoff_rel_path": "docs/milestones/v0.91.3/review/obsmem/ct_demo_001_handoff.md",
-  "trace_proof_rel_paths": [
-    "workflow/c-sdlc/v0.91.3/trace/ct_demo_001_trace_manifest.json"
-  ]
+  "obsmem_handoff_rel_path": "docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json",
+  "trace_proof_rel_paths": []
 }
