@@ -32,9 +32,23 @@ The goal is not more theory; it is a dependable development control plane.
 | WP-16 | Internal review | review | code/docs/tests/process review packet | WP-15 |
 | WP-17 | External / 3rd-party review | review | independent review packet and handoff surface | WP-16 |
 | WP-18 | Review findings remediation | review | fixes, finding dispositions, and follow-on routing | WP-17 |
-| WP-19 | Next milestone planning | docs | next-milestone handoff and downstream planning update | WP-18 |
+| WP-19 | Next milestone planning | docs | `NEXT_MILESTONE_HANDOFF_v0.91.4.md` refresh and downstream planning update | WP-18 |
 | WP-20 | Next milestone review pass | docs | final review pass over next-milestone planning before ceremony | WP-19 |
 | WP-21 | Release ceremony | release | evidence package, signed-trace proof, and closeout record | WP-20 |
+
+## CodeFriend Sidecar Mini-Sprint
+
+The CodeFriend pre-alpha setup work is planned for v0.91.4 as a sidecar
+mini-sprint. It is product setup work, not C-SDLC core machinery, and it does
+not add or remove any release closeout-tail step.
+
+| ID | Title | Queue | Primary Deliverable | Dependencies |
+| --- | --- | --- | --- | --- |
+| CF-PRE-00 | CodeFriend pre-alpha site mini-sprint umbrella | docs/product | ordered sidecar sprint state, child issue orchestration, and final handoff | WP-01 |
+| CF-PRE-01 | Product repo bootstrap | product/docs | private CodeFriend repo with README, license posture, source map, and no ADL runtime dependency | CF-PRE-00 |
+| CF-PRE-02 | Static welcome page | product/frontend | minimal `CodeFriend - Because your code needs a friend. Coming soon from Agent Logic, Inc.` page | CF-PRE-01 |
+| CF-PRE-03 | AWS S3, CloudFront, ACM, and Route 53 machinery | product/infra | S3 asset origin, CloudFront HTTPS, ACM certificate path, DNS plan, deployment/rollback docs | CF-PRE-02 |
+| CF-PRE-04 | Publication safety, verification, and handoff | product/docs | public-safety review, verification record, blocked/completed handoff, and follow-on routing | CF-PRE-03 |
 
 ## Sequencing Notes
 
@@ -55,3 +69,5 @@ lessons:
 - no release ceremony before proof coverage, quality gate, docs/adoption review,
   internal review, external review, remediation, next-milestone planning, and
   next-milestone review pass have completed in order
+- no CodeFriend sidecar launch claim without repo, DNS/HTTPS, publication
+  safety, and handoff evidence, or an explicit blocked state
