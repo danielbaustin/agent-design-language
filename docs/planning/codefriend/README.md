@@ -28,6 +28,7 @@ and local-only notes.
 
 - [CodeFriend setup plan](CODEFRIEND_SETUP_PLAN.md)
 - [CodeFriend reference inventory](CODEFRIEND_REFERENCE_INVENTORY.md)
+- [CodeFriend pre-alpha repo and S3 welcome mini-sprint](CODEFRIEND_PRE_ALPHA_REPO_AND_S3_WELCOME_MINI_SPRINT.md)
 
 ## Source Baseline
 
