@@ -197,19 +197,19 @@ pub fn wp02_cognitive_transition_manifest_valid_fixture() -> CognitiveTransition
         ],
         cards: CognitiveTransitionCardPaths {
             sip_rel_path:
-                ".adl/v0.91.3/tasks/issue-3200__v0-91-3-wp-02-cognitive-transition-schema/sip.md"
+                "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/sip.md"
                     .to_string(),
             stp_rel_path:
-                ".adl/v0.91.3/tasks/issue-3200__v0-91-3-wp-02-cognitive-transition-schema/stp.md"
+                "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/stp.md"
                     .to_string(),
             spp_rel_path:
-                ".adl/v0.91.3/tasks/issue-3200__v0-91-3-wp-02-cognitive-transition-schema/spp.md"
+                "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/spp.md"
                     .to_string(),
             srp_rel_path:
-                ".adl/v0.91.3/tasks/issue-3200__v0-91-3-wp-02-cognitive-transition-schema/srp.md"
+                "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/srp.md"
                     .to_string(),
             sor_rel_path:
-                ".adl/v0.91.3/tasks/issue-3200__v0-91-3-wp-02-cognitive-transition-schema/sor.md"
+                "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/sor.md"
                     .to_string(),
         },
         dag_rel_path: "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_transition_dag.md"
@@ -412,6 +412,27 @@ mod tests {
     #[test]
     fn cognitive_transition_manifest_fixture_points_at_wp04_transition_packet() {
         let manifest = wp02_cognitive_transition_manifest_valid_fixture();
+
+        assert_eq!(
+            manifest.cards.sip_rel_path,
+            "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/sip.md"
+        );
+        assert_eq!(
+            manifest.cards.stp_rel_path,
+            "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/stp.md"
+        );
+        assert_eq!(
+            manifest.cards.spp_rel_path,
+            "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/spp.md"
+        );
+        assert_eq!(
+            manifest.cards.srp_rel_path,
+            "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/srp.md"
+        );
+        assert_eq!(
+            manifest.cards.sor_rel_path,
+            "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/sor.md"
+        );
 
         assert_eq!(
             manifest.dag_rel_path,

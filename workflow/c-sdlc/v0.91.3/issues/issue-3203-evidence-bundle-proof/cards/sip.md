@@ -1,0 +1,191 @@
+# ADL Input Card
+
+Semantic role: Structured Issue Prompt (`SIP`).
+Compatibility note: this template filename and header remain stable for current
+tooling, but generated `sip.md` files are issue-intent cards in the canonical
+`SIP -> STP -> SPP -> SRP -> SOR` lifecycle.
+
+Task ID: issue-3203
+Run ID: issue-3203
+Version: v0.91.3
+Title: [v0.91.3][WP-05][docs/tools] Evidence bundle and review synthesis
+Branch: codex/3203-v0-91-3-wp-05-evidence-bundle-and-review-synthesis
+
+Context:
+- Issue: https://github.com/danielbaustin/agent-design-language/issues/3203
+- PR:
+- Source Issue Prompt: .adl/v0.91.3/bodies/issue-3203-v0-91-3-wp-05-evidence-bundle-and-review-synthesis.md
+- Docs: none
+- Other: none
+
+## Agent Execution Rules
+- This issue is closed/completed; implementation branch/worktree lifecycle is finished.
+- Do not run `pr start`; the issue has already completed its lifecycle.
+- Do not delete or recreate cards.
+- Do not switch branches unless explicitly instructed.
+- Do not work on `main`.
+- Only modify files required for the issue.
+- Use repository-relative paths; avoid absolute host paths.
+- Write the output record to the paired local task bundle `sor.md` path.
+- If repository state is unexpected, stop and ask before attempting repository repair.
+
+## Lifecycle Semantics
+- Lifecycle stage: `SIP`
+- Activation state: scaffold before issue-intent review; active when the issue
+  scope, dependencies, acceptance criteria, and boundaries are truthful.
+- Next stage: `STP`, where the selected task or solution is made explicit.
+- Legacy compatibility: older references may call this an input card, but new
+  issue work should treat it as the Structured Issue Prompt.
+
+## Prompt Spec
+```yaml
+prompt_schema: adl.v1
+actor:
+  role: execution_agent
+  name: codex
+model:
+  id: gpt-5-codex
+  determinism_mode: stable
+inputs:
+  sections:
+    - goal
+    - required_outcome
+    - acceptance_criteria
+    - inputs
+    - target_files_surfaces
+    - validation_plan
+    - demo_proof_requirements
+    - constraints_policies
+    - system_invariants
+    - reviewer_checklist
+    - non_goals_out_of_scope
+    - notes_risks
+    - instructions_to_agent
+outputs:
+  output_card: .adl/v0.91.3/tasks/issue-3203__v0-91-3-wp-05-evidence-bundle-and-review-synthesis/sor.md
+  summary_style: concise_structured
+constraints:
+  include_system_invariants: true
+  include_reviewer_checklist: true
+  disallow_secrets: true
+  disallow_absolute_host_paths: true
+automation_hints:
+  source_issue_prompt_required: true
+  target_files_surfaces_recommended: true
+  validation_plan_required: true
+  required_outcome_type_supported: true
+review_surfaces:
+  - card_review_checklist.v1
+  - card_review_output.v1
+  - card_reviewer_gpt.v1.1
+```
+
+Reviewer protocol IDs are versioned and order-sensitive:
+1. checklist contract
+2. output artifact contract
+3. reviewer behavior contract
+
+Prompt Spec contract notes:
+- Supported section IDs and machine-readable field semantics are defined in `docs/tooling/prompt-spec.md`.
+- Missing required Prompt Spec keys or required boolean `automation_hints` fields should fail lint.
+- Prompt generation must preserve declared section order rather than heuristic extraction.
+
+Execution:
+- Agent:
+- Provider:
+- Tools allowed:
+- Sandbox / approvals:
+- Source issue-prompt slug:
+- Required outcome type:
+- Demo required:
+
+## Goal
+
+Preserve the closed/completed issue prompt and local card truth after closeout.
+
+## Required Outcome
+
+- Keep the linked issue prompt, SIP, and SOR aligned for review.
+- Preserve truthful closed/completed lifecycle state after merge and closeout.
+
+## Acceptance Criteria
+
+- The linked source issue prompt is reviewable and structurally valid.
+- The card bundle records the completed issue branch and no longer claims pre-run state.
+- Validation and proof expectations are recorded or explicitly marked not applicable.
+
+## Inputs
+- linked source issue prompt
+- root task bundle cards in `SIP -> STP -> SPP -> SRP -> SOR` order
+- current repository state before execution binding
+
+## Target Files / Surfaces
+- files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt, once execution is bound
+
+## Validation Plan
+- Commands to run before execution: structured prompt/card validation only, unless the source issue prompt explicitly requires a pre-run proof.
+- Commands to run during execution: derive the exact command set from the linked issue prompt and repo state after `pr run` binds the worktree.
+- Tests to run: execute the smallest proving test set for the required outcome during execution.
+- Artifacts or traces: produce or update the proof surfaces required by the linked issue prompt during execution.
+- Reviewer checks: capture review instructions and results in SRP, then summarize outcome truth in SOR.
+
+## Demo / Proof Requirements
+- Demo set: follow the linked issue prompt.
+- Proof surfaces: use the proof surfaces named by the linked issue prompt and SOR once execution is bound.
+- No-demo rationale: if no demo is required, explain why in the SOR during execution.
+
+## Constraints / Policies
+- Determinism: keep behavior stable for identical inputs unless the issue explicitly changes semantics.
+- Security and privacy: do not introduce secrets, tokens, prompts, tool arguments, or absolute host paths.
+- Resource limits: prefer the smallest command and test surface that proves the issue is complete.
+
+## System Invariants (must remain true)
+- Deterministic execution for identical inputs.
+- No hidden state or undeclared side effects.
+- Artifacts remain replay-compatible with the replay runner.
+- Trace artifacts contain no secrets, prompts, tool arguments, or absolute host paths.
+- Artifact schema changes are explicit and approved.
+
+## Reviewer Checklist (machine-readable hints)
+```yaml
+determinism_required: true
+network_allowed: false
+artifact_schema_change: false
+replay_required: true
+security_sensitive: true
+ci_validation_required: true
+```
+
+## Card Automation Hooks (prompt generation)
+- Prompt source fields:
+  - Goal
+  - Required Outcome
+  - Acceptance Criteria
+  - Inputs
+  - Target Files / Surfaces
+  - Validation Plan
+  - Demo / Proof Requirements
+  - Constraints / Policies
+  - System Invariants
+  - Reviewer Checklist
+- Generation requirements:
+  - Deterministic output for identical SIP content
+  - No secrets, tokens, or absolute host paths in generated prompt text
+  - Preserve traceability back to the source issue prompt
+  - Preserve explicit required-outcome and demo/proof requirements
+
+## Non-goals / Out of scope
+
+- unrelated repository repair
+- changing the source issue prompt without recording it explicitly
+
+## Notes / Risks
+
+- Refine this card if the linked source issue prompt changes materially before execution begins.
+
+## Instructions to the Agent
+- Read this file.
+- Read the linked source issue prompt before starting work.
+- Do not create a branch or worktree from this card alone.
+- When execution is approved, run the repo-native issue-mode `pr run` flow and then perform the work described above.
+- Write execution outcome truth to the paired `sor.md` file during execution.

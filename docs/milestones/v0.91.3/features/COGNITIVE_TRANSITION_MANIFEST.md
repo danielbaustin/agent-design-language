@@ -21,7 +21,6 @@ The initial manifest records or links:
 - transition identity
 - issue and branch/worktree identity
 - actor and role references for material participants
-- base and candidate repository state
 - SIP, STP, SPP, SRP, and SOR paths, where SPP means Structured Plan Prompt
 - DAG and shard plan paths
 - evidence bundle path
@@ -65,8 +64,16 @@ The initial manifest records or links:
 - tracked JSON fixtures:
   - `docs/milestones/v0.91.3/review/transition_manifest/fixtures/valid_cognitive_transition_manifest_v1.json`
   - `docs/milestones/v0.91.3/review/transition_manifest/fixtures/invalid_cognitive_transition_manifest_v1_missing_seed_role.json`
+- durable tracked card bundle:
+  - `workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/`
 - focused proof command:
   - `cargo test --manifest-path adl/Cargo.toml cognitive_transition_schema -- --nocapture`
 
 This is intentionally bounded. DAG convergence, evidence-bundle richness,
 merge-readiness enforcement, and ObsMem handoff hardening stay with later WPs.
+
+The `WP-02` manifest now points at tracked workflow card snapshots for
+reviewer-facing proof surfaces. Local `.adl` issue-card copies remain
+derivation and execution-history inputs, and the promoted tracked snapshots may
+still preserve bounded historical local references while the broader
+tracked-workflow migration remains incomplete.

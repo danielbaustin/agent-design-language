@@ -12,6 +12,8 @@ into canonical ObsMem inputs.
 - `docs/milestones/v0.91.3/review/obsmem_handoff/README.md`
 - `docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json`
 - `docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.md`
+- `workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/srp.md`
+- `workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/sor.md`
 - `adl/tools/validate_obsmem_handoff_packet.py`
 - `adl/tools/test_obsmem_handoff_packet.sh`
 - `adl/src/cognitive_transition_schema.rs`
@@ -22,8 +24,9 @@ into canonical ObsMem inputs.
 - the handoff record preserves two distinct memory candidates:
   - `srp_review_learning`
   - `sor_outcome_truth`
-- the handoff cites tracked review/evidence artifacts rather than local-only
-  `.adl` paths as canonical memory inputs
+- the handoff cites exact tracked final `SRP` / `SOR` source records plus
+  tracked supporting evidence artifacts rather than local-only `.adl` paths as
+  the durable reviewer-facing memory anchors
 - the `WP-02` manifest fixture points at a real `WP-07` handoff artifact
 
 ## Focused Validation

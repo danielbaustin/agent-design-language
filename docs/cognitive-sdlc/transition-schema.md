@@ -120,6 +120,8 @@ closeout, release evidence, or memory.
   `docs/milestones/v0.91.3/review/transition_manifest/fixtures/valid_cognitive_transition_manifest_v1.json`
 - invalid JSON fixture:
   `docs/milestones/v0.91.3/review/transition_manifest/fixtures/invalid_cognitive_transition_manifest_v1_missing_seed_role.json`
+- durable tracked card proof bundle:
+  `workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/`
 - validator:
   `validate_cognitive_transition_manifest_v1(...)`
 - JSON-schema export:
@@ -138,6 +140,7 @@ This proof currently checks:
 - repo-relative path rules
 - required actor-role seed presence
 - JSON-schema surface generation
+- durable tracked card references instead of local-only `.adl` card paths
 
 ## Merge-Readiness Gate
 
