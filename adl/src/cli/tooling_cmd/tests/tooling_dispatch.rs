@@ -20,6 +20,8 @@ fn tooling_dispatch_and_help_paths_cover_public_entrypoint() {
         &valid_sip_text(1374, repo.path()),
     );
     let prompt_out = repo.path().join("prompt.txt");
+    let editor_model_out = repo.path().join("editor_model.js");
+    let editor_samples_out = repo.path().join("editor_samples");
 
     assert!(real_tooling(&[]).is_err());
     real_tooling(&["help".to_string()]).expect("help should succeed");
@@ -36,6 +38,19 @@ fn tooling_dispatch_and_help_paths_cover_public_entrypoint() {
     ])
     .expect("card-prompt dispatch should succeed");
     assert!(prompt_out.is_file());
+
+    real_tooling(&[
+        "csdlc-prompt-editor".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--emit-model-js".to_string(),
+        editor_model_out.to_string_lossy().to_string(),
+        "--render-samples".to_string(),
+        editor_samples_out.to_string_lossy().to_string(),
+    ])
+    .expect("csdlc prompt editor dispatch should succeed");
+    assert!(editor_model_out.is_file());
+    assert!(editor_samples_out.join("sip.md").is_file());
 
     let code_review_out = repo.path().join("code-review-clean");
     real_tooling(&[
@@ -228,6 +243,7 @@ fn tooling_dispatch_routes_public_subcommands() {
         &valid_review_output_yaml(repo.path()),
     );
     let prompt_out = repo.path().join("prompt.txt");
+    let editor_model_out = repo.path().join("editor_model.js");
 
     assert!(real_tooling(&[
         "card-prompt".to_string(),
@@ -238,6 +254,16 @@ fn tooling_dispatch_routes_public_subcommands() {
     ])
     .is_ok());
     assert!(prompt_out.is_file());
+
+    assert!(real_tooling(&[
+        "csdlc-prompt-editor".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--emit-model-js".to_string(),
+        editor_model_out.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+    assert!(editor_model_out.is_file());
 
     assert!(real_tooling(&[
         "lint-prompt-spec".to_string(),

@@ -23,6 +23,7 @@ pub mod chronosense;
 pub mod cognitive_transition_schema;
 pub mod continuous_verification_self_attack;
 pub mod control_plane;
+pub mod csdlc_prompt_editor;
 pub mod csm_observatory;
 pub mod dangerous_negative_suite;
 pub mod delegation_policy;

@@ -7,6 +7,8 @@ task_id: "issue-<issue_padded>"
 version: "<version>"
 title: "<title>"
 branch: "<branch>"
+generated_at: "<timestamp>"
+card_status: "<card_status>"
 status: "draft"
 source_refs:
   - kind: "issue"

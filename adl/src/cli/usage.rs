@@ -58,7 +58,7 @@ pub fn usage() -> &'static str {
   adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
   adl instrument <graph|replay|replay-bundle|diff-plan|diff-trace|trace-schema|validate-trace-v1|provider-substrate|provider-substrate-schema> ...
   adl learn export --format <jsonl|bundle-v1|trace-bundle-v2> [--runs-dir <dir>] [--run-id <id> ...] --out <path>
-  adl tooling <card-prompt|code-review|lint-prompt-spec|validate-structured-prompt|review-card-surface|review-runtime-surface|verify-review-output-provenance|verify-repo-review-contract> ...
+  adl tooling <card-prompt|code-review|csdlc-prompt-editor|lint-prompt-spec|validate-structured-prompt|review-card-surface|review-runtime-surface|verify-review-output-provenance|verify-repo-review-contract> ...
   adl verify <adl.yaml> [--key <public_key_path>]
 
 Options:
@@ -143,6 +143,7 @@ Examples:
   adl learn export --format trace-bundle-v2 --runs-dir .adl/trace-archive --out /tmp/archived-trace-bundle
   adl tooling lint-prompt-spec --issue 761
   adl tooling card-prompt --issue 761 --out /tmp/issue-761.prompt.md
+  adl tooling csdlc-prompt-editor --emit-model-js docs/tooling/csdlc-prompt-editor/editor_model.js --render-samples /tmp/csdlc-prompt-samples
   adl tooling code-review --out artifacts/reviews/pr-review --backend fixture --visibility packet-only
   adl tooling code-review --out artifacts/reviews/file-review --backend ollama --file adl/src/lib.rs --allow-live-ollama
   adl verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"

@@ -8,6 +8,8 @@ run_id: "issue-<issue_padded>"
 version: "<version>"
 title: "<title>"
 branch: "<branch>"
+generated_at: "<timestamp>"
+card_status: "<card_status>"
 status: "draft"
 activation_state: "draft"
 plan_revision: 1

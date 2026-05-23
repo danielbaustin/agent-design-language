@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>C-SDLC Prompt Editor</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="masthead" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Agent Design Language</p>
+          <h1 id="page-title">C-SDLC Prompt Editor</h1>
+          <p id="template-version" class="version-line">Template version loading</p>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="Prompt editor workspace">
+        <aside class="rail">
+          <h2>Card Type</h2>
+          <div id="card-list" class="card-list"></div>
+        </aside>
+
+        <section class="form-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Form</p>
+            <div class="title-row">
+              <h2 id="active-card-title">Select a card</h2>
+              <span id="card-status" class="status-pill" data-status="draft">draft</span>
+            </div>
+          </div>
+          <form id="prompt-form" class="prompt-form"></form>
+        </section>
+
+        <section class="preview-panel">
+          <div class="panel-heading split">
+            <div>
+              <p class="eyebrow">Review</p>
+              <h2>Validation</h2>
+            </div>
+            <div class="actions">
+              <button id="toggle-markdown" type="button" class="secondary">Show Markdown</button>
+              <button id="copy-markdown" type="button">Copy Markdown</button>
+            </div>
+          </div>
+          <section class="locked-panel" aria-labelledby="locked-fields-title">
+            <p class="eyebrow">System</p>
+            <h3 id="locked-fields-title">Issue Context</h3>
+            <dl id="system-fields" class="system-fields"></dl>
+          </section>
+          <div id="validation-panel" class="validation-panel"></div>
+          <p class="validation-note">
+            Local form checks are a draft aid. Exported Markdown must still pass
+            the structured prompt validator before it becomes lifecycle-ready.
+          </p>
+          <div class="validation-actions">
+            <button id="validate-form" type="button" class="secondary">Validate</button>
+          </div>
+          <pre id="markdown-preview" class="markdown-preview hidden" tabindex="0"></pre>
+        </section>
+      </section>
+    </main>
+
+    <script src="./editor_model.js?v=3289.20"></script>
+    <script src="./editor.js?v=3289.20"></script>
+  </body>
+</html>

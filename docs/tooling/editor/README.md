@@ -1,5 +1,10 @@
 # Task Bundle Editor
 
+> Compatibility note: this is the legacy STP/SIP/SOR task-bundle editor. The
+> current C-SDLC prompt form editor for all five cards is
+> `docs/tooling/csdlc-prompt-editor/`, backed by the SemVer prompt-template
+> registry in `docs/templates/prompts/current.json`.
+
 This directory contains the bounded editor surface for ADL task bundles and current workflow-skill handoff.
 
 Open:

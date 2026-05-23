@@ -6,6 +6,8 @@ title: "<title>"
 labels:
   - "track:roadmap"
 issue_number: <issue>
+generated_at: "<timestamp>"
+card_status: "<card_status>"
 status: "draft"
 action: "edit"
 supersedes: []
@@ -27,6 +29,7 @@ pr_start:
 ---
 
 Canonical Template Source: `docs/templates/prompts/1.0.0/stp.md`
+Generated: <timestamp>
 
 # Structured Task Prompt
 
