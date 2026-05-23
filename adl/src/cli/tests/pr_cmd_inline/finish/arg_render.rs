@@ -1,5 +1,7 @@
 use super::*;
-use crate::cli::pr_cmd::finish_support::real_pr_finish;
+use crate::cli::pr_cmd::finish_support::{
+    real_pr_finish, select_finish_validation_plan_for_finish,
+};
 
 #[test]
 fn parse_finish_args_requires_title_and_accepts_finish_flags() {
@@ -431,6 +433,34 @@ fn finish_validation_plan_supports_focused_local_ci_gated_mode() {
         .commands
         .iter()
         .any(|command| command.contains("cargo clippy")));
+}
+
+#[test]
+fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request() {
+    let docs_plan = select_finish_validation_plan_for_finish(
+        ".",
+        &["docs/milestones/v0.91.3/review/example.md".to_string()],
+    )
+    .expect("docs-only actual path plan");
+    assert_eq!(docs_plan.mode, FinishValidationMode::DocsOnly);
+    assert!(!docs_plan
+        .commands
+        .iter()
+        .any(|command: &String| command.contains("cargo nextest")));
+
+    let focused_plan = select_finish_validation_plan_for_finish(
+        ".",
+        &["adl/src/cli/pr_cmd/finish_support.rs".to_string()],
+    )
+    .expect("focused actual path plan");
+    assert_eq!(focused_plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert!(focused_plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml cli::pr_cmd::tests::finish".to_string()
+    ));
+    assert!(!focused_plan
+        .commands
+        .iter()
+        .any(|command: &String| command.contains("cargo clippy")));
 }
 
 #[test]
