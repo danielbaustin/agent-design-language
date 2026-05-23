@@ -262,12 +262,19 @@ pub(super) fn run_doctor_ready(
     validate_issue_prompt_exists(&source_path)?;
     validate_bootstrap_stp(repo_root, &source_path)?;
     validate_authored_prompt_surface("doctor", &source_path, PromptSurfaceKind::IssuePrompt)?;
-    if !root_stp.is_file() {
-        bail!("doctor: missing root stp: {}", root_stp.display());
-    }
-    validate_bootstrap_stp(repo_root, &root_stp)?;
-    validate_authored_prompt_surface("doctor", &root_stp, PromptSurfaceKind::Stp)?;
     if closed_completed {
+        lifecycle::closeout_closed_completed_issue_bundle(
+            repo_root,
+            repo_root,
+            issue_ref,
+            &root_bundle_output,
+        )
+        .with_context(|| {
+            format!(
+                "doctor: failed to finalize closed/completed local bundle truth for issue #{}",
+                issue_ref.issue_number()
+            )
+        })?;
         validate_closed_completed_ready_bundle(
             repo_root,
             issue_ref,
@@ -299,6 +306,11 @@ pub(super) fn run_doctor_ready(
             status: "PASS",
         });
     }
+    if !root_stp.is_file() {
+        bail!("doctor: missing root stp: {}", root_stp.display());
+    }
+    validate_bootstrap_stp(repo_root, &root_stp)?;
+    validate_authored_prompt_surface("doctor", &root_stp, PromptSurfaceKind::Stp)?;
     validate_initialized_cards(
         issue_ref.issue_number(),
         issue_ref.slug(),
@@ -780,6 +792,32 @@ fn validate_closed_completed_ready_bundle(
     root_bundle_output: &Path,
     bundle_paths: StructuredBundlePaths<'_>,
 ) -> Result<()> {
+    let canonical_bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
+    let canonical_bundle_missing = !canonical_bundle_dir.is_dir()
+        || !ensure_nonempty_file_path(root_bundle_input)?
+        || !ensure_nonempty_file_path(root_bundle_output)?
+        || !ensure_nonempty_file_path(bundle_paths.plan_path)?
+        || !ensure_nonempty_file_path(bundle_paths.review_policy_path)?;
+    if canonical_bundle_missing {
+        lifecycle::reconcile_closed_completed_issue_bundle(
+            repo_root,
+            issue_ref,
+            root_bundle_output,
+        )
+        .with_context(|| {
+            format!(
+                "doctor: failed to restore canonical closeout bundle for closed issue #{}",
+                issue_ref.issue_number()
+            )
+        })?;
+    }
+    lifecycle::ensure_closed_completed_issue_bundle_truth(repo_root, issue_ref, root_bundle_output)
+        .with_context(|| {
+            format!(
+                "doctor: closed issue #{} has stale canonical closeout truth; run the explicit closeout normalization path instead of doctor --mode ready",
+                issue_ref.issue_number()
+            )
+        })?;
     validate_initialized_cards(
         issue_ref.issue_number(),
         issue_ref.slug(),
@@ -787,14 +825,7 @@ fn validate_closed_completed_ready_bundle(
         root_bundle_output,
         repo_root,
         bundle_paths,
-    )?;
-    lifecycle::ensure_closed_completed_issue_bundle_truth(repo_root, issue_ref, root_bundle_output)
-        .with_context(|| {
-            format!(
-                "doctor: closed issue #{} has stale canonical closeout truth; run the explicit closeout normalization path instead of doctor --mode ready",
-                issue_ref.issue_number()
-            )
-        })
+    )
 }
 
 fn srp_has_final_review_results(text: &str) -> bool {
