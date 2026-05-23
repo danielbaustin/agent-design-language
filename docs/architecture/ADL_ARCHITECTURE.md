@@ -262,7 +262,7 @@ See `diagrams/DIAGRAM_PACKET.md` for diagram evidence and assumptions.
 - `diagrams/runtime_v2_subsystem_structure.mmd`
 - `diagrams/codebuddy_review_flow.mmd`
 
-## ADR Candidates
+## ADR Candidate Provenance
 
-See `adr/CANDIDATE_ADRS.md`. The ADRs are candidates, not accepted decisions,
-until a human reviewer explicitly promotes them.
+See `adr/CANDIDATE_ADRS.md` for candidate provenance. ADR 0020 through ADR 0028
+were promoted to accepted records in `../adr/` during the v0.91.3 review tail.

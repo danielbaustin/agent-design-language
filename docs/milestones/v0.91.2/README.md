@@ -39,9 +39,9 @@ reviewable systems:
 - Rustdoc and documentation cleanup.
 - Workflow guardrails that prevent main-branch writes, hung closeout watchers,
   and unsafe report-generation shell behavior from recurring.
-- ADR candidates that make the milestone's durable architecture boundaries
-  explicit before closeout, including the C-SDLC tracked-state and signed-trace
-  direction for v0.91.3/v0.91.4.
+- Accepted ADRs that make the milestone's durable architecture boundaries
+  explicit, including the C-SDLC tracked-state and signed-trace direction for
+  v0.91.3/v0.91.4.
 
 ## Milestone Role
 

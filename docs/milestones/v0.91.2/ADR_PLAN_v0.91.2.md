@@ -4,13 +4,14 @@
 
 Tracked ADR authoring plan for `v0.91.2`.
 
-This plan does not accept any ADR by itself. It records the candidate ADR set
-that should be reviewed before milestone closeout.
+This plan did not accept any ADR by itself. It recorded the candidate ADR set
+for review. ADR 0020 through ADR 0028 were promoted to accepted records in
+`docs/adr/` during the v0.91.3 review tail.
 
 ## Purpose
 
-`v0.91.2` turns several implicit architecture boundaries into explicit
-decision surfaces. The milestone now needs ADR candidates for the tooling split,
+`v0.91.2` turned several implicit architecture boundaries into explicit
+decision surfaces. The milestone needed ADR candidates for the tooling split,
 runtime proposal/commit boundaries, GWS promotion boundaries, workflow control
 plane, productization, repo visibility, modernization, and the C-SDLC
 tracked-state direction.
@@ -20,7 +21,7 @@ reviewable, and durable.
 
 ## Existing Baseline
 
-Accepted ADRs currently live in `docs/adr/` and run through ADR 0019.
+Accepted ADRs currently live in `docs/adr/` and run through ADR 0028.
 
 Key inherited decisions:
 
@@ -28,13 +29,13 @@ Key inherited decisions:
 - ADR 0018 records structured planning and review artifacts.
 - ADR 0019 records Theory of Mind as bounded social cognition, not authority.
 
-`v0.91.2` should not rewrite those records casually. It should add new
-candidate ADRs and, after review, promote accepted records with narrow
-supersession notes.
+`v0.91.2` did not rewrite those records casually. It added new candidate ADRs
+and, after review, promoted accepted records with narrow supersession notes.
+That promotion happened during v0.91.3.
 
-## Candidate ADR Set
+## Promoted ADR Set
 
-| Candidate | Title | Primary Boundary |
+| ADR | Title | Primary Boundary |
 | --- | --- | --- |
 | ADR 0020 | Universal Tool Schema As Portable Tool Description Standard | UTS is portable description, not authority; ADL adopts UTS while the standard moves toward a standalone repo. |
 | ADR 0021 | ADL Capability Contract As Governed Runtime Authority Boundary | ACC is ADL-native runtime authority for capability exercise. |
@@ -46,7 +47,8 @@ supersession notes.
 | ADR 0027 | Governed Code Modernization With Moderne/OpenRewrite LST | Modernization is deterministic, dry-run/review/approval bounded, not automatic mass rewrite. |
 | ADR 0028 | C-SDLC Tracked Workflow State And Signed Trace Boundary | Durable C-SDLC truth becomes tracked/auditable and signed-trace-backed by the end of v0.91.4. |
 
-Candidate files live in `docs/architecture/adr/`.
+Accepted files live in `docs/adr/`. The original candidate files remain in
+`docs/architecture/adr/` as provenance.
 
 ## Supersession Plan
 
@@ -55,7 +57,7 @@ Candidate files live in `docs/architecture/adr/`.
 Do not delete or rewrite ADR 0015. It remains historical truth for the v0.90.5
 governed-tools umbrella.
 
-After ADR 0020 and ADR 0021 are accepted:
+Now that ADR 0020 and ADR 0021 are accepted:
 
 - mark ADR 0015 as superseded or partially superseded by ADR 0020 and ADR 0021
 - point active UTS interpretation to ADR 0020
@@ -67,7 +69,7 @@ After ADR 0020 and ADR 0021 are accepted:
 Do not replace ADR 0018. It remains the artifact-contract decision for `SPP`
 and `SRP` and the refined card lifecycle.
 
-After ADR 0024 and ADR 0028 are accepted:
+Now that ADR 0024 and ADR 0028 are accepted:
 
 - point lifecycle-control-plane policy to ADR 0024
 - point tracked workflow-state and signed trace migration policy to ADR 0028
@@ -121,6 +123,6 @@ No standalone ADR is created yet for:
 - UTS and ACC are split.
 - ADR 0015 and ADR 0018 have clear supersession relationships.
 - C-SDLC tracked workflow state and signed traces are captured as ADR 0028.
-- Candidate records remain candidates until human review and explicit
+- Candidate records were promoted only after human review and explicit
   promotion.
 - The milestone decision surface points reviewers to this plan.
