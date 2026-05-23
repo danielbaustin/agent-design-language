@@ -109,11 +109,6 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         })?;
     }
 
-    let finish_validation_plan = select_finish_validation_plan(&parsed.paths)?;
-    if !parsed.no_checks {
-        run_finish_validation_rust(&repo_root, &finish_validation_plan)?;
-    }
-
     stage_selected_paths_rust(&repo_root, &parsed.paths)?;
     ensure_no_staged_issue_bundle_mutations(&repo_root, &issue_ref)?;
     let has_uncommitted = has_uncommitted_changes(&repo_root)?;
@@ -130,6 +125,11 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
 
     let changed_paths = finish_changed_paths(&repo_root, has_uncommitted)?;
     validate_milestone_doc_drift_for_finish(&repo_root, issue_ref.scope(), &changed_paths)?;
+    let finish_validation_plan =
+        select_finish_validation_plan_for_finish(&parsed.paths, &changed_paths)?;
+    if !parsed.no_checks {
+        run_finish_validation_rust(&repo_root, &finish_validation_plan)?;
+    }
 
     let close_line = if parsed.no_close {
         None
@@ -470,6 +470,24 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             "cargo test --manifest-path adl/Cargo.toml --doc --all-features".to_string(),
         ],
     })
+}
+
+pub(super) fn select_finish_validation_plan_for_finish(
+    requested_paths_csv: &str,
+    changed_paths: &[String],
+) -> Result<FinishValidationPlan> {
+    let requested_paths = requested_paths_csv
+        .split(',')
+        .map(str::trim)
+        .filter(|path| !path.is_empty())
+        .collect::<Vec<_>>();
+    if requested_paths.is_empty() {
+        bail!("finish: --paths resolved to empty");
+    }
+    if changed_paths.is_empty() {
+        bail!("finish: no changed tracked paths available for validation profile selection");
+    }
+    select_finish_validation_plan(&changed_paths.join(","))
 }
 
 fn finish_path_is_docs_only(path: &str) -> bool {
