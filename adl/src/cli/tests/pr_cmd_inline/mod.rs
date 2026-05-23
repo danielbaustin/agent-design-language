@@ -137,6 +137,26 @@ fn copy_bootstrap_support_files(repo: &Path) {
     }
 }
 
+fn copy_versioned_prompt_templates(repo: &Path) {
+    let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("workspace root")
+        .to_path_buf();
+    let source_root = workspace_root.join("docs/templates/prompts");
+    let target_root = repo.join("docs/templates/prompts");
+    fs::create_dir_all(target_root.join("1.0.0")).expect("create prompt template dir");
+    for rel in [
+        "current.json",
+        "1.0.0/sip.md",
+        "1.0.0/stp.md",
+        "1.0.0/spp.md",
+        "1.0.0/srp.md",
+        "1.0.0/sor.md",
+    ] {
+        fs::copy(source_root.join(rel), target_root.join(rel)).expect("copy prompt template");
+    }
+}
+
 fn write_authored_issue_prompt(repo: &Path, issue_ref: &IssueRef, title: &str) {
     let path = issue_ref.issue_prompt_path(repo);
     fs::create_dir_all(path.parent().expect("issue prompt parent")).expect("create body dir");
@@ -662,6 +682,211 @@ fn write_output_card_emits_truthful_pre_run_scaffold() {
     assert!(!text.contains("none | list explicitly"));
     assert!(!text.contains("PASS | FAIL"));
     assert!(!text.contains("worktree | pr_branch | main_repo"));
+}
+
+#[test]
+fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-prompt-templates");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        3286,
+        "v0.91.3".to_string(),
+        "tools-versioned-csdlc-prompt-templates".to_string(),
+    )
+    .expect("issue ref");
+    let title = "[v0.91.3][tools] Add SemVer C-SDLC prompt templates";
+    write_authored_issue_prompt(&repo, &issue_ref, title);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+
+    let stp_path = ensure_task_bundle_stp(&repo, &issue_ref, &source_path)
+        .expect("versioned STP template should render");
+    let (bundle_stp, bundle_input, bundle_output) = ensure_bootstrap_cards(
+        &repo,
+        &issue_ref,
+        title,
+        "codex/3286-v0-91-3-tools-versioned-csdlc-prompt-templates",
+        &source_path,
+    )
+    .expect("versioned prompt templates should bootstrap all cards");
+
+    assert_eq!(stp_path, bundle_stp);
+    let stp = fs::read_to_string(&bundle_stp).expect("read stp");
+    let sip = fs::read_to_string(&bundle_input).expect("read sip");
+    let spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
+    let srp =
+        fs::read_to_string(issue_ref.task_bundle_review_policy_path(&repo)).expect("read srp");
+    let sor = fs::read_to_string(&bundle_output).expect("read sor");
+
+    for (kind, text) in [
+        ("STP", &stp),
+        ("SIP", &sip),
+        ("SPP", &spp),
+        ("SRP", &srp),
+        ("SOR", &sor),
+    ] {
+        assert!(
+            text.contains(&format!(
+                "Canonical Template Source: `docs/templates/prompts/1.0.0/{}.md`",
+                kind.to_ascii_lowercase()
+            )),
+            "{kind} should identify the versioned template source"
+        );
+        assert!(
+            !text.contains("<issue") && !text.contains("<slug>") && !text.contains("<branch>"),
+            "{kind} should not retain core prompt-template placeholders"
+        );
+    }
+    assert!(stp.contains("# Structured Task Prompt"));
+    assert!(sip.contains("Semantic role: Structured Issue Prompt (`SIP`)."));
+    assert!(spp.contains("artifact_type: \"structured_planning_prompt\""));
+    assert!(srp.contains("artifact_type: \"structured_review_prompt\""));
+    assert!(sor.contains("Status: IN_PROGRESS"));
+}
+
+#[test]
+fn pre_run_bootstrap_cards_preserve_not_bound_yet_template_truth() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-pre-run-templates");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        3296,
+        "v0.91.3".to_string(),
+        "tools-enforce-csdlc-card-status-transitions-in-skills".to_string(),
+    )
+    .expect("issue ref");
+    let title = "[v0.91.3][tools] Enforce C-SDLC card-status transitions in skills";
+    write_authored_issue_prompt(&repo, &issue_ref, title);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path)
+        .expect("versioned STP template should render");
+
+    let (_, bundle_input, bundle_output) =
+        ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path)
+            .expect("pre-run bootstrap should render versioned templates");
+    let sip = fs::read_to_string(&bundle_input).expect("read sip");
+    let sor = fs::read_to_string(&bundle_output).expect("read sor");
+    let spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
+
+    assert!(sip.contains("Branch: not bound yet"));
+    assert!(sor.contains("Branch: not bound yet"));
+    assert!(sor.contains("Status: NOT_STARTED"));
+    assert!(spp.contains("branch: \"not bound yet\""));
+    assert!(!sip.contains("Do not run `pr start`; the branch and worktree already exist."));
+    assert!(sor
+        .contains("Preserved pre-run branch truth; no execution branch or worktree is bound yet."));
+}
+
+#[test]
+fn versioned_spp_summarizes_source_prompt_sections_into_execution_plan() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-spp-sections");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        3297,
+        "v0.91.3".to_string(),
+        "tools-test-spp-section-extraction".to_string(),
+    )
+    .expect("issue ref");
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("mkdir");
+    fs::write(
+        &source_path,
+        r#"---
+title: "[v0.91.3][tools] Test SPP section extraction"
+labels:
+  - "track:roadmap"
+issue_number: 3297
+---
+
+# Test SPP section extraction
+
+## Summary
+
+Test source prompt section extraction.
+
+## Goal
+
+Make the generated SPP issue-local and concrete.
+
+## Required Outcome
+
+The generated SPP should carry source-prompt facts into the plan.
+
+## Deliverables
+
+- Versioned template loader coverage
+- Generated plan proof
+
+## Acceptance Criteria
+
+- SPP uses the source issue acceptance text
+- No generated plan placeholder remains
+
+## Repo Inputs
+
+- adl/src/cli/pr_cmd_cards/cards.rs
+- docs/templates/prompts/1.0.0/spp.md
+
+## Dependencies
+
+- PR #3294 coverage gate must be green
+
+## Demo Expectations
+
+- none
+
+## Non-goals
+
+- broad lifecycle redesign
+
+## Issue-Graph Notes
+
+- test fixture
+
+## Notes
+
+- none
+
+## Tooling Notes
+
+- Run focused pr_cmd coverage only
+"#,
+    )
+    .expect("write source");
+    let title = "[v0.91.3][tools] Test SPP section extraction";
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_bootstrap_cards(
+        &repo,
+        &issue_ref,
+        title,
+        "codex/3297-test-spp-section-extraction",
+        &source_path,
+    )
+    .expect("bootstrap cards");
+
+    let spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
+    assert!(spp.contains(
+        "Confirm dependency readiness and starting state: PR #3294 coverage gate must be green"
+    ));
+    assert!(spp.contains(
+        "Implement only the bounded deliverables: Versioned template loader coverage; Generated plan proof"
+    ));
+    assert!(spp.contains(
+        "Run focused proof gates for acceptance: SPP uses the source issue acceptance text; No generated plan placeholder remains"
+    ));
+    assert!(spp.contains("Run focused pr_cmd coverage only"));
+    assert!(!spp.contains("<deliverables_inline>"));
+    assert!(!spp.contains("[summary truncated]"));
 }
 
 mod basics;
