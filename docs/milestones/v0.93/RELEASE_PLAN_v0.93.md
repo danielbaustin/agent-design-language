@@ -16,7 +16,7 @@ v0.93 should not be released until it has evidence for:
 - standing transition evidence
 - constitutional review packet
 - challenge and appeal flow
-- delegation and IAM authority evidence
+- delegation, upstream delegation, and IAM authority evidence
 - zero-trust trust-boundary model and deny-by-default evidence
 - policy-enforcement and least-privilege authorization evidence
 - secrets/key lifecycle, signing, encryption, rotation, and revocation evidence

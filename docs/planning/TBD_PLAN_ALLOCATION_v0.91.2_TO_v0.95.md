@@ -65,7 +65,9 @@ source notes to tracked execution homes.
 
 | Root TBD document | Current home | Disposition |
 | --- | --- | --- |
+| `ADL_AGENT_UPSTREAM_DELEGATION.md` | `v0.93` delegation/upstream-delegation/IAM and social-cognition governance; local backlog `LB-100` | Allocated. This source note feeds governed upstream cognition, delegation routing, and polis/provider escalation in the v0.93 delegation/upstream-delegation/IAM feature. It does not claim implemented runtime behavior. |
 | `ADL_AND_GENERIC_SPECULATIVE_DECODING.md` | `v0.91.2` WP-11 speculative decoding prototype | Allocated. |
+| `ADL_AND_RUNTIME_EXECUTION_STRATEGY.md.md` | Local backlog `LB-099` WildClawBench/runtime-execution item | Backlog, not active milestone execution. This note is about planning a WildClawBench run or runtime-execution evidence lane, not current ADL runtime strategy implementation. |
 | `ADL_AND_SLEEP.md` | `v0.91.1` agent lifecycle/wellbeing provenance | Delivered/provenance, not an unowned future feature. |
 | `ADL_AND_SPECULATIVE_CODING_REPLAY.md` | `v0.91.2` WP-11 speculative decoding/replay lane | Allocated. |
 | `ADL_AND_WILDCLAW.md` | None before `v0.95` | Unallocated/deferred. Candidate home is a future external-benchmark or substrate-evidence lane after the current UTS benchmark and MVP proof surfaces stabilize. |
@@ -79,7 +81,9 @@ source notes to tracked execution homes.
 | `BROADCAST_AUDIO_ROADMAP_v0911.md` | `v0.91.1` broadcast-audio sprint provenance | Delivered/provenance. Preserve in place per operator direction. |
 | `CODEFRIEND_PRODUCT_MILESTONE_PLAN_V0912_TO_V095_2026-05-19.md` | `v0.91.2` CodeFriend productization; `v0.95` MVP polish | Allocated as product-lane planning source, separate from C-SDLC. |
 | `CODEFRIEND_PLANNING.md` | `v0.91.2` CodeFriend productization; `v0.95` MVP polish | Allocated. |
+| `C_SDLC_AND_LONG_TESTING_TAIL.md` | `v0.91.4` C-SDLC repeatability, validation-tiering, proof-latency hardening, and Parallel Validation Fabric planning | Allocated. This note identifies validation latency as the next C-SDLC bottleneck after short sprint coordination improves. v0.91.4 should address it with transition-aware and parallelizable validation without weakening proof truth. |
 | `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_2026-05-19.md` | `v0.91.3` / `v0.91.4` C-SDLC implementation planning | Allocated. This is source material for making durable workflow records public, tracked, auditable, and eventually trace/ObsMem-fed. |
+| `FIVE_MINUTE_SPRINT_TEST_CYCLE_NOTE_2026-05-22.md` | `v0.91.4` C-SDLC five-minute-sprint repeatability, validation-tail, and parallel-validation planning | Allocated. The issue is not whether to skip validation; it is how to separate immediate issue-local proof from deferred/broader gates while preserving truthful `SPP`, `SRP`, and `SOR` state. |
 | `HEY_JUDE_AUDIO_UPGRADE_PLAN.md` | Delivered audio/demo provenance; `v0.95` demo catalog if reused | Allocated as demo source material. |
 | `LOCAL_BACKLOG.md` | Local backlog source, not a milestone feature by itself | Active local control surface. |
 | `MILESTONE_CLOSEOUT_CHECKLIST.md` | Recurring release-tail process; `v0.91.2` workflow guardrails | Allocated as process guidance, not a feature. |
@@ -113,17 +117,21 @@ source notes to tracked execution homes.
 | `WP_01_REVIEW_PLAN_v0.91.2.md` | `v0.91.2` WP-01 review source evidence | Archive after WP-01 closeout. |
 | `v0.90.5_TEST_RUNTIME_REDUCTION_PLAN.md` | `v0.91.2` runtime/test-cycle recovery | Allocated. |
 | `v0.91.1_gap_review.md` | Historical gap-review evidence | Archive/provenance. |
+| `v0.91.3_gap_review.md` | Active `v0.91.3` gap-review surface | Keep current and refresh after the C-SDLC issue wave completes. Do not classify as a feature plan or closeout artifact until the relevant issues land. |
 | `v0.91_1_runtime_observatory_dependency_note.md` | `v0.91.1` runtime observatory provenance | Archive/provenance. |
 | `v0.91_gap_review.md` | Historical gap-review evidence | Archive/provenance. |
 
 ## Not Yet Execution-Scheduled Before v0.95
 
-The current audit found three root plan notes that are not execution-scheduled
+The current audit found four root plan notes that are not execution-scheduled
 before or through `v0.95`:
 
 - `ADL_AND_WILDCLAW.md`: useful external-benchmark pressure test, but no
   milestone issue currently owns a WildClawBench run or substrate-evidence
   interpretation.
+- `ADL_AND_RUNTIME_EXECUTION_STRATEGY.md.md`: WildClawBench/runtime-execution
+  evidence planning. Preserve in the local backlog until a bounded external
+  benchmark or substrate-evidence issue exists.
 - `ADL_LOGISTIC_SPLIT.md`: now has a tracked provenance copy at
   `docs/planning/ADL_LOGISTIC_SPLIT.md` and a tracked post-`v0.95` repository
   split plan at `docs/planning/POST_V095_ADL_CSM_LOGISTIC_SPLIT_PLAN.md`, but
@@ -132,6 +140,16 @@ before or through `v0.95`:
   currently owns it.
 The C-SDLC workflow-state, SPP live-planning, and v0.91.3/v0.91.4 doc-review
 notes are allocated to the tracked C-SDLC milestone-planning lane, not GWS.
+The five-minute-sprint validation-tail notes are also allocated to `v0.91.4`,
+where repeatability must include proof-latency, validation-tier truth, and
+Parallel Validation Fabric planning.
+
+The `ADL_AGENT_UPSTREAM_DELEGATION.md` source note is allocated to `v0.93` as
+part of delegation/upstream-delegation/IAM, standing, social-cognition, and
+governance planning.
+
+The active `v0.91.3_gap_review.md` remains a current gap-review surface and
+should be refreshed after the C-SDLC issues complete.
 
 The `V0912_ADR_PLAN_2026-05-13.md` note is allocated through `#3124` and the
 v0.91.3 promotion follow-on `#3277`. The tracked ADR plan exists; ADR 0020

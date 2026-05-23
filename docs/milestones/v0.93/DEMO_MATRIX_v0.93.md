@@ -19,7 +19,7 @@ reviewable behavior rather than perimeter language.
 | D1 | Constitutional review of a challenged action | A citizen action can be evaluated against rights, duties, policy, trace, outcome, and standing evidence. | Review packet with finding, evidence references, and appeal state. | Planned candidate |
 | D2 | Standing degradation and restoration | Standing changes require evidence and can include restoration when conditions are met. | Standing transition fixture and reviewer summary. | Planned candidate |
 | D3 | Human guest versus citizen-mode boundary | Human input does not become citizen action unless mediated through CSM identity, Freedom Gate, signed trace, and temporal anchoring. | Two-case fixture showing guest-only and mediated citizen-mode paths. | Planned candidate |
-| D4 | Delegated authority chain | Delegated action is allowed or denied based on explicit authority and policy. | Delegation/IAM fixture with allow/deny decision events. | Planned candidate |
+| D4 | Delegated and upstream authority chain | Delegated or upstream-escalated action is allowed or denied based on explicit authority, policy, provenance, and verification boundaries. | Delegation/upstream-delegation/IAM fixture with allow/deny decision events. | Planned candidate |
 | D5 | Communication without inspection | Communication does not grant private-state inspection. | Communication event, redacted projection, and failed inspection attempt. | Planned candidate |
 | D6 | ToM and reputation boundary | Private ToM can inform later cognition only through authorized, redacted, evidence-grounded projections; reputation is not the private model. | Private model fixture, signed update event, reputation projection, redaction report, denied unauthorized inspection. | Planned candidate |
 | D7 | Conflict and decay in shared social memory | Stale or contradictory social cognition is marked, downgraded, and reviewable rather than silently overwritten. | Conflict fixture, decay event, social-memory projection, arbitration impact note. | Planned candidate |
@@ -82,10 +82,11 @@ Expected proof:
   trace, and temporal anchoring
 - direct out-of-band human action is rejected as citizen conduct
 
-### D4) Delegated Authority Chain
+### D4) Delegated And Upstream Authority Chain
 
-The demo should show a delegated action request where authority is either
-accepted or denied based on explicit policy.
+The demo should show a delegated or upstream-escalated action request where
+authority is either accepted or denied based on explicit policy, provenance,
+and verification boundaries.
 
 Expected proof:
 

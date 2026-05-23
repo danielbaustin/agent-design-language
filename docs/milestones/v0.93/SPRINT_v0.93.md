@@ -21,7 +21,7 @@ substrates.
 | 2 | Constitutional citizenship core | Citizenship contract, human/citizen boundary, rights, duties, and standing states. |
 | 3 | Social cognition | ToM schema, signed update events, reputation boundary, shared social memory, conflict, decay, and projection rules. |
 | 4 | Review and appeal | Constitutional review packet, challenge flow, appeal flow, and evidence rules. |
-| 5 | Delegation and IAM | Authority-chain rules across citizens, guests, operators, services, tools, and external actors. |
+| 5 | Delegation, upstream delegation, and IAM | Authority-chain and escalation-routing rules across citizens, guests, operators, services, tools, polis services, trusted external polis boundaries, frontier cognition providers, and other external actors. |
 | 6 | Enterprise security foundation | Zero-trust architecture, enforcement, key/secrets lifecycle, audit/compliance evidence, isolation/data governance, and security operations. |
 | 7 | Social contract and communication | Bounded social-contract representation and communication-without-inspection proof. |
 | 8 | Demo and review tail | Governance and enterprise-security demos, demo matrix, quality gate, review handoff, and release ceremony. |
@@ -45,9 +45,9 @@ substrates.
 At least one later demo should show constitutional review of a challenged
 citizen action. Strong secondary demos include standing restoration, human
 guest versus mediated citizen-mode action, ToM/reputation boundary,
-delegation/IAM, zero-trust deny-by-default behavior, audit/compliance evidence,
-key rotation/revocation, isolation leakage prevention, and communication without
-inspection.
+delegation/upstream-delegation/IAM, zero-trust deny-by-default behavior,
+audit/compliance evidence, key rotation/revocation, isolation leakage
+prevention, and communication without inspection.
 
 The review packet should make it easy to answer:
 

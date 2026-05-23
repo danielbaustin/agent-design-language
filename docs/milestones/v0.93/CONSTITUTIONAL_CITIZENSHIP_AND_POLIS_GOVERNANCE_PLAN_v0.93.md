@@ -23,7 +23,8 @@ The milestone should answer:
   governance without becoming hidden verdicts
 - how standing is maintained, degraded, challenged, restored, or revoked
 - how constitutional review consumes trace evidence
-- how delegation and IAM work without turning humans, services, or tools into
+- how delegation, upstream delegation, and IAM work without turning humans,
+  services, tools, external polis services, or frontier cognition providers into
   hidden sovereigns
 - how enterprise security works inside the polis as zero-trust, policy
   enforcement, cryptographic trust, audit/compliance evidence, isolation/data
@@ -49,7 +50,7 @@ Direct out-of-band human action does not count as citizen action.
 | v0.90.5 | Governed tool calls, UTS, ACC, authority evaluation, capability contracts, and tool-call trace. | Tool schemas, tool execution semantics, or public tool conformance. |
 | v0.91 | Freedom Gate moral events, moral trace, validation rules, outcome linkage, metrics, trajectory review, anti-harm constraints, moral resources, and wellbeing evidence. | Moral trace schema, moral metrics, anti-harm proof, or moral-trajectory review foundations. |
 | v0.92 | Durable identity, names, capability envelopes, continuity, memory grounding, and the first true Gödel-agent birthday. | Identity architecture, birth event semantics, or continuity prerequisites. |
-| v0.93 | Constitutional citizenship, Theory of Mind, reputation boundary, shared social memory, polis governance, rights/duties, social contract, constitutional review, delegation/IAM policy, enterprise security, and reviewer-facing governance/security evidence. | Earlier substrate layers. |
+| v0.93 | Constitutional citizenship, Theory of Mind, reputation boundary, shared social memory, polis governance, rights/duties, social contract, constitutional review, delegation/upstream-delegation/IAM policy, enterprise security, and reviewer-facing governance/security evidence. | Earlier substrate layers. |
 
 ## Feature And Idea Allocation
 
@@ -62,7 +63,7 @@ Direct out-of-band human action does not count as citizen action.
 | Standing maintenance and degradation | Primary feature | Rules for good standing, monitored, restricted, suspended, restored, and revoked states. |
 | Constitutional review | Primary feature | Review packet shape that consumes moral trace, outcome linkage, allowed ToM projections, reputation, standing evidence, identity records, and policy context. |
 | Challenge and appeal | Primary feature | Flow for challenging a governance finding, preserving evidence, and producing an appeal disposition. |
-| Delegation and IAM | Primary feature | Authority-chain model for citizen, guest, service actor, operator, and tool-mediated action. |
+| Delegation, upstream delegation, and IAM | Primary feature | Authority-chain and escalation-routing model for citizen, guest, service actor, operator, tool-mediated action, polis service, trusted external polis, and frontier cognition provider participation. |
 | Enterprise security WP-S1: zero-trust architecture | Primary feature | Trust-boundary model, actor/zone definitions, default-deny fixtures, and unauthorized-boundary negative cases. |
 | Enterprise security WP-S2: policy enforcement and authorization | Primary feature | IAM/delegation/standing/tool-authority policy decision contract, least-privilege fixtures, and fail-closed tests. |
 | Enterprise security WP-S3: secrets, keys, and cryptographic trust | Primary feature | Key/secrets lifecycle contract covering custody, signing, encryption, rotation, revocation, sealed-state access, and internal ACIP encryption requirements. |
@@ -118,7 +119,8 @@ A later v0.93 implementation should be able to emit a packet with:
 - standing-change rationale
 - allowed ToM projection or reputation evidence when policy permits
 - challenge or appeal status
-- delegation and IAM authority chain if another actor participated
+- delegation, upstream delegation, and IAM authority chain if another actor or
+  upstream cognition provider participated
 - privacy/redaction disposition
 - reviewer findings with severity, evidence, and uncertainty
 
@@ -134,7 +136,7 @@ commitments.
 | Constitutional review of a challenged action | A citizen action can be judged against policy using trace, outcome, identity, and standing evidence. | Synthetic incident fixture, review packet, finding, appeal disposition. |
 | Standing degradation and restoration | Standing changes are evidence-based, reversible when appropriate, and not arbitrary punishment. | Standing transition fixture, trace evidence, restoration criteria, reviewer summary. |
 | Human guest versus citizen-mode boundary | Human input is permitted as guest participation, while citizen action requires identity binding and Freedom Gate mediation. | Two-case fixture showing guest-only transcript and mediated citizen-mode action. |
-| Delegated authority chain | A delegated action is allowed or denied based on standing, policy, capability, and traceable authority. | IAM/delegation fixture, decision event, selected/rejected action evidence. |
+| Delegated and upstream authority chain | A delegated or upstream-escalated action is allowed or denied based on standing, policy, capability, traceable authority, provenance, and verification boundaries. | IAM/delegation/upstream-delegation fixture, decision event, selected/rejected action evidence. |
 | Communication without inspection | Citizens can communicate through governed channels without granting private-state access. | Communication event fixture, redacted projection, failed inspection attempt. |
 | ToM and reputation boundary | Private ToM can inform review only through authorized, redacted, evidence-grounded projections. | Private model fixture, signed update event, reputation projection, redaction report, denied unauthorized inspection. |
 | Polis governance health packet | Reviewers can inspect governance health without scalar moral verdicts or private-state leaks. | Generated governance report with evidence references, caveats, and unresolved questions. |
@@ -175,7 +177,8 @@ Recommended ordering pressure:
    transitions, and challenge/appeal flow.
 4. Add constitutional review packets over moral trace, outcome evidence, and
    authorized social-cognition projections.
-5. Add delegation and IAM governance only after tool/capability authority is
+5. Add delegation, upstream delegation, and IAM governance only after
+   tool/capability authority is
    stable enough to consume.
 6. Add the six enterprise-security WPs after identity, IAM, governed-tool, and
    secure-comms prerequisites are explicit.
