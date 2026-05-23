@@ -199,7 +199,7 @@ is_reporting_only_coverage_workflow_change() {
 is_release_truth_doc_surface() {
   local path="$1"
   case "$path" in
-    README.md|CHANGELOG.md|REVIEW.md|docs/*)
+    README.md|CHANGELOG.md|REVIEW.md|adl/README.md|docs/*)
       return 0
       ;;
   esac
