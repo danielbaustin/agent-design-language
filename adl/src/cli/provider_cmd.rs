@@ -34,7 +34,11 @@ fn real_provider_setup(repo_root: &Path, args: &[String]) -> Result<()> {
     while i < args.len() {
         match args[i].as_str() {
             "--out" => {
-                out_dir = Some(PathBuf::from(required_value(args, i, "--out")?));
+                let value = required_value(args, i, "--out")?;
+                if value.starts_with('-') {
+                    return Err(anyhow!("--out requires a value"));
+                }
+                out_dir = Some(PathBuf::from(value));
                 i += 1;
             }
             "--force" => force = true,
@@ -436,6 +440,30 @@ mod tests {
             &repo,
         )
         .expect_err("missing out value should fail");
+        assert!(err.to_string().contains("--out requires a value"));
+
+        let err = real_provider_in_repo(
+            &[
+                "setup".to_string(),
+                "chatgpt".to_string(),
+                "--out".to_string(),
+                "--force".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("flag-like out value should fail");
+        assert!(err.to_string().contains("--out requires a value"));
+
+        let err = real_provider_in_repo(
+            &[
+                "setup".to_string(),
+                "chatgpt".to_string(),
+                "--out".to_string(),
+                "-h".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("single-dash flag-like out value should fail");
         assert!(err.to_string().contains("--out requires a value"));
     }
 
