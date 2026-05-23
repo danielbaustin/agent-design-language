@@ -39,6 +39,16 @@
 - output truth:
   `.adl/v0.91.3/tasks/issue-3203__v0-91-3-wp-05-evidence-bundle-and-review-synthesis/sor.md`
 
+## Structured Snapshot
+
+- snapshot:
+  `docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate_snapshot.json`
+- validation mode:
+  the merge-readiness validator reconciles the tracked markdown gate record
+  against this structured snapshot and the referenced tracked artifacts
+- live-state boundary:
+  this remains a post-hoc reviewable record, not a live GitHub API gate
+
 ## Blocked Conditions
 
 The gate would fail closed if any of the following were true:
@@ -61,6 +71,6 @@ The gate would fail closed if any of the following were true:
 
 ## Residual Risks
 
-- this is a first bounded post-hoc gate record, not yet an operative pre-merge enforcement gate
+- this is a first bounded snapshot-backed post-hoc gate record, not yet an operative pre-merge enforcement gate
 - Sprint 4 still owns the broader milestone quality gate
 - live ObsMem ingestion and signed-trace proof remain later work

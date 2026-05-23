@@ -57,10 +57,12 @@ rust_required="$bool_false"
 coverage_required="$bool_false"
 full_coverage_required="$bool_false"
 demo_smoke_required="$bool_false"
+v0913_proof_required="$bool_false"
 release_version_only="$bool_false"
 fail_closed=false
 coverage_lane="skip"
 coverage_authority="not_required"
+proof_validation_scope="not_required"
 reason="path_policy_docs_or_tooling_only"
 changed_count=0
 changed_files=""
@@ -109,6 +111,14 @@ mark_policy_surface_full_coverage() {
   coverage_lane="authoritative_full"
   coverage_authority="$authority"
   reason="$reason_value"
+}
+
+mark_v0913_proof_required() {
+  v0913_proof_required=true
+  proof_validation_scope="v0_91_3"
+  if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
+    reason="v0913_proof_surface_change_runs_targeted_packet_validation"
+  fi
 }
 
 normalize_changed_rows() {
@@ -200,6 +210,44 @@ is_release_truth_doc_surface() {
   local path="$1"
   case "$path" in
     README.md|CHANGELOG.md|REVIEW.md|adl/README.md|docs/*)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+is_v0913_proof_surface() {
+  local path="$1"
+  case "$path" in
+    docs/milestones/v0.91.3/review/*|\
+    docs/milestones/v0.91.3/DEMO_MATRIX_v0.91.3.md|\
+    docs/milestones/v0.91.3/FEATURE_PROOF_COVERAGE_v0.91.3.md|\
+    docs/milestones/v0.91.3/QUALITY_GATE_v0.91.3.md|\
+    demos/v0.91.3/*|\
+    adl/tools/validate_transition_dag_packet.py|\
+    adl/tools/test_transition_dag_packet.sh|\
+    adl/tools/validate_evidence_bundle_packet.py|\
+    adl/tools/test_evidence_bundle_packet.sh|\
+    adl/tools/validate_merge_readiness_packet.py|\
+    adl/tools/test_merge_readiness_packet.sh|\
+    adl/tools/validate_obsmem_handoff_packet.py|\
+    adl/tools/test_obsmem_handoff_packet.sh|\
+    adl/tools/validate_first_proof_readiness_packet.py|\
+    adl/tools/test_first_proof_readiness_packet.sh|\
+    adl/tools/validate_first_proof_demo_packet.py|\
+    adl/tools/test_first_proof_demo_packet.sh|\
+    adl/tools/validate_five_minute_html_game_packet.py|\
+    adl/tools/test_five_minute_html_game_packet.sh|\
+    adl/tools/validate_five_minute_sprint_console_packet.py|\
+    adl/tools/test_five_minute_sprint_console_packet.sh|\
+    adl/tools/validate_podcast_studio_v2_packet.py|\
+    adl/tools/test_podcast_studio_v2_packet.sh|\
+    adl/tools/validate_csdlc_demo_proof_contract_packet.py|\
+    adl/tools/test_csdlc_demo_proof_contract_packet.sh|\
+    adl/tools/validate_v0913_quality_gate_review_surfaces.py|\
+    adl/tools/demo_v0913_quality_gate.sh|\
+    adl/tools/run_v0913_proof_validation_lane.sh|\
+    adl/tools/test_run_v0913_proof_validation_lane.sh)
       return 0
       ;;
   esac
@@ -375,6 +423,9 @@ else
         saw_pr_finish_control_plane=true
         continue
       fi
+      if is_v0913_proof_surface "$path"; then
+        mark_v0913_proof_required
+      fi
       case "$path" in
         adl/src/*|adl/tests/*|adl/Cargo.toml|adl/Cargo.lock|adl/build.rs)
           if [ "$release_version_only" = true ] && { [ "$path" = "adl/Cargo.toml" ] || [ "$path" = "adl/Cargo.lock" ]; }; then
@@ -423,10 +474,12 @@ emit "rust_required" "$rust_required"
 emit "coverage_required" "$coverage_required"
 emit "full_coverage_required" "$full_coverage_required"
 emit "demo_smoke_required" "$demo_smoke_required"
+emit "v0913_proof_required" "$v0913_proof_required"
 emit "release_version_only" "$release_version_only"
 emit "fail_closed" "$fail_closed"
 emit "coverage_lane" "$coverage_lane"
 emit "coverage_authority" "$coverage_authority"
+emit "proof_validation_scope" "$proof_validation_scope"
 emit "changed_count" "$changed_count"
 emit "reason" "$reason"
 
@@ -435,8 +488,10 @@ printf '  rust_required=%s\n' "$rust_required"
 printf '  coverage_required=%s\n' "$coverage_required"
 printf '  full_coverage_required=%s\n' "$full_coverage_required"
 printf '  demo_smoke_required=%s\n' "$demo_smoke_required"
+printf '  v0913_proof_required=%s\n' "$v0913_proof_required"
 printf '  release_version_only=%s\n' "$release_version_only"
 printf '  fail_closed=%s\n' "$fail_closed"
 printf '  coverage_lane=%s\n' "$coverage_lane"
 printf '  coverage_authority=%s\n' "$coverage_authority"
+printf '  proof_validation_scope=%s\n' "$proof_validation_scope"
 printf '  changed_count=%s\n' "$changed_count"

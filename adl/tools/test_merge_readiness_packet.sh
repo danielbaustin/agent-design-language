@@ -13,6 +13,8 @@ mkdir -p "$BROKEN_ROOT"
 cp "$PACKET_ROOT"/README.md "$BROKEN_ROOT"/README.md
 cp "$PACKET_ROOT"/MERGE_READINESS_PROOF_PACKET_v0.91.3.md \
   "$BROKEN_ROOT"/MERGE_READINESS_PROOF_PACKET_v0.91.3.md
+cp "$PACKET_ROOT"/ct_demo_001_merge_gate_snapshot.json \
+  "$BROKEN_ROOT"/ct_demo_001_merge_gate_snapshot.json
 python3 - "$PACKET_ROOT/ct_demo_001_merge_gate.md" "$BROKEN_ROOT/ct_demo_001_merge_gate.md" <<'PY'
 from pathlib import Path
 import sys
@@ -31,6 +33,32 @@ fi
 
 grep -Fq "gate record missing required snippets" "$TMPDIR_ROOT/fail.stderr" || {
   echo "assertion failed: missing fail-closed validator message" >&2
+  exit 1
+}
+
+BROKEN_SNAPSHOT_ROOT="$TMPDIR_ROOT/broken-snapshot"
+mkdir -p "$BROKEN_SNAPSHOT_ROOT"
+cp "$PACKET_ROOT"/README.md "$BROKEN_SNAPSHOT_ROOT"/README.md
+cp "$PACKET_ROOT"/MERGE_READINESS_PROOF_PACKET_v0.91.3.md \
+  "$BROKEN_SNAPSHOT_ROOT"/MERGE_READINESS_PROOF_PACKET_v0.91.3.md
+cp "$PACKET_ROOT"/ct_demo_001_merge_gate.md "$BROKEN_SNAPSHOT_ROOT"/ct_demo_001_merge_gate.md
+python3 - "$PACKET_ROOT/ct_demo_001_merge_gate_snapshot.json" "$BROKEN_SNAPSHOT_ROOT/ct_demo_001_merge_gate_snapshot.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+data["pr_state"] = "OPEN"
+Path(sys.argv[2]).write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+PY
+
+if python3 "$ROOT_DIR/adl/tools/validate_merge_readiness_packet.py" "$BROKEN_SNAPSHOT_ROOT" >/dev/null 2>"$TMPDIR_ROOT/snapshot.stderr"; then
+  echo "assertion failed: validator accepted snapshot with stale PR state" >&2
+  exit 1
+fi
+
+grep -Fq "snapshot field 'pr_state' expected 'MERGED', found 'OPEN'" "$TMPDIR_ROOT/snapshot.stderr" || {
+  echo "assertion failed: missing snapshot fail-closed validator message" >&2
   exit 1
 }
 

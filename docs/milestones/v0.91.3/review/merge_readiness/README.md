@@ -7,10 +7,11 @@ Contents:
 
 - `MERGE_READINESS_PROOF_PACKET_v0.91.3.md`
 - `ct_demo_001_merge_gate.md`
+- `ct_demo_001_merge_gate_snapshot.json`
 
 Boundaries:
 
 - this packet does not merge PRs automatically
 - this packet does not replace GitHub branch protection, CI, or human review
-- this packet preserves a reviewable gate record and a fail-closed validator
-  surface only
+- this packet preserves a reviewable gate record, a structured snapshot, and a
+  fail-closed validator surface only
