@@ -120,11 +120,53 @@ Expected behavior:
 - The generator should classify sidecar/tooling issues deliberately.
 - If sprint assignment is unknown, the card should make the operational consequence explicit.
 
+### P2: Authored issue front matter is not reliably promoted into generated STP metadata
+
+Creating `#3298` with an authored body that included `depends_on`, `repo_inputs`, `canonical_files`, and `demo_required` produced an `STP` whose generated metadata still said:
+
+- `depends_on: []`
+- `repo_inputs: []`
+- `canonical_files: []`
+- `demo_required: false`
+
+The authored front matter was preserved lower in the generated `STP` body, but the top machine-readable STP metadata did not ingest it.
+
+Expected behavior:
+
+- The bootstrap path should parse authored source-prompt front matter and promote known fields into the generated card metadata.
+- If a field cannot be promoted safely, the generated card should explain why instead of silently emitting empty defaults.
+
+### P2: Generated STP can embed a second YAML front matter block inside the body
+
+The `#3298` generated `STP` contains the generated STP front matter, then immediately embeds the authored source issue front matter as body text.
+
+Expected behavior:
+
+- The generated STP should preserve source issue evidence without creating a second front-matter-looking block in the Markdown body.
+- If the source issue prompt front matter is copied into the STP, it should be rendered under an explicit quoted or fenced provenance section.
+
+### P3: Bootstrap SOR wording still says "direct write in main repo" for local ignored records
+
+The `#3298` bootstrap `SOR` says:
+
+```text
+Integration method used: direct write in main repo for the local ignored pre-run record
+```
+
+That wording is confusing when the bundle was created in the `#3286` worktree and the cards are local ignored records.
+
+Expected behavior:
+
+- Bootstrap SOR wording should distinguish primary-checkout, bound-worktree, and local ignored card writes clearly.
+- It should not imply tracked main-repo mutation when no tracked main-repo artifact was written.
+
 ## What Worked
 
 - `pr init` created complete five-file bundles for fresh issues `#3291` and `#3296`.
+- `pr create` created `#3298` with a complete five-file bundle using the new prompt-template path.
 - Fresh SPPs now default to `status: "draft"` and `activation_state: "draft"`.
 - `SIP`, `STP`, and `SOR` validation passed for `#3296`.
+- `SIP`, `STP`, and `SOR` validation passed for freshly created `#3298`.
 - `SIP` and `SOR` validation passed for all three practice targets.
 - `SRP` uses `Structured Review Prompt`, not the legacy `Structured Review Policy`.
 
