@@ -2,8 +2,9 @@
 
 ## Status
 
-These are proposed decisions extracted from the v0.90 architecture packet. They
-are not accepted ADRs until reviewed and promoted.
+The remaining unpromoted entries in this file are proposed decisions extracted
+from the v0.90 architecture packet. They are not accepted ADRs until reviewed
+and promoted.
 
 ## Candidate 0001: Trace And Artifacts As Runtime Truth
 
@@ -23,7 +24,7 @@ are not accepted ADRs until reviewed and promoted.
 - Context: implementation on the root checkout creates drift, conflicts, and
   closeout ambiguity.
 - Proposed decision: tracked issue implementation should run in issue-specific
-  worktrees with STP/SIP/SOR truth recorded before finish and closeout.
+  worktrees with SIP/STP/SPP/SRP/SOR truth recorded before finish and closeout.
 - Consequences: conductor and lifecycle skills must route to worktree-bound
   execution, and closeout must reconcile GitHub and local truth.
 - Evidence: `docs/default_workflow.md`, `adl/src/control_plane.rs`, `pr-*`
