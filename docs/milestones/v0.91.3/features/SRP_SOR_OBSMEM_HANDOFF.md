@@ -14,6 +14,14 @@ findings, dispositions, and residual risk; `SOR` contains actual outcome truth.
 Together they provide a memory handoff shape that `v0.91.4` can harden into
 tracked ingestion.
 
+For `v0.91.3`, exact reviewer-facing source provenance is now anchored to the
+tracked `WP-05` card bundle under
+`workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/`, while
+supporting evidence and merge-readiness artifacts remain companion citations.
+The promoted snapshots may still preserve bounded local derivation references,
+so this feature proves durable source anchoring rather than a fully standalone
+tracked-workflow migration.
+
 ## Scope
 
 The first slice must define:
@@ -40,6 +48,8 @@ Tracked first-slice proof:
 
 - `docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json`
 - `docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.md`
+- `workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/srp.md`
+- `workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/sor.md`
 - `adl/tools/validate_obsmem_handoff_packet.py`
 - `adl/tools/test_obsmem_handoff_packet.sh`
 

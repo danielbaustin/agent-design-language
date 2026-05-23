@@ -16,6 +16,7 @@
   "srp_memory_entry": {
     "entry_kind": "srp_review_learning",
     "source_truth": "derived_from_final_srp",
+    "source_record_rel_path": "workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/srp.md",
     "summary": "The bounded pre-PR review outcome for ct_demo_001 preserved no blocking findings at publication while keeping later merge, memory, and timing work explicitly deferred.",
     "review_judgments": [
       {
@@ -41,6 +42,7 @@
       "signed-trace proof and later trace-linked memory hardening"
     ],
     "citations": [
+      "workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/srp.md",
       "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
       "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md",
       "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md"
@@ -49,6 +51,7 @@
   "sor_memory_entry": {
     "entry_kind": "sor_outcome_truth",
     "source_truth": "derived_from_final_sor",
+    "source_record_rel_path": "workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/sor.md",
     "summary": "The first tracked evidence-bundle and review-synthesis packet for ct_demo_001 merged through PR #3243 after focused validator-backed proof.",
     "facts": [
       "source issue state at publication outcome was CLOSED",
@@ -78,6 +81,7 @@
     "integration_state": "merged",
     "closeout_state": "closed_out",
     "citations": [
+      "workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/sor.md",
       "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
       "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md",
       "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md"

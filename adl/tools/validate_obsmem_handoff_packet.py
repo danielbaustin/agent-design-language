@@ -46,6 +46,10 @@ def main(argv: list[str]) -> int:
     root = Path(argv[1])
     if not root.is_dir():
         return fail(f"packet root does not exist: {root}")
+    try:
+        repo_root = root.resolve().parents[4]
+    except IndexError:
+        return fail(f"packet root does not have the expected repository depth: {root}")
 
     for rel_path, required_snippets in REQUIRED_FILES.items():
         path = root / rel_path
@@ -91,9 +95,23 @@ def main(argv: list[str]) -> int:
             return fail(f"{entry_name} has unexpected entry_kind")
         if entry.get("source_truth") != expected_truth:
             return fail(f"{entry_name} has unexpected source_truth")
+        source_record_rel_path = entry.get("source_record_rel_path")
+        if not isinstance(source_record_rel_path, str):
+            return fail(f"{entry_name} must declare source_record_rel_path")
+        try:
+            validate_repo_relative(f"{entry_name}.source_record_rel_path", source_record_rel_path)
+        except ValueError as err:
+            return fail(str(err))
+        expected_suffix = "cards/srp.md" if entry_name == "srp_memory_entry" else "cards/sor.md"
+        if not source_record_rel_path.endswith(expected_suffix):
+            return fail(f"{entry_name}.source_record_rel_path must end with {expected_suffix}")
+        if not (repo_root / source_record_rel_path).is_file():
+            return fail(f"{entry_name}.source_record_rel_path does not exist in the repo")
         citations = entry.get("citations")
         if not isinstance(citations, list) or not citations:
             return fail(f"{entry_name} must have citations")
+        if source_record_rel_path not in citations:
+            return fail(f"{entry_name} citations must include source_record_rel_path")
         for idx, citation in enumerate(citations):
             if not isinstance(citation, str):
                 return fail(f"{entry_name} citation {idx} must be a string")

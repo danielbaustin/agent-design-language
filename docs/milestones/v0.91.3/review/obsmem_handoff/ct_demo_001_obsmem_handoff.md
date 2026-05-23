@@ -11,8 +11,14 @@
 
 - derived from final `SRP` and `SOR` truth for the closed `WP-05` transition
   packet outcome
+- exact final card provenance is anchored to the tracked `WP-05` card bundle
+  under `workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/`
 - local `.adl` issue-card files remain derivation inputs only
-- canonical memory citations are limited to tracked review/evidence artifacts
+- supporting evidence and merge-readiness artifacts remain companion citations,
+  not substitutes for the exact final `SRP` / `SOR` source records
+- the promoted tracked card snapshots may still preserve bounded local
+  derivation references and therefore act as durable provenance anchors rather
+  than a claim of fully standalone tracked-workflow migration
 
 ## Tracked Supporting Artifacts
 
