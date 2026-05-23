@@ -27,6 +27,20 @@ target yet.
 - shard count: `2`
 - synchronization barriers: `3`
 
+## Supporting Proof Checks
+
+- merge gate outcome: `merge_ready`
+- merge gate decision: `merge_ready`
+- merge gate PR state: `MERGED`
+- merge gate checks success: `True`
+- merge gate zero open findings: `True`
+- readiness outcome: `ready_for_wp09`
+- ObsMem source PR state: `merged`
+- ObsMem integration state: `merged`
+- ObsMem closeout state: `closed_out`
+- evidence bundle proving disposition present: `True`
+- evidence bundle deferred disposition present: `True`
+
 ## Transition Timeline
 
 ```mermaid
