@@ -782,6 +782,56 @@ fn sync_completed_output_surfaces_skips_copy_when_output_already_canonical() {
 }
 
 #[test]
+fn closeout_closed_completed_issue_bundle_records_prune_result_on_canonical_output() {
+    let _guard = env_lock();
+    let _manifest_guard = set_tooling_manifest_root_to_workspace();
+    let temp = temp_dir("adl-pr-lifecycle-closeout-canonical-output");
+    let repo = temp.join("repo");
+    let origin = temp.join("origin.git");
+    init_repo_with_origin(&repo, &origin);
+    let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let sip_text = format!(
+        "# ADL Input Card\n\nTask ID: {task_id}\nRun ID: {task_id}\nVersion: v0.87\nTitle: PR Command Sync Coverage\nBranch: codex/1410-canonical-slug\n\nContext:\n- Issue: https://github.com/example/repo/issues/{issue}\n- PR: https://github.com/example/repo/pull/{issue}\n- Source Issue Prompt: .adl/v0.87/bodies/issue-1410-canonical-slug.md\n- Docs: none\n- Other: none\n\n## Agent Execution Rules\n- Work only in the issue worktree until closeout reconciles the canonical bundle.\n- Keep closeout proof repo-relative and deterministic.\n\n## Prompt Spec\n```yaml\nprompt_schema: adl.v1\nactor:\n  role: execution_agent\n  name: adl\nmodel:\n  id: codl\n  determinism_mode: stable\ninputs:\n  sections:\n    - goal\n    - required_outcome\n    - acceptance_criteria\n    - inputs\n    - target_files_surfaces\n    - validation_plan\n    - demo_proof_requirements\n    - constraints_policies\n    - system_invariants\n    - reviewer_checklist\n    - non_goals_out_of_scope\n    - notes_risks\n    - instructions_to_agent\noutputs:\n  output_card: .adl/v0.87/tasks/{bundle}/sor.md\n  summary_style: concise_structured\nconstraints:\n  include_system_invariants: true\n  include_reviewer_checklist: true\n  disallow_secrets: true\n  disallow_absolute_host_paths: true\nautomation_hints:\n  source_issue_prompt_required: true\n  target_files_surfaces_recommended: true\n  validation_plan_required: true\n  required_outcome_type_supported: true\nreview_surfaces:\n  - card_review_checklist.v1\n  - card_review_output.v1\n  - card_reviewer_gpt.v1.1\n```\n\nReviewer protocol IDs are versioned and order-sensitive:\n1. checklist contract\n2. output artifact contract\n3. reviewer behavior contract\n\nPrompt Spec contract notes:\n- Supported section IDs and machine-readable field semantics are defined in `docs/tooling/prompt-spec.md`.\n- Missing required Prompt Spec keys or required boolean `automation_hints` fields should fail lint.\n- Prompt generation must preserve declared section order rather than heuristic extraction.\n\nExecution:\n- Agent: adl\n- Provider: local\n- Tools allowed: git, cargo, bash\n- Sandbox / approvals: workspace-write / on-failure\n- Source issue-prompt slug: canonical-slug\n- Required outcome type: code\n- Demo required: false\n\n## Goal\n\nRecord canonical closeout truth after pruning the clean issue worktree.\n\n## Required Outcome\n\n- closed completed closeout preserves canonical output truth and records the prune result\n\n## Acceptance Criteria\n\n- canonical output remains valid after closeout\n- worktree prune result is recorded on the canonical output card\n- the clean issue worktree is removed\n\n## Inputs\n- linked source issue prompt\n- canonical `sip.md`, `stp.md`, and `sor.md` surfaces for the closed issue\n- current repository state before closeout reconciliation\n\n## Target Files / Surfaces\n- `.adl/v0.87/tasks/{bundle}/sor.md`\n- `.adl/v0.87/tasks/{bundle}/sip.md`\n- `.adl/v0.87/tasks/{bundle}/stp.md`\n\n## Validation Plan\n- `cargo test --manifest-path adl/Cargo.toml closeout_closed_completed_issue_bundle_records_prune_result_on_canonical_output -- --nocapture`\n- `bash adl/tools/validate_structured_prompt.sh --type stp --input .adl/v0.87/tasks/{bundle}/stp.md`\n- `bash adl/tools/validate_structured_prompt.sh --type sip --input .adl/v0.87/tasks/{bundle}/sip.md`\n\n## Demo / Proof Requirements\n- Demo set: none\n- Proof surfaces: canonical `sor.md` plus prune-result recording\n- No-demo rationale: this is a lifecycle closeout test fixture only\n\n## Constraints / Policies\n- Determinism: keep closeout proof stable for identical inputs.\n- Security and privacy: do not introduce secrets, prompts, tool arguments, or absolute host paths.\n- Resource limits: use focused lifecycle validation only.\n\n## System Invariants (must remain true)\n- Deterministic execution for identical inputs.\n- No hidden state or undeclared side effects.\n- Canonical closeout truth remains replay-compatible.\n- Artifact paths remain repo-relative.\n\n## Reviewer Checklist (machine-readable hints)\n```yaml\ndeterminism_required: true\nnetwork_allowed: false\nartifact_schema_change: false\nreplay_required: false\nsecurity_sensitive: true\nci_validation_required: true\n```\n\n## Non-goals / Out of scope\n- PR publication or merge handling\n- unrelated repository repair\n\n## Notes / Risks\n- Keep the fixture self-contained so CI does not depend on ignored local card bundles.\n\n## Instructions to the Agent\n- Validate the canonical bundle surfaces before running closeout.\n- Reconcile closeout truth without widening into PR publication.\n- Record execution outcome truth only in the paired `sor.md` output.\n",
+        task_id = issue_ref.task_issue_id(),
+        issue = issue_ref.issue_number(),
+        bundle = issue_ref.task_bundle_dir_name(),
+    );
+    let stp_text = "---\nissue_card_schema: adl.issue.v1\nwp: \"WP-15\"\nqueue: \"tools\"\nslug: \"canonical-slug\"\ntitle: \"PR Command Sync Coverage\"\nlabels:\n  - \"area:tools\"\nissue_number: 1410\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"test fixture\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs:\n  - \"adl/src/cli/pr_cmd/lifecycle/tests.rs\"\ncanonical_files:\n  - \".adl/v0.87/tasks/issue-1410__canonical-slug/sor.md\"\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Self-contained lifecycle closeout fixture.\"\npr_start:\n  enabled: false\n  slug: \"canonical-slug\"\n---\n\n# PR Command Sync Coverage\n\n## Summary\n\nSelf-contained fixture for canonical closeout reconciliation.\n\n## Goal\n\nRecord canonical closeout truth after pruning a clean issue worktree.\n\n## Required Outcome\n\n- canonical closeout truth remains valid after pruning the issue worktree\n\n## Deliverables\n\n- canonical `sor.md` remains final-valid after closeout\n- worktree prune result is recorded on the canonical output card\n\n## Acceptance Criteria\n\n- closeout records the worktree prune result\n- the canonical output card remains final-valid after reconciliation\n- the clean issue worktree is removed\n\n## Repo Inputs\n\n- `adl/src/cli/pr_cmd/lifecycle/tests.rs`\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- PR publication or merge handling\n\n## Issue-Graph Notes\n\n- Self-contained lifecycle closeout fixture.\n\n## Notes\n\n- Keep the fixture portable so CI does not depend on ignored local card bundles.\n\n## Tooling Notes\n\n- Validate closeout behavior through focused lifecycle tests only.\n";
+
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "worktree",
+            "add",
+            path_str(&worktree).expect("worktree path"),
+            "-b",
+            "codex/1410-canonical-slug",
+            "main",
+        ])
+        .status()
+        .expect("git worktree add")
+        .success());
+
+    let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&canonical_dir).expect("canonical dir");
+    fs::write(canonical_dir.join("stp.md"), stp_text).expect("write stp");
+    fs::write(canonical_dir.join("sip.md"), sip_text).expect("write sip");
+    let output = canonical_dir.join("sor.md");
+    fs::write(&output, issue_ref_sync_completed_output_content()).expect("write sor");
+
+    closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
+        .expect("closeout should preserve canonical output");
+
+    let text = fs::read_to_string(&output).expect("read sor");
+    assert!(text.contains("- Worktree prune result: pruned: adl-wp-1410"));
+    assert!(!worktree.exists(), "worktree should be pruned");
+    ensure_closed_completed_issue_bundle_truth(&repo, &issue_ref, &output)
+        .expect("canonical truth remains valid");
+}
+
+#[test]
 fn record_worktree_prune_result_inserts_result_line_after_worktree_only_value() {
     let temp = temp_dir("adl-pr-lifecycle-record-worktree-prune-result");
     let output = temp.join("sor.md");
