@@ -54,7 +54,7 @@ Primary public source surfaces include:
 | Term | Definition |
 | --- | --- |
 | Standing | Recognition as a participant in the polis with declared identity, bounded authority, policy accountability, and trace visibility. |
-| Citizen | A full identity-bearing participant in a polis, subject to rights, duties, policy, continuity, and Freedom Gate-mediated agency. Current v0.90.x citizens are provisional unless explicitly stated otherwise. |
+| Citizen | A full identity-bearing participant in a polis, subject to rights, duties, policy, continuity, and Freedom Gate-mediated agency. Pre-`v0.91.1` citizen-state prototypes are provisional unless explicitly stated otherwise. |
 | Guest | A temporary, externally originated, or limited participant with bounded scope, capabilities, duration, and traceability. Humans enter the CSM polis as guests by default. |
 | CSM identity | The mediated identity inside the CSM that can hold citizen standing. The human is not directly the citizen; the CSM identity is the citizen. |
 | Human provider | A provider surface where a human supplies bounded judgment, review, approval, reframing, hypothesis generation, or another artifactized contribution to an ADL workflow. Human provider mode is not polis citizenship. |
