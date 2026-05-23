@@ -2,7 +2,11 @@
 
 ## Purpose
 
-Use this template for ADL `SPP` artifacts. An `SPP` is an issue-local,
+Compatibility note: the canonical copy-and-fill `SPP` template now lives at
+`docs/templates/prompts/1.0.0/spp.md`. This file remains as a descriptive
+compatibility reference for older links.
+
+Use the canonical template for ADL `SPP` artifacts. An `SPP` is an issue-local,
 reviewable planning artifact used after `SIP` and `STP` are complete enough to
 define the issue and selected task, and before implementation proceeds.
 

@@ -55,6 +55,16 @@ def write_file(path: Path, content: str) -> None:
     path.write_text(content)
 
 
+def render_prompt_template(repo_root: Path, kind: str, replacements: dict[str, str]) -> str | None:
+    template_path = repo_root / 'docs' / 'templates' / 'prompts' / '1.0.0' / f'{kind}.md'
+    if not template_path.is_file():
+        return None
+    text = template_path.read_text()
+    for token, value in replacements.items():
+        text = text.replace(token, value)
+    return text
+
+
 def fallback_bootstrap_local_bundle(
     repo_root: Path,
     sprint_issue_number: int,
@@ -71,58 +81,78 @@ def fallback_bootstrap_local_bundle(
     sor_path = bundle_dir / 'sor.md'
     spp_path = bundle_dir / 'spp.md'
     srp_path = bundle_dir / 'srp.md'
+    issue_padded = f'{sprint_issue_number:04d}'
+    source_rel = str(source_path.relative_to(repo_root))
+    stp_rel = str(stp_path.relative_to(repo_root))
+    sip_rel = str(sip_path.relative_to(repo_root))
+    spp_rel = str(spp_path.relative_to(repo_root))
+    srp_rel = str(srp_path.relative_to(repo_root))
+    sor_rel = str(sor_path.relative_to(repo_root))
+    replacements = {
+        '<issue>': str(sprint_issue_number),
+        '<issue_padded>': issue_padded,
+        '<task_id>': f'issue-{issue_padded}',
+        '<run_id>': f'issue-{issue_padded}',
+        '<version>': version,
+        '<slug>': slug,
+        '<title>': title,
+        '<branch>': 'not bound yet',
+        '<issue_url>': issue_url,
+        '<source_issue_prompt>': source_rel,
+        '<docs_context>': 'none',
+        '<output_card>': sor_rel,
+        '<stp_card>': stp_rel,
+        '<sip_card>': sip_rel,
+        '<spp_card>': spp_rel,
+        '<srp_card>': srp_rel,
+        '<sor_card>': sor_rel,
+        '<wp>': 'sprint',
+        '<required_outcome_type>': 'docs',
+        '<demo_required>': 'false',
+        '<issue_graph_note>': 'Sprint management issue created by sprint-conductor helper.',
+        '<summary>': f'Sprint-management surface for {title}.',
+        '<goal>': body,
+        '<required_outcome>': 'Create a concrete sprint-management issue with complete local C-SDLC cards.',
+        '<deliverables>': 'Sprint issue body and five-card local task bundle.',
+        '<acceptance_criteria>': 'All five local cards exist and are ready for sprint preflight review.',
+        '<repo_inputs>': 'Ordered child issue list and sprint goal.',
+        '<dependencies>': 'Child issue cards must exist and validate before sprint execution.',
+        '<target_files_surfaces>': 'Local sprint issue body and task bundle.',
+        '<validation_plan>': 'Run sprint structured-prompt readiness before execution starts.',
+        '<demo_proof_requirements>': 'No demo required for sprint management issue creation.',
+        '<non_goals>': 'Do not execute child issues from this bootstrap helper.',
+        '<issue_graph_notes>': 'Sprint umbrella orchestrates children; it does not replace child issue closeout.',
+        '<notes_risks>': 'Review cards before sprint execution starts.',
+        '<tooling_notes>': 'Generated from docs/templates/prompts/1.0.0/ when available.',
+        '<target_files_surfaces_inline>': 'Local sprint issue body and task bundle.',
+        '<non_goals_inline>': 'Do not execute child issues from this bootstrap helper.',
+        '<plan_summary>': f'Design-time sprint-management plan for {title}.',
+        '<dependencies_inline>': 'Child issue cards must exist and validate before execution.',
+        '<repo_inputs_inline>': 'Ordered child issue list and sprint goal.',
+        '<deliverables_inline>': 'Sprint issue body and five-card local task bundle.',
+        '<acceptance_criteria_inline>': 'All five cards exist and pass preflight readiness.',
+        '<risks_inline>': 'Sprint state can drift if child closeout is skipped.',
+        '<validation_plan_inline>': 'Run sprint structured-prompt readiness before execution starts.',
+        '<notes_risks_inline>': 'Review and update before sprint execution starts.',
+        '<status>': 'NOT_STARTED',
+        '<timestamp>': '1970-01-01T00:00:00Z',
+        '<branch_action>': 'Preserved pre-run branch truth; no execution branch or worktree is bound yet.',
+    }
 
     write_file(source_path, body + '\n')
-    write_file(stp_path, body + '\n')
-    write_file(
-        sip_path,
-        (
-            "# ADL Input Card\n\n"
-            f"Task ID: issue-{sprint_issue_number}\n"
-            f"Run ID: issue-{sprint_issue_number}\n"
-            f"Version: {version}\n"
-            f"Title: {title}\n"
-            "Branch: not bound yet\n\n"
-            "Context:\n"
-            f"- Issue: {issue_url}\n"
-            f"- Source Issue Prompt: {source_path.relative_to(repo_root)}\n\n"
-            "## Agent Execution Rules\n"
-            "- This issue is not started yet; do not assume a branch or worktree already exists.\n"
-        ),
-    )
-    write_file(
-        sor_path,
-        (
-            f"# issue-{sprint_issue_number}\n\n"
-            f"Task ID: issue-{sprint_issue_number}\n"
-            f"Run ID: issue-{sprint_issue_number}\n"
-            f"Version: {version}\n"
-            f"Title: {title}\n"
-            "Branch: not bound yet\n"
-            "Status: NOT_STARTED\n"
-        ),
-    )
-    write_file(
-        spp_path,
-        (
-            "issue: {issue}\n"
-            "task_id: \"issue-{issue}\"\n"
-            "run_id: \"issue-{issue}\"\n"
-            "codex_plan:\n"
-            "  status: pending\n"
-            "  step: \"Sprint management issue created; detailed plan pending execution.\"\n"
-        ).format(issue=sprint_issue_number),
-    )
-    write_file(
-        srp_path,
-        (
-            "issue: {issue}\n"
-            "task_id: \"issue-{issue}\"\n"
-            "review_status: pending\n"
-            "notes:\n"
-            "  - \"Sprint management issue created; review policy pending execution.\"\n"
-        ).format(issue=sprint_issue_number),
-    )
+    for kind, path in {
+        'stp': stp_path,
+        'sip': sip_path,
+        'sor': sor_path,
+        'spp': spp_path,
+        'srp': srp_path,
+    }.items():
+        rendered = render_prompt_template(repo_root, kind, replacements)
+        if rendered is None and kind == 'stp':
+            rendered = body + '\n'
+        if rendered is None:
+            rendered = f'# {kind.upper()}\n\nissue: {sprint_issue_number}\ntask_id: "issue-{issue_padded}"\n'
+        write_file(path, rendered)
     return {
         'version': version,
         'slug': slug,
@@ -154,24 +184,16 @@ def bootstrap_local_bundle(
             ],
             cwd=repo_root,
         )
-        version = infer_version_from_title(title)
-        slug = sanitize_slug(title)
-        source_path = issue_prompt_path(repo_root, version, sprint_issue_number, slug)
-        bundle_dir = task_bundle_dir(repo_root, version, sprint_issue_number, slug)
-        stp_path = bundle_dir / 'stp.md'
-        write_file(source_path, body + '\n')
-        write_file(stp_path, body + '\n')
-        return {
-            'version': version,
-            'slug': slug,
-            'source_path': str(source_path),
-            'bundle_dir': str(bundle_dir),
-            'stp_path': str(stp_path),
-            'sip_path': str(bundle_dir / 'sip.md'),
-            'sor_path': str(bundle_dir / 'sor.md'),
-            'spp_path': str(bundle_dir / 'spp.md'),
-            'srp_path': str(bundle_dir / 'srp.md'),
-        }
+        # pr.sh init establishes the canonical local paths; render the sprint body
+        # back through the 1.0.0 templates so the local bundle is not left as a
+        # generic bootstrap stub or a plain issue-body STP.
+        return fallback_bootstrap_local_bundle(
+            repo_root,
+            sprint_issue_number,
+            title,
+            issue_url,
+            body,
+        )
     return fallback_bootstrap_local_bundle(repo_root, sprint_issue_number, title, issue_url, body)
 
 

@@ -696,6 +696,13 @@ fn has_generic_spp_design_time_scaffold(text: &str) -> bool {
         "Design-time generated SPP; review before execution",
         "Review this SPP before execution; during runtime, update it before continuing if the actual execution sequence changes.",
         "generated from source issue prompt, STP/SIP surfaces",
+        "Design-time execution plan for",
+        "Use dependency truth from the linked source issue prompt",
+        "Use repo inputs from the linked source issue prompt",
+        "Use deliverables from the linked source issue prompt",
+        "Satisfy the linked source issue prompt acceptance criteria",
+        "Run focused proof gates for acceptance: Satisfy the linked source issue prompt acceptance criteria",
+        "Record SRP review results and SOR outcome truth",
     ];
     MARKERS.iter().any(|marker| text.contains(marker)) || has_truncation_sentinel_line(text)
 }
@@ -1364,6 +1371,36 @@ mod tests {
                 .and_then(|stage| stage.next_editor),
             None
         );
+        assert_eq!(
+            lifecycle
+                .stages
+                .iter()
+                .find(|stage| stage.stage == "SPP")
+                .and_then(|stage| stage.next_editor),
+            Some("spp-editor")
+        );
+    }
+
+    #[test]
+    fn card_lifecycle_blocks_approved_generic_spp_before_execution() {
+        let repo = lifecycle_temp_repo("approved-generic-spp");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Branch: not bound yet\n",
+                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                spp: "---\nbranch: \"not bound yet\"\nstatus: \"approved\"\n---\n\n# Structured Plan Prompt\n\n## Plan Summary\n\nDesign-time execution plan for generated issue.\n\n## Proposed Steps\n\n- Use deliverables from the linked source issue prompt\n- Satisfy the linked source issue prompt acceptance criteria\n",
+                srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
+                sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_eq!(lifecycle.pr_run_readiness, "blocked");
+        assert_stage(&lifecycle, "SPP", "scaffold", false, false);
         assert_eq!(
             lifecycle
                 .stages

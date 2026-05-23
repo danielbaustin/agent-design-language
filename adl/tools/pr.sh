@@ -699,36 +699,67 @@ trim_ws() {
 # ---------- cards + templates (templates tracked; cards local-only) ----------
 ADL_DIR=".adl"
 
-INPUT_TEMPLATE="adl/templates/cards/input_card_template.md"
-OUTPUT_TEMPLATE="adl/templates/cards/output_card_template.md"
+PROMPT_TEMPLATE_ROOT="docs/templates/prompts/1.0.0"
+INPUT_TEMPLATE="$PROMPT_TEMPLATE_ROOT/sip.md"
+STP_TEMPLATE="$PROMPT_TEMPLATE_ROOT/stp.md"
+SPP_TEMPLATE="$PROMPT_TEMPLATE_ROOT/spp.md"
+SRP_TEMPLATE="$PROMPT_TEMPLATE_ROOT/srp.md"
+OUTPUT_TEMPLATE="$PROMPT_TEMPLATE_ROOT/sor.md"
+COMPAT_INPUT_TEMPLATE="adl/templates/cards/input_card_template.md"
+COMPAT_OUTPUT_TEMPLATE="adl/templates/cards/output_card_template.md"
 LEGACY_INPUT_TEMPLATE="$ADL_DIR/templates/input_card_template.md"
 LEGACY_OUTPUT_TEMPLATE="$ADL_DIR/templates/output_card_template.md"
 
+resolve_prompt_template() {
+  local kind="$1" primary="" compat="" legacy=""
+  local registry_path registry_template
+  case "$kind" in
+    sip) primary="$INPUT_TEMPLATE"; compat="$COMPAT_INPUT_TEMPLATE"; legacy="$LEGACY_INPUT_TEMPLATE" ;;
+    stp) primary="$STP_TEMPLATE" ;;
+    spp) primary="$SPP_TEMPLATE" ;;
+    srp) primary="$SRP_TEMPLATE" ;;
+    sor) primary="$OUTPUT_TEMPLATE"; compat="$COMPAT_OUTPUT_TEMPLATE"; legacy="$LEGACY_OUTPUT_TEMPLATE" ;;
+    *) die "unknown prompt template kind: $kind" ;;
+  esac
+  registry_path="$(repo_root)/docs/templates/prompts/current.json"
+  if [[ -f "$registry_path" ]]; then
+    registry_template="$(
+      python3 - "$registry_path" "$kind" <<'PY' 2>/dev/null || true
+import json
+import sys
+from pathlib import Path
+
+registry = json.loads(Path(sys.argv[1]).read_text())
+entry = registry.get("templates", {}).get(sys.argv[2], {})
+print(entry.get("path", ""))
+PY
+    )"
+    if [[ -n "$registry_template" && -f "$(repo_root)/$registry_template" ]]; then
+      echo "$(repo_root)/$registry_template"
+      return 0
+    fi
+  fi
+  if [[ -n "$primary" && -f "$(repo_root)/$primary" ]]; then
+    echo "$(repo_root)/$primary"
+    return 0
+  fi
+  if [[ -n "$compat" && -f "$(repo_root)/$compat" ]]; then
+    echo "$(repo_root)/$compat"
+    return 0
+  fi
+  if [[ -n "$legacy" && -f "$(repo_root)/$legacy" ]]; then
+    echo "$(repo_root)/$legacy"
+    return 0
+  fi
+  echo "$(repo_root)/$primary"
+}
+
 resolve_input_template() {
-  if [[ -f "$(repo_root)/$INPUT_TEMPLATE" ]]; then
-    echo "$(repo_root)/$INPUT_TEMPLATE"
-    return 0
-  fi
-  if [[ -f "$(repo_root)/$LEGACY_INPUT_TEMPLATE" ]]; then
-    echo "$(repo_root)/$LEGACY_INPUT_TEMPLATE"
-    return 0
-  fi
-  # Return preferred path even if it doesn't exist (caller validates existence).
-  echo "$(repo_root)/$INPUT_TEMPLATE"
+  resolve_prompt_template sip
 }
 
 resolve_output_template() {
-  # Prefer the new name; fall back to legacy for backwards compatibility.
-  if [[ -f "$(repo_root)/$OUTPUT_TEMPLATE" ]]; then
-    echo "$(repo_root)/$OUTPUT_TEMPLATE"
-    return 0
-  fi
-  if [[ -f "$(repo_root)/$LEGACY_OUTPUT_TEMPLATE" ]]; then
-    echo "$(repo_root)/$LEGACY_OUTPUT_TEMPLATE"
-    return 0
-  fi
-  # Return the preferred path even if it doesn't exist (caller will handle).
-  echo "$(repo_root)/$OUTPUT_TEMPLATE"
+  resolve_prompt_template sor
 }
 
 resolve_structured_prompt_validator() {
@@ -799,6 +830,25 @@ render_template() {
   local tpl="$1"
   [[ -f "$tpl" ]] || return 1
   cat "$tpl"
+}
+
+apply_prompt_template_values() {
+  local file="$1"
+  shift
+  python3 - "$file" "$@" <<'PY'
+import sys
+
+path = sys.argv[1]
+pairs = sys.argv[2:]
+if len(pairs) % 2:
+    raise SystemExit("template replacement requires token/value pairs")
+with open(path, "r", encoding="utf-8") as handle:
+    text = handle.read()
+for idx in range(0, len(pairs), 2):
+    text = text.replace(pairs[idx], pairs[idx + 1])
+with open(path, "w", encoding="utf-8") as handle:
+    handle.write(text)
+PY
 }
 
 join_by() {
@@ -932,6 +982,38 @@ seed_input_card() {
   render_template "$tpl" >"$tmp" || die "failed to render input card template: $tpl"
   ensure_nonempty_file "$tmp" || die "rendered input card is empty: $tmp"
 
+  repo="$(default_repo)"
+  source_slug="$(sanitize_slug "$title")"
+  source_path="$(issue_prompt_path_for_issue "$issue" "$ver" "$source_slug")"
+  issue_url="https://github.com/${repo}/issues/${issue}"
+  docs_value="$(docs_context_value_for_issue_prompt "$source_path")"
+  output_path_actual="${output_path_actual:-$(output_card_path "$issue" "$ver" "$source_slug")}"
+  output_path_actual="$(path_relative_to_repo "$output_path_actual")"
+  apply_prompt_template_values "$tmp" \
+    "<issue>" "$issue" \
+    "<issue_padded>" "$(card_issue_pad "$issue")" \
+    "<task_id>" "$task_id" \
+    "<run_id>" "$run_id" \
+    "<version>" "$ver" \
+    "<slug>" "$source_slug" \
+    "<title>" "$title" \
+    "<branch>" "$branch" \
+    "<issue_url>" "$issue_url" \
+    "<source_issue_prompt>" "$(path_relative_to_repo "$source_path")" \
+    "<docs_context>" "$docs_value" \
+    "<output_card>" "$output_path_actual" \
+    "<required_outcome_type>" "combination" \
+    "<demo_required>" "false" \
+    "<goal>" "Execute the linked issue prompt in the bound issue worktree." \
+    "<required_outcome>" "Ship the required outcome described by the linked source issue prompt." \
+    "<acceptance_criteria>" "Satisfy the acceptance criteria in the linked source issue prompt and record focused proof in SOR." \
+    "<inputs>" "Linked source issue prompt; root task bundle cards; current repository state." \
+    "<target_files_surfaces>" "Files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt." \
+    "<validation_plan>" "Run the smallest proving validation for the touched surface and record exact commands in SOR." \
+    "<demo_proof_requirements>" "Follow demo and proof requirements from the linked source issue prompt." \
+    "<non_goals>" "Do not widen scope beyond the linked source issue prompt." \
+    "<notes_risks>" "Refine this card if the linked source issue prompt changes materially before execution begins."
+
   # Stamp fields (best-effort; keeps template generic and domain-agnostic).
   set_field_line "$tmp" "Task ID" "$task_id"
   set_field_line "$tmp" "Run ID" "$run_id"
@@ -940,25 +1022,19 @@ seed_input_card() {
   set_field_line "$tmp" "Branch" "$branch"
 
   # If there is a Context Issue line, fill it with a URL.
-  repo="$(default_repo)"
   if [[ -n "$repo" ]]; then
-    issue_url="https://github.com/${repo}/issues/${issue}"
     replace_first_line_re "$tmp" "^- Issue:.*$" "- Issue: $issue_url"
   fi
 
-  source_slug="$(sanitize_slug "$title")"
-  source_path="$(issue_prompt_path_for_issue "$issue" "$ver" "$source_slug")"
   if [[ -f "$source_path" ]]; then
     replace_first_line_re "$tmp" "^- Source Issue Prompt:.*$" "- Source Issue Prompt: $(path_relative_to_repo "$source_path")"
   elif [[ -n "$issue_url" ]]; then
     replace_first_line_re "$tmp" "^- Source Issue Prompt:.*$" "- Source Issue Prompt: $issue_url"
   fi
-  docs_value="$(docs_context_value_for_issue_prompt "$source_path")"
   replace_first_line_re "$tmp" "^- Docs:.*$" "- Docs: $docs_value"
   replace_first_line_re "$tmp" "^- Other:.*$" "- Other: none"
 
   if [[ -n "$output_path_actual" ]]; then
-    output_path_actual="$(path_relative_to_repo "$output_path_actual")"
     replace_first_line_re "$tmp" "^- Write the output card to the paired .*" "- Write the output record to the paired local task bundle sor.md path."
     replace_first_line_re "$tmp" "^[[:space:]]*output_card: .*$" "  output_card: $output_path_actual"
   fi
@@ -984,6 +1060,30 @@ seed_output_card() {
   render_template "$out_tpl" >"$tmp" || die "failed to render output card template: $out_tpl"
   ensure_nonempty_file "$tmp" || die "rendered output card is empty: $tmp"
 
+  local timestamp status branch_action output_rel
+  timestamp="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+  if branch_indicates_unbound_state "$branch"; then
+    status="NOT_STARTED"
+    branch_action="Preserved pre-run branch truth; no execution branch or worktree is bound yet."
+  else
+    status="IN_PROGRESS"
+    branch_action="Reserved the execution branch for later implementation."
+  fi
+  output_rel="$(path_relative_to_repo "$path")"
+  apply_prompt_template_values "$tmp" \
+    "<issue>" "$issue" \
+    "<issue_padded>" "$(card_issue_pad "$issue")" \
+    "<task_id>" "$task_id" \
+    "<run_id>" "$run_id" \
+    "<version>" "$ver" \
+    "<slug>" "$issue_slug" \
+    "<title>" "$title" \
+    "<branch>" "$branch" \
+    "<status>" "$status" \
+    "<timestamp>" "$timestamp" \
+    "<output_card>" "$output_rel" \
+    "<branch_action>" "$branch_action"
+
   set_field_line "$tmp" "Task ID" "$task_id"
   set_field_line "$tmp" "Run ID" "$run_id"
   set_field_line "$tmp" "Version" "$ver"
@@ -992,7 +1092,7 @@ seed_output_card() {
   replace_first_markdown_h1 "$tmp" "$issue_slug"
 
   # Default Status if template left it blank.
-  replace_first_line_re "$tmp" "^Status:[[:space:]]*$" "Status: NOT_STARTED | IN_PROGRESS | DONE | FAILED"
+  replace_first_line_re "$tmp" "^Status:[[:space:]]*$" "Status: $status"
   replace_first_line_re "$tmp" "^- Integration state:.*$" "- Integration state: worktree_only"
   replace_first_line_re "$tmp" "^- Verification scope:.*$" "- Verification scope: worktree"
   validate_card_header_count "$tmp" "# $issue_slug" || die "generated output card must contain exactly one '# $issue_slug' header"
@@ -1036,10 +1136,352 @@ validate_bootstrap_stp() {
     || die "init: stp failed validation: $path"
 }
 
+validate_structured_card() {
+  local kind="$1" path="$2"
+  local validator
+  validator="$(resolve_structured_prompt_validator)"
+  "$validator" --type "$kind" --phase bootstrap --input "$path" >/dev/null \
+    || die "init: $kind failed validation: $path"
+}
+
+source_section_one_line() {
+  local path="$1" heading="$2" fallback="$3"
+  local value
+  if [[ -f "$path" ]]; then
+    value="$(
+      awk -v heading="## ${heading}" '
+        $0 == heading { in_section=1; next }
+        in_section && /^## / { exit }
+        in_section {
+          line=$0
+          sub(/^[[:space:]]*[-*][[:space:]]+/, "", line)
+          sub(/^[[:space:]]+/, "", line)
+          sub(/[[:space:]]+$/, "", line)
+          if (line != "" && line != "-" && line != "none") {
+            if (out != "") { out = out "; " }
+            out = out line
+          }
+        }
+        END { print out }
+      ' "$path"
+    )"
+    value="$(trim_ws "$value")"
+  fi
+  if [[ -n "${value:-}" ]]; then
+    printf '%s\n' "$value"
+  else
+    printf '%s\n' "$fallback"
+  fi
+}
+
+seed_prompt_template_card() {
+  local kind="$1" path="$2" issue="$3" title="$4" branch="$5" ver="$6" source_path="$7" slug="$8"
+  local tpl tmp repo issue_url bundle_dir stp_rel sip_rel spp_rel srp_rel sor_rel source_rel target_inline
+  local source_summary source_goal source_required_outcome source_deliverables source_acceptance source_repo_inputs
+  local source_dependencies source_validation source_demo source_non_goals source_issue_graph source_notes
+  tpl="$(resolve_prompt_template "$kind")"
+  mkdir -p "$(dirname "$path")"
+  tmp="$(mktemp -t prsh_${kind}_card_XXXXXX)"
+
+  repo="$(default_repo)"
+  issue_url="https://github.com/${repo}/issues/${issue}"
+  bundle_dir="$(task_bundle_dir_path "$issue" "$ver" "$slug")"
+  source_rel="$(path_relative_to_repo "$source_path")"
+  stp_rel="$(path_relative_to_repo "$bundle_dir/stp.md")"
+  sip_rel="$(path_relative_to_repo "$bundle_dir/sip.md")"
+  spp_rel="$(path_relative_to_repo "$bundle_dir/spp.md")"
+  srp_rel="$(path_relative_to_repo "$bundle_dir/srp.md")"
+  sor_rel="$(path_relative_to_repo "$bundle_dir/sor.md")"
+  source_summary="$(source_section_one_line "$source_path" "Summary" "Issue-local task surface for $title.")"
+  source_goal="$(source_section_one_line "$source_path" "Goal" "Refine the linked source issue prompt goal.")"
+  source_required_outcome="$(source_section_one_line "$source_path" "Required Outcome" "Refine the linked source issue prompt required outcome.")"
+  source_deliverables="$(source_section_one_line "$source_path" "Deliverables" "Refine source issue deliverables before execution.")"
+  source_acceptance="$(source_section_one_line "$source_path" "Acceptance Criteria" "Refine source issue acceptance criteria before execution.")"
+  source_repo_inputs="$(source_section_one_line "$source_path" "Repo Inputs" "$source_rel")"
+  source_dependencies="$(source_section_one_line "$source_path" "Dependencies" "none recorded in source issue prompt")"
+  source_validation="$(source_section_one_line "$source_path" "Validation Plan" "$(source_section_one_line "$source_path" "Tooling Notes" "Run the smallest proving validation for the touched surface and record it in SOR.")")"
+  source_demo="$(source_section_one_line "$source_path" "Demo Expectations" "No demo required unless the source issue says otherwise.")"
+  source_non_goals="$(source_section_one_line "$source_path" "Non-goals" "Do not widen scope beyond the linked source issue prompt.")"
+  source_issue_graph="$(source_section_one_line "$source_path" "Issue-Graph Notes" "Preserve issue graph truth from the linked source issue prompt.")"
+  source_notes="$(source_section_one_line "$source_path" "Notes" "Update this card if execution reality diverges.")"
+  target_inline="$source_repo_inputs"
+
+  if [[ -f "$tpl" ]]; then
+    render_template "$tpl" >"$tmp" || die "failed to render $kind prompt template: $tpl"
+  elif [[ "$kind" == "spp" ]]; then
+    cat >"$tmp" <<'EOF'
+---
+schema_version: "0.1"
+artifact_type: "structured_planning_prompt"
+name: "<slug>-execution-plan"
+issue: <issue>
+task_id: "issue-<issue_padded>"
+run_id: "issue-<issue_padded>"
+version: "<version>"
+title: "<title>"
+branch: "<branch>"
+status: "draft"
+activation_state: "draft"
+plan_revision: 1
+source_refs:
+  - kind: "issue"
+    ref: "<issue_url>"
+scope:
+  files:
+    - "<target_files_surfaces_inline>"
+  components:
+    - "<slug>"
+  out_of_scope:
+    - "<non_goals_inline>"
+constraints:
+  - "design_time_plan_must_be_reviewed_before_execution"
+confidence: "medium"
+plan_summary: "<plan_summary>"
+assumptions:
+  - "The linked source issue prompt remains canonical."
+proposed_steps:
+  - id: "step-1"
+    description: "Implement only the bounded deliverables: <deliverables_inline>"
+    expected_output: "tracked issue work product"
+    allowed_mode: "execution_after_approval"
+codex_plan:
+  - step: "Implement the bounded deliverables only."
+    status: "pending"
+affected_areas:
+  - "<slug>"
+invariants_to_preserve:
+  - "Keep SPP issue-local."
+risks_and_edge_cases:
+  - "<risks_inline>"
+test_strategy:
+  - "<validation_plan_inline>"
+execution_handoff: "Use this SPP as the design-time plan-of-record."
+required_permissions:
+  - "workspace-write after execution approval"
+stop_conditions:
+  - "Stop and re-plan if scope changes."
+alternatives_considered:
+  - description: "Rely only on transient chat planning."
+    reason_not_chosen: "Chat-only planning is not durable."
+review_hooks:
+  - "Check scope truthfulness and validation sufficiency."
+notes: "<notes_risks_inline>"
+---
+
+# Structured Plan Prompt
+
+## Plan Summary
+
+<plan_summary>
+
+## Codex Plan
+
+1. [pending] Implement the bounded deliverables only.
+
+## Assumptions
+
+- The linked source issue prompt remains canonical.
+
+## Proposed Steps
+
+1. Implement only the bounded deliverables: <deliverables_inline>
+
+## Affected Areas
+
+- <slug>
+
+## Invariants To Preserve
+
+- Keep SPP issue-local.
+
+## Risks And Edge Cases
+
+- <risks_inline>
+
+## Test Strategy
+
+- <validation_plan_inline>
+
+## Execution Handoff
+
+Use this SPP as the design-time plan-of-record.
+
+## Stop Conditions
+
+- Stop and re-plan if scope changes.
+
+## Notes
+
+<notes_risks_inline>
+EOF
+  elif [[ "$kind" == "srp" ]]; then
+    cat >"$tmp" <<'EOF'
+---
+schema_version: "0.1"
+artifact_type: "structured_review_prompt"
+name: "<slug>-review-prompt"
+issue: <issue>
+task_id: "issue-<issue_padded>"
+version: "<version>"
+title: "<title>"
+branch: "<branch>"
+status: "draft"
+source_refs:
+  - kind: "issue"
+    ref: "<issue_url>"
+review_mode: "pre_pr_independent_review"
+timing: "before_pr_open"
+scope_basis:
+  - "<stp_card>"
+  - "<sip_card>"
+in_scope_surfaces:
+  - "tracked changes for this issue branch"
+evidence_policy:
+  - "Use repository evidence and targeted validation output only."
+validation_inputs:
+  - "Issue-local proofs recorded in the SOR."
+allowed_dispositions:
+  - "PASS"
+  - "BLOCK"
+  - "NEEDS_FOLLOWUP"
+reviewer_constraints:
+  - "Do not widen issue scope."
+refusal_policy:
+  - "Refuse claims that are unsupported by repository evidence."
+follow_up_routing:
+  - "Route actionable defects back to the issue branch."
+non_claims:
+  - "This prompt does not claim review has already run."
+policy_refs:
+  - "<stp_card>"
+notes: "Structured Review Prompt prepared before execution."
+---
+
+# Structured Review Prompt
+
+## Review Summary
+
+Use this prompt to govern the independent pre-PR review for this issue.
+
+## Scope Basis
+
+- <stp_card>
+- <sip_card>
+
+## In-Scope Surfaces
+
+- tracked changes for this issue branch
+
+## Evidence Rules
+
+- Use repository evidence and targeted validation output only.
+
+## Validation Inputs
+
+- Issue-local proofs recorded in the SOR.
+
+## Allowed Dispositions
+
+- PASS
+- BLOCK
+- NEEDS_FOLLOWUP
+
+## Reviewer Constraints
+
+- Do not widen issue scope.
+
+## Refusal Policy
+
+- Refuse claims that are unsupported by repository evidence.
+
+## Follow-up Routing
+
+- Route actionable defects back to the issue branch.
+
+## Non-Claims
+
+- This prompt does not claim review has already run.
+
+## Review Results
+
+### Findings
+
+- Not run yet; implementation has not been bound.
+
+### Dispositions
+
+- Not applicable until review runs.
+
+### Recommended Outcome
+
+- Not run yet.
+
+## Notes
+
+Structured Review Prompt prepared before execution.
+EOF
+  else
+    die "missing $kind prompt template: $tpl"
+  fi
+  ensure_nonempty_file "$tmp" || die "rendered $kind card is empty: $tmp"
+
+  apply_prompt_template_values "$tmp" \
+    "<issue>" "$issue" \
+    "<issue_padded>" "$(card_issue_pad "$issue")" \
+    "<task_id>" "issue-$(card_issue_pad "$issue")" \
+    "<run_id>" "issue-$(card_issue_pad "$issue")" \
+    "<version>" "$ver" \
+    "<slug>" "$slug" \
+    "<title>" "$title" \
+    "<branch>" "$branch" \
+    "<issue_url>" "$issue_url" \
+    "<source_issue_prompt>" "$source_rel" \
+    "<stp_card>" "$stp_rel" \
+    "<sip_card>" "$sip_rel" \
+    "<spp_card>" "$spp_rel" \
+    "<srp_card>" "$srp_rel" \
+    "<sor_card>" "$sor_rel" \
+    "<output_card>" "$sor_rel" \
+    "<wp>" "process" \
+    "<required_outcome_type>" "code" \
+    "<demo_required>" "false" \
+    "<issue_graph_note>" "Versioned C-SDLC prompt template applied; source issue prompt remains the design-time intent source." \
+    "<summary>" "$source_summary" \
+    "<goal>" "$source_goal" \
+    "<required_outcome>" "$source_required_outcome" \
+    "<deliverables>" "$source_deliverables" \
+    "<acceptance_criteria>" "$source_acceptance" \
+    "<repo_inputs>" "$source_repo_inputs" \
+    "<dependencies>" "$source_dependencies" \
+    "<target_files_surfaces>" "$target_inline" \
+    "<validation_plan>" "$source_validation" \
+    "<demo_proof_requirements>" "$source_demo" \
+    "<non_goals>" "$source_non_goals" \
+    "<issue_graph_notes>" "$source_issue_graph" \
+    "<notes_risks>" "$source_notes" \
+    "<tooling_notes>" "Generated from docs/templates/prompts/1.0.0/." \
+    "<target_files_surfaces_inline>" "$target_inline" \
+    "<non_goals_inline>" "$source_non_goals" \
+    "<plan_summary>" "Issue-local execution plan for $title." \
+    "<dependencies_inline>" "$source_dependencies" \
+    "<repo_inputs_inline>" "$source_repo_inputs" \
+    "<deliverables_inline>" "$source_deliverables" \
+    "<acceptance_criteria_inline>" "$source_acceptance" \
+    "<risks_inline>" "Generated card may need editor tightening if the source issue prompt is underspecified." \
+    "<validation_plan_inline>" "$source_validation" \
+    "<notes_risks_inline>" "Generated from 1.0.0 template; update before continuing if execution diverges."
+
+  mv "$tmp" "$path"
+}
+
 seed_task_bundle_stp() {
-  local source_path="$1" dest_path="$2"
+  local source_path="$1" dest_path="$2" issue="$3" title="$4" branch="$5" version="$6" slug="$7"
   mkdir -p "$(dirname "$dest_path")"
-  cp -f "$source_path" "$dest_path"
+  if [[ -f "$(repo_root)/$STP_TEMPLATE" ]]; then
+    seed_prompt_template_card stp "$dest_path" "$issue" "$title" "$branch" "$version" "$source_path" "$slug"
+  else
+    cp -f "$source_path" "$dest_path"
+  fi
 }
 
 seed_bootstrap_surfaces() {
@@ -1050,13 +1492,16 @@ seed_bootstrap_surfaces() {
   mkdir -p "$bundle_dir"
   if ! ensure_nonempty_file "$stp_path"; then
     note "Creating task-bundle STP: $stp_path" >&2
-    seed_task_bundle_stp "$source_path" "$stp_path"
+    seed_task_bundle_stp "$source_path" "$stp_path" "$issue" "$title" "$branch" "$version" "$slug"
   else
     note "Task-bundle STP exists: $stp_path" >&2
   fi
 
   in_path="$(input_card_path "$issue" "$version" "$slug")"
   out_path="$(output_card_path "$issue" "$version" "$slug")"
+  local spp_path srp_path
+  spp_path="$bundle_dir/spp.md"
+  srp_path="$bundle_dir/srp.md"
   ensure_adl_dirs
   if ! ensure_nonempty_file "$in_path" || input_card_is_bootstrap_stub "$in_path"; then
     note "Creating input card: $in_path" >&2
@@ -1070,10 +1515,24 @@ seed_bootstrap_surfaces() {
   else
     note "Output card exists: $out_path" >&2
   fi
+  if ! ensure_nonempty_file "$spp_path"; then
+    note "Creating SPP card: $spp_path" >&2
+    seed_prompt_template_card spp "$spp_path" "$issue" "$title" "$branch" "$version" "$source_path" "$slug"
+  else
+    note "SPP card exists: $spp_path" >&2
+  fi
+  if ! ensure_nonempty_file "$srp_path"; then
+    note "Creating SRP card: $srp_path" >&2
+    seed_prompt_template_card srp "$srp_path" "$issue" "$title" "$branch" "$version" "$source_path" "$slug"
+  else
+    note "SRP card exists: $srp_path" >&2
+  fi
   sync_legacy_links_for_issue "$issue" "$version" "$slug"
   validate_bootstrap_stp "$stp_path"
+  validate_structured_card spp "$spp_path"
+  validate_structured_card srp "$srp_path"
   validate_bootstrap_cards "$issue" "$slug" "$branch" "$in_path" "$out_path"
-  printf '%s\n%s\n%s\n' "$stp_path" "$in_path" "$out_path"
+  printf '%s\n%s\n%s\n%s\n%s\n' "$stp_path" "$in_path" "$out_path" "$spp_path" "$srp_path"
 }
 
 
@@ -1828,7 +2287,7 @@ Notes:
 - Runs Rust checks in adl/ by default (fmt, clippy -D warnings, test).
 - finish stages only the tracked repo-root paths selected by `--paths`; canonical `.adl` issue bundles remain local-only and must not be tracked or force-staged.
 - `--allow-gitignore` only permits staged `.gitignore` / `adl/.gitignore` changes during finish publication; it does not widen generic ignored-path staging.
-- Templates are stored in adl/templates/cards/ (legacy fallback: .adl/templates/).
+- C-SDLC prompt templates are stored in docs/templates/prompts/1.0.0/ (legacy SIP/SOR fallback: adl/templates/cards/ and .adl/templates/).
 - Cards are stored locally under cards_root and are not committed to git.
   cards_root resolves as: ADL_CARDS_ROOT (if set) else <primary-checkout>/.adl/cards.
 
@@ -2004,6 +2463,10 @@ EOF
 }
 
 main() {
+  if [[ "${ADL_PR_SH_TEMPLATE_RESOLVER_SELF_TEST:-0}" == "1" ]]; then
+    resolve_prompt_template "${1:-sip}"
+    return 0
+  fi
   local cmd="${1:-}"; shift || true
   case "$cmd" in
     help) usage ;;

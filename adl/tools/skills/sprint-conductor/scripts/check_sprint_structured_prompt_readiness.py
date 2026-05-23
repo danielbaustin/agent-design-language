@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 
@@ -49,6 +50,26 @@ GENERIC_SPP_MARKERS = [
     'Design-time generated SPP; review before execution',
     'Review this SPP before execution; during runtime, update it before continuing if the actual execution sequence changes.',
     'generated from source issue prompt, STP/SIP surfaces',
+    'Design-time execution plan for',
+    'Use dependency truth from the linked source issue prompt',
+    'Use repo inputs from the linked source issue prompt',
+    'Use deliverables from the linked source issue prompt',
+    'Satisfy the linked source issue prompt acceptance criteria',
+    'Run focused proof gates for acceptance: Satisfy the linked source issue prompt acceptance criteria',
+    'Record SRP review results and SOR outcome truth',
+]
+
+GENERIC_STP_MARKERS = [
+    'Issue-local task surface for',
+    'Execute the linked issue prompt with bounded, reviewable changes',
+    'Ship the outcome required by the linked source issue prompt',
+    'Use deliverables from the linked source issue prompt',
+    'Satisfy the linked source issue prompt acceptance criteria',
+    'Use repo inputs from the linked source issue prompt',
+    'Use dependency truth from the linked source issue prompt',
+    'Review source issue prompt and scoped repo inputs',
+    'Follow demo/proof requirements from the linked source issue prompt',
+    'Generated from 1.0.0 C-SDLC prompt template; refine with editor skills before execution if needed',
 ]
 
 
@@ -61,6 +82,13 @@ def has_truncation_sentinel_line(text: str) -> bool:
     return any(line.strip() in sentinels for line in text.splitlines())
 
 
+V1_PLACEHOLDER_RE = re.compile(r'<[a-z][a-z0-9_]*>')
+
+
+def has_unfilled_v1_placeholder(text: str) -> bool:
+    return V1_PLACEHOLDER_RE.search(text) is not None
+
+
 def line_value_after_prefix(text: str, prefix: str) -> str:
     for raw in text.splitlines():
         line = raw.strip()
@@ -70,11 +98,15 @@ def line_value_after_prefix(text: str, prefix: str) -> str:
 
 
 def design_time_defect(card_name: str, text: str) -> str | None:
+    if has_unfilled_v1_placeholder(text):
+        return 'unfilled prompt-template placeholder'
     if card_name == 'sip.md' and contains_any(text, GENERIC_SIP_MARKERS):
         return 'generic design-time SIP scaffold'
     if card_name == 'stp.md':
         if '## Required Outcome' not in text or '## Acceptance Criteria' not in text:
             return 'incomplete design-time STP acceptance surface'
+        if contains_any(text, GENERIC_STP_MARKERS):
+            return 'generic design-time STP scaffold'
     if card_name == 'spp.md':
         status = line_value_after_prefix(text, 'status:')
         if contains_any(text, GENERIC_SPP_MARKERS) or has_truncation_sentinel_line(text):

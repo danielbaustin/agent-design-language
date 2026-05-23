@@ -15,8 +15,17 @@ preflight before child execution starts.
 
 ## Compatibility Policy
 
-Current tooling still depends on some historical filenames and artifact
-identifiers:
+The canonical copy-and-fill template home is now:
+
+- `docs/templates/prompts/current.json`
+- `docs/templates/prompts/1.0.0/sip.md`
+- `docs/templates/prompts/1.0.0/stp.md`
+- `docs/templates/prompts/1.0.0/spp.md`
+- `docs/templates/prompts/1.0.0/srp.md`
+- `docs/templates/prompts/1.0.0/sor.md`
+
+Current tooling still supports some historical filenames and artifact
+identifiers as compatibility fallbacks:
 
 - `adl/templates/cards/input_card_template.md`
 - `adl/templates/cards/output_card_template.md`
@@ -24,10 +33,10 @@ identifiers:
 - `adl/schemas/structured_output_record.contract.yaml`
 - `docs/templates/STRUCTURED_REVIEW_POLICY_TEMPLATE.md`
 
-Those compatibility surfaces remain valid during this mini-sprint. Their
+Those compatibility surfaces remain valid during this transition. Their
 semantic roles are now clarified as `SIP`, `SOR`, and `SRP` target-state
-surfaces. Follow-on validator and conductor issues decide when compatibility
-aliases become warnings or migration blockers.
+surfaces. New authoring and bootstrap work should treat
+`docs/templates/prompts/1.0.0/` as canonical.
 
 ## Shared Lifecycle Fields
 
@@ -70,7 +79,8 @@ Target responsibility:
 Compatibility surfaces:
 
 - current file: `sip.md`
-- current generator template: `adl/templates/cards/input_card_template.md`
+- canonical template: `docs/templates/prompts/1.0.0/sip.md`
+- compatibility generator template: `adl/templates/cards/input_card_template.md`
 - current schema filename:
   `adl/schemas/structured_implementation_prompt.contract.yaml`
 
@@ -89,9 +99,10 @@ Target responsibility:
 Compatibility surfaces:
 
 - current file: `stp.md`
+- canonical template: `docs/templates/prompts/1.0.0/stp.md`
 - current schema filename: `adl/schemas/structured_task_prompt.contract.yaml`
-- source issue body/front matter remains the practical STP authoring shape
-  until a dedicated tracked STP template is introduced.
+- source issue body/front matter remains the canonical source prompt; the STP
+  card now has its own copy-and-fill template shape.
 
 ## SPP Target
 
@@ -111,7 +122,8 @@ Target responsibility:
 Compatibility surfaces:
 
 - current file: `spp.md`
-- current template: `docs/templates/STRUCTURED_PLAN_PROMPT_TEMPLATE.md`
+- canonical template: `docs/templates/prompts/1.0.0/spp.md`
+- compatibility template note: `docs/templates/STRUCTURED_PLAN_PROMPT_TEMPLATE.md`
 - current validator surface: Rust validator-backed contract, not a dedicated
   schema file yet
 
@@ -139,7 +151,8 @@ Design-time responsibility:
 Compatibility surfaces:
 
 - current file: `srp.md`
-- current template filename:
+- canonical template: `docs/templates/prompts/1.0.0/srp.md`
+- compatibility template filename:
   `docs/templates/STRUCTURED_REVIEW_POLICY_TEMPLATE.md`
 - current artifact type: `structured_review_prompt`
 
@@ -163,7 +176,8 @@ Target responsibility:
 Compatibility surfaces:
 
 - current file: `sor.md`
-- current generator template: `adl/templates/cards/output_card_template.md`
+- canonical template: `docs/templates/prompts/1.0.0/sor.md`
+- compatibility generator template: `adl/templates/cards/output_card_template.md`
 - current schema filename: `adl/schemas/structured_output_record.contract.yaml`
 
 `SOR` should summarize and link to `SIP`, `STP`, `SPP`, and `SRP`; it should
