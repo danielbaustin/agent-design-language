@@ -30,7 +30,10 @@ repeatable default development lane for future ADL software work.
 - Tracks durable workflow records in Git.
 - Adds signed trace proof and verification evidence.
 - Integrates SRP/SOR outcome truth with ObsMem handoff.
-- Measures repeatable five-minute-sprint behavior.
+- Measures repeatable five-minute-sprint behavior, including validation-tail
+  and proof-latency behavior.
+- Plans a Parallel Validation Fabric so proof can become shardable without
+  hiding pending or failed validation.
 - Carries a bounded CodeFriend pre-alpha repo/S3 welcome-page setup sidecar,
   if completed or truthfully blocked by release time.
 

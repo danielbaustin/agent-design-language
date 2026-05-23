@@ -13,8 +13,9 @@ polis-governance milestone for ADL.
 
 If implemented as planned, it should add reviewable governance surfaces for
 citizenship, rights, duties, Theory of Mind, reputation boundary, shared social
-memory, standing, constitutional review, challenge, appeal, delegation, IAM, and
-privacy-preserving reviewer evidence, plus the first explicit enterprise-
+memory, standing, constitutional review, challenge, appeal, delegation,
+upstream delegation, IAM, and privacy-preserving reviewer evidence, plus the
+first explicit enterprise-
 security tranche for zero-trust polis operation.
 
 ## Planned Highlights
@@ -27,7 +28,7 @@ security tranche for zero-trust polis operation.
 - Evidence-based standing transitions.
 - Constitutional review packets over trace and outcome evidence.
 - Challenge and appeal flow.
-- Delegation and IAM authority-chain proof.
+- Delegation, upstream delegation, and IAM authority-chain proof.
 - Enterprise-security proof surfaces for zero trust, policy enforcement,
   secrets/key lifecycle, audit/compliance evidence, isolation/data governance,
   and security operations.

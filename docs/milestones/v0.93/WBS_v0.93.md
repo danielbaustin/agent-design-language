@@ -25,7 +25,7 @@ milestones.
 | F | Standing maintenance and degradation | Define evidence-based transitions among good standing, monitored, restricted, suspended, restored, and revoked. | Standing transition tests and review packet. | v0.90.3 standing and challenge flow. |
 | G | Constitutional review packet | Consume trace, outcome, attribution, policy, ToM projections where allowed, reputation, and standing evidence. | Review packet schema and fixtures. | v0.91 moral trace and trajectory review. |
 | H | Challenge and appeal flow | Preserve evidence, allow challenge, record appeal disposition, and avoid arbitrary punishment. | Challenge/appeal state machine and proof fixture. | v0.90.3 challenge/quarantine, v0.91 review evidence. |
-| I | Delegation and IAM | Model delegated authority across citizens, guests, services, operators, and tools. | Authority-chain model and allow/deny fixtures. | v0.90.5 governed tools if landed. |
+| I | Delegation, upstream delegation, and IAM | Model delegated authority across citizens, guests, services, operators, tools, polis services, trusted external polis boundaries, and frontier cognition providers. | Authority-chain model, upstream-delegation routing rules, and allow/deny fixtures. | v0.90.5 governed tools if landed. |
 | J | Communication without inspection | Ensure governed communication does not create private-state or private-ToM inspection rights. | Communication/inspection negative proof. | v0.90.3 communication and projection policy. |
 | K | Social contract representation | Represent the bounded obligations of the polis and citizens. | Draft social-contract contract and review notes. | A through J. |
 | L | Polis governance health evidence | Summarize governance state without scalar moral verdicts, leaked private state, or leaked private ToM. | Governance evidence packet and redacted report. | G through K. |
@@ -35,7 +35,7 @@ milestones.
 | P | Security WP-S4: audit, compliance, and incident evidence | Produce tamper-evident audit trails, compliance evidence packets, incident records, and redaction-safe reviewer views without claiming external certification. | Audit schema, compliance-evidence packet, incident fixture, and redacted report. | G, H, L, N, O, moral trace, standing evidence. |
 | Q | Security WP-S5: isolation, data governance, and privacy | Define tenant/polis isolation, data classification, retention, deletion, projection, private-state privacy, and cross-actor data-flow controls. | Isolation/data-governance contract, retention/projection fixtures, leakage negative cases. | B, J, M, O, v0.90.3 private-state/access/projection, v0.92 memory grounding. |
 | R | Security WP-S6: security operations, adversarial regression, and provenance | Bind red/blue adversarial testing, supply-chain/provenance checks, runtime hardening, threat-board hygiene, and incident-response drills into the milestone. | Security-ops runbook, adversarial regression suite, provenance checks, threat-board and incident-response evidence. | M through Q plus v0.89.1 adversarial runtime and current CI/review gates. |
-| S | Demo matrix and proof demos | Build constitutional review, ToM/reputation boundary, standing transition, delegation/IAM, enterprise-security, and guest/citizen boundary demos. | Demo matrix rows and runnable proof commands. | A through R. |
+| S | Demo matrix and proof demos | Build constitutional review, ToM/reputation boundary, standing transition, delegation/upstream-delegation/IAM, enterprise-security, and guest/citizen boundary demos. | Demo matrix rows and runnable proof commands. | A through R. |
 | T | Review, docs, and release tail | Align docs, update feature list, run review, and close the milestone. | Review handoff, release notes, ceremony evidence. | All prior work. |
 
 ## Sequencing Pressure
@@ -44,7 +44,8 @@ milestones.
 2. Add rights, duties, and the ToM/reputation/shared-social-memory boundary.
 3. Add standing transition semantics.
 4. Add review packet, challenge, and appeal.
-5. Add delegation and IAM after authority prerequisites are clear.
+5. Add delegation, upstream delegation, and IAM after authority prerequisites
+   are clear.
 6. Add communication and social-contract surfaces.
 7. Add the six enterprise-security WPs after identity, IAM, and tool authority
    prerequisites are explicit.
@@ -61,7 +62,9 @@ milestones.
 - Private ToM must not become public relationship verdict, reputation,
   standing, or constitutional judgment without redaction, authority, and
   evidence.
-- Delegation and IAM must fail closed when authority is missing.
+- Delegation, upstream delegation, and IAM must fail closed when authority is
+  missing or when the upstream provider cannot preserve identity, policy,
+  provenance, verification, and trace boundaries.
 - Zero-trust policy must default deny at every polis, tool, service, operator,
   communication, and data boundary.
 - Secrets, keys, signatures, encryption, rotation, and revocation must be

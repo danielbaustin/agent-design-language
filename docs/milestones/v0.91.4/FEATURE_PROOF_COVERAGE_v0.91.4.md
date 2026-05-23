@@ -14,7 +14,7 @@ Planned proof map for C-SDLC completion.
 | Merge-readiness and PR gate hardening | `features/MERGE_READINESS_AND_PR_GATE_HARDENING.md` | PR readiness preserves issue, branch, CI, review, evidence, trace, and closeout truth. | planned |
 | ObsMem transition memory integration | `features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md` | Tracked SRP/SOR/trace evidence feeds memory handoff records. | planned |
 | Sprint conductor default C-SDLC lane | `features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md` | Sprint execution cannot skip child closeout, umbrella truth, or combined-lane validation. | planned |
-| Five-minute-sprint repeatability | `features/FIVE_MINUTE_SPRINT_REPEATABILITY.md` | More than one transition records coordination and repeatability metrics. | planned |
+| Five-minute-sprint repeatability | `features/FIVE_MINUTE_SPRINT_REPEATABILITY.md` | More than one transition records coordination, validation-tail/proof-latency, Parallel Validation Fabric, and repeatability metrics. | planned |
 | Active issue migration policy | `features/ACTIVE_ISSUE_MIGRATION_POLICY.md` | Open issues and future issues have a safe migration/defaulting path. | planned |
 | Process drift regression fixtures | `features/PROCESS_DRIFT_REGRESSION_FIXTURES.md` | Known card, closeout, state, and proof drift modes fail closed. | planned |
 | Tracked workflow state migration | `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md` | Durable C-SDLC records, proof packets, signed traces, and ObsMem ingestion surfaces are tracked in Git. | planned |
@@ -55,7 +55,8 @@ still have a truthful completion or blocked-state record before release:
 - sprint closeout truth examples
 - evidence bundle and review synthesis outputs
 - ObsMem handoff records
-- five-minute-sprint metrics report
+- five-minute-sprint metrics report, including validation-tail/proof-latency
+  measurements and Parallel Validation Fabric planning evidence
 - active-issue migration policy evidence
 - process-drift regression fixture results
 - docs/adoption review evidence

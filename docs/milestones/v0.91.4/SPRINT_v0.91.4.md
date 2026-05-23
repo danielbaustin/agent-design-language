@@ -10,7 +10,7 @@ Planned sprint map. Sprint issue numbers are `pending`.
 | --- | --- | --- | --- |
 | Sprint 1 | Lifecycle And Routing Hardening | WP-01, WP-02, WP-03, WP-04 | Make validators, doctor, conductor, and editor skills agree on C-SDLC state. |
 | Sprint 2 | Transition Operation | WP-05, WP-06, WP-07, WP-08 | Make actor standing, shards, evidence, merge gates, and memory handoff repeatable. |
-| Sprint 3 | Sprint Default And Metrics | WP-09, WP-10, WP-11, WP-12 | Make sprint execution default-safe and measure repeatability. |
+| Sprint 3 | Sprint Default And Metrics | WP-09, WP-10, WP-11, WP-12 | Make sprint execution default-safe and measure repeatability, validation-tail, proof-latency, and parallel-validation behavior. |
 | Sprint 4 | Review, Remediation, Planning, And Release | WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-20, WP-21 | Prove, gate, review, remediate, plan the next milestone, re-review the handoff, and close the completion milestone. |
 
 ## Sidecar Mini-Sprint
@@ -59,7 +59,8 @@ It must show that the C-SDLC lane can run repeatedly with:
 - correct SOR closeout
 - correct sprint state
 - correct memory handoff boundary
-- measured coordination behavior
+- measured coordination, validation-tail, proof-latency, and parallel-validation
+  behavior
 
 The CodeFriend sidecar is complete only when it has either a verified HTTPS
 welcome page and handoff record or a truthful blocked handoff with AWS/DNS

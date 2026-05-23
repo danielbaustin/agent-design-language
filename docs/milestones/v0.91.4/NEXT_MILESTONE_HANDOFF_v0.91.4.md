@@ -43,7 +43,9 @@ conditions are true:
 - signed trace proof exists for durable C-SDLC runs, or blockers are explicit
 - ObsMem consumes tracked evidence rather than untracked local lore
 - sprint closeout cannot advance over stale child issue truth
-- five-minute-sprint repeatability metrics are recorded without weakening
+- five-minute-sprint repeatability metrics, validation-tail/proof-latency
+  metrics, Parallel Validation Fabric planning, and deferred-proof truth are
+  recorded without weakening
   governance or review
 
 ## Candidate Downstream Inputs

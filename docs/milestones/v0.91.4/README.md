@@ -22,6 +22,10 @@ Where v0.91.3 proves the crown jewel, v0.91.4 makes it operational:
 - repeatable evidence convergence
 - robust review, merge-readiness, closeout, and ObsMem handoff
 - metrics for coordination latency and five-minute-sprint repeatability
+- validation-tail handling so short sprints do not get swallowed by long
+  blocking proof cycles
+- Parallel Validation Fabric planning so validation can be shardable,
+  cache-aware, and truthful about pending/deferred/blocking proof
 - migration of future ADL software-development issues onto the C-SDLC default
 - tracked durable workflow records for all C-SDLC truth
 - minimal signed trace proof for durable C-SDLC runs

@@ -29,7 +29,9 @@ The release should establish:
 - tracked durable workflow records
 - minimal signed trace proof
 - ObsMem ingestion from tracked evidence
-- five-minute-sprint repeatability metrics
+- five-minute-sprint repeatability metrics, including validation-tail and
+  proof-latency measurement
+- Parallel Validation Fabric planning for shardable, truthful proof lanes
 
 The goal is not more theory. The goal is a dependable process that future ADL
 software-development issues can actually use.
@@ -40,7 +42,8 @@ software-development issues can actually use.
 
 1. Lifecycle and routing hardening.
 2. Transition operation.
-3. Sprint default behavior and repeatability metrics.
+3. Sprint default behavior, repeatability metrics, validation-tail/proof-latency
+   handling, and Parallel Validation Fabric planning.
 4. Durable tracked workflow state, signed trace proof, and memory integration.
 5. Review, remediation, planning, and release discipline.
 
@@ -76,7 +79,8 @@ inspectable, replay-aware, and memory-ready.
 ## Five-Minute Sprint Repeatability
 
 `v0.91.4` should show the five-minute sprint is not a one-off miracle. It should
-measure repeated bounded transitions and record coordination-latency evidence
+measure repeated bounded transitions, record coordination-latency evidence, and
+show that long validation cycles are measured and routed rather than hidden,
 without weakening review or governance.
 
 ## Milestone Context

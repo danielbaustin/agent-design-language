@@ -15,7 +15,9 @@ The milestone must run:
 - sprint-conductor closeout tests
 - evidence bundle and review synthesis tests
 - ObsMem handoff validation
-- repeated five-minute-sprint metrics capture
+- repeated five-minute-sprint metrics capture, including validation-tail and
+  proof-latency measurement
+- Parallel Validation Fabric planning or bounded proof evidence
 - combined C-SDLC lane validation
 - active-issue migration policy review with sampled issue routing
 - process-drift regression fixture results for legacy SRP, stale SOR, skipped
@@ -44,6 +46,9 @@ The milestone is blocked if:
 - SOR closeout can overclaim merge/main truth
 - memory handoff can consume stale SRP or SOR records
 - five-minute-sprint evidence weakens governance or review
+- validation-tail handling hides pending or deferred proof instead of recording
+  it truthfully
+- parallel validation hides failures or pending proof behind aggregate success
 - active issues can remain in an ambiguous lifecycle state without an explicit
   migrate/defer/no-op decision
 - regression fixtures do not cover the process-drift failures that motivated

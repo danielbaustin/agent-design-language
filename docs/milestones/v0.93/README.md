@@ -24,7 +24,8 @@ v0.93 should establish:
 - constitutional citizenship as a trace-grounded policy model
 - bounded Theory of Mind, relationship, reputation, and shared social memory as
   distinct social-cognition surfaces
-- rights, duties, standing, challenge, appeal, delegation, and IAM semantics
+- rights, duties, standing, challenge, appeal, delegation, upstream delegation,
+  and IAM semantics
 - enterprise-security foundations for zero-trust polis operation
 - cryptographic trust, secrets/key lifecycle, isolation, audit, and incident
   evidence as first-class governance surfaces
@@ -72,7 +73,10 @@ The likely `v0.93` tranche is:
 - Standing maintenance, degradation, restoration, suspension, and revocation.
 - Constitutional review packet shape.
 - Challenge and appeal flow.
-- Delegation and IAM policy model.
+- Delegation, upstream delegation, and IAM policy model.
+- Upstream delegation for governed escalation from local cognition to polis,
+  trusted external, or frontier cognition providers while preserving identity,
+  policy, provenance, and verification boundaries.
 - Zero-trust architecture and trust-boundary model.
 - Policy enforcement, authorization, and least-privilege checks.
 - Secrets, key lifecycle, signing, encryption, and rotation boundaries.
@@ -119,7 +123,7 @@ The likely `v0.93` tranche is:
   [SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md](features/SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md)
 - Citizenship, rights/duties, and social contract:
   [CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md](features/CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md)
-- Delegation, IAM, standing, and appeal governance:
+- Delegation, upstream delegation, IAM, standing, and appeal governance:
   [DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md](features/DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md)
 - Enterprise security:
   [ENTERPRISE_SECURITY_v0.93.md](features/ENTERPRISE_SECURITY_v0.93.md)
@@ -154,6 +158,6 @@ v0.93 is ready to execute when:
 - the human/citizen boundary is explicit in docs, fixtures, and tests
 - constitutional review packets are trace-grounded and privacy-preserving
 - ToM, reputation, standing, and constitutional review remain distinct
-- delegation and IAM decisions are reviewable
+- delegation, upstream delegation, and IAM decisions are reviewable
 - demo candidates prove behavior rather than merely describing policy
 - philosophical claims remain separated from implemented engineering behavior

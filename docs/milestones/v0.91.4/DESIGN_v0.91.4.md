@@ -24,6 +24,10 @@ to agree so future software-development issues can use C-SDLC by default.
 - Make C-SDLC the default lane for future ADL software-development issues.
 - Keep durable workflow records public, tracked, and auditable.
 - Add signed trace proof for durable C-SDLC runs.
+- Measure and route validation-tail/proof-latency so short sprint loops do not
+  hide long blocking proof cycles.
+- Plan a Parallel Validation Fabric that decomposes proof into truthful
+  transition-aware validation shards.
 - Prevent known process drift from returning.
 - Preserve human review, GitHub PRs, CI, and branch protection.
 
@@ -48,7 +52,9 @@ to agree so future software-development issues can use C-SDLC by default.
 - merge-readiness and PR gate hardening
 - ObsMem transition memory integration
 - sprint conductor default C-SDLC lane
-- repeatability metrics and process-drift fixtures
+- repeatability metrics, validation-tail/proof-latency handling, and
+- Parallel Validation Fabric planning
+- process-drift fixtures
 - active issue migration policy
 - full review and release tail
 
@@ -106,8 +112,9 @@ Sprint issues must enforce child closeout truth before advancement.
 ## Risks And Mitigations
 
 - Risk: Default C-SDLC remains aspirational.
-  Mitigation: Require repeatability metrics and process-drift regression
-  fixtures.
+  Mitigation: Require repeatability metrics, validation-tail/proof-latency
+  measurement, Parallel Validation Fabric planning, and process-drift
+  regression fixtures.
 - Risk: Durable state remains local-only.
   Mitigation: Require tracked workflow namespace and signed trace proof.
 - Risk: Actor/shard claims overreach.

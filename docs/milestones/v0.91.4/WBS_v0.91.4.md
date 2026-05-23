@@ -23,7 +23,7 @@ The goal is not more theory; it is a dependable development control plane.
 | WP-07 | Merge-readiness and PR gate hardening | tools | transition-aware merge gate preserving GitHub truth | WP-06 |
 | WP-08 | ObsMem transition memory integration | tools/docs | SRP/SOR/signed-trace memory handoff write/read contract | WP-06, WP-07 |
 | WP-09 | Sprint conductor default C-SDLC lane | tools | sprint flow that cannot skip child closeout or umbrella truth | WP-03, WP-04 |
-| WP-10 | Five-minute-sprint repeatability metrics | demo/tools | repeated transition metrics and coordination-latency report | WP-05 through WP-09 |
+| WP-10 | Five-minute-sprint repeatability metrics | demo/tools | repeated transition metrics, validation-tail/proof-latency report, Parallel Validation Fabric plan, and coordination-latency report | WP-05 through WP-09 |
 | WP-11 | Active issue migration policy | docs/tools | policy for existing open cards and future issue defaults | WP-02 through WP-09 |
 | WP-12 | Regression fixtures for process drift | tests/tools | fixtures for SRP drift, stale SORs, skipped closeout, and env/global-state hazards | WP-10, WP-11 |
 | WP-13 | Demo matrix and proof coverage | demo | demo matrix, feature-proof coverage, and proof-evidence map | WP-12 |
@@ -52,8 +52,13 @@ not add or remove any release closeout-tail step.
 
 ## Sequencing Notes
 
-Validator and conductor truth must land before repeatability metrics. Otherwise
-the milestone risks timing an unreliable process and calling that a proof.
+Validator and conductor truth must land before repeatability metrics,
+validation-tail/proof-latency measurement, and Parallel Validation Fabric
+planning. Otherwise the milestone risks timing an unreliable process and
+calling that a proof.
+The repeatability work must also account for validation-tail latency: a
+five-minute sprint with a long blocking test cycle is useful evidence of the
+next bottleneck, not proof that the operating loop is complete.
 
 The sprint-conductor lane should explicitly consume the v0.91.2 and v0.91.3
 lessons:
