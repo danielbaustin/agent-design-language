@@ -1264,12 +1264,6 @@ mod tests {
         let issue_ref = IssueRef::new(1410, "v0.91.2", "fixture").expect("issue ref");
         let bundle = issue_ref.task_bundle_dir_path(&repo);
         fs::create_dir_all(&bundle).expect("create bundle");
-        let workspace_root = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .expect("adl crate lives under repo root");
-        let template_bundle = workspace_root.join(
-            ".adl/v0.91.3/tasks/issue-3279__v0-91-3-wp-15-tools-fix-pr-lifecycle-readiness-and-closeout-correctness",
-        );
 
         let sip = bundle.join("sip.md");
         let stp = bundle.join("stp.md");
@@ -1277,10 +1271,29 @@ mod tests {
         let srp = bundle.join("srp.md");
         let sor = bundle.join("sor.md");
 
-        fs::copy(template_bundle.join("sip.md"), &sip).expect("copy sip");
-        fs::copy(template_bundle.join("stp.md"), &stp).expect("copy stp");
-        fs::copy(template_bundle.join("spp.md"), &spp).expect("copy spp");
-        fs::copy(template_bundle.join("srp.md"), &srp).expect("copy srp");
+        let sip_text = format!(
+            "# ADL Input Card\n\nTask ID: {task_id}\nRun ID: {task_id}\nVersion: v0.91.2\nTitle: Fixture\nBranch: codex/1410-fixture\n\nContext:\n- Issue: https://github.com/example/repo/issues/{issue}\n- PR: https://github.com/example/repo/pull/{issue}\n- Source Issue Prompt: .adl/v0.91.2/bodies/issue-1410-fixture.md\n- Docs: none\n- Other: none\n\n## Agent Execution Rules\n- Do not run `pr start`; the branch and worktree already exist.\n- Only modify files required for the issue.\n\n## Prompt Spec\n```yaml\nprompt_schema: adl.v1\nactor:\n  role: execution_agent\n  name: codex\nmodel:\n  id: gpt-5-codex\n  determinism_mode: stable\ninputs:\n  sections:\n    - goal\n    - required_outcome\n    - acceptance_criteria\n    - target_files_surfaces\n    - validation_plan\noutputs:\n  output_card: .adl/v0.91.2/tasks/{bundle}/sor.md\nconstraints:\n  disallow_secrets: true\n  disallow_absolute_host_paths: true\n```\n\n## Goal\n\nKeep the closed-ready doctor path read-only when closeout truth is stale.\n\n## Required Outcome\n\n- The issue must refuse stale closed-issue truth without mutating the bundle.\n\n## Acceptance Criteria\n\n- closed-ready validation reports stale truth\n- the stale SOR remains byte-identical after validation fails\n\n## Target Files / Surfaces\n- adl/src/cli/pr_cmd/doctor.rs\n\n## Validation Plan\n- `cargo test --manifest-path adl/Cargo.toml closed_ready_validation_is_read_only_and_reports_truth_drift -- --nocapture`\n\n## Demo / Proof Requirements\n- none\n\n## Non-goals / Out of scope\n- runtime closeout mutation\n",
+            task_id = issue_ref.task_issue_id(),
+            issue = issue_ref.issue_number(),
+            bundle = issue_ref.task_bundle_dir_name(),
+        );
+        let stp_text = "## Required Outcome\n\n- closed-ready validation stays read-only when canonical closeout truth is stale\n\n## Acceptance Criteria\n\n- stale closeout truth causes a blocking validation error\n- no bundle files are mutated on failure\n";
+        let spp_text = format!(
+            "---\nschema_version: \"0.1\"\nartifact_type: \"structured_planning_prompt\"\nname: \"fixture-plan\"\nissue: {issue}\ntask_id: \"{task_id}\"\nrun_id: \"{task_id}\"\nversion: v0.91.2\ntitle: \"Fixture\"\nbranch: \"codex/1410-fixture\"\nstatus: \"reviewed\"\nactivation_state: \"reviewed\"\nplan_revision: 1\nsource_refs:\n  - kind: \"issue\"\n    ref: \"https://github.com/example/repo/issues/{issue}\"\nscope:\n  files:\n    - \".adl/v0.91.2/tasks/{bundle}/sip.md\"\nconstraints:\n  - \"read_only_until_execution_is_approved\"\nconfidence: \"medium\"\nplan_summary: \"Fixture plan for closed-ready validation.\"\nassumptions:\n  - \"The canonical bundle already exists.\"\nproposed_steps:\n  - id: \"step-1\"\n    description: \"Validate closed-ready truth without mutation.\"\n    expected_output: \".adl/v0.91.2/tasks/{bundle}/spp.md\"\n    allowed_mode: \"execution_after_approval\"\ncodex_plan:\n  - step: \"Validate closed-ready truth without mutation.\"\n    status: \"pending\"\naffected_areas:\n  - \"doctor\"\ninvariants_to_preserve:\n  - \"Do not mutate stale closeout truth during validation.\"\nrisks_and_edge_cases:\n  - \"Closed issue bundles can still drift.\"\ntest_strategy:\n  - \"Run the focused doctor regression test.\"\nexecution_handoff: \"Use this artifact as the durable plan-of-record before execution.\"\nrequired_permissions:\n  - \"workspace-write after execution approval\"\nstop_conditions:\n  - \"Stop if validation would mutate the stale bundle.\"\nalternatives_considered:\n  - description: \"Use transient planning only.\"\n    reason_not_chosen: \"That would not leave durable reviewable plan truth.\"\nreview_hooks:\n  - \"Check read-only behavior.\"\nnotes: \"fixture\"\n---\n\n# Structured Plan Prompt\n\n## Plan Summary\n\nFixture plan.\n\n## Codex Plan\n\n1. [pending] Validate closed-ready truth without mutation.\n",
+            issue = issue_ref.issue_number(),
+            task_id = issue_ref.task_issue_id(),
+            bundle = issue_ref.task_bundle_dir_name(),
+        );
+        let srp_text = format!(
+            "---\nschema_version: \"0.1\"\nartifact_type: \"structured_review_prompt\"\nname: \"fixture-review\"\nissue: {issue}\ntask_id: \"{task_id}\"\nversion: v0.91.2\ntitle: \"Fixture\"\nbranch: \"codex/1410-fixture\"\nstatus: \"draft\"\nsource_refs:\n  - kind: \"issue\"\n    ref: \"https://github.com/example/repo/issues/{issue}\"\nreview_mode: \"pre_pr_independent_review\"\ntiming: \"before_pr_open\"\nscope_basis:\n  - \".adl/v0.91.2/tasks/{bundle}/sip.md\"\nin_scope_surfaces:\n  - \"tracked changes for this issue branch\"\nevidence_policy:\n  - \"Use repository evidence and issue-local validation only.\"\nvalidation_inputs:\n  - \"Issue-local proofs recorded in the SOR.\"\nallowed_dispositions:\n  - \"PASS\"\n  - \"BLOCK\"\nreviewer_constraints:\n  - \"Do not widen issue scope.\"\nrefusal_policy:\n  - \"Refuse unsupported claims.\"\nfollow_up_routing:\n  - \"Route findings back to the issue branch.\"\nnon_claims:\n  - \"This prompt does not claim review has already run.\"\npolicy_refs:\n  - \".adl/v0.91.2/tasks/{bundle}/spp.md\"\nfindings_status: \"not_run\"\nrecommended_outcome: \"not_applicable\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent until implementation exists\"\n---\n\n# Structured Review Prompt\n\n## Review Instructions\n\nRun the bounded issue review after implementation.\n",
+            issue = issue_ref.issue_number(),
+            task_id = issue_ref.task_issue_id(),
+            bundle = issue_ref.task_bundle_dir_name(),
+        );
+        fs::write(&sip, sip_text).expect("write sip");
+        fs::write(&stp, stp_text).expect("write stp");
+        fs::write(&spp, spp_text).expect("write spp");
+        fs::write(&srp, srp_text).expect("write srp");
         let stale_sor = "# issue-1410-fixture\n\nTask ID: issue-1410\nRun ID: issue-1410\nVersion: v0.91.2\nTitle: Fixture\nBranch: codex/1410-fixture\nStatus: IN_PROGRESS\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: adl/src/foo.rs\n- Integration state: pr_open\n- Verification scope: worktree\n- Result: PASS\n";
         fs::write(&sor, stale_sor).expect("write stale sor");
 
