@@ -243,7 +243,7 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
             &repo_root,
             &primary_root,
             &issue_ref,
-            &output_path,
+            &canonical_output,
         )?;
         println!("{pr_url}");
         return Ok(());

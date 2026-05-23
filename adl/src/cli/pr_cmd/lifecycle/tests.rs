@@ -782,6 +782,55 @@ fn sync_completed_output_surfaces_skips_copy_when_output_already_canonical() {
 }
 
 #[test]
+fn closeout_closed_completed_issue_bundle_records_prune_result_on_canonical_output() {
+    let _guard = env_lock();
+    let _manifest_guard = set_tooling_manifest_root_to_workspace();
+    let temp = temp_dir("adl-pr-lifecycle-closeout-canonical-output");
+    let repo = temp.join("repo");
+    let origin = temp.join("origin.git");
+    init_repo_with_origin(&repo, &origin);
+    let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let workspace_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("adl crate lives under repo root");
+    let template_bundle = workspace_root.join(
+        ".adl/v0.91.3/tasks/issue-3279__v0-91-3-wp-15-tools-fix-pr-lifecycle-readiness-and-closeout-correctness",
+    );
+
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "worktree",
+            "add",
+            path_str(&worktree).expect("worktree path"),
+            "-b",
+            "codex/1410-canonical-slug",
+            "main",
+        ])
+        .status()
+        .expect("git worktree add")
+        .success());
+
+    let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&canonical_dir).expect("canonical dir");
+    fs::copy(template_bundle.join("stp.md"), canonical_dir.join("stp.md")).expect("copy stp");
+    fs::copy(template_bundle.join("sip.md"), canonical_dir.join("sip.md")).expect("copy sip");
+    let output = canonical_dir.join("sor.md");
+    fs::write(&output, issue_ref_sync_completed_output_content()).expect("write sor");
+
+    closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
+        .expect("closeout should preserve canonical output");
+
+    let text = fs::read_to_string(&output).expect("read sor");
+    assert!(text.contains("- Worktree prune result: pruned: adl-wp-1410"));
+    assert!(!worktree.exists(), "worktree should be pruned");
+    ensure_closed_completed_issue_bundle_truth(&repo, &issue_ref, &output)
+        .expect("canonical truth remains valid");
+}
+
+#[test]
 fn record_worktree_prune_result_inserts_result_line_after_worktree_only_value() {
     let temp = temp_dir("adl-pr-lifecycle-record-worktree-prune-result");
     let output = temp.join("sor.md");

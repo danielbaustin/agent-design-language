@@ -262,26 +262,17 @@ pub(super) fn run_doctor_ready(
     validate_issue_prompt_exists(&source_path)?;
     validate_bootstrap_stp(repo_root, &source_path)?;
     validate_authored_prompt_surface("doctor", &source_path, PromptSurfaceKind::IssuePrompt)?;
-    if closed_completed {
-        lifecycle::closeout_closed_completed_issue_bundle(
-            repo_root,
-            repo_root,
-            issue_ref,
-            &root_bundle_output,
-        )?;
-    }
     if !root_stp.is_file() {
         bail!("doctor: missing root stp: {}", root_stp.display());
     }
     validate_bootstrap_stp(repo_root, &root_stp)?;
     validate_authored_prompt_surface("doctor", &root_stp, PromptSurfaceKind::Stp)?;
     if closed_completed {
-        validate_initialized_cards(
-            issue_ref.issue_number(),
-            issue_ref.slug(),
+        validate_closed_completed_ready_bundle(
+            repo_root,
+            issue_ref,
             &root_bundle_input,
             &root_bundle_output,
-            repo_root,
             StructuredBundlePaths {
                 plan_path: &root_bundle_plan,
                 review_policy_path: &root_bundle_review_policy,
@@ -713,11 +704,12 @@ fn classify_srp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
         || text.contains("review_results_exception:")
         || text.contains("policy_exception:"))
         && !has_pre_review_absence_exception;
+    let pre_execution_review_state = srp_looks_pre_execution_review_state(&text);
     let legacy_policy_only = text.contains("# Structured Review Policy")
         || text.contains("artifact_type: \"structured_review_policy\"");
     let structured_review_prompt = text.contains("# Structured Review Prompt")
         && text.contains("artifact_type: \"structured_review_prompt\"");
-    if has_review_results || has_policy_exception {
+    if has_review_results || (has_policy_exception && !pre_execution_review_state) {
         return card_stage(
             repo_root,
             "SRP",
@@ -771,6 +763,38 @@ fn classify_srp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             "SRP exists but still needs review results or an explicit policy exception.",
         ),
     )
+}
+
+fn srp_looks_pre_execution_review_state(text: &str) -> bool {
+    text.contains("pre-execution review results are absent")
+        || text.contains("Review results are intentionally absent before implementation exists")
+        || text.contains("Run the bounded issue review after implementation.")
+        || text.contains("- Not run yet.")
+        || text.contains("Not applicable until review runs.")
+}
+
+fn validate_closed_completed_ready_bundle(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    root_bundle_input: &Path,
+    root_bundle_output: &Path,
+    bundle_paths: StructuredBundlePaths<'_>,
+) -> Result<()> {
+    validate_initialized_cards(
+        issue_ref.issue_number(),
+        issue_ref.slug(),
+        root_bundle_input,
+        root_bundle_output,
+        repo_root,
+        bundle_paths,
+    )?;
+    lifecycle::ensure_closed_completed_issue_bundle_truth(repo_root, issue_ref, root_bundle_output)
+        .with_context(|| {
+            format!(
+                "doctor: closed issue #{} has stale canonical closeout truth; run the explicit closeout normalization path instead of doctor --mode ready",
+                issue_ref.issue_number()
+            )
+        })
 }
 
 fn srp_has_final_review_results(text: &str) -> bool {
@@ -1179,6 +1203,70 @@ mod tests {
         assert_eq!(lifecycle.pr_run_readiness, "ready");
         assert_eq!(lifecycle.pr_finish_readiness, "blocked");
         assert_stage(&lifecycle, "SRP", "pre_review", true, false);
+    }
+
+    #[test]
+    fn card_lifecycle_accepts_terminal_structured_review_prompt_exception() {
+        let repo = lifecycle_temp_repo("srp-prompt-exception-final");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Branch: codex/3065-test\n",
+                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results_exception: \"explicit policy exception: docs-only no-op review\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\nexplicit policy exception recorded\n",
+                sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_eq!(lifecycle.pr_finish_readiness, "ready");
+        assert_stage(&lifecycle, "SRP", "final", true, true);
+    }
+
+    #[test]
+    fn closed_ready_validation_is_read_only_and_reports_truth_drift() {
+        let repo = lifecycle_temp_repo("closed-ready-read-only");
+        let issue_ref = IssueRef::new(1410, "v0.91.2", "fixture").expect("issue ref");
+        let bundle = issue_ref.task_bundle_dir_path(&repo);
+        fs::create_dir_all(&bundle).expect("create bundle");
+        let workspace_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .expect("adl crate lives under repo root");
+        let template_bundle = workspace_root.join(
+            ".adl/v0.91.3/tasks/issue-3279__v0-91-3-wp-15-tools-fix-pr-lifecycle-readiness-and-closeout-correctness",
+        );
+
+        let sip = bundle.join("sip.md");
+        let stp = bundle.join("stp.md");
+        let spp = bundle.join("spp.md");
+        let srp = bundle.join("srp.md");
+        let sor = bundle.join("sor.md");
+
+        fs::copy(template_bundle.join("sip.md"), &sip).expect("copy sip");
+        fs::copy(template_bundle.join("stp.md"), &stp).expect("copy stp");
+        fs::copy(template_bundle.join("spp.md"), &spp).expect("copy spp");
+        fs::copy(template_bundle.join("srp.md"), &srp).expect("copy srp");
+        let stale_sor = "# issue-1410-fixture\n\nTask ID: issue-1410\nRun ID: issue-1410\nVersion: v0.91.2\nTitle: Fixture\nBranch: codex/1410-fixture\nStatus: IN_PROGRESS\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: adl/src/foo.rs\n- Integration state: pr_open\n- Verification scope: worktree\n- Result: PASS\n";
+        fs::write(&sor, stale_sor).expect("write stale sor");
+
+        let err = validate_closed_completed_ready_bundle(
+            &repo,
+            &issue_ref,
+            &sip,
+            &sor,
+            StructuredBundlePaths {
+                plan_path: &spp,
+                review_policy_path: &srp,
+            },
+        )
+        .expect_err("stale closeout truth should fail");
+
+        let _ = err;
+        assert_eq!(fs::read_to_string(&sor).expect("read sor"), stale_sor);
     }
 
     #[test]
