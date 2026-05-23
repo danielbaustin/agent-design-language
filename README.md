@@ -117,6 +117,12 @@ cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-91-chat
 
 These are three high-signal recent demo entrypoints.
 
+Start with the active v0.91.3 proof lane:
+
+- [v0.91.3 README](docs/milestones/v0.91.3/README.md)
+- [v0.91.3 sprint plan](docs/milestones/v0.91.3/SPRINT_v0.91.3.md)
+- [v0.91.3 demo matrix](docs/milestones/v0.91.3/DEMO_MATRIX_v0.91.3.md)
+
 Generate the v0.91 cognitive-being flagship proof bundle:
 
 ```bash
