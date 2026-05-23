@@ -28,8 +28,9 @@ that behavior.
 - Define standing transitions, challenge, appeal, and restoration semantics.
 - Define constitutional review packets that consume moral trace, outcome
   linkage, identity, and standing evidence.
-- Define delegation and IAM rules without giving services, operators, tools, or
-  guests hidden sovereign authority.
+- Define delegation, upstream delegation, and IAM rules without giving guests,
+  services, operators, tools, external polis services, or frontier cognition
+  providers hidden sovereign authority.
 - Define enterprise-security foundations for zero-trust, policy enforcement,
   key/secrets lifecycle, audit/compliance evidence, isolation/data governance,
   and security operations.
@@ -65,7 +66,8 @@ The layer has three parts:
 - Social-cognition model: private ToM, reputation projections, shared social
   memory, uncertainty, conflict, decay, and redaction policy.
 - Policy model: constitutional citizenship, rights, duties, standing changes,
-  review, appeal, delegation, IAM, and social-contract representation.
+  review, appeal, delegation, upstream delegation, IAM, and social-contract
+  representation.
 - Security model: zero-trust boundaries, least-privilege policy enforcement,
   cryptographic trust, secrets/key lifecycle, audit/compliance records,
   isolation, data governance, incident response, provenance, and adversarial
@@ -101,7 +103,7 @@ A review packet should include:
 - moral trace event references
 - outcome and attribution references
 - applicable rights, duties, and policy
-- delegation/IAM authority chain when relevant
+- delegation, upstream delegation, and IAM authority chain when relevant
 - finding, severity, uncertainty, and appeal status
 - redaction disposition
 
