@@ -1,0 +1,131 @@
+{
+  "schema": "adl.planning_template_registry.v1",
+  "planning_template_set": "1.0.0",
+  "semver": "1.0.0",
+  "status": "active",
+  "object_kind": "planning_template_set",
+  "template_root": "docs/templates/planning/1.0.0/",
+  "placeholder_style": "angle_bracket",
+  "draft_truth_model": {
+    "generated": "Template-filled planning docs are generated drafts.",
+    "validated": "Validation proves structure and placeholder resolution only.",
+    "reviewed": "Review status must be recorded from an actual review.",
+    "approved": "Approval must come from human or lifecycle evidence, not template filling."
+  },
+  "templates": {
+    "readme": {
+      "object_kind": "planning_template",
+      "semantic_role": "Milestone README",
+      "path": "docs/templates/planning/1.0.0/readme.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/README_TEMPLATE.md",
+      "required_sections": ["Metadata", "Purpose", "How To Use", "Overview", "Scope Summary", "Document Map", "Execution Model", "Demo and Validation Surface", "Status", "Exit Criteria"]
+    },
+    "wbs": {
+      "object_kind": "planning_template",
+      "semantic_role": "Work Breakdown Structure",
+      "path": "docs/templates/planning/1.0.0/wbs.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/WBS_TEMPLATE.md",
+      "required_sections": ["Metadata", "How To Use", "WBS Summary", "Work Packages", "Sequencing", "Acceptance Mapping", "Exit Criteria"]
+    },
+    "sprint": {
+      "object_kind": "planning_template",
+      "semantic_role": "Sprint Plan",
+      "path": "docs/templates/planning/1.0.0/sprint.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/SPRINT_TEMPLATE.md",
+      "required_sections": ["Metadata", "How To Use", "Sprint Goal", "Planned Scope", "Work Plan", "Risks / Dependencies", "Demo / Review Plan", "Exit Criteria"]
+    },
+    "vision": {
+      "object_kind": "planning_template",
+      "semantic_role": "Milestone Vision",
+      "path": "docs/templates/planning/1.0.0/vision.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/VISION_TEMPLATE.md",
+      "required_sections": ["Metadata", "Purpose", "How To Use", "Overview", "Core Goals", "Milestone Context", "Long-Term Direction", "Summary", "Exit Criteria"]
+    },
+    "design": {
+      "object_kind": "planning_template",
+      "semantic_role": "Milestone Design",
+      "path": "docs/templates/planning/1.0.0/design.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/DESIGN_TEMPLATE.md",
+      "required_sections": ["Metadata", "Purpose", "Problem Statement", "Goals", "Non-Goals", "Scope", "Requirements", "Proposed Design", "Validation Plan", "Exit Criteria"]
+    },
+    "decisions": {
+      "object_kind": "planning_template",
+      "semantic_role": "Decision Log",
+      "path": "docs/templates/planning/1.0.0/decisions.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/DECISIONS_TEMPLATE.md",
+      "required_sections": ["Metadata", "Purpose", "How To Use", "Decision Log", "Open Questions", "Exit Criteria"]
+    },
+    "demo_matrix": {
+      "object_kind": "planning_template",
+      "semantic_role": "Demo Matrix",
+      "path": "docs/templates/planning/1.0.0/demo_matrix.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/DEMO_MATRIX_TEMPLATE.md",
+      "required_sections": ["Metadata", "Purpose", "How To Use", "Scope", "Runtime Preconditions", "Demo Coverage Summary", "Coverage Rules", "Demo Details", "Cross-Demo Validation", "Determinism Evidence", "Reviewer Sign-Off Surface", "Exit Criteria"]
+    },
+    "feature_doc": {
+      "object_kind": "planning_template",
+      "semantic_role": "Feature Document",
+      "path": "docs/templates/planning/1.0.0/feature_doc.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/FEATURE_DOC_TEMPLATE.md",
+      "required_sections": ["Metadata", "Template Rules", "Purpose", "Context", "Coverage / Ownership", "Overview", "Design", "Execution Flow", "Determinism and Constraints", "Integration Points", "Validation", "Acceptance Criteria", "Risks", "Future Work", "Notes"]
+    },
+    "milestone_checklist": {
+      "object_kind": "planning_template",
+      "semantic_role": "Milestone Checklist",
+      "path": "docs/templates/planning/1.0.0/milestone_checklist.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/MILESTONE_CHECKLIST_TEMPLATE.md",
+      "required_sections": ["Metadata", "Purpose", "Planning", "Execution Discipline", "Quality Gates", "Release Packaging", "Post-Release", "Exit Criteria"]
+    },
+    "release_plan": {
+      "object_kind": "planning_template",
+      "semantic_role": "Release Plan",
+      "path": "docs/templates/planning/1.0.0/release_plan.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/RELEASE_PLAN_TEMPLATE.md",
+      "required_sections": ["Metadata", "How To Use", "0) Release-Tail Convergence", "1) Release Readiness", "2) Branch And Tag Preparation", "3) GitHub Release Steps", "4) Verification", "5) Communication", "Exit Criteria"]
+    },
+    "release_notes": {
+      "object_kind": "planning_template",
+      "semantic_role": "Release Notes",
+      "path": "docs/templates/planning/1.0.0/release_notes.md",
+      "version": "1.0.0",
+      "status": "active",
+      "legacy_path": "docs/templates/RELEASE_NOTES_TEMPLATE.md",
+      "required_sections": ["Metadata", "How To Use", "Summary", "Highlights", "What's New In Detail", "Upgrade Notes", "Known Limitations", "Validation Notes", "What's Next", "Exit Criteria"]
+    }
+  },
+  "compatibility_fallbacks": {
+    "flat_templates": [
+      "docs/templates/README_TEMPLATE.md",
+      "docs/templates/WBS_TEMPLATE.md",
+      "docs/templates/SPRINT_TEMPLATE.md",
+      "docs/templates/VISION_TEMPLATE.md",
+      "docs/templates/DESIGN_TEMPLATE.md",
+      "docs/templates/DECISIONS_TEMPLATE.md",
+      "docs/templates/DEMO_MATRIX_TEMPLATE.md",
+      "docs/templates/FEATURE_DOC_TEMPLATE.md",
+      "docs/templates/MILESTONE_CHECKLIST_TEMPLATE.md",
+      "docs/templates/RELEASE_PLAN_TEMPLATE.md",
+      "docs/templates/RELEASE_NOTES_TEMPLATE.md"
+    ]
+  }
+}
