@@ -1,5 +1,6 @@
 use anyhow::{bail, Context, Result};
 use chrono::Utc;
+use serde_json::Value;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -30,8 +31,62 @@ pub(crate) fn ensure_task_bundle_stp(
             fs::create_dir_all(parent)?;
         }
         if let Some(mut text) = try_read_prompt_template(root, "stp") {
+            let prompt = fs::read_to_string(source_path).unwrap_or_default();
             let source_rel = path_relative_to_repo(root, source_path);
             let title = issue_ref.slug().replace('-', " ");
+            let summary = issue_prompt_section(&prompt, "Summary")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| format!("Issue-local task surface for {title}."));
+            let goal = issue_prompt_section(&prompt, "Goal")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| "Refine the linked source issue prompt goal.".to_string());
+            let required_outcome = issue_prompt_section(&prompt, "Required Outcome")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| {
+                    "Refine the linked source issue prompt required outcome.".to_string()
+                });
+            let deliverables = issue_prompt_section(&prompt, "Deliverables")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| {
+                    "Refine source issue deliverables before execution.".to_string()
+                });
+            let acceptance = issue_prompt_section(&prompt, "Acceptance Criteria")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| {
+                    "Refine source issue acceptance criteria before execution.".to_string()
+                });
+            let repo_inputs = issue_prompt_section(&prompt, "Repo Inputs")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| source_rel.clone());
+            let dependencies = issue_prompt_section(&prompt, "Dependencies")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| "none recorded in source issue prompt".to_string());
+            let target_surfaces = repo_inputs.clone();
+            let validation_plan = issue_prompt_section(&prompt, "Validation Plan")
+                .or_else(|| issue_prompt_section(&prompt, "Tooling Notes"))
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| {
+                    "Run the smallest proving validation for the touched surface and record it in SOR."
+                        .to_string()
+                });
+            let demo_requirements = issue_prompt_section(&prompt, "Demo Expectations")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| {
+                    "No demo required unless the source issue says otherwise.".to_string()
+                });
+            let non_goals = issue_prompt_section(&prompt, "Non-goals")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| {
+                    "Do not widen scope beyond the linked source issue prompt.".to_string()
+                });
+            let issue_graph_notes = issue_prompt_section(&prompt, "Issue-Graph Notes")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| {
+                    "Preserve issue graph truth from the linked source issue prompt.".to_string()
+                });
+            let notes_risks = issue_prompt_section(&prompt, "Notes")
+                .map(|value| one_line_summary(&value))
+                .unwrap_or_else(|| "Update this card if execution reality diverges.".to_string());
             apply_template_values(
                 &mut text,
                 &[
@@ -47,66 +102,22 @@ pub(crate) fn ensure_task_bundle_stp(
                     ("<demo_required>", "false".to_string()),
                     (
                         "<issue_graph_note>",
-                        "Generated from 1.0.0 C-SDLC prompt template; refine with editor skills before execution if needed."
+                        "Versioned C-SDLC prompt template applied; source issue prompt remains the design-time intent source."
                             .to_string(),
                     ),
-                    (
-                        "<summary>",
-                        format!("Issue-local task surface for {title}."),
-                    ),
-                    (
-                        "<goal>",
-                        "Execute the linked issue prompt with bounded, reviewable changes."
-                            .to_string(),
-                    ),
-                    (
-                        "<required_outcome>",
-                        "Ship the outcome required by the linked source issue prompt."
-                            .to_string(),
-                    ),
-                    (
-                        "<deliverables>",
-                        "Use deliverables from the linked source issue prompt.".to_string(),
-                    ),
-                    (
-                        "<acceptance_criteria>",
-                        "Satisfy the linked source issue prompt acceptance criteria.".to_string(),
-                    ),
-                    (
-                        "<repo_inputs>",
-                        "Use repo inputs from the linked source issue prompt.".to_string(),
-                    ),
-                    (
-                        "<dependencies>",
-                        "Use dependency truth from the linked source issue prompt.".to_string(),
-                    ),
-                    (
-                        "<target_files_surfaces>",
-                        "Review source issue prompt and scoped repo inputs.".to_string(),
-                    ),
-                    (
-                        "<validation_plan>",
-                        "Run the smallest proving validation for the touched surface and record it in SOR."
-                            .to_string(),
-                    ),
-                    (
-                        "<demo_proof_requirements>",
-                        "Follow demo/proof requirements from the linked source issue prompt."
-                            .to_string(),
-                    ),
-                    (
-                        "<non_goals>",
-                        "Do not widen scope beyond the linked source issue prompt.".to_string(),
-                    ),
-                    (
-                        "<issue_graph_notes>",
-                        "Preserve issue graph truth from the linked source issue prompt."
-                            .to_string(),
-                    ),
-                    (
-                        "<notes_risks>",
-                        "Update this card if execution reality diverges.".to_string(),
-                    ),
+                    ("<summary>", summary),
+                    ("<goal>", goal),
+                    ("<required_outcome>", required_outcome),
+                    ("<deliverables>", deliverables),
+                    ("<acceptance_criteria>", acceptance),
+                    ("<repo_inputs>", repo_inputs),
+                    ("<dependencies>", dependencies),
+                    ("<target_files_surfaces>", target_surfaces),
+                    ("<validation_plan>", validation_plan),
+                    ("<demo_proof_requirements>", demo_requirements),
+                    ("<non_goals>", non_goals),
+                    ("<issue_graph_notes>", issue_graph_notes),
+                    ("<notes_risks>", notes_risks),
                     (
                         "<tooling_notes>",
                         "Generated from docs/templates/prompts/1.0.0/.".to_string(),
@@ -528,6 +539,12 @@ fn write_input_card(
 }
 
 fn read_prompt_template(repo_root: &Path, kind: &str, fallbacks: &[&str]) -> Result<String> {
+    if let Some(path) = active_prompt_template_path(repo_root, kind)? {
+        if path.is_file() {
+            return fs::read_to_string(&path)
+                .with_context(|| format!("failed to read prompt template {}", path.display()));
+        }
+    }
     let primary = repo_root
         .join("docs")
         .join("templates")
@@ -546,6 +563,34 @@ fn read_prompt_template(repo_root: &Path, kind: &str, fallbacks: &[&str]) -> Res
         }
     }
     bail!("missing {kind} prompt template under docs/templates/prompts/1.0.0")
+}
+
+fn active_prompt_template_path(repo_root: &Path, kind: &str) -> Result<Option<PathBuf>> {
+    let registry_path = repo_root.join("docs/templates/prompts/current.json");
+    if !registry_path.is_file() {
+        return Ok(None);
+    }
+    let registry_text = fs::read_to_string(&registry_path).with_context(|| {
+        format!(
+            "failed to read prompt template registry {}",
+            registry_path.display()
+        )
+    })?;
+    let registry: Value = serde_json::from_str(&registry_text).with_context(|| {
+        format!(
+            "failed to parse prompt template registry {}",
+            registry_path.display()
+        )
+    })?;
+    let Some(path) = registry
+        .get("templates")
+        .and_then(|templates| templates.get(kind))
+        .and_then(|entry| entry.get("path"))
+        .and_then(Value::as_str)
+    else {
+        return Ok(None);
+    };
+    Ok(Some(repo_root.join(path)))
 }
 
 fn try_read_prompt_template(repo_root: &Path, kind: &str) -> Option<String> {
@@ -946,7 +991,7 @@ fn render_bootstrap_plan_card(
                 ("<non_goals_inline>", non_goals_step.clone()),
                 (
                     "<plan_summary>",
-                    format!("Design-time execution plan for {title}."),
+                    format!("Issue-local execution plan for {title}."),
                 ),
                 ("<dependencies_inline>", dependency_step.clone()),
                 ("<repo_inputs_inline>", repo_inputs_step.clone()),
@@ -1030,7 +1075,7 @@ proposed_steps:
     expected_output: "validation evidence recorded in SOR"
     allowed_mode: "execution_after_approval"
   - id: "step-5"
-    description: "Record review in SRP, outcome truth in SOR, and refresh this SPP if execution diverges."
+    description: "Record issue-specific review findings in SRP, issue outcome truth in SOR, and refresh this SPP if execution diverges."
     expected_output: "reviewed SRP and truthful SOR"
     allowed_mode: "execution_after_approval"
 codex_plan:
@@ -1042,7 +1087,7 @@ codex_plan:
     status: "pending"
   - step: "Run focused validation and proof gates."
     status: "pending"
-  - step: "Record SRP review results and SOR outcome truth."
+  - step: "Record issue-specific SRP findings and SOR outcome truth."
     status: "pending"
 affected_areas:
   - "{slug}"
@@ -1083,7 +1128,7 @@ Design-time operative plan for this issue. Use this SPP to guide execution; duri
 2. [pending] Inspect repo inputs and target surfaces before editing.
 3. [pending] Implement the bounded deliverables only.
 4. [pending] Run focused validation and proof gates.
-5. [pending] Record SRP review results and SOR outcome truth.
+5. [pending] Record issue-specific SRP findings and SOR outcome truth.
 
 ## Assumptions
 
@@ -1096,7 +1141,7 @@ Design-time operative plan for this issue. Use this SPP to guide execution; duri
 2. Review repo inputs and scoped surfaces before editing: {repo_inputs_md}
 3. Implement only the bounded deliverables: {deliverables_md}
 4. Run focused proof gates for acceptance: {acceptance_md}
-5. Record review in SRP, outcome truth in SOR, and refresh this SPP if execution diverges.
+5. Record issue-specific review findings in SRP, issue outcome truth in SOR, and refresh this SPP if execution diverges.
 
 ## Affected Areas
 

@@ -157,6 +157,40 @@ fn copy_versioned_prompt_templates(repo: &Path) {
     }
 }
 
+fn write_alternate_stp_prompt_template(repo: &Path) {
+    let alternate_dir = repo.join("docs/templates/prompts/1.0.1");
+    fs::create_dir_all(&alternate_dir).expect("create alternate prompt template dir");
+    let base = fs::read_to_string(repo.join("docs/templates/prompts/1.0.0/stp.md"))
+        .expect("read base stp template");
+    fs::write(
+        alternate_dir.join("stp.md"),
+        base.replace(
+            "Canonical Template Source: `docs/templates/prompts/1.0.0/stp.md`",
+            "Canonical Template Source: `docs/templates/prompts/1.0.1/stp.md`",
+        ) + "\n\nRegistry route proof: alternate STP template.\n",
+    )
+    .expect("write alternate stp template");
+    fs::write(
+        repo.join("docs/templates/prompts/current.json"),
+        r#"{
+  "schema": "adl.csdlc.prompt_template_registry.v1",
+  "csdlc_prompt_template_set": "1.0.1",
+  "semver": "1.0.1",
+  "status": "active",
+  "object_kind": "csdlc_prompt_template_set",
+  "lifecycle": ["SIP", "STP", "SPP", "SRP", "SOR"],
+  "templates": {
+    "stp": {
+      "semantic_role": "Structured Task Prompt",
+      "path": "docs/templates/prompts/1.0.1/stp.md"
+    }
+  }
+}
+"#,
+    )
+    .expect("write alternate registry");
+}
+
 fn write_authored_issue_prompt(repo: &Path, issue_ref: &IssueRef, title: &str) {
     let path = issue_ref.issue_prompt_path(repo);
     fs::create_dir_all(path.parent().expect("issue prompt parent")).expect("create body dir");
@@ -743,6 +777,8 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     assert!(stp.contains("# Structured Task Prompt"));
     assert!(sip.contains("Semantic role: Structured Issue Prompt (`SIP`)."));
     assert!(spp.contains("artifact_type: \"structured_planning_prompt\""));
+    assert!(spp.contains("status: \"draft\""));
+    assert!(spp.contains("activation_state: \"draft\""));
     assert!(srp.contains("artifact_type: \"structured_review_prompt\""));
     assert!(sor.contains("Status: IN_PROGRESS"));
 }
@@ -875,6 +911,8 @@ The generated SPP should carry source-prompt facts into the plan.
     .expect("bootstrap cards");
 
     let spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
+    assert!(spp.contains("status: \"draft\""));
+    assert!(spp.contains("activation_state: \"draft\""));
     assert!(spp.contains(
         "Confirm dependency readiness and starting state: PR #3294 coverage gate must be green"
     ));
@@ -887,6 +925,171 @@ The generated SPP should carry source-prompt facts into the plan.
     assert!(spp.contains("Run focused pr_cmd coverage only"));
     assert!(!spp.contains("<deliverables_inline>"));
     assert!(!spp.contains("[summary truncated]"));
+}
+
+#[test]
+fn versioned_bootstrap_cards_avoid_design_time_readiness_markers() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-design-readiness");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        3298,
+        "v0.91.3".to_string(),
+        "tools-test-design-readiness".to_string(),
+    )
+    .expect("issue ref");
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("mkdir");
+    fs::write(
+        &source_path,
+        r#"---
+title: "[v0.91.3][tools] Test design readiness"
+labels:
+  - "track:roadmap"
+issue_number: 3298
+---
+
+# Test design readiness
+
+## Summary
+
+Prove versioned card bootstrap output is ready for design-time review.
+
+## Goal
+
+Generate issue-local cards from concrete source prompt sections.
+
+## Required Outcome
+
+All generated prompt cards pass the sprint readiness checker.
+
+## Deliverables
+
+- Versioned prompt cards
+- Readiness checker proof
+
+## Acceptance Criteria
+
+- Generated STP avoids generic linked-source placeholders
+- Generated SPP avoids generic linked-source placeholders
+- Generated SRP uses Structured Review Prompt semantics
+
+## Repo Inputs
+
+- adl/src/cli/pr_cmd_cards/cards.rs
+- docs/templates/prompts/1.0.0/
+
+## Dependencies
+
+- none
+
+## Demo Expectations
+
+- no human demo required
+
+## Non-goals
+
+- broad sprint orchestration changes
+
+## Issue-Graph Notes
+
+- issue-local regression fixture
+
+## Notes
+
+- readiness checker should accept this generated bundle
+
+## Tooling Notes
+
+- Run focused pr_cmd card tests
+"#,
+    )
+    .expect("write source");
+    let title = "[v0.91.3][tools] Test design readiness";
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_bootstrap_cards(
+        &repo,
+        &issue_ref,
+        title,
+        "codex/3298-test-design-readiness",
+        &source_path,
+    )
+    .expect("bootstrap cards");
+
+    let stp = fs::read_to_string(issue_ref.task_bundle_stp_path(&repo)).expect("read stp");
+    let spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
+    let srp =
+        fs::read_to_string(issue_ref.task_bundle_review_policy_path(&repo)).expect("read srp");
+    assert!(spp.contains("status: \"draft\""));
+    assert!(spp.contains("activation_state: \"draft\""));
+    for marker in [
+        "Issue-local task surface for",
+        "Execute the linked issue prompt with bounded, reviewable changes",
+        "Ship the outcome required by the linked source issue prompt",
+        "Use deliverables from the linked source issue prompt",
+        "Satisfy the linked source issue prompt acceptance criteria",
+        "Use repo inputs from the linked source issue prompt",
+        "Use dependency truth from the linked source issue prompt",
+        "Review source issue prompt and scoped repo inputs",
+        "Follow demo/proof requirements from the linked source issue prompt",
+        "Generated from 1.0.0 C-SDLC prompt template; refine with editor skills before execution if needed",
+    ] {
+        assert!(
+            !stp.contains(marker),
+            "generated STP retained generic readiness marker: {marker}"
+        );
+    }
+    for marker in [
+        "Bootstrap-generated SPP",
+        "Design-time generated SPP; review before execution",
+        "Review this SPP before execution; during runtime, update it before continuing if the actual execution sequence changes.",
+        "generated from source issue prompt, STP/SIP surfaces",
+        "Design-time execution plan for",
+        "Use dependency truth from the linked source issue prompt",
+        "Use repo inputs from the linked source issue prompt",
+        "Use deliverables from the linked source issue prompt",
+        "Satisfy the linked source issue prompt acceptance criteria",
+        "Run focused proof gates for acceptance: Satisfy the linked source issue prompt acceptance criteria",
+        "Record SRP review results and SOR outcome truth",
+    ] {
+        assert!(
+            !spp.contains(marker),
+            "generated SPP retained generic readiness marker: {marker}"
+        );
+    }
+    assert!(srp.contains("artifact_type: \"structured_review_prompt\""));
+    assert!(srp.contains("# Structured Review Prompt"));
+    assert!(!srp.contains("Structured Review Policy"));
+}
+
+#[test]
+fn prompt_template_registry_redirects_rust_template_loading() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-registry-redirect");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+    write_alternate_stp_prompt_template(&repo);
+
+    let issue_ref = IssueRef::new(
+        3299,
+        "v0.91.3".to_string(),
+        "tools-test-template-registry-redirect".to_string(),
+    )
+    .expect("issue ref");
+    let title = "[v0.91.3][tools] Test template registry redirect";
+    write_authored_issue_prompt(&repo, &issue_ref, title);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+
+    let stp_path = ensure_task_bundle_stp(&repo, &issue_ref, &source_path)
+        .expect("versioned STP template should render");
+    let stp = fs::read_to_string(stp_path).expect("read stp");
+
+    assert!(stp.contains("Canonical Template Source: `docs/templates/prompts/1.0.1/stp.md`"));
+    assert!(stp.contains("Registry route proof: alternate STP template."));
 }
 
 mod basics;

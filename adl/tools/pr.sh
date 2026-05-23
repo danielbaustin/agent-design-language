@@ -712,6 +712,7 @@ LEGACY_OUTPUT_TEMPLATE="$ADL_DIR/templates/output_card_template.md"
 
 resolve_prompt_template() {
   local kind="$1" primary="" compat="" legacy=""
+  local registry_path registry_template
   case "$kind" in
     sip) primary="$INPUT_TEMPLATE"; compat="$COMPAT_INPUT_TEMPLATE"; legacy="$LEGACY_INPUT_TEMPLATE" ;;
     stp) primary="$STP_TEMPLATE" ;;
@@ -720,6 +721,24 @@ resolve_prompt_template() {
     sor) primary="$OUTPUT_TEMPLATE"; compat="$COMPAT_OUTPUT_TEMPLATE"; legacy="$LEGACY_OUTPUT_TEMPLATE" ;;
     *) die "unknown prompt template kind: $kind" ;;
   esac
+  registry_path="$(repo_root)/docs/templates/prompts/current.json"
+  if [[ -f "$registry_path" ]]; then
+    registry_template="$(
+      python3 - "$registry_path" "$kind" <<'PY' 2>/dev/null || true
+import json
+import sys
+from pathlib import Path
+
+registry = json.loads(Path(sys.argv[1]).read_text())
+entry = registry.get("templates", {}).get(sys.argv[2], {})
+print(entry.get("path", ""))
+PY
+    )"
+    if [[ -n "$registry_template" && -f "$(repo_root)/$registry_template" ]]; then
+      echo "$(repo_root)/$registry_template"
+      return 0
+    fi
+  fi
   if [[ -n "$primary" && -f "$(repo_root)/$primary" ]]; then
     echo "$(repo_root)/$primary"
     return 0
@@ -1125,9 +1144,41 @@ validate_structured_card() {
     || die "init: $kind failed validation: $path"
 }
 
+source_section_one_line() {
+  local path="$1" heading="$2" fallback="$3"
+  local value
+  if [[ -f "$path" ]]; then
+    value="$(
+      awk -v heading="## ${heading}" '
+        $0 == heading { in_section=1; next }
+        in_section && /^## / { exit }
+        in_section {
+          line=$0
+          sub(/^[[:space:]]*[-*][[:space:]]+/, "", line)
+          sub(/^[[:space:]]+/, "", line)
+          sub(/[[:space:]]+$/, "", line)
+          if (line != "" && line != "-" && line != "none") {
+            if (out != "") { out = out "; " }
+            out = out line
+          }
+        }
+        END { print out }
+      ' "$path"
+    )"
+    value="$(trim_ws "$value")"
+  fi
+  if [[ -n "${value:-}" ]]; then
+    printf '%s\n' "$value"
+  else
+    printf '%s\n' "$fallback"
+  fi
+}
+
 seed_prompt_template_card() {
   local kind="$1" path="$2" issue="$3" title="$4" branch="$5" ver="$6" source_path="$7" slug="$8"
   local tpl tmp repo issue_url bundle_dir stp_rel sip_rel spp_rel srp_rel sor_rel source_rel target_inline
+  local source_summary source_goal source_required_outcome source_deliverables source_acceptance source_repo_inputs
+  local source_dependencies source_validation source_demo source_non_goals source_issue_graph source_notes
   tpl="$(resolve_prompt_template "$kind")"
   mkdir -p "$(dirname "$path")"
   tmp="$(mktemp -t prsh_${kind}_card_XXXXXX)"
@@ -1141,7 +1192,19 @@ seed_prompt_template_card() {
   spp_rel="$(path_relative_to_repo "$bundle_dir/spp.md")"
   srp_rel="$(path_relative_to_repo "$bundle_dir/srp.md")"
   sor_rel="$(path_relative_to_repo "$bundle_dir/sor.md")"
-  target_inline="Review source issue prompt and scoped repo inputs."
+  source_summary="$(source_section_one_line "$source_path" "Summary" "Issue-local task surface for $title.")"
+  source_goal="$(source_section_one_line "$source_path" "Goal" "Refine the linked source issue prompt goal.")"
+  source_required_outcome="$(source_section_one_line "$source_path" "Required Outcome" "Refine the linked source issue prompt required outcome.")"
+  source_deliverables="$(source_section_one_line "$source_path" "Deliverables" "Refine source issue deliverables before execution.")"
+  source_acceptance="$(source_section_one_line "$source_path" "Acceptance Criteria" "Refine source issue acceptance criteria before execution.")"
+  source_repo_inputs="$(source_section_one_line "$source_path" "Repo Inputs" "$source_rel")"
+  source_dependencies="$(source_section_one_line "$source_path" "Dependencies" "none recorded in source issue prompt")"
+  source_validation="$(source_section_one_line "$source_path" "Validation Plan" "$(source_section_one_line "$source_path" "Tooling Notes" "Run the smallest proving validation for the touched surface and record it in SOR.")")"
+  source_demo="$(source_section_one_line "$source_path" "Demo Expectations" "No demo required unless the source issue says otherwise.")"
+  source_non_goals="$(source_section_one_line "$source_path" "Non-goals" "Do not widen scope beyond the linked source issue prompt.")"
+  source_issue_graph="$(source_section_one_line "$source_path" "Issue-Graph Notes" "Preserve issue graph truth from the linked source issue prompt.")"
+  source_notes="$(source_section_one_line "$source_path" "Notes" "Update this card if execution reality diverges.")"
+  target_inline="$source_repo_inputs"
 
   if [[ -f "$tpl" ]]; then
     render_template "$tpl" >"$tmp" || die "failed to render $kind prompt template: $tpl"
@@ -1157,8 +1220,8 @@ run_id: "issue-<issue_padded>"
 version: "<version>"
 title: "<title>"
 branch: "<branch>"
-status: "approved"
-activation_state: "design_time_ready"
+status: "draft"
+activation_state: "draft"
 plan_revision: 1
 source_refs:
   - kind: "issue"
@@ -1382,30 +1445,30 @@ EOF
     "<wp>" "process" \
     "<required_outcome_type>" "code" \
     "<demo_required>" "false" \
-    "<issue_graph_note>" "Generated from 1.0.0 C-SDLC prompt template; refine with editor skills before execution if needed." \
-    "<summary>" "Issue-local task surface for $title." \
-    "<goal>" "Execute the linked issue prompt with bounded, reviewable changes." \
-    "<required_outcome>" "Ship the outcome required by the linked source issue prompt." \
-    "<deliverables>" "Use deliverables from the linked source issue prompt." \
-    "<acceptance_criteria>" "Satisfy the linked source issue prompt acceptance criteria." \
-    "<repo_inputs>" "Use repo inputs from the linked source issue prompt." \
-    "<dependencies>" "Use dependency truth from the linked source issue prompt." \
+    "<issue_graph_note>" "Versioned C-SDLC prompt template applied; source issue prompt remains the design-time intent source." \
+    "<summary>" "$source_summary" \
+    "<goal>" "$source_goal" \
+    "<required_outcome>" "$source_required_outcome" \
+    "<deliverables>" "$source_deliverables" \
+    "<acceptance_criteria>" "$source_acceptance" \
+    "<repo_inputs>" "$source_repo_inputs" \
+    "<dependencies>" "$source_dependencies" \
     "<target_files_surfaces>" "$target_inline" \
-    "<validation_plan>" "Run the smallest proving validation for the touched surface and record it in SOR." \
-    "<demo_proof_requirements>" "Follow demo/proof requirements from the linked source issue prompt." \
-    "<non_goals>" "Do not widen scope beyond the linked source issue prompt." \
-    "<issue_graph_notes>" "Preserve issue graph truth from the linked source issue prompt." \
-    "<notes_risks>" "Update this card if execution reality diverges." \
+    "<validation_plan>" "$source_validation" \
+    "<demo_proof_requirements>" "$source_demo" \
+    "<non_goals>" "$source_non_goals" \
+    "<issue_graph_notes>" "$source_issue_graph" \
+    "<notes_risks>" "$source_notes" \
     "<tooling_notes>" "Generated from docs/templates/prompts/1.0.0/." \
     "<target_files_surfaces_inline>" "$target_inline" \
-    "<non_goals_inline>" "Do not widen scope beyond the linked source issue prompt." \
-    "<plan_summary>" "Design-time execution plan for $title." \
-    "<dependencies_inline>" "Use dependency truth from the linked source issue prompt." \
-    "<repo_inputs_inline>" "Use repo inputs from the linked source issue prompt." \
-    "<deliverables_inline>" "Use deliverables from the linked source issue prompt." \
-    "<acceptance_criteria_inline>" "Satisfy acceptance criteria from the linked source issue prompt." \
+    "<non_goals_inline>" "$source_non_goals" \
+    "<plan_summary>" "Issue-local execution plan for $title." \
+    "<dependencies_inline>" "$source_dependencies" \
+    "<repo_inputs_inline>" "$source_repo_inputs" \
+    "<deliverables_inline>" "$source_deliverables" \
+    "<acceptance_criteria_inline>" "$source_acceptance" \
     "<risks_inline>" "Generated card may need editor tightening if the source issue prompt is underspecified." \
-    "<validation_plan_inline>" "Run focused validation for the touched surface and record exact commands in SOR." \
+    "<validation_plan_inline>" "$source_validation" \
     "<notes_risks_inline>" "Generated from 1.0.0 template; update before continuing if execution diverges."
 
   mv "$tmp" "$path"
@@ -2400,6 +2463,10 @@ EOF
 }
 
 main() {
+  if [[ "${ADL_PR_SH_TEMPLATE_RESOLVER_SELF_TEST:-0}" == "1" ]]; then
+    resolve_prompt_template "${1:-sip}"
+    return 0
+  fi
   local cmd="${1:-}"; shift || true
   case "$cmd" in
     help) usage ;;

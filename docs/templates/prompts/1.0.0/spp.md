@@ -8,8 +8,8 @@ run_id: "issue-<issue_padded>"
 version: "<version>"
 title: "<title>"
 branch: "<branch>"
-status: "approved"
-activation_state: "design_time_ready"
+status: "draft"
+activation_state: "draft"
 plan_revision: 1
 source_refs:
   - kind: "issue"
@@ -53,7 +53,7 @@ proposed_steps:
     expected_output: "validation evidence recorded in SOR"
     allowed_mode: "execution_after_approval"
   - id: "step-5"
-    description: "Record review in SRP, outcome truth in SOR, and refresh this SPP if execution diverges."
+    description: "Record issue-specific review findings in SRP, issue outcome truth in SOR, and refresh this SPP if execution diverges."
     expected_output: "reviewed SRP and truthful SOR"
     allowed_mode: "execution_after_approval"
 codex_plan:
@@ -65,7 +65,7 @@ codex_plan:
     status: "pending"
   - step: "Run focused validation and proof gates."
     status: "pending"
-  - step: "Record SRP review results and SOR outcome truth."
+  - step: "Record issue-specific SRP findings and SOR outcome truth."
     status: "pending"
 affected_areas:
   - "<slug>"
@@ -105,7 +105,7 @@ Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`
 2. [pending] Inspect repo inputs and target surfaces before editing.
 3. [pending] Implement the bounded deliverables only.
 4. [pending] Run focused validation and proof gates.
-5. [pending] Record SRP review results and SOR outcome truth.
+5. [pending] Record issue-specific SRP findings and SOR outcome truth.
 
 ## Assumptions
 
@@ -117,7 +117,7 @@ Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`
 2. Review repo inputs and scoped surfaces before editing: <repo_inputs_inline>
 3. Implement only the bounded deliverables: <deliverables_inline>
 4. Run focused proof gates for acceptance: <acceptance_criteria_inline>
-5. Record review in SRP, outcome truth in SOR, and refresh this SPP if execution diverges.
+5. Record issue-specific review findings in SRP, issue outcome truth in SOR, and refresh this SPP if execution diverges.
 
 ## Affected Areas
 

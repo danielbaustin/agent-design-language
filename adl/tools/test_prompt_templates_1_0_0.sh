@@ -98,4 +98,40 @@ if grep -R "Structured Review Policy" "$ROOT_DIR/docs/templates/prompts/1.0.0"; 
   exit 1
 fi
 
+registry_repo="$tmpdir/registry-repo"
+mkdir -p "$registry_repo/adl/tools" "$registry_repo/docs/templates/prompts/1.0.0" "$registry_repo/docs/templates/prompts/1.0.1"
+cp "$ROOT_DIR/adl/tools/pr.sh" "$registry_repo/adl/tools/pr.sh"
+cp "$ROOT_DIR/adl/tools/card_paths.sh" "$registry_repo/adl/tools/card_paths.sh"
+cp "$ROOT_DIR/docs/templates/prompts/1.0.0/stp.md" "$registry_repo/docs/templates/prompts/1.0.0/stp.md"
+sed 's#docs/templates/prompts/1.0.0/stp.md#docs/templates/prompts/1.0.1/stp.md#' \
+  "$ROOT_DIR/docs/templates/prompts/1.0.0/stp.md" >"$registry_repo/docs/templates/prompts/1.0.1/stp.md"
+cat >"$registry_repo/docs/templates/prompts/current.json" <<'JSON'
+{
+  "schema": "adl.csdlc.prompt_template_registry.v1",
+  "csdlc_prompt_template_set": "1.0.1",
+  "semver": "1.0.1",
+  "status": "active",
+  "object_kind": "csdlc_prompt_template_set",
+  "templates": {
+    "stp": {
+      "semantic_role": "Structured Task Prompt",
+      "path": "docs/templates/prompts/1.0.1/stp.md"
+    }
+  }
+}
+JSON
+git -C "$registry_repo" init -q
+git -C "$registry_repo" remote add origin https://github.com/danielbaustin/agent-design-language.git
+resolved="$(
+  cd "$registry_repo"
+  ADL_PR_SH_TEMPLATE_RESOLVER_SELF_TEST=1 bash adl/tools/pr.sh stp
+)"
+case "$resolved" in
+  */docs/templates/prompts/1.0.1/stp.md) ;;
+  *)
+    echo "expected pr.sh template resolver to follow current.json, got: $resolved" >&2
+    exit 1
+    ;;
+esac
+
 echo "PASS: 1.0.0 prompt templates fill and validate"
