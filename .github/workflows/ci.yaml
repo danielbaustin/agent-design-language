@@ -100,6 +100,10 @@ jobs:
         run: bash adl/tools/test_ci_path_policy.sh
         working-directory: .
 
+      - name: v0.91.3 proof-validation lane contract
+        run: bash adl/tools/test_run_v0913_proof_validation_lane.sh
+        working-directory: .
+
       - name: PR-fast test lane contract
         run: bash adl/tools/test_run_pr_fast_test_lane.sh
         working-directory: .
@@ -210,11 +214,24 @@ jobs:
         run: bash adl/tools/demo_smoke_v07_story.sh
         working-directory: .
 
+      - name: v0.91.3 proof validation lane
+        if: steps.path-policy.outputs.v0913_proof_required == 'true'
+        run: bash adl/tools/run_v0913_proof_validation_lane.sh
+        working-directory: .
+
       - name: Demo smoke skipped by path policy
         if: steps.path-policy.outputs.demo_smoke_required != 'true'
         run: |
           echo "Demo smoke skipped because changed paths do not touch runtime or demo surfaces."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+        working-directory: .
+
+      - name: v0.91.3 proof validation skipped by path policy
+        if: steps.path-policy.outputs.v0913_proof_required != 'true'
+        run: |
+          echo "v0.91.3 proof validation skipped because changed paths do not touch tracked v0.91.3 proof/demo packet surfaces."
+          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+          echo "Proof validation scope: ${{ steps.path-policy.outputs.proof_validation_scope }}"
         working-directory: .
 
       - name: Rust acceleration stats

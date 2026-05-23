@@ -1,0 +1,23 @@
+{
+  "schema_version": "adl.v0.91.3.merge_readiness_snapshot.v1",
+  "transition_id": "cts.v0_91_3.issue_3200.ct_demo_001",
+  "gate_kind": "governed_merge_readiness_gate.v1",
+  "decision_mode": "reviewable_record",
+  "outcome": "merge_ready",
+  "issue_number": 3203,
+  "issue_state": "CLOSED",
+  "branch": "codex/3203-v0-91-3-wp-05-evidence-bundle-and-review-synthesis",
+  "worktree": ".worktrees/adl-wp-3203",
+  "pr_number": 3243,
+  "pr_state": "MERGED",
+  "base_branch": "main",
+  "adl_ci": "SUCCESS",
+  "adl_coverage": "SUCCESS",
+  "bounded_review_outcome": "PASS",
+  "open_bounded_review_findings": 0,
+  "human_merge_review_required": true,
+  "evidence_bundle_rel_path": "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md",
+  "review_synthesis_rel_path": "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_review_synthesis.md",
+  "sor_rel_path": ".adl/v0.91.3/tasks/issue-3203__v0-91-3-wp-05-evidence-bundle-and-review-synthesis/sor.md",
+  "decision": "merge_ready"
+}

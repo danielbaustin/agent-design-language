@@ -73,9 +73,11 @@ EOF
   assert_has "$docs_output" "coverage_required=false"
   assert_has "$docs_output" "full_coverage_required=false"
   assert_has "$docs_output" "demo_smoke_required=false"
+  assert_has "$docs_output" "v0913_proof_required=false"
   assert_has "$docs_output" "release_version_only=false"
   assert_has "$docs_output" "coverage_lane=skip"
   assert_has "$docs_output" "coverage_authority=not_required"
+  assert_has "$docs_output" "proof_validation_scope=not_required"
 
   git checkout -q -b release-version-only "$base_sha"
   python3 - <<'PY'
@@ -99,9 +101,11 @@ PY
   assert_has "$release_version_output" "coverage_required=false"
   assert_has "$release_version_output" "full_coverage_required=false"
   assert_has "$release_version_output" "demo_smoke_required=false"
+  assert_has "$release_version_output" "v0913_proof_required=false"
   assert_has "$release_version_output" "release_version_only=true"
   assert_has "$release_version_output" "coverage_lane=skip"
   assert_has "$release_version_output" "coverage_authority=not_required"
+  assert_has "$release_version_output" "proof_validation_scope=not_required"
   assert_has "$release_version_output" "reason=release_version_only_cargo_surface_change_runs_lightweight_validation"
 
   git checkout -q -b release-version-only-with-adl-readme "$base_sha"
@@ -129,9 +133,11 @@ PY
   assert_has "$release_version_adl_readme_output" "coverage_required=false"
   assert_has "$release_version_adl_readme_output" "full_coverage_required=false"
   assert_has "$release_version_adl_readme_output" "demo_smoke_required=false"
+  assert_has "$release_version_adl_readme_output" "v0913_proof_required=false"
   assert_has "$release_version_adl_readme_output" "release_version_only=true"
   assert_has "$release_version_adl_readme_output" "coverage_lane=skip"
   assert_has "$release_version_adl_readme_output" "coverage_authority=not_required"
+  assert_has "$release_version_adl_readme_output" "proof_validation_scope=not_required"
   assert_has "$release_version_adl_readme_output" "reason=release_version_only_cargo_surface_change_runs_lightweight_validation"
 
   git checkout -q -b cargo-structural-change "$base_sha"
@@ -149,9 +155,11 @@ EOF
   assert_has "$cargo_structural_output" "coverage_required=true"
   assert_has "$cargo_structural_output" "full_coverage_required=false"
   assert_has "$cargo_structural_output" "demo_smoke_required=true"
+  assert_has "$cargo_structural_output" "v0913_proof_required=false"
   assert_has "$cargo_structural_output" "release_version_only=false"
   assert_has "$cargo_structural_output" "coverage_lane=pr_fast"
   assert_has "$cargo_structural_output" "coverage_authority=pr_changed_surface"
+  assert_has "$cargo_structural_output" "proof_validation_scope=not_required"
 
   git checkout -q -b runtime-change "$base_sha"
   printf 'pub fn added_runtime() -> bool { true }\n' >> adl/src/lib.rs
@@ -164,9 +172,11 @@ EOF
   assert_has "$runtime_output" "coverage_required=true"
   assert_has "$runtime_output" "full_coverage_required=false"
   assert_has "$runtime_output" "demo_smoke_required=true"
+  assert_has "$runtime_output" "v0913_proof_required=false"
   assert_has "$runtime_output" "release_version_only=false"
   assert_has "$runtime_output" "coverage_lane=pr_fast"
   assert_has "$runtime_output" "coverage_authority=pr_changed_surface"
+  assert_has "$runtime_output" "proof_validation_scope=not_required"
   assert_has "$runtime_output" "reason=runtime_or_rust_test_change_runs_pr_fast_validation"
 
   git checkout -q -b new-runtime-file "$base_sha"
@@ -180,9 +190,11 @@ EOF
   assert_has "$new_runtime_file_output" "coverage_required=true"
   assert_has "$new_runtime_file_output" "full_coverage_required=false"
   assert_has "$new_runtime_file_output" "demo_smoke_required=true"
+  assert_has "$new_runtime_file_output" "v0913_proof_required=false"
   assert_has "$new_runtime_file_output" "release_version_only=false"
   assert_has "$new_runtime_file_output" "coverage_lane=pr_fast"
   assert_has "$new_runtime_file_output" "coverage_authority=pr_changed_surface"
+  assert_has "$new_runtime_file_output" "proof_validation_scope=not_required"
   assert_has "$new_runtime_file_output" "reason=runtime_or_rust_test_change_runs_pr_fast_validation"
 
   git checkout -q -b finish-control-plane "$base_sha"
@@ -199,6 +211,7 @@ EOF
   assert_has "$finish_control_plane_output" "coverage_required=false"
   assert_has "$finish_control_plane_output" "full_coverage_required=false"
   assert_has "$finish_control_plane_output" "demo_smoke_required=false"
+  assert_has "$finish_control_plane_output" "v0913_proof_required=false"
   assert_has "$finish_control_plane_output" "release_version_only=false"
   assert_has "$finish_control_plane_output" "reason=publication_control_plane_change_runs_focused_rust_validation"
 
@@ -214,9 +227,11 @@ EOF
   assert_has "$policy_surface_output" "coverage_required=false"
   assert_has "$policy_surface_output" "full_coverage_required=true"
   assert_has "$policy_surface_output" "demo_smoke_required=false"
+  assert_has "$policy_surface_output" "v0913_proof_required=false"
   assert_has "$policy_surface_output" "release_version_only=false"
   assert_has "$policy_surface_output" "coverage_lane=authoritative_full"
   assert_has "$policy_surface_output" "coverage_authority=pr_policy_surface_tooling_only"
+  assert_has "$policy_surface_output" "proof_validation_scope=not_required"
   assert_has "$policy_surface_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
 
   git checkout -q -b workflow-reporting-only-change "$base_sha"
@@ -235,9 +250,11 @@ PY
   assert_has "$workflow_reporting_output" "coverage_required=false"
   assert_has "$workflow_reporting_output" "full_coverage_required=false"
   assert_has "$workflow_reporting_output" "demo_smoke_required=false"
+  assert_has "$workflow_reporting_output" "v0913_proof_required=false"
   assert_has "$workflow_reporting_output" "release_version_only=false"
   assert_has "$workflow_reporting_output" "coverage_lane=skip"
   assert_has "$workflow_reporting_output" "coverage_authority=not_required"
+  assert_has "$workflow_reporting_output" "proof_validation_scope=not_required"
   assert_has "$workflow_reporting_output" "reason=coverage_reporting_workflow_change_skips_authoritative_coverage"
 
   git checkout -q -b workflow-authoritative-policy-change "$base_sha"
@@ -256,8 +273,26 @@ PY
   assert_has "$workflow_policy_output" "coverage_required=false"
   assert_has "$workflow_policy_output" "full_coverage_required=true"
   assert_has "$workflow_policy_output" "demo_smoke_required=false"
+  assert_has "$workflow_policy_output" "v0913_proof_required=false"
   assert_has "$workflow_policy_output" "coverage_lane=authoritative_full"
   assert_has "$workflow_policy_output" "coverage_authority=pr_policy_surface_tooling_only"
+  assert_has "$workflow_policy_output" "proof_validation_scope=not_required"
+
+  git checkout -q -b v0913-proof-surface "$base_sha"
+  mkdir -p docs/milestones/v0.91.3/review/merge_readiness
+  printf '\nproof note\n' >> docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md
+  git add docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md
+  git commit -q -m v0913-proof-surface
+  v0913_proof_head="$(git rev-parse HEAD)"
+
+  v0913_proof_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$v0913_proof_head" --ref "refs/pull/1/merge")"
+  assert_has "$v0913_proof_output" "rust_required=false"
+  assert_has "$v0913_proof_output" "coverage_required=false"
+  assert_has "$v0913_proof_output" "full_coverage_required=false"
+  assert_has "$v0913_proof_output" "demo_smoke_required=false"
+  assert_has "$v0913_proof_output" "v0913_proof_required=true"
+  assert_has "$v0913_proof_output" "proof_validation_scope=v0_91_3"
+  assert_has "$v0913_proof_output" "reason=v0913_proof_surface_change_runs_targeted_packet_validation"
   assert_has "$workflow_policy_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
 
   git checkout -q -b runtime-policy-surface-change "$base_sha"

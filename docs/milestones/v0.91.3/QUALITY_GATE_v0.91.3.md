@@ -38,6 +38,16 @@ Heavy checks remain opt-in:
 The default quality-gate lane should stay focused and should not silently turn
 into a broad runtime test cycle.
 
+## CI Proof-Gate Boundary
+
+- green CI does not imply every `v0.91.3` proof validator ran on every PR
+- CI now runs `bash adl/tools/run_v0913_proof_validation_lane.sh` when changed
+  paths touch tracked `v0.91.3` proof/demo packet surfaces or their validators
+- when that lane is out of scope, CI must say so explicitly rather than
+  implying full proof-packet coverage
+- merge-readiness remains a structured snapshot-backed packet proof, not a live
+  merge-authority or GitHub API gate
+
 ## Review Gate
 
 Before release-tail closeout:
