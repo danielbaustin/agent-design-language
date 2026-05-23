@@ -65,8 +65,8 @@ import sys
 
 path = Path(sys.argv[1])
 data = json.loads(path.read_text(encoding="utf-8"))
-data["sor_memory_entry"]["source_record_rel_path"] = "workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/missing-sor.md"
-data["sor_memory_entry"]["citations"][0] = "workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/missing-sor.md"
+data["sor_memory_entry"]["source_record_rel_path"] = "workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof-missing/cards/sor.md"
+data["sor_memory_entry"]["citations"][0] = "workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof-missing/cards/sor.md"
 path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 PY
 

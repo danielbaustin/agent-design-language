@@ -46,10 +46,9 @@ def main(argv: list[str]) -> int:
     root = Path(argv[1])
     if not root.is_dir():
         return fail(f"packet root does not exist: {root}")
-    try:
-        repo_root = root.resolve().parents[4]
-    except IndexError:
-        return fail(f"packet root does not have the expected repository depth: {root}")
+    # Anchor repo-relative proof checks on the validator's own repository
+    # location so temp-copied packet fixtures still validate truthfully.
+    repo_root = Path(__file__).resolve().parents[2]
 
     for rel_path, required_snippets in REQUIRED_FILES.items():
         path = root / rel_path
