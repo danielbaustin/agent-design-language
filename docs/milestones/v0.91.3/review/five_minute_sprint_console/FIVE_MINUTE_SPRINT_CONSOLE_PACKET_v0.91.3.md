@@ -59,7 +59,8 @@ Validation not run:
 
 - review surface: bounded pre-PR review over the demo files, packet, and
   validation lane
-- findings fixed before publication: pending issue-local review execution
+- findings fixed before publication: no unresolved packet findings remain in
+  the closed `#3222` demo lane
 - residual risks: avoid overstating the compressed clock as measured runtime;
   keep browser-capture proof boundary explicit if it remains partial
 

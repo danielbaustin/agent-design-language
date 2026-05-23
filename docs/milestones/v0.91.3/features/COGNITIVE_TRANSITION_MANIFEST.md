@@ -4,7 +4,7 @@
 
 - Feature Name: Cognitive Transition Manifest
 - Milestone Target: `v0.91.3`
-- Status: in_flight
+- Status: proven first-slice schema surface
 - Planned WP Home: WP-02 through WP-07 / #3200 through #3205
 
 ## Purpose
@@ -14,9 +14,9 @@ Define the first machine-checkable manifest for a Cognitive State Transition.
 The manifest is the bridge between issue cards, execution shards, review
 evidence, merge readiness, outcome truth, and memory handoff.
 
-## Expected Shape
+## Implemented Shape
 
-The initial manifest should record:
+The initial manifest records or links:
 
 - transition identity
 - issue and branch/worktree identity

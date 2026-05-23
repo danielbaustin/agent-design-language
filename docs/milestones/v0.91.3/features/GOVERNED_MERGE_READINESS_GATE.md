@@ -2,7 +2,7 @@
 
 ## Status
 
-In-flight `v0.91.3` feature under `WP-06` / `#3204`.
+Proven `v0.91.3` feature under `WP-06` / `#3204`.
 
 ## Purpose
 

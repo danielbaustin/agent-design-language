@@ -23,25 +23,40 @@ It provides:
 
 ## Current Status
 
-- Current active milestone in the main repo: **v0.91.2**
-- Current release state: **Sprint 4 has completed external review,
-  remediation, and next-milestone planning; `WP-24` is the release ceremony
-  and final end-of-milestone evidence gate**
-- Most recently completed milestone in the main repo: **v0.91.1**
-- Current crate version on the active release line: **0.91.2**
+- Current active milestone in the main repo: **v0.91.3**
+- Current release state: **Sprint 4 has completed proof coverage, the quality
+  gate, and the docs review pass; `WP-13` / `#3208` is the next
+  internal-review gate**
+- Most recently completed milestone in the main repo: **v0.91.2**
+- Current crate version on the active release line: **0.91.3**
 
 This README describes the runtime as it exists on the current `main` branch and points to the relevant milestone and demo surfaces in the parent repository.
 
 ## Recent Runtime Milestones
 
+### v0.91.3 — Cognitive SDLC First Slice
+
+v0.91.3 is the active milestone. The runtime-adjacent work centers on the first
+bounded Cognitive SDLC slice: tracked issue cards, transition manifest and DAG,
+review/evidence convergence, merge-readiness truth, ObsMem handoff, and the
+first measured proof surface. Sprint 4 has completed proof coverage, the
+quality gate, and the docs review pass; `WP-13` / `#3208` is the next
+internal-review gate.
+
+Highlights:
+- one bounded Cognitive State Transition proof stack
+- public `SIP -> STP -> SPP -> SRP -> SOR` lifecycle discipline
+- transition manifest, DAG, evidence bundle, merge gate, and ObsMem handoff
+  proof surfaces
+- focused quality-gate lane that avoids unnecessary broad test cycles
+
 ### v0.91.2 — Tooling, Evaluation, Productization, And Workflow Pressure Release
 
-v0.91.2 is the active milestone. The runtime-adjacent work has landed through
+v0.91.2 is complete. The runtime-adjacent work landed through
 UTS + ACC benchmark expansion, runtime/test-cycle recovery, quality-gate
 ergonomics, workflow guardrails, and release-tail proof/quality surfaces.
-Sprint 4 has completed corrective internal review, third-party review,
-accepted-finding remediation, and next-milestone planning. `WP-24` is the
-release ceremony and final end-of-milestone evidence gate.
+Sprint 4 completed corrective internal review, third-party review,
+accepted-finding remediation, next-milestone planning, and release closeout.
 
 Highlights:
 - standalone and governed UTS/ACC benchmark evidence

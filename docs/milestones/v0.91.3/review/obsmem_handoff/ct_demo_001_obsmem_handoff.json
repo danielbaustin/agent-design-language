@@ -36,7 +36,7 @@
       "signed trace proof remains out of scope for v0.91.3"
     ],
     "follow_on_work": [
-      "WP-09 five-minute-sprint timing metrics",
+      "WP-09 five-minute-sprint timing metrics, later landed in v0.91.3",
       "live ObsMem ingestion and retrieval against the tracked handoff packet",
       "signed-trace proof and later trace-linked memory hardening"
     ],

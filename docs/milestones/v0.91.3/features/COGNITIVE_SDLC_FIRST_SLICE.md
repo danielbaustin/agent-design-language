@@ -4,8 +4,9 @@
 
 - Feature Name: Cognitive SDLC First Slice
 - Milestone Target: `v0.91.3`
-- Status: planned
-- Planned WP Home: WP-01 through WP-18 / #3199-#3211 plus #3226-#3230
+- Status: active first-slice proof; release-tail review in progress
+- Planned WP Home: WP-01 through WP-18 / #3199-#3211, corrected Sprint 4 tail
+  #3226-#3230, and Sprint 4 umbrella #3231
 
 ## Purpose
 
@@ -15,6 +16,11 @@ GitHub issue/PR workflow.
 This slice is the first practical ADL implementation of the C-SDLC model. It
 uses Git as the observable state substrate, structured prompts as transition
 instructions, and typed work packets to make coordination explicit.
+
+As of the `WP-12` docs pass, the first-slice proof surfaces have landed through
+proof coverage and quality gate. Internal review, external review, remediation,
+next-milestone planning, final next-milestone review, and release ceremony still
+own the remaining milestone closeout truth.
 
 ## Core Contract
 

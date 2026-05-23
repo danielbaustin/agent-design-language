@@ -4,7 +4,7 @@
 
 - Feature Name: Five-Minute Sprint First Proof
 - Milestone Target: `v0.91.3`
-- Status: in_flight
+- Status: proven first proof; literal five-minute target classified separately
 - Planned WP Home: WP-09 / #3207
 
 ## Purpose
@@ -15,7 +15,7 @@ The goal is not to prove maximum speed. The goal is to show that C-SDLC can
 reduce coordination latency while preserving review, replay, merge, and closeout
 discipline.
 
-## Candidate Scenario
+## Proof Scenario
 
 The bounded first-proof scenario is:
 
@@ -30,7 +30,7 @@ run C-SDLC, then proves that improvement with one tracked, measurable report.
 
 ## Required Proof
 
-The demo should record:
+The demo records:
 
 - issue-local `SIP -> STP -> SPP -> SRP -> SOR` lifecycle proof, with `SPP`
   as Structured Plan Prompt
@@ -59,10 +59,10 @@ python3 adl/tools/demo_v0913_first_proof_demo.py \
   --out docs/milestones/v0.91.3/review/first_proof_demo
 ```
 
-Before the demo runs, `WP-08` should provide one tracked readiness packet under
-`docs/milestones/v0.91.3/review/first_proof_readiness/` so the proof run does
-not spend its time rediscovering missing manifest/evidence/gate/handoff
-prerequisites.
+`WP-08` provided one tracked readiness packet under
+`docs/milestones/v0.91.3/review/first_proof_readiness/`, so the proof run did
+not rely on rediscovering missing manifest/evidence/gate/handoff prerequisites
+at demo time.
 
 ## Non-Claims
 

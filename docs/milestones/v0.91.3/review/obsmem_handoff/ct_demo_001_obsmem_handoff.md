@@ -58,8 +58,8 @@
 - hypothetical future review findings remain outside memory until final review
   or final outcome truth records them
 
-## Follow-On Work
+## Follow-On Work At `WP-07` Boundary
 
-- `WP-09` five-minute-sprint timing metrics
+- `WP-09` five-minute-sprint timing metrics, later landed in `v0.91.3`
 - live ObsMem ingestion and retrieval against the tracked handoff packet
 - signed-trace proof and later trace-linked memory hardening
