@@ -4,7 +4,7 @@
 
 - Feature Name: Integrated Process Lessons And Proof Readiness
 - Milestone Target: `v0.91.3`
-- Status: in_flight
+- Status: proven first-proof readiness packet
 - Planned WP Home: WP-08 / #3206
 
 ## Purpose
@@ -27,7 +27,7 @@ isolated wins and starts treating them as one combined readiness surface.
 
 ## Required Readiness Contract
 
-Before `WP-09` may claim a first proof, the milestone should have:
+Before `WP-09` claimed a first proof, the milestone produced:
 
 - a valid tracked transition manifest fixture
 - a tracked public lifecycle proof bundle
@@ -52,6 +52,6 @@ That packet is paired with a focused validator/test lane:
 
 ## Non-Claims
 
-- This feature does not run the `WP-09` proof demo.
+- This feature did not itself run the `WP-09` proof demo.
 - This feature does not make merge-readiness a live enforced GitHub gate yet.
 - This feature does not turn ObsMem handoff into a live memory backend.

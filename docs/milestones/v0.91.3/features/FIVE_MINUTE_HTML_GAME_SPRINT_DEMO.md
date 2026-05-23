@@ -2,7 +2,8 @@
 
 ## Status
 
-In flight under demo `WP-02` / `#3221`.
+Bounded artifact and packet proof landed under demo `WP-02` / `#3221`;
+full browser automation remained partial in the captured environment.
 
 ## Purpose
 
@@ -23,9 +24,9 @@ Supporting run and proof surfaces are:
 - `adl/tools/demo_v0913_starharvest_html_game.sh`
 - `docs/milestones/v0.91.3/review/five_minute_html_game/`
 
-## Expected Outcome
+## Outcome
 
-The demo should show that a bounded C-SDLC slice can produce:
+The demo shows that a bounded C-SDLC slice can produce:
 
 - a compact but real game loop
 - intentional art direction
@@ -45,7 +46,7 @@ The current game loop is intentionally small:
 
 ## Proof Boundary
 
-This demo is meant to prove:
+This demo is meant to prove, within the bounded packet/run-path evidence:
 
 - C-SDLC can produce a small but real visible artifact
 - the artifact can be run locally without special environment setup
@@ -60,4 +61,3 @@ This demo is not meant to prove:
 ## Linked Review Packet
 
 - `docs/milestones/v0.91.3/review/five_minute_html_game/FIVE_MINUTE_HTML_GAME_PACKET_v0.91.3.md`
-

@@ -36,10 +36,9 @@ evidence, review synthesis, merge-readiness, and memory handoff planning.
 
 ### C-SDLC First Slice
 
-- Transition manifest, actor-role seed, and state model work are scheduled in
-  `WP-02`.
-- Transition DAG and shard plan work are scheduled in `WP-04`.
-- Evidence bundle and review synthesis are scheduled in `WP-05`.
+- Transition manifest, actor-role seed, and state model work landed in `WP-02`.
+- Transition DAG and shard plan work landed in `WP-04`.
+- Evidence bundle and review synthesis landed in `WP-05`.
 
 ### Governance And Memory
 
@@ -50,10 +49,10 @@ evidence, review synthesis, merge-readiness, and memory handoff planning.
 
 ### Proof And Review Tail
 
-- First proof demo is scheduled in `WP-09`.
-- Proof coverage, quality gate, docs review, internal review, external review,
-  remediation, next planning, next review, and release ceremony are distinct
-  ordered work packages.
+- First proof demo landed in `WP-09`.
+- Proof coverage, quality gate, and docs review have completed. Internal
+  review, external review, remediation, next planning, next review, and release
+  ceremony remain distinct ordered work packages.
 
 ## Upgrade Notes
 

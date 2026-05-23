@@ -2,7 +2,7 @@
 
 ## Status
 
-In-flight `v0.91.3` feature under demo `WP-01` / `#3220`.
+Proven `v0.91.3` demo feature under demo `WP-01` / `#3220`.
 
 ## Purpose
 

@@ -2,14 +2,14 @@
 
 ## Status
 
-In-flight `v0.91.3` feature under `WP-07` / `#3205`.
+Proven `v0.91.3` feature under `WP-07` / `#3205`.
 
 ## Purpose
 
 Define how C-SDLC review results and outcome truth become memory input without
 turning unreviewed local notes into canonical knowledge.
 
-The first slice should show the boundary: `SRP` contains review instructions,
+The first slice shows the boundary: `SRP` contains review instructions,
 findings, dispositions, and residual risk; `SOR` contains actual outcome truth.
 Together they provide a memory handoff shape that `v0.91.4` can harden into
 tracked ingestion.

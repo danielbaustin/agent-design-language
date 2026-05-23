@@ -27,9 +27,9 @@ This packet does claim:
 
 Use this packet when reviewing:
 
-- demo completeness before Sprint 4 quality/review work
+- demo completeness for Sprint 4 quality/review work
 - whether a reviewer can actually inspect each feature without rebuilding milestone history
-- whether weak demo surfaces still need explicit routing
+- whether any weak demo surfaces require explicit routing
 
 ## Validation
 

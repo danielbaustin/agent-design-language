@@ -14,11 +14,11 @@ exists. Ceremony is confirmation and publication, not hidden implementation.
 
 ## 0. Release-Tail Convergence
 
-- [ ] Demo/proof coverage complete or gaps routed:
+- [x] Demo/proof coverage complete or gaps routed:
   [DEMO_MATRIX_v0.91.3.md](DEMO_MATRIX_v0.91.3.md)
-- [ ] Quality gate complete:
+- [x] Quality gate complete:
   [QUALITY_GATE_v0.91.3.md](QUALITY_GATE_v0.91.3.md)
-- [ ] Docs review pass complete and findings resolved or routed.
+- [x] Docs review pass complete and findings resolved or routed.
 - [ ] Internal review complete.
 - [ ] External / third-party review complete.
 - [ ] Review remediation complete.

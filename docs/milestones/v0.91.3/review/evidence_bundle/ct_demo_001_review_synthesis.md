@@ -17,12 +17,18 @@ transition fixtures, and card-local records.
 - the current evidence surface is good enough to anchor later merge-readiness
   and ObsMem handoff work
 
-## Deferred Findings
+## Deferred Findings At `WP-05` Boundary
 
-- `WP-06` still needs to turn merge-readiness into a governed fail-closed gate
-- `WP-07` still needs to turn SRP/SOR truth into a durable memory handoff
-- `WP-09` still needs to measure timing and coordination instead of only
-  structuring the proof packet
+- `WP-06` was the next planned step to turn merge-readiness into a governed
+  fail-closed gate.
+- `WP-07` was the next planned step to turn SRP/SOR truth into a durable memory
+  handoff.
+- `WP-09` was the next planned step to measure timing and coordination instead
+  of only structuring the proof packet.
+
+Later `v0.91.3` proof packets landed those follow-on surfaces; this synthesis
+keeps the historical `WP-05` boundary visible rather than rewriting the packet
+as if the later work had already existed.
 
 ## Residual Risks
 
@@ -33,4 +39,5 @@ transition fixtures, and card-local records.
 ## Recommended Outcome
 
 - `pass` for bounded `WP-05` completion
-- continue with `WP-06` and `WP-07` as the next proof-convergence steps
+- at the `WP-05` boundary, continue with `WP-06` and `WP-07` as the next
+  proof-convergence steps

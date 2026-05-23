@@ -28,6 +28,8 @@ Tracked planning source:
 
 - [v0.91.3 C-SDLC Tracked Source Package](../C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md)
 
-These features are tracked in the opened `v0.91.3` issue wave. Some are already
-proven, some are in flight, and the milestone is not complete until the full
-wave is executed, reviewed, and closed out.
+These features are tracked in the opened `v0.91.3` issue wave. The first-slice
+feature and demo proof surfaces are now present for Sprint 4 review, but the
+milestone is not complete until internal review, external review, remediation,
+next-milestone planning, final next-milestone review, and release closeout are
+finished.

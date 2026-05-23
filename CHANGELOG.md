@@ -2,11 +2,27 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.91.2 (Active milestone)
+## v0.91.3 (Active milestone)
 
-Status: Active. The v0.91.2 issue wave was opened as `#3000-#3023`, the
+Status: Active. The v0.91.3 issue wave was opened as `#3199-#3214`; corrective
+tail issue `#3225` added the complete Sprint 4 closeout gates as `#3226-#3230`
+and Sprint 4 umbrella `#3231`. The crate version has advanced to `0.91.3` for
+the Cognitive SDLC first-slice line.
+
+Planning notes:
+- The tracked v0.91.3 package lives under `docs/milestones/v0.91.3/`.
+- WP-01 opened the issue wave and prepared the tracked source package.
+- Sprints 1 through 3 proved the first Cognitive State Transition substrate,
+  evidence/review/memory path, and first proof surface.
+- Sprint 4 has completed demo/proof coverage, the quality gate, and this docs
+  review pass; `WP-13` / `#3208` is the next internal-review gate.
+- This is an active milestone entry, not a release entry.
+
+## v0.91.2 (Completed milestone)
+
+Status: Completed. The v0.91.2 issue wave was opened as `#3000-#3023`, the
 sprint-conductor umbrellas were opened as `#3025-#3028`, and the crate version
-has advanced to `0.91.2` for the tooling, evaluation, productization,
+advanced to `0.91.2` for the tooling, evaluation, productization,
 publication, and workflow pressure-release line.
 
 Planning notes:
@@ -16,14 +32,12 @@ Planning notes:
   CodeFriend productization, Workspace bridge work, modernization, publication
   packets, rustdoc/doc cleanup, repo-visibility follow-on work, and workflow
   guardrails.
-- Sprint 4 release-tail work has landed through the docs/review-entry band:
-  demo/proof convergence, the bounded `WP-17A` code-feature demo follow-on,
-  the quality-gate packet, and the `WP-19` docs review pass are closed.
-- The first `WP-20` internal review packet was too thin for external handoff.
-  `WP-20B` is now the controlling full internal review packet; accepted
-  `WP-20B` remediation issues have closed, and `WP-21` external review can
-  start from the refreshed handoff packet.
-- This is an active milestone entry, not a release entry.
+- Sprint 4 completed demo/proof convergence, the bounded `WP-17A` code-feature
+  demo follow-on, quality gate, docs review pass, corrected full internal
+  review, third-party review, accepted-finding remediation, next-milestone
+  planning, final next-milestone review pass, and release ceremony.
+- The `v0.91.3` and `v0.91.4` C-SDLC planning packages were prepared during the
+  release tail.
 
 ## v0.91.1 (Completed milestone)
 

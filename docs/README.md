@@ -6,9 +6,9 @@ Use this index to find the right source of truth quickly.
 
 ## Start Here
 
-- Active milestone package: `milestones/v0.91.2/`
-- Most recently completed milestone: `milestones/v0.91.1/`
-- Previous completed milestone: `milestones/v0.91/`
+- Active milestone package: `milestones/v0.91.3/`
+- Most recently completed milestone: `milestones/v0.91.2/`
+- Previous completed milestone: `milestones/v0.91.1/`
 - Previous completed milestone package: `milestones/v0.90.5/`
 - Root project overview: `../README.md`
 - Runtime and CLI guide: `../adl/README.md`
@@ -18,9 +18,9 @@ Use this index to find the right source of truth quickly.
 
 ## Milestone Documentation
 
-- Active milestone package: `milestones/v0.91.2/`
-- Most recently completed milestone: `milestones/v0.91.1/`
-- Previous completed milestone: `milestones/v0.91/`
+- Active milestone package: `milestones/v0.91.3/`
+- Most recently completed milestone: `milestones/v0.91.2/`
+- Previous completed milestone: `milestones/v0.91.1/`
 - Previous completed milestone package: `milestones/v0.90.5/`
 - Recent stable milestones: `milestones/v0.87.1/`, `milestones/v0.87/`, `milestones/v0.86/`, `milestones/v0.85/`, `milestones/v0.8/`
 - Earlier milestones: `milestones/v0.75/`, `milestones/v0.7/`, `milestones/v0.6/`
@@ -38,9 +38,9 @@ Use this index to find the right source of truth quickly.
 ## Demo and Tooling Surfaces
 
 - Canonical demo index: `../demos/README.md`
-- Active milestone demo matrix: `milestones/v0.91.2/DEMO_MATRIX_v0.91.2.md`
-- Most recently completed milestone demo matrix: `milestones/v0.91.1/DEMO_MATRIX_v0.91.1.md`
-- Previous completed milestone demo matrix: `milestones/v0.91/DEMO_MATRIX_v0.91.md`
+- Active milestone demo matrix: `milestones/v0.91.3/DEMO_MATRIX_v0.91.3.md`
+- Most recently completed milestone demo matrix: `milestones/v0.91.2/DEMO_MATRIX_v0.91.2.md`
+- Previous completed milestone demo matrix: `milestones/v0.91.1/DEMO_MATRIX_v0.91.1.md`
 - Earlier milestone demo matrix: `milestones/v0.90.5/DEMO_MATRIX_v0.90.5.md`
 - Editor/tooling demo surfaces: `tooling/editor/README.md`
 
@@ -48,9 +48,8 @@ Use this index to find the right source of truth quickly.
 
 Milestone docs should be read as bounded engineering records. They distinguish
 what has shipped, what is currently being implemented, what is demoable, and
-what is planned for later milestones. At the moment, `v0.91.2` is the active
-tooling, evaluation, productization, publication, and repo-health milestone;
-its Sprint 4 release tail moves to `WP-20` internal review after closed
-`WP-17`, `WP-17A`, `WP-18`, and `WP-19` release-tail work. `v0.91.1` is the most
-recently completed inhabited-runtime readiness package, and `v0.91` remains the
-earlier moral-governance wave.
+what is planned for later milestones. At the moment, `v0.91.3` is the active
+Cognitive SDLC first-slice milestone. Sprint 4 has completed proof coverage,
+the quality gate, and the docs review pass; `WP-13` / `#3208` is the next
+internal-review gate. `v0.91.2` is the most recently completed tooling,
+evaluation, productization, publication, and workflow-pressure package.

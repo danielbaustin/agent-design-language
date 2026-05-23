@@ -32,10 +32,11 @@ when evidence exists.
 
 ## Quality Gates
 
-- [ ] Demo/proof coverage is complete:
+- [x] Demo/proof coverage is complete:
   [DEMO_MATRIX](DEMO_MATRIX_v0.91.3.md)
-- [ ] Quality gate is complete:
+- [x] Quality gate is complete:
   [QUALITY_GATE](QUALITY_GATE_v0.91.3.md)
+- [x] Docs review pass is complete and ready for internal review.
 - [ ] Focused validators for touched tools/docs pass.
 - [ ] CI is green on merged code changes.
 - [ ] No unresolved P1/P0 findings remain.

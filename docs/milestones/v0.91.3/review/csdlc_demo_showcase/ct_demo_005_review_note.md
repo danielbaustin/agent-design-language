@@ -19,16 +19,17 @@ Reviewed surfaces:
 - verified merged truth for `#3207/#3250`, `#3220/#3251`, `#3221/#3252`,
   `#3222/#3253`, and `#3223/#3256`
 - verified the new showcase packet paths resolve
-- checked the touched milestone docs for stale `in_flight`,
-  `local_pass_pending_pr`, or PR-pending language on already merged demo rows
+- checked the touched milestone docs for stale PR-state language on already
+  merged demo rows
 - reviewed the package wording for claim drift between merged upstream demos and
-  the still-open packaging issue `#3224`
+  the then-current packaging scope for `#3224`
 
 ## Findings
 
 - fixed before publication:
-  - wording that treated `#3224` as already complete rather than as the active
-    packaging issue over merged upstream evidence
+  - wording that treated `#3224` as already complete during its pre-merge review
+    rather than as the then-current packaging scope over merged upstream
+    evidence
   - missing review-truth surface for the new showcase review root
 
 ## Residual Risks
