@@ -26,6 +26,7 @@ trap 'rm -rf "$tmp_dir"' EXIT
 
   mkdir -p adl/src docs
   printf 'pub fn baseline() -> bool { true }\n' > adl/src/lib.rs
+  printf '# adl baseline\n' > adl/README.md
   mkdir -p .github/workflows
   cat > adl/Cargo.toml <<'EOF'
 [package]
@@ -102,6 +103,36 @@ PY
   assert_has "$release_version_output" "coverage_lane=skip"
   assert_has "$release_version_output" "coverage_authority=not_required"
   assert_has "$release_version_output" "reason=release_version_only_cargo_surface_change_runs_lightweight_validation"
+
+  git checkout -q -b release-version-only-with-adl-readme "$base_sha"
+  python3 - <<'PY'
+from pathlib import Path
+
+manifest = Path("adl/Cargo.toml")
+manifest.write_text(manifest.read_text().replace('version = "0.90.3"', 'version = "0.90.4"', 1))
+
+lock = Path("adl/Cargo.lock")
+lock.write_text(lock.read_text().replace('version = "0.90.3"', 'version = "0.90.4"', 1))
+
+Path("README.md").write_text("# repo release truth\n")
+Path("CHANGELOG.md").write_text("# changelog\n\n- v0.90.4\n")
+Path("adl/README.md").write_text("# adl release truth\n")
+doc = Path("docs/readme.md")
+doc.write_text(doc.read_text() + "\nrelease-truth update with adl readme\n")
+PY
+  git add README.md CHANGELOG.md adl/README.md adl/Cargo.toml adl/Cargo.lock docs/readme.md
+  git commit -q -m release-version-only-with-adl-readme
+  release_version_adl_readme_head="$(git rev-parse HEAD)"
+
+  release_version_adl_readme_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$release_version_adl_readme_head" --ref "refs/pull/1/merge")"
+  assert_has "$release_version_adl_readme_output" "rust_required=false"
+  assert_has "$release_version_adl_readme_output" "coverage_required=false"
+  assert_has "$release_version_adl_readme_output" "full_coverage_required=false"
+  assert_has "$release_version_adl_readme_output" "demo_smoke_required=false"
+  assert_has "$release_version_adl_readme_output" "release_version_only=true"
+  assert_has "$release_version_adl_readme_output" "coverage_lane=skip"
+  assert_has "$release_version_adl_readme_output" "coverage_authority=not_required"
+  assert_has "$release_version_adl_readme_output" "reason=release_version_only_cargo_surface_change_runs_lightweight_validation"
 
   git checkout -q -b cargo-structural-change "$base_sha"
   cat >> adl/Cargo.toml <<'EOF'
