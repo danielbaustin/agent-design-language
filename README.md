@@ -249,7 +249,7 @@ production markets.
 - Current release-tail state: v0.91.3 Sprint 4 has completed proof coverage,
   the quality gate, and the docs review pass; `WP-13` / `#3208` is the next
   internal-review gate
-- Previous completed milestone: v0.90.5
+- Previous completed milestone before v0.91.2: v0.91.1
 - Primary implementation language: Rust
 
 ADL is under active development. The repository contains implemented runtime
