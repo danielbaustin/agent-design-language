@@ -1,6 +1,12 @@
 # Starharvest QA Checklist
 
-## Run Path
+## Observed Evidence Status
+
+- helper command prints a valid local URL: `passed`
+- packet validator/test lane: `passed`
+- browser load and interactive gameplay behavior in captured environment: `not run`
+
+## Manual Follow-Up Checklist
 
 - [ ] HTML file opens cleanly in a browser
 - [ ] helper command prints a valid local URL
@@ -32,4 +38,3 @@
 - [ ] selected asteroid panel updates
 - [ ] upgrades can be purchased when affordable
 - [ ] hazards visibly move through the playfield
-

@@ -17,7 +17,6 @@ import argparse
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 
 REQUIRED_SUPPORTING_PATHS = [
@@ -99,6 +98,23 @@ def count_table_rows(path: Path, heading: str) -> int:
     return max(rows - 1, 0)
 
 
+def normalize_scalar(value: str) -> str:
+    value = value.strip()
+    if value.startswith("`") and value.endswith("`"):
+        return value[1:-1]
+    return value
+
+
+def markdown_scalar(text: str, label: str) -> str | None:
+    prefix = f"- {label}:"
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith(prefix):
+            continue
+        return normalize_scalar(stripped[len(prefix) :].strip())
+    return None
+
+
 def load_snapshot(timeline_path: Path) -> dict:
     return json.loads(timeline_path.read_text(encoding="utf-8"))
 
@@ -109,14 +125,43 @@ def supporting_ref_summary(repo: Path) -> dict:
     gate_text = (
         repo / "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md"
     ).read_text(encoding="utf-8")
+    readiness_text = (
+        repo / "docs/milestones/v0.91.3/review/first_proof_readiness/ct_demo_001_first_proof_readiness.md"
+    ).read_text(encoding="utf-8")
+    evidence_text = (
+        repo / "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md"
+    ).read_text(encoding="utf-8")
+    obsmem = json.loads(
+        (
+            repo
+            / "docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json"
+        ).read_text(encoding="utf-8")
+    )
     return {
         "serial_node_count": count_table_rows(dag_path, "## Serial Nodes"),
         "barrier_count": count_table_rows(dag_path, "## Barrier Nodes"),
         "shard_count": count_table_rows(shard_path, "## Shards"),
-        "gate_reports_zero_open_findings": (
+        "merge_gate_outcome": markdown_scalar(gate_text, "outcome"),
+        "merge_gate_decision": markdown_scalar(gate_text, "decision"),
+        "merge_gate_pr_state": markdown_scalar(gate_text, "PR state"),
+        "merge_gate_checks_success": (
+            "- `adl-ci`: `SUCCESS`" in gate_text
+            and "- `adl-coverage`: `SUCCESS`" in gate_text
+        ),
+        "merge_gate_zero_open_findings": (
             "no actionable bounded pre-PR review findings remained open at publication"
             in gate_text
         ),
+        "readiness_outcome": markdown_scalar(readiness_text, "readiness outcome"),
+        "evidence_bundle_primary_disposition_present": (
+            "`F-001` -> `accepted_as_proven`" in evidence_text
+        ),
+        "evidence_bundle_residual_disposition_present": (
+            "`F-002` -> `deferred_to_planned_follow_on`" in evidence_text
+        ),
+        "obsmem_source_pr_state": obsmem.get("source_pr_state"),
+        "obsmem_integration_state": obsmem.get("sor_memory_entry", {}).get("integration_state"),
+        "obsmem_closeout_state": obsmem.get("sor_memory_entry", {}).get("closeout_state"),
     }
 
 
@@ -161,8 +206,25 @@ def build_metrics(snapshot: dict, repo: Path) -> dict:
 
     support = supporting_ref_summary(repo)
     literal_target = actual_elapsed_minutes <= 5.0
-    governance_chain_complete = support["gate_reports_zero_open_findings"]
-    evidence_chain_complete = all((repo / rel).is_file() for rel in REQUIRED_SUPPORTING_PATHS)
+    evidence_chain_complete = all((repo / rel).is_file() for rel in REQUIRED_SUPPORTING_PATHS) and all(
+        [
+            support["evidence_bundle_primary_disposition_present"],
+            support["evidence_bundle_residual_disposition_present"],
+        ]
+    )
+    governance_chain_complete = all(
+        [
+            support["merge_gate_outcome"] == "merge_ready",
+            support["merge_gate_decision"] == "merge_ready",
+            support["merge_gate_pr_state"] == "MERGED",
+            support["merge_gate_checks_success"],
+            support["merge_gate_zero_open_findings"],
+            support["readiness_outcome"] == "ready_for_wp09",
+            support["obsmem_source_pr_state"] == "merged",
+            support["obsmem_integration_state"] == "merged",
+            support["obsmem_closeout_state"] == "closed_out",
+        ]
+    )
 
     return {
         "schema_version": "v0.91.3.first_proof_metrics.v1",
@@ -211,6 +273,19 @@ def build_metrics(snapshot: dict, repo: Path) -> dict:
             "trace_signed_ready_status": "signed_trace_ready_not_proven",
             "artifact_path_portability": "repo_relative",
             "review_synthesis_completeness": "complete",
+        },
+        "supporting_truth_checks": {
+            "merge_gate_outcome": support["merge_gate_outcome"],
+            "merge_gate_decision": support["merge_gate_decision"],
+            "merge_gate_pr_state": support["merge_gate_pr_state"],
+            "merge_gate_checks_success": support["merge_gate_checks_success"],
+            "merge_gate_zero_open_findings": support["merge_gate_zero_open_findings"],
+            "readiness_outcome": support["readiness_outcome"],
+            "obsmem_source_pr_state": support["obsmem_source_pr_state"],
+            "obsmem_integration_state": support["obsmem_integration_state"],
+            "obsmem_closeout_state": support["obsmem_closeout_state"],
+            "evidence_bundle_primary_disposition_present": support["evidence_bundle_primary_disposition_present"],
+            "evidence_bundle_residual_disposition_present": support["evidence_bundle_residual_disposition_present"],
         },
         "memory_metrics": {
             "srp_findings_ingested_shape": "tracked_packet_present",
@@ -290,6 +365,24 @@ def render_report(metrics: dict) -> str:
     lines.append(f"- shard count: `{coordination['parallel_shard_count']}`")
     lines.append(
         f"- synchronization barriers: `{coordination['synchronization_barrier_count']}`"
+    )
+    lines.append("")
+    lines.append("## Supporting Proof Checks")
+    lines.append("")
+    lines.append(f"- merge gate outcome: `{metrics['supporting_truth_checks']['merge_gate_outcome']}`")
+    lines.append(f"- merge gate decision: `{metrics['supporting_truth_checks']['merge_gate_decision']}`")
+    lines.append(f"- merge gate PR state: `{metrics['supporting_truth_checks']['merge_gate_pr_state']}`")
+    lines.append(f"- merge gate checks success: `{metrics['supporting_truth_checks']['merge_gate_checks_success']}`")
+    lines.append(f"- merge gate zero open findings: `{metrics['supporting_truth_checks']['merge_gate_zero_open_findings']}`")
+    lines.append(f"- readiness outcome: `{metrics['supporting_truth_checks']['readiness_outcome']}`")
+    lines.append(f"- ObsMem source PR state: `{metrics['supporting_truth_checks']['obsmem_source_pr_state']}`")
+    lines.append(f"- ObsMem integration state: `{metrics['supporting_truth_checks']['obsmem_integration_state']}`")
+    lines.append(f"- ObsMem closeout state: `{metrics['supporting_truth_checks']['obsmem_closeout_state']}`")
+    lines.append(
+        f"- evidence bundle proving disposition present: `{metrics['supporting_truth_checks']['evidence_bundle_primary_disposition_present']}`"
+    )
+    lines.append(
+        f"- evidence bundle deferred disposition present: `{metrics['supporting_truth_checks']['evidence_bundle_residual_disposition_present']}`"
     )
     lines.append("")
     lines.append("## Transition Timeline")

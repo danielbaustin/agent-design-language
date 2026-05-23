@@ -12,6 +12,7 @@ This validator is stronger than section-presence:
 from __future__ import annotations
 
 import filecmp
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -39,6 +40,7 @@ REQUIRED_REPORT_SNIPPETS = [
     "## Demo Identity",
     "## Executive Verdict",
     "## Key Metrics",
+    "## Supporting Proof Checks",
     "## Transition Timeline",
     "## Per-WP Timing",
     "## Proof Classification",
@@ -58,6 +60,71 @@ REQUIRED_SUPPORTING_PATHS = [
     "docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json",
     "docs/milestones/v0.91.3/review/first_proof_readiness/FIRST_PROOF_READINESS_PACKET_v0.91.3.md",
 ]
+
+
+def normalize_scalar(value: str) -> str:
+    value = value.strip()
+    if value.startswith("`") and value.endswith("`"):
+        return value[1:-1]
+    return value
+
+
+def markdown_scalar(text: str, label: str) -> str | None:
+    prefix = f"- {label}:"
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith(prefix):
+            continue
+        return normalize_scalar(stripped[len(prefix) :].strip())
+    return None
+
+
+def supporting_truth_errors(repo: Path) -> list[str]:
+    errors: list[str] = []
+
+    merge_gate_text = (
+        repo / "docs/milestones/v0.91.3/review/merge_readiness/ct_demo_001_merge_gate.md"
+    ).read_text(encoding="utf-8")
+    if markdown_scalar(merge_gate_text, "outcome") != "merge_ready":
+        errors.append("merge gate outcome is not `merge_ready`")
+    if markdown_scalar(merge_gate_text, "decision") != "merge_ready":
+        errors.append("merge gate decision is not `merge_ready`")
+    if markdown_scalar(merge_gate_text, "PR state") != "MERGED":
+        errors.append("merge gate PR state is not `MERGED`")
+    if "- `adl-ci`: `SUCCESS`" not in merge_gate_text or "- `adl-coverage`: `SUCCESS`" not in merge_gate_text:
+        errors.append("merge gate does not record both CI checks as `SUCCESS`")
+    if "no actionable bounded pre-PR review findings remained open at publication" not in merge_gate_text:
+        errors.append("merge gate does not record zero open bounded review findings")
+
+    readiness_text = (
+        repo / "docs/milestones/v0.91.3/review/first_proof_readiness/ct_demo_001_first_proof_readiness.md"
+    ).read_text(encoding="utf-8")
+    if markdown_scalar(readiness_text, "readiness outcome") != "ready_for_wp09":
+        errors.append("first-proof readiness outcome is not `ready_for_wp09`")
+
+    evidence_text = (
+        repo / "docs/milestones/v0.91.3/review/evidence_bundle/ct_demo_001_evidence_bundle.md"
+    ).read_text(encoding="utf-8")
+    if "`F-001` -> `accepted_as_proven`" not in evidence_text:
+        errors.append("evidence bundle is missing accepted-as-proven disposition for `F-001`")
+    if "`F-002` -> `deferred_to_planned_follow_on`" not in evidence_text:
+        errors.append("evidence bundle is missing deferred follow-on disposition for `F-002`")
+
+    obsmem = json.loads(
+        (
+            repo
+            / "docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json"
+        ).read_text(encoding="utf-8")
+    )
+    if obsmem.get("source_pr_state") != "merged":
+        errors.append("ObsMem handoff source_pr_state is not `merged`")
+    sor_entry = obsmem.get("sor_memory_entry", {})
+    if sor_entry.get("integration_state") != "merged":
+        errors.append("ObsMem handoff sor_memory_entry.integration_state is not `merged`")
+    if sor_entry.get("closeout_state") != "closed_out":
+        errors.append("ObsMem handoff sor_memory_entry.closeout_state is not `closed_out`")
+
+    return errors
 
 
 def fail(message: str) -> int:
@@ -100,6 +167,9 @@ def main() -> int:
     ]
     if missing_paths:
         return fail("required supporting proof paths missing: " + ", ".join(missing_paths))
+    truth_errors = supporting_truth_errors(repo)
+    if truth_errors:
+        return fail("supporting proof truth errors: " + "; ".join(truth_errors))
 
     with TemporaryDirectory() as tmpdir:
         tmp_root = Path(tmpdir)

@@ -32,9 +32,11 @@ This packet uses the shared C-SDLC demo proof contract result vocabulary:
 
 ## What This Demo Proves
 
-- a bounded C-SDLC mini-sprint can produce a real playable browser artifact
-- the artifact can be run locally without special environment setup
-- design, implementation, QA, and proof notes can stay inspectable
+- the mini-sprint produced a real browser artifact plus a truthful packet about
+  what is and is not proven
+- the helper run path and validator/test lane are present and reviewable
+- design, implementation, QA, and proof notes stay inspectable without hiding
+  browser-proof gaps
 
 ## What This Demo Suggests
 
@@ -43,6 +45,8 @@ This packet uses the shared C-SDLC demo proof contract result vocabulary:
 
 ## What This Demo Does Not Prove
 
+- browser load, keyboard control, gameplay loop, scoring, and win/loss behavior
+  are not fully proven in the captured environment yet
 - universal five-minute software delivery
 - broad game-engine substitution
 - production readiness beyond bounded demo evidence
@@ -53,9 +57,9 @@ This packet uses the shared C-SDLC demo proof contract result vocabulary:
 
 ## Executable Run Status
 
-- artifact run path: present
-- packet validator/test proof: passed
-- full browser automation proof in this environment: partial, because the local
+- helper launch path: `passed`
+- packet validator/test proof: `passed`
+- browser/gameplay proof in captured environment: `partial`, because the local
   browser runtime was sandbox-constrained during capture
 
 ## Primary Artifact

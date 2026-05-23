@@ -42,6 +42,19 @@
     "artifact_path_portability": "repo_relative",
     "review_synthesis_completeness": "complete"
   },
+  "supporting_truth_checks": {
+    "merge_gate_outcome": "merge_ready",
+    "merge_gate_decision": "merge_ready",
+    "merge_gate_pr_state": "MERGED",
+    "merge_gate_checks_success": true,
+    "merge_gate_zero_open_findings": true,
+    "readiness_outcome": "ready_for_wp09",
+    "obsmem_source_pr_state": "merged",
+    "obsmem_integration_state": "merged",
+    "obsmem_closeout_state": "closed_out",
+    "evidence_bundle_primary_disposition_present": true,
+    "evidence_bundle_residual_disposition_present": true
+  },
   "memory_metrics": {
     "srp_findings_ingested_shape": "tracked_packet_present",
     "sor_outcome_truth_ingested_shape": "tracked_packet_present",

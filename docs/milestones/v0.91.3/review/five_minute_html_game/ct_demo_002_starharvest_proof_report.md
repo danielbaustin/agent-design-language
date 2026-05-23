@@ -8,11 +8,12 @@
 
 - artifact existence and run path: `passed`
 - packet validator/test lane: `passed`
-- full browser-run proof in this environment: `partial`
+- full browser/gameplay proof in captured environment: `partial`
 
 ## What the Demo Proves
 
-- the mini-sprint produced a real playable browser artifact
+- the mini-sprint produced a browser artifact plus a truthful packet about the
+  current proof boundary
 - the artifact carries a bounded implementation, QA, and proof packet
 - C-SDLC can support visible creative production without hiding the run path
 
@@ -24,6 +25,8 @@
 
 ## What the Demo Does Not Prove
 
+- browser load, controls, gameplay loop, score updates, or win/loss behavior
+  are not fully proven in the captured environment yet
 - universal five-minute software delivery
 - broad strategic success of the entire C-SDLC thesis
 - production readiness beyond bounded demo scope
