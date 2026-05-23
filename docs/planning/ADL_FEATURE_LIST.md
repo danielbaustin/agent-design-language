@@ -128,7 +128,7 @@ ADL already provides a serious platform baseline:
 | Provider and transport substrate | Implemented baseline | provider docs, HTTP/local provider surfaces, reviewer package | Runtime/provider completion target: `v0.92` |
 | Remote execution baseline | Implemented baseline | bounded remote execution surfaces and docs | Runtime/security completion target: `v0.93` |
 | Human-in-the-loop pause/resume | Implemented baseline | runtime/control surfaces and review docs | MVP completion target: `v0.95` |
-| Structured authoring model | Implemented baseline | STP/SIP/SOR contracts and prompt tooling | MVP completion target: `v0.95` |
+| Structured authoring model | Implemented baseline | SIP/STP/SPP/SRP/SOR contracts and prompt tooling | MVP completion target: `v0.95` |
 | Structured planning and Structured Review Prompt workflow | Implemented baseline | `v0.91` SPP/SRP feature docs, readiness records, validation tooling, and issue-bundle workflow surfaces; historical records may still mention the older Structured Review Policy wording | Completed baseline by `v0.91.0`; validator/closeout hardening continues in `v0.91.1` |
 | Control-plane lifecycle | Implemented baseline | `pr init/create/start/run/finish`, doctor, janitor, closeout surfaces | MVP completion target: `v0.95` |
 | Editor and command-adapter surfaces | Implemented baseline | editor docs, demos, bounded command adapters | MVP completion target: `v0.95` |
@@ -309,9 +309,10 @@ the platform boundary between orchestration logic and execution backends.
 ### Structured Authoring and Control Plane
 
 The repo now has a real control-plane lifecycle around issue creation,
-bootstrap, run binding, validation, and closeout. STP/SIP/SOR records, doctor
-checks, janitoring, and bounded PR tooling give ADL a strong authoring and
-execution spine instead of relying on vague contributor habit.
+bootstrap, plan review, run binding, validation, review, and closeout.
+SIP/STP/SPP/SRP/SOR records, doctor checks, janitoring, and bounded PR tooling
+give ADL a strong authoring and execution spine instead of relying on vague
+contributor habit.
 
 ### Operational Skills as System Intelligence
 

@@ -3,7 +3,8 @@
 This directory contains accepted ADL architecture decision records.
 
 Candidate ADRs live in `docs/architecture/adr/` until they are reviewed and
-promoted.
+promoted. ADR 0020 through ADR 0028 were authored as candidates during the
+v0.91.2 ADR planning pass and accepted during the v0.91.3 review tail.
 
 ## Accepted Records
 
@@ -26,3 +27,12 @@ promoted.
 - `0017-secure-local-agent-comms-and-a2a-boundary.md`
 - `0018-structured-planning-and-review-policy-artifacts.md`
 - `0019-theory-of-mind-foundation.md`
+- `0020-universal-tool-schema-portable-tool-description-standard.md`
+- `0021-adl-capability-contract-runtime-authority-boundary.md`
+- `0022-speculative-decoding-deterministic-commit-boundary.md`
+- `0023-google-workspace-cms-bridge-canonical-promotion-boundary.md`
+- `0024-workflow-guardrails-issue-lifecycle-control-plane.md`
+- `0025-codefriend-review-packet-product-boundary.md`
+- `0026-repo-visibility-manifest-linkage-layer.md`
+- `0027-governed-code-modernization-moderne-openrewrite-lst.md`
+- `0028-c-sdlc-tracked-workflow-state-and-signed-trace.md`

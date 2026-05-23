@@ -5,6 +5,7 @@
 - Related issue: #2717
 - Related milestone: v0.90.5
 - Builds on: ADR 0014
+- Superseded in part by: ADR 0020, ADR 0021
 
 ## Context
 

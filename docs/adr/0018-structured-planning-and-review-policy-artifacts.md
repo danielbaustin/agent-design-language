@@ -5,6 +5,7 @@
 - Related milestone: v0.91
 - Related release line: v0.91.0
 - Builds on: ADR 0015, ADR 0017
+- Refined by: ADR 0024, ADR 0028
 
 ## Context
 

@@ -44,7 +44,7 @@ Current tracked baseline:
 - [CodeFriend product report template](../../milestones/v0.91.2/review/codefriend_productization/product_report_template.md)
 - [CodeFriend evidence requirements](../../milestones/v0.91.2/review/codefriend_productization/evidence_requirements.md)
 - [CodeFriend skill and demo alignment](../../milestones/v0.91.2/review/codefriend_productization/skill_demo_alignment.md)
-- [ADR 0025 candidate](../../architecture/adr/0025-codefriend-review-packet-product-boundary.md)
+- [ADR 0025](../../adr/0025-codefriend-review-packet-product-boundary.md)
 - [ADL feature list](../ADL_FEATURE_LIST.md)
 
 Operator-provided local input used for this planning pass:

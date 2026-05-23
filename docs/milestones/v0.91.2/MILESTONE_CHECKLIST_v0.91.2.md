@@ -5,7 +5,7 @@
 - [x] README, WBS, sprint plan, issue wave, execution readiness, and demo matrix exist.
 - [x] Feature index exists and names concrete WP homes.
 - [x] Missing milestone-planning package surfaces have been restored.
-- [x] ADR plan exists and names the v0.91.2 candidate ADR packet.
+- [x] ADR plan exists, names the v0.91.2 candidate ADR packet, and points to the promoted accepted ADR records.
 - [x] Issue wave opened into tracked GitHub issues.
 - [x] Local STP/SIP/SPP/SRP/SOR bundle wave generated for every WP and sprint umbrella.
 
@@ -23,6 +23,6 @@
 - [x] Internal review is complete.
 - [x] External review is complete.
 - [x] Accepted findings are fixed or dispositioned.
-- [ ] ADR candidates are reviewed, promoted, deferred, or explicitly carried forward.
+- [x] ADR candidates are reviewed, promoted, deferred, or explicitly carried forward.
 - [x] Release evidence and release readiness are prepared for ceremony.
 - [ ] Ceremony completed.

@@ -29,7 +29,7 @@ references:
 
 - `docs/milestones/v0.91.2/features/CODEFRIEND_PRODUCTIZATION.md`
 - `docs/milestones/v0.91.2/review/codefriend_productization/`
-- `docs/architecture/adr/0025-codefriend-review-packet-product-boundary.md`
+- `docs/adr/0025-codefriend-review-packet-product-boundary.md`
 - `docs/planning/ADL_FEATURE_LIST.md`
 - `docs/planning/TBD_PLAN_ALLOCATION_v0.91.2_TO_v0.95.md`
 

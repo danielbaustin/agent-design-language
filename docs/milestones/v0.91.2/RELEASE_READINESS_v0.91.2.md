@@ -39,5 +39,4 @@ closeout.
 ## Remaining Gate
 
 - `WP-24` must still perform release ceremony and final closeout
-- ADR candidates exist for review, but they are not accepted release decisions
-  until promoted or explicitly carried forward
+- ADR 0020 through ADR 0028 are promoted to accepted records in `docs/adr/`

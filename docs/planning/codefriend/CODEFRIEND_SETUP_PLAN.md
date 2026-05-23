@@ -209,7 +209,7 @@ The current product boundary is:
   risk, and publication boundaries.
 - CodeFriend reports should be useful, but not magically certain.
 
-This follows the v0.91.2 productization package and ADR 0025 candidate.
+This follows the v0.91.2 productization package and ADR 0025.
 
 ### 3. Architecture Cognition Roadmap
 
@@ -332,7 +332,7 @@ Scope:
 
 Validation:
 
-- check against ADR 0025 and the v0.91.2 productization package
+- check against accepted ADR 0025 and the v0.91.2 productization package
 - mark speculative items as planned, not implemented
 
 ### Product Repo / Site Decision
@@ -378,7 +378,7 @@ Scope:
 Validation:
 
 - verify the roadmap does not overclaim alpha scope
-- check against the CodeFriend notes, ADR 0025, and current feature list
+- check against the CodeFriend notes, accepted ADR 0025, and current feature list
 - route any schedule conflicts back to milestone planning before issue seeding
 
 ## Non-Goals
