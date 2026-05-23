@@ -69,6 +69,9 @@ pub(super) fn real_validate_structured_prompt(args: &[String]) -> Result<()> {
     ensure_file(&input, "input")?;
     ensure_no_absolute_host_path(&input, &prompt_type)?;
     let text = fs::read_to_string(&input)?;
+    if is_versioned_prompt_template_card(&text) {
+        ensure_no_unresolved_prompt_placeholders(&text)?;
+    }
     match prompt_type.as_str() {
         "stp" => validate_stp_text(&text)?,
         "sip" => validate_sip_text(&text, &input, phase.as_deref())?,
@@ -281,6 +284,42 @@ fn ensure_required_sections(text: &str, required_sections: &[&str]) -> Result<()
         missing.join(", ")
     );
     Ok(())
+}
+
+fn ensure_no_unresolved_prompt_placeholders(text: &str) -> Result<()> {
+    let bytes = text.as_bytes();
+    let mut idx = 0usize;
+    while idx < bytes.len() {
+        if bytes[idx] != b'<' {
+            idx += 1;
+            continue;
+        }
+        let start = idx;
+        idx += 1;
+        if idx >= bytes.len() || !bytes[idx].is_ascii_lowercase() {
+            continue;
+        }
+        while idx < bytes.len()
+            && (bytes[idx].is_ascii_lowercase()
+                || bytes[idx].is_ascii_digit()
+                || bytes[idx] == b'_')
+        {
+            idx += 1;
+        }
+        if idx < bytes.len() && bytes[idx] == b'>' {
+            bail!(
+                "structured prompt contains unresolved prompt-template placeholder near byte {}",
+                start
+            );
+        }
+    }
+    Ok(())
+}
+
+fn is_versioned_prompt_template_card(text: &str) -> bool {
+    text.contains("Canonical Template Source: `docs/templates/prompts/1.0.0/")
+        && !text.contains("Compatibility fallback:")
+        && !text.contains("Compatibility note:")
 }
 
 fn issue_number_from_task_id(task_id: &str) -> Result<u32> {

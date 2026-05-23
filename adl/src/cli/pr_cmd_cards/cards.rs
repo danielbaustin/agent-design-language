@@ -29,7 +29,94 @@ pub(crate) fn ensure_task_bundle_stp(
         if let Some(parent) = stp_path.parent() {
             fs::create_dir_all(parent)?;
         }
-        fs::copy(source_path, &stp_path)?;
+        if let Some(mut text) = try_read_prompt_template(root, "stp") {
+            let source_rel = path_relative_to_repo(root, source_path);
+            let title = issue_ref.slug().replace('-', " ");
+            apply_template_values(
+                &mut text,
+                &[
+                    ("<issue>", issue_ref.issue_number().to_string()),
+                    ("<issue_padded>", issue_ref.padded_issue_number().to_string()),
+                    ("<version>", issue_ref.scope().to_string()),
+                    ("<slug>", issue_ref.slug().to_string()),
+                    ("<title>", title.clone()),
+                    ("<branch>", "not bound yet".to_string()),
+                    ("<source_issue_prompt>", source_rel.clone()),
+                    ("<wp>", "process".to_string()),
+                    ("<required_outcome_type>", "code".to_string()),
+                    ("<demo_required>", "false".to_string()),
+                    (
+                        "<issue_graph_note>",
+                        "Generated from 1.0.0 C-SDLC prompt template; refine with editor skills before execution if needed."
+                            .to_string(),
+                    ),
+                    (
+                        "<summary>",
+                        format!("Issue-local task surface for {title}."),
+                    ),
+                    (
+                        "<goal>",
+                        "Execute the linked issue prompt with bounded, reviewable changes."
+                            .to_string(),
+                    ),
+                    (
+                        "<required_outcome>",
+                        "Ship the outcome required by the linked source issue prompt."
+                            .to_string(),
+                    ),
+                    (
+                        "<deliverables>",
+                        "Use deliverables from the linked source issue prompt.".to_string(),
+                    ),
+                    (
+                        "<acceptance_criteria>",
+                        "Satisfy the linked source issue prompt acceptance criteria.".to_string(),
+                    ),
+                    (
+                        "<repo_inputs>",
+                        "Use repo inputs from the linked source issue prompt.".to_string(),
+                    ),
+                    (
+                        "<dependencies>",
+                        "Use dependency truth from the linked source issue prompt.".to_string(),
+                    ),
+                    (
+                        "<target_files_surfaces>",
+                        "Review source issue prompt and scoped repo inputs.".to_string(),
+                    ),
+                    (
+                        "<validation_plan>",
+                        "Run the smallest proving validation for the touched surface and record it in SOR."
+                            .to_string(),
+                    ),
+                    (
+                        "<demo_proof_requirements>",
+                        "Follow demo/proof requirements from the linked source issue prompt."
+                            .to_string(),
+                    ),
+                    (
+                        "<non_goals>",
+                        "Do not widen scope beyond the linked source issue prompt.".to_string(),
+                    ),
+                    (
+                        "<issue_graph_notes>",
+                        "Preserve issue graph truth from the linked source issue prompt."
+                            .to_string(),
+                    ),
+                    (
+                        "<notes_risks>",
+                        "Update this card if execution reality diverges.".to_string(),
+                    ),
+                    (
+                        "<tooling_notes>",
+                        "Generated from docs/templates/prompts/1.0.0/.".to_string(),
+                    ),
+                ],
+            );
+            fs::write(&stp_path, text)?;
+        } else {
+            fs::copy(source_path, &stp_path)?;
+        }
     }
     validate_bootstrap_stp(root, &stp_path)?;
     Ok(stp_path)
@@ -324,8 +411,83 @@ fn write_input_card(
     source_path: &Path,
     output_path: &Path,
 ) -> Result<()> {
-    let mut text =
-        fs::read_to_string(repo_root.join("adl/templates/cards/input_card_template.md"))?;
+    let mut text = read_prompt_template(
+        repo_root,
+        "sip",
+        &[
+            "adl/templates/cards/input_card_template.md",
+            ".adl/templates/input_card_template.md",
+        ],
+    )?;
+    let issue_url = format!(
+        "https://github.com/{}/issues/{}",
+        default_repo(repo_root)?,
+        issue_ref.issue_number()
+    );
+    let source_rel = path_relative_to_repo(repo_root, source_path);
+    let output_rel = path_relative_to_repo(repo_root, output_path);
+    apply_template_values(
+        &mut text,
+        &[
+            ("<issue>", issue_ref.issue_number().to_string()),
+            ("<issue_padded>", issue_ref.padded_issue_number().to_string()),
+            ("<task_id>", format!("issue-{}", issue_ref.padded_issue_number())),
+            ("<run_id>", format!("issue-{}", issue_ref.padded_issue_number())),
+            ("<version>", issue_ref.scope().to_string()),
+            ("<slug>", issue_ref.slug().to_string()),
+            ("<title>", title.to_string()),
+            ("<branch>", branch.to_string()),
+            ("<issue_url>", issue_url.clone()),
+            ("<source_issue_prompt>", source_rel.clone()),
+            ("<docs_context>", "none".to_string()),
+            ("<output_card>", output_rel.clone()),
+            ("<required_outcome_type>", "combination".to_string()),
+            ("<demo_required>", "false".to_string()),
+            (
+                "<goal>",
+                "Execute the linked issue prompt in the bound issue worktree.".to_string(),
+            ),
+            (
+                "<required_outcome>",
+                "Ship the required outcome described by the linked source issue prompt."
+                    .to_string(),
+            ),
+            (
+                "<acceptance_criteria>",
+                "Satisfy the acceptance criteria in the linked source issue prompt and record focused proof in SOR."
+                    .to_string(),
+            ),
+            (
+                "<inputs>",
+                "Linked source issue prompt; root task bundle cards; current repository state."
+                    .to_string(),
+            ),
+            (
+                "<target_files_surfaces>",
+                "Files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt."
+                    .to_string(),
+            ),
+            (
+                "<validation_plan>",
+                "Run the smallest proving validation for the touched surface and record exact commands in SOR."
+                    .to_string(),
+            ),
+            (
+                "<demo_proof_requirements>",
+                "Follow demo and proof requirements from the linked source issue prompt."
+                    .to_string(),
+            ),
+            (
+                "<non_goals>",
+                "Do not widen scope beyond the linked source issue prompt.".to_string(),
+            ),
+            (
+                "<notes_risks>",
+                "Refine this card if the linked source issue prompt changes materially before execution begins."
+                    .to_string(),
+            ),
+        ],
+    );
     replace_field_line(
         &mut text,
         "Task ID",
@@ -339,22 +501,11 @@ fn write_input_card(
     replace_field_line(&mut text, "Version", issue_ref.scope());
     replace_field_line(&mut text, "Title", title);
     replace_field_line(&mut text, "Branch", branch);
-    replace_exact_line(
-        &mut text,
-        "- Issue:",
-        &format!(
-            "- Issue: https://github.com/{}/issues/{}",
-            default_repo(repo_root)?,
-            issue_ref.issue_number()
-        ),
-    );
+    replace_exact_line(&mut text, "- Issue:", &format!("- Issue: {issue_url}"));
     replace_exact_line(
         &mut text,
         "- Source Issue Prompt: <required repo-relative reference or URL>",
-        &format!(
-            "- Source Issue Prompt: {}",
-            path_relative_to_repo(repo_root, source_path)
-        ),
+        &format!("- Source Issue Prompt: {}", source_rel),
     );
     replace_exact_line(
         &mut text,
@@ -369,14 +520,42 @@ fn write_input_card(
     replace_exact_line(
         &mut text,
         "  output_card: .adl/<scope>/tasks/<task-id>__<slug>/sor.md",
-        &format!(
-            "  output_card: {}",
-            path_relative_to_repo(repo_root, output_path)
-        ),
+        &format!("  output_card: {}", output_rel),
     );
     apply_input_card_lifecycle(&mut text, branch);
     fs::write(path, text)?;
     Ok(())
+}
+
+fn read_prompt_template(repo_root: &Path, kind: &str, fallbacks: &[&str]) -> Result<String> {
+    let primary = repo_root
+        .join("docs")
+        .join("templates")
+        .join("prompts")
+        .join("1.0.0")
+        .join(format!("{kind}.md"));
+    if primary.is_file() {
+        return fs::read_to_string(&primary)
+            .with_context(|| format!("failed to read prompt template {}", primary.display()));
+    }
+    for fallback in fallbacks {
+        let path = repo_root.join(fallback);
+        if path.is_file() {
+            return fs::read_to_string(&path)
+                .with_context(|| format!("failed to read prompt template {}", path.display()));
+        }
+    }
+    bail!("missing {kind} prompt template under docs/templates/prompts/1.0.0")
+}
+
+fn try_read_prompt_template(repo_root: &Path, kind: &str) -> Option<String> {
+    read_prompt_template(repo_root, kind, &[]).ok()
+}
+
+fn apply_template_values(text: &mut String, values: &[(&str, String)]) {
+    for (token, value) in values {
+        *text = text.replace(token, value);
+    }
 }
 
 fn apply_input_card_lifecycle(text: &mut String, branch: &str) {
@@ -509,11 +688,40 @@ fn render_bootstrap_output_card(
     } else {
         "Reserved the execution branch for later implementation."
     };
+    if let Some(mut text) = try_read_prompt_template(repo_root, "sor") {
+        apply_template_values(
+            &mut text,
+            &[
+                ("<issue>", issue_ref.issue_number().to_string()),
+                (
+                    "<issue_padded>",
+                    issue_ref.padded_issue_number().to_string(),
+                ),
+                (
+                    "<task_id>",
+                    format!("issue-{}", issue_ref.padded_issue_number()),
+                ),
+                (
+                    "<run_id>",
+                    format!("issue-{}", issue_ref.padded_issue_number()),
+                ),
+                ("<version>", issue_ref.scope().to_string()),
+                ("<slug>", issue_ref.slug().to_string()),
+                ("<title>", title.to_string()),
+                ("<branch>", branch.to_string()),
+                ("<status>", status.to_string()),
+                ("<timestamp>", timestamp.to_string()),
+                ("<output_card>", output_rel.clone()),
+                ("<branch_action>", branch_action.to_string()),
+            ],
+        );
+        return text;
+    }
     format!(
         r#"# {slug}
 
-Canonical Template Source: `adl/templates/cards/output_card_template.md`
-Consumed by: `adl/tools/pr.sh` (`OUTPUT_TEMPLATE`) with legacy fallback support for `.adl/templates/output_card_template.md`.
+Canonical Template Source: `docs/templates/prompts/1.0.0/sor.md`
+Consumed by: `adl/tools/pr.sh` (`OUTPUT_TEMPLATE`) with compatibility fallback support for `adl/templates/cards/output_card_template.md` and `.adl/templates/output_card_template.md`.
 
 Execution Record Requirements:
 - The output card is a machine-auditable execution record.
@@ -562,7 +770,7 @@ Pre-run output scaffold initialized during issue-wave opening. No implementation
 Rules:
 - Final artifacts must exist in the main repository, not only in a worktree.
 - Do not leave docs, code, or generated artifacts only under a `adl-wp-*` worktree.
-- Prefer git-aware transfer into the main repo (`git checkout <branch> -- <path>` or commit + cherry-pick).
+- Prefer git-aware transfer into the main repo (`git checkout BRANCH -- PATH` or commit + cherry-pick).
 - If artifacts exist only in the worktree, the task is NOT complete.
 - `Integration state` describes lifecycle state of the integrated artifact set, not where verification happened.
 - `Verification scope` describes where the verification commands were run.
@@ -708,6 +916,60 @@ fn render_bootstrap_plan_card(
     let non_goals_step = yaml_inline(&non_goals);
     let demo_step = yaml_inline(&demo_expectations);
     let validation_step = yaml_inline(&validation_strategy);
+    if let Some(mut text) = try_read_prompt_template(repo_root, "spp") {
+        let issue_url = format!(
+            "https://github.com/{}/issues/{}",
+            default_repo(repo_root)
+                .unwrap_or_else(|_| "danielbaustin/agent-design-language".to_string()),
+            issue_ref.issue_number()
+        );
+        apply_template_values(
+            &mut text,
+            &[
+                ("<issue>", issue_ref.issue_number().to_string()),
+                ("<issue_padded>", issue_ref.padded_issue_number().to_string()),
+                ("<task_id>", format!("issue-{}", issue_ref.padded_issue_number())),
+                ("<run_id>", format!("issue-{}", issue_ref.padded_issue_number())),
+                ("<version>", issue_ref.scope().to_string()),
+                ("<slug>", issue_ref.slug().to_string()),
+                ("<title>", title.to_string()),
+                ("<branch>", branch.to_string()),
+                ("<issue_url>", issue_url),
+                ("<source_issue_prompt>", source_rel.clone()),
+                ("<stp_card>", stp_rel.clone()),
+                ("<sip_card>", sip_rel.clone()),
+                ("<spp_card>", spp_rel.clone()),
+                (
+                    "<target_files_surfaces_inline>",
+                    repo_inputs_step.clone(),
+                ),
+                ("<non_goals_inline>", non_goals_step.clone()),
+                (
+                    "<plan_summary>",
+                    format!("Design-time execution plan for {title}."),
+                ),
+                ("<dependencies_inline>", dependency_step.clone()),
+                ("<repo_inputs_inline>", repo_inputs_step.clone()),
+                ("<deliverables_inline>", deliverable_step.clone()),
+                (
+                    "<acceptance_criteria_inline>",
+                    acceptance_step.clone(),
+                ),
+                (
+                    "<risks_inline>",
+                    "Generated card may need editor tightening if the source issue prompt is underspecified."
+                        .to_string(),
+                ),
+                ("<validation_plan_inline>", validation_step.clone()),
+                (
+                    "<notes_risks_inline>",
+                    "Generated from 1.0.0 template; update before continuing if execution diverges."
+                        .to_string(),
+                ),
+            ],
+        );
+        return text;
+    }
     format!(
         r#"---
 schema_version: "0.1"
@@ -952,7 +1214,45 @@ fn render_bootstrap_review_policy_card(
 ) -> String {
     let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
     let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
+    let spp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_plan_path(repo_root));
+    let srp_rel = path_relative_to_repo(
+        repo_root,
+        &issue_ref.task_bundle_review_policy_path(repo_root),
+    );
     let sor_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_output_path(repo_root));
+    if let Some(mut text) = try_read_prompt_template(repo_root, "srp") {
+        let issue_url = format!(
+            "https://github.com/{}/issues/{}",
+            default_repo(repo_root)
+                .unwrap_or_else(|_| "danielbaustin/agent-design-language".to_string()),
+            issue_ref.issue_number()
+        );
+        apply_template_values(
+            &mut text,
+            &[
+                ("<issue>", issue_ref.issue_number().to_string()),
+                (
+                    "<issue_padded>",
+                    issue_ref.padded_issue_number().to_string(),
+                ),
+                (
+                    "<task_id>",
+                    format!("issue-{}", issue_ref.padded_issue_number()),
+                ),
+                ("<version>", issue_ref.scope().to_string()),
+                ("<slug>", issue_ref.slug().to_string()),
+                ("<title>", title.to_string()),
+                ("<branch>", branch.to_string()),
+                ("<issue_url>", issue_url),
+                ("<stp_card>", stp_rel.clone()),
+                ("<sip_card>", sip_rel.clone()),
+                ("<spp_card>", spp_rel),
+                ("<srp_card>", srp_rel),
+                ("<sor_card>", sor_rel.clone()),
+            ],
+        );
+        return text;
+    }
     format!(
         r#"---
 schema_version: "0.1"

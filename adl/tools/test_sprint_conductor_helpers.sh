@@ -75,6 +75,8 @@ fake_repo="${tmpdir}/fake-repo"
 mkdir -p "${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05"
 mkdir -p "${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06"
 mkdir -p "${fake_repo}/adl/tools"
+mkdir -p "${fake_repo}/docs/templates"
+cp -R "${repo_root}/docs/templates/prompts" "${fake_repo}/docs/templates/"
 
 cat >"${fake_repo}/adl/tools/pr.sh" <<'PR_EOF'
 #!/usr/bin/env bash
@@ -235,8 +237,13 @@ test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-s
 test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/sor.md"
 grep -q "Run the narrow sprint-conductor trial" "${fake_repo}/.adl/v0.91.1/bodies/issue-3001-sprint-1-management-trial-sprint.md"
 grep -q "Run the narrow sprint-conductor trial" "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/stp.md"
+grep -q "# Structured Task Prompt" "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/stp.md"
 if grep -q "generic pr init" "${fake_repo}/.adl/v0.91.1/bodies/issue-3001-sprint-1-management-trial-sprint.md"; then
   echo "expected preferred-path bootstrap to replace generic local source prompt" >&2
+  exit 1
+fi
+if grep -q "generic pr init" "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/stp.md"; then
+  echo "expected preferred-path bootstrap to replace generic local STP" >&2
   exit 1
 fi
 
@@ -327,6 +334,58 @@ assert preflight["status"] == "needs_editor_repair"
 wp06 = [result for result in preflight["issue_results"] if result["issue_number"] == 2828][0]
 assert "spp-editor" in wp06["required_editor_skills"]
 assert any("spp.md" in defect for defect in wp06["design_time_defects"])
+PY
+
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'
+---
+issue: 2828
+status: approved
+---
+
+# Structured Plan Prompt
+
+## Codex Plan
+
+1. [pending] Execute the bounded WP-06 task.
+EOF2
+
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'
+---
+issue: 2828
+status: approved
+---
+
+# Structured Plan Prompt
+
+## Plan Summary
+
+Design-time execution plan for [v0.91.1][WP-06][runtime] Citizen state substrate.
+
+## Codex Plan
+
+1. [pending] Use dependency truth from the linked source issue prompt.
+2. [pending] Use repo inputs from the linked source issue prompt.
+3. [pending] Use deliverables from the linked source issue prompt.
+4. [pending] Satisfy the linked source issue prompt acceptance criteria.
+EOF2
+
+generic_v1_state_path="${tmpdir}/sprint-state-generic-v1.json"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --state "${generic_v1_state_path}" >/dev/null
+
+python3 - "${generic_v1_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+preflight = state["structured_prompt_preflight"]
+assert preflight["status"] == "needs_editor_repair"
+wp06 = [result for result in preflight["issue_results"] if result["issue_number"] == 2828][0]
+assert "spp-editor" in wp06["required_editor_skills"]
+assert any("generic" in defect for defect in wp06["design_time_defects"])
 PY
 
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'

@@ -1,7 +1,7 @@
 # <issue-slug>
 
-Canonical Template Source: `adl/templates/cards/output_card_template.md`
-Consumed by: `adl/tools/pr.sh` (`OUTPUT_TEMPLATE`) with legacy fallback support for `.adl/templates/output_card_template.md`.
+Canonical Template Source: `docs/templates/prompts/1.0.0/sor.md`
+Compatibility fallback: `adl/templates/cards/output_card_template.md`
 
 Execution Record Requirements:
 - The SOR is a machine-auditable Structured Outcome Record.
@@ -10,9 +10,8 @@ Execution Record Requirements:
 - If something is not applicable, include a one-line justification.
 
 Semantic role: Structured Outcome Record (`SOR`).
-Compatibility note: this template filename remains stable for current tooling,
-but generated `sor.md` files are outcome-truth cards in the canonical
-`SIP -> STP -> SPP -> SRP -> SOR` lifecycle.
+Compatibility note: this legacy filename remains stable for older tooling and
+tests, but new generation should prefer the canonical template home.
 
 Task ID:
 Run ID:

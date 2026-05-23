@@ -2,7 +2,11 @@
 
 ## Purpose
 
-Use this template for ADL `SRP` artifacts. An `SRP` is an issue-local
+Compatibility note: the canonical copy-and-fill `SRP` template now lives at
+`docs/templates/prompts/1.0.0/srp.md`. This legacy filename remains as a
+descriptive compatibility reference for older links.
+
+Use the canonical template for ADL `SRP` artifacts. An `SRP` is an issue-local
 Structured Review Prompt. It carries both the review instructions/policy and
 the review results: findings, dispositions, residual risks, and recommended
 outcome.

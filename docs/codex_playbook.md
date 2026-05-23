@@ -24,7 +24,8 @@ Card semantics:
 - GitHub issue state is the source of truth for whether a card is active or complete.
 - Active/current issue cards stay flat under `.adl/cards/<issue>/` while the milestone is in flight.
 - Closed/completed cards may be archived under `.adl/cards/completed/<milestone>/<issue>/` after or as part of milestone closeout so the active top-level card list stays workable.
-- Templates live under `adl/templates/cards/` (versioned).
+- C-SDLC prompt templates live under `docs/templates/prompts/1.0.0/`; legacy
+  SIP/SOR compatibility templates remain under `adl/templates/cards/`.
 - Tasks can be non-code; the same card-based trace applies.
 
 Fast path (copy/paste):

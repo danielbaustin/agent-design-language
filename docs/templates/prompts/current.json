@@ -1,0 +1,34 @@
+{
+  "schema": "adl.csdlc.prompt_template_registry.v1",
+  "csdlc_prompt_template_set": "1.0.0",
+  "semver": "1.0.0",
+  "status": "active",
+  "object_kind": "csdlc_prompt_template_set",
+  "lifecycle": ["SIP", "STP", "SPP", "SRP", "SOR"],
+  "templates": {
+    "sip": {
+      "semantic_role": "Structured Issue Prompt",
+      "path": "docs/templates/prompts/1.0.0/sip.md"
+    },
+    "stp": {
+      "semantic_role": "Structured Task Prompt",
+      "path": "docs/templates/prompts/1.0.0/stp.md"
+    },
+    "spp": {
+      "semantic_role": "Structured Plan Prompt",
+      "path": "docs/templates/prompts/1.0.0/spp.md"
+    },
+    "srp": {
+      "semantic_role": "Structured Review Prompt",
+      "path": "docs/templates/prompts/1.0.0/srp.md"
+    },
+    "sor": {
+      "semantic_role": "Structured Outcome Record",
+      "path": "docs/templates/prompts/1.0.0/sor.md"
+    }
+  },
+  "compatibility_fallbacks": {
+    "sip": ["adl/templates/cards/input_card_template.md", ".adl/templates/input_card_template.md"],
+    "sor": ["adl/templates/cards/output_card_template.md", ".adl/templates/output_card_template.md"]
+  }
+}
