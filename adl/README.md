@@ -6,8 +6,8 @@ The runtime is built for readers and builders who want AI workflow execution to 
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![License](https://img.shields.io/badge/license-Apache--2.0-blue)
-![MSRV](https://img.shields.io/badge/MSRV-1.74%2B-blue)
+![License](https://img.shields.io/badge/license-MIT%20or%20Apache--2.0-blue)
+![Rust toolchain](https://img.shields.io/badge/Rust-stable-blue)
 
 ## Why the Runtime Matters
 
@@ -327,6 +327,21 @@ cargo llvm-cov --workspace --all-features --summary-only
 
 The runtime uses coverage as a design signal for core compiler-like behavior: parsing, validation, resolution, execution, and CLI behavior should remain well exercised.
 
+The current repository policy tracks the stable Rust toolchain in CI, and local
+operator coverage workflows are expected to use a compatible Rust toolchain.
+This README does not claim a separately enforced fixed MSRV. If we need a
+strict MSRV guarantee later, that should be encoded in the manifest and CI
+explicitly rather than implied by documentation alone.
+
+Coverage outputs such as `lcov.info`, `coverage-summary.json`, and
+`coverage-summary.txt` are CI/operator review surfaces. Normalize runner-local
+paths and apply redaction/publication review before reusing them in
+publication-adjacent or customer-facing packets.
+
 ## License
 
-Apache-2.0
+The `adl` crate metadata declares `MIT OR Apache-2.0`.
+
+The repository root currently carries Apache-2.0 license text. Any repo-wide
+license-term change remains a maintainer policy decision rather than an
+automatic tooling decision.

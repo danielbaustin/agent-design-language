@@ -13,6 +13,9 @@ concurrency:
 jobs:
   adl-ci:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     defaults:
       run:
         working-directory: adl
@@ -426,6 +429,12 @@ jobs:
             adl/coverage-summary.json
             adl/coverage-summary.txt
           if-no-files-found: error
+      - name: Coverage artifact publication boundary
+        if: github.event_name != 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
+        run: |
+          echo "Coverage artifacts are CI/operator review surfaces."
+          echo "Normalize runner-local paths and run redaction/publication review before reusing them in publication-adjacent or customer-facing packets."
+        working-directory: .
 
       - name: Coverage skipped by path policy
         if: steps.path-policy.outputs.coverage_required != 'true'
