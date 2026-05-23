@@ -26,6 +26,7 @@ It must not replace:
 - `pr-finish`
 - `pr-janitor`
 - `pr-closeout`
+- `planning-doc-editor`
 - `stp-editor`
 - `sip-editor`
 - `spp-editor`
@@ -42,9 +43,9 @@ This skill should track the repository's canonical operational skill family and
 the workflow-policy notes that motivated it.
 
 At the moment, the key repo references are:
-- `/Users/daniel/git/agent-design-language/adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md`
-- `/Users/daniel/git/agent-design-language/.adl/docs/TBD/ADL_EXECUTION_POLICY_FOR_SKILLS_AND_SUBAGENTS.md`
-- `/Users/daniel/git/agent-design-language/.adl/docs/TBD/LIGHTWEIGHT_WORKFLOW_CONDUCTOR_SKILL.md`
+- `adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md`
+- `.adl/docs/TBD/ADL_EXECUTION_POLICY_FOR_SKILLS_AND_SUBAGENTS.md`
+- `.adl/docs/TBD/LIGHTWEIGHT_WORKFLOW_CONDUCTOR_SKILL.md`
 
 Within this bundle, the operational details live in:
 - `references/conductor-playbook.md`
@@ -105,6 +106,7 @@ If there is no concrete target, stop and report `blocked`.
 3. Determine whether the next step is:
    - lifecycle routing
    - card-editor routing
+   - planning-doc-editor routing
    - blocked/no-op reporting
 4. Apply the declared skill/subagent policy.
 5. Select the next skill.
@@ -121,6 +123,7 @@ Preferred next-skill mapping:
 - card-local SPP issue -> `spp-editor`
 - card-local SRP issue -> `srp-editor`
 - card-local SOR issue -> `sor-editor`
+- planning-doc-local issue -> `planning-doc-editor`
 - structurally ready but not bound -> `pr-ready`
 - ready for execution bind -> `pr-run`
 - execution complete, needs publication -> `pr-finish`
@@ -140,6 +143,10 @@ Important rule:
   matching card editor before execution or publication continues; generic
   `SIP`, incomplete `STP`, generic/truncated `SPP`, and legacy/incomplete
   `SRP` surfaces are not safe to treat as ready merely because the files exist
+- planning-document defects such as placeholder residue, missing required
+  planning sections, stale planning status claims, or generated-vs-reviewed
+  truth drift should route to `planning-doc-editor`; do not send those defects
+  to C-SDLC card editors unless the defect is actually in SIP/STP/SPP/SRP/SOR
 
 ## Policy Model
 
