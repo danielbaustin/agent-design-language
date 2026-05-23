@@ -2,13 +2,16 @@
 %% Assumptions: state names describe lifecycle truth, not a single enum in the source.
 stateDiagram-v2
   [*] --> IssueCaptured
-  IssueCaptured --> BundleInitialized: STP SIP SOR created
+  IssueCaptured --> BundleInitialized: SIP STP SPP SRP authored
   BundleInitialized --> ReadyChecked: doctor pass
   ReadyChecked --> WorktreeBound: pr run
   WorktreeBound --> Implemented: bounded edits and validation
-  Implemented --> Published: pr finish
+  Implemented --> Reviewed: SRP review findings recorded
+  Reviewed --> Published: pr finish updates SOR
   Published --> Integrated: PR merged or no-PR disposition
   Integrated --> ClosedOut: pr closeout
   ClosedOut --> [*]
   ReadyChecked --> NeedsRepair: doctor fail
   NeedsRepair --> BundleInitialized: editor skill repair
+  Implemented --> NeedsRepair: validation or review defect
+  Reviewed --> NeedsRepair: actionable review findings

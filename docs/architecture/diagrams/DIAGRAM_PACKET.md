@@ -47,7 +47,7 @@ mmdc -i docs/architecture/diagrams/system_context.mmd -o artifacts/diagrams/adl-
 ## Diagram A4: Task Bundle State
 
 - Source: `docs/architecture/diagrams/task_bundle_state.mmd`
-- Purpose: show STP/SIP/SOR bundle state transitions.
+- Purpose: show SIP/STP/SPP/SRP/SOR bundle state transitions.
 - Evidence: `adl/src/control_plane.rs`, `docs/default_workflow.md`.
 - Assumptions: state labels describe lifecycle truth, not a single Rust enum.
 - Unsupported claims excluded: no guarantee that every historic bundle is clean.
