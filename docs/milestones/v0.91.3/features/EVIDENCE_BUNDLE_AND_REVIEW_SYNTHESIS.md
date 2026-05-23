@@ -2,7 +2,7 @@
 
 ## Status
 
-In flight under `WP-05` / `#3203` with a tracked evidence-bundle packet,
+Proven under `WP-05` / `#3203` with a tracked evidence-bundle packet,
 review synthesis companion, and focused validator/test proof.
 
 ## Purpose

@@ -18,7 +18,7 @@ two-repository operating model:
   repo regularly
 
 This document plans the split. It does not itself create the new repository,
-move code, or change current `v0.91.x` through `v0.95` milestone scope.
+move code, or change current `v0.91.3`, `v0.91.4`, or `v0.95` milestone scope.
 
 ## Purpose
 

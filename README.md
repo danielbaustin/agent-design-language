@@ -9,7 +9,7 @@ packets, demos, and milestone evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.91.2%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.91.3%20active-blue)
 
 ![ADL deterministic cognitive architecture overview](docs/assets/ADL-overview.png)
 
@@ -142,25 +142,31 @@ from issue
 
 ## Recent Milestones
 
-### v0.91.2 - Active Tooling, Evaluation, Productization, And Workflow Pressure Release
+### v0.91.3 - Active Cognitive SDLC First-Slice Milestone
 
-v0.91.2 is the active pressure-release milestone. Its issue wave was opened as
-`#3000` through `#3023`, with sprint-conductor umbrella issues `#3025` through
-`#3028`. Sprint 4 completed demo/proof coverage, quality gate, docs pass,
-internal review, third-party review, accepted-finding remediation, and
-next-milestone planning. `WP-24` is the release ceremony and final
-end-of-milestone evidence gate. The milestone focuses on UTS + ACC benchmarking,
-runtime/test-cycle recovery, CodeFriend productization, Workspace bridge work,
-modernization, publication packets, rustdoc/doc cleanup, repo-visibility
-follow-on work, and workflow guardrails.
+v0.91.3 is the active Cognitive SDLC first-slice milestone. Its main issue wave
+was opened as `#3199` through `#3214`; follow-up `#3225` restored the complete
+closeout tail as `#3226` through `#3230`, with Sprint 4 opened as `#3231`.
+Sprint 4 has completed proof coverage, the quality gate, and this docs review
+pass. `WP-13` / `#3208` is the next internal-review gate. The milestone proves
+one bounded Cognitive State Transition without claiming full C-SDLC default
+operation before v0.91.4.
 
 Start here:
 
-- [v0.91.2 README](docs/milestones/v0.91.2/README.md)
-- [v0.91.2 issue wave](docs/milestones/v0.91.2/WP_ISSUE_WAVE_v0.91.2.yaml)
-- [v0.91.2 sprint plan](docs/milestones/v0.91.2/SPRINT_v0.91.2.md)
-- [v0.91.2 sprint-conductor plan](docs/milestones/v0.91.2/SPRINT_CONDUCTOR_EXECUTION_PLAN_v0.91.2.md)
-- [v0.91.2 third-party review handoff](docs/milestones/v0.91.2/ADL_v0.91.2_THIRD_PARTY_REVIEW_HANDOFF.md)
+- [v0.91.3 README](docs/milestones/v0.91.3/README.md)
+- [v0.91.3 issue wave](docs/milestones/v0.91.3/WP_ISSUE_WAVE_v0.91.3.yaml)
+- [v0.91.3 sprint plan](docs/milestones/v0.91.3/SPRINT_v0.91.3.md)
+- [v0.91.3 demo matrix](docs/milestones/v0.91.3/DEMO_MATRIX_v0.91.3.md)
+- [v0.91.3 quality gate](docs/milestones/v0.91.3/QUALITY_GATE_v0.91.3.md)
+
+### v0.91.2 - Completed Tooling, Evaluation, Productization, And Workflow Pressure Release
+
+v0.91.2 is complete. It closed the UTS + ACC benchmark, runtime/test-cycle
+recovery, CodeFriend productization, Workspace bridge, modernization,
+publication packet, rustdoc/doc cleanup, repo-visibility follow-on, and
+workflow-guardrail pressure-release band. Its release-tail review, remediation,
+next-milestone planning, and ceremony work prepared v0.91.3 and v0.91.4.
 
 ### v0.91.1 - Completed Inhabited Runtime Readiness Milestone
 
@@ -237,13 +243,13 @@ production markets.
 
 ## Project Status
 
-- Active milestone: v0.91.2
-- Current crate version: 0.91.2
-- Most recently completed milestone: v0.91.1
-- Current release-tail state: v0.91.2 Sprint 4 has completed review,
-  remediation, and next-milestone planning; `WP-24` is the release ceremony
-  and final end-of-milestone evidence gate
-- Previous completed milestone: v0.90.5
+- Active milestone: v0.91.3
+- Current crate version: 0.91.3
+- Most recently completed milestone: v0.91.2
+- Current release-tail state: v0.91.3 Sprint 4 has completed proof coverage,
+  the quality gate, and the docs review pass; `WP-13` / `#3208` is the next
+  internal-review gate
+- Previous completed milestone before v0.91.2: v0.91.1
 - Primary implementation language: Rust
 
 ADL is under active development. The repository contains implemented runtime

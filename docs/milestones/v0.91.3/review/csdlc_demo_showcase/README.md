@@ -1,7 +1,7 @@
 # C-SDLC Demo Showcase Review Surface
 
 This directory packages the merged C-SDLC demo mini-sprint evidence into one
-reviewer-facing surface while `WP-05` remains the active packaging issue.
+reviewer-facing surface produced by demo `WP-05` / `#3224`.
 
 Use this packet when you want:
 

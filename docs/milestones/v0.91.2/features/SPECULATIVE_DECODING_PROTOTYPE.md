@@ -62,4 +62,4 @@ trial before ADL should productize it.
 That makes the most truthful next step a follow-on backend experiment rather
 than more synthetic optimism. Unless roadmap priorities change, that follow-on
 is likely better placed after `v0.95` than mixed into the current
-`v0.91.x` C-SDLC and sprint-completion work.
+`v0.91.3` / `v0.91.4` C-SDLC and sprint-completion work.
