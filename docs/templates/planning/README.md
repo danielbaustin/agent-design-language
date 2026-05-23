@@ -58,13 +58,23 @@ versioned registry and active template paths in this directory.
 
 ## Focused Validation
 
+Generate a filled planning draft from explicit JSON values:
+
+```bash
+python3 adl/tools/fill_planning_template.py \
+  --registry docs/templates/planning/current.json \
+  --template readme \
+  --values docs/templates/planning/fixtures/minimal/readme_values.json \
+  --output docs/templates/planning/fixtures/minimal/readme_generated.md
+```
+
 Use the planning-template validator to check generated or filled planning docs:
 
 ```bash
 python3 adl/tools/validate_planning_template.py \
   --registry docs/templates/planning/current.json \
   --template readme \
-  --input docs/templates/planning/fixtures/minimal/readme.md
+  --input docs/templates/planning/fixtures/minimal/readme_generated.md
 ```
 
 The validator checks:
@@ -75,6 +85,14 @@ The validator checks:
 - required sections for the selected template are present
 - unresolved identifier-style angle-bracket or legacy curly placeholders are
   absent from filled outputs
+
+The minimal fixture set currently covers the core first-slice planning
+surfaces:
+
+- `readme`
+- `wbs`
+- `sprint`
+- `milestone_checklist`
 
 ## Migration Note
 

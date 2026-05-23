@@ -20,17 +20,16 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 - [ ] New issue bundles use the target lifecycle
   `SIP -> STP -> SPP -> SRP -> SOR`, or legacy compatibility exceptions are
   explicitly documented
-- [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp>/`
-- [ ] Draft PR opened for each issue before merge
-- [ ] Transient failures retried and documented
-- [ ] "Green-only merge" policy followed
+- [ ] Required proof artifacts are recorded in issue-local SORs or review/evidence docs
+- [ ] Draft PR opened for each issue before merge unless an explicit no-PR closeout path is recorded
+- [ ] Transient failures retried and documented when they affect proof truth
+- [ ] Merge policy followed for the target branch
 
 ## Quality Gates
-- [ ] `cargo fmt` passes
-- [ ] `cargo clippy --all-targets -- -D warnings` passes
-- [ ] `cargo test` passes
-- [ ] CI is green on the merge target
-- [ ] Coverage signal is not red (or exception documented) (`<coverage_link_or_note>`)
+- [ ] Focused validation commands recorded for each touched surface
+- [ ] Code-format/lint/test gates run where relevant to touched code
+- [ ] CI is green on the merge target or exceptions are documented
+- [ ] Coverage signal is not red where coverage applies, or exception documented (`<coverage_link_or_note>`)
 - [ ] No unresolved high-priority blockers (`<blocker_report_link>`)
 
 ## Release Packaging
