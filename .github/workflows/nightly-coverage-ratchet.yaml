@@ -158,6 +158,8 @@ jobs:
             echo "- This GitHub Actions workflow is a scheduled watchdog/reporter."
             echo "- No active per-file exclusion is configured; workspace 90% and per-file 80% posture matches the merge gate."
             echo "- Code-changing ratchet work (test authoring + PRs) is still handled by Codex automation."
+            echo "- This workflow intentionally tracks the stable Rust toolchain on \`ubuntu-latest\`; review and adjust that policy explicitly rather than assuming a pinned MSRV/runtime image."
+            echo "- Coverage artifacts and report excerpts require path normalization and redaction review before publication-adjacent reuse."
           } > "$report_path"
 
           below_count="$(wc -l < "$below_path" | tr -d ' ')"
