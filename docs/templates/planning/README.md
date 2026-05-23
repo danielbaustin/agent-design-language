@@ -86,6 +86,14 @@ The validator checks:
 - unresolved identifier-style angle-bracket or legacy curly placeholders are
   absent from filled outputs
 
+The minimal fixture set currently covers the core first-slice planning
+surfaces:
+
+- `readme`
+- `wbs`
+- `sprint`
+- `milestone_checklist`
+
 ## Migration Note
 
 This template set does not rewrite existing milestone packages. Future issues

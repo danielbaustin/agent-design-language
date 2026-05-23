@@ -63,20 +63,19 @@ Supporting / domain-specific docs:
 
 ## Execution Model
 
-This milestone is executed as a sequence of work packages (WPs):
+This milestone is executed as a sequence of work packages (WPs). The exact WP count is milestone-specific.
 
-- WP-01: Design pass (docs + planning)
-- WP-02 – WP-12: Feature and system work
-- WP-13: Demo matrix and integration demos
-- WP-14: Coverage / quality gate
-- WP-15: Docs and review convergence
-- WP-16: Release ceremony
+Sequencing expectations:
+- WP-01 is the design/planning pass.
+- Feature and system work occupy the middle of the sequence.
+- Demo/proof, quality, docs/review convergence, and release ceremony work happen at the tail.
+- Do not hard-code a 16-WP shape unless that milestone explicitly uses it.
 
 Execution expectations:
 - Each WP is tracked by an issue and implemented via PRs.
 - Each issue follows the structured card lifecycle
   `SIP -> STP -> SPP -> SRP -> SOR`, plus any required reports.
-- All work merges under green CI and passes quality gates.
+- Each WP records its own focused validation and merge/readiness proof.
 
 ## Demo and Validation Surface
 

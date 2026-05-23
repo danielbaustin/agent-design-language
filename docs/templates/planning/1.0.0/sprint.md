@@ -28,9 +28,9 @@
 | 3 | <work_item_3> | <issue_3> | <owner_3> | <status_3> |
 
 ## Cadence Expectations
-- Use issue cards (`input`/`output`) for each item.
+- Use the structured card lifecycle (`SIP -> STP -> SPP -> SRP -> SOR`) for each tracked issue.
 - Keep changes scoped per issue; use draft PRs until checks pass.
-- Run required quality gates (fmt/clippy/test) for code changes.
+- Run the smallest meaningful validation for each touched surface and record proof truthfully.
 
 ## Risks / Dependencies
 - Dependency: <dependency_1>

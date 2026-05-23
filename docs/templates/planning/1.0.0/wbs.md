@@ -10,8 +10,10 @@
 - Break work into independently-mergeable issues.
 - Keep each item measurable and testable.
 - Include deliverables + dependencies + issue links.
-- `WP-01` is **always** the milestone **design pass** (canonical docs + WBS + decisions + sprint plan + checklist).
-- Reserve the final WPs for the release tail in this order: `WP-13` demos, `WP-14` quality/coverage gate, `WP-15` docs/review convergence, `WP-16` release ceremony.
+- `WP-01` is the milestone design pass (canonical docs + WBS + decisions + sprint plan + checklist).
+- Use as many middle WPs as the milestone needs; current milestones often need more than 16 total WPs.
+- Reserve the final WPs for the release tail in this order: demos/proof, quality gate, docs/review convergence, release ceremony.
+- Do not hard-code exact tail WP numbers unless the milestone WBS has already fixed them.
 
 ## WBS Summary
 <wbs_summary>
@@ -31,10 +33,10 @@
 | WP-10 | <package_10> | <description_10> | <deliverable_10> | <deps_10> | <issue_10> |
 | WP-11 | <package_11> | <description_11> | <deliverable_11> | <deps_11> | <issue_11> |
 | WP-12 | <package_12> | <description_12> | <deliverable_12> | <deps_12> | <issue_12> |
-| WP-13 | Demo matrix + integration demos | <description_13> | <deliverable_13> | <deps_13> | <issue_13> |
-| WP-14 | Coverage / quality gate (ratchet + exclusions) | <description_14> | <deliverable_14> | <deps_14> | <issue_14> |
-| WP-15 | Docs + review pass (repo-wide alignment) | <description_15> | <deliverable_15> | <deps_15> | <issue_15> |
-| WP-16 | Release ceremony (final validation + tag + notes + cleanup) | <description_16> | <deliverable_16> | <deps_16> | <issue_16> |
+| WP-N-3 | Demo matrix + integration demos | <description_demo_tail> | <deliverable_demo_tail> | <deps_demo_tail> | <issue_demo_tail> |
+| WP-N-2 | Quality gate (focused proof + exceptions) | <description_quality_tail> | <deliverable_quality_tail> | <deps_quality_tail> | <issue_quality_tail> |
+| WP-N-1 | Docs + review pass (repo-wide alignment) | <description_docs_tail> | <deliverable_docs_tail> | <deps_docs_tail> | <issue_docs_tail> |
+| WP-N | Release ceremony (final validation + tag + notes + cleanup) | <description_release_tail> | <deliverable_release_tail> | <deps_release_tail> | <issue_release_tail> |
 
 ## Sequencing
 - Phase 1: <phase_1>
@@ -54,10 +56,10 @@
 - WP-10 -> <acceptance_criteria_10>
 - WP-11 -> <acceptance_criteria_11>
 - WP-12 -> <acceptance_criteria_12>
-- WP-13 (Demos) -> <acceptance_criteria_13>
-- WP-14 (Quality gate) -> <acceptance_criteria_14>
-- WP-15 (Docs/review) -> <acceptance_criteria_15>
-- WP-16 (Release ceremony) -> <acceptance_criteria_16>
+- WP-N-3 (Demos/proof) -> <acceptance_criteria_demo_tail>
+- WP-N-2 (Quality gate) -> <acceptance_criteria_quality_tail>
+- WP-N-1 (Docs/review) -> <acceptance_criteria_docs_tail>
+- WP-N (Release ceremony) -> <acceptance_criteria_release_tail>
 
 ## Exit Criteria
 - Every in-scope requirement maps to at least one WBS item.
