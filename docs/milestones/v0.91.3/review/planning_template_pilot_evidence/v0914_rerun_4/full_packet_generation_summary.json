@@ -1,0 +1,87 @@
+{
+  "canonical_count": 10,
+  "feature_doc_template_available_but_excluded_from_10_doc_milestone_packet": true,
+  "evidence_location": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4",
+  "results": [
+    {
+      "template": "readme",
+      "output": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/README_GENERATED.md",
+      "fill_rc": 0,
+      "validate_rc": 0,
+      "fill_stderr": "",
+      "validate_stderr": ""
+    },
+    {
+      "template": "wbs",
+      "output": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/WBS_GENERATED.md",
+      "fill_rc": 0,
+      "validate_rc": 0,
+      "fill_stderr": "",
+      "validate_stderr": ""
+    },
+    {
+      "template": "sprint",
+      "output": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/SPRINT_GENERATED.md",
+      "fill_rc": 0,
+      "validate_rc": 0,
+      "fill_stderr": "",
+      "validate_stderr": ""
+    },
+    {
+      "template": "vision",
+      "output": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/VISION_GENERATED.md",
+      "fill_rc": 0,
+      "validate_rc": 0,
+      "fill_stderr": "",
+      "validate_stderr": ""
+    },
+    {
+      "template": "design",
+      "output": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/DESIGN_GENERATED.md",
+      "fill_rc": 0,
+      "validate_rc": 0,
+      "fill_stderr": "",
+      "validate_stderr": ""
+    },
+    {
+      "template": "decisions",
+      "output": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/DECISIONS_GENERATED.md",
+      "fill_rc": 0,
+      "validate_rc": 0,
+      "fill_stderr": "",
+      "validate_stderr": ""
+    },
+    {
+      "template": "demo_matrix",
+      "output": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/DEMO_MATRIX_GENERATED.md",
+      "fill_rc": 0,
+      "validate_rc": 0,
+      "fill_stderr": "",
+      "validate_stderr": ""
+    },
+    {
+      "template": "milestone_checklist",
+      "output": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/MILESTONE_CHECKLIST_GENERATED.md",
+      "fill_rc": 0,
+      "validate_rc": 0,
+      "fill_stderr": "",
+      "validate_stderr": ""
+    },
+    {
+      "template": "release_plan",
+      "output": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/RELEASE_PLAN_GENERATED.md",
+      "fill_rc": 0,
+      "validate_rc": 0,
+      "fill_stderr": "",
+      "validate_stderr": ""
+    },
+    {
+      "template": "release_notes",
+      "output": "docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/RELEASE_NOTES_GENERATED.md",
+      "fill_rc": 0,
+      "validate_rc": 0,
+      "fill_stderr": "",
+      "validate_stderr": ""
+    }
+  ]
+}
