@@ -468,9 +468,29 @@ fn real_pr_start(args: &[String]) -> Result<()> {
 
     println!("• Agent:");
     println!("  STP    {}", worktree_stp.display());
+    println!(
+        "  SPP    {}",
+        issue_ref.task_bundle_plan_path(&worktree_path).display()
+    );
+    println!(
+        "  SRP    {}",
+        issue_ref
+            .task_bundle_review_policy_path(&worktree_path)
+            .display()
+    );
     println!("  READ   {}", worktree_paths.1.display());
     println!("  WRITE  {}", worktree_paths.2.display());
     println!("  ROOT_STP    {}", root_stp.display());
+    println!(
+        "  ROOT_SPP    {}",
+        issue_ref.task_bundle_plan_path(&repo_root).display()
+    );
+    println!(
+        "  ROOT_SRP    {}",
+        issue_ref
+            .task_bundle_review_policy_path(&repo_root)
+            .display()
+    );
     println!("  ROOT_READ   {}", root_paths.1.display());
     println!("  ROOT_WRITE  {}", root_paths.2.display());
     println!("  WORKTREE {}", worktree_path.display());
@@ -748,7 +768,7 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         path_relative_to_repo(&repo_root, &source_path)
     );
     println!("  ISSUE    #{issue}");
-    println!("  CONTRACT minimum v0.86 init = validated source prompt + root stp/sip/sor bundle");
+    println!("  CONTRACT validated source prompt + root SIP/STP/SPP/SRP/SOR task bundle");
     println!("  STATE    ISSUE_AND_BUNDLE_READY");
     eprintln!("• Done.");
     Ok(())
@@ -760,24 +780,10 @@ fn bootstrap_root_task_bundle(
     title: &str,
     source_path: &Path,
 ) -> Result<(PathBuf, PathBuf, PathBuf, PathBuf)> {
-    let stp_path = issue_ref.task_bundle_stp_path(repo_root);
     let bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
     let init_branch = "not bound yet";
     eprintln!("• Initializing task bundle: {}", bundle_dir.display());
-    if !stp_path.is_file() {
-        if let Some(parent) = stp_path.parent() {
-            fs::create_dir_all(parent)?;
-        }
-        fs::copy(source_path, &stp_path).with_context(|| {
-            format!(
-                "failed to seed task-bundle stp from '{}' to '{}'",
-                source_path.display(),
-                stp_path.display()
-            )
-        })?;
-    } else {
-        eprintln!("• STP already exists: {}", stp_path.display());
-    }
+    let stp_path = ensure_task_bundle_stp(repo_root, issue_ref, source_path)?;
     let (_, bundle_input, bundle_output) =
         ensure_bootstrap_cards(repo_root, issue_ref, title, init_branch, source_path)?;
     Ok((stp_path, bundle_input, bundle_output, bundle_dir))

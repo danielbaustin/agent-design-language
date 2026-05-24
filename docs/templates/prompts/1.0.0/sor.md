@@ -42,7 +42,7 @@ Pre-run output scaffold initialized during issue-wave opening. No implementation
 - Worktree-only paths remaining: no tracked implementation artifacts exist yet; execution-time proof surfaces will be established during implementation and PR publication
 - Integration state: worktree_only
 - Verification scope: main_repo
-- Integration method used: direct write in main repo for the local ignored pre-run record; tracked implementation artifacts do not exist yet
+- Integration method used: local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet
 - Verification performed:
   - `bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input <output_card>`
     Verified bootstrap SOR contract compliance for the local pre-run scaffold.

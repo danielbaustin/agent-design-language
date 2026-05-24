@@ -603,15 +603,15 @@ fn real_pr_init_seeds_stp_from_generated_source_prompt() {
 }
 
 #[test]
-fn real_pr_init_existing_stp_is_left_untouched() {
+fn real_pr_init_refreshes_invalid_existing_stp() {
     let _guard = env_lock();
-    let repo = unique_temp_dir("adl-pr-real-init-existing");
+    let repo = unique_temp_dir("adl-pr-real-init-invalid-existing");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
     let issue_ref = IssueRef::new(
         1151,
         "v0.86".to_string(),
-        "v0-86-tools-init-existing".to_string(),
+        "v0-86-tools-init-invalid-existing".to_string(),
     )
     .expect("issue ref");
     let stp_path = issue_ref.task_bundle_stp_path(&repo);
@@ -626,19 +626,18 @@ fn real_pr_init_existing_stp_is_left_untouched() {
         "init".to_string(),
         "1151".to_string(),
         "--slug".to_string(),
-        "v0-86-tools-init-existing".to_string(),
+        "v0-86-tools-init-invalid-existing".to_string(),
         "--title".to_string(),
-        "[v0.86][tools] Init existing".to_string(),
+        "[v0.86][tools] Init invalid existing".to_string(),
         "--no-fetch-issue".to_string(),
         "--version".to_string(),
         "v0.86".to_string(),
     ]);
     env::set_current_dir(prev_dir).expect("restore cwd");
-    result.expect("real_pr init existing");
-    assert_eq!(
-        fs::read_to_string(&stp_path).expect("read stp"),
-        "sentinel\n"
-    );
+    result.expect("real_pr init invalid existing");
+    let stp = fs::read_to_string(&stp_path).expect("read stp");
+    assert!(stp.contains("issue_number: 1151"));
+    assert!(!stp.contains("sentinel"));
     assert!(sip_path.is_file());
     assert!(sor_path.is_file());
 }
@@ -694,8 +693,8 @@ Review the issue bundle and tighten the planned execution sequence.
 
     let spp = fs::read_to_string(&spp_path).expect("read refreshed spp");
     assert!(
-        spp.contains("Design-time operative plan"),
-        "legacy SPP should be replaced with a design-time plan"
+        spp.contains("Use this SPP as the design-time plan-of-record"),
+        "legacy SPP should be replaced with the versioned design-time template"
     );
     assert!(
         !spp.contains("Bootstrap-generated SPP"),
