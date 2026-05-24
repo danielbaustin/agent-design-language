@@ -31,6 +31,13 @@ Local `.adl` state may remain for ephemeral execution support only. Durable
 C-SDLC lifecycle truth must not depend on an untracked or private scratch
 surface.
 
+The prompt-template and editor transition plan is tracked in
+[`docs/planning/C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md`](../../planning/C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md).
+That plan defines how versioned prompt templates, Rust-owned field validation,
+browser-assisted human review, and editor skills feed this durable workflow
+state migration. This document owns the tracked-record destination; the
+transition plan owns the template/editor adoption path.
+
 ## Canonical Namespace
 
 By default operation, durable C-SDLC records should live under this repo-local

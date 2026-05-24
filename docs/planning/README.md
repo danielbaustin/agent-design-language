@@ -35,6 +35,9 @@ Active planning docs:
 - `DESIGN_TIME_CARD_COMPLETION_PLAN.md` - process plan for making `SIP`, `STP`,
   and `SPP` complete and reviewable before issue execution, while preserving
   runtime truth boundaries for `SRP` and `SOR`
+- `C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md` - transition plan for
+  moving C-SDLC cards onto versioned prompt templates, Rust-owned field
+  validation, browser-assisted human review, and tracked durable prompt records
 - `codefriend/` - single tracked home for current CodeFriend planning,
   including product setup, naming migration, source inventory, and links back to
   historical milestone proof
