@@ -214,7 +214,8 @@ fn run_doctor_preflight(
             url: pr.url.clone(),
         })
         .collect::<Vec<_>>();
-    if open_prs.is_empty() {
+    let card_run_readiness = preflight_card_run_readiness(repo_root, issue_ref);
+    if open_prs.is_empty() && card_run_readiness != Some("blocked") {
         Ok(DoctorPreflightResult {
             target_queue: target_queue.queue,
             target_queue_source: target_queue.source,
@@ -231,6 +232,21 @@ fn run_doctor_preflight(
             status: "BLOCK",
         })
     }
+}
+
+fn preflight_card_run_readiness(repo_root: &Path, issue_ref: &IssueRef) -> Option<&'static str> {
+    let sip = issue_ref.task_bundle_input_path(repo_root);
+    let stp = issue_ref.task_bundle_stp_path(repo_root);
+    let spp = issue_ref.task_bundle_plan_path(repo_root);
+    let srp = issue_ref.task_bundle_review_policy_path(repo_root);
+    let sor = issue_ref.task_bundle_output_path(repo_root);
+    if [&sip, &stp, &spp, &srp, &sor]
+        .iter()
+        .any(|path| !path.is_file())
+    {
+        return None;
+    }
+    Some(build_doctor_card_lifecycle(repo_root, &sip, &stp, &spp, &srp, &sor).pr_run_readiness)
 }
 
 pub(super) fn run_doctor_ready(
@@ -346,6 +362,15 @@ pub(super) fn run_doctor_ready(
     }
     if !worktree_path.is_dir() {
         if root_indicates_pre_run {
+            let card_lifecycle = build_doctor_card_lifecycle(
+                repo_root,
+                &root_bundle_input,
+                &root_stp,
+                &root_bundle_plan,
+                &root_bundle_review_policy,
+                &root_bundle_output,
+            );
+            let status = doctor_ready_status_for(&card_lifecycle);
             return Ok(DoctorReadyResult {
                 lifecycle_state: "pre_run",
                 worktree: None,
@@ -356,15 +381,8 @@ pub(super) fn run_doctor_ready(
                 wt_stp: None,
                 wt_input: None,
                 wt_output: None,
-                card_lifecycle: build_doctor_card_lifecycle(
-                    repo_root,
-                    &root_bundle_input,
-                    &root_stp,
-                    &root_bundle_plan,
-                    &root_bundle_review_policy,
-                    &root_bundle_output,
-                ),
-                status: "PASS",
+                card_lifecycle,
+                status,
             });
         }
         bail!("doctor: missing worktree: {}", worktree_path.display());
@@ -372,6 +390,15 @@ pub(super) fn run_doctor_ready(
     if root_indicates_pre_run
         && (!wt_stp.is_file() || !wt_bundle_input.is_file() || !wt_bundle_output.is_file())
     {
+        let card_lifecycle = build_doctor_card_lifecycle(
+            repo_root,
+            &root_bundle_input,
+            &root_stp,
+            &root_bundle_plan,
+            &root_bundle_review_policy,
+            &root_bundle_output,
+        );
+        let status = doctor_ready_status_for(&card_lifecycle);
         return Ok(DoctorReadyResult {
             lifecycle_state: "pre_run",
             worktree: None,
@@ -382,15 +409,8 @@ pub(super) fn run_doctor_ready(
             wt_stp: None,
             wt_input: None,
             wt_output: None,
-            card_lifecycle: build_doctor_card_lifecycle(
-                repo_root,
-                &root_bundle_input,
-                &root_stp,
-                &root_bundle_plan,
-                &root_bundle_review_policy,
-                &root_bundle_output,
-            ),
-            status: "PASS",
+            card_lifecycle,
+            status,
         });
     }
     let wt_branch = run_capture(
@@ -439,6 +459,16 @@ pub(super) fn run_doctor_ready(
         },
     )?;
 
+    let card_lifecycle = build_doctor_card_lifecycle(
+        repo_root,
+        &wt_bundle_input,
+        &wt_stp,
+        &wt_bundle_plan,
+        &wt_bundle_review_policy,
+        &wt_bundle_output,
+    );
+    let status = doctor_ready_status_for(&card_lifecycle);
+
     Ok(DoctorReadyResult {
         lifecycle_state: "run_bound",
         worktree: Some(path_relative_to_repo(repo_root, &worktree_path)),
@@ -449,15 +479,8 @@ pub(super) fn run_doctor_ready(
         wt_stp: Some(path_relative_to_repo(repo_root, &wt_stp)),
         wt_input: Some(path_relative_to_repo(repo_root, &wt_bundle_input)),
         wt_output: Some(path_relative_to_repo(repo_root, &wt_bundle_output)),
-        card_lifecycle: build_doctor_card_lifecycle(
-            repo_root,
-            &wt_bundle_input,
-            &wt_stp,
-            &wt_bundle_plan,
-            &wt_bundle_review_policy,
-            &wt_bundle_output,
-        ),
-        status: "PASS",
+        card_lifecycle,
+        status,
     })
 }
 
@@ -568,10 +591,32 @@ fn build_doctor_card_lifecycle(
     }
 }
 
+fn doctor_ready_status_for(lifecycle: &DoctorCardLifecycleJson) -> &'static str {
+    if lifecycle.pr_run_readiness == "ready" {
+        "PASS"
+    } else {
+        "BLOCK"
+    }
+}
+
 fn classify_sip_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
     let Some(text) = read_card_text(path) else {
         return missing_stage(repo_root, "SIP", path, "sip-editor");
     };
+    if !design_time_card_status_allows_execution(&text) {
+        return card_stage(
+            repo_root,
+            "SIP",
+            path,
+            stage_truth(
+                "active",
+                false,
+                false,
+                Some("sip-editor"),
+                "SIP card_status must be ready or approved before execution binding.",
+            ),
+        );
+    }
     if has_generic_sip_design_time_scaffold(&text) {
         return card_stage(
             repo_root,
@@ -604,6 +649,20 @@ fn classify_stp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
     let Some(text) = read_card_text(path) else {
         return missing_stage(repo_root, "STP", path, "stp-editor");
     };
+    if !design_time_card_status_allows_execution(&text) {
+        return card_stage(
+            repo_root,
+            "STP",
+            path,
+            stage_truth(
+                "active",
+                false,
+                false,
+                Some("stp-editor"),
+                "STP card_status must be ready or approved before execution binding.",
+            ),
+        );
+    }
     if text.contains("## Required Outcome") && text.contains("## Acceptance Criteria") {
         return card_stage(
             repo_root,
@@ -637,6 +696,20 @@ fn classify_spp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
         return missing_stage(repo_root, "SPP", path, "spp-editor");
     };
     let status = line_value_after_prefix(&text, "status:").unwrap_or_default();
+    if !design_time_card_status_allows_execution(&text) {
+        return card_stage(
+            repo_root,
+            "SPP",
+            path,
+            stage_truth(
+                "active",
+                false,
+                false,
+                Some("spp-editor"),
+                "SPP card_status must be ready or approved before execution binding.",
+            ),
+        );
+    }
     if has_generic_spp_design_time_scaffold(&text) {
         return card_stage(
             repo_root,
@@ -713,6 +786,19 @@ fn has_truncation_sentinel_line(text: &str) -> bool {
         .any(|line| matches!(line, "..." | "- ..." | "* ..." | "<...>"))
 }
 
+fn card_status_value(text: &str) -> Option<String> {
+    line_value_after_prefix(text, "card_status:")
+        .or_else(|| line_value_after_prefix(text, "Card Status:"))
+}
+
+fn design_time_card_status_allows_execution(text: &str) -> bool {
+    match card_status_value(text).as_deref() {
+        Some("ready" | "approved") => true,
+        Some(_) => false,
+        None => true,
+    }
+}
+
 fn classify_srp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
     let Some(text) = read_card_text(path) else {
         return missing_stage(repo_root, "SRP", path, "srp-editor");
@@ -728,6 +814,22 @@ fn classify_srp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
         || text.contains("artifact_type: \"structured_review_policy\"");
     let structured_review_prompt = text.contains("# Structured Review Prompt")
         && text.contains("artifact_type: \"structured_review_prompt\"");
+    if card_status_value(&text).as_deref() == Some("completed")
+        && !(has_review_results || (has_policy_exception && !pre_execution_review_state))
+    {
+        return card_stage(
+            repo_root,
+            "SRP",
+            path,
+            stage_truth(
+                "active",
+                false,
+                false,
+                Some("srp-editor"),
+                "SRP card_status completed requires review findings, dispositions, or an explicit final policy exception.",
+            ),
+        );
+    }
     if has_review_results || (has_policy_exception && !pre_execution_review_state) {
         return card_stage(
             repo_root,
@@ -879,6 +981,27 @@ fn classify_sor_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
     let result = line_value_after_prefix(&text, "- Result:").unwrap_or_default();
     let worktree_only =
         line_value_after_prefix(&text, "- Worktree-only paths remaining:").unwrap_or_default();
+    let terminal_closeout = ["merged", "closed_no_pr"].contains(&integration_state.as_str())
+        && matches!(
+            (status.as_str(), result.as_str()),
+            ("DONE", "PASS") | ("FAILED", "FAIL")
+        )
+        && worktree_only == "none"
+        && text.contains("## Validation");
+    if card_status_value(&text).as_deref() == Some("completed") && !terminal_closeout {
+        return card_stage(
+            repo_root,
+            "SOR",
+            path,
+            stage_truth(
+                "active",
+                false,
+                false,
+                Some("sor-editor"),
+                "SOR card_status completed requires terminal closeout truth.",
+            ),
+        );
+    }
     if status == "NOT_STARTED" || text.contains("No implementation has started yet") {
         return card_stage(
             repo_root,
@@ -893,14 +1016,7 @@ fn classify_sor_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             ),
         );
     }
-    if ["merged", "closed_no_pr"].contains(&integration_state.as_str())
-        && matches!(
-            (status.as_str(), result.as_str()),
-            ("DONE", "PASS") | ("FAILED", "FAIL")
-        )
-        && worktree_only == "none"
-        && text.contains("## Validation")
-    {
+    if terminal_closeout {
         return card_stage(
             repo_root,
             "SOR",
@@ -1438,6 +1554,124 @@ mod tests {
                 .find(|stage| stage.stage == "SIP")
                 .and_then(|stage| stage.next_editor),
             Some("sip-editor")
+        );
+    }
+
+    #[test]
+    fn card_lifecycle_blocks_draft_design_time_card_status_before_execution() {
+        let repo = lifecycle_temp_repo("draft-card-status");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Card Status: draft\nBranch: not bound yet\n",
+                stp: "---\ncard_status: \"ready\"\n---\n\n## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                spp: "---\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\n---\n\n# Structured Plan Prompt\n",
+                srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
+                sor: "Branch: not bound yet\nCard Status: draft\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_eq!(lifecycle.pr_run_readiness, "blocked");
+        assert_eq!(doctor_ready_status_for(&lifecycle), "BLOCK");
+        assert_stage(&lifecycle, "SIP", "active", false, false);
+        assert_eq!(
+            lifecycle
+                .stages
+                .iter()
+                .find(|stage| stage.stage == "SIP")
+                .and_then(|stage| stage.next_editor),
+            Some("sip-editor")
+        );
+    }
+
+    #[test]
+    fn card_lifecycle_blocks_completed_srp_without_review_results() {
+        let repo = lifecycle_temp_repo("completed-srp-without-results");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Card Status: ready\nBranch: codex/3065-test\n",
+                stp: "---\ncard_status: \"ready\"\n---\n\n## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                spp: "---\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\n---\n",
+                srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"completed\"\nstatus: \"approved\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n- Not run yet.\n",
+                sor: "# output\n\nBranch: codex/3065-test\nCard Status: ready\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_eq!(lifecycle.pr_finish_readiness, "blocked");
+        assert_stage(&lifecycle, "SRP", "active", false, false);
+    }
+
+    #[test]
+    fn card_lifecycle_blocks_completed_sor_before_terminal_closeout() {
+        let repo = lifecycle_temp_repo("completed-sor-before-closeout");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Card Status: ready\nBranch: codex/3065-test\n",
+                stp: "---\ncard_status: \"ready\"\n---\n\n## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                spp: "---\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"approved\"\n---\n",
+                srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"completed\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n- pass\n",
+                sor: "# output\n\nBranch: codex/3065-test\nCard Status: completed\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_eq!(lifecycle.pr_finish_readiness, "blocked");
+        assert_stage(&lifecycle, "SOR", "active", false, false);
+    }
+
+    #[test]
+    fn preflight_card_readiness_reports_blocked_for_draft_design_time_card() {
+        let repo = lifecycle_temp_repo("preflight-draft-card-status");
+        let issue_ref = IssueRef::new(
+            3296,
+            "v0.91.3".to_string(),
+            "v0-91-3-tools-enforce-c-sdlc-card-status-transitions-in-skills".to_string(),
+        )
+        .expect("issue ref");
+        let bundle = issue_ref.task_bundle_dir_path(&repo);
+        fs::create_dir_all(&bundle).expect("create bundle");
+        fs::write(
+            issue_ref.task_bundle_input_path(&repo),
+            "Card Status: draft\nBranch: not bound yet\n",
+        )
+        .expect("write sip");
+        fs::write(
+            issue_ref.task_bundle_stp_path(&repo),
+            "---\ncard_status: \"ready\"\n---\n\n## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+        )
+        .expect("write stp");
+        fs::write(
+            issue_ref.task_bundle_plan_path(&repo),
+            "---\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\n---\n",
+        )
+        .expect("write spp");
+        fs::write(
+            issue_ref.task_bundle_review_policy_path(&repo),
+            "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
+        )
+        .expect("write srp");
+        fs::write(
+            issue_ref.task_bundle_output_path(&repo),
+            "Branch: not bound yet\nCard Status: draft\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
+        )
+        .expect("write sor");
+
+        assert_eq!(
+            preflight_card_run_readiness(&repo, &issue_ref),
+            Some("blocked")
         );
     }
 

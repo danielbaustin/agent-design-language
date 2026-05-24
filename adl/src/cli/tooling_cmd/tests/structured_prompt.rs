@@ -98,6 +98,75 @@ fn structured_prompt_completed_sor_closed_no_pr_still_rejects_non_retrospective_
 }
 
 #[test]
+fn structured_prompt_validators_reject_invalid_card_status_values() {
+    let stp = valid_stp_text().replace(
+        "status: \"draft\"",
+        "status: \"draft\"\ncard_status: \"almost\"",
+    );
+    let err = validate_stp_text(&stp).expect_err("invalid STP card_status should fail");
+    assert!(err.to_string().contains("card_status must be one of"));
+
+    let sip = valid_sip_text(1374, Path::new("/Users/daniel/git/agent-design-language"));
+    let sip = sip.replace(
+        "Branch: codex/1374-tooling-test",
+        "Card Status: almost\nBranch: codex/1374-tooling-test",
+    );
+    let err = validate_sip_text(&sip, Path::new("sip.md"), None)
+        .expect_err("invalid SIP Card Status should fail");
+    assert!(err.to_string().contains("Card Status must be one of"));
+}
+
+#[test]
+fn structured_prompt_srp_completed_card_status_requires_final_review_truth() {
+    let srp = valid_srp_text(1374)
+        .replace("status: \"draft\"", "card_status: \"completed\"\nstatus: \"approved\"")
+        .replace(
+            "review_results_exception: \"explicit policy exception: fixture review results are not run.\"\n",
+            "",
+        );
+
+    let err = validate_srp_text(&srp).expect_err("completed SRP without review truth should fail");
+    assert!(err
+        .to_string()
+        .contains("card_status completed requires review_results"));
+
+    let final_srp = srp.replace(
+        "notes: \"test note\"",
+        "review_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\nnotes: \"test note\"",
+    );
+    validate_srp_text(&final_srp).expect("completed SRP with final review truth should pass");
+}
+
+#[test]
+fn structured_prompt_sor_completed_card_status_requires_full_closeout_truth() {
+    let sor = valid_sor_text().replace(
+        "Status: DONE",
+        "Card Status: completed\nStatus: NOT_STARTED",
+    );
+    let err = validate_sor_text(&sor, Some("completed"))
+        .expect_err("completed SOR without terminal execution status should fail");
+    assert!(err
+        .to_string()
+        .contains("Card Status completed requires terminal Status"));
+
+    let sor = valid_sor_text()
+        .replace("Status: DONE", "Card Status: completed\nStatus: DONE")
+        .replace(
+            "Worktree-only paths remaining: none",
+            "Worktree-only paths remaining: tracked change still on PR branch",
+        );
+    let err = validate_sor_text(&sor, Some("completed"))
+        .expect_err("completed SOR with worktree residue should fail");
+    assert!(err
+        .to_string()
+        .contains("Card Status completed requires Worktree-only paths remaining"));
+
+    let sor = valid_sor_text().replace("Status: DONE", "Card Status: completed\nStatus: DONE");
+    validate_sor_text(&sor, Some("completed"))
+        .expect("completed SOR with terminal closeout truth should pass");
+}
+
+#[test]
 fn validate_structured_prompt_accepts_all_supported_prompt_types() {
     let repo = TempRepo::new("structured");
     let stp = repo.write_rel(".tmp/tooling_cmd_tests/stp.md", &valid_stp_text());

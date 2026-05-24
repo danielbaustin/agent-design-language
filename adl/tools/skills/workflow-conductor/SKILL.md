@@ -143,6 +143,10 @@ Important rule:
   matching card editor before execution or publication continues; generic
   `SIP`, incomplete `STP`, generic/truncated `SPP`, and legacy/incomplete
   `SRP` surfaces are not safe to treat as ready merely because the files exist
+- card-status blockers from `pr doctor` should route to the matching card
+  editor: `SIP`, `STP`, and `SPP` must be `ready` or `approved` before
+  execution binding; `SRP` completion requires review truth; `SOR` completion
+  requires terminal closeout truth
 - planning-document defects such as placeholder residue, missing required
   planning sections, stale planning status claims, or generated-vs-reviewed
   truth drift should route to `planning-doc-editor`; do not send those defects

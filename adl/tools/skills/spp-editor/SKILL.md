@@ -64,6 +64,9 @@ This skill may:
   `Test Strategy`, `Execution Handoff`, `Stop Conditions`, and `Notes`
 - fix invalid `codex_plan` statuses so they are only `pending`,
   `in_progress`, or `completed`
+- set `card_status` to `draft`, `ready`, `approved`, `blocked`, or
+  `superseded` according to observed planning truth; pre-run execution
+  readiness requires `ready` or `approved`
 - demote unsupported completed implementation steps back to pending planning
   state when execution evidence is absent
 - normalize assumptions, dependencies, source references, scope, risks, test
@@ -74,11 +77,14 @@ This skill may:
 - mark an SPP `reviewed` or `approved` only after the issue-local plan is
   specific enough to execute from tracked state; generic or truncated generated
   plans remain editor blockers
+- return `card_status` to `draft` when actual execution materially diverges
+  from the tracked plan and the plan must be revised before continuing
 - remove placeholders and stale execution or branch-binding claims
 
 This skill must not:
 - create or bind a branch or worktree
 - claim implementation is complete without explicit execution evidence
+- set `card_status: "completed"` merely because the plan is executable
 - erase concrete manual planning detail by collapsing issue-specific plans into
   generic boilerplate
 - rewrite `STP`, `SIP`, or `SOR` instead of handing off

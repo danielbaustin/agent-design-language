@@ -45,7 +45,7 @@ use review_surface::{decision_for, ReviewCheck};
 #[cfg(test)]
 use structured_prompt::{
     extract_prompt_spec_yaml, prompt_spec_bool, prompt_spec_sections, validate_prompt_spec,
-    validate_sip_text, validate_sor_text, validate_stp_text,
+    validate_sip_text, validate_sor_text, validate_srp_text, validate_stp_text,
 };
 
 pub(crate) fn real_tooling(args: &[String]) -> Result<()> {

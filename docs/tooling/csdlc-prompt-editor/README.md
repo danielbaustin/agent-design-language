@@ -18,6 +18,11 @@ The editor is intentionally small:
 - Exported Markdown remains the reviewable card truth that validators and
   issue worktrees consume.
 
+The editor shows `card_status` as local form state, not as operator authority.
+Execution tooling still enforces the phase rules: `SIP`, `STP`, and `SPP` must
+be `ready` or `approved` before execution starts; `SRP` completion requires
+review truth; and `SOR` completion requires closeout truth.
+
 ## Generate The Model
 
 Run this after template or field-model changes:

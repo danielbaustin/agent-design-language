@@ -42,6 +42,9 @@ Useful additional inputs:
 
 This skill may:
 - improve goal wording without changing intent
+- set `card_status` to `draft`, `ready`, `blocked`, or `superseded` according
+  to observed STP truth; pre-run execution readiness requires `ready` or
+  `approved`
 - tighten required outcome and acceptance criteria
 - make the selected task explicit enough for design-time readiness, including
   deliverables, touched surfaces, proof shape, invariants, and non-goals
@@ -52,6 +55,7 @@ This skill may:
 This skill must not:
 - create or bind branches/worktrees
 - invent implementation results
+- set `card_status: "completed"` without explicit lifecycle closeout evidence
 - rewrite SIP/SOR content except by explicit handoff to those skills
 - widen issue scope
 - silently change source-prompt meaning

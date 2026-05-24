@@ -214,6 +214,113 @@ EOF
 "$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_valid.md"
 "$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_valid.md"
 
+cp "$tmpdir/stp_valid.md" "$tmpdir/stp_invalid_card_status.md"
+perl -0pi -e 's/status: "draft"/status: "draft"\ncard_status: "nearly-ready"/' "$tmpdir/stp_invalid_card_status.md"
+if "$VALIDATOR" --type stp --input "$tmpdir/stp_invalid_card_status.md" >"$tmpdir/stp_invalid_card_status.out" 2>&1; then
+  echo "expected STP with invalid card_status to fail validation" >&2
+  exit 1
+fi
+grep -Fq "card_status must be one of: draft, ready, reviewed, approved, completed, blocked, superseded" "$tmpdir/stp_invalid_card_status.out"
+
+cp "$tmpdir/sor_valid.md" "$tmpdir/sor_invalid_card_status.md"
+perl -0pi -e 's/Status: NOT_STARTED/Card Status: nearly-ready\nStatus: NOT_STARTED/' "$tmpdir/sor_invalid_card_status.md"
+if "$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_invalid_card_status.md" >"$tmpdir/sor_invalid_card_status.out" 2>&1; then
+  echo "expected SOR with invalid Card Status to fail validation" >&2
+  exit 1
+fi
+grep -Fq "Card Status must be one of: draft, ready, reviewed, approved, completed, blocked, superseded" "$tmpdir/sor_invalid_card_status.out"
+
+cp "$tmpdir/sor_valid.md" "$tmpdir/sor_completed_without_closeout.md"
+perl -0pi -e 's/Status: NOT_STARTED/Card Status: completed\nStatus: DONE/; s/- Integration state:/- Integration state: pr_open/; s/- Result:/- Result: PASS/' "$tmpdir/sor_completed_without_closeout.md"
+if "$VALIDATOR" --type sor --input "$tmpdir/sor_completed_without_closeout.md" >"$tmpdir/sor_completed_without_closeout.out" 2>&1; then
+  echo "expected completed SOR without terminal closeout to fail validation" >&2
+  exit 1
+fi
+grep -Fq "Card Status completed requires terminal Integration state: merged or closed_no_pr" "$tmpdir/sor_completed_without_closeout.out"
+
+cp "$tmpdir/sor_valid.md" "$tmpdir/sor_completed_without_terminal_status.md"
+perl -0pi -e 's/Status: NOT_STARTED/Card Status: completed\nStatus: NOT_STARTED/; s/- Worktree-only paths remaining:/- Worktree-only paths remaining: none/; s/- Integration state:/- Integration state: merged/; s/- Result:/- Result: PASS/' "$tmpdir/sor_completed_without_terminal_status.md"
+if "$VALIDATOR" --type sor --input "$tmpdir/sor_completed_without_terminal_status.md" >"$tmpdir/sor_completed_without_terminal_status.out" 2>&1; then
+  echo "expected completed SOR without terminal execution status to fail validation" >&2
+  exit 1
+fi
+grep -Fq "Card Status completed requires terminal Status: DONE or FAILED" "$tmpdir/sor_completed_without_terminal_status.out"
+
+cat >"$tmpdir/srp_completed_without_results.md" <<'EOF'
+---
+schema_version: "0.1"
+artifact_type: "structured_review_prompt"
+name: "invalid-completed-srp"
+issue: 898
+task_id: "issue-0898"
+version: "v0.85"
+title: "Invalid completed SRP"
+branch: "codex/898-invalid-completed-srp"
+card_status: "completed"
+status: "approved"
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/danielbaustin/agent-design-language/issues/898"
+review_mode: "pre_pr_independent_review"
+timing: "before_pr_open"
+scope_basis:
+  - "stp.md"
+in_scope_surfaces:
+  - "tracked changes"
+evidence_policy:
+  - "repo evidence only"
+validation_inputs:
+  - "focused checks"
+allowed_dispositions:
+  - "PASS"
+reviewer_constraints:
+  - "do not widen scope"
+refusal_policy:
+  - "refuse unsupported claims"
+follow_up_routing:
+  - "route findings back"
+non_claims:
+  - "review has not run"
+policy_refs:
+  - "stp.md"
+---
+
+# Structured Review Prompt
+
+## Review Summary
+x
+## Scope Basis
+x
+## In-Scope Surfaces
+x
+## Evidence Rules
+x
+## Validation Inputs
+x
+## Allowed Dispositions
+x
+## Reviewer Constraints
+x
+## Refusal Policy
+x
+## Follow-up Routing
+x
+## Non-Claims
+x
+## Review Results
+
+- Not run yet.
+
+## Notes
+x
+EOF
+
+if "$VALIDATOR" --type srp --input "$tmpdir/srp_completed_without_results.md" >"$tmpdir/srp_completed_without_results.out" 2>&1; then
+  echo "expected completed SRP without review results to fail validation" >&2
+  exit 1
+fi
+grep -Fq "card_status completed requires review_results with findings_status and recommended_outcome, or a final review_results_exception" "$tmpdir/srp_completed_without_results.out"
+
 cat >"$tmpdir/stp_missing_multiple_sections.md" <<'EOF'
 ---
 issue_card_schema: adl.issue.v1

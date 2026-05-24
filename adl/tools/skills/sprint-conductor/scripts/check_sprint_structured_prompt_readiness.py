@@ -97,9 +97,61 @@ def line_value_after_prefix(text: str, prefix: str) -> str:
     return ''
 
 
+def card_status_value(text: str) -> str:
+    return (
+        line_value_after_prefix(text, 'card_status:') or
+        line_value_after_prefix(text, 'Card Status:')
+    )
+
+
+def design_time_card_status_defect(card_name: str, text: str) -> str | None:
+    status = card_status_value(text)
+    if not status:
+        return None
+    if card_name in {'sip.md', 'stp.md', 'spp.md'} and status not in {'ready', 'approved'}:
+        return f'{card_name} card_status must be ready or approved before execution binding'
+    return None
+
+
+def completed_srp_without_review_results(text: str) -> bool:
+    if card_status_value(text) != 'completed':
+        return False
+    findings_status = line_value_after_prefix(text, 'findings_status:')
+    recommended_outcome = line_value_after_prefix(text, 'recommended_outcome:')
+    has_review_results = (
+        findings_status in {'no_findings', 'findings_present'} and
+        recommended_outcome in {'pass', 'block', 'needs_followup'}
+    )
+    exception = line_value_after_prefix(text, 'review_results_exception:')
+    has_final_exception = (
+        bool(exception) and
+        'pre-execution review results are absent' not in exception
+    )
+    return not (has_review_results or has_final_exception)
+
+
+def completed_sor_without_terminal_closeout(text: str) -> bool:
+    if card_status_value(text) != 'completed':
+        return False
+    integration_state = line_value_after_prefix(text, '- Integration state:')
+    status = line_value_after_prefix(text, 'Status:')
+    result = line_value_after_prefix(text, '- Result:')
+    worktree_only = line_value_after_prefix(text, '- Worktree-only paths remaining:')
+    validation_body = text.split('## Validation', 1)[1].split('\n## ', 1)[0].strip() if '## Validation' in text else ''
+    return not (
+        integration_state in {'merged', 'closed_no_pr'} and
+        (status, result) in {('DONE', 'PASS'), ('FAILED', 'FAIL')} and
+        worktree_only == 'none' and
+        bool(validation_body)
+    )
+
+
 def design_time_defect(card_name: str, text: str) -> str | None:
     if has_unfilled_v1_placeholder(text):
         return 'unfilled prompt-template placeholder'
+    status_defect = design_time_card_status_defect(card_name, text)
+    if status_defect:
+        return status_defect
     if card_name == 'sip.md' and contains_any(text, GENERIC_SIP_MARKERS):
         return 'generic design-time SIP scaffold'
     if card_name == 'stp.md':
@@ -118,6 +170,11 @@ def design_time_defect(card_name: str, text: str) -> str | None:
             return 'legacy SRP policy scaffold'
         if '# Structured Review Prompt' not in text or 'artifact_type: "structured_review_prompt"' not in text:
             return 'missing Structured Review Prompt semantics'
+        if completed_srp_without_review_results(text):
+            return 'completed SRP lacks review results or a final policy exception'
+    if card_name == 'sor.md':
+        if completed_sor_without_terminal_closeout(text):
+            return 'completed SOR lacks terminal closeout truth'
     return None
 
 

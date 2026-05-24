@@ -157,6 +157,11 @@ This skill enforces:
 - no sprint-state advancement without a fresh matched live GitHub truth check
 - no next-child advancement without explicit child-closeout gate satisfaction
 - no live sprint execution without an explicit installed-skill parity/readiness result when sprint policy requires it
+- no child issue execution when `SIP`, `STP`, or `SPP` has a `card_status`
+  other than `ready` or `approved`
+- no child closeout acceptance when `SRP` or `SOR` overclaims
+  `card_status: completed` / `Card Status: completed` without review or
+  terminal closeout truth
 - healthy child waiting states are monitored issue-local lifecycle states, not default operator stop states
 - merged-but-not-closeouted children are immediate closeout work, not natural pause points
 
