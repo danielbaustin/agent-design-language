@@ -1,3 +1,4 @@
+pub(super) use super::structured_prompt::validate_srp_text;
 pub(super) use super::*;
 pub(super) use crate::cli::tooling_cmd::common::{
     ensure_bool, is_repo_review_finding_title, mapping_bool, mapping_contains, mapping_mapping,
