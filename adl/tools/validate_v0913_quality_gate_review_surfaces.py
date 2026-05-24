@@ -18,6 +18,30 @@ def require_text(path: Path, snippets: list[str]) -> str | None:
     return None
 
 
+def require_demo_map_routes(path: Path) -> str | None:
+    text = path.read_text(encoding="utf-8")
+    required_routes = {
+        "Cognitive Transition Manifest": "cargo test --manifest-path adl/Cargo.toml cognitive_transition_schema -- --nocapture",
+        "Card Lifecycle Integration": "adl/tools/pr.sh doctor 3201 --version v0.91.3 --json",
+        "Transition DAG And Shard Coordination": "python3 adl/tools/validate_transition_dag_packet.py docs/milestones/v0.91.3/review/transition_dag",
+        "Evidence Bundle And Review Synthesis": "python3 adl/tools/validate_evidence_bundle_packet.py docs/milestones/v0.91.3/review/evidence_bundle",
+        "Governed Merge-Readiness Gate": "python3 adl/tools/validate_merge_readiness_packet.py docs/milestones/v0.91.3/review/merge_readiness",
+        "SRP/SOR ObsMem Handoff": "python3 adl/tools/validate_obsmem_handoff_packet.py docs/milestones/v0.91.3/review/obsmem_handoff",
+        "Integrated Process Lessons And Proof Readiness": "python3 adl/tools/validate_first_proof_readiness_packet.py docs/milestones/v0.91.3/review/first_proof_readiness",
+        "Five-Minute Sprint First Proof": "python3 adl/tools/demo_v0913_first_proof_demo.py",
+        "C-SDLC Demo Proof Contract": "python3 adl/tools/validate_csdlc_demo_proof_contract_packet.py docs/milestones/v0.91.3/review/csdlc_demo_proof_contract",
+    }
+    missing: list[str] = []
+    for feature, route in required_routes.items():
+        if feature not in text or route not in text:
+            missing.append(f"{feature} -> {route}")
+    if missing:
+        return "demo coverage map missing executable proof routes: " + "; ".join(missing)
+    if "Missing feature with no truthful demo/proof route: none found" not in text:
+        return "demo coverage map must record the missing-feature verdict"
+    return None
+
+
 def main() -> int:
     if len(sys.argv) != 3:
         return fail(
@@ -86,6 +110,9 @@ def main() -> int:
         linked = docs_root / "review/demo_coverage/ct_demo_006_feature_demo_map.md"
         if not linked.is_file():
             return fail(f"missing linked demo-coverage map: {linked}")
+        error = require_demo_map_routes(linked)
+        if error:
+            return fail(error)
     else:
         return fail(f"unknown surface: {surface}")
 
