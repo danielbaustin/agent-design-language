@@ -1075,7 +1075,7 @@ fn render_bootstrap_plan_card(
             ("<title>", title.to_string()),
             ("<branch>", branch.to_string()),
             ("<timestamp>", timestamp),
-            ("<card_status>", "approved".to_string()),
+            ("<card_status>", "draft".to_string()),
             ("<issue_url>", issue_url),
             ("<source_issue_prompt>", source_rel),
             ("<stp_card>", stp_rel),

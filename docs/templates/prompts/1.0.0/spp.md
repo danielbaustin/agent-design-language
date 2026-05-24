@@ -99,6 +99,8 @@ Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`
 
 ## Plan Summary
 
+Design-time operative plan for `<title>`.
+
 <plan_summary>
 
 ## Codex Plan
