@@ -167,8 +167,8 @@ assert_contains() {
   assert_contains "STP      .adl/v0.85/tasks/issue-0042__test-init/stp.md" "$out1" "stp path"
   assert_contains "SPP      .adl/v0.85/tasks/issue-0042__test-init/spp.md" "$out1" "spp path"
   assert_contains "SRP      .adl/v0.85/tasks/issue-0042__test-init/srp.md" "$out1" "srp path"
-  assert_contains "READ     .adl/v0.85/tasks/issue-0042__test-init/sip.md" "$out1" "read path"
-  assert_contains "WRITE    .adl/v0.85/tasks/issue-0042__test-init/sor.md" "$out1" "write path"
+  assert_contains "SIP      .adl/v0.85/tasks/issue-0042__test-init/sip.md" "$out1" "sip path"
+  assert_contains "SOR      .adl/v0.85/tasks/issue-0042__test-init/sor.md" "$out1" "sor path"
   assert_contains "CONTRACT validated source prompt + root SIP/STP/SPP/SRP/SOR task bundle" "$out1" "contract line"
   assert_contains "STATE    ISSUE_AND_BUNDLE_READY" "$out1" "state line"
 
@@ -210,8 +210,8 @@ assert_contains() {
 
   out3="$("$BASH_BIN" adl/tools/pr.sh init 43 --version v0.86)"
   assert_contains "STP      .adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/stp.md" "$out3" "generated stp path"
-  assert_contains "READ     .adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/sip.md" "$out3" "generated sip path"
-  assert_contains "WRITE    .adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/sor.md" "$out3" "generated sor path"
+  assert_contains "SIP      .adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/sip.md" "$out3" "generated sip path"
+  assert_contains "SOR      .adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/sor.md" "$out3" "generated sor path"
   assert_contains "SOURCE   .adl/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" "$out3" "generated source path"
   [[ -f "$repo/.adl/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" ]] || {
     echo "assertion failed: expected generated canonical source issue prompt" >&2
@@ -252,8 +252,8 @@ assert_contains() {
 
   out4="$("$BASH_BIN" adl/tools/pr.sh init 46)"
   assert_contains "STP      .adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/stp.md" "$out4" "dot-suffixed stp path"
-  assert_contains "READ     .adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sip.md" "$out4" "dot-suffixed sip path"
-  assert_contains "WRITE    .adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sor.md" "$out4" "dot-suffixed sor path"
+  assert_contains "SIP      .adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sip.md" "$out4" "dot-suffixed sip path"
+  assert_contains "SOR      .adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sor.md" "$out4" "dot-suffixed sor path"
   assert_contains "SOURCE   .adl/v0.87.1/bodies/issue-46-v0-87-1-tools-dot-suffixed-milestone-prompt.md" "$out4" "dot-suffixed source path"
   [[ -f "$repo/.adl/v0.87.1/bodies/issue-46-v0-87-1-tools-dot-suffixed-milestone-prompt.md" ]] || {
     echo "assertion failed: expected generated dot-suffixed source issue prompt" >&2

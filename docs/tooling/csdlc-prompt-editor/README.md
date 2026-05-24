@@ -11,8 +11,8 @@ The editor is intentionally small:
 - The browser only performs local form checks. It keeps generated cards in
   `draft` status until the exported Markdown passes the structured prompt
   validator and lifecycle tooling advances the card.
-- Later lifecycle tooling owns `ready`, `approved`, `completed`, `blocked`, and
-  `superseded` transitions.
+- Later lifecycle tooling owns `ready`, `reviewed`, `approved`, `completed`,
+  `blocked`, and `superseded` transitions.
 - The page does not write files directly, call GitHub, or replace the editor
   skills required by `AGENTS.md`.
 - Exported Markdown remains the reviewable card truth that validators and
