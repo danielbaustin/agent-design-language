@@ -1,4 +1,4 @@
-# Decisions Template
+# <milestone> Decisions
 
 ## Metadata
 - Milestone: `<milestone>`

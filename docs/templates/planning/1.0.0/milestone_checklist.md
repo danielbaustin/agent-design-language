@@ -1,4 +1,4 @@
-# Milestone Checklist Template
+# <milestone> Milestone Checklist
 
 ## Metadata
 - Milestone: `<milestone>`

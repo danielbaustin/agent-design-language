@@ -1,4 +1,4 @@
-# Vision Template
+# <milestone> Vision
 
 ## Metadata
 - Project: `<project_name>`
@@ -48,7 +48,7 @@ This milestone should strengthen the architectural or strategic pillars of:
 
 ---
 
-# Core Goals
+## Core Goals
 
 `<version>` advances `<project_name>` in five major areas:
 
@@ -60,7 +60,9 @@ This milestone should strengthen the architectural or strategic pillars of:
 
 ---
 
-# 1. <goal_area_1>
+## <goal_heading_1>
+
+### 1. <goal_area_1>
 
 `<version>` improves `<goal_area_1>` so the project can `<outcome_1>`.
 
@@ -81,7 +83,9 @@ The system or product should guarantee:
 
 ---
 
-# 2. <goal_area_2>
+## <goal_heading_2>
+
+### 2. <goal_area_2>
 
 `<goal_area_2>` must improve without sacrificing `<constraint_2>`.
 
@@ -101,7 +105,9 @@ These changes should help users:
 
 ---
 
-# 3. <goal_area_3>
+## <goal_heading_3>
+
+### 3. <goal_area_3>
 
 A central principle of `<project_name>` is **<principle_3>**.
 
@@ -124,7 +130,9 @@ The result should make the project more:
 
 ---
 
-# 4. <goal_area_4>
+## <goal_heading_4>
+
+### 4. <goal_area_4>
 
 `<version>` continues development of `<goal_area_4>`.
 
@@ -147,7 +155,7 @@ These improvements should guide the system toward `<desired_state_4>`.
 
 ---
 
-# 5. <goal_area_5>
+### 5. <goal_area_5>
 
 To support real-world use, `<version>` must improve `<goal_area_5>`.
 
@@ -168,7 +176,7 @@ This work should strengthen the development and operating workflow by improving:
 
 ---
 
-# Special Focus: `<special_focus_title>`
+## Special Focus: `<special_focus_title>`
 
 `<special_focus_title>` becomes a central focus of `<version>`.
 
@@ -191,7 +199,7 @@ This keeps the project aligned with `<alignment_principle>`.
 
 ---
 
-# Milestone Context
+## Milestone Context
 
 `<previous_milestone>` represents `<previous_milestone_significance>`.
 
@@ -207,7 +215,7 @@ The goal is to have `<future_goal>` by **<future_target_milestone>**.
 
 ---
 
-# Long-Term Direction
+## Long-Term Direction
 
 `<project_name>` is being designed as `<long_term_identity>`.
 
@@ -222,7 +230,7 @@ These principles aim to move the project beyond `<old_mode>` toward `<new_mode>`
 
 ---
 
-# Summary
+## Summary
 
 `<version>` is the milestone where `<project_name>` becomes:
 
