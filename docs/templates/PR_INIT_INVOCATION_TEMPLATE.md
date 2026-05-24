@@ -25,11 +25,11 @@ This template is a caller artifact. It does not replace the underlying schema in
 Copy this shape and replace the placeholder values.
 
 ```yaml
-Use $pr-init at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-init/SKILL.md with this validated input:
+Use $pr-init at <repo-root>/adl/tools/skills/pr-init/SKILL.md with this validated input:
 
 skill_input_schema: pr_init.v1
 mode: create_and_bootstrap | bootstrap_existing_issue
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 
 issue:
   number: null | <issue number>
@@ -152,11 +152,11 @@ Typical choices:
 ## Example: New Issue Bootstrap
 
 ```yaml
-Use $pr-init at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-init/SKILL.md with this validated input:
+Use $pr-init at <repo-root>/adl/tools/skills/pr-init/SKILL.md with this validated input:
 
 skill_input_schema: pr_init.v1
 mode: create_and_bootstrap
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 issue:
   number: null
   title: "[v0.87][tools] Example issue"
@@ -176,11 +176,11 @@ policy:
 ## Example: Existing Issue Bootstrap
 
 ```yaml
-Use $pr-init at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-init/SKILL.md with this validated input:
+Use $pr-init at <repo-root>/adl/tools/skills/pr-init/SKILL.md with this validated input:
 
 skill_input_schema: pr_init.v1
 mode: bootstrap_existing_issue
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 issue:
   number: 1374
   title: null

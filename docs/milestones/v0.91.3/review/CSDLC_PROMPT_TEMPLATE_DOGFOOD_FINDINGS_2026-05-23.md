@@ -14,6 +14,10 @@ Practice targets:
 
 The new template bootstrap path is useful, but the first dogfood pass found several follow-up fixes needed before the process feels deterministic enough for routine C-SDLC use.
 
+Path note: machine-local absolute paths in this dogfood review artifact have
+been normalized to `<repo-root>` so the findings remain portable. The original
+review evidence was local execution evidence, not a portable contract.
+
 ## Findings
 
 ### P1: Existing bundles are preserved instead of normalized to the new template contract
@@ -53,8 +57,8 @@ Expected behavior:
 After creating `#3291` and `#3296` bundles in the `#3286` worktree, `pr doctor` looked for source issue prompts under the primary checkout:
 
 ```text
-/Users/daniel/git/agent-design-language/.adl/v0.91.3/bodies/issue-3291-issue-3291.md
-/Users/daniel/git/agent-design-language/.adl/v0.91.3/bodies/issue-3296-issue-3296.md
+<repo-root>/.adl/v0.91.3/bodies/issue-3291-issue-3291.md
+<repo-root>/.adl/v0.91.3/bodies/issue-3296-issue-3296.md
 ```
 
 Those paths do not match the worktree-local source prompts that `pr init` created.
