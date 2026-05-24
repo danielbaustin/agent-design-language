@@ -2,17 +2,18 @@
 
 Issue: #3312
 Date: 2026-05-24
-Status: pilot complete; generated drafts are non-authoritative
+Status: rerun complete after template-shape fixes; generated drafts remain non-authoritative
 
 ## Scope
 
 This pilot generated the 10 canonical milestone planning documents from the active planning-template registry and compared those generated drafts against the existing v0.91.4 planning package.
 
-The generated drafts were written only to ignored scratch space:
+The pilot also fixed template-shape issues discovered by the first run, then reran generation and validation.
 
-- `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/`
-- `.adl/runs/planning-template-pilot/v0.91.4/values_full_packet/`
-- `.adl/runs/planning-template-pilot/v0.91.4/full_packet_generation_summary.json`
+The final generated drafts were written only to ignored scratch space:
+
+- `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/`
+- `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/full_packet_generation_summary.json`
 
 No authoritative v0.91.4 planning documents were modified.
 
@@ -20,78 +21,87 @@ No authoritative v0.91.4 planning documents were modified.
 
 - This pilot does not approve generated planning docs for use as milestone truth.
 - This pilot does not replace the existing v0.91.4 planning package.
-- This pilot does not prove semantic correctness of generated text.
+- This pilot does not prove semantic correctness of generated prose.
 - This pilot does not evaluate `feature_doc`; that template is present in the registry, but this run targeted the 10 canonical milestone packet documents.
+
+## Template Fixes Applied Before Rerun
+
+The first pilot proved that all 10 templates could generate and validate, but it also exposed avoidable shape drift against the real v0.91.4 package. The rerun fixed those issues before regenerating the packet.
+
+Fixed surfaces:
+
+- README now includes the real milestone-package sections: `Status`, `Milestone Role`, `Boundaries`, `Source Map`, a value-driven sidecar heading, and `Success Criteria`.
+- WBS now includes `Status`, `Candidate WP Sequence`, a value-driven sidecar mini-sprint heading, and `Sequencing Notes`.
+- SPRINT now includes `Status`, `Sprint Overview`, a value-driven sidecar mini-sprint heading, `Sprint Goals`, `Execution Policy`, and `Closeout Bar`.
+- VISION no longer emits repeated top-level headings for numbered goal areas. Milestone-specific strategic headings are value-driven, so the v0.91.4 pilot can preserve the v0.91.4 section shape without baking those headings into the canonical template.
+- DESIGN now uses `Interfaces And Contracts`, matching the existing milestone doc.
+- DEMO_MATRIX now includes a `Status` surface and cleaner demo-detail headings.
+- RELEASE_PLAN now uses the same numbered heading style as the existing release plan.
+- All generated top-level titles now use the milestone name instead of generic `Template` titles.
+- The planning registry required-section lists were updated to match the fixed template shapes.
 
 ## Generated Packet
 
-All 10 canonical milestone planning templates generated and passed structural validation:
+All 10 canonical milestone planning templates generated and passed structural validation after the fixes:
 
 | Template | Generated draft | Structural validation |
 | --- | --- | --- |
-| `readme` | `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/README_GENERATED.md` | passed |
-| `wbs` | `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/WBS_GENERATED.md` | passed |
-| `sprint` | `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/SPRINT_GENERATED.md` | passed |
-| `vision` | `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/VISION_GENERATED.md` | passed |
-| `design` | `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/DESIGN_GENERATED.md` | passed |
-| `decisions` | `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/DECISIONS_GENERATED.md` | passed |
-| `demo_matrix` | `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/DEMO_MATRIX_GENERATED.md` | passed |
-| `milestone_checklist` | `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/MILESTONE_CHECKLIST_GENERATED.md` | passed |
-| `release_plan` | `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/RELEASE_PLAN_GENERATED.md` | passed |
-| `release_notes` | `.adl/runs/planning-template-pilot/v0.91.4/generated_full_packet/RELEASE_NOTES_GENERATED.md` | passed |
+| `readme` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/README_GENERATED.md` | passed |
+| `wbs` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/WBS_GENERATED.md` | passed |
+| `sprint` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/SPRINT_GENERATED.md` | passed |
+| `vision` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/VISION_GENERATED.md` | passed |
+| `design` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/DESIGN_GENERATED.md` | passed |
+| `decisions` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/DECISIONS_GENERATED.md` | passed |
+| `demo_matrix` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/DEMO_MATRIX_GENERATED.md` | passed |
+| `milestone_checklist` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/MILESTONE_CHECKLIST_GENERATED.md` | passed |
+| `release_plan` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/RELEASE_PLAN_GENERATED.md` | passed |
+| `release_notes` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/RELEASE_NOTES_GENERATED.md` | passed |
 
 ## Findings
 
-### P1: The 10-doc template packet is structurally complete, but generated output is not yet semantically safe to substitute for existing v0.91.4 docs
+### P1: Fixed - the 10-doc template packet now matches the existing v0.91.4 section surface
 
-The active registry contains the expected 10 milestone packet templates plus the separate `feature_doc` template. The generator can fill all 10 canonical milestone docs and the validator accepts each generated draft.
+After the template-shape fixes, every generated canonical milestone document shares all headings with its corresponding existing v0.91.4 document.
 
-That shows the template substrate is functional for first-draft generation. It does not prove that generated docs can replace a mature milestone package. The existing v0.91.4 documents contain milestone-specific planning semantics around C-SDLC routing, transition operation, durable trace/memory, proof latency, and CodeFriend sidecar work that generic values do not recover automatically.
+This is the main pilot result: the template system is now able to produce a complete structurally aligned 10-doc milestone packet without modifying authoritative milestone docs.
 
-Recommendation: use generated packets as draft scaffolds, then route them through planning-doc editor review before they become milestone truth.
 
-### P2: README, WBS, and SPRINT lose important milestone-specific structure
+### P2: Fixed - milestone-specific headings are value-driven, not hard-coded canonical requirements
 
-The existing README is organized around `Status`, `Purpose`, `Milestone Role`, `Boundaries`, `Source Map`, `Document Map`, `CodeFriend Sidecar`, and `Success Criteria`. The generated README is structurally broader, with `Metadata`, `How To Use`, `Overview`, `Scope Summary`, `Execution Model`, `Demo and Validation Surface`, and related generic sections.
+The final fix keeps the canonical templates reusable. VISION strategic headings and sidecar headings are supplied by values for this pilot rather than required as universal registry sections. This lets the v0.91.4 generated packet align with the existing v0.91.4 section surface without making future milestones inherit v0.91.4-specific names by construction.
 
-The WBS and SPRINT templates generate valid scaffolds, but the existing v0.91.4 WBS and sprint plan encode a 21-WP sequence, CodeFriend sidecar mini-sprint, sequencing notes, execution policy, and closeout bar. Those are not inferred by the template fill process.
+### P2: Remaining semantic review is still required before generated docs become milestone truth
 
-Recommendation: keep these templates, but add a milestone-package values model that can represent sidecar work, ordered WP ranges, closeout policy, and special milestone themes explicitly.
+Structural alignment is not the same as semantic correctness. Generated values can still be generic, repetitive, or weaker than hand-authored milestone content.
 
-### P2: VISION and DEMO_MATRIX reveal template/value-model pressure
+This is expected and appropriate for the current tool boundary. Template filling proves scaffold completeness and placeholder resolution. A planning-doc editor or human review must still decide whether generated text is true enough to become authoritative milestone documentation.
 
-The generated VISION draft is structurally valid but much longer than the existing v0.91.4 vision and repeats generic goal text across multiple placeholder slots. That is a values-model problem, not a registry problem: the template asks for detailed semantic content that a generic pilot values file cannot supply.
+### P2: VISION and DEMO_MATRIX are intentionally richer than some current v0.91.4 docs
 
-The generated DEMO_MATRIX is also structurally valid, but the existing v0.91.4 demo matrix is currently a compact status surface while the template expects a detailed proof matrix. This may be an improvement target, but it should be handled deliberately rather than treated as a no-op regeneration.
+The generated VISION and DEMO_MATRIX now preserve the existing v0.91.4 heading surface for this pilot, but their templates are richer than the compact current docs in some places.
 
-Recommendation: before using generated VISION or DEMO_MATRIX drafts authoritatively, require a human/editor pass that checks repetition, proof specificity, and milestone fit.
+That is not a blocker. It means these templates are useful for future milestone setup and for expanding proof surfaces, but regenerating an existing mature milestone package still requires editorial judgment.
 
-### P2: Several templates are close structural matches and look usable for normal draft scaffolding
+### P3: The `feature_doc` template remains available but unproven by this 10-doc pilot
 
-`design`, `decisions`, `milestone_checklist`, `release_plan`, and `release_notes` align closely with the corresponding existing v0.91.4 documents at the section level.
+The registry includes `feature_doc`, so the available planning-template surface contains 11 templates. This pilot intentionally exercised the 10 canonical milestone packet docs only.
 
-The generated versions still need semantic review, but the template shapes are credible. These are good candidates for early operational use in future milestone setup.
+Recommendation: run a separate feature-doc pilot against one real feature planning surface before treating the 11th template as operationally proven.
 
-### P3: The feature-doc template is present but was not exercised in this 10-doc packet pilot
+## Final Comparison Summary
 
-The registry includes `feature_doc`, bringing the available planning-template surface to 11 templates. This pilot generated the 10 canonical milestone planning documents only, matching the milestone packet rather than a feature-specific planning doc.
-
-Recommendation: run a follow-on feature-doc pilot against one v0.91.4 feature surface before treating the 11th template as operationally proven.
-
-## Comparison Summary
-
-| Document | Existing doc | Generated doc | Result |
-| --- | --- | --- | --- |
-| README | 174 lines, 9 headings | 143 lines, 15 headings | Structurally valid, semantic gap |
-| WBS | 78 lines, 6 headings | 78 lines, 8 headings | Structurally valid, needs richer WP values |
-| SPRINT | 67 lines, 7 headings | 60 lines, 10 headings | Structurally valid, loses sidecar/execution-policy detail |
-| VISION | 96 lines, 11 headings | 253 lines, 16 headings | Structurally valid, values are too generic/repetitive |
-| DESIGN | 146 lines, 20 headings | 85 lines, 20 headings | Good structural match, needs semantic review |
-| DECISIONS | 39 lines, 6 headings | 41 lines, 7 headings | Good structural match |
-| DEMO_MATRIX | 22 lines, 2 headings | 266 lines, 18 headings | Template is richer than current doc; requires deliberate migration |
-| MILESTONE_CHECKLIST | 80 lines, 9 headings | 62 lines, 9 headings | Good structural match |
-| RELEASE_PLAN | 85 lines, 10 headings | 82 lines, 10 headings | Good structural match |
-| RELEASE_NOTES | 95 lines, 15 headings | 68 lines, 15 headings | Good structural match, needs semantic review |
+| Document | Existing lines | Generated lines | Shared headings | Remaining missing existing headings |
+| --- | ---: | ---: | ---: | --- |
+| README | 174 | 148 | 9/9 | none |
+| WBS | 78 | 104 | 6/6 | none |
+| SPRINT | 67 | 110 | 7/7 | none |
+| VISION | 96 | 261 | 11/11 | none |
+| DESIGN | 146 | 85 | 20/20 | none |
+| DECISIONS | 39 | 41 | 6/6 | none |
+| DEMO_MATRIX | 22 | 270 | 2/2 | none |
+| MILESTONE_CHECKLIST | 80 | 62 | 9/9 | none |
+| RELEASE_PLAN | 85 | 82 | 10/10 | none |
+| RELEASE_NOTES | 95 | 68 | 15/15 | none |
 
 ## What Passed
 
@@ -99,8 +109,9 @@ Recommendation: run a follow-on feature-doc pilot against one v0.91.4 feature su
 - The registry also exposes the separate `feature_doc` template.
 - All 10 canonical milestone documents generated from explicit JSON values.
 - All 10 generated documents passed `validate_planning_template.py` structural validation.
-- The pilot kept generated drafts in ignored scratch space.
-- The pilot did not modify existing v0.91.4 milestone docs.
+- All 10 generated documents now preserve the existing v0.91.4 heading surface.
+- Generated drafts stayed in ignored scratch space.
+- Existing v0.91.4 milestone docs were not modified.
 
 ## Recommended Next Steps
 
@@ -108,8 +119,8 @@ Recommendation: run a follow-on feature-doc pilot against one v0.91.4 feature su
 2. Add or document a milestone-package values model so values can be shared coherently across all 10 docs.
 3. Add planning-doc editor guidance for converting generated drafts into authoritative milestone docs.
 4. Run a separate `feature_doc` pilot against one feature-level planning surface.
-5. Decide whether the v0.91.4 demo matrix should stay compact or migrate to the richer template shape.
+5. Decide whether future milestones should use the richer demo matrix template from the start rather than compact status-only demo matrices.
 
 ## Bottom Line
 
-The planning-template system can produce complete first-draft milestone packets. It is not yet ready to regenerate a complex existing milestone package without editor review. That is a good outcome for this stage: the substrate works, and the next improvement is semantic normalization rather than basic template coverage.
+The planning-template system is now ready to produce complete, structurally aligned first-draft milestone packets. The next improvement is not basic template coverage; it is semantic normalization through the planning-doc editor and better milestone-package values.
