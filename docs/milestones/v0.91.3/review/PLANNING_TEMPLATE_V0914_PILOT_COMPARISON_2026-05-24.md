@@ -2,18 +2,18 @@
 
 Issue: #3312
 Date: 2026-05-24
-Status: rerun complete against stabilized template branch; generated drafts remain non-authoritative
+Status: rerun complete after planning-template stabilization merged; generated drafts remain non-authoritative
 
 ## Scope
 
-This pilot generated the 10 canonical milestone planning documents from the stabilized planning-template branch and compared those generated drafts against the existing v0.91.4 planning package.
+This pilot generated the 10 canonical milestone planning documents from the stabilized planning-template contract and compared those generated drafts against the existing v0.91.4 planning package.
 
-Template-shape stabilization is split into #3315 / PR #3316. This pilot PR is stacked on that branch so #3312 remains a pilot/comparison issue rather than a hidden template-change issue.
+Template-shape stabilization was split into #3315 / PR #3316 and merged before this final rerun, so #3312 remains a pilot/comparison issue rather than a hidden template-change issue.
 
 The final generated drafts were first written to ignored scratch space and then copied into tracked review evidence for PR inspection:
 
-- `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/`
-- `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/full_packet_generation_summary.json`
+- `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/`
+- `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/full_packet_generation_summary.json`
 
 
 No authoritative v0.91.4 planning documents were modified.
@@ -43,20 +43,20 @@ Fixed surfaces:
 
 ## Generated Packet
 
-All 10 canonical milestone planning templates generated and passed structural validation after the fixes:
+All 10 canonical milestone planning templates generated and passed structural validation after the stabilization PR merged:
 
 | Template | Generated draft | Structural validation |
 | --- | --- | --- |
-| `readme` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/README_GENERATED.md` | passed |
-| `wbs` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/WBS_GENERATED.md` | passed |
-| `sprint` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/SPRINT_GENERATED.md` | passed |
-| `vision` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/VISION_GENERATED.md` | passed |
-| `design` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/DESIGN_GENERATED.md` | passed |
-| `decisions` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/DECISIONS_GENERATED.md` | passed |
-| `demo_matrix` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/DEMO_MATRIX_GENERATED.md` | passed |
-| `milestone_checklist` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/MILESTONE_CHECKLIST_GENERATED.md` | passed |
-| `release_plan` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/RELEASE_PLAN_GENERATED.md` | passed |
-| `release_notes` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/RELEASE_NOTES_GENERATED.md` | passed |
+| `readme` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/README_GENERATED.md` | passed |
+| `wbs` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/WBS_GENERATED.md` | passed |
+| `sprint` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/SPRINT_GENERATED.md` | passed |
+| `vision` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/VISION_GENERATED.md` | passed |
+| `design` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/DESIGN_GENERATED.md` | passed |
+| `decisions` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/DECISIONS_GENERATED.md` | passed |
+| `demo_matrix` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/DEMO_MATRIX_GENERATED.md` | passed |
+| `milestone_checklist` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/MILESTONE_CHECKLIST_GENERATED.md` | passed |
+| `release_plan` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/RELEASE_PLAN_GENERATED.md` | passed |
+| `release_notes` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/RELEASE_NOTES_GENERATED.md` | passed |
 
 ## Findings
 
@@ -67,9 +67,9 @@ After the template-shape fixes, every generated canonical milestone document sha
 This is the main pilot result: the template system is now able to produce a complete structurally aligned 10-doc milestone packet without modifying authoritative milestone docs.
 
 
-### P2: Fixed - milestone-specific headings are value-driven, not hard-coded canonical requirements
+### P2: Stabilization dependency resolved - milestone-specific headings are value-driven, not hard-coded canonical requirements
 
-The final fix keeps the canonical templates reusable. VISION strategic headings and sidecar headings are supplied by values for this pilot rather than required as universal registry sections. This lets the v0.91.4 generated packet align with the existing v0.91.4 section surface without making future milestones inherit v0.91.4-specific names by construction.
+The template stabilization landed separately in #3315 / PR #3316. VISION strategic headings and sidecar headings are supplied by values for this pilot rather than required as universal registry sections. This lets the v0.91.4 generated packet align with the existing v0.91.4 section surface without making future milestones inherit v0.91.4-specific names by construction.
 
 ### P2: Remaining semantic review is still required before generated docs become milestone truth
 
@@ -93,9 +93,9 @@ The source issue required the pilot to identify existing v0.91.4 docs that do no
 | `docs/milestones/v0.91.4/QUALITY_GATE_v0.91.4.md` | No direct 10-doc template counterpart | Unmapped quality/proof gate surface | Keep as milestone-specific proof doc or add a future `quality_gate` template if repeated across milestones |
 | `docs/milestones/v0.91.4/NEXT_MILESTONE_HANDOFF_v0.91.4.md` | No direct 10-doc template counterpart | Unmapped handoff/transition surface | Keep as milestone-specific handoff doc or add a future `next_milestone_handoff` template if repeated across milestones |
 | `docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md` | Adjacent to `feature_doc`, but not exercised here | Feature/proof-specific surface outside 10-doc milestone packet | Use a separate feature-doc pilot before claiming coverage |
-| `docs/milestones/v0.91.4/WP_ISSUE_WAVE_v0.91.4.yaml` | No Markdown planning-template counterpart | Operational issue-wave data, not a planning doc template | Keep as structured milestone execution data, not a generated Markdown planning doc |
+| `docs/milestones/v0.91.4/WP_ISSUE_WAVE_v0.91.4.yaml` | Outside the 10-doc Markdown planning packet | Structured issue-wave data, not a Markdown planning doc | Keep as structured milestone execution data, or route through dedicated YAML/data-template tooling if that family is added |
 
-This means the 10-doc packet is structurally complete for canonical milestone planning, but the full v0.91.4 planning ecosystem still has milestone-specific proof, handoff, feature-coverage, and issue-wave surfaces that should not be silently forced into the 10-doc template family.
+This means the 10-doc packet is structurally complete for canonical Markdown milestone planning, but the full v0.91.4 planning ecosystem still has milestone-specific proof, handoff, feature-coverage, and structured issue-wave surfaces that should not be silently forced into the 10-doc Markdown template family.
 
 ### P3: The `feature_doc` template remains available but unproven by this 10-doc pilot
 
