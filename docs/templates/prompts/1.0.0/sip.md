@@ -8,6 +8,8 @@ Run ID: issue-<issue_padded>
 Version: <version>
 Title: <title>
 Branch: <branch>
+Card Status: <card_status>
+Generated: <timestamp>
 
 Context:
 - Issue: <issue_url>

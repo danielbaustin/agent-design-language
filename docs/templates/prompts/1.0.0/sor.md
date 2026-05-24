@@ -13,7 +13,9 @@ Run ID: issue-<issue_padded>
 Version: <version>
 Title: <title>
 Branch: <branch>
+Card Status: <card_status>
 Status: <status>
+Generated: <timestamp>
 
 Execution:
 - Actor: issue-wave bootstrap
