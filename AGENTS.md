@@ -35,6 +35,11 @@ These rules are mandatory for ADL issue work.
    - Use `sip-editor`, `stp-editor`, `spp-editor`, `srp-editor`, `sor-editor`,
      or other issue-card editor skills when card surfaces need normalization.
    - Do not hand-edit cards opportunistically.
+   - Do not hand-roll new cards from memory. New issue cards must come from
+     the active versioned prompt templates in `docs/templates/prompts/`.
+   - The current prompt-template registry is `docs/templates/prompts/current.json`;
+     use it rather than hard-coding a template version unless an issue
+     explicitly requires a compatibility path.
 3. Always work in a bound worktree on a specific branch.
    - Never do tracked issue work on `main`.
    - Use the repo-native issue-mode `pr run` flow to bind execution context.
@@ -56,6 +61,18 @@ These rules are mandatory for ADL issue work.
 - Preserve the canonical card lifecycle: `SIP -> STP -> SPP -> SRP -> SOR`.
   `SRP` is the Structured Review Prompt and review-result surface; `SOR` is the
   truthful execution and integration record.
+- Treat prompt cards as durable C-SDLC state, not disposable chat output.
+  `SIP`, `STP`, and `SPP` should be issue-specific and design-time ready before
+  execution starts. If they are generic, stale, or incomplete, route them through
+  the appropriate editor skill before running the issue.
+- Treat `SPP` as the operative issue-local plan. If real execution diverges
+  materially from the tracked plan, update the `SPP` before continuing.
+- Treat `SRP` and `SOR` as truth surfaces. `SRP` records review prompts,
+  findings, and dispositions; `SOR` records actual execution, validation,
+  integration, and closeout truth.
+- Prefer the human prompt editor or card editor skills for filling and
+  normalizing cards. Do not regenerate complete card prose when a template field
+  update is sufficient.
 
 ## Where To Start
 
@@ -63,13 +80,16 @@ For a normal tracked issue:
 
 1. read the source issue prompt and current task bundle
 2. route through `workflow-conductor`
-3. follow the conductor-selected lifecycle step
-4. if the issue is ready for execution binding, use `adl/tools/pr.sh run <issue>`
-5. make the bounded change in the issue worktree
-6. run the smallest meaningful validation for the touched surface
-7. run a pre-PR subagent review and fix findings
-8. verify PR base/stack topology, then publish through the normal PR workflow
-9. perform closeout after merge/closure
+3. confirm all five C-SDLC cards exist and came from the active prompt-template
+   registry
+4. make sure `SIP`, `STP`, and `SPP` are issue-specific and design-time ready
+5. follow the conductor-selected lifecycle step
+6. if the issue is ready for execution binding, use `adl/tools/pr.sh run <issue>`
+7. make the bounded change in the issue worktree, never on `main`
+8. run the smallest meaningful validation for the touched surface
+9. run a pre-PR subagent review and fix findings
+10. verify PR base/stack topology, then publish through the normal PR workflow
+11. perform closeout after merge/closure
 
 ## Validation Expectations
 
