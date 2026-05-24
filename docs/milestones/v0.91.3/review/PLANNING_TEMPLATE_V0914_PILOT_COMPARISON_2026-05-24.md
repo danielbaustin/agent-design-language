@@ -15,6 +15,9 @@ The final generated drafts were first written to ignored scratch space and then 
 - `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/generated_full_packet/`
 - `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_4/full_packet_generation_summary.json`
 
+These tracked generated drafts are evidence of template output only. They may
+contain intentional `TBD` placeholders from the fixture values, and reviewers
+must not treat them as authoritative v0.91.4 milestone docs.
 
 No authoritative v0.91.4 planning documents were modified.
 

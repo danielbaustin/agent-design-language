@@ -153,11 +153,12 @@ from issue
 v0.91.3 is the active Cognitive SDLC first-slice milestone. Its main issue wave
 was opened as `#3199` through `#3214`; follow-up `#3225` restored the complete
 closeout tail as `#3226` through `#3230`, with Sprint 4 opened as `#3231`.
-Sprint 4 has completed proof coverage, the quality gate, and the docs review
-pass. `WP-13` / `#3208` opened the internal-review cycle, and the second
-internal-review pass is now being used to repair review truth before external
-handoff. The milestone proves one bounded Cognitive State Transition without
-claiming full C-SDLC default operation before v0.91.4.
+Sprint 4 has completed proof coverage, the quality gate, the docs review pass,
+and the second internal-review remediation wave. `WP-13` / `#3208` opened the
+internal-review cycle, `#3321` closed that second review, and v0.91.3 is now
+being prepared for third-party review. The milestone proves one bounded
+Cognitive State Transition without claiming full C-SDLC default operation
+before v0.91.4.
 
 Start here:
 
@@ -254,9 +255,9 @@ production markets.
 - Current crate version: 0.91.3
 - Most recently completed milestone: v0.91.2
 - Current release-tail state: v0.91.3 Sprint 4 has completed proof coverage,
-  the quality gate, and the docs review pass; `WP-13` / `#3208` opened the
-  internal-review cycle, and pass-2 remediation is active before external
-  review handoff
+  the quality gate, the docs review pass, and the second internal-review
+  remediation wave; `#3321` is closed, and the next release-tail gate is
+  third-party review handoff
 - Previous completed milestone before v0.91.2: v0.91.1
 - Primary implementation language: Rust
 

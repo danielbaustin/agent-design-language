@@ -50,7 +50,7 @@ Milestone docs should be read as bounded engineering records. They distinguish
 what has shipped, what is currently being implemented, what is demoable, and
 what is planned for later milestones. At the moment, `v0.91.3` is the active
 Cognitive SDLC first-slice milestone. Sprint 4 has completed proof coverage,
-the quality gate, and the docs review pass; `WP-13` / `#3208` opened the
-internal-review cycle, and pass-2 remediation is active before external review
-handoff. `v0.91.2` is the most recently completed tooling, evaluation,
-productization, publication, and workflow-pressure package.
+the quality gate, the docs review pass, and the second internal-review
+remediation wave; `#3321` is closed, and v0.91.3 is now preparing for
+third-party review handoff. `v0.91.2` is the most recently completed tooling,
+evaluation, productization, publication, and workflow-pressure package.
