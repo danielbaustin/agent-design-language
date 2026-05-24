@@ -114,6 +114,7 @@ mark_policy_surface_full_coverage() {
 }
 
 mark_v0913_proof_required() {
+  rust_required=true
   v0913_proof_required=true
   proof_validation_scope="v0_91_3"
   if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
@@ -220,6 +221,7 @@ is_v0913_proof_surface() {
   local path="$1"
   case "$path" in
     docs/milestones/v0.91.3/review/*|\
+    docs/milestones/v0.91.3/features/*|\
     docs/milestones/v0.91.3/DEMO_MATRIX_v0.91.3.md|\
     docs/milestones/v0.91.3/FEATURE_PROOF_COVERAGE_v0.91.3.md|\
     docs/milestones/v0.91.3/QUALITY_GATE_v0.91.3.md|\
@@ -247,7 +249,8 @@ is_v0913_proof_surface() {
     adl/tools/validate_v0913_quality_gate_review_surfaces.py|\
     adl/tools/demo_v0913_quality_gate.sh|\
     adl/tools/run_v0913_proof_validation_lane.sh|\
-    adl/tools/test_run_v0913_proof_validation_lane.sh)
+    adl/tools/test_run_v0913_proof_validation_lane.sh|\
+    workflow/c-sdlc/v0.91.3/issues/*)
       return 0
       ;;
   esac
@@ -404,7 +407,7 @@ elif [ -z "$base_sha" ] || [ -z "$head_sha" ]; then
   fail_closed=true
   mark_authoritative_full_coverage "fail_closed" "missing_pull_request_sha_runs_full_validation"
 else
-  changed_rows="$(git diff --name-status --diff-filter=ACMR "$base_sha" "$head_sha" 2>/dev/null | normalize_changed_rows || true)"
+  changed_rows="$(git diff --name-status --diff-filter=ACMRD "$base_sha" "$head_sha" 2>/dev/null | normalize_changed_rows || true)"
   changed_files="$(printf '%s\n' "$changed_rows" | awk -F '\t' 'NF >= 2 { print $2 }')"
   if [ -z "$changed_rows" ]; then
     fail_closed=true

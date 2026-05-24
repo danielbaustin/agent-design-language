@@ -15,11 +15,36 @@ run_check() {
   "$@"
 }
 
+validate_card_lifecycle_bundle() {
+  bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type sip --phase bootstrap \
+    --input "$ROOT_DIR/workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sip.md"
+  bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type stp \
+    --input "$ROOT_DIR/workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/stp.md"
+  bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type spp --phase final \
+    --input "$ROOT_DIR/workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/spp.md"
+  bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type srp --phase final \
+    --input "$ROOT_DIR/workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/srp.md"
+  bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type sor --phase final \
+    --input "$ROOT_DIR/workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sor.md"
+}
+
+validate_card_lifecycle_contract() {
+  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" tracked_csdlc_card_bundle -- --nocapture
+  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture
+}
+
 run_check transition_dag_packet \
   python3 "$ROOT_DIR/adl/tools/validate_transition_dag_packet.py" \
   "$ROOT_DIR/docs/milestones/v0.91.3/review/transition_dag"
 run_check transition_dag_contract \
   bash "$ROOT_DIR/adl/tools/test_transition_dag_packet.sh"
+
+run_check transition_manifest_schema \
+  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" cognitive_transition_schema -- --nocapture
+
+run_check card_lifecycle_bundle validate_card_lifecycle_bundle
+
+run_check card_lifecycle_contract validate_card_lifecycle_contract
 
 run_check evidence_bundle_packet \
   python3 "$ROOT_DIR/adl/tools/validate_evidence_bundle_packet.py" \

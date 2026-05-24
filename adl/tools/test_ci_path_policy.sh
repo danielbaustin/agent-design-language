@@ -286,7 +286,7 @@ PY
   v0913_proof_head="$(git rev-parse HEAD)"
 
   v0913_proof_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$v0913_proof_head" --ref "refs/pull/1/merge")"
-  assert_has "$v0913_proof_output" "rust_required=false"
+  assert_has "$v0913_proof_output" "rust_required=true"
   assert_has "$v0913_proof_output" "coverage_required=false"
   assert_has "$v0913_proof_output" "full_coverage_required=false"
   assert_has "$v0913_proof_output" "demo_smoke_required=false"
@@ -294,6 +294,43 @@ PY
   assert_has "$v0913_proof_output" "proof_validation_scope=v0_91_3"
   assert_has "$v0913_proof_output" "reason=v0913_proof_surface_change_runs_targeted_packet_validation"
   assert_has "$workflow_policy_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
+
+  git checkout -q -b v0913-feature-proof-surface "$base_sha"
+  mkdir -p docs/milestones/v0.91.3/features workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo
+  printf '# feature proof\n' > docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md
+  printf '# tracked bundle\n' > workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md
+  git add docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md
+  git commit -q -m v0913-feature-proof-surface
+  v0913_feature_proof_head="$(git rev-parse HEAD)"
+
+  v0913_feature_proof_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$v0913_feature_proof_head" --ref "refs/pull/1/merge")"
+  assert_has "$v0913_feature_proof_output" "rust_required=true"
+  assert_has "$v0913_feature_proof_output" "coverage_required=false"
+  assert_has "$v0913_feature_proof_output" "full_coverage_required=false"
+  assert_has "$v0913_feature_proof_output" "demo_smoke_required=false"
+  assert_has "$v0913_feature_proof_output" "v0913_proof_required=true"
+  assert_has "$v0913_feature_proof_output" "proof_validation_scope=v0_91_3"
+  assert_has "$v0913_feature_proof_output" "reason=v0913_proof_surface_change_runs_targeted_packet_validation"
+
+  git checkout -q -b v0913-proof-surface-deletion "$base_sha"
+  mkdir -p docs/milestones/v0.91.3/review/demo_coverage
+  printf '# proof packet\n' > docs/milestones/v0.91.3/review/demo_coverage/DEMO_COVERAGE_PACKET_v0.91.3.md
+  git add docs/milestones/v0.91.3/review/demo_coverage/DEMO_COVERAGE_PACKET_v0.91.3.md
+  git commit -q -m seed-v0913-proof-surface-deletion
+  deletion_base="$(git rev-parse HEAD)"
+  rm docs/milestones/v0.91.3/review/demo_coverage/DEMO_COVERAGE_PACKET_v0.91.3.md
+  git add -A docs/milestones/v0.91.3/review/demo_coverage/DEMO_COVERAGE_PACKET_v0.91.3.md
+  git commit -q -m delete-v0913-proof-surface
+  deletion_head="$(git rev-parse HEAD)"
+
+  deletion_output="$("$POLICY" --event-name pull_request --base "$deletion_base" --head "$deletion_head" --ref "refs/pull/1/merge")"
+  assert_has "$deletion_output" "rust_required=true"
+  assert_has "$deletion_output" "coverage_required=false"
+  assert_has "$deletion_output" "full_coverage_required=false"
+  assert_has "$deletion_output" "demo_smoke_required=false"
+  assert_has "$deletion_output" "v0913_proof_required=true"
+  assert_has "$deletion_output" "proof_validation_scope=v0_91_3"
+  assert_has "$deletion_output" "reason=v0913_proof_surface_change_runs_targeted_packet_validation"
 
   git checkout -q -b runtime-policy-surface-change "$base_sha"
   mkdir -p adl/tools
