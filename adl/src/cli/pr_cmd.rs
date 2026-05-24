@@ -262,11 +262,11 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         )
     );
     println!(
-        "  READ       {}",
+        "  SIP        {}",
         path_relative_to_repo(&repo_root, &bundle_input)
     );
     println!(
-        "  WRITE      {}",
+        "  SOR        {}",
         path_relative_to_repo(&repo_root, &bundle_output)
     );
     println!(
@@ -481,8 +481,8 @@ fn real_pr_start(args: &[String]) -> Result<()> {
             .task_bundle_review_policy_path(&worktree_path)
             .display()
     );
-    println!("  READ   {}", worktree_paths.1.display());
-    println!("  WRITE  {}", worktree_paths.2.display());
+    println!("  SIP    {}", worktree_paths.1.display());
+    println!("  SOR    {}", worktree_paths.2.display());
     println!("  ROOT_STP    {}", root_stp.display());
     println!(
         "  ROOT_SPP    {}",
@@ -494,8 +494,8 @@ fn real_pr_start(args: &[String]) -> Result<()> {
             .task_bundle_review_policy_path(&repo_root)
             .display()
     );
-    println!("  ROOT_READ   {}", root_paths.1.display());
-    println!("  ROOT_WRITE  {}", root_paths.2.display());
+    println!("  ROOT_SIP    {}", root_paths.1.display());
+    println!("  ROOT_SOR    {}", root_paths.2.display());
     println!("  WORKTREE {}", worktree_path.display());
     println!("  BRANCH {branch}");
     println!(
@@ -755,11 +755,11 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         )
     );
     println!(
-        "  READ     {}",
+        "  SIP      {}",
         path_relative_to_repo(&repo_root, &bundle_input)
     );
     println!(
-        "  WRITE    {}",
+        "  SOR      {}",
         path_relative_to_repo(&repo_root, &bundle_output)
     );
     println!(

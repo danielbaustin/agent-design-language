@@ -90,7 +90,7 @@ Materialized the canonical bootstrap output card so this issue bundle has a trut
 - Worktree-only paths remaining: none
 - Integration state: main_repo
 - Verification scope: main_repo
-- Integration method used: direct write in main repo
+- Integration method used: local ignored card-bundle scaffold write under the active checkout
 - Verification performed:
   - `ls .adl/{version_value}/tasks/{os.path.basename(task_dir)}/sor.md`
     - verified the canonical output-card path exists

@@ -556,7 +556,7 @@ function renderMarkdown({ artifactKey: modelArtifactKey, artifact, metadata, sec
   const lines = [renderYaml({ artifact_type: artifact.label, title: titleInput.value.trim(), ...metadata }), "", `# ${heading}`, ""];
   if (modelArtifactKey === "sor") {
     lines.push("## Summary", "", sections.summary_text || titleInput.value.trim() || "Replace me.", "");
-    lines.push("## Main Repo Integration", "");
+    lines.push("## Main Repo Integration (REQUIRED)", "");
     lines.push(`- Integration state: ${metadata.integration_state || "pr_open"}`);
     lines.push(`- Verification scope: ${metadata.verification_scope || "worktree"}`);
     lines.push(`- Branch: ${metadata.branch || branchInput.value.trim()}`);

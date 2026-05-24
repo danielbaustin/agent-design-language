@@ -8,6 +8,7 @@ const TEMPLATE_REGISTRY: &str = "docs/templates/prompts/current.json";
 const CARD_STATUS_VALUES: &[&str] = &[
     "draft",
     "ready",
+    "reviewed",
     "approved",
     "completed",
     "blocked",
@@ -952,6 +953,7 @@ mod tests {
             [
                 "draft",
                 "ready",
+                "reviewed",
                 "approved",
                 "completed",
                 "blocked",

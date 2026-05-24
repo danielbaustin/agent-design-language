@@ -60,8 +60,8 @@ Every filled prompt card uses this small lifecycle enum:
 - `superseded`: a newer card or template version has replaced this card
 
 The local browser editor derives `draft` or `ready` from form validation.
-Lifecycle tooling should set `approved`, `completed`, `blocked`, or
-`superseded` only at the corresponding C-SDLC state transition.
+Lifecycle tooling should set `reviewed`, `approved`, `completed`, `blocked`,
+or `superseded` only at the corresponding C-SDLC state transition.
 
 Execution preflight is intentionally stricter than enum validation:
 
