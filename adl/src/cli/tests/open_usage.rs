@@ -119,7 +119,9 @@ fn usage_mentions_v0_4_and_legacy_examples() {
 #[test]
 fn code_review_filter_covers_global_usage_entry() {
     let text = usage();
-    assert!(text.contains("adl tooling <card-prompt|code-review|lint-prompt-spec"));
+    assert!(
+        text.contains("adl tooling <card-prompt|code-review|csdlc-prompt-editor|lint-prompt-spec")
+    );
     assert!(text.contains(
         "adl tooling code-review --out artifacts/reviews/pr-review --backend fixture --visibility packet-only"
     ));

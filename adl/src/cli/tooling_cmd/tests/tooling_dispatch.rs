@@ -2,7 +2,7 @@ use super::support::*;
 use super::*;
 
 #[test]
-fn tooling_dispatch_and_help_paths_cover_public_entrypoint() {
+fn csdlc_prompt_editor_tooling_dispatch_and_help_paths_cover_public_entrypoint() {
     let repo = TempRepo::new("dispatch");
     let input = repo.write_rel(
         ".tmp/tooling_cmd_tests/input.md",
@@ -227,6 +227,57 @@ fn tooling_dispatch_accepts_help_and_rejects_unknown_subcommands() {
     assert!(real_tooling(&["--help".to_string()]).is_ok());
     assert!(real_tooling(&[]).is_err());
     assert!(real_tooling(&["unknown-subcommand".to_string()]).is_err());
+}
+
+#[test]
+fn csdlc_prompt_editor_cli_dispatch_usage_and_errors_are_covered() {
+    let repo = TempRepo::new("csdlc-prompt-editor-dispatch");
+    let model_out = repo.path().join("editor_model.js");
+    let samples_out = repo.path().join("samples");
+
+    assert!(super::super::tooling_usage().contains("adl tooling csdlc-prompt-editor"));
+    assert!(crate::cli::usage::usage().contains("adl tooling csdlc-prompt-editor"));
+    assert!(real_tooling(&["csdlc-prompt-editor".to_string(), "--help".to_string()]).is_ok());
+
+    let missing_action =
+        real_tooling(&["csdlc-prompt-editor".to_string()]).expect_err("missing action should fail");
+    assert!(missing_action
+        .to_string()
+        .contains("requires --emit-model-js and/or --render-samples"));
+
+    let unknown = real_tooling(&["csdlc-prompt-editor".to_string(), "--unknown".to_string()])
+        .expect_err("unknown arg should fail");
+    assert!(unknown
+        .to_string()
+        .contains("unknown arg for tooling csdlc-prompt-editor"));
+
+    let bad_root = real_tooling(&[
+        "csdlc-prompt-editor".to_string(),
+        "--repo-root".to_string(),
+        repo.path().to_string_lossy().to_string(),
+        "--emit-model-js".to_string(),
+        model_out.to_string_lossy().to_string(),
+    ])
+    .expect_err("non-repo root should fail");
+    assert!(bad_root
+        .to_string()
+        .contains("repo root must contain adl/Cargo.toml"));
+
+    real_tooling(&[
+        "csdlc-prompt-editor".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--emit-model-js".to_string(),
+        model_out.to_string_lossy().to_string(),
+        "--render-samples".to_string(),
+        samples_out.to_string_lossy().to_string(),
+    ])
+    .expect("csdlc prompt editor dispatch should render model and samples");
+
+    let model = fs::read_to_string(&model_out).expect("editor model");
+    assert!(model.contains("window.CSDLC_PROMPT_EDITOR_MODEL"));
+    assert!(samples_out.join("sip.md").is_file());
+    assert!(samples_out.join("sor.md").is_file());
 }
 
 #[test]
