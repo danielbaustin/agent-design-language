@@ -16,12 +16,12 @@ source_refs:
   - kind: "issue"
     ref: "https://github.com/danielbaustin/agent-design-language/issues/3201"
   - kind: "stp"
-    ref: "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/stp.md"
+    ref: "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/stp.md"
   - kind: "sip"
-    ref: "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sip.md"
+    ref: "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md"
 scope:
   files:
-    - "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/"
+    - "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/"
     - "adl/src/cli/tooling_cmd/tests/structured_prompt.rs"
     - "adl/src/cli/pr_cmd/doctor.rs"
   components:
@@ -40,7 +40,7 @@ assumptions:
   - "The public proof bundle complements rather than replaces local issue bundles."
 proposed_steps:
   - id: "step-1"
-    description: "Create the tracked public card bundle under workflow/c-sdlc/v0.91.3/issues/."
+    description: "Create the tracked public card bundle under docs/milestones/v0.91.3/review/evidence/csdlc/issues/."
     expected_output: "Tracked SIP/STP/SPP/SRP/SOR proof cards."
     allowed_mode: "execution_after_approval"
   - id: "step-2"
@@ -61,7 +61,7 @@ codex_plan:
   - step: "Run focused validation and record truthful output state."
     status: "completed"
 affected_areas:
-  - "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/"
+  - "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/"
   - "adl/src/cli/tooling_cmd/tests/structured_prompt.rs"
   - "adl/src/cli/pr_cmd/doctor.rs"
 invariants_to_preserve:
@@ -74,11 +74,11 @@ risks_and_edge_cases:
 test_strategy:
   - "cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture"
   - "cargo test --manifest-path adl/Cargo.toml card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture"
-  - "bash adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sip.md"
-  - "bash adl/tools/validate_structured_prompt.sh --type stp --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/stp.md"
-  - "bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/spp.md"
-  - "bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/srp.md"
-  - "bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sor.md"
+  - "bash adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md"
+  - "bash adl/tools/validate_structured_prompt.sh --type stp --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/stp.md"
+  - "bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md"
+  - "bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/srp.md"
+  - "bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md"
 execution_handoff: "Use this artifact as the public issue-local plan proof for WP-03."
 required_permissions:
   - "workspace-write"
@@ -113,13 +113,13 @@ issue bundle plus focused validator and doctor expectations.
 
 ## Proposed Steps
 
-1. Create the tracked public card bundle under `workflow/c-sdlc/v0.91.3/issues/`.
+1. Create the tracked public card bundle under `docs/milestones/v0.91.3/review/evidence/csdlc/issues/`.
 2. Back the bundle with focused structured-prompt validator tests.
 3. Back the bundle with doctor lifecycle expectations for final review/output truth.
 
 ## Affected Areas
 
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/`
 - `adl/src/cli/tooling_cmd/tests/structured_prompt.rs`
 - `adl/src/cli/pr_cmd/doctor.rs`
 
@@ -138,11 +138,11 @@ issue bundle plus focused validator and doctor expectations.
 
 - `cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture`
 - `cargo test --manifest-path adl/Cargo.toml card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture`
-- `bash adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sip.md`
-- `bash adl/tools/validate_structured_prompt.sh --type stp --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/stp.md`
-- `bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/spp.md`
-- `bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/srp.md`
-- `bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sor.md`
+- `bash adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md`
+- `bash adl/tools/validate_structured_prompt.sh --type stp --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/stp.md`
+- `bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md`
+- `bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/srp.md`
+- `bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md`
 
 ## Execution Handoff
 

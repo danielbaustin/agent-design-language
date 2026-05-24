@@ -1768,7 +1768,7 @@ mod tests {
             .expect("adl crate lives under repo root")
             .to_path_buf();
         let bundle =
-            repo_root.join("workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards");
+            repo_root.join("docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards");
         let lifecycle = build_doctor_card_lifecycle(
             &repo_root,
             &bundle.join("sip.md"),

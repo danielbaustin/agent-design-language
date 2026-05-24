@@ -11,7 +11,7 @@ Context:
 - PR: https://github.com/danielbaustin/agent-design-language/pull/3236
 - Source Issue Prompt: .adl/v0.91.3/bodies/issue-3201-v0-91-3-wp-03-card-lifecycle-integration.md
 - Docs: docs/cognitive-sdlc/card-lifecycle.md
-- Other: workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md
+- Other: docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/README.md
 
 ## Agent Execution Rules
 
@@ -60,7 +60,7 @@ lifecycle validator and doctor expectations for the slice.
 
 ## Target Files / Surfaces
 
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/`
 - `docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md`
 - `docs/milestones/v0.91.3/DEMO_MATRIX_v0.91.3.md`
 - `docs/milestones/v0.91.3/FEATURE_PROOF_COVERAGE_v0.91.3.md`
@@ -73,7 +73,7 @@ lifecycle validator and doctor expectations for the slice.
 
 ## Demo / Proof Requirements
 
-- tracked public card bundle in `workflow/c-sdlc/v0.91.3/issues/`
+- tracked public card bundle in `docs/milestones/v0.91.3/review/evidence/csdlc/issues/`
 - focused validator and doctor test proof
 
 ## Constraints / Policies

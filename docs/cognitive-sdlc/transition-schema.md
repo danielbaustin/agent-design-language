@@ -121,7 +121,7 @@ closeout, release evidence, or memory.
 - invalid JSON fixture:
   `docs/milestones/v0.91.3/review/transition_manifest/fixtures/invalid_cognitive_transition_manifest_v1_missing_seed_role.json`
 - durable tracked card proof bundle:
-  `workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/`
+  `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3200-card-schema-proof/`
 - validator:
   `validate_cognitive_transition_manifest_v1(...)`
 - JSON-schema export:

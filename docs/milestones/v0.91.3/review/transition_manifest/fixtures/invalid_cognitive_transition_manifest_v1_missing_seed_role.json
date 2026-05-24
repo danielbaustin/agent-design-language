@@ -20,11 +20,11 @@
     }
   ],
   "cards": {
-    "sip_rel_path": "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/sip.md",
-    "stp_rel_path": "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/stp.md",
-    "spp_rel_path": "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/spp.md",
-    "srp_rel_path": "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/srp.md",
-    "sor_rel_path": "workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/sor.md"
+    "sip_rel_path": "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3200-card-schema-proof/cards/sip.md",
+    "stp_rel_path": "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3200-card-schema-proof/cards/stp.md",
+    "spp_rel_path": "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3200-card-schema-proof/cards/spp.md",
+    "srp_rel_path": "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3200-card-schema-proof/cards/srp.md",
+    "sor_rel_path": "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3200-card-schema-proof/cards/sor.md"
   },
   "dag_rel_path": "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_transition_dag.md",
   "shard_plan_rel_path": "docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_shard_plan.md",

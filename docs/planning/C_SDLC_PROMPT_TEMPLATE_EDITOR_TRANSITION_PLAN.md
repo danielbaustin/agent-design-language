@@ -131,7 +131,7 @@ During `v0.91.4`, durable C-SDLC records should move under the tracked
 workflow namespace defined by the workflow-state migration plan:
 
 ```text
-workflow/c-sdlc/<version>/issues/<issue-number>-<slug>/
+docs/milestones/<version>/review/evidence/csdlc/issues/<issue-number>-<slug>/
   sip.md
   stp.md
   spp.md
@@ -214,7 +214,7 @@ Before `v0.91.4` can claim C-SDLC default operation:
 - `card_status` transitions must be enforced by skills and lifecycle tooling
 - sprint-conductor must block on child-card readiness before child execution
 - editor skills must understand template versions and allowed transitions
-- durable prompt records must be tracked under `workflow/c-sdlc/`
+- durable prompt records must be tracked under `docs/milestones/<version>/review/evidence/csdlc/`
 - SRP/SOR closeout rules must be deterministic enough to prevent overclaiming
 - minimal signed trace proof must exist for durable C-SDLC runs
 - ObsMem ingestion should point at tracked evidence surfaces
@@ -276,7 +276,7 @@ The transition plan depends on these already-created follow-ons:
 
 Potential additional follow-ons, if not absorbed by those issues:
 
-- add tracked `workflow/c-sdlc/` mirroring for prompt records
+- add tracked `docs/milestones/<version>/review/evidence/csdlc/` mirroring for prompt records
 - add editor-skill tests that use SemVer template fixtures
 - add source-prompt validation guidance so old issue bodies cannot omit
   required sections unnoticed

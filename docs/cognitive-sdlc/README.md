@@ -78,7 +78,7 @@ C-SDLC truth.
 The target namespace for durable workflow records is:
 
 ```text
-workflow/c-sdlc/<version>/
+docs/milestones/<version>/review/evidence/csdlc/
 ```
 
 `v0.91.3` proves the namespace shape for the first slice.

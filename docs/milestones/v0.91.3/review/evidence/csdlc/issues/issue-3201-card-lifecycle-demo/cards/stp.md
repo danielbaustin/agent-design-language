@@ -24,11 +24,11 @@ repo_inputs:
   - "adl/src/cli/pr_cmd/doctor.rs"
   - "adl/src/cli/tooling_cmd/tests/structured_prompt.rs"
 canonical_files:
-  - "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sip.md"
-  - "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/stp.md"
-  - "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/spp.md"
-  - "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/srp.md"
-  - "workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sor.md"
+  - "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md"
+  - "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/stp.md"
+  - "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md"
+  - "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/srp.md"
+  - "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md"
 demo_required: false
 demo_names: []
 issue_graph_notes:
@@ -62,7 +62,7 @@ lifecycle validator and doctor expectations for the slice.
 - the work product satisfies the `WP-03` outcome in
   `docs/milestones/v0.91.3/WP_ISSUE_WAVE_v0.91.3.yaml`
 - new durable card records for the proof live under
-  `workflow/c-sdlc/v0.91.3/issues/`
+  `docs/milestones/v0.91.3/review/evidence/csdlc/issues/`
 - validators accept the tracked bundle directly
 - doctor lifecycle expectations classify the tracked bundle correctly
 

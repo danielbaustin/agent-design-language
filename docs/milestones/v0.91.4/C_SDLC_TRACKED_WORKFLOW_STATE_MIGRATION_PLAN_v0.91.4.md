@@ -44,7 +44,7 @@ By default operation, durable C-SDLC records should live under this repo-local
 tracked namespace:
 
 ```text
-workflow/c-sdlc/
+docs/milestones/<version>/review/evidence/csdlc/
   <version>/
     issues/
     sprints/
@@ -53,13 +53,13 @@ workflow/c-sdlc/
 ```
 
 For `v0.91.4`, new durable workflow records should use
-`workflow/c-sdlc/v0.91.4/` unless a future migration issue deliberately changes
+`docs/milestones/v0.91.4/review/evidence/csdlc/` unless a future migration issue deliberately changes
 the namespace contract.
 
 Issue-local records should use a predictable issue directory such as:
 
 ```text
-workflow/c-sdlc/v0.91.4/issues/<issue-number>-<slug>/
+docs/milestones/v0.91.4/review/evidence/csdlc/issues/<issue-number>-<slug>/
   sip.md
   stp.md
   spp.md
@@ -73,12 +73,12 @@ workflow/c-sdlc/v0.91.4/issues/<issue-number>-<slug>/
 Sprint records should use the matching sprint namespace:
 
 ```text
-workflow/c-sdlc/v0.91.4/sprints/<sprint-id>/
+docs/milestones/v0.91.4/review/evidence/csdlc/sprints/<sprint-id>/
 ```
 
 The namespace is intentionally repo-local. In a large organization with many
 repositories, every repo can keep its own public, inspectable workflow truth
-under `workflow/c-sdlc/`, while organization-level systems index, mirror,
+under `docs/milestones/<version>/review/evidence/csdlc/`, while organization-level systems index, mirror,
 summarize, or feed ObsMem from those tracked records. The org-level system
 should not replace the repo-local source of truth.
 
@@ -186,11 +186,11 @@ longer silently local-only:
 
 - workflow skills classify durable versus ephemeral artifacts
 - editor skills write, normalize, or mirror durable card records under
-  `workflow/c-sdlc/<version>/issues/`
+  `docs/milestones/<version>/review/evidence/csdlc/issues/`
 - `spp-editor` preserves issue-local operative plan truth and refuses to widen
   `SPP` into sprint orchestration
 - sprint tooling writes canonical tracked sprint artifacts under
-  `workflow/c-sdlc/<version>/sprints/` by default
+  `docs/milestones/<version>/review/evidence/csdlc/sprints/` by default
 - closeout enforces durable record integration truth
 - SORs reference tracked signed trace bundles under the durable namespace when
   proof is durable

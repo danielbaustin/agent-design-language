@@ -30,7 +30,7 @@ The milestone must run:
   risks, and follow-on routing
 - tracked workflow-record path checks for durable C-SDLC cards, sprint state,
   closeout, reviews, proof packets, traces, and release evidence under
-  `workflow/c-sdlc/v0.91.4/`
+  `docs/milestones/v0.91.4/review/evidence/csdlc/`
 - signed trace bundle verification for durable C-SDLC proof
 - ObsMem ingestion check over tracked evidence
 
@@ -58,6 +58,6 @@ The milestone is blocked if:
   review, external review, remediation, next-milestone planning,
   next-milestone review, and release proof
 - durable C-SDLC records remain only in ignored `.adl` or `artifacts/` paths
-  instead of the documented `workflow/c-sdlc/v0.91.4/` namespace
+  instead of the documented `docs/milestones/v0.91.4/review/evidence/csdlc/` namespace
 - signed trace bundles are missing or unverifiable for durable C-SDLC proof
 - ObsMem ingestion depends on untracked local evidence

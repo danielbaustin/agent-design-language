@@ -207,6 +207,30 @@ is_reporting_only_coverage_workflow_change() {
       done
 }
 
+is_csdlc_evidence_namespace_policy_update() {
+  local path="$1"
+  [ "$path" = "adl/tools/ci_path_policy.sh" ] || return 1
+  git diff --unified=0 "$base_sha" "$head_sha" -- "$path" 2>/dev/null \
+    | while IFS= read -r line; do
+        case "$line" in
+          diff\ --git*|index\ *|@@*|---*|+++*)
+            continue
+            ;;
+          +*|-*)
+            local content="${line#?}"
+            case "$content" in
+              *"workflow/c-sdlc/v0.91.3/issues/"*|\
+              *"docs/milestones/v0.91.3/review/evidence/csdlc/issues/"*)
+                ;;
+              *)
+                return 1
+                ;;
+            esac
+            ;;
+        esac
+      done
+}
+
 is_release_truth_doc_surface() {
   local path="$1"
   case "$path" in
@@ -250,7 +274,7 @@ is_v0913_proof_surface() {
     adl/tools/demo_v0913_quality_gate.sh|\
     adl/tools/run_v0913_proof_validation_lane.sh|\
     adl/tools/test_run_v0913_proof_validation_lane.sh|\
-    workflow/c-sdlc/v0.91.3/issues/*)
+    docs/milestones/v0.91.3/review/evidence/csdlc/issues/*)
       return 0
       ;;
   esac
@@ -448,6 +472,12 @@ EOF
       if is_full_coverage_policy_surface "$path"; then
         if is_reporting_only_coverage_workflow_change "$path"; then
           reason="coverage_reporting_workflow_change_skips_authoritative_coverage"
+          continue
+        fi
+        if is_csdlc_evidence_namespace_policy_update "$path"; then
+          if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
+            reason="csdlc_evidence_namespace_policy_update_skips_authoritative_coverage"
+          fi
           continue
         fi
         if [ "$coverage_required" = true ] || [ "$demo_smoke_required" = true ]; then

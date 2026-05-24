@@ -36,13 +36,13 @@ evidence surfaces.
 Durable records should live under:
 
 ```text
-workflow/c-sdlc/<version>/
+docs/milestones/<version>/review/evidence/csdlc/
 ```
 
 The planned shape is:
 
 ```text
-workflow/c-sdlc/<version>/
+docs/milestones/<version>/review/evidence/csdlc/
   issues/
   sprints/
   evidence/

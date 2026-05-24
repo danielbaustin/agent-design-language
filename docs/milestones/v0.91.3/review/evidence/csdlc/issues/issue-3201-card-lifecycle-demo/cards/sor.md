@@ -14,16 +14,16 @@ Completed the tracked public `WP-03` proof bundle for the canonical
 
 ## Artifacts produced
 
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sip.md`
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/stp.md`
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/spp.md`
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/srp.md`
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sor.md`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/stp.md`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/srp.md`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md`
 
 ## Actions taken
 
 - Created a tracked public issue-local card bundle under
-  `workflow/c-sdlc/v0.91.3/issues/`.
+  `docs/milestones/v0.91.3/review/evidence/csdlc/issues/`.
 - Proved the bundle validates directly with the structured-prompt validator.
 - Proved the doctor lifecycle classifier accepts the tracked bundle as final
   review/output truth.
@@ -31,12 +31,12 @@ Completed the tracked public `WP-03` proof bundle for the canonical
 ## Main Repo Integration (REQUIRED)
 
 - Main-repo paths updated:
-  - `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md`
-  - `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sip.md`
-  - `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/stp.md`
-  - `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/spp.md`
-  - `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/srp.md`
-  - `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sor.md`
+  - `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/README.md`
+  - `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md`
+  - `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/stp.md`
+  - `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md`
+  - `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/srp.md`
+  - `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md`
 - Worktree-only paths remaining: none
 - Integration state: merged
 - Verification scope: main_repo
@@ -51,15 +51,15 @@ Completed the tracked public `WP-03` proof bundle for the canonical
 ## Validation
 
 - Validation commands and their purpose:
-  - `bash adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sip.md`
+  - `bash adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md`
     Verified the tracked public SIP bundle card.
-  - `bash adl/tools/validate_structured_prompt.sh --type stp --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/stp.md`
+  - `bash adl/tools/validate_structured_prompt.sh --type stp --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/stp.md`
     Verified the tracked public STP bundle card.
-  - `bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/spp.md`
+  - `bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md`
     Verified the tracked public SPP bundle card.
-  - `bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/srp.md`
+  - `bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/srp.md`
     Verified the tracked public SRP bundle card.
-  - `bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sor.md`
+  - `bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md`
     Verified the tracked public SOR bundle card.
   - `cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture`
     Verified the structured-prompt validator accepts the tracked public bundle.
@@ -83,11 +83,11 @@ verification_summary:
   validation:
     status: PASS
     checks_run:
-      - "bash adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sip.md"
-      - "bash adl/tools/validate_structured_prompt.sh --type stp --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/stp.md"
-      - "bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/spp.md"
-      - "bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/srp.md"
-      - "bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/sor.md"
+      - "bash adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md"
+      - "bash adl/tools/validate_structured_prompt.sh --type stp --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/stp.md"
+      - "bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md"
+      - "bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/srp.md"
+      - "bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md"
       - "cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture"
       - "cargo test --manifest-path adl/Cargo.toml card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture"
   determinism:
@@ -125,13 +125,13 @@ verification_summary:
 ## Replay Artifacts
 
 - Trace bundle path(s): not_applicable
-- Run artifact root: `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/`
+- Run artifact root: `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/`
 - Replay command used for verification: `cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture`
 - Replay result: PASS
 
 ## Artifact Verification
 
-- Primary proof surface: `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/`
+- Primary proof surface: `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/`
 - Required artifacts present: yes
 - Artifact schema/version checks: passed
 - Hash/byte-stability checks: not run

@@ -296,10 +296,10 @@ PY
   assert_has "$workflow_policy_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
 
   git checkout -q -b v0913-feature-proof-surface "$base_sha"
-  mkdir -p docs/milestones/v0.91.3/features workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo
+  mkdir -p docs/milestones/v0.91.3/features docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo
   printf '# feature proof\n' > docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md
-  printf '# tracked bundle\n' > workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md
-  git add docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md
+  printf '# tracked bundle\n' > docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/README.md
+  git add docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/README.md
   git commit -q -m v0913-feature-proof-surface
   v0913_feature_proof_head="$(git rev-parse HEAD)"
 

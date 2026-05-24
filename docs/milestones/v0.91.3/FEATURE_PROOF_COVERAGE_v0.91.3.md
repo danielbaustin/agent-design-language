@@ -28,7 +28,7 @@ reviewer-facing demo path when one exists.
 The milestone proof package should include:
 
 - transition manifest fixture and validator output
-- tracked public card bundle under `workflow/c-sdlc/v0.91.3/issues/`
+- tracked public card bundle under `docs/milestones/v0.91.3/review/evidence/csdlc/issues/`
 - actor-role reference fixture or manifest section
 - transition DAG fixture
 - evidence bundle fixture

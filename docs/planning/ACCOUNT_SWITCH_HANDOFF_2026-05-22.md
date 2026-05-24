@@ -98,7 +98,7 @@ software-development path:
 The documented durable workflow namespace is:
 
 ```text
-workflow/c-sdlc/v0.91.4/
+docs/milestones/v0.91.4/review/evidence/csdlc/
 ```
 
 Primary source files:

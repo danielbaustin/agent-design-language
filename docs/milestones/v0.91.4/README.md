@@ -54,7 +54,7 @@ issue bounds. It is public/tracked C-SDLC truth, but it is not sprint
 orchestration, review-result truth, or output truth.
 
 The durable workflow namespace for default operation is
-`workflow/c-sdlc/v0.91.4/`. Local `.adl/` state may support execution, but the
+`docs/milestones/v0.91.4/review/evidence/csdlc/`. Local `.adl/` state may support execution, but the
 public, inspectable C-SDLC record must live in tracked repo files.
 
 ## Boundaries
@@ -160,7 +160,7 @@ v0.91.4 is ready to close when:
 - evidence bundles and merge gates are repeatable
 - durable C-SDLC cards, sprint state, closeout, review, proof, trace, and
   release evidence are tracked in Git under the documented
-  `workflow/c-sdlc/v0.91.4/` namespace
+  `docs/milestones/v0.91.4/review/evidence/csdlc/` namespace
 - durable C-SDLC proof includes minimal signed trace bundles and verification
   results
 - ObsMem ingestion consumes tracked evidence, not untracked local lore

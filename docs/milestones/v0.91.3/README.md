@@ -78,7 +78,7 @@ The local `.adl/docs/TBD/cognitive-sdlc/` notes are drafting history. The
 tracked C-SDLC docs home and tracked source package are the branch-verifiable
 source map for the milestone.
 When durable workflow records are introduced, the first-slice target namespace
-is `workflow/c-sdlc/v0.91.3/`; local `.adl/` copies remain execution cache or
+is `docs/milestones/v0.91.3/review/evidence/csdlc/`; local `.adl/` copies remain execution cache or
 staging state, not sufficient public proof by themselves.
 
 ## Document Map
@@ -127,7 +127,7 @@ Cognitive State Transition that:
 - preserves GitHub issue, PR, CI, branch, human review, and closeout discipline
 - records an ObsMem handoff boundary
 - keeps the C-SDLC planning sources public, tracked, and auditable
-- defines or proves the `workflow/c-sdlc/v0.91.3/` namespace for durable
+- defines or proves the `docs/milestones/v0.91.3/review/evidence/csdlc/` namespace for durable
   workflow records
 - records trace/proof references that can become signed trace bundles in
   v0.91.4

@@ -9,8 +9,8 @@ execution surfaces.
 
 ## Namespace
 
-- `workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/`
-- `workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/cards/`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3200-card-schema-proof/`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3200-card-schema-proof/cards/`
 
 ## Source Promotion Boundary
 

@@ -5,8 +5,8 @@
 - `docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.json`
 - `docs/milestones/v0.91.3/review/obsmem_handoff/ct_demo_001_obsmem_handoff.md`
 - `docs/milestones/v0.91.3/review/obsmem_handoff/OBSMEM_HANDOFF_PROOF_PACKET_v0.91.3.md`
-- `workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/srp.md`
-- `workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/sor.md`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3203-evidence-bundle-proof/cards/srp.md`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3203-evidence-bundle-proof/cards/sor.md`
 - `adl/tools/validate_obsmem_handoff_packet.py`
 - `adl/tools/test_obsmem_handoff_packet.sh`
 

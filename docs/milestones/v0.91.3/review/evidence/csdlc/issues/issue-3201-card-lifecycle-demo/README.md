@@ -17,11 +17,11 @@ namespace rather than only inside local ignored `.adl/` issue bundles.
 The target public namespace for durable issue-local card records in the first
 slice is:
 
-- `workflow/c-sdlc/v0.91.3/issues/`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/`
 
 This demo bundle uses:
 
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards/`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/`
 
 ## Proof Surfaces
 

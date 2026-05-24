@@ -128,7 +128,7 @@ Related C-SDLC/tooling source docs:
 - `SPP` is consistently treated as issue-local operative execution-plan truth,
   not sprint orchestration, review truth, or output truth.
 - Durable workflow state is consistently routed to
-  `workflow/c-sdlc/v0.91.4/`.
+  `docs/milestones/v0.91.4/review/evidence/csdlc/`.
 - Signed trace proof and ObsMem ingestion are in scope and connected to tracked
   evidence.
 - GWS does not appear as canonical C-SDLC infrastructure in the reviewed
