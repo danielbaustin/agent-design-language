@@ -2,13 +2,13 @@
 
 Issue: #3312
 Date: 2026-05-24
-Status: rerun complete after template-shape fixes; generated drafts remain non-authoritative
+Status: rerun complete against stabilized template branch; generated drafts remain non-authoritative
 
 ## Scope
 
-This pilot generated the 10 canonical milestone planning documents from the active planning-template registry and compared those generated drafts against the existing v0.91.4 planning package.
+This pilot generated the 10 canonical milestone planning documents from the stabilized planning-template branch and compared those generated drafts against the existing v0.91.4 planning package.
 
-The pilot also fixed template-shape issues discovered by the first run, then reran generation and validation.
+Template-shape stabilization is split into #3315 / PR #3316. This pilot PR is stacked on that branch so #3312 remains a pilot/comparison issue rather than a hidden template-change issue.
 
 The final generated drafts were first written to ignored scratch space and then copied into tracked review evidence for PR inspection:
 
@@ -83,6 +83,20 @@ The generated VISION and DEMO_MATRIX now preserve the existing v0.91.4 heading s
 
 That is not a blocker. It means these templates are useful for future milestone setup and for expanding proof surfaces, but regenerating an existing mature milestone package still requires editorial judgment.
 
+
+### P2: Existing v0.91.4 docs outside the 10-doc template packet need explicit routing
+
+The source issue required the pilot to identify existing v0.91.4 docs that do not map cleanly to the current template family. The 10 generated milestone-packet docs map to the 10 canonical milestone templates, while these existing v0.91.4 docs remain outside the exercised packet:
+
+| Existing v0.91.4 document | Current template mapping | Classification | Recommended routing |
+| --- | --- | --- | --- |
+| `docs/milestones/v0.91.4/QUALITY_GATE_v0.91.4.md` | No direct 10-doc template counterpart | Unmapped quality/proof gate surface | Keep as milestone-specific proof doc or add a future `quality_gate` template if repeated across milestones |
+| `docs/milestones/v0.91.4/NEXT_MILESTONE_HANDOFF_v0.91.4.md` | No direct 10-doc template counterpart | Unmapped handoff/transition surface | Keep as milestone-specific handoff doc or add a future `next_milestone_handoff` template if repeated across milestones |
+| `docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md` | Adjacent to `feature_doc`, but not exercised here | Feature/proof-specific surface outside 10-doc milestone packet | Use a separate feature-doc pilot before claiming coverage |
+| `docs/milestones/v0.91.4/WP_ISSUE_WAVE_v0.91.4.yaml` | No Markdown planning-template counterpart | Operational issue-wave data, not a planning doc template | Keep as structured milestone execution data, not a generated Markdown planning doc |
+
+This means the 10-doc packet is structurally complete for canonical milestone planning, but the full v0.91.4 planning ecosystem still has milestone-specific proof, handoff, feature-coverage, and issue-wave surfaces that should not be silently forced into the 10-doc template family.
+
 ### P3: The `feature_doc` template remains available but unproven by this 10-doc pilot
 
 The registry includes `feature_doc`, so the available planning-template surface contains 11 templates. This pilot intentionally exercised the 10 canonical milestone packet docs only.
@@ -119,8 +133,9 @@ Recommendation: run a separate feature-doc pilot against one real feature planni
 1. Keep the current template set as the canonical substrate for draft generation.
 2. Add or document a milestone-package values model so values can be shared coherently across all 10 docs.
 3. Add planning-doc editor guidance for converting generated drafts into authoritative milestone docs.
-4. Run a separate `feature_doc` pilot against one feature-level planning surface.
-5. Decide whether future milestones should use the richer demo matrix template from the start rather than compact status-only demo matrices.
+4. Decide whether repeated quality-gate and next-milestone handoff docs should become first-class templates.
+5. Run a separate `feature_doc` pilot against one feature-level planning surface.
+6. Decide whether future milestones should use the richer demo matrix template from the start rather than compact status-only demo matrices.
 
 ## Bottom Line
 
