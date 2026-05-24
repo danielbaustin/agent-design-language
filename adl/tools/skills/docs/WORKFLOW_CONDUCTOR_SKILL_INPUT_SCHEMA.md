@@ -116,11 +116,11 @@ belong in the input payload rather than being guessed by the conductor.
 ## Example Invocation
 
 ```yaml
-Use $workflow-conductor at /Users/daniel/git/agent-design-language/adl/tools/skills/workflow-conductor/SKILL.md with this validated input:
+Use $workflow-conductor at <repo-root>/adl/tools/skills/workflow-conductor/SKILL.md with this validated input:
 
 skill_input_schema: workflow_conductor.v1
 mode: route_issue
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   issue_number: 1647
   slug: add-lightweight-workflow-conductor-skill

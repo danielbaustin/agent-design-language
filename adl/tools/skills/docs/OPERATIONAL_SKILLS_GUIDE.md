@@ -169,10 +169,10 @@ For deterministic use, prefer structured invocation over loose prose.
 The general pattern is:
 
 ```yaml
-Use $<skill-name> at /Users/daniel/git/agent-design-language/adl/tools/skills/<skill-name>/SKILL.md with this validated input:
+Use $<skill-name> at <repo-root>/adl/tools/skills/<skill-name>/SKILL.md with this validated input:
 skill_input_schema: <schema-id>
 mode: <mode>
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   ...
 policy:
@@ -395,10 +395,13 @@ Minimum:
   - `target.task_bundle_path`
   - `target.branch`
   - `target.worktree_path`
-- `target.pr_number`
+  - `target.pr_number`
 - explicit routing `mode`
 - explicit `policy`
 - optional `observed_state.subagent_assigned`
+
+`target.pr_number` is the required target identifier for `route_pr`; other
+routing modes may use any one concrete target identifier from the list above.
 
 Structured schema:
 
@@ -408,11 +411,11 @@ Structured schema:
 ### Example Invocation
 
 ```yaml
-Use $workflow-conductor at /Users/daniel/git/agent-design-language/adl/tools/skills/workflow-conductor/SKILL.md with this validated input:
+Use $workflow-conductor at <repo-root>/adl/tools/skills/workflow-conductor/SKILL.md with this validated input:
 
 skill_input_schema: workflow_conductor.v1
 mode: route_issue
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   issue_number: 1647
   slug: add-lightweight-workflow-conductor-skill
@@ -742,11 +745,11 @@ required source-prompt sections up front and reports the complete missing
 section set in one failure.
 
 ```yaml
-Use $pr-init at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-init/SKILL.md with this validated input:
+Use $pr-init at <repo-root>/adl/tools/skills/pr-init/SKILL.md with this validated input:
 
 skill_input_schema: pr_init.v1
 mode: create_and_bootstrap
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 issue:
   number: null
   title: "[v0.87][tools] Example issue"
@@ -851,11 +854,11 @@ It must stop before:
 ### Example Invocation
 
 ```yaml
-Use $pr-ready at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-ready/SKILL.md with this validated input:
+Use $pr-ready at <repo-root>/adl/tools/skills/pr-ready/SKILL.md with this validated input:
 
 skill_input_schema: pr_ready.v1
 mode: diagnose_issue
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   issue_number: 1299
   task_bundle_path: null
@@ -963,11 +966,11 @@ It must stop before:
 ### Example Invocation
 
 ```yaml
-Use $pr-run at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-run/SKILL.md with this validated input:
+Use $pr-run at <repo-root>/adl/tools/skills/pr-run/SKILL.md with this validated input:
 
 skill_input_schema: pr_run.v1
 mode: run_issue
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   issue_number: 1299
   task_bundle_path: null
@@ -1071,11 +1074,11 @@ It must stop before:
 ### Example Invocation
 
 ```yaml
-Use $pr-janitor at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-janitor/SKILL.md with this validated input:
+Use $pr-janitor at <repo-root>/adl/tools/skills/pr-janitor/SKILL.md with this validated input:
 
 skill_input_schema: pr_janitor.v1
 mode: watch_pr
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   pr_number: 1338
   pr_url: null
@@ -1185,16 +1188,16 @@ Structured schema:
 ### Example Invocation
 
 ```yaml
-Use $pr-closeout at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-closeout/SKILL.md with this validated input:
+Use $pr-closeout at <repo-root>/adl/tools/skills/pr-closeout/SKILL.md with this validated input:
 
 skill_input_schema: pr_closeout.v1
 mode: closeout_issue
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   issue_number: 1443
   pr_number: 1433
   branch: codex/1443-v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow
-  worktree_path: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1443
+  worktree_path: <repo-root>/.worktrees/adl-wp-<issue>
   root_stp_path: .adl/v0.87.1/tasks/issue-1443__v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow/stp.md
   root_sip_path: .adl/v0.87.1/tasks/issue-1443__v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow/sip.md
   root_sor_path: .adl/v0.87.1/tasks/issue-1443__v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow/sor.md
@@ -1567,11 +1570,11 @@ Structured schema:
 ### Example Invocation
 
 ```yaml
-Use $spp-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/spp-editor/SKILL.md with this validated input:
+Use $spp-editor at <repo-root>/adl/tools/skills/spp-editor/SKILL.md with this validated input:
 
 skill_input_schema: spp_editor.v1
 mode: tighten_for_review
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   spp_path: .adl/v0.91/tasks/issue-2701__example/spp.md
   issue_number: 2701
@@ -1635,11 +1638,11 @@ Structured schema:
 ### Example Invocation
 
 ```yaml
-Use $srp-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/srp-editor/SKILL.md with this validated input:
+Use $srp-editor at <repo-root>/adl/tools/skills/srp-editor/SKILL.md with this validated input:
 
 skill_input_schema: srp_editor.v1
 mode: record_review_results
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   srp_path: .adl/v0.91.2/tasks/issue-3066__example/srp.md
   issue_number: 3066
@@ -1710,11 +1713,11 @@ Structured schema:
 ### Example Invocation
 
 ```yaml
-Use $stp-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/stp-editor/SKILL.md with this validated input:
+Use $stp-editor at <repo-root>/adl/tools/skills/stp-editor/SKILL.md with this validated input:
 
 skill_input_schema: stp_editor.v1
 mode: tighten_for_review
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   stp_path: .adl/v0.87.1/tasks/issue-1419__v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces/stp.md
   issue_number: 1419
@@ -1783,16 +1786,16 @@ Structured schema:
 ### Example Invocation
 
 ```yaml
-Use $sip-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/sip-editor/SKILL.md with this validated input:
+Use $sip-editor at <repo-root>/adl/tools/skills/sip-editor/SKILL.md with this validated input:
 
 skill_input_schema: sip_editor.v1
 mode: repair_lifecycle_drift
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   sip_path: .adl/v0.87.1/tasks/issue-1419__v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces/sip.md
   issue_number: 1419
   branch: codex/1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces
-  worktree_path: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1419
+  worktree_path: <repo-root>/.worktrees/adl-wp-<issue>
   source_prompt_path: .adl/v0.87.1/bodies/issue-1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces.md
 policy:
   lifecycle_state: run_bound
@@ -1858,16 +1861,16 @@ Structured schema:
 ### Example Invocation
 
 ```yaml
-Use $sor-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/sor-editor/SKILL.md with this validated input:
+Use $sor-editor at <repo-root>/adl/tools/skills/sor-editor/SKILL.md with this validated input:
 
 skill_input_schema: sor_editor.v1
 mode: prepare_for_finish
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   sor_path: .adl/v0.87.1/tasks/issue-1419__v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces/sor.md
   issue_number: 1419
   branch: codex/1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces
-  worktree_path: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1419
+  worktree_path: <repo-root>/.worktrees/adl-wp-<issue>
   pr_number: null
 evidence:
   commands_run:
@@ -1992,10 +1995,10 @@ This skill is findings-only and must not edit code.
 ### Example Invocation
 
 ```yaml
-Use $repo-code-review at /Users/daniel/git/agent-design-language/adl/tools/skills/repo-code-review/SKILL.md with:
+Use $repo-code-review at <repo-root>/adl/tools/skills/repo-code-review/SKILL.md with:
 skill_input_schema: repo_code_review.v1
 mode: review_repository
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   target_path: null
   branch: null
@@ -2091,10 +2094,10 @@ It must stop before broader implementation, janitoring, or finish.
 ### Example Invocation
 
 ```yaml
-Use $test-generator at /Users/daniel/git/agent-design-language/adl/tools/skills/test-generator/SKILL.md with:
+Use $test-generator at <repo-root>/adl/tools/skills/test-generator/SKILL.md with:
 skill_input_schema: test_generator.v1
 mode: generate_for_issue
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   issue_number: 1769
   diff_base: null
@@ -2191,10 +2194,10 @@ It must stop before demo implementation, release-evidence assembly, or unrelated
 ### Example Invocation
 
 ```yaml
-Use $demo-operator at /Users/daniel/git/agent-design-language/adl/tools/skills/demo-operator/SKILL.md with:
+Use $demo-operator at <repo-root>/adl/tools/skills/demo-operator/SKILL.md with:
 skill_input_schema: demo_operator.v1
 mode: operate_named_demo
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   demo_name: gemma4_issue_clerk
   demo_command: bash adl/tools/demo_v089_gemma4_issue_clerk.sh --dry-run
@@ -2384,10 +2387,10 @@ unbounded research.
 ### Example Invocation
 
 ```yaml
-Use $arxiv-paper-writer at /Users/daniel/git/agent-design-language/adl/tools/skills/arxiv-paper-writer/SKILL.md with:
+Use $arxiv-paper-writer at <repo-root>/adl/tools/skills/arxiv-paper-writer/SKILL.md with:
 skill_input_schema: arxiv_paper_writer.v1
 mode: draft_from_source_packet
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   source_packet_path: demos/v0.89.1/arxiv_manuscript_workflow_demo.md
   source_packet_text: null
@@ -2524,10 +2527,10 @@ unsupported visual claims.
 ### Example Invocation
 
 ```yaml
-Use $diagram-author at /Users/daniel/git/agent-design-language/adl/tools/skills/diagram-author/SKILL.md with:
+Use $diagram-author at <repo-root>/adl/tools/skills/diagram-author/SKILL.md with:
 skill_input_schema: diagram_author.v1
 mode: draft_from_issue
-repo_root: /Users/daniel/git/agent-design-language
+repo_root: <repo-root>
 target:
   source_packet_path: null
   source_packet_text: null
