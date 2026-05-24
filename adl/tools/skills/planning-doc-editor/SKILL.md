@@ -40,6 +40,7 @@ Examples:
 - a sprint plan says it is approved when only generation occurred
 - a demo matrix has stale milestone labels
 - a release plan includes absolute host paths or temp paths
+- a planning-template registry or generated draft records resolved host paths
 - a planning packet needs status wording normalized before review
 
 Do not use this skill for:
@@ -123,6 +124,8 @@ those sources.
 Classify defects before editing:
 - unresolved placeholders
 - missing required sections
+- absolute registered template paths
+- generated-draft provenance that records resolved host paths
 - stale milestone or sprint claims
 - generated/reviewed/approved status drift
 - unsupported release or PR claims
@@ -145,6 +148,7 @@ Allowed edits:
 - normalize status labels such as `generated`, `draft`, `reviewed`, or
   `approved`
 - repair repo-relative links and portable paths
+- preserve repo-relative template provenance in generated planning docs
 - clarify validation that was run, not run, or deferred
 - add a short residual-risk or follow-up section when needed
 
@@ -161,6 +165,7 @@ Use the smallest validation that proves the edit:
 - placeholder scan for generated docs
 - required-section check when a template contract exists
 - portable-path scan when docs may be published
+- helper invocation from a non-repo cwd when path portability is the defect
 - markdown link/path check when links are part of the defect
 
 If validation is not run, record why.
