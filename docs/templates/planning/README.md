@@ -15,6 +15,22 @@ embedded in prose.
 - Placeholder style: stable identifier-style angle-bracket placeholders such as
   `<version>` and `<milestone_title>`
 
+## Path Portability Contract
+
+Registry template paths are repo-relative contract paths. They must stay
+relative, such as `docs/templates/planning/1.0.0/readme.md`; absolute host paths
+are rejected as non-portable.
+
+The helper scripts resolve registered template paths relative to the registry's
+repository root, not the caller's current shell directory. This means the same
+registry can be used from the repository root or from another working directory
+when explicit paths are supplied for the registry, values, input, and output
+files.
+
+Generated Markdown records repo-relative template provenance in its header. It
+must not record resolved host paths such as user home directories, temporary
+worktree paths, or machine-local checkout roots.
+
 ## Template-Filled Does Not Mean Reviewed
 
 Planning-template validation is structural. It can prove that a draft has the
@@ -30,7 +46,7 @@ records, release records, or explicit human decisions.
 - `1.0.0/` is immutable after adoption except for obvious typo fixes.
 - Future semantic changes create a new SemVer directory, such as `1.1.0/` or
   `2.0.0/`, then update `current.json`.
-- Tools should resolve active paths from `current.json` when practical.
+- Tools resolve active paths from `current.json`.
 
 ## Template Objects
 
@@ -77,11 +93,33 @@ python3 adl/tools/validate_planning_template.py \
   --input docs/templates/planning/fixtures/minimal/readme_generated.md
 ```
 
+The same commands can run from another working directory with symbolic absolute
+inputs:
+
+```bash
+REPO="$(pwd)"
+ADL_TMP="${TMPDIR:-/tmp}"
+cd "$ADL_TMP"
+
+python3 "$REPO/adl/tools/fill_planning_template.py" \
+  --registry "$REPO/docs/templates/planning/current.json" \
+  --template readme \
+  --values "$REPO/docs/templates/planning/fixtures/minimal/readme_values.json" \
+  --output "$ADL_TMP/adl-planning-readme.md"
+
+python3 "$REPO/adl/tools/validate_planning_template.py" \
+  --registry "$REPO/docs/templates/planning/current.json" \
+  --template readme \
+  --input "$ADL_TMP/adl-planning-readme.md"
+```
+
 The validator checks:
 
 - registry JSON parses
 - selected template registry entry exists, is active, and points to an existing
   file under the active template root
+- registered template paths are relative and contained within the active
+  template root
 - required sections for the selected template are present
 - unresolved identifier-style angle-bracket or legacy curly placeholders are
   absent from filled outputs

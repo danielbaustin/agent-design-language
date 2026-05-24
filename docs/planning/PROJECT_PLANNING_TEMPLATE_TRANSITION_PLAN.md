@@ -1,10 +1,10 @@
 # Project Planning Template Transition Plan
 
-Status: draft transition plan for issue `#3303`
+Status: current planning-template transition contract
 
 Version target: `v0.91.3`
 
-Related substrate issue: `#3302`
+Related issues: `#3302`, `#3303`, `#3308`, `#3310`
 
 ## Purpose
 
@@ -80,19 +80,25 @@ The first generator should be intentionally boring.
 Required behavior:
 
 - read `docs/templates/planning/current.json`
+- resolve registry template paths relative to the registry/repo root, not cwd
+- reject absolute registered template paths as non-portable
 - select one named planning document type
 - fill declared placeholders from an explicit input map
 - write the generated document to an explicit output path
 - stamp template version and generation status
+- record repo-relative template provenance, not resolved host paths
 - avoid hidden defaults that create false milestone truth
 
 Suggested command shape:
 
 ```bash
+ADL_TMP="${TMPDIR:-/tmp}"
+
 python3 adl/tools/fill_planning_template.py \
+  --registry docs/templates/planning/current.json \
   --template readme \
   --values examples/planning/values/minimal.json \
-  --output /tmp/adl-planning-fixture/README.md
+  --output "$ADL_TMP/adl-planning-fixture.md"
 ```
 
 ### Phase 3: Validation Contract
@@ -103,6 +109,8 @@ Required behavior:
 
 - fail on unresolved placeholders
 - fail on missing required sections for the selected document type
+- fail on absolute registered template paths
+- use path-aware template-root containment checks rather than string prefixes
 - report the template version used
 - report generated, reviewed, and approved status truth separately
 - avoid treating validation as approval
@@ -110,9 +118,32 @@ Required behavior:
 Suggested command shape:
 
 ```bash
+ADL_TMP="${TMPDIR:-/tmp}"
+
 python3 adl/tools/validate_planning_template.py \
+  --registry docs/templates/planning/current.json \
   --template readme \
-  --input /tmp/adl-planning-fixture/README.md
+  --input "$ADL_TMP/adl-planning-fixture.md"
+```
+
+Non-repo-cwd invocation should use symbolic paths rather than machine-local
+paths:
+
+```bash
+REPO="$(pwd)"
+ADL_TMP="${TMPDIR:-/tmp}"
+cd "$ADL_TMP"
+
+python3 "$REPO/adl/tools/fill_planning_template.py" \
+  --registry "$REPO/docs/templates/planning/current.json" \
+  --template readme \
+  --values "$REPO/docs/templates/planning/fixtures/minimal/readme_values.json" \
+  --output "$ADL_TMP/adl-planning-fixture.md"
+
+python3 "$REPO/adl/tools/validate_planning_template.py" \
+  --registry "$REPO/docs/templates/planning/current.json" \
+  --template readme \
+  --input "$ADL_TMP/adl-planning-fixture.md"
 ```
 
 Minimum first-slice document types:
@@ -171,8 +202,10 @@ Migration rules:
 
 - `generate` command reads a versioned registry.
 - `generate` command writes explicit generation metadata.
+- generated Markdown records repo-relative template provenance.
 - `validate` command rejects unresolved placeholders.
 - `validate` command checks required sections.
+- `validate` command rejects absolute registered template paths.
 - `validate` command does not mark review or approval.
 - `planning-doc-editor` skill exists and has a clear stop boundary.
 - `workflow-conductor` routes planning-doc defects to `planning-doc-editor`.
