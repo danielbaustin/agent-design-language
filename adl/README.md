@@ -24,9 +24,9 @@ It provides:
 ## Current Status
 
 - Current active milestone in the main repo: **v0.91.3**
-- Current release state: **Sprint 4 has completed proof coverage, the quality
-  gate, and the docs review pass; `WP-13` / `#3208` is the next
-  internal-review gate**
+- Current release state: **Sprint 4 has completed proof coverage, quality gate,
+  docs review, and second internal-review remediation; `WP-14` / `#3229` is the
+  active third-party review handoff gate**
 - Most recently completed milestone in the main repo: **v0.91.2**
 - Current crate version on the active release line: **0.91.3**
 
@@ -39,9 +39,9 @@ This README describes the runtime as it exists on the current `main` branch and 
 v0.91.3 is the active milestone. The runtime-adjacent work centers on the first
 bounded Cognitive SDLC slice: tracked issue cards, transition manifest and DAG,
 review/evidence convergence, merge-readiness truth, ObsMem handoff, and the
-first measured proof surface. Sprint 4 has completed proof coverage, the
-quality gate, and the docs review pass; `WP-13` / `#3208` is the next
-internal-review gate.
+first measured proof surface. Sprint 4 has completed proof coverage, quality
+gate, docs review, and second internal-review remediation; `WP-14` / `#3229` is
+the active third-party review handoff gate.
 
 Highlights:
 - one bounded Cognitive State Transition proof stack

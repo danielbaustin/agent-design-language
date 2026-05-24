@@ -74,12 +74,12 @@ This package is grounded in:
 - `docs/tooling/structured-prompt-contracts.md`
 - `docs/tooling/srp-sor-obsmem-handoff-v0.91.2.md`
 
-The local `.adl/docs/TBD/cognitive-sdlc/` notes are drafting history. The
-tracked C-SDLC docs home and tracked source package are the branch-verifiable
-source map for the milestone.
-When durable workflow records are introduced, the first-slice target namespace
-is `docs/milestones/v0.91.3/review/evidence/csdlc/`; local `.adl/` copies remain execution cache or
-staging state, not sufficient public proof by themselves.
+Historical drafting notes are not part of the public review packet. The tracked
+C-SDLC docs home and tracked source package are the branch-verifiable source
+map for the milestone.
+The first-slice durable workflow-record namespace is
+`docs/milestones/v0.91.3/review/evidence/csdlc/`; only tracked repo state
+counts as public proof for third-party review.
 
 ## Document Map
 
@@ -101,6 +101,8 @@ staging state, not sufficient public proof by themselves.
 - Quality gate: [QUALITY_GATE_v0.91.3.md](QUALITY_GATE_v0.91.3.md)
 - Quality-gate review surface:
   [review/quality_gate/README.md](review/quality_gate/README.md)
+- Third-party review handoff:
+  [ADL_v0.91.3_THIRD_PARTY_REVIEW_HANDOFF.md](ADL_v0.91.3_THIRD_PARTY_REVIEW_HANDOFF.md)
 - Release plan: [RELEASE_PLAN_v0.91.3.md](RELEASE_PLAN_v0.91.3.md)
 - Release notes: [RELEASE_NOTES_v0.91.3.md](RELEASE_NOTES_v0.91.3.md)
 - Milestone checklist:
