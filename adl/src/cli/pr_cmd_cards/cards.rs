@@ -1,6 +1,7 @@
 use anyhow::{bail, Context, Result};
 use chrono::Utc;
 use serde_json::Value;
+use serde_yaml::Value as YamlValue;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -26,108 +27,122 @@ pub(crate) fn ensure_task_bundle_stp(
     source_path: &Path,
 ) -> Result<PathBuf> {
     let stp_path = issue_ref.task_bundle_stp_path(root);
-    if !stp_path.is_file() {
+    let stp_invalid = stp_path.is_file() && validate_bootstrap_stp(root, &stp_path).is_err();
+    if stp_invalid || prompt_surface_needs_template_refresh(&stp_path)? {
         if let Some(parent) = stp_path.parent() {
             fs::create_dir_all(parent)?;
         }
-        if let Some(mut text) = try_read_prompt_template(root, "stp") {
-            let prompt = fs::read_to_string(source_path).unwrap_or_default();
-            let source_rel = path_relative_to_repo(root, source_path);
-            let title = issue_ref.slug().replace('-', " ");
-            let summary = issue_prompt_section(&prompt, "Summary")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| format!("Issue-local task surface for {title}."));
-            let goal = issue_prompt_section(&prompt, "Goal")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| "Refine the linked source issue prompt goal.".to_string());
-            let required_outcome = issue_prompt_section(&prompt, "Required Outcome")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| {
-                    "Refine the linked source issue prompt required outcome.".to_string()
-                });
-            let deliverables = issue_prompt_section(&prompt, "Deliverables")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| {
-                    "Refine source issue deliverables before execution.".to_string()
-                });
-            let acceptance = issue_prompt_section(&prompt, "Acceptance Criteria")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| {
-                    "Refine source issue acceptance criteria before execution.".to_string()
-                });
-            let repo_inputs = issue_prompt_section(&prompt, "Repo Inputs")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| source_rel.clone());
-            let dependencies = issue_prompt_section(&prompt, "Dependencies")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| "none recorded in source issue prompt".to_string());
-            let target_surfaces = repo_inputs.clone();
-            let validation_plan = issue_prompt_section(&prompt, "Validation Plan")
-                .or_else(|| issue_prompt_section(&prompt, "Tooling Notes"))
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| {
-                    "Run the smallest proving validation for the touched surface and record it in SOR."
-                        .to_string()
-                });
-            let demo_requirements = issue_prompt_section(&prompt, "Demo Expectations")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| {
-                    "No demo required unless the source issue says otherwise.".to_string()
-                });
-            let non_goals = issue_prompt_section(&prompt, "Non-goals")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| {
-                    "Do not widen scope beyond the linked source issue prompt.".to_string()
-                });
-            let issue_graph_notes = issue_prompt_section(&prompt, "Issue-Graph Notes")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| {
-                    "Preserve issue graph truth from the linked source issue prompt.".to_string()
-                });
-            let notes_risks = issue_prompt_section(&prompt, "Notes")
-                .map(|value| one_line_summary(&value))
-                .unwrap_or_else(|| "Update this card if execution reality diverges.".to_string());
-            apply_template_values(
-                &mut text,
-                &[
-                    ("<issue>", issue_ref.issue_number().to_string()),
-                    ("<issue_padded>", issue_ref.padded_issue_number().to_string()),
-                    ("<version>", issue_ref.scope().to_string()),
-                    ("<slug>", issue_ref.slug().to_string()),
-                    ("<title>", title.clone()),
-                    ("<branch>", "not bound yet".to_string()),
-                    ("<source_issue_prompt>", source_rel.clone()),
-                    ("<wp>", "process".to_string()),
-                    ("<required_outcome_type>", "code".to_string()),
-                    ("<demo_required>", "false".to_string()),
-                    (
-                        "<issue_graph_note>",
-                        "Versioned C-SDLC prompt template applied; source issue prompt remains the design-time intent source."
-                            .to_string(),
-                    ),
-                    ("<summary>", summary),
-                    ("<goal>", goal),
-                    ("<required_outcome>", required_outcome),
-                    ("<deliverables>", deliverables),
-                    ("<acceptance_criteria>", acceptance),
-                    ("<repo_inputs>", repo_inputs),
-                    ("<dependencies>", dependencies),
-                    ("<target_files_surfaces>", target_surfaces),
-                    ("<validation_plan>", validation_plan),
-                    ("<demo_proof_requirements>", demo_requirements),
-                    ("<non_goals>", non_goals),
-                    ("<issue_graph_notes>", issue_graph_notes),
-                    ("<notes_risks>", notes_risks),
-                    (
-                        "<tooling_notes>",
-                        "Generated from docs/templates/prompts/1.0.0/.".to_string(),
-                    ),
-                ],
-            );
-            fs::write(&stp_path, text)?;
-        } else {
-            fs::copy(source_path, &stp_path)?;
-        }
+        let mut text = read_prompt_template(root, "stp", &[])?;
+        let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string();
+        let prompt = fs::read_to_string(source_path).unwrap_or_default();
+        let metadata = SourcePromptMetadata::from_prompt(&prompt);
+        let source_rel = path_relative_to_repo(root, source_path);
+        let title = metadata
+            .title
+            .clone()
+            .unwrap_or_else(|| issue_ref.slug().replace('-', " "));
+        let wp = metadata.wp.as_deref().unwrap_or("process").to_string();
+        let required_outcome_type = metadata
+            .required_outcome_type
+            .first()
+            .cloned()
+            .unwrap_or_else(|| "code".to_string());
+        let demo_required = metadata
+            .demo_required
+            .map(|value| value.to_string())
+            .unwrap_or_else(|| "false".to_string());
+        let summary = issue_prompt_section(&prompt, "Summary")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| format!("Issue-local task surface for {title}."));
+        let goal = issue_prompt_section(&prompt, "Goal")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| "Refine the linked source issue prompt goal.".to_string());
+        let required_outcome = issue_prompt_section(&prompt, "Required Outcome")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| {
+                "Refine the linked source issue prompt required outcome.".to_string()
+            });
+        let deliverables = issue_prompt_section(&prompt, "Deliverables")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| "Refine source issue deliverables before execution.".to_string());
+        let acceptance = issue_prompt_section(&prompt, "Acceptance Criteria")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| {
+                "Refine source issue acceptance criteria before execution.".to_string()
+            });
+        let repo_inputs = issue_prompt_section(&prompt, "Repo Inputs")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| source_rel.clone());
+        let dependencies = issue_prompt_section(&prompt, "Dependencies")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| "none recorded in source issue prompt".to_string());
+        let target_surfaces = repo_inputs.clone();
+        let validation_plan = issue_prompt_section(&prompt, "Validation Plan")
+            .or_else(|| issue_prompt_section(&prompt, "Tooling Notes"))
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| {
+                "Run the smallest proving validation for the touched surface and record it in SOR."
+                    .to_string()
+            });
+        let demo_requirements = issue_prompt_section(&prompt, "Demo Expectations")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| {
+                "No demo required unless the source issue says otherwise.".to_string()
+            });
+        let non_goals = issue_prompt_section(&prompt, "Non-goals")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| {
+                "Do not widen scope beyond the linked source issue prompt.".to_string()
+            });
+        let issue_graph_notes = issue_prompt_section(&prompt, "Issue-Graph Notes")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| {
+                "Preserve issue graph truth from the linked source issue prompt.".to_string()
+            });
+        let notes_risks = issue_prompt_section(&prompt, "Notes")
+            .map(|value| one_line_summary(&value))
+            .unwrap_or_else(|| "Update this card if execution reality diverges.".to_string());
+        apply_template_values(
+            &mut text,
+            &[
+                ("<issue>", issue_ref.issue_number().to_string()),
+                ("<issue_padded>", issue_ref.padded_issue_number().to_string()),
+                ("<version>", issue_ref.scope().to_string()),
+                ("<slug>", issue_ref.slug().to_string()),
+                ("<title>", title.clone()),
+                ("<branch>", "not bound yet".to_string()),
+                ("<timestamp>", timestamp),
+                ("<card_status>", "ready".to_string()),
+                ("<source_issue_prompt>", source_rel.clone()),
+                ("<wp>", wp),
+                ("<required_outcome_type>", required_outcome_type),
+                ("<demo_required>", demo_required),
+                (
+                    "<issue_graph_note>",
+                    "Versioned C-SDLC prompt template applied; source issue prompt remains the design-time intent source."
+                        .to_string(),
+                ),
+                ("<summary>", summary),
+                ("<goal>", goal),
+                ("<required_outcome>", required_outcome),
+                ("<deliverables>", deliverables),
+                ("<acceptance_criteria>", acceptance),
+                ("<repo_inputs>", repo_inputs),
+                ("<dependencies>", dependencies),
+                ("<target_files_surfaces>", target_surfaces),
+                ("<validation_plan>", validation_plan),
+                ("<demo_proof_requirements>", demo_requirements),
+                ("<non_goals>", non_goals),
+                ("<issue_graph_notes>", issue_graph_notes),
+                ("<notes_risks>", notes_risks),
+                (
+                    "<tooling_notes>",
+                    "Generated from docs/templates/prompts/1.0.0/.".to_string(),
+                ),
+            ],
+        );
+        apply_stp_metadata_values(&mut text, &metadata, &source_rel);
+        fs::write(&stp_path, text)?;
     }
     validate_bootstrap_stp(root, &stp_path)?;
     Ok(stp_path)
@@ -162,7 +177,237 @@ fn plan_card_needs_design_time_refresh(path: &Path) -> Result<bool> {
         .with_context(|| format!("failed to read SPP at {}", path.display()))?;
     Ok(text.contains("Bootstrap-generated SPP")
         || text.contains("Bootstrap planning surface for this issue")
-        || text.contains("Review the issue bundle and tighten the planned execution sequence."))
+        || text.contains("Review the issue bundle and tighten the planned execution sequence.")
+        || text.contains("activation_state: \"design_time_ready\""))
+}
+
+fn prompt_surface_needs_template_refresh(path: &Path) -> Result<bool> {
+    if !path.is_file() {
+        return Ok(true);
+    }
+    let text = fs::read_to_string(path)
+        .with_context(|| format!("failed to read prompt surface at {}", path.display()))?;
+    Ok(text.contains("[summary truncated]") || contains_prompt_template_placeholder(&text))
+}
+
+fn contains_prompt_template_placeholder(text: &str) -> bool {
+    let mut chars = text.char_indices().peekable();
+    while let Some((start, ch)) = chars.next() {
+        if ch != '<' {
+            continue;
+        }
+        let mut end = None;
+        while let Some(&(idx, next)) = chars.peek() {
+            chars.next();
+            if next == '>' {
+                end = Some(idx);
+                break;
+            }
+        }
+        let Some(end_idx) = end else {
+            break;
+        };
+        let candidate = &text[start + 1..end_idx];
+        if !candidate.is_empty()
+            && candidate
+                .chars()
+                .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
+        {
+            return true;
+        }
+    }
+    false
+}
+
+#[derive(Default)]
+struct SourcePromptMetadata {
+    title: Option<String>,
+    wp: Option<String>,
+    labels: Vec<String>,
+    depends_on: Vec<String>,
+    required_outcome_type: Vec<String>,
+    repo_inputs: Vec<String>,
+    canonical_files: Vec<String>,
+    demo_required: Option<bool>,
+}
+
+impl SourcePromptMetadata {
+    fn from_prompt(text: &str) -> Self {
+        let mut out = Self::default();
+        for value in yaml_front_matter_documents(text) {
+            let Some(mapping) = value.as_mapping() else {
+                continue;
+            };
+            if out.title.is_none() {
+                out.title = yaml_string_field(mapping, "title");
+            }
+            if out.wp.is_none() {
+                out.wp = yaml_string_field(mapping, "wp");
+            }
+            merge_strings(
+                &mut out.labels,
+                yaml_string_sequence_field(mapping, "labels"),
+            );
+            merge_strings(
+                &mut out.depends_on,
+                yaml_string_sequence_field(mapping, "depends_on"),
+            );
+            merge_strings(
+                &mut out.required_outcome_type,
+                yaml_string_sequence_field(mapping, "required_outcome_type"),
+            );
+            merge_strings(
+                &mut out.repo_inputs,
+                yaml_string_sequence_field(mapping, "repo_inputs"),
+            );
+            merge_strings(
+                &mut out.canonical_files,
+                yaml_string_sequence_field(mapping, "canonical_files"),
+            );
+            if out.demo_required.is_none() {
+                out.demo_required = yaml_bool_field(mapping, "demo_required");
+            }
+        }
+        out
+    }
+}
+
+fn apply_stp_metadata_values(text: &mut String, metadata: &SourcePromptMetadata, source_rel: &str) {
+    if !metadata.labels.is_empty() {
+        replace_top_level_yaml_field(
+            text,
+            "labels",
+            &yaml_sequence_field("labels", &metadata.labels),
+        );
+    }
+    if !metadata.depends_on.is_empty() {
+        replace_top_level_yaml_field(
+            text,
+            "depends_on",
+            &yaml_sequence_field("depends_on", &metadata.depends_on),
+        );
+    }
+    if !metadata.required_outcome_type.is_empty() {
+        replace_top_level_yaml_field(
+            text,
+            "required_outcome_type",
+            &yaml_sequence_field("required_outcome_type", &metadata.required_outcome_type),
+        );
+    }
+    let repo_inputs = if metadata.repo_inputs.is_empty() {
+        vec![source_rel.to_string()]
+    } else {
+        metadata.repo_inputs.clone()
+    };
+    replace_top_level_yaml_field(
+        text,
+        "repo_inputs",
+        &yaml_sequence_field("repo_inputs", &repo_inputs),
+    );
+    if !metadata.canonical_files.is_empty() {
+        replace_top_level_yaml_field(
+            text,
+            "canonical_files",
+            &yaml_sequence_field("canonical_files", &metadata.canonical_files),
+        );
+    }
+}
+
+fn yaml_front_matter_documents(text: &str) -> Vec<YamlValue> {
+    let normalized = text.replace("\r\n", "\n");
+    let mut docs = Vec::new();
+    let mut rest = normalized.as_str();
+    while let Some(start) = rest.find("---\n") {
+        let after_start = &rest[start + 4..];
+        let Some(end) = after_start.find("\n---\n") else {
+            break;
+        };
+        let front_matter = &after_start[..end];
+        if let Ok(value) = serde_yaml::from_str(front_matter) {
+            docs.push(value);
+        }
+        rest = &after_start[end + 5..];
+    }
+    docs
+}
+
+fn yaml_string_field(mapping: &serde_yaml::Mapping, key: &str) -> Option<String> {
+    mapping
+        .get(YamlValue::String(key.to_string()))
+        .and_then(YamlValue::as_str)
+        .map(ToString::to_string)
+}
+
+fn yaml_bool_field(mapping: &serde_yaml::Mapping, key: &str) -> Option<bool> {
+    mapping
+        .get(YamlValue::String(key.to_string()))
+        .and_then(YamlValue::as_bool)
+}
+
+fn yaml_string_sequence_field(mapping: &serde_yaml::Mapping, key: &str) -> Vec<String> {
+    let Some(value) = mapping.get(YamlValue::String(key.to_string())) else {
+        return Vec::new();
+    };
+    if let Some(sequence) = value.as_sequence() {
+        return sequence.iter().filter_map(yaml_scalar_to_string).collect();
+    }
+    yaml_scalar_to_string(value).into_iter().collect()
+}
+
+fn yaml_scalar_to_string(value: &YamlValue) -> Option<String> {
+    if let Some(value) = value.as_str() {
+        return Some(value.to_string());
+    }
+    if let Some(value) = value.as_i64() {
+        return Some(value.to_string());
+    }
+    if let Some(value) = value.as_u64() {
+        return Some(value.to_string());
+    }
+    if let Some(value) = value.as_bool() {
+        return Some(value.to_string());
+    }
+    None
+}
+
+fn merge_strings(target: &mut Vec<String>, values: Vec<String>) {
+    for value in values {
+        if !target.contains(&value) {
+            target.push(value);
+        }
+    }
+}
+
+fn yaml_sequence_field(key: &str, values: &[String]) -> String {
+    if values.is_empty() {
+        return format!("{key}: []");
+    }
+    let lines = values
+        .iter()
+        .map(|value| format!("  - \"{}\"", value.replace('"', "\\\"")))
+        .collect::<Vec<_>>()
+        .join("\n");
+    format!("{key}:\n{lines}")
+}
+
+fn replace_top_level_yaml_field(text: &mut String, key: &str, replacement: &str) {
+    let mut lines = text.lines().map(ToString::to_string).collect::<Vec<_>>();
+    let Some(start) = lines
+        .iter()
+        .position(|line| line == &format!("{key}:") || line.starts_with(&format!("{key}: ")))
+    else {
+        return;
+    };
+    let mut end = start + 1;
+    while end < lines.len() && (lines[end].starts_with("  ") || lines[end].trim().is_empty()) {
+        end += 1;
+    }
+    let replacement_lines = replacement
+        .lines()
+        .map(ToString::to_string)
+        .collect::<Vec<_>>();
+    lines.splice(start..end, replacement_lines);
+    *text = format!("{}\n", lines.join("\n"));
 }
 
 pub(crate) fn sync_root_task_bundle_into_worktree(
@@ -301,7 +546,7 @@ fn ensure_bootstrap_cards_with_mode(
     if bundle_stp_created {
         validate_authored_prompt_surface("start", &bundle_stp, PromptSurfaceKind::Stp)?;
     }
-    if !bundle_input.is_file()
+    if prompt_surface_needs_template_refresh(&bundle_input)?
         || prompt_surface_is_bootstrap_stub(&bundle_input, PromptSurfaceKind::Sip)?
     {
         write_input_card(
@@ -316,19 +561,21 @@ fn ensure_bootstrap_cards_with_mode(
     } else if bind_existing_cards && field_line_value(&bundle_input, "Branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_input, "Branch", branch)?;
     }
-    if !bundle_output.is_file()
+    if prompt_surface_needs_template_refresh(&bundle_output)?
         || !output_card_title_matches_slug(&bundle_output, issue_ref.slug())?
     {
         write_output_card(root, &bundle_output, issue_ref, title, branch)?;
     } else if bind_existing_cards && field_line_value(&bundle_output, "Branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_output, "Branch", branch)?;
     }
-    if !bundle_plan.is_file() || plan_card_needs_design_time_refresh(&bundle_plan)? {
+    if prompt_surface_needs_template_refresh(&bundle_plan)?
+        || plan_card_needs_design_time_refresh(&bundle_plan)?
+    {
         write_plan_card(root, &bundle_plan, issue_ref, title, branch, source_path)?;
     } else if bind_existing_cards && field_line_value(&bundle_plan, "branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_plan, "branch", &format!("\"{branch}\""))?;
     }
-    if !bundle_review_policy.is_file() {
+    if prompt_surface_needs_template_refresh(&bundle_review_policy)? {
         write_review_policy_card(root, &bundle_review_policy, issue_ref, title, branch)?;
     } else if bind_existing_cards
         && field_line_value(&bundle_review_policy, "branch")?.trim() != branch
@@ -383,7 +630,7 @@ pub(crate) fn write_output_card(
     title: &str,
     branch: &str,
 ) -> Result<()> {
-    let text = render_bootstrap_output_card(repo_root, issue_ref, title, branch);
+    let text = render_bootstrap_output_card(repo_root, issue_ref, title, branch)?;
     fs::write(path, text)?;
     Ok(())
 }
@@ -396,7 +643,7 @@ pub(crate) fn write_plan_card(
     branch: &str,
     source_path: &Path,
 ) -> Result<()> {
-    let text = render_bootstrap_plan_card(repo_root, issue_ref, title, branch, source_path);
+    let text = render_bootstrap_plan_card(repo_root, issue_ref, title, branch, source_path)?;
     fs::write(path, text)?;
     Ok(())
 }
@@ -408,7 +655,7 @@ pub(crate) fn write_review_policy_card(
     title: &str,
     branch: &str,
 ) -> Result<()> {
-    let text = render_bootstrap_review_policy_card(repo_root, issue_ref, title, branch);
+    let text = render_bootstrap_review_policy_card(repo_root, issue_ref, title, branch)?;
     fs::write(path, text)?;
     Ok(())
 }
@@ -448,6 +695,8 @@ fn write_input_card(
             ("<slug>", issue_ref.slug().to_string()),
             ("<title>", title.to_string()),
             ("<branch>", branch.to_string()),
+            ("<timestamp>", Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string()),
+            ("<card_status>", "ready".to_string()),
             ("<issue_url>", issue_url.clone()),
             ("<source_issue_prompt>", source_rel.clone()),
             ("<docs_context>", "none".to_string()),
@@ -593,10 +842,6 @@ fn active_prompt_template_path(repo_root: &Path, kind: &str) -> Result<Option<Pa
     Ok(Some(repo_root.join(path)))
 }
 
-fn try_read_prompt_template(repo_root: &Path, kind: &str) -> Option<String> {
-    read_prompt_template(repo_root, kind, &[]).ok()
-}
-
 fn apply_template_values(text: &mut String, values: &[(&str, String)]) {
     for (token, value) in values {
         *text = text.replace(token, value);
@@ -718,7 +963,7 @@ fn render_bootstrap_output_card(
     issue_ref: &IssueRef,
     title: &str,
     branch: &str,
-) -> String {
+) -> Result<String> {
     let output_rel =
         path_relative_to_repo(repo_root, &issue_ref.task_bundle_output_path(repo_root));
     let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%SZ");
@@ -733,185 +978,38 @@ fn render_bootstrap_output_card(
     } else {
         "Reserved the execution branch for later implementation."
     };
-    if let Some(mut text) = try_read_prompt_template(repo_root, "sor") {
-        apply_template_values(
-            &mut text,
-            &[
-                ("<issue>", issue_ref.issue_number().to_string()),
-                (
-                    "<issue_padded>",
-                    issue_ref.padded_issue_number().to_string(),
-                ),
-                (
-                    "<task_id>",
-                    format!("issue-{}", issue_ref.padded_issue_number()),
-                ),
-                (
-                    "<run_id>",
-                    format!("issue-{}", issue_ref.padded_issue_number()),
-                ),
-                ("<version>", issue_ref.scope().to_string()),
-                ("<slug>", issue_ref.slug().to_string()),
-                ("<title>", title.to_string()),
-                ("<branch>", branch.to_string()),
-                ("<status>", status.to_string()),
-                ("<timestamp>", timestamp.to_string()),
-                ("<output_card>", output_rel.clone()),
-                ("<branch_action>", branch_action.to_string()),
-            ],
-        );
-        return text;
-    }
-    format!(
-        r#"# {slug}
-
-Canonical Template Source: `docs/templates/prompts/1.0.0/sor.md`
-Consumed by: `adl/tools/pr.sh` (`OUTPUT_TEMPLATE`) with compatibility fallback support for `adl/templates/cards/output_card_template.md` and `.adl/templates/output_card_template.md`.
-
-Execution Record Requirements:
-- The output card is a machine-auditable execution record.
-- All sections must be fully populated. Empty sections, placeholders, or implicit claims are not allowed.
-- Every command listed must include both what was run and what it verified.
-- If something is not applicable, include a one-line justification.
-
-Task ID: issue-{issue}
-Run ID: issue-{issue}
-Version: {version}
-Title: {title}
-Branch: {branch}
-Status: {status}
-
-Execution:
-- Actor: issue-wave bootstrap
-- Model: not_applicable
-- Provider: not_applicable
-- Start Time: {timestamp}
-- End Time: {timestamp}
-
-## Summary
-
-Pre-run output scaffold initialized during issue-wave opening. No implementation has started yet.
-
-## Artifacts produced
-- Local ignored output-card scaffold at `{output_rel}`
-- Tracked implementation artifacts: not_applicable until execution begins
-
-## Actions taken
-- Opened the local issue bundle and wrote a truthful pre-run output scaffold.
-- {branch_action}
-- Deferred implementation, proof capture, and release integration to the execution lifecycle and PR publication.
-
-## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none
-- Worktree-only paths remaining: no tracked implementation artifacts exist yet; execution-time proof surfaces will be established during implementation and PR publication
-- Integration state: worktree_only
-- Verification scope: main_repo
-- Integration method used: direct write in main repo for the local ignored pre-run record; tracked implementation artifacts do not exist yet
-- Verification performed:
-  - `bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input {output_rel}`
-    Verified bootstrap SOR contract compliance for the local pre-run scaffold.
-- Result: PASS
-
-Rules:
-- Final artifacts must exist in the main repository, not only in a worktree.
-- Do not leave docs, code, or generated artifacts only under a `adl-wp-*` worktree.
-- Prefer git-aware transfer into the main repo (`git checkout BRANCH -- PATH` or commit + cherry-pick).
-- If artifacts exist only in the worktree, the task is NOT complete.
-- `Integration state` describes lifecycle state of the integrated artifact set, not where verification happened.
-- `Verification scope` describes where the verification commands were run.
-- `worktree_only` means at least one required path still exists only outside the main repository path.
-- `pr_open` should pair with truthful `Worktree-only paths remaining` content; list those paths when they still exist only in the worktree or say `none` only when the branch contents are fully represented in the main repository path.
-- If `Integration state` is `pr_open`, verify the actual proof artifacts rather than only the containing directory or card path.
-- If `Integration method used` is `direct write in main repo`, `Verification scope` should normally be `main_repo` unless the deviation is explained.
-- Completed output records must not leave `Status` as `NOT_STARTED`.
-- By `pr finish`, `Status` should normally be `DONE` (or `FAILED` if the run failed and the record is documenting that failure).
-
-## Validation
-- Validation commands and their purpose:
-  - `bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input {output_rel}`
-    Verified bootstrap SOR contract compliance for the local output scaffold.
-- Results:
-  - PASS
-
-Validation command/path rules:
-- Prefer repository-relative paths in recorded commands and artifact references.
-- Do not record absolute host paths in output records unless they are explicitly required and justified.
-- `absolute_path_leakage_detected: false` means the final recorded artifact does not contain unjustified absolute host paths.
-- Do not list commands without describing their effect.
-
-## Verification Summary
-
-Rules:
-- Replace the example values below with one actual final value per field.
-- Do not leave pipe-delimited enum menus or placeholder text in a finished record.
-
-```yaml
-verification_summary:
-  validation:
-    status: PASS
-    checks_run:
-      - \"bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input {output_rel}\"
-  determinism:
-    status: NOT_RUN
-    replay_verified: unknown
-    ordering_guarantees_verified: unknown
-  security_privacy:
-    status: PARTIAL
-    secrets_leakage_detected: false
-    prompt_or_tool_arg_leakage_detected: false
-    absolute_path_leakage_detected: false
-  artifacts:
-    status: PASS
-    required_artifacts_present: true
-    schema_changes:
-      present: false
-      approved: not_applicable
-```
-
-## Determinism Evidence
-- Determinism tests executed: not_run; bootstrap scaffold creation has not been replay-verified for this issue yet.
-- Fixtures or scripts used: `adl/tools/pr.sh` issue-wave opening flow.
-- Replay verification (same inputs -> same artifacts/order): not yet verified for this specific issue record.
-- Ordering guarantees (sorting / tie-break rules used): not_applicable for a single-card bootstrap write.
-- Artifact stability notes: repository-relative paths only; execution-time proof artifacts are not expected yet.
-
-## Security / Privacy Checks
-- Secret leakage scan performed: limited content review only; no secrets were intentionally recorded in the scaffold.
-- Prompt / tool argument redaction verified: not_applicable for bootstrap scaffold generation.
-- Absolute path leakage check: repository-relative paths only in the scaffold.
-- Sandbox / policy invariants preserved: yes; local ignored issue-record path only.
-
-## Replay Artifacts
-- Trace bundle path(s): not_applicable until execution begins
-- Run artifact root: not_applicable until execution begins
-- Replay command used for verification: not_run
-- Replay result: NOT_RUN
-
-## Artifact Verification
-- Primary proof surface: this local pre-run SOR scaffold and its bootstrap validation result
-- Required artifacts present: local output card scaffold only; tracked implementation artifacts are not expected yet
-- Artifact schema/version checks: bootstrap SOR validator passed
-- Hash/byte-stability checks: not_run
-- Missing/optional artifacts and rationale: execution proofs, demos, and tracked outputs are intentionally absent before implementation begins
-
-## Decisions / Deviations
-- Issue-wave opening emits a truthful pre-run SOR scaffold instead of leaving raw template residue for later cleanup.
-- Integration state remains `worktree_only` until execution creates tracked artifacts or opens a PR.
-
-## Follow-ups / Deferred work
-- Update this record during execution with actual actions, validations, proof surfaces, and integration truth.
-- Normalize this record to `pr_open`, `merged`, or `closed_no_pr` during finish/closeout as appropriate.
-"#,
-        slug = issue_ref.slug(),
-        issue = issue_ref.padded_issue_number(),
-        version = issue_ref.scope(),
-        title = title,
-        branch = branch,
-        status = status,
-        branch_action = branch_action,
-        output_rel = output_rel,
-        timestamp = timestamp,
-    )
+    let mut text = read_prompt_template(repo_root, "sor", &[])?;
+    apply_template_values(
+        &mut text,
+        &[
+            ("<issue>", issue_ref.issue_number().to_string()),
+            (
+                "<issue_padded>",
+                issue_ref.padded_issue_number().to_string(),
+            ),
+            (
+                "<task_id>",
+                format!("issue-{}", issue_ref.padded_issue_number()),
+            ),
+            (
+                "<run_id>",
+                format!("issue-{}", issue_ref.padded_issue_number()),
+            ),
+            ("<version>", issue_ref.scope().to_string()),
+            ("<slug>", issue_ref.slug().to_string()),
+            ("<title>", title.to_string()),
+            ("<branch>", branch.to_string()),
+            (
+                "<card_status>",
+                if pre_run_unbound { "draft" } else { "ready" }.to_string(),
+            ),
+            ("<status>", status.to_string()),
+            ("<timestamp>", timestamp.to_string()),
+            ("<output_card>", output_rel),
+            ("<branch_action>", branch_action.to_string()),
+        ],
+    );
+    Ok(text)
 }
 
 fn render_bootstrap_plan_card(
@@ -920,11 +1018,12 @@ fn render_bootstrap_plan_card(
     title: &str,
     branch: &str,
     source_path: &Path,
-) -> String {
+) -> Result<String> {
     let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
     let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
     let spp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_plan_path(repo_root));
     let source_rel = path_relative_to_repo(repo_root, source_path);
+    let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string();
     let prompt = fs::read_to_string(source_path).unwrap_or_default();
     let dependencies = issue_prompt_section(&prompt, "Dependencies")
         .map(|value| one_line_summary(&value))
@@ -945,9 +1044,6 @@ fn render_bootstrap_plan_card(
     let non_goals = issue_prompt_section(&prompt, "Non-goals")
         .map(|value| one_line_summary(&value))
         .unwrap_or_else(|| "Preserve the non-goals named by the source issue prompt.".to_string());
-    let demo_expectations = issue_prompt_section(&prompt, "Demo Expectations")
-        .map(|value| one_line_summary(&value))
-        .unwrap_or_else(|| "Follow demo expectations from the source issue prompt.".to_string());
     let validation_strategy = issue_prompt_section(&prompt, "Tooling Notes")
         .or_else(|| issue_prompt_section(&prompt, "Acceptance Criteria"))
         .map(|value| one_line_summary(&value))
@@ -959,250 +1055,53 @@ fn render_bootstrap_plan_card(
     let acceptance_step = yaml_inline(&acceptance);
     let repo_inputs_step = yaml_inline(&repo_inputs);
     let non_goals_step = yaml_inline(&non_goals);
-    let demo_step = yaml_inline(&demo_expectations);
     let validation_step = yaml_inline(&validation_strategy);
-    if let Some(mut text) = try_read_prompt_template(repo_root, "spp") {
-        let issue_url = format!(
-            "https://github.com/{}/issues/{}",
-            default_repo(repo_root)
-                .unwrap_or_else(|_| "danielbaustin/agent-design-language".to_string()),
-            issue_ref.issue_number()
-        );
-        apply_template_values(
-            &mut text,
-            &[
-                ("<issue>", issue_ref.issue_number().to_string()),
-                ("<issue_padded>", issue_ref.padded_issue_number().to_string()),
-                ("<task_id>", format!("issue-{}", issue_ref.padded_issue_number())),
-                ("<run_id>", format!("issue-{}", issue_ref.padded_issue_number())),
-                ("<version>", issue_ref.scope().to_string()),
-                ("<slug>", issue_ref.slug().to_string()),
-                ("<title>", title.to_string()),
-                ("<branch>", branch.to_string()),
-                ("<issue_url>", issue_url),
-                ("<source_issue_prompt>", source_rel.clone()),
-                ("<stp_card>", stp_rel.clone()),
-                ("<sip_card>", sip_rel.clone()),
-                ("<spp_card>", spp_rel.clone()),
-                (
-                    "<target_files_surfaces_inline>",
-                    repo_inputs_step.clone(),
-                ),
-                ("<non_goals_inline>", non_goals_step.clone()),
-                (
-                    "<plan_summary>",
-                    format!("Issue-local execution plan for {title}."),
-                ),
-                ("<dependencies_inline>", dependency_step.clone()),
-                ("<repo_inputs_inline>", repo_inputs_step.clone()),
-                ("<deliverables_inline>", deliverable_step.clone()),
-                (
-                    "<acceptance_criteria_inline>",
-                    acceptance_step.clone(),
-                ),
-                (
-                    "<risks_inline>",
-                    "Generated card may need editor tightening if the source issue prompt is underspecified."
-                        .to_string(),
-                ),
-                ("<validation_plan_inline>", validation_step.clone()),
-                (
-                    "<notes_risks_inline>",
-                    "Generated from 1.0.0 template; update before continuing if execution diverges."
-                        .to_string(),
-                ),
-            ],
-        );
-        return text;
-    }
-    format!(
-        r#"---
-schema_version: "0.1"
-artifact_type: "structured_planning_prompt"
-name: "{slug}-execution-plan"
-issue: {issue}
-task_id: "issue-{issue_padded}"
-run_id: "issue-{issue_padded}"
-version: "{version}"
-title: "{title}"
-branch: "{branch}"
-status: "draft"
-activation_state: "draft"
-plan_revision: 1
-source_refs:
-  - kind: "issue"
-    ref: "https://github.com/{repo}/issues/{issue}"
-  - kind: "source_issue_prompt"
-    ref: "{source_rel}"
-  - kind: "stp"
-    ref: "{stp_rel}"
-  - kind: "sip"
-    ref: "{sip_rel}"
-scope:
-  files:
-    - "{source_rel}"
-    - "{stp_rel}"
-    - "{sip_rel}"
-    - "{spp_rel}"
-  components:
-    - "{slug}"
-  out_of_scope:
-    - "{non_goals_step}"
-constraints:
-  - "design_time_plan_must_be_reviewed_before_execution"
-  - "runtime_execution_must_update_spp_if_plan_changes"
-  - "no_hidden_scope_expansion"
-confidence: "medium"
-plan_summary: "Design-time operative plan for {title}; derived from the authored issue prompt, STP/SIP surfaces, dependencies, deliverables, acceptance criteria, and validation expectations."
-assumptions:
-  - "The linked source issue prompt, STP, and SIP remain the canonical design-time inputs."
-  - "Dependency details may need refresh when earlier issues land."
-proposed_steps:
-  - id: "step-1"
-    description: "Confirm dependency readiness and starting state: {dependency_step}"
-    expected_output: "{sip_rel}"
-    allowed_mode: "design_review_then_execution"
-  - id: "step-2"
-    description: "Review repo inputs and scoped surfaces before editing: {repo_inputs_step}"
-    expected_output: "{stp_rel}"
-    allowed_mode: "design_review_then_execution"
-  - id: "step-3"
-    description: "Implement only the bounded deliverables: {deliverable_step}"
-    expected_output: "tracked issue work product"
-    allowed_mode: "execution_after_approval"
-  - id: "step-4"
-    description: "Run focused proof gates for acceptance: {acceptance_step}"
-    expected_output: "validation evidence recorded in SOR"
-    allowed_mode: "execution_after_approval"
-  - id: "step-5"
-    description: "Record issue-specific review findings in SRP, issue outcome truth in SOR, and refresh this SPP if execution diverges."
-    expected_output: "reviewed SRP and truthful SOR"
-    allowed_mode: "execution_after_approval"
-codex_plan:
-  - step: "Confirm dependencies and starting state from the source issue prompt."
-    status: "pending"
-  - step: "Inspect repo inputs and target surfaces before editing."
-    status: "pending"
-  - step: "Implement the bounded deliverables only."
-    status: "pending"
-  - step: "Run focused validation and proof gates."
-    status: "pending"
-  - step: "Record issue-specific SRP findings and SOR outcome truth."
-    status: "pending"
-affected_areas:
-  - "{slug}"
-invariants_to_preserve:
-  - "Keep SPP issue-local; do not turn it into sprint orchestration."
-  - "Keep SRP as review-result truth and SOR as output truth."
-  - "Do not expand touched files or validation beyond issue-local evidence without updating this plan."
-risks_and_edge_cases:
-  - "Earlier dependency output may change the correct execution sequence."
-  - "Generated design-time plans can be incomplete; runtime must update SPP before continuing if reality changes."
-test_strategy:
-  - "{validation_step}"
-  - "{demo_step}"
-execution_handoff: "Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes."
-required_permissions:
-  - "workspace-write after execution approval"
-stop_conditions:
-  - "Stop and re-plan if dependencies are unmet or materially different from this design-time plan."
-  - "Stop and update SPP if touched files, proof gates, or validation commands change materially."
-  - "Stop and route follow-on work if acceptance requires scope outside this issue."
-alternatives_considered:
-  - description: "Rely only on transient chat planning."
-    reason_not_chosen: "Chat-only planning is not durable or reviewable enough for this workflow surface."
-review_hooks:
-  - "Check dependency truth, scope truthfulness, touched-file truthfulness, validation sufficiency, and re-plan triggers."
-notes: "Design-time SPP derived from the authored issue prompt; update during runtime if the plan changes."
----
-
-# Structured Plan Prompt
-
-## Plan Summary
-
-Design-time operative plan for this issue. Use this SPP to guide execution; during runtime, update it before continuing if the actual execution sequence changes.
-
-## Codex Plan
-
-1. [pending] Confirm dependencies and starting state from the source issue prompt.
-2. [pending] Inspect repo inputs and target surfaces before editing.
-3. [pending] Implement the bounded deliverables only.
-4. [pending] Run focused validation and proof gates.
-5. [pending] Record issue-specific SRP findings and SOR outcome truth.
-
-## Assumptions
-
-- The linked source issue prompt, STP, and SIP remain the canonical design-time inputs.
-- Dependency details may need refresh when earlier issues land.
-
-## Proposed Steps
-
-1. Confirm dependency readiness and starting state: {dependencies_md}
-2. Review repo inputs and scoped surfaces before editing: {repo_inputs_md}
-3. Implement only the bounded deliverables: {deliverables_md}
-4. Run focused proof gates for acceptance: {acceptance_md}
-5. Record issue-specific review findings in SRP, issue outcome truth in SOR, and refresh this SPP if execution diverges.
-
-## Affected Areas
-
-- {slug}
-
-## Invariants To Preserve
-
-- Keep SPP issue-local; do not turn it into sprint orchestration.
-- Keep SRP as review-result truth and SOR as output truth.
-- Do not expand touched files or validations without updating this plan.
-
-## Risks And Edge Cases
-
-- Earlier dependency output may change the correct execution sequence.
-- Generated design-time plans can be incomplete; runtime must update SPP before continuing if reality changes.
-
-## Test Strategy
-
-- {validation_md}
-- {demo_md}
-
-## Execution Handoff
-
-Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes.
-
-## Stop Conditions
-
-- Stop and re-plan if dependencies are unmet or materially different from this design-time plan.
-- Stop and update SPP if touched files, proof gates, or validation commands change materially.
-- Stop and route follow-on work if acceptance requires scope outside this issue.
-
-## Notes
-
-Design-time SPP derived from the authored issue prompt; update during runtime if the plan changes.
-"#,
-        slug = issue_ref.slug(),
-        issue = issue_ref.issue_number(),
-        issue_padded = issue_ref.padded_issue_number(),
-        version = issue_ref.scope(),
-        title = title,
-        branch = branch,
-        repo = default_repo(repo_root)
+    let mut text = read_prompt_template(repo_root, "spp", &[])?;
+    let issue_url = format!(
+        "https://github.com/{}/issues/{}",
+        default_repo(repo_root)
             .unwrap_or_else(|_| "danielbaustin/agent-design-language".to_string()),
-        source_rel = source_rel,
-        stp_rel = stp_rel,
-        sip_rel = sip_rel,
-        spp_rel = spp_rel,
-        dependency_step = dependency_step,
-        deliverable_step = deliverable_step,
-        acceptance_step = acceptance_step,
-        repo_inputs_step = repo_inputs_step,
-        non_goals_step = non_goals_step,
-        demo_step = demo_step,
-        validation_step = validation_step,
-        dependencies_md = dependencies,
-        deliverables_md = deliverables,
-        acceptance_md = acceptance,
-        repo_inputs_md = repo_inputs,
-        demo_md = demo_expectations,
-        validation_md = validation_strategy,
-    )
+        issue_ref.issue_number()
+    );
+    apply_template_values(
+        &mut text,
+        &[
+            ("<issue>", issue_ref.issue_number().to_string()),
+            ("<issue_padded>", issue_ref.padded_issue_number().to_string()),
+            ("<task_id>", format!("issue-{}", issue_ref.padded_issue_number())),
+            ("<run_id>", format!("issue-{}", issue_ref.padded_issue_number())),
+            ("<version>", issue_ref.scope().to_string()),
+            ("<slug>", issue_ref.slug().to_string()),
+            ("<title>", title.to_string()),
+            ("<branch>", branch.to_string()),
+            ("<timestamp>", timestamp),
+            ("<card_status>", "draft".to_string()),
+            ("<issue_url>", issue_url),
+            ("<source_issue_prompt>", source_rel),
+            ("<stp_card>", stp_rel),
+            ("<sip_card>", sip_rel),
+            ("<spp_card>", spp_rel),
+            ("<target_files_surfaces_inline>", repo_inputs_step.clone()),
+            ("<non_goals_inline>", non_goals_step),
+            ("<plan_summary>", format!("Issue-local execution plan for {title}.")),
+            ("<dependencies_inline>", dependency_step),
+            ("<repo_inputs_inline>", repo_inputs_step),
+            ("<deliverables_inline>", deliverable_step),
+            ("<acceptance_criteria_inline>", acceptance_step),
+            (
+                "<risks_inline>",
+                "Generated card may need editor tightening if the source issue prompt is underspecified."
+                    .to_string(),
+            ),
+            ("<validation_plan_inline>", validation_step),
+            (
+                "<notes_risks_inline>",
+                "Generated from 1.0.0 template; update before continuing if execution diverges."
+                    .to_string(),
+            ),
+        ],
+    );
+    Ok(text)
 }
 
 fn issue_prompt_section(text: &str, heading: &str) -> Option<String> {
@@ -1231,20 +1130,47 @@ fn issue_prompt_section(text: &str, heading: &str) -> Option<String> {
 }
 
 fn one_line_summary(text: &str) -> String {
-    const MAX_LEN: usize = 420;
-    let out = text
+    let summary = text
         .lines()
         .map(|line| line.trim().trim_start_matches("- ").trim())
         .filter(|line| !line.is_empty())
         .collect::<Vec<_>>()
         .join("; ");
-    if out.chars().count() > MAX_LEN {
-        let mut truncated = out.chars().take(MAX_LEN).collect::<String>();
-        truncated.push_str(" [summary truncated]");
-        truncated
-    } else {
-        out
+    sanitize_prompt_template_residue_literals(&summary)
+}
+
+fn sanitize_prompt_template_residue_literals(text: &str) -> String {
+    let text = text.replace("[summary truncated]", "[summary-truncated marker]");
+    escape_prompt_template_placeholder_literals(&text)
+}
+
+fn escape_prompt_template_placeholder_literals(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut cursor = 0;
+    while let Some(relative_start) = text[cursor..].find('<') {
+        let start = cursor + relative_start;
+        let Some(relative_end) = text[start + 1..].find('>') else {
+            break;
+        };
+        let end = start + 1 + relative_end;
+        let candidate = &text[start + 1..end];
+        if !candidate.is_empty()
+            && candidate
+                .chars()
+                .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
+        {
+            out.push_str(&text[cursor..start]);
+            out.push_str("&lt;");
+            out.push_str(candidate);
+            out.push_str("&gt;");
+            cursor = end + 1;
+        } else {
+            out.push_str(&text[cursor..=start]);
+            cursor = start + 1;
+        }
     }
+    out.push_str(&text[cursor..]);
+    out
 }
 
 fn yaml_inline(text: &str) -> String {
@@ -1256,7 +1182,7 @@ fn render_bootstrap_review_policy_card(
     issue_ref: &IssueRef,
     title: &str,
     branch: &str,
-) -> String {
+) -> Result<String> {
     let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
     let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
     let spp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_plan_path(repo_root));
@@ -1265,167 +1191,39 @@ fn render_bootstrap_review_policy_card(
         &issue_ref.task_bundle_review_policy_path(repo_root),
     );
     let sor_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_output_path(repo_root));
-    if let Some(mut text) = try_read_prompt_template(repo_root, "srp") {
-        let issue_url = format!(
-            "https://github.com/{}/issues/{}",
-            default_repo(repo_root)
-                .unwrap_or_else(|_| "danielbaustin/agent-design-language".to_string()),
-            issue_ref.issue_number()
-        );
-        apply_template_values(
-            &mut text,
-            &[
-                ("<issue>", issue_ref.issue_number().to_string()),
-                (
-                    "<issue_padded>",
-                    issue_ref.padded_issue_number().to_string(),
-                ),
-                (
-                    "<task_id>",
-                    format!("issue-{}", issue_ref.padded_issue_number()),
-                ),
-                ("<version>", issue_ref.scope().to_string()),
-                ("<slug>", issue_ref.slug().to_string()),
-                ("<title>", title.to_string()),
-                ("<branch>", branch.to_string()),
-                ("<issue_url>", issue_url),
-                ("<stp_card>", stp_rel.clone()),
-                ("<sip_card>", sip_rel.clone()),
-                ("<spp_card>", spp_rel),
-                ("<srp_card>", srp_rel),
-                ("<sor_card>", sor_rel.clone()),
-            ],
-        );
-        return text;
-    }
-    format!(
-        r#"---
-schema_version: "0.1"
-artifact_type: "structured_review_prompt"
-name: "{slug}-review-prompt"
-issue: {issue}
-task_id: "issue-{issue_padded}"
-version: "{version}"
-title: "{title}"
-branch: "{branch}"
-status: "draft"
-source_refs:
-  - kind: "issue"
-    ref: "https://github.com/{repo}/issues/{issue}"
-  - kind: "stp"
-    ref: "{stp_rel}"
-  - kind: "sip"
-    ref: "{sip_rel}"
-  - kind: "sor"
-    ref: "{sor_rel}"
-review_mode: "pre_pr_independent_review"
-timing: "before_pr_open"
-scope_basis:
-  - "{stp_rel}"
-  - "{sip_rel}"
-in_scope_surfaces:
-  - "tracked changes for this issue branch"
-evidence_policy:
-  - "Use repository evidence, targeted validation output, and linked issue-bundle artifacts only."
-validation_inputs:
-  - "Issue-local proofs recorded in the SOR."
-allowed_dispositions:
-  - "PASS"
-  - "BLOCK"
-  - "NEEDS_FOLLOWUP"
-reviewer_constraints:
-  - "Do not widen issue scope."
-  - "Do not merge, publish, or close the issue."
-refusal_policy:
-  - "Refuse claims that are unsupported by repository evidence."
-  - "Refuse approving behavior outside the recorded issue scope."
-follow_up_routing:
-  - "Route actionable defects back to the issue branch before PR publication."
-non_claims:
-  - "This prompt does not claim review has already run."
-  - "This prompt does not guarantee review quality by itself."
-policy_refs:
-  - "{stp_rel}"
-  - "{sip_rel}"
-notes: "Structured Review Prompt prepared before execution; finalize with actual review findings before PR publication."
----
-
-# Structured Review Prompt
-
-## Review Summary
-
-Use this prompt to govern the independent pre-PR review for this issue. Review results are intentionally absent before implementation exists and must be finalized before PR publication.
-
-## Scope Basis
-
-- {stp_rel}
-- {sip_rel}
-
-## In-Scope Surfaces
-
-- tracked changes for this issue branch
-
-## Evidence Rules
-
-- Use repository evidence, targeted validation output, and linked issue-bundle artifacts only.
-
-## Validation Inputs
-
-- Issue-local proofs recorded in the SOR.
-
-## Allowed Dispositions
-
-- PASS
-- BLOCK
-- NEEDS_FOLLOWUP
-
-## Reviewer Constraints
-
-- Do not widen issue scope.
-- Do not merge, publish, or close the issue.
-
-## Refusal Policy
-
-- Refuse claims that are unsupported by repository evidence.
-- Refuse approving behavior outside the recorded issue scope.
-
-## Follow-up Routing
-
-- Route actionable defects back to the issue branch before PR publication.
-
-## Non-Claims
-
-- This prompt does not claim review has already run.
-- This prompt does not guarantee review quality by itself.
-
-## Review Results
-
-### Findings
-
-- Not run yet; implementation has not been bound.
-
-### Dispositions
-
-- Not applicable until review runs.
-
-### Recommended Outcome
-
-- Not run yet.
-
-## Notes
-
-Structured Review Prompt prepared before execution; finalize with actual review findings before PR publication.
-"#,
-        slug = issue_ref.slug(),
-        issue = issue_ref.issue_number(),
-        issue_padded = issue_ref.padded_issue_number(),
-        version = issue_ref.scope(),
-        title = title,
-        branch = branch,
-        repo = default_repo(repo_root)
+    let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string();
+    let mut text = read_prompt_template(repo_root, "srp", &[])?;
+    let issue_url = format!(
+        "https://github.com/{}/issues/{}",
+        default_repo(repo_root)
             .unwrap_or_else(|_| "danielbaustin/agent-design-language".to_string()),
-        stp_rel = stp_rel,
-        sip_rel = sip_rel,
-        sor_rel = sor_rel,
-    )
+        issue_ref.issue_number()
+    );
+    apply_template_values(
+        &mut text,
+        &[
+            ("<issue>", issue_ref.issue_number().to_string()),
+            (
+                "<issue_padded>",
+                issue_ref.padded_issue_number().to_string(),
+            ),
+            (
+                "<task_id>",
+                format!("issue-{}", issue_ref.padded_issue_number()),
+            ),
+            ("<version>", issue_ref.scope().to_string()),
+            ("<slug>", issue_ref.slug().to_string()),
+            ("<title>", title.to_string()),
+            ("<branch>", branch.to_string()),
+            ("<timestamp>", timestamp),
+            ("<card_status>", "ready".to_string()),
+            ("<issue_url>", issue_url),
+            ("<stp_card>", stp_rel),
+            ("<sip_card>", sip_rel),
+            ("<spp_card>", spp_rel),
+            ("<srp_card>", srp_rel),
+            ("<sor_card>", sor_rel),
+        ],
+    );
+    Ok(text)
 }

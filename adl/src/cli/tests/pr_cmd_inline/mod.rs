@@ -28,6 +28,46 @@ fn env_lock() -> std::sync::MutexGuard<'static, ()> {
     guard
 }
 
+fn has_prompt_template_placeholder(text: &str) -> bool {
+    let mut chars = text.char_indices().peekable();
+    while let Some((start, ch)) = chars.next() {
+        if ch != '<' {
+            continue;
+        }
+        let mut end = None;
+        while let Some(&(idx, next)) = chars.peek() {
+            chars.next();
+            if next == '>' {
+                end = Some(idx);
+                break;
+            }
+        }
+        let Some(end_idx) = end else {
+            break;
+        };
+        let candidate = &text[start + 1..end_idx];
+        if !candidate.is_empty()
+            && candidate
+                .chars()
+                .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
+        {
+            return true;
+        }
+    }
+    false
+}
+
+fn assert_no_prompt_template_residue(kind: &str, text: &str) {
+    assert!(
+        !has_prompt_template_placeholder(text),
+        "{kind} should not retain prompt-template placeholders"
+    );
+    assert!(
+        !text.contains("[summary truncated]"),
+        "{kind} should not retain truncated summary sentinels"
+    );
+}
+
 #[test]
 fn env_lock_disables_post_merge_closeout_by_default() {
     let _guard = env_lock();
@@ -135,6 +175,7 @@ fn copy_bootstrap_support_files(repo: &Path) {
             fs::set_permissions(&dst, perms).expect("chmod");
         }
     }
+    copy_versioned_prompt_templates(repo);
 }
 
 fn copy_versioned_prompt_templates(repo: &Path) {
@@ -710,7 +751,7 @@ fn write_output_card_emits_truthful_pre_run_scaffold() {
     assert!(text.contains("Status: IN_PROGRESS"));
     assert!(text.contains("Pre-run output scaffold initialized during issue-wave opening."));
     assert!(text.contains("Local ignored output-card scaffold"));
-    assert!(text.contains("Integration method used: direct write in main repo for the local ignored pre-run record; tracked implementation artifacts do not exist yet"));
+    assert!(text.contains("Integration method used: local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet"));
     assert!(text.contains("Verification scope: main_repo"));
     assert!(text.contains("Issue-wave opening emits a truthful pre-run SOR scaffold instead of leaving raw template residue for later cleanup."));
     assert!(!text.contains("none | list explicitly"));
@@ -773,6 +814,7 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
             !text.contains("<issue") && !text.contains("<slug>") && !text.contains("<branch>"),
             "{kind} should not retain core prompt-template placeholders"
         );
+        assert_no_prompt_template_residue(kind, text);
     }
     assert!(stp.contains("# Structured Task Prompt"));
     assert!(sip.contains("Semantic role: Structured Issue Prompt (`SIP`)."));
@@ -781,6 +823,198 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     assert!(spp.contains("activation_state: \"draft\""));
     assert!(srp.contains("artifact_type: \"structured_review_prompt\""));
     assert!(sor.contains("Status: IN_PROGRESS"));
+    assert!(sor.contains("Integration method used: local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet"));
+    assert!(!sor.contains("direct write in main repo for the local ignored pre-run record"));
+}
+
+#[test]
+fn versioned_bootstrap_refreshes_existing_template_placeholder_cards() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-refresh-placeholder-cards");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        3298,
+        "v0.91.3".to_string(),
+        "tools-fix-csdlc-prompt-template-dogfood-findings".to_string(),
+    )
+    .expect("issue ref");
+    let title = "[v0.91.3][tools] Fix C-SDLC prompt-template dogfood findings";
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("mkdir source");
+    fs::write(
+        &source_path,
+        format!(
+            r#"---
+title: "{title}"
+labels:
+  - "track:roadmap"
+  - "area:tools"
+issue_number: 3298
+depends_on:
+  - 3286
+repo_inputs:
+  - adl/src/cli/pr_cmd_cards/cards.rs
+canonical_files:
+  - docs/milestones/v0.91.3/review/CSDLC_PROMPT_TEMPLATE_DOGFOOD_FINDINGS_2026-05-23.md
+required_outcome_type:
+  - code
+demo_required: false
+---
+
+# Fix C-SDLC prompt-template dogfood findings
+
+## Summary
+
+Fix generated-card defects found while dogfooding the versioned prompt templates.
+
+## Goal
+
+Regenerate broken prompt cards from copied templates instead of hand-patching card bodies.
+
+## Required Outcome
+
+Fresh bootstrap output contains all five C-SDLC cards with no raw template placeholders.
+
+## Deliverables
+
+- Template-refresh detection for stale generated cards
+- Literal placeholder evidence escaping
+
+## Acceptance Criteria
+
+- Historical evidence like `<card_status>` is preserved as text, not mistaken for an unresolved field.
+- No generated card retains `[summary truncated]`.
+
+## Repo Inputs
+
+- adl/src/cli/pr_cmd_cards/cards.rs
+- docs/templates/prompts/1.0.0/
+
+## Dependencies
+
+- none
+
+## Demo Expectations
+
+- no demo required
+
+## Non-goals
+
+- hand-editing card bodies
+
+## Issue-Graph Notes
+
+- regression fixture
+
+## Notes
+
+- use the generator path only
+
+## Tooling Notes
+
+- Run focused versioned prompt tests
+"#
+        ),
+    )
+    .expect("write source");
+    fs::create_dir_all(issue_ref.task_bundle_dir_path(&repo)).expect("mkdir task bundle");
+    for path in [
+        issue_ref.task_bundle_stp_path(&repo),
+        issue_ref.task_bundle_input_path(&repo),
+        issue_ref.task_bundle_plan_path(&repo),
+        issue_ref.task_bundle_review_policy_path(&repo),
+        issue_ref.task_bundle_output_path(&repo),
+    ] {
+        fs::write(
+            path,
+            "stale generated card with <card_status> and [summary truncated]\n",
+        )
+        .expect("write stale card");
+    }
+
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path)
+        .expect("placeholder STP should be refreshed from template");
+    let (_, bundle_input, bundle_output) = ensure_bootstrap_cards(
+        &repo,
+        &issue_ref,
+        title,
+        "codex/3298-v0-91-3-tools-fix-csdlc-prompt-template-dogfood-findings",
+        &source_path,
+    )
+    .expect("placeholder cards should be refreshed from templates");
+
+    for (kind, path) in [
+        ("STP", issue_ref.task_bundle_stp_path(&repo)),
+        ("SIP", bundle_input),
+        ("SPP", issue_ref.task_bundle_plan_path(&repo)),
+        ("SRP", issue_ref.task_bundle_review_policy_path(&repo)),
+        ("SOR", bundle_output),
+    ] {
+        let text = fs::read_to_string(path).expect("read refreshed card");
+        assert_no_prompt_template_residue(kind, &text);
+        assert!(
+            text.contains("Canonical Template Source: `docs/templates/prompts/1.0.0/"),
+            "{kind} should be regenerated from the versioned template set"
+        );
+    }
+    let stp = fs::read_to_string(issue_ref.task_bundle_stp_path(&repo)).expect("read stp");
+    assert!(stp.contains("&lt;card_status&gt;"));
+    assert!(!stp.contains("<card_status>"));
+    assert!(stp.contains("  - \"area:tools\""));
+    assert!(stp.contains("depends_on:\n  - \"3286\""));
+    assert!(stp.contains("repo_inputs:\n  - \"adl/src/cli/pr_cmd_cards/cards.rs\""));
+    assert!(stp.contains("canonical_files:\n  - \"docs/milestones/v0.91.3/review/CSDLC_PROMPT_TEMPLATE_DOGFOOD_FINDINGS_2026-05-23.md\""));
+}
+
+#[test]
+fn versioned_bootstrap_refreshes_legacy_design_time_ready_spp() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-refresh-legacy-spp");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        3291,
+        "v0.91.3".to_string(),
+        "process-plan-csdlc-prompt-template-editor-transition".to_string(),
+    )
+    .expect("issue ref");
+    let title = "[v0.91.3][process] Plan C-SDLC prompt-template/editor transition";
+    write_authored_issue_prompt(&repo, &issue_ref, title);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_bootstrap_cards(&repo, &issue_ref, title, "not bound yet", &source_path)
+        .expect("bootstrap cards");
+    let spp_path = issue_ref.task_bundle_plan_path(&repo);
+    fs::write(
+        &spp_path,
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_planning_prompt"
+issue: 3291
+branch: "not bound yet"
+status: "approved"
+activation_state: "design_time_ready"
+---
+
+# Structured Plan Prompt
+
+## Plan Summary
+
+Legacy design-time-ready SPP from the pre-template transition window.
+"#,
+    )
+    .expect("write legacy spp");
+
+    ensure_bootstrap_cards(&repo, &issue_ref, title, "not bound yet", &source_path)
+        .expect("legacy SPP should be refreshed");
+    let spp = fs::read_to_string(&spp_path).expect("read spp");
+    assert!(spp.contains("Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`"));
+    assert!(!spp.contains("activation_state: \"design_time_ready\""));
 }
 
 #[test]

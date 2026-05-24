@@ -59,9 +59,7 @@ Canonical Template Source: `docs/templates/prompts/1.0.0/srp.md`
 
 ## Review Summary
 
-Use this prompt to govern the independent pre-PR review for this issue. Review
-results are intentionally absent before implementation exists and must be
-finalized before PR publication.
+Use this prompt to govern the independent pre-PR review for this issue. Review results are intentionally absent before implementation exists and must be finalized before PR publication.
 
 ## Scope Basis
 

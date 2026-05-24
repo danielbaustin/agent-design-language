@@ -25,6 +25,7 @@ values = {
     "<slug>": "template-test",
     "<title>": "Template test",
     "<branch>": "not bound yet",
+    "<card_status>": "ready",
     "<issue_url>": "https://github.com/danielbaustin/agent-design-language/issues/1374",
     "<source_issue_prompt>": ".adl/v0.91.3/bodies/issue-1374-template-test.md",
     "<docs_context>": "docs/templates/prompts/current.json",
