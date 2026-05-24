@@ -7,6 +7,7 @@ PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 PROMPT_LINT_SRC="$ROOT_DIR/adl/tools/lint_prompt_spec.sh"
 PROMPT_VALIDATOR_SRC="$ROOT_DIR/adl/tools/validate_structured_prompt.sh"
+PROMPT_TEMPLATES_SRC="$ROOT_DIR/docs/templates/prompts"
 INPUT_TPL_SRC="$ROOT_DIR/adl/templates/cards/input_card_template.md"
 OUTPUT_TPL_SRC="$ROOT_DIR/adl/templates/cards/output_card_template.md"
 STP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_task_prompt.contract.yaml"
@@ -29,6 +30,7 @@ mkdir -p \
   "$repo/adl/tools" \
   "$repo/adl/templates/cards" \
   "$repo/adl/schemas" \
+  "$repo/docs/templates" \
   "$repo/.adl/issues/v0.85/bodies" \
   "$bindir"
 
@@ -36,6 +38,7 @@ cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$PROMPT_LINT_SRC" "$repo/adl/tools/lint_prompt_spec.sh"
 cp "$PROMPT_VALIDATOR_SRC" "$repo/adl/tools/validate_structured_prompt.sh"
+cp -R "$PROMPT_TEMPLATES_SRC" "$repo/docs/templates/prompts"
 cp "$INPUT_TPL_SRC" "$repo/adl/templates/cards/input_card_template.md"
 cp "$OUTPUT_TPL_SRC" "$repo/adl/templates/cards/output_card_template.md"
 cp "$STP_CONTRACT_SRC" "$repo/adl/schemas/structured_task_prompt.contract.yaml"
@@ -162,9 +165,11 @@ assert_contains() {
 
   out1="$("$BASH_BIN" adl/tools/pr.sh init 42 --slug test-init --no-fetch-issue --version v0.85)"
   assert_contains "STP      .adl/v0.85/tasks/issue-0042__test-init/stp.md" "$out1" "stp path"
+  assert_contains "SPP      .adl/v0.85/tasks/issue-0042__test-init/spp.md" "$out1" "spp path"
+  assert_contains "SRP      .adl/v0.85/tasks/issue-0042__test-init/srp.md" "$out1" "srp path"
   assert_contains "READ     .adl/v0.85/tasks/issue-0042__test-init/sip.md" "$out1" "read path"
   assert_contains "WRITE    .adl/v0.85/tasks/issue-0042__test-init/sor.md" "$out1" "write path"
-  assert_contains "CONTRACT minimum v0.86 init = validated source prompt + root stp/sip/sor bundle" "$out1" "contract line"
+  assert_contains "CONTRACT validated source prompt + root SIP/STP/SPP/SRP/SOR task bundle" "$out1" "contract line"
   assert_contains "STATE    ISSUE_AND_BUNDLE_READY" "$out1" "state line"
 
   stp_path="$repo/.adl/v0.85/tasks/issue-0042__test-init/stp.md"

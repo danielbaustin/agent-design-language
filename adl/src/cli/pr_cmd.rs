@@ -273,11 +273,14 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         "  BUNDLE     {}",
         path_relative_to_repo(&repo_root, &bundle_dir)
     );
-    println!("  READY      {}", ready.status);
+    println!(
+        "  READY      {}",
+        bootstrap_ready_status_label(ready.status)
+    );
     println!("  LIFECYCLE  {}", ready.lifecycle_state);
     println!("  NEXT       qualitative SIP/STP/SPP/SRP design-time review, then adl/tools/pr.sh run {issue} --slug {slug} --version {version}");
     println!("  STATE      ISSUE_AND_BUNDLE_READY");
-    eprintln!("• Done.");
+    println!("• Done.");
     Ok(())
 }
 
@@ -500,7 +503,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
         parsed.issue
     );
     println!("  STATE  FULLY_STARTED");
-    eprintln!("• Done.");
+    println!("• Done.");
     Ok(())
 }
 
@@ -770,8 +773,29 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     println!("  ISSUE    #{issue}");
     println!("  CONTRACT validated source prompt + root SIP/STP/SPP/SRP/SOR task bundle");
     println!("  STATE    ISSUE_AND_BUNDLE_READY");
-    eprintln!("• Done.");
+    println!("• Done.");
     Ok(())
+}
+
+fn bootstrap_ready_status_label(status: &str) -> &str {
+    match status {
+        "BLOCK" => "BLOCKED_PENDING_CARD_REVIEW",
+        other => other,
+    }
+}
+
+#[cfg(test)]
+mod bootstrap_output_tests {
+    use super::bootstrap_ready_status_label;
+
+    #[test]
+    fn bootstrap_ready_status_explains_card_review_blockers() {
+        assert_eq!(
+            bootstrap_ready_status_label("BLOCK"),
+            "BLOCKED_PENDING_CARD_REVIEW"
+        );
+        assert_eq!(bootstrap_ready_status_label("PASS"), "PASS");
+    }
 }
 
 fn bootstrap_root_task_bundle(
