@@ -176,7 +176,10 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         &["-C", path_str(&repo_root)?, "push", "origin", &branch],
     )?;
 
+    let pr_base = resolve_finish_pr_base(&repo_root, &branch)?;
+
     let pr_url = if let Some(existing) = current_pr_url(&repo, &branch)? {
+        ensure_existing_pr_base_matches(&repo, &existing, &pr_base)?;
         run_status(
             "gh",
             &[
@@ -201,7 +204,7 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
                 "-R",
                 &repo,
                 "--base",
-                "main",
+                &pr_base,
                 "--head",
                 &branch,
                 "--title",
@@ -679,6 +682,62 @@ pub(super) fn run_finish_validation_rust(
     Ok(())
 }
 
+fn resolve_finish_pr_base(repo_root: &Path, branch: &str) -> Result<String> {
+    for key in ["ADL_PR_BASE", "ADL_PR_BASE_BRANCH", "GH_PR_BASE"] {
+        if let Some(value) = std::env::var_os(key) {
+            let value = value.to_string_lossy().trim().to_string();
+            if !value.is_empty() {
+                if value == branch {
+                    bail!("finish: {key} must not match the current branch '{branch}'");
+                }
+                return Ok(value);
+            }
+        }
+    }
+
+    let config_key = format!("branch.{branch}.gh-merge-base");
+    if let Some(value) = run_capture_allow_failure(
+        "git",
+        &["-C", path_str(repo_root)?, "config", "--get", &config_key],
+    )? {
+        let value = value.trim().to_string();
+        if !value.is_empty() {
+            if value == branch {
+                bail!("finish: {config_key} must not match the current branch '{branch}'");
+            }
+            return Ok(value);
+        }
+    }
+
+    Ok("main".to_string())
+}
+
+fn ensure_existing_pr_base_matches(repo: &str, pr_url: &str, expected_base: &str) -> Result<()> {
+    let actual_base = run_capture(
+        "gh",
+        &[
+            "pr",
+            "view",
+            "-R",
+            repo,
+            pr_url,
+            "--json",
+            "baseRefName",
+            "--jq",
+            ".baseRefName",
+        ],
+    )?;
+    let actual_base = actual_base.trim();
+    if actual_base != expected_base {
+        bail!(
+            "finish: existing PR base '{}' does not match expected base '{}'; update the PR base or rerun with the intended ADL_PR_BASE",
+            actual_base,
+            expected_base
+        );
+    }
+    Ok(())
+}
+
 pub(super) fn render_default_finish_validation(plan: &FinishValidationPlan) -> String {
     plan.commands
         .iter()
@@ -711,9 +770,18 @@ pub(super) fn tracked_issue_surface_paths(
 ) -> Result<Vec<String>> {
     let mut tracked = BTreeSet::new();
     let root_stp = issue_ref.task_bundle_stp_path(primary_root);
+    let root_spp = issue_ref.task_bundle_plan_path(primary_root);
+    let root_srp = issue_ref.task_bundle_review_policy_path(primary_root);
     let root_input = issue_ref.task_bundle_input_path(primary_root);
     let root_output = issue_ref.task_bundle_output_path(primary_root);
-    for path in [source_path, &root_stp, &root_input, &root_output] {
+    for path in [
+        source_path,
+        &root_stp,
+        &root_spp,
+        &root_srp,
+        &root_input,
+        &root_output,
+    ] {
         let Some(repo_relative) = path
             .strip_prefix(primary_root)
             .ok()

@@ -50,6 +50,9 @@ non_claims:
 policy_refs:
   - "<stp_card>"
   - "<sip_card>"
+review_results:
+  findings_status: "<findings_status>"
+  recommended_outcome: "<recommended_outcome>"
 notes: "Structured Review Prompt prepared before execution; finalize with actual review findings before PR publication."
 ---
 
@@ -104,6 +107,14 @@ Use this prompt to govern the independent pre-PR review for this issue. Review r
 - This prompt does not guarantee review quality by itself.
 
 ## Review Results
+
+When finalizing review, record the machine-readable review result in frontmatter:
+
+```yaml
+review_results:
+  findings_status: "no_findings | findings_present"
+  recommended_outcome: "pass | block | needs_followup"
+```
 
 ### Findings
 
