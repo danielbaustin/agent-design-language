@@ -24,6 +24,7 @@ CURLY_PLACEHOLDER = re.compile(r"\{\{[A-Za-z][A-Za-z0-9_]*\}\}")
 
 
 def load_registry(path: Path) -> dict[str, Any]:
+    path = path.resolve()
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except FileNotFoundError:
@@ -35,6 +36,30 @@ def load_registry(path: Path) -> dict[str, Any]:
     return data
 
 
+def registry_repo_root(registry_path: Path) -> Path:
+    resolved = registry_path.resolve()
+    parts = resolved.parts
+    suffix = ("docs", "templates", "planning", "current.json")
+    if len(parts) >= len(suffix) and tuple(parts[-len(suffix) :]) == suffix:
+        return Path(*parts[: -len(suffix)])
+    return resolved.parent
+
+
+def resolve_registered_path(registry_path: Path, path_value: str) -> Path:
+    path = Path(path_value)
+    if path.is_absolute():
+        raise SystemExit(f"registered template path must be relative: {path_value}")
+    return registry_repo_root(registry_path) / path
+
+
+def is_relative_to_path(path: Path, root: Path) -> bool:
+    try:
+        path.resolve().relative_to(root.resolve())
+        return True
+    except ValueError:
+        return False
+
+
 def validate_required_sections(text: str, required_sections: list[str]) -> list[str]:
     missing: list[str] = []
     for section in required_sections:
@@ -44,7 +69,12 @@ def validate_required_sections(text: str, required_sections: list[str]) -> list[
     return missing
 
 
-def validate_document(registry: dict[str, Any], template_key: str, input_path: Path) -> int:
+def validate_document(
+    registry: dict[str, Any],
+    registry_path: Path,
+    template_key: str,
+    input_path: Path,
+) -> int:
     templates = registry.get("templates", {})
     template = templates.get(template_key)
     if not isinstance(template, dict):
@@ -58,9 +88,12 @@ def validate_document(registry: dict[str, Any], template_key: str, input_path: P
     if not isinstance(template_path_value, str):
         print(f"template path is missing or invalid: {template_key}", file=sys.stderr)
         return 2
-    template_path = Path(template_path_value)
+    template_path = resolve_registered_path(registry_path, template_path_value)
     template_root = str(registry.get("template_root", ""))
-    if template_root and not template_path_value.startswith(template_root):
+    if template_root and not is_relative_to_path(
+        template_path,
+        resolve_registered_path(registry_path, template_root),
+    ):
         print(
             f"template path is outside active template root: {template_path_value}",
             file=sys.stderr,
@@ -124,8 +157,9 @@ def main() -> int:
     parser.add_argument("--input", required=True)
     args = parser.parse_args()
 
-    registry = load_registry(Path(args.registry))
-    return validate_document(registry, args.template, Path(args.input))
+    registry_path = Path(args.registry)
+    registry = load_registry(registry_path)
+    return validate_document(registry, registry_path, args.template, Path(args.input))
 
 
 if __name__ == "__main__":

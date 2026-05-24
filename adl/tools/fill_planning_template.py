@@ -18,6 +18,7 @@ PLACEHOLDER = re.compile(r"<([A-Za-z][A-Za-z0-9_]*)>")
 
 
 def load_json(path: Path) -> dict[str, Any]:
+    path = path.resolve()
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except FileNotFoundError:
@@ -29,7 +30,35 @@ def load_json(path: Path) -> dict[str, Any]:
     return data
 
 
-def resolve_template(registry: dict[str, Any], template_key: str) -> Path:
+def registry_repo_root(registry_path: Path) -> Path:
+    resolved = registry_path.resolve()
+    parts = resolved.parts
+    suffix = ("docs", "templates", "planning", "current.json")
+    if len(parts) >= len(suffix) and tuple(parts[-len(suffix) :]) == suffix:
+        return Path(*parts[: -len(suffix)])
+    return resolved.parent
+
+
+def resolve_registered_path(registry_path: Path, path_value: str) -> Path:
+    path = Path(path_value)
+    if path.is_absolute():
+        raise SystemExit(f"registered template path must be relative: {path_value}")
+    return registry_repo_root(registry_path) / path
+
+
+def is_relative_to_path(path: Path, root: Path) -> bool:
+    try:
+        path.resolve().relative_to(root.resolve())
+        return True
+    except ValueError:
+        return False
+
+
+def resolve_template(
+    registry: dict[str, Any],
+    registry_path: Path,
+    template_key: str,
+) -> tuple[Path, str]:
     templates = registry.get("templates", {})
     template = templates.get(template_key)
     if not isinstance(template, dict):
@@ -40,12 +69,15 @@ def resolve_template(registry: dict[str, Any], template_key: str) -> Path:
     if not isinstance(template_path_value, str):
         raise SystemExit(f"template path is missing or invalid: {template_key}")
     template_root = str(registry.get("template_root", ""))
-    if template_root and not template_path_value.startswith(template_root):
+    template_path = resolve_registered_path(registry_path, template_path_value)
+    if template_root and not is_relative_to_path(
+        template_path,
+        resolve_registered_path(registry_path, template_root),
+    ):
         raise SystemExit(f"template path is outside active template root: {template_path_value}")
-    template_path = Path(template_path_value)
     if not template_path.exists():
         raise SystemExit(f"registered template file does not exist: {template_path}")
-    return template_path
+    return template_path, template_path_value
 
 
 def stringify(value: Any) -> str:
@@ -70,7 +102,7 @@ def fill_template(template_text: str, values: dict[str, Any]) -> tuple[str, list
     return filled, sorted(missing)
 
 
-def generated_header(registry: dict[str, Any], template_key: str, template_path: Path) -> str:
+def generated_header(registry: dict[str, Any], template_key: str, template_path: str) -> str:
     return "\n".join(
         [
             "<!--",
@@ -102,11 +134,12 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    registry = load_json(Path(args.registry))
+    registry_path = Path(args.registry)
+    registry = load_json(registry_path)
     if registry.get("schema") != "adl.planning_template_registry.v1":
         raise SystemExit(f"unsupported registry schema: {registry.get('schema')!r}")
     values = load_json(Path(args.values))
-    template_path = resolve_template(registry, args.template)
+    template_path, template_display_path = resolve_template(registry, registry_path, args.template)
     template_text = template_path.read_text(encoding="utf-8")
     filled, missing = fill_template(template_text, values)
 
@@ -117,7 +150,7 @@ def main() -> int:
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
-        generated_header(registry, args.template, template_path) + filled,
+        generated_header(registry, args.template, template_display_path) + filled,
         encoding="utf-8",
     )
     print(
@@ -125,7 +158,7 @@ def main() -> int:
             {
                 "status": "PASS" if not missing else "PARTIAL",
                 "template": args.template,
-                "template_path": str(template_path),
+                "template_path": template_display_path,
                 "values": args.values,
                 "output": str(output_path),
                 "missing_values": missing,
