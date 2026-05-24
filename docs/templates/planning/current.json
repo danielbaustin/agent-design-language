@@ -20,7 +20,19 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/README_TEMPLATE.md",
-      "required_sections": ["Metadata", "Purpose", "How To Use", "Overview", "Scope Summary", "Document Map", "Execution Model", "Demo and Validation Surface", "Status", "Exit Criteria"]
+      "required_sections": [
+        "Metadata",
+        "Status",
+        "Purpose",
+        "Milestone Role",
+        "Boundaries",
+        "Source Map",
+        "Document Map",
+        "Execution Model",
+        "Demo and Validation Surface",
+        "Success Criteria",
+        "Exit Criteria"
+      ]
     },
     "wbs": {
       "object_kind": "planning_template",
@@ -29,7 +41,18 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/WBS_TEMPLATE.md",
-      "required_sections": ["Metadata", "How To Use", "WBS Summary", "Work Packages", "Sequencing", "Acceptance Mapping", "Exit Criteria"]
+      "required_sections": [
+        "Metadata",
+        "Status",
+        "How To Use",
+        "WBS Summary",
+        "Candidate WP Sequence",
+        "Work Packages",
+        "Sequencing",
+        "Sequencing Notes",
+        "Acceptance Mapping",
+        "Exit Criteria"
+      ]
     },
     "sprint": {
       "object_kind": "planning_template",
@@ -38,7 +61,22 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/SPRINT_TEMPLATE.md",
-      "required_sections": ["Metadata", "How To Use", "Sprint Goal", "Planned Scope", "Work Plan", "Risks / Dependencies", "Demo / Review Plan", "Exit Criteria"]
+      "required_sections": [
+        "Metadata",
+        "Status",
+        "How To Use",
+        "Sprint Overview",
+        "Sprint Goals",
+        "Sprint Goal",
+        "Planned Scope",
+        "Work Plan",
+        "Execution Policy",
+        "Cadence Expectations",
+        "Risks / Dependencies",
+        "Demo / Review Plan",
+        "Closeout Bar",
+        "Exit Criteria"
+      ]
     },
     "vision": {
       "object_kind": "planning_template",
@@ -47,7 +85,17 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/VISION_TEMPLATE.md",
-      "required_sections": ["Metadata", "Purpose", "How To Use", "Overview", "Core Goals", "Milestone Context", "Long-Term Direction", "Summary", "Exit Criteria"]
+      "required_sections": [
+        "Metadata",
+        "Purpose",
+        "How To Use",
+        "Overview",
+        "Core Goals",
+        "Milestone Context",
+        "Long-Term Direction",
+        "Summary",
+        "Exit Criteria"
+      ]
     },
     "design": {
       "object_kind": "planning_template",
@@ -56,7 +104,19 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/DESIGN_TEMPLATE.md",
-      "required_sections": ["Metadata", "Purpose", "Problem Statement", "Goals", "Non-Goals", "Scope", "Requirements", "Proposed Design", "Validation Plan", "Exit Criteria"]
+      "required_sections": [
+        "Metadata",
+        "Purpose",
+        "Problem Statement",
+        "Goals",
+        "Non-Goals",
+        "Scope",
+        "Requirements",
+        "Proposed Design",
+        "Interfaces And Contracts",
+        "Validation Plan",
+        "Exit Criteria"
+      ]
     },
     "decisions": {
       "object_kind": "planning_template",
@@ -65,7 +125,14 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/DECISIONS_TEMPLATE.md",
-      "required_sections": ["Metadata", "Purpose", "How To Use", "Decision Log", "Open Questions", "Exit Criteria"]
+      "required_sections": [
+        "Metadata",
+        "Purpose",
+        "How To Use",
+        "Decision Log",
+        "Open Questions",
+        "Exit Criteria"
+      ]
     },
     "demo_matrix": {
       "object_kind": "planning_template",
@@ -74,7 +141,21 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/DEMO_MATRIX_TEMPLATE.md",
-      "required_sections": ["Metadata", "Purpose", "How To Use", "Scope", "Runtime Preconditions", "Demo Coverage Summary", "Coverage Rules", "Demo Details", "Cross-Demo Validation", "Determinism Evidence", "Reviewer Sign-Off Surface", "Exit Criteria"]
+      "required_sections": [
+        "Status",
+        "Metadata",
+        "Purpose",
+        "How To Use",
+        "Scope",
+        "Runtime Preconditions",
+        "Demo Coverage Summary",
+        "Coverage Rules",
+        "Demo Details",
+        "Cross-Demo Validation",
+        "Determinism Evidence",
+        "Reviewer Sign-Off Surface",
+        "Exit Criteria"
+      ]
     },
     "feature_doc": {
       "object_kind": "planning_template",
@@ -83,7 +164,23 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/FEATURE_DOC_TEMPLATE.md",
-      "required_sections": ["Metadata", "Template Rules", "Purpose", "Context", "Coverage / Ownership", "Overview", "Design", "Execution Flow", "Determinism and Constraints", "Integration Points", "Validation", "Acceptance Criteria", "Risks", "Future Work", "Notes"]
+      "required_sections": [
+        "Metadata",
+        "Template Rules",
+        "Purpose",
+        "Context",
+        "Coverage / Ownership",
+        "Overview",
+        "Design",
+        "Execution Flow",
+        "Determinism and Constraints",
+        "Integration Points",
+        "Validation",
+        "Acceptance Criteria",
+        "Risks",
+        "Future Work",
+        "Notes"
+      ]
     },
     "milestone_checklist": {
       "object_kind": "planning_template",
@@ -92,7 +189,16 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/MILESTONE_CHECKLIST_TEMPLATE.md",
-      "required_sections": ["Metadata", "Purpose", "Planning", "Execution Discipline", "Quality Gates", "Release Packaging", "Post-Release", "Exit Criteria"]
+      "required_sections": [
+        "Metadata",
+        "Purpose",
+        "Planning",
+        "Execution Discipline",
+        "Quality Gates",
+        "Release Packaging",
+        "Post-Release",
+        "Exit Criteria"
+      ]
     },
     "release_plan": {
       "object_kind": "planning_template",
@@ -101,7 +207,17 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/RELEASE_PLAN_TEMPLATE.md",
-      "required_sections": ["Metadata", "How To Use", "0) Release-Tail Convergence", "1) Release Readiness", "2) Branch And Tag Preparation", "3) GitHub Release Steps", "4) Verification", "5) Communication", "Exit Criteria"]
+      "required_sections": [
+        "Metadata",
+        "How To Use",
+        "0. Release-Tail Convergence",
+        "1. Release Readiness",
+        "2. Branch And Tag Preparation",
+        "3. GitHub Release Steps",
+        "4. Verification",
+        "5. Communication",
+        "Exit Criteria"
+      ]
     },
     "release_notes": {
       "object_kind": "planning_template",
@@ -110,7 +226,18 @@
       "version": "1.0.0",
       "status": "active",
       "legacy_path": "docs/templates/RELEASE_NOTES_TEMPLATE.md",
-      "required_sections": ["Metadata", "How To Use", "Summary", "Highlights", "What's New In Detail", "Upgrade Notes", "Known Limitations", "Validation Notes", "What's Next", "Exit Criteria"]
+      "required_sections": [
+        "Metadata",
+        "How To Use",
+        "Summary",
+        "Highlights",
+        "What's New In Detail",
+        "Upgrade Notes",
+        "Known Limitations",
+        "Validation Notes",
+        "What's Next",
+        "Exit Criteria"
+      ]
     }
   },
   "compatibility_fallbacks": {

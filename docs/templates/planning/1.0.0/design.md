@@ -1,4 +1,4 @@
-# Design Template
+# <milestone> Design
 
 ## Metadata
 - Milestone: `<milestone>`
@@ -22,11 +22,11 @@ Define what we are building, why, and how we validate it — concisely, with lin
 - <non_goal_2>
 
 ## Scope
-### In scope
+### In Scope
 - <in_scope_1>
 - <in_scope_2>
 
-### Out of scope
+### Out Of Scope
 - <out_of_scope_1>
 - <out_of_scope_2>
 
@@ -35,7 +35,7 @@ Define what we are building, why, and how we validate it — concisely, with lin
 - <functional_requirement_1>
 - <functional_requirement_2>
 
-### Non-functional
+### Non-Functional
 - Deterministic behavior and reproducible outputs.
 - Clear failure semantics and observability.
 - <non_functional_requirement_1>
@@ -44,14 +44,14 @@ Define what we are building, why, and how we validate it — concisely, with lin
 ### Overview
 <architecture_summary>
 
-### Interfaces / Data contracts
+### Interfaces And Contracts
 - <interface_or_contract_1>
 - <interface_or_contract_2>
 
-### Execution semantics
+### Execution Semantics
 <execution_semantics>
 
-## Risks and Mitigations
+## Risks And Mitigations
 - Risk: <risk_1>
   - Mitigation: <mitigation_1>
 - Risk: <risk_2>

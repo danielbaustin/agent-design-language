@@ -1,4 +1,4 @@
-# Release Process Template
+# <milestone> Release Plan
 
 ## Metadata
 - Milestone: `<milestone>`
@@ -13,7 +13,7 @@
 - Ceremony is a confirmation and publication phase, not a hidden implementation
   phase.
 
-## 0) Release-Tail Convergence
+## 0. Release-Tail Convergence
 - [ ] Live trackers refreshed and reflected honestly:
   - coverage/test tracker
   - Rust module watch / refactoring tracker
@@ -35,31 +35,31 @@
 - [ ] Next-milestone handoff prepared before ceremony starts
 - [ ] Any remaining work is either landed, explicitly deferred, or routed
 
-## 1) Release Readiness
+## 1. Release Readiness
 - [ ] Milestone checklist complete (`<milestone_checklist_link>`)
 - [ ] Release notes approved (`<release_notes_link>`)
 - [ ] Go/no-go decision recorded (`<decision_link>`)
 
-## 2) Branch And Tag Preparation
+## 2. Branch And Tag Preparation
 - [ ] Target branch confirmed (`<target_branch>`)
 - [ ] Working tree clean
 - [ ] Version string(s) validated (`<version_validation_link>`)
 - [ ] Tag created: `<tag_name>`
 - [ ] Tag pushed and verified
 
-## 3) GitHub Release Steps
+## 3. GitHub Release Steps
 - [ ] GitHub Release draft created from `<tag_name>` (`<release_draft_link>`)
 - [ ] Release body populated from approved notes
 - [ ] Links to key PRs/issues included
 - [ ] Release visibility confirmed (draft/prerelease/final)
 - [ ] Release published
 
-## 4) Verification
+## 4. Verification
 - [ ] Post-release CI status checked (`<ci_run_link>`)
 - [ ] Release links tested (docs, artifacts, notes)
 - [ ] Immediate regressions triaged and tracked (`<triage_link>`)
 
-## 5) Communication
+## 5. Communication
 - [ ] Community announcement published (`<announcement_link>`)
 - [ ] Internal update posted (`<internal_update_link>`)
 - [ ] Roadmap/status updated (`<roadmap_update_link>`)

@@ -10,135 +10,140 @@ claim_boundary: generated draft only; not reviewed or approved
 > Generated planning draft. This file proves only template filling;
 > it is not reviewed, approved, released, merged, or lifecycle-true.
 
-
-# Milestone README Template
+# fixture-milestone Milestone README
 
 ## Metadata
 - Milestone: `fixture-milestone`
 - Version: `v0.0.0-fixture`
 - Date: `2026-05-23`
 - Owner: `fixture-owner`
+- Status: `generated fixture`
+
+## Status
+
+Current status: `generated fixture`
+
+- Planning: `generated fixture only`
+- Execution: `not applicable`
+- Validation: `structurally valid when validator passes`
+- Release readiness: `not applicable`
 
 ## Purpose
-Provide a single entry point for the milestone: what it is, why it matters, what is included, and how to navigate the canonical documents and artifacts.
 
-## How To Use
-- Start here before reading individual milestone documents.
-- Use this README to locate the canonical design, execution, and validation surfaces.
-- Keep this document concise and navigational; detailed content belongs in the linked docs.
-- Keep links up to date as files move or are renamed.
+Provide the canonical entry point for `fixture-milestone`: why it exists, what it changes, what is in and out of scope, and where reviewers should go for design, execution, demo, proof, and release evidence.
 
-## Overview
+## Milestone Role
 
-`fixture-milestone` represents the stage where `ADL planning-template fixture` moves from `legacy flat templates` to `versioned planning templates`.
+`fixture-milestone` moves `ADL planning-template fixture` from `legacy flat templates` to `versioned planning templates`.
 
-This milestone focuses on:
-- fixture scope
-- fixture validation
-- fixture portability
+This milestone exists to:
 
-Key outcomes:
-- placeholder-free output
-- required-section coverage
-- no approval claim
+- `fixture scope`
+- `fixture validation`
+- `fixture portability`
 
-## Scope Summary
+Expected outcomes:
 
-### In scope
-- fixture validation
-- registry resolution
-- portable paths
+- `placeholder-free output`
+- `required-section coverage`
+- `no approval claim`
 
-### Out of scope
-- release truth
-- live milestone migration
+## Boundaries
 
-## Document Map
+In scope:
 
-Canonical milestone documents:
+- `fixture validation`
+- `registry resolution`
+- `portable paths`
+
+Out of scope:
+
+- `release truth`
+- `live milestone migration`
+
+Known risks:
+
+- `fixture proves only README generation`
+- `fixture is not live milestone truth`
+
+Open questions:
+
+- `none`
+- `none`
+
+## Source Map
+
+Primary planning and proof sources:
 
 - Vision: `VISION.md`
 - Design: `DESIGN.md`
-- Work Breakdown Structure (WBS): `WBS.md`
+- Work Breakdown Structure: `WBS.md`
 - Sprint plan: `SPRINT.md`
 - Decisions log: `DECISIONS.md`
 - Demo matrix: `DEMO_MATRIX.md`
 - Milestone checklist: `MILESTONE_CHECKLIST.md`
-- Release plan / process: `RELEASE_PLAN.md`
+- Release plan: `RELEASE_PLAN.md`
 - Release notes: `RELEASE_NOTES.md`
 
 Supporting / domain-specific docs:
-- none
-- none
-- none
+
+- `none`
+- `none`
+- `none`
+
+## Document Map
+
+Use the source map above as the canonical navigation surface. Keep this README concise; details belong in the linked milestone documents.
+
+## Sidecar Work
+
+If this milestone includes a sidecar, record it here rather than hiding it in chat or issue comments.
+
+- Sidecar scope: `not applicable for fixture`
+- Sidecar boundary: `not applicable for fixture`
+- Sidecar proof surface: `not applicable for fixture`
+
+If no sidecar exists, set these values to `not applicable`.
 
 ## Execution Model
 
-This milestone is executed as a sequence of work packages (WPs):
-
-- WP-01: Design pass (docs + planning)
-- WP-02 – WP-12: Feature and system work
-- WP-13: Demo matrix and integration demos
-- WP-14: Coverage / quality gate
-- WP-15: Docs and review convergence
-- WP-16: Release ceremony
+This milestone is executed as an ordered issue/PR sequence. The exact WP count is milestone-specific.
 
 Execution expectations:
-- Each WP is tracked by an issue and implemented via PRs.
-- Each issue follows the structured card lifecycle
-  `SIP -> STP -> SPP -> SRP -> SOR`, plus any required reports.
-- All work merges under green CI and passes quality gates.
+
+- WP-01 is the design/planning pass.
+- Feature and system work occupy the middle of the sequence.
+- Demo/proof, quality, docs/review convergence, and release ceremony work happen at the tail.
+- Each tracked issue follows `SIP -> STP -> SPP -> SRP -> SOR`.
+- Each WP records focused validation and merge/readiness proof.
+- Do not hard-code a 16-WP shape unless that milestone explicitly uses it.
 
 ## Demo and Validation Surface
 
-Primary validation is defined in:
-- Demo matrix: `DEMO_MATRIX.md`
+Primary validation is defined in `DEMO_MATRIX.md`.
 
 Additional validation surfaces:
+
 - Test suite results
 - Generated artifacts under `.adl/runs/`
 - Trace and replay outputs
 
-Success criteria:
-- required sections are present
-- unresolved placeholders are absent
-- no review or approval status is claimed
+Determinism evidence:
 
-## Determinism and Reproducibility
+- `docs/templates/planning/fixtures/minimal/readme_generated.md`
+- `docs/templates/planning/current.json`
 
-The milestone should demonstrate:
-- Deterministic or bounded-repeatable execution where required
-- Replayable traces and inspectable artifacts
-- Stable command entry points for demos
+## Success Criteria
 
-Evidence locations:
-- docs/templates/planning/fixtures/minimal/readme_generated.md
-- docs/templates/planning/current.json
-
-## Risks and Open Questions
-
-Known risks:
-- fixture proves only README generation
-- fixture is not live milestone truth
-
-Open questions:
-- none
-- none
-
-## Status
-
-Current status: generated fixture
-
-- Planning: generated fixture only
-- Execution: not applicable
-- Validation: structurally valid when validator passes
-- Release readiness: not applicable
+- `required sections are present`
+- `unresolved placeholders are absent`
+- `no review or approval status is claimed`
 
 ## Exit Criteria
 
 - All canonical milestone documents are complete and internally consistent.
 - All WBS items are implemented or explicitly deferred.
 - Demo matrix is runnable and validated.
-- Quality gates (fmt, clippy, test, CI) are passing.
+- Quality gates relevant to touched surfaces are passing or exceptions are documented.
 - Milestone checklist is complete or exceptions are documented.
-- Release artifacts (notes, tag, docs) are ready.
+- Release artifacts are ready.

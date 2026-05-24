@@ -42,5 +42,9 @@
   "planning_status": "generated fixture only",
   "execution_status": "not applicable",
   "validation_status": "structurally valid when validator passes",
-  "release_status": "not applicable"
+  "release_status": "not applicable",
+  "sidecar_heading": "Sidecar Work",
+  "sidecar_scope": "not applicable for fixture",
+  "sidecar_boundary": "not applicable for fixture",
+  "sidecar_proof_surface": "not applicable for fixture"
 }

@@ -1,4 +1,8 @@
-# Demo Matrix Template
+# <milestone> Demo Matrix
+
+## Status
+
+`<status>`
 
 ## Metadata
 - Milestone: `<milestone>`
@@ -81,7 +85,7 @@ Status guidance:
 
 Repeat one block per demo in the coverage summary.
 
-### <demo_id_1>) <demo_title_1>
+### <demo_id_1> - <demo_title_1>
 
 Description:
 - <demo_description_1>
@@ -126,7 +130,7 @@ Known limits / caveats:
 
 ---
 
-### <demo_id_2>) <demo_title_2>
+### <demo_id_2> - <demo_title_2>
 
 Description:
 - <demo_description_2>
@@ -161,7 +165,7 @@ Known limits / caveats:
 
 ---
 
-### <demo_id_3>) <demo_title_3>
+### <demo_id_3> - <demo_title_3>
 
 Description:
 - <demo_description_3>

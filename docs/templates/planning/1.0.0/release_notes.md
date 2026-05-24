@@ -1,4 +1,4 @@
-# Release Notes Template
+# <milestone> Release Notes
 
 ## Metadata
 - Product: `<product_name>`
