@@ -7,9 +7,10 @@ Active milestone package authored from `#3099` and opened by `WP-01` / `#3199`.
 The v0.91.3 issue wave is open. The initial wave opened `#3199` through
 `#3214`; follow-up correction `#3225` added the missing closeout-tail gates as
 `#3226` through `#3230` and Sprint 4 as `#3231`. Sprint 4 has completed proof
-coverage, the quality gate, and this docs review pass; `WP-13` / `#3208`
-opened the internal-review cycle. A second internal-review pass is now repairing
-review truth and handoff evidence before external review.
+coverage, the quality gate, this docs review pass, and the second
+internal-review remediation wave. `WP-13` / `#3208` opened the internal-review
+cycle, and `#3321` closed the second internal review after its remediation
+issues landed. The milestone is now preparing for third-party review.
 
 ## Purpose
 
