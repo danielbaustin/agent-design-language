@@ -400,6 +400,9 @@ Minimum:
 - explicit `policy`
 - optional `observed_state.subagent_assigned`
 
+`target.pr_number` is the required target identifier for `route_pr`; other
+routing modes may use any one concrete target identifier from the list above.
+
 Structured schema:
 
 - `adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md`
