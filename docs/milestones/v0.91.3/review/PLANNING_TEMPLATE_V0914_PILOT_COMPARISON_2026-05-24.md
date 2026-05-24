@@ -10,10 +10,11 @@ This pilot generated the 10 canonical milestone planning documents from the acti
 
 The pilot also fixed template-shape issues discovered by the first run, then reran generation and validation.
 
-The final generated drafts were written only to ignored scratch space:
+The final generated drafts were first written to ignored scratch space and then copied into tracked review evidence for PR inspection:
 
-- `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/`
-- `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/full_packet_generation_summary.json`
+- `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/`
+- `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/full_packet_generation_summary.json`
+
 
 No authoritative v0.91.4 planning documents were modified.
 
@@ -46,16 +47,16 @@ All 10 canonical milestone planning templates generated and passed structural va
 
 | Template | Generated draft | Structural validation |
 | --- | --- | --- |
-| `readme` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/README_GENERATED.md` | passed |
-| `wbs` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/WBS_GENERATED.md` | passed |
-| `sprint` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/SPRINT_GENERATED.md` | passed |
-| `vision` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/VISION_GENERATED.md` | passed |
-| `design` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/DESIGN_GENERATED.md` | passed |
-| `decisions` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/DECISIONS_GENERATED.md` | passed |
-| `demo_matrix` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/DEMO_MATRIX_GENERATED.md` | passed |
-| `milestone_checklist` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/MILESTONE_CHECKLIST_GENERATED.md` | passed |
-| `release_plan` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/RELEASE_PLAN_GENERATED.md` | passed |
-| `release_notes` | `.adl/runs/planning-template-pilot/v0.91.4-rerun-3/generated_full_packet/RELEASE_NOTES_GENERATED.md` | passed |
+| `readme` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/README_GENERATED.md` | passed |
+| `wbs` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/WBS_GENERATED.md` | passed |
+| `sprint` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/SPRINT_GENERATED.md` | passed |
+| `vision` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/VISION_GENERATED.md` | passed |
+| `design` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/DESIGN_GENERATED.md` | passed |
+| `decisions` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/DECISIONS_GENERATED.md` | passed |
+| `demo_matrix` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/DEMO_MATRIX_GENERATED.md` | passed |
+| `milestone_checklist` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/MILESTONE_CHECKLIST_GENERATED.md` | passed |
+| `release_plan` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/RELEASE_PLAN_GENERATED.md` | passed |
+| `release_notes` | `docs/milestones/v0.91.3/review/planning_template_pilot_evidence/v0914_rerun_3/generated_full_packet/RELEASE_NOTES_GENERATED.md` | passed |
 
 ## Findings
 
@@ -110,7 +111,7 @@ Recommendation: run a separate feature-doc pilot against one real feature planni
 - All 10 canonical milestone documents generated from explicit JSON values.
 - All 10 generated documents passed `validate_planning_template.py` structural validation.
 - All 10 generated documents now preserve the existing v0.91.4 heading surface.
-- Generated drafts stayed in ignored scratch space.
+- Generated drafts are preserved in tracked review evidence; ignored scratch is not required for PR review.
 - Existing v0.91.4 milestone docs were not modified.
 
 ## Recommended Next Steps
