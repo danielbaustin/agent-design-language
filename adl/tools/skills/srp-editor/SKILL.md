@@ -46,6 +46,8 @@ Useful additional inputs:
 
 This skill may:
 - normalize `artifact_type` to `structured_review_prompt`
+- set `card_status` to `draft`, `ready`, `approved`, `completed`, `blocked`,
+  or `superseded` according to observed review truth
 - update headings and wording from legacy Structured Review Policy scaffolding
   to Structured Review Prompt semantics
 - prepare a complete review prompt before review while explicitly preserving
@@ -55,6 +57,9 @@ This skill may:
   dispositions, reviewer notes, residual risks, and recommended outcome
 - record review findings only when explicit review evidence is supplied
 - mark no-findings review results only when an actual review was performed
+- set `card_status: "completed"` only after review findings, dispositions,
+  reviewer notes, residual risks, or an explicit final policy exception are
+  recorded
 - preserve unresolved findings and route them back to implementation or
   follow-on issue creation
 - remove placeholders and stale review-completion claims

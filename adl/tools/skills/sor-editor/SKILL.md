@@ -44,16 +44,22 @@ Useful additional inputs:
 
 This skill may:
 - fix integration wording such as `worktree_only`, `pr_open`, or main-repo claims
+- set `Card Status` to `draft`, `ready`, `blocked`, or `superseded` according
+  to observed execution truth before closeout
 - replace placeholders with concrete paths or commands when evidence is supplied
 - normalize validation sections to reflect only checks actually run
 - preserve the design-time boundary between a pre-execution scaffold and a
   post-execution output record; do not mark output, validation, PR, merge, or
   closeout truth as complete before it exists
+- set `Card Status: completed` only when terminal closeout truth exists:
+  integration state is `merged` or `closed_no_pr`, validation result is
+  terminal, and no worktree-only paths remain
 - tighten artifact and determinism wording for truthfulness
 
 This skill must not:
 - invent validation that did not happen
 - claim merge or main-repo integration prematurely
+- set `Card Status: completed` for an open PR or active worktree
 - silently change issue scope
 - publish the PR itself
 

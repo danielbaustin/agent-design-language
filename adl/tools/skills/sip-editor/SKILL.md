@@ -43,6 +43,9 @@ Useful additional inputs:
 
 This skill may:
 - fix truthful `Branch` state such as `not bound yet` vs bound execution branch
+- set `Card Status` to `draft`, `ready`, `blocked`, or `superseded` according
+  to observed SIP truth; pre-run execution readiness requires `ready` or
+  `approved`
 - normalize target-file and validation-plan sections
 - align SIP wording with current lifecycle state
 - replace generic bootstrap intent with issue-specific design-time intent,
@@ -53,6 +56,8 @@ This skill may:
 This skill must not:
 - create or bind the branch/worktree itself
 - claim work is complete
+- set `Card Status: completed`; SIP completion is lifecycle truth owned by the
+  broader issue closeout path
 - author the final output record
 - widen issue scope
 

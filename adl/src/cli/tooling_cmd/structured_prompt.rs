@@ -16,6 +16,16 @@ use super::markdown::{
 };
 use super::tooling_usage;
 
+const ALLOWED_CARD_STATUS: &[&str] = &[
+    "draft",
+    "ready",
+    "reviewed",
+    "approved",
+    "completed",
+    "blocked",
+    "superseded",
+];
+
 pub(super) fn real_lint_prompt_spec(args: &[String]) -> Result<()> {
     let input = resolve_issue_or_input_arg(args)?;
     ensure_file(&input, "input card")?;
@@ -351,6 +361,52 @@ fn validate_reference_sequence(fm: &serde_yaml::Mapping, key: &str) -> Result<()
     Ok(())
 }
 
+fn validate_optional_front_matter_card_status(fm: &serde_yaml::Mapping) -> Result<()> {
+    if let Some(card_status) = mapping_string(fm, "card_status") {
+        ensure!(
+            ALLOWED_CARD_STATUS.contains(&card_status.as_str()),
+            "card_status must be one of: draft, ready, reviewed, approved, completed, blocked, superseded"
+        );
+    }
+    Ok(())
+}
+
+fn validate_completed_srp_card_status(fm: &serde_yaml::Mapping) -> Result<()> {
+    if mapping_string(fm, "card_status").as_deref() != Some("completed") {
+        return Ok(());
+    }
+    let has_review_results = fm
+        .get(Value::String("review_results".to_string()))
+        .and_then(Value::as_mapping)
+        .map(|mapping| {
+            mapping_string(mapping, "findings_status")
+                .map(|v| matches!(v.as_str(), "no_findings" | "findings_present"))
+                .unwrap_or(false)
+                && mapping_string(mapping, "recommended_outcome")
+                    .map(|v| matches!(v.as_str(), "pass" | "block" | "needs_followup"))
+                    .unwrap_or(false)
+        })
+        .unwrap_or(false);
+    let has_final_exception = mapping_string(fm, "review_results_exception")
+        .map(|v| !v.trim().is_empty() && !v.contains("pre-execution review results are absent"))
+        .unwrap_or(false);
+    ensure!(
+        has_review_results || has_final_exception,
+        "card_status completed requires review_results with findings_status and recommended_outcome, or a final review_results_exception"
+    );
+    Ok(())
+}
+
+fn validate_optional_markdown_card_status(text: &str) -> Result<()> {
+    if let Some(card_status) = markdown_field(text, "Card Status") {
+        ensure!(
+            ALLOWED_CARD_STATUS.contains(&card_status.as_str()),
+            "Card Status must be one of: draft, ready, reviewed, approved, completed, blocked, superseded"
+        );
+    }
+    Ok(())
+}
+
 pub(super) fn validate_stp_text(text: &str) -> Result<()> {
     let (fm_text, body_text) = split_front_matter(text)?;
     let fm_yaml: Value = serde_yaml::from_str(&fm_text)?;
@@ -406,6 +462,7 @@ pub(super) fn validate_stp_text(text: &str) -> Result<()> {
         ["draft", "active", "complete"].contains(&status.as_str()),
         "status must be one of: draft, active, complete"
     );
+    validate_optional_front_matter_card_status(fm)?;
     let action = mapping_string(fm, "action").unwrap_or_default();
     ensure!(
         ["create", "edit", "close", "split", "supersede"].contains(&action.as_str()),
@@ -485,6 +542,7 @@ pub(super) fn validate_sip_text(text: &str, path: &Path, phase: Option<&str>) ->
         valid_task_id(&markdown_field(text, "Run ID").unwrap_or_default()),
         "Run ID must match issue-0000"
     );
+    validate_optional_markdown_card_status(text)?;
     ensure!(
         valid_version(&markdown_field(text, "Version").unwrap_or_default()),
         "Version must match milestone version format (for example v0.85 or v0.87.1)"
@@ -569,6 +627,7 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
         valid_task_id(&markdown_field(text, "Run ID").unwrap_or_default()),
         "Run ID must match issue-0000"
     );
+    validate_optional_markdown_card_status(text)?;
     ensure!(
         valid_version(&markdown_field(text, "Version").unwrap_or_default()),
         "Version must match milestone version format (for example v0.85 or v0.87.1)"
@@ -640,6 +699,35 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
         result.is_empty() || ["PASS", "FAIL"].contains(&result.as_str()),
         "Main Repo Integration.Result must be one of: PASS, FAIL"
     );
+    if markdown_field(text, "Card Status").as_deref() == Some("completed") {
+        let worktree_only = markdown_block_field(
+            text,
+            "Main Repo Integration (REQUIRED)",
+            "Worktree-only paths remaining",
+        )
+        .unwrap_or_default();
+        let validation_body = markdown_section_body(text, "Validation").unwrap_or_default();
+        ensure!(
+            ["merged", "closed_no_pr"].contains(&integration_state.as_str()),
+            "Card Status completed requires terminal Integration state: merged or closed_no_pr"
+        );
+        ensure!(
+            ["DONE", "FAILED"].contains(&status.as_str()),
+            "Card Status completed requires terminal Status: DONE or FAILED"
+        );
+        ensure!(
+            ["PASS", "FAIL"].contains(&result.as_str()),
+            "Card Status completed requires terminal Main Repo Integration.Result: PASS or FAIL"
+        );
+        ensure!(
+            worktree_only == "none",
+            "Card Status completed requires Worktree-only paths remaining: none"
+        );
+        ensure!(
+            !validation_body.trim().is_empty(),
+            "Card Status completed requires validation truth"
+        );
+    }
 
     if phase == Some("completed") {
         ensure!(
@@ -762,6 +850,7 @@ pub(super) fn validate_spp_text(text: &str) -> Result<()> {
             .contains(&mapping_string(fm, "status").unwrap_or_default().as_str()),
         "status must be one of: draft, reviewed, approved"
     );
+    validate_optional_front_matter_card_status(fm)?;
     ensure!(
         mapping_string(fm, "plan_revision")
             .and_then(|v| v.parse::<u32>().ok())
@@ -931,6 +1020,8 @@ pub(super) fn validate_srp_text(text: &str) -> Result<()> {
             .contains(&mapping_string(fm, "status").unwrap_or_default().as_str()),
         "status must be one of: draft, ready, approved"
     );
+    validate_optional_front_matter_card_status(fm)?;
+    validate_completed_srp_card_status(fm)?;
     validate_reference_sequence(fm, "source_refs")?;
     ensure!(
         mapping_string(fm, "review_mode").as_deref() == Some("pre_pr_independent_review"),

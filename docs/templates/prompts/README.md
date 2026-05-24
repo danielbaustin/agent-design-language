@@ -53,6 +53,7 @@ Every filled prompt card uses this small lifecycle enum:
 
 - `draft`: the card exists but is incomplete or locally invalid
 - `ready`: the card is filled and locally validator-clean
+- `reviewed`: the card has been reviewed but is not yet an execution gate
 - `approved`: the required review gate has accepted the card for use
 - `completed`: the card has fulfilled its lifecycle role and is now audit truth
 - `blocked`: the card cannot advance until an upstream condition changes
@@ -61,6 +62,15 @@ Every filled prompt card uses this small lifecycle enum:
 The local browser editor derives `draft` or `ready` from form validation.
 Lifecycle tooling should set `approved`, `completed`, `blocked`, or
 `superseded` only at the corresponding C-SDLC state transition.
+
+Execution preflight is intentionally stricter than enum validation:
+
+- `SIP`, `STP`, and `SPP` must be `ready` or `approved` before execution binds.
+- `SPP` may return to `draft` when the real execution path materially diverges.
+- `SRP` may be `completed` only after review results, dispositions, or an
+  explicit final policy exception are recorded.
+- `SOR` may be `completed` only after terminal closeout truth is present.
+- `SOR` execution `Status` remains separate from card lifecycle `Card Status`.
 
 ## Compatibility
 
