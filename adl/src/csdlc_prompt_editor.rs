@@ -65,6 +65,8 @@ const PLACEHOLDERS: &[&str] = &[
     "status",
     "timestamp",
     "branch_action",
+    "findings_status",
+    "recommended_outcome",
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -447,6 +449,8 @@ pub fn sample_values() -> BTreeMap<String, String> {
             "branch_action",
             "Preserved pre-run branch truth in generated sample content.",
         ),
+        ("findings_status", "not_run"),
+        ("recommended_outcome", "not_run"),
     ] {
         values.insert(key.to_string(), value.to_string());
     }
@@ -759,6 +763,20 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Review Notes",
                 true,
                 "Review constraints and residual risks.",
+            ));
+            fields.push(select(
+                "findings_status",
+                "Findings Status",
+                true,
+                "Machine-readable final review findings status.",
+                &["not_run", "findings_present", "no_findings"],
+            ));
+            fields.push(select(
+                "recommended_outcome",
+                "Recommended Outcome",
+                true,
+                "Machine-readable final review outcome.",
+                &["not_run", "pass", "block", "needs_followup"],
             ));
         }
         PromptCardKind::Sor => {

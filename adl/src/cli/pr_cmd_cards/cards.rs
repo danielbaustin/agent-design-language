@@ -1223,6 +1223,8 @@ fn render_bootstrap_review_policy_card(
             ("<spp_card>", spp_rel),
             ("<srp_card>", srp_rel),
             ("<sor_card>", sor_rel),
+            ("<findings_status>", "not_run".to_string()),
+            ("<recommended_outcome>", "not_run".to_string()),
         ],
     );
     Ok(text)

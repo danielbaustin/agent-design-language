@@ -279,18 +279,6 @@ pub(super) fn run_doctor_ready(
     validate_bootstrap_stp(repo_root, &source_path)?;
     validate_authored_prompt_surface("doctor", &source_path, PromptSurfaceKind::IssuePrompt)?;
     if closed_completed {
-        lifecycle::closeout_closed_completed_issue_bundle(
-            repo_root,
-            repo_root,
-            issue_ref,
-            &root_bundle_output,
-        )
-        .with_context(|| {
-            format!(
-                "doctor: failed to finalize closed/completed local bundle truth for issue #{}",
-                issue_ref.issue_number()
-            )
-        })?;
         validate_closed_completed_ready_bundle(
             repo_root,
             issue_ref,
@@ -908,17 +896,10 @@ fn validate_closed_completed_ready_bundle(
         || !ensure_nonempty_file_path(bundle_paths.plan_path)?
         || !ensure_nonempty_file_path(bundle_paths.review_policy_path)?;
     if canonical_bundle_missing {
-        lifecycle::reconcile_closed_completed_issue_bundle(
-            repo_root,
-            issue_ref,
-            root_bundle_output,
-        )
-        .with_context(|| {
-            format!(
-                "doctor: failed to restore canonical closeout bundle for closed issue #{}",
-                issue_ref.issue_number()
-            )
-        })?;
+        bail!(
+            "doctor: closed issue #{} is missing canonical closeout bundle surfaces; run the explicit closeout normalization path instead of doctor --mode ready",
+            issue_ref.issue_number()
+        );
     }
     lifecycle::ensure_closed_completed_issue_bundle_truth(repo_root, issue_ref, root_bundle_output)
         .with_context(|| {
@@ -938,13 +919,22 @@ fn validate_closed_completed_ready_bundle(
 }
 
 fn srp_has_final_review_results(text: &str) -> bool {
-    if !text.contains("review_results:") {
+    let Some(front_matter) = markdown_front_matter(text) else {
+        return false;
+    };
+    if !front_matter.contains("review_results:") {
         return false;
     }
-    let findings_status = line_value_after_prefix(text, "findings_status:");
-    let recommended_outcome = line_value_after_prefix(text, "recommended_outcome:");
+    let findings_status = line_value_after_prefix(front_matter, "findings_status:");
+    let recommended_outcome = line_value_after_prefix(front_matter, "recommended_outcome:");
     matches_final_findings_status(findings_status.as_deref())
         && matches_final_recommended_outcome(recommended_outcome.as_deref())
+}
+
+fn markdown_front_matter(text: &str) -> Option<&str> {
+    let rest = text.strip_prefix("---\n")?;
+    let end = rest.find("\n---")?;
+    Some(&rest[..end])
 }
 
 fn normalized_review_value(value: Option<&str>) -> Option<String> {

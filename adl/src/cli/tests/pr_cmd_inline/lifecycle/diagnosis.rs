@@ -813,7 +813,7 @@ fn real_pr_preflight_allows_cross_queue_open_prs() {
 }
 
 #[test]
-fn real_pr_doctor_reconciles_closed_completed_issue_bundle_without_worktree() {
+fn real_pr_doctor_reports_closed_completed_issue_bundle_drift_without_worktree() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-doctor-closed-issue-reconcile");
     let origin = temp.join("origin.git");
@@ -1087,22 +1087,21 @@ verification_summary:
         env::set_var("PATH", old_path);
     }
     env::set_current_dir(prev_dir).expect("restore cwd");
-    doctor.expect("doctor closed reconcile");
+    let err = doctor.expect_err("doctor should not reconcile closed issue drift");
+    assert!(err
+        .to_string()
+        .contains("run the explicit closeout normalization path"));
 
-    let canonical_output = issue_ref.task_bundle_output_path(&repo);
-    let canonical_text = fs::read_to_string(&canonical_output).expect("read canonical sor");
     assert!(
-        canonical_bundle.is_dir(),
-        "canonical bundle should exist after reconciliation"
+        !canonical_bundle.exists(),
+        "doctor should not recreate the canonical bundle"
     );
     assert!(
         duplicate_bundle.is_dir(),
-        "duplicate bundle should be preserved after reconciliation"
+        "doctor should preserve the duplicate bundle without mutation"
     );
-    assert!(canonical_text.contains("Status: DONE"));
-    assert!(canonical_text.contains("- Integration state: merged"));
-    assert!(canonical_text.contains("- Verification scope: main_repo"));
-    assert!(canonical_text.contains("- Worktree-only paths remaining: none"));
-    assert!(canonical_text.contains("- Worktree prune result: pruned: adl-wp-1410"));
-    assert!(!worktree.exists());
+    assert!(
+        worktree.exists(),
+        "doctor should not prune worktrees during readiness diagnosis"
+    );
 }
