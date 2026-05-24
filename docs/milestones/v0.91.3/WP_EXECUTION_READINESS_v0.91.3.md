@@ -7,8 +7,8 @@ opened `#3199` through `#3214`; correction `#3225` added the missing closeout
 tail as `#3226` through `#3231`. Sprint 1 starts at `WP-02` / `#3200` because
 `WP-01` / `#3199` is already merged and recorded as closed out in Sprint 1
 state. Sprint 4 has completed `WP-10` proof coverage, `WP-11` quality gate, and
-this `WP-12` docs review pass; `WP-13` / `#3208` is the next internal-review
-gate.
+this `WP-12` docs review pass; `WP-13` / `#3208` opened the internal-review
+cycle, and pass-2 remediation is active before external review handoff.
 
 ## Readiness Requirements
 
