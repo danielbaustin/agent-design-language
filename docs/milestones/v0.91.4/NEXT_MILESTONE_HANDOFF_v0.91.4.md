@@ -57,7 +57,7 @@ conditions are true:
 - v0.91.4 quality gate
 - v0.91.4 internal and external review packets
 - v0.91.4 remediation dispositions
-- tracked C-SDLC workflow records under `workflow/c-sdlc/v0.91.4/`
+- tracked C-SDLC workflow records under `docs/milestones/v0.91.4/review/evidence/csdlc/`
 - signed trace verification evidence
 - ObsMem transition-memory ingestion evidence
 - `docs/planning/ADL_FEATURE_LIST.md`

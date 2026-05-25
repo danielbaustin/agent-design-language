@@ -15,7 +15,7 @@
 - transition manifest fixture:
   - `docs/milestones/v0.91.3/review/transition_manifest/fixtures/valid_cognitive_transition_manifest_v1.json`
 - tracked card bundle proof:
-  - `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md`
+  - `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/README.md`
 - transition DAG proof:
   - `docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_transition_dag.md`
   - `docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_shard_plan.md`
@@ -73,7 +73,7 @@
 
 ## Trace / Proof References
 
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/README.md`
 - `docs/milestones/v0.91.3/review/transition_manifest/fixtures/valid_cognitive_transition_manifest_v1.json`
 - `docs/milestones/v0.91.3/review/transition_dag/TRANSITION_DAG_PROOF_PACKET_v0.91.3.md`
 

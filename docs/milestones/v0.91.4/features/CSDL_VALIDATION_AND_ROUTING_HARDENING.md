@@ -36,7 +36,7 @@ has passed, what is pending, and what blocks continuation.
 - Validators or readiness checks reject durable C-SDLC evidence that remains
   only in ignored local paths.
 - Validators or readiness checks verify new durable C-SDLC records use the
-  documented `workflow/c-sdlc/v0.91.4/` namespace.
+  documented `docs/milestones/v0.91.4/review/evidence/csdlc/` namespace.
 - Signed trace verification is part of the durable-proof lane.
 
 ## Source Notes

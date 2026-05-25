@@ -109,7 +109,7 @@ actor governance, and default-operation enforcement belong to `v0.91.4`.
 this repo-local tracked namespace:
 
 ```text
-workflow/c-sdlc/v0.91.3/
+docs/milestones/v0.91.3/review/evidence/csdlc/
   issues/
   sprints/
   evidence/
@@ -117,7 +117,7 @@ workflow/c-sdlc/v0.91.3/
 ```
 
 The namespace is intentionally repo-local. In a larger organization, every repo
-can keep its own inspectable C-SDLC truth under `workflow/c-sdlc/`, while
+can keep its own inspectable C-SDLC truth under `docs/milestones/<version>/review/evidence/csdlc/`, while
 company-level indexing, dashboards, or ObsMem ingestion can crawl those tracked
 records across repositories without replacing the repo-local source of truth.
 

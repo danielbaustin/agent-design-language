@@ -65,7 +65,7 @@ The initial manifest records or links:
   - `docs/milestones/v0.91.3/review/transition_manifest/fixtures/valid_cognitive_transition_manifest_v1.json`
   - `docs/milestones/v0.91.3/review/transition_manifest/fixtures/invalid_cognitive_transition_manifest_v1_missing_seed_role.json`
 - durable tracked card bundle:
-  - `workflow/c-sdlc/v0.91.3/issues/issue-3200-card-schema-proof/`
+  - `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3200-card-schema-proof/`
 - focused proof command:
   - `cargo test --manifest-path adl/Cargo.toml cognitive_transition_schema -- --nocapture`
 

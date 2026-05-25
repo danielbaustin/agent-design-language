@@ -29,7 +29,7 @@ The policy must classify active issues as:
 - A sampled active-issue audit demonstrates the classification process.
 - Future issue creation defaults to the canonical C-SDLC card sequence.
 - New durable records created after migration use
-  `workflow/c-sdlc/v0.91.4/issues/` as the tracked issue-local namespace.
+  `docs/milestones/v0.91.4/review/evidence/csdlc/issues/` as the tracked issue-local namespace.
 - In-flight PRs are not forced through unsafe card rewrites.
 - Historical records keep their truth while new records stop reproducing old
   drift.

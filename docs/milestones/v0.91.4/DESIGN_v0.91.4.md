@@ -97,7 +97,7 @@ release.
 
 - `docs/milestones/v0.91.4/WP_ISSUE_WAVE_v0.91.4.yaml` defines the planned
   issue wave.
-- `workflow/c-sdlc/v0.91.4/` is the durable tracked namespace for default
+- `docs/milestones/v0.91.4/review/evidence/csdlc/` is the durable tracked namespace for default
   operation.
 - Signed trace bundles provide durable proof references and verification output.
 - SRP/SOR and ObsMem handoff docs define review-result and outcome-truth memory

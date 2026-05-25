@@ -6,7 +6,7 @@ Tracked review packet for `WP-03` / `#3201`.
 
 ## Primary Proof Surface
 
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/`
 
 ## Secondary Proof Surfaces
 

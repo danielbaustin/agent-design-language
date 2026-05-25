@@ -45,14 +45,14 @@ The first slice must define and prove:
   sprint orchestration, review-result truth, or outcome truth.
 - Any durable C-SDLC `SPP` surface used by the proof is tracked, public, and
   auditable rather than only local `.adl/` state.
-- The first-slice proof names `workflow/c-sdlc/v0.91.3/issues/` as the target
+- The first-slice proof names `docs/milestones/v0.91.3/review/evidence/csdlc/issues/` as the target
   tracked namespace for durable issue-local card records.
 
 ## Current WP-03 Proof Surface
 
 `WP-03` now anchors the first tracked public proof bundle at:
 
-- `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/`
 
 That bundle contains:
 

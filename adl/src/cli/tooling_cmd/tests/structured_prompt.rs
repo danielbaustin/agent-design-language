@@ -358,8 +358,9 @@ fn structured_prompt_srp_validator_rejects_malformed_source_refs() {
 #[test]
 fn tracked_csdlc_card_bundle_validates() {
     let repo_root = repo_root_for_tests();
-    let bundle_root =
-        repo_root.join("workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/cards");
+    let bundle_root = repo_root.join(
+        "docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards",
+    );
     let sip = bundle_root.join("sip.md");
     let stp = bundle_root.join("stp.md");
     let spp = bundle_root.join("spp.md");

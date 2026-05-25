@@ -21,7 +21,7 @@ Before any WP starts:
 - closeout responsibility is explicit
 - durable workflow records are expected to be tracked, not left only in local
   `.adl` state
-- new durable C-SDLC records target `workflow/c-sdlc/v0.91.4/` unless a WP
+- new durable C-SDLC records target `docs/milestones/v0.91.4/review/evidence/csdlc/` unless a WP
   explicitly documents a narrower migration boundary
 - the planned closeout tail preserves separate ordered work for proof coverage,
   quality gate, docs/adoption review, internal review, external review,
@@ -39,6 +39,6 @@ Every implementation WP must identify:
 - how SRP/SOR truth flows into memory handoff
 - which actors participate, which roles they hold, and what evidence supports
   their transition standing
-- how durable proof is tracked in Git under `workflow/c-sdlc/v0.91.4/`
+- how durable proof is tracked in Git under `docs/milestones/v0.91.4/review/evidence/csdlc/`
 - whether the WP must emit or verify a signed trace bundle
 - how tracked evidence feeds ObsMem

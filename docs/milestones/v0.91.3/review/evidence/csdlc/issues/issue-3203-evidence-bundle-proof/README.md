@@ -9,8 +9,8 @@ summaries.
 
 ## Namespace
 
-- `workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/`
-- `workflow/c-sdlc/v0.91.3/issues/issue-3203-evidence-bundle-proof/cards/`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3203-evidence-bundle-proof/`
+- `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3203-evidence-bundle-proof/cards/`
 
 ## Source Promotion Boundary
 

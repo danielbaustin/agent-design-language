@@ -13,7 +13,7 @@
 - manifest fixture:
   `docs/milestones/v0.91.3/review/transition_manifest/fixtures/valid_cognitive_transition_manifest_v1.json`
 - tracked lifecycle proof bundle:
-  `workflow/c-sdlc/v0.91.3/issues/issue-3201-card-lifecycle-demo/README.md`
+  `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/README.md`
 - transition DAG packet:
   `docs/milestones/v0.91.3/review/transition_dag/ct_demo_001_transition_dag.md`
 - shard plan:

@@ -31,7 +31,7 @@ This feature covers:
 - Umbrella closeout requires current sprint state, child issue truth, review
   truth, and evidence paths.
 - Durable sprint records are written under
-  `workflow/c-sdlc/v0.91.4/sprints/`, not only ignored local state.
+  `docs/milestones/v0.91.4/review/evidence/csdlc/sprints/`, not only ignored local state.
 - Combined-lane validation is required where process state crosses issue
   boundaries.
 - The lane records when a sprint is useful with repairs rather than clean.

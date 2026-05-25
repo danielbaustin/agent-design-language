@@ -87,7 +87,7 @@ merge gate, memory handoff, proof demo, and review/closeout tail.
 - `docs/milestones/v0.91.3/WP_ISSUE_WAVE_v0.91.3.yaml` defines the active issue
   wave and closeout sequence.
 - `docs/milestones/v0.91.3/features/` defines feature-level contracts.
-- `workflow/c-sdlc/v0.91.3/` is the tracked namespace for durable first-slice
+- `docs/milestones/v0.91.3/review/evidence/csdlc/` is the tracked namespace for durable first-slice
   workflow records.
 - SRP carries review prompt/results; SOR carries final execution and integration
   truth.
@@ -103,7 +103,7 @@ publication. Closeout follows after issue closure.
 - Risk: The first slice becomes theory-only.
   Mitigation: Require proof demo, fixtures, and reviewable evidence.
 - Risk: Local `.adl` state is mistaken for public truth.
-  Mitigation: Use tracked docs and `workflow/c-sdlc/v0.91.3/` records as the
+  Mitigation: Use tracked docs and `docs/milestones/v0.91.3/review/evidence/csdlc/` records as the
   canonical audit surface.
 - Risk: The process widens into full default adoption too early.
   Mitigation: Route repeatability and enforcement to `v0.91.4`.
