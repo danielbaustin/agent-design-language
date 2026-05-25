@@ -4,12 +4,19 @@
 
 - Milestone: `v0.91.4`
 - Version: `v0.91.4`
-- Date: `2026-05-22`
+- Date: `2026-05-25`
 - Owner: ADL maintainers
 
 ## Purpose
 
 Capture milestone-critical decisions for completing the C-SDLC rollout.
+
+## How To Use
+
+Use this decision log to preserve the milestone's strategic constraints while
+the issue wave is seeded and executed. New decisions should be added here only
+when they affect v0.91.4 scope, sequencing, release truth, or sidecar
+boundaries.
 
 ## Decision Log
 
@@ -23,6 +30,7 @@ Capture milestone-critical decisions for completing the C-SDLC rollout.
 | D-06 | Five-minute sprint repeatability must be measured, not merely asserted. | accepted | One fast run is not a dependable process. | Treat a single demo as enough. | Repeatability metrics are part of the milestone exit bar. | [DEMO_MATRIX](DEMO_MATRIX_v0.91.4.md) |
 | D-07 | C-SDLC core completion remains separate from optional workspace or product work. | accepted | v0.91.4 must finish the software-development control plane without making GWS, CodeFriend, or other product surfaces required C-SDLC machinery. | Mix optional workspace/product execution into the C-SDLC default-operation contract. | Product and workspace work may be planned separately, but C-SDLC proof, trace, memory, and workflow state stand on tracked ADL repo evidence. | [DESIGN](DESIGN_v0.91.4.md), [NEXT_MILESTONE_HANDOFF](NEXT_MILESTONE_HANDOFF_v0.91.4.md) |
 | D-08 | CodeFriend pre-alpha repo/S3 welcome-page setup is a v0.91.4 sidecar mini-sprint. | accepted | The setup plan was intentionally scheduled for v0.91.4 and should be visible before the milestone opens. | Defer all CodeFriend setup to a later alpha milestone or hide it outside the milestone issue wave. | Adds a bounded sidecar wave for repo bootstrap, welcome page, AWS S3/CloudFront/ACM/Route 53 setup, and publication handoff without changing the C-SDLC core or closeout tail. | [CODEFRIEND_PRE_ALPHA_REPO_AND_S3_WELCOME_MINI_SPRINT](../../planning/codefriend/CODEFRIEND_PRE_ALPHA_REPO_AND_S3_WELCOME_MINI_SPRINT.md) |
+| D-09 | Parallel Validation Fabric has an explicit v0.91.4 feature/proof surface. | accepted | The validation-tail bottleneck is central to making five-minute sprints real; it cannot remain an implied subsection of repeatability work. | Leave PVF embedded only in WP-10 repeatability wording. | WP-10 owns the first PVF plan/proof, and WP-14 validates that pending/deferred/blocking proof is represented truthfully. | [PARALLEL_VALIDATION_FABRIC](features/PARALLEL_VALIDATION_FABRIC.md) |
 
 ## Open Questions
 

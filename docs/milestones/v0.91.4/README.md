@@ -1,5 +1,13 @@
 # v0.91.4 Milestone README
 
+## Metadata
+
+- Milestone: `v0.91.4`
+- Version: `v0.91.4`
+- Date: `2026-05-25`
+- Owner: ADL maintainers
+- Related issues: `#3210`, planned v0.91.4 issue wave
+
 ## Status
 
 Planned milestone package authored from `#3100`.
@@ -90,16 +98,15 @@ This package is grounded in:
 - `docs/milestones/v0.91.3/features/SRP_SOR_OBSMEM_HANDOFF.md`
 - `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md`
 - `docs/milestones/v0.91.3/C_SDLC_TRACKED_SOURCE_PACKAGE_v0.91.3.md`
-- `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md`
+- `docs/milestones/v0.91.4/C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md`
 - `docs/cognitive-sdlc/architecture.md`
 - `docs/cognitive-sdlc/transition-schema.md`
 - `docs/tooling/card-lifecycle.md`
 - `docs/tooling/structured-prompt-contracts.md`
 
-The broader `.adl/docs/TBD/cognitive-sdlc/` planning notes are drafting history.
-The tracked C-SDLC docs home, the tracked v0.91.3 source package, and this
-v0.91.4 migration plan are the branch-verifiable C-SDLC planning surfaces for
-review.
+Earlier cognitive-sdlc planning notes are drafting history. The tracked C-SDLC
+docs home, the tracked v0.91.3 source package, and this v0.91.4 migration plan
+are the branch-verifiable C-SDLC planning surfaces for review.
 
 ## Document Map
 
@@ -145,6 +152,37 @@ analytics, signup flows, alpha-product claims, or C-SDLC dependencies. It can
 finish as completed or truthfully blocked by AWS/DNS approval, but it must not
 alter the required C-SDLC closeout tail.
 
+## Execution Model
+
+v0.91.4 should execute through the same lifecycle discipline it is hardening:
+
+- issue work begins from `SIP`, `STP`, and design-time `SPP` truth
+- conductor routing is used for every issue and lifecycle stage
+- card edits use the relevant editor skill
+- implementation happens in bound worktrees, not on `main`
+- review results are recorded in `SRP`
+- execution and integration truth are recorded in `SOR`
+- durable workflow evidence is promoted to tracked milestone evidence under
+  `docs/milestones/v0.91.4/review/evidence/csdlc/`
+
+The CodeFriend sidecar may use the same issue/sprint discipline, but it remains
+a sidecar product setup lane and does not replace C-SDLC core proof.
+
+## Demo and Validation Surface
+
+The milestone proof surface is intentionally split across:
+
+- feature proof coverage:
+  [FEATURE_PROOF_COVERAGE_v0.91.4.md](FEATURE_PROOF_COVERAGE_v0.91.4.md)
+- demo matrix: [DEMO_MATRIX_v0.91.4.md](DEMO_MATRIX_v0.91.4.md)
+- quality gate: [QUALITY_GATE_v0.91.4.md](QUALITY_GATE_v0.91.4.md)
+- milestone checklist:
+  [MILESTONE_CHECKLIST_v0.91.4.md](MILESTONE_CHECKLIST_v0.91.4.md)
+- release plan: [RELEASE_PLAN_v0.91.4.md](RELEASE_PLAN_v0.91.4.md)
+
+Demo and validation claims must stay planned until v0.91.4 execution produces
+tracked evidence.
+
 ## Success Criteria
 
 v0.91.4 is ready to close when:
@@ -172,3 +210,13 @@ v0.91.4 is ready to close when:
   next-milestone review, and release ceremony sequence
 - the CodeFriend sidecar setup is either complete, truthfully blocked with a
   handoff, or explicitly routed before release
+
+## Exit Criteria
+
+- The v0.91.4 issue wave has been opened and completed or truthfully routed.
+- The C-SDLC default-operation claims in this README are supported by tracked
+  proof, review, trace, and release evidence.
+- Review, remediation, next-milestone planning, next-milestone review, and
+  release ceremony happen in the required order.
+- Any incomplete CodeFriend sidecar work is recorded as blocked or routed
+  without weakening the C-SDLC release bar.

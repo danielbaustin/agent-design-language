@@ -1,9 +1,23 @@
 # v0.91.4 Work Breakdown Structure
 
+## Metadata
+
+- Milestone: `v0.91.4`
+- Version: `v0.91.4`
+- Date: `2026-05-25`
+- Owner: ADL maintainers
+- Related issues: `#3210`, planned v0.91.4 issue wave
+
 ## Status
 
 Planned WBS. Work package issue numbers remain `pending` until seeded through
 the v0.91.4 issue wave.
+
+## How To Use
+
+Use this WBS as the planning source for seeding v0.91.4 issues and sprint
+umbrellas. The table is a planned sequence, not evidence that any WP has
+executed.
 
 ## WBS Summary
 
@@ -23,7 +37,7 @@ The goal is not more theory; it is a dependable development control plane.
 | WP-07 | Merge-readiness and PR gate hardening | tools | transition-aware merge gate preserving GitHub truth | WP-06 |
 | WP-08 | ObsMem transition memory integration | tools/docs | SRP/SOR/signed-trace memory handoff write/read contract | WP-06, WP-07 |
 | WP-09 | Sprint conductor default C-SDLC lane | tools | sprint flow that cannot skip child closeout or umbrella truth | WP-03, WP-04 |
-| WP-10 | Five-minute-sprint repeatability metrics | demo/tools | repeated transition metrics, validation-tail/proof-latency report, Parallel Validation Fabric plan, and coordination-latency report | WP-05 through WP-09 |
+| WP-10 | Five-minute-sprint repeatability and Parallel Validation Fabric | demo/tools | repeated transition metrics, validation-tail/proof-latency report, explicit Parallel Validation Fabric feature/proof packet, and coordination-latency report | WP-05 through WP-09 |
 | WP-11 | Active issue migration policy | docs/tools | policy for existing open cards and future issue defaults | WP-02 through WP-09 |
 | WP-12 | Regression fixtures for process drift | tests/tools | fixtures for SRP drift, stale SORs, skipped closeout, and env/global-state hazards | WP-10, WP-11 |
 | WP-13 | Demo matrix and proof coverage | demo | demo matrix, feature-proof coverage, and proof-evidence map | WP-12 |
@@ -35,6 +49,11 @@ The goal is not more theory; it is a dependable development control plane.
 | WP-19 | Next milestone planning | docs | `NEXT_MILESTONE_HANDOFF_v0.91.4.md` refresh and downstream planning update | WP-18 |
 | WP-20 | Next milestone review pass | docs | final review pass over next-milestone planning before ceremony | WP-19 |
 | WP-21 | Release ceremony | release | evidence package, signed-trace proof, and closeout record | WP-20 |
+
+## Work Packages
+
+The candidate WP sequence above is the canonical work-package table for
+v0.91.4. Issue numbers remain pending until WP-01 seeds the wave.
 
 ## CodeFriend Sidecar Mini-Sprint
 
@@ -49,6 +68,20 @@ not add or remove any release closeout-tail step.
 | CF-PRE-02 | Static welcome page | product/frontend | minimal `CodeFriend - Because your code needs a friend. Coming soon from Agent Logic, Inc.` page | CF-PRE-01 |
 | CF-PRE-03 | AWS S3, CloudFront, ACM, and Route 53 machinery | product/infra | S3 asset origin, CloudFront HTTPS, ACM certificate path, DNS plan, deployment/rollback docs | CF-PRE-02 |
 | CF-PRE-04 | Publication safety, verification, and handoff | product/docs | public-safety review, verification record, blocked/completed handoff, and follow-on routing | CF-PRE-03 |
+
+## Sequencing
+
+- Phase 1: WP-01 through WP-04 establish lifecycle, validator, conductor, and
+  editor readiness.
+- Phase 2: WP-05 through WP-08 establish transition operation, signed trace,
+  merge readiness, and memory handoff.
+- Phase 3: WP-09 through WP-12 make sprint execution default-safe and measure
+  repeatability, validation-tail, proof-latency, and regression risk.
+- Phase 4: WP-13 through WP-21 perform proof, quality, docs/adoption review,
+  internal review, external review, remediation, next-milestone planning,
+  next-milestone review, and release ceremony.
+- Sidecar: CF-PRE-00 through CF-PRE-04 may run after WP-01 without changing the
+  C-SDLC release-tail sequence.
 
 ## Sequencing Notes
 
@@ -76,3 +109,43 @@ lessons:
   next-milestone review pass have completed in order
 - no CodeFriend sidecar launch claim without repo, DNS/HTTPS, publication
   safety, and handoff evidence, or an explicit blocked state
+
+## Acceptance Mapping
+
+- WP-01 -> v0.91.4 opens with validated issue-wave and sprint setup.
+- WP-02 through WP-04 -> lifecycle validators, conductor, doctor, and editors
+  agree on the C-SDLC card state model.
+- WP-05 through WP-08 -> actor standing, shard ownership, evidence, trace,
+  merge readiness, and memory handoff are repeatable.
+- WP-09 through WP-12 -> sprint execution is default-safe, measured, and
+  guarded by drift fixtures. WP-10 must explicitly own Parallel Validation
+  Fabric planning/proof rather than leaving it implicit inside repeatability.
+- WP-13 through WP-15 -> demo/proof coverage, quality gate, and docs/adoption
+  review support the milestone claims.
+- WP-16 through WP-18 -> internal review, external review, and remediation are
+  completed or truthfully routed.
+- WP-19 through WP-21 -> next-milestone planning, next-milestone review, and
+  release ceremony complete in order.
+- CF-PRE sidecar -> CodeFriend setup is complete, blocked with handoff, or
+  routed without becoming C-SDLC core proof.
+
+## Planned Side Issues
+
+The following items are planned v0.91.4 side issues or mini-sprints. They are
+not release-tail WPs unless WP-01 explicitly seeds them into the issue wave.
+
+- outstanding demo work, including the best available Unity-facing C-SDLC demo
+  proof
+- benchmarking mini-sprint
+- root README rewrite
+- repo cleanup pass
+- partial drafting of Medium articles
+- HTML editors for planning docs
+- first-birthday readiness work for `v0.92`
+
+## Exit Criteria
+
+- Every work package has a seeded issue or an explicit routing decision.
+- The closeout tail preserves the required sequence and does not skip the
+  next-milestone review pass before ceremony.
+- Sidecar work remains visibly separate from C-SDLC default-operation proof.

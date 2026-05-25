@@ -17,7 +17,7 @@ The milestone must run:
 - ObsMem handoff validation
 - repeated five-minute-sprint metrics capture, including validation-tail and
   proof-latency measurement
-- Parallel Validation Fabric planning or bounded proof evidence
+- explicit Parallel Validation Fabric feature/proof evidence
 - combined C-SDLC lane validation
 - active-issue migration policy review with sampled issue routing
 - process-drift regression fixture results for legacy SRP, stale SOR, skipped
@@ -49,6 +49,8 @@ The milestone is blocked if:
 - validation-tail handling hides pending or deferred proof instead of recording
   it truthfully
 - parallel validation hides failures or pending proof behind aggregate success
+- Parallel Validation Fabric remains only an implied repeatability subsection
+  instead of an owned feature/proof surface
 - active issues can remain in an ambiguous lifecycle state without an explicit
   migrate/defer/no-op decision
 - regression fixtures do not cover the process-drift failures that motivated
