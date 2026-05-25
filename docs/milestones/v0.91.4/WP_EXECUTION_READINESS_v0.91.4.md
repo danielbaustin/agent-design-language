@@ -3,7 +3,7 @@
 ## Status
 
 Opening readiness surface. WP-01 `#3346` has opened the milestone and seeded
-Sprint 1 and Sprint 2 as controlled issue/card batches.
+Sprint 1, Sprint 2, and Sprint 3 as controlled issue/card batches.
 
 ## Entry Bar
 
@@ -45,7 +45,9 @@ safe:
 - Batch 2: Sprint 2 `#3352` plus WP-05 `#3353`, WP-06 `#3354`, WP-07
   `#3355`, and WP-08 `#3356` seeded and card-ready; child execution waits on
   WP-01/Sprint 1 sequencing.
-- Batch 3: Sprint 3 queued.
+- Batch 3: Sprint 3 `#3357` plus WP-09 `#3358`, WP-10 `#3359`, WP-11
+  `#3360`, and WP-12 `#3361` seeded and card-ready; child execution waits on
+  WP-01/Sprint 1 and Sprint 2 sequencing.
 - Batch 4: Sprint 4 queued.
 - Batch 5: CodeFriend sidecar queued after WP-01.
 

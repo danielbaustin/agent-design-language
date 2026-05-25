@@ -17,9 +17,11 @@ Sprint 1 has been seeded as the first controlled issue/card batch: Sprint 1
 
 Sprint 2 has also been seeded as the transition-operation batch: Sprint 2
 `#3352`, WP-05 `#3353`, WP-06 `#3354`, WP-07 `#3355`, and WP-08 `#3356`.
-Sprint 2 child execution waits on WP-01/Sprint 1 sequencing. Later sprints,
-CodeFriend sidecar work, and list-only side issues remain queued until WP-01
-routes them.
+Sprint 3 has been seeded as the sprint-default and metrics batch: Sprint 3
+`#3357`, WP-09 `#3358`, WP-10 `#3359`, WP-11 `#3360`, and WP-12 `#3361`.
+Sprint 2 and Sprint 3 child execution waits on WP-01/Sprint 1 sequencing and
+their own dependency gates. Later Sprint 4, CodeFriend sidecar work, and
+list-only side issues remain queued until WP-01 routes them.
 
 This package is intentionally stacked after the v0.91.3 first-slice package. It
 assumes v0.91.3 proves one bounded Cognitive State Transition and then defines

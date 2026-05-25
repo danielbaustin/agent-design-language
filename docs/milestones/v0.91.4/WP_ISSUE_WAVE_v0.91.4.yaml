@@ -50,8 +50,8 @@ opening_batch_policy:
       state: seeded_and_ready_waiting_on_wp_01
     - batch: 3
       title: Sprint 3 sprint default and metrics
-      seeded_issues: []
-      state: queued
+      seeded_issues: [3357, 3358, 3359, 3360, 3361]
+      state: seeded_and_ready_waiting_on_wp_01
     - batch: 4
       title: Sprint 4 review, remediation, planning, and release
       seeded_issues: []
@@ -121,28 +121,28 @@ work_packages:
     primary_deliverable: SRP/SOR/signed-trace memory handoff write/read contract
     proof_surface: ObsMem handoff fixture, tracked SRP/SOR/trace inputs, and ingestion evidence
   - wp: WP-09
-    issue: pending
+    issue: 3358
     title: Sprint conductor default C-SDLC lane
     queue: tools
     depends_on: [WP-03, WP-04]
     primary_deliverable: sprint flow that cannot skip child closeout or umbrella truth
     proof_surface: sprint-conductor fixtures and closed-out sprint state artifact
   - wp: WP-10
-    issue: pending
+    issue: 3359
     title: Five-minute-sprint repeatability and Parallel Validation Fabric
     queue: demo_tools
     depends_on: [WP-05, WP-06, WP-07, WP-08, WP-09]
     primary_deliverable: repeated transition metrics, validation-tail/proof-latency report, Parallel Validation Fabric feature/proof packet, and coordination-latency report
     proof_surface: metrics report, PVF plan or bounded proof, and tracked repeatability evidence
   - wp: WP-11
-    issue: pending
+    issue: 3360
     title: Active issue migration policy
     queue: docs_tools
     depends_on: [WP-02, WP-03, WP-04, WP-09]
     primary_deliverable: policy for existing open cards and future issue defaults
     proof_surface: active-issue migration policy plus sampled migrate/defer/leave/fold/block classifications
   - wp: WP-12
-    issue: pending
+    issue: 3361
     title: Regression fixtures for process drift
     queue: tests_tools
     depends_on: [WP-10, WP-11]
@@ -294,7 +294,7 @@ sprint_umbrellas:
     title: Transition Operation
     ordered_children: [WP-05, WP-06, WP-07, WP-08]
   - sprint: Sprint 3
-    issue: pending
+    issue: 3357
     title: Sprint Default And Metrics
     ordered_children: [WP-09, WP-10, WP-11, WP-12]
   - sprint: Sprint 4
