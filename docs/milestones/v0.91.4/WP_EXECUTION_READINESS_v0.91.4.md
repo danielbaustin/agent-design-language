@@ -2,7 +2,8 @@
 
 ## Status
 
-Planned readiness surface.
+Opening readiness surface. WP-01 `#3346` has opened the milestone and seeded
+Sprint 1 as the first controlled issue/card batch.
 
 ## Entry Bar
 
@@ -14,6 +15,11 @@ C-SDLC transition slice or an explicit no-go/defer decision.
 Before any WP starts:
 
 - issue cards exist and validate
+- every opened issue has all five cards: `SIP`, `STP`, `SPP`, `SRP`, and `SOR`
+- `SIP`, `STP`, and `SPP` are issue-specific and design-time ready before
+  execution starts
+- `SRP` and `SOR` exist upfront but do not claim review or output completion
+  before their lifecycle stages
 - `workflow-conductor` routes the issue
 - execution is bound to a worktree
 - editor skills own card edits
@@ -27,6 +33,22 @@ Before any WP starts:
   quality gate, docs/adoption review, internal review, external review,
   remediation, next-milestone planning, next-milestone review, and release
   ceremony
+
+## Opening Batch State
+
+WP-01 uses sprint-sized issue opening batches to keep the upfront-card rule
+safe:
+
+- Batch 0: WP-01 `#3346` seeded and ready.
+- Batch 1: Sprint 1 `#3347` plus WP-02 `#3348`, WP-03 `#3349`, and WP-04
+  `#3350` seeded and ready.
+- Batch 2: Sprint 2 queued.
+- Batch 3: Sprint 3 queued.
+- Batch 4: Sprint 4 queued.
+- Batch 5: CodeFriend sidecar queued after WP-01.
+
+Planned side issues remain list-only until the operator explicitly promotes
+them.
 
 ## Completion-Specific Readiness
 

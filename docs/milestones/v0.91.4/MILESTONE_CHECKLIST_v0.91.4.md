@@ -24,11 +24,15 @@ evidence exists.
 - [x] Next-milestone handoff scaffold present:
   [NEXT_MILESTONE_HANDOFF](NEXT_MILESTONE_HANDOFF_v0.91.4.md)
 - [x] CodeFriend sidecar setup plan represented in the milestone package.
+- [x] WP-01 opening gate created: `#3346`.
+- [x] Sprint 1 issue batch seeded: Sprint 1 `#3347`, WP-02 `#3348`, WP-03
+  `#3349`, and WP-04 `#3350`.
 
 ## Execution Discipline
 
-- [ ] Every opened issue bundle uses `SIP -> STP -> SPP -> SRP -> SOR`.
-- [ ] `SPP` records tracked issue-local operative plan truth before execution.
+- [x] Every currently opened issue bundle uses `SIP -> STP -> SPP -> SRP -> SOR`.
+- [x] `SPP` records design-time issue-local operative plan truth before execution
+  for the currently opened batch.
 - [ ] Card edits use editor skills.
 - [ ] Work executes in bound worktrees.
 - [ ] Draft PR opens before merge for each issue.

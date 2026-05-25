@@ -1,7 +1,8 @@
 milestone: v0.91.4
-status: planned_issue_wave_not_open
-issue_wave_opened: false
+status: issue_wave_opening_in_progress
+issue_wave_opened: partial
 owner_issue: 3100
+opening_issue: 3346
 planning_source: docs/milestones/v0.91.4
 tracked_package: docs/milestones/v0.91.4
 depends_on:
@@ -27,32 +28,65 @@ notes:
   - CodeFriend sidecar work is product setup, not C-SDLC core proof.
 card_update_rule:
   - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
+  - SIP, STP, and SPP must be issue-specific and design-time ready before execution starts.
+  - SRP and SOR must exist upfront but remain truthful to review and output lifecycle state.
   - Card edits must use editor skills.
   - SOR closeout must match GitHub issue/PR truth.
+opening_batch_policy:
+  status: active
+  rule: Seed the v0.91.4 wave in sprint-sized batches to keep card review human-sized and validator-clean.
+  batches:
+    - batch: 0
+      title: WP-01 opening gate
+      seeded_issues: [3346]
+      state: seeded_and_ready
+    - batch: 1
+      title: Sprint 1 lifecycle and routing hardening
+      seeded_issues: [3347, 3348, 3349, 3350]
+      state: seeded_and_ready
+    - batch: 2
+      title: Sprint 2 transition operation
+      seeded_issues: []
+      state: queued
+    - batch: 3
+      title: Sprint 3 sprint default and metrics
+      seeded_issues: []
+      state: queued
+    - batch: 4
+      title: Sprint 4 review, remediation, planning, and release
+      seeded_issues: []
+      state: queued
+    - batch: 5
+      title: CodeFriend pre-alpha sidecar
+      seeded_issues: []
+      state: queued_after_wp_01
+  list_only_side_issues:
+    state: not_promoted
+    note: Planned side issues remain list-only until explicitly promoted by the operator.
 work_packages:
   - wp: WP-01
-    issue: pending
+    issue: 3346
     title: Design pass and issue-wave readiness
     queue: docs
     depends_on: [v0.91.3 closeout]
     primary_deliverable: v0.91.4 issue wave, sprint umbrellas, sidecar routing decisions, and validated cards
     proof_surface: issue-wave YAML, sprint umbrella issues, and complete SIP/STP/SPP/SRP/SOR cards
   - wp: WP-02
-    issue: pending
+    issue: 3348
     title: Lifecycle validator hardening
     queue: tools
     depends_on: [WP-01]
     primary_deliverable: strict card and transition lifecycle validators
     proof_surface: validator fixture results for valid, invalid, stale, blocked, and routed card states
   - wp: WP-03
-    issue: pending
+    issue: 3349
     title: Doctor and conductor state truth
     queue: tools
     depends_on: [WP-02]
     primary_deliverable: pr doctor, workflow-conductor, and sprint-conductor aligned on C-SDLC stages
     proof_surface: routing report and doctor/conductor fixture evidence
   - wp: WP-04
-    issue: pending
+    issue: 3350
     title: Editor skill repair reliability
     queue: tools
     depends_on: [WP-02]
@@ -252,7 +286,7 @@ planned_side_issues:
     scheduling_note: list_only_until_wp_01
 sprint_umbrellas:
   - sprint: Sprint 1
-    issue: pending
+    issue: 3347
     title: Lifecycle And Routing Hardening
     ordered_children: [WP-01, WP-02, WP-03, WP-04]
   - sprint: Sprint 2

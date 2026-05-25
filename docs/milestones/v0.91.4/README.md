@@ -10,7 +10,12 @@
 
 ## Status
 
-Planned milestone package authored from `#3100`.
+Milestone opening in progress through WP-01 `#3346`.
+
+Sprint 1 has been seeded as the first controlled issue/card batch: Sprint 1
+`#3347`, WP-02 `#3348`, WP-03 `#3349`, and WP-04 `#3350`. Later sprints,
+CodeFriend sidecar work, and list-only side issues remain queued until WP-01
+routes them.
 
 This package is intentionally stacked after the v0.91.3 first-slice package. It
 assumes v0.91.3 proves one bounded Cognitive State Transition and then defines
