@@ -1,8 +1,21 @@
 # v0.91.4 Sprint Plan
 
+## Metadata
+
+- Milestone: `v0.91.4`
+- Version: `v0.91.4`
+- Date: `2026-05-25`
+- Owner: ADL maintainers
+- Related issues: `#3210`, planned v0.91.4 sprint umbrellas
+
 ## Status
 
 Planned sprint map. Sprint issue numbers are `pending`.
+
+## How To Use
+
+Use this document to seed sprint umbrellas and order child work. It is not a
+claim that any sprint has started or closed.
 
 ## Sprint Overview
 
@@ -31,6 +44,30 @@ The sprint overview table above is the generator-facing sprint map. The goals
 below explain the intended execution posture for each sprint without replacing
 that canonical table.
 
+## Sprint Goal
+
+v0.91.4 should make the C-SDLC default lane reliable enough that future ADL
+software-development work can use it without special ceremony or hidden local
+state.
+
+## Planned Scope
+
+- Sprint 1: lifecycle, validator, conductor, doctor, and editor hardening.
+- Sprint 2: actor standing, shard ownership, evidence convergence, signed
+  trace, merge readiness, and memory handoff.
+- Sprint 3: sprint default behavior, active issue migration, repeatability
+  metrics, validation-tail/proof-latency handling, and drift fixtures.
+- Sprint 4: proof coverage, quality gate, docs/adoption review, internal
+  review, external review, remediation, next-milestone planning,
+  next-milestone review, and release ceremony.
+- Sidecar mini-sprint: bounded CodeFriend pre-alpha repo and static-site setup.
+
+## Work Plan
+
+Execute sprints in order unless a documented dependency gate requires a
+bounded sidecar issue to run after WP-01. Do not let the sidecar replace,
+delay invisibly, or expand the C-SDLC release-tail gates.
+
 ## Execution Policy
 
 Every sprint must preserve:
@@ -45,6 +82,30 @@ Every sprint must preserve:
   external review, remediation, next-milestone planning, next-milestone review
   pass, and release ceremony remain separate ordered tail issues
 - sidecar product work remains separate from C-SDLC default-operation proof
+
+## Cadence Expectations
+
+- Keep issue execution bounded and reviewable.
+- Prefer focused proof over broad test cycles when the touched surface is docs
+  or planning only.
+- Record validation-tail and proof-latency evidence instead of hiding long
+  blocking checks behind the five-minute-sprint claim.
+
+## Risks / Dependencies
+
+- Sprint 1 must land before later sprints rely on default C-SDLC state truth.
+- Signed trace and tracked workflow-state proof must land before release
+  readiness is claimed.
+- The CodeFriend sidecar depends on AWS/DNS approval and may end in a truthful
+  blocked handoff.
+
+## Demo / Review Plan
+
+- Sprint 3 owns repeatability and validation-tail/proof-latency evidence.
+- Sprint 4 owns demo/proof coverage, quality gate, docs/adoption review,
+  internal review, external review, remediation, next-milestone planning,
+  next-milestone review, and ceremony.
+- CodeFriend sidecar proof is reviewed as product setup evidence only.
 
 ## Closeout Bar
 
@@ -65,3 +126,10 @@ It must show that the C-SDLC lane can run repeatedly with:
 The CodeFriend sidecar is complete only when it has either a verified HTTPS
 welcome page and handoff record or a truthful blocked handoff with AWS/DNS
 approval blockers recorded.
+
+## Exit Criteria
+
+- Sprint umbrellas are opened with ordered child work and complete structured
+  prompts.
+- Sprint state cannot advance past child issues without closeout truth.
+- v0.91.4 closes only after the full release-tail sequence completes.

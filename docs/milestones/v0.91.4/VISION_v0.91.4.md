@@ -5,7 +5,7 @@
 - Project: `Agent Design Language`
 - Milestone: `v0.91.4`
 - Version: `v0.91.4`
-- Date: `2026-05-22`
+- Date: `2026-05-25`
 - Owner: ADL maintainers
 - Related issues: `#3100`, planned issue wave pending
 
@@ -13,6 +13,12 @@
 
 Define the milestone-level vision for completing the C-SDLC rollout after the
 `v0.91.3` first slice.
+
+## How To Use
+
+Use this document as the high-level intent surface for v0.91.4. It explains why
+the milestone exists; the WBS, sprint plan, demo matrix, and release documents
+own execution details.
 
 ## Overview
 
@@ -43,7 +49,7 @@ software-development issues can actually use.
 1. Lifecycle and routing hardening.
 2. Transition operation.
 3. Sprint default behavior, repeatability metrics, validation-tail/proof-latency
-   handling, and Parallel Validation Fabric planning.
+   handling, and Parallel Validation Fabric ownership.
 4. Durable tracked workflow state, signed trace proof, and memory integration.
 5. Review, remediation, planning, and release discipline.
 
@@ -94,3 +100,18 @@ features on that stabilized base.
 C-SDLC is intended to remodel software development around tracked intention,
 bounded execution, reviewable evidence, and truthful memory. `v0.91.4` is the
 moment where that model must become ordinary enough to rely on.
+
+## Summary
+
+v0.91.4 is the completion milestone for C-SDLC default operation. It should
+turn the v0.91.3 first slice into a repeatable, tracked, reviewable,
+trace-backed issue execution lane.
+
+## Exit Criteria
+
+- The vision is reflected in the WBS, sprint plan, demo matrix, and release
+  gates.
+- C-SDLC default operation remains separate from optional product/workspace
+  sidecars.
+- Later milestones can rely on the completed v0.91.4 process only after the
+  release tail records supporting evidence.

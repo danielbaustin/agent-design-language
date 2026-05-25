@@ -35,106 +35,148 @@ work_packages:
     title: Design pass and issue-wave readiness
     queue: docs
     depends_on: [v0.91.3 closeout]
+    primary_deliverable: v0.91.4 issue wave, sprint umbrellas, sidecar routing decisions, and validated cards
+    proof_surface: issue-wave YAML, sprint umbrella issues, and complete SIP/STP/SPP/SRP/SOR cards
   - wp: WP-02
     issue: pending
     title: Lifecycle validator hardening
     queue: tools
     depends_on: [WP-01]
+    primary_deliverable: strict card and transition lifecycle validators
+    proof_surface: validator fixture results for valid, invalid, stale, blocked, and routed card states
   - wp: WP-03
     issue: pending
     title: Doctor and conductor state truth
     queue: tools
     depends_on: [WP-02]
+    primary_deliverable: pr doctor, workflow-conductor, and sprint-conductor aligned on C-SDLC stages
+    proof_surface: routing report and doctor/conductor fixture evidence
   - wp: WP-04
     issue: pending
     title: Editor skill repair reliability
     queue: tools
     depends_on: [WP-02]
+    primary_deliverable: card editor skills repair drift without hand edits
+    proof_surface: editor repair examples and structured-prompt validation output
   - wp: WP-05
     issue: pending
     title: Software Development Polis, shard ownership, and interface freeze
     queue: docs_tools
     depends_on: [WP-03]
+    primary_deliverable: actor standing, enforceable shard write boundaries, and synchronization rules
+    proof_surface: actor-standing fixtures, shard ownership rules, and interface-freeze evidence
   - wp: WP-06
     issue: pending
     title: Evidence convergence, review synthesis, and signed trace proof
     queue: tools
     depends_on: [WP-05]
+    primary_deliverable: repeatable evidence bundle, review synthesis flow, and minimal signed trace bundle
+    proof_surface: evidence bundle, review synthesis output, signed trace bundle, and verification result
   - wp: WP-07
     issue: pending
     title: Merge-readiness and PR gate hardening
     queue: tools
     depends_on: [WP-06]
+    primary_deliverable: transition-aware merge gate preserving GitHub truth
+    proof_surface: merge-readiness gate fixtures and PR truth-preservation report
   - wp: WP-08
     issue: pending
     title: ObsMem transition memory integration
     queue: docs_tools
     depends_on: [WP-06, WP-07]
+    primary_deliverable: SRP/SOR/signed-trace memory handoff write/read contract
+    proof_surface: ObsMem handoff fixture, tracked SRP/SOR/trace inputs, and ingestion evidence
   - wp: WP-09
     issue: pending
     title: Sprint conductor default C-SDLC lane
     queue: tools
     depends_on: [WP-03, WP-04]
+    primary_deliverable: sprint flow that cannot skip child closeout or umbrella truth
+    proof_surface: sprint-conductor fixtures and closed-out sprint state artifact
   - wp: WP-10
     issue: pending
-    title: Five-minute-sprint repeatability and parallel validation metrics
+    title: Five-minute-sprint repeatability and Parallel Validation Fabric
     queue: demo_tools
     depends_on: [WP-05, WP-06, WP-07, WP-08, WP-09]
+    primary_deliverable: repeated transition metrics, validation-tail/proof-latency report, Parallel Validation Fabric feature/proof packet, and coordination-latency report
+    proof_surface: metrics report, PVF plan or bounded proof, and tracked repeatability evidence
   - wp: WP-11
     issue: pending
     title: Active issue migration policy
     queue: docs_tools
     depends_on: [WP-02, WP-03, WP-04, WP-09]
+    primary_deliverable: policy for existing open cards and future issue defaults
+    proof_surface: active-issue migration policy plus sampled migrate/defer/leave/fold/block classifications
   - wp: WP-12
     issue: pending
     title: Regression fixtures for process drift
     queue: tests_tools
     depends_on: [WP-10, WP-11]
+    primary_deliverable: fixtures for SRP drift, stale SORs, skipped closeout, and env/global-state hazards
+    proof_surface: regression fixture report showing known drift modes fail closed
   - wp: WP-13
     issue: pending
     title: Demo matrix and proof coverage
     queue: demo
     depends_on: [WP-12]
+    primary_deliverable: demo matrix, feature-proof coverage, proof-evidence map, and best-demo showcase including Unity-facing proof when available
+    proof_surface: demo matrix, feature proof coverage, and tracked demo showcase packet
   - wp: WP-14
     issue: pending
     title: Coverage / quality gate
     queue: quality
     depends_on: [WP-13]
+    primary_deliverable: validation gate covering lifecycle, tools, tests, traces, PVF, and release blockers
+    proof_surface: quality-gate record and blocker disposition report
   - wp: WP-15
     issue: pending
     title: Docs + adoption review pass
     queue: docs
     depends_on: [WP-14]
+    primary_deliverable: C-SDLC default-operation docs, tracked-source docs, onboarding updates, and docs-review findings
+    proof_surface: docs-review packet and adoption-readiness findings
   - wp: WP-16
     issue: pending
     title: Internal review
     queue: review
     depends_on: [WP-15]
+    primary_deliverable: code/docs/tests/process review packet
+    proof_surface: internal review report and finding register
   - wp: WP-17
     issue: pending
     title: External / 3rd-party review
     queue: review
     depends_on: [WP-16]
+    primary_deliverable: independent review packet and handoff surface
+    proof_surface: external review handoff and received review packet
   - wp: WP-18
     issue: pending
     title: Review findings remediation
     queue: review
     depends_on: [WP-17]
+    primary_deliverable: fixes, finding dispositions, and follow-on routing
+    proof_surface: finding disposition record and remediation PRs
   - wp: WP-19
     issue: pending
     title: Next milestone planning
     queue: docs
     depends_on: [WP-18]
+    primary_deliverable: NEXT_MILESTONE_HANDOFF_v0.91.4 refresh and downstream planning update
+    proof_surface: handoff doc and downstream planning diff
   - wp: WP-20
     issue: pending
     title: Next milestone review pass
     queue: docs
     depends_on: [WP-19]
+    primary_deliverable: final review pass over next-milestone planning before ceremony
+    proof_surface: next-milestone review findings and disposition note
   - wp: WP-21
     issue: pending
     title: Release ceremony
     queue: release
     depends_on: [WP-20]
+    primary_deliverable: evidence package, signed-trace proof, and closeout record
+    proof_surface: release evidence packet, signed trace verification, and ceremony closeout
 closeout_sequence:
   - WP-13: Demo matrix and proof coverage
   - WP-14: Coverage / quality gate
@@ -179,6 +221,35 @@ sidecar_issue_waves:
         title: Publication safety, verification, and handoff
         queue: product_docs
         depends_on: [CF-PRE-03]
+planned_side_issues:
+  - id: SIDE-DEMO
+    title: Outstanding demo work, including the best available Unity-facing C-SDLC demo proof
+    queue: demo
+    scheduling_note: list_only_until_wp_01
+  - id: SIDE-BENCH
+    title: Benchmarking mini-sprint
+    queue: benchmark
+    scheduling_note: list_only_until_wp_01
+  - id: SIDE-README
+    title: Root README rewrite
+    queue: docs
+    scheduling_note: list_only_until_wp_01
+  - id: SIDE-CLEANUP
+    title: Repository cleanup pass
+    queue: cleanup
+    scheduling_note: list_only_until_wp_01
+  - id: SIDE-MEDIUM
+    title: Partially draft Medium articles
+    queue: publication
+    scheduling_note: list_only_until_wp_01
+  - id: SIDE-PLANNING-EDITORS
+    title: HTML editors for planning docs
+    queue: tools
+    scheduling_note: list_only_until_wp_01
+  - id: SIDE-BIRTHDAY
+    title: First-birthday readiness for v0.92
+    queue: docs
+    scheduling_note: list_only_until_wp_01
 sprint_umbrellas:
   - sprint: Sprint 1
     issue: pending
