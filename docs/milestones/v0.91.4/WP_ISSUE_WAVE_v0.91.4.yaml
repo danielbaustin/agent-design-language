@@ -46,8 +46,8 @@ opening_batch_policy:
       state: seeded_and_ready
     - batch: 2
       title: Sprint 2 transition operation
-      seeded_issues: []
-      state: queued
+      seeded_issues: [3352, 3353, 3354, 3355, 3356]
+      state: seeded_and_ready_waiting_on_wp_01
     - batch: 3
       title: Sprint 3 sprint default and metrics
       seeded_issues: []
@@ -93,28 +93,28 @@ work_packages:
     primary_deliverable: card editor skills repair drift without hand edits
     proof_surface: editor repair examples and structured-prompt validation output
   - wp: WP-05
-    issue: pending
+    issue: 3353
     title: Software Development Polis, shard ownership, and interface freeze
     queue: docs_tools
     depends_on: [WP-03]
     primary_deliverable: actor standing, enforceable shard write boundaries, and synchronization rules
     proof_surface: actor-standing fixtures, shard ownership rules, and interface-freeze evidence
   - wp: WP-06
-    issue: pending
+    issue: 3354
     title: Evidence convergence, review synthesis, and signed trace proof
     queue: tools
     depends_on: [WP-05]
     primary_deliverable: repeatable evidence bundle, review synthesis flow, and minimal signed trace bundle
     proof_surface: evidence bundle, review synthesis output, signed trace bundle, and verification result
   - wp: WP-07
-    issue: pending
+    issue: 3355
     title: Merge-readiness and PR gate hardening
     queue: tools
     depends_on: [WP-06]
     primary_deliverable: transition-aware merge gate preserving GitHub truth
     proof_surface: merge-readiness gate fixtures and PR truth-preservation report
   - wp: WP-08
-    issue: pending
+    issue: 3356
     title: ObsMem transition memory integration
     queue: docs_tools
     depends_on: [WP-06, WP-07]
@@ -290,7 +290,7 @@ sprint_umbrellas:
     title: Lifecycle And Routing Hardening
     ordered_children: [WP-01, WP-02, WP-03, WP-04]
   - sprint: Sprint 2
-    issue: pending
+    issue: 3352
     title: Transition Operation
     ordered_children: [WP-05, WP-06, WP-07, WP-08]
   - sprint: Sprint 3

@@ -13,7 +13,11 @@
 Milestone opening in progress through WP-01 `#3346`.
 
 Sprint 1 has been seeded as the first controlled issue/card batch: Sprint 1
-`#3347`, WP-02 `#3348`, WP-03 `#3349`, and WP-04 `#3350`. Later sprints,
+`#3347`, WP-02 `#3348`, WP-03 `#3349`, and WP-04 `#3350`.
+
+Sprint 2 has also been seeded as the transition-operation batch: Sprint 2
+`#3352`, WP-05 `#3353`, WP-06 `#3354`, WP-07 `#3355`, and WP-08 `#3356`.
+Sprint 2 child execution waits on WP-01/Sprint 1 sequencing. Later sprints,
 CodeFriend sidecar work, and list-only side issues remain queued until WP-01
 routes them.
 

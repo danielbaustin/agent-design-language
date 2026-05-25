@@ -10,8 +10,8 @@
 
 ## Status
 
-Sprint map opened through WP-01. Sprint 1 is seeded; later sprint issue numbers
-remain `pending` until their batches are opened.
+Sprint map opened through WP-01. Sprint 1 and Sprint 2 are seeded; later sprint
+issue numbers remain `pending` until their batches are opened.
 
 ## How To Use
 
@@ -23,7 +23,7 @@ claim that any sprint has started or closed.
 | Sprint | Title | Ordered Children | Goal |
 | --- | --- | --- | --- |
 | Sprint 1 | Lifecycle And Routing Hardening (`#3347`) | WP-01 `#3346`, WP-02 `#3348`, WP-03 `#3349`, WP-04 `#3350` | Make validators, doctor, conductor, and editor skills agree on C-SDLC state. |
-| Sprint 2 | Transition Operation | WP-05, WP-06, WP-07, WP-08 | Make actor standing, shards, evidence, merge gates, and memory handoff repeatable. |
+| Sprint 2 | Transition Operation (`#3352`) | WP-05 `#3353`, WP-06 `#3354`, WP-07 `#3355`, WP-08 `#3356` | Make actor standing, shards, evidence, merge gates, and memory handoff repeatable. |
 | Sprint 3 | Sprint Default And Metrics | WP-09, WP-10, WP-11, WP-12 | Make sprint execution default-safe and measure repeatability, validation-tail, proof-latency, and parallel-validation behavior. |
 | Sprint 4 | Review, Remediation, Planning, And Release | WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-20, WP-21 | Prove, gate, review, remediate, plan the next milestone, re-review the handoff, and close the completion milestone. |
 
@@ -47,7 +47,9 @@ rule stays reviewable:
 - Batch 0 opened WP-01 `#3346`.
 - Batch 1 opened Sprint 1 `#3347` and WP-02 through WP-04 as `#3348` through
   `#3350`.
-- Batches 2 through 4 remain queued for Sprint 2, Sprint 3, and Sprint 4.
+- Batch 2 opened Sprint 2 `#3352` and WP-05 through WP-08 as `#3353` through
+  `#3356`; child execution waits on WP-01/Sprint 1 sequencing.
+- Batches 3 through 4 remain queued for Sprint 3 and Sprint 4.
 - Batch 5 remains queued for the CodeFriend sidecar after WP-01.
 
 Every opened issue receives all five cards upfront. `SIP`, `STP`, and `SPP`

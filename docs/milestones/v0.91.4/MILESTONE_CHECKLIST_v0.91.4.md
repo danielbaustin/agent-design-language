@@ -27,6 +27,8 @@ evidence exists.
 - [x] WP-01 opening gate created: `#3346`.
 - [x] Sprint 1 issue batch seeded: Sprint 1 `#3347`, WP-02 `#3348`, WP-03
   `#3349`, and WP-04 `#3350`.
+- [x] Sprint 2 issue batch seeded: Sprint 2 `#3352`, WP-05 `#3353`, WP-06
+  `#3354`, WP-07 `#3355`, and WP-08 `#3356`.
 
 ## Execution Discipline
 
