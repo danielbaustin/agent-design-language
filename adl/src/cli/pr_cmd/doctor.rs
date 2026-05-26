@@ -651,7 +651,7 @@ fn classify_stp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             ),
         );
     }
-    if text.contains("## Required Outcome") && text.contains("## Acceptance Criteria") {
+    if has_complete_stp_design_time_surface(&text) {
         return card_stage(
             repo_root,
             "STP",
@@ -661,7 +661,7 @@ fn classify_stp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
                 true,
                 false,
                 None,
-                "STP has the required task intent and acceptance surfaces.",
+                "STP has the required issue-specific task intent, acceptance, and dependency surfaces.",
             ),
         );
     }
@@ -677,6 +677,41 @@ fn classify_stp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             "STP exists but is not complete enough to anchor execution.",
         ),
     )
+}
+
+fn has_complete_stp_design_time_surface(text: &str) -> bool {
+    const REQUIRED_HEADINGS: &[&str] = &[
+        "Summary",
+        "Goal",
+        "Required Outcome",
+        "Deliverables",
+        "Acceptance Criteria",
+        "Repo Inputs",
+        "Dependencies",
+        "Demo Expectations",
+        "Non-goals",
+        "Issue-Graph Notes",
+        "Notes",
+        "Tooling Notes",
+    ];
+    REQUIRED_HEADINGS
+        .iter()
+        .all(|heading| doctor_markdown_has_heading(text, heading))
+}
+
+fn doctor_markdown_has_heading(text: &str, heading: &str) -> bool {
+    let mut in_fence = false;
+    for line in text.lines() {
+        let trimmed = line.trim_start();
+        if trimmed.starts_with("```") {
+            in_fence = !in_fence;
+            continue;
+        }
+        if !in_fence && line.trim_end() == format!("## {heading}") {
+            return true;
+        }
+    }
+    false
 }
 
 fn classify_spp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
@@ -1208,7 +1243,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Policy\n\n## Review Summary\n\npolicy only\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
@@ -1234,7 +1269,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\nreview_results:\n  findings_status: \"not_run | findings_present | no_findings\"\n  recommended_outcome: \"pass | block | needs_followup | not_run\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- <pass, block, needs_followup, or not_run>\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
@@ -1258,7 +1293,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"todo\"\n  recommended_outcome: \"ship_it\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- ship_it\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
@@ -1281,7 +1316,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results_exception: \"explicit policy exception: docs-only no-op review\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\nexplicit policy exception recorded\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
@@ -1303,7 +1338,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Prompt\n\n## Review Instructions\n\nRun the bounded issue review after implementation.\n",
                 sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
@@ -1333,7 +1368,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent until implementation exists\"\n---\n\n# Structured Review Prompt\n\n## Review Instructions\n\nRun the bounded issue review after implementation.\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
@@ -1356,7 +1391,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results_exception: \"explicit policy exception: docs-only no-op review\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\nexplicit policy exception recorded\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
@@ -1390,7 +1425,10 @@ mod tests {
             issue = issue_ref.issue_number(),
             bundle = issue_ref.task_bundle_dir_name(),
         );
-        let stp_text = "## Required Outcome\n\n- closed-ready validation stays read-only when canonical closeout truth is stale\n\n## Acceptance Criteria\n\n- stale closeout truth causes a blocking validation error\n- no bundle files are mutated on failure\n";
+        let stp_text = complete_stp_fixture_with(
+            "- closed-ready validation stays read-only when canonical closeout truth is stale",
+            "- stale closeout truth causes a blocking validation error\n- no bundle files are mutated on failure",
+        );
         let spp_text = format!(
             "---\nschema_version: \"0.1\"\nartifact_type: \"structured_planning_prompt\"\nname: \"fixture-plan\"\nissue: {issue}\ntask_id: \"{task_id}\"\nrun_id: \"{task_id}\"\nversion: v0.91.2\ntitle: \"Fixture\"\nbranch: \"codex/1410-fixture\"\nstatus: \"reviewed\"\nactivation_state: \"reviewed\"\nplan_revision: 1\nsource_refs:\n  - kind: \"issue\"\n    ref: \"https://github.com/example/repo/issues/{issue}\"\nscope:\n  files:\n    - \".adl/v0.91.2/tasks/{bundle}/sip.md\"\nconstraints:\n  - \"read_only_until_execution_is_approved\"\nconfidence: \"medium\"\nplan_summary: \"Fixture plan for closed-ready validation.\"\nassumptions:\n  - \"The canonical bundle already exists.\"\nproposed_steps:\n  - id: \"step-1\"\n    description: \"Validate closed-ready truth without mutation.\"\n    expected_output: \".adl/v0.91.2/tasks/{bundle}/spp.md\"\n    allowed_mode: \"execution_after_approval\"\ncodex_plan:\n  - step: \"Validate closed-ready truth without mutation.\"\n    status: \"pending\"\naffected_areas:\n  - \"doctor\"\ninvariants_to_preserve:\n  - \"Do not mutate stale closeout truth during validation.\"\nrisks_and_edge_cases:\n  - \"Closed issue bundles can still drift.\"\ntest_strategy:\n  - \"Run the focused doctor regression test.\"\nexecution_handoff: \"Use this artifact as the durable plan-of-record before execution.\"\nrequired_permissions:\n  - \"workspace-write after execution approval\"\nstop_conditions:\n  - \"Stop if validation would mutate the stale bundle.\"\nalternatives_considered:\n  - description: \"Use transient planning only.\"\n    reason_not_chosen: \"That would not leave durable reviewable plan truth.\"\nreview_hooks:\n  - \"Check read-only behavior.\"\nnotes: \"fixture\"\n---\n\n# Structured Plan Prompt\n\n## Plan Summary\n\nFixture plan.\n\n## Codex Plan\n\n1. [pending] Validate closed-ready truth without mutation.\n",
             issue = issue_ref.issue_number(),
@@ -1433,7 +1471,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n\n# Structured Plan Prompt\n\n## Validation\n\nInspect provider output like `downloading... done` without treating it as truncation.\n",
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Prompt\n",
                 sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
@@ -1455,7 +1493,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: not bound yet\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"not bound yet\"\nstatus: \"draft\"\n---\n\nBootstrap-generated SPP; revise before use if planning review is required.\n",
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
                 sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
@@ -1494,7 +1532,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: not bound yet\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"not bound yet\"\nstatus: \"approved\"\n---\n\n# Structured Plan Prompt\n\n## Plan Summary\n\nDesign-time execution plan for generated issue.\n\n## Proposed Steps\n\n- Use deliverables from the linked source issue prompt\n- Satisfy the linked source issue prompt acceptance criteria\n",
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
                 sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
@@ -1524,7 +1562,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: not bound yet\n\n## Goal\n\nPrepare the linked issue prompt and review surfaces for truthful pre-run review before execution is bound.\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"not bound yet\"\nstatus: \"approved\"\n---\n\n# Structured Plan Prompt\n",
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
                 sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
@@ -1554,7 +1592,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Card Status: draft\nBranch: not bound yet\n",
-                stp: "---\ncard_status: \"ready\"\n---\n\n## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: "---\ncard_status: \"ready\"\n---\n\n## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\nfixture notes\n\n## Tooling Notes\n\n- fixture tooling note\n",
                 spp: "---\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\n---\n\n# Structured Plan Prompt\n",
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
                 sor: "Branch: not bound yet\nCard Status: draft\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
@@ -1585,7 +1623,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Card Status: ready\nBranch: codex/3065-test\n",
-                stp: "---\ncard_status: \"ready\"\n---\n\n## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: "---\ncard_status: \"ready\"\n---\n\n## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\nfixture notes\n\n## Tooling Notes\n\n- fixture tooling note\n",
                 spp: "---\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"completed\"\nstatus: \"approved\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n- Not run yet.\n",
                 sor: "# output\n\nBranch: codex/3065-test\nCard Status: ready\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
@@ -1607,7 +1645,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Card Status: ready\nBranch: codex/3065-test\n",
-                stp: "---\ncard_status: \"ready\"\n---\n\n## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: "---\ncard_status: \"ready\"\n---\n\n## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\nfixture notes\n\n## Tooling Notes\n\n- fixture tooling note\n",
                 spp: "---\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"approved\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"completed\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n- pass\n",
                 sor: "# output\n\nBranch: codex/3065-test\nCard Status: completed\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
@@ -1640,7 +1678,7 @@ mod tests {
         .expect("write sip");
         fs::write(
             issue_ref.task_bundle_stp_path(&repo),
-            "---\ncard_status: \"ready\"\n---\n\n## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+            "---\ncard_status: \"ready\"\n---\n\n## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\nfixture notes\n\n## Tooling Notes\n\n- fixture tooling note\n",
         )
         .expect("write stp");
         fs::write(
@@ -1672,7 +1710,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\ncodex_plan:\n  - step: \"implement\"\n    status: \"in_progress\"\n",
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Policy\n",
                 sor: "Branch: codex/3065-test\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
@@ -1715,13 +1753,61 @@ mod tests {
     }
 
     #[test]
+    fn card_lifecycle_blocks_sparse_stp_before_execution() {
+        let repo = lifecycle_temp_repo("sparse-stp");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Branch: codex/3065-test\n",
+                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Policy\n",
+                sor: "Branch: codex/3065-test\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_eq!(lifecycle.active_stage, "STP");
+        assert_eq!(lifecycle.next_required_stage, Some("STP"));
+        assert_eq!(lifecycle.pr_run_readiness, "blocked");
+        assert_stage(&lifecycle, "STP", "active", false, false);
+    }
+
+    #[test]
+    fn card_lifecycle_does_not_treat_embedded_heading_text_as_complete_stp() {
+        let repo = lifecycle_temp_repo("embedded-heading-text-stp");
+        let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Branch: codex/3065-test\n",
+                stp: "## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\n```md\n## Tooling Notes\n```\n",
+                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Policy\n",
+                sor: "Branch: codex/3065-test\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
+            },
+        );
+
+        let lifecycle = build_doctor_card_lifecycle(
+            &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        );
+
+        assert_eq!(lifecycle.active_stage, "STP");
+        assert_eq!(lifecycle.next_required_stage, Some("STP"));
+        assert_eq!(lifecycle.pr_run_readiness, "blocked");
+        assert_stage(&lifecycle, "STP", "active", false, false);
+    }
+
+    #[test]
     fn card_lifecycle_reports_final_review_and_output_truth() {
         let repo = lifecycle_temp_repo("final-srp-sor");
         let paths = write_lifecycle_fixture(
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- pass\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: none\n- Integration state: merged\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
@@ -1746,7 +1832,7 @@ mod tests {
             &repo,
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
-                stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
+                stp: complete_stp_fixture(),
                 spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\n---\n",
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- pass\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: none\n- Integration state: merged\n- Result: FAIL\n\n## Validation\n- focused validation failed\n",
@@ -1837,6 +1923,26 @@ mod tests {
         fs::write(&paths.srp, fixture.srp).expect("write srp");
         fs::write(&paths.sor, fixture.sor).expect("write sor");
         paths
+    }
+
+    fn complete_stp_fixture() -> &'static str {
+        Box::leak(
+            "## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\nfixture notes\n\n## Tooling Notes\n\n- fixture tooling note\n"
+                .to_string()
+                .into_boxed_str(),
+        )
+    }
+
+    fn complete_stp_fixture_with(
+        required_outcome: &str,
+        acceptance_criteria: &str,
+    ) -> &'static str {
+        Box::leak(
+            format!(
+                "## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\n{required_outcome}\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n{acceptance_criteria}\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\nfixture notes\n\n## Tooling Notes\n\n- fixture tooling note\n"
+            )
+            .into_boxed_str(),
+        )
     }
 
     fn assert_stage(

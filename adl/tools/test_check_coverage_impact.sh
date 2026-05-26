@@ -51,7 +51,7 @@ bash "$SCRIPT" --changed-files "$changed" --print-risk-filters >"$risk_filters"
 grep -Fx "new_large_surface" "$risk_filters" >/dev/null
 
 control_plane_changed="$TMP/control-plane-changed.txt"
-printf 'A\tadl/src/cli/pr_cmd_cards.rs\n' >"$control_plane_changed"
+printf 'A\tadl/src/cli/pr_cmd/doctor.rs\n' >"$control_plane_changed"
 control_plane_filters="$TMP/control-plane-filters.txt"
 bash "$SCRIPT" --changed-files "$control_plane_changed" --print-risk-filters >"$control_plane_filters"
 grep -Fx "pr_cmd" "$control_plane_filters" >/dev/null
@@ -122,6 +122,18 @@ grep -F "Then rerun: bash adl/tools/check_coverage_impact.sh --base release/base
 docs_filters="$TMP/docs-filters.txt"
 bash "$SCRIPT" --changed-files "$docs_only" --print-risk-filters >"$docs_filters"
 [ ! -s "$docs_filters" ]
+
+mixed_fast_lane_changed="$TMP/mixed-fast-lane-changed.txt"
+cat >"$mixed_fast_lane_changed" <<'EOF'
+M	adl/src/cli/pr_cmd/doctor.rs
+M	adl/src/cli/tooling_cmd/structured_prompt.rs
+M	adl/src/cli/tooling_cmd/markdown.rs
+EOF
+mixed_fast_lane_filters="$TMP/mixed-fast-lane-filters.txt"
+bash "$SCRIPT" --changed-files "$mixed_fast_lane_changed" --print-risk-filters >"$mixed_fast_lane_filters"
+grep -Fx "pr_cmd" "$mixed_fast_lane_filters" >/dev/null
+grep -Fx "structured_prompt" "$mixed_fast_lane_filters" >/dev/null
+grep -Fx "markdown" "$mixed_fast_lane_filters" >/dev/null
 
 low_summary="$TMP/low-summary.json"
 make_summary "adl/src/runtime_v2/new_large_surface.rs" 77 100 "$low_summary"

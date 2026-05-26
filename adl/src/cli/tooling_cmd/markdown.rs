@@ -20,8 +20,18 @@ pub(super) fn split_front_matter(text: &str) -> Result<(String, String)> {
 }
 
 pub(super) fn markdown_has_heading(text: &str, heading: &str) -> bool {
-    text.lines()
-        .any(|line| line.trim_end() == format!("## {heading}"))
+    let mut in_fence = false;
+    for line in text.lines() {
+        let trimmed = line.trim_start();
+        if trimmed.starts_with("```") {
+            in_fence = !in_fence;
+            continue;
+        }
+        if !in_fence && line.trim_end() == format!("## {heading}") {
+            return true;
+        }
+    }
+    false
 }
 
 pub(super) fn markdown_headings(text: &str) -> Vec<&str> {

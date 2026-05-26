@@ -221,10 +221,11 @@ triggers before work starts. In contrast, branch-bound SPP/SRP drift with a
 `next_editor` remains a real card-local blocker and must be routed through the
 matching editor skill.
 
-Legacy SRP policy scaffolds remain validator-compatible while migration is in
-progress, but doctor output must classify them as `legacy_compatible` rather
-than final review readiness unless review results or an explicit policy
-exception are present.
+Legacy SRP policy scaffolds are not valid new SRP prompt artifacts. The
+structured-prompt validator should fail them closed, while `pr doctor` may
+still classify retained historical scaffolds as `legacy_compatible` so they can
+be routed through `srp-editor` instead of being mistaken for final review
+readiness.
 
 ## SRP/SOR Finish And Closeout Handoff
 
