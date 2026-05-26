@@ -27,7 +27,8 @@ Options:
                                   "path" or "STATUS<TAB>path".
   --threshold <percent>           Per-file line threshold. Defaults to PER_FILE_LINE_THRESHOLD or 80.
   --require-summary-for-risk      Fail when risky changed Rust files lack summary evidence.
-  --print-risk-filters            Print one candidate test filter per risky changed Rust file and exit.
+  --print-risk-filters            Print one candidate test filter per changed Rust file that
+                                  may need summary evidence and exit.
   -h, --help                      Show this help.
 
 This is a fast authoring-time guard. It does not replace the full GitHub
@@ -237,7 +238,7 @@ file_has_no_executable_surface() {
   local path="$1"
   [ -f "$ROOT/$path" ] || return 1
 
-  ! grep -Eq '^[[:space:]]*(pub[[:space:]]+)?fn[[:space:]]+|^[[:space:]]*impl([[:space:][:alnum:]_<>,:&]+)?[[:space:]]*\{' "$ROOT/$path"
+  ! grep -Eq '^[[:space:]]*(pub([[:space:]]*\([^)]*\))?[[:space:]]+)?fn[[:space:]]+|^[[:space:]]*impl([[:space:][:alnum:]_<>,:&]+)?[[:space:]]*\{' "$ROOT/$path"
 }
 
 risk_rows=""
@@ -335,16 +336,16 @@ EOF
 fi
 
 if [ "$PRINT_RISK_FILTERS" = true ]; then
-  if [ -z "$risk_rows" ]; then
-    exit 0
-  fi
-  printf '%s' "$risk_rows" \
-    | while IFS=$'\t' read -r _status path _lines _delta _reason; do
+  printf '%s\n' "$changed_source_rows" \
+    | while IFS=$'\t' read -r _status path; do
         [ -n "$path" ] || continue
+        if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path"; then
+          continue
+        fi
         candidate_filter_for_path "$path"
         printf '\n'
       done \
-    | awk '!seen[$0]++'
+    | awk 'NF && !seen[$0]++'
   exit 0
 fi
 
