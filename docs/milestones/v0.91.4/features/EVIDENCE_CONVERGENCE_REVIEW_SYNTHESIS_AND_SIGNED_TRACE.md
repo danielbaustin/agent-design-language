@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned `v0.91.4` feature.
+Landed in `WP-06`.
 
 ## Purpose
 
@@ -34,6 +34,16 @@ This feature covers:
 - The `SOR` links to the evidence bundle, review synthesis, and signed trace
   proof.
 - Missing or unverifiable signed trace proof blocks default-operation claims.
+
+## Proof Surface
+
+- `docs/milestones/v0.91.4/review/evidence/csdlc/C_SDLC_EVIDENCE_BUNDLE_PACKET_v0.91.4.md`
+- `docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_transition_evidence_bundle.json`
+- `docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_review_synthesis.json`
+- `docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_signed.adl.yaml`
+- `docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_public_key.b64`
+- `python3 adl/tools/validate_v0914_csdlc_evidence_bundle.py docs/milestones/v0.91.4/review/evidence/csdlc`
+- `bash adl/tools/test_v0914_csdlc_evidence_bundle.sh`
 
 ## Non-Goals
 

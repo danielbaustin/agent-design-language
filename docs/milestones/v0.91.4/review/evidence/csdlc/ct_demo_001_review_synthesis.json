@@ -1,0 +1,43 @@
+{
+  "synthesis_id": "ct_demo_001_review_synthesis",
+  "source_issue_number": 3353,
+  "source_pr_number": 3387,
+  "summary": "WP-05 produced a durable tracked proof packet for actor standing and shard ownership, then fixed all bounded review findings before publication.",
+  "findings": [
+    {
+      "severity": "P2",
+      "id": "wp05-review-001",
+      "summary": "Allowed actor-standing fixture originally omitted a legitimate closeout authority holder.",
+      "disposition": "fixed"
+    },
+    {
+      "severity": "P2",
+      "id": "wp05-review-002",
+      "summary": "Shard/barrier prose overclaimed stronger guarantees than the validator enforced.",
+      "disposition": "fixed"
+    },
+    {
+      "severity": "P3",
+      "id": "wp05-review-003",
+      "summary": "Negative tests were initially too weak to guarantee failure on the intended invariant branch.",
+      "disposition": "fixed"
+    },
+    {
+      "severity": "P3",
+      "id": "wp05-review-004",
+      "summary": "Actor-authority wording drifted between merge readiness and merge approval terminology.",
+      "disposition": "fixed"
+    }
+  ],
+  "residual_risks": [
+    "The signed trace fixture proves durable verification of a minimal ADL document, not full release ceremony scope.",
+    "Release approval still depends on later merge-readiness, memory, and release-evidence work."
+  ],
+  "review_boundary": "bounded_local_pre_pr_review_plus_merge_truth",
+  "review_truth": {
+    "findings_preserved": true,
+    "dispositions_preserved": true,
+    "residual_risks_preserved": true
+  }
+}
+

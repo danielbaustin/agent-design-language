@@ -10,7 +10,7 @@ Planned proof map for C-SDLC completion.
 | C-SDLC validation and routing hardening | `features/CSDL_VALIDATION_AND_ROUTING_HARDENING.md` | Validators, doctor, conductors, and editors agree on lifecycle state. | planned |
 | Software Development Polis and actor standing | `features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md` | Transition records identify actor roles, standing, authority boundaries, and proof duties. | landed |
 | Shard ownership and interface freeze | `features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md` | Parallel work has explicit ownership, barriers, and conflict rules. | landed |
-| Evidence convergence, review synthesis, and signed trace proof | `features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md` | Durable transition proof is tracked, synthesized, and signed or explicitly blocked. | planned |
+| Evidence convergence, review synthesis, and signed trace proof | `features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md` | Durable transition proof is tracked, synthesized, and signed or explicitly blocked. | landed |
 | Merge-readiness and PR gate hardening | `features/MERGE_READINESS_AND_PR_GATE_HARDENING.md` | PR readiness preserves issue, branch, CI, review, evidence, trace, and closeout truth. | planned |
 | ObsMem transition memory integration | `features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md` | Tracked SRP/SOR/trace evidence feeds memory handoff records. | planned |
 | Sprint conductor default C-SDLC lane | `features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md` | Sprint execution cannot skip child closeout, umbrella truth, or combined-lane validation. | planned |
