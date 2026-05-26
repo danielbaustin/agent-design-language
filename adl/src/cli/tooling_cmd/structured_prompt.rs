@@ -977,11 +977,8 @@ pub(super) fn validate_srp_text(text: &str) -> Result<()> {
         "schema_version must be 0.1"
     );
     ensure!(
-        matches!(
-            mapping_string(fm, "artifact_type").as_deref(),
-            Some("structured_review_policy" | "structured_review_prompt")
-        ),
-        "artifact_type must be structured_review_policy or structured_review_prompt"
+        mapping_string(fm, "artifact_type").as_deref() == Some("structured_review_prompt"),
+        "artifact_type must be structured_review_prompt; legacy structured_review_policy scaffolds must be routed through srp-editor before validation passes"
     );
     ensure!(
         !mapping_string(fm, "name").unwrap_or_default().is_empty(),

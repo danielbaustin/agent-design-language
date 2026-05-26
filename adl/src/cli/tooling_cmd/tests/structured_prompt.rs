@@ -138,6 +138,20 @@ fn structured_prompt_srp_completed_card_status_requires_final_review_truth() {
 }
 
 #[test]
+fn structured_prompt_srp_rejects_legacy_review_policy_artifact_type() {
+    let srp = valid_srp_text(1374).replace(
+        "artifact_type: \"structured_review_prompt\"",
+        "artifact_type: \"structured_review_policy\"",
+    );
+
+    let err = validate_srp_text(&srp)
+        .expect_err("legacy structured_review_policy SRP should fail validator");
+    assert!(err
+        .to_string()
+        .contains("artifact_type must be structured_review_prompt"));
+}
+
+#[test]
 fn structured_prompt_sor_completed_card_status_requires_full_closeout_truth() {
     let sor = valid_sor_text().replace(
         "Status: DONE",
