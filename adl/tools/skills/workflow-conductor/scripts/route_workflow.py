@@ -474,16 +474,19 @@ def infer_doctor_card_blocker(doctor):
     lifecycle = doctor.get("card_lifecycle") if isinstance(doctor, dict) else None
     if not isinstance(lifecycle, dict):
         return "none"
+    lifecycle_state = str(doctor.get("lifecycle_state", "unknown")).lower()
     for stage in lifecycle.get("stages", []) or []:
         if not isinstance(stage, dict):
             continue
         editor = stage.get("next_editor")
-        if editor not in {"sip-editor", "stp-editor", "spp-editor", "srp-editor"}:
+        if editor not in {"sip-editor", "stp-editor", "spp-editor", "srp-editor", "sor-editor"}:
             continue
         if stage.get("complete") is True:
             continue
         stage_name = str(stage.get("stage", "")).lower()
         if stage_name in {"sip", "stp", "spp", "srp"}:
+            return stage_name
+        if stage_name == "sor" and lifecycle_state in {"execution_done", "closed", "closed_out"}:
             return stage_name
     return "none"
 
