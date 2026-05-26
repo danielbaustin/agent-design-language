@@ -1,0 +1,155 @@
+---
+schema_version: "0.1"
+artifact_type: "structured_planning_prompt"
+name: "example-spp-repair-execution-plan"
+issue: 4003
+task_id: "issue-4003"
+run_id: "issue-4003"
+version: "v0.91.4"
+title: "[example][SPP] Repaired issue-local plan"
+branch: "codex/4003-example-spp-repair"
+generated_at: "2026-05-26T12:00:00Z"
+card_status: "approved"
+status: "reviewed"
+activation_state: "ready_for_execution_binding"
+plan_revision: 2
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/danielbaustin/agent-design-language/issues/4003"
+  - kind: "source_issue_prompt"
+    ref: ".adl/v0.91.4/bodies/example-spp-repair.md"
+  - kind: "stp"
+    ref: ".adl/v0.91.4/tasks/issue-4003__example-spp-repair/stp.md"
+  - kind: "sip"
+    ref: ".adl/v0.91.4/tasks/issue-4003__example-spp-repair/sip.md"
+scope:
+  files:
+    - "docs/tooling/csdlc-prompt-editor/repair_examples/"
+  components:
+    - "example-spp-repair"
+  out_of_scope:
+    - "Do not turn SPP into a retrospective execution log."
+constraints:
+  - "design_time_plan_must_be_reviewed_before_execution"
+  - "runtime_execution_must_update_spp_if_plan_changes"
+  - "no_hidden_scope_expansion"
+confidence: "medium"
+plan_summary: "Example issue-local plan showing the approved design-time shape expected after SPP repair."
+assumptions:
+  - "The linked source issue prompt, STP, and SIP remain the canonical design-time inputs."
+proposed_steps:
+  - id: "step-1"
+    description: "Confirm the repaired card bundle still matches the source issue intent."
+    expected_output: ".adl/v0.91.4/tasks/issue-4003__example-spp-repair/sip.md"
+    allowed_mode: "design_review_then_execution"
+  - id: "step-2"
+    description: "Inspect the bounded repair-example surfaces before editing."
+    expected_output: ".adl/v0.91.4/tasks/issue-4003__example-spp-repair/stp.md"
+    allowed_mode: "design_review_then_execution"
+  - id: "step-3"
+    description: "Implement only the bounded example and validation surfaces."
+    expected_output: "tracked issue work product"
+    allowed_mode: "execution_after_approval"
+  - id: "step-4"
+    description: "Run focused proof gates for the repaired card surfaces."
+    expected_output: "validation evidence recorded in SOR"
+    allowed_mode: "execution_after_approval"
+  - id: "step-5"
+    description: "Record issue-specific SRP findings and SOR outcome truth, then update this SPP if execution diverges."
+    expected_output: "reviewed SRP and truthful SOR"
+    allowed_mode: "execution_after_approval"
+codex_plan:
+  - step: "Confirm dependencies and starting state from the source issue prompt."
+    status: "completed"
+  - step: "Inspect repo inputs and target surfaces before editing."
+    status: "completed"
+  - step: "Implement the bounded deliverables only."
+    status: "pending"
+  - step: "Run focused validation and proof gates."
+    status: "pending"
+  - step: "Record issue-specific SRP findings and SOR outcome truth."
+    status: "pending"
+affected_areas:
+  - "example-spp-repair"
+invariants_to_preserve:
+  - "Keep SPP issue-local; do not turn it into sprint orchestration."
+  - "Keep SRP as review-result truth and SOR as output truth."
+risks_and_edge_cases:
+  - "Execution-time drift should demote plan state back to draft if the plan materially changes."
+test_strategy:
+  - "Run the matching structured prompt validator for `spp` at final phase."
+execution_handoff: "Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes."
+required_permissions:
+  - "workspace-write after execution approval"
+stop_conditions:
+  - "Stop and re-plan if dependencies are unmet or materially different from this design-time plan."
+  - "Stop and update SPP if touched files, proof gates, or validation commands change materially."
+  - "Stop and route follow-on work if acceptance requires scope outside this issue."
+alternatives_considered:
+  - description: "Leave the plan generic."
+    reason_not_chosen: "Generic plans do not provide durable issue-local execution truth."
+review_hooks:
+  - "Check dependency truth, scope truthfulness, touched-file truthfulness, validation sufficiency, and re-plan triggers."
+notes: "Example repaired SPP showing approved pre-execution planning truth."
+---
+
+Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`
+
+# Structured Plan Prompt
+
+## Plan Summary
+
+Design-time operative plan for `[example][SPP] Repaired issue-local plan`.
+
+Example issue-local plan showing the approved design-time shape expected after SPP repair.
+
+## Codex Plan
+
+1. [completed] Confirm dependencies and starting state from the source issue prompt.
+2. [completed] Inspect repo inputs and target surfaces before editing.
+3. [pending] Implement the bounded deliverables only.
+4. [pending] Run focused validation and proof gates.
+5. [pending] Record issue-specific SRP findings and SOR outcome truth.
+
+## Assumptions
+
+- The linked source issue prompt, STP, and SIP remain the canonical design-time inputs.
+
+## Proposed Steps
+
+1. Confirm the repaired card bundle still matches the source issue intent.
+2. Inspect the bounded repair-example surfaces before editing.
+3. Implement only the bounded example and validation surfaces.
+4. Run focused proof gates for the repaired card surfaces.
+5. Record issue-specific SRP findings and SOR outcome truth, then update this SPP if execution diverges.
+
+## Affected Areas
+
+- example-spp-repair
+
+## Invariants To Preserve
+
+- Keep SPP issue-local; do not turn it into sprint orchestration.
+- Keep SRP as review-result truth and SOR as output truth.
+
+## Risks And Edge Cases
+
+- Execution-time drift should demote plan state back to draft if the plan materially changes.
+
+## Test Strategy
+
+- Run the matching structured prompt validator for `spp` at final phase.
+
+## Execution Handoff
+
+Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes.
+
+## Stop Conditions
+
+- Stop and re-plan if dependencies are unmet or materially different from this design-time plan.
+- Stop and update SPP if touched files, proof gates, or validation commands change materially.
+- Stop and route follow-on work if acceptance requires scope outside this issue.
+
+## Notes
+
+Example repaired SPP showing approved pre-execution planning truth.

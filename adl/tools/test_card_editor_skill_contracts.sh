@@ -35,5 +35,9 @@ grep -Fq "sip-editor" "${skills_root}/pr-ready/SKILL.md"
 grep -Fq "sor-editor" "${skills_root}/pr-run/SKILL.md"
 grep -Fq "sor-editor" "${skills_root}/pr-finish/SKILL.md"
 grep -Fq "srp-editor" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
+grep -Fq "repair_examples" "$repo_root/docs/tooling/csdlc-prompt-editor/README.md"
+grep -Fq "repair_examples" "$repo_root/docs/tooling/csdlc-prompt-editor/repair_examples/README.md"
+
+bash "$repo_root/adl/tools/test_card_editor_repair_examples.sh"
 
 echo "PASS test_card_editor_skill_contracts"
