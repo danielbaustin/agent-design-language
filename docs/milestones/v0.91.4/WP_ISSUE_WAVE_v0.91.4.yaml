@@ -60,9 +60,13 @@ opening_batch_policy:
       title: CodeFriend pre-alpha sidecar
       seeded_issues: [3372, 3373, 3374, 3375, 3376]
       state: seeded_and_ready_waiting_on_wp_01
+    - batch: 6
+      title: WildClawBench benchmark spike sidecar
+      seeded_issues: [3378, 3379, 3380, 3381, 3382]
+      state: seeded_and_ready_waiting_on_wp_01
   list_only_side_issues:
     state: not_promoted
-    note: Planned side issues remain list-only until explicitly promoted by the operator.
+    note: Planned side issues remain list-only until explicitly promoted by the operator; SIDE-BENCH has been promoted to the WildClawBench sidecar issue wave.
 work_packages:
   - wp: WP-01
     issue: 3346
@@ -255,14 +259,43 @@ sidecar_issue_waves:
         title: Publication safety, verification, and handoff
         queue: product_docs
         depends_on: [CF-PRE-03]
+  - id: WC-PRE-00
+    issue: 3378
+    title: WildClawBench benchmark spike mini-sprint umbrella
+    queue: benchmark
+    source_plan: docs/planning/WILDCLAWBENCH_ADL_BENCHMARK_SPIKE_PLAN.md
+    depends_on: [WP-01]
+    non_core: true
+    notes:
+      - This sidecar does not add release-tail steps.
+      - This sidecar does not make WildClawBench a release gate.
+      - Exit posture is a small benchmark spike result or truthful blocked
+        handoff, not a broad benchmark-win claim.
+    ordered_children:
+      - id: WC-PRE-01
+        issue: 3379
+        title: Setup and upstream smoke baseline
+        queue: benchmark
+        depends_on: [WC-PRE-00]
+      - id: WC-PRE-02
+        issue: 3380
+        title: ADL wrapper trace comparison
+        queue: benchmark
+        depends_on: [WC-PRE-01]
+      - id: WC-PRE-03
+        issue: 3381
+        title: UTS-only and UTS+ACC comparison setup
+        queue: benchmark
+        depends_on: [WC-PRE-02]
+      - id: WC-PRE-04
+        issue: 3382
+        title: Results taxonomy and handoff
+        queue: benchmark
+        depends_on: [WC-PRE-03]
 planned_side_issues:
   - id: SIDE-DEMO
     title: Outstanding demo work, including the best available Unity-facing C-SDLC demo proof
     queue: demo
-    scheduling_note: list_only_until_wp_01
-  - id: SIDE-BENCH
-    title: Benchmarking mini-sprint
-    queue: benchmark
     scheduling_note: list_only_until_wp_01
   - id: SIDE-README
     title: Root README rewrite

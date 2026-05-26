@@ -3,8 +3,8 @@
 ## Status
 
 Opening readiness surface. WP-01 `#3346` has opened the milestone and seeded
-Sprint 1, Sprint 2, Sprint 3, Sprint 4, and the CodeFriend sidecar as
-controlled issue/card batches.
+Sprint 1, Sprint 2, Sprint 3, Sprint 4, the CodeFriend sidecar, and the
+WildClawBench benchmark spike sidecar as controlled issue/card batches.
 
 ## Entry Bar
 
@@ -56,6 +56,10 @@ safe:
 - Batch 5: CodeFriend sidecar `#3372` plus CF-PRE-01 `#3373`, CF-PRE-02
   `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04 `#3376` seeded and card-ready;
   sidecar child execution waits on WP-01 routing and remains non-core.
+- Batch 6: WildClawBench benchmark spike sidecar `#3378` plus WC-PRE-01
+  `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, and WC-PRE-04 `#3382`
+  seeded and card-ready; sidecar child execution waits on WP-01 routing and
+  remains non-core.
 
 Planned side issues remain list-only until the operator explicitly promotes
 them.

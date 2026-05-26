@@ -24,10 +24,12 @@ Sprint 4 `#3362`, WP-13 `#3363`, WP-14 `#3364`, WP-15 `#3365`, WP-16
 `#3366`, WP-17 `#3367`, WP-18 `#3368`, WP-19 `#3369`, WP-20 `#3370`, and
 WP-21 `#3371`. The CodeFriend sidecar has also been seeded: umbrella `#3372`,
 CF-PRE-01 `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04
-`#3376`. Sprint 2, Sprint 3, and Sprint 4 child execution waits on WP-01/Sprint
-1 sequencing, prior sprint sequencing, and their own dependency gates. The
-CodeFriend sidecar remains non-core and waits on WP-01 routing. List-only side
-issues remain queued until explicitly promoted.
+`#3376`. The WildClawBench benchmark spike sidecar has been seeded: umbrella
+`#3378`, WC-PRE-01 `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, and
+WC-PRE-04 `#3382`. Sprint 2, Sprint 3, and Sprint 4 child execution waits on
+WP-01/Sprint 1 sequencing, prior sprint sequencing, and their own dependency
+gates. The CodeFriend and WildClawBench sidecars remain non-core and wait on
+WP-01 routing. List-only side issues remain queued until explicitly promoted.
 
 This package is intentionally stacked after the v0.91.3 first-slice package. It
 assumes v0.91.3 proves one bounded Cognitive State Transition and then defines

@@ -10,8 +10,9 @@
 
 ## Status
 
-Sprint map opened through WP-01. Sprint 1, Sprint 2, Sprint 3, Sprint 4, and
-the CodeFriend sidecar are seeded as controlled issue/card batches.
+Sprint map opened through WP-01. Sprint 1, Sprint 2, Sprint 3, Sprint 4, the
+CodeFriend sidecar, and the WildClawBench benchmark spike sidecar are seeded
+as controlled issue/card batches.
 
 ## How To Use
 
@@ -35,6 +36,7 @@ mini-sprint in v0.91.4:
 | Sidecar | Title | Ordered Children | Goal |
 | --- | --- | --- | --- |
 | CodeFriend Pre-Alpha Setup (`#3372`) | CodeFriend pre-alpha site setup | CF-PRE-01 `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, CF-PRE-04 `#3376` | Establish the private CodeFriend repo and a verified S3/CloudFront/HTTPS welcome page without making CodeFriend part of C-SDLC core proof. |
+| WildClawBench Benchmark Spike (`#3378`) | WildClawBench benchmark spike | WC-PRE-01 `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, WC-PRE-04 `#3382` | Run a small external benchmark spike that tests ADL substrate evidence without making WildClawBench a release gate or benchmark-win claim. |
 
 The sidecar may run after WP-01 has opened the v0.91.4 issue wave. It must not
 interrupt the required C-SDLC closeout tail or add extra release-tail gates.
@@ -57,6 +59,9 @@ rule stays reviewable:
 - Batch 5 opened the CodeFriend sidecar `#3372` and CF-PRE-01 through
   CF-PRE-04 as `#3373` through `#3376`; sidecar child execution waits on
   WP-01 routing and remains non-core.
+- Batch 6 opened the WildClawBench benchmark spike sidecar `#3378` and
+  WC-PRE-01 through WC-PRE-04 as `#3379` through `#3382`; sidecar child
+  execution waits on WP-01 routing and remains non-core.
 
 Every opened issue receives all five cards upfront. `SIP`, `STP`, and `SPP`
 must be design-time ready before execution starts; `SRP` and `SOR` remain

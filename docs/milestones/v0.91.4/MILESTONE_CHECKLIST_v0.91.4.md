@@ -36,6 +36,8 @@ evidence exists.
   WP-19 `#3369`, WP-20 `#3370`, and WP-21 `#3371`.
 - [x] CodeFriend sidecar issue batch seeded: umbrella `#3372`, CF-PRE-01
   `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04 `#3376`.
+- [x] WildClawBench sidecar issue batch seeded: umbrella `#3378`, WC-PRE-01
+  `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, and WC-PRE-04 `#3382`.
 
 ## Execution Discipline
 
