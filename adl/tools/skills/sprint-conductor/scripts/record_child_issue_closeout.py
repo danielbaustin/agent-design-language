@@ -7,6 +7,9 @@ from pathlib import Path
 from typing import Any
 
 
+DETERMINISTIC_CLOSEOUT_ELIGIBLE_STATUSES = {'pending', 'active', 'waiting_for_review'}
+
+
 def parse_bool(raw: str) -> bool:
     lowered = raw.strip().lower()
     if lowered in {'1', 'true', 'yes', 'on'}:
@@ -32,10 +35,24 @@ def ensure_issue_record(state: dict[str, Any], issue_number: int) -> dict[str, A
     return record
 
 
-def require_truth_gate(state: dict[str, Any]) -> None:
+def require_truth_gate(state: dict[str, Any], issue_number: int) -> None:
     truth_check = state.get('truth_check') or {}
     if truth_check.get('status') == 'matched' and truth_check.get('gate_passed') is True:
         return
+    if truth_check.get('status') == 'drift_detected':
+        notes = truth_check.get('notes') or []
+        if len(notes) != 1:
+            raise SystemExit(
+                'Refusing to record child closeout while additional GitHub truth drift is present.'
+            )
+        for record in state.get('issue_records', []):
+            if record.get('issue_number') != issue_number:
+                continue
+            if (
+                record.get('github_issue_state') == 'CLOSED'
+                and record.get('status') in DETERMINISTIC_CLOSEOUT_ELIGIBLE_STATUSES
+            ):
+                return
     raise SystemExit('Refusing to record child closeout without a fresh matched GitHub truth check.')
 
 
@@ -99,7 +116,7 @@ def main() -> int:
     state_path = Path(args.state)
     state = json.loads(state_path.read_text())
     require_structured_prompt_preflight(state)
-    require_truth_gate(state)
+    require_truth_gate(state, args.issue_number)
 
     if not parse_bool(args.issue_closed):
         raise SystemExit('child closeout gate failed: issue_closed must be true before advancement')

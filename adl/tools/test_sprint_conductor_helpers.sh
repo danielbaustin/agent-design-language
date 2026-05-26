@@ -446,10 +446,95 @@ PY
 
 printf 'CLOSED\n' > "${issue_2827_state_file}"
 printf 'MERGED false\n' > "${pr_4001_state_file}"
-python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
   --repo-root "${fake_repo}" \
   --state "${state_path}" \
-  --require-match >/dev/null
+  --require-match >/dev/null 2>&1; then
+  echo "expected check_sprint_truth.py to fail when a child issue is closed before local closeout truth is recorded" >&2
+  exit 1
+fi
+
+python3 - "${state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+assert state["truth_check"]["status"] == "drift_detected"
+assert state["truth_check"]["gate_passed"] is False
+assert any("record_child_issue_closeout.py must run before sprint state can advance" in note for note in state["truth_check"]["notes"])
+PY
+
+python3 - "${state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+state = json.loads(path.read_text())
+record = next(record for record in state["issue_records"] if record["issue_number"] == 2828)
+record["status"] = "closed_out"
+path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
+PY
+
+printf 'OPEN\n' > "${issue_2828_state_file}"
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
+  --repo-root "${fake_repo}" \
+  --state "${state_path}" \
+  --require-match >/dev/null 2>&1; then
+  echo "expected check_sprint_truth.py to fail when unrelated truth drift is present" >&2
+  exit 1
+fi
+
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_child_issue_closeout.py" \
+  --state "${state_path}" \
+  --issue-number 2827 \
+  --issue-closed true \
+  --pr-state merged \
+  --root-sor-status done \
+  --worktree-status pruned \
+  --pr-url "https://github.com/danielbaustin/agent-design-language/pull/4001" >/dev/null 2>&1; then
+  echo "expected record_child_issue_closeout.py to refuse closeout when unrelated truth drift is present" >&2
+  exit 1
+fi
+
+python3 - "${state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+state = json.loads(path.read_text())
+record = next(record for record in state["issue_records"] if record["issue_number"] == 2828)
+record["status"] = "pending"
+path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
+PY
+
+printf 'CLOSED\n' > "${issue_2828_state_file}"
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
+  --repo-root "${fake_repo}" \
+  --state "${state_path}" \
+  --require-match >/dev/null 2>&1; then
+  echo "expected check_sprint_truth.py to fail when multiple child issues are drifting" >&2
+  exit 1
+fi
+
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_child_issue_closeout.py" \
+  --state "${state_path}" \
+  --issue-number 2827 \
+  --issue-closed true \
+  --pr-state merged \
+  --root-sor-status done \
+  --worktree-status pruned \
+  --pr-url "https://github.com/danielbaustin/agent-design-language/pull/4001" >/dev/null 2>&1; then
+  echo "expected record_child_issue_closeout.py to refuse closeout when multiple child issues are drifting" >&2
+  exit 1
+fi
+
+printf 'OPEN\n' > "${issue_2828_state_file}"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
+  --repo-root "${fake_repo}" \
+  --state "${state_path}" >/dev/null
 
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_child_issue_closeout.py" \
   --state "${state_path}" \
@@ -474,6 +559,52 @@ assert state["continuation"] == "continue"
 assert state["truth_check"]["gate_passed"] is False
 PY
 
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
+  --repo-root "${fake_repo}" \
+  --state "${state_path}" \
+  --require-match >/dev/null
+
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py" \
+  --state "${state_path}" \
+  --sprint-issue 3001 \
+  --ordered-issues "2827,2828" \
+  --current-issue 2828 \
+  --mark-status blocked >/dev/null
+
+printf 'CLOSED\n' > "${issue_2828_state_file}"
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
+  --repo-root "${fake_repo}" \
+  --state "${state_path}" \
+  --require-match >/dev/null 2>&1; then
+  echo "expected check_sprint_truth.py to fail when a blocked child issue is closed before local closeout truth is recorded" >&2
+  exit 1
+fi
+
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_child_issue_closeout.py" \
+  --state "${state_path}" \
+  --issue-number 2828 \
+  --issue-closed true \
+  --pr-state not_applicable \
+  --root-sor-status done \
+  --worktree-status retained_with_reason \
+  --worktree-note "Retained for post-sprint audio inspection." >/dev/null 2>&1; then
+  echo "expected record_child_issue_closeout.py to refuse deterministic closeout for blocked child state" >&2
+  exit 1
+fi
+
+printf 'OPEN\n' > "${issue_2828_state_file}"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
+  --repo-root "${fake_repo}" \
+  --state "${state_path}" \
+  --require-match >/dev/null
+
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py" \
+  --state "${state_path}" \
+  --sprint-issue 3001 \
+  --ordered-issues "2827,2828" \
+  --current-issue 2828 \
+  --mark-status pending >/dev/null
+
 if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py" \
   --state "${state_path}" \
   --sprint-issue 3001 \
@@ -485,10 +616,13 @@ if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint
 fi
 
 printf 'CLOSED\n' > "${issue_2828_state_file}"
-python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
   --repo-root "${fake_repo}" \
   --state "${state_path}" \
-  --require-match >/dev/null
+  --require-match >/dev/null 2>&1; then
+  echo "expected check_sprint_truth.py to fail when the final child issue is closed before local closeout truth is recorded" >&2
+  exit 1
+fi
 
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_child_issue_closeout.py" \
   --state "${state_path}" \

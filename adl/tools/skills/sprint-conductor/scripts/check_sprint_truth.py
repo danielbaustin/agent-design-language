@@ -40,11 +40,11 @@ def main() -> int:
         record['github_issue_state'] = issue.get('state')
         if issue.get('state') == 'CLOSED' and record.get('status') not in {'closed_out'}:
             local_status = record.get('status')
-            if local_status in {'pending', 'waiting_for_review', 'active'}:
-                notes.append(f'issue #{issue_number} is CLOSED on GitHub and local status {local_status} is eligible for deterministic closeout advancement')
-            else:
-                drift = True
-                notes.append(f'issue #{issue_number} is CLOSED on GitHub but local status is {local_status}')
+            drift = True
+            notes.append(
+                f'issue #{issue_number} is CLOSED on GitHub but local status is {local_status}; '
+                'record_child_issue_closeout.py must run before sprint state can advance'
+            )
         if issue.get('state') == 'OPEN' and record.get('status') == 'closed_out':
             drift = True
             notes.append(f'issue #{issue_number} is OPEN on GitHub but local status is closed_out')

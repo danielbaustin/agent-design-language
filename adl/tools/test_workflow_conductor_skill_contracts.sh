@@ -368,6 +368,11 @@ JSON
 {"schema":"adl.pr.doctor.v1","issue":2017,"version":"v0.88","slug":"route-sibling-unrelated","branch":"codex/2017-route-sibling-unrelated","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"pre_run","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2017-route-sibling-unrelated.md","root_stp":".adl/v0.88/tasks/issue-2017__route-sibling-unrelated/stp.md","root_input":".adl/v0.88/tasks/issue-2017__route-sibling-unrelated/sip.md","root_output":".adl/v0.88/tasks/issue-2017__route-sibling-unrelated/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
 JSON
     ;;
+  2018)
+    cat <<'JSON'
+{"schema":"adl.pr.doctor.v1","issue":2018,"version":"v0.88","slug":"route-sor-closeout-blocker","branch":"codex/2018-route-sor-closeout-blocker","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"execution_done","ready_status":"BLOCK","worktree":null,"source":".adl/v0.88/bodies/issue-2018-route-sor-closeout-blocker.md","root_stp":".adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/stp.md","root_input":".adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/sip.md","root_output":".adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"card_lifecycle":{"order":["SIP","STP","SPP","SRP","SOR"],"active_stage":"SOR","next_required_stage":"SOR","pr_run_readiness":"ready","pr_finish_readiness":"blocked","stages":[{"stage":"SIP","path":".adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/sip.md","state":"complete","complete":true,"design_time_complete":true,"final_ready":false,"next_editor":null,"detail":"design-time complete"},{"stage":"STP","path":".adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/stp.md","state":"complete","complete":true,"design_time_complete":true,"final_ready":false,"next_editor":null,"detail":"complete"},{"stage":"SPP","path":".adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/spp.md","state":"complete","complete":true,"design_time_complete":true,"final_ready":false,"next_editor":null,"detail":"design-time complete"},{"stage":"SRP","path":".adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/srp.md","state":"final","complete":true,"design_time_complete":false,"final_ready":true,"next_editor":null,"detail":"review complete"},{"stage":"SOR","path":".adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/sor.md","state":"contradictory","complete":false,"design_time_complete":false,"final_ready":false,"next_editor":"sor-editor","detail":"execution complete but closeout truth drift remains"}]},"doctor_status":"BLOCK"}
+JSON
+    ;;
   *)
     exit 1
     ;;
@@ -464,6 +469,12 @@ EOF
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-2017__route-sibling-unrelated/sip.md"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-2017__route-sibling-unrelated/sor.md"
 touch "${fixture_repo}/.adl/v0.88/bodies/issue-2017-route-sibling-unrelated.md"
+
+mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/stp.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/sip.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2018__route-sor-closeout-blocker/sor.md"
+touch "${fixture_repo}/.adl/v0.88/bodies/issue-2018-route-sor-closeout-blocker.md"
 
 mkdir -p "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2005__route-worktree-finish"
 touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2005__route-worktree-finish/stp.md"
@@ -871,6 +882,28 @@ cat >"${tmpdir}/route_sibling_unrelated.json" <<EOF
 }
 EOF
 
+cat >"${tmpdir}/route_sor_closeout_blocker.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2018
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
 mock_bin="${tmpdir}/mock-bin"
 mkdir -p "${mock_bin}"
 cat >"${mock_bin}/gh" <<'EOF'
@@ -1081,6 +1114,7 @@ python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "$
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue_closed_dispatch.json" --artifact-path ".adl/reviews/route-issue-closed-dispatch.md" >"${tmpdir}/route_issue_closed_dispatch.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_sibling_satisfied.json" --artifact-path ".adl/reviews/route-sibling-satisfied.md" >"${tmpdir}/route_sibling_satisfied.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_sibling_unrelated.json" --artifact-path ".adl/reviews/route-sibling-unrelated.md" >"${tmpdir}/route_sibling_unrelated.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_sor_closeout_blocker.json" --artifact-path ".adl/reviews/route-sor-closeout-blocker.md" >"${tmpdir}/route_sor_closeout_blocker.out.json"
 rm -f "${fixture_repo}/docs/milestones/v0.88/WP_ISSUE_WAVE_v0.88.yaml"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_sibling_no_artifact.json" --artifact-path ".adl/reviews/route-sibling-no-artifact.md" >"${tmpdir}/route_sibling_no_artifact.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_blocked.json" --artifact-path ".adl/reviews/route-pr-blocked.md" >"${tmpdir}/route_pr_blocked.out.json"
@@ -1187,6 +1221,11 @@ assert route_sibling_no_artifact["workflow_state"]["blocker_class"] == "none"
 route_sibling_unrelated = load("route_sibling_unrelated.out.json")
 assert route_sibling_unrelated["selected_skill"]["skill_name"] == "pr-run"
 assert route_sibling_unrelated["workflow_state"]["blocker_class"] == "none"
+
+route_sor_closeout_blocker = load("route_sor_closeout_blocker.out.json")
+assert route_sor_closeout_blocker["selected_skill"]["skill_name"] == "sor-editor"
+assert route_sor_closeout_blocker["selected_skill"]["editor_skill"] == "sor-editor"
+assert route_sor_closeout_blocker["workflow_state"]["detected_phase"] == "card_local_blocker"
 
 route_worktree_finish = load("route_worktree_finish.out.json")
 assert route_worktree_finish["selected_skill"]["skill_name"] == "pr-finish"

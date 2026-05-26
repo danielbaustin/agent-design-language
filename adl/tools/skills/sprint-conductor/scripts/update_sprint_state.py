@@ -177,9 +177,14 @@ def main() -> int:
                 completed = set(state.setdefault('completed_issue_numbers', []))
                 completed.add(issue_number)
                 state['completed_issue_numbers'] = sorted(completed)
+                if state.get('blocked_issue_number') == issue_number:
+                    state['blocked_issue_number'] = None
             elif args.mark_status == 'blocked':
                 state['blocked_issue_number'] = issue_number
-            elif args.mark_status == 'waiting_for_review':
+            else:
+                if state.get('blocked_issue_number') == issue_number:
+                    state['blocked_issue_number'] = None
+            if args.mark_status == 'waiting_for_review':
                 state['continuation'] = 'waiting_for_review'
         if args.pr_url:
             record['pr_url'] = args.pr_url
