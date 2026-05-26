@@ -34,6 +34,8 @@ evidence exists.
 - [x] Sprint 4 issue batch seeded: Sprint 4 `#3362`, WP-13 `#3363`, WP-14
   `#3364`, WP-15 `#3365`, WP-16 `#3366`, WP-17 `#3367`, WP-18 `#3368`,
   WP-19 `#3369`, WP-20 `#3370`, and WP-21 `#3371`.
+- [x] CodeFriend sidecar issue batch seeded: umbrella `#3372`, CF-PRE-01
+  `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04 `#3376`.
 
 ## Execution Discipline
 

@@ -10,9 +10,8 @@
 
 ## Status
 
-Sprint map opened through WP-01. Sprint 1, Sprint 2, Sprint 3, and Sprint 4
-are seeded as controlled issue/card batches; the CodeFriend sidecar remains
-queued until WP-01 routes it separately.
+Sprint map opened through WP-01. Sprint 1, Sprint 2, Sprint 3, Sprint 4, and
+the CodeFriend sidecar are seeded as controlled issue/card batches.
 
 ## How To Use
 
@@ -35,7 +34,7 @@ mini-sprint in v0.91.4:
 
 | Sidecar | Title | Ordered Children | Goal |
 | --- | --- | --- | --- |
-| CodeFriend Pre-Alpha Setup | CodeFriend pre-alpha site setup | CF-PRE-01, CF-PRE-02, CF-PRE-03, CF-PRE-04 | Establish the private CodeFriend repo and a verified S3/CloudFront/HTTPS welcome page without making CodeFriend part of C-SDLC core proof. |
+| CodeFriend Pre-Alpha Setup (`#3372`) | CodeFriend pre-alpha site setup | CF-PRE-01 `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, CF-PRE-04 `#3376` | Establish the private CodeFriend repo and a verified S3/CloudFront/HTTPS welcome page without making CodeFriend part of C-SDLC core proof. |
 
 The sidecar may run after WP-01 has opened the v0.91.4 issue wave. It must not
 interrupt the required C-SDLC closeout tail or add extra release-tail gates.
@@ -55,7 +54,9 @@ rule stays reviewable:
 - Batch 4 opened Sprint 4 `#3362` and WP-13 through WP-21 as `#3363`
   through `#3371`; child execution waits on WP-01 and the prior sprint
   sequence.
-- Batch 5 remains queued for the CodeFriend sidecar after WP-01.
+- Batch 5 opened the CodeFriend sidecar `#3372` and CF-PRE-01 through
+  CF-PRE-04 as `#3373` through `#3376`; sidecar child execution waits on
+  WP-01 routing and remains non-core.
 
 Every opened issue receives all five cards upfront. `SIP`, `STP`, and `SPP`
 must be design-time ready before execution starts; `SRP` and `SOR` remain

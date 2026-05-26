@@ -3,7 +3,8 @@
 ## Status
 
 Opening readiness surface. WP-01 `#3346` has opened the milestone and seeded
-Sprint 1, Sprint 2, Sprint 3, and Sprint 4 as controlled issue/card batches.
+Sprint 1, Sprint 2, Sprint 3, Sprint 4, and the CodeFriend sidecar as
+controlled issue/card batches.
 
 ## Entry Bar
 
@@ -52,7 +53,9 @@ safe:
   `#3365`, WP-16 `#3366`, WP-17 `#3367`, WP-18 `#3368`, WP-19 `#3369`,
   WP-20 `#3370`, and WP-21 `#3371` seeded and card-ready; child execution
   waits on WP-01 and the prior sprint sequence.
-- Batch 5: CodeFriend sidecar queued after WP-01.
+- Batch 5: CodeFriend sidecar `#3372` plus CF-PRE-01 `#3373`, CF-PRE-02
+  `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04 `#3376` seeded and card-ready;
+  sidecar child execution waits on WP-01 routing and remains non-core.
 
 Planned side issues remain list-only until the operator explicitly promotes
 them.

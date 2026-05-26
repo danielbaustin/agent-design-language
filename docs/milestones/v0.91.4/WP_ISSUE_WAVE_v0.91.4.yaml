@@ -58,8 +58,8 @@ opening_batch_policy:
       state: seeded_and_ready_waiting_on_wp_01
     - batch: 5
       title: CodeFriend pre-alpha sidecar
-      seeded_issues: []
-      state: queued_after_wp_01
+      seeded_issues: [3372, 3373, 3374, 3375, 3376]
+      state: seeded_and_ready_waiting_on_wp_01
   list_only_side_issues:
     state: not_promoted
     note: Planned side issues remain list-only until explicitly promoted by the operator.
@@ -223,7 +223,7 @@ closeout_sequence:
   - WP-21: Release ceremony
 sidecar_issue_waves:
   - id: CF-PRE-00
-    issue: pending
+    issue: 3372
     title: CodeFriend pre-alpha site mini-sprint umbrella
     queue: product_docs
     source_plan: docs/planning/codefriend/CODEFRIEND_PRE_ALPHA_REPO_AND_S3_WELCOME_MINI_SPRINT.md
@@ -236,22 +236,22 @@ sidecar_issue_waves:
         handoff if AWS/DNS approval prevents launch.
     ordered_children:
       - id: CF-PRE-01
-        issue: pending
+        issue: 3373
         title: Product repo bootstrap
         queue: product_docs
         depends_on: [CF-PRE-00]
       - id: CF-PRE-02
-        issue: pending
+        issue: 3374
         title: Static welcome page
         queue: product_frontend
         depends_on: [CF-PRE-01]
       - id: CF-PRE-03
-        issue: pending
+        issue: 3375
         title: AWS S3, CloudFront, ACM, and Route 53 machinery
         queue: product_infra
         depends_on: [CF-PRE-02]
       - id: CF-PRE-04
-        issue: pending
+        issue: 3376
         title: Publication safety, verification, and handoff
         queue: product_docs
         depends_on: [CF-PRE-03]
