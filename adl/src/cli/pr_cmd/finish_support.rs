@@ -441,9 +441,7 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path))
         {
             commands.push("cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string());
-            commands.push(
-                "cargo test --manifest-path adl/Cargo.toml cli::pr_cmd::tests::finish".to_string(),
-            );
+            commands.push("cargo test --manifest-path adl/Cargo.toml cli::pr_cmd".to_string());
         }
         if paths
             .iter()
@@ -515,19 +513,25 @@ fn finish_path_is_focused_local_ci_gated(path: &str) -> bool {
         ".github/workflows/ci.yaml"
             | "docs/default_workflow.md"
             | "docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md"
+            | "docs/tooling/merge_readiness_gate_policy_v0.91.4.md"
+            | "docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md"
+            | "docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md"
+            | "docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md"
             | "adl/src/cli/pr_cmd.rs"
             | "adl/tools/check_coverage_impact.sh"
             | "adl/tools/test_check_coverage_impact.sh"
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
             | "adl/src/cli/pr_cmd/finish_support.rs"
-    ) || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
+    ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
+        || trimmed.starts_with("docs/milestones/v0.91.4/review/merge_readiness/")
+        || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
 }
 
 fn finish_path_needs_pr_finish_rust_focused_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     trimmed == "adl/src/cli/pr_cmd.rs"
-        || trimmed == "adl/src/cli/pr_cmd/finish_support.rs"
+        || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
 }
 
@@ -580,14 +584,14 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
-                "cargo test --manifest-path adl/Cargo.toml cli::pr_cmd::tests::finish" => {
+                "cargo test --manifest-path adl/Cargo.toml cli::pr_cmd" => {
                     run_status(
                         "cargo",
                         &[
                             "test",
                             "--manifest-path",
                             path_str(&manifest)?,
-                            "cli::pr_cmd::tests::finish",
+                            "cli::pr_cmd",
                         ],
                     )?;
                 }

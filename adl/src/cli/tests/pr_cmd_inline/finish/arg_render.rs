@@ -408,7 +408,7 @@ fn finish_full_rust_validation_falls_back_when_nextest_is_unavailable() {
 #[test]
 fn finish_validation_plan_supports_focused_local_ci_gated_mode() {
     let plan = select_finish_validation_plan(
-        "adl/src/cli/pr_cmd/finish_support.rs,adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs,.github/workflows/ci.yaml,adl/tools/check_coverage_impact.sh,adl/tools/ci_path_policy.sh",
+        "adl/src/cli/pr_cmd/doctor.rs,adl/src/cli/pr_cmd/lifecycle/tests.rs,adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs,.github/workflows/ci.yaml,adl/tools/check_coverage_impact.sh,adl/tools/ci_path_policy.sh,docs/tooling/merge_readiness_gate_policy_v0.91.4.md,docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md,docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md,docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md,docs/milestones/v0.91.4/review/merge_readiness/ct_demo_001_merge_gate_profile_report.md",
     )
     .expect("focused plan");
 
@@ -420,9 +420,9 @@ fn finish_validation_plan_supports_focused_local_ci_gated_mode() {
     assert!(plan
         .commands
         .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml cli::pr_cmd::tests::finish".to_string()
-    ));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml cli::pr_cmd".to_string()));
     assert!(plan
         .commands
         .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
@@ -450,13 +450,13 @@ fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request()
 
     let focused_plan = select_finish_validation_plan_for_finish(
         ".",
-        &["adl/src/cli/pr_cmd/finish_support.rs".to_string()],
+        &["adl/src/cli/pr_cmd/doctor.rs".to_string()],
     )
     .expect("focused actual path plan");
     assert_eq!(focused_plan.mode, FinishValidationMode::FocusedLocalCiGated);
-    assert!(focused_plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml cli::pr_cmd::tests::finish".to_string()
-    ));
+    assert!(focused_plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml cli::pr_cmd".to_string()));
     assert!(!focused_plan
         .commands
         .iter()
@@ -510,7 +510,7 @@ fn finish_helper_paths_run_focused_local_ci_gated_validation() {
     }
 
     let plan = select_finish_validation_plan(
-        "adl/src/cli/pr_cmd/finish_support.rs,.github/workflows/ci.yaml,adl/tools/check_coverage_impact.sh,adl/tools/ci_path_policy.sh",
+        "adl/src/cli/pr_cmd/doctor.rs,adl/src/cli/pr_cmd/lifecycle/tests.rs,.github/workflows/ci.yaml,adl/tools/check_coverage_impact.sh,adl/tools/ci_path_policy.sh,docs/tooling/merge_readiness_gate_policy_v0.91.4.md,docs/milestones/v0.91.4/review/merge_readiness/ct_demo_001_merge_gate_profile_report.md",
     )
     .expect("focused plan");
     assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
