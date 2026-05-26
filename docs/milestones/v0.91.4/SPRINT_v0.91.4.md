@@ -10,7 +10,9 @@
 
 ## Status
 
-Planned sprint map. Sprint issue numbers are `pending`.
+Sprint map opened through WP-01. Sprint 1, Sprint 2, Sprint 3, Sprint 4, the
+CodeFriend sidecar, and the WildClawBench benchmark spike sidecar are seeded
+as controlled issue/card batches.
 
 ## How To Use
 
@@ -21,10 +23,10 @@ claim that any sprint has started or closed.
 
 | Sprint | Title | Ordered Children | Goal |
 | --- | --- | --- | --- |
-| Sprint 1 | Lifecycle And Routing Hardening | WP-01, WP-02, WP-03, WP-04 | Make validators, doctor, conductor, and editor skills agree on C-SDLC state. |
-| Sprint 2 | Transition Operation | WP-05, WP-06, WP-07, WP-08 | Make actor standing, shards, evidence, merge gates, and memory handoff repeatable. |
-| Sprint 3 | Sprint Default And Metrics | WP-09, WP-10, WP-11, WP-12 | Make sprint execution default-safe and measure repeatability, validation-tail, proof-latency, and parallel-validation behavior. |
-| Sprint 4 | Review, Remediation, Planning, And Release | WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-20, WP-21 | Prove, gate, review, remediate, plan the next milestone, re-review the handoff, and close the completion milestone. |
+| Sprint 1 | Lifecycle And Routing Hardening (`#3347`) | WP-01 `#3346`, WP-02 `#3348`, WP-03 `#3349`, WP-04 `#3350` | Make validators, doctor, conductor, and editor skills agree on C-SDLC state. |
+| Sprint 2 | Transition Operation (`#3352`) | WP-05 `#3353`, WP-06 `#3354`, WP-07 `#3355`, WP-08 `#3356` | Make actor standing, shards, evidence, merge gates, and memory handoff repeatable. |
+| Sprint 3 | Sprint Default And Metrics (`#3357`) | WP-09 `#3358`, WP-10 `#3359`, WP-11 `#3360`, WP-12 `#3361` | Make sprint execution default-safe and measure repeatability, validation-tail, proof-latency, and parallel-validation behavior. |
+| Sprint 4 | Review, Remediation, Planning, And Release (`#3362`) | WP-13 `#3363`, WP-14 `#3364`, WP-15 `#3365`, WP-16 `#3366`, WP-17 `#3367`, WP-18 `#3368`, WP-19 `#3369`, WP-20 `#3370`, WP-21 `#3371` | Prove, gate, review, remediate, plan the next milestone, re-review the handoff, and close the completion milestone. |
 
 ## Sidecar Mini-Sprint
 
@@ -33,10 +35,40 @@ mini-sprint in v0.91.4:
 
 | Sidecar | Title | Ordered Children | Goal |
 | --- | --- | --- | --- |
-| CodeFriend Pre-Alpha Setup | CodeFriend pre-alpha site setup | CF-PRE-01, CF-PRE-02, CF-PRE-03, CF-PRE-04 | Establish the private CodeFriend repo and a verified S3/CloudFront/HTTPS welcome page without making CodeFriend part of C-SDLC core proof. |
+| CodeFriend Pre-Alpha Setup (`#3372`) | CodeFriend pre-alpha site setup | CF-PRE-01 `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, CF-PRE-04 `#3376` | Establish the private CodeFriend repo and a verified S3/CloudFront/HTTPS welcome page without making CodeFriend part of C-SDLC core proof. |
+| WildClawBench Benchmark Spike (`#3378`) | WildClawBench benchmark spike | WC-PRE-01 `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, WC-PRE-04 `#3382` | Run a small external benchmark spike that tests ADL substrate evidence without making WildClawBench a release gate or benchmark-win claim. |
 
 The sidecar may run after WP-01 has opened the v0.91.4 issue wave. It must not
 interrupt the required C-SDLC closeout tail or add extra release-tail gates.
+
+## Issue Opening Policy
+
+The v0.91.4 issue wave is opened in sprint-sized batches so the new upfront-card
+rule stays reviewable:
+
+- Batch 0 opened WP-01 `#3346`.
+- Batch 1 opened Sprint 1 `#3347` and WP-02 through WP-04 as `#3348` through
+  `#3350`.
+- Batch 2 opened Sprint 2 `#3352` and WP-05 through WP-08 as `#3353` through
+  `#3356`; child execution waits on WP-01/Sprint 1 sequencing.
+- Batch 3 opened Sprint 3 `#3357` and WP-09 through WP-12 as `#3358` through
+  `#3361`; child execution waits on WP-01/Sprint 1 and Sprint 2 sequencing.
+- Batch 4 opened Sprint 4 `#3362` and WP-13 through WP-21 as `#3363`
+  through `#3371`; child execution waits on WP-01 and the prior sprint
+  sequence.
+- Batch 5 opened the CodeFriend sidecar `#3372` and CF-PRE-01 through
+  CF-PRE-04 as `#3373` through `#3376`; sidecar child execution waits on
+  WP-01 routing and remains non-core.
+- Batch 6 opened the WildClawBench benchmark spike sidecar `#3378` and
+  WC-PRE-01 through WC-PRE-04 as `#3379` through `#3382`; sidecar child
+  execution waits on WP-01 routing and remains non-core.
+- Standalone first-birthday readiness side issue `#3377` is promoted for v0.92
+  launch preparation and should feed WP-19/WP-20; it is not a sprint child and
+  does not alter the v0.91.4 release-tail sequence.
+
+Every opened issue receives all five cards upfront. `SIP`, `STP`, and `SPP`
+must be design-time ready before execution starts; `SRP` and `SOR` remain
+present but truthful to pre-review and pre-output lifecycle state.
 
 ## Sprint Goals
 

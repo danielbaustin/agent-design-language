@@ -24,11 +24,26 @@ evidence exists.
 - [x] Next-milestone handoff scaffold present:
   [NEXT_MILESTONE_HANDOFF](NEXT_MILESTONE_HANDOFF_v0.91.4.md)
 - [x] CodeFriend sidecar setup plan represented in the milestone package.
+- [x] WP-01 opening gate created: `#3346`.
+- [x] Sprint 1 issue batch seeded: Sprint 1 `#3347`, WP-02 `#3348`, WP-03
+  `#3349`, and WP-04 `#3350`.
+- [x] Sprint 2 issue batch seeded: Sprint 2 `#3352`, WP-05 `#3353`, WP-06
+  `#3354`, WP-07 `#3355`, and WP-08 `#3356`.
+- [x] Sprint 3 issue batch seeded: Sprint 3 `#3357`, WP-09 `#3358`, WP-10
+  `#3359`, WP-11 `#3360`, and WP-12 `#3361`.
+- [x] Sprint 4 issue batch seeded: Sprint 4 `#3362`, WP-13 `#3363`, WP-14
+  `#3364`, WP-15 `#3365`, WP-16 `#3366`, WP-17 `#3367`, WP-18 `#3368`,
+  WP-19 `#3369`, WP-20 `#3370`, and WP-21 `#3371`.
+- [x] CodeFriend sidecar issue batch seeded: umbrella `#3372`, CF-PRE-01
+  `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04 `#3376`.
+- [x] WildClawBench sidecar issue batch seeded: umbrella `#3378`, WC-PRE-01
+  `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, and WC-PRE-04 `#3382`.
 
 ## Execution Discipline
 
-- [ ] Every opened issue bundle uses `SIP -> STP -> SPP -> SRP -> SOR`.
-- [ ] `SPP` records tracked issue-local operative plan truth before execution.
+- [x] Every currently opened issue bundle uses `SIP -> STP -> SPP -> SRP -> SOR`.
+- [x] `SPP` records design-time issue-local operative plan truth before execution
+  for the currently opened batch.
 - [ ] Card edits use editor skills.
 - [ ] Work executes in bound worktrees.
 - [ ] Draft PR opens before merge for each issue.
@@ -49,6 +64,9 @@ evidence exists.
 - [ ] No unresolved P1/P0 findings remain.
 - [ ] Deferred issues have owners and follow-on routing.
 - [ ] CodeFriend sidecar setup is complete or truthfully blocked/routed.
+- [ ] WildClawBench sidecar spike is complete or truthfully blocked/routed.
+- [ ] First-birthday readiness side issue `#3377` is complete or routed into
+  WP-19/WP-20 next-milestone planning/review.
 
 ## Release Packaging
 

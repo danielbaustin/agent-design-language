@@ -1,7 +1,8 @@
 milestone: v0.91.4
-status: planned_issue_wave_not_open
-issue_wave_opened: false
+status: issue_wave_opening_in_progress
+issue_wave_opened: partial
 owner_issue: 3100
+opening_issue: 3346
 planning_source: docs/milestones/v0.91.4
 tracked_package: docs/milestones/v0.91.4
 depends_on:
@@ -27,151 +28,188 @@ notes:
   - CodeFriend sidecar work is product setup, not C-SDLC core proof.
 card_update_rule:
   - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
+  - SIP, STP, and SPP must be issue-specific and design-time ready before execution starts.
+  - SRP and SOR must exist upfront but remain truthful to review and output lifecycle state.
   - Card edits must use editor skills.
   - SOR closeout must match GitHub issue/PR truth.
+opening_batch_policy:
+  status: active
+  rule: Seed the v0.91.4 wave in sprint-sized batches to keep card review human-sized and validator-clean.
+  batches:
+    - batch: 0
+      title: WP-01 opening gate
+      seeded_issues: [3346]
+      state: seeded_and_ready
+    - batch: 1
+      title: Sprint 1 lifecycle and routing hardening
+      seeded_issues: [3347, 3348, 3349, 3350]
+      state: seeded_and_ready
+    - batch: 2
+      title: Sprint 2 transition operation
+      seeded_issues: [3352, 3353, 3354, 3355, 3356]
+      state: seeded_and_ready_waiting_on_wp_01
+    - batch: 3
+      title: Sprint 3 sprint default and metrics
+      seeded_issues: [3357, 3358, 3359, 3360, 3361]
+      state: seeded_and_ready_waiting_on_wp_01
+    - batch: 4
+      title: Sprint 4 review, remediation, planning, and release
+      seeded_issues: [3362, 3363, 3364, 3365, 3366, 3367, 3368, 3369, 3370, 3371]
+      state: seeded_and_ready_waiting_on_wp_01
+    - batch: 5
+      title: CodeFriend pre-alpha sidecar
+      seeded_issues: [3372, 3373, 3374, 3375, 3376]
+      state: seeded_and_ready_waiting_on_wp_01
+    - batch: 6
+      title: WildClawBench benchmark spike sidecar
+      seeded_issues: [3378, 3379, 3380, 3381, 3382]
+      state: seeded_and_ready_waiting_on_wp_01
+  list_only_side_issues:
+    state: not_promoted
+    note: Planned side issues remain list-only until explicitly promoted by the operator; SIDE-BENCH has been promoted to the WildClawBench sidecar issue wave, and SIDE-BIRTHDAY has been promoted as standalone side issue #3377.
 work_packages:
   - wp: WP-01
-    issue: pending
+    issue: 3346
     title: Design pass and issue-wave readiness
     queue: docs
     depends_on: [v0.91.3 closeout]
     primary_deliverable: v0.91.4 issue wave, sprint umbrellas, sidecar routing decisions, and validated cards
     proof_surface: issue-wave YAML, sprint umbrella issues, and complete SIP/STP/SPP/SRP/SOR cards
   - wp: WP-02
-    issue: pending
+    issue: 3348
     title: Lifecycle validator hardening
     queue: tools
     depends_on: [WP-01]
     primary_deliverable: strict card and transition lifecycle validators
     proof_surface: validator fixture results for valid, invalid, stale, blocked, and routed card states
   - wp: WP-03
-    issue: pending
+    issue: 3349
     title: Doctor and conductor state truth
     queue: tools
     depends_on: [WP-02]
     primary_deliverable: pr doctor, workflow-conductor, and sprint-conductor aligned on C-SDLC stages
     proof_surface: routing report and doctor/conductor fixture evidence
   - wp: WP-04
-    issue: pending
+    issue: 3350
     title: Editor skill repair reliability
     queue: tools
     depends_on: [WP-02]
     primary_deliverable: card editor skills repair drift without hand edits
     proof_surface: editor repair examples and structured-prompt validation output
   - wp: WP-05
-    issue: pending
+    issue: 3353
     title: Software Development Polis, shard ownership, and interface freeze
     queue: docs_tools
     depends_on: [WP-03]
     primary_deliverable: actor standing, enforceable shard write boundaries, and synchronization rules
     proof_surface: actor-standing fixtures, shard ownership rules, and interface-freeze evidence
   - wp: WP-06
-    issue: pending
+    issue: 3354
     title: Evidence convergence, review synthesis, and signed trace proof
     queue: tools
     depends_on: [WP-05]
     primary_deliverable: repeatable evidence bundle, review synthesis flow, and minimal signed trace bundle
     proof_surface: evidence bundle, review synthesis output, signed trace bundle, and verification result
   - wp: WP-07
-    issue: pending
+    issue: 3355
     title: Merge-readiness and PR gate hardening
     queue: tools
     depends_on: [WP-06]
     primary_deliverable: transition-aware merge gate preserving GitHub truth
     proof_surface: merge-readiness gate fixtures and PR truth-preservation report
   - wp: WP-08
-    issue: pending
+    issue: 3356
     title: ObsMem transition memory integration
     queue: docs_tools
     depends_on: [WP-06, WP-07]
     primary_deliverable: SRP/SOR/signed-trace memory handoff write/read contract
     proof_surface: ObsMem handoff fixture, tracked SRP/SOR/trace inputs, and ingestion evidence
   - wp: WP-09
-    issue: pending
+    issue: 3358
     title: Sprint conductor default C-SDLC lane
     queue: tools
     depends_on: [WP-03, WP-04]
     primary_deliverable: sprint flow that cannot skip child closeout or umbrella truth
     proof_surface: sprint-conductor fixtures and closed-out sprint state artifact
   - wp: WP-10
-    issue: pending
+    issue: 3359
     title: Five-minute-sprint repeatability and Parallel Validation Fabric
     queue: demo_tools
     depends_on: [WP-05, WP-06, WP-07, WP-08, WP-09]
     primary_deliverable: repeated transition metrics, validation-tail/proof-latency report, Parallel Validation Fabric feature/proof packet, and coordination-latency report
     proof_surface: metrics report, PVF plan or bounded proof, and tracked repeatability evidence
   - wp: WP-11
-    issue: pending
+    issue: 3360
     title: Active issue migration policy
     queue: docs_tools
     depends_on: [WP-02, WP-03, WP-04, WP-09]
     primary_deliverable: policy for existing open cards and future issue defaults
     proof_surface: active-issue migration policy plus sampled migrate/defer/leave/fold/block classifications
   - wp: WP-12
-    issue: pending
+    issue: 3361
     title: Regression fixtures for process drift
     queue: tests_tools
     depends_on: [WP-10, WP-11]
     primary_deliverable: fixtures for SRP drift, stale SORs, skipped closeout, and env/global-state hazards
     proof_surface: regression fixture report showing known drift modes fail closed
   - wp: WP-13
-    issue: pending
+    issue: 3363
     title: Demo matrix and proof coverage
     queue: demo
     depends_on: [WP-12]
     primary_deliverable: demo matrix, feature-proof coverage, proof-evidence map, and best-demo showcase including Unity-facing proof when available
     proof_surface: demo matrix, feature proof coverage, and tracked demo showcase packet
   - wp: WP-14
-    issue: pending
+    issue: 3364
     title: Coverage / quality gate
     queue: quality
     depends_on: [WP-13]
     primary_deliverable: validation gate covering lifecycle, tools, tests, traces, PVF, and release blockers
     proof_surface: quality-gate record and blocker disposition report
   - wp: WP-15
-    issue: pending
+    issue: 3365
     title: Docs + adoption review pass
     queue: docs
     depends_on: [WP-14]
     primary_deliverable: C-SDLC default-operation docs, tracked-source docs, onboarding updates, and docs-review findings
     proof_surface: docs-review packet and adoption-readiness findings
   - wp: WP-16
-    issue: pending
+    issue: 3366
     title: Internal review
     queue: review
     depends_on: [WP-15]
     primary_deliverable: code/docs/tests/process review packet
     proof_surface: internal review report and finding register
   - wp: WP-17
-    issue: pending
+    issue: 3367
     title: External / 3rd-party review
     queue: review
     depends_on: [WP-16]
     primary_deliverable: independent review packet and handoff surface
     proof_surface: external review handoff and received review packet
   - wp: WP-18
-    issue: pending
+    issue: 3368
     title: Review findings remediation
     queue: review
     depends_on: [WP-17]
     primary_deliverable: fixes, finding dispositions, and follow-on routing
     proof_surface: finding disposition record and remediation PRs
   - wp: WP-19
-    issue: pending
+    issue: 3369
     title: Next milestone planning
     queue: docs
     depends_on: [WP-18]
     primary_deliverable: NEXT_MILESTONE_HANDOFF_v0.91.4 refresh and downstream planning update
     proof_surface: handoff doc and downstream planning diff
   - wp: WP-20
-    issue: pending
+    issue: 3370
     title: Next milestone review pass
     queue: docs
     depends_on: [WP-19]
     primary_deliverable: final review pass over next-milestone planning before ceremony
     proof_surface: next-milestone review findings and disposition note
   - wp: WP-21
-    issue: pending
+    issue: 3371
     title: Release ceremony
     queue: release
     depends_on: [WP-20]
@@ -189,7 +227,7 @@ closeout_sequence:
   - WP-21: Release ceremony
 sidecar_issue_waves:
   - id: CF-PRE-00
-    issue: pending
+    issue: 3372
     title: CodeFriend pre-alpha site mini-sprint umbrella
     queue: product_docs
     source_plan: docs/planning/codefriend/CODEFRIEND_PRE_ALPHA_REPO_AND_S3_WELCOME_MINI_SPRINT.md
@@ -202,33 +240,73 @@ sidecar_issue_waves:
         handoff if AWS/DNS approval prevents launch.
     ordered_children:
       - id: CF-PRE-01
-        issue: pending
+        issue: 3373
         title: Product repo bootstrap
         queue: product_docs
         depends_on: [CF-PRE-00]
       - id: CF-PRE-02
-        issue: pending
+        issue: 3374
         title: Static welcome page
         queue: product_frontend
         depends_on: [CF-PRE-01]
       - id: CF-PRE-03
-        issue: pending
+        issue: 3375
         title: AWS S3, CloudFront, ACM, and Route 53 machinery
         queue: product_infra
         depends_on: [CF-PRE-02]
       - id: CF-PRE-04
-        issue: pending
+        issue: 3376
         title: Publication safety, verification, and handoff
         queue: product_docs
         depends_on: [CF-PRE-03]
+  - id: WC-PRE-00
+    issue: 3378
+    title: WildClawBench benchmark spike mini-sprint umbrella
+    queue: benchmark
+    source_plan: docs/planning/WILDCLAWBENCH_ADL_BENCHMARK_SPIKE_PLAN.md
+    depends_on: [WP-01]
+    non_core: true
+    notes:
+      - This sidecar does not add release-tail steps.
+      - This sidecar does not make WildClawBench a release gate.
+      - Exit posture is a small benchmark spike result or truthful blocked
+        handoff, not a broad benchmark-win claim.
+    ordered_children:
+      - id: WC-PRE-01
+        issue: 3379
+        title: Setup and upstream smoke baseline
+        queue: benchmark
+        depends_on: [WC-PRE-00]
+      - id: WC-PRE-02
+        issue: 3380
+        title: ADL wrapper trace comparison
+        queue: benchmark
+        depends_on: [WC-PRE-01]
+      - id: WC-PRE-03
+        issue: 3381
+        title: UTS-only and UTS+ACC comparison setup
+        queue: benchmark
+        depends_on: [WC-PRE-02]
+      - id: WC-PRE-04
+        issue: 3382
+        title: Results taxonomy and handoff
+        queue: benchmark
+        depends_on: [WC-PRE-03]
 planned_side_issues:
+  - id: SIDE-BIRTHDAY
+    issue: 3377
+    title: First-birthday readiness for v0.92
+    queue: docs
+    scheduling_note: promoted_standalone_side_issue_waiting_on_wp_01
+    consumes:
+      - WP-19
+      - WP-20
+    notes:
+      - This side issue does not alter the v0.91.4 release-tail sequence.
+      - This side issue supports v0.92 first-birthday launch readiness.
   - id: SIDE-DEMO
     title: Outstanding demo work, including the best available Unity-facing C-SDLC demo proof
     queue: demo
-    scheduling_note: list_only_until_wp_01
-  - id: SIDE-BENCH
-    title: Benchmarking mini-sprint
-    queue: benchmark
     scheduling_note: list_only_until_wp_01
   - id: SIDE-README
     title: Root README rewrite
@@ -246,24 +324,20 @@ planned_side_issues:
     title: HTML editors for planning docs
     queue: tools
     scheduling_note: list_only_until_wp_01
-  - id: SIDE-BIRTHDAY
-    title: First-birthday readiness for v0.92
-    queue: docs
-    scheduling_note: list_only_until_wp_01
 sprint_umbrellas:
   - sprint: Sprint 1
-    issue: pending
+    issue: 3347
     title: Lifecycle And Routing Hardening
     ordered_children: [WP-01, WP-02, WP-03, WP-04]
   - sprint: Sprint 2
-    issue: pending
+    issue: 3352
     title: Transition Operation
     ordered_children: [WP-05, WP-06, WP-07, WP-08]
   - sprint: Sprint 3
-    issue: pending
+    issue: 3357
     title: Sprint Default And Metrics
     ordered_children: [WP-09, WP-10, WP-11, WP-12]
   - sprint: Sprint 4
-    issue: pending
+    issue: 3362
     title: Review, Remediation, Planning, And Release
     ordered_children: [WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-20, WP-21]

@@ -10,7 +10,30 @@
 
 ## Status
 
-Planned milestone package authored from `#3100`.
+Milestone opening in progress through WP-01 `#3346`.
+
+Sprint 1 has been seeded as the first controlled issue/card batch: Sprint 1
+`#3347`, WP-02 `#3348`, WP-03 `#3349`, and WP-04 `#3350`.
+
+Sprint 2 has also been seeded as the transition-operation batch: Sprint 2
+`#3352`, WP-05 `#3353`, WP-06 `#3354`, WP-07 `#3355`, and WP-08 `#3356`.
+Sprint 3 has been seeded as the sprint-default and metrics batch: Sprint 3
+`#3357`, WP-09 `#3358`, WP-10 `#3359`, WP-11 `#3360`, and WP-12 `#3361`.
+Sprint 4 has been seeded as the review/remediation/planning/release batch:
+Sprint 4 `#3362`, WP-13 `#3363`, WP-14 `#3364`, WP-15 `#3365`, WP-16
+`#3366`, WP-17 `#3367`, WP-18 `#3368`, WP-19 `#3369`, WP-20 `#3370`, and
+WP-21 `#3371`. The CodeFriend sidecar has also been seeded: umbrella `#3372`,
+CF-PRE-01 `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04
+`#3376`. The WildClawBench benchmark spike sidecar has been seeded: umbrella
+`#3378`, WC-PRE-01 `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, and
+WC-PRE-04 `#3382`. First-birthday readiness has been promoted as standalone
+side issue `#3377` for v0.92 launch preparation. Sprint 2, Sprint 3, and
+Sprint 4 child execution waits on WP-01/Sprint 1 sequencing, prior sprint
+sequencing, and their own dependency gates. The CodeFriend and WildClawBench
+sidecars remain non-core and wait on WP-01 routing. First-birthday readiness
+does not alter the v0.91.4 release-tail sequence and should feed WP-19/WP-20
+next-milestone planning/review. Remaining list-only side issues remain queued
+until explicitly promoted.
 
 This package is intentionally stacked after the v0.91.3 first-slice package. It
 assumes v0.91.3 proves one bounded Cognitive State Transition and then defines
