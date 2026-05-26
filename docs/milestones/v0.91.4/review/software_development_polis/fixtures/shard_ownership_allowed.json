@@ -1,0 +1,55 @@
+{
+  "transition_id": "ct-v0914-wp05-shards-allowed",
+  "expected_result": "allowed",
+  "interface_freeze": {
+    "frozen_surfaces": [
+      "docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md",
+      "docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md"
+    ],
+    "mutable_surfaces": [
+      "docs/milestones/v0.91.4/review/software_development_polis/"
+    ],
+    "freeze_barriers": [
+      "review-complete",
+      "operator-approval"
+    ]
+  },
+  "shards": [
+    {
+      "shard_id": "actor-standing-docs",
+      "owner_actor_id": "actor.worker.polis",
+      "writable_paths": [
+        "docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md"
+      ],
+      "read_only_paths": [
+        "docs/cognitive-sdlc/"
+      ],
+      "dependencies": [],
+      "proof_duties": [
+        "document-standing-classes"
+      ],
+      "sync_barriers": [
+        "review-packet-sync"
+      ]
+    },
+    {
+      "shard_id": "shard-freeze-docs",
+      "owner_actor_id": "actor.worker.polis",
+      "writable_paths": [
+        "docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md"
+      ],
+      "read_only_paths": [
+        "docs/cognitive-sdlc/transition-schema.md"
+      ],
+      "dependencies": [
+        "actor-standing-docs"
+      ],
+      "proof_duties": [
+        "document-shard-boundaries"
+      ],
+      "sync_barriers": [
+        "review-packet-sync"
+      ]
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned `v0.91.4` feature.
+Tracked `WP-05` feature contract with bounded proof fixtures.
 
 ## Purpose
 
@@ -22,6 +22,15 @@ work quickly without colliding, widening scope, or hiding integration risk.
 - conflict routing and blocked-state reporting
 - review evidence for shard compliance
 
+## Proof Surface
+
+`WP-05` proves this feature through:
+
+- `docs/milestones/v0.91.4/review/software_development_polis/SOFTWARE_DEVELOPMENT_POLIS_PROOF_PACKET_v0.91.4.md`
+- `docs/milestones/v0.91.4/review/software_development_polis/ct_demo_002_shard_conflict_report.md`
+- `docs/milestones/v0.91.4/review/software_development_polis/fixtures/shard_ownership_allowed.json`
+- `docs/milestones/v0.91.4/review/software_development_polis/fixtures/shard_ownership_blocked.json`
+
 ## Acceptance Criteria
 
 - Each transition can declare shard ownership before parallel work starts.
@@ -36,3 +45,5 @@ work quickly without colliding, widening scope, or hiding integration risk.
 - This feature does not authorize unbounded parallel issue execution.
 - This feature does not replace human integration review.
 - This feature does not treat speed as evidence of correctness.
+- This feature does not claim unconstrained parallel execution; `WP-05`
+  establishes explicit shard boundaries and blocked overlap examples.

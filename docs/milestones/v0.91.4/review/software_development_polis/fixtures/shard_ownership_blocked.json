@@ -1,0 +1,43 @@
+{
+  "transition_id": "ct-v0914-wp05-shards-blocked",
+  "expected_result": "blocked",
+  "interface_freeze": {
+    "frozen_surfaces": [
+      "docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md"
+    ],
+    "mutable_surfaces": [
+      "docs/milestones/v0.91.4/review/software_development_polis/"
+    ],
+    "freeze_barriers": [
+      "review-complete"
+    ]
+  },
+  "shards": [
+    {
+      "shard_id": "feature-doc-a",
+      "owner_actor_id": "actor.worker.alpha",
+      "writable_paths": [
+        "docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md"
+      ],
+      "read_only_paths": [],
+      "dependencies": [],
+      "proof_duties": [
+        "edit-frozen-surface"
+      ],
+      "sync_barriers": []
+    },
+    {
+      "shard_id": "feature-doc-b",
+      "owner_actor_id": "actor.worker.beta",
+      "writable_paths": [
+        "docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md"
+      ],
+      "read_only_paths": [],
+      "dependencies": [],
+      "proof_duties": [
+        "parallel-edit-frozen-surface"
+      ],
+      "sync_barriers": []
+    }
+  ]
+}
