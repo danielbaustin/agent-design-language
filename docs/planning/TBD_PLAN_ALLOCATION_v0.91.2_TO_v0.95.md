@@ -67,10 +67,10 @@ source notes to tracked execution homes.
 | --- | --- | --- |
 | `ADL_AGENT_UPSTREAM_DELEGATION.md` | `v0.93` delegation/upstream-delegation/IAM and social-cognition governance; local backlog `LB-100` | Allocated. This source note feeds governed upstream cognition, delegation routing, and polis/provider escalation in the v0.93 delegation/upstream-delegation/IAM feature. It does not claim implemented runtime behavior. |
 | `ADL_AND_GENERIC_SPECULATIVE_DECODING.md` | `v0.91.2` WP-11 speculative decoding prototype | Allocated. |
-| `ADL_AND_RUNTIME_EXECUTION_STRATEGY.md.md` | Local backlog `LB-099` WildClawBench/runtime-execution item | Backlog, not active milestone execution. This note is about planning a WildClawBench run or runtime-execution evidence lane, not current ADL runtime strategy implementation. |
+| `ADL_AND_RUNTIME_EXECUTION_STRATEGY.md` | `v0.91.4` WildClawBench sidecar (`#3378`-`#3382`); local backlog `LB-099` for later expansion | Allocated as planning/source material for the bounded v0.91.4 WildClawBench sidecar. It is not current ADL runtime strategy implementation outside that sidecar. |
 | `ADL_AND_SLEEP.md` | `v0.91.1` agent lifecycle/wellbeing provenance | Delivered/provenance, not an unowned future feature. |
 | `ADL_AND_SPECULATIVE_CODING_REPLAY.md` | `v0.91.2` WP-11 speculative decoding/replay lane | Allocated. |
-| `ADL_AND_WILDCLAW.md` | None before `v0.95` | Unallocated/deferred. Candidate home is a future external-benchmark or substrate-evidence lane after the current UTS benchmark and MVP proof surfaces stabilize. |
+| `ADL_AND_WILDCLAW.md` | `v0.91.4` WildClawBench sidecar planning and any later external-benchmark follow-on | Allocated as WildClawBench benchmark/source planning. The bounded first execution owner is the v0.91.4 sidecar; broader external-benchmark follow-on may still land later. |
 | `ADL_LOGISTIC_SPLIT.md` | `docs/planning/ADL_LOGISTIC_SPLIT.md` and `docs/planning/POST_V095_ADL_CSM_LOGISTIC_SPLIT_PLAN.md` | Promoted to tracked planning provenance plus a tracked post-`v0.95` repository split plan. The direction is to keep ADL stable enough to use while a split-off repo carries fast-moving work with regular mergeback. This is still not active execution scope before MVP closure and does not authorize code movement before the stable baseline. |
 | `ADL_WORKFLOW_STATE_HOME_DECISION_MEMO_2026-05-19.md` | `v0.91.3` / `v0.91.4` C-SDLC tracked workflow state planning | Allocated as planning source for the C-SDLC tracked workflow state migration. |
 | `ACIP_SCHEMA_CATALOG_AND_MESSAGE_ACCESS_RULES_2026-05-20.md` | `v0.92` ACIP binary schema and WebSocket transport feature | Allocated through `docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md`. |
@@ -126,12 +126,12 @@ source notes to tracked execution homes.
 The current audit found four root plan notes that are not execution-scheduled
 before or through `v0.95`:
 
-- `ADL_AND_WILDCLAW.md`: useful external-benchmark pressure test, but no
-  milestone issue currently owns a WildClawBench run or substrate-evidence
-  interpretation.
-- `ADL_AND_RUNTIME_EXECUTION_STRATEGY.md.md`: WildClawBench/runtime-execution
-  evidence planning. Preserve in the local backlog until a bounded external
-  benchmark or substrate-evidence issue exists.
+- `ADL_AND_WILDCLAW.md`: broader external-benchmark planning still extends
+  beyond the bounded `v0.91.4` sidecar execution owner and may need a later
+  dedicated evaluation lane.
+- `ADL_AND_RUNTIME_EXECUTION_STRATEGY.md`: now has a bounded execution owner in
+  the `v0.91.4` WildClawBench sidecar, while later expansion can remain in the
+  local backlog.
 - `ADL_LOGISTIC_SPLIT.md`: now has a tracked provenance copy at
   `docs/planning/ADL_LOGISTIC_SPLIT.md` and a tracked post-`v0.95` repository
   split plan at `docs/planning/POST_V095_ADL_CSM_LOGISTIC_SPLIT_PLAN.md`, but

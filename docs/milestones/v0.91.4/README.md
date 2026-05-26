@@ -29,11 +29,14 @@ CF-PRE-01 `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04
 WC-PRE-04 `#3382`. First-birthday readiness has been promoted as standalone
 side issue `#3377` for v0.92 launch preparation. Sprint 2, Sprint 3, and
 Sprint 4 child execution waits on WP-01/Sprint 1 sequencing, prior sprint
-sequencing, and their own dependency gates. The CodeFriend and WildClawBench
-sidecars remain non-core and wait on WP-01 routing. First-birthday readiness
-does not alter the v0.91.4 release-tail sequence and should feed WP-19/WP-20
-next-milestone planning/review. Remaining list-only side issues remain queued
-until explicitly promoted.
+sequencing, and their own dependency gates. The CodeFriend sidecar remains
+non-core and wait-gated by its own routing/dependency lane. The WildClawBench
+sidecar has now started through WC-PRE-01 `#3379`, which completed upstream
+reconnaissance and ended in a truthful blocked setup baseline pending benchmark
+image, workspace payload, helper tools, and API-key availability. First-birthday
+readiness does not alter the v0.91.4 release-tail sequence and should feed
+WP-19/WP-20 next-milestone planning/review. Remaining list-only side issues
+remain queued until explicitly promoted.
 
 This package is intentionally stacked after the v0.91.3 first-slice package. It
 assumes v0.91.3 proves one bounded Cognitive State Transition and then defines
@@ -144,6 +147,8 @@ are the branch-verifiable C-SDLC planning surfaces for review.
 - Feature proof coverage:
   [FEATURE_PROOF_COVERAGE_v0.91.4.md](FEATURE_PROOF_COVERAGE_v0.91.4.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.4.md](DEMO_MATRIX_v0.91.4.md)
+- WildClawBench setup notes:
+  [WILDCLAW_SETUP_NOTES.md](WILDCLAW_SETUP_NOTES.md)
 - Quality gate: [QUALITY_GATE_v0.91.4.md](QUALITY_GATE_v0.91.4.md)
 - Release plan: [RELEASE_PLAN_v0.91.4.md](RELEASE_PLAN_v0.91.4.md)
 - Release notes: [RELEASE_NOTES_v0.91.4.md](RELEASE_NOTES_v0.91.4.md)
