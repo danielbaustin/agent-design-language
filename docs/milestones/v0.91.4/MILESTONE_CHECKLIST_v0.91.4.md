@@ -64,6 +64,9 @@ evidence exists.
 - [ ] No unresolved P1/P0 findings remain.
 - [ ] Deferred issues have owners and follow-on routing.
 - [ ] CodeFriend sidecar setup is complete or truthfully blocked/routed.
+- [ ] WildClawBench sidecar spike is complete or truthfully blocked/routed.
+- [ ] First-birthday readiness side issue `#3377` is complete or routed into
+  WP-19/WP-20 next-milestone planning/review.
 
 ## Release Packaging
 

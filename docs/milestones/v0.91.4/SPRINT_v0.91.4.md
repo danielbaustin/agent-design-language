@@ -62,6 +62,9 @@ rule stays reviewable:
 - Batch 6 opened the WildClawBench benchmark spike sidecar `#3378` and
   WC-PRE-01 through WC-PRE-04 as `#3379` through `#3382`; sidecar child
   execution waits on WP-01 routing and remains non-core.
+- Standalone first-birthday readiness side issue `#3377` is promoted for v0.92
+  launch preparation and should feed WP-19/WP-20; it is not a sprint child and
+  does not alter the v0.91.4 release-tail sequence.
 
 Every opened issue receives all five cards upfront. `SIP`, `STP`, and `SPP`
 must be design-time ready before execution starts; `SRP` and `SOR` remain

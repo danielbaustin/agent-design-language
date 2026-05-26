@@ -66,7 +66,7 @@ opening_batch_policy:
       state: seeded_and_ready_waiting_on_wp_01
   list_only_side_issues:
     state: not_promoted
-    note: Planned side issues remain list-only until explicitly promoted by the operator; SIDE-BENCH has been promoted to the WildClawBench sidecar issue wave.
+    note: Planned side issues remain list-only until explicitly promoted by the operator; SIDE-BENCH has been promoted to the WildClawBench sidecar issue wave, and SIDE-BIRTHDAY has been promoted as standalone side issue #3377.
 work_packages:
   - wp: WP-01
     issue: 3346
@@ -293,6 +293,17 @@ sidecar_issue_waves:
         queue: benchmark
         depends_on: [WC-PRE-03]
 planned_side_issues:
+  - id: SIDE-BIRTHDAY
+    issue: 3377
+    title: First-birthday readiness for v0.92
+    queue: docs
+    scheduling_note: promoted_standalone_side_issue_waiting_on_wp_01
+    consumes:
+      - WP-19
+      - WP-20
+    notes:
+      - This side issue does not alter the v0.91.4 release-tail sequence.
+      - This side issue supports v0.92 first-birthday launch readiness.
   - id: SIDE-DEMO
     title: Outstanding demo work, including the best available Unity-facing C-SDLC demo proof
     queue: demo
@@ -312,10 +323,6 @@ planned_side_issues:
   - id: SIDE-PLANNING-EDITORS
     title: HTML editors for planning docs
     queue: tools
-    scheduling_note: list_only_until_wp_01
-  - id: SIDE-BIRTHDAY
-    title: First-birthday readiness for v0.92
-    queue: docs
     scheduling_note: list_only_until_wp_01
 sprint_umbrellas:
   - sprint: Sprint 1

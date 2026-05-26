@@ -60,6 +60,10 @@ safe:
   `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, and WC-PRE-04 `#3382`
   seeded and card-ready; sidecar child execution waits on WP-01 routing and
   remains non-core.
+- Standalone side issue: first-birthday readiness `#3377` is promoted for
+  v0.92 launch preparation and should feed WP-19/WP-20 next-milestone
+  planning/review; it is not a C-SDLC release-tail child and does not change
+  the core sprint sequence.
 
 Planned side issues remain list-only until the operator explicitly promotes
 them.
