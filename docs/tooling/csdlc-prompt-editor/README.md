@@ -69,6 +69,16 @@ sample cards, verifies the browser sample renderer/validator, and checks that
 the browser editor is consuming the generated Rust-owned model instead of
 carrying independent card semantics.
 
+For durable post-repair examples that match the current prompt-template family,
+see:
+
+- `docs/tooling/csdlc-prompt-editor/repair_examples/`
+
+Those examples are intentionally separate from the browser-generated samples:
+they show validator-clean repaired shapes that model what truthful `sip-editor`,
+`stp-editor`, `spp-editor`, `srp-editor`, and `sor-editor` output should look
+like.
+
 ## Boundaries
 
 This editor is a human review and recovery surface. Agent-authored card changes
@@ -81,3 +91,9 @@ still route through the card editor skills:
 - `sor-editor`
 
 The canonical template set remains `docs/templates/prompts/current.json`.
+
+Use the focused repair-example proof when validating the editor-skill boundary:
+
+```sh
+bash adl/tools/test_card_editor_repair_examples.sh
+```
