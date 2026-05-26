@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned `v0.91.4` feature.
+Tracked `WP-05` feature contract with bounded proof fixtures.
 
 ## Purpose
 
@@ -30,6 +30,15 @@ This feature covers:
 - evidence required before an actor can claim a role or advance a transition
 - human/operator authority boundaries that cannot be delegated silently
 
+## Proof Surface
+
+`WP-05` proves this feature through:
+
+- `docs/milestones/v0.91.4/review/software_development_polis/SOFTWARE_DEVELOPMENT_POLIS_PROOF_PACKET_v0.91.4.md`
+- `docs/milestones/v0.91.4/review/software_development_polis/ct_demo_001_actor_authority_boundary_report.md`
+- `docs/milestones/v0.91.4/review/software_development_polis/fixtures/actor_standing_allowed.json`
+- `docs/milestones/v0.91.4/review/software_development_polis/fixtures/actor_standing_blocked.json`
+
 ## Acceptance Criteria
 
 - C-SDLC transition records identify actor and role references for every
@@ -55,3 +64,5 @@ This feature covers:
   organizational authority.
 - This feature does not replace human review, branch protection, or operator
   judgment.
+- This feature does not claim every standing rule is runtime-enforced yet; the
+  `WP-05` proof is a tracked contract plus fail-closed examples.

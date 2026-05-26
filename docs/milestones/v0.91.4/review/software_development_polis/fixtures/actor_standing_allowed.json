@@ -1,0 +1,106 @@
+{
+  "transition_id": "ct-v0914-wp05-actor-standing-allowed",
+  "expected_result": "allowed",
+  "non_delegable_authorities": [
+    "merge_approval",
+    "closeout_approval"
+  ],
+  "actors": [
+    {
+      "actor_id": "actor.operator.primary",
+      "actor_class": "human",
+      "role": "operator",
+      "standing": "active",
+      "authorities": [
+        "scope_selection",
+        "merge_approval"
+      ],
+      "evidence_refs": [
+        "issue-3353"
+      ]
+    },
+    {
+      "actor_id": "actor.conductor.lifecycle",
+      "actor_class": "ai",
+      "role": "conductor",
+      "standing": "active",
+      "authorities": [
+        "route_lifecycle",
+        "watch_dependency_gate"
+      ],
+      "evidence_refs": [
+        "workflow-conductor"
+      ]
+    },
+    {
+      "actor_id": "actor.editor.sor",
+      "actor_class": "ai",
+      "role": "editor",
+      "standing": "active",
+      "authorities": [
+        "normalize_card_truth"
+      ],
+      "evidence_refs": [
+        "sor-editor"
+      ]
+    },
+    {
+      "actor_id": "actor.worker.polis",
+      "actor_class": "ai",
+      "role": "implementation_owner",
+      "standing": "active",
+      "authorities": [
+        "edit_owned_shard"
+      ],
+      "writable_paths": [
+        "docs/milestones/v0.91.4/features/",
+        "docs/milestones/v0.91.4/review/software_development_polis/"
+      ],
+      "proof_duties": [
+        "update_feature_contract",
+        "land_fixture_packet"
+      ],
+      "evidence_refs": [
+        "issue-3353",
+        "wp05-proof-packet"
+      ]
+    },
+    {
+      "actor_id": "actor.reviewer.bounded",
+      "actor_class": "ai",
+      "role": "reviewer",
+      "standing": "active",
+      "authorities": [
+        "issue_findings"
+      ],
+      "evidence_refs": [
+        "bounded-review"
+      ]
+    },
+    {
+      "actor_id": "actor.verifier.focused",
+      "actor_class": "ai",
+      "role": "verifier",
+      "standing": "active",
+      "authorities": [
+        "run_focused_validation"
+      ],
+      "evidence_refs": [
+        "validate_software_development_polis_packet.py"
+      ]
+    },
+    {
+      "actor_id": "actor.closeout.owner",
+      "actor_class": "human",
+      "role": "closeout_owner",
+      "standing": "active",
+      "authorities": [
+        "closeout_recording",
+        "closeout_approval"
+      ],
+      "evidence_refs": [
+        "pr-closeout"
+      ]
+    }
+  ]
+}

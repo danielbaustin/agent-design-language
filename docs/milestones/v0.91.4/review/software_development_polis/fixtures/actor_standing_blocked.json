@@ -1,0 +1,39 @@
+{
+  "transition_id": "ct-v0914-wp05-actor-standing-blocked",
+  "expected_result": "blocked",
+  "non_delegable_authorities": [
+    "merge_approval",
+    "closeout_approval"
+  ],
+  "actors": [
+    {
+      "actor_id": "actor.operator.primary",
+      "actor_class": "human",
+      "role": "operator",
+      "standing": "active",
+      "authorities": [
+        "scope_selection"
+      ],
+      "evidence_refs": [
+        "issue-3353"
+      ]
+    },
+    {
+      "actor_id": "actor.worker.shadow",
+      "actor_class": "ai",
+      "role": "implementation_owner",
+      "standing": "active",
+      "authorities": [
+        "edit_owned_shard",
+        "merge_approval"
+      ],
+      "writable_paths": [
+        "docs/milestones/v0.91.4/features/"
+      ],
+      "proof_duties": [
+        "update_feature_contract"
+      ],
+      "evidence_refs": []
+    }
+  ]
+}
