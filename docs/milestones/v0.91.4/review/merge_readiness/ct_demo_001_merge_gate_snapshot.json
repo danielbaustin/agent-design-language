@@ -1,0 +1,20 @@
+{
+  "transition_id": "csdlc.v0_91_4.wp_07.ct_demo_001",
+  "gate_kind": "governed_merge_readiness_gate.v2",
+  "issue_number": 3355,
+  "depends_on_issue_number": 3354,
+  "depends_on_pr_number": 3388,
+  "docs_only_finish_mode": "DocsOnly",
+  "focused_local_ci_mode": "FocusedLocalCiGated",
+  "focused_rust_test_filter": "cli::pr_cmd",
+  "stale_lifecycle_blocker_test": "card_lifecycle_blocks_completed_sor_before_terminal_closeout",
+  "docs_only_review_exception_test": "card_lifecycle_allows_explicit_srp_policy_exception",
+  "remote_ci_state_preserved": true,
+  "merge_truth_inferred_from_local_validation": false,
+  "feature_doc_rel_path": "docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md",
+  "tooling_policy_rel_path": "docs/tooling/merge_readiness_gate_policy_v0.91.4.md",
+  "evidence_bundle_rel_path": "docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_transition_evidence_bundle.json",
+  "review_synthesis_rel_path": "docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_review_synthesis.json",
+  "signed_trace_rel_path": "docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_signed.adl.yaml",
+  "decision": "gate_hardened"
+}

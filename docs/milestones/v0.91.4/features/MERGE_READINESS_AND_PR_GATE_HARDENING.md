@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned `v0.91.4` feature.
+Landed in `WP-07`.
 
 ## Purpose
 
@@ -35,6 +35,27 @@ contradictory.
   gate passes.
 - Signed trace proof is linked when durable C-SDLC proof is claimed.
 - The demo matrix includes a PR-gate hardening proof surface.
+
+## Proof Surface
+
+- packet:
+  `docs/milestones/v0.91.4/review/merge_readiness/MERGE_READINESS_GATE_PACKET_v0.91.4.md`
+- report:
+  `docs/milestones/v0.91.4/review/merge_readiness/ct_demo_001_merge_gate_profile_report.md`
+- snapshot:
+  `docs/milestones/v0.91.4/review/merge_readiness/ct_demo_001_merge_gate_snapshot.json`
+- tooling policy:
+  `docs/tooling/merge_readiness_gate_policy_v0.91.4.md`
+- validator:
+  `python3 adl/tools/validate_v0914_merge_readiness_gate.py docs/milestones/v0.91.4/review/merge_readiness`
+- contract test:
+  `bash adl/tools/test_v0914_merge_readiness_gate.sh`
+
+The bounded proof here is intentionally about truthful gate behavior. It proves
+that focused merge-readiness validation covers the real `pr_cmd` subtree and
+continues to block stale lifecycle truth. It also records, rather than newly
+automates, the boundary that remote merge state must not be inferred from local
+validation alone.
 
 ## Non-Goals
 
