@@ -1,0 +1,47 @@
+{
+  "bundle_id": "ct_demo_001_transition_evidence_bundle",
+  "version": "v0.91.4",
+  "issue_number": 3354,
+  "depends_on_issue_number": 3353,
+  "depends_on_pr_number": 3387,
+  "bundle_scope": "csdlc_transition_proof",
+  "evidence_inputs": [
+    {
+      "kind": "proof_packet",
+      "path": "docs/milestones/v0.91.4/review/software_development_polis/SOFTWARE_DEVELOPMENT_POLIS_PROOF_PACKET_v0.91.4.md",
+      "sha256": "4ea8b848964de3402327d541b7186265cc7da9c9a5fe227d0486fa7e51df203d"
+    },
+    {
+      "kind": "feature_doc",
+      "path": "docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md",
+      "sha256": "ab6aa93994194a314dc5a27dd50befef911decf99de17abcaec2de5de15724f5"
+    },
+    {
+      "kind": "actor_report",
+      "path": "docs/milestones/v0.91.4/review/software_development_polis/ct_demo_001_actor_authority_boundary_report.md",
+      "sha256": "1acab4c165ff428812a4ad82b20cbdd2c9c98f8f357671caf9ce82a814892029"
+    },
+    {
+      "kind": "shard_report",
+      "path": "docs/milestones/v0.91.4/review/software_development_polis/ct_demo_002_shard_conflict_report.md",
+      "sha256": "ade416f80305a28360b9d46cd6247a1365ebc16920341b99010eb07f4a28b1f2"
+    },
+    {
+      "kind": "feature_doc",
+      "path": "docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md",
+      "sha256": "aa0da89b65e3c32d6f76a2a571d2d068332994078715e70b3b6e577990301315"
+    }
+  ],
+  "review_synthesis_path": "docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_review_synthesis.json",
+  "signed_trace": {
+    "unsigned_path": "docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_unsigned.adl.yaml",
+    "signed_path": "docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_signed.adl.yaml",
+    "public_key_path": "docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_public_key.b64",
+    "verification_mode": "explicit_key"
+  },
+  "residual_risk_posture": "bounded_trace_fixture_only",
+  "notes": [
+    "This bundle proves durable tracked convergence for the WP-05 -> WP-06 transition.",
+    "The signed trace surface is intentionally minimal and uses existing ADL signing/verify primitives."
+  ]
+}

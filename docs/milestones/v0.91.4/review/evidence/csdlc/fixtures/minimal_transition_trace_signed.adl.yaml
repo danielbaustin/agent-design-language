@@ -1,0 +1,33 @@
+version: '0.5'
+providers:
+  local:
+    type: ollama
+    config:
+      model: phi4-mini
+agents:
+  trace_recorder:
+    provider: local
+    model: phi4-mini
+tasks:
+  transition_summary:
+    prompt:
+      user: Transition {{issue}} concluded via {{proof_surface}}.
+run:
+  name: csdlc-transition-trace-proof
+  workflow:
+    kind: sequential
+    steps:
+    - id: record.transition
+      agent: trace_recorder
+      task: transition_summary
+      inputs:
+        issue: '3353'
+        proof_surface: software_development_polis
+signature:
+  alg: ed25519
+  key_id: v0914-wp06-trace
+  public_key_b64: wabPM6mm66YsqS11zRF3if+SytlzpkI5Eq9YcX0Izms=
+  sig_b64: c31t+hVlm3wBvC/Go3zC4npJ7UQ/0r5XjB6QwjOPxbHme768G5gMSzZbwrjr+suMpdZaSAFz/s0ht2ZoPN00Cw==
+  signed_header:
+    adl_version: '0.5'
+    workflow_id: null
