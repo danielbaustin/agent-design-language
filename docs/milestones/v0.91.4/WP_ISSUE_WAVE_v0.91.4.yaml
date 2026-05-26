@@ -54,8 +54,8 @@ opening_batch_policy:
       state: seeded_and_ready_waiting_on_wp_01
     - batch: 4
       title: Sprint 4 review, remediation, planning, and release
-      seeded_issues: []
-      state: queued
+      seeded_issues: [3362, 3363, 3364, 3365, 3366, 3367, 3368, 3369, 3370, 3371]
+      state: seeded_and_ready_waiting_on_wp_01
     - batch: 5
       title: CodeFriend pre-alpha sidecar
       seeded_issues: []
@@ -149,63 +149,63 @@ work_packages:
     primary_deliverable: fixtures for SRP drift, stale SORs, skipped closeout, and env/global-state hazards
     proof_surface: regression fixture report showing known drift modes fail closed
   - wp: WP-13
-    issue: pending
+    issue: 3363
     title: Demo matrix and proof coverage
     queue: demo
     depends_on: [WP-12]
     primary_deliverable: demo matrix, feature-proof coverage, proof-evidence map, and best-demo showcase including Unity-facing proof when available
     proof_surface: demo matrix, feature proof coverage, and tracked demo showcase packet
   - wp: WP-14
-    issue: pending
+    issue: 3364
     title: Coverage / quality gate
     queue: quality
     depends_on: [WP-13]
     primary_deliverable: validation gate covering lifecycle, tools, tests, traces, PVF, and release blockers
     proof_surface: quality-gate record and blocker disposition report
   - wp: WP-15
-    issue: pending
+    issue: 3365
     title: Docs + adoption review pass
     queue: docs
     depends_on: [WP-14]
     primary_deliverable: C-SDLC default-operation docs, tracked-source docs, onboarding updates, and docs-review findings
     proof_surface: docs-review packet and adoption-readiness findings
   - wp: WP-16
-    issue: pending
+    issue: 3366
     title: Internal review
     queue: review
     depends_on: [WP-15]
     primary_deliverable: code/docs/tests/process review packet
     proof_surface: internal review report and finding register
   - wp: WP-17
-    issue: pending
+    issue: 3367
     title: External / 3rd-party review
     queue: review
     depends_on: [WP-16]
     primary_deliverable: independent review packet and handoff surface
     proof_surface: external review handoff and received review packet
   - wp: WP-18
-    issue: pending
+    issue: 3368
     title: Review findings remediation
     queue: review
     depends_on: [WP-17]
     primary_deliverable: fixes, finding dispositions, and follow-on routing
     proof_surface: finding disposition record and remediation PRs
   - wp: WP-19
-    issue: pending
+    issue: 3369
     title: Next milestone planning
     queue: docs
     depends_on: [WP-18]
     primary_deliverable: NEXT_MILESTONE_HANDOFF_v0.91.4 refresh and downstream planning update
     proof_surface: handoff doc and downstream planning diff
   - wp: WP-20
-    issue: pending
+    issue: 3370
     title: Next milestone review pass
     queue: docs
     depends_on: [WP-19]
     primary_deliverable: final review pass over next-milestone planning before ceremony
     proof_surface: next-milestone review findings and disposition note
   - wp: WP-21
-    issue: pending
+    issue: 3371
     title: Release ceremony
     queue: release
     depends_on: [WP-20]
@@ -298,6 +298,6 @@ sprint_umbrellas:
     title: Sprint Default And Metrics
     ordered_children: [WP-09, WP-10, WP-11, WP-12]
   - sprint: Sprint 4
-    issue: pending
+    issue: 3362
     title: Review, Remediation, Planning, And Release
     ordered_children: [WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-20, WP-21]

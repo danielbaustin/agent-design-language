@@ -31,6 +31,9 @@ evidence exists.
   `#3354`, WP-07 `#3355`, and WP-08 `#3356`.
 - [x] Sprint 3 issue batch seeded: Sprint 3 `#3357`, WP-09 `#3358`, WP-10
   `#3359`, WP-11 `#3360`, and WP-12 `#3361`.
+- [x] Sprint 4 issue batch seeded: Sprint 4 `#3362`, WP-13 `#3363`, WP-14
+  `#3364`, WP-15 `#3365`, WP-16 `#3366`, WP-17 `#3367`, WP-18 `#3368`,
+  WP-19 `#3369`, WP-20 `#3370`, and WP-21 `#3371`.
 
 ## Execution Discipline
 

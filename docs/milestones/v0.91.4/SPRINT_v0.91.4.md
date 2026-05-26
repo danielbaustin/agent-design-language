@@ -10,8 +10,9 @@
 
 ## Status
 
-Sprint map opened through WP-01. Sprint 1, Sprint 2, and Sprint 3 are seeded;
-later sprint issue numbers remain `pending` until their batches are opened.
+Sprint map opened through WP-01. Sprint 1, Sprint 2, Sprint 3, and Sprint 4
+are seeded as controlled issue/card batches; the CodeFriend sidecar remains
+queued until WP-01 routes it separately.
 
 ## How To Use
 
@@ -25,7 +26,7 @@ claim that any sprint has started or closed.
 | Sprint 1 | Lifecycle And Routing Hardening (`#3347`) | WP-01 `#3346`, WP-02 `#3348`, WP-03 `#3349`, WP-04 `#3350` | Make validators, doctor, conductor, and editor skills agree on C-SDLC state. |
 | Sprint 2 | Transition Operation (`#3352`) | WP-05 `#3353`, WP-06 `#3354`, WP-07 `#3355`, WP-08 `#3356` | Make actor standing, shards, evidence, merge gates, and memory handoff repeatable. |
 | Sprint 3 | Sprint Default And Metrics (`#3357`) | WP-09 `#3358`, WP-10 `#3359`, WP-11 `#3360`, WP-12 `#3361` | Make sprint execution default-safe and measure repeatability, validation-tail, proof-latency, and parallel-validation behavior. |
-| Sprint 4 | Review, Remediation, Planning, And Release | WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-20, WP-21 | Prove, gate, review, remediate, plan the next milestone, re-review the handoff, and close the completion milestone. |
+| Sprint 4 | Review, Remediation, Planning, And Release (`#3362`) | WP-13 `#3363`, WP-14 `#3364`, WP-15 `#3365`, WP-16 `#3366`, WP-17 `#3367`, WP-18 `#3368`, WP-19 `#3369`, WP-20 `#3370`, WP-21 `#3371` | Prove, gate, review, remediate, plan the next milestone, re-review the handoff, and close the completion milestone. |
 
 ## Sidecar Mini-Sprint
 
@@ -51,7 +52,9 @@ rule stays reviewable:
   `#3356`; child execution waits on WP-01/Sprint 1 sequencing.
 - Batch 3 opened Sprint 3 `#3357` and WP-09 through WP-12 as `#3358` through
   `#3361`; child execution waits on WP-01/Sprint 1 and Sprint 2 sequencing.
-- Batch 4 remains queued for Sprint 4.
+- Batch 4 opened Sprint 4 `#3362` and WP-13 through WP-21 as `#3363`
+  through `#3371`; child execution waits on WP-01 and the prior sprint
+  sequence.
 - Batch 5 remains queued for the CodeFriend sidecar after WP-01.
 
 Every opened issue receives all five cards upfront. `SIP`, `STP`, and `SPP`
