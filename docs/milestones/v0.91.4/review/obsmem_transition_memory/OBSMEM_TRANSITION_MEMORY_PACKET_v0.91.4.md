@@ -23,6 +23,7 @@ This packet covers:
 
 - `ct_demo_001_transition_outcome_truth.json`
 - `ct_demo_001_obsmem_transition_memory_handoff.json`
+- `../evidence/csdlc/ct_demo_001_transition_evidence_bundle.json`
 - `../evidence/csdlc/ct_demo_001_review_synthesis.json`
 - `../evidence/csdlc/fixtures/minimal_transition_trace_signed.adl.yaml`
 - `../evidence/csdlc/fixtures/minimal_transition_trace_public_key.b64`
