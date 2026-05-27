@@ -59,6 +59,7 @@ full_coverage_required="$bool_false"
 demo_smoke_required="$bool_false"
 v0913_proof_required="$bool_false"
 release_version_only="$bool_false"
+ci_contracts_required="$bool_false"
 fail_closed=false
 coverage_lane="skip"
 coverage_authority="not_required"
@@ -84,6 +85,7 @@ require_full_validation() {
   coverage_required=true
   full_coverage_required=true
   demo_smoke_required=true
+  ci_contracts_required=true
 }
 
 mark_authoritative_full_coverage() {
@@ -99,6 +101,7 @@ mark_pr_fast_coverage() {
   rust_required=true
   coverage_required=true
   demo_smoke_required=true
+  ci_contracts_required=true
   coverage_lane="pr_fast"
   coverage_authority="pr_changed_surface"
   reason="runtime_or_rust_test_change_runs_pr_fast_validation"
@@ -107,6 +110,7 @@ mark_pr_fast_coverage() {
 mark_policy_surface_full_coverage() {
   local authority="$1"
   local reason_value="$2"
+  ci_contracts_required=true
   full_coverage_required=true
   coverage_lane="authoritative_full"
   coverage_authority="$authority"
@@ -115,6 +119,7 @@ mark_policy_surface_full_coverage() {
 
 mark_v0913_proof_required() {
   rust_required=true
+  ci_contracts_required=true
   v0913_proof_required=true
   proof_validation_scope="v0_91_3"
   if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
@@ -447,6 +452,7 @@ else
       [ -n "$path" ] || continue
       if is_pr_finish_control_plane_surface "$path"; then
         rust_required=true
+        ci_contracts_required=true
         saw_pr_finish_control_plane=true
         continue
       fi
@@ -461,7 +467,11 @@ else
           mark_pr_fast_coverage
           ;;
         demos/*|adl/tools/demo_*|adl/tools/test_demo_*)
+          ci_contracts_required=true
           demo_smoke_required=true
+          ;;
+        .github/workflows/*|adl/tools/*)
+          ci_contracts_required=true
           ;;
       esac
     done <<EOF
@@ -509,6 +519,7 @@ emit "full_coverage_required" "$full_coverage_required"
 emit "demo_smoke_required" "$demo_smoke_required"
 emit "v0913_proof_required" "$v0913_proof_required"
 emit "release_version_only" "$release_version_only"
+emit "ci_contracts_required" "$ci_contracts_required"
 emit "fail_closed" "$fail_closed"
 emit "coverage_lane" "$coverage_lane"
 emit "coverage_authority" "$coverage_authority"
@@ -523,6 +534,7 @@ printf '  full_coverage_required=%s\n' "$full_coverage_required"
 printf '  demo_smoke_required=%s\n' "$demo_smoke_required"
 printf '  v0913_proof_required=%s\n' "$v0913_proof_required"
 printf '  release_version_only=%s\n' "$release_version_only"
+printf '  ci_contracts_required=%s\n' "$ci_contracts_required"
 printf '  fail_closed=%s\n' "$fail_closed"
 printf '  coverage_lane=%s\n' "$coverage_lane"
 printf '  coverage_authority=%s\n' "$coverage_authority"

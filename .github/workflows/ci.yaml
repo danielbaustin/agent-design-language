@@ -101,14 +101,17 @@ jobs:
         working-directory: .
 
       - name: v0.91.3 proof-validation lane contract
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_run_v0913_proof_validation_lane.sh
         working-directory: .
 
       - name: PR-fast test lane contract
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_run_pr_fast_test_lane.sh
         working-directory: .
 
       - name: authoritative coverage lane contract
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_run_authoritative_coverage_lane.sh
         working-directory: .
 
@@ -123,23 +126,36 @@ jobs:
         working-directory: .
 
       - name: repo-code-review contract check
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_repo_code_review_skill_contracts.sh
         working-directory: .
 
       - name: test-generator contract check
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_test_generator_skill_contracts.sh
         working-directory: .
 
       - name: demo-operator contract check
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_demo_operator_skill_contracts.sh
         working-directory: .
 
       - name: arxiv-paper-writer contract check
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_arxiv_paper_writer_skill_contracts.sh
         working-directory: .
 
       - name: ANRM/Gemma trace dataset tooling check
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_build_v0911_anrm_trace_dataset.sh
+        working-directory: .
+
+      - name: CI contract checks skipped by path policy
+        if: steps.path-policy.outputs.ci_contracts_required != 'true'
+        run: |
+          echo "Runtime-compiling CI contract checks skipped because changed paths qualify for the minimal docs/release lane."
+          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+          echo "ci_contracts_required=${{ steps.path-policy.outputs.ci_contracts_required }}"
         working-directory: .
 
       - name: fmt
@@ -154,13 +170,16 @@ jobs:
         run: bash tools/check_release_notes_commands.sh
 
       - name: ci runtime contract check
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash tools/test_ci_runtime_contracts.sh
 
       - name: ci runtime budget report contract check
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_summarize_ci_runtime.sh
         working-directory: .
 
       - name: ci cache/linker contract check
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash tools/test_ci_cache_linker_contracts.sh
 
       - name: release version truth check
