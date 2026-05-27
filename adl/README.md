@@ -23,25 +23,38 @@ It provides:
 
 ## Current Status
 
-- Current active milestone in the main repo: **v0.91.3**
-- Current release state: **Sprint 4 has completed proof coverage, the quality
-  gate, and the docs review pass; `WP-13` / `#3208` is the next
-  internal-review gate**
-- Most recently completed milestone in the main repo: **v0.91.2**
-- Current crate version on the active release line: **0.91.3**
+- Current active milestone in the main repo: **v0.91.4**
+- Current release state: **v0.91.4 issue setup and C-SDLC default-operation
+  hardening are underway**
+- Most recently completed milestone in the main repo: **v0.91.3**
+- Current crate version on the active release line: **0.91.4**
 
 This README describes the runtime as it exists on the current `main` branch and points to the relevant milestone and demo surfaces in the parent repository.
 
 ## Recent Runtime Milestones
 
+### v0.91.4 — Cognitive SDLC Default Operation
+
+v0.91.4 is the active milestone. The runtime-adjacent work hardens the
+v0.91.3 first slice into default C-SDLC operation: validator/doctor/conductor
+alignment, signed trace and ObsMem handoff, five-minute-sprint repeatability,
+validation-tail/PVF work, and active-issue migration policy.
+
+Highlights:
+- default `SIP -> STP -> SPP -> SRP -> SOR` lifecycle operation for future
+  software-development issues
+- signed trace and ObsMem handoff hardening
+- validation-tail and Parallel Validation Fabric work so fast sprint
+  coordination does not hide long proof cycles
+- CodeFriend and WildClawBench sidecar preparation without making them C-SDLC
+  core proof
+
 ### v0.91.3 — Cognitive SDLC First Slice
 
-v0.91.3 is the active milestone. The runtime-adjacent work centers on the first
+v0.91.3 is complete. The runtime-adjacent work centered on the first
 bounded Cognitive SDLC slice: tracked issue cards, transition manifest and DAG,
 review/evidence convergence, merge-readiness truth, ObsMem handoff, and the
-first measured proof surface. Sprint 4 has completed proof coverage, the
-quality gate, and the docs review pass; `WP-13` / `#3208` is the next
-internal-review gate.
+first measured proof surface.
 
 Highlights:
 - one bounded Cognitive State Transition proof stack

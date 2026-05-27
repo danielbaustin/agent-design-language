@@ -52,14 +52,12 @@ completion targets in this list.
 ## Current Repo Status
 
 The current repo truth is:
-- active milestone: `v0.91.3`
-- current crate version on the active release line: `0.91.3`
-- current milestone state: `v0.91.2` is complete and `v0.91.3` is active; the
-  main `WP-01` / `#3199` through `WP-18` / `#3211` issue wave is open, the
-  corrected closeout-tail gates `#3226` through `#3230` are in the Sprint 4
-  sequence, proof coverage and quality gate have closed, this docs review pass
-  prepares the package for `WP-13` / `#3208` internal review, and v0.91.4
-  remains the planned C-SDLC default-operation hardening milestone
+- active milestone: `v0.91.4`
+- current crate version on the active release line: `0.91.4`
+- current milestone state: `v0.91.3` is complete and `v0.91.4` is active; the
+  v0.91.4 issue wave and sprint umbrellas are open, C-SDLC default-operation
+  hardening is underway, and validation-tail/Parallel Validation Fabric work
+  is being promoted into the active milestone plan
 - most recently completed tooling/workflow-pressure milestone package: `v0.91.2`
 - most recently completed inhabited-runtime milestone package: `v0.91.1`
 - most recently completed moral-governance milestone package: `v0.91`
@@ -90,8 +88,8 @@ That means the feature story should be read this way:
 - `v0.91.1` is the completed inhabited-runtime readiness band
 - `v0.91.2` is the completed tooling, evaluation, productization, publication,
   and workflow pressure-release band
-- `v0.91.3` is the active first Cognitive SDLC implementation slice
-- `v0.91.4` is the planned Cognitive SDLC default-operation hardening band
+- `v0.91.3` is the completed first Cognitive SDLC implementation slice
+- `v0.91.4` is the active Cognitive SDLC default-operation hardening band
 - `v0.92` through `v0.95` are the later planned identity, governance,
   publication, integration, and MVP-convergence bands
 
@@ -210,8 +208,8 @@ ADL already provides a serious platform baseline:
 | General-intelligence paper packet | Implemented packet | `docs/milestones/v0.91.2/features/GENERAL_INTELLIGENCE_PAPER_PACKET.md` | `v0.91.2` paper packet complete with canonical paper repo as source of manuscript truth |
 | Rustdoc/doc cleanup | Implemented baseline | `docs/milestones/v0.91.2/features/RUSTDOC_DOC_CLEANUP.md` | `v0.91.2` cleanup baseline complete |
 | Workflow guardrails | Implemented baseline | `docs/milestones/v0.91.2/features/WORKFLOW_GUARDRAILS.md` | `v0.91.2` guardrail baseline complete |
-| Cognitive SDLC first slice and transition manifest | Active issue wave | `docs/milestones/v0.91.3/features/COGNITIVE_SDLC_FIRST_SLICE.md`, `docs/milestones/v0.91.3/features/COGNITIVE_TRANSITION_MANIFEST.md`, `docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md`, `docs/milestones/v0.91.3/features/TRANSITION_DAG_AND_SHARD_COORDINATION.md`, `docs/milestones/v0.91.3/features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md`, `docs/milestones/v0.91.3/features/GOVERNED_MERGE_READINESS_GATE.md`, `docs/milestones/v0.91.3/features/SRP_SOR_OBSMEM_HANDOFF.md`, and `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md` | `v0.91.3` issue wave is open as `#3199` through `#3214`, with the corrected closeout tail tracked as `#3226` through `#3231`; it proves one bounded Cognitive State Transition, while `v0.91.4` hardens repeatable/default operation |
-| Cognitive SDLC default operation and five-minute-sprint repeatability | Planned | `docs/milestones/v0.91.4/features/COGNITIVE_SDLC_DEFAULT_OPERATION.md`, `docs/milestones/v0.91.4/features/CSDL_VALIDATION_AND_ROUTING_HARDENING.md`, `docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md`, `docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md`, `docs/milestones/v0.91.4/features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md`, `docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md`, `docs/milestones/v0.91.4/features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md`, `docs/milestones/v0.91.4/features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md`, `docs/milestones/v0.91.4/features/FIVE_MINUTE_SPRINT_REPEATABILITY.md`, `docs/milestones/v0.91.4/features/ACTIVE_ISSUE_MIGRATION_POLICY.md`, `docs/milestones/v0.91.4/features/PROCESS_DRIFT_REGRESSION_FIXTURES.md`, and `docs/planning/C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md` | `v0.91.4` completes the C-SDLC rollout and makes it the default software-development path, including validation-tail/proof-latency handling and Parallel Validation Fabric planning so sprint speed does not hide long blocking proof cycles; tracked prompt-record migration consumes the versioned `docs/templates/prompts/1.0.0/` substrate, Rust-owned field validation, browser-assisted human review, and the transition plan created in `v0.91.3` |
+| Cognitive SDLC first slice and transition manifest | Implemented baseline | `docs/milestones/v0.91.3/features/COGNITIVE_SDLC_FIRST_SLICE.md`, `docs/milestones/v0.91.3/features/COGNITIVE_TRANSITION_MANIFEST.md`, `docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md`, `docs/milestones/v0.91.3/features/TRANSITION_DAG_AND_SHARD_COORDINATION.md`, `docs/milestones/v0.91.3/features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md`, `docs/milestones/v0.91.3/features/GOVERNED_MERGE_READINESS_GATE.md`, `docs/milestones/v0.91.3/features/SRP_SOR_OBSMEM_HANDOFF.md`, and `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md` | `v0.91.3` proved one bounded Cognitive State Transition; `v0.91.4` hardens repeatable/default operation |
+| Cognitive SDLC default operation and five-minute-sprint repeatability | Active milestone | `docs/milestones/v0.91.4/features/COGNITIVE_SDLC_DEFAULT_OPERATION.md`, `docs/milestones/v0.91.4/features/CSDL_VALIDATION_AND_ROUTING_HARDENING.md`, `docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md`, `docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md`, `docs/milestones/v0.91.4/features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md`, `docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md`, `docs/milestones/v0.91.4/features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md`, `docs/milestones/v0.91.4/features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md`, `docs/milestones/v0.91.4/features/FIVE_MINUTE_SPRINT_REPEATABILITY.md`, `docs/milestones/v0.91.4/features/ACTIVE_ISSUE_MIGRATION_POLICY.md`, `docs/milestones/v0.91.4/features/PROCESS_DRIFT_REGRESSION_FIXTURES.md`, and `docs/planning/C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md` | `v0.91.4` completes the C-SDLC rollout and makes it the default software-development path, including validation-tail/proof-latency handling and Parallel Validation Fabric planning so sprint speed does not hide long blocking proof cycles; tracked prompt-record migration consumes the versioned `docs/templates/prompts/1.0.0/` substrate, Rust-owned field validation, browser-assisted human review, and the transition plan created in `v0.91.3` |
 | ACP / cognitive profiles runtime surface | Planned | `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md` | `v0.92` |
 | ACIP binary schema and WebSocket carrier | Planned | `docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md` | `v0.92` binary/schema carrier; `v0.93` security; `v0.94` signed trace |
 | Identity, stable name, and continuity substrate | Planned | `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md` | `v0.92` |
@@ -256,8 +254,8 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.91` | Moral governance, wellbeing and happiness, affect, kindness, humor, moral cognition, structured planning / SRP, secure local Agent Comms substrate, A2A boundary planning, cognitive-being flagship demo, review/remediation, next-milestone handoff, and release ceremony. |
 | `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, agent lifecycle states, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, GHB-adjacent runtime evidence, and observatory-visible agent runtime proof. |
 | `v0.91.2` | Tooling/evaluation/productization/publication pressure release: UTS + ACC multi-model benchmark, provider-native tool-call comparison, runtime/test-cycle recovery, coverage ergonomics, CodeFriend productization, Google Workspace CMS bridge, modernization demo, publication packets including GHB/general-intelligence source packets, rustdoc/doc cleanup, and workflow guardrails. |
-| `v0.91.3` | Active first Cognitive SDLC implementation slice: issue wave `#3199` through `#3214` plus corrected closeout tail `#3226` through `#3231`, one bounded Cognitive State Transition, issue-local operative `SPP`, transition manifest, transition DAG, evidence bundle, governed merge-readiness gate, SRP/SOR memory handoff, and first five-minute-sprint proof surface. |
-| `v0.91.4` | Planned Cognitive SDLC completion and hardening milestone: default-operation lifecycle, validator/doctor/conductor/editor alignment, Software Development Polis actor standing, shard ownership, tracked durable workflow records, signed trace proof, ObsMem handoff, repeatability metrics, validation-tail/proof-latency handling, Parallel Validation Fabric planning, and active-issue migration policy. |
+| `v0.91.3` | Completed first Cognitive SDLC implementation slice: one bounded Cognitive State Transition, issue-local operative `SPP`, transition manifest, transition DAG, evidence bundle, governed merge-readiness gate, SRP/SOR memory handoff, and first five-minute-sprint proof surface. |
+| `v0.91.4` | Active Cognitive SDLC completion and hardening milestone: default-operation lifecycle, validator/doctor/conductor/editor alignment, Software Development Polis actor standing, shard ownership, tracked durable workflow records, signed trace proof, ObsMem handoff, repeatability metrics, validation-tail/proof-latency handling, Parallel Validation Fabric planning, and active-issue migration policy. |
 | `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
 | `v0.93` | Constitutional citizenship, rights/duties, social contract, delegation/upstream delegation/IAM, standing/challenge/appeal governance, relationship model, reputation/trust, shared social memory, ToM/social cognition, and enterprise security for the ADL polis. |
 | `v0.94` | Secure execution, policy-engine and identity/auth convergence, provider trust and isolation, secrets/data governance, signed/queryable trace and reasoning/provenance closure, bounded mental time travel / temporal self-projection, and cross-band convergence before MVP freeze. |
@@ -405,26 +403,23 @@ practical long-lived runtime supervision:
 The truthful v0.90 story is implemented baseline, with Runtime v2 consuming
 those surfaces rather than replacing them.
 
-## Current Active Milestone: v0.91.3
+## Current Active Milestone: v0.91.4
 
-`v0.91.3` is the active milestone. Its job is to prove the first bounded
-Cognitive SDLC slice: one Cognitive State Transition with tracked cards,
-transition evidence, review synthesis, merge-readiness truth, ObsMem handoff,
-and a reviewer-facing first-proof/demo package.
+`v0.91.4` is the active milestone. Its job is to harden the first bounded
+Cognitive SDLC slice into default operation for future ADL software-development
+issues.
 
 The current active bands are:
-- Cognitive State Transition manifest and actor-role seed
-- public `SIP -> STP -> SPP -> SRP -> SOR` issue lifecycle proof
-- transition DAG and shard coordination
-- evidence bundle and review synthesis
-- governed merge-readiness gate
-- SRP/SOR ObsMem handoff boundary
-- five-minute-sprint first proof and demo wave
-- proof coverage, quality gate, and release-tail review discipline
+- default `SIP -> STP -> SPP -> SRP -> SOR` lifecycle operation
+- validator, doctor, conductor, sprint-conductor, and editor alignment
+- Software Development Polis actor standing and shard ownership rules
+- evidence convergence, review synthesis, signed trace, and ObsMem handoff
+- merge-readiness and PR gate hardening
+- five-minute-sprint repeatability
+- validation-tail and Parallel Validation Fabric work
+- active-issue migration policy and process-drift regression fixtures
 
-`v0.91.3` does not claim full C-SDLC default operation. `v0.91.4` owns
-repeatability, enforcement, signed trace proof, and default adoption for future
-software-development issues.
+`v0.91.3` remains the completed first-slice milestone that v0.91.4 consumes.
 
 ## Current And Upcoming Capability Bands
 
