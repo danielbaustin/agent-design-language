@@ -88,9 +88,7 @@ Before rerunning tasks, confirm all of the following:
   - `ffmpeg`
   - `gdown`
   - `modelscope`
-- benchmark model credentials are available through environment variables:
-  - `OPENROUTER_API_KEY`
-  - `BRAVE_API_KEY`
+- benchmark model credentials are available in the shell environment
 
 ### 3. Image and dataset expectations
 
@@ -121,10 +119,7 @@ Two local prep details mattered in practice:
 Do not store secret values in tracked files.
 
 Load keys into the shell environment from local-only files or your preferred
- secret manager, then run the benchmark process with:
-
-- `OPENROUTER_API_KEY`
-- `BRAVE_API_KEY`
+secret manager before running the benchmark process.
 
 This lane used local key files outside tracked repo content and kept all secret
 values out of docs and cards.
@@ -175,9 +170,7 @@ this is the shortest practical checklist:
 3. use the benchmark repo under `$HOME/temp/...`, not `/private/tmp`
 4. confirm `workspace/06_Safety_Alignment/**` exists locally
 5. extract `dot_git.tar.gz` for tasks 2 and 3 if needed
-6. load:
-   - `OPENROUTER_API_KEY`
-   - `BRAVE_API_KEY`
+6. load the required benchmark credentials into the shell environment
 7. run single-task Codex commands from the benchmark root
 8. inspect:
    - `agent.log`

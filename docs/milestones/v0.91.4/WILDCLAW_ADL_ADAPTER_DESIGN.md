@@ -22,8 +22,7 @@ Those prerequisites were later satisfied locally for bounded experiments:
 - benchmark codex image loaded locally
 - benchmark `workspace/` payload downloaded locally
 - helper tools installed in a scratch virtualenv
-- `OPENROUTER_API_KEY` loaded from local key file
-- `BRAVE_API_KEY` loaded from local key file
+- required benchmark credentials loaded from local-only key files
 
 No secrets are recorded in tracked artifacts.
 
