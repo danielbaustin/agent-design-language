@@ -121,6 +121,12 @@ source notes to tracked execution homes.
 | `v0.91_1_runtime_observatory_dependency_note.md` | `v0.91.1` runtime observatory provenance | Archive/provenance. |
 | `v0.91_gap_review.md` | Historical gap-review evidence | Archive/provenance. |
 
+## Local Backlog Line Items
+
+| Backlog item | Current home | Disposition |
+| --- | --- | --- |
+| `LB-101` Memory v2 / ObsMem v2 | Future memory/identity planning; likely v0.92 identity/birthday work or post-v0.91.4 C-SDLC stabilization | Deferred. Captured from `#3390` as a backlog line item only; do not keep a standalone backlog issue open. Future planning should review the ObsMem baseline, trace ingestion, SRP/SOR handoff, identity continuity, privacy/redaction, replay compatibility, and retrieval semantics. |
+
 ## Not Yet Execution-Scheduled Before v0.95
 
 The current audit found four root plan notes that are not execution-scheduled
