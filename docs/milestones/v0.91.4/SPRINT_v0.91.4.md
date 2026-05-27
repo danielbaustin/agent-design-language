@@ -116,6 +116,12 @@ rule stays reviewable:
   MA-CSDL-01 through MA-CSDL-04 as `#3416` through `#3419`; this is added
   C-SDLC proof scope and should feed WP-10/WP-13/WP-14/WP-15 without changing
   the closeout-tail sequence.
+- Batch 8 added PVF docs-only follow-on `#3437` for pre-PR validation evidence
+  reuse. This issue updates the PVF plan so the later CI/release-gate work can
+  avoid rerunning the same full Rust cycle immediately after PR creation when
+  the PR head commit and tree exactly match a recorded validation artifact. It
+  does not implement CI changes and must fail closed to full validation in the
+  future if evidence is absent, stale, mismatched, or invalid under policy.
 - Standalone first-birthday readiness side issue `#3377` is promoted for v0.92
   launch preparation and should feed WP-19/WP-20; it is not a sprint child and
   does not alter the v0.91.4 release-tail sequence.
