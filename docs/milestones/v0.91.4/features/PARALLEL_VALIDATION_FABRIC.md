@@ -4,7 +4,7 @@
 
 - Feature Name: Parallel Validation Fabric
 - Milestone Target: `v0.91.4`
-- Status: planned
+- Status: landed
 - Planned WP Home: WP-10, with WP-14 quality-gate validation
 - Template: `docs/templates/planning/1.0.0/feature_doc.md`
 
@@ -175,3 +175,33 @@ Source notes:
 
 - `.adl/docs/TBD/cognitive-sdlc/FIVE_MINUTE_SPRINT_TEST_CYCLE_NOTE_2026-05-22.md`
 - `.adl/docs/TBD/cognitive-sdlc/C_SDLC_AND_LONG_TESTING_TAIL.md`
+
+## First Bounded Proof Surface
+
+- `docs/milestones/v0.91.4/FIVE_MINUTE_SPRINT_REPEATABILITY_REPORT_2026-05-27.md`
+
+## Landed v0.91.4 Position
+
+WP-10 lands the first bounded PVF proof as a lane taxonomy and reporting
+discipline, not as a distributed scheduler or CI replacement.
+
+What is landed:
+
+- explicit lane categories for focused issue-local proof, docs-only proof,
+  broad integration proof, merge-gate CI, deferred proof, and sprint closeout
+  truth
+- explicit distinction between passed, pending, deferred, blocked, and failed
+  proof
+- evidence-backed demonstration that validation-tail drag can dominate merged
+  wall-clock time even when issue-local proof is small
+
+What is not landed:
+
+- automatic pre-PR evidence reuse
+- distributed proof orchestration
+- automatic cache identity verification
+
+The current PVF posture is therefore:
+
+- landed as a truthful milestone planning/proof surface
+- still planned as richer automation beyond v0.91.4
