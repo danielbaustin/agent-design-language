@@ -120,7 +120,7 @@ fn sample_request() -> MemoryWriteRequest {
 }
 
 #[test]
-fn write_request_normalization_is_deterministic() {
+fn models_write_request_normalization_is_deterministic() {
     let mut request = sample_request();
     request.tags = vec!["z".to_string(), "a".to_string(), "a".to_string()];
     request.citations = vec![
@@ -146,7 +146,7 @@ fn write_request_normalization_is_deterministic() {
 }
 
 #[test]
-fn write_request_normalization_canonicalizes_structured_fields() {
+fn models_write_request_normalization_canonicalizes_structured_fields() {
     let mut request = sample_request();
     request.trace_event_refs = vec![
         MemoryTraceRef {
@@ -227,7 +227,7 @@ fn write_request_normalization_canonicalizes_structured_fields() {
 }
 
 #[test]
-fn write_request_validation_rejects_absolute_and_parent_paths() {
+fn models_write_request_validation_rejects_absolute_and_parent_paths() {
     let mut request = sample_request();
     request.trace_bundle_rel_path = "/Users/runner/leak.json".to_string();
     let err = request.validate().expect_err("absolute path should fail");
@@ -242,7 +242,7 @@ fn write_request_validation_rejects_absolute_and_parent_paths() {
 }
 
 #[test]
-fn write_request_validation_rejects_invalid_citation_and_trace_ref_paths() {
+fn models_write_request_validation_rejects_invalid_citation_and_trace_ref_paths() {
     let mut request = sample_request();
     request.citations[0].path = "bad/../path.json".to_string();
     let err = request
@@ -259,7 +259,7 @@ fn write_request_validation_rejects_invalid_citation_and_trace_ref_paths() {
 }
 
 #[test]
-fn write_request_validation_rejects_version_and_empty_fields() {
+fn models_write_request_validation_rejects_version_and_empty_fields() {
     let mut request = sample_request();
     request.contract_version = OBSMEM_CONTRACT_VERSION + 1;
     let err = request
@@ -279,7 +279,7 @@ fn write_request_validation_rejects_version_and_empty_fields() {
 }
 
 #[test]
-fn write_request_validation_rejects_citation_and_privacy_violations() {
+fn models_write_request_validation_rejects_citation_and_privacy_violations() {
     let mut request = sample_request();
     request.citations[0].hash = " ".to_string();
     let err = request
@@ -296,7 +296,7 @@ fn write_request_validation_rejects_citation_and_privacy_violations() {
 }
 
 #[test]
-fn write_request_validation_rejects_empty_structured_review_and_follow_on_fields() {
+fn models_write_request_validation_rejects_empty_structured_review_and_follow_on_fields() {
     let mut request = sample_request();
     request.review_findings[0].id = " ".to_string();
     let err = request
@@ -341,7 +341,7 @@ fn write_request_validation_rejects_empty_structured_review_and_follow_on_fields
 }
 
 #[test]
-fn query_validation_rejects_invalid_bounds_and_version() {
+fn models_query_validation_rejects_invalid_bounds_and_version() {
     let mut query = MemoryQuery {
         contract_version: OBSMEM_CONTRACT_VERSION + 1,
         workflow_id: None,
@@ -363,7 +363,7 @@ fn query_validation_rejects_invalid_bounds_and_version() {
 }
 
 #[test]
-fn query_normalization_is_deterministic() {
+fn models_query_normalization_is_deterministic() {
     let mut query = MemoryQuery {
         contract_version: OBSMEM_CONTRACT_VERSION,
         workflow_id: Some("wf-a".to_string()),
@@ -378,7 +378,7 @@ fn query_normalization_is_deterministic() {
 }
 
 #[test]
-fn query_validation_accepts_valid_query() {
+fn models_query_validation_accepts_valid_query() {
     let query = MemoryQuery {
         contract_version: OBSMEM_CONTRACT_VERSION,
         workflow_id: Some("wf-a".to_string()),
@@ -391,7 +391,7 @@ fn query_validation_accepts_valid_query() {
 }
 
 #[test]
-fn error_code_display_strings_are_stable() {
+fn models_error_code_display_strings_are_stable() {
     assert_eq!(
         ObsMemContractErrorCode::BackendUnavailable.as_str(),
         "OBSMEM_BACKEND_UNAVAILABLE"
@@ -408,7 +408,7 @@ fn error_code_display_strings_are_stable() {
 }
 
 #[test]
-fn in_memory_client_round_trip_is_deterministic() {
+fn models_in_memory_client_round_trip_is_deterministic() {
     let client = ObsMemInMemory::default();
     let request = sample_request();
 
@@ -431,7 +431,7 @@ fn in_memory_client_round_trip_is_deterministic() {
 }
 
 #[test]
-fn in_memory_client_filters_and_truncates_results() {
+fn models_in_memory_client_filters_and_truncates_results() {
     let client = ObsMemInMemory::default();
     let request = sample_request();
     client.write_entry(&request).expect("first write");
