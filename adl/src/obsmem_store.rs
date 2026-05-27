@@ -174,6 +174,9 @@ impl ObsMemClient for FileObsMemClient {
                 score: "1.00".to_string(),
                 citations: entry.citations.clone(),
                 trace_event_refs: entry.trace_event_refs.clone(),
+                review_findings: entry.review_findings.clone(),
+                residual_risks: entry.residual_risks.clone(),
+                follow_on_refs: entry.follow_on_refs.clone(),
             })
             .collect();
         hits.sort_by(|a, b| {
@@ -229,6 +232,9 @@ mod tests {
                 step_id: Some("s1".to_string()),
                 delegation_id: None,
             }],
+            review_findings: Vec::new(),
+            residual_risks: Vec::new(),
+            follow_on_refs: Vec::new(),
         };
         request.normalize();
         request
@@ -376,5 +382,46 @@ mod tests {
 
         assert_eq!(err.code, ObsMemContractErrorCode::BackendUnavailable);
         assert!(err.message.contains("unsupported ObsMem store schema"));
+    }
+
+    #[test]
+    fn file_store_round_trips_structured_review_fields() {
+        let root = unique_temp_dir("structured-review-fields");
+        let store_path = root.join("_shared/obsmem_store.v1.json");
+        let client = FileObsMemClient::new(&store_path);
+
+        let mut request = request("run-review", "review-memory");
+        request.review_findings = vec![crate::obsmem_contract::MemoryReviewFinding {
+            id: "finding-1".to_string(),
+            severity: "P2".to_string(),
+            summary: "bounded review fact".to_string(),
+            disposition: "fixed".to_string(),
+        }];
+        request.residual_risks = vec!["later release work remains".to_string()];
+        request.follow_on_refs = vec![crate::obsmem_contract::MemoryFollowOnRef {
+            issue_number: 3356,
+            title: "ObsMem transition memory integration".to_string(),
+            status: "active".to_string(),
+        }];
+        request.normalize();
+
+        client.write_entry(&request).expect("write request");
+        let result = client
+            .query(&MemoryQuery {
+                contract_version: OBSMEM_CONTRACT_VERSION,
+                workflow_id: Some("wf-shared".to_string()),
+                failure_code: Some("tool_failure".to_string()),
+                tags: vec![
+                    "status:failed".to_string(),
+                    "workflow:wf-shared".to_string(),
+                ],
+                limit: 10,
+            })
+            .expect("query");
+
+        assert_eq!(result.hits.len(), 1);
+        assert_eq!(result.hits[0].review_findings, request.review_findings);
+        assert_eq!(result.hits[0].residual_risks, request.residual_risks);
+        assert_eq!(result.hits[0].follow_on_refs, request.follow_on_refs);
     }
 }

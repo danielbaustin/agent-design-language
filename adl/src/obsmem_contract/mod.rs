@@ -9,6 +9,7 @@ mod tests;
 pub use client::ObsMemClient;
 pub use error::{ObsMemContractError, ObsMemContractErrorCode};
 pub use models::{
-    MemoryCitation, MemoryQuery, MemoryQueryResult, MemoryRecord, MemoryTraceRef, MemoryWriteAck,
-    MemoryWriteRequest, OBSMEM_CONTRACT_VERSION,
+    MemoryCitation, MemoryFollowOnRef, MemoryQuery, MemoryQueryResult, MemoryRecord,
+    MemoryReviewFinding, MemoryTraceRef, MemoryWriteAck, MemoryWriteRequest,
+    OBSMEM_CONTRACT_VERSION,
 };

@@ -112,7 +112,10 @@
         "step_id": null,
         "delegation_id": null
       }
-    ]
+    ],
+    "review_findings": [],
+    "residual_risks": [],
+    "follow_on_refs": []
   },
   "memory_query_example": {
     "contract_version": 1,

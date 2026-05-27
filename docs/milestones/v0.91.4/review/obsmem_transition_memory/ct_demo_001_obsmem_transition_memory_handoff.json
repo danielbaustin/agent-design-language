@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "handoff_id": "ct_demo_001_obsmem_transition_memory_handoff",
+  "workflow_id": "v0914_csdlc_transition_memory",
+  "outcome_truth_path": "docs/milestones/v0.91.4/review/obsmem_transition_memory/ct_demo_001_transition_outcome_truth.json",
+  "evidence_bundle_path": "docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_transition_evidence_bundle.json",
+  "review_synthesis_path": "docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_review_synthesis.json",
+  "signed_trace_path": "docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_signed.adl.yaml",
+  "signed_trace_public_key_path": "docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_public_key.b64",
+  "follow_ons": [
+    {
+      "issue_number": 3355,
+      "title": "Merge-readiness and PR gate hardening",
+      "status": "merged"
+    },
+    {
+      "issue_number": 3356,
+      "title": "ObsMem transition memory integration",
+      "status": "active"
+    }
+  ],
+  "notes": [
+    "This handoff promotes outcome truth into a tracked packet instead of consuming local-only .adl cards.",
+    "Review findings and residual risks remain in the tracked review synthesis rather than being flattened into free-form summary text."
+  ]
+}

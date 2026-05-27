@@ -66,6 +66,9 @@ impl ObsMemClient for ObsMemInMemory {
                 score: "1.0".to_string(),
                 citations: entry.citations.clone(),
                 trace_event_refs: entry.trace_event_refs.clone(),
+                review_findings: entry.review_findings.clone(),
+                residual_risks: entry.residual_risks.clone(),
+                follow_on_refs: entry.follow_on_refs.clone(),
             })
             .collect();
 
@@ -101,11 +104,23 @@ fn sample_request() -> MemoryWriteRequest {
             step_id: Some("s1".to_string()),
             delegation_id: None,
         }],
+        review_findings: vec![MemoryReviewFinding {
+            id: "finding-001".to_string(),
+            severity: "P2".to_string(),
+            summary: "bounded review fact".to_string(),
+            disposition: "fixed".to_string(),
+        }],
+        residual_risks: vec!["residual risk".to_string()],
+        follow_on_refs: vec![MemoryFollowOnRef {
+            issue_number: 9999,
+            title: "Follow-on".to_string(),
+            status: "planned".to_string(),
+        }],
     }
 }
 
 #[test]
-fn write_request_normalization_is_deterministic() {
+fn models_write_request_normalization_is_deterministic() {
     let mut request = sample_request();
     request.tags = vec!["z".to_string(), "a".to_string(), "a".to_string()];
     request.citations = vec![
@@ -131,7 +146,88 @@ fn write_request_normalization_is_deterministic() {
 }
 
 #[test]
-fn write_request_validation_rejects_absolute_and_parent_paths() {
+fn models_write_request_normalization_canonicalizes_structured_fields() {
+    let mut request = sample_request();
+    request.trace_event_refs = vec![
+        MemoryTraceRef {
+            event_sequence: 3,
+            event_kind: "z-kind".to_string(),
+            step_id: Some("step-b".to_string()),
+            delegation_id: Some("del-2".to_string()),
+        },
+        MemoryTraceRef {
+            event_sequence: 1,
+            event_kind: "a-kind".to_string(),
+            step_id: Some("step-a".to_string()),
+            delegation_id: None,
+        },
+        MemoryTraceRef {
+            event_sequence: 1,
+            event_kind: "a-kind".to_string(),
+            step_id: Some("step-a".to_string()),
+            delegation_id: None,
+        },
+    ];
+    request.review_findings = vec![
+        MemoryReviewFinding {
+            id: "finding-z".to_string(),
+            severity: "P3".to_string(),
+            summary: "later".to_string(),
+            disposition: "accepted".to_string(),
+        },
+        MemoryReviewFinding {
+            id: "finding-a".to_string(),
+            severity: "P1".to_string(),
+            summary: "earlier".to_string(),
+            disposition: "fixed".to_string(),
+        },
+        MemoryReviewFinding {
+            id: "finding-a".to_string(),
+            severity: "P1".to_string(),
+            summary: "earlier".to_string(),
+            disposition: "fixed".to_string(),
+        },
+    ];
+    request.residual_risks = vec![
+        "risk-z".to_string(),
+        "risk-a".to_string(),
+        "risk-a".to_string(),
+    ];
+    request.follow_on_refs = vec![
+        MemoryFollowOnRef {
+            issue_number: 2000,
+            title: "Later".to_string(),
+            status: "planned".to_string(),
+        },
+        MemoryFollowOnRef {
+            issue_number: 1000,
+            title: "Earlier".to_string(),
+            status: "open".to_string(),
+        },
+        MemoryFollowOnRef {
+            issue_number: 1000,
+            title: "Earlier".to_string(),
+            status: "open".to_string(),
+        },
+    ];
+
+    request.normalize();
+
+    assert_eq!(request.trace_event_refs.len(), 2);
+    assert_eq!(request.trace_event_refs[0].event_sequence, 1);
+    assert_eq!(request.trace_event_refs[0].event_kind, "a-kind");
+    assert_eq!(request.trace_event_refs[1].event_sequence, 3);
+    assert_eq!(request.review_findings.len(), 2);
+    assert_eq!(request.review_findings[0].id, "finding-a");
+    assert_eq!(request.review_findings[1].id, "finding-z");
+    assert_eq!(request.residual_risks, vec!["risk-a", "risk-z"]);
+    assert_eq!(request.follow_on_refs.len(), 2);
+    assert_eq!(request.follow_on_refs[0].issue_number, 1000);
+    assert_eq!(request.follow_on_refs[1].issue_number, 2000);
+}
+
+#[test]
+fn models_write_request_validation_rejects_absolute_and_parent_paths() {
     let mut request = sample_request();
     request.trace_bundle_rel_path = "/Users/runner/leak.json".to_string();
     let err = request.validate().expect_err("absolute path should fail");
@@ -146,7 +242,24 @@ fn write_request_validation_rejects_absolute_and_parent_paths() {
 }
 
 #[test]
-fn write_request_validation_rejects_version_and_empty_fields() {
+fn models_write_request_validation_rejects_invalid_citation_and_trace_ref_paths() {
+    let mut request = sample_request();
+    request.citations[0].path = "bad/../path.json".to_string();
+    let err = request
+        .validate()
+        .expect_err("citation traversal path should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.citations[0].path = "trace_bundle_v2/runs/run-001/steps.json".to_string();
+    request.trace_event_refs[0].event_kind = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty trace event kind should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+}
+
+#[test]
+fn models_write_request_validation_rejects_version_and_empty_fields() {
     let mut request = sample_request();
     request.contract_version = OBSMEM_CONTRACT_VERSION + 1;
     let err = request
@@ -166,7 +279,7 @@ fn write_request_validation_rejects_version_and_empty_fields() {
 }
 
 #[test]
-fn write_request_validation_rejects_citation_and_privacy_violations() {
+fn models_write_request_validation_rejects_citation_and_privacy_violations() {
     let mut request = sample_request();
     request.citations[0].hash = " ".to_string();
     let err = request
@@ -183,7 +296,52 @@ fn write_request_validation_rejects_citation_and_privacy_violations() {
 }
 
 #[test]
-fn query_validation_rejects_invalid_bounds_and_version() {
+fn models_write_request_validation_rejects_empty_structured_review_and_follow_on_fields() {
+    let mut request = sample_request();
+    request.review_findings[0].id = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty review finding id should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.review_findings[0].id = "finding-001".to_string();
+    request.review_findings[0].summary = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty review finding summary should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.review_findings[0].summary = "bounded review fact".to_string();
+    request.residual_risks[0] = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty residual risk should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.residual_risks[0] = "residual risk".to_string();
+    request.follow_on_refs[0].issue_number = 0;
+    let err = request
+        .validate()
+        .expect_err("zero follow-on issue number should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.follow_on_refs[0].issue_number = 9999;
+    request.follow_on_refs[0].title = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty follow-on title should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.follow_on_refs[0].title = "Follow-on".to_string();
+    request.follow_on_refs[0].status = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty follow-on status should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+}
+
+#[test]
+fn models_query_validation_rejects_invalid_bounds_and_version() {
     let mut query = MemoryQuery {
         contract_version: OBSMEM_CONTRACT_VERSION + 1,
         workflow_id: None,
@@ -205,7 +363,7 @@ fn query_validation_rejects_invalid_bounds_and_version() {
 }
 
 #[test]
-fn query_normalization_is_deterministic() {
+fn models_query_normalization_is_deterministic() {
     let mut query = MemoryQuery {
         contract_version: OBSMEM_CONTRACT_VERSION,
         workflow_id: Some("wf-a".to_string()),
@@ -220,7 +378,20 @@ fn query_normalization_is_deterministic() {
 }
 
 #[test]
-fn error_code_display_strings_are_stable() {
+fn models_query_validation_accepts_valid_query() {
+    let query = MemoryQuery {
+        contract_version: OBSMEM_CONTRACT_VERSION,
+        workflow_id: Some("wf-a".to_string()),
+        failure_code: Some("TOOL_FAILURE".to_string()),
+        tags: vec!["tool".to_string()],
+        limit: 2,
+    };
+
+    query.validate().expect("valid query");
+}
+
+#[test]
+fn models_error_code_display_strings_are_stable() {
     assert_eq!(
         ObsMemContractErrorCode::BackendUnavailable.as_str(),
         "OBSMEM_BACKEND_UNAVAILABLE"
@@ -237,7 +408,7 @@ fn error_code_display_strings_are_stable() {
 }
 
 #[test]
-fn in_memory_client_round_trip_is_deterministic() {
+fn models_in_memory_client_round_trip_is_deterministic() {
     let client = ObsMemInMemory::default();
     let request = sample_request();
 
@@ -257,4 +428,44 @@ fn in_memory_client_round_trip_is_deterministic() {
     assert_eq!(first, second, "query result ordering must be deterministic");
     assert_eq!(first.hits.len(), 1);
     assert_eq!(first.hits[0].run_id, "run-001");
+}
+
+#[test]
+fn models_in_memory_client_filters_and_truncates_results() {
+    let client = ObsMemInMemory::default();
+    let request = sample_request();
+    client.write_entry(&request).expect("first write");
+
+    let mut second = sample_request();
+    second.run_id = "run-002".to_string();
+    second.failure_code = Some("OTHER_FAILURE".to_string());
+    second.tags = vec!["other".to_string(), "tool".to_string()];
+    second.summary = "second summary".to_string();
+    second.review_findings[0].id = "finding-002".to_string();
+    second.residual_risks = vec!["other risk".to_string()];
+    second.follow_on_refs[0].issue_number = 10000;
+    client.write_entry(&second).expect("second write");
+
+    let by_failure = MemoryQuery {
+        contract_version: OBSMEM_CONTRACT_VERSION,
+        workflow_id: Some("wf-a".to_string()),
+        failure_code: Some("TOOL_FAILURE".to_string()),
+        tags: vec!["tool".to_string()],
+        limit: 5,
+    };
+    let failure_hits = client.query(&by_failure).expect("failure query");
+    assert_eq!(failure_hits.hits.len(), 1);
+    assert_eq!(failure_hits.hits[0].run_id, "run-001");
+    assert_eq!(failure_hits.hits[0].review_findings.len(), 1);
+    assert_eq!(failure_hits.hits[0].residual_risks, vec!["residual risk"]);
+
+    let tag_filtered = MemoryQuery {
+        contract_version: OBSMEM_CONTRACT_VERSION,
+        workflow_id: None,
+        failure_code: None,
+        tags: vec!["tool".to_string()],
+        limit: 1,
+    };
+    let limited_hits = client.query(&tag_filtered).expect("tag query");
+    assert_eq!(limited_hits.hits.len(), 1);
 }

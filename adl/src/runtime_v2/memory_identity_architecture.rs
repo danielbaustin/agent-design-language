@@ -539,6 +539,9 @@ fn memory_write_example(
                 hash: "observatory-projection-hash-0001".to_string(),
             },
         ],
+        review_findings: Vec::new(),
+        residual_risks: Vec::new(),
+        follow_on_refs: Vec::new(),
         trace_event_refs: vec![
             MemoryTraceRef {
                 event_sequence: 2,

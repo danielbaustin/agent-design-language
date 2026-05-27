@@ -12,7 +12,7 @@ Planned proof map for C-SDLC completion.
 | Shard ownership and interface freeze | `features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md` | Parallel work has explicit ownership, barriers, and conflict rules. | landed |
 | Evidence convergence, review synthesis, and signed trace proof | `features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md` | Durable transition proof is tracked, synthesized, and signed or explicitly blocked. | landed |
 | Merge-readiness and PR gate hardening | `features/MERGE_READINESS_AND_PR_GATE_HARDENING.md` | PR readiness preserves issue, branch, CI, review, evidence, trace, and closeout truth. | landed |
-| ObsMem transition memory integration | `features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md` | Tracked SRP/SOR/trace evidence feeds memory handoff records. | planned |
+| ObsMem transition memory integration | `features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md` | Tracked review truth, promoted outcome truth, and signed-trace evidence feed replayable memory handoff records. | landed |
 | Sprint conductor default C-SDLC lane | `features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md` | Sprint execution cannot skip child closeout, umbrella truth, or combined-lane validation. | planned |
 | Five-minute-sprint repeatability | `features/FIVE_MINUTE_SPRINT_REPEATABILITY.md` | More than one transition records coordination, validation-tail/proof-latency, Parallel Validation Fabric, and repeatability metrics. | planned |
 | Parallel Validation Fabric | `features/PARALLEL_VALIDATION_FABRIC.md` | Validation is decomposed into truthful issue-local, shardable, cache-aware, deferred, pending, and blocking proof lanes without hiding failures. | planned |
@@ -55,7 +55,7 @@ still have a truthful completion or blocked-state record before release:
 - actor-standing and authority-boundary examples
 - sprint closeout truth examples
 - evidence bundle and review synthesis outputs
-- ObsMem handoff records
+- ObsMem handoff records and promoted outcome/review truth packets
 - five-minute-sprint metrics report, including validation-tail/proof-latency
   measurements and Parallel Validation Fabric planning evidence
 - Parallel Validation Fabric feature/proof packet showing owned proof lanes,
