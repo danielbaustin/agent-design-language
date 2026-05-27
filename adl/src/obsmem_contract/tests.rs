@@ -146,6 +146,87 @@ fn write_request_normalization_is_deterministic() {
 }
 
 #[test]
+fn write_request_normalization_canonicalizes_structured_fields() {
+    let mut request = sample_request();
+    request.trace_event_refs = vec![
+        MemoryTraceRef {
+            event_sequence: 3,
+            event_kind: "z-kind".to_string(),
+            step_id: Some("step-b".to_string()),
+            delegation_id: Some("del-2".to_string()),
+        },
+        MemoryTraceRef {
+            event_sequence: 1,
+            event_kind: "a-kind".to_string(),
+            step_id: Some("step-a".to_string()),
+            delegation_id: None,
+        },
+        MemoryTraceRef {
+            event_sequence: 1,
+            event_kind: "a-kind".to_string(),
+            step_id: Some("step-a".to_string()),
+            delegation_id: None,
+        },
+    ];
+    request.review_findings = vec![
+        MemoryReviewFinding {
+            id: "finding-z".to_string(),
+            severity: "P3".to_string(),
+            summary: "later".to_string(),
+            disposition: "accepted".to_string(),
+        },
+        MemoryReviewFinding {
+            id: "finding-a".to_string(),
+            severity: "P1".to_string(),
+            summary: "earlier".to_string(),
+            disposition: "fixed".to_string(),
+        },
+        MemoryReviewFinding {
+            id: "finding-a".to_string(),
+            severity: "P1".to_string(),
+            summary: "earlier".to_string(),
+            disposition: "fixed".to_string(),
+        },
+    ];
+    request.residual_risks = vec![
+        "risk-z".to_string(),
+        "risk-a".to_string(),
+        "risk-a".to_string(),
+    ];
+    request.follow_on_refs = vec![
+        MemoryFollowOnRef {
+            issue_number: 2000,
+            title: "Later".to_string(),
+            status: "planned".to_string(),
+        },
+        MemoryFollowOnRef {
+            issue_number: 1000,
+            title: "Earlier".to_string(),
+            status: "open".to_string(),
+        },
+        MemoryFollowOnRef {
+            issue_number: 1000,
+            title: "Earlier".to_string(),
+            status: "open".to_string(),
+        },
+    ];
+
+    request.normalize();
+
+    assert_eq!(request.trace_event_refs.len(), 2);
+    assert_eq!(request.trace_event_refs[0].event_sequence, 1);
+    assert_eq!(request.trace_event_refs[0].event_kind, "a-kind");
+    assert_eq!(request.trace_event_refs[1].event_sequence, 3);
+    assert_eq!(request.review_findings.len(), 2);
+    assert_eq!(request.review_findings[0].id, "finding-a");
+    assert_eq!(request.review_findings[1].id, "finding-z");
+    assert_eq!(request.residual_risks, vec!["risk-a", "risk-z"]);
+    assert_eq!(request.follow_on_refs.len(), 2);
+    assert_eq!(request.follow_on_refs[0].issue_number, 1000);
+    assert_eq!(request.follow_on_refs[1].issue_number, 2000);
+}
+
+#[test]
 fn write_request_validation_rejects_absolute_and_parent_paths() {
     let mut request = sample_request();
     request.trace_bundle_rel_path = "/Users/runner/leak.json".to_string();
@@ -157,6 +238,23 @@ fn write_request_validation_rejects_absolute_and_parent_paths() {
     let err = request
         .validate()
         .expect_err("parent traversal path should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+}
+
+#[test]
+fn write_request_validation_rejects_invalid_citation_and_trace_ref_paths() {
+    let mut request = sample_request();
+    request.citations[0].path = "bad/../path.json".to_string();
+    let err = request
+        .validate()
+        .expect_err("citation traversal path should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.citations[0].path = "trace_bundle_v2/runs/run-001/steps.json".to_string();
+    request.trace_event_refs[0].event_kind = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty trace event kind should fail");
     assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
 }
 
@@ -200,6 +298,13 @@ fn write_request_validation_rejects_citation_and_privacy_violations() {
 #[test]
 fn write_request_validation_rejects_empty_structured_review_and_follow_on_fields() {
     let mut request = sample_request();
+    request.review_findings[0].id = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty review finding id should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.review_findings[0].id = "finding-001".to_string();
     request.review_findings[0].summary = " ".to_string();
     let err = request
         .validate()
@@ -207,10 +312,31 @@ fn write_request_validation_rejects_empty_structured_review_and_follow_on_fields
     assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
 
     request.review_findings[0].summary = "bounded review fact".to_string();
+    request.residual_risks[0] = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty residual risk should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.residual_risks[0] = "residual risk".to_string();
+    request.follow_on_refs[0].issue_number = 0;
+    let err = request
+        .validate()
+        .expect_err("zero follow-on issue number should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.follow_on_refs[0].issue_number = 9999;
     request.follow_on_refs[0].title = " ".to_string();
     let err = request
         .validate()
         .expect_err("empty follow-on title should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.follow_on_refs[0].title = "Follow-on".to_string();
+    request.follow_on_refs[0].status = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty follow-on status should fail");
     assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
 }
 
@@ -252,6 +378,19 @@ fn query_normalization_is_deterministic() {
 }
 
 #[test]
+fn query_validation_accepts_valid_query() {
+    let query = MemoryQuery {
+        contract_version: OBSMEM_CONTRACT_VERSION,
+        workflow_id: Some("wf-a".to_string()),
+        failure_code: Some("TOOL_FAILURE".to_string()),
+        tags: vec!["tool".to_string()],
+        limit: 2,
+    };
+
+    query.validate().expect("valid query");
+}
+
+#[test]
 fn error_code_display_strings_are_stable() {
     assert_eq!(
         ObsMemContractErrorCode::BackendUnavailable.as_str(),
@@ -289,4 +428,44 @@ fn in_memory_client_round_trip_is_deterministic() {
     assert_eq!(first, second, "query result ordering must be deterministic");
     assert_eq!(first.hits.len(), 1);
     assert_eq!(first.hits[0].run_id, "run-001");
+}
+
+#[test]
+fn in_memory_client_filters_and_truncates_results() {
+    let client = ObsMemInMemory::default();
+    let request = sample_request();
+    client.write_entry(&request).expect("first write");
+
+    let mut second = sample_request();
+    second.run_id = "run-002".to_string();
+    second.failure_code = Some("OTHER_FAILURE".to_string());
+    second.tags = vec!["other".to_string(), "tool".to_string()];
+    second.summary = "second summary".to_string();
+    second.review_findings[0].id = "finding-002".to_string();
+    second.residual_risks = vec!["other risk".to_string()];
+    second.follow_on_refs[0].issue_number = 10000;
+    client.write_entry(&second).expect("second write");
+
+    let by_failure = MemoryQuery {
+        contract_version: OBSMEM_CONTRACT_VERSION,
+        workflow_id: Some("wf-a".to_string()),
+        failure_code: Some("TOOL_FAILURE".to_string()),
+        tags: vec!["tool".to_string()],
+        limit: 5,
+    };
+    let failure_hits = client.query(&by_failure).expect("failure query");
+    assert_eq!(failure_hits.hits.len(), 1);
+    assert_eq!(failure_hits.hits[0].run_id, "run-001");
+    assert_eq!(failure_hits.hits[0].review_findings.len(), 1);
+    assert_eq!(failure_hits.hits[0].residual_risks, vec!["residual risk"]);
+
+    let tag_filtered = MemoryQuery {
+        contract_version: OBSMEM_CONTRACT_VERSION,
+        workflow_id: None,
+        failure_code: None,
+        tags: vec!["tool".to_string()],
+        limit: 1,
+    };
+    let limited_hits = client.query(&tag_filtered).expect("tag query");
+    assert_eq!(limited_hits.hits.len(), 1);
 }
