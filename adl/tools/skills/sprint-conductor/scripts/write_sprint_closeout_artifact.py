@@ -7,6 +7,11 @@ from pathlib import Path
 
 
 def closure_cleanliness(state: dict) -> str:
+    records = {record.get('issue_number'): record for record in state.get('issue_records', [])}
+    for issue in state.get('ordered_issue_numbers', []):
+        record = records.get(issue, {})
+        if record.get('status') != 'closed_out':
+            return 'residual_debt'
     if state.get('blocked_issue_number') is not None:
         return 'residual_debt'
     if state.get('deferred_issue_numbers'):

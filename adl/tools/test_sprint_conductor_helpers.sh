@@ -225,6 +225,7 @@ assert state["sprint_issue_number"] == 3001
 assert state["sprint_issue_created_by_skill"] is True
 assert state["current_issue_number"] == 2827
 assert len(state["issue_records"]) == 2
+assert state["structured_prompt_preflight"]["required_card_types"] == ["stp.md", "sip.md", "sor.md", "spp.md", "srp.md"]
 assert state["truth_check"]["status"] == "not_run"
 assert state["truth_check"]["gate_passed"] is False
 bundle = state["local_bundle"]
@@ -405,6 +406,17 @@ python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_str
   --repo-root "${fake_repo}" \
   --ordered-issues "2827,2828" \
   --state "${state_path}" >/dev/null
+
+brand_new_state_path="${tmpdir}/brand-new-sprint-state.json"
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py" \
+  --state "${brand_new_state_path}" \
+  --sprint-issue 3001 \
+  --ordered-issues "2827,2828" \
+  --current-issue 2827 \
+  --mark-status active >/dev/null 2>&1; then
+  echo "expected update_sprint_state.py to refuse creating and mutating a new sprint state in one step" >&2
+  exit 1
+fi
 
 if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py" \
   --state "${state_path}" \
@@ -615,6 +627,51 @@ if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint
   exit 1
 fi
 
+reopened_state_path="${tmpdir}/sprint-state-reopened.json"
+cp "${state_path}" "${reopened_state_path}"
+python3 - "${reopened_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+state = json.loads(path.read_text())
+record = next(record for record in state["issue_records"] if record["issue_number"] == 2827)
+record["status"] = "closed_out"
+state["completed_issue_numbers"] = [2827]
+state["current_issue_number"] = 2828
+state["continuation"] = "continue"
+state["truth_check"] = {
+    "status": "matched",
+    "source": "github_live",
+    "gate_passed": True,
+    "checked_issue_numbers": [2827, 2828],
+    "checked_pr_urls": [],
+    "notes": [],
+}
+path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
+PY
+
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/update_sprint_state.py" \
+  --state "${reopened_state_path}" \
+  --sprint-issue 3001 \
+  --ordered-issues "2827,2828" \
+  --current-issue 2827 \
+  --mark-status pending >/dev/null
+
+python3 - "${reopened_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+record = next(record for record in state["issue_records"] if record["issue_number"] == 2827)
+assert record["status"] == "pending"
+assert 2827 not in state["completed_issue_numbers"]
+assert state["current_issue_number"] == 2827
+assert state["continuation"] == "continue"
+PY
+
 printf 'CLOSED\n' > "${issue_2828_state_file}"
 if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
   --repo-root "${fake_repo}" \
@@ -634,6 +691,60 @@ python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_child_iss
   --worktree-note "Retained for post-sprint audio inspection." \
   --follow-up-issue 5001 \
   --follow-up-summary "Document one post-sprint conductor follow-up." >/dev/null
+
+incomplete_close_state_path="${tmpdir}/sprint-state-incomplete-close.json"
+cp "${state_path}" "${incomplete_close_state_path}"
+python3 - "${incomplete_close_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+state = json.loads(path.read_text())
+record = next(record for record in state["issue_records"] if record["issue_number"] == 2828)
+record["status"] = "pending"
+path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
+PY
+
+incomplete_closeout_artifact="${tmpdir}/sprint-closeout-incomplete.md"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/write_sprint_closeout_artifact.py" \
+  --state "${incomplete_close_state_path}" \
+  --out "${incomplete_closeout_artifact}" >/dev/null
+
+grep -Fq 'closure cleanliness: `residual_debt`' "${incomplete_closeout_artifact}"
+
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/close_sprint_issue.py" \
+  --state "${incomplete_close_state_path}" \
+  --summary "Should fail because one child is still stale." >/dev/null 2>&1; then
+  echo "expected close_sprint_issue.py to refuse sprint close when any child lacks closeout truth" >&2
+  exit 1
+fi
+
+must_land_state_path="${tmpdir}/sprint-state-must-land.json"
+cp "${state_path}" "${must_land_state_path}"
+python3 - "${must_land_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+state = json.loads(path.read_text())
+state["follow_up_issues"] = [
+    {
+        "issue_number": 6001,
+        "disposition": "must_land_before_sprint_close",
+        "summary": "Blocking post-sprint repair.",
+    }
+]
+path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
+PY
+
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/close_sprint_issue.py" \
+  --state "${must_land_state_path}" \
+  --summary "Should fail because must-land follow-ups remain." >/dev/null 2>&1; then
+  echo "expected close_sprint_issue.py to refuse sprint close when must-land follow-up issues remain" >&2
+  exit 1
+fi
 
 python3 - "${state_path}" <<'PY'
 import json
