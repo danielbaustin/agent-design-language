@@ -1,5 +1,14 @@
 # v0.92 Demo Matrix: Candidate Birthday Proofs
 
+## Metadata
+
+- Milestone: `v0.92`
+- Version: `v0.92`
+- Date: `2026-05-27`
+- Owner: ADL maintainers
+- Related issues / work packages: `#3377`, `#3434`, candidate WP sequence in `WP_ISSUE_WAVE_v0.92.yaml`
+- Planning template set: `docs/templates/planning/1.0.0`
+
 ## Status
 
 Candidate demo planning only. Commands and artifacts will be finalized when the
@@ -10,7 +19,27 @@ v0.92 implementation WPs exist.
 The v0.92 demo program should prove that the first true Gödel-agent birthday is
 evidence-bearing runtime behavior, not a ceremonial label.
 
-## Candidate Coverage Summary
+Issue `#3377` supplies required demo rehearsal and negative-suite readiness
+inputs. WP-01 should reconcile those inputs before opening the final demo WPs.
+
+## How To Use
+
+Use this matrix as candidate demo coverage for WP-01 and later demo WPs. It
+does not prove any demo has run.
+
+## Scope
+
+The scope is birthday proof, negative cases, continuity, memory grounding,
+capability, ACP/cognitive-profile evidence, ACIP schema-public transport
+readiness, and governance handoff.
+
+## Runtime Preconditions
+
+Runtime preconditions are intentionally pending. WP-01 and the demo WPs must
+replace this planning text with concrete commands, fixtures, and environment
+requirements once implementation exists.
+
+## Demo Coverage Summary
 
 | Demo ID | Candidate demo | Milestone claim | Primary proof surface | Status |
 | --- | --- | --- | --- | --- |
@@ -23,7 +52,7 @@ evidence-bearing runtime behavior, not a ceremonial label.
 | D7 | ACIP binary schema and WebSocket carrier proof | Binary ACIP remains inspectable through public schemas while message contents remain governed. | ACIP `.proto`, schema catalog fixture, JSON projection report, denied-access case, mock WebSocket trace packet. | Planned candidate |
 | D8 | Birthday-to-governance handoff | v0.93 governance can consume v0.92 identity evidence without redefining birth. | Handoff packet mapping identity evidence to future governance. | Planned candidate |
 
-## Demo Rules
+## Coverage Rules
 
 - Every demo must distinguish birth from ordinary runtime activity.
 - Every birthday claim must cite evidence.
@@ -36,7 +65,7 @@ evidence-bearing runtime behavior, not a ceremonial label.
 - Demo outputs should distinguish engineering evidence from philosophical or
   governance context.
 
-## Candidate Details
+## Demo Details
 
 ### D1) First Birthday Rehearsal
 
@@ -148,3 +177,26 @@ Expected proof:
   consciousness claims.
 - These demos do not prove production WebSocket security, cross-polis
   networking, or signed/queryable trace completion.
+
+## Cross-Demo Validation
+
+The final demo set should cross-check that the birthday packet, negative suite,
+continuity proof, memory grounding, capability envelope, ACP profile, ACIP
+carrier proof, and governance handoff all tell one consistent story.
+
+## Determinism Evidence
+
+Determinism evidence is pending implementation. Final demos should record
+commands, fixtures, expected outputs, and any allowed nondeterminism.
+
+## Reviewer Sign-Off Surface
+
+Reviewers should receive the birthday packet, demo outputs, validation logs,
+negative-case report, and residual-risk notes.
+
+## Exit Criteria
+
+- Every milestone claim has at least one planned demo or explicit non-demo
+  proof surface.
+- No demo claims completion before v0.92 implementation produces evidence.
+- The final matrix can be reviewed without chat context.

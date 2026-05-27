@@ -6,11 +6,21 @@
 - Milestone Target: `v0.92`
 - Status: planned
 - Source Docs:
-  - `.adl/docs/TBD/acip/ACIP_SCHEMA_CATALOG_AND_MESSAGE_ACCESS_RULES_2026-05-20.md`
-  - `.adl/docs/TBD/WEBSOCKET_TRANSPORT_SUPPORT_PLAN_2026-05-20.md`
+  - `docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md`
+  - `docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml`
   - `docs/explainers/ACIP.md`
   - `docs/milestones/v0.91.1/features/ACIP_HARDENING.md`
+  - `#3377`
 - Proof Modes: schema, fixtures, round-trip tests, mock transport proof
+
+The earlier local-only ACIP schema-catalog and WebSocket notes are provenance
+inputs, not canonical public source paths. WP-01 should either promote their
+remaining requirements into tracked v0.92 docs or record them as explicit gaps.
+
+## Template Rules
+
+This is a planning feature doc. It records the transport-readiness scope for
+v0.92 without claiming production networking, security, or signed trace.
 
 ## Purpose
 
@@ -21,6 +31,57 @@ inspectability, citizen access boundaries, or ADL authority semantics.
 The first real network/session ACIP carrier should use protobuf bytes on the
 wire. JSON remains the deterministic projection and fixture format used for
 debugging, review, trace, and citizen-facing inspection when access is allowed.
+
+## Context
+
+ACIP already exists as an ADL communication substrate. v0.92 should define the
+binary/protobuf and schema-catalog shape needed for future session transport
+while preserving inspectability.
+
+## Coverage / Ownership
+
+v0.92 owns schema, catalog, JSON projection, fixtures, and mock/loopback
+carrier proof. v0.93 owns transport security and key lifecycle. v0.94 owns
+signed/queryable trace completion.
+
+## Overview
+
+Binary ACIP should be efficient on the wire and still reviewable through
+public schemas and deterministic JSON projections for authorized readers.
+
+## Design
+
+The design uses protobuf envelopes with schema family/version metadata,
+payload classification, digest, session identity, monotonic sequence, and
+public catalog lookup.
+
+## Execution Flow
+
+1. Select schema and compatibility profile.
+2. Encode binary ACIP envelope.
+3. Decode through public schema catalog.
+4. Render deterministic JSON for authorized readers.
+5. Reject unauthorized content inspection.
+
+## Determinism and Constraints
+
+Round trips must preserve semantic fields. Schema access must not bypass
+message-content authorization. Unknown, missing, malformed, duplicate, or
+out-of-order events fail closed.
+
+## Integration Points
+
+- `docs/explainers/ACIP.md`
+- v0.91.1 ACIP hardening.
+- v0.92 birthday evidence packet.
+- v0.93 transport security.
+- v0.94 signed/queryable trace.
+
+## Validation
+
+Validation should include protobuf/JSON round trips, schema-catalog lookup,
+denied-access cases, malformed payloads, sequence checks, and mock WebSocket
+carrier proof.
 
 ## Scope
 
@@ -87,6 +148,22 @@ and trace/audit requirements.
   provider dependency.
 - The proof records trace/replay-compatible session event evidence without
   claiming v0.94 signed/queryable trace completion.
+
+## Risks
+
+- Binary transport could become opaque. Mitigation: require public schemas and
+  deterministic JSON projection.
+- Schema access could be confused with content access. Mitigation: keep access
+  rules separate and fail closed.
+
+## Future Work
+
+v0.93 should harden transport security. v0.94 should close signed/queryable
+trace. v0.95 can consume the mature carrier if prior gates pass.
+
+## Notes
+
+WebSocket is a carrier proof, not an authority source.
 
 ## Optional OpenAI Realtime Spike
 

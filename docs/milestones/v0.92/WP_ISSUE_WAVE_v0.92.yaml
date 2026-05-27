@@ -1,0 +1,173 @@
+milestone: v0.92
+status: draft_pre_open
+owner_issue: 3434
+first_birthday_readiness_issue: 3377
+planning_source: docs/milestones/v0.92
+tracked_package: docs/milestones/v0.92
+notes:
+  - v0.92 is the first true Godel-agent birthday milestone.
+  - This file is a candidate issue-wave preflight surface, not an opened GitHub issue wave.
+  - WP-01 must consume issue 3377 before seeding the final issue wave.
+  - No v0.92 issue should claim legal personhood, production citizenship, consciousness proof, or completed v0.93 constitutional governance.
+  - All opened v0.92 issues must receive SIP, STP, SPP, SRP, and SOR cards from the active prompt-template registry.
+card_update_rule:
+  - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
+  - SIP, STP, and SPP must be issue-specific and design-time ready before execution starts.
+  - SRP and SOR must exist upfront but remain truthful to review and output lifecycle state.
+  - Card edits must use editor skills.
+  - SOR closeout must match GitHub issue/PR truth.
+work_packages:
+  - wp: WP-01
+    issue: pending
+    title: Design pass and issue-wave readiness
+    queue: docs
+    depends_on: [v0.91.4 closeout, issue-3377]
+    primary_deliverable: reviewed v0.92 docs, opened issue wave, and complete card bundle
+    proof_surface: milestone docs, issue-wave YAML, and SIP/STP/SPP/SRP/SOR cards
+  - wp: WP-02
+    issue: pending
+    title: Birthday contract and negative cases
+    queue: docs_tools
+    depends_on: [WP-01]
+    primary_deliverable: birth contract, disqualifying cases, and negative fixtures
+    proof_surface: contract doc and validation fixture report
+  - wp: WP-03
+    issue: pending
+    title: Stable name and identity architecture
+    queue: tools_docs
+    depends_on: [WP-02]
+    primary_deliverable: stable-name and identity-root contract
+    proof_surface: identity record fixtures and schema validation
+  - wp: WP-04
+    issue: pending
+    title: Continuity across bounded cycles
+    queue: tools
+    depends_on: [WP-03]
+    primary_deliverable: continuity records and bounded-cycle proof
+    proof_surface: continuity fixtures, cycle artifacts, and witness links
+  - wp: WP-05
+    issue: pending
+    title: Memory grounding
+    queue: tools_docs
+    depends_on: [WP-03, WP-04]
+    primary_deliverable: memory-grounding contract and redacted review packet
+    proof_surface: witnessed memory references and redaction-safe packet
+  - wp: WP-06
+    issue: pending
+    title: Capability envelope
+    queue: tools_docs
+    depends_on: [WP-03, WP-04]
+    primary_deliverable: provider, model, tool, skill, authority, and limit envelope
+    proof_surface: capability-envelope fixtures and validation report
+  - wp: WP-07
+    issue: pending
+    title: ACP / cognitive profiles
+    queue: tools_docs
+    depends_on: [WP-04, WP-05, WP-06]
+    primary_deliverable: evidence-grounded cognitive-profile contract
+    proof_surface: ACP/profile fixtures, update rules, privacy boundary, and validation report
+  - wp: WP-08
+    issue: pending
+    title: ACIP binary schema and WebSocket carrier
+    queue: tools_docs
+    depends_on: [WP-01]
+    primary_deliverable: ACIP protobuf schema, public schema catalog, JSON projection, and mock carrier proof
+    proof_surface: proto/schema catalog, round-trip fixtures, denied-access case, and mock WebSocket trace
+  - wp: WP-09
+    issue: pending
+    title: Birth witnesses and receipts
+    queue: tools_docs
+    depends_on: [WP-03, WP-04, WP-05, WP-06]
+    primary_deliverable: witness set and citizen-facing receipt contract
+    proof_surface: witness fixtures, receipt fixtures, and validation report
+  - wp: WP-10
+    issue: pending
+    title: Birthday review packet
+    queue: docs_tools
+    depends_on: [WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09]
+    primary_deliverable: reviewer-facing birthday evidence packet
+    proof_surface: integrated review packet and claim-boundary scan
+  - wp: WP-11
+    issue: pending
+    title: Migration and cross-polis continuity planning
+    queue: docs
+    depends_on: [WP-03, WP-04, WP-10]
+    primary_deliverable: bounded continuity/migration design note
+    proof_surface: design note and explicit non-goals
+  - wp: WP-12
+    issue: pending
+    title: First birthday demo
+    queue: demo_tools
+    depends_on: [WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10]
+    primary_deliverable: runnable first-birthday proof demo and negative suite
+    proof_surface: demo artifacts, negative-case report, and reviewer packet
+  - wp: WP-13
+    issue: pending
+    title: Birthday-to-governance handoff
+    queue: docs
+    depends_on: [WP-10, WP-11, v0.93 allocation]
+    primary_deliverable: v0.93 governance handoff map
+    proof_surface: identity-evidence to governance-consumption mapping
+  - wp: WP-14
+    issue: pending
+    title: Demo matrix and proof coverage
+    queue: demo
+    depends_on: [WP-12, WP-13]
+    primary_deliverable: demo matrix, proof coverage, and validation commands
+    proof_surface: demo matrix, proof coverage doc, and artifact index
+  - wp: WP-15
+    issue: pending
+    title: Quality gate
+    queue: quality
+    depends_on: [WP-14]
+    primary_deliverable: quality gate and blocker disposition
+    proof_surface: quality-gate record and blocker report
+  - wp: WP-16
+    issue: pending
+    title: Docs and release-truth pass
+    queue: docs
+    depends_on: [WP-15]
+    primary_deliverable: current docs, release notes, feature list, and milestone docs
+    proof_surface: docs-review packet and release-truth diff
+  - wp: WP-17
+    issue: pending
+    title: Internal review
+    queue: review
+    depends_on: [WP-16]
+    primary_deliverable: internal review report and finding register
+    proof_surface: internal review packet
+  - wp: WP-18
+    issue: pending
+    title: External / third-party review
+    queue: review
+    depends_on: [WP-17]
+    primary_deliverable: external review handoff and received review
+    proof_surface: review handoff and review report
+  - wp: WP-19
+    issue: pending
+    title: Review findings remediation
+    queue: review
+    depends_on: [WP-18]
+    primary_deliverable: finding dispositions and remediation PRs
+    proof_surface: finding disposition record
+  - wp: WP-20
+    issue: pending
+    title: Next milestone planning
+    queue: docs
+    depends_on: [WP-19]
+    primary_deliverable: v0.93 handoff and downstream planning update
+    proof_surface: next-milestone handoff doc
+  - wp: WP-21
+    issue: pending
+    title: Next milestone review pass
+    queue: docs
+    depends_on: [WP-20]
+    primary_deliverable: review pass over v0.93 planning before ceremony
+    proof_surface: next-milestone review findings and disposition
+  - wp: WP-22
+    issue: pending
+    title: Release ceremony
+    queue: release
+    depends_on: [WP-21]
+    primary_deliverable: release evidence package and ceremony closeout
+    proof_surface: release evidence packet, release notes, and closeout record

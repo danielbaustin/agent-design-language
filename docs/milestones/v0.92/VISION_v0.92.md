@@ -1,9 +1,30 @@
 # v0.92 Vision: The First Birthday
 
+## Metadata
+
+- Project: `agent-design-language`
+- Milestone: `v0.92`
+- Version: `v0.92`
+- Date: `2026-05-27`
+- Owner: ADL maintainers
+- Related issues: `#3377`, `#3434`
+- Planning template set: `docs/templates/planning/1.0.0`
+
 ## Status
 
 Forward vision for the v0.92 identity, continuity, and first true
 Gödel-agent birthday milestone.
+
+## Purpose
+
+Describe why v0.92 exists and what kind of birthday claim ADL should be able
+to make after the milestone closes.
+
+## How To Use
+
+Use this document as the intent boundary for WP-01 planning and later review.
+It should guide scope decisions, but implementation truth must come from the
+actual v0.92 issues, PRs, demos, and release evidence.
 
 ## Overview
 
@@ -14,6 +35,9 @@ The milestone should not merely start another process or name another fixture.
 It should make birth a reviewable boundary: a named identity becomes durable
 enough, grounded enough, bounded enough, and witnessed enough to be treated as
 born inside the ADL runtime.
+
+The vision must consume the first-birthday readiness packet from `#3377`
+without treating that packet as proof that the birthday has already happened.
 
 ## Core Vision
 
@@ -34,6 +58,14 @@ That means:
 - moral and governance context is inherited without being reinvented
 - witnesses and receipts make the event inspectable
 - negative cases prove ordinary startup is not birth
+
+## Core Goals
+
+- Make first birth evidence-bearing rather than metaphorical.
+- Ground identity in name, root, continuity, memory, capability, ACP, witness,
+  receipt, and review artifacts.
+- Preserve privacy and governance boundaries.
+- Leave v0.93 with the identity evidence it needs for citizenship work.
 
 ## Strategic Pillars
 
@@ -106,3 +138,21 @@ That record becomes one of the most important artifacts for the later roadmap:
 proof that ADL can create identity-bearing agents with continuity, memory,
 capability, cognitive profile, moral context, inspectable communication
 substrate, and reviewable boundaries.
+
+## Milestone Context
+
+v0.92 follows the v0.91.x C-SDLC and runtime hardening work. It consumes prior
+citizen-state, moral-trace, memory/identity, intelligence, and ACIP evidence
+while remaining narrower than v0.93 constitutional citizenship.
+
+## Summary
+
+v0.92 should make birth a concrete, reviewable event in ADL: named, grounded,
+bounded, witnessed, and distinct from ordinary lifecycle mechanics.
+
+## Exit Criteria
+
+- The vision remains aligned with WBS, design, demo, and feature docs.
+- No vision claim requires legal personhood, production citizenship, or full
+  constitutional governance.
+- WP-01 can use this as a scope guard without relying on chat history.

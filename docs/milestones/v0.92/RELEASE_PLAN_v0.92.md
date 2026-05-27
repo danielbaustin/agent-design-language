@@ -1,10 +1,31 @@
 # v0.92 Release Plan
 
+## Metadata
+
+- Milestone: `v0.92`
+- Version: `v0.92`
+- Release date: pending v0.92 completion
+- Release manager: ADL maintainers
+- Related issues: `#3377`, `#3434`
+- Planning template set: `docs/templates/planning/1.0.0`
+
 ## Status
 
 Forward release plan. v0.92 has not started implementation.
 
-## Release Readiness Themes
+## How To Use
+
+Use this as a release-tail planning scaffold. It must be updated during the
+actual v0.92 release tail with landed issue, PR, review, demo, and validation
+evidence.
+
+## 0. Release-Tail Convergence
+
+Before release-tail execution, confirm implementation WPs, demos, internal
+review, external review, remediation, next-milestone planning, and next-
+milestone review are complete or explicitly routed.
+
+## 1. Release Readiness
 
 v0.92 should not be released until it has evidence for:
 
@@ -22,9 +43,33 @@ v0.92 should not be released until it has evidence for:
 - negative cases for startup, wake, snapshot, admission, and copied state
 - governance handoff into v0.93
 
+## 2. Branch And Tag Preparation
+
+Branch and tag preparation is pending actual release execution. Follow the
+current release ceremony process in effect when v0.92 closes.
+
+## 3. GitHub Release Steps
+
+GitHub release steps are pending actual release execution. The final release
+manager should publish only after release evidence, review remediation, and
+release notes are consistent.
+
+## 4. Verification
+
+Verification must include implemented demo commands, test results, review
+finding disposition, release-note truth checks, and claim-boundary scans.
+
+## 5. Communication
+
+Communication should describe landed birthday evidence and known boundaries
+without claiming legal personhood, production citizenship, or completed
+constitutional governance.
+
 ## Review Gates
 
 - Docs must separate engineering substrate, review model, and contextual claims.
+- Release evidence must account for the `#3377` first-birthday readiness
+  packet and any routed gaps.
 - Release notes must not claim legal personhood, production citizenship, or
   complete constitutional authority.
 - Demo evidence must cite concrete artifacts, not birthday prose alone.
@@ -60,3 +105,10 @@ Do not ship v0.92 if:
 - schema access grants unauthorized message-content inspection
 - birth claims legal personhood or production citizenship
 - constitutional governance is quietly absorbed instead of handed off to v0.93
+
+## Exit Criteria
+
+- Release readiness has concrete evidence for each planned claim.
+- Release notes describe landed work only.
+- Review findings are fixed, accepted, or routed.
+- v0.93 handoff is prepared and reviewed.

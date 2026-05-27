@@ -1,9 +1,28 @@
 # v0.92 Decisions
 
+## Metadata
+
+- Milestone: `v0.92`
+- Version: `v0.92`
+- Date: `2026-05-27`
+- Owner: ADL maintainers
+- Related issues: `#3377`, `#3434`
+- Planning template set: `docs/templates/planning/1.0.0`
+
 ## Status
 
 Forward-planning decisions. These are accepted as planning boundaries for the
 v0.92 allocation, but they are not implementation closeout decisions.
+
+## Purpose
+
+Record the decisions that constrain v0.92 planning before WP-01 opens the
+actual issue wave.
+
+## How To Use
+
+Use these decisions as planning guardrails. If v0.92 execution needs to change
+one of them, record a superseding decision instead of silently widening scope.
 
 ## Decision Log
 
@@ -17,6 +36,7 @@ v0.92 allocation, but they are not implementation closeout decisions.
 | D-06 | Memory palace remains context unless bounded into a specific implementation slice. | Accepted for planning | The memory-palace source spans too many layers to ship whole in v0.92. | Allows memory grounding without forcing the full architecture. |
 | D-07 | ACP / cognitive profiles belong in v0.92 as an evidence-grounded runtime profile surface. | Accepted for planning | Profiles need v0.91.1 capability, memory, ToM, intelligence, and learning evidence before they are meaningful. | Keeps profiles tied to identity readiness without turning them into reputation, personality labels, or public standing. |
 | D-08 | v0.92 owns ACIP binary schema, public schema catalog, JSON projection, and mock WebSocket carrier readiness. | Accepted for planning | ACIP is already a local communication substrate, but citizen/polis communication needs a binary/protobuf shape that remains publicly decodeable by schema and governed by access rules. | Keeps the communication layer inspectable while deferring production transport security to v0.93 and signed/queryable trace closure to v0.94. |
+| D-09 | v0.92 WP-01 must consume `#3377` before seeding final issues. | Accepted for planning | First-birthday readiness was promoted during v0.91.4 as a separate launch-packet source. | Prevents the milestone from reconstructing birthday readiness from chat or duplicating the `#3377` packet. |
 
 ## Open Questions
 
@@ -32,6 +52,8 @@ v0.92 allocation, but they are not implementation closeout decisions.
   versioning, deterministic JSON projection, and governed message access?
 - Which WebSocket proof is enough to show carrier readiness without claiming
   production networking or security?
+- Which `#3377` outputs are already complete by v0.92 opening, and which must
+  become explicit WP-01 gaps?
 
 ## Exit Criteria
 
