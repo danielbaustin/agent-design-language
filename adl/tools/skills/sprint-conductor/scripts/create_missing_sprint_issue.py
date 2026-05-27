@@ -305,6 +305,14 @@ def main() -> int:
             'continuation': 'continue',
             'local_bundle': local_bundle,
             'issue_records': default_issue_records(ordered),
+            'structured_prompt_preflight': {
+                'status': 'not_run',
+                'required_card_types': ['stp.md', 'sip.md', 'sor.md', 'spp.md', 'srp.md'],
+                'issue_results': [],
+                'notes': [
+                    'Run sprint-wide structured prompt preflight before starting issue execution, including SPP and SRP design-time readiness.',
+                ],
+            },
             'truth_check': {
                 'status': 'not_run',
                 'source': 'sprint_state_only',

@@ -42,9 +42,11 @@ def load_state(path: Path, sprint_issue: int, ordered: list[int]) -> dict[str, A
         'issue_records': default_issue_records(ordered),
         'structured_prompt_preflight': {
             'status': 'not_run',
-            'required_card_types': ['stp.md', 'sip.md', 'sor.md'],
+            'required_card_types': ['stp.md', 'sip.md', 'sor.md', 'spp.md', 'srp.md'],
             'issue_results': [],
-            'notes': ['Run sprint-wide structured prompt preflight before starting issue execution.'],
+            'notes': [
+                'Run sprint-wide structured prompt preflight before starting issue execution, including SPP and SRP design-time readiness.',
+            ],
         },
         'truth_check': {
             'status': 'not_run',
@@ -160,11 +162,16 @@ def main() -> int:
 
     state_path = Path(args.state)
     state_preexisted = state_path.exists()
+    if not state_preexisted and mutation_requested(args):
+        raise SystemExit(
+            'Refusing to create and mutate sprint state in one step. '
+            'Create the state artifact first, then run structured prompt preflight and a matched live GitHub truth check before the first sprint-state transition.'
+        )
     ordered = parse_csv_ints(args.ordered_issues)
     state = load_state(state_path, args.sprint_issue, ordered)
     state['sprint_issue_number'] = args.sprint_issue
     state['ordered_issue_numbers'] = ordered
-    if state_preexisted and mutation_requested(args):
+    if mutation_requested(args):
         require_structured_prompt_preflight(state)
         require_truth_gate(state)
 
@@ -179,7 +186,12 @@ def main() -> int:
                 state['completed_issue_numbers'] = sorted(completed)
                 if state.get('blocked_issue_number') == issue_number:
                     state['blocked_issue_number'] = None
-            elif args.mark_status == 'blocked':
+            else:
+                completed = set(state.setdefault('completed_issue_numbers', []))
+                if issue_number in completed:
+                    completed.remove(issue_number)
+                    state['completed_issue_numbers'] = sorted(completed)
+            if args.mark_status == 'blocked':
                 state['blocked_issue_number'] = issue_number
             else:
                 if state.get('blocked_issue_number') == issue_number:
@@ -201,7 +213,7 @@ def main() -> int:
         state['blocked_issue_number'] = None
 
     select_next_issue(state)
-    if state_preexisted and mutation_requested(args):
+    if mutation_requested(args):
         consume_truth_gate(state)
     state_path.parent.mkdir(parents=True, exist_ok=True)
     state_path.write_text(json.dumps(state, indent=2, sort_keys=True) + '\n')

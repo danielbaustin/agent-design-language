@@ -7,6 +7,40 @@ import subprocess
 from pathlib import Path
 
 
+def require_child_closeout_truth(state: dict) -> None:
+    ordered_issues = state.get('ordered_issue_numbers', [])
+    records = {record.get('issue_number'): record for record in state.get('issue_records', [])}
+    stale = [
+        issue for issue in ordered_issues
+        if records.get(issue, {}).get('status') != 'closed_out'
+    ]
+    if stale:
+        formatted = ', '.join(f'#{issue}' for issue in stale)
+        raise SystemExit(
+            'Cannot close sprint-management issue because child closeout truth is incomplete for '
+            f'{formatted}.'
+        )
+
+
+def require_clean_close_boundary(state: dict) -> None:
+    if state.get('blocked_issue_number') is not None:
+        raise SystemExit('Cannot close sprint-management issue because a blocked child issue is still recorded in sprint state.')
+    if state.get('deferred_issue_numbers'):
+        raise SystemExit('Cannot close sprint-management issue because deferred child issues are still recorded in sprint state.')
+    follow_ups = state.get('follow_up_issues', [])
+    must_land = [
+        item.get('issue_number')
+        for item in follow_ups
+        if item.get('disposition') == 'must_land_before_sprint_close'
+    ]
+    if must_land:
+        formatted = ', '.join(f'#{issue}' for issue in must_land if issue is not None)
+        raise SystemExit(
+            'Cannot close sprint-management issue because must-land-before-close follow-up issues remain: '
+            f'{formatted}.'
+        )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--state', required=True)
@@ -19,6 +53,8 @@ def main() -> int:
     sprint_issue_number = state.get('sprint_issue_number')
     if sprint_issue_number is None:
         raise SystemExit('Cannot close sprint-management issue because sprint_issue_number is missing from state.')
+    require_child_closeout_truth(state)
+    require_clean_close_boundary(state)
 
     subprocess.check_call(
         [
