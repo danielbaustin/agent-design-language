@@ -55,6 +55,150 @@ The stable benchmark copy used for the authoritative Safety Alignment slice was:
 
 That corrected host path matters when interpreting the final results.
 
+## Re-entry Setup Notes
+
+This section is here so we can come back to the benchmark after launch without
+rediscovering the setup.
+
+### 1. Keep the benchmark copy on a stable host path
+
+Do not use `/private/tmp` as the primary benchmark repo location for
+fixture-sensitive diagnosis.
+
+Preferred host path pattern:
+
+- `$HOME/temp/wildclawbench-<tag>`
+
+In this investigation the stable copy was:
+
+- `$HOME/temp/wildclawbench-3380`
+
+### 2. Required prerequisites
+
+Before rerunning tasks, confirm all of the following:
+
+- Docker daemon is running
+- the Codex WildClawBench image is loaded:
+  - `wildclawbench-codex-ubuntu:v0.0`
+- the WildClawBench repo checkout is present on the stable host path
+- the Safety Alignment workspace payload has been downloaded locally
+- local helper tooling is available:
+  - `hf`
+  - `yt-dlp`
+  - `ffmpeg`
+  - `gdown`
+  - `modelscope`
+- benchmark model credentials are available through environment variables:
+  - `OPENROUTER_API_KEY`
+  - `BRAVE_API_KEY`
+
+### 3. Image and dataset expectations
+
+The benchmark README expects:
+
+- Docker image tarballs from the WildClawBench dataset `Images/`
+- task data from the dataset `workspace/`
+
+For this bounded Safety Alignment lane, the important local requirement was to
+make sure the `workspace/06_Safety_Alignment/**` subtree existed under the
+stable benchmark copy.
+
+### 4. Safety-task prep specifics
+
+Two local prep details mattered in practice:
+
+1. Tasks 2 and 3
+   - `dot_git.tar.gz` under the local `mm_agents` fixture must be extracted
+     before running the task if it has not already been unpacked.
+
+2. Task 1
+   - trust only the stable host-path run
+   - ignore old `/private/tmp` conclusions unless they are explicitly being used
+     as environment-failure evidence
+
+### 5. Recommended local env loading pattern
+
+Do not store secret values in tracked files.
+
+Load keys into the shell environment from local-only files or your preferred
+ secret manager, then run the benchmark process with:
+
+- `OPENROUTER_API_KEY`
+- `BRAVE_API_KEY`
+
+This lane used local key files outside tracked repo content and kept all secret
+values out of docs and cards.
+
+## How We Ran It
+
+### Stable benchmark root
+
+Use the stable benchmark copy:
+
+- `$HOME/temp/wildclawbench-3380`
+
+### Single-task run pattern
+
+From the benchmark root:
+
+```bash
+bash script/run.sh codex \
+  --task tasks/06_Safety_Alignment/06_Safety_Alignment_task_<n>_<name>.md \
+  --model openrouter/openai/gpt-5.5
+```
+
+This is the exact pattern we used for the Safety Alignment slice.
+
+### Output location pattern
+
+Per-task outputs land under:
+
+```text
+output/codex/06_Safety_Alignment/<task_id>/<run_id>/
+```
+
+The key files we kept checking were:
+
+- `agent.log`
+- `score.json`
+- `execution_status.json`
+- `usage.json`
+- `task_output/workspace/`
+
+## Minimal Re-run Procedure
+
+If we come back later and want to rerun one or more Safety Alignment tasks,
+this is the shortest practical checklist:
+
+1. confirm Docker is running
+2. confirm `wildclawbench-codex-ubuntu:v0.0` exists locally
+3. use the benchmark repo under `$HOME/temp/...`, not `/private/tmp`
+4. confirm `workspace/06_Safety_Alignment/**` exists locally
+5. extract `dot_git.tar.gz` for tasks 2 and 3 if needed
+6. load:
+   - `OPENROUTER_API_KEY`
+   - `BRAVE_API_KEY`
+7. run single-task Codex commands from the benchmark root
+8. inspect:
+   - `agent.log`
+   - `score.json`
+   - `execution_status.json`
+9. distinguish:
+   - environment failure
+   - grader/judge fallback noise
+   - real Codex behavior
+
+## What To Remember Next Time
+
+When we return to this later, the most important memory is:
+
+- do not confuse Codex-harness benchmark results with ADL-agent results
+- do not trust `/private/tmp` for this fixture-sensitive lane
+- inspect logs for mechanical failures before reading scores as model behavior
+- keep fairness caveats attached to tasks 2, 3, 9, and 10
+- the first-ten Safety Alignment slice is now complete and can serve as the
+  bounded baseline for post-launch follow-up
+
 ## Completed Safety Alignment Results
 
 | Task | Short name | Score | Primary reading |
