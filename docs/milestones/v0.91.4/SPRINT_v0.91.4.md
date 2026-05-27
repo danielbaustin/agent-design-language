@@ -6,18 +6,19 @@
 - Version: `v0.91.4`
 - Date: `2026-05-25`
 - Owner: ADL maintainers
-- Related issues: `#3210`, planned v0.91.4 sprint umbrellas
+- Related issues: `#3210`, seeded v0.91.4 sprint umbrellas with Sprint 1 closed
 
 ## Status
 
-Sprint map opened through WP-01. Sprint 1, Sprint 2, Sprint 3, Sprint 4, the
-CodeFriend sidecar, and the WildClawBench benchmark spike sidecar are seeded
-as controlled issue/card batches.
+Sprint 1 is closed with clean closeout truth. Sprint 2, Sprint 3, Sprint 4,
+the CodeFriend sidecar, and the WildClawBench benchmark spike sidecar remain
+seeded as controlled issue/card batches.
 
 ## How To Use
 
-Use this document to seed sprint umbrellas and order child work. It is not a
-claim that any sprint has started or closed.
+Use this document to track sprint umbrellas, ordered child work, and closeout
+state. Sprint membership is canonical here, while live execution/closeout
+truth must stay aligned with the sprint state artifacts.
 
 ## Sprint Overview
 
@@ -48,20 +49,24 @@ rule stays reviewable:
 
 - Batch 0 opened WP-01 `#3346`.
 - Batch 1 opened Sprint 1 `#3347` and WP-02 through WP-04 as `#3348` through
-  `#3350`.
+  `#3350`; Sprint 1 is now closed after `#3346`, `#3348`, `#3349`, and `#3350`
+  each merged and closed out cleanly.
 - Batch 2 opened Sprint 2 `#3352` and WP-05 through WP-08 as `#3353` through
-  `#3356`; child execution waits on WP-01/Sprint 1 sequencing.
+  `#3356`; child execution now waits only on Sprint 2's own dependency and
+  closeout gates because Sprint 1 is already closed.
 - Batch 3 opened Sprint 3 `#3357` and WP-09 through WP-12 as `#3358` through
-  `#3361`; child execution waits on WP-01/Sprint 1 and Sprint 2 sequencing.
+  `#3361`; child execution now waits on Sprint 2 sequencing and its own
+  dependency gates rather than on Sprint 1 opening.
 - Batch 4 opened Sprint 4 `#3362` and WP-13 through WP-21 as `#3363`
-  through `#3371`; child execution waits on WP-01 and the prior sprint
-  sequence.
+  through `#3371`; child execution now waits on prior sprint closeout and its
+  own dependency gates rather than on WP-01 opening.
 - Batch 5 opened the CodeFriend sidecar `#3372` and CF-PRE-01 through
-  CF-PRE-04 as `#3373` through `#3376`; sidecar child execution waits on
-  WP-01 routing and remains non-core.
+  CF-PRE-04 as `#3373` through `#3376`; sidecar child execution now waits on
+  its own routing/dependency gates and remains non-core.
 - Batch 6 opened the WildClawBench benchmark spike sidecar `#3378` and
   WC-PRE-01 through WC-PRE-04 as `#3379` through `#3382`; sidecar child
-  execution waits on WP-01 routing and remains non-core.
+  execution now waits on its own routing/dependency gates and remains
+  non-core.
 - Standalone first-birthday readiness side issue `#3377` is promoted for v0.92
   launch preparation and should feed WP-19/WP-20; it is not a sprint child and
   does not alter the v0.91.4 release-tail sequence.
