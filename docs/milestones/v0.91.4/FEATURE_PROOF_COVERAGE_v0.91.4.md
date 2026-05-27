@@ -16,6 +16,7 @@ Planned proof map for C-SDLC completion.
 | Sprint conductor default C-SDLC lane | `features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md` | Sprint execution cannot skip child closeout, umbrella truth, or combined-lane validation. | planned |
 | Five-minute-sprint repeatability | `features/FIVE_MINUTE_SPRINT_REPEATABILITY.md` | More than one transition records coordination, validation-tail/proof-latency, Parallel Validation Fabric, and repeatability metrics. | planned |
 | Parallel Validation Fabric | `features/PARALLEL_VALIDATION_FABRIC.md` | Validation is decomposed into truthful issue-local, shardable, cache-aware, deferred, pending, and blocking proof lanes without hiding failures. | planned |
+| Multi-agent C-SDLC workcell proof | `SPRINT_v0.91.4.md` and workcell proof packet from `#3415` through `#3419` | C-SDLC demonstrates bounded conductor-managed parallel worker/reviewer/janitor lanes with explicit shard admission and serialized merge/closeout gates. | planned |
 | Active issue migration policy | `features/ACTIVE_ISSUE_MIGRATION_POLICY.md` | Open issues and future issues have a safe migration/defaulting path. | planned |
 | Process drift regression fixtures | `features/PROCESS_DRIFT_REGRESSION_FIXTURES.md` | Known card, closeout, state, and proof drift modes fail closed. | planned |
 | Tracked workflow state migration | `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md` | Durable C-SDLC records, proof packets, signed traces, and ObsMem ingestion surfaces are tracked in Git. | planned |
@@ -60,6 +61,9 @@ still have a truthful completion or blocked-state record before release:
   measurements and Parallel Validation Fabric planning evidence
 - Parallel Validation Fabric feature/proof packet showing owned proof lanes,
   synchronization barriers, blocked-state handling, and reviewer-visible status
+- multi-agent workcell proof packet showing shard admission, worker/reviewer
+  assignment, branch/worktree boundaries, serialized merge/closeout gates, and
+  coordination timing
 - active-issue migration policy evidence
 - process-drift regression fixture results
 - docs/adoption review evidence

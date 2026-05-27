@@ -37,6 +37,8 @@ In scope for v0.91.4:
   readiness, and ObsMem handoff
 - sprint closeout enforcement, repeatability metrics, active issue migration,
   process-drift regression fixtures, and validation-tail/proof-latency evidence
+- bounded multi-agent C-SDLC workcell proof with explicit shard admission,
+  worker/reviewer/janitor lanes, and serialized merge/closeout gates
 - bounded CodeFriend static-site sidecar proof or truthful blocked handoff
 
 Out of scope for v0.91.4:
@@ -100,6 +102,7 @@ Additional environment / fixture requirements:
 | D14 | Process-drift regression fixtures | WP-12 catches legacy SRP drift, stale SOR truth, skipped closeout, and shared-state hazards. | WP-owned regression command | regression fixture report | known drift cases fail closed | fixture-based, replayable | planned |
 | D15 | Best-demo showcase, including Unity-facing C-SDLC proof | WP-13 packages the strongest reviewer-facing demos, including a Unity-facing demo if available. | WP-owned demo showcase runbook | demo showcase packet and proof index | demos are inspectable, bounded, and do not overclaim release state | demo proof may be live or recorded with replay notes | planned |
 | D16 | CodeFriend pre-alpha welcome page sidecar | CF-PRE-02 through CF-PRE-04 prove static welcome page and HTTPS path, or truthful blocked handoff. | sidecar verification command/runbook | CodeFriend repo/source-map proof, page proof, CloudFront/DNS verification or blocked handoff | welcome page is reachable over HTTPS or blocker is recorded | live proof if available, otherwise blocked handoff | planned |
+| D17 | Multi-agent C-SDLC workcell proof | MA-CSDL-00 through MA-CSDL-04 prove bounded conductor-managed parallel worker/reviewer/janitor lanes without losing card, branch, PR, validation, review, or closeout truth. | workcell assignment planner and proof runbook | workcell model, assignment plan, state packet, proof review packet, and finding disposition | at least two worker lanes and one independent reviewer lane are coordinated safely, or a truthful blocked handoff records why not | bounded proof; live parallelism only where write sets and dependencies are disjoint | planned |
 
 ## Coverage Rules
 
