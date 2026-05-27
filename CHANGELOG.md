@@ -2,9 +2,23 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.91.3 (Active milestone)
+## v0.91.4 (Active milestone)
 
-Status: Active. The v0.91.3 issue wave was opened as `#3199-#3214`; corrective
+Status: Active. The v0.91.4 issue wave and sprint umbrellas are open, and the
+crate version has advanced to `0.91.4` for the C-SDLC default-operation,
+repeatability, validation-tail, and Parallel Validation Fabric hardening line.
+
+Planning notes:
+- The tracked v0.91.4 package lives under `docs/milestones/v0.91.4/`.
+- v0.91.4 builds on the completed v0.91.3 first C-SDLC slice.
+- The milestone owns C-SDLC default operation, signed trace and ObsMem handoff
+  hardening, five-minute-sprint repeatability, validation-tail/PVF work, and
+  sidecar preparation for CodeFriend and WildClawBench.
+- This is an active milestone entry, not a release entry.
+
+## v0.91.3 (Completed milestone)
+
+Status: Completed. The v0.91.3 issue wave was opened as `#3199-#3214`; corrective
 tail issue `#3225` added the complete Sprint 4 closeout gates as `#3226-#3230`
 and Sprint 4 umbrella `#3231`. The crate version has advanced to `0.91.3` for
 the Cognitive SDLC first-slice line.
@@ -14,9 +28,9 @@ Planning notes:
 - WP-01 opened the issue wave and prepared the tracked source package.
 - Sprints 1 through 3 proved the first Cognitive State Transition substrate,
   evidence/review/memory path, and first proof surface.
-- Sprint 4 has completed demo/proof coverage, the quality gate, and this docs
-  review pass; `WP-13` / `#3208` is the next internal-review gate.
-- This is an active milestone entry, not a release entry.
+- Sprint 4 completed demo/proof coverage, the quality gate, docs review,
+  internal review, third-party review, next-milestone planning, and ceremony.
+- This is a completed milestone entry, not a release entry.
 
 ## v0.91.2 (Completed milestone)
 

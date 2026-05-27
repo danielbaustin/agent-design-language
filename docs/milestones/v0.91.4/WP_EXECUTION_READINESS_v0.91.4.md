@@ -9,8 +9,8 @@ batches.
 
 ## Entry Bar
 
-v0.91.4 should not begin execution until v0.91.3 has produced a reviewed first
-C-SDLC transition slice or an explicit no-go/defer decision.
+This entry bar is satisfied: v0.91.3 produced the reviewed first C-SDLC
+transition slice, and v0.91.4 execution has begun.
 
 ## Required Readiness
 

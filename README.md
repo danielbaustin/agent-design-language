@@ -9,7 +9,7 @@ packets, demos, and milestone evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.91.3%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.91.4%20active-blue)
 
 ![ADL deterministic cognitive architecture overview](docs/assets/ADL-overview.png)
 
@@ -117,11 +117,11 @@ cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-91-chat
 
 These are three high-signal recent demo entrypoints.
 
-Start with the active v0.91.3 proof lane:
+Start with the active v0.91.4 C-SDLC completion lane:
 
-- [v0.91.3 README](docs/milestones/v0.91.3/README.md)
-- [v0.91.3 sprint plan](docs/milestones/v0.91.3/SPRINT_v0.91.3.md)
-- [v0.91.3 demo matrix](docs/milestones/v0.91.3/DEMO_MATRIX_v0.91.3.md)
+- [v0.91.4 README](docs/milestones/v0.91.4/README.md)
+- [v0.91.4 sprint plan](docs/milestones/v0.91.4/SPRINT_v0.91.4.md)
+- [v0.91.4 demo matrix](docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md)
 
 Generate the v0.91 cognitive-being flagship proof bundle:
 
@@ -148,25 +148,31 @@ from issue
 
 ## Recent Milestones
 
-### v0.91.3 - Active Cognitive SDLC First-Slice Milestone
+### v0.91.4 - Active Cognitive SDLC Default-Operation Milestone
 
-v0.91.3 is the active Cognitive SDLC first-slice milestone. Its main issue wave
-was opened as `#3199` through `#3214`; follow-up `#3225` restored the complete
-closeout tail as `#3226` through `#3230`, with Sprint 4 opened as `#3231`.
-Sprint 4 has completed proof coverage, the quality gate, the docs review pass,
-and the second internal-review remediation wave. `WP-13` / `#3208` opened the
-internal-review cycle, `#3321` closed that second review, and v0.91.3 is now
-being prepared for third-party review. The milestone proves one bounded
-Cognitive State Transition without claiming full C-SDLC default operation
-before v0.91.4.
+v0.91.4 is the active Cognitive SDLC completion and hardening milestone. Its
+issue wave and sprint umbrellas are open, and the crate version has advanced to
+`0.91.4`. The milestone turns the v0.91.3 first slice into default operating
+practice: validator/doctor/conductor/editor alignment, signed trace and ObsMem
+handoff hardening, five-minute-sprint repeatability, validation-tail/PVF work,
+and sidecar preparation for CodeFriend and WildClawBench.
 
 Start here:
 
-- [v0.91.3 README](docs/milestones/v0.91.3/README.md)
-- [v0.91.3 issue wave](docs/milestones/v0.91.3/WP_ISSUE_WAVE_v0.91.3.yaml)
-- [v0.91.3 sprint plan](docs/milestones/v0.91.3/SPRINT_v0.91.3.md)
-- [v0.91.3 demo matrix](docs/milestones/v0.91.3/DEMO_MATRIX_v0.91.3.md)
-- [v0.91.3 quality gate](docs/milestones/v0.91.3/QUALITY_GATE_v0.91.3.md)
+- [v0.91.4 README](docs/milestones/v0.91.4/README.md)
+- [v0.91.4 issue wave](docs/milestones/v0.91.4/WP_ISSUE_WAVE_v0.91.4.yaml)
+- [v0.91.4 sprint plan](docs/milestones/v0.91.4/SPRINT_v0.91.4.md)
+- [v0.91.4 demo matrix](docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md)
+- [v0.91.4 quality gate](docs/milestones/v0.91.4/QUALITY_GATE_v0.91.4.md)
+
+### v0.91.3 - Completed Cognitive SDLC First-Slice Milestone
+
+v0.91.3 is complete. It proved one bounded Cognitive State Transition with
+tracked cards, transition evidence, review synthesis, merge-readiness truth,
+ObsMem handoff, and a reviewer-facing first-proof/demo package. It does not
+claim full C-SDLC default operation; v0.91.4 owns repeatability, enforcement,
+signed trace proof, validation-tail hardening, and default adoption for future
+software-development issues.
 
 ### v0.91.2 - Completed Tooling, Evaluation, Productization, And Workflow Pressure Release
 
@@ -251,13 +257,12 @@ production markets.
 
 ## Project Status
 
-- Active milestone: v0.91.3
-- Current crate version: 0.91.3
-- Most recently completed milestone: v0.91.2
-- Current release-tail state: v0.91.3 Sprint 4 has completed proof coverage,
-  the quality gate, the docs review pass, and the second internal-review
-  remediation wave; `#3321` is closed, and the next release-tail gate is
-  third-party review handoff
+- Active milestone: v0.91.4
+- Current crate version: 0.91.4
+- Most recently completed milestone: v0.91.3
+- Current milestone state: v0.91.4 issue setup is underway, with C-SDLC
+  default-operation hardening, validation-tail/PVF work, and sidecar setup work
+  active
 - Previous completed milestone before v0.91.2: v0.91.1
 - Primary implementation language: Rust
 
