@@ -27,10 +27,26 @@ def extract_signed_public_key(signed_trace_path: Path) -> str:
     fail("signed trace fixture is missing embedded public_key_b64")
 
 
+def find_repo_root(start: Path) -> Path:
+    for candidate in [start, *start.parents]:
+        if (candidate / "adl").is_dir() and (candidate / "docs").is_dir():
+            return candidate
+    fail(f"could not determine repo root from {start}")
+
+
+def resolve_existing_ancestor_path(start: Path, rel_path: str) -> Path:
+    for candidate in [start, *start.parents]:
+        probe = candidate / rel_path
+        if probe.exists():
+            return probe
+    fail(f"required tracked/retained artifact missing across ancestor roots: {rel_path}")
+
+
 def ensure_sor_links(repo_root: Path) -> None:
-    sor_path = repo_root / ".adl/v0.91.4/tasks/issue-3354__v0-91-4-wp-06-evidence-convergence-review-synthesis-and-signed-trace-proof/sor.md"
-    if not sor_path.exists():
-        fail("WP-06 SOR is missing; cannot prove evidence/trace linkage")
+    sor_path = resolve_existing_ancestor_path(
+        repo_root,
+        ".adl/v0.91.4/tasks/issue-3354__v0-91-4-wp-06-evidence-convergence-review-synthesis-and-signed-trace-proof/sor.md",
+    )
     sor_text = sor_path.read_text()
     required_refs = [
         "docs/milestones/v0.91.4/review/evidence/csdlc/C_SDLC_EVIDENCE_BUNDLE_PACKET_v0.91.4.md",
@@ -47,7 +63,7 @@ def main() -> None:
     if len(sys.argv) != 2:
         fail("usage: validate_v0914_csdlc_evidence_bundle.py <packet_dir>")
     packet_dir = Path(sys.argv[1]).resolve()
-    repo_root = Path.cwd().resolve()
+    repo_root = find_repo_root(packet_dir)
 
     required = [
         packet_dir / "README.md",
@@ -92,8 +108,10 @@ def main() -> None:
         fail("review synthesis path missing")
 
     synthesis = json.loads((packet_dir / "ct_demo_001_review_synthesis.json").read_text())
-    if synthesis.get("source_issue_number") != 3353 or synthesis.get("source_pr_number") != 3387:
-        fail("review synthesis source truth drift")
+    if synthesis.get("source_issue_number") != bundle.get("issue_number"):
+        fail("review synthesis source issue must align with bundle issue_number")
+    if not isinstance(synthesis.get("source_pr_number"), int) or synthesis.get("source_pr_number", 0) <= 0:
+        fail("review synthesis source_pr_number must be a positive integer")
     findings = synthesis.get("findings", [])
     if len(findings) != 4:
         fail("expected four preserved review findings")

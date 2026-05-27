@@ -37,6 +37,14 @@ def find_repo_root(start: Path) -> Path:
     fail(f"could not determine repo root from {start}")
 
 
+def require_repo_relative_path(repo_root: Path, rel: str, key: str) -> Path:
+    require(repo_relative(rel), f"{key} must be repo-relative without traversal")
+    require(not rel.startswith(".adl/"), f"{key} must not point into local-only .adl state")
+    target = repo_root / rel
+    require(target.exists(), f"{key} target missing: {rel}")
+    return target
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         fail("usage: validate_v0914_obsmem_transition_memory.py <packet_dir>")
@@ -55,32 +63,28 @@ def main() -> None:
 
     handoff = load_json(packet_dir / "ct_demo_001_obsmem_transition_memory_handoff.json")
     outcome = load_json(packet_dir / "ct_demo_001_transition_outcome_truth.json")
-    review = load_json(
-        repo_root
-        / "docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_review_synthesis.json"
-    )
-    evidence = load_json(
-        repo_root
-        / "docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_transition_evidence_bundle.json"
-    )
-
     require(handoff.get("schema_version") == 1, "handoff schema_version must be 1")
     require(outcome.get("schema_version") == 1, "outcome schema_version must be 1")
     require(handoff.get("workflow_id") == "v0914_csdlc_transition_memory", "unexpected workflow_id")
     require(len(handoff.get("follow_ons", [])) >= 2, "handoff must preserve visible follow-ons")
 
-    path_keys = [
-        "outcome_truth_path",
-        "evidence_bundle_path",
-        "review_synthesis_path",
-        "signed_trace_path",
+    outcome_truth_path = require_repo_relative_path(repo_root, handoff.get("outcome_truth_path", ""), "outcome_truth_path")
+    evidence_bundle_path = require_repo_relative_path(repo_root, handoff.get("evidence_bundle_path", ""), "evidence_bundle_path")
+    review_synthesis_path = require_repo_relative_path(repo_root, handoff.get("review_synthesis_path", ""), "review_synthesis_path")
+    signed_trace_path = require_repo_relative_path(repo_root, handoff.get("signed_trace_path", ""), "signed_trace_path")
+    signed_trace_public_key_path = require_repo_relative_path(
+        repo_root,
+        handoff.get("signed_trace_public_key_path", ""),
         "signed_trace_public_key_path",
-    ]
-    for key in path_keys:
-        rel = handoff.get(key, "")
-        require(repo_relative(rel), f"{key} must be repo-relative without traversal")
-        require(not rel.startswith(".adl/"), f"{key} must not point into local-only .adl state")
-        require((repo_root / rel).exists(), f"{key} target missing: {rel}")
+    )
+
+    require(
+        outcome_truth_path.resolve() == (packet_dir / "ct_demo_001_transition_outcome_truth.json").resolve(),
+        "outcome_truth_path must point at the tracked packet-local outcome truth file",
+    )
+
+    review = load_json(review_synthesis_path)
+    evidence = load_json(evidence_bundle_path)
 
     signed_trace = evidence.get("signed_trace", {})
     require(
@@ -94,6 +98,14 @@ def main() -> None:
     require(
         signed_trace.get("verification_mode") == "explicit_key",
         "signed trace verification_mode must be explicit_key",
+    )
+    require(
+        signed_trace_path == (repo_root / signed_trace.get("signed_path", "")),
+        "signed trace path must align with the evidence bundle signed trace path",
+    )
+    require(
+        signed_trace_public_key_path == (repo_root / signed_trace.get("public_key_path", "")),
+        "signed trace public key path must align with the evidence bundle public key path",
     )
 
     evidence_inputs = evidence.get("evidence_inputs", [])
