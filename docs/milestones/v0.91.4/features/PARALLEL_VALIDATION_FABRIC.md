@@ -50,6 +50,8 @@ lanes and records each lane's status in C-SDLC surfaces:
 - issue-local proof that can run immediately
 - shardable proof that can run in parallel
 - cache-aware proof that can be reused only with valid inputs
+- pre-PR validation evidence that can satisfy CI only when commit and tree
+  identity prove the exact same code was tested
 - deferred proof that does not block the current transition
 - blocking proof that must pass before continuation
 
@@ -67,6 +69,34 @@ Each validation lane should declare:
 Aggregated status must be derived from lane truth. A green aggregate cannot
 hide a failing, pending, or blocked lane.
 
+### Pre-PR Validation Evidence Reuse
+
+The duplicate-test-cycle case is a first-class PVF target. Today a runtime PR
+can run the full Rust validation profile during `pr finish`, open or update the
+PR, and then immediately run the same expensive profile again in GitHub CI even
+though the code has not changed.
+
+The future PVF lane for this should convert the pre-PR validation run into a
+structured evidence artifact that CI may accept only when all trust inputs still
+match:
+
+- PR head commit matches the validated commit
+- tree identity matches the validated tree
+- changed-path and validation-policy inputs match the current policy
+- command list, tool versions, timestamps, exit codes, and log hashes are
+  recorded
+- evidence is fresh enough under the release policy
+- workflow, CI, coverage, or validation-tooling changes do not force remote
+  proof
+
+If any check fails, CI must fall back to the full Rust validation lane. Evidence
+reuse is a cache-aware proof lane, not a validation waiver. It must preserve
+branch protection, human review, and closeout truth.
+
+Issue `#3437` records this docs-only planning addition. The implementation
+belongs with the PVF CI/release-gate work, currently represented by `#3403` or a
+future dedicated implementation issue.
+
 ## Execution Flow
 
 1. `SPP` identifies required proof lanes and stop/replan conditions.
@@ -82,6 +112,9 @@ hide a failing, pending, or blocked lane.
 
 - Proof lanes must be reproducible from tracked inputs whenever possible.
 - Cache reuse must name the inputs that make reuse valid.
+- Pre-PR validation evidence reuse must require exact commit/tree identity and
+  must fail closed to full CI whenever identity, policy, workflow, tooling, or
+  freshness checks do not prove equivalence.
 - Async proof cannot be treated as passed until evidence exists.
 - Pending/deferred proof must remain visible to reviewers.
 - PVF must not weaken the existing C-SDLC review, merge, or closeout gates.
@@ -101,6 +134,8 @@ WP-10 should produce a PVF runbook or fixture proof. WP-14 should validate that:
 
 - each lane has an owner, input, proof artifact, and status
 - aggregate status does not hide failed, pending, deferred, or blocked proof
+- pre-PR validation evidence reuse is treated as a strict equivalence proof with
+  full-CI fallback, not as a skip
 - C-SDLC cards record proof status consistently
 - release evidence cites the PVF proof surface before making completion claims
 
@@ -110,6 +145,9 @@ WP-10 should produce a PVF runbook or fixture proof. WP-14 should validate that:
   proof packet.
 - The fabric names proof lanes, owners, synchronization barriers, cache inputs,
   and blocked-state rules.
+- The fabric includes pre-PR validation evidence reuse as a cache-aware lane
+  whose acceptance requires exact commit/tree identity and automatic full-Rust
+  fallback on mismatch, staleness, or policy/tooling drift.
 - `SPP` records required proof and stop/replan conditions before execution.
 - `SRP` records review findings and pending/deferred proof without converting
   them into success.

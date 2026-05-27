@@ -15,7 +15,7 @@ Planned proof map for C-SDLC completion.
 | ObsMem transition memory integration | `features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md` | Tracked review truth, promoted outcome truth, and signed-trace evidence feed replayable memory handoff records. | landed |
 | Sprint conductor default C-SDLC lane | `features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md` | Sprint execution cannot skip child closeout, umbrella truth, or combined-lane validation. | planned |
 | Five-minute-sprint repeatability | `features/FIVE_MINUTE_SPRINT_REPEATABILITY.md` | More than one transition records coordination, validation-tail/proof-latency, Parallel Validation Fabric, and repeatability metrics. | planned |
-| Parallel Validation Fabric | `features/PARALLEL_VALIDATION_FABRIC.md` | Validation is decomposed into truthful issue-local, shardable, cache-aware, deferred, pending, and blocking proof lanes without hiding failures. | planned |
+| Parallel Validation Fabric | `features/PARALLEL_VALIDATION_FABRIC.md` | Validation is decomposed into truthful issue-local, shardable, cache-aware, pre-PR evidence-reuse, deferred, pending, and blocking proof lanes without hiding failures. | planned |
 | Multi-agent C-SDLC workcell proof | `SPRINT_v0.91.4.md` and workcell proof packet from `#3415` through `#3419` | C-SDLC demonstrates bounded conductor-managed parallel worker/reviewer/janitor lanes with explicit shard admission and serialized merge/closeout gates. | planned |
 | Active issue migration policy | `features/ACTIVE_ISSUE_MIGRATION_POLICY.md` | Open issues and future issues have a safe migration/defaulting path. | planned |
 | Process drift regression fixtures | `features/PROCESS_DRIFT_REGRESSION_FIXTURES.md` | Known card, closeout, state, and proof drift modes fail closed. | planned |
@@ -61,6 +61,9 @@ still have a truthful completion or blocked-state record before release:
   measurements and Parallel Validation Fabric planning evidence
 - Parallel Validation Fabric feature/proof packet showing owned proof lanes,
   synchronization barriers, blocked-state handling, and reviewer-visible status
+- pre-PR validation evidence reuse plan from `#3437`, including exact
+  commit/tree identity checks and automatic full-Rust fallback when evidence is
+  absent, stale, mismatched, or invalid under current policy
 - multi-agent workcell proof packet showing shard admission, worker/reviewer
   assignment, branch/worktree boundaries, serialized merge/closeout gates, and
   coordination timing
