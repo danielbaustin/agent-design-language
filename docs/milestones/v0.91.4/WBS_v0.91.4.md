@@ -6,18 +6,19 @@
 - Version: `v0.91.4`
 - Date: `2026-05-25`
 - Owner: ADL maintainers
-- Related issues: `#3210`, planned v0.91.4 issue wave
+- Related issues: `#3210`, seeded v0.91.4 issue wave with Sprint 1 closeout recorded
 
 ## Status
 
-Planned WBS. Work package issue numbers remain `pending` until seeded through
-the v0.91.4 issue wave.
+Tracked WBS. The v0.91.4 issue wave is seeded through Sprint 4, the sidecar
+waves, and the standalone first-birthday readiness issue; Sprint 1 has already
+closed cleanly.
 
 ## How To Use
 
-Use this WBS as the planning source for seeding v0.91.4 issues and sprint
-umbrellas. The table is a planned sequence, not evidence that any WP has
-executed.
+Use this WBS as the planning source for v0.91.4 issue/sprint sequencing and
+issue-wave scope. The table is a planned sequence, while execution and closeout
+truth live in the sprint state artifacts and milestone status docs.
 
 ## WBS Summary
 
@@ -53,7 +54,8 @@ The goal is not more theory; it is a dependable development control plane.
 ## Work Packages
 
 The candidate WP sequence above is the canonical work-package table for
-v0.91.4. Issue numbers remain pending until WP-01 seeds the wave.
+v0.91.4. The work-package issue wave is already seeded; later status truth now
+depends on sprint execution and closeout rather than issue-number assignment.
 
 ## CodeFriend Sidecar Mini-Sprint
 
@@ -131,17 +133,19 @@ lessons:
 
 ## Planned Side Issues
 
-The following items are planned v0.91.4 side issues or mini-sprints. They are
-not release-tail WPs unless WP-01 explicitly seeds them into the issue wave.
+The following items remain list-only v0.91.4 side issues or mini-sprints unless
+explicitly promoted into the tracked issue wave. Already-seeded sidecars such as
+WildClawBench `#3378` and first-birthday readiness `#3377` are no longer part
+of this list-only bucket.
 
 - outstanding demo work, including the best available Unity-facing C-SDLC demo
   proof
-- benchmarking mini-sprint
+- benchmarking mini-sprint candidates beyond the already-seeded WildClawBench sidecar
 - root README rewrite
 - repo cleanup pass
 - partial drafting of Medium articles
 - HTML editors for planning docs
-- first-birthday readiness work for `v0.92`
+- first-birthday readiness follow-on work beyond the already-promoted `#3377`
 
 ## Exit Criteria
 
