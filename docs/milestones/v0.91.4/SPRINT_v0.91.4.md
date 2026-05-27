@@ -31,13 +31,26 @@ truth must stay aligned with the sprint state artifacts.
 
 ## Sidecar Mini-Sprint
 
-The CodeFriend pre-alpha repo/S3 welcome-page setup runs as a bounded sidecar
-mini-sprint in v0.91.4:
+The CodeFriend pre-alpha repo/S3 welcome-page setup and the WildClawBench
+benchmark spike run as bounded sidecar mini-sprints in v0.91.4:
 
 | Sidecar | Title | Ordered Children | Goal |
 | --- | --- | --- | --- |
 | CodeFriend Pre-Alpha Setup (`#3372`) | CodeFriend pre-alpha site setup | CF-PRE-01 `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, CF-PRE-04 `#3376` | Establish the private CodeFriend repo and a verified S3/CloudFront/HTTPS welcome page without making CodeFriend part of C-SDLC core proof. |
 | WildClawBench Benchmark Spike (`#3378`) | WildClawBench benchmark spike | WC-PRE-01 `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, WC-PRE-04 `#3382` | Run a small external benchmark spike that tests ADL substrate evidence without making WildClawBench a release gate or benchmark-win claim. |
+
+Current sidecar state:
+
+- CodeFriend remains a separate bounded sidecar lane.
+- WildClawBench is in final publication state as a bounded docs-and-evidence
+  spike:
+  - `#3379` published setup and smoke-baseline notes
+  - `#3380` published adapter, validity-audit, and bounded safety-slice results
+  - `#3381` published the `UTS`/`ACC` comparison framing and re-entry matrix
+  - `#3382` has the final results taxonomy and handoff recommendation in draft
+    PR for review
+  - the sidecar recommendation is to defer broader benchmark work until a
+    later post-launch evaluation lane with a real ADL benchmark subject
 
 The sidecar may run after WP-01 has opened the v0.91.4 issue wave. It must not
 interrupt the required C-SDLC closeout tail or add extra release-tail gates.
