@@ -38,6 +38,10 @@ Active planning docs:
 - `C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md` - transition plan for
   moving C-SDLC cards onto versioned prompt templates, Rust-owned field
   validation, browser-assisted human review, and tracked durable prompt records
+- `PR_CONTROL_PLANE_DECRUFT_COMPATIBILITY_CUT_PLAN.md` - plan-only cut-line
+  for retiring obsolete PR/card compatibility paths in `v0.92` after a reviewed
+  migration window, while preserving historical records as readable audit
+  artifacts
 - `codefriend/` - single tracked home for current CodeFriend planning,
   including product setup, naming migration, source inventory, and links back to
   historical milestone proof
