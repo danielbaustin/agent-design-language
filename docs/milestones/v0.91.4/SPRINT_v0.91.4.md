@@ -11,8 +11,9 @@
 ## Status
 
 Sprint 1 is closed with clean closeout truth. Sprint 2, Sprint 3, Sprint 4,
-the CodeFriend sidecar, and the WildClawBench benchmark spike sidecar remain
-seeded as controlled issue/card batches.
+the multi-agent C-SDLC workcell proof mini-sprint, the CodeFriend sidecar, and
+the WildClawBench benchmark spike sidecar remain seeded as controlled
+issue/card batches.
 
 ## How To Use
 
@@ -28,6 +29,28 @@ truth must stay aligned with the sprint state artifacts.
 | Sprint 2 | Transition Operation (`#3352`) | WP-05 `#3353`, WP-06 `#3354`, WP-07 `#3355`, WP-08 `#3356` | Make actor standing, shards, evidence, merge gates, and memory handoff repeatable. |
 | Sprint 3 | Sprint Default And Metrics (`#3357`) | WP-09 `#3358`, WP-10 `#3359`, WP-11 `#3360`, WP-12 `#3361` | Make sprint execution default-safe and measure repeatability, validation-tail, proof-latency, and parallel-validation behavior. |
 | Sprint 4 | Review, Remediation, Planning, And Release (`#3362`) | WP-13 `#3363`, WP-14 `#3364`, WP-15 `#3365`, WP-16 `#3366`, WP-17 `#3367`, WP-18 `#3368`, WP-19 `#3369`, WP-20 `#3370`, WP-21 `#3371` | Prove, gate, review, remediate, plan the next milestone, re-review the handoff, and close the completion milestone. |
+
+## C-SDLC Proof Mini-Sprint
+
+The multi-agent C-SDLC workcell proof is added v0.91.4 scope because completing
+C-SDLC requires at least one bounded proof that the process can coordinate more
+than one agent lane at a time without losing card, branch, review, PR, or
+closeout truth.
+
+| Mini-sprint | Title | Ordered Children | Goal |
+| --- | --- | --- | --- |
+| Multi-Agent C-SDLC Workcell Proof (`#3415`) | Parallel C-SDLC workcell proof | MA-CSDL-01 `#3416`, MA-CSDL-02 `#3417`, MA-CSDL-03 `#3418`, MA-CSDL-04 `#3419` | Prove a conductor-managed workcell with bounded worker, reviewer, janitor, and closeout lanes, explicit shard admission, and truthful serialized gates. |
+
+Current workcell state:
+
+- `#3415` opened the mini-sprint umbrella and child wave.
+- `#3416` owns the workcell execution model.
+- `#3417` owns shard admission and assignment planning.
+- `#3418` owns workcell state artifacts and conductor hook points.
+- `#3419` owns the bounded multi-agent proof sprint.
+- This is C-SDLC core proof, not product sidecar work, but it does not add
+  extra release-tail gates; its evidence should feed WP-10, WP-13, WP-14, and
+  WP-15.
 
 ## Sidecar Mini-Sprint
 
@@ -89,6 +112,10 @@ rule stays reviewable:
   WC-PRE-01 through WC-PRE-04 as `#3379` through `#3382`; sidecar child
   execution now waits on its own routing/dependency gates and remains
   non-core.
+- Batch 7 opened the multi-agent C-SDLC workcell proof `#3415` and
+  MA-CSDL-01 through MA-CSDL-04 as `#3416` through `#3419`; this is added
+  C-SDLC proof scope and should feed WP-10/WP-13/WP-14/WP-15 without changing
+  the closeout-tail sequence.
 - Standalone first-birthday readiness side issue `#3377` is promoted for v0.92
   launch preparation and should feed WP-19/WP-20; it is not a sprint child and
   does not alter the v0.91.4 release-tail sequence.
@@ -115,11 +142,14 @@ state.
 - Sprint 2: actor standing, shard ownership, evidence convergence, signed
   trace, merge readiness, and memory handoff.
 - Sprint 3: sprint default behavior, active issue migration, repeatability
-  metrics, validation-tail/proof-latency handling, and drift fixtures.
+  metrics, validation-tail/proof-latency handling, multi-agent workcell proof,
+  and drift fixtures.
 - Sprint 4: proof coverage, quality gate, docs/adoption review, internal
   review, external review, remediation, next-milestone planning,
   next-milestone review, and release ceremony.
-- Sidecar mini-sprint: bounded CodeFriend pre-alpha repo and static-site setup.
+- C-SDLC proof mini-sprint: bounded multi-agent workcell proof.
+- Sidecar mini-sprints: bounded CodeFriend pre-alpha repo and static-site setup
+  plus WildClawBench benchmark spike.
 
 ## Work Plan
 
@@ -157,10 +187,15 @@ Every sprint must preserve:
   readiness is claimed.
 - The CodeFriend sidecar is complete with a verified HTTPS landing surface and
   truthful handoff; later CodeFriend alpha work remains outside this mini-sprint.
+- Multi-agent workcell proof must stay bounded: no overlapping write sets, no
+  hidden state, no autonomous merge authority, and no bypass of normal issue
+  lifecycle.
 
 ## Demo / Review Plan
 
 - Sprint 3 owns repeatability and validation-tail/proof-latency evidence.
+- The multi-agent workcell proof owns bounded parallel agent coordination
+  evidence and feeds the Sprint 3/WP-10 repeatability story.
 - Sprint 4 owns demo/proof coverage, quality gate, docs/adoption review,
   internal review, external review, remediation, next-milestone planning,
   next-milestone review, and ceremony.
@@ -178,13 +213,13 @@ It must show that the C-SDLC lane can run repeatedly with:
 - correct review recording
 - correct SOR closeout
 - correct sprint state
+- correct multi-agent shard admission and assignment state
 - correct memory handoff boundary
 - measured coordination, validation-tail, proof-latency, and parallel-validation
   behavior
 
-The CodeFriend sidecar is complete only when it has either a verified HTTPS
-welcome page and handoff record or a truthful blocked handoff with AWS/DNS
-approval blockers recorded.
+The CodeFriend sidecar is complete with a verified HTTPS welcome page and
+handoff record. Later CodeFriend alpha work remains outside this mini-sprint.
 
 ## Exit Criteria
 

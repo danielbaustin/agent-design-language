@@ -25,6 +25,9 @@ notes:
     proof cycles.
   - Parallel Validation Fabric planning is in scope for v0.91.4 and must
     preserve truthful pending/deferred/blocking proof state.
+  - Multi-agent C-SDLC workcell proof is in scope for v0.91.4 so C-SDLC can
+    demonstrate bounded parallel worker/reviewer/janitor lanes, not only
+    single-threaded sprint execution.
   - CodeFriend sidecar work is product setup, not C-SDLC core proof.
 card_update_rule:
   - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
@@ -64,6 +67,10 @@ opening_batch_policy:
       title: WildClawBench benchmark spike sidecar
       seeded_issues: [3378, 3379, 3380, 3381, 3382]
       state: seeded_and_ready_waiting_on_wp_01
+    - batch: 7
+      title: Multi-agent C-SDLC workcell proof
+      seeded_issues: [3415, 3416, 3417, 3418, 3419]
+      state: seeded_and_ready
   list_only_side_issues:
     state: not_promoted
     note: Planned side issues remain list-only until explicitly promoted by the operator; SIDE-BENCH has been promoted to the WildClawBench sidecar issue wave, and SIDE-BIRTHDAY has been promoted as standalone side issue #3377.
@@ -225,6 +232,40 @@ closeout_sequence:
   - WP-19: Next milestone planning
   - WP-20: Next milestone review pass
   - WP-21: Release ceremony
+csdlc_proof_issue_waves:
+  - id: MA-CSDL-00
+    issue: 3415
+    title: Multi-agent C-SDLC workcell proof mini-sprint umbrella
+    queue: csdlc_tools
+    source_plan: docs/milestones/v0.91.4/SPRINT_v0.91.4.md
+    depends_on: [WP-10]
+    non_core: false
+    notes:
+      - This is added C-SDLC proof scope, not product sidecar work.
+      - This mini-sprint does not add release-tail steps.
+      - Exit posture is a bounded proof of safe parallel worker/reviewer/janitor
+        coordination or a truthful blocked handoff with follow-on routing.
+    ordered_children:
+      - id: MA-CSDL-01
+        issue: 3416
+        title: Define parallel C-SDLC workcell execution model
+        queue: docs_tools
+        depends_on: [MA-CSDL-00]
+      - id: MA-CSDL-02
+        issue: 3417
+        title: Implement shard admission and assignment planner
+        queue: tools
+        depends_on: [MA-CSDL-01]
+      - id: MA-CSDL-03
+        issue: 3418
+        title: Add workcell state artifacts and conductor hooks
+        queue: tools
+        depends_on: [MA-CSDL-02]
+      - id: MA-CSDL-04
+        issue: 3419
+        title: Run bounded multi-agent C-SDLC proof sprint
+        queue: demo_quality
+        depends_on: [MA-CSDL-03]
 sidecar_issue_waves:
   - id: CF-PRE-00
     issue: 3372

@@ -18,6 +18,9 @@ The milestone must run:
 - repeated five-minute-sprint metrics capture, including validation-tail and
   proof-latency measurement
 - explicit Parallel Validation Fabric feature/proof evidence
+- explicit multi-agent workcell proof or truthful blocked handoff showing
+  shard admission, worker/reviewer/janitor lanes, and serialized merge/closeout
+  gates
 - combined C-SDLC lane validation
 - active-issue migration policy review with sampled issue routing
 - process-drift regression fixture results for legacy SRP, stale SOR, skipped
