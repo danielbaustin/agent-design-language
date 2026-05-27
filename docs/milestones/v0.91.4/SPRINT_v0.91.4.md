@@ -41,7 +41,16 @@ benchmark spike run as bounded sidecar mini-sprints in v0.91.4:
 
 Current sidecar state:
 
-- CodeFriend remains a separate bounded sidecar lane.
+- CodeFriend is now complete as a bounded pre-alpha product-setup lane:
+  - `#3373` created and scaffolded the private `agent-logic/codefriend.ai`
+    repository
+  - `#3374` refined the static coming-soon page
+  - `#3375` provisioned the Terraform-managed AWS static-site substrate and
+    made `https://codefriend.ai` and `https://www.codefriend.ai` live over
+    HTTPS
+  - `#3376` recorded publication-safety review, verification, and handoff
+  - the sidecar outcome is a real live coming-soon surface, not a CodeFriend
+    alpha-product claim
 - WildClawBench is in final publication state as a bounded docs-and-evidence
   spike:
   - `#3379` published setup and smoke-baseline notes
@@ -146,8 +155,8 @@ Every sprint must preserve:
 - Sprint 1 must land before later sprints rely on default C-SDLC state truth.
 - Signed trace and tracked workflow-state proof must land before release
   readiness is claimed.
-- The CodeFriend sidecar depends on AWS/DNS approval and may end in a truthful
-  blocked handoff.
+- The CodeFriend sidecar is complete with a verified HTTPS landing surface and
+  truthful handoff; later CodeFriend alpha work remains outside this mini-sprint.
 
 ## Demo / Review Plan
 
