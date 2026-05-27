@@ -16,6 +16,25 @@ pub struct MemoryCitation {
     pub hash: String,
 }
 
+/// Structured review finding preserved at the memory boundary so later agents
+/// can distinguish review judgment from final outcome facts.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MemoryReviewFinding {
+    pub id: String,
+    pub severity: String,
+    pub summary: String,
+    pub disposition: String,
+}
+
+/// Explicit follow-on issue or obligation that should remain visible in memory
+/// instead of being flattened into free-form summary text.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MemoryFollowOnRef {
+    pub issue_number: u64,
+    pub title: String,
+    pub status: String,
+}
+
 /// Deterministic reference back to the trace event(s) that support a memory
 /// record. v0.87 uses event sequence plus bounded identity fields as the
 /// "event_id or equivalent" coherence contract.
@@ -40,6 +59,12 @@ pub struct MemoryWriteRequest {
     pub tags: Vec<String>,
     pub citations: Vec<MemoryCitation>,
     pub trace_event_refs: Vec<MemoryTraceRef>,
+    #[serde(default)]
+    pub review_findings: Vec<MemoryReviewFinding>,
+    #[serde(default)]
+    pub residual_risks: Vec<String>,
+    #[serde(default)]
+    pub follow_on_refs: Vec<MemoryFollowOnRef>,
 }
 
 impl MemoryWriteRequest {
@@ -64,6 +89,29 @@ impl MemoryWriteRequest {
                 && a.event_kind == b.event_kind
                 && a.step_id == b.step_id
                 && a.delegation_id == b.delegation_id
+        });
+        self.review_findings.sort_by(|a, b| {
+            a.id.cmp(&b.id)
+                .then_with(|| a.severity.cmp(&b.severity))
+                .then_with(|| a.summary.cmp(&b.summary))
+                .then_with(|| a.disposition.cmp(&b.disposition))
+        });
+        self.review_findings.dedup_by(|a, b| {
+            a.id == b.id
+                && a.severity == b.severity
+                && a.summary == b.summary
+                && a.disposition == b.disposition
+        });
+        self.residual_risks.sort();
+        self.residual_risks.dedup();
+        self.follow_on_refs.sort_by(|a, b| {
+            a.issue_number
+                .cmp(&b.issue_number)
+                .then_with(|| a.title.cmp(&b.title))
+                .then_with(|| a.status.cmp(&b.status))
+        });
+        self.follow_on_refs.dedup_by(|a, b| {
+            a.issue_number == b.issue_number && a.title == b.title && a.status == b.status
         });
     }
 
@@ -112,14 +160,48 @@ impl MemoryWriteRequest {
                 ));
             }
         }
+        for finding in &self.review_findings {
+            if finding.id.trim().is_empty()
+                || finding.severity.trim().is_empty()
+                || finding.summary.trim().is_empty()
+                || finding.disposition.trim().is_empty()
+            {
+                return Err(ObsMemContractError::new(
+                    ObsMemContractErrorCode::InvalidRequest,
+                    "review findings require non-empty id, severity, summary, and disposition",
+                ));
+            }
+        }
+        for risk in &self.residual_risks {
+            if risk.trim().is_empty() {
+                return Err(ObsMemContractError::new(
+                    ObsMemContractErrorCode::InvalidRequest,
+                    "residual risks must be non-empty when present",
+                ));
+            }
+        }
+        for follow_on in &self.follow_on_refs {
+            if follow_on.issue_number == 0
+                || follow_on.title.trim().is_empty()
+                || follow_on.status.trim().is_empty()
+            {
+                return Err(ObsMemContractError::new(
+                    ObsMemContractErrorCode::InvalidRequest,
+                    "follow-on refs require non-zero issue_number plus non-empty title and status",
+                ));
+            }
+        }
 
         let text = format!(
-            "{}\n{}\n{:?}\n{:?}\n{:?}",
+            "{}\n{}\n{:?}\n{:?}\n{:?}\n{:?}\n{:?}\n{:?}",
             self.summary,
             self.trace_bundle_rel_path,
             self.tags,
             self.citations,
-            self.trace_event_refs
+            self.trace_event_refs,
+            self.review_findings,
+            self.residual_risks,
+            self.follow_on_refs
         );
         if contains_disallowed_content(&text) {
             return Err(ObsMemContractError::new(
@@ -194,6 +276,12 @@ pub struct MemoryRecord {
     pub score: String,
     pub citations: Vec<MemoryCitation>,
     pub trace_event_refs: Vec<MemoryTraceRef>,
+    #[serde(default)]
+    pub review_findings: Vec<MemoryReviewFinding>,
+    #[serde(default)]
+    pub residual_risks: Vec<String>,
+    #[serde(default)]
+    pub follow_on_refs: Vec<MemoryFollowOnRef>,
 }
 
 /// Query response wrapper for deterministic hit lists.

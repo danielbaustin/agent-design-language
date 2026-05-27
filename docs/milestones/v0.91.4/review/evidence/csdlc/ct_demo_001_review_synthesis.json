@@ -1,8 +1,8 @@
 {
   "synthesis_id": "ct_demo_001_review_synthesis",
-  "source_issue_number": 3353,
-  "source_pr_number": 3387,
-  "summary": "WP-05 produced a durable tracked proof packet for actor standing and shard ownership, then fixed all bounded review findings before publication.",
+  "source_issue_number": 3354,
+  "source_pr_number": 3388,
+  "summary": "WP-06 converged the WP-05 proof packet, preserved bounded review findings and residual risks, and published a durable tracked evidence bundle with signed-trace support.",
   "findings": [
     {
       "severity": "P2",
@@ -40,4 +40,3 @@
     "residual_risks_preserved": true
   }
 }
-

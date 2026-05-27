@@ -54,6 +54,7 @@ pub mod obsmem_demo;
 pub mod obsmem_indexing;
 pub mod obsmem_retrieval_policy;
 pub mod obsmem_store;
+pub mod obsmem_transition_memory;
 pub mod operational_skills_substrate;
 pub mod overlay;
 pub mod plan;

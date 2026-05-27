@@ -66,6 +66,9 @@ impl ObsMemClient for ObsMemInMemory {
                 score: "1.0".to_string(),
                 citations: entry.citations.clone(),
                 trace_event_refs: entry.trace_event_refs.clone(),
+                review_findings: entry.review_findings.clone(),
+                residual_risks: entry.residual_risks.clone(),
+                follow_on_refs: entry.follow_on_refs.clone(),
             })
             .collect();
 
@@ -100,6 +103,18 @@ fn sample_request() -> MemoryWriteRequest {
             event_kind: "step_finished".to_string(),
             step_id: Some("s1".to_string()),
             delegation_id: None,
+        }],
+        review_findings: vec![MemoryReviewFinding {
+            id: "finding-001".to_string(),
+            severity: "P2".to_string(),
+            summary: "bounded review fact".to_string(),
+            disposition: "fixed".to_string(),
+        }],
+        residual_risks: vec!["residual risk".to_string()],
+        follow_on_refs: vec![MemoryFollowOnRef {
+            issue_number: 9999,
+            title: "Follow-on".to_string(),
+            status: "planned".to_string(),
         }],
     }
 }
@@ -180,6 +195,23 @@ fn write_request_validation_rejects_citation_and_privacy_violations() {
         .validate()
         .expect_err("token-like content should be blocked");
     assert_eq!(err.code.as_str(), "OBSMEM_PRIVACY_VIOLATION");
+}
+
+#[test]
+fn write_request_validation_rejects_empty_structured_review_and_follow_on_fields() {
+    let mut request = sample_request();
+    request.review_findings[0].summary = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty review finding summary should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+    request.review_findings[0].summary = "bounded review fact".to_string();
+    request.follow_on_refs[0].title = " ".to_string();
+    let err = request
+        .validate()
+        .expect_err("empty follow-on title should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
 }
 
 #[test]

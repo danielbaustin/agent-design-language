@@ -446,6 +446,9 @@ mod tests {
                 step_id: Some("s1".to_string()),
                 delegation_id: None,
             }],
+            review_findings: Vec::new(),
+            residual_risks: Vec::new(),
+            follow_on_refs: Vec::new(),
         }
     }
 

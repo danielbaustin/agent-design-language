@@ -2,6 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::obsmem_indexing::index_run_from_artifacts;
+use crate::obsmem_transition_memory::build_write_request_from_transition_handoff;
 
 use crate::obsmem_contract::{
     MemoryCitation, MemoryQuery, MemoryQueryResult, MemoryWriteAck, MemoryWriteRequest,
@@ -33,6 +34,18 @@ impl<C: ObsMemClient> ObsMemAdapter<C> {
         run_id: &str,
     ) -> Result<MemoryWriteAck, ObsMemContractError> {
         let request = build_write_request_from_run_artifacts(runs_root, run_id)?;
+        self.client.write_entry(&request)
+    }
+
+    /// Build a deterministic memory write request from a tracked C-SDLC
+    /// transition handoff packet and forward it to the configured ObsMem
+    /// client.
+    pub fn index_transition_handoff(
+        &self,
+        repo_root: &Path,
+        handoff_path: &Path,
+    ) -> Result<MemoryWriteAck, ObsMemContractError> {
+        let request = build_write_request_from_transition_handoff(repo_root, handoff_path)?;
         self.client.write_entry(&request)
     }
 
@@ -121,6 +134,9 @@ pub fn build_write_request_from_run_artifacts(
         tags,
         citations,
         trace_event_refs,
+        review_findings: Vec::new(),
+        residual_risks: Vec::new(),
+        follow_on_refs: Vec::new(),
     };
 
     req.normalize();
@@ -210,6 +226,9 @@ mod tests {
                     score: "1.0".to_string(),
                     citations: e.citations.clone(),
                     trace_event_refs: e.trace_event_refs.clone(),
+                    review_findings: e.review_findings.clone(),
+                    residual_risks: e.residual_risks.clone(),
+                    follow_on_refs: e.follow_on_refs.clone(),
                 })
                 .collect();
             hits.sort_by(|a, b| a.id.cmp(&b.id));
