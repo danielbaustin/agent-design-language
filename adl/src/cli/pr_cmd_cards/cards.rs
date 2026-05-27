@@ -175,10 +175,12 @@ fn plan_card_needs_design_time_refresh(path: &Path) -> Result<bool> {
     }
     let text = fs::read_to_string(path)
         .with_context(|| format!("failed to read SPP at {}", path.display()))?;
+    let legacy_design_time_ready =
+        text.contains("activation_state: \"design_time_ready\"") && !text.contains("card_status:");
     Ok(text.contains("Bootstrap-generated SPP")
         || text.contains("Bootstrap planning surface for this issue")
         || text.contains("Review the issue bundle and tighten the planned execution sequence.")
-        || text.contains("activation_state: \"design_time_ready\""))
+        || legacy_design_time_ready)
 }
 
 fn prompt_surface_needs_template_refresh(path: &Path) -> Result<bool> {

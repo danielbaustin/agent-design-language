@@ -1054,6 +1054,200 @@ fn pre_run_bootstrap_cards_preserve_not_bound_yet_template_truth() {
 }
 
 #[test]
+fn pre_run_bootstrap_cards_preserve_reviewed_design_time_ready_spp() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-pre-run-preserve-reviewed-spp");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        3392,
+        "v0.91.4".to_string(),
+        "docs-reconcile-sprint-1-closeout-truth-in-milestone-planning-docs".to_string(),
+    )
+    .expect("issue ref");
+    let title = "[v0.91.4][docs] Reconcile Sprint 1 closeout truth in milestone planning docs";
+    write_authored_issue_prompt(&repo, &issue_ref, title);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path)
+        .expect("versioned STP template should render");
+    ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path)
+        .expect("pre-run bootstrap should render versioned templates");
+
+    let spp_path = issue_ref.task_bundle_plan_path(&repo);
+    let reviewed_spp = r#"---
+schema_version: "0.1"
+artifact_type: "structured_planning_prompt"
+name: "docs-reconcile-sprint-1-closeout-truth-in-milestone-planning-docs-execution-plan"
+issue: 3392
+task_id: "issue-3392"
+run_id: "issue-3392"
+version: "v0.91.4"
+title: "[v0.91.4][docs] Reconcile Sprint 1 closeout truth in milestone planning docs"
+branch: "not bound yet"
+generated_at: "2026-05-26T22:36:52Z"
+card_status: "ready"
+status: "approved"
+activation_state: "design_time_ready"
+plan_revision: 2
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/danielbaustin/agent-design-language/issues/3392"
+scope:
+  files:
+    - "docs/milestones/v0.91.4/README.md"
+  components:
+    - "docs-reconcile-sprint-1-closeout-truth-in-milestone-planning-docs"
+  out_of_scope:
+    - "Do not widen scope."
+constraints:
+  - "design_time_plan_must_be_reviewed_before_execution"
+confidence: "medium"
+plan_summary: "Reviewed planning surface for Sprint 1 closeout truth repair."
+assumptions:
+  - "Sprint 1 issue membership is already fixed."
+proposed_steps:
+  - id: "step-1"
+    description: "Update the milestone docs to reflect closed Sprint 1 truth."
+    expected_output: "tracked docs updates"
+    allowed_mode: "execution_after_approval"
+codex_plan:
+  - step: "Update the milestone docs to reflect closed Sprint 1 truth."
+    status: "pending"
+affected_areas:
+  - "docs/milestones/v0.91.4"
+invariants_to_preserve:
+  - "Keep Sprint 1 membership unchanged."
+risks_and_edge_cases:
+  - "Do not regress later sprint readiness text."
+test_strategy:
+  - "Run focused docs-only validation."
+execution_handoff: "Use this reviewed plan as the design-time plan-of-record."
+required_permissions:
+  - "workspace-write after execution approval"
+stop_conditions:
+  - "Stop if the docs fix widens into other milestone cleanup."
+alternatives_considered:
+  - description: "Leave stale docs in place."
+    reason_not_chosen: "That would keep milestone status truth drift."
+review_hooks:
+  - "Check docs status truth and downstream sequencing clarity."
+notes: "Reviewed card should remain stable across pre-run bootstrap."
+---
+
+Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`
+
+# Structured Plan Prompt
+
+## Plan Summary
+
+Reviewed planning surface for Sprint 1 closeout truth repair.
+
+## Codex Plan
+
+1. [pending] Update the milestone docs to reflect closed Sprint 1 truth.
+
+## Assumptions
+
+- Sprint 1 issue membership is already fixed.
+
+## Proposed Steps
+
+1. Update the milestone docs to reflect closed Sprint 1 truth.
+
+## Affected Areas
+
+- docs/milestones/v0.91.4
+
+## Invariants To Preserve
+
+- Keep Sprint 1 membership unchanged.
+
+## Risks And Edge Cases
+
+- Do not regress later sprint readiness text.
+
+## Test Strategy
+
+- Run focused docs-only validation.
+
+## Execution Handoff
+
+Use this reviewed plan as the design-time plan-of-record.
+
+## Stop Conditions
+
+- Stop if the docs fix widens into other milestone cleanup.
+
+## Notes
+
+Reviewed card should remain stable across pre-run bootstrap.
+"#;
+    fs::write(&spp_path, reviewed_spp).expect("write reviewed spp");
+
+    ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path)
+        .expect("reviewed SPP should survive pre-run bootstrap");
+    let reread = fs::read_to_string(&spp_path).expect("read spp after bootstrap");
+
+    assert!(reread.contains("card_status: \"ready\""));
+    assert!(reread.contains("status: \"approved\""));
+    assert!(reread.contains("activation_state: \"design_time_ready\""));
+    assert!(reread.contains("Reviewed card should remain stable across pre-run bootstrap."));
+}
+
+#[test]
+fn versioned_bootstrap_refreshes_mixed_format_design_time_ready_spp() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-refresh-mixed-format-spp");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        3394,
+        "v0.91.4".to_string(),
+        "tools-mixed-format-design-time-ready-spp".to_string(),
+    )
+    .expect("issue ref");
+    let title = "[v0.91.4][tools] Mixed-format design-time-ready SPP";
+    write_authored_issue_prompt(&repo, &issue_ref, title);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_bootstrap_cards(&repo, &issue_ref, title, "not bound yet", &source_path)
+        .expect("bootstrap cards");
+    let spp_path = issue_ref.task_bundle_plan_path(&repo);
+    fs::write(
+        &spp_path,
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_planning_prompt"
+issue: 3394
+branch: "not bound yet"
+status: "approved"
+activation_state: "design_time_ready"
+---
+
+Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`
+
+# Structured Plan Prompt
+
+## Plan Summary
+
+Mixed-format legacy SPP that still lacks card-status truth.
+"#,
+    )
+    .expect("write mixed-format spp");
+
+    ensure_bootstrap_cards(&repo, &issue_ref, title, "not bound yet", &source_path)
+        .expect("mixed-format legacy SPP should be refreshed");
+    let reread = fs::read_to_string(&spp_path).expect("read refreshed spp");
+
+    assert!(reread.contains("card_status:"));
+    assert!(!reread.contains("Mixed-format legacy SPP that still lacks card-status truth."));
+}
+
+#[test]
 fn versioned_spp_summarizes_source_prompt_sections_into_execution_plan() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-versioned-spp-sections");
