@@ -65,12 +65,12 @@ Present:
 - `pip`: `26.1.1`
 - upstream repo clone succeeded
 
-Missing at time of check:
+Missing at time of the initial `WC-PRE-01` check:
 
 - benchmark image `wildclawbench-codex-ubuntu:v0.0`
 - Hugging Face `workspace/` payload
-- `OPENROUTER_API_KEY`
-- `BRAVE_API_KEY`
+- `BENCHMARK_PROVIDER_KEY`
+- `BENCHMARK_SEARCH_KEY`
 - helper tools:
   - `hf`
   - `yt-dlp`
@@ -78,20 +78,20 @@ Missing at time of check:
   - `gdown`
   - `modelscope`
 
-## Blocker Classification
+## Initial Blocker Classification
 
-Current blockers are primarily setup and environment blockers, with one
-credential/harness blocker:
+At the time of the initial setup reconnaissance, the blockers were primarily
+setup and environment blockers, with one credential/harness blocker:
 
 - `setup_blocker`: required helper tooling is not installed
 - `artifact_blocker`: workspace payload is not downloaded
 - `artifact_blocker`: benchmark Docker image is not loaded
-- `credential_blocker`: `OPENROUTER_API_KEY` is not configured for the codex
+- `credential_blocker`: `BENCHMARK_PROVIDER_KEY` is not configured for the codex
   harness path
-- `credential_blocker`: `BRAVE_API_KEY` is not configured for search tasks
+- `credential_blocker`: `BENCHMARK_SEARCH_KEY` is not configured for search tasks
 
-No ADL runtime defect was observed yet because execution did not reach the task
-run stage.
+No ADL runtime defect was observed at that stage because execution had not yet
+reached the task run stage.
 
 ## Initial Representative Smoke Subset
 
@@ -115,9 +115,9 @@ Rationale:
 - includes one task likely to expose environment friction early
 - avoids claiming representativeness from only one easy category
 
-## Smallest Honest Next Run
+## Smallest Honest First Run
 
-Once the setup blockers are cleared, the smallest honest first run should be a
+For the initial setup-baseline stage, the smallest honest first run was a
 single codex-harness task, not a batch:
 
 ```bash
@@ -130,7 +130,7 @@ Why this task first:
 - safety-sensitive behavior is central to ADL substrate claims
 - it avoids pretending a full representative batch already ran
 
-This is still only a first smoke run, not a benchmark result.
+That was still only a first smoke run, not a benchmark result.
 
 ## Commands Run For This Baseline
 
@@ -153,10 +153,12 @@ This is still only a first smoke run, not a benchmark result.
   - reviewed backend, task, and credential expectations
 - `docker image inspect wildclawbench-codex-ubuntu:v0.0 >/dev/null 2>&1 && echo IMAGE_PRESENT || echo IMAGE_MISSING`
   - checked required codex benchmark image presence
-- `[ -n "${OPENROUTER_API_KEY:-}" ] && echo OPENROUTER_KEY_SET || echo OPENROUTER_KEY_MISSING`
-  - checked model-provider credential availability
-- `[ -n "${BRAVE_API_KEY:-}" ] && echo BRAVE_KEY_SET || echo BRAVE_KEY_MISSING`
-  - checked search credential availability
+- `[ -n "${BENCHMARK_PROVIDER_KEY:-}" ] && echo PROVIDER_KEY_SET || echo PROVIDER_KEY_MISSING`
+  - checked model-provider credential availability using a generic local
+    placeholder name
+- `[ -n "${BENCHMARK_SEARCH_KEY:-}" ] && echo SEARCH_KEY_SET || echo SEARCH_KEY_MISSING`
+  - checked search credential availability using a generic local placeholder
+    name
 - `[ -d workspace ] && echo WORKSPACE_PRESENT || echo WORKSPACE_MISSING`
   - checked task payload download state inside the cloned WildClawBench checkout
 - `for bin in hf yt-dlp ffmpeg gdown modelscope; do ...; done`
@@ -164,8 +166,9 @@ This is still only a first smoke run, not a benchmark result.
 
 ## Outcome
 
-`WC-PRE-01` currently ends as a truthful blocked setup baseline, not a smoke
-run result.
+`WC-PRE-01` ended as a truthful blocked setup baseline, not a smoke run result.
 
-The benchmark lane can continue once the image, workspace, helper tools, and
-required credentials are available.
+That blocker state was later cleared well enough to run Codex safety tasks from
+a stable host path. The current WildClawBench blocker is no longer basic
+environment setup. The current blocker is that we do not yet have an honest ADL
+benchmark subject for a real `UTS`-only versus `UTS+ACC` comparison.
