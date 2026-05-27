@@ -177,6 +177,7 @@ The likely `v0.92` tranche is:
 - Release plan: [RELEASE_PLAN_v0.92.md](RELEASE_PLAN_v0.92.md)
 - Release notes: [RELEASE_NOTES_v0.92.md](RELEASE_NOTES_v0.92.md)
 - Feature plans: [features/README.md](features/README.md)
+- ADR plan: [ADR_PLAN_v0.92.md](ADR_PLAN_v0.92.md)
 - Identity, continuity, and birthday allocation:
   [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md)
 - First-birthday readiness source issue:
@@ -185,6 +186,10 @@ The likely `v0.92` tranche is:
   [ACP_COGNITIVE_PROFILES_v0.92.md](features/ACP_COGNITIVE_PROFILES_v0.92.md)
 - ACIP binary schema and WebSocket transport:
   [ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md](features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md)
+- Cross-polis continuity and migration planning:
+  [CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md](features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md)
+- First-birthday demo and governance handoff:
+  [FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md](features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md)
 - Identity, stable name, and continuity:
   [IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md](features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md)
 - Memory grounding, capability, and witnesses:
@@ -239,3 +244,5 @@ This planning package is ready for v0.92 WP-01 when:
 - the feature docs validate against the feature-doc template
 - the candidate issue wave parses and preserves the release-tail sequence
 - `#3377` is explicitly consumed, routed, or marked as a WP-01 prerequisite
+- the ADR plan identifies v0.92 architecture decisions for WP-01 and review-tail
+  follow-through

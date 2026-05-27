@@ -42,7 +42,9 @@ scope, validation, risks, and future-work boundary.
 ## Overview
 
 The package covers birthday, identity/continuity, memory/capability/witnesses,
-ACP/cognitive profiles, and ACIP binary/schema-catalog transport readiness.
+ACP/cognitive profiles, ACIP binary/schema-catalog transport readiness,
+cross-polis continuity planning, and the first-birthday demo/governance
+handoff.
 
 ## Design
 
@@ -96,6 +98,23 @@ This index intentionally keeps `#3377` visible as a launch-readiness source.
 
 - [ACP_COGNITIVE_PROFILES_v0.92.md](ACP_COGNITIVE_PROFILES_v0.92.md)
 - [ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md](ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md)
+- [CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md](CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md)
+- [FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md](FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md)
 - [IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md](IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md)
 - [MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md](MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md)
 - [FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md](FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md)
+
+## WP Coverage Map
+
+| Candidate WPs | Feature coverage |
+| --- | --- |
+| WP-02, WP-09, WP-10 | [FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md](FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md) |
+| WP-03, WP-04 | [IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md](IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md) |
+| WP-05, WP-06, WP-09 | [MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md](MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md) |
+| WP-07 | [ACP_COGNITIVE_PROFILES_v0.92.md](ACP_COGNITIVE_PROFILES_v0.92.md) |
+| WP-08 | [ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md](ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md) |
+| WP-11 | [CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md](CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md) |
+| WP-12, WP-13, WP-14 | [FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md](FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md) |
+
+Review, quality, docs, remediation, next-milestone planning, and ceremony WPs
+are release/process work rather than standalone product features.

@@ -57,6 +57,10 @@ and editor work.
   `docs/templates/planning/1.0.0`.
 - Normalized the v0.92 feature-doc package against the active `feature_doc`
   template.
+- Added missing feature contracts for cross-polis continuity/migration planning
+  and first-birthday demo/governance handoff coverage.
+- Added `ADR_PLAN_v0.92.md` so WP-01 and the review tail can track candidate
+  architecture decisions explicitly.
 - Ran focused structural validation for every canonical planning doc and every
   v0.92 feature doc.
 

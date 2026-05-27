@@ -8,6 +8,7 @@ notes:
   - v0.92 is the first true Godel-agent birthday milestone.
   - This file is a candidate issue-wave preflight surface, not an opened GitHub issue wave.
   - WP-01 must consume issue 3377 before seeding the final issue wave.
+  - WP-01 must verify the v0.92 feature-doc package and ADR plan before opening implementation WPs.
   - No v0.92 issue should claim legal personhood, production citizenship, consciousness proof, or completed v0.93 constitutional governance.
   - All opened v0.92 issues must receive SIP, STP, SPP, SRP, and SOR cards from the active prompt-template registry.
 card_update_rule:
@@ -22,8 +23,8 @@ work_packages:
     title: Design pass and issue-wave readiness
     queue: docs
     depends_on: [v0.91.4 closeout, issue-3377]
-    primary_deliverable: reviewed v0.92 docs, opened issue wave, and complete card bundle
-    proof_surface: milestone docs, issue-wave YAML, and SIP/STP/SPP/SRP/SOR cards
+    primary_deliverable: reviewed v0.92 docs, verified feature-doc package, ADR plan, opened issue wave, and complete card bundle
+    proof_surface: milestone docs, feature docs, ADR plan, issue-wave YAML, and SIP/STP/SPP/SRP/SOR cards
   - wp: WP-02
     issue: pending
     title: Birthday contract and negative cases
@@ -92,22 +93,22 @@ work_packages:
     title: Migration and cross-polis continuity planning
     queue: docs
     depends_on: [WP-03, WP-04, WP-10]
-    primary_deliverable: bounded continuity/migration design note
-    proof_surface: design note and explicit non-goals
+    primary_deliverable: bounded continuity/migration feature note and design note
+    proof_surface: cross-polis continuity feature doc, design note, and explicit non-goals
   - wp: WP-12
     issue: pending
     title: First birthday demo
     queue: demo_tools
     depends_on: [WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10]
     primary_deliverable: runnable first-birthday proof demo and negative suite
-    proof_surface: demo artifacts, negative-case report, and reviewer packet
+    proof_surface: first-birthday demo feature doc, demo artifacts, negative-case report, and reviewer packet
   - wp: WP-13
     issue: pending
     title: Birthday-to-governance handoff
     queue: docs
     depends_on: [WP-10, WP-11, v0.93 allocation]
     primary_deliverable: v0.93 governance handoff map
-    proof_surface: identity-evidence to governance-consumption mapping
+    proof_surface: identity-evidence to governance-consumption mapping and ADR-plan update
   - wp: WP-14
     issue: pending
     title: Demo matrix and proof coverage
@@ -127,8 +128,8 @@ work_packages:
     title: Docs and release-truth pass
     queue: docs
     depends_on: [WP-15]
-    primary_deliverable: current docs, release notes, feature list, and milestone docs
-    proof_surface: docs-review packet and release-truth diff
+    primary_deliverable: current docs, release notes, feature list, ADR plan, and milestone docs
+    proof_surface: docs-review packet, ADR candidate packet if needed, and release-truth diff
   - wp: WP-17
     issue: pending
     title: Internal review

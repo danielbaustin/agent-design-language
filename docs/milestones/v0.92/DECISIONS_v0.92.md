@@ -37,6 +37,7 @@ one of them, record a superseding decision instead of silently widening scope.
 | D-07 | ACP / cognitive profiles belong in v0.92 as an evidence-grounded runtime profile surface. | Accepted for planning | Profiles need v0.91.1 capability, memory, ToM, intelligence, and learning evidence before they are meaningful. | Keeps profiles tied to identity readiness without turning them into reputation, personality labels, or public standing. |
 | D-08 | v0.92 owns ACIP binary schema, public schema catalog, JSON projection, and mock WebSocket carrier readiness. | Accepted for planning | ACIP is already a local communication substrate, but citizen/polis communication needs a binary/protobuf shape that remains publicly decodeable by schema and governed by access rules. | Keeps the communication layer inspectable while deferring production transport security to v0.93 and signed/queryable trace closure to v0.94. |
 | D-09 | v0.92 WP-01 must consume `#3377` before seeding final issues. | Accepted for planning | First-birthday readiness was promoted during v0.91.4 as a separate launch-packet source. | Prevents the milestone from reconstructing birthday readiness from chat or duplicating the `#3377` packet. |
+| D-10 | v0.92 must carry an ADR plan before implementation starts. | Accepted for planning | Birthday, identity, ACP, ACIP, and governance-handoff boundaries are architecture decisions, not just feature prose. | WP-01 and the review tail can decide which candidate ADRs to author, split, accept, or defer. |
 
 ## Open Questions
 

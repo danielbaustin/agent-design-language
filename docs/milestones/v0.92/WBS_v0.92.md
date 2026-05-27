@@ -44,12 +44,12 @@ milestones.
 | WP-08 | ACIP binary schema and WebSocket carrier | Define protobuf ACIP wire schema, public schema catalog, deterministic JSON projection, and optional binary ACIP-over-WebSocket mock proof. | ACIP `.proto`, schema catalog rules, JSON/protobuf fixtures, mock WebSocket carrier proof. | ACIP substrate and trace/replay baseline. |
 | WP-09 | Birth witnesses and receipts | Define witness set and citizen-facing receipt for the birthday event. | Witness schema, receipt schema, validation. | WP-03 through WP-06. |
 | WP-10 | Birthday review packet | Assemble identity, continuity, memory, capability, witness, and moral context into one review surface. | Reviewer packet and fixture. | WP-02 through WP-09. |
-| WP-11 | Migration and cross-polis continuity planning | Define bounded design notes for future movement without production migration claims. | Design note and non-goals. | WP-03, WP-04, WP-10. |
-| WP-12 | First birthday demo | Build a flagship demo showing a real birthday record and negative cases. | Runnable proof demo and artifacts. | WP-02 through WP-10. |
-| WP-13 | Birthday-to-governance handoff | Produce the evidence map v0.93 governance will consume. | Handoff packet mapping identity evidence to governance. | WP-10, WP-11, v0.93 allocation. |
+| WP-11 | Migration and cross-polis continuity planning | Define bounded design notes for future movement without production migration claims. | Cross-polis continuity feature note, design note, and non-goals. | WP-03, WP-04, WP-10. |
+| WP-12 | First birthday demo | Build a flagship demo showing a real birthday record and negative cases. | Runnable proof demo and artifacts linked to the first-birthday demo feature doc. | WP-02 through WP-10. |
+| WP-13 | Birthday-to-governance handoff | Produce the evidence map v0.93 governance will consume. | Handoff packet mapping identity evidence to governance and ADR-plan updates. | WP-10, WP-11, v0.93 allocation. |
 | WP-14 | Demo matrix and proof coverage | Align demos with milestone claims. | Demo matrix rows, commands, artifacts, and validation notes. | WP-12, WP-13. |
 | WP-15 | Quality gate | Validate implementation, fixtures, docs, and claim boundaries. | Quality-gate record and blocker disposition. | WP-14. |
-| WP-16 | Docs and release-truth pass | Align README, changelog, feature list, release notes, and milestone docs. | Docs review packet and updated release docs. | WP-15. |
+| WP-16 | Docs and release-truth pass | Align README, changelog, feature list, ADR plan, release notes, and milestone docs. | Docs review packet, ADR candidate packet if needed, and updated release docs. | WP-15. |
 | WP-17 | Internal review | Run internal code/docs/tests/process review. | Internal review report and finding register. | WP-16. |
 | WP-18 | External / third-party review | Prepare and run external review. | External review handoff and received review packet. | WP-17. |
 | WP-19 | Review findings remediation | Fix or route review findings. | Finding disposition record and remediation PRs. | WP-18. |
@@ -126,3 +126,6 @@ Before opening v0.92 issues, WP-01 must:
 - WP-01 can use this document and `WP_ISSUE_WAVE_v0.92.yaml` without
   reconstructing work packages from chat.
 - Every candidate implementation WP names a reviewable deliverable.
+- Every feature-like implementation tranche has a tracked feature doc or an
+  explicit reason it is release/review/process work instead.
+- v0.92 ADR candidates are planned before review-tail execution.
