@@ -6,6 +6,11 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use anyhow::{Context, Result};
+use serde_json::Value;
+
+use crate::model_identity::{
+    normalize_sha256_digest, observed_at_now_v1, ModelIdentityStrengthV1, ModelIdentityV1,
+};
 
 use super::types::{
     OllamaPsEntry, UtsAccBenchmarkConditions, UtsAccBenchmarkModelResult,
@@ -62,6 +67,59 @@ pub(crate) fn provider_id_for_host(host: &str) -> &'static str {
         REMOTE_PROVIDER_ID
     } else {
         LOCAL_PROVIDER_ID
+    }
+}
+
+fn digest_from_ollama_show_json(body: &str) -> Option<String> {
+    let value: Value = serde_json::from_str(body).ok()?;
+    value
+        .get("digest")
+        .and_then(Value::as_str)
+        .and_then(normalize_sha256_digest)
+        .or_else(|| {
+            value
+                .get("details")
+                .and_then(|details| details.get("digest"))
+                .and_then(Value::as_str)
+                .and_then(normalize_sha256_digest)
+        })
+}
+
+pub(crate) fn resolve_ollama_model_digest(model: &str) -> Option<String> {
+    let output = Command::new(ollama_bin())
+        .args(["show", "--json", model])
+        .output()
+        .ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    digest_from_ollama_show_json(&String::from_utf8_lossy(&output.stdout))
+}
+
+pub(crate) fn local_model_identity(model: &str) -> ModelIdentityV1 {
+    let host = current_ollama_host();
+    let resolved_digest = resolve_ollama_model_digest(model);
+    ModelIdentityV1 {
+        provider_kind: "ollama".to_string(),
+        provider: provider_id_for_host(&host).to_string(),
+        model_ref: model.to_string(),
+        provider_model_id: model.to_string(),
+        runtime_surface: provider_transport_label(&host).to_string(),
+        identity_strength: if resolved_digest.is_some() {
+            ModelIdentityStrengthV1::Pinned
+        } else {
+            ModelIdentityStrengthV1::TagOnly
+        },
+        observed_at: observed_at_now_v1(),
+        resolved_digest,
+        source_registry: Some(host),
+        runtime_fingerprint: None,
+        inference_parameter_fingerprint: Some("temperature=provider_default".to_string()),
+        tool_surface: Some("uts.v1.1".to_string()),
+        governance_surface: Some("acc.v1.1".to_string()),
+        evaluator_ref: Some("uts_acc_multi_model_evaluator.v1".to_string()),
+        lane_ref: Some("uts_acc_governed.v1".to_string()),
+        benchmark_ref: Some("uts_acc_multi_model_benchmark.v1".to_string()),
     }
 }
 
@@ -272,6 +330,7 @@ pub(crate) fn skipped_model_result(
         candidate_id: format!("local.{model}"),
         run_status: UtsAccMultiModelRunStatus::Skipped,
         skip_reason: Some(reason),
+        model_identity: local_model_identity(model),
         conditions: UtsAccBenchmarkConditions {
             provider_id: provider_id_for_host(&host).to_string(),
             model_id: model.to_string(),

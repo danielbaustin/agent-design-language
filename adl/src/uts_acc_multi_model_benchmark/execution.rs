@@ -3,11 +3,15 @@ use std::io;
 use std::path::Path;
 
 use crate::local_gemma_model_evaluation::default_local_gemma_models;
+use crate::model_identity::{
+    stable_text_digest_v1, BenchmarkIdentityV1, EvaluatorIdentityV1, LaneIdentityV1, LaneKindV1,
+};
 
 use super::evaluation::{evaluate_task, scorecard_for};
 use super::runtime::{
     append_progress_line, build_local_ollama_provider, current_ollama_host,
-    local_runtime_busy_reason, model_unavailable_reason, provider_complete_with_retries,
+    local_model_identity, local_runtime_busy_reason, model_unavailable_reason,
+    provider_complete_with_retries,
     provider_id_for_host, provider_transport_label, resolve_models, skipped_model_result,
 };
 use super::task_fixtures::{benchmark_tasks, prompt_record};
@@ -15,6 +19,7 @@ use super::types::{
     UtsAccBenchmarkConditions, UtsAccBenchmarkModelResult, UtsAccBenchmarkTaskFixture,
     UtsAccMultiModelBenchmarkEvidenceStatus, UtsAccMultiModelBenchmarkReport,
     UtsAccMultiModelRunStatus, UTS_ACC_MULTI_MODEL_BENCHMARK_SCHEMA_VERSION,
+    UTS_ACC_MULTI_MODEL_BENCHMARK_RUNNER_VERSION,
 };
 
 pub(crate) fn model_result_for(
@@ -43,6 +48,7 @@ pub(crate) fn model_result_for(
                 candidate_id: format!("local.{model}"),
                 run_status: UtsAccMultiModelRunStatus::Skipped,
                 skip_reason: Some(format!("provider unavailable: {error:#}")),
+                model_identity: local_model_identity(model),
                 conditions,
                 scorecard: None,
                 cases: Vec::new(),
@@ -118,10 +124,57 @@ pub(crate) fn model_result_for(
         candidate_id: format!("local.{model}"),
         run_status: UtsAccMultiModelRunStatus::Evaluated,
         skip_reason: None,
+        model_identity: local_model_identity(model),
         conditions,
         scorecard: Some(scorecard),
         cases,
         failure_notes,
+    }
+}
+
+fn evaluator_identity() -> EvaluatorIdentityV1 {
+    EvaluatorIdentityV1 {
+        evaluator_ref: "uts_acc_multi_model_evaluator".to_string(),
+        evaluator_version: "1.0.0".to_string(),
+        prompt_contract_version: super::UTS_ACC_MULTI_MODEL_BENCHMARK_PROMPT_VERSION.to_string(),
+        classifier_version: "uts_acc_classification.v1".to_string(),
+    }
+}
+
+fn lane_identities() -> Vec<LaneIdentityV1> {
+    vec![LaneIdentityV1 {
+        lane_ref: "uts_acc_governed.v1".to_string(),
+        lane_kind: LaneKindV1::UtsAccGoverned,
+        contract_version: "uts.v1.1+acc.v1.1".to_string(),
+    }]
+}
+
+fn benchmark_identity(
+    tasks: &[UtsAccBenchmarkTaskFixture],
+    selected_models: &[String],
+) -> BenchmarkIdentityV1 {
+    let task_parts = tasks
+        .iter()
+        .flat_map(|task| {
+            [
+                task.record.id,
+                task.record.scenario,
+                task.record.expected_behavior,
+            ]
+        })
+        .collect::<Vec<_>>();
+    let model_parts = selected_models.iter().map(String::as_str).collect::<Vec<_>>();
+    BenchmarkIdentityV1 {
+        benchmark_ref: "uts_acc_multi_model_benchmark".to_string(),
+        benchmark_version: UTS_ACC_MULTI_MODEL_BENCHMARK_SCHEMA_VERSION.to_string(),
+        task_panel_digest: stable_text_digest_v1(&task_parts),
+        model_panel_digest: stable_text_digest_v1(&model_parts),
+        runner_version: UTS_ACC_MULTI_MODEL_BENCHMARK_RUNNER_VERSION.to_string(),
+        contract_lock_digest: stable_text_digest_v1(&[
+            super::UTS_ACC_MULTI_MODEL_BENCHMARK_PROMPT_VERSION,
+            "uts.v1.1",
+            "acc.v1.1",
+        ]),
     }
 }
 
@@ -170,6 +223,9 @@ pub fn run_uts_acc_multi_model_benchmark_with_models(
     UtsAccMultiModelBenchmarkReport {
         schema_version: UTS_ACC_MULTI_MODEL_BENCHMARK_SCHEMA_VERSION,
         prompt_record: prompt_record(),
+        benchmark_identity: benchmark_identity(&tasks, &selected_models),
+        evaluator_identity: evaluator_identity(),
+        lane_identities: lane_identities(),
         evidence_status,
         selection_source,
         selected_models,
@@ -225,6 +281,13 @@ pub fn render_summary(report: &UtsAccMultiModelBenchmarkReport) -> String {
         lines.push(format!("## {}", model.candidate_id));
         lines.push(String::new());
         lines.push(format!("- run status: `{:?}`", model.run_status));
+        lines.push(format!(
+            "- identity strength: `{:?}`",
+            model.model_identity.identity_strength
+        ));
+        if let Some(digest) = &model.model_identity.resolved_digest {
+            lines.push(format!("- resolved digest: `{digest}`"));
+        }
         if let Some(reason) = &model.skip_reason {
             lines.push(format!("- skip reason: {}", reason));
         }

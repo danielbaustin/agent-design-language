@@ -14,6 +14,7 @@ Feature docs:
 - [Sprint Conductor Default C-SDLC Lane](SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md)
 - [Five-Minute Sprint Repeatability](FIVE_MINUTE_SPRINT_REPEATABILITY.md)
 - [Parallel Validation Fabric](PARALLEL_VALIDATION_FABRIC.md)
+- [Model Identity And Execution Identity](MODEL_IDENTITY_AND_EXECUTION_IDENTITY.md)
 - [Active Issue Migration Policy](ACTIVE_ISSUE_MIGRATION_POLICY.md)
 - [Process Drift Regression Fixtures](PROCESS_DRIFT_REGRESSION_FIXTURES.md)
 

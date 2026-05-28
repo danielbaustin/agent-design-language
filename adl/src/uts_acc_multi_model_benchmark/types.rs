@@ -1,5 +1,9 @@
 use serde::{Deserialize, Serialize};
 
+use crate::model_identity::{
+    BenchmarkIdentityV1, EvaluatorIdentityV1, LaneIdentityV1, ModelIdentityV1,
+};
+
 pub const UTS_ACC_MULTI_MODEL_BENCHMARK_REPORT_ARTIFACT_PATH: &str =
     "docs/milestones/v0.91.2/review/uts_acc_multi_model_benchmark_report.json";
 pub const UTS_ACC_MULTI_MODEL_BENCHMARK_SUMMARY_ARTIFACT_PATH: &str =
@@ -16,6 +20,8 @@ pub(crate) const TOOL_PROPOSAL_MODE: &str = "adl_json_proposal";
 pub(crate) const PROVIDER_COMPLETE_MAX_ATTEMPTS: usize = 1;
 pub(crate) const PROVIDER_RETRY_DELAY_MILLIS: u64 = 1500;
 pub(crate) const DEFAULT_TASK_PANEL_PATH: &str = "tools/benchmark/uts_33_task_panel.json";
+pub(crate) const UTS_ACC_MULTI_MODEL_BENCHMARK_RUNNER_VERSION: &str =
+    "uts_acc_multi_model_benchmark_runner.v1.2";
 
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct TaskPanelFile {
@@ -132,6 +138,7 @@ pub struct UtsAccBenchmarkModelResult {
     pub candidate_id: String,
     pub run_status: UtsAccMultiModelRunStatus,
     pub skip_reason: Option<String>,
+    pub model_identity: ModelIdentityV1,
     pub conditions: UtsAccBenchmarkConditions,
     pub scorecard: Option<UtsAccBenchmarkScorecard>,
     pub cases: Vec<UtsAccBenchmarkTaskResult>,
@@ -148,6 +155,9 @@ pub(crate) struct OllamaPsEntry {
 pub struct UtsAccMultiModelBenchmarkReport {
     pub schema_version: &'static str,
     pub prompt_record: UtsAccMultiModelBenchmarkPromptRecord,
+    pub benchmark_identity: BenchmarkIdentityV1,
+    pub evaluator_identity: EvaluatorIdentityV1,
+    pub lane_identities: Vec<LaneIdentityV1>,
     pub evidence_status: UtsAccMultiModelBenchmarkEvidenceStatus,
     pub selection_source: UtsAccMultiModelSelectionSource,
     pub selected_models: Vec<String>,
