@@ -2,9 +2,9 @@
 
 ## Status
 
-The remaining unpromoted entries in this file are proposed decisions extracted
-from the v0.90 architecture packet. They are not accepted ADRs until reviewed
-and promoted.
+The unpromoted entries in this file are proposed decisions from the source
+packets named in each section. They are not accepted ADRs until reviewed and
+promoted into `docs/adr/`.
 
 ## Candidate 0001: Trace And Artifacts As Runtime Truth
 
@@ -72,3 +72,26 @@ copies for provenance.
 | ADR 0026 | `../../adr/0026-repo-visibility-manifest-linkage-layer.md` | Repo visibility is manifest/linkage support, not full repo cognition. |
 | ADR 0027 | `../../adr/0027-governed-code-modernization-moderne-openrewrite-lst.md` | Modernization remains dry-run/review/approval bounded. |
 | ADR 0028 | `../../adr/0028-c-sdlc-tracked-workflow-state-and-signed-trace.md` | C-SDLC durable workflow truth becomes tracked and signed-trace-backed. |
+
+## v0.91.4 Candidate ADR Packet
+
+These candidate records were created for the v0.91.4 C-SDLC completion pass.
+They are proposed decisions only. They should not be treated as accepted until
+reviewed and promoted into `docs/adr/`.
+
+| Candidate | Source focus | Summary |
+| --- | --- | --- |
+| [ADR 0029](0029-c-sdlc-default-software-development-lane.md) | C-SDLC default operation | C-SDLC becomes the default ADL software-development lane once v0.91.4 completion evidence supports the claim. |
+| [ADR 0030](0030-software-development-polis-actor-standing-and-shard-ownership.md) | Actor standing and shard ownership | C-SDLC work is governed as a software-development polis with bounded actor standing, shard ownership, and interface-freeze rules. |
+| [ADR 0031](0031-c-sdlc-multi-agent-parallel-execution-boundary.md) | Multi-agent parallel execution | Multi-agent C-SDLC execution is allowed only behind conductor-owned shard, review, merge, and closeout boundaries. |
+| [ADR 0032](0032-parallel-validation-fabric.md) | Parallel Validation Fabric | Validation decomposes into lane-scoped proof without hiding failed, pending, deferred, or blocked evidence. |
+| [ADR 0033](0033-merge-readiness-and-pr-gate-truth-boundary.md) | Merge readiness and PR gates | Merge readiness is a convergence boundary across issue, branch, PR, CI, review, evidence, trace, and closeout truth. |
+| [ADR 0034](0034-c-sdlc-evidence-convergence-signed-trace-and-obsmem-handoff.md) | Evidence convergence and memory handoff | C-SDLC durable proof links SRP/SOR evidence, signed trace verification, review synthesis, and ObsMem handoff. |
+
+Deferred or folded candidates:
+
+- Active issue migration remains a v0.91.4 operational policy surface unless a
+  later review decides it needs a standalone accepted architecture decision.
+- CodeFriend pre-alpha publication remains covered by ADR 0025 and current
+  sidecar milestone planning unless a future product-boundary change requires a
+  separate ADR.
