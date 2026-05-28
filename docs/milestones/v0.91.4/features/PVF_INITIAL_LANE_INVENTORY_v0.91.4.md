@@ -45,7 +45,7 @@ map instead of an implicit shell-script pile.
 | PR run / issue-mode workflow | `bash adl/tools/test_pr_run_issue_mode.sh` | `cli_workflow` | medium | ordinary PR lane for PR lifecycle tooling | representative issue binding proof |
 | PR finish relative-path guard | `bash adl/tools/test_pr_finish_relative_card_paths.sh` | `cli_workflow` | medium | ordinary PR lane for finish-path changes | catches publication-path regressions |
 | Docs command truth | `bash tools/check_release_notes_commands.sh` | `docs` | low | docs or release-tail PR lane | command-surfaces truth check |
-| Legacy-swarm reference guardrail | `bash adl/tools/check_no_new_legacy_swarm_refs.sh` | `docs` | low | ordinary PR lane when docs/publication language changes | publication-boundary and stale-term guardrail |
+| Stale-term reference guardrail | `bash adl/tools/check_no_new_legacy_swarm_refs.sh` | `docs` | low | ordinary PR lane when docs/publication language changes | publication-boundary and stale-term guardrail |
 | PR closing linkage guardrail | `bash adl/tools/check_pr_closing_linkage.sh` | `docs` | low | ordinary PR lane for issue/PR truth, not only docs changes | issue/PR truth surface |
 | v0.91.3 proof validation lane | `bash adl/tools/run_v0913_proof_validation_lane.sh` | `integration_worktree` | high | not ordinary unless proof surfaces changed | composed milestone proof lane |
 | Demo smoke lane | `bash adl/tools/demo_smoke_v07_story.sh` | `integration_worktree` | medium | conditional ordinary PR lane for demo surfaces | bounded composed demo proof |
