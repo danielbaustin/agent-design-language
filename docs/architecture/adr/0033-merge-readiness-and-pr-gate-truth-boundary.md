@@ -3,7 +3,7 @@
 - Status: Candidate
 - Target milestone: v0.91.4
 - Related issues: #3444
-- Related ADRs: ADR 0024, ADR 0028, ADR 0029 after acceptance
+- Related ADRs: ADR 0024, ADR 0028, Candidate ADR 0029 if accepted
 - Source evidence:
   - `docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md`
   - `docs/tooling/merge_readiness_gate_policy_v0.91.4.md`

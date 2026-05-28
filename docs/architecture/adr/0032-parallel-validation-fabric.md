@@ -3,7 +3,7 @@
 - Status: Candidate
 - Target milestone: v0.91.4
 - Related issues: #3400, #3401, #3402, #3403, #3444
-- Related ADRs: ADR 0024, ADR 0028, ADR 0029 after acceptance
+- Related ADRs: ADR 0024, ADR 0028, Candidate ADR 0029 if accepted
 - Source evidence:
   - `docs/milestones/v0.91.4/features/PARALLEL_VALIDATION_FABRIC.md`
   - `docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_TAXONOMY_v0.91.4.md`

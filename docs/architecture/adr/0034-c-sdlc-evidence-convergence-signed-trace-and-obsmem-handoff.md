@@ -3,7 +3,7 @@
 - Status: Candidate
 - Target milestone: v0.91.4
 - Related issues: #3444
-- Related ADRs: ADR 0002, ADR 0006, ADR 0007, ADR 0028, ADR 0029 after acceptance
+- Related ADRs: ADR 0002, ADR 0006, ADR 0007, ADR 0028, Candidate ADR 0029 if accepted
 - Source evidence:
   - `docs/milestones/v0.91.4/features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md`
   - `docs/milestones/v0.91.4/features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md`
