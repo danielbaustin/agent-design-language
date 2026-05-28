@@ -5,6 +5,7 @@ use serde_json::{json, Value};
 use std::collections::HashMap;
 
 use crate::adl;
+use crate::model_identity::{observed_at_now_v1, ModelIdentityStrengthV1, ModelIdentityV1};
 use crate::provider;
 
 pub const PROVIDER_SUBSTRATE_MANIFEST_SCHEMA: &str = "provider_substrate_manifest.v1";
@@ -72,6 +73,7 @@ pub struct ProviderInvocationTargetV1 {
     pub base_url: Option<String>,
     pub model_ref: String,
     pub provider_model_id: String,
+    pub model_identity: ModelIdentityV1,
     pub capabilities: ProviderCapabilitiesV1,
 }
 
@@ -181,6 +183,25 @@ fn infer_transport(spec: &adl::ProviderSpec) -> Result<ProviderTransportV1> {
         other => Err(anyhow!(
             "unsupported provider kind '{other}' for provider substrate v1"
         )),
+    }
+}
+
+fn transport_surface_label(transport: &ProviderTransportV1) -> &'static str {
+    match transport {
+        ProviderTransportV1::Http => "hosted_http",
+        ProviderTransportV1::LocalCli => "local_cli",
+        ProviderTransportV1::InProcess => "in_process",
+    }
+}
+
+fn model_identity_strength_for_target(
+    vendor: &str,
+    transport: &ProviderTransportV1,
+) -> ModelIdentityStrengthV1 {
+    if vendor == "ollama" || matches!(transport, ProviderTransportV1::LocalCli) {
+        ModelIdentityStrengthV1::TagOnly
+    } else {
+        ModelIdentityStrengthV1::ProviderAsserted
     }
 }
 
@@ -384,10 +405,34 @@ pub fn provider_invocation_target_v1(
         .or_else(|| cfg_str(&spec.config, "model").map(ToString::to_string))
         .unwrap_or_else(|| model_ref.clone());
     let capabilities = provider_capabilities_v1(spec, &transport, &vendor, Some(&model_ref));
+    let provider_id = substrate.provider_id.clone();
+    let provider_kind = substrate.provider_kind.clone();
+    let model_identity = ModelIdentityV1 {
+        provider_kind: provider_kind.clone(),
+        provider: provider_id.clone(),
+        model_ref: model_ref.clone(),
+        provider_model_id: provider_model_id.clone(),
+        runtime_surface: transport_surface_label(&transport).to_string(),
+        identity_strength: model_identity_strength_for_target(&vendor, &transport),
+        observed_at: observed_at_now_v1(),
+        resolved_digest: None,
+        source_registry: substrate
+            .endpoint
+            .clone()
+            .or_else(|| substrate.base_url.clone())
+            .or_else(|| substrate.profile.clone()),
+        runtime_fingerprint: None,
+        inference_parameter_fingerprint: None,
+        tool_surface: None,
+        governance_surface: None,
+        evaluator_ref: None,
+        lane_ref: None,
+        benchmark_ref: None,
+    };
 
     Ok(ProviderInvocationTargetV1 {
-        provider_id: substrate.provider_id,
-        provider_kind: substrate.provider_kind,
+        provider_id,
+        provider_kind,
         vendor: substrate.vendor,
         transport: substrate.transport,
         profile: substrate.profile,
@@ -395,6 +440,7 @@ pub fn provider_invocation_target_v1(
         base_url: substrate.base_url,
         model_ref,
         provider_model_id,
+        model_identity,
         capabilities,
     })
 }
@@ -506,6 +552,11 @@ mod tests {
         let target = provider_invocation_target_v1("p1", &spec, None).expect("target");
         assert_eq!(target.model_ref, "reasoning/default");
         assert_eq!(target.provider_model_id, "gpt-4.1-mini-2026-03-01");
+        assert_eq!(target.model_identity.model_ref, "reasoning/default");
+        assert_eq!(
+            target.model_identity.provider_model_id,
+            "gpt-4.1-mini-2026-03-01"
+        );
     }
 
     #[test]
