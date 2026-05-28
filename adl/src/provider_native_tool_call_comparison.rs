@@ -394,12 +394,13 @@ fn comparison_fixtures() -> Vec<ProviderComparisonFixture> {
 }
 
 fn comparison_entry(fixture: &ProviderComparisonFixture) -> ProviderNativeComparisonEntry {
-    let target = provider_invocation_target_v1(
+    let mut target = provider_invocation_target_v1(
         fixture.provider_id,
         &(fixture.spec)(),
         fixture.model_override,
     )
     .expect("provider-native comparison fixtures should remain normalizable");
+    target.model_identity.observed_at = "unix:0".to_string();
     ProviderNativeComparisonEntry {
         candidate_id: fixture.candidate_id,
         provider_family: fixture.provider_family,

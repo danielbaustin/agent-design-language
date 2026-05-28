@@ -1,0 +1,72 @@
+{
+  "manifest_version": "v0.91.4",
+  "lane_classes": [
+    "contract_schema_card",
+    "docs",
+    "cli_workflow"
+  ],
+  "lanes": {
+    "pvf_manifest_contract": {
+      "lane_class": "contract_schema_card",
+      "owner_surface": "PVF manifest schema and example fixtures",
+      "command": "python3 -m json.tool docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_SCHEMA_v0.91.4.json && python3 -m json.tool docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_EXAMPLE_v0.91.4.json",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        "docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_SCHEMA_v0.91.4.json",
+        "docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_EXAMPLE_v0.91.4.json"
+      ],
+      "evidence_outputs": [
+        "stdout:json_parse_success"
+      ],
+      "timeout_minutes": 2,
+      "requires_credentials": false,
+      "requires_worktree": false,
+      "notes": "Smallest proving lane for PVF schema and example fixtures."
+    },
+    "docs_truth_scan": {
+      "lane_class": "docs",
+      "owner_surface": "Milestone docs and publication-boundary truth",
+      "command": "git diff --check",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        "docs/"
+      ],
+      "evidence_outputs": [
+        "stdout:diff_check_clean"
+      ],
+      "timeout_minutes": 1,
+      "requires_credentials": false,
+      "requires_worktree": false,
+      "notes": "Docs-only hygiene lane."
+    },
+    "sprint_helper_regression": {
+      "lane_class": "cli_workflow",
+      "owner_surface": "Conductor and helper shell workflow behavior",
+      "command": "bash adl/tools/test_sprint_conductor_helpers.sh",
+      "resource_profile": "medium",
+      "determinism": "fixture_bound",
+      "cache_strategy": "local_reuse",
+      "release_gate_class": "release_candidate",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        "adl/tools/skills/sprint-conductor/",
+        "adl/tools/test_sprint_conductor_helpers.sh"
+      ],
+      "evidence_outputs": [
+        "stdout:helper_regression_pass"
+      ],
+      "timeout_minutes": 10,
+      "requires_credentials": false,
+      "requires_worktree": false,
+      "notes": "Representative CLI workflow lane for conductor helper changes."
+    }
+  }
+}

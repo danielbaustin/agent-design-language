@@ -18,6 +18,8 @@ The milestone must run:
 - repeated five-minute-sprint metrics capture, including validation-tail and
   proof-latency measurement
 - explicit Parallel Validation Fabric feature/proof evidence
+- explicit PVF docs-only PR lane proof showing that docs-only, runtime PR-fast,
+  and release-gate-only lanes are distinguished truthfully
 - explicit multi-agent workcell proof or truthful blocked handoff showing
   shard admission, worker/reviewer/janitor lanes, and serialized merge/closeout
   gates
@@ -52,6 +54,8 @@ The milestone is blocked if:
 - validation-tail handling hides pending or deferred proof instead of recording
   it truthfully
 - parallel validation hides failures or pending proof behind aggregate success
+- docs-only PVF lanes can still disappear into a generic skip instead of
+  remaining explicit proof with truthful release-gate separation
 - Parallel Validation Fabric remains only an implied repeatability subsection
   instead of an owned feature/proof surface
 - active issues can remain in an ambiguous lifecycle state without an explicit

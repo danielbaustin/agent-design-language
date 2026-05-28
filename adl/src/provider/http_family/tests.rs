@@ -1,4 +1,5 @@
 use super::*;
+use crate::model_identity::{ModelIdentityStrengthV1, ModelIdentityV1};
 use crate::provider_substrate::{
     CapabilityModeV1, CapabilitySupportV1, ProviderCapabilitiesV1, ProviderInvocationTargetV1,
     ProviderTransportV1,
@@ -104,10 +105,28 @@ fn provider_target(
         vendor: provider_kind.to_string(),
         transport: ProviderTransportV1::Http,
         profile: None,
-        endpoint: Some(endpoint),
+        endpoint: Some(endpoint.clone()),
         base_url: None,
         model_ref: provider_model_id.to_string(),
         provider_model_id: provider_model_id.to_string(),
+        model_identity: ModelIdentityV1 {
+            provider_kind: provider_kind.to_string(),
+            provider: format!("{provider_kind}_primary"),
+            model_ref: provider_model_id.to_string(),
+            provider_model_id: provider_model_id.to_string(),
+            runtime_surface: "hosted_http".to_string(),
+            identity_strength: ModelIdentityStrengthV1::ProviderAsserted,
+            observed_at: "unix:1".to_string(),
+            resolved_digest: None,
+            source_registry: Some(endpoint),
+            runtime_fingerprint: None,
+            inference_parameter_fingerprint: None,
+            tool_surface: None,
+            governance_surface: None,
+            evaluator_ref: None,
+            lane_ref: None,
+            benchmark_ref: None,
+        },
         capabilities: provider_caps(),
     }
 }
