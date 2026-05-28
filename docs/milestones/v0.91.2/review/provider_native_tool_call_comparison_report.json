@@ -38,6 +38,15 @@
         "base_url": null,
         "model_ref": "reasoning/default",
         "provider_model_id": "gpt-4.1-mini",
+        "model_identity": {
+          "provider_kind": "openai",
+          "provider": "openai_primary",
+          "model_ref": "reasoning/default",
+          "provider_model_id": "gpt-4.1-mini",
+          "runtime_surface": "hosted_http",
+          "identity_strength": "provider_asserted",
+          "observed_at": "unix:0"
+        },
         "capabilities": {
           "tool_calling": {
             "supported": true,
@@ -93,6 +102,15 @@
         "base_url": null,
         "model_ref": "reasoning/default",
         "provider_model_id": "claude-haiku-4-5-20251001",
+        "model_identity": {
+          "provider_kind": "anthropic",
+          "provider": "anthropic_primary",
+          "model_ref": "reasoning/default",
+          "provider_model_id": "claude-haiku-4-5-20251001",
+          "runtime_surface": "hosted_http",
+          "identity_strength": "provider_asserted",
+          "observed_at": "unix:0"
+        },
         "capabilities": {
           "tool_calling": {
             "supported": true,
@@ -147,6 +165,16 @@
         "base_url": null,
         "model_ref": "reasoning/default",
         "provider_model_id": "gemini-2.0-flash",
+        "model_identity": {
+          "provider_kind": "http",
+          "provider": "gemini_primary",
+          "model_ref": "reasoning/default",
+          "provider_model_id": "gemini-2.0-flash",
+          "runtime_surface": "hosted_http",
+          "identity_strength": "provider_asserted",
+          "observed_at": "unix:0",
+          "source_registry": "https://api.example.invalid/v1/complete"
+        },
         "capabilities": {
           "tool_calling": {
             "supported": false,
@@ -201,6 +229,16 @@
         "base_url": null,
         "model_ref": "reasoning/default",
         "provider_model_id": "deepseek-chat",
+        "model_identity": {
+          "provider_kind": "http",
+          "provider": "deepseek_primary",
+          "model_ref": "reasoning/default",
+          "provider_model_id": "deepseek-chat",
+          "runtime_surface": "hosted_http",
+          "identity_strength": "provider_asserted",
+          "observed_at": "unix:0",
+          "source_registry": "https://api.example.invalid/v1/complete"
+        },
         "capabilities": {
           "tool_calling": {
             "supported": false,
@@ -253,6 +291,15 @@
         "base_url": null,
         "model_ref": "gpt-oss",
         "provider_model_id": "gpt-oss",
+        "model_identity": {
+          "provider_kind": "local_ollama",
+          "provider": "local_ollama",
+          "model_ref": "gpt-oss",
+          "provider_model_id": "gpt-oss",
+          "runtime_surface": "local_cli",
+          "identity_strength": "tag_only",
+          "observed_at": "unix:0"
+        },
         "capabilities": {
           "tool_calling": {
             "supported": true,
@@ -305,6 +352,15 @@
         "base_url": null,
         "model_ref": "deepseek-r1",
         "provider_model_id": "deepseek-r1",
+        "model_identity": {
+          "provider_kind": "local_ollama",
+          "provider": "local_ollama",
+          "model_ref": "deepseek-r1",
+          "provider_model_id": "deepseek-r1",
+          "runtime_surface": "local_cli",
+          "identity_strength": "tag_only",
+          "observed_at": "unix:0"
+        },
         "capabilities": {
           "tool_calling": {
             "supported": false,
