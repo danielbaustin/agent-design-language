@@ -160,6 +160,9 @@ changed_line_delta_for_path() {
 candidate_filter_for_path() {
   local path="$1"
   case "$path" in
+    adl/src/governed_executor_parts/*.rs|adl/src/governed_executor.rs)
+      printf 'governed_executor'
+      ;;
     adl/src/acc.rs|adl/src/acc/*.rs)
       printf 'acc'
       ;;
