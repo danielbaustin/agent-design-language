@@ -184,6 +184,25 @@ EOF
   assert_has "$runtime_output" "proof_validation_scope=not_required"
   assert_has "$runtime_output" "reason=runtime_or_rust_test_change_runs_pr_fast_validation"
 
+  git checkout -q -b rust-test-manifest-change "$base_sha"
+  mkdir -p adl/src/runtime_v2
+  printf 'mod slow_proof_contract;\n' > adl/src/runtime_v2/tests.rs
+  git add adl/src/runtime_v2/tests.rs
+  git commit -q -m rust-test-manifest-change
+  rust_test_manifest_head="$(git rev-parse HEAD)"
+
+  rust_test_manifest_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$rust_test_manifest_head" --ref "refs/pull/1/merge")"
+  assert_has "$rust_test_manifest_output" "rust_required=true"
+  assert_has "$rust_test_manifest_output" "coverage_required=false"
+  assert_has "$rust_test_manifest_output" "full_coverage_required=false"
+  assert_has "$rust_test_manifest_output" "demo_smoke_required=false"
+  assert_has "$rust_test_manifest_output" "v0913_proof_required=false"
+  assert_has "$rust_test_manifest_output" "release_version_only=false"
+  assert_has "$rust_test_manifest_output" "ci_contracts_required=true"
+  assert_has "$rust_test_manifest_output" "coverage_lane=skip"
+  assert_has "$rust_test_manifest_output" "coverage_authority=not_required"
+  assert_has "$rust_test_manifest_output" "reason=rust_test_manifest_change_runs_focused_validation"
+
   git checkout -q -b new-runtime-file "$base_sha"
   printf 'pub fn contract_schema() -> bool { true }\n' > adl/src/contract_schema.rs
   git add adl/src/contract_schema.rs
@@ -265,6 +284,62 @@ PY
   assert_has "$workflow_reporting_output" "coverage_authority=not_required"
   assert_has "$workflow_reporting_output" "proof_validation_scope=not_required"
   assert_has "$workflow_reporting_output" "reason=coverage_reporting_workflow_change_skips_authoritative_coverage"
+
+  git checkout -q -b workflow-pvf-slow-proof-change "$base_sha"
+  python3 - <<'PY'
+from pathlib import Path
+
+path = Path(".github/workflows/ci.yaml")
+text = path.read_text()
+text = text.replace(
+    "jobs:\n",
+    'on:\n  workflow_dispatch:\n  schedule:\n    - cron: "17 10 * * *"\n\njobs:\n',
+    1,
+)
+text = text.replace(
+    "      - name: Coverage run and summary (json)\n        run: bash tools/run_authoritative_coverage_lane.sh\n",
+    "      - name: slow-proof lane contract\n        if: steps.path-policy.outputs.ci_contracts_required == 'true'\n        run: bash adl/tools/test_slow_proof_lane_contract.sh\n      - name: Coverage run and summary (json)\n        run: bash tools/run_authoritative_coverage_lane.sh\n",
+    1,
+)
+text += """
+  adl-slow-proof:
+    if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    defaults:
+      run:
+        working-directory: adl
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+      - name: Install cargo-nextest
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090
+        with:
+          tool: nextest
+      - name: Slow proof shard
+        run: cargo nextest run --features slow-proof-tests --partition count:${{ matrix.shard }}/4 --status-level all --final-status-level slow
+"""
+path.write_text(text)
+PY
+  git add .github/workflows/ci.yaml
+  git commit -q -m workflow-pvf-slow-proof-change
+  workflow_pvf_slow_proof_head="$(git rev-parse HEAD)"
+
+  workflow_pvf_slow_proof_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$workflow_pvf_slow_proof_head" --ref "refs/pull/1/merge")"
+  assert_has "$workflow_pvf_slow_proof_output" "rust_required=true"
+  assert_has "$workflow_pvf_slow_proof_output" "coverage_required=false"
+  assert_has "$workflow_pvf_slow_proof_output" "full_coverage_required=false"
+  assert_has "$workflow_pvf_slow_proof_output" "demo_smoke_required=false"
+  assert_has "$workflow_pvf_slow_proof_output" "v0913_proof_required=false"
+  assert_has "$workflow_pvf_slow_proof_output" "ci_contracts_required=true"
+  assert_has "$workflow_pvf_slow_proof_output" "coverage_lane=skip"
+  assert_has "$workflow_pvf_slow_proof_output" "coverage_authority=not_required"
+  assert_has "$workflow_pvf_slow_proof_output" "reason=pvf_slow_proof_change_runs_contract_validation"
 
   git checkout -q -b workflow-authoritative-policy-change "$base_sha"
   python3 - <<'PY'

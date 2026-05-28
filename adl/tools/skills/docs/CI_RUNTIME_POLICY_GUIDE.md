@@ -80,7 +80,7 @@ or assembling release evidence:
 - PRs that change explicit coverage-governance surfaces should still run the
   authoritative coverage lane. Tooling-only policy PRs may use the bounded
   authoritative workspace pass, while mixed runtime-plus-policy PRs still run
-  the full all-features lane. The trigger is policy-surface based, not size-
+  the full default-feature lane. The trigger is policy-surface based, not size-
   or novelty-based.
 - When `full_coverage_required=true`, the JSON summary and changed-source
   impact gate should execute before LCOV artifact generation. A coverage
@@ -193,9 +193,35 @@ Truthful interpretation:
 - The ordinary PR lane must not re-enable heavyweight opt-in features such as
   `slow-proof-tests`; those stay reserved for dedicated heavy proof or
   authoritative coverage lanes.
+- Known slow proof-materialization families must not live in the default
+  ordinary PR nextest set. If a runtime-v2 test is expected to spend tens of
+  seconds materializing proof packets, comparing golden release fixtures, or
+  proving release-only evidence, classify it under `slow-proof-tests` and keep
+  the ordinary PR lane focused on fast correctness proof.
+- The initial slow-proof runtime-v2 module set is `a2a_adapter_boundary`,
+  `access_control`, `acip_hardening`, `challenge`, `citizen_state_substrate`,
+  `contract_registry_accessors`, and `delegation_subcontract`.
 - Full instrumented coverage is intentionally deferred for the PR to avoid
   running all tests twice.
 - The PR does not itself provide full release coverage evidence.
+
+### Runtime slow-proof lane
+
+The slow-proof command is explicit:
+
+```bash
+cargo nextest run --features slow-proof-tests --status-level all --final-status-level slow
+```
+
+When the slow lane must run in parallel, shard it with nextest partitions:
+
+```bash
+cargo nextest run --features slow-proof-tests --partition count:1/4 --status-level all --final-status-level slow
+```
+
+Use the matching `count:2/4`, `count:3/4`, and `count:4/4` partitions for the
+other shards. Individual tests should not contain shard-specific logic; they
+should only be classified as ordinary fast proof or explicit slow proof.
 
 ### Full-Evidence Runtime Event Or Policy-Surface PR
 
@@ -223,8 +249,9 @@ may stay false while `full_coverage_required=true` still means the
 authoritative coverage lane must run. In that bounded case, the PR uses one
 workspace `cargo llvm-cov nextest` pass without `--all-features`. If the same
 PR also changes runtime or demo-affecting surfaces, the authority upgrades to
-`pr_policy_surface_runtime_mixed` and the full all-features authoritative lane
-still runs.
+`pr_policy_surface_runtime_mixed` and the full default-feature authoritative
+lane still runs. Slow proof remains a separate `slow-proof-tests` lane rather
+than being pulled back into coverage through `--all-features`.
 
 Tooling-only policy-surface PRs should still run changed-source coverage-impact
 validation from the generated `coverage-summary.json`, but they should not be
@@ -241,7 +268,8 @@ adl/tools/run_authoritative_coverage_lane.sh
 
 That runner performs one pass per event:
 
-- `full_authoritative_all_features` on `main` and other full-evidence events
+- `full_authoritative_default_features` on `main` and other full-evidence
+  events
 - `bounded_policy_surface_pr` on policy-surface pull requests
 
 and then emits one coverage summary report. Skills should treat

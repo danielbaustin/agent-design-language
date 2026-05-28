@@ -140,6 +140,20 @@ assert_has "$runtime_test_helper_output" "reason=bounded_family_surface_runs_fam
 assert_has "$runtime_test_helper_output" "filter_tokens=runtime_v2"
 assert_has "$runtime_test_helper_output" "filter_expression=test(runtime_v2)"
 
+slow_proof_inventory="$TMP/slow_proof_inventory.txt"
+cat >"$slow_proof_inventory" <<'EOF'
+M	.github/workflows/ci.yaml
+M	adl/src/runtime_v2/tests.rs
+M	adl/tools/ci_path_policy.sh
+M	adl/tools/test_slow_proof_lane_contract.sh
+M	docs/milestones/v0.91.4/features/PVF_INITIAL_LANE_INVENTORY_v0.91.4.md
+EOF
+slow_proof_inventory_output="$(bash "$SCRIPT" --changed-files "$slow_proof_inventory" --print-plan)"
+assert_has "$slow_proof_inventory_output" "mode=contract_only"
+assert_has "$slow_proof_inventory_output" "reason=slow_proof_inventory_change_covered_by_contract_check"
+assert_has "$slow_proof_inventory_output" "rust_surface_count=1"
+assert_has "$slow_proof_inventory_output" "slow_proof_inventory_surface_count=1"
+
 uts_compiler_adoption="$TMP/uts_compiler_adoption.txt"
 cat >"$uts_compiler_adoption" <<'EOF'
 M	adl/src/tool_registry.rs

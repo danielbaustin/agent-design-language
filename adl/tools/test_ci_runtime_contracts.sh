@@ -142,6 +142,16 @@ if expected_gate_fragment not in gate_if:
         f"found: {gate_if}"
     )
 
+gate_block = step_block("Enforce coverage policy gates (workspace + per-file)")
+slow_proof_exclusion = (
+    "adl/src/runtime_v2/(a2a_adapter_boundary|access_control|acip_hardening|challenge|contract_registry_accessors)"
+)
+if slow_proof_exclusion not in gate_block:
+    raise SystemExit(
+        "default-feature coverage gate must exclude source files whose tests are explicitly owned by slow-proof-tests; "
+        "workflow is missing the slow-proof per-file exclusion"
+    )
+
 deferred_policy_step = step_if("Full workspace coverage gate deferred for policy PR")
 expected_deferred_fragment = "steps.path-policy.outputs.coverage_authority == 'pr_policy_surface_tooling_only'"
 if expected_deferred_fragment not in deferred_policy_step:

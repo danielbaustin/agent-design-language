@@ -8,8 +8,8 @@ plan="$(bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" --print-pl
 for required in \
   "authority=push_main" \
   "event_name=push" \
-  "mode=full_authoritative_all_features" \
-  "features=all_features" \
+  "mode=full_authoritative_default_features" \
+  "features=default" \
   "workspace=full"
 do
   if ! grep -F "$required" <<<"$plan" >/dev/null 2>&1; then
@@ -38,8 +38,8 @@ runtime_policy_plan="$(bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane
 for required in \
   "authority=pr_policy_surface_runtime_mixed" \
   "event_name=pull_request" \
-  "mode=full_authoritative_all_features" \
-  "features=all_features" \
+  "mode=full_authoritative_default_features" \
+  "features=default" \
   "workspace=full"
 do
   if ! grep -F "$required" <<<"$runtime_policy_plan" >/dev/null 2>&1; then

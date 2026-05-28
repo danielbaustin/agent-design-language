@@ -117,6 +117,17 @@ mark_policy_surface_full_coverage() {
   reason="$reason_value"
 }
 
+mark_pvf_slow_proof_contract_validation() {
+  rust_required=true
+  ci_contracts_required=true
+  coverage_required=false
+  full_coverage_required=false
+  demo_smoke_required=false
+  coverage_lane="skip"
+  coverage_authority="not_required"
+  reason="pvf_slow_proof_change_runs_contract_validation"
+}
+
 mark_v0913_proof_required() {
   rust_required=true
   ci_contracts_required=true
@@ -210,6 +221,93 @@ is_reporting_only_coverage_workflow_change() {
             ;;
         esac
       done
+}
+
+is_pvf_slow_proof_workflow_change() {
+  local path="$1"
+  [ "$path" = ".github/workflows/ci.yaml" ] || return 1
+  local diff_text
+  diff_text="$(git diff --unified=0 "$base_sha" "$head_sha" -- "$path" 2>/dev/null || true)"
+  [ -n "$diff_text" ] || return 1
+  grep -E 'adl-slow-proof|test_slow_proof_lane_contract|slow-proof-tests|EXCLUDE_FROM_FILE_FLOOR_REGEX' <<<"$diff_text" >/dev/null 2>&1
+}
+
+is_pvf_slow_proof_runtime_manifest_change() {
+  local path="$1"
+  [ "$path" = "adl/src/runtime_v2/tests.rs" ] || return 1
+  local diff_text
+  diff_text="$(git diff --unified=0 "$base_sha" "$head_sha" -- "$path" 2>/dev/null || true)"
+  [ -n "$diff_text" ] || return 1
+  grep -E 'slow-proof-tests|a2a_adapter_boundary|access_control|acip_hardening|challenge|citizen_state_substrate|contract_registry_accessors|delegation_subcontract' <<<"$diff_text" >/dev/null 2>&1
+}
+
+is_pvf_slow_proof_policy_surface() {
+  local path="$1"
+  case "$path" in
+    .github/workflows/ci.yaml|\
+    adl/src/runtime_v2/tests.rs|\
+    adl/tools/ci_path_policy.sh|\
+    adl/tools/run_authoritative_coverage_lane.sh|\
+    adl/tools/run_pr_fast_test_lane.sh|\
+    adl/tools/test_ci_path_policy.sh|\
+    adl/tools/test_ci_runtime_contracts.sh|\
+    adl/tools/test_run_authoritative_coverage_lane.sh|\
+    adl/tools/test_run_pr_fast_test_lane.sh|\
+    adl/tools/test_slow_proof_lane_contract.sh|\
+    adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md|\
+    docs/milestones/v0.91.4/QUALITY_GATE_v0.91.4.md|\
+    docs/milestones/v0.91.4/features/PARALLEL_VALIDATION_FABRIC.md|\
+    docs/milestones/v0.91.4/features/PVF_CI_RELEASE_POLICY_v0.91.4.md|\
+    docs/milestones/v0.91.4/features/PVF_INITIAL_LANE_INVENTORY_v0.91.4.md)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+is_pvf_slow_proof_policy_change() {
+  local saw_pvf_marker=false
+  local saw_other=false
+  local path
+  while IFS= read -r path; do
+    [ -n "$path" ] || continue
+    if ! is_pvf_slow_proof_policy_surface "$path"; then
+      saw_other=true
+      continue
+    fi
+    case "$path" in
+      .github/workflows/ci.yaml)
+        if is_pvf_slow_proof_workflow_change "$path"; then
+          saw_pvf_marker=true
+        fi
+        ;;
+      adl/src/runtime_v2/tests.rs)
+        if is_pvf_slow_proof_runtime_manifest_change "$path"; then
+          saw_pvf_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+      adl/tools/ci_path_policy.sh|\
+      adl/tools/run_authoritative_coverage_lane.sh|\
+      adl/tools/run_pr_fast_test_lane.sh|\
+      adl/tools/test_ci_path_policy.sh|\
+      adl/tools/test_ci_runtime_contracts.sh|\
+      adl/tools/test_run_authoritative_coverage_lane.sh|\
+      adl/tools/test_run_pr_fast_test_lane.sh|\
+      adl/tools/test_slow_proof_lane_contract.sh|\
+      adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md|\
+      docs/milestones/v0.91.4/QUALITY_GATE_v0.91.4.md|\
+      docs/milestones/v0.91.4/features/PARALLEL_VALIDATION_FABRIC.md|\
+      docs/milestones/v0.91.4/features/PVF_CI_RELEASE_POLICY_v0.91.4.md|\
+      docs/milestones/v0.91.4/features/PVF_INITIAL_LANE_INVENTORY_v0.91.4.md)
+        saw_pvf_marker=true
+        ;;
+    esac
+  done <<EOF
+$changed_files
+EOF
+  [ "$saw_pvf_marker" = true ] && [ "$saw_other" = false ]
 }
 
 is_csdlc_evidence_namespace_policy_update() {
@@ -442,13 +540,18 @@ else
     fail_closed=true
     mark_authoritative_full_coverage "fail_closed" "empty_or_unavailable_diff_runs_full_validation"
   else
-    saw_pr_finish_control_plane=false
-    changed_count="$(printf '%s\n' "$changed_files" | sed '/^$/d' | wc -l | tr -d ' ')"
-    if is_release_version_only_surface_change; then
-      release_version_only=true
-      reason="release_version_only_cargo_surface_change_runs_lightweight_validation"
-    fi
-    while IFS= read -r path; do
+	    saw_pr_finish_control_plane=false
+	    changed_count="$(printf '%s\n' "$changed_files" | sed '/^$/d' | wc -l | tr -d ' ')"
+	    if is_release_version_only_surface_change; then
+	      release_version_only=true
+	      reason="release_version_only_cargo_surface_change_runs_lightweight_validation"
+	    fi
+	    pvf_slow_proof_policy_change=false
+	    if is_pvf_slow_proof_policy_change; then
+	      pvf_slow_proof_policy_change=true
+	      mark_pvf_slow_proof_contract_validation
+	    fi
+	    while IFS= read -r path; do
       [ -n "$path" ] || continue
       if is_pr_finish_control_plane_surface "$path"; then
         rust_required=true
@@ -460,6 +563,13 @@ else
         mark_v0913_proof_required
       fi
       case "$path" in
+        adl/src/tests.rs|adl/src/*/tests.rs)
+          rust_required=true
+          ci_contracts_required=true
+          if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
+            reason="rust_test_manifest_change_runs_focused_validation"
+          fi
+          ;;
         adl/src/*|adl/tests/*|adl/Cargo.toml|adl/Cargo.lock|adl/build.rs)
           if [ "$release_version_only" = true ] && { [ "$path" = "adl/Cargo.toml" ] || [ "$path" = "adl/Cargo.lock" ]; }; then
             continue
@@ -477,11 +587,21 @@ else
     done <<EOF
 $changed_files
 EOF
-    while IFS=$'\t' read -r _status path; do
-      [ -n "$path" ] || continue
-      if is_full_coverage_policy_surface "$path"; then
+	    while IFS=$'\t' read -r _status path; do
+	      [ -n "$path" ] || continue
+	      if [ "$pvf_slow_proof_policy_change" = true ] && is_pvf_slow_proof_policy_surface "$path"; then
+	        continue
+	      fi
+	      if is_full_coverage_policy_surface "$path"; then
         if is_reporting_only_coverage_workflow_change "$path"; then
           reason="coverage_reporting_workflow_change_skips_authoritative_coverage"
+          continue
+        fi
+        if is_pvf_slow_proof_workflow_change "$path"; then
+          ci_contracts_required=true
+          if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
+            reason="pvf_slow_proof_workflow_change_runs_contract_validation"
+          fi
           continue
         fi
         if is_csdlc_evidence_namespace_policy_update "$path"; then

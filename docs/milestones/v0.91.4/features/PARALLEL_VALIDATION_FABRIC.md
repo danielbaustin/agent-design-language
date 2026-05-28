@@ -192,6 +192,11 @@ What is landed:
   truth
 - explicit ordinary-PR versus release-gate routing for docs-only lanes,
   runtime PR-fast lanes, and authoritative release-only lanes
+- explicit runtime slow-proof routing so heavyweight runtime-v2
+  proof-materialization and golden-fixture tests run behind
+  `slow-proof-tests`, not inside the default ordinary PR nextest lane
+- four-shard GitHub slow-proof execution for `push` to `main`, nightly
+  schedule, and manual operator dispatch
 - bounded policy treatment for artifact reuse so reused proof remains visible as
   `reused` instead of being collapsed into silent success
 - explicit test-authoring policy and migration guardrails so future tests are
@@ -206,6 +211,7 @@ What is not landed:
 - automatic pre-PR evidence reuse
 - distributed proof orchestration
 - automatic cache identity verification
+- automatic GitHub matrix fan-out for every proof lane
 
 The current PVF posture is therefore:
 
