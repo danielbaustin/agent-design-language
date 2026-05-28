@@ -80,8 +80,12 @@ checks needed for a truthful v0.92 closeout.
 
 ## Release Packaging
 
-- [ ] Release evidence packet assembled.
-- [ ] Release notes rewritten from draft planning text to landed behavior.
+- [ ] WP-16 prepared release-truth docs and release-note draft before review.
+- [ ] WP-19 reflected review-finding remediation in release-facing docs where
+  needed.
+- [ ] WP-22 assembled the release evidence packet.
+- [ ] WP-22 rewrote final release notes from draft planning text to landed
+  behavior.
 - [ ] Review handoff and remediation records are linked.
 - [ ] Birthday evidence packet is included or explicitly linked.
 

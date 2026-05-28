@@ -84,12 +84,24 @@ constitutional governance.
   governed message-content access without claiming production transport
   security.
 
-## Closeout Notes For Later WP-20
+## Closeout Notes For Later WP-22
 
 The release ceremony should follow the exact closeout pattern used by recent
 milestones at the time v0.92 closes. If the standard ceremony script or release
-tail changes before then, WP-20 should point to the then-current canonical
+tail changes before then, WP-22 should point to the then-current canonical
 pattern rather than inventing a new one.
+
+Release-tail ownership is:
+
+- WP-16 prepares release-truth docs, release notes, feature list, ADR plan, and
+  milestone-doc alignment before review.
+- WP-19 updates release-facing docs only as needed to reflect review-finding
+  remediation.
+- WP-20 is next-milestone planning and should not own ceremony/release-note
+  rewrite work except for downstream handoff text.
+- WP-21 reviews the next-milestone plan before ceremony.
+- WP-22 performs the release ceremony and final release-note/evidence truth
+  check.
 
 ## Non-Release Conditions
 

@@ -12,8 +12,18 @@
 ## Status
 
 Draft placeholder for later release closeout. These notes describe intended
-release themes only and must be rewritten during v0.92 WP-19/WP-20 to describe
-landed behavior.
+release themes only and must be rewritten during the v0.92 release tail to
+describe landed behavior.
+
+Release-note ownership should follow the v0.92 WBS:
+
+- WP-16 prepares the release-note draft for internal review.
+- WP-19 updates release notes only for review-finding remediation.
+- WP-22 performs the final release-note truth check during the release
+  ceremony.
+
+WP-20 and WP-21 are next-milestone planning/review gates, not release-note
+rewrite owners.
 
 ## How To Use
 
