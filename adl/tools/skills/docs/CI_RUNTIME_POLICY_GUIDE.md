@@ -248,6 +248,49 @@ and then emits one coverage summary report. Skills should treat
 `bounded_policy_surface_pr` as bounded PR governance validation, not as full
 release evidence.
 
+## PVF Integration Mapping
+
+The first PVF integration does not replace stable checks. It adds a truthful
+lane vocabulary beneath them.
+
+The bounded v0.91.4 policy slice should distinguish at least:
+
+- `docs_only_pr`
+  : ordinary PR docs-only validation for docs/planning/operator-policy changes
+- `docs_only_reuse_candidate`
+  : explicit reuse-capable docs-only proof lane for unchanged docs-only inputs
+- `runtime_pr_fast`
+  : ordinary PR runtime/source validation using the existing PR-fast posture
+- `authoritative_release_gate`
+  : release-gate-only proof that stays visible as required future work on an
+    ordinary PR and becomes runnable proof on release-mode execution
+
+This matters for two reasons:
+
+1. docs-only work must not be forced to impersonate runtime validation
+2. release-gate-only proof must not disappear into a generic skip
+
+Truthful ordinary PR interpretation under the bounded policy fixture:
+
+- docs-only lanes may `pass` and/or `reuse`
+- runtime PR-fast lane may `pass` or `skip` based on changed surfaces
+- authoritative release lane should report `release_gate_required`, not
+  `skipped`
+
+Truthful release-mode interpretation under PVF:
+
+- the same authoritative release lane becomes runnable proof and should report
+  ordinary success/failure status
+
+The bounded manifest and proof packet for this lane live at:
+
+- `docs/milestones/v0.91.4/features/PVF_CI_RELEASE_POLICY_v0.91.4.md`
+- `docs/milestones/v0.91.4/features/PVF_CI_RELEASE_POLICY_MANIFEST_v0.91.4.json`
+
+Those tracked commands are intentionally policy-fixture commands. They prove
+lane routing and aggregate truth, not the complete production docs-only
+validator bundle or full authoritative coverage workflow.
+
 ### Failed-Closed Classification
 
 Observed:

@@ -287,7 +287,7 @@ for lane_id in "${lane_ids[@]}"; do
   fi
 done
 
-aggregate_status="passed"
+aggregate_status="skipped"
 for lane_id in "${lane_ids[@]}"; do
   status="$(get_lane_value "$lane_id" status)"
   case "$status" in
@@ -311,13 +311,16 @@ for lane_id in "${lane_ids[@]}"; do
       fi
       ;;
     skipped)
-      if [ "$aggregate_status" = "passed" ]; then
-        aggregate_status="skipped"
-      fi
       ;;
     reused)
+      if [ "$aggregate_status" = "skipped" ]; then
+        aggregate_status="passed"
+      fi
       ;;
     passed)
+      if [ "$aggregate_status" = "skipped" ]; then
+        aggregate_status="passed"
+      fi
       ;;
   esac
 done
