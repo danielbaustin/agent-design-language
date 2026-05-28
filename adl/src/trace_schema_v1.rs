@@ -688,6 +688,84 @@ mod tests {
     }
 
     #[test]
+    fn validate_trace_event_envelope_v1_rejects_mismatched_model_identity() {
+        let mut model = sample_event(TraceEventTypeV1::ModelInvocation);
+        model.provider = Some(TraceProviderV1 {
+            vendor: "openai".to_string(),
+            transport: "openai_http".to_string(),
+            model_ref: "adl-stable-ref".to_string(),
+            provider_model_id: Some("gpt-5.5".to_string()),
+            model_identity: Some(crate::model_identity::ModelIdentityV1 {
+                provider_kind: "openai".to_string(),
+                provider: "openai_primary".to_string(),
+                model_ref: "different-stable-ref".to_string(),
+                provider_model_id: "gpt-5.5".to_string(),
+                runtime_surface: "hosted_http".to_string(),
+                identity_strength: crate::model_identity::ModelIdentityStrengthV1::ProviderAsserted,
+                observed_at: "unix:1".to_string(),
+                resolved_digest: None,
+                source_registry: None,
+                runtime_fingerprint: None,
+                inference_parameter_fingerprint: None,
+                tool_surface: None,
+                governance_surface: None,
+                evaluator_ref: None,
+                lane_ref: None,
+                benchmark_ref: None,
+            }),
+        });
+        let envelope = TraceEventEnvelopeV1 {
+            schema_version: "trace.v1".to_string(),
+            events: vec![
+                sample_event(TraceEventTypeV1::RunStart),
+                model,
+                sample_event(TraceEventTypeV1::RunEnd),
+            ],
+        };
+        let err = validate_trace_event_envelope_v1(&envelope).expect_err("mismatch must fail");
+        assert!(err.to_string().contains("model_identity.model_ref"));
+    }
+
+    #[test]
+    fn validate_trace_event_envelope_v1_rejects_invalid_model_identity_digest() {
+        let mut model = sample_event(TraceEventTypeV1::ModelInvocation);
+        model.provider = Some(TraceProviderV1 {
+            vendor: "ollama".to_string(),
+            transport: "local_http".to_string(),
+            model_ref: "gemma4:31b".to_string(),
+            provider_model_id: Some("gemma4:31b".to_string()),
+            model_identity: Some(crate::model_identity::ModelIdentityV1 {
+                provider_kind: "ollama".to_string(),
+                provider: "local_ollama_http".to_string(),
+                model_ref: "gemma4:31b".to_string(),
+                provider_model_id: "gemma4:31b".to_string(),
+                runtime_surface: "local_http".to_string(),
+                identity_strength: crate::model_identity::ModelIdentityStrengthV1::Pinned,
+                observed_at: "unix:1".to_string(),
+                resolved_digest: Some("not-a-digest".to_string()),
+                source_registry: Some("http://127.0.0.1:11434".to_string()),
+                runtime_fingerprint: None,
+                inference_parameter_fingerprint: None,
+                tool_surface: None,
+                governance_surface: None,
+                evaluator_ref: None,
+                lane_ref: None,
+                benchmark_ref: None,
+            }),
+        });
+        let envelope = TraceEventEnvelopeV1 {
+            schema_version: "trace.v1".to_string(),
+            events: vec![
+                sample_event(TraceEventTypeV1::RunStart),
+                model,
+                sample_event(TraceEventTypeV1::RunEnd),
+            ],
+        };
+        let err = validate_trace_event_envelope_v1(&envelope).expect_err("bad digest must fail");
+        assert!(err.to_string().contains("resolved_digest"));
+    }
+
+    #[test]
     fn validate_trace_event_envelope_v1_rejects_bad_artifact_ref() {
         let mut run_start = sample_event(TraceEventTypeV1::RunStart);
         run_start.inputs_ref = Some("/tmp/not-allowed.json".to_string());

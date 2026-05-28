@@ -9,17 +9,16 @@ use crate::model_identity::{
 
 use super::evaluation::{evaluate_task, scorecard_for};
 use super::runtime::{
-    append_progress_line, build_local_ollama_provider, current_ollama_host,
-    local_model_identity, local_runtime_busy_reason, model_unavailable_reason,
-    provider_complete_with_retries,
+    append_progress_line, build_local_ollama_provider, current_ollama_host, local_model_identity,
+    local_runtime_busy_reason, model_unavailable_reason, provider_complete_with_retries,
     provider_id_for_host, provider_transport_label, resolve_models, skipped_model_result,
 };
 use super::task_fixtures::{benchmark_tasks, prompt_record};
 use super::types::{
     UtsAccBenchmarkConditions, UtsAccBenchmarkModelResult, UtsAccBenchmarkTaskFixture,
     UtsAccMultiModelBenchmarkEvidenceStatus, UtsAccMultiModelBenchmarkReport,
-    UtsAccMultiModelRunStatus, UTS_ACC_MULTI_MODEL_BENCHMARK_SCHEMA_VERSION,
-    UTS_ACC_MULTI_MODEL_BENCHMARK_RUNNER_VERSION,
+    UtsAccMultiModelRunStatus, UTS_ACC_MULTI_MODEL_BENCHMARK_RUNNER_VERSION,
+    UTS_ACC_MULTI_MODEL_BENCHMARK_SCHEMA_VERSION,
 };
 
 pub(crate) fn model_result_for(
@@ -163,7 +162,10 @@ fn benchmark_identity(
             ]
         })
         .collect::<Vec<_>>();
-    let model_parts = selected_models.iter().map(String::as_str).collect::<Vec<_>>();
+    let model_parts = selected_models
+        .iter()
+        .map(String::as_str)
+        .collect::<Vec<_>>();
     BenchmarkIdentityV1 {
         benchmark_ref: "uts_acc_multi_model_benchmark".to_string(),
         benchmark_version: UTS_ACC_MULTI_MODEL_BENCHMARK_SCHEMA_VERSION.to_string(),
