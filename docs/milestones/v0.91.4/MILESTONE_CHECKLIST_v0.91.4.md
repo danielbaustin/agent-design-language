@@ -44,6 +44,8 @@ evidence exists.
 - [x] Every currently opened issue bundle uses `SIP -> STP -> SPP -> SRP -> SOR`.
 - [x] `SPP` records design-time issue-local operative plan truth before execution
   for the currently opened batch.
+- [ ] New tests or test families land with explicit PVF lane/proof metadata;
+  migration rationale is only for pre-existing uncategorized tests.
 - [ ] Card edits use editor skills.
 - [ ] Work executes in bound worktrees.
 - [ ] Draft PR opens before merge for each issue.
@@ -57,6 +59,8 @@ evidence exists.
   [DEMO_MATRIX](DEMO_MATRIX_v0.91.4.md)
 - [ ] Quality gate is complete:
   [QUALITY_GATE](QUALITY_GATE_v0.91.4.md)
+- [ ] Review checklist for new tests and C-SDLC proof includes PVF lane,
+  proof role, determinism, resource profile, and release-gate checks.
 - [ ] Lifecycle, doctor, conductor, and editor focused tests pass.
 - [ ] Signed trace verification passes.
 - [ ] Process-drift regression fixtures pass.
