@@ -19,12 +19,12 @@ ADRs live under `docs/adr/` only after explicit review and promotion.
 
 | Candidate | Title | Primary Source Surfaces |
 | --- | --- | --- |
-| `0029` | C-SDLC Default Software-Development Lane | `DESIGN_v0.91.4.md`, `DECISIONS_v0.91.4.md`, `features/COGNITIVE_SDLC_DEFAULT_OPERATION.md` |
-| `0030` | Software Development Polis Actor Standing And Shard Ownership | `features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md`, `features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md` |
-| `0031` | C-SDLC Multi-Agent Parallel Execution Boundary | `DESIGN_v0.91.4.md`, shard ownership and actor-standing feature docs |
-| `0032` | Parallel Validation Fabric | `features/PARALLEL_VALIDATION_FABRIC.md`, PVF taxonomy and manifest surfaces |
-| `0033` | Merge-Readiness And PR Gate Truth Boundary | `features/MERGE_READINESS_AND_PR_GATE_HARDENING.md`, merge-readiness gate policy and proof packet |
-| `0034` | C-SDLC Evidence Convergence, Signed Trace, And ObsMem Handoff | `features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md`, `features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md` |
+| `0029` | C-SDLC Default Software-Development Lane | `docs/milestones/v0.91.4/DESIGN_v0.91.4.md`, `docs/milestones/v0.91.4/DECISIONS_v0.91.4.md`, `docs/milestones/v0.91.4/features/COGNITIVE_SDLC_DEFAULT_OPERATION.md`, `docs/milestones/v0.91.4/features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md` |
+| `0030` | Software Development Polis Actor Standing And Shard Ownership | `docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md`, `docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md`, `docs/milestones/v0.91.4/DESIGN_v0.91.4.md`, `docs/milestones/v0.91.4/DECISIONS_v0.91.4.md` |
+| `0031` | C-SDLC Multi-Agent Parallel Execution Boundary | `docs/milestones/v0.91.4/DESIGN_v0.91.4.md`, `docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md`, `docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md`, `docs/milestones/v0.91.4/features/PROCESS_DRIFT_REGRESSION_FIXTURES.md` |
+| `0032` | Parallel Validation Fabric | `docs/milestones/v0.91.4/features/PARALLEL_VALIDATION_FABRIC.md`, `docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_TAXONOMY_v0.91.4.md`, `docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_SCHEMA_v0.91.4.json`, `docs/milestones/v0.91.4/FIVE_MINUTE_SPRINT_REPEATABILITY_REPORT_2026-05-27.md` |
+| `0033` | Merge-Readiness And PR Gate Truth Boundary | `docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md`, `docs/tooling/merge_readiness_gate_policy_v0.91.4.md`, `docs/milestones/v0.91.4/review/merge_readiness/MERGE_READINESS_GATE_PACKET_v0.91.4.md` |
+| `0034` | C-SDLC Evidence Convergence, Signed Trace, And ObsMem Handoff | `docs/milestones/v0.91.4/features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md`, `docs/milestones/v0.91.4/features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md`, `docs/milestones/v0.91.4/DESIGN_v0.91.4.md`, `docs/milestones/v0.91.4/DECISIONS_v0.91.4.md` |
 
 ## Existing ADR Relationships
 

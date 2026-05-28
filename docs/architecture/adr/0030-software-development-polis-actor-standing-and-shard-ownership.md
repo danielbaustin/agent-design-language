@@ -2,7 +2,7 @@
 
 - Status: Candidate
 - Target milestone: v0.91.4
-- Related issues: #3444
+- Related issues: #3353, #3415, #3416, #3417, #3418, #3419, #3444
 - Related ADRs: ADR 0024, ADR 0028, Candidate ADR 0029 if accepted
 - Source evidence:
   - `docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md`

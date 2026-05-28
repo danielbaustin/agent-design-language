@@ -2,7 +2,7 @@
 
 - Status: Candidate
 - Target milestone: v0.91.4
-- Related issues: #3444
+- Related issues: #3353, #3415, #3416, #3417, #3418, #3419, #3444
 - Related ADRs: ADR 0024, ADR 0028, Candidate ADR 0029 if accepted, Candidate ADR 0030 if accepted
 - Source evidence:
   - `docs/milestones/v0.91.4/DESIGN_v0.91.4.md`
