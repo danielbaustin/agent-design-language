@@ -194,6 +194,8 @@ What is landed:
   runtime PR-fast lanes, and authoritative release-only lanes
 - bounded policy treatment for artifact reuse so reused proof remains visible as
   `reused` instead of being collapsed into silent success
+- explicit test-authoring policy and migration guardrails so future tests are
+  introduced with lane/proof metadata instead of relying on later cleanup
 - explicit distinction between passed, pending, deferred, blocked, and failed
   proof
 - evidence-backed demonstration that validation-tail drag can dominate merged

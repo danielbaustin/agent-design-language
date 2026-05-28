@@ -291,6 +291,34 @@ Those tracked commands are intentionally policy-fixture commands. They prove
 lane routing and aggregate truth, not the complete production docs-only
 validator bundle or full authoritative coverage workflow.
 
+## PVF Test Authoring Guardrails
+
+Future tests should enter the repository already classifiable into the PVF lane
+model.
+
+At authoring time, new test surfaces should have explicit tracked metadata for:
+
+- `lane_class`
+- `proof_role`
+- `determinism`
+- `resource_profile`
+- `release_gate_class`
+
+This metadata may live in a manifest, inventory, or tightly-coupled proof
+packet. It does not need to be embedded directly into every test file.
+
+Reviewer rule:
+
+- block new uncategorized test surfaces
+- allow existing uncategorized tests only with a bounded migration rationale or
+  follow-on when the current issue is not the right place to classify them
+
+Authoring rule:
+
+- keep tests boring
+- keep shard/routing/release mechanics in manifests, runners, and policy
+  surfaces rather than inside ordinary test logic
+
 ### Failed-Closed Classification
 
 Observed:

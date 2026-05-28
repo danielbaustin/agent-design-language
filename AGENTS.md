@@ -58,6 +58,13 @@ These rules are mandatory for ADL issue work.
 - Keep milestone claims, proof claims, and review claims evidence-bound.
 - Prefer repo-relative paths in artifacts and records.
 - Do not silently widen issue scope.
+- New tests must be PVF-classifiable at authoring time. When adding a new test
+  surface, make lane class, proof role, determinism posture, resource profile,
+  and release-gate status explicit in the same issue/PR through the tracked
+  manifest, inventory, or tightly-coupled proof packet.
+- Keep tests boring. Do not push shard mechanics, CI/release-mode branching, or
+  hidden routing policy down into ordinary test logic; that belongs in manifests,
+  runners, and policy docs.
 - Preserve the canonical card lifecycle: `SIP -> STP -> SPP -> SRP -> SOR`.
   `SRP` is the Structured Review Prompt and review-result surface; `SOR` is the
   truthful execution and integration record.
@@ -97,6 +104,8 @@ For a normal tracked issue:
 - Do not skip required proof just because the change is small.
 - Do not run broad validation reflexively when focused proof is enough.
 - Keep review records and output cards truthful about what was and was not run.
+- Docs-only and policy-only PVF work should prefer focused docs/path/contract/
+  guardrail proof unless tracked runtime behavior changed.
 
 ## Review And Publication Rules
 
