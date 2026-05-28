@@ -45,11 +45,10 @@ tracked namespace:
 
 ```text
 docs/milestones/<version>/review/evidence/csdlc/
-  <version>/
-    issues/
-    sprints/
-    evidence/
-    traces/
+  issues/
+  sprints/
+  evidence/
+  traces/
 ```
 
 For `v0.91.4`, new durable workflow records should use
@@ -178,6 +177,37 @@ Backfill older records only when they are still needed for:
 - ObsMem ingestion value
 
 Do not migrate every historical `.adl` artifact just because it exists.
+
+## Active-Issue Decision Policy
+
+Open issues should not all be treated the same during the migration.
+
+The default decision classes are:
+
+- `migrate_now`
+  - issue is open, current, and not already in a risky in-flight publish state
+- `defer`
+  - issue is outside the active milestone/sprint or should wait for a later
+    planning boundary
+- `leave_unchanged`
+  - issue already uses the intended contract or would lose truth if rewritten
+    mid-flight
+- `fold_or_noop_close`
+  - issue is duplicate/superseded/satisfied and should route through explicit
+    folding rather than migration
+- `block`
+  - issue needs operator judgment or unresolved prerequisites make migration
+    unsafe
+
+The sampled audit for `v0.91.4` is tracked in
+[`ACTIVE_ISSUE_MIGRATION_AUDIT_2026-05-27.md`](ACTIVE_ISSUE_MIGRATION_AUDIT_2026-05-27.md).
+
+Two hard rules govern the policy:
+
+- do not rewrite truthful in-flight PR/review/closeout state just to make an
+  issue look cleaner
+- future ADL software-development issues should start on the five-card C-SDLC
+  contract instead of relying on later migration where avoidable
 
 ## Tooling Implications
 
