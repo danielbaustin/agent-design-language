@@ -190,6 +190,10 @@ What is landed:
 - explicit lane categories for focused issue-local proof, docs-only proof,
   broad integration proof, merge-gate CI, deferred proof, and sprint closeout
   truth
+- explicit ordinary-PR versus release-gate routing for docs-only lanes,
+  runtime PR-fast lanes, and authoritative release-only lanes
+- bounded policy treatment for artifact reuse so reused proof remains visible as
+  `reused` instead of being collapsed into silent success
 - explicit distinction between passed, pending, deferred, blocked, and failed
   proof
 - evidence-backed demonstration that validation-tail drag can dominate merged

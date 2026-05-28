@@ -1,0 +1,86 @@
+{
+  "manifest_version": "v0.91.4",
+  "lane_classes": [
+    "docs",
+    "cli_workflow",
+    "release_gate"
+  ],
+  "lanes": {
+    "docs_only_pr": {
+      "lane_class": "docs",
+      "owner_surface": "docs-only PR validation",
+      "command": "bash adl/tools/run_pvf_ci_release_policy_fixture.sh",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        "docs/",
+        "docs/planning/",
+        "README.md",
+        ".adl/",
+        "adl/tools/skills/docs/"
+      ],
+      "evidence_outputs": [
+        "bounded policy-fixture stdout"
+      ]
+    },
+    "docs_only_reuse_candidate": {
+      "lane_class": "docs",
+      "owner_surface": "artifact-reuse candidate for docs-only proof",
+      "command": "bash adl/tools/run_pvf_ci_release_policy_fixture.sh",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "artifact_reuse",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        "docs/",
+        "docs/planning/",
+        "README.md",
+        ".adl/",
+        "adl/tools/skills/docs/"
+      ],
+      "evidence_outputs": [
+        "runner-level reused status"
+      ]
+    },
+    "runtime_pr_fast": {
+      "lane_class": "cli_workflow",
+      "owner_surface": "ordinary runtime PR-fast validation",
+      "command": "bash adl/tools/run_pvf_ci_release_policy_fixture.sh",
+      "resource_profile": "medium",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        "adl/src/",
+        "adl/tests/",
+        "adl/build.rs"
+      ],
+      "evidence_outputs": [
+        "ordinary PR-fast Rust validation summary"
+      ]
+    },
+    "authoritative_release_gate": {
+      "lane_class": "release_gate",
+      "owner_surface": "authoritative coverage or release-gate proof",
+      "command": "bash adl/tools/run_pvf_ci_release_policy_fixture.sh",
+      "resource_profile": "high",
+      "determinism": "fixture_bound",
+      "cache_strategy": "artifact_reuse",
+      "release_gate_class": "manual_release_gate",
+      "default_trigger": "release_only",
+      "changed_path_hints": [
+        "adl/src/",
+        "adl/tests/",
+        "docs/milestones/"
+      ],
+      "evidence_outputs": [
+        "bounded release-fixture stdout"
+      ]
+    }
+  }
+}
