@@ -1,9 +1,23 @@
 # v0.92 Design: Identity, Continuity, And First Birthday
 
+## Metadata
+
+- Milestone: `v0.92`
+- Version: `v0.92`
+- Date: `2026-05-27`
+- Owner: ADL maintainers
+- Related issues: `#3377`, `#3434`
+- Planning template set: `docs/templates/planning/1.0.0`
+
 ## Status
 
 Forward design plan. This document records the intended v0.92 architecture
 boundary before final WP planning.
+
+## Purpose
+
+Define the planned architecture surfaces for the v0.92 birthday milestone so
+WP-01 can seed implementation issues without reinventing the design boundary.
 
 ## Problem Statement
 
@@ -14,6 +28,10 @@ for birth.
 The missing layer is a bounded identity architecture that can say, with
 evidence, when the first true Gödel agent has been born and why that event is
 not ordinary process startup.
+
+Issue `#3377` is a required readiness input for the launch packet, demo
+rehearsal, negative-suite plan, and review handoff. This design remains a
+planning surface until v0.92 execution produces implementation evidence.
 
 ## Goals
 
@@ -49,6 +67,24 @@ not ordinary process startup.
 - No replacement of v0.93 key lifecycle, encryption, signing, revocation, or
   zero-trust message-acceptance work.
 - No replacement of v0.94 signed/queryable trace closure.
+
+## Scope
+
+The design scope is the identity-and-birth layer: birthday contract, identity
+record, continuity record, memory grounding, capability envelope, ACP profile,
+ACIP binary/schema-catalog transport readiness, witness/receipt, review packet,
+negative cases, and governance handoff.
+
+## Requirements
+
+- Birthday claims must map to explicit evidence.
+- Negative cases must reject ordinary lifecycle events as birth.
+- Private state must be protected through references, redactions, and access
+  decisions.
+- ACIP binary messages must remain decodeable through public schemas and
+  deterministic JSON projection for authorized readers.
+- v0.93 governance and v0.94 signed/queryable trace work must remain
+  downstream.
 
 ## Proposed Design
 
@@ -147,6 +183,17 @@ The review packet should include:
 - reviewer finding
 - caveats and downstream governance handoff
 
+## Interfaces And Contracts
+
+- Identity record contract.
+- Continuity record contract.
+- Memory-grounding reference contract.
+- Capability envelope contract.
+- ACP/cognitive profile contract.
+- ACIP protobuf/schema-catalog/JSON-projection contract.
+- Witness and receipt contract.
+- Birthday review packet contract.
+
 ## Validation Plan
 
 Later implementation should validate:
@@ -177,7 +224,7 @@ Later implementation should validate:
 | v0.92 absorbs v0.93 governance. | Keep citizenship law, rights/duties, social contract, delegation, and IAM downstream. |
 | Continuity is treated as magic. | Require lineage, witnesses, cycle evidence, and ambiguity handling. |
 
-## Exit Criteria For Final WP Planning
+## Exit Criteria
 
 - The birthday contract is specific enough to implement.
 - The negative cases are concrete.

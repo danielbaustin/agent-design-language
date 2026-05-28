@@ -1,11 +1,25 @@
 # v0.92 Identity, Continuity, And First Birthday Plan
 
+## Metadata
+
+- Milestone: `v0.92`
+- Version: `v0.92`
+- Date: `2026-05-27`
+- Owner: ADL maintainers
+- Related issues: `#3377`, `#3434`
+- Planning template set: `docs/templates/planning/1.0.0`
+
 ## Status
 
 Planning allocation document. This is not a final v0.92 work-package sequence
 and does not create the v0.92 issue wave.
 
 v0.92 is the planned milestone for the first true Gödel-agent birthday.
+
+Issue `#3377` is the v0.91.4 readiness source for the first-birthday launch
+packet, go/no-go checklist, demo rehearsal outline, negative-suite plan, and
+review handoff expectations. v0.92 WP-01 must consume that issue before opening
+the final issue wave.
 
 ## Purpose
 
@@ -79,6 +93,7 @@ provenance labels, not public path requirements.
 | Source file or source group | Disposition | Reason |
 | --- | --- | --- |
 | ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md | Primary v0.92 source | Defines the first-birthday boundary and required birth evidence. |
+| `#3377` first-birthday readiness issue | Required readiness source | Supplies launch-packet, go/no-go, demo rehearsal, negative-suite, and reviewer-handoff expectations for WP-01. |
 | v0.90.3 citizen-state source corpus | Dependency source | Supplies signed state, lineage, witnesses, quarantine, standing, and projection prerequisites. |
 | v0.91 moral-governance allocation | Dependency source | Supplies moral trace, outcome linkage, review, wellbeing, and moral resources that inform birth readiness. |
 | v0.93 constitutional citizenship allocation | Downstream handoff source | Shows what v0.92 must prepare for without absorbing governance. |
@@ -138,7 +153,8 @@ commitments.
 ## Non-Goals
 
 - No runtime implementation in this planning issue.
-- No v0.92 issue wave or final WP sequence yet.
+- No opened v0.92 GitHub issue wave yet; the candidate issue-wave preflight is
+  tracked in `WP_ISSUE_WAVE_v0.92.yaml`.
 - No legal personhood claim.
 - No production citizenship claim.
 - No complete constitutional authority claim.

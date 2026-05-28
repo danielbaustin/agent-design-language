@@ -1,11 +1,28 @@
 # v0.92 Milestone README
 
+## Metadata
+
+- Milestone: `v0.92`
+- Version: `v0.92`
+- Date: `2026-05-27`
+- Owner: ADL maintainers
+- Related issues: `#3377`, `#3434`
+- Planning template set: `docs/templates/planning/1.0.0`
+
 ## Status
 
-Forward planning. v0.92 is not yet an active implementation milestone and has
-no final issue wave. Its boundary was rechecked during the v0.90.3 and v0.90.4
-WP-19 handoff passes so it stays about identity and birth rather than
-absorbing economics, governed tools, or constitutional citizenship
+Current status: forward planning for the next milestone.
+
+- Planning: candidate package refreshed during `v0.91.4` issue `#3434`
+- Execution: not started
+- Validation: docs-readiness validation only
+- Release readiness: not applicable until `v0.92` executes
+
+v0.92 is not yet an active implementation milestone. It now has a candidate
+issue-wave preflight document for WP-01 seeding, but the GitHub issue wave
+must not be opened until `v0.92` begins. Its boundary was rechecked during the
+`v0.91.4` docs-preparation pass so it stays about identity and birth rather
+than absorbing economics, governed tools, or constitutional citizenship
 prematurely.
 
 ## Purpose
@@ -14,6 +31,11 @@ v0.92 is the planned first true Gödel-agent birthday milestone.
 
 The canonical allocation is recorded in
 [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md).
+
+The first-birthday readiness source issue is
+[#3377](https://github.com/danielbaustin/agent-design-language/issues/3377).
+That issue owns the launch packet and go/no-go readiness plan; this milestone
+package owns the canonical `docs/milestones/v0.92/` planning surface.
 
 ## Milestone Role
 
@@ -47,6 +69,16 @@ context, witnesses, and reviewable evidence.
 
 Roadmap: [Runtime v2 And Birthday Boundary Roadmap](../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md)
 
+## Boundaries
+
+The milestone boundary is identity and birth readiness. v0.92 may consume
+prior citizen-state, moral-trace, runtime, memory, intelligence, and ACIP
+evidence, but it must not redefine those prerequisite surfaces.
+
+This planning packet is not release evidence and does not approve v0.92
+execution. WP-01 must promote, correct, or supersede this candidate package
+when the milestone opens.
+
 ## Dependency Boundary
 
 v0.92 depends on:
@@ -69,6 +101,7 @@ v0.92 depends on:
   external-transport non-claims
 - v0.93 as a downstream consumer of identity evidence for constitutional
   citizenship and polis governance
+- v0.91.4 issue `#3377` for first-birthday launch-packet readiness inputs
 
 ## Parallel Python Reduction Tranche
 
@@ -82,6 +115,17 @@ The likely `v0.92` tranche is:
 - bridge or protocol leftovers that still sit in Python
 - edge-surface deletion or Rust replacement that is easier to finish after the
   earlier control-plane waves land
+
+## Source Map
+
+- `#3377`: first-birthday readiness packet source.
+- `#3434`: v0.92 planning-doc preparation issue.
+- [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md):
+  current identity and birthday allocation plan.
+- [WP_ISSUE_WAVE_v0.92.yaml](WP_ISSUE_WAVE_v0.92.yaml):
+  candidate issue-wave seed for WP-01.
+- [Runtime v2 And Birthday Boundary Roadmap](../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md):
+  roadmap boundary for birthday semantics.
 
 ## Scope Summary
 
@@ -121,6 +165,8 @@ The likely `v0.92` tranche is:
 
 ## Document Map
 
+- Candidate issue wave:
+  [WP_ISSUE_WAVE_v0.92.yaml](WP_ISSUE_WAVE_v0.92.yaml)
 - Vision: [VISION_v0.92.md](VISION_v0.92.md)
 - Design: [DESIGN_v0.92.md](DESIGN_v0.92.md)
 - WBS: [WBS_v0.92.md](WBS_v0.92.md)
@@ -131,12 +177,19 @@ The likely `v0.92` tranche is:
 - Release plan: [RELEASE_PLAN_v0.92.md](RELEASE_PLAN_v0.92.md)
 - Release notes: [RELEASE_NOTES_v0.92.md](RELEASE_NOTES_v0.92.md)
 - Feature plans: [features/README.md](features/README.md)
+- ADR plan: [ADR_PLAN_v0.92.md](ADR_PLAN_v0.92.md)
 - Identity, continuity, and birthday allocation:
   [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md)
+- First-birthday readiness source issue:
+  [#3377](https://github.com/danielbaustin/agent-design-language/issues/3377)
 - ACP / cognitive profiles:
   [ACP_COGNITIVE_PROFILES_v0.92.md](features/ACP_COGNITIVE_PROFILES_v0.92.md)
 - ACIP binary schema and WebSocket transport:
   [ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md](features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md)
+- Cross-polis continuity and migration planning:
+  [CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md](features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md)
+- First-birthday demo and governance handoff:
+  [FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md](features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md)
 - Identity, stable name, and continuity:
   [IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md](features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md)
 - Memory grounding, capability, and witnesses:
@@ -149,6 +202,8 @@ The likely `v0.92` tranche is:
 Later WP planning should preserve the standard milestone rhythm:
 
 - WP-01: promote reviewed milestone docs and issue wave
+- WP-01 must consume the candidate issue wave and `#3377` readiness packet
+  rather than reconstructing the birthday plan from chat.
 - feature WPs: implement identity, continuity, memory grounding, capability,
   ACP/cognitive profile, ACIP binary transport-readiness, witness, receipt, and
   birthday-record surfaces
@@ -157,6 +212,17 @@ Later WP planning should preserve the standard milestone rhythm:
 - release WP: close the milestone under the normal ceremony pattern
 
 The exact WP sequence is intentionally deferred until v0.92 planning is active.
+
+## Demo and Validation Surface
+
+v0.92 demos should prove birthday behavior, negative cases, continuity,
+memory grounding, capability envelopes, ACP/cognitive-profile evidence, ACIP
+schema-public inspectability, and governance handoff. The candidate demo plan
+is tracked in [DEMO_MATRIX_v0.92.md](DEMO_MATRIX_v0.92.md).
+
+Validation for this planning package is structural only until v0.92 execution:
+planning-template validation, Markdown link checks, YAML parsing, and
+claim-boundary review.
 
 ## Success Criteria
 
@@ -168,3 +234,15 @@ v0.92 is ready to execute when:
 - v0.90.3 and v0.91 prerequisites are named rather than redefined
 - v0.93 governance is downstream rather than absorbed
 - demo candidates prove identity and birth behavior, not merely vocabulary
+
+## Exit Criteria
+
+This planning package is ready for v0.92 WP-01 when:
+
+- the ten canonical planning docs validate against the active planning
+  template set
+- the feature docs validate against the feature-doc template
+- the candidate issue wave parses and preserves the release-tail sequence
+- `#3377` is explicitly consumed, routed, or marked as a WP-01 prerequisite
+- the ADR plan identifies v0.92 architecture decisions for WP-01 and review-tail
+  follow-through
