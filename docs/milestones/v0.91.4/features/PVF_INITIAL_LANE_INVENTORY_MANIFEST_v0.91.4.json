@@ -1,0 +1,225 @@
+{
+  "manifest_version": "v0.91.4",
+  "lane_classes": [
+    "fast_unit",
+    "contract_schema_card",
+    "docs",
+    "cli_workflow",
+    "integration_worktree",
+    "provider_live",
+    "release_gate"
+  ],
+  "lanes": {
+    "rust_fmt": {
+      "lane_class": "fast_unit",
+      "owner_surface": "Rust formatting gate",
+      "command": "cargo fmt --all -- --check",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        "adl/src/",
+        "adl/tests/"
+      ],
+      "evidence_outputs": [
+        "stdout:fmt_check_clean"
+      ],
+      "timeout_minutes": 5,
+      "requires_credentials": false,
+      "requires_worktree": false
+    },
+    "structured_prompt_contract": {
+      "lane_class": "contract_schema_card",
+      "owner_surface": "Structured prompt, schema, and manifest contracts",
+      "command": "bash adl/tools/validate_structured_prompt.sh --type sor --phase completed --input <card> && python3 -m json.tool docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_SCHEMA_v0.91.4.json >/dev/null && python3 -m json.tool docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_EXAMPLE_v0.91.4.json >/dev/null",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        ".adl/",
+        "docs/templates/prompts/",
+        "adl/tools/validate_structured_prompt.sh",
+        "docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_SCHEMA_v0.91.4.json",
+        "docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_EXAMPLE_v0.91.4.json",
+        "docs/milestones/v0.91.4/features/PVF_INITIAL_LANE_INVENTORY_MANIFEST_v0.91.4.json"
+      ],
+      "evidence_outputs": [
+        "stdout:card_contract_pass"
+      ],
+      "timeout_minutes": 3,
+      "requires_credentials": false,
+      "requires_worktree": false
+    },
+    "release_notes_commands": {
+      "lane_class": "docs",
+      "owner_surface": "Release-notes command surfaces",
+      "command": "bash tools/check_release_notes_commands.sh",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        "docs/",
+        "README.md",
+        "CHANGELOG.md"
+      ],
+      "evidence_outputs": [
+        "stdout:release_notes_commands_pass"
+      ],
+      "timeout_minutes": 3,
+      "requires_credentials": false,
+      "requires_worktree": false
+    },
+    "legacy_swarm_refs_guard": {
+      "lane_class": "docs",
+      "owner_surface": "Publication-boundary and stale-term guardrails",
+      "command": "bash adl/tools/check_no_new_legacy_swarm_refs.sh",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        "docs/",
+        "README.md",
+        ".adl/",
+        "adl/tools/skills/"
+      ],
+      "evidence_outputs": [
+        "stdout:legacy_swarm_refs_guard_pass"
+      ],
+      "timeout_minutes": 3,
+      "requires_credentials": false,
+      "requires_worktree": false
+    },
+    "pr_closing_linkage_guard": {
+      "lane_class": "docs",
+      "owner_surface": "Issue and PR closing-linkage truth",
+      "command": "bash adl/tools/check_pr_closing_linkage.sh",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "always",
+      "changed_path_hints": [
+        ".github/workflows/ci.yaml",
+        "adl/tools/check_pr_closing_linkage.sh",
+        ".adl/",
+        "docs/"
+      ],
+      "evidence_outputs": [
+        "stdout:pr_closing_linkage_guard_pass"
+      ],
+      "timeout_minutes": 3,
+      "requires_credentials": false,
+      "requires_worktree": false
+    },
+    "ci_path_policy_contract": {
+      "lane_class": "cli_workflow",
+      "owner_surface": "Changed-path classification and CI routing contracts",
+      "command": "bash adl/tools/test_ci_path_policy.sh",
+      "resource_profile": "low",
+      "determinism": "fixture_bound",
+      "cache_strategy": "local_reuse",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        ".github/workflows/ci.yaml",
+        "adl/tools/ci_path_policy.sh",
+        "adl/tools/test_ci_path_policy.sh"
+      ],
+      "evidence_outputs": [
+        "stdout:ci_path_policy_contract_pass"
+      ],
+      "timeout_minutes": 5,
+      "requires_credentials": false,
+      "requires_worktree": false
+    },
+    "sprint_helper_regression": {
+      "lane_class": "cli_workflow",
+      "owner_surface": "Sprint conductor helper behavior",
+      "command": "bash adl/tools/test_sprint_conductor_helpers.sh",
+      "resource_profile": "medium",
+      "determinism": "fixture_bound",
+      "cache_strategy": "local_reuse",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": [
+        "adl/tools/skills/sprint-conductor/",
+        "adl/tools/test_sprint_conductor_helpers.sh"
+      ],
+      "evidence_outputs": [
+        "stdout:sprint_helper_regression_pass"
+      ],
+      "timeout_minutes": 10,
+      "requires_credentials": false,
+      "requires_worktree": false
+    },
+    "proof_validation_lane": {
+      "lane_class": "integration_worktree",
+      "owner_surface": "v0.91.3 proof validation packet",
+      "command": "bash adl/tools/run_v0913_proof_validation_lane.sh",
+      "resource_profile": "high",
+      "determinism": "fixture_bound",
+      "cache_strategy": "artifact_reuse",
+      "release_gate_class": "release_candidate",
+      "default_trigger": "manual",
+      "changed_path_hints": [
+        "docs/milestones/v0.91.3/",
+        "adl/tools/run_v0913_proof_validation_lane.sh"
+      ],
+      "evidence_outputs": [
+        "stdout:proof_validation_lane_pass"
+      ],
+      "timeout_minutes": 20,
+      "requires_credentials": false,
+      "requires_worktree": true
+    },
+    "authoritative_coverage": {
+      "lane_class": "release_gate",
+      "owner_surface": "Authoritative coverage authority",
+      "command": "bash adl/tools/run_authoritative_coverage_lane.sh",
+      "resource_profile": "high",
+      "determinism": "fixture_bound",
+      "cache_strategy": "artifact_reuse",
+      "release_gate_class": "manual_release_gate",
+      "default_trigger": "release_only",
+      "changed_path_hints": [
+        ".github/workflows/ci.yaml",
+        "adl/tools/run_authoritative_coverage_lane.sh"
+      ],
+      "evidence_outputs": [
+        "coverage-summary.json",
+        "coverage-summary.txt",
+        "lcov.info"
+      ],
+      "timeout_minutes": 30,
+      "requires_credentials": false,
+      "requires_worktree": false
+    },
+    "uts_benchmark": {
+      "lane_class": "provider_live",
+      "owner_surface": "Hosted benchmark provider execution",
+      "command": "bash adl/tools/run_uts_benchmark.sh",
+      "resource_profile": "high",
+      "determinism": "live",
+      "cache_strategy": "artifact_reuse",
+      "release_gate_class": "manual_release_gate",
+      "default_trigger": "manual",
+      "changed_path_hints": [
+        "adl/tools/run_uts_benchmark.sh"
+      ],
+      "evidence_outputs": [
+        "stdout:uts_benchmark_summary"
+      ],
+      "timeout_minutes": 60,
+      "requires_credentials": true,
+      "requires_worktree": false
+    }
+  }
+}
