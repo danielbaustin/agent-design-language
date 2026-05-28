@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-design-language.dev/schemas/pvf-validation-lane-manifest-v0.91.4.json",
+  "title": "PVF Validation Lane Manifest v0.91.4",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "lane_classes",
+    "lanes"
+  ],
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "const": "v0.91.4"
+    },
+    "lane_classes": {
+      "description": "Subset of canonical lane classes actually used by entries in this manifest.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "fast_unit",
+          "contract_schema_card",
+          "docs",
+          "cli_workflow",
+          "integration_worktree",
+          "provider_live",
+          "release_gate"
+        ]
+      }
+    },
+    "lanes": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+        "$ref": "#/$defs/lane"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lane_class",
+        "owner_surface",
+        "command",
+        "resource_profile",
+        "determinism",
+        "cache_strategy",
+        "release_gate_class",
+        "default_trigger",
+        "changed_path_hints",
+        "evidence_outputs"
+      ],
+      "properties": {
+        "lane_class": {
+          "type": "string",
+          "enum": [
+            "fast_unit",
+            "contract_schema_card",
+            "docs",
+            "cli_workflow",
+            "integration_worktree",
+            "provider_live",
+            "release_gate"
+          ]
+        },
+        "owner_surface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resource_profile": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "determinism": {
+          "type": "string",
+          "enum": [
+            "strict",
+            "fixture_bound",
+            "live"
+          ]
+        },
+        "cache_strategy": {
+          "type": "string",
+          "enum": [
+            "none",
+            "local_reuse",
+            "artifact_reuse"
+          ]
+        },
+        "release_gate_class": {
+          "type": "string",
+          "enum": [
+            "required_on_pr",
+            "release_candidate",
+            "manual_release_gate",
+            "optional"
+          ]
+        },
+        "default_trigger": {
+          "type": "string",
+          "enum": [
+            "always",
+            "changed_paths",
+            "manual",
+            "release_only"
+          ]
+        },
+        "changed_path_hints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "evidence_outputs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeout_minutes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "requires_credentials": {
+          "type": "boolean"
+        },
+        "requires_worktree": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
