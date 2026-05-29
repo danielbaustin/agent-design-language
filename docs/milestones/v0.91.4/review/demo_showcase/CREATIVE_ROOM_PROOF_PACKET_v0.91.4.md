@@ -19,6 +19,7 @@ This packet records the proof boundary for the ADL Creative Room demo built for 
 The Creative Room demo is a front-stage visualization of C-SDLC creative production:
 
 - role separation across architect, builder, reviewer, editor, and operator lanes
+- an animated `Run the room` transition replay through intent, shard split, build, review, and closeout
 - convergence through a shared state machine and evidence ledger
 - explicit scope cuts and non-claims
 - durable artifact surfaces: prompt cards, work product, proof packet, and SOR truth
@@ -57,6 +58,7 @@ Expected visible proof points:
 - claim ledger separates claim, evidence, and boundary
 - room map exposes five roles
 - selecting a role changes the selected-role panel
+- `Run the room` animates the transition replay and updates active node, event log, progress bar, and replay status
 - `Show tighter cut` exposes deferred work and non-claims
 - artifact ledger includes prompt cards, work product, proof packet, and SOR truth
 - visual route works in Chromium through the documented Computer Use visible-browser path
@@ -76,7 +78,7 @@ Validation recorded for `#3459` includes the focused checks below:
 - static artifact exists at the primary artifact path
 - artifact contains required labels for roles, proof pulse, claim ledger, scope cuts, artifact ledger, and non-claims
 - proof packet distinguishes static artifact proof from live multi-agent execution
-- Browser MCP proof verified render and interaction: title, heading, proof pulse, claim ledger, non-provider boundary, reviewer role selection, and scope-cut state
+- Browser MCP proof verified render and interaction: title, heading, proof pulse, claim ledger, non-provider boundary, reviewer role selection, scope-cut state, and `Run the room` replay progress
 - Computer Use visible Chromium proof verified the artifact renders in the real Chromium app
 - patch hygiene passed
 

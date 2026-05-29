@@ -334,6 +334,122 @@
       margin-top: 18px;
     }
 
+    .sprint-console {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.8fr) minmax(320px, 1.2fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .signal-board {
+      border-radius: 26px;
+      background: linear-gradient(160deg, #101b19, #18352d);
+      color: var(--paper);
+      border: 1px solid rgba(255,250,240,0.18);
+      padding: 22px;
+      min-height: 310px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .signal-board::before {
+      content: "";
+      position: absolute;
+      inset: 24px;
+      border: 1px dashed rgba(255,250,240,0.18);
+      border-radius: 22px;
+    }
+
+    .signal-node {
+      position: absolute;
+      width: 112px;
+      min-height: 56px;
+      padding: 10px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+      background: rgba(255,250,240,0.1);
+      border: 1px solid rgba(255,250,240,0.2);
+      transition: background 220ms ease, transform 220ms ease, border-color 220ms ease;
+      z-index: 1;
+    }
+
+    .signal-node.hot {
+      background: rgba(217,162,58,0.9);
+      color: var(--ink);
+      border-color: rgba(255,250,240,0.75);
+      transform: scale(1.06);
+      box-shadow: 0 0 40px rgba(217,162,58,0.38);
+    }
+
+    .signal-node.done {
+      background: rgba(168,199,193,0.78);
+      color: var(--ink);
+    }
+
+    .signal-node.intent { left: 8%; top: 10%; }
+    .signal-node.shards { right: 9%; top: 12%; }
+    .signal-node.build { right: 12%; bottom: 16%; }
+    .signal-node.review { left: 12%; bottom: 15%; }
+    .signal-node.closeout { left: 50%; top: 48%; transform: translate(-50%, -50%); }
+    .signal-node.closeout.hot { transform: translate(-50%, -50%) scale(1.06); }
+
+    .signal-line {
+      position: absolute;
+      height: 2px;
+      transform-origin: left center;
+      background: linear-gradient(90deg, transparent, rgba(217,162,58,0.86), transparent);
+      opacity: 0.22;
+      transition: opacity 220ms ease;
+    }
+
+    .signal-line.hot { opacity: 0.95; }
+    .signal-line.one { left: 26%; top: 25%; width: 42%; transform: rotate(4deg); }
+    .signal-line.two { right: 20%; top: 32%; width: 33%; transform: rotate(72deg); }
+    .signal-line.three { right: 27%; bottom: 27%; width: 42%; transform: rotate(166deg); }
+    .signal-line.four { left: 22%; bottom: 32%; width: 34%; transform: rotate(-68deg); }
+
+    .event-log {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: rgba(255,250,240,0.74);
+      padding: 20px;
+      display: grid;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .event-log ol {
+      margin: 0;
+      padding-left: 22px;
+      display: grid;
+      gap: 10px;
+      color: rgba(23,35,29,0.72);
+    }
+
+    .event-log li.active {
+      color: var(--fern);
+      font-weight: 900;
+    }
+
+    .progress-rail {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(23,35,29,0.1);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--clay), var(--gold), var(--moss));
+      transition: width 260ms ease;
+    }
+
     .artifact {
       border-radius: 22px;
       padding: 18px;
@@ -389,12 +505,12 @@
       .map { min-height: 650px; }
       .role.operator { left: 32%; top: 5%; }
       .timeline, .artifact-grid { grid-template-columns: 1fr 1fr; }
-      .pulse-grid, .claim-board { grid-template-columns: 1fr 1fr; }
+      .pulse-grid, .claim-board, .sprint-console { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 640px) {
       .timeline, .artifact-grid { grid-template-columns: 1fr; }
-      .pulse-grid, .claim-board, .claim-row { grid-template-columns: 1fr; }
+      .pulse-grid, .claim-board, .claim-row, .sprint-console { grid-template-columns: 1fr; }
       .map { min-height: 760px; }
       .role { width: 140px; }
       .center { width: 150px; height: 150px; }
@@ -482,6 +598,41 @@
         </div>
       </section>
 
+      <section class="stage" aria-label="Watch the C-SDLC room run">
+        <h2>Watch it run</h2>
+        <div class="sprint-console">
+          <div class="signal-board" aria-label="Animated C-SDLC transition map">
+            <div class="signal-line one" data-line="0"></div>
+            <div class="signal-line two" data-line="1"></div>
+            <div class="signal-line three" data-line="2"></div>
+            <div class="signal-line four" data-line="3"></div>
+            <div class="signal-node intent hot" data-node="0">Intent packet</div>
+            <div class="signal-node shards" data-node="1">Shard split</div>
+            <div class="signal-node build" data-node="2">Build artifact</div>
+            <div class="signal-node review" data-node="3">Review truth</div>
+            <div class="signal-node closeout" data-node="4">Closeout memory</div>
+          </div>
+          <div class="event-log">
+            <h2>Live transition replay</h2>
+            <h3 id="replay-title">Intent packet accepted</h3>
+            <p id="replay-copy">The room starts by turning a loose creative wish into explicit deliverables, non-goals, and proof duties.</p>
+            <div class="progress-rail" aria-label="Replay progress"><div class="progress-fill" id="progress-fill"></div></div>
+            <ol id="event-list">
+              <li class="active">Intent becomes a durable issue and prompt-card bundle.</li>
+              <li>Work is split into artifact, proof, matrix, and review surfaces.</li>
+              <li>The demo artifact is built inside the bounded shard.</li>
+              <li>Review checks the claims against visible evidence.</li>
+              <li>Closeout records what happened so the next agent inherits state.</li>
+            </ol>
+            <div class="control-row">
+              <button id="run-sprint-button">Run the room</button>
+              <button id="pause-sprint-button" class="secondary">Pause</button>
+            </div>
+            <div class="status-line" id="replay-status">Replay state: waiting at intent.</div>
+          </div>
+        </div>
+      </section>
+
       <section class="stage" aria-label="C-SDLC transition timeline">
         <h2>Convergence timeline</h2>
         <div class="timeline">
@@ -518,6 +669,50 @@
     const statusLine = document.querySelector('#status-line');
     const cutButton = document.querySelector('#cut-button');
     const resetButton = document.querySelector('#reset-button');
+    const runSprintButton = document.querySelector('#run-sprint-button');
+    const pauseSprintButton = document.querySelector('#pause-sprint-button');
+    const replayTitle = document.querySelector('#replay-title');
+    const replayCopy = document.querySelector('#replay-copy');
+    const replayStatus = document.querySelector('#replay-status');
+    const progressFill = document.querySelector('#progress-fill');
+    const replayItems = Array.from(document.querySelectorAll('#event-list li'));
+    const replayNodes = Array.from(document.querySelectorAll('[data-node]'));
+    const replayLines = Array.from(document.querySelectorAll('[data-line]'));
+    const replaySteps = [
+      ['Intent packet accepted', 'The room starts by turning a loose creative wish into explicit deliverables, non-goals, and proof duties.'],
+      ['Shard split is visible', 'Artifact, proof packet, matrix link, and review truth become separate owned surfaces.'],
+      ['Artifact lane builds', 'The bounded work product appears without claiming hidden provider execution.'],
+      ['Review lane challenges', 'Claims are checked against visible evidence and non-claims stay on stage.'],
+      ['Closeout memory lands', 'Outcome truth becomes durable handoff state instead of disappearing into chat.']
+    ];
+    let replayIndex = 0;
+    let replayTimer = null;
+
+    function setReplay(index) {
+      replayIndex = index % replaySteps.length;
+      replayTitle.textContent = replaySteps[replayIndex][0];
+      replayCopy.textContent = replaySteps[replayIndex][1];
+      progressFill.style.width = `${((replayIndex + 1) / replaySteps.length) * 100}%`;
+      replayStatus.textContent = `Replay state: ${replaySteps[replayIndex][0].toLowerCase()}.`;
+      replayItems.forEach((item, itemIndex) => item.classList.toggle('active', itemIndex === replayIndex));
+      replayNodes.forEach((node, nodeIndex) => {
+        node.classList.toggle('hot', nodeIndex === replayIndex);
+        node.classList.toggle('done', nodeIndex < replayIndex);
+      });
+      replayLines.forEach((line, lineIndex) => line.classList.toggle('hot', lineIndex < replayIndex));
+    }
+
+    function startReplay() {
+      window.clearInterval(replayTimer);
+      setReplay(0);
+      replayTimer = window.setInterval(() => setReplay(replayIndex + 1), 1100);
+    }
+
+    function pauseReplay() {
+      window.clearInterval(replayTimer);
+      replayTimer = null;
+      replayStatus.textContent = `Replay state: paused at ${replaySteps[replayIndex][0].toLowerCase()}.`;
+    }
 
     roles.forEach((role) => {
       role.addEventListener('click', () => {
@@ -543,7 +738,13 @@
       scopeTitle.textContent = 'Current cut: static front-stage artifact';
       scopeCopy.textContent = 'This issue builds the Creative Room demo and proof packet. It does not build Unity, run live providers, or claim multi-agent execution.';
       statusLine.textContent = 'Room state: converging with bounded claims.';
+      pauseReplay();
+      setReplay(0);
     });
+
+    runSprintButton.addEventListener('click', startReplay);
+    pauseSprintButton.addEventListener('click', pauseReplay);
+    setReplay(0);
   </script>
 </body>
 </html>
