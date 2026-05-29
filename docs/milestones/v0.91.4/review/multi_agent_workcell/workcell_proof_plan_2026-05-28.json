@@ -53,20 +53,6 @@
     {
       "classification": "blocked",
       "execution_backend": null,
-      "issue_number": 5003,
-      "model_hint": null,
-      "reasons": [
-        "review lane awaits serialized normalized worker publication"
-      ],
-      "role": "reviewer",
-      "shard_id": "hosted-reviewer",
-      "write_paths": [
-        "docs/milestones/v0.91.4/review/multi_agent_workcell/MULTI_AGENT_CSDLC_WORKCELL_PROOF_PACKET_2026-05-28.md"
-      ]
-    },
-    {
-      "classification": "blocked",
-      "execution_backend": null,
       "issue_number": 5005,
       "model_hint": null,
       "reasons": [
@@ -75,6 +61,20 @@
       "role": "closeout",
       "shard_id": "closeout-lane",
       "write_paths": []
+    },
+    {
+      "classification": "blocked",
+      "execution_backend": null,
+      "issue_number": 5003,
+      "model_hint": null,
+      "reasons": [
+        "review lane missing reviewable input"
+      ],
+      "role": "reviewer",
+      "shard_id": "hosted-reviewer",
+      "write_paths": [
+        "docs/milestones/v0.91.4/review/multi_agent_workcell/MULTI_AGENT_CSDLC_WORKCELL_PROOF_PACKET_2026-05-28.md"
+      ]
     },
     {
       "classification": "blocked",
