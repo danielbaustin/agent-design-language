@@ -1,5 +1,5 @@
-use adl::provider_adapter::execute_provider_invocation;
-use adl::provider_communication::{ProviderInvocationRequestV1, ProviderRunLoggerV1};
+use crate::provider_adapter::execute_provider_invocation;
+use crate::provider_communication::{ProviderInvocationRequestV1, ProviderRunLoggerV1};
 use anyhow::{Context, Result};
 use clap::Parser;
 use std::fs;
@@ -8,22 +8,18 @@ use std::path::PathBuf;
 #[derive(Debug, Parser)]
 #[command(name = "adl-provider-adapter")]
 #[command(about = "Run one ADL provider invocation through the Rust provider adapter")]
-struct Args {
+pub struct ProviderAdapterCliArgs {
     #[arg(long)]
-    request: PathBuf,
+    pub request: PathBuf,
 
     #[arg(long)]
-    out: PathBuf,
+    pub out: PathBuf,
 
     #[arg(long)]
-    log: PathBuf,
+    pub log: PathBuf,
 }
 
-fn main() -> Result<()> {
-    run(Args::parse())
-}
-
-fn run(args: Args) -> Result<()> {
+pub fn run_provider_adapter_cli(args: ProviderAdapterCliArgs) -> Result<()> {
     let request_text = fs::read_to_string(&args.request)
         .with_context(|| format!("read request file {}", args.request.display()))?;
     let request: ProviderInvocationRequestV1 = serde_json::from_str(&request_text)
@@ -46,7 +42,6 @@ fn run(args: Args) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use adl::provider_communication::ProviderInvocationFinalStatusV1;
     use std::time::{SystemTime, UNIX_EPOCH};
 
     fn temp_path(name: &str) -> PathBuf {
@@ -96,7 +91,7 @@ mod tests {
         )
         .unwrap();
 
-        run(Args {
+        run_provider_adapter_cli(ProviderAdapterCliArgs {
             request: request.clone(),
             out: out.clone(),
             log: log.clone(),
@@ -124,6 +119,5 @@ mod tests {
         let _ = fs::remove_file(request);
         let _ = fs::remove_file(out);
         let _ = fs::remove_file(log);
-        let _ = ProviderInvocationFinalStatusV1::Failed;
     }
 }
