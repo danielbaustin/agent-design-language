@@ -339,12 +339,31 @@ filter_tokens=""
 filter_expression=""
 rust_surface_count=0
 structural_surface_count=0
+slow_proof_inventory_surface_count=0
 all_paths_have_precise_token=true
 all_paths_have_family_token=true
 classification_locked=false
+saw_slow_proof_contract_surface=false
 
 declare -a tokens=()
 declare -a family_tokens=()
+
+while IFS= read -r path; do
+  [ -n "$path" ] || continue
+  case "$path" in
+    .github/workflows/ci.yaml|\
+    adl/tools/test_slow_proof_lane_contract.sh|\
+    adl/tools/ci_path_policy.sh|\
+    docs/milestones/v0.91.4/features/PVF_INITIAL_LANE_INVENTORY_v0.91.4.md|\
+    docs/milestones/v0.91.4/features/PVF_CI_RELEASE_POLICY_v0.91.4.md)
+      saw_slow_proof_contract_surface=true
+      ;;
+  esac
+done <<EOF
+$(changed_rows \
+  | normalize_changed_rows \
+  | awk -F '\t' 'NF >= 2 { print $2 }')
+EOF
 
 while IFS= read -r path; do
   [ -n "$path" ] || continue
@@ -356,6 +375,10 @@ while IFS= read -r path; do
     continue
   fi
   rust_surface_count=$((rust_surface_count + 1))
+  if [ "$path" = "adl/src/runtime_v2/tests.rs" ] && [ "$saw_slow_proof_contract_surface" = true ]; then
+    slow_proof_inventory_surface_count=$((slow_proof_inventory_surface_count + 1))
+    continue
+  fi
   if is_broad_rust_surface "$path"; then
     mode="full"
     reason="broad_rust_surface_requires_full_nextest"
@@ -386,6 +409,9 @@ EOF
 
 if [ "$classification_locked" = true ]; then
   :
+elif [ "$slow_proof_inventory_surface_count" -gt 0 ] && [ "$rust_surface_count" -eq "$slow_proof_inventory_surface_count" ]; then
+  mode="contract_only"
+  reason="slow_proof_inventory_change_covered_by_contract_check"
 elif [ "$rust_surface_count" -eq 0 ]; then
   mode="full"
   reason="no_relevant_rust_surface_detected_for_fast_lane"
@@ -423,6 +449,7 @@ emit "mode" "$mode"
 emit "reason" "$reason"
 emit "rust_surface_count" "$rust_surface_count"
 emit "structural_surface_count" "$structural_surface_count"
+emit "slow_proof_inventory_surface_count" "$slow_proof_inventory_surface_count"
 emit "filter_tokens" "$filter_tokens"
 emit "filter_expression" "$filter_expression"
 
@@ -435,6 +462,8 @@ cd "$ROOT_DIR/adl"
 if [ "$mode" = "focused" ] || [ "$mode" = "family" ]; then
   echo "Running $mode nextest lane: $filter_expression"
   cargo nextest run --status-level all --final-status-level slow -E "$filter_expression"
+elif [ "$mode" = "contract_only" ]; then
+  echo "Skipping ordinary nextest lane: slow-proof inventory change is covered by the slow-proof lane contract."
 else
   echo "Running full nextest lane: $reason"
   cargo nextest run --status-level all --final-status-level slow

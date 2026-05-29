@@ -1,16 +1,20 @@
 use super::*;
 
+#[cfg(feature = "slow-proof-tests")]
 mod a2a_adapter_boundary;
 #[cfg(feature = "slow-proof-tests")]
 mod access_control;
+#[cfg(feature = "slow-proof-tests")]
 mod acip_hardening;
 mod affect_reasoning_control;
 mod agent_lifecycle_state;
 mod anti_harm_trajectory_constraints;
 mod bid_schema;
 mod boot_admission;
+#[cfg(feature = "slow-proof-tests")]
 mod challenge;
 mod citizen_lifecycle;
+#[cfg(feature = "slow-proof-tests")]
 mod citizen_state_substrate;
 mod cognitive_being_flagship_demo;
 mod common;
@@ -21,6 +25,7 @@ mod contract_registry_accessors;
 mod contract_schema;
 mod csm_run_packet;
 mod cultivating_intelligence;
+#[cfg(feature = "slow-proof-tests")]
 mod delegation_subcontract;
 mod evaluation_selection;
 mod external_counterparty;

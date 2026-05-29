@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+  schedule:
+    - cron: "17 10 * * *"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -100,6 +103,12 @@ jobs:
         run: bash adl/tools/test_ci_path_policy.sh
         working-directory: .
 
+      - name: Install cargo-nextest for CI contract checks
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        with:
+          tool: nextest
+
       - name: tracked proof-validation lane contract
         if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_run_v0913_proof_validation_lane.sh
@@ -108,6 +117,11 @@ jobs:
       - name: PR-fast test lane contract
         if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_run_pr_fast_test_lane.sh
+        working-directory: .
+
+      - name: slow-proof lane contract
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
+        run: bash adl/tools/test_slow_proof_lane_contract.sh
         working-directory: .
 
       - name: authoritative coverage lane contract
@@ -259,6 +273,43 @@ jobs:
           echo "Linker mode: ${RUST_LINK_ACCEL:-unknown}"
           sccache --show-stats || true
 
+  adl-slow-proof:
+    if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    defaults:
+      run:
+        working-directory: adl
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
+        with:
+          workspaces: |
+            adl -> target
+          cache-directories: |
+            ~/.cache/sccache
+
+      - name: Install cargo-nextest
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        with:
+          tool: nextest
+
+      - name: Slow proof shard
+        run: |
+          cargo nextest run --features slow-proof-tests --partition "count:${{ matrix.shard }}/4" --status-level all --final-status-level slow
+
   adl-coverage:
     runs-on: ubuntu-latest
     permissions:
@@ -362,7 +413,7 @@ jobs:
       - name: PR fast coverage summary (json)
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: |
-          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --all-features --status-level all --final-status-level slow --no-report -- ${{ steps.coverage-impact.outputs.filters }}
+          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -- ${{ steps.coverage-impact.outputs.filters }}
           cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
 
       - name: Coverage-impact changed-source gate
@@ -424,6 +475,7 @@ jobs:
         env:
           WORKSPACE_LINE_THRESHOLD: "90"
           PER_FILE_LINE_THRESHOLD: "80"
+          EXCLUDE_FROM_FILE_FLOOR_REGEX: 'adl/src/runtime_v2/(a2a_adapter_boundary|access_control|acip_hardening|challenge|contract_registry_accessors)\.rs$'
         run: |
           set -eu
           bash tools/enforce_coverage_gates.sh coverage-summary.json

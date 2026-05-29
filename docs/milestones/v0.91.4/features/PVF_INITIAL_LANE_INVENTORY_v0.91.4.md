@@ -35,6 +35,7 @@ map instead of an implicit shell-script pile.
 | Rust lint gate | `cargo clippy --all-targets -- -D warnings` | `fast_unit` | medium | run when `rust_required=true` | compile-backed but still ordinary PR proof |
 | Rust doc tests | `cargo test --doc` | `fast_unit` | medium | run on Rust-affecting PRs unless replaced by authoritative lane policy | bounded compared with full nextest/coverage |
 | PR-fast Rust test lane | `bash adl/tools/run_pr_fast_test_lane.sh` | `fast_unit` | medium | ordinary runtime PR lane | already policy-aware and may focus or fail closed |
+| Runtime slow-proof lane | `cargo nextest run --features slow-proof-tests --status-level all --final-status-level slow` | `release_gate` | high | not ordinary PR CI | heavyweight runtime-v2 proof/materialization and golden release-evidence tests |
 | Structured prompt / manifest validation | `bash adl/tools/test_structured_prompt_validation.sh` plus `python3 adl/tools/validate_pvf_manifest.py ...` and schema parse checks | `contract_schema_card` | low | ordinary PR-ready proof for card, schema, and manifest changes | canonical contract lane for cards, schemas, and manifest fixtures |
 | Prompt-template contract suite | `bash adl/tools/test_prompt_templates_1_0_0.sh` | `contract_schema_card` | low | run when prompt-template surfaces change | schema/template contract proof |
 | Structured prompt validation suite | `bash adl/tools/test_structured_prompt_validation.sh` | `contract_schema_card` | low | run when validator surfaces change | contract behavior proof |
@@ -92,6 +93,17 @@ map instead of an implicit shell-script pile.
 
 - `bash adl/tools/run_authoritative_coverage_lane.sh`
 - `bash adl/tools/run_local_authoritative_coverage_gate.sh`
+- `cargo nextest run --features slow-proof-tests --status-level all --final-status-level slow`
+
+Initial runtime-v2 families assigned to this lane are:
+
+- `a2a_adapter_boundary`
+- `access_control`
+- `acip_hardening`
+- `challenge`
+- `citizen_state_substrate`
+- `contract_registry_accessors`
+- `delegation_subcontract`
 
 ### `provider_live`
 
@@ -119,6 +131,8 @@ surfaces into `integration_worktree` and `release_gate`.
 
 Migration note:
 - `#3403` should encode the escalation rule explicitly in CI/release logic.
+- Slow runtime-v2 proof-materialization tests should stay out of the ordinary
+  PR-fast lane and run through the explicit slow-proof/release-gate lane.
 
 ### Gap 3: live/provider surfaces must remain outside ordinary PR CI
 

@@ -60,6 +60,29 @@ This lane represents the existing focused PR-fast validation posture. It is the
 ordinary PR proof lane for runtime-affecting changes, not the release-evidence
 lane.
 
+The default runtime PR lane must not include known slow proof-materialization
+families. Tests that build or validate heavyweight runtime-v2 proof packets,
+fixture materialization, or golden release evidence belong behind the
+`slow-proof-tests` feature and run through explicit slow-proof or release-gate
+commands.
+
+### Runtime slow-proof lane
+
+- lane id: `runtime_slow_proof`
+- lane class: `release_gate`
+- ordinary PR status: `release_gate_required` or `deferred`
+- explicit command:
+  `cargo nextest run --features slow-proof-tests --status-level all --final-status-level slow`
+- sharded command shape:
+  `cargo nextest run --features slow-proof-tests --partition count:N/4 --status-level all --final-status-level slow`
+
+This lane preserves the value of expensive proof tests without putting them in
+the same queue as ordinary PR-fast correctness checks. The slow lane is
+appropriate for push-to-main, nightly/ratchet runs, release-gate validation, or
+operator-requested proof. It must remain visible in PVF status as pending,
+deferred, passed, failed, or release-gate-required; it must not disappear behind
+a green fast lane.
+
 ### Release coverage lane
 
 - lane id: `authoritative_release_gate`
@@ -151,3 +174,5 @@ It does not claim the full release stack is yet driven by PVF.
   docs-only or PR-fast lane.
 - This packet does not claim that reuse is sound across changed commands,
   changed manifests, or changed release policy.
+- This packet does not claim that slow proof has passed when the ordinary
+  PR-fast lane passes; slow proof remains a separate explicit evidence lane.
