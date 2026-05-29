@@ -33,6 +33,48 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
+
+class RunLogger:
+    def __init__(self, path: Path, run_id: str) -> None:
+        self.path = path
+        self.run_id = run_id
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self._handle = self.path.open("a", encoding="utf-8")
+
+    def close(self) -> None:
+        self._handle.close()
+
+    def event(self, event_type: str, **fields: Any) -> None:
+        record = {
+            "timestamp": utc_timestamp(),
+            "run_id": self.run_id,
+            "event_type": event_type,
+        }
+        for key, value in fields.items():
+            if value is not None:
+                record[key] = value
+        self._handle.write(json.dumps(record, sort_keys=True) + "\n")
+        self._handle.flush()
+
+
+def run_log_path_for(out_path: Path) -> Path:
+    return out_path.with_name(f"{out_path.stem}_run.log.jsonl")
+
+
+def provider_event_fields(entry: dict[str, Any], lane: str | None = None, task_id: str | None = None) -> dict[str, Any]:
+    fields = {
+        "provider_kind": entry.get("provider_kind"),
+        "provider": entry.get("provider"),
+        "route": entry.get("route"),
+        "model": entry.get("id"),
+        "provider_model_id": entry.get("model_id"),
+    }
+    if lane is not None:
+        fields["lane"] = lane
+    if task_id is not None:
+        fields["task_id"] = task_id
+    return fields
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parents[1]
 BENCHMARK_DIR = SCRIPT_DIR / "benchmark"
@@ -640,13 +682,21 @@ def provider_failure_kind(note: str) -> str | None:
         return "provider_auth_missing"
     if "missing or empty" in lower and "key file" in lower:
         return "provider_auth_missing"
-    if "does not exist" in lower or "model" in lower and "not" in lower and "found" in lower:
-        return "provider_model_unavailable"
     if "credit balance" in lower or "billing" in lower:
         return "provider_billing_blocked"
-    if "timed out" in lower:
+    if "rate limit" in lower or "rate_limited" in lower or "status=429" in lower:
+        return "provider_rate_limited"
+    if "timed out" in lower or "timeout" in lower:
         return "provider_timeout"
-    if "provider_" in lower or "status=" in lower:
+    if "local_runtime_busy" in lower:
+        return "local_runtime_busy"
+    if "local_runtime_unverified" in lower or "connection refused" in lower or "failed to establish" in lower:
+        return "local_runtime_unavailable"
+    if "ollama" in lower and ("not running" in lower or "refused" in lower or "unavailable" in lower):
+        return "local_runtime_unavailable"
+    if "does not exist" in lower or ("model" in lower and "not" in lower and "found" in lower):
+        return "provider_model_unavailable"
+    if "provider_" in lower or "status=" in lower or "http" in lower:
         return "provider_error"
     return None
 
@@ -682,18 +732,26 @@ def host_policy_note(entry: dict[str, Any]) -> str | None:
     return None
 
 
-def run_lane(entry: dict[str, Any], tasks: list[dict[str, Any]], lane: str) -> dict[str, Any]:
+def run_lane(entry: dict[str, Any], tasks: list[dict[str, Any]], lane: str, logger: RunLogger | None = None) -> dict[str, Any]:
     lane_started_at = utc_timestamp()
+    if logger:
+        logger.event("lane_start", **provider_event_fields(entry, lane=lane))
     cases: list[dict[str, Any]] = []
     for index, task in enumerate(tasks, start=1):
         case_started_at = utc_timestamp()
         print(f"{lane}:{entry['id']} task {index}/{len(tasks)} {task['id']}", file=sys.stderr, flush=True)
+        if logger:
+            logger.event("task_start", **provider_event_fields(entry, lane=lane, task_id=task["id"]), task_index=index, total_tasks=len(tasks))
         prompt = regular_prompt(task) if lane == "regular" else uts_prompt(task)
         try:
             busy_note = local_runtime_busy_note(entry)
             if busy_note:
                 raise RuntimeError(busy_note)
+            if logger:
+                logger.event("attempt_start", **provider_event_fields(entry, lane=lane, task_id=task["id"]), attempt_index=1)
             raw, duration_ms = invoke_model(entry, prompt)
+            if logger:
+                logger.event("attempt_success", **provider_event_fields(entry, lane=lane, task_id=task["id"]), attempt_index=1, duration_ms=duration_ms)
             parsed = extract_json_object(raw)
             classification, passed, note = classify_regular(task, parsed) if lane == "regular" else classify_uts(task, parsed)
         except Exception as exc:  # noqa: BLE001
@@ -703,8 +761,12 @@ def run_lane(entry: dict[str, Any], tasks: list[dict[str, Any]], lane: str) -> d
             passed = False
             failure_kind = provider_failure_kind(raw)
             note = sanitize_artifact_note(raw, failure_kind)
+            if logger:
+                logger.event("attempt_failure", **provider_event_fields(entry, lane=lane, task_id=task["id"]), attempt_index=1, provider_failure_kind=failure_kind, note=note)
         else:
             failure_kind = None
+        if logger:
+            logger.event("task_result", **provider_event_fields(entry, lane=lane, task_id=task["id"]), classification=classification, passed=passed, provider_failure_kind=failure_kind, duration_ms=duration_ms)
         cases.append({
             "task_id": task["id"],
             "started_at": case_started_at,
@@ -716,11 +778,19 @@ def run_lane(entry: dict[str, Any], tasks: list[dict[str, Any]], lane: str) -> d
             "provider_failure_kind": failure_kind,
             "note": note,
         })
-    failure_kinds = [case.get("provider_failure_kind") for case in cases if case["classification"] == "runtime_or_parse_failure"]
-    if len(failure_kinds) == len(cases) and failure_kinds and all(kind == failure_kinds[0] and kind for kind in failure_kinds):
-        return {"status": "provider_failed", "provider_failure_kind": failure_kinds[0], "started_at": lane_started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": cases[0]["note"]}
+    provider_failures = [case for case in cases if case.get("provider_failure_kind")]
+    if provider_failures:
+        failure_kind = provider_failures[0].get("provider_failure_kind")
+        note = provider_failures[0].get("note") or "provider/runtime failure occurred"
+        result = {"status": "provider_failed", "provider_failure_kind": failure_kind, "started_at": lane_started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": note, "provider_failure_count": len(provider_failures)}
+        if logger:
+            logger.event("lane_result", **provider_event_fields(entry, lane=lane), status=result["status"], provider_failure_kind=result.get("provider_failure_kind"), provider_failure_count=len(provider_failures), passed_count=0, total_cases=0)
+        return result
     passed_count = sum(1 for case in cases if case["passed"])
-    return {"status": "evaluated", "started_at": lane_started_at, "completed_at": utc_timestamp(), "passed_count": passed_count, "total_cases": len(cases), "full_support": passed_count == len(cases), "cases": cases}
+    result = {"status": "evaluated", "started_at": lane_started_at, "completed_at": utc_timestamp(), "passed_count": passed_count, "total_cases": len(cases), "full_support": passed_count == len(cases), "cases": cases}
+    if logger:
+        logger.event("lane_result", **provider_event_fields(entry, lane=lane), status=result["status"], passed_count=passed_count, total_cases=len(cases))
+    return result
 
 
 def duration_stats(cases: list[dict[str, Any]]) -> tuple[str, str]:
@@ -866,14 +936,22 @@ def sanitize_governed_raw_artifact(doc: dict[str, Any]) -> dict[str, Any]:
     return doc
 
 
-def run_governed_lane(entry: dict[str, Any], task_panel_file: Path, raw_path: Path) -> dict[str, Any]:
+def run_governed_lane(entry: dict[str, Any], task_panel_file: Path, raw_path: Path, logger: RunLogger | None = None) -> dict[str, Any]:
     started_at = utc_timestamp()
+    if logger:
+        logger.event("lane_start", **provider_event_fields(entry, lane="uts_acc"), raw_artifact=display_path(raw_path))
     cargo = shutil.which("cargo") if 'shutil' in globals() else None
     if cargo is None:
-        return {"status": "skipped", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": "Rust cargo is not installed; governed lane skipped"}
+        result = {"status": "skipped", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": "Rust cargo is not installed; governed lane skipped"}
+        if logger:
+            logger.event("lane_result", **provider_event_fields(entry, lane="uts_acc"), status=result["status"], note=result["note"])
+        return result
     manifest = SCRIPT_DIR.parent / "Cargo.toml"
     if not manifest.is_file():
-        return {"status": "skipped", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": "Rust manifest missing; governed lane skipped"}
+        result = {"status": "skipped", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": "Rust manifest missing; governed lane skipped"}
+        if logger:
+            logger.event("lane_result", **provider_event_fields(entry, lane="uts_acc"), status=result["status"], note=result["note"])
+        return result
     raw_path.parent.mkdir(parents=True, exist_ok=True)
     command = [cargo, "run", "--manifest-path", str(manifest), "--bin", "demo_v0912_uts_acc_multi_model_benchmark", "--", str(raw_path), entry["model_id"], str(task_panel_file)]
     env = os.environ.copy()
@@ -907,6 +985,8 @@ def run_governed_lane(entry: dict[str, Any], task_panel_file: Path, raw_path: Pa
     result.setdefault("started_at", started_at)
     result.setdefault("completed_at", utc_timestamp())
     result["raw_artifact"] = display_path(raw_path)
+    if logger:
+        logger.event("lane_result", **provider_event_fields(entry, lane="uts_acc"), status=result.get("status"), provider_failure_kind=result.get("provider_failure_kind"), passed_count=result.get("passed_count"), total_cases=result.get("total_cases"), raw_artifact=display_path(raw_path))
     return result
 
 
@@ -986,7 +1066,7 @@ def write_artifacts(report: dict[str, Any], out_path: Path) -> None:
                 )
             detail_lines.append("")
     detailed.write_text("\n".join(detail_lines) + "\n", encoding="utf-8")
-    provider = {"schema_version": "uts_benchmark_provider_status.v1", "source_results": display_path(out_path), "models": []}
+    provider = {"schema_version": "uts_benchmark_provider_status.v1", "source_results": display_path(out_path), "run_log": report.get("run_log"), "models": []}
     for model in report["models"]:
         statuses = {}
         events = []
@@ -1047,16 +1127,29 @@ def main() -> int:
         parser.error("provider_kind and models_file are required unless --doctor-hosted-auth is used")
     models_file = Path(args.models_file)
     out_path = Path(args.out_json) if args.out_json else REPO_ROOT / "artifacts" / "uts_runs" / f"uts_{models_file.stem}.json"
+    run_id = f"uts-{out_path.stem}-{int(time.time())}"
+    log_path = run_log_path_for(out_path)
+    print(f"run_dir={display_path(out_path.parent)}", file=sys.stderr, flush=True)
+    print(f"run_log={display_path(log_path)}", file=sys.stderr, flush=True)
+    print(f"watch=tail -f {display_path(log_path)}", file=sys.stderr, flush=True)
+    logger = RunLogger(log_path, run_id)
+    logger.event("run_start", provider_kind=args.provider_kind, models_file=display_path(models_file), panel_file=display_path(panel_file), task_panel_file=display_path(task_panel_file), include_governed=args.include_governed)
     panel = load_json(panel_file)
     tasks = task_rows(load_json(task_panel_file))
     selected = select_models(panel, args.provider_kind, load_models_file(models_file))
     if not selected:
+        logger.event("run_finish", status="failed", note="no models selected")
+        logger.close()
         raise SystemExit("no models selected")
+    report = {"schema_version": "uts_benchmark_runner.v1", "runner": "adl/tools/uts_benchmark_runner.py", "run_id": run_id, "run_log": display_path(log_path), "started_at": utc_timestamp(), "selection": {"provider_kind": args.provider_kind, "models_file": display_path(models_file), "panel_file": display_path(panel_file), "task_panel_file": display_path(task_panel_file)}, "include_governed": args.include_governed, "models": []}
     if args.provider_kind == "hosted":
+        logger.event("hosted_auth_check_start", provider_kind=args.provider_kind)
         auth_status = doctor_hosted_auth(panel_file, models_file)
+        logger.event("hosted_auth_check_result", provider_kind=args.provider_kind, status="passed" if auth_status == 0 else "failed")
         if auth_status != 0:
+            logger.event("run_finish", status="failed", provider_failure_kind="provider_auth_missing")
+            logger.close()
             return auth_status
-    report = {"schema_version": "uts_benchmark_runner.v1", "runner": "adl/tools/uts_benchmark_runner.py", "started_at": utc_timestamp(), "selection": {"provider_kind": args.provider_kind, "models_file": display_path(models_file), "panel_file": display_path(panel_file), "task_panel_file": display_path(task_panel_file)}, "include_governed": args.include_governed, "models": []}
     self_check = run_deterministic_self_check(str(panel_file), str(task_panel_file))
     self_check_out = self_check_path_for(out_path)
     self_check_out.parent.mkdir(parents=True, exist_ok=True)
@@ -1064,21 +1157,27 @@ def main() -> int:
     report["deterministic_self_check"] = {"artifact": display_path(self_check_out), "passed": self_check["passed"], "failures": self_check["failures"]}
     if not self_check["passed"]:
         write_artifacts(report, out_path)
+        logger.event("run_finish", status="failed", note="deterministic self-check failed")
+        logger.close()
         raise SystemExit(f"deterministic self-check failed; see {self_check_out}")
     governed_raw_dir = out_path.with_name(f"{out_path.stem}_governed_raw")
     for entry in selected:
         model_started_at = utc_timestamp()
+        logger.event("model_start", **provider_event_fields(entry))
         blocked_note = host_policy_note(entry) or local_runtime_busy_note(entry)
         if blocked_note:
+            logger.event("model_blocked", **provider_event_fields(entry), provider_failure_kind=provider_failure_kind(blocked_note), note=sanitize_artifact_note(blocked_note))
             regular = skipped_lane(blocked_note)
             uts_only = skipped_lane(blocked_note)
             governed = skipped_lane(blocked_note) if args.include_governed else {"status": "not_run", "started_at": None, "completed_at": None, "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": "pass --include-governed to run UTS+ACC"}
         else:
-            regular = run_lane(entry, tasks, "regular")
-            uts_only = run_lane(entry, tasks, "uts_only")
+            regular = run_lane(entry, tasks, "regular", logger)
+            uts_only = run_lane(entry, tasks, "uts_only", logger)
             raw_path = governed_raw_dir / f"{safe_name(entry['id'])}.json"
-            governed = run_governed_lane(entry, task_panel_file, raw_path) if args.include_governed else {"status": "not_run", "started_at": None, "completed_at": None, "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": "pass --include-governed to run UTS+ACC"}
-        report["models"].append({"candidate_id": entry["id"], "started_at": model_started_at, "completed_at": utc_timestamp(), "tier": entry.get("tier"), "provider": entry.get("provider"), "model_id": entry.get("model_id"), "lanes": {"regular": regular, "uts_only": uts_only, "uts_acc": governed}})
+            governed = run_governed_lane(entry, task_panel_file, raw_path, logger) if args.include_governed else {"status": "not_run", "started_at": None, "completed_at": None, "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": "pass --include-governed to run UTS+ACC"}
+        model_completed_at = utc_timestamp()
+        report["models"].append({"candidate_id": entry["id"], "started_at": model_started_at, "completed_at": model_completed_at, "tier": entry.get("tier"), "provider": entry.get("provider"), "model_id": entry.get("model_id"), "lanes": {"regular": regular, "uts_only": uts_only, "uts_acc": governed}})
+        logger.event("model_result", **provider_event_fields(entry), regular_status=regular.get("status"), uts_only_status=uts_only.get("status"), uts_acc_status=governed.get("status"))
         write_artifacts(report, out_path)
     report["completed_at"] = utc_timestamp()
     write_artifacts(report, out_path)
@@ -1087,7 +1186,10 @@ def main() -> int:
         print("Benchmark run is non-proving:", file=sys.stderr)
         for failure in failures:
             print(f"- {failure}", file=sys.stderr)
+    logger.event("run_finish", status="passed" if exit_code == 0 else "non_proving", failure_count=len(failures))
+    logger.close()
     print(f"Wrote {out_path}")
+    print(f"Run log {log_path}")
     return exit_code
 
 
