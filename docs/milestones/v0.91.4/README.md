@@ -157,6 +157,8 @@ are the branch-verifiable C-SDLC planning surfaces for review.
   [NEXT_MILESTONE_HANDOFF_v0.91.4.md](NEXT_MILESTONE_HANDOFF_v0.91.4.md)
 - Tracked workflow-state migration plan:
   [C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md](C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md)
+- Public C-SDLC prompt records transition:
+  [PUBLIC_CSDLC_PROMPT_RECORDS_TRANSITION_PLAN.md](PUBLIC_CSDLC_PROMPT_RECORDS_TRANSITION_PLAN.md)
 - C-SDLC canonical docs:
   [../../cognitive-sdlc/README.md](../../cognitive-sdlc/README.md)
 - Feature index: [features/README.md](features/README.md)
@@ -191,6 +193,8 @@ v0.91.4 should execute through the same lifecycle discipline it is hardening:
 - execution and integration truth are recorded in `SOR`
 - durable workflow evidence is promoted to tracked milestone evidence under
   `docs/milestones/v0.91.4/review/evidence/csdlc/`
+- public prompt-record packets are exported from local execution-cache cards
+  into the tracked evidence namespace after sanitization and validation
 
 The CodeFriend sidecar may use the same issue/sprint discipline, but it remains
 a sidecar product setup lane and does not replace C-SDLC core proof.
