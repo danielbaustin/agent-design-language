@@ -56,3 +56,12 @@ A real browser/gameplay proof should verify at least:
 ## Current v0.91.4 Finding
 
 During `#3458`, `curl` confirmed the Starharvest page returned HTTP 200 from the local server. The operator confirmed `open -a chromium http://www.google.com` works from their shell, while the Codex sandbox could not resolve `open -a chromium`. Future proof tooling should preserve both routes instead of treating one failed launcher as evidence that browsers are unavailable.
+
+## Canonical Browser Automation Reference
+
+The broader ADL browser automation contract is tracked in:
+
+- `docs/milestones/v0.91.4/review/browser_automation/BROWSER_AUTOMATION_RUNBOOK_v0.91.4.md`
+- `adl/tools/diagnose_browser_routes.py`
+
+Use that runbook before adding new browser-backed demo proof. This demo-showcase note remains the local Starharvest-specific quick path.

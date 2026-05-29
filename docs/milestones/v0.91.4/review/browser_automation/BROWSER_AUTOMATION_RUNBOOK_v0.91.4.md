@@ -1,0 +1,140 @@
+# Browser Automation Runbook v0.91.4
+
+## Status
+
+`canonical_agent_route_defined`
+
+## Purpose
+
+ADL agents need a boring, repeatable browser proof path for demos, localhost checks, and web-facing review work. Browser proof should not be rediscovered during every demo issue.
+
+## Canonical Recommendation
+
+For ADL agent proof, use the Codex in-app browser first.
+
+Why:
+
+- it can load `localhost` and `127.0.0.1` pages from the Codex app context
+- it supports screenshot/DOM proof
+- it supports real browser-side CUA input such as clicks and keypresses
+- it avoids relying on macOS LaunchServices app-name lookup from the sandboxed shell
+
+Use installed Chromium/Safari/Chrome as operator-visible fallback paths, not as the primary automated agent path.
+
+## Route Types
+
+| Route | What it proves | What it does not prove | Status |
+| --- | --- | --- | --- |
+| `curl` / HTTP HEAD | URL reachability and HTTP status | rendering, script execution, keyboard/mouse interaction | useful but insufficient |
+| Codex in-app browser | page load, rendering, screenshot, DOM state, CUA input | operator's external browser app state | canonical for agent proof |
+| `open -a chromium ...` from operator shell | operator can open a URL in local Chromium | Codex shell can resolve the same app name | valid manual/operator route |
+| `open -Ra <app>` from Codex shell | whether LaunchServices resolves an app for the Codex process | whether the operator can open it from another shell | diagnostic only |
+| direct Chrome/Chromium executable headless | possible headless proof if stable | may abort under macOS/sandbox constraints | optional fallback |
+
+## Why Chromium Can Be Up But Not Usable From Codex Shell
+
+The operator shell and Codex tool process do not necessarily share the same app lookup behavior. During `#3458`, the operator reported:
+
+```bash
+open -a chromium http://www.google.com
+```
+
+worked locally. In the Codex shell, app lookup for `chromium` failed even though browser proof was still possible through the Codex in-app browser. Treat this as an environment boundary:
+
+- operator shell app lookup: useful manual route
+- Codex shell app lookup: diagnostic route only
+- Codex in-app browser: canonical automated proof route
+
+Do not conclude that a browser is unavailable merely because one route fails.
+
+## In-App Browser Proof Pattern
+
+Use the Browser skill and the in-app browser. For interaction proof, prefer CUA input for keys/clicks, then inspect DOM state.
+
+Known working Starharvest pattern:
+
+```js
+await tab.goto('http://127.0.0.1:43191/demos/v0.91.3/starharvest_five_minute_sprint_demo.html');
+await tab.playwright.waitForLoadState({ state: 'load', timeoutMs: 10000 });
+await tab.cua.click({ x: 500, y: 400 });
+await tab.cua.keypress({ keys: ['Space'] });
+const afterSpace = await tab.playwright.evaluate(() => ({
+  score: document.querySelector('#hud-score')?.textContent,
+  seeds: document.querySelector('#hud-seeds')?.textContent,
+  status: document.querySelector('#status-banner')?.textContent,
+}));
+await tab.cua.keypress({ keys: ['r'] });
+const afterRestart = await tab.playwright.evaluate(() => ({
+  score: document.querySelector('#hud-score')?.textContent,
+  seeds: document.querySelector('#hud-seeds')?.textContent,
+  status: document.querySelector('#status-banner')?.textContent,
+}));
+```
+
+Important: do not rely on constructing `KeyboardEvent` inside the evaluated page context unless you have verified that event constructors exist there. During `#3458`, CUA keypress was the reliable route.
+
+## Diagnostic Script
+
+Use the browser route diagnostic to record what the current environment exposes:
+
+```bash
+python3 adl/tools/diagnose_browser_routes.py --json
+```
+
+With a local URL reachability check:
+
+```bash
+python3 adl/tools/diagnose_browser_routes.py --url http://127.0.0.1:43191/demos/v0.91.3/starharvest_five_minute_sprint_demo.html --json
+```
+
+The diagnostic separates:
+
+- `app_routes`: app lookup visible to the Codex shell
+- `known_executable_routes`: known macOS executable paths
+- `path_routes`: PATH-resolved browser commands
+- `http_check`: HTTP reachability only
+- `codex_in_app_browser_route`: documented canonical route that must be exercised through the Browser skill, not the shell
+
+## Demo Issue Rules
+
+- Record browser proof as `passed` only when a browser route loads the page and verifies the required DOM or interaction behavior.
+- Record `curl` as reachability proof only.
+- If operator Chromium works but Codex shell app lookup fails, record both facts.
+- Prefer representative proof paths for demo readiness and route exhaustive coverage as separate follow-on work.
+- Do not bury browser setup discoveries inside chat; update this runbook or the issue proof record.
+
+## Starharvest Reference Result
+
+The Starharvest proof route that worked in `#3458` was:
+
+- local server on `127.0.0.1:43191`
+- Codex in-app browser opened the demo URL
+- CUA click focused the page
+- CUA `Space` changed seeds from `4` to `3`
+- CUA `r` restarted the game and reset seeds to `4`
+
+This is the model for future lightweight demo browser proof.
+
+## Current Diagnostic Result
+
+Focused diagnostic command:
+
+```bash
+python3 adl/tools/diagnose_browser_routes.py --headless-smoke --json
+```
+
+Observed in the Codex shell during `#3497`:
+
+- `open -Ra chromium`: failed with `Unable to find application named 'chromium'`.
+- `open -Ra Chromium`: failed with `Unable to find application named 'Chromium'`.
+- `open -Ra Google Chrome`: failed with `Unable to find application named 'Google Chrome'`.
+- `open -Ra Safari`: failed with `Unable to find application named 'Safari'`.
+- `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`: exists and is executable.
+- `/Applications/Safari.app/Contents/MacOS/Safari`: exists and is executable.
+- `~/Library/Application Support/Chromium` and `~/Library/Caches/Chromium`: exist as Chromium profile/cache directories; this is evidence of browser use, not an executable route.
+- `/Applications/Google Chrome copy.app/Contents/MacOS/Google Chrome`: exists in this environment and should be diagnosed separately from the primary Chrome app when needed.
+- direct Google Chrome headless smoke from the Codex shell: attempted and failed with signal-style return code `-6`; do not use direct Chrome headless as the default proof route here.
+- Chromium operator route: operator reports `open -a chromium ...` works from their shell, but Codex shell cannot resolve `chromium`; preserve that distinction.
+- Codex in-app browser route: worked during Starharvest proof and remains the canonical agent route.
+
+Conclusion: the issue is not simply “no browser is installed.” It is a boundary between shell app lookup, direct macOS app execution, and the Codex in-app browser automation surface. ADL agents should use the in-app browser for automated proof, prefer operator `open -a chromium ...` for human-visible manual playback when available, and avoid direct Chrome headless unless a fresh diagnostic proves it works.
