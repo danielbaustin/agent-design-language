@@ -1,0 +1,99 @@
+{
+  "limitations": [
+    "planner does not assign or launch agents automatically",
+    "write-set safety depends on declared write_paths, not inferred edits",
+    "review/janitor/closeout lanes remain bounded lifecycle states rather than autonomous execution"
+  ],
+  "manifest_id": "v0-91-4-multi-agent-workcell-proof",
+  "results": [
+    {
+      "classification": "ready",
+      "execution_backend": "local_ollama",
+      "issue_number": 5001,
+      "model_hint": "deepseek-r1:8b",
+      "reasons": [
+        "worker shard is assignment-ready"
+      ],
+      "role": "worker",
+      "shard_id": "ollama-worker-a",
+      "write_paths": [
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_a/docs/worker_a_summary.md",
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_a/.adl/v0.91.4/tasks/issue-5001__demo-worker-a/sor.md"
+      ]
+    },
+    {
+      "classification": "ready",
+      "execution_backend": "local_ollama",
+      "issue_number": 5002,
+      "model_hint": "gemma4:26b",
+      "reasons": [
+        "worker shard is assignment-ready"
+      ],
+      "role": "worker",
+      "shard_id": "ollama-worker-b",
+      "write_paths": [
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_b/docs/worker_b_contract.md",
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_b/.adl/v0.91.4/tasks/issue-5002__demo-worker-b/sor.md"
+      ]
+    },
+    {
+      "classification": "serial_only",
+      "execution_backend": "local_ollama",
+      "issue_number": 5006,
+      "model_hint": "Qwen3.5:35b-a3b",
+      "reasons": [
+        "requires serialized validation/review gate"
+      ],
+      "role": "worker",
+      "shard_id": "serialized-local-worker-c",
+      "write_paths": [
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_c/docs/serialized_worker_c.md"
+      ]
+    },
+    {
+      "classification": "blocked",
+      "execution_backend": null,
+      "issue_number": 5003,
+      "model_hint": null,
+      "reasons": [
+        "review lane awaits serialized normalized worker publication"
+      ],
+      "role": "reviewer",
+      "shard_id": "hosted-reviewer",
+      "write_paths": [
+        "docs/milestones/v0.91.4/review/multi_agent_workcell/MULTI_AGENT_CSDLC_WORKCELL_PROOF_PACKET_2026-05-28.md"
+      ]
+    },
+    {
+      "classification": "blocked",
+      "execution_backend": null,
+      "issue_number": 5005,
+      "model_hint": null,
+      "reasons": [
+        "closeout lane not yet ready"
+      ],
+      "role": "closeout",
+      "shard_id": "closeout-lane",
+      "write_paths": []
+    },
+    {
+      "classification": "blocked",
+      "execution_backend": null,
+      "issue_number": 5004,
+      "model_hint": null,
+      "reasons": [
+        "janitor lane has no explicit PR blocker"
+      ],
+      "role": "janitor",
+      "shard_id": "janitor-lane",
+      "write_paths": []
+    }
+  ],
+  "safe_parallel_workers": [
+    "ollama-worker-a",
+    "ollama-worker-b"
+  ],
+  "serial_only_workers": [
+    "serialized-local-worker-c"
+  ]
+}
