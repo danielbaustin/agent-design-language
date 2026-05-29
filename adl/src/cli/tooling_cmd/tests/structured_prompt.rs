@@ -370,6 +370,26 @@ fn structured_prompt_srp_validator_rejects_malformed_source_refs() {
 }
 
 #[test]
+fn structured_prompt_srp_validator_rejects_absolute_host_path_leakage() {
+    let repo = TempRepo::new("structured-srp-absolute-host-path");
+    let srp = repo.write_rel(
+        ".tmp/tooling_cmd_tests/srp-absolute-host-path.md",
+        &valid_srp_text(1374).replace(
+            "notes: \"test note\"",
+            "notes: \"Host path leaked from local machine: /Users/daniel/tmp/artifact.txt\"",
+        ),
+    );
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "srp".to_string(),
+        "--input".to_string(),
+        srp.to_string_lossy().to_string(),
+    ])
+    .expect_err("absolute host path leakage should fail");
+    assert!(err.to_string().contains("absolute host path"));
+}
+
+#[test]
 fn tracked_csdlc_card_bundle_validates() {
     let repo_root = repo_root_for_tests();
     let bundle_root = repo_root.join(
