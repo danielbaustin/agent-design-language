@@ -1,0 +1,88 @@
+{
+  "manifest_id": "v0-91-4-multi-agent-workcell-proof",
+  "shards": [
+    {
+      "shard_id": "ollama-worker-a",
+      "issue_number": 5001,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "deepseek-r1:8b",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "approved"
+      },
+      "write_paths": [
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_a/docs/worker_a_summary.md",
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_a/.adl/v0.91.4/tasks/issue-5001__demo-worker-a/sor.md"
+      ],
+      "dependencies": [],
+      "dependency_state": "independent",
+      "validation_lane": "parallel_pvf_lane"
+    },
+    {
+      "shard_id": "ollama-worker-b",
+      "issue_number": 5002,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "gemma4:26b",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "approved"
+      },
+      "write_paths": [
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_b/docs/worker_b_contract.md",
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_b/.adl/v0.91.4/tasks/issue-5002__demo-worker-b/sor.md"
+      ],
+      "dependencies": [],
+      "dependency_state": "independent",
+      "validation_lane": "parallel_pvf_lane"
+    },
+    {
+      "shard_id": "hosted-reviewer",
+      "issue_number": 5003,
+      "role": "reviewer",
+      "review_input_state": "awaiting_normalized_publication",
+      "write_paths": [
+        "docs/milestones/v0.91.4/review/multi_agent_workcell/MULTI_AGENT_CSDLC_WORKCELL_PROOF_PACKET_2026-05-28.md"
+      ],
+      "dependencies": [
+        "ollama-worker-a",
+        "ollama-worker-b"
+      ],
+      "dependency_state": "awaiting_worker_publication"
+    },
+    {
+      "shard_id": "janitor-lane",
+      "issue_number": 5004,
+      "role": "janitor",
+      "pr_blocker_state": "none"
+    },
+    {
+      "shard_id": "closeout-lane",
+      "issue_number": 5005,
+      "role": "closeout",
+      "closeout_state": "pending"
+    },
+    {
+      "shard_id": "serialized-local-worker-c",
+      "issue_number": 5006,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "Qwen3.5:35b-a3b",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "approved"
+      },
+      "write_paths": [
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_c/docs/serialized_worker_c.md"
+      ],
+      "dependencies": [],
+      "dependency_state": "independent",
+      "validation_lane": "manual",
+      "serialized_gate": true
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "schema_version": "adl.multi_agent_workcell_state.v1",
+  "workcell_id": "v0-91-4-multi-agent-proof-20260528",
+  "sprint_issue_number": 3415,
+  "planner_manifest_path": "docs/milestones/v0.91.4/review/multi_agent_workcell/workcell_proof_manifest.json",
+  "conductor_hooks": {
+    "worker_admission": {
+      "selected_skill": "pr-run",
+      "canonical_truth": ["github_issue_state", "sip", "stp", "spp", "sprint_state"]
+    },
+    "review_publication": {
+      "selected_skill": "pr-finish",
+      "canonical_truth": ["srp", "sor", "pr_state", "published_artifacts"]
+    },
+    "janitor_remediation": {
+      "selected_skill": "pr-janitor",
+      "canonical_truth": ["pr_state", "check_status", "review_findings"]
+    },
+    "closeout_reconciliation": {
+      "selected_skill": "pr-closeout",
+      "canonical_truth": ["github_issue_state", "sor", "sprint_state", "closeout_artifacts"]
+    }
+  },
+  "shard_assignments": [
+    {
+      "shard_id": "ollama-worker-a",
+      "issue_number": 5001,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "deepseek-r1:8b",
+      "branch": "codex/proof-worker-a",
+      "worktree_path": "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_a",
+      "write_paths": [
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_a/docs/worker_a_summary.md",
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_a/.adl/v0.91.4/tasks/issue-5001__demo-worker-a/sor.md"
+      ],
+      "dependencies": [],
+      "admission_status": "parallel_admitted",
+      "validation_gate": "parallel_pvf_lane",
+      "review_lane": "bounded_subagent_review",
+      "closeout_status": "waiting_for_review",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "approved",
+        "srp": "draft",
+        "sor": "draft"
+      },
+      "github_issue_state": "OPEN",
+      "pr_state": "draft"
+    },
+    {
+      "shard_id": "ollama-worker-b",
+      "issue_number": 5002,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "gemma4:26b",
+      "branch": "codex/proof-worker-b",
+      "worktree_path": "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_b",
+      "write_paths": [
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_b/docs/worker_b_contract.md",
+        "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_b/.adl/v0.91.4/tasks/issue-5002__demo-worker-b/sor.md"
+      ],
+      "dependencies": [],
+      "admission_status": "parallel_admitted",
+      "validation_gate": "parallel_pvf_lane",
+      "review_lane": "bounded_subagent_review",
+      "closeout_status": "waiting_for_review",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "approved",
+        "srp": "draft",
+        "sor": "draft"
+      },
+      "github_issue_state": "OPEN",
+      "pr_state": "draft"
+    },
+    {
+      "shard_id": "hosted-reviewer",
+      "issue_number": 5003,
+      "role": "reviewer",
+      "branch": "codex/proof-reviewer",
+      "worktree_path": "artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/reviewer",
+      "write_paths": [
+        "docs/milestones/v0.91.4/review/multi_agent_workcell/MULTI_AGENT_CSDLC_WORKCELL_PROOF_PACKET_2026-05-28.md"
+      ],
+      "dependencies": ["ollama-worker-a", "ollama-worker-b"],
+      "admission_status": "review_ready",
+      "validation_gate": "published_artifact_gate",
+      "review_lane": "bounded_subagent_review",
+      "closeout_status": "waiting_for_review",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "approved",
+        "srp": "ready",
+        "sor": "draft"
+      },
+      "github_issue_state": "OPEN",
+      "pr_state": "open"
+    }
+  ]
+}
