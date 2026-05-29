@@ -239,6 +239,31 @@ Each provider row should include:
 - failure kind when applicable
 - source artifact reference
 
+### `ProviderRunLogV1`
+
+Long-running provider and benchmark execution must produce logs that are easy to watch while the run is active. This is a hard operational requirement, not just a convenience, because hosted and local model runs commonly fail due to connection resets, auth problems, rate limits, stalled local runtimes, missing models, and provider-side empty outputs.
+
+Required behavior:
+
+- Write a line-oriented log file as the run progresses.
+- Flush each log event immediately or near-immediately so `tail -f` is useful.
+- Include ISO-8601 UTC timestamps on every event.
+- Include `run_id`, provider, model, lane, task id, attempt index, and event type when applicable.
+- Record provider-call lifecycle events: run start, model start, lane start, task start, attempt start, retry scheduled, attempt success, attempt failure, task result, lane result, model result, and run finish.
+- Record normalized failure kind and bounded provider excerpt for errors.
+- Keep secrets, authorization headers, raw credentials, and full prompt bodies out of the watch log.
+- Keep watch logs separate from scored summary artifacts so a failed provider connection cannot be mistaken for a scored task failure.
+
+Recommended outputs:
+
+- `run.log.jsonl`: machine-readable line-delimited JSON events.
+- `run.log`: optional human-readable mirror for quick terminal watching.
+- `provider_status.json`: final summarized provider status artifact.
+- `details.json`: scored task detail artifact.
+- `summary.json`: scored summary artifact.
+
+The JSONL log should be the canonical watch surface. Human-readable logs may be derived from it, but should not be the only source of operational truth.
+
 ## Execution Boundary
 
 ### Hosted Providers
@@ -319,6 +344,7 @@ Acceptance criteria:
 
 - Contract fields are documented with required/optional status.
 - At least four fixture rows exist: hosted success, hosted failure, local pinned Ollama row, and local tag-only row.
+- Provider run logging contract includes tail-friendly JSONL events, immediate flushing expectations, normalized failure kinds, and secret-redaction rules.
 - Fixture validation can run without live provider calls.
 
 Validation expectation:
@@ -343,6 +369,7 @@ Scope:
 Acceptance criteria:
 
 - Rust provider invocation artifacts include route, attempts, model identity, final status, and normalized failure kind where applicable.
+- Provider execution writes tail-friendly operational log events without leaking secrets or full prompt bodies.
 - Existing compatibility fields remain present during the migration window.
 - Fixture or unit tests prove the new fields serialize as expected.
 
@@ -400,8 +427,9 @@ Scope:
 
 Acceptance criteria:
 
-- UTS benchmark artifacts include compatible provider route, model identity, attempts, failure, and provider status shapes.
+- UTS benchmark artifacts include compatible provider route, model identity, attempts, failure, provider run log, and provider status shapes.
 - Ad-hoc model rows disclose model source and identity strength.
+- Logs can be watched with `tail -f` during hosted/local runs and expose connection, auth, rate-limit, timeout, retry, and local-runtime failures as separate operational events.
 - Tests cover hosted provider-asserted rows, local pinned rows, local tag-only rows, and provider failure rows without requiring live providers.
 
 Validation expectation:
