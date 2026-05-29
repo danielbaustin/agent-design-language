@@ -23,9 +23,8 @@ The milestone must run:
 - explicit PVF slow-proof lane proof showing that heavyweight runtime-v2
   proof/materialization tests are excluded from ordinary PR-fast nextest and
   included in the explicit `slow-proof-tests` release-gate lane
-- explicit multi-agent workcell proof or truthful blocked handoff showing
-  shard admission, worker/reviewer/janitor lanes, and serialized merge/closeout
-  gates
+- explicit routing of remaining multi-agent workcell stabilization to v0.91.5
+  so v0.91.4 release truth does not overclaim multi-agent completion
 - combined C-SDLC lane validation
 - active-issue migration policy review with sampled issue routing
 - process-drift regression fixture results for legacy SRP, stale SOR, skipped

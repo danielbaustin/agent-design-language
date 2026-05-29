@@ -25,17 +25,19 @@ WP-21 `#3371`. The CodeFriend sidecar has also been seeded: umbrella `#3372`,
 CF-PRE-01 `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04
 `#3376`. The WildClawBench benchmark spike sidecar is seeded: umbrella
 `#3378`, WC-PRE-01 `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, and
-WC-PRE-04 `#3382`. First-birthday readiness has been promoted as standalone
-side issue `#3377` for v0.92 launch preparation. Sprint 2, Sprint 3, and
+WC-PRE-04 `#3382`. Remaining bridge work has moved to v0.91.5: first-birthday
+readiness `#3377`, multi-agent/provider work beginning at `#3415`, public
+prompt records `#3472`-`#3476`, demo readiness `#3455`/`#3460`/`#3461`, and
+OpenRouter/model-matrix issues `#3501`-`#3505`. Sprint 2, Sprint 3, and
 Sprint 4 child execution now depends on prior sprint sequencing and their own
 dependency gates rather than on Sprint 1 opening. The CodeFriend sidecar
 remains non-core and wait-gated by its own routing/dependency lane. The
 WildClawBench sidecar has now started through WC-PRE-01 `#3379`, which
 completed upstream reconnaissance and ended in a truthful blocked setup
 baseline pending benchmark image, workspace payload, helper tools, and API-key
-availability. First-birthday readiness does not alter the v0.91.4 release-tail
-sequence and should feed WP-19/WP-20 next-milestone planning/review. Remaining
-list-only side issues remain queued until explicitly promoted.
+availability. The bridge split does not alter the v0.91.4 release-tail
+sequence: v0.91.4 now closes Sprint 4 and release truth, while v0.91.5 carries
+the remaining pre-v0.92 stabilization work.
 
 This package is intentionally stacked after the v0.91.3 first-slice package. It
 assumes v0.91.3 proves one bounded Cognitive State Transition and then defines
@@ -69,6 +71,10 @@ repo/S3 welcome-page setup mini-sprint described in
 That sidecar is part of v0.91.4 scheduling, but it is not C-SDLC core
 machinery and must not be used as proof that C-SDLC default operation is
 complete.
+
+The v0.91.5 bridge milestone now carries the remaining multi-agent,
+provider/model, public prompt-record, demo-readiness, and first-birthday
+preflight work so v0.91.4 can land cleanly.
 
 ## Milestone Role
 

@@ -10,9 +10,9 @@
 
 ## Status
 
-Tracked WBS. The v0.91.4 issue wave is seeded through Sprint 4, the sidecar
-waves, and the standalone first-birthday readiness issue; Sprint 1 has already
-closed cleanly.
+Tracked WBS. The v0.91.4 issue wave is seeded through Sprint 4 and the closed
+or closing sidecar waves; Sprint 1 has already closed cleanly. Remaining
+pre-v0.92 bridge work has moved to v0.91.5.
 
 ## How To Use
 
@@ -133,19 +133,17 @@ lessons:
 
 ## Planned Side Issues
 
-The following items remain list-only v0.91.4 side issues or mini-sprints unless
-explicitly promoted into the tracked issue wave. Already-seeded sidecars such as
-WildClawBench `#3378` and first-birthday readiness `#3377` are no longer part
-of this list-only bucket.
+The following items are no longer v0.91.4 release blockers. They are routed to
+v0.91.5 bridge planning or later backlog unless already closed.
 
 - outstanding demo work, including the best available Unity-facing C-SDLC demo
-  proof
+  proof, now represented by v0.91.5 demo readiness issues
 - benchmarking mini-sprint candidates beyond the already-seeded WildClawBench sidecar
 - root README rewrite
 - repo cleanup pass
 - partial drafting of Medium articles
 - HTML editors for planning docs
-- first-birthday readiness follow-on work beyond the already-promoted `#3377`
+- first-birthday readiness `#3377`, now a v0.91.5 preflight input
 
 ## Exit Criteria
 

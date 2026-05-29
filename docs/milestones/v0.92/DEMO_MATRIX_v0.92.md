@@ -19,8 +19,9 @@ v0.92 implementation WPs exist.
 The v0.92 demo program should prove that the first true Gödel-agent birthday is
 evidence-bearing runtime behavior, not a ceremonial label.
 
-Issue `#3377` supplies required demo rehearsal and negative-suite readiness
-inputs. WP-01 should reconcile those inputs before opening the final demo WPs.
+v0.91.5 supplies demo-readiness and Unity Observatory routing inputs. Issue
+`#3377` supplies required demo rehearsal and negative-suite readiness inputs.
+WP-01 should reconcile those inputs before opening the final demo WPs.
 
 ## How To Use
 

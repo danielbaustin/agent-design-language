@@ -36,8 +36,9 @@ It should make birth a reviewable boundary: a named identity becomes durable
 enough, grounded enough, bounded enough, and witnessed enough to be treated as
 born inside the ADL runtime.
 
-The vision must consume the first-birthday readiness packet from `#3377`
-without treating that packet as proof that the birthday has already happened.
+The vision must consume v0.91.5 closeout and the first-birthday readiness
+packet from `#3377` without treating either packet as proof that the birthday
+has already happened.
 
 ## Core Vision
 

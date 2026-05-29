@@ -69,8 +69,9 @@ evidence exists.
 - [ ] Deferred issues have owners and follow-on routing.
 - [ ] CodeFriend sidecar setup is complete or truthfully blocked/routed.
 - [ ] WildClawBench sidecar spike is complete or truthfully blocked/routed.
-- [ ] First-birthday readiness side issue `#3377` is complete or routed into
-  WP-19/WP-20 next-milestone planning/review.
+- [x] First-birthday readiness side issue `#3377` is routed to v0.91.5.
+- [x] Remaining multi-agent, provider/model, public prompt-record, and
+  demo-readiness bridge work is routed to v0.91.5.
 
 ## Release Packaging
 
@@ -88,7 +89,7 @@ evidence exists.
 ## Post-Release
 
 - [ ] Milestone/epic issues closed with release links.
-- [ ] Deferred items moved to the next milestone backlog.
+- [ ] Deferred items moved to the v0.91.5 bridge package or later backlog.
 - [ ] Follow-up bugs/tech debt captured as issues.
 - [ ] Roadmap/status docs updated.
 - [ ] Retrospective or release closeout summary recorded.

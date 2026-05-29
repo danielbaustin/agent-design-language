@@ -28,9 +28,9 @@ By `WP-19`, this handoff should answer:
 
 ## Current Planning Assumption
 
-The immediate purpose of v0.91.4 is not to start the next product or research
-wave early. It is to make future ADL software-development work run through a
-tracked, auditable C-SDLC default lane.
+The next milestone is now planned as v0.91.5, a bridge milestone for
+multi-agent stabilization, provider/model breadth, public prompt records,
+demo-readiness routing, and v0.92 activation preflight.
 
 The next milestone should therefore consume v0.91.4 outputs only after these
 conditions are true:
@@ -63,13 +63,15 @@ conditions are true:
 - `docs/planning/ADL_FEATURE_LIST.md`
 - `docs/planning/codefriend/`
 - current backlog and open issue state
+- v0.91.5 bridge package:
+  [../v0.91.5/README.md](../v0.91.5/README.md)
 
 ## Required WP-19 Update
 
 During `WP-19`, replace this section with the actual handoff:
 
-- selected next milestone
-- selected scope
+- selected next milestone: expected `v0.91.5`
+- selected scope: bridge work required before v0.92 first birthday
 - non-goals
 - issue-wave candidates
 - feature docs or ADRs required before execution
