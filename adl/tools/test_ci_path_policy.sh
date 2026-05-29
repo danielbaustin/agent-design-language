@@ -261,6 +261,25 @@ EOF
   assert_has "$policy_surface_output" "proof_validation_scope=not_required"
   assert_has "$policy_surface_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
 
+  git checkout -q -b policy-surface-plus-demo-tooling "$base_sha"
+  mkdir -p adl/tools docs/milestones/v0.91.4/review/demo_showcase
+  printf '#!/usr/bin/env bash\nprintf policy\n' > adl/tools/enforce_coverage_gates.sh
+  printf '#!/usr/bin/env bash\nprintf demo\n' > adl/tools/demo_v0914_complete_issue.sh
+  printf '# demo note\n' > docs/milestones/v0.91.4/review/demo_showcase/DEMO_NOTE.md
+  git add adl/tools/enforce_coverage_gates.sh adl/tools/demo_v0914_complete_issue.sh docs/milestones/v0.91.4/review/demo_showcase/DEMO_NOTE.md
+  git commit -q -m policy-surface-plus-demo-tooling
+  policy_surface_plus_demo_head="$(git rev-parse HEAD)"
+
+  policy_surface_plus_demo_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$policy_surface_plus_demo_head" --ref "refs/pull/1/merge")"
+  assert_has "$policy_surface_plus_demo_output" "rust_required=false"
+  assert_has "$policy_surface_plus_demo_output" "coverage_required=false"
+  assert_has "$policy_surface_plus_demo_output" "full_coverage_required=true"
+  assert_has "$policy_surface_plus_demo_output" "demo_smoke_required=true"
+  assert_has "$policy_surface_plus_demo_output" "ci_contracts_required=true"
+  assert_has "$policy_surface_plus_demo_output" "coverage_lane=authoritative_full"
+  assert_has "$policy_surface_plus_demo_output" "coverage_authority=pr_policy_surface_tooling_only"
+  assert_has "$policy_surface_plus_demo_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
+
   git checkout -q -b workflow-reporting-only-change "$base_sha"
   python3 - <<'PY'
 from pathlib import Path
@@ -437,6 +456,34 @@ PY
   assert_has "$runtime_policy_surface_output" "coverage_lane=authoritative_full"
   assert_has "$runtime_policy_surface_output" "coverage_authority=pr_policy_surface_runtime_mixed"
   assert_has "$runtime_policy_surface_output" "reason=coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
+
+  git checkout -q -b feature-branch-before-main-advances "$base_sha"
+  mkdir -p adl/tools docs/milestones/v0.91.4/review/demo_showcase
+  printf '#!/usr/bin/env bash\nprintf demo\n' > adl/tools/demo_v0914_complete_issue.sh
+  printf '# tool demo note\n' > docs/milestones/v0.91.4/review/demo_showcase/DEMO_NOTE.md
+  git add adl/tools/demo_v0914_complete_issue.sh docs/milestones/v0.91.4/review/demo_showcase/DEMO_NOTE.md
+  git commit -q -m feature-branch-before-main-advances
+  stale_feature_head="$(git rev-parse HEAD)"
+
+  git checkout -q -b main-advances-with-policy-surface "$base_sha"
+  mkdir -p .github/workflows docs/milestones/v0.91.4/review/demo_showcase
+  printf 'name: nightly coverage\n' > .github/workflows/nightly-coverage-ratchet.yaml
+  printf '# stale packet\n' > docs/milestones/v0.91.4/review/demo_showcase/STALE_PACKET.md
+  git add .github/workflows/nightly-coverage-ratchet.yaml docs/milestones/v0.91.4/review/demo_showcase/STALE_PACKET.md
+  git commit -q -m main-advance-seed
+  rm docs/milestones/v0.91.4/review/demo_showcase/STALE_PACKET.md
+  git add -A docs/milestones/v0.91.4/review/demo_showcase/STALE_PACKET.md
+  git commit -q -m main-advances-with-policy-surface
+  advanced_main_head="$(git rev-parse HEAD)"
+
+  stale_feature_output="$("$POLICY" --event-name pull_request --base "$advanced_main_head" --head "$stale_feature_head" --ref "refs/pull/1/merge")"
+  assert_has "$stale_feature_output" "rust_required=false"
+  assert_has "$stale_feature_output" "coverage_required=false"
+  assert_has "$stale_feature_output" "full_coverage_required=false"
+  assert_has "$stale_feature_output" "demo_smoke_required=true"
+  assert_has "$stale_feature_output" "ci_contracts_required=true"
+  assert_has "$stale_feature_output" "coverage_lane=skip"
+  assert_has "$stale_feature_output" "coverage_authority=not_required"
 
   main_output="$("$POLICY" --event-name push --ref "refs/heads/main")"
   assert_has "$main_output" "rust_required=true"
