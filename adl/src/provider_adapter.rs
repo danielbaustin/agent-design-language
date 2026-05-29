@@ -14,6 +14,8 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 const DEFAULT_OPENAI_RESPONSES_URL: &str = "https://api.openai.com/v1/responses";
+const DEFAULT_ANTHROPIC_MESSAGES_URL: &str = "https://api.anthropic.com/v1/messages";
+const DEFAULT_GEMINI_BASE_URL: &str = "https://generativelanguage.googleapis.com/v1beta";
 const DEFAULT_OLLAMA_BASE_URL: &str = "http://127.0.0.1:11434";
 const DEFAULT_BACKOFF_MS: u64 = 1_000;
 
@@ -50,7 +52,7 @@ pub fn execute_provider_invocation(
         let _ = logger.event(event("attempt_start", &request).with_attempt(attempt_index));
 
         let outcome = match request.route.runtime_surface {
-            RuntimeSurfaceV1::HostedApi => execute_hosted_openai(&request, &policy),
+            RuntimeSurfaceV1::HostedApi => execute_hosted(&request, &policy),
             RuntimeSurfaceV1::OllamaHttp => execute_ollama_http(&mut request, &policy),
             RuntimeSurfaceV1::OllamaCli | RuntimeSurfaceV1::Mock | RuntimeSurfaceV1::Unknown => {
                 Err(provider_failure_from_note(
@@ -216,19 +218,28 @@ struct ProviderTextResponse {
     http_status: u16,
 }
 
+fn execute_hosted(
+    request: &ProviderInvocationRequestV1,
+    policy: &ProviderAttemptPolicyV1,
+) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
+    match request.route.provider.to_ascii_lowercase().as_str() {
+        "openai" | "chatgpt" => execute_hosted_openai(request, policy),
+        "anthropic" | "claude" => execute_hosted_anthropic(request, policy),
+        "google" | "gemini" => execute_hosted_gemini(request, policy),
+        _ => Err(ProviderFailureV1 {
+            kind: ProviderFailureKindV1::ProviderError,
+            retryable: false,
+            message: "unsupported hosted provider".to_string(),
+            provider_error_excerpt: None,
+            http_status: None,
+        }),
+    }
+}
+
 fn execute_hosted_openai(
     request: &ProviderInvocationRequestV1,
     policy: &ProviderAttemptPolicyV1,
 ) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
-    if !request.route.provider.eq_ignore_ascii_case("openai") {
-        return Err(ProviderFailureV1 {
-            kind: ProviderFailureKindV1::ProviderError,
-            retryable: false,
-            message: "hosted adapter currently supports provider=openai only".to_string(),
-            provider_error_excerpt: None,
-            http_status: None,
-        });
-    }
     let key = resolve_credential(request.route.credential_ref.as_deref(), "OPENAI_API_KEY")?;
     let url = request
         .route
@@ -248,6 +259,72 @@ fn execute_hosted_openai(
     decode_text_response(
         response,
         extract_openai_output_text,
+        RuntimeSurfaceV1::HostedApi,
+    )
+}
+
+fn execute_hosted_anthropic(
+    request: &ProviderInvocationRequestV1,
+    policy: &ProviderAttemptPolicyV1,
+) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
+    let key = resolve_credential(request.route.credential_ref.as_deref(), "ANTHROPIC_API_KEY")?;
+    let url = request
+        .route
+        .endpoint_ref
+        .as_deref()
+        .filter(|endpoint| endpoint.starts_with("http://") || endpoint.starts_with("https://"))
+        .unwrap_or(DEFAULT_ANTHROPIC_MESSAGES_URL);
+    let response = client(policy)?
+        .post(url)
+        .header("x-api-key", key)
+        .header("anthropic-version", "2023-06-01")
+        .json(&json!({
+            "model": request.route.provider_model_id,
+            "max_tokens": 256,
+            "messages": [{
+                "role": "user",
+                "content": request.input_text.as_deref().unwrap_or_default(),
+            }],
+        }))
+        .send()
+        .map_err(map_reqwest_error)?;
+    decode_text_response(
+        response,
+        extract_anthropic_output_text,
+        RuntimeSurfaceV1::HostedApi,
+    )
+}
+
+fn execute_hosted_gemini(
+    request: &ProviderInvocationRequestV1,
+    policy: &ProviderAttemptPolicyV1,
+) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
+    let key = resolve_credential(
+        request.route.credential_ref.as_deref(),
+        if env::var("GEMINI_API_KEY").is_ok() {
+            "GEMINI_API_KEY"
+        } else {
+            "GOOGLE_API_KEY"
+        },
+    )?;
+    let url = gemini_generate_url(
+        request.route.endpoint_ref.as_deref(),
+        &request.route.provider_model_id,
+        &key,
+    );
+    let response = client(policy)?
+        .post(url)
+        .json(&json!({
+            "contents": [{
+                "role": "user",
+                "parts": [{"text": request.input_text.as_deref().unwrap_or_default()}],
+            }],
+        }))
+        .send()
+        .map_err(map_reqwest_error)?;
+    decode_text_response(
+        response,
+        extract_gemini_output_text,
         RuntimeSurfaceV1::HostedApi,
     )
 }
@@ -326,6 +403,29 @@ fn resolve_credential(
         provider_error_excerpt: None,
         http_status: None,
     })
+}
+
+fn gemini_generate_url(endpoint_ref: Option<&str>, model: &str, key: &str) -> String {
+    let encoded_model = model.trim_start_matches("models/");
+    let base = endpoint_ref
+        .filter(|endpoint| endpoint.starts_with("http://") || endpoint.starts_with("https://"))
+        .unwrap_or(DEFAULT_GEMINI_BASE_URL)
+        .trim_end_matches('/');
+    if base.contains(":generateContent") {
+        append_query_key(base, key)
+    } else if base.ends_with(&format!("models/{encoded_model}")) {
+        append_query_key(&format!("{base}:generateContent"), key)
+    } else {
+        append_query_key(
+            &format!("{base}/models/{encoded_model}:generateContent"),
+            key,
+        )
+    }
+}
+
+fn append_query_key(url: &str, key: &str) -> String {
+    let separator = if url.contains('?') { '&' } else { '?' };
+    format!("{url}{separator}key={key}")
 }
 
 fn ollama_generate_url(endpoint_ref: Option<&str>) -> String {
@@ -502,6 +602,54 @@ fn extract_openai_output_text(json: &Value) -> Option<String> {
         }
     }
     (!chunks.is_empty()).then(|| chunks.join("\n"))
+}
+
+fn extract_anthropic_output_text(json: &Value) -> Option<String> {
+    let mut chunks = Vec::new();
+    if let Some(content) = json.get("content").and_then(Value::as_array) {
+        for part in content {
+            if part.get("type").and_then(Value::as_str) == Some("text") {
+                if let Some(text) = part.get("text").and_then(Value::as_str) {
+                    if !text.trim().is_empty() {
+                        chunks.push(text.to_string());
+                    }
+                }
+            }
+        }
+    }
+    (!chunks.is_empty()).then(|| {
+        chunks.join(
+            "
+",
+        )
+    })
+}
+
+fn extract_gemini_output_text(json: &Value) -> Option<String> {
+    let mut chunks = Vec::new();
+    if let Some(candidates) = json.get("candidates").and_then(Value::as_array) {
+        for candidate in candidates {
+            if let Some(parts) = candidate
+                .get("content")
+                .and_then(|content| content.get("parts"))
+                .and_then(Value::as_array)
+            {
+                for part in parts {
+                    if let Some(text) = part.get("text").and_then(Value::as_str) {
+                        if !text.trim().is_empty() {
+                            chunks.push(text.to_string());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    (!chunks.is_empty()).then(|| {
+        chunks.join(
+            "
+",
+        )
+    })
 }
 
 fn redacted_response_marker(text: &str) -> String {
@@ -760,12 +908,74 @@ mod tests {
     }
 
     #[test]
-    fn non_openai_hosted_route_is_rejected_not_misrouted() {
-        let endpoint = one_shot_server(r#"{"output_text":"should not happen"}"#, "200 OK");
-        let path = temp_log("non-openai");
+    fn claude_hosted_adapter_returns_output_and_redacts_log() {
+        env::set_var("ADL_PROVIDER_ADAPTER_CLAUDE_KEY", "test-key");
+        let endpoint = one_shot_server(
+            r#"{"content":[{"type":"text","text":"claude success"}]}"#,
+            "200 OK",
+        );
+        let path = temp_log("claude");
         let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
         let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
         req.route.provider = "anthropic".to_string();
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_CLAUDE_KEY".to_string());
+        req.model_identity = hosted_model_identity(
+            "anthropic",
+            "claude-test",
+            "test-model",
+            Some("test".to_string()),
+        );
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+        assert_eq!(result.output_text.as_deref(), Some("claude success"));
+        let log = fs::read_to_string(&path).expect("read log");
+        assert!(log.contains("attempt_success"));
+        assert!(!log.contains("secret prompt"));
+        assert!(!log.contains("claude success"));
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_CLAUDE_KEY");
+    }
+
+    #[test]
+    fn gemini_hosted_adapter_returns_output_and_redacts_log() {
+        env::set_var("ADL_PROVIDER_ADAPTER_GEMINI_KEY", "test-key");
+        let endpoint = one_shot_server(
+            r#"{"candidates":[{"content":{"parts":[{"text":"gemini success"}]}}]}"#,
+            "200 OK",
+        );
+        let path = temp_log("gemini");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "gemini".to_string();
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_GEMINI_KEY".to_string());
+        req.model_identity = hosted_model_identity(
+            "gemini",
+            "gemini-test",
+            "test-model",
+            Some("test".to_string()),
+        );
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+        assert_eq!(result.output_text.as_deref(), Some("gemini success"));
+        let log = fs::read_to_string(&path).expect("read log");
+        assert!(log.contains("attempt_success"));
+        assert!(!log.contains("secret prompt"));
+        assert!(!log.contains("gemini success"));
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_GEMINI_KEY");
+    }
+
+    #[test]
+    fn unsupported_hosted_provider_is_rejected_not_misrouted() {
+        let endpoint = one_shot_server(r#"{"output_text":"should not happen"}"#, "200 OK");
+        let path = temp_log("unsupported-hosted");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "unknown-hosted".to_string();
         let result = execute_provider_invocation(req, &mut logger);
         drop(logger);
 
