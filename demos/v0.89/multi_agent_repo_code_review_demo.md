@@ -47,6 +47,20 @@ Primary proof surfaces:
 - `synthesis/final_synthesis_review.md`
 - `demo_manifest.json`
 
+## See Also
+
+If you want the stronger reviewer-first proof companion with visible heuristics,
+explicit non-findings, role-specific caveats, and stricter publication
+boundaries, use:
+
+```bash
+bash adl/tools/demo_v0914_multi_agent_repo_review_serious_proof.sh
+```
+
+See:
+
+- `demos/v0.91.4/multi_agent_repo_review_serious_proof_demo.md`
+
 ## Important Boundary
 
 This is a bounded review demo.
