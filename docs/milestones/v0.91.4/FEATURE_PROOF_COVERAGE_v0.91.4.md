@@ -16,7 +16,7 @@ Planned proof map for C-SDLC completion.
 | Sprint conductor default C-SDLC lane | `features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md` | Sprint execution cannot skip child closeout, umbrella truth, or combined-lane validation. | planned |
 | Five-minute-sprint repeatability | `features/FIVE_MINUTE_SPRINT_REPEATABILITY.md` | More than one transition records coordination, validation-tail/proof-latency, Parallel Validation Fabric, and repeatability metrics. | landed |
 | Parallel Validation Fabric | `features/PARALLEL_VALIDATION_FABRIC.md` | Validation is decomposed into truthful issue-local, shardable, cache-aware, pre-PR evidence-reuse, deferred, pending, and blocking proof lanes without hiding failures. | landed |
-| Multi-agent C-SDLC workcell proof | `SPRINT_v0.91.4.md` and workcell proof packet from `#3415` through `#3419` | C-SDLC demonstrates bounded conductor-managed parallel worker/reviewer/janitor lanes with explicit shard admission, serialized publication normalization, and serialized merge/closeout gates. | in_progress |
+| Multi-agent C-SDLC workcell proof | `SPRINT_v0.91.4.md`, `docs/milestones/v0.91.4/review/multi_agent_workcell/MULTI_AGENT_CSDLC_WORKCELL_PROOF_PACKET_2026-05-28.md`, and `docs/milestones/v0.91.4/review/multi_agent_workcell/CODEX_ONLY_COMPLETE_ISSUE_WORKCELL_PROOF_PACKET_2026-05-29.md` from the `#3415` through `#3419` proof wave plus `#3484` | C-SDLC demonstrates bounded conductor-managed parallel worker lanes with explicit shard admission and serialized publication/review/merge/closeout gates; the new `#3484` evidence strengthens the claim by showing multiple hosted Codex worker lanes completing disjoint issue-local work in parallel without bypassing serialized downstream review, janitor, or closeout control. | in_progress |
 | Active issue migration policy | `features/ACTIVE_ISSUE_MIGRATION_POLICY.md` and `ACTIVE_ISSUE_MIGRATION_AUDIT_2026-05-27.md` | Open issues and future issues have a safe migration/defaulting path. | planned |
 | Process drift regression fixtures | `features/PROCESS_DRIFT_REGRESSION_FIXTURES.md` and `PROCESS_DRIFT_REGRESSION_REPORT_2026-05-28.md` | Known card, closeout, state, and proof drift modes fail closed. | planned |
 | Tracked workflow state migration | `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md` | Durable C-SDLC records, proof packets, signed traces, and ObsMem ingestion surfaces are tracked in Git. | planned |
@@ -66,7 +66,8 @@ still have a truthful completion or blocked-state record before release:
   absent, stale, mismatched, or invalid under current policy
 - multi-agent workcell proof packet showing shard admission, worker/reviewer
   assignment, branch/worktree boundaries, serialized merge/closeout gates, and
-  coordination timing
+  coordination timing, plus the `#3484` Codex-only follow-on slice at
+  `docs/milestones/v0.91.4/review/multi_agent_workcell/CODEX_ONLY_COMPLETE_ISSUE_WORKCELL_PROOF_PACKET_2026-05-29.md`
 - active-issue migration policy evidence
 - process-drift regression fixture results
 - docs/adoption review evidence

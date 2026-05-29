@@ -1,0 +1,110 @@
+{
+  "schema_version": "adl.multi_agent_workcell_state.v1",
+  "workcell_id": "issue-3484-codex-only-complete-issue-demo-2026-05-29",
+  "issue_number": 3484,
+  "status": "in_progress",
+  "result_classification": "partially_proven",
+  "summary": "Primary tracked state packet for the Codex-only complete-issue multi-agent demo. Records directly observed parallel hosted Codex worker-lane outputs with disjoint ownership and preserves serialized downstream gates as not yet fully proven.",
+  "source_evidence": {
+    "source_issue_prompt": ".adl/v0.91.4/bodies/issue-3484-v0-91-4-multi-agent-demo-prove-complete-bounded-issue-execution-with-parallel-hosted-codex-lanes-after-provider-alignment.md",
+    "stp": ".adl/v0.91.4/tasks/issue-3484__v0-91-4-multi-agent-demo-prove-complete-bounded-issue-execution-with-parallel-hosted-codex-lanes-after-provider-alignment/stp.md",
+    "spp": ".adl/v0.91.4/tasks/issue-3484__v0-91-4-multi-agent-demo-prove-complete-bounded-issue-execution-with-parallel-hosted-codex-lanes-after-provider-alignment/spp.md",
+    "sor": ".adl/v0.91.4/tasks/issue-3484__v0-91-4-multi-agent-demo-prove-complete-bounded-issue-execution-with-parallel-hosted-codex-lanes-after-provider-alignment/sor.md",
+    "precursor_parallel_proof": "docs/milestones/v0.91.4/review/multi_agent_workcell/MULTI_AGENT_CSDLC_WORKCELL_PROOF_PACKET_2026-05-28.md",
+    "precursor_codex_slice": "docs/milestones/v0.91.4/review/multi_agent_workcell/CODEX_ONLY_PARALLEL_WORKER_SLICE_2026-05-29.md",
+    "primary_packet": "docs/milestones/v0.91.4/review/multi_agent_workcell/CODEX_ONLY_COMPLETE_ISSUE_WORKCELL_PROOF_PACKET_2026-05-29.md"
+  },
+  "execution_context": {
+    "worktree_path": ".worktrees/adl-wp-3484",
+    "branch": "codex/3484-v0-91-4-multi-agent-demo-prove-complete-bounded-issue-execution-with-parallel-hosted-codex-lanes-after-provider-alignment",
+    "execution_mode": "multiple_hosted_codex_lanes_with_disjoint_file_ownership",
+    "operator_attested_parallelism": true,
+      "notes": [
+      "This state packet records repository-relative evidence only.",
+      "The current branch now contains directly inspected outputs from worker A, worker B, and worker C on disjoint owned file sets.",
+      "A focused proving command for the documentary fixture was executed locally, but downstream reviewer publication, janitor routing, merge, and closeout are still not claimed as complete."
+    ]
+  },
+  "shard_assignments": [
+    {
+      "shard_id": "worker-a-demo-runner-lane",
+      "role": "worker",
+      "execution_backend": "hosted_codex",
+      "admission_status": "parallel_admitted",
+      "ownership_status": "exclusive",
+      "write_paths": [
+        "adl/tools/demo_v0914_codex_only_complete_issue_workcell.sh",
+        "adl/tools/test_demo_v0914_codex_only_complete_issue_workcell.sh"
+      ],
+      "dependencies": [],
+      "evidence_status": "directly_observed"
+    },
+    {
+      "shard_id": "worker-b-proof-packet-lane",
+      "role": "worker",
+      "execution_backend": "hosted_codex",
+      "admission_status": "parallel_admitted",
+      "ownership_status": "exclusive",
+      "write_paths": [
+        "docs/milestones/v0.91.4/review/multi_agent_workcell/CODEX_ONLY_COMPLETE_ISSUE_WORKCELL_PROOF_PACKET_2026-05-29.md",
+        "docs/milestones/v0.91.4/review/multi_agent_workcell/codex_only_complete_issue_workcell_state_2026-05-29.json"
+      ],
+      "dependencies": [],
+      "evidence_status": "directly_observed"
+    },
+    {
+      "shard_id": "worker-c-milestone-evidence-lane",
+      "role": "worker",
+      "execution_backend": "hosted_codex",
+      "admission_status": "parallel_admitted",
+      "ownership_status": "exclusive",
+      "write_paths": [
+        "docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md",
+        "docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md"
+      ],
+      "dependencies": [],
+      "evidence_status": "directly_observed"
+    },
+    {
+      "shard_id": "serialized-review-janitor-closeout-gates",
+      "role": "control_plane",
+      "execution_backend": "serialized_human_or_model_supervised_gate",
+      "admission_status": "pending_or_externalized",
+      "ownership_status": "shared_truth_surface",
+      "write_paths": [],
+      "dependencies": [
+        "worker-b-proof-packet-lane",
+        "other-hosted-codex-worker-lanes"
+      ],
+      "evidence_status": "not_yet_proven"
+    }
+  ],
+  "parallelized_capabilities": [
+    "disjoint hosted Codex worker-lane execution on the live issue surface",
+    "lane-local artifact authorship under explicit file ownership constraints",
+    "parallel production of code/demo, proof packet, and milestone-evidence surfaces"
+  ],
+  "serialized_gates": [
+    "conductor admission and lifecycle routing truth",
+    "reviewer publication and synthesis across worker-owned artifacts",
+    "janitor routing if blockers appear",
+    "closeout reconciliation across SRP, SOR, and issue state",
+    "milestone-level publication claims outside the issue-local proof packet"
+  ],
+  "reviewer_expectations": [
+    "Verify that at least two hosted Codex worker lanes produced concrete issue-local outputs on disjoint paths.",
+    "Verify that no lane edited outside its owned file set.",
+    "Verify that reviewer findings or explicit non-findings were recorded on the produced diffs or artifacts.",
+    "Verify whether janitor routing was unnecessary or was truthfully executed as a serialized step.",
+    "Verify that closeout truth lands on canonical issue-local review/output surfaces before classifying the proof as proven."
+  ],
+  "truth_notes": [
+    "This packet intentionally distinguishes directly observed worker outputs from downstream serialized gates that remain unresolved.",
+    "The current classification remains conservative because complete end-to-end issue closure is not directly evidenced here."
+  ],
+  "validation_evidence": [
+    "bash adl/tools/test_demo_v0914_codex_only_complete_issue_workcell.sh",
+    "python3 -m json.tool docs/milestones/v0.91.4/review/multi_agent_workcell/codex_only_complete_issue_workcell_state_2026-05-29.json >/dev/null",
+    "git diff --check"
+  ]
+}
