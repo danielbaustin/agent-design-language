@@ -146,6 +146,29 @@ normalize_changed_rows() {
   '
 }
 
+git_pr_diff() {
+  git diff "$@"
+}
+
+git_pr_name_status() {
+  if [ -n "${base_sha:-}" ] && [ -n "${head_sha:-}" ]; then
+    git_pr_diff --name-status --diff-filter=ACMRD "$base_sha...$head_sha" 2>/dev/null || \
+      git_pr_diff --name-status --diff-filter=ACMRD "$base_sha" "$head_sha" 2>/dev/null || true
+    return
+  fi
+  git_pr_diff --name-status --diff-filter=ACMRD "$@" 2>/dev/null || true
+}
+
+git_pr_patch() {
+  local path="$1"
+  if [ -n "${base_sha:-}" ] && [ -n "${head_sha:-}" ]; then
+    git_pr_diff --unified=0 "$base_sha...$head_sha" -- "$path" 2>/dev/null || \
+      git_pr_diff --unified=0 "$base_sha" "$head_sha" -- "$path" 2>/dev/null || true
+    return
+  fi
+  git_pr_diff --unified=0 -- "$path" 2>/dev/null || true
+}
+
 is_production_rust_source() {
   local path="$1"
   case "$path" in
@@ -192,7 +215,7 @@ is_full_coverage_policy_surface() {
 is_reporting_only_coverage_workflow_change() {
   local path="$1"
   [ "$path" = ".github/workflows/ci.yaml" ] || return 1
-  git diff --unified=0 "$base_sha" "$head_sha" -- "$path" 2>/dev/null \
+  git_pr_patch "$path" \
     | while IFS= read -r line; do
         case "$line" in
           diff\ --git*|index\ *|@@*|---*|+++*)
@@ -227,7 +250,7 @@ is_pvf_slow_proof_workflow_change() {
   local path="$1"
   [ "$path" = ".github/workflows/ci.yaml" ] || return 1
   local diff_text
-  diff_text="$(git diff --unified=0 "$base_sha" "$head_sha" -- "$path" 2>/dev/null || true)"
+  diff_text="$(git_pr_patch "$path")"
   [ -n "$diff_text" ] || return 1
   grep -E 'adl-slow-proof|test_slow_proof_lane_contract|slow-proof-tests|EXCLUDE_FROM_FILE_FLOOR_REGEX' <<<"$diff_text" >/dev/null 2>&1
 }
@@ -236,7 +259,7 @@ is_pvf_slow_proof_runtime_manifest_change() {
   local path="$1"
   [ "$path" = "adl/src/runtime_v2/tests.rs" ] || return 1
   local diff_text
-  diff_text="$(git diff --unified=0 "$base_sha" "$head_sha" -- "$path" 2>/dev/null || true)"
+  diff_text="$(git_pr_patch "$path")"
   [ -n "$diff_text" ] || return 1
   grep -E 'slow-proof-tests|a2a_adapter_boundary|access_control|acip_hardening|challenge|citizen_state_substrate|contract_registry_accessors|delegation_subcontract' <<<"$diff_text" >/dev/null 2>&1
 }
@@ -313,7 +336,7 @@ EOF
 is_csdlc_evidence_namespace_policy_update() {
   local path="$1"
   [ "$path" = "adl/tools/ci_path_policy.sh" ] || return 1
-  git diff --unified=0 "$base_sha" "$head_sha" -- "$path" 2>/dev/null \
+  git_pr_patch "$path" \
     | while IFS= read -r line; do
         case "$line" in
           diff\ --git*|index\ *|@@*|---*|+++*)
@@ -520,7 +543,7 @@ line_count_for_path() {
 
 changed_line_delta_for_path() {
   local path="$1"
-  git diff --numstat "$base_sha" "$head_sha" -- "$path" 2>/dev/null \
+  git_pr_diff --numstat "$base_sha...$head_sha" -- "$path" 2>/dev/null \
     | awk '($1 ~ /^[0-9]+$/ && $2 ~ /^[0-9]+$/) { total += $1 + $2 } END { print total + 0 }'
 }
 
@@ -534,7 +557,7 @@ elif [ -z "$base_sha" ] || [ -z "$head_sha" ]; then
   fail_closed=true
   mark_authoritative_full_coverage "fail_closed" "missing_pull_request_sha_runs_full_validation"
 else
-  changed_rows="$(git diff --name-status --diff-filter=ACMRD "$base_sha" "$head_sha" 2>/dev/null | normalize_changed_rows || true)"
+  changed_rows="$(git_pr_name_status | normalize_changed_rows || true)"
   changed_files="$(printf '%s\n' "$changed_rows" | awk -F '\t' 'NF >= 2 { print $2 }')"
   if [ -z "$changed_rows" ]; then
     fail_closed=true
