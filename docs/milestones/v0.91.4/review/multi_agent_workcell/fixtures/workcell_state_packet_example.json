@@ -1,0 +1,205 @@
+{
+  "schema_version": "adl.multi_agent_workcell_state.v1",
+  "workcell_id": "v0-91-4-multi-agent-proof-slice",
+  "sprint_issue_number": 3415,
+  "planner_manifest_path": "docs/milestones/v0.91.4/review/multi_agent_workcell/fixtures/workcell_assignment_allowed.json",
+  "conductor_hooks": {
+    "worker_admission": {
+      "selected_skill": "pr-run",
+      "canonical_truth": [
+        "github_issue_state",
+        "sip",
+        "stp",
+        "spp",
+        "sprint_state"
+      ]
+    },
+    "review_publication": {
+      "selected_skill": "pr-finish",
+      "canonical_truth": [
+        "srp",
+        "sor",
+        "pr_state",
+        "published_artifacts"
+      ]
+    },
+    "janitor_remediation": {
+      "selected_skill": "pr-janitor",
+      "canonical_truth": [
+        "pr_state",
+        "check_status",
+        "review_findings"
+      ]
+    },
+    "closeout_reconciliation": {
+      "selected_skill": "pr-closeout",
+      "canonical_truth": [
+        "github_issue_state",
+        "sor",
+        "sprint_state",
+        "closeout_artifacts"
+      ]
+    }
+  },
+  "shard_assignments": [
+    {
+      "shard_id": "ollama-worker-a",
+      "issue_number": 4001,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "qwen2.5-coder:32b",
+      "branch": "codex/4001-example-ollama-worker-a",
+      "worktree_path": ".worktrees/example-ollama-worker-a",
+      "write_paths": [
+        "docs/milestones/v0.91.4/features/MULTI_AGENT_WORKCELL_STATE_CONTRACT.md"
+      ],
+      "dependencies": [],
+      "admission_status": "parallel_admitted",
+      "validation_gate": "parallel_pvf_lane",
+      "review_lane": "bounded_subagent_review",
+      "closeout_status": "waiting_for_review",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "approved",
+        "srp": "draft",
+        "sor": "draft"
+      },
+      "github_issue_state": "OPEN",
+      "pr_state": "draft"
+    },
+    {
+      "shard_id": "codex-worker-b",
+      "issue_number": 4002,
+      "role": "worker",
+      "execution_backend": "hosted_codex",
+      "model_hint": "gpt-5.5-codex",
+      "branch": "codex/4002-example-codex-worker-b",
+      "worktree_path": ".worktrees/example-codex-worker-b",
+      "write_paths": [
+        "adl/tools/validate_multi_agent_workcell_state.py"
+      ],
+      "dependencies": [],
+      "admission_status": "parallel_admitted",
+      "validation_gate": "parallel_pvf_lane",
+      "review_lane": "bounded_subagent_review",
+      "closeout_status": "waiting_for_review",
+      "cards": {
+        "sip": "approved",
+        "stp": "ready",
+        "spp": "ready",
+        "srp": "draft",
+        "sor": "draft"
+      },
+      "github_issue_state": "OPEN",
+      "pr_state": "draft"
+    },
+    {
+      "shard_id": "serialized-worker-c",
+      "issue_number": 4003,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "mistral-small3.2:24b",
+      "branch": "codex/4003-example-serialized-worker-c",
+      "worktree_path": ".worktrees/example-serialized-worker-c",
+      "write_paths": [
+        "docs/milestones/v0.91.4/review/multi_agent_workcell/fixtures/workcell_state_packet_example.json"
+      ],
+      "dependencies": [
+        "ollama-worker-a"
+      ],
+      "admission_status": "serial_only",
+      "validation_gate": "serialized_gate",
+      "review_lane": "bounded_subagent_review",
+      "closeout_status": "not_started",
+      "cards": {
+        "sip": "ready",
+        "stp": "approved",
+        "spp": "ready",
+        "srp": "draft",
+        "sor": "draft"
+      },
+      "github_issue_state": "OPEN",
+      "pr_state": "none"
+    },
+    {
+      "shard_id": "independent-reviewer",
+      "issue_number": 4004,
+      "role": "reviewer",
+      "branch": "codex/4004-example-reviewer",
+      "worktree_path": ".worktrees/example-reviewer",
+      "write_paths": [
+        "docs/milestones/v0.91.4/review/multi_agent_workcell/fixtures/workcell_state_packet_example.json"
+      ],
+      "dependencies": [
+        "ollama-worker-a",
+        "codex-worker-b"
+      ],
+      "admission_status": "review_ready",
+      "validation_gate": "published_artifact_gate",
+      "review_lane": "bounded_subagent_review",
+      "closeout_status": "waiting_for_review",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "ready",
+        "srp": "ready",
+        "sor": "draft"
+      },
+      "github_issue_state": "OPEN",
+      "pr_state": "open"
+    },
+    {
+      "shard_id": "pr-janitor",
+      "issue_number": 4005,
+      "role": "janitor",
+      "branch": "codex/4005-example-pr-janitor",
+      "worktree_path": ".worktrees/example-pr-janitor",
+      "write_paths": [
+        "docs/milestones/v0.91.4/review/multi_agent_workcell/fixtures/workcell_state_packet_example.json"
+      ],
+      "dependencies": [
+        "independent-reviewer"
+      ],
+      "admission_status": "janitor_ready",
+      "validation_gate": "pr_blocker_gate",
+      "review_lane": "pr_janitor",
+      "closeout_status": "janitor_pending",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "ready",
+        "srp": "reviewed",
+        "sor": "draft"
+      },
+      "github_issue_state": "OPEN",
+      "pr_state": "open"
+    },
+    {
+      "shard_id": "closeout-lane",
+      "issue_number": 4006,
+      "role": "closeout",
+      "branch": "codex/4006-example-closeout",
+      "worktree_path": ".worktrees/example-closeout",
+      "write_paths": [
+        "docs/milestones/v0.91.4/review/multi_agent_workcell/fixtures/workcell_state_packet_example.json"
+      ],
+      "dependencies": [
+        "pr-janitor"
+      ],
+      "admission_status": "closeout_ready",
+      "validation_gate": "closeout_truth_gate",
+      "review_lane": "pr_closeout",
+      "closeout_status": "closed_out",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "ready",
+        "srp": "reviewed",
+        "sor": "done"
+      },
+      "github_issue_state": "CLOSED",
+      "pr_state": "merged"
+    }
+  ]
+}
