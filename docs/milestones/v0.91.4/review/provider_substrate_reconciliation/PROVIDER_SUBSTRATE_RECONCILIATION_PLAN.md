@@ -264,6 +264,51 @@ Recommended outputs:
 
 The JSONL log should be the canonical watch surface. Human-readable logs may be derived from it, but should not be the only source of operational truth.
 
+#### Operator Notes For Watching Provider Runs
+
+Every provider-backed benchmark or smoke run should print or record the run artifact directory before provider calls begin. Operators should be able to watch progress without reading scored artifacts or waiting for the run to finish.
+
+Expected files:
+
+- `run.log.jsonl`: canonical tail-friendly operational event stream.
+- `run.log`: optional human-readable mirror.
+- `provider_status.json`: final provider health/status summary.
+- `details.json`: scored per-task detail output.
+- `summary.json`: scored aggregate output.
+
+Primary watch command:
+
+```bash
+tail -f <run-dir>/run.log.jsonl
+```
+
+Useful filtered watches:
+
+```bash
+tail -f <run-dir>/run.log.jsonl | rg 'provider_auth|provider_rate_limited|provider_timeout|local_runtime|retry'
+tail -f <run-dir>/run.log.jsonl | rg 'attempt_failure|retry_scheduled|model_result|run_finish'
+```
+
+Operators should look for:
+
+- missing or invalid credentials
+- provider rate limits
+- provider connection resets
+- provider timeouts
+- provider empty text output
+- missing local models
+- local runtime busy or hung states
+- retries that continue across many tasks or lanes
+
+Operational provider failures are not the same thing as scored task failures. A task should only be counted as an evaluated benchmark failure when the runner records that a valid provider response was evaluated against the task contract. Auth errors, connection failures, missing models, and runtime stalls should remain provider/run-status failures unless the benchmark contract explicitly says otherwise.
+
+The runner should emit the artifact directory and the watch command near run start, for example:
+
+```text
+run_dir=docs/milestones/v0.91.4/review/.../runs/<run-id>
+watch=tail -f docs/milestones/v0.91.4/review/.../runs/<run-id>/run.log.jsonl
+```
+
 ## Execution Boundary
 
 ### Hosted Providers
