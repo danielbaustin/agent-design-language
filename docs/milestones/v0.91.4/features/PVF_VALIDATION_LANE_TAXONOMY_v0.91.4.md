@@ -94,7 +94,7 @@ manifest's `lanes` map and must define:
 - `cache_strategy`: `none`, `local_reuse`, or `artifact_reuse`
 - `release_gate_class`: `required_on_pr`, `release_candidate`, `manual_release_gate`, or `optional`
 - `default_trigger`: `always`, `changed_paths`, `manual`, or `release_only`
-- `changed_path_hints`: zero or more path prefixes or glob-style hints
+- `changed_path_hints`: zero or more path prefixes or shell-glob hints
 - `evidence_outputs`: zero or more files or artifact classes produced by the lane
 
 Optional but encouraged:

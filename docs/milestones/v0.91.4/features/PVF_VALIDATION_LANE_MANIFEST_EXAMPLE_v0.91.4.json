@@ -9,13 +9,14 @@
     "pvf_manifest_contract": {
       "lane_class": "contract_schema_card",
       "owner_surface": "PVF manifest schema and example fixtures",
-      "command": "python3 -m json.tool docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_SCHEMA_v0.91.4.json && python3 -m json.tool docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_EXAMPLE_v0.91.4.json",
+      "command": "python3 adl/tools/validate_pvf_manifest.py docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_EXAMPLE_v0.91.4.json && python3 -m json.tool docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_SCHEMA_v0.91.4.json >/dev/null",
       "resource_profile": "low",
       "determinism": "strict",
       "cache_strategy": "none",
       "release_gate_class": "required_on_pr",
       "default_trigger": "changed_paths",
       "changed_path_hints": [
+        "adl/tools/validate_pvf_manifest.py",
         "docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_SCHEMA_v0.91.4.json",
         "docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_EXAMPLE_v0.91.4.json"
       ],

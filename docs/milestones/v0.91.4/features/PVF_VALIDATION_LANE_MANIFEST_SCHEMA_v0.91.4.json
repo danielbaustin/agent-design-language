@@ -15,7 +15,7 @@
       "const": "v0.91.4"
     },
     "lane_classes": {
-      "description": "Subset of canonical lane classes actually used by entries in this manifest.",
+      "description": "Subset of canonical lane classes actually used by entries in this manifest. Equality with the classes used by `lanes` is enforced by `adl/tools/validate_pvf_manifest.py`.",
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
