@@ -61,6 +61,13 @@ def run_log_path_for(out_path: Path) -> Path:
     return out_path.with_name(f"{out_path.stem}_run.log.jsonl")
 
 
+ADAPTER_EVIDENCE_ROOT: Path | None = None
+
+
+def adapter_evidence_root() -> Path | None:
+    return ADAPTER_EVIDENCE_ROOT
+
+
 def provider_event_fields(entry: dict[str, Any], lane: str | None = None, task_id: str | None = None) -> dict[str, Any]:
     fields = {
         "provider_kind": entry.get("provider_kind"),
@@ -597,10 +604,165 @@ def invoke_local(entry: dict[str, Any], prompt: str) -> tuple[str, int]:
     return text, int((time.time() - started) * 1000)
 
 
-def invoke_model(entry: dict[str, Any], prompt: str) -> tuple[str, int]:
+def provider_adapter_command() -> list[str]:
+    override = os.getenv("ADL_PROVIDER_ADAPTER_BIN")
+    if override:
+        return [override]
+    return [
+        "cargo",
+        "run",
+        "--quiet",
+        "--manifest-path",
+        str(REPO_ROOT / "adl" / "Cargo.toml"),
+        "--bin",
+        "adl-provider-adapter",
+        "--",
+    ]
+
+
+def adapter_runtime_surface(entry: dict[str, Any]) -> str:
+    return "hosted_api" if entry.get("provider_kind") == "hosted" else "ollama_http"
+
+
+def adapter_identity_strength(entry: dict[str, Any]) -> str:
+    return "provider_asserted" if entry.get("provider_kind") == "hosted" else "tag_only"
+
+
+def adapter_provider(entry: dict[str, Any]) -> str:
+    return str(entry.get("route") or entry.get("provider") or ("ollama" if entry.get("provider_kind") == "local" else "unknown"))
+
+
+def adapter_credential_ref(entry: dict[str, Any]) -> str | None:
+    if entry.get("provider_kind") != "hosted":
+        return None
+    env_name = HOSTED_ROUTE_KEYS.get(adapter_provider(entry))
+    return f"env:{env_name}" if env_name else None
+
+
+def adapter_endpoint_ref(entry: dict[str, Any]) -> str | None:
+    if entry.get("endpoint_ref"):
+        return str(entry["endpoint_ref"])
+    if entry.get("provider_kind") == "local":
+        return current_ollama_base_url()
+    return None
+
+
+def adapter_request(entry: dict[str, Any], prompt: str, lane_ref: str = "benchmark") -> dict[str, Any]:
+    provider_kind = entry.get("provider_kind") or "unknown"
+    provider = adapter_provider(entry)
+    model_id = entry["model_id"]
+    source_registry = entry.get("source_registry") or entry.get("panel_ref") or "uts_benchmark_runner"
+    route: dict[str, Any] = {
+        "provider_kind": provider_kind,
+        "provider": provider,
+        "runtime_surface": adapter_runtime_surface(entry),
+        "provider_model_id": model_id,
+        "source_registry": source_registry,
+    }
+    endpoint = adapter_endpoint_ref(entry)
+    if endpoint:
+        route["endpoint_ref"] = endpoint
+    credential = adapter_credential_ref(entry)
+    if credential:
+        route["credential_ref"] = credential
+    safe_model = safe_name(str(entry.get("id") or model_id))
+    return {
+        "route": route,
+        "model_identity": {
+            "provider_kind": provider_kind,
+            "provider": provider,
+            "model_ref": entry.get("id") or model_id,
+            "provider_model_id": model_id,
+            "runtime_surface": adapter_runtime_surface(entry),
+            "identity_strength": adapter_identity_strength(entry),
+            "observed_at": "unix:1",
+            "source_registry": source_registry,
+        },
+        "prompt_contract_ref": "uts_benchmark_runner.v1",
+        "lane_ref": lane_ref,
+        "run_id": f"uts-benchmark-{safe_model}",
+        "request_id": f"uts-benchmark-{safe_model}-{secrets.token_hex(4)}",
+        "attempt_policy": {
+            "max_attempts": 1,
+            "timeout_ms": (HOSTED_TIMEOUT if provider_kind == "hosted" else LOCAL_TIMEOUT) * 1000,
+            "retry_backoff_ms": 1000,
+        },
+        "input_text": prompt,
+    }
+
+
+def adapter_environment(entry: dict[str, Any]) -> dict[str, str]:
+    env = os.environ.copy()
     if entry.get("provider_kind") == "hosted":
-        return invoke_hosted(entry, prompt)
-    return invoke_local(entry, prompt)
+        env_name = HOSTED_ROUTE_KEYS.get(adapter_provider(entry))
+        if env_name:
+            env[env_name] = hosted_key(env_name)
+    return env
+
+
+def invoke_via_provider_adapter(entry: dict[str, Any], prompt: str, lane_ref: str) -> tuple[str, int, dict[str, Any]]:
+    busy_note = local_runtime_busy_note(entry)
+    if busy_note:
+        raise RuntimeError(busy_note)
+    timeout = HOSTED_TIMEOUT if entry.get("provider_kind") == "hosted" else LOCAL_TIMEOUT
+    with tempfile.TemporaryDirectory(prefix="adl-provider-adapter-") as temp_dir:
+        root = Path(temp_dir)
+        request_path = root / "request.json"
+        result_path = root / "result.json"
+        log_path = root / "run.log.jsonl"
+        request_path.write_text(json.dumps(adapter_request(entry, prompt, lane_ref=lane_ref), indent=2) + "\n", encoding="utf-8")
+        command = provider_adapter_command() + ["--request", str(request_path), "--out", str(result_path), "--log", str(log_path)]
+        completed = subprocess.run(command, env=adapter_environment(entry), capture_output=True, text=True, timeout=timeout + 10)
+        if completed.returncode != 0:
+            note = (completed.stderr or completed.stdout or "provider adapter failed").strip()
+            raise RuntimeError(f"provider_adapter_failed: {note[:500]}")
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+        adapter_evidence = retain_adapter_evidence(entry, lane_ref, result_path, log_path, result)
+    if result.get("final_status") != "ok":
+        failure = result.get("failure") or {}
+        kind = failure.get("kind") or "provider_error"
+        message = failure.get("message") or "provider adapter returned non-ok status"
+        raise RuntimeError(f"{kind}: {message}")
+    text = result.get("output_text")
+    if not isinstance(text, str) or not text.strip():
+        raise RuntimeError("provider_error: provider adapter result did not contain output_text")
+    refs: dict[str, Any] = {
+        "adapter_final_status": result.get("final_status"),
+        "adapter_model_identity": result.get("model_identity"),
+    }
+    if adapter_evidence:
+        refs["adapter_result"] = adapter_evidence.get("result")
+        refs["adapter_run_log"] = adapter_evidence.get("run_log")
+    return text, int(result.get("duration_ms") or 0), refs
+
+
+def retained_adapter_stem(entry: dict[str, Any], lane_ref: str) -> str:
+    return f"{safe_name(str(entry.get('id') or entry.get('model_id') or 'model'))}_{safe_name(lane_ref)}_{secrets.token_hex(4)}"
+
+
+def sanitized_adapter_result(result: dict[str, Any]) -> dict[str, Any]:
+    cleaned = dict(result)
+    cleaned.pop("output_text", None)
+    if cleaned.get("output_text_excerpt") is None and result.get("output_text"):
+        cleaned["output_text_excerpt"] = redact_artifact_excerpt(str(result["output_text"]))
+    return cleaned
+
+
+def retain_adapter_evidence(entry: dict[str, Any], lane_ref: str, result_path: Path, log_path: Path, result: dict[str, Any]) -> dict[str, str] | None:
+    root = adapter_evidence_root()
+    if root is None:
+        return None
+    root.mkdir(parents=True, exist_ok=True)
+    stem = retained_adapter_stem(entry, lane_ref)
+    result_out = root / f"{stem}_result.json"
+    log_out = root / f"{stem}_run.log.jsonl"
+    result_out.write_text(json.dumps(sanitized_adapter_result(result), indent=2) + "\n", encoding="utf-8")
+    shutil.copyfile(log_path, log_out)
+    return {"result": display_path(result_out), "run_log": display_path(log_out)}
+
+
+def invoke_model(entry: dict[str, Any], prompt: str, lane_ref: str) -> tuple[str, int, dict[str, Any]]:
+    return invoke_via_provider_adapter(entry, prompt, lane_ref)
 
 
 def regular_prompt(task: dict[str, Any]) -> str:
@@ -749,14 +911,22 @@ def run_lane(entry: dict[str, Any], tasks: list[dict[str, Any]], lane: str, logg
                 raise RuntimeError(busy_note)
             if logger:
                 logger.event("attempt_start", **provider_event_fields(entry, lane=lane, task_id=task["id"]), attempt_index=1)
-            raw, duration_ms = invoke_model(entry, prompt)
+            raw, duration_ms, adapter_refs = invoke_model(entry, prompt, lane)
             if logger:
-                logger.event("attempt_success", **provider_event_fields(entry, lane=lane, task_id=task["id"]), attempt_index=1, duration_ms=duration_ms)
+                logger.event(
+                    "attempt_success",
+                    **provider_event_fields(entry, lane=lane, task_id=task["id"]),
+                    attempt_index=1,
+                    duration_ms=duration_ms,
+                    adapter_result=adapter_refs.get("adapter_result"),
+                    adapter_run_log=adapter_refs.get("adapter_run_log"),
+                )
             parsed = extract_json_object(raw)
             classification, passed, note = classify_regular(task, parsed) if lane == "regular" else classify_uts(task, parsed)
         except Exception as exc:  # noqa: BLE001
             raw = str(exc)
             duration_ms = None
+            adapter_refs = {}
             classification = "runtime_or_parse_failure"
             passed = False
             failure_kind = provider_failure_kind(raw)
@@ -777,6 +947,7 @@ def run_lane(entry: dict[str, Any], tasks: list[dict[str, Any]], lane: str, logg
             "raw_response_excerpt": redact_artifact_excerpt(raw),
             "provider_failure_kind": failure_kind,
             "note": note,
+            **adapter_refs,
         })
     provider_failures = [case for case in cases if case.get("provider_failure_kind")]
     if provider_failures:
@@ -1105,8 +1276,79 @@ def benchmark_exit_status(report: dict[str, Any]) -> tuple[int, list[str]]:
     return (1 if failures else 0, failures)
 
 
+class _AdapterSmokeHandler(http.server.BaseHTTPRequestHandler):
+    def log_message(self, format: str, *args: Any) -> None:  # noqa: A002
+        return
+
+    def do_POST(self) -> None:  # noqa: N802
+        length = int(self.headers.get("content-length", "0"))
+        payload = json.loads(self.rfile.read(length).decode("utf-8")) if length else {}
+        if payload.get("model") != "adapter-smoke-model" or payload.get("input") != "Return adapter smoke ok":
+            body = json.dumps({"error": "unexpected adapter request"}).encode("utf-8")
+            self.send_response(400)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        body = json.dumps({"output_text": "adapter smoke ok"}).encode("utf-8")
+        self.send_response(200)
+        self.send_header("content-type", "application/json")
+        self.send_header("content-length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+
+def run_adapter_smoke_self_test() -> int:
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _AdapterSmokeHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    host, port = server.server_address
+    global ADAPTER_EVIDENCE_ROOT
+    previous_evidence_root = ADAPTER_EVIDENCE_ROOT
+    try:
+        os.environ["OPENAI_API_KEY"] = "test-key"
+        with tempfile.TemporaryDirectory(prefix="adl-adapter-smoke-evidence-") as evidence_dir:
+            ADAPTER_EVIDENCE_ROOT = Path(evidence_dir)
+            entry = {
+                "id": "adapter-smoke-openai",
+                "provider_kind": "hosted",
+                "provider": "openai",
+                "route": "openai",
+                "model_id": "adapter-smoke-model",
+                "endpoint_ref": f"http://{host}:{port}",
+            }
+            text, duration_ms, adapter_refs = invoke_model(entry, "Return adapter smoke ok", "adapter_smoke")
+            if text.strip() != "adapter smoke ok":
+                print(f"adapter smoke self-test failed: unexpected text {text!r}", file=sys.stderr)
+                return 1
+            retained = sorted(ADAPTER_EVIDENCE_ROOT.glob("*"))
+            result_files = [path for path in retained if path.name.endswith("_result.json")]
+            log_files = [path for path in retained if path.name.endswith("_run.log.jsonl")]
+            if len(result_files) != 1 or len(log_files) != 1:
+                print("adapter smoke self-test failed: retained evidence files missing", file=sys.stderr)
+                return 1
+            result_doc = json.loads(result_files[0].read_text(encoding="utf-8"))
+            log_text = log_files[0].read_text(encoding="utf-8")
+            if result_doc.get("output_text") or "Return adapter smoke ok" in log_text or "adapter smoke ok" in log_text:
+                print("adapter smoke self-test failed: retained evidence leaked prompt or output", file=sys.stderr)
+                return 1
+            if not adapter_refs.get("adapter_model_identity") or adapter_refs.get("adapter_final_status") != "ok":
+                print("adapter smoke self-test failed: adapter identity/status refs missing", file=sys.stderr)
+                return 1
+            print(json.dumps({"status": "ok", "text": text, "duration_ms": duration_ms, "retained_evidence": len(retained)}, sort_keys=True))
+            return 0
+    finally:
+        ADAPTER_EVIDENCE_ROOT = previous_evidence_root
+        os.environ.pop("OPENAI_API_KEY", None)
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run the self-contained UTS benchmark suite.")
+    parser.add_argument("--adapter-smoke-self-test", action="store_true", help="run an offline fake-provider smoke through the Rust provider adapter and exit")
     parser.add_argument("provider_kind", nargs="?", choices=("hosted", "local"))
     parser.add_argument("models_file", nargs="?")
     parser.add_argument("out_json", nargs="?")
@@ -1117,6 +1359,8 @@ def main() -> int:
     parser.add_argument("--include-governed", action="store_true", help="also run the Rust-backed UTS+ACC governed lane")
     parser.add_argument("--no-resume", action="store_true", help="accepted for compatibility; this runner always writes the requested artifact")
     args = parser.parse_args()
+    if args.adapter_smoke_self_test:
+        return run_adapter_smoke_self_test()
 
     panel_file = Path(args.panel_file)
     task_panel_file = Path(args.task_panel_file)
@@ -1129,6 +1373,8 @@ def main() -> int:
     out_path = Path(args.out_json) if args.out_json else REPO_ROOT / "artifacts" / "uts_runs" / f"uts_{models_file.stem}.json"
     run_id = f"uts-{out_path.stem}-{int(time.time())}"
     log_path = run_log_path_for(out_path)
+    global ADAPTER_EVIDENCE_ROOT
+    ADAPTER_EVIDENCE_ROOT = out_path.with_name(f"{out_path.stem}_adapter_evidence")
     print(f"run_dir={display_path(out_path.parent)}", file=sys.stderr, flush=True)
     print(f"run_log={display_path(log_path)}", file=sys.stderr, flush=True)
     print(f"watch=tail -f {display_path(log_path)}", file=sys.stderr, flush=True)
