@@ -71,13 +71,14 @@ Do not treat `curl` success as proof of rendering or interaction.
 
 ## Validation Performed
 
-Recorded by the issue SOR when `#3459` is published. Expected focused validation:
+Validation recorded for `#3459` includes the focused checks below:
 
 - static artifact exists at the primary artifact path
-- artifact contains required labels for roles, scope cuts, artifact ledger, and non-claims
+- artifact contains required labels for roles, proof pulse, claim ledger, scope cuts, artifact ledger, and non-claims
 - proof packet distinguishes static artifact proof from live multi-agent execution
-- browser proof verifies render and at least one interaction when practical
-- patch hygiene passes
+- Browser MCP proof verified render and interaction: title, heading, proof pulse, claim ledger, non-provider boundary, reviewer role selection, and scope-cut state
+- Computer Use visible Chromium proof verified the artifact renders in the real Chromium app
+- patch hygiene passed
 
 ## Residual Risk
 
