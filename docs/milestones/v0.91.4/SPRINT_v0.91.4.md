@@ -44,10 +44,10 @@ closeout truth.
 Current workcell state:
 
 - `#3415` opened the mini-sprint umbrella and child wave.
-- `#3416` owns the workcell execution model.
+- `#3416` owns the workcell execution model in `docs/milestones/v0.91.4/features/MULTI_AGENT_CSDLC_WORKCELL_EXECUTION_MODEL.md`.
 - `#3417` owns shard admission and assignment planning.
 - `#3418` owns workcell state artifacts and conductor hook points.
-- `#3419` owns the bounded multi-agent proof sprint.
+- `#3419` owns the bounded multi-agent proof sprint and should consume the `#3416` proof-slice recommendation rather than inventing its own lane shape.
 - This is C-SDLC core proof, not product sidecar work, but it does not add
   extra release-tail gates; its evidence should feed WP-10, WP-13, WP-14, and
   WP-15.
