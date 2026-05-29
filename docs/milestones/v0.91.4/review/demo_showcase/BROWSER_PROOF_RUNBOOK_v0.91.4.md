@@ -12,14 +12,21 @@ This runbook records the preferred browser-proof order for v0.91.4 demo work.
    - It can load `localhost` and `127.0.0.1` pages.
    - It has a Playwright-backed evaluation surface.
    - Use it for proof capture when the demo needs DOM/gameplay assertions.
-2. Use the installed Chromium app from an operator terminal when the in-app browser is unavailable.
+2. Use Computer Use to control the visible Chromium app when the demo must be shown in Chromium.
+   - This is the preferred human-visible Chromium route.
+   - It can set the address bar, read the accessibility tree, and capture the visible app state.
+   - Known working target:
+     ```text
+     http://127.0.0.1:43191/demos/v0.91.3/starharvest_five_minute_sprint_demo.html
+     ```
+3. Use the installed Chromium app from an operator terminal when automated visible-app control is unavailable.
    - Known operator command:
      ```bash
      open -a chromium http://127.0.0.1:43191/demos/v0.91.3/starharvest_five_minute_sprint_demo.html
      ```
    - This may work in the operator shell even if `open -a chromium` does not resolve from a sandboxed Codex process.
-3. Use Safari as a manual fallback only when automation is not required.
-4. Use `curl` only for HTTP reachability, not for gameplay proof.
+4. Use Safari as a manual fallback only when automation is not required.
+5. Use `curl` only for HTTP reachability, not for gameplay proof.
 
 ## Starharvest Local Server
 
@@ -56,3 +63,14 @@ A real browser/gameplay proof should verify at least:
 ## Current v0.91.4 Finding
 
 During `#3458`, `curl` confirmed the Starharvest page returned HTTP 200 from the local server. The operator confirmed `open -a chromium http://www.google.com` works from their shell, while the Codex sandbox could not resolve `open -a chromium`. Future proof tooling should preserve both routes instead of treating one failed launcher as evidence that browsers are unavailable.
+
+During `#3497`, Computer Use successfully controlled the visible Chromium app and loaded Starharvest in that real Chromium window. The accessibility tree verified the Starharvest title, URL, heading, timer, stardust, seeds, hull, asteroid field, selected asteroid, and restart button. This is the correct route when a demo must be shown in Chromium.
+
+## Canonical Browser Automation Reference
+
+The broader ADL browser automation contract is tracked in:
+
+- `docs/milestones/v0.91.4/review/browser_automation/BROWSER_AUTOMATION_RUNBOOK_v0.91.4.md`
+- `adl/tools/diagnose_browser_routes.py`
+
+Use that runbook before adding new browser-backed demo proof. This demo-showcase note remains the local Starharvest-specific quick path.
