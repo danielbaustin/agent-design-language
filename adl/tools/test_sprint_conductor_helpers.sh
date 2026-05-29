@@ -571,6 +571,51 @@ assert state["continuation"] == "continue"
 assert state["truth_check"]["gate_passed"] is False
 PY
 
+deferred_state_path="${tmpdir}/sprint-state-deferred-next.json"
+cp "${state_path}" "${deferred_state_path}"
+python3 - "${deferred_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+state = json.loads(path.read_text())
+state["completed_issue_numbers"] = []
+state["current_issue_number"] = 2827
+state["continuation"] = "continue"
+state["truth_check"] = {
+    "status": "matched",
+    "source": "github_live",
+    "gate_passed": True,
+    "checked_issue_numbers": [2827, 2828],
+    "checked_pr_urls": [],
+    "notes": [],
+}
+record_2827 = next(record for record in state["issue_records"] if record["issue_number"] == 2827)
+record_2827["status"] = "pending"
+record_2828 = next(record for record in state["issue_records"] if record["issue_number"] == 2828)
+record_2828["status"] = "deferred"
+path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
+PY
+
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_child_issue_closeout.py" \
+  --state "${deferred_state_path}" \
+  --issue-number 2827 \
+  --issue-closed true \
+  --pr-state merged \
+  --root-sor-status done \
+  --worktree-status pruned >/dev/null
+
+python3 - "${deferred_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+assert state["current_issue_number"] == 2828
+assert state["continuation"] == "ask_operator"
+PY
+
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
   --repo-root "${fake_repo}" \
   --state "${state_path}" \
@@ -743,6 +788,26 @@ if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/close_sprint_
   --state "${must_land_state_path}" \
   --summary "Should fail because must-land follow-ups remain." >/dev/null 2>&1; then
   echo "expected close_sprint_issue.py to refuse sprint close when must-land follow-up issues remain" >&2
+  exit 1
+fi
+
+missing_artifact_state_path="${tmpdir}/sprint-state-missing-artifact.json"
+cp "${state_path}" "${missing_artifact_state_path}"
+python3 - "${missing_artifact_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+state = json.loads(path.read_text())
+state.pop("closeout", None)
+path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
+PY
+
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/close_sprint_issue.py" \
+  --state "${missing_artifact_state_path}" \
+  --summary "Should fail because no closeout artifact is recorded." >/dev/null 2>&1; then
+  echo "expected close_sprint_issue.py to refuse sprint close when no retained closeout artifact is recorded" >&2
   exit 1
 fi
 
