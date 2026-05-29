@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADL Creative Room / C-SDLC Front-Stage Demo</title>
+  <style>
+    :root {
+      --ink: #17231d;
+      --mist: #f6f1e7;
+      --paper: #fffaf0;
+      --moss: #6d8a54;
+      --fern: #234b3a;
+      --clay: #b96745;
+      --gold: #d9a23a;
+      --sky: #a8c7c1;
+      --night: #111b1a;
+      --line: rgba(23, 35, 29, 0.18);
+      --shadow: 0 24px 80px rgba(17, 27, 26, 0.2);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 14% 16%, rgba(217, 162, 58, 0.28), transparent 28rem),
+        radial-gradient(circle at 88% 6%, rgba(168, 199, 193, 0.45), transparent 30rem),
+        linear-gradient(135deg, #fbf5e7 0%, #e5efe7 52%, #d3e0d6 100%);
+      font-family: "Avenir Next", "Gill Sans", Verdana, sans-serif;
+      min-height: 100vh;
+    }
+
+    .grain {
+      min-height: 100vh;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.33) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.24) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    header {
+      padding: 44px clamp(20px, 5vw, 72px) 24px;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      align-items: end;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      width: fit-content;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.74);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      max-width: 880px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(46px, 8vw, 112px);
+      line-height: 0.88;
+      letter-spacing: -0.07em;
+    }
+
+    .lead {
+      max-width: 770px;
+      font-size: clamp(17px, 2.1vw, 24px);
+      line-height: 1.45;
+      color: rgba(23, 35, 29, 0.78);
+    }
+
+    .truth-card {
+      background: rgba(255, 250, 240, 0.82);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .truth-card h2, .panel h2, .stage h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--fern);
+    }
+
+    .truth-card ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.65;
+    }
+
+    main {
+      padding: 0 clamp(20px, 5vw, 72px) 72px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .stage {
+      background: rgba(255, 250, 240, 0.78);
+      border: 1px solid var(--line);
+      border-radius: 36px;
+      box-shadow: var(--shadow);
+      padding: clamp(20px, 3vw, 34px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: auto -8% -38% 42%;
+      height: 340px;
+      background: radial-gradient(circle, rgba(35, 75, 58, 0.18), transparent 64%);
+      pointer-events: none;
+    }
+
+    .room-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      position: relative;
+    }
+
+    .map {
+      min-height: 520px;
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 48% 43%, rgba(217, 162, 58, 0.24), transparent 9rem),
+        linear-gradient(150deg, var(--night), #19332e 54%, #243f32);
+      color: var(--paper);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map::after {
+      content: "";
+      position: absolute;
+      inset: 24px;
+      border: 1px dashed rgba(255, 250, 240, 0.22);
+      border-radius: 26px;
+      pointer-events: none;
+    }
+
+    .orbit {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: min(76%, 520px);
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(255, 250, 240, 0.2);
+      border-radius: 50%;
+    }
+
+    .orbit.two { width: min(52%, 360px); }
+
+    .center {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: 180px;
+      height: 180px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 20px;
+      background: radial-gradient(circle, #fff3c0, var(--gold) 60%, #8d5d22);
+      color: #17231d;
+      box-shadow: 0 0 0 12px rgba(217, 162, 58, 0.12), 0 22px 70px rgba(0,0,0,0.28);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .role {
+      position: absolute;
+      width: 154px;
+      min-height: 94px;
+      border: 1px solid rgba(255, 250, 240, 0.24);
+      border-radius: 22px;
+      background: rgba(255, 250, 240, 0.09);
+      backdrop-filter: blur(12px);
+      padding: 14px;
+      color: var(--paper);
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+    }
+
+    .role:hover, .role.active {
+      transform: translateY(-4px);
+      background: rgba(255, 250, 240, 0.18);
+      border-color: rgba(217, 162, 58, 0.78);
+    }
+
+    .role strong { display: block; font-size: 16px; margin-bottom: 6px; }
+    .role span { display: block; font-size: 12px; line-height: 1.35; opacity: 0.8; }
+    .role.architect { left: 8%; top: 11%; }
+    .role.builder { right: 9%; top: 15%; }
+    .role.reviewer { right: 8%; bottom: 14%; }
+    .role.editor { left: 8%; bottom: 12%; }
+    .role.operator { left: 38%; top: 4%; }
+
+    .side-stack { display: grid; gap: 16px; }
+
+    .pulse-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 14px;
+      margin: 8px 0 24px;
+    }
+
+    .pulse {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      background: rgba(255, 250, 240, 0.72);
+      box-shadow: 0 14px 44px rgba(17, 27, 26, 0.1);
+    }
+
+    .pulse strong {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 0.9;
+      letter-spacing: -0.06em;
+      color: var(--fern);
+      margin-bottom: 10px;
+    }
+
+    .pulse span {
+      display: block;
+      font-size: 13px;
+      line-height: 1.35;
+      color: rgba(23,35,29,0.72);
+      font-weight: 800;
+    }
+
+    .claim-board {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .claim-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .claim-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(255,250,240,0.72);
+    }
+
+    .claim-row b {
+      color: var(--clay);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .claim-row span { line-height: 1.35; }
+
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: rgba(255,255,255,0.46);
+      padding: 22px;
+    }
+
+    .panel h3 { margin: 0 0 8px; font-size: 24px; letter-spacing: -0.04em; }
+    .panel p { margin: 0; line-height: 1.55; color: rgba(23,35,29,0.74); }
+
+    .tokens { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+    .token {
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--fern);
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .step {
+      padding: 18px;
+      border-radius: 24px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      min-height: 150px;
+    }
+
+    .step b { display: block; font-size: 14px; color: var(--clay); margin-bottom: 10px; }
+    .step span { display: block; font-size: 15px; line-height: 1.45; }
+
+    .artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .artifact {
+      border-radius: 22px;
+      padding: 18px;
+      background: linear-gradient(145deg, rgba(255,250,240,0.88), rgba(224,235,224,0.86));
+      border: 1px solid var(--line);
+      min-height: 130px;
+    }
+
+    .artifact small {
+      display: block;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--moss);
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .artifact strong { display: block; margin-bottom: 8px; }
+    .artifact p { margin: 0; line-height: 1.4; color: rgba(23,35,29,0.7); }
+
+    .control-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      background: var(--fern);
+      color: var(--paper);
+      box-shadow: 0 12px 34px rgba(35, 75, 58, 0.22);
+    }
+    button.secondary { background: var(--clay); }
+
+    .status-line {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(35, 75, 58, 0.1);
+      border: 1px solid rgba(35, 75, 58, 0.15);
+      font-weight: 800;
+    }
+
+    footer {
+      padding: 0 clamp(20px, 5vw, 72px) 52px;
+      color: rgba(23,35,29,0.68);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 960px) {
+      header, .room-grid { grid-template-columns: 1fr; }
+      .map { min-height: 650px; }
+      .role.operator { left: 32%; top: 5%; }
+      .timeline, .artifact-grid { grid-template-columns: 1fr 1fr; }
+      .pulse-grid, .claim-board { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .timeline, .artifact-grid { grid-template-columns: 1fr; }
+      .pulse-grid, .claim-board, .claim-row { grid-template-columns: 1fr; }
+      .map { min-height: 760px; }
+      .role { width: 140px; }
+      .center { width: 150px; height: 150px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain">
+    <header>
+      <section>
+        <div class="eyebrow">C-SDLC demo / creative production room</div>
+        <h1>ADL Creative Room</h1>
+        <p class="lead">A front-stage demo of how a creative software sprint becomes inspectable: roles separate, scope cuts are explicit, artifacts converge, review truth survives, and the demo refuses to pretend static proof is live provider orchestration.</p>
+      </section>
+      <aside class="truth-card" aria-label="Truth boundary">
+        <h2>Truth boundary</h2>
+        <ul>
+          <li>Static HTML, CSS, and JavaScript artifact.</li>
+          <li>No hidden credentials or provider calls.</li>
+          <li>Shows the C-SDLC room model, not universal automation.</li>
+          <li>Designed for browser proof and reviewer inspection.</li>
+        </ul>
+      </aside>
+    </header>
+
+    <main>
+      <section class="stage" aria-label="Creative room proof pulse">
+        <h2>Proof pulse</h2>
+        <div class="pulse-grid" aria-label="Creative Room proof counters">
+          <div class="pulse"><strong>5</strong><span>named lanes with different duties and authority</span></div>
+          <div class="pulse"><strong>4</strong><span>durable artifacts reviewers can inspect</span></div>
+          <div class="pulse"><strong>3</strong><span>explicit non-claims before anyone is impressed</span></div>
+          <div class="pulse"><strong>1</strong><span>shared state machine that keeps the room honest</span></div>
+        </div>
+        <div class="claim-board">
+          <div class="panel">
+            <h2>Why this matters</h2>
+            <h3>Creativity becomes auditable without becoming dead.</h3>
+            <p>The point is not to make agents less imaginative. The point is to give imagination rails: owned surfaces, explicit cuts, reviewable evidence, and a clean handoff to the next transition.</p>
+          </div>
+          <div class="claim-list" aria-label="Claim ledger">
+            <div class="claim-row"><b>Claim</b><span>A creative sprint can be decomposed into visible lanes.</span></div>
+            <div class="claim-row"><b>Evidence</b><span>This artifact exposes roles, artifacts, scope cuts, and review truth in one browser surface.</span></div>
+            <div class="claim-row"><b>Boundary</b><span>It is static proof, not a hosted-provider or Unity execution claim.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stage" aria-label="Creative room map">
+        <h2>Room map</h2>
+        <div class="room-grid">
+          <div class="map" id="room-map">
+            <div class="orbit"></div>
+            <div class="orbit two"></div>
+            <div class="center">Shared state machine<br />and evidence ledger</div>
+            <button class="role architect active" data-role="Architect" data-copy="Frames intent, acceptance criteria, and decomposition boundaries before anyone writes code."><strong>Architect</strong><span>intent, interfaces, constraints</span></button>
+            <button class="role builder" data-role="Builder" data-copy="Creates the bounded artifact inside the assigned shard, without silently expanding scope."><strong>Builder</strong><span>artifact, shard, implementation</span></button>
+            <button class="role reviewer" data-role="Reviewer" data-copy="Checks claims against evidence, records findings, and refuses unsupported success labels."><strong>Reviewer</strong><span>findings, proof, residual risk</span></button>
+            <button class="role editor" data-role="Editor" data-copy="Normalizes durable cards and public records so future agents inherit clean state."><strong>Editor</strong><span>cards, docs, truth surfaces</span></button>
+            <button class="role operator" data-role="Operator" data-copy="Chooses priorities, accepts tradeoffs, and prevents clever detours from replacing the goal."><strong>Operator</strong><span>goals, timing, judgment</span></button>
+          </div>
+          <div class="side-stack">
+            <article class="panel" aria-live="polite">
+              <h2>Selected role</h2>
+              <h3 id="selected-role">Architect</h3>
+              <p id="selected-copy">Frames intent, acceptance criteria, and decomposition boundaries before anyone writes code.</p>
+              <div class="tokens">
+                <span class="token">standing</span>
+                <span class="token">authority</span>
+                <span class="token">handoff</span>
+                <span class="token">review</span>
+              </div>
+            </article>
+            <article class="panel">
+              <h2>Scope cut</h2>
+              <h3 id="scope-title">Current cut: static front-stage artifact</h3>
+              <p id="scope-copy">This issue builds the Creative Room demo and proof packet. It does not build Unity, run live providers, or claim multi-agent execution.</p>
+              <div class="control-row">
+                <button id="cut-button">Show tighter cut</button>
+                <button id="reset-button" class="secondary">Reset room</button>
+              </div>
+              <div class="status-line" id="status-line">Room state: converging with bounded claims.</div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="stage" aria-label="C-SDLC transition timeline">
+        <h2>Convergence timeline</h2>
+        <div class="timeline">
+          <div class="step"><b>01 / Intent</b><span>Turn a vague demo wish into an issue with deliverables, non-goals, and proof duties.</span></div>
+          <div class="step"><b>02 / Shards</b><span>Split the work into owned surfaces: artifact, proof packet, matrix link, review truth.</span></div>
+          <div class="step"><b>03 / Build</b><span>Create the smallest useful artifact that makes the idea visible and playable.</span></div>
+          <div class="step"><b>04 / Review</b><span>Compare claims against evidence and capture what is still not proven.</span></div>
+          <div class="step"><b>05 / Closeout</b><span>Preserve outcome truth so the next agent starts from state, not vibes.</span></div>
+        </div>
+      </section>
+
+      <section class="stage" aria-label="Artifacts and review truth">
+        <h2>Artifact ledger</h2>
+        <div class="artifact-grid">
+          <div class="artifact"><small>Prompt cards</small><strong>SIP / STP / SPP</strong><p>Design-time intent, task, and operative plan are durable before execution.</p></div>
+          <div class="artifact"><small>Work product</small><strong>Creative Room HTML</strong><p>The visible demo artifact is open-file runnable and has no provider dependency.</p></div>
+          <div class="artifact"><small>Review</small><strong>Proof packet</strong><p>Claims, non-claims, validation, and residual risks are separated for reviewers.</p></div>
+          <div class="artifact"><small>Closeout</small><strong>SOR truth</strong><p>Actual commands, validations, integration state, and follow-ons survive the sprint.</p></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      ADL Creative Room is a bounded C-SDLC demonstration artifact for v0.91.4. It demonstrates an inspectable creative-production model; it does not claim live multi-agent execution, general project automation, or Unity development completion.
+    </footer>
+  </div>
+
+  <script>
+    const roles = Array.from(document.querySelectorAll('.role'));
+    const selectedRole = document.querySelector('#selected-role');
+    const selectedCopy = document.querySelector('#selected-copy');
+    const scopeTitle = document.querySelector('#scope-title');
+    const scopeCopy = document.querySelector('#scope-copy');
+    const statusLine = document.querySelector('#status-line');
+    const cutButton = document.querySelector('#cut-button');
+    const resetButton = document.querySelector('#reset-button');
+
+    roles.forEach((role) => {
+      role.addEventListener('click', () => {
+        roles.forEach((item) => item.classList.remove('active'));
+        role.classList.add('active');
+        selectedRole.textContent = role.dataset.role;
+        selectedCopy.textContent = role.dataset.copy;
+        statusLine.textContent = `Room state: ${role.dataset.role} lane selected; evidence remains shared.`;
+      });
+    });
+
+    cutButton.addEventListener('click', () => {
+      scopeTitle.textContent = 'Current cut: demo artifact plus proof packet only';
+      scopeCopy.textContent = 'Deferred: Unity game, hosted provider orchestration, WildClawBench, and claims about universal five-minute delivery.';
+      statusLine.textContent = 'Room state: scope cut accepted; non-claims are visible.';
+    });
+
+    resetButton.addEventListener('click', () => {
+      roles.forEach((item) => item.classList.remove('active'));
+      roles[0].classList.add('active');
+      selectedRole.textContent = 'Architect';
+      selectedCopy.textContent = roles[0].dataset.copy;
+      scopeTitle.textContent = 'Current cut: static front-stage artifact';
+      scopeCopy.textContent = 'This issue builds the Creative Room demo and proof packet. It does not build Unity, run live providers, or claim multi-agent execution.';
+      statusLine.textContent = 'Room state: converging with bounded claims.';
+    });
+  </script>
+</body>
+</html>

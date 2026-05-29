@@ -29,7 +29,7 @@ remediation, planning, and release tail:
 
 | WBS Work | Required Proof Surface | Expected Result | Status |
 | --- | --- | --- | --- |
-| `WP-13` Demo matrix and proof coverage | demo matrix, feature-proof coverage, and proof-evidence map | The completed C-SDLC default-operation package has explicit proof and demo coverage before review begins. | planned |
+| `WP-13` Demo matrix and proof coverage | demo matrix, feature-proof coverage, Creative Room proof packet, Starharvest proof, and proof-evidence map | The completed C-SDLC default-operation package has explicit proof and demo coverage before review begins. | in_progress |
 | `WP-14` Coverage / quality gate | validation gate record | Lifecycle, tooling, trace, evidence, memory, docs, and release blockers are checked before docs/review claims. | planned |
 | `WP-15` Docs + adoption review pass | updated operator docs, skill docs, onboarding references, and docs-review findings | The default C-SDLC path is teachable from the docs without relying on oral context. | planned |
 | `WP-16` Internal review | code/docs/tests/process review packet | The completed C-SDLC default-operation package is reviewed for behavior, docs, tests, process truth, and demo credibility. | planned |
