@@ -47,7 +47,7 @@ v0.91.4 release tail. v0.91.5 is the clean place to finish them.
 
 v0.91.5 should leave ADL ready for v0.92 first birthday and for future
 multi-agent software-development operation. The long-term direction is not a
-swarm of hidden agents; it is governed parallelism with visible roles, explicit
+cluster of hidden agents; it is governed parallelism with visible roles, explicit
 shards, testable model aptitude, and durable prompt records.
 
 ## Summary
