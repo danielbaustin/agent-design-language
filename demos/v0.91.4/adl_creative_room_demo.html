@@ -436,6 +436,111 @@
       font-weight: 900;
     }
 
+    .issue-tracker {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.85fr) minmax(320px, 1.15fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .issue-card {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: rgba(255,250,240,0.76);
+      padding: 22px;
+      box-shadow: 0 14px 44px rgba(17, 27, 26, 0.1);
+    }
+
+    .issue-card h3 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .issue-meta {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .issue-meta div {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 10px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      font-size: 14px;
+    }
+
+    .issue-meta b {
+      color: var(--clay);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .issue-lanes {
+      display: grid;
+      gap: 10px;
+    }
+
+    .lane-row {
+      display: grid;
+      grid-template-columns: 124px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.44);
+      padding: 12px;
+    }
+
+    .lane-row b {
+      color: var(--fern);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .lane-row span {
+      line-height: 1.35;
+      color: rgba(23,35,29,0.76);
+    }
+
+    .lane-row em {
+      justify-self: end;
+      border-radius: 999px;
+      padding: 6px 9px;
+      background: rgba(109,138,84,0.16);
+      color: var(--fern);
+      font-style: normal;
+      font-weight: 900;
+      font-size: 11px;
+    }
+
+    .lane-row.current {
+      border-color: rgba(217,162,58,0.74);
+      background: rgba(217,162,58,0.13);
+    }
+
+    .evidence-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .evidence-pill {
+      border-radius: 999px;
+      padding: 8px 10px;
+      background: rgba(35,75,58,0.1);
+      color: var(--fern);
+      font-weight: 900;
+      font-size: 12px;
+      border: 1px solid rgba(35,75,58,0.16);
+    }
+
     .progress-rail {
       height: 12px;
       border-radius: 999px;
@@ -505,12 +610,12 @@
       .map { min-height: 650px; }
       .role.operator { left: 32%; top: 5%; }
       .timeline, .artifact-grid { grid-template-columns: 1fr 1fr; }
-      .pulse-grid, .claim-board, .sprint-console { grid-template-columns: 1fr; }
+      .pulse-grid, .claim-board, .sprint-console, .issue-tracker { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 640px) {
       .timeline, .artifact-grid { grid-template-columns: 1fr; }
-      .pulse-grid, .claim-board, .claim-row, .sprint-console { grid-template-columns: 1fr; }
+      .pulse-grid, .claim-board, .claim-row, .sprint-console, .issue-tracker, .lane-row { grid-template-columns: 1fr; }
       .map { min-height: 760px; }
       .role { width: 140px; }
       .center { width: 150px; height: 150px; }
@@ -644,6 +749,44 @@
         </div>
       </section>
 
+      <section class="stage" aria-label="Real issue tracker snapshot">
+        <h2>Real issue tracker</h2>
+        <div class="issue-tracker">
+          <article class="issue-card">
+            <h2>Tracked issue</h2>
+            <h3 id="issue-title">#3459 Creative Room demo</h3>
+            <p id="issue-summary">This very demo is tracking its own C-SDLC issue: a bounded static artifact, proof packet, matrix links, review, and PR publication.</p>
+            <div class="issue-meta">
+              <div><b>Branch</b><span id="issue-branch">codex/3459-v0-91-4-demo-build-adl-creative-room-demo</span></div>
+              <div><b>PR</b><span id="issue-pr">#3500 draft PR</span></div>
+              <div><b>Boundary</b><span>Static snapshot from tracked issue work; no live GitHub API call.</span></div>
+            </div>
+            <div class="control-row">
+              <button id="track-issue-button">Track #3459</button>
+              <button id="advance-issue-button" class="secondary">Advance lane</button>
+            </div>
+          </article>
+          <article class="issue-card">
+            <h2>Lifecycle lanes</h2>
+            <div class="issue-lanes" id="issue-lanes">
+              <div class="lane-row current" data-lane="0"><b>SPP</b><span>Plan normalized to ready before execution binding.</span><em>ready</em></div>
+              <div class="lane-row" data-lane="1"><b>Build</b><span>Creative Room HTML artifact created in the issue worktree.</span><em>done</em></div>
+              <div class="lane-row" data-lane="2"><b>Proof</b><span>Browser and visible Chromium proof validate render and interaction.</span><em>done</em></div>
+              <div class="lane-row" data-lane="3"><b>Review</b><span>Kierkegaard review findings were fixed before continuing.</span><em>fixed</em></div>
+              <div class="lane-row" data-lane="4"><b>PR</b><span>Draft PR #3500 carries the tracked artifact and proof packet.</span><em>open</em></div>
+            </div>
+            <div class="evidence-strip" aria-label="Issue evidence">
+              <span class="evidence-pill">HTML artifact</span>
+              <span class="evidence-pill">Proof packet</span>
+              <span class="evidence-pill">Demo matrix</span>
+              <span class="evidence-pill">Browser proof</span>
+              <span class="evidence-pill">Review fixes</span>
+            </div>
+            <div class="status-line" id="issue-status">Issue state: SPP ready; artifact path is tracked.</div>
+          </article>
+        </div>
+      </section>
+
       <section class="stage" aria-label="Artifacts and review truth">
         <h2>Artifact ledger</h2>
         <div class="artifact-grid">
@@ -678,6 +821,25 @@
     const replayItems = Array.from(document.querySelectorAll('#event-list li'));
     const replayNodes = Array.from(document.querySelectorAll('[data-node]'));
     const replayLines = Array.from(document.querySelectorAll('[data-line]'));
+    const trackIssueButton = document.querySelector('#track-issue-button');
+    const advanceIssueButton = document.querySelector('#advance-issue-button');
+    const issueStatus = document.querySelector('#issue-status');
+    const issueLanes = Array.from(document.querySelectorAll('.lane-row'));
+    const issueLaneCopy = [
+      'Issue state: SPP ready; artifact path is tracked.',
+      'Issue state: build lane complete; demo artifact exists.',
+      'Issue state: proof lane complete; browser and Chromium evidence captured.',
+      'Issue state: review findings fixed; no hidden success label.',
+      'Issue state: draft PR #3500 is open for CI and human review.'
+    ];
+    let issueLaneIndex = 0;
+
+    function setIssueLane(index) {
+      issueLaneIndex = index % issueLanes.length;
+      issueLanes.forEach((lane, laneIndex) => lane.classList.toggle('current', laneIndex === issueLaneIndex));
+      issueStatus.textContent = issueLaneCopy[issueLaneIndex];
+    }
+
     const replaySteps = [
       ['Intent packet accepted', 'The room starts by turning a loose creative wish into explicit deliverables, non-goals, and proof duties.'],
       ['Shard split is visible', 'Artifact, proof packet, matrix link, and review truth become separate owned surfaces.'],
@@ -744,7 +906,13 @@
 
     runSprintButton.addEventListener('click', startReplay);
     pauseSprintButton.addEventListener('click', pauseReplay);
+    trackIssueButton.addEventListener('click', () => {
+      setIssueLane(0);
+      issueStatus.textContent = 'Issue state: tracking #3459 from static, reviewable evidence.';
+    });
+    advanceIssueButton.addEventListener('click', () => setIssueLane(issueLaneIndex + 1));
     setReplay(0);
+    setIssueLane(0);
   </script>
 </body>
 </html>

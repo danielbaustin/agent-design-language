@@ -24,6 +24,7 @@ The Creative Room demo is a front-stage visualization of C-SDLC creative product
 - explicit scope cuts and non-claims
 - durable artifact surfaces: prompt cards, work product, proof packet, and SOR truth
 - a bounded transition timeline from intent to closeout
+- a static real-issue tracker for `#3459`, including branch, draft PR, lifecycle lanes, and evidence pills
 
 ## What This Demo Does Not Claim
 
@@ -59,6 +60,9 @@ Expected visible proof points:
 - room map exposes five roles
 - selecting a role changes the selected-role panel
 - `Run the room` animates the transition replay and updates active node, event log, progress bar, and replay status
+- real issue tracker shows `#3459 Creative Room demo`, branch `codex/3459-v0-91-4-demo-build-adl-creative-room-demo`, PR `#3500 draft PR`, and the static/no-live-GitHub boundary
+- `Track #3459` resets the issue tracker to the issue-local starting lane
+- `Advance lane` moves through SPP, build, proof, review, and PR lanes while updating the issue-status line
 - `Show tighter cut` exposes deferred work and non-claims
 - artifact ledger includes prompt cards, work product, proof packet, and SOR truth
 - visual route works in Chromium through the documented Computer Use visible-browser path
@@ -79,6 +83,7 @@ Validation recorded for `#3459` includes the focused checks below:
 - artifact contains required labels for roles, proof pulse, claim ledger, scope cuts, artifact ledger, and non-claims
 - proof packet distinguishes static artifact proof from live multi-agent execution
 - Browser MCP proof verified render and interaction: title, heading, proof pulse, claim ledger, non-provider boundary, reviewer role selection, scope-cut state, and `Run the room` replay progress
+- Browser MCP proof verified real-issue tracker interaction: `#3459` issue title, branch, draft PR, static/no-live-GitHub boundary, evidence pills, and `Advance lane` lifecycle movement
 - Computer Use visible Chromium proof verified the artifact renders in the real Chromium app
 - patch hygiene passed
 
