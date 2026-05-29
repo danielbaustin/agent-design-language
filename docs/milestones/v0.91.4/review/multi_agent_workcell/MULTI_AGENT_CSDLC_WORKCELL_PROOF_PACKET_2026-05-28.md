@@ -2,23 +2,23 @@
 
 ## Status
 
-Tracked bounded proof packet for issue `#3419` showing local worker proposal generation, serialized publication normalization, and hosted independent review.
+Tracked bounded proof packet for issue `#3419`.
 
 ## Summary
 
 This proof executed a bounded multi-agent C-SDLC workcell with:
 
 - two parallel local worker lanes via the Ollama local provider API
-- one independent hosted Codex reviewer lane after serialized publication normalization
+- one independent hosted OpenAI/Codex reviewer lane after serialized publication normalization
 - serialized conductor admission, publication normalization, review publication, and closeout/janitor decisions
 
-This packet provides useful bounded proof evidence. It does not claim raw local worker publication correctness, production-grade autonomous merge, or closeout authority.
+This packet proves bounded parallel coordination. It does not claim production-grade autonomous merge or closeout authority.
 
 ## Lane Assignment
 
 - worker A: `local_ollama` / `deepseek-r1:8b`
 - worker B: `local_ollama` / `gemma4:26b`
-- reviewer: `hosted_codex` / `codex_cli_default`
+- reviewer: `hosted_openai_responses` / `gpt-5.3-codex`
 - optional serialized local model observed for future work: `Qwen3.5:35b-a3b`
 
 ## Planned / Serialized Gates
@@ -32,10 +32,9 @@ This packet provides useful bounded proof evidence. It does not claim raw local 
 ## Assignment And State Evidence
 
 - planner manifest: `docs/milestones/v0.91.4/review/multi_agent_workcell/workcell_proof_manifest.json`
-- planner report: `docs/milestones/v0.91.4/review/multi_agent_workcell/workcell_proof_plan_2026-05-28.json` (pre-execution admission plan, not post-publication truth)
-- validated workcell state packet: `docs/milestones/v0.91.4/review/multi_agent_workcell/workcell_proof_state_2026-05-28.json` (admitted-workcell contract state, not closeout truth)
+- planner report: `docs/milestones/v0.91.4/review/multi_agent_workcell/workcell_proof_plan_2026-05-28.json`
+- validated workcell state packet: `docs/milestones/v0.91.4/review/multi_agent_workcell/workcell_proof_state_2026-05-28.json`
 - raw local worker proposals remain archived under `artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/reports/`
-- follow-on Codex-only parallel slice: `docs/milestones/v0.91.4/review/multi_agent_workcell/CODEX_ONLY_PARALLEL_WORKER_SLICE_2026-05-29.md`
 
 ## Actual Branch / Worktree Boundaries
 
@@ -43,9 +42,7 @@ This packet provides useful bounded proof evidence. It does not claim raw local 
 - `codex/proof-worker-b` -> `artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/worker_b`
 - `codex/proof-reviewer` -> `artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/worktrees/reviewer`
 
-## Normalized Publication Surfaces
-
-The raw local-model proposals remain archived under `artifacts/v0914/multi_agent_workcell/v0-91-4-multi-agent-proof-20260528/reports/`. The surfaces below are the serialized normalized publication surfaces that were sent to the hosted reviewer lane.
+## Worker Outputs
 
 ### Worker A
 
@@ -61,29 +58,39 @@ The raw local-model proposals remain archived under `artifacts/v0914/multi_agent
 
 ## Reviewer Output
 
-## Findings
+## 1. Findings
 
 No material findings.
 
-The two patches preserve separated write ownership: Worker A touched only its summary plus its own SOR, and Worker B touched only its contract plus its own SOR. The content also keeps reviewer, janitor, publication, and closeout decisions outside the worker lanes.
+Both patches are narrowly scoped, consistent with bounded lane ownership, and do not show cross-lane or shared-surface modification.
+- **Worker A** edits only:
+  - `.adl/v0.91.4/tasks/issue-5001__demo-worker-a/sor.md`
+  - `docs/worker_a_summary.md`
+- **Worker B** edits only:
+  - `.adl/v0.91.4/tasks/issue-5002__demo-worker-b/sor.md`
+  - `docs/worker_b_contract.md`
 
-## Non-findings
+The SOR summaries align with the described worker-local normalization actions.
 
-Worker A’s summary accurately describes bounded parallel coordination and serialized downstream gates.
+## 2. Non-findings
 
-Worker B’s contract states path ownership limits and avoids claiming authority over Worker A or shared proof packet surfaces.
+- No evidence of unauthorized file-path overlap between Worker A and Worker B.
+- No executable/config/security-sensitive code changes.
+- No indication of hidden behavior in the provided diffs.
+- No contradiction between claimed bounded behavior and actual file edits shown.
 
-Both SOR updates are consistent with the narrow file-local changes shown.
+## 3. Residual risk
 
-## Residual risk
+Low residual risk, limited to process/attestation integrity rather than code impact:
+- The proof still depends on truthful lane attribution and correct serialization of downstream decisions.
+- Markdown content is declarative; risk is mainly misstatement risk, not runtime/system risk.
 
-The embedded diffs do not show validation output, reviewer execution logs, or proof packet aggregation state. That is acceptable for this lane, but those claims should not be inferred from the worker patches alone.
+## 4. Serialized gates that still remain outside the proof
 
-The SOR records are very terse, so they prove completion only at a minimal summary level.
-
-## Serialized gates that still remain outside the proof
-
-Independent reviewer disposition, janitor/publication decisions, PR/base or stack verification, merge/closure, and final closeout remain serialized outside the parallel worker proof.
+Per the worker text and patch scope, these remain outside worker-lane proof and must be serialized elsewhere:
+- **Reviewer decision/publication**
+- **Janitor/cleanup actions**
+- **Closeout/finalization decision**
 
 ## Timing
 
@@ -95,8 +102,6 @@ Timing evidence is recorded in:
 
 - No blocking coordination failure occurred in the bounded two-worker plus reviewer slice.
 - Janitor and closeout remained explicit serialized gates instead of being smuggled into worker autonomy.
-- The current proof demonstrates that local worker proposals still benefit from a serialized publication-normalization step before independent review.
-- A separate ad hoc Codex-only slice showed that two hosted Codex worker lanes could complete disjoint shard edits in parallel and pass hosted Codex review without material findings.
 
 ## Non-findings
 
@@ -106,8 +111,7 @@ Timing evidence is recorded in:
 ## Residual Risk
 
 - This proof uses a demo-local repository rather than live GitHub PR creation for shard publication.
-- Hosted reviewer execution depends on the local Codex CLI authentication surface remaining healthy.
-- The tracked planner artifact is a pre-execution admission plan and should not be read as post-publication dependency truth.
+- Hosted reviewer execution depends on direct OpenAI Responses API credential availability and network reachability.
 - The proof demonstrates bounded coordination, not general autonomous multi-agent delivery.
 
 ## Validation

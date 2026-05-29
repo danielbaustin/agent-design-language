@@ -2,7 +2,17 @@
 
 ## Status
 
-`adl-provider-adapter` is the Rust execution boundary for one provider invocation. It consumes the shared provider communication substrate and writes both a structured result JSON file and a tail-friendly JSONL run log.
+`adl-provider-adapter` is an optional Rust wrapper around the canonical provider execution surface for one provider invocation. The canonical ADL execution claim is the direct provider API/library path; the CLI remains useful for debug, operator inspection, and compatibility-only workflows. When used, it consumes the shared provider communication substrate and writes both a structured result JSON file and a tail-friendly JSONL run log.
+
+## Canonical Integration Boundary
+
+ADL callers should prefer the direct provider invocation API over the CLI wrapper:
+
+- internal runtime and proof surfaces should call the provider execution surface directly
+- cross-substrate behavior should be owned by the shared request/result/log contract
+- the CLI should remain a thin optional shell, not the primary architectural boundary
+
+This distinction matters for cross-platform and cross-substrate execution: model calls should not require shelling out to the CLI wrapper in order to reach hosted or local providers.
 
 ## Command
 

@@ -7,7 +7,6 @@ TRACKED_REVIEW_ROOT_DEFAULT="$ROOT_DIR/docs/milestones/v0.91.4/review/multi_agen
 MANIFEST_DEFAULT="$TRACKED_REVIEW_ROOT_DEFAULT/workcell_proof_manifest.json"
 STATE_VALIDATOR="$ROOT_DIR/adl/tools/validate_multi_agent_workcell_state.py"
 PLANNER="$ROOT_DIR/adl/tools/plan_multi_agent_workcell.py"
-CODEX_BIN="${CODEX_BIN:-codex}"
 LOCAL_MODEL_A_DEFAULT="deepseek-r1:8b"
 LOCAL_MODEL_B_DEFAULT="gemma4:26b"
 LOCAL_MODEL_C_DEFAULT="Qwen3.5:35b-a3b"
@@ -22,7 +21,7 @@ MANIFEST_PATH="$MANIFEST_DEFAULT"
 LOCAL_MODEL_A="$LOCAL_MODEL_A_DEFAULT"
 LOCAL_MODEL_B="$LOCAL_MODEL_B_DEFAULT"
 SERIAL_MODEL_C="$LOCAL_MODEL_C_DEFAULT"
-HOSTED_REVIEW_MODEL="${HOSTED_REVIEW_MODEL:-codex_cli_default}"
+HOSTED_REVIEW_MODEL="${HOSTED_REVIEW_MODEL:-gpt-5.3-codex}"
 OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-}"
 USE_SERIAL_MODEL_C=0
 DRY_RUN=0
@@ -40,7 +39,7 @@ Options:
   --local-model-b <name>         Second local Ollama worker model. Default: $LOCAL_MODEL_B_DEFAULT
   --serial-model-c <name>        Optional serialized local model note. Default: $LOCAL_MODEL_C_DEFAULT
   --use-serial-model-c           Record the optional serialized local model lane in the proof packet
-  --hosted-review-model <name>   Hosted reviewer model hint. Default: codex_cli_default
+  --hosted-review-model <name>   Hosted reviewer model hint. Default: gpt-5.3-codex
   --openai-key-file <path>       Hosted key file for OpenAI-backed Codex auth fallback
   --dry-run                      Prepare workcell repo, plan, and packet skeletons without invoking Codex
 USAGE
@@ -99,6 +98,18 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+resolve_path() {
+  python3 - "$1" <<'__PY__'
+from pathlib import Path
+import sys
+print(Path(sys.argv[1]).resolve())
+__PY__
+}
+
+ARTIFACT_ROOT="$(resolve_path "$ARTIFACT_ROOT")"
+TRACKED_REVIEW_ROOT="$(resolve_path "$TRACKED_REVIEW_ROOT")"
+MANIFEST_PATH="$(resolve_path "$MANIFEST_PATH")"
 
 load_key() {
   local env_name="$1"
@@ -230,6 +241,117 @@ Path(parsed_path).write_text(json.dumps(parsed, indent=2) + "\n", encoding="utf-
 __PY__
 }
 
+run_hosted_openai_reviewer() {
+  local model="$1"
+  local prompt_file="$2"
+  local message_file="$3"
+  local log_file="$4"
+
+  python3 - "$model" "$prompt_file" "$message_file" "$log_file" <<'__PY__'
+import json
+import os
+import sys
+import time
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
+
+def extract_openai_text(payload: dict) -> str:
+    output_text = payload.get("output_text")
+    if isinstance(output_text, str) and output_text.strip():
+        return output_text.strip()
+    chunks = []
+    for item in payload.get("output", []):
+        if not isinstance(item, dict):
+            continue
+        for content in item.get("content", []):
+            if not isinstance(content, dict):
+                continue
+            text = content.get("text")
+            if isinstance(text, str) and text.strip():
+                chunks.append(text)
+    return "\n".join(chunks).strip()
+
+model, prompt_path, message_path, log_path = sys.argv[1:]
+api_key = os.environ["OPENAI_API_KEY"]
+prompt = Path(prompt_path).read_text(encoding="utf-8")
+payload = {
+    "model": model,
+    "input": prompt,
+}
+request = urllib.request.Request(
+    OPENAI_RESPONSES_URL,
+    data=json.dumps(payload).encode("utf-8"),
+    headers={
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    },
+    method="POST",
+)
+started = time.time()
+try:
+    with urllib.request.urlopen(request, timeout=300) as response:
+        body = response.read().decode("utf-8")
+        status = response.status
+        request_id = (
+            response.headers.get("x-request-id")
+            or response.headers.get("request-id")
+            or response.headers.get("x-openai-request-id")
+        )
+except urllib.error.HTTPError as exc:
+    detail = exc.read().decode("utf-8", errors="replace")
+    Path(log_path).write_text(
+        json.dumps(
+            {
+                "status": exc.code,
+                "request_id_present": bool(exc.headers.get("x-request-id") or exc.headers.get("request-id")),
+                "latency_ms": int((time.time() - started) * 1000),
+                "error": detail[:400],
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    raise
+payload = json.loads(body)
+text = extract_openai_text(payload)
+if not text:
+    Path(log_path).write_text(
+        json.dumps(
+            {
+                "status": status,
+                "request_id_present": bool(request_id),
+                "latency_ms": int((time.time() - started) * 1000),
+                "error": "empty text output",
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    raise SystemExit("hosted reviewer response did not contain text output")
+Path(message_path).write_text(text.rstrip() + "\n", encoding="utf-8")
+Path(log_path).write_text(
+    json.dumps(
+        {
+            "status": status,
+            "request_id_present": bool(request_id),
+            "latency_ms": int((time.time() - started) * 1000),
+            "output_chars": len(text),
+            "provider": "openai",
+            "model": model,
+        },
+        indent=2,
+    )
+    + "\n",
+    encoding="utf-8",
+)
+__PY__
+}
+
 sanitize_text_file() {
   local path="$1"
   python3 - "$path" "$ROOT_DIR" "$ARTIFACT_ROOT" "$OPENAI_KEY_FILE" <<'__PY__'
@@ -286,9 +408,9 @@ TRACKED_PLAN_JSON="$TRACKED_REVIEW_ROOT/workcell_proof_plan_${PROOF_DATE}.json"
 TRACKED_STATE_JSON="$TRACKED_REVIEW_ROOT/workcell_proof_state_${PROOF_DATE}.json"
 TRACKED_PACKET_MD="$TRACKED_REVIEW_ROOT/MULTI_AGENT_CSDLC_WORKCELL_PROOF_PACKET_${PROOF_DATE}.md"
 REVIEWER_MESSAGE="$REPORT_ROOT/reviewer_last_message.md"
-REVIEWER_LOG="$LOG_ROOT/reviewer_codex.log"
-WORKER_A_LOG="$LOG_ROOT/worker_a_codex.log"
-WORKER_B_LOG="$LOG_ROOT/worker_b_codex.log"
+REVIEWER_LOG="$LOG_ROOT/reviewer_openai.json"
+WORKER_A_LOG="$LOG_ROOT/worker_a_ollama.log"
+WORKER_B_LOG="$LOG_ROOT/worker_b_ollama.log"
 WORKER_A_LAST="$REPORT_ROOT/worker_a_last_message.md"
 WORKER_B_LAST="$REPORT_ROOT/worker_b_last_message.md"
 PLAN_TEXT="$REPORT_ROOT/workcell_plan.txt"
@@ -508,7 +630,11 @@ __REVIEW_PROMPT__
   } > "$REPORT_ROOT/reviewer_prompt.md"
   (
     cd "$REPORT_ROOT"
-    OPENAI_API_KEY="$OPENAI_API_KEY" "$CODEX_BIN" exec -s read-only - < "$REPORT_ROOT/reviewer_prompt.md" > "$REVIEWER_MESSAGE" 2> "$REVIEWER_LOG"
+    OPENAI_API_KEY="$OPENAI_API_KEY" run_hosted_openai_reviewer \
+      "$HOSTED_REVIEW_MODEL" \
+      "$REPORT_ROOT/reviewer_prompt.md" \
+      "$REVIEWER_MESSAGE" \
+      "$REVIEWER_LOG"
   )
   reviewer_end="$(record_epoch)"
 else
@@ -679,7 +805,7 @@ Tracked bounded proof packet for issue \`#3419\`.
 This proof executed a bounded multi-agent C-SDLC workcell with:
 
 - two parallel local worker lanes via the Ollama local provider API
-- one independent hosted Codex reviewer lane after serialized publication normalization
+- one independent hosted OpenAI/Codex reviewer lane after serialized publication normalization
 - serialized conductor admission, publication normalization, review publication, and closeout/janitor decisions
 
 This packet proves bounded parallel coordination. It does not claim production-grade autonomous merge or closeout authority.
@@ -688,7 +814,7 @@ This packet proves bounded parallel coordination. It does not claim production-g
 
 - worker A: \`local_ollama\` / \`$LOCAL_MODEL_A\`
 - worker B: \`local_ollama\` / \`$LOCAL_MODEL_B\`
-- reviewer: \`hosted_codex\` / \`$HOSTED_REVIEW_MODEL\`
+- reviewer: \`hosted_openai_responses\` / \`$HOSTED_REVIEW_MODEL\`
 - optional serialized local model observed for future work: \`$SERIAL_MODEL_C\`
 
 ## Planned / Serialized Gates
@@ -745,7 +871,7 @@ Timing evidence is recorded in:
 ## Residual Risk
 
 - This proof uses a demo-local repository rather than live GitHub PR creation for shard publication.
-- Hosted reviewer execution depends on the local Codex CLI authentication surface remaining healthy.
+- Hosted reviewer execution depends on direct OpenAI Responses API credential availability and network reachability.
 - The proof demonstrates bounded coordination, not general autonomous multi-agent delivery.
 
 ## Validation
