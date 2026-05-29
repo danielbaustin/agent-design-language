@@ -38,6 +38,12 @@ browser-assisted human review, and editor skills feed this durable workflow
 state migration. This document owns the tracked-record destination; the
 transition plan owns the template/editor adoption path.
 
+The public prompt-record packet contract for v0.91.4 is tracked in
+[`PUBLIC_CSDLC_PROMPT_RECORDS_TRANSITION_PLAN.md`](PUBLIC_CSDLC_PROMPT_RECORDS_TRANSITION_PLAN.md).
+That packet defines the sanitized issue-level `SIP` / `STP` / `SPP` / `SRP` /
+`SOR` export shape and the local `.adl` disposition classes used during the
+transition.
+
 ## Canonical Namespace
 
 By default operation, durable C-SDLC records should live under this repo-local
@@ -84,6 +90,10 @@ should not replace the repo-local source of truth.
 Local `.adl/` paths may still exist as execution cache, local staging, or tool
 scratch space. They are not sufficient as the canonical durable record once
 C-SDLC default operation is claimed.
+
+Public prompt packets are exported records, not raw `.adl` commits. They should
+preserve lifecycle truth while removing secrets, absolute host paths, raw
+private memory, and unsafe local scratch assumptions.
 
 ## Durable Records That Must Be Tracked
 
