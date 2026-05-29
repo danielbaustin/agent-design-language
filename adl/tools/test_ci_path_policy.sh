@@ -261,6 +261,25 @@ EOF
   assert_has "$policy_surface_output" "proof_validation_scope=not_required"
   assert_has "$policy_surface_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
 
+  git checkout -q -b policy-surface-plus-demo-tooling "$base_sha"
+  mkdir -p adl/tools docs/milestones/v0.91.4/review/demo_showcase
+  printf '#!/usr/bin/env bash\nprintf policy\n' > adl/tools/enforce_coverage_gates.sh
+  printf '#!/usr/bin/env bash\nprintf demo\n' > adl/tools/demo_v0914_complete_issue.sh
+  printf '# demo note\n' > docs/milestones/v0.91.4/review/demo_showcase/DEMO_NOTE.md
+  git add adl/tools/enforce_coverage_gates.sh adl/tools/demo_v0914_complete_issue.sh docs/milestones/v0.91.4/review/demo_showcase/DEMO_NOTE.md
+  git commit -q -m policy-surface-plus-demo-tooling
+  policy_surface_plus_demo_head="$(git rev-parse HEAD)"
+
+  policy_surface_plus_demo_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$policy_surface_plus_demo_head" --ref "refs/pull/1/merge")"
+  assert_has "$policy_surface_plus_demo_output" "rust_required=false"
+  assert_has "$policy_surface_plus_demo_output" "coverage_required=false"
+  assert_has "$policy_surface_plus_demo_output" "full_coverage_required=true"
+  assert_has "$policy_surface_plus_demo_output" "demo_smoke_required=true"
+  assert_has "$policy_surface_plus_demo_output" "ci_contracts_required=true"
+  assert_has "$policy_surface_plus_demo_output" "coverage_lane=authoritative_full"
+  assert_has "$policy_surface_plus_demo_output" "coverage_authority=pr_policy_surface_tooling_only"
+  assert_has "$policy_surface_plus_demo_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
+
   git checkout -q -b workflow-reporting-only-change "$base_sha"
   python3 - <<'PY'
 from pathlib import Path

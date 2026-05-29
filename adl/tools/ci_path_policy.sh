@@ -633,7 +633,7 @@ EOF
           fi
           continue
         fi
-        if [ "$coverage_required" = true ] || [ "$demo_smoke_required" = true ]; then
+        if [ "$coverage_required" = true ]; then
           mark_policy_surface_full_coverage \
             "pr_policy_surface_runtime_mixed" \
             "coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
