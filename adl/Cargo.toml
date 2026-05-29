@@ -18,6 +18,10 @@ path = "src/main.rs"
 name = "adl-remote"
 path = "src/bin/adl_remote.rs"
 
+[[bin]]
+name = "adl-provider-adapter"
+path = "tools/adl_provider_adapter.rs"
+
 [features]
 # Heavy runtime_v2 proof-materialization and CLI proof-smoke tests stay out of
 # ordinary `cargo test` but remain covered by authoritative `--all-features`
