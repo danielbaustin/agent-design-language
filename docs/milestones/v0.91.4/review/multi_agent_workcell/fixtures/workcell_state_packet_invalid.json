@@ -1,0 +1,50 @@
+{
+  "schema_version": "adl.multi_agent_workcell_state.v1",
+  "workcell_id": "v0-91-4-multi-agent-proof-slice-invalid",
+  "sprint_issue_number": 3415,
+  "planner_manifest_path": "docs/milestones/v0.91.4/review/multi_agent_workcell/fixtures/workcell_assignment_allowed.json",
+  "conductor_hooks": {
+    "worker_admission": {
+      "selected_skill": "pr-run",
+      "canonical_truth": ["github_issue_state", "sip", "stp", "spp", "sprint_state"]
+    },
+    "review_publication": {
+      "selected_skill": "pr-finish",
+      "canonical_truth": ["srp", "sor", "pr_state", "published_artifacts"]
+    },
+    "janitor_remediation": {
+      "selected_skill": "pr-janitor",
+      "canonical_truth": ["pr_state", "check_status", "review_findings"]
+    },
+    "closeout_reconciliation": {
+      "selected_skill": "pr-closeout",
+      "canonical_truth": ["github_issue_state", "sor", "sprint_state", "closeout_artifacts"]
+    }
+  },
+  "shard_assignments": [
+    {
+      "shard_id": "broken-worker",
+      "issue_number": 4999,
+      "role": "worker",
+      "execution_backend": "hosted_codex",
+      "model_hint": "gpt-5.5-codex",
+      "branch": "codex/4999-broken-worker",
+      "worktree_path": ".worktrees/broken-worker",
+      "write_paths": ["docs/milestones/v0.91.4/features/MULTI_AGENT_WORKCELL_STATE_CONTRACT.md"],
+      "dependencies": [],
+      "admission_status": "parallel_admitted",
+      "validation_gate": "parallel_pvf_lane",
+      "review_lane": "bounded_subagent_review",
+      "closeout_status": "waiting_for_review",
+      "cards": {
+        "sip": "ready",
+        "stp": "ready",
+        "spp": "approved",
+        "srp": "draft",
+        "sor": "draft"
+      },
+      "github_issue_state": "CLOSED",
+      "pr_state": "draft"
+    }
+  ]
+}
