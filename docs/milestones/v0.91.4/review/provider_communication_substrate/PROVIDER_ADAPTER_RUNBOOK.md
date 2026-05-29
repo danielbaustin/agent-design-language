@@ -49,7 +49,7 @@ Hosted OpenAI example. The current hosted adapter intentionally supports `provid
 }
 ```
 
-Ollama HTTP example. The adapter calls `/api/show` before `/api/generate` and records a pinned model identity when Ollama returns a digest.
+Ollama HTTP example. The adapter calls `/api/show`, then falls back to `/api/tags`, before `/api/generate` and records a pinned model identity when Ollama returns a digest.
 
 ```json
 {

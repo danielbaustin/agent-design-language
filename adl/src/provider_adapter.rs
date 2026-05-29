@@ -387,37 +387,81 @@ fn refresh_ollama_identity(
     request: &mut ProviderInvocationRequestV1,
     policy: &ProviderAttemptPolicyV1,
 ) {
-    let url = ollama_show_url(request.route.endpoint_ref.as_deref());
-    let Ok(response) = client(policy).and_then(|client| {
-        client
-            .post(url)
-            .json(&json!({"model": request.route.provider_model_id}))
-            .send()
-            .map_err(map_reqwest_error)
-    }) else {
-        return;
-    };
-    if !response.status().is_success() {
-        return;
-    }
-    let Ok(body) = response.text() else {
-        return;
-    };
-    let Ok(json) = serde_json::from_str::<Value>(&body) else {
-        return;
-    };
-    let digest = json
-        .get("digest")
-        .and_then(Value::as_str)
-        .or_else(|| json.pointer("/details/digest").and_then(Value::as_str));
+    let digest =
+        ollama_show_digest(request, policy).or_else(|| ollama_tags_digest(request, policy));
     if digest.is_some() {
         request.model_identity = ollama_model_identity(
             request.route.provider_model_id.clone(),
             request.route.provider_model_id.clone(),
-            digest,
+            digest.as_deref(),
             request.route.source_registry.clone(),
         );
     }
+}
+
+fn ollama_show_digest(
+    request: &ProviderInvocationRequestV1,
+    policy: &ProviderAttemptPolicyV1,
+) -> Option<String> {
+    let response = client(policy)
+        .ok()?
+        .post(ollama_show_url(request.route.endpoint_ref.as_deref()))
+        .json(&json!({"model": request.route.provider_model_id}))
+        .send()
+        .ok()?;
+    if !response.status().is_success() {
+        return None;
+    }
+    let json = serde_json::from_str::<Value>(&response.text().ok()?).ok()?;
+    json.get("digest")
+        .and_then(Value::as_str)
+        .or_else(|| json.pointer("/details/digest").and_then(Value::as_str))
+        .map(str::to_string)
+}
+
+fn ollama_tags_digest(
+    request: &ProviderInvocationRequestV1,
+    policy: &ProviderAttemptPolicyV1,
+) -> Option<String> {
+    let response = client(policy)
+        .ok()?
+        .get(ollama_tags_url(request.route.endpoint_ref.as_deref()))
+        .send()
+        .ok()?;
+    if !response.status().is_success() {
+        return None;
+    }
+    let json = serde_json::from_str::<Value>(&response.text().ok()?).ok()?;
+    json.get("models")?
+        .as_array()?
+        .iter()
+        .find(|model| {
+            model.get("name").and_then(Value::as_str) == Some(&request.route.provider_model_id)
+                || model.get("model").and_then(Value::as_str)
+                    == Some(&request.route.provider_model_id)
+        })
+        .and_then(|model| model.get("digest").and_then(Value::as_str))
+        .map(str::to_string)
+}
+
+fn ollama_tags_url(endpoint_ref: Option<&str>) -> String {
+    if let Some(endpoint) = endpoint_ref {
+        if endpoint.starts_with("http://") || endpoint.starts_with("https://") {
+            let trimmed = endpoint.trim_end_matches('/');
+            if trimmed.ends_with("/api/tags") {
+                return trimmed.to_string();
+            }
+            if trimmed.ends_with("/api/generate") {
+                return trimmed.trim_end_matches("/api/generate").to_string() + "/api/tags";
+            }
+            if trimmed.ends_with("/api/show") {
+                return trimmed.trim_end_matches("/api/show").to_string() + "/api/tags";
+            }
+            return format!("{trimmed}/api/tags");
+        }
+    }
+    let base = env::var("OLLAMA_HOST").unwrap_or_else(|_| DEFAULT_OLLAMA_BASE_URL.to_string());
+    format!("{}/api/tags", base.trim_end_matches('/'))
 }
 
 fn ollama_show_url(endpoint_ref: Option<&str>) -> String {
@@ -637,8 +681,9 @@ mod tests {
     #[test]
     fn ollama_adapter_returns_output_and_redacts_log() {
         let endpoint = scripted_server(vec![
+            (r#"{}"#, "200 OK"),
             (
-                r#"{"digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}"#,
+                r#"{"models":[{"name":"test-model","digest":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}]}"#,
                 "200 OK",
             ),
             (r#"{"response":"ollama success"}"#, "200 OK"),
@@ -695,6 +740,7 @@ mod tests {
     fn ollama_missing_model_is_not_reported_as_busy() {
         let endpoint = scripted_server(vec![
             (r#"{}"#, "200 OK"),
+            (r#"{"models":[]}"#, "200 OK"),
             (r#"{"error":"model test-model not found"}"#, "404 Not Found"),
         ]);
         let path = temp_log("ollama-missing-model");
