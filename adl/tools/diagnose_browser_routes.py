@@ -24,7 +24,13 @@ from pathlib import Path
 from typing import Any
 
 APP_NAMES = ["chromium", "Chromium", "Google Chrome", "Safari"]
+REPO_ROOT = Path(__file__).resolve().parents[2]
+PRIMARY_REPO_ROOT = REPO_ROOT.parent.parent if REPO_ROOT.parent.name == ".worktrees" else REPO_ROOT
+PLAYWRIGHT_CHROMIUM_REL = Path(".adl/.cache/diagram-renderers/playwright/chromium-1134/chrome-mac/Chromium.app/Contents/MacOS/Chromium")
+
 EXECUTABLE_CANDIDATES = [
+    str(PRIMARY_REPO_ROOT / PLAYWRIGHT_CHROMIUM_REL),
+    str(REPO_ROOT / PLAYWRIGHT_CHROMIUM_REL),
     "/Applications/Chromium.app/Contents/MacOS/Chromium",
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
     "/Applications/Google Chrome copy.app/Contents/MacOS/Google Chrome",
@@ -32,8 +38,8 @@ EXECUTABLE_CANDIDATES = [
 ]
 PATH_COMMANDS = ["chromium", "chromium-browser", "google-chrome", "chrome"]
 PROFILE_CANDIDATES = [
-    "/Users/daniel/Library/Application Support/Chromium",
-    "/Users/daniel/Library/Caches/Chromium",
+    str(Path.home() / "Library/Application Support/Chromium"),
+    str(Path.home() / "Library/Caches/Chromium"),
 ]
 
 
@@ -64,6 +70,15 @@ def app_route(name: str) -> dict[str, Any]:
 def executable_route(path: str) -> dict[str, Any]:
     p = Path(path)
     return {"path": path, "exists": p.exists(), "is_file": p.is_file(), "executable": os.access(path, os.X_OK) if p.exists() else False}
+
+
+def version_smoke(path: str) -> dict[str, Any]:
+    p = Path(path)
+    if not p.exists() or not os.access(path, os.X_OK):
+        return {"attempted": False, "reason": "executable_missing_or_not_executable"}
+    if "Chrome" not in path and "Chromium" not in path:
+        return {"attempted": False, "reason": "not_a_chrome_family_executable"}
+    return run_command([path, "--version"], timeout=5)
 
 
 def headless_smoke(path: str) -> dict[str, Any]:
@@ -120,11 +135,12 @@ def main() -> int:
         "recommended_canonical_route": "codex_in_app_browser_for_agent_proof",
         "proof_boundaries": {
             "http_reachability": "curl/urllib can prove a URL responds, but not browser rendering or interaction.",
-            "browser_interaction": "Use the Codex in-app browser CUA/evaluate route or an explicit operator browser session.",
+            "browser_interaction": "Use the Codex in-app browser CUA/evaluate route, or an explicit operator browser session.",
+            "direct_shell_browser": "A Chrome/Chromium executable version check proves only executable identity. Direct shell proof also requires a passing headless smoke.",
         },
         "app_routes": [app_route(name) for name in APP_NAMES],
         "known_executable_routes": [
-            {**executable_route(path), **({"headless_smoke": headless_smoke(path)} if args.headless_smoke else {})}
+            {**executable_route(path), "version_smoke": version_smoke(path), **({"headless_smoke": headless_smoke(path)} if args.headless_smoke else {})}
             for path in EXECUTABLE_CANDIDATES
         ],
         "path_routes": [path_route(command) for command in PATH_COMMANDS],

@@ -10,7 +10,7 @@ ADL agents need a boring, repeatable browser proof path for demos, localhost che
 
 ## Canonical Recommendation
 
-For ADL agent proof, use the Codex in-app browser first.
+For ADL agent proof, use the Codex in-app browser first. The repo-cached Playwright Chromium executable should be diagnosed and recorded when present, but direct shell-driven headless Chromium is not the default proof route unless its smoke test passes in the current environment.
 
 Why:
 
@@ -18,8 +18,10 @@ Why:
 - it supports screenshot/DOM proof
 - it supports real browser-side CUA input such as clicks and keypresses
 - it avoids relying on macOS LaunchServices app-name lookup from the sandboxed shell
+- the primary-checkout or worktree Playwright Chromium cache path can be diagnosed directly without relying on `open -a`
+- a cached Chromium version check can prove which executable exists, while a headless smoke check proves whether direct shell execution is usable
 
-Use installed Chromium/Safari/Chrome as operator-visible fallback paths, not as the primary automated agent path.
+Use operator-installed Chromium/Safari/Chrome as operator-visible fallback paths, not as the primary automated agent path. Use direct cached Chromium headless only after the diagnostic smoke says it works. In the current environment, the cached Chromium executable can report its version, but direct shell headless launch fails under crashpad permission constraints.
 
 ## Route Types
 
@@ -29,6 +31,7 @@ Use installed Chromium/Safari/Chrome as operator-visible fallback paths, not as 
 | Codex in-app browser | page load, rendering, screenshot, DOM state, CUA input | operator's external browser app state | canonical for agent proof |
 | `open -a chromium ...` from operator shell | operator can open a URL in local Chromium | Codex shell can resolve the same app name | valid manual/operator route |
 | `open -Ra <app>` from Codex shell | whether LaunchServices resolves an app for the Codex process | whether the operator can open it from another shell | diagnostic only |
+| repo-cached Playwright Chromium executable | shell-visible Chromium executable under `.adl/.cache/diagram-renderers/playwright/...`; version check | app-name lookup or successful headless execution | diagnostic route; direct proof only if smoke passes |
 | direct Chrome/Chromium executable headless | possible headless proof if stable | may abort under macOS/sandbox constraints | optional fallback |
 
 ## Why Chromium Can Be Up But Not Usable From Codex Shell
@@ -91,6 +94,8 @@ The diagnostic separates:
 
 - `app_routes`: app lookup visible to the Codex shell
 - `known_executable_routes`: known macOS executable paths
+- `version_smoke`: direct executable identity check for Chrome/Chromium-family routes
+- `headless_smoke`: optional direct shell headless execution check
 - `path_routes`: PATH-resolved browser commands
 - `http_check`: HTTP reachability only
 - `codex_in_app_browser_route`: documented canonical route that must be exercised through the Browser skill, not the shell
@@ -133,8 +138,10 @@ Observed in the Codex shell during `#3497`:
 - `/Applications/Safari.app/Contents/MacOS/Safari`: exists and is executable.
 - `~/Library/Application Support/Chromium` and `~/Library/Caches/Chromium`: exist as Chromium profile/cache directories; this is evidence of browser use, not an executable route.
 - `/Applications/Google Chrome copy.app/Contents/MacOS/Google Chrome`: exists in this environment and should be diagnosed separately from the primary Chrome app when needed.
+- primary-checkout Playwright Chromium executable: discovered at `.adl/.cache/diagram-renderers/playwright/chromium-1134/chrome-mac/Chromium.app/Contents/MacOS/Chromium` and reports `Chromium 129.0.6668.29`; issue worktrees may not have their own `.adl/.cache` copy.
+- direct primary-checkout Playwright Chromium headless smoke from the Codex shell: attempted and failed with crashpad permission/handshake errors; do not use direct cached Chromium headless as the proof route unless a fresh smoke passes.
 - direct Google Chrome headless smoke from the Codex shell: attempted and failed with signal-style return code `-6`; do not use direct Chrome headless as the default proof route here.
 - Chromium operator route: operator reports `open -a chromium ...` works from their shell, but Codex shell cannot resolve `chromium`; preserve that distinction.
 - Codex in-app browser route: worked during Starharvest proof and remains the canonical agent route.
 
-Conclusion: the issue is not simply “no browser is installed.” It is a boundary between shell app lookup, direct macOS app execution, and the Codex in-app browser automation surface. ADL agents should use the in-app browser for automated proof, prefer operator `open -a chromium ...` for human-visible manual playback when available, and avoid direct Chrome headless unless a fresh diagnostic proves it works.
+Conclusion: the issue is not simply “no browser is installed.” It is a boundary between shell app lookup, direct macOS app execution, and the Codex in-app browser automation surface. ADL agents should use the in-app browser for automated proof, record the repo-cached Playwright Chromium executable as a diagnostic route, prefer operator `open -a chromium ...` for human-visible manual playback when available, and avoid direct cached Chromium or Chrome headless unless a fresh diagnostic proves it works.
