@@ -75,7 +75,7 @@ cat >"$manifest" <<'EOF'
       "cache_strategy": "none",
       "release_gate_class": "required_on_pr",
       "default_trigger": "changed_paths",
-      "changed_path_hints": ["docs/"],
+      "changed_path_hints": ["docs/*.md"],
       "evidence_outputs": ["stdout:pass"]
     },
     "reuse_lane": {
@@ -252,5 +252,148 @@ assert report["aggregate_status"] == "blocked"
 assert report["lanes"]["credential_lane"]["status"] == "blocked"
 assert report["lanes"]["credential_lane"]["reason"] == "credential_lane_requires_explicit_opt_in"
 PY
+
+release_gate_manifest="$tmpdir/release-gate-manifest.json"
+release_gate_report="$tmpdir/release-gate-report.json"
+cat >"$release_gate_manifest" <<'EOF'
+{
+  "manifest_version": "v0.91.4",
+  "lane_classes": [
+    "docs",
+    "release_gate"
+  ],
+  "lanes": {
+    "manual_docs_lane": {
+      "lane_class": "docs",
+      "owner_surface": "manual docs lane",
+      "command": "pass_lane.sh",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "optional",
+      "default_trigger": "manual",
+      "changed_path_hints": [],
+      "evidence_outputs": ["stdout:manual"]
+    },
+    "release_gate_lane": {
+      "lane_class": "release_gate",
+      "owner_surface": "release gate lane",
+      "command": "pass_lane.sh",
+      "resource_profile": "high",
+      "determinism": "fixture_bound",
+      "cache_strategy": "artifact_reuse",
+      "release_gate_class": "manual_release_gate",
+      "default_trigger": "release_only",
+      "changed_path_hints": ["docs/*.md"],
+      "evidence_outputs": ["stdout:release"]
+    }
+  }
+}
+EOF
+
+set +e
+"$RUNNER" --manifest "$release_gate_manifest" --changed-files "$changed" --report-out "$release_gate_report" >"$tmpdir/release-gate.stdout"
+release_gate_status=$?
+set -e
+if [ "$release_gate_status" -eq 0 ]; then
+  echo "expected release-gate-required aggregate run to exit nonzero" >&2
+  exit 1
+fi
+python3 - <<'PY' "$release_gate_report"
+import json
+import sys
+from pathlib import Path
+
+report = json.loads(Path(sys.argv[1]).read_text())
+assert report["aggregate_status"] == "release_gate_required"
+assert report["lanes"]["manual_docs_lane"]["status"] == "deferred"
+assert report["lanes"]["release_gate_lane"]["status"] == "release_gate_required"
+PY
+
+grep -q "aggregate_status=release_gate_required" "$tmpdir/release-gate.stdout"
+
+nonmatching_release_gate_manifest="$tmpdir/nonmatching-release-gate-manifest.json"
+nonmatching_release_gate_report="$tmpdir/nonmatching-release-gate-report.json"
+cat >"$nonmatching_release_gate_manifest" <<'EOF'
+{
+  "manifest_version": "v0.91.4",
+  "lane_classes": [
+    "docs",
+    "release_gate"
+  ],
+  "lanes": {
+    "pass_lane": {
+      "lane_class": "docs",
+      "owner_surface": "pass lane",
+      "command": "pass_lane.sh",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "changed_paths",
+      "changed_path_hints": ["docs/*.md"],
+      "evidence_outputs": ["stdout:pass"]
+    },
+    "release_gate_lane": {
+      "lane_class": "release_gate",
+      "owner_surface": "release gate lane",
+      "command": "pass_lane.sh",
+      "resource_profile": "high",
+      "determinism": "fixture_bound",
+      "cache_strategy": "artifact_reuse",
+      "release_gate_class": "manual_release_gate",
+      "default_trigger": "release_only",
+      "changed_path_hints": ["adl/src/*"],
+      "evidence_outputs": ["stdout:release"]
+    }
+  }
+}
+EOF
+
+"$RUNNER" --manifest "$nonmatching_release_gate_manifest" --changed-files "$changed" --report-out "$nonmatching_release_gate_report" >"$tmpdir/nonmatching-release-gate.stdout"
+python3 - <<'PY' "$nonmatching_release_gate_report"
+import json
+import sys
+from pathlib import Path
+
+report = json.loads(Path(sys.argv[1]).read_text())
+assert report["aggregate_status"] == "passed"
+assert report["lanes"]["pass_lane"]["status"] == "passed"
+assert report["lanes"]["release_gate_lane"]["status"] == "skipped"
+PY
+
+invalid_manifest="$tmpdir/invalid-manifest.json"
+cat >"$invalid_manifest" <<'EOF'
+{
+  "manifest_version": "v0.91.4",
+  "lane_classes": [
+    "docs"
+  ],
+  "lanes": {
+    "pass_lane": {
+      "lane_class": "fast_unit",
+      "owner_surface": "pass lane",
+      "command": "pass_lane.sh",
+      "resource_profile": "low",
+      "determinism": "strict",
+      "cache_strategy": "none",
+      "release_gate_class": "required_on_pr",
+      "default_trigger": "always",
+      "changed_path_hints": [],
+      "evidence_outputs": ["stdout:pass"]
+    }
+  }
+}
+EOF
+
+set +e
+"$RUNNER" --manifest "$invalid_manifest" >"$tmpdir/invalid.stdout" 2>"$tmpdir/invalid.stderr"
+invalid_status=$?
+set -e
+if [ "$invalid_status" -eq 0 ]; then
+  echo "expected invalid manifest run to fail fast" >&2
+  exit 1
+fi
+grep -q "manifest contract validation failed" "$tmpdir/invalid.stderr"
 
 echo "PASS test_run_pvf_validation_lane"

@@ -106,6 +106,11 @@ else
   : > "$changed_paths_txt"
 fi
 
+if ! python3 "$ROOT_DIR/adl/tools/validate_pvf_manifest.py" "$MANIFEST_PATH" >/dev/null; then
+  echo "run_pvf_validation_lane: manifest contract validation failed: $MANIFEST_PATH" >&2
+  exit 2
+fi
+
 python3 - "$MANIFEST_PATH" "$plan_tsv" <<'PY'
 import json
 import sys
@@ -136,6 +141,7 @@ path_matches_hints() {
   python3 - "$changed_paths_txt" "$hints_json" <<'PY'
 import json
 import sys
+from fnmatch import fnmatch
 from pathlib import Path
 
 changed = [line.strip() for line in Path(sys.argv[1]).read_text().splitlines() if line.strip()]
@@ -147,7 +153,7 @@ if not changed:
 
 for path in changed:
     for hint in hints:
-        if path == hint or path.startswith(hint):
+        if path == hint or path.startswith(hint) or fnmatch(path, hint):
             print("match")
             raise SystemExit(0)
 
@@ -202,6 +208,15 @@ while IFS=$'\t' read -r lane_id lane_class release_gate_class default_trigger re
     continue
   fi
 
+  if [ "$changed_hints_json" != "[]" ]; then
+    match_result="$(path_matches_hints "$changed_hints_json")"
+    if [ "$match_result" = "no_match" ]; then
+      set_lane_value "$lane_id" status "skipped"
+      set_lane_value "$lane_id" reason "changed_paths_not_matched"
+      continue
+    fi
+  fi
+
   if [ "$default_trigger" = "manual" ]; then
     set_lane_value "$lane_id" status "deferred"
     set_lane_value "$lane_id" reason "manual_trigger_not_selected"
@@ -214,14 +229,6 @@ while IFS=$'\t' read -r lane_id lane_class release_gate_class default_trigger re
     continue
   fi
 
-  if [ "$default_trigger" = "changed_paths" ]; then
-    match_result="$(path_matches_hints "$changed_hints_json")"
-    if [ "$match_result" = "no_match" ]; then
-      set_lane_value "$lane_id" status "skipped"
-      set_lane_value "$lane_id" reason "changed_paths_not_matched"
-      continue
-    fi
-  fi
 done < "$plan_tsv"
 
 if [ "$PRINT_PLAN" = true ]; then
@@ -301,7 +308,7 @@ for lane_id in "${lane_ids[@]}"; do
       fi
       ;;
     release_gate_required)
-      if [ "$aggregate_status" = "passed" ] || [ "$aggregate_status" = "reused" ] || [ "$aggregate_status" = "skipped" ]; then
+      if [ "$aggregate_status" = "passed" ] || [ "$aggregate_status" = "reused" ] || [ "$aggregate_status" = "skipped" ] || [ "$aggregate_status" = "deferred" ]; then
         aggregate_status="release_gate_required"
       fi
       ;;
@@ -405,7 +412,7 @@ else
   cat "$report_json"
 fi
 
-if [ "$aggregate_status" = "failed" ] || [ "$aggregate_status" = "blocked" ]; then
+if [ "$aggregate_status" = "failed" ] || [ "$aggregate_status" = "blocked" ] || [ "$aggregate_status" = "release_gate_required" ]; then
   exit 1
 fi
 

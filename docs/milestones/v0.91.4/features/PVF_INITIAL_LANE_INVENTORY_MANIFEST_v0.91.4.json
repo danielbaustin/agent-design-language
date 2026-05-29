@@ -33,13 +33,14 @@
     "structured_prompt_contract": {
       "lane_class": "contract_schema_card",
       "owner_surface": "Structured prompt, schema, and manifest contracts",
-      "command": "bash adl/tools/validate_structured_prompt.sh --type sor --phase completed --input <card> && python3 -m json.tool docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_SCHEMA_v0.91.4.json >/dev/null && python3 -m json.tool docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_EXAMPLE_v0.91.4.json >/dev/null",
+      "command": "bash adl/tools/test_structured_prompt_validation.sh && python3 adl/tools/validate_pvf_manifest.py docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_EXAMPLE_v0.91.4.json docs/milestones/v0.91.4/features/PVF_INITIAL_LANE_INVENTORY_MANIFEST_v0.91.4.json && python3 -m json.tool docs/milestones/v0.91.4/features/PVF_VALIDATION_LANE_MANIFEST_SCHEMA_v0.91.4.json >/dev/null",
       "resource_profile": "low",
       "determinism": "strict",
       "cache_strategy": "none",
       "release_gate_class": "required_on_pr",
       "default_trigger": "changed_paths",
       "changed_path_hints": [
+        "adl/tools/validate_pvf_manifest.py",
         ".adl/",
         "docs/templates/prompts/",
         "adl/tools/validate_structured_prompt.sh",
