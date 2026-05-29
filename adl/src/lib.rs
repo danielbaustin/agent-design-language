@@ -62,6 +62,7 @@ pub mod plan;
 pub mod policy_authority;
 pub mod prompt;
 pub mod provider;
+pub mod provider_adapter;
 pub mod provider_communication;
 pub mod provider_extension_packaging;
 pub mod provider_native_tool_call_comparison;

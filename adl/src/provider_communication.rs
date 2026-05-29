@@ -54,12 +54,19 @@ pub struct ProviderAttemptPolicyV1 {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct ProviderInvocationRequestV1 {
     pub route: ProviderRouteV1,
     pub model_identity: ModelIdentityV1,
     pub prompt_contract_ref: String,
     pub lane_ref: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub run_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     pub attempt_policy: ProviderAttemptPolicyV1,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub input_text: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub inference_parameter_fingerprint: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -141,6 +148,8 @@ pub struct ProviderInvocationResultV1 {
     pub attempts: Vec<ProviderAttemptV1>,
     pub final_status: ProviderInvocationFinalStatusV1,
     pub duration_ms: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub output_text: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output_text_excerpt: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -601,6 +610,7 @@ mod tests {
             }],
             final_status: ProviderInvocationFinalStatusV1::Ok,
             duration_ms: 10,
+            output_text: Some("{}".to_string()),
             output_text_excerpt: Some("{}".to_string()),
             failure: None,
             artifact_ref: None,
@@ -639,6 +649,7 @@ mod tests {
             }],
             final_status: ProviderInvocationFinalStatusV1::Failed,
             duration_ms: 10,
+            output_text: None,
             output_text_excerpt: None,
             failure: Some(failure),
             artifact_ref: None,
@@ -681,11 +692,14 @@ mod tests {
             model_identity: identity,
             prompt_contract_ref: "uts.v1".to_string(),
             lane_ref: "regular".to_string(),
+            run_id: Some("run-test".to_string()),
+            request_id: Some("req-test".to_string()),
             attempt_policy: ProviderAttemptPolicyV1 {
                 max_attempts: 1,
                 timeout_ms: 1000,
                 retry_backoff_ms: Some(100),
             },
+            input_text: Some("test prompt".to_string()),
             inference_parameter_fingerprint: None,
             tool_surface: None,
             governance_surface: None,
