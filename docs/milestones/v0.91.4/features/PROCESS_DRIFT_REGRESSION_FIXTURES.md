@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned `v0.91.4` feature.
+Tracked WP-12 feature packet proposed for `v0.91.4`.
 
 ## Purpose
 
@@ -13,16 +13,13 @@ The process should fail closed when its core truth surfaces are wrong.
 
 ## Scope
 
-`v0.91.4` should include fixtures for:
+This WP-12 slice lands fixtures for:
 
 - legacy `SRP` policy wording in new bundles
 - stale `SOR` integration state
 - missing review results
 - skipped child closeout
 - sprint umbrella state that overclaims cleanliness
-- overlapping shard write surfaces
-- local-only durable evidence
-- missing or unverifiable signed trace proof
 
 ## Acceptance Criteria
 
@@ -31,6 +28,32 @@ The process should fail closed when its core truth surfaces are wrong.
 - Fixture expectations are tracked and reviewer-readable.
 - The quality gate requires these fixtures before default operation is claimed.
 - The release packet records fixture results.
+
+## Focused Validation Command
+
+Use the bounded regression command:
+
+```bash
+bash adl/tools/test_process_drift_regressions.sh
+```
+
+That command intentionally stays small and composes the existing focused
+fixtures instead of inventing a broad new integration suite.
+
+## Covered Drift Modes
+
+- legacy `SRP` policy wording in new bundles
+- stale `SRP` review truth
+- stale `SOR` closeout truth
+- skipped sprint child closeout and stale sprint-state truth
+- machine-local absolute host-path leakage in durable prompt cards
+
+## Proof Surfaces
+
+- `adl/tools/test_process_drift_regressions.sh`
+- `adl/tools/test_sprint_conductor_helpers.sh`
+- `adl/src/cli/tooling_cmd/tests/structured_prompt.rs`
+- `docs/milestones/v0.91.4/PROCESS_DRIFT_REGRESSION_REPORT_2026-05-28.md`
 
 ## Non-Goals
 
