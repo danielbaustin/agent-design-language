@@ -41,6 +41,19 @@ def require_clean_close_boundary(state: dict) -> None:
         )
 
 
+def require_closeout_artifact(state: dict) -> None:
+    closeout = state.get('closeout') or {}
+    closeout_artifact_path = closeout.get('closeout_artifact_path')
+    if not closeout_artifact_path:
+        raise SystemExit('Cannot close sprint-management issue because no retained sprint closeout artifact is recorded in state.')
+    artifact_path = Path(closeout_artifact_path)
+    if not artifact_path.exists():
+        raise SystemExit(
+            'Cannot close sprint-management issue because the retained sprint closeout artifact is missing: '
+            f'{closeout_artifact_path}.'
+        )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--state', required=True)
@@ -55,6 +68,7 @@ def main() -> int:
         raise SystemExit('Cannot close sprint-management issue because sprint_issue_number is missing from state.')
     require_child_closeout_truth(state)
     require_clean_close_boundary(state)
+    require_closeout_artifact(state)
 
     subprocess.check_call(
         [

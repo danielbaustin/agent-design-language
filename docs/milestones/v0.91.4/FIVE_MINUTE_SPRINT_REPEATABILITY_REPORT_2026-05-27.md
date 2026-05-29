@@ -32,7 +32,7 @@ is GitHub PR timing plus the tracked issue proof shape.
 
 | Issue / PR | Surface | Commit authored | PR opened | PR merged | Prep-to-open | Open-to-merge | Validation / proof shape | Takeaway |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `#3420` / `#3420` | Real infra/product-sidecar lane | `2026-05-27T18:24:07Z` | `2026-05-27T18:24:22Z` | `2026-05-27T18:31:58Z` | `15s` | `7m36s` | Terraform/apply and live HTTPS verification; real AWS substrate work | Substantive product/infrastructure work can still publish quickly when the proof surface is narrow and the substrate is already reachable. |
+| `#3375` / `#3420` | Real infra/product-sidecar lane | `2026-05-27T18:24:07Z` | `2026-05-27T18:24:22Z` | `2026-05-27T18:31:58Z` | `15s` | `7m36s` | Terraform/apply and live HTTPS verification; real AWS substrate work | Substantive product/infrastructure work can still publish quickly when the proof surface is narrow and the substrate is already reachable. |
 | `#3423` / `#3427` | Docs/process lane | `2026-05-27T18:41:17Z` | `2026-05-27T18:41:21Z` | `2026-05-27T18:43:00Z` | `4s` | `1m39s` | Docs-only issue with bounded review and focused doc-truth checks | Docs/process transitions can complete well inside a five-minute claim envelope when no broad validation tail is required. |
 | `#3358` / `#3440` | Core C-SDLC tools lane | `2026-05-27T19:58:31Z` | `2026-05-27T19:58:34Z` | `2026-05-27T20:34:28Z` | `3s` | `35m54s` | Focused sprint-conductor helper proof passed quickly; default publish lane widened into monolithic Rust validation and nextest | The local issue work can be quick while the validation tail remains long. Counting the whole tail as “five-minute sprint” would be misleading. |
 
