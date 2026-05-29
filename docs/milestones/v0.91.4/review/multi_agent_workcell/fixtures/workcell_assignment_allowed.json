@@ -1,0 +1,63 @@
+{
+  "manifest_id": "ma-csdlc-allowed",
+  "shards": [
+    {
+      "shard_id": "ollama-worker-a",
+      "issue_number": 4001,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "qwen2.5-coder:32b",
+      "cards": {"sip": "ready", "stp": "ready", "spp": "approved"},
+      "write_paths": ["docs/milestones/v0.91.4/features/worker-a.md"],
+      "dependencies": [],
+      "dependency_state": "none",
+      "validation_lane": "focused_docs"
+    },
+    {
+      "shard_id": "codex-worker-b",
+      "issue_number": 4002,
+      "role": "worker",
+      "execution_backend": "hosted_codex",
+      "model_hint": "gpt-5.5-codex",
+      "cards": {"sip": "ready", "stp": "approved", "spp": "approved"},
+      "write_paths": ["docs/milestones/v0.91.4/features/worker-b.md"],
+      "dependencies": [],
+      "dependency_state": "none",
+      "validation_lane": "focused_docs"
+    },
+    {
+      "shard_id": "serialized-worker-c",
+      "issue_number": 4003,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "mistral-small3.2:24b",
+      "cards": {"sip": "ready", "stp": "ready", "spp": "approved"},
+      "write_paths": ["adl/tools/run_sensitive_lane.sh"],
+      "dependencies": ["ollama-worker-a"],
+      "dependency_state": "satisfied",
+      "validation_lane": "manual",
+      "serialized_gate": true
+    },
+    {
+      "shard_id": "independent-reviewer",
+      "issue_number": 4004,
+      "role": "reviewer",
+      "review_input_state": "ready",
+      "write_paths": []
+    },
+    {
+      "shard_id": "pr-janitor",
+      "issue_number": 4005,
+      "role": "janitor",
+      "pr_blocker_state": "blocked_pr",
+      "write_paths": []
+    },
+    {
+      "shard_id": "closeout-lane",
+      "issue_number": 4006,
+      "role": "closeout",
+      "closeout_state": "ready",
+      "write_paths": []
+    }
+  ]
+}

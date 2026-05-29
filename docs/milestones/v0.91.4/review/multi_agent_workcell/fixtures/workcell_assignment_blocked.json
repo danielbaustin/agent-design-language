@@ -1,0 +1,65 @@
+{
+  "manifest_id": "ma-csdlc-blocked",
+  "shards": [
+    {
+      "shard_id": "conflict-worker-a",
+      "issue_number": 4011,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "qwen2.5-coder:32b",
+      "cards": {"sip": "ready", "stp": "ready", "spp": "approved"},
+      "write_paths": ["docs/milestones/v0.91.4/features/shared-surface.md"],
+      "dependencies": [],
+      "dependency_state": "none",
+      "validation_lane": "focused_docs"
+    },
+    {
+      "shard_id": "conflict-worker-b",
+      "issue_number": 4012,
+      "role": "worker",
+      "execution_backend": "hosted_codex",
+      "model_hint": "gpt-5.5-codex",
+      "cards": {"sip": "ready", "stp": "ready", "spp": "approved"},
+      "write_paths": ["docs/milestones/v0.91.4/features/shared-surface.md"],
+      "dependencies": [],
+      "dependency_state": "none",
+      "validation_lane": "focused_docs"
+    },
+    {
+      "shard_id": "not-ready-worker",
+      "issue_number": 4013,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "mistral-small3.2:24b",
+      "cards": {"sip": "ready", "stp": "draft", "spp": "approved"},
+      "write_paths": ["docs/milestones/v0.91.4/features/not-ready.md"],
+      "dependencies": [],
+      "dependency_state": "none",
+      "validation_lane": "focused_docs"
+    },
+    {
+      "shard_id": "blocked-dependency-worker",
+      "issue_number": 4014,
+      "role": "worker",
+      "execution_backend": "hosted_codex",
+      "model_hint": "gpt-5.5-codex",
+      "cards": {"sip": "ready", "stp": "ready", "spp": "approved"},
+      "write_paths": ["docs/milestones/v0.91.4/features/dependency.md"],
+      "dependencies": ["conflict-worker-a"],
+      "dependency_state": "blocked",
+      "validation_lane": "focused_docs"
+    },
+    {
+      "shard_id": "transitive-dependent-worker",
+      "issue_number": 4015,
+      "role": "worker",
+      "execution_backend": "local_ollama",
+      "model_hint": "qwen2.5-coder:32b",
+      "cards": {"sip": "ready", "stp": "ready", "spp": "approved"},
+      "write_paths": ["docs/milestones/v0.91.4/features/transitive.md"],
+      "dependencies": ["blocked-dependency-worker"],
+      "dependency_state": "satisfied",
+      "validation_lane": "focused_docs"
+    }
+  ]
+}
