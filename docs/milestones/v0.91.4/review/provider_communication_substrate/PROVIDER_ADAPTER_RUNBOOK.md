@@ -162,3 +162,19 @@ Live smoke results recorded during `#3486`:
 | Ollama | `gemma:2b` | `ok`, HTTP 200, ~2.7s | Local identity pinned from `/api/tags`; model was stopped after the smoke. |
 
 This adapter does not start or stop Ollama models. Model lifecycle control belongs to the benchmark runner or operator script.
+
+## UTS Benchmark Runner Integration
+
+`adl/tools/uts_benchmark_runner.py` routes regular and UTS-only provider calls through `adl-provider-adapter`. The Python runner remains responsible for task prompts, scoring, lane summaries, hosted auth setup, local Ollama residency checks, and benchmark artifacts. The Rust adapter owns only provider execution, normalized provider results, model identity, and redacted JSONL adapter logs.
+
+For each regular or UTS-only model call, the runner retains redacted adapter evidence beside the benchmark output under `<output_stem>_adapter_evidence/`. These retained files intentionally omit raw prompts and full model outputs while preserving the normalized adapter result, model identity, final status, attempts, and tail-friendly adapter JSONL log reference. Each benchmark case records the retained `adapter_result`, `adapter_run_log`, `adapter_final_status`, and `adapter_model_identity` fields.
+
+Adapter requests carry the benchmark lane as `lane_ref` (`regular` or `uts_only`) so adapter logs and retained evidence can be inspected without guessing which scoring lane produced a provider call.
+
+Offline runner-to-adapter smoke:
+
+```bash
+python3 adl/tools/uts_benchmark_runner.py --adapter-smoke-self-test
+```
+
+Expected output is a compact JSON object with `status: "ok"`. The smoke starts an in-process fake OpenAI-compatible endpoint, invokes the Rust adapter, and does not require live credentials.
