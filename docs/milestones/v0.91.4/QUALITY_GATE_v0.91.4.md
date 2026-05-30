@@ -171,17 +171,18 @@ That means release-readiness surfaces should be kept aligned with the narrowed S
 
 ## Non-Blocking Quality Concern
 
-### Q1. The Rust maintainability hotspot tracker has stale milestone naming.
+### Q1. The Rust maintainability hotspot tracker should be referenced from its maintained manual surface.
 
-The current Rust maintainability tracker still lives under the older
-`v0.90`-named surface `docs/milestones/v0.90/MAINTAINABILITY_HOTSPOT_SPLIT_PLAN_v0.90.md`.
+The current Rust maintainability tracker is maintained at:
+
+- `.adl/reports/manual/rust_module_watch_list.md`
 
 This is a real quality/maintenance signal, but it is not a `v0.91.4` Sprint 4
 release blocker by itself because:
 
 - WP-14 is a release-readiness gate, not a broad maintainability refactor lane
-- the legacy-named tracker does not currently invalidate the landed Sprint 4 proof surfaces
-- renaming or rehoming the tracker should be handled as explicit follow-on maintenance work rather than hidden inside the release-tail gate
+- the maintained tracker does not currently invalidate the landed Sprint 4 proof surfaces
+- aligning milestone/release surfaces to reference the maintained tracker should be handled as explicit follow-on maintenance work rather than hidden inside the release-tail gate
 
 Current posture: `follow_on_needed_non_blocking`
 
@@ -227,7 +228,7 @@ Before WP-16 internal review can be considered ready, the milestone should at mi
 
 - Release-tail blockers remain in Sprint 4 and should flow through WP-15 to WP-21.
 - Non-Sprint-4 bridge work remains routed to `v0.91.5`; sidecar work remains non-core and should be classified explicitly as complete, blocked, or routed if later release-tail docs still mention it.
-- Rust hotspot / refactoring-tracker rename or rehome should be routed as separate maintenance planning rather than silently absorbed into the Sprint 4 gate.
+- Rust hotspot / refactoring-tracker reference alignment should be routed as separate maintenance planning rather than silently absorbed into the Sprint 4 gate.
 - Any newly discovered defect that widens beyond the gate record should route into WP-18 or a follow-on issue rather than being hidden in the quality-gate doc.
 
 ## Gate Outcome
