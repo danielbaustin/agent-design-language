@@ -7,7 +7,7 @@
 - Owner: ADL maintainers
 - Status: `draft_pre_open`
 - Related setup umbrella: `#3506` (closed)
-- Active setup children: `#3507`, `#3508`, `#3509`, `#3510`, `#3511`
+- Closed setup children: `#3507`, `#3508`, `#3509`, `#3510`, `#3511`
 - Planning template set: `docs/templates/planning/1.0.0`
 
 ## Status
@@ -23,7 +23,7 @@ Setup truth:
 
 - `#3506` is the closed v0.91.4-origin setup umbrella that created the bridge
   package and child setup wave.
-- `#3507`-`#3511` are the active v0.91.5 setup child issues for planning
+- `#3507`-`#3511` are the closed v0.91.5 setup child issues for planning
   package, issue reallocation, v0.91.4 release-tail reconciliation, v0.92
   dependency reconciliation, and migration-truth review.
 
