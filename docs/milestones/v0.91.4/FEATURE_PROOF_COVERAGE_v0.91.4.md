@@ -35,7 +35,7 @@ This claim is not the same as claiming every auxiliary experiment is complete. I
 | --- | --- | --- | --- |
 | Cognitive SDLC Default Operation | partially_proven | core proof map above plus Sprint 4 closeout tail | final release claim still depends on WP-14 through WP-21 finishing in order |
 | C-SDLC Validation And Routing Hardening | landed | Sprint 1 issue wave and feature doc | no new WP-13 blocker identified |
-| Software Development Polis And Actor Standing | landed | software-development-polis proof packet | reviewer should treat this as control-plane proof, not live swarm proof |
+| Software Development Polis And Actor Standing | landed | software-development-polis proof packet | reviewer should treat this as control-plane proof, not live multi-agent proof |
 | Shard Ownership And Interface Freeze | landed | software-development-polis proof packet and related feature docs | bounded coordination claim only |
 | Evidence Convergence, Review Synthesis, And Signed Trace Proof | landed_for_release_input | Sprint 2 issue wave and feature doc | later Sprint 4 review surfaces still need to consume this evidence cleanly |
 | Merge-Readiness And PR Gate Hardening | landed | merge-readiness packet | remains a prerequisite input to release-tail review work |
