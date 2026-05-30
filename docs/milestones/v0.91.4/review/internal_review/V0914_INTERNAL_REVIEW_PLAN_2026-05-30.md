@@ -69,6 +69,8 @@ This review must not:
 
 ## Durable Review Outputs
 
+Public review records are tracked by default for v0.91.4 forward. See `README.md` in this directory for the public-review-record policy, redaction rules, and local-only control-artifact boundary.
+
 Write the review packet under:
 
 `docs/milestones/v0.91.4/review/internal_review/`
