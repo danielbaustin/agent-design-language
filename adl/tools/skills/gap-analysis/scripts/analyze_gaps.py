@@ -20,6 +20,24 @@ GAP_TYPES = {
     "closeout_drift",
     "scope_ambiguity",
 }
+GAP_BUCKETS = {
+    "release_blockers",
+    "durable_proof_gaps",
+    "routed_work",
+    "stale_release_readiness_docs",
+    "non_blocking_quality_concerns",
+}
+BUCKET_ALIASES = {
+    "release_blocker": "release_blockers",
+    "release_blockers": "release_blockers",
+    "durable_proof_gap": "durable_proof_gaps",
+    "durable_proof_gaps": "durable_proof_gaps",
+    "routed_work": "routed_work",
+    "stale_release_docs": "stale_release_readiness_docs",
+    "stale_release_readiness_docs": "stale_release_readiness_docs",
+    "non_blocking_quality_concern": "non_blocking_quality_concerns",
+    "non_blocking_quality_concerns": "non_blocking_quality_concerns",
+}
 
 
 def now_utc() -> str:
@@ -81,7 +99,7 @@ def line_value(text: str, key: str) -> str:
     return match.group(1).strip() if match else ""
 
 
-def metadata(root: Path) -> dict[str, str]:
+def metadata(root: Path) -> dict[str, Any]:
     manifest = load_json(root / "gap_manifest.json")
     if not isinstance(manifest, dict):
         manifest = {}
@@ -89,6 +107,7 @@ def metadata(root: Path) -> dict[str, str]:
         "run_id": str(manifest.get("run_id") or root.name),
         "scope": str(manifest.get("scope") or line_value(read_text(root / "expected_baseline.md"), "Scope") or root.name),
         "mode": str(manifest.get("mode") or "compare_issue_to_implementation"),
+        "policy": manifest.get("policy") if isinstance(manifest.get("policy"), dict) else {},
     }
 
 
@@ -101,16 +120,28 @@ def expected_items(text: str) -> list[dict[str, str]]:
     )
     items = []
     for index, bullet in enumerate(bullets, start=1):
-        gap_type = infer_gap_type(bullet)
+        bucket, cleaned = split_bucket_tag(bullet)
+        gap_type = infer_gap_type(cleaned)
+        severity = infer_severity(cleaned, gap_type)
         items.append(
             {
                 "id": f"E-{index:03d}",
-                "expected": bullet,
+                "expected": cleaned,
                 "gap_type": gap_type,
-                "severity": infer_severity(bullet, gap_type),
+                "severity": severity,
+                "bucket": bucket or infer_bucket(cleaned, gap_type, severity),
             }
         )
     return items
+
+
+def split_bucket_tag(text: str) -> tuple[str | None, str]:
+    match = re.match(r"^\[(?P<tag>[a-z0-9_ -]+)\]\s*(?P<body>.+)$", text.strip(), re.IGNORECASE)
+    if not match:
+        return None, text.strip()
+    tag = normalize(match.group("tag")).replace(" ", "_")
+    bucket = BUCKET_ALIASES.get(tag)
+    return bucket, match.group("body").strip()
 
 
 def infer_gap_type(text: str) -> str:
@@ -133,6 +164,52 @@ def infer_severity(text: str, gap_type: str) -> str:
     if gap_type in {"closeout_drift", "test_gap"}:
         return "P2"
     return "P3"
+
+
+def infer_bucket(text: str, gap_type: str, severity: str) -> str:
+    lowered = text.lower()
+    if any(
+        phrase in lowered
+        for phrase in [
+            "route to",
+            "routed",
+            "follow-on",
+            "bridge work",
+            "sidecar",
+            "move to v0.91.5",
+            "v0.91.5",
+            "deferred",
+        ]
+    ):
+        return "routed_work"
+    if gap_type == "docs_drift" and any(
+        phrase in lowered
+        for phrase in [
+            "release",
+            "readiness",
+            "quality gate",
+            "feature proof coverage",
+            "demo matrix",
+            "milestone checklist",
+            "release plan",
+            "wording",
+        ]
+    ):
+        return "stale_release_readiness_docs"
+    if severity in {"P0", "P1"}:
+        return "release_blockers"
+    if gap_type in {"missing_evidence", "test_gap", "closeout_drift"} or any(
+        phrase in lowered
+        for phrase in [
+            "closeout truth",
+            "sor truth",
+            "proof gap",
+            "missing proof",
+            "validation gap",
+        ]
+    ):
+        return "durable_proof_gaps"
+    return "non_blocking_quality_concerns"
 
 
 def observed_text(root: Path, explicit_observed: Path | None) -> tuple[str, list[str]]:
@@ -160,30 +237,77 @@ def explicit_gaps(root: Path) -> list[dict[str, str]]:
     bullets = extract_bullets_after(text, "Gaps") or [line.strip()[2:] for line in text.splitlines() if line.strip().startswith("- ")]
     findings = []
     for index, bullet in enumerate(bullets, start=1):
-        gap_type = infer_gap_type(bullet)
+        bucket, cleaned = split_bucket_tag(bullet)
+        gap_type = infer_gap_type(cleaned)
+        severity = infer_severity(cleaned, gap_type)
         findings.append(
             {
                 "id": f"G-{index:03d}",
                 "gap_type": gap_type,
-                "severity": infer_severity(bullet, gap_type),
-                "title": bullet[:96],
+                "severity": severity,
+                "title": cleaned[:96],
                 "expected": "Recorded baseline expectation or review finding.",
-                "observed": bullet,
+                "observed": cleaned,
                 "evidence": "known_gaps.md",
                 "uncertainty": "low",
                 "recommended_follow_up": recommended_follow_up(gap_type),
                 "source_artifact": "known_gaps.md",
+                "bucket": bucket or infer_bucket(cleaned, gap_type, severity),
             }
         )
     return findings
+
+
+def empty_gap_buckets() -> dict[str, list[str]]:
+    return {bucket: [] for bucket in sorted(GAP_BUCKETS)}
+
+
+def summarize_buckets(findings: list[dict[str, str]]) -> dict[str, list[str]]:
+    buckets = empty_gap_buckets()
+    for finding in findings:
+        bucket = str(finding.get("bucket") or "")
+        if bucket in buckets:
+            buckets[bucket].append(str(finding["id"]))
+    return buckets
+
+
+def artifact_routing(mode: str, gap_buckets: dict[str, list[str]], has_findings: bool, policy: dict[str, Any]) -> dict[str, object]:
+    quality_gate_candidate = bool(
+        gap_buckets["release_blockers"]
+        or gap_buckets["durable_proof_gaps"]
+        or gap_buckets["stale_release_readiness_docs"]
+    )
+    separate_gap_candidate = has_findings and (mode == "compare_milestone_to_evidence" or bool(gap_buckets["routed_work"]))
+    quality_gate_update = quality_gate_candidate and policy.get("quality_gate_update_allowed", True) is not False
+    separate_gap_review = separate_gap_candidate and policy.get("separate_gap_review_allowed", True) is not False
+    if quality_gate_update and separate_gap_review:
+        recommendation = "both"
+        rationale = "Blocker-grade or release-doc gaps exist and a standalone gap-review packet is still useful."
+    elif quality_gate_update:
+        recommendation = "quality_gate_only"
+        rationale = "The findings should update the milestone quality gate."
+    elif separate_gap_review:
+        recommendation = "separate_gap_review_only"
+        rationale = "The findings are useful for milestone review but do not require gate mutation."
+    else:
+        recommendation = "none"
+        rationale = "No milestone artifact routing is required from this comparison."
+    return {
+        "update_quality_gate": quality_gate_update,
+        "emit_separate_gap_review": separate_gap_review,
+        "recommended_surface": recommendation,
+        "rationale": rationale,
+    }
 
 
 def analyze(root: Path, baseline: Path | None, observed: Path | None) -> dict[str, object]:
     baseline_path = baseline if baseline else root / "expected_baseline.md"
     baseline_text = read_text(baseline_path)
     meta = metadata(root)
+    policy = meta["policy"] if isinstance(meta.get("policy"), dict) else {}
     observed_blob, observed_sources = observed_text(root, observed)
     if not baseline_text:
+        gap_buckets = empty_gap_buckets()
         return {
             "schema": SCHEMA,
             "created_at": now_utc(),
@@ -193,9 +317,11 @@ def analyze(root: Path, baseline: Path | None, observed: Path | None) -> dict[st
             "expected_baseline": {"path": rel(root, baseline_path), "items": []},
             "observed_evidence": {"sources": observed_sources},
             "findings": [],
+            "gap_buckets": gap_buckets,
             "missing_evidence": ["Expected baseline missing or unreadable."],
             "uncertainty": ["No baseline was available; no gap claims were made."],
             "recommended_follow_up": ["Provide an explicit expected baseline."],
+            "artifact_routing": artifact_routing(meta["mode"], gap_buckets, False, policy),
             "stop_boundary": stop_boundary(),
         }
     items = expected_items(baseline_text)
@@ -216,6 +342,7 @@ def analyze(root: Path, baseline: Path | None, observed: Path | None) -> dict[st
             "uncertainty": "medium" if observed_blob else "high",
             "recommended_follow_up": recommended_follow_up(item["gap_type"]),
             "source_artifact": rel(root, baseline_path),
+            "bucket": item["bucket"],
         }
         findings.append(finding)
         missing.append(item["expected"])
@@ -225,6 +352,7 @@ def analyze(root: Path, baseline: Path | None, observed: Path | None) -> dict[st
     status = "pass" if not findings and items else "partial"
     if any(item["severity"] in {"P0", "P1"} for item in findings):
         status = "fail"
+    gap_buckets = summarize_buckets(findings)
     return {
         "schema": SCHEMA,
         "created_at": now_utc(),
@@ -234,9 +362,11 @@ def analyze(root: Path, baseline: Path | None, observed: Path | None) -> dict[st
         "expected_baseline": {"path": rel(root, baseline_path), "items": items},
         "observed_evidence": {"sources": observed_sources},
         "findings": findings,
+        "gap_buckets": gap_buckets,
         "missing_evidence": missing,
         "uncertainty": uncertainty or ["Uncertainty is limited to the supplied evidence bundle."],
         "recommended_follow_up": dedupe([str(item["recommended_follow_up"]) for item in findings]) or ["No follow-up required from this comparison."],
+        "artifact_routing": artifact_routing(meta["mode"], gap_buckets, bool(findings), policy),
         "stop_boundary": stop_boundary(),
     }
 
@@ -286,6 +416,7 @@ def finding_lines(findings: list[dict[str, str]]) -> str:
             f"""### {finding['id']}: [{finding['severity']}] {finding['title']}
 
 - Gap type: {finding['gap_type']}
+- Milestone bucket: {finding.get('bucket', 'not_classified')}
 - Expected: {finding['expected']}
 - Observed: {finding['observed']}
 - Evidence: {finding['evidence']}
@@ -297,8 +428,32 @@ def finding_lines(findings: list[dict[str, str]]) -> str:
     return "\n".join(parts)
 
 
+def bucket_lines(report: dict[str, object]) -> str:
+    buckets = report["gap_buckets"]
+    labels = {
+        "release_blockers": "Release blockers",
+        "durable_proof_gaps": "Durable proof gaps",
+        "routed_work": "Routed work",
+        "stale_release_readiness_docs": "Stale release/readiness docs",
+        "non_blocking_quality_concerns": "Non-blocking quality concerns",
+    }
+    parts = []
+    for key in [
+        "release_blockers",
+        "durable_proof_gaps",
+        "routed_work",
+        "stale_release_readiness_docs",
+        "non_blocking_quality_concerns",
+    ]:
+        values = buckets.get(key, [])
+        rendered = ", ".join(values) if values else "None."
+        parts.append(f"- {labels[key]}: {rendered}")
+    return "\n".join(parts)
+
+
 def write_markdown(path: Path, report: dict[str, object]) -> None:
     boundary = report["stop_boundary"]
+    routing = report["artifact_routing"]
     content = f"""# Gap Analysis Report: {report['scope']}
 
 ## Gap Analysis Summary
@@ -324,6 +479,10 @@ def write_markdown(path: Path, report: dict[str, object]) -> None:
 
 {finding_lines(report['findings'])}
 
+## Gap Buckets
+
+{bucket_lines(report)}
+
 ## Missing Evidence
 
 {bullet_lines(report['missing_evidence'])}
@@ -335,6 +494,13 @@ def write_markdown(path: Path, report: dict[str, object]) -> None:
 ## Recommended Follow-up
 
 {bullet_lines(report['recommended_follow_up'])}
+
+## Artifact Routing
+
+- Update quality gate: {str(routing['update_quality_gate']).lower()}.
+- Emit separate gap review: {str(routing['emit_separate_gap_review']).lower()}.
+- Recommended surface: {routing['recommended_surface']}.
+- Rationale: {routing['rationale']}
 
 ## Stop Boundary
 

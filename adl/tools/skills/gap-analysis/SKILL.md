@@ -13,6 +13,11 @@ Use this skill before issue closeout, milestone closeout, third-party review,
 release readiness, or customer-facing report publication when a specific
 baseline must be reconciled against observed truth.
 
+For milestone and release work, this skill should make one extra distinction
+explicit: the goal is not just to list mismatches, but to separate release
+blockers from durable proof gaps, routed work, stale release/readiness docs,
+and lower-risk quality concerns.
+
 ## Quick Start
 
 1. Confirm the expected baseline:
@@ -33,7 +38,14 @@ baseline must be reconciled against observed truth.
    - `scripts/analyze_gaps.py <gap-root> --out <artifact-root>`
 4. Review the gap report for source-grounded findings, uncertainty, and follow-up
    recommendations.
-5. Stop before fixing gaps, creating issues, creating PRs, approving closeout, or
+5. For milestone/release use, classify the findings into the milestone truth
+   buckets:
+   - `release_blockers`
+   - `durable_proof_gaps`
+   - `routed_work`
+   - `stale_release_readiness_docs`
+   - `non_blocking_quality_concerns`
+6. Stop before fixing gaps, creating issues, creating PRs, approving closeout, or
    mutating repositories.
 
 ## Required Inputs
@@ -55,13 +67,13 @@ Supported modes:
 
 Useful policy fields:
 
-- `severity_floor`
-- `required_gap_types`
-- `uncertainty_policy`
-- `issue_creation_allowed`
-- `write_gap_artifact`
+ - `quality_gate_update_allowed`
+ - `separate_gap_review_allowed`
 - `stop_before_fix`
 - `stop_before_mutation`
+
+When the deterministic helper is used, these policy fields should be supplied in
+`gap_manifest.json`.
 
 If there is no explicit expected baseline, stop and report `not_run`. Do not
 infer intended outcomes from vibes or from the absence of evidence.
@@ -111,6 +123,12 @@ Required artifacts:
 - `gap_analysis_report.json`
 
 Use the detailed contract in `references/output-contract.md`.
+
+For milestone/release runs, the output should also answer:
+
+- should the result update an existing quality gate?
+- should the result emit a separate gap-review packet?
+- should both happen because blockers and narrative review drift both exist?
 
 ## Stop Boundary
 

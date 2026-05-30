@@ -23,34 +23,32 @@ admission:
       - "compare_review_to_closeout"
       - "compare_packet_to_report"
     policy_fields:
-      - "severity_floor"
-      - "required_gap_types"
-      - "uncertainty_policy"
-      - "issue_creation_allowed"
-      - "write_gap_artifact"
+      - "quality_gate_update_allowed"
+      - "separate_gap_review_allowed"
       - "stop_before_fix"
       - "stop_before_mutation"
     mode_requirements:
       compare_issue_to_implementation:
         required_target_fields:
-          - "issue_ref"
-          - "changed_paths"
+          - "expected_baseline.issue_ref"
+          - "expected_baseline.acceptance_criteria_path"
+          - "observed_evidence.changed_paths"
       compare_milestone_to_evidence:
         required_target_fields:
-          - "milestone_plan"
-          - "evidence_root"
+          - "expected_baseline.milestone_plan"
+          - "observed_evidence.evidence_root"
       compare_spec_to_docs:
         required_target_fields:
-          - "spec_path"
-          - "docs_paths"
+          - "expected_baseline.spec_path"
+          - "observed_evidence.docs_paths"
       compare_review_to_closeout:
         required_target_fields:
-          - "review_artifact"
-          - "closeout_record"
+          - "expected_baseline.review_artifact"
+          - "observed_evidence.closeout_record"
       compare_packet_to_report:
         required_target_fields:
-          - "review_packet_path"
-          - "report_path"
+          - "expected_baseline.review_packet_path"
+          - "observed_evidence.report_path"
   intent:
     - "gap_analysis"
     - "expected_vs_observed_truth"
@@ -62,12 +60,9 @@ admission:
     - "policy"
   optional_inputs:
     - "artifact_root"
-    - "issue_ref"
-    - "milestone_plan"
-    - "spec_path"
-    - "review_packet_path"
-    - "report_path"
-    - "closeout_record"
+    - "milestone_version"
+    - "quality_gate_target"
+    - "gap_review_target"
   stop_if_missing:
     - "expected_baseline"
   prevalidation_rules:
