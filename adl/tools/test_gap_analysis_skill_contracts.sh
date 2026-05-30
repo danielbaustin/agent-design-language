@@ -18,9 +18,13 @@ grep -Fq 'id: "gap-analysis"' "${skills_root}/gap-analysis/adl-skill.yaml"
 grep -Fq 'id: "gap_analysis.v1"' "${skills_root}/gap-analysis/adl-skill.yaml"
 grep -Fq 'reference_doc: "../docs/GAP_ANALYSIS_SKILL_INPUT_SCHEMA.md"' "${skills_root}/gap-analysis/adl-skill.yaml"
 grep -Fq "expected_baseline_must_be_explicit" "${skills_root}/gap-analysis/adl-skill.yaml"
+grep -Fq "expected_baseline.milestone_plan" "${skills_root}/gap-analysis/adl-skill.yaml"
 grep -Fq "Compare an explicit expected baseline" "${skills_root}/gap-analysis/SKILL.md"
 grep -Fq "Distinguish missing evidence from proven failure." "${skills_root}/gap-analysis/references/output-contract.md"
 grep -Fq "Schema id: \`gap_analysis.v1\`" "${skills_root}/docs/GAP_ANALYSIS_SKILL_INPUT_SCHEMA.md"
+grep -Fq "release_blockers" "${skills_root}/gap-analysis/references/output-contract.md"
+grep -Fq "quality_gate_update_allowed" "${skills_root}/docs/GAP_ANALYSIS_SKILL_INPUT_SCHEMA.md"
+grep -Fq "Mode-Specific Nested Fields" "${skills_root}/docs/GAP_ANALYSIS_SKILL_INPUT_SCHEMA.md"
 
 gap_root="${tmpdir}/gap"
 report_root="${tmpdir}/gap-report"
@@ -28,8 +32,14 @@ mkdir -p "${gap_root}"
 cat >"${gap_root}/gap_manifest.json" <<'JSON'
 {
   "run_id": "gap-analysis-contract-test",
-  "scope": "issue-2044",
-  "mode": "compare_issue_to_implementation"
+  "scope": "v0.91.4",
+  "mode": "compare_milestone_to_evidence",
+  "policy": {
+    "quality_gate_update_allowed": false,
+    "separate_gap_review_allowed": true,
+    "stop_before_fix": true,
+    "stop_before_mutation": true
+  }
 }
 JSON
 cat >"${gap_root}/expected_baseline.md" <<'MD'
@@ -39,7 +49,7 @@ cat >"${gap_root}/expected_baseline.md" <<'MD'
 
 - Create gap-analysis skill bundle with SKILL metadata and bounded stop boundary.
 - Add validation contract tests for findings format and evidence guardrails.
-- Document input schema for explicit expected baseline and observed evidence.
+- [stale_release_docs] Document milestone/release routing for explicit expected baseline and observed evidence.
 - Record closeout truth in output cards.
 MD
 cat >"${gap_root}/observed_evidence.md" <<'MD'
@@ -53,7 +63,7 @@ cat >"${gap_root}/known_gaps.md" <<'MD'
 
 ## Gaps
 
-- Validation contract tests for findings format and evidence guardrails are missing.
+- [release_blocker] Validation contract tests for findings format and evidence guardrails are missing.
 MD
 
 python3 "${skills_root}/gap-analysis/scripts/analyze_gaps.py" \
@@ -63,10 +73,17 @@ python3 "${skills_root}/gap-analysis/scripts/analyze_gaps.py" \
 grep -Fq '"schema": "adl.gap_analysis_report.v1"' "${report_root}/gap_analysis_report.json"
 grep -Fq '"run_id": "gap-analysis-contract-test"' "${report_root}/gap_analysis_report.json"
 grep -Fq '"gap_type": "test_gap"' "${report_root}/gap_analysis_report.json"
+grep -Fq '"gap_buckets"' "${report_root}/gap_analysis_report.json"
+grep -Fq '"release_blockers": [' "${report_root}/gap_analysis_report.json"
+grep -Fq '"artifact_routing": {' "${report_root}/gap_analysis_report.json"
+grep -Fq '"update_quality_gate": false' "${report_root}/gap_analysis_report.json"
+grep -Fq '"emit_separate_gap_review": true' "${report_root}/gap_analysis_report.json"
 grep -Fq '"created_issues": false' "${report_root}/gap_analysis_report.json"
 grep -Fq '"mutated_repository": false' "${report_root}/gap_analysis_report.json"
 grep -Fq "## Gap Analysis Summary" "${report_root}/gap_analysis_report.md"
 grep -Fq "## Findings" "${report_root}/gap_analysis_report.md"
+grep -Fq "## Gap Buckets" "${report_root}/gap_analysis_report.md"
+grep -Fq "## Artifact Routing" "${report_root}/gap_analysis_report.md"
 grep -Fq "Created issues: false." "${report_root}/gap_analysis_report.md"
 grep -Fq "Mutated repository: false." "${report_root}/gap_analysis_report.md"
 

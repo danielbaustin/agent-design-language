@@ -8,6 +8,10 @@ Compare an explicit expected baseline against observed implementation, docs,
 tests, review, PR, milestone, or closeout evidence and produce a bounded
 findings-first gap report.
 
+For milestone and release work, this schema should support repeatable truth
+maintenance: separating real blockers from routed work, stale release/readiness
+docs, durable proof gaps, and lower-risk quality concerns.
+
 ## Required Top-Level Fields
 
 - `skill_input_schema`: must be `gap_analysis.v1`.
@@ -23,20 +27,37 @@ findings-first gap report.
 ## Optional Fields
 
 - `artifact_root`: report destination.
-- `issue_ref`
-- `milestone_plan`
-- `spec_path`
-- `review_packet_path`
-- `report_path`
-- `closeout_record`
+- `milestone_version`
+- `quality_gate_target`
+- `gap_review_target`
+
+## Mode-Specific Nested Fields
+
+Place mode-specific source fields under `expected_baseline` and
+`observed_evidence`.
+
+- `compare_issue_to_implementation`
+  - `expected_baseline.issue_ref`
+  - `expected_baseline.acceptance_criteria_path`
+  - `observed_evidence.changed_paths`
+- `compare_milestone_to_evidence`
+  - `expected_baseline.milestone_plan`
+  - `observed_evidence.evidence_root`
+  - `observed_evidence.truth_sources`
+- `compare_spec_to_docs`
+  - `expected_baseline.spec_path`
+  - `observed_evidence.docs_paths`
+- `compare_review_to_closeout`
+  - `expected_baseline.review_artifact`
+  - `observed_evidence.closeout_record`
+- `compare_packet_to_report`
+  - `expected_baseline.review_packet_path`
+  - `observed_evidence.report_path`
 
 ## Policy Fields
 
-- `severity_floor`
-- `required_gap_types`
-- `uncertainty_policy`
-- `issue_creation_allowed`
-- `write_gap_artifact`
+- `quality_gate_update_allowed`
+- `separate_gap_review_allowed`
 - `stop_before_fix`
 - `stop_before_mutation`
 
@@ -44,28 +65,20 @@ findings-first gap report.
 
 ```yaml
 skill_input_schema: gap_analysis.v1
-mode: compare_issue_to_implementation
+mode: compare_milestone_to_evidence
 expected_baseline:
-  issue_ref: "#2044"
-  acceptance_criteria_path: .adl/v0.90/tasks/issue-2044__backlog-skills-add-gap-analysis-skill/stp.md
+  milestone_plan: docs/milestones/v0.91.4/SPRINT_v0.91.4.md
+  quality_gate_target: docs/milestones/v0.91.4/QUALITY_GATE_v0.91.4.md
 observed_evidence:
-  changed_paths:
-    - adl/tools/skills/gap-analysis/SKILL.md
-    - adl/tools/skills/gap-analysis/adl-skill.yaml
-    - adl/tools/test_gap_analysis_skill_contracts.sh
-  validation_commands:
-    - bash adl/tools/test_gap_analysis_skill_contracts.sh
+  truth_sources:
+    - .adl/docs/TBD/v0.91.4_gap_review.md
+    - docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md
+    - docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md
+    - docs/milestones/v0.91.4/RELEASE_PLAN_v0.91.4.md
+  evidence_root: .adl/reviews/gap-analysis/v0.91.4/
 policy:
-  severity_floor: P3
-  required_gap_types:
-    - missing_evidence
-    - implementation_gap
-    - docs_drift
-    - test_gap
-    - closeout_drift
-  uncertainty_policy: record_explicitly
-  issue_creation_allowed: false
-  write_gap_artifact: true
+  quality_gate_update_allowed: true
+  separate_gap_review_allowed: true
   stop_before_fix: true
   stop_before_mutation: true
 ```
@@ -90,6 +103,11 @@ Statuses:
 - `fail`: severe gap should block the requested closeout or release decision.
 - `not_run`: explicit baseline missing.
 - `blocked`: requested action violates stop boundary.
+
+Milestone/release runs should also emit:
+
+- `gap_buckets`
+- `artifact_routing`
 
 ## Stop Boundary
 

@@ -20,9 +20,11 @@ Required sections:
 - Expected Baseline
 - Observed Evidence
 - Findings
+- Gap Buckets
 - Missing Evidence
 - Uncertainty
 - Recommended Follow-up
+- Artifact Routing
 - Stop Boundary
 
 ### gap_analysis_report.json
@@ -36,10 +38,21 @@ Required top-level fields:
 - `expected_baseline`
 - `observed_evidence`
 - `findings`
+- `gap_buckets`
 - `missing_evidence`
 - `uncertainty`
 - `recommended_follow_up`
+- `artifact_routing`
 - `stop_boundary`
+
+Required `stop_boundary` fields:
+
+- `fixed_gaps`
+- `created_issues`
+- `created_prs`
+- `approved_closeout`
+- `approved_release`
+- `mutated_repository`
 
 ## Status Values
 
@@ -66,11 +79,18 @@ Each finding must include:
 - uncertainty
 - recommended follow-up
 - source artifact or path when available
+- milestone/release bucket when available
 
 ## Rules
 
 - Do not infer intended outcomes without an explicit baseline.
 - Distinguish missing evidence from proven failure.
+- Keep milestone/release truth buckets explicit:
+  - `release_blockers`
+  - `durable_proof_gaps`
+  - `routed_work`
+  - `stale_release_readiness_docs`
+  - `non_blocking_quality_concerns`
 - Use repo-relative, issue-relative, or packet-relative paths.
 - Do not write absolute host paths into report artifacts.
 - Do not claim approval, release-readiness, merge-readiness, compliance,
