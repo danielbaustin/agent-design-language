@@ -1,6 +1,8 @@
 milestone: v0.91.5
 status: draft_pre_open
 owner_issue: 3506
+owner_issue_state: closed_setup_umbrella
+setup_child_issues: [3507, 3508, 3509, 3510, 3511]
 planning_source: docs/milestones/v0.91.5
 tracked_package: docs/milestones/v0.91.5
 depends_on:
@@ -19,15 +21,18 @@ card_update_rule:
 moved_issue_inputs:
   from_v0_91_4:
     keep_in_v0_91_4: [3362, 3363, 3364, 3365, 3366, 3367, 3368, 3369, 3370, 3371]
-    move_to_v0_91_5: [3377, 3415, 3455, 3460, 3461, 3472, 3473, 3474, 3475, 3476, 3484, 3501, 3502, 3503, 3504, 3505]
+    move_to_v0_91_5: [3377, 3415, 3455, 3460, 3461, 3472, 3473, 3474, 3475, 3476, 3501, 3502, 3503, 3504, 3505]
+    already_satisfied: [3484]
 work_packages:
   - wp: WP-01
-    issue: 3506
-    title: Bridge planning and issue migration
+    issue: 3507
+    supporting_issues: [3508, 3509, 3510, 3511]
+    setup_umbrella: 3506
+    title: Bridge planning package and migration review
     queue: docs
     depends_on: [v0.91.4 Sprint 4 readiness]
-    primary_deliverable: v0.91.5 planning package, issue relabeling, and v0.91.4/v0.92 doc reconciliation
-    proof_surface: planning docs, issue labels, and focused docs validation
+    primary_deliverable: v0.91.5 planning package, issue relabeling, v0.91.4/v0.92 doc reconciliation, and migration-truth review
+    proof_surface: planning docs, issue labels, setup child issues #3507-#3511, and focused docs validation
   - wp: WP-02
     issue: 3476
     title: Public prompt transition umbrella
@@ -96,8 +101,9 @@ work_packages:
     title: Parallel hosted Codex lanes
     queue: multi_agent
     depends_on: [WP-10]
-    primary_deliverable: complete bounded issue execution with parallel hosted Codex lanes
-    proof_surface: branch/worktree/PR/card evidence
+    status: satisfied_closed
+    primary_deliverable: closed setup evidence for parallel hosted Codex lane feasibility
+    proof_surface: closed issue #3484 branch/worktree/PR/card evidence; no new WP execution expected unless a follow-on is opened
   - wp: WP-12
     issue: 3503
     title: Single-agent vs multi-agent overhead comparison
@@ -168,4 +174,3 @@ work_packages:
     depends_on: [WP-20]
     primary_deliverable: release evidence and ceremony closeout
     proof_surface: release notes and closeout record
-

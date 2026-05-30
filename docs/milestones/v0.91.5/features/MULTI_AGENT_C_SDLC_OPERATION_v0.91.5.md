@@ -7,7 +7,8 @@
 - Date: `2026-05-29`
 - Owner: ADL maintainers
 - Status: `draft_pre_open`
-- Related issues: `#3415`, `#3484`, `#3501`, `#3503`, `#3504`
+- Related issues: `#3415`, `#3501`, `#3503`, `#3504`
+- Prior satisfied evidence: `#3484`
 
 ## Template Rules
 
@@ -85,4 +86,3 @@ Development Polis operation.
 ## Notes
 
 This feature does not claim unbounded autonomous development.
-

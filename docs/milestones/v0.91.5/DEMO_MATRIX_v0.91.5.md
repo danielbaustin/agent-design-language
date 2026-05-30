@@ -35,7 +35,7 @@ truthfully without leaking secrets.
 
 | Demo | Issues | Proof expectation | Status |
 | --- | --- | --- | --- |
-| Multi-agent C-SDLC workcell | `#3415`, `#3484`, `#3501`-`#3504` | Bounded issue execution with role, shard, provider, review, and closeout truth. | planned |
+| Multi-agent C-SDLC workcell | `#3415`, `#3501`-`#3504`; `#3484` is closed/satisfied evidence | Bounded issue execution with role, shard, provider, review, and closeout truth. | planned with prior evidence |
 | Provider/model matrix | `#3501`, `#3505` | Hosted, local Ollama, remote Ollama, and OpenRouter model-lane evidence. | planned |
 | Public prompt packet pilot | `#3472`-`#3476` | Exported, redacted, reviewer-indexed prompt packets. | planned |
 | Celestial Rescue / Unity Observatory readiness | `#3455`, `#3460`, `#3461` | Demo artifact or explicit readiness decision for v0.92 Observatory. | planned |
