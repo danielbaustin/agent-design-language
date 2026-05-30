@@ -60,7 +60,7 @@ Make v0.92 openable without hidden operational debt.
 
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | Bridge planning and migration | `#3507`-`#3511` (`#3506` closed umbrella) | ADL maintainers | active setup |
+| 1 | Bridge planning and migration | `#3507`-`#3511` (`#3506` closed umbrella) | ADL maintainers | satisfied setup wave |
 | 2 | Public prompt records | `#3472`-`#3476` | ADL maintainers | moved |
 | 3 | Provider/model matrix | `#3501`, `#3505` | ADL maintainers | moved |
 | 4 | Multi-agent proof | `#3415`, `#3503`, `#3504` (`#3484` satisfied/closed evidence) | ADL maintainers | moved |
