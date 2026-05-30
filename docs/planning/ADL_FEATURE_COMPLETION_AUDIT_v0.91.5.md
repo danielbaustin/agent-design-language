@@ -55,6 +55,11 @@ No exact calendar release date is invented here.
    integration is deferred to `v0.95`.
 5. If AEE is meant to feel like a completed subsystem before MVP convergence, it
    needs an explicit completion tranche before `v0.95`.
+6. Several `v0.95` rows should be split into earlier prerequisite tranches so
+   the MVP milestone is convergence and polish, not first subsystem closure.
+7. `v0.91.5` should be treated as a real completion target for bridge work:
+   multi-agent stabilization, provider/model breadth, public prompt records,
+   v0.92 activation readiness, and AEE closure-definition work.
 
 ## Adaptive Execution Engine (AEE) Assessment
 
@@ -97,12 +102,29 @@ activation readiness, depending on scope pressure:
 
 ## Pull-Forward Candidates
 
-| Feature | Current target | Why it may need pull-forward | Recommended routing |
+| Feature | Current target | Why it needs pull-forward | Recommended routing |
 | --- | --- | --- | --- |
-| AEE 1.0 convergence | MVP integration by `v0.95` | Too implicit; subsystem closure diffused across distributed execution, control plane, proof/demo convergence, and release-tail review. | Create an explicit AEE completion tranche before `v0.95`; prefer `v0.91.5` planning plus `v0.92` implementation/proof unless v0.91.5 scope permits. |
-| Human-in-the-loop pause/resume | MVP target `v0.95` | AEE queue/wake/handoff semantics may depend on it earlier. | Include in AEE closure criteria; do not wait for generic MVP convergence if needed by first-birthday or multi-agent proofs. |
-| Control-plane lifecycle | MVP target `v0.95` | AEE control-path truth depends on lifecycle and reviewability. | Treat AEE-required subset as a prerequisite tranche; leave broad hardening to `v0.95`. |
-| Distributed execution integration | `v0.95` | Multi-agent and AEE distributed boundary may need earlier proof. | Keep broad integration in `v0.95`, but pull AEE-specific boundary proof earlier if multi-agent work requires it. |
+| AEE 1.0 convergence | MVP integration by `v0.95` | Too implicit; subsystem closure is diffused across distributed execution, control plane, proof/demo convergence, and release-tail review. | Pull forward now: `#3534` should define the AEE completion tranche in `v0.91.5`, then schedule implementation/proof no later than `v0.92` unless operator review routes a bounded subset to `v0.91.5`. |
+| Human-in-the-loop pause/resume | MVP target `v0.95` | AEE queue/wake/handoff semantics should not wait for generic MVP convergence if they are needed for first-birthday or multi-agent proofs. | Pull the AEE-required subset into the AEE closure tranche. Broad UX polish may remain `v0.95`, but queue/wake/handoff semantics should target `v0.92`. |
+| Control-plane lifecycle | MVP target `v0.95` | AEE control-path truth depends on lifecycle and reviewability. | Pull the AEE-required control-path subset into `v0.91.5`/`v0.92`; leave broad Rust migration and polish to `v0.95`. |
+| Distributed execution integration | `v0.95` | Multi-agent and AEE distributed boundaries need earlier proof to make `v0.92` activation credible. | Pull a bounded AEE/multi-agent distributed-boundary proof into `v0.91.5` or `v0.92`; leave broad distributed execution integration in `v0.95`. |
+| Multi-agent stabilization | Bridge work not represented as a feature-list completion target | It is now core C-SDLC operational hardening, not optional side work. | Treat as `v0.91.5` completion work with proof of role/delegation usefulness before `v0.92` opens. |
+| Provider/model matrix and OpenRouter breadth | Bridge work not represented as a feature-list completion target | Multi-agent role selection and aptitude testing need model breadth before first-birthday activation. | Treat as `v0.91.5` completion work, with hosted/local/remote/OpenRouter evidence surfaces. |
+| Public C-SDLC prompt records | Bridge work not represented as a feature-list completion target | Durable public prompt records are part of making C-SDLC observable rather than local habit. | Treat as `v0.91.5` completion work before `v0.92` activation. |
+| v0.92 activation readiness map | Bridge work not represented as a feature-list completion target | v0.92 brings many dormant surfaces alive; surprises here would destabilize the birthday milestone. | Treat as `v0.91.5` completion work and use `#3377` as final go/no-go readiness. |
+| Generic speculative decoding productization | Productization deferred pending backend | It is the only row that is not cleanly scheduled as a productization path. | Add a decision boundary before `v0.95`: either identify a viable backend/productization lane or explicitly defer/remove it from MVP scope. |
+
+## Pull-Forward Decisions
+
+The audit recommends the following scheduling policy:
+
+| Decision | Result |
+| --- | --- |
+| Do not leave AEE completion buried in `v0.95`. | `v0.91.5` defines the completion tranche; `v0.92` should carry implementation/proof unless the tranche proves a smaller `v0.91.5` closure is safe. |
+| Do not pull all of `v0.95` forward. | Pull only prerequisite subsets needed for AEE, multi-agent, provider breadth, public prompt records, and v0.92 activation readiness. |
+| Treat `v0.91.5` as a real bridge-completion milestone. | Add explicit completion expectations for multi-agent stabilization, provider/model matrix, public prompt records, and activation readiness. |
+| Keep `v0.95` as convergence/polish. | Leave broad demo catalog polish, broad distributed execution, broad control-plane Rust migration, and product UX convergence in `v0.95` unless needed earlier by AEE or v0.92 activation. |
+| Resolve unscheduled speculative decoding productization. | Add a pre-`v0.95` decision gate rather than leaving productization open-ended. |
 
 ## Completion Table
 
@@ -120,10 +142,10 @@ the source docs provide an exact calendar date.
 | 6 | Signing, verification, and trust policy | Implemented baseline | Signing/verification surfaces, trust docs | Baseline `v0.90`; enterprise hardening `v0.93` | Baseline complete; hardening scheduled. |
 | 7 | Provider and transport substrate | Implemented baseline | Provider docs, HTTP/local provider surfaces, reviewer package | Target `v0.92`; calendar TBD | Scheduled. |
 | 8 | Remote execution baseline | Implemented baseline | Bounded remote execution surfaces and docs | Target `v0.93`; calendar TBD | Scheduled. |
-| 9 | Human-in-the-loop pause/resume | Implemented baseline | Runtime/control surfaces and review docs | Target `v0.95`; calendar TBD | Reassess for AEE pull-forward. |
+| 9 | Human-in-the-loop pause/resume | Implemented baseline | Runtime/control surfaces and review docs | AEE-required subset target `v0.92`; broad UX/MVP polish `v0.95`; calendar TBD | Pull forward the AEE queue/wake/handoff subset; leave broad polish scheduled for `v0.95`. |
 | 10 | Structured authoring model | Implemented baseline | SIP/STP/SPP/SRP/SOR contracts and prompt tooling | Target `v0.95`; calendar TBD | Baseline complete; MVP integration scheduled. |
 | 11 | Structured planning and Structured Review Prompt workflow | Implemented baseline | `v0.91` SPP/SRP docs, readiness records, validation tooling, issue bundles | Baseline `v0.91.0`; hardening `v0.91.1` | Baseline complete. |
-| 12 | Control-plane lifecycle | Implemented baseline | `pr init/create/start/run/finish`, doctor, janitor, closeout | Target `v0.95`; calendar TBD | Reassess for AEE-required subset. |
+| 12 | Control-plane lifecycle | Implemented baseline | `pr init/create/start/run/finish`, doctor, janitor, closeout | AEE-required subset target `v0.91.5`/`v0.92`; broad hardening `v0.95`; calendar TBD | Pull forward the AEE control-path/reviewability subset; leave broad hardening scheduled. |
 | 13 | Editor and command-adapter surfaces | Implemented baseline | Editor docs, demos, bounded command adapters | Target `v0.95`; calendar TBD | Scheduled. |
 | 14 | Review and validation surfaces | Implemented baseline | Reviewer contracts, validation tools, review packages | Target `v0.95`; calendar TBD | Scheduled. |
 | 15 | Task-bundle workflow | Implemented baseline | Issue/task bundles and public execution records | Target `v0.95`; calendar TBD | Scheduled. |
@@ -150,7 +172,7 @@ the source docs provide an exact calendar date.
 | 36 | Instinct and bounded agency | Implemented baseline | `v0.88` feature docs, instinct review, Paper Sonata | Cognitive-being `v0.91`; governance `v0.93` | Baseline complete; governance scheduled. |
 | 37 | Paper Sonata public-facing proof surface | Implemented baseline | `demo_v088_paper_sonata.sh` and milestone docs | Target `v0.95`; calendar TBD | Scheduled for demo catalog. |
 | 38 | Deep-agents comparative proof | Implemented baseline | `demo_v088_deep_agents_comparative_proof.sh`, `v0.89` demo docs | Target `v0.95`; calendar TBD | Scheduled for demo catalog. |
-| 39 | AEE 1.0 convergence | Implemented baseline | `v0.89` convergence contract names control-path convergence output, D1 proof row, feature doc | Runtime integration `v0.91.1`; MVP `v0.95` | Gap: needs explicit subsystem closure before `v0.95` if "done" is expected. |
+| 39 | AEE 1.0 convergence | Implemented baseline | `v0.89` convergence contract names control-path convergence output, D1 proof row, feature doc | Runtime integration `v0.91.1`; closure-definition `v0.91.5`; subsystem implementation/proof target `v0.92`; MVP polish `v0.95` | Pulled forward: no longer acceptable to leave AEE subsystem closure only inside broad `v0.95` convergence. |
 | 40 | Decision, action, and skill-governance surfaces | Implemented baseline | `v0.89`/`v0.89.1` decision/action/skill docs and proof | Target `v0.93`; calendar TBD | Scheduled. |
 | 41 | Delegation, refusal, and coordination contracts | Implemented baseline | `v0.89.1` operational-skill and coordination package | Target `v0.93`; calendar TBD | Scheduled. |
 | 42 | Provider-extension packaging and safe extension boundaries | Implemented baseline | `v0.89.1` provider-extension package and proof | Target `v0.93`; calendar TBD | Scheduled. |
@@ -197,7 +219,7 @@ the source docs provide an exact calendar date.
 | 83 | Review heuristics and reviewer demo lane | Implemented baseline | `v0.91.2` feature doc | Baseline `v0.91.2` | Complete baseline. |
 | 84 | Google Workspace CMS bridge and Rust-native adapter boundary | Implemented baseline plus active hardening | `v0.91.2` GWS CMS bridge | Bounded baseline `v0.91.2`; operational hardening ongoing | Complete baseline; ongoing hardening. |
 | 85 | Automated repository modernization and external refactoring integration | Implemented bounded packet | `v0.91.2` code modernization demo | Bounded packet `v0.91.2` | Complete bounded packet. |
-| 86 | Generic speculative decoding runtime acceleration | Implemented evaluation packet | TBD docs plus `v0.91.2` prototype feature | Evaluation `v0.91.2`; productization deferred | Evaluation complete; productization unscheduled pending backend. |
+| 86 | Generic speculative decoding runtime acceleration | Implemented evaluation packet | TBD docs plus `v0.91.2` prototype feature | Evaluation `v0.91.2`; decision gate before `v0.95`; productization only if backend is viable | Productization is not yet scheduled; add a pre-`v0.95` decision gate so it is either scheduled, explicitly deferred, or removed from MVP scope. |
 | 87 | Repo visibility follow-on | Implemented baseline | `v0.91.2` follow-on plus `v0.90` baseline | Follow-on `v0.91.2` | Complete baseline. |
 | 88 | Publication packet program and GHB paper lane | Implemented packet | `v0.91.2` publication program and GHB lineage docs | Packet `v0.91.2`; no publication approval | Complete packet. |
 | 89 | General-intelligence paper packet | Implemented packet | `v0.91.2` paper packet | Packet `v0.91.2` | Complete packet. |
@@ -218,7 +240,7 @@ the source docs provide an exact calendar date.
 | 104 | Mental time travel / temporal self-projection | Planned | `v0.94` MTT feature doc plus source note | Target `v0.94`; calendar TBD | Scheduled. |
 | 105 | Payments, settlement, economic agency, and `x402` / Lightning adapters | Planned | `v0.94.1` payments/settlement feature doc | Target `v0.94.1`; calendar TBD | Scheduled. |
 | 106 | Bounded contract-market and resource-stewardship bridge | Implemented baseline | `v0.90.4` contract-market docs, proof coverage, demo matrix | Completed by `v0.90.4` | Complete bounded baseline. |
-| 107 | Distributed execution integration | Partially implemented | `v0.95` feature doc, ADR 0003, cluster-execution groundwork | Target `v0.95`; calendar TBD | Scheduled; AEE boundary may need earlier subset. |
+| 107 | Distributed execution integration | Partially implemented | `v0.95` feature doc, ADR 0003, cluster-execution groundwork | AEE/multi-agent boundary proof target `v0.91.5`/`v0.92`; broad integration `v0.95`; calendar TBD | Pull forward bounded boundary proof if required by multi-agent or AEE; broad integration remains scheduled for `v0.95`. |
 | 108 | Demo catalog and polished MVP walkthrough | Partially implemented | `v0.95` feature doc plus demo matrices/reviewer packages | Target `v0.95`; calendar TBD | Scheduled. |
 | 109 | Control-plane Rust migration / tooling hardening | Partially implemented | `v0.95` feature doc and Python-elimination/tooling plans | Target `v0.95`; calendar TBD | Scheduled. |
 | 110 | Zed integration | MVP-scoped decision | `v0.95` feature doc plus v0.85 editor-planning notes | Decide adapter or removal by `v0.95`; calendar TBD | Scheduled decision boundary. |
@@ -230,21 +252,22 @@ the source docs provide an exact calendar date.
 | Completed by `v0.8` or earlier | 1-4, 24 | Baseline deterministic execution and bounded AEE-era primitives are complete. |
 | Completed by `v0.86`-`v0.91.2` | 5, 11, 16, 18-21, 23, 26, 28-36, 39, 47-54, 56-65, 69-91, 106 | Many rows are baseline-complete but several retain later integration targets. |
 | Active `v0.91.4` | 93 | C-SDLC default-operation closeout is active, not complete until Sprint 4/release tail closes. |
-| Bridge `v0.91.5` | none in the feature list as completion targets | v0.91.5 currently prepares multi-agent, public prompts, provider matrix, demos, and v0.92 activation; it should also decide whether AEE closure moves here. |
-| Planned `v0.92` | 7, 18-21, 32, 94-98 | Identity/birthday/ACP/ACIP and memory grounding are scheduled. |
+| Bridge `v0.91.5` | new pull-forward targets: AEE closure definition, multi-agent stabilization, provider/model matrix, public prompt records, and v0.92 activation readiness | v0.91.5 should now be treated as a real bridge-completion milestone, not just preparation. |
+| Planned `v0.92` | 7, 9 subset, 12 subset, 18-21, 32, 39, 94-98, 107 subset | Identity/birthday/ACP/ACIP, memory grounding, AEE implementation/proof, and bounded distributed/control-path subsets are scheduled. |
 | Planned `v0.93` | 6, 8, 16, 25, 31, 33, 36, 40-44, 95, 99-102 | Governance, delegation, security, and enterprise trust are scheduled. |
 | Planned `v0.94` | 22, 26, 67-68, 95, 103-104 | Secure execution, signed/queryable trace, reasoning/provenance, and MTT are scheduled. |
 | Planned `v0.94.1` | 105 | Payments and economic rails are intentionally separated. |
-| Planned `v0.95` | 9-10, 12-15, 17, 23, 27, 34, 37-39, 45-46, 49, 51-55, 61-63, 65-66, 107-110 | MVP convergence remains broad. AEE is the most important row to pull out of this bucket. |
+| Planned `v0.95` | 9-10, 12-15, 17, 23, 27, 34, 37-38, 45-46, 49, 51-55, 61-63, 65-66, 86 decision/productization boundary, 107-110 | MVP convergence remains broad, but AEE subsystem closure and its prerequisite subsets should no longer wait until `v0.95`. |
 
 ## Gaps And Follow-On Recommendations
 
 | Severity | Gap | Recommendation |
 | --- | --- | --- |
-| P1 | AEE completion is too implicit and too late if it is expected to be a finished subsystem before MVP convergence. | Create an explicit AEE completion tranche with done criteria and schedule before `v0.95`. |
+| P1 | AEE completion was too implicit and too late if it is expected to be a finished subsystem before MVP convergence. | Pull forward immediately: use `#3534` to define the tranche in `v0.91.5`, then schedule implementation/proof for `v0.92` unless the tranche proves a smaller `v0.91.5` closure is safe. |
 | P2 | Calendar dates are not represented in the feature list or forward milestone docs. | Keep milestone targets as authoritative for now; add exact dates only when release planning owns them. |
-| P2 | Several baseline-complete rows also have future integration targets, which can make "done" feel ambiguous. | Split "baseline complete" from "integration complete" in future feature-list revisions. |
-| P2 | `v0.91.5` is important bridge work but is not represented as a completion target in the feature list. | Decide whether v0.91.5 should add completion targets for multi-agent, public prompt records, provider/model matrix, and AEE closure-definition work. |
+| P2 | Several baseline-complete rows also have future integration targets, which can make "done" feel ambiguous. | Split "baseline complete" from "integration complete" in future feature-list revisions, with explicit pulled-forward subset targets where needed. |
+| P2 | `v0.91.5` is important bridge work but is not represented as a completion target in the feature list. | Treat `v0.91.5` as a completion target for multi-agent stabilization, public prompt records, provider/model matrix, v0.92 activation readiness, and AEE closure-definition work. |
+| P2 | Generic speculative decoding productization remains open-ended. | Add a decision gate before `v0.95`: schedule productization if a backend is viable, otherwise explicitly defer or remove it from MVP scope. |
 | P3 | The feature list is very broad and hard to review as one table. | Add a generated/maintained completion dashboard or split by milestone band after this audit is reviewed. |
 
 ## Proposed AEE Follow-On Issue Shape
@@ -283,4 +306,5 @@ Validation completed for this audit:
 - Count feature rows in `docs/planning/ADL_FEATURE_LIST.md`.
 - Confirm this audit represents all 110 rows.
 - Confirm AEE source docs exist.
+- Confirm pulled-forward rows are explicitly represented in this audit.
 - Run markdown/path checks for touched docs.
