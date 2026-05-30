@@ -13,9 +13,9 @@ Planned proof-coverage surface.
 | Public prompt records | [PUBLIC_PROMPT_RECORDS_v0.91.5.md](features/PUBLIC_PROMPT_RECORDS_v0.91.5.md) | Export, validation, redaction, reviewer index. | planned |
 | Demo and Unity Observatory readiness | [DEMO_AND_UNITY_OBSERVATORY_READINESS_v0.91.5.md](features/DEMO_AND_UNITY_OBSERVATORY_READINESS_v0.91.5.md) | Demo index, proof map, Unity routing. | planned |
 | v0.92 activation readiness | [V092_ACTIVATION_READINESS_v0.91.5.md](features/V092_ACTIVATION_READINESS_v0.91.5.md) | Activation map and `#3377` consumption. | planned |
+| Coverage / quality-gate checklist | [QUALITY_GATE_v0.91.5.md](QUALITY_GATE_v0.91.5.md) | Applied checklist covering coverage gaps, Rust module tracker, closeout truth, internal-review readiness, PVF lanes, changed-file risk, runtime regression, card lifecycle, PR topology, docs truth, ADR readiness, demos, redaction, and follow-on routing. | planned |
 
 ## Exit Criteria
 
 - Every feature row is complete, blocked, or deferred with owner and rationale.
 - No feature row claims implementation evidence from planning text alone.
-
