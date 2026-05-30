@@ -22,6 +22,9 @@ Routed out of the `v0.91.4` Sprint 4 release path:
 - provider/model matrix follow-ons
 - public prompt-record follow-ons
 - demo-readiness follow-ons outside the Sprint 4 closeout path
+- `#3526` / draft PR `#3528` audit work on feature-completion dates and AEE
+  closure unless a later Sprint 4 issue explicitly reclaims it as a release
+  blocker
 
 Non-core sidecar work that is not required as Sprint 4 release proof:
 
@@ -124,6 +127,13 @@ The following required release-tail issues remain open:
 - `#3370` Next milestone review pass
 - `#3371` Release ceremony
 
+Open `v0.91.4` work outside that Sprint 4 closeout tail should not be treated
+as a release blocker by this gate unless explicitly re-routed back into the
+Sprint 4 lane. At the current snapshot, that includes:
+
+- `#3526` `[v0.91.4][docs] Audit ADL feature completion dates and AEE closure`
+  with draft PR `#3528`
+
 State snapshot recorded at `2026-05-30T19:58:36Z`:
 
 | Issue | State |
@@ -186,6 +196,127 @@ release blocker by itself because:
 
 Current posture: `follow_on_needed_non_blocking`
 
+## Manual Control-Tower Checks
+
+WP-14 should also record the current state of a few recurring milestone-quality
+checks, even when they are performed manually rather than through a dedicated
+future workflow.
+
+Manual checks performed on 2026-05-30:
+
+1. `Issue closeout truth`
+   - command:
+     `bash adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.91.4`
+   - result:
+     `PASS check_milestone_closed_issue_sor_truth version=v0.91.4 checked=77`
+   - interpretation: the earlier broad stale closed-issue `SOR` drift is no
+     longer an active milestone-level blocker
+2. `Rust module watch-list review`
+   - source: `.adl/reports/manual/rust_module_watch_list.md`
+   - result: tracker updated on `2026-05-30`; top current review targets are:
+     - `adl/src/runtime_v2/contract_market_demo.rs` (`1382` LoC)
+     - `adl/src/cli/tests/run_state/persistence.rs` (`1381` LoC)
+     - `adl/src/long_lived_agent.rs` (`1377` LoC)
+   - interpretation: maintainability hotspots remain real and visible, but
+     they are being tracked and do not by themselves block Sprint 4 closeout
+3. `Internal review plan existence/readiness`
+   - source:
+     `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_PLAN_2026-05-30.md`
+   - result: present, scoped, and reviewer-facing; status remains
+     `planned_not_started`
+   - interpretation: the internal review surface exists and is structurally
+     ready, but WP-16 is still a real open blocker because execution has not
+     started
+4. `Test coverage gap analysis`
+   - artifact:
+     `docs/milestones/v0.91.4/review/quality_gate/V0914_TEST_COVERAGE_GAP_ANALYSIS_2026-05-30.md`
+   - result: dedicated packet now exists; verdict `partial`
+   - interpretation: the missing artifact gap is fixed, but final
+     release-authoritative coverage proof still remains part of the open
+     release-tail work
+5. `PVF lane health`
+   - source snapshot: PR `#3527` check state at `2026-05-30T20:48:53Z`
+   - result:
+     - `adl-ci`: `pass`
+     - `adl-coverage`: `pass`
+     - `adl-slow-proof`: `skipping`
+   - interpretation: current docs-only release-tail work is being classified
+     truthfully enough that broad runtime proof is not being forced into this
+     PR path; PVF remains usable as a release input rather than a fresh blocker
+6. `Changed-file risk review`
+   - current open Sprint 4 PRs: only `#3527`
+   - current tracked WP-14 delta:
+     - `docs/milestones/v0.91.4/QUALITY_GATE_v0.91.4.md`
+     - `docs/milestones/v0.91.4/review/quality_gate/V0914_TEST_COVERAGE_GAP_ANALYSIS_2026-05-30.md`
+     - `docs/milestones/v0.91.4/review/quality_gate/V0914_TEST_RUNTIME_REGRESSION_CHECK_2026-05-30.md`
+     - `docs/milestones/v0.91.4/review/quality_gate/V0914_REDACTION_AUDIT_2026-05-30.md`
+   - interpretation: current open release-tail delta is low-risk and docs-only;
+     no additional runtime/provider/workflow-control code is presently in flight
+     in the Sprint 4 release-tail lane
+7. `Test runtime regression check`
+   - artifact:
+     `docs/milestones/v0.91.4/review/quality_gate/V0914_TEST_RUNTIME_REGRESSION_CHECK_2026-05-30.md`
+   - result: dedicated packet now exists; verdict `partial`
+   - interpretation: runtime-regression posture is now explicitly recorded, but
+     a richer cross-milestone comparison workflow still remains future process
+     work
+8. `Prompt/card lifecycle audit`
+   - manual sample: `pr doctor --mode ready` for `#3365` through `#3371`
+   - result: all sampled release-tail issues report `ready_status: PASS`,
+     `pr_run_readiness: ready`, and `lifecycle_state: pre_run`
+   - interpretation: remaining Sprint 4 issue bundles are structurally ready;
+     the current blocker is release-tail sequencing/execution, not missing card
+     scaffolding
+9. `PR stack/base hygiene`
+   - current open release-tail PRs: only `#3527`
+   - result: base `main`, merge state `CLEAN`, checks green, draft still open
+     at `2026-05-30T20:48:53Z`
+   - interpretation: current stack/base hygiene looks clean; no hidden conflict
+     or stale-base problem is visible in the active release-tail PR snapshot
+10. `Docs truth / staleness scan`
+   - source surfaces:
+     - `docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md`
+     - `docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md`
+     - `docs/milestones/v0.91.4/RELEASE_NOTES_v0.91.4.md`
+   - result: still treated as partial gap by the local milestone gap review;
+     some proof/demo/release wording remains too conservative or stale relative
+     to already closed work
+   - interpretation: this remains a real docs/adoption cleanup concern for
+     WP-15 rather than a reason to reopen the earlier implementation wave
+11. `ADR / decision readiness`
+   - source surfaces:
+     - `docs/milestones/v0.91.4/ADR_PLAN_v0.91.4.md`
+     - `docs/milestones/v0.91.4/DECISIONS_v0.91.4.md`
+   - result: candidate ADR packet exists, decisions log exists, and candidate
+     boundaries are explicit
+   - interpretation: architectural decision routing appears present and
+     reviewable; no missing ADR-plan blocker was found in this manual pass
+12. `Demo / proof artifact readiness`
+   - source surfaces include:
+     - `review/demo_showcase/`
+     - `review/merge_readiness/`
+     - `review/obsmem_transition_memory/`
+     - `review/browser_automation/`
+   - result: substantial reviewer-facing proof packets exist for the current
+     best showcase, browser proof, merge-readiness, and ObsMem handoff surfaces
+   - interpretation: demo/proof inputs are materially present, but the milestone
+     still does not claim a polished great demo for every feature
+13. `Security / privacy / redaction pass`
+   - artifact:
+     `docs/milestones/v0.91.4/review/quality_gate/V0914_REDACTION_AUDIT_2026-05-30.md`
+   - result: dedicated packet now exists; verdict `pass_with_caveats`
+   - interpretation: no obvious tracked secret or host-path leakage was found in
+     the reviewed public milestone/review surfaces
+14. `Follow-on issue hygiene`
+   - source truth:
+     - Sprint 4 umbrella `#3362` and children `#3363`-`#3371`
+     - v0.91.5 bridge split and routed follow-on work
+   - result: the remaining release tail is explicitly tracked, and non-Sprint-4
+     work is already routed away from `v0.91.4`
+   - interpretation: known large follow-on work is not floating unplanned;
+     routing hygiene is substantially better than it was earlier in the
+     milestone
+
 ## Blockers That Are No Longer Required Here
 
 The gate explicitly does **not** block on the following anymore:
@@ -229,6 +360,9 @@ Before WP-16 internal review can be considered ready, the milestone should at mi
 - Release-tail blockers remain in Sprint 4 and should flow through WP-15 to WP-21.
 - Non-Sprint-4 bridge work remains routed to `v0.91.5`; sidecar work remains non-core and should be classified explicitly as complete, blocked, or routed if later release-tail docs still mention it.
 - Rust hotspot / refactoring-tracker reference alignment should be routed as separate maintenance planning rather than silently absorbed into the Sprint 4 gate.
+- Carry these new WP-14 packet types forward into the future v0.91.5
+  control-tower workflow so they become standard outputs instead of ad hoc
+  one-offs.
 - Any newly discovered defect that widens beyond the gate record should route into WP-18 or a follow-on issue rather than being hidden in the quality-gate doc.
 
 ## Gate Outcome
