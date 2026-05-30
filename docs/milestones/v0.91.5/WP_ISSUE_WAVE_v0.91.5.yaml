@@ -148,11 +148,12 @@ work_packages:
     proof_surface: launch packet, checklist, and v0.92 opening recommendations
   - wp: WP-18
     issue: pending
-    title: Docs and release-truth pass
+    supporting_issues: [3531]
+    title: Docs, quality-gate checklist, and release-truth pass
     queue: docs
     depends_on: [WP-17]
-    primary_deliverable: aligned v0.91.5 and v0.92 planning docs
-    proof_surface: docs review packet
+    primary_deliverable: aligned v0.91.5 and v0.92 planning docs plus reusable coverage / quality-gate checklist integration
+    proof_surface: docs review packet and applied quality-gate checklist surface
   - wp: WP-19
     issue: pending
     title: Internal review

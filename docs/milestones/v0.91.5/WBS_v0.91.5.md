@@ -43,7 +43,7 @@ matrix, multi-agent proof, demo readiness, and v0.92 activation preflight.
 | WP-15 | Demo showcase proof map | Demo proof index. | WP-13, WP-14. |
 | WP-16 | v0.92 activation-test ledger | Complete activation-test map and deferred-work ledger. | WP-01. |
 | WP-17 | v0.92 first-birthday launch packet | `#3377` go/no-go packet. | WP-10, WP-15, WP-16. |
-| WP-18 | Docs and release-truth pass | Aligned bridge and v0.92 planning docs. | WP-17. |
+| WP-18 | Docs, quality-gate checklist, and release-truth pass | Aligned bridge and v0.92 planning docs, plus reusable quality-gate checklist integration. | WP-17. |
 | WP-19 | Internal review | Internal review and finding register. | WP-18. |
 | WP-20 | Remediation and v0.92 final preflight | Finding dispositions and v0.92 go/no-go. | WP-19. |
 | WP-21 | Release ceremony | Release evidence and closeout. | WP-20. |
@@ -78,8 +78,8 @@ is explicit.
 - WP-13 through WP-15 -> demo readiness is explicit.
 - WP-16 through WP-17 -> v0.92 activation and first-birthday readiness are
   ready for WP-01 consumption.
-- WP-18 through WP-21 -> docs, review, remediation, preflight, and release
-  close the bridge.
+- WP-18 through WP-21 -> docs, quality-gate checklist application, review,
+  remediation, preflight, and release close the bridge.
 
 ## Exit Criteria
 

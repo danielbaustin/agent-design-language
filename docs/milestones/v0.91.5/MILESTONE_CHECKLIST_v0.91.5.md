@@ -32,6 +32,19 @@ checks needed for truthful v0.91.5 closeout.
 
 ## Quality Gates
 
+- [ ] Reusable coverage / quality-gate checklist is applied or explicitly
+  routed:
+  [QUALITY_GATE](QUALITY_GATE_v0.91.5.md)
+- [ ] Test coverage gap analysis is complete or truthfully deferred.
+- [ ] Rust module size tracker has been checked when available:
+  `.adl/reports/manual/rust_module_watch_list.md`
+- [ ] Recent issue closeout truth is sampled or mechanically checked.
+- [ ] Internal review plan exists and is ready before internal review begins.
+- [ ] PVF lane health is recorded, including docs-only, runtime fast/default,
+  slow-proof, authoritative coverage, and release-gate lanes.
+- [ ] Changed-file risk, test runtime regression, PR stack/base, docs truth,
+  ADR readiness, demo/proof artifacts, security/redaction, and follow-on
+  routing have blocker dispositions.
 - [ ] Multi-agent C-SDLC workcell proof completes or blocks truthfully.
 - [ ] OpenRouter/provider matrix work completes or blocks truthfully.
 - [ ] Public prompt packet export/redaction/index path completes or blocks
