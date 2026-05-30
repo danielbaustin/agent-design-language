@@ -29,10 +29,11 @@ Before v0.91.5 release, review this handoff and confirm:
 - v0.92 dependencies are explicit;
 - no first-birthday implementation is claimed early;
 - activation surfaces are complete, blocked, or deferred;
+- AEE completion has a named v0.92 owner/proof route instead of being deferred
+  implicitly to v0.95 convergence;
 - residual risks have owners.
 
 ## Non-Claims
 
 This scaffold does not claim v0.91.5 is complete or that v0.92 is approved to
 open.
-

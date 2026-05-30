@@ -19,8 +19,9 @@ the issue wave together.
 
 ## WBS Summary
 
-v0.91.5 contains five work bands: public prompt transition, provider/model
-matrix, multi-agent proof, demo readiness, and v0.92 activation preflight.
+v0.91.5 contains six work bands: AEE completion-tranche routing, public prompt
+transition, provider/model matrix, multi-agent proof, demo readiness, and v0.92
+activation preflight.
 
 ## Candidate WP Sequence
 
@@ -42,7 +43,7 @@ matrix, multi-agent proof, demo readiness, and v0.92 activation preflight.
 | WP-14 | Celestial Rescue / Unity Observatory readiness | Demo artifact or readiness decision. | WP-13. |
 | WP-15 | Demo showcase proof map | Demo proof index. | WP-13, WP-14. |
 | WP-16 | v0.92 activation-test ledger | Complete activation-test map and deferred-work ledger. | WP-01. |
-| WP-17 | v0.92 first-birthday launch packet | `#3377` go/no-go packet. | WP-10, WP-15, WP-16. |
+| WP-17 | AEE completion tranche and v0.92 launch packet | AEE closure-routing plan plus `#3377` go/no-go packet. | WP-10, WP-15, WP-16. |
 | WP-18 | Docs, quality-gate checklist, and release-truth pass | Aligned bridge and v0.92 planning docs, plus reusable quality-gate checklist integration. | WP-17. |
 | WP-19 | Internal review | Internal review and finding register. | WP-18. |
 | WP-20 | Remediation and v0.92 final preflight | Finding dispositions and v0.92 go/no-go. | WP-19. |
@@ -61,7 +62,8 @@ issues should be reused rather than duplicated.
 3. Add provider/model breadth before claiming multi-agent usefulness.
 4. Run multi-agent proof before relying on it for v0.92.
 5. Prepare demos and activation readiness before first-birthday preflight.
-6. Review, remediate, preflight v0.92, then release.
+6. Route AEE completion explicitly before v0.92 consumes the bridge.
+7. Review, remediate, preflight v0.92, then release.
 
 ## Sequencing Notes
 
@@ -76,8 +78,8 @@ is explicit.
 - WP-02 through WP-06 -> public prompt records are safe to review.
 - WP-07 through WP-12 -> provider/model and multi-agent usefulness are tested.
 - WP-13 through WP-15 -> demo readiness is explicit.
-- WP-16 through WP-17 -> v0.92 activation and first-birthday readiness are
-  ready for WP-01 consumption.
+- WP-16 through WP-17 -> v0.92 activation, AEE closure routing, and
+  first-birthday readiness are ready for WP-01 consumption.
 - WP-18 through WP-21 -> docs, quality-gate checklist application, review,
   remediation, preflight, and release close the bridge.
 

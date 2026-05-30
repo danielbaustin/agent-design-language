@@ -11,6 +11,7 @@ notes:
   - v0.91.5 is the bridge milestone between v0.91.4 C-SDLC hardening and v0.92 first birthday.
   - Multi-agent C-SDLC execution must work by milestone closeout or be truthfully blocked before v0.92 depends on it.
   - v0.92 activation testing must include every known feature surface that comes alive during first birthday.
+  - AEE completion must be routed as a named closure tranche before v0.92 opens; it must not be left implicit until v0.95 convergence.
   - Public prompt records require export, redaction, archive, and reviewer-index controls before `.adl` cleanup.
 card_update_rule:
   - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
@@ -141,11 +142,12 @@ work_packages:
     proof_surface: V092_ACTIVATION_TEST_MAP_v0.91.5.md and linked ledger
   - wp: WP-17
     issue: 3377
+    supporting_issues: [3534]
     title: v0.92 first-birthday launch packet
     queue: docs
     depends_on: [WP-10, WP-15, WP-16]
-    primary_deliverable: go/no-go first-birthday readiness packet
-    proof_surface: launch packet, checklist, and v0.92 opening recommendations
+    primary_deliverable: AEE completion-tranche routing plus go/no-go first-birthday readiness packet
+    proof_surface: AEE completion tranche plan, launch packet, checklist, and v0.92 opening recommendations
   - wp: WP-18
     issue: pending
     supporting_issues: [3531]

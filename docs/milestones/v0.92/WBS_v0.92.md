@@ -15,15 +15,15 @@
 Candidate allocation only. v0.92 has no opened GitHub issue wave yet.
 
 The candidate WP sequence below should be consumed by the v0.92 WP-01 planning
-pass. WP-01 should verify prerequisite truth, reconcile v0.91.5 closeout and
-`#3377`, then seed the
+pass. WP-01 should verify prerequisite truth, reconcile v0.91.5 closeout, the
+AEE completion tranche, and `#3377`, then seed the
 actual GitHub issue wave and full C-SDLC card set.
 
 ## How To Use
 
 Use this WBS as WP-01 seed input, not as proof that v0.92 issues are already
-open. WP-01 should reconcile the sequence with v0.91.5 closeout and `#3377`,
-then generate the
+open. WP-01 should reconcile the sequence with v0.91.5 closeout, the AEE
+completion tranche, and `#3377`, then generate the
 real issue wave and all five C-SDLC cards for each opened issue.
 
 ## WBS Summary
@@ -36,7 +36,7 @@ milestones.
 
 | WP | Work Package | Description | Primary deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
-| WP-01 | Design pass and issue-wave readiness | Promote reviewed v0.92 planning docs, consume v0.91.5 closeout and `#3377`, seed issue wave, and prepare cards. | Opened issue wave and full SIP/STP/SPP/SRP/SOR cards. | v0.91.5 closeout, activation-test map, and `#3377` readiness packet. |
+| WP-01 | Design pass and issue-wave readiness | Promote reviewed v0.92 planning docs, consume v0.91.5 closeout, the AEE completion tranche, and `#3377`, seed issue wave, and prepare cards. | Opened issue wave and full SIP/STP/SPP/SRP/SOR cards, including AEE proof routing if required. | v0.91.5 closeout, activation-test map, AEE completion tranche, and `#3377` readiness packet. |
 | WP-02 | Birthday contract and negative cases | Define what counts as birth and what does not. | Feature contract, negative fixtures, and validation rules. | WP-01. |
 | WP-03 | Stable name and identity architecture | Define identity root, stable name, aliases, provenance, and continuity head. | Identity record contract and fixtures. | WP-02 and prior citizen-state lineage. |
 | WP-04 | Continuity across bounded cycles | Prove identity survives multiple bounded cycles with evidence. | Continuity record, cycle fixtures, validation. | WP-03. |
@@ -49,7 +49,7 @@ milestones.
 | WP-11 | Migration and cross-polis continuity planning | Define bounded design notes for future movement without production migration claims. | Cross-polis continuity feature note, design note, and non-goals. | WP-03, WP-04, WP-10. |
 | WP-12 | First birthday demo | Build a flagship demo showing a real birthday record and negative cases. | Runnable proof demo and artifacts linked to the first-birthday demo feature doc. | WP-02 through WP-10. |
 | WP-13 | Birthday-to-governance handoff | Produce the evidence map v0.93 governance will consume. | Handoff packet mapping identity evidence to governance and ADR-plan updates. | WP-10, WP-11, v0.93 allocation. |
-| WP-14 | Demo matrix and proof coverage | Align demos with milestone claims. | Demo matrix rows, commands, artifacts, and validation notes. | WP-12, WP-13. |
+| WP-14 | Demo matrix, AEE proof, and proof coverage | Align demos and AEE proof expectations with milestone claims. | Demo matrix rows, AEE proof routing or proof packet, commands, artifacts, and validation notes. | WP-12, WP-13, v0.91.5 AEE completion tranche. |
 | WP-15 | Quality gate | Validate implementation, fixtures, docs, and claim boundaries. | Quality-gate record and blocker disposition. | WP-14. |
 | WP-16 | Docs and release-truth pass | Align README, changelog, feature list, ADR plan, release notes, and milestone docs. | Docs review packet, ADR candidate packet if needed, and updated release docs. | WP-15. |
 | WP-17 | Internal review | Run internal code/docs/tests/process review. | Internal review report and finding register. | WP-16. |
@@ -91,6 +91,8 @@ Before opening v0.92 issues, WP-01 must:
 
 - reconcile the candidate sequence with v0.91.5 closeout, the activation-test
   map, and `#3377`
+- reconcile the AEE completion tranche from v0.91.5 and either seed concrete
+  AEE proof work or record why existing v0.92 WPs cover it
 - verify all feature docs remain linked and scoped
 - create all five cards for every opened issue from the active prompt-template
   registry

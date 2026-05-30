@@ -8,6 +8,7 @@ Planned proof-coverage surface.
 
 | Feature | Feature doc | Required proof | Status |
 | --- | --- | --- | --- |
+| AEE completion tranche | [AEE_COMPLETION_TRANCHE_v0.91.5.md](features/AEE_COMPLETION_TRANCHE_v0.91.5.md) | Closure criteria, owner routing, v0.92 activation-test row, and proof expectations for steering, queue/wake/handoff, distributed boundary, policy stops, trace/replay, and end-to-end demo. | planned |
 | Multi-agent C-SDLC operation | [MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md](features/MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md) | Workcell proof or explicit blocker. | planned |
 | Provider/model matrix | [PROVIDER_MODEL_MATRIX_v0.91.5.md](features/PROVIDER_MODEL_MATRIX_v0.91.5.md) | Hosted/local/remote/OpenRouter role evidence. | planned |
 | Public prompt records | [PUBLIC_PROMPT_RECORDS_v0.91.5.md](features/PUBLIC_PROMPT_RECORDS_v0.91.5.md) | Export, validation, redaction, reviewer index. | planned |
