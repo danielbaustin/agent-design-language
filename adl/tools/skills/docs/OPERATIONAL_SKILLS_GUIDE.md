@@ -14,6 +14,7 @@ scratch.
 
 The tracked skill set is:
 
+- `adl-milestone-creator`
 - `adr-curator`
 - `architecture-diagram-reviewer`
 - `architecture-fitness-function-author`
@@ -27,6 +28,7 @@ The tracked skill set is:
 - `issue-splitter`
 - `issue-watcher`
 - `medium-article-writer`
+- `planning-doc-editor`
 - `portable-contract-normalizer`
 - `pr-closeout`
 - `pr-finish`
@@ -87,12 +89,14 @@ The normal workflow is:
 `diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
 `sprint-conductor` is a slow-path sprint orchestrator that sequences issues through the existing lifecycle and editor skills, then finishes with sprint review and closeout.
+`adl-milestone-creator` is a bounded milestone setup helper for creating full milestone packages, bridge milestones, issue-routing truth, feature/proof coverage, and downstream handoff docs without relying on session memory.
 `issue-folding` is a bounded issue-disposition helper for classifying duplicate, superseded, absorbed, already-satisfied, obsolete, or still-actionable issues before closeout.
 `issue-splitter` is a bounded issue-scope helper for deciding whether one issue should stay intact, split now, defer splitting, or stop for operator review.
 `issue-watcher` is a bounded wait-window helper for watching one issue, PR, branch, or dependency gate and routing blockers without mutating state.
 `pr-stack-manager` is a bounded stack-topology helper for ancestry, base alignment, and dependency-order analysis.
 `review-comment-triage` is a bounded review-feedback helper for classifying PR comments before implementation.
 `review-readiness-cleanup` is a bounded review-cycle preflight helper for classifying safe cleanup, blockers, skipped surfaces, and follow-on needs before formal review starts.
+`planning-doc-editor` is a bounded planning-document editor for milestone/project docs that need placeholder cleanup, required-section repair, status-truth normalization, template-contract alignment, or portable-path cleanup without editing lifecycle cards.
 `portable-contract-normalizer` is a bounded portability helper for detecting machine-local assumptions and applying only explicitly approved safe mechanical normalization.
 
 The PR lifecycle skills share the CI runtime interpretation policy in
@@ -241,6 +245,13 @@ The conductor should be especially useful when:
 - initial workflow steps are only partially complete
 - the operator wants one bounded entrypoint
 - skill/subagent policy should be applied explicitly instead of by memory
+
+Use `adl-milestone-creator` when the operator asks to create a milestone,
+bridge milestone, next-milestone package, milestone split, setup wave, or issue
+reallocation package. It should create or consume one setup issue, require
+versioned prompt cards, bind work to a worktree, produce the full milestone
+planning package, preserve moved-vs-abandoned issue truth, run focused
+docs/YAML/link validation, and stop before merge or release approval.
 
 ## Compression-Era Execution Policy
 

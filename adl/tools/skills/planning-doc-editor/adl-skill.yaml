@@ -1,0 +1,118 @@
+version: "0.1"
+kind: "adl-skill"
+id: "planning-doc-editor"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "planning_doc_editor.v1"
+    reference_doc: "../docs/PLANNING_DOC_EDITOR_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "placeholder_cleanup"
+      - "required_section_repair"
+      - "status_truth_normalization"
+      - "planning_packet_review_cleanup"
+      - "template_contract_alignment"
+      - "portable_path_cleanup"
+    policy_fields:
+      - "bounded_target_required"
+      - "source_evidence_required"
+      - "no_card_edits"
+      - "no_release_approval"
+      - "stop_before_publication"
+    mode_requirements:
+      placeholder_cleanup:
+        required_target_fields:
+          - "target_path"
+      required_section_repair:
+        required_target_fields:
+          - "target_path"
+          - "planning_doc_type"
+      status_truth_normalization:
+        required_target_fields:
+          - "target_path"
+          - "status_truth"
+      planning_packet_review_cleanup:
+        required_target_fields:
+          - "target_paths"
+      template_contract_alignment:
+        required_target_fields:
+          - "target_path"
+          - "template_registry_path"
+      portable_path_cleanup:
+        required_target_fields:
+          - "target_path"
+  intent:
+    - "planning_doc_editing"
+    - "milestone_planning_cleanup"
+    - "template_contract_alignment"
+    - "planning_truth_normalization"
+  required_inputs:
+    - "repo_root"
+    - "target.target_path"
+  optional_inputs:
+    - "target.target_paths"
+    - "target.planning_doc_type"
+    - "target.template_version"
+    - "target.template_registry_path"
+    - "target.issue_number"
+    - "target.milestone"
+    - "target.source_issue_prompt"
+    - "target.review_findings"
+    - "target.status_truth"
+    - "target.validation_command"
+  stop_if_missing:
+    - "repo_root"
+    - "target.target_path"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_planning_doc_editor.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "policy.bounded_target_required_must_be_true"
+    - "policy.source_evidence_required_must_be_true"
+    - "policy.no_card_edits_must_be_true"
+    - "policy.no_release_approval_must_be_true"
+    - "policy.stop_before_publication_must_be_true"
+execution:
+  mode: "bounded_planning_doc_editing"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  workflow_role: "planning_doc_editor"
+  preferred_path: "bounded_target_then_source_evidence_then_focused_edit_then_validation_report"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - "bounded planning-document targets explicitly named by the caller"
+  must_not_write:
+    - "SIP/STP/SPP/SRP/SOR lifecycle cards"
+    - "runtime source files"
+    - "unrelated milestone packages"
+  stop_on_partial_failure: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  required_sections:
+    - "target"
+    - "planning_document_type"
+    - "editing_mode"
+    - "defects_corrected"
+    - "claims_demoted_or_qualified"
+    - "validation"
+    - "residual_risks"
+    - "recommended_handoff"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+display_name: Planning Doc Editor
+short_description: Normalize ADL milestone and project planning docs without editing issue cards
+default_prompt: Normalize this ADL planning document against the planning-template contract while preserving generated, reviewed, and approved truth.
