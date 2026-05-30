@@ -2,149 +2,69 @@
 
 ## Status
 
-Mixed demo/proof surface. Rows remain `planned` until the owning WP produces
-tracked proof, and some rows may land as documentary proof packets rather than
-as runnable harness demos when that is the truthful evidence shape.
+Tracked Sprint 4 demo and proof matrix for `v0.91.4` release closeout.
 
-## Metadata
+This matrix now distinguishes three classes of surface:
 
-- Milestone: `v0.91.4`
-- Version: `v0.91.4`
-- Date: `2026-05-25`
-- Owner: ADL maintainers
-- Related issues / work packages: planned v0.91.4 issue wave, WP-02 through
-  WP-14, and CodeFriend sidecar `CF-PRE-02` through `CF-PRE-04`
+- release-blocking C-SDLC proof needed for Sprint 4 closeout
+- bounded showcase/demo surfaces that help reviewers understand the system but do not by themselves close the milestone
+- sidecar or bridge surfaces routed to `v0.91.5` or later so they do not distort `v0.91.4` release truth
 
-## Purpose
+## Scope Boundary
 
-Define the canonical v0.91.4 demo program: which bounded demos exist, which
-milestone claims they prove, and which proof surfaces reviewers should inspect.
+`v0.91.4` closes on Sprint 4 (`#3362` through `#3371`).
 
-## How To Use
+Earlier core C-SDLC work packages remain valid proof inputs for this release.
+Remaining bridge work outside Sprint 4, including multi-agent stabilization and sidecar product follow-on work, is not release-blocking here unless explicitly called back into Sprint 4.
 
-- Use this document for planned milestone evidence, not broad feature
-  brainstorming.
-- Treat every row as `planned` until the named WP produces tracked proof.
-- Keep CodeFriend sidecar proof separate from C-SDLC default-operation proof.
-- If a claim cannot be shown through a runnable demo, record the alternate
-  proof surface in the row and follow-up review.
+## Release-Blocking Proof Surfaces
 
-## Scope
+| ID | Surface | Owning WP / Issue | Status | Reviewer value | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| D13 | Demo matrix and proof coverage refresh | WP-13 / `#3363` | in_progress | makes the release proof surface legible and scoped | this matrix, `FEATURE_PROOF_COVERAGE_v0.91.4.md`, and `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` |
+| D14 | Coverage / quality gate | WP-14 / `#3364` | pending | proves lifecycle, tools, tests, traces, and blocker truth are gated before release | `QUALITY_GATE_v0.91.4.md` |
+| D15 | Docs + adoption review pass | WP-15 / `#3365` | pending | proves the default path is documented honestly enough for maintainers and reviewers | docs-review packet to be produced by WP-15 |
+| D16 | Internal review | WP-16 / `#3366` | pending | proves the code/docs/tests/process slice has internal reviewer scrutiny | internal review packet to be produced by WP-16 |
+| D17 | External / third-party review | WP-17 / `#3367` | pending | proves the release survives outside scrutiny | external review handoff and returned packet |
+| D18 | Review findings remediation | WP-18 / `#3368` | pending | proves findings are fixed, routed, or truthfully deferred | remediation packet and disposition record |
+| D19 | Next milestone planning refresh | WP-19 / `#3369` | pending | proves release closeout does not strand the next planning wave | `NEXT_MILESTONE_HANDOFF_v0.91.4.md` refresh |
+| D20 | Next milestone review pass | WP-20 / `#3370` | pending | proves the next milestone plan has review before ceremony | next-milestone review findings packet |
+| D21 | Release ceremony | WP-21 / `#3371` | pending | proves all release-tail evidence converges in order | release evidence packet and ceremony closeout |
 
-In scope for v0.91.4:
+## Core C-SDLC Proof Already Available
 
-- lifecycle validators, routing, editor repair, and doctor/conductor truth
-- actor standing, shard ownership, evidence convergence, signed trace, merge
-  readiness, and ObsMem handoff
-- sprint closeout enforcement, repeatability metrics, active issue migration,
-  process-drift regression fixtures, and validation-tail/proof-latency evidence
-- bounded multi-agent C-SDLC workcell proof with explicit shard admission,
-  worker/reviewer/janitor lanes, and serialized merge/closeout gates
-- bounded CodeFriend static-site sidecar proof or truthful blocked handoff
+| ID | Surface | Source issue(s) | Status | Why it matters now | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| D01 | Software Development Polis and shard ownership proof | `#3353` | landed | establishes actor standing and bounded coordination claims for the default path | `review/software_development_polis/SOFTWARE_DEVELOPMENT_POLIS_PROOF_PACKET_v0.91.4.md` |
+| D02 | Merge-readiness proof | `#3355` | landed | shows PR gating and GitHub truth preservation are no longer informal | `review/merge_readiness/MERGE_READINESS_GATE_PACKET_v0.91.4.md` |
+| D03 | ObsMem transition memory proof | `#3356` | landed | shows tracked handoff truth can survive transition memory packaging | `review/obsmem_transition_memory/OBSMEM_TRANSITION_MEMORY_PACKET_v0.91.4.md` |
+| D04 | Five-minute sprint repeatability proof | `#3359` | landed | shows the default path has measured repeatability and visible coordination cost | `FIVE_MINUTE_SPRINT_REPEATABILITY_REPORT_2026-05-27.md` |
+| D05 | Process drift regression proof | `#3361` | landed | shows the default path fails closed on known workflow drift modes | `PROCESS_DRIFT_REGRESSION_REPORT_2026-05-28.md` |
 
-Out of scope for v0.91.4:
+## Best Available Reviewer-Facing Showcase Surfaces
 
-- full CodeFriend alpha product behavior
-- making GWS or any workspace bridge a required C-SDLC substrate
-- claiming C-SDLC default operation before the release tail validates it
+| ID | Surface | Source issue(s) | Status | Role in release story | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| S01 | Creative Room static C-SDLC showcase | `#3459` | landed | strongest available front-stage explanation of the C-SDLC operating model without overclaiming live provider-backed orchestration | `review/demo_showcase/CREATIVE_ROOM_PROOF_PACKET_v0.91.4.md` |
+| S02 | Starharvest browser proof | `#3458`, `#3497` | landed | strongest available browser-backed interaction proof for the demo showcase lane | `review/demo_showcase/STARHARVEST_BROWSER_PROOF_v0.91.4.md` and `review/demo_showcase/BROWSER_PROOF_RUNBOOK_v0.91.4.md` |
+| S03 | Best available default-operation showcase note | WP-13 / `#3363` | in_progress | explains which existing demo should be shown to reviewers first and why | `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` |
 
-## Runtime Preconditions
+## Routed Or Non-Blocking Surfaces
 
-Working directory:
+| ID | Surface | Status | Routing truth |
+| --- | --- | --- | --- |
+| R01 | Multi-agent C-SDLC proving wave and remaining stabilization | routed_to_v0_91_5 | the old `#3415` mini-sprint remains useful background evidence, but the concrete bridge wave now lives under `#3501`, `#3503`, and `#3504`, with `#3484` retained as already-satisfied proof rather than a `v0.91.4` release blocker |
+| R02 | CodeFriend sidecar product setup | non_core_sidecar | product publication work is tracked separately and does not count as default-operation C-SDLC proof |
+| R03 | WildClawBench benchmark sidecar | non_core_sidecar | benchmark spike evidence may inform later work, but it is not required for Sprint 4 release closeout |
+| R04 | Unity-facing best-demo completion | deferred_to_v0_91_5 | no `v0.91.4` release claim depends on Unity completion; the current truthful release posture is best-available showcase plus explicit non-claim |
 
-```bash
-# Run commands from the repository root.
-pwd
-```
+## Current Release Read
 
-Deterministic runtime / provider assumptions:
+The strongest reviewer-facing story available today is:
 
-```bash
-# Each WP must record its own focused validation command and proof surface.
-# Live provider, browser, AWS, or DNS checks are required only for demos that
-# explicitly depend on those substrates.
-```
+1. core C-SDLC control-plane proof already landed through Sprints 1 through 3
+2. Creative Room is the best front-stage demo for explaining the default-operation claim boundary
+3. Starharvest provides the strongest browser-backed interaction proof in the current showcase lane
+4. Sprint 4 now needs to finish the closeout tail: quality gate, docs/adoption review, internal review, external review, remediation, next-milestone planning, and ceremony
 
-Additional environment / fixture requirements:
-
-- fixture-based demos should not require private local state
-- signed trace proof must name the trace/digest/signature verification command
-- CodeFriend sidecar proof may depend on AWS/DNS approval or record a blocked
-  handoff if approval is unavailable
-
-## Related Docs
-
-- Design contract: [DESIGN_v0.91.4.md](DESIGN_v0.91.4.md)
-- WBS / milestone mapping: [WBS_v0.91.4.md](WBS_v0.91.4.md)
-- Sprint / execution plan: [SPRINT_v0.91.4.md](SPRINT_v0.91.4.md)
-- Feature proof coverage:
-  [FEATURE_PROOF_COVERAGE_v0.91.4.md](FEATURE_PROOF_COVERAGE_v0.91.4.md)
-- Quality gate: [QUALITY_GATE_v0.91.4.md](QUALITY_GATE_v0.91.4.md)
-- Milestone checklist:
-  [MILESTONE_CHECKLIST_v0.91.4.md](MILESTONE_CHECKLIST_v0.91.4.md)
-
-## Demo Coverage Summary
-
-| Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| D1 | Lifecycle validator hardening | WP-02 blocks or routes invalid/stale lifecycle states. | WP-owned validator command | valid/invalid fixture report | invalid states fail closed or route correctly | fixture-based, replayable | planned |
-| D2 | Doctor/conductor routing | WP-03 maps workflow state to the correct skill. | WP-owned routing check | routing report | state-to-skill mapping matches expected lane | fixture-based, replayable | planned |
-| D3 | Editor repair lane | WP-04 repairs card drift without hand edits. | WP-owned editor repair check | editor repair examples | repaired cards validate and preserve truth | fixture-based, replayable | planned |
-| D4 | Software Development Polis actor standing | WP-05 records explicit roles, standing, authority boundaries, and proof duties. | `python3 adl/tools/validate_software_development_polis_packet.py docs/milestones/v0.91.4/review/software_development_polis` | `actor_standing_allowed.json`, `actor_standing_blocked.json`, and `ct_demo_001_actor_authority_boundary_report.md` | participants have explicit standing, and hidden authority escalation fails closed | fixture-based, replayable | landed |
-| D5 | Shard ownership and interface freeze | WP-05 proves parallel shards have write boundaries and synchronization barriers. | `bash adl/tools/test_software_development_polis_packet.sh` | `shard_ownership_allowed.json`, `shard_ownership_blocked.json`, and `ct_demo_002_shard_conflict_report.md` | overlapping shard writes are blocked or routed before merge | fixture-based, replayable | landed |
-| D6 | Evidence convergence and review synthesis | WP-06 converges transition evidence, review findings, and residual risks. | `python3 adl/tools/validate_v0914_csdlc_evidence_bundle.py docs/milestones/v0.91.4/review/evidence/csdlc` | `ct_demo_001_transition_evidence_bundle.json` and `ct_demo_001_review_synthesis.json` | proof packet contains tracked evidence, preserved findings, and residual risks | replayable from tracked evidence | landed |
-| D7 | Merge-readiness and PR gate hardening | WP-07 preserves issue, branch, CI, review, evidence, trace, and closeout truth. | `bash adl/tools/test_v0914_merge_readiness_gate.sh` | `ct_demo_001_merge_gate_profile_report.md` and `ct_demo_001_merge_gate_snapshot.json` | gate refuses stale truth and records the local-vs-remote merge-state boundary without overclaiming live reconciliation | fixture/snapshot-based | landed |
-| D8 | ObsMem transition memory integration | WP-08 feeds tracked outcome truth, review findings, residual risks, follow-ons, and signed-trace evidence into a replayable memory handoff boundary. | `bash adl/tools/test_v0914_obsmem_transition_memory.sh` | `ct_demo_001_obsmem_transition_memory_handoff.json`, `ct_demo_001_transition_outcome_truth.json`, and `ct_demo_001_transition_evidence_bundle.json` | handoff preserves outcome facts, review findings, residual risks, and follow-ons distinctly while rejecting local-only durable inputs | replayable from tracked repo records | landed |
-| D9 | Sprint closeout enforcement | WP-09 prevents sprint advance or closeout over stale child truth. | WP-owned sprint fixture | sprint state/closeout fixture | stale child truth blocks advancement | fixture-based, replayable | planned |
-| D10 | Signed trace proof | WP-06 emits and verifies tracked trace/digest/signature evidence. | `bash adl/tools/test_v0914_csdlc_evidence_bundle.sh` | signed trace fixture plus verification lane in `review/evidence/csdlc/fixtures/` | signature/digest verification passes and tampering fails closed | replayable from tracked trace bundle | landed |
-| D11 | Repeatable five-minute sprint | WP-10 measures repeated bounded transitions and validation-tail/proof-latency behavior. | Documentary proof packet review via `docs/milestones/v0.91.4/FIVE_MINUTE_SPRINT_REPEATABILITY_REPORT_2026-05-27.md` | documentary repeatability packet with PR timing sample, validation-tail analysis, and PVF linkage | repeated bounded transitions record timing and bottleneck truth without overclaiming end-to-end speed | documentary proof packet; replay means reconstructing the timing sample from tracked docs and GitHub PR metadata, not rerunning a dedicated benchmark harness | landed |
-| D12 | Parallel Validation Fabric | WP-10 proves validation lanes are issue-local, shardable, cache-aware, and truthful about pending/deferred/blocking proof. | Documentary proof packet review via `docs/milestones/v0.91.4/features/PARALLEL_VALIDATION_FABRIC.md` | documentary PVF feature/proof packet plus repeatability report | no failed, pending, deferred, or blocked proof is hidden behind aggregate success | documentary proof packet; richer runnable automation remains future work | landed |
-| D13 | Active issue migration policy | WP-11 classifies active issues into migrate, defer, leave, fold, or block. | WP-owned migration audit | sampled migration audit | sample classifications are explicit and reviewable | audit is reproducible from issue/card state | planned |
-| D14 | Process-drift regression fixtures | WP-12 catches legacy SRP drift, stale SOR truth, skipped closeout, and machine-local truth hazards. | `bash adl/tools/test_process_drift_regressions.sh` | `PROCESS_DRIFT_REGRESSION_REPORT_2026-05-28.md` plus the named fixture commands | known drift cases fail closed | fixture-based, replayable | planned |
-| D15 | Best-demo showcase, including Creative Room and Unity-facing C-SDLC proof | WP-13 packages the strongest reviewer-facing demos, including Creative Room and a Unity-facing demo if available. | `python3 -m http.server 43231 --bind 127.0.0.1` then open `http://127.0.0.1:43231/demos/v0.91.4/adl_creative_room_demo.html` | `docs/milestones/v0.91.4/review/demo_showcase/CREATIVE_ROOM_PROOF_PACKET_v0.91.4.md`, `docs/milestones/v0.91.4/review/demo_showcase/STARHARVEST_REFRESH_NOTE_v0.91.4.md`, plus later showcase packet and proof index | demos are inspectable, bounded, and do not overclaim release state | Creative Room is a static/browser-rendered front-stage artifact with a real `#3459` issue tracker snapshot and replayable lane controls; Starharvest reuses the v0.91.3 artifact with fresh browser proof; Unity remains separately owned and last | in_progress |
-| D16 | CodeFriend pre-alpha welcome page sidecar | CF-PRE-02 through CF-PRE-04 prove static welcome page and HTTPS path, or truthful blocked handoff. | sidecar verification command/runbook | CodeFriend repo/source-map proof, page proof, CloudFront/DNS verification or blocked handoff | welcome page is reachable over HTTPS or blocker is recorded | live proof if available, otherwise blocked handoff | planned |
-| D17 | Multi-agent C-SDLC workcell proof | MA-CSDL-00 through MA-CSDL-04 prove bounded conductor-managed parallel worker/reviewer/janitor lanes without losing card, branch, PR, validation, review, or closeout truth. | `bash adl/tools/test_demo_v0914_codex_only_complete_issue_workcell.sh` | `docs/milestones/v0.91.4/review/multi_agent_workcell/MULTI_AGENT_CSDLC_WORKCELL_PROOF_PACKET_2026-05-28.md`, `docs/milestones/v0.91.4/review/multi_agent_workcell/CODEX_ONLY_COMPLETE_ISSUE_WORKCELL_PROOF_PACKET_2026-05-29.md`, plus the workcell model, assignment plan, and state packet | tracked proof shows two local Ollama worker lanes plus a hosted Codex reviewer coordinated safely after serialized publication normalization, and the `#3484` follow-on slice adds direct tracked evidence that multiple hosted Codex worker lanes can complete disjoint issue-local work in parallel while reviewer publication, janitor routing, and closeout remain serialized gates | bounded proof; live parallelism only where write sets and dependencies are disjoint, and the proof does not overclaim autonomous downstream review, janitor, merge, or closeout | in_progress |
-
-## Coverage Rules
-
-- Every major milestone claim maps to a runnable demo or explicit alternate
-  proof surface.
-- Every demo names one primary proof surface that a reviewer can inspect.
-- Commands must be copy/paste-ready by the time the owning WP closes.
-- Success signals must say what to check, not only that a command exits `0`.
-- Determinism and replay notes must explain how stability is judged.
-
-## Demo Details
-
-Per-demo details are owned by the relevant WP. Until the issue wave executes,
-the coverage summary is the planning source.
-
-## Cross-Demo Validation
-
-WP-14 should verify that demo evidence does not contradict feature proof
-coverage, release readiness, or the milestone checklist.
-
-## Determinism Evidence
-
-Fixture-based demos should be replayable from tracked inputs. Live AWS/DNS or
-provider-dependent demos must record environment assumptions and either proof
-or a blocked handoff.
-
-## Reviewer Sign-Off Surface
-
-Reviewers should use this matrix alongside feature proof coverage, the quality
-gate, and release evidence. No row should be marked complete until the owning
-WP produces tracked evidence.
-
-## Notes
-
-The CodeFriend sidecar is included for scheduling and proof tracking only. It
-does not become C-SDLC core machinery.
-
-## Exit Criteria
-
-- Every planned demo row is completed, blocked with an owner, or routed before
-  release.
-- Demo/proof status agrees with feature proof coverage and the quality gate.
-- No demo overclaims C-SDLC default operation before tracked release evidence
-  supports it.
+`v0.91.4` should not claim live multi-agent completion, Unity completion, or sidecar-product success as required release proof.

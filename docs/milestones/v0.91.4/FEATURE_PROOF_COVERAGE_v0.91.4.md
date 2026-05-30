@@ -2,79 +2,72 @@
 
 ## Status
 
-Planned proof map for C-SDLC completion.
+Tracked proof coverage for `v0.91.4` closeout.
 
-| Feature | Proof Surface | Expected Result | Status |
+This document maps release-facing claims to the strongest currently tracked evidence and distinguishes between:
+
+- landed core proof that already supports the release
+- Sprint 4 closeout proof still required before ceremony
+- routed or deferred surfaces that should not be misrepresented as `v0.91.4` blockers
+
+## Core Default-Operation Claim
+
+`v0.91.4` claims that ADL can operate through a governed Cognitive SDLC default path with explicit cards, truthful routing, bounded review, and durable proof surfaces.
+
+This claim is not the same as claiming every auxiliary experiment is complete. In particular, live multi-agent stabilization, extra sidecar demos, and product sidecar publication are not required release proof for this milestone.
+
+## Proof-Evidence Map For C-SDLC Default Operation
+
+| Claim area | Current status | Strongest tracked evidence | Notes |
 | --- | --- | --- | --- |
-| C-SDLC default operation | `features/COGNITIVE_SDLC_DEFAULT_OPERATION.md` | New software-development issues use the C-SDLC lifecycle by default. | planned |
-| C-SDLC validation and routing hardening | `features/CSDL_VALIDATION_AND_ROUTING_HARDENING.md` | Validators, doctor, conductors, and editors agree on lifecycle state. | planned |
-| Software Development Polis and actor standing | `features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md` | Transition records identify actor roles, standing, authority boundaries, and proof duties. | landed |
-| Shard ownership and interface freeze | `features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md` | Parallel work has explicit ownership, barriers, and conflict rules. | landed |
-| Evidence convergence, review synthesis, and signed trace proof | `features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md` | Durable transition proof is tracked, synthesized, and signed or explicitly blocked. | landed |
-| Merge-readiness and PR gate hardening | `features/MERGE_READINESS_AND_PR_GATE_HARDENING.md` | PR readiness preserves issue, branch, CI, review, evidence, trace, and closeout truth. | landed |
-| ObsMem transition memory integration | `features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md` | Tracked review truth, promoted outcome truth, and signed-trace evidence feed replayable memory handoff records. | landed |
-| Sprint conductor default C-SDLC lane | `features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md` | Sprint execution cannot skip child closeout, umbrella truth, or combined-lane validation. | planned |
-| Five-minute-sprint repeatability | `features/FIVE_MINUTE_SPRINT_REPEATABILITY.md` | More than one transition records coordination, validation-tail/proof-latency, Parallel Validation Fabric, and repeatability metrics. | landed |
-| Parallel Validation Fabric | `features/PARALLEL_VALIDATION_FABRIC.md` | Validation is decomposed into truthful issue-local, shardable, cache-aware, pre-PR evidence-reuse, deferred, pending, and blocking proof lanes without hiding failures. | landed |
-| Multi-agent C-SDLC workcell proof | `SPRINT_v0.91.4.md`, `docs/milestones/v0.91.4/review/multi_agent_workcell/MULTI_AGENT_CSDLC_WORKCELL_PROOF_PACKET_2026-05-28.md`, and `docs/milestones/v0.91.4/review/multi_agent_workcell/CODEX_ONLY_COMPLETE_ISSUE_WORKCELL_PROOF_PACKET_2026-05-29.md` from the `#3415` through `#3419` proof wave plus `#3484` | C-SDLC demonstrates bounded conductor-managed parallel worker lanes with explicit shard admission and serialized publication/review/merge/closeout gates; the new `#3484` evidence strengthens the claim by showing multiple hosted Codex worker lanes completing disjoint issue-local work in parallel without bypassing serialized downstream review, janitor, or closeout control. | in_progress |
-| Active issue migration policy | `features/ACTIVE_ISSUE_MIGRATION_POLICY.md` and `ACTIVE_ISSUE_MIGRATION_AUDIT_2026-05-27.md` | Open issues and future issues have a safe migration/defaulting path. | planned |
-| Process drift regression fixtures | `features/PROCESS_DRIFT_REGRESSION_FIXTURES.md` and `PROCESS_DRIFT_REGRESSION_REPORT_2026-05-28.md` | Known card, closeout, state, and proof drift modes fail closed. | planned |
-| Tracked workflow state migration | `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md` | Durable C-SDLC records, proof packets, signed traces, and ObsMem ingestion surfaces are tracked in Git. | planned |
+| Lifecycle validation and routing hardening | landed | feature docs plus Sprint 1 issue wave (`#3348`, `#3349`, `#3350`) | establishes the card and routing contract the rest of the release depends on |
+| Actor standing and shard ownership | landed | `review/software_development_polis/SOFTWARE_DEVELOPMENT_POLIS_PROOF_PACKET_v0.91.4.md` | supports bounded-authority and shard-ownership claims |
+| Merge-readiness and GitHub truth preservation | landed | `review/merge_readiness/MERGE_READINESS_GATE_PACKET_v0.91.4.md` | proves PR truth is governed rather than informal |
+| ObsMem transition memory handoff | landed | `review/obsmem_transition_memory/OBSMEM_TRANSITION_MEMORY_PACKET_v0.91.4.md` | proves tracked transition truth can be handed off durably |
+| Sprint default lane and repeatability | landed | `FIVE_MINUTE_SPRINT_REPEATABILITY_REPORT_2026-05-27.md` and Sprint 3 deliverables | shows the path is repeatable enough to measure and review |
+| Process-drift fail-closed posture | landed | `PROCESS_DRIFT_REGRESSION_REPORT_2026-05-28.md` | shows known workflow drifts are now caught instead of silently passing |
+| Reviewer-facing demo explanation | partially_proven | `review/demo_showcase/CREATIVE_ROOM_PROOF_PACKET_v0.91.4.md`, `review/demo_showcase/STARHARVEST_BROWSER_PROOF_v0.91.4.md`, and `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` | strongest available showcase path is bounded and honest, not a live-provider overclaim |
+| Release-tail proof convergence | pending_sprint_4 | Sprint 4 WP-14 through WP-21 | this is the remaining blocker between landed machinery and a clean release ceremony |
 
-## Completion Work Proof
+## Feature Coverage Table
 
-The feature rows above cover the feature and hardening work through `WP-12`.
-Milestone completion also requires proof for the demo/proof, quality, review,
-remediation, planning, and release tail:
-
-| WBS Work | Required Proof Surface | Expected Result | Status |
+| Feature | Status | Evidence | Residual boundary |
 | --- | --- | --- | --- |
-| `WP-13` Demo matrix and proof coverage | demo matrix, feature-proof coverage, Creative Room proof packet, Starharvest proof, and proof-evidence map | The completed C-SDLC default-operation package has explicit proof and demo coverage before review begins. | in_progress |
-| `WP-14` Coverage / quality gate | validation gate record | Lifecycle, tooling, trace, evidence, memory, docs, and release blockers are checked before docs/review claims. | planned |
-| `WP-15` Docs + adoption review pass | updated operator docs, skill docs, onboarding references, and docs-review findings | The default C-SDLC path is teachable from the docs without relying on oral context. | planned |
-| `WP-16` Internal review | code/docs/tests/process review packet | The completed C-SDLC default-operation package is reviewed for behavior, docs, tests, process truth, and demo credibility. | planned |
-| `WP-17` External / 3rd-party review | independent review handoff and resulting review packet | Outside reviewers receive the right evidence and review the fully corrected package, not a thin or stale handoff. | planned |
-| `WP-18` Review findings remediation | finding disposition record and follow-on routing | Actionable review findings are fixed or routed before release claims. | planned |
-| `WP-19` Next milestone planning | `NEXT_MILESTONE_HANDOFF_v0.91.4.md` and downstream planning update | The next milestone is planned before the release ceremony, preserving the established release cycle. | planned |
-| `WP-20` Next milestone review pass | final review of next-milestone planning | The handoff is re-reviewed after the short break and before ceremony. | planned |
-| `WP-21` Release ceremony | release evidence packet, signed trace proof, and closeout record | Release truth includes feature proof, tail-work proof, signed trace verification, residual risks, and follow-on routing. | planned |
+| Cognitive SDLC Default Operation | partially_proven | core proof map above plus Sprint 4 closeout tail | final release claim still depends on WP-14 through WP-21 finishing in order |
+| C-SDLC Validation And Routing Hardening | landed | Sprint 1 issue wave and feature doc | no new WP-13 blocker identified |
+| Software Development Polis And Actor Standing | landed | software-development-polis proof packet | reviewer should treat this as control-plane proof, not live multi-agent proof |
+| Shard Ownership And Interface Freeze | landed | software-development-polis proof packet and related feature docs | bounded coordination claim only |
+| Evidence Convergence, Review Synthesis, And Signed Trace Proof | landed_for_release_input | Sprint 2 issue wave and feature doc | later Sprint 4 review surfaces still need to consume this evidence cleanly |
+| Merge-Readiness And PR Gate Hardening | landed | merge-readiness packet | remains a prerequisite input to release-tail review work |
+| ObsMem Transition Memory Integration | landed | ObsMem packet | durable memory handoff is available as release evidence |
+| Sprint Conductor Default C-SDLC Lane | landed | Sprint 3 issue wave | supports default-lane governance claims |
+| Five-Minute Sprint Repeatability | landed | repeatability report | does not hide validation-tail cost |
+| Parallel Validation Fabric | landed_but_non_tail_blocking | PVF docs and runner landed earlier | no remaining PVF stabilization is required to close Sprint 4 |
+| Model Identity And Execution Identity | partial_bridge | `review/provider_substrate_reconciliation/PROVIDER_SUBSTRATE_RECONCILIATION_PLAN.md` and `review/provider_communication_substrate/UTS_REUSE_STRATEGY.md` | remaining provider-alignment follow-on work belongs to `v0.91.5` |
+| Active Issue Migration Policy | landed | `ACTIVE_ISSUE_MIGRATION_AUDIT_2026-05-27.md` and `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md` | supports workflow-state truth claims |
+| Process Drift Regression Fixtures | landed | regression report | release-tail review should explicitly rely on this fail-closed posture |
 
-## Sidecar Proof
+## Sprint 4 Closeout Coverage
 
-The CodeFriend pre-alpha setup sidecar is not C-SDLC core proof, but it must
-still have a truthful completion or blocked-state record before release:
-
-| Sidecar Work | Required Proof Surface | Expected Result | Status |
+| WP | Issue | Status | Required evidence |
 | --- | --- | --- | --- |
-| CodeFriend pre-alpha repo/S3 welcome-page setup | sidecar sprint state, repo/source-map proof, static page proof, AWS/DNS/HTTPS verification or blocked handoff | CodeFriend has a private product/site repo and verified welcome-page path, or a truthful blocked handoff if AWS/DNS approval prevents launch. | planned |
+| WP-13 | `#3363` | in_progress | refreshed demo matrix, refreshed feature proof coverage, best-available showcase packet |
+| WP-14 | `#3364` | pending | `QUALITY_GATE_v0.91.4.md` with blocker dispositions |
+| WP-15 | `#3365` | pending | docs/adoption review packet |
+| WP-16 | `#3366` | pending | internal review packet |
+| WP-17 | `#3367` | pending | external review handoff and returned packet |
+| WP-18 | `#3368` | pending | remediation packet and finding dispositions |
+| WP-19 | `#3369` | pending | next-milestone handoff refresh |
+| WP-20 | `#3370` | pending | next-milestone review packet |
+| WP-21 | `#3371` | pending | release evidence packet and ceremony closeout |
 
-## Required Evidence
+## Explicit Non-Claims For v0.91.4
 
-- validator fixture results
-- doctor/conductor routing examples
-- editor-skill repair examples
-- actor-standing and authority-boundary examples
-- sprint closeout truth examples
-- evidence bundle and review synthesis outputs
-- ObsMem handoff records and promoted outcome/review truth packets
-- five-minute-sprint metrics report, including validation-tail/proof-latency
-  measurements and Parallel Validation Fabric planning evidence
-- Parallel Validation Fabric feature/proof packet showing owned proof lanes,
-  synchronization barriers, blocked-state handling, and reviewer-visible status
-- pre-PR validation evidence reuse plan from `#3437`, including exact
-  commit/tree identity checks and automatic full-Rust fallback when evidence is
-  absent, stale, mismatched, or invalid under current policy
-- multi-agent workcell proof packet showing shard admission, worker/reviewer
-  assignment, branch/worktree boundaries, serialized merge/closeout gates, and
-  coordination timing, plus the `#3484` Codex-only follow-on slice at
-  `docs/milestones/v0.91.4/review/multi_agent_workcell/CODEX_ONLY_COMPLETE_ISSUE_WORKCELL_PROOF_PACKET_2026-05-29.md`
-- active-issue migration policy evidence
-- process-drift regression fixture results
-- docs/adoption review evidence
-- release evidence and closeout packet
-- tracked durable-card, sprint-state, closeout, review, proof, trace, and
-  release evidence paths
-- signed trace bundle and verification result for durable C-SDLC proof
-- ObsMem ingestion evidence derived from tracked records
-- CodeFriend sidecar completion or blocked handoff evidence, without treating
-  CodeFriend as C-SDLC core proof
+`v0.91.4` does not need to prove the following to close Sprint 4:
+
+- live provider-backed multi-agent workcell completion
+- Unity-facing showcase completion
+- CodeFriend sidecar product success as C-SDLC default-operation proof
+- WildClawBench benchmark maturity as release-tail proof
+
+Those surfaces may remain useful. They are simply not the gating proof boundary for this milestone closeout.
