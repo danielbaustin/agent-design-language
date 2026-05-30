@@ -1,0 +1,129 @@
+version: "0.1"
+kind: "adl-skill"
+id: "adl-milestone-creator"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "adl_milestone_creator.v1"
+    reference_doc: "../docs/ADL_MILESTONE_CREATOR_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "milestone"
+      - "policy"
+    mode_enum:
+      - "create_milestone_package"
+      - "create_bridge_milestone"
+      - "split_or_reallocate_milestone"
+      - "review_milestone_creation_plan"
+    policy_fields:
+      - "require_workflow_conductor"
+      - "require_versioned_prompt_templates"
+      - "require_bound_worktree"
+      - "require_full_planning_package"
+      - "require_issue_migration_truth"
+      - "require_focused_docs_validation"
+      - "allow_runtime_validation"
+      - "stop_before_merge"
+    mode_requirements:
+      create_milestone_package:
+        required_milestone_fields:
+          - "target_version"
+          - "purpose"
+      create_bridge_milestone:
+        required_milestone_fields:
+          - "source_version"
+          - "target_version"
+          - "downstream_version"
+          - "moved_issue_numbers"
+      split_or_reallocate_milestone:
+        required_milestone_fields:
+          - "source_version"
+          - "target_version"
+          - "moved_issue_numbers"
+      review_milestone_creation_plan:
+        required_milestone_fields:
+          - "target_version"
+          - "planning_package_paths"
+  intent:
+    - "milestone_creation"
+    - "milestone_split"
+    - "bridge_milestone"
+    - "issue_reallocation"
+    - "planning_package_creation"
+  required_inputs:
+    - "repo_root"
+    - "milestone.target_version"
+  optional_inputs:
+    - "milestone.source_version"
+    - "milestone.downstream_version"
+    - "milestone.purpose"
+    - "milestone.setup_issue_number"
+    - "milestone.moved_issue_numbers"
+    - "milestone.kept_issue_numbers"
+    - "milestone.planning_package_paths"
+    - "milestone.feature_tracks"
+    - "milestone.adr_candidates"
+    - "milestone.activation_map_required"
+  stop_if_missing:
+    - "repo_root"
+    - "milestone.target_version"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_adl_milestone_creator.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "policy.require_workflow_conductor_must_be_true"
+    - "policy.require_versioned_prompt_templates_must_be_true"
+    - "policy.require_bound_worktree_must_be_true_for_repo_mutation"
+    - "policy.require_full_planning_package_must_be_true_unless_operator_explicitly_narrows_scope"
+    - "policy.require_issue_migration_truth_must_be_true_when_issues_move"
+    - "policy.require_focused_docs_validation_must_be_true"
+    - "policy.allow_runtime_validation_must_be_false_for_docs_only_setup"
+    - "policy.stop_before_merge_must_be_true"
+execution:
+  mode: "milestone_setup_process_guidance"
+  allow_code_edits: false
+  allow_network: true
+  allow_subagents: true
+  workflow_role: "milestone_planning_operator"
+  preferred_commands:
+    - "workflow-conductor for issue routing"
+    - "pr-init/pr-ready/pr-run/pr-finish/pr-closeout for the setup issue lifecycle"
+    - "planning-doc-editor for milestone planning document cleanup"
+    - "card editor skills for SIP/STP/SPP/SRP/SOR normalization"
+    - "gh issue list/edit/comment for explicit issue migration truth"
+  preferred_path: "setup_issue_then_bound_worktree_then_full_planning_package_then_review"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - "docs/milestones/**"
+    - "adl/tools/skills/**"
+    - "issue labels/titles/comments explicitly named by the operator"
+    - ".adl/** local issue cards and closeout records"
+  must_not_write:
+    - "runtime source files unless explicitly scoped by a separate issue"
+    - "unrelated milestone packages"
+    - "historical .adl records scheduled for archive review"
+  stop_on_partial_failure: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  required_sections:
+    - "setup_issue"
+    - "target_milestone"
+    - "planning_package"
+    - "issue_routing"
+    - "validation"
+    - "review"
+    - "handoff"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+display_name: ADL Milestone Creator
+short_description: Create complete ADL milestone packages
+default_prompt: Create a complete ADL milestone package with issue routing, planning docs, validation, review, and handoff truth.

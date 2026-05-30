@@ -1,0 +1,4 @@
+interface:
+  display_name: "ADL Milestone Creator"
+  short_description: "Create complete ADL milestone packages"
+  default_prompt: "Use $adl-milestone-creator to create a complete ADL milestone package."
