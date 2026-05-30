@@ -7,6 +7,7 @@ tracked_package: docs/milestones/v0.92
 notes:
   - v0.92 is the first true Godel-agent birthday milestone.
   - This file is a candidate issue-wave preflight surface, not an opened GitHub issue wave.
+  - WP-01 must consume v0.91.5 closeout and the v0.91.5 activation-test map before seeding the final issue wave.
   - WP-01 must consume issue 3377 before seeding the final issue wave.
   - WP-01 must verify the v0.92 feature-doc package and ADR plan before opening implementation WPs.
   - No v0.92 issue should claim legal personhood, production citizenship, consciousness proof, or completed v0.93 constitutional governance.
@@ -22,7 +23,7 @@ work_packages:
     issue: pending
     title: Design pass and issue-wave readiness
     queue: docs
-    depends_on: [v0.91.4 closeout, issue-3377]
+    depends_on: [v0.91.5 closeout, v0.91.5 activation-test map, issue-3377]
     primary_deliverable: reviewed v0.92 docs, verified feature-doc package, ADR plan, opened issue wave, and complete card bundle
     proof_surface: milestone docs, feature docs, ADR plan, issue-wave YAML, and SIP/STP/SPP/SRP/SOR cards
   - wp: WP-02

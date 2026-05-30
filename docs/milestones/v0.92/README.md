@@ -13,7 +13,8 @@
 
 Current status: forward planning for the next milestone.
 
-- Planning: candidate package refreshed during `v0.91.4` issue `#3434`
+- Planning: candidate package refreshed during `v0.91.4` issue `#3434` and
+  bridge dependency added during `#3506`
 - Execution: not started
 - Validation: docs-readiness validation only
 - Release readiness: not applicable until `v0.92` executes
@@ -23,7 +24,7 @@ issue-wave preflight document for WP-01 seeding, but the GitHub issue wave
 must not be opened until `v0.92` begins. Its boundary was rechecked during the
 `v0.91.4` docs-preparation pass so it stays about identity and birth rather
 than absorbing economics, governed tools, or constitutional citizenship
-prematurely.
+prematurely. It now depends on the v0.91.5 bridge closeout before opening.
 
 ## Purpose
 
@@ -35,7 +36,10 @@ The canonical allocation is recorded in
 The first-birthday readiness source issue is
 [#3377](https://github.com/danielbaustin/agent-design-language/issues/3377).
 That issue owns the launch packet and go/no-go readiness plan; this milestone
-package owns the canonical `docs/milestones/v0.92/` planning surface.
+package owns the canonical `docs/milestones/v0.92/` planning surface. Issue
+`#3377` is routed through v0.91.5 so it can consume multi-agent,
+provider/model, public prompt-record, demo-readiness, and activation-test
+outputs before v0.92 WP-01 opens.
 
 ## Milestone Role
 
@@ -101,7 +105,9 @@ v0.92 depends on:
   external-transport non-claims
 - v0.93 as a downstream consumer of identity evidence for constitutional
   citizenship and polis governance
-- v0.91.4 issue `#3377` for first-birthday launch-packet readiness inputs
+- v0.91.5 bridge closeout for multi-agent, provider/model, public prompt,
+  demo-readiness, and activation-test preflight
+- v0.91.5 issue `#3377` for first-birthday launch-packet readiness inputs
 
 ## Parallel Python Reduction Tranche
 
@@ -120,6 +126,9 @@ The likely `v0.92` tranche is:
 
 - `#3377`: first-birthday readiness packet source.
 - `#3434`: v0.92 planning-doc preparation issue.
+- `#3506`: v0.91.5 bridge milestone setup and dependency correction.
+- [../v0.91.5/V092_ACTIVATION_TEST_MAP_v0.91.5.md](../v0.91.5/V092_ACTIVATION_TEST_MAP_v0.91.5.md):
+  activation-test map that v0.92 WP-01 must consume.
 - [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md):
   current identity and birthday allocation plan.
 - [WP_ISSUE_WAVE_v0.92.yaml](WP_ISSUE_WAVE_v0.92.yaml):
@@ -202,7 +211,8 @@ The likely `v0.92` tranche is:
 Later WP planning should preserve the standard milestone rhythm:
 
 - WP-01: promote reviewed milestone docs and issue wave
-- WP-01 must consume the candidate issue wave and `#3377` readiness packet
+- WP-01 must consume the candidate issue wave, v0.91.5 bridge closeout, the
+  activation-test map, and `#3377` readiness packet
   rather than reconstructing the birthday plan from chat.
 - feature WPs: implement identity, continuity, memory grounding, capability,
   ACP/cognitive profile, ACIP binary transport-readiness, witness, receipt, and

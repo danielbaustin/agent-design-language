@@ -16,10 +16,10 @@ and does not create the v0.92 issue wave.
 
 v0.92 is the planned milestone for the first true Gödel-agent birthday.
 
-Issue `#3377` is the v0.91.4 readiness source for the first-birthday launch
+Issue `#3377` is the v0.91.5 readiness source for the first-birthday launch
 packet, go/no-go checklist, demo rehearsal outline, negative-suite plan, and
-review handoff expectations. v0.92 WP-01 must consume that issue before opening
-the final issue wave.
+review handoff expectations. v0.92 WP-01 must consume v0.91.5 closeout, the
+v0.91.5 activation-test map, and `#3377` before opening the final issue wave.
 
 ## Purpose
 
@@ -64,6 +64,7 @@ evidence.
 | v0.90.3 | Citizen-state security, signed envelopes, lineage, continuity witnesses, standing, sanctuary/quarantine, challenge, and redacted projections. | Private-state format, projection policy, quarantine, or standing classes. |
 | v0.91 | Moral trace, Freedom Gate moral events, outcome linkage, trajectory review, wellbeing evidence, moral resources, and anti-harm proof surfaces. | Moral trace schema, moral metrics, wellbeing model, or trajectory-review protocol. |
 | v0.91.1 | Runtime/polis alignment, agent lifecycle states, memory/identity architecture, Theory of Mind foundation, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP local hardening, and observatory-visible runtime proof. | Lifecycle-state transition evidence, ACIP eligibility rules, ACP evidence inputs, ToM schemas, capability harnesses, or intelligence metrics. |
+| v0.91.5 | Multi-agent operational readiness, provider/model matrix, public prompt-record readiness, demo/Unity Observatory readiness, and activation-test map. | First-birthday implementation or birthday release evidence. |
 | v0.92 | Identity architecture, stable names, continuity records, memory grounding, capability envelope, ACIP binary schema/catalog transport readiness, birthday record, migration semantics, and reviewer-facing birth evidence. | Earlier substrate layers, production transport security, signed/queryable trace, or later constitutional governance. |
 | v0.93 | Constitutional citizenship, rights, duties, social contract, delegation, IAM, and polis governance over identity-bearing citizens. | Birth semantics, identity architecture, or continuity prerequisites. |
 

@@ -10,10 +10,11 @@
 
 ## Status
 
-Sprint 1 is closed with clean closeout truth. Sprint 2, Sprint 3, Sprint 4,
-the multi-agent C-SDLC workcell proof mini-sprint, the CodeFriend sidecar, and
-the WildClawBench benchmark spike sidecar remain seeded as controlled
-issue/card batches.
+Sprint 1 is closed with clean closeout truth. Sprint 2, Sprint 3, and Sprint 4
+remain the v0.91.4 core sprint sequence. CodeFriend and WildClawBench are
+closed or closing sidecar evidence lanes. The remaining multi-agent,
+provider/model, public prompt-record, demo-readiness, and first-birthday
+preflight work has moved to v0.91.5.
 
 ## How To Use
 
@@ -30,16 +31,15 @@ truth must stay aligned with the sprint state artifacts.
 | Sprint 3 | Sprint Default And Metrics (`#3357`) | WP-09 `#3358`, WP-10 `#3359`, WP-11 `#3360`, WP-12 `#3361` | Make sprint execution default-safe and measure repeatability, validation-tail, proof-latency, and parallel-validation behavior. |
 | Sprint 4 | Review, Remediation, Planning, And Release (`#3362`) | WP-13 `#3363`, WP-14 `#3364`, WP-15 `#3365`, WP-16 `#3366`, WP-17 `#3367`, WP-18 `#3368`, WP-19 `#3369`, WP-20 `#3370`, WP-21 `#3371` | Prove, gate, review, remediate, plan the next milestone, re-review the handoff, and close the completion milestone. |
 
-## C-SDLC Proof Mini-Sprint
+## Bridge-Routed C-SDLC Proof Work
 
-The multi-agent C-SDLC workcell proof is added v0.91.4 scope because completing
-C-SDLC requires at least one bounded proof that the process can coordinate more
-than one agent lane at a time without losing card, branch, review, PR, or
-closeout truth.
+The multi-agent C-SDLC workcell proof remains required before v0.92 depends on
+multi-agent operation, but it is now routed to v0.91.5 so v0.91.4 can finish
+Sprint 4 and release without further scope expansion.
 
 | Mini-sprint | Title | Ordered Children | Goal |
 | --- | --- | --- | --- |
-| Multi-Agent C-SDLC Workcell Proof (`#3415`) | Parallel C-SDLC workcell proof | MA-CSDL-01 `#3416`, MA-CSDL-02 `#3417`, MA-CSDL-03 `#3418`, MA-CSDL-04 `#3419` | Prove a conductor-managed workcell with bounded worker, reviewer, janitor, and closeout lanes, explicit shard admission, and truthful serialized gates. |
+| Multi-Agent C-SDLC Workcell Proof (`#3415`) | Parallel C-SDLC workcell proof | moved to v0.91.5 | Prove a conductor-managed workcell with bounded worker, reviewer, janitor, and closeout lanes, explicit shard admission, and truthful serialized gates. |
 
 Current workcell state:
 
@@ -48,9 +48,8 @@ Current workcell state:
 - `#3417` owns shard admission and assignment planning.
 - `#3418` owns workcell state artifacts and conductor hook points.
 - `#3419` owns the bounded multi-agent proof sprint and should consume the `#3416` proof-slice recommendation rather than inventing its own lane shape.
-- This is C-SDLC core proof, not product sidecar work, but it does not add
-  extra release-tail gates; its evidence should feed WP-10, WP-13, WP-14, and
-  WP-15.
+- This is C-SDLC core proof, not product sidecar work.
+- Its remaining stabilization and follow-on work is now v0.91.5 bridge scope.
 
 ## Sidecar Mini-Sprint
 
@@ -113,18 +112,16 @@ rule stays reviewable:
   execution now waits on its own routing/dependency gates and remains
   non-core.
 - Batch 7 opened the multi-agent C-SDLC workcell proof `#3415` and
-  MA-CSDL-01 through MA-CSDL-04 as `#3416` through `#3419`; this is added
-  C-SDLC proof scope and should feed WP-10/WP-13/WP-14/WP-15 without changing
-  the closeout-tail sequence.
+  MA-CSDL-01 through MA-CSDL-04 as `#3416` through `#3419`; remaining
+  multi-agent stabilization has moved to v0.91.5.
 - Batch 8 added PVF docs-only follow-on `#3437` for pre-PR validation evidence
   reuse. This issue updates the PVF plan so the later CI/release-gate work can
   avoid rerunning the same full Rust cycle immediately after PR creation when
   the PR head commit and tree exactly match a recorded validation artifact. It
   does not implement CI changes and must fail closed to full validation in the
   future if evidence is absent, stale, mismatched, or invalid under policy.
-- Standalone first-birthday readiness side issue `#3377` is promoted for v0.92
-  launch preparation and should feed WP-19/WP-20; it is not a sprint child and
-  does not alter the v0.91.4 release-tail sequence.
+- Standalone first-birthday readiness issue `#3377` has moved to v0.91.5 and
+  should feed v0.92 WP-01 after v0.91.5 closeout.
 
 Every opened issue receives all five cards upfront. `SIP`, `STP`, and `SPP`
 must be design-time ready before execution starts; `SRP` and `SOR` remain

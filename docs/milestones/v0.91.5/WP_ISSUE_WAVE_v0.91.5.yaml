@@ -1,0 +1,171 @@
+milestone: v0.91.5
+status: draft_pre_open
+owner_issue: 3506
+planning_source: docs/milestones/v0.91.5
+tracked_package: docs/milestones/v0.91.5
+depends_on:
+  - v0.91.4 Sprint 4 closeout
+notes:
+  - v0.91.5 is the bridge milestone between v0.91.4 C-SDLC hardening and v0.92 first birthday.
+  - Multi-agent C-SDLC execution must work by milestone closeout or be truthfully blocked before v0.92 depends on it.
+  - v0.92 activation testing must include every known feature surface that comes alive during first birthday.
+  - Public prompt records require export, redaction, archive, and reviewer-index controls before `.adl` cleanup.
+card_update_rule:
+  - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
+  - SIP, STP, and SPP must be issue-specific and design-time ready before execution starts.
+  - SRP and SOR must exist upfront but remain truthful to review and output lifecycle state.
+  - Card edits must use editor skills.
+  - SOR closeout must match GitHub issue/PR truth.
+moved_issue_inputs:
+  from_v0_91_4:
+    keep_in_v0_91_4: [3362, 3363, 3364, 3365, 3366, 3367, 3368, 3369, 3370, 3371]
+    move_to_v0_91_5: [3377, 3415, 3455, 3460, 3461, 3472, 3473, 3474, 3475, 3476, 3484, 3501, 3502, 3503, 3504, 3505]
+work_packages:
+  - wp: WP-01
+    issue: 3506
+    title: Bridge planning and issue migration
+    queue: docs
+    depends_on: [v0.91.4 Sprint 4 readiness]
+    primary_deliverable: v0.91.5 planning package, issue relabeling, and v0.91.4/v0.92 doc reconciliation
+    proof_surface: planning docs, issue labels, and focused docs validation
+  - wp: WP-02
+    issue: 3476
+    title: Public prompt transition umbrella
+    queue: docs_tools
+    depends_on: [WP-01]
+    primary_deliverable: public prompt transition plan and child issue readiness
+    proof_surface: transition plan and issue graph
+  - wp: WP-03
+    issue: 3472
+    title: Prompt packet exporter
+    queue: tools
+    depends_on: [WP-02]
+    primary_deliverable: public C-SDLC prompt packet exporter
+    proof_surface: exported packet fixtures and validation output
+  - wp: WP-04
+    issue: 3473
+    title: ADL local-state inventory and archive disposition
+    queue: docs
+    depends_on: [WP-02]
+    primary_deliverable: inventory and disposition of `.adl` local state
+    proof_surface: inventory, archive plan, and review-before-delete checklist
+  - wp: WP-05
+    issue: 3474
+    title: Prompt packet pilot and reviewer index
+    queue: docs
+    depends_on: [WP-03, WP-04]
+    primary_deliverable: pilot public prompt packets and reviewer index
+    proof_surface: packet index and reviewer walkthrough
+  - wp: WP-06
+    issue: 3475
+    title: Prompt packet validation and redaction gates
+    queue: quality
+    depends_on: [WP-05]
+    primary_deliverable: validation and redaction gates for public prompt packets
+    proof_surface: redaction report and validation commands
+  - wp: WP-07
+    issue: 3505
+    title: OpenRouter provider
+    queue: provider
+    depends_on: [WP-01]
+    primary_deliverable: OpenRouter provider or bounded provider plan
+    proof_surface: provider identity and smoke-test evidence
+  - wp: WP-08
+    issue: 3501
+    title: Provider/model and role matrix
+    queue: multi_agent
+    depends_on: [WP-07]
+    primary_deliverable: hosted, local Ollama, remote Ollama, and OpenRouter model-role matrix
+    proof_surface: model inventory and role test results
+  - wp: WP-09
+    issue: 3504
+    title: Multi-agent usefulness checklist
+    queue: quality
+    depends_on: [WP-08]
+    primary_deliverable: reviewer checklist for multi-agent usefulness
+    proof_surface: checklist and applied review example
+  - wp: WP-10
+    issue: 3415
+    title: Multi-agent workcell proof
+    queue: multi_agent
+    depends_on: [WP-08, WP-09]
+    primary_deliverable: bounded multi-agent C-SDLC workcell proof
+    proof_surface: workcell proof packet, role records, shard records, and closeout truth
+  - wp: WP-11
+    issue: 3484
+    title: Parallel hosted Codex lanes
+    queue: multi_agent
+    depends_on: [WP-10]
+    primary_deliverable: complete bounded issue execution with parallel hosted Codex lanes
+    proof_surface: branch/worktree/PR/card evidence
+  - wp: WP-12
+    issue: 3503
+    title: Single-agent vs multi-agent overhead comparison
+    queue: docs
+    depends_on: [WP-10]
+    primary_deliverable: overhead and usefulness comparison on one docs audit
+    proof_surface: timing and coordination report
+  - wp: WP-13
+    issue: 3455
+    title: Demo showcase refresh
+    queue: demo
+    depends_on: [WP-01]
+    primary_deliverable: demo showcase index and deferred creative demo routing
+    proof_surface: demo index and proof map
+  - wp: WP-14
+    issue: 3460
+    title: Celestial Rescue Unity game demo
+    queue: demo
+    depends_on: [WP-13]
+    primary_deliverable: Celestial Rescue demo and Unity Observatory readiness decision
+    proof_surface: demo artifact or bounded implementation plan
+  - wp: WP-15
+    issue: 3461
+    title: Demo showcase proof map
+    queue: demo
+    depends_on: [WP-13, WP-14]
+    primary_deliverable: demo showcase proof map
+    proof_surface: demo proof index
+  - wp: WP-16
+    issue: 3502
+    title: v0.92 activation-test ledger
+    queue: docs
+    depends_on: [WP-01]
+    primary_deliverable: deferred-work and activation-test ledger for v0.92
+    proof_surface: V092_ACTIVATION_TEST_MAP_v0.91.5.md and linked ledger
+  - wp: WP-17
+    issue: 3377
+    title: v0.92 first-birthday launch packet
+    queue: docs
+    depends_on: [WP-10, WP-15, WP-16]
+    primary_deliverable: go/no-go first-birthday readiness packet
+    proof_surface: launch packet, checklist, and v0.92 opening recommendations
+  - wp: WP-18
+    issue: pending
+    title: Docs and release-truth pass
+    queue: docs
+    depends_on: [WP-17]
+    primary_deliverable: aligned v0.91.5 and v0.92 planning docs
+    proof_surface: docs review packet
+  - wp: WP-19
+    issue: pending
+    title: Internal review
+    queue: review
+    depends_on: [WP-18]
+    primary_deliverable: internal review report
+    proof_surface: finding register
+  - wp: WP-20
+    issue: pending
+    title: Remediation and v0.92 final preflight
+    queue: review
+    depends_on: [WP-19]
+    primary_deliverable: finding dispositions and v0.92 go/no-go
+    proof_surface: disposition record and preflight checklist
+  - wp: WP-21
+    issue: pending
+    title: Release ceremony
+    queue: release
+    depends_on: [WP-20]
+    primary_deliverable: release evidence and ceremony closeout
+    proof_surface: release notes and closeout record
+

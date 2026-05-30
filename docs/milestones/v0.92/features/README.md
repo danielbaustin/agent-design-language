@@ -17,8 +17,8 @@ These documents define the tracked feature-doc package for the identity,
 continuity, first-birthday, and ACIP transport-readiness band. They are
 planning surfaces, not implementation closeout records.
 
-WP-01 must reconcile these feature contracts with `#3377` before opening the
-final issue wave.
+WP-01 must reconcile these feature contracts with v0.91.5 closeout, the
+v0.91.5 activation-test map, and `#3377` before opening the final issue wave.
 
 ## Template Rules
 
@@ -54,7 +54,8 @@ milestone README, WBS, sprint plan, and candidate issue wave.
 ## Execution Flow
 
 1. WP-01 reviews this index and the linked feature docs.
-2. WP-01 reconciles them with `#3377`.
+2. WP-01 reconciles them with v0.91.5 closeout, the activation-test map, and
+   `#3377`.
 3. WP-01 opens or adjusts implementation issues.
 4. Later WPs update feature docs only with landed evidence.
 
@@ -68,6 +69,7 @@ The package must not claim implementation completion before v0.92 work lands.
 - [../WBS_v0.92.md](../WBS_v0.92.md)
 - [../WP_ISSUE_WAVE_v0.92.yaml](../WP_ISSUE_WAVE_v0.92.yaml)
 - `#3377`
+- [../../v0.91.5/V092_ACTIVATION_TEST_MAP_v0.91.5.md](../../v0.91.5/V092_ACTIVATION_TEST_MAP_v0.91.5.md)
 
 ## Validation
 
@@ -92,7 +94,8 @@ MVP hardening feature packages.
 
 ## Notes
 
-This index intentionally keeps `#3377` visible as a launch-readiness source.
+This index intentionally keeps `#3377` and the v0.91.5 activation-test map
+visible as launch-readiness sources.
 
 ## Feature Documents
 
