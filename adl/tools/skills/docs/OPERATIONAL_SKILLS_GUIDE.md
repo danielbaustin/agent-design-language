@@ -28,6 +28,7 @@ The tracked skill set is:
 - `issue-splitter`
 - `issue-watcher`
 - `medium-article-writer`
+- `planning-doc-editor`
 - `portable-contract-normalizer`
 - `pr-closeout`
 - `pr-finish`
@@ -95,6 +96,7 @@ The normal workflow is:
 `pr-stack-manager` is a bounded stack-topology helper for ancestry, base alignment, and dependency-order analysis.
 `review-comment-triage` is a bounded review-feedback helper for classifying PR comments before implementation.
 `review-readiness-cleanup` is a bounded review-cycle preflight helper for classifying safe cleanup, blockers, skipped surfaces, and follow-on needs before formal review starts.
+`planning-doc-editor` is a bounded planning-document editor for milestone/project docs that need placeholder cleanup, required-section repair, status-truth normalization, template-contract alignment, or portable-path cleanup without editing lifecycle cards.
 `portable-contract-normalizer` is a bounded portability helper for detecting machine-local assumptions and applying only explicitly approved safe mechanical normalization.
 
 The PR lifecycle skills share the CI runtime interpretation policy in
