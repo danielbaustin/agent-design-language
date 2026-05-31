@@ -126,6 +126,7 @@ source notes to tracked execution homes.
 | Backlog item | Current home | Disposition |
 | --- | --- | --- |
 | `LB-101` Memory v2 / ObsMem v2 | Future memory/identity planning; likely v0.92 identity/birthday work or post-v0.91.4 C-SDLC stabilization | Deferred. Captured from `#3390` as a backlog line item only; do not keep a standalone backlog issue open. Future planning should review the ObsMem baseline, trace ingestion, SRP/SOR handoff, identity continuity, privacy/redaction, replay compatibility, and retrieval semantics. |
+| `LB-102` Reusable WP-14 control-tower skill | v0.91.5 execution backlog; follow-on to reusable coverage / quality-gate checklist work | Deferred to v0.91.5 execution. Turn the new WP-14 control-tower packet/checklist pattern into a standard reusable workflow or skill instead of leaving it as a manual one-off. This is process hardening, not v0.91.4 milestone remediation. Candidate scope includes checklist generation, evidence bucket prompts, blocker/follow-on routing, PVF lane-health capture, Rust module tracker consumption, issue closeout sampling, internal-review readiness checks, and a bounded output contract. |
 
 ## Not Yet Execution-Scheduled Before v0.95
 
