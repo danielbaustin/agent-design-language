@@ -8,16 +8,35 @@ trap 'rm -rf "$tmpdir"' EXIT
 manifest="$ROOT_DIR/docs/milestones/v0.91.4/features/PVF_CI_RELEASE_POLICY_MANIFEST_v0.91.4.json"
 docs_changed="$tmpdir/docs.changed"
 runtime_changed="$tmpdir/runtime.changed"
+release_changed="$tmpdir/release.changed"
 docs_report="$tmpdir/docs.report.json"
 runtime_report="$tmpdir/runtime.report.json"
 release_report="$tmpdir/release.report.json"
 
 printf 'M\tadl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md\n' > "$docs_changed"
 printf 'M\tadl/src/lib.rs\n' > "$runtime_changed"
+printf 'M\tdocs/milestones/v0.91.4/README.md\n' > "$release_changed"
 
+set +e
 "$RUNNER" --manifest "$manifest" --changed-files "$docs_changed" --report-out "$docs_report" >"$tmpdir/docs.stdout"
+docs_status=$?
 "$RUNNER" --manifest "$manifest" --changed-files "$runtime_changed" --report-out "$runtime_report" >"$tmpdir/runtime.stdout"
-"$RUNNER" --manifest "$manifest" --changed-files "$docs_changed" --mode release --report-out "$release_report" >"$tmpdir/release.stdout"
+runtime_status=$?
+set -e
+
+if [ "$docs_status" -ne 0 ]; then
+  echo "expected docs-only PR mode to exit 0 for passed aggregate, got $docs_status" >&2
+  cat "$tmpdir/docs.stdout" >&2
+  exit 1
+fi
+
+if [ "$runtime_status" -ne 1 ]; then
+  echo "expected runtime PR mode to exit 1 for release_gate_required, got $runtime_status" >&2
+  cat "$tmpdir/runtime.stdout" >&2
+  exit 1
+fi
+
+"$RUNNER" --manifest "$manifest" --changed-files "$release_changed" --mode release --report-out "$release_report" >"$tmpdir/release.stdout"
 
 python3 - <<'PY' "$docs_report" "$runtime_report" "$release_report"
 import json
@@ -28,11 +47,11 @@ docs = json.loads(Path(sys.argv[1]).read_text())
 runtime = json.loads(Path(sys.argv[2]).read_text())
 release = json.loads(Path(sys.argv[3]).read_text())
 
-assert docs["aggregate_status"] == "release_gate_required"
+assert docs["aggregate_status"] == "passed"
 assert docs["lanes"]["docs_only_pr"]["status"] == "passed"
 assert docs["lanes"]["docs_only_reuse_candidate"]["status"] == "reused"
 assert docs["lanes"]["runtime_pr_fast"]["status"] == "skipped"
-assert docs["lanes"]["authoritative_release_gate"]["status"] == "release_gate_required"
+assert docs["lanes"]["authoritative_release_gate"]["status"] == "skipped"
 
 assert runtime["aggregate_status"] == "release_gate_required"
 assert runtime["lanes"]["docs_only_pr"]["status"] == "skipped"
@@ -47,7 +66,7 @@ assert release["lanes"]["runtime_pr_fast"]["status"] == "skipped"
 assert release["lanes"]["authoritative_release_gate"]["status"] == "passed"
 PY
 
-grep -q "aggregate_status=release_gate_required" "$tmpdir/docs.stdout"
+grep -q "aggregate_status=passed" "$tmpdir/docs.stdout"
 grep -q "aggregate_status=release_gate_required" "$tmpdir/runtime.stdout"
 grep -q "aggregate_status=passed" "$tmpdir/release.stdout"
 grep -q "docs_only_reuse_candidate status=reused" "$tmpdir/release.stdout"
