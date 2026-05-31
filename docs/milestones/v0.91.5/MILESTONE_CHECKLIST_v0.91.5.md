@@ -52,6 +52,7 @@ checks needed for truthful v0.91.5 closeout.
 - [ ] `.adl` cleanup/archive decisions are reviewed before deletion.
 - [ ] Demo readiness and Unity Observatory routing are explicit.
 - [ ] v0.92 activation test map is complete and consumed by `#3377`.
+- [ ] AEE completion tranche is reviewed and routed before v0.92 opens.
 
 ## Release Packaging
 

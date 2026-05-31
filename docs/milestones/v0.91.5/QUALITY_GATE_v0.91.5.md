@@ -18,6 +18,7 @@ The milestone must run focused validation for:
 - single-agent versus multi-agent overhead comparison;
 - demo readiness and Unity Observatory routing;
 - v0.92 activation map completeness;
+- AEE completion-tranche routing and proof expectations;
 - `#3377` first-birthday readiness packet.
 
 ## Reusable Quality-Gate Checklist
@@ -70,6 +71,8 @@ The milestone is blocked if:
 - public prompt packets can leak local/private state;
 - `.adl` cleanup deletes historical material without review;
 - v0.92 activation surfaces remain undocumented;
+- AEE completion remains implicit in v0.95 convergence instead of being routed
+  through `#3534` and v0.92 activation planning;
 - v0.92 docs depend on direct v0.91.4 closeout rather than v0.91.5 closeout and
   `#3377`.
 - the reusable checklist above is not applied, or its blocked/deferred rows are

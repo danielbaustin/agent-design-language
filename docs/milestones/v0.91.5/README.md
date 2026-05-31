@@ -38,13 +38,15 @@ remaining pre-v0.92 work a tracked, reviewable home.
 ## Milestone Role
 
 `v0.91.5` moves ADL from a hardened mostly single-agent C-SDLC lane to a
-pre-v0.92 operating posture where multi-agent execution, provider/model
-breadth, public prompt records, demos, and activation testing are ready enough
-for the first-birthday milestone.
+pre-v0.92 operating posture where AEE completion routing, multi-agent
+execution, provider/model breadth, public prompt records, demos, and activation
+testing are ready enough for the first-birthday milestone.
 
 This milestone exists to:
 
 - make bounded multi-agent C-SDLC execution work truthfully;
+- define AEE completion as a first-class closure tranche instead of leaving it
+  implicit until `v0.95`;
 - prepare the provider/model matrix, including OpenRouter, hosted models, local
   Ollama, and remote Ollama;
 - move public prompt records and `.adl` cleanup/archive planning into a
@@ -170,6 +172,8 @@ Determinism evidence:
 - All moved issues carry `version:v0.91.5` and no longer claim active v0.91.4
   scope.
 - Multi-agent execution has a bounded proof or a blocker that v0.92 can consume.
+- AEE completion has explicit v0.92 owner/proof routing through `#3534` and
+  `#3377`.
 - v0.92 activation testing covers every identified feature surface.
 - Public prompt records have export, validation, redaction, and archive routing.
 

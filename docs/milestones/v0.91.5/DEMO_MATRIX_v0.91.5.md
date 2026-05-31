@@ -22,8 +22,9 @@ Do not mark rows complete until artifacts exist.
 
 ## Scope
 
-Scope covers multi-agent C-SDLC proof, provider/model matrix proof, public
-prompt packet proof, demo readiness, and v0.92 activation preflight.
+Scope covers AEE completion proof routing, multi-agent C-SDLC proof,
+provider/model matrix proof, public prompt packet proof, demo readiness, and
+v0.92 activation preflight.
 
 ## Runtime Preconditions
 
@@ -35,6 +36,7 @@ truthfully without leaking secrets.
 
 | Demo | Issues | Proof expectation | Status |
 | --- | --- | --- | --- |
+| AEE completion tranche | `#3526`, `#3528`, `#3534`, `#3377` | Closure criteria and future proof/demo expectations for steering, queue/wake/handoff, policy stops, trace/replay, and bounded end-to-end AEE behavior. | planned |
 | Multi-agent C-SDLC workcell | `#3415`, `#3501`-`#3504`; `#3484` is closed/satisfied evidence | Bounded issue execution with role, shard, provider, review, and closeout truth. | planned with prior evidence |
 | Provider/model matrix | `#3501`, `#3505` | Hosted, local Ollama, remote Ollama, and OpenRouter model-lane evidence. | planned |
 | Public prompt packet pilot | `#3472`-`#3476` | Exported, redacted, reviewer-indexed prompt packets. | planned |
@@ -56,6 +58,12 @@ truthfully without leaking secrets.
 
 Proof should show a bounded C-SDLC sprint or issue slice completed with more
 than one role while preserving card and PR truth.
+
+### AEE completion tranche
+
+Proof should show that AEE completion has explicit steering, queue/wake/handoff,
+distributed-boundary, policy-stop, trace/replay, and end-to-end demo
+expectations before v0.92 consumes the bridge.
 
 ### Provider/model matrix
 
@@ -79,9 +87,9 @@ v0.92 WP-01.
 
 ## Cross-Demo Validation
 
-The final demo review should confirm there is no contradiction between the
-multi-agent proof, provider matrix, public prompt records, and v0.92 activation
-map.
+The final demo review should confirm there is no contradiction between the AEE
+completion tranche, multi-agent proof, provider matrix, public prompt records,
+and v0.92 activation map.
 
 ## Determinism Evidence
 

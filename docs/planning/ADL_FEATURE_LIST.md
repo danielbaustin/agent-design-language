@@ -125,10 +125,10 @@ ADL already provides a serious platform baseline:
 | Signing, verification, and trust policy | Implemented baseline | signing/verification surfaces, trust docs | Completed baseline in `v0.90`; enterprise hardening complete in `v0.93` |
 | Provider and transport substrate | Implemented baseline | provider docs, HTTP/local provider surfaces, reviewer package | Runtime/provider completion target: `v0.92` |
 | Remote execution baseline | Implemented baseline | bounded remote execution surfaces and docs | Runtime/security completion target: `v0.93` |
-| Human-in-the-loop pause/resume | Implemented baseline | runtime/control surfaces and review docs | MVP completion target: `v0.95` |
+| Human-in-the-loop pause/resume | Implemented baseline; AEE-required subset pulled forward | runtime/control surfaces and review docs | AEE-required queue/wake/handoff subset targeted for `v0.92`; broad operator UX polish by `v0.95` |
 | Structured authoring model | Implemented baseline | SIP/STP/SPP/SRP/SOR contracts and prompt tooling | MVP completion target: `v0.95` |
 | Structured planning and Structured Review Prompt workflow | Implemented baseline | `v0.91` SPP/SRP feature docs, readiness records, validation tooling, and issue-bundle workflow surfaces; historical records may still mention the older Structured Review Policy wording | Completed baseline by `v0.91.0`; validator/closeout hardening continues in `v0.91.1` |
-| Control-plane lifecycle | Implemented baseline | `pr init/create/start/run/finish`, doctor, janitor, closeout surfaces | MVP completion target: `v0.95` |
+| Control-plane lifecycle | Implemented baseline; AEE-required truth surfaces pulled forward | `pr init/create/start/run/finish`, doctor, janitor, closeout surfaces | AEE/control-path truth subset targeted for `v0.91.5`/`v0.92`; broad hardening by `v0.95` |
 | Editor and command-adapter surfaces | Implemented baseline | editor docs, demos, bounded command adapters | MVP completion target: `v0.95` |
 | Review and validation surfaces | Implemented baseline | reviewer contracts, validation tools, review packages | MVP completion target: `v0.95` |
 | Task-bundle workflow | Implemented baseline | issue/task bundles and public execution records | MVP completion target: `v0.95` |
@@ -155,7 +155,7 @@ ADL already provides a serious platform baseline:
 | Instinct and bounded agency | Implemented baseline | `v0.88` feature docs, instinct review surface, Paper Sonata | Cognitive-being completion target: `v0.91`; governance integration complete by `v0.93` |
 | Paper Sonata public-facing proof surface | Implemented baseline | `demo_v088_paper_sonata.sh` and milestone docs | Publication/demo catalog completion target: `v0.95` |
 | Deep-agents comparative proof | Implemented baseline | `demo_v088_deep_agents_comparative_proof.sh` and `v0.89` follow-on demo docs | Publication/demo catalog completion target: `v0.95` |
-| AEE 1.0 convergence | Implemented baseline | `v0.89` `control_path/convergence.json`, D1 proof row, feature doc | Runtime-inhabitant integration complete in `v0.91.1`; MVP integration complete by `v0.95` |
+| AEE 1.0 convergence | Implemented baseline; subsystem closure explicitly pulled forward | `v0.89` `control_path/convergence.json`, D1 proof row, feature doc, and `docs/milestones/v0.91.5/features/AEE_COMPLETION_TRANCHE_v0.91.5.md` | Runtime-inhabitant integration complete in `v0.91.1`; closure tranche defined in `v0.91.5`; subsystem proof targeted for `v0.92`; MVP polish only by `v0.95` |
 | Decision, action, and skill-governance surfaces | Implemented baseline | `v0.89` and `v0.89.1` decision/action/skill docs, runtime/proof surfaces | Governance completion target: `v0.93` |
 | Delegation, refusal, and coordination contracts | Implemented baseline | `v0.89.1` operational-skill and coordination package | Governance completion target: `v0.93` |
 | Provider-extension packaging and safe extension boundaries | Implemented baseline | `v0.89.1` provider-extension package and proof surfaces | Provider/security completion target: `v0.93` |
@@ -223,7 +223,7 @@ ADL already provides a serious platform baseline:
 | Mental time travel / temporal self-projection | Planned | `docs/milestones/v0.94/features/MENTAL_TIME_TRAVEL_v0.94.md` plus the `MTT-v1` source note | `v0.94` |
 | Payments, settlement, economic agency, and `x402` / Lightning adapters | Planned | `docs/milestones/v0.94.1/features/PAYMENTS_SETTLEMENT_AND_X402_v0.94.1.md` and the tracked `v0.94.1` milestone package | `v0.94.1` |
 | Bounded contract-market and resource-stewardship bridge | Implemented baseline | `docs/milestones/v0.90.4` contract-market docs, proof coverage, and demo matrix | Completed bounded baseline by `v0.90.4` |
-| Distributed execution integration | Partially implemented | `docs/milestones/v0.95/features/DISTRIBUTED_EXECUTION_INTEGRATION_v0.95.md`, ADR 0003, and cluster-execution groundwork docs | `v0.95` |
+| Distributed execution integration | Partially implemented; AEE/multi-agent boundary subset pulled forward | `docs/milestones/v0.95/features/DISTRIBUTED_EXECUTION_INTEGRATION_v0.95.md`, ADR 0003, cluster-execution groundwork docs, and `docs/milestones/v0.91.5/features/AEE_COMPLETION_TRANCHE_v0.91.5.md` | AEE/multi-agent boundary proof targeted for `v0.91.5`/`v0.92`; broad distributed integration by `v0.95` |
 | Demo catalog and polished MVP walkthrough | Partially implemented | `docs/milestones/v0.95/features/DEMO_CATALOG_AND_MVP_WALKTHROUGH_v0.95.md` plus milestone demo matrices and reviewer packages | `v0.95` |
 | Control-plane Rust migration / tooling hardening | Partially implemented | `docs/milestones/v0.95/features/CONTROL_PLANE_RUST_MIGRATION_AND_TOOLING_HARDENING_v0.95.md` and Python-elimination/tooling-hardening planning | `v0.95` |
 | Zed integration | MVP-scoped decision | `docs/milestones/v0.95/features/ZED_INTEGRATION_v0.95.md` plus the v0.85 MVP-boundary/editor-planning notes | Complete the adapter or explicitly remove it from MVP scope by `v0.95` |

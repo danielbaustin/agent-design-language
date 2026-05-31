@@ -18,6 +18,7 @@ milestone.
 
 | Surface | Why it matters for v0.92 | Owner issue | v0.92 candidate WP | Test / proof posture | Required v0.91.5 action |
 | --- | --- | --- | --- | --- | --- |
+| AEE completion tranche | First birthday and multi-agent operation need governed adaptation, not scattered retry/convergence claims. | `#3526`, `#3528`, `#3534`, `#3377` | WP-01 / WP-14 candidate | Closure criteria and proof expectations for steering, queue/wake/handoff, distributed boundary, policy stops, trace/replay, and end-to-end demo. | Feed the AEE closure tranche into `#3377`; v0.92 WP-01 must seed or route concrete AEE proof work before claiming birthday readiness. |
 | Memory v2 / ObsMem handoff | First birthday needs witnessed, redacted memory grounding. | `#3502`, `#3377` | WP-03 / WP-04 candidate | Inventory plus activation-test plan; no live-memory claim until proof exists. | Confirm available evidence, blockers, and required v0.92 tests. |
 | ACP / cognitive profiles | Birthday records need bounded cognitive-profile context without free-floating labels. | `#3502`, `#3377` | WP-07 candidate | Fixture and privacy-boundary review before birthday use. | Map profile fixtures and privacy constraints into v0.92 WP-07. |
 | Aptitude and capability selector | Multi-agent and birth capability envelopes need model/role suitability evidence. | `#3501`, `#3505`, `#3377` | WP-06 candidate | Provider/model role matrix plus explicit suitability caveats. | Connect model-role matrix to v0.92 capability-envelope planning. |

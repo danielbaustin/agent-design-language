@@ -21,6 +21,8 @@ work.
 - [ ] `.adl` archive/deletion review disposition complete.
 - [ ] Demo readiness proof map complete.
 - [ ] v0.92 activation test map complete.
+- [ ] AEE completion tranche routed through `#3534`, with v0.92 owner/proof
+      expectations explicit.
 - [ ] `#3377` first-birthday readiness packet complete.
 - [ ] Closed issue/card truth refreshed for the v0.91.5 wave.
 
