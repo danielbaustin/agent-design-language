@@ -121,7 +121,7 @@ The strongest reviewer-facing story available today is:
 1. core C-SDLC control-plane proof already landed through Sprints 1 through 3
 2. Creative Room is the best front-stage demo for explaining the default-operation claim boundary
 3. Starharvest provides the strongest browser-backed interaction proof in the current showcase lane
-4. Sprint 4 now needs to finish the closeout tail: quality gate, docs/adoption review, internal review, external review, remediation, next-milestone planning, and ceremony
+4. Sprint 4 has closed the demo/proof refresh and quality gate; the remaining closeout tail is docs/adoption review, internal review, external review, remediation, next-milestone planning, next-milestone review, and ceremony
 
 `v0.91.4` should not claim live multi-agent completion, Unity completion, or sidecar-product success as required release proof.
 
