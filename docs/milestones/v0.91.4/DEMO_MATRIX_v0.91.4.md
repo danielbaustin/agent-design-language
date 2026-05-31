@@ -10,19 +10,54 @@ This matrix now distinguishes three classes of surface:
 - bounded showcase/demo surfaces that help reviewers understand the system but do not by themselves close the milestone
 - sidecar or bridge surfaces routed to `v0.91.5` or later so they do not distort `v0.91.4` release truth
 
-## Scope Boundary
+## Metadata
+
+- Milestone: `v0.91.4`
+- Version: `v0.91.4`
+- Date: `2026-05-31`
+- Owner: ADL maintainers
+- Related issues / work packages: `#3363` through `#3371`, sidecar evidence
+  lanes `#3372` through `#3382`, bridge routing to `v0.91.5`
+
+## Purpose
+
+Define the canonical v0.91.4 demo and proof program for release-tail review:
+which proof surfaces are release-blocking, which surfaces are explanatory
+showcases, and which sidecar or bridge surfaces are explicitly non-blocking.
+
+## How To Use
+
+- Use release-blocking rows to decide what Sprint 4 must finish before release.
+- Use landed core proof rows as supporting evidence for the C-SDLC default path.
+- Use showcase rows to choose the best reviewer-facing walkthrough without
+  upgrading demos into release gates.
+- Use routed/non-blocking rows to prevent sidecars or bridge work from becoming
+  hidden v0.91.4 release scope.
+
+## Scope
 
 `v0.91.4` closes on Sprint 4 (`#3362` through `#3371`).
 
 Earlier core C-SDLC work packages remain valid proof inputs for this release.
 Remaining bridge work outside Sprint 4, including multi-agent stabilization and sidecar product follow-on work, is not release-blocking here unless explicitly called back into Sprint 4.
 
+## Runtime Preconditions
+
+No single runtime command proves this whole matrix. Reviewer proof is assembled
+from the tracked evidence packets, demo/showcase packets, quality-gate records,
+and release-tail review artifacts named below.
+
+When a row names a runnable demo or validator, use that row's linked proof
+surface for its local preconditions and commands.
+
+## Demo Coverage Summary
+
 ## Release-Blocking Proof Surfaces
 
 | ID | Surface | Owning WP / Issue | Status | Reviewer value | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| D13 | Demo matrix and proof coverage refresh | WP-13 / `#3363` | in_progress | makes the release proof surface legible and scoped | this matrix, `FEATURE_PROOF_COVERAGE_v0.91.4.md`, and `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` |
-| D14 | Coverage / quality gate | WP-14 / `#3364` | pending | proves lifecycle, tools, tests, traces, and blocker truth are gated before release | `QUALITY_GATE_v0.91.4.md` |
+| D13 | Demo matrix and proof coverage refresh | WP-13 / `#3363` | closed | makes the release proof surface legible and scoped | this matrix, `FEATURE_PROOF_COVERAGE_v0.91.4.md`, and `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` |
+| D14 | Coverage / quality gate | WP-14 / `#3364` | closed | proves lifecycle, tools, tests, traces, and blocker truth are gated before release | `QUALITY_GATE_v0.91.4.md` |
 | D15 | Docs + adoption review pass | WP-15 / `#3365` | pending | proves the default path is documented honestly enough for maintainers and reviewers | docs-review packet to be produced by WP-15 |
 | D16 | Internal review | WP-16 / `#3366` | pending | proves the code/docs/tests/process slice has internal reviewer scrutiny | internal review packet to be produced by WP-16 |
 | D17 | External / third-party review | WP-17 / `#3367` | pending | proves the release survives outside scrutiny | external review handoff and returned packet |
@@ -47,7 +82,7 @@ Remaining bridge work outside Sprint 4, including multi-agent stabilization and 
 | --- | --- | --- | --- | --- | --- |
 | S01 | Creative Room static C-SDLC showcase | `#3459` | landed | strongest available front-stage explanation of the C-SDLC operating model without overclaiming live provider-backed orchestration | `review/demo_showcase/CREATIVE_ROOM_PROOF_PACKET_v0.91.4.md` |
 | S02 | Starharvest browser proof | `#3458`, `#3497` | landed | strongest available browser-backed interaction proof for the demo showcase lane | `review/demo_showcase/STARHARVEST_BROWSER_PROOF_v0.91.4.md` and `review/demo_showcase/BROWSER_PROOF_RUNBOOK_v0.91.4.md` |
-| S03 | Best available default-operation showcase note | WP-13 / `#3363` | in_progress | explains which existing demo should be shown to reviewers first and why | `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` |
+| S03 | Best available default-operation showcase note | WP-13 / `#3363` | closed | explains which existing demo should be shown to reviewers first and why | `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` |
 
 ## Routed Or Non-Blocking Surfaces
 
@@ -57,6 +92,27 @@ Remaining bridge work outside Sprint 4, including multi-agent stabilization and 
 | R02 | CodeFriend sidecar product setup | non_core_sidecar | product publication work is tracked separately and does not count as default-operation C-SDLC proof |
 | R03 | WildClawBench benchmark sidecar | non_core_sidecar | benchmark spike evidence may inform later work, but it is not required for Sprint 4 release closeout |
 | R04 | Unity-facing best-demo completion | deferred_to_v0_91_5 | no `v0.91.4` release claim depends on Unity completion; the current truthful release posture is best-available showcase plus explicit non-claim |
+
+## Coverage Rules
+
+- Release-blocking proof must remain separate from reviewer-facing showcase
+  material.
+- Sidecar and bridge surfaces must not become release gates unless a later issue
+  explicitly promotes them.
+- A row may use a tracked proof packet instead of a runnable command when the
+  proof surface is a review, quality, release, or handoff artifact.
+- Pending rows must stay pending until the named WP produces evidence.
+
+## Demo Details
+
+This milestone uses compact table-backed proof details rather than one expanded
+demo block per row because Sprint 4 is a release-tail review sequence. The
+tables above are the canonical row-level detail for:
+
+- release-blocking proof surfaces
+- landed core C-SDLC proof already available
+- reviewer-facing showcase surfaces
+- routed or non-blocking sidecar/bridge surfaces
 
 ## Current Release Read
 
@@ -68,3 +124,39 @@ The strongest reviewer-facing story available today is:
 4. Sprint 4 now needs to finish the closeout tail: quality gate, docs/adoption review, internal review, external review, remediation, next-milestone planning, and ceremony
 
 `v0.91.4` should not claim live multi-agent completion, Unity completion, or sidecar-product success as required release proof.
+
+## Cross-Demo Validation
+
+Cross-demo validation happens through Sprint 4, not through a single demo
+command:
+
+- WP-13 refreshes demo/proof coverage.
+- WP-14 records quality-gate and validation posture.
+- WP-15 records docs/adoption readiness.
+- WP-16 and WP-17 provide internal and external review.
+- WP-18 records remediation or truthful deferral.
+
+## Determinism Evidence
+
+Determinism evidence is supplied by the tracked proof packets and validators
+named in the table rows, plus release-tail review of whether those packets are
+repo-relative, replayable where applicable, and explicit about non-claims.
+
+## Reviewer Sign-Off Surface
+
+Reviewers should sign off against:
+
+- this matrix
+- `FEATURE_PROOF_COVERAGE_v0.91.4.md`
+- `QUALITY_GATE_v0.91.4.md`
+- `review/docs_adoption/WP15_DOCS_ADOPTION_REVIEW_2026-05-31.md`
+- internal and external review packets once WP-16 and WP-17 complete
+
+## Exit Criteria
+
+- Release-blocking rows have landed evidence, truthful blockers, or routed
+  follow-on dispositions.
+- Showcase rows remain explanatory and do not become hidden release gates.
+- Sidecar and bridge rows are explicitly non-blocking unless promoted by a
+  later tracked decision.
+- The matrix passes the planning-template structure validator.

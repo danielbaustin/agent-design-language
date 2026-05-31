@@ -72,6 +72,10 @@ That sidecar is part of v0.91.4 scheduling, but it is not C-SDLC core
 machinery and must not be used as proof that C-SDLC default operation is
 complete.
 
+v0.91.4 also carries the bounded WildClawBench benchmark-spike sidecar. That
+sidecar is evaluation evidence and failure-taxonomy learning, not a release
+gate, benchmark-win claim, or C-SDLC core dependency.
+
 The v0.91.5 bridge milestone now carries the remaining multi-agent,
 provider/model, public prompt-record, demo-readiness, and first-birthday
 preflight work so v0.91.4 can land cleanly.
@@ -155,6 +159,8 @@ are the branch-verifiable C-SDLC planning surfaces for review.
 - WildClawBench setup notes:
   [WILDCLAW_SETUP_NOTES.md](WILDCLAW_SETUP_NOTES.md)
 - Quality gate: [QUALITY_GATE_v0.91.4.md](QUALITY_GATE_v0.91.4.md)
+- Docs/adoption review:
+  [review/docs_adoption/WP15_DOCS_ADOPTION_REVIEW_2026-05-31.md](review/docs_adoption/WP15_DOCS_ADOPTION_REVIEW_2026-05-31.md)
 - Release plan: [RELEASE_PLAN_v0.91.4.md](RELEASE_PLAN_v0.91.4.md)
 - Release notes: [RELEASE_NOTES_v0.91.4.md](RELEASE_NOTES_v0.91.4.md)
 - Milestone checklist:
@@ -247,6 +253,8 @@ v0.91.4 is ready to close when:
   next-milestone review, and release ceremony sequence
 - the CodeFriend sidecar setup is either complete, truthfully blocked with a
   handoff, or explicitly routed before release
+- the WildClawBench sidecar spike is either complete, truthfully blocked with a
+  handoff, or explicitly routed before release
 
 ## Exit Criteria
 
@@ -256,4 +264,6 @@ v0.91.4 is ready to close when:
 - Review, remediation, next-milestone planning, next-milestone review, and
   release ceremony happen in the required order.
 - Any incomplete CodeFriend sidecar work is recorded as blocked or routed
+  without weakening the C-SDLC release bar.
+- Any incomplete WildClawBench sidecar work is recorded as blocked or routed
   without weakening the C-SDLC release bar.
