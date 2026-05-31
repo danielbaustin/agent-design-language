@@ -9,7 +9,7 @@ It answers four practical questions:
 - what ADL already does today
 - what is active in the current milestone
 - which major platform bands are planned next
-- how the project is expected to converge by `v0.95`
+- how each feature is expected to reach an explicit completion state
 
 The tone should be strong because ADL has already become a substantial system.
 The status language should remain strict: we only call something implemented
@@ -33,21 +33,86 @@ can survive code review, ops review, and postmortem analysis.
 
 ## Status Legend
 
+The status column describes current repo maturity, not final completion. A
+feature can have a real implemented baseline and still need later subsystem,
+milestone-integration, or MVP-completion work.
+
 - **Implemented**: materially present on `main` with working code, artifacts,
-  docs, and/or demo or review surfaces.
-- **Implemented baseline**: already real and usable, with later milestones
-  deepening, integrating, or hardening it.
+  docs, and/or demo or review surfaces. This does not automatically mean the
+  feature is complete for every milestone or for the MVP.
+- **Implemented baseline**: a real, usable slice exists. Baseline means "there
+  is something reviewable to build from," not "the feature is done."
 - **Active milestone**: materially present and under active closeout/review in
   the current milestone band.
 - **Partially implemented**: meaningful enabling surfaces exist, but the
-  capability is not yet complete enough to count as a finished platform band.
+  capability is not yet complete enough to count as a finished subsystem or
+  platform band.
 - **Planned**: primarily a planned milestone/feature band today.
-- **MVP-scoped**: not complete yet, but explicitly assigned to a milestone no
-  later than `v0.95`.
+- **MVP-scoped**: not complete yet, but explicitly assigned to the MVP path.
+  By `v0.95`, every in-roadmap feature should at least reach
+  `baseline_exists` unless it is explicitly out of scope.
+- **Post-MVP / post-v0.95 completion**: baseline is expected by `v0.95`, but
+  subsystem-complete or product-complete work is intentionally later. This is
+  valid only when the feature has an explicit rationale and non-goal boundary.
+- **Out of scope**: deliberately excluded from the current roadmap, with a
+  recorded reason.
 
-Every feature row must name the milestone where the feature is complete enough
-for the `v0.95` MVP. "Deepen later", "future", and "post-v0.95" are not valid
-completion targets in this list.
+Every feature row must eventually name an explicit baseline target, completion
+target, or out-of-scope disposition. "Deepen later" and "future" are not valid
+by themselves. Post-v0.95 completion is allowed, but the feature should still
+have a v0.95 baseline if it remains in the MVP roadmap.
+
+MVP rule: `v0.95` is the MVP convergence milestone, not the universal
+subsystem-completion milestone. By `v0.95`, every feature that remains in the
+MVP roadmap should at least have a reviewable baseline, proof posture, and
+explicit post-MVP disposition if it is not fully complete.
+
+## Completion State Model
+
+Use these completion states when interpreting or updating feature rows.
+
+| Completion state | Meaning | Required evidence |
+| --- | --- | --- |
+| `baseline_exists` | A bounded slice exists and is reviewable. | Code, docs, demo, fixture, proof packet, or review artifact exists on `main`. |
+| `subsystem_complete` | The feature has explicit done criteria and all required subsystem behavior is implemented or explicitly out of scope. | Done criteria, owner issue/PR evidence, validation, review, and residual-risk disposition. |
+| `integrated_for_milestone` | The feature is usable for a named milestone story. | Milestone docs, issue wave, proof surface, and release-tail evidence agree. |
+| `mvp_complete` | No known MVP-blocking work remains for the feature. | MVP acceptance criteria, validation, demo/proof, review sign-off, and release evidence. |
+| `partial_or_blocked` | Some surfaces exist but completion depends on unresolved work or a blocker. | Blocker, owner, target milestone, and next proof step are recorded. |
+| `post_mvp_completion` | Baseline is expected by `v0.95`, but subsystem/product completion is later. | v0.95 baseline proof, explicit non-MVP rationale, boundary, and optional future target. |
+| `out_of_scope` | ADL deliberately will not pursue this work in the current roadmap. | Decision note or issue disposition explaining why. |
+
+Moving a feature from `baseline_exists` to any completion state requires four
+things: clear done criteria, an owner milestone or post-MVP disposition, a
+proof surface, and residual-risk routing. A baseline row without those four
+things is not complete; it is only a starting point future agents can rely on.
+
+## Enterprise Security Organization Boundary
+
+Enterprise-security features are part of the roadmap, but they should not make
+the core ADL runtime harder to understand, build, or review. Treat enterprise
+security as a separable capability band rather than as ambient mainline
+complexity.
+
+Recommended organization rule:
+
+- Keep core runtime, C-SDLC, prompt records, provider substrate, and ordinary
+  validation paths in the mainline code/docs surface.
+- Put enterprise security features behind explicit modules, feature docs,
+  schemas, adapters, fixtures, tests, and proof packets.
+- Prefer names and paths that make the boundary obvious, such as
+  `enterprise_security`, `adversarial_runtime`, `signed_trace`, `policy`,
+  `trust`, or milestone feature docs that point to those modules.
+- Do not let enterprise-only threat models, deployment assumptions, or audit
+  requirements become hidden prerequisites for normal local ADL development.
+- Require every enterprise-security feature to declare whether its `v0.95`
+  requirement is baseline, subsystem complete, MVP complete, or post-MVP
+  completion.
+
+Dedicated planning issue `#3538` owns the architecture decision before large
+code moves: first inventory enterprise-security surfaces, then decide whether
+they belong in separate Rust modules, feature gates, crates, docs packages, or
+proof bundles. The organizing principle is clear now: separate the enterprise
+security band without orphaning the proof and policy contracts it depends on.
 
 ## Current Repo Status
 
@@ -219,7 +284,7 @@ ADL already provides a serious platform baseline:
 | Bounded Theory of Mind, relationship, reputation, and shared social memory boundary | Planned | `docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md` and `docs/milestones/v0.93/features/SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md` | `v0.93` |
 | Delegation, upstream delegation, IAM, standing transition, and challenge/appeal governance | Planned | `docs/milestones/v0.93/features/DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md` plus `.adl/docs/TBD/ADL_AGENT_UPSTREAM_DELEGATION.md` source planning | `v0.93` |
 | Enterprise security for the ADL polis | Planned | `docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md` and the `v0.93` zero-trust/security work breakdown | `v0.93` |
-| Secure execution, policy, identity/auth, isolation, and provider-trust convergence | Planned | `docs/milestones/v0.94/features/SECURE_EXECUTION_AND_TRUST_CONVERGENCE_v0.94.md` and the tracked `v0.94` milestone package | `v0.94` |
+| Secure execution, policy, identity/auth, isolation, and provider-trust convergence | Planned | `docs/milestones/v0.94/features/SECURE_EXECUTION_AND_TRUST_CONVERGENCE_v0.94.md` and the tracked `v0.94` milestone package | `v0.94`; enterprise-security repo/module separation must be explicitly planned before large code movement |
 | Mental time travel / temporal self-projection | Planned | `docs/milestones/v0.94/features/MENTAL_TIME_TRAVEL_v0.94.md` plus the `MTT-v1` source note | `v0.94` |
 | Payments, settlement, economic agency, and `x402` / Lightning adapters | Planned | `docs/milestones/v0.94.1/features/PAYMENTS_SETTLEMENT_AND_X402_v0.94.1.md` and the tracked `v0.94.1` milestone package | `v0.94.1` |
 | Bounded contract-market and resource-stewardship bridge | Implemented baseline | `docs/milestones/v0.90.4` contract-market docs, proof coverage, and demo matrix | Completed bounded baseline by `v0.90.4` |
@@ -577,9 +642,15 @@ into MVP scope; otherwise they remain non-claims, not hidden backlog.
 - MVP dependency cleanup
 - reasoning graph and signed/queryable trace completion
 
-### v0.95 - MVP Convergence and Feature Freeze
+### v0.95 - MVP Baseline Convergence and Feature Freeze
 
-`v0.95` is the planned convergence point:
+`v0.95` is the planned MVP convergence point. It should ensure every
+in-roadmap feature has at least a reviewable baseline and clear proof posture;
+it does not have to make every subsystem product-complete. Features that remain
+unfinished after the MVP must have explicit post-MVP disposition instead of
+implicit backlog language.
+
+The v0.95 band includes:
 - polished demo catalog
 - coherent MVP walkthrough
 - control-plane/tooling hardening
@@ -634,4 +705,6 @@ deliberate convergence path:
 - complete v0.91.3/v0.91.4 C-SDLC first-slice and default-operation work
 - complete v0.92 identity/birthday work and v0.93 governance/security work
 - close v0.94 integration gaps before the v0.95 MVP freeze
+- ensure every in-roadmap feature has a baseline, proof posture, and completion
+  or post-MVP disposition
 - close the MVP as a serious, reviewable agent-runtime platform
