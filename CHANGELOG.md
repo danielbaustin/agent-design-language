@@ -4,9 +4,10 @@ All notable project-level changes are summarized here by milestone/release.
 
 ## v0.91.4 (Active milestone)
 
-Status: Active. The v0.91.4 issue wave and sprint umbrellas are open, and the
-crate version has advanced to `0.91.4` for the C-SDLC default-operation,
-repeatability, validation-tail, and Parallel Validation Fabric hardening line.
+Status: Active. The v0.91.4 issue wave and sprint umbrellas are open, the
+crate version has advanced to `0.91.4`, and the milestone is in its Sprint 4
+review/release-tail sequence for the C-SDLC default-operation, repeatability,
+validation-tail, and Parallel Validation Fabric hardening line.
 
 Planning notes:
 - The tracked v0.91.4 package lives under `docs/milestones/v0.91.4/`.
@@ -14,6 +15,10 @@ Planning notes:
 - The milestone owns C-SDLC default operation, signed trace and ObsMem handoff
   hardening, five-minute-sprint repeatability, validation-tail/PVF work, and
   sidecar preparation for CodeFriend and WildClawBench.
+- Bridge work that should not block v0.91.4 release closeout has been routed to
+  v0.91.5: multi-agent stabilization, provider/model matrix, public prompt
+  records, demo readiness, first-birthday preflight, AEE completion routing,
+  and enterprise-security repo/module separation planning.
 - This is an active milestone entry, not a release entry.
 
 ## v0.91.3 (Completed milestone)

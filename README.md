@@ -151,11 +151,12 @@ from issue
 ### v0.91.4 - Active Cognitive SDLC Default-Operation Milestone
 
 v0.91.4 is the active Cognitive SDLC completion and hardening milestone. Its
-issue wave and sprint umbrellas are open, and the crate version has advanced to
-`0.91.4`. The milestone turns the v0.91.3 first slice into default operating
-practice: validator/doctor/conductor/editor alignment, signed trace and ObsMem
-handoff hardening, five-minute-sprint repeatability, validation-tail/PVF work,
-and sidecar preparation for CodeFriend and WildClawBench.
+issue wave and sprint umbrellas are open, the crate version has advanced to
+`0.91.4`, and the milestone is in its Sprint 4 review/release-tail sequence.
+The milestone turns the v0.91.3 first slice into default operating practice:
+validator/doctor/conductor/editor alignment, signed trace and ObsMem handoff
+hardening, five-minute-sprint repeatability, validation-tail/PVF work, and
+bounded sidecar evidence for CodeFriend and WildClawBench.
 
 Start here:
 
@@ -260,9 +261,9 @@ production markets.
 - Active milestone: v0.91.4
 - Current crate version: 0.91.4
 - Most recently completed milestone: v0.91.3
-- Current milestone state: v0.91.4 issue setup is underway, with C-SDLC
-  default-operation hardening, validation-tail/PVF work, and sidecar setup work
-  active
+- Current milestone state: v0.91.4 is in Sprint 4 docs/review/release-tail
+  convergence. WP-14 quality gate is closed, WP-15 docs/adoption review is
+  active, and remaining bridge work has been routed to v0.91.5.
 - Previous completed milestone before v0.91.2: v0.91.1
 - Primary implementation language: Rust
 

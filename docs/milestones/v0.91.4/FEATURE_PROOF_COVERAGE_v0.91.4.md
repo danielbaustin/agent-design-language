@@ -51,8 +51,8 @@ This claim is not the same as claiming every auxiliary experiment is complete. I
 
 | WP | Issue | Status | Required evidence |
 | --- | --- | --- | --- |
-| WP-13 | `#3363` | in_progress | refreshed demo matrix, refreshed feature proof coverage, best-available showcase packet |
-| WP-14 | `#3364` | pending | `QUALITY_GATE_v0.91.4.md` with blocker dispositions |
+| WP-13 | `#3363` | closed | refreshed demo matrix, refreshed feature proof coverage, best-available showcase packet |
+| WP-14 | `#3364` | closed | `QUALITY_GATE_v0.91.4.md` with blocker dispositions |
 | WP-15 | `#3365` | pending | docs/adoption review packet |
 | WP-16 | `#3366` | pending | internal review packet |
 | WP-17 | `#3367` | pending | external review handoff and returned packet |

@@ -24,6 +24,7 @@ work.
   [C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN](C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md)
 - [ ] Signed trace proof and verification evidence complete.
 - [ ] CodeFriend pre-alpha sidecar setup complete or truthfully blocked/routed.
+- [ ] WildClawBench benchmark-spike sidecar complete or truthfully blocked/routed.
 - [ ] v0.91.5 bridge work routed out of v0.91.4 release scope:
   multi-agent stabilization, provider/model matrix, public prompt records,
   demo readiness, and first-birthday preflight.
