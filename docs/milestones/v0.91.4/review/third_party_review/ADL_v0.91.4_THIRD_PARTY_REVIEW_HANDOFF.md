@@ -9,7 +9,7 @@
 - Prepared during: `v0.91.4` release tail
 - Prepared for issue: `#3367`
 - Parent sprint: `#3362`
-- Current packet status: `ready_for_external_review`
+- Current packet status: `blocked_pending_internal_review_artifact_recovery`
 - Date: `2026-06-01`
 - Publication attempted: false
 - Release approval claimed: false
@@ -19,11 +19,14 @@
 
 This handoff is the tracked third-party review packet surface for `WP-17`.
 `WP-16` / `#3366` is closed, and the WP-16-originated remediation wave is
-closed through merged PRs.
+closed through merged PRs. This packet is not ready to send until the recovered
+WP-16 internal-review artifacts are published through `#3555`.
 
 Before sending this packet to an external reviewer, confirm again:
 
 - `#3366` remains closed.
+- `#3555` is closed and the recovered WP-16 internal-review artifacts are
+  present under `docs/milestones/v0.91.4/review/internal_review/`.
 - The WP-16 closeout comment remains the controlling internal-review closeout
   evidence.
 - Accepted WP-16 findings remain fixed through merged PRs or explicitly routed.
@@ -99,11 +102,16 @@ The closeout comment names the intended internal-review artifacts:
 - `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_SYNTHESIS_2026-05-31.md`
 - `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_REMEDIATION_ISSUES_2026-05-31.md`
 
-Those named files are not present on current `origin/main` as tracked files at
-the time this handoff was refreshed. For WP-17 entry, the controlling evidence
-is therefore the WP-16 closeout comment plus the closed remediation issue/PR
-wave below. The external reviewer should treat the missing tracked files as a
-reviewable evidence-shape caveat, not as release approval.
+Those named files were recovered from the WP-16 worktree after this handoff
+was refreshed, but they are not yet present on current `origin/main` as tracked
+files. The recovery is tracked by `#3555`
+`[v0.91.4][WP-16][review] Publish recovered internal review artifacts`.
+
+Do not send this packet to an external reviewer until `#3555` is closed and
+the recovered artifacts are present under the tracked internal-review path.
+Until then, the controlling evidence is the WP-16 closeout comment plus the
+closed remediation issue/PR wave below, and the absent tracked files remain a
+blocking evidence-shape gap.
 
 ## WP-16 Finding Disposition
 
