@@ -17,17 +17,19 @@ shipped behavior.
 
 ## Summary
 
-`v0.91.4` completes the C-SDLC rollout by hardening the first slice into a
-repeatable default development lane for future ADL software work.
+`v0.91.4` is planned to close the C-SDLC rollout by hardening the first slice
+into a repeatable development lane for future ADL software work. Final release
+notes must confirm this only after the release-tail gates land.
 
 ## Highlights
 
-- Makes C-SDLC the default path for future ADL software-development issues.
-- Hardens validators, doctor, conductor, and editor routing around lifecycle
-  truth.
+- Prepares C-SDLC to become the default path for future ADL
+  software-development issues, subject to final release-tail proof.
+- Should harden validators, doctor, conductor, and editor routing around lifecycle
+  truth, pending final release-tail proof.
 - Adds Software Development Polis actor-standing and shard-ownership support
   needed for repeated execution.
-- Tracks durable workflow records in Git.
+- Should track durable workflow records in Git.
 - Adds signed trace proof and verification evidence.
 - Integrates SRP/SOR outcome truth with ObsMem handoff.
 - Measures repeatable five-minute-sprint behavior, including validation-tail
@@ -62,7 +64,8 @@ repeatable default development lane for future ADL software work.
 
 ## Upgrade Notes
 
-- Future ADL software-development issues should use the C-SDLC default lane.
+- Future ADL software-development issues should use the C-SDLC lane once the
+  release-tail proof has landed.
 - Durable workflow records must be tracked; local `.adl` state is not enough.
 - Active issues should follow the migration policy rather than ad hoc rewrites.
 

@@ -46,9 +46,10 @@ software-development path.
 
 ## Purpose
 
-v0.91.4 completes the Cognitive SDLC rollout.
+v0.91.4 is the Cognitive SDLC rollout-closeout milestone.
 
-Where v0.91.3 proves the crown jewel, v0.91.4 makes it operational:
+Where v0.91.3 proves the crown jewel, v0.91.4 is intended to make it
+operational through the release-tail gates:
 
 - stricter lifecycle validators
 - reliable conductor and editor routing
@@ -61,7 +62,7 @@ Where v0.91.3 proves the crown jewel, v0.91.4 makes it operational:
   blocking proof cycles
 - Parallel Validation Fabric planning so validation can be shardable,
   cache-aware, and truthful about pending/deferred/blocking proof
-- migration of future ADL software-development issues onto the C-SDLC default
+- migration of future ADL software-development issues toward the C-SDLC default
 - tracked durable workflow records for all C-SDLC truth
 - minimal signed trace proof for durable C-SDLC runs
 
@@ -82,7 +83,7 @@ preflight work so v0.91.4 can land cleanly.
 
 ## Milestone Role
 
-v0.91.4 should leave ADL with one default issue execution model:
+v0.91.4 should leave ADL ready to rely on one default issue execution model:
 
 ```text
 SIP -> STP -> SPP -> SRP -> SOR
@@ -169,7 +170,7 @@ are the branch-verifiable C-SDLC planning surfaces for review.
   [NEXT_MILESTONE_HANDOFF_v0.91.4.md](NEXT_MILESTONE_HANDOFF_v0.91.4.md)
 - Tracked workflow-state migration plan:
   [C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md](C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md)
-- Public C-SDLC prompt records transition:
+- Public C-SDLC prompt records transition plan:
   [PUBLIC_CSDLC_PROMPT_RECORDS_TRANSITION_PLAN.md](PUBLIC_CSDLC_PROMPT_RECORDS_TRANSITION_PLAN.md)
 - C-SDLC canonical docs:
   [../../cognitive-sdlc/README.md](../../cognitive-sdlc/README.md)
@@ -230,7 +231,7 @@ tracked evidence.
 
 v0.91.4 is ready to close when:
 
-- new ADL software-development issues default to the C-SDLC lifecycle
+- new ADL software-development issues can truthfully use the C-SDLC lifecycle as the default path
 - durable `SPP` records are tracked, issue-local, and operative before they are
   used to guide execution
 - conductor/editor/doctor/validator tooling agrees on lifecycle state
