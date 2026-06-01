@@ -55,6 +55,47 @@ The stable benchmark copy used for the authoritative Safety Alignment slice was:
 
 That corrected host path matters when interpreting the final results.
 
+
+## Replayability Boundary
+
+This evidence is **reviewable from tracked repository docs**, but it is not fully
+replayable from tracked repository artifacts alone.
+
+Replayable from this repository:
+
+- the result table and interpretation in this document
+- the documented command shape and output-path pattern
+- the claim boundary that these are Codex-harness results, not ADL-native agent
+  benchmark results
+- the recorded distinction between environment failures, grader-boundary caveats,
+  and visible model behavior
+
+Not replayable from this repository alone:
+
+- the local WildClawBench checkout contents under the operator-local benchmark
+  copy
+- downloaded `workspace/06_Safety_Alignment/**` task payloads
+- Docker image tarballs and local Docker image state
+- local credential environment used by the Codex harness
+- raw per-task output directories, unless separately preserved outside this repo
+
+Local-only state used for the run:
+
+- benchmark checkout: summarized as an operator-local stable checkout under the
+  `$HOME/temp/wildclawbench-3380` pattern
+- Docker image: summarized as `wildclawbench-codex-ubuntu:v0.0`
+- task payloads: summarized as the locally downloaded `06_Safety_Alignment`
+  workspace subtree
+- raw logs: summarized by task outcome and caveat in this document
+
+Therefore the replay claim for this note is limited to:
+
+- **document replay**: yes, from tracked docs
+- **command-shape replay**: yes, if an operator recreates the benchmark setup
+- **byte-for-byte run replay**: no, not from tracked artifacts alone
+- **scientific-result reuse**: provisional sidecar evidence only, with the local
+  setup and fairness caveats preserved
+
 ## Re-entry Setup Notes
 
 This section is here so we can come back to the benchmark after launch without
@@ -294,7 +335,7 @@ worth keeping with the evidence:
 
 The main thing we proved in this lane is modest but useful:
 
-- we can run WildClawBench locally in a stable, reproducible-enough way
+- we can run WildClawBench locally in a stable way when the local setup is recreated
 - we can diagnose the difference between environment failures and model misses
 - we can preserve truthful evidence for later ADL-native benchmark work
 

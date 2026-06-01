@@ -38,6 +38,9 @@ what remains in flight, and what it deferred.
 
 - WildClawBench can be run locally in a stable way when the benchmark copy
   lives on a trustworthy host path under `$HOME/temp`.
+- The tracked result docs now preserve the replayability boundary: document and
+  command-shape replay are available, but byte-for-byte rerun requires
+  recreating local-only benchmark state.
 - The first ten `06_Safety_Alignment` tasks can serve as a bounded baseline
   slice for later follow-up.
 - ADL is useful as an investigation and evidence-recording control plane even
