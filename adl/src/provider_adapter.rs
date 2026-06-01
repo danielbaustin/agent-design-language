@@ -310,10 +310,10 @@ fn execute_hosted_gemini(
     let url = gemini_generate_url(
         request.route.endpoint_ref.as_deref(),
         &request.route.provider_model_id,
-        &key,
     );
     let response = client(policy)?
         .post(url)
+        .header("x-goog-api-key", key)
         .json(&json!({
             "contents": [{
                 "role": "user",
@@ -405,27 +405,19 @@ fn resolve_credential(
     })
 }
 
-fn gemini_generate_url(endpoint_ref: Option<&str>, model: &str, key: &str) -> String {
+fn gemini_generate_url(endpoint_ref: Option<&str>, model: &str) -> String {
     let encoded_model = model.trim_start_matches("models/");
     let base = endpoint_ref
         .filter(|endpoint| endpoint.starts_with("http://") || endpoint.starts_with("https://"))
         .unwrap_or(DEFAULT_GEMINI_BASE_URL)
         .trim_end_matches('/');
     if base.contains(":generateContent") {
-        append_query_key(base, key)
+        base.to_string()
     } else if base.ends_with(&format!("models/{encoded_model}")) {
-        append_query_key(&format!("{base}:generateContent"), key)
+        format!("{base}:generateContent")
     } else {
-        append_query_key(
-            &format!("{base}/models/{encoded_model}:generateContent"),
-            key,
-        )
+        format!("{base}/models/{encoded_model}:generateContent")
     }
-}
-
-fn append_query_key(url: &str, key: &str) -> String {
-    let separator = if url.contains('?') { '&' } else { '?' };
-    format!("{url}{separator}key={key}")
 }
 
 fn ollama_generate_url(endpoint_ref: Option<&str>) -> String {
@@ -783,6 +775,80 @@ mod tests {
 
     fn one_shot_server(body: &'static str, status: &'static str) -> String {
         scripted_server(vec![(body, status)])
+    }
+
+    fn capture_one_request_server(
+        body: &'static str,
+        status: &'static str,
+    ) -> (String, mpsc::Receiver<String>) {
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind server");
+        let addr = listener.local_addr().expect("server addr");
+        let (tx, rx) = mpsc::channel();
+        thread::spawn(move || {
+            let (mut stream, _) = listener.accept().expect("accept");
+            let mut buffer = [0_u8; 8192];
+            let bytes_read = stream.read(&mut buffer).unwrap_or(0);
+            let request = String::from_utf8_lossy(&buffer[..bytes_read]).to_string();
+            let _ = tx.send(request);
+            let response = format!(
+                "HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+                body.len()
+            );
+            stream
+                .write_all(response.as_bytes())
+                .expect("write response");
+        });
+        (format!("http://{addr}"), rx)
+    }
+
+    #[test]
+    fn gemini_generate_url_does_not_embed_api_key() {
+        let url = gemini_generate_url(
+            Some("https://generativelanguage.googleapis.com/v1beta"),
+            "models/gemini-test",
+        );
+        assert_eq!(
+            url,
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent"
+        );
+        assert!(!url.contains("key="));
+    }
+
+    #[test]
+    fn hosted_gemini_adapter_sends_api_key_header_without_url_key() {
+        env::set_var(
+            "ADL_PROVIDER_ADAPTER_GEMINI_TEST_KEY",
+            "synthetic-gemini-key",
+        );
+        let (endpoint, rx) = capture_one_request_server(
+            r#"{"candidates":[{"content":{"parts":[{"text":"gemini ok"}]}}]}"#,
+            "200 OK",
+        );
+        let path = temp_log("gemini");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-gemini").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "gemini".to_string();
+        req.route.provider_model_id = "gemini-test".to_string();
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_GEMINI_TEST_KEY".to_string());
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+        assert_eq!(result.output_text.as_deref(), Some("gemini ok"));
+        let raw_request = rx.recv().expect("captured request");
+        assert!(raw_request
+            .to_ascii_lowercase()
+            .contains("x-goog-api-key: synthetic-gemini-key"));
+        assert!(!raw_request
+            .lines()
+            .next()
+            .unwrap_or_default()
+            .contains("key="));
+        let raw_log = fs::read_to_string(&path).unwrap();
+        assert!(!raw_log.contains("synthetic-gemini-key"));
+        env::remove_var("ADL_PROVIDER_ADAPTER_GEMINI_TEST_KEY");
+        let _ = fs::remove_file(path);
     }
 
     fn scripted_server(responses: Vec<(&'static str, &'static str)>) -> String {
