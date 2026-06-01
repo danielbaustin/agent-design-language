@@ -28,7 +28,7 @@ work.
 - [ ] v0.91.5 bridge work routed out of v0.91.4 release scope:
   multi-agent stabilization, provider/model matrix, public prompt records,
   demo readiness, and first-birthday preflight.
-- [ ] Internal review complete.
+- [x] Internal review complete.
 - [ ] External / third-party review complete.
 - [ ] Review remediation complete.
 - [ ] Next milestone planning complete.

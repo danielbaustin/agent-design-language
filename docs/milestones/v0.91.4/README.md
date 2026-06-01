@@ -14,30 +14,29 @@ Sprint 1 is complete and closed: WP-01 `#3346`, WP-02 `#3348`, WP-03 `#3349`,
 and WP-04 `#3350` all merged, and umbrella `#3347` is closed with clean sprint
 truth.
 
-Sprint 2 is seeded as the transition-operation batch: Sprint 2 `#3352`,
-WP-05 `#3353`, WP-06 `#3354`, WP-07 `#3355`, and WP-08 `#3356`.
-Sprint 3 is seeded as the sprint-default and metrics batch: Sprint 3 `#3357`,
-WP-09 `#3358`, WP-10 `#3359`, WP-11 `#3360`, and WP-12 `#3361`.
-Sprint 4 is seeded as the review/remediation/planning/release batch:
-Sprint 4 `#3362`, WP-13 `#3363`, WP-14 `#3364`, WP-15 `#3365`, WP-16
-`#3366`, WP-17 `#3367`, WP-18 `#3368`, WP-19 `#3369`, WP-20 `#3370`, and
-WP-21 `#3371`. The CodeFriend sidecar has also been seeded: umbrella `#3372`,
-CF-PRE-01 `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04
-`#3376`. The WildClawBench benchmark spike sidecar is seeded: umbrella
+Sprint 2 is complete and closed as the transition-operation batch: Sprint 2
+`#3352`, WP-05 `#3353`, WP-06 `#3354`, WP-07 `#3355`, and WP-08 `#3356`.
+Sprint 3 is complete and closed as the sprint-default and metrics batch:
+Sprint 3 `#3357`, WP-09 `#3358`, WP-10 `#3359`, WP-11 `#3360`, and WP-12
+`#3361`. Sprint 4 is the active review/remediation/planning/release batch:
+Sprint 4 `#3362`, closed WP-13 `#3363`, closed WP-14 `#3364`, closed WP-15
+`#3365`, closed WP-16 `#3366`, open WP-17 `#3367`, and later release-tail WPs
+`#3368` through `#3371`.
+
+The CodeFriend sidecar is complete and closed: umbrella `#3372`, CF-PRE-01
+`#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04 `#3376`. The
+WildClawBench benchmark spike sidecar is also complete and closed: umbrella
 `#3378`, WC-PRE-01 `#3379`, WC-PRE-02 `#3380`, WC-PRE-03 `#3381`, and
-WC-PRE-04 `#3382`. Remaining bridge work has moved to v0.91.5: first-birthday
-readiness `#3377`, multi-agent/provider work beginning at `#3415`, public
-prompt records `#3472`-`#3476`, demo readiness `#3455`/`#3460`/`#3461`, and
-OpenRouter/model-matrix issues `#3501`-`#3505`. Sprint 2, Sprint 3, and
-Sprint 4 child execution now depends on prior sprint sequencing and their own
-dependency gates rather than on Sprint 1 opening. The CodeFriend sidecar
-remains non-core and wait-gated by its own routing/dependency lane. The
-WildClawBench sidecar has now started through WC-PRE-01 `#3379`, which
-completed upstream reconnaissance and ended in a truthful blocked setup
-baseline pending benchmark image, workspace payload, helper tools, and API-key
-availability. The bridge split does not alter the v0.91.4 release-tail
-sequence: v0.91.4 now closes Sprint 4 and release truth, while v0.91.5 carries
-the remaining pre-v0.92 stabilization work.
+WC-PRE-04 `#3382`. Both sidecars remain non-core evidence lanes rather than
+C-SDLC default-operation proof or release-tail gates.
+
+Remaining bridge work has moved to v0.91.5: first-birthday readiness `#3377`,
+multi-agent/provider work beginning at `#3415`, public prompt records
+`#3472`-`#3476`, demo readiness `#3455`/`#3460`/`#3461`, and
+OpenRouter/model-matrix issues `#3501`-`#3505`. The bridge split does not
+alter the v0.91.4 release-tail sequence: v0.91.4 now closes Sprint 4 and
+release truth, while v0.91.5 carries the remaining pre-v0.92 stabilization
+work.
 
 This package is intentionally stacked after the v0.91.3 first-slice package. It
 assumes v0.91.3 proves one bounded Cognitive State Transition and then defines
@@ -162,6 +161,8 @@ are the branch-verifiable C-SDLC planning surfaces for review.
 - Quality gate: [QUALITY_GATE_v0.91.4.md](QUALITY_GATE_v0.91.4.md)
 - Docs/adoption review:
   [review/docs_adoption/WP15_DOCS_ADOPTION_REVIEW_2026-05-31.md](review/docs_adoption/WP15_DOCS_ADOPTION_REVIEW_2026-05-31.md)
+- Third-party review handoff:
+  [review/third_party_review/ADL_v0.91.4_THIRD_PARTY_REVIEW_HANDOFF.md](review/third_party_review/ADL_v0.91.4_THIRD_PARTY_REVIEW_HANDOFF.md)
 - Release plan: [RELEASE_PLAN_v0.91.4.md](RELEASE_PLAN_v0.91.4.md)
 - Release notes: [RELEASE_NOTES_v0.91.4.md](RELEASE_NOTES_v0.91.4.md)
 - Milestone checklist:

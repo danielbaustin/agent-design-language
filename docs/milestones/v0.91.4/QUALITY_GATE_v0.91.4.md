@@ -39,7 +39,8 @@ Non-core sidecar work that is not required as Sprint 4 release proof:
 - `docs/milestones/v0.91.4/WP_EXECUTION_READINESS_v0.91.4.md`
 - `docs/milestones/v0.91.4/RELEASE_PLAN_v0.91.4.md`
 - `docs/milestones/v0.91.4/MILESTONE_CHECKLIST_v0.91.4.md`
-- GitHub issue truth for Sprint 4 closeout-tail issues `#3365` through `#3371`, checked at `2026-05-30T19:58:36Z`
+- GitHub issue truth for Sprint 4 closeout-tail issues `#3365` through `#3371`,
+  refreshed for WP-17 entry after WP-16 closed at `2026-06-01T01:36:50Z`
 
 ## Gap-Analysis Role
 
@@ -119,8 +120,6 @@ The milestone remains blocked for the reasons below.
 
 The following required release-tail issues remain open:
 
-- `#3365` Docs + adoption review pass
-- `#3366` Internal review
 - `#3367` External / 3rd-party review
 - `#3368` Review findings remediation
 - `#3369` Next milestone planning
@@ -134,12 +133,12 @@ Sprint 4 lane. At the current snapshot, that includes:
 - `#3526` `[v0.91.4][docs] Audit ADL feature completion dates and AEE closure`
   with draft PR `#3528`
 
-State snapshot recorded at `2026-05-30T19:58:36Z`:
+State snapshot refreshed at `2026-06-01T01:36:50Z` after WP-16 closeout:
 
 | Issue | State |
 | --- | --- |
-| `#3365` | `OPEN` |
-| `#3366` | `OPEN` |
+| `#3365` | `CLOSED` |
+| `#3366` | `CLOSED` |
 | `#3367` | `OPEN` |
 | `#3368` | `OPEN` |
 | `#3369` | `OPEN` |
@@ -222,11 +221,9 @@ Manual checks performed on 2026-05-30:
 3. `Internal review plan existence/readiness`
    - source:
      `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_PLAN_2026-05-30.md`
-   - result: present, scoped, and reviewer-facing; status remains
-     `planned_not_started`
-   - interpretation: the internal review surface exists and is structurally
-     ready, but WP-16 is still a real open blocker because execution has not
-     started
+   - result: present, scoped, and reviewer-facing; WP-16 is now closed
+   - interpretation: the internal review gate has completed; later external
+     review findings belong to WP-18 rather than reopening WP-16
 4. `Test coverage gap analysis`
    - artifact:
      `docs/milestones/v0.91.4/review/quality_gate/V0914_TEST_COVERAGE_GAP_ANALYSIS_2026-05-30.md`
@@ -244,15 +241,15 @@ Manual checks performed on 2026-05-30:
      truthfully enough that broad runtime proof is not being forced into this
      PR path; PVF remains usable as a release input rather than a fresh blocker
 6. `Changed-file risk review`
-   - current open Sprint 4 PRs: only `#3527`
+   - WP-14 snapshot open Sprint 4 PRs: only `#3527`
    - current tracked WP-14 delta:
      - `docs/milestones/v0.91.4/QUALITY_GATE_v0.91.4.md`
      - `docs/milestones/v0.91.4/review/quality_gate/V0914_TEST_COVERAGE_GAP_ANALYSIS_2026-05-30.md`
      - `docs/milestones/v0.91.4/review/quality_gate/V0914_TEST_RUNTIME_REGRESSION_CHECK_2026-05-30.md`
      - `docs/milestones/v0.91.4/review/quality_gate/V0914_REDACTION_AUDIT_2026-05-30.md`
-   - interpretation: current open release-tail delta is low-risk and docs-only;
-     no additional runtime/provider/workflow-control code is presently in flight
-     in the Sprint 4 release-tail lane
+   - interpretation at WP-14: the open release-tail delta was low-risk and
+     docs-only; later release-tail updates should be reviewed in their own WP
+     records
 7. `Test runtime regression check`
    - artifact:
      `docs/milestones/v0.91.4/review/quality_gate/V0914_TEST_RUNTIME_REGRESSION_CHECK_2026-05-30.md`
@@ -268,8 +265,8 @@ Manual checks performed on 2026-05-30:
      the current blocker is release-tail sequencing/execution, not missing card
      scaffolding
 9. `PR stack/base hygiene`
-   - current open release-tail PRs: only `#3527`
-   - result: base `main`, merge state `CLEAN`, checks green, draft still open
+   - WP-14 snapshot open release-tail PRs: only `#3527`
+   - result at WP-14: base `main`, merge state `CLEAN`, checks green, draft still open
      at `2026-05-30T20:48:53Z`
    - interpretation: current stack/base hygiene looks clean; no hidden conflict
      or stale-base problem is visible in the active release-tail PR snapshot
@@ -346,14 +343,15 @@ Available as landed proof input. Current posture: `pass_as_release_input`, not a
 
 Available as landed evidence from the repeatability/PVF work. Current posture: `pass_as_release_input`, with the reminder that slow or deferred proof must remain explicit rather than being hidden behind aggregate green summaries.
 
-## Required Remediation Before Internal Review
+## Required Remediation Before External Review
 
-Before WP-16 internal review can be considered ready, the milestone should at minimum have:
+Before WP-17 external review can be considered ready, the milestone should at minimum have:
 
 1. docs/adoption review package completed under WP-15
-2. release-readiness surfaces aligned to the Sprint 4-only scope boundary
-3. durable workflow-state migration proof made explicit enough to review
-4. signed-trace / release-evidence expectation made concrete for the remaining tail
+2. WP-16 internal review closed with accepted findings fixed or routed
+3. release-readiness surfaces aligned to the Sprint 4-only scope boundary
+4. durable workflow-state migration proof made explicit enough to review
+5. signed-trace / release-evidence expectation made concrete for the remaining tail
 
 ## Follow-on Routing
 

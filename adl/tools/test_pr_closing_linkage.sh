@@ -21,6 +21,10 @@ if [[ "$1" == "pr" && "$2" == "view" ]]; then
     exit 0
   fi
 fi
+if [[ "$1" == "issue" && "$2" == "view" ]]; then
+  printf '%s\n' "${MOCK_GH_ISSUE_STATE:-OPEN}"
+  exit 0
+fi
 exit 1
 EOF
 chmod +x "$TMPDIR/bin/gh"
@@ -61,6 +65,20 @@ if bash "$SCRIPT" --event-name pull_request --event-path "$event_bad" --head-ref
   echo "expected failure for missing closing linkage" >&2
   exit 1
 fi
+
+event_non_closing="$TMPDIR/non-closing.json"
+make_event "$event_non_closing" "Non-closing lifecycle PR: issue 1414 remains open"
+export MOCK_GH_ISSUE_STATE="OPEN"
+bash "$SCRIPT" --event-name pull_request --event-path "$event_non_closing" --head-ref "codex/1414-remediation"
+
+event_non_closing_closed="$TMPDIR/non-closing-closed.json"
+make_event "$event_non_closing_closed" "Non-closing lifecycle PR: issue 1414 remains open"
+export MOCK_GH_ISSUE_STATE="CLOSED"
+if bash "$SCRIPT" --event-name pull_request --event-path "$event_non_closing_closed" --head-ref "codex/1414-remediation"; then
+  echo "expected failure for non-closing marker on closed issue" >&2
+  exit 1
+fi
+unset MOCK_GH_ISSUE_STATE
 
 event_stale="$TMPDIR/stale.json"
 make_event "$event_stale" "Refs #1414" "example/repo" "88"

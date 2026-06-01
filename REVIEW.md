@@ -21,7 +21,64 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the most recently completed v0.90.5 governed-tools release package, start with:
+For the active v0.91.4 external / third-party review, start with:
+
+- `docs/milestones/v0.91.4/review/third_party_review/ADL_v0.91.4_THIRD_PARTY_REVIEW_HANDOFF.md`
+- `docs/milestones/v0.91.4/README.md`
+- `docs/milestones/v0.91.4/WBS_v0.91.4.md`
+- `docs/milestones/v0.91.4/SPRINT_v0.91.4.md`
+- `docs/milestones/v0.91.4/WP_ISSUE_WAVE_v0.91.4.yaml`
+- `docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md`
+- `docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md`
+- `docs/milestones/v0.91.4/QUALITY_GATE_v0.91.4.md`
+- `docs/milestones/v0.91.4/MILESTONE_CHECKLIST_v0.91.4.md`
+- `docs/milestones/v0.91.4/RELEASE_PLAN_v0.91.4.md`
+- `docs/milestones/v0.91.4/RELEASE_NOTES_v0.91.4.md`
+- `docs/milestones/v0.91.4/NEXT_MILESTONE_HANDOFF_v0.91.4.md`
+- `docs/milestones/v0.91.4/review/internal_review/`
+- `docs/milestones/v0.91.4/features/`
+- `docs/templates/prompts/`
+- `docs/cognitive-sdlc/`
+- `AGENTS.md`
+- `README.md`
+- `CHANGELOG.md`
+- `docs/README.md`
+- `adl/Cargo.toml`
+- `adl/Cargo.lock`
+
+The current review posture is v0.91.4 WP-17 external / third-party review.
+WP-15 and WP-16 are closed. WP-17 / `#3367` remains open until external review
+truth is recorded and any findings are fixed, routed to WP-18 / `#3368`, or
+explicitly accepted as residual risk. The third-party handoff is the
+controlling review entrypoint for this review pass.
+
+v0.91.4 should be reviewed as the Cognitive SDLC rollout-closeout milestone. It
+hardens the v0.91.3 C-SDLC vertical slice into default operational practice:
+conductor-first issue routing, `SIP -> STP -> SPP -> SRP -> SOR` cards,
+versioned prompt templates, editor skills, bound worktrees, pre-PR review,
+truthful SOR closeout, Parallel Validation Fabric classification, durable
+tracked evidence records, and release-tail review discipline.
+
+Important v0.91.4 non-claims:
+
+- v0.91.4 does not claim release approval or release ceremony completion.
+- v0.91.4 does not claim external review completion until WP-17 is closed.
+- v0.91.4 does not claim v0.91.5 bridge work is complete.
+- v0.91.4 does not claim v0.92 first-birthday readiness.
+- v0.91.4 does not claim multi-agent stabilization, provider/model matrix
+  breadth, public prompt-record transition, Unity Observatory, or
+  demo-readiness follow-ons are complete; those are routed to v0.91.5 or later.
+- CodeFriend and WildClawBench are bounded sidecars, not proof that C-SDLC core
+  operation is complete.
+
+The recovered WP-16 internal-review packet is tracked under
+`docs/milestones/v0.91.4/review/internal_review/` and was published through
+closed recovery issue `#3555`. Reviewers should treat those artifacts as part
+of the v0.91.4 review input, alongside the WP-16 closeout comments and
+remediation issue/PR wave.
+
+For historical context, the prior completed release-review entrypoint was
+v0.90.5:
 
 - `docs/milestones/v0.90.5/README.md`
 - `docs/milestones/v0.90.5/WBS_v0.90.5.md`
@@ -38,70 +95,6 @@ For the most recently completed v0.90.5 governed-tools release package, start wi
 - `docs/milestones/v0.90.5/END_OF_MILESTONE_REPORT_v0.90.5.md`
 - `docs/milestones/v0.90.5/WP_EXECUTION_READINESS_v0.90.5.md`
 - `docs/milestones/v0.90.5/WP_ISSUE_WAVE_v0.90.5.yaml`
-- `docs/planning/ADL_FEATURE_LIST.md`
-- `CHANGELOG.md`
-- `adl/Cargo.toml`
-- `adl/Cargo.lock`
-
-The final v0.90.5 review posture is completed release copy. The wave ran as
-`#2566-#2591` and is now fully closed. Docs/review convergence, internal
-review, zero-finding third-party review, explicit no-remediation disposition,
-next-milestone handoff, and release ceremony are complete.
-
-v0.90.5 should produce Governed Tools v1.0 plus the landed first-level Comms /
-ACIP tranche: UTS public-compatible schema and conformance, ACC authority and
-visibility semantics, registry/compiler/normalization/policy/executor behavior,
-trace/replay/redaction evidence, dangerous negative tests, bounded
-model-proposal evaluation, the flagship governed-tools demo, and the bounded
-review/coding-agent communications substrate that was explicitly landed in this
-milestone.
-
-The crate version is `0.90.5` for the completed v0.90.5 release line.
-Reviewers should treat any conflicting older version reference as a stale
-release-truth defect.
-
-For the active next-milestone planning package, start with:
-
-- `docs/milestones/v0.91/README.md`
-- `docs/milestones/v0.91/WBS_v0.91.md`
-- `docs/milestones/v0.91/SPRINT_v0.91.md`
-- `docs/milestones/v0.91/MILESTONE_CHECKLIST_v0.91.md`
-- `docs/milestones/v0.91/WP_ISSUE_WAVE_v0.91.yaml`
-- `docs/milestones/v0.91/features/README.md`
-
-The current active planning posture is `v0.91`. The reviewed candidate issue
-wave exists, but it is not opened yet.
-
-Important v0.90.5 non-claims:
-
-- v0.90.5 does not claim that UTS alone is an execution authority.
-- v0.90.5 does not claim arbitrary shell or network execution merely because a
-  model emitted valid JSON.
-- v0.90.5 does not claim payment rails, legal contracting, billing, or
-  inter-polis economics.
-- v0.90.5 does not claim full v0.91 moral/cognitive-being substrate or full
-  v0.91.1 identity/capability follow-on work.
-- v0.90.5 does not claim production secret-management or cloud-enclave
-  dependence.
-
-During execution, verify that every WP preserves the required outputs and
-validation from `WP_EXECUTION_READINESS_v0.90.5.md` rather than widening into
-generic implementation work.
-
-WP-21 tracker status to preserve during review:
-- `QUALITY_GATE_v0.90.5.md` is the canonical quality and coverage posture
-  record, including the explicit main-branch coverage exception still carried
-  into the review tail.
-- `RELEASE_READINESS_v0.90.5.md` is the reviewer entry surface for the active
-  milestone package.
-- docs/release-truth surfaces should consistently report v0.90.5 as the active
-  line, v0.90.4 as the most recently completed milestone, and `0.90.5` as the
-  active crate version.
-- root `README.md` cleanup is tracked separately under #2712 and should not be
-  treated as part of the bounded WP-21 reviewer-entry package until that issue
-  lands.
-- internal review has not happened yet; WP-21 prepares the package for WP-22
-  rather than pre-claiming that review outcome.
 
 For the most recently completed v0.90.2 release package, start with:
 
