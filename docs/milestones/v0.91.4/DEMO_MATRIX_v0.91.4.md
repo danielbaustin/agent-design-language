@@ -63,8 +63,8 @@ surface for its local preconditions and commands.
 | D17 | External / third-party review | WP-17 / `#3367` | closed | proves the release survives outside scrutiny | external review handoff and returned packet |
 | D18 | Review findings remediation | WP-18 / `#3368` | closed | proves findings are fixed, routed, or truthfully deferred | remediation packet and disposition record |
 | D19 | Next milestone planning refresh | WP-19 / `#3369` | closed | proves release closeout does not strand the next planning wave | `NEXT_MILESTONE_HANDOFF_v0.91.4.md` refresh |
-| D20 | Next milestone review pass | WP-20 / `#3370` | pending | proves the next milestone plan has review before ceremony | next-milestone review findings packet |
-| D21 | Release ceremony | WP-21 / `#3371` | pending | proves all release-tail evidence converges in order | release evidence packet and ceremony closeout |
+| D20 | Next milestone review pass | WP-20 / `#3370` | closed | proves the next milestone plan has review before ceremony | `review/next_milestone/V0914_NEXT_MILESTONE_REVIEW_2026-06-01.md` |
+| D21 | Release ceremony | WP-21 / `#3371` | in_progress | proves all release-tail evidence converges in order | `RELEASE_EVIDENCE_v0.91.4.md`, `RELEASE_READINESS_v0.91.4.md`, and `END_OF_MILESTONE_REPORT_v0.91.4.md` |
 
 ## Core C-SDLC Proof Already Available
 
@@ -121,7 +121,7 @@ The strongest reviewer-facing story available today is:
 1. core C-SDLC control-plane proof already landed through Sprints 1 through 3
 2. Creative Room is the best front-stage demo for explaining the default-operation claim boundary
 3. Starharvest provides the strongest browser-backed interaction proof in the current showcase lane
-4. Sprint 4 has closed the demo/proof refresh, quality gate, docs/adoption review, internal review, external review, remediation, and next-milestone planning; the remaining closeout tail is next-milestone review and ceremony
+4. Sprint 4 has closed the demo/proof refresh, quality gate, docs/adoption review, internal review, external review, remediation, next-milestone planning, and next-milestone review; the remaining closeout tail is WP-21 ceremony merge, tag, and GitHub Release publication
 
 `v0.91.4` should not claim live multi-agent completion, Unity completion, or sidecar-product success as required release proof.
 

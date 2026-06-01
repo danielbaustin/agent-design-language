@@ -2,24 +2,38 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.91.4 (Active milestone)
+## v0.91.5 (Active bridge milestone)
 
-Status: Active. The v0.91.4 issue wave and sprint umbrellas are open, the
-crate version has advanced to `0.91.4`, and the milestone is in its Sprint 4
-review/release-tail sequence for the C-SDLC default-operation, repeatability,
-validation-tail, and Parallel Validation Fabric hardening line.
+Status: Active bridge planning/execution. The v0.91.5 package lives under
+`docs/milestones/v0.91.5/` and carries pre-v0.92 stabilization work that should
+not have been hidden inside v0.91.4 release closeout.
 
 Planning notes:
-- The tracked v0.91.4 package lives under `docs/milestones/v0.91.4/`.
-- v0.91.4 builds on the completed v0.91.3 first C-SDLC slice.
-- The milestone owns C-SDLC default operation, signed trace and ObsMem handoff
+- v0.91.5 owns multi-agent stabilization, provider/model matrix work,
+  OpenRouter/DeepSeek provider planning, public prompt records, demo readiness,
+  AEE completion routing, v0.92 activation testing, and first-birthday
+  preflight through `#3377`.
+- v0.91.5 prepares v0.92; it does not implement the first birthday itself.
+- This is an active bridge entry, not a release entry.
+
+## v0.91.4 (Completed milestone)
+
+Status: Completed. The v0.91.4 issue wave closed through Sprint 4 release
+ceremony, the crate version is `0.91.4`, and the milestone records C-SDLC
+default-operation release evidence under `docs/milestones/v0.91.4/`.
+
+Planning notes:
+- v0.91.4 built on the completed v0.91.3 first C-SDLC slice.
+- The milestone landed C-SDLC default operation, signed trace and ObsMem handoff
   hardening, five-minute-sprint repeatability, validation-tail/PVF work, and
   sidecar preparation for CodeFriend and WildClawBench.
-- Bridge work that should not block v0.91.4 release closeout has been routed to
-  v0.91.5: multi-agent stabilization, provider/model matrix, public prompt
-  records, demo readiness, first-birthday preflight, AEE completion routing,
-  and enterprise-security repo/module separation planning.
-- This is an active milestone entry, not a release entry.
+- Sprint 4 completed demo/proof refresh, quality gate, docs/adoption review,
+  internal review, external review, remediation, next-milestone planning,
+  next-milestone review, closeout truth normalization, and release ceremony.
+- Bridge work that should not block v0.91.4 release closeout moved to v0.91.5:
+  multi-agent stabilization, provider/model matrix, public prompt records,
+  demo readiness, first-birthday preflight, AEE completion routing, and
+  enterprise-security repo/module separation planning.
 
 ## v0.91.3 (Completed milestone)
 

@@ -7,7 +7,7 @@ Tracked proof coverage for `v0.91.4` closeout.
 This document maps release-facing claims to the strongest currently tracked evidence and distinguishes between:
 
 - landed core proof that already supports the release
-- Sprint 4 closeout proof still required before ceremony
+- Sprint 4 closeout proof consumed by ceremony
 - routed or deferred surfaces that should not be misrepresented as `v0.91.4` blockers
 
 ## Core Default-Operation Claim
@@ -27,13 +27,13 @@ This claim is not the same as claiming every auxiliary experiment is complete. I
 | Sprint default lane and repeatability | landed | `FIVE_MINUTE_SPRINT_REPEATABILITY_REPORT_2026-05-27.md` and Sprint 3 deliverables | shows the path is repeatable enough to measure and review |
 | Process-drift fail-closed posture | landed | `PROCESS_DRIFT_REGRESSION_REPORT_2026-05-28.md` | shows known workflow drifts are now caught instead of silently passing |
 | Reviewer-facing demo explanation | partially_proven | `review/demo_showcase/CREATIVE_ROOM_PROOF_PACKET_v0.91.4.md`, `review/demo_showcase/STARHARVEST_BROWSER_PROOF_v0.91.4.md`, and `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` | strongest available showcase path is bounded and honest, not a live-provider overclaim |
-| Release-tail proof convergence | pending_sprint_4 | Sprint 4 WP-20 through WP-21 | WP-17 external review, WP-18 remediation, and WP-19 planning are closed; next-milestone review and ceremony remain |
+| Release-tail proof convergence | landed | Sprint 4 WP-20 through WP-21 | WP-20 next-milestone review is closed; WP-21 ceremony evidence is in this release packet |
 
 ## Feature Coverage Table
 
 | Feature | Status | Evidence | Residual boundary |
 | --- | --- | --- | --- |
-| Cognitive SDLC Default Operation | partially_proven | core proof map above plus Sprint 4 closeout tail | final release claim still depends on WP-20 through WP-21 finishing in order |
+| Cognitive SDLC Default Operation | landed_for_v0_91_4 | core proof map above plus Sprint 4 closeout tail | future acceleration and activation work is routed to v0.91.5 |
 | C-SDLC Validation And Routing Hardening | landed | Sprint 1 issue wave and feature doc | no new WP-13 blocker identified |
 | Software Development Polis And Actor Standing | landed | software-development-polis proof packet | reviewer should treat this as control-plane proof, not live multi-agent proof |
 | Shard Ownership And Interface Freeze | landed | software-development-polis proof packet and related feature docs | bounded coordination claim only |
@@ -58,8 +58,8 @@ This claim is not the same as claiming every auxiliary experiment is complete. I
 | WP-17 | `#3367` | closed | external review handoff and returned packet |
 | WP-18 | `#3368` | closed | remediation packet and finding dispositions |
 | WP-19 | `#3369` | closed | next-milestone handoff refresh |
-| WP-20 | `#3370` | pending | next-milestone review packet |
-| WP-21 | `#3371` | pending | release evidence packet and ceremony closeout |
+| WP-20 | `#3370` | closed | next-milestone review packet |
+| WP-21 | `#3371` | in_progress | release evidence packet and ceremony closeout |
 
 ## Explicit Non-Claims For v0.91.4
 

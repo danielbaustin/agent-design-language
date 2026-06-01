@@ -16,11 +16,14 @@ Current release-tail state at this handoff:
   dispositioned through `#3560` / PR `#3561`.
 - `WP-19` / `#3369`: closed after next-milestone planning landed through PR
   `#3563`.
-- `WP-20` / `#3370`: in progress for next-milestone review.
-- `WP-21` / `#3371`: pending release ceremony and release-evidence closeout.
+- `WP-20` / `#3370`: closed after next-milestone review landed through PR
+  `#3565`.
+- `WP-21` / `#3371`: in progress for release ceremony and release-evidence
+  closeout.
 
-Do not treat this handoff as release approval. `WP-20` still needs to review
-this plan, and `WP-21` still owns ceremony/evidence convergence.
+Do not treat this handoff alone as release approval. `WP-21` still needs to
+merge ceremony/release-evidence closeout before `v0.91.4` can be tagged and
+published.
 
 ## Purpose
 
@@ -137,9 +140,8 @@ The canonical v0.91.5 activation map is:
 
 ## Known Blockers And Residual Risks
 
-Remaining v0.91.4 release-tail blockers:
+Remaining v0.91.4 release-tail work:
 
-- `WP-20` must review this handoff before ceremony.
 - `WP-21` must converge release evidence and close the release ceremony.
 
 Bridge risks for v0.91.5:
@@ -165,9 +167,10 @@ This handoff does not:
 - claim prompt records are public-safe before export/redaction validation
 - close or supersede v0.91.5 planning documents
 
-## WP-20 Review Requirement
+## WP-20 Review Result
 
-`WP-20` must review this handoff before the release ceremony.
+`WP-20` reviewed this handoff before the release ceremony and closed through
+PR `#3565`.
 
 That review should confirm:
 
@@ -180,5 +183,4 @@ That review should confirm:
 
 ## Handoff Decision
 
-Proceed through `WP-20` review with `v0.91.5` as the selected next milestone.
-If WP-20 stays review-clean, WP-21 may consume this handoff for ceremony.
+Proceed through `WP-21` ceremony with `v0.91.5` as the selected next milestone.

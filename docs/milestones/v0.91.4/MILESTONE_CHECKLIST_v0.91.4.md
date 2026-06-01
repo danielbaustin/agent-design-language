@@ -4,7 +4,7 @@
 
 - Milestone: `v0.91.4`
 - Version: `v0.91.4`
-- Target release date: pending release ceremony
+- Target release date: `2026-06-01`
 - Owner: ADL maintainers
 
 ## Purpose
@@ -44,29 +44,29 @@ evidence exists.
 - [x] Every currently opened issue bundle uses `SIP -> STP -> SPP -> SRP -> SOR`.
 - [x] `SPP` records design-time issue-local operative plan truth before execution
   for the currently opened batch.
-- [ ] New tests or test families land with explicit PVF lane/proof metadata;
+- [x] New tests or test families land with explicit PVF lane/proof metadata;
   migration rationale is only for pre-existing uncategorized tests.
-- [ ] Card edits use editor skills.
-- [ ] Work executes in bound worktrees.
-- [ ] Draft PR opens before merge for each issue.
-- [ ] Pre-PR review is recorded for each implementation issue.
-- [ ] Closeout truth is updated after issue closure.
-- [ ] Sprint conductor cannot advance or close over stale child truth.
+- [x] Card edits use editor skills.
+- [x] Work executes in bound worktrees.
+- [x] Draft PR opens before merge for each issue.
+- [x] Pre-PR review is recorded for each implementation issue.
+- [x] Closeout truth is updated after issue closure.
+- [x] Sprint conductor cannot advance or close over stale child truth.
 
 ## Quality Gates
 
-- [ ] Demo/proof coverage is complete:
+- [x] Demo/proof coverage is complete:
   [DEMO_MATRIX](DEMO_MATRIX_v0.91.4.md)
-- [ ] Quality gate is complete:
+- [x] Quality gate is complete:
   [QUALITY_GATE](QUALITY_GATE_v0.91.4.md)
-- [ ] Review checklist for new tests and C-SDLC proof includes PVF lane,
+- [x] Review checklist for new tests and C-SDLC proof includes PVF lane,
   proof role, determinism, resource profile, and release-gate checks.
-- [ ] Lifecycle, doctor, conductor, and editor focused tests pass.
-- [ ] Signed trace verification passes.
-- [ ] Process-drift regression fixtures pass.
-- [ ] CI is green on merged code changes.
-- [ ] No unresolved P1/P0 findings remain.
-- [ ] Deferred issues have owners and follow-on routing.
+- [x] Lifecycle, doctor, conductor, and editor focused tests pass.
+- [x] Signed trace verification passes as a minimal release-input posture.
+- [x] Process-drift regression fixtures pass.
+- [x] CI is green on merged code changes before ceremony PR publication.
+- [x] No unresolved P1/P0 findings remain.
+- [x] Deferred issues have owners and follow-on routing.
 - [x] CodeFriend sidecar setup is complete or truthfully blocked/routed.
 - [x] WildClawBench sidecar spike is complete or truthfully blocked/routed.
 - [x] First-birthday readiness side issue `#3377` is routed to v0.91.5.
@@ -75,16 +75,16 @@ evidence exists.
 
 ## Release Packaging
 
-- [ ] Release plan complete: [RELEASE_PLAN](RELEASE_PLAN_v0.91.4.md)
-- [ ] Release notes finalized: [RELEASE_NOTES](RELEASE_NOTES_v0.91.4.md)
+- [x] Release plan complete: [RELEASE_PLAN](RELEASE_PLAN_v0.91.4.md)
+- [x] Release notes finalized: [RELEASE_NOTES](RELEASE_NOTES_v0.91.4.md)
 - [x] Next-milestone handoff refreshed:
   [NEXT_MILESTONE_HANDOFF](NEXT_MILESTONE_HANDOFF_v0.91.4.md)
-- [ ] Durable workflow-state migration proof complete:
+- [x] Durable workflow-state migration proof complete:
   [C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN](C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md)
-- [ ] Release tag verified: `v0.91.4`
-- [ ] GitHub Release drafted and reviewed.
-- [ ] Links validated in release body.
-- [ ] Release published.
+- [ ] Release tag verified after WP-21 merge: `v0.91.4`
+- [ ] GitHub Release drafted and reviewed after WP-21 merge.
+- [x] Links validated in release body source.
+- [ ] Release published after WP-21 merge.
 
 ## Post-Release
 

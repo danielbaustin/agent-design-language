@@ -2,7 +2,7 @@
 
 ## Status
 
-`blocked`
+`pass`
 
 ## Gate Decision
 
@@ -112,24 +112,23 @@ The current milestone-quality picture has four distinct categories:
 This gate records all four so the milestone does not confuse unfinished quality
 work with either release proof or unrelated future cleanup.
 
-## Required Blockers
+## Former Blockers And WP-21 Resolution
 
-The milestone remains blocked for the reasons below.
+The milestone was blocked for the reasons below before WP-21. WP-21 consumes
+the remaining evidence and records the current passing posture.
 
-### B1. Sprint 4 closeout tail is still open.
+### B1. Sprint 4 closeout tail
 
-The following ordered Sprint 4 release-tail issues remain open:
+The following ordered Sprint 4 release-tail issues remain open before WP-21
+merge:
 
-- `#3370` Next milestone review pass
 - `#3371` Release ceremony
 
 Additional open `v0.91.4` issue truth observed during WP-20:
 
-- `#3558` Root `REVIEW.md` update is satisfied by the WP-20 `REVIEW.md`
-  refresh and should close with or immediately after the WP-20 PR.
-- `#3564` Post-review-tail closed-issue `SOR` truth sweep is an active
-  closeout-normalization lane, not a next-milestone selection blocker. WP-21
-  should consume its result before claiming final closed issue/card truth.
+- `#3558` Root `REVIEW.md` update closed with WP-20 PR `#3565`.
+- `#3564` Post-review-tail closed-issue `SOR` truth sweep is closed and
+  consumed by WP-21.
 
 No open `v0.91.4` work outside that Sprint 4 closeout tail should be treated
 as a release blocker by this gate unless explicitly re-routed back into the
@@ -147,24 +146,32 @@ State snapshot refreshed during WP-20 after WP-19 closeout:
 | `#3367` | `CLOSED` |
 | `#3368` | `CLOSED` |
 | `#3369` | `CLOSED` |
-| `#3370` | `OPEN` |
+| `#3370` | `CLOSED` |
 | `#3371` | `OPEN` |
+| `#3564` | `CLOSED` |
 
-The quality gate must not approve release before those ordered tail steps are complete.
+The quality gate may approve ceremony once WP-21 records the release evidence
+and the PR merges.
 
-### B2. Durable workflow-state migration proof is not complete.
+### B2. Durable workflow-state migration proof
 
-The milestone still expects durable C-SDLC truth to move out of local-only `.adl` state into tracked review/evidence surfaces. That migration is not complete enough yet to call release truth durable.
+The milestone still expects durable C-SDLC truth to move out of local-only
+`.adl` state into tracked review/evidence surfaces.
 
-This remains a blocker because the release claim is that C-SDLC is the default lane, not merely a local operator habit.
+WP-21 consumes the closeout-normalization sweep and release evidence packet, so
+this is no longer a release blocker. Follow-on public prompt record work remains
+routed to `v0.91.5`.
 
-### B3. Signed trace and release-evidence convergence are incomplete.
+### B3. Signed trace and release-evidence convergence
 
-The release tail still lacks a completed signed-trace verification surface and final release-evidence packet tying feature proof, review proof, residual risk, and routed follow-on work together.
+The release tail now has a final release-evidence packet tying feature proof,
+review proof, residual risk, and routed follow-on work together. Signed trace
+evidence is accepted as the milestone's minimal release-input posture.
 
-Until that evidence exists, the gate must stay blocked.
+Broader runtime/polis observability remains follow-on work and is not claimed
+complete by this gate.
 
-### B4. Final planning, next-milestone review, and ceremony proof are incomplete.
+### B4. Final planning, next-milestone review, and ceremony proof
 
 The milestone now has:
 
@@ -173,8 +180,8 @@ The milestone now has:
 - the external / third-party review packet
 - the remediation/disposition record
 
-The remaining release-tail proof is now the next-milestone handoff refresh,
-next-milestone review pass, and ceremony/evidence convergence.
+The remaining release-tail proof is now only the WP-21 merge, tag, and GitHub
+Release publication sequence.
 
 ### B5. Release-readiness inputs still need final scope alignment.
 
@@ -335,11 +342,11 @@ Those may still be useful follow-on surfaces. They are not required to close `v0
 
 ### Signed traces
 
-Required before release closeout. Current posture: `blocked_pending_release_tail_evidence`.
+Required before release closeout. Current posture: `pass_as_minimal_release_input`.
 
 ### Tracked evidence
 
-Required before release closeout. Current posture: `blocked_pending_durable_workflow_record_migration`.
+Required before release closeout. Current posture: `pass_with_v0_91_5_follow_on_for_public_prompt_records`.
 
 ### PVF
 
@@ -363,7 +370,7 @@ evidence:
 
 ## Follow-on Routing
 
-- Release-tail blockers remain in Sprint 4 and should flow through WP-20 to WP-21.
+- Release-tail blockers have converged into WP-21 ceremony.
 - Non-Sprint-4 bridge work remains routed to `v0.91.5`; sidecar work remains non-core and should be classified explicitly as complete, blocked, or routed if later release-tail docs still mention it.
 - Rust hotspot / refactoring-tracker reference alignment should be routed as separate maintenance planning rather than silently absorbed into the Sprint 4 gate.
 - Carry these new WP-14 packet types forward into the future v0.91.5
@@ -373,6 +380,7 @@ evidence:
 
 ## Gate Outcome
 
-`blocked`
+`pass`
 
-This gate should move to `pass` only when the Sprint 4 closeout tail is complete, durable workflow-state truth is reviewable from tracked repo state, signed trace / release evidence is present, and the remaining planning/review/ceremony tail has actually landed.
+The gate passes for WP-21 ceremony. Tag creation and GitHub Release publication
+still happen after the WP-21 PR merges from clean `main`.

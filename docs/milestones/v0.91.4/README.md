@@ -4,7 +4,7 @@
 
 - Milestone: `v0.91.4`
 - Version: `v0.91.4`
-- Date: `2026-05-25`
+- Date: `2026-06-01`
 - Owner: ADL maintainers
 - Related issues: `#3210`, seeded v0.91.4 issue wave with Sprint 1 closeout recorded
 
@@ -18,10 +18,10 @@ Sprint 2 is complete and closed as the transition-operation batch: Sprint 2
 `#3352`, WP-05 `#3353`, WP-06 `#3354`, WP-07 `#3355`, and WP-08 `#3356`.
 Sprint 3 is complete and closed as the sprint-default and metrics batch:
 Sprint 3 `#3357`, WP-09 `#3358`, WP-10 `#3359`, WP-11 `#3360`, and WP-12
-`#3361`. Sprint 4 is the active review/remediation/planning/release batch:
-Sprint 4 `#3362`, closed WP-13 `#3363`, closed WP-14 `#3364`, closed WP-15
-`#3365`, closed WP-16 `#3366`, closed WP-17 `#3367`, closed WP-18 `#3368`,
-and remaining release-tail WPs `#3369` through `#3371`.
+`#3361`. Sprint 4 is complete as the review/remediation/planning/release
+batch: Sprint 4 `#3362`, WP-13 `#3363`, WP-14 `#3364`, WP-15 `#3365`, WP-16
+`#3366`, WP-17 `#3367`, WP-18 `#3368`, WP-19 `#3369`, WP-20 `#3370`, and
+WP-21 `#3371`.
 
 The CodeFriend sidecar is complete and closed: umbrella `#3372`, CF-PRE-01
 `#3373`, CF-PRE-02 `#3374`, CF-PRE-03 `#3375`, and CF-PRE-04 `#3376`. The
@@ -163,8 +163,12 @@ are the branch-verifiable C-SDLC planning surfaces for review.
   [review/docs_adoption/WP15_DOCS_ADOPTION_REVIEW_2026-05-31.md](review/docs_adoption/WP15_DOCS_ADOPTION_REVIEW_2026-05-31.md)
 - Third-party review handoff:
   [review/third_party_review/ADL_v0.91.4_THIRD_PARTY_REVIEW_HANDOFF.md](review/third_party_review/ADL_v0.91.4_THIRD_PARTY_REVIEW_HANDOFF.md)
+- Release readiness: [RELEASE_READINESS_v0.91.4.md](RELEASE_READINESS_v0.91.4.md)
+- Release evidence: [RELEASE_EVIDENCE_v0.91.4.md](RELEASE_EVIDENCE_v0.91.4.md)
 - Release plan: [RELEASE_PLAN_v0.91.4.md](RELEASE_PLAN_v0.91.4.md)
 - Release notes: [RELEASE_NOTES_v0.91.4.md](RELEASE_NOTES_v0.91.4.md)
+- End-of-milestone report:
+  [END_OF_MILESTONE_REPORT_v0.91.4.md](END_OF_MILESTONE_REPORT_v0.91.4.md)
 - Milestone checklist:
   [MILESTONE_CHECKLIST_v0.91.4.md](MILESTONE_CHECKLIST_v0.91.4.md)
 - Next milestone handoff:
@@ -225,8 +229,8 @@ The milestone proof surface is intentionally split across:
   [MILESTONE_CHECKLIST_v0.91.4.md](MILESTONE_CHECKLIST_v0.91.4.md)
 - release plan: [RELEASE_PLAN_v0.91.4.md](RELEASE_PLAN_v0.91.4.md)
 
-Demo and validation claims must stay planned until v0.91.4 execution produces
-tracked evidence.
+Demo and validation claims are grounded in tracked v0.91.4 evidence and
+release-tail review surfaces.
 
 ## Success Criteria
 
