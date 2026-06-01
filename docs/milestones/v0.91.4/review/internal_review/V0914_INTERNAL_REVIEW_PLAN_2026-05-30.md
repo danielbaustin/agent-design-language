@@ -2,7 +2,7 @@
 
 ## Status
 
-`planned_not_started`
+`executed_2026-05-31`
 
 ## Purpose
 
@@ -78,9 +78,12 @@ Write the review packet under:
 Expected artifacts:
 
 - `V0914_INTERNAL_REVIEW_PLAN_2026-05-30.md`
-- `V0914_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-05-30.md`
-- `V0914_INTERNAL_REVIEW_SYNTHESIS_2026-05-30.md`
-- `V0914_INTERNAL_REVIEW_HANDOFF_2026-05-30.md`
+- `V0914_INTERNAL_REVIEW_SPECIALIST_FINDINGS_2026-05-31.md`
+- `V0914_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-05-31.md`
+- `V0914_INTERNAL_REVIEW_SYNTHESIS_2026-05-31.md`
+- `V0914_INTERNAL_REVIEW_HANDOFF_2026-05-31.md`
+- `V0914_INTERNAL_REVIEW_REMEDIATION_ISSUES_2026-05-31.md`
+- `repo_packet_2026-05-31/`
 
 Optional local control artifacts may live under ignored `.adl/reviews/` paths,
 but reviewer-facing claims and findings must be summarized in tracked milestone

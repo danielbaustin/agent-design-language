@@ -1,0 +1,307 @@
+{
+  "ci": [
+    ".github/workflows/ci.yaml",
+    ".github/workflows/nightly-coverage-ratchet.yaml",
+    ".github/workflows/v0871_milestone_closeout_gate.yaml"
+  ],
+  "docs": [
+    ".github/README.md",
+    "AGENTS.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "README.md",
+    "REVIEW.md",
+    "SECURITY.md",
+    "adl-spec/README.md",
+    "adl-spec/examples/README.md",
+    "adl-spec/examples/v0.8/README.md",
+    "adl-spec/schemas/README.md",
+    "adl-spec/schemas/v0.8/README.md",
+    "adl-spec/spec/1.0/contracts.md",
+    "adl-spec/spec/1.0/core-concepts.md",
+    "adl-spec/spec/1.0/normative-language.md",
+    "adl-spec/spec/README.md",
+    "adl/CONTRIBUTING.md",
+    "adl/README.md",
+    "adl/examples/README.md",
+    "adl/examples/docs/doc_1.txt",
+    "adl/examples/docs/doc_2.txt",
+    "adl/examples/docs/doc_3.txt",
+    "adl/examples/docs/override_input_1.txt",
+    "adl/examples/docs/override_input_2.txt",
+    "adl/examples/packets/v0-89-gemini-in-the-loop-review-packet.md",
+    "adl/examples/v0-2-coordinator-agents-sdk.md",
+    "adl/examples/v0-3-concurrency-fork-join.md",
+    "adl/examples/v0-3-fork-join-seq-run.md",
+    "adl/examples/v0-3-on-error-retry.md",
+    "adl/examples/v0-3-remote-http-provider.md",
+    "adl/src/demo/fixtures/demo_g_readme.md",
+    "adl/templates/cards/input_card_template.md",
+    "adl/templates/cards/output_card_template.md",
+    "adl/tests/fixtures/runtime_v2/inhabitant/runtime_inhabitant_operator_report.md",
+    "adl/tests/fixtures/runtime_v2/observatory/operator_report.md",
+    "adl/tests/fixtures/runtime_v2/observatory/private_state_projection_report.md",
+    "adl/tools/BURST_FINAL_SUMMARY_TEMPLATE.md",
+    "adl/tools/README.md",
+    "adl/tools/benchmark/full_core_models.txt",
+    "adl/tools/benchmark/hosted_claude_smoke_models.txt"
+  ],
+  "extension_counts": {
+    ".b64": 1,
+    ".css": 7,
+    ".html": 9,
+    ".inc": 9,
+    ".java": 1,
+    ".js": 10,
+    ".json": 280,
+    ".jsonl": 4,
+    ".lock": 2,
+    ".md": 1651,
+    ".mmd": 13,
+    ".patch": 1,
+    ".pdf": 1,
+    ".png": 3,
+    ".py": 99,
+    ".rs": 535,
+    ".sh": 352,
+    ".svg": 1,
+    ".toml": 2,
+    ".txt": 12,
+    ".xml": 1,
+    ".yaml": 196,
+    ".yaml\"": 2,
+    "<no_ext>": 4
+  },
+  "file_count": 3196,
+  "is_worktree": true,
+  "largest_code_files": [
+    {
+      "line_count": 2493,
+      "path": "adl/tools/pr.sh"
+    },
+    {
+      "line_count": 1536,
+      "path": "adl/src/agent_comms/orchestrate/trace.inc"
+    },
+    {
+      "line_count": 1443,
+      "path": "adl/tools/uts_benchmark_runner.py"
+    },
+    {
+      "line_count": 1428,
+      "path": "adl/src/agent_comms/tests.inc"
+    },
+    {
+      "line_count": 1382,
+      "path": "adl/src/runtime_v2/contract_market_demo.rs"
+    },
+    {
+      "line_count": 1381,
+      "path": "adl/src/cli/tests/run_state/persistence.rs"
+    },
+    {
+      "line_count": 1377,
+      "path": "adl/src/long_lived_agent.rs"
+    },
+    {
+      "line_count": 1375,
+      "path": "adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs"
+    },
+    {
+      "line_count": 1370,
+      "path": "adl/src/runtime_v2/humor_and_absurdity.rs"
+    },
+    {
+      "line_count": 1315,
+      "path": "adl/src/runtime_v2/kindness_model.rs"
+    },
+    {
+      "line_count": 1314,
+      "path": "adl/src/runtime_v2/moral_resources.rs"
+    },
+    {
+      "line_count": 1273,
+      "path": "adl/tests/demo_tests.rs"
+    },
+    {
+      "line_count": 1268,
+      "path": "adl/src/runtime_v2/delegation_subcontract.rs"
+    },
+    {
+      "line_count": 1268,
+      "path": "adl/src/runtime_v2/private_state_observatory.rs"
+    },
+    {
+      "line_count": 1264,
+      "path": "adl/tools/test_workflow_conductor_skill_contracts.sh"
+    },
+    {
+      "line_count": 1252,
+      "path": "adl/src/uts.rs"
+    },
+    {
+      "line_count": 1243,
+      "path": "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+    },
+    {
+      "line_count": 1237,
+      "path": "adl/src/gws_live_content_card_roundtrip/logic.rs"
+    },
+    {
+      "line_count": 1233,
+      "path": "adl/src/cli/pr_cmd_cards/cards.rs"
+    },
+    {
+      "line_count": 1217,
+      "path": "adl/src/runtime_v2/challenge.rs"
+    }
+  ],
+  "largest_files": [
+    {
+      "line_count": 9141,
+      "path": "docs/milestones/v0.90.3/assets/csm_observatory_multimode_ui_mockups.png"
+    },
+    {
+      "line_count": 3944,
+      "path": "docs/assets/ADL-overview.png"
+    },
+    {
+      "line_count": 2727,
+      "path": "adl/Cargo.lock"
+    },
+    {
+      "line_count": 2710,
+      "path": "adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md"
+    },
+    {
+      "line_count": 2493,
+      "path": "adl/tools/pr.sh"
+    },
+    {
+      "line_count": 1685,
+      "path": "docs/milestones/v0.91.2/review/uts_benchmark_evidence/historical/uts-hosted-core-v2.json"
+    },
+    {
+      "line_count": 1536,
+      "path": "adl/src/agent_comms/orchestrate/trace.inc"
+    },
+    {
+      "line_count": 1533,
+      "path": "docs/milestones/v0.91.2/review/internal_review_full/packet/evidence_index.json"
+    },
+    {
+      "line_count": 1443,
+      "path": "adl/tools/uts_benchmark_runner.py"
+    },
+    {
+      "line_count": 1428,
+      "path": "adl/src/agent_comms/tests.inc"
+    },
+    {
+      "line_count": 1382,
+      "path": "adl/src/runtime_v2/contract_market_demo.rs"
+    },
+    {
+      "line_count": 1381,
+      "path": "adl/src/cli/tests/run_state/persistence.rs"
+    },
+    {
+      "line_count": 1378,
+      "path": "docs/milestones/v0.90.3/assets/csm_observatory_first_screen.png"
+    },
+    {
+      "line_count": 1377,
+      "path": "adl/src/long_lived_agent.rs"
+    },
+    {
+      "line_count": 1375,
+      "path": "adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs"
+    },
+    {
+      "line_count": 1370,
+      "path": "adl/src/runtime_v2/humor_and_absurdity.rs"
+    },
+    {
+      "line_count": 1315,
+      "path": "adl/src/runtime_v2/kindness_model.rs"
+    },
+    {
+      "line_count": 1314,
+      "path": "adl/src/runtime_v2/moral_resources.rs"
+    },
+    {
+      "line_count": 1273,
+      "path": "adl/tests/demo_tests.rs"
+    },
+    {
+      "line_count": 1268,
+      "path": "adl/src/runtime_v2/delegation_subcontract.rs"
+    }
+  ],
+  "likely_code_roots": [
+    "adl",
+    "demos",
+    "docs"
+  ],
+  "manifests": [
+    "adl/Cargo.lock",
+    "adl/Cargo.toml",
+    "demos/transpiler_demo/Cargo.lock",
+    "demos/transpiler_demo/Cargo.toml",
+    "docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/pom.xml"
+  ],
+  "repo_name": "agent-design-language",
+  "schema": "codebuddy.repo_packet.inventory.v1",
+  "tests": [
+    "\"adl/tests/fixtures/\\343\\203\\246\\343\\203\\213\\343\\202\\263\\343\\203\\274\\343\\203\\211/include-fragment.adl.yaml\"",
+    "\"adl/tests/fixtures/\\343\\203\\246\\343\\203\\213\\343\\202\\263\\343\\203\\274\\343\\203\\211/include-root.adl.yaml\"",
+    "adl-spec/spec/1.0/contracts.md",
+    "adl-spec/spec/1.0/core-concepts.md",
+    "adl-spec/spec/1.0/normative-language.md",
+    "adl-spec/spec/README.md",
+    "adl/src/cli/identity_cmd/tests/adversarial_contracts.rs",
+    "adl/src/cli/identity_cmd/tests/dispatch.rs",
+    "adl/src/cli/identity_cmd/tests/helper_functions.rs",
+    "adl/src/cli/identity_cmd/tests/profile.rs",
+    "adl/src/cli/identity_cmd/tests/skill_contracts.rs",
+    "adl/src/cli/identity_cmd/tests/temporal_contracts.rs",
+    "adl/src/cli/tests/artifact_builders/agency_execution.rs",
+    "adl/src/cli/tests/artifact_builders/cognitive.rs",
+    "adl/src/cli/tests/artifact_builders/learning_runtime.rs",
+    "adl/src/cli/tests/artifact_builders/learning_runtime/artifact_models.rs",
+    "adl/src/cli/tests/artifact_builders/learning_runtime/decision_surfaces.rs",
+    "adl/src/cli/tests/artifact_builders/learning_runtime/run_status.rs",
+    "adl/src/cli/tests/artifact_builders/learning_runtime/scores_io.rs",
+    "adl/src/cli/tests/artifact_builders/mod.rs",
+    "adl/src/cli/tests/artifact_builders/summary.rs",
+    "adl/src/cli/tests/godel.rs",
+    "adl/src/cli/tests/internal_commands.rs",
+    "adl/src/cli/tests/internal_commands/control_path.rs",
+    "adl/src/cli/tests/internal_commands/demo.rs",
+    "adl/src/cli/tests/internal_commands/instrumentation.rs",
+    "adl/src/cli/tests/internal_commands/learn.rs",
+    "adl/src/cli/tests/internal_commands/runtime_state.rs",
+    "adl/src/cli/tests/internal_commands/signing.rs",
+    "adl/src/cli/tests/open_usage.rs",
+    "adl/src/cli/tests/pr_cmd_inline/basics.rs",
+    "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs",
+    "adl/src/cli/tests/pr_cmd_inline/finish/guardrails.rs",
+    "adl/src/cli/tests/pr_cmd_inline/finish/guardrails/branch_and_gitignore.rs",
+    "adl/src/cli/tests/pr_cmd_inline/finish/guardrails/canonical_surfaces.rs",
+    "adl/src/cli/tests/pr_cmd_inline/finish/guardrails/foreign_bundle.rs",
+    "adl/src/cli/tests/pr_cmd_inline/finish/guardrails/output_truth.rs",
+    "adl/src/cli/tests/pr_cmd_inline/finish/guardrails/sync_and_prompt.rs",
+    "adl/src/cli/tests/pr_cmd_inline/finish/mod.rs",
+    "adl/src/cli/tests/pr_cmd_inline/finish/publication.rs"
+  ],
+  "top_level_dirs": {
+    "\"adl": 2,
+    ".": 8,
+    ".github": 4,
+    "adl": 1508,
+    "adl-spec": 39,
+    "demos": 166,
+    "docs": 1469
+  },
+  "worktree_name": "adl-wp-3366"
+}

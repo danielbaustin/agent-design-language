@@ -1,0 +1,1531 @@
+{
+  "evidence": [
+    {
+      "category": "manifest",
+      "line_count": 2727,
+      "path": "adl/Cargo.lock",
+      "reason": "manifest or dependency/build surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 48,
+      "path": "docs/architecture/README.md",
+      "reason": "architecture documentation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 26,
+      "path": "docs/architecture/adr/README.md",
+      "reason": "architecture documentation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 11,
+      "path": "docs/architecture/diagrams/README.md",
+      "reason": "architecture documentation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 71,
+      "path": "adl/Cargo.toml",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 107,
+      "path": "demos/transpiler_demo/Cargo.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 8,
+      "path": "demos/transpiler_demo/Cargo.toml",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 16,
+      "path": "docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/pom.xml",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "ci",
+      "line_count": 552,
+      "path": ".github/workflows/ci.yaml",
+      "reason": "CI or automation surface; large file",
+      "specialist_lanes": [
+        "code",
+        "dependencies",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 15,
+      "path": "adl-spec/spec/README.md",
+      "reason": "test or validation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 160,
+      "path": "docs/specs/acc/README.md",
+      "reason": "test or validation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 221,
+      "path": "docs/specs/uts/README.md",
+      "reason": "test or validation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "ci",
+      "line_count": 184,
+      "path": ".github/workflows/nightly-coverage-ratchet.yaml",
+      "reason": "CI or automation surface",
+      "specialist_lanes": [
+        "code",
+        "dependencies",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "ci",
+      "line_count": 20,
+      "path": ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "reason": "CI or automation surface",
+      "specialist_lanes": [
+        "code",
+        "dependencies",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 268,
+      "path": "docs/architecture/ADL_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 123,
+      "path": "docs/architecture/ARCHITECTURE_DOCUMENT_GENERATION_PLAN.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 104,
+      "path": "docs/architecture/ARCHITECTURE_REVIEW_AUTOMATION.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 261,
+      "path": "docs/architecture/PROVIDER_CAPABILITY_AND_TRANSPORT_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 131,
+      "path": "docs/architecture/TRACE_SYSTEM_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 98,
+      "path": "docs/architecture/adr/0020-universal-tool-schema-portable-tool-description-standard.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 90,
+      "path": "docs/architecture/adr/0021-adl-capability-contract-runtime-authority-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 76,
+      "path": "docs/architecture/adr/0022-speculative-decoding-deterministic-commit-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 83,
+      "path": "docs/architecture/adr/0023-google-workspace-cms-bridge-canonical-promotion-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 83,
+      "path": "docs/architecture/adr/0024-workflow-guardrails-issue-lifecycle-control-plane.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 75,
+      "path": "docs/architecture/adr/0025-codefriend-review-packet-product-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 75,
+      "path": "docs/architecture/adr/0026-repo-visibility-manifest-linkage-layer.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 74,
+      "path": "docs/architecture/adr/0027-governed-code-modernization-moderne-openrewrite-lst.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 117,
+      "path": "docs/architecture/adr/0028-c-sdlc-tracked-workflow-state-and-signed-trace.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 89,
+      "path": "docs/architecture/adr/0029-c-sdlc-default-software-development-lane.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 84,
+      "path": "docs/architecture/adr/0030-software-development-polis-actor-standing-and-shard-ownership.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 82,
+      "path": "docs/architecture/adr/0031-c-sdlc-multi-agent-parallel-execution-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 81,
+      "path": "docs/architecture/adr/0032-parallel-validation-fabric.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 78,
+      "path": "docs/architecture/adr/0033-merge-readiness-and-pr-gate-truth-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 84,
+      "path": "docs/architecture/adr/0034-c-sdlc-evidence-convergence-signed-trace-and-obsmem-handoff.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 97,
+      "path": "docs/architecture/adr/CANDIDATE_ADRS.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 124,
+      "path": "docs/architecture/diagrams/DIAGRAM_PACKET.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 24,
+      "path": "docs/architecture/diagrams/artifact_data_flow.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 38,
+      "path": "docs/architecture/diagrams/codebuddy_review_flow.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 21,
+      "path": "docs/architecture/diagrams/control_plane_lifecycle.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 24,
+      "path": "docs/architecture/diagrams/runtime_lifecycle.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 33,
+      "path": "docs/architecture/diagrams/runtime_v2_subsystem_structure.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 23,
+      "path": "docs/architecture/diagrams/skill_orchestration.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 23,
+      "path": "docs/architecture/diagrams/system_context.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 18,
+      "path": "docs/architecture/diagrams/task_bundle_and_pr_lifecycle.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 17,
+      "path": "docs/architecture/diagrams/task_bundle_state.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 19,
+      "path": "docs/architecture/diagrams/trust_boundaries.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 637,
+      "path": "adl/src/acc/validation.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1157,
+      "path": "adl/src/adl/tests.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 715,
+      "path": "adl/src/adl/types.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1073,
+      "path": "adl/src/agent_comms.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 875,
+      "path": "adl/src/agent_comms/dispatch/coding.inc",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 867,
+      "path": "adl/src/agent_comms/dispatch/invocation.inc",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 559,
+      "path": "adl/src/agent_comms/dispatch/review.inc",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 635,
+      "path": "adl/src/agent_comms/orchestrate/proof_demo.inc",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1536,
+      "path": "adl/src/agent_comms/orchestrate/trace.inc",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1428,
+      "path": "adl/src/agent_comms/tests.inc",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 715,
+      "path": "adl/src/agent_comms/transport.inc",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 625,
+      "path": "adl/src/artifacts.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 745,
+      "path": "adl/src/capability_aptitude_testing.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 505,
+      "path": "adl/src/chronosense/tests.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 550,
+      "path": "adl/src/cli/agent_cmd.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1056,
+      "path": "adl/src/cli/godel_cmd.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 544,
+      "path": "adl/src/cli/identity_cmd/tests/temporal_contracts.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 852,
+      "path": "adl/src/cli/pr_cmd.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 635,
+      "path": "adl/src/cli/pr_cmd/doctor/card_lifecycle.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 725,
+      "path": "adl/src/cli/pr_cmd/doctor/tests.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1065,
+      "path": "adl/src/cli/pr_cmd/finish_support.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 946,
+      "path": "adl/src/cli/pr_cmd/github.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 580,
+      "path": "adl/src/cli/pr_cmd/lifecycle/reconciliation.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 950,
+      "path": "adl/src/cli/pr_cmd/lifecycle/tests.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1233,
+      "path": "adl/src/cli/pr_cmd_cards/cards.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 551,
+      "path": "adl/src/cli/provider_cmd.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 656,
+      "path": "adl/src/cli/run.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 710,
+      "path": "adl/src/cli/run_artifacts/cognitive/control_path.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 727,
+      "path": "adl/src/cli/run_artifacts/cognitive/state_artifacts.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1129,
+      "path": "adl/src/cli/run_artifacts/runtime/trace_envelope.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 908,
+      "path": "adl/src/cli/run_artifacts/runtime/trace_validation.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 735,
+      "path": "adl/src/cli/run_artifacts/runtime/writer.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 692,
+      "path": "adl/src/cli/run_artifacts/summary.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1004,
+      "path": "adl/src/cli/run_artifacts_types.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 519,
+      "path": "adl/src/cli/runtime_v2_cmd/commands.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 998,
+      "path": "adl/src/cli/runtime_v2_cmd/tests.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 821,
+      "path": "adl/src/cli/tests/artifact_builders/agency_execution.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 664,
+      "path": "adl/src/cli/tests/artifact_builders/cognitive.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 1176,
+      "path": "adl/src/cli/tests/artifact_builders/learning_runtime/artifact_models.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 718,
+      "path": "adl/src/cli/tests/artifact_builders/learning_runtime/decision_surfaces.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 921,
+      "path": "adl/src/cli/tests/godel.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 1178,
+      "path": "adl/src/cli/tests/internal_commands/control_path.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 1243,
+      "path": "adl/src/cli/tests/pr_cmd_inline/basics.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 1020,
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 827,
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/publication/flow.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 1107,
+      "path": "adl/src/cli/tests/pr_cmd_inline/lifecycle/diagnosis.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 1375,
+      "path": "adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 839,
+      "path": "adl/src/cli/tests/pr_cmd_inline/repo_helpers/bootstrap.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 526,
+      "path": "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 718,
+      "path": "adl/src/cli/tests/pr_cmd_inline/support.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 803,
+      "path": "adl/src/cli/tests/pr_cmd_inline/versioned_bootstrap.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 1381,
+      "path": "adl/src/cli/tests/run_state/persistence.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 666,
+      "path": "adl/src/cli/tooling_cmd/code_review_reviewer.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1082,
+      "path": "adl/src/cli/tooling_cmd/structured_prompt.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 1094,
+      "path": "adl/src/cli/tooling_cmd/tests/code_review.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 856,
+      "path": "adl/src/cli/tooling_cmd/tests/support.rs",
+      "reason": "test or validation surface; large file",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 831,
+      "path": "adl/src/cli/tooling_cmd/wp_issue_wave.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 571,
+      "path": "adl/src/cognitive_transition_schema.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 616,
+      "path": "adl/src/continuous_verification_self_attack.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1020,
+      "path": "adl/src/csdlc_prompt_editor.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1039,
+      "path": "adl/src/csm_observatory.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 543,
+      "path": "adl/src/dangerous_negative_suite.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1178,
+      "path": "adl/src/demo.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 678,
+      "path": "adl/src/demo/adversarial_self_attack.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 987,
+      "path": "adl/src/demo/stock_league/model.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1207,
+      "path": "adl/src/demo/v086_review_surface.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 518,
+      "path": "adl/src/demo_proof_entry_points.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1057,
+      "path": "adl/src/execute/runner.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 952,
+      "path": "adl/src/execute/state/runtime_control.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 1204,
+      "path": "adl/src/execute/tests.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 771,
+      "path": "adl/src/execution_plan.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 575,
+      "path": "adl/src/exploit_artifact_replay.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 760,
+      "path": "adl/src/freedom_gate.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "code",
+      "line_count": 606,
+      "path": "adl/src/godel/affect_slice.rs",
+      "reason": "executable code surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "diagrams",
+        "redaction",
+        "synthesis"
+      ]
+    }
+  ],
+  "schema": "codebuddy.repo_packet.evidence.v1"
+}
