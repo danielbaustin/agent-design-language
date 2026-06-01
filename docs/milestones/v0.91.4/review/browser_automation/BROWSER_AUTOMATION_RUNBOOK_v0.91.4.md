@@ -169,15 +169,15 @@ Observed in the Codex shell during `#3497`:
 
 - Browser MCP / Codex in-app browser route: passed a local HTTP proof against `127.0.0.1`, including page load, selector click, and DOM mutation inspection.
 - Computer Use visible Chromium route: passed against the actual Chromium window. It loaded Starharvest, verified the visible URL/title, and exposed the game state through the accessibility tree.
-- Standalone Playwright installed outside the repo at `~/tools/playwright-browser` reports Playwright `1.60.0` and browser cache metadata, but `chromium.launch({ headless: true })` fails from the Codex shell with a macOS MachPort permission error. Treat this as proof that the package is installed, not proof that direct shell browser launch is usable.
+- Standalone Playwright installed outside the repo at `<operator-local-playwright-tools>` reports Playwright `1.60.0` and browser cache metadata, but `chromium.launch({ headless: true })` fails from the Codex shell with a macOS MachPort permission error. Treat this as proof that the package is installed, not proof that direct shell browser launch is usable.
 - `open -Ra chromium`: failed with `Unable to find application named 'chromium'`.
 - `open -Ra Chromium`: failed with `Unable to find application named 'Chromium'`.
 - `open -Ra Google Chrome`: failed with `Unable to find application named 'Google Chrome'`.
 - `open -Ra Safari`: failed with `Unable to find application named 'Safari'`.
-- `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`: exists and is executable.
-- `/Applications/Safari.app/Contents/MacOS/Safari`: exists and is executable.
-- `~/Library/Application Support/Chromium` and `~/Library/Caches/Chromium`: exist as Chromium profile/cache directories; this is evidence of browser use, not an executable route.
-- `/Applications/Google Chrome copy.app/Contents/MacOS/Google Chrome`: exists in this environment and should be diagnosed separately from the primary Chrome app when needed.
+- macOS Chrome binary pattern, `<macos-app-bundle>/Contents/MacOS/Google Chrome`: exists in the reviewed environment and is executable.
+- macOS Safari binary pattern, `<macos-app-bundle>/Contents/MacOS/Safari`: exists in the reviewed environment and is executable.
+- `<operator-local-chromium-profile>` and `<operator-local-chromium-cache>`: exist as Chromium profile/cache directories; this is evidence of browser use, not an executable route.
+- Alternate Chrome bundle pattern, `<alternate-macos-app-bundle>/Contents/MacOS/Google Chrome`: exists in this environment and should be diagnosed separately from the primary Chrome app when needed.
 - primary-checkout Playwright Chromium executable: discovered at `.adl/.cache/diagram-renderers/playwright/chromium-1134/chrome-mac/Chromium.app/Contents/MacOS/Chromium` and reports `Chromium 129.0.6668.29`; issue worktrees may not have their own `.adl/.cache` copy.
 - direct primary-checkout Playwright Chromium headless smoke from the Codex shell: attempted and failed with crashpad permission/handshake errors; do not use direct cached Chromium headless as the proof route unless a fresh smoke passes.
 - direct Google Chrome headless smoke from the Codex shell: attempted and failed with signal-style return code `-6`; do not use direct Chrome headless as the default proof route here.
