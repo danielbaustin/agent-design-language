@@ -20,7 +20,7 @@ Sprint 3 is complete and closed as the sprint-default and metrics batch:
 Sprint 3 `#3357`, WP-09 `#3358`, WP-10 `#3359`, WP-11 `#3360`, and WP-12
 `#3361`. Sprint 4 is the active review/remediation/planning/release batch:
 Sprint 4 `#3362`, closed WP-13 `#3363`, closed WP-14 `#3364`, closed WP-15
-`#3365`, open WP-16 `#3366`, open WP-17 `#3367`, and later release-tail WPs
+`#3365`, closed WP-16 `#3366`, open WP-17 `#3367`, and later release-tail WPs
 `#3368` through `#3371`.
 
 The CodeFriend sidecar is complete and closed: umbrella `#3372`, CF-PRE-01

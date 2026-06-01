@@ -9,24 +9,24 @@
 - Prepared during: `v0.91.4` release tail
 - Prepared for issue: `#3367`
 - Parent sprint: `#3362`
-- Current packet status: `draft_pre_send`
-- Date: `2026-05-31`
+- Current packet status: `ready_for_external_review`
+- Date: `2026-06-01`
 - Publication attempted: false
 - Release approval claimed: false
 - External review approval claimed: false
 
 ## Send Gate
 
-This handoff is the tracked third-party review packet surface for `WP-17`, but
-it is not ready to send while `WP-16` / `#3366` is still open.
+This handoff is the tracked third-party review packet surface for `WP-17`.
+`WP-16` / `#3366` is closed, and the WP-16-originated remediation wave is
+closed through merged PRs.
 
-Before sending this packet to an external reviewer, confirm:
+Before sending this packet to an external reviewer, confirm again:
 
-- `#3366` is closed with tracked internal-review outputs.
-- The internal review directory contains the expected findings register,
-  synthesis report, and internal-review handoff.
-- Accepted internal-review findings are fixed, routed to `WP-18`, or explicitly
-  deferred with owner and rationale.
+- `#3366` remains closed.
+- The WP-16 closeout comment remains the controlling internal-review closeout
+  evidence.
+- Accepted WP-16 findings remain fixed through merged PRs or explicitly routed.
 - `README.md`, `CHANGELOG.md`, `adl/Cargo.toml`, `adl/Cargo.lock`,
   `docs/README.md`, and `docs/milestones/v0.91.4/` agree on v0.91.4 release
   truth.
@@ -64,17 +64,18 @@ release ceremony.
 At packet preparation time:
 
 - `WP-15` / `#3365` is closed.
-- `WP-16` / `#3366` is open and remains the controlling internal-review gate.
+- `WP-16` / `#3366` is closed.
 - `WP-17` / `#3367` is open and should not close until external review truth is
   recorded.
-- Sprint 4 remains the controlling release-tail lane for v0.91.4 closeout.
+- Sprint 4 remains open as the controlling release-tail lane for v0.91.4
+  closeout.
 - CodeFriend and WildClawBench are bounded sidecars, not proof that C-SDLC core
   operation is complete.
 - Remaining multi-agent, provider/model, public-prompt-record, demo-readiness,
   and first-birthday preflight work has moved to the v0.91.5 bridge milestone.
 
-This handoff does not claim that v0.91.4 is release-ready. It prepares the
-review packet that should be used after internal review completes.
+This handoff does not claim that v0.91.4 is release-ready. It records that the
+internal review gate has closed and prepares the packet for external review.
 
 ## Controlling Internal Review Packet
 
@@ -86,15 +87,39 @@ The internal-review plan is tracked at:
 
 - `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_PLAN_2026-05-30.md`
 
-Before external review starts, the following expected internal-review outputs
-should also exist in the same directory:
+The WP-16 closeout evidence is recorded in the issue closeout comments:
 
-- `V0914_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-05-30.md`
-- `V0914_INTERNAL_REVIEW_SYNTHESIS_2026-05-30.md`
-- `V0914_INTERNAL_REVIEW_HANDOFF_2026-05-30.md`
+- `https://github.com/danielbaustin/agent-design-language/issues/3366#issuecomment-4588929069`
+- `https://github.com/danielbaustin/agent-design-language/issues/3366#issuecomment-4588929132`
 
-If those outputs are absent, treat this handoff as a draft and stop before
-sending it to a third-party reviewer.
+The closeout comment names the intended internal-review artifacts:
+
+- `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_SPECIALIST_FINDINGS_2026-05-31.md`
+- `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_FINDINGS_2026-05-31.md`
+- `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_SYNTHESIS_2026-05-31.md`
+- `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_REMEDIATION_ISSUES_2026-05-31.md`
+
+Those named files are not present on current `origin/main` as tracked files at
+the time this handoff was refreshed. For WP-17 entry, the controlling evidence
+is therefore the WP-16 closeout comment plus the closed remediation issue/PR
+wave below. The external reviewer should treat the missing tracked files as a
+reviewable evidence-shape caveat, not as release approval.
+
+## WP-16 Finding Disposition
+
+WP-16 routed accepted findings through five remediation issues. All five are
+closed through merged PRs:
+
+| Finding route | Issue state | PR state | Disposition |
+| --- | --- | --- | --- |
+| PVF release-policy test execution and CI coverage | `#3542` closed | `#3547` merged | fixed |
+| Release-doc truth before external review | `#3543` closed | `#3550` merged | fixed |
+| Provider identity and Gemini credential diagnostics | `#3544` closed | `#3548` merged | fixed |
+| Review evidence path and redaction cleanup | `#3545` closed | `#3552` merged | fixed |
+| WildClawBench replayability-boundary cleanup | `#3546` closed | `#3554` merged | fixed |
+
+No accepted WP-16 finding remains open at the time this handoff was refreshed.
+Future findings from the external review belong to `WP-18` / `#3368`.
 
 ## Required Review Scope
 

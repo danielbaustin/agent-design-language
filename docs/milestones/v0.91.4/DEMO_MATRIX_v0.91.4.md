@@ -58,8 +58,8 @@ surface for its local preconditions and commands.
 | --- | --- | --- | --- | --- | --- |
 | D13 | Demo matrix and proof coverage refresh | WP-13 / `#3363` | closed | makes the release proof surface legible and scoped | this matrix, `FEATURE_PROOF_COVERAGE_v0.91.4.md`, and `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` |
 | D14 | Coverage / quality gate | WP-14 / `#3364` | closed | proves lifecycle, tools, tests, traces, and blocker truth are gated before release | `QUALITY_GATE_v0.91.4.md` |
-| D15 | Docs + adoption review pass | WP-15 / `#3365` | pending | proves the default path is documented honestly enough for maintainers and reviewers | docs-review packet to be produced by WP-15 |
-| D16 | Internal review | WP-16 / `#3366` | pending | proves the code/docs/tests/process slice has internal reviewer scrutiny | internal review packet to be produced by WP-16 |
+| D15 | Docs + adoption review pass | WP-15 / `#3365` | closed | proves the default path is documented honestly enough for maintainers and reviewers | `review/docs_adoption/WP15_DOCS_ADOPTION_REVIEW_2026-05-31.md` |
+| D16 | Internal review | WP-16 / `#3366` | closed | proves the code/docs/tests/process slice has internal reviewer scrutiny | WP-16 closeout comment plus closed remediation issues `#3542` through `#3546` |
 | D17 | External / third-party review | WP-17 / `#3367` | pending | proves the release survives outside scrutiny | external review handoff and returned packet |
 | D18 | Review findings remediation | WP-18 / `#3368` | pending | proves findings are fixed, routed, or truthfully deferred | remediation packet and disposition record |
 | D19 | Next milestone planning refresh | WP-19 / `#3369` | pending | proves release closeout does not strand the next planning wave | `NEXT_MILESTONE_HANDOFF_v0.91.4.md` refresh |
@@ -133,7 +133,7 @@ command:
 - WP-13 refreshes demo/proof coverage.
 - WP-14 records quality-gate and validation posture.
 - WP-15 records docs/adoption readiness.
-- WP-16 and WP-17 provide internal and external review.
+- WP-16 has provided internal review; WP-17 provides external review.
 - WP-18 records remediation or truthful deferral.
 
 ## Determinism Evidence
@@ -150,7 +150,7 @@ Reviewers should sign off against:
 - `FEATURE_PROOF_COVERAGE_v0.91.4.md`
 - `QUALITY_GATE_v0.91.4.md`
 - `review/docs_adoption/WP15_DOCS_ADOPTION_REVIEW_2026-05-31.md`
-- internal and external review packets once WP-16 and WP-17 complete
+- WP-16 closeout evidence and the external review packet once WP-17 completes
 
 ## Exit Criteria
 
