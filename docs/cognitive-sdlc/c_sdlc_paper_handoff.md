@@ -15,7 +15,7 @@ https://github.com/danielbaustin/cognitive-sdlc-paper
 Local checkout:
 
 ```text
-/Users/daniel/git/cognitive-sdlc-paper
+<operator-local-csdlc-paper-checkout>
 ```
 
 ## Canonical Draft

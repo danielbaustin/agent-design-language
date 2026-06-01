@@ -18,7 +18,7 @@ published the coming-soon page live over HTTPS.
 
 - `https://codefriend.ai`
 - `https://www.codefriend.ai`
-- CloudFront distribution domain: `https://dgqj4hit346az.cloudfront.net`
+- CloudFront distribution domain: retained in private infrastructure records
 
 ## What changed
 

@@ -26,7 +26,7 @@ Use the same staged workflow as the private SSC/general-intelligence paper repo:
 
 Reference local pattern:
 
-- `/Users/daniel/git/general-intelligence-paper/GENERAL_INTELLIGENCE_PAPER_WORKFLOW.md`
+- `<operator-local-papers-workspace>/general-intelligence-paper/GENERAL_INTELLIGENCE_PAPER_WORKFLOW.md`
 
 ## Proposed Private Repo
 
@@ -39,7 +39,7 @@ cognitive-sdlc-paper
 Suggested local path:
 
 ```text
-/Users/daniel/git/cognitive-sdlc-paper
+<operator-local-csdlc-paper-checkout>
 ```
 
 GitHub repository:
@@ -276,7 +276,7 @@ manuscript once the private repo exists.
 Completed:
 
 - private GitHub repository created
-- local checkout initialized at `/Users/daniel/git/cognitive-sdlc-paper`
+- local checkout initialized at `<operator-local-csdlc-paper-checkout>`
 - initial paper workflow added
 - current Markdown draft migrated into the private repo
 - claim/citation packet scaffold added
