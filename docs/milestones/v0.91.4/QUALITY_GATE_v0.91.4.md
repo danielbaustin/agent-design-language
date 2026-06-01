@@ -40,7 +40,7 @@ Non-core sidecar work that is not required as Sprint 4 release proof:
 - `docs/milestones/v0.91.4/RELEASE_PLAN_v0.91.4.md`
 - `docs/milestones/v0.91.4/MILESTONE_CHECKLIST_v0.91.4.md`
 - GitHub issue truth for Sprint 4 closeout-tail issues `#3365` through `#3371`,
-  refreshed for WP-19 entry after WP-17 and WP-18 closed on `2026-06-01`
+  refreshed for WP-20 entry after WP-19 closed on `2026-06-01`
 
 ## Gap-Analysis Role
 
@@ -118,11 +118,18 @@ The milestone remains blocked for the reasons below.
 
 ### B1. Sprint 4 closeout tail is still open.
 
-The following required release-tail issues remain open:
+The following ordered Sprint 4 release-tail issues remain open:
 
-- `#3369` Next milestone planning
 - `#3370` Next milestone review pass
 - `#3371` Release ceremony
+
+Additional open `v0.91.4` issue truth observed during WP-20:
+
+- `#3558` Root `REVIEW.md` update is satisfied by the WP-20 `REVIEW.md`
+  refresh and should close with or immediately after the WP-20 PR.
+- `#3564` Post-review-tail closed-issue `SOR` truth sweep is an active
+  closeout-normalization lane, not a next-milestone selection blocker. WP-21
+  should consume its result before claiming final closed issue/card truth.
 
 No open `v0.91.4` work outside that Sprint 4 closeout tail should be treated
 as a release blocker by this gate unless explicitly re-routed back into the
@@ -131,7 +138,7 @@ Sprint 4 lane. Previously open feature-date/AEE audit work is now closed:
 - `#3526` `[v0.91.4][docs] Audit ADL feature completion dates and AEE closure`
   closed with merged PR `#3528`
 
-State snapshot refreshed during WP-19 after WP-17 and WP-18 closeout:
+State snapshot refreshed during WP-20 after WP-19 closeout:
 
 | Issue | State |
 | --- | --- |
@@ -139,7 +146,7 @@ State snapshot refreshed during WP-19 after WP-17 and WP-18 closeout:
 | `#3366` | `CLOSED` |
 | `#3367` | `CLOSED` |
 | `#3368` | `CLOSED` |
-| `#3369` | `OPEN` |
+| `#3369` | `CLOSED` |
 | `#3370` | `OPEN` |
 | `#3371` | `OPEN` |
 
@@ -356,7 +363,7 @@ evidence:
 
 ## Follow-on Routing
 
-- Release-tail blockers remain in Sprint 4 and should flow through WP-19 to WP-21.
+- Release-tail blockers remain in Sprint 4 and should flow through WP-20 to WP-21.
 - Non-Sprint-4 bridge work remains routed to `v0.91.5`; sidecar work remains non-core and should be classified explicitly as complete, blocked, or routed if later release-tail docs still mention it.
 - Rust hotspot / refactoring-tracker reference alignment should be routed as separate maintenance planning rather than silently absorbed into the Sprint 4 gate.
 - Carry these new WP-14 packet types forward into the future v0.91.5

@@ -23,19 +23,20 @@ work.
 - [ ] Durable workflow-state migration proof complete:
   [C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN](C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md)
 - [ ] Signed trace proof and verification evidence complete.
-- [ ] CodeFriend pre-alpha sidecar setup complete or truthfully blocked/routed.
-- [ ] WildClawBench benchmark-spike sidecar complete or truthfully blocked/routed.
+- [x] CodeFriend pre-alpha sidecar setup complete or truthfully blocked/routed.
+- [x] WildClawBench benchmark-spike sidecar complete or truthfully blocked/routed.
 - [ ] v0.91.5 bridge work routed out of v0.91.4 release scope:
   multi-agent stabilization, provider/model matrix, public prompt records,
   demo readiness, and first-birthday preflight.
 - [x] Internal review complete.
-- [ ] External / third-party review complete.
-- [ ] Review remediation complete.
-- [ ] Next milestone planning complete.
-- [ ] Next milestone handoff refreshed:
+- [x] External / third-party review complete.
+- [x] Review remediation complete.
+- [x] Next milestone planning complete.
+- [x] Next milestone handoff refreshed:
   [NEXT_MILESTONE_HANDOFF_v0.91.4.md](NEXT_MILESTONE_HANDOFF_v0.91.4.md)
 - [ ] Final next-milestone review pass complete.
-- [ ] Closed issue/card truth refreshed for the full issue wave.
+- [ ] Closed issue/card truth refreshed for the full issue wave, including
+  closeout-normalization sweep `#3564`.
 - [ ] Release-truth docs aligned:
   - `README.md`
   - `CHANGELOG.md`
