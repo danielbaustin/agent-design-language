@@ -94,7 +94,7 @@ The following work should carry forward into `v0.91.5`:
 | Public C-SDLC prompt records | `#3472`-`#3476`, `#3553` | Export, render, validate, redact, index, and transition prompt records without deleting `.adl` history unsafely. |
 | Demo readiness | `#3455`, `#3460`, `#3461` | Decide whether Celestial Rescue doubles as Unity Observatory proof or remains v0.92 demo preparation. |
 | v0.92 activation testing | `#3502`, `#3377` | Ensure every feature surface that comes alive in v0.92 has owner issue, candidate WP, and test/proof posture. |
-| AEE completion tranche | `#3526`, `#3534`, `#3377` | Define explicit subsystem closure criteria rather than letting AEE completion remain implicit until MVP convergence. |
+| AEE completion tranche | closed evidence inputs: `#3526`, `#3534`; live v0.91.5 route: `#3377` | Consume the closed AEE audit/tranche plans in `#3377`, then either seed concrete AEE proof/implementation follow-ons or explicitly block v0.92 readiness before MVP convergence. |
 | Enterprise security separation | `#3538` | Plan separation of enterprise-security features from the main codebase without destabilizing MVP scope. |
 | Runtime/polis observability | `#3556` plus follow-on issue as needed | Make deterministic logs and runtime/polis observability first-class proof surfaces. |
 | Godel-Hadamard-Bayes paper | `#3541` | Produce a bounded paper packet without blocking v0.92 activation readiness. |
