@@ -16,6 +16,30 @@ This document closes the bounded WildClawBench spike by recording:
 - how to interpret the `UTS`/`ACC` framing
 - what the next responsible step should be
 
+
+## Replayability Boundary
+
+The Safety Alignment result packet is a bounded sidecar evidence record, not a
+self-contained replay bundle.
+
+External reviewers should treat the tracked docs as replayable for:
+
+- result interpretation
+- command shape
+- claim boundaries
+- known caveats and failure taxonomy
+
+External reviewers should not treat the tracked docs as sufficient for:
+
+- byte-for-byte rerun of the original task outputs
+- reconstruction of local Docker image state
+- reconstruction of local benchmark workspace payloads
+- verification of raw per-task logs unless those logs are separately supplied
+
+The corrected replayability boundary lives in:
+
+- `docs/milestones/v0.91.4/WILDCLAW_SAFETY_ALIGNMENT_RESULTS_2026-05-27.md`
+
 ## Mini-sprint scope
 
 The bounded WildClawBench sidecar consisted of:
