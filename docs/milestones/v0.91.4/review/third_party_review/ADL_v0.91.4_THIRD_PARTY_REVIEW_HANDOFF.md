@@ -64,12 +64,12 @@ release ceremony.
 
 ## Current Milestone Truth
 
-At packet preparation time:
+At packet preparation time, before external review was returned:
 
 - `WP-15` / `#3365` is closed.
 - `WP-16` / `#3366` is closed.
-- `WP-17` / `#3367` is open and should not close until external review truth is
-  recorded.
+- `WP-17` / `#3367` was open and should not close until external review truth
+  was recorded.
 - Sprint 4 remains open as the controlling release-tail lane for v0.91.4
   closeout.
 - CodeFriend and WildClawBench are bounded sidecars, not proof that C-SDLC core
@@ -78,7 +78,7 @@ At packet preparation time:
   and first-birthday preflight work has moved to the v0.91.5 bridge milestone.
 
 This handoff does not claim that v0.91.4 is release-ready. It records that the
-internal review gate has closed and prepares the packet for external review.
+internal review gate closed and prepared the packet for external review.
 
 ## External Review Result
 
@@ -101,9 +101,9 @@ record four actionable findings:
 | `R3` PVF CI wiring is path-policy gated | `P3` | add a path-policy assertion or documented guard |
 | `R4` F003 provider identity closure is not verifiable from tracked state | `P2` | record fixed-by-PR evidence or explicit v0.91.5 route |
 
-Those findings are routed to `WP-18` / `#3368`. `WP-17` should not be closed
-until this tracked review result is published and the `WP-18` remediation path
-has clear issue-level ownership.
+Those findings were routed to `WP-18` / `#3368`. The tracked review result is
+published, and the `WP-18` remediation path has issue-level ownership through
+`#3560` and PR `#3561`.
 
 ## Controlling Internal Review Packet
 

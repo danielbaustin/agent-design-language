@@ -8,7 +8,7 @@
 
 `v0.91.4` is not ready to advance past the quality gate yet.
 
-This is a successful truthful result for WP-14: the gate is now explicit about what is already proven, what is routed out of scope, and what still blocks Sprint 4 from moving into the internal-review tail.
+This is a successful truthful result for WP-14: the gate is explicit about what is already proven, what is routed out of scope, and what still blocks Sprint 4 from finishing the planning, next-milestone review, and ceremony tail.
 
 ## Scope Boundary
 
@@ -22,9 +22,9 @@ Routed out of the `v0.91.4` Sprint 4 release path:
 - provider/model matrix follow-ons
 - public prompt-record follow-ons
 - demo-readiness follow-ons outside the Sprint 4 closeout path
-- `#3526` / draft PR `#3528` audit work on feature-completion dates and AEE
-  closure unless a later Sprint 4 issue explicitly reclaims it as a release
-  blocker
+- closed `#3526` / merged PR `#3528` audit work on feature-completion dates
+  and AEE closure unless a later Sprint 4 issue explicitly reclaims it as a
+  release blocker
 
 Non-core sidecar work that is not required as Sprint 4 release proof:
 
@@ -40,7 +40,7 @@ Non-core sidecar work that is not required as Sprint 4 release proof:
 - `docs/milestones/v0.91.4/RELEASE_PLAN_v0.91.4.md`
 - `docs/milestones/v0.91.4/MILESTONE_CHECKLIST_v0.91.4.md`
 - GitHub issue truth for Sprint 4 closeout-tail issues `#3365` through `#3371`,
-  refreshed for WP-17 entry after WP-16 closed at `2026-06-01T01:36:50Z`
+  refreshed for WP-19 entry after WP-17 and WP-18 closed on `2026-06-01`
 
 ## Gap-Analysis Role
 
@@ -120,27 +120,25 @@ The milestone remains blocked for the reasons below.
 
 The following required release-tail issues remain open:
 
-- `#3367` External / 3rd-party review
-- `#3368` Review findings remediation
 - `#3369` Next milestone planning
 - `#3370` Next milestone review pass
 - `#3371` Release ceremony
 
-Open `v0.91.4` work outside that Sprint 4 closeout tail should not be treated
+No open `v0.91.4` work outside that Sprint 4 closeout tail should be treated
 as a release blocker by this gate unless explicitly re-routed back into the
-Sprint 4 lane. At the current snapshot, that includes:
+Sprint 4 lane. Previously open feature-date/AEE audit work is now closed:
 
 - `#3526` `[v0.91.4][docs] Audit ADL feature completion dates and AEE closure`
-  with draft PR `#3528`
+  closed with merged PR `#3528`
 
-State snapshot refreshed at `2026-06-01T01:36:50Z` after WP-16 closeout:
+State snapshot refreshed during WP-19 after WP-17 and WP-18 closeout:
 
 | Issue | State |
 | --- | --- |
 | `#3365` | `CLOSED` |
 | `#3366` | `CLOSED` |
-| `#3367` | `OPEN` |
-| `#3368` | `OPEN` |
+| `#3367` | `CLOSED` |
+| `#3368` | `CLOSED` |
 | `#3369` | `OPEN` |
 | `#3370` | `OPEN` |
 | `#3371` | `OPEN` |
@@ -159,16 +157,17 @@ The release tail still lacks a completed signed-trace verification surface and f
 
 Until that evidence exists, the gate must stay blocked.
 
-### B4. Docs/adoption and review proof are incomplete.
+### B4. Final planning, next-milestone review, and ceremony proof are incomplete.
 
-The milestone does not yet have:
+The milestone now has:
 
 - the docs/adoption review packet
 - the internal review packet
 - the external / third-party review packet
 - the remediation/disposition record
 
-That means the release claim has not yet survived the required review sequence.
+The remaining release-tail proof is now the next-milestone handoff refresh,
+next-milestone review pass, and ceremony/evidence convergence.
 
 ### B5. Release-readiness inputs still need final scope alignment.
 
@@ -345,7 +344,9 @@ Available as landed evidence from the repeatability/PVF work. Current posture: `
 
 ## Required Remediation Before External Review
 
-Before WP-17 external review can be considered ready, the milestone should at minimum have:
+WP-17 external review is complete, and WP-18 remediation has landed. The
+pre-external-review checklist below is retained as historical release-tail
+evidence:
 
 1. docs/adoption review package completed under WP-15
 2. WP-16 internal review closed with accepted findings fixed or routed
@@ -355,16 +356,16 @@ Before WP-17 external review can be considered ready, the milestone should at mi
 
 ## Follow-on Routing
 
-- Release-tail blockers remain in Sprint 4 and should flow through WP-15 to WP-21.
+- Release-tail blockers remain in Sprint 4 and should flow through WP-19 to WP-21.
 - Non-Sprint-4 bridge work remains routed to `v0.91.5`; sidecar work remains non-core and should be classified explicitly as complete, blocked, or routed if later release-tail docs still mention it.
 - Rust hotspot / refactoring-tracker reference alignment should be routed as separate maintenance planning rather than silently absorbed into the Sprint 4 gate.
 - Carry these new WP-14 packet types forward into the future v0.91.5
   control-tower workflow so they become standard outputs instead of ad hoc
   one-offs.
-- Any newly discovered defect that widens beyond the gate record should route into WP-18 or a follow-on issue rather than being hidden in the quality-gate doc.
+- Any newly discovered defect that widens beyond the gate record should route into WP-20 review/remediation or a follow-on issue rather than being hidden in the quality-gate doc.
 
 ## Gate Outcome
 
 `blocked`
 
-This gate should move to `pass` only when the Sprint 4 closeout tail is complete, durable workflow-state truth is reviewable from tracked repo state, signed trace / release evidence is present, and the remaining docs/review/remediation tail has actually landed.
+This gate should move to `pass` only when the Sprint 4 closeout tail is complete, durable workflow-state truth is reviewable from tracked repo state, signed trace / release evidence is present, and the remaining planning/review/ceremony tail has actually landed.
