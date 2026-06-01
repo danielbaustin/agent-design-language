@@ -103,6 +103,11 @@ jobs:
         run: bash adl/tools/test_ci_path_policy.sh
         working-directory: .
 
+      - name: PVF CI release policy contract
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
+        run: bash adl/tools/test_pvf_ci_release_policy.sh
+        working-directory: .
+
       - name: Install cargo-nextest for CI contract checks
         if: steps.path-policy.outputs.ci_contracts_required == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
