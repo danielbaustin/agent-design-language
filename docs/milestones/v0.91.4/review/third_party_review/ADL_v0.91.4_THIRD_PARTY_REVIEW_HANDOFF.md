@@ -9,7 +9,7 @@
 - Prepared during: `v0.91.4` release tail
 - Prepared for issue: `#3367`
 - Parent sprint: `#3362`
-- Current packet status: `ready_for_external_review`
+- Current packet status: `external_review_recorded`
 - Date: `2026-06-01`
 - Publication attempted: false
 - Release approval claimed: false
@@ -79,6 +79,26 @@ At packet preparation time:
 
 This handoff does not claim that v0.91.4 is release-ready. It records that the
 internal review gate has closed and prepares the packet for external review.
+
+## External Review Result
+
+The external review result is now tracked at:
+
+- `docs/milestones/v0.91.4/review/third_party_review/V0914_EXTERNAL_REVIEW_FINDINGS_2026-06-01.md`
+
+The review found no `P0` or `P1` findings in the reviewed surfaces, but it did
+record four actionable findings:
+
+| Finding | Severity | Required route |
+| --- | --- | --- |
+| `R1` PVF policy test retains the F001 bug class on the release lane | `P2` | fix before `WP-18` close |
+| `R2` WildClawBench host path persists after replayability-boundary cleanup | `P3` | fix or explicitly retain as sidecar caveat |
+| `R3` PVF CI wiring is path-policy gated | `P3` | add a path-policy assertion or documented guard |
+| `R4` F003 provider identity closure is not verifiable from tracked state | `P2` | record fixed-by-PR evidence or explicit v0.91.5 route |
+
+Those findings are routed to `WP-18` / `#3368`. `WP-17` should not be closed
+until this tracked review result is published and the `WP-18` remediation path
+has clear issue-level ownership.
 
 ## Controlling Internal Review Packet
 
