@@ -186,11 +186,12 @@ fn infer_transport(spec: &adl::ProviderSpec) -> Result<ProviderTransportV1> {
     }
 }
 
-fn transport_surface_label(transport: &ProviderTransportV1) -> &'static str {
-    match transport {
-        ProviderTransportV1::Http => "hosted_http",
-        ProviderTransportV1::LocalCli => "local_cli",
-        ProviderTransportV1::InProcess => "in_process",
+fn transport_surface_label(vendor: &str, transport: &ProviderTransportV1) -> &'static str {
+    match (vendor, transport) {
+        ("ollama", ProviderTransportV1::Http) => "ollama_http",
+        (_, ProviderTransportV1::Http) => "hosted_http",
+        (_, ProviderTransportV1::LocalCli) => "local_cli",
+        (_, ProviderTransportV1::InProcess) => "in_process",
     }
 }
 
@@ -412,7 +413,7 @@ pub fn provider_invocation_target_v1(
         provider: provider_id.clone(),
         model_ref: model_ref.clone(),
         provider_model_id: provider_model_id.clone(),
-        runtime_surface: transport_surface_label(&transport).to_string(),
+        runtime_surface: transport_surface_label(&vendor, &transport).to_string(),
         identity_strength: model_identity_strength_for_target(&vendor, &transport),
         observed_at: observed_at_now_v1(),
         resolved_digest: None,
@@ -586,6 +587,14 @@ mod tests {
         assert_eq!(
             substrate.capabilities.structured_json.mode,
             CapabilityModeV1::PromptBased
+        );
+
+        let target = provider_invocation_target_v1("remote_ollama", &spec, None).expect("target");
+        assert_eq!(target.model_identity.provider_kind, "ollama");
+        assert_eq!(target.model_identity.runtime_surface, "ollama_http");
+        assert_eq!(
+            target.model_identity.identity_strength,
+            ModelIdentityStrengthV1::TagOnly
         );
     }
 

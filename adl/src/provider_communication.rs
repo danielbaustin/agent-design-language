@@ -416,6 +416,8 @@ fn sanitize_provider_message(note: &str) -> String {
         "authorization",
         "bearer ",
         "x-api-key",
+        "key=",
+        "api_key=",
         "api key",
         ".key",
         "prompt:",
@@ -575,6 +577,20 @@ mod tests {
             classify_provider_failure("invalid API key provided", None),
             ProviderFailureKindV1::ProviderAuthError
         );
+    }
+
+    #[test]
+    fn url_query_api_keys_are_redacted_from_provider_failures() {
+        let failure = provider_failure_from_note(
+            "error sending request for url (https://generativelanguage.googleapis.com/v1beta/models/gemini:generateContent?key=synthetic-secret)",
+            None,
+        );
+        assert_eq!(failure.message, "redacted provider diagnostic");
+        assert!(!failure
+            .provider_error_excerpt
+            .as_deref()
+            .unwrap_or_default()
+            .contains("synthetic-secret"));
     }
 
     #[test]
