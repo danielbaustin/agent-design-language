@@ -13,8 +13,8 @@ Do not treat this scaffold as the final next-milestone decision.
 
 ## Purpose
 
-v0.91.4 completes the C-SDLC rollout. The next milestone should be planned from
-the evidence produced by that completion work, not from chat memory or local
+v0.91.4 is the C-SDLC rollout-closeout milestone. The next milestone should be planned from
+the evidence produced by completed release-tail work, not from chat memory or local
 drafts.
 
 By `WP-19`, this handoff should answer:
@@ -28,12 +28,13 @@ By `WP-19`, this handoff should answer:
 
 ## Current Planning Assumption
 
-The next milestone is now planned as v0.91.5, a bridge milestone for
+The current planning assumption is v0.91.5 as a bridge milestone for
 multi-agent stabilization, provider/model breadth, public prompt records,
 demo-readiness routing, and v0.92 activation preflight.
 
-The next milestone should therefore consume v0.91.4 outputs only after these
-conditions are true:
+WP-19 should confirm or revise that assumption from tracked evidence. The next
+milestone should therefore consume v0.91.4 outputs only after these conditions
+are true:
 
 - new ADL software-development issues default to `SIP -> STP -> SPP -> SRP -> SOR`
 - durable cards, sprint state, review, proof, trace, closeout, and release

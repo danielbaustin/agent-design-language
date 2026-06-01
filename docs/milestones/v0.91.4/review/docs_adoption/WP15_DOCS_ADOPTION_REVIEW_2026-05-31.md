@@ -7,7 +7,7 @@
 - Issue: `#3365`
 - Date: `2026-05-31`
 - Review type: docs/adoption readiness before internal and external review
-- Status: `draft_for_pr_review`
+- Status: `merged_review_record`
 
 ## Scope
 
