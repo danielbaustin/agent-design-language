@@ -27,13 +27,13 @@ This claim is not the same as claiming every auxiliary experiment is complete. I
 | Sprint default lane and repeatability | landed | `FIVE_MINUTE_SPRINT_REPEATABILITY_REPORT_2026-05-27.md` and Sprint 3 deliverables | shows the path is repeatable enough to measure and review |
 | Process-drift fail-closed posture | landed | `PROCESS_DRIFT_REGRESSION_REPORT_2026-05-28.md` | shows known workflow drifts are now caught instead of silently passing |
 | Reviewer-facing demo explanation | partially_proven | `review/demo_showcase/CREATIVE_ROOM_PROOF_PACKET_v0.91.4.md`, `review/demo_showcase/STARHARVEST_BROWSER_PROOF_v0.91.4.md`, and `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` | strongest available showcase path is bounded and honest, not a live-provider overclaim |
-| Release-tail proof convergence | pending_sprint_4 | Sprint 4 WP-14 through WP-21 | this is the remaining blocker between landed machinery and a clean release ceremony |
+| Release-tail proof convergence | pending_sprint_4 | Sprint 4 WP-19 through WP-21 | WP-17 external review and WP-18 remediation are closed; next-milestone planning, next-milestone review, and ceremony remain |
 
 ## Feature Coverage Table
 
 | Feature | Status | Evidence | Residual boundary |
 | --- | --- | --- | --- |
-| Cognitive SDLC Default Operation | partially_proven | core proof map above plus Sprint 4 closeout tail | final release claim still depends on WP-14 through WP-21 finishing in order |
+| Cognitive SDLC Default Operation | partially_proven | core proof map above plus Sprint 4 closeout tail | final release claim still depends on WP-19 through WP-21 finishing in order |
 | C-SDLC Validation And Routing Hardening | landed | Sprint 1 issue wave and feature doc | no new WP-13 blocker identified |
 | Software Development Polis And Actor Standing | landed | software-development-polis proof packet | reviewer should treat this as control-plane proof, not live multi-agent proof |
 | Shard Ownership And Interface Freeze | landed | software-development-polis proof packet and related feature docs | bounded coordination claim only |
@@ -55,8 +55,8 @@ This claim is not the same as claiming every auxiliary experiment is complete. I
 | WP-14 | `#3364` | closed | `QUALITY_GATE_v0.91.4.md` with blocker dispositions |
 | WP-15 | `#3365` | closed | docs/adoption review packet |
 | WP-16 | `#3366` | closed | internal review closeout and remediation routing |
-| WP-17 | `#3367` | pending | external review handoff and returned packet |
-| WP-18 | `#3368` | pending | remediation packet and finding dispositions |
+| WP-17 | `#3367` | closed | external review handoff and returned packet |
+| WP-18 | `#3368` | closed | remediation packet and finding dispositions |
 | WP-19 | `#3369` | pending | next-milestone handoff refresh |
 | WP-20 | `#3370` | pending | next-milestone review packet |
 | WP-21 | `#3371` | pending | release evidence packet and ceremony closeout |
