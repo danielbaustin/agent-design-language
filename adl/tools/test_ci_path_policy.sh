@@ -280,6 +280,16 @@ EOF
   assert_has "$policy_surface_plus_demo_output" "coverage_authority=pr_policy_surface_tooling_only"
   assert_has "$policy_surface_plus_demo_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
 
+  git checkout -q -b pvf-runner-policy-surface "$base_sha"
+  mkdir -p adl/tools
+  printf '#!/usr/bin/env bash\nprintf pvf-runner\n' > adl/tools/run_pvf_validation_lane.sh
+  git add adl/tools/run_pvf_validation_lane.sh
+  git commit -q -m pvf-runner-policy-surface
+  pvf_runner_policy_head="$(git rev-parse HEAD)"
+
+  pvf_runner_policy_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$pvf_runner_policy_head" --ref "refs/pull/1/merge")"
+  assert_has "$pvf_runner_policy_output" "ci_contracts_required=true"
+
   git checkout -q -b workflow-reporting-only-change "$base_sha"
   python3 - <<'PY'
 from pathlib import Path

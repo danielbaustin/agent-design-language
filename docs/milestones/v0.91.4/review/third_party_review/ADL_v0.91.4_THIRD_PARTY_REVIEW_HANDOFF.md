@@ -86,6 +86,11 @@ The external review result is now tracked at:
 
 - `docs/milestones/v0.91.4/review/third_party_review/V0914_EXTERNAL_REVIEW_FINDINGS_2026-06-01.md`
 
+The WP-18 remediation disposition is tracked at:
+
+- `docs/milestones/v0.91.4/review/third_party_review/V0914_EXTERNAL_REVIEW_REMEDIATION_2026-06-01.md`
+- `#3560` `[v0.91.4][WP-18][review] Remediate WP-17 external review findings`
+
 The review found no `P0` or `P1` findings in the reviewed surfaces, but it did
 record four actionable findings:
 
