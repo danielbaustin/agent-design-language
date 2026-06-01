@@ -21,9 +21,12 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the active v0.91.4 release-tail review, start with:
+For the v0.91.4 release ceremony review, start with:
 
 - `docs/milestones/v0.91.4/review/third_party_review/ADL_v0.91.4_THIRD_PARTY_REVIEW_HANDOFF.md`
+- `docs/milestones/v0.91.4/RELEASE_EVIDENCE_v0.91.4.md`
+- `docs/milestones/v0.91.4/RELEASE_READINESS_v0.91.4.md`
+- `docs/milestones/v0.91.4/END_OF_MILESTONE_REPORT_v0.91.4.md`
 - `docs/milestones/v0.91.4/README.md`
 - `docs/milestones/v0.91.4/WBS_v0.91.4.md`
 - `docs/milestones/v0.91.4/SPRINT_v0.91.4.md`
@@ -46,15 +49,16 @@ For the active v0.91.4 release-tail review, start with:
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
-The current review posture is v0.91.4 WP-20 next-milestone review before the
-release ceremony. WP-15 through WP-19 are closed. WP-17 / `#3367` recorded the
-external review, WP-18 / `#3368` recorded remediation, and WP-19 / `#3369`
-refreshed the next-milestone handoff. WP-20 / `#3370` reviews that handoff
-before WP-21 / `#3371` may perform release-evidence convergence and ceremony.
+The current review posture is v0.91.4 WP-21 release ceremony. WP-15 through
+WP-20 are closed. WP-17 / `#3367` recorded the external review, WP-18 /
+`#3368` recorded remediation, WP-19 / `#3369` refreshed the next-milestone
+handoff, WP-20 / `#3370` reviewed that handoff, and WP-21 / `#3371` performs
+release-evidence convergence and ceremony.
 
 The third-party handoff remains a required review input, but it is no longer
-the active controlling stage by itself. The next-milestone handoff and WP-20
-review packet are now the controlling release-tail planning surfaces.
+the active controlling stage by itself. The release evidence, release
+readiness, end-of-milestone report, next-milestone handoff, and WP-20 review
+packet are now the controlling release-tail surfaces.
 
 v0.91.4 should be reviewed as the Cognitive SDLC rollout-closeout milestone. It
 hardens the v0.91.3 C-SDLC vertical slice into default operational practice:
@@ -65,8 +69,8 @@ tracked evidence records, and release-tail review discipline.
 
 Important v0.91.4 non-claims:
 
-- v0.91.4 does not claim release approval or release ceremony completion.
-- v0.91.4 does not claim release ceremony completion until WP-21 is closed.
+- v0.91.4 does not claim tag or GitHub Release publication until WP-21 merges
+  and release publication runs from clean `main`.
 - v0.91.4 does not claim v0.91.5 bridge work is complete.
 - v0.91.4 does not claim v0.92 first-birthday readiness.
 - v0.91.4 does not claim multi-agent stabilization, provider/model matrix

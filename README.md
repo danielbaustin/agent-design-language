@@ -9,7 +9,7 @@ packets, demos, and milestone evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.91.4%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.91.5%20bridge-blue)
 
 ![ADL deterministic cognitive architecture overview](docs/assets/ADL-overview.png)
 
@@ -117,11 +117,12 @@ cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-91-chat
 
 These are three high-signal recent demo entrypoints.
 
-Start with the active v0.91.4 C-SDLC completion lane:
+Start with the completed v0.91.4 C-SDLC release evidence lane:
 
 - [v0.91.4 README](docs/milestones/v0.91.4/README.md)
 - [v0.91.4 sprint plan](docs/milestones/v0.91.4/SPRINT_v0.91.4.md)
 - [v0.91.4 demo matrix](docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md)
+- [v0.91.4 release evidence](docs/milestones/v0.91.4/RELEASE_EVIDENCE_v0.91.4.md)
 
 Generate the v0.91 cognitive-being flagship proof bundle:
 
@@ -148,12 +149,27 @@ from issue
 
 ## Recent Milestones
 
-### v0.91.4 - Active Cognitive SDLC Default-Operation Milestone
+### v0.91.5 - Active Bridge Milestone
 
-v0.91.4 is the active Cognitive SDLC completion and hardening milestone. Its
-issue wave and sprint umbrellas are open, the crate version has advanced to
-`0.91.4`, and the milestone is in its Sprint 4 review/release-tail sequence.
-The milestone turns the v0.91.3 first slice into default operating practice:
+v0.91.5 is the active bridge milestone between the C-SDLC rollout closeout and
+the v0.92 first-birthday milestone. It carries multi-agent stabilization,
+provider/model breadth, public prompt records, demo readiness, AEE completion
+routing, and activation testing so v0.92 can begin from a clean operational
+base.
+
+Start here:
+
+- [v0.91.5 README](docs/milestones/v0.91.5/README.md)
+- [v0.91.5 sprint plan](docs/milestones/v0.91.5/SPRINT_v0.91.5.md)
+- [v0.91.5 issue wave](docs/milestones/v0.91.5/WP_ISSUE_WAVE_v0.91.5.yaml)
+- [v0.92 activation test map](docs/milestones/v0.91.5/V092_ACTIVATION_TEST_MAP_v0.91.5.md)
+
+### v0.91.4 - Completed Cognitive SDLC Default-Operation Milestone
+
+v0.91.4 is complete as the Cognitive SDLC completion and hardening milestone.
+Its issue wave closed through Sprint 4 release ceremony, and the crate version
+is `0.91.4`. The milestone turns the v0.91.3 first slice into default
+operating practice:
 validator/doctor/conductor/editor alignment, signed trace and ObsMem handoff
 hardening, five-minute-sprint repeatability, validation-tail/PVF work, and
 bounded sidecar evidence for CodeFriend and WildClawBench.
@@ -165,6 +181,7 @@ Start here:
 - [v0.91.4 sprint plan](docs/milestones/v0.91.4/SPRINT_v0.91.4.md)
 - [v0.91.4 demo matrix](docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md)
 - [v0.91.4 quality gate](docs/milestones/v0.91.4/QUALITY_GATE_v0.91.4.md)
+- [v0.91.4 release evidence](docs/milestones/v0.91.4/RELEASE_EVIDENCE_v0.91.4.md)
 
 ### v0.91.3 - Completed Cognitive SDLC First-Slice Milestone
 
@@ -258,12 +275,11 @@ production markets.
 
 ## Project Status
 
-- Active milestone: v0.91.4
+- Active milestone: v0.91.5
 - Current crate version: 0.91.4
-- Most recently completed milestone: v0.91.3
-- Current milestone state: v0.91.4 is in Sprint 4 docs/review/release-tail
-  convergence. WP-14 quality gate is closed, WP-15 docs/adoption review is
-  active, and remaining bridge work has been routed to v0.91.5.
+- Most recently completed milestone: v0.91.4
+- Current milestone state: v0.91.5 bridge planning is ready to begin from the
+  completed v0.91.4 C-SDLC release evidence package.
 - Previous completed milestone before v0.91.2: v0.91.1
 - Primary implementation language: Rust
 
