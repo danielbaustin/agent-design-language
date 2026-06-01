@@ -9,7 +9,7 @@
 - Prepared during: `v0.91.4` release tail
 - Prepared for issue: `#3367`
 - Parent sprint: `#3362`
-- Current packet status: `blocked_pending_internal_review_artifact_recovery`
+- Current packet status: `ready_for_external_review`
 - Date: `2026-06-01`
 - Publication attempted: false
 - Release approval claimed: false
@@ -18,9 +18,9 @@
 ## Send Gate
 
 This handoff is the tracked third-party review packet surface for `WP-17`.
-`WP-16` / `#3366` is closed, and the WP-16-originated remediation wave is
-closed through merged PRs. This packet is not ready to send until the recovered
-WP-16 internal-review artifacts are published through `#3555`.
+`WP-16` / `#3366` is closed, the WP-16-originated remediation wave is closed
+through merged PRs, and the recovered WP-16 internal-review artifacts are now
+tracked through closed recovery issue `#3555`.
 
 Before sending this packet to an external reviewer, confirm again:
 
@@ -95,23 +95,20 @@ The WP-16 closeout evidence is recorded in the issue closeout comments:
 - `https://github.com/danielbaustin/agent-design-language/issues/3366#issuecomment-4588929069`
 - `https://github.com/danielbaustin/agent-design-language/issues/3366#issuecomment-4588929132`
 
-The closeout comment names the intended internal-review artifacts:
+The internal-review artifacts are tracked at:
 
+- `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_PLAN_2026-05-30.md`
 - `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_SPECIALIST_FINDINGS_2026-05-31.md`
-- `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_FINDINGS_2026-05-31.md`
+- `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-05-31.md`
 - `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_SYNTHESIS_2026-05-31.md`
 - `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_REMEDIATION_ISSUES_2026-05-31.md`
+- `docs/milestones/v0.91.4/review/internal_review/V0914_INTERNAL_REVIEW_HANDOFF_2026-05-31.md`
+- `docs/milestones/v0.91.4/review/internal_review/repo_packet_2026-05-31/`
 
-Those named files were recovered from the WP-16 worktree after this handoff
-was refreshed, but they are not yet present on current `origin/main` as tracked
-files. The recovery is tracked by `#3555`
-`[v0.91.4][WP-16][review] Publish recovered internal review artifacts`.
-
-Do not send this packet to an external reviewer until `#3555` is closed and
-the recovered artifacts are present under the tracked internal-review path.
-Until then, the controlling evidence is the WP-16 closeout comment plus the
-closed remediation issue/PR wave below, and the absent tracked files remain a
-blocking evidence-shape gap.
+Those artifacts were recovered from the WP-16 worktree and published through
+`#3555` `[v0.91.4][WP-16][review] Publish recovered internal review artifacts`,
+which is now closed. The controlling evidence is therefore the tracked
+internal-review packet plus the closed remediation issue/PR wave below.
 
 ## WP-16 Finding Disposition
 
