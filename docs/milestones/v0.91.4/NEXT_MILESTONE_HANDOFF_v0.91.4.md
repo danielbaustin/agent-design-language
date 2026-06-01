@@ -14,8 +14,9 @@ Current release-tail state at this handoff:
   `#3551`.
 - `WP-18` / `#3368`: closed after external review findings R1-R4 were fixed or
   dispositioned through `#3560` / PR `#3561`.
-- `WP-19` / `#3369`: in progress for next-milestone planning.
-- `WP-20` / `#3370`: pending next-milestone review.
+- `WP-19` / `#3369`: closed after next-milestone planning landed through PR
+  `#3563`.
+- `WP-20` / `#3370`: in progress for next-milestone review.
 - `WP-21` / `#3371`: pending release ceremony and release-evidence closeout.
 
 Do not treat this handoff as release approval. `WP-20` still needs to review
@@ -138,7 +139,6 @@ The canonical v0.91.5 activation map is:
 
 Remaining v0.91.4 release-tail blockers:
 
-- `WP-19` must finish this handoff and open it to WP-20 review.
 - `WP-20` must review this handoff before ceremony.
 - `WP-21` must converge release evidence and close the release ceremony.
 
@@ -180,5 +180,5 @@ That review should confirm:
 
 ## Handoff Decision
 
-Proceed from `WP-19` to `WP-20` with `v0.91.5` as the selected next milestone,
-subject to WP-20 review.
+Proceed through `WP-20` review with `v0.91.5` as the selected next milestone.
+If WP-20 stays review-clean, WP-21 may consume this handoff for ceremony.
