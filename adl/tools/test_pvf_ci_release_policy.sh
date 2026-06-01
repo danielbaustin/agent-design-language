@@ -36,7 +36,16 @@ if [ "$runtime_status" -ne 1 ]; then
   exit 1
 fi
 
+set +e
 "$RUNNER" --manifest "$manifest" --changed-files "$release_changed" --mode release --report-out "$release_report" >"$tmpdir/release.stdout"
+release_status=$?
+set -e
+
+if [ "$release_status" -ne 0 ]; then
+  echo "expected release mode to exit 0 for passed aggregate, got $release_status" >&2
+  cat "$tmpdir/release.stdout" >&2
+  exit 1
+fi
 
 python3 - <<'PY' "$docs_report" "$runtime_report" "$release_report"
 import json

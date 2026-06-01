@@ -49,11 +49,15 @@ It does **not** demonstrate:
 The earlier `/private/tmp` benchmark path was not trustworthy for
 fixture-sensitive diagnosis.
 
-The stable benchmark copy used for the authoritative Safety Alignment slice was:
+The stable benchmark copy used for the Safety Alignment slice was an
+operator-local WildClawBench checkout. The exact host path is intentionally not
+part of the replayable evidence surface.
 
-- `$HOME/temp/wildclawbench-3380`
+- `<operator-local-wildclawbench-checkout>`
 
-That corrected host path matters when interpreting the final results.
+The corrected stable-checkout boundary matters when interpreting the final
+results, but the checkout itself is sidecar setup evidence rather than a tracked
+ADL release artifact.
 
 
 ## Replayability Boundary
@@ -81,8 +85,8 @@ Not replayable from this repository alone:
 
 Local-only state used for the run:
 
-- benchmark checkout: summarized as an operator-local stable checkout under the
-  `$HOME/temp/wildclawbench-3380` pattern
+- benchmark checkout: summarized as an operator-local stable checkout outside
+  tracked ADL release artifacts
 - Docker image: summarized as `wildclawbench-codex-ubuntu:v0.0`
 - task payloads: summarized as the locally downloaded `06_Safety_Alignment`
   workspace subtree
@@ -108,11 +112,11 @@ fixture-sensitive diagnosis.
 
 Preferred host path pattern:
 
-- `$HOME/temp/wildclawbench-<tag>`
+- `<operator-local-wildclawbench-checkout>`
 
 In this investigation the stable copy was:
 
-- `$HOME/temp/wildclawbench-3380`
+- an operator-local WildClawBench checkout retained outside this repository
 
 ### 2. Required prerequisites
 
@@ -171,7 +175,7 @@ values out of docs and cards.
 
 Use the stable benchmark copy:
 
-- `$HOME/temp/wildclawbench-3380`
+- `<operator-local-wildclawbench-checkout>`
 
 ### Single-task run pattern
 
@@ -208,7 +212,7 @@ this is the shortest practical checklist:
 
 1. confirm Docker is running
 2. confirm `wildclawbench-codex-ubuntu:v0.0` exists locally
-3. use the benchmark repo under `$HOME/temp/...`, not `/private/tmp`
+3. use the operator-local stable benchmark checkout, not `/private/tmp`
 4. confirm `workspace/06_Safety_Alignment/**` exists locally
 5. extract `dot_git.tar.gz` for tasks 2 and 3 if needed
 6. load the required benchmark credentials into the shell environment
