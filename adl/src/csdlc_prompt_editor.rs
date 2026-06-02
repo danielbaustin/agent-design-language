@@ -517,10 +517,6 @@ impl PromptMarkdownStructure {
             {
                 continue;
             }
-            if kind == "sor" {
-                continue;
-            }
-
             let trimmed = raw_line.trim();
             if trimmed.is_empty() || contains_prompt_placeholder(raw_line) {
                 continue;
@@ -816,6 +812,7 @@ fn is_rendered_value_line(trimmed: &str) -> bool {
         "- Required outcome type:",
         "- Demo required:",
         "- Local ignored output-card scaffold at",
+        "- `bash adl/tools/validate_structured_prompt.sh",
         "Source issue-prompt slug:",
         "Required outcome type:",
         "Demo required:",

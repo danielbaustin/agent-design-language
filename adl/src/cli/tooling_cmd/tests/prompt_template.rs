@@ -162,6 +162,18 @@ fn prompt_template_cli_rejects_markdown_structure_drift() {
     let err = validate_structure_err("sip", &locked_mutation);
     assert!(err.to_string().contains("locked template text drifted"));
 
+    let sor = rendered_dir.join("sor.md");
+    let valid_sor = fs::read_to_string(&sor).expect("sor");
+    let sor_locked_mutation = repo.write_rel(
+        "sor-locked-mutation.md",
+        &valid_sor.replace(
+            "If artifacts exist only in the worktree, the task is NOT complete.",
+            "If artifacts exist only in the worktree, the task can still be complete.",
+        ),
+    );
+    let err = validate_structure_err("sor", &sor_locked_mutation);
+    assert!(err.to_string().contains("locked template text drifted"));
+
     let inserted_frontmatter = repo.write_rel(
         "frontmatter-insertion.md",
         &valid_stp.replace(
