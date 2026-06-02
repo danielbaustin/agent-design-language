@@ -24,7 +24,8 @@ and v0.92 first birthday. Final notes must be rewritten from landed evidence.
 - Multi-agent C-SDLC stabilization.
 - Provider/model matrix and OpenRouter readiness.
 - Public prompt records and `.adl` archive transition.
-- Demo readiness and v0.92 activation preflight.
+- Demo readiness, plus v0.92 activation/final preflight routed through the
+  closeout tail.
 
 ## What's New In Detail
 

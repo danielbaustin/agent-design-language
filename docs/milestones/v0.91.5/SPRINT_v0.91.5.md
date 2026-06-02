@@ -29,7 +29,7 @@ Planned scope:
 - public prompt records and `.adl` transition controls;
 - AEE completion-tranche routing before v0.92 consumes bridge evidence;
 - provider/model matrix and multi-agent proof;
-- demo readiness and v0.92 activation preflight;
+- demo matrix/showcase readiness;
 - review, remediation, final v0.92 preflight, and release.
 
 ## Bridge Sprint Work
@@ -43,11 +43,14 @@ Planned scope:
 
 - WP-01 opening: confirm active milestone truth, issue/card readiness, sprint
   umbrellas, canonical WP ordering, and newly scheduled portable adapter work.
-- Sprint 1: route issues and make public prompt / portable project records
+- Sprint 1 (`#3571`): land prompt-template values rendering first, then make
+  downstream cards, public prompt records, and portable project records
   reviewable.
-- Sprint 2: make provider/model breadth and multi-agent execution work.
-- Sprint 3: prepare demos and v0.92 activation readiness.
-- Sprint 4: review, remediate, preflight v0.92, and close the bridge.
+- Sprint 2 (`#3572`): make provider/model breadth and multi-agent execution work.
+- Sprint 3 (`#3573`): refresh demo matrix / demo showcase readiness.
+- Sprint 4 (`#3574`): run coverage/quality, docs/review alignment, internal
+  review, external review, remediation/final v0.92 preflight, next-milestone
+  planning, and release ceremony.
 
 ## Sprint Goal
 
@@ -60,22 +63,33 @@ Make v0.92 openable without hidden operational debt.
 - OpenRouter and model-role matrix.
 - Multi-agent C-SDLC workcell proof.
 - Demo showcase and Unity Observatory readiness.
-- v0.92 activation map and first-birthday launch packet.
+- v0.92 activation map and first-birthday launch packet as WP-18 preflight
+  inputs.
 
 ## Work Plan
 
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | WP-01 milestone opening | `#3568`, consuming closed setup `#3506`-`#3511` | ADL maintainers | active |
+| 1 | WP-01 milestone opening | `#3568`, consuming closed setup `#3506`-`#3511` | ADL maintainers | closed |
 | 2 | Canonical WP ordering standard | `#3567` | ADL maintainers | scheduled |
-| 3 | Portable ADL adapter contract | `#3569` | ADL maintainers | scheduled |
-| 4 | AEE completion tranche | `#3534`, consumed by `#3377` | ADL maintainers | planned |
-| 5 | Public prompt records | `#3472`-`#3476` | ADL maintainers | moved |
-| 6 | Provider/model matrix | `#3501`, `#3505` | ADL maintainers | moved |
-| 7 | Multi-agent proof | `#3415`, `#3503`, `#3504` (`#3484` satisfied/closed evidence) | ADL maintainers | moved |
-| 8 | Demo readiness | `#3455`, `#3460`, `#3461` | ADL maintainers | moved |
-| 9 | v0.92 activation and birthday preflight | `#3502`, `#3377` | ADL maintainers | moved |
-| 10 | Review, remediation, release | pending | ADL maintainers | planned |
+| 3 | Sprint 1 umbrella: prompt/public records and portable ADL readiness | `#3571` | ADL maintainers | seeded |
+| 4 | Prompt-template values renderer | `#3553` | ADL maintainers | first |
+| 5 | Downstream card rewrite after prompt templates v1.1 | `#3582` | ADL maintainers | scheduled after `#3553` |
+| 6 | Public prompt records | `#3472`-`#3476` | ADL maintainers | moved |
+| 7 | Portable ADL adapter contract | `#3569` | ADL maintainers | scheduled |
+| 8 | Sprint 2 umbrella: provider matrix and multi-agent proof | `#3572` | ADL maintainers | seeded |
+| 9 | Provider/model matrix | `#3501`, `#3505` | ADL maintainers | moved |
+| 10 | Multi-agent proof | `#3415`, `#3503`, `#3504` (`#3484` satisfied/closed evidence) | ADL maintainers | moved |
+| 11 | Sprint 3 umbrella: demo matrix / demo showcase refresh | `#3573` | ADL maintainers | seeded |
+| 12 | Demo matrix / demo showcase refresh | `#3455` with `#3460`, `#3461` as supporting demo inputs | ADL maintainers | moved |
+| 13 | Sprint 4 umbrella: coverage, review, remediation, planning, release | `#3574` | ADL maintainers | seeded |
+| 14 | Coverage / quality gate | `#3575`, consuming `#3531` | ADL maintainers | seeded |
+| 15 | Docs + review alignment | `#3579` | ADL maintainers | seeded |
+| 16 | Internal review | `#3576` | ADL maintainers | seeded |
+| 17 | External / 3rd-party review | `#3580` | ADL maintainers | seeded |
+| 18 | Review findings remediation + final v0.92 preflight | `#3577`, consuming `#3502`, `#3534`, `#3377` | ADL maintainers | seeded |
+| 19 | Next milestone planning | `#3581` | ADL maintainers | seeded |
+| 20 | Release ceremony | `#3578` | ADL maintainers | seeded |
 
 ## Execution Policy
 
@@ -89,6 +103,11 @@ Make v0.92 openable without hidden operational debt.
 - Preserve ordered execution where dependencies matter.
 - Do not close WP-01 until planned issues, cards, sprint umbrellas, and initial
   sequencing are ready to begin or explicitly routed.
+- Downstream card rewrite is explicitly routed through `#3582` and waits until
+  `#3553` lands; WP-01 does not need to rewrite every scaffold-era downstream
+  card before opening Sprint 1.
+- Sprint umbrellas `#3571` through `#3574` own sprint-level coordination and
+  closeout truth; they do not replace child issue execution.
 - Use multi-agent lanes only where they are being tested or provide clear value.
 - Do not merge hidden prompt-record cleanup into unrelated issues.
 - Escalate blockers as findings or follow-on issues.

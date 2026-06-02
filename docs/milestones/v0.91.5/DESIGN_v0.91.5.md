@@ -59,7 +59,7 @@ The milestone uses four execution sprints:
 
 - Sprint 1: bridge package and public prompt record transition.
 - Sprint 2: provider/model matrix and multi-agent stabilization.
-- Sprint 3: demo readiness and v0.92 activation preflight.
+- Sprint 3: demo matrix / demo showcase refresh.
 - Sprint 4: docs, review, remediation, v0.92 final preflight, and release.
 
 ## Interfaces And Contracts

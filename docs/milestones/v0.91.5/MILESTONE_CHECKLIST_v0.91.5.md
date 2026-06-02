@@ -16,8 +16,12 @@ checks needed for truthful v0.91.5 closeout.
 
 - [x] v0.91.5 planning package exists.
 - [ ] WP-01 confirms planned issues, cards, sprint umbrellas, and initial sequencing are ready.
-- [ ] Canonical milestone WP ordering standard is scheduled through `#3567`.
-- [ ] Portable ADL project adapter planning is scheduled through `#3569`.
+- [x] Canonical milestone WP ordering standard is scheduled through `#3567`.
+- [x] Portable ADL project adapter planning is scheduled through `#3569`.
+- [x] Sprint umbrella issues `#3571` through `#3574` are seeded.
+- [x] Closeout-tail issues `#3575`, `#3579`, `#3576`, `#3580`,
+  `#3577`, `#3581`, and `#3578` are seeded.
+- [x] Reusable milestone WP ordering standard and template surface exist.
 - [ ] Feature docs exist for all bridge work tracks.
 - [ ] Open side issues are relabeled to `version:v0.91.5`.
 - [ ] v0.91.4 docs say bridge work moved, not abandoned.
