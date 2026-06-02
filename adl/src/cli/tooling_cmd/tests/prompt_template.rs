@@ -47,6 +47,17 @@ fn prompt_template_cli_renders_and_validates_all_five_cards_from_values() {
             values.to_string_lossy().to_string(),
         ])
         .expect("values should validate");
+        real_tooling(&[
+            "prompt-template".to_string(),
+            "validate-structure".to_string(),
+            "--repo-root".to_string(),
+            repo_root_for_tests().to_string_lossy().to_string(),
+            "--kind".to_string(),
+            kind.to_string(),
+            "--input".to_string(),
+            card.to_string_lossy().to_string(),
+        ])
+        .expect("rendered structure should validate");
 
         let mut args = vec![
             "validate-structured-prompt".to_string(),
@@ -116,6 +127,71 @@ fn prompt_template_cli_renders_one_card_and_rejects_locked_value_edits() {
 }
 
 #[test]
+fn prompt_template_cli_rejects_markdown_structure_drift() {
+    let repo = TempRepo::new("prompt-template-structure");
+    let values_dir = repo.path().join("values");
+    let rendered_dir = repo.path().join("rendered");
+    render_sample_cards_for_structure_test(&values_dir, &rendered_dir);
+
+    let stp = rendered_dir.join("stp.md");
+    let valid_stp = fs::read_to_string(&stp).expect("stp");
+
+    let missing_heading = repo.write_rel(
+        "missing-heading.md",
+        &valid_stp.replace("\n## Goal\n", "\n"),
+    );
+    let err = validate_structure_err("stp", &missing_heading);
+    assert!(err.to_string().contains("heading structure drifted"));
+
+    let reordered = repo.write_rel(
+        "reordered-heading.md",
+        &valid_stp
+            .replace("## Summary", "## TEMP_HEADING")
+            .replace("## Required Outcome", "## Summary")
+            .replace("## TEMP_HEADING", "## Required Outcome"),
+    );
+    let err = validate_structure_err("stp", &reordered);
+    assert!(err.to_string().contains("heading structure drifted"));
+
+    let sip = rendered_dir.join("sip.md");
+    let valid_sip = fs::read_to_string(&sip).expect("sip");
+    let locked_mutation = repo.write_rel(
+        "locked-mutation.md",
+        &valid_sip.replace("- Follow `AGENTS.md`.", "- Ignore `AGENTS.md`."),
+    );
+    let err = validate_structure_err("sip", &locked_mutation);
+    assert!(err.to_string().contains("locked template text drifted"));
+
+    let inserted_frontmatter = repo.write_rel(
+        "frontmatter-insertion.md",
+        &valid_stp.replace(
+            "issue_card_schema: adl.issue.v1\n",
+            "issue_card_schema: adl.issue.v1\nsurprise_field: true\n",
+        ),
+    );
+    let err = validate_structure_err("stp", &inserted_frontmatter);
+    assert!(err
+        .to_string()
+        .contains("frontmatter key inventory drifted"));
+
+    let fence_drift = repo.write_rel(
+        "fence-drift.md",
+        &valid_sip.replace("```yaml\nprompt_schema", "```\nprompt_schema"),
+    );
+    let err = validate_structure_err("sip", &fence_drift);
+    assert!(err.to_string().contains("fenced block structure drifted"));
+
+    let unresolved = repo.write_rel(
+        "unresolved-placeholder.md",
+        &valid_stp.replace("Sample C-SDLC prompt editor card.", "{{summary}}"),
+    );
+    let err = validate_structure_err("stp", &unresolved);
+    assert!(err
+        .to_string()
+        .contains("unresolved prompt-template placeholder"));
+}
+
+#[test]
 fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
     let repo = TempRepo::new("prompt-template-errors");
     let values = repo.write_rel(
@@ -143,6 +219,12 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
         "--help".to_string(),
     ])
     .expect("validate-values help should succeed");
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "validate-structure".to_string(),
+        "--help".to_string(),
+    ])
+    .expect("validate-structure help should succeed");
 
     let missing = real_tooling(&["prompt-template".to_string()])
         .expect_err("missing prompt-template subcommand should fail");
@@ -202,4 +284,56 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
     assert!(missing_value
         .to_string()
         .contains("missing value for --values-dir"));
+
+    let missing_input = real_tooling(&[
+        "prompt-template".to_string(),
+        "validate-structure".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "sip".to_string(),
+    ])
+    .expect_err("validate-structure requires input");
+    assert!(missing_input
+        .to_string()
+        .contains("validate-structure requires --input"));
+}
+
+fn render_sample_cards_for_structure_test(
+    values_dir: &std::path::Path,
+    rendered_dir: &std::path::Path,
+) {
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "write-sample-values".to_string(),
+        "--out-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+    ])
+    .expect("write sample values");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "render-all".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--values-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+        "--out-dir".to_string(),
+        rendered_dir.to_string_lossy().to_string(),
+    ])
+    .expect("render sample cards");
+}
+
+fn validate_structure_err(kind: &str, input: &std::path::Path) -> anyhow::Error {
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "validate-structure".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        kind.to_string(),
+        "--input".to_string(),
+        input.to_string_lossy().to_string(),
+    ])
+    .expect_err("structure drift should fail")
 }

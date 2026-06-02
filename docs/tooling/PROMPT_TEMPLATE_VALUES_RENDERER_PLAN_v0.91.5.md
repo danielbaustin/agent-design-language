@@ -131,17 +131,22 @@ The v0.91.5 values validator implemented by `#3553` rejects:
 - invalid issue, version, slug, and card-status values;
 - locked/system field supplied through ordinary `values`.
 
-The following validation surfaces are intentionally routed to follow-on guard
-work instead of being claimed by the `#3553` renderer:
+The following validation surfaces were intentionally routed out of `#3553`
+instead of being claimed by the values validator:
 
-- rendered Markdown structure drift;
 - host-local absolute paths or secret markers in public card output;
 - richer typed list/item schema validation beyond the current values model.
 
-Markdown structure immutability is tracked by `#3585`, which must land before
-the downstream card rewrite in `#3582`. Public artifact hygiene and redaction
-checks remain separate review/validation surfaces unless a later issue binds
-them directly to the renderer.
+Markdown structure immutability is implemented by `#3585` as a deterministic
+structure guard over frontmatter key inventory, Markdown heading order, fenced
+block shape, unresolved placeholders, and locked template prose where the card
+kind has stable prose. It deliberately uses the existing Rust-owned template
+model and lightweight Markdown structure scanner for v0.91.5 instead of adding
+a new parser dependency. `markdown-rs` or a richer LST-style parser remains a
+future option if later work needs trivia-preserving structure checks.
+
+Public artifact hygiene and redaction checks remain separate review/validation
+surfaces unless a later issue binds them directly to the renderer.
 
 Validation should fail fast with short, deterministic messages. These docs are
 small; failures should be effectively immediate.
@@ -174,6 +179,10 @@ cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template write-sample
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render-all \
   --values-dir /tmp/csdlc-prompt-values \
   --out-dir /tmp/csdlc-prompt-cards
+
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure \
+  --kind stp \
+  --input /tmp/csdlc-prompt-cards/stp.md
 ```
 
 The existing Markdown validator remains in use:
@@ -207,15 +216,15 @@ Compatibility rules:
 - existing `1.0.0` Markdown cards can be validated as Markdown;
 - new values-rendered cards should carry enough metadata to identify the
   template set and card kind;
-- downstream card rewrite after the renderer and AST structure guard is tracked
+- downstream card rewrite after the renderer and structure guard is tracked
   through `#3582`;
 - historical cards are not migrated in `#3553`;
 - cards with truthful lifecycle state should not be rewritten merely for style.
 
 ## Follow-On Routing
 
-This issue implements the renderer and values validator. The remaining bounded
-follow-ons are Markdown AST template immutability validation (`#3585`) and then
+This issue implements the renderer and values validator. Markdown structure
+immutability is implemented by `#3585`; the remaining bounded follow-on is
 downstream card rewrite/normalization after both guards land (`#3582`).
 
 ## Acceptance Bar For Follow-Ons
@@ -227,7 +236,7 @@ Renderer implementation is complete when:
 - values validation rejects the implemented failure modes above;
 - rendered Markdown passes existing structured prompt validation;
 - editor model is Rust-owned and can render/preview the values contract;
-- `#3585` can add structure immutability proof without redesigning the renderer;
+- `#3585` adds structure immutability proof without redesigning the renderer;
 - `#3582` can rewrite downstream v0.91.5 cards without hand-editing structure
   after the renderer and AST guard are available.
 
@@ -237,7 +246,6 @@ Renderer implementation is complete when:
 - This plan does not migrate historical cards.
 - This plan does not change C-SDLC lifecycle semantics.
 - This plan does not make browser/editor validation authoritative.
-- This plan does not claim rendered Markdown structure immutability, redaction,
-  or host-path scanning is implemented by `#3553`.
-- This plan does not close `#3585`.
+- This plan does not claim redaction or host-path scanning is implemented by
+  `#3553` or `#3585`.
 - This plan does not close `#3582`.

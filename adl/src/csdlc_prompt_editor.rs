@@ -218,7 +218,9 @@ pub fn render_sample_card(repo_root: &Path, kind: PromptCardKind) -> Result<Stri
         .ok_or_else(|| anyhow!("missing card model for {}", kind.key()))?;
     let values = sample_values();
     validate_values(card, &values)?;
-    render_template(&card.template, &values)
+    let rendered = render_template(&card.template, &values)?;
+    validate_rendered_card_structure(card, &rendered)?;
+    Ok(rendered)
 }
 
 pub fn render_card_from_values_file(
@@ -230,7 +232,9 @@ pub fn render_card_from_values_file(
     let card = card_model(&model, kind)?;
     let values = load_values_file(card, values_path, &model.template_set)?;
     validate_values(card, &values)?;
-    render_template(&card.template, &values)
+    let rendered = render_template(&card.template, &values)?;
+    validate_rendered_card_structure(card, &rendered)?;
+    Ok(rendered)
 }
 
 pub fn validate_values_file(
@@ -242,6 +246,18 @@ pub fn validate_values_file(
     let card = card_model(&model, kind)?;
     let values = load_values_file(card, values_path, &model.template_set)?;
     validate_values(card, &values)
+}
+
+pub fn validate_rendered_card_structure_file(
+    repo_root: &Path,
+    kind: PromptCardKind,
+    rendered_path: &Path,
+) -> Result<()> {
+    let model = load_editor_model(repo_root)?;
+    let card = card_model(&model, kind)?;
+    let rendered = fs::read_to_string(rendered_path)
+        .with_context(|| format!("failed to read rendered card {}", rendered_path.display()))?;
+    validate_rendered_card_structure(card, &rendered)
 }
 
 pub fn render_all_cards_from_values_dir(
@@ -375,6 +391,454 @@ pub fn render_template(template: &str, values: &BTreeMap<String, String>) -> Res
         bail!("rendered card contains unresolved prompt-template placeholder near byte {idx}");
     }
     Ok(rendered)
+}
+
+pub fn validate_rendered_card_structure(card: &PromptCardForm, rendered: &str) -> Result<()> {
+    ensure!(
+        unresolved_placeholder_offset(rendered).is_none()
+            && unresolved_curly_placeholder_offset(rendered).is_none(),
+        "{} rendered card contains unresolved prompt-template placeholder",
+        card.key
+    );
+    let dynamic_sections = dynamic_markdown_sections(card);
+    let expected = PromptMarkdownStructure::from_text(card.key, &card.template, &dynamic_sections)?;
+    let actual = PromptMarkdownStructure::from_text(card.key, rendered, &dynamic_sections)?;
+    ensure!(
+        actual.frontmatter_keys == expected.frontmatter_keys,
+        "{} frontmatter key inventory drifted: expected {:?}, got {:?}",
+        card.key,
+        expected.frontmatter_keys,
+        actual.frontmatter_keys
+    );
+    ensure!(
+        headings_match(&expected.headings, &actual.headings),
+        "{} Markdown heading structure drifted: expected {:?}, got {:?}",
+        card.key,
+        expected.headings,
+        actual.headings
+    );
+    ensure!(
+        fenced_blocks_match(&expected.fenced_blocks, &actual.fenced_blocks),
+        "{} fenced block structure drifted: expected {:?}, got {:?}",
+        card.key,
+        expected.fenced_blocks,
+        actual.fenced_blocks
+    );
+    if !locked_lines_match(&expected.locked_lines, &actual.locked_lines) {
+        bail!(
+            "{} locked template text drifted: {}",
+            card.key,
+            locked_line_diff(&expected.locked_lines, &actual.locked_lines)
+        );
+    }
+    Ok(())
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct PromptMarkdownStructure {
+    frontmatter_keys: Vec<String>,
+    headings: Vec<MarkdownHeading>,
+    fenced_blocks: Vec<FencedBlockShape>,
+    locked_lines: Vec<LockedLine>,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct MarkdownHeading {
+    level: usize,
+    text: Option<String>,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct FencedBlockShape {
+    ordinal: usize,
+    info: String,
+    heading_path: Vec<String>,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct LockedLine {
+    heading_path: Vec<String>,
+    text: String,
+}
+
+impl PromptMarkdownStructure {
+    fn from_text(
+        kind: &str,
+        text: &str,
+        editable_sections: &BTreeSet<&'static str>,
+    ) -> Result<Self> {
+        let (frontmatter_keys, body) = split_optional_frontmatter_keys(text)?;
+        let mut headings = Vec::new();
+        let mut fenced_blocks = Vec::new();
+        let mut locked_lines = Vec::new();
+        let mut heading_stack: Vec<(usize, String)> = Vec::new();
+        let mut in_fence = false;
+        let mut fence_ordinal = 0usize;
+
+        for raw_line in body.lines() {
+            let trimmed_start = raw_line.trim_start();
+            if trimmed_start.starts_with("```") {
+                if !in_fence {
+                    fenced_blocks.push(FencedBlockShape {
+                        ordinal: fence_ordinal,
+                        info: trimmed_start.trim_start_matches("```").trim().to_string(),
+                        heading_path: heading_path(&heading_stack),
+                    });
+                    fence_ordinal += 1;
+                    in_fence = true;
+                } else {
+                    in_fence = false;
+                }
+                continue;
+            }
+            if in_fence {
+                continue;
+            }
+
+            if let Some(heading) = parse_markdown_heading(raw_line) {
+                while heading_stack
+                    .last()
+                    .is_some_and(|(level, _)| *level >= heading.level)
+                {
+                    heading_stack.pop();
+                }
+                if let Some(text) = &heading.text {
+                    heading_stack.push((heading.level, text.clone()));
+                } else {
+                    heading_stack.push((heading.level, "<dynamic-heading>".to_string()));
+                }
+                headings.push(heading);
+                continue;
+            }
+
+            if heading_stack
+                .last()
+                .is_some_and(|(_, heading)| editable_sections.contains(heading.as_str()))
+            {
+                continue;
+            }
+            if kind == "sor" {
+                continue;
+            }
+
+            let trimmed = raw_line.trim();
+            if trimmed.is_empty() || contains_prompt_placeholder(raw_line) {
+                continue;
+            }
+            if is_template_scaffold_line(trimmed) || is_rendered_value_line(trimmed) {
+                continue;
+            }
+            locked_lines.push(LockedLine {
+                heading_path: heading_path(&heading_stack),
+                text: raw_line.trim_end().to_string(),
+            });
+        }
+
+        ensure!(
+            !in_fence,
+            "{kind} rendered card has an unclosed fenced code block"
+        );
+
+        Ok(Self {
+            frontmatter_keys,
+            headings,
+            fenced_blocks,
+            locked_lines,
+        })
+    }
+}
+
+fn dynamic_markdown_sections(card: &PromptCardForm) -> BTreeSet<&'static str> {
+    let mut sections = PLACEHOLDERS
+        .iter()
+        .flat_map(|key| dynamic_field_sections(key))
+        .collect::<BTreeSet<_>>();
+    if card.kind == PromptCardKind::Stp {
+        sections.insert("Demo Expectations");
+        sections.insert("Notes");
+    }
+    sections
+}
+
+fn dynamic_field_sections(key: &str) -> Vec<&'static str> {
+    match key {
+        "summary" => vec!["Summary"],
+        "goal" => vec!["Goal"],
+        "required_outcome" => vec!["Required Outcome"],
+        "deliverables" => vec!["Deliverables"],
+        "acceptance_criteria" => vec!["Acceptance Criteria"],
+        "inputs" => vec!["Inputs"],
+        "repo_inputs" => vec!["Repo Inputs"],
+        "dependencies" => vec!["Dependencies"],
+        "target_files_surfaces" => vec!["Target Files / Surfaces"],
+        "validation_plan" => vec!["Validation Plan"],
+        "demo_proof_requirements" => vec!["Demo / Proof Requirements", "Demo Expectations"],
+        "constraints_policies" => vec!["Constraints / Policies"],
+        "system_invariants" => vec!["System Invariants (must remain true)"],
+        "reviewer_checklist" => vec!["Reviewer Checklist (machine-readable hints)"],
+        "non_goals" => vec!["Non-goals", "Non-goals / Out of scope"],
+        "issue_graph_notes" => vec!["Issue-Graph Notes"],
+        "notes_risks" => vec!["Notes / Risks", "Notes"],
+        "tooling_notes" => vec!["Tooling Notes"],
+        "plan_summary" => vec!["Plan Summary"],
+        "dependencies_inline" => vec!["Proposed Steps"],
+        "repo_inputs_inline" => vec!["Proposed Steps"],
+        "deliverables_inline" => vec!["Proposed Steps"],
+        "acceptance_criteria_inline" => vec!["Proposed Steps"],
+        "risks_inline" => vec!["Risks And Edge Cases"],
+        "validation_plan_inline" => vec!["Test Strategy"],
+        "notes_risks_inline" => vec!["Notes"],
+        "slug" => vec!["Affected Areas"],
+        "stp_card" | "sip_card" | "spp_card" | "srp_card" | "sor_card" => {
+            vec!["Scope Basis", "Policy Refs"]
+        }
+        "output_card" => vec!["Outputs"],
+        "branch_action" => vec!["Actions taken"],
+        _ => Vec::new(),
+    }
+}
+
+fn split_optional_frontmatter_keys(text: &str) -> Result<(Vec<String>, &str)> {
+    let mut lines = text.lines().collect::<Vec<_>>();
+    if lines.first().is_none_or(|line| line.trim() != "---") {
+        return Ok((Vec::new(), text));
+    }
+    let close = lines
+        .iter()
+        .enumerate()
+        .skip(1)
+        .find(|(_, line)| line.trim() == "---")
+        .map(|(idx, _)| idx)
+        .ok_or_else(|| anyhow!("missing YAML frontmatter closer"))?;
+    let frontmatter = lines[1..close].join("\n");
+    let keys = frontmatter_key_inventory(&frontmatter)?;
+    let body_start = text
+        .match_indices('\n')
+        .nth(close)
+        .map(|(idx, _)| idx + 1)
+        .unwrap_or(text.len());
+    lines.clear();
+    Ok((keys, &text[body_start..]))
+}
+
+fn frontmatter_key_inventory(frontmatter: &str) -> Result<Vec<String>> {
+    let doc: serde_yaml::Value = serde_yaml::from_str(frontmatter)
+        .with_context(|| "failed to parse prompt card frontmatter")?;
+    let mut keys = Vec::new();
+    collect_yaml_key_paths(&doc, "", &mut keys)?;
+    keys.sort();
+    Ok(keys)
+}
+
+fn collect_yaml_key_paths(
+    value: &serde_yaml::Value,
+    prefix: &str,
+    out: &mut Vec<String>,
+) -> Result<()> {
+    let Some(mapping) = value.as_mapping() else {
+        return Ok(());
+    };
+    for (key, value) in mapping {
+        let key = key
+            .as_str()
+            .ok_or_else(|| anyhow!("frontmatter keys must be strings"))?;
+        let path = if prefix.is_empty() {
+            key.to_string()
+        } else {
+            format!("{prefix}.{key}")
+        };
+        out.push(path.clone());
+        collect_yaml_key_paths(value, &path, out)?;
+    }
+    Ok(())
+}
+
+fn parse_markdown_heading(line: &str) -> Option<MarkdownHeading> {
+    let trimmed = line.trim_start();
+    let marker_len = trimmed.chars().take_while(|ch| *ch == '#').count();
+    if !(1..=6).contains(&marker_len) {
+        return None;
+    }
+    let rest = &trimmed[marker_len..];
+    if !rest.starts_with(' ') {
+        return None;
+    }
+    Some(MarkdownHeading {
+        level: marker_len,
+        text: if contains_prompt_placeholder(rest) {
+            None
+        } else {
+            Some(rest.trim().to_string())
+        },
+    })
+}
+
+fn heading_path(stack: &[(usize, String)]) -> Vec<String> {
+    stack.iter().map(|(_, text)| text.clone()).collect()
+}
+
+fn headings_match(expected: &[MarkdownHeading], actual: &[MarkdownHeading]) -> bool {
+    expected.len() == actual.len()
+        && expected.iter().zip(actual).all(|(expected, actual)| {
+            expected.level == actual.level
+                && expected
+                    .text
+                    .as_ref()
+                    .is_none_or(|expected_text| actual.text.as_ref() == Some(expected_text))
+        })
+}
+
+fn fenced_blocks_match(expected: &[FencedBlockShape], actual: &[FencedBlockShape]) -> bool {
+    expected.len() == actual.len()
+        && expected.iter().zip(actual).all(|(expected, actual)| {
+            expected.ordinal == actual.ordinal
+                && expected.info == actual.info
+                && heading_paths_match(&expected.heading_path, &actual.heading_path)
+        })
+}
+
+fn heading_paths_match(expected: &[String], actual: &[String]) -> bool {
+    expected.len() == actual.len()
+        && expected
+            .iter()
+            .zip(actual)
+            .all(|(expected, actual)| expected == "<dynamic-heading>" || expected == actual)
+}
+
+fn locked_lines_match(expected: &[LockedLine], actual: &[LockedLine]) -> bool {
+    expected.len() == actual.len()
+        && expected.iter().zip(actual).all(|(expected, actual)| {
+            expected.text == actual.text
+                && heading_paths_match(&expected.heading_path, &actual.heading_path)
+        })
+}
+
+fn locked_line_diff(expected: &[LockedLine], actual: &[LockedLine]) -> String {
+    let max = expected.len().max(actual.len());
+    for idx in 0..max {
+        match (expected.get(idx), actual.get(idx)) {
+            (Some(expected), Some(actual))
+                if expected.text != actual.text
+                    || !heading_paths_match(&expected.heading_path, &actual.heading_path) =>
+            {
+                return format!(
+                    "first drift at locked line {idx}: expected {:?}, got {:?}",
+                    expected, actual
+                );
+            }
+            (Some(expected), None) => {
+                return format!("missing locked line {idx}: expected {:?}", expected);
+            }
+            (None, Some(actual)) => {
+                return format!("unexpected locked line {idx}: got {:?}", actual);
+            }
+            _ => {}
+        }
+    }
+    "locked line inventory differs".to_string()
+}
+
+fn contains_prompt_placeholder(line: &str) -> bool {
+    PLACEHOLDERS
+        .iter()
+        .any(|key| line.contains(&format!("<{key}>")) || line.contains(&format!("{{{{{key}}}}}")))
+}
+
+fn is_template_scaffold_line(trimmed: &str) -> bool {
+    matches!(
+        trimmed,
+        "---"
+            | "```yaml"
+            | "```"
+            | "labels:"
+            | "supersedes: []"
+            | "duplicates: []"
+            | "depends_on: []"
+            | "canonical_files: []"
+            | "demo_names: []"
+            | "pr_start:"
+            | "enabled: true"
+            | "source_refs:"
+            | "scope:"
+            | "files:"
+            | "components:"
+            | "out_of_scope:"
+            | "constraints:"
+            | "assumptions:"
+            | "proposed_steps:"
+            | "codex_plan:"
+            | "affected_areas:"
+            | "invariants_to_preserve:"
+            | "risks_and_edge_cases:"
+            | "test_strategy:"
+            | "required_permissions:"
+            | "stop_conditions:"
+            | "alternatives_considered:"
+            | "review_hooks:"
+            | "review_results:"
+    ) || trimmed.starts_with("- kind:")
+        || trimmed.starts_with("kind:")
+        || trimmed.starts_with("ref:")
+        || trimmed.starts_with("- id:")
+        || trimmed.starts_with("description:")
+        || trimmed.starts_with("expected_output:")
+        || trimmed.starts_with("allowed_mode:")
+        || trimmed.starts_with("- step:")
+        || trimmed.starts_with("status:")
+        || trimmed.starts_with("- description:")
+        || trimmed.starts_with("reason_not_chosen:")
+}
+
+fn is_rendered_value_line(trimmed: &str) -> bool {
+    [
+        "Task ID:",
+        "Run ID:",
+        "Version:",
+        "Title:",
+        "Branch:",
+        "Card Status:",
+        "Status:",
+        "Generated:",
+        "- Actor:",
+        "- Model:",
+        "- Start Time:",
+        "- End Time:",
+        "- Issue:",
+        "- PR:",
+        "- Source Issue Prompt:",
+        "- Docs:",
+        "- Other:",
+        "- Agent:",
+        "- Provider:",
+        "- Tools allowed:",
+        "- Sandbox / approvals:",
+        "- Source issue-prompt slug:",
+        "- Required outcome type:",
+        "- Demo required:",
+        "- Local ignored output-card scaffold at",
+        "Source issue-prompt slug:",
+        "Required outcome type:",
+        "Demo required:",
+        "Canonical Template Source:",
+        "Generated from",
+        "name:",
+        "issue:",
+        "task_id:",
+        "run_id:",
+        "version:",
+        "title:",
+        "branch:",
+        "generated_at:",
+        "card_status:",
+        "activation_state:",
+        "plan_revision:",
+        "confidence:",
+        "plan_summary:",
+        "execution_handoff:",
+        "notes:",
+    ]
+    .iter()
+    .any(|prefix| trimmed.starts_with(prefix))
 }
 
 fn load_values_file(
