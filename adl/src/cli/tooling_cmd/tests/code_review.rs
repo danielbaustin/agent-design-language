@@ -332,6 +332,40 @@ fn code_review_build_changed_files_accepts_file_filter_inside_changed_set() {
 }
 
 #[test]
+fn code_review_build_changed_files_skips_lockfiles_from_automatic_inventory() {
+    let root = init_temp_git_repo("changed-files-lockfile");
+    let source_path = root.join("src/sample.rs");
+    let lock_path = root.join("Cargo.lock");
+    std::fs::create_dir_all(source_path.parent().expect("source parent"))
+        .expect("create source parent");
+    std::fs::write(&source_path, "fn sample() { println!(\"v1\"); }\n")
+        .expect("write initial source");
+    std::fs::write(&lock_path, "# lock v1\n").expect("write initial lockfile");
+    std::process::Command::new("git")
+        .args(["add", "."])
+        .current_dir(&root)
+        .output()
+        .expect("git add initial");
+    std::process::Command::new("git")
+        .args(["commit", "-m", "initial"])
+        .current_dir(&root)
+        .output()
+        .expect("git commit initial");
+    std::fs::write(&source_path, "fn sample() { println!(\"v2\"); }\n")
+        .expect("write changed source");
+    std::fs::write(&lock_path, "# lock v2\n").expect("write changed lockfile");
+
+    let mut args = test_args();
+    args.base_ref = "HEAD".to_string();
+    args.head_ref = "HEAD".to_string();
+    args.include_working_tree = true;
+
+    let files = changed_files(&root, &args).expect("changed file inventory should pass");
+    assert_eq!(files, vec!["src/sample.rs".to_string()]);
+    std::fs::remove_dir_all(&root).ok();
+}
+
+#[test]
 fn code_review_build_changed_files_rejects_file_filter_outside_changed_set() {
     let root = init_temp_git_repo_with_changed_file(
         "changed-files-reject",
