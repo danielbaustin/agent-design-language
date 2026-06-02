@@ -23,6 +23,8 @@ used by prompt-card structure validation.
 
 v0.91.5 adds the next authoring model described in
 [`PROMPT_TEMPLATE_VALUES_RENDERER_PLAN_v0.91.5.md`](../../tooling/PROMPT_TEMPLATE_VALUES_RENDERER_PLAN_v0.91.5.md).
+The short operator checklist for using the renderer and structure schemas is
+[`PROMPT_TEMPLATE_CARD_GENERATION_CHECKLIST.md`](../../tooling/PROMPT_TEMPLATE_CARD_GENERATION_CHECKLIST.md).
 
 The intended direction is deterministic rendering:
 
@@ -35,6 +37,20 @@ editing surface can now be a values object with locked system fields, required
 values, enum validation, placeholder checks, and Rust-owned static validation.
 The browser editor exposes those values, but it must not become a separate
 template or validation authority.
+
+For new or fully re-rendered cards, prefer this path over direct Markdown
+structure edits:
+
+1. fill or export values YAML;
+2. run `validate-values`;
+3. render with `render` or `render-all`;
+4. run `validate-structure` on each rendered card;
+5. run `validate-schemas` and the Python schema smoke check when schema
+   artifacts are touched.
+
+Editor skills still own lifecycle-truth repairs. The renderer owns deterministic
+template filling and shape preservation; it does not invent execution, review,
+PR, merge, or closeout truth.
 
 ## Structure Schemas
 

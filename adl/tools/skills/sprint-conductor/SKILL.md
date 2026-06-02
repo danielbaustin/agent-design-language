@@ -125,6 +125,9 @@ missing sprint-management issue first.
 3. When live execution is about to begin, run the installed-skill parity/readiness gate first.
 4. Run sprint-wide structured prompt review before issue execution begins.
 5. If any child issue cards are not ready, repair them through the editor skills first.
+   When the child issue needs new or fully re-rendered cards, prefer the
+   prompt-template values renderer and `validate-structure` before routing
+   issue-local lifecycle truth through the matching editor skill.
 6. Confirm the current issue is the earliest not-yet-closed issue in the list.
 7. Route that issue through `workflow-conductor`.
 8. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
@@ -149,6 +152,8 @@ This skill enforces:
   card-completion review for `SIP`, `STP`, `SPP`, and `SRP`
 - no issue `N+1` work before issue `N` is fully closed out
 - editor-skill routing when cards drift
+- prompt-template renderer/schema validation when cards need deterministic
+  regeneration rather than lifecycle-truth repair
 - immediate stop on true blocker
 - no silent creation of extra sprint-management issues
 - no missing sprint-management issue workaround outside the skill when sprint

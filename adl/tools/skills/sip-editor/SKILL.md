@@ -16,6 +16,22 @@ Its job is to:
 
 This is a helper skill, not a readiness or execution orchestrator.
 
+## Prompt-Template Tooling Boundary
+
+When creating a new SIP or fully re-rendering one, prefer the active
+prompt-template values renderer and structure/schema validators before using
+Markdown as lifecycle state:
+
+```sh
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-values --kind sip --values <path>
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render --kind sip --values <path> --out <path>
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure --kind sip --input <path>
+```
+
+Use this skill for SIP truth repairs: issue-specific intent, branch/worktree
+truth, target surfaces, validation guidance, and placeholder cleanup. Do not use
+it to bypass locked template prose or schema validation.
+
 ## Required Inputs
 
 At minimum, gather:
