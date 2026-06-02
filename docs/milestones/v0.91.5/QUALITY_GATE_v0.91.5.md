@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned quality gate.
+Planned quality gate; v0.91.5 is in WP-01 opening.
 
 ## Required Validation
 
@@ -77,6 +77,8 @@ The milestone is blocked if:
   `#3377`.
 - the reusable checklist above is not applied, or its blocked/deferred rows are
   not routed before release closeout.
+- portable ADL adapter planning is relied on for external repository evidence
+  without a tracked contract, template, or explicit follow-on route.
 
 ## Release Gate
 

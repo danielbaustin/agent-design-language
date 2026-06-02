@@ -6,7 +6,7 @@
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 - Related issues: `#3472`, `#3473`, `#3474`, `#3475`, `#3476`
 
 ## Template Rules
@@ -83,4 +83,3 @@ prompt corpora.
 ## Notes
 
 This feature does not require all `.adl` history to become tracked repo state.
-

@@ -6,7 +6,7 @@
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 - Related issues: `#3377`, `#3502`
 
 ## Template Rules
@@ -84,4 +84,3 @@ resulting identity evidence for governance.
 ## Notes
 
 This feature is the answer to “what comes alive in v0.92?”
-

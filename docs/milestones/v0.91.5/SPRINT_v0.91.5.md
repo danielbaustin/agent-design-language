@@ -3,14 +3,14 @@
 ## Metadata
 - Sprint: `v0.91.5`
 - Milestone: `v0.91.5`
-- Start date: `pending`
+- Start date: `2026-06-02`
 - End date: `pending`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 
 ## Status
 
-`draft_pre_open`
+`active_wp_01_opening`
 
 ## How To Use
 
@@ -21,7 +21,8 @@
 
 ## Sprint Overview
 
-v0.91.5 is split into four sprint bands.
+v0.91.5 is split into ordered sprint bands after WP-01 opens the milestone and
+confirms issue/card/sprint readiness.
 
 Planned scope:
 
@@ -40,7 +41,10 @@ Planned scope:
 
 ## Sprint Goals
 
-- Sprint 1: route issues and make public prompt records reviewable.
+- WP-01 opening: confirm active milestone truth, issue/card readiness, sprint
+  umbrellas, canonical WP ordering, and newly scheduled portable adapter work.
+- Sprint 1: route issues and make public prompt / portable project records
+  reviewable.
 - Sprint 2: make provider/model breadth and multi-agent execution work.
 - Sprint 3: prepare demos and v0.92 activation readiness.
 - Sprint 4: review, remediate, preflight v0.92, and close the bridge.
@@ -62,14 +66,16 @@ Make v0.92 openable without hidden operational debt.
 
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | Bridge planning and migration | `#3507`-`#3511` (`#3506` closed umbrella) | ADL maintainers | satisfied setup wave |
-| 2 | AEE completion tranche | `#3534`, consumed by `#3377` | ADL maintainers | planned |
-| 3 | Public prompt records | `#3472`-`#3476` | ADL maintainers | moved |
-| 4 | Provider/model matrix | `#3501`, `#3505` | ADL maintainers | moved |
-| 5 | Multi-agent proof | `#3415`, `#3503`, `#3504` (`#3484` satisfied/closed evidence) | ADL maintainers | moved |
-| 6 | Demo readiness | `#3455`, `#3460`, `#3461` | ADL maintainers | moved |
-| 7 | v0.92 activation and birthday preflight | `#3502`, `#3377` | ADL maintainers | moved |
-| 8 | Review, remediation, release | pending | ADL maintainers | planned |
+| 1 | WP-01 milestone opening | `#3568`, consuming closed setup `#3506`-`#3511` | ADL maintainers | active |
+| 2 | Canonical WP ordering standard | `#3567` | ADL maintainers | scheduled |
+| 3 | Portable ADL adapter contract | `#3569` | ADL maintainers | scheduled |
+| 4 | AEE completion tranche | `#3534`, consumed by `#3377` | ADL maintainers | planned |
+| 5 | Public prompt records | `#3472`-`#3476` | ADL maintainers | moved |
+| 6 | Provider/model matrix | `#3501`, `#3505` | ADL maintainers | moved |
+| 7 | Multi-agent proof | `#3415`, `#3503`, `#3504` (`#3484` satisfied/closed evidence) | ADL maintainers | moved |
+| 8 | Demo readiness | `#3455`, `#3460`, `#3461` | ADL maintainers | moved |
+| 9 | v0.92 activation and birthday preflight | `#3502`, `#3377` | ADL maintainers | moved |
+| 10 | Review, remediation, release | pending | ADL maintainers | planned |
 
 ## Execution Policy
 
@@ -81,6 +87,8 @@ Make v0.92 openable without hidden operational debt.
 ## Cadence Expectations
 
 - Preserve ordered execution where dependencies matter.
+- Do not close WP-01 until planned issues, cards, sprint umbrellas, and initial
+  sequencing are ready to begin or explicitly routed.
 - Use multi-agent lanes only where they are being tested or provide clear value.
 - Do not merge hidden prompt-record cleanup into unrelated issues.
 - Escalate blockers as findings or follow-on issues.

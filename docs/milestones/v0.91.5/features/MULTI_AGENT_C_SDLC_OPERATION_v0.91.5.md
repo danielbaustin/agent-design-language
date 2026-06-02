@@ -6,7 +6,7 @@
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 - Related issues: `#3415`, `#3501`, `#3503`, `#3504`
 - Prior satisfied evidence: `#3484`
 

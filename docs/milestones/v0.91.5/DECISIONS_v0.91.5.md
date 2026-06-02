@@ -3,9 +3,9 @@
 ## Metadata
 - Milestone: `v0.91.5`
 - Version: `v0.91.5`
-- Date: `2026-05-29`
+- Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 
 ## Purpose
 
@@ -26,6 +26,8 @@ record a superseding decision rather than silently widening scope.
 | D-04 | OpenRouter belongs in the provider matrix. | accepted | It gives fast access to many models for aptitude testing. | Provider identity and routing evidence must remain explicit. |
 | D-05 | Public prompt records require transition controls. | accepted | Prompt cards are durable C-SDLC state, but local cache may contain cruft. | Export, redaction, archive, and deletion review are separate gates. |
 | D-06 | v0.92 activation features must be mapped before v0.92 opens. | accepted | Many features were implemented earlier and will activate together in v0.92. | The activation map is a v0.91.5 exit artifact. |
+| D-07 | WP-01 remains the milestone planning/setup gate. | accepted | Prior milestone structure depends on WP-01 seeding issues, cards, sprints, and ordering before implementation begins. | Implementation discovered during WP-01 must be scheduled into later WPs or sprint issues. |
+| D-08 | Portable ADL adapter planning belongs in v0.91.5. | accepted | Paper repos, UTS, demos, and future projects need repo-local instructions and machine-readable adapter contracts. | `#3569` owns the contract/templates; WP-01 schedules it but does not implement external repo migration. |
 
 ## Open Questions
 

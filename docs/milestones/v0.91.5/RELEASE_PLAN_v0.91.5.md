@@ -5,7 +5,7 @@
 - Version: `v0.91.5`
 - Release date: pending release ceremony
 - Release manager: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 
 ## How To Use
 
