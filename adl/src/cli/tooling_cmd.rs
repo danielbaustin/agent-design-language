@@ -10,6 +10,8 @@ mod common;
 mod csdlc_prompt_editor;
 #[path = "tooling_cmd/markdown.rs"]
 mod markdown;
+#[path = "tooling_cmd/prompt_template.rs"]
+mod prompt_template;
 #[path = "tooling_cmd/review_contract.rs"]
 mod review_contract;
 #[path = "tooling_cmd/review_surface.rs"]
@@ -22,6 +24,7 @@ mod wp_issue_wave;
 use card_prompt::real_card_prompt;
 use code_review::real_code_review;
 use csdlc_prompt_editor::real_csdlc_prompt_editor;
+use prompt_template::real_prompt_template;
 use review_contract::{real_verify_repo_review_contract, real_verify_review_output_provenance};
 use review_surface::{real_review_card_surface, real_review_runtime_surface};
 use structured_prompt::{real_lint_prompt_spec, real_validate_structured_prompt};
@@ -61,6 +64,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
         "csdlc-prompt-editor" => real_csdlc_prompt_editor(&args[1..]),
         "generate-wp-issue-wave" => real_generate_wp_issue_wave(&args[1..]),
         "lint-prompt-spec" => real_lint_prompt_spec(&args[1..]),
+        "prompt-template" => real_prompt_template(&args[1..]),
         "validate-structured-prompt" => real_validate_structured_prompt(&args[1..]),
         "review-card-surface" => real_review_card_surface(&args[1..]),
         "review-runtime-surface" => real_review_runtime_surface(&args[1..]),
@@ -71,7 +75,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown tooling subcommand '{subcommand}' (expected card-prompt | code-review | csdlc-prompt-editor | lint-prompt-spec | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave)"
+            "unknown tooling subcommand '{subcommand}' (expected card-prompt | code-review | csdlc-prompt-editor | generate-wp-issue-wave | lint-prompt-spec | prompt-template | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
         )),
     }
 }
@@ -84,6 +88,10 @@ adl tooling csdlc-prompt-editor [--repo-root <path>] [--emit-model-js <path>] [-
 adl tooling generate-wp-issue-wave --version <version> [--wbs <path>] [--sprint <path>] [--out <path>]\n\
 adl tooling lint-prompt-spec --issue <number>\n\
 adl tooling lint-prompt-spec --input <path>\n\
+adl tooling prompt-template render --kind <sip|stp|spp|srp|sor> --values <values.yaml> --out <card.md> [--repo-root <path>]\n\
+adl tooling prompt-template render-all --values-dir <dir> --out-dir <dir> [--repo-root <path>]\n\
+adl tooling prompt-template validate-values --kind <sip|stp|spp|srp|sor> --values <values.yaml> [--repo-root <path>]\n\
+adl tooling prompt-template write-sample-values --out-dir <dir>\n\
 adl tooling validate-structured-prompt --type <sip|stp|spp|srp|sor> --input <path> [--phase <phase>]\n\
 adl tooling review-card-surface --input <input.md> --output <output.md>\n\
 adl tooling review-runtime-surface --review-root <dir>\n\

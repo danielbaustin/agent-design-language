@@ -15,8 +15,9 @@ The editor is intentionally small:
   `blocked`, and `superseded` transitions.
 - The page does not write files directly, call GitHub, or replace the editor
   skills required by `AGENTS.md`.
-- Exported Markdown remains the reviewable card truth that validators and
-  issue worktrees consume.
+- Exported values YAML and Markdown remain local draft aids until the Rust
+  renderer, structured prompt validators, and issue lifecycle tooling accept
+  them.
 
 The editor shows `card_status` as local form state, not as operator authority.
 Execution tooling still enforces the phase rules: `SIP`, `STP`, and `SPP` must
@@ -53,8 +54,36 @@ Then:
 1. Select `SIP`, `STP`, `SPP`, `SRP`, or `SOR`.
 2. Review the system-supplied issue context and fill the bounded text areas.
 3. Resolve all validation warnings.
-4. Copy the Markdown preview into the appropriate issue bundle card.
-5. Run the matching structured prompt validator.
+4. Copy Values YAML when you want Rust to render from a locked `system` /
+   editable `values` split.
+5. Copy Markdown only for local review or compatibility paths.
+6. Run the matching values renderer and structured prompt validator.
+
+## Values Renderer
+
+The deterministic values renderer keeps prompt-card structure owned by the
+template registry while humans and editor skills update only field values:
+
+```sh
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+  write-sample-values --out-dir /tmp/csdlc-prompt-values
+
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+  render-all --values-dir /tmp/csdlc-prompt-values --out-dir /tmp/csdlc-prompt-cards
+
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+  validate-values --kind sip --values /tmp/csdlc-prompt-values/sip.values.yaml
+```
+
+Values files use:
+
+- `system` for locked lifecycle, routing, branch, issue, path, enum, and
+  derived template values.
+- `values` for editable issue-local prose fields.
+
+The renderer rejects unknown fields, locked fields under `values`, editable
+fields under `system`, unresolved placeholders, enum drift, and malformed
+issue/version/card-status values.
 
 ## Proof Command
 

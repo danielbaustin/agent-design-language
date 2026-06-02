@@ -281,6 +281,39 @@ fn csdlc_prompt_editor_cli_dispatch_usage_and_errors_are_covered() {
 }
 
 #[test]
+fn prompt_template_tooling_dispatch_and_usage_are_covered() {
+    let repo = TempRepo::new("prompt-template-dispatch");
+    let values_dir = repo.path().join("values");
+    let rendered_dir = repo.path().join("rendered");
+
+    assert!(super::super::tooling_usage().contains("adl tooling prompt-template render"));
+    assert!(crate::cli::usage::usage().contains("adl tooling <card-prompt|code-review|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template|validate-structured-prompt"));
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "write-sample-values".to_string(),
+        "--out-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+    ])
+    .expect("prompt-template dispatch should write sample values");
+    assert!(values_dir.join("sip.values.yaml").is_file());
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "render-all".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--values-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+        "--out-dir".to_string(),
+        rendered_dir.to_string_lossy().to_string(),
+    ])
+    .expect("prompt-template dispatch should render all cards");
+    assert!(rendered_dir.join("sip.md").is_file());
+    assert!(rendered_dir.join("sor.md").is_file());
+}
+
+#[test]
 fn tooling_dispatch_routes_public_subcommands() {
     let repo = TempRepo::new("dispatch");
     let input = repo.write_rel(

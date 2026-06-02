@@ -73,7 +73,7 @@ Make v0.92 openable without hidden operational debt.
 | 1 | WP-01 milestone opening | `#3568`, consuming closed setup `#3506`-`#3511` | ADL maintainers | closed |
 | 2 | Canonical WP ordering standard | `#3567` | ADL maintainers | scheduled |
 | 3 | Sprint 1 umbrella: prompt/public records and portable ADL readiness | `#3571` | ADL maintainers | seeded |
-| 4 | Prompt-template values renderer | `#3553` | ADL maintainers | first |
+| 4 | Prompt-template values renderer | `#3553` | ADL maintainers | in progress |
 | 5 | Downstream card rewrite after prompt templates v1.1 | `#3582` | ADL maintainers | scheduled after `#3553` |
 | 6 | Public prompt records | `#3472`-`#3476` | ADL maintainers | moved |
 | 7 | Portable ADL adapter contract | `#3569` | ADL maintainers | scheduled |

@@ -16,6 +16,26 @@ template file is a direct copy-and-fill card form, not an explanatory wrapper.
   call the Rust-backed validators, but they should not become a separate
   template authority.
 
+## Values Renderer
+
+v0.91.5 adds the next authoring model described in
+[`PROMPT_TEMPLATE_VALUES_RENDERER_PLAN_v0.91.5.md`](../../tooling/PROMPT_TEMPLATE_VALUES_RENDERER_PLAN_v0.91.5.md).
+
+The intended direction is deterministic rendering:
+
+```text
+prompt template set + card kind + values object -> rendered card Markdown
+```
+
+Rendered Markdown remains the reviewable lifecycle artifact. The ordinary
+editing surface can now be a values object with locked system fields, required
+values, enum validation, placeholder checks, and Rust-owned static validation.
+The browser editor exposes those values, but it must not become a separate
+template or validation authority.
+
+`current.json` should not move to a new active template set until all five card
+kinds have renderer fixtures, values validation, and compatibility notes.
+
 ## Local Editor
 
 The local human editor for this template set lives at
