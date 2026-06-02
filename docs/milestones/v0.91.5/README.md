@@ -9,14 +9,17 @@
 - Related setup umbrella: `#3506` (closed)
 - Closed setup children: `#3507`, `#3508`, `#3509`, `#3510`, `#3511`
 - Planning template set: `docs/templates/planning/1.0.0`
+- Canonical WP standard: [ADL_MILESTONE_WP_ORDERING_STANDARD.md](../../planning/ADL_MILESTONE_WP_ORDERING_STANDARD.md)
 
 ## Status
 
 Current status: `active_wp_01_opening`
 
 - Planning: v0.91.5 bridge package created, setup wave closed, WP-01 opening
-  follow-up active.
-- Execution: WP-01 opening pass active; execution sprints not started.
+  follow-up `#3568` closed, and `#3567` is completing the WP-ordering/sprint
+  readiness standard.
+- Execution: WP-01 planning-standard pass active; execution sprints not
+  started.
 - Validation: focused planning-doc, YAML, link, and issue-label validation.
 - Release readiness: not applicable until v0.91.5 executes.
 
@@ -27,10 +30,15 @@ Setup truth:
 - `#3507`-`#3511` are the closed v0.91.5 setup child issues for planning
   package, issue reallocation, v0.91.4 release-tail reconciliation, v0.92
   dependency reconciliation, and migration-truth review.
-- `#3568` is the active WP-01 opening follow-up after v0.91.4 release.
+- `#3568` is the closed WP-01 opening follow-up after v0.91.4 release.
 - `#3567` is scheduled to canonicalize the milestone WP ordering standard.
 - `#3569` is scheduled to define portable ADL project adapter contract and
   templates.
+- `#3582` is scheduled to rewrite/normalize downstream v0.91.5 card bundles
+  after prompt templates v1.1 lands through `#3553`.
+- `#3571`-`#3574` are the seeded sprint umbrella issues.
+- `#3575`, `#3579`, `#3576`, `#3580`, `#3577`, `#3581`, and `#3578`
+  are the seeded closeout-tail issues.
 
 ## Purpose
 
@@ -117,6 +125,7 @@ Primary planning and proof sources:
 - WP execution readiness: [WP_EXECUTION_READINESS_v0.91.5.md](WP_EXECUTION_READINESS_v0.91.5.md)
 - ADR plan: [ADR_PLAN_v0.91.5.md](ADR_PLAN_v0.91.5.md)
 - Next milestone handoff: [NEXT_MILESTONE_HANDOFF_v0.91.5.md](NEXT_MILESTONE_HANDOFF_v0.91.5.md)
+- Milestone WP ordering standard: [ADL_MILESTONE_WP_ORDERING_STANDARD.md](../../planning/ADL_MILESTONE_WP_ORDERING_STANDARD.md)
 
 Supporting / domain-specific docs:
 

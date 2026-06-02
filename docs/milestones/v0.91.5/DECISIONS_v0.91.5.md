@@ -28,6 +28,7 @@ record a superseding decision rather than silently widening scope.
 | D-06 | v0.92 activation features must be mapped before v0.92 opens. | accepted | Many features were implemented earlier and will activate together in v0.92. | The activation map is a v0.91.5 exit artifact. |
 | D-07 | WP-01 remains the milestone planning/setup gate. | accepted | Prior milestone structure depends on WP-01 seeding issues, cards, sprints, and ordering before implementation begins. | Implementation discovered during WP-01 must be scheduled into later WPs or sprint issues. |
 | D-08 | Portable ADL adapter planning belongs in v0.91.5. | accepted | Paper repos, UTS, demos, and future projects need repo-local instructions and machine-readable adapter contracts. | `#3569` owns the contract/templates; WP-01 schedules it but does not implement external repo migration. |
+| D-09 | Sprint umbrellas and closeout-tail issues are first-class WP-01 readiness artifacts. | accepted | v0.91.5 must not rely on prose-only sprint rows or pending release-tail placeholders after planning closes. | Seed sprint umbrella issues `#3571`-`#3574`, closeout-tail issues `#3575`, `#3579`, `#3576`, `#3580`, `#3577`, `#3581`, and `#3578`, and record the reusable ordering standard in `docs/planning/ADL_MILESTONE_WP_ORDERING_STANDARD.md`. |
 
 ## Open Questions
 

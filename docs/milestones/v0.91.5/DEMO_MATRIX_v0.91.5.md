@@ -24,7 +24,7 @@ Do not mark rows complete until artifacts exist.
 
 Scope covers AEE completion proof routing, multi-agent C-SDLC proof,
 provider/model matrix proof, public prompt packet proof, demo readiness, and
-v0.92 activation preflight.
+demo evidence consumed by the WP-18 v0.92 activation/final preflight.
 
 ## Runtime Preconditions
 

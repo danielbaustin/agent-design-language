@@ -4,7 +4,7 @@ owner_issue: 3506
 owner_issue_state: closed_setup_umbrella
 setup_child_issues: [3507, 3508, 3509, 3510, 3511]
 opening_issue: 3568
-wp_01_scheduled_issues: [3567, 3569]
+wp_01_scheduled_issues: [3567, 3553, 3582, 3569, 3571, 3572, 3573, 3574, 3575, 3579, 3576, 3580, 3577, 3581, 3578]
 planning_source: docs/milestones/v0.91.5
 tracked_package: docs/milestones/v0.91.5
 depends_on:
@@ -14,6 +14,8 @@ notes:
   - v0.91.5 opened after the v0.91.4 release ceremony, tag, and GitHub Release publication.
   - WP-01 is the planning and setup gate; it seeds/schedules issues, cards, sprint umbrellas, and ordering before execution sprints begin.
   - Canonical milestone WP ordering is scheduled through #3567; portable ADL project adapter planning is scheduled through #3569.
+  - Downstream v0.91.5 card rewrite/normalization waits for prompt templates v1.1 and is tracked through #3582 instead of blocking WP-01.
+  - Sprint umbrella issues are seeded as #3571 through #3574; closeout-tail issues are seeded as #3575, #3579, #3576, #3580, #3577, #3581, and #3578.
   - Multi-agent C-SDLC execution must work by milestone closeout or be truthfully blocked before v0.92 depends on it.
   - v0.92 activation testing must include every known feature surface that comes alive during first birthday.
   - AEE completion must be routed as a named closure tranche before v0.92 opens; it must not be left implicit until v0.95 convergence.
@@ -32,80 +34,131 @@ moved_issue_inputs:
   wp_01_new_seeded:
     canonical_milestone_wp_ordering_standard: 3567
     portable_adl_project_contract_and_templates: 3569
+    prompt_template_values_renderer: 3553
+    downstream_card_rewrite_after_prompt_templates_v1_1: 3582
+    sprint_1_public_prompt_records_and_portable_adl_readiness: 3571
+    sprint_2_provider_matrix_and_multi_agent_proof: 3572
+    sprint_3_demo_readiness_and_v0_92_activation_preflight: 3573
+    sprint_4_review_remediation_preflight_and_release: 3574
+    wp_14_coverage_quality_gate: 3575
+    wp_15_docs_and_review_alignment: 3579
+    wp_16_internal_review: 3576
+    wp_17_external_third_party_review: 3580
+    wp_18_remediation_and_v0_92_final_preflight: 3577
+    wp_19_next_milestone_planning: 3581
+    wp_20_release_ceremony: 3578
+sprint_umbrellas:
+  - sprint: Sprint 1
+    issue: 3571
+    title: Public prompt records and portable ADL readiness
+    child_issues: [3553, 3582, 3476, 3472, 3473, 3474, 3475, 3569]
+    depends_on: [WP-01]
+  - sprint: Sprint 2
+    issue: 3572
+    title: Provider matrix and multi-agent proof
+    child_issues: [3505, 3501, 3504, 3415, 3503]
+    satisfied_inputs: [3484]
+    depends_on: [WP-01]
+  - sprint: Sprint 3
+    issue: 3573
+    title: Demo matrix and demo showcase refresh
+    child_issues: [3455]
+    supporting_inputs: [3460, 3461]
+    depends_on: [Sprint 2]
+  - sprint: Sprint 4
+    issue: 3574
+    title: Coverage, review, remediation, next-milestone planning, and release
+    child_issues: [3575, 3579, 3576, 3580, 3577, 3581, 3578]
+    supporting_inputs: [3531, 3502, 3534, 3377]
+    depends_on: [Sprint 1, Sprint 2, Sprint 3]
 work_packages:
   - wp: WP-01
     issue: 3568
-    supporting_issues: [3507, 3508, 3509, 3510, 3511, 3567, 3569]
+    supporting_issues: [3507, 3508, 3509, 3510, 3511, 3567, 3569, 3553, 3582, 3571, 3572, 3573, 3574, 3575, 3579, 3576, 3580, 3577, 3581, 3578]
     setup_umbrella: 3506
     title: Milestone opening, issue-wave readiness, and scheduling pass
     queue: docs
     depends_on: [v0.91.4 release closeout complete]
     primary_deliverable: active v0.91.5 planning package, issue/card/sprint readiness, canonical WP ordering scheduling, and portable ADL adapter planning route
-    proof_surface: planning docs, issue labels, setup child issues #3507-#3511, scheduled issues #3567/#3569, and focused docs validation
+    proof_surface: planning docs, issue labels, setup child issues #3507-#3511, scheduled issues #3567/#3553/#3582/#3569, sprint umbrellas #3571-#3574, closeout-tail issues #3575/#3579/#3576/#3580/#3577/#3581/#3578, and focused docs validation
   - wp: WP-02
+    issue: 3553
+    title: Deterministic prompt-template values renderer
+    queue: tools
+    depends_on: [WP-01]
+    primary_deliverable: prompt-template values renderer and static validation path for v1.1 prompt templates
+    proof_surface: renderer fixtures, validation output, and prompt-template contract notes
+  - wp: WP-02-SUP
+    issue: 3582
+    title: Rewrite downstream issue cards after prompt templates v1.1
+    queue: docs
+    depends_on: [WP-02]
+    primary_deliverable: downstream v0.91.5 card rewrite/normalization after prompt templates v1.1 lands
+    proof_surface: card-bundle inventory, rewrite dispositions, and focused card contract validation
+  - wp: WP-03
     issue: 3476
     title: Public prompt transition umbrella
     queue: docs_tools
-    depends_on: [WP-01]
+    depends_on: [WP-02]
     primary_deliverable: public prompt transition plan and child issue readiness
     proof_surface: transition plan and issue graph
-  - wp: WP-03
+  - wp: WP-04
     issue: 3472
     title: Prompt packet exporter
     queue: tools
-    depends_on: [WP-02]
+    depends_on: [WP-03]
     primary_deliverable: public C-SDLC prompt packet exporter
     proof_surface: exported packet fixtures and validation output
-  - wp: WP-04
+  - wp: WP-05
     issue: 3473
     title: ADL local-state inventory and archive disposition
     queue: docs
-    depends_on: [WP-02]
+    depends_on: [WP-03]
     primary_deliverable: inventory and disposition of `.adl` local state
     proof_surface: inventory, archive plan, and review-before-delete checklist
-  - wp: WP-05
+  - wp: WP-06
     issue: 3474
     title: Prompt packet pilot and reviewer index
     queue: docs
-    depends_on: [WP-03, WP-04]
+    depends_on: [WP-04, WP-05]
     primary_deliverable: pilot public prompt packets and reviewer index
     proof_surface: packet index and reviewer walkthrough
-  - wp: WP-06
+  - wp: WP-07
     issue: 3475
     title: Prompt packet validation and redaction gates
     queue: quality
-    depends_on: [WP-05]
+    depends_on: [WP-06]
     primary_deliverable: validation and redaction gates for public prompt packets
     proof_surface: redaction report and validation commands
-  - wp: WP-07
+  - wp: WP-08
     issue: 3505
     title: OpenRouter provider
     queue: provider
     depends_on: [WP-01]
     primary_deliverable: OpenRouter provider or bounded provider plan
     proof_surface: provider identity and smoke-test evidence
-  - wp: WP-08
+  - wp: WP-09
     issue: 3501
     title: Provider/model and role matrix
     queue: multi_agent
-    depends_on: [WP-07]
+    depends_on: [WP-08]
     primary_deliverable: hosted, local Ollama, remote Ollama, and OpenRouter model-role matrix
     proof_surface: model inventory and role test results
-  - wp: WP-09
+  - wp: WP-10
     issue: 3504
     title: Multi-agent usefulness checklist
     queue: quality
-    depends_on: [WP-08]
+    depends_on: [WP-09]
     primary_deliverable: reviewer checklist for multi-agent usefulness
     proof_surface: checklist and applied review example
-  - wp: WP-10
+  - wp: WP-11
     issue: 3415
     title: Multi-agent workcell proof
     queue: multi_agent
-    depends_on: [WP-08, WP-09]
+    depends_on: [WP-09, WP-10]
     primary_deliverable: bounded multi-agent C-SDLC workcell proof
     proof_surface: workcell proof packet, role records, shard records, and closeout truth
-  - wp: WP-11
+  - wp: WP-11-SAT
     issue: 3484
     title: Parallel hosted Codex lanes
     queue: multi_agent
@@ -122,66 +175,60 @@ work_packages:
     proof_surface: timing and coordination report
   - wp: WP-13
     issue: 3455
-    title: Demo showcase refresh
+    supporting_issues: [3460, 3461]
+    title: Demo matrix and demo showcase refresh
     queue: demo
-    depends_on: [WP-01]
-    primary_deliverable: demo showcase index and deferred creative demo routing
-    proof_surface: demo index and proof map
+    depends_on: [WP-12]
+    primary_deliverable: demo matrix, demo showcase refresh, Celestial Rescue/Unity Observatory routing, and demo proof map
+    proof_surface: demo matrix, demo index, proof map, and supporting issue evidence
   - wp: WP-14
-    issue: 3460
-    title: Celestial Rescue Unity game demo
-    queue: demo
-    depends_on: [WP-13]
-    primary_deliverable: Celestial Rescue demo and Unity Observatory readiness decision
-    proof_surface: demo artifact or bounded implementation plan
-  - wp: WP-15
-    issue: 3461
-    title: Demo showcase proof map
-    queue: demo
-    depends_on: [WP-13, WP-14]
-    primary_deliverable: demo showcase proof map
-    proof_surface: demo proof index
-  - wp: WP-16
-    issue: 3502
-    title: v0.92 activation-test ledger
-    queue: docs
-    depends_on: [WP-01]
-    primary_deliverable: deferred-work and activation-test ledger for v0.92
-    proof_surface: V092_ACTIVATION_TEST_MAP_v0.91.5.md and linked ledger
-  - wp: WP-17
-    issue: 3377
-    supporting_issues: [3534]
-    title: v0.92 first-birthday launch packet
-    queue: docs
-    depends_on: [WP-10, WP-15, WP-16]
-    primary_deliverable: AEE completion-tranche routing plus go/no-go first-birthday readiness packet
-    proof_surface: AEE completion tranche plan, launch packet, checklist, and v0.92 opening recommendations
-  - wp: WP-18
-    issue: pending
+    issue: 3575
     supporting_issues: [3531]
-    title: Docs, quality-gate checklist, and release-truth pass
+    title: Coverage / quality gate
+    queue: quality
+    depends_on: [WP-13]
+    primary_deliverable: quality-gate checklist application, coverage/test gap review, Rust module size tracker check, issue closeout check, and internal review readiness gate
+    proof_surface: quality-gate packet and checklist evidence
+  - wp: WP-15
+    issue: 3579
+    title: Docs and review alignment
     queue: docs
-    depends_on: [WP-17]
-    primary_deliverable: aligned v0.91.5 and v0.92 planning docs plus reusable coverage / quality-gate checklist integration
-    proof_surface: docs review packet and applied quality-gate checklist surface
-  - wp: WP-19
-    issue: pending
+    depends_on: [WP-13, WP-14]
+    primary_deliverable: aligned docs/review entrypoints and internal-review handoff
+    proof_surface: docs alignment packet and stale-claim/link/redaction scans
+  - wp: WP-16
+    issue: 3576
     title: Internal review
     queue: review
-    depends_on: [WP-18]
+    depends_on: [WP-15]
     primary_deliverable: internal review report
     proof_surface: finding register
-  - wp: WP-20
-    issue: pending
-    title: Remediation and v0.92 final preflight
+  - wp: WP-17
+    issue: 3580
+    title: External / 3rd-party review
     queue: review
-    depends_on: [WP-19]
-    primary_deliverable: finding dispositions and v0.92 go/no-go
-    proof_surface: disposition record and preflight checklist
-  - wp: WP-21
-    issue: pending
+    depends_on: [WP-16]
+    primary_deliverable: external review handoff/result or explicit blocked/deferred review record
+    proof_surface: external review packet and findings register
+  - wp: WP-18
+    issue: 3577
+    supporting_issues: [3502, 3377, 3534]
+    title: Review findings remediation and final v0.92 preflight
+    queue: review
+    depends_on: [WP-16, WP-17]
+    primary_deliverable: finding dispositions, AEE completion-tranche routing, activation ledger consumption, and v0.92 go/no-go
+    proof_surface: disposition record, activation/preflight checklist, and v0.92 opening recommendations
+  - wp: WP-19
+    issue: 3581
+    title: Next milestone planning
+    queue: docs
+    depends_on: [WP-18]
+    primary_deliverable: v0.92 opening/handoff planning surface and follow-on routing
+    proof_surface: next-milestone planning docs and v0.92 WP-01 inputs
+  - wp: WP-20
+    issue: 3578
     title: Release ceremony
     queue: release
-    depends_on: [WP-20]
+    depends_on: [WP-19]
     primary_deliverable: release evidence and ceremony closeout
     proof_surface: release notes and closeout record
