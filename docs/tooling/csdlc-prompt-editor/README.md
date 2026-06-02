@@ -73,6 +73,9 @@ cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
 
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
   validate-values --kind sip --values /tmp/csdlc-prompt-values/sip.values.yaml
+
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+  validate-structure --kind sip --input /tmp/csdlc-prompt-cards/sip.md
 ```
 
 Values files use:
@@ -84,6 +87,14 @@ Values files use:
 The renderer rejects unknown fields, locked fields under `values`, editable
 fields under `system`, unresolved placeholders, enum drift, and malformed
 issue/version/card-status values.
+
+The structure validator protects rendered cards from template-shape drift. It
+checks frontmatter key inventory, Markdown heading order, fenced-block shape,
+unresolved placeholders, and locked template prose where the card kind has
+stable prose. It intentionally does not add a new Markdown parser dependency in
+v0.91.5; the current guard uses the Rust-owned template model and lightweight
+Markdown structure scanner. A richer `markdown-rs` or LST-style parser remains a
+future option if later work needs whitespace/trivia-preserving validation.
 
 ## Proof Command
 

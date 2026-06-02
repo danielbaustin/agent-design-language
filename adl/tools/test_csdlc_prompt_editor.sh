@@ -17,6 +17,11 @@ cargo run --quiet --manifest-path "$ROOT/adl/Cargo.toml" -- tooling csdlc-prompt
 cmp "$MODEL_TMP" "$TRACKED_MODEL"
 
 for kind in sip stp spp srp sor; do
+  cargo run --quiet --manifest-path "$ROOT/adl/Cargo.toml" -- tooling prompt-template \
+    validate-structure \
+    --repo-root "$ROOT" \
+    --kind "$kind" \
+    --input "$SAMPLES_DIR/$kind.md"
   bash "$ROOT/adl/tools/validate_structured_prompt.sh" \
     --type "$kind" \
     --phase bootstrap \

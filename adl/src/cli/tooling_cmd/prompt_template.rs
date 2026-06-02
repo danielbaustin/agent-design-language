@@ -1,6 +1,7 @@
 use adl::csdlc_prompt_editor::{
     render_all_cards_from_values_dir, render_card_from_values_file, repo_root_from_arg,
-    validate_values_file, write_all_sample_values, PromptCardKind,
+    validate_rendered_card_structure_file, validate_values_file, write_all_sample_values,
+    PromptCardKind,
 };
 use anyhow::{bail, Result};
 use std::fs;
@@ -10,20 +11,21 @@ use super::tooling_usage;
 
 pub(crate) fn real_prompt_template(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
-        bail!("prompt-template requires a subcommand: render | render-all | validate-values | write-sample-values");
+        bail!("prompt-template requires a subcommand: render | render-all | validate-values | validate-structure | write-sample-values");
     };
 
     match subcommand {
         "render" => render_one(&args[1..]),
         "render-all" => render_all(&args[1..]),
         "validate-values" => validate_one(&args[1..]),
+        "validate-structure" => validate_structure_one(&args[1..]),
         "write-sample-values" => write_samples(&args[1..]),
         "--help" | "-h" | "help" => {
             println!("{}", tooling_usage());
             Ok(())
         }
         other => bail!(
-            "unknown prompt-template subcommand '{other}' (expected render | render-all | validate-values | write-sample-values)"
+            "unknown prompt-template subcommand '{other}' (expected render | render-all | validate-values | validate-structure | write-sample-values)"
         ),
     }
 }
@@ -67,6 +69,47 @@ fn validate_one(args: &[String]) -> Result<()> {
     let values = values.ok_or_else(|| anyhow::anyhow!("validate-values requires --values"))?;
     validate_values_file(&root, kind, &values)?;
     println!("PASS: values valid for {}", kind.key());
+    Ok(())
+}
+
+fn validate_structure_one(args: &[String]) -> Result<()> {
+    if has_help_arg(args) {
+        println!("{}", tooling_usage());
+        return Ok(());
+    }
+    let mut repo_root: Option<PathBuf> = None;
+    let mut kind: Option<PromptCardKind> = None;
+    let mut input: Option<PathBuf> = None;
+
+    let mut idx = 0usize;
+    while idx < args.len() {
+        match args[idx].as_str() {
+            "--repo-root" => {
+                idx += 1;
+                repo_root = Some(PathBuf::from(value_arg(args, idx, "--repo-root")?));
+            }
+            "--kind" => {
+                idx += 1;
+                kind = Some(PromptCardKind::parse_key(value_arg(args, idx, "--kind")?)?);
+            }
+            "--input" => {
+                idx += 1;
+                input = Some(PathBuf::from(value_arg(args, idx, "--input")?));
+            }
+            "--help" | "-h" | "help" => {
+                println!("{}", tooling_usage());
+                return Ok(());
+            }
+            other => bail!("unknown arg for tooling prompt-template validate-structure: {other}"),
+        }
+        idx += 1;
+    }
+
+    let root = repo_root_from_arg(repo_root)?;
+    let kind = kind.ok_or_else(|| anyhow::anyhow!("validate-structure requires --kind"))?;
+    let input = input.ok_or_else(|| anyhow::anyhow!("validate-structure requires --input"))?;
+    validate_rendered_card_structure_file(&root, kind, &input)?;
+    println!("PASS: rendered structure valid for {}", kind.key());
     Ok(())
 }
 
