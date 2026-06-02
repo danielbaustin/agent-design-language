@@ -19,6 +19,7 @@ window.CSDLC_PROMPT_EDITOR_MODEL = {
       "label": "Structured Issue Prompt",
       "output_file": "sip.md",
       "template_path": "docs/templates/prompts/1.0.0/sip.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.0/schemas/sip.structure.json",
       "fields": [
         {
           "key": "issue",
@@ -209,6 +210,7 @@ window.CSDLC_PROMPT_EDITOR_MODEL = {
       "label": "Structured Task Prompt",
       "output_file": "stp.md",
       "template_path": "docs/templates/prompts/1.0.0/stp.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.0/schemas/stp.structure.json",
       "fields": [
         {
           "key": "issue",
@@ -444,6 +446,7 @@ window.CSDLC_PROMPT_EDITOR_MODEL = {
       "label": "Structured Plan Prompt",
       "output_file": "spp.md",
       "template_path": "docs/templates/prompts/1.0.0/spp.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.0/schemas/spp.structure.json",
       "fields": [
         {
           "key": "issue",
@@ -625,6 +628,7 @@ window.CSDLC_PROMPT_EDITOR_MODEL = {
       "label": "Structured Review Prompt",
       "output_file": "srp.md",
       "template_path": "docs/templates/prompts/1.0.0/srp.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.0/schemas/srp.structure.json",
       "fields": [
         {
           "key": "issue",
@@ -770,6 +774,7 @@ window.CSDLC_PROMPT_EDITOR_MODEL = {
       "label": "Structured Outcome Record",
       "output_file": "sor.md",
       "template_path": "docs/templates/prompts/1.0.0/sor.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.0/schemas/sor.structure.json",
       "fields": [
         {
           "key": "issue",

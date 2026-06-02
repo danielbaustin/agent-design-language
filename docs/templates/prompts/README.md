@@ -4,6 +4,8 @@ This directory is the canonical tracked home for C-SDLC issue-card templates.
 
 The active template set is declared in [`current.json`](current.json). Each
 template file is a direct copy-and-fill card form, not an explanatory wrapper.
+Each active template entry also points at a generated structure schema artifact
+used by prompt-card structure validation.
 
 ## Current Set
 
@@ -11,10 +13,11 @@ template file is a direct copy-and-fill card form, not an explanatory wrapper.
 - Lifecycle: `SIP -> STP -> SPP -> SRP -> SOR`
 - Template root: `docs/templates/prompts/1.0.0/`
 - Registry: `docs/templates/prompts/current.json`
+- Structure schemas: `docs/templates/prompts/1.0.0/schemas/*.structure.json`
 - Implementation owner: Rust tooling owns the canonical template registry,
-  field model, and validation path. Python sprint helpers may fill templates or
-  call the Rust-backed validators, but they should not become a separate
-  template authority.
+  field model, schema extraction, and validation path. Python sprint helpers may
+  load schema artifacts, fill templates, or call the Rust-backed validators, but
+  they should not become a separate template authority.
 
 ## Values Renderer
 
@@ -32,6 +35,35 @@ editing surface can now be a values object with locked system fields, required
 values, enum validation, placeholder checks, and Rust-owned static validation.
 The browser editor exposes those values, but it must not become a separate
 template or validation authority.
+
+## Structure Schemas
+
+The `*.structure.json` files under the active template set are generated from
+the Markdown templates and consumed by the Rust validator. They record:
+
+- the template set and card kind;
+- the source template path;
+- the parser used for Markdown extraction;
+- frontmatter key inventory;
+- Markdown heading order;
+- fenced code block shape;
+- locked template prose.
+
+Use the Rust tool to regenerate schemas only when template structure changes
+intentionally:
+
+```sh
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+  write-structure-schemas \
+  --out-dir docs/templates/prompts/1.0.0/schemas
+```
+
+Then run both Rust and Python-readable schema checks:
+
+```sh
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-schemas
+python3 adl/tools/test_prompt_template_structure_schemas.py
+```
 
 `current.json` should not move to a new active template set until all five card
 kinds have renderer fixtures, values validation, and compatibility notes.

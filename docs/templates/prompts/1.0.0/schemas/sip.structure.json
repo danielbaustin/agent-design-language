@@ -1,0 +1,554 @@
+{
+  "schema": "adl.csdlc.prompt_card_structure.v1",
+  "template_set": "1.0.0",
+  "card_kind": "sip",
+  "template_path": "docs/templates/prompts/1.0.0/sip.md",
+  "parser": "markdown-rs 1.0.0",
+  "editable_sections": [
+    "Acceptance Criteria",
+    "Actions taken",
+    "Affected Areas",
+    "Deliverables",
+    "Demo / Proof Requirements",
+    "Demo Expectations",
+    "Dependencies",
+    "Goal",
+    "Inputs",
+    "Issue-Graph Notes",
+    "Non-goals",
+    "Non-goals / Out of scope",
+    "Notes",
+    "Notes / Risks",
+    "Outputs",
+    "Plan Summary",
+    "Policy Refs",
+    "Proposed Steps",
+    "Repo Inputs",
+    "Required Outcome",
+    "Risks And Edge Cases",
+    "Scope Basis",
+    "Summary",
+    "Target Files / Surfaces",
+    "Test Strategy",
+    "Tooling Notes",
+    "Validation Plan"
+  ],
+  "scaffold_lines": [
+    "---",
+    "```yaml",
+    "```",
+    "labels:",
+    "supersedes: []",
+    "duplicates: []",
+    "depends_on: []",
+    "canonical_files: []",
+    "demo_names: []",
+    "pr_start:",
+    "enabled: true",
+    "source_refs:",
+    "scope:",
+    "files:",
+    "components:",
+    "out_of_scope:",
+    "constraints:",
+    "assumptions:",
+    "proposed_steps:",
+    "codex_plan:",
+    "affected_areas:",
+    "invariants_to_preserve:",
+    "risks_and_edge_cases:",
+    "test_strategy:",
+    "required_permissions:",
+    "stop_conditions:",
+    "alternatives_considered:",
+    "review_hooks:",
+    "review_results:"
+  ],
+  "scaffold_line_prefixes": [
+    "- kind:",
+    "kind:",
+    "ref:",
+    "- id:",
+    "description:",
+    "expected_output:",
+    "allowed_mode:",
+    "- step:",
+    "status:",
+    "- description:",
+    "reason_not_chosen:"
+  ],
+  "rendered_value_line_prefixes": [
+    "Task ID:",
+    "Run ID:",
+    "Version:",
+    "Title:",
+    "Branch:",
+    "Card Status:",
+    "Status:",
+    "Generated:",
+    "- Actor:",
+    "- Model:",
+    "- Start Time:",
+    "- End Time:",
+    "- Issue:",
+    "- PR:",
+    "- Source Issue Prompt:",
+    "- Docs:",
+    "- Other:",
+    "- Agent:",
+    "- Provider:",
+    "- Tools allowed:",
+    "- Sandbox / approvals:",
+    "- Source issue-prompt slug:",
+    "- Required outcome type:",
+    "- Demo required:",
+    "- Local ignored output-card scaffold at",
+    "- `bash adl/tools/validate_structured_prompt.sh",
+    "Source issue-prompt slug:",
+    "Required outcome type:",
+    "Demo required:",
+    "Canonical Template Source:",
+    "Generated from",
+    "name:",
+    "issue:",
+    "task_id:",
+    "run_id:",
+    "version:",
+    "title:",
+    "branch:",
+    "generated_at:",
+    "card_status:",
+    "activation_state:",
+    "plan_revision:",
+    "confidence:",
+    "plan_summary:",
+    "execution_handoff:",
+    "notes:"
+  ],
+  "frontmatter_keys": [],
+  "headings": [
+    {
+      "level": 1,
+      "text": "ADL Input Card"
+    },
+    {
+      "level": 2,
+      "text": "Agent Execution Rules"
+    },
+    {
+      "level": 2,
+      "text": "Lifecycle Semantics"
+    },
+    {
+      "level": 2,
+      "text": "Prompt Spec"
+    },
+    {
+      "level": 2,
+      "text": "Execution"
+    },
+    {
+      "level": 2,
+      "text": "Goal"
+    },
+    {
+      "level": 2,
+      "text": "Required Outcome"
+    },
+    {
+      "level": 2,
+      "text": "Acceptance Criteria"
+    },
+    {
+      "level": 2,
+      "text": "Inputs"
+    },
+    {
+      "level": 2,
+      "text": "Target Files / Surfaces"
+    },
+    {
+      "level": 2,
+      "text": "Validation Plan"
+    },
+    {
+      "level": 2,
+      "text": "Demo / Proof Requirements"
+    },
+    {
+      "level": 2,
+      "text": "Constraints / Policies"
+    },
+    {
+      "level": 2,
+      "text": "System Invariants (must remain true)"
+    },
+    {
+      "level": 2,
+      "text": "Reviewer Checklist (machine-readable hints)"
+    },
+    {
+      "level": 2,
+      "text": "Card Automation Hooks (prompt generation)"
+    },
+    {
+      "level": 2,
+      "text": "Non-goals / Out of scope"
+    },
+    {
+      "level": 2,
+      "text": "Notes / Risks"
+    },
+    {
+      "level": 2,
+      "text": "Instructions to the Agent"
+    }
+  ],
+  "fenced_blocks": [
+    {
+      "ordinal": 0,
+      "info": "yaml",
+      "heading_path": [
+        "ADL Input Card",
+        "Prompt Spec"
+      ]
+    },
+    {
+      "ordinal": 1,
+      "info": "yaml",
+      "heading_path": [
+        "ADL Input Card",
+        "Reviewer Checklist (machine-readable hints)"
+      ]
+    }
+  ],
+  "locked_lines": [
+    {
+      "heading_path": [
+        "ADL Input Card"
+      ],
+      "text": "Semantic role: Structured Issue Prompt (`SIP`)."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card"
+      ],
+      "text": "Context:"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Agent Execution Rules"
+      ],
+      "text": "- This issue is not started yet; do not assume a branch or worktree already exists."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Agent Execution Rules"
+      ],
+      "text": "- Do not run `pr start`; use the current issue-mode `pr run` flow only if execution later becomes necessary."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Agent Execution Rules"
+      ],
+      "text": "- Do not delete or recreate cards."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Agent Execution Rules"
+      ],
+      "text": "- Do not switch branches unless explicitly instructed."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Agent Execution Rules"
+      ],
+      "text": "- Do not work on `main`."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Agent Execution Rules"
+      ],
+      "text": "- Only modify files required for the issue."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Agent Execution Rules"
+      ],
+      "text": "- Use repository-relative paths; avoid absolute host paths."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Agent Execution Rules"
+      ],
+      "text": "- Write the output record to the paired local task bundle `sor.md` path."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Agent Execution Rules"
+      ],
+      "text": "- If repository state is unexpected, stop and ask before attempting repository repair."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Lifecycle Semantics"
+      ],
+      "text": "- Lifecycle stage: `SIP`"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Lifecycle Semantics"
+      ],
+      "text": "- Activation state: active after issue-intent review."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Lifecycle Semantics"
+      ],
+      "text": "- Next stage: `STP`, where the selected task or solution is made explicit."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Lifecycle Semantics"
+      ],
+      "text": "- Legacy compatibility: older references may call this an input card, but new"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Lifecycle Semantics"
+      ],
+      "text": "  issue work should treat it as the Structured Issue Prompt."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Constraints / Policies"
+      ],
+      "text": "- Follow `AGENTS.md`."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Constraints / Policies"
+      ],
+      "text": "- Use workflow-conductor for lifecycle routing."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Constraints / Policies"
+      ],
+      "text": "- Edit cards only with editor skills."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Constraints / Policies"
+      ],
+      "text": "- Work only in the bound issue worktree after `pr run`."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Constraints / Policies"
+      ],
+      "text": "- Keep validation focused on the touched surface."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "System Invariants (must remain true)"
+      ],
+      "text": "- Deterministic execution for identical inputs."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "System Invariants (must remain true)"
+      ],
+      "text": "- No hidden state or undeclared side effects."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "System Invariants (must remain true)"
+      ],
+      "text": "- Artifacts remain replay-compatible with the replay runner."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "System Invariants (must remain true)"
+      ],
+      "text": "- Trace artifacts contain no secrets, prompts, tool arguments, or absolute host paths."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "System Invariants (must remain true)"
+      ],
+      "text": "- Artifact schema changes are explicit and approved."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "- Prompt source fields:"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Goal"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Required Outcome"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Acceptance Criteria"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Inputs"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Target Files / Surfaces"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Validation Plan"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Demo / Proof Requirements"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Constraints / Policies"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - System Invariants"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Reviewer Checklist"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "- Generation requirements:"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Deterministic output for identical SIP content"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - No secrets, tokens, or absolute host paths in generated prompt text"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Preserve traceability back to the source issue prompt"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Card Automation Hooks (prompt generation)"
+      ],
+      "text": "  - Preserve explicit required-outcome and demo/proof requirements"
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Instructions to the Agent"
+      ],
+      "text": "- Read this file."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Instructions to the Agent"
+      ],
+      "text": "- Read the linked source issue prompt before starting work."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Instructions to the Agent"
+      ],
+      "text": "- Do not create a branch or worktree from this card alone."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Instructions to the Agent"
+      ],
+      "text": "- When execution is approved, run the repo-native issue-mode `pr run` flow and then perform the work described above."
+    },
+    {
+      "heading_path": [
+        "ADL Input Card",
+        "Instructions to the Agent"
+      ],
+      "text": "- Write execution outcome truth to the paired `sor.md` file during execution."
+    }
+  ]
+}

@@ -92,7 +92,9 @@ adl tooling prompt-template render --kind <sip|stp|spp|srp|sor> --values <values
 adl tooling prompt-template render-all --values-dir <dir> --out-dir <dir> [--repo-root <path>]\n\
 adl tooling prompt-template validate-values --kind <sip|stp|spp|srp|sor> --values <values.yaml> [--repo-root <path>]\n\
 adl tooling prompt-template validate-structure --kind <sip|stp|spp|srp|sor> --input <card.md> [--repo-root <path>]\n\
+adl tooling prompt-template validate-schemas [--repo-root <path>]\n\
 adl tooling prompt-template write-sample-values --out-dir <dir>\n\
+adl tooling prompt-template write-structure-schemas --out-dir <dir> [--repo-root <path>]\n\
 adl tooling validate-structured-prompt --type <sip|stp|spp|srp|sor> --input <path> [--phase <phase>]\n\
 adl tooling review-card-surface --input <input.md> --output <output.md>\n\
 adl tooling review-runtime-surface --review-root <dir>\n\

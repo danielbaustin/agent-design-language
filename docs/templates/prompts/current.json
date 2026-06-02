@@ -8,23 +8,28 @@
   "templates": {
     "sip": {
       "semantic_role": "Structured Issue Prompt",
-      "path": "docs/templates/prompts/1.0.0/sip.md"
+      "path": "docs/templates/prompts/1.0.0/sip.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.0/schemas/sip.structure.json"
     },
     "stp": {
       "semantic_role": "Structured Task Prompt",
-      "path": "docs/templates/prompts/1.0.0/stp.md"
+      "path": "docs/templates/prompts/1.0.0/stp.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.0/schemas/stp.structure.json"
     },
     "spp": {
       "semantic_role": "Structured Plan Prompt",
-      "path": "docs/templates/prompts/1.0.0/spp.md"
+      "path": "docs/templates/prompts/1.0.0/spp.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.0/schemas/spp.structure.json"
     },
     "srp": {
       "semantic_role": "Structured Review Prompt",
-      "path": "docs/templates/prompts/1.0.0/srp.md"
+      "path": "docs/templates/prompts/1.0.0/srp.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.0/schemas/srp.structure.json"
     },
     "sor": {
       "semantic_role": "Structured Outcome Record",
-      "path": "docs/templates/prompts/1.0.0/sor.md"
+      "path": "docs/templates/prompts/1.0.0/sor.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.0/schemas/sor.structure.json"
     }
   },
   "compatibility_fallbacks": {

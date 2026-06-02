@@ -16,6 +16,11 @@ cargo run --quiet --manifest-path "$ROOT/adl/Cargo.toml" -- tooling csdlc-prompt
 
 cmp "$MODEL_TMP" "$TRACKED_MODEL"
 
+cargo run --quiet --manifest-path "$ROOT/adl/Cargo.toml" -- tooling prompt-template \
+  validate-schemas \
+  --repo-root "$ROOT"
+python3 "$ROOT/adl/tools/test_prompt_template_structure_schemas.py"
+
 for kind in sip stp spp srp sor; do
   cargo run --quiet --manifest-path "$ROOT/adl/Cargo.toml" -- tooling prompt-template \
     validate-structure \
