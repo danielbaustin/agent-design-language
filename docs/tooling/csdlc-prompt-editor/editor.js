@@ -10,6 +10,7 @@ const systemFields = document.getElementById("system-fields");
 const templateVersion = document.getElementById("template-version");
 const validateButton = document.getElementById("validate-form");
 const copyButton = document.getElementById("copy-markdown");
+const copyValuesButton = document.getElementById("copy-values");
 const toggleMarkdownButton = document.getElementById("toggle-markdown");
 
 let activeKey = "sip";
@@ -297,6 +298,38 @@ function renderTemplate(template, values) {
   });
 }
 
+function yamlScalar(value) {
+  const text = String(value || "");
+  if (text.includes("\n")) {
+    return `|-\n${text
+      .split(/\r?\n/)
+      .map((line) => `    ${line}`)
+      .join("\n")}`;
+  }
+  return `"${text.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\t/g, "\\t")}"`;
+}
+
+function valuesDocumentFor(card, values) {
+  const editableKeys = new Set(
+    card.fields
+      .filter((field) => field.editable !== false)
+      .map((field) => field.key)
+  );
+  const presentKeys = Object.keys(values).sort();
+  const systemKeys = presentKeys.filter((key) => !editableKeys.has(key));
+  const valueKeys = presentKeys.filter((key) => editableKeys.has(key));
+  const lines = [
+    "schema: adl.csdlc.prompt_template_values.v1",
+    `template_set: ${yamlScalar(model.template_set)}`,
+    `card_kind: ${yamlScalar(card.key)}`,
+    "system:",
+    ...systemKeys.map((key) => `  ${key}: ${yamlScalar(values[key])}`),
+    "values:",
+    ...valueKeys.map((key) => `  ${key}: ${yamlScalar(values[key])}`),
+  ];
+  return `${lines.join("\n")}\n`;
+}
+
 function addError(errors, field, message) {
   errors.push({ field, message });
 }
@@ -452,6 +485,17 @@ copyButton.addEventListener("click", async () => {
   }, 1100);
 });
 
+copyValuesButton.addEventListener("click", async () => {
+  const card = cardByKey(activeKey);
+  const values = deriveTemplateValues(card, draftFor(card));
+  await navigator.clipboard.writeText(valuesDocumentFor(card, values));
+  copyValuesButton.textContent = "Copied";
+  copyValuesButton.blur();
+  setTimeout(() => {
+    copyValuesButton.textContent = "Copy Values YAML";
+  }, 1100);
+});
+
 toggleMarkdownButton.addEventListener("click", () => {
   const hidden = preview.classList.toggle("hidden");
   toggleMarkdownButton.textContent = hidden ? "Show Markdown" : "Hide Markdown";
@@ -471,6 +515,7 @@ if (typeof module !== "undefined") {
     deriveTemplateValues,
     draftFor,
     renderTemplate,
+    valuesDocumentFor,
     validate,
   };
 }

@@ -48,6 +48,7 @@ for (const key of ["sip", "stp", "spp", "srp", "sor"]) {
   const card = editor.cardByKey(key);
   const values = editor.deriveTemplateValues(card, editor.draftFor(card));
   const markdown = editor.renderTemplate(card.template, values);
+  const valuesYaml = editor.valuesDocumentFor(card, values);
   const errors = editor.validate(card, values, markdown);
   if (errors.length > 0) {
     throw new Error(
@@ -66,6 +67,18 @@ for (const key of ["sip", "stp", "spp", "srp", "sor"]) {
     throw new Error(
       `${key} browser sample must remain draft until validator/lifecycle approval`
     );
+  }
+  if (!valuesYaml.includes("schema: adl.csdlc.prompt_template_values.v1")) {
+    throw new Error(`${key} browser values export is missing schema`);
+  }
+  if (!valuesYaml.includes(`card_kind: "${key}"`)) {
+    throw new Error(`${key} browser values export is missing card_kind`);
+  }
+  if (!valuesYaml.includes("system:\n") || !valuesYaml.includes("values:\n")) {
+    throw new Error(`${key} browser values export must split system and values`);
+  }
+  if (valuesYaml.includes("\nvalues:\n  issue:")) {
+    throw new Error(`${key} browser values export exposed locked issue in values`);
   }
 }
 

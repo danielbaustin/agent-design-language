@@ -120,7 +120,9 @@ fn usage_mentions_v0_4_and_legacy_examples() {
 fn code_review_filter_covers_global_usage_entry() {
     let text = usage();
     assert!(
-        text.contains("adl tooling <card-prompt|code-review|csdlc-prompt-editor|lint-prompt-spec")
+        text.contains(
+            "adl tooling <card-prompt|code-review|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template"
+        )
     );
     assert!(text.contains(
         "adl tooling code-review --out artifacts/reviews/pr-review --backend fixture --visibility packet-only"

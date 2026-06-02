@@ -86,8 +86,8 @@ work_packages:
     title: Deterministic prompt-template values renderer
     queue: tools
     depends_on: [WP-01]
-    primary_deliverable: prompt-template values renderer and static validation path for v1.1 prompt templates
-    proof_surface: renderer fixtures, validation output, and prompt-template contract notes
+    primary_deliverable: deterministic Rust prompt-template values renderer, values validator, browser values export, and downstream rewrite route
+    proof_surface: prompt-template CLI tests, csdlc prompt-editor proof, docs/tooling/PROMPT_TEMPLATE_VALUES_RENDERER_PLAN_v0.91.5.md, and #3582 rewrite routing
   - wp: WP-02-SUP
     issue: 3582
     title: Rewrite downstream issue cards after prompt templates v1.1

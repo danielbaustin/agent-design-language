@@ -11,6 +11,7 @@ pub(super) use std::path::Path;
 mod card_prompt;
 mod common_helpers;
 mod prompt_spec;
+mod prompt_template;
 mod review_surfaces;
 mod structured_prompt;
 mod support;
