@@ -6,7 +6,7 @@
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 - Related issues: `#3455`, `#3460`, `#3461`
 
 ## Template Rules
@@ -79,4 +79,3 @@ v0.92 can build the first-birthday Unity Observatory proof if readiness passes.
 ## Notes
 
 This feature prepares demo infrastructure; it does not implement the birthday.
-

@@ -6,7 +6,7 @@
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 - Related issues: `#3501`, `#3505`
 
 ## Template Rules
@@ -81,4 +81,3 @@ routing.
 ## Notes
 
 The matrix informs role selection; it does not grant execution authority.
-

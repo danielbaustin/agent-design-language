@@ -3,9 +3,9 @@
 ## Metadata
 - Milestone: `v0.91.5`
 - Version: `v0.91.5`
-- Date: `2026-05-29`
+- Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 
 ## Purpose
 
@@ -14,7 +14,10 @@ checks needed for truthful v0.91.5 closeout.
 
 ## Planning
 
-- [ ] v0.91.5 planning package exists.
+- [x] v0.91.5 planning package exists.
+- [ ] WP-01 confirms planned issues, cards, sprint umbrellas, and initial sequencing are ready.
+- [ ] Canonical milestone WP ordering standard is scheduled through `#3567`.
+- [ ] Portable ADL project adapter planning is scheduled through `#3569`.
 - [ ] Feature docs exist for all bridge work tracks.
 - [ ] Open side issues are relabeled to `version:v0.91.5`.
 - [ ] v0.91.4 docs say bridge work moved, not abandoned.

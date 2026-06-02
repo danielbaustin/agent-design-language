@@ -3,13 +3,13 @@
 ## Metadata
 - Milestone: `v0.91.5`
 - Version: `v0.91.5`
-- Date: `2026-05-29`
+- Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 
 ## Status
 
-Candidate WBS for v0.91.5 WP-01 review and issue seeding.
+Active WBS for v0.91.5 WP-01 opening, issue seeding, and sprint readiness.
 
 ## How To Use
 
@@ -27,7 +27,7 @@ activation preflight.
 
 | WP | Work Package | Primary deliverable | Dependencies |
 | --- | --- | --- | --- |
-| WP-01 | Bridge planning and issue migration | Planning package, issue relabeling, and v0.91.4/v0.92 doc reconciliation. | v0.91.4 Sprint 4 readiness. |
+| WP-01 | Milestone opening and issue-wave readiness | Active planning package, issue/card/sprint readiness, canonical WP ordering scheduling, and portable ADL adapter planning route. | v0.91.4 release closeout complete. |
 | WP-02 | Public prompt transition umbrella | Public prompt transition plan and child readiness. | WP-01. |
 | WP-03 | Prompt packet exporter | Exporter for public C-SDLC prompt packets. | WP-02. |
 | WP-04 | `.adl` inventory and archive disposition | Inventory, archive plan, and review-before-delete policy. | WP-02. |
@@ -55,6 +55,25 @@ The candidate WP sequence above is reflected in
 [WP_ISSUE_WAVE_v0.91.5.yaml](WP_ISSUE_WAVE_v0.91.5.yaml). Existing moved
 issues should be reused rather than duplicated.
 
+## Canonical Milestone Structure
+
+v0.91.5 follows the ADL milestone script from prior milestones:
+
+- `WP-01` is always the milestone planning and setup gate. It closes only after
+  planned issues, cards, sprint umbrellas, and initial sequencing are ready to
+  begin.
+- Execution work is grouped into sprint bands, with sprint issues or umbrellas
+  where the band has multiple child issues.
+- Up to six execution sprints may exist before the closeout tail.
+- The closeout-tail WP numbers may shift depending on the number of working
+  WPs, but the closeout-tail order must not shift: demo matrix / showcase,
+  coverage-quality gate, docs-review alignment, internal review, external /
+  third-party review, review-findings remediation plus final preflight when
+  applicable, next-milestone planning, and release ceremony.
+- `#3567` owns the reusable template/standard for this milestone structure.
+- `#3569` owns the portable ADL project adapter contract and templates; WP-01
+  schedules it, but adapter implementation does not become WP-01 work.
+
 ## Sequencing
 
 1. Route issue truth first.
@@ -74,7 +93,8 @@ is explicit.
 
 ## Acceptance Mapping
 
-- WP-01 -> bridge scope is visible in docs and GitHub labels.
+- WP-01 -> bridge scope is visible in docs and GitHub labels; all scheduled
+  issues/cards/sprint umbrellas are ready to begin or explicitly routed.
 - WP-02 through WP-06 -> public prompt records are safe to review.
 - WP-07 through WP-12 -> provider/model and multi-agent usefulness are tested.
 - WP-13 through WP-15 -> demo readiness is explicit.

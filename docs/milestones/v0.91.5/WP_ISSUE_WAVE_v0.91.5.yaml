@@ -1,14 +1,19 @@
 milestone: v0.91.5
-status: draft_pre_open
+status: active_wp_01_opening
 owner_issue: 3506
 owner_issue_state: closed_setup_umbrella
 setup_child_issues: [3507, 3508, 3509, 3510, 3511]
+opening_issue: 3568
+wp_01_scheduled_issues: [3567, 3569]
 planning_source: docs/milestones/v0.91.5
 tracked_package: docs/milestones/v0.91.5
 depends_on:
-  - v0.91.4 Sprint 4 closeout
+  - v0.91.4 release closeout complete
 notes:
   - v0.91.5 is the bridge milestone between v0.91.4 C-SDLC hardening and v0.92 first birthday.
+  - v0.91.5 opened after the v0.91.4 release ceremony, tag, and GitHub Release publication.
+  - WP-01 is the planning and setup gate; it seeds/schedules issues, cards, sprint umbrellas, and ordering before execution sprints begin.
+  - Canonical milestone WP ordering is scheduled through #3567; portable ADL project adapter planning is scheduled through #3569.
   - Multi-agent C-SDLC execution must work by milestone closeout or be truthfully blocked before v0.92 depends on it.
   - v0.92 activation testing must include every known feature surface that comes alive during first birthday.
   - AEE completion must be routed as a named closure tranche before v0.92 opens; it must not be left implicit until v0.95 convergence.
@@ -24,16 +29,19 @@ moved_issue_inputs:
     keep_in_v0_91_4: [3362, 3363, 3364, 3365, 3366, 3367, 3368, 3369, 3370, 3371]
     move_to_v0_91_5: [3377, 3415, 3455, 3460, 3461, 3472, 3473, 3474, 3475, 3476, 3501, 3502, 3503, 3504, 3505]
     already_satisfied: [3484]
+  wp_01_new_seeded:
+    canonical_milestone_wp_ordering_standard: 3567
+    portable_adl_project_contract_and_templates: 3569
 work_packages:
   - wp: WP-01
-    issue: 3507
-    supporting_issues: [3508, 3509, 3510, 3511]
+    issue: 3568
+    supporting_issues: [3507, 3508, 3509, 3510, 3511, 3567, 3569]
     setup_umbrella: 3506
-    title: Bridge planning package and migration review
+    title: Milestone opening, issue-wave readiness, and scheduling pass
     queue: docs
-    depends_on: [v0.91.4 Sprint 4 readiness]
-    primary_deliverable: v0.91.5 planning package, issue relabeling, v0.91.4/v0.92 doc reconciliation, and migration-truth review
-    proof_surface: planning docs, issue labels, setup child issues #3507-#3511, and focused docs validation
+    depends_on: [v0.91.4 release closeout complete]
+    primary_deliverable: active v0.91.5 planning package, issue/card/sprint readiness, canonical WP ordering scheduling, and portable ADL adapter planning route
+    proof_surface: planning docs, issue labels, setup child issues #3507-#3511, scheduled issues #3567/#3569, and focused docs validation
   - wp: WP-02
     issue: 3476
     title: Public prompt transition umbrella

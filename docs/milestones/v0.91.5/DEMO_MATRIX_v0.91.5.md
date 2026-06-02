@@ -9,7 +9,7 @@ Candidate demo matrix. Demos are planned until their issues land evidence.
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 
 ## Purpose
 

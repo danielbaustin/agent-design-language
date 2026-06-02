@@ -3,19 +3,20 @@
 ## Metadata
 - Milestone: `v0.91.5`
 - Version: `v0.91.5`
-- Date: `2026-05-29`
+- Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `draft_pre_open`
+- Status: `active_wp_01_opening`
 - Related setup umbrella: `#3506` (closed)
 - Closed setup children: `#3507`, `#3508`, `#3509`, `#3510`, `#3511`
 - Planning template set: `docs/templates/planning/1.0.0`
 
 ## Status
 
-Current status: `draft_pre_open`
+Current status: `active_wp_01_opening`
 
-- Planning: v0.91.5 bridge package created for review.
-- Execution: not started.
+- Planning: v0.91.5 bridge package created, setup wave closed, WP-01 opening
+  follow-up active.
+- Execution: WP-01 opening pass active; execution sprints not started.
 - Validation: focused planning-doc, YAML, link, and issue-label validation.
 - Release readiness: not applicable until v0.91.5 executes.
 
@@ -26,6 +27,10 @@ Setup truth:
 - `#3507`-`#3511` are the closed v0.91.5 setup child issues for planning
   package, issue reallocation, v0.91.4 release-tail reconciliation, v0.92
   dependency reconciliation, and migration-truth review.
+- `#3568` is the active WP-01 opening follow-up after v0.91.4 release.
+- `#3567` is scheduled to canonicalize the milestone WP ordering standard.
+- `#3569` is scheduled to define portable ADL project adapter contract and
+  templates.
 
 ## Purpose
 
@@ -53,6 +58,8 @@ This milestone exists to:
   governed transition;
 - prepare demo and Unity Observatory readiness;
 - complete the v0.92 activation-test map and first-birthday launch preflight.
+- make external ADL-adjacent repositories portable through a tracked adapter
+  contract and templates before relying on paper/UTS/demo repo evidence.
 
 Expected outcomes:
 
@@ -141,7 +148,12 @@ is milestone-specific.
 
 Execution expectations:
 
-- WP-01 is the bridge planning and issue migration pass.
+- WP-01 is the milestone planning/setup/issue-wave readiness gate. It closes
+  only after planned issues, cards, sprint umbrellas, and initial sequencing are
+  ready to begin or explicitly routed.
+- The canonical milestone structure is being captured by `#3567`.
+- Portable ADL adapter planning is scheduled through `#3569`; implementation
+  belongs in later issue execution, not WP-01 itself.
 - Public prompt, provider/model, multi-agent, demo, and activation work occupy
   the middle of the sequence.
 - Demo/proof, quality, docs/review convergence, v0.92 preflight, and release
