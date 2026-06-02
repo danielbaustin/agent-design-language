@@ -85,7 +85,9 @@ pub(crate) fn changed_files(root: &Path, args: &CodeReviewArgs) -> anyhow::Resul
             .map(str::trim)
             .filter(|line| !line.is_empty())
         {
-            files.insert(validate_include_file(line)?);
+            if let Some(file) = validate_changed_file_from_git(line)? {
+                files.insert(file);
+            }
         }
     }
     if args.include_working_tree {
@@ -95,7 +97,9 @@ pub(crate) fn changed_files(root: &Path, args: &CodeReviewArgs) -> anyhow::Resul
             .map(str::trim)
             .filter(|line| !line.is_empty())
         {
-            files.insert(validate_include_file(line)?);
+            if let Some(file) = validate_changed_file_from_git(line)? {
+                files.insert(file);
+            }
         }
     }
     if !args.include_files.is_empty() {
@@ -108,6 +112,14 @@ pub(crate) fn changed_files(root: &Path, args: &CodeReviewArgs) -> anyhow::Resul
         return Ok(args.include_files.clone());
     }
     Ok(files.into_iter().collect())
+}
+
+fn validate_changed_file_from_git(raw: &str) -> anyhow::Result<Option<String>> {
+    let value = raw.trim();
+    if value.ends_with(".lock") {
+        return Ok(None);
+    }
+    validate_include_file(value).map(Some)
 }
 
 pub(crate) fn diff_hunks(

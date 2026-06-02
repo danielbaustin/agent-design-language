@@ -1,0 +1,365 @@
+{
+  "schema": "adl.csdlc.prompt_card_structure.v1",
+  "template_set": "1.0.0",
+  "card_kind": "srp",
+  "template_path": "docs/templates/prompts/1.0.0/srp.md",
+  "parser": "markdown-rs 1.0.0",
+  "editable_sections": [
+    "Acceptance Criteria",
+    "Actions taken",
+    "Affected Areas",
+    "Deliverables",
+    "Demo / Proof Requirements",
+    "Demo Expectations",
+    "Dependencies",
+    "Goal",
+    "Inputs",
+    "Issue-Graph Notes",
+    "Non-goals",
+    "Non-goals / Out of scope",
+    "Notes",
+    "Notes / Risks",
+    "Outputs",
+    "Plan Summary",
+    "Policy Refs",
+    "Proposed Steps",
+    "Repo Inputs",
+    "Required Outcome",
+    "Risks And Edge Cases",
+    "Scope Basis",
+    "Summary",
+    "Target Files / Surfaces",
+    "Test Strategy",
+    "Tooling Notes",
+    "Validation Plan"
+  ],
+  "scaffold_lines": [
+    "---",
+    "```yaml",
+    "```",
+    "labels:",
+    "supersedes: []",
+    "duplicates: []",
+    "depends_on: []",
+    "canonical_files: []",
+    "demo_names: []",
+    "pr_start:",
+    "enabled: true",
+    "source_refs:",
+    "scope:",
+    "files:",
+    "components:",
+    "out_of_scope:",
+    "constraints:",
+    "assumptions:",
+    "proposed_steps:",
+    "codex_plan:",
+    "affected_areas:",
+    "invariants_to_preserve:",
+    "risks_and_edge_cases:",
+    "test_strategy:",
+    "required_permissions:",
+    "stop_conditions:",
+    "alternatives_considered:",
+    "review_hooks:",
+    "review_results:"
+  ],
+  "scaffold_line_prefixes": [
+    "- kind:",
+    "kind:",
+    "ref:",
+    "- id:",
+    "description:",
+    "expected_output:",
+    "allowed_mode:",
+    "- step:",
+    "status:",
+    "- description:",
+    "reason_not_chosen:"
+  ],
+  "rendered_value_line_prefixes": [
+    "Task ID:",
+    "Run ID:",
+    "Version:",
+    "Title:",
+    "Branch:",
+    "Card Status:",
+    "Status:",
+    "Generated:",
+    "- Actor:",
+    "- Model:",
+    "- Start Time:",
+    "- End Time:",
+    "- Issue:",
+    "- PR:",
+    "- Source Issue Prompt:",
+    "- Docs:",
+    "- Other:",
+    "- Agent:",
+    "- Provider:",
+    "- Tools allowed:",
+    "- Sandbox / approvals:",
+    "- Source issue-prompt slug:",
+    "- Required outcome type:",
+    "- Demo required:",
+    "- Local ignored output-card scaffold at",
+    "- `bash adl/tools/validate_structured_prompt.sh",
+    "Source issue-prompt slug:",
+    "Required outcome type:",
+    "Demo required:",
+    "Canonical Template Source:",
+    "Generated from",
+    "name:",
+    "issue:",
+    "task_id:",
+    "run_id:",
+    "version:",
+    "title:",
+    "branch:",
+    "generated_at:",
+    "card_status:",
+    "activation_state:",
+    "plan_revision:",
+    "confidence:",
+    "plan_summary:",
+    "execution_handoff:",
+    "notes:"
+  ],
+  "frontmatter_keys": [
+    "allowed_dispositions",
+    "artifact_type",
+    "branch",
+    "card_status",
+    "evidence_policy",
+    "follow_up_routing",
+    "generated_at",
+    "in_scope_surfaces",
+    "issue",
+    "name",
+    "non_claims",
+    "notes",
+    "policy_refs",
+    "refusal_policy",
+    "review_mode",
+    "review_results",
+    "review_results.findings_status",
+    "review_results.recommended_outcome",
+    "reviewer_constraints",
+    "schema_version",
+    "scope_basis",
+    "source_refs",
+    "status",
+    "task_id",
+    "timing",
+    "title",
+    "validation_inputs",
+    "version"
+  ],
+  "headings": [
+    {
+      "level": 1,
+      "text": "Structured Review Prompt"
+    },
+    {
+      "level": 2,
+      "text": "Review Summary"
+    },
+    {
+      "level": 2,
+      "text": "Scope Basis"
+    },
+    {
+      "level": 2,
+      "text": "In-Scope Surfaces"
+    },
+    {
+      "level": 2,
+      "text": "Evidence Rules"
+    },
+    {
+      "level": 2,
+      "text": "Validation Inputs"
+    },
+    {
+      "level": 2,
+      "text": "Allowed Dispositions"
+    },
+    {
+      "level": 2,
+      "text": "Reviewer Constraints"
+    },
+    {
+      "level": 2,
+      "text": "Refusal Policy"
+    },
+    {
+      "level": 2,
+      "text": "Follow-up Routing"
+    },
+    {
+      "level": 2,
+      "text": "Non-Claims"
+    },
+    {
+      "level": 2,
+      "text": "Review Results"
+    },
+    {
+      "level": 3,
+      "text": "Findings"
+    },
+    {
+      "level": 3,
+      "text": "Dispositions"
+    },
+    {
+      "level": 3,
+      "text": "Recommended Outcome"
+    },
+    {
+      "level": 2,
+      "text": "Notes"
+    }
+  ],
+  "fenced_blocks": [
+    {
+      "ordinal": 0,
+      "info": "yaml",
+      "heading_path": [
+        "Structured Review Prompt",
+        "Review Results"
+      ]
+    }
+  ],
+  "locked_lines": [
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Review Summary"
+      ],
+      "text": "Use this prompt to govern the independent pre-PR review for this issue. Review results are intentionally absent before implementation exists and must be finalized before PR publication."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "In-Scope Surfaces"
+      ],
+      "text": "- tracked changes for this issue branch"
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Evidence Rules"
+      ],
+      "text": "- Use repository evidence, targeted validation output, and linked issue-bundle artifacts only."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Validation Inputs"
+      ],
+      "text": "- Issue-local proofs recorded in the SOR."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Allowed Dispositions"
+      ],
+      "text": "- PASS"
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Allowed Dispositions"
+      ],
+      "text": "- BLOCK"
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Allowed Dispositions"
+      ],
+      "text": "- NEEDS_FOLLOWUP"
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Reviewer Constraints"
+      ],
+      "text": "- Do not widen issue scope."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Reviewer Constraints"
+      ],
+      "text": "- Do not merge, publish, or close the issue."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Refusal Policy"
+      ],
+      "text": "- Refuse claims that are unsupported by repository evidence."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Refusal Policy"
+      ],
+      "text": "- Refuse approving behavior outside the recorded issue scope."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Follow-up Routing"
+      ],
+      "text": "- Route actionable defects back to the issue branch before PR publication."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Non-Claims"
+      ],
+      "text": "- This prompt does not claim review has already run."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Non-Claims"
+      ],
+      "text": "- This prompt does not guarantee review quality by itself."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Review Results"
+      ],
+      "text": "When finalizing review, record the machine-readable review result in frontmatter:"
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Review Results",
+        "Findings"
+      ],
+      "text": "- Not run yet; implementation has not been bound."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Review Results",
+        "Dispositions"
+      ],
+      "text": "- Not applicable until review runs."
+    },
+    {
+      "heading_path": [
+        "Structured Review Prompt",
+        "Review Results",
+        "Recommended Outcome"
+      ],
+      "text": "- Not run yet."
+    }
+  ]
+}

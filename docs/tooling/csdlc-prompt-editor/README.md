@@ -76,6 +76,11 @@ cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
 
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
   validate-structure --kind sip --input /tmp/csdlc-prompt-cards/sip.md
+
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+  validate-schemas
+
+python3 adl/tools/test_prompt_template_structure_schemas.py
 ```
 
 Values files use:
@@ -91,10 +96,23 @@ issue/version/card-status values.
 The structure validator protects rendered cards from template-shape drift. It
 checks frontmatter key inventory, Markdown heading order, fenced-block shape,
 unresolved placeholders, and locked template prose where the card kind has
-stable prose. It intentionally does not add a new Markdown parser dependency in
-v0.91.5; the current guard uses the Rust-owned template model and lightweight
-Markdown structure scanner. A richer `markdown-rs` or LST-style parser remains a
-future option if later work needs whitespace/trivia-preserving validation.
+stable prose. The active registry points each card kind at a tracked JSON
+structure schema under `docs/templates/prompts/1.0.0/schemas/`. Rust validates
+rendered cards against those schema files, and
+`adl/tools/test_prompt_template_structure_schemas.py` proves the same artifacts
+are easy to load with Python stdlib tooling.
+
+When template structure changes intentionally, regenerate and validate the
+schema artifacts:
+
+```sh
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+  write-structure-schemas \
+  --out-dir docs/templates/prompts/1.0.0/schemas
+
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+  validate-schemas
+```
 
 ## Proof Command
 

@@ -1,7 +1,7 @@
 use adl::csdlc_prompt_editor::{
     render_all_cards_from_values_dir, render_card_from_values_file, repo_root_from_arg,
-    validate_rendered_card_structure_file, validate_values_file, write_all_sample_values,
-    PromptCardKind,
+    validate_rendered_card_structure_file, validate_structure_schema_files, validate_values_file,
+    write_all_sample_values, write_all_structure_schemas, PromptCardKind,
 };
 use anyhow::{bail, Result};
 use std::fs;
@@ -11,7 +11,7 @@ use super::tooling_usage;
 
 pub(crate) fn real_prompt_template(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
-        bail!("prompt-template requires a subcommand: render | render-all | validate-values | validate-structure | write-sample-values");
+        bail!("prompt-template requires a subcommand: render | render-all | validate-values | validate-structure | validate-schemas | write-sample-values | write-structure-schemas");
     };
 
     match subcommand {
@@ -19,13 +19,15 @@ pub(crate) fn real_prompt_template(args: &[String]) -> Result<()> {
         "render-all" => render_all(&args[1..]),
         "validate-values" => validate_one(&args[1..]),
         "validate-structure" => validate_structure_one(&args[1..]),
+        "validate-schemas" => validate_schemas(&args[1..]),
         "write-sample-values" => write_samples(&args[1..]),
+        "write-structure-schemas" => write_structure_schemas(&args[1..]),
         "--help" | "-h" | "help" => {
             println!("{}", tooling_usage());
             Ok(())
         }
         other => bail!(
-            "unknown prompt-template subcommand '{other}' (expected render | render-all | validate-values | validate-structure | write-sample-values)"
+            "unknown prompt-template subcommand '{other}' (expected render | render-all | validate-values | validate-structure | validate-schemas | write-sample-values | write-structure-schemas)"
         ),
     }
 }
@@ -151,6 +153,35 @@ fn render_all(args: &[String]) -> Result<()> {
     Ok(())
 }
 
+fn validate_schemas(args: &[String]) -> Result<()> {
+    if has_help_arg(args) {
+        println!("{}", tooling_usage());
+        return Ok(());
+    }
+    let mut repo_root: Option<PathBuf> = None;
+
+    let mut idx = 0usize;
+    while idx < args.len() {
+        match args[idx].as_str() {
+            "--repo-root" => {
+                idx += 1;
+                repo_root = Some(PathBuf::from(value_arg(args, idx, "--repo-root")?));
+            }
+            "--help" | "-h" | "help" => {
+                println!("{}", tooling_usage());
+                return Ok(());
+            }
+            other => bail!("unknown arg for tooling prompt-template validate-schemas: {other}"),
+        }
+        idx += 1;
+    }
+
+    let root = repo_root_from_arg(repo_root)?;
+    validate_structure_schema_files(&root)?;
+    println!("PASS: prompt-card structure schemas match active templates");
+    Ok(())
+}
+
 fn write_samples(args: &[String]) -> Result<()> {
     let mut out_dir: Option<PathBuf> = None;
 
@@ -174,6 +205,43 @@ fn write_samples(args: &[String]) -> Result<()> {
         out_dir.ok_or_else(|| anyhow::anyhow!("write-sample-values requires --out-dir"))?;
     write_all_sample_values(&out_dir)?;
     println!("PASS: wrote sample prompt values to {}", out_dir.display());
+    Ok(())
+}
+
+fn write_structure_schemas(args: &[String]) -> Result<()> {
+    let mut repo_root: Option<PathBuf> = None;
+    let mut out_dir: Option<PathBuf> = None;
+
+    let mut idx = 0usize;
+    while idx < args.len() {
+        match args[idx].as_str() {
+            "--repo-root" => {
+                idx += 1;
+                repo_root = Some(PathBuf::from(value_arg(args, idx, "--repo-root")?));
+            }
+            "--out-dir" => {
+                idx += 1;
+                out_dir = Some(PathBuf::from(value_arg(args, idx, "--out-dir")?));
+            }
+            "--help" | "-h" | "help" => {
+                println!("{}", tooling_usage());
+                return Ok(());
+            }
+            other => {
+                bail!("unknown arg for tooling prompt-template write-structure-schemas: {other}")
+            }
+        }
+        idx += 1;
+    }
+
+    let out_dir =
+        out_dir.ok_or_else(|| anyhow::anyhow!("write-structure-schemas requires --out-dir"))?;
+    let root = repo_root_from_arg(repo_root)?;
+    write_all_structure_schemas(&root, &out_dir)?;
+    println!(
+        "PASS: wrote prompt-card structure schemas to {}",
+        out_dir.display()
+    );
     Ok(())
 }
 

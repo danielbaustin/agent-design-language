@@ -137,13 +137,14 @@ instead of being claimed by the values validator:
 - host-local absolute paths or secret markers in public card output;
 - richer typed list/item schema validation beyond the current values model.
 
-Markdown structure immutability is implemented by `#3585` as a deterministic
+Markdown structure immutability was introduced by `#3585` as a deterministic
 structure guard over frontmatter key inventory, Markdown heading order, fenced
 block shape, unresolved placeholders, and locked template prose where the card
-kind has stable prose. It deliberately uses the existing Rust-owned template
-model and lightweight Markdown structure scanner for v0.91.5 instead of adding
-a new parser dependency. `markdown-rs` or a richer LST-style parser remains a
-future option if later work needs trivia-preserving structure checks.
+kind has stable prose. `#3587` promotes that guard to consume versioned
+structure schema artifacts from `docs/templates/prompts/current.json` and uses
+`markdown-rs` AST extraction for headings and fenced blocks. The tracked schema
+artifacts are JSON so a dependency-free Python smoke test can verify registry
+coverage and schema readability outside the Rust implementation.
 
 Public artifact hygiene and redaction checks remain separate review/validation
 surfaces unless a later issue binds them directly to the renderer.
@@ -183,6 +184,10 @@ cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render-all \
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure \
   --kind stp \
   --input /tmp/csdlc-prompt-cards/stp.md
+
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-schemas
+
+python3 adl/tools/test_prompt_template_structure_schemas.py
 ```
 
 The existing Markdown validator remains in use:

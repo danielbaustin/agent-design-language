@@ -72,6 +72,14 @@ fn prompt_template_cli_renders_and_validates_all_five_cards_from_values() {
         }
         real_tooling(&args).expect("rendered card should pass markdown validator");
     }
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "validate-schemas".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+    ])
+    .expect("tracked structure schemas should match active templates");
 }
 
 #[test]
@@ -286,6 +294,15 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
     assert!(missing_out_dir
         .to_string()
         .contains("write-sample-values requires --out-dir"));
+
+    let missing_schema_out_dir = real_tooling(&[
+        "prompt-template".to_string(),
+        "write-structure-schemas".to_string(),
+    ])
+    .expect_err("write-structure-schemas requires out dir");
+    assert!(missing_schema_out_dir
+        .to_string()
+        .contains("write-structure-schemas requires --out-dir"));
 
     let missing_value = real_tooling(&[
         "prompt-template".to_string(),
