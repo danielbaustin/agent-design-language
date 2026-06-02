@@ -16,6 +16,22 @@ Its job is to:
 
 This is a helper skill, not a lifecycle orchestrator.
 
+## Prompt-Template Tooling Boundary
+
+When creating a new STP or fully re-rendering one, prefer the active
+prompt-template values renderer and structure/schema validators before using
+Markdown as lifecycle state:
+
+```sh
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-values --kind stp --values <path>
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render --kind stp --values <path> --out <path>
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure --kind stp --input <path>
+```
+
+Use this skill for STP truth repairs: task intent, required outcome,
+acceptance criteria, bounded scope, validation plan, and placeholder cleanup. Do
+not use it to bypass locked template prose or schema validation.
+
 ## Required Inputs
 
 At minimum, gather:

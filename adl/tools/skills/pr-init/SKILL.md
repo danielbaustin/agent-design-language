@@ -169,6 +169,21 @@ Ensure the repo's canonical bootstrap surfaces exist in the right places:
 
 Prefer the repo's existing templates and control-plane logic over hand-written file generation.
 
+When the active prompt-template values renderer is available for the target
+card kind, bootstrap or regeneration paths should prefer:
+
+1. resolve `docs/templates/prompts/current.json`;
+2. fill values YAML with locked fields under `system` and editable fields under
+   `values`;
+3. render Markdown through `adl tooling prompt-template render` or `render-all`;
+4. validate rendered shape with `validate-structure`;
+5. validate schema artifacts with `validate-schemas` when template structure is
+   touched.
+
+Do not hand-roll card Markdown from memory. If the generated card needs
+issue-local lifecycle truth repair after bootstrap, hand off to the matching
+card editor skill.
+
 Do not qualitatively rewrite STP or SIP content in this step beyond the mechanical bootstrap required by the repo's standard control-plane behavior.
 
 ### 4. Validate and Review the Bootstrap Result

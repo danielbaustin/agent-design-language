@@ -200,6 +200,12 @@ After merge or closure:
 
 - Do not create milestone docs on `main`.
 - Do not hand-roll cards from memory.
+- When prompt-template values rendering is available, create or regenerate
+  milestone issue cards through the values renderer and validate the rendered
+  Markdown with `validate-structure`. If template structure changes, also run
+  `validate-schemas` and `python3 adl/tools/test_prompt_template_structure_schemas.py`.
+- Use card editor skills for lifecycle-truth cleanup after generation; do not
+  use them to bypass locked template prose or schema validation.
 - Do not leave `SIP`, `STP`, or `SPP` generic when execution starts.
 - Do not leave feature docs missing for first-class work.
 - Do not let moved sidecar work disappear from closeout/checklist truth.

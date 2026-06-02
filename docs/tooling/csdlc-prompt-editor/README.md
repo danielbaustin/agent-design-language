@@ -83,6 +83,9 @@ cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
 python3 adl/tools/test_prompt_template_structure_schemas.py
 ```
 
+For the concise operator checklist, see
+[`../PROMPT_TEMPLATE_CARD_GENERATION_CHECKLIST.md`](../PROMPT_TEMPLATE_CARD_GENERATION_CHECKLIST.md).
+
 Values files use:
 
 - `system` for locked lifecycle, routing, branch, issue, path, enum, and
@@ -149,6 +152,11 @@ still route through the card editor skills:
 - `sor-editor`
 
 The canonical template set remains `docs/templates/prompts/current.json`.
+For new or fully re-rendered cards, agents should prefer values YAML plus the
+Rust renderer and structure/schema validators before using rendered Markdown as
+the reviewable lifecycle artifact. Use editor skills for lifecycle-truth
+normalization and bounded repairs, not for hand-written template structure
+changes.
 
 Use the focused repair-example proof when validating the editor-skill boundary:
 

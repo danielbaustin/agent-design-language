@@ -40,6 +40,15 @@ These rules are mandatory for ADL issue work.
    - The current prompt-template registry is `docs/templates/prompts/current.json`;
      use it rather than hard-coding a template version unless an issue
      explicitly requires a compatibility path.
+   - For new or fully re-rendered cards, prefer the deterministic
+     prompt-template values renderer over direct Markdown structure edits:
+     `adl tooling prompt-template validate-values`, `render`, `render-all`,
+     `validate-structure`, and `validate-schemas`.
+   - Treat the tracked structure schemas under
+     `docs/templates/prompts/<version>/schemas/` as the template-shape
+     authority. If a rendered card fails structure validation, fix the values or
+     intentionally version/regenerate the template schema; do not patch locked
+     template prose by hand.
 3. Always work in a bound worktree on a specific branch.
    - Never do tracked issue work on `main`.
    - Use the repo-native issue-mode `pr run` flow to bind execution context.
@@ -80,6 +89,10 @@ These rules are mandatory for ADL issue work.
 - Prefer the human prompt editor or card editor skills for filling and
   normalizing cards. Do not regenerate complete card prose when a template field
   update is sufficient.
+- When the issue context supports values-rendered prompt cards, update the
+  values object first, render through the Rust tooling, then run structure and
+  schema validation. Use editor skills for lifecycle truth and bounded repairs,
+  not as a reason to bypass the renderer/schema path.
 
 ## Where To Start
 
@@ -106,6 +119,10 @@ For a normal tracked issue:
 - Keep review records and output cards truthful about what was and was not run.
 - Docs-only and policy-only PVF work should prefer focused docs/path/contract/
   guardrail proof unless tracked runtime behavior changed.
+- Prompt-card generation or repair work should include the focused renderer
+  checks that apply to the touched surface: values validation, rendered
+  structure validation, schema parity validation, and the Python-readable schema
+  smoke check when schema artifacts are touched.
 
 ## Review And Publication Rules
 

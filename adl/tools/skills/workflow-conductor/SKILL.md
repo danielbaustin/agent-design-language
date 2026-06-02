@@ -130,6 +130,13 @@ Preferred next-skill mapping:
 - PR in flight with checks/conflicts/review blockers -> `pr-janitor`
 - PR merged or intentionally closed -> `pr-closeout`
 
+Prompt-template tooling route:
+- new or fully re-rendered prompt card -> active prompt-template values
+  renderer, then `validate-structure`
+- changed prompt-template schema artifact -> `validate-schemas`, then
+  `python3 adl/tools/test_prompt_template_structure_schemas.py`
+- lifecycle-truth drift in an existing card -> matching card editor skill
+
 Important rule:
 - treat partially completed early steps as normal state, not corruption
 - the conductor should resume from the next truthful step instead of restarting bootstrap by reflex
@@ -151,6 +158,9 @@ Important rule:
   planning sections, stale planning status claims, or generated-vs-reviewed
   truth drift should route to `planning-doc-editor`; do not send those defects
   to C-SDLC card editors unless the defect is actually in SIP/STP/SPP/SRP/SOR
+- when values-rendered prompt-card support exists for the target, do not route
+  broad card generation to direct Markdown edits; use the renderer/schema path
+  first, then card-editor skills only for issue-local lifecycle truth
 
 ## Policy Model
 

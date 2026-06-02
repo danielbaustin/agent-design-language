@@ -114,6 +114,23 @@ The five card editor skills are helper skills:
 - `sip-editor` for truthful `sip.md` cleanup
 - `sor-editor` for truthful `sor.md` cleanup
 
+For new or fully re-rendered prompt cards, prefer the Rust-owned values
+renderer and structure-schema validator before editing Markdown directly:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-values --kind <kind> --values <kind>.values.yaml
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render --kind <kind> --values <kind>.values.yaml --out <kind>.md
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure --kind <kind> --input <kind>.md
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-schemas
+python3 adl/tools/test_prompt_template_structure_schemas.py
+```
+
+The editor skills remain authoritative for lifecycle-truth normalization:
+branch/worktree truth, issue-specific readiness, review results, validation
+claims, integration state, and closeout truth. They should not be used as a
+reason to hand-write locked template prose or bypass schema validation when a
+values-rendered card path is available.
+
 `sprint-conductor` is a bounded orchestration helper rather than an editor skill. It sequences one sprint issue across ordered child issues using the existing lifecycle/editor stack, then assembles sprint review and sprint closeout evidence.
 It now includes a small deterministic sprint-state helper, supports a bounded review-subagent exception when policy enables it, and should be installed or synced into the active Codex skills directory before live use.
 
