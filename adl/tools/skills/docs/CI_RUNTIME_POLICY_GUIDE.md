@@ -240,9 +240,12 @@ Truthful interpretation:
   `cargo llvm-cov` lane is the relevant Rust test execution for that event.
 - A lightweight `cargo test --doc` check may still run to preserve doc-test
   coverage without duplicating the whole suite.
-- Full coverage artifacts and policy gates are expected.
-- This lane can be cited as full coverage evidence when it produces
-  `coverage-summary.json`, `coverage-summary.txt`, and `lcov.info`.
+- Full coverage artifacts and workspace policy gates are expected on
+  push-to-main, nightly ratchet, and non-PR fail-closed events.
+- Pull requests that enter this lane use the authoritative coverage run plus
+  changed-source coverage-impact validation, but they must not claim the full
+  workspace coverage ratchet passed unless the workflow also produced the
+  release-evidence artifacts.
 
 For a tooling-only policy-surface PR, `rust_required` and `demo_smoke_required`
 may stay false while `full_coverage_required=true` still means the
@@ -253,12 +256,11 @@ PR also changes runtime or demo-affecting surfaces, the authority upgrades to
 lane still runs. Slow proof remains a separate `slow-proof-tests` lane rather
 than being pulled back into coverage through `--all-features`.
 
-Tooling-only policy-surface PRs should still run changed-source coverage-impact
-validation from the generated `coverage-summary.json`, but they should not be
-described as having passed the full workspace coverage gate or produced full
-release-evidence LCOV artifacts. Those remain reserved for full-evidence
-authorities such as `push_main`, `fail_closed`, and mixed runtime-plus-policy
-governance changes.
+Policy-surface PRs should still run changed-source coverage-impact validation
+from the generated `coverage-summary.json`, but they should not be described as
+having passed the full workspace coverage gate or produced full release-evidence
+LCOV artifacts. Those remain reserved for full-evidence authorities such as
+`push_main`, nightly ratchet, and non-PR fail-closed events.
 
 The authoritative coverage implementation is now explicit:
 
