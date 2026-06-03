@@ -135,6 +135,11 @@ if '--summary adl/coverage-summary.json \\' not in pr_preflight_step:
     )
 
 gate_if = step_if("Enforce coverage policy gates (workspace + per-file)")
+if "github.event_name != 'pull_request'" not in gate_if:
+    raise SystemExit(
+        "workspace coverage gate must be skipped for pull_request coverage runs; "
+        f"found: {gate_if}"
+    )
 expected_gate_fragment = "steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'"
 if expected_gate_fragment not in gate_if:
     raise SystemExit(
@@ -152,11 +157,11 @@ if slow_proof_exclusion not in gate_block:
         "workflow is missing the slow-proof per-file exclusion"
     )
 
-deferred_policy_step = step_if("Full workspace coverage gate deferred for policy PR")
-expected_deferred_fragment = "steps.path-policy.outputs.coverage_authority == 'pr_policy_surface_tooling_only'"
+deferred_policy_step = step_if("Full workspace coverage gate deferred for PR")
+expected_deferred_fragment = "github.event_name == 'pull_request'"
 if expected_deferred_fragment not in deferred_policy_step:
     raise SystemExit(
-        "tooling-only policy PR defer note must be keyed to pr_policy_surface_tooling_only; "
+        "PR defer note must be keyed to pull_request coverage runs; "
         f"found: {deferred_policy_step}"
     )
 

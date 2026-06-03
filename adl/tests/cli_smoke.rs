@@ -45,6 +45,13 @@ fn run_adl_runtime(args: &[&str]) -> std::process::Output {
         .expect("run adl-runtime binary")
 }
 
+fn run_adl_review(args: &[&str]) -> std::process::Output {
+    Command::new(resolve_adl_review_exe())
+        .args(args)
+        .output()
+        .expect("run adl-review binary")
+}
+
 fn run_adl_runtime_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
     let mut cmd = Command::new(resolve_adl_runtime_exe());
     cmd.args(args);
@@ -88,6 +95,17 @@ fn resolve_adl_csdlc_exe() -> PathBuf {
 fn resolve_adl_runtime_exe() -> PathBuf {
     let raw = std::env::var("CARGO_BIN_EXE_adl-runtime")
         .unwrap_or_else(|_| env!("CARGO_BIN_EXE_adl-runtime").to_string());
+    let path = PathBuf::from(raw);
+    if path.is_absolute() {
+        path
+    } else {
+        Path::new(env!("CARGO_MANIFEST_DIR")).join(path)
+    }
+}
+
+fn resolve_adl_review_exe() -> PathBuf {
+    let raw = std::env::var("CARGO_BIN_EXE_adl-review")
+        .unwrap_or_else(|_| env!("CARGO_BIN_EXE_adl-review").to_string());
     let path = PathBuf::from(raw);
     if path.is_absolute() {
         path
@@ -167,6 +185,93 @@ fn adl_runtime_cli_binary_help_and_version_smoke() {
         String::from_utf8_lossy(&version.stdout).trim(),
         env!("CARGO_PKG_VERSION")
     );
+}
+
+#[test]
+fn adl_review_cli_binary_help_and_version_smoke() {
+    let help = run_adl_review(&["--help"]);
+    assert!(
+        help.status.success(),
+        "stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&help.stdout),
+        String::from_utf8_lossy(&help.stderr)
+    );
+    let help_stdout = String::from_utf8_lossy(&help.stdout);
+    assert!(help_stdout.contains("adl-review - ADL review tooling compatibility binary"));
+    assert!(help_stdout.contains("adl-review code-review --out <dir>"));
+    assert!(help_stdout.contains("verify-repo-contract"));
+
+    let version = run_adl_review(&["--version"]);
+    assert!(
+        version.status.success(),
+        "stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&version.stdout),
+        String::from_utf8_lossy(&version.stderr)
+    );
+    assert_eq!(
+        String::from_utf8_lossy(&version.stdout).trim(),
+        env!("CARGO_PKG_VERSION")
+    );
+}
+
+#[test]
+fn adl_review_verify_repo_contract_matches_legacy_tooling_command() {
+    let review = unique_test_temp_dir("adl-review-contract").join("review.md");
+    fs::write(
+        &review,
+        "# Repository Review\n\n\
+## Metadata\n\n\
+- Review Type: fixture\n\
+- Subject: adl-review compatibility\n\
+- Reviewer: fixture\n\n\
+## Scope\n\n\
+- Reviewed: review compatibility surface\n\
+- Not Reviewed: runtime behavior\n\
+- Review Mode: fixture\n\
+- Gate: non-blocking\n\n\
+## Findings\n\n\
+No material findings.\n\n\
+## System-Level Assessment\n\n\
+The review packet is structurally valid for compatibility smoke coverage.\n\n\
+## Recommended Action Plan\n\n\
+- Fix now: none\n\
+- Fix before milestone closeout: none\n\
+- Defer: none\n\n\
+## Follow-ups / Deferred Work\n\n\
+None.\n\n\
+## Final Assessment\n\n\
+Pass.\n",
+    )
+    .expect("write review fixture");
+
+    let legacy = run_adl(&[
+        "tooling",
+        "verify-repo-review-contract",
+        "--review",
+        review.to_str().unwrap(),
+    ]);
+    let review_bin =
+        run_adl_review(&["verify-repo-contract", "--review", review.to_str().unwrap()]);
+
+    assert!(
+        legacy.status.success() && review_bin.status.success(),
+        "legacy stderr:\n{}\nreview stderr:\n{}",
+        String::from_utf8_lossy(&legacy.stderr),
+        String::from_utf8_lossy(&review_bin.stderr)
+    );
+    assert_eq!(
+        legacy.stdout, review_bin.stdout,
+        "adl-review verify-repo-contract should preserve legacy tooling output"
+    );
+}
+
+#[test]
+fn adl_review_rejects_issue_and_runtime_families() {
+    let issue = run_adl_review(&["pr", "run", "3599"]);
+    assert_failure_contains(&issue, "review tooling only");
+
+    let runtime = run_adl_review(&["run", "workflow.adl.yaml"]);
+    assert_failure_contains(&runtime, "does not run ADL runtime commands");
 }
 
 #[test]

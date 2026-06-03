@@ -63,6 +63,10 @@ jobs:
         if: steps.path-policy.outputs.rust_required == 'true'
         run: |
           if ! command -v ld.lld >/dev/null 2>&1; then
+            # GitHub-hosted runners can carry browser apt sources unrelated to
+            # Rust. Keep lld installation isolated from transient Chrome mirror
+            # sync failures.
+            sudo find /etc/apt/sources.list.d -type f -name '*google-chrome*' -exec mv {} {}.disabled \; 2>/dev/null || true
             sudo apt-get update
             sudo apt-get install -y lld
           fi
@@ -385,6 +389,10 @@ jobs:
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: |
           if ! command -v ld.lld >/dev/null 2>&1; then
+            # GitHub-hosted runners can carry browser apt sources unrelated to
+            # Rust. Keep lld installation isolated from transient Chrome mirror
+            # sync failures.
+            sudo find /etc/apt/sources.list.d -type f -name '*google-chrome*' -exec mv {} {}.disabled \; 2>/dev/null || true
             sudo apt-get update
             sudo apt-get install -y lld
           fi
@@ -433,12 +441,12 @@ jobs:
             --threshold "$PER_FILE_LINE_THRESHOLD"
         working-directory: .
 
-      - name: Full workspace gate deferred for bounded authoritative policy PR
-        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_authority == 'pr_policy_surface_tooling_only'
+      - name: Full workspace gate deferred for bounded authoritative PR
+        if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'
         run: |
-          echo "Workspace coverage gate and lcov artifact generation are deferred for tooling-only policy PRs."
-          echo "This PR ran the bounded authoritative coverage pass plus changed-source coverage-impact validation."
-          echo "Full workspace coverage gating remains required on push-to-main, fail-closed events, and mixed runtime-plus-policy PRs."
+          echo "Workspace coverage gate and lcov artifact generation are deferred for pull requests."
+          echo "This PR ran the authoritative coverage pass plus changed-source coverage-impact validation."
+          echo "Full workspace coverage gating remains required on push-to-main, nightly ratchet, and non-PR fail-closed events."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
           echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
           echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
@@ -476,7 +484,7 @@ jobs:
         working-directory: .
 
       - name: Enforce coverage policy gates (workspace + per-file)
-        if: steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
+        if: github.event_name != 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
         env:
           WORKSPACE_LINE_THRESHOLD: "90"
           PER_FILE_LINE_THRESHOLD: "80"
@@ -485,12 +493,12 @@ jobs:
           set -eu
           bash tools/enforce_coverage_gates.sh coverage-summary.json
 
-      - name: Full workspace coverage gate deferred for policy PR
-        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_authority == 'pr_policy_surface_tooling_only'
+      - name: Full workspace coverage gate deferred for PR
+        if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'
         run: |
-          echo "Workspace coverage gate and lcov artifact generation are deferred for tooling-only policy PRs."
-          echo "This PR ran the bounded authoritative coverage pass plus changed-source coverage-impact validation."
-          echo "Full workspace coverage gating remains required on push-to-main, fail-closed events, and mixed runtime-plus-policy PRs."
+          echo "Workspace coverage gate and lcov artifact generation are deferred for pull requests."
+          echo "This PR ran the authoritative coverage pass plus changed-source coverage-impact validation."
+          echo "Full workspace coverage gating remains required on push-to-main, nightly ratchet, and non-PR fail-closed events."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
           echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
           echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
