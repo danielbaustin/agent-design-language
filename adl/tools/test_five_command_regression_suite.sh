@@ -24,6 +24,7 @@ run_check adl/tools/test_pr_init_skill_contracts.sh
 run_check adl/tools/test_card_editor_skill_contracts.sh
 run_check adl/tools/test_pr_closeout_skill_contracts.sh
 run_check adl/tools/test_cli_wrapper_migration_contract.sh
+run_check adl/tools/test_adl_runtime_compatibility.sh
 run_check adl/tools/test_pr_run.sh
 run_check adl/tools/test_pr_run_ambiguity_policy.sh
 run_check adl/tools/test_pr_run_materializes_worktree_cards.sh
