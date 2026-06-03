@@ -142,6 +142,42 @@ Disposition:
 
 - Routed to `#3612`: Review module navigability and consolidation candidates.
 
+### P3: Deferred helper binary candidates needed a live review route
+
+The command inventory explicitly deferred possible helper binaries for crypto,
+Godel, and identity surfaces. That was safe for the first owner-boundary split,
+but the follow-on route was only implicit until this review sweep.
+
+Evidence:
+
+- `docs/milestones/v0.91.5/CLI_COMMAND_INVENTORY_3594.md` lists possible
+  future `adl-crypto`, `adl-godel`, and identity splits as deferred work.
+- The first mini-sprint intentionally kept those surfaces under `adl-runtime`
+  to avoid premature fragmentation.
+
+Disposition:
+
+- Routed to `#3614`: Evaluate deferred helper binary split candidates.
+
+### P3: Shim deprecation and compatibility sunset policy needed a live route
+
+The inventory and wrapper contract define compatibility posture, but the
+deprecation/sunset transition still needs a concrete route so deprecated command
+strings do not fossilize in generated cards or remain executable forever by
+accident.
+
+Evidence:
+
+- `docs/milestones/v0.91.5/CLI_COMMAND_INVENTORY_3594.md` names generated-card
+  and sunset expectations across command families.
+- `docs/planning/PR_CONTROL_PLANE_DECRUFT_COMPATIBILITY_CUT_PLAN.md` records a
+  future v0.92 cleanup tranche, but deletion must be preceded by v0.91.5
+  compatibility routing and active-bundle scan policy.
+
+Disposition:
+
+- Routed to `#3615`: Route shim deprecation and compatibility sunset policy.
+
 ## Follow-On Routing
 
 | Follow-on | Purpose | Status |
@@ -152,6 +188,8 @@ Disposition:
 | `#3610` | Real speedup through workspace/test-lane split with timing evidence. | Open |
 | `#3611` | Docs, skills, templates, and generated-card command migration. | Open |
 | `#3612` | Module navigability/consolidation review. | Open |
+| `#3614` | Helper binary candidate review for deferred crypto, Godel, and identity splits. | Open |
+| `#3615` | Shim deprecation and compatibility sunset routing. | Open |
 
 ## Focused Timing Evidence
 
