@@ -20,9 +20,9 @@ use super::run_artifacts::{
     AEE_DECISION_VERSION, PAUSE_STATE_SCHEMA_VERSION,
 };
 use super::{
-    csdlc_issue_to_pr_args, csdlc_usage, dispatch_args, dispatch_csdlc_args,
-    looks_like_adl_workflow_path, real_instrument, real_keygen, real_learn, real_sign, real_verify,
-    reject_csdlc_runtime_run, usage, version_text,
+    csdlc_issue_to_pr_args, csdlc_usage, dispatch_args, dispatch_csdlc_args, dispatch_runtime_args,
+    looks_like_adl_workflow_path, looks_like_issue_ref, real_instrument, real_keygen, real_learn,
+    real_sign, real_verify, reject_csdlc_runtime_run, runtime_usage, usage, version_text,
 };
 use ::adl::godel::cross_workflow::{
     DownstreamWorkflowDecision, PersistedCrossWorkflowArtifact, CROSS_WORKFLOW_ARTIFACT_VERSION,
@@ -148,6 +148,55 @@ fn csdlc_dispatch_exposes_help_and_version_without_runtime_dispatch() {
     assert!(usage.contains("adl-csdlc issue run <issue>"));
     assert!(usage.contains("adl/tools/pr.sh remains the canonical agent-facing issue wrapper"));
     assert!(usage.contains("adl-runtime run <adl.yaml>"));
+}
+
+#[test]
+fn runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch() {
+    dispatch_runtime_args(&["--help".to_string()]).expect("runtime help should succeed");
+    dispatch_runtime_args(&["-h".to_string()]).expect("runtime short help should succeed");
+    dispatch_runtime_args(&["help".to_string()]).expect("runtime help alias should succeed");
+    dispatch_runtime_args(&["--version".to_string()]).expect("runtime version should succeed");
+    dispatch_runtime_args(&["-V".to_string()]).expect("runtime short version should succeed");
+
+    let usage = runtime_usage();
+    assert!(usage.contains("adl-runtime run <adl.yaml>"));
+    assert!(usage.contains("adl <adl.yaml> remains available as a compatibility shortcut"));
+    assert!(usage.contains("C-SDLC issue work belongs to adl/tools/pr.sh run <issue>"));
+}
+
+#[test]
+fn runtime_dispatch_rejects_csdlc_and_issue_run_inputs() {
+    dispatch_runtime_args(&["run".to_string(), "--help".to_string()])
+        .expect("runtime run help should succeed");
+
+    let issue_err = dispatch_runtime_args(&["run".to_string(), "3598".to_string()])
+        .expect_err("runtime run must reject numeric issue ids");
+    assert!(issue_err
+        .to_string()
+        .contains("adl/tools/pr.sh run <issue>"));
+
+    let hash_issue_err = dispatch_runtime_args(&["run".to_string(), "#3598".to_string()])
+        .expect_err("runtime run must reject hash-prefixed issue ids");
+    assert!(hash_issue_err
+        .to_string()
+        .contains("adl/tools/pr.sh run <issue>"));
+    assert!(looks_like_issue_ref("3598"));
+    assert!(looks_like_issue_ref("#3598"));
+    assert!(!looks_like_issue_ref("workflow.adl.yaml"));
+    assert!(!looks_like_issue_ref("#not-an-issue"));
+
+    let pr_err = dispatch_runtime_args(&["pr".to_string(), "run".to_string(), "3598".to_string()])
+        .expect_err("runtime must not own pr commands");
+    assert!(pr_err
+        .to_string()
+        .contains("does not own C-SDLC workflow commands"));
+
+    let tooling_err =
+        dispatch_runtime_args(&["tooling".to_string(), "prompt-template".to_string()])
+            .expect_err("runtime must not own tooling commands");
+    assert!(tooling_err
+        .to_string()
+        .contains("does not own C-SDLC workflow commands"));
 }
 
 #[test]
