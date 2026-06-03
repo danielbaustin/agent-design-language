@@ -1,0 +1,86 @@
+# Control-Plane Observability Contract (#3609)
+
+Issue: #3609
+Status: implementation contract
+
+## Purpose
+
+ADL control-plane commands must tell operators what they are doing before they
+block, mutate state, call GitHub, delegate to Rust, or fail. Silent waits are a
+workflow defect because agents cannot distinguish useful work from a wedge.
+
+## Event Shape
+
+Shell and Rust command-dispatch events use one line per stage:
+
+```text
+adl_event schema=adl.observability.event.v1 command=<command> stage=<stage> result=<result> key=value ...
+```
+
+Required fields:
+
+- `schema`: currently `adl.observability.event.v1`
+- `command`: command family such as `pr.sh`, `adl-runtime`, or
+  `attach_post_merge_closeout.sh`
+- `stage`: bounded stage name such as `dispatch`, `doctor`, `rust_delegate`,
+  `github_fetch`, `closeout`, or `watcher_attached`
+- `result`: `started`, `exec`, `ok`, `blocked`, `skipped`, or `failed`
+
+Optional fields may include `issue`, `subcommand`, `operation`, `branch`,
+`delegate`, `log`, `summary`, `elapsed_ms`, and other bounded diagnostic keys.
+
+## Redaction Rules
+
+Events must not expose:
+
+- raw credentials, secret markers, API keys, tokens, or private key material
+- raw prompts or private tool arguments
+- host-local absolute paths
+- unbounded command output
+
+Repo paths should be normalized to `<repo>/...`, home paths to `<home>/...`,
+and temp or unrelated absolute paths to `<tmp>` or `<path>`.
+
+## Terminal And Durable Logs
+
+By default, shell and Rust dispatch events are visible on stderr. If
+`ADL_OBSERVABILITY_LOG` is set, shell events are also appended to that durable
+log path.
+
+`ADL_OBSERVABILITY=0` disables event emission for compatibility tests that need
+a completely quiet stderr surface.
+
+## OTEL Mapping
+
+The event vocabulary is intentionally OTEL-ready:
+
+| ADL field | OTEL-style mapping |
+| --- | --- |
+| `command` | span name prefix or `service.operation` attribute |
+| `stage` | span name suffix or event name |
+| `result` | status/event result attribute |
+| `issue`, `branch`, `operation` | span attributes |
+| `elapsed_ms` | span/event duration field |
+
+This issue does not require a hosted collector. Exporter wiring belongs behind
+a later implementation gate after local deterministic logs are stable.
+
+## Implemented First Slice
+
+The first slice instruments:
+
+- `adl/tools/pr.sh` command dispatch and Rust delegation boundaries
+- high-pain `pr.sh` commands: `run`, `doctor`, `finish`, and `closeout`
+- `adl/tools/attach_post_merge_closeout.sh` watch, GitHub fetch, attach, and
+  closeout stages
+- Rust dispatch entrypoints for `adl`, `adl-csdlc`, `adl-runtime`, and
+  `adl-review`
+
+Runtime action-level logs remain owned by #3556. This contract keeps the
+vocabulary aligned so runtime and control-plane spans can converge later.
+
+## Non-Claims
+
+- This contract does not claim complete OpenTelemetry export.
+- This contract does not claim every Rust internal function is span-instrumented.
+- This contract does not change command semantics or exit-code policy.

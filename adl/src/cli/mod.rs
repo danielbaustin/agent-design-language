@@ -7,6 +7,7 @@ mod csm_cmd;
 mod demo_cmd;
 mod godel_cmd;
 mod identity_cmd;
+mod observability;
 mod open;
 mod pr_cmd;
 mod pr_cmd_args;
@@ -127,6 +128,16 @@ fn dispatch_args(args: &[String]) -> Result<()> {
         return Ok(());
     }
 
+    observability::emit_event(
+        "adl",
+        "dispatch",
+        "started",
+        &[(
+            "subcommand",
+            args.first().map(String::as_str).unwrap_or("workflow"),
+        )],
+    );
+
     match args.first().map(|s| s.as_str()) {
         Some("artifact") => real_artifact(&args[1..]),
         Some("agent") => real_agent(&args[1..]),
@@ -187,6 +198,13 @@ fn dispatch_runtime_args(args: &[String]) -> Result<()> {
         println!("{}", version_text());
         return Ok(());
     }
+
+    observability::emit_event(
+        "adl-runtime",
+        "dispatch",
+        "started",
+        &[("subcommand", args.first().map(String::as_str).unwrap_or(""))],
+    );
 
     match args.first().map(|s| s.as_str()) {
         Some("run") => real_runtime_run(&args[1..]),
@@ -265,6 +283,13 @@ fn dispatch_review_args(args: &[String]) -> Result<()> {
         println!("{}", version_text());
         return Ok(());
     }
+
+    observability::emit_event(
+        "adl-review",
+        "dispatch",
+        "started",
+        &[("subcommand", args.first().map(String::as_str).unwrap_or(""))],
+    );
 
     match args.first().map(|s| s.as_str()) {
         Some("code-review") => review_to_tooling_args("code-review", &args[1..])
@@ -348,6 +373,13 @@ fn dispatch_csdlc_args(args: &[String]) -> Result<()> {
         println!("{}", version_text());
         return Ok(());
     }
+
+    observability::emit_event(
+        "adl-csdlc",
+        "dispatch",
+        "started",
+        &[("subcommand", args.first().map(String::as_str).unwrap_or(""))],
+    );
 
     match args.first().map(|s| s.as_str()) {
         Some("pr") => {

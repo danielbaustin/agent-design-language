@@ -44,6 +44,15 @@ set -euo pipefail
 CARD_PATHS_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/card_paths.sh"
 # shellcheck disable=SC1090
 source "$CARD_PATHS_LIB"
+OBSERVABILITY_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observability.sh"
+if [[ -f "$OBSERVABILITY_LIB" ]]; then
+  # shellcheck disable=SC1090
+  source "$OBSERVABILITY_LIB"
+else
+  # Some compatibility tests copy pr.sh into a minimal fake repo. Observability
+  # must never make those compatibility surfaces fail before their assertions.
+  adl_obs_event() { :; }
+fi
 
 DEFAULT_VERSION="v0.86"
 DEFAULT_NEW_LABELS="track:roadmap,type:task,area:tools"
@@ -239,12 +248,15 @@ delegate_pr_command_to_rust() {
   # wrapper contract here is limited to exact delegation and exit-status
   # propagation into the Rust control plane.
   if [[ -n "${ADL_PR_RUST_BIN:-}" ]]; then
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$ADL_PR_RUST_BIN"
     exec "${ADL_PR_RUST_BIN}" pr "$subcommand" "$@"
   fi
   cached_bin="$(rust_pr_delegate_cached_bin || true)"
   if [[ -n "$cached_bin" ]]; then
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin"
     exec "$cached_bin" pr "$subcommand" "$@"
   fi
+  adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest"
   exec cargo run --quiet --manifest-path "$manifest" --bin adl -- pr "$subcommand" "$@"
 }
 
@@ -1718,10 +1730,12 @@ cmd_run() {
     usage_run
     return 0
   fi
+  adl_obs_event "pr.sh" "run_dispatch" "started" "arg0" "${1:-}"
 
   if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
     ensure_pr_run_issue_args_are_issue_only "$@"
     require_rust_pr_delegate
+    adl_obs_event "pr.sh" "issue_bind" "started" "issue" "$1"
     note "Issue-mode run: binding execution context for issue $1"
     delegate_pr_command_to_rust start "$@"
     return 0
@@ -2232,6 +2246,7 @@ cmd_start() {
     usage_start
     return 0
   fi
+  adl_obs_event "pr.sh" "issue_bind" "started" "issue" "${1:-}"
   require_rust_pr_delegate
   note "Deprecated compatibility path: prefer 'adl/tools/pr.sh run <issue> ...' for execution-context binding."
   delegate_pr_command_to_rust start "$@"
@@ -2243,6 +2258,7 @@ cmd_finish() {
     usage_finish
     return 0
   fi
+  adl_obs_event "pr.sh" "finish" "started" "issue" "${1:-}"
   require_rust_pr_delegate
   delegate_pr_command_to_rust finish "$@"
 }
@@ -2252,6 +2268,7 @@ cmd_closeout() {
     usage_closeout
     return 0
   fi
+  adl_obs_event "pr.sh" "closeout" "started" "issue" "${1:-}"
   require_rust_pr_delegate
   delegate_pr_command_to_rust closeout "$@"
 }
@@ -2287,6 +2304,7 @@ cmd_doctor() {
     usage_doctor
     return 0
   fi
+  adl_obs_event "pr.sh" "doctor" "started" "issue" "${1:-}"
   require_rust_pr_delegate
   delegate_pr_command_to_rust doctor "$@"
 }
@@ -2537,6 +2555,10 @@ main() {
     return 0
   fi
   local cmd="${1:-}"; shift || true
+  local first_arg="${1:-}"
+  if [[ -n "$cmd" && "$cmd" != "help" && "$cmd" != "-h" && "$cmd" != "--help" && "$first_arg" != "help" && "$first_arg" != "-h" && "$first_arg" != "--help" ]]; then
+    adl_obs_event "pr.sh" "command_start" "started" "subcommand" "$cmd"
+  fi
   case "$cmd" in
     help) usage ;;
     create) cmd_create "$@" ;;
