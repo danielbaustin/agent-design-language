@@ -20,8 +20,9 @@ use super::run_artifacts::{
     AEE_DECISION_VERSION, PAUSE_STATE_SCHEMA_VERSION,
 };
 use super::{
-    dispatch_args, real_instrument, real_keygen, real_learn, real_sign, real_verify, usage,
-    version_text,
+    csdlc_issue_to_pr_args, csdlc_usage, dispatch_args, dispatch_csdlc_args,
+    looks_like_adl_workflow_path, real_instrument, real_keygen, real_learn, real_sign, real_verify,
+    reject_csdlc_runtime_run, usage, version_text,
 };
 use ::adl::godel::cross_workflow::{
     DownstreamWorkflowDecision, PersistedCrossWorkflowArtifact, CROSS_WORKFLOW_ARTIFACT_VERSION,
@@ -133,6 +134,127 @@ fn top_level_version_flag_is_handled_before_workflow_dispatch() {
     dispatch_args(&["--version".to_string()]).expect("version flag should succeed");
     dispatch_args(&["-V".to_string()]).expect("short version flag should succeed");
     assert_eq!(version_text(), env!("CARGO_PKG_VERSION"));
+}
+
+#[test]
+fn csdlc_dispatch_exposes_help_and_version_without_runtime_dispatch() {
+    dispatch_csdlc_args(&["--help".to_string()]).expect("csdlc help should succeed");
+    dispatch_csdlc_args(&["-h".to_string()]).expect("csdlc short help should succeed");
+    dispatch_csdlc_args(&["help".to_string()]).expect("csdlc help alias should succeed");
+    dispatch_csdlc_args(&["--version".to_string()]).expect("csdlc version should succeed");
+    dispatch_csdlc_args(&["-V".to_string()]).expect("csdlc short version should succeed");
+
+    let usage = csdlc_usage();
+    assert!(usage.contains("adl-csdlc issue run <issue>"));
+    assert!(usage.contains("adl/tools/pr.sh remains the canonical agent-facing issue wrapper"));
+    assert!(usage.contains("adl-runtime run <adl.yaml>"));
+}
+
+#[test]
+fn csdlc_dispatch_routes_tooling_and_pr_errors_to_existing_surfaces() {
+    dispatch_csdlc_args(&["tooling".to_string(), "help".to_string()])
+        .expect("tooling help should route through existing tooling");
+    let missing_command = dispatch_csdlc_args(&[]).expect_err("missing command should fail closed");
+    assert!(missing_command
+        .to_string()
+        .contains("adl-csdlc requires a command"));
+    let unknown_command =
+        dispatch_csdlc_args(&["frobnicate".to_string()]).expect_err("unknown command should fail");
+    assert!(unknown_command
+        .to_string()
+        .contains("unknown adl-csdlc command"));
+    let pr_err = dispatch_csdlc_args(&["pr".to_string()])
+        .expect_err("empty pr command should route to existing pr validation");
+    assert!(pr_err.to_string().contains("pr requires a subcommand"));
+    let issue_err = dispatch_csdlc_args(&["issue".to_string()])
+        .expect_err("empty issue alias should fail before behavior changes");
+    assert!(issue_err
+        .to_string()
+        .contains("adl-csdlc issue requires a pr-compatible subcommand"));
+}
+
+#[test]
+fn csdlc_issue_run_rejects_runtime_yaml_and_non_numeric_operands() {
+    let missing_issue_err = dispatch_csdlc_args(&["issue".to_string(), "run".to_string()])
+        .expect_err("issue run should require an issue id");
+    assert!(missing_issue_err
+        .to_string()
+        .contains("requires a numeric issue id"));
+
+    let yaml_err = dispatch_csdlc_args(&[
+        "issue".to_string(),
+        "run".to_string(),
+        "workflow.adl.yaml".to_string(),
+    ])
+    .expect_err("runtime YAML must not route through adl-csdlc issue run");
+    assert!(yaml_err
+        .to_string()
+        .contains("Use adl-runtime run <adl.yaml>"));
+
+    let non_numeric_err = dispatch_csdlc_args(&[
+        "issue".to_string(),
+        "run".to_string(),
+        "not-an-issue".to_string(),
+    ])
+    .expect_err("issue run should require numeric issue ids");
+    assert!(non_numeric_err
+        .to_string()
+        .contains("expects a numeric issue id"));
+
+    assert!(looks_like_adl_workflow_path("workflow.adl.yaml"));
+    assert!(looks_like_adl_workflow_path("workflow.adl.yml"));
+    assert!(!looks_like_adl_workflow_path("3596"));
+    reject_csdlc_runtime_run("adl-csdlc issue", &["run".to_string()])
+        .expect("run without operand is left to downstream issue validation");
+    reject_csdlc_runtime_run(
+        "adl-csdlc issue",
+        &["doctor".to_string(), "3596".to_string()],
+    )
+    .expect("non-run issue subcommands should not be rejected");
+}
+
+#[test]
+fn csdlc_issue_run_maps_to_existing_pr_start_command() {
+    let mapped = csdlc_issue_to_pr_args(&[
+        "run".to_string(),
+        "3596".to_string(),
+        "--slug".to_string(),
+        "example".to_string(),
+    ])
+    .expect("numeric issue run should map to existing pr start command");
+    assert_eq!(
+        mapped,
+        vec![
+            "start".to_string(),
+            "3596".to_string(),
+            "--slug".to_string(),
+            "example".to_string()
+        ]
+    );
+
+    let doctor = csdlc_issue_to_pr_args(&["doctor".to_string(), "3596".to_string()])
+        .expect("non-run issue subcommands should preserve pr args");
+    assert_eq!(doctor, vec!["doctor".to_string(), "3596".to_string()]);
+}
+
+#[test]
+fn csdlc_pr_and_top_level_run_reject_runtime_workflow_execution() {
+    let pr_yaml_err = dispatch_csdlc_args(&[
+        "pr".to_string(),
+        "run".to_string(),
+        "workflow.adl.yml".to_string(),
+    ])
+    .expect_err("runtime YAML must not route through adl-csdlc pr run");
+    assert!(pr_yaml_err
+        .to_string()
+        .contains("cannot execute ADL workflow YAML"));
+
+    let top_level_run_err =
+        dispatch_csdlc_args(&["run".to_string(), "workflow.adl.yaml".to_string()])
+            .expect_err("top-level csdlc run is ambiguous");
+    assert!(top_level_run_err
+        .to_string()
+        .contains("does not run ADL workflow YAML"));
 }
 
 #[test]
