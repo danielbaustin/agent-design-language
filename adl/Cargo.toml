@@ -15,6 +15,10 @@ name = "adl"
 path = "src/main.rs"
 
 [[bin]]
+name = "adl-csdlc"
+path = "src/bin/adl_csdlc.rs"
+
+[[bin]]
 name = "adl-remote"
 path = "src/bin/adl_remote.rs"
 

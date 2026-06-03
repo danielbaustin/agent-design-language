@@ -67,9 +67,25 @@ pub fn run_main() {
     }
 }
 
+#[allow(dead_code)]
+#[cfg(not(test))]
+pub fn run_csdlc_main() {
+    if let Err(err) = real_csdlc_main() {
+        print_error_chain(&err);
+        std::process::exit(1);
+    }
+}
+
 fn real_main() -> Result<()> {
     let args: Vec<String> = std::env::args().skip(1).collect();
     dispatch_args(&args)
+}
+
+#[allow(dead_code)]
+#[cfg(not(test))]
+fn real_csdlc_main() -> Result<()> {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    dispatch_csdlc_args(&args)
 }
 
 fn dispatch_args(args: &[String]) -> Result<()> {
@@ -102,4 +118,107 @@ fn dispatch_args(args: &[String]) -> Result<()> {
         Some("resume") => real_resume(&args[1..]),
         _ => run_workflow(args),
     }
+}
+
+#[allow(dead_code)]
+pub(crate) fn csdlc_usage() -> &'static str {
+    "adl-csdlc - ADL C-SDLC compatibility binary\n\n\
+Usage:\n\
+  adl-csdlc pr <create|init|start|doctor|ready|preflight|finish|closeout> ...\n\
+  adl-csdlc issue <create|init|run|doctor|finish|closeout> ...\n\
+  adl-csdlc issue run <issue> [--slug <slug>] [--version <v>]\n\
+  adl-csdlc tooling <card-prompt|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template|validate-structured-prompt|...> ...\n\
+  adl-csdlc --help\n\
+  adl-csdlc --version\n\n\
+Notes:\n\
+  adl/tools/pr.sh remains the canonical agent-facing issue wrapper during migration.\n\
+  adl-csdlc issue run expects a numeric issue id. Runtime workflow YAML belongs to adl-runtime run <adl.yaml>."
+}
+
+#[allow(dead_code)]
+fn dispatch_csdlc_args(args: &[String]) -> Result<()> {
+    if matches!(
+        args.first().map(|s| s.as_str()),
+        Some("--help" | "-h" | "help")
+    ) {
+        println!("{}", csdlc_usage());
+        return Ok(());
+    }
+
+    if matches!(args.first().map(|s| s.as_str()), Some("--version" | "-V")) {
+        println!("{}", version_text());
+        return Ok(());
+    }
+
+    match args.first().map(|s| s.as_str()) {
+        Some("pr") => {
+            reject_csdlc_runtime_run("adl-csdlc pr", &args[1..])?;
+            real_pr(&args[1..])
+        }
+        Some("issue") => real_csdlc_issue(&args[1..]),
+        Some("tooling") => real_tooling(&args[1..]),
+        Some("run") => Err(anyhow::anyhow!(
+            "adl-csdlc does not run ADL workflow YAML. Use adl-runtime run <adl.yaml> for runtime workflows or adl-csdlc issue run <issue> for C-SDLC issue execution."
+        )),
+        Some(other) => Err(anyhow::anyhow!(
+            "unknown adl-csdlc command '{other}'. Expected pr, issue, tooling, help, or --version."
+        )),
+        None => Err(anyhow::anyhow!(
+            "adl-csdlc requires a command. Run `adl-csdlc --help` for usage."
+        )),
+    }
+}
+
+#[allow(dead_code)]
+fn real_csdlc_issue(args: &[String]) -> Result<()> {
+    let pr_args = csdlc_issue_to_pr_args(args)?;
+    real_pr(&pr_args)
+}
+
+#[allow(dead_code)]
+fn csdlc_issue_to_pr_args(args: &[String]) -> Result<Vec<String>> {
+    reject_csdlc_runtime_run("adl-csdlc issue", args)?;
+    let Some(subcommand) = args.first().map(|s| s.as_str()) else {
+        return Err(anyhow::anyhow!(
+            "adl-csdlc issue requires a pr-compatible subcommand such as run, doctor, finish, or closeout."
+        ));
+    };
+    if subcommand == "run" {
+        let Some(issue) = args.get(1) else {
+            return Err(anyhow::anyhow!(
+                "adl-csdlc issue run requires a numeric issue id."
+            ));
+        };
+        if !issue.chars().all(|ch| ch.is_ascii_digit()) {
+            return Err(anyhow::anyhow!(
+                "adl-csdlc issue run expects a numeric issue id, got '{issue}'. Runtime workflow YAML belongs to adl-runtime run <adl.yaml>."
+            ));
+        }
+        let mut mapped = Vec::with_capacity(args.len());
+        mapped.push("start".to_string());
+        mapped.extend(args[1..].iter().cloned());
+        return Ok(mapped);
+    }
+    Ok(args.to_vec())
+}
+
+#[allow(dead_code)]
+fn reject_csdlc_runtime_run(context: &str, args: &[String]) -> Result<()> {
+    if args.first().map(|s| s.as_str()) != Some("run") {
+        return Ok(());
+    }
+    let Some(operand) = args.get(1) else {
+        return Ok(());
+    };
+    if looks_like_adl_workflow_path(operand) {
+        return Err(anyhow::anyhow!(
+            "{context} run cannot execute ADL workflow YAML '{operand}'. Use adl-runtime run <adl.yaml> for runtime workflows."
+        ));
+    }
+    Ok(())
+}
+
+#[allow(dead_code)]
+fn looks_like_adl_workflow_path(value: &str) -> bool {
+    value.ends_with(".adl.yaml") || value.ends_with(".adl.yml")
 }
