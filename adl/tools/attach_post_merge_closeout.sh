@@ -4,6 +4,14 @@ if [ -z "${BASH_VERSION:-}" ]; then
 fi
 set -euo pipefail
 
+OBSERVABILITY_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observability.sh"
+if [[ -f "$OBSERVABILITY_LIB" ]]; then
+  # shellcheck disable=SC1090
+  source "$OBSERVABILITY_LIB"
+else
+  adl_obs_event() { :; }
+fi
+
 usage() {
   cat <<'EOF' >&2
 Usage:
@@ -45,6 +53,7 @@ poll_once() {
   local issue_state
   local issue_reason
 
+  adl_obs_event "attach_post_merge_closeout.sh" "github_fetch" "started" "issue" "$ISSUE" "operation" "pr_state"
   pr_json="$(gh pr view -R "$REPO" "$PR_URL" --json state,mergedAt,url 2>>"$run_log" || true)"
   if [[ -z "$pr_json" ]]; then
     return 1
@@ -59,6 +68,7 @@ poll_once() {
     return 1
   fi
 
+  adl_obs_event "attach_post_merge_closeout.sh" "github_fetch" "started" "issue" "$ISSUE" "operation" "issue_state"
   issue_json="$(gh issue view "$ISSUE" -R "$REPO" --json state,stateReason,url 2>>"$run_log" || true)"
   if [[ -z "$issue_json" ]]; then
     return 1
@@ -69,11 +79,14 @@ poll_once() {
     return 1
   fi
 
+  adl_obs_event "attach_post_merge_closeout.sh" "closeout" "started" "issue" "$ISSUE"
   if bash "$REPO_ROOT/adl/tools/pr.sh" closeout "$ISSUE" >>"$run_log" 2>&1; then
+    adl_obs_event "attach_post_merge_closeout.sh" "closeout" "ok" "issue" "$ISSUE"
     write_summary "$summary_file" "normalized" "Automatic post-merge closeout completed after PR merge and issue closure."
     return 0
   fi
 
+  adl_obs_event "attach_post_merge_closeout.sh" "closeout" "failed" "issue" "$ISSUE"
   write_summary "$summary_file" "failed_closeout" "PR merged and issue closed/completed, but automatic closeout failed. Inspect run.log for the bounded error."
   return 20
 }
@@ -143,6 +156,7 @@ RUN_LOG="${RUN_LOG:-$ARTIFACT_ROOT/run.log}"
 PID_FILE="$ARTIFACT_ROOT/pid"
 
 if [[ "$WATCH_MODE" == "1" ]]; then
+  adl_obs_event "attach_post_merge_closeout.sh" "watch_loop" "started" "issue" "$ISSUE" "branch" "$BRANCH"
   run_watch_loop "$ARTIFACT_ROOT" "$SUMMARY_FILE" "$RUN_LOG"
   exit 0
 fi
@@ -159,4 +173,5 @@ nohup bash "$0" \
 
 CLOSEOUT_PID=$!
 printf '%s\n' "$CLOSEOUT_PID" >"$PID_FILE"
+adl_obs_event "attach_post_merge_closeout.sh" "watcher_attached" "ok" "issue" "$ISSUE" "pid" "$CLOSEOUT_PID" "log" "$RUN_LOG" "summary" "$SUMMARY_FILE"
 printf 'ATTACHED issue=%s pr=%s pid=%s log=%s summary=%s\n' "$ISSUE" "$PR_URL" "$CLOSEOUT_PID" "$RUN_LOG" "$SUMMARY_FILE"
