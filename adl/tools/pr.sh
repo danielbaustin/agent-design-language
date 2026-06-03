@@ -1646,6 +1646,73 @@ print_pr_run_summary() {
   echo "  proof_run_summary_json=$run_summary_json"
 }
 
+pr_run_flag_family() {
+  case "$1" in
+    --trace|--print-plan|--print-prompts|--print-prompt|--resume|--steer|--overlay|--out|--runs-root|--quiet|--no-step-output|--open|--allow-unsigned)
+      printf 'runtime\n'
+      ;;
+    --prefix|--slug|--title|--no-fetch-issue|--version|--allow-open-pr-wave)
+      printf 'issue\n'
+      ;;
+    *)
+      printf 'unknown\n'
+      ;;
+  esac
+}
+
+ensure_pr_run_issue_args_are_issue_only() {
+  local issue="$1"
+  shift || true
+  while [[ $# -gt 0 ]]; do
+    local flag="$1"
+    local family
+    family="$(pr_run_flag_family "$flag")"
+    if [[ "$family" == "runtime" ]]; then
+      die "run: ambiguous operand '$issue': issue-mode run cannot accept runtime flag '$flag'. Use 'adl/tools/pr.sh run <adl.yaml> ...' for runtime workflows or 'adl/tools/pr.sh run <issue> ...' with issue flags only."
+    fi
+    case "$flag" in
+      --prefix|--slug|--title|--version)
+        [[ $# -ge 2 ]] || die_with_usage "run: $flag requires a value" usage_start
+        shift 2
+        ;;
+      --no-fetch-issue|--allow-open-pr-wave)
+        shift
+        ;;
+      *)
+        # Let the Rust start parser preserve the exact compatibility behavior
+        # for future issue-mode flags that are not classified here.
+        shift
+        ;;
+    esac
+  done
+}
+
+ensure_pr_run_runtime_args_are_runtime_only() {
+  local adl_path="$1"
+  shift || true
+  while [[ $# -gt 0 ]]; do
+    local flag="$1"
+    local family
+    family="$(pr_run_flag_family "$flag")"
+    if [[ "$family" == "issue" ]]; then
+      die "run: ambiguous operand '$adl_path': runtime workflow run cannot accept issue flag '$flag'. Use 'adl/tools/pr.sh run <issue> ...' for C-SDLC issue execution or 'adl/tools/pr.sh run <adl.yaml> ...' with runtime flags only."
+    fi
+    case "$flag" in
+      --resume|--steer|--overlay|--out|--runs-root)
+        [[ $# -ge 2 ]] || die_with_usage "run: $flag requires a value" usage_run
+        shift 2
+        ;;
+      --print-plan|--print-prompts|--print-prompt|--trace|--quiet|--no-step-output|--open|--allow-unsigned|-h|--help)
+        shift
+        ;;
+      *)
+        # The normal runtime parser below owns unknown-runtime-flag diagnostics.
+        shift
+        ;;
+    esac
+  done
+}
+
 cmd_run() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     usage_run
@@ -1653,6 +1720,7 @@ cmd_run() {
   fi
 
   if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+    ensure_pr_run_issue_args_are_issue_only "$@"
     require_rust_pr_delegate
     note "Issue-mode run: binding execution context for issue $1"
     delegate_pr_command_to_rust start "$@"
@@ -1661,6 +1729,7 @@ cmd_run() {
 
   local adl_path="${1:-}"
   [[ -n "$adl_path" ]] || die_with_usage "run: missing <adl.yaml>" usage_run
+  ensure_pr_run_runtime_args_are_runtime_only "$@"
   shift || true
 
   local root adl_abs runs_root

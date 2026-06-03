@@ -24,6 +24,7 @@ run_check adl/tools/test_pr_init_skill_contracts.sh
 run_check adl/tools/test_card_editor_skill_contracts.sh
 run_check adl/tools/test_pr_closeout_skill_contracts.sh
 run_check adl/tools/test_pr_run.sh
+run_check adl/tools/test_pr_run_ambiguity_policy.sh
 run_check adl/tools/test_pr_run_materializes_worktree_cards.sh
 run_check adl/tools/test_pr_finish_default_stage_root.sh
 # Legacy shell-era rerun expectations in this harness currently diverge from the Rust-owned finish path.
