@@ -23,6 +23,10 @@ name = "adl-runtime"
 path = "src/bin/adl_runtime.rs"
 
 [[bin]]
+name = "adl-review"
+path = "src/bin/adl_review.rs"
+
+[[bin]]
 name = "adl-remote"
 path = "src/bin/adl_remote.rs"
 

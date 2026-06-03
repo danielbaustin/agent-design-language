@@ -76,6 +76,14 @@ pub fn run_runtime_main() {
 }
 
 #[allow(dead_code)]
+pub fn run_review_main() {
+    if let Err(err) = real_review_main() {
+        print_error_chain(&err);
+        std::process::exit(1);
+    }
+}
+
+#[allow(dead_code)]
 #[cfg(not(test))]
 pub fn run_csdlc_main() {
     if let Err(err) = real_csdlc_main() {
@@ -93,6 +101,12 @@ fn real_main() -> Result<()> {
 fn real_runtime_main() -> Result<()> {
     let args: Vec<String> = std::env::args().skip(1).collect();
     dispatch_runtime_args(&args)
+}
+
+#[allow(dead_code)]
+fn real_review_main() -> Result<()> {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    dispatch_review_args(&args)
 }
 
 #[allow(dead_code)]
@@ -219,6 +233,84 @@ fn real_runtime_run(args: &[String]) -> Result<()> {
         ));
     }
     run_workflow(args)
+}
+
+#[allow(dead_code)]
+pub(crate) fn review_usage() -> &'static str {
+    "adl-review - ADL review tooling compatibility binary\n\n\
+Usage:\n\
+  adl-review code-review --out <dir> [--backend fixture|ollama] [--visibility packet-only|read-only-repo] ...\n\
+  adl-review card-surface --input <input.md> --output <output.md>\n\
+  adl-review runtime-surface --review-root <dir>\n\
+  adl-review verify-output-provenance --review <review-output.yaml>\n\
+  adl-review verify-repo-contract --review <review.md>\n\
+  adl-review --help\n\
+  adl-review --version\n\n\
+Notes:\n\
+  adl tooling code-review and related review commands remain available as compatibility shims during migration.\n\
+  C-SDLC issue work belongs to adl/tools/pr.sh run <issue>; runtime workflow YAML belongs to adl-runtime run <adl.yaml>."
+}
+
+#[allow(dead_code)]
+fn dispatch_review_args(args: &[String]) -> Result<()> {
+    if matches!(
+        args.first().map(|s| s.as_str()),
+        Some("--help" | "-h" | "help")
+    ) {
+        println!("{}", review_usage());
+        return Ok(());
+    }
+
+    if matches!(args.first().map(|s| s.as_str()), Some("--version" | "-V")) {
+        println!("{}", version_text());
+        return Ok(());
+    }
+
+    match args.first().map(|s| s.as_str()) {
+        Some("code-review") => review_to_tooling_args("code-review", &args[1..])
+            .and_then(|mapped| real_tooling(&mapped)),
+        Some("card-surface") => review_to_tooling_args("review-card-surface", &args[1..])
+            .and_then(|mapped| real_tooling(&mapped)),
+        Some("runtime-surface") => review_to_tooling_args("review-runtime-surface", &args[1..])
+            .and_then(|mapped| real_tooling(&mapped)),
+        Some("verify-output-provenance") => {
+            review_to_tooling_args("verify-review-output-provenance", &args[1..])
+                .and_then(|mapped| real_tooling(&mapped))
+        }
+        Some("verify-repo-contract") => {
+            review_to_tooling_args("verify-repo-review-contract", &args[1..])
+                .and_then(|mapped| real_tooling(&mapped))
+        }
+        Some("pr") | Some("issue") | Some("tooling") => Err(anyhow::anyhow!(
+            "adl-review owns review tooling only. Use adl/tools/pr.sh run <issue> or adl-csdlc for C-SDLC issue work."
+        )),
+        Some("run") | Some("resume") | Some("agent") | Some("artifact") | Some("csm")
+        | Some("demo") | Some("godel") | Some("identity") | Some("instrument") | Some("learn")
+        | Some("provider") | Some("runtime-v2") | Some("keygen") | Some("sign")
+        | Some("verify") => Err(anyhow::anyhow!(
+            "adl-review does not run ADL runtime commands. Use adl-runtime run <adl.yaml> for runtime workflows."
+        )),
+        Some(other) => Err(anyhow::anyhow!(
+            "unknown adl-review command '{other}'. Expected code-review, card-surface, runtime-surface, verify-output-provenance, verify-repo-contract, help, or --version."
+        )),
+        None => Err(anyhow::anyhow!(
+            "adl-review requires a command. Run `adl-review --help` for usage."
+        )),
+    }
+}
+
+#[allow(dead_code)]
+fn review_to_tooling_args(subcommand: &str, args: &[String]) -> Result<Vec<String>> {
+    if args
+        .iter()
+        .any(|arg| matches!(arg.as_str(), "help" | "--help" | "-h"))
+    {
+        return Ok(vec!["help".to_string()]);
+    }
+    let mut mapped = Vec::with_capacity(args.len() + 1);
+    mapped.push(subcommand.to_string());
+    mapped.extend(args.iter().cloned());
+    Ok(mapped)
 }
 
 #[allow(dead_code)]

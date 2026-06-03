@@ -20,9 +20,10 @@ use super::run_artifacts::{
     AEE_DECISION_VERSION, PAUSE_STATE_SCHEMA_VERSION,
 };
 use super::{
-    csdlc_issue_to_pr_args, csdlc_usage, dispatch_args, dispatch_csdlc_args, dispatch_runtime_args,
-    looks_like_adl_workflow_path, looks_like_issue_ref, real_instrument, real_keygen, real_learn,
-    real_sign, real_verify, reject_csdlc_runtime_run, runtime_usage, usage, version_text,
+    csdlc_issue_to_pr_args, csdlc_usage, dispatch_args, dispatch_csdlc_args, dispatch_review_args,
+    dispatch_runtime_args, looks_like_adl_workflow_path, looks_like_issue_ref, real_instrument,
+    real_keygen, real_learn, real_sign, real_verify, reject_csdlc_runtime_run,
+    review_to_tooling_args, review_usage, runtime_usage, usage, version_text,
 };
 use ::adl::godel::cross_workflow::{
     DownstreamWorkflowDecision, PersistedCrossWorkflowArtifact, CROSS_WORKFLOW_ARTIFACT_VERSION,
@@ -162,6 +163,62 @@ fn runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch() {
     assert!(usage.contains("adl-runtime run <adl.yaml>"));
     assert!(usage.contains("adl <adl.yaml> remains available as a compatibility shortcut"));
     assert!(usage.contains("C-SDLC issue work belongs to adl/tools/pr.sh run <issue>"));
+}
+
+#[test]
+fn review_dispatch_exposes_help_and_version_without_runtime_or_csdlc_dispatch() {
+    dispatch_review_args(&["--help".to_string()]).expect("review help should succeed");
+    dispatch_review_args(&["-h".to_string()]).expect("review short help should succeed");
+    dispatch_review_args(&["help".to_string()]).expect("review help alias should succeed");
+    dispatch_review_args(&["--version".to_string()]).expect("review version should succeed");
+    dispatch_review_args(&["-V".to_string()]).expect("review short version should succeed");
+
+    let usage = review_usage();
+    assert!(usage.contains("adl-review - ADL review tooling compatibility binary"));
+    assert!(usage.contains("adl-review code-review --out <dir>"));
+    assert!(usage.contains("adl tooling code-review"));
+    assert!(usage.contains("adl-runtime run <adl.yaml>"));
+}
+
+#[test]
+fn review_dispatch_maps_review_commands_and_rejects_other_families() {
+    let mapped = review_to_tooling_args(
+        "verify-repo-review-contract",
+        &["--review".to_string(), "r.md".to_string()],
+    )
+    .expect("review args should map");
+    assert_eq!(
+        mapped,
+        vec![
+            "verify-repo-review-contract".to_string(),
+            "--review".to_string(),
+            "r.md".to_string()
+        ]
+    );
+
+    let help_mapped = review_to_tooling_args("code-review", &["--help".to_string()])
+        .expect("review help should map to common tooling help");
+    assert_eq!(help_mapped, vec!["help".to_string()]);
+
+    dispatch_review_args(&["code-review".to_string(), "--help".to_string()])
+        .expect("code-review help should route through existing tooling help");
+    dispatch_review_args(&["card-surface".to_string(), "--help".to_string()])
+        .expect("card-surface help should route through existing tooling help");
+
+    let missing = dispatch_review_args(&[]).expect_err("missing review command should fail");
+    assert!(missing
+        .to_string()
+        .contains("adl-review requires a command"));
+
+    let pr_err = dispatch_review_args(&["pr".to_string(), "run".to_string(), "3599".to_string()])
+        .expect_err("review binary must not own issue work");
+    assert!(pr_err.to_string().contains("review tooling only"));
+
+    let runtime_err = dispatch_review_args(&["run".to_string(), "workflow.adl.yaml".to_string()])
+        .expect_err("review binary must not own runtime workflows");
+    assert!(runtime_err
+        .to_string()
+        .contains("does not run ADL runtime commands"));
 }
 
 #[test]
