@@ -94,10 +94,13 @@ Recommended fix:
 - The migration docs are mostly honest that the first wave does not remove shell-backed operations.
 - The `adl-csdlc` routing boundary remains conservative: `adl/tools/pr.sh` stays the taught operator entrypoint during migration.
 
-## Validation Attempted
+## Validation Performed
 
-- Attempted focused Rust validation: `cargo test --manifest-path adl/Cargo.toml github_client --lib -- --nocapture`.
-- Result: not completed; Cargo was blocked waiting for the build-directory lock for more than 20 seconds, so the local test process was stopped to avoid wasting time or interfering with other active work.
+- `cargo test --manifest-path adl/Cargo.toml --bin adl github_client -- --nocapture`
+  - Result: PASS.
+  - Coverage: 18 focused `github_client` / C-SDLC GitHub boundary tests passed; 0 failed; 507 filtered out.
+
+- Earlier attempted command `cargo test --manifest-path adl/Cargo.toml github_client --lib -- --nocapture` completed but matched 0 tests, so it is not counted as proof.
 
 No broad validation was run for this review.
 
