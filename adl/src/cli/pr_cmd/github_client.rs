@@ -331,6 +331,60 @@ pub(super) fn issue_metadata_drift(
     problems
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) struct PullRequestMetadataSnapshot {
+    pub(super) title: String,
+    pub(super) head_ref_name: String,
+    pub(super) base_ref_name: String,
+    pub(super) is_draft: bool,
+}
+
+impl PullRequestMetadataSnapshot {
+    pub(super) fn new(
+        title: impl Into<String>,
+        head_ref_name: impl Into<String>,
+        base_ref_name: impl Into<String>,
+        is_draft: bool,
+    ) -> Self {
+        Self {
+            title: title.into(),
+            head_ref_name: head_ref_name.into(),
+            base_ref_name: base_ref_name.into(),
+            is_draft,
+        }
+    }
+}
+
+pub(super) fn pr_matches_main_version_wave(
+    pr: &PullRequestMetadataSnapshot,
+    version: &str,
+    exclude_branch: Option<&str>,
+) -> bool {
+    pr.base_ref_name == "main"
+        && pr.title.contains(&format!("[{version}]"))
+        && exclude_branch
+            .map(|branch| pr.head_ref_name != branch)
+            .unwrap_or(true)
+}
+
+pub(super) fn linked_issue_numbers_from_lines(lines: &str) -> BTreeSet<u32> {
+    lines
+        .lines()
+        .filter_map(|line| line.trim().parse::<u32>().ok())
+        .collect()
+}
+
+pub(super) fn linked_issue_numbers_include(
+    linked_issue_numbers: &BTreeSet<u32>,
+    issue: u32,
+) -> bool {
+    linked_issue_numbers.contains(&issue)
+}
+
+pub(super) fn body_contains_closing_linkage(body: &str, issue: u32) -> bool {
+    body.contains(&format!("Closes #{issue}"))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -533,5 +587,50 @@ mod tests {
         assert!(
             issue_metadata_drift("[v0.91.5][tools] new title", &expected, &final_actual).is_empty()
         );
+    }
+
+    #[test]
+    fn pr_wave_matching_preserves_main_version_and_branch_filters() {
+        let pr = PullRequestMetadataSnapshot::new(
+            "[v0.91.5][tools] Example",
+            "codex/example",
+            "main",
+            false,
+        );
+        assert!(pr_matches_main_version_wave(&pr, "v0.91.5", None));
+        assert!(!pr_matches_main_version_wave(
+            &pr,
+            "v0.91.5",
+            Some("codex/example")
+        ));
+        assert!(!pr_matches_main_version_wave(&pr, "v0.91.4", None));
+
+        let non_main = PullRequestMetadataSnapshot::new(
+            "[v0.91.5][tools] Example",
+            "codex/example",
+            "release",
+            true,
+        );
+        assert!(!pr_matches_main_version_wave(&non_main, "v0.91.5", None));
+        assert!(non_main.is_draft);
+    }
+
+    #[test]
+    fn closing_linkage_helpers_preserve_api_and_body_semantics() {
+        let linked = linked_issue_numbers_from_lines("1153\nnot-a-number\n1160\n");
+        assert!(linked_issue_numbers_include(&linked, 1153));
+        assert!(!linked_issue_numbers_include(&linked, 9999));
+        assert!(body_contains_closing_linkage(
+            "Summary\n\nCloses #1153\n",
+            1153
+        ));
+        assert!(!body_contains_closing_linkage(
+            "Summary\n\ncloses #1153\n",
+            1153
+        ));
+        assert!(!body_contains_closing_linkage(
+            "Summary\n\nRefs #1153\n",
+            1153
+        ));
     }
 }

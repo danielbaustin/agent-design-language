@@ -1,7 +1,9 @@
 use super::*;
 use crate::cli::pr_cmd::github_client::{
-    issue_labels_from_csv, issue_labels_from_csv_in_order, issue_metadata_drift,
-    plan_issue_metadata_parity, IssueMetadataSnapshot,
+    body_contains_closing_linkage, issue_labels_from_csv, issue_labels_from_csv_in_order,
+    issue_metadata_drift, linked_issue_numbers_from_lines, linked_issue_numbers_include,
+    plan_issue_metadata_parity, pr_matches_main_version_wave, IssueMetadataSnapshot,
+    PullRequestMetadataSnapshot,
 };
 use crate::cli::pr_cmd_prompt::infer_workflow_queue;
 use ::adl::control_plane::resolve_primary_checkout_root;
@@ -66,19 +68,23 @@ pub(super) fn unresolved_milestone_pr_wave(
     .unwrap_or_else(|| "[]".to_string());
     let prs: Vec<OpenPullRequest> =
         serde_json::from_str(&out).with_context(|| "failed to parse gh pr list json")?;
-    let version_tag = format!("[{version}]");
     Ok(prs
         .into_iter()
-        .filter(|pr| pr.base_ref_name == "main")
-        .filter(|pr| pr.title.contains(&version_tag))
+        .filter(|pr| {
+            pr_matches_main_version_wave(
+                &PullRequestMetadataSnapshot::new(
+                    &pr.title,
+                    &pr.head_ref_name,
+                    &pr.base_ref_name,
+                    pr.is_draft,
+                ),
+                version,
+                exclude_branch,
+            )
+        })
         .map(|mut pr| {
             pr.queue = infer_workflow_queue(&pr.title, "", None).map(str::to_string);
             pr
-        })
-        .filter(|pr| {
-            exclude_branch
-                .map(|branch| pr.head_ref_name != branch)
-                .unwrap_or(true)
         })
         .filter(|pr| {
             pr.queue
@@ -121,12 +127,9 @@ pub(super) fn pr_has_closing_linkage(repo: &str, pr_ref: &str, issue: u32) -> Re
             ".closingIssuesReferences[]?.number",
         ],
     )?;
-    if linked
-        .as_deref()
-        .unwrap_or_default()
-        .lines()
-        .any(|line| line.trim() == issue.to_string())
-    {
+    let linked_issue_numbers =
+        linked_issue_numbers_from_lines(linked.as_deref().unwrap_or_default());
+    if linked_issue_numbers_include(&linked_issue_numbers, issue) {
         return Ok(true);
     }
     let body = run_capture_allow_failure(
@@ -136,7 +139,7 @@ pub(super) fn pr_has_closing_linkage(repo: &str, pr_ref: &str, issue: u32) -> Re
         ],
     )?
     .unwrap_or_default();
-    Ok(body.contains(&format!("Closes #{issue}")))
+    Ok(body_contains_closing_linkage(&body, issue))
 }
 
 pub(super) fn ensure_pr_closing_linkage(
