@@ -40,6 +40,7 @@ mod doctor;
 mod finish_support;
 mod git_support;
 mod github;
+mod github_client;
 mod lifecycle;
 
 #[cfg(test)]
