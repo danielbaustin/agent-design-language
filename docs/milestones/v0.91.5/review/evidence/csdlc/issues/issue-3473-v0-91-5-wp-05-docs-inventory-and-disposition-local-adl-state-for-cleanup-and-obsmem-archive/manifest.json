@@ -1,0 +1,78 @@
+{
+  "cards": [
+    {
+      "card_status": "ready",
+      "kind": "sip",
+      "public_rel_path": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3473-v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive/cards/sip.md",
+      "source_rel_path": ".adl/v0.91.5/tasks/issue-3473__v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive/sip.md",
+      "template_version": "1.0.0",
+      "validation_state": "source_present_export_hygiene_passed"
+    },
+    {
+      "card_status": "ready",
+      "kind": "stp",
+      "public_rel_path": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3473-v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive/cards/stp.md",
+      "source_rel_path": ".adl/v0.91.5/tasks/issue-3473__v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive/stp.md",
+      "template_version": "1.0.0",
+      "validation_state": "source_present_export_hygiene_passed"
+    },
+    {
+      "card_status": "ready",
+      "kind": "spp",
+      "public_rel_path": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3473-v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive/cards/spp.md",
+      "source_rel_path": ".adl/v0.91.5/tasks/issue-3473__v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive/spp.md",
+      "template_version": "1.0.0",
+      "validation_state": "source_present_export_hygiene_passed"
+    },
+    {
+      "card_status": "ready",
+      "kind": "srp",
+      "public_rel_path": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3473-v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive/cards/srp.md",
+      "source_rel_path": ".adl/v0.91.5/tasks/issue-3473__v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive/srp.md",
+      "template_version": "1.0.0",
+      "validation_state": "source_present_export_hygiene_passed"
+    },
+    {
+      "card_status": "ready",
+      "kind": "sor",
+      "public_rel_path": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3473-v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive/cards/sor.md",
+      "source_rel_path": ".adl/v0.91.5/tasks/issue-3473__v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive/sor.md",
+      "template_version": "1.0.0",
+      "validation_state": "source_present_export_hygiene_passed"
+    }
+  ],
+  "generated_by": "adl tooling public-prompt-packet export",
+  "issue_number": 3473,
+  "non_claims": [
+    "This packet does not make local .adl state canonical public truth.",
+    "This packet does not claim runtime validation was executed.",
+    "This packet preserves source card text after export hygiene checks."
+  ],
+  "output_dir": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3473-v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive",
+  "redaction": {
+    "checks": [
+      "sip: no host paths, secret-like tokens, private key markers, or local scratch paths",
+      "stp: no host paths, secret-like tokens, private key markers, or local scratch paths",
+      "spp: no host paths, secret-like tokens, private key markers, or local scratch paths",
+      "srp: no host paths, secret-like tokens, private key markers, or local scratch paths",
+      "sor: no host paths, secret-like tokens, private key markers, or local scratch paths"
+    ],
+    "mode": "refuse_not_rewrite",
+    "status": "passed"
+  },
+  "schema": "adl.public_prompt_packet.v1",
+  "slug": "v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive",
+  "source_bundle": ".adl/v0.91.5/tasks/issue-3473__v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive",
+  "template_registry": "docs/templates/prompts/current.json",
+  "tracker": {
+    "issue_number": 3473,
+    "provider": "github",
+    "url": "https://github.com/danielbaustin/agent-design-language/issues/3473"
+  },
+  "version": "v0.91.5",
+  "work_item": {
+    "id": "issue-3473",
+    "kind": "issue",
+    "slug": "v0-91-5-wp-05-docs-inventory-and-disposition-local-adl-state-for-cleanup-and-obsmem-archive"
+  }
+}
