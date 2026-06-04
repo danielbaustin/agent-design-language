@@ -282,7 +282,7 @@ mod tests {
     }
 
     #[test]
-    fn provider_error_helpers_and_classification_are_stable() {
+    fn provider_mod_error_helpers_and_classification_are_stable() {
         let retryable = runtime_error("mock", "retryable");
         assert!(is_retryable_error(&retryable));
         assert_eq!(stable_failure_kind(&retryable), Some("provider_error"));
@@ -312,7 +312,7 @@ mod tests {
     }
 
     #[test]
-    fn provider_complete_stream_default_buffers_mock_output() {
+    fn provider_mod_complete_stream_default_buffers_mock_output() {
         let spec = provider_spec("mock", Some("mock-model"));
         let provider = build_provider_for_id("mock_primary", &spec, None).expect("mock provider");
         let mut chunks = Vec::new();
@@ -325,7 +325,7 @@ mod tests {
     }
 
     #[test]
-    fn build_provider_dispatches_supported_native_and_compatibility_kinds() {
+    fn provider_mod_build_provider_dispatches_supported_native_and_compatibility_kinds() {
         let mock = provider_spec("mock", Some("mock-model"));
         build_provider_for_id("mock_primary", &mock, None).expect("mock provider");
 
@@ -356,7 +356,7 @@ mod tests {
     }
 
     #[test]
-    fn build_provider_rejects_unknown_kind_and_invalid_native_endpoint() {
+    fn provider_mod_build_provider_rejects_unknown_kind_and_invalid_native_endpoint() {
         let unknown = provider_spec("not-a-provider", Some("model"));
         let unknown_err = match build_provider_for_id("unknown_primary", &unknown, None) {
             Ok(_) => panic!("unknown kind should fail"),
@@ -381,7 +381,7 @@ mod tests {
     }
 
     #[test]
-    fn remote_retry_classification_distinguishes_deterministic_failures() {
+    fn provider_mod_remote_retry_classification_distinguishes_deterministic_failures() {
         let schema = anyhow::Error::new(crate::remote_exec::RemoteExecuteClientError::new(
             crate::remote_exec::RemoteExecuteClientErrorKind::SchemaViolation,
             "REMOTE_SCHEMA_VIOLATION",
@@ -408,7 +408,7 @@ mod tests {
     }
 
     #[test]
-    fn profile_endpoint_validation_rejects_placeholder_and_invalid_hosts() {
+    fn provider_mod_profile_endpoint_validation_rejects_placeholder_and_invalid_hosts() {
         let empty =
             validate_profile_endpoint("p1", "http:gpt-4o-mini", " ").expect_err("empty endpoint");
         assert!(empty
@@ -430,7 +430,7 @@ mod tests {
     }
 
     #[test]
-    fn profile_endpoint_validation_rejects_plain_http() {
+    fn provider_mod_profile_endpoint_validation_rejects_plain_http() {
         let err = validate_profile_endpoint(
             "p1",
             "http:gpt-4o-mini",
@@ -441,13 +441,13 @@ mod tests {
     }
 
     #[test]
-    fn profile_endpoint_validation_allows_loopback_http_for_local_harnesses() {
+    fn provider_mod_profile_endpoint_validation_allows_loopback_http_for_local_harnesses() {
         validate_profile_endpoint("p1", "http:gpt-4o-mini", "http://127.0.0.1:8787/complete")
             .expect("loopback http should remain allowed");
     }
 
     #[test]
-    fn provider_profile_registry_includes_first_class_claude_profiles() {
+    fn provider_mod_provider_profile_registry_includes_first_class_claude_profiles() {
         let names = provider_profile_names();
         assert!(names.contains(&"claude:claude-3-7-sonnet".to_string()));
         assert!(names.contains(&"claude:claude-3-5-haiku".to_string()));
@@ -461,7 +461,7 @@ mod tests {
     }
 
     #[test]
-    fn cfg_numeric_helpers_cover_all_supported_and_rejected_types() {
+    fn provider_mod_cfg_numeric_helpers_cover_all_supported_and_rejected_types() {
         let mut cfg = HashMap::new();
         cfg.insert("f64".to_string(), serde_json::json!(0.5));
         cfg.insert("i64".to_string(), serde_json::json!(2));
@@ -487,7 +487,7 @@ mod tests {
     }
 
     #[test]
-    fn timeout_secs_rejects_zero_and_uses_default_without_env() {
+    fn provider_mod_timeout_secs_rejects_zero_and_uses_default_without_env() {
         let prev_adl = env::var_os("ADL_TIMEOUT_SECS");
 
         env::set_var("ADL_TIMEOUT_SECS", "0");
