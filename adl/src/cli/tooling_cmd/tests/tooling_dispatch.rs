@@ -2,7 +2,7 @@ use super::support::*;
 use super::*;
 
 #[test]
-fn csdlc_prompt_editor_tooling_dispatch_and_help_paths_cover_public_entrypoint() {
+fn tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint() {
     let repo = TempRepo::new("dispatch");
     let input = repo.write_rel(
         ".tmp/tooling_cmd_tests/input.md",
@@ -28,6 +28,8 @@ fn csdlc_prompt_editor_tooling_dispatch_and_help_paths_cover_public_entrypoint()
     assert!(real_tooling(&["unknown".to_string()]).is_err());
     real_tooling(&["code-review".to_string(), "--help".to_string()])
         .expect("code-review help should succeed without --out");
+    real_tooling(&["portable-project-doctor".to_string(), "--help".to_string()])
+        .expect("portable-project-doctor help should succeed");
 
     real_tooling(&[
         "card-prompt".to_string(),
