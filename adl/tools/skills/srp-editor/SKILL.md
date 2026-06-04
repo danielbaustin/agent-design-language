@@ -24,13 +24,16 @@ Markdown as lifecycle state:
 
 ```sh
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-values --kind srp --values <path>
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template edit-values --kind srp --values <path> --set <field=value> --out <path>
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render --kind srp --values <path> --out <path>
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure --kind srp --input <path>
 ```
 
 Use this skill for SRP truth repairs: review scope, review prompts, findings,
 dispositions, reviewer notes, residual risks, and recommended outcome. Do not
-use it to bypass locked template prose or schema validation.
+use it to bypass locked template prose or schema validation. When a supported
+declared values field is the only change needed, prefer `edit-values` before
+rendering instead of patching rendered Markdown.
 
 ## Required Inputs
 

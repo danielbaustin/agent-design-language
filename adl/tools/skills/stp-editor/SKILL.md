@@ -24,13 +24,16 @@ Markdown as lifecycle state:
 
 ```sh
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-values --kind stp --values <path>
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template edit-values --kind stp --values <path> --set <field=value> --out <path>
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render --kind stp --values <path> --out <path>
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure --kind stp --input <path>
 ```
 
 Use this skill for STP truth repairs: task intent, required outcome,
 acceptance criteria, bounded scope, validation plan, and placeholder cleanup. Do
-not use it to bypass locked template prose or schema validation.
+not use it to bypass locked template prose or schema validation. When a
+supported declared values field is the only change needed, prefer `edit-values`
+before rendering instead of patching rendered Markdown.
 
 ## Required Inputs
 

@@ -30,6 +30,7 @@ Markdown as lifecycle state:
 
 ```sh
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-values --kind spp --values <path>
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template edit-values --kind spp --values <path> --set <field=value> --out <path>
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render --kind spp --values <path> --out <path>
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure --kind spp --input <path>
 ```
@@ -37,7 +38,8 @@ cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-str
 Use this skill for SPP truth repairs: issue-local plan readiness, `codex_plan`
 status normalization, assumptions, stop conditions, dependencies, and
 execution-handoff truth. Do not use it to bypass locked template prose or schema
-validation.
+validation. When a supported declared values field is the only change needed,
+prefer `edit-values` before rendering instead of patching rendered Markdown.
 
 ## Required Inputs
 

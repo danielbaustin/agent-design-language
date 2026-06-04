@@ -254,6 +254,57 @@ pub fn validate_values_file(
     validate_values(card, &values)
 }
 
+pub fn edit_values_file(
+    repo_root: &Path,
+    kind: PromptCardKind,
+    values_path: &Path,
+    updates: &[(String, String)],
+    out_path: Option<&Path>,
+) -> Result<PathBuf> {
+    ensure!(
+        !updates.is_empty(),
+        "edit-values requires at least one --set field=value update"
+    );
+    let model = load_editor_model(repo_root)?;
+    let card = card_model(&model, kind)?;
+    let mut doc = load_values_document(card, values_path, &model.template_set)?;
+
+    for (key, value) in updates {
+        let field = card
+            .fields
+            .iter()
+            .find(|field| field.key == key.as_str())
+            .ok_or_else(|| {
+                anyhow!(
+                    "{}.{} is not a declared prompt-template field",
+                    card.key,
+                    key
+                )
+            })?;
+        ensure!(
+            field.editable,
+            "{}.{} is locked; edit only declared values fields",
+            card.key,
+            key
+        );
+        doc.values.insert(key.clone(), value.clone());
+    }
+
+    let values = doc.merged_values();
+    validate_values(card, &values)?;
+    let rendered = render_template(&card.template, &values)?;
+    validate_rendered_card_structure_from_repo(repo_root, card, &rendered)?;
+
+    let target = out_path.unwrap_or(values_path).to_path_buf();
+    if let Some(parent) = target.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("failed to create {}", parent.display()))?;
+    }
+    fs::write(&target, doc.to_yaml(card))
+        .with_context(|| format!("failed to write edited values file {}", target.display()))?;
+    Ok(target)
+}
+
 pub fn validate_rendered_card_structure_file(
     repo_root: &Path,
     kind: PromptCardKind,
@@ -1091,11 +1142,54 @@ fn is_rendered_value_line(trimmed: &str, schema: &PromptCardStructureSchema) -> 
         .any(|prefix| trimmed.starts_with(prefix))
 }
 
+#[derive(Debug, Clone)]
+struct PromptValuesDocument {
+    schema: String,
+    template_set: String,
+    card_kind: Option<String>,
+    system: BTreeMap<String, String>,
+    values: BTreeMap<String, String>,
+}
+
+impl PromptValuesDocument {
+    fn merged_values(&self) -> BTreeMap<String, String> {
+        let mut merged = self.system.clone();
+        merged.extend(self.values.clone());
+        merged
+    }
+
+    fn to_yaml(&self, card: &PromptCardForm) -> String {
+        let mut out = String::new();
+        out.push_str(&format!("schema: {}\n", yaml_scalar(&self.schema)));
+        out.push_str(&format!(
+            "template_set: {}\n",
+            yaml_scalar(&self.template_set)
+        ));
+        out.push_str(&format!(
+            "card_kind: {}\n",
+            yaml_scalar(self.card_kind.as_deref().unwrap_or(card.key))
+        ));
+        out.push_str("system:\n");
+        write_yaml_mapping(&mut out, &self.system);
+        out.push_str("values:\n");
+        write_yaml_mapping(&mut out, &self.values);
+        out
+    }
+}
+
 fn load_values_file(
     card: &PromptCardForm,
     path: &Path,
     expected_template_set: &str,
 ) -> Result<BTreeMap<String, String>> {
+    Ok(load_values_document(card, path, expected_template_set)?.merged_values())
+}
+
+fn load_values_document(
+    card: &PromptCardForm,
+    path: &Path,
+    expected_template_set: &str,
+) -> Result<PromptValuesDocument> {
     let raw = fs::read_to_string(path)
         .with_context(|| format!("failed to read values file {}", path.display()))?;
     let doc: serde_yaml::Value = serde_yaml::from_str(&raw)
@@ -1127,31 +1221,42 @@ fn load_values_file(
         );
     }
 
-    let mut values = BTreeMap::new();
-    if let Some(system) = mapping.get(serde_yaml::Value::String("system".to_string())) {
-        collect_values_section(card, system, false, &mut values, "system")?;
-    }
-    if let Some(editable) = mapping.get(serde_yaml::Value::String("values".to_string())) {
-        collect_values_section(card, editable, true, &mut values, "values")?;
-    }
+    let system = if let Some(system) = mapping.get(serde_yaml::Value::String("system".to_string()))
+    {
+        collect_values_section(card, system, false, "system")?
+    } else {
+        BTreeMap::new()
+    };
+    let values =
+        if let Some(editable) = mapping.get(serde_yaml::Value::String("values".to_string())) {
+            collect_values_section(card, editable, true, "values")?
+        } else {
+            BTreeMap::new()
+        };
 
     ensure!(
-        !values.is_empty(),
+        !system.is_empty() || !values.is_empty(),
         "values file must contain system and/or values mappings"
     );
-    Ok(values)
+    Ok(PromptValuesDocument {
+        schema,
+        template_set,
+        card_kind: mapping_string_value(mapping, "card_kind")?,
+        system,
+        values,
+    })
 }
 
 fn collect_values_section(
     card: &PromptCardForm,
     section: &serde_yaml::Value,
     ordinary_values: bool,
-    out: &mut BTreeMap<String, String>,
     section_name: &str,
-) -> Result<()> {
+) -> Result<BTreeMap<String, String>> {
     let mapping = section
         .as_mapping()
         .ok_or_else(|| anyhow!("{section_name} must be a mapping"))?;
+    let mut out = BTreeMap::new();
     for (key, value) in mapping {
         let key = key
             .as_str()
@@ -1182,7 +1287,7 @@ fn collect_values_section(
             .ok_or_else(|| anyhow!("{}.{} must be a scalar value", section_name, key))?;
         out.insert(key.to_string(), value);
     }
-    Ok(())
+    Ok(out)
 }
 
 fn scalar_to_string(value: &serde_yaml::Value) -> Option<String> {
@@ -1203,6 +1308,34 @@ fn mapping_string_value(mapping: &serde_yaml::Mapping, key: &str) -> Result<Opti
         .as_str()
         .ok_or_else(|| anyhow!("{key} must be a string"))?;
     Ok(Some(value.to_string()))
+}
+
+fn write_yaml_mapping(out: &mut String, values: &BTreeMap<String, String>) {
+    if values.is_empty() {
+        out.push_str("  {}\n");
+        return;
+    }
+    for (key, value) in values {
+        if value.contains('\n') {
+            let (indicator, body) = if let Some(stripped) = value.strip_suffix('\n') {
+                ("|", stripped)
+            } else {
+                ("|-", value.as_str())
+            };
+            out.push_str(&format!("  {key}: {indicator}\n"));
+            for line in body.split('\n') {
+                out.push_str("    ");
+                out.push_str(line);
+                out.push('\n');
+            }
+        } else {
+            out.push_str(&format!("  {key}: {}\n", yaml_scalar(value)));
+        }
+    }
+}
+
+fn yaml_scalar(value: &str) -> String {
+    format!("\"{}\"", value.replace('\\', "\\\\").replace('"', "\\\""))
 }
 
 fn sample_values_document(kind: PromptCardKind) -> String {
@@ -2051,5 +2184,130 @@ system:
         assert!(err
             .to_string()
             .contains("template_set must match active template set"));
+    }
+
+    #[test]
+    fn edit_values_file_updates_declared_editable_fields_for_all_card_kinds() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-prompt-values-edit-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("clock")
+                .as_nanos()
+        ));
+        fs::create_dir_all(&tmp).expect("tmp");
+
+        for (kind, field, value) in [
+            (
+                PromptCardKind::Sip,
+                "goal",
+                "Exercise the field-level editor for SIP.",
+            ),
+            (
+                PromptCardKind::Stp,
+                "summary",
+                "Exercise the field-level editor for STP.",
+            ),
+            (
+                PromptCardKind::Spp,
+                "plan_summary",
+                "Exercise the field-level editor for SPP.",
+            ),
+            (
+                PromptCardKind::Srp,
+                "notes_risks",
+                "Exercise the field-level editor for SRP.",
+            ),
+            (PromptCardKind::Sor, "status", "DONE"),
+        ] {
+            let input = tmp.join(format!("{}.values.yaml", kind.key()));
+            let output = tmp.join(format!("{}.edited.values.yaml", kind.key()));
+            fs::write(&input, sample_values_document(kind)).expect("sample values");
+
+            edit_values_file(
+                &repo_root(),
+                kind,
+                &input,
+                &[(field.to_string(), value.to_string())],
+                Some(&output),
+            )
+            .expect("editable field should update");
+
+            let model = load_editor_model(&repo_root()).expect("model");
+            let card = card_model(&model, kind).expect("card");
+            let edited = load_values_file(card, &output, &model.template_set)
+                .expect("edited values should load");
+            assert_eq!(edited.get(field).map(String::as_str), Some(value));
+            render_card_from_values_file(&repo_root(), kind, &output)
+                .expect("edited values should render and validate structure");
+        }
+
+        let input = tmp.join("stp-multiline.values.yaml");
+        let output = tmp.join("stp-multiline.edited.values.yaml");
+        let multiline = "First line.\nSecond line.";
+        fs::write(&input, sample_values_document(PromptCardKind::Stp)).expect("sample values");
+        edit_values_file(
+            &repo_root(),
+            PromptCardKind::Stp,
+            &input,
+            &[("summary".to_string(), multiline.to_string())],
+            Some(&output),
+        )
+        .expect("multiline editable value should update");
+        let model = load_editor_model(&repo_root()).expect("model");
+        let stp = card_model(&model, PromptCardKind::Stp).expect("stp");
+        let edited =
+            load_values_file(stp, &output, &model.template_set).expect("load multiline values");
+        assert_eq!(edited.get("summary").map(String::as_str), Some(multiline));
+    }
+
+    #[test]
+    fn edit_values_file_fails_closed_for_locked_unknown_and_invalid_fields() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-prompt-values-edit-fail-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("clock")
+                .as_nanos()
+        ));
+        fs::create_dir_all(&tmp).expect("tmp");
+        let sip = tmp.join("sip.values.yaml");
+        fs::write(&sip, sample_values_document(PromptCardKind::Sip)).expect("sip values");
+
+        let locked = edit_values_file(
+            &repo_root(),
+            PromptCardKind::Sip,
+            &sip,
+            &[("issue".to_string(), "9999".to_string())],
+            Some(&tmp.join("locked.values.yaml")),
+        )
+        .expect_err("locked field edit should fail");
+        assert!(locked.to_string().contains("sip.issue is locked"));
+
+        let unknown = edit_values_file(
+            &repo_root(),
+            PromptCardKind::Sip,
+            &sip,
+            &[("unknown_field".to_string(), "nope".to_string())],
+            Some(&tmp.join("unknown.values.yaml")),
+        )
+        .expect_err("unknown field edit should fail");
+        assert!(unknown
+            .to_string()
+            .contains("sip.unknown_field is not a declared prompt-template field"));
+
+        let sor = tmp.join("sor.values.yaml");
+        fs::write(&sor, sample_values_document(PromptCardKind::Sor)).expect("sor values");
+        let invalid_enum = edit_values_file(
+            &repo_root(),
+            PromptCardKind::Sor,
+            &sor,
+            &[("status".to_string(), "ALMOST_DONE".to_string())],
+            Some(&tmp.join("invalid-enum.values.yaml")),
+        )
+        .expect_err("invalid enum edit should fail");
+        assert!(invalid_enum
+            .to_string()
+            .contains("sor.status must be one of"));
     }
 }
