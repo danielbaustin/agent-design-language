@@ -13,7 +13,7 @@ notes:
   - v0.91.5 is the bridge milestone between v0.91.4 C-SDLC hardening and v0.92 first birthday.
   - v0.91.5 opened after the v0.91.4 release ceremony, tag, and GitHub Release publication.
   - WP-01 is the planning and setup gate; it seeds/schedules issues, cards, sprint umbrellas, and ordering before execution sprints begin.
-  - Canonical milestone WP ordering is scheduled through #3567; portable ADL project adapter planning is scheduled through #3569.
+  - Canonical milestone WP ordering was closed through #3567; portable ADL project adapter planning and templates are routed through #3569.
   - Downstream v0.91.5 card rewrite/normalization waits for prompt templates v1.1 and is tracked through #3582 instead of blocking WP-01.
   - Sprint umbrella issues are seeded as #3571 through #3574; closeout-tail issues are seeded as #3575, #3579, #3576, #3580, #3577, #3581, and #3578.
   - Multi-agent C-SDLC execution must work by milestone closeout or be truthfully blocked before v0.92 depends on it.
@@ -80,7 +80,7 @@ work_packages:
     queue: docs
     depends_on: [v0.91.4 release closeout complete]
     primary_deliverable: active v0.91.5 planning package, issue/card/sprint readiness, canonical WP ordering scheduling, and portable ADL adapter planning route
-    proof_surface: planning docs, issue labels, setup child issues #3507-#3511, scheduled issues #3567/#3553/#3582/#3569, sprint umbrellas #3571-#3574, closeout-tail issues #3575/#3579/#3576/#3580/#3577/#3581/#3578, and focused docs validation
+    proof_surface: planning docs, issue labels, setup child issues #3507-#3511, closed #3567, scheduled issues #3553/#3582/#3569, sprint umbrellas #3571-#3574, closeout-tail issues #3575/#3579/#3576/#3580/#3577/#3581/#3578, and focused docs validation
   - wp: WP-02
     issue: 3553
     title: Deterministic prompt-template values renderer
