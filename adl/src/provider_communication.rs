@@ -11,6 +11,8 @@ use crate::model_identity::{
 };
 
 pub const PROVIDER_COMMUNICATION_SCHEMA_VERSION: &str = "provider_communication.v1";
+pub const REVIEW_PROVIDER_AUTHORITY_BOUNDARY_V1: &str =
+    "advisory_findings_only_requires_codefriend_synthesis";
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -158,6 +160,125 @@ pub struct ProviderInvocationResultV1 {
     pub artifact_ref: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub trace_ref: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ReviewProviderRoleV1 {
+    Reviewer,
+    SecurityReviewer,
+    TestReviewer,
+    DocsReviewer,
+    ArchitectureReviewer,
+    SynthesisReviewer,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ReviewResultStatusV1 {
+    Passed,
+    Findings,
+    FailedProvider,
+    FailedMalformed,
+    Blocked,
+    Skipped,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ReviewRedactionStatusV1 {
+    Redacted,
+    NoSensitiveContentObserved,
+    RedactionRequired,
+    Unknown,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ReviewFindingSeverityV1 {
+    P0,
+    P1,
+    P2,
+    P3,
+    Info,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewProviderV1 {
+    pub schema_version: String,
+    pub provider_ref: String,
+    pub role: ReviewProviderRoleV1,
+    pub provider_request: ProviderInvocationRequestV1,
+    pub authority_boundary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewProviderRequestV1 {
+    pub schema_version: String,
+    pub review_request_id: String,
+    pub review_provider: ReviewProviderV1,
+    pub review_packet_ref: String,
+    pub rubric_ref: String,
+    pub requested_at: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub issue_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pr_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub diff_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub file_refs: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub expected_output_contract_ref: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewFindingV1 {
+    pub severity: ReviewFindingSeverityV1,
+    pub title: String,
+    pub body: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub evidence_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub file_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub line: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewProviderResultV1 {
+    pub schema_version: String,
+    pub review_request_id: String,
+    pub provider_result: ProviderInvocationResultV1,
+    pub review_status: ReviewResultStatusV1,
+    pub redaction_status: ReviewRedactionStatusV1,
+    pub findings: Vec<ReviewFindingV1>,
+    pub started_at: String,
+    pub completed_at: String,
+    pub elapsed_ms: u64,
+    pub log_ref: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub artifact_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub malformed_output_reason: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewRunRecordV1 {
+    pub schema_version: String,
+    pub run_id: String,
+    pub review_request: ReviewProviderRequestV1,
+    pub review_result: ReviewProviderResultV1,
+    pub model_identity: ModelIdentityV1,
+    pub route: ProviderRouteV1,
+    pub log_ref: String,
+    pub redaction_status: ReviewRedactionStatusV1,
+    pub authority_boundary: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -409,6 +530,201 @@ pub fn validate_provider_request(request: &ProviderInvocationRequestV1) -> Resul
     Ok(())
 }
 
+pub fn validate_provider_result(result: &ProviderInvocationResultV1) -> Result<()> {
+    require_schema_version("provider_result.schema_version", &result.schema_version)?;
+    require_non_empty("provider_result.route.provider", &result.route.provider)?;
+    require_non_empty(
+        "provider_result.route.provider_model_id",
+        &result.route.provider_model_id,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.provider_kind",
+        &result.model_identity.provider_kind,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.provider",
+        &result.model_identity.provider,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.model_ref",
+        &result.model_identity.model_ref,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.provider_model_id",
+        &result.model_identity.provider_model_id,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.runtime_surface",
+        &result.model_identity.runtime_surface,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.observed_at",
+        &result.model_identity.observed_at,
+    )?;
+    if result.attempts.is_empty() {
+        return Err(anyhow!("provider_result.attempts must not be empty"));
+    }
+    for attempt in &result.attempts {
+        require_non_empty("provider_result.attempts.started_at", &attempt.started_at)?;
+        match &attempt.status {
+            ProviderAttemptStatusV1::Ok => {
+                if attempt.failure.is_some() {
+                    return Err(anyhow!(
+                        "provider_result ok attempts must not carry failure details"
+                    ));
+                }
+            }
+            ProviderAttemptStatusV1::Error | ProviderAttemptStatusV1::Timeout => {
+                if attempt.failure.is_none() {
+                    return Err(anyhow!(
+                        "provider_result failed attempts must carry failure details"
+                    ));
+                }
+            }
+        }
+    }
+    match &result.final_status {
+        ProviderInvocationFinalStatusV1::Ok => {
+            if result.failure.is_some() {
+                return Err(anyhow!(
+                    "provider_result final_status ok must not carry failure"
+                ));
+            }
+            if result.output_text.is_none() && result.output_text_excerpt.is_none() {
+                return Err(anyhow!(
+                    "provider_result final_status ok requires output text or excerpt"
+                ));
+            }
+        }
+        ProviderInvocationFinalStatusV1::Failed => {
+            if result.failure.is_none() {
+                return Err(anyhow!(
+                    "provider_result final_status failed requires failure"
+                ));
+            }
+        }
+        ProviderInvocationFinalStatusV1::Skipped | ProviderInvocationFinalStatusV1::Blocked => {
+            if result.failure.is_none() {
+                return Err(anyhow!(
+                    "provider_result final_status skipped or blocked requires failure"
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+pub fn validate_review_provider_request(request: &ReviewProviderRequestV1) -> Result<()> {
+    require_schema_version("schema_version", &request.schema_version)?;
+    require_non_empty("review_request_id", &request.review_request_id)?;
+    require_non_empty("review_packet_ref", &request.review_packet_ref)?;
+    require_non_empty("rubric_ref", &request.rubric_ref)?;
+    require_non_empty("requested_at", &request.requested_at)?;
+    require_schema_version(
+        "review_provider.schema_version",
+        &request.review_provider.schema_version,
+    )?;
+    require_non_empty(
+        "review_provider.provider_ref",
+        &request.review_provider.provider_ref,
+    )?;
+    require_non_empty(
+        "review_provider.authority_boundary",
+        &request.review_provider.authority_boundary,
+    )?;
+    if request.review_provider.authority_boundary != REVIEW_PROVIDER_AUTHORITY_BOUNDARY_V1 {
+        return Err(anyhow!(
+            "review_provider.authority_boundary must be {REVIEW_PROVIDER_AUTHORITY_BOUNDARY_V1}"
+        ));
+    }
+    validate_provider_request(&request.review_provider.provider_request)?;
+    let has_scope = request
+        .issue_ref
+        .as_deref()
+        .is_some_and(|value| !value.trim().is_empty())
+        || request
+            .pr_ref
+            .as_deref()
+            .is_some_and(|value| !value.trim().is_empty())
+        || request
+            .diff_ref
+            .as_deref()
+            .is_some_and(|value| !value.trim().is_empty())
+        || request
+            .file_refs
+            .iter()
+            .any(|value| !value.trim().is_empty());
+    if !has_scope {
+        return Err(anyhow!(
+            "review request must include at least one issue, PR, diff, or file scope reference"
+        ));
+    }
+    Ok(())
+}
+
+pub fn validate_review_provider_result(result: &ReviewProviderResultV1) -> Result<()> {
+    require_schema_version("schema_version", &result.schema_version)?;
+    require_non_empty("review_request_id", &result.review_request_id)?;
+    require_non_empty("started_at", &result.started_at)?;
+    require_non_empty("completed_at", &result.completed_at)?;
+    require_non_empty("log_ref", &result.log_ref)?;
+    validate_provider_result(&result.provider_result)?;
+    let provider_failed = matches!(
+        result.provider_result.final_status,
+        ProviderInvocationFinalStatusV1::Failed
+            | ProviderInvocationFinalStatusV1::Skipped
+            | ProviderInvocationFinalStatusV1::Blocked
+    );
+    if provider_failed
+        && !matches!(
+            result.review_status,
+            ReviewResultStatusV1::FailedProvider
+                | ReviewResultStatusV1::FailedMalformed
+                | ReviewResultStatusV1::Blocked
+                | ReviewResultStatusV1::Skipped
+        )
+    {
+        return Err(anyhow!(
+            "provider_result failure requires failed_provider, failed_malformed, blocked, or skipped review_status"
+        ));
+    }
+    if matches!(
+        result.provider_result.final_status,
+        ProviderInvocationFinalStatusV1::Ok
+    ) && matches!(
+        result.review_status,
+        ReviewResultStatusV1::FailedProvider
+            | ReviewResultStatusV1::Blocked
+            | ReviewResultStatusV1::Skipped
+    ) {
+        return Err(anyhow!(
+            "provider_result ok must not be reported as provider failed, blocked, or skipped"
+        ));
+    }
+    let failure_status = matches!(
+        result.review_status,
+        ReviewResultStatusV1::FailedProvider
+            | ReviewResultStatusV1::FailedMalformed
+            | ReviewResultStatusV1::Blocked
+            | ReviewResultStatusV1::Skipped
+    );
+    if failure_status && !result.findings.is_empty() {
+        return Err(anyhow!(
+            "failed, blocked, or skipped review-provider results must not carry scored findings"
+        ));
+    }
+    if matches!(result.review_status, ReviewResultStatusV1::Findings) && result.findings.is_empty()
+    {
+        return Err(anyhow!(
+            "review_status findings requires at least one finding"
+        ));
+    }
+    if matches!(result.review_status, ReviewResultStatusV1::Passed) && !result.findings.is_empty() {
+        return Err(anyhow!("review_status passed must not carry findings"));
+    }
+    Ok(())
+}
+
 fn sanitize_provider_message(note: &str) -> String {
     let text = note.split_whitespace().collect::<Vec<_>>().join(" ");
     let lowered = text.to_ascii_lowercase();
@@ -463,6 +779,15 @@ fn redacted_excerpt(note: &str) -> String {
 fn require_non_empty(field: &str, value: &str) -> Result<()> {
     if value.trim().is_empty() {
         return Err(anyhow!("{field} must not be empty"));
+    }
+    Ok(())
+}
+
+fn require_schema_version(field: &str, value: &str) -> Result<()> {
+    if value != PROVIDER_COMMUNICATION_SCHEMA_VERSION {
+        return Err(anyhow!(
+            "{field} must be {PROVIDER_COMMUNICATION_SCHEMA_VERSION}"
+        ));
     }
     Ok(())
 }
@@ -725,5 +1050,377 @@ mod tests {
         validate_provider_request(&request).unwrap();
         request.attempt_policy.max_attempts = 0;
         assert!(validate_provider_request(&request).is_err());
+    }
+
+    fn review_provider_request_fixture() -> ReviewProviderRequestV1 {
+        let identity = hosted_model_identity("anthropic", "review/default", "claude-test", None);
+        let route = ProviderRouteV1 {
+            provider_kind: ProviderKindV1::Hosted,
+            provider: "anthropic".to_string(),
+            runtime_surface: RuntimeSurfaceV1::HostedApi,
+            provider_model_id: "claude-test".to_string(),
+            endpoint_ref: Some("anthropic.messages".to_string()),
+            credential_ref: Some("env:ANTHROPIC_API_KEY".to_string()),
+            source_registry: Some("review-provider-profile".to_string()),
+        };
+        let provider_request = ProviderInvocationRequestV1 {
+            route,
+            model_identity: identity,
+            prompt_contract_ref: "codefriend.review_packet.v1".to_string(),
+            lane_ref: "external_review_provider".to_string(),
+            run_id: Some("review-run-1".to_string()),
+            request_id: Some("provider-request-1".to_string()),
+            attempt_policy: ProviderAttemptPolicyV1 {
+                max_attempts: 1,
+                timeout_ms: 30_000,
+                retry_backoff_ms: None,
+            },
+            input_text: None,
+            inference_parameter_fingerprint: Some("sha256:test".to_string()),
+            tool_surface: None,
+            governance_surface: Some("codefriend.synthesis_required.v1".to_string()),
+            evaluator_ref: Some("review-provider-contract.v1".to_string()),
+            benchmark_ref: None,
+        };
+        ReviewProviderRequestV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            review_request_id: "review-request-1".to_string(),
+            review_provider: ReviewProviderV1 {
+                schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+                provider_ref: "review-provider/anthropic/default".to_string(),
+                role: ReviewProviderRoleV1::Reviewer,
+                provider_request,
+                authority_boundary: REVIEW_PROVIDER_AUTHORITY_BOUNDARY_V1.to_string(),
+            },
+            review_packet_ref: "review/packets/issue-1.json".to_string(),
+            rubric_ref: "codefriend.rubric.findings_first.v1".to_string(),
+            requested_at: "unix:1".to_string(),
+            issue_ref: Some("https://github.com/example/repo/issues/1".to_string()),
+            pr_ref: None,
+            diff_ref: None,
+            file_refs: Vec::new(),
+            expected_output_contract_ref: Some("ReviewProviderResultV1".to_string()),
+        }
+    }
+
+    #[test]
+    fn review_provider_request_validates_scope_authority_and_provider_request() {
+        let request = review_provider_request_fixture();
+        validate_review_provider_request(&request).unwrap();
+
+        let doc = serde_json::to_value(&request).unwrap();
+        assert_eq!(
+            doc["review_provider"]["authority_boundary"],
+            REVIEW_PROVIDER_AUTHORITY_BOUNDARY_V1
+        );
+        assert_eq!(
+            doc["review_provider"]["provider_request"]["lane_ref"],
+            "external_review_provider"
+        );
+    }
+
+    #[test]
+    fn review_provider_request_fails_closed_without_scope_or_authority() {
+        let mut no_scope = review_provider_request_fixture();
+        no_scope.issue_ref = None;
+        assert!(validate_review_provider_request(&no_scope)
+            .unwrap_err()
+            .to_string()
+            .contains("at least one issue, PR, diff, or file scope"));
+
+        let mut blank_scope = review_provider_request_fixture();
+        blank_scope.issue_ref = Some("  ".to_string());
+        blank_scope.file_refs = vec!["".to_string(), "   ".to_string()];
+        assert!(validate_review_provider_request(&blank_scope)
+            .unwrap_err()
+            .to_string()
+            .contains("at least one issue, PR, diff, or file scope"));
+
+        let mut no_authority = review_provider_request_fixture();
+        no_authority.review_provider.authority_boundary.clear();
+        assert!(validate_review_provider_request(&no_authority)
+            .unwrap_err()
+            .to_string()
+            .contains("review_provider.authority_boundary"));
+
+        let mut wrong_authority = review_provider_request_fixture();
+        wrong_authority.review_provider.authority_boundary = "advisory_but_ambiguous".to_string();
+        assert!(validate_review_provider_request(&wrong_authority)
+            .unwrap_err()
+            .to_string()
+            .contains(REVIEW_PROVIDER_AUTHORITY_BOUNDARY_V1));
+
+        let mut wrong_schema = review_provider_request_fixture();
+        wrong_schema.schema_version = "provider_communication.v0".to_string();
+        assert!(validate_review_provider_request(&wrong_schema)
+            .unwrap_err()
+            .to_string()
+            .contains(PROVIDER_COMMUNICATION_SCHEMA_VERSION));
+    }
+
+    #[test]
+    fn review_provider_result_preserves_findings_and_provider_failure_boundaries() {
+        let request = review_provider_request_fixture();
+        let route = request.review_provider.provider_request.route.clone();
+        let identity = request
+            .review_provider
+            .provider_request
+            .model_identity
+            .clone();
+        let provider_failure = provider_failure_from_note("provider returned empty output", None);
+        let provider_result = ProviderInvocationResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            route: route.clone(),
+            model_identity: identity.clone(),
+            attempts: vec![ProviderAttemptV1 {
+                attempt_index: 1,
+                started_at: "unix:1".to_string(),
+                duration_ms: 25,
+                status: ProviderAttemptStatusV1::Error,
+                retryable: false,
+                http_status: None,
+                failure: Some(provider_failure.clone()),
+                raw_response_excerpt: None,
+            }],
+            final_status: ProviderInvocationFinalStatusV1::Failed,
+            duration_ms: 25,
+            output_text: None,
+            output_text_excerpt: None,
+            failure: Some(provider_failure),
+            artifact_ref: None,
+            trace_ref: None,
+        };
+        let result = ReviewProviderResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            review_request_id: request.review_request_id.clone(),
+            provider_result,
+            review_status: ReviewResultStatusV1::FailedProvider,
+            redaction_status: ReviewRedactionStatusV1::Redacted,
+            findings: Vec::new(),
+            started_at: "unix:1".to_string(),
+            completed_at: "unix:2".to_string(),
+            elapsed_ms: 25,
+            log_ref: "review/logs/review-run-1.jsonl".to_string(),
+            artifact_ref: Some("review/results/review-run-1.json".to_string()),
+            malformed_output_reason: None,
+        };
+        let run = ReviewRunRecordV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            run_id: "review-run-1".to_string(),
+            review_request: request,
+            review_result: result,
+            model_identity: identity,
+            route,
+            log_ref: "review/logs/review-run-1.jsonl".to_string(),
+            redaction_status: ReviewRedactionStatusV1::Redacted,
+            authority_boundary: REVIEW_PROVIDER_AUTHORITY_BOUNDARY_V1.to_string(),
+        };
+        validate_review_provider_result(&run.review_result).unwrap();
+        assert_eq!(
+            run.review_result.review_status,
+            ReviewResultStatusV1::FailedProvider
+        );
+        assert!(run.review_result.findings.is_empty());
+        assert_eq!(
+            run.review_result
+                .provider_result
+                .failure
+                .as_ref()
+                .unwrap()
+                .kind,
+            ProviderFailureKindV1::ProviderEmptyTextOutput
+        );
+    }
+
+    #[test]
+    fn review_provider_result_rejects_findings_on_failed_or_passed_status() {
+        let request = review_provider_request_fixture();
+        let route = request.review_provider.provider_request.route.clone();
+        let identity = request
+            .review_provider
+            .provider_request
+            .model_identity
+            .clone();
+        let provider_result = ProviderInvocationResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            route,
+            model_identity: identity,
+            attempts: vec![ProviderAttemptV1 {
+                attempt_index: 1,
+                started_at: "unix:1".to_string(),
+                duration_ms: 25,
+                status: ProviderAttemptStatusV1::Ok,
+                retryable: false,
+                http_status: Some(200),
+                failure: None,
+                raw_response_excerpt: Some("[redacted response len=120]".to_string()),
+            }],
+            final_status: ProviderInvocationFinalStatusV1::Ok,
+            duration_ms: 25,
+            output_text: None,
+            output_text_excerpt: Some("[redacted review output]".to_string()),
+            failure: None,
+            artifact_ref: None,
+            trace_ref: None,
+        };
+        let ok_provider_result = provider_result.clone();
+        let finding = ReviewFindingV1 {
+            severity: ReviewFindingSeverityV1::P2,
+            title: "Example finding".to_string(),
+            body: "Finding body stays advisory until CodeFriend synthesis.".to_string(),
+            evidence_ref: Some("review/packets/issue-1.json".to_string()),
+            file_ref: Some("src/lib.rs".to_string()),
+            line: Some(12),
+        };
+        let mut result = ReviewProviderResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            review_request_id: request.review_request_id,
+            provider_result,
+            review_status: ReviewResultStatusV1::Findings,
+            redaction_status: ReviewRedactionStatusV1::Redacted,
+            findings: vec![finding],
+            started_at: "unix:1".to_string(),
+            completed_at: "unix:2".to_string(),
+            elapsed_ms: 25,
+            log_ref: "review/logs/review-run-1.jsonl".to_string(),
+            artifact_ref: Some("review/results/review-run-1.json".to_string()),
+            malformed_output_reason: None,
+        };
+        validate_review_provider_result(&result).unwrap();
+
+        let provider_failure = provider_failure_from_note("provider returned empty output", None);
+        let mut failed_provider_result = ok_provider_result.clone();
+        failed_provider_result.attempts[0].status = ProviderAttemptStatusV1::Error;
+        failed_provider_result.attempts[0].failure = Some(provider_failure.clone());
+        failed_provider_result.attempts[0].raw_response_excerpt = None;
+        failed_provider_result.final_status = ProviderInvocationFinalStatusV1::Failed;
+        failed_provider_result.output_text = None;
+        failed_provider_result.output_text_excerpt = None;
+        failed_provider_result.failure = Some(provider_failure);
+        result.provider_result = failed_provider_result;
+        result.review_status = ReviewResultStatusV1::FailedProvider;
+        assert!(validate_review_provider_result(&result)
+            .unwrap_err()
+            .to_string()
+            .contains("must not carry scored findings"));
+
+        result.provider_result = ok_provider_result.clone();
+        result.review_status = ReviewResultStatusV1::Passed;
+        assert!(validate_review_provider_result(&result)
+            .unwrap_err()
+            .to_string()
+            .contains("passed must not carry findings"));
+
+        result.review_status = ReviewResultStatusV1::Findings;
+        result.findings.clear();
+        assert!(validate_review_provider_result(&result)
+            .unwrap_err()
+            .to_string()
+            .contains("requires at least one finding"));
+    }
+
+    #[test]
+    fn review_provider_result_rejects_passed_status_when_provider_failed() {
+        let request = review_provider_request_fixture();
+        let route = request.review_provider.provider_request.route.clone();
+        let identity = request
+            .review_provider
+            .provider_request
+            .model_identity
+            .clone();
+        let provider_failure = provider_failure_from_note("provider timed out", None);
+        let provider_result = ProviderInvocationResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            route,
+            model_identity: identity,
+            attempts: vec![ProviderAttemptV1 {
+                attempt_index: 1,
+                started_at: "unix:1".to_string(),
+                duration_ms: 25,
+                status: ProviderAttemptStatusV1::Timeout,
+                retryable: true,
+                http_status: None,
+                failure: Some(provider_failure.clone()),
+                raw_response_excerpt: None,
+            }],
+            final_status: ProviderInvocationFinalStatusV1::Failed,
+            duration_ms: 25,
+            output_text: None,
+            output_text_excerpt: None,
+            failure: Some(provider_failure),
+            artifact_ref: None,
+            trace_ref: None,
+        };
+        let result = ReviewProviderResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            review_request_id: request.review_request_id,
+            provider_result,
+            review_status: ReviewResultStatusV1::Passed,
+            redaction_status: ReviewRedactionStatusV1::Redacted,
+            findings: Vec::new(),
+            started_at: "unix:1".to_string(),
+            completed_at: "unix:2".to_string(),
+            elapsed_ms: 25,
+            log_ref: "review/logs/review-run-1.jsonl".to_string(),
+            artifact_ref: Some("review/results/review-run-1.json".to_string()),
+            malformed_output_reason: None,
+        };
+
+        assert!(validate_review_provider_result(&result)
+            .unwrap_err()
+            .to_string()
+            .contains("provider_result failure requires"));
+    }
+
+    #[test]
+    fn review_provider_result_transitively_rejects_malformed_provider_result() {
+        let request = review_provider_request_fixture();
+        let route = request.review_provider.provider_request.route.clone();
+        let identity = request
+            .review_provider
+            .provider_request
+            .model_identity
+            .clone();
+        let provider_result = ProviderInvocationResultV1 {
+            schema_version: "provider_communication.v0".to_string(),
+            route,
+            model_identity: identity,
+            attempts: vec![ProviderAttemptV1 {
+                attempt_index: 1,
+                started_at: "unix:1".to_string(),
+                duration_ms: 25,
+                status: ProviderAttemptStatusV1::Ok,
+                retryable: false,
+                http_status: Some(200),
+                failure: None,
+                raw_response_excerpt: Some("[redacted response len=120]".to_string()),
+            }],
+            final_status: ProviderInvocationFinalStatusV1::Ok,
+            duration_ms: 25,
+            output_text: None,
+            output_text_excerpt: Some("[redacted review output]".to_string()),
+            failure: None,
+            artifact_ref: None,
+            trace_ref: None,
+        };
+        let result = ReviewProviderResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            review_request_id: request.review_request_id,
+            provider_result,
+            review_status: ReviewResultStatusV1::Passed,
+            redaction_status: ReviewRedactionStatusV1::Redacted,
+            findings: Vec::new(),
+            started_at: "unix:1".to_string(),
+            completed_at: "unix:2".to_string(),
+            elapsed_ms: 25,
+            log_ref: "review/logs/review-run-1.jsonl".to_string(),
+            artifact_ref: Some("review/results/review-run-1.json".to_string()),
+            malformed_output_reason: None,
+        };
+
+        assert!(validate_review_provider_result(&result)
+            .unwrap_err()
+            .to_string()
+            .contains("provider_result.schema_version"));
     }
 }
