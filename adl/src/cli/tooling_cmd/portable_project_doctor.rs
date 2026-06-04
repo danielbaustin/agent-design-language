@@ -415,10 +415,6 @@ fn resolve_adl_home(
         checks.push(pass("tooling_discovery.resolver", "--adl-home override"));
         return Some(normalize_existing_path(path));
     }
-    if let Some(value) = std::env::var_os("ADL_HOME") {
-        checks.push(pass("tooling_discovery.resolver", "ADL_HOME"));
-        return Some(normalize_existing_path(Path::new(&value)));
-    }
     let tooling = config.get("tooling_discovery")?;
     if let Some(repo_relative) = string_field(tooling, "repo_relative") {
         if !repo_relative.is_empty() {
@@ -431,6 +427,10 @@ fn resolve_adl_home(
             checks.push(pass("tooling_discovery.resolver", "sibling_repo"));
             return Some(normalize_existing_path(&project_root.join(sibling)));
         }
+    }
+    if let Some(value) = std::env::var_os("ADL_HOME") {
+        checks.push(pass("tooling_discovery.resolver", "ADL_HOME"));
+        return Some(normalize_existing_path(Path::new(&value)));
     }
     checks.push(fail(
         "tooling_discovery.resolver",
@@ -472,13 +472,15 @@ fn check_adl_checkout(adl_home: &Path, config: &Value, checks: &mut Vec<DoctorCh
             format!("missing {registry}"),
         ));
     }
-    if adl_home.join("adl/Cargo.toml").is_file() {
+    let cargo_manifest = adl_home.join("adl/Cargo.toml");
+    if cargo_manifest.is_file() {
         checks.push(pass("adl_home.cargo_manifest", "exists"));
+        check_adl_checkout_version(&cargo_manifest, config, checks);
     } else {
         checks.push(fail("adl_home.cargo_manifest", "missing adl/Cargo.toml"));
     }
     match read_git_origin(adl_home) {
-        Some(origin) if origin.contains("agent-design-language") => checks.push(pass(
+        Some(origin) if adl_origin_matches_expected_repo(&origin) => checks.push(pass(
             "adl_home.git_origin",
             "matches ADL repository identity",
         )),
@@ -502,6 +504,58 @@ fn check_adl_checkout(adl_home: &Path, config: &Value, checks: &mut Vec<DoctorCh
     }
 }
 
+fn check_adl_checkout_version(
+    cargo_manifest: &Path,
+    config: &Value,
+    checks: &mut Vec<DoctorCheck>,
+) {
+    let required = string_field(config, "min_adl_version").unwrap_or_default();
+    let Some(version) = read_adl_crate_version(cargo_manifest) else {
+        checks.push(fail(
+            "adl_home.version",
+            "missing package.version in adl/Cargo.toml",
+        ));
+        return;
+    };
+    if version_le(required, &version) {
+        checks.push(pass(
+            "adl_home.version",
+            format!("checkout version {version} satisfies {required}"),
+        ));
+    } else {
+        checks.push(fail(
+            "adl_home.version",
+            format!("checkout version {version} does not satisfy {required}"),
+        ));
+    }
+}
+
+fn read_adl_crate_version(cargo_manifest: &Path) -> Option<String> {
+    let text = fs::read_to_string(cargo_manifest).ok()?;
+    let mut in_package = false;
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if trimmed.starts_with('[') {
+            in_package = trimmed == "[package]";
+            continue;
+        }
+        if in_package {
+            if let Some(value) = trimmed.strip_prefix("version") {
+                let version = value
+                    .trim_start()
+                    .strip_prefix('=')?
+                    .trim()
+                    .trim_matches('"')
+                    .trim();
+                if !version.is_empty() {
+                    return Some(version.to_string());
+                }
+            }
+        }
+    }
+    None
+}
+
 fn read_git_origin(adl_home: &Path) -> Option<String> {
     let git_marker = adl_home.join(".git");
     let config_path = if git_marker.is_dir() {
@@ -521,6 +575,29 @@ fn read_git_origin(adl_home: &Path) -> Option<String> {
     };
     let config = fs::read_to_string(config_path).ok()?;
     parse_origin_url(&config)
+}
+
+fn adl_origin_matches_expected_repo(origin: &str) -> bool {
+    let trimmed = origin.trim().trim_end_matches('/');
+    let Some(path) = trimmed
+        .strip_prefix("https://github.com/")
+        .or_else(|| trimmed.strip_prefix("git@github.com:"))
+        .or_else(|| trimmed.strip_prefix("ssh://git@github.com/"))
+        .or_else(|| trimmed.strip_prefix("github.com/"))
+    else {
+        return false;
+    };
+    let normalized = path.trim_end_matches('/').trim_end_matches(".git");
+    let parts = normalized
+        .split('/')
+        .filter(|part| !part.is_empty())
+        .collect::<Vec<_>>();
+    matches!(
+        parts.as_slice(),
+        [owner, repo]
+            if owner.eq_ignore_ascii_case("danielbaustin")
+                && *repo == "agent-design-language"
+    )
 }
 
 fn parse_origin_url(config: &str) -> Option<String> {
@@ -613,7 +690,7 @@ mod tests {
         fs::create_dir_all(adl_home.join(".git")).expect("git dir");
         fs::write(
             adl_home.join("adl/Cargo.toml"),
-            "[package]\nname = \"adl\"\n",
+            "[package]\nname = \"adl\"\nversion = \"0.91.5\"\n",
         )
         .expect("cargo");
         fs::write(
@@ -771,6 +848,42 @@ mod tests {
     }
 
     #[test]
+    fn portable_project_doctor_prefers_project_discovery_over_ambient_adl_home() {
+        let _guard = ENV_LOCK.lock().expect("env lock");
+        let root = temp_root("project-discovery-first");
+        let project_adl_home = write_adl_home(&root);
+        let ambient_adl_home = root.join("ambient-agent-design-language");
+        fs::create_dir_all(ambient_adl_home.join("adl/tools")).expect("ambient tools");
+        let project_root = root.join("paper");
+        fs::create_dir_all(&project_root).expect("project root");
+        let mut config = valid_project_value();
+        config["tooling_discovery"]["repo_relative"] =
+            serde_json::json!("../agent-design-language");
+        config["tooling_discovery"]["sibling_repo"] = Value::Null;
+        let project = write_project(&project_root, &config.to_string());
+        let previous = std::env::var_os("ADL_HOME");
+        std::env::set_var("ADL_HOME", &ambient_adl_home);
+
+        let report = run_portable_project_doctor(&project, None).expect("doctor");
+        assert_eq!(report.status, DoctorStatus::Pass, "{:#?}", report.checks);
+        assert_eq!(
+            report.resolved_adl_home,
+            project_adl_home
+                .file_name()
+                .map(|name| name.to_string_lossy().to_string())
+        );
+        assert!(report
+            .checks
+            .iter()
+            .any(|c| c.name == "tooling_discovery.resolver" && c.message == "repo_relative"));
+
+        match previous {
+            Some(value) => std::env::set_var("ADL_HOME", value),
+            None => std::env::remove_var("ADL_HOME"),
+        }
+    }
+
+    #[test]
     fn portable_project_doctor_resolves_adl_home_env_and_fails_missing_discovery() {
         let _guard = ENV_LOCK.lock().expect("env lock");
         let root = temp_root("env");
@@ -905,5 +1018,69 @@ mod tests {
             .checks
             .iter()
             .any(|c| c.name == "adl_home.git_origin" && c.status == DoctorStatus::Fail));
+    }
+
+    #[test]
+    fn portable_project_doctor_rejects_wrong_origin_and_stale_checkout_version() {
+        let root = temp_root("checkout-truth");
+        let adl_home = write_adl_home(&root);
+        let project_root = root.join("paper");
+        fs::create_dir_all(&project_root).expect("project root");
+        let project = write_project(&project_root, &valid_project_json());
+
+        fs::write(
+            adl_home.join(".git/config"),
+            "[remote \"origin\"]\n\turl = https://github.com/danielbaustin/not-agent-design-language.git\n",
+        )
+        .expect("bad git config");
+        let bad_origin = run_portable_project_doctor(&project, Some(&adl_home)).expect("doctor");
+        assert_eq!(bad_origin.status, DoctorStatus::Fail);
+        assert!(bad_origin
+            .checks
+            .iter()
+            .any(|c| c.name == "adl_home.git_origin" && c.status == DoctorStatus::Fail));
+
+        fs::write(
+            adl_home.join(".git/config"),
+            "[remote \"origin\"]\n\turl = https://evil.example/danielbaustin/agent-design-language.git\n",
+        )
+        .expect("wrong host git config");
+        let wrong_host = run_portable_project_doctor(&project, Some(&adl_home)).expect("doctor");
+        assert_eq!(wrong_host.status, DoctorStatus::Fail);
+        assert!(wrong_host
+            .checks
+            .iter()
+            .any(|c| c.name == "adl_home.git_origin" && c.status == DoctorStatus::Fail));
+
+        fs::write(
+            adl_home.join(".git/config"),
+            "[remote \"origin\"]\n\turl = https://evil.example/github.com/danielbaustin/agent-design-language.git\n",
+        )
+        .expect("wrong host path git config");
+        let wrong_host_path =
+            run_portable_project_doctor(&project, Some(&adl_home)).expect("doctor");
+        assert_eq!(wrong_host_path.status, DoctorStatus::Fail);
+        assert!(wrong_host_path
+            .checks
+            .iter()
+            .any(|c| c.name == "adl_home.git_origin" && c.status == DoctorStatus::Fail));
+
+        fs::write(
+            adl_home.join(".git/config"),
+            "[remote \"origin\"]\n\turl = https://github.com/danielbaustin/agent-design-language.git\n",
+        )
+        .expect("good git config");
+        fs::write(
+            adl_home.join("adl/Cargo.toml"),
+            "[package]\nname = \"adl\"\nversion = \"0.91.4\"\n",
+        )
+        .expect("old cargo");
+        let stale_checkout =
+            run_portable_project_doctor(&project, Some(&adl_home)).expect("doctor");
+        assert_eq!(stale_checkout.status, DoctorStatus::Fail);
+        assert!(stale_checkout
+            .checks
+            .iter()
+            .any(|c| c.name == "adl_home.version" && c.status == DoctorStatus::Fail));
     }
 }
