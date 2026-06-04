@@ -355,6 +355,7 @@ fn csdlc_github_client_boundary_doc_records_shared_ownership() {
     assert!(doc.contains("adl/src/cli/pr_cmd/github_client.rs"));
     assert!(doc.contains("adl/src/cli/pr_cmd/github.rs"));
     assert!(doc.contains("ADL_GITHUB_CLIENT"));
+    assert!(doc.contains("ADL_GITHUB_DISABLE_GH_FALLBACK"));
     assert!(doc.contains("Do not duplicate GitHub issue or PR metadata interpretation"));
 }
 

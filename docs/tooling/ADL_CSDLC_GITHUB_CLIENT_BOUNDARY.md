@@ -24,6 +24,8 @@ The shared layer owns:
 - GitHub client mode selection through `ADL_GITHUB_CLIENT`.
 - Token-source selection using `GITHUB_TOKEN` before `GH_TOKEN`.
 - Fallback policy for `auto`, `octocrab`, and `gh` modes.
+- Fail-closed shell fallback disablement through
+  `ADL_GITHUB_DISABLE_GH_FALLBACK`.
 - Issue metadata parity planning.
 - PR wave filtering.
 - PR closing-linkage interpretation.
@@ -33,6 +35,8 @@ The shared layer owns:
 - Do not duplicate GitHub issue or PR metadata interpretation in `adl-csdlc`.
 - Do not bypass `adl/tools/pr.sh` as the taught operator entrypoint.
 - Do not remove `gh` fallback in this migration slice.
+- Do not silently use `gh` fallback when `ADL_GITHUB_DISABLE_GH_FALLBACK`
+  is enabled.
 - Do not introduce GitHub App authentication in this migration slice.
 - Do not rename public workflow commands in this migration slice.
 
