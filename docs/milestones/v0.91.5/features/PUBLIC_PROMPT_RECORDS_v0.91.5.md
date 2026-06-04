@@ -8,6 +8,7 @@
 - Owner: ADL maintainers
 - Status: `active_wp_01_opening`
 - Related issues: `#3472`, `#3473`, `#3474`, `#3475`, `#3476`
+- Local ADL state disposition: [../LOCAL_ADL_STATE_DISPOSITION_3473.md](../LOCAL_ADL_STATE_DISPOSITION_3473.md)
 
 ## Template Rules
 
@@ -33,6 +34,10 @@ and `.adl` archive/deletion review expectations.
 
 The public prompt-record lane should export selected prompt packets, validate
 machine-readable shape, redact local/private data, and index them for review.
+
+The companion local-state disposition for `#3473` classifies local `.adl/`
+content before cleanup or archive work proceeds. It explicitly performs no
+deletion and does not promote local `.adl` state as canonical public truth.
 
 ## Design
 
