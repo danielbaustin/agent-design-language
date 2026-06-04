@@ -5,6 +5,9 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MANIFEST="$ROOT_DIR/adl/Cargo.toml"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
+ADL_BIN="${ADL_BIN:-}"
+ADL_REVIEW_BIN="${ADL_REVIEW_BIN:-}"
+ADL_PACKAGE_VERSION="${ADL_PACKAGE_VERSION:-}"
 
 assert_contains() {
   local pattern="$1" text="$2" label="$3"
@@ -25,11 +28,27 @@ assert_status_nonzero() {
 }
 
 run_adl() {
+  if [[ -n "$ADL_BIN" ]]; then
+    "$ADL_BIN" "$@"
+    return
+  fi
   cargo run --quiet --manifest-path "$MANIFEST" --bin adl -- "$@"
 }
 
 run_review() {
+  if [[ -n "$ADL_REVIEW_BIN" ]]; then
+    "$ADL_REVIEW_BIN" "$@"
+    return
+  fi
   cargo run --quiet --manifest-path "$MANIFEST" --bin adl-review -- "$@"
+}
+
+package_version() {
+  if [[ -n "$ADL_PACKAGE_VERSION" ]]; then
+    printf '%s\n' "$ADL_PACKAGE_VERSION"
+    return
+  fi
+  cargo metadata --quiet --no-deps --format-version 1 --manifest-path "$MANIFEST" | python3 -c 'import json,sys; print(json.load(sys.stdin)["packages"][0]["version"])'
 }
 
 help_output="$(run_review --help)"
@@ -38,7 +57,7 @@ assert_contains "adl-review code-review --out <dir>" "$help_output" "review code
 assert_contains "C-SDLC issue work belongs to adl/tools/pr.sh run <issue>" "$help_output" "csdlc handoff help"
 
 version_output="$(run_review --version)"
-expected_version="$(cargo metadata --quiet --no-deps --format-version 1 --manifest-path "$MANIFEST" | python3 -c 'import json,sys; print(json.load(sys.stdin)["packages"][0]["version"])')"
+expected_version="$(package_version)"
 assert_contains "$expected_version" "$version_output" "review version"
 
 review_fixture="$TMP_DIR/review.md"

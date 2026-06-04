@@ -6,6 +6,9 @@ MANIFEST="$ROOT_DIR/adl/Cargo.toml"
 FIXTURE="$ROOT_DIR/adl/examples/v0-3-concurrency-fork-join.adl.yaml"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
+ADL_BIN="${ADL_BIN:-}"
+ADL_RUNTIME_BIN="${ADL_RUNTIME_BIN:-}"
+ADL_PACKAGE_VERSION="${ADL_PACKAGE_VERSION:-}"
 
 assert_contains() {
   local pattern="$1" text="$2" label="$3"
@@ -26,11 +29,27 @@ assert_status_nonzero() {
 }
 
 run_adl() {
+  if [[ -n "$ADL_BIN" ]]; then
+    "$ADL_BIN" "$@"
+    return
+  fi
   cargo run --quiet --manifest-path "$MANIFEST" --bin adl -- "$@"
 }
 
 run_runtime() {
+  if [[ -n "$ADL_RUNTIME_BIN" ]]; then
+    "$ADL_RUNTIME_BIN" "$@"
+    return
+  fi
   cargo run --quiet --manifest-path "$MANIFEST" --bin adl-runtime -- "$@"
+}
+
+package_version() {
+  if [[ -n "$ADL_PACKAGE_VERSION" ]]; then
+    printf '%s\n' "$ADL_PACKAGE_VERSION"
+    return
+  fi
+  cargo metadata --quiet --no-deps --format-version 1 --manifest-path "$MANIFEST" | python3 -c 'import json,sys; print(json.load(sys.stdin)["packages"][0]["version"])'
 }
 
 help_output="$(run_runtime --help)"
@@ -42,7 +61,7 @@ run_help_output="$(run_runtime run --help)"
 assert_contains "adl-runtime run <adl.yaml>" "$run_help_output" "runtime run subcommand help"
 
 version_output="$(run_runtime --version)"
-assert_contains "$(cargo metadata --quiet --no-deps --format-version 1 --manifest-path "$MANIFEST" | python3 -c 'import json,sys; print(json.load(sys.stdin)["packages"][0]["version"])')" "$version_output" "runtime version"
+assert_contains "$(package_version)" "$version_output" "runtime version"
 
 legacy_plan="$TMP_DIR/legacy-plan.txt"
 runtime_plan="$TMP_DIR/runtime-plan.txt"
