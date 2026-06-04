@@ -33,6 +33,18 @@ The matrix should cover planner, worker, reviewer, janitor, and watcher roles
 across direct hosted providers, local Ollama, remote AI node Ollama, and
 OpenRouter.
 
+## Native Provider Status
+
+| Provider family | Native ADL type | Credential env | Default endpoint | Status |
+| --- | --- | --- | --- | --- |
+| OpenAI | `openai` | `OPENAI_API_KEY` | `https://api.openai.com/v1/responses` | implemented |
+| Anthropic | `anthropic` | `ANTHROPIC_API_KEY` | `https://api.anthropic.com/v1/messages` | implemented |
+| DeepSeek | `deepseek` | `DEEPSEEK_API_KEY` | `https://api.deepseek.com/chat/completions` | implemented in `#3549` |
+| Gemini | none yet | `GEMINI_API_KEY` | n/a | compatibility/profile lane only |
+
+Compatibility profiles such as `http:deepseek-chat` remain useful for gateway
+tests, but they must not be confused with the native `deepseek` provider path.
+
 ## Design
 
 - Record provider, model, transport, credentials posture, and role.

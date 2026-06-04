@@ -125,7 +125,7 @@ fn infer_vendor(spec: &adl::ProviderSpec) -> String {
                 "mock" => return "mock".to_string(),
                 "chatgpt" => return "openai".to_string(),
                 "claude" => return "anthropic".to_string(),
-                "http" => {}
+                "http" => return "generic_http".to_string(),
                 _ => {}
             }
         }
@@ -162,6 +162,7 @@ fn infer_vendor(spec: &adl::ProviderSpec) -> String {
         "mock" => "mock".to_string(),
         "openai" => "openai".to_string(),
         "anthropic" => "anthropic".to_string(),
+        "deepseek" => "deepseek".to_string(),
         "http" | "http_remote" => "generic_http".to_string(),
         other if !other.is_empty() => other.to_lowercase(),
         _ => "unknown".to_string(),
@@ -177,7 +178,9 @@ fn infer_transport(spec: &adl::ProviderSpec) -> Result<ProviderTransportV1> {
                 Ok(ProviderTransportV1::LocalCli)
             }
         }
-        "http" | "http_remote" | "openai" | "anthropic" => Ok(ProviderTransportV1::Http),
+        "http" | "http_remote" | "openai" | "anthropic" | "deepseek" => {
+            Ok(ProviderTransportV1::Http)
+        }
         "local_ollama" => Ok(ProviderTransportV1::LocalCli),
         "mock" => Ok(ProviderTransportV1::InProcess),
         other => Err(anyhow!(
@@ -519,7 +522,7 @@ mod tests {
     }
 
     #[test]
-    fn provider_substrate_accepts_native_openai_and_anthropic_kinds() {
+    fn provider_substrate_accepts_native_openai_anthropic_and_deepseek_kinds() {
         let mut openai = provider_spec("openai");
         openai.default_model = Some("gpt-test".to_string());
         let openai_substrate =
@@ -535,6 +538,14 @@ mod tests {
         assert_eq!(anthropic_substrate.vendor, "anthropic");
         assert_eq!(anthropic_substrate.transport, ProviderTransportV1::Http);
         assert_eq!(anthropic_substrate.provider_kind, "anthropic");
+
+        let mut deepseek = provider_spec("deepseek");
+        deepseek.default_model = Some("deepseek-chat".to_string());
+        let deepseek_substrate =
+            provider_substrate_v1("deepseek_primary", &deepseek).expect("deepseek substrate");
+        assert_eq!(deepseek_substrate.vendor, "deepseek");
+        assert_eq!(deepseek_substrate.transport, ProviderTransportV1::Http);
+        assert_eq!(deepseek_substrate.provider_kind, "deepseek");
     }
 
     #[test]
@@ -724,6 +735,29 @@ mod tests {
         assert_eq!(
             substrate.capabilities.structured_json.mode,
             CapabilityModeV1::Native
+        );
+    }
+
+    #[test]
+    fn provider_substrate_keeps_http_deepseek_profile_as_compatibility_lane() {
+        let mut spec = provider_spec("http");
+        spec.profile = Some("http:deepseek-chat".to_string());
+        spec.default_model = Some("reasoning/default".to_string());
+        spec.config.insert(
+            "endpoint".to_string(),
+            json!("https://proxy.deepseek.example.com/v1/complete"),
+        );
+        spec.config
+            .insert("provider_model_id".to_string(), json!("deepseek-chat"));
+
+        let substrate = provider_substrate_v1("deepseek_compat", &spec).expect("substrate");
+        assert_eq!(substrate.vendor, "generic_http");
+        assert_eq!(substrate.provider_kind, "http");
+        assert_eq!(substrate.transport, ProviderTransportV1::Http);
+        assert!(!substrate.capabilities.tool_calling.supported);
+        assert_eq!(
+            substrate.capabilities.structured_json.mode,
+            CapabilityModeV1::PromptBased
         );
     }
 

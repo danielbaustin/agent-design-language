@@ -30,15 +30,16 @@ The generated bundle is intentionally local-only:
 - users are expected to copy/fill a local env file and source it before running ADL
 
 Important transport note:
-- `openai` and `anthropic` now use Rust-native provider adapters by default:
+- `openai`, `anthropic`, and `deepseek` now use Rust-native provider adapters by default:
   - `type: "openai"` targets the OpenAI Responses API unless `config.endpoint` is explicitly overridden
   - `type: "anthropic"` targets the Anthropic Messages API unless `config.endpoint` is explicitly overridden
+  - `type: "deepseek"` targets the DeepSeek chat completions API unless `config.endpoint` is explicitly overridden
 - ADL's bounded HTTP provider expects a completion-style contract:
   - request JSON with `{"prompt": "..."}`
   - response JSON with `{"output": "..."}`
 - raw vendor-native endpoints may need an adapter or compatibility gateway if
   they do not expose that exact contract directly; this applies to HTTP/profile
-  families such as `chatgpt`, `claude`, `gemini`, `deepseek`, and `http`
+  families such as `chatgpt`, `claude`, `gemini`, and `http`
 - provider-family demos should keep setup instructions here and keep family-specific
   runtime proof steps in their own wrapper surfaces
 
@@ -48,7 +49,12 @@ Example:
 adl provider setup chatgpt
 adl provider setup claude
 adl provider setup openai --out ./.adl/provider-setup/openai
+adl provider setup deepseek
 ```
+
+DeepSeek native note:
+- `adl provider setup deepseek` emits `type: "deepseek"`, reads `DEEPSEEK_API_KEY`, and uses `https://api.deepseek.com/chat/completions` by default
+- the older `http:deepseek-chat` profile remains a compatibility surface for ADL-style completion gateways; it is not the native DeepSeek API path
 
 Loopback demo note:
 - the `v0.87.1` bounded HTTP family demo uses `http://127.0.0.1:8787/complete` with a dummy bearer token as a local proof path for the ADL completion contract
