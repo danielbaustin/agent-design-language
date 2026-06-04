@@ -10,7 +10,8 @@ use super::git_support::{
 };
 use super::github::{
     attach_post_merge_closeout, attach_pr_janitor, current_pr_url,
-    ensure_or_repair_pr_closing_linkage,
+    ensure_or_repair_pr_closing_linkage, run_gh_capture, run_gh_status,
+    run_gh_status_allow_failure,
 };
 use super::lifecycle;
 use super::DEFAULT_VERSION;
@@ -180,8 +181,8 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
 
     let pr_url = if let Some(existing) = current_pr_url(&repo, &branch)? {
         ensure_existing_pr_base_matches(&repo, &existing, &pr_base)?;
-        run_status(
-            "gh",
+        run_gh_status(
+            "pr.edit.finish_existing",
             &[
                 "pr",
                 "edit",
@@ -196,8 +197,8 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         )?;
         existing
     } else {
-        let created = run_capture(
-            "gh",
+        let created = run_gh_capture(
+            "pr.create.finish",
             &[
                 "pr",
                 "create",
@@ -227,10 +228,13 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
 
     if parsed.merge_mode {
         if parsed.ready {
-            let _ = run_status_allow_failure("gh", &["pr", "ready", "-R", &repo, &pr_url])?;
+            let _ = run_gh_status_allow_failure(
+                "pr.ready.finish_merge",
+                &["pr", "ready", "-R", &repo, &pr_url],
+            )?;
         }
-        run_status(
-            "gh",
+        run_gh_status(
+            "pr.merge.finish",
             &[
                 "pr",
                 "merge",
@@ -253,7 +257,8 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     if parsed.ready {
-        let _ = run_status_allow_failure("gh", &["pr", "ready", "-R", &repo, &pr_url])?;
+        let _ =
+            run_gh_status_allow_failure("pr.ready.finish", &["pr", "ready", "-R", &repo, &pr_url])?;
     }
 
     attach_pr_janitor(
@@ -817,8 +822,8 @@ fn resolve_finish_pr_base(repo_root: &Path, branch: &str) -> Result<String> {
 }
 
 fn ensure_existing_pr_base_matches(repo: &str, pr_url: &str, expected_base: &str) -> Result<()> {
-    let actual_base = run_capture(
-        "gh",
+    let actual_base = run_gh_capture(
+        "pr.view.base_ref.finish_existing",
         &[
             "pr",
             "view",

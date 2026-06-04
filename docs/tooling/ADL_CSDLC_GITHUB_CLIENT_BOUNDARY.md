@@ -26,6 +26,8 @@ The shared layer owns:
 - Fallback policy for `auto`, `octocrab`, and `gh` modes.
 - Fail-closed shell fallback disablement through
   `ADL_GITHUB_DISABLE_GH_FALLBACK`.
+- Live `gh` process guards for issue and PR workflow operations that have not
+  yet migrated to trait-backed octocrab transport.
 - Issue metadata parity planning.
 - PR wave filtering.
 - PR closing-linkage interpretation.
@@ -37,6 +39,9 @@ The shared layer owns:
 - Do not remove `gh` fallback in this migration slice.
 - Do not silently use `gh` fallback when `ADL_GITHUB_DISABLE_GH_FALLBACK`
   is enabled.
+- Do not silently use `gh` when `ADL_GITHUB_CLIENT=octocrab` explicitly selects
+  octocrab for a live operation that is still shell-backed; fail closed instead
+  until that operation has a real octocrab implementation.
 - Do not introduce GitHub App authentication in this migration slice.
 - Do not rename public workflow commands in this migration slice.
 
@@ -47,6 +52,8 @@ The focused ownership checks live in the Rust CLI tests:
 - `csdlc_dispatch_exposes_help_and_version_without_runtime_dispatch`
 - `csdlc_issue_run_maps_to_existing_pr_start_command`
 - `csdlc_github_client_boundary_doc_records_shared_ownership`
+- `live_gh_policy_guard_blocks_disabled_fallback_before_spawn`
+- `live_gh_policy_guard_blocks_explicit_octocrab_before_spawn`
 
 These checks prove that `adl-csdlc` remains a compatibility surface over the
 shared PR control-plane path instead of becoming a second GitHub workflow truth.

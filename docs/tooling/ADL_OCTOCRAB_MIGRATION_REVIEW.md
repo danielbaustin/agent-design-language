@@ -24,6 +24,9 @@ operation now uses live octocrab network calls.
   `adl-csdlc` stays on the shared PR control-plane path.
 - `#3641` added fail-closed shell fallback disablement and this migration review
   packet.
+- `#3672` wires that fallback policy into live shell-backed issue and PR
+  workflow operations so disabled fallback and explicit octocrab mode fail
+  before spawning `gh`.
 
 ## Mode Policy
 
@@ -34,6 +37,10 @@ operation now uses live octocrab network calls.
 - `ADL_GITHUB_CLIENT=gh` explicitly selects `gh` fallback.
 - `ADL_GITHUB_DISABLE_GH_FALLBACK=1` disables shell fallback and fails closed
   for shell-backed modes.
+- Live operations that are still shell-backed may use `gh` only when fallback is
+  allowed. If `ADL_GITHUB_CLIENT=octocrab` explicitly selects octocrab, or
+  fallback is disabled, those live paths fail closed until a trait-backed
+  octocrab implementation exists for the operation.
 
 The stable failure code for disabled shell fallback is
 `github_client.fallback_disabled`.
@@ -49,7 +56,8 @@ The following operations still route through the existing `gh` command path:
 - live issue and PR linkage checks where the current code calls `gh`
 
 This is intentional for this migration wave. The typed helpers now own shared
-interpretation, but live network mutation was not migrated in this slice.
+interpretation and shell-fallback admission, but live network mutation was not
+migrated in this slice.
 
 ## Follow-On Routes
 

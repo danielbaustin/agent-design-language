@@ -43,6 +43,8 @@ mod github;
 mod github_client;
 mod lifecycle;
 
+pub(crate) use self::github::run_gh_capture_allow_failure;
+
 #[cfg(test)]
 type CreatePostBootstrapHook = fn(&Path, &IssueRef) -> Result<()>;
 
