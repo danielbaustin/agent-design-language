@@ -59,7 +59,7 @@ Fix Direction: <bounded repair direction>
 Repo-local validator:
 
 ```text
-adl tooling verify-repo-review-contract
+adl-review verify-repo-contract --review <review.md>
 ```
 
 Fixture test:

@@ -21,9 +21,9 @@ This is a procedural execution skill.
 This skill should track the repository's canonical PR tooling docs.
 
 At the moment, the canonical repo docs are:
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PREFLIGHT_CHECK_SKILL.md`
+- `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
+- `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+- `<repo-root>/docs/milestones/v0.87/features/PREFLIGHT_CHECK_SKILL.md`
 
 Within this skill bundle, the operational details live in:
 - `references/ready-playbook.md`
@@ -93,12 +93,9 @@ If there is no concrete target, stop and report `blocked` with the missing targe
 1. Resolve the concrete target context.
 2. Prefer the canonical doctor path first:
    - `adl/tools/pr.sh doctor --json`
-   - `adl pr doctor --json`
 3. Use compatibility aliases only when the canonical doctor surface is unavailable:
    - `adl/tools/pr.sh ready`
-   - `adl pr ready`
    - `adl/tools/pr.sh preflight`
-   - `adl pr preflight`
 4. Use direct inspection only as a last resort.
 5. Inspect the relevant workflow surfaces:
    - issue/task identity
@@ -208,13 +205,10 @@ Unsafe parallel examples:
 
 Canonical machine surface:
 - `adl/tools/pr.sh doctor --json`
-- `adl pr doctor --json`
 
 Compatibility aliases:
 - `adl/tools/pr.sh ready`
 - `adl/tools/pr.sh preflight`
-- `adl pr ready`
-- `adl pr preflight`
 
 Command-order rule:
 - prefer `doctor --json` first when the surface exists
@@ -289,5 +283,5 @@ For stricter ADL execution, also use:
 
 - Playbook: `references/ready-playbook.md`
 - Output contract: `references/output-contract.md`
-- PR tooling feature doc: `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
-- PR tooling architecture doc: `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+- PR tooling feature doc: `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
+- PR tooling architecture doc: `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`

@@ -3,8 +3,8 @@
 Use this file after the main skill triggers and you are ready to execute an issue.
 
 Planning basis:
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+- `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
+- `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
 
 If the repo relocates those docs, follow the relocated canonical copies instead of these exact paths.
 
@@ -53,11 +53,8 @@ Default stance:
 
 Preferred diagnostic order:
 1. `adl/tools/pr.sh doctor --json`
-2. `adl pr doctor --json`
-3. `adl/tools/pr.sh ready`
-4. `adl pr ready`
-5. `adl/tools/pr.sh preflight`
-6. `adl pr preflight`
+2. `adl/tools/pr.sh ready`
+3. `adl/tools/pr.sh preflight`
 
 ## Binding Checklist
 

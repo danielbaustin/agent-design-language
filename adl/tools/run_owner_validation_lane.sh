@@ -95,6 +95,8 @@ build_owner_bins() {
 }
 
 run_csdlc_lane() {
+  run_command "C-SDLC owner command guidance" \
+    bash adl/tools/test_cli_owner_command_guidance.sh
   run_command "C-SDLC wrapper migration contract" \
     bash adl/tools/test_cli_wrapper_migration_contract.sh
   run_command "C-SDLC run ambiguity policy" \

@@ -720,8 +720,6 @@ Structured schema:
 
 - `adl/tools/pr.sh create`
 - `adl/tools/pr.sh init`
-- `adl pr create`
-- `adl pr init`
 
 For `create_and_bootstrap`, the expected machine-safe path is:
 
@@ -850,11 +848,8 @@ Structured schema:
 Preferred diagnostic order:
 
 - `adl/tools/pr.sh doctor --json`
-- `adl pr doctor --json`
 - `adl/tools/pr.sh ready`
-- `adl pr ready`
 - `adl/tools/pr.sh preflight`
-- `adl pr preflight`
 
 Use direct inspection only when the repo-native doctor/readiness surfaces are
 unavailable or unusable.
@@ -965,13 +960,9 @@ Structured schema:
 Preferred execution order:
 
 - `adl/tools/pr.sh doctor --json`
-- `adl pr doctor --json`
 - `adl/tools/pr.sh run`
-- `adl pr run`
 - `adl/tools/pr.sh ready`
-- `adl pr ready`
 - `adl/tools/pr.sh preflight`
-- `adl pr preflight`
 
 ### Output And Stop Boundary
 

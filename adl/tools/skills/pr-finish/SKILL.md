@@ -54,7 +54,6 @@ Useful additional inputs:
 2. Confirm the execution output record is present and truthful.
 3. Prefer repo-native finish commands:
    - `adl/tools/pr.sh finish`
-   - `adl pr finish`
 4. Validate the declared staged paths and PR metadata.
 5. Publish or update the draft PR surface.
 6. Emit a structured finish result and stop.
