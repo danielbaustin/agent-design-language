@@ -148,6 +148,7 @@ fn csdlc_dispatch_exposes_help_and_version_without_runtime_dispatch() {
     let usage = csdlc_usage();
     assert!(usage.contains("adl-csdlc issue run <issue>"));
     assert!(usage.contains("adl/tools/pr.sh remains the canonical agent-facing issue wrapper"));
+    assert!(usage.contains("shared pr control-plane client layer"));
     assert!(usage.contains("adl-runtime run <adl.yaml>"));
 }
 
@@ -341,6 +342,20 @@ fn csdlc_issue_run_maps_to_existing_pr_start_command() {
     let doctor = csdlc_issue_to_pr_args(&["doctor".to_string(), "3596".to_string()])
         .expect("non-run issue subcommands should preserve pr args");
     assert_eq!(doctor, vec!["doctor".to_string(), "3596".to_string()]);
+}
+
+#[test]
+fn csdlc_github_client_boundary_doc_records_shared_ownership() {
+    let doc = include_str!("../../../docs/tooling/ADL_CSDLC_GITHUB_CLIENT_BOUNDARY.md");
+
+    assert!(doc.contains("adl/tools/pr.sh"));
+    assert!(doc.contains("remains the canonical"));
+    assert!(doc.contains("adl-csdlc"));
+    assert!(doc.contains("Rust-owned C-SDLC compatibility binary"));
+    assert!(doc.contains("adl/src/cli/pr_cmd/github_client.rs"));
+    assert!(doc.contains("adl/src/cli/pr_cmd/github.rs"));
+    assert!(doc.contains("ADL_GITHUB_CLIENT"));
+    assert!(doc.contains("Do not duplicate GitHub issue or PR metadata interpretation"));
 }
 
 #[test]

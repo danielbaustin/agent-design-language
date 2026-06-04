@@ -356,6 +356,7 @@ Usage:\n\
   adl-csdlc --version\n\n\
 Notes:\n\
   adl/tools/pr.sh remains the canonical agent-facing issue wrapper during migration.\n\
+  GitHub issue/PR metadata interpretation is owned by the shared pr control-plane client layer.\n\
   adl-csdlc issue run expects a numeric issue id. Runtime workflow YAML belongs to adl-runtime run <adl.yaml>."
 }
 
