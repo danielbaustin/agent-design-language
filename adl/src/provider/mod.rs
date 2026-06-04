@@ -23,13 +23,14 @@ mod http_family;
 mod local;
 mod profiles;
 
+pub use http_family::DeepSeekProvider;
 pub use http_family::{AnthropicProvider, HttpProvider, OllamaHttpProvider, OpenAiProvider};
 pub use local::{MockProvider, OllamaProvider};
 pub use profiles::{expand_provider_profiles, provider_profile_names};
 
 pub(crate) use profiles::{
     is_allowed_ollama_endpoint, is_allowed_remote_endpoint, ANTHROPIC_MESSAGES_ENDPOINT,
-    ANTHROPIC_VERSION, OPENAI_RESPONSES_ENDPOINT,
+    ANTHROPIC_VERSION, DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT, OPENAI_RESPONSES_ENDPOINT,
 };
 
 /// A minimal blocking provider abstraction used by runtime execution paths.
@@ -69,8 +70,8 @@ impl ProviderError {
             kind: ProviderErrorKind::UnknownKind,
             provider: None,
             message: format!(
-                "provider kind '{kind}' is not supported (supported: ollama, local_ollama, mock, http, http_remote, openai, anthropic). \
-Set providers.<id>.type to one of: ollama, local_ollama, mock, http, http_remote, openai, anthropic. The remote provider surfaces are HTTPS-only."
+                "provider kind '{kind}' is not supported (supported: ollama, local_ollama, mock, http, http_remote, openai, anthropic, deepseek). \
+Set providers.<id>.type to one of: ollama, local_ollama, mock, http, http_remote, openai, anthropic, deepseek. The remote provider surfaces are HTTPS-only."
             ),
         }
     }
@@ -234,7 +235,8 @@ pub fn build_provider_for_id(
     model_override: Option<&str>,
 ) -> Result<Box<dyn Provider>> {
     match spec.kind.trim() {
-        "http" | "http_remote" | "ollama" | "local_ollama" | "mock" | "openai" | "anthropic" => {}
+        "http" | "http_remote" | "ollama" | "local_ollama" | "mock" | "openai" | "anthropic"
+        | "deepseek" => {}
         other => return Err(unknown_kind(other)),
     }
 
@@ -247,6 +249,7 @@ pub fn build_provider_for_id(
             "ollama" => Ok(Box::new(OllamaHttpProvider::from_target(spec, &target)?)),
             "openai" => Ok(Box::new(OpenAiProvider::from_target(spec, &target)?)),
             "anthropic" => Ok(Box::new(AnthropicProvider::from_target(spec, &target)?)),
+            "deepseek" => Ok(Box::new(DeepSeekProvider::from_target(spec, &target)?)),
             other => Err(unknown_kind(other)),
         },
         provider_substrate::ProviderTransportV1::LocalCli
@@ -267,8 +270,19 @@ mod tests {
     use super::*;
     use std::env;
 
+    fn provider_spec(kind: &str, default_model: Option<&str>) -> adl::ProviderSpec {
+        adl::ProviderSpec {
+            id: Some(format!("{kind}_primary")),
+            profile: None,
+            kind: kind.to_string(),
+            base_url: None,
+            default_model: default_model.map(ToString::to_string),
+            config: HashMap::new(),
+        }
+    }
+
     #[test]
-    fn provider_error_helpers_and_classification_are_stable() {
+    fn provider_mod_error_helpers_and_classification_are_stable() {
         let retryable = runtime_error("mock", "retryable");
         assert!(is_retryable_error(&retryable));
         assert_eq!(stable_failure_kind(&retryable), Some("provider_error"));
@@ -285,10 +299,89 @@ mod tests {
         assert!(!is_retryable_error(&panic));
         assert_eq!(stable_failure_kind(&panic), Some("panic"));
         assert!(format!("{panic:#}").contains("provider mock panic: panic"));
+
+        let config = invalid_config("mock", "bad config");
+        assert!(!is_retryable_error(&config));
+        assert_eq!(stable_failure_kind(&config), Some("schema_error"));
+        assert!(format!("{config:#}").contains("provider mock invalid config: bad config"));
+
+        let unknown = unknown_kind("mystery");
+        assert!(!is_retryable_error(&unknown));
+        assert_eq!(stable_failure_kind(&unknown), Some("schema_error"));
+        assert!(format!("{unknown:#}").contains("provider kind 'mystery' is not supported"));
     }
 
     #[test]
-    fn remote_retry_classification_distinguishes_deterministic_failures() {
+    fn provider_mod_complete_stream_default_buffers_mock_output() {
+        let spec = provider_spec("mock", Some("mock-model"));
+        let provider = build_provider_for_id("mock_primary", &spec, None).expect("mock provider");
+        let mut chunks = Vec::new();
+        let output = provider
+            .complete_stream("hello mock", &mut |chunk| chunks.push(chunk.to_string()))
+            .expect("mock stream completion");
+
+        assert_eq!(output, "hello mock");
+        assert_eq!(chunks, vec!["hello mock".to_string()]);
+    }
+
+    #[test]
+    fn provider_mod_build_provider_dispatches_supported_native_and_compatibility_kinds() {
+        let mock = provider_spec("mock", Some("mock-model"));
+        build_provider_for_id("mock_primary", &mock, None).expect("mock provider");
+
+        let local_ollama = provider_spec("ollama", Some("phi4-mini"));
+        build_provider_for_id("ollama_primary", &local_ollama, Some("phi4-mini"))
+            .expect("local ollama provider");
+
+        let mut http_ollama = provider_spec("ollama", Some("phi4-mini"));
+        http_ollama.base_url = Some("http://127.0.0.1:11434".to_string());
+        build_provider_for_id("ollama_http_primary", &http_ollama, None)
+            .expect("ollama http provider");
+
+        let mut generic_http = provider_spec("http", Some("http-model"));
+        generic_http.config.insert(
+            "endpoint".to_string(),
+            serde_json::json!("https://api.example.com/v1/complete"),
+        );
+        build_provider_for_id("http_primary", &generic_http, None).expect("generic http provider");
+
+        let openai = provider_spec("openai", Some("gpt-test"));
+        build_provider_for_id("openai_primary", &openai, None).expect("openai provider");
+
+        let anthropic = provider_spec("anthropic", Some("claude-test"));
+        build_provider_for_id("anthropic_primary", &anthropic, None).expect("anthropic provider");
+
+        let deepseek = provider_spec("deepseek", Some("deepseek-chat"));
+        build_provider_for_id("deepseek_primary", &deepseek, None).expect("deepseek provider");
+    }
+
+    #[test]
+    fn provider_mod_build_provider_rejects_unknown_kind_and_invalid_native_endpoint() {
+        let unknown = provider_spec("not-a-provider", Some("model"));
+        let unknown_err = match build_provider_for_id("unknown_primary", &unknown, None) {
+            Ok(_) => panic!("unknown kind should fail"),
+            Err(err) => err,
+        };
+        assert!(unknown_err
+            .to_string()
+            .contains("provider kind 'not-a-provider' is not supported"));
+
+        let mut unsafe_openai = provider_spec("openai", Some("gpt-test"));
+        unsafe_openai.config.insert(
+            "endpoint".to_string(),
+            serde_json::json!("http://api.openai.com/v1/responses"),
+        );
+        let endpoint_err = match build_provider_for_id("openai_primary", &unsafe_openai, None) {
+            Ok(_) => panic!("plain http hosted endpoint should fail"),
+            Err(err) => err,
+        };
+        assert!(endpoint_err
+            .to_string()
+            .contains("endpoint must use https://"));
+    }
+
+    #[test]
+    fn provider_mod_remote_retry_classification_distinguishes_deterministic_failures() {
         let schema = anyhow::Error::new(crate::remote_exec::RemoteExecuteClientError::new(
             crate::remote_exec::RemoteExecuteClientErrorKind::SchemaViolation,
             "REMOTE_SCHEMA_VIOLATION",
@@ -315,7 +408,7 @@ mod tests {
     }
 
     #[test]
-    fn profile_endpoint_validation_rejects_placeholder_and_invalid_hosts() {
+    fn provider_mod_profile_endpoint_validation_rejects_placeholder_and_invalid_hosts() {
         let empty =
             validate_profile_endpoint("p1", "http:gpt-4o-mini", " ").expect_err("empty endpoint");
         assert!(empty
@@ -337,7 +430,7 @@ mod tests {
     }
 
     #[test]
-    fn profile_endpoint_validation_rejects_plain_http() {
+    fn provider_mod_profile_endpoint_validation_rejects_plain_http() {
         let err = validate_profile_endpoint(
             "p1",
             "http:gpt-4o-mini",
@@ -348,13 +441,13 @@ mod tests {
     }
 
     #[test]
-    fn profile_endpoint_validation_allows_loopback_http_for_local_harnesses() {
+    fn provider_mod_profile_endpoint_validation_allows_loopback_http_for_local_harnesses() {
         validate_profile_endpoint("p1", "http:gpt-4o-mini", "http://127.0.0.1:8787/complete")
             .expect("loopback http should remain allowed");
     }
 
     #[test]
-    fn provider_profile_registry_includes_first_class_claude_profiles() {
+    fn provider_mod_provider_profile_registry_includes_first_class_claude_profiles() {
         let names = provider_profile_names();
         assert!(names.contains(&"claude:claude-3-7-sonnet".to_string()));
         assert!(names.contains(&"claude:claude-3-5-haiku".to_string()));
@@ -368,7 +461,7 @@ mod tests {
     }
 
     #[test]
-    fn cfg_numeric_helpers_cover_all_supported_and_rejected_types() {
+    fn provider_mod_cfg_numeric_helpers_cover_all_supported_and_rejected_types() {
         let mut cfg = HashMap::new();
         cfg.insert("f64".to_string(), serde_json::json!(0.5));
         cfg.insert("i64".to_string(), serde_json::json!(2));
@@ -394,7 +487,7 @@ mod tests {
     }
 
     #[test]
-    fn timeout_secs_rejects_zero_and_uses_default_without_env() {
+    fn provider_mod_timeout_secs_rejects_zero_and_uses_default_without_env() {
         let prev_adl = env::var_os("ADL_TIMEOUT_SECS");
 
         env::set_var("ADL_TIMEOUT_SECS", "0");

@@ -167,15 +167,15 @@ fn template_for_family(family: &str) -> Result<&'static ProviderSetupTemplate> {
         },
         "deepseek" => &ProviderSetupTemplate {
             family: "deepseek",
-            profile: Some("http:deepseek-chat"),
-            kind: None,
+            profile: None,
+            kind: Some("deepseek"),
             env_var: "DEEPSEEK_API_KEY",
             provider_id: "deepseek_primary",
             agent_id: "deepseek_agent",
             model_ref: "reasoning/default",
             provider_model_id: "deepseek-chat",
-            endpoint_hint: Some("https://api.example.invalid/v1/complete"),
-            notes: "Use this with an ADL-compatible HTTP endpoint that fronts DeepSeek-compatible models.",
+            endpoint_hint: None,
+            notes: "Use this for the Rust-native DeepSeek provider path. The default endpoint is DeepSeek's chat completions API; override config.endpoint only for tests or a trusted compatible endpoint.",
         },
         "http" | "generic-http" => &ProviderSetupTemplate {
             family: "http",
@@ -208,11 +208,17 @@ fn render_provider_yaml(template: &ProviderSetupTemplate) -> String {
         .endpoint_hint
         .map(|endpoint| format!("      endpoint: \"{endpoint}\"\n"))
         .unwrap_or_default();
+    let headers_line = if template.kind.is_some() {
+        String::new()
+    } else {
+        "      headers:\n        X-Client: \"adl-provider-setup\"\n".to_string()
+    };
     format!(
-        "version: \"0.5\"\n\nproviders:\n  {provider_id}:\n    {provider_identity}\n    config:\n{endpoint_line}      auth:\n        type: bearer\n        env: {env_var}\n      headers:\n        X-Client: \"adl-provider-setup\"\n      timeout_secs: 15\n      model_ref: \"{model_ref}\"\n      provider_model_id: \"{provider_model_id}\"\n\nagents:\n  {agent_id}:\n    provider: \"{provider_id}\"\n    model: \"{model_ref}\"\n\n# Merge this provider/agent snippet into your workflow file.\n",
+        "version: \"0.5\"\n\nproviders:\n  {provider_id}:\n    {provider_identity}\n    config:\n{endpoint_line}      auth:\n        type: bearer\n        env: {env_var}\n{headers_line}      timeout_secs: 15\n      model_ref: \"{model_ref}\"\n      provider_model_id: \"{provider_model_id}\"\n\nagents:\n  {agent_id}:\n    provider: \"{provider_id}\"\n    model: \"{model_ref}\"\n\n# Merge this provider/agent snippet into your workflow file.\n",
         provider_id = template.provider_id,
         provider_identity = provider_identity,
         endpoint_line = endpoint_line,
+        headers_line = headers_line,
         env_var = template.env_var,
         model_ref = template.model_ref,
         provider_model_id = template.provider_model_id,
@@ -493,11 +499,7 @@ mod tests {
                 "profile: \"http:gemini-2.0-flash\"",
                 "GEMINI_API_KEY",
             ),
-            (
-                "deepseek",
-                "profile: \"http:deepseek-chat\"",
-                "DEEPSEEK_API_KEY",
-            ),
+            ("deepseek", "type: \"deepseek\"", "DEEPSEEK_API_KEY"),
             (
                 "generic-http",
                 "profile: \"http:gpt-4.1-mini\"",

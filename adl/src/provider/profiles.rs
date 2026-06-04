@@ -55,6 +55,8 @@ pub(crate) fn is_allowed_ollama_endpoint(endpoint: &str) -> bool {
 
 pub(crate) const OPENAI_RESPONSES_ENDPOINT: &str = "https://api.openai.com/v1/responses";
 pub(crate) const ANTHROPIC_MESSAGES_ENDPOINT: &str = "https://api.anthropic.com/v1/messages";
+pub(crate) const DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT: &str =
+    "https://api.deepseek.com/chat/completions";
 /// Canonical Anthropic API version used by the HTTP adapter.
 pub(crate) const ANTHROPIC_VERSION: &str = "2023-06-01";
 
