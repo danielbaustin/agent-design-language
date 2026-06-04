@@ -104,7 +104,7 @@ Current demo-showcase order:
 | R01 | Multi-agent C-SDLC proving wave and remaining stabilization | routed_to_v0_91_5 | the old `#3415` mini-sprint remains useful background evidence, but the concrete bridge wave now lives under `#3501`, `#3503`, and `#3504`, with `#3484` retained as already-satisfied proof rather than a `v0.91.4` release blocker |
 | R02 | CodeFriend sidecar product setup | non_core_sidecar | product publication work is tracked separately and does not count as default-operation C-SDLC proof |
 | R03 | WildClawBench benchmark sidecar | parked_sidecar | benchmark spike evidence may inform later work, but it is not required for Sprint 4 release closeout and should not be presented as active WP-13 demo work |
-| R04 | Unity-facing best-demo completion | active_in_v0_91_5_pending_unity_import | `#3460` carries Celestial Rescue in v0.91.5; no `v0.91.4` release claim depends on Unity completion or Unity editor/build validation |
+| R04 | Unity-facing best-demo completion | active_in_v0_91_5_pending_unity_import | no `v0.91.4` release claim depends on Unity completion; `#3460` now owns the Celestial Rescue Unity project under `demos/v0.91.4/celestial-rescue-unity/` with proof packet `review/demo_showcase/CELESTIAL_RESCUE_UNITY_PROOF_PACKET_v0.91.5.md`, but Unity editor/import/build validation is still pending |
 | R05 | Unity Observatory | next_milestone | Observatory remains separate next-milestone work and must not be collapsed into the Celestial Rescue game |
 | R06 | D17 / multi-agent workcell proof lane | preserved_sidecar | issue `#3419` and the multi-agent workcell proof packets remain linked evidence, not a v0.91.4 release gate |
 

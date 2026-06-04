@@ -45,6 +45,11 @@ Current truthful posture:
 - Starharvest is the strongest current browser-backed demo proof
 - Unity-facing best-demo completion remains deferred and should move forward under `v0.91.5` rather than being smuggled into the `v0.91.4` release claim
 
+Issue `#3460` now carries that deferred Unity work in `v0.91.5` through the
+Celestial Rescue Unity project at
+`demos/v0.91.4/celestial-rescue-unity/`. That project can become a showcase
+artifact without retroactively becoming a `v0.91.4` release gate.
+
 ## Why This Is Not A Multi-Agent Claim
 
 This showcase note also does not claim live provider-backed multi-agent proof.

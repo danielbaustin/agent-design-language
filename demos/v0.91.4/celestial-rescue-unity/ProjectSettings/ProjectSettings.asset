@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!129 &1
+PlayerSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 26
+  productGUID: 3460000000000000000000000000915
+  companyName: Agent Logic, Inc.
+  productName: Celestial Rescue
+  defaultScreenWidth: 1280
+  defaultScreenHeight: 720
+  runInBackground: 1
+  captureSingleScreen: 0
+  usePlayerLog: 1
+  resizableWindow: 1

@@ -1,0 +1,74 @@
+.screen {
+  flex-grow: 1;
+  background-color: rgba(5, 9, 20, 0.68);
+  color: #eef7ff;
+  -unity-font-style: normal;
+}
+.hud-card {
+  position: absolute;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background-color: rgba(14, 24, 46, 0.86);
+  border-width: 1px;
+  border-color: rgba(150, 218, 255, 0.42);
+}
+.top-left { left: 24px; top: 22px; }
+.top-right { right: 24px; top: 22px; width: 210px; }
+.eyebrow {
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: #8bd6ff;
+  text-transform: uppercase;
+}
+.metric {
+  font-size: 28px;
+  margin-top: 4px;
+  color: #ffffff;
+}
+.oxygen-track {
+  height: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+.oxygen-fill {
+  height: 10px;
+  border-radius: 8px;
+  width: 100%;
+  background-color: #4ff0ae;
+}
+.mission-panel {
+  width: 470px;
+  align-self: center;
+  margin-top: 190px;
+  padding: 30px;
+  border-radius: 24px;
+  background-color: rgba(8, 15, 32, 0.91);
+  border-width: 1px;
+  border-color: rgba(119, 198, 255, 0.55);
+}
+.title {
+  font-size: 42px;
+  color: #ffffff;
+  -unity-font-style: bold;
+}
+.body {
+  margin-top: 12px;
+  font-size: 16px;
+  color: #c8d7ea;
+  white-space: normal;
+}
+.primary-button, .secondary-button {
+  margin-top: 18px;
+  height: 42px;
+  border-radius: 18px;
+  font-size: 15px;
+}
+.primary-button {
+  background-color: #66d9ff;
+  color: #06111e;
+}
+.secondary-button {
+  background-color: rgba(255, 255, 255, 0.11);
+  color: #eef7ff;
+}

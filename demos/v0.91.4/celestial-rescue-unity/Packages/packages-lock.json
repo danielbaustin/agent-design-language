@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "com.unity.2d.sprite": { "version": "1.0.0", "depth": 0, "source": "builtin", "dependencies": {} },
+    "com.unity.inputsystem": { "version": "1.7.0", "depth": 0, "source": "registry", "dependencies": {} },
+    "com.unity.textmeshpro": { "version": "3.0.6", "depth": 0, "source": "builtin", "dependencies": {} },
+    "com.unity.timeline": { "version": "1.8.7", "depth": 0, "source": "registry", "dependencies": {} },
+    "com.unity.ui": { "version": "1.0.0", "depth": 0, "source": "builtin", "dependencies": {} },
+    "com.unity.ugui": { "version": "1.0.0", "depth": 0, "source": "builtin", "dependencies": {} }
+  }
+}
