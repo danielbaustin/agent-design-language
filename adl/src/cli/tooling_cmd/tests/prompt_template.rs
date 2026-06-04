@@ -223,6 +223,103 @@ fn prompt_template_cli_edits_declared_values_and_fails_closed() {
 }
 
 #[test]
+fn prompt_template_cli_imports_values_and_round_trips_rendered_card() {
+    let repo = TempRepo::new("prompt-template-import-values");
+    let values_dir = repo.path().join("values");
+    let rendered_dir = repo.path().join("rendered");
+    let imported_values = repo.path().join("imported-stp.values.yaml");
+    let normalized = repo.path().join("normalized-stp.md");
+    let rerendered = repo.path().join("rerendered-stp.md");
+    render_sample_cards_for_structure_test(&values_dir, &rendered_dir);
+    let source = rendered_dir.join("stp.md");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "import-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "stp".to_string(),
+        "--input".to_string(),
+        source.to_string_lossy().to_string(),
+        "--out".to_string(),
+        imported_values.to_string_lossy().to_string(),
+        "--normalized-out".to_string(),
+        normalized.to_string_lossy().to_string(),
+    ])
+    .expect("import-values should produce values YAML");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "validate-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "stp".to_string(),
+        "--values".to_string(),
+        imported_values.to_string_lossy().to_string(),
+    ])
+    .expect("imported values should validate");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "render".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "stp".to_string(),
+        "--values".to_string(),
+        imported_values.to_string_lossy().to_string(),
+        "--out".to_string(),
+        rerendered.to_string_lossy().to_string(),
+    ])
+    .expect("imported values should render");
+
+    let source = fs::read_to_string(source).expect("source card");
+    assert_eq!(
+        fs::read_to_string(normalized).expect("normalized card"),
+        source
+    );
+    assert_eq!(
+        fs::read_to_string(rerendered).expect("rerendered card"),
+        source
+    );
+}
+
+#[test]
+fn prompt_template_cli_import_values_fails_closed_for_structure_drift() {
+    let repo = TempRepo::new("prompt-template-import-values-drift");
+    let values_dir = repo.path().join("values");
+    let rendered_dir = repo.path().join("rendered");
+    render_sample_cards_for_structure_test(&values_dir, &rendered_dir);
+    let source = rendered_dir.join("sip.md");
+    let drifted = repo.write_rel(
+        "drifted-sip.md",
+        &fs::read_to_string(source)
+            .expect("source card")
+            .replace("- Follow `AGENTS.md`.", "- Ignore `AGENTS.md`."),
+    );
+
+    let err = real_tooling(&[
+        "prompt-template".to_string(),
+        "import-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "sip".to_string(),
+        "--input".to_string(),
+        drifted.to_string_lossy().to_string(),
+        "--out".to_string(),
+        repo.path()
+            .join("drifted-sip.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+    ])
+    .expect_err("locked prose drift should fail");
+    assert!(err.to_string().contains("locked template text drifted"));
+}
+
+#[test]
 fn prompt_template_cli_rejects_markdown_structure_drift() {
     let repo = TempRepo::new("prompt-template-structure");
     let values_dir = repo.path().join("values");
@@ -333,6 +430,12 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
         "--help".to_string(),
     ])
     .expect("edit-values help should succeed");
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "import-values".to_string(),
+        "--help".to_string(),
+    ])
+    .expect("import-values help should succeed");
     real_tooling(&[
         "prompt-template".to_string(),
         "validate-structure".to_string(),
