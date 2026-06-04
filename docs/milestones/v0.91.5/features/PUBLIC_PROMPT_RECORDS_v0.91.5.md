@@ -77,6 +77,35 @@ host-local absolute paths, secret-like tokens, private key markers, local scratc
 paths, or unresolved template markers. Later redaction gates may add richer
 review, but this first exporter must not silently sanitize away lifecycle truth.
 
+## Validation Command
+
+Public prompt packets are validated with the paired read-only command:
+
+```bash
+adl tooling public-prompt-packet validate \
+  --packet <packet-dir-or-packet-root> \
+  [--repo-root <repo-root>]
+```
+
+The command accepts either one packet directory containing `manifest.json` or a
+packet root whose direct children contain public prompt packet manifests. It
+fails closed when a packet is missing required manifest fields, has non-GitHub
+tracker metadata for the current v1 packet shape, points public paths into
+`.adl/`, references missing card files, contains unresolved template markers,
+or contains obvious host-local paths, local scratch/worktree paths, private-key
+markers, or secret-like tokens.
+
+The validator treats `.adl/<version>/tasks/...` as allowable source provenance
+only when it is recorded as a repo-relative task-bundle path. `.worktrees/`,
+`.codex/`, absolute checkout paths, and temp/scratch paths are not valid public
+packet provenance.
+
+The gate also runs the structured prompt validators over all five exported
+cards. `SIP`, `STP`, `SPP`, and `SRP` must satisfy their current structured
+prompt contracts. `SOR` may satisfy either the completed-phase or bootstrap
+structured contract so the gate can validate both completed public records and
+freshly rendered sample packets without rewriting card truth.
+
 ## Execution Flow
 
 1. Define/export prompt packets.
@@ -96,8 +125,10 @@ Public packet generation must not depend on host paths or hidden local state.
 
 ## Validation
 
-Validation should include prompt packet structure, redaction scan, link checks,
-and archive/deletion review checklist.
+Validation should include prompt packet structure, manifest shape, tracker
+metadata, redaction/path safety scanning, structured prompt-card checks, link
+checks, and archive/deletion review checklist. The public packet validator is a
+focused docs/tooling gate, not a runtime proof lane.
 
 ## Acceptance Criteria
 
