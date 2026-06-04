@@ -103,9 +103,10 @@ Make v0.92 openable without hidden operational debt.
 - Preserve ordered execution where dependencies matter.
 - Do not close WP-01 until planned issues, cards, sprint umbrellas, and initial
   sequencing are ready to begin or explicitly routed.
-- Downstream card rewrite is explicitly routed through `#3582` and waits until
-  `#3553` lands; WP-01 does not need to rewrite every scaffold-era downstream
-  card before opening Sprint 1.
+- Downstream card rewrite is explicitly routed through `#3582` after the
+  prompt-template renderer, schema guard, and field-level editor land. Its
+  audit records that all downstream v0.91.5 cards validate phase-aware, so
+  Sprint 1 can proceed without mass Markdown rewrites.
 - Sprint umbrellas `#3571` through `#3574` own sprint-level coordination and
   closeout truth; they do not replace child issue execution.
 - Use multi-agent lanes only where they are being tested or provide clear value.
