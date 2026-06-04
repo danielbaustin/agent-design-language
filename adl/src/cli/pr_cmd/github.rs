@@ -1,8 +1,11 @@
 use super::*;
+use crate::cli::pr_cmd::github_client::{
+    issue_labels_from_csv, issue_labels_from_csv_in_order, issue_metadata_drift,
+    plan_issue_metadata_parity, IssueMetadataSnapshot,
+};
 use crate::cli::pr_cmd_prompt::infer_workflow_queue;
 use ::adl::control_plane::resolve_primary_checkout_root;
 use serde::Deserialize;
-use std::collections::BTreeSet;
 use std::path::Path;
 use std::process::Command;
 
@@ -343,11 +346,7 @@ pub(super) fn gh_issue_create(
         .arg(title)
         .arg("--body")
         .arg(body);
-    for label in labels_csv
-        .split(',')
-        .map(str::trim)
-        .filter(|label| !label.is_empty())
-    {
+    for label in issue_labels_from_csv_in_order(labels_csv) {
         cmd.arg("--label").arg(label);
     }
     let output = cmd
@@ -445,63 +444,37 @@ pub(super) fn ensure_issue_metadata_parity(
     expected_title: &str,
     labels_csv: &str,
 ) -> Result<()> {
-    let expected: BTreeSet<String> = labels_csv
-        .split(',')
-        .map(str::trim)
-        .filter(|label| !label.is_empty())
-        .map(ToString::to_string)
-        .collect();
+    let expected = issue_labels_from_csv(labels_csv);
     if expected.is_empty() {
         bail!("create: expected at least one label for tracked issue creation");
     }
 
     let current_title = gh_issue_title(issue, repo)?.unwrap_or_default();
-    if current_title != expected_title {
-        gh_issue_edit_title(repo, issue, expected_title)?;
-    }
+    let actual = IssueMetadataSnapshot::new(current_title, issue_label_names(issue, repo)?);
+    let plan = plan_issue_metadata_parity(expected_title, &expected, &actual);
 
-    let actual: BTreeSet<String> = issue_label_names(issue, repo)?.into_iter().collect();
-    let missing: Vec<String> = expected.difference(&actual).cloned().collect();
-    let stale_versions: Vec<String> = actual
-        .iter()
-        .filter(|label| label.starts_with("version:") && !expected.contains(*label))
-        .cloned()
-        .collect();
-
-    if !missing.is_empty() {
-        gh_issue_add_labels(repo, issue, &missing)?;
+    if let Some(title) = plan.title_update {
+        gh_issue_edit_title(repo, issue, &title)?;
     }
-    if !stale_versions.is_empty() {
-        gh_issue_remove_labels(repo, issue, &stale_versions)?;
+    if !plan.labels_to_add.is_empty() {
+        gh_issue_add_labels(repo, issue, &plan.labels_to_add)?;
+    }
+    if !plan.version_labels_to_remove.is_empty() {
+        gh_issue_remove_labels(repo, issue, &plan.version_labels_to_remove)?;
     }
 
     let final_title = gh_issue_title(issue, repo)?.unwrap_or_default();
-    if final_title != expected_title {
+    let final_actual = IssueMetadataSnapshot::new(final_title, issue_label_names(issue, repo)?);
+    if final_actual.title != expected_title {
         bail!(
             "create: issue #{} title mismatch after metadata parity enforcement: expected '{}', got '{}'",
             issue,
             expected_title,
-            final_title
+            final_actual.title
         );
     }
-    let final_labels: BTreeSet<String> = issue_label_names(issue, repo)?.into_iter().collect();
-    let final_missing: Vec<String> = expected.difference(&final_labels).cloned().collect();
-    let final_stale_versions: Vec<String> = final_labels
-        .iter()
-        .filter(|label| label.starts_with("version:") && !expected.contains(*label))
-        .cloned()
-        .collect();
-    if !final_missing.is_empty() || !final_stale_versions.is_empty() {
-        let mut problems = Vec::new();
-        if !final_missing.is_empty() {
-            problems.push(format!("missing labels: {}", final_missing.join(", ")));
-        }
-        if !final_stale_versions.is_empty() {
-            problems.push(format!(
-                "unexpected version labels: {}",
-                final_stale_versions.join(", ")
-            ));
-        }
+    let problems = issue_metadata_drift(expected_title, &expected, &final_actual);
+    if !problems.is_empty() {
         bail!(
             "create: issue #{} metadata drift remains after parity enforcement: {}",
             issue,
@@ -942,5 +915,136 @@ mod tests {
             std::env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
             std::env::remove_var("ADL_POST_MERGE_CLOSEOUT_DISABLE");
         }
+    }
+
+    #[test]
+    fn issue_metadata_helpers_preserve_create_body_title_and_label_parity() {
+        let _guard = env_lock();
+        let temp = unique_temp_dir("adl-github-issue-metadata");
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let title_file = temp.join("title.txt");
+        let labels_file = temp.join("labels.txt");
+        let body_file = temp.join("body.md");
+        let log_file = temp.join("gh.log");
+        fs::write(&title_file, "[v0.91.4][tools] Old title\n").expect("title");
+        fs::write(&labels_file, "track:roadmap\nversion:v0.91.4\n").expect("labels");
+
+        write_executable(
+            &bin_dir.join("gh"),
+            &format!(
+                r#"#!/usr/bin/env python3
+import pathlib
+import shutil
+import sys
+
+title = pathlib.Path({title:?})
+labels = pathlib.Path({labels:?})
+body = pathlib.Path({body:?})
+log = pathlib.Path({log:?})
+args = sys.argv[1:]
+with log.open("a", encoding="utf-8") as fh:
+    fh.write(repr(args) + "\n")
+
+if args[:2] == ["issue", "create"]:
+    print("https://github.com/owner/repo/issues/77")
+    sys.exit(0)
+
+if args[:2] == ["issue", "view"]:
+    if "labels" in args:
+        print(labels.read_text(encoding="utf-8"), end="")
+        sys.exit(0)
+    if "title" in args:
+        print(title.read_text(encoding="utf-8"), end="")
+        sys.exit(0)
+    sys.exit(2)
+
+if args[:2] == ["issue", "edit"]:
+    current_labels = [
+        line.strip()
+        for line in labels.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    i = 2
+    while i < len(args):
+        if args[i] == "--title":
+            title.write_text(args[i + 1] + "\n", encoding="utf-8")
+            i += 2
+        elif args[i] == "--add-label":
+            if args[i + 1] not in current_labels:
+                current_labels.append(args[i + 1])
+            i += 2
+        elif args[i] == "--remove-label":
+            current_labels = [label for label in current_labels if label != args[i + 1]]
+            i += 2
+        elif args[i] == "--body-file":
+            shutil.copyfile(args[i + 1], body)
+            i += 2
+        else:
+            i += 1
+    labels.write_text("\n".join(current_labels) + "\n", encoding="utf-8")
+    sys.exit(0)
+
+sys.exit(9)
+"#,
+                title = title_file.display().to_string(),
+                labels = labels_file.display().to_string(),
+                body = body_file.display().to_string(),
+                log = log_file.display().to_string(),
+            ),
+        );
+
+        let old_path = std::env::var("PATH").ok();
+        let mut path_entries = vec![bin_dir.clone()];
+        path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
+        unsafe {
+            std::env::set_var(
+                "PATH",
+                std::env::join_paths(path_entries).expect("join PATH"),
+            );
+        }
+
+        let created = gh_issue_create(
+            "owner/repo",
+            "[v0.91.5][tools] New title",
+            "issue body",
+            " version:v0.91.5, area:tools,,type:task ",
+        )
+        .expect("create issue");
+        assert_eq!(created, "https://github.com/owner/repo/issues/77");
+
+        gh_issue_edit_body("owner/repo", 77, "updated body").expect("edit body");
+        assert_eq!(
+            fs::read_to_string(&body_file).expect("body file"),
+            "updated body"
+        );
+
+        ensure_issue_metadata_parity(
+            "owner/repo",
+            77,
+            "[v0.91.5][tools] New title",
+            "track:roadmap,area:tools,version:v0.91.5",
+        )
+        .expect("metadata parity");
+
+        assert_eq!(
+            fs::read_to_string(&title_file).expect("title"),
+            "[v0.91.5][tools] New title\n"
+        );
+        assert_eq!(
+            fs::read_to_string(&labels_file).expect("labels"),
+            "track:roadmap\narea:tools\nversion:v0.91.5\n"
+        );
+
+        restore_env("PATH", old_path);
+
+        let calls = fs::read_to_string(&log_file).expect("gh log");
+        assert!(calls.contains("'--label', 'version:v0.91.5'"));
+        assert!(calls.contains("'--label', 'area:tools'"));
+        assert!(calls.contains("'--label', 'type:task'"));
+        assert!(calls.contains("'--title', '[v0.91.5][tools] New title'"));
+        assert!(calls.contains("'--add-label', 'area:tools'"));
+        assert!(calls.contains("'--add-label', 'version:v0.91.5'"));
+        assert!(calls.contains("'--remove-label', 'version:v0.91.4'"));
     }
 }
