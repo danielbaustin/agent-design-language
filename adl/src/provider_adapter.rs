@@ -15,6 +15,7 @@ use std::time::{Duration, Instant};
 
 const DEFAULT_OPENAI_RESPONSES_URL: &str = "https://api.openai.com/v1/responses";
 const DEFAULT_ANTHROPIC_MESSAGES_URL: &str = "https://api.anthropic.com/v1/messages";
+const DEFAULT_DEEPSEEK_CHAT_COMPLETIONS_URL: &str = "https://api.deepseek.com/chat/completions";
 const DEFAULT_GEMINI_BASE_URL: &str = "https://generativelanguage.googleapis.com/v1beta";
 const DEFAULT_OLLAMA_BASE_URL: &str = "http://127.0.0.1:11434";
 const DEFAULT_BACKOFF_MS: u64 = 1_000;
@@ -225,6 +226,7 @@ fn execute_hosted(
     match request.route.provider.to_ascii_lowercase().as_str() {
         "openai" | "chatgpt" => execute_hosted_openai(request, policy),
         "anthropic" | "claude" => execute_hosted_anthropic(request, policy),
+        "deepseek" => execute_hosted_deepseek(request, policy),
         "google" | "gemini" => execute_hosted_gemini(request, policy),
         _ => Err(ProviderFailureV1 {
             kind: ProviderFailureKindV1::ProviderError,
@@ -291,6 +293,38 @@ fn execute_hosted_anthropic(
     decode_text_response(
         response,
         extract_anthropic_output_text,
+        RuntimeSurfaceV1::HostedApi,
+    )
+}
+
+fn execute_hosted_deepseek(
+    request: &ProviderInvocationRequestV1,
+    policy: &ProviderAttemptPolicyV1,
+) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
+    let key = resolve_credential(request.route.credential_ref.as_deref(), "DEEPSEEK_API_KEY")?;
+    let url = request
+        .route
+        .endpoint_ref
+        .as_deref()
+        .filter(|endpoint| endpoint.starts_with("http://") || endpoint.starts_with("https://"))
+        .unwrap_or(DEFAULT_DEEPSEEK_CHAT_COMPLETIONS_URL);
+    let response = client(policy)?
+        .post(url)
+        .bearer_auth(key)
+        .json(&json!({
+            "model": request.route.provider_model_id,
+            "messages": [{
+                "role": "user",
+                "content": request.input_text.as_deref().unwrap_or_default(),
+            }],
+            "max_tokens": 256,
+            "stream": false,
+        }))
+        .send()
+        .map_err(map_reqwest_error)?;
+    decode_text_response(
+        response,
+        extract_deepseek_output_text,
         RuntimeSurfaceV1::HostedApi,
     )
 }
@@ -615,6 +649,17 @@ fn extract_anthropic_output_text(json: &Value) -> Option<String> {
 ",
         )
     })
+}
+
+fn extract_deepseek_output_text(json: &Value) -> Option<String> {
+    json.get("choices")
+        .and_then(Value::as_array)
+        .and_then(|choices| choices.first())
+        .and_then(|choice| choice.get("message"))
+        .and_then(|message| message.get("content"))
+        .and_then(Value::as_str)
+        .filter(|text| !text.trim().is_empty())
+        .map(str::to_string)
 }
 
 fn extract_gemini_output_text(json: &Value) -> Option<String> {
@@ -1002,6 +1047,37 @@ mod tests {
         assert!(!log.contains("claude success"));
         let _ = fs::remove_file(path);
         env::remove_var("ADL_PROVIDER_ADAPTER_CLAUDE_KEY");
+    }
+
+    #[test]
+    fn deepseek_hosted_adapter_returns_output_and_redacts_log() {
+        env::set_var("ADL_PROVIDER_ADAPTER_DEEPSEEK_KEY", "test-key");
+        let endpoint = one_shot_server(
+            r#"{"choices":[{"message":{"content":"deepseek success"}}]}"#,
+            "200 OK",
+        );
+        let path = temp_log("deepseek");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "deepseek".to_string();
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_DEEPSEEK_KEY".to_string());
+        req.model_identity = hosted_model_identity(
+            "deepseek",
+            "deepseek-test",
+            "test-model",
+            Some("test".to_string()),
+        );
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+        assert_eq!(result.output_text.as_deref(), Some("deepseek success"));
+        let log = fs::read_to_string(&path).expect("read log");
+        assert!(log.contains("attempt_success"));
+        assert!(!log.contains("secret prompt"));
+        assert!(!log.contains("deepseek success"));
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_DEEPSEEK_KEY");
     }
 
     #[test]
