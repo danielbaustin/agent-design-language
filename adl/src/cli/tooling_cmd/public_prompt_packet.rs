@@ -1,16 +1,16 @@
 use anyhow::{bail, ensure, Result};
-use serde_json::json;
+use serde_json::{json, Value};
+use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 
 use super::common::{
     contains_absolute_host_path_in_text, contains_secret_like_token, is_normalized_slug,
-    repo_relative_display, repo_root, valid_github_issue_url, valid_version,
+    is_repo_relative, repo_relative_display, repo_root, valid_github_issue_url, valid_version,
 };
 use super::structured_prompt::{
     validate_sip_text, validate_sor_text, validate_spp_text, validate_srp_text, validate_stp_text,
 };
-use super::tooling_usage;
 
 const CARD_KINDS: [&str; 5] = ["sip", "stp", "spp", "srp", "sor"];
 
@@ -21,17 +21,20 @@ pub(crate) fn real_public_prompt_packet(args: &[String]) -> Result<()> {
 
     match subcommand {
         "export" => export_public_prompt_packet(&args[1..]),
+        "validate" => validate_public_prompt_packet(&args[1..]),
         "--help" | "-h" | "help" => {
-            println!("{}", tooling_usage());
+            println!("{}", public_prompt_packet_usage());
             Ok(())
         }
-        other => bail!("unknown public-prompt-packet subcommand '{other}' (expected export)"),
+        other => {
+            bail!("unknown public-prompt-packet subcommand '{other}' (expected export | validate)")
+        }
     }
 }
 
 fn export_public_prompt_packet(args: &[String]) -> Result<()> {
     if has_help_arg(args) {
-        println!("{}", tooling_usage());
+        println!("{}", public_prompt_packet_usage());
         return Ok(());
     }
 
@@ -240,6 +243,352 @@ fn validate_public_card_text(kind: &str, source_path: &Path, text: &str) -> Resu
         _ => bail!("unsupported public prompt card kind: {kind}"),
     }
     Ok(())
+}
+
+fn validate_public_prompt_packet(args: &[String]) -> Result<()> {
+    if has_help_arg(args) {
+        println!("{}", public_prompt_packet_usage());
+        return Ok(());
+    }
+
+    let mut packet: Option<PathBuf> = None;
+    let mut root_override: Option<PathBuf> = None;
+
+    let mut idx = 0usize;
+    while idx < args.len() {
+        match args[idx].as_str() {
+            "--packet" => {
+                idx += 1;
+                packet = Some(PathBuf::from(value_arg(args, idx, "--packet")?));
+            }
+            "--repo-root" => {
+                idx += 1;
+                root_override = Some(PathBuf::from(value_arg(args, idx, "--repo-root")?));
+            }
+            other => bail!("unknown arg for tooling public-prompt-packet validate: {other}"),
+        }
+        idx += 1;
+    }
+
+    let root = root_override.unwrap_or(repo_root()?);
+    let packet = packet.ok_or_else(|| anyhow::anyhow!("validate requires --packet"))?;
+    let packet = absolutize_against(&root, &packet);
+    ensure!(
+        packet.is_dir(),
+        "packet path is not a directory: {}",
+        packet.display()
+    );
+
+    let manifests = manifest_paths_for_packet_input(&packet)?;
+    ensure!(
+        !manifests.is_empty(),
+        "no public prompt packet manifests found under {}",
+        packet.display()
+    );
+
+    let mut warnings = Vec::new();
+    for manifest_path in &manifests {
+        validate_one_packet(&root, manifest_path, &mut warnings)?;
+    }
+
+    for warning in &warnings {
+        eprintln!("WARN: {warning}");
+    }
+    println!(
+        "PASS: public prompt packet validation passed for {} packet(s){}",
+        manifests.len(),
+        if warnings.is_empty() {
+            String::new()
+        } else {
+            format!(
+                " with {} completed-card diagnostic warning(s)",
+                warnings.len()
+            )
+        }
+    );
+    Ok(())
+}
+
+fn manifest_paths_for_packet_input(packet: &Path) -> Result<Vec<PathBuf>> {
+    let direct = packet.join("manifest.json");
+    if direct.is_file() {
+        return Ok(vec![direct]);
+    }
+    let mut manifests = Vec::new();
+    for entry in fs::read_dir(packet)? {
+        let entry = entry?;
+        let path = entry.path().join("manifest.json");
+        if path.is_file() {
+            manifests.push(path);
+        }
+    }
+    manifests.sort();
+    Ok(manifests)
+}
+
+fn validate_one_packet(
+    root: &Path,
+    manifest_path: &Path,
+    warnings: &mut Vec<String>,
+) -> Result<()> {
+    let packet_dir = manifest_path
+        .parent()
+        .ok_or_else(|| anyhow::anyhow!("manifest has no parent: {}", manifest_path.display()))?;
+    let manifest_text = fs::read_to_string(manifest_path)?;
+    ensure_public_text_is_safe("manifest", manifest_path, &manifest_text)?;
+    let manifest: Value = serde_json::from_str(&manifest_text)?;
+
+    ensure!(
+        manifest.get("schema").and_then(Value::as_str) == Some("adl.public_prompt_packet.v1"),
+        "{} schema must be adl.public_prompt_packet.v1",
+        manifest_path.display()
+    );
+    let version = required_str(&manifest, "version", manifest_path)?;
+    ensure!(
+        valid_version(version),
+        "{} version must be a milestone version",
+        manifest_path.display()
+    );
+    let issue = manifest
+        .get("issue_number")
+        .and_then(Value::as_u64)
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "{} issue_number must be a positive integer",
+                manifest_path.display()
+            )
+        })?;
+    ensure!(
+        issue > 0,
+        "{} issue_number must be positive",
+        manifest_path.display()
+    );
+    let slug = required_str(&manifest, "slug", manifest_path)?;
+    ensure!(
+        is_normalized_slug(slug),
+        "{} slug must be normalized kebab-case",
+        manifest_path.display()
+    );
+    let source_bundle = required_str(&manifest, "source_bundle", manifest_path)?;
+    ensure_safe_source_provenance(source_bundle, manifest_path)?;
+    let output_dir = required_str(&manifest, "output_dir", manifest_path)?;
+    ensure_repo_relative_public_path(output_dir, manifest_path)?;
+    ensure!(
+        root.join(output_dir).is_dir() || packet_dir == root.join(output_dir),
+        "{} output_dir must point at the packet directory",
+        manifest_path.display()
+    );
+    validate_tracker(&manifest, issue, manifest_path)?;
+    validate_redaction_block(&manifest, manifest_path)?;
+
+    let cards = manifest
+        .get("cards")
+        .and_then(Value::as_array)
+        .ok_or_else(|| anyhow::anyhow!("{} cards must be an array", manifest_path.display()))?;
+    ensure!(
+        cards.len() == CARD_KINDS.len(),
+        "{} cards must contain five lifecycle cards",
+        manifest_path.display()
+    );
+    let mut seen = BTreeSet::new();
+    for card in cards {
+        let kind = required_str(card, "kind", manifest_path)?;
+        ensure!(
+            CARD_KINDS.contains(&kind),
+            "{} has unsupported card kind {kind}",
+            manifest_path.display()
+        );
+        ensure!(
+            seen.insert(kind.to_string()),
+            "{} has duplicate card kind {kind}",
+            manifest_path.display()
+        );
+        let source_rel = required_str(card, "source_rel_path", manifest_path)?;
+        ensure_safe_source_provenance(source_rel, manifest_path)?;
+        let public_rel = required_str(card, "public_rel_path", manifest_path)?;
+        ensure_repo_relative_public_path(public_rel, manifest_path)?;
+        ensure!(
+            !public_rel.contains(".adl/"),
+            "{} public_rel_path must not point into .adl: {public_rel}",
+            manifest_path.display()
+        );
+        let public_path = root.join(public_rel);
+        ensure!(
+            public_path.is_file(),
+            "{} public card path does not exist: {public_rel}",
+            manifest_path.display()
+        );
+        let text = fs::read_to_string(&public_path)?;
+        ensure_public_text_is_safe(kind, &public_path, &text)?;
+        validate_public_card_for_packet(kind, &public_path, &text, warnings)?;
+    }
+    for kind in CARD_KINDS {
+        ensure!(
+            seen.contains(kind),
+            "{} missing {kind} card",
+            manifest_path.display()
+        );
+    }
+
+    let readme = packet_dir.join("README.md");
+    ensure!(
+        readme.is_file(),
+        "{} packet README.md is missing",
+        packet_dir.display()
+    );
+    ensure_public_text_is_safe("README.md", &readme, &fs::read_to_string(&readme)?)?;
+    Ok(())
+}
+
+fn required_str<'a>(value: &'a Value, key: &str, manifest_path: &Path) -> Result<&'a str> {
+    value
+        .get(key)
+        .and_then(Value::as_str)
+        .filter(|value| !value.trim().is_empty())
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "{} missing required string field {key}",
+                manifest_path.display()
+            )
+        })
+}
+
+fn validate_tracker(manifest: &Value, issue: u64, manifest_path: &Path) -> Result<()> {
+    let tracker = manifest
+        .get("tracker")
+        .and_then(Value::as_object)
+        .ok_or_else(|| anyhow::anyhow!("{} tracker must be an object", manifest_path.display()))?;
+    ensure!(
+        tracker.get("provider").and_then(Value::as_str) == Some("github"),
+        "{} tracker.provider must be github",
+        manifest_path.display()
+    );
+    ensure!(
+        tracker.get("issue_number").and_then(Value::as_u64) == Some(issue),
+        "{} tracker.issue_number must match issue_number",
+        manifest_path.display()
+    );
+    let url = tracker.get("url").and_then(Value::as_str).ok_or_else(|| {
+        anyhow::anyhow!("{} tracker.url must be present", manifest_path.display())
+    })?;
+    ensure!(
+        valid_github_issue_url(url),
+        "{} tracker.url must be a GitHub issue URL",
+        manifest_path.display()
+    );
+    Ok(())
+}
+
+fn validate_redaction_block(manifest: &Value, manifest_path: &Path) -> Result<()> {
+    let redaction = manifest
+        .get("redaction")
+        .and_then(Value::as_object)
+        .ok_or_else(|| {
+            anyhow::anyhow!("{} redaction must be an object", manifest_path.display())
+        })?;
+    ensure!(
+        redaction.get("status").and_then(Value::as_str) == Some("passed"),
+        "{} redaction.status must be passed",
+        manifest_path.display()
+    );
+    ensure!(
+        redaction.get("mode").and_then(Value::as_str) == Some("refuse_not_rewrite"),
+        "{} redaction.mode must be refuse_not_rewrite",
+        manifest_path.display()
+    );
+    ensure!(
+        redaction
+            .get("checks")
+            .and_then(Value::as_array)
+            .is_some_and(|checks| !checks.is_empty()),
+        "{} redaction.checks must be a non-empty array",
+        manifest_path.display()
+    );
+    Ok(())
+}
+
+fn ensure_repo_relative_public_path(value: &str, manifest_path: &Path) -> Result<()> {
+    ensure!(
+        is_repo_relative(value),
+        "{} path must be repo-relative and must not contain traversal: {value}",
+        manifest_path.display()
+    );
+    ensure!(
+        !contains_local_scratch_marker(value),
+        "{} path contains local scratch/worktree marker: {value}",
+        manifest_path.display()
+    );
+    Ok(())
+}
+
+fn ensure_safe_source_provenance(value: &str, manifest_path: &Path) -> Result<()> {
+    ensure_repo_relative_public_path(value, manifest_path)?;
+    if value.contains(".adl/") {
+        ensure!(
+            value.starts_with(".adl/")
+                && value.contains("/tasks/")
+                && !value.contains(".worktrees/")
+                && !value.contains(".codex/"),
+            "{} .adl provenance must be a repo-relative task-bundle path, not scratch/private state: {value}",
+            manifest_path.display()
+        );
+    }
+    Ok(())
+}
+
+fn ensure_public_text_is_safe(label: &str, path: &Path, text: &str) -> Result<()> {
+    if contains_absolute_host_path_in_text(text)
+        || contains_secret_like_token(text)
+        || contains_private_key_marker(text)
+        || contains_local_scratch_marker(text)
+    {
+        bail!(
+            "public prompt packet {label} contains disallowed public content: {}",
+            path.display()
+        );
+    }
+    ensure!(
+        !text.contains("{{") && !text.contains("}}"),
+        "public prompt packet {label} contains unresolved template markers: {}",
+        path.display()
+    );
+    Ok(())
+}
+
+fn validate_public_card_for_packet(
+    kind: &str,
+    public_path: &Path,
+    text: &str,
+    warnings: &mut Vec<String>,
+) -> Result<()> {
+    match kind {
+        "sip" => validate_sip_text(text, public_path, Some("bootstrap"))?,
+        "stp" => validate_stp_text(text)?,
+        "spp" => validate_spp_text(text)?,
+        "srp" => validate_srp_text(text)?,
+        "sor" => match validate_sor_text(text, Some("completed")) {
+            Ok(()) => {}
+            Err(completed_err) => {
+                validate_sor_text(text, Some("bootstrap")).map_err(|bootstrap_err| {
+                    anyhow::anyhow!(
+                        "{} SOR must satisfy completed or bootstrap structured prompt validation; completed: {completed_err}; bootstrap: {bootstrap_err}",
+                        public_path.display()
+                    )
+                })?;
+                warnings.push(format!(
+                    "{} accepted as bootstrap-phase SOR; completed-phase diagnostic: {completed_err}",
+                    public_path.display()
+                ));
+            }
+        },
+        _ => bail!("unsupported public prompt card kind: {kind}"),
+    }
+    Ok(())
+}
+
+fn public_prompt_packet_usage() -> &'static str {
+    "adl tooling public-prompt-packet export --issue <number> --slug <slug> --version <version> [--source <dir>] [--out-root <dir>] [--tracker-url <url>] [--repo-root <path>]\n\
+adl tooling public-prompt-packet validate --packet <dir> [--repo-root <path>]"
 }
 
 fn contains_private_key_marker(text: &str) -> bool {
