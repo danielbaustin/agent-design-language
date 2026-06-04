@@ -51,6 +51,14 @@ This showcase note also does not claim live provider-backed multi-agent proof.
 
 The multi-agent workcell lane produced useful bounded evidence, but remaining stabilization and proving work have been routed out of the `v0.91.4` Sprint 4 release boundary.
 
+## Packaged Showcase Map
+
+The final packaging index for this demo mini-sprint is:
+
+- `docs/milestones/v0.91.4/review/demo_showcase/DEMO_SHOWCASE_INDEX_v0.91.5.md`
+
+That index keeps Creative Room first, Starharvest second, preserves the D17 / `#3419` multi-agent proof lane, records Celestial Rescue as v0.91.5 Unity-game work pending Unity import/build validation, parks WildClawBench, and keeps Observatory as next-milestone work.
+
 ## Reviewer Guidance
 
 If a reviewer asks, "What should I look at first to understand the release?", the recommended order is:
@@ -59,5 +67,6 @@ If a reviewer asks, "What should I look at first to understand the release?", th
 2. `docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md`
 3. `docs/milestones/v0.91.4/review/demo_showcase/CREATIVE_ROOM_PROOF_PACKET_v0.91.4.md`
 4. `docs/milestones/v0.91.4/review/demo_showcase/STARHARVEST_BROWSER_PROOF_v0.91.4.md`
+5. `docs/milestones/v0.91.4/review/demo_showcase/DEMO_SHOWCASE_INDEX_v0.91.5.md`
 
 That sequence keeps the milestone claim, the evidence map, the best explanatory showcase, and the browser-backed proof surface aligned.
