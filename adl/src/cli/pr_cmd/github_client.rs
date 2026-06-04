@@ -2,6 +2,7 @@
 // Foundation contract for the octocrab mini-sprint. Later parity issues wire
 // this module into live issue/PR operations after behavior equivalence is proven.
 
+use std::collections::BTreeSet;
 use std::fmt;
 use std::marker::PhantomData;
 
@@ -231,6 +232,105 @@ pub(super) fn redact_for_diagnostics(input: &str) -> String {
     redacted.join(" ")
 }
 
+pub(super) fn issue_labels_from_csv_in_order(labels_csv: &str) -> Vec<String> {
+    labels_csv
+        .split(',')
+        .map(str::trim)
+        .filter(|label| !label.is_empty())
+        .map(ToString::to_string)
+        .collect()
+}
+
+pub(super) fn issue_labels_from_csv(labels_csv: &str) -> BTreeSet<String> {
+    issue_labels_from_csv_in_order(labels_csv)
+        .into_iter()
+        .collect()
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) struct IssueMetadataSnapshot {
+    pub(super) title: String,
+    pub(super) labels: BTreeSet<String>,
+}
+
+impl IssueMetadataSnapshot {
+    pub(super) fn new(title: impl Into<String>, labels: impl IntoIterator<Item = String>) -> Self {
+        Self {
+            title: title.into(),
+            labels: labels.into_iter().collect(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) struct IssueMetadataParityPlan {
+    pub(super) title_update: Option<String>,
+    pub(super) labels_to_add: Vec<String>,
+    pub(super) version_labels_to_remove: Vec<String>,
+}
+
+impl IssueMetadataParityPlan {
+    pub(super) fn is_empty(&self) -> bool {
+        self.title_update.is_none()
+            && self.labels_to_add.is_empty()
+            && self.version_labels_to_remove.is_empty()
+    }
+}
+
+pub(super) fn plan_issue_metadata_parity(
+    expected_title: &str,
+    expected_labels: &BTreeSet<String>,
+    actual: &IssueMetadataSnapshot,
+) -> IssueMetadataParityPlan {
+    IssueMetadataParityPlan {
+        title_update: (actual.title != expected_title).then(|| expected_title.to_string()),
+        labels_to_add: expected_labels
+            .difference(&actual.labels)
+            .cloned()
+            .collect(),
+        version_labels_to_remove: actual
+            .labels
+            .iter()
+            .filter(|label| label.starts_with("version:") && !expected_labels.contains(*label))
+            .cloned()
+            .collect(),
+    }
+}
+
+pub(super) fn issue_metadata_drift(
+    expected_title: &str,
+    expected_labels: &BTreeSet<String>,
+    actual: &IssueMetadataSnapshot,
+) -> Vec<String> {
+    let mut problems = Vec::new();
+    if actual.title != expected_title {
+        problems.push(format!(
+            "title mismatch: expected '{}', got '{}'",
+            expected_title, actual.title
+        ));
+    }
+    let missing: Vec<String> = expected_labels
+        .difference(&actual.labels)
+        .cloned()
+        .collect();
+    if !missing.is_empty() {
+        problems.push(format!("missing labels: {}", missing.join(", ")));
+    }
+    let stale_versions: Vec<String> = actual
+        .labels
+        .iter()
+        .filter(|label| label.starts_with("version:") && !expected_labels.contains(*label))
+        .cloned()
+        .collect();
+    if !stale_versions.is_empty() {
+        problems.push(format!(
+            "unexpected version labels: {}",
+            stale_versions.join(", ")
+        ));
+    }
+    problems
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -366,5 +466,72 @@ mod tests {
         assert_eq!(GithubClientMode::Gh.as_str(), "gh");
         assert_eq!(GithubClientBackend::Octocrab.as_str(), "octocrab");
         assert_eq!(GithubClientBackend::GhFallback.as_str(), "gh");
+    }
+
+    #[test]
+    fn issue_label_csv_helpers_preserve_create_order_and_set_parity() {
+        assert_eq!(
+            issue_labels_from_csv_in_order(" version:v0.91.5, area:tools,, type:task "),
+            vec!["version:v0.91.5", "area:tools", "type:task"]
+        );
+        assert_eq!(
+            issue_labels_from_csv("type:task,version:v0.91.5,type:task")
+                .into_iter()
+                .collect::<Vec<_>>(),
+            vec!["type:task", "version:v0.91.5"]
+        );
+    }
+
+    #[test]
+    fn issue_metadata_parity_plan_preserves_title_label_and_version_semantics() {
+        let expected = issue_labels_from_csv("track:roadmap,area:tools,version:v0.91.5");
+        let actual = IssueMetadataSnapshot::new(
+            "[v0.91.4][tools] old title",
+            vec![
+                "track:roadmap".to_string(),
+                "version:v0.91.4".to_string(),
+                "type:task".to_string(),
+            ],
+        );
+
+        let plan = plan_issue_metadata_parity("[v0.91.5][tools] new title", &expected, &actual);
+
+        assert_eq!(
+            plan.title_update.as_deref(),
+            Some("[v0.91.5][tools] new title")
+        );
+        assert_eq!(plan.labels_to_add, vec!["area:tools", "version:v0.91.5"]);
+        assert_eq!(plan.version_labels_to_remove, vec!["version:v0.91.4"]);
+        assert!(!plan.is_empty());
+    }
+
+    #[test]
+    fn issue_metadata_drift_reports_only_enforced_parity_gaps() {
+        let expected = issue_labels_from_csv("track:roadmap,area:tools,version:v0.91.5");
+        let actual = IssueMetadataSnapshot::new(
+            "[v0.91.5][tools] new title",
+            vec![
+                "track:roadmap".to_string(),
+                "area:tools".to_string(),
+                "type:task".to_string(),
+                "version:v0.91.4".to_string(),
+            ],
+        );
+
+        assert_eq!(
+            issue_metadata_drift("[v0.91.5][tools] new title", &expected, &actual),
+            vec![
+                "missing labels: version:v0.91.5".to_string(),
+                "unexpected version labels: version:v0.91.4".to_string(),
+            ]
+        );
+
+        let final_actual = IssueMetadataSnapshot::new(
+            "[v0.91.5][tools] new title",
+            expected.iter().cloned().chain(["type:task".to_string()]),
+        );
+        assert!(
+            issue_metadata_drift("[v0.91.5][tools] new title", &expected, &final_actual).is_empty()
+        );
     }
 }
