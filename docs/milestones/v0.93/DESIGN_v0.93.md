@@ -164,6 +164,11 @@ The six planned security WPs are:
   supply-chain evidence, runtime hardening, threat-board hygiene, and incident
   drills feed release review.
 
+The reviewed red/blue issue-wave planning surface is
+[`RED_BLUE_ADVERSARIAL_SECURITY_ISSUE_WAVE_v0.93.md`](RED_BLUE_ADVERSARIAL_SECURITY_ISSUE_WAVE_v0.93.md).
+It prepares future issue candidates and proof obligations; it does not claim
+that the security work has been implemented.
+
 ## Validation Plan
 
 Later implementation should validate:
