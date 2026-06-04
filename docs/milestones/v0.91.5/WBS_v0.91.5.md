@@ -77,8 +77,9 @@ to the reusable standard at
 - `#3569` owns the portable ADL project adapter contract and templates; WP-01
   schedules it, but adapter implementation does not become WP-01 work.
 - `#3582` owns the downstream card rewrite/normalization pass after prompt
-  templates v1.1 lands. WP-01 records that route instead of blocking on
-  polishing every downstream card before the new templates exist.
+  templates, structure schemas, and field-level values editing land. Its audit
+  records phase-aware validation and avoids polishing every downstream card
+  when no lifecycle-truth defect exists.
 
 ## Sprint Umbrella Issues
 
@@ -112,9 +113,9 @@ is explicit.
   issues/cards/sprint umbrellas are ready to begin or explicitly routed.
   Sprint umbrellas are `#3571` through `#3574`; closeout-tail issues are
   `#3575`, `#3579`, `#3576`, `#3580`, `#3577`, `#3581`, and `#3578`.
-- WP-01 explicitly routes downstream card rewriting through `#3582` after
-  `#3553` lands, so old card scaffolds are not treated as final execution
-  truth and do not block opening the milestone.
+- WP-01 explicitly routes downstream card rewriting through `#3582`, so old
+  card scaffolds are validated or dispositioned before later sprint work
+  consumes them.
 - WP-02 through WP-07 -> prompt-template and public prompt records are safe to review.
 - WP-08 through WP-12 -> provider/model and multi-agent usefulness are tested.
 - WP-13 -> demo matrix and showcase readiness are explicit.
