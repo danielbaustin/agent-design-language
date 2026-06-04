@@ -34,6 +34,19 @@ This feature should establish:
   into one auditable secure-execution path
 - a reviewer-facing truth boundary for what `v0.94` does and does not claim
 
+## Enterprise-Security Input Boundary
+
+The v0.94 secure-execution convergence story should consume the v0.91.5
+enterprise-security organization packet:
+
+- `docs/milestones/v0.91.5/features/ENTERPRISE_SECURITY_ORGANIZATION_BOUNDARY_v0.91.5.md`
+
+This keeps secure execution connected to the v0.93 enterprise-security bands
+without turning enterprise-only audit, isolation, deployment, or compliance
+assumptions into hidden prerequisites for normal local ADL development. v0.94
+should converge the proven v0.93 bands with signed trace/query and reasoning
+graph provenance rather than inventing a second authority model.
+
 ## Non-goals
 
 - external certification claims
