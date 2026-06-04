@@ -27,6 +27,7 @@ reviewable issue candidates for:
 
 ## Source Inputs
 
+- `docs/milestones/v0.91.5/features/CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SCHEDULING_v0.91.5.md`
 - `docs/explainers/RED_BLUE_SECURITY.md`
 - `docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md`
 - `docs/milestones/v0.93/features/SECURITY_WP_S1_ZERO_TRUST_ARCHITECTURE_v0.93.md`
@@ -115,6 +116,11 @@ and replayable inside declared ADL-owned fixtures.
 ## Follow-On Routing
 
 - `#3538` owns the enterprise-security repo/module separation recommendation.
+- `#3675` schedules Continuous Adversarial Verification, the ADL Threat Model,
+  and the CodeFriend Security Model as related but distinct security inputs:
+  CAV and the threat model feed ADL security/WP-S6 planning, while CodeFriend
+  security remains a product-lane consumer rather than a core enterprise-security
+  implementation feature.
 - The six issue candidates above should become future `v0.93` execution issues
   only after `v0.93` planning opens.
 - `WP-S6` should own the integrated red/blue/purple operations packet and

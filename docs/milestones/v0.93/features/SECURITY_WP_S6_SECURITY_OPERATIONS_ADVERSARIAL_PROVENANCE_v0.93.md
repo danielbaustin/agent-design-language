@@ -19,6 +19,8 @@ than separate manual rituals.
 ## Dependencies
 
 - WP-S1 through WP-S5.
+- v0.91.5 CAV/threat-model scheduling packet:
+  `docs/milestones/v0.91.5/features/CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SCHEDULING_v0.91.5.md`.
 - v0.89.1 adversarial runtime, red/blue proof surfaces, exploit/replay, and
   self-attack work.
 - Current CI, review, release-evidence, and milestone closeout gates.
@@ -28,6 +30,8 @@ than separate manual rituals.
 
 - Security-ops runbook for threat-board review, incident triage, regression
   routing, and release evidence.
+- CAV-aligned exploit artifact, replay, mitigation-verification, and security
+  corpus scheduling boundaries, without claiming the full CAV runtime exists.
 - Adversarial regression suite or matrix mapped to zero-trust, policy,
   cryptographic trust, audit, and isolation controls.
 - Provenance checks for source, dependency, tool, provider, and artifact
