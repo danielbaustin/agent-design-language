@@ -120,6 +120,11 @@ impl RunArtifactPaths {
         self.logs_dir().join("activation_log.json")
     }
 
+    /// Canonical runtime action-log artifact path.
+    pub fn action_log_jsonl(&self) -> PathBuf {
+        self.logs_dir().join("action_log.jsonl")
+    }
+
     /// Canonical Trace v1 artifact path.
     pub fn trace_v1_json(&self) -> PathBuf {
         self.logs_dir().join("trace_v1.json")
@@ -509,6 +514,9 @@ mod tests {
         assert!(paths
             .activation_log_json()
             .ends_with(".adl/runs/artifact-path-accessors/logs/activation_log.json"));
+        assert!(paths
+            .action_log_jsonl()
+            .ends_with(".adl/runs/artifact-path-accessors/logs/action_log.jsonl"));
         assert!(paths
             .trace_v1_json()
             .ends_with(".adl/runs/artifact-path-accessors/logs/trace_v1.json"));

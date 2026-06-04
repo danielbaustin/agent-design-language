@@ -625,6 +625,11 @@ pub(crate) fn write_run_state_artifacts(
             serde_json::to_vec_pretty(&pause_artifact).context("serialize pause_state.json")?;
         artifacts::atomic_write(&run_paths.pause_state_json(), &pause_json)?;
     }
+    instrumentation::write_action_log_artifact_with_artifacts(
+        &run_paths.action_log_jsonl(),
+        &tr.events,
+        &run_manifest.generated_artifacts,
+    )?;
 
     Ok(run_dir)
 }
@@ -711,6 +716,7 @@ fn build_run_manifest(
             "run_summary.json".to_string(),
             "run_manifest.json".to_string(),
             "logs/activation_log.json".to_string(),
+            "logs/action_log.jsonl".to_string(),
             "logs/trace_v1.json".to_string(),
         ],
     }

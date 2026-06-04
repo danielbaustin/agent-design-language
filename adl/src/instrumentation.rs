@@ -13,10 +13,15 @@ use serde::{Deserialize, Serialize};
 use crate::execution_plan::ExecutionPlan;
 use crate::trace::TraceEvent;
 
+mod action_log;
 mod graph;
 mod trace_formatting;
 mod trace_normalization;
 
+pub use action_log::{
+    runtime_action_log_events, runtime_action_log_events_with_artifacts, write_action_log_artifact,
+    write_action_log_artifact_with_artifacts, RuntimeActionLogEvent, ACTION_LOG_SCHEMA_VERSION,
+};
 pub use graph::{
     export_graph, export_graph_dot, export_graph_json, GraphEdge, GraphExport, GraphNode,
 };
