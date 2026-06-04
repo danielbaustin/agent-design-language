@@ -109,10 +109,13 @@ Recommended organization rule:
   completion.
 
 Dedicated planning issue `#3538` owns the architecture decision before large
-code moves: first inventory enterprise-security surfaces, then decide whether
-they belong in separate Rust modules, feature gates, crates, docs packages, or
-proof bundles. The organizing principle is clear now: separate the enterprise
-security band without orphaning the proof and policy contracts it depends on.
+code moves. Its tracked planning packet is
+`docs/milestones/v0.91.5/features/ENTERPRISE_SECURITY_ORGANIZATION_BOUNDARY_v0.91.5.md`.
+That packet inventories the current security/trust/policy/signing/adversarial/
+isolation/ACIP/governed-execution surfaces and recommends staged module/proof
+separation before any crate extraction. The organizing principle is clear now:
+separate the enterprise security band without orphaning the proof and policy
+contracts it depends on.
 
 ## Current Repo Status
 

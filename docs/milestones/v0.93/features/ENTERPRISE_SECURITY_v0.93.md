@@ -36,6 +36,20 @@ This feature should establish:
 - a clear truth boundary between internal architecture/security claims and
   external compliance claims
 
+## Organization Boundary
+
+v0.93 enterprise-security implementation should consume the v0.91.5
+organization packet:
+
+- `docs/milestones/v0.91.5/features/ENTERPRISE_SECURITY_ORGANIZATION_BOUNDARY_v0.91.5.md`
+
+That packet recommends staged module/proof separation. The six v0.93 security
+WPs should identify their target capability band before implementation:
+`zero_trust`, `policy`, `trust`, `audit`, `isolation`, or `adversarial_ops`.
+Do not move existing core runtime primitives merely to make the tree look
+organized; move or add code only when ownership, proof fixtures, dependency
+impact, and review gates are explicit.
+
 ## Six Security WPs
 
 | WP | Name | Required work product |
