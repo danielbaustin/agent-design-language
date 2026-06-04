@@ -3,8 +3,8 @@
 Use this file after the main skill triggers and you are ready to execute the `pr init` step.
 
 Planning basis:
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+- `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
+- `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
 - this skill bundle's `SKILL.md` and reference files
 
 If the repo relocates those docs, follow the relocated canonical copies instead of these exact paths.
@@ -95,8 +95,8 @@ Unsafe examples:
 The skill should prefer the Rust-owned control-plane path when available.
 
 Current command truth:
-- use `adl pr create` or `adl/tools/pr.sh create` when a new issue must be created
-- use `adl pr init` or `adl/tools/pr.sh init` when the issue already exists
+- use `adl/tools/pr.sh create` when a new issue must be created
+- use `adl/tools/pr.sh init` when the issue already exists
 - hand off to qualitative review after bootstrap
 - only after review does issue-mode `pr run` bind branch and worktree context
 

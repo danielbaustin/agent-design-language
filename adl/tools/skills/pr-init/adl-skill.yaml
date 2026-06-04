@@ -79,8 +79,6 @@ execution:
   preferred_commands:
     - "adl/tools/pr.sh create"
     - "adl/tools/pr.sh init"
-    - "adl pr create"
-    - "adl pr init"
   preferred_path: "rust_owned_control_plane_when_available"
   invocation_pattern: "one_issue_per_invocation_parent_aggregates_multi_issue_results"
   validation_policy: "must_verify_issue_labels_source_prompt_root_bundle_and_no_branch_or_worktree_side_effects"

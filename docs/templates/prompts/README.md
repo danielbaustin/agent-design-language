@@ -69,7 +69,7 @@ Use the Rust tool to regenerate schemas only when template structure changes
 intentionally:
 
 ```sh
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- tooling prompt-template \
   write-structure-schemas \
   --out-dir docs/templates/prompts/1.0.0/schemas
 ```
@@ -77,7 +77,7 @@ cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
 Then run both Rust and Python-readable schema checks:
 
 ```sh
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-schemas
+cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- tooling prompt-template validate-schemas
 python3 adl/tools/test_prompt_template_structure_schemas.py
 ```
 
@@ -91,7 +91,7 @@ The local human editor for this template set lives at
 generated from Rust with:
 
 ```sh
-cargo run --manifest-path adl/Cargo.toml -- tooling csdlc-prompt-editor \
+cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- tooling csdlc-prompt-editor \
   --emit-model-js docs/tooling/csdlc-prompt-editor/editor_model.js
 ```
 

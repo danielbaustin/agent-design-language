@@ -40,7 +40,6 @@ execution:
   workflow_role: "finish"
   preferred_commands:
     - "adl/tools/pr.sh finish"
-    - "adl pr finish"
   preferred_path: "repo_native_finish_surface"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:

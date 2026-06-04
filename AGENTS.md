@@ -42,8 +42,8 @@ These rules are mandatory for ADL issue work.
      explicitly requires a compatibility path.
    - For new or fully re-rendered cards, prefer the deterministic
      prompt-template values renderer over direct Markdown structure edits:
-     `adl tooling prompt-template validate-values`, `render`, `render-all`,
-     `validate-structure`, and `validate-schemas`.
+     `adl-csdlc tooling prompt-template validate-values`, `render`,
+     `render-all`, `validate-structure`, and `validate-schemas`.
    - Treat the tracked structure schemas under
      `docs/templates/prompts/<version>/schemas/` as the template-shape
      authority. If a rendered card fails structure validation, fix the values or

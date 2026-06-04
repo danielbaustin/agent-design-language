@@ -23,15 +23,15 @@ Keep mechanical work separate from qualitative review.
 This skill should track the repository's canonical PR tooling planning docs.
 
 At the moment, the canonical repo docs are:
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+- `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
+- `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
 
 Within this skill bundle, the operational details live in:
 - `references/init-playbook.md`
 - `references/output-contract.md`
 
 The canonical caller-facing invocation template lives at:
-- `/Users/daniel/git/agent-design-language/docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
+- `<repo-root>/docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
 
 If those docs move, prefer the moved tracked canonical copies over stale path references. Do not silently invent a new workflow model from memory when the repo docs have changed.
 
@@ -93,7 +93,7 @@ For deterministic ADL execution, also prefer an explicit issue-metadata policy:
 
 When the caller can provide structured input, prefer the tracked invocation
 template in:
-- `/Users/daniel/git/agent-design-language/docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
+- `<repo-root>/docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
 
 When the caller provides an authored issue body, require it to follow the
 canonical authored issue body scaffold in that template before running create.
@@ -175,7 +175,7 @@ card kind, bootstrap or regeneration paths should prefer:
 1. resolve `docs/templates/prompts/current.json`;
 2. fill values YAML with locked fields under `system` and editable fields under
    `values`;
-3. render Markdown through `adl tooling prompt-template render` or `render-all`;
+3. render Markdown through `adl-csdlc tooling prompt-template render` or `render-all`;
 4. validate rendered shape with `validate-structure`;
 5. validate schema artifacts with `validate-schemas` when template structure is
    touched.
@@ -251,11 +251,9 @@ Recommended multi-issue pattern:
 Prefer repo-native control-plane commands such as:
 - `adl/tools/pr.sh create`
 - `adl/tools/pr.sh init`
-- `adl pr create`
-- `adl pr init`
 
 For caller payload shape, prefer the canonical tracked template:
-- `/Users/daniel/git/agent-design-language/docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
+- `<repo-root>/docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
 
 Use existing templates, validation helpers, and path logic from the repository. Do not recreate bundle contents manually unless the repo-native path is unavailable and the user explicitly wants a fallback.
 
@@ -326,5 +324,5 @@ For stricter ADL execution, also use:
 
 - Playbook: `references/init-playbook.md`
 - Output contract: `references/output-contract.md`
-- PR tooling feature doc: `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
-- PR tooling architecture doc: `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+- PR tooling feature doc: `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
+- PR tooling architecture doc: `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`

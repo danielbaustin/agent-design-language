@@ -27,8 +27,8 @@ This is an execution skill. It is allowed to write code, docs, tests, and relate
 This skill should track the repository's canonical PR tooling docs.
 
 At the moment, the canonical repo docs are:
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
-- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+- `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
+- `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
 
 Within this skill bundle, the operational details live in:
 - `references/run-playbook.md`
@@ -276,17 +276,13 @@ Unsafe parallel examples:
 
 Canonical machine surface:
 - `adl/tools/pr.sh doctor --json`
-- `adl pr doctor --json`
 
 Execution surface:
 - `adl/tools/pr.sh run`
-- `adl pr run`
 
 Compatibility aliases:
 - `adl/tools/pr.sh ready`
 - `adl/tools/pr.sh preflight`
-- `adl pr ready`
-- `adl pr preflight`
 
 Use the repo's existing templates, validators, and path logic. Prefer the repository control plane over manual git branching when possible.
 
@@ -346,5 +342,5 @@ For stricter ADL execution, also use:
 
 - Playbook: `references/run-playbook.md`
 - Output contract: `references/output-contract.md`
-- PR tooling feature doc: `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
-- PR tooling architecture doc: `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+- PR tooling feature doc: `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
+- PR tooling architecture doc: `<repo-root>/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
