@@ -430,7 +430,7 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
     }
     if paths
         .iter()
-        .all(|path| finish_path_is_focused_local_ci_gated(path))
+        .all(|path| finish_path_is_docs_only(path) || finish_path_is_focused_local_ci_gated(path))
     {
         let mut commands = vec![
             "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
@@ -440,8 +440,27 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             .iter()
             .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path))
         {
-            commands.push("cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string());
-            commands.push("cargo test --manifest-path adl/Cargo.toml cli::pr_cmd".to_string());
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml cli::pr_cmd",
+            );
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_public_prompt_packet_focused_validation(path))
+        {
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc public_prompt_packet",
+            );
         }
         if paths
             .iter()
@@ -504,6 +523,12 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
     })
 }
 
+fn push_finish_validation_command(commands: &mut Vec<String>, command: &str) {
+    if !commands.iter().any(|existing| existing == command) {
+        commands.push(command.to_string());
+    }
+}
+
 pub(super) fn select_finish_validation_plan_for_finish(
     requested_paths_csv: &str,
     changed_paths: &[String],
@@ -563,6 +588,8 @@ fn finish_path_is_focused_local_ci_gated(path: &str) -> bool {
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
             | "adl/src/cli/pr_cmd/finish_support.rs"
+            | "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
+            | "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs"
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("docs/milestones/v0.91.4/review/merge_readiness/")
         || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
@@ -582,6 +609,15 @@ fn finish_path_needs_coverage_tooling_focused_validation(path: &str) -> bool {
         ".github/workflows/ci.yaml"
             | "adl/tools/check_coverage_impact.sh"
             | "adl/tools/test_check_coverage_impact.sh"
+    )
+}
+
+fn finish_path_needs_public_prompt_packet_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
+            | "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs"
     )
 }
 
@@ -672,6 +708,19 @@ pub(super) fn run_finish_validation_rust(
                             "--manifest-path",
                             path_str(&manifest)?,
                             "cli::pr_cmd",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc public_prompt_packet" => {
+                    run_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-csdlc",
+                            "public_prompt_packet",
                         ],
                     )?;
                 }
