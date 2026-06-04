@@ -7,6 +7,7 @@ use std::fmt;
 use std::marker::PhantomData;
 
 const ADL_GITHUB_CLIENT_ENV: &str = "ADL_GITHUB_CLIENT";
+const ADL_GITHUB_DISABLE_GH_FALLBACK_ENV: &str = "ADL_GITHUB_DISABLE_GH_FALLBACK";
 const GITHUB_TOKEN_ENV: &str = "GITHUB_TOKEN";
 const GH_TOKEN_ENV: &str = "GH_TOKEN";
 
@@ -79,6 +80,7 @@ pub(super) struct AdlGithubClientConfig {
     pub(super) backend: GithubClientBackend,
     pub(super) token_source: Option<GithubTokenSource>,
     pub(super) gh_fallback_allowed: bool,
+    pub(super) gh_fallback_disabled: bool,
 }
 
 #[derive(Clone)]
@@ -99,10 +101,13 @@ impl fmt::Debug for AdlGithubClient {
 
 impl AdlGithubClient {
     pub(super) fn from_env() -> Result<Self, AdlGithubClientError> {
-        Self::from_values(
+        Self::from_values_with_fallback_policy(
             std::env::var(ADL_GITHUB_CLIENT_ENV).ok().as_deref(),
             std::env::var(GITHUB_TOKEN_ENV).ok().as_deref(),
             std::env::var(GH_TOKEN_ENV).ok().as_deref(),
+            std::env::var(ADL_GITHUB_DISABLE_GH_FALLBACK_ENV)
+                .ok()
+                .as_deref(),
         )
     }
 
@@ -111,7 +116,17 @@ impl AdlGithubClient {
         github_token: Option<&str>,
         gh_token: Option<&str>,
     ) -> Result<Self, AdlGithubClientError> {
+        Self::from_values_with_fallback_policy(requested_mode, github_token, gh_token, None)
+    }
+
+    pub(super) fn from_values_with_fallback_policy(
+        requested_mode: Option<&str>,
+        github_token: Option<&str>,
+        gh_token: Option<&str>,
+        disable_gh_fallback: Option<&str>,
+    ) -> Result<Self, AdlGithubClientError> {
         let requested_mode = GithubClientMode::parse(requested_mode)?;
+        let gh_fallback_disabled = parse_disable_gh_fallback(disable_gh_fallback)?;
         let token_source = discover_token_source(github_token, gh_token);
         let backend = match (requested_mode, token_source) {
             (GithubClientMode::Gh, _) => GithubClientBackend::GhFallback,
@@ -128,12 +143,22 @@ impl AdlGithubClient {
                 ));
             }
         };
+        if gh_fallback_disabled && backend == GithubClientBackend::GhFallback {
+            return Err(AdlGithubClientError::new(
+                AdlGithubClientErrorKind::FallbackDisabled,
+                format!(
+                    "{ADL_GITHUB_DISABLE_GH_FALLBACK_ENV}=1 disables gh fallback; set {GITHUB_TOKEN_ENV} or {GH_TOKEN_ENV} for octocrab-backed mode, or unset {ADL_GITHUB_DISABLE_GH_FALLBACK_ENV}"
+                ),
+            ));
+        }
         Ok(Self {
             config: AdlGithubClientConfig {
                 requested_mode,
                 backend,
                 token_source,
-                gh_fallback_allowed: requested_mode != GithubClientMode::Octocrab,
+                gh_fallback_allowed: requested_mode != GithubClientMode::Octocrab
+                    && !gh_fallback_disabled,
+                gh_fallback_disabled,
             },
             _octocrab: PhantomData,
         })
@@ -157,10 +182,26 @@ fn discover_token_source(
     }
 }
 
+fn parse_disable_gh_fallback(raw: Option<&str>) -> Result<bool, AdlGithubClientError> {
+    match raw.map(str::trim).filter(|value| !value.is_empty()) {
+        None => Ok(false),
+        Some("1") | Some("true") | Some("yes") | Some("on") => Ok(true),
+        Some("0") | Some("false") | Some("no") | Some("off") => Ok(false),
+        Some(other) => Err(AdlGithubClientError::new(
+            AdlGithubClientErrorKind::InvalidMode,
+            format!(
+                "unsupported {ADL_GITHUB_DISABLE_GH_FALLBACK_ENV} value '{}'; expected 1, true, yes, on, 0, false, no, or off",
+                redact_for_diagnostics(other)
+            ),
+        )),
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum AdlGithubClientErrorKind {
     InvalidMode,
     MissingToken,
+    FallbackDisabled,
     Auth,
     RateLimit,
     NotFound,
@@ -189,6 +230,7 @@ impl AdlGithubClientError {
         match self.kind {
             AdlGithubClientErrorKind::InvalidMode => "github_client.invalid_mode",
             AdlGithubClientErrorKind::MissingToken => "github_client.missing_token",
+            AdlGithubClientErrorKind::FallbackDisabled => "github_client.fallback_disabled",
             AdlGithubClientErrorKind::Auth => "github_client.auth",
             AdlGithubClientErrorKind::RateLimit => "github_client.rate_limit",
             AdlGithubClientErrorKind::NotFound => "github_client.not_found",
@@ -428,11 +470,13 @@ mod tests {
             Some(GithubTokenSource::GithubToken)
         );
         assert!(client.config().gh_fallback_allowed);
+        assert!(!client.config().gh_fallback_disabled);
 
         let client = AdlGithubClient::from_values(Some("auto"), None, None).unwrap();
         assert_eq!(client.config().backend, GithubClientBackend::GhFallback);
         assert_eq!(client.config().token_source, None);
         assert!(client.config().gh_fallback_allowed);
+        assert!(!client.config().gh_fallback_disabled);
     }
 
     #[test]
@@ -472,6 +516,77 @@ mod tests {
     }
 
     #[test]
+    fn fallback_disable_fails_closed_for_shell_backed_modes() {
+        let err =
+            AdlGithubClient::from_values_with_fallback_policy(Some("auto"), None, None, Some("1"))
+                .unwrap_err();
+        assert_eq!(err.kind(), AdlGithubClientErrorKind::FallbackDisabled);
+        assert_eq!(err.stable_code(), "github_client.fallback_disabled");
+        assert!(err.to_string().contains("ADL_GITHUB_DISABLE_GH_FALLBACK=1"));
+
+        let err =
+            AdlGithubClient::from_values_with_fallback_policy(Some("gh"), None, None, Some("true"))
+                .unwrap_err();
+        assert_eq!(err.kind(), AdlGithubClientErrorKind::FallbackDisabled);
+    }
+
+    #[test]
+    fn fallback_disable_allows_token_backed_octocrab_modes_without_shell_fallback() {
+        let client = AdlGithubClient::from_values_with_fallback_policy(
+            Some("auto"),
+            Some("github"),
+            None,
+            Some("yes"),
+        )
+        .unwrap();
+        assert_eq!(client.config().backend, GithubClientBackend::Octocrab);
+        assert_eq!(
+            client.config().token_source,
+            Some(GithubTokenSource::GithubToken)
+        );
+        assert!(client.config().gh_fallback_disabled);
+        assert!(!client.config().gh_fallback_allowed);
+
+        let client = AdlGithubClient::from_values_with_fallback_policy(
+            Some("octocrab"),
+            Some("github"),
+            None,
+            Some("on"),
+        )
+        .unwrap();
+        assert_eq!(client.config().backend, GithubClientBackend::Octocrab);
+        assert!(client.config().gh_fallback_disabled);
+        assert!(!client.config().gh_fallback_allowed);
+    }
+
+    #[test]
+    fn fallback_disable_rejects_unsupported_values_without_leaking_tokens() {
+        let err = AdlGithubClient::from_values_with_fallback_policy(
+            Some("auto"),
+            Some("github"),
+            None,
+            Some("github_pat_secret"),
+        )
+        .unwrap_err();
+        assert_eq!(err.kind(), AdlGithubClientErrorKind::InvalidMode);
+        assert!(!err.to_string().contains("github_pat_secret"));
+        assert!(err.to_string().contains("<redacted>"));
+    }
+
+    #[test]
+    fn migration_review_records_fallback_and_remaining_shell_boundaries() {
+        let doc = include_str!("../../../../docs/tooling/ADL_OCTOCRAB_MIGRATION_REVIEW.md");
+
+        assert!(doc.contains("ADL_GITHUB_DISABLE_GH_FALLBACK"));
+        assert!(doc.contains("github_client.fallback_disabled"));
+        assert!(doc.contains("Remaining Shell-Backed Operations"));
+        assert!(
+            doc.contains("This packet does not claim all GitHub operations are octocrab-backed")
+        );
+        assert!(doc.contains("adl/tools/pr.sh"));
+    }
+
+    #[test]
     fn github_status_mapping_is_stable_and_redacted() {
         let auth = map_github_status(401, "Authorization: token=ghp_secret");
         assert_eq!(auth.kind(), AdlGithubClientErrorKind::Auth);
@@ -497,6 +612,7 @@ mod tests {
         let _guard = env_lock();
         unsafe {
             std::env::set_var(ADL_GITHUB_CLIENT_ENV, "auto");
+            std::env::set_var(ADL_GITHUB_DISABLE_GH_FALLBACK_ENV, "1");
             std::env::set_var(GITHUB_TOKEN_ENV, "github");
             std::env::set_var(GH_TOKEN_ENV, "gh");
         }
@@ -506,8 +622,11 @@ mod tests {
             client.config().token_source,
             Some(GithubTokenSource::GithubToken)
         );
+        assert!(client.config().gh_fallback_disabled);
+        assert!(!client.config().gh_fallback_allowed);
         unsafe {
             std::env::remove_var(ADL_GITHUB_CLIENT_ENV);
+            std::env::remove_var(ADL_GITHUB_DISABLE_GH_FALLBACK_ENV);
             std::env::remove_var(GITHUB_TOKEN_ENV);
             std::env::remove_var(GH_TOKEN_ENV);
         }
