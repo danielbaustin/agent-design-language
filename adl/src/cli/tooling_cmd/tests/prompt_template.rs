@@ -135,6 +135,94 @@ fn prompt_template_cli_renders_one_card_and_rejects_locked_value_edits() {
 }
 
 #[test]
+fn prompt_template_cli_edits_declared_values_and_fails_closed() {
+    let repo = TempRepo::new("prompt-template-edit-values");
+    let values_dir = repo.path().join("values");
+    let edited_values = repo.path().join("edited-stp.values.yaml");
+    let rendered = repo.path().join("edited-stp.md");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "write-sample-values".to_string(),
+        "--out-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+    ])
+    .expect("write sample values");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "stp".to_string(),
+        "--values".to_string(),
+        values_dir
+            .join("stp.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+        "--set".to_string(),
+        "summary=Edited through the deterministic field editor.".to_string(),
+        "--out".to_string(),
+        edited_values.to_string_lossy().to_string(),
+    ])
+    .expect("edit-values should update editable field");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "render".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "stp".to_string(),
+        "--values".to_string(),
+        edited_values.to_string_lossy().to_string(),
+        "--out".to_string(),
+        rendered.to_string_lossy().to_string(),
+    ])
+    .expect("edited values should render");
+    assert!(fs::read_to_string(&rendered)
+        .expect("rendered edited card")
+        .contains("Edited through the deterministic field editor."));
+
+    let locked = real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "stp".to_string(),
+        "--values".to_string(),
+        values_dir
+            .join("stp.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+        "--set".to_string(),
+        "issue=9999".to_string(),
+    ])
+    .expect_err("locked field should fail");
+    assert!(locked.to_string().contains("stp.issue is locked"));
+
+    let missing_set = real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "stp".to_string(),
+        "--values".to_string(),
+        values_dir
+            .join("stp.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+    ])
+    .expect_err("missing --set should fail");
+    assert!(missing_set
+        .to_string()
+        .contains("edit-values requires at least one --set"));
+}
+
+#[test]
 fn prompt_template_cli_rejects_markdown_structure_drift() {
     let repo = TempRepo::new("prompt-template-structure");
     let values_dir = repo.path().join("values");
@@ -239,6 +327,12 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
         "--help".to_string(),
     ])
     .expect("validate-values help should succeed");
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--help".to_string(),
+    ])
+    .expect("edit-values help should succeed");
     real_tooling(&[
         "prompt-template".to_string(),
         "validate-structure".to_string(),

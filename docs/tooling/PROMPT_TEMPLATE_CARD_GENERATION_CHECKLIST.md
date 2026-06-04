@@ -29,6 +29,16 @@ cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
   validate-values --kind sip --values /tmp/csdlc-prompt-values/sip.values.yaml
 ```
 
+Apply a supported field-level update to values YAML:
+
+```sh
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+  edit-values --kind sip \
+  --values /tmp/csdlc-prompt-values/sip.values.yaml \
+  --set goal="Tighten the issue goal." \
+  --out /tmp/csdlc-prompt-values/sip.edited.values.yaml
+```
+
 Render one card or all five cards:
 
 ```sh
@@ -62,6 +72,8 @@ python3 adl/tools/test_prompt_template_structure_schemas.py
 - Did the card values come from the active registry in
   `docs/templates/prompts/current.json`?
 - Did editable issue-local prose stay under `values` rather than `system`?
+- If only declared field values changed, did the edit use `edit-values` rather
+  than direct Markdown patching?
 - Did locked lifecycle, routing, branch, issue, path, enum, or derived template
   fields stay under `system`?
 - Did `validate-values` pass before rendering?

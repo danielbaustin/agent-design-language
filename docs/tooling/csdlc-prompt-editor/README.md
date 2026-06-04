@@ -75,6 +75,12 @@ cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
   validate-values --kind sip --values /tmp/csdlc-prompt-values/sip.values.yaml
 
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
+  edit-values --kind sip \
+  --values /tmp/csdlc-prompt-values/sip.values.yaml \
+  --set goal="Tighten the issue goal." \
+  --out /tmp/csdlc-prompt-values/sip.edited.values.yaml
+
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
   validate-structure --kind sip --input /tmp/csdlc-prompt-cards/sip.md
 
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template \
@@ -95,6 +101,14 @@ Values files use:
 The renderer rejects unknown fields, locked fields under `values`, editable
 fields under `system`, unresolved placeholders, enum drift, and malformed
 issue/version/card-status values.
+
+`edit-values` is the deterministic field-level edit path for supported
+declared values fields. It updates the values YAML, rejects locked or unknown
+fields, validates enum and required-field constraints, renders the card in
+memory, and checks the rendered Markdown against the tracked structure schema
+before writing the updated values file. Use it when a bounded field change is
+sufficient; use the editor skills for lifecycle-truth judgment or unsupported
+repairs.
 
 The structure validator protects rendered cards from template-shape drift. It
 checks frontmatter key inventory, Markdown heading order, fenced-block shape,

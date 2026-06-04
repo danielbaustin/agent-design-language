@@ -24,6 +24,7 @@ Markdown as lifecycle state:
 
 ```sh
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-values --kind sor --values <path>
+cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template edit-values --kind sor --values <path> --set <field=value> --out <path>
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render --kind sor --values <path> --out <path>
 cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure --kind sor --input <path>
 ```
@@ -31,7 +32,8 @@ cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-str
 Use this skill for SOR truth repairs: execution result, changed paths,
 validation actually run, integration state, PR state, residual risks, and
 closeout truth. Do not use it to bypass locked template prose or schema
-validation.
+validation. When a supported declared values field is the only change needed,
+prefer `edit-values` before rendering instead of patching rendered Markdown.
 
 ## Required Inputs
 
