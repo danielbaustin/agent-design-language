@@ -52,6 +52,17 @@ surface for its local preconditions and commands.
 
 ## Demo Coverage Summary
 
+For reviewer-facing demo packaging, use `review/demo_showcase/DEMO_SHOWCASE_INDEX_v0.91.5.md` first. That index records the final demo order and separates landed, preserved, parked, active-in-v0.91.5, and next-milestone surfaces.
+
+Current demo-showcase order:
+
+1. Creative Room static C-SDLC showcase.
+2. Starharvest browser/gameplay proof.
+3. D17 / `#3419` multi-agent workcell proof lane, preserved as sidecar evidence.
+4. Celestial Rescue Unity game, active in v0.91.5 and pending Unity editor import/build validation.
+5. WildClawBench benchmark sidecar, parked.
+6. Unity Observatory, next-milestone work.
+
 ## Release-Blocking Proof Surfaces
 
 | ID | Surface | Owning WP / Issue | Status | Reviewer value | Evidence |
@@ -64,7 +75,7 @@ surface for its local preconditions and commands.
 | D18 | Review findings remediation | WP-18 / `#3368` | closed | proves findings are fixed, routed, or truthfully deferred | remediation packet and disposition record |
 | D19 | Next milestone planning refresh | WP-19 / `#3369` | closed | proves release closeout does not strand the next planning wave | `NEXT_MILESTONE_HANDOFF_v0.91.4.md` refresh |
 | D20 | Next milestone review pass | WP-20 / `#3370` | closed | proves the next milestone plan has review before ceremony | `review/next_milestone/V0914_NEXT_MILESTONE_REVIEW_2026-06-01.md` |
-| D21 | Release ceremony | WP-21 / `#3371` | in_progress | proves all release-tail evidence converges in order | `RELEASE_EVIDENCE_v0.91.4.md`, `RELEASE_READINESS_v0.91.4.md`, and `END_OF_MILESTONE_REPORT_v0.91.4.md` |
+| D21 | Release ceremony | WP-21 / `#3371` | closed | proves all release-tail evidence converged in order | `RELEASE_EVIDENCE_v0.91.4.md`, `RELEASE_READINESS_v0.91.4.md`, and `END_OF_MILESTONE_REPORT_v0.91.4.md` |
 
 ## Core C-SDLC Proof Already Available
 
@@ -83,6 +94,8 @@ surface for its local preconditions and commands.
 | S01 | Creative Room static C-SDLC showcase | `#3459` | landed | strongest available front-stage explanation of the C-SDLC operating model without overclaiming live provider-backed orchestration | `review/demo_showcase/CREATIVE_ROOM_PROOF_PACKET_v0.91.4.md` |
 | S02 | Starharvest browser proof | `#3458`, `#3497` | landed | strongest available browser-backed interaction proof for the demo showcase lane | `review/demo_showcase/STARHARVEST_BROWSER_PROOF_v0.91.4.md` and `review/demo_showcase/BROWSER_PROOF_RUNBOOK_v0.91.4.md` |
 | S03 | Best available default-operation showcase note | WP-13 / `#3363` | closed | explains which existing demo should be shown to reviewers first and why | `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` |
+| S04 | Demo showcase index and proof map | `#3461` | active_in_v0_91_5 | packages the final reviewer-facing demo order and proof/routing links without adding new demo claims | `review/demo_showcase/DEMO_SHOWCASE_INDEX_v0.91.5.md` |
+| S05 | Celestial Rescue Unity game | `#3460` / PR `#3680` | active_in_v0_91_5_pending_unity_import | source-created Unity game scaffold; not a v0.91.4 release gate and not Unity editor/build proven yet | draft PR `#3680` |
 
 ## Routed Or Non-Blocking Surfaces
 
@@ -90,8 +103,10 @@ surface for its local preconditions and commands.
 | --- | --- | --- | --- |
 | R01 | Multi-agent C-SDLC proving wave and remaining stabilization | routed_to_v0_91_5 | the old `#3415` mini-sprint remains useful background evidence, but the concrete bridge wave now lives under `#3501`, `#3503`, and `#3504`, with `#3484` retained as already-satisfied proof rather than a `v0.91.4` release blocker |
 | R02 | CodeFriend sidecar product setup | non_core_sidecar | product publication work is tracked separately and does not count as default-operation C-SDLC proof |
-| R03 | WildClawBench benchmark sidecar | non_core_sidecar | benchmark spike evidence may inform later work, but it is not required for Sprint 4 release closeout |
-| R04 | Unity-facing best-demo completion | deferred_to_v0_91_5 | no `v0.91.4` release claim depends on Unity completion; the current truthful release posture is best-available showcase plus explicit non-claim |
+| R03 | WildClawBench benchmark sidecar | parked_sidecar | benchmark spike evidence may inform later work, but it is not required for Sprint 4 release closeout and should not be presented as active WP-13 demo work |
+| R04 | Unity-facing best-demo completion | active_in_v0_91_5_pending_unity_import | `#3460` carries Celestial Rescue in v0.91.5; no `v0.91.4` release claim depends on Unity completion or Unity editor/build validation |
+| R05 | Unity Observatory | next_milestone | Observatory remains separate next-milestone work and must not be collapsed into the Celestial Rescue game |
+| R06 | D17 / multi-agent workcell proof lane | preserved_sidecar | issue `#3419` and the multi-agent workcell proof packets remain linked evidence, not a v0.91.4 release gate |
 
 ## Coverage Rules
 
@@ -121,7 +136,10 @@ The strongest reviewer-facing story available today is:
 1. core C-SDLC control-plane proof already landed through Sprints 1 through 3
 2. Creative Room is the best front-stage demo for explaining the default-operation claim boundary
 3. Starharvest provides the strongest browser-backed interaction proof in the current showcase lane
-4. Sprint 4 has closed the demo/proof refresh, quality gate, docs/adoption review, internal review, external review, remediation, next-milestone planning, and next-milestone review; the remaining closeout tail is WP-21 ceremony merge, tag, and GitHub Release publication
+4. D17 / `#3419` multi-agent proof remains preserved as sidecar evidence rather than being hidden or promoted into the release gate
+5. Celestial Rescue is active v0.91.5 Unity-game work pending Unity editor import/build validation
+6. WildClawBench is parked sidecar evidence, and Observatory remains next-milestone work
+7. Sprint 4 has closed the demo/proof refresh, quality gate, docs/adoption review, internal review, external review, remediation, next-milestone planning, next-milestone review, and WP-21 release ceremony evidence
 
 `v0.91.4` should not claim live multi-agent completion, Unity completion, or sidecar-product success as required release proof.
 

@@ -26,8 +26,8 @@ This claim is not the same as claiming every auxiliary experiment is complete. I
 | ObsMem transition memory handoff | landed | `review/obsmem_transition_memory/OBSMEM_TRANSITION_MEMORY_PACKET_v0.91.4.md` | proves tracked transition truth can be handed off durably |
 | Sprint default lane and repeatability | landed | `FIVE_MINUTE_SPRINT_REPEATABILITY_REPORT_2026-05-27.md` and Sprint 3 deliverables | shows the path is repeatable enough to measure and review |
 | Process-drift fail-closed posture | landed | `PROCESS_DRIFT_REGRESSION_REPORT_2026-05-28.md` | shows known workflow drifts are now caught instead of silently passing |
-| Reviewer-facing demo explanation | partially_proven | `review/demo_showcase/CREATIVE_ROOM_PROOF_PACKET_v0.91.4.md`, `review/demo_showcase/STARHARVEST_BROWSER_PROOF_v0.91.4.md`, and `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md` | strongest available showcase path is bounded and honest, not a live-provider overclaim |
-| Release-tail proof convergence | landed | Sprint 4 WP-20 through WP-21 | WP-20 next-milestone review is closed; WP-21 ceremony evidence is in this release packet |
+| Reviewer-facing demo explanation | packaged | `review/demo_showcase/CREATIVE_ROOM_PROOF_PACKET_v0.91.4.md`, `review/demo_showcase/STARHARVEST_BROWSER_PROOF_v0.91.4.md`, `review/demo_showcase/BEST_AVAILABLE_CSDLC_DEMO_SHOWCASE_v0.91.4.md`, and `review/demo_showcase/DEMO_SHOWCASE_INDEX_v0.91.5.md` | strongest available showcase path is bounded and honest, with final demo order and proof/routing links packaged by `#3461` |
+| Release-tail proof convergence | landed | `RELEASE_EVIDENCE_v0.91.4.md`, `RELEASE_READINESS_v0.91.4.md`, `END_OF_MILESTONE_REPORT_v0.91.4.md`, and closed WP-21 issue `#3371` | WP-20 next-milestone review and WP-21 release ceremony are closed; this row points to concrete release packet evidence rather than a vague WP range |
 
 ## Feature Coverage Table
 
@@ -46,6 +46,7 @@ This claim is not the same as claiming every auxiliary experiment is complete. I
 | Model Identity And Execution Identity | partial_bridge | `review/provider_substrate_reconciliation/PROVIDER_SUBSTRATE_RECONCILIATION_PLAN.md` and `review/provider_communication_substrate/UTS_REUSE_STRATEGY.md` | remaining provider-alignment follow-on work belongs to `v0.91.5` |
 | Active Issue Migration Policy | landed | `ACTIVE_ISSUE_MIGRATION_AUDIT_2026-05-27.md` and `C_SDLC_TRACKED_WORKFLOW_STATE_MIGRATION_PLAN_v0.91.4.md` | supports workflow-state truth claims |
 | Process Drift Regression Fixtures | landed | regression report | release-tail review should explicitly rely on this fail-closed posture |
+| Demo Showcase Packaging | packaged_in_v0_91_5 | `DEMO_MATRIX_v0.91.4.md` and `review/demo_showcase/DEMO_SHOWCASE_INDEX_v0.91.5.md` | records Creative Room, Starharvest, D17/`#3419`, Celestial Rescue, parked WildClawBench, and next-milestone Observatory boundaries |
 
 ## Sprint 4 Closeout Coverage
 
@@ -59,15 +60,16 @@ This claim is not the same as claiming every auxiliary experiment is complete. I
 | WP-18 | `#3368` | closed | remediation packet and finding dispositions |
 | WP-19 | `#3369` | closed | next-milestone handoff refresh |
 | WP-20 | `#3370` | closed | next-milestone review packet |
-| WP-21 | `#3371` | in_progress | release evidence packet and ceremony closeout |
+| WP-21 | `#3371` | closed | release evidence packet and ceremony closeout |
 
 ## Explicit Non-Claims For v0.91.4
 
 `v0.91.4` does not need to prove the following to close Sprint 4:
 
 - live provider-backed multi-agent workcell completion
-- Unity-facing showcase completion
+- Unity-facing showcase completion as a v0.91.4 release gate; Celestial Rescue is active v0.91.5 work and remains pending Unity editor/build validation
 - CodeFriend sidecar product success as C-SDLC default-operation proof
 - WildClawBench benchmark maturity as release-tail proof
+- Unity Observatory implementation in v0.91.4
 
 Those surfaces may remain useful. They are simply not the gating proof boundary for this milestone closeout.
