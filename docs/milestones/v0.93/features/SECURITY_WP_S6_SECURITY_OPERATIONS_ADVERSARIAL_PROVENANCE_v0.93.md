@@ -21,6 +21,8 @@ than separate manual rituals.
 - WP-S1 through WP-S5.
 - v0.91.5 CAV/threat-model scheduling packet:
   `docs/milestones/v0.91.5/features/CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SCHEDULING_v0.91.5.md`.
+- v0.91.5 CAV/threat-model source packet:
+  `docs/milestones/v0.91.5/features/CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SOURCE_PACKET_v0.91.5.md`.
 - v0.89.1 adversarial runtime, red/blue proof surfaces, exploit/replay, and
   self-attack work.
 - Current CI, review, release-evidence, and milestone closeout gates.

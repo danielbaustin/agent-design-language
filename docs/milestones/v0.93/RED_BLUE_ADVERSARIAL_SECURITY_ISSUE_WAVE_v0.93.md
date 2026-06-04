@@ -28,6 +28,7 @@ reviewable issue candidates for:
 ## Source Inputs
 
 - `docs/milestones/v0.91.5/features/CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SCHEDULING_v0.91.5.md`
+- `docs/milestones/v0.91.5/features/CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SOURCE_PACKET_v0.91.5.md`
 - `docs/explainers/RED_BLUE_SECURITY.md`
 - `docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md`
 - `docs/milestones/v0.93/features/SECURITY_WP_S1_ZERO_TRUST_ARCHITECTURE_v0.93.md`

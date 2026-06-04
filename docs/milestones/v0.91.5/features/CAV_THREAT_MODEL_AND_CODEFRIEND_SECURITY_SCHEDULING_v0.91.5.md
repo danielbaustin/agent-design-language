@@ -11,8 +11,9 @@ production security-operations claim.
 
 ## Purpose
 
-ADL has three related local draft surfaces that should not remain loose planning
-notes:
+ADL has three related security-architecture source surfaces captured in the
+reviewable source packet
+`docs/milestones/v0.91.5/features/CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SOURCE_PACKET_v0.91.5.md`:
 
 - Continuous Adversarial Verification (CAV)
 - ADL Threat Model
@@ -32,13 +33,22 @@ without being identical to enterprise-security feature work:
   ADL security architecture, but should not silently become core ADL runtime
   scope.
 
-## Source Drafts
+## Source Packet
+
+The durable source basis for this scheduling decision is:
+
+- `docs/milestones/v0.91.5/features/CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SOURCE_PACKET_v0.91.5.md`
+
+That source packet summarizes the local planning drafts in a tracked,
+reviewer-safe form. The local `.adl` drafts are not required for PR review.
+
+## Source Surfaces
 
 | Draft | Current role | Future owner lane | Scheduling decision |
 | --- | --- | --- | --- |
-| `.adl/docs/TBD/ADL_THREAT_MODEL.md` | Defines what can be attacked, how attacks are classified, and what must be defended. | ADL security architecture; v0.93 enterprise/security planning consumer. | Promote into the v0.93 security planning surface as the threat taxonomy and control-area input. |
-| `.adl/docs/TBD/CONTINUOUS_ADVERSARIAL_VERIFICATION.md` | Defines continuous exploit discovery, reproduction, mitigation verification, replay, and security-corpus growth. | ADL adversarial verification architecture; v0.93 WP-S6 planning consumer. | Promote into WP-S6 as the security-operations/adversarial-regression doctrine. |
-| `.adl/docs/TBD/CODEFRIEND_SECURITY_MODEL.md` | Defines CodeFriend's correctness/security/adversarial/constitutional review model. | CodeFriend/product lane; consumes ADL security architecture. | Route to CodeFriend planning as an application of CAV and threat modeling, not as a core ADL runtime feature. |
+| ADL Threat Model | Defines what can be attacked, how attacks are classified, and what must be defended. | ADL security architecture; v0.93 enterprise/security planning consumer. | Promote into the v0.93 security planning surface as the threat taxonomy and control-area input. |
+| Continuous Adversarial Verification | Defines continuous exploit discovery, reproduction, mitigation verification, replay, and security-corpus growth. | ADL adversarial verification architecture; v0.93 WP-S6 planning consumer. | Promote into WP-S6 as the security-operations/adversarial-regression doctrine. |
+| CodeFriend Security Model | Defines CodeFriend's correctness/security/adversarial/constitutional review model. | CodeFriend/product lane; consumes ADL security architecture. | Route to CodeFriend planning as an application of CAV and threat modeling, not as a core ADL runtime feature. |
 
 ## Relationship To The Enterprise-Security Boundary
 
