@@ -48,6 +48,9 @@ These rules are mandatory for ADL issue work.
      `adl-csdlc tooling prompt-template edit-values --kind <kind> --values <path> --set <field=value>`,
      then render and validate structure. Do not patch the rendered Markdown
      when a declared values-field edit is sufficient.
+   - When starting from an existing rendered card, test representability first
+     with `adl-csdlc tooling prompt-template import-values --kind <kind> --input <card.md> --out <values.yaml>`,
+     then validate the imported values and re-render before accepting a rewrite.
    - Treat the tracked structure schemas under
      `docs/templates/prompts/<version>/schemas/` as the template-shape
      authority. If a rendered card fails structure validation, fix the values or

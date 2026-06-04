@@ -6,7 +6,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 mod values;
-use values::{load_values_document, load_values_file, sample_values_document};
+use values::{
+    load_values_document, load_values_file, sample_values_document, PromptValuesDocument,
+};
 
 const TEMPLATE_REGISTRY: &str = "docs/templates/prompts/current.json";
 const VALUES_SCHEMA: &str = "adl.csdlc.prompt_template_values.v1";
@@ -306,6 +308,290 @@ pub fn edit_values_file(
     fs::write(&target, doc.to_yaml(card))
         .with_context(|| format!("failed to write edited values file {}", target.display()))?;
     Ok(target)
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PromptCardRoundTripComparison {
+    Exact,
+    Normalized,
+}
+
+impl PromptCardRoundTripComparison {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Exact => "exact",
+            Self::Normalized => "normalized",
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PromptCardImportReport {
+    pub values_path: PathBuf,
+    pub normalized_path: Option<PathBuf>,
+    pub comparison: PromptCardRoundTripComparison,
+    pub unrepresented_required_fields: Vec<String>,
+}
+
+pub fn import_values_from_rendered_card_file(
+    repo_root: &Path,
+    kind: PromptCardKind,
+    input_path: &Path,
+    out_path: &Path,
+    normalized_out_path: Option<&Path>,
+) -> Result<PromptCardImportReport> {
+    let model = load_editor_model(repo_root)?;
+    let card = card_model(&model, kind)?;
+    let source = fs::read_to_string(input_path)
+        .with_context(|| format!("failed to read rendered card {}", input_path.display()))?;
+
+    validate_rendered_card_structure_from_repo(repo_root, card, &source)?;
+    let (doc, unrepresented_required_fields) =
+        import_values_document_from_rendered_card(card, &model.template_set, &source)?;
+    let values = doc.merged_values();
+    validate_values(card, &values)?;
+
+    let rendered = render_template(&card.template, &values)?;
+    validate_rendered_card_structure_from_repo(repo_root, card, &rendered)?;
+
+    let comparison = if rendered == source {
+        PromptCardRoundTripComparison::Exact
+    } else {
+        PromptCardRoundTripComparison::Normalized
+    };
+
+    if let Some(parent) = out_path.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("failed to create {}", parent.display()))?;
+    }
+    fs::write(out_path, doc.to_yaml(card)).with_context(|| {
+        format!(
+            "failed to write imported values file {}",
+            out_path.display()
+        )
+    })?;
+
+    if let Some(normalized_out_path) = normalized_out_path {
+        if let Some(parent) = normalized_out_path.parent() {
+            fs::create_dir_all(parent)
+                .with_context(|| format!("failed to create {}", parent.display()))?;
+        }
+        fs::write(normalized_out_path, rendered).with_context(|| {
+            format!(
+                "failed to write normalized rendered card {}",
+                normalized_out_path.display()
+            )
+        })?;
+    }
+
+    Ok(PromptCardImportReport {
+        values_path: out_path.to_path_buf(),
+        normalized_path: normalized_out_path.map(Path::to_path_buf),
+        comparison,
+        unrepresented_required_fields,
+    })
+}
+
+fn import_values_document_from_rendered_card(
+    card: &PromptCardForm,
+    template_set: &str,
+    rendered: &str,
+) -> Result<(PromptValuesDocument, Vec<String>)> {
+    let mut extracted = extract_template_values(card, &card.template, rendered)?;
+    let unrepresented_required_fields =
+        populate_unrepresented_required_import_fields(card, &mut extracted)?;
+    let editable_keys = card
+        .fields
+        .iter()
+        .filter(|field| field.editable)
+        .map(|field| field.key)
+        .collect::<BTreeSet<_>>();
+
+    let mut system = BTreeMap::new();
+    let mut values = BTreeMap::new();
+    for (key, value) in extracted {
+        if editable_keys.contains(key.as_str()) {
+            values.insert(key, value);
+        } else {
+            system.insert(key, value);
+        }
+    }
+
+    Ok((
+        PromptValuesDocument {
+            schema: VALUES_SCHEMA.to_string(),
+            template_set: template_set.to_string(),
+            card_kind: Some(card.key.to_string()),
+            system,
+            values,
+        },
+        unrepresented_required_fields,
+    ))
+}
+
+fn populate_unrepresented_required_import_fields(
+    card: &PromptCardForm,
+    values: &mut BTreeMap<String, String>,
+) -> Result<Vec<String>> {
+    let issue = derive_import_issue(values).unwrap_or_else(|| "1".to_string());
+    let mut unrepresented = Vec::new();
+    for field in &card.fields {
+        if !field.required || values.contains_key(field.key) {
+            continue;
+        }
+        values.insert(
+            field.key.to_string(),
+            unrepresented_import_value(field.key, &issue),
+        );
+        unrepresented.push(field.key.to_string());
+    }
+    Ok(unrepresented)
+}
+
+fn derive_import_issue(values: &BTreeMap<String, String>) -> Option<String> {
+    for key in ["issue", "issue_padded"] {
+        if let Some(value) = values.get(key).map(|value| value.trim()) {
+            if value.parse::<u32>().is_ok() {
+                return Some(value.to_string());
+            }
+        }
+    }
+    for key in ["task_id", "run_id", "issue_url", "source_issue_prompt"] {
+        if let Some(issue) = values
+            .get(key)
+            .and_then(|value| extract_issue_number(value))
+        {
+            return Some(issue);
+        }
+    }
+    None
+}
+
+fn extract_issue_number(value: &str) -> Option<String> {
+    let bytes = value.as_bytes();
+    let mut idx = 0usize;
+    while idx < bytes.len() {
+        if bytes[idx].is_ascii_digit() {
+            let start = idx;
+            while idx < bytes.len() && bytes[idx].is_ascii_digit() {
+                idx += 1;
+            }
+            return Some(value[start..idx].to_string());
+        }
+        idx += 1;
+    }
+    None
+}
+
+fn unrepresented_import_value(key: &str, issue: &str) -> String {
+    match key {
+        "issue" | "issue_padded" => issue.to_string(),
+        "task_id" | "run_id" => format!("issue-{issue}"),
+        "version" => "v0.0.0-imported".to_string(),
+        "slug" => "imported-rendered-prompt-card".to_string(),
+        "title" => "Imported rendered prompt card".to_string(),
+        "branch" => "not bound yet".to_string(),
+        "issue_url" => {
+            format!("https://github.com/danielbaustin/agent-design-language/issues/{issue}")
+        }
+        "source_issue_prompt" => {
+            format!(".adl/imported/issue-{issue}-source-issue-prompt.md")
+        }
+        "card_status" => "draft".to_string(),
+        _ => "UNREPRESENTED_IN_RENDERED_CARD".to_string(),
+    }
+}
+
+fn extract_template_values(
+    card: &PromptCardForm,
+    template: &str,
+    rendered: &str,
+) -> Result<BTreeMap<String, String>> {
+    let mut out = BTreeMap::new();
+    let mut template_pos = 0usize;
+    let mut rendered_pos = 0usize;
+
+    while let Some(token) = next_placeholder_token(template, template_pos) {
+        let literal = &template[template_pos..token.start];
+        ensure!(
+            rendered[rendered_pos..].starts_with(literal),
+            "{} rendered card cannot be represented by active template near byte {}",
+            card.key,
+            rendered_pos
+        );
+        rendered_pos += literal.len();
+
+        let next_template_pos = token.end;
+        let next_literal = next_placeholder_token(template, next_template_pos)
+            .map(|next| &template[next_template_pos..next.start])
+            .unwrap_or(&template[next_template_pos..]);
+        ensure!(
+            !next_literal.is_empty(),
+            "{} template has adjacent placeholders near byte {}; import would be ambiguous",
+            card.key,
+            token.start
+        );
+        let Some(next_literal_offset) = rendered[rendered_pos..].find(next_literal) else {
+            bail!(
+                "{} rendered card cannot find post-placeholder literal for {} near byte {}",
+                card.key,
+                token.key,
+                rendered_pos
+            );
+        };
+        let value = rendered[rendered_pos..rendered_pos + next_literal_offset].to_string();
+        if let Some(existing) = out.get(token.key) {
+            ensure!(
+                existing == &value,
+                "{} repeated placeholder {} resolved to different values",
+                card.key,
+                token.key
+            );
+        } else {
+            out.insert(token.key.to_string(), value);
+        }
+        rendered_pos += next_literal_offset;
+        template_pos = token.end;
+    }
+
+    let tail = &template[template_pos..];
+    ensure!(
+        rendered[rendered_pos..] == *tail,
+        "{} rendered card has trailing content that does not match active template",
+        card.key
+    );
+    Ok(out)
+}
+
+#[derive(Debug, Clone, Copy)]
+struct PlaceholderToken<'a> {
+    key: &'a str,
+    start: usize,
+    end: usize,
+}
+
+fn next_placeholder_token(text: &str, from: usize) -> Option<PlaceholderToken<'_>> {
+    let haystack = &text[from..];
+    PLACEHOLDERS
+        .iter()
+        .flat_map(|key| {
+            let legacy = format!("<{key}>");
+            let curly = format!("{{{{{key}}}}}");
+            [
+                haystack.find(&legacy).map(|offset| PlaceholderToken {
+                    key,
+                    start: from + offset,
+                    end: from + offset + legacy.len(),
+                }),
+                haystack.find(&curly).map(|offset| PlaceholderToken {
+                    key,
+                    start: from + offset,
+                    end: from + offset + curly.len(),
+                }),
+            ]
+        })
+        .flatten()
+        .min_by_key(|token| token.start)
 }
 
 pub fn validate_rendered_card_structure_file(
@@ -1865,6 +2151,85 @@ mod tests {
                 assert!(text.contains("# Structured Review Prompt"));
                 assert!(!text.contains("# Structured Review Policy"));
             }
+        }
+    }
+
+    #[test]
+    fn import_values_from_rendered_cards_round_trips_all_card_kinds() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-prompt-values-import-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("clock")
+                .as_nanos()
+        ));
+        fs::create_dir_all(&tmp).expect("tmp");
+
+        for kind in PromptCardKind::all() {
+            let rendered = render_sample_card(&repo_root(), kind).expect("sample render");
+            let input = tmp.join(format!("{}.md", kind.key()));
+            let values = tmp.join(format!("{}.imported.values.yaml", kind.key()));
+            let normalized = tmp.join(format!("{}.normalized.md", kind.key()));
+            fs::write(&input, &rendered).expect("rendered card");
+
+            let report = import_values_from_rendered_card_file(
+                &repo_root(),
+                kind,
+                &input,
+                &values,
+                Some(&normalized),
+            )
+            .expect("rendered card should import");
+            assert_eq!(report.comparison, PromptCardRoundTripComparison::Exact);
+
+            validate_values_file(&repo_root(), kind, &values).expect("imported values valid");
+            let rerendered = render_card_from_values_file(&repo_root(), kind, &values)
+                .expect("imported values render");
+            assert_eq!(
+                rerendered,
+                rendered,
+                "{} should round-trip exactly",
+                kind.key()
+            );
+            assert_eq!(
+                fs::read_to_string(&normalized).expect("normalized card"),
+                rendered
+            );
+        }
+    }
+
+    #[test]
+    fn import_values_fails_closed_for_locked_template_drift_on_all_card_kinds() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-prompt-values-import-drift-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("clock")
+                .as_nanos()
+        ));
+        fs::create_dir_all(&tmp).expect("tmp");
+
+        for kind in PromptCardKind::all() {
+            let rendered = render_sample_card(&repo_root(), kind).expect("sample render");
+            let drifted = rendered.replace(
+                "Canonical Template Source:",
+                "Canonical Template Source Drift:",
+            );
+            let input = tmp.join(format!("{}.drift.md", kind.key()));
+            let values = tmp.join(format!("{}.drift.values.yaml", kind.key()));
+            fs::write(&input, drifted).expect("drifted card");
+
+            let err =
+                import_values_from_rendered_card_file(&repo_root(), kind, &input, &values, None)
+                    .expect_err("locked template drift should fail");
+            assert!(
+                err.to_string().contains("locked template text drifted")
+                    || err
+                        .to_string()
+                        .contains("cannot be represented by active template"),
+                "{} should fail closed for locked prose drift: {err}",
+                kind.key()
+            );
         }
     }
 
