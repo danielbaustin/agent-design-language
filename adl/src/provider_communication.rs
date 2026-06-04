@@ -530,6 +530,90 @@ pub fn validate_provider_request(request: &ProviderInvocationRequestV1) -> Resul
     Ok(())
 }
 
+pub fn validate_provider_result(result: &ProviderInvocationResultV1) -> Result<()> {
+    require_schema_version("provider_result.schema_version", &result.schema_version)?;
+    require_non_empty("provider_result.route.provider", &result.route.provider)?;
+    require_non_empty(
+        "provider_result.route.provider_model_id",
+        &result.route.provider_model_id,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.provider_kind",
+        &result.model_identity.provider_kind,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.provider",
+        &result.model_identity.provider,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.model_ref",
+        &result.model_identity.model_ref,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.provider_model_id",
+        &result.model_identity.provider_model_id,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.runtime_surface",
+        &result.model_identity.runtime_surface,
+    )?;
+    require_non_empty(
+        "provider_result.model_identity.observed_at",
+        &result.model_identity.observed_at,
+    )?;
+    if result.attempts.is_empty() {
+        return Err(anyhow!("provider_result.attempts must not be empty"));
+    }
+    for attempt in &result.attempts {
+        require_non_empty("provider_result.attempts.started_at", &attempt.started_at)?;
+        match &attempt.status {
+            ProviderAttemptStatusV1::Ok => {
+                if attempt.failure.is_some() {
+                    return Err(anyhow!(
+                        "provider_result ok attempts must not carry failure details"
+                    ));
+                }
+            }
+            ProviderAttemptStatusV1::Error | ProviderAttemptStatusV1::Timeout => {
+                if attempt.failure.is_none() {
+                    return Err(anyhow!(
+                        "provider_result failed attempts must carry failure details"
+                    ));
+                }
+            }
+        }
+    }
+    match &result.final_status {
+        ProviderInvocationFinalStatusV1::Ok => {
+            if result.failure.is_some() {
+                return Err(anyhow!(
+                    "provider_result final_status ok must not carry failure"
+                ));
+            }
+            if result.output_text.is_none() && result.output_text_excerpt.is_none() {
+                return Err(anyhow!(
+                    "provider_result final_status ok requires output text or excerpt"
+                ));
+            }
+        }
+        ProviderInvocationFinalStatusV1::Failed => {
+            if result.failure.is_none() {
+                return Err(anyhow!(
+                    "provider_result final_status failed requires failure"
+                ));
+            }
+        }
+        ProviderInvocationFinalStatusV1::Skipped | ProviderInvocationFinalStatusV1::Blocked => {
+            if result.failure.is_none() {
+                return Err(anyhow!(
+                    "provider_result final_status skipped or blocked requires failure"
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
 pub fn validate_review_provider_request(request: &ReviewProviderRequestV1) -> Result<()> {
     require_schema_version("schema_version", &request.schema_version)?;
     require_non_empty("review_request_id", &request.review_request_id)?;
@@ -584,6 +668,39 @@ pub fn validate_review_provider_result(result: &ReviewProviderResultV1) -> Resul
     require_non_empty("started_at", &result.started_at)?;
     require_non_empty("completed_at", &result.completed_at)?;
     require_non_empty("log_ref", &result.log_ref)?;
+    validate_provider_result(&result.provider_result)?;
+    let provider_failed = matches!(
+        result.provider_result.final_status,
+        ProviderInvocationFinalStatusV1::Failed
+            | ProviderInvocationFinalStatusV1::Skipped
+            | ProviderInvocationFinalStatusV1::Blocked
+    );
+    if provider_failed
+        && !matches!(
+            result.review_status,
+            ReviewResultStatusV1::FailedProvider
+                | ReviewResultStatusV1::FailedMalformed
+                | ReviewResultStatusV1::Blocked
+                | ReviewResultStatusV1::Skipped
+        )
+    {
+        return Err(anyhow!(
+            "provider_result failure requires failed_provider, failed_malformed, blocked, or skipped review_status"
+        ));
+    }
+    if matches!(
+        result.provider_result.final_status,
+        ProviderInvocationFinalStatusV1::Ok
+    ) && matches!(
+        result.review_status,
+        ReviewResultStatusV1::FailedProvider
+            | ReviewResultStatusV1::Blocked
+            | ReviewResultStatusV1::Skipped
+    ) {
+        return Err(anyhow!(
+            "provider_result ok must not be reported as provider failed, blocked, or skipped"
+        ));
+    }
     let failure_status = matches!(
         result.review_status,
         ReviewResultStatusV1::FailedProvider
@@ -1146,6 +1263,7 @@ mod tests {
             artifact_ref: None,
             trace_ref: None,
         };
+        let ok_provider_result = provider_result.clone();
         let finding = ReviewFindingV1 {
             severity: ReviewFindingSeverityV1::P2,
             title: "Example finding".to_string(),
@@ -1170,12 +1288,23 @@ mod tests {
         };
         validate_review_provider_result(&result).unwrap();
 
+        let provider_failure = provider_failure_from_note("provider returned empty output", None);
+        let mut failed_provider_result = ok_provider_result.clone();
+        failed_provider_result.attempts[0].status = ProviderAttemptStatusV1::Error;
+        failed_provider_result.attempts[0].failure = Some(provider_failure.clone());
+        failed_provider_result.attempts[0].raw_response_excerpt = None;
+        failed_provider_result.final_status = ProviderInvocationFinalStatusV1::Failed;
+        failed_provider_result.output_text = None;
+        failed_provider_result.output_text_excerpt = None;
+        failed_provider_result.failure = Some(provider_failure);
+        result.provider_result = failed_provider_result;
         result.review_status = ReviewResultStatusV1::FailedProvider;
         assert!(validate_review_provider_result(&result)
             .unwrap_err()
             .to_string()
             .contains("must not carry scored findings"));
 
+        result.provider_result = ok_provider_result.clone();
         result.review_status = ReviewResultStatusV1::Passed;
         assert!(validate_review_provider_result(&result)
             .unwrap_err()
@@ -1188,5 +1317,110 @@ mod tests {
             .unwrap_err()
             .to_string()
             .contains("requires at least one finding"));
+    }
+
+    #[test]
+    fn review_provider_result_rejects_passed_status_when_provider_failed() {
+        let request = review_provider_request_fixture();
+        let route = request.review_provider.provider_request.route.clone();
+        let identity = request
+            .review_provider
+            .provider_request
+            .model_identity
+            .clone();
+        let provider_failure = provider_failure_from_note("provider timed out", None);
+        let provider_result = ProviderInvocationResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            route,
+            model_identity: identity,
+            attempts: vec![ProviderAttemptV1 {
+                attempt_index: 1,
+                started_at: "unix:1".to_string(),
+                duration_ms: 25,
+                status: ProviderAttemptStatusV1::Timeout,
+                retryable: true,
+                http_status: None,
+                failure: Some(provider_failure.clone()),
+                raw_response_excerpt: None,
+            }],
+            final_status: ProviderInvocationFinalStatusV1::Failed,
+            duration_ms: 25,
+            output_text: None,
+            output_text_excerpt: None,
+            failure: Some(provider_failure),
+            artifact_ref: None,
+            trace_ref: None,
+        };
+        let result = ReviewProviderResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            review_request_id: request.review_request_id,
+            provider_result,
+            review_status: ReviewResultStatusV1::Passed,
+            redaction_status: ReviewRedactionStatusV1::Redacted,
+            findings: Vec::new(),
+            started_at: "unix:1".to_string(),
+            completed_at: "unix:2".to_string(),
+            elapsed_ms: 25,
+            log_ref: "review/logs/review-run-1.jsonl".to_string(),
+            artifact_ref: Some("review/results/review-run-1.json".to_string()),
+            malformed_output_reason: None,
+        };
+
+        assert!(validate_review_provider_result(&result)
+            .unwrap_err()
+            .to_string()
+            .contains("provider_result failure requires"));
+    }
+
+    #[test]
+    fn review_provider_result_transitively_rejects_malformed_provider_result() {
+        let request = review_provider_request_fixture();
+        let route = request.review_provider.provider_request.route.clone();
+        let identity = request
+            .review_provider
+            .provider_request
+            .model_identity
+            .clone();
+        let provider_result = ProviderInvocationResultV1 {
+            schema_version: "provider_communication.v0".to_string(),
+            route,
+            model_identity: identity,
+            attempts: vec![ProviderAttemptV1 {
+                attempt_index: 1,
+                started_at: "unix:1".to_string(),
+                duration_ms: 25,
+                status: ProviderAttemptStatusV1::Ok,
+                retryable: false,
+                http_status: Some(200),
+                failure: None,
+                raw_response_excerpt: Some("[redacted response len=120]".to_string()),
+            }],
+            final_status: ProviderInvocationFinalStatusV1::Ok,
+            duration_ms: 25,
+            output_text: None,
+            output_text_excerpt: Some("[redacted review output]".to_string()),
+            failure: None,
+            artifact_ref: None,
+            trace_ref: None,
+        };
+        let result = ReviewProviderResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            review_request_id: request.review_request_id,
+            provider_result,
+            review_status: ReviewResultStatusV1::Passed,
+            redaction_status: ReviewRedactionStatusV1::Redacted,
+            findings: Vec::new(),
+            started_at: "unix:1".to_string(),
+            completed_at: "unix:2".to_string(),
+            elapsed_ms: 25,
+            log_ref: "review/logs/review-run-1.jsonl".to_string(),
+            artifact_ref: Some("review/results/review-run-1.json".to_string()),
+            malformed_output_reason: None,
+        };
+
+        assert!(validate_review_provider_result(&result)
+            .unwrap_err()
+            .to_string()
+            .contains("provider_result.schema_version"));
     }
 }
