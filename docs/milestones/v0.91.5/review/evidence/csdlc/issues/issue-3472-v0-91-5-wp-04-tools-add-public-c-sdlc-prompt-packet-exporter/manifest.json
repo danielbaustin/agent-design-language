@@ -1,0 +1,78 @@
+{
+  "cards": [
+    {
+      "card_status": "ready",
+      "kind": "sip",
+      "public_rel_path": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3472-v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/cards/sip.md",
+      "source_rel_path": ".adl/v0.91.5/tasks/issue-3472__v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/sip.md",
+      "template_version": "1.0.0",
+      "validation_state": "source_present_export_hygiene_passed"
+    },
+    {
+      "card_status": "ready",
+      "kind": "stp",
+      "public_rel_path": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3472-v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/cards/stp.md",
+      "source_rel_path": ".adl/v0.91.5/tasks/issue-3472__v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/stp.md",
+      "template_version": "1.0.0",
+      "validation_state": "source_present_export_hygiene_passed"
+    },
+    {
+      "card_status": "ready",
+      "kind": "spp",
+      "public_rel_path": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3472-v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/cards/spp.md",
+      "source_rel_path": ".adl/v0.91.5/tasks/issue-3472__v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/spp.md",
+      "template_version": "1.0.0",
+      "validation_state": "source_present_export_hygiene_passed"
+    },
+    {
+      "card_status": "approved",
+      "kind": "srp",
+      "public_rel_path": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3472-v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/cards/srp.md",
+      "source_rel_path": ".adl/v0.91.5/tasks/issue-3472__v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/srp.md",
+      "template_version": "1.0.0",
+      "validation_state": "source_present_export_hygiene_passed"
+    },
+    {
+      "card_status": "ready",
+      "kind": "sor",
+      "public_rel_path": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3472-v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/cards/sor.md",
+      "source_rel_path": ".adl/v0.91.5/tasks/issue-3472__v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/sor.md",
+      "template_version": "1.0.0",
+      "validation_state": "source_present_export_hygiene_passed"
+    }
+  ],
+  "generated_by": "adl tooling public-prompt-packet export",
+  "issue_number": 3472,
+  "non_claims": [
+    "This packet does not make local .adl state canonical public truth.",
+    "This packet does not claim runtime validation was executed.",
+    "This packet preserves source card text after export hygiene checks."
+  ],
+  "output_dir": "docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3472-v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter",
+  "redaction": {
+    "checks": [
+      "sip: no host paths, secret-like tokens, private key markers, or local scratch paths",
+      "stp: no host paths, secret-like tokens, private key markers, or local scratch paths",
+      "spp: no host paths, secret-like tokens, private key markers, or local scratch paths",
+      "srp: no host paths, secret-like tokens, private key markers, or local scratch paths",
+      "sor: no host paths, secret-like tokens, private key markers, or local scratch paths"
+    ],
+    "mode": "refuse_not_rewrite",
+    "status": "passed"
+  },
+  "schema": "adl.public_prompt_packet.v1",
+  "slug": "v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter",
+  "source_bundle": ".adl/v0.91.5/tasks/issue-3472__v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter",
+  "template_registry": "docs/templates/prompts/current.json",
+  "tracker": {
+    "issue_number": 3472,
+    "provider": "github",
+    "url": "https://github.com/danielbaustin/agent-design-language/issues/3472"
+  },
+  "version": "v0.91.5",
+  "work_item": {
+    "id": "issue-3472",
+    "kind": "issue",
+    "slug": "v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter"
+  }
+}

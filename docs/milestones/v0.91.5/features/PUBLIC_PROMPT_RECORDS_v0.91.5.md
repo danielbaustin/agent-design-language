@@ -42,6 +42,36 @@ machine-readable shape, redact local/private data, and index them for review.
 - Inventory `.adl` state before archive or deletion.
 - Require review before destructive cleanup.
 
+## Export Command
+
+Initial packet export is handled by the repository tooling command:
+
+```bash
+adl tooling public-prompt-packet export \
+  --issue <number> \
+  --slug <normalized-slug> \
+  --version <milestone-version> \
+  [--source <card-bundle-dir>] \
+  [--out-root <public-packet-root>] \
+  [--tracker-url <github-issue-url>] \
+  [--repo-root <repo-root>]
+```
+
+By default, the exporter reads from
+`.adl/<version>/tasks/issue-<number>__<slug>/` and writes to
+`docs/milestones/<version>/review/evidence/csdlc/issues/issue-<number>-<slug>/`.
+
+The command copies `sip.md`, `stp.md`, `spp.md`, `srp.md`, and `sor.md` into a
+public `cards/` directory, writes a machine-readable `manifest.json`, and writes
+a packet `README.md`. The manifest separates tracker identity from
+tracker-agnostic work-item identity so future Jira or other adapters do not have
+to reinterpret GitHub issue fields as the only source of work identity.
+
+The exporter refuses, rather than rewrites, source cards containing obvious
+host-local absolute paths, secret-like tokens, private key markers, local scratch
+paths, or unresolved template markers. Later redaction gates may add richer
+review, but this first exporter must not silently sanitize away lifecycle truth.
+
 ## Execution Flow
 
 1. Define/export prompt packets.
