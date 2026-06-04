@@ -157,6 +157,14 @@ paths without forcing full local Rust validation, because the selector uses the
 actual changed tracked paths after staging and treats docs as non-widening when
 the code side is already covered by an explicit focused lane.
 
+Not every focused C-SDLC path uses the same Rust selector. Finish-validation
+planner changes such as `adl/src/cli/pr_cmd/finish_support.rs` and
+`adl/src/cli/tests/pr_cmd_inline/finish/*` are proved by formatter checks plus
+narrow `adl-csdlc` filtered tests for finish validation planning and focused
+runner dispatch. Broader lifecycle surfaces such as `doctor`, `git_support`,
+`github`, and `lifecycle` still use the broader `cli::pr_cmd` filtered test
+until they have their own narrower proof lane.
+
 Public prompt packet tooling is also a focused lane: changes to
 `adl/src/cli/tooling_cmd/public_prompt_packet.rs` or its paired
 `public_prompt_packet` tests are proved by formatter checks and the

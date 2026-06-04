@@ -546,6 +546,43 @@ fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
 }
 
 #[test]
+fn finish_validation_profile_keeps_finish_support_changes_narrow() {
+    let plan = select_finish_validation_plan_for_finish(
+        ".",
+        &[
+            "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+            "docs/default_workflow.md".to_string(),
+        ],
+    )
+    .expect("finish support plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_validation"
+            .to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation"
+            .to_string()
+    ));
+    assert!(!plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml cli::pr_cmd".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo nextest")));
+}
+
+#[test]
 fn finish_helper_paths_run_focused_local_ci_gated_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-focused-validation");
@@ -615,6 +652,60 @@ fn finish_helper_paths_run_focused_local_ci_gated_validation() {
     let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
     assert!(focused_calls.contains("coverage"));
     assert!(focused_calls.contains("path-policy"));
+}
+
+#[test]
+fn finish_helper_paths_run_narrow_finish_focused_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-narrow-focused-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let plan = select_finish_validation_plan(
+        "adl/src/cli/pr_cmd/finish_support.rs,adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs,docs/default_workflow.md",
+    )
+    .expect("narrow finish-focused plan");
+    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    run_finish_validation_rust(&repo, &plan).expect("narrow focused validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("fmt --manifest-path"));
+    assert!(cargo_calls
+        .contains("--bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_validation"));
+    assert!(cargo_calls.contains(
+        "--bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation"
+    ));
+    assert!(!cargo_calls.contains(" cli::pr_cmd\n"));
+    assert!(!cargo_calls.contains("clippy --manifest-path"));
 }
 
 #[test]
