@@ -270,6 +270,17 @@ mod tests {
     use super::*;
     use std::env;
 
+    fn provider_spec(kind: &str, default_model: Option<&str>) -> adl::ProviderSpec {
+        adl::ProviderSpec {
+            id: Some(format!("{kind}_primary")),
+            profile: None,
+            kind: kind.to_string(),
+            base_url: None,
+            default_model: default_model.map(ToString::to_string),
+            config: HashMap::new(),
+        }
+    }
+
     #[test]
     fn provider_error_helpers_and_classification_are_stable() {
         let retryable = runtime_error("mock", "retryable");
@@ -288,6 +299,85 @@ mod tests {
         assert!(!is_retryable_error(&panic));
         assert_eq!(stable_failure_kind(&panic), Some("panic"));
         assert!(format!("{panic:#}").contains("provider mock panic: panic"));
+
+        let config = invalid_config("mock", "bad config");
+        assert!(!is_retryable_error(&config));
+        assert_eq!(stable_failure_kind(&config), Some("schema_error"));
+        assert!(format!("{config:#}").contains("provider mock invalid config: bad config"));
+
+        let unknown = unknown_kind("mystery");
+        assert!(!is_retryable_error(&unknown));
+        assert_eq!(stable_failure_kind(&unknown), Some("schema_error"));
+        assert!(format!("{unknown:#}").contains("provider kind 'mystery' is not supported"));
+    }
+
+    #[test]
+    fn provider_complete_stream_default_buffers_mock_output() {
+        let spec = provider_spec("mock", Some("mock-model"));
+        let provider = build_provider_for_id("mock_primary", &spec, None).expect("mock provider");
+        let mut chunks = Vec::new();
+        let output = provider
+            .complete_stream("hello mock", &mut |chunk| chunks.push(chunk.to_string()))
+            .expect("mock stream completion");
+
+        assert_eq!(output, "hello mock");
+        assert_eq!(chunks, vec!["hello mock".to_string()]);
+    }
+
+    #[test]
+    fn build_provider_dispatches_supported_native_and_compatibility_kinds() {
+        let mock = provider_spec("mock", Some("mock-model"));
+        build_provider_for_id("mock_primary", &mock, None).expect("mock provider");
+
+        let local_ollama = provider_spec("ollama", Some("phi4-mini"));
+        build_provider_for_id("ollama_primary", &local_ollama, Some("phi4-mini"))
+            .expect("local ollama provider");
+
+        let mut http_ollama = provider_spec("ollama", Some("phi4-mini"));
+        http_ollama.base_url = Some("http://127.0.0.1:11434".to_string());
+        build_provider_for_id("ollama_http_primary", &http_ollama, None)
+            .expect("ollama http provider");
+
+        let mut generic_http = provider_spec("http", Some("http-model"));
+        generic_http.config.insert(
+            "endpoint".to_string(),
+            serde_json::json!("https://api.example.com/v1/complete"),
+        );
+        build_provider_for_id("http_primary", &generic_http, None).expect("generic http provider");
+
+        let openai = provider_spec("openai", Some("gpt-test"));
+        build_provider_for_id("openai_primary", &openai, None).expect("openai provider");
+
+        let anthropic = provider_spec("anthropic", Some("claude-test"));
+        build_provider_for_id("anthropic_primary", &anthropic, None).expect("anthropic provider");
+
+        let deepseek = provider_spec("deepseek", Some("deepseek-chat"));
+        build_provider_for_id("deepseek_primary", &deepseek, None).expect("deepseek provider");
+    }
+
+    #[test]
+    fn build_provider_rejects_unknown_kind_and_invalid_native_endpoint() {
+        let unknown = provider_spec("not-a-provider", Some("model"));
+        let unknown_err = match build_provider_for_id("unknown_primary", &unknown, None) {
+            Ok(_) => panic!("unknown kind should fail"),
+            Err(err) => err,
+        };
+        assert!(unknown_err
+            .to_string()
+            .contains("provider kind 'not-a-provider' is not supported"));
+
+        let mut unsafe_openai = provider_spec("openai", Some("gpt-test"));
+        unsafe_openai.config.insert(
+            "endpoint".to_string(),
+            serde_json::json!("http://api.openai.com/v1/responses"),
+        );
+        let endpoint_err = match build_provider_for_id("openai_primary", &unsafe_openai, None) {
+            Ok(_) => panic!("plain http hosted endpoint should fail"),
+            Err(err) => err,
+        };
+        assert!(endpoint_err
+            .to_string()
+            .contains("endpoint must use https://"));
     }
 
     #[test]
