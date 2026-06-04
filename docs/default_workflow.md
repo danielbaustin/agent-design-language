@@ -152,8 +152,17 @@ Current implementation is intentionally narrower than the general policy: the
 focused `pr finish` lane currently applies only to docs-only paths and a
 bounded publication-control-plane slice (`pr_cmd`, `finish_support`, inline
 finish tests, CI path-policy / coverage-impact scripts, and the matching
-workflow/docs surfaces). Other actual changed paths still escalate to full
-local validation until more focused lanes are explicitly implemented and tested.
+workflow/docs surfaces). Docs-only paths may accompany these focused tooling
+paths without forcing full local Rust validation, because the selector uses the
+actual changed tracked paths after staging and treats docs as non-widening when
+the code side is already covered by an explicit focused lane.
+
+Public prompt packet tooling is also a focused lane: changes to
+`adl/src/cli/tooling_cmd/public_prompt_packet.rs` or its paired
+`public_prompt_packet` tests are proved by formatter checks and the
+`adl-csdlc public_prompt_packet` filtered test, while merge-context CI remains
+required before merge. Other actual changed paths still escalate to full local
+validation until more focused lanes are explicitly implemented and tested.
 
 Use full local validation for runtime, schema, security, release, broad tooling,
 or ambiguous changes.

@@ -512,6 +512,40 @@ fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request()
 }
 
 #[test]
+fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
+    let plan = select_finish_validation_plan_for_finish(
+        ".",
+        &[
+            "adl/src/cli/tooling_cmd/public_prompt_packet.rs".to_string(),
+            "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs".to_string(),
+            "docs/milestones/v0.91.5/features/PUBLIC_PROMPT_RECORDS_v0.91.5.md".to_string(),
+        ],
+    )
+    .expect("public prompt packet plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc public_prompt_packet"
+            .to_string()
+    ));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo nextest")));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("--doc --all-features")));
+}
+
+#[test]
 fn finish_helper_paths_run_focused_local_ci_gated_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-focused-validation");
@@ -558,7 +592,7 @@ fn finish_helper_paths_run_focused_local_ci_gated_validation() {
     }
 
     let plan = select_finish_validation_plan(
-        "adl/src/cli/pr_cmd/doctor.rs,adl/src/cli/pr_cmd/lifecycle/tests.rs,.github/workflows/ci.yaml,adl/tools/check_coverage_impact.sh,adl/tools/ci_path_policy.sh,docs/tooling/merge_readiness_gate_policy_v0.91.4.md,docs/milestones/v0.91.4/review/merge_readiness/ct_demo_001_merge_gate_profile_report.md",
+        "adl/src/cli/pr_cmd/doctor.rs,adl/src/cli/pr_cmd/lifecycle/tests.rs,adl/src/cli/tooling_cmd/public_prompt_packet.rs,.github/workflows/ci.yaml,adl/tools/check_coverage_impact.sh,adl/tools/ci_path_policy.sh,docs/tooling/merge_readiness_gate_policy_v0.91.4.md,docs/milestones/v0.91.4/review/merge_readiness/ct_demo_001_merge_gate_profile_report.md",
     )
     .expect("focused plan");
     assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
@@ -575,6 +609,7 @@ fn finish_helper_paths_run_focused_local_ci_gated_validation() {
     let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
     assert!(cargo_calls.contains("fmt --manifest-path"));
     assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("--bin adl-csdlc public_prompt_packet"));
     assert!(!cargo_calls.contains("clippy --manifest-path"));
 
     let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
