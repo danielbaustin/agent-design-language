@@ -181,8 +181,14 @@ fn demo_b_run_is_quiet_and_writes_artifacts() {
 
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(
-        stderr.trim().is_empty(),
-        "expected empty stderr on success, got:\n{stderr}"
+        stderr.contains(
+            "adl_event schema=adl.observability.event.v1 command=adl stage=dispatch result=started subcommand=demo"
+        ),
+        "expected structured dispatch observability on stderr, got:\n{stderr}"
+    );
+    assert!(
+        !stderr.contains("RUN failed") && !stderr.contains("STEP failed"),
+        "success stderr should not report runtime failure noise:\n{stderr}"
     );
 }
 
