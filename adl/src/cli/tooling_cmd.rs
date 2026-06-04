@@ -14,6 +14,8 @@ mod markdown;
 mod portable_project_doctor;
 #[path = "tooling_cmd/prompt_template.rs"]
 mod prompt_template;
+#[path = "tooling_cmd/public_prompt_packet.rs"]
+mod public_prompt_packet;
 #[path = "tooling_cmd/review_contract.rs"]
 mod review_contract;
 #[path = "tooling_cmd/review_surface.rs"]
@@ -28,6 +30,7 @@ use code_review::real_code_review;
 use csdlc_prompt_editor::real_csdlc_prompt_editor;
 use portable_project_doctor::real_portable_project_doctor;
 use prompt_template::real_prompt_template;
+use public_prompt_packet::real_public_prompt_packet;
 use review_contract::{real_verify_repo_review_contract, real_verify_review_output_provenance};
 use review_surface::{real_review_card_surface, real_review_runtime_surface};
 use structured_prompt::{real_lint_prompt_spec, real_validate_structured_prompt};
@@ -57,7 +60,7 @@ use structured_prompt::{
 pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "tooling requires a subcommand: card-prompt | code-review | csdlc-prompt-editor | lint-prompt-spec | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave"
+            "tooling requires a subcommand: card-prompt | code-review | csdlc-prompt-editor | lint-prompt-spec | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave"
         ));
     };
 
@@ -69,6 +72,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
         "lint-prompt-spec" => real_lint_prompt_spec(&args[1..]),
         "portable-project-doctor" => real_portable_project_doctor(&args[1..]),
         "prompt-template" => real_prompt_template(&args[1..]),
+        "public-prompt-packet" => real_public_prompt_packet(&args[1..]),
         "validate-structured-prompt" => real_validate_structured_prompt(&args[1..]),
         "review-card-surface" => real_review_card_surface(&args[1..]),
         "review-runtime-surface" => real_review_runtime_surface(&args[1..]),
@@ -79,7 +83,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown tooling subcommand '{subcommand}' (expected card-prompt | code-review | csdlc-prompt-editor | generate-wp-issue-wave | lint-prompt-spec | portable-project-doctor | prompt-template | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
+            "unknown tooling subcommand '{subcommand}' (expected card-prompt | code-review | csdlc-prompt-editor | generate-wp-issue-wave | lint-prompt-spec | portable-project-doctor | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
         )),
     }
 }
@@ -102,6 +106,7 @@ adl tooling prompt-template validate-structure --kind <sip|stp|spp|srp|sor> --in
 adl tooling prompt-template validate-schemas [--repo-root <path>]\n\
 adl tooling prompt-template write-sample-values --out-dir <dir>\n\
 adl tooling prompt-template write-structure-schemas --out-dir <dir> [--repo-root <path>]\n\
+adl tooling public-prompt-packet export --issue <number> --slug <slug> --version <version> [--source <dir>] [--out-root <dir>] [--tracker-url <url>] [--repo-root <path>]\n\
 adl tooling validate-structured-prompt --type <sip|stp|spp|srp|sor> --input <path> [--phase <phase>]\n\
 adl tooling review-card-surface --input <input.md> --output <output.md>\n\
 adl tooling review-runtime-surface --review-root <dir>\n\
