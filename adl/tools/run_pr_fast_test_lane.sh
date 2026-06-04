@@ -205,6 +205,10 @@ filter_token_for_path() {
       printf 'cli'
       return 0
       ;;
+    adl/src/csdlc_prompt_editor.rs|adl/src/csdlc_prompt_editor/*.rs)
+      printf 'csdlc_prompt_editor'
+      return 0
+      ;;
     adl/src/cli/identity_cmd/*.rs|adl/src/cli/identity_cmd/tests.rs|adl/src/cli/identity_cmd/tests/*.rs)
       printf 'identity_cmd'
       return 0
