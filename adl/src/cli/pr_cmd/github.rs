@@ -1,9 +1,10 @@
 use super::*;
+use crate::cli::pr_cmd::git_support::run_status_allow_failure;
 use crate::cli::pr_cmd::github_client::{
     body_contains_closing_linkage, issue_labels_from_csv, issue_labels_from_csv_in_order,
     issue_metadata_drift, linked_issue_numbers_from_lines, linked_issue_numbers_include,
-    plan_issue_metadata_parity, pr_matches_main_version_wave, IssueMetadataSnapshot,
-    PullRequestMetadataSnapshot,
+    plan_issue_metadata_parity, pr_matches_main_version_wave, AdlGithubClient, GithubClientBackend,
+    GithubClientMode, IssueMetadataSnapshot, PullRequestMetadataSnapshot,
 };
 use crate::cli::pr_cmd_prompt::infer_workflow_queue;
 use ::adl::control_plane::resolve_primary_checkout_root;
@@ -26,9 +27,54 @@ pub(super) struct OpenPullRequest {
     pub(super) queue: Option<String>,
 }
 
+fn ensure_live_gh_allowed(operation: &str) -> Result<()> {
+    let client = AdlGithubClient::from_env()
+        .with_context(|| format!("github client policy rejected gh operation '{operation}'"))?;
+    let config = client.config();
+    match config.backend {
+        GithubClientBackend::GhFallback => Ok(()),
+        GithubClientBackend::Octocrab
+            if config.requested_mode == GithubClientMode::Auto && config.gh_fallback_allowed =>
+        {
+            Ok(())
+        }
+        GithubClientBackend::Octocrab => {
+            bail!(
+                "github_client.live_octocrab_transport_unavailable: gh operation '{}' is not allowed because {} selected backend '{}' and live octocrab transport is not implemented for this operation; unset ADL_GITHUB_CLIENT or allow gh fallback to use the current shell-backed path",
+                operation,
+                config.requested_mode.as_str(),
+                config.backend.as_str()
+            )
+        }
+    }
+}
+
+pub(super) fn run_gh_capture(operation: &str, args: &[&str]) -> Result<String> {
+    ensure_live_gh_allowed(operation)?;
+    run_capture("gh", args)
+}
+
+pub(crate) fn run_gh_capture_allow_failure(
+    operation: &str,
+    args: &[&str],
+) -> Result<Option<String>> {
+    ensure_live_gh_allowed(operation)?;
+    run_capture_allow_failure("gh", args)
+}
+
+pub(super) fn run_gh_status(operation: &str, args: &[&str]) -> Result<()> {
+    ensure_live_gh_allowed(operation)?;
+    run_status("gh", args)
+}
+
+pub(super) fn run_gh_status_allow_failure(operation: &str, args: &[&str]) -> Result<bool> {
+    ensure_live_gh_allowed(operation)?;
+    run_status_allow_failure("gh", args)
+}
+
 pub(super) fn current_pr_url(repo: &str, branch: &str) -> Result<Option<String>> {
-    let out = run_capture_allow_failure(
-        "gh",
+    let out = run_gh_capture_allow_failure(
+        "pr.list.current_branch",
         &[
             "pr", "list", "-R", repo, "--head", branch, "--state", "open", "--json", "url", "--jq",
             ".[0].url",
@@ -52,8 +98,8 @@ pub(super) fn unresolved_milestone_pr_wave(
     target_queue: &str,
     exclude_branch: Option<&str>,
 ) -> Result<Vec<OpenPullRequest>> {
-    let out = run_capture_allow_failure(
-        "gh",
+    let out = run_gh_capture_allow_failure(
+        "pr.list.open_wave",
         &[
             "pr",
             "list",
@@ -113,8 +159,8 @@ pub(super) fn format_open_pr_wave(prs: &[OpenPullRequest]) -> String {
 }
 
 pub(super) fn pr_has_closing_linkage(repo: &str, pr_ref: &str, issue: u32) -> Result<bool> {
-    let linked = run_capture_allow_failure(
-        "gh",
+    let linked = run_gh_capture_allow_failure(
+        "pr.view.closing_issues",
         &[
             "pr",
             "view",
@@ -132,8 +178,8 @@ pub(super) fn pr_has_closing_linkage(repo: &str, pr_ref: &str, issue: u32) -> Re
     if linked_issue_numbers_include(&linked_issue_numbers, issue) {
         return Ok(true);
     }
-    let body = run_capture_allow_failure(
-        "gh",
+    let body = run_gh_capture_allow_failure(
+        "pr.view.body",
         &[
             "pr", "view", "-R", repo, pr_ref, "--json", "body", "--jq", ".body",
         ],
@@ -175,8 +221,8 @@ pub(super) fn ensure_or_repair_pr_closing_linkage(
     if pr_has_closing_linkage(repo, pr_ref, issue)? {
         return Ok(false);
     }
-    run_status(
-        "gh",
+    run_gh_status(
+        "pr.edit.body_file",
         &[
             "pr",
             "edit",
@@ -308,8 +354,8 @@ fn helper_command_path(repo_root: &Path, relative: &str) -> String {
 }
 
 pub(super) fn issue_version(issue: u32, repo: &str) -> Result<Option<String>> {
-    let labels = run_capture_allow_failure(
-        "gh",
+    let labels = run_gh_capture_allow_failure(
+        "issue.view.labels_for_version",
         &[
             "issue",
             "view",
@@ -340,6 +386,7 @@ pub(super) fn gh_issue_create(
     body: &str,
     labels_csv: &str,
 ) -> Result<String> {
+    ensure_live_gh_allowed("issue.create")?;
     let mut cmd = Command::new("gh");
     cmd.arg("issue")
         .arg("create")
@@ -374,8 +421,8 @@ pub(super) fn gh_issue_create(
 }
 
 fn issue_label_names(issue: u32, repo: &str) -> Result<Vec<String>> {
-    let labels = run_capture_allow_failure(
-        "gh",
+    let labels = run_gh_capture_allow_failure(
+        "issue.view.labels",
         &[
             "issue",
             "view",
@@ -398,8 +445,8 @@ fn issue_label_names(issue: u32, repo: &str) -> Result<Vec<String>> {
 }
 
 fn gh_issue_edit_title(repo: &str, issue: u32, title: &str) -> Result<()> {
-    run_status(
-        "gh",
+    run_gh_status(
+        "issue.edit.title",
         &[
             "issue",
             "edit",
@@ -423,7 +470,7 @@ fn gh_issue_add_labels(repo: &str, issue: u32, labels: &[String]) -> Result<()> 
         args.push("--add-label");
         args.push(label);
     }
-    run_status("gh", &args)
+    run_gh_status("issue.edit.add_labels", &args)
         .with_context(|| format!("create: gh issue add labels failed for issue #{issue}"))
 }
 
@@ -437,7 +484,7 @@ fn gh_issue_remove_labels(repo: &str, issue: u32, labels: &[String]) -> Result<(
         args.push("--remove-label");
         args.push(label);
     }
-    run_status("gh", &args)
+    run_gh_status("issue.edit.remove_labels", &args)
         .with_context(|| format!("create: gh issue remove labels failed for issue #{issue}"))
 }
 
@@ -489,8 +536,8 @@ pub(super) fn ensure_issue_metadata_parity(
 
 pub(super) fn gh_issue_edit_body(repo: &str, issue: u32, body: &str) -> Result<()> {
     let body_file = write_temp_markdown("issue_body", body)?;
-    run_status(
-        "gh",
+    run_gh_status(
+        "issue.edit.body",
         &[
             "issue",
             "edit",
@@ -505,8 +552,8 @@ pub(super) fn gh_issue_edit_body(repo: &str, issue: u32, body: &str) -> Result<(
 }
 
 pub(super) fn gh_issue_title(issue: u32, repo: &str) -> Result<Option<String>> {
-    let out = run_capture_allow_failure(
-        "gh",
+    let out = run_gh_capture_allow_failure(
+        "issue.view.title",
         &[
             "issue",
             "view",
@@ -564,9 +611,35 @@ mod tests {
         }
     }
 
+    fn clear_github_policy_env() -> Vec<(&'static str, Option<String>)> {
+        let keys = [
+            "ADL_GITHUB_CLIENT",
+            "ADL_GITHUB_DISABLE_GH_FALLBACK",
+            "GITHUB_TOKEN",
+            "GH_TOKEN",
+        ];
+        let saved = keys
+            .into_iter()
+            .map(|key| (key, std::env::var(key).ok()))
+            .collect::<Vec<_>>();
+        unsafe {
+            for (key, _) in &saved {
+                std::env::remove_var(key);
+            }
+        }
+        saved
+    }
+
+    fn restore_github_policy_env(saved: Vec<(&'static str, Option<String>)>) {
+        for (key, value) in saved {
+            restore_env(key, value);
+        }
+    }
+
     #[test]
     fn closing_linkage_helpers_cover_reference_body_repair_and_error_paths() {
         let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
         let temp = unique_temp_dir("adl-github-closing-linkage");
         let bin_dir = temp.join("bin");
         fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -673,6 +746,7 @@ mod tests {
         let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
         assert!(gh_calls
             .contains("pr edit -R owner/repo https://github.com/owner/repo/pull/1161 --body-file"));
+        restore_github_policy_env(policy_env);
     }
 
     #[test]
@@ -839,6 +913,7 @@ mod tests {
     #[test]
     fn github_helpers_cover_fallback_and_spawn_failure_paths() {
         let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
         let temp = unique_temp_dir("adl-github-helper-fallbacks");
         let bin_dir = temp.join("bin");
         fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -918,11 +993,13 @@ mod tests {
             std::env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
             std::env::remove_var("ADL_POST_MERGE_CLOSEOUT_DISABLE");
         }
+        restore_github_policy_env(policy_env);
     }
 
     #[test]
     fn issue_metadata_helpers_preserve_create_body_title_and_label_parity() {
         let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
         let temp = unique_temp_dir("adl-github-issue-metadata");
         let bin_dir = temp.join("bin");
         fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -1049,5 +1126,97 @@ sys.exit(9)
         assert!(calls.contains("'--add-label', 'area:tools'"));
         assert!(calls.contains("'--add-label', 'version:v0.91.5'"));
         assert!(calls.contains("'--remove-label', 'version:v0.91.4'"));
+        restore_github_policy_env(policy_env);
+    }
+
+    #[test]
+    fn live_gh_policy_guard_blocks_disabled_fallback_before_spawn() {
+        let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
+        let temp = unique_temp_dir("adl-github-disabled-fallback");
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let gh_log = temp.join("gh.log");
+        write_executable(
+            &bin_dir.join("gh"),
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nprintf 'unexpected gh spawn\\n'\n",
+                gh_log.display()
+            ),
+        );
+        let old_path = std::env::var("PATH").ok();
+        let mut path_entries = vec![bin_dir.clone()];
+        path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
+        unsafe {
+            std::env::set_var(
+                "PATH",
+                std::env::join_paths(path_entries).expect("join PATH"),
+            );
+            std::env::set_var("ADL_GITHUB_DISABLE_GH_FALLBACK", "1");
+        }
+
+        let err = current_pr_url("owner/repo", "codex/3672-branch")
+            .expect_err("fallback-disabled current_pr_url should fail closed");
+        let err_debug = format!("{err:?}");
+        assert!(err_debug.contains("pr.list.current_branch"));
+        assert!(err_debug.contains("github_client.fallback_disabled"));
+        let err = gh_issue_edit_body("owner/repo", 3672, "body")
+            .expect_err("fallback-disabled issue edit should fail closed");
+        let err_debug = format!("{err:?}");
+        assert!(err_debug.contains("issue.edit.body"));
+        assert!(err_debug.contains("github_client.fallback_disabled"));
+        assert!(
+            !gh_log.exists(),
+            "policy guard should reject before spawning gh"
+        );
+
+        restore_env("PATH", old_path);
+        restore_github_policy_env(policy_env);
+    }
+
+    #[test]
+    fn live_gh_policy_guard_blocks_explicit_octocrab_before_spawn() {
+        let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
+        let temp = unique_temp_dir("adl-github-explicit-octocrab");
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let gh_log = temp.join("gh.log");
+        write_executable(
+            &bin_dir.join("gh"),
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nprintf 'unexpected gh spawn\\n'\n",
+                gh_log.display()
+            ),
+        );
+        let old_path = std::env::var("PATH").ok();
+        let mut path_entries = vec![bin_dir.clone()];
+        path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
+        unsafe {
+            std::env::set_var(
+                "PATH",
+                std::env::join_paths(path_entries).expect("join PATH"),
+            );
+            std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+            std::env::set_var("GITHUB_TOKEN", "test-token");
+        }
+
+        let err = current_pr_url("owner/repo", "codex/3672-branch")
+            .expect_err("explicit octocrab current_pr_url should fail closed");
+        let err_debug = format!("{err:?}");
+        assert!(err_debug.contains("pr.list.current_branch"));
+        assert!(err_debug.contains("github_client.live_octocrab_transport_unavailable"));
+        let err = gh_issue_edit_body("owner/repo", 3672, "body")
+            .expect_err("explicit octocrab issue edit should fail closed");
+        let err_debug = format!("{err:?}");
+        assert!(err_debug.contains("issue.edit.body"));
+        assert!(err_debug.contains("github_client.live_octocrab_transport_unavailable"));
+        assert!(
+            !gh_log.exists(),
+            "policy guard should reject before spawning gh"
+        );
+
+        restore_env("PATH", old_path);
+        restore_github_policy_env(policy_env);
     }
 }

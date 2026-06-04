@@ -9,7 +9,7 @@ mod godel_cmd;
 mod identity_cmd;
 mod observability;
 mod open;
-mod pr_cmd;
+pub(crate) mod pr_cmd;
 mod pr_cmd_args;
 mod pr_cmd_cards;
 mod pr_cmd_prompt;

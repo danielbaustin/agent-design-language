@@ -3,6 +3,7 @@ use serde_yaml::Value;
 use std::fs;
 use std::path::Path;
 
+use super::super::pr_cmd::run_gh_capture_allow_failure;
 use super::super::pr_cmd_prompt::{
     infer_required_outcome_type, infer_workflow_queue, infer_wp_from_title, normalize_labels_csv,
     render_generated_issue_prompt,
@@ -205,8 +206,9 @@ fn render_issue_prompt_from_authored_front_matter(issue: u32, body: &str) -> Opt
 }
 
 fn fetch_issue_body(repo: &str, issue: u32) -> Result<Option<String>> {
-    let output = match std::process::Command::new("gh")
-        .args([
+    let Some(body) = run_gh_capture_allow_failure(
+        "issue.view.body_for_prompt",
+        &[
             "issue",
             "view",
             &issue.to_string(),
@@ -216,19 +218,115 @@ fn fetch_issue_body(repo: &str, issue: u32) -> Result<Option<String>> {
             "body",
             "-q",
             ".body",
-        ])
-        .output()
-    {
-        Ok(output) => output,
-        Err(_) => return Ok(None),
-    };
-    if !output.status.success() {
+        ],
+    )?
+    else {
         return Ok(None);
-    }
-    let body = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    };
+    let body = body.trim().to_string();
     if body.is_empty() || body.eq_ignore_ascii_case("null") {
         Ok(None)
     } else {
         Ok(Some(body))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cli::tests::env_lock;
+    use std::path::{Path, PathBuf};
+
+    fn unique_temp_dir(name: &str) -> PathBuf {
+        let path = std::env::temp_dir().join(format!(
+            "{name}-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("clock")
+                .as_nanos()
+        ));
+        fs::create_dir_all(&path).expect("temp dir");
+        path
+    }
+
+    fn write_executable(path: &Path, body: &str) {
+        fs::write(path, body).expect("script");
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = fs::metadata(path).expect("metadata").permissions();
+            perms.set_mode(0o755);
+            fs::set_permissions(path, perms).expect("chmod");
+        }
+    }
+
+    fn restore_env(key: &str, value: Option<String>) {
+        unsafe {
+            if let Some(value) = value {
+                std::env::set_var(key, value);
+            } else {
+                std::env::remove_var(key);
+            }
+        }
+    }
+
+    #[test]
+    fn fetch_issue_body_respects_github_fallback_policy() {
+        let _guard = env_lock();
+        let temp = unique_temp_dir("adl-fetch-issue-body-policy");
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let gh_log = temp.join("gh.log");
+        write_executable(
+            &bin_dir.join("gh"),
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nprintf 'Issue body from gh\\n'\n",
+                gh_log.display()
+            ),
+        );
+
+        let old_path = std::env::var("PATH").ok();
+        let old_client = std::env::var("ADL_GITHUB_CLIENT").ok();
+        let old_disable = std::env::var("ADL_GITHUB_DISABLE_GH_FALLBACK").ok();
+        let old_github_token = std::env::var("GITHUB_TOKEN").ok();
+        let old_gh_token = std::env::var("GH_TOKEN").ok();
+        let mut path_entries = vec![bin_dir.clone()];
+        path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
+        unsafe {
+            std::env::set_var(
+                "PATH",
+                std::env::join_paths(path_entries).expect("join PATH"),
+            );
+            std::env::remove_var("ADL_GITHUB_CLIENT");
+            std::env::remove_var("ADL_GITHUB_DISABLE_GH_FALLBACK");
+            std::env::remove_var("GITHUB_TOKEN");
+            std::env::remove_var("GH_TOKEN");
+        }
+
+        assert_eq!(
+            fetch_issue_body("owner/repo", 3672).expect("fetch body"),
+            Some("Issue body from gh".to_string())
+        );
+        fs::remove_file(&gh_log).expect("clear gh log");
+
+        unsafe {
+            std::env::set_var("ADL_GITHUB_DISABLE_GH_FALLBACK", "1");
+        }
+        let err = fetch_issue_body("owner/repo", 3672)
+            .expect_err("fallback-disabled body fetch should fail closed");
+        let err_debug = format!("{err:?}");
+        assert!(err_debug.contains("issue.view.body_for_prompt"));
+        assert!(err_debug.contains("github_client.fallback_disabled"));
+        assert!(
+            !gh_log.exists(),
+            "policy guard should reject before spawning gh"
+        );
+
+        restore_env("PATH", old_path);
+        restore_env("ADL_GITHUB_CLIENT", old_client);
+        restore_env("ADL_GITHUB_DISABLE_GH_FALLBACK", old_disable);
+        restore_env("GITHUB_TOKEN", old_github_token);
+        restore_env("GH_TOKEN", old_gh_token);
     }
 }
