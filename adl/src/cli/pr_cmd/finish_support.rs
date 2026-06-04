@@ -455,6 +455,37 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         {
             commands.push("bash adl/tools/test_ci_path_policy.sh".to_string());
         }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_owner_lane_contract_validation(path))
+        {
+            commands.push("bash adl/tools/test_owner_validation_lane.sh".to_string());
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_csdlc_owner_lane_validation(path))
+        {
+            commands.push("bash adl/tools/run_owner_validation_lane.sh csdlc".to_string());
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_runtime_owner_lane_validation(path))
+        {
+            commands
+                .push("bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string());
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_review_owner_lane_validation(path))
+        {
+            commands.push("bash adl/tools/run_owner_validation_lane.sh review --build".to_string());
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_all_owner_lane_validation(path))
+        {
+            commands.push("bash adl/tools/run_owner_validation_lane.sh all --build".to_string());
+        }
         return Ok(FinishValidationPlan {
             mode: FinishValidationMode::FocusedLocalCiGated,
             commands,
@@ -522,6 +553,15 @@ fn finish_path_is_focused_local_ci_gated(path: &str) -> bool {
             | "adl/tools/test_check_coverage_impact.sh"
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
+            | "adl/tools/run_owner_validation_lane.sh"
+            | "adl/tools/test_owner_validation_lane.sh"
+            | "adl/tools/test_cli_wrapper_migration_contract.sh"
+            | "adl/tools/test_pr_run_ambiguity_policy.sh"
+            | "adl/tools/test_control_plane_observability.sh"
+            | "adl/tools/test_adl_runtime_compatibility.sh"
+            | "adl/tools/test_adl_review_compatibility.sh"
+            | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
+            | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
             | "adl/src/cli/pr_cmd/finish_support.rs"
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("docs/milestones/v0.91.4/review/merge_readiness/")
@@ -553,6 +593,46 @@ fn finish_path_needs_ci_policy_focused_validation(path: &str) -> bool {
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
     )
+}
+
+fn finish_path_needs_owner_lane_contract_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/tools/run_owner_validation_lane.sh"
+            | "adl/tools/test_owner_validation_lane.sh"
+            | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
+            | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
+    )
+}
+
+fn finish_path_needs_csdlc_owner_lane_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/tools/run_owner_validation_lane.sh"
+            | "adl/tools/test_owner_validation_lane.sh"
+            | "adl/tools/test_cli_wrapper_migration_contract.sh"
+            | "adl/tools/test_pr_run_ambiguity_policy.sh"
+            | "adl/tools/test_control_plane_observability.sh"
+            | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
+            | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
+    )
+}
+
+fn finish_path_needs_runtime_owner_lane_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(trimmed, "adl/tools/test_adl_runtime_compatibility.sh")
+}
+
+fn finish_path_needs_review_owner_lane_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(trimmed, "adl/tools/test_adl_review_compatibility.sh")
+}
+
+fn finish_path_needs_all_owner_lane_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(trimmed, "adl/tools/run_owner_validation_lane.sh")
 }
 
 pub(super) fn run_finish_validation_rust(
@@ -602,6 +682,26 @@ pub(super) fn run_finish_validation_rust(
                 "bash adl/tools/test_ci_path_policy.sh" => {
                     let script = repo_root.join("adl/tools/test_ci_path_policy.sh");
                     run_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_owner_validation_lane.sh" => {
+                    let script = repo_root.join("adl/tools/test_owner_validation_lane.sh");
+                    run_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/run_owner_validation_lane.sh csdlc" => {
+                    let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
+                    run_status("bash", &[path_str(&script)?, "csdlc"])?;
+                }
+                "bash adl/tools/run_owner_validation_lane.sh runtime --build" => {
+                    let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
+                    run_status("bash", &[path_str(&script)?, "runtime", "--build"])?;
+                }
+                "bash adl/tools/run_owner_validation_lane.sh review --build" => {
+                    let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
+                    run_status("bash", &[path_str(&script)?, "review", "--build"])?;
+                }
+                "bash adl/tools/run_owner_validation_lane.sh all --build" => {
+                    let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
+                    run_status("bash", &[path_str(&script)?, "all", "--build"])?;
                 }
                 other => bail!("finish: unsupported focused validation command '{other}'"),
             }
@@ -743,11 +843,31 @@ fn ensure_existing_pr_base_matches(repo: &str, pr_url: &str, expected_base: &str
 }
 
 pub(super) fn render_default_finish_validation(plan: &FinishValidationPlan) -> String {
-    plan.commands
+    let mut lines = plan
+        .commands
         .iter()
         .map(|command| format!("- {command}"))
-        .collect::<Vec<_>>()
-        .join("\n")
+        .collect::<Vec<_>>();
+    match plan.mode {
+        FinishValidationMode::DocsOnly => {
+            lines.push(
+                "- CI integration proof: deferred to GitHub checks for merge-context validation."
+                    .to_string(),
+            );
+        }
+        FinishValidationMode::FocusedLocalCiGated => {
+            lines.push(
+                "- Local preflight profile: focused owner/policy proof only; this is not full local Rust validation."
+                    .to_string(),
+            );
+            lines.push(
+                "- CI integration proof: deferred to GitHub checks for merge-context validation."
+                    .to_string(),
+            );
+        }
+        FinishValidationMode::FullRust => {}
+    }
+    lines.join("\n")
 }
 
 pub(super) fn ensure_issue_surfaces_are_local_only(

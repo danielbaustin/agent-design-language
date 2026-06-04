@@ -436,6 +436,54 @@ fn finish_validation_plan_supports_focused_local_ci_gated_mode() {
 }
 
 #[test]
+fn finish_validation_plan_classifies_owner_validation_lanes() {
+    let csdlc_plan = select_finish_validation_plan(
+        "adl/tools/run_owner_validation_lane.sh,docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md",
+    )
+    .expect("owner lane plan");
+    assert_eq!(csdlc_plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert!(csdlc_plan
+        .commands
+        .contains(&"bash adl/tools/test_owner_validation_lane.sh".to_string()));
+    assert!(csdlc_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+    assert!(csdlc_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh all --build".to_string()));
+    assert!(!csdlc_plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+    let csdlc_rendered_validation = render_default_finish_validation(&csdlc_plan);
+    assert!(!csdlc_rendered_validation.contains("cargo nextest run"));
+    assert!(csdlc_rendered_validation.contains("focused owner/policy proof only"));
+    assert!(csdlc_rendered_validation.contains("CI integration proof"));
+
+    let runtime_plan = select_finish_validation_plan("adl/tools/test_adl_runtime_compatibility.sh")
+        .expect("runtime owner lane plan");
+    assert_eq!(runtime_plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert!(runtime_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+    assert!(!runtime_plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+
+    let review_plan = select_finish_validation_plan("adl/tools/test_adl_review_compatibility.sh")
+        .expect("review owner lane plan");
+    assert_eq!(review_plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert!(review_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh review --build".to_string()));
+    assert!(!review_plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+}
+
+#[test]
 fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request() {
     let docs_plan = select_finish_validation_plan_for_finish(
         ".",
