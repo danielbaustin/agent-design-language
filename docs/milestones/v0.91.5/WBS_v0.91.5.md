@@ -73,9 +73,10 @@ to the reusable standard at
   coverage-quality gate, docs-review alignment, internal review, external /
   third-party review, review-findings remediation plus final preflight when
   applicable, next-milestone planning, and release ceremony.
-- `#3567` owns the reusable template/standard for this milestone structure.
+- Closed issue `#3567` owns the reusable template/standard for this milestone
+  structure.
 - `#3569` owns the portable ADL project adapter contract and templates; WP-01
-  schedules it, but adapter implementation does not become WP-01 work.
+  schedules it, but external repository migration does not become WP-01 work.
 - `#3582` owns the downstream card rewrite/normalization pass after prompt
   templates, structure schemas, and field-level values editing land. Its audit
   records phase-aware validation and avoids polishing every downstream card

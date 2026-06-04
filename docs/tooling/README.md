@@ -28,6 +28,16 @@ These docs describe the structured prompt surfaces used to shape issues, issue-c
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings)
 - [Issue Prompt Templates](issue-prompts/README.md)
 
+### Portable ADL Project Surfaces
+
+These docs and templates describe how external repositories can declare ADL
+C-SDLC workflow policy without copying the full ADL toolchain.
+
+- [Portable ADL Project Adapter Contract](PORTABLE_ADL_PROJECT_ADAPTER_CONTRACT_v0.91.5.md)
+- [Portable ADL Project Doctor Plan](PORTABLE_ADL_PROJECT_DOCTOR_PLAN_v0.91.5.md)
+- [Portable ADL Adapter Follow-Ons](PORTABLE_ADL_PROJECT_ADAPTER_FOLLOW_ONS_v0.91.5.md)
+- [Portable ADL Templates](../templates/portable-adl/README.md)
+
 ### Reviewer and Validation Surfaces
 
 These docs describe bounded reviewer behavior, deterministic output formats, and provenance/review validation surfaces.

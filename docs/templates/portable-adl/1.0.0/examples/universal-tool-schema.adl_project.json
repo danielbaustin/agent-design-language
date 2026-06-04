@@ -1,0 +1,39 @@
+{
+  "schema_version": "adl.project.v1",
+  "project_id": "universal-tool-schema",
+  "profile": "spec",
+  "tooling_ref": "agent-design-language@v0.91.5",
+  "min_adl_version": "0.91.5",
+  "prompt_template_registry": "docs/templates/prompts/current.json",
+  "issue_tracker": {
+    "provider": "github",
+    "repo": "danielbaustin/universal-tool-schema"
+  },
+  "tooling_discovery": {
+    "env": "ADL_HOME",
+    "repo_relative": null,
+    "sibling_repo": "../agent-design-language",
+    "failure_mode": "fail_with_setup_instructions"
+  },
+  "state_policy": {
+    "issue_authority": "external_repo",
+    "cards_location": "repo_local_ignored_adl",
+    "worktree_location": "external_repo_worktrees",
+    "tracked_public_evidence": true,
+    "local_adl_state_ignored": true
+  },
+  "validation_profile": "spec",
+  "artifact_policy": {
+    "forbid_absolute_host_paths": true,
+    "public_outputs": [
+      "spec_docs",
+      "examples",
+      "conformance_notes"
+    ],
+    "private_outputs": [
+      "scratch_runs",
+      "credentials",
+      "non_public_reviewer_notes"
+    ]
+  }
+}

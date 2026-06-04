@@ -31,9 +31,8 @@ Setup truth:
   package, issue reallocation, v0.91.4 release-tail reconciliation, v0.92
   dependency reconciliation, and migration-truth review.
 - `#3568` is the closed WP-01 opening follow-up after v0.91.4 release.
-- `#3567` is scheduled to canonicalize the milestone WP ordering standard.
-- `#3569` is scheduled to define portable ADL project adapter contract and
-  templates.
+- `#3567` closed the reusable milestone WP ordering standard.
+- `#3569` defines the portable ADL project adapter contract and templates.
 - `#3582` is scheduled to rewrite/normalize downstream v0.91.5 card bundles
   after prompt templates v1.1 lands through `#3553`.
 - `#3571`-`#3574` are the seeded sprint umbrella issues.
@@ -160,9 +159,9 @@ Execution expectations:
 - WP-01 is the milestone planning/setup/issue-wave readiness gate. It closes
   only after planned issues, cards, sprint umbrellas, and initial sequencing are
   ready to begin or explicitly routed.
-- The canonical milestone structure is being captured by `#3567`.
-- Portable ADL adapter planning is scheduled through `#3569`; implementation
-  belongs in later issue execution, not WP-01 itself.
+- The canonical milestone structure is captured by closed issue `#3567`.
+- Portable ADL adapter planning and templates are routed through `#3569`;
+  external repository migrations live outside WP-01.
 - Public prompt, provider/model, multi-agent, demo, and activation work occupy
   the middle of the sequence.
 - Demo/proof, quality, docs/review convergence, v0.92 preflight, and release

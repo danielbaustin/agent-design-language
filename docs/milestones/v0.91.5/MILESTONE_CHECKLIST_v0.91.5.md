@@ -16,7 +16,7 @@ checks needed for truthful v0.91.5 closeout.
 
 - [x] v0.91.5 planning package exists.
 - [ ] WP-01 confirms planned issues, cards, sprint umbrellas, and initial sequencing are ready.
-- [x] Canonical milestone WP ordering standard is scheduled through `#3567`.
+- [x] Canonical milestone WP ordering standard is closed through `#3567`.
 - [x] Portable ADL project adapter planning is scheduled through `#3569`.
 - [x] Sprint umbrella issues `#3571` through `#3574` are seeded.
 - [x] Closeout-tail issues `#3575`, `#3579`, `#3576`, `#3580`,
