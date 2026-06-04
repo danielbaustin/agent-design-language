@@ -116,6 +116,11 @@ For a normal tracked issue:
 - Run the smallest proving validation that matches the issue's outcome type.
 - Do not skip required proof just because the change is small.
 - Do not run broad validation reflexively when focused proof is enough.
+- Separate local preflight proof from CI integration proof. Local records must
+  say what ran locally, what is deferred to GitHub CI, and why that deferral is
+  safe for the touched surface.
+- For owner-binary surfaces, prefer the focused lane runner when it matches the
+  change: `bash adl/tools/run_owner_validation_lane.sh csdlc|runtime|review|all`.
 - Keep review records and output cards truthful about what was and was not run.
 - Docs-only and policy-only PVF work should prefer focused docs/path/contract/
   guardrail proof unless tracked runtime behavior changed.
