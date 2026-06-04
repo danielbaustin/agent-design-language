@@ -268,6 +268,23 @@ fn infer_capability_defaults(
         };
     }
 
+    if matches!(transport, ProviderTransportV1::Http) && vendor == "deepseek" {
+        return ProviderCapabilitiesV1 {
+            tool_calling: CapabilitySupportV1 {
+                supported: false,
+                mode: CapabilityModeV1::None,
+            },
+            structured_json: CapabilitySupportV1 {
+                supported: true,
+                mode: CapabilityModeV1::PromptBased,
+            },
+            semantic_tool_fallback: CapabilitySupportV1 {
+                supported: false,
+                mode: CapabilityModeV1::None,
+            },
+        };
+    }
+
     let native_tool_calling = match transport {
         ProviderTransportV1::Http | ProviderTransportV1::InProcess => CapabilitySupportV1 {
             supported: true,
@@ -546,6 +563,15 @@ mod tests {
         assert_eq!(deepseek_substrate.vendor, "deepseek");
         assert_eq!(deepseek_substrate.transport, ProviderTransportV1::Http);
         assert_eq!(deepseek_substrate.provider_kind, "deepseek");
+        assert!(!deepseek_substrate.capabilities.tool_calling.supported);
+        assert_eq!(
+            deepseek_substrate.capabilities.tool_calling.mode,
+            CapabilityModeV1::None
+        );
+        assert_eq!(
+            deepseek_substrate.capabilities.structured_json.mode,
+            CapabilityModeV1::PromptBased
+        );
     }
 
     #[test]

@@ -7,7 +7,8 @@
 - Surface: native hosted-provider adapter
 - Provider family: `deepseek`
 - Credential policy: operator environment only; no secret material recorded
-- Live run status: `passed_operator_provided_key`
+- Live API reachability status: `passed_operator_provided_key`
+- Native adapter live status: `not_run`
 
 ## Change Summary
 
@@ -25,6 +26,9 @@
 - Compatibility `http:*` profiles remain classified as `generic_http` in the
   provider substrate even when their endpoint names contain vendor-family
   strings.
+- Native DeepSeek substrate capability defaults intentionally do not advertise
+  native tool-calling. This issue proves text completion request/response
+  behavior only.
 
 ## Contract Boundaries
 
@@ -47,6 +51,8 @@ The implementation adds focused Rust tests for:
 - Custom endpoint credential-safety rejection.
 - Provider setup output using native `type: "deepseek"`.
 - Provider substrate recognition of native `deepseek` as hosted HTTP.
+- Provider substrate capability truth for native DeepSeek: no native
+  tool-calling claim, prompt-based structured JSON only.
 - Provider substrate preservation of `http:deepseek-chat` as a compatibility
   lane rather than native DeepSeek.
 
@@ -105,11 +111,17 @@ Result:
 - `0` failures
 - Summary artifact written to `adl/target/coverage-impact-summary.json`
 
-## Live Run Disposition
+## Live API Reachability Disposition
 
-Live DeepSeek API execution was run once with the operator-provided key from
-`$HOME/keys/deepseek.key`. The key was loaded into process environment only and
-was not printed or written to tracked files.
+Live DeepSeek API reachability was checked once with the operator-provided key
+from `$HOME/keys/deepseek.key`. The key was loaded into process environment only
+and was not printed or written to tracked files.
+
+This live check used raw `curl`. It did not invoke `DeepSeekProvider::complete`
+and is not claimed as end-to-end live proof of the Rust adapter. The Rust
+adapter path is covered by deterministic loopback tests that exercise request
+construction, bearer auth, DeepSeek response parsing, and invocation-record
+writing without exposing a real credential.
 
 Command shape:
 
@@ -126,20 +138,22 @@ Observed non-secret result:
 - Response text: `ADL_DEEPSEEK_OK`
 - Reported served model: `deepseek-v4-flash`
 
-Required live proof command shape, after operator credential setup:
+Setup command shape, after operator credential setup:
 
 ```bash
 export DEEPSEEK_API_KEY=...
 adl provider setup deepseek --force
 ```
 
-A stronger future proof can add a bounded demo wrapper that invokes the native
-provider with a small prompt and records only status, model, HTTP status,
-timestamp, prompt length, and output length.
+The setup command generates provider configuration only; it does not invoke the
+provider. A stronger future proof can add a bounded demo wrapper or provider
+invoke command that calls the native adapter with a small prompt and records
+only status, model, HTTP status, timestamp, prompt length, and output length.
 
 ## Non-Claims
 
 - This packet does not claim DeepSeek tool-calling support.
 - This packet does not claim benchmark quality or role aptitude.
+- This packet does not claim an end-to-end live ADL native-adapter invocation.
 - This packet does not claim the compatibility `http:deepseek-chat` profile is
   equivalent to the native DeepSeek API.
