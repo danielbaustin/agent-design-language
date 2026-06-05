@@ -57,6 +57,8 @@ pub(crate) const OPENAI_RESPONSES_ENDPOINT: &str = "https://api.openai.com/v1/re
 pub(crate) const ANTHROPIC_MESSAGES_ENDPOINT: &str = "https://api.anthropic.com/v1/messages";
 pub(crate) const DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT: &str =
     "https://api.deepseek.com/chat/completions";
+pub(crate) const OPENROUTER_CHAT_COMPLETIONS_ENDPOINT: &str =
+    "https://openrouter.ai/api/v1/chat/completions";
 /// Canonical Anthropic API version used by the HTTP adapter.
 pub(crate) const ANTHROPIC_VERSION: &str = "2023-06-01";
 

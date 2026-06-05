@@ -1,6 +1,6 @@
 //! HTTP-based provider implementations and request transport helpers.
 //!
-//! Supports OpenAI, Anthropic, DeepSeek, generic HTTP, and Ollama-HTTP style backends.
+//! Supports OpenAI, Anthropic, DeepSeek, OpenRouter, generic HTTP, and Ollama-HTTP style backends.
 use super::*;
 use std::thread;
 use std::time::Duration;
@@ -258,6 +258,10 @@ fn extract_deepseek_output_text(json: &Value) -> Option<String> {
     (!joined.is_empty()).then_some(joined)
 }
 
+fn extract_openrouter_output_text(json: &Value) -> Option<String> {
+    extract_deepseek_output_text(json)
+}
+
 #[derive(Debug, Clone)]
 /// OpenAI-compatible provider backed by HTTP/requests API.
 pub struct OpenAiProvider {
@@ -470,6 +474,84 @@ impl Provider for DeepSeekProvider {
             runtime_error_non_retryable("deepseek", "response missing message content")
         })?;
         write_native_invocation_record("deepseek", &self.model, prompt, &output, http_status)?;
+        Ok(output)
+    }
+}
+
+#[derive(Debug, Clone)]
+/// OpenRouter native provider using the OpenAI-compatible chat completions format.
+pub struct OpenRouterProvider {
+    endpoint: String,
+    auth_env: String,
+    model: String,
+    max_tokens: u64,
+    timeout_secs: Option<u64>,
+}
+
+impl OpenRouterProvider {
+    /// Build an OpenRouter provider from normalized invocation target.
+    pub fn from_target(
+        spec: &adl::ProviderSpec,
+        target: &ProviderInvocationTargetV1,
+    ) -> Result<Self> {
+        let endpoint = vendor_endpoint(
+            spec,
+            target,
+            OPENROUTER_CHAT_COMPLETIONS_ENDPOINT,
+            "openrouter",
+        )?;
+        let auth_env = auth_env_for(spec, "OPENROUTER_API_KEY")?;
+        validate_vendor_credential_endpoint(
+            spec,
+            "openrouter",
+            &endpoint,
+            &auth_env,
+            "OPENROUTER_API_KEY",
+            &["openrouter.ai"],
+        )?;
+        Ok(Self {
+            endpoint,
+            auth_env,
+            model: target.provider_model_id.clone(),
+            max_tokens: cfg_u64(&spec.config, "max_tokens")
+                .or_else(|| cfg_u64(&spec.config, "max_output_tokens"))
+                .unwrap_or(220),
+            timeout_secs: cfg_u64(&spec.config, "timeout_secs"),
+        })
+    }
+}
+
+impl Provider for OpenRouterProvider {
+    fn complete(&self, prompt: &str) -> Result<String> {
+        let token = env::var(&self.auth_env).map_err(|_| {
+            invalid_config(
+                "openrouter",
+                format!("missing required auth env var '{}'", self.auth_env),
+            )
+        })?;
+        let mut client_builder = reqwest::blocking::Client::builder();
+        if let Some(secs) = self.timeout_secs {
+            client_builder = client_builder.timeout(Duration::from_secs(secs));
+        }
+        let client = client_builder
+            .build()
+            .context("failed to build OpenRouter client")
+            .map_err(|err| runtime_error("openrouter", err.to_string()))?;
+        let req = client
+            .post(&self.endpoint)
+            .header("Content-Type", "application/json")
+            .bearer_auth(token)
+            .json(&serde_json::json!({
+                "model": self.model,
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": self.max_tokens,
+                "stream": false,
+            }));
+        let (json, http_status) = provider_http_json("openrouter", req)?;
+        let output = extract_openrouter_output_text(&json).ok_or_else(|| {
+            runtime_error_non_retryable("openrouter", "response missing message content")
+        })?;
+        write_native_invocation_record("openrouter", &self.model, prompt, &output, http_status)?;
         Ok(output)
     }
 }
