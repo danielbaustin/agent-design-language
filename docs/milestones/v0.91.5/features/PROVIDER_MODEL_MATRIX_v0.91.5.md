@@ -40,10 +40,12 @@ OpenRouter.
 | OpenAI | `openai` | `OPENAI_API_KEY` | `https://api.openai.com/v1/responses` | implemented |
 | Anthropic | `anthropic` | `ANTHROPIC_API_KEY` | `https://api.anthropic.com/v1/messages` | implemented |
 | DeepSeek | `deepseek` | `DEEPSEEK_API_KEY` | `https://api.deepseek.com/chat/completions` | implemented in `#3549` |
+| OpenRouter | `openrouter` | `OPENROUTER_API_KEY` | `https://openrouter.ai/api/v1/chat/completions` | implemented in `#3505`; live matrix proof remains `#3501` |
 | Gemini | none yet | `GEMINI_API_KEY` | n/a | compatibility/profile lane only |
 
 Compatibility profiles such as `http:deepseek-chat` remain useful for gateway
-tests, but they must not be confused with the native `deepseek` provider path.
+tests, but they must not be confused with the native `deepseek` or
+`openrouter` provider paths.
 
 ## Design
 
@@ -55,7 +57,7 @@ tests, but they must not be confused with the native `deepseek` provider path.
 ## Execution Flow
 
 1. Inventory available local and remote models.
-2. Add OpenRouter provider or a bounded implementation plan.
+2. Use the native OpenRouter provider for broad hosted model-lane probes.
 3. Test small role-specific prompts.
 4. Feed results into multi-agent execution planning.
 
@@ -72,7 +74,13 @@ private prompt content.
 ## Validation
 
 Validation should include provider smoke tests, role probes, skipped-state
-records, and OpenRouter disposition.
+records, and explicit separation between OpenRouter substrate proof and live
+model-matrix evidence.
+
+OpenRouter capability support is model-dependent. The native provider preserves
+the OpenRouter lane and exact routed model identifier, but role probes must
+record any native tool/JSON capability as explicit lane evidence or a configured
+capability override rather than assuming gateway-wide support.
 
 ## Acceptance Criteria
 

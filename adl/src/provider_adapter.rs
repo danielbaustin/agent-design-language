@@ -16,6 +16,8 @@ use std::time::{Duration, Instant};
 const DEFAULT_OPENAI_RESPONSES_URL: &str = "https://api.openai.com/v1/responses";
 const DEFAULT_ANTHROPIC_MESSAGES_URL: &str = "https://api.anthropic.com/v1/messages";
 const DEFAULT_DEEPSEEK_CHAT_COMPLETIONS_URL: &str = "https://api.deepseek.com/chat/completions";
+const DEFAULT_OPENROUTER_CHAT_COMPLETIONS_URL: &str =
+    "https://openrouter.ai/api/v1/chat/completions";
 const DEFAULT_GEMINI_BASE_URL: &str = "https://generativelanguage.googleapis.com/v1beta";
 const DEFAULT_OLLAMA_BASE_URL: &str = "http://127.0.0.1:11434";
 const DEFAULT_BACKOFF_MS: u64 = 1_000;
@@ -227,6 +229,7 @@ fn execute_hosted(
         "openai" | "chatgpt" => execute_hosted_openai(request, policy),
         "anthropic" | "claude" => execute_hosted_anthropic(request, policy),
         "deepseek" => execute_hosted_deepseek(request, policy),
+        "openrouter" => execute_hosted_openrouter(request, policy),
         "google" | "gemini" => execute_hosted_gemini(request, policy),
         _ => Err(ProviderFailureV1 {
             kind: ProviderFailureKindV1::ProviderError,
@@ -325,6 +328,41 @@ fn execute_hosted_deepseek(
     decode_text_response(
         response,
         extract_deepseek_output_text,
+        RuntimeSurfaceV1::HostedApi,
+    )
+}
+
+fn execute_hosted_openrouter(
+    request: &ProviderInvocationRequestV1,
+    policy: &ProviderAttemptPolicyV1,
+) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
+    let key = resolve_credential(
+        request.route.credential_ref.as_deref(),
+        "OPENROUTER_API_KEY",
+    )?;
+    let url = request
+        .route
+        .endpoint_ref
+        .as_deref()
+        .filter(|endpoint| endpoint.starts_with("http://") || endpoint.starts_with("https://"))
+        .unwrap_or(DEFAULT_OPENROUTER_CHAT_COMPLETIONS_URL);
+    let response = client(policy)?
+        .post(url)
+        .bearer_auth(key)
+        .json(&json!({
+            "model": request.route.provider_model_id,
+            "messages": [{
+                "role": "user",
+                "content": request.input_text.as_deref().unwrap_or_default(),
+            }],
+            "max_tokens": 256,
+            "stream": false,
+        }))
+        .send()
+        .map_err(map_reqwest_error)?;
+    decode_text_response(
+        response,
+        extract_chat_completion_output_text,
         RuntimeSurfaceV1::HostedApi,
     )
 }
@@ -652,6 +690,10 @@ fn extract_anthropic_output_text(json: &Value) -> Option<String> {
 }
 
 fn extract_deepseek_output_text(json: &Value) -> Option<String> {
+    extract_chat_completion_output_text(json)
+}
+
+fn extract_chat_completion_output_text(json: &Value) -> Option<String> {
     json.get("choices")
         .and_then(Value::as_array)
         .and_then(|choices| choices.first())
@@ -1078,6 +1120,43 @@ mod tests {
         assert!(!log.contains("deepseek success"));
         let _ = fs::remove_file(path);
         env::remove_var("ADL_PROVIDER_ADAPTER_DEEPSEEK_KEY");
+    }
+
+    #[test]
+    fn openrouter_hosted_adapter_returns_output_and_redacts_log() {
+        env::set_var("ADL_PROVIDER_ADAPTER_OPENROUTER_KEY", "test-key");
+        let (endpoint, rx) = capture_one_request_server(
+            r#"{"choices":[{"message":{"content":"openrouter success"}}]}"#,
+            "200 OK",
+        );
+        let path = temp_log("openrouter");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "openrouter".to_string();
+        req.route.provider_model_id = "anthropic/claude-3.5-haiku".to_string();
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_OPENROUTER_KEY".to_string());
+        req.model_identity = hosted_model_identity(
+            "openrouter",
+            "anthropic/claude-3.5-haiku",
+            "reviewer/fast",
+            Some("test".to_string()),
+        );
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+        assert_eq!(result.output_text.as_deref(), Some("openrouter success"));
+        let raw_request = rx.recv().expect("captured request");
+        assert!(raw_request
+            .to_ascii_lowercase()
+            .contains("authorization: bearer test-key"));
+        assert!(raw_request.contains(r#""model":"anthropic/claude-3.5-haiku""#));
+        let log = fs::read_to_string(&path).expect("read log");
+        assert!(log.contains("attempt_success"));
+        assert!(!log.contains("secret prompt"));
+        assert!(!log.contains("openrouter success"));
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_KEY");
     }
 
     #[test]

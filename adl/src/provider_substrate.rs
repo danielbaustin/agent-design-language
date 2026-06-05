@@ -125,6 +125,7 @@ fn infer_vendor(spec: &adl::ProviderSpec) -> String {
                 "mock" => return "mock".to_string(),
                 "chatgpt" => return "openai".to_string(),
                 "claude" => return "anthropic".to_string(),
+                "openrouter" => return "openrouter".to_string(),
                 "http" => return "generic_http".to_string(),
                 _ => {}
             }
@@ -152,6 +153,9 @@ fn infer_vendor(spec: &adl::ProviderSpec) -> String {
         if lower.contains("deepseek") {
             return "deepseek".to_string();
         }
+        if lower.contains("openrouter") {
+            return "openrouter".to_string();
+        }
         if lower.contains("ollama") || lower.contains("11434") {
             return "ollama".to_string();
         }
@@ -163,6 +167,7 @@ fn infer_vendor(spec: &adl::ProviderSpec) -> String {
         "openai" => "openai".to_string(),
         "anthropic" => "anthropic".to_string(),
         "deepseek" => "deepseek".to_string(),
+        "openrouter" => "openrouter".to_string(),
         "http" | "http_remote" => "generic_http".to_string(),
         other if !other.is_empty() => other.to_lowercase(),
         _ => "unknown".to_string(),
@@ -178,7 +183,7 @@ fn infer_transport(spec: &adl::ProviderSpec) -> Result<ProviderTransportV1> {
                 Ok(ProviderTransportV1::LocalCli)
             }
         }
-        "http" | "http_remote" | "openai" | "anthropic" | "deepseek" => {
+        "http" | "http_remote" | "openai" | "anthropic" | "deepseek" | "openrouter" => {
             Ok(ProviderTransportV1::Http)
         }
         "local_ollama" => Ok(ProviderTransportV1::LocalCli),
@@ -268,7 +273,9 @@ fn infer_capability_defaults(
         };
     }
 
-    if matches!(transport, ProviderTransportV1::Http) && vendor == "deepseek" {
+    if matches!(transport, ProviderTransportV1::Http)
+        && (vendor == "deepseek" || vendor == "openrouter")
+    {
         return ProviderCapabilitiesV1 {
             tool_calling: CapabilitySupportV1 {
                 supported: false,
@@ -539,7 +546,7 @@ mod tests {
     }
 
     #[test]
-    fn provider_substrate_accepts_native_openai_anthropic_and_deepseek_kinds() {
+    fn provider_substrate_accepts_native_openai_anthropic_deepseek_and_openrouter_kinds() {
         let mut openai = provider_spec("openai");
         openai.default_model = Some("gpt-test".to_string());
         let openai_substrate =
@@ -572,6 +579,55 @@ mod tests {
             deepseek_substrate.capabilities.structured_json.mode,
             CapabilityModeV1::PromptBased
         );
+
+        let mut openrouter = provider_spec("openrouter");
+        openrouter.default_model = Some("openai/gpt-4o-mini".to_string());
+        let openrouter_substrate =
+            provider_substrate_v1("openrouter_primary", &openrouter).expect("openrouter substrate");
+        assert_eq!(openrouter_substrate.vendor, "openrouter");
+        assert_eq!(openrouter_substrate.transport, ProviderTransportV1::Http);
+        assert_eq!(openrouter_substrate.provider_kind, "openrouter");
+        assert!(!openrouter_substrate.capabilities.tool_calling.supported);
+        assert_eq!(
+            openrouter_substrate.capabilities.tool_calling.mode,
+            CapabilityModeV1::None
+        );
+        assert_eq!(
+            openrouter_substrate.capabilities.structured_json.mode,
+            CapabilityModeV1::PromptBased
+        );
+    }
+
+    #[test]
+    fn provider_substrate_infers_openrouter_endpoint_vendor_and_preserves_model_id() {
+        let mut spec = provider_spec("openrouter");
+        spec.config.insert(
+            "endpoint".to_string(),
+            json!("https://openrouter.ai/api/v1/chat/completions"),
+        );
+        spec.default_model = Some("reasoning/default".to_string());
+        spec.config.insert(
+            "provider_model_id".to_string(),
+            json!("anthropic/claude-3.5-haiku"),
+        );
+
+        let substrate = provider_substrate_v1("openrouter_primary", &spec).expect("substrate");
+        assert_eq!(substrate.vendor, "openrouter");
+        assert_eq!(
+            substrate.provider_default_model_id.as_deref(),
+            Some("anthropic/claude-3.5-haiku")
+        );
+
+        let target =
+            provider_invocation_target_v1("openrouter_primary", &spec, None).expect("target");
+        assert_eq!(target.model_ref, "reasoning/default");
+        assert_eq!(target.provider_model_id, "anthropic/claude-3.5-haiku");
+        assert_eq!(target.model_identity.provider_kind, "openrouter");
+        assert_eq!(
+            target.model_identity.provider_model_id,
+            "anthropic/claude-3.5-haiku"
+        );
+        assert_eq!(target.model_identity.runtime_surface, "hosted_http");
     }
 
     #[test]

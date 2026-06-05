@@ -514,6 +514,125 @@ fn deepseek_provider_complete_records_chat_completion_request() {
 }
 
 #[test]
+fn openrouter_provider_complete_records_chat_completion_request() {
+    let _guard = env_lock();
+    let Some((endpoint, captured, handle)) = spawn_json_server(
+        200,
+        r#"{"choices":[{"message":{"role":"assistant","content":"openrouter ok"}}]}"#,
+    ) else {
+        return;
+    };
+
+    let artifact = std::env::temp_dir().join(format!(
+        "adl-provider-invocations-{}-openrouter.json",
+        std::process::id()
+    ));
+    let artifact_display = artifact.to_string_lossy().to_string();
+    let prev_artifact = env::var_os("ADL_PROVIDER_INVOCATIONS_PATH");
+    let prev_key = env::var_os("OPENROUTER_API_KEY");
+    env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", &artifact_display);
+    env::set_var("OPENROUTER_API_KEY", "test-openrouter-token");
+
+    let spec = provider_spec(
+        "openrouter",
+        &format!("{endpoint}/api/v1/chat/completions"),
+        Some("OPENROUTER_API_KEY"),
+        &[],
+    );
+    let target = provider_target(
+        "openrouter",
+        format!("{endpoint}/api/v1/chat/completions"),
+        "deepseek/deepseek-chat",
+    );
+    let provider = OpenRouterProvider::from_target(&spec, &target).expect("provider");
+
+    let output = provider.complete("hello openrouter").expect("completion");
+    assert_eq!(output, "openrouter ok");
+
+    let captured = captured.lock().expect("capture").clone().expect("request");
+    assert_eq!(captured.url, "/api/v1/chat/completions");
+    assert!(captured
+        .body
+        .contains(r#""model":"deepseek/deepseek-chat""#));
+    assert!(captured.body.contains(r#""content":"hello openrouter""#));
+    assert!(captured.body.contains(r#""stream":false"#));
+    assert!(captured.headers.iter().any(
+        |(k, v)| k.eq_ignore_ascii_case("authorization") && v == "Bearer test-openrouter-token"
+    ));
+
+    let payload = std::fs::read_to_string(&artifact).expect("artifact");
+    assert!(!payload.contains("test-openrouter-token"));
+    let json: serde_json::Value = serde_json::from_str(&payload).expect("json artifact");
+    assert_eq!(json["invocations"][0]["family"], "openrouter");
+    assert_eq!(json["invocations"][0]["model"], "deepseek/deepseek-chat");
+    assert_eq!(json["invocations"][0]["output_chars"], 13);
+
+    match prev_artifact {
+        Some(v) => env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", v),
+        None => env::remove_var("ADL_PROVIDER_INVOCATIONS_PATH"),
+    }
+    match prev_key {
+        Some(v) => env::set_var("OPENROUTER_API_KEY", v),
+        None => env::remove_var("OPENROUTER_API_KEY"),
+    }
+
+    let _ = handle.join();
+}
+
+#[test]
+fn openrouter_provider_rejects_missing_credentials_and_bad_response_shape() {
+    let _guard = env_lock();
+    let prev_key = env::var_os("OPENROUTER_API_KEY");
+    env::remove_var("OPENROUTER_API_KEY");
+
+    let spec = provider_spec(
+        "openrouter",
+        OPENROUTER_CHAT_COMPLETIONS_ENDPOINT,
+        Some("OPENROUTER_API_KEY"),
+        &[],
+    );
+    let target = provider_target(
+        "openrouter",
+        OPENROUTER_CHAT_COMPLETIONS_ENDPOINT.to_string(),
+        "openai/gpt-4o-mini",
+    );
+    let provider = OpenRouterProvider::from_target(&spec, &target).expect("provider");
+    let missing_key = provider
+        .complete("hello")
+        .expect_err("missing credential should fail");
+    assert!(missing_key
+        .to_string()
+        .contains("missing required auth env var 'OPENROUTER_API_KEY'"));
+
+    env::set_var("OPENROUTER_API_KEY", "test-openrouter-token");
+    let Some((endpoint, _captured, handle)) = spawn_json_server(200, r#"{"choices":[]}"#) else {
+        restore_env_var("OPENROUTER_API_KEY", prev_key);
+        return;
+    };
+    let bad_spec = provider_spec(
+        "openrouter",
+        &format!("{endpoint}/api/v1/chat/completions"),
+        Some("OPENROUTER_API_KEY"),
+        &[],
+    );
+    let bad_target = provider_target(
+        "openrouter",
+        format!("{endpoint}/api/v1/chat/completions"),
+        "openai/gpt-4o-mini",
+    );
+    let bad_provider = OpenRouterProvider::from_target(&bad_spec, &bad_target).expect("provider");
+    let bad_shape = bad_provider
+        .complete("hello")
+        .expect_err("missing message content should fail");
+    assert!(bad_shape
+        .to_string()
+        .contains("response missing message content"));
+
+    restore_env_var("OPENROUTER_API_KEY", prev_key);
+    let _ = handle.join();
+}
+
+#[test]
 fn deepseek_provider_rejects_missing_credentials_and_bad_response_shape() {
     let _guard = env_lock();
     let prev_key = env::var_os("DEEPSEEK_API_KEY");
@@ -724,6 +843,25 @@ fn http_provider_complete_and_helper_errors_cover_status_and_validation() {
     )
     .expect_err("default DeepSeek credentials should not go to untrusted remote endpoints");
     assert!(untrusted_deepseek_err
+        .to_string()
+        .contains("config.trust_custom_endpoint"));
+
+    let untrusted_openrouter_spec = provider_spec(
+        "openrouter",
+        "https://proxy.example.com/api/v1/chat/completions",
+        Some("OPENROUTER_API_KEY"),
+        &[],
+    );
+    let untrusted_openrouter_err = OpenRouterProvider::from_target(
+        &untrusted_openrouter_spec,
+        &provider_target(
+            "openrouter",
+            "https://proxy.example.com/api/v1/chat/completions".to_string(),
+            "openai/gpt-4o-mini",
+        ),
+    )
+    .expect_err("default OpenRouter credentials should not go to untrusted remote endpoints");
+    assert!(untrusted_openrouter_err
         .to_string()
         .contains("config.trust_custom_endpoint"));
 

@@ -23,14 +23,15 @@ mod http_family;
 mod local;
 mod profiles;
 
-pub use http_family::DeepSeekProvider;
 pub use http_family::{AnthropicProvider, HttpProvider, OllamaHttpProvider, OpenAiProvider};
+pub use http_family::{DeepSeekProvider, OpenRouterProvider};
 pub use local::{MockProvider, OllamaProvider};
 pub use profiles::{expand_provider_profiles, provider_profile_names};
 
 pub(crate) use profiles::{
     is_allowed_ollama_endpoint, is_allowed_remote_endpoint, ANTHROPIC_MESSAGES_ENDPOINT,
     ANTHROPIC_VERSION, DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT, OPENAI_RESPONSES_ENDPOINT,
+    OPENROUTER_CHAT_COMPLETIONS_ENDPOINT,
 };
 
 /// A minimal blocking provider abstraction used by runtime execution paths.
@@ -70,8 +71,8 @@ impl ProviderError {
             kind: ProviderErrorKind::UnknownKind,
             provider: None,
             message: format!(
-                "provider kind '{kind}' is not supported (supported: ollama, local_ollama, mock, http, http_remote, openai, anthropic, deepseek). \
-Set providers.<id>.type to one of: ollama, local_ollama, mock, http, http_remote, openai, anthropic, deepseek. The remote provider surfaces are HTTPS-only."
+                "provider kind '{kind}' is not supported (supported: ollama, local_ollama, mock, http, http_remote, openai, anthropic, deepseek, openrouter). \
+Set providers.<id>.type to one of: ollama, local_ollama, mock, http, http_remote, openai, anthropic, deepseek, openrouter. The remote provider surfaces are HTTPS-only."
             ),
         }
     }
@@ -236,7 +237,7 @@ pub fn build_provider_for_id(
 ) -> Result<Box<dyn Provider>> {
     match spec.kind.trim() {
         "http" | "http_remote" | "ollama" | "local_ollama" | "mock" | "openai" | "anthropic"
-        | "deepseek" => {}
+        | "deepseek" | "openrouter" => {}
         other => return Err(unknown_kind(other)),
     }
 
@@ -250,6 +251,7 @@ pub fn build_provider_for_id(
             "openai" => Ok(Box::new(OpenAiProvider::from_target(spec, &target)?)),
             "anthropic" => Ok(Box::new(AnthropicProvider::from_target(spec, &target)?)),
             "deepseek" => Ok(Box::new(DeepSeekProvider::from_target(spec, &target)?)),
+            "openrouter" => Ok(Box::new(OpenRouterProvider::from_target(spec, &target)?)),
             other => Err(unknown_kind(other)),
         },
         provider_substrate::ProviderTransportV1::LocalCli
@@ -353,6 +355,10 @@ mod tests {
 
         let deepseek = provider_spec("deepseek", Some("deepseek-chat"));
         build_provider_for_id("deepseek_primary", &deepseek, None).expect("deepseek provider");
+
+        let openrouter = provider_spec("openrouter", Some("openai/gpt-4o-mini"));
+        build_provider_for_id("openrouter_primary", &openrouter, None)
+            .expect("openrouter provider");
     }
 
     #[test]
