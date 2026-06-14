@@ -1,0 +1,107 @@
+{
+  "schema": "adl.multi_agent_workcell_proof.v1",
+  "issue": 3415,
+  "run_id": "v0915-parallel-csdlc-workcell-20260614",
+  "started_at_utc": "2026-06-14T09:03:10Z",
+  "ended_at_utc": "2026-06-14T09:04:05Z",
+  "wall_duration_seconds": 54.495,
+  "execution_mode": "concurrent_threaded_live_provider_probe",
+  "lane_count": 3,
+  "useful_lane_count": 2,
+  "lanes": [
+    {
+      "lane": "planner_openrouter_deepseek_v4_flash",
+      "role": "planner_critic",
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "output_path": "docs/milestones/v0.91.5/review/multi_agent_workcell/lane_outputs/planner_openrouter_deepseek_v4_flash.md",
+      "start_time_utc": "2026-06-14T09:03:10Z",
+      "status": "passed_useful_output",
+      "metadata": {
+        "response_model": "deepseek/deepseek-v4-flash-20260423",
+        "usage": {
+          "prompt_tokens": 63,
+          "completion_tokens": 220,
+          "total_tokens": 283,
+          "cost": 4.527e-05,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 4.527e-05,
+            "upstream_inference_prompt_cost": 5.67e-06,
+            "upstream_inference_completions_cost": 3.96e-05
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        }
+      },
+      "output_chars": 1082,
+      "useful_output": true,
+      "end_time_utc": "2026-06-14T09:03:13Z",
+      "duration_seconds": 3.404
+    },
+    {
+      "lane": "watcher_remote_gemma4_e2b",
+      "role": "watcher",
+      "provider": "remote_ollama",
+      "model": "gemma4:e2b",
+      "output_path": "docs/milestones/v0.91.5/review/multi_agent_workcell/lane_outputs/watcher_remote_gemma4_e2b.md",
+      "start_time_utc": "2026-06-14T09:03:10Z",
+      "status": "completed_unhelpful_output",
+      "metadata": {
+        "done": true,
+        "total_duration": 54316496300,
+        "eval_count": 180
+      },
+      "output_chars": 0,
+      "useful_output": false,
+      "end_time_utc": "2026-06-14T09:04:05Z",
+      "duration_seconds": 54.49
+    },
+    {
+      "lane": "worker_local_qwen3_coder_30b",
+      "role": "worker",
+      "provider": "local_ollama",
+      "model": "qwen3-coder:30b",
+      "output_path": "docs/milestones/v0.91.5/review/multi_agent_workcell/lane_outputs/worker_local_qwen3_coder_30b.md",
+      "start_time_utc": "2026-06-14T09:03:10Z",
+      "status": "passed_useful_output",
+      "metadata": {
+        "done": true,
+        "total_duration": 20427577500,
+        "eval_count": 180
+      },
+      "output_chars": 965,
+      "useful_output": true,
+      "end_time_utc": "2026-06-14T09:03:30Z",
+      "duration_seconds": 20.448
+    }
+  ],
+  "disjoint_write_sets": [
+    "docs/milestones/v0.91.5/review/multi_agent_workcell/lane_outputs/planner_openrouter_deepseek_v4_flash.md",
+    "docs/milestones/v0.91.5/review/multi_agent_workcell/lane_outputs/watcher_remote_gemma4_e2b.md",
+    "docs/milestones/v0.91.5/review/multi_agent_workcell/lane_outputs/worker_local_qwen3_coder_30b.md"
+  ],
+  "serialized_gates": [
+    "conductor_admission",
+    "pre_pr_review",
+    "pr_publication",
+    "merge",
+    "issue_closeout"
+  ],
+  "classification": "useful_with_limits",
+  "non_claims": [
+    "does_not_grant_model_merge_authority",
+    "does_not_prove_all_provider_lanes",
+    "does_not_prove_remote_qwen_or_remote_deepseek_usefulness",
+    "does_not_replace_single_agent_fallback"
+  ]
+}
