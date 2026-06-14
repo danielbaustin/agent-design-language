@@ -1,0 +1,91 @@
+{
+  "schema": "adl.multi_agent_overhead_comparison.v1",
+  "issue": 3503,
+  "date": "2026-06-14",
+  "status": "single_agent_preferred_for_tiny_docs_audit",
+  "comparison_task": {
+    "description": "Audit the #3415 parallel workcell evidence for usefulness and overhead.",
+    "inputs": [
+      "docs/milestones/v0.91.5/review/multi_agent_workcell/V0915_PARALLEL_C_SDLC_WORKCELL_PROOF_PACKET_2026-06-14.md",
+      "docs/milestones/v0.91.5/review/multi_agent_workcell/v0915_parallel_csdlc_workcell_state_2026-06-14.json",
+      "docs/milestones/v0.91.5/review/multi_agent_workcell/lane_outputs/",
+      "docs/milestones/v0.91.5/review/multi_agent_usefulness/MULTI_AGENT_USEFULNESS_REVIEW_CHECKLIST_2026-06-14.md"
+    ]
+  },
+  "single_agent_path": {
+    "topology": "one Codex reviewer in the #3503 issue worktree",
+    "started_at_utc": "2026-06-14T09:52:10Z",
+    "ended_at_utc": "2026-06-14T09:54:29Z",
+    "wall_duration_seconds": 139,
+    "provider_calls": false,
+    "findings": [
+      "The #3415 useful_with_limits classification is accurate.",
+      "Local Qwen worker output was useful.",
+      "OpenRouter DeepSeek output was fast but generic/off-target in places and cut off mid-thought.",
+      "Remote Gemma watcher completed with empty output.",
+      "For this tiny docs audit, a single reviewer produced the same usefulness classification with less coordination overhead."
+    ]
+  },
+  "multi_agent_path": {
+    "source_issue": 3415,
+    "source_state_path": "docs/milestones/v0.91.5/review/multi_agent_workcell/v0915_parallel_csdlc_workcell_state_2026-06-14.json",
+    "wall_duration_seconds": 54.495,
+    "lane_count": 3,
+    "useful_lane_count": 2,
+    "classification": "useful_with_limits",
+    "lanes": [
+      {
+        "lane": "planner_openrouter_deepseek_v4_flash",
+        "role": "planner_critic",
+        "provider": "openrouter",
+        "model": "deepseek/deepseek-v4-flash",
+        "duration_seconds": 3.404,
+        "result": "useful but generic/off-target in places"
+      },
+      {
+        "lane": "worker_local_qwen3_coder_30b",
+        "role": "worker",
+        "provider": "local_ollama",
+        "model": "qwen3-coder:30b",
+        "duration_seconds": 20.448,
+        "result": "useful output"
+      },
+      {
+        "lane": "watcher_remote_gemma4_e2b",
+        "role": "watcher",
+        "provider": "remote_ollama",
+        "model": "gemma4:e2b",
+        "duration_seconds": 54.49,
+        "result": "completed with empty output"
+      }
+    ]
+  },
+  "comparison": {
+    "raw_lane_execution_faster_than_single_agent_audit": true,
+    "net_operator_overhead_lower_with_multi_agent": false,
+    "single_agent_preferred_for_small_docs_audit": true,
+    "multi_agent_retains_value_for_disjoint_or_review_quality_tasks": true
+  },
+  "findings": [
+    {
+      "severity": "P2",
+      "summary": "Multi-agent is not yet a net speedup claim for tiny docs audits.",
+      "routing": "Keep #3415 classified as useful_with_limits unless later evidence improves the result."
+    },
+    {
+      "severity": "P3",
+      "summary": "Remote Gemma watcher availability is proven but role usefulness is not proven for this prompt shape.",
+      "routing": "Improve watcher prompt or model selection before reuse."
+    },
+    {
+      "severity": "P3",
+      "summary": "OpenRouter DeepSeek is promising as a fast planner/critic lane, but prompt grounding needs improvement.",
+      "routing": "Use stronger ADL-specific prompts before treating it as reliable planning evidence."
+    }
+  ],
+  "non_claims": [
+    "does_not_prove_multi_agent_execution_is_broadly_unhelpful",
+    "does_not_compare_against_all_hosted_providers",
+    "does_not_grant_model_lanes_review_merge_approval_or_closeout_authority"
+  ]
+}

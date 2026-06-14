@@ -4,9 +4,9 @@
 
 - Milestone: `v0.91.5`
 - Version: `v0.91.5`
-- Date: `2026-05-29`
+- Date: `2026-06-14`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `active_sprint_2_evidence`
 - Related issues: `#3415`, `#3501`, `#3503`, `#3504`
 - Prior satisfied evidence: `#3484`
 - Current provider/model evidence:
@@ -15,6 +15,8 @@
   [MULTI_AGENT_USEFULNESS_REVIEW_CHECKLIST_2026-06-14.md](../review/multi_agent_usefulness/MULTI_AGENT_USEFULNESS_REVIEW_CHECKLIST_2026-06-14.md)
 - Current workcell proof:
   [V0915_PARALLEL_C_SDLC_WORKCELL_PROOF_PACKET_2026-06-14.md](../review/multi_agent_workcell/V0915_PARALLEL_C_SDLC_WORKCELL_PROOF_PACKET_2026-06-14.md)
+- Current overhead comparison:
+  [MULTI_AGENT_OVERHEAD_COMPARISON_2026-06-14.md](../review/multi_agent_overhead/MULTI_AGENT_OVERHEAD_COMPARISON_2026-06-14.md)
 
 ## Template Rules
 
@@ -87,8 +89,10 @@ role-specific warning signs, and single-agent fallback rules for evaluating
 The `#3415` live workcell proof classifies the current lane as
 `useful_with_limits`: local Qwen produced useful worker evidence, OpenRouter
 DeepSeek produced partially useful planner/critic evidence, and remote Gemma
-completed with empty watcher output. `#3503` still must compare this against a
-single-agent path before Sprint 2 claims net usefulness.
+completed with empty watcher output. The `#3503` overhead comparison records
+that single-agent execution is preferred for tiny docs audits, while
+multi-agent remains useful for disjoint surfaces or review-quality tasks when
+the extra coordination cost is justified.
 
 ## Acceptance Criteria
 
