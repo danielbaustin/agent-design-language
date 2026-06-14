@@ -565,6 +565,7 @@ fn real_pr_init_seeds_stp_from_generated_source_prompt() {
     let repo = unique_temp_dir("adl-pr-real-init");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
+    let _github_fixture = install_issue_label_fixture(&repo);
     let prev_dir = env::current_dir().expect("cwd");
     env::set_current_dir(&repo).expect("chdir");
 
@@ -608,6 +609,7 @@ fn real_pr_init_refreshes_invalid_existing_stp() {
     let repo = unique_temp_dir("adl-pr-real-init-invalid-existing");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
+    let _github_fixture = install_issue_label_fixture(&repo);
     let issue_ref = IssueRef::new(
         1151,
         "v0.86".to_string(),
@@ -648,6 +650,7 @@ fn real_pr_init_refreshes_legacy_bootstrap_spp() {
     let repo = unique_temp_dir("adl-pr-real-init-refresh-spp");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
+    let _github_fixture = install_issue_label_fixture(&repo);
     let issue_ref = IssueRef::new(
         1151,
         "v0.86".to_string(),

@@ -215,6 +215,17 @@ mod tests {
     }
 
     fn write_executable(path: &Path, body: &str) {
+        let body = if path.file_name().and_then(|name| name.to_str()) == Some("gh")
+            && !body.contains("ADL_GITHUB_TEST_FIXTURE")
+        {
+            body.replacen(
+                "#!/usr/bin/env bash\n",
+                "#!/usr/bin/env bash\n# ADL_GITHUB_TEST_FIXTURE\n",
+                1,
+            )
+        } else {
+            body.to_string()
+        };
         fs::write(path, body).expect("script");
         #[cfg(unix)]
         {

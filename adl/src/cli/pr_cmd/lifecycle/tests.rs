@@ -82,6 +82,17 @@ fn set_tooling_manifest_root_to_workspace() -> EnvVarGuard {
 }
 
 fn write_executable(path: &Path, body: &str) {
+    let body = if path.file_name().and_then(|name| name.to_str()) == Some("gh")
+        && !body.contains("ADL_GITHUB_TEST_FIXTURE")
+    {
+        body.replacen(
+            "#!/usr/bin/env bash\n",
+            "#!/usr/bin/env bash\n# ADL_GITHUB_TEST_FIXTURE\n",
+            1,
+        )
+    } else {
+        body.to_string()
+    };
     fs::write(path, body).expect("write executable");
     let mut perms = fs::metadata(path).expect("metadata").permissions();
     perms.set_mode(0o755);
@@ -175,11 +186,16 @@ fn issue_is_closed_and_completed_parses_completed_state() {
     let temp = temp_dir("adl-pr-lifecycle-gh");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
+    let github_cli_fixture = bin_dir.join("github-cli-fixture");
     write_executable(
-            &bin_dir.join("gh"),
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}\\n'\n",
-        );
+        &github_cli_fixture,
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}\\n'\n",
+    );
     let old_path = env::var("PATH").unwrap_or_default();
+    let _fixture_guard = EnvVarGuard::set(
+        "ADL_TEST_GITHUB_CLI_FIXTURE",
+        github_cli_fixture.to_string_lossy().as_ref(),
+    );
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
     }
@@ -198,11 +214,16 @@ fn issue_is_closed_and_completed_returns_false_for_empty_or_open_state() {
     let temp = temp_dir("adl-pr-lifecycle-gh-open");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
+    let github_cli_fixture = bin_dir.join("github-cli-fixture");
     write_executable(
-            &bin_dir.join("gh"),
-            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"${1:-}\" == \"issue\" ]]; then\n  printf '{\"state\":\"OPEN\",\"stateReason\":null}\\n'\nfi\n",
-        );
+        &github_cli_fixture,
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"${1:-}\" == \"issue\" ]]; then\n  printf '{\"state\":\"OPEN\",\"stateReason\":null}\\n'\nfi\n",
+    );
     let old_path = env::var("PATH").unwrap_or_default();
+    let _fixture_guard = EnvVarGuard::set(
+        "ADL_TEST_GITHUB_CLI_FIXTURE",
+        github_cli_fixture.to_string_lossy().as_ref(),
+    );
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
     }
@@ -221,11 +242,16 @@ fn ensure_issue_closed_completed_for_closeout_rejects_unfinished_issue() {
     let temp = temp_dir("adl-pr-lifecycle-closeout-guard");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
+    let github_cli_fixture = bin_dir.join("github-cli-fixture");
     write_executable(
-            &bin_dir.join("gh"),
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '{\"state\":\"CLOSED\",\"stateReason\":\"NOT_PLANNED\"}\\n'\n",
-        );
+        &github_cli_fixture,
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '{\"state\":\"CLOSED\",\"stateReason\":\"NOT_PLANNED\"}\\n'\n",
+    );
     let old_path = env::var("PATH").unwrap_or_default();
+    let _fixture_guard = EnvVarGuard::set(
+        "ADL_TEST_GITHUB_CLI_FIXTURE",
+        github_cli_fixture.to_string_lossy().as_ref(),
+    );
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
     }
@@ -248,14 +274,19 @@ fn wait_for_issue_closed_and_completed_succeeds_after_retry() {
     let bin_dir = temp.join("bin");
     let counter = temp.join("counter.txt");
     fs::create_dir_all(&bin_dir).expect("bin dir");
+    let github_cli_fixture = bin_dir.join("github-cli-fixture");
     write_executable(
-            &bin_dir.join("gh"),
-            &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\ncounter=\"{}\"\ncount=0\nif [[ -f \"$counter\" ]]; then\n  count=$(cat \"$counter\")\nfi\ncount=$((count + 1))\nprintf '%s' \"$count\" > \"$counter\"\nif [[ \"$count\" -lt 2 ]]; then\n  printf '{{\"state\":\"OPEN\",\"stateReason\":null}}\\n'\nelse\n  printf '{{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}}\\n'\nfi\n",
-                counter.display()
-            ),
-        );
+        &github_cli_fixture,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\ncounter=\"{}\"\ncount=0\nif [[ -f \"$counter\" ]]; then\n  count=$(cat \"$counter\")\nfi\ncount=$((count + 1))\nprintf '%s' \"$count\" > \"$counter\"\nif [[ \"$count\" -lt 2 ]]; then\n  printf '{{\"state\":\"OPEN\",\"stateReason\":null}}\\n'\nelse\n  printf '{{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}}\\n'\nfi\n",
+            counter.display()
+        ),
+    );
     let old_path = env::var("PATH").unwrap_or_default();
+    let _fixture_guard = EnvVarGuard::set(
+        "ADL_TEST_GITHUB_CLI_FIXTURE",
+        github_cli_fixture.to_string_lossy().as_ref(),
+    );
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
     }
