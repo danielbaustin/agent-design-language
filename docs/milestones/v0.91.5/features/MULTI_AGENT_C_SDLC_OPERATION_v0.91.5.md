@@ -9,6 +9,8 @@
 - Status: `active_wp_01_opening`
 - Related issues: `#3415`, `#3501`, `#3503`, `#3504`
 - Prior satisfied evidence: `#3484`
+- Current provider/model evidence:
+  [PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md](../review/multi_agent_matrix/PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md)
 
 ## Template Rules
 
@@ -66,6 +68,13 @@ closeout truth.
 
 Validation should include a bounded proof packet, role records, shard records,
 timing/overhead comparison, and reviewer checklist.
+
+The `#3501` provider/model role matrix is now recorded as a partial live-proof
+packet: local Ollama role candidates are available, OpenRouter passed one live
+DeepSeek V4 Flash smoke, direct hosted provider lanes still require provider
+credentials, and the current remote Ollama node passed inventory plus one
+Gemma watcher-class smoke. Qwen/DeepSeek role usefulness on the remote node
+still needs bounded follow-up proof.
 
 ## Acceptance Criteria
 

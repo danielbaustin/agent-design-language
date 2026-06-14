@@ -8,6 +8,8 @@
 - Owner: ADL maintainers
 - Status: `active_wp_01_opening`
 - Related issues: `#3501`, `#3505`
+- Current evidence packet:
+  [PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md](../review/multi_agent_matrix/PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md)
 
 ## Template Rules
 
@@ -40,7 +42,7 @@ OpenRouter.
 | OpenAI | `openai` | `OPENAI_API_KEY` | `https://api.openai.com/v1/responses` | implemented |
 | Anthropic | `anthropic` | `ANTHROPIC_API_KEY` | `https://api.anthropic.com/v1/messages` | implemented |
 | DeepSeek | `deepseek` | `DEEPSEEK_API_KEY` | `https://api.deepseek.com/chat/completions` | implemented in `#3549` |
-| OpenRouter | `openrouter` | `OPENROUTER_API_KEY` | `https://openrouter.ai/api/v1/chat/completions` | implemented in `#3505`; live matrix proof remains `#3501` |
+| OpenRouter | `openrouter` | `OPENROUTER_API_KEY` | `https://openrouter.ai/api/v1/chat/completions` | implemented in `#3505`; one live `#3501` smoke passed via `deepseek/deepseek-v4-flash` |
 | Gemini | none yet | `GEMINI_API_KEY` | n/a | compatibility/profile lane only |
 
 Compatibility profiles such as `http:deepseek-chat` remain useful for gateway
@@ -81,6 +83,13 @@ OpenRouter capability support is model-dependent. The native provider preserves
 the OpenRouter lane and exact routed model identifier, but role probes must
 record any native tool/JSON capability as explicit lane evidence or a configured
 capability override rather than assuming gateway-wide support.
+
+The first v0.91.5 matrix packet records local Ollama availability, one
+OpenRouter live smoke through `deepseek/deepseek-v4-flash`, direct hosted lanes
+blocked where provider credentials were unavailable in the `#3501` shell, and
+remote Ollama inventory plus one Gemma watcher-class smoke on the current
+`nessus.local` node. See
+[PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md](../review/multi_agent_matrix/PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md).
 
 ## Acceptance Criteria
 

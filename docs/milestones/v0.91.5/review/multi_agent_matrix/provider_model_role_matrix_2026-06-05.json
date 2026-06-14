@@ -1,0 +1,126 @@
+{
+  "schema": "adl.provider_model_role_matrix.v1",
+  "date": "2026-06-05",
+  "issue": 3501,
+  "status": "bounded_matrix_ready_live_proof_partial",
+  "provider_lanes": [
+    {
+      "lane": "openai",
+      "substrate": "native_openai",
+      "credential_env": "OPENAI_API_KEY",
+      "status": "blocked_missing_credential",
+      "roles": ["planner", "author", "worker", "reviewer"]
+    },
+    {
+      "lane": "anthropic",
+      "substrate": "native_anthropic",
+      "credential_env": "ANTHROPIC_API_KEY",
+      "status": "blocked_missing_credential",
+      "roles": ["reviewer", "critic", "synthesis"]
+    },
+    {
+      "lane": "gemini",
+      "substrate": "compatibility_profile",
+      "credential_env": "GEMINI_API_KEY",
+      "status": "blocked_missing_credential",
+      "roles": ["reviewer", "alternate_synthesis"]
+    },
+    {
+      "lane": "deepseek_hosted",
+      "substrate": "native_deepseek",
+      "credential_env": "DEEPSEEK_API_KEY",
+      "status": "blocked_missing_credential",
+      "roles": ["critic", "reviewer", "reasoning_worker"]
+    },
+    {
+      "lane": "openrouter",
+      "substrate": "native_openrouter",
+      "credential_env": "OPENROUTER_API_KEY",
+      "status": "live_smoke_passed",
+      "roles": ["hosted_model_gateway", "candidate_planner", "candidate_worker", "candidate_reviewer"],
+      "live_smoke": {
+        "route": "openrouter_chat_completions",
+        "requested_model": "deepseek/deepseek-v4-flash",
+        "response_model": "deepseek/deepseek-v4-flash-20260423",
+        "sentinel": "ADL_OPENROUTER_SMOKE_OK",
+        "usage": {
+          "prompt_tokens": 19,
+          "completion_tokens": 61,
+          "total_tokens": 80,
+          "reported_cost_usd": 0.00001955
+        },
+        "credential_recorded": false
+      }
+    },
+    {
+      "lane": "local_ollama",
+      "substrate": "local_ollama",
+      "credential_env": null,
+      "status": "available_for_bounded_local_probe",
+      "roles": ["planner", "author", "worker", "reviewer", "watcher"]
+    },
+    {
+      "lane": "remote_ollama_192_168_68_77",
+      "substrate": "remote_ollama",
+      "credential_env": null,
+      "status": "blocked_stale_node",
+      "roles": ["remote_local_model_capacity"],
+      "blockers": ["ssh_host_key_verification_changed", "ollama_http_connection_refused"]
+    },
+    {
+      "lane": "remote_ollama_nessus_local_current",
+      "substrate": "remote_ollama",
+      "credential_env": null,
+      "status": "live_inventory_and_watcher_smoke_passed",
+      "roles": ["remote_local_model_capacity", "watcher_candidate"],
+      "host_observation": {
+        "resolved_ip": "192.168.68.70",
+        "model_count": 18
+      },
+      "live_smoke": {
+        "route": "ollama_generate",
+        "passed_model": "gemma4:e2b",
+        "sentinel": "ADL_REMOTE_OLLAMA_SMOKE_OK",
+        "failed_or_unhelpful_models": [
+          {"model": "qwen3:30b", "result": "completed_empty_response"},
+          {"model": "deepseek-r1:8b", "result": "completed_empty_response"}
+        ]
+      }
+    }
+  ],
+  "local_model_candidates": [
+    {"model": "qwen3.6:27b", "family": "qwen", "candidate_roles": ["planner", "author", "reviewer", "watcher"]},
+    {"model": "Qwen3.5:35b-a3b", "family": "qwen", "candidate_roles": ["planner", "author", "reviewer"]},
+    {"model": "qwen3-coder:30b", "family": "qwen_coder", "candidate_roles": ["worker", "code_review_helper"]},
+    {"model": "qwen2.5-coder:32b", "family": "qwen_coder", "candidate_roles": ["worker", "code_review_helper"]},
+    {"model": "deepseek-r1:8b", "family": "deepseek", "candidate_roles": ["reviewer", "critic"]},
+    {"model": "deepseek-r1:32b", "family": "deepseek", "candidate_roles": ["reviewer", "critic", "reasoning_worker"]},
+    {"model": "gemma4:e4b", "family": "gemma", "candidate_roles": ["watcher", "summarizer"]},
+    {"model": "mistral-nemo:latest", "family": "mistral", "candidate_roles": ["watcher", "summarizer", "reviewer"]}
+  ],
+  "remote_model_candidates": [
+    {"model": "qwen2.5:32b", "family": "qwen", "candidate_roles": ["planner", "author"]},
+    {"model": "qwen2.5-coder:32b", "family": "qwen_coder", "candidate_roles": ["worker", "code_review_helper"]},
+    {"model": "qwen3-coder:30b", "family": "qwen_coder", "candidate_roles": ["worker", "code_review_helper"]},
+    {"model": "qwen3:30b", "family": "qwen", "candidate_roles": ["planner", "author"]},
+    {"model": "deepseek-r1:32b", "family": "deepseek", "candidate_roles": ["reviewer", "critic"]},
+    {"model": "deepseek-r1:8b", "family": "deepseek", "candidate_roles": ["reviewer", "critic"]},
+    {"model": "gemma4:e2b", "family": "gemma", "candidate_roles": ["watcher", "summarizer"], "smoke_status": "passed"},
+    {"model": "gpt-oss:120b", "family": "gpt_oss", "candidate_roles": ["worker", "reviewer"]}
+  ],
+  "downstream_issues": [
+    {"issue": 3504, "purpose": "multi_agent_usefulness_checklist"},
+    {"issue": 3415, "purpose": "parallel_csdlc_workcell_proof"},
+    {"issue": 3503, "purpose": "single_agent_vs_multi_agent_overhead_comparison"},
+    {"issue": 3572, "purpose": "sprint_2_umbrella"}
+  ],
+  "non_claims": [
+    "direct_hosted_live_execution_not_proven",
+    "openrouter_role_usefulness_not_proven",
+    "openrouter_tool_or_json_capability_not_proven",
+    "broad_remote_ollama_execution_not_proven",
+    "remote_qwen_deepseek_role_usefulness_not_proven",
+    "multi_agent_usefulness_not_proven",
+    "no_agent_merge_or_close_authority"
+  ]
+}
