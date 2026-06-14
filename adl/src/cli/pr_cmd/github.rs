@@ -19,9 +19,6 @@ struct RepoParts {
     name: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
-struct ReadyForReviewResponse {}
-
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub(super) struct OpenPullRequest {
     pub(super) number: u32,
@@ -62,6 +59,28 @@ struct PullRequestClosingIssuesConnection {
 #[derive(Debug, Clone, Deserialize)]
 struct PullRequestClosingIssueNode {
     number: u32,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestNodeIdResponse {
+    repository: Option<PullRequestNodeIdRepository>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestNodeIdRepository {
+    #[serde(rename = "pullRequest")]
+    pull_request: Option<PullRequestNodeIdPullRequest>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestNodeIdPullRequest {
+    id: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct MarkPullRequestReadyResponse {
+    #[serde(rename = "markPullRequestReadyForReview")]
+    _mark_pull_request_ready_for_review: Option<serde_json::Value>,
 }
 
 fn current_pr_url_octocrab(repo: &str, branch: &str) -> Result<Option<String>> {
@@ -262,14 +281,53 @@ fn update_pr_title_body_octocrab(repo: &str, pr_ref: &str, title: &str, body: &s
 
 fn mark_pr_ready_octocrab(repo: &str, pr_ref: &str) -> Result<()> {
     let repo_parts = parse_repo(repo)?;
-    let number = parse_pr_number(pr_ref)?;
+    let number = parse_pr_number(pr_ref)? as i64;
     with_octocrab("pr.ready", |runtime, octo| {
-        let route = format!(
-            "/repos/{}/{}/pulls/{}/ready_for_review",
-            repo_parts.owner, repo_parts.name, number
-        );
-        let _: ReadyForReviewResponse = block_on_octocrab(runtime, "pr.ready", || async {
-            octo.post::<_, ReadyForReviewResponse>(route, None::<&()>)
+        let id_payload = serde_json::json!({
+            "query": r#"
+                query($owner: String!, $name: String!, $number: Int!) {
+                  repository(owner: $owner, name: $name) {
+                    pullRequest(number: $number) {
+                      id
+                    }
+                  }
+                }
+            "#,
+            "variables": {
+                "owner": repo_parts.owner,
+                "name": repo_parts.name,
+                "number": number,
+            }
+        });
+        let id_response: PullRequestNodeIdResponse =
+            block_on_octocrab(runtime, "pr.ready", || async {
+                octo.graphql::<PullRequestNodeIdResponse>(&id_payload).await
+            })?;
+        let pull_request_id = id_response
+            .repository
+            .and_then(|repo| repo.pull_request)
+            .map(|pr| pr.id)
+            .filter(|id| !id.trim().is_empty())
+            .ok_or_else(|| {
+                anyhow!("GitHub did not return a pull request node id for PR {pr_ref}")
+            })?;
+        let ready_payload = serde_json::json!({
+            "query": r#"
+                mutation($pullRequestId: ID!) {
+                  markPullRequestReadyForReview(input: { pullRequestId: $pullRequestId }) {
+                    pullRequest {
+                      id
+                      isDraft
+                    }
+                  }
+                }
+            "#,
+            "variables": {
+                "pullRequestId": pull_request_id,
+            }
+        });
+        let _: MarkPullRequestReadyResponse = block_on_octocrab(runtime, "pr.ready", || async {
+            octo.graphql::<MarkPullRequestReadyResponse>(&ready_payload)
                 .await
         })?;
         Ok(())
@@ -1456,23 +1514,49 @@ mod tests {
                         "codex/3697-octocrab-operational-transport",
                         "main",
                     ),
-                    ("POST", "/repos/owner/repo/pulls/1159/ready_for_review") => "{}".to_string(),
                     ("PUT", "/repos/owner/repo/pulls/1159/merge") => {
                         r#"{"sha":"cccccccccccccccccccccccccccccccccccccccc","merged":true,"message":"merged"}"#
                             .to_string()
                     }
-                    ("POST", "/graphql") => serde_json::json!({
-                        "data": {
-                            "repository": {
-                                "pullRequest": {
-                                    "closingIssuesReferences": {
-                                        "nodes": [{"number": 3697}, null, {"number": 3698}]
+                    ("POST", "/graphql") => {
+                        if body.contains("markPullRequestReadyForReview") {
+                            serde_json::json!({
+                                "data": {
+                                    "markPullRequestReadyForReview": {
+                                        "pullRequest": {
+                                            "id": "PR_kwDOready",
+                                            "isDraft": false
+                                        }
                                     }
                                 }
-                            }
+                            })
+                            .to_string()
+                        } else if body.contains("pullRequest(number: $number)") && body.contains("id") && !body.contains("closingIssuesReferences") {
+                            serde_json::json!({
+                                "data": {
+                                    "repository": {
+                                        "pullRequest": {
+                                            "id": "PR_kwDOready"
+                                        }
+                                    }
+                                }
+                            })
+                            .to_string()
+                        } else {
+                            serde_json::json!({
+                                "data": {
+                                    "repository": {
+                                        "pullRequest": {
+                                            "closingIssuesReferences": {
+                                                "nodes": [{"number": 3697}, null, {"number": 3698}]
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                            .to_string()
                         }
-                    })
-                    .to_string(),
+                    }
                     ("POST", "/repos/owner/repo/issues") => issue_fixture(
                         77,
                         "[v0.91.5][tools] Created issue",
@@ -1508,7 +1592,7 @@ mod tests {
         let _guard = env_lock();
         let policy_env = clear_github_policy_env();
         let temp = unique_temp_dir("adl-octocrab-transport");
-        let (base_uri, server) = spawn_octocrab_test_server(18);
+        let (base_uri, server) = spawn_octocrab_test_server(19);
         unsafe {
             std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
             std::env::set_var("GITHUB_TOKEN", "test-token");
@@ -1680,7 +1764,7 @@ mod tests {
         .expect("set labels");
 
         let seen = server.join().expect("server join");
-        assert_eq!(seen.len(), 18, "unexpected mock GitHub calls: {seen:#?}");
+        assert_eq!(seen.len(), 19, "unexpected mock GitHub calls: {seen:#?}");
         assert!(seen
             .iter()
             .any(|call| call.starts_with("POST /repos/owner/repo/pulls ")));
