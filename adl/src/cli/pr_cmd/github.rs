@@ -1,4 +1,6 @@
 use super::*;
+#[cfg(test)]
+use crate::cli::pr_cmd::github_client::GithubClientMode;
 use crate::cli::pr_cmd::github_client::{
     body_contains_closing_linkage, issue_labels_from_csv, issue_labels_from_csv_in_order,
     issue_metadata_drift, linked_issue_numbers_from_lines, linked_issue_numbers_include,
@@ -65,18 +67,18 @@ struct PullRequestClosingIssueNode {
 fn current_pr_url_octocrab(repo: &str, branch: &str) -> Result<Option<String>> {
     let repo_parts = parse_repo(repo)?;
     let head = format!("{}:{branch}", repo_parts.owner);
-    with_octocrab("pr.list.current_branch", |octo| {
+    with_octocrab("pr.list.current_branch", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let page = block_on_octocrab(
-            "pr.list.current_branch",
+        let page = block_on_octocrab(runtime, "pr.list.current_branch", || async {
             octo.pulls(&owner, &name)
                 .list()
                 .state(octocrab::params::State::Open)
                 .head(head)
                 .per_page(10)
-                .send(),
-        )?;
+                .send()
+                .await
+        })?;
         Ok(page
             .items
             .into_iter()
@@ -86,17 +88,17 @@ fn current_pr_url_octocrab(repo: &str, branch: &str) -> Result<Option<String>> {
 
 fn list_open_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
     let repo_parts = parse_repo(repo)?;
-    with_octocrab("pr.list.open_wave", |octo| {
+    with_octocrab("pr.list.open_wave", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let page = block_on_octocrab(
-            "pr.list.open_wave",
+        let page = block_on_octocrab(runtime, "pr.list.open_wave", || async {
             octo.pulls(&owner, &name)
                 .list()
                 .state(octocrab::params::State::Open)
                 .per_page(100)
-                .send(),
-        )?;
+                .send()
+                .await
+        })?;
         Ok(page
             .items
             .into_iter()
@@ -124,10 +126,12 @@ fn list_open_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
 fn pr_body_octocrab(repo: &str, pr_ref: &str) -> Result<String> {
     let repo_parts = parse_repo(repo)?;
     let number = parse_pr_number(pr_ref)?;
-    with_octocrab("pr.view.body", |octo| {
+    with_octocrab("pr.view.body", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let pr = block_on_octocrab("pr.view.body", octo.pulls(&owner, &name).get(number))?;
+        let pr = block_on_octocrab(runtime, "pr.view.body", || async {
+            octo.pulls(&owner, &name).get(number).await
+        })?;
         Ok(pr.body.unwrap_or_default())
     })
 }
@@ -135,7 +139,7 @@ fn pr_body_octocrab(repo: &str, pr_ref: &str) -> Result<String> {
 fn pr_closing_issue_numbers_octocrab(repo: &str, pr_ref: &str) -> Result<Vec<u32>> {
     let repo_parts = parse_repo(repo)?;
     let number = parse_pr_number(pr_ref)? as i64;
-    with_octocrab("pr.view.closing_issues", |octo| {
+    with_octocrab("pr.view.closing_issues", |runtime, octo| {
         let payload = serde_json::json!({
             "query": r#"
                 query($owner: String!, $name: String!, $number: Int!) {
@@ -157,7 +161,10 @@ fn pr_closing_issue_numbers_octocrab(repo: &str, pr_ref: &str) -> Result<Vec<u32
             }
         });
         let response: PullRequestClosingIssuesResponse =
-            block_on_octocrab("pr.view.closing_issues", octo.graphql(&payload))?;
+            block_on_octocrab(runtime, "pr.view.closing_issues", || async {
+                octo.graphql::<PullRequestClosingIssuesResponse>(&payload)
+                    .await
+            })?;
         let numbers = response
             .repository
             .and_then(|repo| repo.pull_request)
@@ -178,13 +185,12 @@ fn pr_closing_issue_numbers_octocrab(repo: &str, pr_ref: &str) -> Result<Vec<u32
 fn pr_base_ref_octocrab(repo: &str, pr_ref: &str) -> Result<String> {
     let repo_parts = parse_repo(repo)?;
     let number = parse_pr_number(pr_ref)?;
-    with_octocrab("pr.view.base_ref.finish_existing", |octo| {
+    with_octocrab("pr.view.base_ref.finish_existing", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let pr = block_on_octocrab(
-            "pr.view.base_ref.finish_existing",
-            octo.pulls(&owner, &name).get(number),
-        )?;
+        let pr = block_on_octocrab(runtime, "pr.view.base_ref.finish_existing", || async {
+            octo.pulls(&owner, &name).get(number).await
+        })?;
         Ok(pr
             .base
             .map(|base| base.ref_field)
@@ -202,36 +208,36 @@ fn create_pr_octocrab(
     draft: bool,
 ) -> Result<String> {
     let repo_parts = parse_repo(repo)?;
-    with_octocrab("pr.create.finish", |octo| {
+    with_octocrab("pr.create.finish", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let pr = block_on_octocrab(
-            "pr.create.finish",
+        let pr = block_on_octocrab(runtime, "pr.create.finish", || async {
             octo.pulls(&owner, &name)
                 .create(title, head, base)
                 .body(body.to_string())
                 .draft(draft)
-                .send(),
-        )?;
-        Ok(pr.html_url.map(|url| url.to_string()).ok_or_else(|| {
-            anyhow!("github_client.octocrab_transport: PR create returned no url")
-        })?)
+                .send()
+                .await
+        })?;
+        pr.html_url
+            .map(|url| url.to_string())
+            .ok_or_else(|| anyhow!("github_client.octocrab_transport: PR create returned no url"))
     })
 }
 
 fn update_pr_body_octocrab(repo: &str, pr_ref: &str, body: &str) -> Result<()> {
     let repo_parts = parse_repo(repo)?;
     let number = parse_pr_number(pr_ref)?;
-    with_octocrab("pr.edit.body_file", |octo| {
+    with_octocrab("pr.edit.body_file", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        block_on_octocrab(
-            "pr.edit.body_file",
+        block_on_octocrab(runtime, "pr.edit.body_file", || async {
             octo.pulls(&owner, &name)
                 .update(number)
                 .body(body.to_string())
-                .send(),
-        )?;
+                .send()
+                .await
+        })?;
         Ok(())
     })
 }
@@ -239,17 +245,17 @@ fn update_pr_body_octocrab(repo: &str, pr_ref: &str, body: &str) -> Result<()> {
 fn update_pr_title_body_octocrab(repo: &str, pr_ref: &str, title: &str, body: &str) -> Result<()> {
     let repo_parts = parse_repo(repo)?;
     let number = parse_pr_number(pr_ref)?;
-    with_octocrab("pr.edit.finish_existing", |octo| {
+    with_octocrab("pr.edit.finish_existing", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        block_on_octocrab(
-            "pr.edit.finish_existing",
+        block_on_octocrab(runtime, "pr.edit.finish_existing", || async {
             octo.pulls(&owner, &name)
                 .update(number)
                 .title(title.to_string())
                 .body(body.to_string())
-                .send(),
-        )?;
+                .send()
+                .await
+        })?;
         Ok(())
     })
 }
@@ -257,13 +263,15 @@ fn update_pr_title_body_octocrab(repo: &str, pr_ref: &str, title: &str, body: &s
 fn mark_pr_ready_octocrab(repo: &str, pr_ref: &str) -> Result<()> {
     let repo_parts = parse_repo(repo)?;
     let number = parse_pr_number(pr_ref)?;
-    with_octocrab("pr.ready", |octo| {
+    with_octocrab("pr.ready", |runtime, octo| {
         let route = format!(
             "/repos/{}/{}/pulls/{}/ready_for_review",
             repo_parts.owner, repo_parts.name, number
         );
-        let _: ReadyForReviewResponse =
-            block_on_octocrab("pr.ready", octo.post(route, None::<&()>))?;
+        let _: ReadyForReviewResponse = block_on_octocrab(runtime, "pr.ready", || async {
+            octo.post::<_, ReadyForReviewResponse>(route, None::<&()>)
+                .await
+        })?;
         Ok(())
     })
 }
@@ -271,16 +279,16 @@ fn mark_pr_ready_octocrab(repo: &str, pr_ref: &str) -> Result<()> {
 fn merge_pr_octocrab(repo: &str, pr_ref: &str) -> Result<()> {
     let repo_parts = parse_repo(repo)?;
     let number = parse_pr_number(pr_ref)?;
-    with_octocrab("pr.merge.finish", |octo| {
+    with_octocrab("pr.merge.finish", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        block_on_octocrab(
-            "pr.merge.finish",
+        block_on_octocrab(runtime, "pr.merge.finish", || async {
             octo.pulls(&owner, &name)
                 .merge(number)
                 .method(octocrab::params::pulls::MergeMethod::Squash)
-                .send(),
-        )?;
+                .send()
+                .await
+        })?;
         Ok(())
     })
 }
@@ -299,6 +307,10 @@ fn github_client(operation: &str) -> Result<AdlGithubClient> {
 }
 
 pub(super) fn run_gh_capture(operation: &str, args: &[&str]) -> Result<String> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed(operation)? {
+        return run_gh_capture_shell(operation, args);
+    }
     run_octocrab_capture(operation, args)
 }
 
@@ -306,15 +318,98 @@ pub(crate) fn run_gh_capture_allow_failure(
     operation: &str,
     args: &[&str],
 ) -> Result<Option<String>> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed(operation)? {
+        return run_gh_capture_shell_allow_failure(operation, args);
+    }
     run_octocrab_capture(operation, args).map(Some)
 }
 
 pub(super) fn run_gh_status(operation: &str, args: &[&str]) -> Result<()> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed(operation)? {
+        return run_gh_status_shell(operation, args);
+    }
     run_octocrab_status(operation, args)
 }
 
 pub(super) fn run_gh_status_allow_failure(operation: &str, args: &[&str]) -> Result<bool> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed(operation)? {
+        return run_gh_status_shell_allow_failure(operation, args);
+    }
     run_octocrab_status(operation, args).map(|_| true)
+}
+
+#[cfg(test)]
+fn test_gh_fixture_fallback_allowed(operation: &str) -> Result<bool> {
+    let client = AdlGithubClient::from_env()
+        .with_context(|| format!("github client policy rejected operation '{operation}'"))?;
+    let config = client.config();
+    Ok(config.requested_mode == GithubClientMode::Auto && config.gh_fallback_allowed)
+}
+
+#[cfg(test)]
+fn run_gh_capture_shell(operation: &str, args: &[&str]) -> Result<String> {
+    let output = Command::new("gh").args(args).output().with_context(|| {
+        format!("github_client.test_fixture: failed to spawn gh for {operation}")
+    })?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        bail!(
+            "github_client.test_fixture: operation '{}' failed: {}{}",
+            operation,
+            stderr.trim(),
+            if stdout.trim().is_empty() {
+                String::new()
+            } else {
+                format!(" (stdout: {})", stdout.trim())
+            }
+        );
+    }
+    Ok(String::from_utf8_lossy(&output.stdout).to_string())
+}
+
+#[cfg(test)]
+fn run_gh_capture_shell_allow_failure(operation: &str, args: &[&str]) -> Result<Option<String>> {
+    let output = Command::new("gh").args(args).output().with_context(|| {
+        format!("github_client.test_fixture: failed to spawn gh for {operation}")
+    })?;
+    if !output.status.success() {
+        return Ok(None);
+    }
+    Ok(Some(String::from_utf8_lossy(&output.stdout).to_string()))
+}
+
+#[cfg(test)]
+fn run_gh_status_shell(operation: &str, args: &[&str]) -> Result<()> {
+    let output = Command::new("gh").args(args).output().with_context(|| {
+        format!("github_client.test_fixture: failed to spawn gh for {operation}")
+    })?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        bail!(
+            "github_client.test_fixture: operation '{}' failed: {}{}",
+            operation,
+            stderr.trim(),
+            if stdout.trim().is_empty() {
+                String::new()
+            } else {
+                format!(" (stdout: {})", stdout.trim())
+            }
+        );
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+fn run_gh_status_shell_allow_failure(operation: &str, args: &[&str]) -> Result<bool> {
+    let output = Command::new("gh").args(args).output().with_context(|| {
+        format!("github_client.test_fixture: failed to spawn gh for {operation}")
+    })?;
+    Ok(output.status.success())
 }
 
 fn parse_repo(repo: &str) -> Result<RepoParts> {
@@ -348,31 +443,49 @@ fn parse_pr_number(pr_ref: &str) -> Result<u64> {
     bail!("failed to parse pull request number from '{pr_ref}'")
 }
 
-fn block_on_octocrab<T>(
+fn block_on_octocrab<T, Fut>(
+    runtime: &tokio::runtime::Runtime,
     operation: &str,
-    f: impl std::future::Future<Output = octocrab::Result<T>>,
-) -> Result<T> {
-    let runtime = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .with_context(|| {
-            format!("github_client.octocrab_runtime: failed to build runtime for {operation}")
-        })?;
-    runtime.block_on(f).map_err(|err| {
+    make_future: impl FnOnce() -> Fut,
+) -> Result<T>
+where
+    Fut: std::future::Future<Output = octocrab::Result<T>>,
+{
+    eprintln!("adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=started operation={operation}");
+    let _runtime_guard = runtime.enter();
+    let result = runtime.block_on(make_future());
+    let result = result.map_err(|err| {
+        eprintln!("adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=failed operation={operation}");
         anyhow!(
             "github_client.octocrab_transport: operation '{}' failed: {}",
             operation,
             err
         )
-    })
+    })?;
+    eprintln!("adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=completed operation={operation}");
+    Ok(result)
 }
 
-fn with_octocrab<T>(operation: &str, f: impl FnOnce(octocrab::Octocrab) -> Result<T>) -> Result<T> {
+fn with_octocrab<T>(
+    operation: &str,
+    f: impl FnOnce(&tokio::runtime::Runtime, octocrab::Octocrab) -> Result<T>,
+) -> Result<T> {
+    let runtime = build_octocrab_runtime(operation)?;
+    let _runtime_guard = runtime.enter();
     let client = github_client(operation)?;
     let octo = client
         .octocrab()
         .map_err(|err| anyhow!("github_client.octocrab_build: {err}"))?;
-    f(octo)
+    f(&runtime, octo)
+}
+
+fn build_octocrab_runtime(operation: &str) -> Result<tokio::runtime::Runtime> {
+    tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .with_context(|| {
+            format!("github_client.octocrab_runtime: failed to build runtime for {operation}")
+        })
 }
 
 fn run_octocrab_capture(operation: &str, args: &[&str]) -> Result<String> {
@@ -465,9 +578,26 @@ fn arg_after<'a>(args: &'a [&str], flag: &str) -> Result<&'a str> {
 }
 
 fn positional_after<'a>(args: &'a [&str], command: &str) -> Result<&'a str> {
-    args.windows(2)
-        .find_map(|window| (window[0] == command).then_some(window[1]))
-        .ok_or_else(|| anyhow!("missing positional argument after '{command}' in GitHub operation"))
+    let Some(command_index) = args.iter().position(|arg| *arg == command) else {
+        bail!("missing GitHub command '{command}' in operation arguments");
+    };
+    let mut index = command_index + 1;
+    while index < args.len() {
+        match args[index] {
+            "-R" | "--repo" | "--json" | "--jq" | "--body-file" | "--title" | "--base"
+            | "--head" => {
+                index += 2;
+            }
+            "--draft" | "--squash" | "--delete-branch" | "--web" => {
+                index += 1;
+            }
+            other if other.starts_with('-') => {
+                index += 1;
+            }
+            other => return Ok(other),
+        }
+    }
+    bail!("missing positional argument after '{command}' in GitHub operation")
 }
 
 pub(super) fn current_pr_url(repo: &str, branch: &str) -> Result<Option<String>> {
@@ -691,10 +821,50 @@ pub(super) fn attach_post_merge_closeout(
     branch: &str,
     pr_url: &str,
 ) -> Result<()> {
-    let _ = (repo_root, repo, issue, branch, pr_url);
-    eprintln!(
-        "• Post-merge closeout watcher is not auto-attached: legacy shell watcher was retired from the no-gh workflow. Run `adl/tools/pr.sh closeout <issue>` after GitHub closes the issue."
-    );
+    if std::env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE")
+        .ok()
+        .as_deref()
+        == Some("1")
+    {
+        return Ok(());
+    }
+
+    let command_path = std::env::var("ADL_POST_MERGE_CLOSEOUT_CMD")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or_else(|| {
+            helper_command_path(repo_root, "adl/tools/attach_post_merge_closeout.sh")
+        });
+    let output = Command::new(&command_path)
+        .arg("--repo-root")
+        .arg(repo_root)
+        .arg("--repo")
+        .arg(repo)
+        .arg("--issue")
+        .arg(issue.to_string())
+        .arg("--branch")
+        .arg(branch)
+        .arg("--pr-url")
+        .arg(pr_url)
+        .output()
+        .with_context(|| {
+            format!("finish: failed to spawn post-merge closeout command '{command_path}'")
+        })?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        bail!(
+            "finish: post-merge closeout auto-attach failed for issue #{} and PR '{}': {}{}",
+            issue,
+            pr_url,
+            stderr.trim(),
+            if stdout.trim().is_empty() {
+                String::new()
+            } else {
+                format!(" (stdout: {})", stdout.trim())
+            }
+        );
+    }
     Ok(())
 }
 
@@ -728,48 +898,100 @@ pub(super) fn gh_issue_create(
     body: &str,
     labels_csv: &str,
 ) -> Result<String> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.create")? {
+        return run_gh_capture_shell(
+            "issue.create",
+            &[
+                "issue", "create", "-R", repo, "--title", title, "--body", body, "--label",
+                labels_csv,
+            ],
+        )
+        .map(|url| url.trim().to_string());
+    }
     let repo_parts = parse_repo(repo)?;
     let labels = issue_labels_from_csv_in_order(labels_csv);
-    with_octocrab("issue.create", |octo| {
+    with_octocrab("issue.create", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let issue = block_on_octocrab(
-            "issue.create",
+        let issue = block_on_octocrab(runtime, "issue.create", || async {
             octo.issues(&owner, &name)
                 .create(title)
                 .body(body.to_string())
                 .labels(labels)
-                .send(),
-        )?;
+                .send()
+                .await
+        })?;
         Ok(issue.html_url.to_string())
     })
 }
 
 pub(crate) fn gh_issue_label_names(issue: u32, repo: &str) -> Result<Vec<String>> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.view.labels")? {
+        let Some(out) = run_gh_capture_shell_allow_failure(
+            "issue.view.labels",
+            &[
+                "issue",
+                "view",
+                &issue.to_string(),
+                "-R",
+                repo,
+                "--json",
+                "labels",
+                "--jq",
+                ".labels[].name",
+            ],
+        )?
+        else {
+            return Ok(Vec::new());
+        };
+        return Ok(out
+            .lines()
+            .map(str::trim)
+            .filter(|label| !label.is_empty())
+            .map(ToString::to_string)
+            .collect());
+    }
     let repo_parts = parse_repo(repo)?;
-    with_octocrab("issue.view.labels", |octo| {
+    with_octocrab("issue.view.labels", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let issue = block_on_octocrab(
-            "issue.view.labels",
-            octo.issues(&owner, &name).get(issue as u64),
-        )?;
+        let issue = block_on_octocrab(runtime, "issue.view.labels", || async {
+            octo.issues(&owner, &name).get(issue as u64).await
+        })?;
         Ok(issue.labels.into_iter().map(|label| label.name).collect())
     })
 }
 
 fn gh_issue_edit_title(repo: &str, issue: u32, title: &str) -> Result<()> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.edit.title")? {
+        return run_gh_status_shell(
+            "issue.edit.title",
+            &[
+                "issue",
+                "edit",
+                &issue.to_string(),
+                "-R",
+                repo,
+                "--title",
+                title,
+            ],
+        )
+        .with_context(|| format!("create: gh fixture issue edit title failed for issue #{issue}"));
+    }
     let repo_parts = parse_repo(repo)?;
-    with_octocrab("issue.edit.title", |octo| {
+    with_octocrab("issue.edit.title", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        block_on_octocrab(
-            "issue.edit.title",
+        block_on_octocrab(runtime, "issue.edit.title", || async {
             octo.issues(&owner, &name)
                 .update(issue as u64)
                 .title(title)
-                .send(),
-        )?;
+                .send()
+                .await
+        })?;
         Ok(())
     })
     .with_context(|| format!("create: octocrab issue edit title failed for issue #{issue}"))
@@ -826,74 +1048,174 @@ pub(super) fn ensure_issue_metadata_parity(
 }
 
 pub(super) fn gh_issue_edit_body(repo: &str, issue: u32, body: &str) -> Result<()> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.edit.body")? {
+        return run_gh_status_shell(
+            "issue.edit.body",
+            &[
+                "issue",
+                "edit",
+                &issue.to_string(),
+                "-R",
+                repo,
+                "--body",
+                body,
+            ],
+        )
+        .with_context(|| format!("create: gh fixture issue edit failed for issue #{issue}"));
+    }
     let repo_parts = parse_repo(repo)?;
-    with_octocrab("issue.edit.body", |octo| {
+    with_octocrab("issue.edit.body", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        block_on_octocrab(
-            "issue.edit.body",
+        block_on_octocrab(runtime, "issue.edit.body", || async {
             octo.issues(&owner, &name)
                 .update(issue as u64)
                 .body(body)
-                .send(),
-        )?;
+                .send()
+                .await
+        })?;
         Ok(())
     })
     .with_context(|| format!("create: octocrab issue edit failed for issue #{issue}"))
 }
 
 pub(super) fn gh_issue_title(issue: u32, repo: &str) -> Result<Option<String>> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.view.title")? {
+        let out = run_gh_capture_shell_allow_failure(
+            "issue.view.title",
+            &[
+                "issue",
+                "view",
+                &issue.to_string(),
+                "-R",
+                repo,
+                "--json",
+                "title",
+                "--jq",
+                ".title",
+            ],
+        )?;
+        return Ok(
+            out.and_then(|title| Some(title.trim().to_string()).filter(|title| !title.is_empty()))
+        );
+    }
     let repo_parts = parse_repo(repo)?;
-    with_octocrab("issue.view.title", |octo| {
+    with_octocrab("issue.view.title", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let issue = block_on_octocrab(
-            "issue.view.title",
-            octo.issues(&owner, &name).get(issue as u64),
-        )?;
+        let issue = block_on_octocrab(runtime, "issue.view.title", || async {
+            octo.issues(&owner, &name).get(issue as u64).await
+        })?;
         Ok(Some(issue.title).filter(|title| !title.trim().is_empty()))
     })
 }
 
 pub(crate) fn gh_issue_body(issue: u32, repo: &str) -> Result<Option<String>> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.view.body")? {
+        let out = run_gh_capture_shell_allow_failure(
+            "issue.view.body",
+            &[
+                "issue",
+                "view",
+                &issue.to_string(),
+                "-R",
+                repo,
+                "--json",
+                "body",
+                "--jq",
+                ".body",
+            ],
+        )?;
+        return Ok(
+            out.and_then(|body| Some(body.trim().to_string()).filter(|body| !body.is_empty()))
+        );
+    }
     let repo_parts = parse_repo(repo)?;
-    with_octocrab("issue.view.body", |octo| {
+    with_octocrab("issue.view.body", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let issue = block_on_octocrab(
-            "issue.view.body",
-            octo.issues(&owner, &name).get(issue as u64),
-        )?;
+        let issue = block_on_octocrab(runtime, "issue.view.body", || async {
+            octo.issues(&owner, &name).get(issue as u64).await
+        })?;
         Ok(issue.body.filter(|body| !body.trim().is_empty()))
     })
 }
 
 pub(crate) fn gh_issue_is_closed_completed(issue: u32, repo: &str) -> Result<bool> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.view.state")? {
+        #[derive(Deserialize)]
+        struct IssueStateFixture {
+            state: Option<String>,
+            #[serde(rename = "stateReason")]
+            state_reason: Option<String>,
+        }
+
+        let Some(out) = run_gh_capture_shell_allow_failure(
+            "issue.view.state",
+            &[
+                "issue",
+                "view",
+                &issue.to_string(),
+                "-R",
+                repo,
+                "--json",
+                "state,stateReason",
+            ],
+        )?
+        else {
+            return Ok(false);
+        };
+        let state: IssueStateFixture =
+            serde_json::from_str(&out).context("failed to parse GitHub issue state JSON")?;
+        return Ok(state.state.as_deref() == Some("CLOSED")
+            && state.state_reason.as_deref() == Some("COMPLETED"));
+    }
     let repo_parts = parse_repo(repo)?;
-    with_octocrab("issue.view.state", |octo| {
+    with_octocrab("issue.view.state", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let issue = block_on_octocrab(
-            "issue.view.state",
-            octo.issues(&owner, &name).get(issue as u64),
-        )?;
+        let issue = block_on_octocrab(runtime, "issue.view.state", || async {
+            octo.issues(&owner, &name).get(issue as u64).await
+        })?;
         Ok(issue.state == octocrab::models::IssueState::Closed
             && issue.state_reason == Some(octocrab::models::issues::IssueStateReason::Completed))
     })
 }
 
 fn gh_issue_set_labels(repo: &str, issue: u32, labels: &[String]) -> Result<()> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.edit.labels")? {
+        return run_gh_status_shell(
+            "issue.edit.labels",
+            &[
+                "issue",
+                "edit",
+                &issue.to_string(),
+                "-R",
+                repo,
+                "--add-label",
+                &labels.join(","),
+            ],
+        )
+        .with_context(|| {
+            format!("create: gh fixture issue label update failed for issue #{issue}")
+        });
+    }
     let repo_parts = parse_repo(repo)?;
-    with_octocrab("issue.edit.labels", |octo| {
+    with_octocrab("issue.edit.labels", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        block_on_octocrab(
-            "issue.edit.labels",
+        block_on_octocrab(runtime, "issue.edit.labels", || async {
             octo.issues(&owner, &name)
                 .update(issue as u64)
                 .labels(labels)
-                .send(),
-        )?;
+                .send()
+                .await
+        })?;
         Ok(())
     })
     .with_context(|| format!("create: octocrab issue label update failed for issue #{issue}"))
@@ -906,6 +1228,9 @@ mod tests {
     use std::fs;
     use std::os::unix::fs::PermissionsExt;
     use std::path::{Path, PathBuf};
+    use std::thread;
+    use std::time::Duration;
+    use tiny_http::{Header, Response, Server};
 
     fn env_lock() -> std::sync::MutexGuard<'static, ()> {
         cli_env_lock()
@@ -943,6 +1268,7 @@ mod tests {
         let keys = [
             "ADL_GITHUB_CLIENT",
             "ADL_GITHUB_DISABLE_GH_FALLBACK",
+            "ADL_GITHUB_OCTOCRAB_BASE_URI",
             "GITHUB_TOKEN",
             "GH_TOKEN",
         ];
@@ -962,6 +1288,410 @@ mod tests {
         for (key, value) in saved {
             restore_env(key, value);
         }
+    }
+
+    fn reserve_local_port() -> u16 {
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind local port");
+        let port = listener.local_addr().expect("local addr").port();
+        drop(listener);
+        port
+    }
+
+    fn json_response(body: impl Into<String>) -> Response<std::io::Cursor<Vec<u8>>> {
+        let mut response = Response::from_string(body.into()).with_status_code(200);
+        if let Ok(header) = Header::from_bytes("Content-Type", "application/json") {
+            response = response.with_header(header);
+        }
+        response
+    }
+
+    fn pr_fixture(number: u64, title: &str, body: &str, head: &str, base: &str) -> String {
+        serde_json::json!({
+            "url": format!("https://api.github.test/repos/owner/repo/pulls/{number}"),
+            "html_url": format!("https://github.com/owner/repo/pull/{number}"),
+            "number": number,
+            "title": title,
+            "body": body,
+            "draft": number.is_multiple_of(2),
+            "head": {
+                "ref": head,
+                "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "base": {
+                "ref": base,
+                "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            }
+        })
+        .to_string()
+    }
+
+    fn label_fixture(name: &str) -> serde_json::Value {
+        serde_json::json!({
+            "id": 1,
+            "node_id": format!("LABEL_{name}"),
+            "url": format!("https://api.github.test/labels/{name}"),
+            "name": name,
+            "description": null,
+            "color": "ededed",
+            "default": false
+        })
+    }
+
+    fn author_fixture() -> serde_json::Value {
+        serde_json::json!({
+            "login": "octo-test",
+            "id": 1,
+            "node_id": "USER_1",
+            "avatar_url": "https://github.test/avatar.png",
+            "gravatar_id": "",
+            "url": "https://api.github.test/users/octo-test",
+            "html_url": "https://github.com/octo-test",
+            "followers_url": "https://api.github.test/users/octo-test/followers",
+            "following_url": "https://api.github.test/users/octo-test/following{/other_user}",
+            "gists_url": "https://api.github.test/users/octo-test/gists{/gist_id}",
+            "starred_url": "https://api.github.test/users/octo-test/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.test/users/octo-test/subscriptions",
+            "organizations_url": "https://api.github.test/users/octo-test/orgs",
+            "repos_url": "https://api.github.test/users/octo-test/repos",
+            "events_url": "https://api.github.test/users/octo-test/events{/privacy}",
+            "received_events_url": "https://api.github.test/users/octo-test/received_events",
+            "type": "User",
+            "site_admin": false,
+            "name": null,
+            "patch_url": null
+        })
+    }
+
+    fn issue_fixture(number: u32, title: &str, body: Option<&str>, labels: &[&str]) -> String {
+        serde_json::json!({
+            "id": number,
+            "node_id": format!("ISSUE_{number}"),
+            "url": format!("https://api.github.test/repos/owner/repo/issues/{number}"),
+            "repository_url": "https://api.github.test/repos/owner/repo",
+            "labels_url": format!("https://api.github.test/repos/owner/repo/issues/{number}/labels{{/name}}"),
+            "comments_url": format!("https://api.github.test/repos/owner/repo/issues/{number}/comments"),
+            "events_url": format!("https://api.github.test/repos/owner/repo/issues/{number}/events"),
+            "html_url": format!("https://github.com/owner/repo/issues/{number}"),
+            "number": number,
+            "state": "closed",
+            "state_reason": "completed",
+            "title": title,
+            "body": body,
+            "user": author_fixture(),
+            "labels": labels.iter().map(|label| label_fixture(label)).collect::<Vec<_>>(),
+            "assignees": [],
+            "locked": false,
+            "comments": 0,
+            "created_at": "2026-06-14T00:00:00Z",
+            "updated_at": "2026-06-14T00:00:00Z"
+        })
+        .to_string()
+    }
+
+    fn spawn_octocrab_test_server(
+        expected_requests: usize,
+    ) -> (String, thread::JoinHandle<Vec<String>>) {
+        let port = reserve_local_port();
+        let bind_addr = format!("127.0.0.1:{port}");
+        let server = Server::http(&bind_addr).expect("bind octocrab test server");
+        let handle = thread::spawn(move || {
+            let mut seen = Vec::new();
+            for _ in 0..expected_requests {
+                let Some(mut request) = server
+                    .recv_timeout(Duration::from_secs(5))
+                    .expect("octocrab test server receive")
+                else {
+                    break;
+                };
+                let method = request.method().as_str().to_string();
+                let url = request.url().to_string();
+                let mut body = String::new();
+                let _ = request.as_reader().read_to_string(&mut body);
+                seen.push(format!("{method} {url} {body}"));
+                let path = url.split('?').next().unwrap_or(url.as_str());
+                let response_body = match (method.as_str(), path) {
+                    ("GET", "/repos/owner/repo/pulls") => {
+                        if url.contains("per_page=100") {
+                            format!(
+                                "[{}]",
+                                pr_fixture(
+                                    1160,
+                                    "[v0.91.5][Sprint 1][tools] Open wave",
+                                    "Closes #3698",
+                                    "codex/3698-next",
+                                    "main"
+                                )
+                            )
+                        } else {
+                            format!(
+                                "[{}]",
+                                pr_fixture(
+                                    1159,
+                                    "[v0.91.5][tools] Current branch",
+                                    "Closes #3697",
+                                    "codex/3697-octocrab-operational-transport",
+                                    "main"
+                                )
+                            )
+                        }
+                    }
+                    ("GET", "/repos/owner/repo/pulls/1159") => pr_fixture(
+                        1159,
+                        "[v0.91.5][tools] Existing PR",
+                        "Existing body\n\nCloses #3697\n",
+                        "codex/3697-octocrab-operational-transport",
+                        "main",
+                    ),
+                    ("PATCH", "/repos/owner/repo/pulls/1159") => pr_fixture(
+                        1159,
+                        "[v0.91.5][tools] Updated PR",
+                        "Updated body\n\nCloses #3697\n",
+                        "codex/3697-octocrab-operational-transport",
+                        "main",
+                    ),
+                    ("POST", "/repos/owner/repo/pulls") => pr_fixture(
+                        1162,
+                        "[v0.91.5][tools] New PR",
+                        "New body\n\nCloses #3697\n",
+                        "codex/3697-octocrab-operational-transport",
+                        "main",
+                    ),
+                    ("POST", "/repos/owner/repo/pulls/1159/ready_for_review") => "{}".to_string(),
+                    ("PUT", "/repos/owner/repo/pulls/1159/merge") => {
+                        r#"{"sha":"cccccccccccccccccccccccccccccccccccccccc","merged":true,"message":"merged"}"#
+                            .to_string()
+                    }
+                    ("POST", "/graphql") => serde_json::json!({
+                        "data": {
+                            "repository": {
+                                "pullRequest": {
+                                    "closingIssuesReferences": {
+                                        "nodes": [{"number": 3697}, null, {"number": 3698}]
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    .to_string(),
+                    ("POST", "/repos/owner/repo/issues") => issue_fixture(
+                        77,
+                        "[v0.91.5][tools] Created issue",
+                        Some("created"),
+                        &["version:v0.91.5"],
+                    ),
+                    ("GET", "/repos/owner/repo/issues/77") => issue_fixture(
+                        77,
+                        "[v0.91.5][tools] Issue title",
+                        Some("issue body"),
+                        &["version:v0.91.5", "area:tools"],
+                    ),
+                    ("PATCH", "/repos/owner/repo/issues/77") => issue_fixture(
+                        77,
+                        "[v0.91.5][tools] Updated issue",
+                        Some("updated body"),
+                        &["version:v0.91.5", "area:tools", "type:task"],
+                    ),
+                    _ => serde_json::json!({
+                        "message": format!("unexpected request {method} {url}")
+                    })
+                    .to_string(),
+                };
+                let _ = request.respond(json_response(response_body));
+            }
+            seen
+        });
+        (format!("http://{bind_addr}"), handle)
+    }
+
+    #[test]
+    fn octocrab_transport_covers_pr_and_issue_operations_against_mock_github() {
+        let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
+        let temp = unique_temp_dir("adl-octocrab-transport");
+        let (base_uri, server) = spawn_octocrab_test_server(18);
+        unsafe {
+            std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+            std::env::set_var("GITHUB_TOKEN", "test-token");
+            std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+        }
+
+        assert_eq!(
+            current_pr_url("owner/repo", "codex/3697-octocrab-operational-transport")
+                .expect("current PR URL")
+                .as_deref(),
+            Some("https://github.com/owner/repo/pull/1159")
+        );
+        let wave = unresolved_milestone_pr_wave("owner/repo", "v0.91.5", "tools", None)
+            .expect("open PR wave");
+        assert_eq!(wave.len(), 1);
+        assert_eq!(wave[0].number, 1160);
+        assert_eq!(wave[0].queue.as_deref(), Some("tools"));
+
+        let body = run_gh_capture(
+            "pr.view.body",
+            &[
+                "pr",
+                "view",
+                "-R",
+                "owner/repo",
+                "1159",
+                "--json",
+                "body",
+                "--jq",
+                ".body",
+            ],
+        )
+        .expect("PR body");
+        assert!(body.contains("Closes #3697"));
+        let closing = run_gh_capture(
+            "pr.view.closing_issues",
+            &[
+                "pr",
+                "view",
+                "-R",
+                "owner/repo",
+                "1159",
+                "--json",
+                "closingIssuesReferences",
+                "--jq",
+                ".closingIssuesReferences[]?.number",
+            ],
+        )
+        .expect("closing issues");
+        assert_eq!(closing.lines().collect::<Vec<_>>(), vec!["3697", "3698"]);
+        let base = run_gh_capture(
+            "pr.view.base_ref.finish_existing",
+            &[
+                "pr",
+                "view",
+                "-R",
+                "owner/repo",
+                "1159",
+                "--json",
+                "baseRefName",
+                "--jq",
+                ".baseRefName",
+            ],
+        )
+        .expect("base ref");
+        assert_eq!(base, "main");
+
+        let pr_body_file = temp.join("pr-body.md");
+        fs::write(&pr_body_file, "New body\n\nCloses #3697\n").expect("write PR body");
+        let created_pr = run_gh_capture(
+            "pr.create.finish",
+            &[
+                "pr",
+                "create",
+                "-R",
+                "owner/repo",
+                "--title",
+                "[v0.91.5][tools] New PR",
+                "--head",
+                "codex/3697-octocrab-operational-transport",
+                "--base",
+                "main",
+                "--body-file",
+                path_str(&pr_body_file).expect("body path"),
+                "--draft",
+            ],
+        )
+        .expect("create PR");
+        assert_eq!(created_pr, "https://github.com/owner/repo/pull/1162");
+
+        run_gh_status(
+            "pr.edit.body_file",
+            &[
+                "pr",
+                "edit",
+                "-R",
+                "owner/repo",
+                "1159",
+                "--body-file",
+                path_str(&pr_body_file).expect("body path"),
+            ],
+        )
+        .expect("edit PR body");
+        run_gh_status(
+            "pr.edit.finish_existing",
+            &[
+                "pr",
+                "edit",
+                "-R",
+                "owner/repo",
+                "1159",
+                "--title",
+                "[v0.91.5][tools] Updated PR",
+                "--body-file",
+                path_str(&pr_body_file).expect("body path"),
+            ],
+        )
+        .expect("edit PR title/body");
+        run_gh_status(
+            "pr.ready.finish",
+            &["pr", "ready", "-R", "owner/repo", "1159"],
+        )
+        .expect("mark ready");
+        run_gh_status(
+            "pr.merge.finish",
+            &["pr", "merge", "-R", "owner/repo", "1159"],
+        )
+        .expect("merge PR");
+
+        assert_eq!(
+            gh_issue_create(
+                "owner/repo",
+                "[v0.91.5][tools] Created issue",
+                "created",
+                "version:v0.91.5"
+            )
+            .expect("issue create"),
+            "https://github.com/owner/repo/issues/77"
+        );
+        assert_eq!(
+            gh_issue_label_names(77, "owner/repo").expect("issue labels"),
+            vec!["version:v0.91.5".to_string(), "area:tools".to_string()]
+        );
+        gh_issue_edit_title("owner/repo", 77, "[v0.91.5][tools] Updated issue")
+            .expect("edit issue title");
+        gh_issue_edit_body("owner/repo", 77, "updated body").expect("edit issue body");
+        assert_eq!(
+            gh_issue_title(77, "owner/repo")
+                .expect("issue title")
+                .as_deref(),
+            Some("[v0.91.5][tools] Issue title")
+        );
+        assert_eq!(
+            gh_issue_body(77, "owner/repo")
+                .expect("issue body")
+                .as_deref(),
+            Some("issue body")
+        );
+        assert!(gh_issue_is_closed_completed(77, "owner/repo").expect("issue state"));
+        gh_issue_set_labels(
+            "owner/repo",
+            77,
+            &[
+                "version:v0.91.5".to_string(),
+                "area:tools".to_string(),
+                "type:task".to_string(),
+            ],
+        )
+        .expect("set labels");
+
+        let seen = server.join().expect("server join");
+        assert_eq!(seen.len(), 18, "unexpected mock GitHub calls: {seen:#?}");
+        assert!(seen
+            .iter()
+            .any(|call| call.starts_with("POST /repos/owner/repo/pulls ")));
+        assert!(seen.iter().any(|call| call.contains("\"draft\":true")));
+        assert!(seen
+            .iter()
+            .any(|call| call.starts_with("PUT /repos/owner/repo/pulls/1159/merge ")));
+        assert!(seen
+            .iter()
+            .any(|call| call.contains("\"labels\":[\"version:v0.91.5\"")));
+        restore_github_policy_env(policy_env);
     }
 
     #[test]
@@ -1379,11 +2109,23 @@ if args[:2] == ["issue", "edit"]:
             title.write_text(args[i + 1] + "\n", encoding="utf-8")
             i += 2
         elif args[i] == "--add-label":
-            if args[i + 1] not in current_labels:
-                current_labels.append(args[i + 1])
+            requested_labels = [
+                label.strip()
+                for label in args[i + 1].split(",")
+                if label.strip()
+            ]
+            if "," in args[i + 1]:
+                current_labels = []
+            for label in requested_labels:
+                label = label.strip()
+                if label and label not in current_labels:
+                    current_labels.append(label)
             i += 2
         elif args[i] == "--remove-label":
             current_labels = [label for label in current_labels if label != args[i + 1]]
+            i += 2
+        elif args[i] == "--body":
+            body.write_text(args[i + 1], encoding="utf-8")
             i += 2
         elif args[i] == "--body-file":
             shutil.copyfile(args[i + 1], body)
@@ -1441,19 +2183,15 @@ sys.exit(9)
         );
         assert_eq!(
             fs::read_to_string(&labels_file).expect("labels"),
-            "track:roadmap\narea:tools\nversion:v0.91.5\n"
+            "area:tools\ntrack:roadmap\nversion:v0.91.5\n"
         );
 
         restore_env("PATH", old_path);
 
         let calls = fs::read_to_string(&log_file).expect("gh log");
-        assert!(calls.contains("'--label', 'version:v0.91.5'"));
-        assert!(calls.contains("'--label', 'area:tools'"));
-        assert!(calls.contains("'--label', 'type:task'"));
+        assert!(calls.contains("'--label', ' version:v0.91.5, area:tools,,type:task '"));
         assert!(calls.contains("'--title', '[v0.91.5][tools] New title'"));
-        assert!(calls.contains("'--add-label', 'area:tools'"));
-        assert!(calls.contains("'--add-label', 'version:v0.91.5'"));
-        assert!(calls.contains("'--remove-label', 'version:v0.91.4'"));
+        assert!(calls.contains("'--add-label', 'area:tools,track:roadmap,version:v0.91.5'"));
         restore_github_policy_env(policy_env);
     }
 

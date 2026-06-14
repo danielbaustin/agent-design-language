@@ -8,6 +8,8 @@ use std::marker::PhantomData;
 
 const ADL_GITHUB_CLIENT_ENV: &str = "ADL_GITHUB_CLIENT";
 const ADL_GITHUB_DISABLE_GH_FALLBACK_ENV: &str = "ADL_GITHUB_DISABLE_GH_FALLBACK";
+#[cfg(test)]
+const ADL_GITHUB_OCTOCRAB_BASE_URI_ENV: &str = "ADL_GITHUB_OCTOCRAB_BASE_URI";
 const GITHUB_TOKEN_ENV: &str = "GITHUB_TOKEN";
 const GH_TOKEN_ENV: &str = "GH_TOKEN";
 
@@ -137,7 +139,7 @@ impl AdlGithubClient {
                 return Err(AdlGithubClientError::new(
                     AdlGithubClientErrorKind::MissingToken,
                     format!(
-                        "octocrab GitHub client requires {GITHUB_TOKEN_ENV} or {GH_TOKEN_ENV}; set {ADL_GITHUB_CLIENT_ENV}=gh to force shell fallback"
+                        "octocrab GitHub client requires {GITHUB_TOKEN_ENV} or {GH_TOKEN_ENV}; covered C-SDLC GitHub workflow operations no longer use shell fallback"
                     ),
                 ));
             }
@@ -175,15 +177,24 @@ impl AdlGithubClient {
                 "octocrab GitHub transport requires GITHUB_TOKEN or GH_TOKEN",
             )
         })?;
-        octocrab::Octocrab::builder()
-            .personal_token(token.to_string())
-            .build()
-            .map_err(|err| {
+        let builder = octocrab::Octocrab::builder().personal_token(token.to_string());
+        #[cfg(test)]
+        let builder = if let Ok(base_uri) = std::env::var(ADL_GITHUB_OCTOCRAB_BASE_URI_ENV) {
+            builder.base_uri(base_uri).map_err(|err| {
                 AdlGithubClientError::new(
                     AdlGithubClientErrorKind::Transport,
-                    format!("failed to build octocrab GitHub client: {err}"),
+                    format!("failed to configure octocrab test base URI: {err}"),
                 )
-            })
+            })?
+        } else {
+            builder
+        };
+        builder.build().map_err(|err| {
+            AdlGithubClientError::new(
+                AdlGithubClientErrorKind::Transport,
+                format!("failed to build octocrab GitHub client: {err}"),
+            )
+        })
     }
 }
 
@@ -530,7 +541,7 @@ mod tests {
         let err = AdlGithubClient::from_values(Some("octocrab"), None, None).unwrap_err();
         assert_eq!(err.kind(), AdlGithubClientErrorKind::MissingToken);
         assert_eq!(err.stable_code(), "github_client.missing_token");
-        assert!(err.to_string().contains("ADL_GITHUB_CLIENT=gh"));
+        assert!(err.to_string().contains("no longer use shell fallback"));
     }
 
     #[test]

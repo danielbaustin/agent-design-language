@@ -31,6 +31,9 @@ instead of silently spawning `gh`.
   before spawning `gh`.
 - `#3697` moves the covered C-SDLC issue and PR workflow helper paths onto
   octocrab-backed transport and removes ambient legacy GitHub CLI repo-view discovery.
+- The `#3697` live smoke path verifies token-backed
+  `ADL_GITHUB_CLIENT=octocrab` doctor execution and emits
+  `github_octocrab` start/completed events for each covered GitHub operation.
 
 ## Mode Policy
 
@@ -55,6 +58,8 @@ The following workflow helper operations now route through octocrab:
 - PR creation, body updates, readiness changes, and merge operations
 - live PR list/view calls used by workflow guardrails
 - live issue and PR linkage checks where the current code calls `gh`
+- operation-level `github_octocrab` start/completed/failed logs around covered
+  live GitHub requests
 
 The helper function names still contain `gh` in a few places for compatibility
 with the existing PR control-plane call graph, but those helpers no longer
@@ -66,8 +71,8 @@ The next octocrab follow-ons should stay behavior-preserving and separately
 reviewable:
 
 - rename legacy `gh_*` helper functions once the transport behavior has settled
-- add observability for fallback selection, slow GitHub calls, and command
-  timeouts
+- add richer observability for fallback selection, slow GitHub calls, and
+  command timeouts beyond the current per-operation Octocrab events
 - add an optional release-gate smoke check for token-backed octocrab auth
 
 ## Non-Claims

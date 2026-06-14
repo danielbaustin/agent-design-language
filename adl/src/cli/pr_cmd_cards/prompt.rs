@@ -280,7 +280,7 @@ mod tests {
         let err = fetch_issue_body("owner/repo", 3672)
             .expect_err("fallback-disabled body fetch should fail closed");
         let err_debug = format!("{err:?}");
-        assert!(err_debug.contains("issue.view.body_for_prompt"));
+        assert!(err_debug.contains("issue.view.body"));
         assert!(err_debug.contains("github_client.fallback_disabled"));
         assert!(
             !gh_log.exists(),
