@@ -1,0 +1,20 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+  <ui:VisualElement class="screen">
+    <ui:VisualElement class="hud-card top-left">
+      <ui:Label name="mission-state" class="eyebrow" text="Mission briefing" />
+      <ui:Label name="rescue-count" class="metric" text="Satellites 0/5" />
+    </ui:VisualElement>
+    <ui:VisualElement class="hud-card top-right">
+      <ui:Label name="oxygen-value" class="eyebrow" text="O2 90s" />
+      <ui:VisualElement class="oxygen-track">
+        <ui:VisualElement name="oxygen-fill" class="oxygen-fill" />
+      </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="result-panel" class="mission-panel">
+      <ui:Label name="result-title" class="title" text="Celestial Rescue" />
+      <ui:Label name="result-body" class="body" text="Pilot a small rescue craft through a dark orbital field. Recover five stranded satellites before oxygen runs out." />
+      <ui:Button name="start-button" class="primary-button" text="Begin rescue" />
+      <ui:Button name="retry-button" class="secondary-button" text="Try again" />
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>
