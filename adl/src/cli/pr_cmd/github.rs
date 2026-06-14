@@ -408,10 +408,35 @@ fn test_gh_fixture_fallback_allowed(operation: &str) -> Result<bool> {
 }
 
 #[cfg(test)]
-fn run_gh_capture_shell(operation: &str, args: &[&str]) -> Result<String> {
-    let output = Command::new("gh").args(args).output().with_context(|| {
-        format!("github_client.test_fixture: failed to spawn gh for {operation}")
+fn test_github_cli_fixture_command(operation: &str) -> Result<std::path::PathBuf> {
+    let value = std::env::var_os("ADL_TEST_GITHUB_CLI_FIXTURE").ok_or_else(|| {
+        anyhow!(
+            "github_client.test_fixture: operation '{}' requires explicit ADL_TEST_GITHUB_CLI_FIXTURE; refusing to discover a real gh binary",
+            operation
+        )
     })?;
+    let path = std::path::PathBuf::from(value);
+    if path.as_os_str().is_empty() {
+        bail!(
+            "github_client.test_fixture: operation '{}' has empty ADL_TEST_GITHUB_CLI_FIXTURE",
+            operation
+        );
+    }
+    Ok(path)
+}
+
+#[cfg(test)]
+fn run_gh_capture_shell(operation: &str, args: &[&str]) -> Result<String> {
+    let fixture = test_github_cli_fixture_command(operation)?;
+    let output = Command::new(&fixture)
+        .args(args)
+        .output()
+        .with_context(|| {
+            format!(
+                "github_client.test_fixture: failed to spawn fixture command '{}' for {operation}",
+                fixture.display()
+            )
+        })?;
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
         let stdout = String::from_utf8_lossy(&output.stdout);
@@ -431,9 +456,16 @@ fn run_gh_capture_shell(operation: &str, args: &[&str]) -> Result<String> {
 
 #[cfg(test)]
 fn run_gh_capture_shell_allow_failure(operation: &str, args: &[&str]) -> Result<Option<String>> {
-    let output = Command::new("gh").args(args).output().with_context(|| {
-        format!("github_client.test_fixture: failed to spawn gh for {operation}")
-    })?;
+    let fixture = test_github_cli_fixture_command(operation)?;
+    let output = Command::new(&fixture)
+        .args(args)
+        .output()
+        .with_context(|| {
+            format!(
+                "github_client.test_fixture: failed to spawn fixture command '{}' for {operation}",
+                fixture.display()
+            )
+        })?;
     if !output.status.success() {
         return Ok(None);
     }
@@ -442,9 +474,16 @@ fn run_gh_capture_shell_allow_failure(operation: &str, args: &[&str]) -> Result<
 
 #[cfg(test)]
 fn run_gh_status_shell(operation: &str, args: &[&str]) -> Result<()> {
-    let output = Command::new("gh").args(args).output().with_context(|| {
-        format!("github_client.test_fixture: failed to spawn gh for {operation}")
-    })?;
+    let fixture = test_github_cli_fixture_command(operation)?;
+    let output = Command::new(&fixture)
+        .args(args)
+        .output()
+        .with_context(|| {
+            format!(
+                "github_client.test_fixture: failed to spawn fixture command '{}' for {operation}",
+                fixture.display()
+            )
+        })?;
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
         let stdout = String::from_utf8_lossy(&output.stdout);
@@ -464,9 +503,16 @@ fn run_gh_status_shell(operation: &str, args: &[&str]) -> Result<()> {
 
 #[cfg(test)]
 fn run_gh_status_shell_allow_failure(operation: &str, args: &[&str]) -> Result<bool> {
-    let output = Command::new("gh").args(args).output().with_context(|| {
-        format!("github_client.test_fixture: failed to spawn gh for {operation}")
-    })?;
+    let fixture = test_github_cli_fixture_command(operation)?;
+    let output = Command::new(&fixture)
+        .args(args)
+        .output()
+        .with_context(|| {
+            format!(
+                "github_client.test_fixture: failed to spawn fixture command '{}' for {operation}",
+                fixture.display()
+            )
+        })?;
     Ok(output.status.success())
 }
 
@@ -1327,6 +1373,7 @@ mod tests {
             "ADL_GITHUB_CLIENT",
             "ADL_GITHUB_DISABLE_GH_FALLBACK",
             "ADL_GITHUB_OCTOCRAB_BASE_URI",
+            "ADL_TEST_GITHUB_CLI_FIXTURE",
             "GITHUB_TOKEN",
             "GH_TOKEN",
         ];
@@ -1802,8 +1849,9 @@ mod tests {
         fs::write(&repair_ref, "").expect("repair refs");
         fs::write(&repair_body, "Refs #1153\n").expect("repair body");
 
+        let github_cli_fixture = bin_dir.join("github-cli-fixture");
         write_executable(
-            &bin_dir.join("gh"),
+            &github_cli_fixture,
             &format!(
                 "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2\" = 'pr list' ]; then\n  printf 'https://github.com/owner/repo/pull/1159\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr view' ]; then\n  pr_ref=''\n  for arg in \"$@\"; do\n    case \"$arg\" in\n      https://github.com/owner/repo/pull/1159|https://github.com/owner/repo/pull/1160|https://github.com/owner/repo/pull/1161)\n        pr_ref=\"$arg\"\n        ;;\n    esac\n  done\n  case \"$pr_ref\" in\n    https://github.com/owner/repo/pull/1159)\n      refs='{}'\n      body='{}'\n      ;;\n    https://github.com/owner/repo/pull/1160)\n      refs='{}'\n      body='{}'\n      ;;\n    https://github.com/owner/repo/pull/1161)\n      refs='{}'\n      body='{}'\n      ;;\n    *)\n      exit 13\n      ;;\n  esac\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    cat \"$refs\"\n    exit 0\n  fi\n  if printf '%s ' \"$@\" | grep -q ' --json body '; then\n    cat \"$body\"\n    exit 0\n  fi\n  exit 14\nfi\nif [ \"$1 $2\" = 'pr edit' ]; then\n  pr_ref=''\n  body_file=''\n  while [ $# -gt 0 ]; do\n    case \"$1\" in\n      https://github.com/owner/repo/pull/1161)\n        pr_ref=\"$1\"\n        shift\n        ;;\n      --body-file)\n        body_file=\"$2\"\n        shift 2\n        ;;\n      *)\n        shift\n        ;;\n    esac\n  done\n  [ \"$pr_ref\" = 'https://github.com/owner/repo/pull/1161' ] || exit 15\n  cp \"$body_file\" '{}'\n  printf '1153\\n' > '{}'\n  exit 0\nfi\nexit 16\n",
                 gh_log.display(),
@@ -1825,6 +1873,7 @@ mod tests {
         let mut path_entries = vec![bin_dir.clone()];
         path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
         unsafe {
+            std::env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", &github_cli_fixture);
             std::env::set_var(
                 "PATH",
                 std::env::join_paths(path_entries).expect("join PATH"),
@@ -2063,8 +2112,9 @@ mod tests {
         let body_text = temp.join("body.txt");
         fs::write(&body_ref, "").expect("empty refs");
         fs::write(&body_text, "Closes #1153\n").expect("body text");
+        let github_cli_fixture = bin_dir.join("github-cli-fixture");
         write_executable(
-            &bin_dir.join("gh"),
+            &github_cli_fixture,
             &format!(
                 "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    cat '{}'\n    exit 0\n  fi\n  if printf '%s ' \"$@\" | grep -q ' --json body '; then\n    cat '{}'\n    exit 0\n  fi\nfi\nif [ \"$1 $2\" = 'issue view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'labels'; then\n    printf 'track:roadmap\\n'\n  else\n    printf 'Tracking issue without version\\n'\n  fi\n  exit 0\nfi\nexit 1\n",
                 body_ref.display(),
@@ -2076,6 +2126,7 @@ mod tests {
         let mut path_entries = vec![bin_dir.clone()];
         path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
         unsafe {
+            std::env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", &github_cli_fixture);
             std::env::set_var(
                 "PATH",
                 std::env::join_paths(path_entries).expect("join PATH"),
@@ -2152,8 +2203,9 @@ mod tests {
         fs::write(&title_file, "[v0.91.4][tools] Old title\n").expect("title");
         fs::write(&labels_file, "track:roadmap\nversion:v0.91.4\n").expect("labels");
 
+        let github_cli_fixture = bin_dir.join("github-cli-fixture");
         write_executable(
-            &bin_dir.join("gh"),
+            &github_cli_fixture,
             &format!(
                 r#"#!/usr/bin/env python3
 import pathlib
@@ -2232,6 +2284,7 @@ sys.exit(9)
         let mut path_entries = vec![bin_dir.clone()];
         path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
         unsafe {
+            std::env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", &github_cli_fixture);
             std::env::set_var(
                 "PATH",
                 std::env::join_paths(path_entries).expect("join PATH"),
