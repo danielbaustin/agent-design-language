@@ -3,13 +3,13 @@ use serde_yaml::Value;
 use std::fs;
 use std::path::Path;
 
-use super::super::pr_cmd::run_gh_capture_allow_failure;
+use super::super::pr_cmd::{gh_issue_body, gh_issue_label_names};
 use super::super::pr_cmd_prompt::{
     infer_required_outcome_type, infer_workflow_queue, infer_wp_from_title, normalize_labels_csv,
     render_generated_issue_prompt,
 };
 use super::super::pr_cmd_validate::{bootstrap_stub_reason, PromptSurfaceKind};
-use super::shared::{default_repo, run_capture_allow_failure, write_temp_markdown};
+use super::shared::{default_repo, write_temp_markdown};
 use super::validation::validate_bootstrap_stp;
 use ::adl::control_plane::IssueRef;
 
@@ -50,26 +50,12 @@ pub(crate) fn ensure_source_issue_prompt(
     let labels_csv = if let Some(labels) = labels_csv {
         normalize_labels_csv(labels, version)
     } else {
-        let fetched = run_capture_allow_failure(
-            "gh",
-            &[
-                "issue",
-                "view",
-                &issue_ref.issue_number().to_string(),
-                "-R",
-                repo,
-                "--json",
-                "labels",
-                "-q",
-                ".labels[].name",
-            ],
-        )?
-        .unwrap_or_default()
-        .lines()
-        .map(str::trim)
-        .filter(|line| !line.is_empty())
-        .collect::<Vec<_>>()
-        .join(",");
+        let fetched = gh_issue_label_names(issue_ref.issue_number(), repo)?
+            .into_iter()
+            .map(|label| label.trim().to_string())
+            .filter(|label| !label.is_empty())
+            .collect::<Vec<_>>()
+            .join(",");
         let baseline = if fetched.trim().is_empty() {
             default_new_labels.to_string()
         } else {
@@ -206,29 +192,7 @@ fn render_issue_prompt_from_authored_front_matter(issue: u32, body: &str) -> Opt
 }
 
 fn fetch_issue_body(repo: &str, issue: u32) -> Result<Option<String>> {
-    let Some(body) = run_gh_capture_allow_failure(
-        "issue.view.body_for_prompt",
-        &[
-            "issue",
-            "view",
-            &issue.to_string(),
-            "-R",
-            repo,
-            "--json",
-            "body",
-            "-q",
-            ".body",
-        ],
-    )?
-    else {
-        return Ok(None);
-    };
-    let body = body.trim().to_string();
-    if body.is_empty() || body.eq_ignore_ascii_case("null") {
-        Ok(None)
-    } else {
-        Ok(Some(body))
-    }
+    gh_issue_body(issue, repo)
 }
 
 #[cfg(test)]

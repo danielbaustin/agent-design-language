@@ -90,23 +90,6 @@ pub(crate) fn default_repo(repo_root: &Path) -> Result<String> {
         return Ok(inferred);
     }
 
-    let inferred = run_capture_allow_failure(
-        "gh",
-        &[
-            "repo",
-            "view",
-            "--json",
-            "nameWithOwner",
-            "--jq",
-            ".nameWithOwner",
-        ],
-    )?
-    .unwrap_or_default();
-    let inferred = inferred.trim();
-    if !inferred.is_empty() {
-        return Ok(inferred.to_string());
-    }
-
     let base = repo_root
         .file_name()
         .map(|value| value.to_string_lossy().to_string())

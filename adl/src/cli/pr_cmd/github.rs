@@ -1,18 +1,26 @@
 use super::*;
-use crate::cli::pr_cmd::git_support::run_status_allow_failure;
 use crate::cli::pr_cmd::github_client::{
     body_contains_closing_linkage, issue_labels_from_csv, issue_labels_from_csv_in_order,
     issue_metadata_drift, linked_issue_numbers_from_lines, linked_issue_numbers_include,
     plan_issue_metadata_parity, pr_matches_main_version_wave, AdlGithubClient, GithubClientBackend,
-    GithubClientMode, IssueMetadataSnapshot, PullRequestMetadataSnapshot,
+    IssueMetadataSnapshot, PullRequestMetadataSnapshot,
 };
 use crate::cli::pr_cmd_prompt::infer_workflow_queue;
 use ::adl::control_plane::resolve_primary_checkout_root;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::process::Command;
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct RepoParts {
+    owner: String,
+    name: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct ReadyForReviewResponse {}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub(super) struct OpenPullRequest {
     pub(super) number: u32,
     pub(super) title: String,
@@ -27,49 +35,439 @@ pub(super) struct OpenPullRequest {
     pub(super) queue: Option<String>,
 }
 
-fn ensure_live_gh_allowed(operation: &str) -> Result<()> {
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestClosingIssuesResponse {
+    repository: Option<PullRequestClosingIssuesRepository>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestClosingIssuesRepository {
+    #[serde(rename = "pullRequest")]
+    pull_request: Option<PullRequestClosingIssuesPullRequest>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestClosingIssuesPullRequest {
+    #[serde(rename = "closingIssuesReferences")]
+    closing_issues_references: PullRequestClosingIssuesConnection,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestClosingIssuesConnection {
+    nodes: Option<Vec<Option<PullRequestClosingIssueNode>>>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestClosingIssueNode {
+    number: u32,
+}
+
+fn current_pr_url_octocrab(repo: &str, branch: &str) -> Result<Option<String>> {
+    let repo_parts = parse_repo(repo)?;
+    let head = format!("{}:{branch}", repo_parts.owner);
+    with_octocrab("pr.list.current_branch", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let page = block_on_octocrab(
+            "pr.list.current_branch",
+            octo.pulls(&owner, &name)
+                .list()
+                .state(octocrab::params::State::Open)
+                .head(head)
+                .per_page(10)
+                .send(),
+        )?;
+        Ok(page
+            .items
+            .into_iter()
+            .find_map(|pr| pr.html_url.map(|url| url.to_string())))
+    })
+}
+
+fn list_open_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("pr.list.open_wave", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let page = block_on_octocrab(
+            "pr.list.open_wave",
+            octo.pulls(&owner, &name)
+                .list()
+                .state(octocrab::params::State::Open)
+                .per_page(100)
+                .send(),
+        )?;
+        Ok(page
+            .items
+            .into_iter()
+            .map(|pr| OpenPullRequest {
+                number: pr.number.unwrap_or_default() as u32,
+                title: pr.title.unwrap_or_default(),
+                url: pr.html_url.map(|url| url.to_string()).unwrap_or_default(),
+                head_ref_name: pr
+                    .head
+                    .as_ref()
+                    .map(|head| head.ref_field.clone())
+                    .unwrap_or_default(),
+                base_ref_name: pr
+                    .base
+                    .as_ref()
+                    .map(|base| base.ref_field.clone())
+                    .unwrap_or_default(),
+                is_draft: pr.draft.unwrap_or(false),
+                queue: None,
+            })
+            .collect())
+    })
+}
+
+fn pr_body_octocrab(repo: &str, pr_ref: &str) -> Result<String> {
+    let repo_parts = parse_repo(repo)?;
+    let number = parse_pr_number(pr_ref)?;
+    with_octocrab("pr.view.body", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let pr = block_on_octocrab("pr.view.body", octo.pulls(&owner, &name).get(number))?;
+        Ok(pr.body.unwrap_or_default())
+    })
+}
+
+fn pr_closing_issue_numbers_octocrab(repo: &str, pr_ref: &str) -> Result<Vec<u32>> {
+    let repo_parts = parse_repo(repo)?;
+    let number = parse_pr_number(pr_ref)? as i64;
+    with_octocrab("pr.view.closing_issues", |octo| {
+        let payload = serde_json::json!({
+            "query": r#"
+                query($owner: String!, $name: String!, $number: Int!) {
+                  repository(owner: $owner, name: $name) {
+                    pullRequest(number: $number) {
+                      closingIssuesReferences(first: 100) {
+                        nodes {
+                          number
+                        }
+                      }
+                    }
+                  }
+                }
+            "#,
+            "variables": {
+                "owner": repo_parts.owner,
+                "name": repo_parts.name,
+                "number": number,
+            }
+        });
+        let response: PullRequestClosingIssuesResponse =
+            block_on_octocrab("pr.view.closing_issues", octo.graphql(&payload))?;
+        let numbers = response
+            .repository
+            .and_then(|repo| repo.pull_request)
+            .map(|pr| {
+                pr.closing_issues_references
+                    .nodes
+                    .unwrap_or_default()
+                    .into_iter()
+                    .flatten()
+                    .map(|node| node.number)
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
+        Ok(numbers)
+    })
+}
+
+fn pr_base_ref_octocrab(repo: &str, pr_ref: &str) -> Result<String> {
+    let repo_parts = parse_repo(repo)?;
+    let number = parse_pr_number(pr_ref)?;
+    with_octocrab("pr.view.base_ref.finish_existing", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let pr = block_on_octocrab(
+            "pr.view.base_ref.finish_existing",
+            octo.pulls(&owner, &name).get(number),
+        )?;
+        Ok(pr
+            .base
+            .map(|base| base.ref_field)
+            .filter(|base| !base.is_empty())
+            .unwrap_or_default())
+    })
+}
+
+fn create_pr_octocrab(
+    repo: &str,
+    title: &str,
+    head: &str,
+    base: &str,
+    body: &str,
+    draft: bool,
+) -> Result<String> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("pr.create.finish", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let pr = block_on_octocrab(
+            "pr.create.finish",
+            octo.pulls(&owner, &name)
+                .create(title, head, base)
+                .body(body.to_string())
+                .draft(draft)
+                .send(),
+        )?;
+        Ok(pr.html_url.map(|url| url.to_string()).ok_or_else(|| {
+            anyhow!("github_client.octocrab_transport: PR create returned no url")
+        })?)
+    })
+}
+
+fn update_pr_body_octocrab(repo: &str, pr_ref: &str, body: &str) -> Result<()> {
+    let repo_parts = parse_repo(repo)?;
+    let number = parse_pr_number(pr_ref)?;
+    with_octocrab("pr.edit.body_file", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        block_on_octocrab(
+            "pr.edit.body_file",
+            octo.pulls(&owner, &name)
+                .update(number)
+                .body(body.to_string())
+                .send(),
+        )?;
+        Ok(())
+    })
+}
+
+fn update_pr_title_body_octocrab(repo: &str, pr_ref: &str, title: &str, body: &str) -> Result<()> {
+    let repo_parts = parse_repo(repo)?;
+    let number = parse_pr_number(pr_ref)?;
+    with_octocrab("pr.edit.finish_existing", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        block_on_octocrab(
+            "pr.edit.finish_existing",
+            octo.pulls(&owner, &name)
+                .update(number)
+                .title(title.to_string())
+                .body(body.to_string())
+                .send(),
+        )?;
+        Ok(())
+    })
+}
+
+fn mark_pr_ready_octocrab(repo: &str, pr_ref: &str) -> Result<()> {
+    let repo_parts = parse_repo(repo)?;
+    let number = parse_pr_number(pr_ref)?;
+    with_octocrab("pr.ready", |octo| {
+        let route = format!(
+            "/repos/{}/{}/pulls/{}/ready_for_review",
+            repo_parts.owner, repo_parts.name, number
+        );
+        let _: ReadyForReviewResponse =
+            block_on_octocrab("pr.ready", octo.post(route, None::<&()>))?;
+        Ok(())
+    })
+}
+
+fn merge_pr_octocrab(repo: &str, pr_ref: &str) -> Result<()> {
+    let repo_parts = parse_repo(repo)?;
+    let number = parse_pr_number(pr_ref)?;
+    with_octocrab("pr.merge.finish", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        block_on_octocrab(
+            "pr.merge.finish",
+            octo.pulls(&owner, &name)
+                .merge(number)
+                .method(octocrab::params::pulls::MergeMethod::Squash)
+                .send(),
+        )?;
+        Ok(())
+    })
+}
+
+fn github_client(operation: &str) -> Result<AdlGithubClient> {
     let client = AdlGithubClient::from_env()
-        .with_context(|| format!("github client policy rejected gh operation '{operation}'"))?;
+        .with_context(|| format!("github client policy rejected operation '{operation}'"))?;
     let config = client.config();
     match config.backend {
-        GithubClientBackend::GhFallback => Ok(()),
-        GithubClientBackend::Octocrab
-            if config.requested_mode == GithubClientMode::Auto && config.gh_fallback_allowed =>
-        {
-            Ok(())
-        }
-        GithubClientBackend::Octocrab => {
-            bail!(
-                "github_client.live_octocrab_transport_unavailable: gh operation '{}' is not allowed because {} selected backend '{}' and live octocrab transport is not implemented for this operation; unset ADL_GITHUB_CLIENT or allow gh fallback to use the current shell-backed path",
-                operation,
-                config.requested_mode.as_str(),
-                config.backend.as_str()
-            )
-        }
+        GithubClientBackend::Octocrab => Ok(client),
+        GithubClientBackend::GhFallback => bail!(
+            "github_client.gh_fallback_removed: operation '{}' requires octocrab transport; set GITHUB_TOKEN or GH_TOKEN and do not rely on gh fallback",
+            operation
+        ),
     }
 }
 
 pub(super) fn run_gh_capture(operation: &str, args: &[&str]) -> Result<String> {
-    ensure_live_gh_allowed(operation)?;
-    run_capture("gh", args)
+    run_octocrab_capture(operation, args)
 }
 
 pub(crate) fn run_gh_capture_allow_failure(
     operation: &str,
     args: &[&str],
 ) -> Result<Option<String>> {
-    ensure_live_gh_allowed(operation)?;
-    run_capture_allow_failure("gh", args)
+    run_octocrab_capture(operation, args).map(Some)
 }
 
 pub(super) fn run_gh_status(operation: &str, args: &[&str]) -> Result<()> {
-    ensure_live_gh_allowed(operation)?;
-    run_status("gh", args)
+    run_octocrab_status(operation, args)
 }
 
 pub(super) fn run_gh_status_allow_failure(operation: &str, args: &[&str]) -> Result<bool> {
-    ensure_live_gh_allowed(operation)?;
-    run_status_allow_failure("gh", args)
+    run_octocrab_status(operation, args).map(|_| true)
+}
+
+fn parse_repo(repo: &str) -> Result<RepoParts> {
+    let (owner, name) = repo
+        .split_once('/')
+        .ok_or_else(|| anyhow!("github repo must be owner/name, got '{repo}'"))?;
+    if owner.trim().is_empty() || name.trim().is_empty() {
+        bail!("github repo must be owner/name, got '{repo}'");
+    }
+    Ok(RepoParts {
+        owner: owner.to_string(),
+        name: name.to_string(),
+    })
+}
+
+fn parse_pr_number(pr_ref: &str) -> Result<u64> {
+    let trimmed = pr_ref.trim();
+    if let Ok(number) = trimmed.parse::<u64>() {
+        return Ok(number);
+    }
+    let marker = "/pull/";
+    if let Some((_, number)) = trimmed.rsplit_once(marker) {
+        let number = number
+            .split(['/', '?', '#'])
+            .next()
+            .unwrap_or_default()
+            .parse::<u64>()
+            .with_context(|| format!("failed to parse pull request number from '{pr_ref}'"))?;
+        return Ok(number);
+    }
+    bail!("failed to parse pull request number from '{pr_ref}'")
+}
+
+fn block_on_octocrab<T>(
+    operation: &str,
+    f: impl std::future::Future<Output = octocrab::Result<T>>,
+) -> Result<T> {
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .with_context(|| {
+            format!("github_client.octocrab_runtime: failed to build runtime for {operation}")
+        })?;
+    runtime.block_on(f).map_err(|err| {
+        anyhow!(
+            "github_client.octocrab_transport: operation '{}' failed: {}",
+            operation,
+            err
+        )
+    })
+}
+
+fn with_octocrab<T>(operation: &str, f: impl FnOnce(octocrab::Octocrab) -> Result<T>) -> Result<T> {
+    let client = github_client(operation)?;
+    let octo = client
+        .octocrab()
+        .map_err(|err| anyhow!("github_client.octocrab_build: {err}"))?;
+    f(octo)
+}
+
+fn run_octocrab_capture(operation: &str, args: &[&str]) -> Result<String> {
+    match operation {
+        "pr.list.current_branch" => {
+            let repo = arg_after(args, "-R")?;
+            let branch = arg_after(args, "--head")?;
+            current_pr_url_octocrab(repo, branch).map(|url| url.unwrap_or_default())
+        }
+        "pr.list.open_wave" => {
+            let repo = arg_after(args, "-R")?;
+            let prs = list_open_prs_octocrab(repo)?;
+            serde_json::to_string(&prs).context("failed to serialize octocrab PR list")
+        }
+        "pr.view.body" => {
+            let repo = arg_after(args, "-R")?;
+            let pr_ref = positional_after(args, "view")?;
+            pr_body_octocrab(repo, pr_ref)
+        }
+        "pr.view.closing_issues" => {
+            let repo = arg_after(args, "-R")?;
+            let pr_ref = positional_after(args, "view")?;
+            pr_closing_issue_numbers_octocrab(repo, pr_ref).map(|numbers| {
+                numbers
+                    .into_iter()
+                    .map(|n| n.to_string())
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            })
+        }
+        "pr.create.finish" => {
+            let repo = arg_after(args, "-R")?;
+            let base = arg_after(args, "--base")?;
+            let head = arg_after(args, "--head")?;
+            let title = arg_after(args, "--title")?;
+            let body_file = arg_after(args, "--body-file")?;
+            let body = std::fs::read_to_string(body_file)
+                .with_context(|| format!("failed to read PR body file '{body_file}'"))?;
+            create_pr_octocrab(repo, title, head, base, &body, args.contains(&"--draft"))
+        }
+        "pr.view.base_ref.finish_existing" => {
+            let repo = arg_after(args, "-R")?;
+            let pr_ref = positional_after(args, "view")?;
+            pr_base_ref_octocrab(repo, pr_ref)
+        }
+        other => bail!("github_client.unsupported_capture_operation: {other}"),
+    }
+}
+
+fn run_octocrab_status(operation: &str, args: &[&str]) -> Result<()> {
+    match operation {
+        "pr.edit.body_file" => {
+            let repo = arg_after(args, "-R")?;
+            let pr_ref = positional_after(args, "edit")?;
+            let body_file = arg_after(args, "--body-file")?;
+            let body = std::fs::read_to_string(body_file)
+                .with_context(|| format!("failed to read PR body file '{body_file}'"))?;
+            update_pr_body_octocrab(repo, pr_ref, &body)
+        }
+        "pr.edit.finish_existing" => {
+            let repo = arg_after(args, "-R")?;
+            let pr_ref = positional_after(args, "edit")?;
+            let title = arg_after(args, "--title")?;
+            let body_file = arg_after(args, "--body-file")?;
+            let body = std::fs::read_to_string(body_file)
+                .with_context(|| format!("failed to read PR body file '{body_file}'"))?;
+            update_pr_title_body_octocrab(repo, pr_ref, title, &body)
+        }
+        "pr.ready.finish" | "pr.ready.finish_merge" => {
+            let repo = arg_after(args, "-R")?;
+            let pr_ref = positional_after(args, "ready")?;
+            mark_pr_ready_octocrab(repo, pr_ref)
+        }
+        "pr.merge.finish" => {
+            let repo = arg_after(args, "-R")?;
+            let pr_ref = args
+                .last()
+                .copied()
+                .ok_or_else(|| anyhow!("pr.merge.finish missing PR reference"))?;
+            merge_pr_octocrab(repo, pr_ref)
+        }
+        other => bail!("github_client.unsupported_status_operation: {other}"),
+    }
+}
+
+fn arg_after<'a>(args: &'a [&str], flag: &str) -> Result<&'a str> {
+    args.windows(2)
+        .find_map(|window| (window[0] == flag).then_some(window[1]))
+        .ok_or_else(|| anyhow!("missing required argument '{flag}' in GitHub operation"))
+}
+
+fn positional_after<'a>(args: &'a [&str], command: &str) -> Result<&'a str> {
+    args.windows(2)
+        .find_map(|window| (window[0] == command).then_some(window[1]))
+        .ok_or_else(|| anyhow!("missing positional argument after '{command}' in GitHub operation"))
 }
 
 pub(super) fn current_pr_url(repo: &str, branch: &str) -> Result<Option<String>> {
@@ -113,7 +511,7 @@ pub(super) fn unresolved_milestone_pr_wave(
     )?
     .unwrap_or_else(|| "[]".to_string());
     let prs: Vec<OpenPullRequest> =
-        serde_json::from_str(&out).with_context(|| "failed to parse gh pr list json")?;
+        serde_json::from_str(&out).with_context(|| "failed to parse GitHub PR list JSON")?;
     Ok(prs
         .into_iter()
         .filter(|pr| {
@@ -293,50 +691,10 @@ pub(super) fn attach_post_merge_closeout(
     branch: &str,
     pr_url: &str,
 ) -> Result<()> {
-    if std::env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE")
-        .ok()
-        .as_deref()
-        == Some("1")
-    {
-        return Ok(());
-    }
-
-    let command_path = std::env::var("ADL_POST_MERGE_CLOSEOUT_CMD")
-        .ok()
-        .filter(|value| !value.trim().is_empty())
-        .unwrap_or_else(|| {
-            helper_command_path(repo_root, "adl/tools/attach_post_merge_closeout.sh")
-        });
-    let output = Command::new(&command_path)
-        .arg("--repo-root")
-        .arg(repo_root)
-        .arg("--repo")
-        .arg(repo)
-        .arg("--issue")
-        .arg(issue.to_string())
-        .arg("--branch")
-        .arg(branch)
-        .arg("--pr-url")
-        .arg(pr_url)
-        .output()
-        .with_context(|| {
-            format!("finish: failed to spawn post-merge closeout command '{command_path}'")
-        })?;
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        bail!(
-            "finish: post-merge closeout auto-attach failed for issue #{} and PR '{}': {}{}",
-            issue,
-            pr_url,
-            stderr.trim(),
-            if stdout.trim().is_empty() {
-                String::new()
-            } else {
-                format!(" (stdout: {})", stdout.trim())
-            }
-        );
-    }
+    let _ = (repo_root, repo, issue, branch, pr_url);
+    eprintln!(
+        "• Post-merge closeout watcher is not auto-attached: legacy shell watcher was retired from the no-gh workflow. Run `adl/tools/pr.sh closeout <issue>` after GitHub closes the issue."
+    );
     Ok(())
 }
 
@@ -354,25 +712,9 @@ fn helper_command_path(repo_root: &Path, relative: &str) -> String {
 }
 
 pub(super) fn issue_version(issue: u32, repo: &str) -> Result<Option<String>> {
-    let labels = run_gh_capture_allow_failure(
-        "issue.view.labels_for_version",
-        &[
-            "issue",
-            "view",
-            &issue.to_string(),
-            "-R",
-            repo,
-            "--json",
-            "labels",
-            "-q",
-            ".labels[].name",
-        ],
-    )?;
-    if let Some(labels) = labels {
-        for line in labels.lines() {
-            if let Some(version) = line.strip_prefix("version:") {
-                return Ok(Some(version.trim().to_string()));
-            }
+    for label in gh_issue_label_names(issue, repo)? {
+        if let Some(version) = label.strip_prefix("version:") {
+            return Ok(Some(version.trim().to_string()));
         }
     }
 
@@ -386,106 +728,51 @@ pub(super) fn gh_issue_create(
     body: &str,
     labels_csv: &str,
 ) -> Result<String> {
-    ensure_live_gh_allowed("issue.create")?;
-    let mut cmd = Command::new("gh");
-    cmd.arg("issue")
-        .arg("create")
-        .arg("-R")
-        .arg(repo)
-        .arg("--title")
-        .arg(title)
-        .arg("--body")
-        .arg(body);
-    for label in issue_labels_from_csv_in_order(labels_csv) {
-        cmd.arg("--label").arg(label);
-    }
-    let output = cmd
-        .output()
-        .with_context(|| "failed to spawn gh issue create")?;
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        bail!(
-            "init: gh issue create failed{}",
-            if stderr.trim().is_empty() {
-                String::new()
-            } else {
-                format!(": {}", stderr.trim())
-            }
-        );
-    }
-    let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if stdout.is_empty() {
-        bail!("init: gh issue create returned empty output");
-    }
-    Ok(stdout)
+    let repo_parts = parse_repo(repo)?;
+    let labels = issue_labels_from_csv_in_order(labels_csv);
+    with_octocrab("issue.create", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let issue = block_on_octocrab(
+            "issue.create",
+            octo.issues(&owner, &name)
+                .create(title)
+                .body(body.to_string())
+                .labels(labels)
+                .send(),
+        )?;
+        Ok(issue.html_url.to_string())
+    })
 }
 
-fn issue_label_names(issue: u32, repo: &str) -> Result<Vec<String>> {
-    let labels = run_gh_capture_allow_failure(
-        "issue.view.labels",
-        &[
-            "issue",
-            "view",
-            &issue.to_string(),
-            "-R",
-            repo,
-            "--json",
-            "labels",
-            "-q",
-            ".labels[].name",
-        ],
-    )?
-    .unwrap_or_default();
-    Ok(labels
-        .lines()
-        .map(str::trim)
-        .filter(|label| !label.is_empty())
-        .map(ToString::to_string)
-        .collect())
+pub(crate) fn gh_issue_label_names(issue: u32, repo: &str) -> Result<Vec<String>> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.view.labels", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let issue = block_on_octocrab(
+            "issue.view.labels",
+            octo.issues(&owner, &name).get(issue as u64),
+        )?;
+        Ok(issue.labels.into_iter().map(|label| label.name).collect())
+    })
 }
 
 fn gh_issue_edit_title(repo: &str, issue: u32, title: &str) -> Result<()> {
-    run_gh_status(
-        "issue.edit.title",
-        &[
-            "issue",
-            "edit",
-            &issue.to_string(),
-            "-R",
-            repo,
-            "--title",
-            title,
-        ],
-    )
-    .with_context(|| format!("create: gh issue edit title failed for issue #{issue}"))
-}
-
-fn gh_issue_add_labels(repo: &str, issue: u32, labels: &[String]) -> Result<()> {
-    if labels.is_empty() {
-        return Ok(());
-    }
-    let issue_s = issue.to_string();
-    let mut args = vec!["issue", "edit", issue_s.as_str(), "-R", repo];
-    for label in labels {
-        args.push("--add-label");
-        args.push(label);
-    }
-    run_gh_status("issue.edit.add_labels", &args)
-        .with_context(|| format!("create: gh issue add labels failed for issue #{issue}"))
-}
-
-fn gh_issue_remove_labels(repo: &str, issue: u32, labels: &[String]) -> Result<()> {
-    if labels.is_empty() {
-        return Ok(());
-    }
-    let issue_s = issue.to_string();
-    let mut args = vec!["issue", "edit", issue_s.as_str(), "-R", repo];
-    for label in labels {
-        args.push("--remove-label");
-        args.push(label);
-    }
-    run_gh_status("issue.edit.remove_labels", &args)
-        .with_context(|| format!("create: gh issue remove labels failed for issue #{issue}"))
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.edit.title", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        block_on_octocrab(
+            "issue.edit.title",
+            octo.issues(&owner, &name)
+                .update(issue as u64)
+                .title(title)
+                .send(),
+        )?;
+        Ok(())
+    })
+    .with_context(|| format!("create: octocrab issue edit title failed for issue #{issue}"))
 }
 
 pub(super) fn ensure_issue_metadata_parity(
@@ -500,21 +787,25 @@ pub(super) fn ensure_issue_metadata_parity(
     }
 
     let current_title = gh_issue_title(issue, repo)?.unwrap_or_default();
-    let actual = IssueMetadataSnapshot::new(current_title, issue_label_names(issue, repo)?);
+    let actual = IssueMetadataSnapshot::new(current_title, gh_issue_label_names(issue, repo)?);
     let plan = plan_issue_metadata_parity(expected_title, &expected, &actual);
 
+    let mut final_labels = actual.labels.clone();
+    for label in &plan.labels_to_add {
+        final_labels.insert(label.clone());
+    }
+    for label in &plan.version_labels_to_remove {
+        final_labels.remove(label);
+    }
     if let Some(title) = plan.title_update {
         gh_issue_edit_title(repo, issue, &title)?;
     }
-    if !plan.labels_to_add.is_empty() {
-        gh_issue_add_labels(repo, issue, &plan.labels_to_add)?;
-    }
-    if !plan.version_labels_to_remove.is_empty() {
-        gh_issue_remove_labels(repo, issue, &plan.version_labels_to_remove)?;
+    if !plan.labels_to_add.is_empty() || !plan.version_labels_to_remove.is_empty() {
+        gh_issue_set_labels(repo, issue, &final_labels.into_iter().collect::<Vec<_>>())?;
     }
 
     let final_title = gh_issue_title(issue, repo)?.unwrap_or_default();
-    let final_actual = IssueMetadataSnapshot::new(final_title, issue_label_names(issue, repo)?);
+    let final_actual = IssueMetadataSnapshot::new(final_title, gh_issue_label_names(issue, repo)?);
     if final_actual.title != expected_title {
         bail!(
             "create: issue #{} title mismatch after metadata parity enforcement: expected '{}', got '{}'",
@@ -535,40 +826,77 @@ pub(super) fn ensure_issue_metadata_parity(
 }
 
 pub(super) fn gh_issue_edit_body(repo: &str, issue: u32, body: &str) -> Result<()> {
-    let body_file = write_temp_markdown("issue_body", body)?;
-    run_gh_status(
-        "issue.edit.body",
-        &[
-            "issue",
-            "edit",
-            &issue.to_string(),
-            "-R",
-            repo,
-            "--body-file",
-            path_str(&body_file)?,
-        ],
-    )
-    .with_context(|| format!("create: gh issue edit failed for issue #{issue}"))
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.edit.body", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        block_on_octocrab(
+            "issue.edit.body",
+            octo.issues(&owner, &name)
+                .update(issue as u64)
+                .body(body)
+                .send(),
+        )?;
+        Ok(())
+    })
+    .with_context(|| format!("create: octocrab issue edit failed for issue #{issue}"))
 }
 
 pub(super) fn gh_issue_title(issue: u32, repo: &str) -> Result<Option<String>> {
-    let out = run_gh_capture_allow_failure(
-        "issue.view.title",
-        &[
-            "issue",
-            "view",
-            &issue.to_string(),
-            "-R",
-            repo,
-            "--json",
-            "title",
-            "-q",
-            ".title",
-        ],
-    )?;
-    Ok(out
-        .map(|value| value.trim().to_string())
-        .filter(|value| !value.is_empty()))
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.view.title", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let issue = block_on_octocrab(
+            "issue.view.title",
+            octo.issues(&owner, &name).get(issue as u64),
+        )?;
+        Ok(Some(issue.title).filter(|title| !title.trim().is_empty()))
+    })
+}
+
+pub(crate) fn gh_issue_body(issue: u32, repo: &str) -> Result<Option<String>> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.view.body", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let issue = block_on_octocrab(
+            "issue.view.body",
+            octo.issues(&owner, &name).get(issue as u64),
+        )?;
+        Ok(issue.body.filter(|body| !body.trim().is_empty()))
+    })
+}
+
+pub(crate) fn gh_issue_is_closed_completed(issue: u32, repo: &str) -> Result<bool> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.view.state", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let issue = block_on_octocrab(
+            "issue.view.state",
+            octo.issues(&owner, &name).get(issue as u64),
+        )?;
+        Ok(issue.state == octocrab::models::IssueState::Closed
+            && issue.state_reason == Some(octocrab::models::issues::IssueStateReason::Completed))
+    })
+}
+
+fn gh_issue_set_labels(repo: &str, issue: u32, labels: &[String]) -> Result<()> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.edit.labels", |octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        block_on_octocrab(
+            "issue.edit.labels",
+            octo.issues(&owner, &name)
+                .update(issue as u64)
+                .labels(labels)
+                .send(),
+        )?;
+        Ok(())
+    })
+    .with_context(|| format!("create: octocrab issue label update failed for issue #{issue}"))
 }
 
 #[cfg(test)]
@@ -1175,10 +1503,10 @@ sys.exit(9)
     }
 
     #[test]
-    fn live_gh_policy_guard_blocks_explicit_octocrab_before_spawn() {
+    fn live_github_policy_blocks_explicit_gh_fallback_before_spawn() {
         let _guard = env_lock();
         let policy_env = clear_github_policy_env();
-        let temp = unique_temp_dir("adl-github-explicit-octocrab");
+        let temp = unique_temp_dir("adl-github-explicit-gh-fallback");
         let bin_dir = temp.join("bin");
         fs::create_dir_all(&bin_dir).expect("bin dir");
         let gh_log = temp.join("gh.log");
@@ -1197,23 +1525,22 @@ sys.exit(9)
                 "PATH",
                 std::env::join_paths(path_entries).expect("join PATH"),
             );
-            std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+            std::env::set_var("ADL_GITHUB_CLIENT", "gh");
             std::env::set_var("GITHUB_TOKEN", "test-token");
         }
 
         let err = current_pr_url("owner/repo", "codex/3672-branch")
-            .expect_err("explicit octocrab current_pr_url should fail closed");
+            .expect_err("explicit gh fallback current_pr_url should fail closed");
         let err_debug = format!("{err:?}");
         assert!(err_debug.contains("pr.list.current_branch"));
-        assert!(err_debug.contains("github_client.live_octocrab_transport_unavailable"));
+        assert!(err_debug.contains("github_client.gh_fallback_removed"));
         let err = gh_issue_edit_body("owner/repo", 3672, "body")
-            .expect_err("explicit octocrab issue edit should fail closed");
+            .expect_err("explicit gh fallback issue edit should fail closed");
         let err_debug = format!("{err:?}");
-        assert!(err_debug.contains("issue.edit.body"));
-        assert!(err_debug.contains("github_client.live_octocrab_transport_unavailable"));
+        assert!(err_debug.contains("github_client.gh_fallback_removed"));
         assert!(
             !gh_log.exists(),
-            "policy guard should reject before spawning gh"
+            "fallback removal should reject before spawning gh"
         );
 
         restore_env("PATH", old_path);

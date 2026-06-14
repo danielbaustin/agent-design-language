@@ -121,51 +121,21 @@ assert_tag_absent_remote() {
 }
 
 resolve_repo_name() {
-  gh repo view --json nameWithOwner -q .nameWithOwner
+  local url
+  url="$(git -C "$ROOT" remote get-url origin 2>/dev/null || true)"
+  if [[ "$url" =~ github.com[:/]+([^/]+/[^/.]+)(\.git)?$ ]]; then
+    echo "${BASH_REMATCH[1]}"
+    return 0
+  fi
+  fail "could not infer GitHub repo from origin remote; GitHub Release operations are not available from shell helpers"
 }
 
 assert_release_absent() {
-  local status repo
-  repo="$(resolve_repo_name)"
-
-  if gh release view "$TAG" --repo "$repo" >/dev/null 2>&1; then
-    status=0
-  else
-    status="$?"
-  fi
-  case "$status" in
-    0)
-      fail "GitHub release already exists for tag: $TAG"
-      ;;
-    1)
-      :
-      ;;
-    *)
-      fail "could not verify GitHub release absence for tag: $TAG (gh release view exit $status)"
-      ;;
-  esac
+  fail "GitHub Release absence checks are no longer available from shell helpers; implement this path through Rust/octocrab before using --draft-release"
 }
 
 assert_release_present() {
-  local status repo
-  repo="$(resolve_repo_name)"
-
-  if gh release view "$TAG" --repo "$repo" >/dev/null 2>&1; then
-    status=0
-  else
-    status="$?"
-  fi
-  case "$status" in
-    0)
-      :
-      ;;
-    1)
-      fail "GitHub release does not exist for tag: $TAG"
-      ;;
-    *)
-      fail "could not verify GitHub release presence for tag: $TAG (gh release view exit $status)"
-      ;;
-  esac
+  fail "GitHub Release presence checks are no longer available from shell helpers; implement this path through Rust/octocrab before using --publish-release"
 }
 
 check_cargo_version() {
@@ -292,7 +262,6 @@ done
 [[ -n "$TAG" ]] || TAG="$VERSION"
 
 require_cmd git
-require_cmd gh
 require_cmd sed
 require_cmd find
 
@@ -350,17 +319,11 @@ if [[ "$PUSH_TAG" == "1" ]]; then
 fi
 
 if [[ "$CREATE_DRAFT_RELEASE" == "1" ]]; then
-  info "creating GitHub draft release for $TAG from release notes"
-  gh release create "$TAG" \
-    --draft \
-    --verify-tag \
-    --title "ADL $TAG" \
-    --notes-file "$NOTES_FILE"
+  fail "GitHub draft release creation is no longer available from shell helpers; implement this path through Rust/octocrab before using --draft-release"
 fi
 
 if [[ "$PUBLISH_RELEASE" == "1" ]]; then
-  info "publishing GitHub release for $TAG"
-  gh release edit "$TAG" --draft=false
+  fail "GitHub release publication is no longer available from shell helpers; implement this path through Rust/octocrab before using --publish-release"
 fi
 
 info "release ceremony actions completed"

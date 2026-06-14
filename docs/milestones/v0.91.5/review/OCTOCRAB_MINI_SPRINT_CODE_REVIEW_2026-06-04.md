@@ -26,7 +26,13 @@ Reviewed code and docs:
 
 Overall result: `needs_followup`.
 
-The mini-sprint successfully created a typed interpretation layer and documented the migration boundary. The main remaining problem is that the documented fail-closed shell-fallback policy is not enforced by the live `gh` call sites.
+Supersession note: this packet records the first octocrab mini-sprint review as
+historical evidence. Follow-up issue `#3697` addressed the core operational
+transport gap by moving covered C-SDLC issue/PR workflow helper paths to
+octocrab-backed transport and removing ambient `gh` repo-discovery fallback.
+Keep the findings below as historical review input, not current-state truth.
+
+The mini-sprint successfully created a typed interpretation layer and documented the migration boundary. At the time of this historical review, the main remaining problem was that the documented fail-closed shell-fallback policy was not enforced by the live GitHub CLI call sites. Follow-up issue `#3697` supersedes that operational finding.
 
 ## Findings
 
@@ -34,7 +40,7 @@ The mini-sprint successfully created a typed interpretation layer and documented
 
 The boundary doc says the shared client layer owns fail-closed shell fallback disablement through `ADL_GITHUB_DISABLE_GH_FALLBACK`, and explicitly says not to silently use `gh` fallback when it is enabled. The migration review also says `ADL_GITHUB_DISABLE_GH_FALLBACK=1` disables shell fallback and fails closed.
 
-However, the live GitHub operations still call `gh` directly and do not instantiate or consult `AdlGithubClient::from_env()` before shell-backed operations.
+At the time of this review, the live GitHub operations still called the GitHub CLI directly and did not instantiate or consult `AdlGithubClient::from_env()` before shell-backed operations.
 
 Evidence:
 
@@ -43,18 +49,12 @@ Evidence:
 - `docs/tooling/ADL_CSDLC_GITHUB_CLIENT_BOUNDARY.md:38` says not to silently use `gh` fallback when `ADL_GITHUB_DISABLE_GH_FALLBACK` is enabled.
 - `docs/tooling/ADL_OCTOCRAB_MIGRATION_REVIEW.md:35` says `ADL_GITHUB_DISABLE_GH_FALLBACK=1` disables shell fallback and fails closed for shell-backed modes.
 - `adl/src/cli/pr_cmd/github_client.rs:103` defines `AdlGithubClient::from_env()`, but repository search found no non-test call site using it.
-- `adl/src/cli/pr_cmd/github.rs:29` uses `gh pr list` directly for current PR lookup.
-- `adl/src/cli/pr_cmd/github.rs:49` uses `gh pr list` directly for unresolved PR wave detection.
-- `adl/src/cli/pr_cmd/github.rs:115` uses `gh pr view` directly for PR closing-linkage checks.
-- `adl/src/cli/pr_cmd/github.rs:178` uses `gh pr edit` directly for PR body repair.
-- `adl/src/cli/pr_cmd/github.rs:337` uses `Command::new("gh")` directly for issue creation.
-- `adl/src/cli/pr_cmd/github.rs:400` and `adl/src/cli/pr_cmd/github.rs:416` use `gh issue edit` directly for issue metadata repair.
-- `adl/src/cli/pr_cmd/finish_support.rs:181` calls `current_pr_url`, then `adl/src/cli/pr_cmd/finish_support.rs:183` and `adl/src/cli/pr_cmd/finish_support.rs:199` run `gh pr edit` / `gh pr create` directly through helper paths.
+- The first-wave implementation used direct GitHub CLI invocations for current PR lookup, unresolved PR wave detection, PR closing-linkage checks, PR body repair, issue creation, issue metadata repair, and finish PR create/update helper paths.
 
 Impact:
 
-- An operator can set `ADL_GITHUB_DISABLE_GH_FALLBACK=1` expecting shell fallback to fail closed, but live workflow operations can still execute `gh`.
-- The current mode/fallback contract is true for the isolated typed client tests but not for the operational PR/issue path.
+- At the time of this review, an operator could set `ADL_GITHUB_DISABLE_GH_FALLBACK=1` expecting shell fallback to fail closed, while live workflow operations could still execute the GitHub CLI.
+- At the time of this review, the mode/fallback contract was true for the isolated typed client tests but not for the operational PR/issue path.
 - This undermines the main safety claim of the migration slice: fallback should be explicit, controlled, and testable.
 
 Recommended fix:

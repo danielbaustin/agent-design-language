@@ -79,6 +79,7 @@ octocrab = { version = "0.53", default-features = false, features = [
   "rustls",
   "rustls-ring",
 ] }
+tokio = { version = "1", features = ["rt"] }
 
 # JSON Schema (Option A)
 schemars = "0.8"

@@ -113,7 +113,9 @@ fn unresolved_milestone_pr_wave_rejects_invalid_json() {
         env::set_var("PATH", old_path);
     }
 
-    assert!(err.to_string().contains("failed to parse gh pr list json"));
+    assert!(err
+        .to_string()
+        .contains("failed to parse GitHub PR list JSON"));
 }
 
 #[test]

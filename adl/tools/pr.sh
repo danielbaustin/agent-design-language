@@ -9,7 +9,7 @@
 #
 # Requirements:
 # - git
-# - GitHub CLI (gh) authenticated with repo access
+# - GitHub token in GITHUB_TOKEN or GH_TOKEN for Rust octocrab-backed GitHub operations
 # - Rust toolchain for `adl/` checks (fmt, clippy, test)
 #
 #   adl/tools/pr.sh help
@@ -570,7 +570,7 @@ The default required outcome type for this issue is \`$outcome_type\` based on t
 
 ## Tooling Notes
 
-- This body should be concrete enough that \`gh issue view\` is useful immediately after creation.
+- This body should be concrete enough that \`GitHub issue view\` is useful immediately after creation.
 - Default next steps should follow \`pr-ready\`, the editor skills, and \`pr-run\`, not the older \`pr start\` path.
 EOF
     return 0
@@ -666,12 +666,6 @@ default_repo() {
   url="$(git remote get-url origin 2>/dev/null || true)"
   if [[ "$url" =~ github.com[:/]+([^/]+/[^/.]+)(\.git)?$ ]]; then
     echo "${BASH_REMATCH[1]}"
-    return 0
-  fi
-
-  inferred="$(gh repo view --json nameWithOwner --jq .nameWithOwner 2>/dev/null || true)"
-  if [[ -n "$inferred" ]]; then
-    echo "$inferred"
     return 0
   fi
 
@@ -783,19 +777,7 @@ resolve_structured_prompt_validator() {
 
 issue_version() {
   local issue="$1"
-  local v repo
-  repo="$(default_repo)"
-  v="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json labels -q '.labels[].name' 2>/dev/null | sed -n 's/^version://p' | head -n1 || true)"
-  if [[ -z "$v" ]]; then
-    local title
-    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
-    v="$(version_from_title "$title" || true)"
-  fi
-  if [[ -n "$v" ]]; then
-    echo "$v"
-  else
-    echo "$DEFAULT_VERSION"
-  fi
+  die "issue_version: GitHub-backed version inference for issue #$issue is Rust-owned; use create/init/run/start/doctor/finish/closeout or pass --version with legacy card commands"
 }
 
 
@@ -1953,15 +1935,9 @@ cmd_card() {
   local repo
   repo="$(default_repo)"
 
-  if [[ "$no_fetch_issue" != "1" ]]; then
-    require_cmd gh
-  fi
-
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
-    require_cmd gh
-    note "Fetching issue title via gh…"
-    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
+    die "card: GitHub-backed title/label fetching is Rust-owned and no longer available in the shell wrapper; pass --no-fetch-issue with --slug/--version or use 'adl/tools/pr.sh init|run|doctor'"
   fi
 
   if [[ -z "$slug" ]]; then
@@ -2090,15 +2066,9 @@ cmd_output() {
   local repo
   repo="$(default_repo)"
 
-  if [[ "$no_fetch_issue" != "1" ]]; then
-    require_cmd gh
-  fi
-
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
-    require_cmd gh
-    note "Fetching issue title via gh…"
-    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
+    die "output: GitHub-backed title/label fetching is Rust-owned and no longer available in the shell wrapper; pass --no-fetch-issue with --slug/--version or use 'adl/tools/pr.sh init|run|doctor'"
   fi
 
   if [[ -z "$slug" ]]; then
@@ -2171,15 +2141,9 @@ cmd_cards() {
   local repo
   repo="$(default_repo)"
 
-  if [[ "$no_fetch_issue" != "1" ]]; then
-    require_cmd gh
-  fi
-
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
-    require_cmd gh
-    note "Fetching issue title via gh…"
-    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
+    die "cards: GitHub-backed title/label fetching is Rust-owned and no longer available in the shell wrapper; pass --no-fetch-issue with --version or use 'adl/tools/pr.sh init|run|doctor'"
   fi
 
   if [[ -z "$title" ]]; then
@@ -2310,11 +2274,7 @@ cmd_doctor() {
 }
 
 cmd_open() {
-  require_cmd gh
-  local repo
-  repo="$(default_repo)"
-  note "Opening PR for current branch in browser…"
-  gh pr view $(gh_repo_flag "$repo") --web >/dev/null
+  die "open: GitHub CLI browser lookup is no longer supported by pr.sh; use the PR URL printed by the Rust finish/create path"
 }
 
 usage() {
