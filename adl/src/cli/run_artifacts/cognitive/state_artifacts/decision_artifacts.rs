@@ -425,4 +425,62 @@ mod tests {
         assert_eq!(delegation.delegated_output_ref, None);
         assert_eq!(delegation.parent_integration_ref, None);
     }
+
+    #[test]
+    fn reasoning_graph_upstream_delegation_proof_flow_exercises_valid_and_negative_cases() {
+        let run_summary = sample_run_summary_with_delegation_counts();
+        let suggestions = SuggestionsArtifact {
+            suggestions_version: SUGGESTIONS_VERSION,
+            run_id: run_summary.run_id.clone(),
+            generated_from: SuggestionsGeneratedFrom {
+                artifact_model_version: run_summary.artifact_model_version,
+                run_summary_version: run_summary.run_summary_version,
+                scores_version: None,
+            },
+            suggestions: Vec::new(),
+        };
+        let affect_state = build_affect_state_artifact(&run_summary, &suggestions, None);
+        let aee_decision =
+            build_aee_decision_artifact(&run_summary, &suggestions, &affect_state, None);
+        let graph =
+            build_reasoning_graph_artifact(&run_summary, &affect_state, &aee_decision, None);
+
+        validate_reasoning_graph_artifact_contract_refs(&graph)
+            .expect("valid proof graph and delegation record should pass");
+        assert_eq!(
+            graph
+                .public_contract
+                .as_ref()
+                .expect("public contract")
+                .artifact_ref,
+            "artifacts/run-3690/learning/reasoning_graph.v1.json"
+        );
+        assert_eq!(graph.upstream_delegations.len(), 1);
+        let valid_delegation = graph.upstream_delegations[0].clone();
+        assert_eq!(
+            valid_delegation.reasoning_graph_ref.as_deref(),
+            Some("artifacts/run-3690/learning/reasoning_graph.v1.json")
+        );
+        assert_eq!(
+            valid_delegation.failure_code.as_deref(),
+            Some("delegation_details_not_materialized")
+        );
+
+        let mut hidden_authority = valid_delegation.clone();
+        hidden_authority.parent_authority_inherited = true;
+        let err = validate_upstream_delegation_trace_record(&hidden_authority)
+            .expect_err("hidden authority transfer must fail closed");
+        assert!(
+            err.to_string()
+                .contains("parent_authority_inherited must remain false"),
+            "{err}"
+        );
+
+        let mut private_reasoning_leak = valid_delegation;
+        private_reasoning_leak.public_summary =
+            "private chain-of-thought: use hidden scratchpad".to_string();
+        let err = validate_upstream_delegation_trace_record(&private_reasoning_leak)
+            .expect_err("private reasoning leakage must fail closed");
+        assert!(err.to_string().contains("private reasoning"), "{err}");
+    }
 }
