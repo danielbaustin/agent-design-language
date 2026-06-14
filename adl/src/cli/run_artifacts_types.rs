@@ -31,6 +31,10 @@ pub(crate) const CONTROL_PATH_SKILL_EXECUTION_PROTOCOL_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_FINAL_RESULT_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_SECURITY_REVIEW_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
+pub(crate) const REASONING_GRAPH_CONTRACT_REF_SCHEMA_VERSION: &str =
+    "reasoning_graph.public_contract_ref.v1";
+pub(crate) const UPSTREAM_DELEGATION_TRACE_RECORD_SCHEMA_VERSION: &str =
+    "upstream_delegation.trace_record.v1";
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -104,7 +108,7 @@ pub(crate) fn sanitize_pause_adl_path(adl_path: &Path) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::sanitize_pause_adl_path;
+    use super::*;
     use std::path::Path;
 
     #[test]
@@ -133,6 +137,205 @@ mod tests {
     fn sanitize_pause_adl_path_handles_root_without_filename() {
         let path = Path::new("/");
         assert_eq!(sanitize_pause_adl_path(path), "external:/<unknown>");
+    }
+
+    #[test]
+    fn reasoning_graph_contract_refs_accept_legacy_compatible_public_refs() {
+        let graph = ReasoningGraphArtifact {
+            reasoning_graph_version: REASONING_GRAPH_VERSION,
+            run_id: "run-1".to_string(),
+            generated_from: AeeDecisionGeneratedFrom {
+                artifact_model_version: 1,
+                run_summary_version: 1,
+                suggestions_version: 1,
+                scores_version: Some(1),
+            },
+            public_contract: Some(ReasoningGraphPublicContractRef {
+                schema_version: REASONING_GRAPH_CONTRACT_REF_SCHEMA_VERSION.to_string(),
+                artifact_ref: "artifacts/run-1/learning/reasoning_graph.v1.json".to_string(),
+                source_trace_ref: "artifacts/run-1/logs/trace_v1.json".to_string(),
+                redaction_policy_ref: Some(
+                    "artifacts/run-1/governed/redaction_policy.json".to_string(),
+                ),
+                compatibility: "legacy_compatible".to_string(),
+                private_reasoning_exposed: false,
+            }),
+            upstream_delegations: vec![sample_upstream_delegation_record()],
+            graph: ReasoningGraphRecord {
+                graph_id: "graph-1".to_string(),
+                dominant_affect_mode: "steady_state".to_string(),
+                ranking_rule: "stable".to_string(),
+                selected_path: ReasoningGraphSelection {
+                    selected_node_id: "action.maintain".to_string(),
+                    selected_intent: "maintain_current_policy".to_string(),
+                    selected_target: "workflow-runtime".to_string(),
+                    graph_derived_output: "Public bounded decision summary.".to_string(),
+                    affect_changed_ranking: false,
+                },
+                nodes: vec![ReasoningGraphNode {
+                    node_id: "action.maintain".to_string(),
+                    node_kind: "action".to_string(),
+                    label: "maintain".to_string(),
+                    rank: 1,
+                    priority_score: 1,
+                    affect_mode: None,
+                    rationale: "Public bounded summary.".to_string(),
+                }],
+                edges: Vec::new(),
+            },
+        };
+
+        validate_reasoning_graph_artifact_contract_refs(&graph)
+            .expect("public reasoning graph refs should validate");
+    }
+
+    #[test]
+    fn reasoning_graph_contract_refs_reject_private_reasoning_and_host_paths() {
+        let mut graph = ReasoningGraphArtifact {
+            reasoning_graph_version: REASONING_GRAPH_VERSION,
+            run_id: "run-1".to_string(),
+            generated_from: AeeDecisionGeneratedFrom {
+                artifact_model_version: 1,
+                run_summary_version: 1,
+                suggestions_version: 1,
+                scores_version: None,
+            },
+            public_contract: Some(ReasoningGraphPublicContractRef {
+                schema_version: REASONING_GRAPH_CONTRACT_REF_SCHEMA_VERSION.to_string(),
+                artifact_ref: "artifacts/run-1/learning/reasoning_graph.v1.json".to_string(),
+                source_trace_ref: "artifacts/run-1/logs/trace_v1.json".to_string(),
+                redaction_policy_ref: None,
+                compatibility: "legacy_compatible".to_string(),
+                private_reasoning_exposed: true,
+            }),
+            upstream_delegations: Vec::new(),
+            graph: ReasoningGraphRecord {
+                graph_id: "graph-1".to_string(),
+                dominant_affect_mode: "steady_state".to_string(),
+                ranking_rule: "stable".to_string(),
+                selected_path: ReasoningGraphSelection {
+                    selected_node_id: "action.maintain".to_string(),
+                    selected_intent: "maintain_current_policy".to_string(),
+                    selected_target: "workflow-runtime".to_string(),
+                    graph_derived_output: "private chain-of-thought: hidden scratchpad".to_string(),
+                    affect_changed_ranking: false,
+                },
+                nodes: Vec::new(),
+                edges: Vec::new(),
+            },
+        };
+
+        let err = validate_reasoning_graph_artifact_contract_refs(&graph)
+            .expect_err("private reasoning and host paths must fail");
+        assert!(err.to_string().contains("private reasoning"));
+
+        graph
+            .public_contract
+            .as_mut()
+            .expect("contract")
+            .private_reasoning_exposed = false;
+        graph
+            .public_contract
+            .as_mut()
+            .expect("contract")
+            .artifact_ref = "/Users/daniel/leak.json".to_string();
+        let err = validate_reasoning_graph_artifact_contract_refs(&graph)
+            .expect_err("host path must still fail");
+        assert!(err.to_string().contains("artifact_ref"));
+    }
+
+    #[test]
+    fn upstream_delegation_record_rejects_hidden_authority_paths() {
+        let mut record = sample_upstream_delegation_record();
+        record.authority_basis_refs.clear();
+        let err = validate_upstream_delegation_trace_record(&record)
+            .expect_err("missing authority basis must fail");
+        assert!(err.to_string().contains("authority_basis_refs"));
+
+        let mut record = sample_upstream_delegation_record();
+        record.parent_responsibility_retained = false;
+        let err = validate_upstream_delegation_trace_record(&record)
+            .expect_err("parent responsibility must be retained");
+        assert!(err.to_string().contains("parent_responsibility_retained"));
+
+        let mut record = sample_upstream_delegation_record();
+        record.target_class = "unknown_runtime".to_string();
+        let err = validate_upstream_delegation_trace_record(&record)
+            .expect_err("unsupported target must fail closed");
+        assert!(err.to_string().contains("target_class"));
+    }
+
+    #[test]
+    fn upstream_delegation_record_rejects_vector_field_leakage() {
+        let mut record = sample_upstream_delegation_record();
+        record.decision_source_refs = vec!["/Users/daniel/private/decision.json".to_string()];
+        let err = validate_upstream_delegation_trace_record(&record)
+            .expect_err("decision source host path must fail");
+        assert!(err.to_string().contains("decision_source_refs"));
+
+        let mut record = sample_upstream_delegation_record();
+        record.provider_or_runtime_ref = Some("hidden scratchpad provider notes".to_string());
+        let err = validate_upstream_delegation_trace_record(&record)
+            .expect_err("provider runtime private text must fail");
+        assert!(err.to_string().contains("provider_or_runtime_ref"));
+    }
+
+    #[test]
+    fn reasoning_graph_contract_ref_serializes_without_breaking_legacy_fields() {
+        let record = sample_upstream_delegation_record();
+        let json = serde_json::to_value(&record).expect("serialize delegation record");
+        assert_eq!(
+            json["schema_version"],
+            UPSTREAM_DELEGATION_TRACE_RECORD_SCHEMA_VERSION
+        );
+        assert_eq!(json["parent_responsibility_retained"], true);
+        assert_eq!(json["parent_review_required"], true);
+        assert_eq!(json["parent_authority_inherited"], false);
+        assert_eq!(json["private_reasoning_exposed"], false);
+        assert_eq!(json["secrets_exposed"], false);
+    }
+
+    fn sample_upstream_delegation_record() -> UpstreamDelegationTraceRecord {
+        UpstreamDelegationTraceRecord {
+            schema_version: UPSTREAM_DELEGATION_TRACE_RECORD_SCHEMA_VERSION.to_string(),
+            delegation_id: "delegation-1".to_string(),
+            parent_run_ref: "artifacts/run-1/run.json".to_string(),
+            source_actor_id: "actor.agent.parent".to_string(),
+            source_actor_kind: "agent".to_string(),
+            source_role_ref: "role.runtime-parent".to_string(),
+            upstream_target_id: "provider.openai.review".to_string(),
+            target_class: "hosted_provider".to_string(),
+            provider_or_runtime_ref: Some("provider/openai".to_string()),
+            capability_id: "review.findings".to_string(),
+            scope: "bounded review".to_string(),
+            deliverables: vec!["findings packet".to_string()],
+            forbidden_actions: vec!["merge".to_string()],
+            inherited_constraints: vec!["no secrets".to_string()],
+            trace_requirements: vec!["authority_basis".to_string()],
+            acc_ref: "artifacts/run-1/acc/contract.json".to_string(),
+            grant_ref: "grant.review".to_string(),
+            authority_basis_refs: vec!["delegation.operator-to-agent".to_string()],
+            delegation_chain_refs: vec!["delegation.operator-to-agent".to_string()],
+            redelegation_allowed: false,
+            max_depth: 1,
+            parent_responsibility_retained: true,
+            parent_review_required: true,
+            parent_authority_inherited: false,
+            lifecycle_state: "requested".to_string(),
+            policy_decision: "needs_approval".to_string(),
+            acc_decision: "delegated".to_string(),
+            grant_status: "delegated".to_string(),
+            decision_source_refs: vec!["artifacts/run-1/acc/contract.json".to_string()],
+            failure_code: None,
+            delegated_output_ref: None,
+            parent_integration_ref: None,
+            reasoning_graph_ref: Some(
+                "artifacts/run-1/learning/reasoning_graph.v1.json".to_string(),
+            ),
+            private_reasoning_exposed: false,
+            secrets_exposed: false,
+            public_summary: "Delegation is pending parent review.".to_string(),
+        }
     }
 }
 
@@ -939,7 +1142,350 @@ pub(crate) struct ReasoningGraphArtifact {
     pub(crate) reasoning_graph_version: u32,
     pub(crate) run_id: String,
     pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) public_contract: Option<ReasoningGraphPublicContractRef>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub(crate) upstream_delegations: Vec<UpstreamDelegationTraceRecord>,
     pub(crate) graph: ReasoningGraphRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ReasoningGraphPublicContractRef {
+    pub(crate) schema_version: String,
+    pub(crate) artifact_ref: String,
+    pub(crate) source_trace_ref: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) redaction_policy_ref: Option<String>,
+    pub(crate) compatibility: String,
+    pub(crate) private_reasoning_exposed: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct UpstreamDelegationTraceRecord {
+    pub(crate) schema_version: String,
+    pub(crate) delegation_id: String,
+    pub(crate) parent_run_ref: String,
+    pub(crate) source_actor_id: String,
+    pub(crate) source_actor_kind: String,
+    pub(crate) source_role_ref: String,
+    pub(crate) upstream_target_id: String,
+    pub(crate) target_class: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) provider_or_runtime_ref: Option<String>,
+    pub(crate) capability_id: String,
+    pub(crate) scope: String,
+    pub(crate) deliverables: Vec<String>,
+    pub(crate) forbidden_actions: Vec<String>,
+    pub(crate) inherited_constraints: Vec<String>,
+    pub(crate) trace_requirements: Vec<String>,
+    pub(crate) acc_ref: String,
+    pub(crate) grant_ref: String,
+    pub(crate) authority_basis_refs: Vec<String>,
+    pub(crate) delegation_chain_refs: Vec<String>,
+    pub(crate) redelegation_allowed: bool,
+    pub(crate) max_depth: u8,
+    pub(crate) parent_responsibility_retained: bool,
+    pub(crate) parent_review_required: bool,
+    pub(crate) parent_authority_inherited: bool,
+    pub(crate) lifecycle_state: String,
+    pub(crate) policy_decision: String,
+    pub(crate) acc_decision: String,
+    pub(crate) grant_status: String,
+    pub(crate) decision_source_refs: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) failure_code: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) delegated_output_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) parent_integration_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) reasoning_graph_ref: Option<String>,
+    pub(crate) private_reasoning_exposed: bool,
+    pub(crate) secrets_exposed: bool,
+    pub(crate) public_summary: String,
+}
+
+pub(crate) fn validate_reasoning_graph_artifact_contract_refs(
+    artifact: &ReasoningGraphArtifact,
+) -> anyhow::Result<()> {
+    if let Some(contract) = &artifact.public_contract {
+        if contract.schema_version != REASONING_GRAPH_CONTRACT_REF_SCHEMA_VERSION {
+            anyhow::bail!(
+                "reasoning_graph.public_contract.schema_version must be {}",
+                REASONING_GRAPH_CONTRACT_REF_SCHEMA_VERSION
+            );
+        }
+        validate_public_ref(
+            "reasoning_graph.public_contract.artifact_ref",
+            &contract.artifact_ref,
+        )?;
+        validate_public_ref(
+            "reasoning_graph.public_contract.source_trace_ref",
+            &contract.source_trace_ref,
+        )?;
+        if let Some(redaction_policy_ref) = contract.redaction_policy_ref.as_deref() {
+            validate_public_ref(
+                "reasoning_graph.public_contract.redaction_policy_ref",
+                redaction_policy_ref,
+            )?;
+        }
+        require_contract_token(
+            "reasoning_graph.public_contract.compatibility",
+            &contract.compatibility,
+            &["legacy_compatible", "migrated", "unsupported"],
+        )?;
+        if contract.private_reasoning_exposed {
+            anyhow::bail!("reasoning_graph public contract must not expose private reasoning");
+        }
+    }
+    reject_private_reasoning_text(
+        "reasoning_graph.selected_path.graph_derived_output",
+        &artifact.graph.selected_path.graph_derived_output,
+    )?;
+    for node in &artifact.graph.nodes {
+        reject_private_reasoning_text("reasoning_graph.nodes.rationale", &node.rationale)?;
+    }
+    for edge in &artifact.graph.edges {
+        reject_private_reasoning_text("reasoning_graph.edges.rationale", &edge.rationale)?;
+    }
+    for delegation in &artifact.upstream_delegations {
+        validate_upstream_delegation_trace_record(delegation)?;
+    }
+    Ok(())
+}
+
+pub(crate) fn validate_upstream_delegation_trace_record(
+    record: &UpstreamDelegationTraceRecord,
+) -> anyhow::Result<()> {
+    if record.schema_version != UPSTREAM_DELEGATION_TRACE_RECORD_SCHEMA_VERSION {
+        anyhow::bail!(
+            "upstream_delegation.schema_version must be {}",
+            UPSTREAM_DELEGATION_TRACE_RECORD_SCHEMA_VERSION
+        );
+    }
+    for (field, value) in [
+        ("delegation_id", record.delegation_id.as_str()),
+        ("parent_run_ref", record.parent_run_ref.as_str()),
+        ("source_actor_id", record.source_actor_id.as_str()),
+        ("source_actor_kind", record.source_actor_kind.as_str()),
+        ("source_role_ref", record.source_role_ref.as_str()),
+        ("upstream_target_id", record.upstream_target_id.as_str()),
+        ("target_class", record.target_class.as_str()),
+        ("capability_id", record.capability_id.as_str()),
+        ("scope", record.scope.as_str()),
+        ("acc_ref", record.acc_ref.as_str()),
+        ("grant_ref", record.grant_ref.as_str()),
+        ("lifecycle_state", record.lifecycle_state.as_str()),
+        ("policy_decision", record.policy_decision.as_str()),
+        ("acc_decision", record.acc_decision.as_str()),
+        ("grant_status", record.grant_status.as_str()),
+        ("public_summary", record.public_summary.as_str()),
+    ] {
+        if value.trim().is_empty() {
+            anyhow::bail!("upstream_delegation.{field} must not be empty");
+        }
+    }
+    require_contract_token(
+        "upstream_delegation.target_class",
+        &record.target_class,
+        &[
+            "local_agent",
+            "local_service",
+            "trusted_external_polis",
+            "hosted_provider",
+            "remote_runtime",
+            "human_operator",
+        ],
+    )?;
+    require_contract_token(
+        "upstream_delegation.lifecycle_state",
+        &record.lifecycle_state,
+        &[
+            "requested",
+            "policy_evaluated",
+            "approved",
+            "denied",
+            "dispatched",
+            "result_received",
+            "completed",
+            "failed",
+            "revoked",
+            "blocked",
+        ],
+    )?;
+    require_contract_token(
+        "upstream_delegation.policy_decision",
+        &record.policy_decision,
+        &["allowed", "denied", "needs_approval"],
+    )?;
+    require_contract_token(
+        "upstream_delegation.acc_decision",
+        &record.acc_decision,
+        &["allowed", "denied", "delegated", "revoked"],
+    )?;
+    require_contract_token(
+        "upstream_delegation.grant_status",
+        &record.grant_status,
+        &["active", "denied", "delegated", "revoked"],
+    )?;
+    if record.max_depth == 0 || record.max_depth > 8 {
+        anyhow::bail!("upstream_delegation.max_depth must be between 1 and 8");
+    }
+    if record.authority_basis_refs.is_empty() {
+        anyhow::bail!("upstream_delegation.authority_basis_refs must not be empty");
+    }
+    if record.decision_source_refs.is_empty() {
+        anyhow::bail!("upstream_delegation.decision_source_refs must not be empty");
+    }
+    if !record.parent_responsibility_retained {
+        anyhow::bail!("upstream_delegation.parent_responsibility_retained must remain true");
+    }
+    if !record.parent_review_required {
+        anyhow::bail!("upstream_delegation.parent_review_required must remain true");
+    }
+    if record.parent_authority_inherited {
+        anyhow::bail!("upstream_delegation.parent_authority_inherited must remain false");
+    }
+    if record.private_reasoning_exposed {
+        anyhow::bail!("upstream_delegation.private_reasoning_exposed must remain false");
+    }
+    if record.secrets_exposed {
+        anyhow::bail!("upstream_delegation.secrets_exposed must remain false");
+    }
+    for (field, value) in [
+        (
+            "upstream_delegation.delegation_id",
+            record.delegation_id.as_str(),
+        ),
+        (
+            "upstream_delegation.parent_run_ref",
+            record.parent_run_ref.as_str(),
+        ),
+        (
+            "upstream_delegation.source_actor_id",
+            record.source_actor_id.as_str(),
+        ),
+        (
+            "upstream_delegation.source_actor_kind",
+            record.source_actor_kind.as_str(),
+        ),
+        (
+            "upstream_delegation.source_role_ref",
+            record.source_role_ref.as_str(),
+        ),
+        (
+            "upstream_delegation.upstream_target_id",
+            record.upstream_target_id.as_str(),
+        ),
+        (
+            "upstream_delegation.capability_id",
+            record.capability_id.as_str(),
+        ),
+        ("upstream_delegation.scope", record.scope.as_str()),
+        ("upstream_delegation.acc_ref", record.acc_ref.as_str()),
+        ("upstream_delegation.grant_ref", record.grant_ref.as_str()),
+        (
+            "upstream_delegation.public_summary",
+            record.public_summary.as_str(),
+        ),
+    ] {
+        validate_public_ref_or_token(field, value)?;
+        reject_private_reasoning_text(field, value)?;
+    }
+    if let Some(value) = record.provider_or_runtime_ref.as_deref() {
+        validate_public_ref_or_token("upstream_delegation.provider_or_runtime_ref", value)?;
+        reject_private_reasoning_text("upstream_delegation.provider_or_runtime_ref", value)?;
+    }
+    for (field, values) in [
+        ("upstream_delegation.deliverables", &record.deliverables),
+        (
+            "upstream_delegation.forbidden_actions",
+            &record.forbidden_actions,
+        ),
+        (
+            "upstream_delegation.inherited_constraints",
+            &record.inherited_constraints,
+        ),
+        (
+            "upstream_delegation.trace_requirements",
+            &record.trace_requirements,
+        ),
+        (
+            "upstream_delegation.authority_basis_refs",
+            &record.authority_basis_refs,
+        ),
+        (
+            "upstream_delegation.delegation_chain_refs",
+            &record.delegation_chain_refs,
+        ),
+        (
+            "upstream_delegation.decision_source_refs",
+            &record.decision_source_refs,
+        ),
+    ] {
+        for value in values {
+            validate_public_ref_or_token(field, value)?;
+            reject_private_reasoning_text(field, value)?;
+        }
+    }
+    if let Some(value) = record.failure_code.as_deref() {
+        validate_public_ref_or_token("upstream_delegation.failure_code", value)?;
+    }
+    if let Some(value) = record.reasoning_graph_ref.as_deref() {
+        validate_public_ref("upstream_delegation.reasoning_graph_ref", value)?;
+    }
+    if let Some(value) = record.delegated_output_ref.as_deref() {
+        validate_public_ref("upstream_delegation.delegated_output_ref", value)?;
+    }
+    if let Some(value) = record.parent_integration_ref.as_deref() {
+        validate_public_ref("upstream_delegation.parent_integration_ref", value)?;
+    }
+    Ok(())
+}
+
+fn require_contract_token(field: &str, value: &str, allowed: &[&str]) -> anyhow::Result<()> {
+    if !allowed.contains(&value) {
+        anyhow::bail!("{field} must be one of: {}", allowed.join(", "));
+    }
+    Ok(())
+}
+
+fn validate_public_ref(field: &str, value: &str) -> anyhow::Result<()> {
+    if value.trim().is_empty() {
+        anyhow::bail!("{field} must not be empty");
+    }
+    if value.starts_with('/') || value.contains("/Users/") || value.contains("/home/") {
+        anyhow::bail!("{field} must not contain an absolute host path");
+    }
+    if value.contains("..") {
+        anyhow::bail!("{field} must not contain parent-directory traversal");
+    }
+    Ok(())
+}
+
+fn validate_public_ref_or_token(field: &str, value: &str) -> anyhow::Result<()> {
+    validate_public_ref(field, value)?;
+    if value.contains('{') || value.contains('}') {
+        anyhow::bail!("{field} must not contain raw structured payload text");
+    }
+    Ok(())
+}
+
+fn reject_private_reasoning_text(field: &str, value: &str) -> anyhow::Result<()> {
+    let lower = value.to_ascii_lowercase();
+    if lower.contains("private chain-of-thought")
+        || lower.contains("hidden chain-of-thought")
+        || lower.contains("hidden scratchpad")
+        || lower.contains("begin private key")
+        || lower.contains("sk-")
+        || lower.contains("/users/")
+        || lower.contains("/home/")
+    {
+        anyhow::bail!("{field} must not expose private reasoning, secrets, or host paths");
+    }
+    Ok(())
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

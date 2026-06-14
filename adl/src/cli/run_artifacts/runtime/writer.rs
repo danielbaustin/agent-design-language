@@ -493,6 +493,8 @@ pub(crate) fn write_run_state_artifacts(
         &aee_decision,
         Some(&scores_for_suggestions),
     );
+    validate_reasoning_graph_artifact_contract_refs(&reasoning_graph)
+        .context("validate reasoning graph contract refs")?;
     let aee_decision_json =
         serde_json::to_vec_pretty(&aee_decision).context("serialize aee_decision.json")?;
     let reasoning_graph_json =
