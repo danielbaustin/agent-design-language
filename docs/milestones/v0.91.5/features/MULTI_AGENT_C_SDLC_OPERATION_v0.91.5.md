@@ -11,6 +11,8 @@
 - Prior satisfied evidence: `#3484`
 - Current provider/model evidence:
   [PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md](../review/multi_agent_matrix/PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md)
+- Current usefulness checklist:
+  [MULTI_AGENT_USEFULNESS_REVIEW_CHECKLIST_2026-06-14.md](../review/multi_agent_usefulness/MULTI_AGENT_USEFULNESS_REVIEW_CHECKLIST_2026-06-14.md)
 
 ## Template Rules
 
@@ -75,6 +77,10 @@ DeepSeek V4 Flash smoke, direct hosted provider lanes still require provider
 credentials, and the current remote Ollama node passed inventory plus one
 Gemma watcher-class smoke. Qwen/DeepSeek role usefulness on the remote node
 still needs bounded follow-up proof.
+
+The `#3504` reviewer checklist defines hard gates, usefulness signals,
+role-specific warning signs, and single-agent fallback rules for evaluating
+`#3415` and `#3503`.
 
 ## Acceptance Criteria
 
