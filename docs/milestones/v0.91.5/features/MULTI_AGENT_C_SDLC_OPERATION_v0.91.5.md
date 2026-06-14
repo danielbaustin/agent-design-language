@@ -13,6 +13,8 @@
   [PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md](../review/multi_agent_matrix/PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md)
 - Current usefulness checklist:
   [MULTI_AGENT_USEFULNESS_REVIEW_CHECKLIST_2026-06-14.md](../review/multi_agent_usefulness/MULTI_AGENT_USEFULNESS_REVIEW_CHECKLIST_2026-06-14.md)
+- Current workcell proof:
+  [V0915_PARALLEL_C_SDLC_WORKCELL_PROOF_PACKET_2026-06-14.md](../review/multi_agent_workcell/V0915_PARALLEL_C_SDLC_WORKCELL_PROOF_PACKET_2026-06-14.md)
 
 ## Template Rules
 
@@ -81,6 +83,12 @@ still needs bounded follow-up proof.
 The `#3504` reviewer checklist defines hard gates, usefulness signals,
 role-specific warning signs, and single-agent fallback rules for evaluating
 `#3415` and `#3503`.
+
+The `#3415` live workcell proof classifies the current lane as
+`useful_with_limits`: local Qwen produced useful worker evidence, OpenRouter
+DeepSeek produced partially useful planner/critic evidence, and remote Gemma
+completed with empty watcher output. `#3503` still must compare this against a
+single-agent path before Sprint 2 claims net usefulness.
 
 ## Acceptance Criteria
 
