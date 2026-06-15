@@ -28,6 +28,7 @@ fn real_provider_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
 fn real_provider_setup(repo_root: &Path, args: &[String]) -> Result<()> {
     let mut family: Option<String> = None;
     let mut out_dir: Option<PathBuf> = None;
+    let mut model_override: Option<String> = None;
     let mut force = false;
 
     let mut i = 0usize;
@@ -39,6 +40,14 @@ fn real_provider_setup(repo_root: &Path, args: &[String]) -> Result<()> {
                     return Err(anyhow!("--out requires a value"));
                 }
                 out_dir = Some(PathBuf::from(value));
+                i += 1;
+            }
+            "--model" => {
+                let value = required_value(args, i, "--model")?;
+                if value.starts_with('-') {
+                    return Err(anyhow!("--model requires a value"));
+                }
+                model_override = Some(value);
                 i += 1;
             }
             "--force" => force = true,
@@ -71,17 +80,27 @@ fn real_provider_setup(repo_root: &Path, args: &[String]) -> Result<()> {
         .with_context(|| format!("failed to create setup directory {}", out_dir.display()))?;
 
     let provider_path = out_dir.join("provider.adl.yaml");
-    let env_path = out_dir.join(".env.example");
+    let env_path = out_dir.join("env.example");
     let readme_path = out_dir.join("README.md");
+    let selected_model = model_override
+        .as_deref()
+        .unwrap_or(template.provider_model_id);
 
-    fs::write(&provider_path, render_provider_yaml(template).as_bytes())
-        .with_context(|| format!("failed to write {}", provider_path.display()))?;
+    fs::write(
+        &provider_path,
+        render_provider_yaml(template, selected_model).as_bytes(),
+    )
+    .with_context(|| format!("failed to write {}", provider_path.display()))?;
     fs::write(&env_path, render_env_example(template).as_bytes())
         .with_context(|| format!("failed to write {}", env_path.display()))?;
-    fs::write(&readme_path, render_readme(template).as_bytes())
-        .with_context(|| format!("failed to write {}", readme_path.display()))?;
+    fs::write(
+        &readme_path,
+        render_readme(template, selected_model).as_bytes(),
+    )
+    .with_context(|| format!("failed to write {}", readme_path.display()))?;
 
     println!("PROVIDER_SETUP_FAMILY={}", template.family);
+    println!("PROVIDER_SETUP_MODEL={selected_model}");
     println!("PROVIDER_SETUP_DIR={}", out_dir.display());
     println!("PROVIDER_SNIPPET_PATH={}", provider_path.display());
     println!("PROVIDER_ENV_EXAMPLE={}", env_path.display());
@@ -177,6 +196,18 @@ fn template_for_family(family: &str) -> Result<&'static ProviderSetupTemplate> {
             endpoint_hint: None,
             notes: "Use this for the Rust-native DeepSeek provider path. The default endpoint is DeepSeek's chat completions API; override config.endpoint only for tests or a trusted compatible endpoint.",
         },
+        "openrouter" => &ProviderSetupTemplate {
+            family: "openrouter",
+            profile: None,
+            kind: Some("openrouter"),
+            env_var: "OPENROUTER_API_KEY",
+            provider_id: "openrouter_primary",
+            agent_id: "openrouter_agent",
+            model_ref: "reasoning/default",
+            provider_model_id: "deepseek/deepseek-v4-flash",
+            endpoint_hint: None,
+            notes: "Use this for the Rust-native OpenRouter provider path. The default endpoint is OpenRouter's chat completions API; override config.endpoint only for tests or a trusted compatible endpoint. OpenRouter capability support is model-dependent, so record model-specific lane evidence rather than assuming gateway-wide tool or JSON support.",
+        },
         "http" | "generic-http" => &ProviderSetupTemplate {
             family: "http",
             profile: Some("http:gpt-4.1-mini"),
@@ -191,14 +222,14 @@ fn template_for_family(family: &str) -> Result<&'static ProviderSetupTemplate> {
         },
         other => {
             return Err(anyhow!(
-                "unsupported provider setup family '{other}' (supported: chatgpt, claude, openai, anthropic, gemini, deepseek, http)"
+                "unsupported provider setup family '{other}' (supported: chatgpt, claude, openai, anthropic, gemini, deepseek, openrouter, http)"
             ))
         }
     };
     Ok(template)
 }
 
-fn render_provider_yaml(template: &ProviderSetupTemplate) -> String {
+fn render_provider_yaml(template: &ProviderSetupTemplate, selected_model: &str) -> String {
     let provider_identity = match (template.profile, template.kind) {
         (Some(profile), None) => format!("profile: \"{profile}\""),
         (None, Some(kind)) => format!("type: \"{kind}\""),
@@ -214,14 +245,14 @@ fn render_provider_yaml(template: &ProviderSetupTemplate) -> String {
         "      headers:\n        X-Client: \"adl-provider-setup\"\n".to_string()
     };
     format!(
-        "version: \"0.5\"\n\nproviders:\n  {provider_id}:\n    {provider_identity}\n    config:\n{endpoint_line}      auth:\n        type: bearer\n        env: {env_var}\n{headers_line}      timeout_secs: 15\n      model_ref: \"{model_ref}\"\n      provider_model_id: \"{provider_model_id}\"\n\nagents:\n  {agent_id}:\n    provider: \"{provider_id}\"\n    model: \"{model_ref}\"\n\n# Merge this provider/agent snippet into your workflow file.\n",
+        "version: \"0.5\"\n\nproviders:\n  {provider_id}:\n    {provider_identity}\n    config:\n{endpoint_line}      auth:\n        type: bearer\n        env: {env_var}\n{headers_line}      timeout_secs: 15\n      model_ref: \"{model_ref}\"\n      provider_model_id: \"{provider_model_id}\"\n\nagents:\n  {agent_id}:\n    provider: \"{provider_id}\"\n    model: \"{model_ref}\"\n\n# Merge this provider/agent snippet into your workflow file.\n# provider_model_id may be changed to any trusted model ID supported by this provider family.\n",
         provider_id = template.provider_id,
         provider_identity = provider_identity,
         endpoint_line = endpoint_line,
         headers_line = headers_line,
         env_var = template.env_var,
         model_ref = template.model_ref,
-        provider_model_id = template.provider_model_id,
+        provider_model_id = selected_model,
         agent_id = template.agent_id,
     )
 }
@@ -233,7 +264,7 @@ fn render_env_example(template: &ProviderSetupTemplate) -> String {
     )
 }
 
-fn render_readme(template: &ProviderSetupTemplate) -> String {
+fn render_readme(template: &ProviderSetupTemplate, selected_model: &str) -> String {
     let transport_note = if template.kind.is_some() {
         "- This family uses ADL's Rust-native provider adapter for its vendor API.\n- Leave `config.endpoint` unset for the default vendor endpoint unless you are testing against a trusted compatible endpoint."
     } else {
@@ -245,8 +276,9 @@ fn render_readme(template: &ProviderSetupTemplate) -> String {
         "2. Set `config.endpoint` in `provider.adl.yaml` to a real ADL-compatible completion endpoint."
     };
     format!(
-        "# Provider setup: {family}\n\nThis bundle gives you a local starting point for configuring the `{family}` provider family.\n\nFiles:\n- `provider.adl.yaml`: mergeable ADL provider/agent snippet\n- `.env.example`: local env template for your credential\n\nSteps:\n1. Copy `.env.example` to a local untracked env file and put your real credential in `{env_var}`.\n{endpoint_step}\n3. Merge the provider/agent snippet into your workflow file.\n4. Source your local env file before running ADL.\n\nImportant:\n{transport_note}\n- No secrets are stored by this command; the generated env file is only a local template.\n\nNotes:\n{notes}\n",
+        "# Provider setup: {family}\n\nThis bundle gives you a local starting point for configuring the `{family}` provider family.\n\nFiles:\n- `provider.adl.yaml`: mergeable ADL provider/agent snippet\n- `env.example`: local env template for your credential\n\nSelected default model:\n- `{selected_model}`\n\nSteps:\n1. Copy `env.example` to a local untracked env file and put your real credential in `{env_var}`.\n{endpoint_step}\n3. Merge the provider/agent snippet into your workflow file.\n4. Change `provider_model_id` to any trusted model ID supported by this provider family when you want a different task/model route.\n5. Source your local env file before running ADL.\n\nImportant:\n{transport_note}\n- No secrets are stored by this command; the generated env file is only a local template.\n\nNotes:\n{notes}\n",
         family = template.family,
+        selected_model = selected_model,
         env_var = template.env_var,
         endpoint_step = endpoint_step,
         transport_note = transport_note,
@@ -344,7 +376,7 @@ mod tests {
         let out = repo.join(".adl/provider-setup/chatgpt");
         let provider_text =
             fs::read_to_string(out.join("provider.adl.yaml")).expect("provider yaml");
-        let env_text = fs::read_to_string(out.join(".env.example")).expect("env example");
+        let env_text = fs::read_to_string(out.join("env.example")).expect("env example");
         let readme = fs::read_to_string(out.join("README.md")).expect("readme");
 
         assert!(provider_text.contains("profile: \"chatgpt:gpt-5.4\""));
@@ -362,7 +394,7 @@ mod tests {
         let out = repo.join(".adl/provider-setup/claude");
         let provider_text =
             fs::read_to_string(out.join("provider.adl.yaml")).expect("provider yaml");
-        let env_text = fs::read_to_string(out.join(".env.example")).expect("env example");
+        let env_text = fs::read_to_string(out.join("env.example")).expect("env example");
         let readme = fs::read_to_string(out.join("README.md")).expect("readme");
 
         assert!(provider_text.contains("profile: \"claude:claude-3-7-sonnet\""));
@@ -471,6 +503,17 @@ mod tests {
         )
         .expect_err("single-dash flag-like out value should fail");
         assert!(err.to_string().contains("--out requires a value"));
+
+        let err = real_provider_in_repo(
+            &[
+                "setup".to_string(),
+                "openrouter".to_string(),
+                "--model".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("missing model value should fail");
+        assert!(err.to_string().contains("--model requires a value"));
     }
 
     #[test]
@@ -500,6 +543,7 @@ mod tests {
                 "GEMINI_API_KEY",
             ),
             ("deepseek", "type: \"deepseek\"", "DEEPSEEK_API_KEY"),
+            ("openrouter", "type: \"openrouter\"", "OPENROUTER_API_KEY"),
             (
                 "generic-http",
                 "profile: \"http:gpt-4.1-mini\"",
@@ -511,9 +555,9 @@ mod tests {
             let template = template_for_family(family).expect("family should resolve");
             assert_eq!(template.env_var, env_var);
 
-            let provider_yaml = render_provider_yaml(template);
+            let provider_yaml = render_provider_yaml(template, template.provider_model_id);
             let env_example = render_env_example(template);
-            let readme = render_readme(template);
+            let readme = render_readme(template, template.provider_model_id);
 
             assert!(provider_yaml.contains(provider_identity));
             assert!(env_example.contains(env_var));
@@ -544,10 +588,39 @@ mod tests {
             .expect("top-level provider entrypoint should succeed");
 
         assert!(out.join("provider.adl.yaml").exists());
-        assert!(out.join(".env.example").exists());
+        assert!(out.join("env.example").exists());
         assert!(out.join("README.md").exists());
 
         fs::remove_dir_all(out).expect("cleanup generated output");
         env::set_current_dir(prev_dir).expect("restore cwd");
+    }
+
+    #[test]
+    fn provider_setup_supports_model_override_for_openrouter() {
+        let repo = temp_repo("openrouter-model-override");
+        let out = repo.join("custom/provider-setup/openrouter");
+
+        real_provider_in_repo(
+            &[
+                "setup".to_string(),
+                "openrouter".to_string(),
+                "--model".to_string(),
+                "google/gemini-2.5-flash-lite".to_string(),
+                "--out".to_string(),
+                out.display().to_string(),
+            ],
+            &repo,
+        )
+        .expect("openrouter setup with model override should succeed");
+
+        let provider_text =
+            fs::read_to_string(out.join("provider.adl.yaml")).expect("provider yaml");
+        let readme = fs::read_to_string(out.join("README.md")).expect("readme");
+
+        assert!(provider_text.contains("type: \"openrouter\""));
+        assert!(provider_text.contains("provider_model_id: \"google/gemini-2.5-flash-lite\""));
+        assert!(readme.contains("Selected default model:"));
+        assert!(readme.contains("google/gemini-2.5-flash-lite"));
+        assert!(readme.contains("Change `provider_model_id` to any trusted model ID"));
     }
 }

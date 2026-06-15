@@ -1,0 +1,29 @@
+{
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "google/gemini-2.5-flash-lite",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.5.openrouter.matrix"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "google/gemini-2.5-flash-lite",
+    "provider_model_id": "google/gemini-2.5-flash-lite",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1"
+  },
+  "prompt_contract_ref": "v0.91.5.openrouter.matrix.prompt.v1",
+  "lane_ref": "watcher_openrouter_gemini_2_5_flash_lite",
+  "run_id": "watcher_openrouter_gemini_2_5_flash_lite",
+  "request_id": "watcher_openrouter_gemini_2_5_flash_lite",
+  "attempt_policy": {
+    "max_attempts": 1,
+    "timeout_ms": 45000,
+    "retry_backoff_ms": 1000
+  },
+  "input_text": "Return markdown only with exactly these headings:\n# Status\n# Signal\n# Next-Step\n\nRequirements:\n- # Status body must be exactly one of: pass, partial, blocked\n- Mention #3723\n- Mention openrouter\n- Under # Signal include the exact phrase: route probe completed\n- Under # Next-Step mention docs/milestones/v0.91.5/review/openrouter_matrix\n- Keep the response under 110 words."
+}

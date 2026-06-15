@@ -1,0 +1,29 @@
+{
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "qwen/qwen3.6-flash",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.5.openrouter.matrix"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "qwen/qwen3.6-flash",
+    "provider_model_id": "qwen/qwen3.6-flash",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1"
+  },
+  "prompt_contract_ref": "v0.91.5.openrouter.matrix.prompt.v1",
+  "lane_ref": "worker_openrouter_qwen3_6_flash",
+  "run_id": "worker_openrouter_qwen3_6_flash",
+  "request_id": "worker_openrouter_qwen3_6_flash",
+  "attempt_policy": {
+    "max_attempts": 1,
+    "timeout_ms": 45000,
+    "retry_backoff_ms": 1000
+  },
+  "input_text": "Return only minified JSON with keys issue,path,task,limit.\nRequirements:\n- issue must equal \"#3723\"\n- path must equal \"docs/milestones/v0.91.5/review/openrouter_matrix\"\n- task must name one concrete next proof step and include the words \"OpenRouter\" and \"route\"\n- limit must include the exact phrase \"bounded_to_issue_3723\""
+}
