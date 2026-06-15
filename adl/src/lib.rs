@@ -49,6 +49,7 @@ pub mod local_gemma_model_evaluation;
 pub mod long_lived_agent;
 pub mod model_identity;
 pub mod model_proposal_benchmark;
+pub mod observability;
 pub mod obsmem_adapter;
 pub mod obsmem_contract;
 pub mod obsmem_demo;

@@ -1,6 +1,7 @@
 use anyhow::{anyhow, Result};
 use std::path::PathBuf;
 
+use crate::cli::observability::ProgressHeartbeat;
 use ::adl::long_lived_agent::{self, InspectOptions, RunOptions, TickOptions};
 
 pub(crate) fn real_agent(args: &[String]) -> Result<()> {
@@ -45,13 +46,41 @@ fn real_tick(args: &[String]) -> Result<()> {
         }
         i += 1;
     }
+    let spec_path = parsed.spec()?;
+    let heartbeat = ProgressHeartbeat::start(
+        "agent",
+        "agent_tick",
+        &[
+            ("process_class", "long_lived"),
+            ("spec", &spec_path.display().to_string()),
+        ],
+    );
     let status = long_lived_agent::tick(
-        &parsed.spec()?,
+        &spec_path,
         TickOptions {
             recover_stale_lease: parsed.recover_stale_lease,
         },
-    )?;
-    print_status(&status, parsed.json_output)
+    );
+    match status {
+        Ok(status) => {
+            let completed_cycles = status.completed_cycle_count.to_string();
+            heartbeat.completed(&[
+                ("agent_state", status_state_label(&status.state)),
+                ("completed_cycles", &completed_cycles),
+            ]);
+            print_status(&status, parsed.json_output)
+        }
+        Err(err) => {
+            heartbeat.failed(&[
+                ("reason_code", "agent_tick_failed"),
+                (
+                    "next_action_hint",
+                    "inspect_agent_status_and_cycle_artifacts",
+                ),
+            ]);
+            Err(err)
+        }
+    }
 }
 
 fn real_run(args: &[String]) -> Result<()> {
@@ -86,17 +115,50 @@ fn real_run(args: &[String]) -> Result<()> {
         }
         i += 1;
     }
+    let spec_path = parsed.spec()?;
     let max_cycles = max_cycles.ok_or_else(|| anyhow!("agent run requires --max-cycles <n>"))?;
+    let max_cycles_label = max_cycles.to_string();
+    let interval_secs_label = interval_secs
+        .map(|value| value.to_string())
+        .unwrap_or_else(|| "spec_default".to_string());
+    let no_sleep_label = if no_sleep { "true" } else { "false" }.to_string();
+    let heartbeat = ProgressHeartbeat::start(
+        "agent",
+        "agent_run",
+        &[
+            ("process_class", "long_lived"),
+            ("spec", &spec_path.display().to_string()),
+            ("max_cycles", &max_cycles_label),
+            ("interval_secs", &interval_secs_label),
+            ("no_sleep", &no_sleep_label),
+        ],
+    );
     let status = long_lived_agent::run(
-        &parsed.spec()?,
+        &spec_path,
         RunOptions {
             max_cycles,
             interval_secs,
             no_sleep,
             recover_stale_lease: parsed.recover_stale_lease,
         },
-    )?;
-    print_status(&status, parsed.json_output)
+    );
+    match status {
+        Ok(status) => {
+            let completed_cycles = status.completed_cycle_count.to_string();
+            heartbeat.completed(&[
+                ("agent_state", status_state_label(&status.state)),
+                ("completed_cycles", &completed_cycles),
+            ]);
+            print_status(&status, parsed.json_output)
+        }
+        Err(err) => {
+            heartbeat.failed(&[
+                ("reason_code", "agent_run_failed"),
+                ("next_action_hint", "inspect_agent_status_and_cycle_ledger"),
+            ]);
+            Err(err)
+        }
+    }
 }
 
 fn real_status(args: &[String]) -> Result<()> {
@@ -117,8 +179,35 @@ fn real_status(args: &[String]) -> Result<()> {
         }
         i += 1;
     }
-    let status = long_lived_agent::status(&parsed.spec()?)?;
-    print_status(&status, parsed.json_output)
+    let spec_path = parsed.spec()?;
+    let heartbeat = ProgressHeartbeat::start(
+        "agent",
+        "agent_status",
+        &[
+            ("process_class", "long_lived"),
+            ("spec", &spec_path.display().to_string()),
+        ],
+    );
+    match long_lived_agent::status(&spec_path) {
+        Ok(status) => {
+            let completed_cycles = status.completed_cycle_count.to_string();
+            heartbeat.completed(&[
+                ("agent_state", status_state_label(&status.state)),
+                ("completed_cycles", &completed_cycles),
+            ]);
+            print_status(&status, parsed.json_output)
+        }
+        Err(err) => {
+            heartbeat.failed(&[
+                ("reason_code", "agent_status_failed"),
+                (
+                    "next_action_hint",
+                    "inspect_agent_spec_and_status_artifacts",
+                ),
+            ]);
+            Err(err)
+        }
+    }
 }
 
 fn real_inspect(args: &[String]) -> Result<()> {
@@ -467,7 +556,11 @@ memory:
             "--spec requires a value",
         );
         assert_err_contains(real_agent(&args(&["tick", "--bogus"])), "unknown arg");
-        assert_err_contains(real_agent(&args(&["run"])), "requires --max-cycles");
+        assert_err_contains(real_agent(&args(&["run"])), "requires --spec");
+        assert_err_contains(
+            real_agent(&args(&["run", "--spec", "/tmp/example-agent.yaml"])),
+            "requires --max-cycles",
+        );
         assert_err_contains(
             real_agent(&args(&["run", "--max-cycles", "not-a-number"])),
             "expected unsigned integer",
@@ -546,5 +639,41 @@ memory:
         ]))
         .is_ok());
         assert!(root.join("state/stop.json").exists());
+    }
+
+    #[test]
+    fn agent_run_emits_heartbeat_for_long_lived_processes() {
+        let root = temp_dir("heartbeat");
+        let spec = write_spec(&root);
+        let observability = root.join("observability.log");
+        unsafe {
+            std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
+            std::env::set_var("ADL_OBSERVABILITY_LOG", &observability);
+            std::env::set_var("ADL_OBSERVABILITY_HEARTBEAT_MS", "25");
+        }
+
+        assert!(real_agent(&args(&[
+            "run",
+            "--spec",
+            spec.to_str().expect("spec path"),
+            "--max-cycles",
+            "2",
+            "--interval-secs",
+            "1",
+        ]))
+        .is_ok());
+
+        let log_text = fs::read_to_string(&observability).expect("read observability log");
+        assert!(log_text.contains("command=agent"));
+        assert!(log_text.contains("stage=agent_run"));
+        assert!(log_text.contains("process_class=long_lived"));
+        assert!(log_text.contains("result=heartbeat"));
+        assert!(log_text.contains("result=completed"));
+
+        unsafe {
+            std::env::remove_var("ADL_OBSERVABILITY_STDERR");
+            std::env::remove_var("ADL_OBSERVABILITY_LOG");
+            std::env::remove_var("ADL_OBSERVABILITY_HEARTBEAT_MS");
+        }
     }
 }
