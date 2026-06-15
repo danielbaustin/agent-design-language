@@ -7,7 +7,7 @@
 - Date: `2026-06-14`
 - Owner: ADL maintainers
 - Status: `active_sprint_2_evidence`
-- Related issues: `#3415`, `#3501`, `#3503`, `#3504`
+- Related issues: `#3415`, `#3501`, `#3503`, `#3504`, `#3724`, `#3725`
 - Prior satisfied evidence: `#3484`
 - Current provider/model evidence:
   [OPENROUTER_MATRIX_PROOF_2026-06-14.md](../review/openrouter_matrix/OPENROUTER_MATRIX_PROOF_2026-06-14.md)
@@ -19,6 +19,8 @@
   [V0915_PARALLEL_C_SDLC_WORKCELL_PROOF_PACKET_2026-06-14.md](../review/multi_agent_workcell/V0915_PARALLEL_C_SDLC_WORKCELL_PROOF_PACKET_2026-06-14.md)
 - Current overhead comparison:
   [MULTI_AGENT_OVERHEAD_COMPARISON_2026-06-14.md](../review/multi_agent_overhead/MULTI_AGENT_OVERHEAD_COMPARISON_2026-06-14.md)
+- Current disjoint-surface quality comparison:
+  [MULTI_AGENT_QUALITY_COMPARISON_2026-06-15.md](../review/multi_agent_quality_comparison/MULTI_AGENT_QUALITY_COMPARISON_2026-06-15.md)
 
 ## Template Rules
 
@@ -100,6 +102,15 @@ completed with empty watcher output. The `#3503` overhead comparison records
 that single-agent execution is preferred for tiny docs audits, while
 multi-agent remains useful for disjoint surfaces or review-quality tasks when
 the extra coordination cost is justified.
+
+The `#3724` follow-on proves bounded remote Gemma watcher usefulness on larger
+routes while preserving the historical empty-output truth from the older
+workcell packet. The `#3725` comparison then shows a stronger result than the
+tiny docs audit when the task is intentionally split across disjoint evidence
+surfaces: one combined single-agent baseline remained accurate, but a three-lane
+hosted multi-agent run returned comparable fact coverage faster in parallel
+while consuming the separate remote-Gemma proof as one of the reviewed source
+surfaces.
 
 Follow-on issue `#3724` now adds a bounded recovery proof for the remote watcher
 lane at
