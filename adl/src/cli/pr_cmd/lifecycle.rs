@@ -12,7 +12,7 @@ pub(crate) use reconciliation::{
     closeout_closed_completed_issue_bundle, ensure_canonical_output_is_local_only,
     ensure_closed_completed_issue_bundle_truth, matching_task_bundle_dirs,
     normalize_closed_completed_output_card, normalize_closed_completed_sip,
-    normalize_closed_completed_stp, reconcile_closed_completed_issue_bundle,
+    normalize_closed_completed_stp,
 };
 #[allow(unused_imports)]
 pub(crate) use transitions::{

@@ -3,20 +3,6 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
-#[allow(dead_code)]
-pub(crate) fn reconcile_closed_completed_issue_bundle(
-    repo_root: &Path,
-    issue_ref: &IssueRef,
-    canonical_output: &Path,
-) -> Result<()> {
-    reconcile_closed_completed_issue_bundle_with_recovery_sources(
-        repo_root,
-        issue_ref,
-        canonical_output,
-        &[],
-    )
-}
-
 fn reconcile_closed_completed_issue_bundle_with_recovery_sources(
     repo_root: &Path,
     issue_ref: &IssueRef,

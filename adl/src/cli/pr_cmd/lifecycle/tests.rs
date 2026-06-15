@@ -997,6 +997,80 @@ fn closeout_recovers_missing_primary_cards_from_bound_worktree_bundle() {
 }
 
 #[test]
+fn closeout_records_blocked_dirty_worktree_and_refuses_prune() {
+    let _guard = env_lock();
+    let _manifest_guard = set_tooling_manifest_root_to_workspace();
+    let temp = temp_dir("adl-pr-lifecycle-closeout-dirty-worktree");
+    let repo = temp.join("repo");
+    let origin = temp.join("origin.git");
+    init_repo_with_origin(&repo, &origin);
+    copy_prompt_templates(&repo);
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("write gitignore");
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "add",
+            ".gitignore"
+        ])
+        .status()
+        .expect("git add gitignore")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "commit",
+            "-q",
+            "-m",
+            "ignore local adl state",
+        ])
+        .status()
+        .expect("git commit gitignore")
+        .success());
+
+    let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+    let title = "PR Command Dirty Closeout";
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("source parent");
+    fs::write(
+        &source_path,
+        "## Summary\n\nDirty worktree closeout fixture.\n\n## Goal\n\nRefuse to prune a dirty worktree while recording closeout truth.\n\n## Required Outcome\n\n- closeout fails closed when the bound worktree is dirty\n\n## Deliverables\n\n- focused lifecycle regression test\n\n## Acceptance Criteria\n\n- dirty worktree is retained\n- canonical SOR records blocked dirty prune result\n\n## Repo Inputs\n\n- `adl/src/cli/pr_cmd/lifecycle/reconciliation.rs`\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- no broader closeout redesign\n\n## Issue-Graph Notes\n\n- regression fixture\n\n## Notes\n\n- local `.adl` state is ignored\n\n## Tooling Notes\n\n- focused lifecycle test\n",
+    )
+    .expect("write source");
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path).expect("cards");
+    let output = issue_ref.task_bundle_output_path(&repo);
+    fs::write(&output, issue_ref_sync_completed_output_content()).expect("write completed sor");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "worktree",
+            "add",
+            path_str(&worktree).expect("worktree path"),
+            "-b",
+            "codex/1410-canonical-slug",
+            "main",
+        ])
+        .status()
+        .expect("git worktree add")
+        .success());
+    fs::write(worktree.join("DIRTY.txt"), "dirty\n").expect("dirty marker");
+
+    let err = closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
+        .expect_err("dirty worktree should block pruning");
+
+    assert!(err.to_string().contains("refusing to prune dirty worktree"));
+    assert!(worktree.is_dir(), "dirty worktree should be retained");
+    let text = fs::read_to_string(&output).expect("read sor");
+    assert!(text.contains("- Worktree prune result: blocked_dirty: retained adl-wp-1410"));
+    assert!(text.contains("- Worktree-only paths remaining: issue worktree retained: adl-wp-1410"));
+}
+
+#[test]
 fn record_worktree_prune_result_inserts_result_line_after_worktree_only_value() {
     let temp = temp_dir("adl-pr-lifecycle-record-worktree-prune-result");
     let output = temp.join("sor.md");
