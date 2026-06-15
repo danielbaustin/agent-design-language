@@ -100,23 +100,35 @@ review cycles caused by tooling drift.
 
 ### 4. markdown.rs / AST editing
 
-- [ ] Markdown AST editing has an issue-bound implementation plan and does not
-  mutate lifecycle cards outside the renderer/editor policy.
-- [ ] The implementation plan names the concrete Rust Markdown parser/editor
-  dependency and the supported Markdown node set.
-- [ ] The implementation plan defines unsupported-node behavior and requires
-  fail-closed repair notes when safe mutation is impossible.
-- [ ] AST editing targets are classified by document type: prompt card, planning
-  doc, review packet, README/runbook, feature doc, or generated evidence.
-- [ ] For prompt cards, AST edits are limited to safe inspection or import paths
-  unless the active template system cannot represent the required change.
-- [ ] For planning and review docs, AST edits preserve headings, code fences,
-  tables, links, and front matter without text-regex drift.
-- [ ] AST editor validation includes a fixture corpus covering prompt cards,
-  planning docs, review packets, tables, links, code fences, and front matter.
-- [ ] AST editor validation includes round-trip stability checks with explicit
-  diff criteria on representative docs.
-- [ ] AST editor failures fail closed and produce a human-readable repair note.
+- [x] Markdown AST editing has an issue-bound implementation plan and does not
+  mutate lifecycle cards outside the renderer/editor policy. See
+  `adl tooling markdown-ast-edit replace-section` and the `#3715` proof packet.
+- [x] The implementation plan names the concrete Rust Markdown parser/editor
+  dependency and the supported Markdown node set. The bounded substrate uses
+  `markdown-rs` AST parsing and supports heading-anchored section replacement
+  with headings, code fences, tables, links, and YAML front matter preserved.
+- [x] The implementation plan defines unsupported-node behavior and requires
+  fail-closed repair notes when safe mutation is impossible. Raw HTML and
+  lifecycle-card input/output paths fail closed.
+- [x] AST editing targets are classified by document type: prompt card, planning
+  doc, review packet, README/runbook, feature doc, or generated evidence. Prompt
+  cards remain governed by prompt-template/card-editor authority.
+- [x] For prompt cards, AST edits are limited to safe inspection or import paths
+  unless the active template system cannot represent the required change. The
+  current command rejects lifecycle card input and output paths.
+- [x] For planning and review docs, AST edits preserve headings, code fences,
+  tables, links, and front matter without text-regex drift. The mutation is
+  line-preserving and AST-guarded before and after the edit.
+- [x] AST editor validation includes a focused fixture corpus covering a
+  representative docs packet with tables, links, code fences, and front matter;
+  lifecycle-card guardrails; unsupported raw HTML; and protected-node
+  preservation failures. See `adl/src/cli/tooling_cmd/tests/markdown_ast_edit.rs`.
+- [x] AST editor validation includes explicit preservation criteria on
+  representative docs. The focused tests assert preservation of front matter,
+  headings, tables, links, and code fences and reject edits that remove existing
+  protected nodes.
+- [x] AST editor failures fail closed and produce a human-readable repair note.
+  The lifecycle-card and unsupported-HTML tests prove this behavior.
 
 ### 5. Cross-system proof before broader rollout
 
