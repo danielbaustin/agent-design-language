@@ -1,0 +1,102 @@
+{
+  "schema_version": "adl.observatory.event_stream_example.v1",
+  "issue_ref": "#3710",
+  "purpose": "bounded observatory consumption example",
+  "claim_boundary": "Example projection only. The source artifacts remain authoritative.",
+  "events": [
+    {
+      "schema": "adl.observability.event.v1",
+      "timestamp": "2026-06-15T21:29:52Z",
+      "source_kind": "control_plane",
+      "component": "control_plane",
+      "stage": "doctor",
+      "result": "started",
+      "severity": "info",
+      "issue_ref": "#3707",
+      "redaction_view": "operator",
+      "artifact_refs": [
+        ".adl/v0.91.5/tasks/issue-3707__v0-91-5-logging-mini-sprint-unify-runtime-and-provider-action-logging/sor.md"
+      ],
+      "display_bucket": "progress",
+      "display_summary": "Issue doctor started for #3707."
+    },
+    {
+      "schema": "provider_communication.v1",
+      "timestamp": "2026-06-15T21:36:24Z",
+      "source_kind": "provider_log",
+      "component": "provider",
+      "stage": "provider_call",
+      "result": "heartbeat",
+      "severity": "info",
+      "issue_ref": "#3707",
+      "run_id": "run-logging-001",
+      "request_id": "req-provider-001",
+      "provider_ref": "openrouter",
+      "provider_model_id": "google/gemini-2.5-flash-lite",
+      "runtime_surface": "hosted_api",
+      "redaction_view": "operator",
+      "artifact_refs": [
+        "artifacts/run-logging-001/logs/provider_run.jsonl"
+      ],
+      "display_bucket": "progress",
+      "display_summary": "Provider call is still active; operator should inspect the provider run log before treating the command as wedged."
+    },
+    {
+      "schema": "provider_communication.v1",
+      "timestamp": "2026-06-15T21:36:57Z",
+      "source_kind": "provider_log",
+      "component": "provider",
+      "stage": "provider_call",
+      "result": "timeout",
+      "severity": "warning",
+      "issue_ref": "#3708",
+      "run_id": "run-logging-002",
+      "request_id": "req-provider-002",
+      "provider_ref": "openrouter",
+      "provider_model_id": "anthropic/claude-3.5-haiku",
+      "runtime_surface": "hosted_api",
+      "reason_code": "provider_timeout",
+      "redaction_view": "operator",
+      "artifact_refs": [
+        "artifacts/run-logging-002/logs/provider_run.jsonl"
+      ],
+      "display_bucket": "attention",
+      "display_summary": "Provider timed out; show retry guidance and the governed log ref."
+    },
+    {
+      "schema": "adl.long_lived_agent_operator_event.v1",
+      "timestamp": "2026-06-15T21:37:10Z",
+      "source_kind": "long_lived_agent",
+      "component": "long_lived_agent",
+      "stage": "cycle",
+      "result": "completed",
+      "severity": "info",
+      "run_id": "run-agent-001",
+      "cycle_id": "cycle-0004",
+      "agent_instance_id": "agent-001",
+      "redaction_view": "reviewer",
+      "artifact_refs": [
+        "artifacts/run-agent-001/operator_events.jsonl",
+        "artifacts/run-agent-001/cycle_ledger.jsonl"
+      ],
+      "display_bucket": "completed",
+      "display_summary": "Long-lived cycle completed with durable ledger refs available for review."
+    },
+    {
+      "schema": "trace.v2",
+      "timestamp": "2026-06-15T21:37:19Z",
+      "source_kind": "trace_projection",
+      "component": "observability",
+      "stage": "projection",
+      "result": "recorded",
+      "severity": "info",
+      "run_id": "run-agent-001",
+      "artifact_refs": [
+        "artifacts/run-agent-001/logs/trace_v1.json"
+      ],
+      "redaction_view": "public_report_view",
+      "display_bucket": "completed",
+      "display_summary": "Public report view shows only the redacted Observatory projection and trace reference, never private-state payloads."
+    }
+  ]
+}
