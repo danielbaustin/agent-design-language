@@ -2,14 +2,17 @@
 
 Date: 2026-06-14
 Milestone: v0.91.5
-Primary issue: #3697
-Primary PR: #3702
-Status: coordination checklist for open PR review
+Origin issue: #3697
+Origin PR: #3702
+Current sprint: #3717
+Current evidence update: #3713
+Status: coordination checklist for staged follow-up proof
 
 This document is not proof that the integrated system is complete. Checked
-items mean the current #3697 branch or existing milestone evidence reports that
-the item is covered for the named slice. They remain subject to code review,
-CI, PR merge truth, and later end-to-end proof.
+items mean merged milestone evidence, the original #3697/#3702 slice, or a
+tracked follow-up issue reports that the item is covered for the named slice.
+They remain subject to code review, CI, PR merge truth, and later end-to-end
+proof.
 
 ## Purpose
 
@@ -41,9 +44,9 @@ review cycles caused by tooling drift.
 ### 1. GitHub transport and octocrab
 
 - [x] Rust GitHub client boundary exists and supports octocrab token-based API use
-  in the current #3697 branch.
+  in the original #3697/#3702 slice.
 - [x] Issue metadata reads have octocrab-backed paths for covered workflow cases
-  in the current #3697 branch.
+  in the original #3697/#3702 slice.
 - [x] PR creation/edit/ready/merge paths have octocrab-backed implementations for
   covered workflow cases.
 - [x] PR closing-linkage check uses a GitHub API path rather than shelling out to
@@ -62,9 +65,10 @@ review cycles caused by tooling drift.
 - [x] `adl-csdlc` is the target owner for typed C-SDLC workflow operations.
 - [x] Shell wrappers are treated as compatibility delegates, not the long-term
   source of workflow truth.
-- [ ] Every surviving shell wrapper has one of these statuses: delegated to
+- [x] Every surviving shell wrapper has one of these statuses: delegated to
   `adl-csdlc`, local-only utility, explicit fail-closed gap, or scheduled for
-  removal.
+  removal. See [SHELL_WRAPPER_INVENTORY_SUMMARY_3713.md](SHELL_WRAPPER_INVENTORY_SUMMARY_3713.md)
+  and [SHELL_WRAPPER_INVENTORY_3713.tsv](SHELL_WRAPPER_INVENTORY_3713.tsv).
 - [ ] Operator-facing docs describe the Rust command path first and shell wrappers
   second.
 - [ ] Validation lanes distinguish command-surface behavior from wrapper behavior.
