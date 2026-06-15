@@ -10,8 +10,8 @@ title: "<title>"
 branch: "<branch>"
 generated_at: "<timestamp>"
 card_status: "<card_status>"
-status: "draft"
-activation_state: "draft"
+status: "<status>"
+activation_state: "<activation_state>"
 plan_revision: 1
 source_refs:
   - kind: "issue"

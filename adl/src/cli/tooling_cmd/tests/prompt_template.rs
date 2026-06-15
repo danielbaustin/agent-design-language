@@ -223,6 +223,96 @@ fn prompt_template_cli_edits_declared_values_and_fails_closed() {
 }
 
 #[test]
+fn prompt_template_cli_edits_spp_lifecycle_status_values() {
+    let repo = TempRepo::new("prompt-template-edit-spp-lifecycle");
+    let values_dir = repo.path().join("values");
+    let edited_values = repo.path().join("edited-spp.values.yaml");
+    let rendered = repo.path().join("edited-spp.md");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "write-sample-values".to_string(),
+        "--out-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+    ])
+    .expect("write sample values");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--values".to_string(),
+        values_dir
+            .join("spp.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+        "--set".to_string(),
+        "card_status=approved".to_string(),
+        "--set".to_string(),
+        "status=approved".to_string(),
+        "--set".to_string(),
+        "activation_state=approved".to_string(),
+        "--out".to_string(),
+        edited_values.to_string_lossy().to_string(),
+    ])
+    .expect("edit-values should update SPP lifecycle fields");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "render".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--values".to_string(),
+        edited_values.to_string_lossy().to_string(),
+        "--out".to_string(),
+        rendered.to_string_lossy().to_string(),
+    ])
+    .expect("edited SPP values should render");
+
+    let rendered_text = fs::read_to_string(&rendered).expect("rendered SPP");
+    assert!(rendered_text.contains("card_status: \"approved\""));
+    assert!(rendered_text.contains("status: \"approved\""));
+    assert!(rendered_text.contains("activation_state: \"approved\""));
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "validate-structure".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        rendered.to_string_lossy().to_string(),
+    ])
+    .expect("edited SPP structure should validate");
+
+    let invalid = real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--values".to_string(),
+        values_dir
+            .join("spp.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+        "--set".to_string(),
+        "activation_state=design_time_ready".to_string(),
+    ])
+    .expect_err("invalid SPP lifecycle value should fail closed");
+    assert!(invalid
+        .to_string()
+        .contains("spp.activation_state must be one of"));
+}
+
+#[test]
 fn prompt_template_cli_imports_values_and_round_trips_rendered_card() {
     let repo = TempRepo::new("prompt-template-import-values");
     let values_dir = repo.path().join("values");

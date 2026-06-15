@@ -70,6 +70,7 @@ const PLACEHOLDERS: &[&str] = &[
     "validation_plan_inline",
     "notes_risks_inline",
     "status",
+    "activation_state",
     "timestamp",
     "branch_action",
     "findings_status",
@@ -227,7 +228,7 @@ pub fn render_sample_card(repo_root: &Path, kind: PromptCardKind) -> Result<Stri
         .iter()
         .find(|card| card.kind == kind)
         .ok_or_else(|| anyhow!("missing card model for {}", kind.key()))?;
-    let values = sample_values();
+    let values = sample_values_for_kind(kind);
     validate_values(card, &values)?;
     let rendered = render_template(&card.template, &values)?;
     validate_rendered_card_structure_from_repo(repo_root, card, &rendered)?;
@@ -1576,6 +1577,7 @@ pub fn sample_values() -> BTreeMap<String, String> {
             "Use Rust-generated metadata as the browser model.",
         ),
         ("status", "NOT_STARTED"),
+        ("activation_state", "draft"),
         ("timestamp", "2026-05-23T00:00:00Z"),
         (
             "branch_action",
@@ -1585,6 +1587,15 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ("recommended_outcome", "not_run"),
     ] {
         values.insert(key.to_string(), value.to_string());
+    }
+    values
+}
+
+fn sample_values_for_kind(kind: PromptCardKind) -> BTreeMap<String, String> {
+    let mut values = sample_values();
+    if kind == PromptCardKind::Spp {
+        values.insert("status".to_string(), "draft".to_string());
+        values.insert("activation_state".to_string(), "draft".to_string());
     }
     values
 }
@@ -1796,6 +1807,27 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
             ));
         }
         PromptCardKind::Spp => {
+            fields.push(select(
+                "card_status",
+                "Card Status",
+                true,
+                "SPP lifecycle card status.",
+                CARD_STATUS_VALUES,
+            ));
+            fields.push(select(
+                "status",
+                "Status",
+                true,
+                "SPP frontmatter lifecycle status.",
+                CARD_STATUS_VALUES,
+            ));
+            fields.push(select(
+                "activation_state",
+                "Activation State",
+                true,
+                "SPP execution-readiness lifecycle state.",
+                CARD_STATUS_VALUES,
+            ));
             fields.push(read_only_textarea(
                 "stp_card",
                 "STP Card",
