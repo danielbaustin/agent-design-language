@@ -65,6 +65,13 @@ docs audit because the work is intentionally split across disjoint evidence
 surfaces. The single-agent path remained accurate, but the multi-agent lanes
 returned comparable fact coverage faster when run concurrently.
 
+## Reliability Gate
+
+The comparison runner fails closed unless every required model lane returns
+`useful_output` against its lane-local contract before tracked outputs, state,
+or this packet are refreshed. This applies equally to the single-agent baseline
+and all multi-agent lanes, regardless of provider or model family.
+
 ## Quality Notes
 
 - The single-agent baseline remained reviewable and source-grounded.

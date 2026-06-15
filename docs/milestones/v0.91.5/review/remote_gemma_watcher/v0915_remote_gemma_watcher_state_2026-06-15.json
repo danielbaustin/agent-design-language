@@ -21,7 +21,7 @@
       "gemma4:e4b",
       "gemma4:latest"
     ],
-    "tags_snapshot_path": "docs/milestones/v0.91.5/review/remote_gemma_watcher/artifacts/ollama_tags_snapshot.json"
+    "tags_snapshot_policy": "local_only_not_tracked"
   },
   "lanes": [
     {
@@ -31,10 +31,6 @@
       "status": "useful_output",
       "duration_seconds": 13.071,
       "output_path": "docs/milestones/v0.91.5/review/remote_gemma_watcher/lane_outputs/adapter_gemma4_31b.md",
-      "artifact_paths": [
-        "docs/milestones/v0.91.5/review/remote_gemma_watcher/artifacts/adapter_gemma4_31b_result.json",
-        "docs/milestones/v0.91.5/review/remote_gemma_watcher/artifacts/adapter_gemma4_31b_adapter.log"
-      ],
       "notes": []
     },
     {
@@ -44,9 +40,6 @@
       "status": "useful_output",
       "duration_seconds": 22.83,
       "output_path": "docs/milestones/v0.91.5/review/remote_gemma_watcher/lane_outputs/raw_gemma4_26b.md",
-      "artifact_paths": [
-        "docs/milestones/v0.91.5/review/remote_gemma_watcher/artifacts/raw_gemma4_26b_response.json"
-      ],
       "notes": []
     },
     {
@@ -56,9 +49,6 @@
       "status": "useful_output",
       "duration_seconds": 8.993,
       "output_path": "docs/milestones/v0.91.5/review/remote_gemma_watcher/lane_outputs/raw_gemma4_e4b.md",
-      "artifact_paths": [
-        "docs/milestones/v0.91.5/review/remote_gemma_watcher/artifacts/raw_gemma4_e4b_response.json"
-      ],
       "notes": []
     }
   ],
@@ -69,6 +59,9 @@
       "gemma4:e4b"
     ],
     "primary_proving_lane": "adapter_gemma4_31b",
+    "primary_required_status": "useful_output",
+    "minimum_useful_lanes": 2,
+    "reliability_gate": "passed",
     "disposition": "useful_with_limits"
   }
 }

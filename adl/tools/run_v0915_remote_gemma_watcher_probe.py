@@ -21,7 +21,7 @@ RUN_ID = "v0915-remote-gemma-watcher-20260615"
 STATE_SCHEMA = "adl.remote_gemma_watcher_probe.v1"
 PACKET_DIR = PurePosixPath("docs/milestones/v0.91.5/review/remote_gemma_watcher")
 LANE_OUTPUT_DIR = PACKET_DIR / "lane_outputs"
-ARTIFACT_DIR = PACKET_DIR / "artifacts"
+LOCAL_ARTIFACT_DIR = PurePosixPath(".adl/reports/v0.91.5/remote_gemma_watcher/artifacts")
 STATE_PATH = PACKET_DIR / "v0915_remote_gemma_watcher_state_2026-06-15.json"
 PACKET_PATH = PACKET_DIR / "REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md"
 HISTORICAL_EMPTY_OUTPUT = PurePosixPath(
@@ -41,6 +41,8 @@ REQUIRED_CONTEXT_SNIPPETS = (
     "historical empty output",
     "non-empty",
 )
+PRIMARY_PROVING_LANE = "adapter_gemma4_31b"
+MIN_USEFUL_LANES = 2
 PROBE_REQUEST = """You are evaluating remote Gemma watcher usefulness for issue #3724.
 Read this bounded context:
 - repo: agent-design-language
@@ -70,7 +72,6 @@ class LaneResult:
     status: str
     duration_seconds: float
     output_path: PurePosixPath
-    artifact_paths: list[PurePosixPath]
     output_text: str
     notes: list[str]
 
@@ -155,8 +156,7 @@ def run_raw_lane(model: str, output_name: str, artifact_name: str) -> LaneResult
     output_text = str(response.get("response", "") or "")
     status, notes = classify_output(output_text)
     output_path = LANE_OUTPUT_DIR / output_name
-    artifact_path = ARTIFACT_DIR / artifact_name
-    write_text(output_path, output_text.rstrip() + "\n")
+    artifact_path = LOCAL_ARTIFACT_DIR / artifact_name
     write_json(artifact_path, response)
     return LaneResult(
         lane_id=output_name.removesuffix(".md"),
@@ -165,7 +165,6 @@ def run_raw_lane(model: str, output_name: str, artifact_name: str) -> LaneResult
         status=status,
         duration_seconds=duration,
         output_path=output_path,
-        artifact_paths=[artifact_path],
         output_text=output_text,
         notes=notes,
     )
@@ -238,9 +237,8 @@ def run_adapter_lane(adapter_bin: Path, model: str, output_name: str) -> LaneRes
             status = "failed"
             notes.append(f"provider final_status={result.get('final_status')}")
         output_path = LANE_OUTPUT_DIR / output_name
-        result_artifact = ARTIFACT_DIR / output_name.replace(".md", "_result.json")
-        log_artifact = ARTIFACT_DIR / output_name.replace(".md", "_adapter.log")
-        write_text(output_path, output_text.rstrip() + "\n")
+        result_artifact = LOCAL_ARTIFACT_DIR / output_name.replace(".md", "_result.json")
+        log_artifact = LOCAL_ARTIFACT_DIR / output_name.replace(".md", "_adapter.log")
         write_json(result_artifact, result)
         write_text(log_artifact, log_path.read_text(encoding="utf-8"))
         return LaneResult(
@@ -250,7 +248,6 @@ def run_adapter_lane(adapter_bin: Path, model: str, output_name: str) -> LaneRes
             status=status,
             duration_seconds=duration,
             output_path=output_path,
-            artifact_paths=[result_artifact, log_artifact],
             output_text=output_text,
             notes=notes,
         )
@@ -279,7 +276,7 @@ def build_state(tags: dict[str, object], lanes: list[LaneResult]) -> dict[str, o
         "inventory": {
             "model_count": len(tags.get("models", [])),
             "gemma_models": gemma_models,
-            "tags_snapshot_path": (ARTIFACT_DIR / "ollama_tags_snapshot.json").as_posix(),
+            "tags_snapshot_policy": "local_only_not_tracked",
         },
         "lanes": [
             {
@@ -289,17 +286,33 @@ def build_state(tags: dict[str, object], lanes: list[LaneResult]) -> dict[str, o
                 "status": lane.status,
                 "duration_seconds": round(lane.duration_seconds, 3),
                 "output_path": lane.output_path.as_posix(),
-                "artifact_paths": [path.as_posix() for path in lane.artifact_paths],
                 "notes": lane.notes,
             }
             for lane in lanes
         ],
         "summary": {
             "useful_models": [lane.model for lane in lanes if lane.status == "useful_output"],
-            "primary_proving_lane": "adapter_gemma4_31b",
+            "primary_proving_lane": PRIMARY_PROVING_LANE,
+            "primary_required_status": "useful_output",
+            "minimum_useful_lanes": MIN_USEFUL_LANES,
+            "reliability_gate": "passed",
             "disposition": "useful_with_limits",
         },
     }
+
+
+def enforce_reliability_gate(lanes: list[LaneResult]) -> None:
+    by_lane = {lane.lane_id: lane for lane in lanes}
+    primary = by_lane.get(PRIMARY_PROVING_LANE)
+    if primary is None:
+        fail(f"missing primary Gemma proving lane: {PRIMARY_PROVING_LANE}")
+    if primary.status != "useful_output":
+        notes = "; ".join(primary.notes) if primary.notes else "no notes"
+        fail(f"{PRIMARY_PROVING_LANE} did not produce useful output: {primary.status}; {notes}")
+    useful = [lane for lane in lanes if lane.status == "useful_output"]
+    if len(useful) < MIN_USEFUL_LANES:
+        statuses = ", ".join(f"{lane.lane_id}={lane.status}" for lane in lanes)
+        fail(f"Gemma reliability gate requires at least {MIN_USEFUL_LANES} useful lanes; observed {statuses}")
 
 
 def packet_text(state: dict[str, object], lanes: list[LaneResult]) -> str:
@@ -360,6 +373,14 @@ markdown with the required watcher headings and the exact phrase
 
 Secondary useful routes also returned structured watcher text: {useful_models}.
 
+## Reliability Gate
+
+This runner fails closed unless `{PRIMARY_PROVING_LANE}` returns
+`useful_output` through the ADL provider adapter and at least
+`{MIN_USEFUL_LANES}` Gemma lanes return useful structured watcher text. Smaller
+or historically weak routes such as `gemma4:e2b` are not promoted as reliable
+watcher lanes by this proof.
+
 ## Disposition
 
 Remote Gemma watcher usefulness is now **proven in a bounded way** for short,
@@ -389,7 +410,7 @@ structured watcher prompts on larger Gemma4 routes. The lane remains
 
 def main() -> None:
     tags = fetch_tags_snapshot()
-    write_json(ARTIFACT_DIR / "ollama_tags_snapshot.json", tags)
+    write_json(LOCAL_ARTIFACT_DIR / "ollama_tags_snapshot.json", tags)
     for model in ("gemma4:31b", "gemma4:26b", "gemma4:e4b"):
         ensure_model_present(tags, model)
     adapter_bin = build_adapter()
@@ -398,6 +419,9 @@ def main() -> None:
         run_raw_lane("gemma4:26b", "raw_gemma4_26b.md", "raw_gemma4_26b_response.json"),
         run_raw_lane("gemma4:e4b", "raw_gemma4_e4b.md", "raw_gemma4_e4b_response.json"),
     ]
+    enforce_reliability_gate(lanes)
+    for lane in lanes:
+        write_text(lane.output_path, lane.output_text.rstrip() + "\n")
     state = build_state(tags, lanes)
     write_json(STATE_PATH, state)
     write_text(PACKET_PATH, packet_text(state, lanes))

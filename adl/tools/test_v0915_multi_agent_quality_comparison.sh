@@ -58,6 +58,23 @@ if python3 "$validator" "$tmpdir/bad_summary" >"$tmpdir/bad_summary.out" 2>"$tmp
 fi
 grep -Fq 'better comparison requires multi-agent parallel duration to be lower than single-agent duration' "$tmpdir/bad_summary.err"
 
+cp -R "$packet_dir" "$tmpdir/missing_reliability_gate"
+python3 - "$tmpdir/missing_reliability_gate/$state_name" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text())
+data["summary"].pop("reliability_gate", None)
+path.write_text(json.dumps(data, indent=2) + "\n")
+PY
+if python3 "$validator" "$tmpdir/missing_reliability_gate" >"$tmpdir/missing_reliability_gate.out" 2>"$tmpdir/missing_reliability_gate.err"; then
+  echo "assertion failed: missing reliability gate fixture unexpectedly validated" >&2
+  exit 1
+fi
+grep -Fq 'summary.reliability_gate must be passed' "$tmpdir/missing_reliability_gate.err"
+
 cp -R "$packet_dir" "$tmpdir/bad_packet"
 python3 - "$tmpdir/bad_packet/$packet_name" <<'PY'
 import sys
@@ -71,5 +88,35 @@ if python3 "$validator" "$tmpdir/bad_packet" >"$tmpdir/bad_packet.out" 2>"$tmpdi
   exit 1
 fi
 grep -Fq 'packet missing required text: Status: `better`' "$tmpdir/bad_packet.err"
+
+cp -R "$packet_dir" "$tmpdir/local_artifact_ref"
+python3 - "$tmpdir/local_artifact_ref/$state_name" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text())
+data["single_agent"]["artifact_paths"] = [
+    "docs/milestones/v0.91.5/review/multi_agent_quality_comparison/artifacts/single_agent_response.json"
+]
+data["multi_agent"]["lanes"][0]["artifact_paths"] = [
+    "docs/milestones/v0.91.5/review/multi_agent_quality_comparison/artifacts/lane_response.json"
+]
+path.write_text(json.dumps(data, indent=2) + "\n")
+PY
+if python3 "$validator" "$tmpdir/local_artifact_ref" >"$tmpdir/local_artifact_ref.out" 2>"$tmpdir/local_artifact_ref.err"; then
+  echo "assertion failed: local artifact reference fixture unexpectedly validated" >&2
+  exit 1
+fi
+grep -Fq 'single_agent must not require local-only artifact_paths in tracked state' "$tmpdir/local_artifact_ref.err"
+
+cp -R "$packet_dir" "$tmpdir/extra_lane_output"
+printf '# stale output\n' >"$tmpdir/extra_lane_output/lane_outputs/unreferenced_model_lane.md"
+if python3 "$validator" "$tmpdir/extra_lane_output" >"$tmpdir/extra_lane_output.out" 2>"$tmpdir/extra_lane_output.err"; then
+  echo "assertion failed: extra lane output fixture unexpectedly validated" >&2
+  exit 1
+fi
+grep -Fq 'unreferenced lane output files present:' "$tmpdir/extra_lane_output.err"
 
 echo "PASS test_v0915_multi_agent_quality_comparison"

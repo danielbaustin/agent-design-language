@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 
@@ -53,6 +54,18 @@ MULTI_EXPECTED = {
         ),
     },
 }
+REQUIRED_LANE_STATUS = "useful_output"
+RELIABILITY_GATE_POLICY = "all_required_model_lanes_useful"
+UPSTREAM_VALIDATORS = {
+    "openrouter": (
+        "adl/tools/validate_v0915_openrouter_matrix.py",
+        "docs/milestones/v0.91.5/review/openrouter_matrix",
+    ),
+    "remote_gemma": (
+        "adl/tools/validate_v0915_remote_gemma_watcher_probe.py",
+        "docs/milestones/v0.91.5/review/remote_gemma_watcher",
+    ),
+}
 
 
 def fail(message: str) -> None:
@@ -94,6 +107,29 @@ def validate_markdown_output(path: Path, headings: tuple[str, ...], snippets: tu
             fail(f"{label} missing snippet: {snippet}")
 
 
+def validate_upstream_packets(repo_root: Path) -> None:
+    for key, (script, packet_dir) in UPSTREAM_VALIDATORS.items():
+        result = subprocess.run(
+            [sys.executable, script, packet_dir],
+            cwd=repo_root,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            detail = (result.stderr or result.stdout).strip()
+            fail(f"source packet validator failed for {key}: {detail}")
+
+
+def validate_no_unreferenced_lane_outputs(packet_dir: Path, expected_paths: set[PurePosixPath]) -> None:
+    lane_dir = packet_dir / "lane_outputs"
+    expected_names = {path.name for path in expected_paths}
+    found_names = {path.name for path in lane_dir.glob("*.md")}
+    extra = sorted(found_names - expected_names)
+    if extra:
+        fail("unreferenced lane output files present: " + ", ".join(extra))
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         fail("usage: validate_v0915_multi_agent_quality_comparison.py <packet-dir>")
@@ -115,6 +151,9 @@ def main() -> None:
         "multi-agent OpenAI provider lane",
         "multi-agent Claude overhead lane",
         "multi-agent Gemini watcher lane",
+        "## Reliability Gate",
+        "fails closed",
+        "regardless of provider or model family",
         "does not claim multi-agent is superior",
     ):
         if snippet not in packet_text:
@@ -127,6 +166,7 @@ def main() -> None:
         fail(f"state schema_version must be {EXPECTED_SCHEMA}")
     if state.get("issue_number") != 3725:
         fail("state issue_number must be 3725")
+    validate_upstream_packets(repo_root)
 
     source_packets = state.get("source_packets")
     if not isinstance(source_packets, dict):
@@ -140,9 +180,12 @@ def main() -> None:
     single = state.get("single_agent")
     if not isinstance(single, dict):
         fail("single_agent must be an object")
-    if single.get("status") != "useful_output":
-        fail("single_agent.status must be useful_output")
+    if single.get("status") != REQUIRED_LANE_STATUS:
+        fail(f"single_agent.status must be {REQUIRED_LANE_STATUS}")
+    if "artifact_paths" in single:
+        fail("single_agent must not require local-only artifact_paths in tracked state")
     single_output = expect_relative_path(str(single.get("output_path", "")), "single_agent.output_path")
+    referenced_outputs = {single_output}
     validate_markdown_output(repo_root / single_output, SINGLE_REQUIRED_HEADINGS, SINGLE_REQUIRED_SNIPPETS, "single_agent output")
     single_duration = single.get("duration_seconds")
     if not isinstance(single_duration, (int, float)) or single_duration <= 0:
@@ -172,18 +215,28 @@ def main() -> None:
             fail(f"{lane_id}.model must be {expected['model']}")
         if lane.get("execution_surface") != expected["execution_surface"]:
             fail(f"{lane_id}.execution_surface must be {expected['execution_surface']}")
-        if lane.get("status") != "useful_output":
-            fail(f"{lane_id}.status must be useful_output")
+        if lane.get("status") != REQUIRED_LANE_STATUS:
+            fail(f"{lane_id}.status must be {REQUIRED_LANE_STATUS}")
+        if "artifact_paths" in lane:
+            fail(f"{lane_id} must not require local-only artifact_paths in tracked state")
         output_path = expect_relative_path(str(lane.get("output_path", "")), f"{lane_id}.output_path")
+        referenced_outputs.add(output_path)
         validate_markdown_output(repo_root / output_path, ("# Status", "# Signal", "# Next-Step"), expected["snippets"], lane_id)
     if seen != set(MULTI_EXPECTED):
         fail("missing one or more expected multi-agent lanes")
+    validate_no_unreferenced_lane_outputs(packet_dir, referenced_outputs)
 
     summary = state.get("summary")
     if not isinstance(summary, dict):
         fail("summary must be an object")
     if summary.get("comparison_result") != "better":
         fail("summary.comparison_result must be better")
+    if summary.get("reliability_gate") != "passed":
+        fail("summary.reliability_gate must be passed")
+    if summary.get("reliability_gate_policy") != RELIABILITY_GATE_POLICY:
+        fail(f"summary.reliability_gate_policy must be {RELIABILITY_GATE_POLICY}")
+    if summary.get("required_lane_status") != REQUIRED_LANE_STATUS:
+        fail(f"summary.required_lane_status must be {REQUIRED_LANE_STATUS}")
     if summary.get("task_shape") != "disjoint_multi_surface_evidence_review":
         fail("summary.task_shape must preserve the disjoint-surface comparison truth")
     multi_summary = summary.get("multi_agent_parallel_duration_seconds")

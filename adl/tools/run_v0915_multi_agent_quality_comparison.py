@@ -18,7 +18,7 @@ RUN_ID = "v0915-multi-agent-quality-comparison-20260615"
 STATE_SCHEMA = "adl.multi_agent_quality_comparison.v1"
 PACKET_DIR = PurePosixPath("docs/milestones/v0.91.5/review/multi_agent_quality_comparison")
 LANE_OUTPUT_DIR = PACKET_DIR / "lane_outputs"
-ARTIFACT_DIR = PACKET_DIR / "artifacts"
+LOCAL_ARTIFACT_DIR = PurePosixPath(".adl/reports/v0.91.5/multi_agent_quality_comparison/artifacts")
 STATE_PATH = PACKET_DIR / "v0915_multi_agent_quality_comparison_state_2026-06-15.json"
 PACKET_PATH = PACKET_DIR / "MULTI_AGENT_QUALITY_COMPARISON_2026-06-15.md"
 OPENROUTER_KEY_FILE = Path.home() / "keys" / "openrouter.key"
@@ -62,6 +62,8 @@ SINGLE_REQUIRED_SNIPPETS = (
     "faster only for raw lane execution",
 )
 MULTI_REQUIRED_HEADINGS = ("# Status", "# Signal", "# Next-Step")
+REQUIRED_LANE_STATUS = "useful_output"
+RELIABILITY_GATE_POLICY = "all_required_model_lanes_useful"
 LANE_SPECS = {
     "multi_agent_provider_openai_gpt4o_mini": {
         "source_key": "openrouter",
@@ -140,7 +142,6 @@ class LaneResult:
     duration_seconds: float
     output_text: str
     output_path: PurePosixPath
-    artifact_paths: list[PurePosixPath]
     status: str
     missing_snippets: list[str]
 
@@ -251,8 +252,7 @@ def run_single_agent(source_texts: dict[str, str], openrouter_key: str) -> LaneR
         fail("unexpected single-agent OpenRouter response shape")
     output_text = str(response["choices"][0]["message"]["content"])
     output_path = LANE_OUTPUT_DIR / "single_agent_openrouter_deepseek_v4_flash.md"
-    artifact_path = ARTIFACT_DIR / "single_agent_openrouter_deepseek_v4_flash_response.json"
-    write_text(output_path, output_text.rstrip() + "\n")
+    artifact_path = LOCAL_ARTIFACT_DIR / "single_agent_openrouter_deepseek_v4_flash_response.json"
     write_json(artifact_path, response)
     status, missing = classify_output(output_text, SINGLE_REQUIRED_HEADINGS, SINGLE_REQUIRED_SNIPPETS)
     verdict = output_text.lower().split("# verdict", 1)[-1]
@@ -267,7 +267,6 @@ def run_single_agent(source_texts: dict[str, str], openrouter_key: str) -> LaneR
         duration_seconds=duration,
         output_text=output_text,
         output_path=output_path,
-        artifact_paths=[artifact_path],
         status=status,
         missing_snippets=missing,
     )
@@ -300,8 +299,7 @@ def run_multi_lane(lane_id: str, source_texts: dict[str, str], openrouter_key: s
         fail(f"unsupported provider for {lane_id}: {spec['provider']}")
     duration = time.perf_counter() - start
     output_path = LANE_OUTPUT_DIR / f"{lane_id}.md"
-    artifact_path = ARTIFACT_DIR / f"{lane_id}_response.json"
-    write_text(output_path, output_text.rstrip() + "\n")
+    artifact_path = LOCAL_ARTIFACT_DIR / f"{lane_id}_response.json"
     write_json(artifact_path, response)
     status, missing = classify_output(output_text, MULTI_REQUIRED_HEADINGS, spec["required_snippets"])
     return LaneResult(
@@ -312,7 +310,6 @@ def run_multi_lane(lane_id: str, source_texts: dict[str, str], openrouter_key: s
         duration_seconds=duration,
         output_text=output_text,
         output_path=output_path,
-        artifact_paths=[artifact_path],
         status=status,
         missing_snippets=missing,
     )
@@ -341,7 +338,6 @@ def build_state(single: LaneResult, multi_lanes: list[LaneResult]) -> dict[str, 
             "duration_seconds": round(single.duration_seconds, 3),
             "status": single.status,
             "output_path": single.output_path.as_posix(),
-            "artifact_paths": [path.as_posix() for path in single.artifact_paths],
             "missing_snippets": single.missing_snippets,
         },
         "multi_agent": {
@@ -355,7 +351,6 @@ def build_state(single: LaneResult, multi_lanes: list[LaneResult]) -> dict[str, 
                     "duration_seconds": round(lane.duration_seconds, 3),
                     "status": lane.status,
                     "output_path": lane.output_path.as_posix(),
-                    "artifact_paths": [path.as_posix() for path in lane.artifact_paths],
                     "missing_snippets": lane.missing_snippets,
                 }
                 for lane in multi_lanes
@@ -363,6 +358,9 @@ def build_state(single: LaneResult, multi_lanes: list[LaneResult]) -> dict[str, 
         },
         "summary": {
             "comparison_result": comparison_result,
+            "reliability_gate": "passed",
+            "reliability_gate_policy": RELIABILITY_GATE_POLICY,
+            "required_lane_status": REQUIRED_LANE_STATUS,
             "single_agent_duration_seconds": round(single.duration_seconds, 3),
             "multi_agent_parallel_duration_seconds": round(multi_parallel_duration, 3),
             "duration_ratio": round(multi_parallel_duration / single.duration_seconds, 3),
@@ -375,6 +373,26 @@ def build_state(single: LaneResult, multi_lanes: list[LaneResult]) -> dict[str, 
             ),
         },
     }
+
+
+def enforce_model_reliability_gate(single: LaneResult, multi_lanes: list[LaneResult]) -> None:
+    failures = []
+    if single.status != REQUIRED_LANE_STATUS:
+        failures.append(f"{single.lane_id}={single.status}: {', '.join(single.missing_snippets)}")
+    for lane in multi_lanes:
+        if lane.status != REQUIRED_LANE_STATUS:
+            failures.append(f"{lane.lane_id}={lane.status}: {', '.join(lane.missing_snippets)}")
+    if failures:
+        fail("multi-agent reliability gate requires every model lane to be useful_output; " + "; ".join(failures))
+
+
+def remove_stale_lane_outputs(expected_outputs: set[PurePosixPath]) -> None:
+    lane_dir = repo_path(LANE_OUTPUT_DIR)
+    lane_dir.mkdir(parents=True, exist_ok=True)
+    for path in lane_dir.glob("*.md"):
+        rel = PurePosixPath(path.relative_to(repo_root()).as_posix())
+        if rel not in expected_outputs:
+            path.unlink()
 
 
 def packet_text(state: dict[str, object], single: LaneResult, multi_lanes: list[LaneResult]) -> str:
@@ -450,6 +468,13 @@ docs audit because the work is intentionally split across disjoint evidence
 surfaces. The single-agent path remained accurate, but the multi-agent lanes
 returned comparable fact coverage faster when run concurrently.
 
+## Reliability Gate
+
+The comparison runner fails closed unless every required model lane returns
+`{REQUIRED_LANE_STATUS}` against its lane-local contract before tracked outputs,
+state, or this packet are refreshed. This applies equally to the single-agent
+baseline and all multi-agent lanes, regardless of provider or model family.
+
 ## Quality Notes
 
 - The single-agent baseline remained reviewable and source-grounded.
@@ -498,6 +523,12 @@ def main() -> None:
         for future in concurrent.futures.as_completed(futures):
             multi_lanes.append(future.result())
     multi_lanes.sort(key=lambda lane: lane.lane_id)
+    enforce_model_reliability_gate(single, multi_lanes)
+    expected_outputs = {single.output_path, *(lane.output_path for lane in multi_lanes)}
+    remove_stale_lane_outputs(expected_outputs)
+    write_text(single.output_path, single.output_text.rstrip() + "\n")
+    for lane in multi_lanes:
+        write_text(lane.output_path, lane.output_text.rstrip() + "\n")
     state = build_state(single, multi_lanes)
     write_json(STATE_PATH, state)
     write_text(PACKET_PATH, packet_text(state, single, multi_lanes))
