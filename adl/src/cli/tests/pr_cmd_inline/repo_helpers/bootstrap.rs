@@ -381,7 +381,7 @@ fn ensure_worktree_for_branch_reuses_matching_path_and_creates_new_one() {
     write_executable(
             &bin_dir.join("git"),
             &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{0}'\nif [ \"$1 $2\" = 'rev-parse --show-toplevel' ]; then\n  printf '%s\\n' '{1}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'rev-parse --git-common-dir' ]; then\n  printf '%s\\n' '{2}'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  if [ \"${{WT_MODE:-reuse}}\" = 'reuse' ]; then\n    cat <<'EOF'\nworktree {1}/.worktrees/reuse-me\nHEAD deadbeef\nbranch refs/heads/codex/reuse\nEOF\n    exit 0\n  fi\n  printf 'worktree {1}\\nHEAD deadbeef\\nbranch refs/heads/main\\n'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree add {1}/.worktrees/create-me' ]; then\n  mkdir -p {1}/.worktrees/create-me\n  exit 0\nfi\nexit 1\n",
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{0}'\nif [ \"$1 $2\" = 'rev-parse --show-toplevel' ]; then\n  printf '%s\\n' '{1}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'rev-parse --git-common-dir' ]; then\n  printf '%s\\n' '{2}'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  if [ \"${{WT_MODE:-reuse}}\" = 'reuse' ]; then\n    cat <<'EOF'\nworktree {1}/.worktrees/reuse-me\nHEAD deadbeef\nbranch refs/heads/codex/reuse\nEOF\n    exit 0\n  fi\n  printf 'worktree {1}\\nHEAD deadbeef\\nbranch refs/heads/main\\n'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = '-C {1}/.worktrees/reuse-me status' ]; then\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree add {1}/.worktrees/create-me' ]; then\n  mkdir -p {1}/.worktrees/create-me\n  exit 0\nfi\nexit 1\n",
                 git_log.display(),
                 repo.display(),
                 repo.join(".git").display()
@@ -415,6 +415,81 @@ fn ensure_worktree_for_branch_reuses_matching_path_and_creates_new_one() {
         "worktree add {} codex/create",
         create_path.display()
     )));
+}
+
+#[test]
+fn ensure_worktree_for_branch_rejects_dirty_matching_worktree() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-worktree-dirty-reuse");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join(".git")).expect("repo git dir");
+    fs::create_dir_all(repo.join(".worktrees/reuse-me")).expect("reuse worktree");
+    write_executable(
+        &bin_dir.join("git"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'rev-parse --show-toplevel' ]; then\n  printf '%s\\n' '{0}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'rev-parse --git-common-dir' ]; then\n  printf '%s\\n' '{1}'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  cat <<'EOF'\nworktree {0}/.worktrees/reuse-me\nHEAD deadbeef\nbranch refs/heads/codex/reuse\nEOF\n  exit 0\nfi\nif [ \"$1 $2 $3\" = '-C {0}/.worktrees/reuse-me status' ]; then\n  printf ' M README.md\\n?? scratch.txt\\n'\n  exit 0\nfi\nexit 1\n",
+            repo.display(),
+            repo.join(".git").display(),
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_pwd = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    let err = ensure_worktree_for_branch(&repo.join(".worktrees/reuse-me"), "codex/reuse")
+        .expect_err("dirty matching worktree should fail closed");
+    env::set_current_dir(old_pwd).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let err = err.to_string();
+    assert!(err.contains("unsafe_existing_worktree_dirty"));
+    assert!(err.contains("README.md"));
+    assert!(err.contains("scratch.txt"));
+    assert!(err.contains("do not reset or prune until the dirty state is accounted for"));
+}
+
+#[test]
+fn ensure_worktree_for_branch_rejects_existing_path_without_matching_branch() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-worktree-stale-path");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join(".git")).expect("repo git dir");
+    fs::create_dir_all(repo.join(".worktrees/stale")).expect("stale worktree");
+    write_executable(
+        &bin_dir.join("git"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2\" = 'rev-parse --show-toplevel' ]; then\n  printf '%s\\n' '{0}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'rev-parse --git-common-dir' ]; then\n  printf '%s\\n' '{1}'\n  exit 0\nfi\nif [ \"$1 $2 $3\" = 'worktree list --porcelain' ]; then\n  cat <<'EOF'\nworktree {0}\nHEAD deadbeef\nbranch refs/heads/main\nEOF\n  exit 0\nfi\nexit 1\n",
+            repo.display(),
+            repo.join(".git").display(),
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_pwd = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    let err = ensure_worktree_for_branch(&repo.join(".worktrees/stale"), "codex/current")
+        .expect_err("existing stale path should fail closed");
+    env::set_current_dir(old_pwd).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let err = err.to_string();
+    assert!(err.contains("unsafe_existing_worktree_path"));
+    assert!(err.contains(".worktrees/stale"));
+    assert!(err.contains("codex/current"));
 }
 
 #[test]
