@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::observability;
 #[cfg(test)]
 use crate::cli::pr_cmd::github_client::GithubClientMode;
 use crate::cli::pr_cmd::github_client::{
@@ -637,7 +638,12 @@ fn block_on_octocrab<T, Fut>(
 where
     Fut: std::future::Future<Output = octocrab::Result<T>>,
 {
-    eprintln!("adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=started operation={operation}");
+    observability::emit_event(
+        "adl",
+        "github_octocrab",
+        "started",
+        &[("operation", operation)],
+    );
     let _runtime_guard = runtime.enter();
     let mut attempt = 1usize;
     let max_attempts = octocrab_max_attempts();
@@ -649,14 +655,32 @@ where
                     && octocrab_operation_allows_retry(operation)
                     && octocrab_error_is_retryable(&err) =>
             {
-                eprintln!(
-                    "adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=retry operation={operation} attempt={attempt} max_attempts={max_attempts}"
+                let attempt_text = attempt.to_string();
+                let max_attempts_text = max_attempts.to_string();
+                observability::emit_event(
+                    "adl",
+                    "github_octocrab",
+                    "retry",
+                    &[
+                        ("operation", operation),
+                        ("attempt", attempt_text.as_str()),
+                        ("max_attempts", max_attempts_text.as_str()),
+                    ],
                 );
                 std::thread::sleep(octocrab_retry_delay(attempt));
                 attempt += 1;
             }
             Err(err) => {
-                eprintln!("adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=failed operation={operation} attempts={attempt}");
+                let attempts_text = attempt.to_string();
+                observability::emit_event(
+                    "adl",
+                    "github_octocrab",
+                    "failed",
+                    &[
+                        ("operation", operation),
+                        ("attempts", attempts_text.as_str()),
+                    ],
+                );
                 return Err(anyhow!(
                     "github_client.octocrab_transport: operation '{}' failed after {} attempt(s): {}",
                     operation,
@@ -666,7 +690,12 @@ where
             }
         }
     };
-    eprintln!("adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=completed operation={operation}");
+    observability::emit_event(
+        "adl",
+        "github_octocrab",
+        "completed",
+        &[("operation", operation)],
+    );
     Ok(result)
 }
 
@@ -1124,8 +1153,14 @@ pub(super) fn attach_post_merge_closeout(
         .ok()
         .filter(|value| !value.trim().is_empty())
     else {
-        eprintln!(
-            "adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=skipped operation=post_merge_closeout.attach reason=rust_closeout_no_background_watcher"
+        observability::emit_event(
+            "adl",
+            "github_octocrab",
+            "skipped",
+            &[
+                ("operation", "post_merge_closeout.attach"),
+                ("reason", "rust_closeout_no_background_watcher"),
+            ],
         );
         return Ok(());
     };
@@ -2163,6 +2198,55 @@ mod tests {
         );
         unsafe {
             std::env::remove_var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS");
+        }
+        restore_github_policy_env(policy_env);
+    }
+
+    #[test]
+    fn octocrab_transport_honors_quiet_stderr_compatibility_log() {
+        let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
+        let temp = unique_temp_dir("adl-octocrab-observability-log");
+        let log_path = temp.join("events.log");
+        let (base_uri, server) = spawn_transient_octocrab_test_server();
+        unsafe {
+            std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+            std::env::set_var("GITHUB_TOKEN", "test-token");
+            std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+            std::env::set_var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS", "2");
+            std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
+            std::env::set_var(
+                "ADL_OBSERVABILITY_LOG",
+                log_path.to_str().expect("log path utf8"),
+            );
+        }
+
+        assert_eq!(
+            gh_issue_title(88, "owner/repo")
+                .expect("transient issue title")
+                .as_deref(),
+            Some("[v0.91.5][tools] Retry succeeds")
+        );
+
+        let log = fs::read_to_string(&log_path).expect("read observability log");
+        assert!(log.contains("stage=github_octocrab"));
+        assert!(log.contains("result=started"));
+        assert!(log.contains("result=retry"));
+        assert!(log.contains("result=completed"));
+        assert!(log.contains("operation=issue.view.title"));
+
+        let seen = server.join().expect("server join");
+        assert_eq!(
+            seen,
+            vec![
+                "GET /repos/owner/repo/issues/88".to_string(),
+                "GET /repos/owner/repo/issues/88".to_string()
+            ]
+        );
+        unsafe {
+            std::env::remove_var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS");
+            std::env::remove_var("ADL_OBSERVABILITY_STDERR");
+            std::env::remove_var("ADL_OBSERVABILITY_LOG");
         }
         restore_github_policy_env(policy_env);
     }

@@ -44,8 +44,17 @@ and temp or unrelated absolute paths to `<tmp>` or `<path>`.
 ## Terminal And Durable Logs
 
 By default, shell and Rust dispatch events are visible on stderr. If
-`ADL_OBSERVABILITY_LOG` is set, shell events are also appended to that durable
-log path.
+`ADL_OBSERVABILITY_LOG` is set, shell and Rust events may also be mirrored into
+that compatibility log path.
+
+If a machine-readable command needs completely quiet stderr while preserving
+observability, set:
+
+- `ADL_OBSERVABILITY_STDERR=0`
+- `ADL_OBSERVABILITY_LOG=<durable-log-path>`
+
+Under that explicit compatibility mode, the JSON payload remains stdout-only
+while observability events continue to flow into the compatibility mirror file.
 
 `ADL_OBSERVABILITY=0` disables event emission for compatibility tests that need
 a completely quiet stderr surface.

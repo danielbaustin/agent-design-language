@@ -46,4 +46,22 @@ line_count="$(wc -l <"$TMP_DIR/events.log" | tr -d ' ')"
   exit 1
 }
 
+stderr_capture="$TMP_DIR/stderr.log"
+ADL_OBSERVABILITY_STDERR=0 adl_obs_event "pr.sh" "json_mode" "started" \
+  "artifact_ref" "$ROOT_DIR/docs/example.md" \
+  2>"$stderr_capture"
+[[ ! -s "$stderr_capture" ]] || {
+  echo "stderr suppression still wrote terminal output" >&2
+  exit 1
+}
+line_count="$(wc -l <"$TMP_DIR/events.log" | tr -d ' ')"
+[[ "$line_count" == "2" ]] || {
+  echo "stderr suppression did not preserve durable logging" >&2
+  exit 1
+}
+grep -Fq "stage=json_mode" "$TMP_DIR/events.log" || {
+  echo "json-mode event missing from durable log" >&2
+  exit 1
+}
+
 echo "PASS test_control_plane_observability"

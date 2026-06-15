@@ -173,6 +173,15 @@ This applies to:
 - Machine-readable command output on stdout must remain parse-safe.
 - If a command advertises JSON mode, stdout must contain only the declared JSON
   payload unless the interface explicitly says otherwise.
+- When a caller needs quiet stderr for JSON consumers, the supported
+  compatibility mode is `ADL_OBSERVABILITY_STDERR=0` together with
+  `ADL_OBSERVABILITY_LOG=<compatibility-log-path>`, so the payload stays
+  stdout-only while the event stream remains available on a separate explicit
+  compatibility mirror.
+
+This compatibility mirror is not the durable machine-readable observability
+layer. The governed durable layer still requires JSON or JSONL with a declared
+schema.
 
 ### Durable Log Channel
 

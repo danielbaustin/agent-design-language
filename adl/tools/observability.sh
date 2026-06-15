@@ -64,7 +64,9 @@ adl_obs_event() {
     line+=" ${key}=$(adl_obs_sanitize_value "$value")"
   done
 
-  printf '%s\n' "$line" >&2
+  if [[ "${ADL_OBSERVABILITY_STDERR:-1}" != "0" ]]; then
+    printf '%s\n' "$line" >&2
+  fi
   log_path="${ADL_OBSERVABILITY_LOG:-}"
   if [[ -n "$log_path" ]]; then
     mkdir -p "$(dirname "$log_path")"
