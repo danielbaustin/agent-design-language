@@ -377,6 +377,107 @@ fn prompt_template_cli_imports_values_and_round_trips_rendered_card() {
 }
 
 #[test]
+fn prompt_template_cli_imports_lifecycle_updated_spp_values() {
+    let repo = TempRepo::new("prompt-template-import-spp-lifecycle");
+    let values_dir = repo.path().join("values");
+    let edited_values = repo.path().join("edited-spp.values.yaml");
+    let rendered = repo.path().join("edited-spp.md");
+    let imported_values = repo.path().join("imported-spp.values.yaml");
+    let normalized = repo.path().join("normalized-spp.md");
+    let rerendered = repo.path().join("rerendered-spp.md");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "write-sample-values".to_string(),
+        "--out-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+    ])
+    .expect("write sample values");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--values".to_string(),
+        values_dir
+            .join("spp.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+        "--set".to_string(),
+        "card_status=approved".to_string(),
+        "--set".to_string(),
+        "status=approved".to_string(),
+        "--set".to_string(),
+        "activation_state=approved".to_string(),
+        "--out".to_string(),
+        edited_values.to_string_lossy().to_string(),
+    ])
+    .expect("edit lifecycle values");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "render".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--values".to_string(),
+        edited_values.to_string_lossy().to_string(),
+        "--out".to_string(),
+        rendered.to_string_lossy().to_string(),
+    ])
+    .expect("render edited SPP");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "import-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        rendered.to_string_lossy().to_string(),
+        "--out".to_string(),
+        imported_values.to_string_lossy().to_string(),
+        "--normalized-out".to_string(),
+        normalized.to_string_lossy().to_string(),
+    ])
+    .expect("import lifecycle-updated SPP");
+
+    let imported = fs::read_to_string(&imported_values).expect("imported SPP values");
+    assert!(imported.contains("card_status: \"approved\""));
+    assert!(imported.contains("status: \"approved\""));
+    assert!(imported.contains("activation_state: \"approved\""));
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "render".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--values".to_string(),
+        imported_values.to_string_lossy().to_string(),
+        "--out".to_string(),
+        rerendered.to_string_lossy().to_string(),
+    ])
+    .expect("render imported SPP values");
+
+    let source = fs::read_to_string(rendered).expect("rendered SPP");
+    assert_eq!(
+        fs::read_to_string(normalized).expect("normalized SPP"),
+        source
+    );
+    assert_eq!(
+        fs::read_to_string(rerendered).expect("rerendered SPP"),
+        source
+    );
+}
+
+#[test]
 fn prompt_template_cli_import_values_fails_closed_for_structure_drift() {
     let repo = TempRepo::new("prompt-template-import-values-drift");
     let values_dir = repo.path().join("values");
