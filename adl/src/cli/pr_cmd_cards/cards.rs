@@ -1078,6 +1078,8 @@ fn render_bootstrap_plan_card(
             ("<branch>", branch.to_string()),
             ("<timestamp>", timestamp),
             ("<card_status>", "draft".to_string()),
+            ("<status>", "draft".to_string()),
+            ("<activation_state>", "draft".to_string()),
             ("<issue_url>", issue_url),
             ("<source_issue_prompt>", source_rel),
             ("<stp_card>", stp_rel),

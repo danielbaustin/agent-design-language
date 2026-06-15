@@ -203,7 +203,11 @@ fn yaml_scalar(value: &str) -> String {
 }
 
 pub(super) fn sample_values_document(kind: PromptCardKind) -> String {
-    let values = sample_values();
+    let mut values = sample_values();
+    if kind == PromptCardKind::Spp {
+        values.insert("status".to_string(), "draft".to_string());
+        values.insert("activation_state".to_string(), "draft".to_string());
+    }
     let editable_keys = form_fields(kind)
         .iter()
         .filter(|field| field.editable)
