@@ -4,6 +4,27 @@ use crate::cli::pr_cmd_cards::StructuredBundlePaths;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[test]
+fn doctor_issue_prompt_resolution_falls_back_to_bound_worktree_prompt() {
+    let repo = lifecycle_temp_repo("doctor-source-worktree-fallback");
+    let issue_ref = IssueRef::new(
+        3766,
+        "v0.91.5".to_string(),
+        "v0-91-5-tools-workflow-fix-pr-finish-card-template-adoption-seams".to_string(),
+    )
+    .expect("issue ref");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let source_path = issue_ref.issue_prompt_path(&worktree);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("create bodies dir");
+    fs::write(&source_path, "---\nissue: 3766\n---\n\n# Source issue\n")
+        .expect("write source prompt");
+
+    let resolved =
+        resolve_doctor_issue_prompt_path(&repo, &issue_ref).expect("doctor source prompt");
+
+    assert_eq!(resolved, source_path);
+}
+
+#[test]
 fn card_lifecycle_marks_legacy_srp_policy_as_not_finish_ready() {
     let repo = lifecycle_temp_repo("legacy-srp-policy");
     let paths = write_lifecycle_fixture(

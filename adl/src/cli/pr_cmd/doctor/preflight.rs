@@ -9,7 +9,7 @@ pub(super) fn run_doctor_preflight(
     issue_ref: &IssueRef,
     branch: &str,
 ) -> Result<DoctorPreflightResult> {
-    let source_path = resolve_issue_prompt_path(repo_root, issue_ref)?;
+    let source_path = resolve_doctor_issue_prompt_path(repo_root, issue_ref)?;
     let target_queue = resolve_issue_prompt_workflow_queue(&source_path)?;
     let unresolved =
         unresolved_milestone_pr_wave(repo, version, &target_queue.queue, Some(branch))?;

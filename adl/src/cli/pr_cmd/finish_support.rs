@@ -37,11 +37,7 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
 
     let _ = run_status_allow_failure("git", &["fetch", "origin"]);
 
-    let inferred = resolve_issue_scope_and_slug_from_local_state(&primary_root, parsed.issue)?
-        .unwrap_or((
-            DEFAULT_VERSION.to_string(),
-            format!("issue-{}", parsed.issue),
-        ));
+    let inferred = resolve_finish_issue_scope_and_slug(&repo_root, &primary_root, parsed.issue)?;
     let issue_ref = IssueRef::new(parsed.issue, inferred.0.clone(), inferred.1.clone())?;
     let expected_branch = issue_ref.branch_name("codex");
     ensure_finish_uses_bound_checkout(&repo_root, &expected_branch)?;
@@ -57,7 +53,9 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         );
     }
 
-    let source_path = resolve_issue_prompt_path(&primary_root, &issue_ref)?;
+    let source_path =
+        resolve_finish_source_issue_prompt_path(&repo_root, &primary_root, &issue_ref)?;
+    ensure_finish_task_bundle_surfaces(&repo_root, &issue_ref)?;
     let stp_path = issue_ref.task_bundle_stp_path(&repo_root);
 
     let input_path = parsed
@@ -280,6 +278,83 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     Ok(())
 }
 
+pub(super) fn resolve_finish_issue_scope_and_slug(
+    repo_root: &Path,
+    primary_root: &Path,
+    issue: u32,
+) -> Result<(String, String)> {
+    if let Some(identity) = resolve_issue_scope_and_slug_from_local_state(repo_root, issue)? {
+        return Ok(identity);
+    }
+    if primary_root != repo_root {
+        if let Some(identity) = resolve_issue_scope_and_slug_from_local_state(primary_root, issue)?
+        {
+            return Ok(identity);
+        }
+    }
+    Ok((DEFAULT_VERSION.to_string(), format!("issue-{issue}")))
+}
+
+pub(super) fn resolve_finish_source_issue_prompt_path(
+    repo_root: &Path,
+    primary_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<PathBuf> {
+    if let Ok(path) = resolve_issue_prompt_path(repo_root, issue_ref) {
+        return Ok(path);
+    }
+    if primary_root != repo_root {
+        return resolve_issue_prompt_path(primary_root, issue_ref);
+    }
+    resolve_issue_prompt_path(repo_root, issue_ref)
+}
+
+pub(super) fn ensure_finish_task_bundle_surfaces(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<()> {
+    let canonical_dir = issue_ref.task_bundle_dir_path(repo_root);
+    let candidate_dirs = lifecycle::matching_task_bundle_dirs(repo_root, issue_ref)?;
+    let required_files = ["stp.md", "sip.md", "sor.md", "spp.md", "srp.md"];
+    let mut copied_any = false;
+
+    for file_name in required_files {
+        let canonical_path = canonical_dir.join(file_name);
+        if ensure_nonempty_file_path(&canonical_path)? {
+            continue;
+        }
+        let source_path = candidate_dirs
+            .iter()
+            .filter(|candidate| *candidate != &canonical_dir)
+            .map(|candidate| candidate.join(file_name))
+            .find(|candidate| ensure_nonempty_file_path(candidate).unwrap_or(false));
+        if let Some(source_path) = source_path {
+            fs::create_dir_all(&canonical_dir).with_context(|| {
+                format!(
+                    "finish: failed to create canonical task bundle {}",
+                    canonical_dir.display()
+                )
+            })?;
+            fs::copy(&source_path, &canonical_path).with_context(|| {
+                format!(
+                    "finish: failed to restore canonical {} from slug-drifted task bundle {}",
+                    canonical_path.display(),
+                    source_path.display()
+                )
+            })?;
+            copied_any = true;
+        }
+    }
+
+    if copied_any {
+        eprintln!(
+            "finish: restored missing canonical task-bundle cards for #{} from matching issue bundle",
+            issue_ref.issue_number()
+        );
+    }
+    Ok(())
+}
+
 fn ensure_finish_uses_bound_checkout(repo_root: &Path, branch: &str) -> Result<()> {
     let Some(bound_worktree) = branch_checked_out_worktree_path(branch)? else {
         return Ok(());
@@ -469,7 +544,7 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             );
             push_finish_validation_command(
                 &mut commands,
-                "cargo test --manifest-path adl/Cargo.toml cli::pr_cmd",
+                "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd",
             );
         }
         if paths
@@ -729,13 +804,15 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
-                "cargo test --manifest-path adl/Cargo.toml cli::pr_cmd" => {
+                "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd" => {
                     run_finish_validation_status(
                         "cargo",
                         &[
                             "test",
                             "--manifest-path",
                             path_str(&manifest)?,
+                            "--bin",
+                            "adl",
                             "cli::pr_cmd",
                         ],
                     )?;

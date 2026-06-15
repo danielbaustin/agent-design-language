@@ -518,7 +518,7 @@ fn real_pr_doctor_full_blocks_invalid_root_spp() {
     env::set_current_dir(prev_dir).expect("restore cwd");
     let err = err.to_string();
     assert!(err.contains("doctor: spp failed validation"));
-    assert!(err.contains("status must be one of: draft, reviewed, approved"));
+    assert!(err.contains("status must be one of: draft, ready, reviewed, approved"));
 }
 
 #[test]
@@ -653,6 +653,141 @@ fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
 
     env::set_current_dir(prev_dir).expect("restore cwd");
     doctor.expect("doctor from worktree");
+}
+
+#[test]
+fn real_pr_doctor_full_succeeds_with_worktree_only_card_bundle() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-doctor-worktree-only-cards");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "doctor worktree-only cards\n").expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1198, "v0.86", "doctor-worktree-only-cards").expect("issue ref");
+    let title = "[v0.86][tools] Doctor worktree-only cards";
+    let branch = "codex/1198-doctor-worktree-only-cards";
+    write_authored_issue_prompt(&repo, &issue_ref, title);
+    write_design_time_ready_cards(&repo, &issue_ref, title, branch);
+    real_pr(&[
+        "start".to_string(),
+        "1198".to_string(),
+        "--slug".to_string(),
+        "doctor-worktree-only-cards".to_string(),
+        "--title".to_string(),
+        title.to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr start");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    write_authored_issue_prompt(&worktree, &issue_ref, title);
+    let wt_sip = issue_ref.task_bundle_input_path(&worktree);
+    write_authored_sip(
+        &wt_sip,
+        &issue_ref,
+        title,
+        branch,
+        &issue_ref.issue_prompt_path(&worktree),
+        &worktree,
+    );
+
+    fs::remove_file(issue_ref.issue_prompt_path(&repo)).expect("remove primary issue prompt");
+    for stale_primary_card in [
+        issue_ref.task_bundle_input_path(&repo),
+        issue_ref.task_bundle_stp_path(&repo),
+        issue_ref.task_bundle_plan_path(&repo),
+        issue_ref.task_bundle_review_policy_path(&repo),
+    ] {
+        fs::remove_file(stale_primary_card).expect("remove primary card");
+    }
+
+    env::set_current_dir(&worktree).expect("chdir worktree");
+    let doctor = real_pr(&[
+        "doctor".to_string(),
+        "1198".to_string(),
+        "--slug".to_string(),
+        "doctor-worktree-only-cards".to_string(),
+        "--mode".to_string(),
+        "full".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+        "--json".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    doctor.expect("doctor with worktree-only card bundle");
 }
 
 #[test]

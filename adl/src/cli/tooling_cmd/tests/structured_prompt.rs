@@ -249,6 +249,22 @@ fn structured_prompt_spp_validator_rejects_invalid_codex_plan_status() {
 }
 
 #[test]
+fn structured_prompt_spp_validator_accepts_ready_lifecycle_status() {
+    let repo = TempRepo::new("structured-spp-ready-status");
+    let spp = repo.write_rel(
+        ".tmp/tooling_cmd_tests/spp-ready.md",
+        &valid_spp_text(1374).replace("status: \"draft\"", "status: \"ready\""),
+    );
+    real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        spp.to_string_lossy().to_string(),
+    ])
+    .expect("SPP ready lifecycle status should validate");
+}
+
+#[test]
 fn structured_prompt_srp_validator_requires_refusal_policy() {
     let repo = TempRepo::new("structured-srp-invalid");
     let srp = repo.write_rel(
