@@ -63,7 +63,9 @@ fn markdown_ast_edit_fails_closed_for_lifecycle_cards_and_writes_repair_note() {
     ])
     .expect_err("lifecycle card edit should fail closed");
 
-    assert!(err.to_string().contains("lifecycle-card input or output path"));
+    assert!(err
+        .to_string()
+        .contains("lifecycle-card input or output path"));
     assert!(!out.exists());
     let note_text = fs::read_to_string(note).expect("repair note");
     assert!(note_text.contains("Status: not_mutated"));
@@ -78,7 +80,9 @@ fn markdown_ast_edit_fails_closed_when_output_targets_lifecycle_card() {
         "# Demo\n\n## Summary\n\nOld.\n",
     );
     let replacement = repo.write_rel(".tmp/tooling_cmd_tests/replacement.md", "New.\n");
-    let out = repo.path().join(".adl/v0.91.5/tasks/issue-3715__demo/sor.md");
+    let out = repo
+        .path()
+        .join(".adl/v0.91.5/tasks/issue-3715__demo/sor.md");
     let note = repo.path().join(".tmp/tooling_cmd_tests/repair.md");
 
     let err = real_tooling(&[
@@ -110,7 +114,10 @@ fn markdown_ast_edit_rejects_replacements_that_remove_existing_protected_nodes()
         ".tmp/tooling_cmd_tests/doc.md",
         "# Demo\n\n## Summary\n\nOld.\n\n## Evidence\n\n[source](https://example.com)\n\n```rust\nfn main() {}\n```\n",
     );
-    let replacement = repo.write_rel(".tmp/tooling_cmd_tests/replacement.md", "No protected nodes.\n");
+    let replacement = repo.write_rel(
+        ".tmp/tooling_cmd_tests/replacement.md",
+        "No protected nodes.\n",
+    );
     let out = repo.path().join(".tmp/tooling_cmd_tests/out.md");
 
     let err = real_tooling(&[
