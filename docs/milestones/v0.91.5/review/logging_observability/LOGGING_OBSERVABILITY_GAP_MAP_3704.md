@@ -27,7 +27,7 @@ Observatory consumption rules.
 | C-SDLC control-plane contract | `docs/milestones/v0.91.5/CONTROL_PLANE_OBSERVABILITY_CONTRACT_3609.md` and #3609 | implemented_baseline | Defines the `adl_event` vocabulary and an OTEL-ready mapping, but does not complete OTEL export or all command coverage. |
 | Closeout silent-hang fix | #3698 | implemented_followup | Closed a reproduced post-merge closeout silence case. This is evidence that baseline logging needed follow-up hardening. |
 | Octocrab GitHub operation logs | `adl/src/cli/pr_cmd/github.rs` and #3697 | implemented_baseline | Covered GitHub operations emit `github_octocrab` started/completed/failed events. Useful and recently dogfooded. |
-| Runtime action log | `docs/milestones/v0.91.5/RUNTIME_ACTION_LOG_CONTRACT_3556.md`, `adl/src/instrumentation/action_log.rs` | implemented_first_slice | Generates `logs/action_log.jsonl` from trace events and keeps it as a projection, not a second truth source. |
+| Runtime action log | `docs/milestones/v0.91.5/RUNTIME_ACTION_LOG_CONTRACT_3556.md`, `adl/src/instrumentation/action_log.rs`, #3556 | implemented_first_slice | Generates `logs/action_log.jsonl` from trace events and keeps it as a projection, not a second truth source. |
 | Provider run log | `adl/src/provider_communication.rs`, `adl/src/provider_adapter_cli.rs`, #3480 | implemented_baseline | Provider JSONL logs exist with redacted event fields and duration/failure metadata. |
 | Long-lived agent ledgers | `adl/src/long_lived_agent/`, `adl/src/long_lived_agent/storage.rs` | implemented_domain_specific | Has heartbeat spec, cycle ledger, provider binding history, and operator events, but not unified with C-SDLC/runtime observability. |
 | Multi-agent timing packets | `docs/milestones/v0.91.5/review/multi_agent_*` | implemented_evidence | Sprint 2 packets record wall durations and lane timing; they are evidence artifacts, not a general logging framework. |
@@ -56,6 +56,12 @@ Observatory consumption rules.
   GitHub transport operations.
 - `#3698` is closed and provides a direct fix for one reproduced closeout
   silent-hang class.
+- `#3609` is the implemented C-SDLC control-plane logging baseline and shared
+  `adl_event` vocabulary, not a full OpenTelemetry implementation.
+- `#3556` is the implemented first slice of runtime action-log projection,
+  with remaining branch/span/dashboard coverage explicitly deferred.
+- `#3480` is the implemented provider run-log baseline, not a unified
+  runtime/provider/C-SDLC correlation model.
 
 ## Still Missing Or Partial
 
