@@ -49,6 +49,13 @@ markdown with the required watcher headings and the exact phrase
 
 Secondary useful routes also returned structured watcher text: `gemma4:31b`, `gemma4:26b`, `gemma4:e4b`.
 
+## Reliability Gate
+
+This runner fails closed unless `adapter_gemma4_31b` returns `useful_output`
+through the ADL provider adapter and at least `2` Gemma lanes return useful
+structured watcher text. Smaller or historically weak routes such as
+`gemma4:e2b` are not promoted as reliable watcher lanes by this proof.
+
 ## Disposition
 
 Remote Gemma watcher usefulness is now **proven in a bounded way** for short,

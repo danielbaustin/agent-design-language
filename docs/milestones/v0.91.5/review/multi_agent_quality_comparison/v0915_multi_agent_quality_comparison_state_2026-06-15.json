@@ -16,9 +16,6 @@
     "duration_seconds": 17.324,
     "status": "useful_output",
     "output_path": "docs/milestones/v0.91.5/review/multi_agent_quality_comparison/lane_outputs/single_agent_openrouter_deepseek_v4_flash.md",
-    "artifact_paths": [
-      "docs/milestones/v0.91.5/review/multi_agent_quality_comparison/artifacts/single_agent_openrouter_deepseek_v4_flash_response.json"
-    ],
     "missing_snippets": []
   },
   "multi_agent": {
@@ -32,9 +29,6 @@
         "duration_seconds": 10.508,
         "status": "useful_output",
         "output_path": "docs/milestones/v0.91.5/review/multi_agent_quality_comparison/lane_outputs/multi_agent_overhead_claude_3_5_haiku.md",
-        "artifact_paths": [
-          "docs/milestones/v0.91.5/review/multi_agent_quality_comparison/artifacts/multi_agent_overhead_claude_3_5_haiku_response.json"
-        ],
         "missing_snippets": []
       },
       {
@@ -45,9 +39,6 @@
         "duration_seconds": 10.613,
         "status": "useful_output",
         "output_path": "docs/milestones/v0.91.5/review/multi_agent_quality_comparison/lane_outputs/multi_agent_provider_openai_gpt4o_mini.md",
-        "artifact_paths": [
-          "docs/milestones/v0.91.5/review/multi_agent_quality_comparison/artifacts/multi_agent_provider_openai_gpt4o_mini_response.json"
-        ],
         "missing_snippets": []
       },
       {
@@ -58,15 +49,15 @@
         "duration_seconds": 8.114,
         "status": "useful_output",
         "output_path": "docs/milestones/v0.91.5/review/multi_agent_quality_comparison/lane_outputs/multi_agent_watcher_gemini_2_5_flash_lite.md",
-        "artifact_paths": [
-          "docs/milestones/v0.91.5/review/multi_agent_quality_comparison/artifacts/multi_agent_watcher_gemini_2_5_flash_lite_response.json"
-        ],
         "missing_snippets": []
       }
     ]
   },
   "summary": {
     "comparison_result": "better",
+    "reliability_gate": "passed",
+    "reliability_gate_policy": "all_required_model_lanes_useful",
+    "required_lane_status": "useful_output",
     "single_agent_duration_seconds": 17.324,
     "multi_agent_parallel_duration_seconds": 10.613,
     "duration_ratio": 0.613,
