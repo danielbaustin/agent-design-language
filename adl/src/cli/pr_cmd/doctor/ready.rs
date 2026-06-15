@@ -8,13 +8,25 @@ pub(super) fn run_doctor_ready(
     issue_ref: &IssueRef,
     branch: &str,
 ) -> Result<DoctorReadyResult> {
-    let worktree_path = issue_ref.default_worktree_path(
+    let mut worktree_path = issue_ref.default_worktree_path(
         repo_root,
         std::env::var_os("ADL_WORKTREE_ROOT")
             .map(PathBuf::from)
             .as_deref(),
     );
-    let source_path = resolve_issue_prompt_path(repo_root, issue_ref)?;
+    if let Ok(cwd) = std::env::current_dir() {
+        if cwd != repo_root && cwd.join(".git").exists() {
+            if let Ok(current_branch) = run_capture(
+                "git",
+                &["-C", path_str(&cwd)?, "rev-parse", "--abbrev-ref", "HEAD"],
+            ) {
+                if current_branch.trim() == branch {
+                    worktree_path = cwd;
+                }
+            }
+        }
+    }
+    let source_path = resolve_doctor_issue_prompt_path(repo_root, issue_ref)?;
     let root_stp = issue_ref.task_bundle_stp_path(repo_root);
     let wt_stp = issue_ref.task_bundle_stp_path(&worktree_path);
     let root_bundle_input = issue_ref.task_bundle_input_path(repo_root);
@@ -63,6 +75,78 @@ pub(super) fn run_doctor_ready(
                 &root_bundle_output,
             ),
             status: "PASS",
+        });
+    }
+    let root_bundle_complete = [
+        &root_stp,
+        &root_bundle_input,
+        &root_bundle_output,
+        &root_bundle_plan,
+        &root_bundle_review_policy,
+    ]
+    .iter()
+    .all(|path| path.is_file());
+    let wt_bundle_complete = [
+        &wt_stp,
+        &wt_bundle_input,
+        &wt_bundle_output,
+        &wt_bundle_plan,
+        &wt_bundle_review_policy,
+    ]
+    .iter()
+    .all(|path| path.is_file());
+    if !root_bundle_complete && worktree_path.is_dir() && wt_bundle_complete {
+        let wt_branch = run_capture(
+            "git",
+            &[
+                "-C",
+                path_str(&worktree_path)?,
+                "rev-parse",
+                "--abbrev-ref",
+                "HEAD",
+            ],
+        )?;
+        if wt_branch.trim() != branch {
+            bail!(
+                "doctor: worktree branch mismatch for {}",
+                worktree_path.display()
+            );
+        }
+        validate_bootstrap_stp(&worktree_path, &wt_stp)?;
+        validate_authored_prompt_surface("doctor", &wt_stp, PromptSurfaceKind::Stp)?;
+        validate_ready_cards(
+            &worktree_path,
+            issue_ref.issue_number(),
+            issue_ref.slug(),
+            wt_branch.trim(),
+            &wt_bundle_input,
+            &wt_bundle_output,
+            StructuredBundlePaths {
+                plan_path: &wt_bundle_plan,
+                review_policy_path: &wt_bundle_review_policy,
+            },
+        )?;
+        let card_lifecycle = build_doctor_card_lifecycle(
+            repo_root,
+            &wt_bundle_input,
+            &wt_stp,
+            &wt_bundle_plan,
+            &wt_bundle_review_policy,
+            &wt_bundle_output,
+        );
+        let status = doctor_ready_status_for(&card_lifecycle);
+        return Ok(DoctorReadyResult {
+            lifecycle_state: "run_bound",
+            worktree: Some(path_relative_to_repo(repo_root, &worktree_path)),
+            source: path_relative_to_repo(repo_root, &source_path),
+            root_stp: path_relative_to_repo(repo_root, &root_stp),
+            root_input: path_relative_to_repo(repo_root, &root_bundle_input),
+            root_output: path_relative_to_repo(repo_root, &root_bundle_output),
+            wt_stp: Some(path_relative_to_repo(repo_root, &wt_stp)),
+            wt_input: Some(path_relative_to_repo(repo_root, &wt_bundle_input)),
+            wt_output: Some(path_relative_to_repo(repo_root, &wt_bundle_output)),
+            card_lifecycle,
+            status,
         });
     }
     if !root_stp.is_file() {

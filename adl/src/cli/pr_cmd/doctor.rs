@@ -1,7 +1,7 @@
 use super::*;
 use crate::cli::pr_cmd_cards::{validate_bootstrap_output_card, StructuredBundlePaths};
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 mod card_lifecycle;
 mod preflight;
@@ -47,6 +47,33 @@ fn doctor_mode_name(mode: &DoctorMode) -> &'static str {
         DoctorMode::Ready => "ready",
         DoctorMode::Preflight => "preflight",
     }
+}
+
+pub(super) fn resolve_doctor_issue_prompt_path(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<PathBuf> {
+    let mut roots = vec![repo_root.to_path_buf()];
+    let worktree_path = issue_ref.default_worktree_path(
+        repo_root,
+        std::env::var_os("ADL_WORKTREE_ROOT")
+            .map(PathBuf::from)
+            .as_deref(),
+    );
+    if !roots.iter().any(|root| root == &worktree_path) {
+        roots.push(worktree_path);
+    }
+    if let Ok(cwd) = std::env::current_dir() {
+        if !roots.iter().any(|root| root == &cwd) {
+            roots.push(cwd);
+        }
+    }
+    for root in roots {
+        if let Ok(path) = resolve_issue_prompt_path(&root, issue_ref) {
+            return Ok(path);
+        }
+    }
+    resolve_issue_prompt_path(repo_root, issue_ref)
 }
 
 pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
