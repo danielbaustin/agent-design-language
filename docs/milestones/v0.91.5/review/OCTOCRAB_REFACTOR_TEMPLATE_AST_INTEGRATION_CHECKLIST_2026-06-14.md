@@ -5,7 +5,7 @@ Milestone: v0.91.5
 Origin issue: #3697
 Origin PR: #3702
 Current sprint: #3717
-Current evidence update: #3713
+Current evidence update: #3714
 Status: coordination checklist for staged follow-up proof
 
 This document is not proof that the integrated system is complete. Checked
@@ -78,19 +78,25 @@ review cycles caused by tooling drift.
 - [x] `SIP -> STP -> SPP -> SRP -> SOR` remains the canonical card lifecycle.
 - [x] New or fully regenerated cards must use the active prompt-template registry.
 - [x] Card updates should edit values first, then render and validate structure.
-- [ ] `pr.sh` / `adl-csdlc` paths that create or repair cards consistently route
-  through prompt-template renderer commands instead of direct Markdown assembly.
-- [ ] Card editor skills and renderer tooling have a documented boundary:
+- [x] Prompt-template CLI/operator proof lane exercises versioned render, values,
+  import, structure validation, schema validation, and structured-card validation;
+  existing Rust tests cover the supported `adl-csdlc` issue-bootstrap card path.
+  Legacy `pr.sh` direct card command compatibility remains explicitly documented
+  as a non-authoritative cleanup gap. See
+  [PROMPT_TEMPLATE_WORKFLOW_INTEGRATION_3714.md](PROMPT_TEMPLATE_WORKFLOW_INTEGRATION_3714.md).
+- [x] Card editor skills and renderer tooling have a documented boundary:
   renderer/schema for structure, editor skills for issue-local lifecycle truth.
-- [ ] Prompt-template validation is available as a focused PVF lane for card and
-  template changes.
-- [ ] Integrated workflow proof includes `current.json` registry resolution.
-- [ ] Integrated workflow proof includes values import or values editing when
-  updating existing rendered cards.
-- [ ] Integrated workflow proof includes render, structure validation, and schema
-  validation for generated or regenerated cards.
-- [ ] Integrated workflow proof includes schema parity validation when prompt
-  schema artifacts change.
+  See [PROMPT_TEMPLATE_WORKFLOW_INTEGRATION_3714.md](PROMPT_TEMPLATE_WORKFLOW_INTEGRATION_3714.md).
+- [x] Prompt-template validation is available as a focused PVF lane for card and
+  template changes. See `adl/tools/test_prompt_template_workflow_integration.sh`.
+- [x] Integrated workflow proof includes `current.json` registry resolution. See
+  `adl/tools/test_prompt_template_workflow_integration.sh`.
+- [x] Integrated workflow proof includes values import or values editing when
+  updating existing rendered cards. See `adl/tools/test_prompt_template_workflow_integration.sh`.
+- [x] Integrated workflow proof includes render, structure validation, and schema
+  validation for generated or regenerated cards. See `adl/tools/test_prompt_template_workflow_integration.sh`.
+- [x] Integrated workflow proof includes schema parity validation when prompt
+  schema artifacts change. See `adl/tools/test_prompt_template_workflow_integration.sh`.
 
 ### 4. markdown.rs / AST editing
 
