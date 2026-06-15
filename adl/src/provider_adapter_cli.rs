@@ -59,7 +59,7 @@ pub fn run_provider_adapter_cli(args: ProviderAdapterCliArgs) -> Result<()> {
         request.request_id.clone(),
         Some(log_ref.clone()),
     )
-        .with_context(|| format!("open run log {}", args.log.display()))?;
+    .with_context(|| format!("open run log {}", args.log.display()))?;
     let mut result = execute_provider_invocation(request, &mut logger);
     result.artifact_ref = Some(normalize_observability_ref(&args.out));
     let attempts = result.attempts.len().to_string();
