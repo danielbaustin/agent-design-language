@@ -110,6 +110,7 @@ adl tooling portable-project-doctor --project <adl_project.json> [--adl-home <pa
 adl tooling prompt-template render --kind <sip|stp|spp|srp|sor> --values <values.yaml> --out <card.md> [--repo-root <path>]\n\
 adl tooling prompt-template render-all --values-dir <dir> --out-dir <dir> [--repo-root <path>]\n\
 adl tooling prompt-template edit-values --kind <sip|stp|spp|srp|sor> --values <values.yaml> --set <field=value> [--set <field=value> ...] [--out <values.yaml>] [--repo-root <path>]\n\
+adl tooling prompt-template edit-rendered --kind <sip|stp|spp|srp|sor> --input <card.md> --set <field=value> [--set <field=value> ...] --out <card.md> [--values-out <values.yaml>] [--repo-root <path>]\n\
 adl tooling prompt-template import-values --kind <sip|stp|spp|srp|sor> --input <card.md> --out <values.yaml> [--normalized-out <card.md>] [--repo-root <path>]\n\
 adl tooling prompt-template validate-values --kind <sip|stp|spp|srp|sor> --values <values.yaml> [--repo-root <path>]\n\
 adl tooling prompt-template validate-structure --kind <sip|stp|spp|srp|sor> --input <card.md> [--repo-root <path>]\n\
