@@ -90,45 +90,74 @@ setup_fake_gh() {
   mkdir -p "$FAKE_BIN"
   : >"$STATE_FILE"
 
-  cat >"$FAKE_BIN/gh" <<'EOF_FAKE'
+  cat >"$FAKE_BIN/adl" <<'EOF_FAKE'
 #!/usr/bin/env bash
 set -euo pipefail
 
 STATE_FILE="${RELEASE_STATE_FILE:?missing RELEASE_STATE_FILE}"
 
-if [[ "$1" == "repo" && "$2" == "view" ]]; then
-  echo "owner/repo"
-  exit 0
-fi
+if [[ "$1" == "tooling" && "$2" == "github-release" ]]; then
+  ACTION="$3"
+  shift 3
+  TAG=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --tag)
+        TAG="$2"
+        shift 2
+        ;;
+      --repo|--name|--notes-file|--target)
+        shift 2
+        ;;
+      *)
+        echo "unexpected github-release arg: $1" >&2
+        exit 1
+        ;;
+    esac
+  done
+  [[ -n "$TAG" ]] || {
+    echo "missing --tag" >&2
+    exit 1
+  }
 
-if [[ "$1" == "release" && "$2" == "view" ]]; then
-  TAG="$3"
+  if [[ "$ACTION" == "ensure-absent" ]]; then
+    if [[ -f "$STATE_FILE" ]] && grep -Fqx "$TAG" "$STATE_FILE"; then
+      echo "GitHub release already exists for tag $TAG" >&2
+      exit 1
+    fi
+    exit 0
+  fi
+
+  if [[ "$ACTION" == "ensure-present" ]]; then
+    if [[ -f "$STATE_FILE" ]] && grep -Fqx "$TAG" "$STATE_FILE"; then
+      exit 0
+    fi
+    echo "GitHub release does not exist for tag $TAG" >&2
+    exit 1
+  fi
+
+  if [[ "$ACTION" == "draft" ]]; then
+    if ! grep -Fqx "$TAG" "$STATE_FILE" 2>/dev/null; then
+      printf '%s\n' "$TAG" >>"$STATE_FILE"
+    fi
+    exit 0
+  fi
+
+  if [[ "$ACTION" == "publish" ]]; then
   if [[ -f "$STATE_FILE" ]] && grep -Fqx "$TAG" "$STATE_FILE"; then
     exit 0
   fi
   exit 1
-fi
-
-if [[ "$1" == "release" && "$2" == "create" ]]; then
-  TAG="$3"
-  if ! grep -Fqx "$TAG" "$STATE_FILE" 2>/dev/null; then
-    printf '%s\n' "$TAG" >>"$STATE_FILE"
   fi
-  exit 0
+
+  echo "unexpected github-release action: $ACTION" >&2
+  exit 1
 fi
 
-if [[ "$1" == "release" && "$2" == "edit" ]]; then
-  TAG="$3"
-  if ! grep -Fqx "$TAG" "$STATE_FILE" 2>/dev/null; then
-    exit 1
-  fi
-  exit 0
-fi
-
-echo "unexpected gh command: $*" >&2
+echo "unexpected adl command: $*" >&2
 exit 1
 EOF_FAKE
-  chmod +x "$FAKE_BIN/gh"
+  chmod +x "$FAKE_BIN/adl"
 }
 
 reset_git_state() {
@@ -146,6 +175,7 @@ run_release_case() {
   local output
   set +e
   output="$(cd "$FIXTURE" && PATH="$FAKE_BIN:$PATH" RELEASE_STATE_FILE="$STATE_FILE" \
+    ADL_RELEASE_GITHUB_CMD="$FAKE_BIN/adl" ADL_RELEASE_GITHUB_REPO="owner/repo" \
     "$BASH_BIN" adl/tools/release_ceremony.sh --version "$VERSION" \
     --skip-sor-gate --target-branch main --allow-dirty "$@" 2>&1)"
   local status=$?
@@ -210,26 +240,24 @@ git -C "$FIXTURE" tag -a "$TAG_NAME" -m "release fixture"
 run_release_case "push-tag succeeds when local tag exists and remote is absent" 0 "" --push-tag --tag "$TAG_NAME"
 assert_remote_tag_present
 
-# Draft/publish release operations are intentionally fail-closed until the
-# GitHub Release API path is implemented through Rust/octocrab. The shell
-# helper must not silently fall back to legacy GitHub Release CLI behavior.
+# Draft/publish release operations delegate to the Rust/octocrab release path.
 reset_git_state
 git -C "$FIXTURE" tag -a "$TAG_NAME" -m "release fixture"
 git -C "$FIXTURE" push -q origin "$TAG_NAME"
 run_release_case \
-  "draft-release fails closed until Rust/octocrab release support exists" \
-  1 \
-  "GitHub Release absence checks are no longer available from shell helpers" \
+  "draft-release delegates to Rust release support" \
+  0 \
+  "creating draft GitHub release" \
   --draft-release --tag "$TAG_NAME"
-assert_release_absent
+assert_release_present
 
 git -C "$FIXTURE" push -q origin ":refs/tags/$TAG_NAME" >/dev/null 2>&1 || true
 git -C "$FIXTURE" tag -d "$TAG_NAME" >/dev/null 2>&1 || true
 printf '%s\n' "$TAG_NAME" >"$STATE_FILE"
 run_release_case \
-  "publish-release fails closed until Rust/octocrab release support exists" \
-  1 \
-  "GitHub Release presence checks are no longer available from shell helpers" \
+  "publish-release delegates to Rust release support" \
+  0 \
+  "publishing GitHub release" \
   --publish-release --tag "$TAG_NAME"
 assert_release_present
 
@@ -249,16 +277,16 @@ git -C "$FIXTURE" push -q origin "$TAG_NAME"
 printf '%s
 ' "$TAG_NAME" >"$STATE_FILE"
 run_release_case \
-  "draft-release remains fail-closed even when release exists" \
+  "draft-release fails when release exists" \
   1 \
-  "GitHub Release absence checks are no longer available from shell helpers" \
+  "GitHub release already exists" \
   --draft-release --tag "$TAG_NAME"
 
 reset_git_state
 run_release_case \
-  "publish-release remains fail-closed when draft release is missing" \
+  "publish-release fails when draft release is missing" \
   1 \
-  "GitHub Release presence checks are no longer available from shell helpers" \
+  "GitHub release does not exist" \
   --publish-release --tag "$TAG_NAME"
 
 # Split-step invocation across mutation phases.
@@ -269,16 +297,15 @@ run_release_case "split-step phase 2: push-tag" 0 "" --push-tag --tag "$TAG_NAME
 assert_remote_tag_present
 assert_release_absent
 run_release_case \
-  "split-step phase 3: draft-release fails closed" \
-  1 \
-  "GitHub Release absence checks are no longer available from shell helpers" \
+  "split-step phase 3: draft-release" \
+  0 \
+  "creating draft GitHub release" \
   --draft-release --tag "$TAG_NAME"
-assert_release_absent
-printf '%s\n' "$TAG_NAME" >"$STATE_FILE"
+assert_release_present
 run_release_case \
-  "split-step phase 4: publish-release fails closed" \
-  1 \
-  "GitHub Release presence checks are no longer available from shell helpers" \
+  "split-step phase 4: publish-release" \
+  0 \
+  "publishing GitHub release" \
   --publish-release --tag "$TAG_NAME"
 assert_release_present
 
