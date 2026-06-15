@@ -16,6 +16,7 @@ use super::github::{
 };
 use super::lifecycle;
 use super::DEFAULT_VERSION;
+use crate::cli::observability::ProgressHeartbeat;
 use crate::cli::pr_cmd_args::parse_finish_args;
 use crate::cli::pr_cmd_cards::{
     path_relative_to_repo, validate_bootstrap_stp, validate_structured_artifact,
@@ -976,30 +977,127 @@ const FINISH_VALIDATION_SANITIZED_ENVS: &[&str] = &[
 ];
 
 fn run_finish_validation_status(program: &str, args: &[&str]) -> Result<()> {
+    let class = classify_finish_subprocess(program, args);
+    let excerpt = format_subprocess_excerpt(program, args);
+    let heartbeat = ProgressHeartbeat::start(
+        "finish",
+        "validation_subprocess",
+        &[
+            ("program", program),
+            ("subprocess_class", class),
+            ("argv_excerpt", &excerpt),
+        ],
+    );
     let mut command = Command::new(program);
     command.args(args);
     for key in FINISH_VALIDATION_SANITIZED_ENVS {
         command.env_remove(key);
     }
-    let status = command
-        .status()
-        .with_context(|| format!("failed to spawn '{program}'"))?;
+    let status = match command.status() {
+        Ok(status) => status,
+        Err(err) => {
+            heartbeat.failed(&[
+                ("reason_code", "validation_subprocess_spawn_failed"),
+                ("next_action_hint", "check_subprocess_path_and_permissions"),
+            ]);
+            return Err(err).with_context(|| format!("failed to spawn '{program}'"));
+        }
+    };
     if !status.success() {
+        let exit_code = status
+            .code()
+            .map(|value| value.to_string())
+            .unwrap_or_else(|| "signal".to_string());
+        heartbeat.failed(&[
+            ("reason_code", "validation_subprocess_failed"),
+            ("next_action_hint", "inspect_subprocess_output"),
+            ("exit_code", &exit_code),
+        ]);
         bail!("{program} failed with status {:?}", status.code());
     }
+    let exit_code = status
+        .code()
+        .map(|value| value.to_string())
+        .unwrap_or_else(|| "0".to_string());
+    heartbeat.completed(&[("exit_code", &exit_code)]);
     Ok(())
 }
 
 fn run_finish_validation_status_allow_failure(program: &str, args: &[&str]) -> Result<bool> {
+    let class = classify_finish_subprocess(program, args);
+    let excerpt = format_subprocess_excerpt(program, args);
+    let heartbeat = ProgressHeartbeat::start(
+        "finish",
+        "validation_subprocess",
+        &[
+            ("program", program),
+            ("subprocess_class", class),
+            ("argv_excerpt", &excerpt),
+        ],
+    );
     let mut command = Command::new(program);
     command.args(args);
     for key in FINISH_VALIDATION_SANITIZED_ENVS {
         command.env_remove(key);
     }
-    let status = command
-        .status()
-        .with_context(|| format!("failed to spawn '{program}'"))?;
+    let status = match command.status() {
+        Ok(status) => status,
+        Err(err) => {
+            heartbeat.failed(&[
+                ("reason_code", "validation_subprocess_spawn_failed"),
+                ("next_action_hint", "check_subprocess_path_and_permissions"),
+            ]);
+            return Err(err).with_context(|| format!("failed to spawn '{program}'"));
+        }
+    };
+    let exit_code = status
+        .code()
+        .map(|value| value.to_string())
+        .unwrap_or_else(|| "signal".to_string());
+    if status.success() {
+        heartbeat.completed(&[("exit_code", &exit_code)]);
+    } else {
+        heartbeat.failed(&[
+            ("reason_code", "validation_subprocess_failed"),
+            ("next_action_hint", "inspect_subprocess_output"),
+            ("exit_code", &exit_code),
+        ]);
+    }
     Ok(status.success())
+}
+
+fn classify_finish_subprocess(program: &str, args: &[&str]) -> &'static str {
+    match program {
+        "cargo" => "rust_validation",
+        "git" => "git_hygiene",
+        "bash" => {
+            if args
+                .iter()
+                .any(|arg| arg.contains("run_owner_validation_lane"))
+            {
+                "owner_validation_lane"
+            } else if args
+                .iter()
+                .any(|arg| arg.contains("coverage") || arg.contains("llvm-cov"))
+            {
+                "coverage_validation"
+            } else {
+                "shell_validation"
+            }
+        }
+        _ => "validation_subprocess",
+    }
+}
+
+fn format_subprocess_excerpt(program: &str, args: &[&str]) -> String {
+    let mut parts = Vec::with_capacity(args.len() + 1);
+    parts.push(program.to_string());
+    parts.extend(args.iter().take(4).map(|value| value.to_string()));
+    let mut joined = parts.join(" ");
+    if args.len() > 4 {
+        joined.push_str(" ...");
+    }
+    joined
 }
 
 fn resolve_finish_pr_base(repo_root: &Path, branch: &str) -> Result<String> {
@@ -1398,4 +1496,99 @@ pub(super) fn write_temp_markdown(prefix: &str, body: &str) -> Result<PathBuf> {
     path.push(format!("{prefix}-{nanos}.md"));
     fs::write(&path, body)?;
     Ok(path)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::run_finish_validation_status;
+    use std::fs;
+    use std::os::unix::fs::PermissionsExt;
+    use std::path::PathBuf;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    use std::sync::{Mutex, MutexGuard, OnceLock};
+
+    static TEMP_SEQ: AtomicU64 = AtomicU64::new(0);
+    static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+
+    fn env_lock() -> MutexGuard<'static, ()> {
+        match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
+            Ok(guard) => guard,
+            Err(poisoned) => poisoned.into_inner(),
+        }
+    }
+
+    fn temp_dir(prefix: &str) -> PathBuf {
+        let dir = std::env::temp_dir().join(format!(
+            "adl-finish-validation-{prefix}-{}-{}",
+            std::process::id(),
+            TEMP_SEQ.fetch_add(1, Ordering::Relaxed)
+        ));
+        fs::create_dir_all(&dir).expect("create temp dir");
+        dir
+    }
+
+    #[test]
+    fn finish_validation_emits_subprocess_heartbeat_and_classification() {
+        let _guard = env_lock();
+        let temp = temp_dir("heartbeat");
+        let script = temp.join("slow-validation.sh");
+        let log = temp.join("observability.log");
+        fs::write(&script, "#!/bin/sh\nsleep 0.08\nexit 0\n").expect("write script");
+        let mut perms = fs::metadata(&script).expect("metadata").permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script, perms).expect("chmod");
+
+        unsafe {
+            std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
+            std::env::set_var("ADL_OBSERVABILITY_LOG", &log);
+            std::env::set_var("ADL_OBSERVABILITY_HEARTBEAT_MS", "25");
+        }
+
+        run_finish_validation_status("bash", &[script.to_str().expect("script path")])
+            .expect("validation command");
+
+        let contents = fs::read_to_string(&log).expect("read log");
+        assert!(contents.contains("command=finish"));
+        assert!(contents.contains("stage=validation_subprocess"));
+        assert!(contents.contains("program=bash"));
+        assert!(contents.contains("subprocess_class=shell_validation"));
+        assert!(contents.contains("result=heartbeat"));
+        assert!(contents.contains("result=completed"));
+
+        unsafe {
+            std::env::remove_var("ADL_OBSERVABILITY_STDERR");
+            std::env::remove_var("ADL_OBSERVABILITY_LOG");
+            std::env::remove_var("ADL_OBSERVABILITY_HEARTBEAT_MS");
+        }
+    }
+
+    #[test]
+    fn finish_validation_emits_failed_terminal_event_on_spawn_error() {
+        let _guard = env_lock();
+        let temp = temp_dir("spawn-error");
+        let log = temp.join("observability.log");
+
+        unsafe {
+            std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
+            std::env::set_var("ADL_OBSERVABILITY_LOG", &log);
+            std::env::set_var("ADL_OBSERVABILITY_HEARTBEAT_MS", "25");
+        }
+
+        let err =
+            run_finish_validation_status("definitely-not-a-real-finish-subprocess", &["--version"])
+                .expect_err("spawn should fail");
+        assert!(err.to_string().contains("failed to spawn"));
+
+        let contents = fs::read_to_string(&log).expect("read log");
+        assert!(contents.contains("result=started"));
+        assert!(contents.contains("result=failed"));
+        assert!(contents.contains("reason_code=validation_subprocess_spawn_failed"));
+        assert!(contents.contains("next_action_hint=check_subprocess_path_and_permissions"));
+
+        unsafe {
+            std::env::remove_var("ADL_OBSERVABILITY_STDERR");
+            std::env::remove_var("ADL_OBSERVABILITY_LOG");
+            std::env::remove_var("ADL_OBSERVABILITY_HEARTBEAT_MS");
+        }
+    }
 }
