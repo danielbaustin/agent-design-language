@@ -20,16 +20,16 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1781504841",
-      "duration_ms": 12301,
+      "started_at": "unix:1781506761",
+      "duration_ms": 13037,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted provider text len=208]"
+      "raw_response_excerpt": "[redacted provider text len=165]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 12302,
-  "output_text": "{\"issue\":\"#3723\",\"path\":\"docs/milestones/v0.91.5/review/openrouter_matrix\",\"task\":\"Verify OpenRouter configuration correctly route inbound test payloads to fallback endpoints\",\"limit\":\"bounded_to_issue_3723\"}",
-  "output_text_excerpt": "[redacted provider text len=208]"
+  "duration_ms": 13038,
+  "output_text": "{\"issue\":\"#3723\",\"path\":\"docs/milestones/v0.91.5/review/openrouter_matrix\",\"task\":\"Verify OpenRouter route configuration validation\",\"limit\":\"bounded_to_issue_3723\"}",
+  "output_text_excerpt": "[redacted provider text len=165]"
 }

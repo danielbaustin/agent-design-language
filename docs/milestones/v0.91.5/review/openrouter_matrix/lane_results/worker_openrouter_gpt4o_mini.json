@@ -20,16 +20,16 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1781504837",
-      "duration_ms": 829,
+      "started_at": "unix:1781506757",
+      "duration_ms": 1154,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted provider text len=201]"
+      "raw_response_excerpt": "[redacted provider text len=168]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 829,
-  "output_text": "```json\n{\"issue\":\"#3723\",\"path\":\"docs/milestones/v0.91.5/review/openrouter_matrix\",\"task\":\"Verify OpenRouter route configurations against the latest specifications\",\"limit\":\"bounded_to_issue_3723\"}\n```",
-  "output_text_excerpt": "[redacted provider text len=201]"
+  "duration_ms": 1155,
+  "output_text": "```json\n{\"issue\":\"#3723\",\"path\":\"docs/milestones/v0.91.5/review/openrouter_matrix\",\"task\":\"Validate OpenRouter route configuration\",\"limit\":\"bounded_to_issue_3723\"}\n```",
+  "output_text_excerpt": "[redacted provider text len=168]"
 }

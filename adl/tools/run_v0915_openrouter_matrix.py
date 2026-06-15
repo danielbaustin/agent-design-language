@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -105,8 +106,27 @@ def fetch_catalog(out_path: Path, key: str) -> dict:
     )
     with urllib_request.urlopen(req, timeout=30) as response:
         payload = json.loads(response.read().decode("utf-8"))
+    payload = normalize_catalog_payload(payload)
     write_json(out_path, payload)
     return payload
+
+
+def normalize_catalog_payload(payload: object) -> object:
+    if isinstance(payload, dict):
+        normalized = {}
+        for key, value in payload.items():
+            if key == "description" and isinstance(value, str):
+                normalized[key] = normalize_catalog_description(value)
+            else:
+                normalized[key] = normalize_catalog_payload(value)
+        return normalized
+    if isinstance(payload, list):
+        return [normalize_catalog_payload(item) for item in payload]
+    return payload
+
+
+def normalize_catalog_description(value: str) -> str:
+    return re.sub(r"(?i)\bswarm\b", "multi-agent", value)
 
 
 def provider_setup(adl_bin: Path, root: Path, out_dir: Path) -> None:
