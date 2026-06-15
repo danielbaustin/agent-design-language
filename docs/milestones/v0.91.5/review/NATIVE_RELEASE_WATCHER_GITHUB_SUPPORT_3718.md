@@ -57,6 +57,18 @@ bash adl/tools/test_release_ceremony.sh
 
 Result: passed.
 
+```bash
+cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- tooling_cmd
+```
+
+Result: passed; wrote `adl/target/coverage-impact-summary.json`.
+
+```bash
+bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk
+```
+
+Result: passed for changed Rust source files.
+
 ## Review Notes
 
 The proof is intentionally narrow. It shows the release ceremony's covered GitHub release actions now have a typed Rust/octocrab path and that the shell wrapper delegates to it. Remaining GitHub transport work should be routed as follow-on issues rather than hidden inside #3718.
