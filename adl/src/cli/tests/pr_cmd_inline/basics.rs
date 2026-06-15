@@ -18,7 +18,7 @@ fn render_generated_issue_prompt_preserves_bootstrap_contract() {
     assert!(content
         .contains("Bootstrap-generated issue body created from the requested title and labels"));
     assert!(content.contains(
-            "This body should be concrete enough that `gh issue view` is useful immediately after creation."
+            "This body should be concrete enough that `GitHub issue view` is useful immediately after creation."
         ));
     assert!(content.contains(
         "Default next steps should follow `pr-ready` and `pr-run`, not the older `pr start` path."
@@ -565,6 +565,7 @@ fn real_pr_init_seeds_stp_from_generated_source_prompt() {
     let repo = unique_temp_dir("adl-pr-real-init");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
+    let _github_fixture = install_issue_label_fixture(&repo);
     let prev_dir = env::current_dir().expect("cwd");
     env::set_current_dir(&repo).expect("chdir");
 
@@ -608,6 +609,7 @@ fn real_pr_init_refreshes_invalid_existing_stp() {
     let repo = unique_temp_dir("adl-pr-real-init-invalid-existing");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
+    let _github_fixture = install_issue_label_fixture(&repo);
     let issue_ref = IssueRef::new(
         1151,
         "v0.86".to_string(),
@@ -648,6 +650,7 @@ fn real_pr_init_refreshes_legacy_bootstrap_spp() {
     let repo = unique_temp_dir("adl-pr-real-init-refresh-spp");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
+    let _github_fixture = install_issue_label_fixture(&repo);
     let issue_ref = IssueRef::new(
         1151,
         "v0.86".to_string(),
@@ -1057,7 +1060,7 @@ fn real_pr_create_rejects_issue_body_that_cannot_pass_source_prompt_validation()
         "--version".to_string(),
         "v0.86".to_string(),
     ])
-    .expect_err("invalid issue body should fail before gh issue create");
+    .expect_err("invalid issue body should fail before GitHub issue creation");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
     unsafe {
@@ -1113,7 +1116,7 @@ fn real_pr_create_rejects_bootstrap_stub_issue_body_with_authored_body_guidance(
         "--version".to_string(),
         "v0.86".to_string(),
     ])
-    .expect_err("bootstrap stub issue body should fail before gh issue create");
+    .expect_err("bootstrap stub issue body should fail before GitHub issue creation");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
     unsafe {
@@ -1220,13 +1223,13 @@ fn real_pr_create_rejects_missing_origin_before_spawning_gh_issue_create() {
         "--slug".to_string(),
         "v0-87-1-tools-guard-create-repo-target".to_string(),
         "--body".to_string(),
-        "## Summary\n\nGuard issue creation against ambient repo inference.\n\n## Goal\n\nRequire a real GitHub origin before issue creation.\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- create-path guard\n\n## Acceptance Criteria\n\n- create fails before gh issue create when origin is missing\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- broader lifecycle redesign\n\n## Issue-Graph Notes\n\n- regression test\n\n## Notes\n\n- none\n\n## Tooling Notes\n\n- gh should not be spawned on this path\n".to_string(),
+        "## Summary\n\nGuard issue creation against ambient repo inference.\n\n## Goal\n\nRequire a real GitHub origin before issue creation.\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- create-path guard\n\n## Acceptance Criteria\n\n- create fails before GitHub issue creation when origin is missing\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- broader lifecycle redesign\n\n## Issue-Graph Notes\n\n- regression test\n\n## Notes\n\n- none\n\n## Tooling Notes\n\n- GitHub CLI should not be spawned on this path\n".to_string(),
         "--labels".to_string(),
         "track:roadmap,type:task,area:tools".to_string(),
         "--version".to_string(),
         "v0.87.1".to_string(),
     ])
-    .expect_err("missing origin should fail before gh issue create");
+    .expect_err("missing origin should fail before GitHub issue creation");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
     unsafe {
@@ -1238,6 +1241,6 @@ fn real_pr_create_rejects_missing_origin_before_spawning_gh_issue_create() {
         .contains("refusing to infer the GitHub issue target from ambient gh context"));
     assert!(
         !gh_log.exists(),
-        "gh should not be spawned when origin is missing"
+        "GitHub CLI should not be spawned when origin is missing"
     );
 }

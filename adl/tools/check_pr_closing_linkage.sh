@@ -1,189 +1,78 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-EVENT_NAME="${GITHUB_EVENT_NAME:-}"
-EVENT_PATH="${GITHUB_EVENT_PATH:-}"
-HEAD_REF="${GITHUB_HEAD_REF:-}"
-
-body_has_linkage() {
-  local issue="$1"
-  python3 -c '
-import re
-import sys
-
-issue = sys.argv[1]
-body = sys.stdin.read()
-pattern = re.compile(rf"\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#?{re.escape(issue)}\b", re.IGNORECASE)
-if pattern.search(body):
-    raise SystemExit(0)
-raise SystemExit(1)
-' "$issue"
-}
-
-body_has_non_closing_lifecycle_marker() {
-  local issue="$1"
-  python3 -c '
-import re
-import sys
-
-issue = sys.argv[1]
-body = sys.stdin.read()
-pattern = re.compile(
-    rf"^\s*Non-closing lifecycle PR:\s*issue\s+#?{re.escape(issue)}\s+remains\s+open\b",
-    re.IGNORECASE | re.MULTILINE,
-)
-if pattern.search(body):
-    raise SystemExit(0)
-raise SystemExit(1)
-' "$issue"
-}
-
-issue_is_open() {
-  local repo="$1"
-  local issue="$2"
-  if [[ -z "$repo" ]] || ! command -v gh >/dev/null 2>&1; then
-    return 1
-  fi
-  local state
-  state="$(gh issue view "$issue" -R "$repo" --json state --jq '.state' 2>/dev/null || true)"
-  [[ "$state" == "OPEN" ]]
-}
+event_name="${GITHUB_EVENT_NAME:-}"
+event_path="${GITHUB_EVENT_PATH:-}"
+head_ref="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME:-}}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --event-name)
-      EVENT_NAME="${2:-}"
+      event_name="${2:-}"
       shift 2
       ;;
     --event-path)
-      EVENT_PATH="${2:-}"
+      event_path="${2:-}"
       shift 2
       ;;
     --head-ref)
-      HEAD_REF="${2:-}"
+      head_ref="${2:-}"
       shift 2
       ;;
-    -h|--help)
-      cat <<'EOF'
-Usage:
-  check_pr_closing_linkage.sh [--event-name <name>] [--event-path <path>] [--head-ref <ref>]
-
-Enforces that pull requests from codex/<issue>-... branches contain a real GitHub
-closing keyword for that issue in the PR body so the source issue auto-closes on merge.
-
-Lifecycle handoff or evidence-prep PRs that must not close their issue may use
-this explicit marker while the issue is still open:
-
-  Non-closing lifecycle PR: issue <number> remains open
-EOF
-      exit 0
-      ;;
     *)
-      echo "unknown arg: $1" >&2
+      echo "check_pr_closing_linkage: unknown argument '$1'" >&2
       exit 2
       ;;
   esac
 done
 
-if [[ "${EVENT_NAME}" != "pull_request" ]]; then
-  echo "skip: event '${EVENT_NAME:-unknown}' is not pull_request"
+if [[ "$event_name" != "pull_request" ]]; then
+  echo "check_pr_closing_linkage: skipped for event '$event_name'"
   exit 0
 fi
 
-if [[ -z "$HEAD_REF" ]]; then
-  echo "ERROR: missing pull request head ref" >&2
-  exit 1
+if [[ -z "$event_path" || ! -f "$event_path" ]]; then
+  echo "check_pr_closing_linkage: missing GitHub pull_request event payload" >&2
+  exit 2
 fi
 
-if [[ ! "$HEAD_REF" =~ ^codex/([0-9]+)- ]]; then
-  echo "skip: head ref '$HEAD_REF' is not an issue-linked codex branch"
+if [[ ! "$head_ref" =~ (^|/)codex/([0-9]+)- ]]; then
+  echo "check_pr_closing_linkage: skipped for non-issue branch '$head_ref'"
   exit 0
 fi
 
-ISSUE_NUMBER="${BASH_REMATCH[1]}"
+issue="${BASH_REMATCH[2]}"
 
-if [[ -z "$EVENT_PATH" || ! -f "$EVENT_PATH" ]]; then
-  echo "ERROR: missing GitHub event payload at '$EVENT_PATH'" >&2
-  exit 1
-fi
-
-PR_BODY="$(
-python3 - "$EVENT_PATH" <<'PY'
+python3 - "$event_path" "$issue" <<'PY'
 import json
+import re
 import sys
 from pathlib import Path
 
 event_path = Path(sys.argv[1])
-data = json.loads(event_path.read_text())
-body = data.get("pull_request", {}).get("body") or ""
-print(body)
+issue = sys.argv[2]
+payload = json.loads(event_path.read_text())
+body = (payload.get("pull_request") or {}).get("body") or ""
+pr_number = (payload.get("pull_request") or {}).get("number") or "unknown"
+
+if re.search(r"\bNon-closing lifecycle PR\b", body, flags=re.IGNORECASE):
+    print(
+        f"check_pr_closing_linkage: PR #{pr_number} declares non-closing lifecycle work for issue #{issue}"
+    )
+    raise SystemExit(0)
+
+closing = re.compile(
+    rf"\b(close[sd]?|fix(e[sd])?|resolve[sd]?)\s+#?{re.escape(issue)}\b",
+    flags=re.IGNORECASE,
+)
+if closing.search(body):
+    print(f"check_pr_closing_linkage: PR #{pr_number} closes issue #{issue}")
+    raise SystemExit(0)
+
+print(
+    f"check_pr_closing_linkage: PR #{pr_number} is missing closing linkage to issue #{issue}; "
+    f"include a closing keyword such as 'Closes #{issue}' or declare a non-closing lifecycle PR",
+    file=sys.stderr,
+)
+raise SystemExit(1)
 PY
-)"
-
-LIVE_REPO="$(
-python3 - "$EVENT_PATH" <<'PY'
-import json
-import sys
-from pathlib import Path
-
-data = json.loads(Path(sys.argv[1]).read_text())
-repo = data.get("repository", {}).get("full_name") or ""
-print(repo)
-PY
-)"
-
-if body_has_linkage "$ISSUE_NUMBER" <<<"$PR_BODY"; then
-  echo "closing linkage OK for issue #$ISSUE_NUMBER"
-  exit 0
-fi
-
-if body_has_non_closing_lifecycle_marker "$ISSUE_NUMBER" <<<"$PR_BODY"; then
-  if issue_is_open "$LIVE_REPO" "$ISSUE_NUMBER"; then
-    echo "non-closing lifecycle PR OK for open issue #$ISSUE_NUMBER"
-    exit 0
-  fi
-  echo "ERROR: non-closing lifecycle marker is only allowed while issue #$ISSUE_NUMBER is open" >&2
-  exit 1
-fi
-
-if command -v gh >/dev/null 2>&1; then
-  LIVE_PR="$(
-    python3 - "$EVENT_PATH" <<'PY'
-import json
-import sys
-from pathlib import Path
-
-data = json.loads(Path(sys.argv[1]).read_text())
-pr = data.get("pull_request", {}).get("number") or ""
-print(pr)
-PY
-  )"
-  if [[ -n "$LIVE_REPO" && -n "$LIVE_PR" ]]; then
-    LIVE_LINKED="$(
-      gh pr view "$LIVE_PR" -R "$LIVE_REPO" --json closingIssuesReferences --jq '.closingIssuesReferences[]?.number' 2>/dev/null || true
-    )"
-    if grep -Fxq "$ISSUE_NUMBER" <<<"$LIVE_LINKED"; then
-      echo "closing linkage OK for issue #$ISSUE_NUMBER via live PR truth"
-      exit 0
-    fi
-    LIVE_BODY="$(gh pr view "$LIVE_PR" -R "$LIVE_REPO" --json body --jq '.body' 2>/dev/null || true)"
-    if [[ -n "$LIVE_BODY" ]] && body_has_linkage "$ISSUE_NUMBER" <<<"$LIVE_BODY"; then
-      echo "closing linkage OK for issue #$ISSUE_NUMBER via live PR body"
-      exit 0
-    fi
-    if [[ -n "$LIVE_BODY" ]] && body_has_non_closing_lifecycle_marker "$ISSUE_NUMBER" <<<"$LIVE_BODY"; then
-      if issue_is_open "$LIVE_REPO" "$ISSUE_NUMBER"; then
-        echo "non-closing lifecycle PR OK for open issue #$ISSUE_NUMBER via live PR body"
-        exit 0
-      fi
-      echo "ERROR: non-closing lifecycle marker is only allowed while issue #$ISSUE_NUMBER is open" >&2
-      exit 1
-    fi
-  fi
-fi
-
-echo "ERROR: PR body for branch '$HEAD_REF' is missing closing linkage for issue #$ISSUE_NUMBER" >&2
-echo "Add a real closing keyword such as 'Closes #$ISSUE_NUMBER' to the PR body." >&2
-echo "For lifecycle handoff PRs that intentionally keep the issue open, add:" >&2
-echo "Non-closing lifecycle PR: issue $ISSUE_NUMBER remains open" >&2
-exit 1

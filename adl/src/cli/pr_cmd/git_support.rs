@@ -35,24 +35,6 @@ pub(super) fn default_repo(repo_root: &Path) -> Result<String> {
         }
     }
 
-    let gh_repo = run_capture_allow_failure(
-        "gh",
-        &[
-            "repo",
-            "view",
-            "--json",
-            "nameWithOwner",
-            "--jq",
-            ".nameWithOwner",
-        ],
-    )?;
-    if let Some(repo) = gh_repo {
-        let trimmed = repo.trim();
-        if !trimmed.is_empty() {
-            return Ok(trimmed.to_string());
-        }
-    }
-
     let base = repo_root
         .file_name()
         .and_then(|name| name.to_str())

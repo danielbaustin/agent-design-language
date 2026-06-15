@@ -37,7 +37,7 @@ if [[ "$1" == "issue" && "$2" == "view" ]]; then
       echo '{"number":3001,"title":"[v0.91.1][sprint-1][management] Trial sprint","state":"OPEN","url":"https://github.com/danielbaustin/agent-design-language/issues/3001"}'
       ;;
     *)
-      echo "unexpected gh issue view ${issue_number}" >&2
+      echo "unexpected GitHub issue view ${issue_number}" >&2
       exit 1
       ;;
   esac

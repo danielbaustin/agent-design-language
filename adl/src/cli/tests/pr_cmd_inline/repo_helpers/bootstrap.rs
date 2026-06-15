@@ -164,7 +164,7 @@ fn real_pr_init_requires_explicit_or_inferable_version_for_issue() {
     fs::create_dir_all(&bin_dir).expect("bin dir");
     write_executable(
         &bin_dir.join("gh"),
-        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title -q .title\"* ]]; then\n  printf '[runtime] Missing version metadata\\n'\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels -q .labels[].name\"* ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:runtime\\n'\n  exit 0\nfi\nexit 1\n",
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title --jq .title\"* ]]; then\n  printf '[runtime] Missing version metadata\\n'\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels --jq .labels[].name\"* ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:runtime\\n'\n  exit 0\nfi\nexit 1\n",
     );
 
     let old_path = env::var("PATH").unwrap_or_default();

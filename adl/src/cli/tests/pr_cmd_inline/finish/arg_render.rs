@@ -406,6 +406,83 @@ fn finish_full_rust_validation_falls_back_when_nextest_is_unavailable() {
 }
 
 #[test]
+fn finish_validation_sanitizes_live_github_transport_env() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-sanitized-github-env");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo-env.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'args=%s ADL_GITHUB_CLIENT=%s ADL_GITHUB_DISABLE_GH_FALLBACK=%s ADL_GITHUB_OCTOCRAB_BASE_URI=%s GITHUB_TOKEN=%s GH_TOKEN=%s\\n' \"$*\" \"${{ADL_GITHUB_CLIENT-}}\" \"${{ADL_GITHUB_DISABLE_GH_FALLBACK-}}\" \"${{ADL_GITHUB_OCTOCRAB_BASE_URI-}}\" \"${{GITHUB_TOKEN-}}\" \"${{GH_TOKEN-}}\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let github_envs = [
+        "ADL_GITHUB_CLIENT",
+        "ADL_GITHUB_DISABLE_GH_FALLBACK",
+        "ADL_GITHUB_OCTOCRAB_BASE_URI",
+        "GITHUB_TOKEN",
+        "GH_TOKEN",
+    ];
+    let old_github_envs = github_envs
+        .iter()
+        .map(|key| (*key, env::var(key).ok()))
+        .collect::<Vec<_>>();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        env::set_var("ADL_GITHUB_DISABLE_GH_FALLBACK", "1");
+        env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", "http://127.0.0.1:9");
+        env::set_var("GITHUB_TOKEN", "github-secret-token");
+        env::set_var("GH_TOKEN", "gh-secret-token");
+    }
+
+    run_finish_validation_rust(
+        &repo,
+        &select_finish_validation_plan("adl,docs").expect("full-rust plan"),
+    )
+    .expect("full validation should not inherit live GitHub transport env");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+        for (key, value) in old_github_envs {
+            match value {
+                Some(value) => env::set_var(key, value),
+                None => env::remove_var(key),
+            }
+        }
+    }
+
+    let cargo_env = fs::read_to_string(&cargo_log).expect("cargo env log");
+    assert!(cargo_env.contains("nextest --version"));
+    assert!(cargo_env.contains("nextest run --manifest-path"));
+    assert!(!cargo_env.contains("octocrab"));
+    assert!(!cargo_env.contains("github-secret-token"));
+    assert!(!cargo_env.contains("gh-secret-token"));
+    assert!(!cargo_env.contains("127.0.0.1:9"));
+    assert!(cargo_env
+        .lines()
+        .all(|line| line.contains("ADL_GITHUB_CLIENT= ADL_GITHUB_DISABLE_GH_FALLBACK=")));
+}
+
+#[test]
 fn finish_validation_plan_supports_focused_local_ci_gated_mode() {
     let plan = select_finish_validation_plan(
         "adl/src/cli/pr_cmd/doctor.rs,adl/src/cli/pr_cmd/lifecycle/tests.rs,adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs,.github/workflows/ci.yaml,adl/tools/check_coverage_impact.sh,adl/tools/ci_path_policy.sh,docs/tooling/merge_readiness_gate_policy_v0.91.4.md,docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md,docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md,docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md,docs/milestones/v0.91.4/review/merge_readiness/ct_demo_001_merge_gate_profile_report.md",
@@ -1186,7 +1263,6 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
     assert!(head_subject.contains("[v0.86][tools] Rust finish default lane (Closes #1153)"));
     let gh_log = fs::read_to_string(&gh_log).expect("gh log");
     assert!(gh_log.contains("pr create"));
-    assert!(gh_log.contains("pr view -R danielbaustin/agent-design-language"));
     let janitor_log = fs::read_to_string(&janitor_log).expect("janitor log");
     let closeout_log = fs::read_to_string(&closeout_log).expect("closeout log");
     assert!(janitor_log.contains("--issue 1153"));

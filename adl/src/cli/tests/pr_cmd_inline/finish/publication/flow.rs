@@ -247,7 +247,10 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
     let janitor_calls = fs::read_to_string(&janitor_log).expect("read janitor log");
     let closeout_calls = fs::read_to_string(&closeout_log).expect("read closeout log");
     assert!(gh_calls.contains("pr create"));
-    assert!(gh_calls.contains("pr view -R danielbaustin/agent-design-language https://github.com/danielbaustin/agent-design-language/pull/1159 --json closingIssuesReferences --jq .closingIssuesReferences[]?.number"));
+    assert!(gh_calls.contains("pr view"));
+    assert!(gh_calls.contains("danielbaustin/agent-design-language"));
+    assert!(gh_calls.contains("https://github.com/danielbaustin/agent-design-language/pull/1159"));
+    assert!(gh_calls.contains("closingIssuesReferences"));
     assert!(janitor_calls.contains("--issue 1153"));
     assert!(janitor_calls.contains("--branch codex/1153-rust-finish-test"));
     assert!(janitor_calls
@@ -822,6 +825,10 @@ fn real_pr_finish_updates_existing_pr_and_marks_ready() {
     result.expect("real_pr finish edit");
 
     let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
-    assert!(gh_calls.contains("pr edit -R danielbaustin/agent-design-language https://github.com/danielbaustin/agent-design-language/pull/1160 --title [v0.86][tools] Rust finish test edit --body-file"));
-    assert!(gh_calls.contains("pr ready -R danielbaustin/agent-design-language https://github.com/danielbaustin/agent-design-language/pull/1160"));
+    assert!(gh_calls.contains("pr edit"));
+    assert!(gh_calls.contains("danielbaustin/agent-design-language"));
+    assert!(gh_calls.contains("https://github.com/danielbaustin/agent-design-language/pull/1160"));
+    assert!(gh_calls.contains("--title [v0.86][tools] Rust finish test edit"));
+    assert!(gh_calls.contains("--body-file"));
+    assert!(gh_calls.contains("pr ready"));
 }

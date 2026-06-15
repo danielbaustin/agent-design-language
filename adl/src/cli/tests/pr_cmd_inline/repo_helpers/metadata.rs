@@ -113,7 +113,9 @@ fn unresolved_milestone_pr_wave_rejects_invalid_json() {
         env::set_var("PATH", old_path);
     }
 
-    assert!(err.to_string().contains("failed to parse gh pr list json"));
+    assert!(err
+        .to_string()
+        .contains("failed to parse GitHub PR list JSON"));
 }
 
 #[test]
@@ -150,7 +152,7 @@ fn ensure_source_issue_prompt_replaces_existing_bootstrap_stub_when_github_body_
     write_executable(
         &bin_dir.join("gh"),
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json body -q .body\"* ]]; then\n  cat <<'EOF'\n---\nissue_card_schema: adl.issue.v1\nwp: \"unassigned\"\nslug: \"v0-86-tools-replace-bootstrap-stub\"\ntitle: \"[v0.86][tools] Replace bootstrap stub\"\nlabels:\n  - \"track:roadmap\"\n  - \"type:task\"\n  - \"area:tools\"\n  - \"version:v0.86\"\nstatus: \"active\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs:\n  - \"adl/src/cli/pr_cmd.rs\"\ncanonical_files:\n  - \"adl/src/cli/pr_cmd.rs\"\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"GitHub-authored body should replace the local stub.\"\npr_start:\n  enabled: false\n  slug: \"v0-86-tools-replace-bootstrap-stub\"\n---\n\n# [v0.86][tools] Replace bootstrap stub\n\n## Summary\n\nAuthored GitHub issue body should win over the local bootstrap stub.\n\n## Goal\n\nPreserve the authored issue body locally.\n\n## Acceptance Criteria\n\n- replace the bootstrap stub\n- keep the authored body intact\nEOF\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json body --jq .body\"* ]]; then\n  cat <<'EOF'\n---\nissue_card_schema: adl.issue.v1\nwp: \"unassigned\"\nslug: \"v0-86-tools-replace-bootstrap-stub\"\ntitle: \"[v0.86][tools] Replace bootstrap stub\"\nlabels:\n  - \"track:roadmap\"\n  - \"type:task\"\n  - \"area:tools\"\n  - \"version:v0.86\"\nstatus: \"active\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs:\n  - \"adl/src/cli/pr_cmd.rs\"\ncanonical_files:\n  - \"adl/src/cli/pr_cmd.rs\"\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"GitHub-authored body should replace the local stub.\"\npr_start:\n  enabled: false\n  slug: \"v0-86-tools-replace-bootstrap-stub\"\n---\n\n# [v0.86][tools] Replace bootstrap stub\n\n## Summary\n\nAuthored GitHub issue body should win over the local bootstrap stub.\n\n## Goal\n\nPreserve the authored issue body locally.\n\n## Acceptance Criteria\n\n- replace the bootstrap stub\n- keep the authored body intact\nEOF\n  exit 0\nfi\nexit 1\n",
             gh_log.display()
         ),
     );
@@ -205,7 +207,7 @@ fn ensure_source_issue_prompt_replaces_existing_bootstrap_stub_when_github_body_
     assert!(!prompt
         .contains("Bootstrap-generated issue body created from the requested title and labels"));
     let gh_log = fs::read_to_string(&gh_log).expect("gh log");
-    assert!(gh_log.contains("issue view 1153 -R owner/repo --json body -q .body"));
+    assert!(gh_log.contains("issue view 1153 -R owner/repo --json body --jq .body"));
 }
 
 #[test]
@@ -218,7 +220,7 @@ fn ensure_source_issue_prompt_preserves_authored_front_matter_from_github_body()
     fs::create_dir_all(&bin_dir).expect("bin dir");
     write_executable(
         &bin_dir.join("gh"),
-        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$*\" == *\"issue view 1152 -R owner/repo --json body -q .body\"* ]]; then\n  cat <<'EOF'\n---\nissue_card_schema: adl.issue.v1\nwp: \"unassigned\"\nslug: \"v0-86-tools-preserve-authored-front-matter\"\ntitle: \"[v0.86][tools] Preserve authored front matter\"\nlabels:\n  - \"track:roadmap\"\n  - \"type:task\"\n  - \"area:tools\"\n  - \"version:v0.86\"\nstatus: \"active\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs:\n  - \"adl/src/cli/pr_cmd.rs\"\ncanonical_files:\n  - \"adl/src/cli/pr_cmd.rs\"\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Authored on GitHub first.\"\npr_start:\n  enabled: false\n  slug: \"v0-86-tools-preserve-authored-front-matter\"\n---\n\n# [v0.86][tools] Preserve authored front matter\n\n## Summary\n\nAuthored issue body with front matter from GitHub.\n\n## Goal\n\nKeep this authored structure during bootstrap.\n\n## Acceptance Criteria\n\n- preserve authored front matter\n- inject issue number locally\nEOF\n  exit 0\nfi\nexit 1\n",
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$*\" == *\"issue view 1152 -R owner/repo --json body --jq .body\"* ]]; then\n  cat <<'EOF'\n---\nissue_card_schema: adl.issue.v1\nwp: \"unassigned\"\nslug: \"v0-86-tools-preserve-authored-front-matter\"\ntitle: \"[v0.86][tools] Preserve authored front matter\"\nlabels:\n  - \"track:roadmap\"\n  - \"type:task\"\n  - \"area:tools\"\n  - \"version:v0.86\"\nstatus: \"active\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs:\n  - \"adl/src/cli/pr_cmd.rs\"\ncanonical_files:\n  - \"adl/src/cli/pr_cmd.rs\"\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Authored on GitHub first.\"\npr_start:\n  enabled: false\n  slug: \"v0-86-tools-preserve-authored-front-matter\"\n---\n\n# [v0.86][tools] Preserve authored front matter\n\n## Summary\n\nAuthored issue body with front matter from GitHub.\n\n## Goal\n\nKeep this authored structure during bootstrap.\n\n## Acceptance Criteria\n\n- preserve authored front matter\n- inject issue number locally\nEOF\n  exit 0\nfi\nexit 1\n",
     );
 
     let old_path = env::var("PATH").unwrap_or_default();
@@ -283,7 +285,7 @@ fn real_pr_init_repairs_missing_version_metadata_on_github_issue() {
     write_executable(
         &bin_dir.join("gh"),
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nTITLE_FILE='{}'\nLABELS_FILE='{}'\nread_title() {{ if [[ -f \"$TITLE_FILE\" ]]; then cat \"$TITLE_FILE\"; else printf '[tools] Metadata parity\\n'; fi; }}\nread_labels() {{ if [[ -f \"$LABELS_FILE\" ]]; then cat \"$LABELS_FILE\"; else printf 'track:roadmap\\ntype:task\\narea:tools\\n'; fi; }}\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title -q .title\"* ]]; then\n  read_title\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels -q .labels[].name\"* ]]; then\n  read_labels\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json body -q .body\"* ]]; then\n  cat <<'EOF'\n## Summary\n\nRepair missing version metadata during init.\n\n## Goal\n\nKeep GitHub issue metadata aligned with the canonical local prompt.\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- metadata parity enforcement\n\n## Acceptance Criteria\n\n- init repairs the missing version title prefix and version label\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- broader tracker redesign\n\n## Issue-Graph Notes\n\n- regression fixture\n\n## Notes\n\n- none\n\n## Tooling Notes\n\n- ensure bootstrap is truthful\nEOF\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity\"* ]]; then\n  printf '%s\\n' '[v0.87.1][tools] Metadata parity' > \"$TITLE_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--add-label\"* ]]; then\n  cat <<'EOF' > \"$LABELS_FILE\"\ntrack:roadmap\ntype:task\narea:tools\nversion:v0.87.1\nEOF\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nTITLE_FILE='{}'\nLABELS_FILE='{}'\nread_title() {{ if [[ -f \"$TITLE_FILE\" ]]; then cat \"$TITLE_FILE\"; else printf '[tools] Metadata parity\\n'; fi; }}\nread_labels() {{ if [[ -f \"$LABELS_FILE\" ]]; then cat \"$LABELS_FILE\"; else printf 'track:roadmap\\ntype:task\\narea:tools\\n'; fi; }}\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title --jq .title\"* ]]; then\n  read_title\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels --jq .labels[].name\"* ]]; then\n  read_labels\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json body --jq .body\"* ]]; then\n  cat <<'EOF'\n## Summary\n\nRepair missing version metadata during init.\n\n## Goal\n\nKeep GitHub issue metadata aligned with the canonical local prompt.\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- metadata parity enforcement\n\n## Acceptance Criteria\n\n- init repairs the missing version title prefix and version label\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- broader tracker redesign\n\n## Issue-Graph Notes\n\n- regression fixture\n\n## Notes\n\n- none\n\n## Tooling Notes\n\n- ensure bootstrap is truthful\nEOF\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity\"* ]]; then\n  printf '%s\\n' '[v0.87.1][tools] Metadata parity' > \"$TITLE_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--add-label area:tools,track:roadmap,type:task,version:v0.87.1\"* ]]; then\n  cat <<'EOF' > \"$LABELS_FILE\"\narea:tools\ntrack:roadmap\ntype:task\nversion:v0.87.1\nEOF\n  exit 0\nfi\nexit 1\n",
             gh_log.display(),
             title_state.display(),
             labels_state.display()
@@ -332,7 +334,9 @@ fn real_pr_init_repairs_missing_version_metadata_on_github_issue() {
     assert!(
         gh_log.contains("issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity")
     );
-    assert!(gh_log.contains("issue edit 1153 -R owner/repo --add-label version:v0.87.1"));
+    assert!(gh_log.contains(
+        "issue edit 1153 -R owner/repo --add-label area:tools,track:roadmap,type:task,version:v0.87.1"
+    ));
 }
 
 #[test]
@@ -353,7 +357,7 @@ fn ensure_issue_metadata_parity_errors_when_drift_remains_after_repair() {
     write_executable(
         &bin_dir.join("gh"),
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nTITLE_FILE='{}'\nLABELS_FILE='{}'\nread_title() {{ cat \"$TITLE_FILE\"; }}\nread_labels() {{ cat \"$LABELS_FILE\"; }}\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title -q .title\"* ]]; then\n  read_title\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels -q .labels[].name\"* ]]; then\n  read_labels\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity\"* ]]; then\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--add-label version:v0.87.1\"* ]]; then\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--remove-label version:v0.86\"* ]]; then\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nTITLE_FILE='{}'\nLABELS_FILE='{}'\nread_title() {{ cat \"$TITLE_FILE\"; }}\nread_labels() {{ cat \"$LABELS_FILE\"; }}\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title --jq .title\"* ]]; then\n  read_title\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels --jq .labels[].name\"* ]]; then\n  read_labels\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity\"* ]]; then\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--add-label area:tools,track:roadmap,type:task,version:v0.87.1\"* ]]; then\n  exit 0\nfi\nexit 1\n",
             gh_log.display(),
             title_state.display(),
             labels_state.display()
@@ -386,8 +390,9 @@ fn ensure_issue_metadata_parity_errors_when_drift_remains_after_repair() {
     assert!(
         gh_log.contains("issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity")
     );
-    assert!(gh_log.contains("issue edit 1153 -R owner/repo --add-label version:v0.87.1"));
-    assert!(gh_log.contains("issue edit 1153 -R owner/repo --remove-label version:v0.86"));
+    assert!(gh_log.contains(
+        "issue edit 1153 -R owner/repo --add-label area:tools,track:roadmap,type:task,version:v0.87.1"
+    ));
 }
 
 #[test]
@@ -410,7 +415,7 @@ fn github_issue_create_and_metadata_helpers_cover_direct_success_paths() {
     write_executable(
         &bin_dir.join("gh"),
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nTITLE_FILE='{}'\nLABELS_FILE='{}'\nBODY_FILE='{}'\nif [[ \"$*\" == *\"issue create -R owner/repo --title [v0.87.1][tools] Metadata parity --body Seed body\"* ]]; then\n  printf 'https://github.com/owner/repo/issues/1153\\n'\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title -q .title\"* ]]; then\n  cat \"$TITLE_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels -q .labels[].name\"* ]]; then\n  cat \"$LABELS_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity\"* ]]; then\n  printf '[v0.87.1][tools] Metadata parity\\n' > \"$TITLE_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--add-label version:v0.87.1\"* ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\nversion:v0.87.1\\n' > \"$LABELS_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--remove-label version:v0.86\"* ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.87.1\\n' > \"$LABELS_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --body-file \"* ]]; then\n  body_file=\"${{@:$#}}\"\n  cat \"$body_file\" > \"$BODY_FILE\"\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nTITLE_FILE='{}'\nLABELS_FILE='{}'\nBODY_FILE='{}'\nif [[ \"$*\" == *\"issue create -R owner/repo --title [v0.87.1][tools] Metadata parity --body Seed body\"* ]]; then\n  printf 'https://github.com/owner/repo/issues/1153\\n'\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title --jq .title\"* ]]; then\n  cat \"$TITLE_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels --jq .labels[].name\"* ]]; then\n  cat \"$LABELS_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity\"* ]]; then\n  printf '[v0.87.1][tools] Metadata parity\\n' > \"$TITLE_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--add-label area:tools,track:roadmap,type:task,version:v0.87.1\"* ]]; then\n  printf 'area:tools\\ntrack:roadmap\\ntype:task\\nversion:v0.87.1\\n' > \"$LABELS_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --body Refined issue body\"* ]]; then\n  printf 'Refined issue body' > \"$BODY_FILE\"\n  exit 0\nfi\nexit 1\n",
             gh_log.display(),
             title_state.display(),
             labels_state.display(),
@@ -456,8 +461,8 @@ fn github_issue_create_and_metadata_helpers_cover_direct_success_paths() {
     assert!(
         gh_log.contains("issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity")
     );
-    assert!(gh_log.contains("--add-label version:v0.87.1"));
-    assert!(gh_log.contains("--remove-label version:v0.86"));
+    assert!(gh_log.contains("--add-label area:tools,track:roadmap,type:task,version:v0.87.1"));
+    assert!(!gh_log.contains("--remove-label version:v0.86"));
     assert_eq!(
         fs::read_to_string(&body_state).expect("body state"),
         "Refined issue body"

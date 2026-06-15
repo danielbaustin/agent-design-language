@@ -257,7 +257,7 @@ EOF
     exit 1
   }
   if grep -Fq "v0.3" "$gh_log"; then
-    echo "assertion failed: unexpected v0.3 inference in gh issue view path" >&2
+    echo "assertion failed: unexpected v0.3 inference in GitHub issue-view path" >&2
     exit 1
   fi
 

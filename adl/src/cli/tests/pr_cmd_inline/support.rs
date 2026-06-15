@@ -22,6 +22,42 @@ pub(crate) fn env_lock() -> std::sync::MutexGuard<'static, ()> {
     guard
 }
 
+pub(crate) struct GithubCliFixtureGuard {
+    old_fixture: Option<std::ffi::OsString>,
+}
+
+impl Drop for GithubCliFixtureGuard {
+    fn drop(&mut self) {
+        unsafe {
+            match &self.old_fixture {
+                Some(value) => env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", value),
+                None => env::remove_var("ADL_TEST_GITHUB_CLI_FIXTURE"),
+            }
+        }
+    }
+}
+
+impl GithubCliFixtureGuard {
+    pub(crate) fn set(path: &Path) -> Self {
+        let old_fixture = env::var_os("ADL_TEST_GITHUB_CLI_FIXTURE");
+        unsafe {
+            env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", path);
+        }
+        Self { old_fixture }
+    }
+}
+
+pub(crate) fn install_issue_label_fixture(repo: &Path) -> GithubCliFixtureGuard {
+    let fixture_dir = repo.join(".adl/test-fixtures");
+    fs::create_dir_all(&fixture_dir).expect("fixture dir");
+    let fixture = fixture_dir.join("github-cli-fixture");
+    write_executable(
+        &fixture,
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Init test\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+    );
+    GithubCliFixtureGuard::set(&fixture)
+}
+
 pub(crate) fn has_prompt_template_placeholder(text: &str) -> bool {
     let mut chars = text.char_indices().peekable();
     while let Some((start, ch)) = chars.next() {
@@ -72,6 +108,17 @@ pub(crate) fn env_lock_disables_post_merge_closeout_by_default() {
 }
 
 pub(crate) fn write_executable(path: &Path, content: &str) {
+    let content = if path.file_name().and_then(|name| name.to_str()) == Some("gh")
+        && !content.contains("ADL_GITHUB_TEST_FIXTURE")
+    {
+        content.replacen(
+            "#!/usr/bin/env bash\n",
+            "#!/usr/bin/env bash\n# ADL_GITHUB_TEST_FIXTURE\n",
+            1,
+        )
+    } else {
+        content.to_string()
+    };
     fs::write(path, content).expect("write executable");
     #[cfg(unix)]
     {

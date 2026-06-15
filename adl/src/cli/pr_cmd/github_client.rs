@@ -1,6 +1,6 @@
 #![allow(dead_code)]
-// Foundation contract for the octocrab mini-sprint. Later parity issues wire
-// this module into live issue/PR operations after behavior equivalence is proven.
+// Shared GitHub client contract and octocrab transport bridge for C-SDLC issue
+// and PR workflow operations.
 
 use std::collections::BTreeSet;
 use std::fmt;
@@ -8,6 +8,8 @@ use std::marker::PhantomData;
 
 const ADL_GITHUB_CLIENT_ENV: &str = "ADL_GITHUB_CLIENT";
 const ADL_GITHUB_DISABLE_GH_FALLBACK_ENV: &str = "ADL_GITHUB_DISABLE_GH_FALLBACK";
+#[cfg(test)]
+const ADL_GITHUB_OCTOCRAB_BASE_URI_ENV: &str = "ADL_GITHUB_OCTOCRAB_BASE_URI";
 const GITHUB_TOKEN_ENV: &str = "GITHUB_TOKEN";
 const GH_TOKEN_ENV: &str = "GH_TOKEN";
 
@@ -86,8 +88,7 @@ pub(super) struct AdlGithubClientConfig {
 #[derive(Clone)]
 pub(super) struct AdlGithubClient {
     config: AdlGithubClientConfig,
-    // Keep the octocrab dependency in the typed contract without issuing live
-    // requests in this foundation slice.
+    token: Option<String>,
     _octocrab: PhantomData<octocrab::Octocrab>,
 }
 
@@ -138,7 +139,7 @@ impl AdlGithubClient {
                 return Err(AdlGithubClientError::new(
                     AdlGithubClientErrorKind::MissingToken,
                     format!(
-                        "octocrab GitHub client requires {GITHUB_TOKEN_ENV} or {GH_TOKEN_ENV}; set {ADL_GITHUB_CLIENT_ENV}=gh to force shell fallback"
+                        "octocrab GitHub client requires {GITHUB_TOKEN_ENV} or {GH_TOKEN_ENV}; covered C-SDLC GitHub workflow operations no longer use shell fallback"
                     ),
                 ));
             }
@@ -160,12 +161,40 @@ impl AdlGithubClient {
                     && !gh_fallback_disabled,
                 gh_fallback_disabled,
             },
+            token: token_value(github_token, gh_token),
             _octocrab: PhantomData,
         })
     }
 
     pub(super) fn config(&self) -> &AdlGithubClientConfig {
         &self.config
+    }
+
+    pub(super) fn octocrab(&self) -> Result<octocrab::Octocrab, AdlGithubClientError> {
+        let token = self.token.as_deref().ok_or_else(|| {
+            AdlGithubClientError::new(
+                AdlGithubClientErrorKind::MissingToken,
+                "octocrab GitHub transport requires GITHUB_TOKEN or GH_TOKEN",
+            )
+        })?;
+        let builder = octocrab::Octocrab::builder().personal_token(token.to_string());
+        #[cfg(test)]
+        let builder = if let Ok(base_uri) = std::env::var(ADL_GITHUB_OCTOCRAB_BASE_URI_ENV) {
+            builder.base_uri(base_uri).map_err(|err| {
+                AdlGithubClientError::new(
+                    AdlGithubClientErrorKind::Transport,
+                    format!("failed to configure octocrab test base URI: {err}"),
+                )
+            })?
+        } else {
+            builder
+        };
+        builder.build().map_err(|err| {
+            AdlGithubClientError::new(
+                AdlGithubClientErrorKind::Transport,
+                format!("failed to build octocrab GitHub client: {err}"),
+            )
+        })
     }
 }
 
@@ -180,6 +209,14 @@ fn discover_token_source(
     } else {
         None
     }
+}
+
+fn token_value(github_token: Option<&str>, gh_token: Option<&str>) -> Option<String> {
+    github_token
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .or_else(|| gh_token.map(str::trim).filter(|value| !value.is_empty()))
+        .map(ToString::to_string)
 }
 
 fn parse_disable_gh_fallback(raw: Option<&str>) -> Result<bool, AdlGithubClientError> {
@@ -504,14 +541,17 @@ mod tests {
         let err = AdlGithubClient::from_values(Some("octocrab"), None, None).unwrap_err();
         assert_eq!(err.kind(), AdlGithubClientErrorKind::MissingToken);
         assert_eq!(err.stable_code(), "github_client.missing_token");
-        assert!(err.to_string().contains("ADL_GITHUB_CLIENT=gh"));
+        assert!(err.to_string().contains("no longer use shell fallback"));
     }
 
     #[test]
     fn gh_mode_never_requires_token() {
-        let client = AdlGithubClient::from_values(Some("gh"), None, None).unwrap();
+        let client = AdlGithubClient::from_values(Some("gh"), Some("github"), None).unwrap();
         assert_eq!(client.config().backend, GithubClientBackend::GhFallback);
-        assert_eq!(client.config().token_source, None);
+        assert_eq!(
+            client.config().token_source,
+            Some(GithubTokenSource::GithubToken)
+        );
         assert!(client.config().gh_fallback_allowed);
     }
 
@@ -574,15 +614,13 @@ mod tests {
     }
 
     #[test]
-    fn migration_review_records_fallback_and_remaining_shell_boundaries() {
+    fn migration_review_records_operational_octocrab_transport_boundaries() {
         let doc = include_str!("../../../../docs/tooling/ADL_OCTOCRAB_MIGRATION_REVIEW.md");
 
-        assert!(doc.contains("ADL_GITHUB_DISABLE_GH_FALLBACK"));
-        assert!(doc.contains("github_client.fallback_disabled"));
-        assert!(doc.contains("Remaining Shell-Backed Operations"));
-        assert!(
-            doc.contains("This packet does not claim all GitHub operations are octocrab-backed")
-        );
+        assert!(doc.contains("octocrab-backed transport"));
+        assert!(doc.contains("Covered Octocrab Operations"));
+        assert!(doc.contains("no longer"));
+        assert!(doc.contains("spawn the GitHub CLI"));
         assert!(doc.contains("adl/tools/pr.sh"));
     }
 

@@ -2,6 +2,7 @@ use anyhow::{bail, Context, Result};
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use super::git_support::{
     branch_checked_out_worktree_path, commits_ahead_of_origin_main, current_branch, default_repo,
@@ -412,7 +413,7 @@ fn finish_validation_guard(repo_root: &Path) -> Result<()> {
 }
 
 fn cargo_nextest_available() -> bool {
-    run_status_allow_failure("cargo", &["nextest", "--version"]).unwrap_or(false)
+    run_finish_validation_status_allow_failure("cargo", &["nextest", "--version"]).unwrap_or(false)
 }
 
 pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishValidationPlan> {
@@ -705,19 +706,19 @@ pub(super) fn run_finish_validation_rust(
 ) -> Result<()> {
     finish_validation_guard(repo_root)?;
     if plan.mode == FinishValidationMode::DocsOnly {
-        run_status("git", &["-C", path_str(repo_root)?, "diff", "--check"])?;
+        run_finish_validation_status("git", &["-C", path_str(repo_root)?, "diff", "--check"])?;
         return Ok(());
     }
 
     if plan.mode == FinishValidationMode::FocusedLocalCiGated {
-        run_status("git", &["-C", path_str(repo_root)?, "diff", "--check"])?;
+        run_finish_validation_status("git", &["-C", path_str(repo_root)?, "diff", "--check"])?;
         let manifest = repo_root.join("adl/Cargo.toml");
         for command in &plan.commands {
             match command.as_str() {
                 "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh" => {}
                 "git diff --check" => {}
                 "cargo fmt --manifest-path adl/Cargo.toml --all --check" => {
-                    run_status(
+                    run_finish_validation_status(
                         "cargo",
                         &[
                             "fmt",
@@ -729,7 +730,7 @@ pub(super) fn run_finish_validation_rust(
                     )?;
                 }
                 "cargo test --manifest-path adl/Cargo.toml cli::pr_cmd" => {
-                    run_status(
+                    run_finish_validation_status(
                         "cargo",
                         &[
                             "test",
@@ -740,7 +741,7 @@ pub(super) fn run_finish_validation_rust(
                     )?;
                 }
                 "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_validation" => {
-                    run_status(
+                    run_finish_validation_status(
                         "cargo",
                         &[
                             "test",
@@ -753,7 +754,7 @@ pub(super) fn run_finish_validation_rust(
                     )?;
                 }
                 "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation" => {
-                    run_status(
+                    run_finish_validation_status(
                         "cargo",
                         &[
                             "test",
@@ -766,7 +767,7 @@ pub(super) fn run_finish_validation_rust(
                     )?;
                 }
                 "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc public_prompt_packet" => {
-                    run_status(
+                    run_finish_validation_status(
                         "cargo",
                         &[
                             "test",
@@ -780,31 +781,31 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_check_coverage_impact.sh" => {
                     let script = repo_root.join("adl/tools/test_check_coverage_impact.sh");
-                    run_status("bash", &[path_str(&script)?])?;
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_ci_path_policy.sh" => {
                     let script = repo_root.join("adl/tools/test_ci_path_policy.sh");
-                    run_status("bash", &[path_str(&script)?])?;
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_owner_validation_lane.sh" => {
                     let script = repo_root.join("adl/tools/test_owner_validation_lane.sh");
-                    run_status("bash", &[path_str(&script)?])?;
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/run_owner_validation_lane.sh csdlc" => {
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
-                    run_status("bash", &[path_str(&script)?, "csdlc"])?;
+                    run_finish_validation_status("bash", &[path_str(&script)?, "csdlc"])?;
                 }
                 "bash adl/tools/run_owner_validation_lane.sh runtime --build" => {
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
-                    run_status("bash", &[path_str(&script)?, "runtime", "--build"])?;
+                    run_finish_validation_status("bash", &[path_str(&script)?, "runtime", "--build"])?;
                 }
                 "bash adl/tools/run_owner_validation_lane.sh review --build" => {
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
-                    run_status("bash", &[path_str(&script)?, "review", "--build"])?;
+                    run_finish_validation_status("bash", &[path_str(&script)?, "review", "--build"])?;
                 }
                 "bash adl/tools/run_owner_validation_lane.sh all --build" => {
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
-                    run_status("bash", &[path_str(&script)?, "all", "--build"])?;
+                    run_finish_validation_status("bash", &[path_str(&script)?, "all", "--build"])?;
                 }
                 other => bail!("finish: unsupported focused validation command '{other}'"),
             }
@@ -816,7 +817,7 @@ pub(super) fn run_finish_validation_rust(
     let coverage_impact = repo_root.join("adl/tools/check_coverage_impact.sh");
     let coverage_summary = repo_root.join("adl/target/coverage-impact-summary.json");
     if coverage_impact.is_file() {
-        run_status(
+        run_finish_validation_status(
             "bash",
             &[
                 path_str(&coverage_impact)?,
@@ -829,7 +830,7 @@ pub(super) fn run_finish_validation_rust(
             ],
         )?;
     }
-    run_status(
+    run_finish_validation_status(
         "cargo",
         &[
             "fmt",
@@ -839,7 +840,7 @@ pub(super) fn run_finish_validation_rust(
             "--check",
         ],
     )?;
-    run_status(
+    run_finish_validation_status(
         "cargo",
         &[
             "clippy",
@@ -852,7 +853,7 @@ pub(super) fn run_finish_validation_rust(
         ],
     )?;
     if cargo_nextest_available() {
-        run_status(
+        run_finish_validation_status(
             "cargo",
             &[
                 "nextest",
@@ -866,7 +867,7 @@ pub(super) fn run_finish_validation_rust(
         eprintln!(
             "• cargo-nextest not available locally; falling back to cargo test for full local Rust validation."
         );
-        run_status(
+        run_finish_validation_status(
             "cargo",
             &[
                 "test",
@@ -876,7 +877,7 @@ pub(super) fn run_finish_validation_rust(
             ],
         )?;
     }
-    run_status(
+    run_finish_validation_status(
         "cargo",
         &[
             "test",
@@ -887,6 +888,41 @@ pub(super) fn run_finish_validation_rust(
         ],
     )?;
     Ok(())
+}
+
+const FINISH_VALIDATION_SANITIZED_ENVS: &[&str] = &[
+    "ADL_GITHUB_CLIENT",
+    "ADL_GITHUB_DISABLE_GH_FALLBACK",
+    "ADL_GITHUB_OCTOCRAB_BASE_URI",
+    "GITHUB_TOKEN",
+    "GH_TOKEN",
+];
+
+fn run_finish_validation_status(program: &str, args: &[&str]) -> Result<()> {
+    let mut command = Command::new(program);
+    command.args(args);
+    for key in FINISH_VALIDATION_SANITIZED_ENVS {
+        command.env_remove(key);
+    }
+    let status = command
+        .status()
+        .with_context(|| format!("failed to spawn '{program}'"))?;
+    if !status.success() {
+        bail!("{program} failed with status {:?}", status.code());
+    }
+    Ok(())
+}
+
+fn run_finish_validation_status_allow_failure(program: &str, args: &[&str]) -> Result<bool> {
+    let mut command = Command::new(program);
+    command.args(args);
+    for key in FINISH_VALIDATION_SANITIZED_ENVS {
+        command.env_remove(key);
+    }
+    let status = command
+        .status()
+        .with_context(|| format!("failed to spawn '{program}'"))?;
+    Ok(status.success())
 }
 
 fn resolve_finish_pr_base(repo_root: &Path, branch: &str) -> Result<String> {

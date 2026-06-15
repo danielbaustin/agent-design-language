@@ -43,7 +43,8 @@ mod github;
 mod github_client;
 mod lifecycle;
 
-pub(crate) use self::github::run_gh_capture_allow_failure;
+pub(crate) use self::github::gh_issue_is_closed_completed;
+pub(crate) use self::github::{gh_issue_body, gh_issue_label_names};
 
 #[cfg(test)]
 type CreatePostBootstrapHook = fn(&Path, &IssueRef) -> Result<()>;
@@ -52,6 +53,8 @@ type CreatePostBootstrapHook = fn(&Path, &IssueRef) -> Result<()>;
 static CREATE_POST_BOOTSTRAP_HOOK: OnceLock<Mutex<Option<CreatePostBootstrapHook>>> =
     OnceLock::new();
 
+#[cfg(test)]
+use self::finish_support::write_temp_markdown;
 #[cfg(test)]
 use self::finish_support::{
     ensure_issue_surfaces_are_local_only, ensure_output_card_is_started,
@@ -62,9 +65,7 @@ use self::finish_support::{
     staged_gitignore_change_present, tracked_issue_surface_paths, FinishValidationMode,
     FinishValidationPlan,
 };
-use self::finish_support::{
-    ensure_nonempty_file_path, validate_completed_sor, write_temp_markdown,
-};
+use self::finish_support::{ensure_nonempty_file_path, validate_completed_sor};
 #[cfg(test)]
 use self::git_support::commits_ahead_of_origin_main;
 #[cfg(test)]
@@ -75,7 +76,7 @@ use self::git_support::{
     current_branch, default_repo, ensure_git_metadata_writable, ensure_local_branch_exists,
     ensure_worktree_for_branch, fetch_origin_main_with_fallback,
     has_uncommitted_or_untracked_changes, issue_create_repo, path_str, primary_checkout_root,
-    repo_root, run_capture, run_capture_allow_failure, run_status, tracked_changes_status,
+    repo_root, run_capture, run_status, tracked_changes_status,
 };
 use self::github::{
     ensure_issue_metadata_parity, format_open_pr_wave, gh_issue_create, gh_issue_edit_body,
@@ -101,6 +102,15 @@ fn resolve_version_for_create(
                 "create: could not infer version from title or labels; pass --version or include a version:vX.Y label / [vX.Y] title prefix"
             )
         })
+}
+
+fn fetched_issue_labels_csv(repo: &str, issue: u32) -> Result<String> {
+    Ok(gh_issue_label_names(issue, repo)?
+        .into_iter()
+        .map(|label| label.trim().to_string())
+        .filter(|label| !label.is_empty())
+        .collect::<Vec<_>>()
+        .join(","))
 }
 
 fn resolve_version_for_existing_issue(
@@ -319,7 +329,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
         }
         if slug.is_empty() && title.is_empty() {
             bail!(
-                "Could not fetch issue #{} title. Pass --slug or check gh auth/repo.",
+                "Could not fetch issue #{} title. Pass --slug or check GitHub token/repo configuration.",
                 parsed.issue
             );
         }
@@ -356,26 +366,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     let fetched_labels = if parsed.no_fetch_issue {
         String::new()
     } else {
-        run_capture_allow_failure(
-            "gh",
-            &[
-                "issue",
-                "view",
-                &parsed.issue.to_string(),
-                "-R",
-                &repo,
-                "--json",
-                "labels",
-                "-q",
-                ".labels[].name",
-            ],
-        )?
-        .unwrap_or_default()
-        .lines()
-        .map(str::trim)
-        .filter(|line| !line.is_empty())
-        .collect::<Vec<_>>()
-        .join(",")
+        fetched_issue_labels_csv(&repo, parsed.issue)?
     };
     let normalized_labels = normalize_labels_csv(
         if fetched_labels.trim().is_empty() {
@@ -658,7 +649,7 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         }
         if slug.is_empty() && title.is_empty() {
             bail!(
-                "Could not fetch issue #{} title. Pass --slug or check gh auth/repo.",
+                "Could not fetch issue #{} title. Pass --slug or check GitHub token/repo configuration.",
                 issue
             );
         }
@@ -694,26 +685,7 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     let fetched_labels = if parsed.no_fetch_issue {
         String::new()
     } else {
-        run_capture_allow_failure(
-            "gh",
-            &[
-                "issue",
-                "view",
-                &issue.to_string(),
-                "-R",
-                &repo,
-                "--json",
-                "labels",
-                "-q",
-                ".labels[].name",
-            ],
-        )?
-        .unwrap_or_default()
-        .lines()
-        .map(str::trim)
-        .filter(|line| !line.is_empty())
-        .collect::<Vec<_>>()
-        .join(",")
+        fetched_issue_labels_csv(&repo, issue)?
     };
     let normalized_labels = normalize_labels_csv(
         if fetched_labels.trim().is_empty() {

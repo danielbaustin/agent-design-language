@@ -88,18 +88,21 @@ fn real_pr_closeout_reconciles_closed_completed_issue_bundle() {
         &issue_ref,
         "[v0.87.1][tools] Make closeout automatic after merge/closure",
     );
-    real_pr(&[
-        "init".to_string(),
-        "1596".to_string(),
-        "--slug".to_string(),
-        issue_ref.slug().to_string(),
-        "--title".to_string(),
-        "[v0.87.1][tools] Make closeout automatic after merge/closure".to_string(),
-        "--no-fetch-issue".to_string(),
-        "--version".to_string(),
-        "v0.87.1".to_string(),
-    ])
-    .expect("real_pr init");
+    {
+        let _github_fixture = install_issue_label_fixture(&repo);
+        real_pr(&[
+            "init".to_string(),
+            "1596".to_string(),
+            "--slug".to_string(),
+            issue_ref.slug().to_string(),
+            "--title".to_string(),
+            "[v0.87.1][tools] Make closeout automatic after merge/closure".to_string(),
+            "--no-fetch-issue".to_string(),
+            "--version".to_string(),
+            "v0.87.1".to_string(),
+        ])
+        .expect("real_pr init");
+    }
 
     let sip_path = issue_ref.task_bundle_input_path(&repo);
     write_authored_sip(
@@ -133,17 +136,14 @@ fn real_pr_closeout_reconciles_closed_completed_issue_bundle() {
         .success());
     assert!(worktree.is_dir(), "closeout fixture worktree should exist");
 
-    let bin_dir = temp.join("bin");
-    fs::create_dir_all(&bin_dir).expect("bin dir");
-    let gh_path = bin_dir.join("gh");
+    let fixture_dir = temp.join("github-fixtures");
+    fs::create_dir_all(&fixture_dir).expect("fixture dir");
+    let github_cli_fixture = fixture_dir.join("closed-completed-1596");
     write_executable(
-        &gh_path,
+        &github_cli_fixture,
         "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2 $3 $4\" == \"issue view 1596 -R\" ]]; then\n  echo '{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}'\n  exit 0\nfi\nexit 1\n",
     );
-    let old_path = env::var("PATH").unwrap_or_default();
-    unsafe {
-        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
-    }
+    let _github_fixture = GithubCliFixtureGuard::set(&github_cli_fixture);
 
     let closeout = real_pr(&[
         "closeout".to_string(),
@@ -155,9 +155,6 @@ fn real_pr_closeout_reconciles_closed_completed_issue_bundle() {
         "v0.87.1".to_string(),
     ]);
 
-    unsafe {
-        env::set_var("PATH", old_path);
-    }
     env::set_current_dir(prev_dir).expect("restore cwd");
     closeout.expect("closeout closed reconcile");
 
@@ -250,18 +247,21 @@ fn real_pr_closeout_reconciles_closed_no_pr_issue_bundle() {
     let issue_ref =
         IssueRef::new(1597, "v0.87.1", "v0-87-1-tools-closeout-no-pr-truth").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.87.1][tools] Closeout no-pr truth");
-    real_pr(&[
-        "init".to_string(),
-        "1597".to_string(),
-        "--slug".to_string(),
-        issue_ref.slug().to_string(),
-        "--title".to_string(),
-        "[v0.87.1][tools] Closeout no-pr truth".to_string(),
-        "--no-fetch-issue".to_string(),
-        "--version".to_string(),
-        "v0.87.1".to_string(),
-    ])
-    .expect("real_pr init");
+    {
+        let _github_fixture = install_issue_label_fixture(&repo);
+        real_pr(&[
+            "init".to_string(),
+            "1597".to_string(),
+            "--slug".to_string(),
+            issue_ref.slug().to_string(),
+            "--title".to_string(),
+            "[v0.87.1][tools] Closeout no-pr truth".to_string(),
+            "--no-fetch-issue".to_string(),
+            "--version".to_string(),
+            "v0.87.1".to_string(),
+        ])
+        .expect("real_pr init");
+    }
 
     let sip_path = issue_ref.task_bundle_input_path(&repo);
     write_authored_sip(
@@ -306,24 +306,14 @@ fn real_pr_closeout_reconciles_closed_no_pr_issue_bundle() {
         "closeout no-pr fixture worktree should exist"
     );
 
-    let bin_dir = temp.join("bin");
-    fs::create_dir_all(&bin_dir).expect("bin dir");
-    let gh_path = bin_dir.join("gh");
+    let fixture_dir = temp.join("github-fixtures");
+    fs::create_dir_all(&fixture_dir).expect("fixture dir");
+    let github_cli_fixture = fixture_dir.join("closed-completed-1597");
     write_executable(
-        &gh_path,
+        &github_cli_fixture,
         "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2 $3 $4\" == \"issue view 1597 -R\" ]]; then\n  echo '{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}'\n  exit 0\nfi\nexit 1\n",
     );
-    let old_path = env::var("PATH").unwrap_or_default();
-    unsafe {
-        env::set_var(
-            "PATH",
-            format!(
-                "{}:{}",
-                gh_path.parent().expect("gh path").display(),
-                old_path
-            ),
-        );
-    }
+    let _github_fixture = GithubCliFixtureGuard::set(&github_cli_fixture);
 
     let closeout = real_pr(&[
         "closeout".to_string(),
@@ -335,9 +325,6 @@ fn real_pr_closeout_reconciles_closed_no_pr_issue_bundle() {
         "v0.87.1".to_string(),
     ]);
 
-    unsafe {
-        env::set_var("PATH", old_path);
-    }
     env::set_current_dir(prev_dir).expect("restore cwd");
     closeout.expect("closeout closed no-pr issue");
 
@@ -432,30 +419,30 @@ fn real_pr_closeout_refuses_issue_that_is_not_completed() {
         &issue_ref,
         "[v0.87.1][tools] Make closeout automatic after merge/closure",
     );
-    real_pr(&[
-        "init".to_string(),
-        "1596".to_string(),
-        "--slug".to_string(),
-        issue_ref.slug().to_string(),
-        "--title".to_string(),
-        "[v0.87.1][tools] Make closeout automatic after merge/closure".to_string(),
-        "--no-fetch-issue".to_string(),
-        "--version".to_string(),
-        "v0.87.1".to_string(),
-    ])
-    .expect("real_pr init");
+    {
+        let _github_fixture = install_issue_label_fixture(&repo);
+        real_pr(&[
+            "init".to_string(),
+            "1596".to_string(),
+            "--slug".to_string(),
+            issue_ref.slug().to_string(),
+            "--title".to_string(),
+            "[v0.87.1][tools] Make closeout automatic after merge/closure".to_string(),
+            "--no-fetch-issue".to_string(),
+            "--version".to_string(),
+            "v0.87.1".to_string(),
+        ])
+        .expect("real_pr init");
+    }
 
-    let bin_dir = temp.join("bin");
-    fs::create_dir_all(&bin_dir).expect("bin dir");
-    let gh_path = bin_dir.join("gh");
+    let fixture_dir = temp.join("github-fixtures");
+    fs::create_dir_all(&fixture_dir).expect("fixture dir");
+    let github_cli_fixture = fixture_dir.join("open-reopened-1596");
     write_executable(
-        &gh_path,
+        &github_cli_fixture,
         "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2 $3 $4\" == \"issue view 1596 -R\" ]]; then\n  echo '{\"state\":\"OPEN\",\"stateReason\":\"REOPENED\"}'\n  exit 0\nfi\nexit 1\n",
     );
-    let old_path = env::var("PATH").unwrap_or_default();
-    unsafe {
-        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
-    }
+    let _github_fixture = GithubCliFixtureGuard::set(&github_cli_fixture);
 
     let closeout = real_pr(&[
         "closeout".to_string(),
@@ -467,9 +454,6 @@ fn real_pr_closeout_refuses_issue_that_is_not_completed() {
         "v0.87.1".to_string(),
     ]);
 
-    unsafe {
-        env::set_var("PATH", old_path);
-    }
     env::set_current_dir(prev_dir).expect("restore cwd");
 
     let err = closeout.expect_err("closeout should refuse unfinished issue");

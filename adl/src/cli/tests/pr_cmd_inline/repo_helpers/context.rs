@@ -91,7 +91,7 @@ fn default_repo_falls_back_to_local_name_when_remote_and_gh_are_unavailable() {
 }
 
 #[test]
-fn default_repo_uses_gh_repo_when_remote_is_unparseable() {
+fn default_repo_uses_local_name_when_remote_is_unparseable() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-default-repo-gh");
     assert!(Command::new("git")
@@ -122,7 +122,7 @@ fn default_repo_uses_gh_repo_when_remote_is_unparseable() {
     unsafe {
         env::set_var("PATH", old_path);
     }
-    assert_eq!(inferred, "owner/example");
+    assert!(inferred.starts_with("local/adl-pr-default-repo-gh-"));
 }
 
 #[test]

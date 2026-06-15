@@ -96,7 +96,7 @@ execution:
     - "pr-init/pr-ready/pr-run/pr-finish/pr-closeout for the setup issue lifecycle"
     - "planning-doc-editor for milestone planning document cleanup"
     - "card editor skills for SIP/STP/SPP/SRP/SOR normalization"
-    - "gh issue list/edit/comment for explicit issue migration truth"
+    - "adl-csdlc/octocrab issue list/edit/comment for explicit issue migration truth"
   preferred_path: "setup_issue_then_bound_worktree_then_full_planning_package_then_review"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:
