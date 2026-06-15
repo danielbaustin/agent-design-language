@@ -80,7 +80,7 @@ fn real_provider_setup(repo_root: &Path, args: &[String]) -> Result<()> {
         .with_context(|| format!("failed to create setup directory {}", out_dir.display()))?;
 
     let provider_path = out_dir.join("provider.adl.yaml");
-    let env_path = out_dir.join(".env.example");
+    let env_path = out_dir.join("env.example");
     let readme_path = out_dir.join("README.md");
     let selected_model = model_override
         .as_deref()
@@ -276,7 +276,7 @@ fn render_readme(template: &ProviderSetupTemplate, selected_model: &str) -> Stri
         "2. Set `config.endpoint` in `provider.adl.yaml` to a real ADL-compatible completion endpoint."
     };
     format!(
-        "# Provider setup: {family}\n\nThis bundle gives you a local starting point for configuring the `{family}` provider family.\n\nFiles:\n- `provider.adl.yaml`: mergeable ADL provider/agent snippet\n- `.env.example`: local env template for your credential\n\nSelected default model:\n- `{selected_model}`\n\nSteps:\n1. Copy `.env.example` to a local untracked env file and put your real credential in `{env_var}`.\n{endpoint_step}\n3. Merge the provider/agent snippet into your workflow file.\n4. Change `provider_model_id` to any trusted model ID supported by this provider family when you want a different task/model route.\n5. Source your local env file before running ADL.\n\nImportant:\n{transport_note}\n- No secrets are stored by this command; the generated env file is only a local template.\n\nNotes:\n{notes}\n",
+        "# Provider setup: {family}\n\nThis bundle gives you a local starting point for configuring the `{family}` provider family.\n\nFiles:\n- `provider.adl.yaml`: mergeable ADL provider/agent snippet\n- `env.example`: local env template for your credential\n\nSelected default model:\n- `{selected_model}`\n\nSteps:\n1. Copy `env.example` to a local untracked env file and put your real credential in `{env_var}`.\n{endpoint_step}\n3. Merge the provider/agent snippet into your workflow file.\n4. Change `provider_model_id` to any trusted model ID supported by this provider family when you want a different task/model route.\n5. Source your local env file before running ADL.\n\nImportant:\n{transport_note}\n- No secrets are stored by this command; the generated env file is only a local template.\n\nNotes:\n{notes}\n",
         family = template.family,
         selected_model = selected_model,
         env_var = template.env_var,
@@ -376,7 +376,7 @@ mod tests {
         let out = repo.join(".adl/provider-setup/chatgpt");
         let provider_text =
             fs::read_to_string(out.join("provider.adl.yaml")).expect("provider yaml");
-        let env_text = fs::read_to_string(out.join(".env.example")).expect("env example");
+        let env_text = fs::read_to_string(out.join("env.example")).expect("env example");
         let readme = fs::read_to_string(out.join("README.md")).expect("readme");
 
         assert!(provider_text.contains("profile: \"chatgpt:gpt-5.4\""));
@@ -394,7 +394,7 @@ mod tests {
         let out = repo.join(".adl/provider-setup/claude");
         let provider_text =
             fs::read_to_string(out.join("provider.adl.yaml")).expect("provider yaml");
-        let env_text = fs::read_to_string(out.join(".env.example")).expect("env example");
+        let env_text = fs::read_to_string(out.join("env.example")).expect("env example");
         let readme = fs::read_to_string(out.join("README.md")).expect("readme");
 
         assert!(provider_text.contains("profile: \"claude:claude-3-7-sonnet\""));
@@ -588,7 +588,7 @@ mod tests {
             .expect("top-level provider entrypoint should succeed");
 
         assert!(out.join("provider.adl.yaml").exists());
-        assert!(out.join(".env.example").exists());
+        assert!(out.join("env.example").exists());
         assert!(out.join("README.md").exists());
 
         fs::remove_dir_all(out).expect("cleanup generated output");

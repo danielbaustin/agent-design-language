@@ -398,6 +398,6 @@ fn provider_setup_dispatch_path_succeeds() {
     std::env::set_current_dir(prev_dir).expect("restore cwd");
     result.expect("provider setup dispatch should succeed");
     assert!(temp.join("provider.adl.yaml").exists());
-    assert!(temp.join(".env.example").exists());
+    assert!(temp.join("env.example").exists());
     assert!(temp.join("README.md").exists());
 }

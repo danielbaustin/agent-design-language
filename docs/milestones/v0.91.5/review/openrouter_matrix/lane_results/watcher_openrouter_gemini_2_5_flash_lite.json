@@ -20,16 +20,16 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1781493817",
-      "duration_ms": 1467,
+      "started_at": "unix:1781504840",
+      "duration_ms": 747,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted provider text len=158]"
+      "raw_response_excerpt": "[redacted provider text len=239]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 1467,
-  "output_text": "# Status\npass\n\n# Signal\nroute probe completed. #3723 is being monitored with openrouter.\n\n# Next-Step\nReview docs/milestones/v0.91.5/review/openrouter_matrix.",
-  "output_text_excerpt": "[redacted provider text len=158]"
+  "duration_ms": 748,
+  "output_text": "# Status\npass\n\n# Signal\nThe route probe completed. This is a positive development for integrating openrouter.\n\n# Next-Step\nReview docs/milestones/v0.91.5/review/openrouter_matrix for further action. We are tracking progress on issue #3723.",
+  "output_text_excerpt": "[redacted provider text len=239]"
 }

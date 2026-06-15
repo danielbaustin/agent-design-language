@@ -20,16 +20,16 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1781493815",
-      "duration_ms": 2252,
+      "started_at": "unix:1781504838",
+      "duration_ms": 2545,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted provider text len=387]"
+      "raw_response_excerpt": "[redacted provider text len=360]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 2252,
-  "output_text": "# Finding\nOpenRouter matrix proof lacks comprehensive validation against actual model performance metrics, revealing gaps in methodological rigor.\n\n# Severity\nP2\n\n# Routing\nRouting mechanisms appear inconsistent with documented expectations in docs/milestones/v0.91.5/review/openrouter_matrix, suggesting potential calibration challenges.\n\n# Non-Claim\ntool-call capability still unproven",
-  "output_text_excerpt": "[redacted provider text len=387]"
+  "duration_ms": 2545,
+  "output_text": "# Finding\nInconsistent matrix proofs in OpenRouter's documentation, revealing potential gaps in comprehensive test coverage for API performance.\n\n# Severity\nP2\n\n# Routing\nObserved discrepancies in route validation within docs/milestones/v0.91.5/review/openrouter_matrix suggest potential integration challenges.\n\n# Non-Claim\ntool-call capability still unproven",
+  "output_text_excerpt": "[redacted provider text len=360]"
 }

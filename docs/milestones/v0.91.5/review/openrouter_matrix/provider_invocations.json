@@ -7,35 +7,35 @@
       "model": "deepseek/deepseek-v4-flash",
       "http_status": 200,
       "prompt_chars": 411,
-      "output_chars": 524
+      "output_chars": 532
     },
     {
       "family": "openrouter",
       "model": "openai/gpt-4o-mini",
       "http_status": 200,
       "prompt_chars": 323,
-      "output_chars": 195
+      "output_chars": 201
     },
     {
       "family": "openrouter",
       "model": "anthropic/claude-3.5-haiku",
       "http_status": 200,
       "prompt_chars": 416,
-      "output_chars": 387
+      "output_chars": 360
     },
     {
       "family": "openrouter",
       "model": "google/gemini-2.5-flash-lite",
       "http_status": 200,
       "prompt_chars": 373,
-      "output_chars": 158
+      "output_chars": 239
     },
     {
       "family": "openrouter",
       "model": "qwen/qwen3.6-flash",
       "http_status": 200,
       "prompt_chars": 323,
-      "output_chars": 192
+      "output_chars": 208
     }
   ]
 }

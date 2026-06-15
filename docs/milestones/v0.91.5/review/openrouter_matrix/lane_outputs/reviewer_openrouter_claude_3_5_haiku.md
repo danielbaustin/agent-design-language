@@ -7,13 +7,13 @@ Model: `anthropic/claude-3.5-haiku`
 ## Output
 
 # Finding
-OpenRouter matrix proof lacks comprehensive validation against actual model performance metrics, revealing gaps in methodological rigor.
+Inconsistent matrix proofs in OpenRouter's documentation, revealing potential gaps in comprehensive test coverage for API performance.
 
 # Severity
 P2
 
 # Routing
-Routing mechanisms appear inconsistent with documented expectations in docs/milestones/v0.91.5/review/openrouter_matrix, suggesting potential calibration challenges.
+Observed discrepancies in route validation within docs/milestones/v0.91.5/review/openrouter_matrix suggest potential integration challenges.
 
 # Non-Claim
 tool-call capability still unproven

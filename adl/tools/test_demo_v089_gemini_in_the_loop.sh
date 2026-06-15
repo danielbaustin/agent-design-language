@@ -18,7 +18,7 @@ for required in \
   "$OUT_DIR/README.md" \
   "$OUT_DIR/packet/review_packet.md" \
   "$OUT_DIR/provider_setup/provider.adl.yaml" \
-  "$OUT_DIR/provider_setup/.env.example" \
+  "$OUT_DIR/provider_setup/env.example" \
   "$OUT_DIR/review_artifacts/validated_review.json" \
   "$OUT_DIR/review_artifacts/findings.md" \
   "$OUT_DIR/out/review/01-gemini-review.json" \

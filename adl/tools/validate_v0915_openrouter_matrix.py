@@ -55,7 +55,7 @@ def main() -> None:
         packet_dir / f"catalog_snapshot_{date}.json",
         packet_dir / "provider_invocations.json",
         packet_dir / "provider_setup" / "provider.adl.yaml",
-        packet_dir / "provider_setup" / ".env.example",
+        packet_dir / "provider_setup" / "env.example",
         packet_dir / "provider_setup" / "README.md",
     ]
     for path in required:

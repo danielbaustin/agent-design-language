@@ -10,7 +10,7 @@ Model: `google/gemini-2.5-flash-lite`
 pass
 
 # Signal
-route probe completed. #3723 is being monitored with openrouter.
+The route probe completed. This is a positive development for integrating openrouter.
 
 # Next-Step
-Review docs/milestones/v0.91.5/review/openrouter_matrix.
+Review docs/milestones/v0.91.5/review/openrouter_matrix for further action. We are tracking progress on issue #3723.
