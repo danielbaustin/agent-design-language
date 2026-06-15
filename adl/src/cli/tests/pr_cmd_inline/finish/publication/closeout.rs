@@ -16,7 +16,10 @@ fn attach_post_merge_closeout_reports_failure_output() {
     let old_disable = env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE").ok();
     let old_cmd = env::var("ADL_POST_MERGE_CLOSEOUT_CMD").ok();
     unsafe {
-        env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
+        env::set_var(
+            "ADL_POST_MERGE_CLOSEOUT_CMD",
+            tools_dir.join("attach_post_merge_closeout.sh"),
+        );
         env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "0");
     }
 
@@ -104,7 +107,10 @@ fn attach_post_merge_closeout_invokes_helper_successfully() {
     let old_cmd = env::var("ADL_POST_MERGE_CLOSEOUT_CMD").ok();
     unsafe {
         env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "0");
-        env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
+        env::set_var(
+            "ADL_POST_MERGE_CLOSEOUT_CMD",
+            tools_dir.join("attach_post_merge_closeout.sh"),
+        );
     }
 
     attach_post_merge_closeout(
@@ -137,7 +143,7 @@ fn attach_post_merge_closeout_invokes_helper_successfully() {
 }
 
 #[test]
-fn attach_post_merge_closeout_falls_back_when_command_override_is_blank() {
+fn attach_post_merge_closeout_skips_when_command_override_is_blank() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-attach-closeout-blank-override");
     let repo = temp.join("repo");
@@ -166,7 +172,7 @@ fn attach_post_merge_closeout_falls_back_when_command_override_is_blank() {
         "codex/1153-rust-finish-test",
         "https://github.com/owner/repo/pull/1159",
     )
-    .expect("blank command override should fall back to helper path");
+    .expect("blank command override should skip the retired helper path");
 
     unsafe {
         if let Some(value) = old_disable {
@@ -181,6 +187,8 @@ fn attach_post_merge_closeout_falls_back_when_command_override_is_blank() {
         }
     }
 
-    let argv = fs::read_to_string(&argv_log).expect("closeout args");
-    assert!(argv.contains("--repo owner/repo"));
+    assert!(
+        !argv_log.exists(),
+        "blank override must not invoke retired closeout helper"
+    );
 }

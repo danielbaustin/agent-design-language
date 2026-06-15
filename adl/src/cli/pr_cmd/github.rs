@@ -12,6 +12,7 @@ use ::adl::control_plane::resolve_primary_checkout_root;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::process::Command;
+use std::time::Duration;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct RepoParts {
@@ -93,7 +94,7 @@ fn current_pr_url_octocrab(repo: &str, branch: &str) -> Result<Option<String>> {
             octo.pulls(&owner, &name)
                 .list()
                 .state(octocrab::params::State::Open)
-                .head(head)
+                .head(head.clone())
                 .per_page(10)
                 .send()
                 .await
@@ -351,6 +352,43 @@ fn merge_pr_octocrab(repo: &str, pr_ref: &str) -> Result<()> {
     })
 }
 
+fn issue_comment_octocrab(repo: &str, issue: u32, body: &str) -> Result<()> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.comment", |runtime, octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        block_on_octocrab(runtime, "issue.comment", || async {
+            octo.issues(&owner, &name)
+                .create_comment(issue as u64, body.to_string())
+                .await
+        })?;
+        Ok(())
+    })
+    .with_context(|| format!("github_client.octocrab_transport: issue comment failed for #{issue}"))
+}
+
+fn issue_close_octocrab(
+    repo: &str,
+    issue: u32,
+    reason: octocrab::models::issues::IssueStateReason,
+) -> Result<()> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.close", |runtime, octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        block_on_octocrab(runtime, "issue.close", || async {
+            octo.issues(&owner, &name)
+                .update(issue as u64)
+                .state(octocrab::models::IssueState::Closed)
+                .state_reason(reason.clone())
+                .send()
+                .await
+        })?;
+        Ok(())
+    })
+    .with_context(|| format!("github_client.octocrab_transport: issue close failed for #{issue}"))
+}
+
 fn github_client(operation: &str) -> Result<AdlGithubClient> {
     let client = AdlGithubClient::from_env()
         .with_context(|| format!("github client policy rejected operation '{operation}'"))?;
@@ -594,24 +632,94 @@ fn parse_pr_number(pr_ref: &str) -> Result<u64> {
 fn block_on_octocrab<T, Fut>(
     runtime: &tokio::runtime::Runtime,
     operation: &str,
-    make_future: impl FnOnce() -> Fut,
+    mut make_future: impl FnMut() -> Fut,
 ) -> Result<T>
 where
     Fut: std::future::Future<Output = octocrab::Result<T>>,
 {
     eprintln!("adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=started operation={operation}");
     let _runtime_guard = runtime.enter();
-    let result = runtime.block_on(make_future());
-    let result = result.map_err(|err| {
-        eprintln!("adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=failed operation={operation}");
-        anyhow!(
-            "github_client.octocrab_transport: operation '{}' failed: {}",
-            operation,
-            err
-        )
-    })?;
+    let mut attempt = 1usize;
+    let max_attempts = octocrab_max_attempts();
+    let result = loop {
+        match runtime.block_on(make_future()) {
+            Ok(value) => break value,
+            Err(err)
+                if attempt < max_attempts
+                    && octocrab_operation_allows_retry(operation)
+                    && octocrab_error_is_retryable(&err) =>
+            {
+                eprintln!(
+                    "adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=retry operation={operation} attempt={attempt} max_attempts={max_attempts}"
+                );
+                std::thread::sleep(octocrab_retry_delay(attempt));
+                attempt += 1;
+            }
+            Err(err) => {
+                eprintln!("adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=failed operation={operation} attempts={attempt}");
+                return Err(anyhow!(
+                    "github_client.octocrab_transport: operation '{}' failed after {} attempt(s): {}",
+                    operation,
+                    attempt,
+                    err
+                ));
+            }
+        }
+    };
     eprintln!("adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=completed operation={operation}");
     Ok(result)
+}
+
+fn octocrab_max_attempts() -> usize {
+    std::env::var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS")
+        .ok()
+        .and_then(|value| value.parse::<usize>().ok())
+        .filter(|attempts| (1..=10).contains(attempts))
+        .unwrap_or(3)
+}
+
+fn octocrab_retry_delay(attempt: usize) -> Duration {
+    Duration::from_millis(match attempt {
+        0 | 1 => 50,
+        2 => 150,
+        _ => 300,
+    })
+}
+
+fn octocrab_error_is_retryable(err: &octocrab::Error) -> bool {
+    match err {
+        octocrab::Error::GitHub { source, .. } => matches!(
+            source.status_code.as_u16(),
+            408 | 409 | 425 | 429 | 500..=599
+        ),
+        octocrab::Error::Http { .. }
+        | octocrab::Error::Hyper { .. }
+        | octocrab::Error::Service { .. }
+        | octocrab::Error::Other { .. } => true,
+        _ => false,
+    }
+}
+
+fn octocrab_operation_allows_retry(operation: &str) -> bool {
+    matches!(
+        operation,
+        "pr.list.current_branch"
+            | "pr.list.open_wave"
+            | "pr.view.body"
+            | "pr.view.closing_issues"
+            | "pr.view.base_ref.finish_existing"
+            | "pr.edit.body_file"
+            | "pr.edit.finish_existing"
+            | "pr.ready"
+            | "issue.view.labels"
+            | "issue.edit.title"
+            | "issue.edit.body"
+            | "issue.view.title"
+            | "issue.view.body"
+            | "issue.view.state"
+            | "issue.edit.labels"
+            | "issue.close"
+    )
 }
 
 fn with_octocrab<T>(
@@ -715,7 +823,42 @@ fn run_octocrab_status(operation: &str, args: &[&str]) -> Result<()> {
                 .ok_or_else(|| anyhow!("pr.merge.finish missing PR reference"))?;
             merge_pr_octocrab(repo, pr_ref)
         }
+        "issue.comment" => {
+            let repo = arg_after(args, "-R")?;
+            let issue = positional_after(args, "comment")?
+                .parse::<u32>()
+                .context("failed to parse issue number for issue.comment")?;
+            let body_file = arg_after(args, "--body-file")?;
+            let body = std::fs::read_to_string(body_file)
+                .with_context(|| format!("failed to read issue comment body file '{body_file}'"))?;
+            issue_comment_octocrab(repo, issue, &body)
+        }
+        "issue.close" => {
+            let repo = arg_after(args, "-R")?;
+            let issue = positional_after(args, "close")?
+                .parse::<u32>()
+                .context("failed to parse issue number for issue.close")?;
+            let reason = issue_close_reason_from_args(args)?;
+            issue_close_octocrab(repo, issue, reason)
+        }
         other => bail!("github_client.unsupported_status_operation: {other}"),
+    }
+}
+
+fn issue_close_reason_from_args(
+    args: &[&str],
+) -> Result<octocrab::models::issues::IssueStateReason> {
+    let raw = arg_after(args, "--reason")
+        .or_else(|_| arg_after(args, "--state-reason"))
+        .unwrap_or("completed");
+    match raw {
+        "completed" => Ok(octocrab::models::issues::IssueStateReason::Completed),
+        "not_planned" | "not-planned" => {
+            Ok(octocrab::models::issues::IssueStateReason::NotPlanned)
+        }
+        other => bail!(
+            "github_client.issue_close: unsupported state reason '{other}'; expected completed or not_planned"
+        ),
     }
 }
 
@@ -977,12 +1120,15 @@ pub(super) fn attach_post_merge_closeout(
         return Ok(());
     }
 
-    let command_path = std::env::var("ADL_POST_MERGE_CLOSEOUT_CMD")
+    let Some(command_path) = std::env::var("ADL_POST_MERGE_CLOSEOUT_CMD")
         .ok()
         .filter(|value| !value.trim().is_empty())
-        .unwrap_or_else(|| {
-            helper_command_path(repo_root, "adl/tools/attach_post_merge_closeout.sh")
-        });
+    else {
+        eprintln!(
+            "adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=skipped operation=post_merge_closeout.attach reason=rust_closeout_no_background_watcher"
+        );
+        return Ok(());
+    };
     let output = Command::new(&command_path)
         .arg("--repo-root")
         .arg(repo_root)
@@ -1066,7 +1212,7 @@ pub(super) fn gh_issue_create(
             octo.issues(&owner, &name)
                 .create(title)
                 .body(body.to_string())
-                .labels(labels)
+                .labels(labels.clone())
                 .send()
                 .await
         })?;
@@ -1548,6 +1694,21 @@ mod tests {
         .to_string()
     }
 
+    fn issue_comment_fixture(issue: u32, body: &str) -> String {
+        serde_json::json!({
+            "id": 9900 + issue,
+            "node_id": format!("ISSUE_COMMENT_{issue}"),
+            "url": format!("https://api.github.test/repos/owner/repo/issues/comments/{}", 9900 + issue),
+            "html_url": format!("https://github.com/owner/repo/issues/{issue}#issuecomment-{}", 9900 + issue),
+            "issue_url": format!("https://api.github.test/repos/owner/repo/issues/{issue}"),
+            "body": body,
+            "user": author_fixture(),
+            "created_at": "2026-06-14T00:00:00Z",
+            "updated_at": "2026-06-14T00:00:00Z"
+        })
+        .to_string()
+    }
+
     fn spawn_octocrab_test_server(
         expected_requests: usize,
     ) -> (String, thread::JoinHandle<Vec<String>>) {
@@ -1677,6 +1838,9 @@ mod tests {
                         Some("updated body"),
                         &["version:v0.91.5", "area:tools", "type:task"],
                     ),
+                    ("POST", "/repos/owner/repo/issues/77/comments") => {
+                        issue_comment_fixture(77, "closeout line 1\n\ncloseout line 3\n")
+                    }
                     _ => serde_json::json!({
                         "message": format!("unexpected request {method} {url}")
                     })
@@ -1689,12 +1853,47 @@ mod tests {
         (format!("http://{bind_addr}"), handle)
     }
 
+    fn spawn_transient_octocrab_test_server() -> (String, thread::JoinHandle<Vec<String>>) {
+        let port = reserve_local_port();
+        let bind_addr = format!("127.0.0.1:{port}");
+        let server = Server::http(&bind_addr).expect("bind transient octocrab test server");
+        let handle = thread::spawn(move || {
+            let mut seen = Vec::new();
+            for attempt in 1..=2 {
+                let Some(request) = server
+                    .recv_timeout(Duration::from_secs(5))
+                    .expect("transient octocrab test server receive")
+                else {
+                    break;
+                };
+                let method = request.method().as_str().to_string();
+                let url = request.url().to_string();
+                seen.push(format!("{method} {url}"));
+                if attempt == 1 {
+                    let _ = request.respond(
+                        json_response(r#"{"message":"intermittent upstream fault"}"#)
+                            .with_status_code(502),
+                    );
+                } else {
+                    let _ = request.respond(json_response(issue_fixture(
+                        88,
+                        "[v0.91.5][tools] Retry succeeds",
+                        Some("retry body"),
+                        &["version:v0.91.5"],
+                    )));
+                }
+            }
+            seen
+        });
+        (format!("http://{bind_addr}"), handle)
+    }
+
     #[test]
     fn octocrab_transport_covers_pr_and_issue_operations_against_mock_github() {
         let _guard = env_lock();
         let policy_env = clear_github_policy_env();
         let temp = unique_temp_dir("adl-octocrab-transport");
-        let (base_uri, server) = spawn_octocrab_test_server(19);
+        let (base_uri, server) = spawn_octocrab_test_server(22);
         unsafe {
             std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
             std::env::set_var("GITHUB_TOKEN", "test-token");
@@ -1864,9 +2063,51 @@ mod tests {
             ],
         )
         .expect("set labels");
+        let issue_comment_file = temp.join("issue-comment.md");
+        fs::write(&issue_comment_file, "closeout line 1\n\ncloseout line 3\n")
+            .expect("write issue comment");
+        run_gh_status(
+            "issue.comment",
+            &[
+                "issue",
+                "comment",
+                "77",
+                "-R",
+                "owner/repo",
+                "--body-file",
+                path_str(&issue_comment_file).expect("issue comment body path"),
+            ],
+        )
+        .expect("issue comment");
+        run_gh_status(
+            "issue.close",
+            &[
+                "issue",
+                "close",
+                "77",
+                "-R",
+                "owner/repo",
+                "--reason",
+                "completed",
+            ],
+        )
+        .expect("issue close completed");
+        run_gh_status(
+            "issue.close",
+            &[
+                "issue",
+                "close",
+                "77",
+                "-R",
+                "owner/repo",
+                "--reason",
+                "not_planned",
+            ],
+        )
+        .expect("issue close not planned");
 
         let seen = server.join().expect("server join");
-        assert_eq!(seen.len(), 19, "unexpected mock GitHub calls: {seen:#?}");
+        assert_eq!(seen.len(), 22, "unexpected mock GitHub calls: {seen:#?}");
         assert!(seen
             .iter()
             .any(|call| call.starts_with("POST /repos/owner/repo/pulls ")));
@@ -1877,7 +2118,64 @@ mod tests {
         assert!(seen
             .iter()
             .any(|call| call.contains("\"labels\":[\"version:v0.91.5\"")));
+        assert!(seen.iter().any(|call| {
+            call.starts_with("POST /repos/owner/repo/issues/77/comments ")
+                && call.contains("closeout line 1\\n\\ncloseout line 3\\n")
+        }));
+        assert!(seen.iter().any(|call| {
+            call.starts_with("PATCH /repos/owner/repo/issues/77 ")
+                && call.contains("\"state\":\"closed\"")
+                && call.contains("\"state_reason\":\"completed\"")
+        }));
+        assert!(seen.iter().any(|call| {
+            call.starts_with("PATCH /repos/owner/repo/issues/77 ")
+                && call.contains("\"state\":\"closed\"")
+                && call.contains("\"state_reason\":\"not_planned\"")
+        }));
         restore_github_policy_env(policy_env);
+    }
+
+    #[test]
+    fn octocrab_transport_retries_transient_github_failures() {
+        let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
+        let (base_uri, server) = spawn_transient_octocrab_test_server();
+        unsafe {
+            std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+            std::env::set_var("GITHUB_TOKEN", "test-token");
+            std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+            std::env::set_var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS", "2");
+        }
+
+        assert_eq!(
+            gh_issue_title(88, "owner/repo")
+                .expect("transient issue title")
+                .as_deref(),
+            Some("[v0.91.5][tools] Retry succeeds")
+        );
+        let seen = server.join().expect("server join");
+        assert_eq!(
+            seen,
+            vec![
+                "GET /repos/owner/repo/issues/88".to_string(),
+                "GET /repos/owner/repo/issues/88".to_string()
+            ]
+        );
+        unsafe {
+            std::env::remove_var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS");
+        }
+        restore_github_policy_env(policy_env);
+    }
+
+    #[test]
+    fn octocrab_retry_policy_blocks_non_idempotent_mutations() {
+        assert!(octocrab_operation_allows_retry("pr.list.current_branch"));
+        assert!(octocrab_operation_allows_retry("issue.view.title"));
+        assert!(octocrab_operation_allows_retry("issue.close"));
+        assert!(!octocrab_operation_allows_retry("issue.comment"));
+        assert!(!octocrab_operation_allows_retry("issue.create"));
+        assert!(!octocrab_operation_allows_retry("pr.create.finish"));
+        assert!(!octocrab_operation_allows_retry("pr.merge.finish"));
     }
 
     #[test]
@@ -2103,7 +2401,10 @@ mod tests {
 
         unsafe {
             std::env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "0");
-            std::env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
+            std::env::set_var(
+                "ADL_POST_MERGE_CLOSEOUT_CMD",
+                tools_dir.join("attach_post_merge_closeout.sh"),
+            );
         }
         attach_post_merge_closeout(
             &repo,
@@ -2124,7 +2425,7 @@ mod tests {
             "codex/1153-branch",
             "https://github.com/owner/repo/pull/1159",
         )
-        .expect("blank override closeout fallback");
+        .expect("blank override closeout skip");
 
         unsafe {
             std::env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", &failing);
