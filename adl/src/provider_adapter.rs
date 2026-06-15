@@ -100,6 +100,7 @@ pub fn execute_provider_invocation(
                     attempts,
                     final_status: ProviderInvocationFinalStatusV1::Ok,
                     duration_ms: started.elapsed().as_millis() as u64,
+                    request_id: request.request_id.clone(),
                     output_text: Some(output_text.clone()),
                     output_text_excerpt: Some(redacted_response_marker(&output_text)),
                     failure: None,
@@ -172,6 +173,7 @@ fn failed_result(
         attempts,
         final_status: ProviderInvocationFinalStatusV1::Failed,
         duration_ms,
+        request_id: request.request_id,
         output_text: None,
         output_text_excerpt: None,
         failure: Some(failure),
@@ -999,6 +1001,7 @@ mod tests {
         drop(logger);
 
         assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+        assert_eq!(result.request_id.as_deref(), Some("req-test"));
         assert_eq!(result.output_text.as_deref(), Some("adapter success"));
         let log = fs::read_to_string(&path).expect("read log");
         assert!(log.contains("attempt_success"));
@@ -1295,6 +1298,7 @@ mod tests {
         drop(logger);
 
         assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+        assert_eq!(result.request_id.as_deref(), Some("req-test"));
         assert_eq!(
             result.failure.as_ref().map(|failure| failure.kind.clone()),
             Some(ProviderFailureKindV1::ProviderAuthMissing)

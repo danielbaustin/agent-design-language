@@ -151,6 +151,8 @@ pub struct ProviderInvocationResultV1 {
     pub final_status: ProviderInvocationFinalStatusV1,
     pub duration_ms: u64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output_text: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output_text_excerpt: Option<String>,
@@ -286,6 +288,8 @@ pub struct ProviderRunLogEventV1 {
     pub schema_version: String,
     pub timestamp: String,
     pub run_id: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     pub event_type: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub provider: Option<String>,
@@ -310,16 +314,29 @@ pub struct ProviderRunLogEventV1 {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub artifact_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub fields: Option<Value>,
 }
 
 pub struct ProviderRunLoggerV1 {
     run_id: String,
+    request_id: Option<String>,
+    artifact_ref: Option<String>,
     writer: BufWriter<File>,
 }
 
 impl ProviderRunLoggerV1 {
     pub fn create(path: impl AsRef<Path>, run_id: impl Into<String>) -> Result<Self> {
+        Self::create_with_context(path, run_id, None, None)
+    }
+
+    pub fn create_with_context(
+        path: impl AsRef<Path>,
+        run_id: impl Into<String>,
+        request_id: Option<String>,
+        artifact_ref: Option<String>,
+    ) -> Result<Self> {
         let path = path.as_ref();
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent)?;
@@ -327,6 +344,8 @@ impl ProviderRunLoggerV1 {
         let file = OpenOptions::new().create(true).append(true).open(path)?;
         Ok(Self {
             run_id: run_id.into(),
+            request_id,
+            artifact_ref,
             writer: BufWriter::new(file),
         })
     }
@@ -334,6 +353,12 @@ impl ProviderRunLoggerV1 {
     pub fn event(&mut self, mut event: ProviderRunLogEventV1) -> Result<()> {
         event.schema_version = PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string();
         event.run_id = self.run_id.clone();
+        if event.request_id.is_none() {
+            event.request_id = self.request_id.clone();
+        }
+        if event.artifact_ref.is_none() {
+            event.artifact_ref = self.artifact_ref.clone();
+        }
         event.timestamp = observed_at_now_v1();
         scrub_log_event(&mut event);
         let line = serde_json::to_string(&event)?;
@@ -350,6 +375,7 @@ impl ProviderRunLogEventV1 {
             schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
             timestamp: observed_at_now_v1(),
             run_id: String::new(),
+            request_id: None,
             event_type: event_type.into(),
             provider: None,
             provider_kind: None,
@@ -362,6 +388,7 @@ impl ProviderRunLogEventV1 {
             status: None,
             failure_kind: None,
             message: None,
+            artifact_ref: None,
             fields: None,
         }
     }
@@ -889,6 +916,29 @@ mod tests {
     }
 
     #[test]
+    fn provider_run_logger_injects_request_and_artifact_refs_from_context() {
+        let path = temp_log_path();
+        let mut logger = ProviderRunLoggerV1::create_with_context(
+            &path,
+            "run-2",
+            Some("req-2".to_string()),
+            Some("logs/provider-run.jsonl".to_string()),
+        )
+        .unwrap();
+        logger
+            .event(ProviderRunLogEventV1::new("run_start"))
+            .unwrap();
+        drop(logger);
+
+        let raw = fs::read_to_string(&path).unwrap();
+        let row: ProviderRunLogEventV1 = serde_json::from_str(raw.trim()).unwrap();
+        assert_eq!(row.run_id, "run-2");
+        assert_eq!(row.request_id.as_deref(), Some("req-2"));
+        assert_eq!(row.artifact_ref.as_deref(), Some("logs/provider-run.jsonl"));
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
     fn utf8_diagnostics_truncate_without_panic() {
         let diagnostic = format!("{}{}", "界".repeat(200), "é");
         let sanitized = sanitize_provider_message(&diagnostic);
@@ -951,6 +1001,7 @@ mod tests {
             }],
             final_status: ProviderInvocationFinalStatusV1::Ok,
             duration_ms: 10,
+            request_id: None,
             output_text: Some("{}".to_string()),
             output_text_excerpt: Some("{}".to_string()),
             failure: None,
@@ -990,6 +1041,7 @@ mod tests {
             }],
             final_status: ProviderInvocationFinalStatusV1::Failed,
             duration_ms: 10,
+            request_id: None,
             output_text: None,
             output_text_excerpt: None,
             failure: Some(failure),
@@ -1184,6 +1236,7 @@ mod tests {
             }],
             final_status: ProviderInvocationFinalStatusV1::Failed,
             duration_ms: 25,
+            request_id: Some("provider-request-1".to_string()),
             output_text: None,
             output_text_excerpt: None,
             failure: Some(provider_failure),
@@ -1257,6 +1310,7 @@ mod tests {
             }],
             final_status: ProviderInvocationFinalStatusV1::Ok,
             duration_ms: 25,
+            request_id: Some("provider-request-1".to_string()),
             output_text: None,
             output_text_excerpt: Some("[redacted review output]".to_string()),
             failure: None,
@@ -1345,6 +1399,7 @@ mod tests {
             }],
             final_status: ProviderInvocationFinalStatusV1::Failed,
             duration_ms: 25,
+            request_id: Some("provider-request-1".to_string()),
             output_text: None,
             output_text_excerpt: None,
             failure: Some(provider_failure),
@@ -1397,6 +1452,7 @@ mod tests {
             }],
             final_status: ProviderInvocationFinalStatusV1::Ok,
             duration_ms: 25,
+            request_id: Some("provider-request-1".to_string()),
             output_text: None,
             output_text_excerpt: Some("[redacted review output]".to_string()),
             failure: None,

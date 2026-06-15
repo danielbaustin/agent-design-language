@@ -6,8 +6,9 @@ use crate::provider_communication::{
 };
 use anyhow::{Context, Result};
 use clap::Parser;
+use std::env;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Parser)]
 #[command(name = "adl-provider-adapter")]
@@ -51,9 +52,16 @@ pub fn run_provider_adapter_cli(args: ProviderAdapterCliArgs) -> Result<()> {
             ),
         ],
     );
-    let mut logger = ProviderRunLoggerV1::create(&args.log, run_id)
+    let log_ref = normalize_observability_ref(&args.log);
+    let mut logger = ProviderRunLoggerV1::create_with_context(
+        &args.log,
+        run_id,
+        request.request_id.clone(),
+        Some(log_ref.clone()),
+    )
         .with_context(|| format!("open run log {}", args.log.display()))?;
-    let result = execute_provider_invocation(request, &mut logger);
+    let mut result = execute_provider_invocation(request, &mut logger);
+    result.artifact_ref = Some(normalize_observability_ref(&args.out));
     let attempts = result.attempts.len().to_string();
     let terminal_event = provider_terminal_event(&result, &attempts);
     let result_text = serde_json::to_string_pretty(&result)? + "\n";
@@ -178,6 +186,66 @@ fn failure_kind_label(kind: &ProviderFailureKindV1) -> &'static str {
     }
 }
 
+fn normalize_observability_ref(path: &PathBuf) -> String {
+    let path = resolved_path(path);
+    if let Some(repo_relative) = repo_relative_observability_ref(&path) {
+        return repo_relative;
+    }
+    let temp_dir = env::temp_dir();
+    if path.starts_with(&temp_dir) {
+        return format!(
+            "<tmp>/{}",
+            path.file_name().unwrap_or_default().to_string_lossy()
+        );
+    }
+    if let Ok(canonical_temp_dir) = temp_dir.canonicalize() {
+        let canonical = path.canonicalize().unwrap_or_else(|_| path.to_path_buf());
+        if canonical.starts_with(&canonical_temp_dir) {
+            return format!(
+                "<tmp>/{}",
+                path.file_name().unwrap_or_default().to_string_lossy()
+            );
+        }
+    }
+    if let Some(home_dir) = env::var_os("HOME") {
+        let home_path = PathBuf::from(home_dir);
+        if path.starts_with(&home_path) {
+            return format!(
+                "<home>/{}",
+                path.file_name().unwrap_or_default().to_string_lossy()
+            );
+        }
+    }
+    format!(
+        "<absolute>/{}",
+        path.file_name().unwrap_or_default().to_string_lossy()
+    )
+}
+
+fn resolved_path(path: &PathBuf) -> PathBuf {
+    if path.is_absolute() {
+        path.clone()
+    } else {
+        env::current_dir()
+            .unwrap_or_else(|_| PathBuf::from("."))
+            .join(path)
+    }
+}
+
+fn repo_relative_observability_ref(path: &Path) -> Option<String> {
+    let mut cursor = path.parent();
+    while let Some(candidate) = cursor {
+        if candidate.join(".git").exists() {
+            if let Ok(relative) = path.strip_prefix(candidate) {
+                return Some(relative.display().to_string());
+            }
+            return None;
+        }
+        cursor = candidate.parent();
+    }
+    None
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -264,8 +332,22 @@ mod tests {
                 .and_then(serde_json::Value::as_str),
             Some("provider_auth_missing")
         );
+        assert_eq!(
+            result.get("request_id").and_then(serde_json::Value::as_str),
+            Some("req-cli-test")
+        );
+        let expected_result_ref = format!("<tmp>/{}", out.file_name().unwrap().to_string_lossy());
+        assert_eq!(
+            result
+                .get("artifact_ref")
+                .and_then(serde_json::Value::as_str),
+            Some(expected_result_ref.as_str())
+        );
         let log_text = fs::read_to_string(&log).unwrap();
         assert!(log_text.contains("run-cli-test"));
+        assert!(log_text.contains("req-cli-test"));
+        let expected_log_ref = format!("<tmp>/{}", log.file_name().unwrap().to_string_lossy());
+        assert!(log_text.contains(&expected_log_ref));
         assert!(!log_text.contains("secret prompt"));
 
         let _ = fs::remove_file(request);
@@ -448,5 +530,27 @@ mod tests {
         let _ = fs::remove_file(request);
         let _ = fs::remove_file(log);
         let _ = fs::remove_file(observability);
+    }
+
+    #[test]
+    fn normalize_observability_ref_prefers_repo_relative_and_redacts_absolute_paths() {
+        let repo_relative =
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("src/provider_adapter_cli.rs");
+        assert_eq!(
+            normalize_observability_ref(&repo_relative),
+            "adl/src/provider_adapter_cli.rs"
+        );
+
+        let temp_path = env::temp_dir().join("provider-log.jsonl");
+        assert_eq!(
+            normalize_observability_ref(&temp_path),
+            "<tmp>/provider-log.jsonl"
+        );
+
+        let home_path = PathBuf::from(env::var("HOME").unwrap()).join("provider-log.jsonl");
+        assert_eq!(
+            normalize_observability_ref(&home_path),
+            "<home>/provider-log.jsonl"
+        );
     }
 }
