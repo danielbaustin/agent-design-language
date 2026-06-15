@@ -173,7 +173,7 @@ Usage:\n\
   adl-runtime identity <init|show|now|foundation|...> ...\n\
   adl-runtime instrument <graph|replay|replay-bundle|diff-plan|diff-trace|trace-schema|validate-trace-v1|provider-substrate|provider-substrate-schema> ...\n\
   adl-runtime learn export --format <jsonl|bundle-v1|trace-bundle-v2> ...\n\
-  adl-runtime provider setup <family> [--model <provider_model_id>] [--out <dir>] [--force]\n\
+  adl-runtime provider setup <family> [--out <dir>] [--force]\n\
   adl-runtime keygen --out-dir <dir>\n\
   adl-runtime sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]\n\
   adl-runtime verify <adl.yaml> [--key <public_key_path>]\n\

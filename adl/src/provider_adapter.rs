@@ -1189,6 +1189,40 @@ mod tests {
     }
 
     #[test]
+    fn openrouter_hosted_adapter_prefers_observed_provider_model_identity() {
+        env::set_var("ADL_PROVIDER_ADAPTER_OPENROUTER_KEY", "test-key");
+        let endpoint = one_shot_server(
+            r#"{"model":"qwen/qwen3.6-flash","choices":[{"message":{"content":"identity success"}}]}"#,
+            "200 OK",
+        );
+        let path = temp_log("openrouter-observed-model");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "openrouter".to_string();
+        req.route.provider_model_id = "reviewer/fast".to_string();
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_OPENROUTER_KEY".to_string());
+        req.model_identity = hosted_model_identity(
+            "openrouter",
+            "reviewer/fast",
+            "reviewer/fast",
+            Some("test".to_string()),
+        );
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+        assert_eq!(result.output_text.as_deref(), Some("identity success"));
+        assert_eq!(
+            result.model_identity.provider_model_id,
+            "qwen/qwen3.6-flash"
+        );
+
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_KEY");
+    }
+
+    #[test]
     fn gemini_hosted_adapter_returns_output_and_redacts_log() {
         env::set_var("ADL_PROVIDER_ADAPTER_GEMINI_KEY", "test-key");
         let endpoint = one_shot_server(
