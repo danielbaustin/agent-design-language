@@ -291,6 +291,7 @@ fn normalize_existing_worktree_path(path: &Path) -> PathBuf {
 pub(super) fn ensure_worktree_for_branch(worktree_path: &Path, branch: &str) -> Result<()> {
     if let Some(existing) = branch_checked_out_worktree_path(branch)? {
         if existing == worktree_path {
+            ensure_reusable_worktree_is_clean(&existing, branch)?;
             eprintln!(
                 "• Reusing existing worktree for branch: {}",
                 worktree_path.display()
@@ -315,11 +316,40 @@ pub(super) fn ensure_worktree_for_branch(worktree_path: &Path, branch: &str) -> 
         )?;
         return Ok(());
     }
-    eprintln!(
-        "• Reusing existing worktree path: {}",
-        worktree_path.display()
-    );
-    Ok(())
+    bail!(
+        "start: unsafe_existing_worktree_path: target worktree path '{}' already exists but is not the clean checked-out worktree for branch '{}'. Remediation: preserve any local changes, then prune/remove the stale path before rerunning.",
+        worktree_path.display(),
+        branch
+    )
+}
+
+fn ensure_reusable_worktree_is_clean(worktree_path: &Path, branch: &str) -> Result<()> {
+    let status = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(worktree_path)?,
+            "status",
+            "--porcelain",
+            "--untracked-files=all",
+        ],
+    )?;
+    if status.trim().is_empty() {
+        return Ok(());
+    }
+
+    let preview = status
+        .lines()
+        .take(8)
+        .map(str::trim_end)
+        .collect::<Vec<_>>()
+        .join("\\n");
+    bail!(
+        "start: unsafe_existing_worktree_dirty: refusing to reuse worktree '{}' for branch '{}' because it has staged, unstaged, or untracked changes. Remediation: preserve or resolve those changes, then rerun; do not reset or prune until the dirty state is accounted for. Dirty status:\\n{}",
+        worktree_path.display(),
+        branch,
+        preview
+    )
 }
 
 pub(super) fn run_capture(program: &str, args: &[&str]) -> Result<String> {
