@@ -210,17 +210,27 @@ git -C "$FIXTURE" tag -a "$TAG_NAME" -m "release fixture"
 run_release_case "push-tag succeeds when local tag exists and remote is absent" 0 "" --push-tag --tag "$TAG_NAME"
 assert_remote_tag_present
 
-# Draft preconditions: pushed tag exists and no release -> draft-release succeeds.
+# Draft/publish release operations are intentionally fail-closed until the
+# GitHub Release API path is implemented through Rust/octocrab. The shell
+# helper must not silently fall back to legacy GitHub Release CLI behavior.
 reset_git_state
 git -C "$FIXTURE" tag -a "$TAG_NAME" -m "release fixture"
 git -C "$FIXTURE" push -q origin "$TAG_NAME"
-run_release_case "draft-release succeeds when pushed tag exists and no release" 0 "" --draft-release --tag "$TAG_NAME"
-assert_release_present
+run_release_case \
+  "draft-release fails closed until Rust/octocrab release support exists" \
+  1 \
+  "GitHub Release absence checks are no longer available from shell helpers" \
+  --draft-release --tag "$TAG_NAME"
+assert_release_absent
 
 git -C "$FIXTURE" push -q origin ":refs/tags/$TAG_NAME" >/dev/null 2>&1 || true
-# Recreate expected start for publish success.
 git -C "$FIXTURE" tag -d "$TAG_NAME" >/dev/null 2>&1 || true
-run_release_case "publish-release succeeds only when draft release exists" 0 "" --publish-release --tag "$TAG_NAME"
+printf '%s\n' "$TAG_NAME" >"$STATE_FILE"
+run_release_case \
+  "publish-release fails closed until Rust/octocrab release support exists" \
+  1 \
+  "GitHub Release presence checks are no longer available from shell helpers" \
+  --publish-release --tag "$TAG_NAME"
 assert_release_present
 
 # Guard failures for violated preconditions.
@@ -238,10 +248,18 @@ git -C "$FIXTURE" tag -a "$TAG_NAME" -m "release fixture"
 git -C "$FIXTURE" push -q origin "$TAG_NAME"
 printf '%s
 ' "$TAG_NAME" >"$STATE_FILE"
-run_release_case "draft-release fails when release already exists" 1 "GitHub release already exists" --draft-release --tag "$TAG_NAME"
+run_release_case \
+  "draft-release remains fail-closed even when release exists" \
+  1 \
+  "GitHub Release absence checks are no longer available from shell helpers" \
+  --draft-release --tag "$TAG_NAME"
 
 reset_git_state
-run_release_case "publish-release fails when draft release is missing" 1 "GitHub release does not exist" --publish-release --tag "$TAG_NAME"
+run_release_case \
+  "publish-release remains fail-closed when draft release is missing" \
+  1 \
+  "GitHub Release presence checks are no longer available from shell helpers" \
+  --publish-release --tag "$TAG_NAME"
 
 # Split-step invocation across mutation phases.
 reset_git_state
@@ -250,9 +268,18 @@ assert_local_tag_present
 run_release_case "split-step phase 2: push-tag" 0 "" --push-tag --tag "$TAG_NAME"
 assert_remote_tag_present
 assert_release_absent
-run_release_case "split-step phase 3: draft-release" 0 "" --draft-release --tag "$TAG_NAME"
-assert_release_present
-run_release_case "split-step phase 4: publish-release" 0 "" --publish-release --tag "$TAG_NAME"
+run_release_case \
+  "split-step phase 3: draft-release fails closed" \
+  1 \
+  "GitHub Release absence checks are no longer available from shell helpers" \
+  --draft-release --tag "$TAG_NAME"
+assert_release_absent
+printf '%s\n' "$TAG_NAME" >"$STATE_FILE"
+run_release_case \
+  "split-step phase 4: publish-release fails closed" \
+  1 \
+  "GitHub Release presence checks are no longer available from shell helpers" \
+  --publish-release --tag "$TAG_NAME"
 assert_release_present
 
 echo "test_release_ceremony: ok"

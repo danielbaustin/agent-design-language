@@ -90,8 +90,12 @@ Inspect where applicable:
 - mergeability or conflict state
 - review state only at the high-level blocker/routing level
 
-Use direct GitHub metadata or `gh` where available. Do not infer readiness only
-from stale local cards when live GitHub state is required.
+Use repo-native GitHub metadata surfaces for covered ADL-owned workflow state.
+Do not introduce or rely on `gh` as an operational backend for covered paths.
+If a required watcher metadata path is not available through the native
+workflow surface, classify the watch as blocked or route a follow-up instead of
+silently falling back. Do not infer readiness only from stale local cards when
+live GitHub state is required.
 
 When watching PR checks, apply
 `adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md`. Continue watching stable

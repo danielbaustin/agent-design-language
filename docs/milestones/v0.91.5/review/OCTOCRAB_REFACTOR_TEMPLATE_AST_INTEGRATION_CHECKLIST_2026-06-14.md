@@ -52,8 +52,10 @@ review cycles caused by tooling drift.
   of silently calling `gh`.
 - [x] Documentation records that `GITHUB_TOKEN` or `GH_TOKEN` is required for
   Rust/octocrab GitHub operations.
-- [ ] Remaining GitHub release or watcher gaps are routed to explicit follow-up
-  work rather than hidden inside successful workflow claims.
+- [x] Remaining GitHub release or watcher gaps are routed to explicit follow-up
+  work rather than hidden inside successful workflow claims. See
+  [RELEASE_WATCHER_GITHUB_GAP_INVENTORY_3712.md](RELEASE_WATCHER_GITHUB_GAP_INVENTORY_3712.md);
+  native release/watcher implementation is routed to `#3718`.
 
 ### 2. Refactored command surface
 
@@ -120,13 +122,16 @@ review cycles caused by tooling drift.
 
 ### 6. Follow-up routing
 
-- [ ] Create or confirm a follow-up for octocrab-native release/watcher support if
-  those commands remain required for v0.91.5 or v0.92.
-- [ ] Create or confirm a follow-up for wrapper inventory and retirement status.
-- [ ] Create or confirm a follow-up for prompt-template renderer integration in
-  every card-producing workflow path.
-- [ ] Create or confirm a follow-up for markdown.rs AST-backed editing.
-- [ ] Create or confirm a follow-up for a combined end-to-end timing proof.
+- [x] Create or confirm a follow-up for octocrab-native release/watcher support if
+  those commands remain required for v0.91.5 or v0.92: inventory/fail-closed
+  routing in `#3712`, native implementation in `#3718`.
+- [x] Create or confirm a follow-up for wrapper inventory and retirement status:
+  `#3713`.
+- [x] Create or confirm a follow-up for prompt-template renderer integration in
+  every card-producing workflow path: `#3714`.
+- [x] Create or confirm a follow-up for markdown.rs AST-backed editing: `#3715`.
+- [x] Create or confirm a follow-up for a combined end-to-end timing proof:
+  `#3716`.
 
 ## Review questions
 
