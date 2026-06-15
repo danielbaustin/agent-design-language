@@ -124,6 +124,13 @@ def provider_setup(adl_bin: Path, root: Path, out_dir: Path) -> None:
         ],
         cwd=root,
     )
+    dot_env = out_dir / ".env.example"
+    portable_env = out_dir / "env.example"
+    if dot_env.exists():
+        dot_env.rename(portable_env)
+    readme_path = out_dir / "README.md"
+    if readme_path.exists():
+        readme_path.write_text(readme_path.read_text().replace("`.env.example`", "`env.example`"))
 
 
 def lane_prompt(role: str) -> str:
