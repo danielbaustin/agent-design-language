@@ -3,19 +3,40 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
-pub(crate) fn reconcile_closed_completed_issue_bundle(
+fn reconcile_closed_completed_issue_bundle_with_recovery_sources(
     repo_root: &Path,
     issue_ref: &IssueRef,
     canonical_output: &Path,
+    recovery_bundles: &[PathBuf],
 ) -> Result<()> {
     let bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
     if let Some(parent) = bundle_dir.parent() {
-        fs::create_dir_all(parent)?;
+        fs::create_dir_all(parent).with_context(|| {
+            format!(
+                "doctor: failed to create canonical task bundle parent '{}'",
+                parent.display()
+            )
+        })?;
     }
 
-    let duplicates = matching_task_bundle_dirs(repo_root, issue_ref)?;
+    let mut duplicates = Vec::new();
+    for recovery_bundle in recovery_bundles {
+        if recovery_bundle.is_dir() && !duplicates.iter().any(|path| path == recovery_bundle) {
+            duplicates.push(recovery_bundle.clone());
+        }
+    }
+    for duplicate in matching_task_bundle_dirs(repo_root, issue_ref)? {
+        if duplicate.is_dir() && !duplicates.iter().any(|path| path == &duplicate) {
+            duplicates.push(duplicate);
+        }
+    }
     if !bundle_dir.exists() {
-        fs::create_dir_all(&bundle_dir)?;
+        fs::create_dir_all(&bundle_dir).with_context(|| {
+            format!(
+                "doctor: failed to create canonical task bundle '{}'",
+                bundle_dir.display()
+            )
+        })?;
     }
 
     for relative in ["stp.md", "sip.md", "spp.md", "srp.md", "sor.md"] {
@@ -103,13 +124,19 @@ pub(crate) fn closeout_closed_completed_issue_bundle(
     issue_ref: &IssueRef,
     canonical_output: &Path,
 ) -> Result<()> {
-    reconcile_closed_completed_issue_bundle(primary_root, issue_ref, canonical_output)?;
     let worktree_path = issue_ref.default_worktree_path(
         primary_root,
         std::env::var_os("ADL_WORKTREE_ROOT")
             .map(PathBuf::from)
             .as_deref(),
     );
+    let recovery_bundles = [issue_ref.task_bundle_dir_path(&worktree_path)];
+    reconcile_closed_completed_issue_bundle_with_recovery_sources(
+        primary_root,
+        issue_ref,
+        canonical_output,
+        &recovery_bundles,
+    )?;
     if worktree_path.is_dir() {
         super::cleanup::scrub_noncanonical_issue_bundle_residue(&worktree_path, issue_ref)?;
     }
