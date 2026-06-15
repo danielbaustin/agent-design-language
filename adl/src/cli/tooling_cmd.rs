@@ -10,6 +10,8 @@ mod common;
 mod csdlc_prompt_editor;
 #[path = "tooling_cmd/markdown.rs"]
 mod markdown;
+#[path = "tooling_cmd/markdown_ast_edit.rs"]
+mod markdown_ast_edit;
 #[path = "tooling_cmd/portable_project_doctor.rs"]
 mod portable_project_doctor;
 #[path = "tooling_cmd/prompt_template.rs"]
@@ -28,6 +30,7 @@ mod wp_issue_wave;
 use card_prompt::real_card_prompt;
 use code_review::real_code_review;
 use csdlc_prompt_editor::real_csdlc_prompt_editor;
+use markdown_ast_edit::real_markdown_ast_edit;
 use portable_project_doctor::real_portable_project_doctor;
 use prompt_template::real_prompt_template;
 use public_prompt_packet::real_public_prompt_packet;
@@ -70,6 +73,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
         "csdlc-prompt-editor" => real_csdlc_prompt_editor(&args[1..]),
         "generate-wp-issue-wave" => real_generate_wp_issue_wave(&args[1..]),
         "lint-prompt-spec" => real_lint_prompt_spec(&args[1..]),
+        "markdown-ast-edit" => real_markdown_ast_edit(&args[1..]),
         "portable-project-doctor" => real_portable_project_doctor(&args[1..]),
         "prompt-template" => real_prompt_template(&args[1..]),
         "public-prompt-packet" => real_public_prompt_packet(&args[1..]),
@@ -96,6 +100,7 @@ adl tooling csdlc-prompt-editor [--repo-root <path>] [--emit-model-js <path>] [-
 adl tooling generate-wp-issue-wave --version <version> [--wbs <path>] [--sprint <path>] [--out <path>]\n\
 adl tooling lint-prompt-spec --issue <number>\n\
 adl tooling lint-prompt-spec --input <path>\n\
+adl tooling markdown-ast-edit replace-section --input <path> --heading <heading> --replacement <path> --out <path> [--repair-note-out <path>]\n\
 adl tooling portable-project-doctor --project <adl_project.json> [--adl-home <path>] [--json]\n\
 adl tooling prompt-template render --kind <sip|stp|spp|srp|sor> --values <values.yaml> --out <card.md> [--repo-root <path>]\n\
 adl tooling prompt-template render-all --values-dir <dir> --out-dir <dir> [--repo-root <path>]\n\

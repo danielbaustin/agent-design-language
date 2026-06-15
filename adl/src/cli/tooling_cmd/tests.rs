@@ -10,6 +10,7 @@ pub(super) use std::path::Path;
 
 mod card_prompt;
 mod common_helpers;
+mod markdown_ast_edit;
 mod prompt_spec;
 mod prompt_template;
 mod public_prompt_packet;
