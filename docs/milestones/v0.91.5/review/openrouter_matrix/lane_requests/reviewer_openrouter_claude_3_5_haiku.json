@@ -1,0 +1,29 @@
+{
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "anthropic/claude-3.5-haiku",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.5.openrouter.matrix"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "anthropic/claude-3.5-haiku",
+    "provider_model_id": "anthropic/claude-3.5-haiku",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1"
+  },
+  "prompt_contract_ref": "v0.91.5.openrouter.matrix.prompt.v1",
+  "lane_ref": "reviewer_openrouter_claude_3_5_haiku",
+  "run_id": "reviewer_openrouter_claude_3_5_haiku",
+  "request_id": "reviewer_openrouter_claude_3_5_haiku",
+  "attempt_policy": {
+    "max_attempts": 1,
+    "timeout_ms": 45000,
+    "retry_backoff_ms": 1000
+  },
+  "input_text": "Return markdown only with exactly these headings:\n# Finding\n# Severity\n# Routing\n# Non-Claim\n\nRequirements:\n- The finding must be about OpenRouter matrix proof quality, not provider marketing.\n- The severity body must be exactly P2 or P3.\n- Mention docs/milestones/v0.91.5/review/openrouter_matrix\n- Under # Non-Claim include the exact phrase: tool-call capability still unproven\n- Keep the response under 150 words."
+}

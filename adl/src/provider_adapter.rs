@@ -69,6 +69,14 @@ pub fn execute_provider_invocation(
         match outcome {
             Ok(provider_response) => {
                 let output_text = provider_response.output_text;
+                let mut model_identity = request.model_identity.clone();
+                if let Some(observed_provider_model_id) =
+                    provider_response.observed_provider_model_id
+                {
+                    if !observed_provider_model_id.trim().is_empty() {
+                        model_identity.provider_model_id = observed_provider_model_id;
+                    }
+                }
                 attempts.push(ProviderAttemptV1 {
                     attempt_index,
                     started_at: attempt_started_at,
@@ -88,7 +96,7 @@ pub fn execute_provider_invocation(
                 return ProviderInvocationResultV1 {
                     schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
                     route: request.route,
-                    model_identity: request.model_identity,
+                    model_identity,
                     attempts,
                     final_status: ProviderInvocationFinalStatusV1::Ok,
                     duration_ms: started.elapsed().as_millis() as u64,
@@ -219,6 +227,7 @@ fn ensure_request_identity(request: &mut ProviderInvocationRequestV1) {
 struct ProviderTextResponse {
     output_text: String,
     http_status: u16,
+    observed_provider_model_id: Option<String>,
 }
 
 fn execute_hosted(
@@ -264,6 +273,7 @@ fn execute_hosted_openai(
     decode_text_response(
         response,
         extract_openai_output_text,
+        |_| None,
         RuntimeSurfaceV1::HostedApi,
     )
 }
@@ -296,6 +306,7 @@ fn execute_hosted_anthropic(
     decode_text_response(
         response,
         extract_anthropic_output_text,
+        |_| None,
         RuntimeSurfaceV1::HostedApi,
     )
 }
@@ -328,6 +339,7 @@ fn execute_hosted_deepseek(
     decode_text_response(
         response,
         extract_deepseek_output_text,
+        |_| None,
         RuntimeSurfaceV1::HostedApi,
     )
 }
@@ -363,6 +375,7 @@ fn execute_hosted_openrouter(
     decode_text_response(
         response,
         extract_chat_completion_output_text,
+        extract_chat_completion_model_id,
         RuntimeSurfaceV1::HostedApi,
     )
 }
@@ -397,6 +410,7 @@ fn execute_hosted_gemini(
     decode_text_response(
         response,
         extract_gemini_output_text,
+        |_| None,
         RuntimeSurfaceV1::HostedApi,
     )
 }
@@ -423,6 +437,7 @@ fn execute_ollama_http(
                 .and_then(Value::as_str)
                 .map(str::to_string)
         },
+        |_| None,
         RuntimeSurfaceV1::OllamaHttp,
     )
 }
@@ -430,6 +445,7 @@ fn execute_ollama_http(
 fn decode_text_response(
     response: reqwest::blocking::Response,
     extractor: impl Fn(&Value) -> Option<String>,
+    model_extractor: impl Fn(&Value) -> Option<String>,
     runtime_surface: RuntimeSurfaceV1,
 ) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
     let status = response.status();
@@ -451,6 +467,7 @@ fn decode_text_response(
     Ok(ProviderTextResponse {
         output_text,
         http_status: status.as_u16(),
+        observed_provider_model_id: model_extractor(&json),
     })
 }
 
@@ -701,6 +718,14 @@ fn extract_chat_completion_output_text(json: &Value) -> Option<String> {
         .and_then(|message| message.get("content"))
         .and_then(Value::as_str)
         .filter(|text| !text.trim().is_empty())
+        .map(str::to_string)
+}
+
+fn extract_chat_completion_model_id(json: &Value) -> Option<String> {
+    json.get("model")
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|text| !text.is_empty())
         .map(str::to_string)
 }
 
@@ -1126,7 +1151,7 @@ mod tests {
     fn openrouter_hosted_adapter_returns_output_and_redacts_log() {
         env::set_var("ADL_PROVIDER_ADAPTER_OPENROUTER_KEY", "test-key");
         let (endpoint, rx) = capture_one_request_server(
-            r#"{"choices":[{"message":{"content":"openrouter success"}}]}"#,
+            r#"{"model":"anthropic/claude-3.5-haiku","choices":[{"message":{"content":"openrouter success"}}]}"#,
             "200 OK",
         );
         let path = temp_log("openrouter");
@@ -1146,6 +1171,10 @@ mod tests {
 
         assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
         assert_eq!(result.output_text.as_deref(), Some("openrouter success"));
+        assert_eq!(
+            result.model_identity.provider_model_id,
+            "anthropic/claude-3.5-haiku"
+        );
         let raw_request = rx.recv().expect("captured request");
         assert!(raw_request
             .to_ascii_lowercase()

@@ -1,0 +1,41 @@
+{
+  "schema_version": "adl.native_provider_invocations.v1",
+  "credential_policy": "operator_env_or_key_file_no_secret_material_recorded",
+  "invocations": [
+    {
+      "family": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "http_status": 200,
+      "prompt_chars": 411,
+      "output_chars": 524
+    },
+    {
+      "family": "openrouter",
+      "model": "openai/gpt-4o-mini",
+      "http_status": 200,
+      "prompt_chars": 323,
+      "output_chars": 195
+    },
+    {
+      "family": "openrouter",
+      "model": "anthropic/claude-3.5-haiku",
+      "http_status": 200,
+      "prompt_chars": 416,
+      "output_chars": 387
+    },
+    {
+      "family": "openrouter",
+      "model": "google/gemini-2.5-flash-lite",
+      "http_status": 200,
+      "prompt_chars": 373,
+      "output_chars": 158
+    },
+    {
+      "family": "openrouter",
+      "model": "qwen/qwen3.6-flash",
+      "http_status": 200,
+      "prompt_chars": 323,
+      "output_chars": 192
+    }
+  ]
+}

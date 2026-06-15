@@ -8,6 +8,12 @@ Related issues: `#3505`, `#3504`, `#3415`, `#3503`
 
 Status: `bounded_matrix_ready_live_proof_partial`
 
+OpenRouter follow-on: `#3723` now upgrades the hosted gateway evidence with a
+dedicated packet at
+`docs/milestones/v0.91.5/review/openrouter_matrix/OPENROUTER_MATRIX_PROOF_2026-06-14.md`.
+This June 5 packet remains the historical baseline rather than the current
+strongest OpenRouter proof surface.
+
 ## Purpose
 
 This packet records the provider/model readiness matrix for the v0.91.5
@@ -59,7 +65,7 @@ Local Ollama returned the following role-relevant families:
 | Anthropic / Claude | Native `anthropic` provider | reviewer, critic, synthesis | blocked_missing_credential | Re-run with `ANTHROPIC_API_KEY`. |
 | Gemini | Compatibility/profile lane | reviewer, alternate synthesis | blocked_missing_credential | Re-run with `GEMINI_API_KEY`; do not treat as native provider until implemented. |
 | DeepSeek hosted API | Native `deepseek` provider from `#3549` | critic, reviewer, reasoning worker | blocked_missing_credential | Re-run with `DEEPSEEK_API_KEY`; keep distinct from Ollama DeepSeek models. |
-| OpenRouter | Native `openrouter` provider from `#3505` | broad hosted model routing | live_smoke_passed | DeepSeek V4 Flash routed successfully through OpenRouter. Role usefulness and capability details still require `#3504`, `#3415`, and `#3503`. |
+| OpenRouter | Native `openrouter` provider from `#3505` | broad hosted model routing | follow_on_role_proof_recorded | DeepSeek V4 Flash routed successfully here as smoke; `#3723` later added four exact native routed role probes and a fail-closed missing-credential control. Broad role usefulness and capability details still require `#3504`, `#3415`, and `#3503`. |
 | Local Ollama | Local `ollama list` | Qwen + DeepSeek local team | available_for_bounded_local_probe | Use `#3504`, `#3415`, and `#3503` to test actual usefulness and overhead. |
 | Remote Ollama | AI node `nessus.local` / `192.168.68.70` | remote local-model capacity | live_inventory_and_watcher_smoke_passed | Current node inventory passed and `gemma4:e2b` sentinel generation passed; Qwen/DeepSeek remote role probes still need prompt/model-specific follow-up. |
 
@@ -117,5 +123,6 @@ role-relevant families:
   prompts before planner/worker/reviewer usefulness is claimed.
 - Direct hosted lanes must either be re-run with credentials or marked
   skipped/blocked in the Sprint 2 closeout evidence.
-- OpenRouter must be promoted from smoke proof to role probe only after a
-  bounded issue records role-specific prompts, outputs, cost, and limitations.
+- OpenRouter smoke-only proof has now been upgraded by `#3723`, but broad role
+  usefulness still depends on the later multi-agent packets rather than this
+  provider-only lane.

@@ -1,0 +1,20 @@
+version: "0.5"
+
+providers:
+  openrouter_primary:
+    type: "openrouter"
+    config:
+      auth:
+        type: bearer
+        env: OPENROUTER_API_KEY
+      timeout_secs: 15
+      model_ref: "reasoning/default"
+      provider_model_id: "deepseek/deepseek-v4-flash"
+
+agents:
+  openrouter_agent:
+    provider: "openrouter_primary"
+    model: "reasoning/default"
+
+# Merge this provider/agent snippet into your workflow file.
+# provider_model_id may be changed to any trusted model ID supported by this provider family.

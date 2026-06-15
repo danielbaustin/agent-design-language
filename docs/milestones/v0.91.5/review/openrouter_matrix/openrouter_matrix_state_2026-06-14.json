@@ -1,0 +1,167 @@
+{
+  "schema": "adl.openrouter_matrix_proof.v1",
+  "issue": 3723,
+  "date": "2026-06-14",
+  "status": "supported_with_limits",
+  "setup": {
+    "family": "openrouter",
+    "provider_setup_dir": "docs/milestones/v0.91.5/review/openrouter_matrix/provider_setup"
+  },
+  "catalog": {
+    "path": "docs/milestones/v0.91.5/review/openrouter_matrix/catalog_snapshot_2026-06-14.json",
+    "model_count": 337,
+    "selected_models": [
+      "deepseek/deepseek-v4-flash",
+      "openai/gpt-4o-mini",
+      "anthropic/claude-3.5-haiku",
+      "google/gemini-2.5-flash-lite",
+      "qwen/qwen3.6-flash"
+    ]
+  },
+  "lanes": [
+    {
+      "lane": "planner_openrouter_deepseek_v4_flash",
+      "role": "planner",
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "recorded_route_model": "deepseek/deepseek-v4-flash",
+      "recorded_identity_model": "deepseek/deepseek-v4-flash-20260423",
+      "requested_route_completed": true,
+      "prompt_chars": 411,
+      "output_chars": 524,
+      "request_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_requests/planner_openrouter_deepseek_v4_flash.json",
+      "result_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_results/planner_openrouter_deepseek_v4_flash.json",
+      "log_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_logs/planner_openrouter_deepseek_v4_flash.jsonl",
+      "output_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_outputs/planner_openrouter_deepseek_v4_flash.md",
+      "final_status": "ok",
+      "http_status": 200,
+      "duration_ms": 2521,
+      "contract_status": "supported",
+      "note": "structured planner note satisfied contract"
+    },
+    {
+      "lane": "worker_openrouter_gpt4o_mini",
+      "role": "worker",
+      "provider": "openrouter",
+      "model": "openai/gpt-4o-mini",
+      "recorded_route_model": "openai/gpt-4o-mini",
+      "recorded_identity_model": "openai/gpt-4o-mini",
+      "requested_route_completed": true,
+      "prompt_chars": 323,
+      "output_chars": 195,
+      "request_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_requests/worker_openrouter_gpt4o_mini.json",
+      "result_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_results/worker_openrouter_gpt4o_mini.json",
+      "log_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_logs/worker_openrouter_gpt4o_mini.jsonl",
+      "output_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_outputs/worker_openrouter_gpt4o_mini.md",
+      "final_status": "ok",
+      "http_status": 200,
+      "duration_ms": 1544,
+      "contract_status": "supported",
+      "note": "worker lane returned bounded JSON proof step"
+    },
+    {
+      "lane": "reviewer_openrouter_claude_3_5_haiku",
+      "role": "reviewer",
+      "provider": "openrouter",
+      "model": "anthropic/claude-3.5-haiku",
+      "recorded_route_model": "anthropic/claude-3.5-haiku",
+      "recorded_identity_model": "anthropic/claude-3-5-haiku",
+      "requested_route_completed": true,
+      "prompt_chars": 416,
+      "output_chars": 387,
+      "request_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_requests/reviewer_openrouter_claude_3_5_haiku.json",
+      "result_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_results/reviewer_openrouter_claude_3_5_haiku.json",
+      "log_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_logs/reviewer_openrouter_claude_3_5_haiku.jsonl",
+      "output_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_outputs/reviewer_openrouter_claude_3_5_haiku.md",
+      "final_status": "ok",
+      "http_status": 200,
+      "duration_ms": 2252,
+      "contract_status": "supported",
+      "note": "reviewer lane returned a bounded finding surface"
+    },
+    {
+      "lane": "watcher_openrouter_gemini_2_5_flash_lite",
+      "role": "watcher",
+      "provider": "openrouter",
+      "model": "google/gemini-2.5-flash-lite",
+      "recorded_route_model": "google/gemini-2.5-flash-lite",
+      "recorded_identity_model": "google/gemini-2.5-flash-lite",
+      "requested_route_completed": true,
+      "prompt_chars": 373,
+      "output_chars": 158,
+      "request_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_requests/watcher_openrouter_gemini_2_5_flash_lite.json",
+      "result_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_results/watcher_openrouter_gemini_2_5_flash_lite.json",
+      "log_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_logs/watcher_openrouter_gemini_2_5_flash_lite.jsonl",
+      "output_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_outputs/watcher_openrouter_gemini_2_5_flash_lite.md",
+      "final_status": "ok",
+      "http_status": 200,
+      "duration_ms": 1467,
+      "contract_status": "supported",
+      "note": "watcher lane returned bounded status/signal/next-step text"
+    },
+    {
+      "lane": "worker_openrouter_qwen3_6_flash",
+      "role": "worker",
+      "provider": "openrouter",
+      "model": "qwen/qwen3.6-flash",
+      "recorded_route_model": "qwen/qwen3.6-flash",
+      "recorded_identity_model": "qwen/qwen3.6-flash",
+      "requested_route_completed": true,
+      "prompt_chars": 323,
+      "output_chars": 192,
+      "request_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_requests/worker_openrouter_qwen3_6_flash.json",
+      "result_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_results/worker_openrouter_qwen3_6_flash.json",
+      "log_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_logs/worker_openrouter_qwen3_6_flash.jsonl",
+      "output_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_outputs/worker_openrouter_qwen3_6_flash.md",
+      "final_status": "ok",
+      "http_status": 200,
+      "duration_ms": 7835,
+      "contract_status": "supported",
+      "note": "worker lane returned bounded JSON proof step"
+    },
+    {
+      "lane": "negative_missing_credential",
+      "role": "negative_control",
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "request_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_requests/negative_missing_credential.json",
+      "result_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_results/negative_missing_credential.json",
+      "log_path": "docs/milestones/v0.91.5/review/openrouter_matrix/lane_logs/negative_missing_credential.jsonl",
+      "final_status": "failed",
+      "failure_kind": "provider_auth_missing",
+      "duration_ms": 0,
+      "contract_status": "blocked_missing_credential",
+      "note": "missing credential negative control failed closed"
+    }
+  ],
+  "prior_non_proving_evidence": {
+    "issue": 3415,
+    "path": "docs/milestones/v0.91.5/review/multi_agent_workcell/lane_outputs/planner_openrouter_deepseek_v4_flash.md",
+    "reason": "OpenRouter planner/critic output was useful but generic/off-target in places, so broad role usefulness remains unproven."
+  },
+  "findings": [
+    {
+      "severity": "P2",
+      "summary": "The native OpenRouter provider completed five requested model routes under bounded prompts, while preserving fail-closed auth behavior and explicit role-contract non-claims."
+    },
+    {
+      "severity": "P2",
+      "summary": "The missing-credential negative control failed closed as provider_auth_missing rather than silently succeeding or leaking secret material."
+    },
+    {
+      "severity": "P3",
+      "summary": "No flaky retries or timeouts were observed in this bounded run, but the packet does not claim broad route stability beyond the exact models tested here."
+    }
+  ],
+  "non_claims": [
+    "does_not_claim_universal_openrouter_compatibility",
+    "does_not_claim_tool_call_capability_across_openrouter_models",
+    "does_not_claim_json_mode_support_across_openrouter_models",
+    "does_not_override_the_prior_workcell_finding_that_broad_openrouter_planner_usefulness_remains_unproven"
+  ],
+  "artifacts": {
+    "packet": "docs/milestones/v0.91.5/review/openrouter_matrix/OPENROUTER_MATRIX_PROOF_2026-06-14.md",
+    "state": "docs/milestones/v0.91.5/review/openrouter_matrix/openrouter_matrix_state_2026-06-14.json",
+    "provider_invocations": "docs/milestones/v0.91.5/review/openrouter_matrix/provider_invocations.json"
+  }
+}

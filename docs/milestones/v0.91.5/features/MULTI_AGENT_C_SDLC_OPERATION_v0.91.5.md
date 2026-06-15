@@ -10,6 +10,8 @@
 - Related issues: `#3415`, `#3501`, `#3503`, `#3504`
 - Prior satisfied evidence: `#3484`
 - Current provider/model evidence:
+  [OPENROUTER_MATRIX_PROOF_2026-06-14.md](../review/openrouter_matrix/OPENROUTER_MATRIX_PROOF_2026-06-14.md)
+- Historical provider/model baseline:
   [PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md](../review/multi_agent_matrix/PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md)
 - Current usefulness checklist:
   [MULTI_AGENT_USEFULNESS_REVIEW_CHECKLIST_2026-06-14.md](../review/multi_agent_usefulness/MULTI_AGENT_USEFULNESS_REVIEW_CHECKLIST_2026-06-14.md)
@@ -75,12 +77,17 @@ closeout truth.
 Validation should include a bounded proof packet, role records, shard records,
 timing/overhead comparison, and reviewer checklist.
 
-The `#3501` provider/model role matrix is now recorded as a partial live-proof
-packet: local Ollama role candidates are available, OpenRouter passed one live
-DeepSeek V4 Flash smoke, direct hosted provider lanes still require provider
-credentials, and the current remote Ollama node passed inventory plus one
-Gemma watcher-class smoke. Qwen/DeepSeek role usefulness on the remote node
-still needs bounded follow-up proof.
+The `#3501` provider/model role matrix remains the baseline availability packet:
+local Ollama role candidates are available, direct hosted provider lanes were
+credential-blocked in that shell, and the current remote Ollama node passed
+inventory plus one Gemma watcher-class smoke. `#3723` upgrades the OpenRouter
+lane from one smoke to five requested native OpenRouter route probes
+(`deepseek/deepseek-v4-flash`, `openai/gpt-4o-mini`,
+`anthropic/claude-3.5-haiku`, `google/gemini-2.5-flash-lite`,
+`qwen/qwen3.6-flash`) plus a
+fail-closed missing-credential negative control. Broad role usefulness,
+tool-call capability, and JSON-mode capability across OpenRouter models remain
+explicit non-claims.
 
 The `#3504` reviewer checklist defines hard gates, usefulness signals,
 role-specific warning signs, and single-agent fallback rules for evaluating

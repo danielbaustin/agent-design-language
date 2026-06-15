@@ -42,7 +42,7 @@ pub fn usage() -> &'static str {
   adl runtime-v2 contract-market-demo [--out <dir>]
   adl runtime-v2 governed-tools-flagship-demo [--out <dir>]
   adl runtime-v2 feature-proof-coverage [--out <path>]
-  adl provider setup <family> [--out <dir>] [--force]
+  adl provider setup <family> [--model <provider_model_id>] [--out <dir>] [--force]
   adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>]
   adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
   adl pr run <issue> [--prefix <prefix>] [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
@@ -122,6 +122,7 @@ Examples:
   adl runtime-v2 feature-proof-coverage --out artifacts/v0904/feature-proof-coverage.json
   adl provider setup chatgpt
   adl provider setup claude
+  adl provider setup openrouter
   adl provider setup anthropic --out ./.adl/provider-setup/anthropic
   adl godel run --run-id run-745-a --workflow-id wf-godel-loop --failure-code tool_failure --failure-summary \"step failed with deterministic parse error\" --evidence-ref runs/run-745-a/run_status.json
   adl godel inspect --run-id run-745-a --runs-dir .adl/runs

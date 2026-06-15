@@ -1,0 +1,35 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "anthropic/claude-3.5-haiku",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.5.openrouter.matrix"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "anthropic/claude-3.5-haiku",
+    "provider_model_id": "anthropic/claude-3-5-haiku",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1781493815",
+      "duration_ms": 2252,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted provider text len=387]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 2252,
+  "output_text": "# Finding\nOpenRouter matrix proof lacks comprehensive validation against actual model performance metrics, revealing gaps in methodological rigor.\n\n# Severity\nP2\n\n# Routing\nRouting mechanisms appear inconsistent with documented expectations in docs/milestones/v0.91.5/review/openrouter_matrix, suggesting potential calibration challenges.\n\n# Non-Claim\ntool-call capability still unproven",
+  "output_text_excerpt": "[redacted provider text len=387]"
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "deepseek/deepseek-v4-flash",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.5.openrouter.matrix"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "deepseek/deepseek-v4-flash",
+    "provider_model_id": "deepseek/deepseek-v4-flash-20260423",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1781493811",
+      "duration_ms": 2520,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted provider text len=524]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 2521,
+  "output_text": "# Plan\nFor issue #3723, we will finalize the provider model matrix at `docs/milestones/v0.91.5/features/PROVIDER_MODEL_MATRIX_v0.91.5.md`, mapping bounded ADL capabilities to supported providers. This includes verifying model coverage and updating the matrix with v0.91.5 constraints.\n\n# Risks\n- Incomplete provider coverage may delay release if new models are added post-freeze.\n- Matrix format changes could break downstream tooling expecting the current schema.\n\n# Non-Claims\n- no universal OpenRouter compatibility claim",
+  "output_text_excerpt": "[redacted provider text len=524]"
+}

@@ -36,7 +36,7 @@
       "lane": "openrouter",
       "substrate": "native_openrouter",
       "credential_env": "OPENROUTER_API_KEY",
-      "status": "live_smoke_passed",
+      "status": "follow_on_role_proof_recorded",
       "roles": ["hosted_model_gateway", "candidate_planner", "candidate_worker", "candidate_reviewer"],
       "live_smoke": {
         "route": "openrouter_chat_completions",
@@ -50,7 +50,9 @@
           "reported_cost_usd": 0.00001955
         },
         "credential_recorded": false
-      }
+      },
+      "follow_on_issue": 3723,
+      "follow_on_packet": "docs/milestones/v0.91.5/review/openrouter_matrix/OPENROUTER_MATRIX_PROOF_2026-06-14.md"
     },
     {
       "lane": "local_ollama",
