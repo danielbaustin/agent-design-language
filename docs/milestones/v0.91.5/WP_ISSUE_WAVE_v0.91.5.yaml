@@ -1,5 +1,5 @@
 milestone: v0.91.5
-status: active_wp_01_opening
+status: sprint_2_review_remediation_in_progress
 owner_issue: 3506
 owner_issue_state: closed_setup_umbrella
 setup_child_issues: [3507, 3508, 3509, 3510, 3511]
@@ -15,7 +15,7 @@ notes:
   - WP-01 is the planning and setup gate; it seeds/schedules issues, cards, sprint umbrellas, and ordering before execution sprints begin.
   - Canonical milestone WP ordering was closed through #3567; portable ADL project adapter planning and templates are routed through #3569.
   - Downstream v0.91.5 card rewrite/normalization waits for prompt templates v1.1 and is tracked through #3582 instead of blocking WP-01.
-  - Sprint umbrella issues are seeded as #3571 through #3574; closeout-tail issues are seeded as #3575, #3579, #3576, #3580, #3577, #3581, and #3578.
+  - Sprint 1 #3571 is closed, Sprint 2 #3572 remains open with post-execution review/remediation active, and Sprint 3 #3573 plus Sprint 4 #3574 remain open for later execution; closeout-tail issues #3575, #3579, #3576, #3580, #3577, #3581, and #3578 remain seeded/open.
   - Multi-agent C-SDLC execution must work by milestone closeout or be truthfully blocked before v0.92 depends on it.
   - v0.92 activation testing must include every known feature surface that comes alive during first birthday.
   - AEE completion must be routed as a named closure tranche before v0.92 opens; it must not be left implicit until v0.95 convergence.
