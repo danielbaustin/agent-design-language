@@ -94,6 +94,15 @@ that single-agent execution is preferred for tiny docs audits, while
 multi-agent remains useful for disjoint surfaces or review-quality tasks when
 the extra coordination cost is justified.
 
+Follow-on issue `#3724` now adds a bounded recovery proof for the remote watcher
+lane at
+`docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md`.
+That packet keeps the historical `#3415` empty-output fact intact while proving
+that larger remote Gemma4 routes (`gemma4:31b`, `gemma4:26b`, and `gemma4:e4b`)
+can return useful short watcher summaries, with `gemma4:31b` proven through the
+real `adl-provider-adapter` surface. This still does not prove broad
+multi-agent quality; `#3725` remains the comparative baseline issue.
+
 ## Acceptance Criteria
 
 - Multi-agent C-SDLC executes a bounded issue/sprint slice or blocks truthfully.

@@ -1,0 +1,74 @@
+{
+  "schema_version": "adl.remote_gemma_watcher_probe.v1",
+  "issue_number": 3724,
+  "run_id": "v0915-remote-gemma-watcher-20260615",
+  "generated_at": "2026-06-15T07:38:18.129015Z",
+  "endpoint_ref": "http://192.168.68.70:11434",
+  "historical_context": {
+    "issue_number": 3415,
+    "state_packet_path": "docs/milestones/v0.91.5/review/multi_agent_workcell/v0915_parallel_csdlc_workcell_state_2026-06-14.json",
+    "empty_output_path": "docs/milestones/v0.91.5/review/multi_agent_workcell/lane_outputs/watcher_remote_gemma4_e2b.md",
+    "historical_status": "completed_unhelpful_output"
+  },
+  "inventory": {
+    "model_count": 18,
+    "gemma_models": [
+      "gemma3:27b",
+      "gemma3:4b",
+      "gemma4:26b",
+      "gemma4:31b",
+      "gemma4:e2b",
+      "gemma4:e4b",
+      "gemma4:latest"
+    ],
+    "tags_snapshot_path": "docs/milestones/v0.91.5/review/remote_gemma_watcher/artifacts/ollama_tags_snapshot.json"
+  },
+  "lanes": [
+    {
+      "lane_id": "adapter_gemma4_31b",
+      "execution_surface": "adl_provider_adapter",
+      "model": "gemma4:31b",
+      "status": "useful_output",
+      "duration_seconds": 13.071,
+      "output_path": "docs/milestones/v0.91.5/review/remote_gemma_watcher/lane_outputs/adapter_gemma4_31b.md",
+      "artifact_paths": [
+        "docs/milestones/v0.91.5/review/remote_gemma_watcher/artifacts/adapter_gemma4_31b_result.json",
+        "docs/milestones/v0.91.5/review/remote_gemma_watcher/artifacts/adapter_gemma4_31b_adapter.log"
+      ],
+      "notes": []
+    },
+    {
+      "lane_id": "raw_gemma4_26b",
+      "execution_surface": "raw_ollama_http",
+      "model": "gemma4:26b",
+      "status": "useful_output",
+      "duration_seconds": 22.83,
+      "output_path": "docs/milestones/v0.91.5/review/remote_gemma_watcher/lane_outputs/raw_gemma4_26b.md",
+      "artifact_paths": [
+        "docs/milestones/v0.91.5/review/remote_gemma_watcher/artifacts/raw_gemma4_26b_response.json"
+      ],
+      "notes": []
+    },
+    {
+      "lane_id": "raw_gemma4_e4b",
+      "execution_surface": "raw_ollama_http",
+      "model": "gemma4:e4b",
+      "status": "useful_output",
+      "duration_seconds": 8.993,
+      "output_path": "docs/milestones/v0.91.5/review/remote_gemma_watcher/lane_outputs/raw_gemma4_e4b.md",
+      "artifact_paths": [
+        "docs/milestones/v0.91.5/review/remote_gemma_watcher/artifacts/raw_gemma4_e4b_response.json"
+      ],
+      "notes": []
+    }
+  ],
+  "summary": {
+    "useful_models": [
+      "gemma4:31b",
+      "gemma4:26b",
+      "gemma4:e4b"
+    ],
+    "primary_proving_lane": "adapter_gemma4_31b",
+    "disposition": "useful_with_limits"
+  }
+}
