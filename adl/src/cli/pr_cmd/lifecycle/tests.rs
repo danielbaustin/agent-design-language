@@ -4,6 +4,7 @@ use crate::cli::pr_cmd::lifecycle::cleanup::{
     record_worktree_prune_result, replace_worktree_only_paths_remaining,
 };
 use crate::cli::pr_cmd::{card_output_path, resolve_cards_root};
+use crate::cli::pr_cmd_cards::{ensure_pre_run_bootstrap_cards, ensure_task_bundle_stp};
 use crate::cli::tests::env_lock;
 use std::env;
 use std::fs;
@@ -69,6 +70,30 @@ fn ensure_validate_structured_prompt_script(repo_root: &Path) {
         .permissions();
     perms.set_mode(0o755);
     fs::set_permissions(&destination, perms).expect("chmod validator");
+}
+
+fn copy_prompt_templates(repo_root: &Path) {
+    fn copy_dir(src: &Path, dst: &Path) {
+        fs::create_dir_all(dst).expect("create prompt template dir");
+        for entry in fs::read_dir(src).expect("read prompt template dir") {
+            let entry = entry.expect("prompt template entry");
+            let src_path = entry.path();
+            let dst_path = dst.join(entry.file_name());
+            if src_path.is_dir() {
+                copy_dir(&src_path, &dst_path);
+            } else {
+                fs::copy(&src_path, &dst_path).expect("copy prompt template file");
+            }
+        }
+    }
+
+    let workspace_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("manifest parent");
+    copy_dir(
+        &workspace_root.join("docs/templates/prompts"),
+        &repo_root.join("docs/templates/prompts"),
+    );
 }
 
 fn set_tooling_manifest_root_to_workspace() -> EnvVarGuard {
@@ -857,6 +882,115 @@ fn closeout_closed_completed_issue_bundle_records_prune_result_on_canonical_outp
 
     let text = fs::read_to_string(&output).expect("read sor");
     assert!(text.contains("- Worktree prune result: pruned: adl-wp-1410"));
+    assert!(!worktree.exists(), "worktree should be pruned");
+    ensure_closed_completed_issue_bundle_truth(&repo, &issue_ref, &output)
+        .expect("canonical truth remains valid");
+}
+
+#[test]
+fn closeout_recovers_missing_primary_cards_from_bound_worktree_bundle() {
+    let _guard = env_lock();
+    let _manifest_guard = set_tooling_manifest_root_to_workspace();
+    let temp = temp_dir("adl-pr-lifecycle-closeout-recovers-worktree-cards");
+    let repo = temp.join("repo");
+    let origin = temp.join("origin.git");
+    init_repo_with_origin(&repo, &origin);
+    copy_prompt_templates(&repo);
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("write gitignore");
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "add",
+            ".gitignore"
+        ])
+        .status()
+        .expect("git add gitignore")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "commit",
+            "-q",
+            "-m",
+            "ignore local adl state",
+        ])
+        .status()
+        .expect("git commit gitignore")
+        .success());
+
+    let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+    let title = "PR Command Sync Coverage";
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("source parent");
+    fs::write(
+        &source_path,
+        "## Summary\n\nCloseout recovery fixture.\n\n## Goal\n\nRecover missing primary cards from the bound worktree.\n\n## Required Outcome\n\n- closeout restores missing primary cards\n\n## Deliverables\n\n- focused lifecycle regression test\n\n## Acceptance Criteria\n\n- primary STP and SIP are restored from the worktree\n- clean worktree is pruned\n\n## Repo Inputs\n\n- `adl/src/cli/pr_cmd/lifecycle/reconciliation.rs`\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- no broader closeout redesign\n\n## Issue-Graph Notes\n\n- regression fixture\n\n## Notes\n\n- local `.adl` state is ignored\n\n## Tooling Notes\n\n- focused lifecycle test\n",
+    )
+    .expect("write source");
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path).expect("cards");
+    let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    fs::write(&output, issue_ref_sync_completed_output_content()).expect("write completed sor");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "worktree",
+            "add",
+            path_str(&worktree).expect("worktree path"),
+            "-b",
+            "codex/1410-canonical-slug",
+            "main",
+        ])
+        .status()
+        .expect("git worktree add")
+        .success());
+    let worktree_bundle = issue_ref.task_bundle_dir_path(&worktree);
+    fs::create_dir_all(&worktree_bundle).expect("worktree bundle");
+    for relative in ["stp.md", "sip.md", "spp.md", "srp.md", "sor.md"] {
+        fs::copy(canonical_dir.join(relative), worktree_bundle.join(relative))
+            .expect("copy card to worktree");
+    }
+    let stale_ref = IssueRef::new(1410, "v0.87", "stale-primary-duplicate").expect("stale ref");
+    let stale_bundle = stale_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&stale_bundle).expect("stale bundle");
+    for relative in ["stp.md", "sip.md", "spp.md", "srp.md", "sor.md"] {
+        fs::copy(canonical_dir.join(relative), stale_bundle.join(relative))
+            .expect("copy stale primary duplicate card");
+    }
+    fs::write(
+        stale_bundle.join("stp.md"),
+        format!(
+            "{}\n\n<!-- stale-primary-duplicate-marker -->\n",
+            fs::read_to_string(stale_bundle.join("stp.md")).expect("read stale stp")
+        ),
+    )
+    .expect("mark stale stp");
+
+    for relative in ["stp.md", "sip.md", "spp.md", "srp.md"] {
+        fs::remove_file(canonical_dir.join(relative)).expect("remove primary card");
+    }
+
+    closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
+        .expect("closeout should recover missing primary cards from worktree");
+
+    for relative in ["stp.md", "sip.md", "spp.md", "srp.md"] {
+        assert!(
+            canonical_dir.join(relative).is_file(),
+            "{relative} should be restored"
+        );
+    }
+    assert!(
+        !fs::read_to_string(canonical_dir.join("stp.md"))
+            .expect("read restored stp")
+            .contains("stale-primary-duplicate-marker"),
+        "bound worktree recovery should win over stale primary duplicate bundles"
+    );
     assert!(!worktree.exists(), "worktree should be pruned");
     ensure_closed_completed_issue_bundle_truth(&repo, &issue_ref, &output)
         .expect("canonical truth remains valid");
