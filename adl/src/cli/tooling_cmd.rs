@@ -8,6 +8,8 @@ mod code_review;
 mod common;
 #[path = "tooling_cmd/csdlc_prompt_editor.rs"]
 mod csdlc_prompt_editor;
+#[path = "tooling_cmd/github_release.rs"]
+mod github_release;
 #[path = "tooling_cmd/markdown.rs"]
 mod markdown;
 #[path = "tooling_cmd/markdown_ast_edit.rs"]
@@ -30,6 +32,7 @@ mod wp_issue_wave;
 use card_prompt::real_card_prompt;
 use code_review::real_code_review;
 use csdlc_prompt_editor::real_csdlc_prompt_editor;
+use github_release::real_github_release;
 use markdown_ast_edit::real_markdown_ast_edit;
 use portable_project_doctor::real_portable_project_doctor;
 use prompt_template::real_prompt_template;
@@ -63,7 +66,7 @@ use structured_prompt::{
 pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "tooling requires a subcommand: card-prompt | code-review | csdlc-prompt-editor | lint-prompt-spec | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave"
+            "tooling requires a subcommand: card-prompt | code-review | csdlc-prompt-editor | github-release | lint-prompt-spec | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave"
         ));
     };
 
@@ -72,6 +75,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
         "code-review" => real_code_review(&args[1..]),
         "csdlc-prompt-editor" => real_csdlc_prompt_editor(&args[1..]),
         "generate-wp-issue-wave" => real_generate_wp_issue_wave(&args[1..]),
+        "github-release" => real_github_release(&args[1..]),
         "lint-prompt-spec" => real_lint_prompt_spec(&args[1..]),
         "markdown-ast-edit" => real_markdown_ast_edit(&args[1..]),
         "portable-project-doctor" => real_portable_project_doctor(&args[1..]),
@@ -87,7 +91,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown tooling subcommand '{subcommand}' (expected card-prompt | code-review | csdlc-prompt-editor | generate-wp-issue-wave | lint-prompt-spec | portable-project-doctor | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
+            "unknown tooling subcommand '{subcommand}' (expected card-prompt | code-review | csdlc-prompt-editor | generate-wp-issue-wave | github-release | lint-prompt-spec | portable-project-doctor | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
         )),
     }
 }
@@ -98,6 +102,7 @@ adl tooling card-prompt --input <path> [--out <path>]\n\
 adl tooling code-review --out <dir> [--backend fixture|ollama] [--visibility packet-only|read-only-repo] [--base <ref>] [--head <ref>] [--issue <number>] [--writer-session <id>] [--reviewer-session <id>] [--model <name>] [--allow-live-ollama] [--ollama-url <url>] [--timeout-secs <n>] [--include-working-tree] [--file <path> ...] [--fixture-case clean|blocked]\n\
 adl tooling csdlc-prompt-editor [--repo-root <path>] [--emit-model-js <path>] [--render-samples <dir>]\n\
 adl tooling generate-wp-issue-wave --version <version> [--wbs <path>] [--sprint <path>] [--out <path>]\n\
+adl tooling github-release ensure-absent|ensure-present|draft|publish --repo <owner/repo> --tag <tag> [--name <name>] [--notes-file <path>] [--target <branch>]\n\
 adl tooling lint-prompt-spec --issue <number>\n\
 adl tooling lint-prompt-spec --input <path>\n\
 adl tooling markdown-ast-edit replace-section --input <path> --heading <heading> --replacement <path> --out <path> [--repair-note-out <path>]\n\

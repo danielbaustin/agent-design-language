@@ -13,6 +13,7 @@ CREATE_DRAFT_RELEASE=0
 PUBLISH_RELEASE=0
 ALLOW_DIRTY=0
 SKIP_SOR_GATE=0
+RELEASE_GITHUB_CMD="${ADL_RELEASE_GITHUB_CMD:-}"
 
 PLAN_FILE=""
 NOTES_FILE=""
@@ -121,6 +122,11 @@ assert_tag_absent_remote() {
 }
 
 resolve_repo_name() {
+  if [[ -n "${ADL_RELEASE_GITHUB_REPO:-}" ]]; then
+    echo "$ADL_RELEASE_GITHUB_REPO"
+    return 0
+  fi
+
   local url
   url="$(git -C "$ROOT" remote get-url origin 2>/dev/null || true)"
   if [[ "$url" =~ github.com[:/]+([^/]+/[^/.]+)(\.git)?$ ]]; then
@@ -130,12 +136,32 @@ resolve_repo_name() {
   fail "could not infer GitHub repo from origin remote; GitHub Release operations are not available from shell helpers"
 }
 
+release_github_cmd() {
+  if [[ -n "$RELEASE_GITHUB_CMD" ]]; then
+    "$RELEASE_GITHUB_CMD" "$@"
+    return
+  fi
+
+  local adl_bin="$ROOT/adl/target/debug/adl"
+  if [[ -x "$adl_bin" ]]; then
+    "$adl_bin" "$@"
+    return
+  fi
+
+  require_cmd cargo
+  cargo run --manifest-path "$ROOT/adl/Cargo.toml" -- "$@"
+}
+
 assert_release_absent() {
-  fail "GitHub Release absence checks are no longer available from shell helpers; implement this path through Rust/octocrab before using --draft-release"
+  local repo
+  repo="$(resolve_repo_name)"
+  release_github_cmd tooling github-release ensure-absent --repo "$repo" --tag "$TAG"
 }
 
 assert_release_present() {
-  fail "GitHub Release presence checks are no longer available from shell helpers; implement this path through Rust/octocrab before using --publish-release"
+  local repo
+  repo="$(resolve_repo_name)"
+  release_github_cmd tooling github-release ensure-present --repo "$repo" --tag "$TAG"
 }
 
 check_cargo_version() {
@@ -319,11 +345,20 @@ if [[ "$PUSH_TAG" == "1" ]]; then
 fi
 
 if [[ "$CREATE_DRAFT_RELEASE" == "1" ]]; then
-  fail "GitHub draft release creation is no longer available from shell helpers; implement this path through Rust/octocrab before using --draft-release"
+  info "creating draft GitHub release $TAG through Rust/octocrab"
+  repo="$(resolve_repo_name)"
+  release_github_cmd tooling github-release draft \
+    --repo "$repo" \
+    --tag "$TAG" \
+    --name "ADL $TAG" \
+    --notes-file "$NOTES_FILE" \
+    --target "$TARGET_BRANCH"
 fi
 
 if [[ "$PUBLISH_RELEASE" == "1" ]]; then
-  fail "GitHub release publication is no longer available from shell helpers; implement this path through Rust/octocrab before using --publish-release"
+  info "publishing GitHub release $TAG through Rust/octocrab"
+  repo="$(resolve_repo_name)"
+  release_github_cmd tooling github-release publish --repo "$repo" --tag "$TAG"
 fi
 
 info "release ceremony actions completed"
