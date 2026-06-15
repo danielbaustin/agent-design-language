@@ -518,7 +518,7 @@ fn real_pr_doctor_full_blocks_invalid_root_spp() {
     env::set_current_dir(prev_dir).expect("restore cwd");
     let err = err.to_string();
     assert!(err.contains("doctor: spp failed validation"));
-    assert!(err.contains("status must be one of: draft, reviewed, approved"));
+    assert!(err.contains("status must be one of: draft, ready, reviewed, approved"));
 }
 
 #[test]

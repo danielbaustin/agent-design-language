@@ -846,9 +846,9 @@ pub(super) fn validate_spp_text(text: &str) -> Result<()> {
         "branch must be a codex/ branch or `not bound yet`"
     );
     ensure!(
-        ["draft", "reviewed", "approved"]
+        ["draft", "ready", "reviewed", "approved"]
             .contains(&mapping_string(fm, "status").unwrap_or_default().as_str()),
-        "status must be one of: draft, reviewed, approved"
+        "status must be one of: draft, ready, reviewed, approved"
     );
     validate_optional_front_matter_card_status(fm)?;
     ensure!(

@@ -1,6 +1,7 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
-    real_pr_finish, select_finish_validation_plan_for_finish,
+    ensure_finish_task_bundle_surfaces, real_pr_finish, resolve_finish_issue_scope_and_slug,
+    select_finish_validation_plan_for_finish,
 };
 
 #[test]
@@ -499,7 +500,7 @@ fn finish_validation_plan_supports_focused_local_ci_gated_mode() {
         .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
     assert!(plan
         .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml cli::pr_cmd".to_string()));
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
     assert!(plan
         .commands
         .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
@@ -581,7 +582,7 @@ fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request()
     assert_eq!(focused_plan.mode, FinishValidationMode::FocusedLocalCiGated);
     assert!(focused_plan
         .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml cli::pr_cmd".to_string()));
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
     assert!(!focused_plan
         .commands
         .iter()
@@ -648,7 +649,7 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
     ));
     assert!(!plan
         .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml cli::pr_cmd".to_string()));
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
     assert!(!plan
         .commands
         .iter()
@@ -657,6 +658,57 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
         .commands
         .iter()
         .any(|command| command.contains("cargo nextest")));
+}
+
+#[test]
+fn finish_restores_missing_canonical_cards_from_slug_drifted_issue_bundle() {
+    let repo = unique_temp_dir("adl-pr-finish-slug-drift");
+    let issue_ref = IssueRef::new(
+        3766,
+        "v0.91.5".to_string(),
+        "canonical-finish-slug".to_string(),
+    )
+    .expect("issue ref");
+    let tasks_dir = repo.join(".adl").join("v0.91.5").join("tasks");
+    let drifted_dir = tasks_dir.join("issue-3766__v0-91-5-tools-title-derived-slug");
+    fs::create_dir_all(&drifted_dir).expect("drifted bundle dir");
+    for file_name in ["stp.md", "sip.md", "sor.md", "spp.md", "srp.md"] {
+        fs::write(
+            drifted_dir.join(file_name),
+            format!("{file_name} restored from title-derived slug\n"),
+        )
+        .expect("write drifted card");
+    }
+
+    ensure_finish_task_bundle_surfaces(&repo, &issue_ref).expect("restore canonical cards");
+
+    let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
+    for file_name in ["stp.md", "sip.md", "sor.md", "spp.md", "srp.md"] {
+        let restored = fs::read_to_string(canonical_dir.join(file_name)).expect("read restored");
+        assert_eq!(
+            restored,
+            format!("{file_name} restored from title-derived slug\n")
+        );
+    }
+}
+
+#[test]
+fn finish_identity_resolution_prefers_bound_worktree_local_bundle() {
+    let primary = unique_temp_dir("adl-pr-finish-identity-primary");
+    let worktree = unique_temp_dir("adl-pr-finish-identity-worktree");
+    fs::create_dir_all(worktree.join(".adl/v0.91.5/tasks/issue-3766__worktree-local-finish-slug"))
+        .expect("worktree bundle");
+
+    let identity =
+        resolve_finish_issue_scope_and_slug(&worktree, &primary, 3766).expect("identity");
+
+    assert_eq!(
+        identity,
+        (
+            "v0.91.5".to_string(),
+            "worktree-local-finish-slug".to_string()
+        )
+    );
 }
 
 #[test]
