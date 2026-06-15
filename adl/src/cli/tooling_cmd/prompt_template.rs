@@ -12,13 +12,14 @@ use super::tooling_usage;
 
 pub(crate) fn real_prompt_template(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
-        bail!("prompt-template requires a subcommand: render | render-all | edit-values | import-values | validate-values | validate-structure | validate-schemas | write-sample-values | write-structure-schemas");
+        bail!("prompt-template requires a subcommand: render | render-all | edit-values | edit-rendered | import-values | validate-values | validate-structure | validate-schemas | write-sample-values | write-structure-schemas");
     };
 
     match subcommand {
         "render" => render_one(&args[1..]),
         "render-all" => render_all(&args[1..]),
         "edit-values" => edit_values(&args[1..]),
+        "edit-rendered" => edit_rendered(&args[1..]),
         "import-values" => import_values(&args[1..]),
         "validate-values" => validate_one(&args[1..]),
         "validate-structure" => validate_structure_one(&args[1..]),
@@ -30,7 +31,7 @@ pub(crate) fn real_prompt_template(args: &[String]) -> Result<()> {
             Ok(())
         }
         other => bail!(
-            "unknown prompt-template subcommand '{other}' (expected render | render-all | edit-values | import-values | validate-values | validate-structure | validate-schemas | write-sample-values | write-structure-schemas)"
+            "unknown prompt-template subcommand '{other}' (expected render | render-all | edit-values | edit-rendered | import-values | validate-values | validate-structure | validate-schemas | write-sample-values | write-structure-schemas)"
         ),
     }
 }
@@ -125,6 +126,82 @@ fn edit_values(args: &[String]) -> Result<()> {
     let values = values.ok_or_else(|| anyhow::anyhow!("edit-values requires --values"))?;
     let target = edit_values_file(&root, kind, &values, &updates, out.as_deref())?;
     println!("PASS: edited {} values at {}", kind.key(), target.display());
+    Ok(())
+}
+
+fn edit_rendered(args: &[String]) -> Result<()> {
+    if has_help_arg(args) {
+        println!("{}", tooling_usage());
+        return Ok(());
+    }
+    let mut repo_root: Option<PathBuf> = None;
+    let mut kind: Option<PromptCardKind> = None;
+    let mut input: Option<PathBuf> = None;
+    let mut out: Option<PathBuf> = None;
+    let mut values_out: Option<PathBuf> = None;
+    let mut updates: Vec<(String, String)> = Vec::new();
+
+    let mut idx = 0usize;
+    while idx < args.len() {
+        match args[idx].as_str() {
+            "--repo-root" => {
+                idx += 1;
+                repo_root = Some(PathBuf::from(value_arg(args, idx, "--repo-root")?));
+            }
+            "--kind" => {
+                idx += 1;
+                kind = Some(PromptCardKind::parse_key(value_arg(args, idx, "--kind")?)?);
+            }
+            "--input" => {
+                idx += 1;
+                input = Some(PathBuf::from(value_arg(args, idx, "--input")?));
+            }
+            "--out" => {
+                idx += 1;
+                out = Some(PathBuf::from(value_arg(args, idx, "--out")?));
+            }
+            "--values-out" => {
+                idx += 1;
+                values_out = Some(PathBuf::from(value_arg(args, idx, "--values-out")?));
+            }
+            "--set" => {
+                idx += 1;
+                updates.push(parse_set_arg(value_arg(args, idx, "--set")?)?);
+            }
+            "--help" | "-h" | "help" => {
+                println!("{}", tooling_usage());
+                return Ok(());
+            }
+            other => bail!("unknown arg for tooling prompt-template edit-rendered: {other}"),
+        }
+        idx += 1;
+    }
+
+    ensure!(
+        !updates.is_empty(),
+        "edit-rendered requires at least one --set field=value update"
+    );
+    let root = repo_root_from_arg(repo_root)?;
+    let kind = kind.ok_or_else(|| anyhow::anyhow!("edit-rendered requires --kind"))?;
+    let input = input.ok_or_else(|| anyhow::anyhow!("edit-rendered requires --input"))?;
+    let out = out.ok_or_else(|| anyhow::anyhow!("edit-rendered requires --out"))?;
+    let values_target = values_out.unwrap_or_else(|| out.with_extension("values.yaml"));
+
+    let report = import_values_from_rendered_card_file(&root, kind, &input, &values_target, None)?;
+    edit_values_file(&root, kind, &values_target, &updates, None)?;
+    let rendered = render_card_from_values_file(&root, kind, &values_target)?;
+    if let Some(parent) = out.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(&out, rendered)?;
+    validate_rendered_card_structure_file(&root, kind, &out)?;
+    println!(
+        "PASS: edited rendered {} card to {} via values {} (round_trip={})",
+        kind.key(),
+        out.display(),
+        values_target.display(),
+        report.comparison.as_str()
+    );
     Ok(())
 }
 

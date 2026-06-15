@@ -478,6 +478,61 @@ fn prompt_template_cli_imports_lifecycle_updated_spp_values() {
 }
 
 #[test]
+fn prompt_template_cli_edit_rendered_card_uses_values_roundtrip_default_path() {
+    let repo = TempRepo::new("prompt-template-edit-rendered");
+    let values_dir = repo.path().join("values");
+    let rendered_dir = repo.path().join("rendered");
+    let edited = repo.path().join("edited-spp.md");
+    let values_out = repo.path().join("edited-spp.values.yaml");
+    render_sample_cards_for_structure_test(&values_dir, &rendered_dir);
+    let source = rendered_dir.join("spp.md");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-rendered".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        source.to_string_lossy().to_string(),
+        "--set".to_string(),
+        "card_status=approved".to_string(),
+        "--set".to_string(),
+        "status=approved".to_string(),
+        "--set".to_string(),
+        "activation_state=approved".to_string(),
+        "--values-out".to_string(),
+        values_out.to_string_lossy().to_string(),
+        "--out".to_string(),
+        edited.to_string_lossy().to_string(),
+    ])
+    .expect("edit-rendered should import, edit, render, and validate");
+
+    let rendered_text = fs::read_to_string(&edited).expect("edited rendered SPP");
+    assert!(rendered_text.contains("card_status: \"approved\""));
+    assert!(rendered_text.contains("status: \"approved\""));
+    assert!(rendered_text.contains("activation_state: \"approved\""));
+
+    let values_text = fs::read_to_string(&values_out).expect("edited values");
+    assert!(values_text.contains("card_status: \"approved\""));
+    assert!(values_text.contains("status: \"approved\""));
+    assert!(values_text.contains("activation_state: \"approved\""));
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "validate-structure".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        edited.to_string_lossy().to_string(),
+    ])
+    .expect("edit-rendered output should remain structure-valid");
+}
+
+#[test]
 fn prompt_template_cli_import_values_fails_closed_for_structure_drift() {
     let repo = TempRepo::new("prompt-template-import-values-drift");
     let values_dir = repo.path().join("values");
@@ -623,6 +678,12 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
     .expect("edit-values help should succeed");
     real_tooling(&[
         "prompt-template".to_string(),
+        "edit-rendered".to_string(),
+        "--help".to_string(),
+    ])
+    .expect("edit-rendered help should succeed");
+    real_tooling(&[
+        "prompt-template".to_string(),
         "import-values".to_string(),
         "--help".to_string(),
     ])
@@ -714,6 +775,23 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
     assert!(missing_input
         .to_string()
         .contains("validate-structure requires --input"));
+
+    let missing_rendered_set = real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-rendered".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--input".to_string(),
+        values.to_string_lossy().to_string(),
+        "--out".to_string(),
+        repo.path().join("spp.md").to_string_lossy().to_string(),
+    ])
+    .expect_err("edit-rendered requires a declared update");
+    assert!(missing_rendered_set
+        .to_string()
+        .contains("edit-rendered requires at least one --set"));
 }
 
 fn render_sample_cards_for_structure_test(
