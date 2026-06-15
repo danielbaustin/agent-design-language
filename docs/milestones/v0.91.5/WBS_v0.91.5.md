@@ -5,18 +5,19 @@
 - Version: `v0.91.5`
 - Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_2_review_remediation_in_progress`
 - Canonical WP standard: [ADL_MILESTONE_WP_ORDERING_STANDARD.md](../../planning/ADL_MILESTONE_WP_ORDERING_STANDARD.md)
 
 ## Status
 
-Active WBS for v0.91.5 WP-01 opening, issue seeding, and sprint readiness.
+Active WBS for post-Sprint 1 execution, Sprint 2 review/remediation, and the
+remaining Sprint 3 / Sprint 4 execution bands.
 
 ## How To Use
 
-Use this WBS as the source of truth for v0.91.5 sequencing until concrete
-issues are opened or adjusted. If issue reality diverges, update this WBS and
-the issue wave together.
+Use this WBS as the source of truth for v0.91.5 sequencing. If live issue
+truth diverges from the milestone plan, update this WBS and the issue wave
+together.
 
 ## WBS Summary
 

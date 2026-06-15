@@ -6,11 +6,11 @@
 - Start date: `2026-06-02`
 - End date: `pending`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_2_review_remediation_in_progress`
 
 ## Status
 
-`active_wp_01_opening`
+`sprint_2_review_remediation_in_progress`
 
 ## How To Use
 
@@ -22,7 +22,9 @@
 ## Sprint Overview
 
 v0.91.5 is split into ordered sprint bands after WP-01 opens the milestone and
-confirms issue/card/sprint readiness.
+confirms issue/card/sprint readiness. Sprint 1 is complete, Sprint 2 child
+execution is complete, and Sprint 2 umbrella review/remediation is now the
+active public planning state.
 
 Planned scope:
 
@@ -36,7 +38,7 @@ Planned scope:
 
 - Scope: pre-v0.92 operational bridge work.
 - Boundary: no first-birthday implementation.
-- Proof surface: issue wave, moved labels, AEE tranche plan, prompt packets,
+- Proof surface: issue wave, issue labels, AEE tranche plan, prompt packets,
   provider matrix, multi-agent proof, demo index, activation map, and `#3377`.
 
 ## Sprint Goals
@@ -72,14 +74,14 @@ Make v0.92 openable without hidden operational debt.
 |---|---|---|---|---|
 | 1 | WP-01 milestone opening | `#3568`, consuming closed setup `#3506`-`#3511` | ADL maintainers | closed |
 | 2 | Canonical WP ordering standard | `#3567` | ADL maintainers | closed |
-| 3 | Sprint 1 umbrella: prompt/public records and portable ADL readiness | `#3571` | ADL maintainers | seeded |
-| 4 | Prompt-template values renderer | `#3553` | ADL maintainers | in progress |
-| 5 | Downstream card rewrite after prompt templates v1.1 | `#3582` | ADL maintainers | scheduled after `#3553` |
-| 6 | Public prompt records | `#3472`-`#3476` | ADL maintainers | moved |
-| 7 | Portable ADL adapter contract | `#3569` | ADL maintainers | in progress |
-| 8 | Sprint 2 umbrella: provider matrix and multi-agent proof | `#3572` | ADL maintainers | seeded |
-| 9 | Provider/model matrix | `#3501`, `#3505` | ADL maintainers | moved |
-| 10 | Multi-agent proof | `#3415`, `#3503`, `#3504` (`#3484` satisfied/closed evidence) | ADL maintainers | moved |
+| 3 | Sprint 1 umbrella: prompt/public records and portable ADL readiness | `#3571` | ADL maintainers | closed |
+| 4 | Prompt-template values renderer | `#3553` | ADL maintainers | closed |
+| 5 | Downstream card rewrite after prompt templates v1.1 | `#3582` | ADL maintainers | closed |
+| 6 | Public prompt records | `#3472`-`#3476` | ADL maintainers | closed |
+| 7 | Portable ADL adapter contract | `#3569` | ADL maintainers | closed |
+| 8 | Sprint 2 umbrella: provider matrix and multi-agent proof | `#3572` | ADL maintainers | review/remediation active |
+| 9 | Provider/model matrix | `#3501`, `#3505` | ADL maintainers | closed |
+| 10 | Multi-agent proof | `#3415`, `#3503`, `#3504` (`#3484` satisfied/closed evidence) | ADL maintainers | closed |
 | 11 | Sprint 3 umbrella: demo matrix / demo showcase refresh | `#3573` | ADL maintainers | seeded |
 | 12 | Demo matrix / demo showcase refresh | `#3455` with `#3460`, `#3461` as supporting demo inputs | ADL maintainers | moved |
 | 13 | Sprint 4 umbrella: coverage, review, remediation, planning, release | `#3574` | ADL maintainers | seeded |

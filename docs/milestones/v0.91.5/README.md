@@ -5,7 +5,7 @@
 - Version: `v0.91.5`
 - Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_2_review_remediation_in_progress`
 - Related setup umbrella: `#3506` (closed)
 - Closed setup children: `#3507`, `#3508`, `#3509`, `#3510`, `#3511`
 - Planning template set: `docs/templates/planning/1.0.0`
@@ -13,15 +13,18 @@
 
 ## Status
 
-Current status: `active_wp_01_opening`
+Current status: `sprint_2_review_remediation_in_progress`
 
 - Planning: v0.91.5 bridge package created, setup wave closed, WP-01 opening
-  follow-up `#3568` closed, and `#3567` is completing the WP-ordering/sprint
+  follow-up `#3568` closed, and `#3567` closed the WP-ordering/sprint
   readiness standard.
-- Execution: WP-01 planning-standard pass active; execution sprints not
-  started.
+- Execution: Sprint 1 `#3571` is closed; Sprint 2 child execution is complete
+  under `#3505`, `#3501`, `#3504`, `#3415`, and `#3503`, while Sprint 2
+  umbrella review/remediation remains active under `#3572` plus follow-ons
+  `#3719`-`#3725`.
 - Validation: focused planning-doc, YAML, link, and issue-label validation.
-- Release readiness: not applicable until v0.91.5 executes.
+- Release readiness: not applicable until later sprint review/remediation and
+  release-tail work execute.
 
 Setup truth:
 
@@ -35,7 +38,8 @@ Setup truth:
 - `#3569` defines the portable ADL project adapter contract and templates.
 - `#3582` is scheduled to rewrite/normalize downstream v0.91.5 card bundles
   after prompt templates v1.1 lands through `#3553`.
-- `#3571`-`#3574` are the seeded sprint umbrella issues.
+- `#3571` is closed, `#3572` is open with post-execution remediation active,
+  and `#3573`-`#3574` remain open for later sprint bands.
 - `#3575`, `#3579`, `#3576`, `#3580`, `#3577`, `#3581`, and `#3578`
   are the seeded closeout-tail issues.
 
