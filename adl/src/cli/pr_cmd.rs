@@ -11,7 +11,8 @@ use std::sync::{Mutex, OnceLock};
 use super::pr_cmd_args::parse_finish_args;
 use super::pr_cmd_args::{
     parse_closeout_args, parse_create_args, parse_doctor_args, parse_init_args,
-    parse_preflight_args, parse_ready_args, parse_start_args, DoctorArgs, DoctorMode,
+    parse_preflight_args, parse_ready_args, parse_repair_issue_body_args, parse_start_args,
+    DoctorArgs, DoctorMode,
 };
 use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
@@ -31,7 +32,9 @@ use super::pr_cmd_prompt::{
     validate_issue_prompt_exists, version_from_labels_csv, version_from_title,
     WorkflowQueueResolution,
 };
-use super::pr_cmd_validate::{validate_authored_prompt_surface, PromptSurfaceKind};
+use super::pr_cmd_validate::{
+    bootstrap_stub_reason, validate_authored_prompt_surface, PromptSurfaceKind,
+};
 use ::adl::control_plane::{
     card_output_path, resolve_cards_root, resolve_primary_checkout_root, sanitize_slug, IssueRef,
 };
@@ -150,13 +153,14 @@ fn resolve_local_issue_identity(repo_root: &Path, issue: u32) -> Result<Option<(
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
-            "pr requires a subcommand: create | init | start | doctor | ready | preflight | finish | closeout"
+            "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | closeout"
         );
     };
 
     match subcommand {
         "create" => real_pr_create(&args[1..]),
         "init" => real_pr_init(&args[1..]),
+        "repair-issue-body" => real_pr_repair_issue_body(&args[1..]),
         "start" => real_pr_start(&args[1..]),
         "doctor" => real_pr_doctor(&args[1..]),
         "ready" => real_pr_ready(&args[1..]),
@@ -165,6 +169,125 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "closeout" => real_pr_closeout(&args[1..]),
         other => bail!("unknown pr subcommand: {other}"),
     }
+}
+
+fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
+    let parsed = parse_repair_issue_body_args(args)?;
+    let repo_root = repo_root()?;
+    let repo = default_repo(&repo_root)?;
+    let local_identity = resolve_local_issue_identity(&repo_root, parsed.issue)?;
+    let raw_title = if let Some(title) = parsed.title_arg.clone() {
+        title
+    } else {
+        gh_issue_title(parsed.issue, &repo)?
+            .ok_or_else(|| anyhow!("repair-issue-body: could not fetch issue #{} title; pass --title or check GitHub token/repo configuration", parsed.issue))?
+    };
+    let version = if let Some(version) = parsed.version.clone() {
+        version
+    } else if let Some((local_version, _)) = local_identity.as_ref() {
+        local_version.clone()
+    } else {
+        resolve_version_for_existing_issue(
+            &repo_root,
+            &repo,
+            parsed.issue,
+            None,
+            false,
+            "repair-issue-body",
+        )?
+    };
+    let title = normalize_issue_title_for_version(&raw_title, &version);
+    let slug = parsed
+        .slug
+        .clone()
+        .or_else(|| local_identity.as_ref().map(|(_, slug)| slug.clone()))
+        .unwrap_or_else(|| sanitize_slug(&title));
+    let slug = sanitize_slug(&slug);
+    if slug.is_empty() {
+        bail!("repair-issue-body: slug is empty after sanitization");
+    }
+    let fetched_labels = if parsed.labels.is_some() {
+        String::new()
+    } else {
+        fetched_issue_labels_csv(&repo, parsed.issue)?
+    };
+    let label_source = parsed.labels.as_deref().unwrap_or_else(|| {
+        if fetched_labels.trim().is_empty() {
+            DEFAULT_NEW_LABELS
+        } else {
+            &fetched_labels
+        }
+    });
+    let normalized_labels = normalize_labels_csv(label_source, &version);
+    let body = resolve_issue_body(parsed.body.clone(), parsed.body_file.as_deref())?;
+    validate_issue_body_for_create(&repo_root, &title, &normalized_labels, &slug, &body)?;
+
+    let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
+    ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
+    let source_path = issue_ref.issue_prompt_path(&repo_root);
+    if source_path.is_file() && !parsed.force {
+        let current = fs::read_to_string(&source_path)
+            .with_context(|| format!("failed to read {}", source_path.display()))?;
+        if bootstrap_stub_reason(&current, PromptSurfaceKind::IssuePrompt).is_none() {
+            bail!(
+                "repair-issue-body: refusing to overwrite authored source prompt without --force: {}",
+                source_path.display()
+            );
+        }
+    }
+
+    let issue_url = format!("https://github.com/{repo}/issues/{}", parsed.issue);
+    gh_issue_edit_body(&repo, parsed.issue, &body)?;
+    let source_path = write_source_issue_prompt(
+        &repo_root,
+        &issue_ref,
+        &title,
+        &normalized_labels,
+        &issue_url,
+        &body,
+    )?;
+    validate_bootstrap_stp(&repo_root, &source_path)?;
+    validate_authored_prompt_surface(
+        "repair-issue-body",
+        &source_path,
+        PromptSurfaceKind::IssuePrompt,
+    )?;
+
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo_root);
+    if bundle_dir.is_dir() {
+        fs::remove_dir_all(&bundle_dir)
+            .with_context(|| format!("failed to remove stale bundle {}", bundle_dir.display()))?;
+    }
+    let (stp_path, bundle_input, bundle_output, bundle_dir) =
+        bootstrap_root_task_bundle(&repo_root, &issue_ref, &title, &source_path)?;
+
+    println!("• Repaired issue body/source prompt:");
+    println!("  ISSUE     #{}", parsed.issue);
+    println!("  VERSION   {version}");
+    println!("  SLUG      {slug}");
+    println!(
+        "  SOURCE    {}",
+        path_relative_to_repo(&repo_root, &source_path)
+    );
+    println!(
+        "  STP       {}",
+        path_relative_to_repo(&repo_root, &stp_path)
+    );
+    println!(
+        "  SIP       {}",
+        path_relative_to_repo(&repo_root, &bundle_input)
+    );
+    println!(
+        "  SOR       {}",
+        path_relative_to_repo(&repo_root, &bundle_output)
+    );
+    println!(
+        "  BUNDLE    {}",
+        path_relative_to_repo(&repo_root, &bundle_dir)
+    );
+    println!("  STATE     ISSUE_BODY_AND_BUNDLE_REPAIRED");
+    println!("• Done.");
+    Ok(())
 }
 
 fn real_pr_create(args: &[String]) -> Result<()> {
