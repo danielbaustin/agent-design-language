@@ -817,14 +817,18 @@ mod tests {
     use std::io::{Read, Write};
     use std::net::TcpListener;
     use std::path::PathBuf;
+    use std::sync::atomic::{AtomicU64, Ordering};
     use std::sync::mpsc;
     use std::thread;
 
+    static TEMP_LOG_COUNTER: AtomicU64 = AtomicU64::new(0);
+
     fn temp_log(name: &str) -> PathBuf {
         let mut path = env::temp_dir();
+        let unique = TEMP_LOG_COUNTER.fetch_add(1, Ordering::Relaxed);
         path.push(format!(
-            "adl-provider-adapter-{name}-{}.jsonl",
-            std::process::id()
+            "adl-provider-adapter-{name}-{}-{unique}.jsonl",
+            std::process::id(),
         ));
         let _ = fs::remove_file(&path);
         path
