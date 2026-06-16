@@ -158,7 +158,40 @@ pub(super) fn commits_ahead_of_origin_main(repo_root: &Path) -> Result<usize> {
             "origin/main..HEAD",
         ],
     )?;
-    Ok(count.trim().parse::<usize>().unwrap_or(0))
+    count
+        .trim()
+        .parse::<usize>()
+        .with_context(|| "failed to parse origin/main ahead count")
+}
+
+pub(super) fn commits_behind_origin_main(repo_root: &Path) -> Result<usize> {
+    let local_origin_main = run_status_allow_failure(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "rev-parse",
+            "--verify",
+            "origin/main",
+        ],
+    )?;
+    if !local_origin_main {
+        return Ok(0);
+    }
+    let count = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "rev-list",
+            "--count",
+            "HEAD..origin/main",
+        ],
+    )?;
+    count
+        .trim()
+        .parse::<usize>()
+        .with_context(|| "failed to parse origin/main behind count")
 }
 
 pub(super) fn fetch_origin_main_with_fallback() -> Result<()> {
