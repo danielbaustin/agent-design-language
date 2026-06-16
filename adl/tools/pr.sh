@@ -2247,6 +2247,16 @@ cmd_validation() {
   delegate_pr_command_to_rust validation "$@"
 }
 
+cmd_issue() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_issue
+    return 0
+  fi
+  adl_obs_event "pr.sh" "issue" "started" "issue_query" "${1:-}"
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust issue "$@"
+}
+
 cmd_closeout() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     usage_closeout
@@ -2310,6 +2320,7 @@ Commands:
   doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   validation <pr-number-or-url> [-R owner/repo] [--watch] [--json]
+  issue   <list|search|view> ...
   closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
 
 Compatibility / maintenance commands:
@@ -2535,6 +2546,22 @@ Behavior:
 EOF
 }
 
+usage_issue() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh issue list [-R owner/repo] [--state open|closed|all] [--limit <n>] [--json]
+  adl/tools/pr.sh issue search --query "<text>" [-R owner/repo] [--state open|closed|all] [--limit <n>] [--json]
+  adl/tools/pr.sh issue view <issue-number-or-url> [-R owner/repo] [--json]
+
+Behavior:
+- delegates to the Rust-owned issue inspection surface
+- uses the typed GitHub transport rather than raw `gh issue list/view`
+- defaults `-R/--repo` from the current checkout when omitted
+- infers `owner/repo` from a GitHub issue URL on `issue view` when possible
+- keeps machine-readable JSON on stdout when `--json` is set
+EOF
+}
+
 usage_repair_issue_body() {
   cat <<'EOF'
 Usage:
@@ -2582,6 +2609,7 @@ main() {
     preflight) cmd_preflight "$@" ;;
     finish) cmd_finish "$@" ;;
     validation) cmd_validation "$@" ;;
+    issue) cmd_issue "$@" ;;
     closeout) cmd_closeout "$@" ;;
     card) cmd_card "$@" ;;
     output) cmd_output "$@" ;;

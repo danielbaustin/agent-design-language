@@ -202,6 +202,40 @@ policy:
 
 For `pr-init`, the payload uses `issue:` instead of `target:`.
 
+## Canonical Issue Inspection Surface
+
+Use the Rust-owned issue inspection commands before execution, review, or
+closeout when you need live GitHub issue truth without falling back to raw
+`gh issue` commands.
+
+Preferred commands:
+
+```bash
+bash adl/tools/pr.sh issue view <issue-number-or-url> --json
+bash adl/tools/pr.sh issue list --state open|closed|all --limit <n> --json
+bash adl/tools/pr.sh issue search --query "<text>" --state open|closed|all --json
+```
+
+Use this surface when:
+
+- confirming that an issue exists before `pr-init` or `pr-run`
+- checking live title, labels, milestone, closure, or URL truth during review
+  or closeout
+- reproducing milestone queue or closeout checks that previously depended on
+  `gh issue list` or `gh issue view`
+
+Pair it with:
+
+- `bash adl/tools/pr.sh doctor <issue> --mode ready --json` for structural
+  execution readiness
+- `bash adl/tools/pr.sh doctor <issue> --mode full --json` for milestone-wave
+  preflight plus readiness
+
+Do not treat `pr.sh issue ...` as a substitute for lifecycle truth. It is the
+live GitHub inspection surface, while `doctor`, the editor skills, and the
+rest of the lifecycle still own readiness, card truth, PR publication, janitor
+work, and closeout.
+
 ### `issue-watcher`
 
 Use `issue-watcher` when:

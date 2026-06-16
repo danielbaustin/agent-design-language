@@ -111,6 +111,54 @@ pub(crate) struct CloseoutArgs {
     pub(crate) no_fetch_issue: bool,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum IssueStateFilter {
+    Open,
+    Closed,
+    All,
+}
+
+impl IssueStateFilter {
+    pub(crate) fn as_str(&self) -> &'static str {
+        match self {
+            Self::Open => "open",
+            Self::Closed => "closed",
+            Self::All => "all",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct IssueListArgs {
+    pub(crate) repo: Option<String>,
+    pub(crate) state: IssueStateFilter,
+    pub(crate) json: bool,
+    pub(crate) limit: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct IssueSearchArgs {
+    pub(crate) query: String,
+    pub(crate) repo: Option<String>,
+    pub(crate) state: IssueStateFilter,
+    pub(crate) json: bool,
+    pub(crate) limit: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct IssueViewArgs {
+    pub(crate) issue_ref: String,
+    pub(crate) repo: Option<String>,
+    pub(crate) json: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum IssueArgs {
+    List(IssueListArgs),
+    Search(IssueSearchArgs),
+    View(IssueViewArgs),
+}
+
 pub(crate) fn parse_init_args(args: &[String]) -> Result<InitArgs> {
     let issue_raw = args
         .first()
@@ -587,6 +635,144 @@ pub(crate) fn parse_closeout_args(args: &[String]) -> Result<CloseoutArgs> {
             other => bail!("closeout: unknown arg: {other}"),
         }
         i += 1;
+    }
+    Ok(parsed)
+}
+
+pub(crate) fn parse_issue_args(args: &[String]) -> Result<IssueArgs> {
+    let Some(subcommand) = args.first().map(|value| value.as_str()) else {
+        bail!("issue: missing subcommand (list | search | view)");
+    };
+
+    match subcommand {
+        "list" => parse_issue_list_args(&args[1..]).map(IssueArgs::List),
+        "search" => parse_issue_search_args(&args[1..]).map(IssueArgs::Search),
+        "view" => parse_issue_view_args(&args[1..]).map(IssueArgs::View),
+        other => bail!("issue: unknown subcommand: {other}"),
+    }
+}
+
+fn parse_issue_list_args(args: &[String]) -> Result<IssueListArgs> {
+    let mut parsed = IssueListArgs {
+        repo: None,
+        state: IssueStateFilter::Open,
+        json: false,
+        limit: 100,
+    };
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "issue list", args[i].as_str())?);
+                i += 1;
+            }
+            "--state" => {
+                let value = require_value(args, i, "issue list", "--state")?;
+                parsed.state = parse_issue_state_filter("issue list", &value)?;
+                i += 1;
+            }
+            "--limit" => {
+                parsed.limit = parse_positive_usize(
+                    &require_value(args, i, "issue list", "--limit")?,
+                    "issue list",
+                    "--limit",
+                )?;
+                i += 1;
+            }
+            "--json" => parsed.json = true,
+            other => bail!("issue list: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    Ok(parsed)
+}
+
+fn parse_issue_search_args(args: &[String]) -> Result<IssueSearchArgs> {
+    let mut parsed = IssueSearchArgs {
+        query: String::new(),
+        repo: None,
+        state: IssueStateFilter::Open,
+        json: false,
+        limit: 100,
+    };
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--query" => {
+                parsed.query = require_value(args, i, "issue search", "--query")?;
+                i += 1;
+            }
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "issue search", args[i].as_str())?);
+                i += 1;
+            }
+            "--state" => {
+                let value = require_value(args, i, "issue search", "--state")?;
+                parsed.state = parse_issue_state_filter("issue search", &value)?;
+                i += 1;
+            }
+            "--limit" => {
+                parsed.limit = parse_positive_usize(
+                    &require_value(args, i, "issue search", "--limit")?,
+                    "issue search",
+                    "--limit",
+                )?;
+                i += 1;
+            }
+            "--json" => parsed.json = true,
+            other => bail!("issue search: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    if parsed.query.trim().is_empty() {
+        bail!("issue search: --query is required");
+    }
+    if parsed.limit > 1000 {
+        bail!("issue search: --limit must be 1000 or less");
+    }
+    Ok(parsed)
+}
+
+fn parse_issue_view_args(args: &[String]) -> Result<IssueViewArgs> {
+    let issue_ref = args
+        .first()
+        .ok_or_else(|| anyhow!("issue view: missing <issue-number-or-url>"))?
+        .clone();
+    let mut parsed = IssueViewArgs {
+        issue_ref,
+        repo: None,
+        json: false,
+    };
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "issue view", args[i].as_str())?);
+                i += 1;
+            }
+            "--json" => parsed.json = true,
+            other => bail!("issue view: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    Ok(parsed)
+}
+
+fn parse_issue_state_filter(cmd: &str, value: &str) -> Result<IssueStateFilter> {
+    match value {
+        "open" => Ok(IssueStateFilter::Open),
+        "closed" => Ok(IssueStateFilter::Closed),
+        "all" => Ok(IssueStateFilter::All),
+        other => bail!("{cmd}: unsupported --state value: {other}"),
+    }
+}
+
+fn parse_positive_usize(value: &str, cmd: &str, flag: &str) -> Result<usize> {
+    let parsed = value
+        .parse::<usize>()
+        .with_context(|| format!("{cmd}: invalid value for {flag}: {value}"))?;
+    if parsed == 0 {
+        bail!("{cmd}: {flag} must be greater than zero");
     }
     Ok(parsed)
 }

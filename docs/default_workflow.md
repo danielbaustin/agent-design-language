@@ -26,8 +26,9 @@ stubs early, but new issue work should follow this semantic order only.
 
 The active control-plane surface is:
 
+- `pr issue`
 - `pr init`
-- `pr ready`
+- `pr doctor`
 - `pr run`
 - `pr finish`
 
@@ -60,20 +61,31 @@ Minimum init contract:
 - `SOR` as final outcome truth after execution, publication, merge or closure,
   and closeout
 
-## 2) Confirm GitHub Issue Exists
+## 2) Confirm GitHub Issue Exists And Inspect Live Issue Truth
 
 ```bash
-gh issue view <issue_num>
+bash ./adl/tools/pr.sh issue view <issue_num> --json
 ```
 
 `pr.sh` no longer creates or reconciles GitHub issues. The issue must already exist before kickoff continues.
 
+When you need live queue or backlog inspection before execution, use the same
+surface instead of raw `gh`:
+
+```bash
+bash ./adl/tools/pr.sh issue list --state open --limit 50 --json
+bash ./adl/tools/pr.sh issue search --query "<text>" --state all --json
+```
+
 ## 3) Confirm Readiness And Bind Run Phase
 
 ```bash
-bash ./adl/tools/pr.sh ready <issue_num> --slug <slug> --version <milestone_version>
+bash ./adl/tools/pr.sh doctor <issue_num> --slug <slug> --version <milestone_version> --mode ready --json
 bash ./adl/tools/pr.sh run <issue_num> --slug <slug> --version <milestone_version>
 ```
+
+Use `doctor --mode full --json` when you also need milestone-wave/open-PR
+preflight truth before binding execution.
 
 Legacy compatibility card paths:
 - `.adl/cards/<issue_num>/input_<issue_num>.md`

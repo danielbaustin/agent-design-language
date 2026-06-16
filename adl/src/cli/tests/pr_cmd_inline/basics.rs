@@ -1,4 +1,72 @@
 use super::*;
+use crate::cli::pr_cmd_args::IssueStateFilter;
+
+fn spawn_issue_octocrab_test_server(
+    expected_requests: usize,
+) -> (String, std::thread::JoinHandle<Vec<String>>) {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind listener");
+    let port = listener.local_addr().expect("local addr").port();
+    drop(listener);
+    let bind_addr = format!("127.0.0.1:{port}");
+    let server = tiny_http::Server::http(&bind_addr).expect("bind octocrab test server");
+    let handle = std::thread::spawn(move || {
+        let mut seen = Vec::new();
+        for _ in 0..expected_requests {
+            let Some(mut request) = server
+                .recv_timeout(std::time::Duration::from_secs(5))
+                .expect("octocrab test server receive")
+            else {
+                break;
+            };
+            let method = request.method().as_str().to_string();
+            let url = request.url().to_string();
+            let mut body = String::new();
+            let _ = std::io::Read::read_to_string(&mut request.as_reader(), &mut body);
+            seen.push(format!("{method} {url} {body}"));
+            let path = url.split('?').next().unwrap_or(url.as_str());
+            let response_body = match (method.as_str(), path) {
+                ("GET", "/repos/owner/repo/issues") => concat!(
+                    "[",
+                    "{\"number\":77,\"title\":\"[v0.91.5][tools] Replace gh issue inspection\",",
+                    "\"state\":\"open\",\"html_url\":\"https://github.com/owner/repo/issues/77\",",
+                    "\"closed_at\":null,\"body\":\"Issue body\",\"labels\":[{\"name\":\"area:tools\"}],",
+                    "\"milestone\":{\"title\":\"v0.91.5\"}}",
+                    "]"
+                )
+                .to_string(),
+                ("GET", "/search/issues") => concat!(
+                    "{\"items\":[",
+                    "{\"number\":94,\"title\":\"[v0.91.5][docs] Docs audit\",",
+                    "\"state\":\"open\",\"html_url\":\"https://github.com/owner/repo/issues/94\",",
+                    "\"closed_at\":null,\"body\":\"Audit body\",\"labels\":[{\"name\":\"area:docs\"}],",
+                    "\"milestone\":{\"title\":\"v0.91.5\"}}",
+                    "]}"
+                )
+                .to_string(),
+                ("GET", "/repos/owner/repo/issues/77") => concat!(
+                    "{\"number\":77,\"title\":\"[v0.91.5][tools] Replace gh issue inspection\",",
+                    "\"state\":\"open\",\"html_url\":\"https://github.com/owner/repo/issues/77\",",
+                    "\"closed_at\":\"2026-06-16T00:00:00Z\",\"body\":\"## Summary\\n\\nDirect ADL-owned issue inspection.\",",
+                    "\"labels\":[{\"name\":\"area:tools\"},{\"name\":\"version:v0.91.5\"}],",
+                    "\"milestone\":{\"title\":\"v0.91.5\"}}"
+                )
+                .to_string(),
+                _ => {
+                    panic!("unexpected request: {method} {url}");
+                }
+            };
+            let response = tiny_http::Response::from_string(response_body)
+                .with_status_code(200)
+                .with_header(
+                    tiny_http::Header::from_bytes("Content-Type", "application/json")
+                        .expect("content-type header"),
+                );
+            request.respond(response).expect("respond");
+        }
+        seen
+    });
+    (format!("http://{bind_addr}"), handle)
+}
 
 #[test]
 fn render_generated_issue_prompt_preserves_bootstrap_contract() {
@@ -76,6 +144,79 @@ fn parse_validation_args_accepts_repo_watch_and_json_flags() {
 }
 
 #[test]
+fn parse_issue_args_accepts_list_search_and_view_modes() {
+    let parsed = parse_issue_args(&[
+        "list".to_string(),
+        "--state".to_string(),
+        "all".to_string(),
+        "--limit".to_string(),
+        "25".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("parse issue list");
+    match parsed {
+        IssueArgs::List(parsed) => {
+            assert_eq!(parsed.state, IssueStateFilter::All);
+            assert_eq!(parsed.limit, 25);
+            assert!(parsed.json);
+        }
+        other => panic!("expected list args, got {other:?}"),
+    }
+
+    let parsed = parse_issue_args(&[
+        "search".to_string(),
+        "--query".to_string(),
+        "docs audit".to_string(),
+        "-R".to_string(),
+        "owner/repo".to_string(),
+    ])
+    .expect("parse issue search");
+    match parsed {
+        IssueArgs::Search(parsed) => {
+            assert_eq!(parsed.query, "docs audit");
+            assert_eq!(parsed.repo.as_deref(), Some("owner/repo"));
+            assert_eq!(parsed.state, IssueStateFilter::Open);
+        }
+        other => panic!("expected search args, got {other:?}"),
+    }
+
+    let parsed = parse_issue_args(&[
+        "view".to_string(),
+        "https://github.com/owner/repo/issues/3874".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("parse issue view");
+    match parsed {
+        IssueArgs::View(parsed) => {
+            assert_eq!(
+                parsed.issue_ref,
+                "https://github.com/owner/repo/issues/3874"
+            );
+            assert!(parsed.json);
+        }
+        other => panic!("expected view args, got {other:?}"),
+    }
+
+    let err =
+        parse_issue_args(&["search".to_string()]).expect_err("missing required issue search query");
+    assert!(err
+        .to_string()
+        .contains("issue search: --query is required"));
+
+    let err = parse_issue_args(&[
+        "search".to_string(),
+        "--query".to_string(),
+        "docs audit".to_string(),
+        "--limit".to_string(),
+        "1001".to_string(),
+    ])
+    .expect_err("issue search limit should be bounded");
+    assert!(err
+        .to_string()
+        .contains("issue search: --limit must be 1000 or less"));
+}
+
+#[test]
 fn repo_from_pr_ref_extracts_owner_and_repo_from_github_url() {
     assert_eq!(
         repo_from_pr_ref("https://github.com/example/repo/pull/3849"),
@@ -90,6 +231,148 @@ fn repo_from_pr_ref_extracts_owner_and_repo_from_github_url() {
         repo_from_pr_ref("https://example.com/not-github/pull/3849"),
         None
     );
+}
+
+#[test]
+fn repo_from_issue_ref_extracts_owner_and_repo_from_github_url() {
+    assert_eq!(
+        repo_from_issue_ref("https://github.com/example/repo/issues/3874"),
+        Some("example/repo".to_string())
+    );
+    assert_eq!(
+        repo_from_issue_ref("https://github.com/example/repo/issues/not-a-number"),
+        None
+    );
+    assert_eq!(
+        repo_from_issue_ref("https://github.com/example/repo/pull/3874"),
+        None
+    );
+}
+
+#[test]
+fn format_issue_rows_renders_state_milestone_and_url() {
+    let rendered = format_issue_rows(&[
+        IssueRecord {
+            number: 3874,
+            title: "[v0.91.5][tools] Replace gh issue inspection".to_string(),
+            state: "open".to_string(),
+            url: "https://github.com/example/repo/issues/3874".to_string(),
+            closed_at: None,
+            body: None,
+            labels: vec!["area:tools".to_string()],
+            milestone: Some("v0.91.5".to_string()),
+        },
+        IssueRecord {
+            number: 3875,
+            title: "Follow-up".to_string(),
+            state: "closed".to_string(),
+            url: "https://github.com/example/repo/issues/3875".to_string(),
+            closed_at: Some("2026-06-16T00:00:00Z".to_string()),
+            body: None,
+            labels: vec![],
+            milestone: None,
+        },
+    ]);
+
+    assert_eq!(
+        rendered,
+        "#3874 OPEN [v0.91.5][tools] Replace gh issue inspection milestone=v0.91.5 https://github.com/example/repo/issues/3874\n#3875 CLOSED Follow-up https://github.com/example/repo/issues/3875"
+    );
+}
+
+#[test]
+fn format_issue_view_renders_optional_fields_and_body() {
+    let rendered = format_issue_view(&IssueRecord {
+        number: 3874,
+        title: "[v0.91.5][tools] Replace gh issue inspection".to_string(),
+        state: "open".to_string(),
+        url: "https://github.com/example/repo/issues/3874".to_string(),
+        closed_at: Some("2026-06-16T00:00:00Z".to_string()),
+        body: Some("## Summary\n\nDirect ADL-owned issue inspection.".to_string()),
+        labels: vec!["area:tools".to_string(), "version:v0.91.5".to_string()],
+        milestone: Some("v0.91.5".to_string()),
+    });
+
+    assert_eq!(
+        rendered,
+        "#3874 [v0.91.5][tools] Replace gh issue inspection\nstate: open\nurl: https://github.com/example/repo/issues/3874\nclosed_at: 2026-06-16T00:00:00Z\nmilestone: v0.91.5\nlabels: area:tools, version:v0.91.5\n\n## Summary\n\nDirect ADL-owned issue inspection."
+    );
+}
+
+#[test]
+fn format_issue_view_renders_empty_labels_without_optional_fields() {
+    let rendered = format_issue_view(&IssueRecord {
+        number: 3875,
+        title: "Follow-up".to_string(),
+        state: "closed".to_string(),
+        url: "https://github.com/example/repo/issues/3875".to_string(),
+        closed_at: None,
+        body: None,
+        labels: vec![],
+        milestone: None,
+    });
+
+    assert_eq!(
+        rendered,
+        "#3875 Follow-up\nstate: closed\nurl: https://github.com/example/repo/issues/3875\nlabels:"
+    );
+}
+
+#[test]
+fn real_pr_issue_covers_list_search_and_url_view_against_mock_github() {
+    let _guard = env_lock();
+    let _transport_env = force_gh_cli_transport_env();
+    let temp = unique_temp_dir("adl-pr-issue-inline");
+    let repo = temp.join("repo");
+    std::fs::create_dir_all(&repo).expect("repo dir");
+    init_git_repo(&repo);
+    let readme = repo.join("README.md");
+    std::fs::write(&readme, "issue command test\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "README.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-m", "seed"])
+        .current_dir(&repo)
+        .env("GIT_AUTHOR_NAME", "Test User")
+        .env("GIT_AUTHOR_EMAIL", "test@example.com")
+        .env("GIT_COMMITTER_NAME", "Test User")
+        .env("GIT_COMMITTER_EMAIL", "test@example.com")
+        .status()
+        .expect("git commit")
+        .success());
+    let (base_uri, server) = spawn_issue_octocrab_test_server(3);
+    unsafe {
+        std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+        std::env::set_var("GITHUB_TOKEN", "test-token");
+    }
+
+    let prev_dir = std::env::current_dir().expect("current dir");
+    std::env::set_current_dir(&repo).expect("enter repo");
+
+    real_pr_issue(&["list".to_string()]).expect("issue list");
+    real_pr_issue(&[
+        "search".to_string(),
+        "--query".to_string(),
+        "docs audit".to_string(),
+    ])
+    .expect("issue search");
+    real_pr_issue(&[
+        "view".to_string(),
+        "https://github.com/owner/repo/issues/77".to_string(),
+    ])
+    .expect("issue view");
+
+    std::env::set_current_dir(prev_dir).expect("restore cwd");
+    let seen = server.join().expect("server join");
+    assert_eq!(seen.len(), 3);
+    assert!(seen[0].starts_with("GET /repos/owner/repo/issues?"));
+    assert!(seen[1].contains("/search/issues?"));
+    assert!(seen[2].starts_with("GET /repos/owner/repo/issues/77"));
 }
 
 #[test]
@@ -673,7 +956,7 @@ fn same_checkout_root_handles_equivalent_and_missing_paths() {
 fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
     let err = real_pr(&[]).expect_err("missing subcommand");
     assert!(err.to_string().contains(
-        "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | closeout"
+        "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | issue | closeout"
     ));
 
     let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");
