@@ -13,7 +13,9 @@ It should give ADL one coherent launch-shape platform story by finishing:
 
 - HTML milestone dashboard and compression reporting
 - CSM Shepherd and Gemma evaluation/training closure
-- Aptitude Atlas as the bounded model-evaluation platform
+- capability-testing evidence consumption with Aptitude Atlas productization
+  deferred until after `v0.95`
+- CodeFriend v1 and portable adapter v2 proof packaging
 - distributed-substrate integration
 - polished demo catalog and MVP walkthrough
 - control-plane/tooling hardening
@@ -26,7 +28,9 @@ It should give ADL one coherent launch-shape platform story by finishing:
 
 - converged milestone, dashboard, and compression-reporting surfaces for review
 - a bounded evaluator/training lane for Shepherd/Gemma and adjacent model work
-- one coherent model-evaluation platform story through Aptitude Atlas
+- one coherent capability-testing evidence story without making Aptitude Atlas
+  productization an MVP requirement
+- external-repo proof packaging for CodeFriend v1 and portable adapter v2
 - converged user-facing and reviewer-facing walkthrough surfaces
 - explicit integration closure across the platform bands already scheduled
 - final high-value control-plane migration and hardening work
@@ -42,7 +46,9 @@ It should give ADL one coherent launch-shape platform story by finishing:
 
 - HTML milestone dashboard and compression reporting
 - CSM Shepherd and Gemma training/evaluation follow-on
-- Aptitude Atlas model-evaluation platform closure
+- capability-testing evidence consumption and Aptitude Atlas post-`v0.95`
+  boundary
+- CodeFriend v1 and portable adapter v2 proof packaging
 - distributed execution integration closure
 - demo catalog and polished MVP walkthrough
 - control-plane Rust migration and tooling hardening
@@ -72,8 +78,10 @@ It should give ADL one coherent launch-shape platform story by finishing:
   [HTML_MILESTONE_DASHBOARD_AND_COMPRESSION_REPORTING_v0.95.md](features/HTML_MILESTONE_DASHBOARD_AND_COMPRESSION_REPORTING_v0.95.md)
 - Shepherd/Gemma training path:
   [CSM_SHEPHERD_AND_GEMMA_TRAINING_PATH_v0.95.md](features/CSM_SHEPHERD_AND_GEMMA_TRAINING_PATH_v0.95.md)
-- Aptitude Atlas evaluation platform:
+- Capability-testing evidence and Aptitude Atlas boundary:
   [APTITUDE_ATLAS_MODEL_EVALUATION_PLATFORM_v0.95.md](features/APTITUDE_ATLAS_MODEL_EVALUATION_PLATFORM_v0.95.md)
+- CodeFriend v1 and portable adapter v2 proof:
+  [CODEFRIEND_V1_PORTABLE_ADAPTER_V2_PROOF_v0.95.md](features/CODEFRIEND_V1_PORTABLE_ADAPTER_V2_PROOF_v0.95.md)
 - Distributed execution integration:
   [DISTRIBUTED_EXECUTION_INTEGRATION_v0.95.md](features/DISTRIBUTED_EXECUTION_INTEGRATION_v0.95.md)
 - Demo catalog and MVP walkthrough:
@@ -99,8 +107,9 @@ It should give ADL one coherent launch-shape platform story by finishing:
 ## Success Criteria
 
 - every MVP-scoped feature row has a canonical tracked home
-- the dashboard/compression and evaluation-platform surfaces are explicit rather
-  than implied by older backlog language
+- the dashboard/compression and capability-evidence surfaces are explicit
+  rather than implied by older backlog language
+- CodeFriend v1 and adapter v2 proof is packaged before MVP convergence
 - distributed execution remains bounded and reviewable
 - the demo catalog and walkthrough tell one coherent platform story
 - the control plane is hardened enough for the MVP review posture

@@ -14,7 +14,9 @@ Forward-planning checklist only.
 ## MVP Convergence
 
 - [ ] Dashboard/compression reporting has a clear tracked home.
-- [ ] Shepherd/Gemma and Aptitude Atlas evaluator surfaces are explicitly
+- [ ] Shepherd/Gemma and capability-testing evidence surfaces are explicitly
+  covered, with Aptitude Atlas productization post-`v0.95`.
+- [ ] CodeFriend v1 and portable adapter v2 proof packaging is explicitly
   covered.
 - [ ] Distributed execution remains bounded and reviewable.
 - [ ] Demo catalog and MVP walkthrough are defined.

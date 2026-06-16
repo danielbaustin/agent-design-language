@@ -9,7 +9,8 @@ Forward-planning placeholder.
 When `v0.95` is eventually released, the notes should be able to say:
 
 - ADL has one coherent MVP platform story
-- the dashboard/reporting and evaluation-platform surfaces are explicit
+- the dashboard/reporting, capability-evidence, and CodeFriend proof surfaces
+  are explicit
 - distributed execution, walkthrough, control-plane hardening, and editor
   boundary all fit together
 - the MVP scope boundary is explicit rather than implied
@@ -17,7 +18,8 @@ When `v0.95` is eventually released, the notes should be able to say:
 ## Planned Highlight Areas
 
 - dashboard/compression and reviewer entrypoints
-- Shepherd/Gemma and Aptitude Atlas evaluation story
+- Shepherd/Gemma and capability-testing evidence story
+- CodeFriend v1 and portable adapter v2 proof packaging
 - distributed execution integration
 - demo catalog and flagship MVP walkthrough
 - control-plane hardening

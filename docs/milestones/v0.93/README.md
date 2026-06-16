@@ -26,6 +26,8 @@ v0.93 should establish:
   distinct social-cognition surfaces
 - rights, duties, standing, challenge, appeal, delegation, upstream delegation,
   and IAM semantics
+- guilds and collective organization as a governed MVP-scoped collaboration
+  surface
 - enterprise-security foundations for zero-trust polis operation
 - cryptographic trust, secrets/key lifecycle, isolation, audit, and incident
   evidence as first-class governance surfaces
@@ -74,6 +76,7 @@ The likely `v0.93` tranche is:
 - Constitutional review packet shape.
 - Challenge and appeal flow.
 - Delegation, upstream delegation, and IAM policy model.
+- Guilds and collective organization.
 - Upstream delegation for governed escalation from local cognition to polis,
   trusted external, or frontier cognition providers while preserving identity,
   policy, provenance, and verification boundaries.
@@ -125,6 +128,8 @@ The likely `v0.93` tranche is:
   [CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md](features/CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md)
 - Delegation, upstream delegation, IAM, standing, and appeal governance:
   [DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md](features/DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md)
+- Guilds and collective organization:
+  [GUILDS_AND_COLLECTIVE_ORGANIZATION_v0.93.md](features/GUILDS_AND_COLLECTIVE_ORGANIZATION_v0.93.md)
 - Enterprise security:
   [ENTERPRISE_SECURITY_v0.93.md](features/ENTERPRISE_SECURITY_v0.93.md)
 - Enterprise-security WPs:

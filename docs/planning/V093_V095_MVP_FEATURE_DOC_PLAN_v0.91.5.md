@@ -51,9 +51,8 @@ issue. Public work should happen in tracked docs and issue records.
   can consume external-repo proof.
 - Aptitude Atlas productization and baseline-product work are post-`v0.95`;
   `v0.95` consumes capability-testing evidence only.
-- Existing `v0.95` package language that still describes Aptitude Atlas as a
-  product lane or `v0.95` completion target must be reconciled in the v0.95
-  convergence packet before MVP scope is locked.
+- The `v0.95` package must keep Aptitude Atlas productization post-`v0.95`
+  and describe MVP scope as capability-testing evidence consumption only.
 - Rust refactoring before Sprint 4 / MVP convergence must reduce
   change-specific test burden. Merely splitting large files into parts is not
   sufficient.
@@ -206,14 +205,16 @@ Required v0.95 convergence surfaces:
 - Shepherd/Gemma evidence and evaluator/training path
 - capability-testing evidence consumption without Aptitude Atlas
   productization
-- CodeFriend v1 and adapter v2 proof packaging
+- CodeFriend v1 and adapter v2 proof packaging, now routed through
+  `docs/milestones/v0.95/features/CODEFRIEND_V1_PORTABLE_ADAPTER_V2_PROOF_v0.95.md`
 - distributed execution integration closure
 - control-plane/tooling hardening and Rust refactoring
 - web editor baseline
 - Zed decision boundary
 - AI character/style cleanup route
 - Aptitude Atlas v0.95 package reconciliation so README, WBS, and feature-doc
-  language align with evidence-consumption-only MVP scope
+  language align with evidence-consumption-only MVP scope; productization is
+  post-`v0.95`
 - logistic split decision gate
 - post-`v0.95` disposition map
 - feature freeze and `1.0` scope boundary
@@ -244,11 +245,9 @@ Explicitly post-`v0.95` unless separately promoted by an operator decision:
 `v0.95` may consume evidence from these areas only when the evidence is already
 tracked and reviewable. It must not imply the product surface is complete.
 
-Known reconciliation requirement: existing `v0.95` milestone-package language
-still presents Aptitude Atlas as a product lane and `v0.95` completion target.
-The v0.95 convergence packet must update or explicitly qualify those claims so
-they match the current feature-list boundary: evidence consumption in MVP,
-productization after `v0.95`.
+Known reconciliation requirement: keep `v0.95` milestone-package language
+aligned with the current feature-list boundary: evidence consumption in MVP,
+Aptitude Atlas productization after `v0.95`.
 
 ## Issue Split Candidates
 
@@ -259,7 +258,7 @@ reviewed:
 | --- | --- | --- |
 | v0.93 governance/security/guilds feature-doc packet | `v0.93` | Refresh or split governance, security governance, enterprise security, upstream delegation/IAM, and guild feature docs. |
 | v0.94 secure execution/trust/trace/time feature-doc packet | `v0.94` | Refresh or split secure execution, trust convergence, signed/queryable trace, reasoning graph baseline, and temporal self-projection docs. |
-| CodeFriend v1 and portable adapter v2 proof packet | pre-`v0.95` | Define and execute the smallest external-repo CodeFriend proof after adapter v2 exists. |
+| CodeFriend v1 and portable adapter v2 proof packet | pre-`v0.95` | Define and execute the smallest external-repo CodeFriend proof after adapter v2 exists; feature-doc home now exists at `docs/milestones/v0.95/features/CODEFRIEND_V1_PORTABLE_ADAPTER_V2_PROOF_v0.95.md`. |
 | Semantic Rust refactoring mini-sprint | pre-Sprint 4 / `v0.95` | Refactor by test-surface and proof-lane boundaries rather than file-part splitting. |
 | v0.95 MVP convergence packet | `v0.95` | Produce the final MVP boundary, demo catalog/walkthrough, cleanup, post-MVP map, and feature-freeze packet. |
 | Aptitude Atlas v0.95 package reconciliation | `v0.95` convergence | Align README, WBS, and feature-doc language so MVP consumes capability-testing evidence only while Aptitude Atlas productization remains post-`v0.95`. |
@@ -282,7 +281,7 @@ When this plan is updated:
 ## Current Verdict
 
 If MVP scope locked today, the known v0.93-v0.95 feature-doc work is accounted
-for, but it is not executed and the v0.95 Aptitude Atlas package language still
-needs reconciliation. The next step is to create or execute the child
-feature-doc packets above, starting with the v0.93 governance/security/guilds
-packet after the pre-`v0.92` bridge work is truthfully closed or routed.
+for, but it is not executed. Aptitude Atlas productization remains post-`v0.95`;
+the MVP consumes capability-testing evidence only. The next step is to execute
+the child feature-doc packets above after the pre-`v0.92` bridge work is
+truthfully closed or routed.

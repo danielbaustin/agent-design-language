@@ -40,7 +40,7 @@ milestones.
 | WP-02 | Birthday contract and negative cases | Define what counts as birth and what does not. | Feature contract, negative fixtures, and validation rules. | WP-01. |
 | WP-03 | Stable name and identity architecture | Define identity root, stable name, aliases, provenance, and continuity head. | Identity record contract and fixtures. | WP-02 and prior citizen-state lineage. |
 | WP-04 | Continuity across bounded cycles | Prove identity survives multiple bounded cycles with evidence. | Continuity record, cycle fixtures, validation. | WP-03. |
-| WP-05 | Memory grounding | Bind identity to witnessed artifacts and memory references without raw private-state exposure. | Memory-grounding contract and redacted packet. | WP-03, WP-04, ObsMem/trace baseline. |
+| WP-05 | Memory grounding and Memory Palace bridge | Bind identity to witnessed artifacts and memory references without raw private-state exposure, and route the first Memory Palace context-topology slice. | Memory-grounding contract, redacted packet, and Memory Palace bridge feature route. | WP-03, WP-04, ObsMem/trace baseline. |
 | WP-06 | Capability envelope | Declare provider, model, tool, skill, authority, and limit context at birth. | Capability envelope and validation fixtures. | WP-03, governed-tool evidence where tool actions are in scope. |
 | WP-07 | ACP / cognitive profiles | Define runtime-visible cognitive profile records grounded in memory, capability, continuity, ToM, and intelligence evidence. | ACP/profile contract, update rules, privacy boundary, and fixtures. | WP-04 through WP-06 plus v0.91.1 evidence. |
 | WP-08 | ACIP binary schema and WebSocket carrier | Define protobuf ACIP wire schema, public schema catalog, deterministic JSON projection, and optional binary ACIP-over-WebSocket mock proof. | ACIP `.proto`, schema catalog rules, JSON/protobuf fixtures, mock WebSocket carrier proof. | ACIP substrate and trace/replay baseline. |
@@ -93,7 +93,8 @@ Before opening v0.92 issues, WP-01 must:
   map, and `#3377`
 - reconcile the AEE completion tranche from v0.91.5 and either seed concrete
   AEE proof work or record why existing v0.92 WPs cover it
-- verify all feature docs remain linked and scoped
+- verify all feature docs remain linked and scoped, including the Memory
+  Palace context-topology bridge
 - create all five cards for every opened issue from the active prompt-template
   registry
 - keep `SIP`, `STP`, and `SPP` design-time ready before execution
@@ -106,7 +107,8 @@ Before opening v0.92 issues, WP-01 must:
 - Identity must include stable name, identity root, continuity, memory
   grounding, capability, bounded cognitive profile, witnesses, and receipt.
 - Continuity must be evidence-based and reviewable.
-- Memory grounding must not expose raw private state.
+- Memory grounding must not expose raw private state, and Memory Palace work
+  must remain a named bridge slice until implementation proof lands.
 - Capability envelope must record limits and authority context.
 - Cognitive profiles must be evidence-grounded, privacy-bounded, and distinct
   from identity, reputation, and public standing.

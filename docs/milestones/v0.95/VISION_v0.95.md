@@ -26,8 +26,9 @@ clear boundaries, and clear operator/reviewer entrypoints.
 1. MVP convergence rather than new scope growth.
 2. Reviewer/customer legibility through walkthroughs, dashboards, and explicit
    proof posture.
-3. Model-evaluation maturity through Aptitude Atlas and Shepherd/Gemma
-   follow-on work.
+3. Model-evaluation maturity through Shepherd/Gemma follow-on work and tracked
+   capability-testing evidence, while Aptitude Atlas productization remains
+   post-`v0.95`.
 4. Hardened execution/control-plane substrate suitable for the MVP boundary.
 5. Explicit editor/operator story across the web baseline and the Zed decision.
 
@@ -39,6 +40,8 @@ After `v0.95`, ADL should be able to say:
 - what surfaces prove it
 - which operator/editor path is required
 - which optional integrations remain optional
+- which product surfaces, including Aptitude Atlas productization, remain
+  post-MVP
 - how the runtime, governance, execution, evaluation, and demo layers fit
   together
 
