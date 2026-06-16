@@ -2403,6 +2403,7 @@ Notes:
 - Deprecated compatibility shim. Prefer `adl/tools/pr.sh run <issue> ...`.
 - Creates or reuses issue worktree at .worktrees/adl-wp-<issue> by default.
 - Leaves the primary checkout on its current branch.
+- Must be invoked from the primary checkout; started issue worktrees should continue the bound issue work, not bind nested worktrees.
 - `--version` overrides inferred issue version when the caller already knows the intended milestone band.
 - Refuses to start a later issue when an open PR already exists in the same milestone queue unless `--allow-open-pr-wave` is passed.
 EOF
@@ -2417,6 +2418,7 @@ Usage:
 Notes:
 - Issue mode:
   - preferred public binder for execution-time branch and worktree creation
+  - run from the primary checkout; started issue worktrees should continue the bound issue work, not bind nested worktrees
   - delegates to the Rust PR control-plane binder
 - ADL file mode:
   - bounded v0.85 control-plane wrapper over `cargo run --bin adl -- ...`
