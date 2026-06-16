@@ -962,7 +962,7 @@ pub(super) fn unresolved_milestone_pr_wave(
     .unwrap_or_else(|| "[]".to_string());
     let prs: Vec<OpenPullRequest> =
         serde_json::from_str(&out).with_context(|| "failed to parse GitHub PR list JSON")?;
-    Ok(prs
+    prs
         .into_iter()
         .filter(|pr| {
             pr_matches_main_version_wave(
@@ -985,7 +985,33 @@ pub(super) fn unresolved_milestone_pr_wave(
                 .as_deref()
                 .is_none_or(|queue| queue == target_queue)
         })
-        .collect())
+        .filter_map(|pr| match pr_has_any_closing_linkage(repo, &pr.url) {
+            Ok(true) => Some(Ok(pr)),
+            Ok(false) => None,
+            Err(err) => Some(Err(err)),
+        })
+        .collect::<Result<Vec<_>>>()
+}
+
+fn pr_has_any_closing_linkage(repo: &str, pr_ref: &str) -> Result<bool> {
+    let linked = run_gh_capture_allow_failure(
+        "pr.view.closing_issues",
+        &[
+            "pr",
+            "view",
+            "-R",
+            repo,
+            pr_ref,
+            "--json",
+            "closingIssuesReferences",
+            "--jq",
+            ".closingIssuesReferences[]?.number",
+        ],
+    )?;
+    Ok(linked_issue_numbers_from_lines(linked.as_deref().unwrap_or_default())
+        .into_iter()
+        .next()
+        .is_some())
 }
 
 pub(super) fn format_open_pr_wave(prs: &[OpenPullRequest]) -> String {
@@ -2167,6 +2193,75 @@ mod tests {
                 && call.contains("\"state\":\"closed\"")
                 && call.contains("\"state_reason\":\"not_planned\"")
         }));
+        restore_github_policy_env(policy_env);
+    }
+
+    #[test]
+    fn unresolved_wave_ignores_non_closing_stale_pr_residue() {
+        let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
+        let temp = unique_temp_dir("adl-open-wave-closing-filter");
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let github_cli_fixture = bin_dir.join("gh");
+        write_executable(
+            &github_cli_fixture,
+            r#"#!/usr/bin/env bash
+set -euo pipefail
+if [ "$1 $2" = 'pr list' ]; then
+  cat <<'JSON'
+[
+  {
+    "number": 2001,
+    "title": "[v0.91.5][tools] Stale residue",
+    "url": "https://github.com/owner/repo/pull/2001",
+    "headRefName": "codex/stale-residue",
+    "baseRefName": "main",
+    "isDraft": true
+  },
+  {
+    "number": 2002,
+    "title": "[v0.91.5][tools] Real active blocker",
+    "url": "https://github.com/owner/repo/pull/2002",
+    "headRefName": "codex/real-active-blocker",
+    "baseRefName": "main",
+    "isDraft": true
+  }
+]
+JSON
+  exit 0
+fi
+if [ "$1 $2" = 'pr view' ]; then
+  if printf '%s ' "$@" | grep -q 'pull/2001'; then
+    exit 0
+  fi
+  if printf '%s ' "$@" | grep -q 'pull/2002'; then
+    printf '3790\n'
+    exit 0
+  fi
+fi
+exit 1
+"#,
+        );
+
+        let old_path = std::env::var("PATH").ok();
+        let mut path_entries = vec![bin_dir.clone()];
+        path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
+        unsafe {
+            std::env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", &github_cli_fixture);
+            std::env::set_var(
+                "PATH",
+                std::env::join_paths(path_entries).expect("join PATH"),
+            );
+        }
+
+        let wave = unresolved_milestone_pr_wave("owner/repo", "v0.91.5", "tools", None)
+            .expect("open PR wave");
+        assert_eq!(wave.len(), 1);
+        assert_eq!(wave[0].number, 2002);
+        assert_eq!(wave[0].queue.as_deref(), Some("tools"));
+
+        restore_env("PATH", old_path);
         restore_github_policy_env(policy_env);
     }
 
