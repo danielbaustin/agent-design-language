@@ -1,8 +1,9 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
     ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
-    open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout, real_pr_finish,
-    resolve_finish_issue_scope_and_slug, select_finish_validation_plan_for_finish,
+    normalize_docs_only_sor_text, open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout,
+    real_pr_finish, resolve_finish_issue_scope_and_slug, select_finish_validation_plan_for_finish,
+    FinishValidationMode, FinishValidationPlan,
 };
 use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
 
@@ -198,6 +199,131 @@ fn render_pr_body_defaults_docs_only_validation_when_needed() {
     assert!(!body.contains("cargo clippy --all-targets -- -D warnings"));
     assert!(!body.contains("cargo nextest run"));
     assert!(!body.contains("cargo test"));
+}
+
+#[test]
+fn docs_only_sor_normalization_repairs_aliases_and_ingests_validation_evidence() {
+    let input = r#"# issue-3738
+
+Task ID: issue-3738
+Run ID: issue-3738
+Version: v0.91.5
+Title: Example
+Branch: codex/example
+Card Status: ready
+Status: DONE
+
+Execution:
+- Actor: Codex
+- Model: GPT-5
+- Provider: OpenAI
+- Start Time: 2026-06-16T00:00:00Z
+- End Time: 2026-06-16T00:00:01Z
+
+## Summary
+
+done
+
+## Artifacts produced
+- docs/example.md
+
+## Actions taken
+- did the thing
+
+## Main Repo Integration (REQUIRED)
+- Main-repo paths updated:
+  - `docs/example.md`
+- Worktree-only paths remaining: none
+- Worktree prune result: not_run
+- Integration state: open_pr
+- Verification scope: main-repo
+- Integration method used: manual
+- Verification performed:
+  - `python3 - <<'PY' ...`
+    Existing docs-only proof.
+- Result: PASS
+
+## Validation
+- Validation commands and their purpose:
+  - `python3 - <<'PY' ...`
+    Existing docs-only proof.
+- Results:
+  - PASS
+
+## Verification Summary
+
+```yaml
+verification_summary:
+  validation:
+    status: PASS
+    checks_run:
+      - "python3 - <<'PY' ..."
+  determinism:
+    status: NOT_RUN
+```
+
+## Determinism Evidence
+- not_run
+
+## Security / Privacy Checks
+- ok
+
+## Replay Artifacts
+- not_applicable
+
+## Artifact Verification
+- docs/example.md
+
+## Decisions / Deviations
+- none
+
+## Follow-ups / Deferred work
+- none
+"#;
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::DocsOnly,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+        ],
+    };
+
+    let normalized = normalize_docs_only_sor_text(input, &plan.commands);
+
+    assert!(normalized.contains("- Integration state: pr_open"));
+    assert!(normalized.contains("- Verification scope: main_repo"));
+    assert!(normalized.contains("`bash adl/tools/check_no_tracked_adl_issue_record_residue.sh`"));
+    assert!(normalized.contains("`git diff --check`"));
+    assert!(normalized.contains("\"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh\""));
+    assert!(normalized.contains("\"git diff --check\""));
+}
+
+#[test]
+fn docs_only_sor_normalization_is_idempotent_for_existing_entries() {
+    let input = r#"## Validation
+- Validation commands and their purpose:
+  - `git diff --check`
+    Verified whitespace and patch hygiene on the docs-only changed surfaces.
+- Results:
+  - PASS
+
+## Verification Summary
+
+```yaml
+verification_summary:
+  validation:
+    status: PASS
+    checks_run:
+      - "git diff --check"
+  determinism:
+    status: NOT_RUN
+```
+"#;
+
+    let commands = vec!["git diff --check".to_string()];
+    let normalized = normalize_docs_only_sor_text(input, &commands);
+    assert_eq!(normalized.matches("git diff --check").count(), 2);
 }
 
 #[test]
@@ -1141,6 +1267,12 @@ fn finish_path_tracking_covers_staged_vs_head_changes_and_local_only_issue_surfa
         vec!["tracked.txt".to_string()]
     );
 
+    fs::write(repo.join("unstaged.rs"), "pub fn unrelated() {}\n").expect("write unrelated");
+    assert_eq!(
+        finish_changed_paths(&repo, true).expect("staged paths with unrelated unstaged edit"),
+        vec!["tracked.txt".to_string()]
+    );
+
     fs::write(repo.join("ahead.txt"), "ahead\n").expect("ahead file");
     assert!(Command::new("git")
         .args(["add", "ahead.txt", "tracked.txt"])
@@ -1485,6 +1617,16 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
     }
 
     result.expect("real_pr_finish success");
+
+    let output_text = fs::read_to_string(&output).expect("read output card");
+    assert!(
+        !output_text.contains("bash adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "--no-checks finish should not inject unrun validation commands into SOR"
+    );
+    assert!(
+        !output_text.contains("git diff --check"),
+        "--no-checks finish should not inject docs-only validation evidence into SOR"
+    );
 
     let head_subject = run_capture(
         "git",

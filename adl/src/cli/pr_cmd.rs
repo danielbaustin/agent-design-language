@@ -65,8 +65,7 @@ use self::finish_support::{
     finish_inputs_fingerprint, issue_bundle_issue_number_from_repo_relative,
     render_default_finish_validation, render_pr_body, run_finish_validation_rust,
     select_finish_validation_plan, stage_selected_paths_rust, staged_diff_is_empty,
-    staged_gitignore_change_present, tracked_issue_surface_paths, FinishValidationMode,
-    FinishValidationPlan,
+    staged_gitignore_change_present, tracked_issue_surface_paths,
 };
 use self::finish_support::{ensure_nonempty_file_path, validate_completed_sor};
 #[cfg(test)]

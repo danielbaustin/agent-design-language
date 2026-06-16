@@ -89,28 +89,9 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     validate_authored_prompt_surface("finish", &input_path, PromptSurfaceKind::Sip)?;
     validate_structured_artifact(&repo_root, "finish", &plan_path, "spp")?;
     validate_structured_artifact(&repo_root, "finish", &review_policy_path, "srp")?;
-    validate_completed_sor(&repo_root, &output_path)?;
     ensure_issue_surfaces_are_local_only(&repo_root, &primary_root, &issue_ref, &source_path)?;
 
-    let canonical_output = lifecycle::sync_completed_output_surfaces(
-        &repo_root,
-        &primary_root,
-        &issue_ref,
-        &output_path,
-    )?;
-    if lifecycle::issue_is_closed_and_completed(parsed.issue, &repo)? {
-        lifecycle::ensure_closed_completed_issue_bundle_truth(
-            &primary_root,
-            &issue_ref,
-            &canonical_output,
-        )
-        .with_context(|| {
-            format!(
-                "finish: closed issue #{} has stale canonical sor truth; run closeout normalization before publication",
-                parsed.issue
-            )
-        })?;
-    }
+    normalize_sor_enum_aliases_for_finish(&output_path)?;
 
     stage_selected_paths_rust(&repo_root, &parsed.paths)?;
     ensure_no_staged_issue_bundle_mutations(&repo_root, &issue_ref)?;
@@ -135,6 +116,28 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         select_finish_validation_plan_for_finish(&parsed.paths, &changed_paths)?;
     if !parsed.no_checks {
         run_finish_validation_rust(&repo_root, &finish_validation_plan)?;
+        record_docs_only_validation_evidence_for_finish(&output_path, &finish_validation_plan)?;
+    }
+    validate_completed_sor(&repo_root, &output_path)?;
+
+    let canonical_output = lifecycle::sync_completed_output_surfaces(
+        &repo_root,
+        &primary_root,
+        &issue_ref,
+        &output_path,
+    )?;
+    if lifecycle::issue_is_closed_and_completed(parsed.issue, &repo)? {
+        lifecycle::ensure_closed_completed_issue_bundle_truth(
+            &primary_root,
+            &issue_ref,
+            &canonical_output,
+        )
+        .with_context(|| {
+            format!(
+                "finish: closed issue #{} has stale canonical sor truth; run closeout normalization before publication",
+                parsed.issue
+            )
+        })?;
     }
 
     let close_line = if parsed.no_close {
@@ -538,6 +541,316 @@ pub(super) fn validate_completed_sor(repo_root: &Path, output_path: &Path) -> Re
             output_path.display()
         )
     })
+}
+
+fn normalize_sor_enum_aliases_for_finish(output_path: &Path) -> Result<()> {
+    let original = fs::read_to_string(output_path).with_context(|| {
+        format!(
+            "finish: failed to read output card {}",
+            output_path.display()
+        )
+    })?;
+    let normalized = normalize_docs_only_sor_aliases(&original);
+    if normalized != original {
+        fs::write(output_path, normalized).with_context(|| {
+            format!(
+                "finish: failed to write normalized docs-only output card {}",
+                output_path.display()
+            )
+        })?;
+    }
+    Ok(())
+}
+
+fn record_docs_only_validation_evidence_for_finish(
+    output_path: &Path,
+    plan: &FinishValidationPlan,
+) -> Result<()> {
+    if plan.mode != FinishValidationMode::DocsOnly {
+        return Ok(());
+    }
+    let original = fs::read_to_string(output_path).with_context(|| {
+        format!(
+            "finish: failed to read output card {}",
+            output_path.display()
+        )
+    })?;
+    let normalized = normalize_docs_only_validation_evidence(&original, &plan.commands);
+    if normalized != original {
+        fs::write(output_path, normalized).with_context(|| {
+            format!(
+                "finish: failed to write docs-only validation evidence into output card {}",
+                output_path.display()
+            )
+        })?;
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+pub(super) fn normalize_docs_only_sor_text(text: &str, commands: &[String]) -> String {
+    let mut updated = normalize_docs_only_sor_aliases(text);
+    updated = normalize_docs_only_validation_evidence(&updated, commands);
+    updated
+}
+
+fn normalize_docs_only_sor_aliases(text: &str) -> String {
+    let mut updated = text.to_string();
+    updated = normalize_sor_enum_line(
+        &updated,
+        "- Integration state:",
+        normalize_integration_state_alias,
+    );
+    updated = normalize_sor_enum_line(
+        &updated,
+        "- Verification scope:",
+        normalize_verification_scope_alias,
+    );
+    updated
+}
+
+fn normalize_docs_only_validation_evidence(text: &str, commands: &[String]) -> String {
+    let mut updated = text.to_string();
+    updated = ensure_docs_only_validation_entries(&updated, commands);
+    updated = ensure_docs_only_checks_run_entries(&updated, commands);
+    updated
+}
+
+fn normalize_sor_enum_line(
+    text: &str,
+    prefix: &str,
+    normalizer: fn(&str) -> Option<&'static str>,
+) -> String {
+    let mut changed = false;
+    let lines = text
+        .lines()
+        .map(|line| {
+            let trimmed = line.trim_start();
+            if let Some(value) = trimmed.strip_prefix(prefix) {
+                if let Some(normalized) = normalizer(value.trim()) {
+                    let indent_len = line.len() - trimmed.len();
+                    let indent = &line[..indent_len];
+                    let rewritten = format!("{indent}{prefix} {normalized}");
+                    if rewritten != line {
+                        changed = true;
+                        return rewritten;
+                    }
+                }
+            }
+            line.to_string()
+        })
+        .collect::<Vec<_>>();
+    if changed {
+        format!("{}\n", lines.join("\n"))
+    } else {
+        text.to_string()
+    }
+}
+
+fn normalize_integration_state_alias(value: &str) -> Option<&'static str> {
+    match value.trim().to_ascii_lowercase().as_str() {
+        "worktree-only" | "worktree only" | "worktree" => Some("worktree_only"),
+        "pr" | "open_pr" | "open-pr" | "pr-ready" | "pr_ready" => Some("pr_open"),
+        "closed-no-pr" | "closed_no_pr" | "no-pr" | "no_pr" => Some("closed_no_pr"),
+        "merged-pr" | "merged_pr" => Some("merged"),
+        _ => None,
+    }
+}
+
+fn normalize_verification_scope_alias(value: &str) -> Option<&'static str> {
+    match value.trim().to_ascii_lowercase().as_str() {
+        "main" | "main repo" | "main-repo" | "repo" => Some("main_repo"),
+        "pr" | "pr branch" | "pr-branch" | "branch" => Some("pr_branch"),
+        "worktree-only" | "worktree_only" => Some("worktree"),
+        _ => None,
+    }
+}
+
+fn ensure_docs_only_validation_entries(text: &str, commands: &[String]) -> String {
+    let Some(validation_body) = markdown_section_body_local(text, "Validation") else {
+        return text.to_string();
+    };
+    let replacement = ensure_command_entries_before_marker(
+        &validation_body,
+        commands,
+        "- Results:",
+        render_docs_only_validation_entry,
+    );
+    replace_markdown_section_body(text, "Validation", &replacement)
+        .unwrap_or_else(|_| text.to_string())
+}
+
+fn ensure_docs_only_checks_run_entries(text: &str, commands: &[String]) -> String {
+    let Some(summary_body) = markdown_section_body_local(text, "Verification Summary") else {
+        return text.to_string();
+    };
+    let replacement = ensure_yaml_checks_run_entries(&summary_body, commands);
+    replace_markdown_section_body(text, "Verification Summary", &replacement)
+        .unwrap_or_else(|_| text.to_string())
+}
+
+fn ensure_command_entries_before_marker(
+    body: &str,
+    commands: &[String],
+    marker: &str,
+    render_entry: fn(&str) -> String,
+) -> String {
+    let mut lines = body.lines().map(str::to_string).collect::<Vec<_>>();
+    let insert_at = lines
+        .iter()
+        .position(|line| line.trim_start() == marker)
+        .unwrap_or(lines.len());
+    let mut insertion = Vec::new();
+    for command in commands {
+        let needle = format!("`{command}`");
+        if body.contains(&needle) {
+            continue;
+        }
+        insertion.extend(render_entry(command).lines().map(str::to_string));
+    }
+    if insertion.is_empty() {
+        return body.to_string();
+    }
+    if insert_at > 0 && !lines[insert_at - 1].trim().is_empty() {
+        insertion.insert(0, String::new());
+    }
+    lines.splice(insert_at..insert_at, insertion);
+    trim_trailing_blank_lines(lines).join("\n")
+}
+
+fn render_docs_only_validation_entry(command: &str) -> String {
+    format!(
+        "  - `{command}`\n    {}",
+        docs_only_command_description(command)
+    )
+}
+
+fn docs_only_command_description(command: &str) -> &'static str {
+    match command {
+        "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh" => {
+            "Verified no tracked local-only ADL issue-record residue remained staged for publication."
+        }
+        "git diff --check" => {
+            "Verified whitespace and patch hygiene on the docs-only changed surfaces."
+        }
+        _ => "Verified the docs-only finish validation command completed successfully.",
+    }
+}
+
+fn ensure_yaml_checks_run_entries(body: &str, commands: &[String]) -> String {
+    let mut lines = body.lines().map(str::to_string).collect::<Vec<_>>();
+    let Some(checks_run_idx) = lines.iter().position(|line| line.trim() == "checks_run:") else {
+        return body.to_string();
+    };
+    let list_end = lines
+        .iter()
+        .enumerate()
+        .skip(checks_run_idx + 1)
+        .find(|(_, line)| line.starts_with("  ") && !line.starts_with("      - "))
+        .map(|(idx, _)| idx)
+        .unwrap_or(lines.len());
+    let mut insert_at = list_end;
+    for command in commands {
+        let rendered = format!("      - \"{command}\"");
+        if lines.iter().any(|line| line.trim() == rendered.trim()) {
+            continue;
+        }
+        lines.insert(insert_at, rendered);
+        insert_at += 1;
+    }
+    trim_trailing_blank_lines(lines).join("\n")
+}
+
+fn replace_markdown_section_body(input: &str, heading: &str, replacement: &str) -> Result<String> {
+    let lines = input.lines().map(str::to_string).collect::<Vec<_>>();
+    let mut in_fence = false;
+    let mut start = None;
+    let mut target_depth = None;
+    let mut end = lines.len();
+
+    for (idx, line) in lines.iter().enumerate() {
+        if line.trim_start().starts_with("```") {
+            in_fence = !in_fence;
+            continue;
+        }
+        if in_fence {
+            continue;
+        }
+        if let Some((depth, text)) = parse_heading_line(line) {
+            if start.is_none() && text == heading.trim() {
+                start = Some(idx);
+                target_depth = Some(depth);
+                continue;
+            }
+            if start.is_some() && depth <= target_depth.expect("target depth") {
+                end = idx;
+                break;
+            }
+        }
+    }
+
+    let start = start.ok_or_else(|| anyhow::anyhow!("heading '{heading}' not found"))?;
+    let mut out = Vec::new();
+    out.extend_from_slice(&lines[..=start]);
+    out.push(String::new());
+    if !replacement.trim().is_empty() {
+        out.extend(replacement.trim().lines().map(str::to_string));
+        out.push(String::new());
+    }
+    out.extend_from_slice(&lines[end..]);
+    Ok(format!("{}\n", trim_trailing_blank_lines(out).join("\n")))
+}
+
+fn markdown_section_body_local(text: &str, heading: &str) -> Option<String> {
+    let lines = text.lines().collect::<Vec<_>>();
+    let mut in_fence = false;
+    let mut start = None;
+    let mut target_depth = None;
+    let mut end = lines.len();
+
+    for (idx, line) in lines.iter().enumerate() {
+        if line.trim_start().starts_with("```") {
+            in_fence = !in_fence;
+            continue;
+        }
+        if in_fence {
+            continue;
+        }
+        if let Some((depth, text)) = parse_heading_line(line) {
+            if start.is_none() && text == heading.trim() {
+                start = Some(idx + 1);
+                target_depth = Some(depth);
+                continue;
+            }
+            if start.is_some() && depth <= target_depth.expect("target depth") {
+                end = idx;
+                break;
+            }
+        }
+    }
+
+    let start = start?;
+    Some(lines[start..end].join("\n").trim().to_string())
+}
+
+fn parse_heading_line(line: &str) -> Option<(usize, String)> {
+    let trimmed = line.trim_start();
+    let hashes = trimmed.chars().take_while(|ch| *ch == '#').count();
+    if !(1..=6).contains(&hashes) {
+        return None;
+    }
+    let rest = trimmed.get(hashes..)?;
+    if !rest.starts_with(' ') {
+        return None;
+    }
+    Some((hashes, rest.trim().to_string()))
+}
+
+fn trim_trailing_blank_lines(mut lines: Vec<String>) -> Vec<String> {
+    while lines.last().is_some_and(|line| line.trim().is_empty()) {
+        lines.pop();
+    }
+    lines
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
