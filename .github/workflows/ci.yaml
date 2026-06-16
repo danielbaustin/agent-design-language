@@ -92,11 +92,11 @@ jobs:
         working-directory: .
 
       - name: tooling sanity (codex_pr help)
-        run: sh adl/tools/codex_pr.sh --help
+        run: bash adl/tools/codex_pr.sh --help
         working-directory: .
 
       - name: tooling sanity (codexw help)
-        run: sh adl/tools/codexw.sh --help
+        run: bash adl/tools/codexw.sh --help
         working-directory: .
 
       - name: coverage-impact preflight contract
