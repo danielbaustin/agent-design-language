@@ -11,7 +11,8 @@ Candidate demo planning only.
 | D1 | MVP walkthrough flagship | The full MVP story is coherent across runtime, governance, evaluation, and operator surfaces. | walkthrough packet plus catalog/runbook | Planned candidate |
 | D2 | Dashboard and compression review path | Dashboard/reporting surfaces truthfully summarize milestone state without becoming release authority. | HTML dashboard/report pair | Planned candidate |
 | D3 | Distributed execution integration proof | Distributed execution remains bounded, reviewable, and subordinate to secure execution. | integration packet plus boundary report | Planned candidate |
-| D4 | Evaluation-platform proof | Shepherd/Gemma and Aptitude Atlas surfaces are evidence-backed rather than narrative-only. | evaluator/report bundle | Planned candidate |
+| D4 | Capability-evidence proof | Shepherd/Gemma and capability-testing evidence surfaces are evidence-backed rather than narrative-only; Aptitude Atlas productization is out of MVP scope. | evaluator/report bundle | Planned candidate |
+| D4b | CodeFriend external-repo proof | CodeFriend v1 and adapter v2 can run a bounded external-repo review through ADL with redaction and manifest evidence. | CodeFriend proof packet | Planned candidate |
 | D5 | Editor boundary proof | Web editor baseline works with the validated lifecycle and the Zed decision is explicit. | editor integration packet and decision note | Planned candidate |
 
 ## Coverage Rules

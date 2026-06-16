@@ -48,6 +48,7 @@ v0.92 should establish:
 - stable name and identity architecture
 - continuity evidence across bounded cycles
 - memory grounding tied to witnessed artifacts
+- Memory Palace context topology as a planned long-running-context bridge slice
 - capability envelope at birth
 - ACP / cognitive profiles as a bounded runtime profile surface grounded in
   memory, capability, continuity, ToM, and intelligence evidence
@@ -149,6 +150,7 @@ The likely `v0.92` tranche is:
 - Stable name and identity architecture.
 - Continuity record across bounded cycles.
 - Memory grounding.
+- Memory Palace context-topology bridge.
 - Capability envelope.
 - ACP / cognitive profiles as a runtime-visible profile contract.
 - ACIP binary schema, public schema catalog, deterministic JSON projection, and
@@ -193,6 +195,8 @@ The likely `v0.92` tranche is:
 - Feature plans: [features/README.md](features/README.md)
 - Activation bridge ledger:
   [V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md](V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md)
+- Memory Palace context topology:
+  [MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md](features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md)
 - First-birthday launch packet:
   [FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md](FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md)
 - ADR plan: [ADR_PLAN_v0.92.md](ADR_PLAN_v0.92.md)

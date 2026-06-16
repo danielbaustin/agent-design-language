@@ -10,7 +10,9 @@ Forward-planning placeholder with real milestone intent.
 
 - the MVP feature package is internally consistent
 - the walkthrough/demo layer proves the integrated platform story
-- dashboard/evaluation/editor surfaces are explicit and reviewable
+- dashboard/evaluation/evidence/editor surfaces are explicit and reviewable
+- CodeFriend v1 and adapter v2 proof packaging is reviewable if it remains an
+  MVP input
 - control-plane and distributed-execution claims remain bounded
 - the MVP boundary is clear enough for reviewer and customer-facing use
 

@@ -16,7 +16,8 @@ control-plane-facing gaps without silently admitting a new architectural band.
 | --- | --- | --- | --- | --- |
 | A | HTML milestone dashboard and compression reporting | Converge milestone dashboard and compression surfaces into one maintained operator/reviewer entrypoint. | HTML dashboard/reporting package and refresh rules. | `v0.90` milestone compression baseline, `v0.95` milestone docs. |
 | B | Shepherd/Gemma training and evaluator path | Finish the MVP-facing training/evaluation lane for the Shepherd/Gemma line. | Training/evaluation plan, artifact expectations, and proof posture. | `v0.91.1` ANRM/Gemma placement, later evaluation surfaces. |
-| C | Aptitude Atlas product lane | Turn the harness/evaluation groundwork into a coherent model-evaluation platform story. | Product-facing evaluation contract and reporting boundary. | `v0.90.1` Aptitude Atlas planning, `v0.91.1` capability harness, `v0.91.2` productization/evaluation work. |
+| C | Capability-testing evidence and Aptitude Atlas boundary | Package tracked capability-testing evidence for MVP review while keeping Aptitude Atlas productization post-`v0.95`. | Evidence-consumption contract and post-MVP product boundary. | `v0.90.1` Aptitude Atlas planning, `v0.91.1` capability harness, `v0.91.2` evaluation work. |
+| C2 | CodeFriend v1 and portable adapter v2 proof | Package the required external-repo proof that CodeFriend/C-SDLC tools can run through ADL without private workspace leakage. | CodeFriend v1 proof packet, adapter v2 doctor expectations, and review-run manifest boundary. | `v0.91.2` CodeFriend productization baseline, portable adapter v2 planning, `v0.92` identity/continuity readiness. |
 | D | Distributed execution integration | Close the bounded distributed-execution story without sacrificing deterministic reviewability. | Integration contract and reviewable placement boundary. | ADR 0003, remote/cluster groundwork, `v0.94` secure-execution boundary. |
 | E | Demo catalog and MVP walkthrough | Turn the landed demo families into one reviewer/customer-facing catalog and walkthrough. | Catalog, classification rules, and flagship walkthrough package. | Earlier milestone demo matrices, productization/publication surfaces. |
 | F | Control-plane Rust migration and tooling hardening | Finish the highest-value migration/hardening tranche for the MVP control plane. | Hardened control-plane package and residual-language boundary. | Python-elimination staged plan, workflow guardrails, review tooling. |
@@ -41,8 +42,9 @@ control-plane-facing gaps without silently admitting a new architectural band.
 
 - Every `v0.95` feature row in the feature list maps to a candidate work area
   in this WBS.
-- Dashboard/reporting, evaluator/training, and evaluation-platform work are
-  explicit rather than buried in backlog language.
+- Dashboard/reporting, evaluator/training, capability-evidence consumption, and
+  CodeFriend proof packaging are explicit rather than buried in backlog
+  language.
 - Distributed execution remains bounded and subordinate to secure-execution
   truth from `v0.94`.
 - Demo/walkthrough work proves the integrated MVP story rather than only

@@ -37,7 +37,9 @@ people who already know the project history.
 
 - dashboard/compression reporting
 - Shepherd/Gemma evaluator/training closure
-- Aptitude Atlas evaluation-platform story
+- capability-testing evidence consumption and Aptitude Atlas post-`v0.95`
+  boundary
+- CodeFriend v1 and portable adapter v2 proof packaging
 - distributed execution integration closure
 - walkthrough/catalog convergence
 - control-plane Rust migration and tooling hardening
@@ -57,9 +59,11 @@ lanes:
 1. Operator/read-only surfaces:
    dashboard, compression reporting, and reviewer entrypoints.
 2. Evaluation surfaces:
-   Shepherd/Gemma follow-on and Aptitude Atlas product lane.
+   Shepherd/Gemma follow-on, capability-testing evidence consumption, and the
+   Aptitude Atlas post-`v0.95` product boundary.
 3. Platform integration surfaces:
-   distributed execution plus control-plane hardening.
+   distributed execution, CodeFriend external-repo proof packaging, and
+   control-plane hardening.
 4. User/editor surfaces:
    walkthrough/catalog, web editor baseline, and Zed decision.
 

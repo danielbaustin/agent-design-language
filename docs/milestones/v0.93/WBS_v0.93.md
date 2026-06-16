@@ -29,6 +29,7 @@ milestones.
 | J | Communication without inspection | Ensure governed communication does not create private-state or private-ToM inspection rights. | Communication/inspection negative proof. | v0.90.3 communication and projection policy. |
 | K | Social contract representation | Represent the bounded obligations of the polis and citizens. | Draft social-contract contract and review notes. | A through J. |
 | L | Polis governance health evidence | Summarize governance state without scalar moral verdicts, leaked private state, or leaked private ToM. | Governance evidence packet and redacted report. | G through K. |
+| L2 | Guilds and collective organization | Define guild identity, membership, authority, shared resources, privacy, trace, and challenge boundaries. | Guild feature contract, membership/authority fixtures, and governance handoff notes. | A, B, E, I, K, and v0.92 identity evidence. |
 | M | Security WP-S1: zero-trust architecture | Define the polis trust model, actor identities, trust boundaries, default-deny zones, and cross-boundary verification rules. | Zero-trust architecture contract, trust-boundary fixtures, and negative cases. | A, B, I, v0.90.3 access/projection, v0.90.5 governed tools, v0.92 identity. |
 | N | Security WP-S2: policy enforcement and authorization | Make IAM, delegation, standing, tool authority, and citizen/action policy enforceable with least privilege and fail-closed behavior. | Policy decision contract, enforcement fixtures, deny-by-default tests, and reviewer report. | I, M, v0.90.5 ACC/UTS, v0.92 capability envelopes. |
 | O | Security WP-S3: secrets, keys, and cryptographic trust | Specify key custody, signing, encryption, rotation, revocation, sealed-state access, and internal ACIP cryptographic requirements. | Key/secrets lifecycle contract, rotation/revocation fixtures, encrypted-message proof surface. | M, N, v0.90.3 signed envelopes/sealing, v0.91 ACIP, v0.92 identity. |
@@ -47,9 +48,11 @@ milestones.
 5. Add delegation, upstream delegation, and IAM after authority prerequisites
    are clear.
 6. Add communication and social-contract surfaces.
-7. Add the six enterprise-security WPs after identity, IAM, and tool authority
+7. Add guilds after citizenship, shared social memory, delegation/IAM, and
+   social-contract boundaries are clear.
+8. Add the six enterprise-security WPs after identity, IAM, and tool authority
    prerequisites are explicit.
-8. Build proof demos only after the contracts can constrain them.
+9. Build proof demos only after the contracts can constrain them.
 
 ## Acceptance Mapping
 
@@ -76,4 +79,6 @@ milestones.
 - Security operations must connect adversarial regression, provenance,
   runtime-hardening, and threat-board evidence into release review.
 - Public or operator-facing projections must not leak private state.
+- Guild action must be trace-backed, authority-bounded, privacy-preserving, and
+  challengeable when it affects shared reality.
 - Demos must show behavior and evidence, not just policy text.

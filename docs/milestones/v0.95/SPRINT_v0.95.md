@@ -8,8 +8,9 @@ authored during `v0.95` `WP-01`.
 ## Sprint Goal
 
 Close the MVP convergence band: dashboard/reporting, evaluator/training,
-evaluation platform, distributed integration, walkthrough/catalog,
-control-plane hardening, and the final editor boundary.
+capability-testing evidence, CodeFriend proof packaging, distributed
+integration, walkthrough/catalog, control-plane hardening, and the final editor
+boundary.
 
 ## Planned Scope
 
@@ -23,7 +24,8 @@ control-plane hardening, and the final editor boundary.
 
 | Order | Candidate tranche | Milestone role | Status |
 | --- | --- | --- | --- |
-| 1 | Dashboard/reporting + evaluator/platform convergence | Make non-user-facing MVP surfaces explicit first. | Planned |
+| 1 | Dashboard/reporting + evaluator/evidence convergence | Make non-user-facing MVP surfaces explicit first. | Planned |
+| 1b | CodeFriend v1 / adapter v2 proof packaging | Ensure external-repo proof is ready for MVP consumption. | Planned |
 | 2 | Distributed integration + walkthrough/catalog + control-plane hardening | Build the integrated launch-shape story. | Planned |
 | 3 | Web editor baseline + Zed decision + final convergence/review tail | Resolve the editor boundary and close the MVP packet. | Planned |
 
