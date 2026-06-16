@@ -141,7 +141,8 @@ Supporting / domain-specific docs:
 
 Sprint and review support:
 
-- Logging mini-sprint closeout packet and review-hold note for open umbrella `#3703`: [LOGGING_MINI_SPRINT_CLOSEOUT_3703.md](review/logging_observability/LOGGING_MINI_SPRINT_CLOSEOUT_3703.md)
+- Logging mini-sprint closeout packet for umbrella `#3703`: [LOGGING_MINI_SPRINT_CLOSEOUT_3703.md](review/logging_observability/LOGGING_MINI_SPRINT_CLOSEOUT_3703.md)
+- Tools remediation sprint closeout packet for umbrella `#3845`: [TOOLS_REMEDIATION_SPRINT_CLOSEOUT_3845.md](review/tooling_adoption/TOOLS_REMEDIATION_SPRINT_CLOSEOUT_3845.md)
 
 ## Document Map
 
