@@ -168,24 +168,28 @@ pub(crate) fn sanitize_value(value: &str) -> String {
         return "<redacted>".to_string();
     }
 
-    if let Ok(root) = env::var("ADL_OBSERVABILITY_REPO_ROOT") {
-        let root = root.trim_end_matches('/');
+    let repo_root = if let Ok(root) = env::var("ADL_OBSERVABILITY_REPO_ROOT") {
+        Some(root.trim_end_matches('/').to_string())
+    } else if let Ok(root) = env::current_dir() {
+        root.to_str()
+            .map(|root| root.trim_end_matches('/').to_string())
+    } else {
+        None
+    };
+    let home_root = env::var("HOME")
+        .ok()
+        .map(|home| home.trim_end_matches('/').to_string());
+
+    sanitized = sanitize_embedded_paths(&sanitized, repo_root.as_deref(), home_root.as_deref());
+
+    if let Some(root) = repo_root.as_deref() {
         let prefix = format!("{root}/");
         if sanitized.starts_with(&prefix) {
             return format!("<repo>/{}", &sanitized[prefix.len()..]);
         }
-    } else if let Ok(root) = env::current_dir() {
-        if let Some(root) = root.to_str() {
-            let root = root.trim_end_matches('/');
-            let prefix = format!("{root}/");
-            if sanitized.starts_with(&prefix) {
-                return format!("<repo>/{}", &sanitized[prefix.len()..]);
-            }
-        }
     }
 
-    if let Ok(home) = env::var("HOME") {
-        let home = home.trim_end_matches('/');
+    if let Some(home) = home_root.as_deref() {
         let prefix = format!("{home}/");
         if sanitized.starts_with(&prefix) {
             return format!("<home>/{}", &sanitized[prefix.len()..]);
@@ -201,6 +205,76 @@ pub(crate) fn sanitize_value(value: &str) -> String {
     }
 
     sanitized
+}
+
+fn sanitize_embedded_paths(
+    value: &str,
+    repo_root: Option<&str>,
+    home_root: Option<&str>,
+) -> String {
+    let mut out = String::with_capacity(value.len());
+    let mut chars = value.char_indices().peekable();
+    while let Some((start, ch)) = chars.next() {
+        if ch != '/' {
+            out.push(ch);
+            continue;
+        }
+
+        let mut end = value.len();
+        while let Some((idx, next)) = chars.peek().copied() {
+            if is_path_delimiter(next) {
+                end = idx;
+                break;
+            }
+            chars.next();
+        }
+
+        let segment = &value[start..end];
+        if let Some(replacement) = sanitize_path_segment(segment, repo_root, home_root) {
+            out.push_str(&replacement);
+        } else {
+            out.push_str(segment);
+        }
+    }
+    out
+}
+
+fn sanitize_path_segment(
+    segment: &str,
+    repo_root: Option<&str>,
+    home_root: Option<&str>,
+) -> Option<String> {
+    if let Some(root) = repo_root {
+        let prefix = format!("{root}/");
+        if segment.starts_with(&prefix) {
+            return Some(format!("<repo>/{}", &segment[prefix.len()..]));
+        }
+    }
+
+    if let Some(home) = home_root {
+        let prefix = format!("{home}/");
+        if segment.starts_with(&prefix) {
+            return Some(format!("<home>/{}", &segment[prefix.len()..]));
+        }
+    }
+
+    if segment.starts_with("/private/tmp/")
+        || segment.starts_with("/tmp/")
+        || segment.starts_with("/var/folders/")
+        || Path::new(segment).is_absolute()
+    {
+        return Some("<path>".to_string());
+    }
+
+    None
+}
+
+fn is_path_delimiter(ch: char) -> bool {
+    ch.is_whitespace()
+        || matches!(
+            ch,
+            '\'' | '"' | ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>'
+        )
 }
 
 fn contains_secret_marker(value: &str) -> bool {
@@ -292,6 +366,18 @@ mod tests {
         );
         assert_eq!(sanitize_value("/private/tmp/example"), "<path>");
         assert_eq!(sanitize_value("/elsewhere/example"), "<path>");
+        assert_eq!(
+            sanitize_value(
+                "argv_excerpt=cargo run --input /repo/adl/docs/example.md --cache /home/operator/.adl/state.json --tmp /private/tmp/proof.json"
+            ),
+            "argv_excerpt=cargo run --input <repo>/docs/example.md --cache <home>/.adl/state.json --tmp <path>"
+        );
+        assert_eq!(
+            sanitize_value(
+                "diagnostic path=/Users/daniel/elsewhere/example.txt, fallback=/tmp/proof.json"
+            ),
+            "diagnostic path=<path>, fallback=<path>"
+        );
 
         env::remove_var("ADL_OBSERVABILITY_REPO_ROOT");
     }
