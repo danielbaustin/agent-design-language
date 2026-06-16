@@ -13,7 +13,7 @@ use super::github::{
     attach_post_merge_closeout, attach_pr_janitor, current_pr_url,
     ensure_or_repair_pr_closing_linkage, pr_create_finish, pr_edit_finish_existing,
     pr_merge_finish, pr_ready_finish_allow_failure, pr_ready_finish_merge_allow_failure,
-    pr_view_base_ref_finish_existing,
+    pr_view_base_ref_finish_existing, wait_for_pr_validation_finish,
 };
 use super::lifecycle;
 use super::DEFAULT_VERSION;
@@ -202,6 +202,7 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         if parsed.ready {
             let _ = pr_ready_finish_merge_allow_failure(&repo, &pr_url)?;
         }
+        wait_for_pr_validation_finish(&repo, &pr_url)?;
         pr_merge_finish(&repo, &pr_url)?;
         lifecycle::wait_for_issue_closed_and_completed(parsed.issue, &repo)?;
         lifecycle::closeout_closed_completed_issue_bundle(
