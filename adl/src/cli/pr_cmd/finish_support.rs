@@ -725,11 +725,31 @@ fn finish_path_is_docs_only(path: &str) -> bool {
     if trimmed == "docs" || trimmed.starts_with("docs/") {
         return true;
     }
+    if trimmed.starts_with("adl/tools/skills/docs/") {
+        return finish_path_has_docs_artifact_extension(trimmed);
+    }
+    if trimmed.starts_with("adl/tools/skills/") {
+        if trimmed.ends_with("/SKILL.md") || trimmed.contains("/references/") {
+            return finish_path_has_docs_artifact_extension(trimmed);
+        }
+    }
     !trimmed.contains('/')
         && Path::new(trimmed)
             .extension()
             .and_then(|ext| ext.to_str())
             .is_some_and(|ext| ext.eq_ignore_ascii_case("md"))
+}
+
+fn finish_path_has_docs_artifact_extension(path: &str) -> bool {
+    Path::new(path)
+        .extension()
+        .and_then(|ext| ext.to_str())
+        .is_some_and(|ext| {
+            matches!(
+                ext.to_ascii_lowercase().as_str(),
+                "md" | "yaml" | "yml" | "json"
+            )
+        })
 }
 
 fn finish_path_is_focused_local_ci_gated(path: &str) -> bool {
