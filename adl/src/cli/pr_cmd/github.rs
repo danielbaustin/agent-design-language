@@ -403,6 +403,7 @@ fn github_client(operation: &str) -> Result<AdlGithubClient> {
     }
 }
 
+#[cfg(test)]
 pub(super) fn run_gh_capture(operation: &str, args: &[&str]) -> Result<String> {
     #[cfg(test)]
     if test_gh_fixture_fallback_allowed(operation)? {
@@ -430,12 +431,142 @@ pub(super) fn run_gh_status(operation: &str, args: &[&str]) -> Result<()> {
     run_octocrab_status(operation, args)
 }
 
-pub(super) fn run_gh_status_allow_failure(operation: &str, args: &[&str]) -> Result<bool> {
+pub(super) fn pr_view_base_ref_finish_existing(repo: &str, pr_ref: &str) -> Result<String> {
     #[cfg(test)]
-    if test_gh_fixture_fallback_allowed(operation)? {
-        return run_gh_status_shell_allow_failure(operation, args);
+    if test_gh_fixture_fallback_allowed("pr.view.base_ref.finish_existing")? {
+        return run_gh_capture_shell(
+            "pr.view.base_ref.finish_existing",
+            &[
+                "pr",
+                "view",
+                "-R",
+                repo,
+                pr_ref,
+                "--json",
+                "baseRefName",
+                "--jq",
+                ".baseRefName",
+            ],
+        )
+        .map(|value| value.trim().to_string());
     }
-    run_octocrab_status(operation, args).map(|_| true)
+    pr_base_ref_octocrab(repo, pr_ref)
+}
+
+pub(super) fn pr_edit_finish_existing(
+    repo: &str,
+    pr_ref: &str,
+    title: &str,
+    body_file: &Path,
+) -> Result<()> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("pr.edit.finish_existing")? {
+        return run_gh_status_shell(
+            "pr.edit.finish_existing",
+            &[
+                "pr",
+                "edit",
+                "-R",
+                repo,
+                pr_ref,
+                "--title",
+                title,
+                "--body-file",
+                path_str(body_file)?,
+            ],
+        );
+    }
+    let body = std::fs::read_to_string(body_file)
+        .with_context(|| format!("failed to read PR body file '{}'", body_file.display()))?;
+    update_pr_title_body_octocrab(repo, pr_ref, title, &body)
+}
+
+pub(super) fn pr_create_finish(
+    repo: &str,
+    title: &str,
+    head: &str,
+    base: &str,
+    body_file: &Path,
+    draft: bool,
+) -> Result<String> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("pr.create.finish")? {
+        return run_gh_capture_shell(
+            "pr.create.finish",
+            &[
+                "pr",
+                "create",
+                "-R",
+                repo,
+                "--base",
+                base,
+                "--head",
+                head,
+                "--title",
+                title,
+                "--body-file",
+                path_str(body_file)?,
+                "--draft",
+            ],
+        )
+        .map(|value| value.trim().to_string());
+    }
+    let body = std::fs::read_to_string(body_file)
+        .with_context(|| format!("failed to read PR body file '{}'", body_file.display()))?;
+    create_pr_octocrab(repo, title, head, base, &body, draft)
+}
+
+fn pr_ready_with_optional_fixture_fallback(
+    _operation: &str,
+    repo: &str,
+    pr_ref: &str,
+) -> Result<()> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed(_operation)? {
+        return run_gh_status_shell(_operation, &["pr", "ready", "-R", repo, pr_ref]);
+    }
+    mark_pr_ready_octocrab(repo, pr_ref)
+}
+
+pub(super) fn pr_ready_finish(repo: &str, pr_ref: &str) -> Result<()> {
+    pr_ready_with_optional_fixture_fallback("pr.ready.finish", repo, pr_ref)
+}
+
+pub(super) fn pr_ready_finish_merge(repo: &str, pr_ref: &str) -> Result<()> {
+    pr_ready_with_optional_fixture_fallback("pr.ready.finish_merge", repo, pr_ref)
+}
+
+pub(super) fn pr_ready_finish_allow_failure(repo: &str, pr_ref: &str) -> Result<bool> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("pr.ready.finish")? {
+        return run_gh_status_shell_allow_failure(
+            "pr.ready.finish",
+            &["pr", "ready", "-R", repo, pr_ref],
+        );
+    }
+    pr_ready_finish(repo, pr_ref).map(|_| true)
+}
+
+pub(super) fn pr_ready_finish_merge_allow_failure(repo: &str, pr_ref: &str) -> Result<bool> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("pr.ready.finish_merge")? {
+        return run_gh_status_shell_allow_failure(
+            "pr.ready.finish_merge",
+            &["pr", "ready", "-R", repo, pr_ref],
+        );
+    }
+    pr_ready_finish_merge(repo, pr_ref).map(|_| true)
+}
+
+pub(super) fn pr_merge_finish(repo: &str, pr_ref: &str) -> Result<()> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("pr.merge.finish")? {
+        return run_gh_status_shell(
+            "pr.merge.finish",
+            &["pr", "merge", "-R", repo, "--squash", pr_ref],
+        );
+    }
+    merge_pr_octocrab(repo, pr_ref)
 }
 
 #[cfg(test)]

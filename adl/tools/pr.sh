@@ -2322,7 +2322,7 @@ Flags:
   (cards)   --no-fetch-issue                   Do not fetch issue title/labels (uses issue-<n> title)
   (card/output) --version <v0.2>               Override detected version (otherwise inferred from issue labels version:vX.Y)
   (finish) --output-card <output_card.md>          REQUIRED: output card path (must exist)
-  (finish) --merge                              Opt-in: ready + squash-merge + delete branch.
+  (finish) --merge                              Opt-in: ready + squash-merge + local closeout; remote branch deletion is not implied.
   (finish) --idempotent                         Safe no-op only when existing merged PR matches current finish inputs.
   (card/run) --slug <slug>                     Use an explicit slug instead of fetching the issue title.
   (run)     --title "<title>"                  Optional; accepted for UX symmetry and used to derive slug when --slug is omitted.
