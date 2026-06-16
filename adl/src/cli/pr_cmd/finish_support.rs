@@ -728,10 +728,10 @@ fn finish_path_is_docs_only(path: &str) -> bool {
     if trimmed.starts_with("adl/tools/skills/docs/") {
         return finish_path_has_docs_artifact_extension(trimmed);
     }
-    if trimmed.starts_with("adl/tools/skills/") {
-        if trimmed.ends_with("/SKILL.md") || trimmed.contains("/references/") {
-            return finish_path_has_docs_artifact_extension(trimmed);
-        }
+    if trimmed.starts_with("adl/tools/skills/")
+        && (trimmed.ends_with("/SKILL.md") || trimmed.contains("/references/"))
+    {
+        return finish_path_has_docs_artifact_extension(trimmed);
     }
     !trimmed.contains('/')
         && Path::new(trimmed)
