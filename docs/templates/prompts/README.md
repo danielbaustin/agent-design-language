@@ -140,6 +140,14 @@ Execution preflight is intentionally stricter than enum validation:
 - `SOR` may be `completed` only after terminal closeout truth is present.
 - `SOR` execution `Status` remains separate from card lifecycle `Card Status`.
 
+## Host-Path Scan Wording
+
+Lifecycle cards must not record concrete machine-local absolute paths. It is
+acceptable to describe the scan patterns that were checked, such as `/Users/`,
+`/home/`, `/tmp/`, and `/var/folders/`, when the card also states that no
+concrete host-local paths were recorded. Do not include example usernames,
+temporary directories, or full local artifact paths in durable cards.
+
 ## Compatibility
 
 Older files under `adl/templates/cards/` and legacy structured-prompt template

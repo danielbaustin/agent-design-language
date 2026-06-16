@@ -170,8 +170,31 @@ pub(super) fn ensure_no_absolute_host_path(path: &Path, prompt_type: &str) -> Re
 pub(super) fn contains_absolute_host_path_in_text(text: &str) -> bool {
     ["/Users/", "/home/", "/tmp/", "/var/folders/"]
         .iter()
-        .any(|needle| text.contains(needle))
+        .any(|needle| contains_unix_absolute_host_path(text, needle))
         || text.contains(":\\")
+}
+
+fn contains_unix_absolute_host_path(text: &str, prefix: &str) -> bool {
+    let mut offset = 0usize;
+    while let Some(index) = text[offset..].find(prefix) {
+        let end = offset + index + prefix.len();
+        if !text[end..]
+            .chars()
+            .next()
+            .is_none_or(is_safe_scan_pattern_delimiter)
+        {
+            return true;
+        }
+        offset = end;
+    }
+    false
+}
+
+fn is_safe_scan_pattern_delimiter(ch: char) -> bool {
+    matches!(
+        ch,
+        '`' | '\'' | '"' | ')' | ']' | '}' | ',' | ';' | ':' | '\n' | '\r'
+    ) || ch.is_whitespace()
 }
 
 pub(super) fn contains_secret_like_token(text: &str) -> bool {
