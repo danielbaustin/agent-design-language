@@ -1955,7 +1955,7 @@ mod tests {
         let _guard = env_lock();
         let policy_env = clear_github_policy_env();
         let temp = unique_temp_dir("adl-octocrab-transport");
-        let (base_uri, server) = spawn_octocrab_test_server(22);
+        let (base_uri, server) = spawn_octocrab_test_server(23);
         unsafe {
             std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
             std::env::set_var("GITHUB_TOKEN", "test-token");
@@ -2169,7 +2169,7 @@ mod tests {
         .expect("issue close not planned");
 
         let seen = server.join().expect("server join");
-        assert_eq!(seen.len(), 22, "unexpected mock GitHub calls: {seen:#?}");
+        assert_eq!(seen.len(), 23, "unexpected mock GitHub calls: {seen:#?}");
         assert!(seen
             .iter()
             .any(|call| call.starts_with("POST /repos/owner/repo/pulls ")));
