@@ -263,6 +263,12 @@ filter_token_for_path() {
     adl/src/demo/*/*/*/*.rs|adl/src/demo/*/*/*/*/*.rs)
       return 1
       ;;
+    adl/src/bin/adl_lint_prompt_spec.rs|\
+    adl/src/bin/adl_prompt_template.rs|\
+    adl/src/bin/adl_validate_structured_prompt.rs)
+      printf 'tooling_cmd'
+      return 0
+      ;;
     adl/src/bin/[^/]*.rs)
       basename "$path" .rs
       return 0

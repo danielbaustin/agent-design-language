@@ -66,6 +66,24 @@ EOF
   ./adl/tools/lint_prompt_spec.sh --input .adl/cards/761/input_761.md >/dev/null
 )
 
+cat > "$repo/fake-tooling-delegate" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf '%s\n' "$@" > "$FAKE_TOOLING_ARGS"
+exit 0
+EOF
+chmod +x "$repo/fake-tooling-delegate"
+(
+  cd "$repo"
+  FAKE_TOOLING_ARGS="$repo/fake-tooling-args.txt" \
+    ADL_TOOLING_RUST_BIN="$repo/fake-tooling-delegate" \
+    ./adl/tools/lint_prompt_spec.sh --input .adl/cards/761/input_761.md >/dev/null
+)
+grep -Fqx -- "tooling" "$repo/fake-tooling-args.txt"
+grep -Fqx -- "lint-prompt-spec" "$repo/fake-tooling-args.txt"
+grep -Fqx -- "--input" "$repo/fake-tooling-args.txt"
+grep -Fqx -- ".adl/cards/761/input_761.md" "$repo/fake-tooling-args.txt"
+
 cat > "$repo/.adl/cards/761/input_task_bundle_761.md" <<'EOF'
 # ADL Input Card
 

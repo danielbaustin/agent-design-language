@@ -214,6 +214,38 @@ EOF
 "$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_valid.md"
 "$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_valid.md"
 
+cat >"$tmpdir/fake-validator" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf '%s\n' "$@" > "$FAKE_VALIDATOR_ARGS"
+exit 0
+EOF
+chmod +x "$tmpdir/fake-validator"
+FAKE_VALIDATOR_ARGS="$tmpdir/fake-validator-args.txt" \
+  ADL_STRUCTURED_PROMPT_VALIDATOR_BIN="$tmpdir/fake-validator" \
+  "$VALIDATOR" --type stp --input "$tmpdir/stp_valid.md" >/dev/null
+grep -Fqx -- "--type" "$tmpdir/fake-validator-args.txt"
+grep -Fqx -- "stp" "$tmpdir/fake-validator-args.txt"
+grep -Fqx -- "--input" "$tmpdir/fake-validator-args.txt"
+grep -Fqx -- "$tmpdir/stp_valid.md" "$tmpdir/fake-validator-args.txt"
+
+cat >"$tmpdir/fake-tooling-delegate" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf '%s\n' "$@" > "$FAKE_TOOLING_ARGS"
+exit 0
+EOF
+chmod +x "$tmpdir/fake-tooling-delegate"
+FAKE_TOOLING_ARGS="$tmpdir/fake-tooling-args.txt" \
+  ADL_TOOLING_RUST_BIN="$tmpdir/fake-tooling-delegate" \
+  "$VALIDATOR" --type stp --input "$tmpdir/stp_valid.md" >/dev/null
+grep -Fqx -- "tooling" "$tmpdir/fake-tooling-args.txt"
+grep -Fqx -- "validate-structured-prompt" "$tmpdir/fake-tooling-args.txt"
+grep -Fqx -- "--type" "$tmpdir/fake-tooling-args.txt"
+grep -Fqx -- "stp" "$tmpdir/fake-tooling-args.txt"
+grep -Fqx -- "--input" "$tmpdir/fake-tooling-args.txt"
+grep -Fqx -- "$tmpdir/stp_valid.md" "$tmpdir/fake-tooling-args.txt"
+
 cp "$tmpdir/stp_valid.md" "$tmpdir/stp_invalid_card_status.md"
 perl -0pi -e 's/status: "draft"/status: "draft"\ncard_status: "nearly-ready"/' "$tmpdir/stp_invalid_card_status.md"
 if "$VALIDATOR" --type stp --input "$tmpdir/stp_invalid_card_status.md" >"$tmpdir/stp_invalid_card_status.out" 2>&1; then

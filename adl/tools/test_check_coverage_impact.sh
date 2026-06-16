@@ -86,6 +86,20 @@ run_artifacts_runtime_filters="$TMP/run-artifacts-runtime-filters.txt"
 bash "$SCRIPT" --changed-files "$run_artifacts_runtime_changed" --print-risk-filters >"$run_artifacts_runtime_filters"
 grep -Fx "run_state" "$run_artifacts_runtime_filters" >/dev/null
 
+direct_tooling_binaries_changed="$TMP/direct-tooling-binaries-changed.txt"
+cat >"$direct_tooling_binaries_changed" <<'EOF'
+A	adl/src/bin/adl_lint_prompt_spec.rs
+M	adl/src/bin/adl_prompt_template.rs
+M	adl/src/bin/adl_validate_structured_prompt.rs
+EOF
+direct_tooling_binaries_filters="$TMP/direct-tooling-binaries-filters.txt"
+bash "$SCRIPT" --changed-files "$direct_tooling_binaries_changed" --print-risk-filters >"$direct_tooling_binaries_filters"
+grep -Fx "tooling_cmd" "$direct_tooling_binaries_filters" >/dev/null
+if [ "$(wc -l <"$direct_tooling_binaries_filters" | tr -d ' ')" -ne 1 ]; then
+  echo "expected direct tooling binaries to collapse to the shared tooling_cmd filter" >&2
+  exit 1
+fi
+
 gws_live_changed="$TMP/gws-live-changed.txt"
 cat >"$gws_live_changed" <<'EOF'
 A	adl/src/gws_live_capability_execution_surface.rs

@@ -24,8 +24,28 @@ resolve_manifest_root() {
 }
 
 ROOT_DIR="$(resolve_manifest_root)"
-TOOLING_BIN="${ADL_TOOLING_RUST_BIN:-${ADL_PR_RUST_BIN:-}}"
-if [[ -n "$TOOLING_BIN" ]]; then
-  exec "$TOOLING_BIN" tooling validate-structured-prompt "$@"
+LEGACY_TOOLING_BIN="${ADL_TOOLING_RUST_BIN:-${ADL_PR_RUST_BIN:-}}"
+VALIDATOR_BIN="${ADL_STRUCTURED_PROMPT_VALIDATOR_BIN:-}"
+
+if [[ -n "$LEGACY_TOOLING_BIN" && ! -x "$LEGACY_TOOLING_BIN" ]]; then
+  LEGACY_TOOLING_BIN=""
 fi
-exec cargo run --quiet --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl -- tooling validate-structured-prompt "$@"
+
+if [[ -n "$VALIDATOR_BIN" && ! -x "$VALIDATOR_BIN" ]]; then
+  VALIDATOR_BIN=""
+fi
+
+if [[ -n "$LEGACY_TOOLING_BIN" ]]; then
+  exec "$LEGACY_TOOLING_BIN" tooling validate-structured-prompt "$@"
+fi
+
+if [[ -n "$VALIDATOR_BIN" ]]; then
+  exec "$VALIDATOR_BIN" "$@"
+fi
+
+DEFAULT_BIN="$ROOT_DIR/adl/target/debug/adl-validate-structured-prompt"
+if [[ -x "$DEFAULT_BIN" ]]; then
+  exec "$DEFAULT_BIN" "$@"
+fi
+
+exec cargo run --quiet --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl-validate-structured-prompt -- "$@"

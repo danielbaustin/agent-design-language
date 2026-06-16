@@ -24,8 +24,28 @@ resolve_manifest_root() {
 }
 
 ROOT_DIR="$(resolve_manifest_root)"
-TOOLING_BIN="${ADL_TOOLING_RUST_BIN:-${ADL_PR_RUST_BIN:-}}"
-if [[ -n "$TOOLING_BIN" ]]; then
-  exec "$TOOLING_BIN" tooling lint-prompt-spec "$@"
+LEGACY_TOOLING_BIN="${ADL_TOOLING_RUST_BIN:-${ADL_PR_RUST_BIN:-}}"
+LINT_BIN="${ADL_LINT_PROMPT_SPEC_BIN:-}"
+
+if [[ -n "$LEGACY_TOOLING_BIN" && ! -x "$LEGACY_TOOLING_BIN" ]]; then
+  LEGACY_TOOLING_BIN=""
 fi
-exec cargo run --quiet --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl -- tooling lint-prompt-spec "$@"
+
+if [[ -n "$LINT_BIN" && ! -x "$LINT_BIN" ]]; then
+  LINT_BIN=""
+fi
+
+if [[ -n "$LEGACY_TOOLING_BIN" ]]; then
+  exec "$LEGACY_TOOLING_BIN" tooling lint-prompt-spec "$@"
+fi
+
+if [[ -n "$LINT_BIN" ]]; then
+  exec "$LINT_BIN" "$@"
+fi
+
+DEFAULT_BIN="$ROOT_DIR/adl/target/debug/adl-lint-prompt-spec"
+if [[ -x "$DEFAULT_BIN" ]]; then
+  exec "$DEFAULT_BIN" "$@"
+fi
+
+exec cargo run --quiet --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl-lint-prompt-spec -- "$@"
