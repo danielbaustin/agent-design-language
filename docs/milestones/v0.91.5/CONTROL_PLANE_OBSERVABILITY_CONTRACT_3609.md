@@ -59,6 +59,31 @@ while observability events continue to flow into the compatibility mirror file.
 `ADL_OBSERVABILITY=0` disables event emission for compatibility tests that need
 a completely quiet stderr surface.
 
+## PR Validation Wait Runbook
+
+When `pr.sh finish --merge` waits on GitHub PR validation, operators should be
+able to understand the wait from `adl_event` lines alone. To keep stdout clean
+while tailing the wait surface:
+
+```bash
+ADL_OBSERVABILITY_STDERR=0 \
+ADL_OBSERVABILITY_LOG=.adl/logs/pr-validation-wait.log \
+bash adl/tools/pr.sh finish <issue> --title "<title>" --paths "<paths>" --ready --merge
+
+tail -f .adl/logs/pr-validation-wait.log | rg 'stage=pr.validation.wait|operation=pr.validation.status'
+```
+
+The wait events use `stage=pr.validation.wait` with `result=pending`, `success`,
+`failed`, `cancelled`, `skipped`, or `timed_out`. Each event records
+`pr_number`, `commit_sha`, `check_name`, `job_run_id`, `pr_state`, `is_draft`,
+`wait_reason`, `status`, `conclusion`, `elapsed_ms`, `poll_count`, and
+`next_poll_delay_ms`. Empty check rollups remain `pending` until checks report
+or the wait times out; explicit skipped check conclusions remain `skipped`.
+Transient GitHub
+transport retries remain separate `stage=github_octocrab result=retry` events
+with `operation=pr.validation.status`, so a check failure and a GitHub transport
+failure are distinguishable in the same tail.
+
 ## OTEL Mapping
 
 The event vocabulary is intentionally OTEL-ready:

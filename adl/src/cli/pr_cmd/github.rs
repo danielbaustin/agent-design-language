@@ -13,7 +13,7 @@ use ::adl::control_plane::resolve_primary_checkout_root;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::process::Command;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct RepoParts {
@@ -83,6 +83,98 @@ struct PullRequestNodeIdPullRequest {
 struct MarkPullRequestReadyResponse {
     #[serde(rename = "markPullRequestReadyForReview")]
     _mark_pull_request_ready_for_review: Option<serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestValidationStatusResponse {
+    repository: Option<PullRequestValidationRepository>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestValidationRepository {
+    #[serde(rename = "pullRequest")]
+    pull_request: Option<PullRequestValidationPullRequest>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestValidationPullRequest {
+    number: u64,
+    #[serde(rename = "headRefOid")]
+    head_ref_oid: String,
+    state: String,
+    #[serde(rename = "isDraft")]
+    is_draft: bool,
+    #[serde(rename = "statusCheckRollup")]
+    status_check_rollup: Option<PullRequestValidationRollup>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestValidationRollup {
+    contexts: Option<PullRequestValidationContextConnection>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestValidationContextConnection {
+    nodes: Option<Vec<Option<PullRequestValidationContextNode>>>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(tag = "__typename")]
+enum PullRequestValidationContextNode {
+    CheckRun {
+        name: String,
+        status: Option<String>,
+        conclusion: Option<String>,
+        #[serde(rename = "databaseId")]
+        database_id: Option<i64>,
+        #[serde(rename = "checkSuite")]
+        check_suite: Option<PullRequestValidationCheckSuite>,
+    },
+    StatusContext {
+        context: String,
+        state: Option<String>,
+    },
+    #[serde(other)]
+    Other,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestValidationCheckSuite {
+    #[serde(rename = "workflowRun")]
+    workflow_run: Option<PullRequestValidationWorkflowRun>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PullRequestValidationWorkflowRun {
+    #[serde(rename = "databaseId")]
+    database_id: Option<i64>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct PrValidationCheckSnapshot {
+    name: String,
+    status: String,
+    conclusion: String,
+    job_run_id: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct PrValidationSnapshot {
+    pr_number: u64,
+    commit_sha: String,
+    state: String,
+    is_draft: bool,
+    checks: Vec<PrValidationCheckSnapshot>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PrValidationDisposition {
+    Pending,
+    Success,
+    Failed,
+    Cancelled,
+    Skipped,
+    TimedOut,
 }
 
 fn current_pr_url_octocrab(repo: &str, branch: &str) -> Result<Option<String>> {
@@ -351,6 +443,436 @@ fn merge_pr_octocrab(repo: &str, pr_ref: &str) -> Result<()> {
         })?;
         Ok(())
     })
+}
+
+pub(super) fn wait_for_pr_validation_finish(repo: &str, pr_ref: &str) -> Result<()> {
+    let timeout = pr_validation_wait_timeout();
+    let poll_delay = pr_validation_wait_poll_delay();
+    let started = Instant::now();
+    let mut poll_count = 0usize;
+
+    loop {
+        poll_count += 1;
+        let snapshot = pr_validation_status_octocrab(repo, pr_ref)?;
+        let disposition = classify_pr_validation_snapshot(&snapshot);
+        let next_delay = if disposition == PrValidationDisposition::Pending {
+            poll_delay
+        } else {
+            Duration::ZERO
+        };
+        emit_pr_validation_wait_snapshot(&snapshot, disposition, started, poll_count, next_delay);
+
+        match disposition {
+            PrValidationDisposition::Success | PrValidationDisposition::Skipped => return Ok(()),
+            PrValidationDisposition::Failed => {
+                bail!(
+                    "pr validation failed for PR #{pr}: at least one check failed",
+                    pr = snapshot.pr_number
+                )
+            }
+            PrValidationDisposition::Cancelled => {
+                bail!(
+                    "pr validation cancelled for PR #{pr}: at least one check was cancelled",
+                    pr = snapshot.pr_number
+                )
+            }
+            PrValidationDisposition::TimedOut => {
+                bail!("pr validation timed out for PR #{}", snapshot.pr_number)
+            }
+            PrValidationDisposition::Pending => {
+                if started.elapsed() >= timeout {
+                    emit_pr_validation_wait_timeout(&snapshot, started, poll_count, Duration::ZERO);
+                    bail!(
+                        "pr validation timed out for PR #{} after {}ms",
+                        snapshot.pr_number,
+                        started.elapsed().as_millis()
+                    );
+                }
+                std::thread::sleep(poll_delay);
+            }
+        }
+    }
+}
+
+fn pr_validation_status_octocrab(repo: &str, pr_ref: &str) -> Result<PrValidationSnapshot> {
+    let repo_parts = parse_repo(repo)?;
+    let number = parse_pr_number(pr_ref)? as i64;
+    with_octocrab("pr.validation.status", |runtime, octo| {
+        let payload = serde_json::json!({
+            "query": r#"
+                query($owner: String!, $name: String!, $number: Int!) {
+                  repository(owner: $owner, name: $name) {
+                    pullRequest(number: $number) {
+                      number
+                      headRefOid
+                      state
+                      isDraft
+                      statusCheckRollup {
+                        contexts(first: 100) {
+                          nodes {
+                            __typename
+                            ... on CheckRun {
+                              name
+                              status
+                              conclusion
+                              databaseId
+                              checkSuite {
+                                workflowRun {
+                                  databaseId
+                                }
+                              }
+                            }
+                            ... on StatusContext {
+                              context
+                              state
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+            "#,
+            "variables": {
+                "owner": repo_parts.owner,
+                "name": repo_parts.name,
+                "number": number,
+            }
+        });
+        let response: PullRequestValidationStatusResponse =
+            block_on_octocrab(runtime, "pr.validation.status", || async {
+                octo.graphql::<PullRequestValidationStatusResponse>(&payload)
+                    .await
+            })?;
+        response
+            .repository
+            .and_then(|repo| repo.pull_request)
+            .map(pr_validation_snapshot_from_response)
+            .ok_or_else(|| anyhow!("GitHub did not return validation status for PR {pr_ref}"))
+    })
+}
+
+fn pr_validation_snapshot_from_response(
+    pr: PullRequestValidationPullRequest,
+) -> PrValidationSnapshot {
+    let checks = pr
+        .status_check_rollup
+        .and_then(|rollup| rollup.contexts)
+        .and_then(|contexts| contexts.nodes)
+        .unwrap_or_default()
+        .into_iter()
+        .flatten()
+        .filter_map(|node| match node {
+            PullRequestValidationContextNode::CheckRun {
+                name,
+                status,
+                conclusion,
+                database_id,
+                check_suite,
+            } => {
+                let job_run_id = check_suite
+                    .and_then(|suite| suite.workflow_run)
+                    .and_then(|run| run.database_id)
+                    .or(database_id)
+                    .map(|id| id.to_string())
+                    .unwrap_or_else(|| "unknown".to_string());
+                Some(PrValidationCheckSnapshot {
+                    name,
+                    status: status.unwrap_or_else(|| "UNKNOWN".to_string()),
+                    conclusion: conclusion.unwrap_or_else(|| "UNKNOWN".to_string()),
+                    job_run_id,
+                })
+            }
+            PullRequestValidationContextNode::StatusContext { context, state } => {
+                let state = state.unwrap_or_else(|| "UNKNOWN".to_string());
+                Some(PrValidationCheckSnapshot {
+                    name: context,
+                    status: status_context_state_to_status(&state).to_string(),
+                    conclusion: status_context_state_to_conclusion(&state).to_string(),
+                    job_run_id: "unknown".to_string(),
+                })
+            }
+            PullRequestValidationContextNode::Other => None,
+        })
+        .collect();
+    PrValidationSnapshot {
+        pr_number: pr.number,
+        commit_sha: pr.head_ref_oid,
+        state: pr.state,
+        is_draft: pr.is_draft,
+        checks,
+    }
+}
+
+fn classify_pr_validation_snapshot(snapshot: &PrValidationSnapshot) -> PrValidationDisposition {
+    if snapshot.state == "CLOSED" || snapshot.state == "MERGED" {
+        return PrValidationDisposition::Cancelled;
+    }
+    if snapshot.is_draft {
+        return PrValidationDisposition::Pending;
+    }
+    if snapshot.checks.is_empty() {
+        return PrValidationDisposition::Pending;
+    }
+    if snapshot
+        .checks
+        .iter()
+        .any(|check| validation_conclusion_is_cancelled(&check.conclusion))
+    {
+        return PrValidationDisposition::Cancelled;
+    }
+    if snapshot.checks.iter().any(|check| {
+        validation_conclusion_is_failed(&check.conclusion)
+            || status_context_failure_status(&check.status)
+    }) {
+        return PrValidationDisposition::Failed;
+    }
+    if snapshot
+        .checks
+        .iter()
+        .any(|check| validation_check_is_pending(&check.status, &check.conclusion))
+    {
+        return PrValidationDisposition::Pending;
+    }
+    if snapshot
+        .checks
+        .iter()
+        .all(|check| validation_conclusion_is_skipped(&check.conclusion))
+    {
+        return PrValidationDisposition::Skipped;
+    }
+    PrValidationDisposition::Success
+}
+
+fn emit_pr_validation_wait_snapshot(
+    snapshot: &PrValidationSnapshot,
+    disposition: PrValidationDisposition,
+    started: Instant,
+    poll_count: usize,
+    next_poll_delay: Duration,
+) {
+    if snapshot.checks.is_empty() {
+        let (status, conclusion) = match disposition {
+            PrValidationDisposition::Skipped => ("COMPLETED", "SKIPPED"),
+            PrValidationDisposition::TimedOut => ("TIMED_OUT", "TIMED_OUT"),
+            _ => ("PENDING", "UNKNOWN"),
+        };
+        emit_pr_validation_wait_event(
+            snapshot,
+            disposition,
+            "aggregate",
+            status,
+            conclusion,
+            "unknown",
+            started,
+            poll_count,
+            next_poll_delay,
+        );
+        return;
+    }
+    for check in &snapshot.checks {
+        let check_disposition = classify_pr_validation_check(check);
+        emit_pr_validation_wait_event(
+            snapshot,
+            check_disposition,
+            &check.name,
+            &check.status,
+            &check.conclusion,
+            &check.job_run_id,
+            started,
+            poll_count,
+            next_poll_delay,
+        );
+    }
+    emit_pr_validation_wait_event(
+        snapshot,
+        disposition,
+        "aggregate",
+        "COMPLETED",
+        disposition.as_conclusion(),
+        "unknown",
+        started,
+        poll_count,
+        next_poll_delay,
+    );
+}
+
+fn emit_pr_validation_wait_timeout(
+    snapshot: &PrValidationSnapshot,
+    started: Instant,
+    poll_count: usize,
+    next_poll_delay: Duration,
+) {
+    emit_pr_validation_wait_event(
+        snapshot,
+        PrValidationDisposition::TimedOut,
+        "aggregate",
+        "TIMED_OUT",
+        "TIMED_OUT",
+        "unknown",
+        started,
+        poll_count,
+        next_poll_delay,
+    );
+}
+
+#[allow(clippy::too_many_arguments)]
+fn emit_pr_validation_wait_event(
+    snapshot: &PrValidationSnapshot,
+    disposition: PrValidationDisposition,
+    check_name: &str,
+    status: &str,
+    conclusion: &str,
+    job_run_id: &str,
+    started: Instant,
+    poll_count: usize,
+    next_poll_delay: Duration,
+) {
+    let pr_number = snapshot.pr_number.to_string();
+    let elapsed_ms = started.elapsed().as_millis().to_string();
+    let poll_count = poll_count.to_string();
+    let next_poll_delay_ms = next_poll_delay.as_millis().to_string();
+    let is_draft = snapshot.is_draft.to_string();
+    let wait_reason = pr_validation_wait_reason(snapshot, disposition, check_name);
+    observability::emit_event(
+        "adl",
+        "pr.validation.wait",
+        disposition.as_event_result(),
+        &[
+            ("pr_number", pr_number.as_str()),
+            ("commit_sha", snapshot.commit_sha.as_str()),
+            ("check_name", check_name),
+            ("job_run_id", job_run_id),
+            ("pr_state", snapshot.state.as_str()),
+            ("is_draft", is_draft.as_str()),
+            ("wait_reason", wait_reason),
+            ("status", status),
+            ("conclusion", conclusion),
+            ("elapsed_ms", elapsed_ms.as_str()),
+            ("poll_count", poll_count.as_str()),
+            ("next_poll_delay_ms", next_poll_delay_ms.as_str()),
+        ],
+    );
+}
+
+fn pr_validation_wait_reason(
+    snapshot: &PrValidationSnapshot,
+    disposition: PrValidationDisposition,
+    check_name: &str,
+) -> &'static str {
+    if snapshot.is_draft && disposition == PrValidationDisposition::Pending {
+        "pr_draft"
+    } else if snapshot.checks.is_empty() && disposition == PrValidationDisposition::Pending {
+        "checks_not_reported"
+    } else if check_name == "aggregate" {
+        "aggregate"
+    } else {
+        "check_state"
+    }
+}
+
+fn classify_pr_validation_check(check: &PrValidationCheckSnapshot) -> PrValidationDisposition {
+    if validation_conclusion_is_cancelled(&check.conclusion) {
+        PrValidationDisposition::Cancelled
+    } else if validation_conclusion_is_failed(&check.conclusion)
+        || status_context_failure_status(&check.status)
+    {
+        PrValidationDisposition::Failed
+    } else if validation_check_is_pending(&check.status, &check.conclusion) {
+        PrValidationDisposition::Pending
+    } else if validation_conclusion_is_skipped(&check.conclusion) {
+        PrValidationDisposition::Skipped
+    } else {
+        PrValidationDisposition::Success
+    }
+}
+
+impl PrValidationDisposition {
+    fn as_event_result(self) -> &'static str {
+        match self {
+            Self::Pending => "pending",
+            Self::Success => "success",
+            Self::Failed => "failed",
+            Self::Cancelled => "cancelled",
+            Self::Skipped => "skipped",
+            Self::TimedOut => "timed_out",
+        }
+    }
+
+    fn as_conclusion(self) -> &'static str {
+        match self {
+            Self::Pending => "PENDING",
+            Self::Success => "SUCCESS",
+            Self::Failed => "FAILURE",
+            Self::Cancelled => "CANCELLED",
+            Self::Skipped => "SKIPPED",
+            Self::TimedOut => "TIMED_OUT",
+        }
+    }
+}
+
+fn validation_check_is_pending(status: &str, conclusion: &str) -> bool {
+    matches!(
+        status,
+        "QUEUED" | "REQUESTED" | "WAITING" | "PENDING" | "IN_PROGRESS" | "EXPECTED"
+    ) || conclusion == "UNKNOWN"
+        || conclusion.is_empty()
+}
+
+fn validation_conclusion_is_failed(conclusion: &str) -> bool {
+    matches!(
+        conclusion,
+        "FAILURE" | "TIMED_OUT" | "ACTION_REQUIRED" | "STARTUP_FAILURE" | "ERROR"
+    )
+}
+
+fn validation_conclusion_is_cancelled(conclusion: &str) -> bool {
+    conclusion == "CANCELLED"
+}
+
+fn validation_conclusion_is_skipped(conclusion: &str) -> bool {
+    matches!(conclusion, "SKIPPED" | "NEUTRAL")
+}
+
+fn status_context_failure_status(status: &str) -> bool {
+    matches!(status, "FAILURE" | "ERROR")
+}
+
+fn status_context_state_to_status(state: &str) -> &'static str {
+    match state {
+        "PENDING" => "PENDING",
+        "EXPECTED" => "EXPECTED",
+        "ERROR" => "ERROR",
+        "FAILURE" => "FAILURE",
+        "SUCCESS" => "SUCCESS",
+        _ => "UNKNOWN",
+    }
+}
+
+fn status_context_state_to_conclusion(state: &str) -> &'static str {
+    match state {
+        "SUCCESS" => "SUCCESS",
+        "FAILURE" | "ERROR" => "FAILURE",
+        "PENDING" | "EXPECTED" => "UNKNOWN",
+        _ => "UNKNOWN",
+    }
+}
+
+fn pr_validation_wait_timeout() -> Duration {
+    duration_env_ms("ADL_PR_VALIDATION_WAIT_TIMEOUT_MS", 15 * 60 * 1000)
+}
+
+fn pr_validation_wait_poll_delay() -> Duration {
+    duration_env_ms("ADL_PR_VALIDATION_WAIT_POLL_MS", 10 * 1000)
+}
+
+fn duration_env_ms(key: &str, default_ms: u64) -> Duration {
+    Duration::from_millis(
+        std::env::var(key)
+            .ok()
+            .and_then(|value| value.parse::<u64>().ok())
+            .unwrap_or(default_ms),
+    )
 }
 
 fn issue_comment_octocrab(repo: &str, issue: u32, body: &str) -> Result<()> {
@@ -868,6 +1390,7 @@ fn octocrab_operation_allows_retry(operation: &str) -> bool {
             | "pr.view.body"
             | "pr.view.closing_issues"
             | "pr.view.base_ref.finish_existing"
+            | "pr.validation.status"
             | "pr.edit.body_file"
             | "pr.edit.finish_existing"
             | "pr.ready"
@@ -2077,6 +2600,298 @@ mod tests {
         (format!("http://{bind_addr}"), handle)
     }
 
+    fn pr_validation_graphql_response(
+        status: &str,
+        conclusion: Option<&str>,
+        check_name: &str,
+    ) -> String {
+        serde_json::json!({
+            "data": {
+                "repository": {
+                    "pullRequest": {
+                        "number": 1159,
+                        "headRefOid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "state": "OPEN",
+                        "isDraft": false,
+                        "statusCheckRollup": {
+                            "contexts": {
+                                "nodes": [
+                                    {
+                                        "__typename": "CheckRun",
+                                        "name": check_name,
+                                        "status": status,
+                                        "conclusion": conclusion,
+                                        "databaseId": 991,
+                                        "checkSuite": {
+                                            "workflowRun": {
+                                                "databaseId": 8801
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        .to_string()
+    }
+
+    fn spawn_validation_status_transient_server() -> (String, thread::JoinHandle<Vec<String>>) {
+        let port = reserve_local_port();
+        let bind_addr = format!("127.0.0.1:{port}");
+        let server = Server::http(&bind_addr).expect("bind validation status server");
+        let handle = thread::spawn(move || {
+            let mut seen = Vec::new();
+            for attempt in 1..=2 {
+                let Some(mut request) = server
+                    .recv_timeout(Duration::from_secs(5))
+                    .expect("validation status server receive")
+                else {
+                    break;
+                };
+                let method = request.method().as_str().to_string();
+                let url = request.url().to_string();
+                let mut body = String::new();
+                let _ = request.as_reader().read_to_string(&mut body);
+                seen.push(format!("{method} {url} {body}"));
+                if attempt == 1 {
+                    let _ = request.respond(
+                        json_response(r#"{"message":"intermittent graphql fault"}"#)
+                            .with_status_code(502),
+                    );
+                } else {
+                    let _ = request.respond(json_response(pr_validation_graphql_response(
+                        "COMPLETED",
+                        Some("SUCCESS"),
+                        "adl-ci",
+                    )));
+                }
+            }
+            seen
+        });
+        (format!("http://{bind_addr}"), handle)
+    }
+
+    #[test]
+    fn pr_validation_wait_classifies_pending_failed_successful_and_skipped_states() {
+        let snapshot = |checks: Vec<PrValidationCheckSnapshot>| PrValidationSnapshot {
+            pr_number: 1159,
+            commit_sha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".to_string(),
+            state: "OPEN".to_string(),
+            is_draft: false,
+            checks,
+        };
+
+        assert_eq!(
+            classify_pr_validation_snapshot(&snapshot(vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "IN_PROGRESS".to_string(),
+                conclusion: "UNKNOWN".to_string(),
+                job_run_id: "8801".to_string(),
+            }])),
+            PrValidationDisposition::Pending
+        );
+        assert_eq!(
+            classify_pr_validation_snapshot(&snapshot(vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "FAILURE".to_string(),
+                job_run_id: "8801".to_string(),
+            }])),
+            PrValidationDisposition::Failed
+        );
+        assert_eq!(
+            classify_pr_validation_snapshot(&snapshot(vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "SUCCESS".to_string(),
+                job_run_id: "8801".to_string(),
+            }])),
+            PrValidationDisposition::Success
+        );
+        assert_eq!(
+            classify_pr_validation_snapshot(&snapshot(Vec::new())),
+            PrValidationDisposition::Pending
+        );
+        assert_eq!(
+            classify_pr_validation_snapshot(&snapshot(vec![PrValidationCheckSnapshot {
+                name: "optional-lane".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "SKIPPED".to_string(),
+                job_run_id: "8803".to_string(),
+            }])),
+            PrValidationDisposition::Skipped
+        );
+        assert_eq!(
+            classify_pr_validation_snapshot(&snapshot(vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "CANCELLED".to_string(),
+                job_run_id: "8801".to_string(),
+            }])),
+            PrValidationDisposition::Cancelled
+        );
+    }
+
+    #[test]
+    fn pr_validation_wait_emits_tail_friendly_events_for_terminal_and_pending_states() {
+        let _guard = env_lock();
+        let temp = unique_temp_dir("adl-pr-validation-wait-log");
+        let log_path = temp.join("events.log");
+        unsafe {
+            std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
+            std::env::set_var(
+                "ADL_OBSERVABILITY_LOG",
+                log_path.to_str().expect("log path utf8"),
+            );
+        }
+        let snapshot = PrValidationSnapshot {
+            pr_number: 1159,
+            commit_sha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".to_string(),
+            state: "OPEN".to_string(),
+            is_draft: false,
+            checks: vec![
+                PrValidationCheckSnapshot {
+                    name: "adl-ci".to_string(),
+                    status: "IN_PROGRESS".to_string(),
+                    conclusion: "UNKNOWN".to_string(),
+                    job_run_id: "8801".to_string(),
+                },
+                PrValidationCheckSnapshot {
+                    name: "adl-coverage".to_string(),
+                    status: "COMPLETED".to_string(),
+                    conclusion: "FAILURE".to_string(),
+                    job_run_id: "8802".to_string(),
+                },
+            ],
+        };
+
+        emit_pr_validation_wait_snapshot(
+            &snapshot,
+            PrValidationDisposition::Failed,
+            Instant::now(),
+            3,
+            Duration::from_millis(250),
+        );
+        let success = PrValidationSnapshot {
+            checks: vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "SUCCESS".to_string(),
+                job_run_id: "8801".to_string(),
+            }],
+            ..snapshot.clone()
+        };
+        emit_pr_validation_wait_snapshot(
+            &success,
+            PrValidationDisposition::Success,
+            Instant::now(),
+            5,
+            Duration::ZERO,
+        );
+        emit_pr_validation_wait_timeout(&snapshot, Instant::now(), 4, Duration::ZERO);
+        let no_checks_pending = PrValidationSnapshot {
+            checks: Vec::new(),
+            ..snapshot.clone()
+        };
+        emit_pr_validation_wait_snapshot(
+            &no_checks_pending,
+            PrValidationDisposition::Pending,
+            Instant::now(),
+            1,
+            Duration::from_millis(250),
+        );
+        let draft_no_checks = PrValidationSnapshot {
+            is_draft: true,
+            checks: Vec::new(),
+            ..snapshot.clone()
+        };
+        emit_pr_validation_wait_snapshot(
+            &draft_no_checks,
+            PrValidationDisposition::Pending,
+            Instant::now(),
+            2,
+            Duration::from_millis(250),
+        );
+
+        let log = fs::read_to_string(&log_path).expect("read validation wait log");
+        assert!(log.contains("stage=pr.validation.wait"));
+        assert!(log.contains("result=pending"));
+        assert!(log.contains("result=success"));
+        assert!(log.contains("result=failed"));
+        assert!(log.contains("result=timed_out"));
+        assert!(log.contains("pr_number=1159"));
+        assert!(log.contains("commit_sha=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+        assert!(log.contains("check_name=adl-ci"));
+        assert!(log.contains("job_run_id=8801"));
+        assert!(log.contains("pr_state=OPEN"));
+        assert!(log.contains("is_draft=true"));
+        assert!(log.contains("wait_reason=pr_draft"));
+        assert!(log.contains("wait_reason=checks_not_reported"));
+        assert!(log.contains("poll_count=3"));
+        assert!(log.contains("next_poll_delay_ms=250"));
+
+        unsafe {
+            std::env::remove_var("ADL_OBSERVABILITY_STDERR");
+            std::env::remove_var("ADL_OBSERVABILITY_LOG");
+        }
+    }
+
+    #[test]
+    fn pr_validation_status_query_retries_transient_transport_and_returns_success_snapshot() {
+        let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
+        let temp = unique_temp_dir("adl-pr-validation-status-retry");
+        let log_path = temp.join("events.log");
+        let (base_uri, server) = spawn_validation_status_transient_server();
+        unsafe {
+            std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+            std::env::set_var("GITHUB_TOKEN", "test-token");
+            std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+            std::env::set_var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS", "2");
+            std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
+            std::env::set_var(
+                "ADL_OBSERVABILITY_LOG",
+                log_path.to_str().expect("log path utf8"),
+            );
+        }
+
+        let snapshot = pr_validation_status_octocrab("owner/repo", "1159")
+            .expect("validation status snapshot after retry");
+        assert_eq!(snapshot.pr_number, 1159);
+        assert_eq!(
+            snapshot.commit_sha,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
+        assert_eq!(snapshot.checks.len(), 1);
+        assert_eq!(snapshot.checks[0].name, "adl-ci");
+        assert_eq!(snapshot.checks[0].status, "COMPLETED");
+        assert_eq!(snapshot.checks[0].conclusion, "SUCCESS");
+        assert_eq!(snapshot.checks[0].job_run_id, "8801");
+
+        let log = fs::read_to_string(&log_path).expect("read validation status log");
+        assert!(log.contains("stage=github_octocrab"));
+        assert!(log.contains("operation=pr.validation.status"));
+        assert!(log.contains("result=retry"));
+        assert!(log.contains("result=completed"));
+        let seen = server.join().expect("server join");
+        assert_eq!(
+            seen.len(),
+            2,
+            "unexpected validation status calls: {seen:#?}"
+        );
+        assert!(seen.iter().all(|call| call.starts_with("POST /graphql ")));
+
+        unsafe {
+            std::env::remove_var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS");
+            std::env::remove_var("ADL_OBSERVABILITY_STDERR");
+            std::env::remove_var("ADL_OBSERVABILITY_LOG");
+        }
+        restore_github_policy_env(policy_env);
+    }
+
     #[test]
     fn octocrab_transport_covers_pr_and_issue_operations_against_mock_github() {
         let _guard = env_lock();
@@ -2489,6 +3304,7 @@ exit 1
     #[test]
     fn octocrab_retry_policy_blocks_non_idempotent_mutations() {
         assert!(octocrab_operation_allows_retry("pr.list.current_branch"));
+        assert!(octocrab_operation_allows_retry("pr.validation.status"));
         assert!(octocrab_operation_allows_retry("issue.view.title"));
         assert!(octocrab_operation_allows_retry("issue.close"));
         assert!(!octocrab_operation_allows_retry("issue.comment"));

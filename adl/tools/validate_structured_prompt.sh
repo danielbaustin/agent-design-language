@@ -75,6 +75,24 @@ run_if_executable() {
   fi
 }
 
+run_target_dir_validator_if_present() {
+  local target_dir="$1"
+  shift
+  if [[ -z "$target_dir" ]]; then
+    return 0
+  fi
+  case "$target_dir" in
+    /*)
+      run_if_executable "$target_dir/debug/adl-validate-structured-prompt" "$@"
+      ;;
+    *)
+      run_if_executable "$PWD/$target_dir/debug/adl-validate-structured-prompt" "$@"
+      run_if_executable "$ROOT_DIR/adl/$target_dir/debug/adl-validate-structured-prompt" "$@"
+      run_if_executable "$PRIMARY_ROOT/adl/$target_dir/debug/adl-validate-structured-prompt" "$@"
+      ;;
+  esac
+}
+
 ROOT_DIR="$(resolve_manifest_root)"
 PRIMARY_ROOT="$(resolve_primary_root "$ROOT_DIR")"
 EXPLICIT_VALIDATOR_BIN="${ADL_STRUCTURED_PROMPT_VALIDATOR_BIN:-}"
@@ -87,8 +105,12 @@ if [[ -n "$EXPLICIT_VALIDATOR_BIN" && ! -x "$EXPLICIT_VALIDATOR_BIN" ]]; then
 fi
 
 run_if_executable "$EXPLICIT_VALIDATOR_BIN" "$@"
+run_target_dir_validator_if_present "${CARGO_TARGET_DIR:-}" "$@"
+run_target_dir_validator_if_present "${CARGO_LLVM_COV_TARGET_DIR:-}" "$@"
 run_if_executable "$ROOT_DIR/adl/target/debug/adl-validate-structured-prompt" "$@"
 run_if_executable "$PRIMARY_ROOT/adl/target/debug/adl-validate-structured-prompt" "$@"
+run_if_executable "$ROOT_DIR/adl/target/llvm-cov-target/debug/adl-validate-structured-prompt" "$@"
+run_if_executable "$PRIMARY_ROOT/adl/target/llvm-cov-target/debug/adl-validate-structured-prompt" "$@"
 if [[ "$DISABLE_PATH_LOOKUP" != "1" ]] && command -v adl-validate-structured-prompt >/dev/null 2>&1; then
   exec adl-validate-structured-prompt "$@"
 fi
@@ -98,8 +120,12 @@ if [[ "$ALLOW_CARGO_FALLBACK" != "1" ]]; then
 ERROR: missing dedicated adl-validate-structured-prompt binary.
 Expected one of:
 - ADL_STRUCTURED_PROMPT_VALIDATOR_BIN
+- CARGO_TARGET_DIR/debug/adl-validate-structured-prompt
+- CARGO_LLVM_COV_TARGET_DIR/debug/adl-validate-structured-prompt
 - $ROOT_DIR/adl/target/debug/adl-validate-structured-prompt
 - $PRIMARY_ROOT/adl/target/debug/adl-validate-structured-prompt
+- $ROOT_DIR/adl/target/llvm-cov-target/debug/adl-validate-structured-prompt
+- $PRIMARY_ROOT/adl/target/llvm-cov-target/debug/adl-validate-structured-prompt
 - adl-validate-structured-prompt on PATH
 Build it first with: cargo build --manifest-path $PRIMARY_ROOT/adl/Cargo.toml --bin adl-validate-structured-prompt
 Set ADL_STRUCTURED_PROMPT_VALIDATOR_ALLOW_CARGO_FALLBACK=1 only for explicit bootstrap/debug use.
