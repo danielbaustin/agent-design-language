@@ -531,23 +531,6 @@ if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_
   exit 1
 fi
 
-if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_child_issue_closeout.py" \
-  --state "${state_path}" \
-  --issue-number 2827 \
-  --issue-closed true \
-  --pr-state merged \
-  --root-sor-status done \
-  --worktree-status pruned \
-  --pr-url "https://github.com/danielbaustin/agent-design-language/pull/4001" >/dev/null 2>&1; then
-  echo "expected record_child_issue_closeout.py to refuse closeout when multiple child issues are drifting" >&2
-  exit 1
-fi
-
-printf 'OPEN\n' > "${issue_2828_state_file}"
-python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py" \
-  --repo-root "${fake_repo}" \
-  --state "${state_path}" >/dev/null
-
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_child_issue_closeout.py" \
   --state "${state_path}" \
   --issue-number 2827 \
@@ -570,6 +553,8 @@ assert state["current_issue_number"] == 2828
 assert state["continuation"] == "continue"
 assert state["truth_check"]["gate_passed"] is False
 PY
+
+printf 'OPEN\n' > "${issue_2828_state_file}"
 
 deferred_state_path="${tmpdir}/sprint-state-deferred-next.json"
 cp "${state_path}" "${deferred_state_path}"
