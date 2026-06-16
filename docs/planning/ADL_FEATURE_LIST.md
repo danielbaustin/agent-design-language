@@ -119,13 +119,25 @@ contracts it depends on.
 
 ## Current Repo Status
 
-The current repo truth is:
-- active milestone: `v0.91.4`
-- current crate version on the active release line: `0.91.4`
-- current milestone state: `v0.91.3` is complete and `v0.91.4` is active; the
-  v0.91.4 issue wave and sprint umbrellas are open, C-SDLC default-operation
-  hardening is underway, and validation-tail/Parallel Validation Fabric work
-  is being promoted into the active milestone plan
+Current roadmap planning truth as of 2026-06-15:
+- the feature-doc production wave is tracked as issue `#3779` with child
+  issues `#3778`, `#3780`, `#3781`, and `#3782`
+- `v0.91.6` is the first pre-v0.92 bridge/readiness tranche
+- `v0.91.7` is now planned as the second required pre-v0.92 bridge tranche
+- `v0.92` remains the first true identity, continuity, and birthday milestone
+- `v0.95` remains MVP convergence and packaging, not first implementation of
+  major cognitive or product systems
+
+Release and issue closeout truth still lives in the milestone release records,
+issue cards, PRs, and review packets. This feature list records roadmap
+placement and capability state; it does not close or approve milestones.
+
+Recent completed/planned milestone reading:
+- `v0.91.4` completed the C-SDLC default-operation hardening band
+- `v0.91.5` carried bridge/tooling/provider/public-record pressure toward the
+  pre-v0.92 path
+- `v0.91.6` and `v0.91.7` are the planned bridge/readiness tranches before
+  v0.92 activation
 - most recently completed tooling/workflow-pressure milestone package: `v0.91.2`
 - most recently completed inhabited-runtime milestone package: `v0.91.1`
 - most recently completed moral-governance milestone package: `v0.91`
@@ -157,9 +169,12 @@ That means the feature story should be read this way:
 - `v0.91.2` is the completed tooling, evaluation, productization, publication,
   and workflow pressure-release band
 - `v0.91.3` is the completed first Cognitive SDLC implementation slice
-- `v0.91.4` is the active Cognitive SDLC default-operation hardening band
-- `v0.92` through `v0.95` are the later planned identity, governance,
-  publication, integration, and MVP-convergence bands
+- `v0.91.4` is the completed Cognitive SDLC default-operation hardening band
+- `v0.91.5` through `v0.91.7` are the pre-v0.92 bridge, review, logging,
+  tooling, reliability, security, resilience, Curiosity, Constructability, and
+  reasoning-graph readiness path
+- `v0.92` through `v0.95` are the planned identity, governance, secure
+  execution, product-proof, and MVP-convergence bands
 
 ## ADL at a Glance
 
@@ -247,7 +262,7 @@ ADL already provides a serious platform baseline:
 | Third-party review and review-quality gates | Implemented baseline | v0.90.1 WP-15A, v0.90.2 review-tail planning, review handoff packets, finding disposition | Release-tail completion target: every milestone through `v0.95` |
 | ANRM / shepherd-model experiments | Partially implemented | v0.90.1 ANRM Gemma scaffold comparison and ten-trial results | Placement complete in `v0.91.1`; evaluator/training path complete by `v0.95` |
 | CSM Shepherd model and Gemma training path | MVP-scoped | `docs/milestones/v0.95/features/CSM_SHEPHERD_AND_GEMMA_TRAINING_PATH_v0.95.md` plus ANRM comparison/trace-dataset foundations | Placement and trace dataset complete in `v0.91.1`; training/evaluator MVP complete by `v0.95` |
-| Aptitude Atlas model-evaluation platform | MVP-scoped | `docs/milestones/v0.95/features/APTITUDE_ATLAS_MODEL_EVALUATION_PLATFORM_v0.95.md` plus the capability/aptitude harness baseline | Harness complete in `v0.91.1`; productized evaluation complete by `v0.95` |
+| Aptitude Atlas model-evaluation platform | Post-MVP productization; v0.95 evidence consumption only | capability/aptitude harness baseline and local capability-testing source planning | Harness baseline complete in `v0.91.1`; `v0.95` consumes capability-testing evidence only; Aptitude Atlas product/baseline productization is post-v0.95 |
 | Governed tool calls and capability contracts | Implemented baseline | `docs/milestones/v0.90.5` Governed Tools v1.0 planning, Universal Tool Schema, ADL Capability Contract, and tool-to-capability compiler design | Completed baseline; benchmark and conformance expansion in `v0.91.2` |
 | Cognitive Compression Cost instrumentation | Implemented first pass | CCC v0 fixture extractor, generated comparison report, validation command, metric draft, and milestone-compression planning | Trace-backed metric completion target: `v0.91.1`; reporting completion target: `v0.95` |
 | Web-based code editor integration | MVP-scoped | `docs/milestones/v0.95/features/WEB_BASED_CODE_EDITOR_INTEGRATION_v0.95.md` plus the HTA editor-planning baseline | Editor/operator completion target: `v0.95` |
@@ -277,21 +292,33 @@ ADL already provides a serious platform baseline:
 | Rustdoc/doc cleanup | Implemented baseline | `docs/milestones/v0.91.2/features/RUSTDOC_DOC_CLEANUP.md` | `v0.91.2` cleanup baseline complete |
 | Workflow guardrails | Implemented baseline | `docs/milestones/v0.91.2/features/WORKFLOW_GUARDRAILS.md` | `v0.91.2` guardrail baseline complete |
 | Cognitive SDLC first slice and transition manifest | Implemented baseline | `docs/milestones/v0.91.3/features/COGNITIVE_SDLC_FIRST_SLICE.md`, `docs/milestones/v0.91.3/features/COGNITIVE_TRANSITION_MANIFEST.md`, `docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md`, `docs/milestones/v0.91.3/features/TRANSITION_DAG_AND_SHARD_COORDINATION.md`, `docs/milestones/v0.91.3/features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md`, `docs/milestones/v0.91.3/features/GOVERNED_MERGE_READINESS_GATE.md`, `docs/milestones/v0.91.3/features/SRP_SOR_OBSMEM_HANDOFF.md`, and `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md` | `v0.91.3` proved one bounded Cognitive State Transition; `v0.91.4` hardens repeatable/default operation |
-| Cognitive SDLC default operation and five-minute-sprint repeatability | Active milestone | `docs/milestones/v0.91.4/features/COGNITIVE_SDLC_DEFAULT_OPERATION.md`, `docs/milestones/v0.91.4/features/CSDL_VALIDATION_AND_ROUTING_HARDENING.md`, `docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md`, `docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md`, `docs/milestones/v0.91.4/features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md`, `docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md`, `docs/milestones/v0.91.4/features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md`, `docs/milestones/v0.91.4/features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md`, `docs/milestones/v0.91.4/features/FIVE_MINUTE_SPRINT_REPEATABILITY.md`, `docs/milestones/v0.91.4/features/ACTIVE_ISSUE_MIGRATION_POLICY.md`, `docs/milestones/v0.91.4/features/PROCESS_DRIFT_REGRESSION_FIXTURES.md`, and `docs/planning/C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md` | `v0.91.4` completes the C-SDLC rollout and makes it the default software-development path, including validation-tail/proof-latency handling and Parallel Validation Fabric planning so sprint speed does not hide long blocking proof cycles; tracked prompt-record migration consumes the versioned `docs/templates/prompts/1.0.0/` substrate, Rust-owned field validation, browser-assisted human review, and the transition plan created in `v0.91.3` |
+| Cognitive SDLC default operation and five-minute-sprint repeatability | Implemented baseline | `docs/milestones/v0.91.4/features/COGNITIVE_SDLC_DEFAULT_OPERATION.md`, `docs/milestones/v0.91.4/features/CSDL_VALIDATION_AND_ROUTING_HARDENING.md`, `docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md`, `docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md`, `docs/milestones/v0.91.4/features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md`, `docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md`, `docs/milestones/v0.91.4/features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md`, `docs/milestones/v0.91.4/features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md`, `docs/milestones/v0.91.4/features/FIVE_MINUTE_SPRINT_REPEATABILITY.md`, `docs/milestones/v0.91.4/features/ACTIVE_ISSUE_MIGRATION_POLICY.md`, `docs/milestones/v0.91.4/features/PROCESS_DRIFT_REGRESSION_FIXTURES.md`, and `docs/planning/C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md` | `v0.91.4` completes the C-SDLC rollout and makes it the default software-development path, including validation-tail/proof-latency handling and Parallel Validation Fabric planning so sprint speed does not hide long blocking proof cycles; tracked prompt-record migration consumes the versioned `docs/templates/prompts/1.0.0/` substrate, Rust-owned field validation, browser-assisted human review, and the transition plan created in `v0.91.3` |
+| Logging, observability, and tooling proof-loop readiness | Planned bridge work | local workflow-tooling and issue-draft source planning plus `docs/milestones/v0.91.5/CONTROL_PLANE_OBSERVABILITY_CONTRACT_3609.md` | `v0.91.6` first bridge tranche; must preserve broad release confidence while improving bounded PR/tooling cycle time |
+| Resilience, citizen persistence, and operational sleep/wake | Planned required pre-v0.92 bridge | local resilience source planning, `LB-102`, and `docs/milestones/v0.91.5/features/AEE_COMPLETION_TRANCHE_v0.91.5.md` | `v0.91.6` completion-bound bridge: retry/fault classification, provider/tool/workflow resilience, health persistence, checkpoint/restore, sleep/wake, hibernation, simulation, in-transit custody, migration, replay, and continuity proof |
+| Public prompt records export, redaction, validation, and indexing | Planned required pre-v0.92 bridge | local prompt-card authoring surface, public prompt-record export work, and local MVP feature-doc production planning | `v0.91.6` bridge; local cards remain editable while reviewed public export/redaction/indexing boundaries are made explicit |
+| Provider/model reliability and multi-agent readiness | Planned required pre-v0.92 bridge | Sprint 2/remediation proof packets, ANRM/provider planning, Gemma/OpenRouter/local/remote model evidence, and local multi-agent demo planning | `v0.91.6` bridge; reliability proof must be separated from training or ANRM product claims |
+| Security bridge readiness and Continuous Adversarial Verification | Planned required pre-v0.92 bridge | local security planning, `LB-011`, ACIP access-rule docs, citizen-state security docs, and moral anti-harm/Freedom Gate validation sources | `v0.91.6`/`v0.91.7` bridge; threat-model refresh, CAV plan, public-record redaction/security checks, provider/model trust expectations, ACIP access/security handoff, and adversarial/malformed-output expectations must be explicit before v0.92 |
+| Curiosity Engine and Discovery Substrate | Planned required pre-v0.92 bridge | local curiosity planning, `LB-104`, hypothesis/reasoning graph sources, and constructability source material | `v0.91.7` unless a smaller slice is pulled into `v0.91.6`; must prove at least one governed discovery cycle before v0.92 activation |
+| Constructability Gate for shared ADL reality | Planned required pre-v0.92 bridge | local constructability planning, `LB-097`, and related trace/external-anchor planning | `v0.91.7` unless pulled forward; construction-event schema, external-anchor schema, admissibility validator, shared-reality boundary, and proof path before v0.92 |
+| Reasoning graph, loop runtime, and `adl.skill.v1` bridge | Planned required pre-v0.92 bridge | local reasoning-graph planning, `LB-101`, and `docs/milestones/v0.94/features/REASONING_GRAPH_BASELINE_v0.94.md` | `v0.91.7` bridge contract before v0.92; deeper reasoning-graph convergence remains `v0.94` |
 | ACP / cognitive profiles runtime surface | Planned | `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md` | `v0.92` |
 | ACIP binary schema and WebSocket carrier | Planned | `docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md` | `v0.92` binary/schema carrier; `v0.93` security; `v0.94` signed trace |
 | Identity, stable name, and continuity substrate | Planned | `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md` | `v0.92` |
 | Memory grounding, capability envelope, and birth witnesses/receipt | Planned | `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md` | `v0.92` |
+| Memory Palace navigable context topology | Planned v0.92 bridge under development | local Memory Palace/context-problem planning and `LB-110` | v0.92 bridge feature doc after context-problem note review; smallest implementation/proof slice must distinguish ObsMem, palace topology, working set, and context cache |
 | First true Gödel-agent birthday | Planned | `docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md` | `v0.92` |
 | Constitutional citizenship, rights/duties, and governance review | Planned | `docs/milestones/v0.93/features/CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md` plus the `v0.93` citizenship/governance allocation plan | `v0.93` |
 | Bounded Theory of Mind, relationship, reputation, and shared social memory boundary | Planned | `docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md` and `docs/milestones/v0.93/features/SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md` | `v0.93` |
-| Delegation, upstream delegation, IAM, standing transition, and challenge/appeal governance | Planned | `docs/milestones/v0.93/features/DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md` plus `.adl/docs/TBD/ADL_AGENT_UPSTREAM_DELEGATION.md` source planning | `v0.93` |
+| Delegation, upstream delegation, IAM, standing transition, and challenge/appeal governance | Planned | `docs/milestones/v0.93/features/DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md` plus local upstream-delegation source planning | `v0.93` |
+| Guilds and collective organization | MVP-scoped planned governance surface | local guilds planning and the v0.93 governance/security feature-doc lane | v0.93 feature doc with v0.95 MVP consumption; must define identity, membership, authority, delegation, shared resources/capabilities, isolation, privacy, trace, and review/challenge boundaries |
 | Enterprise security for the ADL polis | Planned | `docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md` and the `v0.93` zero-trust/security work breakdown | `v0.93` |
 | Secure execution, policy, identity/auth, isolation, and provider-trust convergence | Planned | `docs/milestones/v0.94/features/SECURE_EXECUTION_AND_TRUST_CONVERGENCE_v0.94.md` and the tracked `v0.94` milestone package | `v0.94`; enterprise-security repo/module separation must be explicitly planned before large code movement |
 | Mental time travel / temporal self-projection | Planned | `docs/milestones/v0.94/features/MENTAL_TIME_TRAVEL_v0.94.md` plus the `MTT-v1` source note | `v0.94` |
 | Payments, settlement, economic agency, and `x402` / Lightning adapters | Planned | `docs/milestones/v0.94.1/features/PAYMENTS_SETTLEMENT_AND_X402_v0.94.1.md` and the tracked `v0.94.1` milestone package | `v0.94.1` |
 | Bounded contract-market and resource-stewardship bridge | Implemented baseline | `docs/milestones/v0.90.4` contract-market docs, proof coverage, and demo matrix | Completed bounded baseline by `v0.90.4` |
 | Distributed execution integration | Partially implemented; AEE/multi-agent boundary subset pulled forward | `docs/milestones/v0.95/features/DISTRIBUTED_EXECUTION_INTEGRATION_v0.95.md`, ADR 0003, cluster-execution groundwork docs, and `docs/milestones/v0.91.5/features/AEE_COMPLETION_TRANCHE_v0.91.5.md` | AEE/multi-agent boundary proof targeted for `v0.91.5`/`v0.92`; broad distributed integration by `v0.95` |
+| CodeFriend v1 and portable adapter v2 | MVP-scoped planned product proof | local CodeFriend/portable-adapter v2 planning and `LB-108` | CodeFriend v1 plus adapter v2 must land after v0.92 and before v0.95; broad product UX/accounts/billing/report UX remain post-v0.95 |
+| Capability-testing evidence consumption / Aptitude Atlas boundary | MVP-scoped evidence consumption; productization post-v0.95 | capability-testing harness docs, local capability-testing planning, and `LB-046` | v0.95 consumes capability-testing evidence only; Aptitude Atlas product/baseline productization is post-v0.95 |
 | Demo catalog and polished MVP walkthrough | Partially implemented | `docs/milestones/v0.95/features/DEMO_CATALOG_AND_MVP_WALKTHROUGH_v0.95.md` plus milestone demo matrices and reviewer packages | `v0.95` |
 | Control-plane Rust migration / tooling hardening | Partially implemented | `docs/milestones/v0.95/features/CONTROL_PLANE_RUST_MIGRATION_AND_TOOLING_HARDENING_v0.95.md` and Python-elimination/tooling-hardening planning | `v0.95` |
 | Zed integration | MVP-scoped decision | `docs/milestones/v0.95/features/ZED_INTEGRATION_v0.95.md` plus the v0.85 MVP-boundary/editor-planning notes | Complete the adapter or explicitly remove it from MVP scope by `v0.95` |
@@ -323,12 +350,15 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.91.1` | Inhabited-runtime readiness: Runtime v2/polis alignment, agent lifecycle states, CSM Observatory active surfaces, citizen standing/state, memory/identity architecture, Theory of Mind, capability/aptitude testing, intelligence metrics, governed learning, ANRM/Gemma placement, ACIP/A2A hardening, GHB-adjacent runtime evidence, and observatory-visible agent runtime proof. |
 | `v0.91.2` | Tooling/evaluation/productization/publication pressure release: UTS + ACC multi-model benchmark, provider-native tool-call comparison, runtime/test-cycle recovery, coverage ergonomics, CodeFriend productization, Google Workspace CMS bridge, modernization demo, publication packets including GHB/general-intelligence source packets, rustdoc/doc cleanup, and workflow guardrails. |
 | `v0.91.3` | Completed first Cognitive SDLC implementation slice: one bounded Cognitive State Transition, issue-local operative `SPP`, transition manifest, transition DAG, evidence bundle, governed merge-readiness gate, SRP/SOR memory handoff, and first five-minute-sprint proof surface. |
-| `v0.91.4` | Active Cognitive SDLC completion and hardening milestone: default-operation lifecycle, validator/doctor/conductor/editor alignment, Software Development Polis actor standing, shard ownership, tracked durable workflow records, signed trace proof, ObsMem handoff, repeatability metrics, validation-tail/proof-latency handling, Parallel Validation Fabric planning, and active-issue migration policy. |
-| `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, witnesses, receipts, and the first true Gödel-agent birthday. |
-| `v0.93` | Constitutional citizenship, rights/duties, social contract, delegation/upstream delegation/IAM, standing/challenge/appeal governance, relationship model, reputation/trust, shared social memory, ToM/social cognition, and enterprise security for the ADL polis. |
+| `v0.91.4` | Completed Cognitive SDLC default-operation and hardening milestone: default-operation lifecycle, validator/doctor/conductor/editor alignment, Software Development Polis actor standing, shard ownership, tracked durable workflow records, signed trace proof, ObsMem handoff, repeatability metrics, validation-tail/proof-latency handling, Parallel Validation Fabric planning, and active-issue migration policy. |
+| `v0.91.5` | Bridge/review/tooling/provider/public-record pressure toward v0.92: AEE completion tranche, prompt-template workflow integration, multi-agent and provider reliability proof, public C-SDLC prompt records, and logging/observability follow-on setup. |
+| `v0.91.6` | First required pre-v0.92 bridge tranche: resilience/citizen persistence, logging/tooling proof-loop fixes, public prompt records, provider/model reliability, first ACIP/A2A/security decisions, and feature-doc issue-wave setup. |
+| `v0.91.7` | Second required pre-v0.92 bridge tranche: Curiosity Engine, Constructability Gate, reasoning graph / loop / `adl.skill.v1` bridge, residual security readiness, and residual ACIP/A2A/protobuf/JSON projection decisions. |
+| `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, Memory Palace bridge slice, witnesses, receipts, and the first true Gödel-agent birthday. |
+| `v0.93` | Constitutional citizenship, rights/duties, social contract, delegation/upstream delegation/IAM, standing/challenge/appeal governance, guilds, relationship model, reputation/trust, shared social memory, ToM/social cognition, security governance, and enterprise security for the ADL polis. |
 | `v0.94` | Secure execution, policy-engine and identity/auth convergence, provider trust and isolation, secrets/data governance, signed/queryable trace and reasoning/provenance closure, bounded mental time travel / temporal self-projection, and cross-band convergence before MVP freeze. |
 | `v0.94.1` | Payments, settlement, accounting/ledger/economic trace, economic agency, and `x402` / Lightning adapter follow-on work. |
-| `v0.95` | MVP convergence, dashboard/compression reporting, Shepherd/Gemma and Aptitude Atlas evaluation surfaces, distributed-substrate integration, polished demo catalog, coherent reviewer/customer walkthrough, control-plane/tooling hardening, web-editor baseline, explicit Zed decision boundary, feature freeze, and the 1.0 scope boundary. |
+| `v0.95` | MVP convergence, dashboard/compression reporting, Shepherd/Gemma evidence, capability-testing evidence consumption, CodeFriend v1/adapter v2 proof packaging, distributed-substrate integration, polished demo catalog, coherent reviewer/customer walkthrough, control-plane/tooling hardening and Rust refactoring, web-editor baseline, explicit Zed/logistic-split decision boundaries, post-v0.95 disposition map, feature freeze, and the 1.0 scope boundary. |
 
 ## Implemented Platform Highlights
 
@@ -471,13 +501,21 @@ practical long-lived runtime supervision:
 The truthful v0.90 story is implemented baseline, with Runtime v2 consuming
 those surfaces rather than replacing them.
 
-## Current Active Milestone: v0.91.4
+## Current Planning Focus: v0.91.6 / v0.91.7 Bridge To v0.92
 
-`v0.91.4` is the active milestone. Its job is to harden the first bounded
-Cognitive SDLC slice into default operation for future ADL software-development
-issues.
+`v0.91.4` is no longer the active planning center in this feature list. Its
+role is the completed Cognitive SDLC default-operation hardening band that the
+current workflow now consumes.
 
-The current active bands are:
+The current planning focus is the pre-v0.92 bridge:
+
+- finish the `v0.91.6` first bridge tranche without overloading it
+- plan `v0.91.7` as the second required bridge tranche
+- keep v0.92 as the first true identity/continuity/birthday milestone
+- keep v0.95 as convergence and packaging, not first implementation of major
+  cognitive systems
+
+The completed v0.91.4 bands were:
 - default `SIP -> STP -> SPP -> SRP -> SOR` lifecycle operation
 - validator, doctor, conductor, sprint-conductor, and editor alignment
 - Software Development Polis actor standing and shard ownership rules
@@ -488,6 +526,46 @@ The current active bands are:
 - active-issue migration policy and process-drift regression fixtures
 
 `v0.91.3` remains the completed first-slice milestone that v0.91.4 consumes.
+
+### v0.91.5 - Bridge, Provider, Prompt-Record, And Tooling Pressure
+
+`v0.91.5` carries bridge pressure between the C-SDLC default-operation band and
+the pre-v0.92 readiness path. Its feature-list role is not to absorb v0.92, but
+to make the handoff reviewable:
+
+- AEE completion tranche and activation-readiness inputs
+- prompt-template workflow integration
+- public C-SDLC prompt-record transition and export posture
+- multi-agent workcell and provider/model reliability evidence
+- shared observability/logging contract and follow-on logging mini-sprint
+- bridge routing for work that must not be hidden inside v0.92 WP-01
+
+### v0.91.6 - First Required Pre-v0.92 Bridge Tranche
+
+`v0.91.6` should finish the load-bearing bridge work already in motion:
+
+- resilience, citizen persistence, and operational sleep/wake
+- logging/tooling proof-loop fixes
+- public prompt records export, redaction, validation, and indexing
+- provider/model reliability and multi-agent readiness
+- first ACIP/A2A/security decisions
+- feature-doc production issue-wave setup
+
+It should not pretend to complete every required pre-v0.92 surface if doing so
+would hide unfinished bridge work.
+
+### v0.91.7 - Second Required Pre-v0.92 Bridge Tranche
+
+`v0.91.7` is now planned as a narrow second bridge tranche before v0.92:
+
+- Curiosity Engine / Discovery Substrate
+- Constructability Gate
+- reasoning graph, loop runtime, and `adl.skill.v1` bridge
+- residual security bridge readiness
+- residual ACIP/A2A/protobuf/JSON projection decisions
+
+This is not a general spillover milestone. It exists so v0.92 can consume
+truthful bridge outputs rather than rediscover unresolved scope during WP-01.
 
 ## Current And Upcoming Capability Bands
 
@@ -608,6 +686,8 @@ agents:
 - provider/model capability contracts
 - stable names
 - continuity hooks across runs
+- Memory Palace bridge slice for navigable long-running context, after the
+  context-problem note is reviewed
 - first true Gödel-agent birthday
 - witnessed memory grounding
 - birth record, witness set, receipt, and reviewer packet
@@ -625,6 +705,8 @@ runtime lifecycle mechanics.
 - delegation
 - policy and constitutional surfaces
 - rights/duties and social contract surfaces
+- guilds and collective organization
+- social cognition, relationship, reputation, and shared social memory
 - enterprise-security foundations:
   zero-trust architecture, policy enforcement, secrets/key lifecycle,
   audit/compliance evidence, isolation/data governance, and security operations
@@ -644,6 +726,8 @@ into MVP scope; otherwise they remain non-claims, not hidden backlog.
 - cross-band convergence
 - MVP dependency cleanup
 - reasoning graph and signed/queryable trace completion
+- secure execution, policy-engine, identity/auth, isolation, secrets/data
+  governance, and provider-trust convergence
 
 ### v0.95 - MVP Baseline Convergence and Feature Freeze
 
@@ -657,21 +741,31 @@ The v0.95 band includes:
 - polished demo catalog
 - coherent MVP walkthrough
 - control-plane/tooling hardening
+- Rust refactoring that reduces change-specific test burden
+- CodeFriend v1 and portable adapter v2 proof packaging
+- capability-testing evidence consumption without Aptitude Atlas productization
+- guilds consumed as an MVP-scoped governance surface
+- post-v0.95 disposition map
 - feature freeze and `1.0` scope boundary
 
 ### Product Lanes: CodeFriend and Aptitude Atlas
 
 Two ADL-powered product directions are now recognized and explicitly scheduled
-inside the v0.95 path without distorting the core Runtime v2 milestone path:
+around the v0.95 path without distorting the core Runtime v2 milestone path:
 
 - CodeFriend: repo-wide code and architecture review, diagrams, tests,
   remediation plans, and product-grade reports powered by ADL review skills.
+  CodeFriend v1 and portable adapter v2 must land after v0.92 and before
+  v0.95 so MVP convergence can consume real external-repo proof. Broader
+  customer UX, accounts, billing, repo connection UI, and report UX are
+  post-v0.95 product work.
 - Aptitude Atlas: model capability and aptitude assessment with leaderboard-
-  style public reporting, deeper than one-off benchmark scores.
+  style public reporting, deeper than one-off benchmark scores. v0.95 consumes
+  capability-testing evidence only; Aptitude Atlas productization and baseline
+  product work are post-v0.95.
 
-Both are strategically important. CodeFriend productization belongs to
-`v0.91.2` with MVP polish by `v0.95`; Aptitude Atlas begins with the v0.91.1
-capability harness and reaches productized MVP shape by `v0.95`.
+Both are strategically important, but neither should distort the pre-v0.92
+bridge or the v0.92 birthday milestone.
 
 ## MVP-Scoped Decision
 
