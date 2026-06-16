@@ -919,8 +919,21 @@ fn github_client(operation: &str) -> Result<AdlGithubClient> {
     match config.backend {
         GithubClientBackend::Octocrab => Ok(client),
         GithubClientBackend::GhFallback => bail!(
-            "github_client.gh_fallback_removed: operation '{}' requires octocrab transport; set GITHUB_TOKEN or GH_TOKEN and do not rely on gh fallback",
-            operation
+            "github_client.gh_fallback_removed: operation '{}' requires octocrab transport; {}; credential values are never printed",
+            operation,
+            github_credential_preflight_hint(config)
+        ),
+    }
+}
+
+fn github_credential_preflight_hint(
+    config: &crate::cli::pr_cmd::github_client::AdlGithubClientConfig,
+) -> String {
+    match config.token_source {
+        None => "credential_status=missing_token; set GITHUB_TOKEN or GH_TOKEN before live C-SDLC GitHub operations; if you already use GitHub CLI auth, export its token into GITHUB_TOKEN for this command without echoing it".to_string(),
+        Some(source) => format!(
+            "credential_status=token_present source={}; ADL_GITHUB_CLIENT=gh is not a supported mutation fallback for covered operations; use ADL_GITHUB_CLIENT=auto or ADL_GITHUB_CLIENT=octocrab",
+            source.env_name()
         ),
     }
 }
@@ -1338,7 +1351,7 @@ where
                     "github_client.octocrab_transport: operation '{}' failed after {} attempt(s): {}",
                     operation,
                     attempt,
-                    err
+                    format_octocrab_failure(&err)
                 ));
             }
         }
@@ -1350,6 +1363,22 @@ where
         &[("operation", operation)],
     );
     Ok(result)
+}
+
+fn format_octocrab_failure(err: &octocrab::Error) -> String {
+    match err {
+        octocrab::Error::GitHub { source, .. } => match source.status_code.as_u16() {
+            401 => "github_client.auth: GitHub authentication failed; token is missing, invalid, expired, or not accepted for this endpoint".to_string(),
+            403 => "github_client.auth: GitHub authorization failed; token may lack required repo/workflow permission or the API refused the operation".to_string(),
+            429 => "github_client.rate_limit: GitHub rate limit or secondary throttling refused the operation".to_string(),
+            404 => {
+                "github_client.not_found: GitHub resource was not found or token cannot see it"
+                    .to_string()
+            }
+            _ => format!("github_client.transport: {err}"),
+        },
+        _ => err.to_string(),
+    }
 }
 
 fn octocrab_max_attempts() -> usize {
@@ -3900,16 +3929,40 @@ sys.exit(9)
         let err_debug = format!("{err:?}");
         assert!(err_debug.contains("pr.list.current_branch"));
         assert!(err_debug.contains("github_client.gh_fallback_removed"));
+        assert!(err_debug.contains("credential_status=token_present"));
+        assert!(err_debug.contains("source=GITHUB_TOKEN"));
+        assert!(!err_debug.contains("test-token"));
         let err = gh_issue_edit_body("owner/repo", 3672, "body")
             .expect_err("explicit gh fallback issue edit should fail closed");
         let err_debug = format!("{err:?}");
         assert!(err_debug.contains("github_client.gh_fallback_removed"));
+        assert!(err_debug.contains("credential_status=token_present"));
+        assert!(!err_debug.contains("test-token"));
         assert!(
             !gh_log.exists(),
             "fallback removal should reject before spawning gh"
         );
 
         restore_env("PATH", old_path);
+        restore_github_policy_env(policy_env);
+    }
+
+    #[test]
+    fn live_github_policy_explains_missing_token_before_spawn() {
+        let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
+        unsafe {
+            std::env::set_var("ADL_GITHUB_CLIENT", "gh");
+        }
+
+        let err = current_pr_url("owner/repo", "codex/3805-branch")
+            .expect_err("explicit gh fallback without token should explain credential preflight");
+        let err_debug = format!("{err:?}");
+        assert!(err_debug.contains("github_client.gh_fallback_removed"));
+        assert!(err_debug.contains("credential_status=missing_token"));
+        assert!(err_debug.contains("set GITHUB_TOKEN or GH_TOKEN"));
+        assert!(err_debug.contains("credential values are never printed"));
+
         restore_github_policy_env(policy_env);
     }
 }
