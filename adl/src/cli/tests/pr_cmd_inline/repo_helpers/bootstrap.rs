@@ -86,6 +86,24 @@ fn real_pr_start_blocks_before_worktree_when_design_time_cards_are_not_ready() {
     )
     .expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Design-time card gate");
+    let root_spp_path = issue_ref.task_bundle_plan_path(&repo);
+    fs::create_dir_all(root_spp_path.parent().expect("root spp parent"))
+        .expect("create root spp parent");
+    write_authored_spp(
+        &root_spp_path,
+        &issue_ref,
+        "[v0.86][tools] Design-time card gate",
+        "not bound yet",
+        &repo,
+    );
+    let root_spp = fs::read_to_string(&root_spp_path).expect("read root spp");
+    fs::write(
+        &root_spp_path,
+        root_spp
+            .replace("status: \"reviewed\"", "status: \"draft\"")
+            .replace("activation_state: \"reviewed\"", "activation_state: \"draft\""),
+    )
+    .expect("write non-ready root spp");
     assert!(Command::new("git")
         .args([
             "remote",
@@ -112,7 +130,7 @@ fn real_pr_start_blocks_before_worktree_when_design_time_cards_are_not_ready() {
         "--version".to_string(),
         "v0.86".to_string(),
     ])
-    .expect_err("start should block before worktree binding when generated SPP is not reviewed");
+    .expect_err("start should block before worktree binding when root SPP is not ready");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
 
