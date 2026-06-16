@@ -962,8 +962,7 @@ pub(super) fn unresolved_milestone_pr_wave(
     .unwrap_or_else(|| "[]".to_string());
     let prs: Vec<OpenPullRequest> =
         serde_json::from_str(&out).with_context(|| "failed to parse GitHub PR list JSON")?;
-    prs
-        .into_iter()
+    prs.into_iter()
         .filter(|pr| {
             pr_matches_main_version_wave(
                 &PullRequestMetadataSnapshot::new(
@@ -1008,10 +1007,12 @@ fn pr_has_any_closing_linkage(repo: &str, pr_ref: &str) -> Result<bool> {
             ".closingIssuesReferences[]?.number",
         ],
     )?;
-    Ok(linked_issue_numbers_from_lines(linked.as_deref().unwrap_or_default())
-        .into_iter()
-        .next()
-        .is_some())
+    Ok(
+        linked_issue_numbers_from_lines(linked.as_deref().unwrap_or_default())
+            .into_iter()
+            .next()
+            .is_some(),
+    )
 }
 
 pub(super) fn format_open_pr_wave(prs: &[OpenPullRequest]) -> String {
