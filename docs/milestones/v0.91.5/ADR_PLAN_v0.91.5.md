@@ -11,6 +11,9 @@ v0.91.5.
 
 ## Candidate ADRs
 
+Issue `#3782` adds the docs-only candidate register:
+[ADR_MINI_SPRINT_CANDIDATES_v0.91.5.md](ADR_MINI_SPRINT_CANDIDATES_v0.91.5.md).
+
 | Candidate | Decision surface | Source docs | Timing |
 | --- | --- | --- | --- |
 | Multi-agent C-SDLC operating boundary | Bounded roles, shard ownership, review/closeout serialization, and no unbounded autonomy. | [MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md](features/MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md) | Author if v0.91.5 changes the accepted multi-agent boundary. |
@@ -26,4 +29,3 @@ This plan does not accept ADRs. It only identifies candidate decision surfaces.
 
 - Any ADR-worthy implementation decision is authored, deferred, or explicitly
   marked unnecessary before release.
-
