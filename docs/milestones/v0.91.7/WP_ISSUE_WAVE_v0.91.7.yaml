@@ -1,0 +1,112 @@
+milestone: v0.91.7
+version: v0.91.7
+status: candidate_issue_wave
+created_by_issue: 3801
+source_bridge_ledger: docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md
+first_tranche_input: docs/milestones/v0.91.6/
+notes:
+  - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
+  - "Do not claim v0.92 activation readiness from this seed."
+  - "Keep v0.92 birthday implementation out of this planning package."
+work_packages:
+  - wp: WP-01
+    title: v0.91.7 planning promotion and issue-wave readiness
+    outcome: Open the concrete v0.91.7 issue wave and card bundles from this candidate package.
+    depends_on:
+      - "#3778"
+      - "#3800"
+      - "#3801"
+    deliverables:
+      - "Opened GitHub issue wave"
+      - "SIP/STP/SPP/SRP/SOR cards for each opened issue"
+  - wp: WP-02
+    title: Curiosity Engine / Discovery Substrate
+    outcome: Define governed curiosity and discovery-cycle proof expectations before v0.92.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "CURIOSITY_ENGINE_DISCOVERY_SUBSTRATE_v0.91.7.md"
+  - wp: WP-03
+    title: Constructability Gate
+    outcome: Define construction events, anchors, validators, and shared-reality boundaries.
+    depends_on:
+      - "WP-01"
+      - "WP-02"
+    deliverables:
+      - "CONSTRUCTABILITY_GATE_v0.91.7.md"
+  - wp: WP-04
+    title: Reasoning graph, loop runtime, and adl.skill.v1 bridge
+    outcome: Define the bridge among prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and adl.skill.v1.
+    depends_on:
+      - "WP-01"
+      - "WP-02"
+    deliverables:
+      - "REASONING_GRAPH_LOOP_SKILL_STANDARD_BRIDGE_v0.91.7.md"
+  - wp: WP-05
+    title: Residual security readiness
+    outcome: Account for security/CAV residuals after v0.91.6 and activation-path blockers.
+    depends_on:
+      - "WP-01"
+      - "v0.91.6 security output"
+    deliverables:
+      - "SECURITY_RESIDUAL_READINESS_v0.91.7.md"
+  - wp: WP-06
+    title: Residual ACIP/A2A/protobuf decisions
+    outcome: Decide remaining protobuf, JSON, WebSocket, and access-rule choices for v0.92 consumption.
+    depends_on:
+      - "WP-01"
+      - "WP-03"
+      - "WP-05"
+    deliverables:
+      - "ACIP_A2A_PROTOBUF_RESIDUALS_v0.91.7.md"
+  - wp: WP-07
+    title: Affect and happiness bridge accounting
+    outcome: Define safe tests and non-claims for affect, humor, happiness, and wellbeing.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "AFFECT_HAPPINESS_BRIDGE_v0.91.7.md"
+  - wp: WP-08
+    title: Godel mechanics bridge accounting
+    outcome: Map experiment, hypothesis, mutation, evaluation, promotion, and proof boundaries.
+    depends_on:
+      - "WP-01"
+      - "WP-02"
+      - "WP-04"
+    deliverables:
+      - "GODEL_MECHANICS_BRIDGE_v0.91.7.md"
+  - wp: WP-09
+    title: Economics-context decision
+    outcome: Decide whether economics is context-only for v0.92 or requires explicit tests.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "ECONOMICS_CONTEXT_DECISION_v0.91.7.md"
+  - wp: WP-10
+    title: Bridge ledger refresh and v0.92 handoff
+    outcome: Record second-tranche dispositions and hand tracked inputs to #3780.
+    depends_on:
+      - "WP-02"
+      - "WP-03"
+      - "WP-04"
+      - "WP-05"
+      - "WP-06"
+      - "WP-07"
+      - "WP-08"
+      - "WP-09"
+    deliverables:
+      - "v0.91.7 bridge disposition addendum or v0.92 handoff record"
+  - wp: WP-11
+    title: Internal review
+    outcome: Review the second-tranche docs for missing surfaces, overclaims, and vague spillover.
+    depends_on:
+      - "WP-10"
+    deliverables:
+      - "Review packet and finding register"
+  - wp: WP-12
+    title: Remediation and closeout
+    outcome: Fix or route review findings and record closeout truth.
+    depends_on:
+      - "WP-11"
+    deliverables:
+      - "Closeout packet"
