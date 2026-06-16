@@ -187,6 +187,9 @@ candidate_filter_for_path() {
     adl/src/cli/mod.rs|adl/src/cli/tests.rs)
       printf 'cli'
       ;;
+    adl/src/bin/adl_lint_prompt_spec.rs|adl/src/bin/adl_prompt_template.rs|adl/src/bin/adl_validate_structured_prompt.rs)
+      printf 'tooling_cmd'
+      ;;
     adl/src/cli/run_artifacts/runtime/*.rs)
       printf 'run_state'
       ;;

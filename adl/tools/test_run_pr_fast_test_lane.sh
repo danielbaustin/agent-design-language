@@ -106,6 +106,18 @@ assert_has "$cli_family_output" "mode=focused"
 assert_has "$cli_family_output" "filter_tokens=cli"
 assert_has "$cli_family_output" "filter_expression=test(cli)"
 
+direct_tooling_binaries="$TMP/direct_tooling_binaries.txt"
+cat >"$direct_tooling_binaries" <<'EOF'
+M	adl/src/bin/adl_lint_prompt_spec.rs
+M	adl/src/bin/adl_prompt_template.rs
+M	adl/src/bin/adl_validate_structured_prompt.rs
+EOF
+direct_tooling_binaries_output="$(bash "$SCRIPT" --changed-files "$direct_tooling_binaries" --print-plan)"
+assert_has "$direct_tooling_binaries_output" "mode=focused"
+assert_has "$direct_tooling_binaries_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$direct_tooling_binaries_output" "filter_tokens=tooling_cmd"
+assert_has "$direct_tooling_binaries_output" "filter_expression=test(tooling_cmd)"
+
 csdlc_prompt_editor_child="$TMP/csdlc_prompt_editor_child.txt"
 printf 'M\tadl/src/csdlc_prompt_editor/values.rs\n' >"$csdlc_prompt_editor_child"
 csdlc_prompt_editor_child_output="$(bash "$SCRIPT" --changed-files "$csdlc_prompt_editor_child" --print-plan)"
