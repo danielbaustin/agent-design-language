@@ -11,8 +11,9 @@ use super::git_support::{
 };
 use super::github::{
     attach_post_merge_closeout, attach_pr_janitor, current_pr_url,
-    ensure_or_repair_pr_closing_linkage, run_gh_capture, run_gh_status,
-    run_gh_status_allow_failure,
+    ensure_or_repair_pr_closing_linkage, pr_create_finish, pr_edit_finish_existing,
+    pr_merge_finish, pr_ready_finish_allow_failure, pr_ready_finish_merge_allow_failure,
+    pr_view_base_ref_finish_existing,
 };
 use super::lifecycle;
 use super::DEFAULT_VERSION;
@@ -181,40 +182,11 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
 
     let pr_url = if let Some(existing) = current_pr_url(&repo, &branch)? {
         ensure_existing_pr_base_matches(&repo, &existing, &pr_base)?;
-        run_gh_status(
-            "pr.edit.finish_existing",
-            &[
-                "pr",
-                "edit",
-                "-R",
-                &repo,
-                &existing,
-                "--title",
-                &parsed.title,
-                "--body-file",
-                path_str(&pr_body_file)?,
-            ],
-        )?;
+        pr_edit_finish_existing(&repo, &existing, &parsed.title, &pr_body_file)?;
         existing
     } else {
-        let created = run_gh_capture(
-            "pr.create.finish",
-            &[
-                "pr",
-                "create",
-                "-R",
-                &repo,
-                "--base",
-                &pr_base,
-                "--head",
-                &branch,
-                "--title",
-                &parsed.title,
-                "--body-file",
-                path_str(&pr_body_file)?,
-                "--draft",
-            ],
-        )?;
+        let created =
+            pr_create_finish(&repo, &parsed.title, &branch, &pr_base, &pr_body_file, true)?;
         created.trim().to_string()
     };
 
@@ -228,23 +200,9 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
 
     if parsed.merge_mode {
         if parsed.ready {
-            let _ = run_gh_status_allow_failure(
-                "pr.ready.finish_merge",
-                &["pr", "ready", "-R", &repo, &pr_url],
-            )?;
+            let _ = pr_ready_finish_merge_allow_failure(&repo, &pr_url)?;
         }
-        run_gh_status(
-            "pr.merge.finish",
-            &[
-                "pr",
-                "merge",
-                "-R",
-                &repo,
-                "--squash",
-                "--delete-branch",
-                &pr_url,
-            ],
-        )?;
+        pr_merge_finish(&repo, &pr_url)?;
         lifecycle::wait_for_issue_closed_and_completed(parsed.issue, &repo)?;
         lifecycle::closeout_closed_completed_issue_bundle(
             &repo_root,
@@ -257,8 +215,7 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     if parsed.ready {
-        let _ =
-            run_gh_status_allow_failure("pr.ready.finish", &["pr", "ready", "-R", &repo, &pr_url])?;
+        let _ = pr_ready_finish_allow_failure(&repo, &pr_url)?;
     }
 
     attach_pr_janitor(
@@ -1131,20 +1088,7 @@ fn resolve_finish_pr_base(repo_root: &Path, branch: &str) -> Result<String> {
 }
 
 fn ensure_existing_pr_base_matches(repo: &str, pr_url: &str, expected_base: &str) -> Result<()> {
-    let actual_base = run_gh_capture(
-        "pr.view.base_ref.finish_existing",
-        &[
-            "pr",
-            "view",
-            "-R",
-            repo,
-            pr_url,
-            "--json",
-            "baseRefName",
-            "--jq",
-            ".baseRefName",
-        ],
-    )?;
+    let actual_base = pr_view_base_ref_finish_existing(repo, pr_url)?;
     let actual_base = actual_base.trim();
     if actual_base != expected_base {
         bail!(
