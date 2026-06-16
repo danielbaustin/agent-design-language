@@ -6,25 +6,27 @@
 - Version: `v0.91.6`
 - Date: `2026-06-16`
 - Setup issue: `#3800`
+- Documentation completion issue: `#3824`
 
 ## Status
 
-Candidate feature-doc index. The listed docs are planned outputs for the
-`v0.91.6` issue wave; they are not yet implemented feature docs.
+Feature-doc package created for the first pre-`v0.92` bridge tranche. These
+docs define planning, decisions, validation expectations, and `v0.92`
+consumption limits; they do not implement runtime behavior.
 
 ## Required Feature Docs And Bridge Records
 
-| Planned doc | Surface | Required questions | Exit state before v0.92 |
+| Feature doc | Surface | Required questions | Exit state before v0.92 |
 | --- | --- | --- | --- |
-| `RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md` | Resilience, citizen persistence, sleep/wake | What retry/fault classes, persistence states, migration/replay paths, and continuity proofs are required? | Complete, blocked, deferred, or routed. |
-| `TOOLING_PROOF_LOOP_RELIABILITY_v0.91.6.md` | Logging/tooling proof-loop fixes | How do validation split, CI budget observability, OTel/logging consumption, and issues `#3802`-`#3805` improve bounded PR reliability? | Complete or routed with explicit residuals. |
-| `PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md` | Public prompt records | How do local editable records export publicly with redaction, validation, indexing, and security review? | Complete, blocked, deferred, or routed. |
-| `PROVIDER_MODEL_RELIABILITY_v0.91.6.md` | Provider/model reliability | Which models are suitable for which roles, including hosted, local, remote, OpenRouter, and Gemma lanes? | Complete or blocked with named proof gaps. |
-| `ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md` | ACIP/A2A/provider communications | What schema catalog, access rules, JSON projection, protobuf decision, WebSocket boundary, and provider-message posture are required? | Complete or routed to `v0.91.7` residual. |
-| `SECURITY_BRIDGE_AND_CAV_v0.91.6.md` | Security bridge and CAV | What threat-model refresh, adversarial checks, malformed-output checks, provider trust, prompt-record security, and ACIP security are required? | Complete, blocked, deferred, or routed. |
-| `IDENTITY_CONTINUITY_CAPABILITY_SELECTOR_BRIDGE_v0.91.6.md` | Identity/continuity and capability selector | How does capability evidence feed v0.92 without starting Aptitude Atlas? How do continuity and resilience connect? | Complete or routed to v0.92 handoff. |
-| `OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md` | Observatory/Unity readiness | Which surfaces are proof, rehearsal, substrate, blocked, or deferred? | Complete classification before birthday demos rely on them. |
-| `AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md` | AEE completion, Memory/ObsMem handoff, ACP/cognitive profiles | What AEE boundaries are complete, what residual runtime/provider action work remains, what Memory/ObsMem can hand off, and what ACP/profile privacy scope may v0.92 consume? | Complete or explicitly routed to v0.92 handoff. |
+| [`RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md`](features/RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md) | Resilience, citizen persistence, sleep/wake | What retry/fault classes, persistence states, migration/replay paths, and continuity proofs are required? | Bridge doc exists; implementation proof remains future issue work. |
+| [`TOOLING_PROOF_LOOP_RELIABILITY_v0.91.6.md`](features/TOOLING_PROOF_LOOP_RELIABILITY_v0.91.6.md) | Logging/tooling proof-loop fixes | How do validation split, CI budget observability, OTel/logging consumption, and issues `#3802`-`#3805` improve bounded PR reliability? | Bridge doc exists; remediation issues remain routed. |
+| [`PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md`](features/PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md) | Public prompt records | How do local editable records export publicly with redaction, validation, indexing, and security review? | Bridge doc exists; export proof remains future issue work. |
+| [`PROVIDER_MODEL_RELIABILITY_v0.91.6.md`](features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md) | Provider/model reliability | Which models are suitable for which roles, including hosted, local, remote, OpenRouter, and Gemma lanes? | Bridge doc exists; proof gaps must be named by implementation issues. |
+| [`ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md`](features/ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md) | ACIP/A2A/provider communications | What schema catalog, access rules, JSON projection, protobuf decision, WebSocket boundary, and provider-message posture are required? | Bridge doc exists; residual protocol closure may route to `v0.91.7`. |
+| [`SECURITY_BRIDGE_AND_CAV_v0.91.6.md`](features/SECURITY_BRIDGE_AND_CAV_v0.91.6.md) | Security bridge and CAV | What threat-model refresh, adversarial checks, malformed-output checks, provider trust, prompt-record security, and ACIP security are required? | Bridge doc exists; security remains activation-path work. |
+| [`IDENTITY_CONTINUITY_CAPABILITY_SELECTOR_BRIDGE_v0.91.6.md`](features/IDENTITY_CONTINUITY_CAPABILITY_SELECTOR_BRIDGE_v0.91.6.md) | Identity/continuity and capability selector | How does capability evidence feed v0.92 without starting Aptitude Atlas? How do continuity and resilience connect? | Bridge doc exists; v0.92 consumes evidence boundaries only. |
+| [`OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md`](features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md) | Observatory/Unity readiness | Which surfaces are proof, rehearsal, substrate, blocked, or deferred? | Bridge doc exists; classification is required before demos rely on surfaces. |
+| [`AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md`](features/AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md) | AEE completion, Memory/ObsMem handoff, ACP/cognitive profiles | What AEE boundaries are complete, what residual runtime/provider action work remains, what Memory/ObsMem can hand off, and what ACP/profile privacy scope may v0.92 consume? | Bridge doc exists; activation consumption remains bounded. |
 
 ## Cross-Doc Requirements
 
@@ -40,8 +42,9 @@ Candidate feature-doc index. The listed docs are planned outputs for the
 
 ## v0.91.7 Residual Guard
 
-The following belong to `#3801` unless a v0.91.6 issue explicitly pulls them
-forward with reviewed scope:
+The following belong to `#3825` for docs-package completion, building on the
+`#3801` planning package, unless a v0.91.6 issue explicitly pulls them forward
+with reviewed scope:
 
 - Curiosity Engine / Discovery Substrate
 - Constructability Gate
@@ -54,7 +57,8 @@ forward with reviewed scope:
 
 When this index is consumed:
 
-- verify each planned doc has an owning issue or explicit blocked/deferred route
+- verify each planned implementation/proof route has an owning issue or
+  explicit blocked/deferred route
 - scan for `v0.92` readiness overclaims
 - scan for local authoring-workspace links or host-local paths
-- verify `#3801` residuals remain visible
+- verify `#3825` / `v0.91.7` residuals remain visible

@@ -11,12 +11,13 @@
 
 ## Status
 
-Current status: candidate planning package for the first pre-`v0.92` bridge
-tranche.
+Current status: planning and feature-doc package for the first pre-`v0.92`
+bridge tranche.
 
 - Planning: created by `#3800`
-- Execution: not started
-- Validation: docs-readiness validation only
+- Documentation completion: `#3824`
+- Execution: not started beyond planning/feature docs
+- Validation: docs-readiness validation only until implementation issues run
 - Release readiness: not applicable until `v0.91.6` executes
 
 This package does not implement runtime features and does not claim `v0.92`
@@ -101,6 +102,7 @@ Expected `v0.91.7` residuals:
 - `#3778`: pre-`v0.92` bridge ledger and issue route
 - `#3800`: this planning package
 - `#3801`: `v0.91.7` second-tranche planning package
+- `#3825`: `v0.91.7` planning and feature-doc completion package
 - `#3780`: later `v0.92` activation and birthday refresh
 - `#3779`: feature-doc production wave setup
 - `#3802`-`#3805`: tooling reliability findings raised during this wave
@@ -112,9 +114,16 @@ Expected `v0.91.7` residuals:
 ## Document Map
 
 - Work breakdown: [WBS_v0.91.6.md](WBS_v0.91.6.md)
+- Vision: [VISION_v0.91.6.md](VISION_v0.91.6.md)
+- Design: [DESIGN_v0.91.6.md](DESIGN_v0.91.6.md)
+- Decisions: [DECISIONS_v0.91.6.md](DECISIONS_v0.91.6.md)
+- Sprint plan: [SPRINT_PLAN_v0.91.6.md](SPRINT_PLAN_v0.91.6.md)
+- Demo matrix: [DEMO_MATRIX_v0.91.6.md](DEMO_MATRIX_v0.91.6.md)
 - Feature-doc index: [FEATURE_DOCS_v0.91.6.md](FEATURE_DOCS_v0.91.6.md)
 - Candidate issue wave: [WP_ISSUE_WAVE_v0.91.6.yaml](WP_ISSUE_WAVE_v0.91.6.yaml)
 - Checklist: [MILESTONE_CHECKLIST_v0.91.6.md](MILESTONE_CHECKLIST_v0.91.6.md)
+- Release plan: [RELEASE_PLAN_v0.91.6.md](RELEASE_PLAN_v0.91.6.md)
+- Release notes: [RELEASE_NOTES_v0.91.6.md](RELEASE_NOTES_v0.91.6.md)
 - Review and validation checklist:
   [REVIEW_AND_VALIDATION_CHECKLIST_v0.91.6.md](REVIEW_AND_VALIDATION_CHECKLIST_v0.91.6.md)
 - Feature directory index: [features/README.md](features/README.md)
