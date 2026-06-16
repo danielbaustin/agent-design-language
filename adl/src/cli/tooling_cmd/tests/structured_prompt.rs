@@ -181,6 +181,17 @@ fn structured_prompt_sor_completed_card_status_requires_full_closeout_truth() {
 }
 
 #[test]
+fn structured_prompt_sor_allows_safe_absolute_path_scan_pattern_description() {
+    let sor = valid_sor_text().replace(
+        "- Absolute path leakage check: passed",
+        "- Absolute path leakage check: scanned host-local path patterns `/Users/`, `/home/`, `/tmp/`, and `/var/folders/`; no concrete host-local paths were recorded.",
+    );
+
+    validate_sor_text(&sor, Some("completed"))
+        .expect("safe scan pattern descriptions should not count as host-path leaks");
+}
+
+#[test]
 fn validate_structured_prompt_accepts_all_supported_prompt_types() {
     let repo = TempRepo::new("structured");
     let stp = repo.write_rel(".tmp/tooling_cmd_tests/stp.md", &valid_stp_text());

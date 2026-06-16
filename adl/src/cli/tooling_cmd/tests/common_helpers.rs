@@ -107,6 +107,18 @@ fn code_review_filter_covers_common_helpers_argument_and_content_guards() {
     assert!(contains_secret_like_token("ghs_1234567890"));
     assert!(!contains_secret_like_token("mask sk_short"));
     assert!(contains_absolute_host_path_in_text("/tmp/example"));
+    assert!(contains_absolute_host_path_in_text(
+        "/Users/daniel/tmp/artifact.txt"
+    ));
+    assert!(contains_absolute_host_path_in_text("/tmp/@artifact"));
+    assert!(contains_absolute_host_path_in_text("/tmp//artifact"));
+    assert!(contains_absolute_host_path_in_text("/tmp/[artifact]"));
+    assert!(!contains_absolute_host_path_in_text(
+        "scan patterns: /Users/, /home/, /tmp/, /var/folders/"
+    ));
+    assert!(!contains_absolute_host_path_in_text(
+        "scan pattern token: `/tmp/`"
+    ));
     assert!(contains_absolute_host_path_in_text("C:\\Users\\example"));
     assert!(!contains_absolute_host_path_in_text("relative/path"));
 
@@ -152,6 +164,11 @@ fn code_review_filter_covers_common_helpers_safety_and_path_branches() {
 
     assert!(contains_absolute_host_path_in_text(
         "/Users/example/project"
+    ));
+    assert!(contains_absolute_host_path_in_text("/tmp/@artifact"));
+    assert!(contains_absolute_host_path_in_text("/tmp//artifact"));
+    assert!(!contains_absolute_host_path_in_text(
+        "safe scan pattern names: /Users/ and /tmp/"
     ));
     assert!(contains_absolute_host_path_in_text("C:\\Users\\example"));
     assert!(!contains_absolute_host_path_in_text("relative/path"));
