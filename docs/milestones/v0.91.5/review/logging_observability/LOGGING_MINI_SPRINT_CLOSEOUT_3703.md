@@ -3,7 +3,7 @@
 Sprint issue: #3703  
 Final child: #3711  
 Captured: 2026-06-15  
-Status: review_closeout_packet
+Status: review_hold_open_until_follow_ons_land
 
 ## Summary
 
@@ -15,6 +15,11 @@ consumption rules.
 This packet is the reviewer-facing summary for the sprint. It states what the
 sprint completed, what remains deferred, and what must not be overclaimed when
 v0.92 or later work relies on these surfaces.
+
+The original child issue wave is complete, but the sprint umbrella should
+remain open until the routed observability/tooling follow-ons are resolved.
+This packet is therefore a review-hold closeout surface, not a final
+sprint-closed claim.
 
 ## Child Issue Outcomes
 
@@ -100,18 +105,40 @@ Unsafe reliance after this sprint:
 
 ## Remaining Follow-Ons
 
-The sprint surfaced bounded tooling follow-ons outside the sprint scope:
+The sprint surfaced bounded observability/tooling follow-ons during review.
+Several have already landed since the first closeout packet was written and
+should remain recorded as completed follow-on work rather than invisible
+backlog:
 
-- machine-readable JSON surfaces still need a cleaner observability contract
-- `pr.sh run` still emits a deprecated compatibility-path note on the preferred
-  execution path
-- open-PR-wave queue gating still misclassifies some stale non-closing residue
-- prompt-template import/edit round-trip remains brittle on some rendered cards
-- bootstrap/init can still generate generic `STP`/`SPP` cards from mirrored
-  issue bodies
-- sprint-state / issue / PR closeout truth can still drift after merge
+- `#3789` machine-readable JSON surface cleanup is already completed and should
+  remain recorded as finished prior follow-on work
+- `#3790` deprecated compatibility-path note removal from the preferred
+  `pr.sh run` flow has landed
+- `#3792` prompt-template import/edit round-trip repair for rendered cards has
+  landed
+- `#3826` open-PR-wave queue gating now ignores stale non-closing PR residue
+- `#3837` bootstrap/init now generates issue-specific `STP` and `SPP` cards
+- `#3807` fail-closed compatibility log behavior has landed
+- `#3808` embedded absolute-path redaction has landed
+
+The remaining logging-tail work must not be silently treated as done:
+
+- `#3809` bounded uniqueness for redacted provider artifact refs remains the
+  explicit remaining provider-logging follow-on from this packet
+- sprint-state / issue / PR closeout truth drift remains a routed tooling
+  concern unless its owning issue closes it separately
 
 Those follow-ons must not be silently treated as done by this sprint.
+
+The umbrella issue `#3703` should remain open and continue through the
+currently routed observability follow-ons that materially affect
+logging/observability review truth. At this point the active logging-tail item
+named by this packet is:
+
+- `#3809` bounded uniqueness for redacted provider artifact refs
+
+That issue now forms the active remaining sprint tail for `#3703` unless a
+later reviewed routing packet adds or removes follow-ons.
 
 ## Reviewer Checklist
 
@@ -126,4 +153,6 @@ Reviewers should confirm:
 
 The logging mini-sprint is a real hardening tranche, not a cosmetic docs wave.
 It gives ADL a usable observability contract and proof baseline, while
-preserving explicit boundaries around the work that still remains.
+preserving explicit boundaries around the work that still remains. Keep
+`#3703` open until the routed observability follow-ons above land; closeout is
+not final before then.
