@@ -56,6 +56,18 @@ control_plane_filters="$TMP/control-plane-filters.txt"
 bash "$SCRIPT" --changed-files "$control_plane_changed" --print-risk-filters >"$control_plane_filters"
 grep -Fx "pr_cmd" "$control_plane_filters" >/dev/null
 
+finish_helper_changed="$TMP/finish-helper-changed.txt"
+printf 'A\tadl/src/cli/pr_cmd/finish_support.rs\n' >"$finish_helper_changed"
+finish_helper_filters="$TMP/finish-helper-filters.txt"
+bash "$SCRIPT" --changed-files "$finish_helper_changed" --print-risk-filters >"$finish_helper_filters"
+grep -Fx "finish" "$finish_helper_filters" >/dev/null
+
+mixed_pr_cmd_helper_changed="$TMP/mixed-pr-cmd-helper-changed.txt"
+printf 'A\tadl/src/cli/pr_cmd/github.rs\n' >"$mixed_pr_cmd_helper_changed"
+mixed_pr_cmd_helper_filters="$TMP/mixed-pr-cmd-helper-filters.txt"
+bash "$SCRIPT" --changed-files "$mixed_pr_cmd_helper_changed" --print-risk-filters >"$mixed_pr_cmd_helper_filters"
+grep -Fx "pr_cmd" "$mixed_pr_cmd_helper_filters" >/dev/null
+
 split_runtime_changed="$TMP/split-runtime-changed.txt"
 printf 'A\tadl/src/runtime_v2/cultivating_intelligence_parts/builder.rs\n' >"$split_runtime_changed"
 split_runtime_filters="$TMP/split-runtime-filters.txt"
@@ -124,6 +136,20 @@ grep -F "new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
 grep -F "candidate filter: new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
 grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
 grep -F "Then rerun: bash adl/tools/check_coverage_impact.sh --base origin/main --changed-files $changed --summary adl/target/coverage-impact-summary.json --require-summary-for-risk" /tmp/coverage-impact-missing.out >/dev/null
+
+if bash "$SCRIPT" --changed-files "$finish_helper_changed" --require-summary-for-risk >/tmp/coverage-impact-finish-helper-missing.out 2>&1; then
+  echo "expected bounded finish helper guidance to fail without summary" >&2
+  exit 1
+fi
+grep -F "candidate filter: finish" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- finish" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
+
+if bash "$SCRIPT" --changed-files "$mixed_pr_cmd_helper_changed" --require-summary-for-risk >/tmp/coverage-impact-mixed-helper-missing.out 2>&1; then
+  echo "expected mixed pr_cmd helper guidance to fail without summary" >&2
+  exit 1
+fi
+grep -F "candidate filter: pr_cmd" /tmp/coverage-impact-mixed-helper-missing.out >/dev/null
+grep -F "github.rs is a mixed-purpose pr_cmd helper surface" /tmp/coverage-impact-mixed-helper-missing.out >/dev/null
 
 branch_diff_changed="$TMP/branch-diff-changed.txt"
 printf 'A\tadl/src/runtime_v2/branch_mode_surface.rs\n' >"$branch_diff_changed"

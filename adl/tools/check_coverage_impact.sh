@@ -160,6 +160,9 @@ changed_line_delta_for_path() {
 candidate_filter_for_path() {
   local path="$1"
   case "$path" in
+    adl/src/cli/pr_cmd/finish_support.rs)
+      printf 'finish'
+      ;;
     adl/src/governed_executor_parts/*.rs|adl/src/governed_executor.rs)
       printf 'governed_executor'
       ;;
@@ -199,6 +202,18 @@ candidate_filter_for_path() {
   esac
 }
 
+extra_guidance_for_path() {
+  local path="$1"
+  case "$path" in
+    adl/src/cli/pr_cmd/github.rs)
+      cat <<'EOF'
+    note: github.rs is a mixed-purpose pr_cmd helper surface, so the fail-closed candidate filter remains pr_cmd.
+    bounded finish-only helper edits may justify a smaller approved synthesis path, but that narrower path should only be used when the changed behavior is explicitly limited to finish-path helpers.
+EOF
+      ;;
+  esac
+}
+
 focused_summary_command_for_filter() {
   local filter="$1"
   printf 'cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- %s' "$filter"
@@ -223,6 +238,7 @@ print_next_actions_for_path() {
   filter="$(candidate_filter_for_path "$path")"
   echo "    candidate filter: ${filter}"
   echo "    ${context}: $(focused_summary_command_for_filter "$filter")"
+  extra_guidance_for_path "$path"
   echo "    rerun preflight: $(rerun_preflight_command)"
 }
 
