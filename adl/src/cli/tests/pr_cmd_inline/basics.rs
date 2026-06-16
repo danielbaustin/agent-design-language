@@ -966,12 +966,12 @@ fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
         "create should generate a reviewable design-time SPP"
     );
     assert!(
-        spp.contains("status: \"draft\""),
-        "create should not claim generated design-time SPPs were reviewed"
+        spp.contains("status: \"ready\""),
+        "create should mark generated design-time SPPs ready without claiming review approval"
     );
     assert!(
-        spp.contains("activation_state: \"draft\""),
-        "create should leave generated SPPs in design-review state"
+        spp.contains("activation_state: \"ready\""),
+        "create should leave generated SPPs in ready design-time state"
     );
     assert!(
         spp.contains("Implement only the bounded deliverables: create-path validation"),

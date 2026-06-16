@@ -101,8 +101,9 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     assert!(stp.contains("# Structured Task Prompt"));
     assert!(sip.contains("Semantic role: Structured Issue Prompt (`SIP`)."));
     assert!(spp.contains("artifact_type: \"structured_planning_prompt\""));
-    assert!(spp.contains("status: \"draft\""));
-    assert!(spp.contains("activation_state: \"draft\""));
+    assert!(spp.contains("card_status: \"ready\""));
+    assert!(spp.contains("status: \"ready\""));
+    assert!(spp.contains("activation_state: \"ready\""));
     assert!(srp.contains("artifact_type: \"structured_review_prompt\""));
     assert!(sor.contains("Status: IN_PROGRESS"));
     assert!(sor.contains("Integration method used: local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet"));
@@ -330,9 +331,123 @@ fn pre_run_bootstrap_cards_preserve_not_bound_yet_template_truth() {
     assert!(sor.contains("Branch: not bound yet"));
     assert!(sor.contains("Status: NOT_STARTED"));
     assert!(spp.contains("branch: \"not bound yet\""));
+    assert!(spp.contains("card_status: \"ready\""));
+    assert!(spp.contains("status: \"ready\""));
+    assert!(spp.contains("activation_state: \"ready\""));
     assert!(!sip.contains("Do not run `pr start`; the branch and worktree already exist."));
     assert!(sor
         .contains("Preserved pre-run branch truth; no execution branch or worktree is bound yet."));
+}
+
+#[test]
+fn versioned_bootstrap_generated_bundle_passes_pr_run_doctor_readiness() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-versioned-bootstrap-doctor-ready");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(
+        repo.join("README.md"),
+        "versioned bootstrap doctor readiness\n",
+    )
+    .expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let issue_ref = IssueRef::new(
+        3793,
+        "v0.91.5".to_string(),
+        "tools-bootstrap-init-specific-cards".to_string(),
+    )
+    .expect("issue ref");
+    let title = "[v0.91.5][tools] Bootstrap init emits issue-specific cards";
+    write_authored_issue_prompt(&repo, &issue_ref, title);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path)
+        .expect("pre-run bootstrap cards");
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let doctor = real_pr(&[
+        "doctor".to_string(),
+        "3793".to_string(),
+        "--slug".to_string(),
+        "tools-bootstrap-init-specific-cards".to_string(),
+        "--mode".to_string(),
+        "full".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.91.5".to_string(),
+        "--json".to_string(),
+    ]);
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    doctor.expect("generated pre-run bundle should pass pr-run doctor readiness");
 }
 
 #[test]
@@ -621,8 +736,9 @@ The generated SPP should carry source-prompt facts into the plan.
     .expect("bootstrap cards");
 
     let spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
-    assert!(spp.contains("status: \"draft\""));
-    assert!(spp.contains("activation_state: \"draft\""));
+    assert!(spp.contains("card_status: \"ready\""));
+    assert!(spp.contains("status: \"ready\""));
+    assert!(spp.contains("activation_state: \"ready\""));
     assert!(spp.contains(
         "Confirm dependency readiness and starting state: PR #3294 coverage gate must be green"
     ));
@@ -733,8 +849,9 @@ All generated prompt cards pass the sprint readiness checker.
     let spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
     let srp =
         fs::read_to_string(issue_ref.task_bundle_review_policy_path(&repo)).expect("read srp");
-    assert!(spp.contains("status: \"draft\""));
-    assert!(spp.contains("activation_state: \"draft\""));
+    assert!(spp.contains("card_status: \"ready\""));
+    assert!(spp.contains("status: \"ready\""));
+    assert!(spp.contains("activation_state: \"ready\""));
     for marker in [
         "Issue-local task surface for",
         "Execute the linked issue prompt with bounded, reviewable changes",

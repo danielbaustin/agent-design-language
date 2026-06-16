@@ -222,7 +222,7 @@ fn classify_spp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             ),
         );
     }
-    if ["reviewed", "approved"].contains(&status.trim_matches('"')) {
+    if ["ready", "reviewed", "approved"].contains(&status.trim_matches('"')) {
         return card_stage(
             repo_root,
             "SPP",
@@ -232,7 +232,7 @@ fn classify_spp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
                 true,
                 false,
                 None,
-                "SPP has reviewed or approved design-time planning state.",
+                "SPP has ready, reviewed, or approved design-time planning state.",
             ),
         );
     }
