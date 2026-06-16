@@ -53,7 +53,9 @@ The current policy is now explicit and shared across the tracked contracts:
 Under that compatibility mode, stdout remains JSON-only while observability is
 still preserved on a separate explicit compatibility mirror. The governed
 durable machine-readable layer remains JSON/JSONL and is not replaced by this
-file sink.
+file sink. If the compatibility sink cannot be created or written while
+`ADL_OBSERVABILITY_STDERR=0` is active, the Rust helper now emits one bounded
+fallback failure event on stderr instead of silently dropping observability.
 
 ## Proof Commands
 
@@ -68,7 +70,10 @@ Expected proof:
 - repo/home/tmp path redaction still works;
 - `ADL_OBSERVABILITY=0` still fully disables emission;
 - `ADL_OBSERVABILITY_STDERR=0` suppresses terminal output while durable logging
-  continues in the compatibility mirror file.
+  continues in the compatibility mirror file;
+- when the compatibility sink path is invalid under quiet-stderr mode, the
+  helper emits one bounded `stage=compatibility_log result=failed` fallback
+  line instead of losing the event silently.
 
 ### Rust observability helper
 
@@ -82,7 +87,8 @@ Expected proof:
 - Rust helper appends to `ADL_OBSERVABILITY_LOG`;
 - Rust helper remains compatible with the quiet-stderr configuration used by
   shell-level proof, without changing the governed JSON/JSONL durable-layer
-  contract.
+  contract;
+- sink-open/write failures are classified explicitly instead of being ignored.
 
 ### Octocrab transport path
 

@@ -11,6 +11,19 @@ pub(crate) fn emit_event(command: &str, stage: &str, result: &str, fields: &[(&s
         return;
     }
 
+    let line = format_event_line(command, stage, result, fields);
+    let stderr_suppressed = env::var("ADL_OBSERVABILITY_STDERR").ok().as_deref() == Some("0");
+    if !stderr_suppressed {
+        eprintln!("{line}");
+    }
+    if let Some(log_path) = compatibility_log_path() {
+        if let Err(err) = append_to_compatibility_log(&log_path, &line) {
+            emit_compatibility_sink_failure(command, stage, &log_path, &err, stderr_suppressed);
+        }
+    }
+}
+
+fn format_event_line(command: &str, stage: &str, result: &str, fields: &[(&str, &str)]) -> String {
     let mut line = format!(
         "adl_event schema=adl.observability.event.v1 command={} stage={} result={}",
         sanitize_value(command),
@@ -23,19 +36,62 @@ pub(crate) fn emit_event(command: &str, stage: &str, result: &str, fields: &[(&s
         line.push('=');
         line.push_str(&sanitize_value(value));
     }
-    if env::var("ADL_OBSERVABILITY_STDERR").ok().as_deref() != Some("0") {
-        eprintln!("{line}");
+    line
+}
+
+fn compatibility_log_path() -> Option<String> {
+    env::var("ADL_OBSERVABILITY_LOG")
+        .ok()
+        .map(|path| path.trim().to_string())
+        .filter(|path| !path.is_empty())
+}
+
+fn append_to_compatibility_log(log_path: &str, line: &str) -> Result<(), String> {
+    if let Some(parent) = Path::new(log_path).parent() {
+        std::fs::create_dir_all(parent).map_err(|err| {
+            format!(
+                "op=create_dir_all sink={} error={}",
+                sanitize_value(log_path),
+                sanitize_value(&err.to_string())
+            )
+        })?;
     }
-    if let Ok(log_path) = env::var("ADL_OBSERVABILITY_LOG") {
-        if !log_path.trim().is_empty() {
-            if let Some(parent) = Path::new(&log_path).parent() {
-                let _ = std::fs::create_dir_all(parent);
-            }
-            if let Ok(mut file) = OpenOptions::new().create(true).append(true).open(&log_path) {
-                let _ = writeln!(file, "{line}");
-            }
-        }
-    }
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(log_path)
+        .map_err(|err| {
+            format!(
+                "op=open sink={} error={}",
+                sanitize_value(log_path),
+                sanitize_value(&err.to_string())
+            )
+        })?;
+    writeln!(file, "{line}").map_err(|err| {
+        format!(
+            "op=write sink={} error={}",
+            sanitize_value(log_path),
+            sanitize_value(&err.to_string())
+        )
+    })?;
+    Ok(())
+}
+
+fn emit_compatibility_sink_failure(
+    command: &str,
+    stage: &str,
+    log_path: &str,
+    err: &str,
+    _stderr_suppressed: bool,
+) {
+    let line = format!(
+        "adl_event schema=adl.observability.event.v1 command={} stage=compatibility_log result=failed original_stage={} sink={} detail={}",
+        sanitize_value(command),
+        sanitize_value(stage),
+        sanitize_value(log_path),
+        sanitize_value(err),
+    );
+    eprintln!("{line}");
 }
 
 fn emit_event_owned(command: &str, stage: &str, result: &str, fields: &[(String, String)]) {
@@ -213,7 +269,10 @@ fn contains_secret_marker(value: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{emit_event, heartbeat_interval, sanitize_value, ProgressHeartbeat};
+    use super::{
+        append_to_compatibility_log, emit_event, format_event_line, heartbeat_interval,
+        sanitize_value, ProgressHeartbeat,
+    };
     use std::env;
     use std::fs;
     use std::path::PathBuf;
@@ -322,6 +381,34 @@ mod tests {
         assert!(contents.contains("result=completed"));
         assert!(contents.contains("artifact_ref="));
         assert!(!contents.contains("/repo/adl/docs/proof.md"));
+    }
+
+    #[test]
+    fn format_event_line_preserves_expected_schema_shape() {
+        let line = format_event_line(
+            "adl",
+            "doctor",
+            "completed",
+            &[("artifact_ref", "/repo/adl/docs/proof.md")],
+        );
+        assert!(line.contains("schema=adl.observability.event.v1"));
+        assert!(line.contains("command=adl"));
+        assert!(line.contains("stage=doctor"));
+        assert!(line.contains("result=completed"));
+        assert!(line.contains("artifact_ref="));
+    }
+
+    #[test]
+    fn append_to_compatibility_log_reports_open_failures() {
+        let temp = unique_temp_dir("adl-observability-bad-log-open");
+        let _env = MultiEnvGuard::set_all(&[("ADL_OBSERVABILITY_REPO_ROOT", "/repo/adl")]);
+        let err = append_to_compatibility_log(
+            temp.to_str().expect("temp utf8"),
+            "adl_event schema=adl.observability.event.v1 command=adl stage=doctor result=completed",
+        )
+        .expect_err("directory path should not be append-openable");
+        assert!(err.contains("op=open"));
+        assert!(err.contains("sink=<path>"));
     }
 
     #[test]
