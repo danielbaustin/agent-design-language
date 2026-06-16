@@ -3,7 +3,8 @@
 Sprint issue: #3703  
 Final child: #3711  
 Captured: 2026-06-15  
-Status: review_hold_open_until_follow_ons_land
+Updated: 2026-06-16
+Status: ready_for_final_umbrella_closeout
 
 ## Summary
 
@@ -16,10 +17,13 @@ This packet is the reviewer-facing summary for the sprint. It states what the
 sprint completed, what remains deferred, and what must not be overclaimed when
 v0.92 or later work relies on these surfaces.
 
-The original child issue wave is complete, but the sprint umbrella should
-remain open until the routed observability/tooling follow-ons are resolved.
-This packet is therefore a review-hold closeout surface, not a final
-sprint-closed claim.
+The original child issue wave is complete. The routed observability/tooling
+follow-ons that materially affected this packet's closeout truth have also
+landed, including `#3807`, `#3808`, and `#3809`.
+
+This packet is therefore ready to support final `#3703` umbrella closeout. It
+does not broaden the sprint's technical claims beyond the proof surfaces listed
+below.
 
 ## Child Issue Outcomes
 
@@ -103,11 +107,10 @@ Unsafe reliance after this sprint:
 - claiming every provider/runtime/long-lived-agent surface is fully unified
 - treating unresolved tool defects as if the sprint solved them
 
-## Remaining Follow-Ons
+## Follow-On Resolution
 
 The sprint surfaced bounded observability/tooling follow-ons during review.
-Several have already landed since the first closeout packet was written and
-should remain recorded as completed follow-on work rather than invisible
+They are recorded here as completed follow-on work rather than invisible
 backlog:
 
 - `#3789` machine-readable JSON surface cleanup is already completed and should
@@ -120,25 +123,11 @@ backlog:
 - `#3837` bootstrap/init now generates issue-specific `STP` and `SPP` cards
 - `#3807` fail-closed compatibility log behavior has landed
 - `#3808` embedded absolute-path redaction has landed
+- `#3809` bounded uniqueness for redacted provider artifact refs has landed
 
-The remaining logging-tail work must not be silently treated as done:
-
-- `#3809` bounded uniqueness for redacted provider artifact refs remains the
-  explicit remaining provider-logging follow-on from this packet
-- sprint-state / issue / PR closeout truth drift remains a routed tooling
-  concern unless its owning issue closes it separately
-
-Those follow-ons must not be silently treated as done by this sprint.
-
-The umbrella issue `#3703` should remain open and continue through the
-currently routed observability follow-ons that materially affect
-logging/observability review truth. At this point the active logging-tail item
-named by this packet is:
-
-- `#3809` bounded uniqueness for redacted provider artifact refs
-
-That issue now forms the active remaining sprint tail for `#3703` unless a
-later reviewed routing packet adds or removes follow-ons.
+No active logging-tail issue remains from this packet. Later toolkit
+simplification work, including the `#3733` refresh of the `#3704` gap audit,
+is a separate post-sprint refresh path and should not keep `#3703` open.
 
 ## Reviewer Checklist
 
@@ -147,12 +136,13 @@ Reviewers should confirm:
 - the child proofs above exist and are internally consistent
 - `#3711` guidance changes teach operators when logging proof is required
 - no packet in this sprint overclaims OTEL or repo-wide JSON cleanliness
-- deferred tool defects remain visible and are not mislabeled as sprint wins
+- deferred tool defects remain visible and are either closed or routed outside
+  this sprint
 
 ## Bottom Line
 
 The logging mini-sprint is a real hardening tranche, not a cosmetic docs wave.
 It gives ADL a usable observability contract and proof baseline, while
-preserving explicit boundaries around the work that still remains. Keep
-`#3703` open until the routed observability follow-ons above land; closeout is
-not final before then.
+preserving explicit boundaries around work that remains outside this sprint.
+The routed follow-ons named by this packet have landed, so `#3703` is ready for
+final umbrella closeout.
