@@ -2259,7 +2259,7 @@ cmd_ready() {
     return 0
   fi
   require_rust_pr_delegate
-  note "Deprecated compatibility path: prefer 'adl/tools/pr.sh doctor <issue> --mode ready ...'."
+  note "Deprecated compatibility path: prefer 'adl/tools/pr.sh doctor <issue> --mode ready ...'." >&2
   delegate_pr_command_to_rust ready "$@"
 }
 
@@ -2269,7 +2269,7 @@ cmd_preflight() {
     return 0
   fi
   require_rust_pr_delegate
-  note "Deprecated compatibility path: prefer 'adl/tools/pr.sh doctor <issue> --mode preflight ...'."
+  note "Deprecated compatibility path: prefer 'adl/tools/pr.sh doctor <issue> --mode preflight ...'." >&2
   delegate_pr_command_to_rust preflight "$@"
 }
 
