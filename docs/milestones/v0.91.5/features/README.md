@@ -32,7 +32,8 @@ validation, risks, and future-work boundary.
 
 The package covers AEE completion, multi-agent C-SDLC operation,
 provider/model matrix, public prompt records, demo/Unity Observatory readiness,
-and v0.92 activation readiness.
+security/CAV scheduling, enterprise-security organization boundaries, and
+v0.92 activation readiness.
 
 ## Design
 
@@ -83,6 +84,9 @@ first-birthday implementation.
 ## Feature Documents
 
 - [AEE_COMPLETION_TRANCHE_v0.91.5.md](AEE_COMPLETION_TRANCHE_v0.91.5.md)
+- [CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SCHEDULING_v0.91.5.md](CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SCHEDULING_v0.91.5.md)
+- [CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SOURCE_PACKET_v0.91.5.md](CAV_THREAT_MODEL_AND_CODEFRIEND_SECURITY_SOURCE_PACKET_v0.91.5.md)
+- [ENTERPRISE_SECURITY_ORGANIZATION_BOUNDARY_v0.91.5.md](ENTERPRISE_SECURITY_ORGANIZATION_BOUNDARY_v0.91.5.md)
 - [MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md](MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md)
 - [PROVIDER_MODEL_MATRIX_v0.91.5.md](PROVIDER_MODEL_MATRIX_v0.91.5.md)
 - [PUBLIC_PROMPT_RECORDS_v0.91.5.md](PUBLIC_PROMPT_RECORDS_v0.91.5.md)
