@@ -122,6 +122,13 @@ structure checks that ran. When redaction- or observability-facing docs are
 involved, the `SOR` should say whether the proof was contract-only or whether a
 real command/log proof was run.
 
+For bounded docs-only finish publication, `pr-finish` may normalize known
+`SOR` enum aliases and ingest the standard docs-only validation commands into
+the `Validation` section and `verification_summary.checks_run`. That automation
+is intentionally narrow: it applies only to the canonical docs-only bundle and
+does not replace explicit human truth judgment for unusual execution or
+integration state.
+
 ## Non-Closing Lifecycle PR Policy
 
 A docs-only PR may complete issue-local execution without closing a larger
