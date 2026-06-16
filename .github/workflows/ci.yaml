@@ -93,7 +93,11 @@ jobs:
 
       - name: tooling sanity (codex_pr help)
         run: |
-          bash adl/tools/codex_pr.sh --help >/tmp/codex_pr_help.out 2>/tmp/codex_pr_help.err
+          if bash adl/tools/codex_pr.sh --help >/tmp/codex_pr_help.out 2>/tmp/codex_pr_help.err; then
+            rc=0
+          else
+            rc=$?
+          fi
           rc=$?
           test "$rc" -eq 2
           grep -q "retired and now fails closed" /tmp/codex_pr_help.err
@@ -101,8 +105,11 @@ jobs:
 
       - name: tooling sanity (codexw help)
         run: |
-          bash adl/tools/codexw.sh --help >/tmp/codexw_help.out 2>/tmp/codexw_help.err
-          rc=$?
+          if bash adl/tools/codexw.sh --help >/tmp/codexw_help.out 2>/tmp/codexw_help.err; then
+            rc=0
+          else
+            rc=$?
+          fi
           test "$rc" -eq 2
           grep -q "retired and now fails closed" /tmp/codexw_help.err
         working-directory: .
