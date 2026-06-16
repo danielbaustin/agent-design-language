@@ -27,6 +27,18 @@ name = "adl-review"
 path = "src/bin/adl_review.rs"
 
 [[bin]]
+name = "adl-validate-structured-prompt"
+path = "src/bin/adl_validate_structured_prompt.rs"
+
+[[bin]]
+name = "adl-lint-prompt-spec"
+path = "src/bin/adl_lint_prompt_spec.rs"
+
+[[bin]]
+name = "adl-prompt-template"
+path = "src/bin/adl_prompt_template.rs"
+
+[[bin]]
 name = "adl-remote"
 path = "src/bin/adl_remote.rs"
 
