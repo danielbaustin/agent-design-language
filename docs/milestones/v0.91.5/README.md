@@ -133,8 +133,13 @@ Primary planning and proof sources:
 Supporting / domain-specific docs:
 
 - v0.92 activation test map: [V092_ACTIVATION_TEST_MAP_v0.91.5.md](V092_ACTIVATION_TEST_MAP_v0.91.5.md)
+- Logging validation checklist: [LOGGING_VALIDATION_CHECKLIST_3711.md](LOGGING_VALIDATION_CHECKLIST_3711.md)
 - Feature index: [features/README.md](features/README.md)
 - Issue wave: [WP_ISSUE_WAVE_v0.91.5.yaml](WP_ISSUE_WAVE_v0.91.5.yaml)
+
+Sprint and review support:
+
+- Logging mini-sprint closeout packet: [LOGGING_MINI_SPRINT_CLOSEOUT_3703.md](review/logging_observability/LOGGING_MINI_SPRINT_CLOSEOUT_3703.md)
 
 ## Document Map
 

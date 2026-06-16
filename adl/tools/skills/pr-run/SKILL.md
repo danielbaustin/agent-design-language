@@ -142,6 +142,19 @@ Default rule:
   - default ADL/Codex behavior is to stop and report `blocked_now`
   - if the caller explicitly wants execution despite the gate, record that the run proceeded under override
 
+### Observability Expectations
+
+- Preserve the execution-time log story for the issue:
+  - what command/binder path was used
+  - whether execution proceeded under an explicit queue or preflight override
+  - what durable or compatibility log behavior was relied on, if any
+- When the issue changes machine-readable command surfaces, include proof for
+  stdout/stderr separation and any `ADL_OBSERVABILITY_STDERR=0` /
+  `ADL_OBSERVABILITY_LOG` compatibility path that is claimed.
+- Do not treat emitted `adl_event` lines as a validation failure by themselves;
+  classify them as part of the current observability contract unless the issue
+  explicitly changes that contract.
+
 ### 3. Bind Branch And Worktree
 
 Use the repo's canonical `run` surface to create or confirm the issue execution branch and worktree at the last responsible moment.

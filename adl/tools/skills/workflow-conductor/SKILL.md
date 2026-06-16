@@ -114,6 +114,19 @@ If there is no concrete target, stop and report `blocked`.
 7. When explicit dispatch mode is enabled, dispatch one bounded downstream skill subtask.
 8. Stop without absorbing the selected skill's logic.
 
+## Observability Expectations
+
+When conductor routing depends on doctor/readiness/PR state:
+- prefer structured workflow evidence first, but expect current repo-native
+  commands to emit `adl_event` lines before or alongside the observed machine
+  output on some paths
+- do not treat those observability lines as corruption when the command still
+  returns the authoritative structured payload
+- do not assume stdout/stderr separation or JSON cleanliness unless the
+  relevant issue or proof packet explicitly established it
+- when a routing result depends on wait state, queue blocking, or PR inference,
+  preserve the relevant log-policy caveat in the output or handoff notes
+
 ## Routing Model
 
 Preferred next-skill mapping:

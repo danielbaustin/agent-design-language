@@ -96,6 +96,16 @@ If there is no concrete PR-progress target, stop and report `blocked`.
 4. Apply only bounded fixes if policy and evidence support them.
 5. Emit a structured progress result and stop.
 
+## Observability Expectations
+
+- Use workflow/control-plane logs as supporting evidence when diagnosing stuck
+  PR lanes, queue gates, draft-state transitions, or GitHub transport failures.
+- Distinguish between a real command failure and log noise on stderr; current
+  repo-native paths may emit `adl_event` lines even when the underlying
+  structured state is healthy.
+- When janitor notes a logging defect, separate that follow-on from the current
+  PR blocker unless the logging defect itself is why the PR cannot advance.
+
 ## Workflow
 
 ### 1. Resolve PR Target

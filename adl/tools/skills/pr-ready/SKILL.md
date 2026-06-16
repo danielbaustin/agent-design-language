@@ -112,6 +112,17 @@ If there is no concrete target, stop and report `blocked` with the missing targe
 10. Apply only clearly safe bounded repairs if permitted.
 11. Emit a structured readiness result and stop.
 
+## Observability Expectations
+
+- Current doctor/readiness commands may emit `adl_event` lines before the
+  structured JSON payload; treat the JSON body as authoritative while recording
+  the logging caveat truthfully when it matters.
+- If the readiness result depends on queue gating, draft PR state, or linked
+  PR inference, preserve those details explicitly instead of compressing them
+  into a generic `blocked` summary.
+- When the changed surface touches machine-readable command output, note whether
+  stdout/stderr separation was part of the readiness proof.
+
 ## Workflow
 
 ### 1. Resolve Target Context
