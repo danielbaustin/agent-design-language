@@ -484,6 +484,11 @@ fn finish_guard_blocks_branch_behind_origin_main_before_validation() {
         .current_dir(&repo)
         .status()
         .expect("git push");
+    Command::new("git")
+        .args(["symbolic-ref", "HEAD", "refs/heads/main"])
+        .current_dir(&origin)
+        .status()
+        .expect("git origin head");
     ensure_finish_branch_not_behind_origin_main(&repo).expect("fresh branch");
 
     let upstream = temp.join("upstream");
