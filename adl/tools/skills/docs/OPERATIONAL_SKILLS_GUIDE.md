@@ -299,6 +299,15 @@ worktree, allowed scope, stop boundary, and a reminder not to merge, close,
 reset, recreate branches, or widen issue scope without explicit operator
 direction.
 
+Forked subagents inherit the parent session's model and should not be given an
+explicit model override in full-history or forked-context review handoffs. When
+a stronger or cheaper model is required for a bounded review, start the parent
+session on that model before forking, or use a non-forked minimal-context
+handoff only when the task does not require full thread history. If a subagent
+spawn fails with an explicit-model or model-override error, retry once without
+the model override and record the inherited-model assumption in the handoff or
+review notes.
+
 Issue classification comes before validation selection.
 
 Classify the issue using the narrowest truthful class:

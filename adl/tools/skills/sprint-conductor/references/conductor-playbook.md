@@ -115,6 +115,8 @@ Bounded review-subagent exception:
 - child issue execution stays local to the normal issue skill path
 - one bounded reviewer subagent may be used during sprint review when sprint
   policy explicitly enables it
+- forked reviewer subagents inherit the parent session's model; do not pass an
+  explicit model override in forked review-subagent handoffs
 - if disabled, record that no review subagent was used
 - validate the declared reviewer-subagent set before review execution:
   - `python3 adl/tools/skills/sprint-conductor/scripts/validate_review_subagent_policy.py --allow-review-subagent-exception <bool> --max-review-subagents 1`
