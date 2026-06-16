@@ -65,6 +65,13 @@ The first four roles may run independently when the operator wants parallel
 review. The suite treats documentation review as required for all internal and
 external review packets unless a lane is explicitly skipped.
 
+When these roles are delegated to forked review subagents, do not request an
+explicit model override in the spawn request. Forked review agents inherit the
+parent session's model. If model choice matters for the review, select the
+desired model for the parent session before forking, or use a non-forked
+minimal-context handoff only when the specialist task does not need full review
+history.
+
 For this suite, the synthesis role must run after at least one specialist
 artifact is available, and ideally after all required roles have reported.
 When a required role is intentionally skipped, record an explicit skip reason,

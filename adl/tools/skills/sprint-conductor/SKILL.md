@@ -241,6 +241,8 @@ Bounded review-subagent exception:
 - child issue execution remains issue-skill driven rather than subagent driven
 - sprint review may use one bounded reviewer subagent when sprint policy
   explicitly enables that exception
+- forked reviewer subagents inherit the parent session's model; do not pass an
+  explicit model override in the forked review-subagent handoff
 - if the exception is disabled, the sprint review must remain local and record
   that no review subagent was used
 - the bundle should validate this boundary mechanically before review execution
