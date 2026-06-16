@@ -193,6 +193,8 @@ The likely `v0.92` tranche is:
 - Feature plans: [features/README.md](features/README.md)
 - Activation bridge ledger:
   [V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md](V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md)
+- First-birthday launch packet:
+  [FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md](FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md)
 - ADR plan: [ADR_PLAN_v0.92.md](ADR_PLAN_v0.92.md)
 - Identity, continuity, and birthday allocation:
   [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md)
