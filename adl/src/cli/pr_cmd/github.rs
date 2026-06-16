@@ -1110,11 +1110,7 @@ pub(super) fn unresolved_milestone_pr_wave(
             pr.queue = infer_workflow_queue(&pr.title, "", None).map(str::to_string);
             pr
         })
-        .filter(|pr| {
-            pr.queue
-                .as_deref()
-                .is_none_or(|queue| queue == target_queue)
-        })
+        .filter(|pr| pr.queue.as_deref() == Some(target_queue))
         .filter_map(|pr| match pr_has_any_closing_linkage(repo, &pr.url) {
             Ok(true) => Some(Ok(pr)),
             Ok(false) => None,
@@ -2358,6 +2354,14 @@ if [ "$1 $2" = 'pr list' ]; then
     "headRefName": "codex/real-active-blocker",
     "baseRefName": "main",
     "isDraft": true
+  },
+  {
+    "number": 2003,
+    "title": "[v0.91.5] Queue-less closing PR",
+    "url": "https://github.com/owner/repo/pull/2003",
+    "headRefName": "codex/queue-less-closing-pr",
+    "baseRefName": "main",
+    "isDraft": true
   }
 ]
 JSON
@@ -2369,6 +2373,10 @@ if [ "$1 $2" = 'pr view' ]; then
   fi
   if printf '%s ' "$@" | grep -q 'pull/2002'; then
     printf '3790\n'
+    exit 0
+  fi
+  if printf '%s ' "$@" | grep -q 'pull/2003'; then
+    printf '3841\n'
     exit 0
   fi
 fi
