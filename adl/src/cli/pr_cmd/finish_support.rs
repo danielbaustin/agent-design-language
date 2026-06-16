@@ -3,6 +3,8 @@ use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::thread;
+use std::time::{Duration, Instant};
 
 use super::git_support::{
     branch_checked_out_worktree_path, commits_ahead_of_origin_main, current_branch, default_repo,
@@ -229,12 +231,111 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     )?;
     attach_post_merge_closeout(&repo_root, &repo, parsed.issue, &branch, &pr_url)?;
 
+    println!("{pr_url}");
     if !parsed.no_open {
-        let _ = run_status_allow_failure("open", &[&pr_url])?;
+        let open_result = open_pr_url_nonblocking("open", &pr_url);
+        if !open_result.success {
+            eprintln!("{}", open_result.warning);
+        }
+    }
+    Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) struct OpenPrUrlResult {
+    pub(super) success: bool,
+    pub(super) warning: String,
+}
+
+const PR_URL_OPENER_TIMEOUT: Duration = Duration::from_secs(5);
+
+pub(super) fn open_pr_url_nonblocking(opener: &str, pr_url: &str) -> OpenPrUrlResult {
+    open_pr_url_nonblocking_with_timeout(opener, pr_url, PR_URL_OPENER_TIMEOUT)
+}
+
+pub(super) fn open_pr_url_nonblocking_with_timeout(
+    opener: &str,
+    pr_url: &str,
+    timeout: Duration,
+) -> OpenPrUrlResult {
+    let mut child = match Command::new(opener)
+        .arg(pr_url)
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+    {
+        Ok(child) => child,
+        Err(err) => {
+            return OpenPrUrlResult {
+                success: false,
+                warning: format!(
+                    "warning: local PR URL opener could not start; PR publication already succeeded. Open manually: {pr_url} ({err})"
+                ),
+            }
+        }
+    };
+
+    let started = Instant::now();
+    loop {
+        match child.try_wait() {
+            Ok(Some(_status)) => break,
+            Ok(None) if started.elapsed() < timeout => {
+                thread::sleep(Duration::from_millis(50));
+            }
+            Ok(None) => {
+                let _ = child.kill();
+                let _ = child.wait();
+                return OpenPrUrlResult {
+                    success: false,
+                    warning: format!(
+                        "warning: local PR URL opener timed out after {}s; PR publication already succeeded. Open manually: {pr_url}",
+                        timeout.as_secs()
+                    ),
+                };
+            }
+            Err(err) => {
+                return OpenPrUrlResult {
+                    success: false,
+                    warning: format!(
+                        "warning: local PR URL opener could not be checked; PR publication already succeeded. Open manually: {pr_url} ({err})"
+                    ),
+                };
+            }
+        }
     }
 
-    println!("{pr_url}");
-    Ok(())
+    match child.wait_with_output() {
+        Ok(output) if output.status.success() => OpenPrUrlResult {
+            success: true,
+            warning: String::new(),
+        },
+        Ok(output) => {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            let detail = stderr.trim();
+            let status = output
+                .status
+                .code()
+                .map(|code| code.to_string())
+                .unwrap_or_else(|| "terminated_by_signal".to_string());
+            OpenPrUrlResult {
+                success: false,
+                warning: format!(
+                    "warning: local PR URL opener failed with status {status}; PR publication already succeeded. Open manually: {pr_url}{}",
+                    if detail.is_empty() {
+                        String::new()
+                    } else {
+                        format!(" ({detail})")
+                    }
+                ),
+            }
+        }
+        Err(err) => OpenPrUrlResult {
+            success: false,
+            warning: format!(
+                "warning: local PR URL opener could not complete; PR publication already succeeded. Open manually: {pr_url} ({err})"
+            ),
+        },
+    }
 }
 
 pub(super) fn resolve_finish_issue_scope_and_slug(
