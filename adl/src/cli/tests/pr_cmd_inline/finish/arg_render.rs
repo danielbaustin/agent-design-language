@@ -1,9 +1,10 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
-    ensure_finish_task_bundle_surfaces, open_pr_url_nonblocking,
-    open_pr_url_nonblocking_with_timeout, real_pr_finish, resolve_finish_issue_scope_and_slug,
-    select_finish_validation_plan_for_finish,
+    ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
+    open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout, real_pr_finish,
+    resolve_finish_issue_scope_and_slug, select_finish_validation_plan_for_finish,
 };
+use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
 
 #[test]
 fn parse_finish_args_requires_title_and_accepts_finish_flags() {
@@ -422,6 +423,118 @@ fn finish_helper_paths_cover_ahead_count_and_validation_modes() {
     assert!(cargo_calls.contains("nextest run --manifest-path"));
     assert!(cargo_calls.contains("test --manifest-path"));
     assert!(cargo_calls.contains("--doc --all-features"));
+}
+
+#[test]
+fn finish_guard_blocks_branch_behind_origin_main_before_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-stale-base-guard");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    init_git_repo(&repo);
+    Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config");
+    Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config");
+    fs::write(repo.join("README.md"), "base\n").expect("readme");
+    Command::new("git")
+        .args(["add", "README.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add");
+    Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit");
+    Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare");
+    Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url");
+    Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch");
+    Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push");
+    ensure_finish_branch_not_behind_origin_main(&repo).expect("fresh branch");
+
+    let upstream = temp.join("upstream");
+    Command::new("git")
+        .args([
+            "clone",
+            "-q",
+            path_str(&origin).expect("origin path"),
+            path_str(&upstream).expect("upstream path"),
+        ])
+        .status()
+        .expect("git clone");
+    Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&upstream)
+        .status()
+        .expect("git config");
+    Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&upstream)
+        .status()
+        .expect("git config");
+    fs::write(upstream.join("README.md"), "upstream\n").expect("upstream readme");
+    Command::new("git")
+        .args(["add", "README.md"])
+        .current_dir(&upstream)
+        .status()
+        .expect("git add");
+    Command::new("git")
+        .args(["commit", "-q", "-m", "upstream"])
+        .current_dir(&upstream)
+        .status()
+        .expect("git commit");
+    Command::new("git")
+        .args(["push", "-q", "origin", "main"])
+        .current_dir(&upstream)
+        .status()
+        .expect("git push");
+    Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch");
+
+    assert_eq!(commits_behind_origin_main(&repo).expect("behind count"), 1);
+    let err = ensure_finish_branch_not_behind_origin_main(&repo).expect_err("stale branch");
+    let message = err.to_string();
+    assert!(message.contains("finish: branch is behind origin/main by 1 commit(s)"));
+    assert!(message.contains("rebase before publication"));
+    assert!(message.contains("coverage-impact false positives"));
+    assert!(message.contains("git fetch origin main && git rebase origin/main --autostash"));
 }
 
 #[test]

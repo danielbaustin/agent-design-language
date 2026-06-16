@@ -7,9 +7,10 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use super::git_support::{
-    branch_checked_out_worktree_path, commits_ahead_of_origin_main, current_branch, default_repo,
-    ensure_not_on_main_branch, has_uncommitted_changes, path_str, primary_checkout_root, repo_root,
-    run_capture, run_capture_allow_failure, run_status, run_status_allow_failure,
+    branch_checked_out_worktree_path, commits_ahead_of_origin_main, commits_behind_origin_main,
+    current_branch, default_repo, ensure_not_on_main_branch, has_uncommitted_changes, path_str,
+    primary_checkout_root, repo_root, run_capture, run_capture_allow_failure, run_status,
+    run_status_allow_failure,
 };
 use super::github::{
     attach_post_merge_closeout, attach_pr_janitor, current_pr_url,
@@ -38,8 +39,6 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     let repo_root = repo_root()?;
     let primary_root = primary_checkout_root()?;
     let repo = default_repo(&repo_root)?;
-
-    let _ = run_status_allow_failure("git", &["fetch", "origin"]);
 
     let inferred = resolve_finish_issue_scope_and_slug(&repo_root, &primary_root, parsed.issue)?;
     let issue_ref = IssueRef::new(parsed.issue, inferred.0.clone(), inferred.1.clone())?;
@@ -116,7 +115,10 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     stage_selected_paths_rust(&repo_root, &parsed.paths)?;
     ensure_no_staged_issue_bundle_mutations(&repo_root, &issue_ref)?;
     let has_uncommitted = has_uncommitted_changes(&repo_root)?;
+    run_status("git", &["fetch", "origin", "main"])
+        .context("finish: failed to fetch origin/main before stale-base guard")?;
     let ahead = commits_ahead_of_origin_main(&repo_root)?;
+    ensure_finish_branch_not_behind_origin_main(&repo_root)?;
     if staged_diff_is_empty(&repo_root)? {
         if !has_uncommitted && ahead == 0 {
             bail!("No changes detected and branch has no commits ahead of origin/main. Nothing to PR.");
@@ -336,6 +338,16 @@ pub(super) fn open_pr_url_nonblocking_with_timeout(
             ),
         },
     }
+}
+
+pub(super) fn ensure_finish_branch_not_behind_origin_main(repo_root: &Path) -> Result<()> {
+    let behind = commits_behind_origin_main(repo_root)?;
+    if behind == 0 {
+        return Ok(());
+    }
+    bail!(
+        "finish: branch is behind origin/main by {behind} commit(s); rebase before publication to avoid stale-base validation and coverage-impact false positives. Suggested recovery: git fetch origin main && git rebase origin/main --autostash, then rerun pr finish from the bound issue worktree."
+    )
 }
 
 pub(super) fn resolve_finish_issue_scope_and_slug(
