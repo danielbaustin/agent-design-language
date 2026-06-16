@@ -23,11 +23,14 @@ prompt-template values renderer and structure/schema validators before using
 Markdown as lifecycle state:
 
 ```sh
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-values --kind sip --values <path>
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template edit-values --kind sip --values <path> --set <field=value> --out <path>
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render --kind sip --values <path> --out <path>
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure --kind sip --input <path>
+adl-csdlc tooling prompt-template validate-values --kind sip --values <path>
+adl-csdlc tooling prompt-template edit-values --kind sip --values <path> --set <field=value> --out <path>
+adl-csdlc tooling prompt-template render --kind sip --values <path> --out <path>
+adl-csdlc tooling prompt-template validate-structure --kind sip --input <path>
 ```
+
+If `adl-csdlc` is not already on `PATH`, run the same commands from a fresh
+checkout through `cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- ...`.
 
 Use this skill for SIP truth repairs: issue-specific intent, branch/worktree
 truth, target surfaces, validation guidance, and placeholder cleanup. Do not use

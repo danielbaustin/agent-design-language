@@ -29,11 +29,14 @@ prompt-template values renderer and structure/schema validators before using
 Markdown as lifecycle state:
 
 ```sh
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-values --kind spp --values <path>
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template edit-values --kind spp --values <path> --set <field=value> --out <path>
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render --kind spp --values <path> --out <path>
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure --kind spp --input <path>
+adl-csdlc tooling prompt-template validate-values --kind spp --values <path>
+adl-csdlc tooling prompt-template edit-values --kind spp --values <path> --set <field=value> --out <path>
+adl-csdlc tooling prompt-template render --kind spp --values <path> --out <path>
+adl-csdlc tooling prompt-template validate-structure --kind spp --input <path>
 ```
+
+If `adl-csdlc` is not already on `PATH`, run the same commands from a fresh
+checkout through `cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- ...`.
 
 Use this skill for SPP truth repairs: issue-local plan readiness, `codex_plan`
 status normalization, assumptions, stop conditions, dependencies, and

@@ -130,7 +130,10 @@ cd ./adl/ && bash tools/enforce_coverage_gates.sh coverage-summary.json
 ./adl/tools/report_large_rust_modules.sh
 
 # generate deterministic execution prompt from an input card
-adl tooling card-prompt --issue <issue_num> --out /tmp/prompt.txt
+adl-csdlc tooling card-prompt --issue <issue_num> --out /tmp/prompt.txt
+
+# fresh checkout fallback when adl-csdlc is not yet on PATH
+cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- tooling card-prompt --issue <issue_num> --out /tmp/prompt.txt
 
 # finish issue and open/update PR
 bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
