@@ -23,6 +23,7 @@ These docs describe the structured prompt surfaces used to shape issues, issue-c
 - [ADL Card Lifecycle](card-lifecycle.md)
 - [Active Card Lifecycle Migration Readiness](active-card-lifecycle-migration-readiness-v0.91.2.md)
 - [Structured Prompt Contracts](structured-prompt-contracts.md)
+- [Structured Prompt Validator Binary Resolution](structured-prompt-validator-binary-resolution.md)
 - [SRP, SOR, And ObsMem Handoff Model](srp-sor-obsmem-handoff-v0.91.2.md)
 - [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md)
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings)
@@ -80,6 +81,7 @@ Important repo-local tooling surfaces include:
 - `adl tooling lint-prompt-spec` — Prompt Spec lint and validation
 - `adl tooling card-prompt` — deterministic prompt generation from cards
 - `adl tooling validate-structured-prompt` — structured prompt contract validation
+- `bash adl/tools/validate_structured_prompt.sh` — compatibility wrapper for the dedicated structured-prompt validator binary; see [binary resolution](structured-prompt-validator-binary-resolution.md)
 - `adl tooling generate-wp-issue-wave` — deterministic WBS/sprint-to-issue-wave planning generator
 - `adl tooling verify-review-output-provenance` — provenance verification for review-output artifacts
 - `adl tooling review-card-surface` — bounded deterministic review helper
