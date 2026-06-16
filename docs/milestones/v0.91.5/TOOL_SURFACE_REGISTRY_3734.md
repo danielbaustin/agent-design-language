@@ -13,8 +13,8 @@ drive later simplification cuts without confusing primary workflow
 entrypoints, supported compatibility shims, internal helpers, and
 historical evidence artifacts.
 
-No surface is marked `remove candidate` in this registry. Removal or
-fail-closed cuts still require the later active-reference scan gate.
+This registry distinguishes active workflow spines from already-retired
+wrapper residue so later cuts can stay evidence-bound.
 
 ## Generation Command
 
@@ -31,11 +31,11 @@ python3 adl/tools/generate_tool_surface_registry.py --check
 ## Classification Counts
 
 - `primary`: 30
-- `supported shim`: 10
-- `internal helper`: 470
+- `supported shim`: 9
+- `internal helper`: 471
 - `historical evidence`: 4
 - `archive candidate`: 0
-- `remove candidate`: 0
+- `remove candidate`: 2
 
 ## Owner Binaries
 
@@ -97,8 +97,8 @@ python3 adl/tools/generate_tool_surface_registry.py --check
 | `adl/tools/ci_path_policy.sh` | tool surface | internal helper | Shell helper retained for bounded workflow support. |
 | `adl/tools/clean_coverage_artifacts.sh` | tool surface | internal helper | Shell helper retained for bounded workflow support. |
 | `adl/tools/closeout_completed_issue_wave.sh` | tool surface | internal helper | Shell helper retained for bounded workflow support. |
-| `adl/tools/codex_pr.sh` | tool surface | supported shim | Legacy compatibility wrapper retained as a supported shim. |
-| `adl/tools/codexw.sh` | tool surface | internal helper | Shell helper retained for bounded workflow support. |
+| `adl/tools/codex_pr.sh` | tool surface | remove candidate | Retired fail-closed wrapper kept only for migration guidance until final deletion. |
+| `adl/tools/codexw.sh` | tool surface | remove candidate | Retired fail-closed wrapper kept only for migration guidance until final deletion. |
 | `adl/tools/compute_ccc_v0.py` | tool surface | internal helper | Python helper or generator used by a bounded tooling surface. |
 | `adl/tools/coverage.sh` | tool surface | internal helper | Shell helper retained for bounded workflow support. |
 | `adl/tools/demo_adaptive_godel_loop.sh` | tool surface | internal helper | Demo/proof helper rather than a primary workflow entrypoint. |
@@ -204,6 +204,7 @@ python3 adl/tools/generate_tool_surface_registry.py --check
 | `adl/tools/fill_planning_template.py` | tool surface | internal helper | Python helper or generator used by a bounded tooling surface. |
 | `adl/tools/fix_git_main_sync.sh` | tool surface | internal helper | Shell helper retained for bounded workflow support. |
 | `adl/tools/fix_git_main_sync_preserve_local_adl.sh` | tool surface | internal helper | Shell helper retained for bounded workflow support. |
+| `adl/tools/generate_active_command_reference_scan.py` | tool surface | internal helper | Python helper or generator used by a bounded tooling surface. |
 | `adl/tools/generate_podcast_studio_v2_packet.py` | tool surface | internal helper | Python helper or generator used by a bounded tooling surface. |
 | `adl/tools/generate_tool_surface_registry.py` | tool surface | internal helper | Python helper or generator used by a bounded tooling surface. |
 | `adl/tools/install_adl_operational_skills.sh` | tool surface | internal helper | Shell helper retained for bounded workflow support. |
@@ -357,6 +358,7 @@ python3 adl/tools/generate_tool_surface_registry.py --check
 | `adl/tools/test_five_minute_sprint_console_packet.sh` | tool surface | internal helper | Focused regression or contract test helper. |
 | `adl/tools/test_fix_git_main_sync_preserves_local_adl_cards.sh` | tool surface | internal helper | Focused regression or contract test helper. |
 | `adl/tools/test_gap_analysis_skill_contracts.sh` | tool surface | internal helper | Focused regression or contract test helper. |
+| `adl/tools/test_generate_active_command_reference_scan.sh` | tool surface | internal helper | Focused regression or contract test helper. |
 | `adl/tools/test_generate_tool_surface_registry.sh` | tool surface | internal helper | Focused regression or contract test helper. |
 | `adl/tools/test_hosted_benchmark_hardening.sh` | tool surface | internal helper | Focused regression or contract test helper. |
 | `adl/tools/test_install_adl_operational_skills.sh` | tool surface | internal helper | Focused regression or contract test helper. |
@@ -578,6 +580,6 @@ python3 adl/tools/generate_tool_surface_registry.py --check
 
 ## Non-Claims
 
-- This registry does not approve any deletion.
+- This registry does not approve final deletion of retired wrappers.
 - This registry does not prove active-reference absence for any shim.
 - This registry does not replace the later simplification review and scan issues.

@@ -183,7 +183,7 @@ fn real_pr_finish_refuses_to_publish_local_only_bundle_without_tracked_changes()
     assert!(!head_files.contains(".adl/v0.86/tasks/issue-1157__rust-finish-ignored-bundle/stp.md"));
     assert!(!head_files.contains(".adl/v0.86/tasks/issue-1157__rust-finish-ignored-bundle/sip.md"));
     assert!(!head_files.contains(".adl/v0.86/tasks/issue-1157__rust-finish-ignored-bundle/sor.md"));
-    let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
+    let gh_calls = fs::read_to_string(&gh_log).unwrap_or_default();
     assert!(!gh_calls.contains("pr create"));
 }
 

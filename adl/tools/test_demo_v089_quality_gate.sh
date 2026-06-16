@@ -32,8 +32,7 @@ if manifest.get("manifest_version") != "adl.v089.quality_gate.v1":
     raise SystemExit("unexpected quality gate manifest version")
 required = {
     "tooling_shell_sanity",
-    "codex_pr_help",
-    "codexw_help",
+    "pr_help",
     "legacy_guardrail",
     "release_notes_commands",
     "repo_code_review_contract",
@@ -52,6 +51,9 @@ checks = manifest.get("checks", {})
 missing = sorted(required.difference(checks))
 if missing:
     raise SystemExit(f"missing quality gate checks: {missing}")
+failed = {key: value.get("status") for key, value in checks.items() if value.get("status") != "PASS"}
+if failed:
+    raise SystemExit(f"quality gate checks did not all pass: {failed}")
 PY
 
 grep -Fq 'it does not replace CI or the PR closing-linkage guardrail' "$README" || {

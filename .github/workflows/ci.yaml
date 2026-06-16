@@ -92,11 +92,25 @@ jobs:
         working-directory: .
 
       - name: tooling sanity (codex_pr help)
-        run: sh adl/tools/codex_pr.sh --help
+        run: |
+          if bash adl/tools/codex_pr.sh --help >/tmp/codex_pr_help.out 2>/tmp/codex_pr_help.err; then
+            rc=0
+          else
+            rc=$?
+          fi
+          test "$rc" -eq 2
+          grep -q "retired and now fails closed" /tmp/codex_pr_help.err
         working-directory: .
 
       - name: tooling sanity (codexw help)
-        run: sh adl/tools/codexw.sh --help
+        run: |
+          if bash adl/tools/codexw.sh --help >/tmp/codexw_help.out 2>/tmp/codexw_help.err; then
+            rc=0
+          else
+            rc=$?
+          fi
+          test "$rc" -eq 2
+          grep -q "retired and now fails closed" /tmp/codexw_help.err
         working-directory: .
 
       - name: coverage-impact preflight contract

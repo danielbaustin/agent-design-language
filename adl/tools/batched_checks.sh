@@ -32,10 +32,8 @@ run_step() {
 }
 
 echo "• Running tooling sanity checks (batched)…"
-bash -n "$ROOT/adl/tools/codex_pr.sh"
-bash -n "$ROOT/adl/tools/codexw.sh"
-echo "Skipping codex_pr sanity check (no --paths configured)."
-sh "$ROOT/adl/tools/codexw.sh" --help >/dev/null 2>&1
+bash -n "$ROOT/adl/tools/pr.sh"
+bash "$ROOT/adl/tools/pr.sh" --help >/dev/null 2>&1
 run_step "repo-code-review contract check" bash "$ROOT/adl/tools/test_repo_code_review_skill_contracts.sh"
 run_step "repo-packet-builder contract check" bash "$ROOT/adl/tools/test_repo_packet_builder_skill_contracts.sh"
 run_step "redaction-and-evidence-auditor contract check" bash "$ROOT/adl/tools/test_redaction_and_evidence_auditor_skill_contracts.sh"
