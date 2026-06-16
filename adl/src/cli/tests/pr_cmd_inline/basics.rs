@@ -375,6 +375,182 @@ fn parse_create_args_accepts_dot_suffixed_version() {
 }
 
 #[test]
+fn parse_repair_issue_body_args_accepts_body_and_force_flags() {
+    let parsed = parse_repair_issue_body_args(&[
+        "3779".to_string(),
+        "--title".to_string(),
+        "[v0.91.5][planning] Feature-doc production wave setup".to_string(),
+        "--slug".to_string(),
+        "feature-doc-production-wave-setup".to_string(),
+        "--body-file".to_string(),
+        "issue-body.md".to_string(),
+        "--labels".to_string(),
+        "track:backlog,type:docs,area:docs".to_string(),
+        "--version".to_string(),
+        "v0.91.5".to_string(),
+        "--force".to_string(),
+    ])
+    .expect("parse");
+    assert_eq!(parsed.issue, 3779);
+    assert_eq!(
+        parsed.title_arg.as_deref(),
+        Some("[v0.91.5][planning] Feature-doc production wave setup")
+    );
+    assert_eq!(
+        parsed.slug.as_deref(),
+        Some("feature-doc-production-wave-setup")
+    );
+    assert_eq!(
+        parsed.body_file.as_deref(),
+        Some(Path::new("issue-body.md"))
+    );
+    assert_eq!(
+        parsed.labels.as_deref(),
+        Some("track:backlog,type:docs,area:docs")
+    );
+    assert_eq!(parsed.version.as_deref(), Some("v0.91.5"));
+    assert!(parsed.force);
+}
+
+#[test]
+fn parse_repair_issue_body_args_requires_body_source() {
+    let err = parse_repair_issue_body_args(&["3779".to_string()]).expect_err("missing body");
+    assert!(err
+        .to_string()
+        .contains("repair-issue-body: --body or --body-file is required"));
+
+    let err = parse_repair_issue_body_args(&[
+        "3779".to_string(),
+        "--body".to_string(),
+        "inline".to_string(),
+        "--body-file".to_string(),
+        "body.md".to_string(),
+    ])
+    .expect_err("conflicting body inputs");
+    assert!(err
+        .to_string()
+        .contains("repair-issue-body: pass only one of --body or --body-file"));
+}
+
+fn authored_repair_body() -> String {
+    "## Summary\n\nRepair an existing tracked issue body through the C-SDLC toolkit.\n\n## Goal\n\nMake issue body repair deterministic and reviewable.\n\n## Required Outcome\n\nThe issue body, source prompt, and root task bundle agree after repair.\n\n## Deliverables\n\n- repair command\n- focused tests\n\n## Acceptance Criteria\n\n- the command updates GitHub and local source prompt state\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- unrelated lifecycle redesign\n\n## Issue-Graph Notes\n\n- test fixture\n\n## Notes\n\n- authored repair body\n\n## Tooling Notes\n\n- should pass source-prompt validation\n"
+        .to_string()
+}
+
+#[test]
+fn real_pr_repair_issue_body_updates_github_source_prompt_and_bundle() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-repair-issue-body");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
+    let issue_body_log = repo.join("issue_body.log");
+    write_executable(
+        &fixture,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            issue_body_log.display()
+        ),
+    );
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
+
+    let body_path = repo.join("repair-body.md");
+    fs::write(&body_path, authored_repair_body()).expect("write body");
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+
+    let result = real_pr(&[
+        "repair-issue-body".to_string(),
+        "1301".to_string(),
+        "--slug".to_string(),
+        "repair-body".to_string(),
+        "--body-file".to_string(),
+        body_path.display().to_string(),
+        "--version".to_string(),
+        "v0.91.5".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    result.expect("repair issue body");
+
+    let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(gh_calls.contains("issue view 1301"));
+    assert!(gh_calls.contains("issue edit 1301"));
+    let edited_body = fs::read_to_string(&issue_body_log).expect("edited body");
+    assert!(edited_body.contains("## Summary"));
+    assert!(edited_body.contains("## Tooling Notes"));
+
+    let source = repo.join(".adl/v0.91.5/bodies/issue-1301-repair-body.md");
+    assert!(source.is_file(), "repair should write the source prompt");
+    let prompt = fs::read_to_string(&source).expect("read source prompt");
+    assert!(prompt.contains("issue_number: 1301"));
+    assert!(prompt.contains("title: \"[v0.91.5][tools] Repair body\""));
+    assert!(prompt.contains("## Required Outcome"));
+    assert!(
+        repo.join(".adl/v0.91.5/tasks/issue-1301__repair-body/stp.md")
+            .is_file(),
+        "repair should regenerate STP"
+    );
+    assert!(
+        repo.join(".adl/v0.91.5/tasks/issue-1301__repair-body/spp.md")
+            .is_file(),
+        "repair should regenerate SPP"
+    );
+}
+
+#[test]
+fn real_pr_repair_issue_body_blocks_duplicate_identity_before_github_edit() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-repair-duplicate-identity");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &fixture,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display()
+        ),
+    );
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
+
+    fs::create_dir_all(repo.join(".adl/v0.91.5/tasks/issue-1302__old-slug")).expect("old bundle");
+    let body_path = repo.join("repair-body.md");
+    fs::write(&body_path, authored_repair_body()).expect("write body");
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "repair-issue-body".to_string(),
+        "1302".to_string(),
+        "--slug".to_string(),
+        "new-slug".to_string(),
+        "--body-file".to_string(),
+        body_path.display().to_string(),
+        "--version".to_string(),
+        "v0.91.5".to_string(),
+    ])
+    .expect_err("duplicate identity should block repair");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    assert!(err
+        .to_string()
+        .contains("duplicate local issue identities detected"));
+    let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(
+        !gh_calls.contains("issue edit"),
+        "duplicate guard should run before GitHub mutation"
+    );
+}
+
+#[test]
 fn parse_init_args_rejects_unknown_arg() {
     let err = parse_init_args(&["1151".to_string(), "--bogus".to_string()]).expect_err("err");
     assert!(err.to_string().contains("init: unknown arg"));
@@ -450,7 +626,7 @@ fn same_checkout_root_handles_equivalent_and_missing_paths() {
 fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
     let err = real_pr(&[]).expect_err("missing subcommand");
     assert!(err.to_string().contains(
-        "pr requires a subcommand: create | init | start | doctor | ready | preflight | finish"
+        "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish"
     ));
 
     let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");

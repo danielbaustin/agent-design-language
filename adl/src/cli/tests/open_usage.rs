@@ -128,5 +128,6 @@ fn code_review_filter_covers_global_usage_entry() {
         "adl tooling code-review --out artifacts/reviews/pr-review --backend fixture --visibility packet-only"
     ));
     assert!(text.contains("adl pr finish <issue> --title <title>"));
+    assert!(text.contains("adl pr repair-issue-body <issue>"));
     assert!(text.contains("adl runtime-v2 contract-market-demo"));
 }

@@ -45,6 +45,7 @@ pub fn usage() -> &'static str {
   adl provider setup <family> [--model <provider_model_id>] [--out <dir>] [--force]
   adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>]
   adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
+  adl pr repair-issue-body <issue> [--slug <slug>] [--title <title>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>] [--force]
   adl pr run <issue> [--prefix <prefix>] [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
   adl pr run <adl.yaml> [--trace] [--signature-key <public_key_path>] [--allow-embedded-signature-key] [--allow-unsigned] [--runs-root <dir>] [--out <dir>]
   adl pr doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]

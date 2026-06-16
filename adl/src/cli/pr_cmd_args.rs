@@ -11,6 +11,18 @@ pub(crate) struct InitArgs {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct RepairIssueBodyArgs {
+    pub(crate) issue: u32,
+    pub(crate) slug: Option<String>,
+    pub(crate) title_arg: Option<String>,
+    pub(crate) body: Option<String>,
+    pub(crate) body_file: Option<PathBuf>,
+    pub(crate) labels: Option<String>,
+    pub(crate) version: Option<String>,
+    pub(crate) force: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct CreateArgs {
     pub(crate) slug: Option<String>,
     pub(crate) title_arg: Option<String>,
@@ -181,6 +193,72 @@ pub(crate) fn parse_create_args(args: &[String]) -> Result<CreateArgs> {
     }
     if parsed.body.is_some() && parsed.body_file.is_some() {
         bail!("create: pass only one of --body or --body-file");
+    }
+
+    Ok(parsed)
+}
+
+pub(crate) fn parse_repair_issue_body_args(args: &[String]) -> Result<RepairIssueBodyArgs> {
+    let issue_raw = args
+        .first()
+        .ok_or_else(|| anyhow!("repair-issue-body: missing <issue> number"))?;
+    let issue = issue_raw
+        .parse::<u32>()
+        .with_context(|| format!("invalid issue number: {issue_raw}"))?;
+    let mut parsed = RepairIssueBodyArgs {
+        issue,
+        slug: None,
+        title_arg: None,
+        body: None,
+        body_file: None,
+        labels: None,
+        version: None,
+        force: false,
+    };
+    let mut i = 1;
+
+    while i < args.len() {
+        match args[i].as_str() {
+            "--slug" => {
+                parsed.slug = Some(require_value(args, i, "repair-issue-body", "--slug")?);
+                i += 1;
+            }
+            "--title" => {
+                parsed.title_arg = Some(require_value(args, i, "repair-issue-body", "--title")?);
+                i += 1;
+            }
+            "--body" => {
+                parsed.body = Some(require_value(args, i, "repair-issue-body", "--body")?);
+                i += 1;
+            }
+            "--body-file" => {
+                parsed.body_file = Some(PathBuf::from(require_value(
+                    args,
+                    i,
+                    "repair-issue-body",
+                    "--body-file",
+                )?));
+                i += 1;
+            }
+            "--labels" => {
+                parsed.labels = Some(require_value(args, i, "repair-issue-body", "--labels")?);
+                i += 1;
+            }
+            "--version" => {
+                parsed.version = Some(require_value(args, i, "repair-issue-body", "--version")?);
+                i += 1;
+            }
+            "--force" => parsed.force = true,
+            other => bail!("repair-issue-body: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+
+    if parsed.body.is_some() && parsed.body_file.is_some() {
+        bail!("repair-issue-body: pass only one of --body or --body-file");
+    }
+    if parsed.body.is_none() && parsed.body_file.is_none() {
+        bail!("repair-issue-body: --body or --body-file is required");
     }
 
     Ok(parsed)

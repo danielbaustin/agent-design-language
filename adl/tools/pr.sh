@@ -15,6 +15,7 @@
 #   adl/tools/pr.sh help
 #   adl/tools/pr.sh create  --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v0.85|v0.87.1>]
 #   adl/tools/pr.sh init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85|v0.87.1>]
+#   adl/tools/pr.sh repair-issue-body <issue> [--slug <slug>] [--title "<title>"] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v0.85|v0.87.1>] [--force]
 #   adl/tools/pr.sh run     <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue] [--version <v0.85|v0.87.1>] [--allow-open-pr-wave]
 #   adl/tools/pr.sh run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
 #   adl/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
@@ -2205,6 +2206,15 @@ cmd_create() {
   delegate_pr_command_to_rust create "$@"
 }
 
+cmd_repair_issue_body() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_repair_issue_body
+    return 0
+  fi
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust repair-issue-body "$@"
+}
+
 cmd_start() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     usage_start
@@ -2497,6 +2507,19 @@ Notes:
 EOF
 }
 
+usage_repair_issue_body() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh repair-issue-body <issue> [--slug <slug>] [--title "<title>"] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v>] [--force]
+
+Behavior:
+- validates an authored issue body against the C-SDLC source-prompt contract
+- updates the GitHub issue body through the Rust/Octocrab-backed PR command
+- rewrites the canonical local source prompt and regenerates the root task bundle
+- refuses to overwrite an authored local source prompt unless --force is supplied
+EOF
+}
+
 usage_closeout() {
   cat <<'EOF'
 Usage:
@@ -2523,6 +2546,7 @@ main() {
     help) usage ;;
     create) cmd_create "$@" ;;
     init) cmd_init "$@" ;;
+    repair-issue-body) cmd_repair_issue_body "$@" ;;
     run) cmd_run "$@" ;;
     start) cmd_start "$@" ;;
     doctor) cmd_doctor "$@" ;;
