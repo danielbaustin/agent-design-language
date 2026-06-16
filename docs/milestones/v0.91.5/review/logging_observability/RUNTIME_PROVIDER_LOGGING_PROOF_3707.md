@@ -38,7 +38,9 @@ keeping runtime action logs as the canonical runtime projection:
 - `adl-provider-adapter` now writes a safe `artifact_ref` for the result
   artifact and emits a safe `artifact_ref` on the provider run log.
 - absolute temp/home paths are normalized to bounded refs such as
-  `<tmp>/file.json` and `<home>/file.json`; repo files remain repo-relative.
+  `<tmp>/file.json@<digest>` and `<home>/file.json@<digest>` so same-basename
+  artifacts remain distinguishable without leaking host-local absolute paths;
+  repo files remain repo-relative.
 
 ## Correlation Model
 

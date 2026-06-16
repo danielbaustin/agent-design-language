@@ -193,33 +193,40 @@ fn normalize_observability_ref(path: &PathBuf) -> String {
     }
     let temp_dir = env::temp_dir();
     if path.starts_with(&temp_dir) {
-        return format!(
-            "<tmp>/{}",
-            path.file_name().unwrap_or_default().to_string_lossy()
-        );
+        return redacted_observability_ref("<tmp>", &path);
     }
     if let Ok(canonical_temp_dir) = temp_dir.canonicalize() {
         let canonical = path.canonicalize().unwrap_or_else(|_| path.to_path_buf());
         if canonical.starts_with(&canonical_temp_dir) {
-            return format!(
-                "<tmp>/{}",
-                path.file_name().unwrap_or_default().to_string_lossy()
-            );
+            return redacted_observability_ref("<tmp>", &path);
         }
     }
     if let Some(home_dir) = env::var_os("HOME") {
         let home_path = PathBuf::from(home_dir);
         if path.starts_with(&home_path) {
-            return format!(
-                "<home>/{}",
-                path.file_name().unwrap_or_default().to_string_lossy()
-            );
+            return redacted_observability_ref("<home>", &path);
         }
     }
-    format!(
-        "<absolute>/{}",
-        path.file_name().unwrap_or_default().to_string_lossy()
-    )
+    redacted_observability_ref("<absolute>", &path)
+}
+
+fn redacted_observability_ref(prefix: &str, path: &Path) -> String {
+    let filename = path
+        .file_name()
+        .unwrap_or_default()
+        .to_string_lossy()
+        .into_owned();
+    let digest = redacted_observability_digest(path);
+    format!("{prefix}/{filename}@{digest}")
+}
+
+fn redacted_observability_digest(path: &Path) -> String {
+    let mut hash: u64 = 0xcbf29ce484222325;
+    for byte in path.as_os_str().to_string_lossy().as_bytes() {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    format!("{hash:016x}")
 }
 
 fn resolved_path(path: &PathBuf) -> PathBuf {
@@ -336,7 +343,7 @@ mod tests {
             result.get("request_id").and_then(serde_json::Value::as_str),
             Some("req-cli-test")
         );
-        let expected_result_ref = format!("<tmp>/{}", out.file_name().unwrap().to_string_lossy());
+        let expected_result_ref = normalize_observability_ref(&out);
         assert_eq!(
             result
                 .get("artifact_ref")
@@ -346,7 +353,7 @@ mod tests {
         let log_text = fs::read_to_string(&log).unwrap();
         assert!(log_text.contains("run-cli-test"));
         assert!(log_text.contains("req-cli-test"));
-        let expected_log_ref = format!("<tmp>/{}", log.file_name().unwrap().to_string_lossy());
+        let expected_log_ref = normalize_observability_ref(&log);
         assert!(log_text.contains(&expected_log_ref));
         assert!(!log_text.contains("secret prompt"));
 
@@ -542,15 +549,32 @@ mod tests {
         );
 
         let temp_path = env::temp_dir().join("provider-log.jsonl");
-        assert_eq!(
-            normalize_observability_ref(&temp_path),
-            "<tmp>/provider-log.jsonl"
-        );
+        let temp_ref = normalize_observability_ref(&temp_path);
+        assert!(temp_ref.starts_with("<tmp>/provider-log.jsonl@"));
 
         let home_path = PathBuf::from(env::var("HOME").unwrap()).join("provider-log.jsonl");
-        assert_eq!(
-            normalize_observability_ref(&home_path),
-            "<home>/provider-log.jsonl"
-        );
+        let home_ref = normalize_observability_ref(&home_path);
+        assert!(home_ref.starts_with("<home>/provider-log.jsonl@"));
+    }
+
+    #[test]
+    fn normalize_observability_ref_preserves_bounded_uniqueness_for_same_basename() {
+        let left = env::temp_dir()
+            .join("adl-provider-artifacts")
+            .join("run-a")
+            .join("provider-log.jsonl");
+        let right = env::temp_dir()
+            .join("adl-provider-artifacts")
+            .join("run-b")
+            .join("provider-log.jsonl");
+
+        let left_ref = normalize_observability_ref(&left);
+        let right_ref = normalize_observability_ref(&right);
+
+        assert_ne!(left_ref, right_ref);
+        assert!(left_ref.starts_with("<tmp>/provider-log.jsonl@"));
+        assert!(right_ref.starts_with("<tmp>/provider-log.jsonl@"));
+        assert!(!left_ref.contains("/Users/"));
+        assert!(!right_ref.contains("/Users/"));
     }
 }
