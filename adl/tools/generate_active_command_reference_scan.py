@@ -118,10 +118,10 @@ COMMAND_FAMILIES = (
     ),
     CommandFamily(
         key="legacy_codex_pr",
-        label="`adl/tools/codex_pr.sh`",
+        label="retired `codex_pr.sh` / `codexw.sh` wrappers",
         preferred_owner="adl/tools/pr.sh ...",
         required_action="migrate if active; preserve if historical; route if unknown",
-        pattern=r"adl/tools/codex_pr\.sh\b",
+        pattern=r"(?<![\w/-])(?:adl/tools/)?codex_pr\.sh\b|(?<![\w/-])(?:adl/tools/)?codexw\.sh\b",
     ),
     CommandFamily(
         key="unapproved_helper_binaries",

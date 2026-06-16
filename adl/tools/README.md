@@ -146,6 +146,8 @@ are not the preferred public workflow:
   execution-context binding path as `pr run`
 - `pr card`, `pr output`, `pr cards`, `pr open`, and `pr status` remain
   maintenance-oriented helpers rather than the taught workflow surface
+- `codex_pr.sh` and `codexw.sh` are retired fail-closed wrappers kept only to
+  print migration guidance; do not use them for new work
 
 ## See Also / Canonical Docs
 

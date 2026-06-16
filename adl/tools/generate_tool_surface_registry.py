@@ -27,9 +27,13 @@ PRIMARY_BINARIES = {
 
 SUPPORTED_SHIMS = {
     "pr.sh": "Canonical agent-facing issue workflow wrapper; implementation owner may move but wrapper remains public workflow spine.",
-    "codex_pr.sh": "Legacy compatibility wrapper retained as a supported shim.",
     "validate_structured_prompt.sh": "Compatibility shim over the direct structured-prompt validator binary.",
     "lint_prompt_spec.sh": "Compatibility shim over the direct prompt-spec lint binary.",
+}
+
+REMOVE_CANDIDATES = {
+    "codex_pr.sh": "Retired fail-closed wrapper kept only for migration guidance until final deletion.",
+    "codexw.sh": "Retired fail-closed wrapper kept only for migration guidance until final deletion.",
 }
 
 PRIMARY_TOOL_SCRIPTS = {
@@ -133,6 +137,8 @@ def parse_bin_names() -> list[str]:
 
 def classify_tool_script(path: Path) -> tuple[str, str]:
     name = path.name
+    if name in REMOVE_CANDIDATES:
+        return "remove candidate", REMOVE_CANDIDATES[name]
     if name in SUPPORTED_SHIMS:
         return "supported shim", SUPPORTED_SHIMS[name]
     if name in PRIMARY_TOOL_SCRIPTS:
@@ -233,8 +239,8 @@ def build_document() -> str:
         "entrypoints, supported compatibility shims, internal helpers, and",
         "historical evidence artifacts.",
         "",
-        "No surface is marked `remove candidate` in this registry. Removal or",
-        "fail-closed cuts still require the later active-reference scan gate.",
+        "This registry distinguishes active workflow spines from already-retired",
+        "wrapper residue so later cuts can stay evidence-bound.",
         "",
         "## Generation Command",
         "",
@@ -279,7 +285,7 @@ def build_document() -> str:
         "",
         "## Non-Claims",
         "",
-        "- This registry does not approve any deletion.",
+        "- This registry does not approve final deletion of retired wrappers.",
         "- This registry does not prove active-reference absence for any shim.",
         "- This registry does not replace the later simplification review and scan issues.",
     ]

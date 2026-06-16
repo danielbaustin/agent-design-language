@@ -36,8 +36,7 @@ if manifest.get("mode") != "required":
     raise SystemExit("unexpected quality gate mode")
 required = {
     "tooling_shell_sanity",
-    "codex_pr_help",
-    "codexw_help",
+    "pr_help",
     "legacy_guardrail",
     "release_notes_commands",
     "repo_code_review_contract",

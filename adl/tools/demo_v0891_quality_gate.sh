@@ -26,8 +26,7 @@ run_check() {
 
 checks_json="{"
 checks_json+="$(run_check tooling_shell_sanity bash -lc "cd \"$ROOT_DIR\" && bash -n adl/tools/*.sh"),"
-checks_json+="$(run_check codex_pr_help bash -lc "cd \"$ROOT_DIR\" && sh adl/tools/codex_pr.sh --help"),"
-checks_json+="$(run_check codexw_help bash -lc "cd \"$ROOT_DIR\" && sh adl/tools/codexw.sh --help"),"
+checks_json+="$(run_check pr_help bash -lc "cd \"$ROOT_DIR\" && bash adl/tools/pr.sh --help"),"
 checks_json+="$(run_check legacy_guardrail bash "$ROOT_DIR/adl/tools/check_no_new_legacy_swarm_refs.sh"),"
 checks_json+="$(run_check release_notes_commands bash "$ROOT_DIR/adl/tools/check_release_notes_commands.sh"),"
 checks_json+="$(run_check repo_code_review_contract bash "$ROOT_DIR/adl/tools/test_repo_code_review_skill_contracts.sh"),"

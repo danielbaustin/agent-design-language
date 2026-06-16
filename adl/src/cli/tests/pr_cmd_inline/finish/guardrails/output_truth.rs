@@ -258,6 +258,23 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_sor_truth() {
         .status()
         .expect("git checkout")
         .success());
+    fs::write(
+        repo.join("adl/src/lib.rs"),
+        "pub fn placeholder() {}\npub fn stale_truth_probe() {}\n",
+    )
+    .expect("update source");
+    assert!(Command::new("git")
+        .args(["add", "adl/src/lib.rs"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "tracked change"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
 
     let issue_ref = IssueRef::new(
         1158,
@@ -322,6 +339,8 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_sor_truth() {
         "1158".to_string(),
         "--title".to_string(),
         "[v0.86][tools] Rust finish closed stale".to_string(),
+        "--paths".to_string(),
+        "adl/src/lib.rs".to_string(),
         "--input".to_string(),
         path_relative_to_repo(&repo, &input),
         "--output".to_string(),
