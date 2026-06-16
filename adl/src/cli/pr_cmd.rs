@@ -426,10 +426,12 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     let repo = default_repo(&repo_root)?;
     let local_identity = resolve_local_issue_identity(&repo_root, parsed.issue)?;
 
-    eprintln!(
-        "• Deprecated compatibility path: prefer `adl/tools/pr.sh run {}` for execution-context binding.",
-        parsed.issue
-    );
+    if std::env::var("ADL_PR_SUPPRESS_START_COMPAT_NOTE").as_deref() != Ok("1") {
+        eprintln!(
+            "• Deprecated compatibility path: prefer `adl/tools/pr.sh run {}` for execution-context binding.",
+            parsed.issue
+        );
+    }
 
     let mut title = parsed.title_arg.clone().unwrap_or_default();
     let mut slug = parsed.slug.clone().unwrap_or_default();
