@@ -40,19 +40,39 @@ def require_truth_gate(state: dict[str, Any], issue_number: int) -> None:
     if truth_check.get('status') == 'matched' and truth_check.get('gate_passed') is True:
         return
     if truth_check.get('status') == 'drift_detected':
-        notes = truth_check.get('notes') or []
-        if len(notes) != 1:
-            raise SystemExit(
-                'Refusing to record child closeout while additional GitHub truth drift is present.'
-            )
+        eligible_drift_issues: set[int] = set()
+        blocking_drift: list[str] = []
         for record in state.get('issue_records', []):
-            if record.get('issue_number') != issue_number:
-                continue
-            if (
-                record.get('github_issue_state') == 'CLOSED'
-                and record.get('status') in DETERMINISTIC_CLOSEOUT_ELIGIBLE_STATUSES
-            ):
-                return
+            record_issue = record.get('issue_number')
+            github_issue_state = record.get('github_issue_state')
+            local_status = record.get('status', 'pending')
+            if github_issue_state == 'CLOSED' and local_status != 'closed_out':
+                if (
+                    isinstance(record_issue, int)
+                    and local_status in DETERMINISTIC_CLOSEOUT_ELIGIBLE_STATUSES
+                ):
+                    eligible_drift_issues.add(record_issue)
+                else:
+                    blocking_drift.append(
+                        f'issue #{record_issue} is CLOSED on GitHub but local status is {local_status}'
+                    )
+            elif github_issue_state == 'OPEN' and local_status == 'closed_out':
+                blocking_drift.append(
+                    f'issue #{record_issue} is OPEN on GitHub but local status is closed_out'
+                )
+        closeout_notes = [
+            note
+            for note in truth_check.get('notes', [])
+            if isinstance(note, str)
+            and 'record_child_issue_closeout.py must run before sprint state can advance' in note
+        ]
+        if blocking_drift:
+            raise SystemExit(
+                'Refusing to record child closeout while non-closeout GitHub truth drift is present: '
+                + '; '.join(blocking_drift)
+            )
+        if issue_number in eligible_drift_issues and len(closeout_notes) == len(eligible_drift_issues):
+            return
     raise SystemExit('Refusing to record child closeout without a fresh matched GitHub truth check.')
 
 
