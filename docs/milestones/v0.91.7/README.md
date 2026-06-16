@@ -12,12 +12,13 @@
 
 ## Status
 
-Current status: candidate planning package for the second required pre-`v0.92`
-bridge tranche.
+Current status: planning and feature-doc package for the second required
+pre-`v0.92` bridge tranche.
 
 - Planning: created by `#3801`
-- Execution: not started
-- Validation: docs-readiness validation only
+- Documentation completion: `#3825`
+- Execution: not started beyond planning/feature docs
+- Validation: docs-readiness validation only until implementation issues run
 - Release readiness: not applicable until `v0.91.7` executes
 
 This package does not implement runtime features and does not claim `v0.92`
@@ -92,9 +93,17 @@ gate by claiming narrative readiness.
 ## Document Map
 
 - Work breakdown: [WBS_v0.91.7.md](WBS_v0.91.7.md)
+- Vision: [VISION_v0.91.7.md](VISION_v0.91.7.md)
+- Design: [DESIGN_v0.91.7.md](DESIGN_v0.91.7.md)
+- Decisions: [DECISIONS_v0.91.7.md](DECISIONS_v0.91.7.md)
+- Sprint plan: [SPRINT_PLAN_v0.91.7.md](SPRINT_PLAN_v0.91.7.md)
+- Demo matrix: [DEMO_MATRIX_v0.91.7.md](DEMO_MATRIX_v0.91.7.md)
 - Feature-doc index: [FEATURE_DOCS_v0.91.7.md](FEATURE_DOCS_v0.91.7.md)
+- v0.92 handoff: [V092_HANDOFF_v0.91.7.md](V092_HANDOFF_v0.91.7.md)
 - Candidate issue wave: [WP_ISSUE_WAVE_v0.91.7.yaml](WP_ISSUE_WAVE_v0.91.7.yaml)
 - Checklist: [MILESTONE_CHECKLIST_v0.91.7.md](MILESTONE_CHECKLIST_v0.91.7.md)
+- Release plan: [RELEASE_PLAN_v0.91.7.md](RELEASE_PLAN_v0.91.7.md)
+- Release notes: [RELEASE_NOTES_v0.91.7.md](RELEASE_NOTES_v0.91.7.md)
 - Review and validation checklist:
   [REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md](REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md)
 - Feature directory index: [features/README.md](features/README.md)
