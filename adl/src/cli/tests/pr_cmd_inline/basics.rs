@@ -56,6 +56,53 @@ fn parse_closeout_args_accepts_expected_flags() {
 }
 
 #[test]
+fn parse_validation_args_accepts_repo_watch_and_json_flags() {
+    let parsed = parse_validation_args(&[
+        "https://github.com/example/repo/pull/3849".to_string(),
+        "-R".to_string(),
+        "example/repo".to_string(),
+        "--watch".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("parse validation");
+    assert_eq!(parsed.pr_ref, "https://github.com/example/repo/pull/3849");
+    assert_eq!(parsed.repo.as_deref(), Some("example/repo"));
+    assert!(parsed.watch);
+    assert!(parsed.json);
+
+    let err = parse_validation_args(&["3849".to_string(), "--bogus".to_string()])
+        .expect_err("unknown validation arg");
+    assert!(err.to_string().contains("validation: unknown arg"));
+}
+
+#[test]
+fn repo_from_pr_ref_extracts_owner_and_repo_from_github_url() {
+    assert_eq!(
+        repo_from_pr_ref("https://github.com/example/repo/pull/3849"),
+        Some("example/repo".to_string())
+    );
+    assert_eq!(
+        repo_from_pr_ref("https://github.com/example/repo/pull/3849/files?foo=bar"),
+        Some("example/repo".to_string())
+    );
+    assert_eq!(repo_from_pr_ref("3849"), None);
+    assert_eq!(
+        repo_from_pr_ref("https://example.com/not-github/pull/3849"),
+        None
+    );
+}
+
+#[test]
+fn validation_disposition_blocks_pending_and_terminal_failures() {
+    assert!(!validation_disposition_blocks_shell_success("success"));
+    assert!(!validation_disposition_blocks_shell_success("skipped"));
+    assert!(validation_disposition_blocks_shell_success("pending"));
+    assert!(validation_disposition_blocks_shell_success("failed"));
+    assert!(validation_disposition_blocks_shell_success("cancelled"));
+    assert!(validation_disposition_blocks_shell_success("timed_out"));
+}
+
+#[test]
 fn render_generated_issue_prompt_uses_workflow_skill_bootstrap_template_for_tools_skill_titles() {
     let content = render_generated_issue_prompt(
         1443,
@@ -626,7 +673,7 @@ fn same_checkout_root_handles_equivalent_and_missing_paths() {
 fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
     let err = real_pr(&[]).expect_err("missing subcommand");
     assert!(err.to_string().contains(
-        "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish"
+        "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | closeout"
     ));
 
     let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");

@@ -96,6 +96,14 @@ pub(crate) struct FinishArgs {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct ValidationArgs {
+    pub(crate) pr_ref: String,
+    pub(crate) repo: Option<String>,
+    pub(crate) watch: bool,
+    pub(crate) json: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct CloseoutArgs {
     pub(crate) issue: u32,
     pub(crate) slug: Option<String>,
@@ -521,6 +529,33 @@ pub(crate) fn parse_finish_args(args: &[String]) -> Result<FinishArgs> {
         bail!("finish: --merge requires checks; remove --no-checks");
     }
 
+    Ok(parsed)
+}
+
+pub(crate) fn parse_validation_args(args: &[String]) -> Result<ValidationArgs> {
+    let pr_ref = args
+        .first()
+        .ok_or_else(|| anyhow!("validation: missing <pr> number or URL"))?
+        .clone();
+    let mut parsed = ValidationArgs {
+        pr_ref,
+        repo: None,
+        watch: false,
+        json: false,
+    };
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "validation", args[i].as_str())?);
+                i += 1;
+            }
+            "--watch" | "--wait" => parsed.watch = true,
+            "--json" => parsed.json = true,
+            other => bail!("validation: unknown arg: {other}"),
+        }
+        i += 1;
+    }
     Ok(parsed)
 }
 

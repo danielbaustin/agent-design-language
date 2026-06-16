@@ -116,6 +116,16 @@ struct PullRequestValidationRollup {
 #[derive(Debug, Clone, Deserialize)]
 struct PullRequestValidationContextConnection {
     nodes: Option<Vec<Option<PullRequestValidationContextNode>>>,
+    #[serde(rename = "pageInfo")]
+    page_info: PullRequestValidationPageInfo,
+}
+
+#[derive(Debug, Clone, Deserialize, Default)]
+struct PullRequestValidationPageInfo {
+    #[serde(rename = "hasNextPage")]
+    has_next_page: bool,
+    #[serde(rename = "endCursor")]
+    end_cursor: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -165,6 +175,26 @@ struct PrValidationSnapshot {
     state: String,
     is_draft: bool,
     checks: Vec<PrValidationCheckSnapshot>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub(super) struct PrValidationCheckReport {
+    pub(super) name: String,
+    pub(super) status: String,
+    pub(super) conclusion: String,
+    pub(super) job_run_id: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub(super) struct PrValidationReport {
+    pub(super) pr_number: u64,
+    pub(super) commit_sha: String,
+    pub(super) pr_state: String,
+    pub(super) is_draft: bool,
+    pub(super) disposition: String,
+    pub(super) checks: Vec<PrValidationCheckReport>,
+    pub(super) failed_checks: Vec<PrValidationCheckReport>,
+    pub(super) pending_checks: Vec<PrValidationCheckReport>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -446,6 +476,34 @@ fn merge_pr_octocrab(repo: &str, pr_ref: &str) -> Result<()> {
 }
 
 pub(super) fn wait_for_pr_validation_finish(repo: &str, pr_ref: &str) -> Result<()> {
+    let report = wait_for_pr_validation_report(repo, pr_ref)?;
+    match report.disposition.as_str() {
+        "success" | "skipped" => Ok(()),
+        "failed" => {
+            bail!(
+                "pr validation failed for PR #{pr}: at least one check failed",
+                pr = report.pr_number
+            )
+        }
+        "cancelled" => {
+            bail!(
+                "pr validation cancelled for PR #{pr}: at least one check was cancelled",
+                pr = report.pr_number
+            )
+        }
+        "timed_out" => bail!("pr validation timed out for PR #{}", report.pr_number),
+        other => bail!(
+            "pr validation ended with unsupported disposition for PR #{}: {}",
+            report.pr_number,
+            other
+        ),
+    }
+}
+
+pub(super) fn wait_for_pr_validation_report(
+    repo: &str,
+    pr_ref: &str,
+) -> Result<PrValidationReport> {
     let timeout = pr_validation_wait_timeout();
     let poll_delay = pr_validation_wait_poll_delay();
     let started = Instant::now();
@@ -463,30 +521,23 @@ pub(super) fn wait_for_pr_validation_finish(repo: &str, pr_ref: &str) -> Result<
         emit_pr_validation_wait_snapshot(&snapshot, disposition, started, poll_count, next_delay);
 
         match disposition {
-            PrValidationDisposition::Success | PrValidationDisposition::Skipped => return Ok(()),
-            PrValidationDisposition::Failed => {
-                bail!(
-                    "pr validation failed for PR #{pr}: at least one check failed",
-                    pr = snapshot.pr_number
-                )
-            }
-            PrValidationDisposition::Cancelled => {
-                bail!(
-                    "pr validation cancelled for PR #{pr}: at least one check was cancelled",
-                    pr = snapshot.pr_number
-                )
-            }
-            PrValidationDisposition::TimedOut => {
-                bail!("pr validation timed out for PR #{}", snapshot.pr_number)
+            PrValidationDisposition::Success
+            | PrValidationDisposition::Skipped
+            | PrValidationDisposition::Failed
+            | PrValidationDisposition::Cancelled
+            | PrValidationDisposition::TimedOut => {
+                return Ok(pr_validation_report_from_snapshot_with_disposition(
+                    &snapshot,
+                    disposition,
+                ))
             }
             PrValidationDisposition::Pending => {
                 if started.elapsed() >= timeout {
                     emit_pr_validation_wait_timeout(&snapshot, started, poll_count, Duration::ZERO);
-                    bail!(
-                        "pr validation timed out for PR #{} after {}ms",
-                        snapshot.pr_number,
-                        started.elapsed().as_millis()
-                    );
+                    return Ok(pr_validation_report_from_snapshot_with_disposition(
+                        &snapshot,
+                        PrValidationDisposition::TimedOut,
+                    ));
                 }
                 std::thread::sleep(poll_delay);
             }
@@ -494,13 +545,24 @@ pub(super) fn wait_for_pr_validation_finish(repo: &str, pr_ref: &str) -> Result<
     }
 }
 
+pub(super) fn pr_validation_report(repo: &str, pr_ref: &str) -> Result<PrValidationReport> {
+    let snapshot = pr_validation_status_octocrab(repo, pr_ref)?;
+    Ok(pr_validation_report_from_snapshot_with_disposition(
+        &snapshot,
+        classify_pr_validation_snapshot(&snapshot),
+    ))
+}
+
 fn pr_validation_status_octocrab(repo: &str, pr_ref: &str) -> Result<PrValidationSnapshot> {
     let repo_parts = parse_repo(repo)?;
     let number = parse_pr_number(pr_ref)? as i64;
     with_octocrab("pr.validation.status", |runtime, octo| {
-        let payload = serde_json::json!({
-            "query": r#"
-                query($owner: String!, $name: String!, $number: Int!) {
+        let mut after: Option<String> = None;
+        let mut snapshot: Option<PrValidationSnapshot> = None;
+        loop {
+            let payload = serde_json::json!({
+                "query": r#"
+                query($owner: String!, $name: String!, $number: Int!, $after: String) {
                   repository(owner: $owner, name: $name) {
                     pullRequest(number: $number) {
                       number
@@ -508,7 +570,7 @@ fn pr_validation_status_octocrab(repo: &str, pr_ref: &str) -> Result<PrValidatio
                       state
                       isDraft
                       statusCheckRollup {
-                        contexts(first: 100) {
+                        contexts(first: 100, after: $after) {
                           nodes {
                             __typename
                             ... on CheckRun {
@@ -527,37 +589,64 @@ fn pr_validation_status_octocrab(repo: &str, pr_ref: &str) -> Result<PrValidatio
                               state
                             }
                           }
+                          pageInfo {
+                            hasNextPage
+                            endCursor
+                          }
                         }
                       }
                     }
                   }
                 }
             "#,
-            "variables": {
-                "owner": repo_parts.owner,
-                "name": repo_parts.name,
-                "number": number,
+                "variables": {
+                    "owner": repo_parts.owner,
+                    "name": repo_parts.name,
+                    "number": number,
+                    "after": after,
+                }
+            });
+            let response: PullRequestValidationStatusResponse =
+                block_on_octocrab(runtime, "pr.validation.status", || async {
+                    octo.graphql::<PullRequestValidationStatusResponse>(&payload)
+                        .await
+                })?;
+            let pr = response
+                .repository
+                .and_then(|repo| repo.pull_request)
+                .ok_or_else(|| {
+                    anyhow!("GitHub did not return validation status for PR {pr_ref}")
+                })?;
+            let (mut page_snapshot, page_info) = pr_validation_snapshot_from_response(pr);
+            if let Some(current) = snapshot.as_mut() {
+                current.checks.append(&mut page_snapshot.checks);
+            } else {
+                snapshot = Some(page_snapshot);
             }
-        });
-        let response: PullRequestValidationStatusResponse =
-            block_on_octocrab(runtime, "pr.validation.status", || async {
-                octo.graphql::<PullRequestValidationStatusResponse>(&payload)
-                    .await
-            })?;
-        response
-            .repository
-            .and_then(|repo| repo.pull_request)
-            .map(pr_validation_snapshot_from_response)
-            .ok_or_else(|| anyhow!("GitHub did not return validation status for PR {pr_ref}"))
+            if !page_info.has_next_page {
+                return snapshot.ok_or_else(|| {
+                    anyhow!("GitHub did not return validation status for PR {pr_ref}")
+                });
+            }
+            after = page_info.end_cursor;
+            if after.as_deref().unwrap_or_default().trim().is_empty() {
+                bail!(
+                    "GitHub validation status for PR {pr_ref} is paginated but did not return an end cursor"
+                );
+            }
+        }
     })
 }
 
 fn pr_validation_snapshot_from_response(
     pr: PullRequestValidationPullRequest,
-) -> PrValidationSnapshot {
-    let checks = pr
-        .status_check_rollup
-        .and_then(|rollup| rollup.contexts)
+) -> (PrValidationSnapshot, PullRequestValidationPageInfo) {
+    let contexts = pr.status_check_rollup.and_then(|rollup| rollup.contexts);
+    let page_info = contexts
+        .as_ref()
+        .map(|contexts| contexts.page_info.clone())
+        .unwrap_or_default();
+    let checks = contexts
         .and_then(|contexts| contexts.nodes)
         .unwrap_or_default()
         .into_iter()
@@ -595,13 +684,16 @@ fn pr_validation_snapshot_from_response(
             PullRequestValidationContextNode::Other => None,
         })
         .collect();
-    PrValidationSnapshot {
-        pr_number: pr.number,
-        commit_sha: pr.head_ref_oid,
-        state: pr.state,
-        is_draft: pr.is_draft,
-        checks,
-    }
+    (
+        PrValidationSnapshot {
+            pr_number: pr.number,
+            commit_sha: pr.head_ref_oid,
+            state: pr.state,
+            is_draft: pr.is_draft,
+            checks,
+        },
+        page_info,
+    )
 }
 
 fn classify_pr_validation_snapshot(snapshot: &PrValidationSnapshot) -> PrValidationDisposition {
@@ -642,6 +734,51 @@ fn classify_pr_validation_snapshot(snapshot: &PrValidationSnapshot) -> PrValidat
         return PrValidationDisposition::Skipped;
     }
     PrValidationDisposition::Success
+}
+
+fn pr_validation_report_from_snapshot_with_disposition(
+    snapshot: &PrValidationSnapshot,
+    disposition: PrValidationDisposition,
+) -> PrValidationReport {
+    let checks = snapshot
+        .checks
+        .iter()
+        .map(pr_validation_check_report)
+        .collect::<Vec<_>>();
+    let failed_checks = snapshot
+        .checks
+        .iter()
+        .filter(|check| {
+            validation_conclusion_is_failed(&check.conclusion)
+                || status_context_failure_status(&check.status)
+        })
+        .map(pr_validation_check_report)
+        .collect::<Vec<_>>();
+    let pending_checks = snapshot
+        .checks
+        .iter()
+        .filter(|check| validation_check_is_pending(&check.status, &check.conclusion))
+        .map(pr_validation_check_report)
+        .collect::<Vec<_>>();
+    PrValidationReport {
+        pr_number: snapshot.pr_number,
+        commit_sha: snapshot.commit_sha.clone(),
+        pr_state: snapshot.state.clone(),
+        is_draft: snapshot.is_draft,
+        disposition: disposition.as_event_result().to_string(),
+        checks,
+        failed_checks,
+        pending_checks,
+    }
+}
+
+fn pr_validation_check_report(check: &PrValidationCheckSnapshot) -> PrValidationCheckReport {
+    PrValidationCheckReport {
+        name: check.name.clone(),
+        status: check.status.clone(),
+        conclusion: check.conclusion.clone(),
+        job_run_id: check.job_run_id.clone(),
+    }
 }
 
 fn emit_pr_validation_wait_snapshot(
@@ -2634,6 +2771,16 @@ mod tests {
         conclusion: Option<&str>,
         check_name: &str,
     ) -> String {
+        pr_validation_graphql_response_page(status, conclusion, check_name, false, None)
+    }
+
+    fn pr_validation_graphql_response_page(
+        status: &str,
+        conclusion: Option<&str>,
+        check_name: &str,
+        has_next_page: bool,
+        end_cursor: Option<&str>,
+    ) -> String {
         serde_json::json!({
             "data": {
                 "repository": {
@@ -2657,7 +2804,11 @@ mod tests {
                                             }
                                         }
                                     }
-                                ]
+                                ],
+                                "pageInfo": {
+                                    "hasNextPage": has_next_page,
+                                    "endCursor": end_cursor
+                                }
                             }
                         }
                     }
@@ -2665,6 +2816,77 @@ mod tests {
             }
         })
         .to_string()
+    }
+
+    fn spawn_validation_status_paginated_server() -> (String, thread::JoinHandle<Vec<String>>) {
+        let port = reserve_local_port();
+        let bind_addr = format!("127.0.0.1:{port}");
+        let server = Server::http(&bind_addr).expect("bind validation status pagination server");
+        let handle = thread::spawn(move || {
+            let mut seen = Vec::new();
+            for page in 1..=2 {
+                let Some(mut request) = server
+                    .recv_timeout(Duration::from_secs(5))
+                    .expect("validation pagination server receive")
+                else {
+                    break;
+                };
+                let method = request.method().as_str().to_string();
+                let url = request.url().to_string();
+                let mut body = String::new();
+                let _ = request.as_reader().read_to_string(&mut body);
+                seen.push(format!("{method} {url} {body}"));
+                let response = if page == 1 {
+                    pr_validation_graphql_response_page(
+                        "COMPLETED",
+                        Some("SUCCESS"),
+                        "adl-ci",
+                        true,
+                        Some("cursor-1"),
+                    )
+                } else {
+                    pr_validation_graphql_response_page(
+                        "COMPLETED",
+                        Some("SUCCESS"),
+                        "adl-coverage",
+                        false,
+                        None,
+                    )
+                };
+                let _ = request.respond(json_response(response));
+            }
+            seen
+        });
+        (format!("http://{bind_addr}"), handle)
+    }
+
+    fn spawn_validation_status_once_server(
+        status: &'static str,
+        conclusion: Option<&'static str>,
+        check_name: &'static str,
+    ) -> (String, thread::JoinHandle<Vec<String>>) {
+        let port = reserve_local_port();
+        let bind_addr = format!("127.0.0.1:{port}");
+        let server = Server::http(&bind_addr).expect("bind validation status single server");
+        let handle = thread::spawn(move || {
+            let mut seen = Vec::new();
+            let Some(mut request) = server
+                .recv_timeout(Duration::from_secs(5))
+                .expect("validation single server receive")
+            else {
+                return seen;
+            };
+            let method = request.method().as_str().to_string();
+            let url = request.url().to_string();
+            let mut body = String::new();
+            let _ = request.as_reader().read_to_string(&mut body);
+            seen.push(format!("{method} {url} {body}"));
+            let _ = request.respond(json_response(pr_validation_graphql_response(
+                status, conclusion, check_name,
+            )));
+            seen
+        });
+        (format!("http://{bind_addr}"), handle)
     }
 
     fn spawn_validation_status_transient_server() -> (String, thread::JoinHandle<Vec<String>>) {
@@ -3326,6 +3548,66 @@ exit 1
             std::env::remove_var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS");
             std::env::remove_var("ADL_OBSERVABILITY_STDERR");
             std::env::remove_var("ADL_OBSERVABILITY_LOG");
+        }
+        restore_github_policy_env(policy_env);
+    }
+
+    #[test]
+    fn pr_validation_status_query_paginates_status_rollup_contexts() {
+        let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
+        let (base_uri, server) = spawn_validation_status_paginated_server();
+        unsafe {
+            std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+            std::env::set_var("GITHUB_TOKEN", "test-token");
+            std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+        }
+
+        let snapshot =
+            pr_validation_status_octocrab("owner/repo", "1159").expect("paginated snapshot");
+        assert_eq!(snapshot.checks.len(), 2);
+        assert_eq!(snapshot.checks[0].name, "adl-ci");
+        assert_eq!(snapshot.checks[1].name, "adl-coverage");
+
+        let seen = server.join().expect("server join");
+        assert_eq!(seen.len(), 2, "unexpected pagination calls: {seen:#?}");
+        assert!(seen[0].contains(r#""after":null"#));
+        assert!(seen[1].contains(r#""after":"cursor-1""#));
+
+        unsafe {
+            std::env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");
+        }
+        restore_github_policy_env(policy_env);
+    }
+
+    #[test]
+    fn pr_validation_watch_returns_failed_report_without_second_fetch() {
+        let _guard = env_lock();
+        let policy_env = clear_github_policy_env();
+        let (base_uri, server) =
+            spawn_validation_status_once_server("COMPLETED", Some("FAILURE"), "adl-coverage");
+        unsafe {
+            std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+            std::env::set_var("GITHUB_TOKEN", "test-token");
+            std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+        }
+
+        let report =
+            wait_for_pr_validation_report("owner/repo", "1159").expect("failed report returned");
+        assert_eq!(report.disposition, "failed");
+        assert_eq!(report.failed_checks.len(), 1);
+        assert_eq!(report.failed_checks[0].name, "adl-coverage");
+        assert_eq!(report.checks.len(), 1);
+
+        let seen = server.join().expect("server join");
+        assert_eq!(
+            seen.len(),
+            1,
+            "watch should not refetch after terminal state"
+        );
+
+        unsafe {
+            std::env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");
         }
         restore_github_policy_env(policy_env);
     }

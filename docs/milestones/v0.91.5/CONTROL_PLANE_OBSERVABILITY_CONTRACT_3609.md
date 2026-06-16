@@ -84,6 +84,24 @@ transport retries remain separate `stage=github_octocrab result=retry` events
 with `operation=pr.validation.status`, so a check failure and a GitHub transport
 failure are distinguishable in the same tail.
 
+For direct PR validation diagnosis without `gh pr checks`, use the Rust-owned
+status surface:
+
+```bash
+bash adl/tools/pr.sh validation <pr-number-or-url> --json
+bash adl/tools/pr.sh validation <pr-number-or-url> --watch --json
+```
+
+The JSON report includes the PR number, head commit, PR state, draft state,
+aggregate disposition, all checks, failed checks, and pending checks. `--watch`
+polls through the same `pr.validation.wait` event stream before printing the
+final report. The status query follows `statusCheckRollup.contexts` pagination
+instead of assuming the first page is complete. When the PR argument is a
+GitHub URL, the command infers `owner/repo` from that URL unless `-R` is
+supplied explicitly. Shell exit status is non-zero for `pending`, `failed`,
+`cancelled`, and `timed_out` dispositions so automation does not confuse “not
+done yet” with success.
+
 ## OTEL Mapping
 
 The event vocabulary is intentionally OTEL-ready:
