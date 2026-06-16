@@ -127,6 +127,10 @@ Expected local-validation posture:
 - `release-tail` work uses tracker, gap, closeout, review-truth, path, and
   evidence checks unless tracked code changed
 
+For the canonical docs-only bundle and `SOR` wording expectations, use:
+
+- `docs/milestones/v0.91.5/DOCS_ONLY_VALIDATION_BUNDLE_3736.md`
+
 This is the main compression rule:
 
 - do not use the full local test cycle as the default for every issue
