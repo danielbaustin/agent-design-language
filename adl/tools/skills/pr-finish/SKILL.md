@@ -119,6 +119,11 @@ This skill must not:
 - silently merge
 - silently close the issue
 
+Use the normal no-closing publication path when the issue-local execution is
+done but the parent lifecycle surface must remain open, for example sprint
+umbrellas, review-hold closeout packets, or milestone truth updates with routed
+follow-ons. In the repo-native wrapper this is the `--no-close` finish mode.
+
 If the repo control plane reports `mismatched_publication_surface`, stop and
 rerun finish from the bound issue worktree. If it reports
 `rebind_to_issue_worktree_required`, re-establish the issue worktree through the

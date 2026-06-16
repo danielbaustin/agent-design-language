@@ -901,6 +901,41 @@ fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request()
 }
 
 #[test]
+fn finish_validation_profile_treats_issue_records_and_skill_docs_as_docs_only() {
+    let plan = select_finish_validation_plan_for_finish(
+        ".",
+        &[
+            "adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md".to_string(),
+            "adl/tools/skills/pr-finish/SKILL.md".to_string(),
+        ],
+    )
+    .expect("docs-only review artifact plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::DocsOnly);
+    assert_eq!(
+        plan.commands,
+        vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+        ]
+    );
+}
+
+#[test]
+fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
+    let plan = select_finish_validation_plan_for_finish(
+        ".",
+        &[
+            "adl/tools/pr.sh".to_string(),
+            "docs/milestones/v0.91.5/DOCS_ONLY_VALIDATION_BUNDLE_3736.md".to_string(),
+        ],
+    )
+    .expect("behavioral tooling plan");
+
+    assert_ne!(plan.mode, FinishValidationMode::DocsOnly);
+}
+
+#[test]
 fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
     let plan = select_finish_validation_plan_for_finish(
         ".",
