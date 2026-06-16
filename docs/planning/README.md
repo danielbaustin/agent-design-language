@@ -18,6 +18,10 @@ Active planning docs:
 - `FEATURE_DOC_PRODUCTION_MINI_SPRINT_v0.91.5.md` - setup packet for the
   feature-doc production mini-sprint and issue wave from `v0.91.5` through
   `v0.95`
+- `V093_V095_MVP_FEATURE_DOC_PLAN_v0.91.5.md` - split-ready production plan
+  for v0.93 governance/security/guilds, v0.94 secure execution/trust/trace,
+  CodeFriend v1 and adapter v2, semantic Rust refactoring, v0.95 convergence,
+  and post-v0.95 boundaries
 - `TBD_PLAN_ALLOCATION_v0.91.2_TO_v0.95.md` - tracked allocation map from the
   local-only `.adl/docs/TBD/` planning corpus to milestone execution homes,
   archive/provenance buckets, or explicit deferred status through `v0.95`
