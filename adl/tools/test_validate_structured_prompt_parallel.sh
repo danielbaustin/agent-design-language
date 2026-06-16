@@ -10,6 +10,48 @@ FAKE_ROOT="$TMPDIR/fake-root"
 mkdir -p "$FAKE_ROOT/adl"
 touch "$FAKE_ROOT/adl/Cargo.toml"
 
+write_fake_validator() {
+  local path="$1"
+  local marker="$2"
+  mkdir -p "$(dirname "$path")"
+  cat >"$path" <<SH
+#!/usr/bin/env bash
+set -euo pipefail
+echo "$marker:\$*"
+exit 0
+SH
+  chmod +x "$path"
+}
+
+write_fake_validator "$FAKE_ROOT/adl/target/debug/adl-validate-structured-prompt" "ordinary-debug-validator"
+ADL_TOOLING_MANIFEST_ROOT="$FAKE_ROOT" \
+ADL_PRIMARY_CHECKOUT_ROOT="$FAKE_ROOT" \
+ADL_STRUCTURED_PROMPT_VALIDATOR_DISABLE_PATH_LOOKUP=1 \
+  "$SCRIPT" --type srp --input "$ROOT_DIR/.adl/v0.91.5/tasks/issue-3778__pre-v092-bridge-feature-doc-production/srp.md" \
+  >"$TMPDIR/ordinary-debug-stdout.txt" 2>"$TMPDIR/ordinary-debug-stderr.txt"
+grep -Fq "ordinary-debug-validator:--type srp --input" "$TMPDIR/ordinary-debug-stdout.txt"
+rm -f "$FAKE_ROOT/adl/target/debug/adl-validate-structured-prompt"
+
+CARGO_TARGET_FIXTURE="$TMPDIR/cargo-target-fixture"
+write_fake_validator "$CARGO_TARGET_FIXTURE/debug/adl-validate-structured-prompt" "cargo-target-validator"
+ADL_TOOLING_MANIFEST_ROOT="$FAKE_ROOT" \
+ADL_PRIMARY_CHECKOUT_ROOT="$FAKE_ROOT" \
+ADL_STRUCTURED_PROMPT_VALIDATOR_DISABLE_PATH_LOOKUP=1 \
+CARGO_TARGET_DIR="$CARGO_TARGET_FIXTURE" \
+  "$SCRIPT" --type srp --input "$ROOT_DIR/.adl/v0.91.5/tasks/issue-3778__pre-v092-bridge-feature-doc-production/srp.md" \
+  >"$TMPDIR/cargo-target-stdout.txt" 2>"$TMPDIR/cargo-target-stderr.txt"
+grep -Fq "cargo-target-validator:--type srp --input" "$TMPDIR/cargo-target-stdout.txt"
+
+LLVM_COV_TARGET_FIXTURE="$TMPDIR/llvm-cov-target-fixture"
+write_fake_validator "$LLVM_COV_TARGET_FIXTURE/debug/adl-validate-structured-prompt" "llvm-cov-target-validator"
+ADL_TOOLING_MANIFEST_ROOT="$FAKE_ROOT" \
+ADL_PRIMARY_CHECKOUT_ROOT="$FAKE_ROOT" \
+ADL_STRUCTURED_PROMPT_VALIDATOR_DISABLE_PATH_LOOKUP=1 \
+CARGO_LLVM_COV_TARGET_DIR="$LLVM_COV_TARGET_FIXTURE" \
+  "$SCRIPT" --type srp --input "$ROOT_DIR/.adl/v0.91.5/tasks/issue-3778__pre-v092-bridge-feature-doc-production/srp.md" \
+  >"$TMPDIR/llvm-cov-target-stdout.txt" 2>"$TMPDIR/llvm-cov-target-stderr.txt"
+grep -Fq "llvm-cov-target-validator:--type srp --input" "$TMPDIR/llvm-cov-target-stdout.txt"
+
 set +e
 ADL_TOOLING_MANIFEST_ROOT="$FAKE_ROOT" \
 ADL_PRIMARY_CHECKOUT_ROOT="$FAKE_ROOT" \

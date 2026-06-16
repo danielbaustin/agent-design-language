@@ -81,6 +81,8 @@ run_target_dir_validator_if_present() {
   if [[ -z "$target_dir" ]]; then
     return 0
   fi
+  # Keep this lookup order aligned with
+  # docs/tooling/structured-prompt-validator-binary-resolution.md.
   case "$target_dir" in
     /*)
       run_if_executable "$target_dir/debug/adl-validate-structured-prompt" "$@"
