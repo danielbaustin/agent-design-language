@@ -125,6 +125,7 @@ Primary planning and proof sources:
 - Release notes: [RELEASE_NOTES_v0.91.5.md](RELEASE_NOTES_v0.91.5.md)
 - Quality gate: [QUALITY_GATE_v0.91.5.md](QUALITY_GATE_v0.91.5.md)
 - Feature proof coverage: [FEATURE_PROOF_COVERAGE_v0.91.5.md](FEATURE_PROOF_COVERAGE_v0.91.5.md)
+- Pre-v0.92 bridge feature-doc ledger: [PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md](PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md)
 - WP execution readiness: [WP_EXECUTION_READINESS_v0.91.5.md](WP_EXECUTION_READINESS_v0.91.5.md)
 - ADR plan: [ADR_PLAN_v0.91.5.md](ADR_PLAN_v0.91.5.md)
 - Next milestone handoff: [NEXT_MILESTONE_HANDOFF_v0.91.5.md](NEXT_MILESTONE_HANDOFF_v0.91.5.md)
