@@ -499,7 +499,7 @@ fn real_pr_doctor_full_blocks_invalid_root_spp() {
     let root_spp = issue_ref.task_bundle_plan_path(&repo);
     let invalid_spp = fs::read_to_string(&root_spp)
         .expect("read root spp")
-        .replace("status: \"draft\"", "status: \"queued\"");
+        .replace("status: \"ready\"", "status: \"queued\"");
     fs::write(&root_spp, invalid_spp).expect("write invalid root spp");
 
     let err = real_pr(&[
