@@ -423,6 +423,7 @@ fn real_pr_create(args: &[String]) -> Result<()> {
 fn real_pr_start(args: &[String]) -> Result<()> {
     let parsed = parse_start_args(args)?;
     let repo_root = repo_root()?;
+    let primary_root = primary_checkout_root()?;
     let repo = default_repo(&repo_root)?;
     let local_identity = resolve_local_issue_identity(&repo_root, parsed.issue)?;
 
@@ -461,6 +462,14 @@ fn real_pr_start(args: &[String]) -> Result<()> {
         if slug.is_empty() {
             slug = sanitize_slug(&title);
         }
+    }
+    if !same_checkout_root(&repo_root, &primary_root)? {
+        bail!(
+            "start: issue-mode run must be invoked from the primary checkout, not from an existing issue worktree. Current checkout: '{}'. Primary checkout: '{}'. Remediation: continue working in the current issue worktree if it already matches your target issue, or rerun `adl/tools/pr.sh run {}` from the primary checkout.",
+            repo_root.display(),
+            primary_root.display(),
+            parsed.issue
+        );
     }
     if title.is_empty() {
         title = slug.clone();

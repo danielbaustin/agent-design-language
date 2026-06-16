@@ -267,6 +267,131 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
 }
 
 #[test]
+fn real_pr_start_rejects_invocation_from_existing_issue_worktree() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-nested-worktree-guard");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "nested guard placeholder\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let issue_ref = IssueRef::new(3819, "v0.91.5", "nested-worktree-guard").expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.91.5][tools] Nested worktree guard");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.91.5][tools] Nested worktree guard",
+        "codex/3819-v0-91-5-tools-nested-worktree-guard",
+    );
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir repo");
+    real_pr(&[
+        "start".to_string(),
+        "3819".to_string(),
+        "--slug".to_string(),
+        "nested-worktree-guard".to_string(),
+        "--title".to_string(),
+        "[v0.91.5][tools] Nested worktree guard".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.91.5".to_string(),
+    ])
+    .expect("initial start");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    env::set_current_dir(&worktree).expect("chdir worktree");
+    let err = real_pr(&[
+        "start".to_string(),
+        "3819".to_string(),
+        "--slug".to_string(),
+        "nested-worktree-guard".to_string(),
+        "--title".to_string(),
+        "[v0.91.5][tools] Nested worktree guard".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.91.5".to_string(),
+    ])
+    .expect_err("issue worktree invocation should fail clearly");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    let err = err.to_string();
+    assert!(err.contains("must be invoked from the primary checkout"));
+    assert!(err.contains(&repo.display().to_string()));
+    assert!(err.contains(&worktree.display().to_string()));
+    assert!(
+        !worktree.join(".worktrees").exists(),
+        "nested worktree root should not be created inside the issue worktree"
+    );
+}
+
+#[test]
 fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-start-repair-worktree-bundle");
