@@ -101,7 +101,10 @@ fn real_pr_start_blocks_before_worktree_when_design_time_cards_are_not_ready() {
         &root_spp_path,
         root_spp
             .replace("status: \"reviewed\"", "status: \"draft\"")
-            .replace("activation_state: \"reviewed\"", "activation_state: \"draft\""),
+            .replace(
+                "activation_state: \"reviewed\"",
+                "activation_state: \"draft\"",
+            ),
     )
     .expect("write non-ready root spp");
     assert!(Command::new("git")
