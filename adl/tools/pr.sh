@@ -2237,6 +2237,16 @@ cmd_finish() {
   delegate_pr_command_to_rust finish "$@"
 }
 
+cmd_validation() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_validation
+    return 0
+  fi
+  adl_obs_event "pr.sh" "validation" "started" "pr" "${1:-}"
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust validation "$@"
+}
+
 cmd_closeout() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     usage_closeout
@@ -2299,6 +2309,7 @@ Commands:
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
   doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
+  validation <pr-number-or-url> [-R owner/repo] [--watch] [--json]
   closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
 
 Compatibility / maintenance commands:
@@ -2509,6 +2520,21 @@ Notes:
 EOF
 }
 
+usage_validation() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh validation <pr-number-or-url> [-R owner/repo] [--watch] [--json]
+
+Behavior:
+- delegates to the Rust-owned PR validation watcher
+- reads PR check status through the typed GitHub transport
+- infers `owner/repo` from a GitHub PR URL when `-R/--repo` is omitted; otherwise falls back to the current checkout repo
+- emits tail-friendly pr.validation.wait events when --watch is set
+- prints a JSON status report when --json is set
+- returns non-zero when validation is pending, failed, cancelled, or timed out
+EOF
+}
+
 usage_repair_issue_body() {
   cat <<'EOF'
 Usage:
@@ -2555,6 +2581,7 @@ main() {
     ready) cmd_ready "$@" ;;
     preflight) cmd_preflight "$@" ;;
     finish) cmd_finish "$@" ;;
+    validation) cmd_validation "$@" ;;
     closeout) cmd_closeout "$@" ;;
     card) cmd_card "$@" ;;
     output) cmd_output "$@" ;;

@@ -12,7 +12,7 @@ use super::pr_cmd_args::parse_finish_args;
 use super::pr_cmd_args::{
     parse_closeout_args, parse_create_args, parse_doctor_args, parse_init_args,
     parse_preflight_args, parse_ready_args, parse_repair_issue_body_args, parse_start_args,
-    DoctorArgs, DoctorMode,
+    parse_validation_args, DoctorArgs, DoctorMode,
 };
 use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
@@ -153,7 +153,7 @@ fn resolve_local_issue_identity(repo_root: &Path, issue: u32) -> Result<Option<(
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
-            "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | closeout"
+            "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | closeout"
         );
     };
 
@@ -166,9 +166,81 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "ready" => real_pr_ready(&args[1..]),
         "preflight" => real_pr_preflight(&args[1..]),
         "finish" => finish_support::real_pr_finish(&args[1..]),
+        "validation" => real_pr_validation(&args[1..]),
         "closeout" => real_pr_closeout(&args[1..]),
         other => bail!("unknown pr subcommand: {other}"),
     }
+}
+
+fn real_pr_validation(args: &[String]) -> Result<()> {
+    let parsed = parse_validation_args(args)?;
+    let repo_root = repo_root()?;
+    let repo = parsed
+        .repo
+        .clone()
+        .or_else(|| repo_from_pr_ref(&parsed.pr_ref))
+        .unwrap_or(default_repo(&repo_root)?);
+    let report = if parsed.watch {
+        github::wait_for_pr_validation_report(&repo, &parsed.pr_ref)?
+    } else {
+        github::pr_validation_report(&repo, &parsed.pr_ref)?
+    };
+    if parsed.json {
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&report)
+                .context("validation: failed to serialize validation report")?
+        );
+    } else {
+        println!(
+            "PR #{} validation: {} (checks: {}, failed: {}, pending: {})",
+            report.pr_number,
+            report.disposition,
+            report.checks.len(),
+            report.failed_checks.len(),
+            report.pending_checks.len()
+        );
+        for check in report
+            .failed_checks
+            .iter()
+            .chain(report.pending_checks.iter())
+        {
+            println!(
+                "- {} status={} conclusion={} job_run_id={}",
+                check.name, check.status, check.conclusion, check.job_run_id
+            );
+        }
+    }
+    if validation_disposition_blocks_shell_success(&report.disposition) {
+        bail!(
+            "validation: PR #{} is {}",
+            report.pr_number,
+            report.disposition
+        );
+    }
+    Ok(())
+}
+
+fn validation_disposition_blocks_shell_success(disposition: &str) -> bool {
+    matches!(
+        disposition,
+        "pending" | "failed" | "cancelled" | "timed_out"
+    )
+}
+
+fn repo_from_pr_ref(pr_ref: &str) -> Option<String> {
+    let trimmed = pr_ref.trim();
+    let marker = "github.com/";
+    let (_, tail) = trimmed.split_once(marker)?;
+    let path = tail.split(['?', '#']).next()?;
+    let mut parts = path.split('/');
+    let owner = parts.next()?.trim();
+    let repo = parts.next()?.trim();
+    let pull_marker = parts.next()?.trim();
+    if owner.is_empty() || repo.is_empty() || pull_marker != "pull" {
+        return None;
+    }
+    Some(format!("{owner}/{repo}"))
 }
 
 fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
