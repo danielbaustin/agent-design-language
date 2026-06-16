@@ -1,0 +1,115 @@
+milestone: v0.91.6
+version: v0.91.6
+status: candidate_issue_wave
+created_by_issue: 3800
+source_bridge_ledger: docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md
+notes:
+  - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
+  - "Do not claim v0.92 activation readiness from this seed."
+  - "Keep v0.91.7 residuals explicit."
+work_packages:
+  - wp: WP-01
+    title: v0.91.6 planning promotion and issue-wave readiness
+    outcome: Open the concrete v0.91.6 issue wave and card bundles from this candidate package.
+    depends_on:
+      - "#3778"
+      - "#3800"
+    deliverables:
+      - "Opened GitHub issue wave"
+      - "SIP/STP/SPP/SRP/SOR cards for each opened issue"
+  - wp: WP-02
+    title: Resilience, persistence, and sleep/wake feature doc
+    outcome: Define resilience and continuity proof boundaries before v0.92.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md"
+  - wp: WP-03
+    title: Logging/tooling proof-loop reliability
+    outcome: Route validation split, observability, PR proof-loop reliability, and issues #3802-#3805.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "TOOLING_PROOF_LOOP_RELIABILITY_v0.91.6.md"
+  - wp: WP-04
+    title: Public prompt records export and redaction
+    outcome: Define export, redaction, validation, indexing, evidence, and security review boundaries.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md"
+  - wp: WP-05
+    title: Provider/model reliability and multi-agent readiness
+    outcome: Define model-role suitability and reliability proof limits, including Gemma.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "PROVIDER_MODEL_RELIABILITY_v0.91.6.md"
+  - wp: WP-06
+    title: ACIP/A2A/provider communications decisions
+    outcome: Decide or route schema catalog, access rules, JSON projection, protobuf, WebSocket, and provider communications.
+    depends_on:
+      - "WP-01"
+      - "WP-07"
+    deliverables:
+      - "ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md"
+  - wp: WP-07
+    title: Security bridge readiness and CAV
+    outcome: Define activation-path security, CAV, provider trust, prompt-record security, ACIP security, and malformed-output checks.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "SECURITY_BRIDGE_AND_CAV_v0.91.6.md"
+  - wp: WP-08
+    title: Identity/continuity and capability-selector bridge
+    outcome: Connect capability evidence, identity continuity, and resilience without starting Aptitude Atlas.
+    depends_on:
+      - "WP-02"
+      - "WP-05"
+    deliverables:
+      - "IDENTITY_CONTINUITY_CAPABILITY_SELECTOR_BRIDGE_v0.91.6.md"
+  - wp: WP-09
+    title: Observatory/Unity consumption classification
+    outcome: Classify demo and Observatory surfaces as proof, rehearsal, substrate, blocked, or deferred.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md"
+  - wp: WP-10
+    title: AEE, Memory/ObsMem, and ACP accounting
+    outcome: Account for AEE completion boundaries, Memory/ObsMem handoff, Memory Palace planning state, and ACP/cognitive profile scope before v0.92.
+    depends_on:
+      - "WP-01"
+      - "WP-02"
+      - "WP-05"
+    deliverables:
+      - "AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md"
+  - wp: WP-11
+    title: Bridge ledger refresh and v0.91.7 handoff
+    outcome: Record first-tranche dispositions and hand residuals to #3801.
+    depends_on:
+      - "WP-02"
+      - "WP-03"
+      - "WP-04"
+      - "WP-05"
+      - "WP-06"
+      - "WP-07"
+      - "WP-08"
+      - "WP-09"
+      - "WP-10"
+    deliverables:
+      - "v0.91.6 bridge disposition addendum or handoff record"
+  - wp: WP-12
+    title: Internal review
+    outcome: Review the first-tranche docs for missing surfaces, overclaims, and vague spillover.
+    depends_on:
+      - "WP-11"
+    deliverables:
+      - "Review packet and finding register"
+  - wp: WP-13
+    title: Remediation and closeout
+    outcome: Fix or route review findings and record closeout truth.
+    depends_on:
+      - "WP-12"
+    deliverables:
+      - "Closeout packet"
