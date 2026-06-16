@@ -170,6 +170,16 @@ This skill enforces:
 - healthy child waiting states are monitored issue-local lifecycle states, not default operator stop states
 - merged-but-not-closeouted children are immediate closeout work, not natural pause points
 
+## Observability Expectations
+
+- Treat workflow/control-plane logs as supporting sprint evidence when they help
+  explain queue gates, waiting states, merge drift, or closeout behavior.
+- Keep GitHub truth authoritative; logs explain state, but they do not replace
+  the live issue/PR check gates.
+- When a sprint is blocked by a workflow/logging defect outside the active
+  child issue, record that as a follow-on rather than hiding it inside sprint
+  completion claims.
+
 Preferred per-issue routing model:
 - sprint-wide structured prompt preflight not ready ->
   `check_sprint_structured_prompt_readiness.py`, then route flagged child issues

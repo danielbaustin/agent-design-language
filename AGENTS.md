@@ -100,6 +100,18 @@ These rules are mandatory for ADL issue work.
   values object first, render through the Rust tooling, then run structure and
   schema validation. Use editor skills for lifecycle truth and bounded repairs,
   not as a reason to bypass the renderer/schema path.
+- Treat observability as part of workflow truth, not optional garnish. When a
+  change touches workflow control-plane paths, runtime/provider execution,
+  watchdog behavior, or machine-readable command output, record the relevant
+  logging policy and proof in the issue artifacts.
+- Preserve the current logging channel contract unless the issue explicitly
+  changes it:
+  - machine-readable payloads belong on stdout
+  - human-oriented `adl_event` observability belongs on stderr by default
+  - compatibility redirection such as `ADL_OBSERVABILITY_STDERR=0` and
+    `ADL_OBSERVABILITY_LOG=<path>` must be documented truthfully when used
+- Do not claim OpenTelemetry, runtime/provider correlation, heartbeat coverage,
+  or JSON-safe observability beyond what the tracked proofs actually establish.
 
 ## Where To Start
 
@@ -135,6 +147,12 @@ For a normal tracked issue:
   checks that apply to the touched surface: values validation, rendered
   structure validation, schema parity validation, and the Python-readable schema
   smoke check when schema artifacts are touched.
+- Logging- or observability-affecting work should also record the smallest
+  proving checks for:
+  - stdout/stderr separation when machine-readable output is involved
+  - redaction and path hygiene for emitted log lines or durable log artifacts
+  - compatibility-log behavior when `ADL_OBSERVABILITY_LOG` or quiet-stderr
+    mode is part of the claimed workflow
 
 ## Review And Publication Rules
 

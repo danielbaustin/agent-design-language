@@ -93,6 +93,17 @@ When PR checks are used as validation evidence, apply
   coverage-required lane actually ran
 - do not cite docs-only PR-level coverage skips as release coverage evidence
 
+## Observability Expectations
+
+- When finish or publication claims depend on logging/observability behavior,
+  record the exact proof surface instead of implying the contract from a green
+  PR alone.
+- If a machine-readable command path was part of the change, preserve whether
+  the issue proved stdout-only payload safety, stderr observability, and any
+  compatibility-log redirection behavior.
+- Treat `adl_event` lines during finish as current workflow evidence, but do
+  not claim machine-readable cleanliness unless the issue explicitly proved it.
+
 ### 3. Run Finish Through The Repo Control Plane
 
 Prefer repo-native finish commands rather than manual git/PR surgery.

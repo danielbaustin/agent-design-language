@@ -97,6 +97,17 @@ workflow surface, classify the watch as blocked or route a follow-up instead of
 silently falling back. Do not infer readiness only from stale local cards when
 live GitHub state is required.
 
+### Observability Expectations
+
+- Watch results may be accompanied by `adl_event` progress lines from the
+  underlying control-plane command path; treat those as observability evidence,
+  not as state mutation.
+- When a watched gate looks stuck, use the log story to classify whether the
+  state is merely pending, genuinely blocked, or suffering from a machine-
+  readable/output-channel defect.
+- Preserve queue-blocking or lifecycle-log details when they are the reason the
+  next issue cannot start.
+
 When watching PR checks, apply
 `adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md`. Continue watching stable
 check names (`adl-ci` and `adl-coverage`), but classify their meaning through

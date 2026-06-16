@@ -118,6 +118,9 @@ Use the smallest useful validation set:
 - check referenced files exist when possible
 - run documented commands only when safe and bounded
 - run Markdown or contract tests when the repo provides them
+- when the doc covers logging or observability behavior, verify channel policy,
+  redaction/path claims, and compatibility-path claims against tracked proof
+  surfaces rather than paraphrasing them from memory
 - check generated docs for absolute host paths and secret markers when
   publication is possible
 - verify diagram or demo links only when they are part of the bounded target

@@ -46,7 +46,7 @@ JSON consumers depend on them.
 | Heartbeat, timeout, and progress policy is not unified. | Operators still ask “is it hung?” for long commands or long-lived processes. | #3708 | `finish`, `closeout`, validation subprocesses, provider calls, long-lived agents | Slow/hanging fixture proves bounded heartbeats/progress with stable timeout reason codes. |
 | OpenTelemetry is only planned/OTEL-ready, not implemented. | Claims of standard observability can overstate reality; future exporters may be bolted on inconsistently. | #3709 | Cargo/dependency plan and exporter boundary | No-op/stdout subscriber proof or design review; CI must not require a collector. |
 | Observatory consumption is not defined against the current event model. | Unity/Observatory could invent a separate telemetry truth instead of consuming ADL runtime/C-SDLC events. | #3710 | v0.92 Observatory docs and event examples | Example event stream and requirements for ingestion, display, retention, redaction, and correlation. |
-| Docs, skills, AGENTS, and validation do not yet enforce the completed logging model. | Implementation can land but future agents keep using old/silent paths. | #3711 | `AGENTS.md`, skills, docs, validation checklist | Skills and docs teach required logs; closeout packet records complete/deferred truth. |
+| Docs, skills, AGENTS, and validation must teach the completed logging model. | If guidance lags implementation, future agents can regress into old or silent paths. | #3711 | `AGENTS.md`, skills, docs, validation checklist | Skills and docs teach required logs; closeout packet records complete/deferred truth. |
 
 ## Not Missing After This Inventory
 
@@ -85,8 +85,9 @@ JSON consumers depend on them.
   not mapped into a shared observability contract.
 - Observatory/Unity consumption requirements are not yet tied to the ADL event
   model.
-- Skills and repo guidance do not yet make logging proof a standard part of
-  future issue work.
+- Repo-native logging guidance now exists, but future workflow/tooling issues
+  still need to apply it consistently and route follow-on defects instead of
+  overclaiming maturity.
 
 ## Recommended Execution Order
 

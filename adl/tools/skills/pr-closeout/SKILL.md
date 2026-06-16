@@ -70,6 +70,17 @@ Useful additional inputs:
 8. Prune the worktree safely.
 9. Emit a structured closeout result and stop.
 
+## Observability Expectations
+
+- Closeout should preserve any issue-local logging proof or compatibility-path
+  caveat that explains what was and was not established by the work.
+- If merged/closed truth was diagnosed partly through workflow logs or watcher
+  evidence, keep GitHub state authoritative and treat logs as supporting
+  evidence rather than as the closure authority.
+- When closeout resolves a logging-hardening issue, record any remaining
+  follow-ons explicitly instead of implying the broader observability program is
+  complete.
+
 ## Workflow
 
 ### 1. Resolve Closeout Target
