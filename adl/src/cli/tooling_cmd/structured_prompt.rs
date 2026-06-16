@@ -26,6 +26,27 @@ const ALLOWED_CARD_STATUS: &[&str] = &[
     "superseded",
 ];
 
+fn allowed_values_error(field: &str, actual: &str, allowed: &[&str]) -> String {
+    let actual = if actual.trim().is_empty() {
+        "<empty>"
+    } else {
+        actual
+    };
+    format!(
+        "{field} must be one of: {}; actual: {actual}",
+        allowed.join(", ")
+    )
+}
+
+fn ensure_allowed_value(field: &str, actual: &str, allowed: &[&str]) -> Result<()> {
+    ensure!(
+        allowed.contains(&actual),
+        "{}",
+        allowed_values_error(field, actual, allowed)
+    );
+    Ok(())
+}
+
 pub(super) fn real_lint_prompt_spec(args: &[String]) -> Result<()> {
     let input = resolve_issue_or_input_arg(args)?;
     ensure_file(&input, "input card")?;
@@ -363,10 +384,7 @@ fn validate_reference_sequence(fm: &serde_yaml::Mapping, key: &str) -> Result<()
 
 fn validate_optional_front_matter_card_status(fm: &serde_yaml::Mapping) -> Result<()> {
     if let Some(card_status) = mapping_string(fm, "card_status") {
-        ensure!(
-            ALLOWED_CARD_STATUS.contains(&card_status.as_str()),
-            "card_status must be one of: draft, ready, reviewed, approved, completed, blocked, superseded"
-        );
+        ensure_allowed_value("card_status", &card_status, ALLOWED_CARD_STATUS)?;
     }
     Ok(())
 }
@@ -399,10 +417,7 @@ fn validate_completed_srp_card_status(fm: &serde_yaml::Mapping) -> Result<()> {
 
 fn validate_optional_markdown_card_status(text: &str) -> Result<()> {
     if let Some(card_status) = markdown_field(text, "Card Status") {
-        ensure!(
-            ALLOWED_CARD_STATUS.contains(&card_status.as_str()),
-            "Card Status must be one of: draft, ready, reviewed, approved, completed, blocked, superseded"
-        );
+        ensure_allowed_value("Card Status", &card_status, ALLOWED_CARD_STATUS)?;
     }
     Ok(())
 }
@@ -458,16 +473,14 @@ pub(super) fn validate_stp_text(text: &str) -> Result<()> {
         "issue_number must be an integer"
     );
     let status = mapping_string(fm, "status").unwrap_or_default();
-    ensure!(
-        ["draft", "active", "complete"].contains(&status.as_str()),
-        "status must be one of: draft, active, complete"
-    );
+    ensure_allowed_value("status", &status, &["draft", "active", "complete"])?;
     validate_optional_front_matter_card_status(fm)?;
     let action = mapping_string(fm, "action").unwrap_or_default();
-    ensure!(
-        ["create", "edit", "close", "split", "supersede"].contains(&action.as_str()),
-        "action must be one of: create, edit, close, split, supersede"
-    );
+    ensure_allowed_value(
+        "action",
+        &action,
+        &["create", "edit", "close", "split", "supersede"],
+    )?;
     ensure!(
         mapping_contains(fm, "depends_on"),
         "missing required field: depends_on"
@@ -642,12 +655,13 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
         "Integration state",
     )
     .unwrap_or_default();
-    ensure!(
-        integration_state.is_empty()
-            || ["worktree_only", "pr_open", "merged", "closed_no_pr"]
-                .contains(&integration_state.as_str()),
-        "Main Repo Integration.Integration state must be one of: worktree_only, pr_open, merged, closed_no_pr"
-    );
+    if !integration_state.is_empty() {
+        ensure_allowed_value(
+            "Main Repo Integration.Integration state",
+            &integration_state,
+            &["worktree_only", "pr_open", "merged", "closed_no_pr"],
+        )?;
+    }
     let branch = markdown_field(text, "Branch").unwrap_or_default();
     let branch_ok = if phase == Some("bootstrap") {
         valid_branch(&branch) || branch.eq_ignore_ascii_case("not bound yet")
@@ -668,10 +682,7 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
         }
     );
     let status = markdown_field(text, "Status").unwrap_or_default();
-    ensure!(
-        ALLOWED_OUTPUT_STATUS.contains(&status.as_str()),
-        "Status must be one of: NOT_STARTED, IN_PROGRESS, DONE, FAILED"
-    );
+    ensure_allowed_value("Status", &status, ALLOWED_OUTPUT_STATUS)?;
     let start = markdown_block_field(text, "Execution", "Start Time").unwrap_or_default();
     ensure!(
         start.is_empty() || valid_iso8601_datetime(&start),
@@ -688,17 +699,18 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
         "Verification scope",
     )
     .unwrap_or_default();
-    ensure!(
-        verification_scope.is_empty()
-            || ["worktree", "pr_branch", "main_repo"].contains(&verification_scope.as_str()),
-        "Main Repo Integration.Verification scope must be one of: worktree, pr_branch, main_repo"
-    );
+    if !verification_scope.is_empty() {
+        ensure_allowed_value(
+            "Main Repo Integration.Verification scope",
+            &verification_scope,
+            &["worktree", "pr_branch", "main_repo"],
+        )?;
+    }
     let result = markdown_block_field(text, "Main Repo Integration (REQUIRED)", "Result")
         .unwrap_or_default();
-    ensure!(
-        result.is_empty() || ["PASS", "FAIL"].contains(&result.as_str()),
-        "Main Repo Integration.Result must be one of: PASS, FAIL"
-    );
+    if !result.is_empty() {
+        ensure_allowed_value("Main Repo Integration.Result", &result, &["PASS", "FAIL"])?;
+    }
     if markdown_field(text, "Card Status").as_deref() == Some("completed") {
         let worktree_only = markdown_block_field(
             text,
@@ -845,11 +857,12 @@ pub(super) fn validate_spp_text(text: &str) -> Result<()> {
         valid_branch(&branch) || branch.eq_ignore_ascii_case("not bound yet"),
         "branch must be a codex/ branch or `not bound yet`"
     );
-    ensure!(
-        ["draft", "ready", "reviewed", "approved"]
-            .contains(&mapping_string(fm, "status").unwrap_or_default().as_str()),
-        "status must be one of: draft, ready, reviewed, approved"
-    );
+    let status = mapping_string(fm, "status").unwrap_or_default();
+    ensure_allowed_value(
+        "status",
+        &status,
+        &["draft", "ready", "reviewed", "approved"],
+    )?;
     validate_optional_front_matter_card_status(fm)?;
     ensure!(
         mapping_string(fm, "plan_revision")
@@ -867,10 +880,7 @@ pub(super) fn validate_spp_text(text: &str) -> Result<()> {
         "missing required field: constraints"
     );
     let confidence = mapping_string(fm, "confidence").unwrap_or_default();
-    ensure!(
-        ["low", "medium", "high"].contains(&confidence.as_str()),
-        "confidence must be one of: low, medium, high"
-    );
+    ensure_allowed_value("confidence", &confidence, &["low", "medium", "high"])?;
     ensure!(
         !mapping_string(fm, "plan_summary")
             .unwrap_or_default()
@@ -939,10 +949,11 @@ pub(super) fn validate_spp_text(text: &str) -> Result<()> {
         let step = mapping_string(item, "step").unwrap_or_default();
         ensure!(!step.is_empty(), "codex_plan.step must be non-empty");
         let status = mapping_string(item, "status").unwrap_or_default();
-        ensure!(
-            ["pending", "in_progress", "completed"].contains(&status.as_str()),
-            "codex_plan.status must be one of: pending, in_progress, completed"
-        );
+        ensure_allowed_value(
+            "codex_plan.status",
+            &status,
+            &["pending", "in_progress", "completed"],
+        )?;
     }
 
     Ok(())
@@ -1012,11 +1023,8 @@ pub(super) fn validate_srp_text(text: &str) -> Result<()> {
         valid_branch(&branch) || branch.eq_ignore_ascii_case("not bound yet"),
         "branch must be a codex/ branch or `not bound yet`"
     );
-    ensure!(
-        ["draft", "ready", "approved"]
-            .contains(&mapping_string(fm, "status").unwrap_or_default().as_str()),
-        "status must be one of: draft, ready, approved"
-    );
+    let status = mapping_string(fm, "status").unwrap_or_default();
+    ensure_allowed_value("status", &status, &["draft", "ready", "approved"])?;
     validate_optional_front_matter_card_status(fm)?;
     validate_completed_srp_card_status(fm)?;
     validate_reference_sequence(fm, "source_refs")?;

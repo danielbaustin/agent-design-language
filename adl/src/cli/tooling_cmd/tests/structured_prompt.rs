@@ -1,5 +1,9 @@
 use super::support::*;
 use super::*;
+use crate::cli::tooling_cmd::structured_prompt::{
+    prompt_spec_bool, prompt_spec_review_surfaces, prompt_spec_sections, real_lint_prompt_spec,
+    validate_spp_text,
+};
 
 #[test]
 fn structured_prompt_validators_accept_canonical_cards() {
@@ -232,6 +236,71 @@ fn validate_structured_prompt_accepts_all_supported_prompt_types() {
 }
 
 #[test]
+fn structured_prompt_lint_prompt_spec_and_helpers_cover_prompt_spec_contract() {
+    let repo = TempRepo::new("structured-prompt-spec-lint");
+    let sip_text = valid_sip_text(1374, repo.path());
+    let sip = repo.write_rel(".tmp/tooling_cmd_tests/sip.md", &sip_text);
+
+    real_lint_prompt_spec(&["--input".to_string(), sip.to_string_lossy().to_string()])
+        .expect("valid SIP prompt spec should lint");
+
+    let spec = extract_prompt_spec_yaml(&sip_text).expect("extract prompt spec");
+    let sections = prompt_spec_sections(&spec);
+    assert!(sections.contains(&"goal".to_string()));
+    assert!(sections.contains(&"validation_plan".to_string()));
+    assert_eq!(prompt_spec_bool(&spec, "disallow_secrets"), Some(true));
+    assert_eq!(prompt_spec_bool(&spec, "not_a_prompt_key"), None);
+    assert_eq!(
+        prompt_spec_review_surfaces(&sip_text),
+        super::common::REQUIRED_REVIEW_SURFACES
+            .iter()
+            .map(|surface| surface.to_string())
+            .collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn structured_prompt_cli_rejects_bad_args_and_unresolved_template_placeholders() {
+    assert!(real_validate_structured_prompt(&["--help".to_string()]).is_ok());
+
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "unknown".to_string(),
+        "--input".to_string(),
+        "missing.md".to_string(),
+    ])
+    .expect_err("missing file should fail before unsupported type");
+    assert!(err.to_string().contains("input"));
+
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "stp".to_string(),
+        "--input".to_string(),
+    ])
+    .expect_err("missing --input value should fail");
+    assert!(err.to_string().contains("missing value for --input"));
+
+    let repo = TempRepo::new("structured-unresolved-placeholder");
+    let stp = repo.write_rel(
+        ".tmp/tooling_cmd_tests/stp-placeholder.md",
+        &format!(
+            "Canonical Template Source: `docs/templates/prompts/1.0.0/stp.md`\n\n{}",
+            valid_stp_text().replace("## Summary", "## Summary\n\n<summary>\n")
+        ),
+    );
+    let err = real_validate_structured_prompt(&[
+        "--type".to_string(),
+        "stp".to_string(),
+        "--input".to_string(),
+        stp.to_string_lossy().to_string(),
+    ])
+    .expect_err("unresolved template placeholder should fail");
+    assert!(err
+        .to_string()
+        .contains("unresolved prompt-template placeholder"));
+}
+
+#[test]
 fn structured_prompt_spp_validator_rejects_invalid_codex_plan_status() {
     let repo = TempRepo::new("structured-spp-invalid");
     let spp = repo.write_rel(
@@ -246,6 +315,101 @@ fn structured_prompt_spp_validator_rejects_invalid_codex_plan_status() {
     ])
     .expect_err("invalid codex plan status should fail");
     assert!(err.to_string().contains("codex_plan.status"));
+    assert!(err.to_string().contains("actual: queued"));
+}
+
+#[test]
+fn structured_prompt_srp_status_diagnostic_includes_actual_and_allowed_values() {
+    let srp = valid_srp_text(1374).replace("status: \"draft\"", "status: \"completed\"");
+
+    let err = validate_srp_text(&srp).expect_err("invalid SRP lifecycle status should fail");
+    let message = err.to_string();
+    assert!(message.contains("status"));
+    assert!(message.contains("draft, ready, approved"));
+    assert!(message.contains("actual: completed"));
+}
+
+#[test]
+fn structured_prompt_sor_verification_scope_diagnostic_includes_actual_and_allowed_values() {
+    let sor = valid_sor_text().replace(
+        "Verification scope: main_repo",
+        "Verification scope: issue worktree",
+    );
+
+    let err = validate_sor_text(&sor, Some("completed"))
+        .expect_err("invalid SOR verification scope should fail");
+    let message = err.to_string();
+    assert!(message.contains("Main Repo Integration.Verification scope"));
+    assert!(message.contains("worktree, pr_branch, main_repo"));
+    assert!(message.contains("actual: issue worktree"));
+}
+
+#[test]
+fn structured_prompt_stp_status_and_action_diagnostics_include_actual_values() {
+    let stp = valid_stp_text().replace("status: \"draft\"", "status: \"queued\"");
+    let err = validate_stp_text(&stp).expect_err("invalid STP status should fail");
+    let message = err.to_string();
+    assert!(message.contains("status"));
+    assert!(message.contains("draft, active, complete"));
+    assert!(message.contains("actual: queued"));
+
+    let stp = valid_stp_text().replace("action: \"edit\"", "action: \"rewrite\"");
+    let err = validate_stp_text(&stp).expect_err("invalid STP action should fail");
+    let message = err.to_string();
+    assert!(message.contains("action"));
+    assert!(message.contains("create, edit, close, split, supersede"));
+    assert!(message.contains("actual: rewrite"));
+}
+
+#[test]
+fn structured_prompt_spp_status_and_confidence_diagnostics_include_actual_values() {
+    let spp = valid_spp_text(1374).replace("status: \"draft\"", "status: \"started\"");
+    let err = validate_spp_text(&spp).expect_err("invalid SPP status should fail");
+    let message = err.to_string();
+    assert!(message.contains("status"));
+    assert!(message.contains("draft, ready, reviewed, approved"));
+    assert!(message.contains("actual: started"));
+
+    let spp = valid_spp_text(1374).replace("confidence: \"medium\"", "confidence: \"certain\"");
+    let err = validate_spp_text(&spp).expect_err("invalid SPP confidence should fail");
+    let message = err.to_string();
+    assert!(message.contains("confidence"));
+    assert!(message.contains("low, medium, high"));
+    assert!(message.contains("actual: certain"));
+}
+
+#[test]
+fn structured_prompt_sor_status_integration_and_result_diagnostics_include_actual_values() {
+    let sor = valid_sor_text().replace("Status: DONE", "Status: COMPLETE");
+    let err =
+        validate_sor_text(&sor, Some("completed")).expect_err("invalid SOR status should fail");
+    let message = err.to_string();
+    assert!(message.contains("Status"));
+    assert!(message.contains("NOT_STARTED, IN_PROGRESS, DONE, FAILED"));
+    assert!(message.contains("actual: COMPLETE"));
+
+    let sor = valid_sor_text().replace("Integration state: merged", "Integration state: done");
+    let err = validate_sor_text(&sor, Some("completed"))
+        .expect_err("invalid SOR integration state should fail");
+    let message = err.to_string();
+    assert!(message.contains("Main Repo Integration.Integration state"));
+    assert!(message.contains("worktree_only, pr_open, merged, closed_no_pr"));
+    assert!(message.contains("actual: done"));
+
+    let sor = valid_sor_text().replace("Result: PASS", "Result: MAYBE");
+    let err =
+        validate_sor_text(&sor, Some("completed")).expect_err("invalid SOR result should fail");
+    let message = err.to_string();
+    assert!(message.contains("Main Repo Integration.Result"));
+    assert!(message.contains("PASS, FAIL"));
+    assert!(message.contains("actual: MAYBE"));
+}
+
+#[test]
+fn structured_prompt_missing_enum_values_report_empty_actual_value() {
+    let stp = valid_stp_text().replace("status: \"draft\"", "status: \"\"");
+    let err = validate_stp_text(&stp).expect_err("empty STP status should fail");
+    assert!(err.to_string().contains("actual: <empty>"));
 }
 
 #[test]
