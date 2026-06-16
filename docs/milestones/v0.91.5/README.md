@@ -140,7 +140,7 @@ Supporting / domain-specific docs:
 
 Sprint and review support:
 
-- Logging mini-sprint closeout packet: [LOGGING_MINI_SPRINT_CLOSEOUT_3703.md](review/logging_observability/LOGGING_MINI_SPRINT_CLOSEOUT_3703.md)
+- Logging mini-sprint closeout packet and review-hold note for open umbrella `#3703`: [LOGGING_MINI_SPRINT_CLOSEOUT_3703.md](review/logging_observability/LOGGING_MINI_SPRINT_CLOSEOUT_3703.md)
 
 ## Document Map
 
