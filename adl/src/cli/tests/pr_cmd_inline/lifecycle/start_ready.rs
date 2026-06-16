@@ -1327,7 +1327,7 @@ fn real_pr_start_blocks_when_open_milestone_pr_wave_exists() {
     let gh_path = bin_dir.join("gh");
     write_executable(
             &gh_path,
-            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  cat <<'JSON'\n[{\"number\":1169,\"title\":\"[v0.86][tools] Keep tools queue busy\",\"url\":\"https://example.test/pr/1169\",\"headRefName\":\"codex/1161-v0-86-tools-keep-tools-queue-busy\",\"baseRefName\":\"main\",\"isDraft\":true}]\nJSON\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  cat <<'JSON'\n[{\"number\":1169,\"title\":\"[v0.86][tools] Keep tools queue busy\",\"url\":\"https://example.test/pr/1169\",\"headRefName\":\"codex/1161-v0-86-tools-keep-tools-queue-busy\",\"baseRefName\":\"main\",\"isDraft\":true}]\nJSON\n  exit 0\nfi\nif [[ \"$1 $2\" == \"pr view\" ]]; then\n  printf '1161\\n'\n  exit 0\nfi\nexit 1\n",
         );
 
     let old_path = env::var("PATH").unwrap_or_default();
