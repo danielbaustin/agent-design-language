@@ -1720,7 +1720,7 @@ cmd_run() {
     require_rust_pr_delegate
     adl_obs_event "pr.sh" "issue_bind" "started" "issue" "$1"
     note "Issue-mode run: binding execution context for issue $1"
-    delegate_pr_command_to_rust start "$@"
+    ADL_PR_SUPPRESS_START_COMPAT_NOTE=1 delegate_pr_command_to_rust start "$@"
     return 0
   fi
 
@@ -2223,7 +2223,7 @@ cmd_start() {
   adl_obs_event "pr.sh" "issue_bind" "started" "issue" "${1:-}"
   require_rust_pr_delegate
   note "Deprecated compatibility path: prefer 'adl/tools/pr.sh run <issue> ...' for execution-context binding."
-  delegate_pr_command_to_rust start "$@"
+  ADL_PR_SUPPRESS_START_COMPAT_NOTE=1 delegate_pr_command_to_rust start "$@"
 }
 
 
