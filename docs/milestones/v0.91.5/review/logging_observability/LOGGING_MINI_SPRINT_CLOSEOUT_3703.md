@@ -1,10 +1,9 @@
 # Logging Mini-Sprint Closeout (#3703)
 
-Sprint issue: #3703  
-Final child: #3711  
-Captured: 2026-06-15  
-Updated: 2026-06-16
-Status: ready_for_final_umbrella_closeout
+Sprint issue: #3703
+Final child: #3711
+Captured: 2026-06-16
+Status: review_hold_pending_umbrella_closeout
 
 ## Summary
 
@@ -17,13 +16,10 @@ This packet is the reviewer-facing summary for the sprint. It states what the
 sprint completed, what remains deferred, and what must not be overclaimed when
 v0.92 or later work relies on these surfaces.
 
-The original child issue wave is complete. The routed observability/tooling
-follow-ons that materially affected this packet's closeout truth have also
-landed, including `#3807`, `#3808`, and `#3809`.
-
-This packet is therefore ready to support final `#3703` umbrella closeout. It
-does not broaden the sprint's technical claims beyond the proof surfaces listed
-below.
+The original child issue wave is complete and the older observability/tooling
+follow-on wave has landed. The sprint umbrella is still open only because the
+review/closeout truth has not been finalized yet. This packet is therefore a
+review-hold closeout surface, not a final sprint-closed claim.
 
 ## Child Issue Outcomes
 
@@ -107,7 +103,7 @@ Unsafe reliance after this sprint:
 - claiming every provider/runtime/long-lived-agent surface is fully unified
 - treating unresolved tool defects as if the sprint solved them
 
-## Follow-On Resolution
+## Follow-On Truth
 
 The sprint surfaced bounded observability/tooling follow-ons during review.
 They are recorded here as completed follow-on work rather than invisible
@@ -125,9 +121,17 @@ backlog:
 - `#3808` embedded absolute-path redaction has landed
 - `#3809` bounded uniqueness for redacted provider artifact refs has landed
 
-No active logging-tail issue remains from this packet. Later toolkit
-simplification work, including the `#3733` refresh of the `#3704` gap audit,
-is a separate post-sprint refresh path and should not keep `#3703` open.
+The older logging-tail issue wave must not be silently forgotten just because
+it is now closed:
+
+- `#3809` bounded uniqueness for redacted provider artifact refs has now landed
+  and should be treated as completed follow-on work rather than the active tail
+- sprint-state / issue / PR closeout truth drift remains a routed tooling
+  concern unless its owning issue closes it separately
+
+The umbrella issue `#3703` is therefore no longer waiting on the older
+observability follow-on issue wave. It remains open only for review-hold and
+closeout-truth reasons until maintainers decide to close it.
 
 ## Reviewer Checklist
 
@@ -143,6 +147,6 @@ Reviewers should confirm:
 
 The logging mini-sprint is a real hardening tranche, not a cosmetic docs wave.
 It gives ADL a usable observability contract and proof baseline, while
-preserving explicit boundaries around work that remains outside this sprint.
-The routed follow-ons named by this packet have landed, so `#3703` is ready for
-final umbrella closeout.
+preserving explicit boundaries around the work that still remains. The original
+observability follow-on wave has landed; what remains is truthful umbrella
+review/closeout handling rather than a missing implementation slice.
