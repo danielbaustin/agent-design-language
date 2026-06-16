@@ -108,6 +108,9 @@ v0.92 depends on:
 - v0.91.5 bridge closeout for multi-agent, provider/model, public prompt,
   demo-readiness, and activation-test preflight
 - v0.91.5 issue `#3377` for first-birthday launch-packet readiness inputs
+- v0.91.6 and v0.91.7 bridge tranches for activation surfaces that must be
+  complete, deferred, blocked, or routed with evidence before birthday
+  activation claims can execute
 
 ## Parallel Python Reduction Tranche
 
@@ -135,6 +138,8 @@ The likely `v0.92` tranche is:
   candidate issue-wave seed for WP-01.
 - [Runtime v2 And Birthday Boundary Roadmap](../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md):
   roadmap boundary for birthday semantics.
+- [V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md](V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md):
+  activation bridge-consumption ledger for `#3780`.
 
 ## Scope Summary
 
@@ -186,6 +191,8 @@ The likely `v0.92` tranche is:
 - Release plan: [RELEASE_PLAN_v0.92.md](RELEASE_PLAN_v0.92.md)
 - Release notes: [RELEASE_NOTES_v0.92.md](RELEASE_NOTES_v0.92.md)
 - Feature plans: [features/README.md](features/README.md)
+- Activation bridge ledger:
+  [V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md](V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md)
 - ADR plan: [ADR_PLAN_v0.92.md](ADR_PLAN_v0.92.md)
 - Identity, continuity, and birthday allocation:
   [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md)
@@ -238,6 +245,9 @@ claim-boundary review.
 
 v0.92 is ready to execute when:
 
+- the activation bridge ledger says every named activation surface is complete,
+  deferred, blocked, or routed with evidence after the `v0.91.6` and `v0.91.7`
+  bridge tranches execute
 - every birthday claim maps to name, identity, continuity, memory, capability,
   cognitive profile, witness, receipt, trace, or review evidence
 - negative cases clearly reject ordinary process startup as birth
