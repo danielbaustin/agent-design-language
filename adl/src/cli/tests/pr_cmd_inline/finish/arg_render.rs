@@ -1,6 +1,7 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
-    ensure_finish_task_bundle_surfaces, real_pr_finish, resolve_finish_issue_scope_and_slug,
+    ensure_finish_task_bundle_surfaces, open_pr_url_nonblocking,
+    open_pr_url_nonblocking_with_timeout, real_pr_finish, resolve_finish_issue_scope_and_slug,
     select_finish_validation_plan_for_finish,
 };
 
@@ -28,6 +29,72 @@ fn parse_finish_args_requires_title_and_accepts_finish_flags() {
     assert!(parsed.ready);
     assert!(parsed.allow_gitignore);
     assert!(parsed.no_open);
+}
+
+#[test]
+fn local_pr_url_opener_failure_is_non_blocking_warning() {
+    let temp = unique_temp_dir("adl-pr-url-opener-warning");
+    let opener = temp.join("open");
+    write_executable(
+        &opener,
+        "#!/usr/bin/env bash\nset -euo pipefail\necho 'No application knows how to open URL' >&2\nexit 42\n",
+    );
+
+    let result = open_pr_url_nonblocking(
+        path_str(&opener).expect("opener path"),
+        "https://github.com/danielbaustin/agent-design-language/pull/3830",
+    );
+
+    assert!(!result.success);
+    assert!(result
+        .warning
+        .contains("warning: local PR URL opener failed"));
+    assert!(result.warning.contains("PR publication already succeeded"));
+    assert!(result.warning.contains(
+        "Open manually: https://github.com/danielbaustin/agent-design-language/pull/3830"
+    ));
+    assert!(result
+        .warning
+        .contains("No application knows how to open URL"));
+}
+
+#[test]
+fn local_pr_url_opener_spawn_failure_is_non_blocking_warning() {
+    let result = open_pr_url_nonblocking(
+        "/definitely/missing/adl-pr-url-opener",
+        "https://github.com/danielbaustin/agent-design-language/pull/3830",
+    );
+
+    assert!(!result.success);
+    assert!(result
+        .warning
+        .contains("warning: local PR URL opener could not start"));
+    assert!(result.warning.contains("PR publication already succeeded"));
+    assert!(result.warning.contains(
+        "Open manually: https://github.com/danielbaustin/agent-design-language/pull/3830"
+    ));
+}
+
+#[test]
+fn local_pr_url_opener_timeout_is_non_blocking_warning() {
+    let temp = unique_temp_dir("adl-pr-url-opener-timeout");
+    let opener = temp.join("open");
+    write_executable(&opener, "#!/usr/bin/env bash\nset -euo pipefail\nsleep 5\n");
+
+    let result = open_pr_url_nonblocking_with_timeout(
+        path_str(&opener).expect("opener path"),
+        "https://github.com/danielbaustin/agent-design-language/pull/3830",
+        std::time::Duration::from_millis(100),
+    );
+
+    assert!(!result.success);
+    assert!(result
+        .warning
+        .contains("warning: local PR URL opener timed out"));
+    assert!(result.warning.contains("PR publication already succeeded"));
+    assert!(result.warning.contains(
+        "Open manually: https://github.com/danielbaustin/agent-design-language/pull/3830"
+    ));
 }
 
 #[test]

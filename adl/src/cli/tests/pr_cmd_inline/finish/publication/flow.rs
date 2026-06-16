@@ -123,9 +123,11 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
     let gh_log = temp.join("gh.log");
     let janitor_log = temp.join("janitor.log");
     let closeout_log = temp.join("closeout.log");
+    let open_log = temp.join("open.log");
     let gh_path = bin_dir.join("gh");
     let janitor_path = bin_dir.join("janitor");
     let closeout_path = bin_dir.join("closeout");
+    let open_path = bin_dir.join("open");
     write_executable(
             &gh_path,
             &format!(
@@ -145,6 +147,13 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
         &format!(
             "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
             closeout_log.display()
+        ),
+    );
+    write_executable(
+        &open_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\necho 'No application knows how to open URL' >&2\nexit 42\n",
+            open_log.display()
         ),
     );
 
@@ -175,7 +184,6 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
         "--output".to_string(),
         path_relative_to_repo(&repo, &output),
         "--no-checks".to_string(),
-        "--no-open".to_string(),
     ]);
 
     env::set_current_dir(prev_dir).expect("restore cwd");
@@ -246,6 +254,7 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
     let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
     let janitor_calls = fs::read_to_string(&janitor_log).expect("read janitor log");
     let closeout_calls = fs::read_to_string(&closeout_log).expect("read closeout log");
+    let open_calls = fs::read_to_string(&open_log).expect("read open log");
     assert!(gh_calls.contains("pr create"));
     assert!(gh_calls.contains("pr view"));
     assert!(gh_calls.contains("danielbaustin/agent-design-language"));
@@ -258,6 +267,7 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
     assert!(janitor_calls.contains("--expected-pr-state draft"));
     assert!(closeout_calls.contains("--issue 1153"));
     assert!(closeout_calls.contains("--branch codex/1153-rust-finish-test"));
+    assert!(open_calls.contains("https://github.com/danielbaustin/agent-design-language/pull/1159"));
     assert!(closeout_calls
         .contains("--pr-url https://github.com/danielbaustin/agent-design-language/pull/1159"));
 }
