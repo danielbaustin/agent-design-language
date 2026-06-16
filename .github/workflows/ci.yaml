@@ -98,7 +98,6 @@ jobs:
           else
             rc=$?
           fi
-          rc=$?
           test "$rc" -eq 2
           grep -q "retired and now fails closed" /tmp/codex_pr_help.err
         working-directory: .
