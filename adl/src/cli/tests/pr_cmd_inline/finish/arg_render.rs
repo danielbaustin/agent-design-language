@@ -1007,6 +1007,32 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
 }
 
 #[test]
+fn finish_validation_profile_keeps_small_binary_delegation_proof_focused() {
+    let plan = select_finish_validation_plan_for_finish(
+        ".",
+        &[
+            "adl/tools/test_pr_small_binary_delegation.sh".to_string(),
+            "docs/milestones/v0.91.5/review/tooling_adoption/PR_LIFECYCLE_SMALL_BINARIES_PROOF_3838.md"
+                .to_string(),
+        ],
+    )
+    .expect("small-binary delegation proof plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_pr_small_binary_delegation.sh".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo nextest")));
+}
+
+#[test]
 fn finish_restores_missing_canonical_cards_from_slug_drifted_issue_bundle() {
     let repo = unique_temp_dir("adl-pr-finish-slug-drift");
     let issue_ref = IssueRef::new(

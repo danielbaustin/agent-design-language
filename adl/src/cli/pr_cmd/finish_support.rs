@@ -959,6 +959,12 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_small_binary_delegation_validation(path))
+        {
+            commands.push("bash adl/tools/test_pr_small_binary_delegation.sh".to_string());
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_owner_lane_contract_validation(path))
         {
             commands.push("bash adl/tools/test_owner_validation_lane.sh".to_string());
@@ -1085,6 +1091,7 @@ fn finish_path_is_focused_local_ci_gated(path: &str) -> bool {
             | "adl/tools/test_owner_validation_lane.sh"
             | "adl/tools/test_cli_wrapper_migration_contract.sh"
             | "adl/tools/test_pr_run_ambiguity_policy.sh"
+            | "adl/tools/test_pr_small_binary_delegation.sh"
             | "adl/tools/test_control_plane_observability.sh"
             | "adl/tools/test_adl_runtime_compatibility.sh"
             | "adl/tools/test_adl_review_compatibility.sh"
@@ -1138,6 +1145,11 @@ fn finish_path_needs_ci_policy_focused_validation(path: &str) -> bool {
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
     )
+}
+
+fn finish_path_needs_small_binary_delegation_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(trimmed, "adl/tools/test_pr_small_binary_delegation.sh")
 }
 
 fn finish_path_needs_owner_lane_contract_validation(path: &str) -> bool {
@@ -1267,6 +1279,10 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_ci_path_policy.sh" => {
                     let script = repo_root.join("adl/tools/test_ci_path_policy.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_pr_small_binary_delegation.sh" => {
+                    let script = repo_root.join("adl/tools/test_pr_small_binary_delegation.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_owner_validation_lane.sh" => {
