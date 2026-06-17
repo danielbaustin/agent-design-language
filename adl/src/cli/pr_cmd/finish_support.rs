@@ -126,6 +126,13 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         &issue_ref,
         &output_path,
     )?;
+    restage_finish_output_truth_paths(
+        &repo_root,
+        &primary_root,
+        &issue_ref,
+        &[output_path.clone(), canonical_output.clone()],
+    )?;
+    ensure_no_staged_issue_bundle_mutations(&repo_root, &issue_ref)?;
     if lifecycle::issue_is_closed_and_completed(parsed.issue, &repo)? {
         lifecycle::ensure_closed_completed_issue_bundle_truth(
             &primary_root,
@@ -584,6 +591,42 @@ fn record_docs_only_validation_evidence_for_finish(
             )
         })?;
     }
+    Ok(())
+}
+
+fn restage_finish_output_truth_paths(
+    repo_root: &Path,
+    primary_root: &Path,
+    issue_ref: &IssueRef,
+    paths: &[PathBuf],
+) -> Result<()> {
+    let worktree_bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
+    let primary_bundle_dir = issue_ref.task_bundle_dir_path(primary_root);
+    let mut relpaths = BTreeSet::new();
+
+    for path in paths {
+        let resolved = if path.is_absolute() {
+            path.clone()
+        } else {
+            repo_root.join(path)
+        };
+        if resolved.starts_with(&worktree_bundle_dir) || resolved.starts_with(&primary_bundle_dir) {
+            continue;
+        }
+        if !resolved.exists() {
+            continue;
+        }
+        if let Ok(relpath) = resolved.strip_prefix(repo_root) {
+            relpaths.insert(relpath.to_string_lossy().into_owned());
+        }
+    }
+
+    for relpath in relpaths {
+        run_status("git", &["-C", path_str(repo_root)?, "add", "--", &relpath]).with_context(
+            || format!("finish: failed to re-stage finish-written output path '{relpath}'"),
+        )?;
+    }
+
     Ok(())
 }
 
