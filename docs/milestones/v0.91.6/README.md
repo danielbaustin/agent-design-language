@@ -79,9 +79,12 @@ issues created during the feature-doc wave:
 - `#3803`: prompt-card enum diagnostics and lifecycle-state alignment
 - `#3804`: lifecycle-card absolute-path leakage diagnostic precision
 - `#3805`: octocrab token preflight diagnostics
+- `#3935`: `SOR`-driven PR-body convergence and generalized card-to-GitHub
+  projection policy
 
 These are not blockers for creating this planning package. They are required
-inputs to the `v0.91.6` tooling proof-loop work.
+inputs to the `v0.91.6` tooling proof-loop work, and `#3935` is expected to
+complete its first-tranche `SOR` convergence slice within this milestone.
 
 ## v0.91.7 Handoff
 
@@ -106,6 +109,7 @@ Expected `v0.91.7` residuals:
 - `#3780`: later `v0.92` activation and birthday refresh
 - `#3779`: feature-doc production wave setup
 - `#3802`-`#3805`: tooling reliability findings raised during this wave
+- `#3935`: card/GitHub projection convergence for PR and lifecycle truth
 - `docs/planning/ADL_FEATURE_LIST.md`
 - `docs/planning/FEATURE_DOC_PRODUCTION_MINI_SPRINT_v0.91.5.md`
 - `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md`
@@ -127,6 +131,8 @@ Expected `v0.91.7` residuals:
 - Review and validation checklist:
   [REVIEW_AND_VALIDATION_CHECKLIST_v0.91.6.md](REVIEW_AND_VALIDATION_CHECKLIST_v0.91.6.md)
 - Feature directory index: [features/README.md](features/README.md)
+- Review packet:
+  [review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md](review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md)
 
 ## Non-Goals
 

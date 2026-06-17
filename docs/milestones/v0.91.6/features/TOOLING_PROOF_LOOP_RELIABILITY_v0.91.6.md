@@ -24,7 +24,8 @@ In scope:
 - absolute-path leakage false positives;
 - octocrab token preflight;
 - PR merge false-negative and GitHub checks transient classification;
-- logging/Otel consumption for proof loops.
+- logging/Otel consumption for proof loops;
+- card-to-GitHub projection reliability for PR publication and closeout truth.
 
 Out of scope:
 
@@ -38,10 +39,14 @@ Out of scope:
 - Which GitHub/API failures are retryable versus blocking?
 - Which observability events are release-gating proof versus diagnostic noise?
 - Which docs-only fast paths can be used without bypassing review?
+- Which GitHub issue/PR surfaces should be card-owned managed projections
+  versus drift-checked mirrors?
 
 ## Dependencies
 
 - Existing remediation issues `#3802`-`#3805`, `#3811`, `#3822`, and `#3823`.
+- `#3935` for `SOR`-driven PR-body convergence and generalized card-projection
+  policy.
 - Logging mini-sprint outputs.
 - Toolkit simplification sprint.
 
@@ -51,14 +56,18 @@ Out of scope:
 - Record transient failures and retry evidence.
 - Verify no token or secret is logged.
 - Review SOR truth for local versus CI proof.
+- Review the card/GitHub projection policy before implementation claims.
 
 ## v0.92 Consumption
 
 `v0.92` may consume a bounded proof-loop contract only after validator,
-GitHub, and logging failure modes are classified or routed.
+GitHub, logging, and card-projection failure modes are classified, with
+`SOR`-owned PR publication truth completed for the first tranche.
 
 ## Non-Goals
 
 - No hidden fallback to deprecated `gh` paths.
 - No broad rewrite of lifecycle tooling in this feature doc.
 - No claim that all tooling debt is gone.
+- No collapse of `SIP -> STP -> SPP -> SRP -> SOR` into one GitHub-facing text
+  surface.
