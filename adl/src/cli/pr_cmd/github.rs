@@ -762,7 +762,7 @@ fn pr_validation_snapshot_from_response(
 }
 
 fn classify_pr_validation_snapshot(snapshot: &PrValidationSnapshot) -> PrValidationDisposition {
-    if snapshot.state == "CLOSED" || snapshot.state == "MERGED" {
+    if snapshot.state == "CLOSED" {
         return PrValidationDisposition::Cancelled;
     }
     if snapshot.is_draft {
@@ -3247,6 +3247,21 @@ mod tests {
                 job_run_id: "8801".to_string(),
             }])),
             PrValidationDisposition::Cancelled
+        );
+
+        let merged_success = PrValidationSnapshot {
+            state: "MERGED".to_string(),
+            checks: vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "SUCCESS".to_string(),
+                job_run_id: "8804".to_string(),
+            }],
+            ..snapshot(Vec::new())
+        };
+        assert_eq!(
+            classify_pr_validation_snapshot(&merged_success),
+            PrValidationDisposition::Success
         );
     }
 
