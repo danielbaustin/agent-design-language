@@ -18,12 +18,12 @@ chmod +x "$repo/adl/tools/pr.sh"
 touch "$repo/adl/Cargo.toml"
 sleep 1
 
-cat >"$repo/adl/target/debug/adl" <<'EOF_ADL'
+cat >"$repo/adl/target/debug/adl-pr-ready" <<'EOF_ADL'
 #!/usr/bin/env bash
 set -euo pipefail
 printf '%s\n' "$*" >> "$TMP_ADL_ARGS"
 EOF_ADL
-chmod +x "$repo/adl/target/debug/adl"
+chmod +x "$repo/adl/target/debug/adl-pr-ready"
 
 cat >"$mockbin/cargo" <<'EOF_CARGO'
 #!/usr/bin/env bash
@@ -53,10 +53,10 @@ export PATH="$mockbin:$PATH"
 )
 
 args="$(cat "$TMP_ADL_ARGS")"
-[[ "$args" == *"pr ready 1152 --slug rust-start --no-fetch-issue --version v0.86"* ]] || {
-  echo "assertion failed: expected built adl binary delegation for ready" >&2
+[[ "$args" == *"1152 --slug rust-start --no-fetch-issue --version v0.86"* ]] || {
+  echo "assertion failed: expected built direct ready binary delegation" >&2
   echo "$args" >&2
   exit 1
 }
 
-echo "pr.sh ready built-binary delegation: ok"
+echo "pr.sh ready built direct-binary delegation: ok"

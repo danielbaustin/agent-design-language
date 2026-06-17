@@ -82,7 +82,11 @@ build_owner_bins() {
   [[ "$BUILD" == "1" ]] || return 0
   run_command "cargo build owner binaries" \
     cargo build --quiet --manifest-path "$MANIFEST" \
-      --bin adl --bin adl-csdlc --bin adl-runtime --bin adl-review
+      --bin adl --bin adl-csdlc --bin adl-runtime --bin adl-review \
+      --bin adl-pr-create --bin adl-pr-init --bin adl-pr-repair-issue-body \
+      --bin adl-pr-run --bin adl-pr-doctor --bin adl-pr-ready \
+      --bin adl-pr-preflight --bin adl-pr-finish --bin adl-pr-validation \
+      --bin adl-pr-closeout
   if [[ "$PRINT_PLAN" == "1" ]]; then
     return 0
   fi
@@ -101,6 +105,8 @@ run_csdlc_lane() {
     bash adl/tools/test_cli_wrapper_migration_contract.sh
   run_command "C-SDLC run ambiguity policy" \
     bash adl/tools/test_pr_run_ambiguity_policy.sh
+  run_command "C-SDLC PR small-binary delegation" \
+    bash adl/tools/test_pr_small_binary_delegation.sh
   run_command "C-SDLC control-plane observability contract" \
     bash adl/tools/test_control_plane_observability.sh
 }

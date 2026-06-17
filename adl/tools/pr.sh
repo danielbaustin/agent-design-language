@@ -190,8 +190,17 @@ rust_pr_delegate_available() {
     [[ -x "${ADL_PR_RUST_BIN}" ]] || return 1
     return 0
   fi
+  local override_bin
+  override_bin="$(rust_pr_subcommand_override_bin "${1:-}" || true)"
+  if [[ -n "$override_bin" && -x "$override_bin" ]]; then
+    return 0
+  fi
   [[ -f "$(rust_pr_delegate_root)/adl/Cargo.toml" ]] || return 1
   local cached_bin
+  cached_bin="$(rust_pr_subcommand_cached_bin "${1:-}" || true)"
+  if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
+    return 0
+  fi
   cached_bin="$(rust_pr_delegate_cached_bin || true)"
   if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
     return 0
@@ -239,9 +248,59 @@ rust_pr_delegate_bin_is_fresh() {
   return 0
 }
 
+rust_pr_subcommand_binary_name() {
+  case "${1:-}" in
+    create) printf 'adl-pr-create\n' ;;
+    init) printf 'adl-pr-init\n' ;;
+    repair-issue-body) printf 'adl-pr-repair-issue-body\n' ;;
+    start) printf 'adl-pr-run\n' ;;
+    doctor) printf 'adl-pr-doctor\n' ;;
+    ready) printf 'adl-pr-ready\n' ;;
+    preflight) printf 'adl-pr-preflight\n' ;;
+    finish) printf 'adl-pr-finish\n' ;;
+    validation) printf 'adl-pr-validation\n' ;;
+    closeout) printf 'adl-pr-closeout\n' ;;
+    *) return 1 ;;
+  esac
+}
+
+rust_pr_subcommand_override_var_name() {
+  case "${1:-}" in
+    create) printf 'ADL_PR_CREATE_BIN\n' ;;
+    init) printf 'ADL_PR_INIT_BIN\n' ;;
+    repair-issue-body) printf 'ADL_PR_REPAIR_ISSUE_BODY_BIN\n' ;;
+    start) printf 'ADL_PR_RUN_BIN\n' ;;
+    doctor) printf 'ADL_PR_DOCTOR_BIN\n' ;;
+    ready) printf 'ADL_PR_READY_BIN\n' ;;
+    preflight) printf 'ADL_PR_PREFLIGHT_BIN\n' ;;
+    finish) printf 'ADL_PR_FINISH_BIN\n' ;;
+    validation) printf 'ADL_PR_VALIDATION_BIN\n' ;;
+    closeout) printf 'ADL_PR_CLOSEOUT_BIN\n' ;;
+    *) return 1 ;;
+  esac
+}
+
+rust_pr_subcommand_override_bin() {
+  local var_name
+  var_name="$(rust_pr_subcommand_override_var_name "$1" || true)"
+  [[ -n "$var_name" ]] || return 1
+  printf '%s\n' "${!var_name:-}"
+}
+
+rust_pr_subcommand_cached_bin() {
+  local root binary_name candidate
+  root="$(rust_pr_delegate_root)"
+  binary_name="$(rust_pr_subcommand_binary_name "$1" || true)"
+  [[ -n "$binary_name" ]] || return 1
+  candidate="$root/adl/target/debug/$binary_name"
+  [[ -x "$candidate" ]] || return 1
+  rust_pr_delegate_bin_is_fresh "$root" "$candidate" || return 1
+  printf '%s\n' "$candidate"
+}
+
 delegate_pr_command_to_rust() {
   local subcommand="$1"; shift || true
-  local root manifest cached_bin
+  local root manifest cached_bin override_bin direct_bin
   root="$(rust_pr_delegate_root)"
   manifest="$root/adl/Cargo.toml"
   # These Rust-owned delegated paths intentionally install no shell-level
@@ -252,17 +311,31 @@ delegate_pr_command_to_rust() {
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$ADL_PR_RUST_BIN"
     exec "${ADL_PR_RUST_BIN}" pr "$subcommand" "$@"
   fi
+  override_bin="$(rust_pr_subcommand_override_bin "$subcommand" || true)"
+  if [[ -n "$override_bin" ]]; then
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$override_bin"
+    exec "$override_bin" "$@"
+  fi
+  direct_bin="$(rust_pr_subcommand_cached_bin "$subcommand" || true)"
+  if [[ -n "$direct_bin" ]]; then
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$direct_bin"
+    exec "$direct_bin" "$@"
+  fi
   cached_bin="$(rust_pr_delegate_cached_bin || true)"
   if [[ -n "$cached_bin" ]]; then
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin"
     exec "$cached_bin" pr "$subcommand" "$@"
   fi
-  adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest"
+  if direct_bin="$(rust_pr_subcommand_binary_name "$subcommand" || true)"; [[ -n "$direct_bin" ]]; then
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "$direct_bin"
+    exec cargo run --quiet --manifest-path "$manifest" --bin "$direct_bin" -- "$@"
+  fi
+  adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "adl"
   exec cargo run --quiet --manifest-path "$manifest" --bin adl -- pr "$subcommand" "$@"
 }
 
 require_rust_pr_delegate() {
-  rust_pr_delegate_available && return 0
+  rust_pr_delegate_available "${1:-}" && return 0
   die "Rust PR control-plane path unavailable; the five-command lifecycle is Rust-owned."
 }
 
@@ -1717,7 +1790,7 @@ cmd_run() {
 
   if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
     ensure_pr_run_issue_args_are_issue_only "$@"
-    require_rust_pr_delegate
+    require_rust_pr_delegate start
     adl_obs_event "pr.sh" "issue_bind" "started" "issue" "$1"
     note "Issue-mode run: binding execution context for issue $1"
     ADL_PR_SUPPRESS_START_COMPAT_NOTE=1 delegate_pr_command_to_rust start "$@"
@@ -2193,7 +2266,7 @@ cmd_init() {
     usage_init
     return 0
   fi
-  require_rust_pr_delegate
+  require_rust_pr_delegate init
   delegate_pr_command_to_rust init "$@"
 }
 
@@ -2202,7 +2275,7 @@ cmd_create() {
     usage_create
     return 0
   fi
-  require_rust_pr_delegate
+  require_rust_pr_delegate create
   delegate_pr_command_to_rust create "$@"
 }
 
@@ -2211,7 +2284,7 @@ cmd_repair_issue_body() {
     usage_repair_issue_body
     return 0
   fi
-  require_rust_pr_delegate
+  require_rust_pr_delegate repair-issue-body
   delegate_pr_command_to_rust repair-issue-body "$@"
 }
 
@@ -2221,7 +2294,7 @@ cmd_start() {
     return 0
   fi
   adl_obs_event "pr.sh" "issue_bind" "started" "issue" "${1:-}"
-  require_rust_pr_delegate
+  require_rust_pr_delegate start
   note "Deprecated compatibility path: prefer 'adl/tools/pr.sh run <issue> ...' for execution-context binding."
   ADL_PR_SUPPRESS_START_COMPAT_NOTE=1 delegate_pr_command_to_rust start "$@"
 }
@@ -2233,7 +2306,7 @@ cmd_finish() {
     return 0
   fi
   adl_obs_event "pr.sh" "finish" "started" "issue" "${1:-}"
-  require_rust_pr_delegate
+  require_rust_pr_delegate finish
   delegate_pr_command_to_rust finish "$@"
 }
 
@@ -2243,7 +2316,7 @@ cmd_validation() {
     return 0
   fi
   adl_obs_event "pr.sh" "validation" "started" "pr" "${1:-}"
-  require_rust_pr_delegate
+  require_rust_pr_delegate validation
   delegate_pr_command_to_rust validation "$@"
 }
 
@@ -2263,7 +2336,7 @@ cmd_closeout() {
     return 0
   fi
   adl_obs_event "pr.sh" "closeout" "started" "issue" "${1:-}"
-  require_rust_pr_delegate
+  require_rust_pr_delegate closeout
   delegate_pr_command_to_rust closeout "$@"
 }
 
@@ -2278,7 +2351,7 @@ cmd_ready() {
     usage_ready
     return 0
   fi
-  require_rust_pr_delegate
+  require_rust_pr_delegate ready
   note "Deprecated compatibility path: prefer 'adl/tools/pr.sh doctor <issue> --mode ready ...'." >&2
   delegate_pr_command_to_rust ready "$@"
 }
@@ -2288,7 +2361,7 @@ cmd_preflight() {
     usage_preflight
     return 0
   fi
-  require_rust_pr_delegate
+  require_rust_pr_delegate preflight
   note "Deprecated compatibility path: prefer 'adl/tools/pr.sh doctor <issue> --mode preflight ...'." >&2
   delegate_pr_command_to_rust preflight "$@"
 }
@@ -2299,7 +2372,7 @@ cmd_doctor() {
     return 0
   fi
   adl_obs_event "pr.sh" "doctor" "started" "issue" "${1:-}"
-  require_rust_pr_delegate
+  require_rust_pr_delegate doctor
   delegate_pr_command_to_rust doctor "$@"
 }
 
