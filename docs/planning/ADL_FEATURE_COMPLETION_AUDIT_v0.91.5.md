@@ -225,8 +225,8 @@ the source docs provide an exact calendar date.
 | 89 | General-intelligence paper packet | Implemented packet | `v0.91.2` paper packet | Packet `v0.91.2` | Complete packet. |
 | 90 | Rustdoc/doc cleanup | Implemented baseline | `v0.91.2` cleanup feature | Baseline `v0.91.2` | Complete baseline. |
 | 91 | Workflow guardrails | Implemented baseline | `v0.91.2` guardrail feature | Baseline `v0.91.2` | Complete baseline. |
-| 92 | Cognitive SDLC first slice and transition manifest | Implemented baseline | `v0.91.3` C-SDLC feature packet | First slice `v0.91.3`; hardening `v0.91.4` | First slice complete; hardening active. |
-| 93 | Cognitive SDLC default operation and five-minute-sprint repeatability | Active milestone | `v0.91.4` C-SDLC feature docs and prompt-template transition plan | Target `v0.91.4`; release in progress | Active closeout; not complete until release tail finishes. |
+| 92 | Cognitive SDLC first slice and transition manifest | Implemented baseline | `v0.91.3` C-SDLC feature packet | First slice `v0.91.3`; hardening `v0.91.4` | First slice complete; hardening completed in `v0.91.4`. |
+| 93 | Cognitive SDLC default operation and five-minute-sprint repeatability | Implemented baseline | `v0.91.4` C-SDLC feature docs and prompt-template transition plan | Target `v0.91.4`; closed with follow-on hardening in later milestones | `v0.91.4` closeout completed; later milestones continue workflow improvements without keeping `v0.91.4` active. |
 | 94 | ACP / cognitive profiles runtime surface | Planned | `v0.92` feature doc | Target `v0.92`; calendar TBD | Scheduled. |
 | 95 | ACIP binary schema and WebSocket carrier | Planned | `v0.92` feature doc | Schema/carrier `v0.92`; security `v0.93`; signed trace `v0.94` | Scheduled in staged tranches. |
 | 96 | Identity, stable name, and continuity substrate | Planned | `v0.92` feature doc | Target `v0.92`; calendar TBD | Scheduled. |
@@ -251,7 +251,7 @@ the source docs provide an exact calendar date.
 | --- | --- | --- |
 | Completed by `v0.8` or earlier | 1-4, 24 | Baseline deterministic execution and bounded AEE-era primitives are complete. |
 | Completed by `v0.86`-`v0.91.2` | 5, 11, 16, 18-21, 23, 26, 28-36, 39, 47-54, 56-65, 69-91, 106 | Many rows are baseline-complete but several retain later integration targets. |
-| Active `v0.91.4` | 93 | C-SDLC default-operation closeout is active, not complete until Sprint 4/release tail closes. |
+| Completed `v0.91.4` | 93 | C-SDLC default-operation closeout completed in `v0.91.4`; later milestones extend the workflow rather than keeping that milestone active. |
 | Bridge `v0.91.5` | new pull-forward targets: AEE closure definition, multi-agent stabilization, provider/model matrix, public prompt records, and v0.92 activation readiness | v0.91.5 should now be treated as a real bridge-completion milestone, not just preparation. |
 | Planned `v0.92` | 7, 9 subset, 12 subset, 18-21, 32, 39, 94-98, 107 subset | Identity/birthday/ACP/ACIP, memory grounding, AEE implementation/proof, and bounded distributed/control-path subsets are scheduled. |
 | Planned `v0.93` | 6, 8, 16, 25, 31, 33, 36, 40-44, 95, 99-102 | Governance, delegation, security, and enterprise trust are scheduled. |
