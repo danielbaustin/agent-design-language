@@ -1,4 +1,4 @@
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{anyhow, Context, Result};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
@@ -189,21 +189,6 @@ fn current_adl_tooling_bin() -> Option<PathBuf> {
         return None;
     }
     Some(current)
-}
-
-pub(crate) fn run_status_with_adl_tooling_bin(program: &str, args: &[&str]) -> Result<()> {
-    let mut command = Command::new(program);
-    command.args(args);
-    if let Some(bin) = current_adl_tooling_bin() {
-        command.env("ADL_TOOLING_RUST_BIN", bin);
-    }
-    let status = command
-        .status()
-        .with_context(|| format!("failed to spawn '{program}'"))?;
-    if !status.success() {
-        bail!("{program} failed with status {:?}", status.code());
-    }
-    Ok(())
 }
 
 pub(crate) fn run_output_with_adl_tooling_bin(program: &str, args: &[&str]) -> Result<Output> {

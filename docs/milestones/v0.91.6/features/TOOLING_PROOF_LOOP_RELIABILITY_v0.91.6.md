@@ -4,7 +4,7 @@
 
 - Feature Name: Tooling Proof-Loop Reliability
 - Milestone Target: `v0.91.6`
-- Status: planned
+- Status: WP-03 logging baseline completed for `#3995`-`#4000`; `#4001` routed separately
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture, artifact
@@ -58,11 +58,35 @@ Out of scope:
 - Review SOR truth for local versus CI proof.
 - Review the card/GitHub projection policy before implementation claims.
 
+## WP-03 Execution Packet
+
+The logging/tooling mini-sprint execution packet for `#3995`-`#4000` is:
+
+- [`LOGGING_COMPLETION_LEDGER_v0.91.6.md`](../LOGGING_COMPLETION_LEDGER_v0.91.6.md)
+- [`CONTROL_PLANE_LOGGING_PROOF_3996.md`](../review/logging_observability/CONTROL_PLANE_LOGGING_PROOF_3996.md)
+- [`RUNTIME_PROVIDER_LOGGING_PROOF_3997.md`](../review/logging_observability/RUNTIME_PROVIDER_LOGGING_PROOF_3997.md)
+- [`HEARTBEAT_TIMEOUT_PROGRESS_PROOF_3998.md`](../review/logging_observability/HEARTBEAT_TIMEOUT_PROGRESS_PROOF_3998.md)
+- [`OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md`](../review/logging_observability/OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md)
+- [`LOGGING_VALIDATION_REDACTION_PROOF_4000.md`](../review/logging_observability/LOGGING_VALIDATION_REDACTION_PROOF_4000.md)
+
+This packet intentionally leaves GitHub/token/release/projection observability
+under `#4001` as a routed adjacent lane rather than silently claiming it done.
+
 ## v0.92 Consumption
 
 `v0.92` may consume a bounded proof-loop contract only after validator,
 GitHub, logging, and card-projection failure modes are classified, with
 `SOR`-owned PR publication truth completed for the first tranche.
+
+For the logging-only execution slice, `v0.92` may consume:
+
+- the shared channel-policy boundary
+- the bounded runtime/provider action-log slice
+- the bounded heartbeat/timeout/progress slice
+- the redacted Observatory/Unity example packet
+
+It may not consume a claim that production OpenTelemetry export or the routed
+`#4001` GitHub/release observability lane is already complete.
 
 ## Non-Goals
 

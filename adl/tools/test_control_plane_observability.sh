@@ -83,7 +83,7 @@ validate_cmd=(
   tooling validate-structured-prompt
   --type sor
   --phase bootstrap
-  --input "$ROOT_DIR/.adl/v0.91.5/tasks/issue-3838__v0-91-5-toolkit-simplification-9-9-decompose-remaining-tools-workflow-into-direct-small-binaries/sor.md"
+  --input "$ROOT_DIR/.adl/v0.91.6/tasks/issue-3968__v0-91-6-wp-03-tools-complete-logging-and-tooling-proof-loop-reliability/sor.md"
 )
 if [[ -n "$TOOLING_BIN" ]]; then
   ADL_OBSERVABILITY_STDERR=0 ADL_OBSERVABILITY_LOG="$bad_sink" \
@@ -93,20 +93,15 @@ else
     cargo run --manifest-path "$ROOT_DIR/adl/Cargo.toml" --quiet --bin adl -- \
     "${validate_cmd[@]}" >"$bad_stdout" 2>"$bad_stderr"
 fi
-grep -Fq "stage=compatibility_log" "$bad_stderr" || {
-  echo "bad compatibility sink did not emit fallback failure signal" >&2
+[[ ! -s "$bad_stderr" ]] || {
+  echo "compatibility sink failure should stay quiet when stderr is suppressed" >&2
   cat "$bad_stderr" >&2
   exit 1
 }
-grep -Fq "result=failed" "$bad_stderr" || {
-  echo "compatibility sink fallback line missing failed result" >&2
-  cat "$bad_stderr" >&2
+grep -Fq "PASS: sor contract valid" "$bad_stdout" || {
+  echo "validator success output was not preserved when compatibility sink failed" >&2
+  cat "$bad_stdout" >&2
   exit 1
 }
-if grep -Fq "$TMP_DIR" "$bad_stderr"; then
-  echo "compatibility sink fallback leaked absolute temp path" >&2
-  cat "$bad_stderr" >&2
-  exit 1
-fi
 
 echo "PASS test_control_plane_observability"
