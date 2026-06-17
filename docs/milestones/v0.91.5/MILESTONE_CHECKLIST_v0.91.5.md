@@ -5,7 +5,7 @@
 - Version: `v0.91.5`
 - Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `sprint_4_wp_14_active`
+- Status: `sprint_4_wp_18_active`
 
 ## Purpose
 
@@ -68,7 +68,10 @@ checks needed for truthful v0.91.5 closeout.
 - [x] Refactor behavior-preservation evidence decision is recorded:
   [WP18_REFACTOR_BEHAVIOR_PRESERVATION_DECISION_2026-06-17.md](review/external_review/WP18_REFACTOR_BEHAVIOR_PRESERVATION_DECISION_2026-06-17.md)
 - [ ] v0.92 final preflight complete.
-- [ ] Review findings fixed or routed.
+- [x] WP-18 conditional v0.92 preflight recorded:
+  [WP18_EXTERNAL_REVIEW_REMEDIATION_DISPOSITION_2026-06-17.md](review/external_review/WP18_EXTERNAL_REVIEW_REMEDIATION_DISPOSITION_2026-06-17.md)
+- [x] Review findings fixed or routed:
+  [WP18_EXTERNAL_REVIEW_REMEDIATION_DISPOSITION_2026-06-17.md](review/external_review/WP18_EXTERNAL_REVIEW_REMEDIATION_DISPOSITION_2026-06-17.md)
 - [ ] Release evidence package assembled.
 
 ## Post-Release
