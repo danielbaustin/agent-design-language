@@ -302,6 +302,8 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
               | sub("^/home/runner/work/[^/]+/[^/]+/"; "")
               | sub("^/__w/[^/]+/[^/]+/"; "")
               | sub("^[A-Za-z]:/a/[^/]+/[^/]+/"; "")
+              | gsub("/\\./"; "/")
+              | gsub("/[^/]+/\\.\\./"; "/")
             ),
             covered: (.summary.lines.covered // 0),
             count: (.summary.lines.count // 0)

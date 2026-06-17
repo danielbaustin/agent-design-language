@@ -235,4 +235,11 @@ make_summary "/private/tmp/repo/adl/src/runtime_v2/new_large_surface.rs" 88 100 
 bash "$SCRIPT" --changed-files "$changed" --summary "$passing_summary" >/tmp/coverage-impact-pass.out
 grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-pass.out >/dev/null
 
+shared_module_changed="$TMP/shared-module-changed.txt"
+printf 'M\tadl/src/pr_dispatch_support.rs\n' >"$shared_module_changed"
+shared_module_summary="$TMP/shared-module-summary.json"
+make_summary "/home/runner/work/agent-design-language/agent-design-language/adl/src/bin/../pr_dispatch_support.rs" 23 24 "$shared_module_summary"
+bash "$SCRIPT" --changed-files "$shared_module_changed" --summary "$shared_module_summary" >/tmp/coverage-impact-shared-module-pass.out
+grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-shared-module-pass.out >/dev/null
+
 echo "PASS test_check_coverage_impact"
