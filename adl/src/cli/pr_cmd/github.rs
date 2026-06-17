@@ -14,7 +14,7 @@ use ::adl::control_plane::resolve_primary_checkout_root;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::process::Command;
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 #[cfg(test)]
 mod test_support;
@@ -32,8 +32,9 @@ use self::transport::{
     PrValidationDisposition, PrValidationSnapshot,
 };
 use self::transport::{
-    create_pr_octocrab, current_pr_url_octocrab, list_open_prs_octocrab, mark_pr_ready_octocrab,
-    merge_pr_octocrab, pr_base_ref_octocrab, pr_body_octocrab, pr_closing_issue_numbers_octocrab,
+    create_pr_octocrab, current_pr_url_octocrab, issue_close_octocrab,
+    issue_comment_octocrab, list_open_prs_octocrab, mark_pr_ready_octocrab, merge_pr_octocrab,
+    pr_base_ref_octocrab, pr_body_octocrab, pr_closing_issue_numbers_octocrab,
     update_pr_body_octocrab, update_pr_title_body_octocrab,
 };
 
@@ -155,43 +156,6 @@ pub(super) fn wait_for_pr_validation_report(
 
 pub(super) fn pr_validation_report(repo: &str, pr_ref: &str) -> Result<PrValidationReport> {
     transport::pr_validation_report(repo, pr_ref)
-}
-
-fn issue_comment_octocrab(repo: &str, issue: u32, body: &str) -> Result<()> {
-    let repo_parts = parse_repo(repo)?;
-    with_octocrab("issue.comment", |runtime, octo| {
-        let owner = repo_parts.owner.clone();
-        let name = repo_parts.name.clone();
-        block_on_octocrab(runtime, "issue.comment", || async {
-            octo.issues(&owner, &name)
-                .create_comment(issue as u64, body.to_string())
-                .await
-        })?;
-        Ok(())
-    })
-    .with_context(|| format!("github_client.octocrab_transport: issue comment failed for #{issue}"))
-}
-
-fn issue_close_octocrab(
-    repo: &str,
-    issue: u32,
-    reason: octocrab::models::issues::IssueStateReason,
-) -> Result<()> {
-    let repo_parts = parse_repo(repo)?;
-    with_octocrab("issue.close", |runtime, octo| {
-        let owner = repo_parts.owner.clone();
-        let name = repo_parts.name.clone();
-        block_on_octocrab(runtime, "issue.close", || async {
-            octo.issues(&owner, &name)
-                .update(issue as u64)
-                .state(octocrab::models::IssueState::Closed)
-                .state_reason(reason.clone())
-                .send()
-                .await
-        })?;
-        Ok(())
-    })
-    .with_context(|| format!("github_client.octocrab_transport: issue close failed for #{issue}"))
 }
 
 fn github_client(operation: &str) -> Result<AdlGithubClient> {
