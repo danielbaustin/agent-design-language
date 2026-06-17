@@ -20,16 +20,19 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1781506758",
-      "duration_ms": 2382,
+      "started_at": "unix:1781718082",
+      "duration_ms": 5270,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted provider text len=393]"
+      "raw_response_excerpt": "[redacted response len=529 sha256=a1e0c9eb3ef4]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 2383,
-  "output_text": "# Finding\nOpenRouter matrix proof quality lacks comprehensive validation against ground truth benchmarks, revealing potential accuracy gaps in model performance claims.\n\n# Severity\nP2\n\n# Routing\nMatrix routing precision requires deeper scrutiny, specifically referencing docs/milestones/v0.91.5/review/openrouter_matrix for detailed assessment.\n\n# Non-Claim\ntool-call capability still unproven",
-  "output_text_excerpt": "[redacted provider text len=393]"
+  "duration_ms": 5270,
+  "request_id": "reviewer_openrouter_claude_3_5_haiku",
+  "output_text_excerpt": "[redacted response len=529 sha256=a1e0c9eb3ef4]",
+  "artifact_ref": "<tmp>/result.json@95d8a75b9976c386",
+  "output_text_chars": 529,
+  "output_text_digest": "sha256:a1e0c9eb3ef4"
 }

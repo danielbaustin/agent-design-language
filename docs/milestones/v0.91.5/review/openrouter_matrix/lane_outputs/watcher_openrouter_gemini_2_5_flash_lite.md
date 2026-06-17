@@ -7,10 +7,10 @@ Model: `google/gemini-2.5-flash-lite`
 ## Output
 
 # Status
-pass
+partial
 
 # Signal
-route probe completed
+The route probe completed successfully. We have identified that #3723 is impacting the integration with openrouter.
 
 # Next-Step
-Reviewing #3723 and openrouter integration status. The next step is to discuss the openrouter matrix at docs/milestones/v0.91.5/review/openrouter_matrix.
+Review docs/milestones/v0.91.5/review/openrouter_matrix for further action.

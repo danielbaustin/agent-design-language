@@ -20,16 +20,19 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1781506760",
-      "duration_ms": 828,
+      "started_at": "unix:1781718087",
+      "duration_ms": 965,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted provider text len=212]"
+      "raw_response_excerpt": "[redacted response len=231 sha256=86c6d30c0213]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 828,
-  "output_text": "# Status\npass\n\n# Signal\nroute probe completed\n\n# Next-Step\nReviewing #3723 and openrouter integration status. The next step is to discuss the openrouter matrix at docs/milestones/v0.91.5/review/openrouter_matrix.",
-  "output_text_excerpt": "[redacted provider text len=212]"
+  "duration_ms": 965,
+  "request_id": "watcher_openrouter_gemini_2_5_flash_lite",
+  "output_text_excerpt": "[redacted response len=231 sha256=86c6d30c0213]",
+  "artifact_ref": "<tmp>/result.json@8f583c151d7f9178",
+  "output_text_chars": 231,
+  "output_text_digest": "sha256:86c6d30c0213"
 }

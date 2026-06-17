@@ -7,35 +7,55 @@
       "model": "deepseek/deepseek-v4-flash",
       "http_status": 200,
       "prompt_chars": 411,
-      "output_chars": 467
+      "prompt_digest": "sha256:eb6b0d851833",
+      "prompt_excerpt": "[redacted prompt len=411 sha256=eb6b0d851833]",
+      "output_chars": 451,
+      "output_digest": "sha256:ee956f845f9f",
+      "output_excerpt": "[redacted response len=451 sha256=ee956f845f9f]"
     },
     {
       "family": "openrouter",
       "model": "openai/gpt-4o-mini",
       "http_status": 200,
       "prompt_chars": 323,
-      "output_chars": 168
+      "prompt_digest": "sha256:33966d22f906",
+      "prompt_excerpt": "[redacted prompt len=323 sha256=33966d22f906]",
+      "output_chars": 182,
+      "output_digest": "sha256:83bd7a938308",
+      "output_excerpt": "[redacted response len=182 sha256=83bd7a938308]"
     },
     {
       "family": "openrouter",
       "model": "anthropic/claude-3.5-haiku",
       "http_status": 200,
       "prompt_chars": 416,
-      "output_chars": 393
+      "prompt_digest": "sha256:c2cb0795ec3b",
+      "prompt_excerpt": "[redacted prompt len=416 sha256=c2cb0795ec3b]",
+      "output_chars": 529,
+      "output_digest": "sha256:a1e0c9eb3ef4",
+      "output_excerpt": "[redacted response len=529 sha256=a1e0c9eb3ef4]"
     },
     {
       "family": "openrouter",
       "model": "google/gemini-2.5-flash-lite",
       "http_status": 200,
       "prompt_chars": 373,
-      "output_chars": 212
+      "prompt_digest": "sha256:0bafbe090a5b",
+      "prompt_excerpt": "[redacted prompt len=373 sha256=0bafbe090a5b]",
+      "output_chars": 231,
+      "output_digest": "sha256:86c6d30c0213",
+      "output_excerpt": "[redacted response len=231 sha256=86c6d30c0213]"
     },
     {
       "family": "openrouter",
       "model": "qwen/qwen3.6-flash",
       "http_status": 200,
       "prompt_chars": 323,
-      "output_chars": 165
+      "prompt_digest": "sha256:33966d22f906",
+      "prompt_excerpt": "[redacted prompt len=323 sha256=33966d22f906]",
+      "output_chars": 186,
+      "output_digest": "sha256:16fb389a9ec0",
+      "output_excerpt": "[redacted response len=186 sha256=16fb389a9ec0]"
     }
   ]
 }

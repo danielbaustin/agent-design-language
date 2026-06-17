@@ -7,13 +7,13 @@ Model: `anthropic/claude-3.5-haiku`
 ## Output
 
 # Finding
-OpenRouter matrix proof quality lacks comprehensive validation against ground truth benchmarks, revealing potential accuracy gaps in model performance claims.
+OpenRouter matrix quality lacks precision in recent validation attempts, specifically referencing docs/milestones/v0.91.5/review/openrouter_matrix comparative benchmarks.
 
 # Severity
 P2
 
 # Routing
-Matrix routing precision requires deeper scrutiny, specifically referencing docs/milestones/v0.91.5/review/openrouter_matrix for detailed assessment.
+Routing verification reveals inconsistent performance metrics across sampled AI model interactions, suggesting potential reliability gaps in matrix representation.
 
 # Non-Claim
-tool-call capability still unproven
+Tool-call capability still unproven, with current evidence insufficient to definitively validate full functional integrity of the routing matrix.
