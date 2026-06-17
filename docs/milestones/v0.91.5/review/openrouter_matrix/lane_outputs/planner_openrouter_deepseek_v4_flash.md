@@ -7,11 +7,10 @@ Model: `deepseek/deepseek-v4-flash`
 ## Output
 
 # Plan
-For issue #3723, we will integrate the provider-model matrix defined in docs/milestones/v0.91.5/features/PROVIDER_MODEL_MATRIX_v0.91.5.md into the ADL planning workflow. This matrix will be used to validate model selections across providers during bounded planning.
+For issue #3723, we will finalize the provider-model matrix at `docs/milestones/v0.91.5/features/PROVIDER_MODEL_MATRIX_v0.91.5.md`, mapping supported models per provider. Updates will include version pins and deprecation notices.
 
 # Risks
-- Incomplete matrix rows may cause unexpected model fallbacks.
-- Delays if providers update model identifiers post-integration.
+Matrix maintenance may lag behind provider API changes, causing documentation drift. Limited testing resources could miss edge-case model failures.
 
 # Non-Claims
 no universal OpenRouter compatibility claim

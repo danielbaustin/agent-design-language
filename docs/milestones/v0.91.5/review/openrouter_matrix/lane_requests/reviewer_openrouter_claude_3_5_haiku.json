@@ -25,5 +25,7 @@
     "timeout_ms": 45000,
     "retry_backoff_ms": 1000
   },
-  "input_text": "Return markdown only with exactly these headings:\n# Finding\n# Severity\n# Routing\n# Non-Claim\n\nRequirements:\n- The finding must be about OpenRouter matrix proof quality, not provider marketing.\n- The severity body must be exactly P2 or P3.\n- Mention docs/milestones/v0.91.5/review/openrouter_matrix\n- Under # Non-Claim include the exact phrase: tool-call capability still unproven\n- Keep the response under 150 words."
+  "input_text_chars": 416,
+  "input_text_digest": "sha256:c2cb0795ec3b",
+  "input_text_excerpt": "[redacted prompt len=416 sha256=c2cb0795ec3b]"
 }

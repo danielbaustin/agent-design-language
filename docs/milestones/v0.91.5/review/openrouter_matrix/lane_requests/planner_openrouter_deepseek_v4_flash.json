@@ -25,5 +25,7 @@
     "timeout_ms": 45000,
     "retry_backoff_ms": 1000
   },
-  "input_text": "You are producing a bounded ADL planning note for issue #3723.\nReturn markdown only with exactly these headings:\n# Plan\n# Risks\n# Non-Claims\n\nRequirements:\n- Mention issue #3723.\n- Mention the exact path docs/milestones/v0.91.5/features/PROVIDER_MODEL_MATRIX_v0.91.5.md exactly once.\n- Under # Non-Claims include the exact phrase: no universal OpenRouter compatibility claim\n- Keep the response under 140 words."
+  "input_text_chars": 411,
+  "input_text_digest": "sha256:eb6b0d851833",
+  "input_text_excerpt": "[redacted prompt len=411 sha256=eb6b0d851833]"
 }

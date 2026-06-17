@@ -20,16 +20,19 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1781506757",
-      "duration_ms": 1154,
+      "started_at": "unix:1781718081",
+      "duration_ms": 1321,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted provider text len=168]"
+      "raw_response_excerpt": "[redacted response len=182 sha256=83bd7a938308]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 1155,
-  "output_text": "```json\n{\"issue\":\"#3723\",\"path\":\"docs/milestones/v0.91.5/review/openrouter_matrix\",\"task\":\"Validate OpenRouter route configuration\",\"limit\":\"bounded_to_issue_3723\"}\n```",
-  "output_text_excerpt": "[redacted provider text len=168]"
+  "duration_ms": 1321,
+  "request_id": "worker_openrouter_gpt4o_mini",
+  "output_text_excerpt": "[redacted response len=182 sha256=83bd7a938308]",
+  "artifact_ref": "<tmp>/result.json@1b7849b8fcb1c5bf",
+  "output_text_chars": 182,
+  "output_text_digest": "sha256:83bd7a938308"
 }

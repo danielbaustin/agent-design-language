@@ -25,5 +25,7 @@
     "timeout_ms": 45000,
     "retry_backoff_ms": 1000
   },
-  "input_text": "Return markdown only with exactly these headings:\n# Status\n# Signal\n# Next-Step\n\nRequirements:\n- # Status body must be exactly one of: pass, partial, blocked\n- Mention #3723\n- Mention openrouter\n- Under # Signal include the exact phrase: route probe completed\n- Under # Next-Step mention docs/milestones/v0.91.5/review/openrouter_matrix\n- Keep the response under 110 words."
+  "input_text_chars": 373,
+  "input_text_digest": "sha256:0bafbe090a5b",
+  "input_text_excerpt": "[redacted prompt len=373 sha256=0bafbe090a5b]"
 }

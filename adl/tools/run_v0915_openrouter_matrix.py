@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import argparse
+import hashlib
 import json
 import os
 import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import textwrap
 from pathlib import Path
 from urllib import request as urllib_request
@@ -239,6 +241,36 @@ def request_payload(model: str, lane_name: str, prompt: str, credential_ref: str
     }
 
 
+def short_sha256(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:12]
+
+
+def redacted_text_marker(kind: str, text: str) -> str:
+    label = "prompt" if kind == "prompt" else "response"
+    return f"[redacted {label} len={len(text)} sha256={short_sha256(text)}]"
+
+
+def sanitized_request_payload(payload: dict) -> dict:
+    cleaned = dict(payload)
+    input_text = str(cleaned.pop("input_text", "") or "")
+    cleaned["input_text_chars"] = len(input_text)
+    cleaned["input_text_digest"] = f"sha256:{short_sha256(input_text)}"
+    cleaned["input_text_excerpt"] = redacted_text_marker("prompt", input_text)
+    return cleaned
+
+
+def sanitized_result_payload(result: dict) -> dict:
+    cleaned = json.loads(json.dumps(result))
+    output_text = str(cleaned.pop("output_text", "") or "")
+    if output_text:
+        cleaned["output_text_chars"] = len(output_text)
+        cleaned["output_text_digest"] = f"sha256:{short_sha256(output_text)}"
+        cleaned["output_text_excerpt"] = redacted_text_marker("response", output_text)
+        for attempt in cleaned.get("attempts") or []:
+            attempt["raw_response_excerpt"] = redacted_text_marker("response", output_text)
+    return cleaned
+
+
 def classify_lane(role: str, output_text: str) -> tuple[str, str]:
     text = output_text.strip()
     text_lower = text.lower().replace("`", "")
@@ -354,36 +386,40 @@ def run_lane(
     result_path = result_dir / f"{lane['lane']}.json"
     log_path = log_dir / f"{lane['lane']}.jsonl"
     output_path = output_dir / f"{lane['lane']}.md"
-    write_json(
-        request_path,
-        request_payload(
-            lane["model"],
-            lane["lane"],
-            lane["prompt"],
-            lane["credential_ref"],
-        ),
+    raw_request = request_payload(
+        lane["model"],
+        lane["lane"],
+        lane["prompt"],
+        lane["credential_ref"],
     )
+    write_json(request_path, sanitized_request_payload(raw_request))
     env = dict(os.environ)
     env["ADL_PROVIDER_INVOCATIONS_PATH"] = str(invocations_path)
-    run(
-        [
-            str(adapter_bin),
-            "--request",
-            str(request_path),
-            "--out",
-            str(result_path),
-            "--log",
-            str(log_path),
-        ],
-        cwd=root,
-        env=env,
-    )
-    result = json.loads(result_path.read_text())
+    with tempfile.TemporaryDirectory(prefix=f"{lane['lane']}_") as temp_dir:
+        temp_root = Path(temp_dir)
+        raw_request_path = temp_root / "request.json"
+        raw_result_path = temp_root / "result.json"
+        write_json(raw_request_path, raw_request)
+        run(
+            [
+                str(adapter_bin),
+                "--request",
+                str(raw_request_path),
+                "--out",
+                str(raw_result_path),
+                "--log",
+                str(log_path),
+            ],
+            cwd=root,
+            env=env,
+        )
+        result = json.loads(raw_result_path.read_text())
     output_text = result.get("output_text") or ""
     recorded_route_model = (result.get("route") or {}).get("provider_model_id")
     recorded_identity_model = (result.get("model_identity") or {}).get("provider_model_id")
     contract_status, note = classify_lane(lane["role"], output_text)
     write_output_markdown(output_path, lane["lane"], lane["role"], lane["model"], output_text)
+    write_json(result_path, sanitized_result_payload(result))
     attempt = (result.get("attempts") or [{}])[0]
     return {
         "lane": lane["lane"],
@@ -394,7 +430,11 @@ def run_lane(
         "recorded_identity_model": recorded_identity_model,
         "requested_route_completed": True,
         "prompt_chars": len(lane["prompt"]),
+        "prompt_digest": f"sha256:{short_sha256(lane['prompt'])}",
+        "prompt_excerpt": redacted_text_marker("prompt", lane["prompt"]),
         "output_chars": len(output_text),
+        "output_digest": f"sha256:{short_sha256(output_text)}",
+        "output_excerpt": redacted_text_marker("response", output_text),
         "request_path": rel(root, request_path),
         "result_path": rel(root, result_path),
         "log_path": rel(root, log_path),
@@ -418,37 +458,45 @@ def run_negative_missing_credential(
     request_path = request_dir / f"{lane_name}.json"
     result_path = result_dir / f"{lane_name}.json"
     log_path = log_dir / f"{lane_name}.jsonl"
-    write_json(
-        request_path,
-        request_payload(
-            "deepseek/deepseek-v4-flash",
-            lane_name,
-            "Reply with exactly: ADL_OPENROUTER_NEGATIVE_CONTROL",
-            "env:ADL_OPENROUTER_MISSING_KEY",
-        ),
+    negative_prompt = "Reply with exactly: ADL_OPENROUTER_NEGATIVE_CONTROL"
+    raw_request = request_payload(
+        "deepseek/deepseek-v4-flash",
+        lane_name,
+        negative_prompt,
+        "env:ADL_OPENROUTER_MISSING_KEY",
     )
+    write_json(request_path, sanitized_request_payload(raw_request))
     env = dict(os.environ)
     env.pop("ADL_OPENROUTER_MISSING_KEY", None)
-    run(
-        [
-            str(adapter_bin),
-            "--request",
-            str(request_path),
-            "--out",
-            str(result_path),
-            "--log",
-            str(log_path),
-        ],
-        cwd=root,
-        env=env,
-    )
-    result = json.loads(result_path.read_text())
+    with tempfile.TemporaryDirectory(prefix=f"{lane_name}_") as temp_dir:
+        temp_root = Path(temp_dir)
+        raw_request_path = temp_root / "request.json"
+        raw_result_path = temp_root / "result.json"
+        write_json(raw_request_path, raw_request)
+        run(
+            [
+                str(adapter_bin),
+                "--request",
+                str(raw_request_path),
+                "--out",
+                str(raw_result_path),
+                "--log",
+                str(log_path),
+            ],
+            cwd=root,
+            env=env,
+        )
+        result = json.loads(raw_result_path.read_text())
+    write_json(result_path, sanitized_result_payload(result))
     failure = result.get("failure") or {}
     return {
         "lane": lane_name,
         "role": "negative_control",
         "provider": "openrouter",
         "model": "deepseek/deepseek-v4-flash",
+        "prompt_chars": len(negative_prompt),
+        "prompt_digest": f"sha256:{short_sha256(negative_prompt)}",
+        "prompt_excerpt": redacted_text_marker("prompt", negative_prompt),
         "request_path": rel(root, request_path),
         "result_path": rel(root, result_path),
         "log_path": rel(root, log_path),
@@ -474,7 +522,11 @@ def write_provider_invocations(path: Path, live_lanes: list[dict]) -> None:
                 "model": lane["recorded_route_model"],
                 "http_status": lane["http_status"],
                 "prompt_chars": lane["prompt_chars"],
+                "prompt_digest": lane["prompt_digest"],
+                "prompt_excerpt": lane["prompt_excerpt"],
                 "output_chars": lane["output_chars"],
+                "output_digest": lane["output_digest"],
+                "output_excerpt": lane["output_excerpt"],
             }
             for lane in live_lanes
         ],
@@ -579,6 +631,7 @@ def write_packet_files(
             "- `GET https://openrouter.ai/api/v1/models` to snapshot the live catalog.",
             "- Five native OpenRouter provider invocations through `adl-provider-adapter` using requested model IDs, while preserving provider-returned identity metadata in the state packet when present.",
             "- One negative control that omits the required credential and must fail closed.",
+            "- Tracked lane request/result JSON retain redacted prompt/output excerpts plus SHA-256 digests rather than raw provider prompts or full raw model output.",
             "",
             "## Lane Summary",
             "",
@@ -646,9 +699,13 @@ def write_packet_files(
             f"- `openrouter_matrix_state_{date}.json`",
             f"- `catalog_snapshot_{date}.json`",
             "- `provider_invocations.json`",
+            "- `lane_requests/`",
             "- `lane_results/`",
+            "- `lane_logs/`",
             "- `lane_outputs/`",
             "- `provider_setup/`",
+            "",
+            "Tracked lane request/result JSON are intentionally redacted to excerpt-plus-digest evidence; bounded rendered outputs remain in `lane_outputs/` for reviewer-facing inspection.",
             "",
         ]
     )

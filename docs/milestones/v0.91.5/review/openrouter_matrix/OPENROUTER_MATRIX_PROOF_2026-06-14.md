@@ -16,6 +16,7 @@ Record a real bounded native OpenRouter proof lane that goes beyond one smoke re
 - `GET https://openrouter.ai/api/v1/models` to snapshot the live catalog.
 - Five native OpenRouter provider invocations through `adl-provider-adapter` using requested model IDs, while preserving provider-returned identity metadata in the state packet when present.
 - One negative control that omits the required credential and must fail closed.
+- Tracked lane request/result JSON retain redacted prompt/output excerpts plus SHA-256 digests rather than raw provider prompts or full raw model output.
 
 ## Lane Summary
 

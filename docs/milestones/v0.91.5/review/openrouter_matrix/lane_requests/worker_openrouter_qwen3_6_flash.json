@@ -25,5 +25,7 @@
     "timeout_ms": 45000,
     "retry_backoff_ms": 1000
   },
-  "input_text": "Return only minified JSON with keys issue,path,task,limit.\nRequirements:\n- issue must equal \"#3723\"\n- path must equal \"docs/milestones/v0.91.5/review/openrouter_matrix\"\n- task must name one concrete next proof step and include the words \"OpenRouter\" and \"route\"\n- limit must include the exact phrase \"bounded_to_issue_3723\""
+  "input_text_chars": 323,
+  "input_text_digest": "sha256:33966d22f906",
+  "input_text_excerpt": "[redacted prompt len=323 sha256=33966d22f906]"
 }

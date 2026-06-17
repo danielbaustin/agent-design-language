@@ -20,16 +20,19 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1781506754",
-      "duration_ms": 2815,
+      "started_at": "unix:1781718078",
+      "duration_ms": 2416,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted provider text len=467]"
+      "raw_response_excerpt": "[redacted response len=451 sha256=ee956f845f9f]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 2816,
-  "output_text": "# Plan\nFor issue #3723, we will integrate the provider-model matrix defined in docs/milestones/v0.91.5/features/PROVIDER_MODEL_MATRIX_v0.91.5.md into the ADL planning workflow. This matrix will be used to validate model selections across providers during bounded planning.\n\n# Risks\n- Incomplete matrix rows may cause unexpected model fallbacks.\n- Delays if providers update model identifiers post-integration.\n\n# Non-Claims\nno universal OpenRouter compatibility claim",
-  "output_text_excerpt": "[redacted provider text len=467]"
+  "duration_ms": 2416,
+  "request_id": "planner_openrouter_deepseek_v4_flash",
+  "output_text_excerpt": "[redacted response len=451 sha256=ee956f845f9f]",
+  "artifact_ref": "<tmp>/result.json@a743180b32022692",
+  "output_text_chars": 451,
+  "output_text_digest": "sha256:ee956f845f9f"
 }
