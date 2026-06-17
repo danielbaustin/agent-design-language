@@ -108,7 +108,7 @@ fn markdown_ast_edit_fails_closed_when_output_targets_lifecycle_card() {
 }
 
 #[test]
-fn markdown_ast_edit_rejects_replacements_that_remove_existing_protected_nodes() {
+fn markdown_ast_edit_allows_section_local_removal_of_protected_nodes() {
     let repo = TempRepo::new("markdown-ast-protected-node-guard");
     let input = repo.write_rel(
         ".tmp/tooling_cmd_tests/doc.md",
@@ -120,7 +120,7 @@ fn markdown_ast_edit_rejects_replacements_that_remove_existing_protected_nodes()
     );
     let out = repo.path().join(".tmp/tooling_cmd_tests/out.md");
 
-    let err = real_tooling(&[
+    real_tooling(&[
         "markdown-ast-edit".to_string(),
         "replace-section".to_string(),
         "--input".to_string(),
@@ -132,10 +132,12 @@ fn markdown_ast_edit_rejects_replacements_that_remove_existing_protected_nodes()
         "--out".to_string(),
         out.to_string_lossy().to_string(),
     ])
-    .expect_err("replacement that removes protected nodes should fail");
+    .expect("section-local removal should be allowed");
 
-    assert!(err.to_string().contains("code fence preservation guard"));
-    assert!(!out.exists());
+    let edited = fs::read_to_string(out).expect("edited markdown");
+    assert!(edited.contains("## Evidence\n\nNo protected nodes.\n"));
+    assert!(!edited.contains("```rust"));
+    assert!(!edited.contains("[source](https://example.com)"));
 }
 
 #[test]

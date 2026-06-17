@@ -129,44 +129,64 @@ fn replace_section(args: ReplaceSectionArgs) -> Result<()> {
         Ok(shape) => shape,
         Err(err) => return fail_closed(&args, &input_abs, &err.to_string()),
     };
+    let before_neutralized =
+        neutralize_section_body(&input_text, &args.heading).context("neutralize input section")?;
+    let after_neutralized =
+        neutralize_section_body(&edited, &args.heading).context("neutralize edited section")?;
+    let before_preserved_shape = inspect_markdown_shape("input-preserved", &before_neutralized)
+        .map_err(|err| anyhow!("preserved-surface guard failed: {err}"))?;
+    let after_preserved_shape = inspect_markdown_shape("edited-preserved", &after_neutralized)
+        .map_err(|err| anyhow!("preserved-surface guard failed: {err}"))?;
     ensure!(
         before_shape.has_front_matter == after_shape.has_front_matter,
         "front matter preservation guard failed"
     );
     ensure!(
-        after_shape.code_fences >= before_shape.code_fences,
-        "code fence preservation guard failed"
+        before_preserved_shape.code_fences == after_preserved_shape.code_fences,
+        "code fence preservation guard failed outside replaced section"
     );
     ensure!(
-        after_shape.tables >= before_shape.tables,
-        "table preservation guard failed"
+        before_preserved_shape.tables == after_preserved_shape.tables,
+        "table preservation guard failed outside replaced section"
     );
     ensure!(
-        before_shape
-            .links
-            .iter()
-            .collect::<BTreeSet<_>>()
-            .is_subset(&after_shape.links.iter().collect::<BTreeSet<_>>()),
-        "link preservation guard failed"
+        before_preserved_shape.links.iter().collect::<BTreeSet<_>>()
+            == after_preserved_shape.links.iter().collect::<BTreeSet<_>>(),
+        "link preservation guard failed outside replaced section"
     );
     ensure!(
-        before_shape
+        before_preserved_shape
             .headings
             .iter()
             .map(|(_, text)| text)
             .collect::<BTreeSet<_>>()
-            .is_subset(
-                &after_shape
-                    .headings
-                    .iter()
-                    .map(|(_, text)| text)
-                    .collect::<BTreeSet<_>>()
-            ),
-        "heading preservation guard failed"
+            == after_preserved_shape
+                .headings
+                .iter()
+                .map(|(_, text)| text)
+                .collect::<BTreeSet<_>>(),
+        "heading preservation guard failed outside replaced section"
+    );
+    ensure!(
+        after_shape
+            .headings
+            .iter()
+            .any(|(_, text)| text == args.heading.trim()),
+        "replaced section heading preservation guard failed"
     );
 
     ensure_parent_dir(&args.out)?;
     fs::write(&args.out, edited).with_context(|| format!("failed to write {}", args.out.display()))
+}
+
+fn neutralize_section_body(input: &str, heading: &str) -> Result<String> {
+    let lines = input.lines().map(str::to_string).collect::<Vec<_>>();
+    let (start, end) = locate_section_bounds(&lines, heading)?;
+    let mut out = Vec::new();
+    out.extend_from_slice(&lines[..=start]);
+    out.push(String::new());
+    out.extend_from_slice(&lines[end..]);
+    Ok(format!("{}\n", trim_trailing_blank_lines(out).join("\n")))
 }
 
 fn fail_closed(args: &ReplaceSectionArgs, input: &Path, reason: &str) -> Result<()> {
@@ -223,8 +243,7 @@ fn strip_matching_heading(text: &str, heading: &str) -> Result<String> {
     Ok(text.trim().to_string())
 }
 
-fn replace_markdown_section_body(input: &str, heading: &str, replacement: &str) -> Result<String> {
-    let lines = input.lines().map(str::to_string).collect::<Vec<_>>();
+fn locate_section_bounds(lines: &[String], heading: &str) -> Result<(usize, usize)> {
     let mut in_fence = false;
     let mut start = None;
     let mut target_depth = None;
@@ -252,6 +271,12 @@ fn replace_markdown_section_body(input: &str, heading: &str, replacement: &str) 
     }
 
     let start = start.ok_or_else(|| anyhow!("heading '{heading}' not found"))?;
+    Ok((start, end))
+}
+
+fn replace_markdown_section_body(input: &str, heading: &str, replacement: &str) -> Result<String> {
+    let lines = input.lines().map(str::to_string).collect::<Vec<_>>();
+    let (start, end) = locate_section_bounds(&lines, heading)?;
     let mut out = Vec::new();
     out.extend_from_slice(&lines[..=start]);
     out.push(String::new());
