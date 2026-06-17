@@ -63,6 +63,12 @@ Minimum init contract:
 
 ## 2) Confirm GitHub Issue Exists And Inspect Live Issue Truth
 
+Live GitHub issue operations use the ADL typed GitHub transport. Provide
+`GITHUB_TOKEN` or `GH_TOKEN` from an operator-approved secret source in the
+command environment without printing the token. Do not fall back to direct
+`gh` commands or connector-specific issue APIs when the ADL issue surface needs
+credentials.
+
 ```bash
 bash ./adl/tools/pr.sh issue view <issue_num> --json
 ```
