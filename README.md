@@ -276,10 +276,11 @@ production markets.
 ## Project Status
 
 - Active milestone: v0.91.5
-- Current crate version: 0.91.4
+- Current crate version: 0.91.5
 - Most recently completed milestone: v0.91.4
-- Current milestone state: v0.91.5 bridge planning is ready to begin from the
-  completed v0.91.4 C-SDLC release evidence package.
+- Current milestone state: v0.91.5 is in the Sprint 4 review/remediation/
+  release tail after substantial bridge delivery, first internal review, and a
+  completed first remediation tranche.
 - Previous completed milestone before v0.91.2: v0.91.1
 - Primary implementation language: Rust
 

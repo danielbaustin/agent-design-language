@@ -4,17 +4,25 @@ All notable project-level changes are summarized here by milestone/release.
 
 ## v0.91.5 (Active bridge milestone)
 
-Status: Active bridge planning/execution. The v0.91.5 package lives under
-`docs/milestones/v0.91.5/` and carries pre-v0.92 stabilization work that should
-not have been hidden inside v0.91.4 release closeout.
+Status: Active Sprint 4 release-tail execution. The v0.91.5 package lives under
+`docs/milestones/v0.91.5/` and carries pre-v0.92 stabilization work that moved
+out of v0.91.4 release closeout.
 
-Planning notes:
+Current state:
+- Sprint 1 through Sprint 3 delivery is materially landed.
+- First internal review already happened.
+- The first internal-review remediation tranche closed through `#3899`.
+- Sprint 4 remains open through WP-14 quality gate, WP-15 docs/review
+  alignment, second-pass internal review, external review, final remediation/
+  preflight, next-milestone planning, and release ceremony.
+- This is still an active bridge entry, not a release entry.
+
+Scope notes:
 - v0.91.5 owns multi-agent stabilization, provider/model matrix work,
   OpenRouter/DeepSeek provider planning, public prompt records, demo readiness,
   AEE completion routing, v0.92 activation testing, and first-birthday
   preflight through `#3377`.
 - v0.91.5 prepares v0.92; it does not implement the first birthday itself.
-- This is an active bridge entry, not a release entry.
 
 ## v0.91.4 (Completed milestone)
 
