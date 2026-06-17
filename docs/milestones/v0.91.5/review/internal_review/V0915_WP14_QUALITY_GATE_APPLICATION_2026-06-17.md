@@ -22,9 +22,8 @@ sampled closeout-truth drift on recent closed issue `#3891`.
 - live issue truth for `#3531`, `#3574`, `#3575`, `#3576`, `#3577`, `#3578`,
   `#3579`, `#3580`, `#3581`, and `#3923`
 - `bash adl/tools/report_large_rust_modules.sh --format tsv`
-- sampled recent closeout records:
-  - `.adl/v0.91.5/tasks/issue-3891__v0-91-5-tools-validation-treat-merged-green-prs-as-successful-in-pr-validation/sor.md`
-  - `.adl/v0.91.5/tasks/issue-3898__allow-intentional-section-local-removals-in-replace-section/sor.md`
+- tracked closed-issue card-truth evidence packet:
+  - `docs/milestones/v0.91.5/review/internal_review/V0915_CLOSED_ISSUE_CARD_TRUTH_EVIDENCE_2026-06-17.md`
 
 ## Checklist Application
 
@@ -32,7 +31,7 @@ sampled closeout-truth drift on recent closed issue `#3891`.
 | --- | --- | --- |
 | Test coverage gap analysis | `deferred` | No dedicated v0.91.5 coverage-gap packet was found in this sweep. This gate records the gap explicitly and routes it to internal review / WP-18 remediation instead of pretending coverage truth exists. |
 | Rust module size tracker | `passed` | `bash adl/tools/report_large_rust_modules.sh --format tsv` ran successfully. The manual tracker path named in earlier docs was not present in this bound worktree, so the live report was used as the proving surface. |
-| Issue closeout truth | `blocked` | Sampled closed issues show mixed truth. `#3898` looks locally normalized, but `#3891` still says `Integration state: worktree_only` and `Card Status: ready` despite the GitHub issue being closed. |
+| Issue closeout truth | `blocked` | Sampled closed issues show mixed truth. The tracked evidence packet preserves the historical local-card excerpts: `#3898` already shows a terminal `merged` integration state, while `#3891` still records `Integration state: worktree_only` and `Card Status: ready` despite the issue being closed in GitHub. |
 | Internal review readiness | `passed` | A second-pass internal review plan is now recorded at `docs/milestones/v0.91.5/review/internal_review/V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md`. |
 | PVF lane health | `deferred` | This docs/control-plane gate did not rerun lane executions. Existing lane contracts remain an input to WP-16 and WP-18, and no new lane-health proof was generated here. |
 | Changed-file risk review | `passed` | Current high-risk areas remain GitHub/client workflow control, prompt-template/editor plumbing, provider/runtime breadth, and release-truth docs. This gate keeps those surfaces visible instead of collapsing them into a green release claim. |
@@ -59,10 +58,17 @@ This gate records the tracker check; it does not create new refactor scope.
 
 ## Closeout Truth Sample
 
-- `#3898`: sampled SOR is locally normalized to `Integration state: merged`
-  and `Status: DONE`.
-- `#3891`: sampled SOR is stale against live issue truth, still recording
-  `Integration state: worktree_only` and `Card Status: ready`.
+Tracked packet:
+
+- `docs/milestones/v0.91.5/review/internal_review/V0915_CLOSED_ISSUE_CARD_TRUTH_EVIDENCE_2026-06-17.md`
+
+Key comparison preserved there:
+
+- `#3898`: historical sampled local record already showed `Integration state:
+  merged` and `Status: DONE`.
+- `#3891`: historical sampled local record remained stale against live issue
+  truth, still recording `Integration state: worktree_only` and
+  `Card Status: ready`.
 
 Disposition:
 
