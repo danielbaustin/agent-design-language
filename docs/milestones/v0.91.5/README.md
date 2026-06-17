@@ -53,8 +53,10 @@ Setup truth:
 Provide the canonical entry point for v0.91.5: a real bridge milestone between
 v0.91.4 C-SDLC hardening and v0.92 first birthday.
 
-v0.91.5 keeps v0.91.4 focused on Sprint 4 closeout and release while giving the
-remaining pre-v0.92 work a tracked, reviewable home.
+v0.91.5 originally gave the remaining pre-v0.92 work a tracked, reviewable
+home while `v0.91.4` finished its own release-tail closeout. It now stands as
+the active bridge milestone whose remaining Sprint 4 work must close cleanly
+before `v0.92` opens.
 
 ## Milestone Role
 

@@ -16,10 +16,11 @@ and does not create the v0.92 issue wave.
 
 v0.92 is the planned milestone for the first true Gödel-agent birthday.
 
-Issue `#3377` is the v0.91.5 readiness source for the first-birthday launch
+Issue `#3377` remains the first-birthday readiness source for the launch
 packet, go/no-go checklist, demo rehearsal outline, negative-suite plan, and
-review handoff expectations. v0.92 WP-01 must consume v0.91.5 closeout, the
-v0.91.5 activation-test map, and `#3377` before opening the final issue wave.
+review handoff expectations. v0.92 WP-01 must consume `v0.91.5` release-tail
+closeout, the `v0.91.5` activation-test map, the `v0.91.6` / `v0.91.7`
+bridge tranches, and `#3377` before opening the final issue wave.
 
 ## Purpose
 

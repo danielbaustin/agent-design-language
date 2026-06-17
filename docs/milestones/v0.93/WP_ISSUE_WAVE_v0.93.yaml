@@ -1,0 +1,112 @@
+milestone: v0.93
+version: v0.93
+status: candidate_issue_wave
+tracked_package: docs/milestones/v0.93
+notes:
+  - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
+  - "Do not claim runtime governance completion from this seed."
+  - "Keep legal personhood, production constitutional authority, and unbounded social-cognition claims out of this package."
+work_packages:
+  - wp: WP-01
+    title: v0.93 planning promotion and issue-wave readiness
+    outcome: Open the concrete v0.93 issue wave and card bundles from this candidate package.
+    depends_on:
+      - "v0.92 closeout"
+    deliverables:
+      - "Opened GitHub issue wave"
+      - "SIP/STP/SPP/SRP/SOR cards for each opened issue"
+  - wp: WP-02
+    title: Constitutional citizenship and actor-boundary contract
+    outcome: Define constitutional citizenship, guest/operator/citizen boundaries, and non-goals.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "Citizenship contract"
+      - "Actor-boundary fixtures"
+  - wp: WP-03
+    title: Rights, duties, standing, review, challenge, and appeal
+    outcome: Make standing and constitutional review evidence-based and challengeable.
+    depends_on:
+      - "WP-02"
+    deliverables:
+      - "Rights and duties contract"
+      - "Standing transition fixtures"
+      - "Challenge and appeal flow"
+  - wp: WP-04
+    title: Theory of Mind, relationship, reputation, and shared social memory
+    outcome: Define private and public social-cognition surfaces without leaking private state.
+    depends_on:
+      - "WP-02"
+      - "WP-03"
+    deliverables:
+      - "ToM contract"
+      - "Relationship and reputation boundary"
+      - "Shared social memory contract"
+  - wp: WP-05
+    title: Delegation, upstream delegation, IAM, and communication boundaries
+    outcome: Make authority chains explicit across citizens, services, tools, and trusted external parties.
+    depends_on:
+      - "WP-02"
+      - "WP-03"
+    deliverables:
+      - "Delegation and IAM contract"
+      - "Communication-without-inspection proof boundary"
+  - wp: WP-06
+    title: Social contract and guild organization
+    outcome: Define bounded collective organization and governance obligations.
+    depends_on:
+      - "WP-04"
+      - "WP-05"
+    deliverables:
+      - "Social contract packet"
+      - "Guild feature contract"
+  - wp: WP-07
+    title: Security WP-S1 and WP-S2 foundations
+    outcome: Establish zero-trust architecture and least-privilege policy enforcement.
+    depends_on:
+      - "WP-05"
+    deliverables:
+      - "Zero-trust architecture contract"
+      - "Policy enforcement and authorization proof surface"
+  - wp: WP-08
+    title: Security WP-S3 and WP-S4 cryptographic trust and audit evidence
+    outcome: Define keys, secrets, signing, audit, compliance, and incident evidence surfaces.
+    depends_on:
+      - "WP-07"
+    deliverables:
+      - "Key and secret lifecycle contract"
+      - "Audit and incident evidence packet"
+  - wp: WP-09
+    title: Security WP-S5 and WP-S6 isolation, privacy, and security operations
+    outcome: Prove isolation, data governance, adversarial regression, and provenance boundaries.
+    depends_on:
+      - "WP-08"
+    deliverables:
+      - "Isolation and privacy contract"
+      - "Security operations and adversarial regression packet"
+  - wp: WP-10
+    title: Demo matrix and governance proof demos
+    outcome: Build constitutional-governance and enterprise-security proof candidates.
+    depends_on:
+      - "WP-06"
+      - "WP-09"
+    deliverables:
+      - "Demo matrix"
+      - "Runnable proof candidates"
+  - wp: WP-11
+    title: Quality gate, review, and remediation
+    outcome: Review and remediate governance, docs, tests, and security-evidence gaps.
+    depends_on:
+      - "WP-10"
+    deliverables:
+      - "Quality gate"
+      - "Internal/external review packets"
+      - "Finding dispositions"
+  - wp: WP-12
+    title: Docs, release tail, and handoff
+    outcome: Align release-facing docs and prepare the next-milestone handoff.
+    depends_on:
+      - "WP-11"
+    deliverables:
+      - "Release-tail packet"
+      - "Next-milestone handoff"

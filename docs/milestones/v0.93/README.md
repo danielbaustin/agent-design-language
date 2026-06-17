@@ -1,9 +1,17 @@
 # v0.93 Milestone README
 
+## Metadata
+
+- Milestone: `v0.93`
+- Version: `v0.93`
+- Owner: ADL maintainers
+- Status: `forward_planning_candidate`
+- Planning template set: `docs/templates/planning/1.0.0`
+
 ## Status
 
 Forward planning. v0.93 is not yet an active implementation milestone and has
-no final issue wave. Its boundary was rechecked during the `v0.90.4` WP-19
+a candidate issue-wave package but no final opened issue wave. Its boundary was rechecked during the `v0.90.4` WP-19
 handoff pass so reputation and social-cognition work stay here instead of
 turning into loose `v0.90.4` follow-on debt.
 
@@ -117,6 +125,7 @@ The likely `v0.93` tranche is:
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.93.md](MILESTONE_CHECKLIST_v0.93.md)
 - Release plan: [RELEASE_PLAN_v0.93.md](RELEASE_PLAN_v0.93.md)
 - Release notes: [RELEASE_NOTES_v0.93.md](RELEASE_NOTES_v0.93.md)
+- Candidate issue wave: [WP_ISSUE_WAVE_v0.93.yaml](WP_ISSUE_WAVE_v0.93.yaml)
 - Feature plans: [features/README.md](features/README.md)
 - Constitutional citizenship and polis governance allocation:
   [CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md](CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md)
