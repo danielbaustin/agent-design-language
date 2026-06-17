@@ -805,7 +805,7 @@ pub(super) fn pr_validation_report_from_snapshot_with_disposition(
     let checks = snapshot
         .checks
         .iter()
-        .map(|check| pr_validation_check_report(check))
+        .map(pr_validation_check_report)
         .collect::<Vec<_>>();
     let failed_checks = effective_checks
         .iter()
