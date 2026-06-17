@@ -30,9 +30,9 @@ python3 adl/tools/generate_tool_surface_registry.py --check
 
 ## Classification Counts
 
-- `primary`: 30
+- `primary`: 40
 - `supported shim`: 9
-- `internal helper`: 471
+- `internal helper`: 472
 - `historical evidence`: 4
 - `archive candidate`: 0
 - `remove candidate`: 2
@@ -47,6 +47,16 @@ python3 adl/tools/generate_tool_surface_registry.py --check
 | `adl-validate-structured-prompt` | owner binary | primary | Direct validator binary for structured prompt validation. |
 | `adl-lint-prompt-spec` | owner binary | primary | Direct validator binary for Prompt Spec lint. |
 | `adl-prompt-template` | owner binary | primary | Direct editor/renderer binary for prompt-template operations. |
+| `adl-pr-create` | owner binary | primary | Owner binary present in Cargo manifest. |
+| `adl-pr-init` | owner binary | primary | Owner binary present in Cargo manifest. |
+| `adl-pr-repair-issue-body` | owner binary | primary | Owner binary present in Cargo manifest. |
+| `adl-pr-run` | owner binary | primary | Owner binary present in Cargo manifest. |
+| `adl-pr-doctor` | owner binary | primary | Owner binary present in Cargo manifest. |
+| `adl-pr-ready` | owner binary | primary | Owner binary present in Cargo manifest. |
+| `adl-pr-preflight` | owner binary | primary | Owner binary present in Cargo manifest. |
+| `adl-pr-finish` | owner binary | primary | Owner binary present in Cargo manifest. |
+| `adl-pr-validation` | owner binary | primary | Owner binary present in Cargo manifest. |
+| `adl-pr-closeout` | owner binary | primary | Owner binary present in Cargo manifest. |
 | `adl-remote` | owner binary | primary | Primary remote workflow binary for remote execution surfaces. |
 | `adl-provider-adapter` | owner binary | primary | Primary provider adapter utility for provider invocation surfaces. |
 
@@ -402,6 +412,7 @@ python3 adl/tools/generate_tool_surface_registry.py --check
 | `adl/tools/test_pr_run_ambiguity_policy.sh` | tool surface | internal helper | Focused regression or contract test helper. |
 | `adl/tools/test_pr_run_issue_mode.sh` | tool surface | internal helper | Focused regression or contract test helper. |
 | `adl/tools/test_pr_run_materializes_worktree_cards.sh` | tool surface | internal helper | Focused regression or contract test helper. |
+| `adl/tools/test_pr_small_binary_delegation.sh` | tool surface | internal helper | Focused regression or contract test helper. |
 | `adl/tools/test_pr_stack_manager_skill_contracts.sh` | tool surface | internal helper | Focused regression or contract test helper. |
 | `adl/tools/test_pr_start_template_validation.sh` | tool surface | internal helper | Focused regression or contract test helper. |
 | `adl/tools/test_pr_start_worktree_safe.sh` | tool surface | internal helper | Focused regression or contract test helper. |

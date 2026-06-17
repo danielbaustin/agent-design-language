@@ -39,6 +39,46 @@ name = "adl-prompt-template"
 path = "src/bin/adl_prompt_template.rs"
 
 [[bin]]
+name = "adl-pr-create"
+path = "src/bin/adl_pr_create.rs"
+
+[[bin]]
+name = "adl-pr-init"
+path = "src/bin/adl_pr_init.rs"
+
+[[bin]]
+name = "adl-pr-repair-issue-body"
+path = "src/bin/adl_pr_repair_issue_body.rs"
+
+[[bin]]
+name = "adl-pr-run"
+path = "src/bin/adl_pr_run.rs"
+
+[[bin]]
+name = "adl-pr-doctor"
+path = "src/bin/adl_pr_doctor.rs"
+
+[[bin]]
+name = "adl-pr-ready"
+path = "src/bin/adl_pr_ready.rs"
+
+[[bin]]
+name = "adl-pr-preflight"
+path = "src/bin/adl_pr_preflight.rs"
+
+[[bin]]
+name = "adl-pr-finish"
+path = "src/bin/adl_pr_finish.rs"
+
+[[bin]]
+name = "adl-pr-validation"
+path = "src/bin/adl_pr_validation.rs"
+
+[[bin]]
+name = "adl-pr-closeout"
+path = "src/bin/adl_pr_closeout.rs"
+
+[[bin]]
 name = "adl-remote"
 path = "src/bin/adl_remote.rs"
 

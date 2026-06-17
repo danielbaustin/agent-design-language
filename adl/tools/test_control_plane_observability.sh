@@ -44,7 +44,10 @@ if grep -Eiq 'super-secret-token|/private/tmp/adl-secret' "$TMP_DIR/events.log";
   exit 1
 fi
 
-ADL_OBSERVABILITY=0 adl_obs_event "pr.sh" "disabled" "started"
+(
+  export ADL_OBSERVABILITY=0
+  adl_obs_event "pr.sh" "disabled" "started"
+)
 line_count="$(wc -l <"$TMP_DIR/events.log" | tr -d ' ')"
 [[ "$line_count" == "1" ]] || {
   echo "disabled observability still wrote events" >&2
@@ -52,9 +55,11 @@ line_count="$(wc -l <"$TMP_DIR/events.log" | tr -d ' ')"
 }
 
 stderr_capture="$TMP_DIR/stderr.log"
-ADL_OBSERVABILITY_STDERR=0 adl_obs_event "pr.sh" "json_mode" "started" \
-  "artifact_ref" "$ROOT_DIR/docs/example.md" \
-  2>"$stderr_capture"
+(
+  export ADL_OBSERVABILITY_STDERR=0
+  adl_obs_event "pr.sh" "json_mode" "started" \
+    "artifact_ref" "$ROOT_DIR/docs/example.md"
+) 2>"$stderr_capture"
 [[ ! -s "$stderr_capture" ]] || {
   echo "stderr suppression still wrote terminal output" >&2
   exit 1
@@ -78,7 +83,7 @@ validate_cmd=(
   tooling validate-structured-prompt
   --type sor
   --phase bootstrap
-  --input "$ROOT_DIR/.adl/v0.91.5/tasks/issue-3807__v0-91-5-tools-observability-fail-closed-when-compatibility-log-sink-is-unavailable-with-stderr-disabled/sor.md"
+  --input "$ROOT_DIR/.adl/v0.91.5/tasks/issue-3838__v0-91-5-toolkit-simplification-9-9-decompose-remaining-tools-workflow-into-direct-small-binaries/sor.md"
 )
 if [[ -n "$TOOLING_BIN" ]]; then
   ADL_OBSERVABILITY_STDERR=0 ADL_OBSERVABILITY_LOG="$bad_sink" \
