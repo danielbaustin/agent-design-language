@@ -45,6 +45,30 @@ printf 'run:%s\n' "$*" >"${ADL_TEST_LOG}"
 EOF
 chmod +x "$run_bin"
 
+finish_bin="$repo/bin/adl-pr-finish"
+cat >"$finish_bin" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'finish:%s\n' "$*" >"${ADL_TEST_LOG}"
+EOF
+chmod +x "$finish_bin"
+
+validation_bin="$repo/bin/adl-pr-validation"
+cat >"$validation_bin" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'validation:%s\n' "$*" >"${ADL_TEST_LOG}"
+EOF
+chmod +x "$validation_bin"
+
+closeout_bin="$repo/bin/adl-pr-closeout"
+cat >"$closeout_bin" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'closeout:%s\n' "$*" >"${ADL_TEST_LOG}"
+EOF
+chmod +x "$closeout_bin"
+
 broad_bin="$repo/bin/adl-broad"
 cat >"$broad_bin" <<'EOF'
 #!/usr/bin/env bash
@@ -74,6 +98,42 @@ run_log="$tmpdir/run.log"
 )
 grep -Fqx 'run:3838 --slug demo --no-fetch-issue --version v0.91.5' "$run_log" || {
   echo "assertion failed: issue-mode run should delegate directly to adl-pr-run without broad 'pr start' argv" >&2
+  exit 1
+}
+
+finish_log="$tmpdir/finish.log"
+(
+  cd "$repo"
+  ADL_TEST_LOG="$finish_log" \
+    ADL_PR_FINISH_BIN="$finish_bin" \
+    "$BASH_BIN" adl/tools/pr.sh finish 3838 --title "demo finish" --output-card demo-output.md >/dev/null
+)
+grep -Fqx 'finish:3838 --title demo finish --output-card demo-output.md' "$finish_log" || {
+  echo "assertion failed: finish should delegate directly to adl-pr-finish without broad 'pr finish' argv" >&2
+  exit 1
+}
+
+validation_log="$tmpdir/validation.log"
+(
+  cd "$repo"
+  ADL_TEST_LOG="$validation_log" \
+    ADL_PR_VALIDATION_BIN="$validation_bin" \
+    "$BASH_BIN" adl/tools/pr.sh validation 3888 --json >/dev/null
+)
+grep -Fqx 'validation:3888 --json' "$validation_log" || {
+  echo "assertion failed: validation should delegate directly to adl-pr-validation without broad 'pr validation' argv" >&2
+  exit 1
+}
+
+closeout_log="$tmpdir/closeout.log"
+(
+  cd "$repo"
+  ADL_TEST_LOG="$closeout_log" \
+    ADL_PR_CLOSEOUT_BIN="$closeout_bin" \
+    "$BASH_BIN" adl/tools/pr.sh closeout 3838 --slug demo --no-fetch-issue --version v0.91.5 >/dev/null
+)
+grep -Fqx 'closeout:3838 --slug demo --no-fetch-issue --version v0.91.5' "$closeout_log" || {
+  echo "assertion failed: closeout should delegate directly to adl-pr-closeout without broad 'pr closeout' argv" >&2
   exit 1
 }
 

@@ -67,6 +67,17 @@ named in the toolkit-simplification sprint acceptance:
 It does **not** make `adl/tools/pr.sh` non-canonical, and it does **not**
 claim `workflow-conductor` or generated cards should stop teaching the wrapper.
 
+The focused wrapper-delegation proof now exercises direct dispatch for:
+
+- `doctor`
+- issue-mode `run`
+- `finish`
+- `validation`
+- `closeout`
+
+It also continues to prove that the broad `ADL_PR_RUST_BIN` compatibility
+override retains precedence over per-command direct binary overrides.
+
 ## Validation
 
 Focused proofs that passed:
