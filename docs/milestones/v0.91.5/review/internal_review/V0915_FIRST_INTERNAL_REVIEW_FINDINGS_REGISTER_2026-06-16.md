@@ -5,7 +5,7 @@
 - Milestone: `v0.91.5`
 - Source review issue: `#3576`
 - Register date: `2026-06-16`
-- Register status: `routed_to_remediation_queue`
+- Register status: `historical_first_pass_baseline`
 - Canonical remediation umbrella: `#3899`
 
 ## Summary
@@ -15,12 +15,23 @@
 - This reconstructed register preserves routing truth from the live remediation
   issue set `#3891` through `#3898` without inventing missing severity or
   approval fields.
-- `#3892` already has draft PR `#3900` in flight and should keep that state
-  during execution.
-- `#3897` and `#3898` have now merged and been locally closed out, leaving
-  `#3896` as the remaining active tooling-remediation child.
-- Use this register as the retained review-to-remediation bridge for the queued
-  first internal-review mini-sprint.
+- The first-pass remediation umbrella `#3899` closed on `2026-06-17` after all
+  child issues `#3891` through `#3898` closed.
+- This packet is now historical first-pass review evidence, not the active
+  remediation or release-tail control surface.
+- Use this register as the retained review-to-remediation bridge for the
+  completed first internal-review mini-sprint, then follow the current Sprint 4
+  control docs and second-pass review packet set for live state.
+
+## Current Authoritative Successor Surfaces
+
+For current release-tail and review truth, use:
+
+- `docs/milestones/v0.91.5/SPRINT_v0.91.5.md`
+- `docs/milestones/v0.91.5/QUALITY_GATE_v0.91.5.md`
+- `docs/milestones/v0.91.5/review/internal_review/V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md`
+- `docs/milestones/v0.91.5/review/internal_review/V0915_WP15_DOCS_REVIEW_ALIGNMENT_2026-06-17.md`
+- `docs/milestones/v0.91.5/review/internal_review/V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md`
 
 ## Reconstruction Note
 
@@ -43,7 +54,7 @@ standalone findings register at the expected path, so this register records
 | `#3893` | lifecycle | `not_retained` | Repair toolkit sprint closeout and card truth so retained sprint/card state matches GitHub closeout truth. | Execute after `#3891` / `#3892` under `#3899`. |
 | `#3894` | docs | `not_retained` | Refresh proof coverage, quality-gate, handoff, and WP-tail docs so review-facing planning truth matches the current bridge state. | Parallel-safe docs remediation group under `#3899`. |
 | `#3895` | evidence | `not_retained` | Redact private LAN endpoint details from tracked public proof packets without weakening evidence meaning. | Parallel-safe evidence hygiene group under `#3899`. |
-| `#3896` | observability | `not_retained` | Preserve quiet stderr when compatibility log sink setup fails. | Active under `#3899` with green draft PR `#3907`; waiting on review/merge before closeout. |
+| `#3896` | observability | `not_retained` | Preserve quiet stderr when compatibility log sink setup fails. | Merged by PR `#3907`; now historically retained under closed umbrella `#3899`. |
 | `#3897` | GitHub linkage | `not_retained` | Support standard GitHub autoclose syntax in fallback PR close-link detection. | Merged by PR `#3905`; now locally closed out under `#3899`. |
 | `#3898` | markdown-ast | `not_retained` | Allow intentional section-local removals in `replace-section` while preserving unrelated-document safety. | Merged by PR `#3906`; now locally closed out under `#3899`. |
 
@@ -93,9 +104,9 @@ or explicitly rerouted:
 10. Emergency publication after finish-path failure is not yet a first-class,
     truthful, retained workflow path.
 
-## Queue Linkage
+## Historical Queue Linkage
 
-Ordered execution route retained by the queue umbrella:
+Ordered execution route retained by the now-closed queue umbrella:
 
 1. `#3891` and `#3892`
 2. `#3893`
@@ -109,4 +120,5 @@ Ordered execution route retained by the queue umbrella:
   retained path; this packet restores routing truth but does not reconstruct
   missing severity rankings.
 - External review, final v0.92 preflight, next-milestone planning, and release
-  ceremony remain downstream work and must not be inferred from this packet.
+  ceremony remain downstream work and must not be inferred from this historical
+  first-pass packet.
