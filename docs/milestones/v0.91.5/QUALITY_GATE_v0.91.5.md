@@ -35,9 +35,12 @@ surface.
   - ADR readiness remains `not_applicable` for this docs-only gate pass
 - Blockers:
   - Sprint 4 release-tail issues remain open
-  - sampled closeout truth is not uniformly clean; recent closed issue `#3891`
-    still has a stale local SOR that reports `Integration state: worktree_only`
-    despite the issue being closed
+  - sampled closeout truth is not uniformly clean; the tracked closed-issue
+    card-truth evidence packet shows that recent closed issue `#3891` still had
+    a historically sampled local SOR excerpt reporting `Integration state:
+    worktree_only` despite the issue being closed
+  - multiple v0.91.5 milestone docs still carry stale `active_wp_01_opening`
+    or opening-era status language and must be normalized in WP-15
   - second-pass internal review and later Sprint 4 release-tail work remain
     incomplete, so release readiness still cannot be claimed
 
@@ -47,6 +50,8 @@ surface.
   [V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md](review/internal_review/V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md)
 - WP-15 docs/review alignment packet:
   [V0915_WP15_DOCS_REVIEW_ALIGNMENT_2026-06-17.md](review/internal_review/V0915_WP15_DOCS_REVIEW_ALIGNMENT_2026-06-17.md)
+- Closed-issue card-truth evidence packet:
+  [V0915_CLOSED_ISSUE_CARD_TRUTH_EVIDENCE_2026-06-17.md](review/internal_review/V0915_CLOSED_ISSUE_CARD_TRUTH_EVIDENCE_2026-06-17.md)
 - Internal-review readiness plan:
   [V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md](review/internal_review/V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md)
 
