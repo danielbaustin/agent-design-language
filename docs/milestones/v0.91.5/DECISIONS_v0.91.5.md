@@ -5,16 +5,16 @@
 - Version: `v0.91.5`
 - Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_4_release_tail_active`
 
 ## Purpose
 
-Record decisions that constrain v0.91.5 bridge planning before execution.
+Record decisions that constrain v0.91.5 bridge work and Sprint 4 closeout.
 
 ## How To Use
 
-Use these decisions as planning guardrails. If execution needs to change one,
-record a superseding decision rather than silently widening scope.
+Use these decisions as milestone guardrails. If execution or closeout needs to
+change one, record a superseding decision rather than silently widening scope.
 
 ## Decision Log
 

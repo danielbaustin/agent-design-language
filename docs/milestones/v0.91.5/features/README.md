@@ -6,7 +6,7 @@
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_4_release_tail_active`
 - Planning template set: `docs/templates/planning/1.0.0`
 
 ## Template Rules
@@ -16,7 +16,8 @@ implementation evidence.
 
 ## Purpose
 
-List the tracked v0.91.5 feature contracts that WP-01 should consume.
+List the tracked v0.91.5 feature contracts that the release tail should use as
+reviewable scope baselines.
 
 ## Context
 
@@ -42,9 +43,10 @@ milestone README, WBS, sprint plan, and issue wave.
 
 ## Execution Flow
 
-1. WP-01 reviews this index and linked feature docs.
-2. WP-01 reconciles live issue labels and the v0.91.5 issue wave.
-3. Later WPs update feature docs only with landed evidence.
+1. The issue wave seeds feature scope.
+2. Execution and review packets land evidence across Sprint 1 through Sprint 4.
+3. Release-tail WPs align feature docs only to landed evidence or explicit
+   blocker truth.
 
 ## Determinism and Constraints
 
@@ -69,8 +71,9 @@ validator and link checks.
 
 ## Risks
 
-- The index may drift from the issue wave. Mitigation: WP-01 must reconcile
-  both before opening or executing issues.
+- The index may drift from the live release tail. Mitigation: WP-15 and later
+  closeout work must reconcile it against the issue wave, quality gate, and
+  review packets.
 
 ## Future Work
 

@@ -6,13 +6,14 @@
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_4_release_tail_active`
 - Related issues: `#3472`, `#3473`, `#3474`, `#3475`, `#3476`
 - Local ADL state disposition: [../LOCAL_ADL_STATE_DISPOSITION_3473.md](../LOCAL_ADL_STATE_DISPOSITION_3473.md)
 
 ## Template Rules
 
-This is a planning feature doc, not a publication approval.
+This is a feature-scope baseline, not publication approval or final release
+proof by itself.
 
 ## Purpose
 
@@ -149,3 +150,7 @@ prompt corpora.
 ## Notes
 
 This feature does not require all `.adl` history to become tracked repo state.
+
+Sprint 4 should treat this doc as an evidence-bound feature baseline. Export,
+validation, redaction, and review surfaces are real milestone work; final
+release language still depends on review/preflight closeout.

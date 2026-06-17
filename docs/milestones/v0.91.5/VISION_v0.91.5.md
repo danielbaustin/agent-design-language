@@ -5,7 +5,7 @@
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_4_release_tail_active`
 
 ## Purpose
 
@@ -14,14 +14,18 @@ able to claim after the milestone closes.
 
 ## How To Use
 
-Use this document as the intent boundary for v0.91.5 WP-01 planning and later
-review. Implementation truth must come from issues, PRs, demos, and release
-evidence.
+Use this document as the intent boundary for v0.91.5 planning and later
+review. Implementation truth must come from issues, PRs, demos, review packets,
+quality-gate records, and release evidence.
 
 ## Overview
 
 v0.91.5 is the bridge from a working single-agent C-SDLC control plane to a
 usable multi-agent development system that can support v0.92.
+
+That bridge work is materially landed through Sprint 3 plus the first
+internal-review remediation tranche. The current frontier is Sprint 4 release
+tail normalization, review, final remediation/preflight, and release.
 
 The milestone is practical: make the machinery work. Roles, providers, model
 selection, prompt records, validation routing, demos, and first-birthday

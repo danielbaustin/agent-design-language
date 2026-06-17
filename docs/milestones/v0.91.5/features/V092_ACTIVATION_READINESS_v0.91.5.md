@@ -6,12 +6,12 @@
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_4_release_tail_active`
 - Related issues: `#3377`, `#3502`
 
 ## Template Rules
 
-This is a planning feature doc, not v0.92 launch approval.
+This is an activation-readiness baseline, not v0.92 launch approval.
 
 ## Purpose
 
@@ -84,3 +84,6 @@ resulting identity evidence for governance.
 ## Notes
 
 This feature is the answer to “what comes alive in v0.92?”
+
+Sprint 4 should use it as a handoff/evidence surface for final preflight, not
+as implied proof that activation readiness is already complete.
