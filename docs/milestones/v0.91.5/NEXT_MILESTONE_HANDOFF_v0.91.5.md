@@ -6,15 +6,15 @@
 - Handoff issue: `#3581`
 - Target downstream milestone: `v0.91.6`
 - Planned milestone sequence: `v0.91.6` -> `v0.91.7` -> `v0.92`
-- Status: `wp_19_review_ready`
+- Status: `wp_20_ceremony_active`
 - Last updated: `2026-06-17`
 
 ## Status
 
-This is the active WP-19 handoff surface for the v0.91.5 release tail. It
-prepares v0.91.6 to open from tracked bridge evidence instead of chat memory or
-implicit readiness, while preserving the planned sequence through v0.91.7 and
-then v0.92.
+This is the closed WP-19 handoff surface now consumed by the active WP-20
+release ceremony. It prepares v0.91.6 to open from tracked bridge evidence
+instead of chat memory or implicit readiness, while preserving the planned
+sequence through v0.91.7 and then v0.92.
 
 v0.91.5 is not released yet. WP-19 does not perform ceremony or implement
 v0.91.6, v0.91.7, or v0.92 work. It records what the next milestones may
@@ -30,8 +30,8 @@ consume from the closed review/remediation gates and what remains for ceremony.
 - External/third-party review closed through `#3580`.
 - Final review remediation and pre-v0.92 readiness routing closed through
   `#3577`, with WP-18 disposition evidence recorded.
-- This WP-19 handoff remains open through `#3581`.
-- Release ceremony remains open through `#3578`.
+- WP-19 handoff closed through `#3581` / PR `#3962`.
+- Release ceremony is active through `#3578`.
 - Rust/GitHub transport-boundary cleanup follow-on `#3929` is closed and is
   consumed here as release-tail tooling truth rather than executed by WP-19.
 
@@ -65,13 +65,13 @@ following gate:
 | second-pass internal review | `#3923` | closed; findings register and dispositions consumed |
 | external / third-party review | `#3580` | closed; external review handoff consumed |
 | final remediation and pre-v0.92 routing | `#3577` | closed; WP-18 disposition consumed |
-| next-milestone handoff | `#3581` | this document and related release-tail docs reflect current truth |
-| release ceremony | `#3578` | starts only after WP-19 review/publication finishes |
+| next-milestone handoff | `#3581` | closed through PR `#3962`; this document and related release-tail docs reflect current truth |
+| release ceremony | `#3578` | active; packages and publishes v0.91.5 release truth |
 
-Operational interpretation: the remaining pre-ceremony work is WP-19 review and
-handoff confirmation, then WP-20 ceremony. If new implementation work appears
-after this point, it must be recorded as a review finding or follow-on issue
-rather than hidden inside WP-19.
+Operational interpretation: WP-19 review and handoff confirmation are complete.
+The remaining work is WP-20 ceremony publication and final closeout. If new
+implementation work appears after this point, it must be recorded as a review
+finding or follow-on issue rather than hidden inside WP-20.
 
 ## Required Handoff Inputs
 
@@ -204,9 +204,8 @@ WP-20 may begin only after this document reflects the final closed state of
 `#3929`, `#3923`, `#3580`, and `#3577`.
 
 Those surfaces are closed and consumed by WP-19. Ceremony can proceed from
-release evidence and release notes after WP-19 review/publication finishes. If
-new contradictions appear, WP-20 should record a blocked release handoff rather
-than publishing v0.91.5.
+release evidence and release notes. If new contradictions appear, WP-20 should
+record a blocked release handoff rather than publishing v0.91.5.
 
 After ceremony completes, schedule a 15-minute operator break before starting
 v0.91.6 WP-01. The break is an operational handoff pause, not a change to the
@@ -225,6 +224,6 @@ This handoff does not claim:
 - `#3929` remains open;
 - bridge planning is still pending in closed `#3800` / `#3801`.
 
-`#3800`, `#3801`, `#3929`, `#3923`, `#3580`, and `#3577` are closed routing
-inputs. Final handoff and ceremony truth remains open release-tail work until
-`#3581` and `#3578` close.
+`#3800`, `#3801`, `#3929`, `#3923`, `#3580`, `#3577`, and `#3581` are closed
+routing inputs. Final ceremony truth remains open release-tail work until
+`#3578` closes.

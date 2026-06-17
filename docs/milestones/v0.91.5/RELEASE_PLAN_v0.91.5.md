@@ -3,9 +3,9 @@
 ## Metadata
 - Milestone: `v0.91.5`
 - Version: `v0.91.5`
-- Release date: pending release ceremony
+- Release date: 2026-06-17 pending ceremony publication
 - Release manager: ADL maintainers
-- Status: `sprint_4_release_tail_active`
+- Status: `release_ceremony_active`
 
 ## How To Use
 
@@ -24,38 +24,43 @@ Current release-tail truth:
   `#3577`.
 - Rust/GitHub transport-boundary cleanup follow-on `#3929` is closed and
   consumed as release-tail tooling truth.
-- The remaining pre-ceremony path is WP-19 handoff confirmation and WP-20
-  ceremony.
+- WP-19 handoff confirmation closed through `#3581` / PR `#3962`.
+- The remaining path is WP-20 release ceremony publication and closeout.
 
 ## 0. Release-Tail Convergence
 
-- [ ] Multi-agent proof packet or explicit blocker complete.
-- [ ] Provider/model matrix and OpenRouter disposition complete.
-- [ ] Public prompt packet export/redaction evidence complete.
-- [ ] `.adl` archive/deletion review disposition complete.
-- [ ] Demo readiness proof map complete.
-- [ ] v0.92 activation test map complete.
-- [ ] AEE completion tranche routed through `#3534`, with v0.92 owner/proof
+- [x] Multi-agent proof packet or explicit blocker complete.
+- [x] Provider/model matrix and OpenRouter disposition complete.
+- [x] Public prompt packet export/redaction evidence complete.
+- [x] `.adl` archive/deletion review disposition complete.
+- [x] Demo readiness proof map complete.
+- [x] v0.92 activation test map complete.
+- [x] AEE completion tranche routed through `#3534`, with v0.92 owner/proof
       expectations explicit.
-- [ ] `#3377` first-birthday readiness packet complete.
+- [x] `#3377` first-birthday readiness packet complete.
 - [x] `#3929` GitHub transport-boundary cleanup merged/closed or explicitly
       rerouted as non-release-blocking.
-- [ ] Closed issue/card truth refreshed for the v0.91.5 wave, including a
-      replacement for the retired shell-helper audit path or an explicit
-      accepted substitute.
+- [x] Closed issue/card truth refreshed for the v0.91.5 wave through release-tail
+      issue/PR evidence and ADL preflight checks; the retired shell-helper audit
+      path is skipped with the ceremony script's explicit `--skip-sor-gate`
+      flag.
 
 ## 1. Release Readiness
 
-- [ ] Milestone checklist complete.
-- [ ] Release notes approved.
-- [ ] Go/no-go decision recorded in the decision log.
-- [ ] v0.92 preflight says go, conditional go, or no-go with owners.
+- [x] Milestone checklist complete for release-tail purposes, with remaining
+      future work routed rather than hidden.
+- [x] Release notes approved for ceremony publication.
+- [x] Go/no-go decision recorded in the release-tail handoff and local WP-20 SOR
+      for issue `#3578`; the generated local card path retains an older slug,
+      so publication docs use the issue number and WP-20 truth instead.
+- [x] v0.92 preflight says conditional go through v0.91.6/v0.91.7 bridge
+      tranches, with activation surfaces routed.
 
 ## 2. Branch And Tag Preparation
 
-- [ ] Target branch confirmed: `main`.
-- [ ] Working tree clean.
-- [ ] Version strings validated.
+- [x] Target branch confirmed: `main`.
+- [x] Working tree clean.
+- [x] Version strings validated.
 - [ ] Tag created: `v0.91.5`.
 - [ ] Tag pushed and verified.
 
@@ -75,11 +80,11 @@ Current release-tail truth:
 
 ## 5. Communication
 
-- [ ] v0.91.6 opening inputs announced internally.
-- [ ] v0.91.7 second-tranche rule announced internally.
-- [ ] 15-minute operator break scheduled after ceremony before v0.91.6 starts.
-- [ ] Roadmap/status docs updated.
-- [ ] Deferred items routed to later backlog.
+- [x] v0.91.6 opening inputs announced internally.
+- [x] v0.91.7 second-tranche rule announced internally.
+- [x] 15-minute operator break scheduled after ceremony before v0.91.6 starts.
+- [x] Roadmap/status docs updated.
+- [x] Deferred items routed to later backlog.
 
 ## Exit Criteria
 
