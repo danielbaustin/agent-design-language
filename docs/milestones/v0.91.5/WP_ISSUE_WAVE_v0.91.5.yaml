@@ -1,5 +1,5 @@
 milestone: v0.91.5
-status: sprint_2_review_remediation_in_progress
+status: first_internal_review_remediation_active
 owner_issue: 3506
 owner_issue_state: closed_setup_umbrella
 setup_child_issues: [3507, 3508, 3509, 3510, 3511]
@@ -16,6 +16,10 @@ notes:
   - Canonical milestone WP ordering was closed through #3567; portable ADL project adapter planning and templates are routed through #3569.
   - Downstream v0.91.5 card rewrite/normalization waits for prompt templates v1.1 and is tracked through #3582 instead of blocking WP-01.
   - Sprint 1 #3571 is closed, Sprint 2 #3572 remains open with post-execution review/remediation active, and Sprint 3 #3573 plus Sprint 4 #3574 remain open for later execution; closeout-tail issues #3575, #3579, #3576, #3580, #3577, #3581, and #3578 remain seeded/open.
+  - WP-16 internal review has now produced a first routed remediation queue under #3899 with child issues #3891 through #3898.
+  - Child issue #3892 has now been closed out after draft PR #3900 merged cleanly.
+  - Live execution exposed a finish-tooling classifier gap: `pr finish` does not yet classify `adl/src/cli/observability.rs` or `adl/src/cli/tooling_cmd/markdown_ast_edit.rs` plus its focused test surface into supported finish-validation lanes, so that publication blocker must remain tracked as remediation truth under #3899.
+  - #3574 remains the canonical Sprint 4 umbrella, but closeout-tail execution should resume through queued review-remediation issue #3899 before WP-17, WP-18 final preflight, WP-19, and WP-20 advance.
   - Multi-agent C-SDLC execution must work by milestone closeout or be truthfully blocked before v0.92 depends on it.
   - v0.92 activation testing must include every known feature surface that comes alive during first birthday.
   - AEE completion must be routed as a named closure tranche before v0.92 opens; it must not be left implicit until v0.95 convergence.

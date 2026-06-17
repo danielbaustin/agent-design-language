@@ -5,13 +5,13 @@
 - Version: `v0.91.5`
 - Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `sprint_2_review_remediation_in_progress`
+- Status: `first_internal_review_remediation_active`
 - Canonical WP standard: [ADL_MILESTONE_WP_ORDERING_STANDARD.md](../../planning/ADL_MILESTONE_WP_ORDERING_STANDARD.md)
 
 ## Status
 
-Active WBS for post-Sprint 1 execution, Sprint 2 review/remediation, and the
-remaining Sprint 3 / Sprint 4 execution bands.
+Active WBS for post-Sprint 1 execution, the first internal-review remediation
+execution under `#3899`, and the remaining Sprint 3 / Sprint 4 execution bands.
 
 ## How To Use
 
@@ -24,7 +24,11 @@ together.
 v0.91.5 contains four sprint bands after WP-01: prompt-template/public prompt
 records and portable ADL readiness, provider/model and multi-agent proof, demo
 matrix/showcase refresh, and coverage/review/remediation/next-milestone/release
-closeout.
+closeout. The current retained execution-prep state is the first internal
+review remediation queue `#3899`, which stages the initial WP-18 remediation
+wave before the remaining closeout-tail issues advance. Live execution also
+surfaced repo-native tooling gaps that must be captured as WP-18 remediation
+inputs rather than lost as operator-side residue.
 
 ## Candidate WP Sequence
 
@@ -92,6 +96,15 @@ to the reusable standard at
 | Sprint 3 | `#3573` | Demo matrix and demo showcase refresh. | `#3455`; supporting inputs `#3460`, `#3461` |
 | Sprint 4 | `#3574` | Coverage, review, remediation, next-milestone planning, and release. | `#3575`, `#3579`, `#3576`, `#3580`, `#3577`, `#3581`, `#3578`; supporting inputs `#3531`, `#3502`, `#3534`, `#3377` |
 
+## Queued Review-Remediation Mini-Sprint
+
+- `#3899` is the queued first internal-review remediation umbrella created from
+  WP-16 review output.
+- Its child execution order is `#3891`, `#3892`, `#3893`, parallel-safe
+  `#3894` / `#3895`, then parallel-safe `#3896` / `#3897` / `#3898`.
+- This queue is a bounded staging wave under WP-18 and does not replace the
+  canonical Sprint 4 umbrella `#3574`.
+
 ## Sequencing
 
 1. Route issue truth first.
@@ -100,7 +113,8 @@ to the reusable standard at
 4. Run multi-agent proof before relying on it for v0.92.
 5. Prepare demos and activation readiness before first-birthday preflight.
 6. Route AEE completion explicitly before v0.92 consumes the bridge.
-7. Review, remediate, preflight v0.92, then release.
+7. Run the first internal-review remediation queue `#3899`.
+8. Review, remediate, preflight v0.92, then release.
 
 ## Sequencing Notes
 
@@ -123,7 +137,10 @@ is explicit.
 - WP-13 -> demo matrix and showcase readiness are explicit.
 - WP-14 through WP-20 -> coverage/quality, docs/review alignment, internal
   review, external review, remediation/final v0.92 preflight, next-milestone
-  planning, and release close the bridge in the standard order.
+  planning, and release close the bridge in the standard order. The first
+  remediation tranche is currently staged through `#3899` and child issues
+  `#3891` through `#3898` before the broader WP-18 final-preflight issue
+  `#3577` should claim completion.
 
 ## Exit Criteria
 
