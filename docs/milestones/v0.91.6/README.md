@@ -40,6 +40,10 @@ Its job is to make the load-bearing pre-`v0.92` surfaces reviewable:
 - AEE completion, Memory/ObsMem handoff, and ACP/cognitive profile accounting
   so `v0.92` knows whether each surface is complete, deferred, blocked, or
   routed before activation
+- strategic account and infrastructure setup planning that must be ready for
+  `v0.91.6` execution, including `#3902` for the `agent-logic.ai` AWS account
+- MVP route preservation for CodeFriend v1 / portable adapter v2 and guilds,
+  so those later surfaces remain scheduled without expanding `v0.92`
 
 `v0.91.6` should leave `v0.91.7` with explicit second-tranche work, not vague
 spillover.
@@ -86,6 +90,21 @@ These are not blockers for creating this planning package. They are required
 inputs to the `v0.91.6` tooling proof-loop work, and `#3935` is expected to
 complete its first-tranche `SOR` convergence slice within this milestone.
 
+## Companion Setup Inputs
+
+`#3902` is the tracked route for creating and planning the `agent-logic.ai` AWS
+account. It is not a `v0.92` activation surface and should not expand the
+birthday milestone, but it is part of the `v0.91.6` readiness queue because the
+company AWS account, credits application, account-bound Terraform posture, and
+strategic project hosting boundaries need to be planned before later
+infrastructure work leans on them.
+
+CodeFriend v1 / portable adapter v2 and guilds are also companion planning
+routes for v0.91.6. They are not first-tranche activation proof, but their
+routes must remain visible so CodeFriend v1 can land after v0.92 and before
+v0.95, and guilds can stay in MVP scope through the v0.93 governance feature
+route and v0.95 MVP consumption.
+
 ## v0.91.7 Handoff
 
 `v0.91.7` remains required for second-tranche bridge work unless `v0.91.6`
@@ -110,6 +129,9 @@ Expected `v0.91.7` residuals:
 - `#3779`: feature-doc production wave setup
 - `#3802`-`#3805`: tooling reliability findings raised during this wave
 - `#3935`: card/GitHub projection convergence for PR and lifecycle truth
+- `#3902`: `agent-logic.ai` AWS account setup planning
+- `docs/milestones/v0.93/features/GUILDS_AND_COLLECTIVE_ORGANIZATION_v0.93.md`
+- `docs/milestones/v0.95/features/CODEFRIEND_V1_PORTABLE_ADAPTER_V2_PROOF_v0.95.md`
 - `docs/planning/ADL_FEATURE_LIST.md`
 - `docs/planning/FEATURE_DOC_PRODUCTION_MINI_SPRINT_v0.91.5.md`
 - `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md`

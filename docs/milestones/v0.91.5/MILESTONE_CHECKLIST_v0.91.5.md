@@ -5,7 +5,7 @@
 - Version: `v0.91.5`
 - Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `sprint_4_wp_18_active`
+- Status: `sprint_4_wp_19_active`
 
 ## Purpose
 
@@ -25,7 +25,8 @@ checks needed for truthful v0.91.5 closeout.
 - [ ] Feature docs exist for all bridge work tracks.
 - [ ] Open side issues are relabeled to `version:v0.91.5`.
 - [ ] v0.91.4 docs say bridge work moved, not abandoned.
-- [ ] v0.92 docs depend on v0.91.5 closeout and `#3377`.
+- [ ] v0.91.6 docs depend on v0.91.5 closeout and `#3377`.
+- [ ] v0.91.7 second-tranche rule is explicit before v0.92 opens.
 - [ ] All opened v0.91.5 issues use five prompt cards from the active registry.
 
 ## Execution Discipline
@@ -65,9 +66,18 @@ checks needed for truthful v0.91.5 closeout.
 
 - [ ] Release plan complete.
 - [ ] Release notes rewritten from landed evidence.
+- [x] `#3929` GitHub transport-boundary cleanup is closed and consumed as
+  release-tail tooling truth.
+- [x] Second-pass internal review `#3923` is complete.
 - [x] Refactor behavior-preservation evidence decision is recorded:
   [WP18_REFACTOR_BEHAVIOR_PRESERVATION_DECISION_2026-06-17.md](review/external_review/WP18_REFACTOR_BEHAVIOR_PRESERVATION_DECISION_2026-06-17.md)
-- [ ] v0.92 final preflight complete.
+- [x] External/third-party review `#3580` is complete or explicitly
+  blocked/deferred with rationale.
+- [x] Final remediation and pre-v0.92 routing `#3577` is complete or explicitly
+  routed.
+- [ ] v0.91.6 handoff complete, including v0.91.7 second-tranche criteria.
+- [ ] 15-minute operator break after ceremony is recorded before v0.91.6 starts.
+- [ ] v0.92 final preflight routing complete.
 - [x] WP-18 conditional v0.92 preflight recorded:
   [WP18_EXTERNAL_REVIEW_REMEDIATION_DISPOSITION_2026-06-17.md](review/external_review/WP18_EXTERNAL_REVIEW_REMEDIATION_DISPOSITION_2026-06-17.md)
 - [x] Review findings fixed or routed:
@@ -76,12 +86,14 @@ checks needed for truthful v0.91.5 closeout.
 
 ## Post-Release
 
-- [ ] v0.92 WP-01 inputs are linked.
+- [ ] v0.91.6 WP-01 inputs are linked.
+- [ ] v0.91.7 and v0.92 routing inputs are linked where applicable.
 - [ ] Deferred bridge items have owners and follow-on routing.
 - [ ] Residual risks are recorded in release notes or handoff.
 
 ## Exit Criteria
 
 - All required gates are checked or exceptions have owners.
-- v0.92 can open from v0.91.5 closeout and `#3377`.
+- v0.91.6 can open from v0.91.5 closeout and `#3377`, with v0.91.7/v0.92
+  routing explicit.
 - Multi-agent completion/blocker truth is explicit.

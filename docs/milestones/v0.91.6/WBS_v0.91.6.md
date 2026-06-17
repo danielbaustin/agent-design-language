@@ -39,6 +39,17 @@ decision records, and proof-loop repairs before `v0.92` activation opens.
 | WP-12 | Internal review | Review docs for missing bridge surfaces, overclaims, security gaps, and vague spillover. | Review packet and finding register. | WP-11. |
 | WP-13 | Remediation and closeout | Fix review findings, update milestone docs, and produce closeout truth. | Remediation PRs, final checklist, and closeout packet. | WP-12. |
 
+## Companion Planning Queue
+
+These items are queued for `v0.91.6` readiness but are not activation surfaces
+and should not disturb the first-tranche bridge sequence above:
+
+| Item | Route | Required v0.91.6 disposition |
+| --- | --- | --- |
+| `agent-logic.ai` AWS account setup | `#3902` | Account setup plan, AWS credits application guidance, Terraform boundary, and hosting/security non-claims are complete, blocked, deferred, or routed before infrastructure consumers rely on the account. |
+| CodeFriend v1 / portable adapter v2 | `docs/milestones/v0.95/features/CODEFRIEND_V1_PORTABLE_ADAPTER_V2_PROOF_v0.95.md` | Route remains visible as post-v0.92 / pre-v0.95 proof work without pulling product implementation into v0.91.6. |
+| Guilds / MVP governance route | `docs/milestones/v0.93/features/GUILDS_AND_COLLECTIVE_ORGANIZATION_v0.93.md` and v0.95 MVP consumption | Route remains visible as MVP-scoped governance work without pulling governance implementation into v0.91.6 or v0.92 birthday activation. |
+
 ## Acceptance Mapping
 
 - Resilience must cover continuity, sleep/wake, recovery, migration, replay, and
@@ -59,6 +70,10 @@ decision records, and proof-loop repairs before `v0.92` activation opens.
 - Security/CAV must remain on the activation path.
 - AEE completion, Memory/ObsMem, and ACP/cognitive profiles must be accounted
   before `v0.92` consumes them.
+- `#3902` must remain visible as a `v0.91.6` account/setup planning item, not
+  as hidden infrastructure work inside the birthday milestone.
+- CodeFriend v1 / adapter v2 and guilds must remain visible as companion
+  planning routes, not as first-tranche activation proof.
 - `v0.91.7` residuals must be named, not left as "future work."
 
 ## Exit Criteria

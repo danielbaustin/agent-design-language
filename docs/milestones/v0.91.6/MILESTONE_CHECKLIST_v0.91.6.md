@@ -45,6 +45,19 @@ execution has not started.
 - [ ] `#3804` lifecycle-card path-leakage diagnostic precision fixed or routed.
 - [ ] `#3805` octocrab token preflight diagnostics fixed or routed.
 
+## Companion Setup Planning
+
+- [ ] `#3902` `agent-logic.ai` AWS account setup plan completed, blocked,
+  deferred, or routed.
+- [ ] AWS credits/application guidance is recorded without exposing sensitive
+  offer identifiers.
+- [ ] Account-bound Terraform and hosting/security boundaries are explicit
+  before later infrastructure consumers rely on the account.
+- [ ] CodeFriend v1 / portable adapter v2 route remains visible for
+  post-v0.92 / pre-v0.95 proof work.
+- [ ] Guilds remain visible as an MVP-scoped governance route through v0.93 and
+  v0.95 consumption.
+
 ## Scope Integrity
 
 - [ ] No runtime feature is claimed by planning docs alone.
@@ -56,6 +69,9 @@ execution has not started.
 - [ ] Gemma/model reliability is addressed as part of multi-agent readiness.
 - [ ] AEE, Memory/ObsMem, and ACP/profile surfaces are visible before v0.92
   activation refresh.
+- [ ] `#3902` is visible as v0.91.6 setup planning, not v0.92 activation proof.
+- [ ] CodeFriend and guild route preservation is not treated as first-tranche
+  runtime or activation proof.
 
 ## Review And Closeout
 
