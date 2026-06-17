@@ -512,6 +512,57 @@ window.CSDLC_PROMPT_EDITOR_MODEL = {
           "enum_values": []
         },
         {
+          "key": "card_status",
+          "label": "Card Status",
+          "input": "select",
+          "required": true,
+          "editable": true,
+          "help": "SPP lifecycle card status.",
+          "enum_values": [
+            "draft",
+            "ready",
+            "reviewed",
+            "approved",
+            "completed",
+            "blocked",
+            "superseded"
+          ]
+        },
+        {
+          "key": "status",
+          "label": "Status",
+          "input": "select",
+          "required": true,
+          "editable": true,
+          "help": "SPP frontmatter lifecycle status.",
+          "enum_values": [
+            "draft",
+            "ready",
+            "reviewed",
+            "approved",
+            "completed",
+            "blocked",
+            "superseded"
+          ]
+        },
+        {
+          "key": "activation_state",
+          "label": "Activation State",
+          "input": "select",
+          "required": true,
+          "editable": true,
+          "help": "SPP execution-readiness lifecycle state.",
+          "enum_values": [
+            "draft",
+            "ready",
+            "reviewed",
+            "approved",
+            "completed",
+            "blocked",
+            "superseded"
+          ]
+        },
+        {
           "key": "stp_card",
           "label": "STP Card",
           "input": "textarea",
@@ -620,7 +671,7 @@ window.CSDLC_PROMPT_EDITOR_MODEL = {
           "enum_values": []
         }
       ],
-      "template": "---\nschema_version: \"0.1\"\nartifact_type: \"structured_planning_prompt\"\nname: \"<slug>-execution-plan\"\nissue: <issue>\ntask_id: \"issue-<issue_padded>\"\nrun_id: \"issue-<issue_padded>\"\nversion: \"<version>\"\ntitle: \"<title>\"\nbranch: \"<branch>\"\ngenerated_at: \"<timestamp>\"\ncard_status: \"<card_status>\"\nstatus: \"draft\"\nactivation_state: \"draft\"\nplan_revision: 1\nsource_refs:\n  - kind: \"issue\"\n    ref: \"<issue_url>\"\n  - kind: \"source_issue_prompt\"\n    ref: \"<source_issue_prompt>\"\n  - kind: \"stp\"\n    ref: \"<stp_card>\"\n  - kind: \"sip\"\n    ref: \"<sip_card>\"\nscope:\n  files:\n    - \"<target_files_surfaces_inline>\"\n  components:\n    - \"<slug>\"\n  out_of_scope:\n    - \"<non_goals_inline>\"\nconstraints:\n  - \"design_time_plan_must_be_reviewed_before_execution\"\n  - \"runtime_execution_must_update_spp_if_plan_changes\"\n  - \"no_hidden_scope_expansion\"\nconfidence: \"medium\"\nplan_summary: \"<plan_summary>\"\nassumptions:\n  - \"The linked source issue prompt, STP, and SIP remain the canonical design-time inputs.\"\nproposed_steps:\n  - id: \"step-1\"\n    description: \"Confirm dependency readiness and starting state: <dependencies_inline>\"\n    expected_output: \"<sip_card>\"\n    allowed_mode: \"design_review_then_execution\"\n  - id: \"step-2\"\n    description: \"Review repo inputs and scoped surfaces before editing: <repo_inputs_inline>\"\n    expected_output: \"<stp_card>\"\n    allowed_mode: \"design_review_then_execution\"\n  - id: \"step-3\"\n    description: \"Implement only the bounded deliverables: <deliverables_inline>\"\n    expected_output: \"tracked issue work product\"\n    allowed_mode: \"execution_after_approval\"\n  - id: \"step-4\"\n    description: \"Run focused proof gates for acceptance: <acceptance_criteria_inline>\"\n    expected_output: \"validation evidence recorded in SOR\"\n    allowed_mode: \"execution_after_approval\"\n  - id: \"step-5\"\n    description: \"Record issue-specific review findings in SRP, issue outcome truth in SOR, and refresh this SPP if execution diverges.\"\n    expected_output: \"reviewed SRP and truthful SOR\"\n    allowed_mode: \"execution_after_approval\"\ncodex_plan:\n  - step: \"Confirm dependencies and starting state from the source issue prompt.\"\n    status: \"pending\"\n  - step: \"Inspect repo inputs and target surfaces before editing.\"\n    status: \"pending\"\n  - step: \"Implement the bounded deliverables only.\"\n    status: \"pending\"\n  - step: \"Run focused validation and proof gates.\"\n    status: \"pending\"\n  - step: \"Record issue-specific SRP findings and SOR outcome truth.\"\n    status: \"pending\"\naffected_areas:\n  - \"<slug>\"\ninvariants_to_preserve:\n  - \"Keep SPP issue-local; do not turn it into sprint orchestration.\"\n  - \"Keep SRP as review-result truth and SOR as output truth.\"\nrisks_and_edge_cases:\n  - \"<risks_inline>\"\ntest_strategy:\n  - \"<validation_plan_inline>\"\nexecution_handoff: \"Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes.\"\nrequired_permissions:\n  - \"workspace-write after execution approval\"\nstop_conditions:\n  - \"Stop and re-plan if dependencies are unmet or materially different from this design-time plan.\"\n  - \"Stop and update SPP if touched files, proof gates, or validation commands change materially.\"\n  - \"Stop and route follow-on work if acceptance requires scope outside this issue.\"\nalternatives_considered:\n  - description: \"Rely only on transient chat planning.\"\n    reason_not_chosen: \"Chat-only planning is not durable or reviewable enough for this workflow surface.\"\nreview_hooks:\n  - \"Check dependency truth, scope truthfulness, touched-file truthfulness, validation sufficiency, and re-plan triggers.\"\nnotes: \"<notes_risks_inline>\"\n---\n\nCanonical Template Source: `docs/templates/prompts/1.0.0/spp.md`\n\n# Structured Plan Prompt\n\n## Plan Summary\n\nDesign-time operative plan for `<title>`.\n\n<plan_summary>\n\n## Codex Plan\n\n1. [pending] Confirm dependencies and starting state from the source issue prompt.\n2. [pending] Inspect repo inputs and target surfaces before editing.\n3. [pending] Implement the bounded deliverables only.\n4. [pending] Run focused validation and proof gates.\n5. [pending] Record issue-specific SRP findings and SOR outcome truth.\n\n## Assumptions\n\n- The linked source issue prompt, STP, and SIP remain the canonical design-time inputs.\n\n## Proposed Steps\n\n1. Confirm dependency readiness and starting state: <dependencies_inline>\n2. Review repo inputs and scoped surfaces before editing: <repo_inputs_inline>\n3. Implement only the bounded deliverables: <deliverables_inline>\n4. Run focused proof gates for acceptance: <acceptance_criteria_inline>\n5. Record issue-specific review findings in SRP, issue outcome truth in SOR, and refresh this SPP if execution diverges.\n\n## Affected Areas\n\n- <slug>\n\n## Invariants To Preserve\n\n- Keep SPP issue-local; do not turn it into sprint orchestration.\n- Keep SRP as review-result truth and SOR as output truth.\n\n## Risks And Edge Cases\n\n- <risks_inline>\n\n## Test Strategy\n\n- <validation_plan_inline>\n\n## Execution Handoff\n\nUse this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes.\n\n## Stop Conditions\n\n- Stop and re-plan if dependencies are unmet or materially different from this design-time plan.\n- Stop and update SPP if touched files, proof gates, or validation commands change materially.\n- Stop and route follow-on work if acceptance requires scope outside this issue.\n\n## Notes\n\n<notes_risks_inline>\n"
+      "template": "---\nschema_version: \"0.1\"\nartifact_type: \"structured_planning_prompt\"\nname: \"<slug>-execution-plan\"\nissue: <issue>\ntask_id: \"issue-<issue_padded>\"\nrun_id: \"issue-<issue_padded>\"\nversion: \"<version>\"\ntitle: \"<title>\"\nbranch: \"<branch>\"\ngenerated_at: \"<timestamp>\"\ncard_status: \"<card_status>\"\nstatus: \"<status>\"\nactivation_state: \"<activation_state>\"\nplan_revision: 1\nsource_refs:\n  - kind: \"issue\"\n    ref: \"<issue_url>\"\n  - kind: \"source_issue_prompt\"\n    ref: \"<source_issue_prompt>\"\n  - kind: \"stp\"\n    ref: \"<stp_card>\"\n  - kind: \"sip\"\n    ref: \"<sip_card>\"\nscope:\n  files:\n    - \"<target_files_surfaces_inline>\"\n  components:\n    - \"<slug>\"\n  out_of_scope:\n    - \"<non_goals_inline>\"\nconstraints:\n  - \"design_time_plan_must_be_reviewed_before_execution\"\n  - \"runtime_execution_must_update_spp_if_plan_changes\"\n  - \"no_hidden_scope_expansion\"\nconfidence: \"medium\"\nplan_summary: \"<plan_summary>\"\nassumptions:\n  - \"The linked source issue prompt, STP, and SIP remain the canonical design-time inputs.\"\nproposed_steps:\n  - id: \"step-1\"\n    description: \"Confirm dependency readiness and starting state: <dependencies_inline>\"\n    expected_output: \"<sip_card>\"\n    allowed_mode: \"design_review_then_execution\"\n  - id: \"step-2\"\n    description: \"Review repo inputs and scoped surfaces before editing: <repo_inputs_inline>\"\n    expected_output: \"<stp_card>\"\n    allowed_mode: \"design_review_then_execution\"\n  - id: \"step-3\"\n    description: \"Implement only the bounded deliverables: <deliverables_inline>\"\n    expected_output: \"tracked issue work product\"\n    allowed_mode: \"execution_after_approval\"\n  - id: \"step-4\"\n    description: \"Run focused proof gates for acceptance: <acceptance_criteria_inline>\"\n    expected_output: \"validation evidence recorded in SOR\"\n    allowed_mode: \"execution_after_approval\"\n  - id: \"step-5\"\n    description: \"Record issue-specific review findings in SRP, issue outcome truth in SOR, and refresh this SPP if execution diverges.\"\n    expected_output: \"reviewed SRP and truthful SOR\"\n    allowed_mode: \"execution_after_approval\"\ncodex_plan:\n  - step: \"Confirm dependencies and starting state from the source issue prompt.\"\n    status: \"pending\"\n  - step: \"Inspect repo inputs and target surfaces before editing.\"\n    status: \"pending\"\n  - step: \"Implement the bounded deliverables only.\"\n    status: \"pending\"\n  - step: \"Run focused validation and proof gates.\"\n    status: \"pending\"\n  - step: \"Record issue-specific SRP findings and SOR outcome truth.\"\n    status: \"pending\"\naffected_areas:\n  - \"<slug>\"\ninvariants_to_preserve:\n  - \"Keep SPP issue-local; do not turn it into sprint orchestration.\"\n  - \"Keep SRP as review-result truth and SOR as output truth.\"\nrisks_and_edge_cases:\n  - \"<risks_inline>\"\ntest_strategy:\n  - \"<validation_plan_inline>\"\nexecution_handoff: \"Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes.\"\nrequired_permissions:\n  - \"workspace-write after execution approval\"\nstop_conditions:\n  - \"Stop and re-plan if dependencies are unmet or materially different from this design-time plan.\"\n  - \"Stop and update SPP if touched files, proof gates, or validation commands change materially.\"\n  - \"Stop and route follow-on work if acceptance requires scope outside this issue.\"\nalternatives_considered:\n  - description: \"Rely only on transient chat planning.\"\n    reason_not_chosen: \"Chat-only planning is not durable or reviewable enough for this workflow surface.\"\nreview_hooks:\n  - \"Check dependency truth, scope truthfulness, touched-file truthfulness, validation sufficiency, and re-plan triggers.\"\nnotes: \"<notes_risks_inline>\"\n---\n\nCanonical Template Source: `docs/templates/prompts/1.0.0/spp.md`\n\n# Structured Plan Prompt\n\n## Plan Summary\n\nDesign-time operative plan for `<title>`.\n\n<plan_summary>\n\n## Codex Plan\n\n1. [pending] Confirm dependencies and starting state from the source issue prompt.\n2. [pending] Inspect repo inputs and target surfaces before editing.\n3. [pending] Implement the bounded deliverables only.\n4. [pending] Run focused validation and proof gates.\n5. [pending] Record issue-specific SRP findings and SOR outcome truth.\n\n## Assumptions\n\n- The linked source issue prompt, STP, and SIP remain the canonical design-time inputs.\n\n## Proposed Steps\n\n1. Confirm dependency readiness and starting state: <dependencies_inline>\n2. Review repo inputs and scoped surfaces before editing: <repo_inputs_inline>\n3. Implement only the bounded deliverables: <deliverables_inline>\n4. Run focused proof gates for acceptance: <acceptance_criteria_inline>\n5. Record issue-specific review findings in SRP, issue outcome truth in SOR, and refresh this SPP if execution diverges.\n\n## Affected Areas\n\n- <slug>\n\n## Invariants To Preserve\n\n- Keep SPP issue-local; do not turn it into sprint orchestration.\n- Keep SRP as review-result truth and SOR as output truth.\n\n## Risks And Edge Cases\n\n- <risks_inline>\n\n## Test Strategy\n\n- <validation_plan_inline>\n\n## Execution Handoff\n\nUse this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes.\n\n## Stop Conditions\n\n- Stop and re-plan if dependencies are unmet or materially different from this design-time plan.\n- Stop and update SPP if touched files, proof gates, or validation commands change materially.\n- Stop and route follow-on work if acceptance requires scope outside this issue.\n\n## Notes\n\n<notes_risks_inline>\n"
     },
     {
       "kind": "srp",
