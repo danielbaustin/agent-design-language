@@ -1681,3 +1681,318 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
     assert!(janitor_log.contains("--issue 1153"));
     assert!(closeout_log.contains("--issue 1153"));
 }
+
+#[test]
+fn real_pr_finish_restages_tracked_output_truth_written_during_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-restage-output-truth");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
+    fs::create_dir_all(repo.join("docs")).expect("docs dir");
+    fs::write(repo.join("docs/notes.md"), "initial notes\n").expect("write docs");
+
+    let issue_ref = IssueRef::new(
+        1162,
+        "v0.86".to_string(),
+        "restage-output-truth".to_string(),
+    )
+    .expect("ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    let stp = issue_ref.task_bundle_stp_path(&repo);
+    let input = issue_ref.task_bundle_input_path(&repo);
+    let output = repo.join("docs/output-truth.md");
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Restage finish output truth",
+    );
+    fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+    write_authored_sip(
+        &input,
+        &issue_ref,
+        "[v0.86][tools] Restage finish output truth",
+        "codex/1162-restage-output-truth",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Restage finish output truth",
+        "codex/1162-restage-output-truth",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Restage finish output truth",
+        "codex/1162-restage-output-truth",
+        &repo,
+    );
+    fs::write(
+        &output,
+        r#"# issue-1162
+
+Task ID: issue-1162
+Run ID: issue-1162
+Version: v0.86
+Title: Restage finish output truth
+Branch: codex/1162-restage-output-truth
+Card Status: ready
+Status: DONE
+
+Execution:
+- Actor: Codex
+- Model: GPT-5
+- Provider: OpenAI
+- Start Time: 2026-06-16T00:00:00Z
+- End Time: 2026-06-16T00:00:01Z
+
+## Summary
+
+done
+
+## Artifacts produced
+- docs/notes.md
+
+## Actions taken
+- updated docs
+
+## Main Repo Integration (REQUIRED)
+- Main-repo paths updated:
+  - `docs/notes.md`
+- Worktree-only paths remaining: none
+- Worktree prune result: not_run
+- Integration state: open_pr
+- Verification scope: main-repo
+- Integration method used: manual
+- Verification performed:
+  - `python3 - <<'PY' ...`
+    Existing docs-only proof.
+- Result: PASS
+
+## Validation
+- Validation commands and their purpose:
+  - `python3 - <<'PY' ...`
+    Existing docs-only proof.
+- Results:
+  - PASS
+
+## Verification Summary
+
+```yaml
+verification_summary:
+  validation:
+    status: PASS
+    checks_run:
+      - "python3 - <<'PY' ..."
+  determinism:
+    status: NOT_RUN
+```
+
+## Determinism Evidence
+- not_run
+
+## Security / Privacy Checks
+- ok
+
+## Replay Artifacts
+- not_applicable
+
+## Artifact Verification
+- docs/notes.md
+
+## Decisions / Deviations
+- none
+
+## Follow-ups / Deferred work
+- none
+"#,
+    )
+    .expect("write output");
+
+    assert!(Command::new("git")
+        .args(["add", ".gitignore", "docs/notes.md", "docs/output-truth.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["checkout", "-q", "-b", "codex/1162-restage-output-truth"])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
+
+    fs::write(repo.join("docs/notes.md"), "updated notes\n").expect("update docs");
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    let janitor_log = temp.join("janitor.log");
+    let closeout_log = temp.join("closeout.log");
+    let gh_path = bin_dir.join("gh");
+    let janitor_path = bin_dir.join("janitor");
+    let closeout_path = bin_dir.join("closeout");
+    write_executable(
+        &gh_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2 $3\" = 'repo view --json' ]; then\n  printf 'danielbaustin/agent-design-language\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr list' ]; then\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr create' ]; then\n  printf 'https://github.com/danielbaustin/agent-design-language/pull/1162\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    printf '1162\\n'\n  else\n    printf 'Closes #1162\\n'\n  fi\n  exit 0\nfi\nexit 1\n",
+            gh_log.display()
+        ),
+    );
+    write_executable(
+        &janitor_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            janitor_log.display()
+        ),
+    );
+    write_executable(
+        &closeout_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            closeout_log.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_janitor_cmd = env::var("ADL_PR_JANITOR_CMD").ok();
+    let old_janitor_disable = env::var("ADL_PR_JANITOR_DISABLE").ok();
+    let old_closeout_cmd = env::var("ADL_POST_MERGE_CLOSEOUT_CMD").ok();
+    let old_closeout_disable = env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE").ok();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("ADL_PR_JANITOR_DISABLE", "0");
+        env::set_var("ADL_PR_JANITOR_CMD", &janitor_path);
+        env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "0");
+        env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", &closeout_path);
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let result = real_pr_finish(&[
+        "1162".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Restage finish output truth".to_string(),
+        "--paths".to_string(),
+        "docs/notes.md".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &input),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &output),
+        "--no-open".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+        if let Some(value) = old_janitor_cmd {
+            env::set_var("ADL_PR_JANITOR_CMD", value);
+        } else {
+            env::remove_var("ADL_PR_JANITOR_CMD");
+        }
+        if let Some(value) = old_janitor_disable {
+            env::set_var("ADL_PR_JANITOR_DISABLE", value);
+        } else {
+            env::remove_var("ADL_PR_JANITOR_DISABLE");
+        }
+        if let Some(value) = old_closeout_cmd {
+            env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", value);
+        } else {
+            env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
+        }
+        if let Some(value) = old_closeout_disable {
+            env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", value);
+        } else {
+            env::remove_var("ADL_POST_MERGE_CLOSEOUT_DISABLE");
+        }
+    }
+
+    result.expect("real_pr_finish success");
+
+    let head_output = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(&repo).expect("repo"),
+            "show",
+            "HEAD:docs/output-truth.md",
+        ],
+    )
+    .expect("head output");
+    assert!(
+        head_output.contains("git diff --check"),
+        "commit should include finish-written docs-only validation evidence"
+    );
+    let head_notes = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(&repo).expect("repo"),
+            "show",
+            "HEAD:docs/notes.md",
+        ],
+    )
+    .expect("head notes");
+    assert!(head_notes.contains("updated notes"));
+}
