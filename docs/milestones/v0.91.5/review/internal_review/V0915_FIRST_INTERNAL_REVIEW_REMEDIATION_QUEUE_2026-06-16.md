@@ -24,10 +24,13 @@
 - `#3891` is merged.
 - `#3892` is merged and closed out after PR `#3900`.
 - `#3893` is closed out.
-- `#3894` and `#3895` are published as draft PRs.
-- `#3899` is structurally ready to run, but its doctor preflight remains
-  blocked by the existing open tools-wave PR, which is expected and should be
-  preserved rather than treated as corruption.
+- `#3894` and `#3895` are closed out.
+- `#3896` remains active with green draft PR `#3907`; checks are complete and
+  the issue is now waiting on review/merge before closeout.
+- `#3897` is merged via PR `#3905` and is now closed out.
+- `#3898` is merged via PR `#3906` and is now closed out.
+- `#3899` remains the open execution umbrella until the active tooling-tranche
+  child issues are closed or explicitly rerouted.
 - No Rust refactoring work is included in this queue.
 
 ## Supplemental Tooling Remediation Added During Execution
@@ -56,6 +59,35 @@ These findings do not justify widening beyond `#3891-#3899`, but they do mean
 the tooling tranche under `#3896-#3898` must absorb adapter/bootstrap/auth UX
 hardening rather than treating the original three issue titles as exhaustive.
 
+## Tooling Problems Captured for Remediation
+
+The current retained tooling problem set for the `#3896-#3898` tranche is:
+
+1. new worktrees can miss prompt-template scaffolding under
+   `docs/templates/prompts`
+2. new worktrees can miss repo-local `adl/tools` wrappers needed by the normal
+   workflow
+3. issue-mode binding can preserve too little of the repo-local helper
+   execution environment, so later steps fail after the worktree is already
+   bound
+4. `pr.sh issue` commands do not always inherit usable GitHub auth from the
+   local authenticated environment
+5. issue-body validation surfaces strict missing-section failures too late for
+   smooth operator repair
+6. `run` can bind onto a stale baseline missing prerequisite in-flight outputs
+   without warning early enough
+7. the adapter still relies on manual bridge-repair knowledge for repeatable
+   worktree startup
+8. `pr finish` lacks supported finish-validation routing for the
+   observability-source surface touched in `#3896`
+9. `pr finish` lacks supported finish-validation routing for the markdown-AST
+   tooling surface plus focused tests touched in `#3898`
+10. truthful emergency publication after finish-path failure is not yet a
+    first-class workflow path
+
+Keep these as explicit remediation inputs even if individual child issues merge
+before the broader adapter/tooling fixes land.
+
 ## Ordered Execution Plan
 
 1. `#3891` and `#3892`
@@ -72,8 +104,9 @@ hardening rather than treating the original three issue titles as exhaustive.
     disjoint.
   - Expanded scope inside the existing tranche: absorb the operator-reported
     worktree bootstrap, local bridge, GitHub auth handoff, issue-body
-    validation UX, and stale-baseline warning findings surfaced during live
-    execution.
+    validation UX, stale-baseline warning findings, incomplete `pr finish`
+    lane classification, and missing truthful emergency-publication path
+    surfaced during live execution.
 5. `#3899` closeout
    - Close the umbrella only after child issues are closed or explicitly
      rerouted.
