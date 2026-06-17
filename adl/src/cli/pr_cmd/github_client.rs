@@ -461,7 +461,37 @@ pub(super) fn linked_issue_numbers_include(
 }
 
 pub(super) fn body_contains_closing_linkage(body: &str, issue: u32) -> bool {
-    body.contains(&format!("Closes #{issue}"))
+    let issue_ref = format!("#{issue}");
+    const CLOSING_KEYWORDS: [&str; 9] = [
+        "close", "closes", "closed", "fix", "fixes", "fixed", "resolve", "resolves", "resolved",
+    ];
+    body.lines().any(|line| {
+        let lower = line.to_ascii_lowercase();
+        CLOSING_KEYWORDS.iter().any(|keyword| {
+            lower.match_indices(keyword).any(|(idx, _)| {
+                closing_keyword_match_targets_issue(&lower, idx, keyword, &issue_ref)
+            })
+        })
+    })
+}
+
+fn closing_keyword_match_targets_issue(
+    line: &str,
+    keyword_idx: usize,
+    keyword: &str,
+    issue_ref: &str,
+) -> bool {
+    if keyword_idx > 0
+        && line[..keyword_idx]
+            .chars()
+            .next_back()
+            .is_some_and(|ch| ch.is_ascii_alphanumeric())
+    {
+        return false;
+    }
+    let mut rest = &line[keyword_idx + keyword.len()..];
+    rest = rest.trim_start_matches(|ch: char| ch.is_ascii_whitespace() || ch == ':');
+    rest.starts_with(issue_ref)
 }
 
 #[cfg(test)]
@@ -781,12 +811,28 @@ mod tests {
             "Summary\n\nCloses #1153\n",
             1153
         ));
-        assert!(!body_contains_closing_linkage(
+        assert!(body_contains_closing_linkage(
             "Summary\n\ncloses #1153\n",
+            1153
+        ));
+        assert!(body_contains_closing_linkage(
+            "Summary\n\nFIXED #1153\n",
+            1153
+        ));
+        assert!(body_contains_closing_linkage(
+            "Summary\n\nResolved: #1153\n",
             1153
         ));
         assert!(!body_contains_closing_linkage(
             "Summary\n\nRefs #1153\n",
+            1153
+        ));
+        assert!(!body_contains_closing_linkage(
+            "Summary\n\nprefixcloses #1153\n",
+            1153
+        ));
+        assert!(!body_contains_closing_linkage(
+            "Summary\n\ncloses #9999\n",
             1153
         ));
     }
