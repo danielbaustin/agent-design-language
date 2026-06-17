@@ -82,8 +82,11 @@ fn emit_compatibility_sink_failure(
     stage: &str,
     log_path: &str,
     err: &str,
-    _stderr_suppressed: bool,
+    stderr_suppressed: bool,
 ) {
+    if stderr_suppressed {
+        return;
+    }
     let line = format!(
         "adl_event schema=adl.observability.event.v1 command={} stage=compatibility_log result=failed original_stage={} sink={} detail={}",
         sanitize_value(command),
@@ -495,6 +498,55 @@ mod tests {
         .expect_err("directory path should not be append-openable");
         assert!(err.contains("op=open"));
         assert!(err.contains("sink=<path>"));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn compatibility_log_sink_failure_stays_quiet_when_stderr_is_suppressed() {
+        use std::fs::File;
+        use std::io::{Read, Write};
+        use std::os::fd::{AsRawFd, FromRawFd};
+
+        unsafe extern "C" {
+            fn close(fd: i32) -> i32;
+            fn dup(fd: i32) -> i32;
+            fn dup2(src: i32, dst: i32) -> i32;
+            fn pipe(fds: *mut i32) -> i32;
+        }
+
+        let temp = unique_temp_dir("adl-observability-quiet-bad-log-open");
+        let _env = MultiEnvGuard::set_all(&[
+            ("ADL_OBSERVABILITY_LOG", temp.to_str().expect("temp utf8")),
+            ("ADL_OBSERVABILITY_STDERR", "0"),
+            ("ADL_OBSERVABILITY_REPO_ROOT", "/repo/adl"),
+        ]);
+
+        let mut fds = [0_i32; 2];
+        assert_eq!(unsafe { pipe(fds.as_mut_ptr()) }, 0, "create pipe");
+        let read_fd = fds[0];
+        let write_fd = fds[1];
+        let stderr_fd = std::io::stderr().as_raw_fd();
+        let saved_stderr = unsafe { dup(stderr_fd) };
+        assert!(saved_stderr >= 0, "dup stderr");
+        assert!(unsafe { dup2(write_fd, stderr_fd) } >= 0, "redirect stderr");
+        unsafe {
+            close(write_fd);
+        }
+
+        emit_event("adl", "doctor", "completed", &[]);
+
+        std::io::stderr().flush().expect("flush stderr");
+        assert!(unsafe { dup2(saved_stderr, stderr_fd) } >= 0, "restore stderr");
+        unsafe {
+            close(saved_stderr);
+        }
+
+        let mut captured = String::new();
+        let mut reader = unsafe { File::from_raw_fd(read_fd) };
+        reader
+            .read_to_string(&mut captured)
+            .expect("read captured stderr");
+        assert!(captured.is_empty(), "expected quiet stderr, got: {captured}");
     }
 
     #[test]
