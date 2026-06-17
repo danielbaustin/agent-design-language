@@ -12,8 +12,15 @@ Usage:\n\
   adl-pr-init --help\n\
   adl-pr-init --version";
 
+fn run_with_dispatch(
+    args: &[String],
+    dispatch: fn(&[String]) -> anyhow::Result<()>,
+) -> anyhow::Result<()> {
+    pr_dispatch_support::run_pr_subcommand_args("init", USAGE, args, dispatch)
+}
+
 fn run(args: &[String]) -> anyhow::Result<()> {
-    pr_dispatch_support::run_pr_subcommand_args("init", USAGE, args, cli::pr_cmd::real_pr)
+    run_with_dispatch(args, cli::pr_cmd::real_pr)
 }
 
 fn main() {
@@ -26,12 +33,43 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::run;
+    use super::{run, run_with_dispatch};
+    use std::sync::{Mutex, OnceLock};
+
+    static CALLS: OnceLock<Mutex<Vec<Vec<String>>>> = OnceLock::new();
+
+    fn record_dispatch(args: &[String]) -> anyhow::Result<()> {
+        CALLS
+            .get_or_init(|| Mutex::new(Vec::new()))
+            .lock()
+            .expect("dispatch calls lock")
+            .push(args.to_vec());
+        Ok(())
+    }
 
     #[test]
-    fn init_binary_help_and_version_paths_succeed() {
+    fn adl_pr_init_help_and_version_paths_succeed() {
         for args in [vec!["--help".to_string()], vec!["--version".to_string()]] {
             run(&args).expect("wrapper path should succeed");
         }
+    }
+
+    #[test]
+    fn adl_pr_init_forwards_args_to_dispatch() {
+        let args = vec!["123".to_string(), "--slug".to_string(), "demo".to_string()];
+        run_with_dispatch(&args, record_dispatch).expect("dispatch should succeed");
+        let calls = CALLS
+            .get_or_init(|| Mutex::new(Vec::new()))
+            .lock()
+            .expect("dispatch calls lock");
+        assert_eq!(
+            calls.last().expect("recorded call"),
+            &vec![
+                "init".to_string(),
+                "123".to_string(),
+                "--slug".to_string(),
+                "demo".to_string()
+            ]
+        );
     }
 }
