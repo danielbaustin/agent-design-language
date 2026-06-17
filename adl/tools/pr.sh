@@ -9,7 +9,9 @@
 #
 # Requirements:
 # - git
-# - GitHub token in GITHUB_TOKEN or GH_TOKEN for Rust octocrab-backed GitHub operations
+# - GitHub token in GITHUB_TOKEN or GH_TOKEN for Rust octocrab-backed GitHub operations.
+#   Load tokens from an operator-approved secret source and pass them only to
+#   the ADL command environment. Do not use direct `gh` commands as a fallback.
 # - Rust toolchain for `adl/` checks (fmt, clippy, test)
 #
 #   adl/tools/pr.sh help
@@ -2470,6 +2472,10 @@ Usage:
 
 Notes:
 - Creates the GitHub issue and bootstraps the local root STP/SIP/SPP/SRP/SOR bundle.
+- Requires GITHUB_TOKEN or GH_TOKEN for live GitHub operations; load the token
+  from an operator-approved secret source without printing it. If no token is
+  present, stop and fix the ADL command environment; do not fall back to direct
+  `gh` commands or connector issue APIs.
 - Runs the doctor-ready structural check immediately after bootstrap and fails if the new issue is not ready for the next step.
 - Does not create the branch or worktree execution context.
 - After create, do qualitative SIP/STP/SPP/SRP design-time review and then run `adl/tools/pr.sh run <issue> ...`.
@@ -2629,6 +2635,10 @@ Usage:
 Behavior:
 - delegates to the Rust-owned issue inspection surface
 - uses the typed GitHub transport rather than raw `gh issue list/view`
+- requires GITHUB_TOKEN or GH_TOKEN for live GitHub operations; if no token is
+  present, stop and fix the ADL command environment by loading one from an
+  operator-approved secret source without echoing it; do not fall back to direct
+  `gh` commands or connector issue APIs
 - defaults `-R/--repo` from the current checkout when omitted
 - infers `owner/repo` from a GitHub issue URL on `issue view` when possible
 - keeps machine-readable JSON on stdout when `--json` is set

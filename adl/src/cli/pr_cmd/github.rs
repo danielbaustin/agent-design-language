@@ -1132,7 +1132,7 @@ fn github_credential_preflight_hint(
     config: &crate::cli::pr_cmd::github_client::AdlGithubClientConfig,
 ) -> String {
     match config.token_source {
-        None => "credential_status=missing_token; set GITHUB_TOKEN or GH_TOKEN before live C-SDLC GitHub operations; if you already use GitHub CLI auth, export its token into GITHUB_TOKEN for this command without echoing it".to_string(),
+        None => "credential_status=missing_token; set GITHUB_TOKEN or GH_TOKEN before live C-SDLC GitHub operations; load the token from an operator-approved secret source and pass it only to the ADL command environment without echoing it; do not fall back to direct gh commands".to_string(),
         Some(source) => format!(
             "credential_status=token_present source={}; ADL_GITHUB_CLIENT=gh is not a supported mutation fallback for covered operations; use ADL_GITHUB_CLIENT=auto or ADL_GITHUB_CLIENT=octocrab",
             source.env_name()
@@ -4542,6 +4542,8 @@ sys.exit(9)
         assert!(err_debug.contains("github_client.gh_fallback_removed"));
         assert!(err_debug.contains("credential_status=missing_token"));
         assert!(err_debug.contains("set GITHUB_TOKEN or GH_TOKEN"));
+        assert!(err_debug.contains("operator-approved secret source"));
+        assert!(err_debug.contains("do not fall back to direct gh commands"));
         assert!(err_debug.contains("credential values are never printed"));
 
         restore_github_policy_env(policy_env);
