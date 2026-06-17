@@ -1,5 +1,6 @@
 use super::*;
 use crate::cli::pr_cmd_args::IssueStateFilter;
+use crate::cli::pr_cmd_cards::render_issue_prompt_from_body;
 
 fn spawn_issue_octocrab_test_server(
     expected_requests: usize,
@@ -104,6 +105,24 @@ fn render_generated_issue_prompt_is_detected_as_bootstrap_stub() {
         "https://github.com/example/repo/issues/1153",
     );
     assert!(bootstrap_stub_reason(&content, PromptSurfaceKind::IssuePrompt).is_some());
+}
+
+#[test]
+fn render_issue_prompt_from_body_adds_notes_section_when_missing() {
+    let content = render_issue_prompt_from_body(
+        3913,
+        "v0-91-5-tools-fix-authored-issue-body-validation-requiring-notes-section",
+        "[v0.91.5][tools] Fix authored issue-body validation requiring Notes section",
+        "track:roadmap,type:bug,area:tools,area:quality,version:v0.91.5",
+        "https://github.com/example/repo/issues/3913",
+        "## Summary\n\nProblem.\n\n## Goal\n\nFix it.\n\n## Required Outcome\n\nCode.\n\n## Deliverables\n\n- fix\n\n## Acceptance Criteria\n\n- passes\n\n## Repo Inputs\n\n- repo\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- extras\n\n## Issue-Graph Notes\n\n- graph",
+    );
+
+    assert!(content.contains("\n## Notes\n\n- No additional notes.\n"));
+    assert_eq!(
+        bootstrap_stub_reason(&content, PromptSurfaceKind::IssuePrompt),
+        None
+    );
 }
 
 #[test]
