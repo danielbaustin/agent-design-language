@@ -2,22 +2,48 @@
 
 ## Status
 
-Reusable quality-gate packet defined; formal WP-14 application remains open
-under `#3575` during Sprint 4 remediation and release-tail work.
+`blocked`
 
 ## Current Phase
 
-v0.91.5 is no longer in WP-01 opening. The milestone is in the Sprint 4
-review/remediation/release tail:
+WP-14 was applied on 2026-06-17 at the start of Sprint 4. The milestone is in
+the review/remediation/release tail and is not release-ready.
 
 - Sprint 4 umbrella `#3574` remains open.
-- WP-14 quality gate `#3575` remains open.
-- WP-16 internal review `#3576` has already happened in practice, and the
-  release tail is now reconciling the resulting stale-doc/stale-record truth.
-- WP-18 remediation/final preflight `#3577` and WP-20 release ceremony `#3578`
-  remain open.
-- Tooling remediation `#3891` is closed and `#3892` remains in flight, so the
-  quality gate must not pretend the release tail is fully settled yet.
+- WP-14 quality gate `#3575` is the active child issue.
+- WP-15 `#3579`, WP-16 `#3576`, WP-17 `#3580`, WP-18 `#3577`, WP-19 `#3581`,
+  and WP-20 `#3578` all remain open.
+- Second-pass internal review `#3923` is also open, so this gate must treat
+  review readiness as a handoff surface rather than a completed fact.
+
+## Gate Outcome
+
+The quality gate is blocked for release, but successful as a truthful control
+surface.
+
+- Passed:
+  - reusable checklist from `#3531` is now applied
+  - Rust module size check was run through the live tracker command
+  - Sprint 4 ordering and release-tail blockers are explicit
+  - an internal-review plan now exists for the second-pass review
+- Deferred or follow-on:
+  - no dedicated v0.91.5 test-coverage gap-analysis packet exists yet
+  - no dedicated test-runtime regression comparison packet exists yet
+  - ADR readiness remains `not_applicable` for this docs-only gate pass
+- Blockers:
+  - Sprint 4 release-tail issues remain open
+  - sampled closeout truth is not uniformly clean; recent closed issue `#3891`
+    still has a stale local SOR that reports `Integration state: worktree_only`
+    despite the issue being closed
+  - multiple v0.91.5 milestone docs still carry stale `active_wp_01_opening`
+    or opening-era status language and must be normalized in WP-15
+
+## Evidence Packets
+
+- Checklist application packet:
+  [V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md](review/internal_review/V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md)
+- Internal-review readiness plan:
+  [V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md](review/internal_review/V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md)
 
 ## Required Validation
 
@@ -35,6 +61,10 @@ The milestone must run focused validation for:
 - v0.92 activation map completeness;
 - AEE completion-tranche routing and proof expectations;
 - `#3377` first-birthday readiness packet.
+
+WP-14 itself is docs/control-plane work, so this pass used focused
+documentation, issue-state, and tracker evidence rather than broad runtime or
+coverage theater.
 
 ## Reusable Quality-Gate Checklist
 
@@ -94,10 +124,14 @@ The milestone is blocked if:
   not routed before release closeout.
 - portable ADL adapter planning is relied on for external repository evidence
   without a tracked contract, template, or explicit follow-on route.
+- recent closed issue records overclaim closeout truth or remain stale without
+  explicit remediation routing.
+- milestone docs still present WP-01-opening status claims after Sprint 4 has
+  begun.
 
 ## Release Gate
 
 Release can proceed only when every blocker is fixed, explicitly deferred with
 owner/rationale, or converted into a v0.92 WP-01 prerequisite.
 
-The current phase is therefore `remediation_active`, not `release_ready`.
+The current phase is `blocked_for_release_tail`, not `release_ready`.

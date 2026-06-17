@@ -5,7 +5,7 @@
 - Version: `v0.91.5`
 - Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_4_wp_14_active`
 
 ## Purpose
 
@@ -15,7 +15,7 @@ checks needed for truthful v0.91.5 closeout.
 ## Planning
 
 - [x] v0.91.5 planning package exists.
-- [ ] WP-01 confirms planned issues, cards, sprint umbrellas, and initial sequencing are ready.
+- [x] WP-01 confirms planned issues, cards, sprint umbrellas, and initial sequencing are ready.
 - [x] Canonical milestone WP ordering standard is closed through `#3567`.
 - [x] Portable ADL project adapter planning is scheduled through `#3569`.
 - [x] Sprint umbrella issues `#3571` through `#3574` are seeded.
@@ -39,17 +39,17 @@ checks needed for truthful v0.91.5 closeout.
 
 ## Quality Gates
 
-- [ ] Reusable coverage / quality-gate checklist is applied or explicitly
+- [x] Reusable coverage / quality-gate checklist is applied or explicitly
   routed:
   [QUALITY_GATE](QUALITY_GATE_v0.91.5.md)
-- [ ] Test coverage gap analysis is complete or truthfully deferred.
-- [ ] Rust module size tracker has been checked when available:
+- [x] Test coverage gap analysis is complete or truthfully deferred.
+- [x] Rust module size tracker has been checked when available:
   `.adl/reports/manual/rust_module_watch_list.md`
-- [ ] Recent issue closeout truth is sampled or mechanically checked.
-- [ ] Internal review plan exists and is ready before internal review begins.
-- [ ] PVF lane health is recorded, including docs-only, runtime fast/default,
+- [x] Recent issue closeout truth is sampled or mechanically checked.
+- [x] Internal review plan exists and is ready before internal review begins.
+- [x] PVF lane health is recorded, including docs-only, runtime fast/default,
   slow-proof, authoritative coverage, and release-gate lanes.
-- [ ] Changed-file risk, test runtime regression, PR stack/base, docs truth,
+- [x] Changed-file risk, test runtime regression, PR stack/base, docs truth,
   ADR readiness, demo/proof artifacts, security/redaction, and follow-on
   routing have blocker dispositions.
 - [ ] Multi-agent C-SDLC workcell proof completes or blocks truthfully.
