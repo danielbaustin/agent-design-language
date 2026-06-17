@@ -6,8 +6,8 @@ use std::path::{Path, PathBuf};
 
 mod structure;
 mod values;
-use structure::{build_structure_schema, default_structure_schema_path, load_structure_schema};
 pub(crate) use structure::validate_rendered_card_structure_from_repo;
+use structure::{build_structure_schema, default_structure_schema_path, load_structure_schema};
 use values::{
     load_values_document, load_values_file, sample_values_document, PromptValuesDocument,
 };

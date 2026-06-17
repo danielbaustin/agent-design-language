@@ -673,3 +673,123 @@ fn is_rendered_value_line(trimmed: &str, schema: &PromptCardStructureSchema) -> 
         .iter()
         .any(|prefix| trimmed.starts_with(prefix))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::PathBuf;
+
+    fn repo_root() -> PathBuf {
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .expect("crate dir has repo parent")
+            .to_path_buf()
+    }
+
+    fn sample_card(kind: PromptCardKind) -> PromptCardForm {
+        super::super::load_editor_model(&repo_root())
+            .expect("load editor model")
+            .cards
+            .into_iter()
+            .find(|card| card.kind == kind)
+            .expect("sample card exists")
+    }
+
+    #[test]
+    fn structure_helpers_cover_frontmatter_and_heading_parsing() {
+        let (keys, body) = split_optional_frontmatter_keys(
+            "---\nname: demo\nnested:\n  child: 1\n---\n# Heading\nbody\n",
+        )
+        .expect("frontmatter should parse");
+        assert_eq!(keys, vec!["name", "nested", "nested.child"]);
+        assert_eq!(body, "# Heading\nbody\n");
+
+        let (empty_keys, unchanged) =
+            split_optional_frontmatter_keys("# Heading\nbody\n").expect("no frontmatter");
+        assert!(empty_keys.is_empty());
+        assert_eq!(unchanged, "# Heading\nbody\n");
+
+        let err = split_optional_frontmatter_keys("---\nname: missing closer\n")
+            .expect_err("missing closer should fail");
+        assert!(err.to_string().contains("missing YAML frontmatter closer"));
+
+        let heading = parse_markdown_heading("### Demo Heading").expect("heading");
+        assert_eq!(heading.level, 3);
+        assert_eq!(heading.text.as_deref(), Some("Demo Heading"));
+        let dynamic_heading =
+            parse_markdown_heading("## <summary>").expect("dynamic heading still recognized");
+        assert!(dynamic_heading.text.is_none());
+        assert!(parse_markdown_heading("###NoSpace").is_none());
+    }
+
+    #[test]
+    fn structure_helpers_cover_schema_and_ast_shape_logic() {
+        let card = sample_card(PromptCardKind::Stp);
+        let schema = build_structure_schema("test-set", &card).expect("schema");
+        assert_eq!(
+            default_structure_schema_path("1.0.0", PromptCardKind::Sip),
+            "docs/templates/prompts/1.0.0/schemas/sip.structure.json"
+        );
+        assert!(schema
+            .editable_sections
+            .contains(&"Acceptance Criteria".to_string()));
+        assert!(schema
+            .editable_sections
+            .contains(&"Demo Expectations".to_string()));
+
+        let (headings, fenced_blocks) =
+            markdown_ast_structure("demo", "# Root\n\n## Child\n\n```yaml\nkey: value\n```\n")
+                .expect("markdown AST structure");
+        assert_eq!(headings.len(), 2);
+        assert_eq!(headings[0].text.as_deref(), Some("Root"));
+        assert_eq!(fenced_blocks.len(), 1);
+        assert_eq!(fenced_blocks[0].info, "yaml");
+        assert_eq!(
+            fenced_blocks[0].heading_path,
+            vec!["Root".to_string(), "Child".to_string()]
+        );
+    }
+
+    #[test]
+    fn structure_validation_covers_mismatch_and_locked_line_helpers() {
+        let card = sample_card(PromptCardKind::Sip);
+        let rendered =
+            super::super::render_sample_card(&repo_root(), PromptCardKind::Sip).expect("render");
+        validate_rendered_card_structure(&card, &rendered).expect("sample render validates");
+
+        let mut schema = build_structure_schema("inline", &card).expect("schema");
+        schema.card_kind = "stp".to_string();
+        let err = validate_rendered_card_structure_with_schema(&card, &rendered, &schema)
+            .expect_err("card kind mismatch should fail");
+        assert!(err
+            .to_string()
+            .contains("structure schema card_kind mismatch"));
+
+        let expected = vec![LockedLine {
+            heading_path: vec!["Root".to_string()],
+            text: "expected".to_string(),
+        }];
+        let actual = vec![LockedLine {
+            heading_path: vec!["Root".to_string()],
+            text: "actual".to_string(),
+        }];
+        assert!(!locked_lines_match(&expected, &actual));
+        assert!(locked_line_diff(&expected, &actual).contains("first drift"));
+        assert!(heading_paths_match(
+            &["<dynamic-heading>".to_string()],
+            &["Runtime value".to_string()]
+        ));
+        assert!(fenced_blocks_match(
+            &[FencedBlockShape {
+                ordinal: 0,
+                info: "yaml".to_string(),
+                heading_path: vec!["<dynamic-heading>".to_string()],
+            }],
+            &[FencedBlockShape {
+                ordinal: 0,
+                info: "yaml".to_string(),
+                heading_path: vec!["Actual".to_string()],
+            }]
+        ));
+    }
+}
