@@ -58,6 +58,9 @@ fn clear_github_policy_env() -> Vec<(&'static str, Option<String>)> {
         "ADL_TEST_GITHUB_CLI_FIXTURE",
         "GITHUB_TOKEN",
         "GH_TOKEN",
+        "ADL_GITHUB_TOKEN_FILE",
+        "ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE",
+        "ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT",
     ];
     let saved = keys
         .into_iter()

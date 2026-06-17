@@ -108,7 +108,10 @@ fn live_github_policy_explains_missing_token_before_spawn() {
     let err_debug = format!("{err:?}");
     assert!(err_debug.contains("github_client.gh_fallback_removed"));
     assert!(err_debug.contains("credential_status=missing_token"));
-    assert!(err_debug.contains("set GITHUB_TOKEN or GH_TOKEN"));
+    assert!(err_debug.contains("GITHUB_TOKEN"));
+    assert!(err_debug.contains("GH_TOKEN"));
+    assert!(err_debug.contains("ADL_GITHUB_TOKEN_FILE"));
+    assert!(err_debug.contains("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE"));
     assert!(err_debug.contains("operator-approved secret source"));
     assert!(err_debug.contains("do not fall back to direct gh commands"));
     assert!(err_debug.contains("credential values are never printed"));

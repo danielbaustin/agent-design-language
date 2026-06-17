@@ -5,6 +5,7 @@ mod artifact_cmd;
 mod commands;
 mod csm_cmd;
 mod demo_cmd;
+mod github_token;
 mod godel_cmd;
 mod identity_cmd;
 mod observability;

@@ -275,6 +275,9 @@ mod tests {
         let old_disable = std::env::var("ADL_GITHUB_DISABLE_GH_FALLBACK").ok();
         let old_github_token = std::env::var("GITHUB_TOKEN").ok();
         let old_gh_token = std::env::var("GH_TOKEN").ok();
+        let old_token_file = std::env::var("ADL_GITHUB_TOKEN_FILE").ok();
+        let old_keychain_service = std::env::var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE").ok();
+        let old_keychain_account = std::env::var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT").ok();
         let mut path_entries = vec![bin_dir.clone()];
         path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
         unsafe {
@@ -286,6 +289,9 @@ mod tests {
             std::env::remove_var("ADL_GITHUB_DISABLE_GH_FALLBACK");
             std::env::remove_var("GITHUB_TOKEN");
             std::env::remove_var("GH_TOKEN");
+            std::env::remove_var("ADL_GITHUB_TOKEN_FILE");
+            std::env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE");
+            std::env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT");
         }
 
         assert_eq!(
@@ -312,5 +318,8 @@ mod tests {
         restore_env("ADL_GITHUB_DISABLE_GH_FALLBACK", old_disable);
         restore_env("GITHUB_TOKEN", old_github_token);
         restore_env("GH_TOKEN", old_gh_token);
+        restore_env("ADL_GITHUB_TOKEN_FILE", old_token_file);
+        restore_env("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE", old_keychain_service);
+        restore_env("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT", old_keychain_account);
     }
 }

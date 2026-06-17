@@ -1010,6 +1010,28 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_github_token_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml --bin adl github_token",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml --bin adl github_client",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml --bin adl github_release_octocrab_covers_absent_draft_present_publish",
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_owner_binary_rust_slice_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1176,8 +1198,11 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "docs/milestones/v0.91.4/DEMO_MATRIX_v0.91.4.md"
             | "docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md"
             | "adl/src/cli/pr_cmd.rs"
+            | "adl/src/cli/mod.rs"
+            | "adl/src/cli/github_token.rs"
             | "adl/src/lib.rs"
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+            | "adl/src/cli/tests/pr_cmd_inline/support.rs"
             | "adl/src/csdlc_prompt_editor.rs"
             | "adl/src/cli/run_artifacts_types.rs"
             | "adl/schemas/structured_implementation_prompt.contract.yaml"
@@ -1205,6 +1230,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
             | "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
+            | "adl/src/cli/tooling_cmd/github_release.rs"
             | "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs"
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
@@ -1224,9 +1250,20 @@ fn finish_path_needs_pr_cmd_lifecycle_focused_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     trimmed == "adl/src/cli/pr_cmd.rs"
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+        || trimmed == "adl/src/cli/tests/pr_cmd_inline/support.rs"
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || (trimmed.starts_with("adl/src/cli/pr_cmd/")
             && trimmed != "adl/src/cli/pr_cmd/finish_support.rs")
+}
+
+fn finish_path_needs_github_token_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/cli/mod.rs"
+            | "adl/src/cli/github_token.rs"
+            | "adl/src/cli/tooling_cmd/github_release.rs"
+    )
 }
 
 fn finish_path_needs_owner_binary_rust_slice_validation(path: &str) -> bool {
@@ -1356,6 +1393,45 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl github_token" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl",
+                            "github_token",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl github_client" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl",
+                            "github_client",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl github_release_octocrab_covers_absent_draft_present_publish" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl",
+                            "github_release_octocrab_covers_absent_draft_present_publish",
+                        ],
+                    )?;
+                }
                 "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation" => {
                     run_finish_validation_status(
                         "cargo",
@@ -1441,6 +1517,9 @@ const FINISH_VALIDATION_SANITIZED_ENVS: &[&str] = &[
     "ADL_GITHUB_OCTOCRAB_BASE_URI",
     "GITHUB_TOKEN",
     "GH_TOKEN",
+    "ADL_GITHUB_TOKEN_FILE",
+    "ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE",
+    "ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT",
 ];
 
 fn run_finish_validation_status(program: &str, args: &[&str]) -> Result<()> {
