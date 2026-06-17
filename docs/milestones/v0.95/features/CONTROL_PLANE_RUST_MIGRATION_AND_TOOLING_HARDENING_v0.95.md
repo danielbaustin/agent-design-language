@@ -89,6 +89,17 @@ Do not repeat the old pattern of splitting large files into generic `parts`
 modules. Each extraction must name the responsibility it owns and the proof it
 keeps local.
 
+Test placement should follow the same rule. Rust `#[cfg(test)]` modules do not
+ship in normal production binaries, so the sprint must not claim production
+binary-size savings from moving inline tests. The real concern is production
+source maintainability: large inline tests make production modules harder to
+read, widen reviewer context, and couple narrow behavior changes to broad
+fixture surfaces. Tiny private-helper invariant tests may remain inline when
+they document the code beside them; fixture-heavy suites, CLI lifecycle
+scenarios, GitHub/mock transport tests, argument-rendering matrices, and broad
+behavioral tests should move into focused test modules or files when that
+creates a smaller proof lane.
+
 Preferred slice shapes:
 
 - **Operation family modules**: for example GitHub issue operations, PR body
@@ -102,6 +113,10 @@ Preferred slice shapes:
   reduce duplication without hiding behavior.
 - **Boundary tests**: characterization tests that prove the extracted unit
   preserves the old behavior and can be run without the full workflow.
+- **Test-surface extraction**: move large inline `#[cfg(test)]` modules or
+  oversized scenario matrices into focused test modules/files only when the
+  moved tests retain characterization coverage and enable a narrower command
+  for the next expected change.
 
 Rejected slice shapes:
 
@@ -110,14 +125,17 @@ Rejected slice shapes:
 - moving tests away from the behavior they characterize
 - broad reformatting mixed with behavior-preserving moves
 - workspace splits without a concrete validation-speed hypothesis
+- claiming production binary shrinkage from moving `#[cfg(test)]` tests
+- moving tiny local invariant tests out of a source module when doing so would
+  make the invariant harder to understand
 
 ## Candidate Work Packages
 
 | Work package | Primary target | Boundary | Local proof goal |
 | --- | --- | --- | --- |
-| WP-R1 | `adl/src/cli/pr_cmd/github.rs` | GitHub operation families and transport helpers | Focused mock-octocrab tests for the touched operation family without exercising every PR command path. |
-| WP-R2 | `adl/src/cli/pr_cmd/finish_support.rs` | Finish validation policy and publication prep | Unit tests for changed-path/validation selection that can run without full finish publication. |
-| WP-R3 | `adl/src/csdlc_prompt_editor.rs` | Prompt editor import/render/value/schema responsibilities | Prompt-template/editor tests grouped by responsibility rather than one broad editor surface. |
+| WP-R1 | `adl/src/cli/pr_cmd/github.rs` | GitHub operation families and transport helpers | Focused mock-octocrab tests for the touched operation family without exercising every PR command path; large inline transport tests should move beside the operation family they characterize, while tiny helper tests may remain inline. |
+| WP-R2 | `adl/src/cli/pr_cmd/finish_support.rs` | Finish validation policy and publication prep | Unit tests for changed-path/validation selection that can run without full finish publication; policy and argument tests should live in focused test modules instead of bloating the production support module. |
+| WP-R3 | `adl/src/csdlc_prompt_editor.rs` | Prompt editor import/render/value/schema responsibilities | Prompt-template/editor tests grouped by responsibility rather than one broad editor surface; fixture-heavy editor tests should be separated by concern. |
 | WP-R4 | `adl/src/cli/tests/pr_cmd_inline/basics.rs` and `adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs` | PR command inline fixture families | Smaller setup/assertion helpers and argument-rendering characterization tests that can run without scanning one broad fixture matrix. |
 | WP-R5 | `adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs` | Start/run readiness fixtures and helpers | Smaller lifecycle fixture tests with clear setup helpers and no hidden branch/worktree side effects. |
 | WP-R6 | `adl/src/cli/run_artifacts_types.rs` | Run-artifact contract families | Serde and schema characterization per artifact family. |
@@ -157,6 +175,9 @@ Before the first implementation child starts, the sprint should have:
 - card-rendered `SIP`, `STP`, and `SPP` surfaces for every child issue
 - a baseline validation-burden note for each target, naming the current broad
   command and the intended narrower command
+- a test-placement note for each target, naming which tests stay inline, which
+  fixture-heavy tests move out, and why that improves review or validation
+  locality
 - a no-behavior-change invariant unless a child issue explicitly includes
   characterization proof and behavior acceptance
 - a review route for any extraction that touches GitHub, card, publication, or
@@ -184,6 +205,8 @@ Every refactoring implementation issue spawned from this plan should state:
 
 - the current large-module evidence used
 - the named responsibility boundary being extracted
+- the test-placement decision: inline invariant tests retained, fixture-heavy
+  suites moved, or no test movement needed
 - the behavior-preserving characterization test before or with the move
 - the smaller validation command expected after the extraction
 - what broad validation remains CI/release-only
@@ -199,6 +222,8 @@ Line-count reduction alone is not sufficient.
 - destabilizing MVP delivery for migration purity alone
 - treating migration-only work as a user-visible feature demo obligation
 - generic file splitting without a named responsibility boundary
+- mechanical separation of all inline tests regardless of locality value
+- production-binary-size claims for moving Rust `#[cfg(test)]` code
 - claiming validation-speed improvement without measured or reviewable proof
 - refactoring provider/runtime feature code merely because it is large when the
   next planned change is elsewhere
