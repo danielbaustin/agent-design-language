@@ -3,7 +3,7 @@
   "issue_number": 3724,
   "run_id": "v0915-remote-gemma-watcher-20260615",
   "generated_at": "2026-06-15T07:38:18.129015Z",
-  "endpoint_ref": "http://192.168.68.70:11434",
+  "endpoint_ref": "remote_ollama_private_lan",
   "historical_context": {
     "issue_number": 3415,
     "state_packet_path": "docs/milestones/v0.91.5/review/multi_agent_workcell/v0915_parallel_csdlc_workcell_state_2026-06-14.json",
