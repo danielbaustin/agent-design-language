@@ -12,6 +12,26 @@ Usage:\n\
   adl-pr-preflight --help\n\
   adl-pr-preflight --version";
 
+fn run(args: &[String]) -> anyhow::Result<()> {
+    pr_dispatch_support::run_pr_subcommand_args("preflight", USAGE, args, cli::pr_cmd::real_pr)
+}
+
 fn main() {
-    pr_dispatch_support::run_pr_subcommand_main("preflight", USAGE, cli::pr_cmd::real_pr);
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if let Err(err) = run(&args) {
+        eprintln!("Error: {err}");
+        std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::run;
+
+    #[test]
+    fn preflight_binary_help_and_version_paths_succeed() {
+        for args in [vec!["--help".to_string()], vec!["--version".to_string()]] {
+            run(&args).expect("wrapper path should succeed");
+        }
+    }
 }

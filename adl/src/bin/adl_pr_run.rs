@@ -12,6 +12,26 @@ Usage:\n\
   adl-pr-run --help\n\
   adl-pr-run --version";
 
+fn run(args: &[String]) -> anyhow::Result<()> {
+    pr_dispatch_support::run_pr_subcommand_args("start", USAGE, args, cli::pr_cmd::real_pr)
+}
+
 fn main() {
-    pr_dispatch_support::run_pr_subcommand_main("start", USAGE, cli::pr_cmd::real_pr);
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if let Err(err) = run(&args) {
+        eprintln!("Error: {err}");
+        std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::run;
+
+    #[test]
+    fn run_binary_help_and_version_paths_succeed() {
+        for args in [vec!["--help".to_string()], vec!["--version".to_string()]] {
+            run(&args).expect("wrapper path should succeed");
+        }
+    }
 }
