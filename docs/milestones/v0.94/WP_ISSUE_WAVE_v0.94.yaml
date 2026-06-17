@@ -1,0 +1,74 @@
+milestone: v0.94
+version: v0.94
+status: candidate_issue_wave
+tracked_package: docs/milestones/v0.94
+notes:
+  - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
+  - "Do not absorb payments or economic-agency work; those belong to v0.94.1."
+work_packages:
+  - wp: WP-01
+    title: v0.94 planning promotion and issue-wave readiness
+    outcome: Open the concrete v0.94 issue wave and card bundles from this candidate package.
+    depends_on:
+      - "v0.93 closeout"
+    deliverables:
+      - "Opened GitHub issue wave"
+      - "SIP/STP/SPP/SRP/SOR cards for each opened issue"
+  - wp: WP-02
+    title: Secure execution model
+    outcome: Define the runtime authority, execution, and fail-closed boundary.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "Secure execution contract"
+      - "Negative cases"
+  - wp: WP-03
+    title: Policy, identity/auth, and trust convergence
+    outcome: Converge authorization semantics with identity and provider trust.
+    depends_on:
+      - "WP-02"
+    deliverables:
+      - "Policy engine architecture"
+      - "Identity/auth and trust model"
+  - wp: WP-04
+    title: Isolation, secrets, and data governance
+    outcome: Define sandbox/runtime isolation and secrets/data-governance boundaries.
+    depends_on:
+      - "WP-03"
+    deliverables:
+      - "Isolation contract"
+      - "Secrets and governance boundary"
+  - wp: WP-05
+    title: Signed and queryable trace closure
+    outcome: Turn trace into a queryable reasoning and provenance substrate.
+    depends_on:
+      - "WP-03"
+      - "WP-04"
+    deliverables:
+      - "Signed/queryable trace design"
+      - "Proof surface"
+  - wp: WP-06
+    title: Mental time travel
+    outcome: Define bounded temporal self-projection over remembered and simulated time.
+    depends_on:
+      - "WP-05"
+    deliverables:
+      - "MTT contract"
+      - "Reasoning artifact shape"
+  - wp: WP-07
+    title: Demo matrix and proof demos
+    outcome: Build secure-execution and temporal-self-projection proof candidates.
+    depends_on:
+      - "WP-06"
+    deliverables:
+      - "Demo matrix"
+      - "Runnable proof candidates"
+  - wp: WP-08
+    title: Quality gate, review, release tail, and handoff
+    outcome: Align review, docs, release truth, and next-milestone handoff.
+    depends_on:
+      - "WP-07"
+    deliverables:
+      - "Quality gate"
+      - "Review packets"
+      - "Release-tail packet"

@@ -1,0 +1,117 @@
+milestone: v0.95
+version: v0.95
+status: candidate_issue_wave
+tracked_package: docs/milestones/v0.95
+notes:
+  - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
+  - "Keep v0.95 as MVP convergence, not a new greenfield domain."
+work_packages:
+  - wp: WP-01
+    title: v0.95 planning promotion and issue-wave readiness
+    outcome: Open the concrete v0.95 issue wave and card bundles from this candidate package.
+    depends_on:
+      - "v0.94 closeout"
+      - "v0.94.1 closeout where MVP-scoped"
+    deliverables:
+      - "Opened GitHub issue wave"
+      - "SIP/STP/SPP/SRP/SOR cards for each opened issue"
+  - wp: WP-02
+    title: HTML milestone dashboard and compression reporting
+    outcome: Converge milestone dashboard and compression surfaces into one maintained entrypoint.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "Dashboard and reporting package"
+  - wp: WP-03
+    title: Shepherd, Gemma, and evaluator path
+    outcome: Finish the MVP-facing training and evaluation lane.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "Training and evaluation plan"
+      - "Proof posture"
+  - wp: WP-04
+    title: Capability-testing evidence and Aptitude Atlas boundary
+    outcome: Package capability evidence while keeping Aptitude Atlas productization post-v0.95.
+    depends_on:
+      - "WP-03"
+    deliverables:
+      - "Evidence-consumption contract"
+      - "Post-MVP boundary note"
+  - wp: WP-05
+    title: CodeFriend v1 and portable adapter v2 proof packaging
+    outcome: Prove external-repo portability and reviewability without private-workspace leakage.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "CodeFriend proof packet"
+      - "Adapter v2 doctor expectations"
+  - wp: WP-06
+    title: Distributed execution integration
+    outcome: Close the bounded distributed-execution story without sacrificing reviewability.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "Integration contract"
+      - "Placement boundary"
+  - wp: WP-07
+    title: Demo catalog and MVP walkthrough
+    outcome: Turn landed demos into one coherent reviewer/customer-facing walkthrough.
+    depends_on:
+      - "WP-02"
+      - "WP-06"
+    deliverables:
+      - "Catalog"
+      - "Walkthrough package"
+  - wp: WP-08
+    title: Control-plane Rust migration and tooling hardening
+    outcome: Finish the highest-value migration and hardening tranche for the MVP control plane.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "Hardened control-plane package"
+      - "Residual-language boundary"
+  - wp: WP-09
+    title: Web-based code editor integration
+    outcome: Establish the minimum required web editor/operator baseline.
+    depends_on:
+      - "WP-08"
+    deliverables:
+      - "Web editor integration contract"
+  - wp: WP-10
+    title: Zed decision boundary
+    outcome: Decide whether Zed ships with MVP or remains explicitly outside the must-have set.
+    depends_on:
+      - "WP-09"
+    deliverables:
+      - "Decision record"
+      - "Success/defer/drop criteria"
+  - wp: WP-11
+    title: MVP convergence packet
+    outcome: Integrate the milestone rows into one explicit MVP boundary and launch-shape story.
+    depends_on:
+      - "WP-04"
+      - "WP-05"
+      - "WP-06"
+      - "WP-07"
+      - "WP-08"
+      - "WP-10"
+    deliverables:
+      - "Convergence packet"
+  - wp: WP-12
+    title: Demo matrix and proof program
+    outcome: Define the bounded demos that prove MVP convergence rather than isolated feature claims.
+    depends_on:
+      - "WP-11"
+    deliverables:
+      - "Demo matrix"
+      - "Proof program"
+  - wp: WP-13
+    title: Quality gate, review, release tail, and handoff
+    outcome: Align quality, review, release truth, and final handoff for MVP convergence.
+    depends_on:
+      - "WP-12"
+    deliverables:
+      - "Quality gate"
+      - "Review packets"
+      - "Release-tail packet"

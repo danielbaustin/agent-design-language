@@ -21,7 +21,33 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the v0.91.4 release ceremony review, start with:
+For the active v0.91.5 Sprint 4 release-tail review, start with:
+
+- `docs/milestones/v0.91.5/README.md`
+- `docs/milestones/v0.91.5/WBS_v0.91.5.md`
+- `docs/milestones/v0.91.5/SPRINT_v0.91.5.md`
+- `docs/milestones/v0.91.5/WP_ISSUE_WAVE_v0.91.5.yaml`
+- `docs/milestones/v0.91.5/QUALITY_GATE_v0.91.5.md`
+- `docs/milestones/v0.91.5/MILESTONE_CHECKLIST_v0.91.5.md`
+- `docs/milestones/v0.91.5/RELEASE_PLAN_v0.91.5.md`
+- `docs/milestones/v0.91.5/RELEASE_NOTES_v0.91.5.md`
+- `docs/milestones/v0.91.5/review/internal_review/V0915_FIRST_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-06-16.md`
+- `docs/milestones/v0.91.5/review/internal_review/V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md`
+- `docs/milestones/v0.91.5/review/internal_review/V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md`
+- `docs/milestones/v0.91.5/review/internal_review/`
+- `docs/milestones/v0.91.5/features/`
+- `docs/templates/prompts/`
+- `docs/cognitive-sdlc/`
+- `AGENTS.md`
+- `README.md`
+- `CHANGELOG.md`
+- `docs/README.md`
+- `adl/Cargo.toml`
+- `adl/Cargo.lock`
+
+The current review posture is v0.91.5 Sprint 4 release-tail review.
+
+For historical v0.91.4 release-ceremony review, use:
 
 - `docs/milestones/v0.91.4/review/third_party_review/ADL_v0.91.4_THIRD_PARTY_REVIEW_HANDOFF.md`
 - `docs/milestones/v0.91.4/RELEASE_EVIDENCE_v0.91.4.md`
@@ -40,28 +66,13 @@ For the v0.91.4 release ceremony review, start with:
 - `docs/milestones/v0.91.4/NEXT_MILESTONE_HANDOFF_v0.91.4.md`
 - `docs/milestones/v0.91.4/review/internal_review/`
 - `docs/milestones/v0.91.4/features/`
-- `docs/templates/prompts/`
-- `docs/cognitive-sdlc/`
-- `AGENTS.md`
-- `README.md`
-- `CHANGELOG.md`
-- `docs/README.md`
-- `adl/Cargo.toml`
-- `adl/Cargo.lock`
 
-The current review posture is v0.91.4 WP-21 release ceremony. WP-15 through
-WP-20 are closed. WP-17 / `#3367` recorded the external review, WP-18 /
-`#3368` recorded remediation, WP-19 / `#3369` refreshed the next-milestone
-handoff, WP-20 / `#3370` reviewed that handoff, and WP-21 / `#3371` performs
-release-evidence convergence and ceremony.
+The third-party handoff remains a required historical review input for
+v0.91.4, but it is no longer the active controlling stage by itself.
 
-The third-party handoff remains a required review input, but it is no longer
-the active controlling stage by itself. The release evidence, release
-readiness, end-of-milestone report, next-milestone handoff, and WP-20 review
-packet are now the controlling release-tail surfaces.
-
-v0.91.4 should be reviewed as the Cognitive SDLC rollout-closeout milestone. It
-hardens the v0.91.3 C-SDLC vertical slice into default operational practice:
+v0.91.4 should be reviewed as the completed Cognitive SDLC rollout-closeout
+milestone. It hardened the v0.91.3 C-SDLC vertical slice into default
+operational practice:
 conductor-first issue routing, `SIP -> STP -> SPP -> SRP -> SOR` cards,
 versioned prompt templates, editor skills, bound worktrees, pre-PR review,
 truthful SOR closeout, Parallel Validation Fabric classification, durable

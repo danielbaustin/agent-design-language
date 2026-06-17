@@ -29,10 +29,11 @@ The missing layer is a bounded identity architecture that can say, with
 evidence, when the first true Gödel agent has been born and why that event is
 not ordinary process startup.
 
-v0.91.5 closeout and issue `#3377` are required readiness inputs for the
-launch packet, activation-test map, demo rehearsal, negative-suite plan, and
-review handoff. This design remains a planning surface until v0.92 execution
-produces implementation evidence.
+`v0.91.5` release-tail closeout, the `v0.91.6` / `v0.91.7` bridge tranches,
+and issue `#3377` are required readiness inputs for the launch packet,
+activation-test map, demo rehearsal, negative-suite plan, and review handoff.
+This design remains a planning surface until v0.92 execution produces
+implementation evidence.
 
 ## Goals
 

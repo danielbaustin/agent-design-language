@@ -1,5 +1,10 @@
 # Cross-Account Session Handoff - 2026-05-22
 
+Historical note: this packet captures live routing and milestone assumptions
+from 2026-05-22 during the `v0.91.4` wave. Treat milestone-specific guidance
+here as time-bound context unless a newer planning or release document
+explicitly supersedes it.
+
 ## Purpose
 
 This packet exists because the current account is low on credits and future ADL

@@ -1,9 +1,17 @@
 # v0.95 Milestone README
 
+## Metadata
+
+- Milestone: `v0.95`
+- Version: `v0.95`
+- Owner: ADL maintainers
+- Status: `forward_planning_candidate`
+- Planning template set: `docs/templates/planning/1.0.0`
+
 ## Status
 
 Forward planning. `v0.95` is not yet an active implementation milestone and
-has no final issue wave.
+has a candidate issue-wave package but no final opened issue wave.
 
 ## Purpose
 
@@ -73,6 +81,7 @@ It should give ADL one coherent launch-shape platform story by finishing:
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.95.md](MILESTONE_CHECKLIST_v0.95.md)
 - Release plan: [RELEASE_PLAN_v0.95.md](RELEASE_PLAN_v0.95.md)
 - Release notes: [RELEASE_NOTES_v0.95.md](RELEASE_NOTES_v0.95.md)
+- Candidate issue wave: [WP_ISSUE_WAVE_v0.95.yaml](WP_ISSUE_WAVE_v0.95.yaml)
 - Feature plans: [features/README.md](features/README.md)
 - HTML dashboard and compression reporting:
   [HTML_MILESTONE_DASHBOARD_AND_COMPRESSION_REPORTING_v0.95.md](features/HTML_MILESTONE_DASHBOARD_AND_COMPRESSION_REPORTING_v0.95.md)

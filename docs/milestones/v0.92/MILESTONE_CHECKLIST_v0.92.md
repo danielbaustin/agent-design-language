@@ -23,7 +23,8 @@ checks needed for a truthful v0.92 closeout.
 
 - [ ] Milestone goal reviewed against the identity, continuity, and birthday
   allocation.
-- [ ] v0.91.5 closeout and activation-test map consumed.
+- [ ] `v0.91.5` release-tail closeout, the activation-test map, and the
+  `v0.91.6` / `v0.91.7` bridge tranches are consumed.
 - [ ] `#3377` first-birthday readiness packet consumed or explicitly routed.
 - [ ] WBS converted from candidate allocation into concrete WPs.
 - [ ] Issue wave authored and opened.

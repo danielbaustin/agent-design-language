@@ -1,0 +1,63 @@
+milestone: v0.94.1
+version: v0.94.1
+status: candidate_issue_wave
+tracked_package: docs/milestones/v0.94.1
+notes:
+  - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
+  - "Keep financial claims bounded and non-production."
+work_packages:
+  - wp: WP-01
+    title: v0.94.1 planning promotion and issue-wave readiness
+    outcome: Open the concrete v0.94.1 issue wave and card bundles from this candidate package.
+    depends_on:
+      - "v0.94 closeout"
+    deliverables:
+      - "Opened GitHub issue wave"
+      - "SIP/STP/SPP/SRP/SOR cards for each opened issue"
+  - wp: WP-02
+    title: Payment adapter boundary
+    outcome: Define the adapter interface and authority boundary for payments.
+    depends_on:
+      - "WP-01"
+    deliverables:
+      - "Payment adapter contract"
+  - wp: WP-03
+    title: x402 and Lightning adapter surfaces
+    outcome: Define protocol-specific adapter contracts and non-goals.
+    depends_on:
+      - "WP-02"
+    deliverables:
+      - "x402 adapter specification"
+      - "Lightning adapter specification"
+  - wp: WP-04
+    title: Settlement rules and accounting trace
+    outcome: Make settlement, accounting, and ledger evidence explicit and reviewable.
+    depends_on:
+      - "WP-03"
+    deliverables:
+      - "Settlement contract"
+      - "Accounting and trace schema"
+  - wp: WP-05
+    title: Economic agency boundary
+    outcome: Define bounded economic-agency and performance-position surfaces.
+    depends_on:
+      - "WP-04"
+    deliverables:
+      - "Economic agency contract"
+  - wp: WP-06
+    title: Demo matrix and payment/economic proof candidates
+    outcome: Build bounded payment and economic proof demos.
+    depends_on:
+      - "WP-05"
+    deliverables:
+      - "Demo matrix"
+      - "Runnable proof candidates"
+  - wp: WP-07
+    title: Quality gate, review, release tail, and handoff
+    outcome: Align review, docs, release truth, and next-milestone handoff.
+    depends_on:
+      - "WP-06"
+    deliverables:
+      - "Quality gate"
+      - "Review packets"
+      - "Release-tail packet"

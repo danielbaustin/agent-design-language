@@ -1,9 +1,17 @@
 # v0.94.1 Milestone README
 
+## Metadata
+
+- Milestone: `v0.94.1`
+- Version: `v0.94.1`
+- Owner: ADL maintainers
+- Status: `forward_planning_candidate`
+- Planning template set: `docs/templates/planning/1.0.0`
+
 ## Status
 
 Forward planning. `v0.94.1` is not yet an active implementation milestone and
-has no final issue wave.
+has a candidate issue-wave package but no final opened issue wave.
 
 ## Purpose
 
@@ -49,6 +57,7 @@ are in place.
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.94.1.md](MILESTONE_CHECKLIST_v0.94.1.md)
 - Release plan: [RELEASE_PLAN_v0.94.1.md](RELEASE_PLAN_v0.94.1.md)
 - Release notes: [RELEASE_NOTES_v0.94.1.md](RELEASE_NOTES_v0.94.1.md)
+- Candidate issue wave: [WP_ISSUE_WAVE_v0.94.1.yaml](WP_ISSUE_WAVE_v0.94.1.yaml)
 - Feature plans: [features/README.md](features/README.md)
 - Payments, settlement, and `x402`:
   [PAYMENTS_SETTLEMENT_AND_X402_v0.94.1.md](features/PAYMENTS_SETTLEMENT_AND_X402_v0.94.1.md)

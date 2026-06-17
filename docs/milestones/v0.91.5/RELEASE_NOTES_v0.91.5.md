@@ -5,7 +5,7 @@
 - Version: `v0.91.5`
 - Release date: pending
 - Tag: `v0.91.5`
-- Status: `active_wp_01_opening`
+- Status: `sprint_4_release_tail_active`
 
 ## How To Use
 - Keep statements implementation-accurate and test-validated.
@@ -16,8 +16,9 @@
 
 ## Summary
 
-v0.91.5 is planned as the bridge milestone between v0.91.4 C-SDLC hardening
-and v0.92 first birthday. Final notes must be rewritten from landed evidence.
+v0.91.5 is the bridge milestone between v0.91.4 C-SDLC hardening and the v0.92
+first birthday. Final notes still must be rewritten from landed evidence before
+release ceremony.
 
 ## Highlights
 
@@ -30,18 +31,20 @@ and v0.92 first birthday. Final notes must be rewritten from landed evidence.
 ## What's New In Detail
 
 ### Multi-Agent And Providers
-- Planned: bounded multi-agent C-SDLC proof.
-- Planned: hosted, local Ollama, remote Ollama, and OpenRouter model-role
-  matrix.
+- Landed or evidenced in milestone review packets: bounded multi-agent C-SDLC
+  proof surfaces and provider/model-role matrix work.
+- Final release wording still depends on Sprint 4 review/preflight closeout.
 
 ### Public Prompt Records
-- Planned: public prompt packet export, redaction, validation, and reviewer
-  index.
-- Planned: `.adl` inventory and archive disposition.
+- Landed or evidenced in milestone review packets: public prompt packet export,
+  validation, redaction, and reviewer-facing packet surfaces.
+- Final release wording still depends on release-tail truth maintenance.
 
 ### v0.92 Readiness
-- Planned: activation-test map for features that come alive in v0.92.
-- Planned: `#3377` first-birthday go/no-go packet.
+- Landed or evidenced: v0.92 activation map and first-birthday readiness
+  routing.
+- Still open in Sprint 4: final preflight, external review, and release
+  ceremony truth.
 
 ## Upgrade Notes
 
@@ -50,8 +53,8 @@ and v0.92 first birthday. Final notes must be rewritten from landed evidence.
 
 ## Known Limitations
 
-- These are planning notes, not release evidence.
-- Multi-agent usefulness is not assumed until measured.
+- These are pre-release draft notes, not final release evidence.
+- Final notes must remain blocked until Sprint 4 review/preflight closes.
 
 ## Validation Notes
 

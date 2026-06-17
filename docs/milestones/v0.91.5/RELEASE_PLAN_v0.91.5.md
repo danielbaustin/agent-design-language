@@ -5,13 +5,21 @@
 - Version: `v0.91.5`
 - Release date: pending release ceremony
 - Release manager: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_4_release_tail_active`
 
 ## How To Use
 
 Execute this plan during the release tail. Check items only when evidence
 exists. The ceremony must not hide implementation, review, or truth-maintenance
 work.
+
+Current release-tail truth:
+
+- WP-14 quality gate is applied and blocked for release.
+- WP-15 docs/review alignment is the active docs/review cleanup step.
+- second-pass internal review remains a later handoff and is not completed by
+  this document alone.
+- the first internal-review remediation wave already closed through `#3899`.
 
 ## 0. Release-Tail Convergence
 
@@ -24,7 +32,9 @@ work.
 - [ ] AEE completion tranche routed through `#3534`, with v0.92 owner/proof
       expectations explicit.
 - [ ] `#3377` first-birthday readiness packet complete.
-- [ ] Closed issue/card truth refreshed for the v0.91.5 wave.
+- [ ] Closed issue/card truth refreshed for the v0.91.5 wave, including a
+      replacement for the retired shell-helper audit path or an explicit
+      accepted substitute.
 
 ## 1. Release Readiness
 

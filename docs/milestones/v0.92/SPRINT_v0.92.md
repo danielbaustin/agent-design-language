@@ -15,8 +15,9 @@
 
 Forward-planning sprint outline. The final sprint and WP sequence will be
 authored during v0.92 WP-01 from
-[WP_ISSUE_WAVE_v0.92.yaml](WP_ISSUE_WAVE_v0.92.yaml) after consuming v0.91.5
-closeout, the activation-test map, and `#3377`.
+[WP_ISSUE_WAVE_v0.92.yaml](WP_ISSUE_WAVE_v0.92.yaml) after consuming
+`v0.91.5` release-tail closeout, the `v0.91.6` / `v0.91.7` bridge tranches,
+the activation-test map, and `#3377`.
 
 ## How To Use
 
@@ -75,7 +76,7 @@ and validation tight rather than one oversized single-threaded queue.
 
 | Phase | Focus | Expected outcome |
 | --- | --- | --- |
-| 1 | Planning promotion | Reviewed milestone docs, v0.91.5 activation inputs, `#3377` launch-packet inputs, issue wave, and cards. |
+| 1 | Planning promotion | Reviewed milestone docs, `v0.91.5` activation inputs, `v0.91.6` / `v0.91.7` bridge inputs, `#3377` launch-packet inputs, issue wave, and cards. |
 | 2 | Birthday contract | Definition of birth and negative cases. |
 | 3 | Identity and continuity | Stable name, identity root, continuity record, and cycle evidence. |
 | 4 | Memory, capability, and cognitive profile | Memory grounding, capability envelope, ACP/cognitive profile, and redacted review boundaries. |
@@ -85,8 +86,8 @@ and validation tight rather than one oversized single-threaded queue.
 
 ## Dependencies To Check Before WP-01
 
-- v0.91.5 bridge closeout and activation-test map are complete or explicitly
-  routed.
+- `v0.91.5` release-tail closeout, the activation-test map, and the `v0.91.6`
+  / `v0.91.7` bridge tranches are complete or explicitly routed.
 - `#3377` first-birthday readiness source is complete or explicitly routed.
 - v0.90.3 citizen-state and standing outputs are stable enough to consume.
 - v0.91 moral trace and moral-governance planning is available.

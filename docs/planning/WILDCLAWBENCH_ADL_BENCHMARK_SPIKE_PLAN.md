@@ -36,7 +36,7 @@ Disallowed claims:
 - ADL wins WildClawBench.
 - ADL proves general intelligence.
 - A small spike establishes model or runtime superiority.
-- WildClawBench completion is required for C-SDLC v0.91.4 release.
+- WildClawBench completion is or was required for C-SDLC `v0.91.4` release.
 
 ## Hypotheses
 
@@ -199,4 +199,3 @@ The sidecar is complete when it records either:
 
 In both cases, the sidecar must state whether to scale, defer, or open a
 dedicated future evaluation lane.
-

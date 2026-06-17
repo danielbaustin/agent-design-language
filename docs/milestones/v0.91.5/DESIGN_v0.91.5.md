@@ -5,12 +5,13 @@
 - Version: `v0.91.5`
 - Date: `2026-05-29`
 - Owner: ADL maintainers
-- Status: `active_wp_01_opening`
+- Status: `sprint_4_release_tail_active`
 
 ## Purpose
 
-Define the planned design surfaces for the v0.91.5 bridge milestone so issue
-execution can proceed without reconstructing scope from chat.
+Define the design surfaces for the v0.91.5 bridge milestone so execution,
+review, and release-tail truth can proceed without reconstructing scope from
+chat.
 
 ## Problem Statement
 
@@ -42,6 +43,13 @@ unclear dependencies.
 Scope is limited to bridge planning, issue routing, implementation/readiness
 work for the named bridge issues, review, remediation, v0.92 preflight, and
 release closeout.
+
+Current state:
+
+- implementation/readiness delivery through Sprint 3 is materially landed
+- first-pass internal review has already happened
+- the first remediation wave closed through `#3899`
+- the remaining design concern is coherent Sprint 4 release-tail truth
 
 ## Requirements
 
