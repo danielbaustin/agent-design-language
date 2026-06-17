@@ -2,7 +2,22 @@
 
 ## Status
 
-Planned quality gate; v0.91.5 is in WP-01 opening.
+Reusable quality-gate packet defined; formal WP-14 application remains open
+under `#3575` during Sprint 4 remediation and release-tail work.
+
+## Current Phase
+
+v0.91.5 is no longer in WP-01 opening. The milestone is in the Sprint 4
+review/remediation/release tail:
+
+- Sprint 4 umbrella `#3574` remains open.
+- WP-14 quality gate `#3575` remains open.
+- WP-16 internal review `#3576` has already happened in practice, and the
+  release tail is now reconciling the resulting stale-doc/stale-record truth.
+- WP-18 remediation/final preflight `#3577` and WP-20 release ceremony `#3578`
+  remain open.
+- Tooling remediation `#3891` is closed and `#3892` remains in flight, so the
+  quality gate must not pretend the release tail is fully settled yet.
 
 ## Required Validation
 
@@ -84,3 +99,5 @@ The milestone is blocked if:
 
 Release can proceed only when every blocker is fixed, explicitly deferred with
 owner/rationale, or converted into a v0.92 WP-01 prerequisite.
+
+The current phase is therefore `remediation_active`, not `release_ready`.
