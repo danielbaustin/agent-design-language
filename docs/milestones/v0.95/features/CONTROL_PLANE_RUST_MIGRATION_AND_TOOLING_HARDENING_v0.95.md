@@ -71,11 +71,13 @@ Current top `RATIONALE` targets:
 
 | Priority | Module | LoC | Refactoring intent |
 | --- | --- | ---: | --- |
-| 1 | `adl/src/cli/pr_cmd/github.rs` | 3968 | Split by GitHub operation families and transport contracts so issue, PR, checks, reviews, and closeout callers can validate narrower behavior. |
+| 1 | `adl/src/cli/pr_cmd/github.rs` | 4534 | Split by GitHub operation families and transport contracts so issue, PR, checks, reviews, and closeout callers can validate narrower behavior. This is now the dominant hotspot and should be treated as control-plane reliability and cycle-time work, not cosmetic decomposition. |
 | 2 | `adl/src/csdlc_prompt_editor.rs` | 2468 | Continue extracting editor responsibilities into template/value/schema/import/render boundaries, with tests owned by each editor concern. |
-| 3 | `adl/src/cli/pr_cmd/finish_support.rs` | 1640 | Separate finish validation planning, changed-path policy, SOR/card checks, and publication preparation so docs-only/tooling-only changes do not pay unrelated proof costs. |
-| 4 | `adl/src/cli/run_artifacts_types.rs` | 1550 | Split stable artifact data contracts by artifact family and preserve serde/schema characterization tests near each family. |
-| 5 | `adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs` | 1500 | Reorganize test fixtures by lifecycle state and setup helper ownership so one start/run behavior change does not require reading the whole readiness fixture file. |
+| 3 | `adl/src/cli/pr_cmd/finish_support.rs` | 1985 | Separate finish validation planning, changed-path policy, SOR/card checks, and publication preparation so docs-only/tooling-only changes do not pay unrelated proof costs. |
+| 4 | `adl/src/cli/tests/pr_cmd_inline/basics.rs` | 1752 | Split fixture setup, happy-path assertions, and compatibility/edge-case coverage so basic PR command changes can run a smaller focused fixture set. |
+| 5 | `adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs` | 1684 | Split finish argument-rendering fixtures by command shape, path policy, and publication mode so finish-policy edits do not require reading one oversized render matrix. |
+| 6 | `adl/src/cli/run_artifacts_types.rs` | 1550 | Split stable artifact data contracts by artifact family and preserve serde/schema characterization tests near each family. |
+| 7 | `adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs` | 1500 | Reorganize test fixtures by lifecycle state and setup helper ownership so one start/run behavior change does not require reading the whole readiness fixture file. |
 
 The first sprint should not attempt all `REVIEW` and `WATCH` targets. It should
 use them as route planning input and pick slices that reduce the next real
@@ -116,10 +118,11 @@ Rejected slice shapes:
 | WP-R1 | `adl/src/cli/pr_cmd/github.rs` | GitHub operation families and transport helpers | Focused mock-octocrab tests for the touched operation family without exercising every PR command path. |
 | WP-R2 | `adl/src/cli/pr_cmd/finish_support.rs` | Finish validation policy and publication prep | Unit tests for changed-path/validation selection that can run without full finish publication. |
 | WP-R3 | `adl/src/csdlc_prompt_editor.rs` | Prompt editor import/render/value/schema responsibilities | Prompt-template/editor tests grouped by responsibility rather than one broad editor surface. |
-| WP-R4 | `adl/src/cli/run_artifacts_types.rs` | Run-artifact contract families | Serde and schema characterization per artifact family. |
+| WP-R4 | `adl/src/cli/tests/pr_cmd_inline/basics.rs` and `adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs` | PR command inline fixture families | Smaller setup/assertion helpers and argument-rendering characterization tests that can run without scanning one broad fixture matrix. |
 | WP-R5 | `adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs` | Start/run readiness fixtures and helpers | Smaller lifecycle fixture tests with clear setup helpers and no hidden branch/worktree side effects. |
-| WP-R6 | `REVIEW` tier triage | Provider/runtime/test-heavy modules over 1000 LoC | Route only the modules whose next expected changes currently require unrelated validation. |
-| WP-R7 | `WATCH` tier guardrail | Modules over 800 LoC | Add planning guardrails and avoid new responsibilities unless a follow-on issue owns the boundary. |
+| WP-R6 | `adl/src/cli/run_artifacts_types.rs` | Run-artifact contract families | Serde and schema characterization per artifact family. |
+| WP-R7 | `REVIEW` tier triage | Provider/runtime/test-heavy modules over 1000 LoC | Route only the modules whose next expected changes currently require unrelated validation. |
+| WP-R8 | `WATCH` tier guardrail | Modules over 800 LoC | Add planning guardrails and avoid new responsibilities unless a follow-on issue owns the boundary. |
 
 ## Execution-Ready Backlog
 
@@ -134,13 +137,15 @@ active prompt templates rather than copied from this table.
 | 2 | Split `github.rs` by PR/issue/check/review operation families | Operation-family modules with shared transport helpers kept explicit. | A change to one GitHub operation family can run a focused mock/live-boundary test without reading or exercising the whole PR command surface. |
 | 3 | Split `finish_support.rs` validation and publication policy | Finish validation planner, changed-path policy, card/SOR checks, and publication-prep boundaries. | Docs-only and tooling-only finish changes have a narrower validation path than full publication rehearsal. |
 | 4 | Continue `csdlc_prompt_editor.rs` responsibility extraction | Editor import, values, render, schema, and structure-validation responsibilities separated by owned tests. | Prompt-template/editor changes can validate the touched responsibility without broad editor fixture coupling. |
-| 5 | Split `run_artifacts_types.rs` by artifact contract family | Stable artifact contract modules with serde/schema characterization nearby. | Artifact-family changes run focused round-trip/schema tests before broader owner validation. |
-| 6 | Reduce `start_ready.rs` fixture coupling | Lifecycle readiness fixtures and setup helpers organized by state and behavior. | A start/run readiness behavior change can point to a smaller fixture helper and test subset. |
+| 5 | Split PR command inline fixture hotspots | `basics.rs`, `finish/arg_render.rs`, and `lifecycle/start_ready.rs` fixture setup and assertions organized by behavior and command shape. | A PR command behavior change can point to a smaller fixture helper and test subset rather than a broad inline fixture megafile. |
+| 6 | Split `run_artifacts_types.rs` by artifact contract family | Stable artifact contract modules with serde/schema characterization nearby. | Artifact-family changes run focused round-trip/schema tests before broader owner validation. |
 | 7 | Review-tier routing pass | Updated route table for `REVIEW` modules, including provider/runtime/test-heavy families. | Remaining large modules are explicitly deferred, routed, or converted into follow-on issue candidates with no silent backlog loss. |
 
 The first executable wave should normally include candidates 1 through 3.
-Candidates 4 through 7 can be included only if the sprint capacity remains
-truthful and each issue keeps its own focused proof surface.
+Candidate 5 may move earlier if the immediate bottleneck is PR command test
+fixture coupling rather than production code ownership. Candidates 4 through 7
+can be included only if the sprint capacity remains truthful and each issue
+keeps its own focused proof surface.
 
 ## Ready-To-Start Gate
 
@@ -166,12 +171,12 @@ Recommended families:
 
 | Family | Examples from current tracker | Routing posture |
 | --- | --- | --- |
-| Control-plane PR lifecycle | `github.rs`, `finish_support.rs`, `pr_cmd.rs`, `cards.rs`, `lifecycle/tests.rs` | Highest priority because these files directly affect issue/PR cycle time and validation breadth. |
+| Control-plane PR lifecycle | `github.rs`, `finish_support.rs`, `pr_cmd.rs`, `cards.rs`, `lifecycle/tests.rs`, `pr_cmd_inline/basics.rs`, `pr_cmd_inline/finish/arg_render.rs` | Highest priority because these files directly affect issue/PR cycle time and validation breadth. |
 | Prompt/template/editor | `csdlc_prompt_editor.rs`, `tooling_cmd/structured_prompt.rs`, prompt-template tests | High priority where extraction reduces card/template validation blast radius. |
 | Run artifacts and trace contracts | `run_artifacts_types.rs`, runtime trace envelope/validation modules | Refactor by data-contract family with serde/schema proof. |
 | Provider and communication | `provider_communication.rs`, `provider_adapter.rs`, `provider/http_family.rs`, HTTP tests | Defer unless the provider/model reliability sprint needs narrower tests. |
 | Runtime v2 feature packets | `contract_market_demo.rs`, kindness/humor/moral/private-state modules | Generally defer until Runtime v2 feature work needs a local slice. |
-| Test fixture megafiles | `start_ready.rs`, `basics.rs`, `arg_render.rs`, demo and run-flow tests | Split helpers and fixtures only when it reduces setup duplication and clarifies expected behavior. |
+| Test fixture megafiles | `start_ready.rs`, `basics.rs`, `arg_render.rs`, demo and run-flow tests | Split helpers and fixtures only when it reduces setup duplication, shortens the fixture surface for a specific command family, and clarifies expected behavior. |
 
 ## Validation And Evidence Expectations
 
