@@ -18,10 +18,13 @@ Current status: `sprint_4_release_tail_active`
 - Planning: v0.91.5 bridge package, issue wave, sprint umbrellas, and closeout
   tail are seeded and in use.
 - Execution: Sprint 1, Sprint 2, and Sprint 3 delivery are materially landed;
-  the first internal-review remediation mini-sprint closed through `#3899`.
-- Current frontier: Sprint 4 `#3574` is active through WP-14 `#3575`,
-  WP-15 `#3579`, WP-16 `#3576`, WP-17 `#3580`, WP-18 `#3577`, WP-19 `#3581`,
-  WP-20 `#3578`, and second-pass internal review follow-on `#3923`.
+  the first internal-review remediation mini-sprint closed through `#3899` on
+  `2026-06-17`.
+- Current frontier: Sprint 4 `#3574` remains active after WP-14 `#3575` and
+  WP-15 `#3579` closed on `2026-06-17`; the remaining active release-tail
+  issues are WP-16 `#3576`, WP-17 `#3580`, WP-18 `#3577`, WP-19 `#3581`,
+  WP-20 `#3578`, and the open second-pass internal-review execution slice
+  `#3923`.
 - Validation: focused milestone docs, issue-state, quality-gate, and review
   packet validation is active in the release tail.
 - Release readiness: `blocked_for_release_tail` until Sprint 4 closeout truth,
@@ -42,11 +45,14 @@ Setup truth:
   after prompt templates v1.1 lands through `#3553`.
 - `#3571`, `#3572`, and `#3573` are closed.
 - `#3574` remains open as the active Sprint 4 umbrella.
-- `#3575`, `#3579`, `#3576`, `#3580`, `#3577`, `#3581`, and `#3578`
-  are the active closeout-tail issues.
-- `#3899` is closed as the first internal-review remediation tranche.
-- `#3923` is open as the second-pass internal-review issue and remains
-  downstream from WP-15.
+- `#3575` and `#3579` closed on `2026-06-17` as the completed WP-14 and WP-15
+  release-tail steps.
+- `#3576`, `#3580`, `#3577`, `#3581`, and `#3578` are the remaining open
+  closeout-tail issues.
+- `#3899` closed on `2026-06-17` as the completed first internal-review
+  remediation tranche.
+- `#3923` is open as the active second-pass internal-review issue and now
+  serves as the live review-entry follow-on under the WP-16 / Sprint 4 lane.
 
 ## Purpose
 
@@ -152,11 +158,11 @@ Sprint and review support:
 - Tools remediation sprint closeout packet for umbrella `#3845`: [TOOLS_REMEDIATION_SPRINT_CLOSEOUT_3845.md](review/tooling_adoption/TOOLS_REMEDIATION_SPRINT_CLOSEOUT_3845.md)
 - Strategic Cognitive Reserve project bootstrap closeout for `#3868`: [STRATEGIC_COGNITIVE_RESERVE_PROJECT_BOOTSTRAP_3868.md](review/tooling_adoption/STRATEGIC_COGNITIVE_RESERVE_PROJECT_BOOTSTRAP_3868.md)
 - TBD documentation backlog closeout for `#3635`: [TBD_DOCUMENTATION_BACKLOG_CLOSEOUT_3635.md](review/tooling_adoption/TBD_DOCUMENTATION_BACKLOG_CLOSEOUT_3635.md)
-- First internal-review findings register: [V0915_FIRST_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-06-16.md](review/internal_review/V0915_FIRST_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-06-16.md)
-- First internal-review remediation queue: [V0915_FIRST_INTERNAL_REVIEW_REMEDIATION_QUEUE_2026-06-16.md](review/internal_review/V0915_FIRST_INTERNAL_REVIEW_REMEDIATION_QUEUE_2026-06-16.md)
+- Historical first internal-review findings register: [V0915_FIRST_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-06-16.md](review/internal_review/V0915_FIRST_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-06-16.md)
+- Historical first internal-review remediation queue: [V0915_FIRST_INTERNAL_REVIEW_REMEDIATION_QUEUE_2026-06-16.md](review/internal_review/V0915_FIRST_INTERNAL_REVIEW_REMEDIATION_QUEUE_2026-06-16.md)
 - WP-14 quality-gate application: [V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md](review/internal_review/V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md)
 - WP-15 docs/review alignment packet: [V0915_WP15_DOCS_REVIEW_ALIGNMENT_2026-06-17.md](review/internal_review/V0915_WP15_DOCS_REVIEW_ALIGNMENT_2026-06-17.md)
-- Second-pass internal-review handoff plan: [V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md](review/internal_review/V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md)
+- Current second-pass internal-review handoff plan: [V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md](review/internal_review/V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md)
 
 ## Document Map
 

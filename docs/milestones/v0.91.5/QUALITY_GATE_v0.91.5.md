@@ -6,15 +6,18 @@
 
 ## Current Phase
 
-WP-14 was applied on 2026-06-17 at the start of Sprint 4. The milestone is in
-the review/remediation/release tail and is not release-ready.
+WP-14 was applied and closed on `2026-06-17` at the start of Sprint 4. The
+milestone remains in the review/remediation/release tail and is not
+release-ready.
 
 - Sprint 4 umbrella `#3574` remains open.
-- WP-14 quality gate `#3575` is the active child issue.
-- WP-15 `#3579`, WP-16 `#3576`, WP-17 `#3580`, WP-18 `#3577`, WP-19 `#3581`,
-  and WP-20 `#3578` all remain open.
+- WP-14 quality gate `#3575` closed on `2026-06-17`.
+- WP-15 `#3579` closed on `2026-06-17`.
+- WP-16 `#3576`, WP-17 `#3580`, WP-18 `#3577`, WP-19 `#3581`, and WP-20
+  `#3578` remain open.
 - Second-pass internal review `#3923` is also open, so this gate must treat
-  review readiness as a handoff surface rather than a completed fact.
+  review readiness as an active execution/handoff surface rather than a
+  completed fact.
 
 ## Gate Outcome
 
@@ -38,11 +41,15 @@ surface.
     worktree_only` despite the issue being closed
   - multiple v0.91.5 milestone docs still carry stale `active_wp_01_opening`
     or opening-era status language and must be normalized in WP-15
+  - second-pass internal review and later Sprint 4 release-tail work remain
+    incomplete, so release readiness still cannot be claimed
 
 ## Evidence Packets
 
 - Checklist application packet:
   [V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md](review/internal_review/V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md)
+- WP-15 docs/review alignment packet:
+  [V0915_WP15_DOCS_REVIEW_ALIGNMENT_2026-06-17.md](review/internal_review/V0915_WP15_DOCS_REVIEW_ALIGNMENT_2026-06-17.md)
 - Closed-issue card-truth evidence packet:
   [V0915_CLOSED_ISSUE_CARD_TRUTH_EVIDENCE_2026-06-17.md](review/internal_review/V0915_CLOSED_ISSUE_CARD_TRUTH_EVIDENCE_2026-06-17.md)
 - Internal-review readiness plan:

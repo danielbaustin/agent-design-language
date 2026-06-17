@@ -5,13 +5,13 @@
 - Version: `v0.91.5`
 - Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `first_internal_review_remediation_active`
+- Status: `second_pass_internal_review_active`
 - Canonical WP standard: [ADL_MILESTONE_WP_ORDERING_STANDARD.md](../../planning/ADL_MILESTONE_WP_ORDERING_STANDARD.md)
 
 ## Status
 
-Active WBS for post-Sprint 1 execution, the first internal-review remediation
-execution under `#3899`, and the remaining Sprint 3 / Sprint 4 execution bands.
+Active WBS for post-Sprint 1 execution, the completed first internal-review
+remediation tranche under `#3899`, and the remaining Sprint 4 execution bands.
 
 ## How To Use
 
@@ -24,11 +24,11 @@ together.
 v0.91.5 contains four sprint bands after WP-01: prompt-template/public prompt
 records and portable ADL readiness, provider/model and multi-agent proof, demo
 matrix/showcase refresh, and coverage/review/remediation/next-milestone/release
-closeout. The current retained execution-prep state is the first internal
-review remediation queue `#3899`, which stages the initial WP-18 remediation
-wave before the remaining closeout-tail issues advance. Live execution also
-surfaced repo-native tooling gaps that must be captured as WP-18 remediation
-inputs rather than lost as operator-side residue.
+closeout. The first internal-review remediation queue `#3899` is now complete
+and retained as historical first-pass evidence, while the live closeout-tail
+frontier has moved to the post-WP-15 second-pass internal-review lane. Live
+execution also surfaced repo-native tooling gaps that remain valid WP-18
+remediation inputs rather than operator-side residue.
 
 ## Candidate WP Sequence
 
@@ -96,14 +96,15 @@ to the reusable standard at
 | Sprint 3 | `#3573` | Demo matrix and demo showcase refresh. | `#3455`; supporting inputs `#3460`, `#3461` |
 | Sprint 4 | `#3574` | Coverage, review, remediation, next-milestone planning, and release. | `#3575`, `#3579`, `#3576`, `#3580`, `#3577`, `#3581`, `#3578`; supporting inputs `#3531`, `#3502`, `#3534`, `#3377` |
 
-## Queued Review-Remediation Mini-Sprint
+## Completed First Review-Remediation Mini-Sprint
 
-- `#3899` is the queued first internal-review remediation umbrella created from
-  WP-16 review output.
+- `#3899` is the closed first internal-review remediation umbrella created from
+  WP-16 review output and completed on `2026-06-17`.
 - Its child execution order is `#3891`, `#3892`, `#3893`, parallel-safe
   `#3894` / `#3895`, then parallel-safe `#3896` / `#3897` / `#3898`.
-- This queue is a bounded staging wave under WP-18 and does not replace the
-  canonical Sprint 4 umbrella `#3574`.
+- This queue is historical first-pass remediation truth under WP-18 and does
+  not replace the canonical Sprint 4 umbrella `#3574` or the current
+  second-pass review lane.
 
 ## Sequencing
 
@@ -138,9 +139,9 @@ is explicit.
 - WP-14 through WP-20 -> coverage/quality, docs/review alignment, internal
   review, external review, remediation/final v0.92 preflight, next-milestone
   planning, and release close the bridge in the standard order. The first
-  remediation tranche is currently staged through `#3899` and child issues
-  `#3891` through `#3898` before the broader WP-18 final-preflight issue
-  `#3577` should claim completion.
+  remediation tranche is now closed through `#3899` and child issues `#3891`
+  through `#3898`; second-pass internal review remains active before the
+  broader WP-18 final-preflight issue `#3577` can claim completion.
 
 ## Exit Criteria
 

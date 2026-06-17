@@ -6,31 +6,40 @@
 - Source review issue: `#3576`
 - Queue umbrella: `#3899`
 - Queue date: `2026-06-16`
-- Queue status: `active_execution`
+- Queue status: `historical_closed`
 - Doctor readiness: `#3899` returned `ready_status: PASS` on `2026-06-17`
 
 ## Queue Summary
 
 - The first v0.91.5 internal review produced eight routed remediation issues:
   `#3891` through `#3898`.
-- `#3574` remains the canonical Sprint 4 umbrella, but this queue is the
-  bounded first remediation tranche that should run before the remaining
-  closeout-tail work resumes.
-- The queue is intentionally execution-focused and does not claim v0.91.5
-  release readiness.
+- `#3899` closed on `2026-06-17` after all child issues closed.
+- `#3574` remains the canonical Sprint 4 umbrella, but this queue is now a
+  historical first remediation tranche rather than the current active control
+  surface.
+- The queue remains intentionally execution-focused historical evidence and
+  does not claim v0.91.5 release readiness.
 
-## Current In-Flight State
+## Current Authoritative Successor Surfaces
+
+For current release-tail and review truth, use:
+
+- `docs/milestones/v0.91.5/SPRINT_v0.91.5.md`
+- `docs/milestones/v0.91.5/QUALITY_GATE_v0.91.5.md`
+- `docs/milestones/v0.91.5/review/internal_review/V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md`
+- `docs/milestones/v0.91.5/review/internal_review/V0915_WP15_DOCS_REVIEW_ALIGNMENT_2026-06-17.md`
+- `docs/milestones/v0.91.5/review/internal_review/V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md`
+
+## Final Child State (Historical)
 
 - `#3891` is merged.
 - `#3892` is merged and closed out after PR `#3900`.
 - `#3893` is closed out.
 - `#3894` and `#3895` are closed out.
-- `#3896` remains active with green draft PR `#3907`; checks are complete and
-  the issue is now waiting on review/merge before closeout.
+- `#3896` is merged via PR `#3907` and is now closed out.
 - `#3897` is merged via PR `#3905` and is now closed out.
 - `#3898` is merged via PR `#3906` and is now closed out.
-- `#3899` remains the open execution umbrella until the active tooling-tranche
-  child issues are closed or explicitly rerouted.
+- `#3899` is closed as the completed first remediation umbrella.
 - No Rust refactoring work is included in this queue.
 
 ## Supplemental Tooling Remediation Added During Execution
@@ -55,8 +64,8 @@ findings that belong inside this same bounded queue:
   `adl/src/cli/tooling_cmd/markdown_ast_edit.rs` into valid finish-validation lanes so normal
   publication does not fail after focused proof is already complete
 
-These findings do not justify widening beyond `#3891-#3899`, but they do mean
-the tooling tranche under `#3896-#3898` must absorb adapter/bootstrap/auth UX
+These findings did not justify widening beyond `#3891-#3899`, but they did mean
+the tooling tranche under `#3896-#3898` had to absorb adapter/bootstrap/auth UX
 hardening rather than treating the original three issue titles as exhaustive.
 
 ## Tooling Problems Captured for Remediation
@@ -85,8 +94,8 @@ The current retained tooling problem set for the `#3896-#3898` tranche is:
 10. truthful emergency publication after finish-path failure is not yet a
     first-class workflow path
 
-Keep these as explicit remediation inputs even if individual child issues merge
-before the broader adapter/tooling fixes land.
+Keep these as explicit historical remediation inputs and reference them when
+later Sprint 4 review/remediation work needs the first-pass execution context.
 
 ## Ordered Execution Plan
 
