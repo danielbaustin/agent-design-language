@@ -2,7 +2,8 @@
 
 ## Status
 
-Tracked bridge ledger for issue `#3778`.
+Tracked bridge ledger for issue `#3778`, now feeding the closed bridge-planning
+tranches `#3800` and `#3801` plus the still-open v0.91.5 release tail.
 
 This document is a planning and routing surface. It does not implement runtime
 features and does not claim `v0.92` activation readiness. Its job is to ensure
@@ -12,8 +13,8 @@ disposition, and review gate before `v0.92` activation work begins.
 ## Purpose
 
 The `v0.92` birthday and activation milestone depends on several bridge
-surfaces that cannot remain in local notes or chat memory. This ledger routes
-those surfaces into two planned bridge tranches:
+surfaces that cannot remain in local notes or chat memory. This ledger routed
+those surfaces into two bridge-planning tranches that are now closed:
 
 - `v0.91.6` issue `#3800`: first bridge tranche for resilience, logging/tooling proof-loop
   fixes, public prompt records, provider/model reliability, and first
@@ -25,6 +26,10 @@ those surfaces into two planned bridge tranches:
 If `v0.91.6` pulls a `v0.91.7` surface forward, the feature doc must say so
 explicitly and must not weaken the resilience, logging/tooling, public-record,
 provider/model, ACIP/A2A, or security proof surfaces.
+
+The remaining release-tail work is no longer “create the bridge plan”; it is to
+consume these routed bridge surfaces truthfully through open preflight and
+handoff work such as `#3577`, `#3581`, and `#3377`.
 
 ## Source Evidence
 
@@ -140,6 +145,8 @@ When this ledger is updated or consumed:
 
 ## Current Verdict
 
-Every named pre-`v0.92` activation surface is accounted for, but none is marked
-complete by this ledger. The next work is to execute the `v0.91.6` and
-`v0.91.7` feature-doc packets so `v0.92` can consume reviewed bridge truth.
+Every named pre-`v0.92` activation surface is accounted for, but this ledger is
+still routing truth rather than activation proof. The bridge-planning tranches
+`#3800` and `#3801` are closed; the next work is to consume their routed
+feature-doc surfaces through the still-open v0.91.5 preflight/handoff/release
+tail so `v0.92` can consume reviewed bridge truth.
