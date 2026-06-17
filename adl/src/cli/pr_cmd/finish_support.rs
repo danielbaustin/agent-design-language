@@ -111,9 +111,18 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     let changed_paths = finish_changed_paths(&repo_root, has_uncommitted)?;
-    validate_milestone_doc_drift_for_finish(&repo_root, issue_ref.scope(), &changed_paths)?;
+    let validation_changed_paths = if changed_paths.is_empty() {
+        finish_declared_paths_for_validation(&parsed.paths)
+    } else {
+        changed_paths.clone()
+    };
+    validate_milestone_doc_drift_for_finish(
+        &repo_root,
+        issue_ref.scope(),
+        &validation_changed_paths,
+    )?;
     let finish_validation_plan =
-        select_finish_validation_plan_for_finish(&parsed.paths, &changed_paths)?;
+        select_finish_validation_plan_for_finish(&parsed.paths, &validation_changed_paths)?;
     if !parsed.no_checks {
         run_finish_validation_rust(&repo_root, &finish_validation_plan)?;
         record_docs_only_validation_evidence_for_finish(&output_path, &finish_validation_plan)?;
@@ -180,7 +189,8 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         parsed.title.clone()
     };
 
-    if has_uncommitted {
+    let has_uncommitted_after_finish_truth = has_uncommitted_changes(&repo_root)?;
+    if has_uncommitted_after_finish_truth {
         run_status(
             "git",
             &["-C", path_str(&repo_root)?, "commit", "-m", &commit_msg],
@@ -498,6 +508,15 @@ pub(super) fn finish_changed_paths(repo_root: &Path, has_uncommitted: bool) -> R
         .filter(|line| !line.is_empty())
         .map(ToString::to_string)
         .collect())
+}
+
+pub(super) fn finish_declared_paths_for_validation(paths: &str) -> Vec<String> {
+    paths
+        .split(',')
+        .map(str::trim)
+        .filter(|path| !path.is_empty())
+        .map(ToString::to_string)
+        .collect()
 }
 
 pub(super) fn ensure_nonempty_file_path(path: &Path) -> Result<bool> {

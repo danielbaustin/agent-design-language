@@ -1,11 +1,19 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
     ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
-    normalize_docs_only_sor_text, open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout,
-    real_pr_finish, resolve_finish_issue_scope_and_slug, select_finish_validation_plan_for_finish,
-    FinishValidationMode, FinishValidationPlan,
+    finish_declared_paths_for_validation, normalize_docs_only_sor_text, open_pr_url_nonblocking,
+    open_pr_url_nonblocking_with_timeout, real_pr_finish, resolve_finish_issue_scope_and_slug,
+    select_finish_validation_plan_for_finish, FinishValidationMode, FinishValidationPlan,
 };
 use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
+
+#[test]
+fn finish_declared_paths_for_validation_splits_operator_surface() {
+    assert_eq!(
+        finish_declared_paths_for_validation("docs, adl/src , ,README.md"),
+        vec!["docs", "adl/src", "README.md"]
+    );
+}
 
 #[test]
 fn parse_finish_args_requires_title_and_accepts_finish_flags() {
@@ -1884,6 +1892,22 @@ verification_summary:
         .success());
 
     fs::write(repo.join("docs/notes.md"), "updated notes\n").expect("update docs");
+    assert!(Command::new("git")
+        .args(["add", "docs/notes.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add branch change")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "pre-finish docs change"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit branch change")
+        .success());
+    assert!(
+        !has_uncommitted_changes(&repo).expect("clean before finish"),
+        "regression requires finish to sample a clean worktree before it writes validation truth"
+    );
 
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
