@@ -27,7 +27,7 @@ decision records, and proof-loop repairs before `v0.92` activation opens.
 | --- | --- | --- | --- | --- |
 | WP-01 | Planning promotion and issue-wave readiness | Promote this candidate package, reconcile `#3778`, open the issue wave, and prepare SIP/STP/SPP/SRP/SOR cards. | Opened issue wave and card bundles. | `#3778`, `#3800`. |
 | WP-02 | Resilience, persistence, and sleep/wake feature doc | Define retry/fault classes, health persistence, checkpoint/restore, sleep/wake, hibernation, simulation, migration, replay, and continuity proof. | Feature doc and acceptance checklist. | WP-01. |
-| WP-03 | Logging/tooling proof-loop fixes | Plan validation split, CI runtime-budget observability, logging/Otel consumption, PR proof-loop reliability, issues `#3802`-`#3805`, and card-to-GitHub projection convergence including `#3935`. | Tooling reliability feature doc, review packet, and issue routes. | WP-01. |
+| WP-03 | Logging/tooling proof-loop fixes | Plan and complete validation split, CI runtime-budget observability, logging/Otel consumption, PR proof-loop reliability, issues `#3802`-`#3805`, and card-to-GitHub projection convergence including `#3935`. | Tooling reliability feature doc, review packet, completed `#3935` convergence slice, and issue routes. | WP-01. |
 | WP-04 | Public prompt records | Define local editable authoring, export, redaction, validation, indexing, evidence, and security review boundaries. | Public prompt-record feature doc. | WP-01, security review inputs. |
 | WP-05 | Provider/model reliability and multi-agent readiness | Define hosted/local/remote/OpenRouter/Gemma lanes, role suitability, known failures, and proof limits. | Provider/model reliability feature doc and matrix update. | WP-01, prior provider/multi-agent evidence. |
 | WP-06 | ACIP/A2A/provider communications decisions | Decide schema catalog, access rules, external-agent posture, provider communications, WebSocket boundary, JSON projection, and protobuf routing. | Decision record plus feature-doc route. | WP-01, WP-07 security input. |
@@ -48,6 +48,8 @@ decision records, and proof-loop repairs before `v0.92` activation opens.
 - Tooling reliability must classify whether PR/issue GitHub surfaces are
   card-owned managed projections, drift-checked mirrors, linked-only review
   surfaces, or card-local only.
+- Tooling reliability must complete the `SOR`-owned PR body and closing-linkage
+  convergence slice in `v0.91.6`, not leave it as an unbounded later follow-on.
 - Public prompt records must preserve local editable authoring and public export
   boundaries.
 - Provider/model reliability must include Gemma reliability and multi-agent

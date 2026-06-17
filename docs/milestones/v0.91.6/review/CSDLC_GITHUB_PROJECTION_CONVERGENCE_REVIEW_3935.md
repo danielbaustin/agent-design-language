@@ -26,8 +26,8 @@ Current-state facts in this review are grounded in:
 - `docs/templates/CARD_LIFECYCLE_TEMPLATE_TARGETS.md`
 - `docs/milestones/v0.91.6/features/TOOLING_PROOF_LOOP_RELIABILITY_v0.91.6.md`
 
-Recommendations in this review are design proposals for `#3935`, not claims
-that the current tooling already behaves this way.
+Recommendations in this review are the proposed completion contract for `#3935`
+in `v0.91.6`, not claims that the current tooling already behaves this way.
 
 ## Current Observed State
 
@@ -103,7 +103,7 @@ This implies:
 
 ## First Concrete Slice
 
-`#3935` should start with the smallest high-value convergence point:
+`#3935` should complete the smallest high-value convergence point in `v0.91.6`:
 
 - make the issue `SOR` the explicit authority for PR publication body truth
 
@@ -142,7 +142,8 @@ recommendation should classify these surfaces now:
 
 ## Generalized Card-To-GitHub Projection Model
 
-Longer-term target recommendation after the first-tranche boundary is approved:
+Target model that `v0.91.6` should define concretely even if some surfaces stay
+drift-checked or linked-only in the first implementation slice:
 
 | Card | Canonical responsibility | GitHub-facing projection candidate | Policy |
 | --- | --- | --- | --- |
@@ -165,9 +166,10 @@ of four classes:
   not mirror the content
 - `card_local_only`: no GitHub projection is attempted
 
-The first-tranche table above is the operative scope for `#3935`. The
-generalized card table is the later target model and must not be read as
-promoting additional surfaces into managed projection during Slice 1.
+The first-tranche table above is the operative implementation scope for
+`#3935`. The generalized card table is the target classification model that
+`v0.91.6` should finish defining, but it must not be read as promoting
+additional surfaces into managed projection during Slice 1.
 
 ## Why This Should Not Collapse The Cards
 
@@ -200,7 +202,8 @@ The goal is projection alignment, not lifecycle collapse.
 
 ### Slice 2
 
-Define the `SIP` to GitHub issue-body ownership boundary.
+Define and document the `SIP` to GitHub issue-body ownership boundary in
+`v0.91.6`.
 
 - distinguish bootstrap/import from ongoing authority
 - define which issue metadata fields are card-owned
@@ -208,7 +211,8 @@ Define the `SIP` to GitHub issue-body ownership boundary.
 
 ### Slice 3
 
-Define `SRP` and review-surface projection boundaries.
+Define and document `SRP` and review-surface projection boundaries in
+`v0.91.6`.
 
 - keep review findings in `SRP`
 - decide whether GitHub comments are summary projections, linked packets, or
@@ -216,7 +220,9 @@ Define `SRP` and review-surface projection boundaries.
 
 ### Slice 4
 
-Classify all remaining GitHub-facing surfaces.
+Classify all remaining GitHub-facing surfaces in `v0.91.6`, even where
+automatic synchronization remains deferred behind a drift-checked or
+linked-only policy.
 
 - PR title
 - labels
@@ -248,12 +254,13 @@ The first implementation slice should prove at minimum:
 
 ## Recommended Review Outcome
 
-Recommend review approval of the following direction:
+Recommend review approval of the following `v0.91.6` completion direction:
 
 - accept `SOR` as the canonical authority for PR publication body truth
 - accept a generalized card-to-GitHub projection policy as a `v0.91.6`
   tooling/control-plane requirement
 - accept the proposed first-tranche projection classification before broadening
   automatic synchronization to other surfaces
-- route implementation in bounded slices so projection ownership becomes
-  deterministic without collapsing C-SDLC card roles
+- require `#3935` to finish the projection classification and complete the
+  `SOR`-owned PR-body/closing-linkage slice within `v0.91.6`, without
+  collapsing C-SDLC card roles

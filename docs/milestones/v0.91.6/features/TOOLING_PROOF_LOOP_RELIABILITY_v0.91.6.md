@@ -61,7 +61,8 @@ Out of scope:
 ## v0.92 Consumption
 
 `v0.92` may consume a bounded proof-loop contract only after validator,
-GitHub, and logging failure modes are classified or routed.
+GitHub, logging, and card-projection failure modes are classified, with
+`SOR`-owned PR publication truth completed for the first tranche.
 
 ## Non-Goals
 

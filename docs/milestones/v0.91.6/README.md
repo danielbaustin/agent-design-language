@@ -83,7 +83,8 @@ issues created during the feature-doc wave:
   projection policy
 
 These are not blockers for creating this planning package. They are required
-inputs to the `v0.91.6` tooling proof-loop work.
+inputs to the `v0.91.6` tooling proof-loop work, and `#3935` is expected to
+complete its first-tranche `SOR` convergence slice within this milestone.
 
 ## v0.91.7 Handoff
 
