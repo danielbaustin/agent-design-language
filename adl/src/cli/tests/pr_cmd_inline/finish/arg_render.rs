@@ -813,6 +813,39 @@ fn finish_validation_plan_classifies_owner_validation_lanes() {
 }
 
 #[test]
+fn finish_validation_plan_classifies_rust_refactor_slices() {
+    let prompt_editor_plan = select_finish_validation_plan(
+        "adl/src/csdlc_prompt_editor.rs,adl/src/csdlc_prompt_editor/structure.rs",
+    )
+    .expect("prompt editor refactor plan");
+    assert_eq!(
+        prompt_editor_plan.mode,
+        FinishValidationMode::LargerBinaryFocused
+    );
+    assert!(prompt_editor_plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(prompt_editor_plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl".to_string()));
+
+    let run_artifacts_plan = select_finish_validation_plan(
+        "adl/src/cli/run_artifacts_types.rs,adl/src/cli/run_artifacts_types/state.rs",
+    )
+    .expect("run artifacts refactor plan");
+    assert_eq!(
+        run_artifacts_plan.mode,
+        FinishValidationMode::LargerBinaryFocused
+    );
+    assert!(run_artifacts_plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(run_artifacts_plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl".to_string()));
+}
+
+#[test]
 fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request() {
     let docs_plan = select_finish_validation_plan_for_finish(
         ".",

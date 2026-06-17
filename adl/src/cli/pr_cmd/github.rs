@@ -1134,7 +1134,7 @@ fn github_credential_preflight_hint(
     match config.token_source {
         None => "credential_status=missing_token; set GITHUB_TOKEN or GH_TOKEN before live C-SDLC GitHub operations; load the token from an operator-approved secret source and pass it only to the ADL command environment without echoing it; do not fall back to direct gh commands".to_string(),
         Some(source) => format!(
-            "credential_status=token_present source={}; ADL_GITHUB_CLIENT=gh is not a supported mutation fallback for covered operations; use ADL_GITHUB_CLIENT=auto or ADL_GITHUB_CLIENT=octocrab",
+            "credential_status=token_present source={}; ADL_GITHUB_CLIENT=gh is not a supported read or mutation fallback for covered operations; use ADL_GITHUB_CLIENT=auto or ADL_GITHUB_CLIENT=octocrab",
             source.env_name()
         ),
     }
@@ -4511,6 +4511,7 @@ sys.exit(9)
         assert!(err_debug.contains("pr.list.current_branch"));
         assert!(err_debug.contains("github_client.gh_fallback_removed"));
         assert!(err_debug.contains("credential_status=token_present"));
+        assert!(err_debug.contains("read or mutation fallback"));
         assert!(err_debug.contains("source=GITHUB_TOKEN"));
         assert!(!err_debug.contains("test-token"));
         let err = gh_issue_edit_body("owner/repo", 3672, "body")
@@ -4518,6 +4519,7 @@ sys.exit(9)
         let err_debug = format!("{err:?}");
         assert!(err_debug.contains("github_client.gh_fallback_removed"));
         assert!(err_debug.contains("credential_status=token_present"));
+        assert!(err_debug.contains("read or mutation fallback"));
         assert!(!err_debug.contains("test-token"));
         assert!(
             !gh_log.exists(),
