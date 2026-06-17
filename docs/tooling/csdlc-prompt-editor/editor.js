@@ -42,7 +42,7 @@ function cardByKey(key) {
 
 function sampleValueFor(field) {
   const samples = {
-    card_status: "ready",
+    card_status: "draft",
     issue: "3289",
     issue_padded: "3289",
     version: "v0.91.3",
@@ -104,7 +104,8 @@ function sampleValueFor(field) {
       ".adl/v0.91.3/tasks/issue-3289__v0-91-3-tools-human-csdlc-prompt-form-editors/srp.md",
     sor_card:
       ".adl/v0.91.3/tasks/issue-3289__v0-91-3-tools-human-csdlc-prompt-form-editors/sor.md",
-    status: "NOT_STARTED",
+    status: "draft",
+    activation_state: "draft",
     output_card:
       ".adl/v0.91.3/tasks/issue-3289__v0-91-3-tools-human-csdlc-prompt-form-editors/sor.md",
     branch_action: "Record branch binding truth for this execution.",
@@ -122,6 +123,13 @@ function draftFor(card) {
     card.fields.forEach((field) => {
       values[field.key] = sampleValueFor(field);
     });
+    if (card.key === "spp") {
+      values.status = "draft";
+      values.activation_state = "draft";
+    }
+    if (card.key === "sor") {
+      values.status = "NOT_STARTED";
+    }
     drafts.set(card.key, values);
   }
   return drafts.get(card.key);
@@ -248,7 +256,13 @@ function deriveTemplateValues(card, draft) {
   values.validation_plan_inline = values.validation_plan_inline || values.validation_plan;
   values.notes_risks_inline = values.notes_risks_inline || values.notes_risks;
   values.plan_summary = values.plan_summary || values.summary || values.goal;
-  values.status = values.status || "NOT_STARTED";
+  if (!values.status) {
+    if (card.key === "sor") {
+      values.status = "NOT_STARTED";
+    } else if (card.key === "spp") {
+      values.status = "draft";
+    }
+  }
   values.timestamp = values.timestamp || systemTimestamp;
 
   return values;

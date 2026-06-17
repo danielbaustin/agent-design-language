@@ -214,7 +214,7 @@ fn github_credential_preflight_hint(
     match config.token_source {
         None => "credential_status=missing_token; set GITHUB_TOKEN or GH_TOKEN before live C-SDLC GitHub operations; load the token from an operator-approved secret source and pass it only to the ADL command environment without echoing it; do not fall back to direct gh commands".to_string(),
         Some(source) => format!(
-            "credential_status=token_present source={}; ADL_GITHUB_CLIENT=gh is not a supported mutation fallback for covered operations; use ADL_GITHUB_CLIENT=auto or ADL_GITHUB_CLIENT=octocrab",
+            "credential_status=token_present source={}; ADL_GITHUB_CLIENT=gh is not a supported read or mutation fallback for covered operations; use ADL_GITHUB_CLIENT=auto or ADL_GITHUB_CLIENT=octocrab",
             source.env_name()
         ),
     }
