@@ -163,3 +163,76 @@ pub(super) fn run_gh_status_shell_allow_failure(operation: &str, args: &[&str]) 
         })?;
     Ok(output.status.success())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cli::tests::env_lock as cli_env_lock;
+
+    fn restore_fixture_env(value: Option<std::ffi::OsString>) {
+        unsafe {
+            if let Some(value) = value {
+                std::env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", value);
+            } else {
+                std::env::remove_var("ADL_TEST_GITHUB_CLI_FIXTURE");
+            }
+        }
+    }
+
+    #[test]
+    fn default_fixture_command_supports_capture_and_status_helpers() {
+        let _lock = cli_env_lock();
+        let saved = std::env::var_os("ADL_TEST_GITHUB_CLI_FIXTURE");
+        restore_fixture_env(None);
+
+        let fixture = test_github_cli_fixture_command("issue-view").expect("fixture command");
+        assert!(fixture.is_file());
+        unsafe {
+            std::env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", &fixture);
+        }
+
+        let title = run_gh_capture_shell("issue-title", &["issue", "view", "1", "--json", "title"])
+            .expect("capture title");
+        assert_eq!(title.trim(), "[v0.86][tools] Init test");
+
+        let labels =
+            run_gh_capture_shell("issue-labels", &["issue", "view", "1", "--json", "labels"])
+                .expect("capture labels");
+        assert!(labels.contains("track:roadmap"));
+
+        let body = run_gh_capture_shell_allow_failure(
+            "issue-body",
+            &["issue", "view", "1", "--json", "body"],
+        )
+        .expect("allow failure helper should run");
+        assert_eq!(body.as_deref().map(str::trim), Some(""));
+
+        run_gh_status_shell("issue-edit", &["issue", "edit", "1"]).expect("status helper");
+        assert!(
+            !run_gh_status_shell_allow_failure("unknown", &["not", "supported"])
+                .expect("status allow failure")
+        );
+        assert!(
+            run_gh_capture_shell_allow_failure("unknown", &["not", "supported"])
+                .expect("capture allow failure")
+                .is_none()
+        );
+
+        restore_fixture_env(saved);
+    }
+
+    #[test]
+    fn fixture_command_rejects_empty_override_path() {
+        let _lock = cli_env_lock();
+        let saved = std::env::var_os("ADL_TEST_GITHUB_CLI_FIXTURE");
+        unsafe {
+            std::env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", "");
+        }
+        let err =
+            test_github_cli_fixture_command("empty-override").expect_err("empty override fails");
+        assert!(err
+            .to_string()
+            .contains("empty ADL_TEST_GITHUB_CLI_FIXTURE"));
+        restore_fixture_env(saved);
+    }
+}
