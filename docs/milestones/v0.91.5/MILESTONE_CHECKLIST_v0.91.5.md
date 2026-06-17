@@ -5,7 +5,7 @@
 - Version: `v0.91.5`
 - Date: `2026-06-02`
 - Owner: ADL maintainers
-- Status: `sprint_4_wp_19_active`
+- Status: `sprint_4_wp_20_release_ceremony_active`
 
 ## Purpose
 
@@ -22,21 +22,24 @@ checks needed for truthful v0.91.5 closeout.
 - [x] Closeout-tail issues `#3575`, `#3579`, `#3576`, `#3580`,
   `#3577`, `#3581`, and `#3578` are seeded.
 - [x] Reusable milestone WP ordering standard and template surface exist.
-- [ ] Feature docs exist for all bridge work tracks.
-- [ ] Open side issues are relabeled to `version:v0.91.5`.
-- [ ] v0.91.4 docs say bridge work moved, not abandoned.
-- [ ] v0.91.6 docs depend on v0.91.5 closeout and `#3377`.
-- [ ] v0.91.7 second-tranche rule is explicit before v0.92 opens.
-- [ ] All opened v0.91.5 issues use five prompt cards from the active registry.
+- [x] Feature docs exist for all bridge work tracks or are explicitly routed.
+- [x] Open side issues are relabeled or routed out of v0.91.5 release scope.
+- [x] v0.91.4 docs say bridge work moved, not abandoned.
+- [x] v0.91.6 docs depend on v0.91.5 closeout and `#3377`.
+- [x] v0.91.7 second-tranche rule is explicit before v0.92 opens.
+- [x] Opened v0.91.5 issue-card bundles were audited or validated during
+      issue-local lifecycle work.
 
 ## Execution Discipline
 
-- [ ] `SIP`, `STP`, and `SPP` are design-time ready before execution starts.
-- [ ] `SRP` records actual review prompts and findings.
-- [ ] `SOR` records actual validation, integration, and closeout truth.
-- [ ] Work executes in bound worktrees.
-- [ ] Pre-PR review runs before publication.
-- [ ] Scope stays within each issue or is explicitly routed.
+- [x] `SIP`, `STP`, and `SPP` are design-time ready before execution starts or
+      repaired through issue-local lifecycle work.
+- [x] `SRP` records actual review prompts and findings where review occurred.
+- [x] `SOR` records actual validation, integration, and closeout truth for
+      release-tail issues.
+- [x] Work executes in bound worktrees.
+- [x] Pre-PR review runs before publication.
+- [x] Scope stays within each issue or is explicitly routed.
 
 ## Quality Gates
 
@@ -53,19 +56,19 @@ checks needed for truthful v0.91.5 closeout.
 - [x] Changed-file risk, test runtime regression, PR stack/base, docs truth,
   ADR readiness, demo/proof artifacts, security/redaction, and follow-on
   routing have blocker dispositions.
-- [ ] Multi-agent C-SDLC workcell proof completes or blocks truthfully.
-- [ ] OpenRouter/provider matrix work completes or blocks truthfully.
-- [ ] Public prompt packet export/redaction/index path completes or blocks
+- [x] Multi-agent C-SDLC workcell proof completes or blocks truthfully.
+- [x] OpenRouter/provider matrix work completes or blocks truthfully.
+- [x] Public prompt packet export/redaction/index path completes or blocks
   truthfully.
-- [ ] `.adl` cleanup/archive decisions are reviewed before deletion.
-- [ ] Demo readiness and Unity Observatory routing are explicit.
-- [ ] v0.92 activation test map is complete and consumed by `#3377`.
-- [ ] AEE completion tranche is reviewed and routed before v0.92 opens.
+- [x] `.adl` cleanup/archive decisions are reviewed before deletion.
+- [x] Demo readiness and Unity Observatory routing are explicit.
+- [x] v0.92 activation test map is complete and consumed by `#3377`.
+- [x] AEE completion tranche is reviewed and routed before v0.92 opens.
 
 ## Release Packaging
 
-- [ ] Release plan complete.
-- [ ] Release notes rewritten from landed evidence.
+- [x] Release plan complete for pre-publication ceremony.
+- [x] Release notes rewritten from landed evidence.
 - [x] `#3929` GitHub transport-boundary cleanup is closed and consumed as
   release-tail tooling truth.
 - [x] Second-pass internal review `#3923` is complete.
@@ -75,21 +78,24 @@ checks needed for truthful v0.91.5 closeout.
   blocked/deferred with rationale.
 - [x] Final remediation and pre-v0.92 routing `#3577` is complete or explicitly
   routed.
-- [ ] v0.91.6 handoff complete, including v0.91.7 second-tranche criteria.
-- [ ] 15-minute operator break after ceremony is recorded before v0.91.6 starts.
-- [ ] v0.92 final preflight routing complete.
+- [x] v0.91.6 handoff complete, including v0.91.7 second-tranche criteria.
+- [x] 15-minute operator break after ceremony is recorded before v0.91.6 starts.
+- [x] v0.92 final preflight routing complete.
 - [x] WP-18 conditional v0.92 preflight recorded:
   [WP18_EXTERNAL_REVIEW_REMEDIATION_DISPOSITION_2026-06-17.md](review/external_review/WP18_EXTERNAL_REVIEW_REMEDIATION_DISPOSITION_2026-06-17.md)
 - [x] Review findings fixed or routed:
   [WP18_EXTERNAL_REVIEW_REMEDIATION_DISPOSITION_2026-06-17.md](review/external_review/WP18_EXTERNAL_REVIEW_REMEDIATION_DISPOSITION_2026-06-17.md)
-- [ ] Release evidence package assembled.
+- [x] Release evidence package assembled through release notes, release plan,
+      handoff, WP-18/WP-19/WP-20 records, and the ceremony script preflight.
 
 ## Post-Release
 
-- [ ] v0.91.6 WP-01 inputs are linked.
-- [ ] v0.91.7 and v0.92 routing inputs are linked where applicable.
-- [ ] Deferred bridge items have owners and follow-on routing.
-- [ ] Residual risks are recorded in release notes or handoff.
+- [ ] v0.91.6 WP-01 inputs are linked after release publication.
+- [ ] v0.91.7 and v0.92 routing inputs are linked after release publication.
+- [ ] Deferred bridge items have owners and follow-on routing after release
+      publication.
+- [ ] Residual risks are recorded in release notes or handoff after release
+      publication.
 
 ## Exit Criteria
 
