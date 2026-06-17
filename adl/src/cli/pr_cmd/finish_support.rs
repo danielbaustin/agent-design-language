@@ -1387,49 +1387,6 @@ fn run_finish_validation_status(program: &str, args: &[&str]) -> Result<()> {
     Ok(())
 }
 
-fn run_finish_validation_status_allow_failure(program: &str, args: &[&str]) -> Result<bool> {
-    let class = classify_finish_subprocess(program, args);
-    let excerpt = format_subprocess_excerpt(program, args);
-    let heartbeat = ProgressHeartbeat::start(
-        "finish",
-        "validation_subprocess",
-        &[
-            ("program", program),
-            ("subprocess_class", class),
-            ("argv_excerpt", &excerpt),
-        ],
-    );
-    let mut command = Command::new(program);
-    command.args(args);
-    for key in FINISH_VALIDATION_SANITIZED_ENVS {
-        command.env_remove(key);
-    }
-    let status = match command.status() {
-        Ok(status) => status,
-        Err(err) => {
-            heartbeat.failed(&[
-                ("reason_code", "validation_subprocess_spawn_failed"),
-                ("next_action_hint", "check_subprocess_path_and_permissions"),
-            ]);
-            return Err(err).with_context(|| format!("failed to spawn '{program}'"));
-        }
-    };
-    let exit_code = status
-        .code()
-        .map(|value| value.to_string())
-        .unwrap_or_else(|| "signal".to_string());
-    if status.success() {
-        heartbeat.completed(&[("exit_code", &exit_code)]);
-    } else {
-        heartbeat.failed(&[
-            ("reason_code", "validation_subprocess_failed"),
-            ("next_action_hint", "inspect_subprocess_output"),
-            ("exit_code", &exit_code),
-        ]);
-    }
-    Ok(status.success())
-}
-
 fn classify_finish_subprocess(program: &str, args: &[&str]) -> &'static str {
     match program {
         "cargo" => "rust_validation",
