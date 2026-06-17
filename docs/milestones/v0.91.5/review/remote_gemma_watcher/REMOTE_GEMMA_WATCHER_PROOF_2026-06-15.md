@@ -27,6 +27,10 @@ that run. It adds new bounded evidence from `#3724`.
 
 ## Probe Summary
 
+Redaction note: public proof packets intentionally normalize private LAN
+endpoint details to `remote_ollama_private_lan` so provider/model evidence
+remains reviewable without exposing host-local addressing.
+
 | Lane | Surface | Model | Status | Output |
 | --- | --- | --- | --- | --- |
 | `adapter_gemma4_31b` | `adl_provider_adapter` | `gemma4:31b` | `useful_output` | `docs/milestones/v0.91.5/review/remote_gemma_watcher/lane_outputs/adapter_gemma4_31b.md` |
@@ -35,7 +39,7 @@ that run. It adds new bounded evidence from `#3724`.
 
 ## What Was Proven
 
-- The remote Ollama host at `http://192.168.68.70:11434` is reachable for bounded watcher probes.
+- The remote Ollama host `remote_ollama_private_lan` is reachable for bounded watcher probes.
 - The larger Gemma4 routes can return non-empty structured watcher text.
 - The ADL-native provider path is proven through `adl-provider-adapter` on
   `gemma4:31b`, not only through raw HTTP.

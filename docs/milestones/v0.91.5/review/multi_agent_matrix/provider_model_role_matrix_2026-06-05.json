@@ -62,7 +62,7 @@
       "roles": ["planner", "author", "worker", "reviewer", "watcher"]
     },
     {
-      "lane": "remote_ollama_192_168_68_77",
+      "lane": "remote_ollama_private_lan_stale",
       "substrate": "remote_ollama",
       "credential_env": null,
       "status": "blocked_stale_node",
@@ -70,13 +70,13 @@
       "blockers": ["ssh_host_key_verification_changed", "ollama_http_connection_refused"]
     },
     {
-      "lane": "remote_ollama_nessus_local_current",
+      "lane": "remote_ollama_private_lan_current",
       "substrate": "remote_ollama",
       "credential_env": null,
       "status": "live_inventory_and_watcher_smoke_passed",
       "roles": ["remote_local_model_capacity", "watcher_candidate"],
       "host_observation": {
-        "resolved_ip": "192.168.68.70",
+        "endpoint_ref": "remote_ollama_private_lan",
         "model_count": 18
       },
       "live_smoke": {

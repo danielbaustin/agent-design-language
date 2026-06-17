@@ -14,6 +14,10 @@ dedicated packet at
 This June 5 packet remains the historical baseline rather than the current
 strongest OpenRouter proof surface.
 
+Redaction note: private LAN host/IP/port details in public evidence are
+normalized to `remote_ollama_private_lan` or `remote_ollama_private_lan_stale`
+to preserve proof semantics without publishing local network coordinates.
+
 ## Purpose
 
 This packet records the provider/model readiness matrix for the v0.91.5
@@ -38,9 +42,9 @@ The following checks were run from the `#3501` worktree.
 | OpenRouter catalogue | `GET https://openrouter.ai/api/v1/models` | Available | Returned 337 models, including DeepSeek V4 candidates. Credential value was not printed or recorded. |
 | OpenRouter live smoke | `POST https://openrouter.ai/api/v1/chat/completions` with `deepseek/deepseek-v4-flash` | Passed | Response model `deepseek/deepseek-v4-flash-20260423`; sentinel `ADL_OPENROUTER_SMOKE_OK`; usage 80 tokens; reported cost `0.00001955` USD. |
 | Local Ollama | `ollama list` | Available | Model names and sizes only. |
-| Remote Ollama stale node | `ssh -o BatchMode=yes -o ConnectTimeout=5 192.168.68.77 'ollama list'`; `GET http://192.168.68.77:11434/api/tags` | Blocked | SSH host-key verification changed and Ollama HTTP refused; no bypass attempted. |
-| Remote Ollama current node | `GET http://192.168.68.70:11434/api/tags` | Available | Returned 18 models on the current `nessus.local` node. |
-| Remote Ollama generation smoke | `POST http://192.168.68.70:11434/api/generate` | Partial pass | `gemma4:e2b` returned sentinel `ADL_REMOTE_OLLAMA_SMOKE_OK`; `qwen3:30b` and `deepseek-r1:8b` completed but returned empty sentinel responses. |
+| Remote Ollama stale node | `ssh -o BatchMode=yes -o ConnectTimeout=5 remote_ollama_private_lan_stale 'ollama list'`; `GET remote_ollama_private_lan_stale/api/tags` | Blocked | SSH host-key verification changed and Ollama HTTP refused; no bypass attempted. |
+| Remote Ollama current node | `GET remote_ollama_private_lan/api/tags` | Available | Returned 18 models on the current remote Ollama node. |
+| Remote Ollama generation smoke | `POST remote_ollama_private_lan/api/generate` | Partial pass | `gemma4:e2b` returned sentinel `ADL_REMOTE_OLLAMA_SMOKE_OK`; `qwen3:30b` and `deepseek-r1:8b` completed but returned empty sentinel responses. |
 | OpenRouter substrate | `#3505` / PR `#3686` | Implemented and merged | Native provider substrate exists; this packet also records one direct OpenRouter API smoke for matrix readiness. |
 
 ## Available Local Model Panel
@@ -67,11 +71,11 @@ Local Ollama returned the following role-relevant families:
 | DeepSeek hosted API | Native `deepseek` provider from `#3549` | critic, reviewer, reasoning worker | blocked_missing_credential | Re-run with `DEEPSEEK_API_KEY`; keep distinct from Ollama DeepSeek models. |
 | OpenRouter | Native `openrouter` provider from `#3505` | broad hosted model routing | follow_on_role_proof_recorded | DeepSeek V4 Flash routed successfully here as smoke; `#3723` later added four exact native routed role probes and a fail-closed missing-credential control. Broad role usefulness and capability details still require `#3504`, `#3415`, and `#3503`. |
 | Local Ollama | Local `ollama list` | Qwen + DeepSeek local team | available_for_bounded_local_probe | Use `#3504`, `#3415`, and `#3503` to test actual usefulness and overhead. |
-| Remote Ollama | AI node `nessus.local` / `192.168.68.70` | remote local-model capacity | live_inventory_and_watcher_smoke_passed | Current node inventory passed and `gemma4:e2b` sentinel generation passed; Qwen/DeepSeek remote role probes still need prompt/model-specific follow-up. |
+| Remote Ollama | `remote_ollama_private_lan` | remote local-model capacity | live_inventory_and_watcher_smoke_passed | Current node inventory passed and `gemma4:e2b` sentinel generation passed; Qwen/DeepSeek remote role probes still need prompt/model-specific follow-up. |
 
 ## Available Remote Model Panel
 
-Remote Ollama on the current `nessus.local` node returned the following
+Remote Ollama on the current `remote_ollama_private_lan` node returned the following
 role-relevant families:
 
 | Family | Observed remote model(s) | Candidate role fit | Status |
