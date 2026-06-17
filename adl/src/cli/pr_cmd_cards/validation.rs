@@ -1,6 +1,5 @@
 use super::shared::{
     field_line_value, output_card_title_matches_slug, path_str, run_output_with_adl_tooling_bin,
-    run_status_with_adl_tooling_bin,
 };
 use anyhow::{bail, Context, Result};
 use serde_yaml::Value;
@@ -143,30 +142,19 @@ pub(crate) fn validate_bootstrap_cards(
     output_path: &Path,
     structured_paths: StructuredBundlePaths<'_>,
 ) -> Result<()> {
-    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    run_status_with_adl_tooling_bin(
-        "bash",
-        &[
-            path_str(&validator)?,
-            "--type",
-            "sip",
-            "--phase",
-            "bootstrap",
-            "--input",
-            path_str(input_path)?,
-        ],
+    validate_structured_artifact_with_phase(
+        repo_root,
+        "start",
+        input_path,
+        "sip",
+        Some("bootstrap"),
     )?;
-    run_status_with_adl_tooling_bin(
-        "bash",
-        &[
-            path_str(&validator)?,
-            "--type",
-            "sor",
-            "--phase",
-            "bootstrap",
-            "--input",
-            path_str(output_path)?,
-        ],
+    validate_structured_artifact_with_phase(
+        repo_root,
+        "start",
+        output_path,
+        "sor",
+        Some("bootstrap"),
     )
     .with_context(|| {
         format!(
@@ -213,18 +201,12 @@ pub(crate) fn validate_bootstrap_output_card(
     branch: &str,
     output_path: &Path,
 ) -> Result<()> {
-    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    run_status_with_adl_tooling_bin(
-        "bash",
-        &[
-            path_str(&validator)?,
-            "--type",
-            "sor",
-            "--phase",
-            "bootstrap",
-            "--input",
-            path_str(output_path)?,
-        ],
+    validate_structured_artifact_with_phase(
+        repo_root,
+        "doctor",
+        output_path,
+        "sor",
+        Some("bootstrap"),
     )?;
     let expected = format!("issue-{:04}", issue);
     if field_line_value(output_path, "Task ID")? != expected {
@@ -256,21 +238,33 @@ pub(crate) fn validate_structured_artifact(
     path: &Path,
     kind: &str,
 ) -> Result<()> {
+    validate_structured_artifact_with_phase(repo_root, phase, path, kind, None)
+}
+
+fn validate_structured_artifact_with_phase(
+    repo_root: &Path,
+    phase: &str,
+    path: &Path,
+    kind: &str,
+    contract_phase: Option<&str>,
+) -> Result<()> {
     let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    let output = run_output_with_adl_tooling_bin(
-        "bash",
-        &[
-            path_str(&validator)?,
-            "--type",
-            kind,
-            "--input",
-            path_str(path)?,
-        ],
-    )?;
+    let validator_path = path_str(&validator)?;
+    let input_path = path_str(path)?;
+    let mut args = vec!["bash", validator_path, "--type", kind];
+    if let Some(contract_phase) = contract_phase {
+        args.push("--phase");
+        args.push(contract_phase);
+    }
+    args.push("--input");
+    args.push(input_path);
+    let output = run_output_with_adl_tooling_bin(args[0], &args[1..])?;
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
         let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
-        let detail = if !stderr.is_empty() {
+        let detail = if contract_phase == Some("bootstrap") {
+            format!("bash failed with status {:?}", output.status.code())
+        } else if !stderr.is_empty() {
             stderr
         } else if !stdout.is_empty() {
             stdout
