@@ -42,7 +42,8 @@ instead of silently spawning `gh`.
 - `ADL_GITHUB_CLIENT=octocrab` requires `GITHUB_TOKEN` or `GH_TOKEN` and fails
   closed without a token.
 - `ADL_GITHUB_CLIENT=gh` is no longer an operational fallback for covered
-  C-SDLC GitHub workflow operations.
+  C-SDLC GitHub workflow operations, including bounded read paths such as live
+  current-PR lookup and other covered issue/PR metadata reads.
 - Missing token, explicit `gh` fallback, or unsupported operations fail closed
   rather than spawning `gh`.
 
