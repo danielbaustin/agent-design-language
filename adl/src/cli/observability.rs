@@ -536,7 +536,10 @@ mod tests {
         emit_event("adl", "doctor", "completed", &[]);
 
         std::io::stderr().flush().expect("flush stderr");
-        assert!(unsafe { dup2(saved_stderr, stderr_fd) } >= 0, "restore stderr");
+        assert!(
+            unsafe { dup2(saved_stderr, stderr_fd) } >= 0,
+            "restore stderr"
+        );
         unsafe {
             close(saved_stderr);
         }
@@ -546,7 +549,10 @@ mod tests {
         reader
             .read_to_string(&mut captured)
             .expect("read captured stderr");
-        assert!(captured.is_empty(), "expected quiet stderr, got: {captured}");
+        assert!(
+            captured.is_empty(),
+            "expected quiet stderr, got: {captured}"
+        );
     }
 
     #[test]
