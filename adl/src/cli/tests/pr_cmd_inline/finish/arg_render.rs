@@ -118,14 +118,11 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
         &output,
         Some("extra notes"),
         Some(&render_default_finish_validation(&FinishValidationPlan {
-            mode: FinishValidationMode::FullRust,
+            mode: FinishValidationMode::LargerBinaryFocused,
             commands: vec![
                 "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
-                "bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk".to_string(),
                 "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
-                "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings".to_string(),
-                "cargo nextest run --manifest-path adl/Cargo.toml --all-features (fallback: cargo test --manifest-path adl/Cargo.toml --all-features when cargo-nextest is unavailable locally)".to_string(),
-                "cargo test --manifest-path adl/Cargo.toml --doc --all-features".to_string(),
+                "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string(),
             ],
         })),
         "fp-123",
@@ -147,14 +144,11 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
         &output,
         Some("issue_card_schema: adl.issue.v1"),
         Some(&render_default_finish_validation(&FinishValidationPlan {
-            mode: FinishValidationMode::FullRust,
+            mode: FinishValidationMode::LargerBinaryFocused,
             commands: vec![
                 "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
-                "bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk".to_string(),
                 "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
-                "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings".to_string(),
-                "cargo nextest run --manifest-path adl/Cargo.toml --all-features (fallback: cargo test --manifest-path adl/Cargo.toml --all-features when cargo-nextest is unavailable locally)".to_string(),
-                "cargo test --manifest-path adl/Cargo.toml --doc --all-features".to_string(),
+                "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string(),
             ],
         })),
         "fp-123",
@@ -527,28 +521,14 @@ fn finish_helper_paths_cover_ahead_count_and_validation_modes() {
         "docs-only validation should not invoke cargo"
     );
 
-    assert_eq!(
-        select_finish_validation_plan("adl,docs")
-            .expect("full-rust plan")
-            .mode,
-        FinishValidationMode::FullRust
-    );
-    run_finish_validation_rust(
-        &repo,
-        &select_finish_validation_plan("adl,docs").expect("full-rust plan"),
-    )
-    .expect("full validation");
+    let err = select_finish_validation_plan("adl,docs").expect_err("unclassified plan should fail");
     unsafe {
         env::set_var("PATH", old_path);
     }
 
-    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
-    assert!(cargo_calls.contains("fmt --manifest-path"));
-    assert!(cargo_calls.contains("clippy --manifest-path"));
-    assert!(cargo_calls.contains("nextest --version"));
-    assert!(cargo_calls.contains("nextest run --manifest-path"));
-    assert!(cargo_calls.contains("test --manifest-path"));
-    assert!(cargo_calls.contains("--doc --all-features"));
+    assert!(err
+        .to_string()
+        .contains("not classified into docs-only, small-binary focused, or larger-binary focused"));
 }
 
 #[test]
@@ -669,52 +649,11 @@ fn finish_guard_blocks_branch_behind_origin_main_before_validation() {
 }
 
 #[test]
-fn finish_full_rust_validation_falls_back_when_nextest_is_unavailable() {
-    let _guard = env_lock();
-    let temp = unique_temp_dir("adl-pr-finish-nextest-fallback");
-    let repo = temp.join("repo");
-    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
-    fs::write(
-        repo.join("adl/Cargo.toml"),
-        "[package]\nname='adl'\nversion='0.1.0'\n",
-    )
-    .expect("cargo toml");
-    write_executable(
-        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
-        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
-    );
-    init_git_repo(&repo);
-
-    let bin_dir = temp.join("bin");
-    fs::create_dir_all(&bin_dir).expect("bin dir");
-    let cargo_log = temp.join("cargo.log");
-    let cargo_path = bin_dir.join("cargo");
-    write_executable(
-        &cargo_path,
-        &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"${{1:-}}\" = 'nextest' ] && [ \"${{2:-}}\" = '--version' ]; then\n  exit 1\nfi\nexit 0\n",
-            cargo_log.display()
-        ),
-    );
-    let old_path = env::var("PATH").unwrap_or_default();
-    unsafe {
-        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
-    }
-    run_finish_validation_rust(
-        &repo,
-        &select_finish_validation_plan("adl,docs").expect("full-rust plan"),
-    )
-    .expect("full validation");
-    unsafe {
-        env::set_var("PATH", old_path);
-    }
-
-    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
-    assert!(cargo_calls.contains("nextest --version"));
-    assert!(!cargo_calls.contains("nextest run --manifest-path"));
-    assert!(cargo_calls.contains("test --manifest-path"));
-    assert!(cargo_calls.contains("--all-features"));
-    assert!(cargo_calls.contains("--doc --all-features"));
+fn finish_unclassified_paths_fail_closed_instead_of_widening_to_repo_wide_rust_validation() {
+    let err = select_finish_validation_plan("adl,docs").expect_err("unclassified plan should fail");
+    assert!(err
+        .to_string()
+        .contains("not classified into docs-only, small-binary focused, or larger-binary focused"));
 }
 
 #[test]
@@ -768,9 +707,10 @@ fn finish_validation_sanitizes_live_github_transport_env() {
 
     run_finish_validation_rust(
         &repo,
-        &select_finish_validation_plan("adl,docs").expect("full-rust plan"),
+        &select_finish_validation_plan("adl/src/cli/pr_cmd/doctor.rs")
+            .expect("larger binary focused plan"),
     )
-    .expect("full validation should not inherit live GitHub transport env");
+    .expect("focused validation should not inherit live GitHub transport env");
 
     unsafe {
         env::set_var("PATH", old_path);
@@ -783,8 +723,8 @@ fn finish_validation_sanitizes_live_github_transport_env() {
     }
 
     let cargo_env = fs::read_to_string(&cargo_log).expect("cargo env log");
-    assert!(cargo_env.contains("nextest --version"));
-    assert!(cargo_env.contains("nextest run --manifest-path"));
+    assert!(cargo_env.contains("args=test --manifest-path"));
+    assert!(!cargo_env.contains("nextest run --manifest-path"));
     assert!(!cargo_env.contains("octocrab"));
     assert!(!cargo_env.contains("github-secret-token"));
     assert!(!cargo_env.contains("gh-secret-token"));
@@ -801,7 +741,7 @@ fn finish_validation_plan_supports_focused_local_ci_gated_mode() {
     )
     .expect("focused plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan
         .commands
         .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
@@ -830,7 +770,7 @@ fn finish_validation_plan_classifies_owner_validation_lanes() {
         "adl/tools/run_owner_validation_lane.sh,docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md",
     )
     .expect("owner lane plan");
-    assert_eq!(csdlc_plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert_eq!(csdlc_plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(csdlc_plan
         .commands
         .contains(&"bash adl/tools/test_owner_validation_lane.sh".to_string()));
@@ -846,12 +786,12 @@ fn finish_validation_plan_classifies_owner_validation_lanes() {
         .any(|command| command.contains("cargo clippy")));
     let csdlc_rendered_validation = render_default_finish_validation(&csdlc_plan);
     assert!(!csdlc_rendered_validation.contains("cargo nextest run"));
-    assert!(csdlc_rendered_validation.contains("focused owner/policy proof only"));
+    assert!(csdlc_rendered_validation.contains("larger owner-binary focused build/test only"));
     assert!(csdlc_rendered_validation.contains("CI integration proof"));
 
     let runtime_plan = select_finish_validation_plan("adl/tools/test_adl_runtime_compatibility.sh")
         .expect("runtime owner lane plan");
-    assert_eq!(runtime_plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert_eq!(runtime_plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(runtime_plan
         .commands
         .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
@@ -862,7 +802,7 @@ fn finish_validation_plan_classifies_owner_validation_lanes() {
 
     let review_plan = select_finish_validation_plan("adl/tools/test_adl_review_compatibility.sh")
         .expect("review owner lane plan");
-    assert_eq!(review_plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert_eq!(review_plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(review_plan
         .commands
         .contains(&"bash adl/tools/run_owner_validation_lane.sh review --build".to_string()));
@@ -890,7 +830,7 @@ fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request()
         &["adl/src/cli/pr_cmd/doctor.rs".to_string()],
     )
     .expect("focused actual path plan");
-    assert_eq!(focused_plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert_eq!(focused_plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(focused_plan
         .commands
         .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
@@ -932,7 +872,7 @@ fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
     )
     .expect("behavioral tooling plan");
 
-    assert_ne!(plan.mode, FinishValidationMode::DocsOnly);
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
 }
 
 #[test]
@@ -947,7 +887,7 @@ fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
     )
     .expect("public prompt packet plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan
         .commands
         .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
@@ -981,16 +921,16 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
     )
     .expect("finish support plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
     assert!(plan
         .commands
         .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
     assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_validation"
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation"
             .to_string()
     ));
     assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation"
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation"
             .to_string()
     ));
     assert!(!plan
@@ -1018,7 +958,7 @@ fn finish_validation_profile_keeps_small_binary_delegation_proof_focused() {
     )
     .expect("small-binary delegation proof plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
     assert!(plan
         .commands
         .contains(&"bash adl/tools/test_pr_small_binary_delegation.sh".to_string()));
@@ -1133,7 +1073,7 @@ fn finish_helper_paths_run_focused_local_ci_gated_validation() {
         "adl/src/cli/pr_cmd/doctor.rs,adl/src/cli/pr_cmd/lifecycle/tests.rs,adl/src/cli/tooling_cmd/public_prompt_packet.rs,.github/workflows/ci.yaml,adl/tools/check_coverage_impact.sh,adl/tools/ci_path_policy.sh,docs/tooling/merge_readiness_gate_policy_v0.91.4.md,docs/milestones/v0.91.4/review/merge_readiness/ct_demo_001_merge_gate_profile_report.md",
     )
     .expect("focused plan");
-    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     run_finish_validation_rust(&repo, &plan).expect("focused validation");
 
     unsafe {
@@ -1191,7 +1131,7 @@ fn finish_helper_paths_run_narrow_finish_focused_validation() {
         "adl/src/cli/pr_cmd/finish_support.rs,adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs,docs/default_workflow.md",
     )
     .expect("narrow finish-focused plan");
-    assert_eq!(plan.mode, FinishValidationMode::FocusedLocalCiGated);
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
     run_finish_validation_rust(&repo, &plan).expect("narrow focused validation");
 
     unsafe {
@@ -1201,9 +1141,9 @@ fn finish_helper_paths_run_narrow_finish_focused_validation() {
     let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
     assert!(cargo_calls.contains("fmt --manifest-path"));
     assert!(cargo_calls
-        .contains("--bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_validation"));
+        .contains("--bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation"));
     assert!(cargo_calls.contains(
-        "--bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation"
+        "--bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation"
     ));
     assert!(!cargo_calls.contains(" cli::pr_cmd\n"));
     assert!(!cargo_calls.contains("clippy --manifest-path"));

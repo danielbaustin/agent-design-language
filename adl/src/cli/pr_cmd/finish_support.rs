@@ -856,8 +856,8 @@ fn trim_trailing_blank_lines(mut lines: Vec<String>) -> Vec<String> {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum FinishValidationMode {
     DocsOnly,
-    FocusedLocalCiGated,
-    FullRust,
+    SmallBinaryFocused,
+    LargerBinaryFocused,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -870,10 +870,6 @@ fn finish_validation_guard(repo_root: &Path) -> Result<()> {
     let tracked_residue_guard =
         repo_root.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh");
     run_status("bash", &[path_str(&tracked_residue_guard)?])
-}
-
-fn cargo_nextest_available() -> bool {
-    run_finish_validation_status_allow_failure("cargo", &["nextest", "--version"]).unwrap_or(false)
 }
 
 pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishValidationPlan> {
@@ -894,14 +890,31 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             ],
         });
     }
-    if paths
+    let unsupported_paths = paths
         .iter()
-        .all(|path| finish_path_is_docs_only(path) || finish_path_is_focused_local_ci_gated(path))
-    {
+        .copied()
+        .filter(|path| {
+            !finish_path_is_docs_only(path)
+                && !finish_path_is_small_binary_focused(path)
+                && !finish_path_is_larger_binary_focused(path)
+        })
+        .collect::<Vec<_>>();
+    if !unsupported_paths.is_empty() {
+        bail!(
+            "finish: changed paths are not classified into docs-only, small-binary focused, or larger-binary focused validation lanes: {}",
+            unsupported_paths.join(", ")
+        );
+    }
+    if paths.iter().all(|path| {
+        finish_path_is_docs_only(path)
+            || finish_path_is_small_binary_focused(path)
+            || finish_path_is_larger_binary_focused(path)
+    }) {
         let mut commands = vec![
             "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
             "git diff --check".to_string(),
         ];
+        let mut mode = FinishValidationMode::SmallBinaryFocused;
         if paths
             .iter()
             .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path))
@@ -912,17 +925,18 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             );
             push_finish_validation_command(
                 &mut commands,
-                "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_validation",
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation",
             );
             push_finish_validation_command(
                 &mut commands,
-                "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation",
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation",
             );
         }
         if paths
             .iter()
             .any(|path| finish_path_needs_pr_cmd_lifecycle_focused_validation(path))
         {
+            mode = FinishValidationMode::LargerBinaryFocused;
             push_finish_validation_command(
                 &mut commands,
                 "cargo fmt --manifest-path adl/Cargo.toml --all --check",
@@ -936,6 +950,7 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             .iter()
             .any(|path| finish_path_needs_public_prompt_packet_focused_validation(path))
         {
+            mode = FinishValidationMode::LargerBinaryFocused;
             push_finish_validation_command(
                 &mut commands,
                 "cargo fmt --manifest-path adl/Cargo.toml --all --check",
@@ -949,12 +964,14 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             .iter()
             .any(|path| finish_path_needs_coverage_tooling_focused_validation(path))
         {
+            mode = FinishValidationMode::LargerBinaryFocused;
             commands.push("bash adl/tools/test_check_coverage_impact.sh".to_string());
         }
         if paths
             .iter()
             .any(|path| finish_path_needs_ci_policy_focused_validation(path))
         {
+            mode = FinishValidationMode::LargerBinaryFocused;
             commands.push("bash adl/tools/test_ci_path_policy.sh".to_string());
         }
         if paths
@@ -967,18 +984,21 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             .iter()
             .any(|path| finish_path_needs_owner_lane_contract_validation(path))
         {
+            mode = FinishValidationMode::LargerBinaryFocused;
             commands.push("bash adl/tools/test_owner_validation_lane.sh".to_string());
         }
         if paths
             .iter()
             .any(|path| finish_path_needs_csdlc_owner_lane_validation(path))
         {
+            mode = FinishValidationMode::LargerBinaryFocused;
             commands.push("bash adl/tools/run_owner_validation_lane.sh csdlc".to_string());
         }
         if paths
             .iter()
             .any(|path| finish_path_needs_runtime_owner_lane_validation(path))
         {
+            mode = FinishValidationMode::LargerBinaryFocused;
             commands
                 .push("bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string());
         }
@@ -986,30 +1006,19 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             .iter()
             .any(|path| finish_path_needs_review_owner_lane_validation(path))
         {
+            mode = FinishValidationMode::LargerBinaryFocused;
             commands.push("bash adl/tools/run_owner_validation_lane.sh review --build".to_string());
         }
         if paths
             .iter()
             .any(|path| finish_path_needs_all_owner_lane_validation(path))
         {
+            mode = FinishValidationMode::LargerBinaryFocused;
             commands.push("bash adl/tools/run_owner_validation_lane.sh all --build".to_string());
         }
-        return Ok(FinishValidationPlan {
-            mode: FinishValidationMode::FocusedLocalCiGated,
-            commands,
-        });
+        return Ok(FinishValidationPlan { mode, commands });
     }
-    Ok(FinishValidationPlan {
-        mode: FinishValidationMode::FullRust,
-        commands: vec![
-            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
-            "bash adl/tools/check_coverage_impact.sh --base origin/main --include-working-tree --summary adl/target/coverage-impact-summary.json --require-summary-for-risk".to_string(),
-            "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
-            "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings".to_string(),
-            "cargo nextest run --manifest-path adl/Cargo.toml --all-features (fallback: cargo test --manifest-path adl/Cargo.toml --all-features when cargo-nextest is unavailable locally)".to_string(),
-            "cargo test --manifest-path adl/Cargo.toml --doc --all-features".to_string(),
-        ],
-    })
+    bail!("finish: internal error selecting validation lane")
 }
 
 fn push_finish_validation_command(commands: &mut Vec<String>, command: &str) {
@@ -1071,7 +1080,15 @@ fn finish_path_has_docs_artifact_extension(path: &str) -> bool {
         })
 }
 
-fn finish_path_is_focused_local_ci_gated(path: &str) -> bool {
+fn finish_path_is_small_binary_focused(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/tools/pr.sh" | "adl/tools/test_pr_small_binary_delegation.sh"
+    ) || finish_path_needs_pr_finish_rust_focused_validation(trimmed)
+}
+
+fn finish_path_is_larger_binary_focused(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(
         trimmed,
@@ -1097,7 +1114,6 @@ fn finish_path_is_focused_local_ci_gated(path: &str) -> bool {
             | "adl/tools/test_adl_review_compatibility.sh"
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
-            | "adl/src/cli/pr_cmd/finish_support.rs"
             | "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
             | "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs"
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
@@ -1202,7 +1218,10 @@ pub(super) fn run_finish_validation_rust(
         return Ok(());
     }
 
-    if plan.mode == FinishValidationMode::FocusedLocalCiGated {
+    if matches!(
+        plan.mode,
+        FinishValidationMode::SmallBinaryFocused | FinishValidationMode::LargerBinaryFocused
+    ) {
         run_finish_validation_status("git", &["-C", path_str(repo_root)?, "diff", "--check"])?;
         let manifest = repo_root.join("adl/Cargo.toml");
         for command in &plan.commands {
@@ -1234,7 +1253,7 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
-                "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_validation" => {
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation" => {
                     run_finish_validation_status(
                         "cargo",
                         &[
@@ -1242,12 +1261,12 @@ pub(super) fn run_finish_validation_rust(
                             "--manifest-path",
                             path_str(&manifest)?,
                             "--bin",
-                            "adl-csdlc",
+                            "adl-pr-finish",
                             "cli::pr_cmd::tests::finish::arg_render::finish_validation",
                         ],
                     )?;
                 }
-                "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation" => {
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation" => {
                     run_finish_validation_status(
                         "cargo",
                         &[
@@ -1255,7 +1274,7 @@ pub(super) fn run_finish_validation_rust(
                             "--manifest-path",
                             path_str(&manifest)?,
                             "--bin",
-                            "adl-csdlc",
+                            "adl-pr-finish",
                             "cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation",
                         ],
                     )?;
@@ -1310,82 +1329,7 @@ pub(super) fn run_finish_validation_rust(
         }
         return Ok(());
     }
-
-    let manifest = repo_root.join("adl/Cargo.toml");
-    let coverage_impact = repo_root.join("adl/tools/check_coverage_impact.sh");
-    let coverage_summary = repo_root.join("adl/target/coverage-impact-summary.json");
-    if coverage_impact.is_file() {
-        run_finish_validation_status(
-            "bash",
-            &[
-                path_str(&coverage_impact)?,
-                "--base",
-                "origin/main",
-                "--include-working-tree",
-                "--summary",
-                path_str(&coverage_summary)?,
-                "--require-summary-for-risk",
-            ],
-        )?;
-    }
-    run_finish_validation_status(
-        "cargo",
-        &[
-            "fmt",
-            "--manifest-path",
-            path_str(&manifest)?,
-            "--all",
-            "--check",
-        ],
-    )?;
-    run_finish_validation_status(
-        "cargo",
-        &[
-            "clippy",
-            "--manifest-path",
-            path_str(&manifest)?,
-            "--all-targets",
-            "--",
-            "-D",
-            "warnings",
-        ],
-    )?;
-    if cargo_nextest_available() {
-        run_finish_validation_status(
-            "cargo",
-            &[
-                "nextest",
-                "run",
-                "--manifest-path",
-                path_str(&manifest)?,
-                "--all-features",
-            ],
-        )?;
-    } else {
-        eprintln!(
-            "• cargo-nextest not available locally; falling back to cargo test for full local Rust validation."
-        );
-        run_finish_validation_status(
-            "cargo",
-            &[
-                "test",
-                "--manifest-path",
-                path_str(&manifest)?,
-                "--all-features",
-            ],
-        )?;
-    }
-    run_finish_validation_status(
-        "cargo",
-        &[
-            "test",
-            "--manifest-path",
-            path_str(&manifest)?,
-            "--doc",
-            "--all-features",
-        ],
-    )?;
-    Ok(())
+    bail!("finish: unsupported validation mode")
 }
 
 const FINISH_VALIDATION_SANITIZED_ENVS: &[&str] = &[
@@ -1576,9 +1520,9 @@ pub(super) fn render_default_finish_validation(plan: &FinishValidationPlan) -> S
                     .to_string(),
             );
         }
-        FinishValidationMode::FocusedLocalCiGated => {
+        FinishValidationMode::SmallBinaryFocused => {
             lines.push(
-                "- Local preflight profile: focused owner/policy proof only; this is not full local Rust validation."
+                "- Local preflight profile: small-binary focused build/test only; this is not a broader local Rust sweep."
                     .to_string(),
             );
             lines.push(
@@ -1586,7 +1530,16 @@ pub(super) fn render_default_finish_validation(plan: &FinishValidationPlan) -> S
                     .to_string(),
             );
         }
-        FinishValidationMode::FullRust => {}
+        FinishValidationMode::LargerBinaryFocused => {
+            lines.push(
+                "- Local preflight profile: larger owner-binary focused build/test only; this is not a repo-wide local Rust sweep."
+                    .to_string(),
+            );
+            lines.push(
+                "- CI integration proof: deferred to GitHub checks for merge-context validation."
+                    .to_string(),
+            );
+        }
     }
     lines.join("\n")
 }
