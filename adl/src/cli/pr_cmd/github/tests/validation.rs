@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::pr_cmd::github::transport::pr_validation_report_from_snapshot_with_disposition;
 
 #[test]
 fn pr_validation_wait_classifies_pending_failed_successful_and_skipped_states() {
@@ -73,6 +74,112 @@ fn pr_validation_wait_classifies_pending_failed_successful_and_skipped_states() 
     assert_eq!(
         classify_pr_validation_snapshot(&merged_success),
         PrValidationDisposition::Success
+    );
+}
+
+#[test]
+fn pr_validation_classification_uses_latest_logical_check_state() {
+    let snapshot = |checks: Vec<PrValidationCheckSnapshot>| PrValidationSnapshot {
+        pr_number: 3933,
+        commit_sha: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb".to_string(),
+        state: "MERGED".to_string(),
+        is_draft: false,
+        checks,
+    };
+
+    assert_eq!(
+        classify_pr_validation_snapshot(&snapshot(vec![
+            PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "CANCELLED".to_string(),
+                job_run_id: "9101".to_string(),
+            },
+            PrValidationCheckSnapshot {
+                name: "adl-coverage".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "CANCELLED".to_string(),
+                job_run_id: "9102".to_string(),
+            },
+            PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "SUCCESS".to_string(),
+                job_run_id: "9201".to_string(),
+            },
+            PrValidationCheckSnapshot {
+                name: "adl-coverage".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "SUCCESS".to_string(),
+                job_run_id: "9202".to_string(),
+            },
+        ])),
+        PrValidationDisposition::Success
+    );
+
+    let reversed_rollup = snapshot(vec![
+        PrValidationCheckSnapshot {
+            name: "adl-ci".to_string(),
+            status: "COMPLETED".to_string(),
+            conclusion: "SUCCESS".to_string(),
+            job_run_id: "9201".to_string(),
+        },
+        PrValidationCheckSnapshot {
+            name: "adl-coverage".to_string(),
+            status: "COMPLETED".to_string(),
+            conclusion: "SUCCESS".to_string(),
+            job_run_id: "9202".to_string(),
+        },
+        PrValidationCheckSnapshot {
+            name: "adl-ci".to_string(),
+            status: "COMPLETED".to_string(),
+            conclusion: "CANCELLED".to_string(),
+            job_run_id: "9101".to_string(),
+        },
+        PrValidationCheckSnapshot {
+            name: "adl-coverage".to_string(),
+            status: "COMPLETED".to_string(),
+            conclusion: "CANCELLED".to_string(),
+            job_run_id: "9102".to_string(),
+        },
+    ]);
+    assert_eq!(
+        classify_pr_validation_snapshot(&reversed_rollup),
+        PrValidationDisposition::Success
+    );
+    let report = pr_validation_report_from_snapshot_with_disposition(
+        &reversed_rollup,
+        classify_pr_validation_snapshot(&reversed_rollup),
+    );
+    assert_eq!(report.disposition, "success");
+    assert_eq!(report.checks.len(), 4);
+    assert!(
+        report.failed_checks.is_empty(),
+        "stale duplicate failures must not remain in failed_checks: {:#?}",
+        report.failed_checks
+    );
+    assert!(
+        report.pending_checks.is_empty(),
+        "stale duplicate pending checks must not remain in pending_checks: {:#?}",
+        report.pending_checks
+    );
+
+    assert_eq!(
+        classify_pr_validation_snapshot(&snapshot(vec![
+            PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "SUCCESS".to_string(),
+                job_run_id: "9201".to_string(),
+            },
+            PrValidationCheckSnapshot {
+                name: "adl-coverage".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "FAILURE".to_string(),
+                job_run_id: "9202".to_string(),
+            },
+        ])),
+        PrValidationDisposition::Failed
     );
 }
 

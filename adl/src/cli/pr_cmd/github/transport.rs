@@ -735,28 +735,26 @@ pub(super) fn classify_pr_validation_snapshot(
     if snapshot.checks.is_empty() {
         return PrValidationDisposition::Pending;
     }
-    if snapshot
-        .checks
+    let effective_checks = effective_pr_validation_checks(&snapshot.checks);
+    if effective_checks
         .iter()
         .any(|check| validation_conclusion_is_cancelled(&check.conclusion))
     {
         return PrValidationDisposition::Cancelled;
     }
-    if snapshot.checks.iter().any(|check| {
+    if effective_checks.iter().any(|check| {
         validation_conclusion_is_failed(&check.conclusion)
             || status_context_failure_status(&check.status)
     }) {
         return PrValidationDisposition::Failed;
     }
-    if snapshot
-        .checks
+    if effective_checks
         .iter()
         .any(|check| validation_check_is_pending(&check.status, &check.conclusion))
     {
         return PrValidationDisposition::Pending;
     }
-    if snapshot
-        .checks
+    if effective_checks
         .iter()
         .all(|check| validation_conclusion_is_skipped(&check.conclusion))
     {
@@ -765,29 +763,62 @@ pub(super) fn classify_pr_validation_snapshot(
     PrValidationDisposition::Success
 }
 
-fn pr_validation_report_from_snapshot_with_disposition(
+fn effective_pr_validation_checks(
+    checks: &[PrValidationCheckSnapshot],
+) -> Vec<&PrValidationCheckSnapshot> {
+    let mut effective = Vec::new();
+    for check in checks {
+        if let Some(existing) = effective
+            .iter()
+            .position(|candidate: &&PrValidationCheckSnapshot| candidate.name == check.name)
+        {
+            if validation_check_is_newer(check, effective[existing]) {
+                effective[existing] = check;
+            }
+        } else {
+            effective.push(check);
+        }
+    }
+    effective
+}
+
+fn validation_check_is_newer(
+    candidate: &PrValidationCheckSnapshot,
+    current: &PrValidationCheckSnapshot,
+) -> bool {
+    match (
+        candidate.job_run_id.parse::<u64>(),
+        current.job_run_id.parse::<u64>(),
+    ) {
+        (Ok(candidate_id), Ok(current_id)) => candidate_id >= current_id,
+        (Ok(_), Err(_)) => true,
+        (Err(_), Ok(_)) => false,
+        (Err(_), Err(_)) => true,
+    }
+}
+
+pub(super) fn pr_validation_report_from_snapshot_with_disposition(
     snapshot: &PrValidationSnapshot,
     disposition: PrValidationDisposition,
 ) -> PrValidationReport {
+    let effective_checks = effective_pr_validation_checks(&snapshot.checks);
     let checks = snapshot
         .checks
         .iter()
         .map(pr_validation_check_report)
         .collect::<Vec<_>>();
-    let failed_checks = snapshot
-        .checks
+    let failed_checks = effective_checks
         .iter()
         .filter(|check| {
             validation_conclusion_is_failed(&check.conclusion)
                 || status_context_failure_status(&check.status)
         })
-        .map(pr_validation_check_report)
+        .map(|check| pr_validation_check_report(check))
         .collect::<Vec<_>>();
-    let pending_checks = snapshot
-        .checks
+    let pending_checks = effective_checks
         .iter()
         .filter(|check| validation_check_is_pending(&check.status, &check.conclusion))
-        .map(pr_validation_check_report)
+        .map(|check| pr_validation_check_report(check))
         .collect::<Vec<_>>();
     PrValidationReport {
         pr_number: snapshot.pr_number,
