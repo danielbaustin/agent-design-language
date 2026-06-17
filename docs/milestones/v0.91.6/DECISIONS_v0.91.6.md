@@ -21,6 +21,7 @@ Capture significant first-tranche bridge decisions and open questions.
 | D-04 | Public prompt records require redaction, validation, indexing, and security review before public consumption. | accepted | Local editable records are not automatically public-safe. | Export remains blocked until the feature doc proof path is met. | `features/PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md` |
 | D-05 | Provider/model reliability must include Gemma and multi-agent suitability limits. | accepted | Multi-agent reliability depends on role-appropriate model behavior, not only provider availability. | Reliability proof remains separate from product/training claims. | `features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md` |
 | D-06 | ACIP/A2A protobuf can be a decision point rather than forced implementation in `v0.91.6`. | accepted | Schema/access/security posture must come first. | Residual wire-format work may route to `v0.91.7`. | `features/ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md` |
+| D-07 | C-SDLC cards should remain authoritative while owned GitHub issue/PR surfaces converge into deterministic managed projections. | proposed | Partial projection without explicit ownership allows PR/issue drift to become workflow truth by accident. | `#3935` should define which surfaces are managed projections, drift-checked mirrors, linked surfaces, or card-local only. | `review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md` |
 
 ## Open Questions
 
@@ -28,6 +29,8 @@ Capture significant first-tranche bridge decisions and open questions.
   records?
 - Which tooling reliability fixes from `#3802`-`#3805` are required before
   `v0.92` refresh versus acceptable as routed residuals?
+- Which GitHub-facing surfaces should be automatically repaired from card truth
+  versus only classified as drift?
 - Which public prompt-record export checks must run locally versus in CI?
 - Which Observatory/Unity surfaces count as proof versus rehearsal?
 
