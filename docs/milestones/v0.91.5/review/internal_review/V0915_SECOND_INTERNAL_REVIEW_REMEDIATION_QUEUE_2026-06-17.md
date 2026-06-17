@@ -22,7 +22,7 @@ claim release readiness.
 | 6 | `P2` | review evidence | `[v0.91.5][review] Refresh first-pass remediation baseline after closed queue` | First-pass queue/register still say `#3896` / `#3899` are active. | May combine with candidate 3 if the issue remains small. |
 | 7 | `P2` | security / evidence hygiene | `[v0.91.5][review] Store OpenRouter provider outputs as excerpts and digests in machine-readable proof` | Tracked OpenRouter lane result JSON stores full provider output even though excerpt-only provider success records are supported. | Can be paired with candidate 4 if the code and evidence changes stay bounded. |
 | 8 | `P3` | evidence hygiene | `[v0.91.6][tools] Replace historical manual GitHub provenance with ADL-native proof where useful` | Rust refactor closeout still preserves raw `gh pr view` commands as historical validation provenance. | Defer unless external-review polish budget allows. |
-| 9 | `P3` | portability / fixtures | `[v0.91.6][provider] Sanitize private LAN endpoint fixtures before they feed durable proof packets` | Demo/provider tests preserve a literal private LAN Ollama endpoint in generated artifacts. | Not a current packet blocker; route for portability hygiene. |
+| 9 | `P3` | portability / fixtures | `[v0.91.6][provider] Sanitize private LAN endpoint fixtures before they feed durable proof packets` | Demo/provider tests preserve a literal private LAN Ollama endpoint in generated artifacts. | Routed through `#3954` as an explicit WP-18 deferral. Owner: v0.91.6 provider/demo proof hygiene follow-on. Rationale: current reviewed public packets already normalize private LAN details, so this remains a non-blocking portability hygiene item rather than a v0.91.5 release blocker. |
 
 ## Recommended Execution Order
 
@@ -46,4 +46,5 @@ claim release readiness.
   repo-native validation truth.
 - Candidates 3, 5, 6, and 7 should stay in `v0.91.5` if the goal is a clean
   external review packet.
-- Candidates 8 and 9 can move to `v0.91.6` if time is tight.
+- Candidate 8 can move to `v0.91.6` if time is tight.
+- Candidate 9 is now explicitly deferred through `#3954` to `v0.91.6` with provider/demo proof hygiene ownership and non-blocking rationale recorded above.
