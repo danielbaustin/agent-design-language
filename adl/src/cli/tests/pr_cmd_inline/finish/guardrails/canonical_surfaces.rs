@@ -3,6 +3,7 @@ use super::*;
 #[test]
 fn real_pr_finish_refuses_to_publish_local_only_bundle_without_tracked_changes() {
     let _guard = env_lock();
+    let _github_env = force_gh_cli_transport_env();
     let temp = unique_temp_dir("adl-pr-finish-ignored-bundle-only");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");

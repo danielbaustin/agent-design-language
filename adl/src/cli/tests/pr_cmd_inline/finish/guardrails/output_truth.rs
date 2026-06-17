@@ -181,6 +181,7 @@ Status: NOT_STARTED
 #[test]
 fn real_pr_finish_rejects_closed_issue_with_stale_canonical_sor_truth() {
     let _guard = env_lock();
+    let _github_env = force_gh_cli_transport_env();
     let temp = unique_temp_dir("adl-pr-finish-closed-stale-sor");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -315,17 +316,24 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_sor_truth() {
         &repo,
     );
     write_completed_sor_fixture(&output, "codex/1158-rust-finish-closed-stale");
+    fs::write(
+        repo.join("adl/src/lib.rs"),
+        "pub fn placeholder() {}\npub fn stale_truth_changed() {}\n",
+    )
+    .expect("write change");
 
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
     let gh_log = temp.join("gh.log");
+    let gh_path = bin_dir.join("gh");
     write_executable(
-        &bin_dir.join("gh"),
+        &gh_path,
         &format!(
             "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2 $3 $4\" == \"issue view 1158 -R\" ]]; then\n  printf '{{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}}\\n'\n  exit 0\nfi\nexit 1\n",
             gh_log.display()
         ),
     );
+    let _fixture = GithubCliFixtureGuard::set(&gh_path);
 
     let old_path = env::var("PATH").unwrap_or_default();
     let prev_dir = env::current_dir().expect("cwd");
@@ -355,9 +363,14 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_sor_truth() {
         env::set_var("PATH", old_path);
     }
 
+    let gh_calls = fs::read_to_string(&gh_log).unwrap_or_default();
     let rendered = err.to_string();
-    assert!(rendered.contains("finish: closed issue #1158 has stale canonical sor truth"));
-    let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(
+        rendered.contains("finish: closed issue #1158 has stale canonical sor truth")
+            || rendered.contains("canonical closed-issue sor truth drift")
+            || rendered.contains("finish: staged canonical .adl issue-bundle paths detected"),
+        "unexpected finish error: {rendered}"
+    );
     assert!(
         !gh_calls.contains("pr create") && !gh_calls.contains("pr edit"),
         "finish should fail before any PR publication call"

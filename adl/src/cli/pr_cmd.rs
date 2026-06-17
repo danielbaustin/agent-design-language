@@ -10,9 +10,9 @@ use std::sync::{Mutex, OnceLock};
 #[cfg(test)]
 use super::pr_cmd_args::parse_finish_args;
 use super::pr_cmd_args::{
-    parse_closeout_args, parse_create_args, parse_doctor_args, parse_init_args,
+    parse_closeout_args, parse_create_args, parse_doctor_args, parse_init_args, parse_issue_args,
     parse_preflight_args, parse_ready_args, parse_repair_issue_body_args, parse_start_args,
-    parse_validation_args, DoctorArgs, DoctorMode,
+    parse_validation_args, DoctorArgs, DoctorMode, IssueArgs,
 };
 use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
@@ -82,7 +82,7 @@ use self::git_support::{
 };
 use self::github::{
     ensure_issue_metadata_parity, format_open_pr_wave, gh_issue_create, gh_issue_edit_body,
-    gh_issue_title, issue_version, unresolved_milestone_pr_wave,
+    gh_issue_title, issue_version, unresolved_milestone_pr_wave, IssueRecord,
 };
 
 const DEFAULT_VERSION: &str = "v0.86";
@@ -152,7 +152,7 @@ fn resolve_local_issue_identity(repo_root: &Path, issue: u32) -> Result<Option<(
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
-            "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | closeout"
+            "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | issue | closeout"
         );
     };
 
@@ -166,6 +166,7 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "preflight" => real_pr_preflight(&args[1..]),
         "finish" => finish_support::real_pr_finish(&args[1..]),
         "validation" => real_pr_validation(&args[1..]),
+        "issue" => real_pr_issue(&args[1..]),
         "closeout" => real_pr_closeout(&args[1..]),
         other => bail!("unknown pr subcommand: {other}"),
     }
@@ -227,6 +228,53 @@ fn validation_disposition_blocks_shell_success(disposition: &str) -> bool {
     )
 }
 
+fn real_pr_issue(args: &[String]) -> Result<()> {
+    let parsed = parse_issue_args(args)?;
+    let repo_root = repo_root()?;
+    match parsed {
+        IssueArgs::List(parsed) => {
+            let repo = parsed.repo.unwrap_or(default_repo(&repo_root)?);
+            let issues = github::gh_issue_list(&repo, parsed.state, parsed.limit)?;
+            if parsed.json {
+                print_json(&issues)?;
+            } else {
+                print_issue_rows(&issues);
+            }
+        }
+        IssueArgs::Search(parsed) => {
+            let repo = parsed.repo.unwrap_or(default_repo(&repo_root)?);
+            let issues = github::gh_issue_search(&repo, &parsed.query, parsed.state, parsed.limit)?;
+            if parsed.json {
+                print_json(&issues)?;
+            } else {
+                print_issue_rows(&issues);
+            }
+        }
+        IssueArgs::View(parsed) => {
+            let repo = parsed
+                .repo
+                .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
+                .unwrap_or(default_repo(&repo_root)?);
+            let issue = if parsed.issue_ref.starts_with("http://")
+                || parsed.issue_ref.starts_with("https://")
+            {
+                parse_issue_number_from_url(&parsed.issue_ref)?
+            } else {
+                parsed.issue_ref.parse::<u32>().with_context(|| {
+                    format!("issue view: invalid issue number: {}", parsed.issue_ref)
+                })?
+            };
+            let record = github::gh_issue_view(&repo, issue)?;
+            if parsed.json {
+                print_json(&record)?;
+            } else {
+                print_issue_view(&record);
+            }
+        }
+    }
+    Ok(())
+}
+
 fn repo_from_pr_ref(pr_ref: &str) -> Option<String> {
     let trimmed = pr_ref.trim();
     let marker = "github.com/";
@@ -240,6 +288,82 @@ fn repo_from_pr_ref(pr_ref: &str) -> Option<String> {
         return None;
     }
     Some(format!("{owner}/{repo}"))
+}
+
+fn repo_from_issue_ref(issue_ref: &str) -> Option<String> {
+    let trimmed = issue_ref.trim();
+    let marker = "github.com/";
+    let (_, tail) = trimmed.split_once(marker)?;
+    let path = tail.split(['?', '#']).next()?;
+    let mut parts = path.split('/');
+    let owner = parts.next()?.trim();
+    let repo = parts.next()?.trim();
+    let issue_marker = parts.next()?.trim();
+    if owner.is_empty() || repo.is_empty() || issue_marker != "issues" {
+        return None;
+    }
+    let issue_number = parts.next()?.trim();
+    if issue_number.parse::<u32>().is_err() {
+        return None;
+    }
+    Some(format!("{owner}/{repo}"))
+}
+
+fn print_issue_rows(issues: &[IssueRecord]) {
+    let rendered = format_issue_rows(issues);
+    if !rendered.is_empty() {
+        println!("{rendered}");
+    }
+}
+
+fn format_issue_rows(issues: &[IssueRecord]) -> String {
+    issues
+        .iter()
+        .map(|issue| {
+            let milestone = issue
+                .milestone
+                .as_deref()
+                .map(|value| format!(" milestone={value}"))
+                .unwrap_or_default();
+            format!(
+                "#{} {} {}{} {}",
+                issue.number,
+                issue.state.to_uppercase(),
+                issue.title,
+                milestone,
+                issue.url
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+fn print_issue_view(issue: &IssueRecord) {
+    println!("{}", format_issue_view(issue));
+}
+
+fn format_issue_view(issue: &IssueRecord) -> String {
+    let mut lines = vec![
+        format!("#{} {}", issue.number, issue.title),
+        format!("state: {}", issue.state),
+        format!("url: {}", issue.url),
+    ];
+    if let Some(closed_at) = issue.closed_at.as_deref() {
+        lines.push(format!("closed_at: {closed_at}"));
+    }
+    if let Some(milestone) = issue.milestone.as_deref() {
+        lines.push(format!("milestone: {milestone}"));
+    }
+    if issue.labels.is_empty() {
+        lines.push("labels:".to_string());
+    } else {
+        lines.push(format!("labels: {}", issue.labels.join(", ")));
+    }
+    if let Some(body) = issue.body.as_deref() {
+        lines.push(String::new());
+        lines.push(body.to_string());
+    }
+    lines.join("\n")
 }
 
 fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {

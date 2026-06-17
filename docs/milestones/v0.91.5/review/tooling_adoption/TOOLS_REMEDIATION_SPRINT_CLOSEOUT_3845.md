@@ -54,9 +54,11 @@ Final review used live GitHub and repo workflow state:
 
 - `bash adl/tools/pr.sh doctor 3845 --mode full --json`
   - returned `PASS`, with no open PR wave blockers for the #3845 queue.
-- `gh issue view` over #3797, #3802, #3803, #3804, #3805, #3809, #3816, #3819,
-  #3822, #3823, #3828, #3829, #3831, #3834, and #3835
-  - confirmed every sprint child and tail issue is CLOSED.
+- `bash adl/tools/pr.sh issue view <issue> --json` over #3797, #3802, #3803,
+  #3804, #3805, #3809, #3816, #3819, #3822, #3823, #3828, #3829, #3831,
+  #3834, and #3835
+  - confirmed every sprint child and tail issue is `closed` through the
+    Rust-owned issue inspection surface rather than raw `gh issue view`.
 - `gh pr view 3858`
   - confirmed PR #3858 is MERGED and its required checks succeeded or were
     intentionally skipped.
@@ -75,4 +77,3 @@ Those are separate work queues. They should not keep #3845 open.
 ## Closeout Decision
 
 #3845 is ready for final umbrella closeout.
-

@@ -47,6 +47,44 @@ impl GithubCliFixtureGuard {
     }
 }
 
+pub(crate) struct GithubTransportEnvGuard {
+    old_values: Vec<(&'static str, Option<std::ffi::OsString>)>,
+}
+
+impl Drop for GithubTransportEnvGuard {
+    fn drop(&mut self) {
+        unsafe {
+            for (key, value) in &self.old_values {
+                match value {
+                    Some(value) => env::set_var(key, value),
+                    None => env::remove_var(key),
+                }
+            }
+        }
+    }
+}
+
+pub(crate) fn force_gh_cli_transport_env() -> GithubTransportEnvGuard {
+    let keys = [
+        "ADL_GITHUB_CLIENT",
+        "ADL_GITHUB_DISABLE_GH_FALLBACK",
+        "ADL_GITHUB_OCTOCRAB_BASE_URI",
+        "ADL_TEST_GITHUB_CLI_FIXTURE",
+        "GITHUB_TOKEN",
+        "GH_TOKEN",
+    ];
+    let old_values = keys
+        .into_iter()
+        .map(|key| (key, env::var_os(key)))
+        .collect::<Vec<_>>();
+    unsafe {
+        for key in keys {
+            env::remove_var(key);
+        }
+    }
+    GithubTransportEnvGuard { old_values }
+}
+
 pub(crate) fn install_issue_label_fixture(repo: &Path) -> GithubCliFixtureGuard {
     let fixture_dir = repo.join(".adl/test-fixtures");
     fs::create_dir_all(&fixture_dir).expect("fixture dir");

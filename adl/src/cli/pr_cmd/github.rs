@@ -8,6 +8,7 @@ use crate::cli::pr_cmd::github_client::{
     plan_issue_metadata_parity, pr_matches_main_version_wave, AdlGithubClient, GithubClientBackend,
     IssueMetadataSnapshot, PullRequestMetadataSnapshot,
 };
+use crate::cli::pr_cmd_args::IssueStateFilter;
 use crate::cli::pr_cmd_prompt::infer_workflow_queue;
 use ::adl::control_plane::resolve_primary_checkout_root;
 use serde::{Deserialize, Serialize};
@@ -34,6 +35,70 @@ pub(super) struct OpenPullRequest {
     pub(super) is_draft: bool,
     #[serde(skip)]
     pub(super) queue: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub(crate) struct IssueRecord {
+    pub(crate) number: u32,
+    pub(crate) title: String,
+    pub(crate) state: String,
+    pub(crate) url: String,
+    #[serde(rename = "closedAt")]
+    pub(crate) closed_at: Option<String>,
+    pub(crate) body: Option<String>,
+    pub(crate) labels: Vec<String>,
+    pub(crate) milestone: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RestIssueLabel {
+    name: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RestIssueMilestone {
+    title: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RestIssueRecord {
+    number: u64,
+    title: Option<String>,
+    state: Option<String>,
+    html_url: Option<String>,
+    closed_at: Option<String>,
+    body: Option<String>,
+    labels: Option<Vec<RestIssueLabel>>,
+    milestone: Option<RestIssueMilestone>,
+    pull_request: Option<serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RestIssueSearchResult {
+    items: Vec<RestIssueRecord>,
+}
+
+impl RestIssueRecord {
+    fn into_issue_record(self) -> Option<IssueRecord> {
+        if self.pull_request.is_some() {
+            return None;
+        }
+        Some(IssueRecord {
+            number: self.number as u32,
+            title: self.title?,
+            state: self.state?,
+            url: self.html_url?,
+            closed_at: self.closed_at,
+            body: self.body,
+            labels: self
+                .labels
+                .unwrap_or_default()
+                .into_iter()
+                .map(|label| label.name)
+                .collect(),
+            milestone: self.milestone.map(|milestone| milestone.title),
+        })
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -1560,11 +1625,14 @@ fn octocrab_operation_allows_retry(operation: &str) -> bool {
             | "pr.edit.body_file"
             | "pr.edit.finish_existing"
             | "pr.ready"
+            | "issue.list"
+            | "issue.search"
             | "issue.view.labels"
             | "issue.edit.title"
             | "issue.edit.body"
             | "issue.view.title"
             | "issue.view.body"
+            | "issue.view.full"
             | "issue.view.state"
             | "issue.edit.labels"
             | "issue.close"
@@ -2098,6 +2166,125 @@ pub(super) fn gh_issue_create(
     })
 }
 
+pub(crate) fn gh_issue_list(
+    repo: &str,
+    state: IssueStateFilter,
+    limit: usize,
+) -> Result<Vec<IssueRecord>> {
+    #[derive(Serialize)]
+    struct IssueListQuery<'a> {
+        state: &'a str,
+        per_page: usize,
+        page: usize,
+    }
+
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.list", |runtime, octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let mut page = 1usize;
+        let mut collected = Vec::new();
+        while collected.len() < limit {
+            let route = format!("/repos/{owner}/{name}/issues");
+            let query = IssueListQuery {
+                state: state.as_str(),
+                per_page: 100,
+                page,
+            };
+            let batch: Vec<RestIssueRecord> = block_on_octocrab(runtime, "issue.list", || async {
+                octo.get(route.as_str(), Some(&query)).await
+            })?;
+            let batch_len = batch.len();
+            for issue in batch {
+                if let Some(issue) = issue.into_issue_record() {
+                    collected.push(issue);
+                    if collected.len() == limit {
+                        break;
+                    }
+                }
+            }
+            if batch_len < 100 {
+                break;
+            }
+            page += 1;
+        }
+        Ok(collected)
+    })
+}
+
+pub(crate) fn gh_issue_search(
+    repo: &str,
+    query: &str,
+    state: IssueStateFilter,
+    limit: usize,
+) -> Result<Vec<IssueRecord>> {
+    #[derive(Serialize)]
+    struct IssueSearchQuery {
+        q: String,
+        per_page: usize,
+        page: usize,
+    }
+
+    let repo_parts = parse_repo(repo)?;
+    let state_term = match state {
+        IssueStateFilter::Open => " state:open",
+        IssueStateFilter::Closed => " state:closed",
+        IssueStateFilter::All => "",
+    };
+    let composed_query = format!(
+        "repo:{}/{} is:issue{} {}",
+        repo_parts.owner,
+        repo_parts.name,
+        state_term,
+        query.trim()
+    );
+    with_octocrab("issue.search", |runtime, octo| {
+        let mut page = 1usize;
+        let mut collected = Vec::new();
+        while collected.len() < limit {
+            let query = IssueSearchQuery {
+                q: composed_query.clone(),
+                per_page: 100,
+                page,
+            };
+            let response: RestIssueSearchResult =
+                block_on_octocrab(runtime, "issue.search", || async {
+                    octo.get("/search/issues", Some(&query)).await
+                })?;
+            let batch_len = response.items.len();
+            for issue in response.items {
+                if let Some(issue) = issue.into_issue_record() {
+                    collected.push(issue);
+                    if collected.len() == limit {
+                        break;
+                    }
+                }
+            }
+            if batch_len < 100 {
+                break;
+            }
+            page += 1;
+        }
+        Ok(collected)
+    })
+}
+
+pub(crate) fn gh_issue_view(repo: &str, issue: u32) -> Result<IssueRecord> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.view.full", |runtime, octo| {
+        let route = format!(
+            "/repos/{}/{}/issues/{}",
+            repo_parts.owner, repo_parts.name, issue
+        );
+        let issue: RestIssueRecord = block_on_octocrab(runtime, "issue.view.full", || async {
+            octo.get(route.as_str(), None::<&()>).await
+        })?;
+        issue.into_issue_record().ok_or_else(|| {
+            anyhow!("issue view: GitHub returned a pull request instead of an issue")
+        })
+    })
+}
+
 pub(crate) fn gh_issue_label_names(issue: u32, repo: &str) -> Result<Vec<String>> {
     #[cfg(test)]
     if test_gh_fixture_fallback_allowed("issue.view.labels")? {
@@ -2572,6 +2759,42 @@ mod tests {
         .to_string()
     }
 
+    fn issue_summary_fixture(
+        number: u32,
+        title: &str,
+        state: &str,
+        closed_at: Option<&str>,
+        milestone: Option<&str>,
+        labels: &[&str],
+    ) -> serde_json::Value {
+        let mut issue = serde_json::json!({
+            "id": number,
+            "node_id": format!("ISSUE_{number}"),
+            "url": format!("https://api.github.test/repos/owner/repo/issues/{number}"),
+            "repository_url": "https://api.github.test/repos/owner/repo",
+            "labels_url": format!("https://api.github.test/repos/owner/repo/issues/{number}/labels{{/name}}"),
+            "comments_url": format!("https://api.github.test/repos/owner/repo/issues/{number}/comments"),
+            "events_url": format!("https://api.github.test/repos/owner/repo/issues/{number}/events"),
+            "html_url": format!("https://github.com/owner/repo/issues/{number}"),
+            "number": number,
+            "state": state,
+            "closed_at": closed_at,
+            "title": title,
+            "body": format!("body for {number}"),
+            "user": author_fixture(),
+            "labels": labels.iter().map(|label| label_fixture(label)).collect::<Vec<_>>(),
+            "assignees": [],
+            "locked": false,
+            "comments": 0,
+            "created_at": "2026-06-14T00:00:00Z",
+            "updated_at": "2026-06-14T00:00:00Z"
+        });
+        issue["milestone"] = milestone
+            .map(|value| serde_json::json!({"title": value}))
+            .unwrap_or(serde_json::Value::Null);
+        issue
+    }
+
     fn issue_comment_fixture(issue: u32, body: &str) -> String {
         serde_json::json!({
             "id": 9900 + issue,
@@ -2710,6 +2933,34 @@ mod tests {
                         Some("issue body"),
                         &["version:v0.91.5", "area:tools"],
                     ),
+                    ("GET", "/repos/owner/repo/issues/92") => serde_json::json!({
+                        "number": 92,
+                        "pull_request": {"url": "https://api.github.test/repos/owner/repo/pulls/92"}
+                    })
+                    .to_string(),
+                    ("GET", "/repos/owner/repo/issues") => serde_json::json!([
+                        issue_summary_fixture(
+                            91,
+                            "[v0.91.5][docs] Deferred-work ledger",
+                            "open",
+                            None,
+                            Some("v0.91.5"),
+                            &["version:v0.91.5", "area:docs"]
+                        ),
+                        serde_json::json!({
+                            "number": 92,
+                            "pull_request": {"url": "https://api.github.test/repos/owner/repo/pulls/92"}
+                        }),
+                        issue_summary_fixture(
+                            93,
+                            "[v0.91.5][quality] Reviewer checklist",
+                            "closed",
+                            Some("2026-06-15T00:00:00Z"),
+                            Some("v0.91.5"),
+                            &["version:v0.91.5", "area:quality"]
+                        )
+                    ])
+                    .to_string(),
                     ("PATCH", "/repos/owner/repo/issues/77") => issue_fixture(
                         77,
                         "[v0.91.5][tools] Updated issue",
@@ -2719,6 +2970,19 @@ mod tests {
                     ("POST", "/repos/owner/repo/issues/77/comments") => {
                         issue_comment_fixture(77, "closeout line 1\n\ncloseout line 3\n")
                     }
+                    ("GET", "/search/issues") => serde_json::json!({
+                        "items": [
+                            issue_summary_fixture(
+                                94,
+                                "[v0.91.5][multi-agent][docs] Compare single-agent vs multi-agent overhead on one docs audit",
+                                "open",
+                                None,
+                                Some("v0.91.5"),
+                                &["version:v0.91.5", "area:docs", "track:backlog"]
+                            )
+                        ]
+                    })
+                    .to_string(),
                     _ => serde_json::json!({
                         "message": format!("unexpected request {method} {url}")
                     })
@@ -3148,7 +3412,7 @@ mod tests {
         let _guard = env_lock();
         let policy_env = clear_github_policy_env();
         let temp = unique_temp_dir("adl-octocrab-transport");
-        let (base_uri, server) = spawn_octocrab_test_server(23);
+        let (base_uri, server) = spawn_octocrab_test_server(27);
         unsafe {
             std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
             std::env::set_var("GITHUB_TOKEN", "test-token");
@@ -3292,6 +3556,17 @@ mod tests {
             gh_issue_label_names(77, "owner/repo").expect("issue labels"),
             vec!["version:v0.91.5".to_string(), "area:tools".to_string()]
         );
+        let listed = gh_issue_list("owner/repo", IssueStateFilter::All, 10).expect("issue list");
+        assert_eq!(listed.len(), 2);
+        assert_eq!(listed[0].number, 91);
+        assert_eq!(listed[0].milestone.as_deref(), Some("v0.91.5"));
+        assert_eq!(listed[1].number, 93);
+        assert_eq!(
+            gh_issue_search("owner/repo", "docs audit", IssueStateFilter::Open, 10)
+                .expect("issue search")[0]
+                .number,
+            94
+        );
         gh_issue_edit_title("owner/repo", 77, "[v0.91.5][tools] Updated issue")
             .expect("edit issue title");
         gh_issue_edit_body("owner/repo", 77, "updated body").expect("edit issue body");
@@ -3307,6 +3582,15 @@ mod tests {
                 .as_deref(),
             Some("issue body")
         );
+        let viewed = gh_issue_view("owner/repo", 77).expect("issue view");
+        assert_eq!(viewed.number, 77);
+        assert_eq!(viewed.state, "closed");
+        assert_eq!(viewed.body.as_deref(), Some("issue body"));
+        assert!(viewed.labels.iter().any(|label| label == "area:tools"));
+        let pr_like = gh_issue_view("owner/repo", 92).expect_err("pr-like issue view should fail");
+        assert!(pr_like
+            .to_string()
+            .contains("GitHub returned a pull request instead of an issue"));
         assert!(gh_issue_is_closed_completed(77, "owner/repo").expect("issue state"));
         gh_issue_set_labels(
             "owner/repo",
@@ -3362,7 +3646,7 @@ mod tests {
         .expect("issue close not planned");
 
         let seen = server.join().expect("server join");
-        assert_eq!(seen.len(), 23, "unexpected mock GitHub calls: {seen:#?}");
+        assert_eq!(seen.len(), 27, "unexpected mock GitHub calls: {seen:#?}");
         assert!(seen
             .iter()
             .any(|call| call.starts_with("POST /repos/owner/repo/pulls ")));
