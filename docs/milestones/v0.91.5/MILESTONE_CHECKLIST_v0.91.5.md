@@ -65,6 +65,8 @@ checks needed for truthful v0.91.5 closeout.
 
 - [ ] Release plan complete.
 - [ ] Release notes rewritten from landed evidence.
+- [x] Refactor behavior-preservation evidence decision is recorded:
+  [WP18_REFACTOR_BEHAVIOR_PRESERVATION_DECISION_2026-06-17.md](review/external_review/WP18_REFACTOR_BEHAVIOR_PRESERVATION_DECISION_2026-06-17.md)
 - [ ] v0.92 final preflight complete.
 - [ ] Review findings fixed or routed.
 - [ ] Release evidence package assembled.
