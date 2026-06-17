@@ -1,4 +1,13 @@
-use super::*;
+use super::{
+    block_on_octocrab, parse_pr_number, parse_repo, with_octocrab, OpenPullRequest,
+    PrValidationCheckReport, PrValidationReport,
+};
+#[cfg(test)]
+use super::{run_gh_status_shell, test_gh_fixture_fallback_allowed};
+use crate::cli::observability;
+use anyhow::{anyhow, bail, Context, Result};
+use serde::Deserialize;
+use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone, Deserialize)]
 struct PullRequestClosingIssuesResponse {
@@ -221,6 +230,43 @@ pub(super) fn pr_body_octocrab(repo: &str, pr_ref: &str) -> Result<String> {
         })?;
         Ok(pr.body.unwrap_or_default())
     })
+}
+
+pub(super) fn issue_comment_octocrab(repo: &str, issue: u32, body: &str) -> Result<()> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.comment", |runtime, octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        block_on_octocrab(runtime, "issue.comment", || async {
+            octo.issues(&owner, &name)
+                .create_comment(issue as u64, body.to_string())
+                .await
+        })?;
+        Ok(())
+    })
+    .with_context(|| format!("github_client.octocrab_transport: issue comment failed for #{issue}"))
+}
+
+pub(super) fn issue_close_octocrab(
+    repo: &str,
+    issue: u32,
+    reason: octocrab::models::issues::IssueStateReason,
+) -> Result<()> {
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.close", |runtime, octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        block_on_octocrab(runtime, "issue.close", || async {
+            octo.issues(&owner, &name)
+                .update(issue as u64)
+                .state(octocrab::models::IssueState::Closed)
+                .state_reason(reason.clone())
+                .send()
+                .await
+        })?;
+        Ok(())
+    })
+    .with_context(|| format!("github_client.octocrab_transport: issue close failed for #{issue}"))
 }
 
 pub(super) fn pr_closing_issue_numbers_octocrab(repo: &str, pr_ref: &str) -> Result<Vec<u32>> {
