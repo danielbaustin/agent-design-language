@@ -6,11 +6,11 @@
 - Start date: `2026-06-02`
 - End date: `pending`
 - Owner: ADL maintainers
-- Status: `sprint_2_review_remediation_in_progress`
+- Status: `first_internal_review_remediation_active`
 
 ## Status
 
-`sprint_2_review_remediation_in_progress`
+`first_internal_review_remediation_active`
 
 ## How To Use
 
@@ -23,8 +23,8 @@
 
 v0.91.5 is split into ordered sprint bands after WP-01 opens the milestone and
 confirms issue/card/sprint readiness. Sprint 1 is complete, Sprint 2 child
-execution is complete, and Sprint 2 umbrella review/remediation is now the
-active public planning state.
+execution is complete, and the first internal-review remediation queue is now
+the active execution-prep state before the remaining Sprint 4 closeout tail.
 
 Planned scope:
 
@@ -33,6 +33,22 @@ Planned scope:
 - provider/model matrix and multi-agent proof;
 - demo matrix/showcase readiness;
 - review, remediation, final v0.92 preflight, and release.
+
+## Current Execution Focus
+
+- First internal-review remediation is active under `#3899`.
+- The active remediation wave covers `#3891` through `#3898` in the retained
+  order recorded by the mini-sprint tracker.
+- `#3891` is merged, `#3892` is closed out after PR `#3900`, `#3893` is
+  closed out, and `#3894` / `#3895` are published as draft PRs.
+- `#3896` surfaced a repo-native publication tooling gap: `pr finish` does not
+  classify `adl/src/cli/observability.rs` into any supported finish-validation
+  lane yet, so that blocker must be treated as a remediation finding rather
+  than hidden operator error.
+- `#3574` remains the canonical Sprint 4 umbrella, but closeout-tail execution
+  should resume through the queued `#3899` remediation wave before external
+  review, final preflight, next-milestone planning, and release ceremony move
+  forward.
 
 ## Bridge Sprint Work
 
@@ -84,12 +100,12 @@ Make v0.92 openable without hidden operational debt.
 | 10 | Multi-agent proof | `#3415`, `#3503`, `#3504` (`#3484` satisfied/closed evidence) | ADL maintainers | closed |
 | 11 | Sprint 3 umbrella: demo matrix / demo showcase refresh | `#3573` | ADL maintainers | seeded |
 | 12 | Demo matrix / demo showcase refresh | `#3455` with `#3460`, `#3461` as supporting demo inputs | ADL maintainers | moved |
-| 13 | Sprint 4 umbrella: coverage, review, remediation, planning, release | `#3574` | ADL maintainers | seeded |
+| 13 | Sprint 4 umbrella: coverage, review, remediation, planning, release | `#3574` | ADL maintainers | queued behind `#3899` |
 | 14 | Coverage / quality gate | `#3575`, consuming `#3531` | ADL maintainers | seeded |
 | 15 | Docs + review alignment | `#3579` | ADL maintainers | seeded |
-| 16 | Internal review | `#3576` | ADL maintainers | seeded |
-| 17 | External / 3rd-party review | `#3580` | ADL maintainers | seeded |
-| 18 | Review findings remediation + final v0.92 preflight | `#3577`, consuming `#3502`, `#3534`, `#3377` | ADL maintainers | seeded |
+| 16 | Internal review | `#3576` | ADL maintainers | first findings routed to `#3899` |
+| 17 | External / 3rd-party review | `#3580` | ADL maintainers | queued after `#3899` |
+| 18 | Review findings remediation + final v0.92 preflight | `#3577`, consuming `#3502`, `#3534`, `#3377` | ADL maintainers | queued via `#3899` |
 | 19 | Next milestone planning | `#3581` | ADL maintainers | seeded |
 | 20 | Release ceremony | `#3578` | ADL maintainers | seeded |
 
