@@ -1115,6 +1115,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md"
             | "adl/src/cli/pr_cmd.rs"
             | "adl/src/lib.rs"
+            | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
             | "adl/src/csdlc_prompt_editor.rs"
             | "adl/src/cli/run_artifacts_types.rs"
             | "adl/schemas/structured_implementation_prompt.contract.yaml"
@@ -1144,6 +1145,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
             | "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs"
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
+        || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
         || trimmed.starts_with("docs/milestones/v0.91.4/review/merge_readiness/")
@@ -1159,6 +1161,8 @@ fn finish_path_needs_pr_finish_rust_focused_validation(path: &str) -> bool {
 fn finish_path_needs_pr_cmd_lifecycle_focused_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     trimmed == "adl/src/cli/pr_cmd.rs"
+        || trimmed == "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+        || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || (trimmed.starts_with("adl/src/cli/pr_cmd/")
             && trimmed != "adl/src/cli/pr_cmd/finish_support.rs")
 }
