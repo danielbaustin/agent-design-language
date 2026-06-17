@@ -7,6 +7,8 @@ notes:
   - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
   - "Do not claim v0.92 activation readiness from this seed."
   - "Keep v0.91.7 residuals explicit."
+  - "Keep #3902 visible as v0.91.6 account/setup planning, not v0.92 activation proof."
+  - "Keep CodeFriend v1 / adapter v2 and guild routes visible without treating them as first-tranche activation proof."
 work_packages:
   - wp: WP-01
     title: v0.91.6 planning promotion and issue-wave readiness
@@ -113,3 +115,19 @@ work_packages:
       - "WP-12"
     deliverables:
       - "Closeout packet"
+companion_planning:
+  - issue: "#3902"
+    title: Create agent-logic.ai AWS account
+    outcome: Record account setup, AWS credits/application guidance, account-bound Terraform posture, and hosting/security boundaries without exposing sensitive offer identifiers.
+    milestone_route: v0.91.6
+    activation_surface: false
+  - issue: feature-list-route
+    title: Preserve CodeFriend v1 / portable adapter v2 route
+    outcome: Keep CodeFriend v1 plus adapter v2 scheduled after v0.92 and before v0.95 without pulling product implementation into v0.91.6.
+    milestone_route: post-v0.92-pre-v0.95
+    activation_surface: false
+  - issue: feature-list-route
+    title: Preserve guilds MVP governance route
+    outcome: Keep guilds visible as MVP-scoped governance work through the v0.93 feature route and v0.95 consumption without pulling governance implementation into v0.91.6 or v0.92.
+    milestone_route: v0.93-to-v0.95
+    activation_surface: false

@@ -40,6 +40,8 @@ turns planning docs and feature docs into issue-ready work with review gates.
 | 8 | Security bridge and CAV route | not opened | ADL maintainers | planned |
 | 9 | Identity, Observatory/Unity, AEE, Memory/ObsMem, ACP accounting | not opened | ADL maintainers | planned |
 | 10 | Bridge-ledger refresh and `v0.91.7` handoff | not opened | ADL maintainers | planned |
+| 11 | `agent-logic.ai` AWS account/setup planning | `#3902` | ADL maintainers | planned |
+| 12 | CodeFriend v1 / adapter v2 and guild route preservation | feature-list routes | ADL maintainers | planned |
 
 ## Execution Policy
 
@@ -52,6 +54,10 @@ turns planning docs and feature docs into issue-ready work with review gates.
 
 - Dependency: `#3825` must complete the second-tranche docs package, building
   on the `#3801` planning package.
+- Dependency: `#3902` must remain an account/setup planning item and must not
+  be treated as v0.92 activation proof.
+- Dependency: CodeFriend and guild routes must remain visible without widening
+  the first-tranche bridge implementation scope.
 - Risk: tooling validation friction slows docs-only work.
   - Mitigation: keep tooling problems captured in remediation issues and use
     focused docs validation.

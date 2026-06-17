@@ -11,7 +11,8 @@
 
 ## Status
 
-Current status: forward planning for the next milestone.
+Current status: forward planning for the later `v0.92` birthday milestone,
+after the planned `v0.91.6` and `v0.91.7` bridge tranches.
 
 - Planning: candidate package refreshed during `v0.91.4` issue `#3434` and
   bridge dependency added during `#3506`
