@@ -118,12 +118,20 @@ For new or fully re-rendered prompt cards, prefer the Rust-owned values
 renderer and structure-schema validator before editing Markdown directly:
 
 ```bash
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-values --kind <kind> --values <kind>.values.yaml
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template render --kind <kind> --values <kind>.values.yaml --out <kind>.md
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-structure --kind <kind> --input <kind>.md
-cargo run --manifest-path adl/Cargo.toml -- tooling prompt-template validate-schemas
+adl-csdlc tooling prompt-template validate-values --kind <kind> --values <kind>.values.yaml
+adl-csdlc tooling prompt-template render --kind <kind> --values <kind>.values.yaml --out <kind>.md
+adl-csdlc tooling prompt-template validate-structure --kind <kind> --input <kind>.md
+adl-csdlc tooling prompt-template validate-schemas
 python3 adl/tools/test_prompt_template_structure_schemas.py
 ```
+
+If `adl-csdlc` is not already on `PATH`, run the same owner-binary commands
+through `cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- ...`
+from a fresh checkout.
+
+For docs-only, milestone-truth, or workflow-doc issues, prefer the
+`docs-bounded` fast path described later in this guide instead of reflexively
+running broad Rust or runtime validation when no executable behavior changed.
 
 The editor skills remain authoritative for lifecycle-truth normalization:
 branch/worktree truth, issue-specific readiness, review results, validation

@@ -69,7 +69,7 @@ Use the Rust tool to regenerate schemas only when template structure changes
 intentionally:
 
 ```sh
-cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- tooling prompt-template \
+adl-csdlc tooling prompt-template \
   write-structure-schemas \
   --out-dir docs/templates/prompts/1.0.0/schemas
 ```
@@ -77,9 +77,13 @@ cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- tooling prompt-templ
 Then run both Rust and Python-readable schema checks:
 
 ```sh
-cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- tooling prompt-template validate-schemas
+adl-csdlc tooling prompt-template validate-schemas
 python3 adl/tools/test_prompt_template_structure_schemas.py
 ```
+
+If `adl-csdlc` is not already on `PATH`, run the same owner-binary commands
+through `cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- ...`
+from a fresh checkout.
 
 `current.json` should not move to a new active template set until all five card
 kinds have renderer fixtures, values validation, and compatibility notes.
