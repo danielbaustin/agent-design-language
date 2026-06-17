@@ -33,7 +33,7 @@ This packet records the final sprint truth:
 | `#3746` | `#3911` | audit landed | Refreshed hotspot evidence and set the safe execution order. |
 | `#3748` | `#3912` | prompt-template boundary landed | Extracted rendered-card structure/schema behavior from `adl/src/csdlc_prompt_editor.rs` into `adl/src/csdlc_prompt_editor/structure.rs`. |
 | `#3749` | `#3915` | run-artifact boundary landed | Extracted run/pause state artifact helpers and pause-path sanitization into `adl/src/cli/run_artifacts_types/state.rs` without changing public artifact semantics. |
-| `#3747` | `#3917` | GitHub control-plane boundary landed | Extracted transport/test-support/test boundaries from `adl/src/cli/pr_cmd/github.rs`. |
+| `#3747` | `#3917` | GitHub control-plane boundary landed | Extracted transport/test-support/test boundaries from `adl/src/cli/pr_cmd/github.rs`, but did not fully isolate every GitHub control-plane concern into a clean standalone transport layer. |
 | `#3750` | `#3918` | consolidation review landed | Recorded which `*_parts` families should consolidate, defer, or stay as-is. |
 
 ## Refreshed Tracker Truth
@@ -51,7 +51,7 @@ bash adl/tools/report_large_rust_modules.sh
 
 | Surface | Audit snapshot in `#3746` | Post-sprint snapshot | Sprint result |
 | --- | ---: | ---: | --- |
-| `adl/src/cli/pr_cmd/github.rs` | 4551 (`RATIONALE`) | 1491 (`REVIEW`) | Production control-plane file is materially smaller after the transport/test split. |
+| `adl/src/cli/pr_cmd/github.rs` | 4551 (`RATIONALE`) | 1491 (`REVIEW`) | Production control-plane file is materially smaller after the transport/test split, but retry policy, blocking Octocrab execution, issue mutation, and compatibility-path concerns still live in `github.rs`. |
 | `adl/src/csdlc_prompt_editor.rs` | 2468 (`RATIONALE`) | 1812 (`RATIONALE`) | Large, but the structure/schema seam is now extracted and review scope is narrower. |
 | `adl/src/cli/run_artifacts_types.rs` | 1550 (`RATIONALE`) | 1485 (`REVIEW`) | Now below the rationale threshold after the state-focused split into `state.rs`. |
 
@@ -59,8 +59,8 @@ bash adl/tools/report_large_rust_modules.sh
 
 - `adl/src/cli/pr_cmd/github/tests.rs` is now `1965` lines and sits at
   `RATIONALE`, but this is an intentional extracted proof surface rather than a
-  hidden production hot path. Leave it alone unless future test-navigation work
-  justifies a dedicated follow-on.
+  hidden production hot path. It should still be routed as future
+  test-structure cleanup before it becomes another hard-to-edit hotspot.
 - `adl/src/cli/pr_cmd/finish_support.rs` remains `1952` lines at
   `RATIONALE`. This was explicitly routed out of scope in `#3746` and remains
   the clearest production follow-on after this sprint.
@@ -78,6 +78,9 @@ bash adl/tools/report_large_rust_modules.sh
 - The sprint replaced a generic "big files are bad" story with merged,
   evidence-backed semantic boundaries.
 - `github.rs` is no longer a 4.5k-line mixed transport/test surface.
+- The GitHub control-plane surface is smaller and more navigable, even though
+  the extracted `transport.rs` boundary is still partial rather than fully
+  clean.
 - `run_artifacts_types.rs` is now below the rationale threshold while keeping
   artifact contract behavior stable.
 - `csdlc_prompt_editor.rs` shed its rendered-card structure/schema machinery
@@ -128,11 +131,14 @@ not require a further sequencing correction from this mini-sprint closeout.
 - `docs/milestones/v0.91.5/SPRINT_v0.91.5.md`
 - `docs/milestones/v0.91.5/WBS_v0.91.5.md`
 - `docs/milestones/v0.91.5/WP_ISSUE_WAVE_v0.91.5.yaml`
-- `gh pr view 3911 --json statusCheckRollup,files,mergedAt,mergeCommit`
-- `gh pr view 3912 --json statusCheckRollup,files,mergedAt,mergeCommit`
-- `gh pr view 3915 --json statusCheckRollup,files,mergedAt,mergeCommit`
-- `gh pr view 3917 --json statusCheckRollup,files,mergedAt,mergeCommit`
-- `gh pr view 3918 --json statusCheckRollup,files,mergedAt,mergeCommit`
+- ADL-native closeout truth recorded in the paired issue-local `sor.md` cards
+  for `#3746`, `#3747`, `#3748`, `#3749`, and `#3750`
+- Historical/manual GitHub provenance from `gh pr view`:
+  - `gh pr view 3911 --json statusCheckRollup,files,mergedAt,mergeCommit`
+  - `gh pr view 3912 --json statusCheckRollup,files,mergedAt,mergeCommit`
+  - `gh pr view 3915 --json statusCheckRollup,files,mergedAt,mergeCommit`
+  - `gh pr view 3917 --json statusCheckRollup,files,mergedAt,mergeCommit`
+  - `gh pr view 3918 --json statusCheckRollup,files,mergedAt,mergeCommit`
 
 ## Residual Risks
 
@@ -141,8 +147,14 @@ not require a further sequencing correction from this mini-sprint closeout.
   truth unless a tracked replacement file is introduced intentionally later.
 - `finish_support.rs` remains a real production hotspot and should not be
   forgotten now that the mini-sprint is closing.
-- The extracted `github/tests.rs` proof surface is large enough to watch, even
-  though it is not a production-boundary regression by itself.
+- `adl/src/cli/pr_cmd/github/transport.rs` is still a partial extraction rather
+  than a clean standalone transport layer because `github.rs` continues to own
+  retry policy, blocking Octocrab execution, issue mutation, and compatibility
+  shims. Routed follow-on: `#3928`.
+- The extracted `github/tests.rs` proof surface is large enough to watch and
+  should be treated as a future test-structure cleanup candidate, even though
+  it is not a production-boundary regression by itself. Routed follow-on:
+  `#3929`.
 
 ## Validation Performed
 
@@ -150,6 +162,7 @@ not require a further sequencing correction from this mini-sprint closeout.
 bash adl/tools/report_large_rust_modules.sh
 bash adl/tools/report_module_navigability.sh --top 12 --format tsv
 rg -n "#3574|Sprint 4|3899" docs/milestones/v0.91.5/SPRINT_v0.91.5.md docs/milestones/v0.91.5/WBS_v0.91.5.md docs/milestones/v0.91.5/WP_ISSUE_WAVE_v0.91.5.yaml
+# Historical/manual GitHub provenance only; not the preferred ADL-native control-plane proof path:
 gh pr view 3911 --json statusCheckRollup,files,mergedAt,mergeCommit
 gh pr view 3912 --json statusCheckRollup,files,mergedAt,mergeCommit
 gh pr view 3915 --json statusCheckRollup,files,mergedAt,mergeCommit

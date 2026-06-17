@@ -14,8 +14,8 @@ generic-split churn.
 
 ## Inputs
 
-- `.adl/reports/manual/rust_module_watch_list.md` regenerated locally on
-  2026-06-17 from `bash adl/tools/report_large_rust_modules.sh --root adl/src --format tsv`
+- Deterministic hotspot report regenerated on 2026-06-17 from
+  `bash adl/tools/report_large_rust_modules.sh --root adl/src --format tsv`
 - `bash adl/tools/report_module_navigability.sh --top 12 --format tsv`
 - `docs/milestones/v0.91.5/MODULE_NAVIGABILITY_REVIEW_3612.md`
 - `docs/milestones/v0.95/features/CONTROL_PLANE_RUST_MIGRATION_AND_TOOLING_HARDENING_v0.95.md`
