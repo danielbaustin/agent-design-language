@@ -831,6 +831,20 @@ fn finish_validation_plan_classifies_owner_validation_lanes() {
 
 #[test]
 fn finish_validation_plan_classifies_resilience_runtime_publication_paths() {
+    let adapter_plan = select_finish_validation_plan("adl/src/provider_adapter.rs")
+        .expect("provider adapter runtime plan");
+    assert_eq!(adapter_plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(adapter_plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --lib provider_adapter".to_string()));
+    assert!(adapter_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+    assert!(!adapter_plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+
     let provider_plan = select_finish_validation_plan("adl/src/provider_communication.rs")
         .expect("provider communication runtime plan");
     assert_eq!(
@@ -866,10 +880,13 @@ fn finish_validation_plan_classifies_resilience_runtime_publication_paths() {
         .any(|command| command.contains("cargo clippy")));
 
     let mixed_plan = select_finish_validation_plan(
-        "adl/src/lib.rs,adl/src/provider_communication.rs,adl/src/resilience.rs,docs/milestones/v0.91.6/features/RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md",
+        "adl/src/lib.rs,adl/src/provider_adapter.rs,adl/src/provider_communication.rs,adl/src/resilience.rs,docs/milestones/v0.91.6/features/RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md",
     )
     .expect("mixed resilience runtime plan");
     assert_eq!(mixed_plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(mixed_plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --lib provider_adapter".to_string()));
     assert!(mixed_plan.commands.contains(
         &"cargo test --manifest-path adl/Cargo.toml --lib provider_communication".to_string()
     ));
@@ -1349,9 +1366,10 @@ fn finish_runtime_paths_run_module_focused_validation_and_runtime_lane() {
         env::set_var("FOCUSED_LOG", &focused_log);
     }
 
-    let plan =
-        select_finish_validation_plan("adl/src/provider_communication.rs,adl/src/resilience.rs")
-            .expect("runtime focused plan");
+    let plan = select_finish_validation_plan(
+        "adl/src/provider_adapter.rs,adl/src/provider_communication.rs,adl/src/resilience.rs",
+    )
+    .expect("runtime focused plan");
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     run_finish_validation_rust(&repo, &plan).expect("runtime focused validation");
 
@@ -1365,6 +1383,7 @@ fn finish_runtime_paths_run_module_focused_validation_and_runtime_lane() {
 
     let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
     assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("--lib provider_adapter"));
     assert!(cargo_calls.contains("--lib provider_communication"));
     assert!(cargo_calls.contains("--lib resilience"));
     assert!(!cargo_calls.contains("clippy --manifest-path"));

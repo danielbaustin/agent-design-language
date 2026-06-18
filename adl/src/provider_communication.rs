@@ -413,18 +413,7 @@ pub fn classify_provider_failure(note: &str, http_status: Option<u16>) -> Provid
 
 pub fn provider_failure_from_note(note: &str, http_status: Option<u16>) -> ProviderFailureV1 {
     let classification = provider_fault_classification(note, http_status);
-    let kind = provider_failure_kind_from_resilience(&classification);
-    let retryable = matches!(
-        classification.disposition,
-        ResilienceFaultDispositionV1::Retryable
-    );
-    ProviderFailureV1 {
-        kind,
-        retryable,
-        message: sanitize_provider_message(note),
-        provider_error_excerpt: Some(redacted_excerpt(note)),
-        http_status,
-    }
+    provider_failure_from_classification(&classification)
 }
 
 pub fn provider_fault_classification(
@@ -432,6 +421,90 @@ pub fn provider_fault_classification(
     http_status: Option<u16>,
 ) -> ResilienceFaultClassificationV1 {
     ResilienceFaultClassificationV1::provider(note, http_status)
+}
+
+pub fn provider_failure_classification_from_failure(
+    failure: &ProviderFailureV1,
+) -> ResilienceFaultClassificationV1 {
+    let (fault_class, disposition) = match failure.kind {
+        ProviderFailureKindV1::ProviderAuthMissing => (
+            ResilienceFaultClassV1::ProviderAuthMissing,
+            ResilienceFaultDispositionV1::OperatorGated,
+        ),
+        ProviderFailureKindV1::ProviderAuthError => (
+            ResilienceFaultClassV1::ProviderAuthError,
+            ResilienceFaultDispositionV1::OperatorGated,
+        ),
+        ProviderFailureKindV1::ProviderRateLimited => (
+            ResilienceFaultClassV1::ProviderRateLimited,
+            ResilienceFaultDispositionV1::Retryable,
+        ),
+        ProviderFailureKindV1::ProviderTimeout => (
+            ResilienceFaultClassV1::ProviderTimeout,
+            ResilienceFaultDispositionV1::Retryable,
+        ),
+        ProviderFailureKindV1::ProviderTransientHttp => (
+            ResilienceFaultClassV1::ProviderTransientHttp,
+            ResilienceFaultDispositionV1::Retryable,
+        ),
+        ProviderFailureKindV1::ProviderEmptyTextOutput => (
+            ResilienceFaultClassV1::ProviderEmptyTextOutput,
+            ResilienceFaultDispositionV1::Terminal,
+        ),
+        ProviderFailureKindV1::ProviderModelUnavailable => (
+            ResilienceFaultClassV1::ProviderModelUnavailable,
+            ResilienceFaultDispositionV1::Terminal,
+        ),
+        ProviderFailureKindV1::ProviderBillingBlocked => (
+            ResilienceFaultClassV1::ProviderBillingBlocked,
+            ResilienceFaultDispositionV1::OperatorGated,
+        ),
+        ProviderFailureKindV1::LocalRuntimeUnavailable => (
+            ResilienceFaultClassV1::LocalRuntimeUnavailable,
+            ResilienceFaultDispositionV1::Retryable,
+        ),
+        ProviderFailureKindV1::LocalRuntimeBusy => (
+            ResilienceFaultClassV1::LocalRuntimeBusy,
+            ResilienceFaultDispositionV1::Retryable,
+        ),
+        ProviderFailureKindV1::LocalRuntimeHung => (
+            ResilienceFaultClassV1::LocalRuntimeHung,
+            ResilienceFaultDispositionV1::Retryable,
+        ),
+        ProviderFailureKindV1::ProviderError => (
+            ResilienceFaultClassV1::ProviderError,
+            ResilienceFaultDispositionV1::Terminal,
+        ),
+        ProviderFailureKindV1::Unknown => (
+            ResilienceFaultClassV1::Unknown,
+            ResilienceFaultDispositionV1::Retryable,
+        ),
+    };
+    ResilienceFaultClassificationV1 {
+        schema_version: crate::resilience::RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+        surface: crate::resilience::ResilienceSurfaceV1::Provider,
+        fault_class,
+        disposition: disposition.clone(),
+        retryable: matches!(disposition, ResilienceFaultDispositionV1::Retryable),
+        summary: sanitize_resilience_summary(&failure.message),
+        component_ref: None,
+        http_status: failure.http_status,
+    }
+}
+
+pub fn provider_failure_from_classification(
+    classification: &ResilienceFaultClassificationV1,
+) -> ProviderFailureV1 {
+    ProviderFailureV1 {
+        kind: provider_failure_kind_from_resilience(classification),
+        retryable: matches!(
+            classification.disposition,
+            ResilienceFaultDispositionV1::Retryable
+        ),
+        message: classification.summary.clone(),
+        provider_error_excerpt: Some(classification.summary.clone()),
+        http_status: classification.http_status,
+    }
 }
 
 pub fn provider_attempt_policy_as_resilience_policy(
@@ -756,6 +829,7 @@ pub fn validate_review_provider_result(result: &ReviewProviderResultV1) -> Resul
     Ok(())
 }
 
+#[cfg(test)]
 fn sanitize_provider_message(note: &str) -> String {
     sanitize_resilience_summary(note)
 }
@@ -768,10 +842,6 @@ fn scrub_log_event(event: &mut ProviderRunLogEventV1) {
         event.fields =
             Some(serde_json::json!({"redacted": "event fields omitted from provider run log"}));
     }
-}
-
-fn redacted_excerpt(note: &str) -> String {
-    format!("[redacted provider detail len={}]", note.len())
 }
 
 fn require_non_empty(field: &str, value: &str) -> Result<()> {
@@ -974,6 +1044,26 @@ mod tests {
             None,
         );
         assert_eq!(classification.summary, "redacted provider diagnostic");
+    }
+
+    #[test]
+    fn provider_failure_round_trips_through_shared_resilience_vocab() {
+        let failure = ProviderFailureV1 {
+            kind: ProviderFailureKindV1::ProviderRateLimited,
+            retryable: true,
+            message: "rate limit exceeded".to_string(),
+            provider_error_excerpt: Some("rate limit exceeded".to_string()),
+            http_status: Some(429),
+        };
+        let classification = provider_failure_classification_from_failure(&failure);
+        assert_eq!(
+            classification.fault_class,
+            ResilienceFaultClassV1::ProviderRateLimited
+        );
+        let remapped = provider_failure_from_classification(&classification);
+        assert_eq!(remapped.kind, ProviderFailureKindV1::ProviderRateLimited);
+        assert!(remapped.retryable);
+        assert_eq!(remapped.http_status, Some(429));
     }
 
     #[test]

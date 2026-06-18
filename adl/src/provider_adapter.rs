@@ -1,16 +1,20 @@
-use crate::model_identity::observed_at_now_v1;
 use crate::provider_communication::{
-    hosted_model_identity, ollama_model_identity, provider_failure_from_note,
-    validate_provider_request, ProviderAttemptPolicyV1, ProviderAttemptStatusV1, ProviderAttemptV1,
-    ProviderFailureKindV1, ProviderFailureV1, ProviderInvocationFinalStatusV1,
-    ProviderInvocationRequestV1, ProviderInvocationResultV1, ProviderRunLogEventV1,
-    ProviderRunLoggerV1, RuntimeSurfaceV1, PROVIDER_COMMUNICATION_SCHEMA_VERSION,
+    hosted_model_identity, ollama_model_identity, provider_attempt_policy_as_resilience_policy,
+    provider_failure_classification_from_failure, provider_failure_from_classification,
+    provider_failure_from_note, validate_provider_request, ProviderAttemptPolicyV1,
+    ProviderAttemptStatusV1, ProviderAttemptV1, ProviderFailureKindV1, ProviderFailureV1,
+    ProviderInvocationFinalStatusV1, ProviderInvocationRequestV1, ProviderInvocationResultV1,
+    ProviderRunLogEventV1, ProviderRunLoggerV1, RuntimeSurfaceV1,
+    PROVIDER_COMMUNICATION_SCHEMA_VERSION,
+};
+use crate::resilience::{
+    execute_retry_policy, ResilienceFaultClassV1, ResilienceSurfaceV1, RetryAttemptRecordV1,
 };
 use anyhow::{anyhow, Result};
 use reqwest::blocking::Client;
 use serde_json::{json, Value};
+use std::cell::RefCell;
 use std::env;
-use std::thread;
 use std::time::{Duration, Instant};
 
 const DEFAULT_OPENAI_RESPONSES_URL: &str = "https://api.openai.com/v1/responses";
@@ -20,7 +24,6 @@ const DEFAULT_OPENROUTER_CHAT_COMPLETIONS_URL: &str =
     "https://openrouter.ai/api/v1/chat/completions";
 const DEFAULT_GEMINI_BASE_URL: &str = "https://generativelanguage.googleapis.com/v1beta";
 const DEFAULT_OLLAMA_BASE_URL: &str = "http://127.0.0.1:11434";
-const DEFAULT_BACKOFF_MS: u64 = 1_000;
 
 pub fn execute_provider_invocation(
     mut request: ProviderInvocationRequestV1,
@@ -46,118 +49,94 @@ pub fn execute_provider_invocation(
 
     let _ = logger.event(event("run_start", &request).with_status("started"));
     let policy = request.attempt_policy.clone();
-    let mut attempts = Vec::new();
-    let mut final_failure = None;
-
-    for attempt_index in 1..=policy.max_attempts {
-        let attempt_started_at = observed_at_now_v1();
-        let attempt_started = Instant::now();
-        let _ = logger.event(event("attempt_start", &request).with_attempt(attempt_index));
-
-        let outcome = match request.route.runtime_surface {
-            RuntimeSurfaceV1::HostedApi => execute_hosted(&request, &policy),
-            RuntimeSurfaceV1::OllamaHttp => execute_ollama_http(&mut request, &policy),
-            RuntimeSurfaceV1::OllamaCli | RuntimeSurfaceV1::Mock | RuntimeSurfaceV1::Unknown => {
-                Err(provider_failure_from_note(
+    let resilience_policy =
+        provider_attempt_policy_as_resilience_policy("provider_adapter.execute", &policy);
+    let route = request.route.clone();
+    let lane_ref = request.lane_ref.clone();
+    let event_model_identity = request.model_identity.clone();
+    let logger_cell = RefCell::new(&mut *logger);
+    let execution = execute_retry_policy(
+        &resilience_policy,
+        ResilienceSurfaceV1::Provider,
+        "provider_adapter.execute",
+        |attempt_index| {
+            let _ = logger_cell.borrow_mut().event(
+                ProviderRunLogEventV1::new("attempt_start")
+                    .with_route(&route, &event_model_identity)
+                    .with_lane(&lane_ref)
+                    .with_attempt(attempt_index),
+            );
+            match request.route.runtime_surface {
+                RuntimeSurfaceV1::HostedApi => execute_hosted(&request, &policy),
+                RuntimeSurfaceV1::OllamaHttp => execute_ollama_http(&mut request, &policy),
+                RuntimeSurfaceV1::OllamaCli
+                | RuntimeSurfaceV1::Mock
+                | RuntimeSurfaceV1::Unknown => Err(provider_failure_from_note(
                     "unsupported provider runtime surface",
                     None,
-                ))
+                )),
             }
-        };
+        },
+        provider_failure_classification_from_failure,
+        |delay_ms| std::thread::sleep(Duration::from_millis(delay_ms)),
+        |attempt| {
+            emit_retry_attempt_event(
+                &mut logger_cell.borrow_mut(),
+                &route,
+                &lane_ref,
+                &event_model_identity,
+                attempt,
+            )
+        },
+    );
+    let duration_ms = started.elapsed().as_millis() as u64;
 
-        let duration_ms = attempt_started.elapsed().as_millis() as u64;
-        match outcome {
-            Ok(provider_response) => {
-                let output_text = provider_response.output_text;
-                let mut model_identity = request.model_identity.clone();
-                if let Some(observed_provider_model_id) =
-                    provider_response.observed_provider_model_id
-                {
-                    if !observed_provider_model_id.trim().is_empty() {
-                        model_identity.provider_model_id = observed_provider_model_id;
-                    }
+    match execution.result {
+        Ok(provider_response) => {
+            let output_text = provider_response.output_text.clone();
+            let mut model_identity = request.model_identity.clone();
+            if let Some(ref observed_provider_model_id) =
+                provider_response.observed_provider_model_id
+            {
+                if !observed_provider_model_id.trim().is_empty() {
+                    model_identity.provider_model_id = observed_provider_model_id.clone();
                 }
-                attempts.push(ProviderAttemptV1 {
-                    attempt_index,
-                    started_at: attempt_started_at,
-                    duration_ms,
-                    status: ProviderAttemptStatusV1::Ok,
-                    retryable: false,
-                    http_status: Some(provider_response.http_status),
-                    failure: None,
-                    raw_response_excerpt: Some(redacted_response_marker(&output_text)),
-                });
-                let _ = logger.event(
-                    event("attempt_success", &request)
-                        .with_attempt(attempt_index)
-                        .with_status("ok"),
-                );
-                let _ = logger.event(event("run_finish", &request).with_status("ok"));
-                return ProviderInvocationResultV1 {
-                    schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
-                    route: request.route,
-                    model_identity,
-                    attempts,
-                    final_status: ProviderInvocationFinalStatusV1::Ok,
-                    duration_ms: started.elapsed().as_millis() as u64,
-                    request_id: request.request_id.clone(),
-                    output_text: Some(output_text.clone()),
-                    output_text_excerpt: Some(redacted_response_marker(&output_text)),
-                    failure: None,
-                    artifact_ref: None,
-                    trace_ref: None,
-                };
             }
-            Err(mut failure) => {
-                let retryable = failure.retryable && attempt_index < policy.max_attempts;
-                failure.retryable = retryable;
-                let status = if matches!(failure.kind, ProviderFailureKindV1::ProviderTimeout) {
-                    ProviderAttemptStatusV1::Timeout
-                } else {
-                    ProviderAttemptStatusV1::Error
-                };
-                attempts.push(ProviderAttemptV1 {
-                    attempt_index,
-                    started_at: attempt_started_at,
-                    duration_ms,
-                    status,
-                    retryable,
-                    http_status: failure.http_status,
-                    failure: Some(failure.clone()),
-                    raw_response_excerpt: None,
-                });
-                let _ = logger.event(
-                    event("attempt_failure", &request)
-                        .with_attempt(attempt_index)
-                        .with_failure(&failure)
-                        .with_status("failed"),
-                );
-                final_failure = Some(failure.clone());
-                if retryable {
-                    thread::sleep(Duration::from_millis(
-                        policy.retry_backoff_ms.unwrap_or(DEFAULT_BACKOFF_MS),
-                    ));
-                } else {
-                    break;
-                }
+            let attempts = provider_attempts_from_trace(
+                &execution.trace.attempts,
+                Some(&provider_response),
+                None,
+            );
+            let _ = logger_cell
+                .borrow_mut()
+                .event(event("run_finish", &request).with_status("ok"));
+            ProviderInvocationResultV1 {
+                schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+                route: request.route,
+                model_identity,
+                attempts,
+                final_status: ProviderInvocationFinalStatusV1::Ok,
+                duration_ms,
+                request_id: request.request_id.clone(),
+                output_text: Some(output_text.clone()),
+                output_text_excerpt: Some(redacted_response_marker(&output_text)),
+                failure: None,
+                artifact_ref: None,
+                trace_ref: None,
             }
         }
+        Err(failure) => {
+            let failure = normalize_terminal_failure(&execution.trace.attempts, &failure);
+            let attempts =
+                provider_attempts_from_trace(&execution.trace.attempts, None, Some(&failure));
+            let _ = logger_cell.borrow_mut().event(
+                event("run_finish", &request)
+                    .with_failure(&failure)
+                    .with_status("failed"),
+            );
+            failed_result(request, attempts, failure, duration_ms)
+        }
     }
-
-    let failure = final_failure.unwrap_or_else(|| {
-        provider_failure_from_note("provider adapter ended without a result", None)
-    });
-    let _ = logger.event(
-        event("run_finish", &request)
-            .with_failure(&failure)
-            .with_status("failed"),
-    );
-    failed_result(
-        request,
-        attempts,
-        failure,
-        started.elapsed().as_millis() as u64,
-    )
 }
 
 fn failed_result(
@@ -179,6 +158,106 @@ fn failed_result(
         failure: Some(failure),
         artifact_ref: None,
         trace_ref: None,
+    }
+}
+
+fn provider_attempts_from_trace(
+    records: &[RetryAttemptRecordV1],
+    success: Option<&ProviderTextResponse>,
+    final_failure: Option<&ProviderFailureV1>,
+) -> Vec<ProviderAttemptV1> {
+    let success_attempt = success.map(|_| records.len() as u32);
+    records
+        .iter()
+        .map(|record| {
+            if let Some(classification) = &record.fault {
+                ProviderAttemptV1 {
+                    attempt_index: record.attempt_index,
+                    started_at: record.started_at.clone(),
+                    duration_ms: record.duration_ms,
+                    status: if matches!(
+                        classification.fault_class,
+                        ResilienceFaultClassV1::ProviderTimeout
+                    ) {
+                        ProviderAttemptStatusV1::Timeout
+                    } else {
+                        ProviderAttemptStatusV1::Error
+                    },
+                    retryable: record.retry_allowed,
+                    http_status: classification.http_status,
+                    failure: provider_failure_from_attempt_record(record),
+                    raw_response_excerpt: None,
+                }
+            } else {
+                let output_text = if success_attempt == Some(record.attempt_index) {
+                    success.map(|response| redacted_response_marker(&response.output_text))
+                } else {
+                    final_failure.map(|_| redacted_response_marker(""))
+                };
+                ProviderAttemptV1 {
+                    attempt_index: record.attempt_index,
+                    started_at: record.started_at.clone(),
+                    duration_ms: record.duration_ms,
+                    status: ProviderAttemptStatusV1::Ok,
+                    retryable: false,
+                    http_status: success.map(|response| response.http_status),
+                    failure: None,
+                    raw_response_excerpt: output_text,
+                }
+            }
+        })
+        .collect()
+}
+
+fn provider_failure_from_attempt_record(
+    record: &RetryAttemptRecordV1,
+) -> Option<ProviderFailureV1> {
+    let classification = record.fault.as_ref()?;
+    let mut failure = provider_failure_from_classification(classification);
+    failure.retryable = record.retry_allowed;
+    Some(failure)
+}
+
+fn normalize_terminal_failure(
+    records: &[RetryAttemptRecordV1],
+    failure: &ProviderFailureV1,
+) -> ProviderFailureV1 {
+    let mut normalized = failure.clone();
+    if let Some(record) = records.last() {
+        normalized.retryable = record.retry_allowed;
+    }
+    normalized
+}
+
+fn emit_retry_attempt_event(
+    logger: &mut ProviderRunLoggerV1,
+    route: &crate::provider_communication::ProviderRouteV1,
+    lane_ref: &str,
+    model_identity: &crate::model_identity::ModelIdentityV1,
+    attempt: &RetryAttemptRecordV1,
+) {
+    match &attempt.fault {
+        Some(_) => {
+            let failure = provider_failure_from_attempt_record(attempt)
+                .expect("attempt with fault must map to provider failure");
+            let _ = logger.event(
+                ProviderRunLogEventV1::new("attempt_failure")
+                    .with_route(route, model_identity)
+                    .with_lane(lane_ref)
+                    .with_attempt(attempt.attempt_index)
+                    .with_failure(&failure)
+                    .with_status("failed"),
+            );
+        }
+        None => {
+            let _ = logger.event(
+                ProviderRunLogEventV1::new("attempt_success")
+                    .with_route(route, model_identity)
+                    .with_lane(lane_ref)
+                    .with_attempt(attempt.attempt_index)
+                    .with_status("ok"),
+            );
+        }
     }
 }
 
@@ -1067,6 +1146,144 @@ mod tests {
         );
         let _ = fs::remove_file(path);
         env::remove_var("ADL_PROVIDER_ADAPTER_OPENAI_ARRAY_KEY");
+    }
+
+    #[test]
+    fn hosted_openai_retries_retryable_failure_then_succeeds() {
+        env::set_var("ADL_PROVIDER_ADAPTER_RETRY_KEY", "test-key");
+        let endpoint = scripted_server(vec![
+            (
+                r#"{"error":"rate limit exceeded"}"#,
+                "429 Too Many Requests",
+            ),
+            (r#"{"output_text":"retry success"}"#, "200 OK"),
+        ]);
+        let path = temp_log("retry-success");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_RETRY_KEY".to_string());
+        req.attempt_policy.max_attempts = 2;
+        req.attempt_policy.retry_backoff_ms = Some(1);
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+        assert_eq!(result.output_text.as_deref(), Some("retry success"));
+        assert_eq!(result.attempts.len(), 2);
+        assert_eq!(
+            result.attempts[0]
+                .failure
+                .as_ref()
+                .map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::ProviderRateLimited)
+        );
+        assert!(result.attempts[0].retryable);
+        assert_eq!(
+            result.attempts[0]
+                .failure
+                .as_ref()
+                .map(|failure| failure.retryable),
+            Some(true)
+        );
+        assert_eq!(result.attempts[1].status, ProviderAttemptStatusV1::Ok);
+
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_RETRY_KEY");
+    }
+
+    #[test]
+    fn hosted_openai_stops_after_non_retryable_failure() {
+        env::set_var("ADL_PROVIDER_ADAPTER_NONRETRY_KEY", "test-key");
+        let endpoint = scripted_server(vec![
+            (r#"{"error":"unauthorized"}"#, "401 Unauthorized"),
+            (r#"{"output_text":"should not be reached"}"#, "200 OK"),
+        ]);
+        let path = temp_log("nonretryable");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_NONRETRY_KEY".to_string());
+        req.attempt_policy.max_attempts = 3;
+        req.attempt_policy.retry_backoff_ms = Some(1);
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+        assert_eq!(result.attempts.len(), 1);
+        assert_eq!(
+            result.failure.as_ref().map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::ProviderAuthError)
+        );
+        assert!(!result.attempts[0].retryable);
+        assert_eq!(
+            result.attempts[0]
+                .failure
+                .as_ref()
+                .map(|failure| failure.retryable),
+            Some(false)
+        );
+        assert_eq!(
+            result.failure.as_ref().map(|failure| failure.retryable),
+            Some(false)
+        );
+
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_NONRETRY_KEY");
+    }
+
+    #[test]
+    fn hosted_openai_reports_retry_budget_exhaustion_after_last_retryable_failure() {
+        env::set_var("ADL_PROVIDER_ADAPTER_EXHAUST_KEY", "test-key");
+        let endpoint = scripted_server(vec![
+            (
+                r#"{"error":"server overloaded"}"#,
+                "503 Service Unavailable",
+            ),
+            (
+                r#"{"error":"server overloaded"}"#,
+                "503 Service Unavailable",
+            ),
+        ]);
+        let path = temp_log("retry-exhausted");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_EXHAUST_KEY".to_string());
+        req.attempt_policy.max_attempts = 2;
+        req.attempt_policy.retry_backoff_ms = Some(1);
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+        assert_eq!(result.attempts.len(), 2);
+        assert_eq!(
+            result.failure.as_ref().map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::ProviderTransientHttp)
+        );
+        assert!(result.attempts[0].retryable);
+        assert!(!result.attempts[1].retryable);
+        assert_eq!(
+            result.attempts[0]
+                .failure
+                .as_ref()
+                .map(|failure| failure.retryable),
+            Some(true)
+        );
+        assert_eq!(
+            result.attempts[1]
+                .failure
+                .as_ref()
+                .map(|failure| failure.retryable),
+            Some(false)
+        );
+        assert_eq!(
+            result.failure.as_ref().map(|failure| failure.retryable),
+            Some(false)
+        );
+
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_EXHAUST_KEY");
     }
 
     #[test]
