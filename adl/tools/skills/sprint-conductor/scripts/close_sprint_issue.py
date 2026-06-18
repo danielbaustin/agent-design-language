@@ -82,6 +82,8 @@ def main() -> int:
     )
 
     state['sprint_issue_closed'] = True
+    state.setdefault('closeout', {})
+    state['closeout']['sprint_issue_close_summary'] = args.summary
     state['sprint_issue_close_summary'] = args.summary
     state_path.write_text(json.dumps(state, indent=2, sort_keys=True) + '\n')
 

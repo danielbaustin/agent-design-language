@@ -1018,3 +1018,126 @@ assert "srp-editor" in problem["required_editor_skills"]
 PY
 
 echo "PASS test_sprint_conductor_helpers"
+
+closeout_readiness_blocked_state="${tmpdir}/closeout-readiness-blocked-state.json"
+cat >"${closeout_readiness_blocked_state}" <<'JSON'
+{
+  "sprint_issue_number": 5001,
+  "ordered_issue_numbers": [5002, 5003],
+  "issue_records": [
+    {"issue_number": 5002, "status": "closed_out", "pr_url": "https://example.test/pr/5002", "artifact_paths": ["docs/review-5002.md"], "closeout_gate": {"issue_closed": true, "pr_state": "merged", "root_sor_status": "done", "worktree_status": "pruned", "worktree_note": null}},
+    {"issue_number": 5003, "status": "waiting_for_review", "pr_url": "https://example.test/pr/5003", "artifact_paths": []}
+  ],
+  "blocked_issue_number": null,
+  "deferred_issue_numbers": [],
+  "follow_up_issues": [],
+  "review": {"status": "done", "packet_path": "docs/review/packet.md", "code_review_path": "docs/review/code.md", "test_review_path": "docs/review/tests.md", "synthesis_path": "docs/review/synthesis.md"},
+  "validation": {"status": "PASS"},
+  "coverage": {"source": "existing_quality_gate", "summary": "Existing quality gate reused for sprint closeout."},
+  "rust_tracker": {"source": "existing_quality_gate", "watch_count": 3, "review_count": 2, "rationale_count": 1},
+  "closeout": {}
+}
+JSON
+blocked_artifact="${tmpdir}/closeout-readiness-blocked.md"
+blocked_summary="${tmpdir}/closeout-readiness-blocked-summary.md"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_closeout_readiness.py" \
+  --state "${closeout_readiness_blocked_state}" \
+  --out "${blocked_artifact}" \
+  --summary-out "${blocked_summary}" \
+  --print-json > "${tmpdir}/closeout-readiness-blocked.json"
+python3 - "${tmpdir}/closeout-readiness-blocked.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+payload = json.loads(Path(sys.argv[1]).read_text())
+assert payload["classification"] == "blocked"
+assert payload["closeout_status"] == "blocked"
+assert any("child closeout truth is incomplete" in item for item in payload["blockers"])
+PY
+grep -Fq 'ready_to_close' "${blocked_summary}" && {
+  echo "blocked closeout summary should not claim ready_to_close" >&2
+  exit 1
+} || true
+grep -Fq 'Blocking conditions:' "${blocked_summary}"
+
+actionable_closeout_state="${tmpdir}/closeout-readiness-remediation-state.json"
+cat >"${actionable_closeout_state}" <<'JSON'
+{
+  "sprint_issue_number": 5001,
+  "ordered_issue_numbers": [5002, 5003],
+  "issue_records": [
+    {"issue_number": 5002, "status": "closed_out", "pr_url": "https://example.test/pr/5002", "artifact_paths": ["docs/review-5002.md"], "closeout_gate": {"issue_closed": true, "pr_state": "merged", "root_sor_status": "done", "worktree_status": "pruned", "worktree_note": null}},
+    {"issue_number": 5003, "status": "closed_out", "pr_url": "https://example.test/pr/5003", "artifact_paths": ["docs/review-5003.md"], "closeout_gate": {"issue_closed": true, "pr_state": "merged", "root_sor_status": "done", "worktree_status": "pruned", "worktree_note": null}}
+  ],
+  "blocked_issue_number": null,
+  "deferred_issue_numbers": [],
+  "follow_up_issues": [],
+  "review": {"status": "not_started"},
+  "closeout": {}
+}
+JSON
+remediation_artifact="${tmpdir}/closeout-readiness-remediation.md"
+remediation_summary="${tmpdir}/closeout-readiness-remediation-summary.md"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_closeout_readiness.py" \
+  --state "${actionable_closeout_state}" \
+  --out "${remediation_artifact}" \
+  --summary-out "${remediation_summary}" \
+  --print-json > "${tmpdir}/closeout-readiness-remediation.json"
+python3 - "${tmpdir}/closeout-readiness-remediation.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+payload = json.loads(Path(sys.argv[1]).read_text())
+assert payload["classification"] == "needs_remediation"
+assert payload["closeout_status"] == "in_progress"
+assert any("Sprint review status is not done." == item for item in payload["remediation"])
+assert payload["closeout_artifact_path"]
+PY
+grep -Fq 'Remediation required before sprint close:' "${remediation_summary}"
+
+actionable_ready_state="${tmpdir}/closeout-readiness-ready-state.json"
+cat >"${actionable_ready_state}" <<'JSON'
+{
+  "sprint_issue_number": 5001,
+  "ordered_issue_numbers": [5002, 5003],
+  "issue_records": [
+    {"issue_number": 5002, "status": "closed_out", "pr_url": "https://example.test/pr/5002", "artifact_paths": ["docs/review-5002.md"], "closeout_gate": {"issue_closed": true, "pr_state": "merged", "root_sor_status": "done", "worktree_status": "pruned", "worktree_note": null}},
+    {"issue_number": 5003, "status": "closed_out", "pr_url": "https://example.test/pr/5003", "artifact_paths": ["docs/review-5003.md"], "closeout_gate": {"issue_closed": true, "pr_state": "merged", "root_sor_status": "done", "worktree_status": "pruned", "worktree_note": null}}
+  ],
+  "blocked_issue_number": null,
+  "deferred_issue_numbers": [],
+  "follow_up_issues": [
+    {"issue_number": 6001, "disposition": "post_sprint_follow_on", "summary": "Document residual SEP learnings."}
+  ],
+  "review": {"status": "done", "packet_path": "docs/review/packet.md", "code_review_path": "docs/review/code.md", "test_review_path": "docs/review/tests.md", "synthesis_path": "docs/review/synthesis.md"},
+  "validation": {"status": "PASS"},
+  "coverage": {"source": "existing_quality_gate", "summary": "Existing quality gate reused for sprint closeout."},
+  "rust_tracker": {"source": "existing_quality_gate", "watch_count": 3, "review_count": 2, "rationale_count": 1},
+  "closeout": {}
+}
+JSON
+ready_artifact="${tmpdir}/closeout-readiness-ready.md"
+ready_summary="${tmpdir}/closeout-readiness-ready-summary.md"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_closeout_readiness.py" \
+  --state "${actionable_ready_state}" \
+  --out "${ready_artifact}" \
+  --summary-out "${ready_summary}" \
+  --print-json > "${tmpdir}/closeout-readiness-ready.json"
+python3 - "${tmpdir}/closeout-readiness-ready.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+payload = json.loads(Path(sys.argv[1]).read_text())
+assert payload["classification"] == "ready_to_close"
+assert payload["closeout_status"] == "done"
+assert payload["closure_cleanliness"] == "clean_with_post_sprint_followups"
+assert payload["closeout_artifact_path"]
+assert "#6001" in payload["summary"]
+state = json.loads(Path(payload["state_path"]).read_text())
+assert state["closeout"]["sprint_issue_close_summary"] == payload["summary"]
+PY
+grep -Fq 'Follow-up routing:' "${ready_summary}"
+grep -Fq '#6001' "${ready_summary}"

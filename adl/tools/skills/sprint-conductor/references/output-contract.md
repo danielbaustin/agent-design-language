@@ -150,6 +150,7 @@ review:
     unresolved_questions: <int or null>
 closeout:
   status: not_started | in_progress | done | blocked
+  readiness: ready_to_close | needs_remediation | blocked | unknown
   closeout_note_path: <path or null>
   closeout_artifact_path: <path or null>
   sprint_issue_close_summary: <bounded text or null>
