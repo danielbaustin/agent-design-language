@@ -4,7 +4,7 @@
 
 - Feature Name: Provider And Model Reliability
 - Milestone Target: `v0.91.6`
-- Status: `m_01_role_suitability_matrix_defined`
+- Status: `m_05_reliability_closeout_matrix_defined`
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture
@@ -188,11 +188,19 @@ Remediation note:
 ## Validation And Review
 
 - Require bounded evidence links for every promoted role lane.
+- Require self-validating proof bundles for provider claims.
+- Use bounded review packets for provider/capability boundaries, role
+  suitability, hosted/remote reliability, failure routing, sanitation, and
+  role-provider policy.
 - Keep historical weaker results visible when newer bounded proofs improve a
   lane.
 - Separate provider-route support from broad role usefulness.
 - Record credential-blocked and inventory-only lanes explicitly instead of
   inferring reliability.
+- Keep unsupported or weakly-proven surfaces classified as blocked,
+  candidate-only, or useful-with-limits instead of silently upgrading them.
+- Preserve explicit non-claims for autonomy, benchmark, and training
+  interpretations.
 
 ## Catalog Boundary Consumed From M-00
 
@@ -212,7 +220,7 @@ This issue adds role suitability on top of that split, but does not collapse:
 
 | Evidence surface | Role in this matrix | Current truth |
 | --- | --- | --- |
-| `#4007` proof note | Defines provider/capability boundary | PR-pending in `#4063`; used as dependency truth, not merged-baseline truth |
+| `#4007` proof note | Defines provider/capability boundary | merged baseline truth via `#4063` |
 | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` | Historical v0.91.5 baseline | Useful for original lane availability and early non-claims |
 | `OPENROUTER_MATRIX_PROOF_2026-06-14.md` | Strongest OpenRouter route proof | Five native requested-route probes are `supported_with_limits` |
 | `MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md` | Multi-agent consumption baseline | Records that usefulness still depends on role/task shape |
@@ -278,7 +286,9 @@ This issue adds role suitability on top of that split, but does not collapse:
 `v0.92` may consume provider/model readiness only as:
 
 - a role-scoped matrix with named evidence states;
+- a bounded provider failure-routing contract;
 - a bounded advisory routing surface;
+- a bounded role-provider policy layer with advisory-only authority;
 - a non-authority-bearing input to capability selection and birthday-demo
   planning.
 
@@ -286,7 +296,9 @@ This issue adds role suitability on top of that split, but does not collapse:
 
 - general intelligence;
 - training readiness;
+- product benchmark status;
 - universal watcher autonomy;
+- autonomous repo authority;
 - authority to merge, close, or bypass C-SDLC review and closeout gates.
 
 ## Non-Goals
