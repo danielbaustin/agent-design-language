@@ -24,7 +24,7 @@ Current live state:
 
 - WP-03 has merged through `#4001`
 - WP-04 child issues `#4002`-`#4006` have merged through `#4006`
-- WP-04 umbrella `#3969` is in final closeout after the merged child wave
+- WP-04 umbrella `#3969` has merged and closed after the merged child wave
 
 ## WBS Summary
 

@@ -6,7 +6,7 @@
 - Version: `v0.91.6`
 - Date: `2026-06-18`
 - Owner: ADL maintainers
-- Status: `wp_04_closeout_ready_pending_review`
+- Status: `wp_04_complete_wp07_residuals_routed`
 - Related issues: `#3969`, `#4002`, `#4003`, `#4004`, `#4005`, `#4006`
 - Prior baseline: [PUBLIC_PROMPT_RECORDS_v0.91.5.md](../../v0.91.5/features/PUBLIC_PROMPT_RECORDS_v0.91.5.md)
 - Export contract proof note: [PUBLIC_PROMPT_RECORDS_EXPORT_CONTRACT_4002.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_EXPORT_CONTRACT_4002.md)
@@ -137,8 +137,8 @@ Closeout result for this feature lane:
 
 Truth boundary carried forward:
 
-- WP-04 becomes closeout-ready for review once the stacked `#4002`-`#4006`
-  proof set is present
+- WP-04 is complete through umbrella closeout once the stacked `#4002`-`#4006`
+  proof set and umbrella `#3969` closeout are present
 - broader activation-path security residuals remain routed to WP-07
 - this feature doc does not claim unrestricted release approval or that later
   security work has already finished
