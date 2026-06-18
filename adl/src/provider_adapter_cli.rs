@@ -265,10 +265,7 @@ mod tests {
     static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
 
     fn env_lock() -> MutexGuard<'static, ()> {
-        match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
-            Ok(guard) => guard,
-            Err(poisoned) => poisoned.into_inner(),
-        }
+        ENV_LOCK.get_or_init(|| Mutex::new(())).lock().unwrap()
     }
 
     fn temp_path(name: &str) -> PathBuf {

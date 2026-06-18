@@ -2098,20 +2098,17 @@ pub(super) fn write_temp_markdown(prefix: &str, body: &str) -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::run_finish_validation_status;
+    use crate::cli::observability::test_env_lock as shared_env_lock;
     use std::fs;
     use std::os::unix::fs::PermissionsExt;
     use std::path::PathBuf;
     use std::sync::atomic::{AtomicU64, Ordering};
-    use std::sync::{Mutex, MutexGuard, OnceLock};
+    use std::sync::MutexGuard;
 
     static TEMP_SEQ: AtomicU64 = AtomicU64::new(0);
-    static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
 
     fn env_lock() -> MutexGuard<'static, ()> {
-        match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
-            Ok(guard) => guard,
-            Err(poisoned) => poisoned.into_inner(),
-        }
+        shared_env_lock()
     }
 
     fn temp_dir(prefix: &str) -> PathBuf {

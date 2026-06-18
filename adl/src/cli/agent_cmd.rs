@@ -437,6 +437,7 @@ fn status_state_label(state: &long_lived_agent::AgentStatusState) -> &'static st
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cli::observability::test_env_lock as env_lock;
     use std::fs;
     use std::path::Path;
     use std::sync::atomic::{AtomicU64, Ordering};
@@ -643,6 +644,7 @@ memory:
 
     #[test]
     fn agent_run_emits_heartbeat_for_long_lived_processes() {
+        let _guard = env_lock();
         let root = temp_dir("heartbeat");
         let spec = write_spec(&root);
         let observability = root.join("observability.log");
