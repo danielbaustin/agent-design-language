@@ -16,6 +16,7 @@ Candidate review checklist for docs/planning and first-tranche bridge work.
 For planning-doc-only changes:
 
 - `git diff --check`
+- `python3 adl/tools/check_repo_quality_staleness.py --milestone v0.91.6`
 - required-file check for `README.md`, `WBS_v0.91.6.md`,
   `FEATURE_DOCS_v0.91.6.md`, `MILESTONE_CHECKLIST_v0.91.6.md`,
   `REVIEW_AND_VALIDATION_CHECKLIST_v0.91.6.md`, and
@@ -30,6 +31,9 @@ For planning-doc-only changes:
 For runtime or tooling changes opened from this milestone:
 
 - use the focused owner lane or exact validation command named by the issue
+- if reviewer-facing repo or milestone docs changed, run
+  `python3 adl/tools/check_repo_quality_staleness.py --milestone v0.91.6`
+  before broader owner-lane proof
 - record local proof separately from deferred CI proof
 - state whether slow proof is skipped, expected, or required
 

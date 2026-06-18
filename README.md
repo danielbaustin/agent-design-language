@@ -9,7 +9,7 @@ packets, demos, and milestone evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.91.5%20bridge-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.91.6%20bridge-blue)
 
 ![ADL deterministic cognitive architecture overview](docs/assets/ADL-overview.png)
 
@@ -149,13 +149,28 @@ from issue
 
 ## Recent Milestones
 
-### v0.91.5 - Active Bridge Milestone
+### v0.91.6 - Active First Bridge Tranche
 
-v0.91.5 is the active bridge milestone between the C-SDLC rollout closeout and
-the v0.92 first-birthday milestone. It carries multi-agent stabilization,
-provider/model breadth, public prompt records, demo readiness, AEE completion
-routing, and activation testing so v0.92 can begin from a clean operational
-base.
+v0.91.6 is the active first pre-v0.92 bridge/readiness tranche. It carries the
+first execution wave for resilience/persistence, logging/tooling proof-loop
+reliability, public prompt records, provider/model reliability, ACIP/A2A
+communications, security bridge readiness, and bridge accounting needed before
+v0.92 activation can open from reviewed evidence.
+
+Start here:
+
+- [v0.91.6 README](docs/milestones/v0.91.6/README.md)
+- [v0.91.6 sprint plan](docs/milestones/v0.91.6/SPRINT_PLAN_v0.91.6.md)
+- [v0.91.6 issue wave](docs/milestones/v0.91.6/WP_ISSUE_WAVE_v0.91.6.yaml)
+- [v0.91.6 feature-doc index](docs/milestones/v0.91.6/FEATURE_DOCS_v0.91.6.md)
+
+### v0.91.5 - Previous Bridge Package And Release-Tail Input
+
+v0.91.5 remains the immediate upstream bridge package between the C-SDLC
+rollout closeout and the v0.92 first-birthday milestone. It carried
+multi-agent stabilization, provider/model breadth, public prompt records, demo
+readiness, AEE completion routing, and activation testing so v0.91.6 and
+v0.91.7 could open from a cleaner operational base.
 
 Start here:
 
@@ -275,12 +290,12 @@ production markets.
 
 ## Project Status
 
-- Active milestone: v0.91.5
+- Active milestone: v0.91.6
 - Current crate version: 0.91.5
 - Most recently completed milestone: v0.91.4
-- Current milestone state: v0.91.5 is in the Sprint 4 review/remediation/
-  release tail after substantial bridge delivery, first internal review, and a
-  completed first remediation tranche.
+- Current milestone state: v0.91.6 is executing as the first pre-v0.92 bridge
+  tranche, with WP-03 and WP-04 merged and later bridge/reliability lanes still
+  active.
 - Previous completed milestone before v0.91.2: v0.91.1
 - Primary implementation language: Rust
 

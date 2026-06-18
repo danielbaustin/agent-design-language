@@ -2,7 +2,26 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.91.5 (Active bridge milestone)
+## v0.91.6 (Active bridge/readiness tranche)
+
+Status: Active. The `v0.91.6` package lives under `docs/milestones/v0.91.6/`
+and is the first execution bridge tranche before `v0.92`.
+
+Current state:
+- The planning package and feature-doc wave are landed.
+- WP-03 logging/tooling and WP-04 public-records umbrellas have merged.
+- Additional bridge-quality and reliability lanes remain in flight.
+- This is an active planning/execution milestone entry, not a release entry.
+
+Scope notes:
+- `v0.91.6` owns the first bridge tranche for resilience/persistence,
+  logging/tooling proof-loop reliability, public prompt records,
+  provider/model reliability, ACIP/A2A/provider communications, security
+  bridge readiness, and activation-adjacent accounting surfaces.
+- `v0.91.6` prepares `v0.92`; it does not claim first-birthday activation by
+  planning docs alone.
+
+## v0.91.5 (Previous bridge milestone)
 
 Status: Active Sprint 4 release-tail execution. The v0.91.5 package lives under
 `docs/milestones/v0.91.5/` and carries pre-v0.92 stabilization work that moved

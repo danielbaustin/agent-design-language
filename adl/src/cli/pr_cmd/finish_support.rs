@@ -1101,6 +1101,13 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_repo_quality_staleness_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            commands.push("bash adl/tools/test_check_repo_quality_staleness.sh".to_string());
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_csdlc_owner_lane_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1188,6 +1195,9 @@ fn finish_path_is_docs_only(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     if trimmed.is_empty() {
         return false;
+    }
+    if trimmed == "adl/tools/README.md" {
+        return true;
     }
     if trimmed == "docs" || trimmed.starts_with("docs/") {
         return true;
@@ -1277,6 +1287,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_control_plane_observability.sh"
             | "adl/tools/test_adl_runtime_compatibility.sh"
             | "adl/tools/test_adl_review_compatibility.sh"
+            | "adl/tools/check_repo_quality_staleness.py"
+            | "adl/tools/test_check_repo_quality_staleness.sh"
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
             | "adl/src/cli/tooling_cmd/github_release.rs"
@@ -1373,6 +1385,15 @@ fn finish_path_needs_owner_lane_contract_validation(path: &str) -> bool {
             | "adl/tools/test_owner_validation_lane.sh"
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
+    )
+}
+
+fn finish_path_needs_repo_quality_staleness_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/tools/check_repo_quality_staleness.py"
+            | "adl/tools/test_check_repo_quality_staleness.sh"
     )
 }
 
@@ -1582,6 +1603,10 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_owner_validation_lane.sh" => {
                     let script = repo_root.join("adl/tools/test_owner_validation_lane.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_check_repo_quality_staleness.sh" => {
+                    let script = repo_root.join("adl/tools/test_check_repo_quality_staleness.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/run_owner_validation_lane.sh csdlc" => {
