@@ -77,7 +77,7 @@ pub fn execute_provider_invocation(
                 )),
             }
         },
-        |failure| provider_failure_classification_from_failure(failure),
+        provider_failure_classification_from_failure,
         |delay_ms| std::thread::sleep(Duration::from_millis(delay_ms)),
         |attempt| {
             emit_retry_attempt_event(

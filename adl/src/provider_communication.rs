@@ -829,6 +829,7 @@ pub fn validate_review_provider_result(result: &ReviewProviderResultV1) -> Resul
     Ok(())
 }
 
+#[cfg(test)]
 fn sanitize_provider_message(note: &str) -> String {
     sanitize_resilience_summary(note)
 }
@@ -841,10 +842,6 @@ fn scrub_log_event(event: &mut ProviderRunLogEventV1) {
         event.fields =
             Some(serde_json::json!({"redacted": "event fields omitted from provider run log"}));
     }
-}
-
-fn redacted_excerpt(note: &str) -> String {
-    format!("[redacted provider detail len={}]", note.len())
 }
 
 fn require_non_empty(field: &str, value: &str) -> Result<()> {
