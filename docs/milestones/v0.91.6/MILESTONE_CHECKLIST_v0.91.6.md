@@ -9,8 +9,9 @@
 
 ## Status
 
-Forward checklist. Items are intentionally unchecked because `v0.91.6`
-execution has not started.
+Forward checklist. `v0.91.6` execution is now in progress, so checked rows
+represent surfaces already completed or routed while unchecked rows remain open
+milestone work.
 
 ## Planning
 
@@ -26,7 +27,7 @@ execution has not started.
 
 - [ ] Resilience, persistence, and sleep/wake feature doc completed or routed.
 - [ ] Logging/tooling proof-loop reliability feature doc completed or routed.
-- [ ] Public prompt records export/redaction/indexing feature doc completed or
+- [x] Public prompt records export/redaction/indexing feature doc completed or
   routed.
 - [ ] Provider/model reliability and multi-agent readiness feature doc completed
   or routed.
@@ -64,7 +65,7 @@ execution has not started.
 - [ ] No `v0.92` activation readiness claim appears without bridge evidence.
 - [ ] Security remains on the activation path.
 - [ ] ACIP/A2A decisions include protobuf/JSON/WebSocket/access-rule posture.
-- [ ] Public prompt records preserve local editable authoring and public export
+- [x] Public prompt records preserve local editable authoring and public export
   boundaries.
 - [ ] Gemma/model reliability is addressed as part of multi-agent readiness.
 - [ ] AEE, Memory/ObsMem, and ACP/profile surfaces are visible before v0.92
