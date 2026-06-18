@@ -49,7 +49,9 @@ planning package does not publish a release by itself.
 
 ## 4. Verification
 
-- [ ] Focused docs validation recorded.
+- [ ] Focused docs validation recorded, including
+  `python3 adl/tools/check_repo_quality_staleness.py --milestone v0.91.6`
+  when reviewer-facing repo or milestone docs changed.
 - [ ] CI status checked for merged PRs.
 - [ ] Release links tested.
 - [ ] Immediate regressions triaged and tracked.

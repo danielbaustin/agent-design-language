@@ -830,6 +830,27 @@ fn finish_validation_plan_classifies_owner_validation_lanes() {
 }
 
 #[test]
+fn finish_validation_plan_classifies_repo_quality_staleness_tooling() {
+    let plan = select_finish_validation_plan(
+        "adl/tools/check_repo_quality_staleness.py,adl/tools/test_check_repo_quality_staleness.sh,adl/tools/README.md,README.md,CHANGELOG.md,docs/milestones/v0.91.6/RELEASE_PLAN_v0.91.6.md,docs/milestones/v0.91.6/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.6.md",
+    )
+    .expect("repo-quality staleness plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_check_repo_quality_staleness.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+}
+
+#[test]
 fn finish_validation_plan_classifies_resilience_runtime_publication_paths() {
     let adapter_plan = select_finish_validation_plan("adl/src/provider_adapter.rs")
         .expect("provider adapter runtime plan");
