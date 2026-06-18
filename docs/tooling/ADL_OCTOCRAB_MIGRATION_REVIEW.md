@@ -54,8 +54,8 @@ The stable failure code for disabled shell fallback is
 
 The following workflow helper operations now route through octocrab:
 
-- issue creation and issue body updates
-- issue title and version-label updates
+- issue inspection through `adl/tools/pr.sh issue list/search/view`
+- issue metadata reads used by workflow guardrails
 - PR creation, body updates, readiness changes, and merge operations
 - live PR list/view calls used by workflow guardrails
 - live issue and PR linkage checks where the current code calls `gh`
@@ -66,11 +66,25 @@ The helper function names still contain `gh` in a few places for compatibility
 with the existing PR control-plane call graph, but those helpers no longer
 spawn the GitHub CLI for covered operations.
 
+## Known Issue Mutation Gap
+
+The public issue command surface does not yet expose typed issue mutation:
+
+- `adl/tools/pr.sh issue create`
+- `adl/tools/pr.sh issue comment`
+- `adl/tools/pr.sh issue edit`
+
+That gap is tracked by `#4078`. Until it lands, sprint setup paths that must
+create or comment on issues may still require an explicitly recorded temporary
+`gh` use. That temporary path must not be described as the desired ADL
+transport model and must not be hidden in sprint automation claims.
+
 ## Follow-On Routes
 
 The next octocrab follow-ons should stay behavior-preserving and separately
 reviewable:
 
+- add typed issue mutation commands for create/comment/edit (`#4078`)
 - rename legacy `gh_*` helper functions once the transport behavior has settled
 - add richer observability for fallback selection, slow GitHub calls, and
   command timeouts beyond the current per-operation Octocrab events

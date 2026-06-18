@@ -2638,6 +2638,8 @@ Usage:
 Behavior:
 - delegates to the Rust-owned issue inspection surface
 - uses the typed GitHub transport rather than raw `gh issue list/view`
+- issue mutation commands (`create`, `comment`, `edit`) are not exposed here yet;
+  #4078 owns adding those typed octocrab-backed paths
 - requires a shared GitHub token source for live GitHub operations. Supported
   sources are GITHUB_TOKEN, GH_TOKEN, ADL_GITHUB_TOKEN_FILE, or
   ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE. The keychain source uses macOS

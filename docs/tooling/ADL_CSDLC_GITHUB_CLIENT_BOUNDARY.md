@@ -33,6 +33,25 @@ The shared layer owns:
 - PR wave filtering.
 - PR closing-linkage interpretation.
 
+## Current Command Surface
+
+The typed issue inspection surface is currently exposed through:
+
+- `adl/tools/pr.sh issue list`
+- `adl/tools/pr.sh issue search`
+- `adl/tools/pr.sh issue view`
+
+Issue mutation is intentionally not documented as complete at this boundary yet.
+The missing typed command surface is tracked by `#4078`, which owns adding:
+
+- `adl/tools/pr.sh issue create`
+- `adl/tools/pr.sh issue comment`
+- `adl/tools/pr.sh issue edit` or an equivalent title/body/label update path
+
+Until `#4078` lands, direct `gh issue create/comment/edit` use is a known
+workflow gap and should be recorded in issue artifacts when it is unavoidable.
+It is not the desired steady-state sprint setup path.
+
 ## Migration Rules
 
 - Do not duplicate GitHub issue or PR metadata interpretation in `adl-csdlc`.
