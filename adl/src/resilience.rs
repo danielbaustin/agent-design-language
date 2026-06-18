@@ -26,6 +26,8 @@ pub const RESILIENCE_RATE_LIMIT_STATE_SCHEMA_V1: &str = "adl.resilience.rate_lim
 pub const RESILIENCE_BULKHEAD_EXECUTION_TRACE_SCHEMA_V1: &str =
     "adl.resilience.bulkhead_execution_trace.v1";
 pub const RESILIENCE_BULKHEAD_STATE_SCHEMA_V1: &str = "adl.resilience.bulkhead_state.v1";
+pub const RESILIENCE_FALLBACK_EXECUTION_TRACE_SCHEMA_V1: &str =
+    "adl.resilience.fallback_execution_trace.v1";
 pub const RESILIENCE_POLICY_SCHEMA_V1: &str = "adl.resilience.policy.v1";
 pub const RESILIENCE_SUBSTRATE_SCHEMA_V1: &str = "adl.resilience.substrate_manifest.v1";
 
@@ -33,6 +35,7 @@ static TIMEOUT_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
 static CIRCUIT_BREAKER_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
 static RATE_LIMIT_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
 static BULKHEAD_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
+static FALLBACK_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -508,6 +511,52 @@ pub struct BulkheadExecution<T, E> {
     pub result: Result<T, E>,
     pub state: BulkheadStateV1,
     pub trace: BulkheadExecutionTraceV1,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum FallbackExecutionFinalStatusV1 {
+    PrimarySuccess,
+    PrimaryFailure,
+    AlternateRouteSuccess,
+    DegradedSuccess,
+    FallbackUnavailable,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum FallbackOutcomeKindV1 {
+    Primary,
+    AlternateRoute,
+    Degraded,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct FallbackExecutionTraceV1 {
+    pub schema_version: String,
+    pub policy_id: String,
+    pub surface: ResilienceSurfaceV1,
+    pub final_status: FallbackExecutionFinalStatusV1,
+    pub outcome_kind: FallbackOutcomeKindV1,
+    pub fallback_executed: bool,
+    pub output_degraded: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fallback_ref: Option<String>,
+    pub decision_summary: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fault: Option<ResilienceFaultClassificationV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub telemetry_event: Option<ResilienceTelemetryEventV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub recovery_artifact: Option<RecoveryArtifactV1>,
+}
+
+#[derive(Debug)]
+pub struct FallbackExecution<T, E> {
+    pub result: Result<T, E>,
+    pub outcome_kind: FallbackOutcomeKindV1,
+    pub trace: FallbackExecutionTraceV1,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -1204,7 +1253,7 @@ where
     let fallback_allowed = normalized_state
         .last_failure
         .as_ref()
-        .map(|fault| circuit_breaker_fallback_allowed(policy, fault))
+        .map(|fault| fallback_allowed_for_policy(policy, fault))
         .unwrap_or(false);
 
     match normalized_state.state {
@@ -2119,7 +2168,7 @@ fn circuit_breaker_state_for_policy(
     }
 }
 
-fn circuit_breaker_fallback_allowed(
+fn fallback_allowed_for_policy(
     policy: &ResiliencePolicyV1,
     fault: &ResilienceFaultClassificationV1,
 ) -> bool {
@@ -2130,6 +2179,159 @@ fn circuit_breaker_fallback_allowed(
         || fallback_policy
             .activation_fault_classes
             .contains(&fault.fault_class)
+}
+
+pub fn execute_fallback_policy<T, E, F, C, FB>(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    operation: F,
+    mut classify_error: C,
+    mut fallback: Option<FB>,
+) -> FallbackExecution<T, E>
+where
+    F: FnOnce() -> Result<T, E>,
+    C: FnMut(&E) -> ResilienceFaultClassificationV1,
+    FB: FnMut() -> T,
+{
+    let fallback_policy = policy.fallback.as_ref();
+    match operation() {
+        Ok(value) => {
+            let decision_summary = format!(
+                "{operation_ref}: primary path completed without fallback or degraded execution"
+            );
+            let telemetry_event = Some(fallback_decision_event(
+                policy,
+                surface.clone(),
+                operation_ref,
+                &decision_summary,
+                None,
+            ));
+            FallbackExecution {
+                result: Ok(value),
+                outcome_kind: FallbackOutcomeKindV1::Primary,
+                trace: FallbackExecutionTraceV1 {
+                    schema_version: RESILIENCE_FALLBACK_EXECUTION_TRACE_SCHEMA_V1.to_string(),
+                    policy_id: policy.policy_id.clone(),
+                    surface,
+                    final_status: FallbackExecutionFinalStatusV1::PrimarySuccess,
+                    outcome_kind: FallbackOutcomeKindV1::Primary,
+                    fallback_executed: false,
+                    output_degraded: false,
+                    fallback_ref: fallback_policy.map(|fallback| fallback.fallback_ref.clone()),
+                    decision_summary,
+                    fault: None,
+                    telemetry_event,
+                    recovery_artifact: None,
+                },
+            }
+        }
+        Err(error) => {
+            let classification = classify_error(&error);
+            let fallback_allowed = fallback_allowed_for_policy(policy, &classification);
+            let fallback_ref = fallback_policy.map(|fallback| fallback.fallback_ref.clone());
+            let output_degraded = fallback_policy
+                .map(|fallback| fallback.marks_output_degraded)
+                .unwrap_or(false);
+
+            if fallback_allowed {
+                if let Some(ref mut fallback_fn) = fallback {
+                    let value = fallback_fn();
+                    let (final_status, outcome_kind, decision_summary) = if output_degraded {
+                        (
+                            FallbackExecutionFinalStatusV1::DegradedSuccess,
+                            FallbackOutcomeKindV1::Degraded,
+                            format!(
+                                "{operation_ref}: primary path failed; degraded fallback '{}' executed",
+                                fallback_ref.as_deref().unwrap_or("unnamed.fallback")
+                            ),
+                        )
+                    } else {
+                        (
+                            FallbackExecutionFinalStatusV1::AlternateRouteSuccess,
+                            FallbackOutcomeKindV1::AlternateRoute,
+                            format!(
+                                "{operation_ref}: primary path failed; alternate route '{}' executed",
+                                fallback_ref.as_deref().unwrap_or("unnamed.fallback")
+                            ),
+                        )
+                    };
+                    let telemetry_event = Some(fallback_decision_event(
+                        policy,
+                        surface.clone(),
+                        operation_ref,
+                        &decision_summary,
+                        Some(classification.clone()),
+                    ));
+                    let recovery_artifact = Some(fallback_recovery_artifact(
+                        policy,
+                        surface.clone(),
+                        operation_ref,
+                        &classification,
+                        fallback_ref.as_deref().unwrap_or("unnamed.fallback"),
+                        output_degraded,
+                    ));
+                    return FallbackExecution {
+                        result: Ok(value),
+                        outcome_kind: outcome_kind.clone(),
+                        trace: FallbackExecutionTraceV1 {
+                            schema_version: RESILIENCE_FALLBACK_EXECUTION_TRACE_SCHEMA_V1
+                                .to_string(),
+                            policy_id: policy.policy_id.clone(),
+                            surface,
+                            final_status,
+                            outcome_kind,
+                            fallback_executed: true,
+                            output_degraded,
+                            fallback_ref,
+                            decision_summary,
+                            fault: Some(classification),
+                            telemetry_event,
+                            recovery_artifact,
+                        },
+                    };
+                }
+            }
+
+            let final_status = if fallback_allowed {
+                FallbackExecutionFinalStatusV1::FallbackUnavailable
+            } else {
+                FallbackExecutionFinalStatusV1::PrimaryFailure
+            };
+            let decision_summary = if fallback_allowed {
+                format!(
+                    "{operation_ref}: primary path failed; fallback policy allowed recovery but no fallback hook was available"
+                )
+            } else {
+                format!("{operation_ref}: primary path failed; fallback policy did not activate")
+            };
+            let telemetry_event = Some(fallback_decision_event(
+                policy,
+                surface.clone(),
+                operation_ref,
+                &decision_summary,
+                Some(classification.clone()),
+            ));
+            FallbackExecution {
+                result: Err(error),
+                outcome_kind: FallbackOutcomeKindV1::Primary,
+                trace: FallbackExecutionTraceV1 {
+                    schema_version: RESILIENCE_FALLBACK_EXECUTION_TRACE_SCHEMA_V1.to_string(),
+                    policy_id: policy.policy_id.clone(),
+                    surface,
+                    final_status,
+                    outcome_kind: FallbackOutcomeKindV1::Primary,
+                    fallback_executed: false,
+                    output_degraded: false,
+                    fallback_ref,
+                    decision_summary,
+                    fault: Some(classification),
+                    telemetry_event,
+                    recovery_artifact: None,
+                },
+            }
+        }
+    }
 }
 
 fn circuit_breaker_decision_event(
@@ -2155,6 +2357,72 @@ fn circuit_breaker_decision_event(
         fault,
         artifact_ref: None,
     }
+}
+
+fn fallback_decision_event(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    decision_summary: &str,
+    fault: Option<ResilienceFaultClassificationV1>,
+) -> ResilienceTelemetryEventV1 {
+    let correlation_suffix = fallback_execution_correlation_suffix();
+    ResilienceTelemetryEventV1 {
+        schema_version: RESILIENCE_TELEMETRY_EVENT_SCHEMA_V1.to_string(),
+        event_id: format!(
+            "{}:fallback:{operation_ref}:{correlation_suffix}",
+            policy.policy_id
+        ),
+        event_kind: TelemetryEventKindV1::FallbackDecision,
+        surface,
+        decision_summary: decision_summary.to_string(),
+        run_id: None,
+        request_id: None,
+        policy_ref: Some(policy.policy_id.clone()),
+        fault,
+        artifact_ref: None,
+    }
+}
+
+fn fallback_recovery_artifact(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    fault: &ResilienceFaultClassificationV1,
+    fallback_ref: &str,
+    output_degraded: bool,
+) -> RecoveryArtifactV1 {
+    let correlation_suffix = fallback_execution_correlation_suffix();
+    let next_action = if output_degraded {
+        format!(
+            "surface degraded output explicitly for fallback '{fallback_ref}' and preserve the original primary failure for downstream handling"
+        )
+    } else {
+        format!(
+            "route to explicit alternate path '{fallback_ref}' while recording the original primary failure"
+        )
+    };
+    RecoveryArtifactV1 {
+        schema_version: RESILIENCE_RECOVERY_ARTIFACT_SCHEMA_V1.to_string(),
+        artifact_id: format!(
+            "{}:fallback:{operation_ref}:{correlation_suffix}",
+            policy.policy_id
+        ),
+        surface,
+        triggering_fault: fault.clone(),
+        disposition: RecoveryDispositionV1::FallbackAllowed,
+        next_action,
+        source_run_id: None,
+        checkpoint_ref: None,
+        evidence_refs: vec![policy.policy_id.clone(), fallback_ref.to_string()],
+    }
+}
+
+fn fallback_execution_correlation_suffix() -> String {
+    FALLBACK_EXECUTION_COUNTER
+        .fetch_add(1, Ordering::Relaxed)
+        .saturating_add(1)
+        .to_string()
 }
 
 fn circuit_breaker_recovery_artifact(
@@ -2649,6 +2917,55 @@ mod tests {
             checkpoint_required: false,
             telemetry_required: true,
         }
+    }
+
+    fn test_degraded_fallback_policy() -> ResiliencePolicyV1 {
+        ResiliencePolicyV1 {
+            schema_version: RESILIENCE_POLICY_SCHEMA_V1.to_string(),
+            policy_id: "fallback.policy".to_string(),
+            retry: Some(RetryPolicyV1 {
+                max_attempts: 2,
+                backoff_ms: Some(10),
+                jitter_ms: Some(0),
+                max_elapsed_ms: Some(20),
+                retryable_fault_classes: vec![ResilienceFaultClassV1::ProviderTimeout],
+            }),
+            timeout: Some(TimeoutPolicyV1 {
+                timeout_ms: 50,
+                hard_deadline_ms: Some(75),
+            }),
+            circuit_breaker: Some(CircuitBreakerPolicyV1 {
+                failure_threshold: 2,
+                recovery_window_ms: 30,
+                half_open_max_attempts: 1,
+            }),
+            rate_limit: Some(RateLimitPolicyV1 {
+                max_requests: 1,
+                window_ms: 100,
+            }),
+            bulkhead: None,
+            fallback: Some(FallbackPolicyV1 {
+                fallback_ref: "test.degraded".to_string(),
+                activation_fault_classes: vec![
+                    ResilienceFaultClassV1::ProviderTimeout,
+                    ResilienceFaultClassV1::ProviderTransientHttp,
+                ],
+                marks_output_degraded: true,
+            }),
+            checkpoint_required: false,
+            telemetry_required: true,
+        }
+    }
+
+    fn test_alternate_route_policy() -> ResiliencePolicyV1 {
+        let mut policy = test_degraded_fallback_policy();
+        policy.policy_id = "alternate.route.policy".to_string();
+        policy.fallback = Some(FallbackPolicyV1 {
+            fallback_ref: "test.alternate".to_string(),
+            activation_fault_classes: vec![ResilienceFaultClassV1::ProviderTimeout],
+            marks_output_degraded: false,
+        });
+        policy
     }
 
     #[test]
@@ -3588,6 +3905,148 @@ mod tests {
         );
         assert!(execution.trace.used_fallback);
         assert!(execution.trace.recovery_artifact.is_some());
+    }
+
+    #[test]
+    fn fallback_policy_returns_primary_success_without_degraded_marking() {
+        let policy = test_degraded_fallback_policy();
+        let execution = execute_fallback_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.fallback.primary",
+            || Ok::<_, ResilienceFaultClassificationV1>("primary"),
+            clone_fault_classification,
+            Some(|| "fallback"),
+        );
+
+        assert_eq!(execution.result.expect("primary result"), "primary");
+        assert_eq!(execution.outcome_kind, FallbackOutcomeKindV1::Primary);
+        assert_eq!(
+            execution.trace.final_status,
+            FallbackExecutionFinalStatusV1::PrimarySuccess
+        );
+        assert!(!execution.trace.fallback_executed);
+        assert!(!execution.trace.output_degraded);
+    }
+
+    #[test]
+    fn fallback_policy_marks_degraded_output_explicitly() {
+        let policy = test_degraded_fallback_policy();
+        let execution = execute_fallback_policy(
+            &policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.fallback.degraded",
+            || {
+                Err::<&'static str, _>(ResilienceFaultClassificationV1::provider(
+                    "provider timeout",
+                    None,
+                ))
+            },
+            clone_fault_classification,
+            Some(|| "degraded-result"),
+        );
+
+        assert_eq!(
+            execution.result.expect("degraded fallback result"),
+            "degraded-result"
+        );
+        assert_eq!(execution.outcome_kind, FallbackOutcomeKindV1::Degraded);
+        assert_eq!(
+            execution.trace.final_status,
+            FallbackExecutionFinalStatusV1::DegradedSuccess
+        );
+        assert!(execution.trace.fallback_executed);
+        assert!(execution.trace.output_degraded);
+        assert_eq!(
+            execution.trace.fallback_ref.as_deref(),
+            Some("test.degraded")
+        );
+        assert!(execution.trace.recovery_artifact.is_some());
+    }
+
+    #[test]
+    fn fallback_policy_supports_explicit_alternate_route_without_degraded_flag() {
+        let policy = test_alternate_route_policy();
+        let execution = execute_fallback_policy(
+            &policy,
+            ResilienceSurfaceV1::Tool,
+            "test.fallback.alternate",
+            || {
+                Err::<&'static str, _>(ResilienceFaultClassificationV1::provider(
+                    "provider timeout",
+                    None,
+                ))
+            },
+            clone_fault_classification,
+            Some(|| "alternate-result"),
+        );
+
+        assert_eq!(
+            execution.result.expect("alternate fallback result"),
+            "alternate-result"
+        );
+        assert_eq!(
+            execution.outcome_kind,
+            FallbackOutcomeKindV1::AlternateRoute
+        );
+        assert_eq!(
+            execution.trace.final_status,
+            FallbackExecutionFinalStatusV1::AlternateRouteSuccess
+        );
+        assert!(execution.trace.fallback_executed);
+        assert!(!execution.trace.output_degraded);
+    }
+
+    #[test]
+    fn fallback_policy_preserves_primary_failure_when_no_hook_exists() {
+        let policy = test_degraded_fallback_policy();
+        let execution = execute_fallback_policy::<&'static str, _, _, _, fn() -> &'static str>(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.fallback.unavailable",
+            || {
+                Err(ResilienceFaultClassificationV1::provider(
+                    "provider timeout",
+                    None,
+                ))
+            },
+            clone_fault_classification,
+            None,
+        );
+
+        assert!(execution.result.is_err());
+        assert_eq!(execution.outcome_kind, FallbackOutcomeKindV1::Primary);
+        assert_eq!(
+            execution.trace.final_status,
+            FallbackExecutionFinalStatusV1::FallbackUnavailable
+        );
+        assert!(!execution.trace.fallback_executed);
+    }
+
+    #[test]
+    fn fallback_policy_does_not_activate_for_non_matching_faults() {
+        let policy = test_degraded_fallback_policy();
+        let execution = execute_fallback_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.fallback.miss",
+            || {
+                Err::<&'static str, _>(ResilienceFaultClassificationV1::provider(
+                    "billing blocked",
+                    None,
+                ))
+            },
+            clone_fault_classification,
+            Some(|| "should-not-run"),
+        );
+
+        assert!(execution.result.is_err());
+        assert_eq!(
+            execution.trace.final_status,
+            FallbackExecutionFinalStatusV1::PrimaryFailure
+        );
+        assert!(!execution.trace.fallback_executed);
+        assert_eq!(execution.outcome_kind, FallbackOutcomeKindV1::Primary);
     }
 
     #[test]
