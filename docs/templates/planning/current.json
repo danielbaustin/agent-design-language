@@ -1,10 +1,10 @@
 {
   "schema": "adl.planning_template_registry.v1",
-  "planning_template_set": "1.0.0",
-  "semver": "1.0.0",
+  "planning_template_set": "1.1.0",
+  "semver": "1.1.0",
   "status": "active",
   "object_kind": "planning_template_set",
-  "template_root": "docs/templates/planning/1.0.0/",
+  "template_root": "docs/templates/planning/1.1.0/",
   "placeholder_style": "angle_bracket",
   "draft_truth_model": {
     "generated": "Template-filled planning docs are generated drafts.",
@@ -16,29 +16,22 @@
     "readme": {
       "object_kind": "planning_template",
       "semantic_role": "Milestone README",
-      "path": "docs/templates/planning/1.0.0/readme.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/readme.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/README_TEMPLATE.md",
       "required_sections": [
         "Metadata",
         "Status",
         "Purpose",
-        "Milestone Role",
-        "Boundaries",
-        "Source Map",
-        "Document Map",
-        "Execution Model",
-        "Demo and Validation Surface",
-        "Success Criteria",
-        "Exit Criteria"
+        "Document Map"
       ]
     },
     "wbs": {
       "object_kind": "planning_template",
       "semantic_role": "Work Breakdown Structure",
-      "path": "docs/templates/planning/1.0.0/wbs.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/wbs.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/WBS_TEMPLATE.md",
       "required_sections": [
@@ -57,8 +50,8 @@
     "sprint": {
       "object_kind": "planning_template",
       "semantic_role": "Sprint Plan",
-      "path": "docs/templates/planning/1.0.0/sprint.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/sprint.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/SPRINT_TEMPLATE.md",
       "required_sections": [
@@ -81,8 +74,8 @@
     "vision": {
       "object_kind": "planning_template",
       "semantic_role": "Milestone Vision",
-      "path": "docs/templates/planning/1.0.0/vision.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/vision.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/VISION_TEMPLATE.md",
       "required_sections": [
@@ -100,8 +93,8 @@
     "design": {
       "object_kind": "planning_template",
       "semantic_role": "Milestone Design",
-      "path": "docs/templates/planning/1.0.0/design.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/design.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/DESIGN_TEMPLATE.md",
       "required_sections": [
@@ -121,8 +114,8 @@
     "decisions": {
       "object_kind": "planning_template",
       "semantic_role": "Decision Log",
-      "path": "docs/templates/planning/1.0.0/decisions.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/decisions.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/DECISIONS_TEMPLATE.md",
       "required_sections": [
@@ -137,8 +130,8 @@
     "demo_matrix": {
       "object_kind": "planning_template",
       "semantic_role": "Demo Matrix",
-      "path": "docs/templates/planning/1.0.0/demo_matrix.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/demo_matrix.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/DEMO_MATRIX_TEMPLATE.md",
       "required_sections": [
@@ -160,8 +153,8 @@
     "feature_doc": {
       "object_kind": "planning_template",
       "semantic_role": "Feature Document",
-      "path": "docs/templates/planning/1.0.0/feature_doc.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/feature_doc.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/FEATURE_DOC_TEMPLATE.md",
       "required_sections": [
@@ -185,8 +178,8 @@
     "milestone_checklist": {
       "object_kind": "planning_template",
       "semantic_role": "Milestone Checklist",
-      "path": "docs/templates/planning/1.0.0/milestone_checklist.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/milestone_checklist.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/MILESTONE_CHECKLIST_TEMPLATE.md",
       "required_sections": [
@@ -203,8 +196,8 @@
     "release_plan": {
       "object_kind": "planning_template",
       "semantic_role": "Release Plan",
-      "path": "docs/templates/planning/1.0.0/release_plan.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/release_plan.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/RELEASE_PLAN_TEMPLATE.md",
       "required_sections": [
@@ -222,8 +215,8 @@
     "release_notes": {
       "object_kind": "planning_template",
       "semantic_role": "Release Notes",
-      "path": "docs/templates/planning/1.0.0/release_notes.md",
-      "version": "1.0.0",
+      "path": "docs/templates/planning/1.1.0/release_notes.md",
+      "version": "1.1.0",
       "status": "active",
       "legacy_path": "docs/templates/RELEASE_NOTES_TEMPLATE.md",
       "required_sections": [
