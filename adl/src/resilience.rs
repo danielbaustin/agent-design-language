@@ -23,12 +23,16 @@ pub const RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1: &str =
 pub const RESILIENCE_RATE_LIMIT_EXECUTION_TRACE_SCHEMA_V1: &str =
     "adl.resilience.rate_limit_execution_trace.v1";
 pub const RESILIENCE_RATE_LIMIT_STATE_SCHEMA_V1: &str = "adl.resilience.rate_limit_state.v1";
+pub const RESILIENCE_BULKHEAD_EXECUTION_TRACE_SCHEMA_V1: &str =
+    "adl.resilience.bulkhead_execution_trace.v1";
+pub const RESILIENCE_BULKHEAD_STATE_SCHEMA_V1: &str = "adl.resilience.bulkhead_state.v1";
 pub const RESILIENCE_POLICY_SCHEMA_V1: &str = "adl.resilience.policy.v1";
 pub const RESILIENCE_SUBSTRATE_SCHEMA_V1: &str = "adl.resilience.substrate_manifest.v1";
 
 static TIMEOUT_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
 static CIRCUIT_BREAKER_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
 static RATE_LIMIT_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
+static BULKHEAD_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -457,6 +461,53 @@ pub struct RateLimitExecution<T, E> {
     pub result: Result<T, E>,
     pub state: RateLimitStateV1,
     pub trace: RateLimitExecutionTraceV1,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum BulkheadFinalStatusV1 {
+    Allowed,
+    Saturated,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct BulkheadStateV1 {
+    pub schema_version: String,
+    pub policy_id: String,
+    pub fault_domain: String,
+    pub in_flight: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct BulkheadExecutionTraceV1 {
+    pub schema_version: String,
+    pub policy_id: String,
+    pub surface: ResilienceSurfaceV1,
+    pub fault_domain: String,
+    pub final_status: BulkheadFinalStatusV1,
+    pub in_flight_before: u32,
+    pub in_flight_during_execution: u32,
+    pub in_flight_after: u32,
+    pub max_concurrency: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_queue_depth: Option<u32>,
+    pub operation_executed: bool,
+    pub decision_summary: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fault: Option<ResilienceFaultClassificationV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub telemetry_event: Option<ResilienceTelemetryEventV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub recovery_artifact: Option<RecoveryArtifactV1>,
+}
+
+#[derive(Debug)]
+pub struct BulkheadExecution<T, E> {
+    pub result: Result<T, E>,
+    pub state: BulkheadStateV1,
+    pub trace: BulkheadExecutionTraceV1,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -1457,6 +1508,148 @@ pub fn rate_limit_initial_state(policy: &ResiliencePolicyV1, now_ms: u64) -> Rat
     }
 }
 
+pub fn bulkhead_initial_state(policy: &ResiliencePolicyV1) -> BulkheadStateV1 {
+    BulkheadStateV1 {
+        schema_version: RESILIENCE_BULKHEAD_STATE_SCHEMA_V1.to_string(),
+        policy_id: policy.policy_id.clone(),
+        fault_domain: bulkhead_fault_domain(policy),
+        in_flight: 0,
+    }
+}
+
+pub fn execute_bulkhead_policy<T, E, F, C, R>(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    current_state: &BulkheadStateV1,
+    operation: F,
+    mut classify_error: C,
+    mut rejection_error: R,
+) -> BulkheadExecution<T, E>
+where
+    F: FnOnce() -> Result<T, E>,
+    C: FnMut(&E) -> ResilienceFaultClassificationV1,
+    R: FnMut(&BulkheadStateV1) -> E,
+{
+    let state = bulkhead_state_for_policy(current_state, policy);
+    let Some(bulkhead_policy) = policy.bulkhead.as_ref() else {
+        let result = operation();
+        let fault = result.as_ref().err().map(&mut classify_error);
+        let decision_summary = format!("{operation_ref}: bulkhead disabled; operation completed");
+        let telemetry_event = Some(bulkhead_decision_event(
+            policy,
+            surface.clone(),
+            operation_ref,
+            &decision_summary,
+            fault.clone(),
+        ));
+        let state = bulkhead_initial_state(policy);
+        return BulkheadExecution {
+            result,
+            state: state.clone(),
+            trace: BulkheadExecutionTraceV1 {
+                schema_version: RESILIENCE_BULKHEAD_EXECUTION_TRACE_SCHEMA_V1.to_string(),
+                policy_id: policy.policy_id.clone(),
+                surface,
+                fault_domain: state.fault_domain.clone(),
+                final_status: BulkheadFinalStatusV1::Allowed,
+                in_flight_before: 0,
+                in_flight_during_execution: 0,
+                in_flight_after: 0,
+                max_concurrency: 0,
+                max_queue_depth: None,
+                operation_executed: true,
+                decision_summary,
+                fault,
+                telemetry_event,
+                recovery_artifact: None,
+            },
+        };
+    };
+
+    let state_before = state.in_flight;
+    if state_before < bulkhead_policy.max_concurrency {
+        let result = operation();
+        let fault = result.as_ref().err().map(&mut classify_error);
+        let decision_summary = format!(
+            "{operation_ref}: bulkhead admitted fault domain '{}' at {}/{} in-flight",
+            bulkhead_policy.fault_domain,
+            state_before.saturating_add(1),
+            bulkhead_policy.max_concurrency
+        );
+        let telemetry_event = Some(bulkhead_decision_event(
+            policy,
+            surface.clone(),
+            operation_ref,
+            &decision_summary,
+            fault.clone(),
+        ));
+        return BulkheadExecution {
+            result,
+            state: state.clone(),
+            trace: BulkheadExecutionTraceV1 {
+                schema_version: RESILIENCE_BULKHEAD_EXECUTION_TRACE_SCHEMA_V1.to_string(),
+                policy_id: policy.policy_id.clone(),
+                surface,
+                fault_domain: bulkhead_policy.fault_domain.clone(),
+                final_status: BulkheadFinalStatusV1::Allowed,
+                in_flight_before: state_before,
+                in_flight_during_execution: state_before.saturating_add(1),
+                in_flight_after: state_before,
+                max_concurrency: bulkhead_policy.max_concurrency,
+                max_queue_depth: bulkhead_policy.max_queue_depth,
+                operation_executed: true,
+                decision_summary,
+                fault,
+                telemetry_event,
+                recovery_artifact: None,
+            },
+        };
+    }
+
+    let error = rejection_error(&state);
+    let fault = classify_error(&error);
+    let decision_summary = format!(
+        "{operation_ref}: bulkhead saturated for fault domain '{}' at {}/{} in-flight",
+        bulkhead_policy.fault_domain, state_before, bulkhead_policy.max_concurrency
+    );
+    let telemetry_event = Some(bulkhead_decision_event(
+        policy,
+        surface.clone(),
+        operation_ref,
+        &decision_summary,
+        Some(fault.clone()),
+    ));
+    let recovery_artifact = Some(bulkhead_recovery_artifact(
+        policy,
+        surface.clone(),
+        operation_ref,
+        &fault,
+        &bulkhead_policy.fault_domain,
+    ));
+    BulkheadExecution {
+        result: Err(error),
+        state: state.clone(),
+        trace: BulkheadExecutionTraceV1 {
+            schema_version: RESILIENCE_BULKHEAD_EXECUTION_TRACE_SCHEMA_V1.to_string(),
+            policy_id: policy.policy_id.clone(),
+            surface,
+            fault_domain: bulkhead_policy.fault_domain.clone(),
+            final_status: BulkheadFinalStatusV1::Saturated,
+            in_flight_before: state_before,
+            in_flight_during_execution: state_before,
+            in_flight_after: state_before,
+            max_concurrency: bulkhead_policy.max_concurrency,
+            max_queue_depth: bulkhead_policy.max_queue_depth,
+            operation_executed: false,
+            decision_summary,
+            fault: Some(fault),
+            telemetry_event,
+            recovery_artifact,
+        },
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub fn execute_rate_limit_policy<T, E, F, R, C>(
     policy: &ResiliencePolicyV1,
@@ -2088,6 +2281,94 @@ fn rate_limit_execution_correlation_suffix() -> String {
         .to_string()
 }
 
+fn bulkhead_fault_domain(policy: &ResiliencePolicyV1) -> String {
+    policy
+        .bulkhead
+        .as_ref()
+        .map(|bulkhead| bulkhead.fault_domain.clone())
+        .unwrap_or_else(|| "unbounded".to_string())
+}
+
+fn bulkhead_state_for_policy(
+    state: &BulkheadStateV1,
+    policy: &ResiliencePolicyV1,
+) -> BulkheadStateV1 {
+    let expected_fault_domain = bulkhead_fault_domain(policy);
+    if state.policy_id == policy.policy_id && state.fault_domain == expected_fault_domain {
+        state.clone()
+    } else {
+        bulkhead_initial_state(policy)
+    }
+}
+
+fn bulkhead_decision_event(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    decision_summary: &str,
+    fault: Option<ResilienceFaultClassificationV1>,
+) -> ResilienceTelemetryEventV1 {
+    let correlation_suffix = bulkhead_execution_correlation_suffix();
+    ResilienceTelemetryEventV1 {
+        schema_version: RESILIENCE_TELEMETRY_EVENT_SCHEMA_V1.to_string(),
+        event_id: format!(
+            "{}:bulkhead:{operation_ref}:{correlation_suffix}",
+            policy.policy_id
+        ),
+        event_kind: TelemetryEventKindV1::BulkheadDecision,
+        surface,
+        decision_summary: decision_summary.to_string(),
+        run_id: None,
+        request_id: None,
+        policy_ref: Some(policy.policy_id.clone()),
+        fault,
+        artifact_ref: None,
+    }
+}
+
+fn bulkhead_recovery_artifact(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    fault: &ResilienceFaultClassificationV1,
+    fault_domain: &str,
+) -> RecoveryArtifactV1 {
+    let correlation_suffix = bulkhead_execution_correlation_suffix();
+    let disposition = match fault.disposition {
+        ResilienceFaultDispositionV1::Retryable => RecoveryDispositionV1::RetryAllowed,
+        ResilienceFaultDispositionV1::DegradedAllowed => RecoveryDispositionV1::FallbackAllowed,
+        ResilienceFaultDispositionV1::QuarantineRequired => {
+            RecoveryDispositionV1::QuarantineRequired
+        }
+        ResilienceFaultDispositionV1::Terminal | ResilienceFaultDispositionV1::OperatorGated => {
+            RecoveryDispositionV1::OperatorInterventionRequired
+        }
+    };
+    RecoveryArtifactV1 {
+        schema_version: RESILIENCE_RECOVERY_ARTIFACT_SCHEMA_V1.to_string(),
+        artifact_id: format!(
+            "{}:bulkhead:{operation_ref}:{correlation_suffix}",
+            policy.policy_id
+        ),
+        surface,
+        triggering_fault: fault.clone(),
+        disposition,
+        next_action: format!(
+            "preserve isolation for fault domain '{fault_domain}' and retry only after in-flight work drains or operator policy changes"
+        ),
+        source_run_id: None,
+        checkpoint_ref: None,
+        evidence_refs: vec![policy.policy_id.clone(), fault_domain.to_string()],
+    }
+}
+
+fn bulkhead_execution_correlation_suffix() -> String {
+    BULKHEAD_EXECUTION_COUNTER
+        .fetch_add(1, Ordering::Relaxed)
+        .saturating_add(1)
+        .to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2299,6 +2580,23 @@ mod tests {
         }
     }
 
+    fn provider_bulkhead_rejection(state: &BulkheadStateV1) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Provider,
+            fault_class: ResilienceFaultClassV1::RuntimeFailure,
+            disposition: ResilienceFaultDispositionV1::Retryable,
+            retryable: true,
+            summary: format!(
+                "bulkhead saturated for fault domain '{}' at {} in-flight",
+                state.fault_domain, state.in_flight
+            ),
+            component_ref: Some(state.fault_domain.clone()),
+            http_status: None,
+            retry_after_ms: None,
+        }
+    }
+
     fn test_circuit_breaker_policy() -> ResiliencePolicyV1 {
         ResiliencePolicyV1 {
             schema_version: RESILIENCE_POLICY_SCHEMA_V1.to_string(),
@@ -2329,6 +2627,25 @@ mod tests {
                 activation_fault_classes: vec![ResilienceFaultClassV1::ProviderTimeout],
                 marks_output_degraded: true,
             }),
+            checkpoint_required: false,
+            telemetry_required: true,
+        }
+    }
+
+    fn test_bulkhead_policy(fault_domain: &str, max_concurrency: u32) -> ResiliencePolicyV1 {
+        ResiliencePolicyV1 {
+            schema_version: RESILIENCE_POLICY_SCHEMA_V1.to_string(),
+            policy_id: format!("bulkhead.{fault_domain}"),
+            retry: None,
+            timeout: None,
+            circuit_breaker: None,
+            rate_limit: None,
+            bulkhead: Some(BulkheadPolicyV1 {
+                fault_domain: fault_domain.to_string(),
+                max_concurrency,
+                max_queue_depth: None,
+            }),
+            fallback: None,
             checkpoint_required: false,
             telemetry_required: true,
         }
@@ -3974,5 +4291,198 @@ mod tests {
         assert_eq!(sleeps, vec![40]);
         assert_eq!(rate_state.borrow().requests_in_window, 1);
         assert_eq!(rate_state.borrow().window_started_at_ms, 60);
+    }
+
+    #[test]
+    fn bulkhead_allows_calls_when_domain_has_capacity() {
+        let policy = test_bulkhead_policy("provider.openrouter", 2);
+        let state = bulkhead_initial_state(&policy);
+
+        let execution = execute_bulkhead_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.bulkhead.allow",
+            &state,
+            || Ok::<_, ResilienceFaultClassificationV1>("ok"),
+            clone_fault_classification,
+            provider_bulkhead_rejection,
+        );
+
+        assert_eq!(execution.result.expect("allowed"), "ok");
+        assert_eq!(execution.state.in_flight, 0);
+        assert_eq!(execution.trace.final_status, BulkheadFinalStatusV1::Allowed);
+        assert_eq!(execution.trace.fault_domain, "provider.openrouter");
+        assert_eq!(execution.trace.in_flight_before, 0);
+        assert_eq!(execution.trace.in_flight_during_execution, 1);
+        assert_eq!(execution.trace.in_flight_after, 0);
+        assert_eq!(
+            execution
+                .trace
+                .telemetry_event
+                .as_ref()
+                .map(|event| event.event_kind.clone()),
+            Some(TelemetryEventKindV1::BulkheadDecision)
+        );
+    }
+
+    #[test]
+    fn bulkhead_rejects_when_domain_is_saturated() {
+        let policy = test_bulkhead_policy("provider.ollama", 1);
+        let state = BulkheadStateV1 {
+            schema_version: RESILIENCE_BULKHEAD_STATE_SCHEMA_V1.to_string(),
+            policy_id: policy.policy_id.clone(),
+            fault_domain: "provider.ollama".to_string(),
+            in_flight: 1,
+        };
+        let called = Cell::new(0);
+
+        let execution = execute_bulkhead_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.bulkhead.saturated",
+            &state,
+            || {
+                called.set(called.get() + 1);
+                Ok::<_, ResilienceFaultClassificationV1>("should-not-run")
+            },
+            clone_fault_classification,
+            provider_bulkhead_rejection,
+        );
+
+        assert_eq!(called.get(), 0);
+        let failure = execution.result.expect_err("saturated");
+        assert_eq!(failure.fault_class, ResilienceFaultClassV1::RuntimeFailure);
+        assert_eq!(
+            execution.trace.final_status,
+            BulkheadFinalStatusV1::Saturated
+        );
+        assert_eq!(execution.trace.in_flight_before, 1);
+        assert_eq!(execution.trace.in_flight_during_execution, 1);
+        assert_eq!(execution.trace.in_flight_after, 1);
+        assert!(execution.trace.recovery_artifact.is_some());
+        assert!(execution
+            .trace
+            .decision_summary
+            .contains("fault domain 'provider.ollama'"));
+    }
+
+    #[test]
+    fn bulkhead_domains_are_isolated_from_each_other() {
+        let saturated_policy = test_bulkhead_policy("provider.primary", 1);
+        let saturated_state = BulkheadStateV1 {
+            schema_version: RESILIENCE_BULKHEAD_STATE_SCHEMA_V1.to_string(),
+            policy_id: saturated_policy.policy_id.clone(),
+            fault_domain: "provider.primary".to_string(),
+            in_flight: 1,
+        };
+        let saturated = execute_bulkhead_policy(
+            &saturated_policy,
+            ResilienceSurfaceV1::Provider,
+            "test.bulkhead.primary",
+            &saturated_state,
+            || Ok::<_, ResilienceFaultClassificationV1>("should-not-run"),
+            clone_fault_classification,
+            provider_bulkhead_rejection,
+        );
+        assert!(saturated.result.is_err());
+
+        let independent_policy = test_bulkhead_policy("workflow.review", 1);
+        let independent_state = bulkhead_initial_state(&independent_policy);
+        let independent = execute_bulkhead_policy(
+            &independent_policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.bulkhead.workflow",
+            &independent_state,
+            || Ok::<_, ResilienceFaultClassificationV1>("ok"),
+            clone_fault_classification,
+            provider_bulkhead_rejection,
+        );
+
+        assert_eq!(independent.result.expect("independent domain"), "ok");
+        assert_eq!(independent.trace.fault_domain, "workflow.review");
+        assert_eq!(
+            independent.trace.final_status,
+            BulkheadFinalStatusV1::Allowed
+        );
+    }
+
+    #[test]
+    fn bulkhead_resets_stale_state_when_policy_or_domain_changes() {
+        let policy = test_bulkhead_policy("tool.validation", 2);
+        let stale_state = BulkheadStateV1 {
+            schema_version: RESILIENCE_BULKHEAD_STATE_SCHEMA_V1.to_string(),
+            policy_id: "bulkhead.old".to_string(),
+            fault_domain: "provider.legacy".to_string(),
+            in_flight: 5,
+        };
+
+        let execution = execute_bulkhead_policy(
+            &policy,
+            ResilienceSurfaceV1::Tool,
+            "test.bulkhead.reset",
+            &stale_state,
+            || Ok::<_, ResilienceFaultClassificationV1>("ok"),
+            clone_fault_classification,
+            provider_bulkhead_rejection,
+        );
+
+        assert_eq!(execution.result.expect("reset then allow"), "ok");
+        assert_eq!(execution.state.policy_id, policy.policy_id);
+        assert_eq!(execution.state.fault_domain, "tool.validation");
+        assert_eq!(execution.state.in_flight, 0);
+        assert_eq!(execution.trace.in_flight_before, 0);
+    }
+
+    #[test]
+    fn bulkhead_decision_artifacts_keep_bounded_unique_ids() {
+        let policy = test_bulkhead_policy("citizen.runtime", 1);
+        let state = BulkheadStateV1 {
+            schema_version: RESILIENCE_BULKHEAD_STATE_SCHEMA_V1.to_string(),
+            policy_id: policy.policy_id.clone(),
+            fault_domain: "citizen.runtime".to_string(),
+            in_flight: 1,
+        };
+        let first = execute_bulkhead_policy(
+            &policy,
+            ResilienceSurfaceV1::CitizenRuntime,
+            "test.bulkhead.ids",
+            &state,
+            || Ok::<_, ResilienceFaultClassificationV1>("should-not-run"),
+            clone_fault_classification,
+            provider_bulkhead_rejection,
+        );
+        let second = execute_bulkhead_policy(
+            &policy,
+            ResilienceSurfaceV1::CitizenRuntime,
+            "test.bulkhead.ids",
+            &state,
+            || Ok::<_, ResilienceFaultClassificationV1>("should-not-run"),
+            clone_fault_classification,
+            provider_bulkhead_rejection,
+        );
+
+        let first_event = first
+            .trace
+            .telemetry_event
+            .as_ref()
+            .expect("first telemetry event");
+        let second_event = second
+            .trace
+            .telemetry_event
+            .as_ref()
+            .expect("second telemetry event");
+        let first_artifact = first
+            .trace
+            .recovery_artifact
+            .as_ref()
+            .expect("first artifact");
+        let second_artifact = second
+            .trace
+            .recovery_artifact
+            .as_ref()
+            .expect("second artifact");
+
+        assert_ne!(first_event.event_id, second_event.event_id);
+        assert_ne!(first_artifact.artifact_id, second_artifact.artifact_id);
     }
 }
