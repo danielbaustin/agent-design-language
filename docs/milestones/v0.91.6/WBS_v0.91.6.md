@@ -10,11 +10,21 @@
 
 ## Status
 
-Candidate allocation only. `v0.91.6` issues have not been opened from this WBS.
+This WBS has begun promotion into concrete `v0.91.6` issues. The WP-03
+logging/tooling route is opened as umbrella `#3968` with child lanes
+`#3995`-`#4001`, and the WP-04 public-records route is opened as umbrella
+`#3969` with child lanes `#4002`-`#4006`.
 
-WP-01 should consume this document and
-[WP_ISSUE_WAVE_v0.91.6.yaml](WP_ISSUE_WAVE_v0.91.6.yaml), then open concrete
-GitHub issues with canonical C-SDLC cards.
+WP-01 consumed this document and
+[WP_ISSUE_WAVE_v0.91.6.yaml](WP_ISSUE_WAVE_v0.91.6.yaml) to begin opening
+concrete GitHub issues with canonical C-SDLC cards. Additional WPs may still
+remain in planning or queue-blocked state.
+
+Current live state:
+
+- WP-03 has merged through `#4001`
+- WP-04 umbrella `#3969` is executing
+- WP-04 child issues `#4002`-`#4006` are structurally ready and ordered
 
 ## WBS Summary
 

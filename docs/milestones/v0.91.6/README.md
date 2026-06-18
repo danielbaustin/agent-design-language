@@ -16,8 +16,13 @@ bridge tranche.
 
 - Planning: created by `#3800`
 - Documentation completion: `#3824`
-- Execution: not started beyond planning/feature docs
-- Validation: docs-readiness validation only until implementation issues run
+- Issue wave: WP-03 logging/tooling umbrella `#3968` and WP-04 public-records
+  umbrella `#3969` are opened with child lanes `#3995`-`#4001` and
+  `#4002`-`#4006`
+- Execution: WP-03 merged; WP-04 umbrella execution started and child lanes
+  `#4002`-`#4006` are queued in order
+- Validation: docs-readiness validation plus issue-readiness doctor checks for
+  `#3969` and child lanes `#4002`-`#4006`
 - Release readiness: not applicable until `v0.91.6` executes
 
 This package does not implement runtime features and does not claim `v0.92`
