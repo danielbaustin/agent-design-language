@@ -71,6 +71,7 @@ pub mod provider_native_tool_call_comparison;
 pub mod provider_substrate;
 pub mod red_blue_agent_architecture;
 pub mod remote_exec;
+pub mod resilience;
 pub mod resolve;
 pub mod runtime_environment;
 pub mod runtime_v2;
