@@ -1075,6 +1075,24 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             .any(|path| finish_path_needs_runtime_owner_lane_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
+            if paths
+                .iter()
+                .any(|path| finish_path_needs_provider_communication_focused_validation(path))
+            {
+                push_finish_validation_command(
+                    &mut commands,
+                    "cargo test --manifest-path adl/Cargo.toml --lib provider_communication",
+                );
+            }
+            if paths
+                .iter()
+                .any(|path| finish_path_needs_resilience_focused_validation(path))
+            {
+                push_finish_validation_command(
+                    &mut commands,
+                    "cargo test --manifest-path adl/Cargo.toml --lib resilience",
+                );
+            }
             commands
                 .push("bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string());
         }
@@ -1177,6 +1195,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md"
             | "adl/src/cli/pr_cmd.rs"
             | "adl/src/lib.rs"
+            | "adl/src/provider_communication.rs"
+            | "adl/src/resilience.rs"
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
             | "adl/src/csdlc_prompt_editor.rs"
             | "adl/src/cli/run_artifacts_types.rs"
@@ -1231,7 +1251,8 @@ fn finish_path_needs_pr_cmd_lifecycle_focused_validation(path: &str) -> bool {
 
 fn finish_path_needs_owner_binary_rust_slice_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
-    trimmed == "adl/src/csdlc_prompt_editor.rs"
+    trimmed == "adl/src/lib.rs"
+        || trimmed == "adl/src/csdlc_prompt_editor.rs"
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed == "adl/src/cli/run_artifacts_types.rs"
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
@@ -1298,7 +1319,22 @@ fn finish_path_needs_csdlc_owner_lane_validation(path: &str) -> bool {
 
 fn finish_path_needs_runtime_owner_lane_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
-    matches!(trimmed, "adl/tools/test_adl_runtime_compatibility.sh")
+    matches!(
+        trimmed,
+        "adl/tools/test_adl_runtime_compatibility.sh"
+            | "adl/src/provider_communication.rs"
+            | "adl/src/resilience.rs"
+    )
+}
+
+fn finish_path_needs_provider_communication_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed == "adl/src/provider_communication.rs"
+}
+
+fn finish_path_needs_resilience_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed == "adl/src/resilience.rs"
 }
 
 fn finish_path_needs_review_owner_lane_validation(path: &str) -> bool {
@@ -1418,6 +1454,30 @@ pub(super) fn run_finish_validation_rust(
                 "bash adl/tools/run_owner_validation_lane.sh runtime --build" => {
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?, "runtime", "--build"])?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --lib provider_communication" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--lib",
+                            "provider_communication",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --lib resilience" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--lib",
+                            "resilience",
+                        ],
+                    )?;
                 }
                 "bash adl/tools/run_owner_validation_lane.sh review --build" => {
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
