@@ -7,11 +7,14 @@
 - Start date: not scheduled
 - End date: not scheduled
 - Owner: ADL maintainers
-- Status: planned
+- Status: issue waves opened; WP-03 merged; WP-04 child wave merged; umbrella closeout pending merge
 
 ## Status
 
-Planned. This document defines execution order; it does not start runtime work.
+Issue opening has completed for the WP-03/WP-04 tranche. WP-04 is no longer
+just executing at the umbrella truth layer: child implementation issues
+`#4002` through `#4006` are merged, and only the final umbrella closeout
+remains.
 
 ## Sprint Overview
 
@@ -31,10 +34,10 @@ turns planning docs and feature docs into issue-ready work with review gates.
 | Order | Item | Issue | Owner | Status |
 | --- | --- | --- | --- | --- |
 | 1 | Complete planning and feature-doc package | `#3824` | ADL maintainers | in progress |
-| 2 | Open/promote first-tranche implementation issues | not opened | ADL maintainers | planned |
+| 2 | Open/promote first-tranche implementation issues | `#3968`, `#3969`, `#3995`-`#4006` opened for the WP-03/WP-04 tranche | ADL maintainers | in progress |
 | 3 | Resilience, persistence, sleep/wake execution route | not opened | ADL maintainers | planned |
-| 4 | Tooling proof-loop reliability route | `#3802`-`#3805`, more not opened | ADL maintainers | planned |
-| 5 | Public prompt records export route | not opened | ADL maintainers | planned |
+| 4 | Tooling proof-loop reliability route | `#3968`, `#3995`-`#4001` | ADL maintainers | merged |
+| 5 | Public prompt records export route | `#3969`, `#4002`-`#4006` | ADL maintainers | child lanes merged through `#4006`; umbrella closeout pending |
 | 6 | Provider/model reliability route | not opened | ADL maintainers | planned |
 | 7 | ACIP/A2A/provider communications route | not opened | ADL maintainers | planned |
 | 8 | Security bridge and CAV route | not opened | ADL maintainers | planned |
