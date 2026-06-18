@@ -37,6 +37,24 @@ Out of scope:
 - Which checkpoint/restore artifacts are required for continuity proof?
 - Which sleep/wake transitions must be replayable before `v0.92`?
 
+## Phase 1 Foundation
+
+The R-00 resilience foundation is the shared substrate in `adl/src/resilience.rs`.
+That module is the tracked source of truth for:
+
+- fault classification vocabulary and retry/operator-gate semantics;
+- citizen health states;
+- recovery artifact shape;
+- checkpoint shape;
+- resilience telemetry event shape; and
+- baseline resilience policy/configuration vocabulary.
+
+Provider-facing failure classification in `adl/src/provider_communication.rs`
+must consume the same shared vocabulary rather than inventing a provider-local
+taxonomy. Later WP-02 slices may extend policy behavior, but they should plug
+into the R-00 substrate rather than creating parallel retry/timeout/fallback
+schemas.
+
 ## Dependencies
 
 - `WBS_v0.91.6.md` WP-02.

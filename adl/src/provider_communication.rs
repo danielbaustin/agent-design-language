@@ -9,6 +9,10 @@ use std::path::Path;
 use crate::model_identity::{
     normalize_sha256_digest, observed_at_now_v1, ModelIdentityStrengthV1, ModelIdentityV1,
 };
+use crate::resilience::{
+    sanitize_resilience_summary, ResilienceFaultClassV1, ResilienceFaultClassificationV1,
+    ResilienceFaultDispositionV1, ResiliencePolicyV1,
+};
 
 pub const PROVIDER_COMMUNICATION_SCHEMA_VERSION: &str = "provider_communication.v1";
 pub const REVIEW_PROVIDER_AUTHORITY_BOUNDARY_V1: &str =
@@ -404,70 +408,15 @@ impl ProviderRunLogEventV1 {
 }
 
 pub fn classify_provider_failure(note: &str, http_status: Option<u16>) -> ProviderFailureKindV1 {
-    let lower = note.to_ascii_lowercase();
-    if lower.contains("unauthorized")
-        || lower.contains("forbidden")
-        || lower.contains("invalid api key")
-        || lower.contains("invalid_api_key")
-        || http_status == Some(401)
-        || http_status == Some(403)
-    {
-        return ProviderFailureKindV1::ProviderAuthError;
-    }
-    if lower.contains("missing required environment variable")
-        || lower.contains("missing api_key")
-        || lower.contains("missing api key")
-    {
-        return ProviderFailureKindV1::ProviderAuthMissing;
-    }
-    if lower.contains("rate limit") || lower.contains("rate_limited") || http_status == Some(429) {
-        return ProviderFailureKindV1::ProviderRateLimited;
-    }
-    if lower.contains("timed out") || lower.contains("timeout") {
-        return ProviderFailureKindV1::ProviderTimeout;
-    }
-    if lower.contains("credit balance") || lower.contains("billing") {
-        return ProviderFailureKindV1::ProviderBillingBlocked;
-    }
-    if lower.contains("local_runtime_busy") || lower.contains("non-target model") {
-        return ProviderFailureKindV1::LocalRuntimeBusy;
-    }
-    if lower.contains("local_runtime_hung") || lower.contains("stopping...") {
-        return ProviderFailureKindV1::LocalRuntimeHung;
-    }
-    if lower.contains("connection refused")
-        || lower.contains("ollama") && lower.contains("not running")
-        || lower.contains("local_runtime_unavailable")
-    {
-        return ProviderFailureKindV1::LocalRuntimeUnavailable;
-    }
-    if lower.contains("model") && (lower.contains("not found") || lower.contains("does not exist"))
-    {
-        return ProviderFailureKindV1::ProviderModelUnavailable;
-    }
-    if lower.contains("empty") && (lower.contains("response") || lower.contains("output")) {
-        return ProviderFailureKindV1::ProviderEmptyTextOutput;
-    }
-    if matches!(http_status, Some(500..=599)) {
-        return ProviderFailureKindV1::ProviderTransientHttp;
-    }
-    if http_status.is_some() || lower.contains("provider_") {
-        return ProviderFailureKindV1::ProviderError;
-    }
-    ProviderFailureKindV1::Unknown
+    provider_failure_kind_from_resilience(&provider_fault_classification(note, http_status))
 }
 
 pub fn provider_failure_from_note(note: &str, http_status: Option<u16>) -> ProviderFailureV1 {
-    let kind = classify_provider_failure(note, http_status);
+    let classification = provider_fault_classification(note, http_status);
+    let kind = provider_failure_kind_from_resilience(&classification);
     let retryable = matches!(
-        kind,
-        ProviderFailureKindV1::ProviderRateLimited
-            | ProviderFailureKindV1::ProviderTimeout
-            | ProviderFailureKindV1::ProviderTransientHttp
-            | ProviderFailureKindV1::LocalRuntimeUnavailable
-            | ProviderFailureKindV1::LocalRuntimeBusy
-            | ProviderFailureKindV1::LocalRuntimeHung
-            | ProviderFailureKindV1::Unknown
+        classification.disposition,
+        ResilienceFaultDispositionV1::Retryable
     );
     ProviderFailureV1 {
         kind,
@@ -475,6 +424,61 @@ pub fn provider_failure_from_note(note: &str, http_status: Option<u16>) -> Provi
         message: sanitize_provider_message(note),
         provider_error_excerpt: Some(redacted_excerpt(note)),
         http_status,
+    }
+}
+
+pub fn provider_fault_classification(
+    note: &str,
+    http_status: Option<u16>,
+) -> ResilienceFaultClassificationV1 {
+    ResilienceFaultClassificationV1::provider(note, http_status)
+}
+
+pub fn provider_attempt_policy_as_resilience_policy(
+    policy_id: impl Into<String>,
+    attempt_policy: &ProviderAttemptPolicyV1,
+) -> ResiliencePolicyV1 {
+    let mut policy = ResiliencePolicyV1::provider_attempt_policy(
+        policy_id,
+        attempt_policy.max_attempts,
+        attempt_policy.timeout_ms,
+    );
+    if let Some(retry) = policy.retry.as_mut() {
+        retry.backoff_ms = attempt_policy.retry_backoff_ms;
+    }
+    policy
+}
+
+fn provider_failure_kind_from_resilience(
+    classification: &ResilienceFaultClassificationV1,
+) -> ProviderFailureKindV1 {
+    match classification.fault_class {
+        ResilienceFaultClassV1::ProviderAuthMissing => ProviderFailureKindV1::ProviderAuthMissing,
+        ResilienceFaultClassV1::ProviderAuthError => ProviderFailureKindV1::ProviderAuthError,
+        ResilienceFaultClassV1::ProviderRateLimited => ProviderFailureKindV1::ProviderRateLimited,
+        ResilienceFaultClassV1::ProviderTimeout => ProviderFailureKindV1::ProviderTimeout,
+        ResilienceFaultClassV1::ProviderTransientHttp => {
+            ProviderFailureKindV1::ProviderTransientHttp
+        }
+        ResilienceFaultClassV1::ProviderEmptyTextOutput => {
+            ProviderFailureKindV1::ProviderEmptyTextOutput
+        }
+        ResilienceFaultClassV1::ProviderModelUnavailable => {
+            ProviderFailureKindV1::ProviderModelUnavailable
+        }
+        ResilienceFaultClassV1::ProviderBillingBlocked => {
+            ProviderFailureKindV1::ProviderBillingBlocked
+        }
+        ResilienceFaultClassV1::LocalRuntimeUnavailable => {
+            ProviderFailureKindV1::LocalRuntimeUnavailable
+        }
+        ResilienceFaultClassV1::LocalRuntimeBusy => ProviderFailureKindV1::LocalRuntimeBusy,
+        ResilienceFaultClassV1::LocalRuntimeHung => ProviderFailureKindV1::LocalRuntimeHung,
+        ResilienceFaultClassV1::ProviderError => ProviderFailureKindV1::ProviderError,
+        ResilienceFaultClassV1::ToolFailure
+        | ResilienceFaultClassV1::WorkflowFailure
+        | ResilienceFaultClassV1::RuntimeFailure
+        | ResilienceFaultClassV1::Unknown => ProviderFailureKindV1::Unknown,
     }
 }
 
@@ -753,29 +757,7 @@ pub fn validate_review_provider_result(result: &ReviewProviderResultV1) -> Resul
 }
 
 fn sanitize_provider_message(note: &str) -> String {
-    let text = note.split_whitespace().collect::<Vec<_>>().join(" ");
-    let lowered = text.to_ascii_lowercase();
-    let sensitive = [
-        "authorization",
-        "bearer ",
-        "x-api-key",
-        "key=",
-        "api_key=",
-        "api key",
-        ".key",
-        "prompt:",
-        "raw prompt",
-        "user said",
-        "messages",
-        "tool arguments",
-        "tool_args",
-        "request body",
-        "request_body",
-    ];
-    if sensitive.iter().any(|marker| lowered.contains(marker)) {
-        return "redacted provider diagnostic".to_string();
-    }
-    truncate_chars(&text, 180)
+    sanitize_resilience_summary(note)
 }
 
 fn scrub_log_event(event: &mut ProviderRunLogEventV1) {
@@ -786,17 +768,6 @@ fn scrub_log_event(event: &mut ProviderRunLogEventV1) {
         event.fields =
             Some(serde_json::json!({"redacted": "event fields omitted from provider run log"}));
     }
-}
-
-fn truncate_chars(text: &str, max_chars: usize) -> String {
-    let mut iter = text.chars();
-    let mut out: String = iter.by_ref().take(max_chars).collect();
-    if iter.next().is_some() {
-        let keep = out.chars().count().saturating_sub(3);
-        out = out.chars().take(keep).collect();
-        out.push_str("...");
-    }
-    out
 }
 
 fn redacted_excerpt(note: &str) -> String {
@@ -952,6 +923,57 @@ mod tests {
             classify_provider_failure("invalid API key provided", None),
             ProviderFailureKindV1::ProviderAuthError
         );
+    }
+
+    #[test]
+    fn provider_fault_classification_uses_shared_resilience_vocab() {
+        let classification =
+            provider_fault_classification("status=429 rate limit exceeded", Some(429));
+        assert_eq!(
+            classification.fault_class,
+            ResilienceFaultClassV1::ProviderRateLimited
+        );
+        assert_eq!(
+            classification.disposition,
+            ResilienceFaultDispositionV1::Retryable
+        );
+    }
+
+    #[test]
+    fn provider_attempt_policy_maps_to_resilience_policy() {
+        let policy = provider_attempt_policy_as_resilience_policy(
+            "provider_default",
+            &ProviderAttemptPolicyV1 {
+                max_attempts: 4,
+                timeout_ms: 5_000,
+                retry_backoff_ms: Some(250),
+            },
+        );
+        let retry = policy.retry.expect("retry policy");
+        let timeout = policy.timeout.expect("timeout policy");
+        assert_eq!(retry.max_attempts, 4);
+        assert_eq!(retry.backoff_ms, Some(250));
+        assert_eq!(timeout.timeout_ms, 5_000);
+    }
+
+    #[test]
+    fn provider_fault_classification_is_total_for_generic_provider_failures() {
+        let classification =
+            provider_fault_classification("unexpected provider socket wobble", None);
+        assert_eq!(classification.fault_class, ResilienceFaultClassV1::Unknown);
+        assert_eq!(
+            classification.disposition,
+            ResilienceFaultDispositionV1::Retryable
+        );
+    }
+
+    #[test]
+    fn provider_fault_classification_redacts_sensitive_summary() {
+        let classification = provider_fault_classification(
+            "provider request failed for key=super-secret-token",
+            None,
+        );
+        assert_eq!(classification.summary, "redacted provider diagnostic");
     }
 
     #[test]
