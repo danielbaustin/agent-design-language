@@ -89,6 +89,13 @@ Preferred structured-prompt preflight helper:
 Preferred missing-sprint-issue helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <goal> --state <path>`
 
+Known helper migration note:
+- the typed issue mutation command surface exists as `pr.sh issue
+  create/comment/edit`
+- if the missing-sprint-issue helper still shells through direct `gh issue
+  create`, route that helper as migration debt and prefer the typed command
+  surface for new sprint setup automation
+
 Preferred live-truth helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match`
 

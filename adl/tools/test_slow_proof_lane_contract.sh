@@ -19,8 +19,8 @@ slow_tests=(
 
 (
   cd "$ADL_DIR"
-  cargo nextest list runtime_v2_ > "$default_list"
-  cargo nextest list --features slow-proof-tests runtime_v2_ > "$slow_list"
+  cargo nextest list --lib runtime_v2_ > "$default_list"
+  cargo nextest list --lib --features slow-proof-tests runtime_v2_ > "$slow_list"
 )
 
 for test_name in "${slow_tests[@]}"; do
