@@ -12,16 +12,15 @@
 ## Status
 
 Current status: first pre-`v0.92` bridge tranche executing with WP-03 complete
-and WP-04 complete through its merged child wave; umbrella closeout is the
-remaining tracked step.
+and WP-04 complete and closed through its merged umbrella.
 
 - Planning: created by `#3800`
 - Documentation completion: `#3824`
 - Issue wave: WP-03 logging/tooling umbrella `#3968` and WP-04 public-records
   umbrella `#3969` were opened with child lanes `#3995`-`#4001` and
   `#4002`-`#4006`
-- Execution: WP-03 merged; WP-04 child lanes `#4002`-`#4006` merged in order;
-  umbrella `#3969` is in final closeout
+- Execution: WP-03 merged; WP-04 umbrella `#3969` and child lanes
+  `#4002`-`#4006` merged and closed
 - Validation: docs-readiness validation plus focused issue/PR proof for the
   merged WP-03 and WP-04 waves
 - Release readiness: not applicable until `v0.91.6` executes
