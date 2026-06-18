@@ -7,6 +7,22 @@
 - Owner: `fixture-owner`
 - Status: `generated fixture`
 
+## How To Use
+
+Start here before reading individual milestone documents.
+
+- Keep this README concise and navigational.
+- Use it to explain milestone purpose, current status, dependency posture, and
+  where canonical planning, execution, demo, proof, and release surfaces live.
+- Make it easy for a new reader to answer four questions quickly: what this
+  milestone is, why it matters, how to get oriented, and where to go next for
+  help or deeper evidence.
+- Record milestone-specific sections such as `Bridge Boundary`, `Companion Setup
+  Inputs`, `Feature Tranche Map`, or `Handoff Rules` as explicit top-level
+  sections when the milestone requires them.
+- If a contractual section is not materially relevant, keep it and state `not
+  applicable` rather than silently deleting the navigation surface.
+
 ## Status
 
 Current status: `generated fixture`
@@ -36,7 +52,16 @@ Expected outcomes:
 - `required-section coverage`
 - `no approval claim`
 
-## Boundaries
+## Dependency Boundary
+
+This milestone depends on and consumes the following prior surfaces, and it
+must not overclaim beyond them:
+
+- `consumes only versioned planning-template registry truth`
+- `does not imply milestone review or approval`
+- `remains portable across repo-relative template consumers`
+
+## Scope Summary
 
 In scope:
 
@@ -58,6 +83,21 @@ Open questions:
 
 - `none`
 - `none`
+
+## Milestone-Specific Extensions
+
+Add milestone-specific sections here when the live milestone needs additional
+navigation or claim-boundary surfaces.
+
+Common examples:
+
+- `Bridge Boundary`
+- `Companion Setup Inputs`
+- `Feature Tranche Map`
+- `Consumption Rules`
+- `Handoff Surface`
+
+If no additional milestone-specific sections are needed, state that explicitly.
 
 ## Source Map
 
@@ -82,6 +122,10 @@ Supporting / domain-specific docs:
 ## Document Map
 
 Use the source map above as the canonical navigation surface. Keep this README concise; details belong in the linked milestone documents.
+
+If readers need more help, route them to the linked milestone docs, issue wave,
+review packet, or owner surface instead of expanding this README into a full
+handbook.
 
 ## Sidecar Work
 

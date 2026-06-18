@@ -1,22 +1,11 @@
-<!--
-Generated Planning Draft
-planning_template_set: 1.1.0
-template: readme
-template_path: docs/templates/planning/1.1.0/readme.md
-generation_status: generated_draft
-claim_boundary: generated draft only; not reviewed or approved
--->
-
-> Generated planning draft. This file proves only template filling;
-> it is not reviewed, approved, released, merged, or lifecycle-true.
-# fixture-milestone Milestone README
+# <milestone> Milestone README
 
 ## Metadata
-- Milestone: `fixture-milestone`
-- Version: `v0.0.0-fixture`
-- Date: `2026-05-23`
-- Owner: `fixture-owner`
-- Status: `generated fixture`
+- Milestone: `<milestone>`
+- Version: `<version>`
+- Date: `<date>`
+- Owner: `<owner>`
+- Status: `<status>`
 
 ## How To Use
 
@@ -36,64 +25,64 @@ Start here before reading individual milestone documents.
 
 ## Status
 
-Current status: `generated fixture`
+Current status: `<status>`
 
-- Planning: `generated fixture only`
-- Execution: `not applicable`
-- Validation: `structurally valid when validator passes`
-- Release readiness: `not applicable`
+- Planning: `<planning_status>`
+- Execution: `<execution_status>`
+- Validation: `<validation_status>`
+- Release readiness: `<release_status>`
 
 ## Purpose
 
-Provide the canonical entry point for `fixture-milestone`: why it exists, what it changes, what is in and out of scope, and where reviewers should go for design, execution, demo, proof, and release evidence.
+Provide the canonical entry point for `<milestone>`: why it exists, what it changes, what is in and out of scope, and where reviewers should go for design, execution, demo, proof, and release evidence.
 
 ## Milestone Role
 
-`fixture-milestone` moves `ADL planning-template fixture` from `legacy flat templates` to `versioned planning templates`.
+`<milestone>` moves `<project_name>` from `<previous_state>` to `<target_state>`.
 
 This milestone exists to:
 
-- `fixture scope`
-- `fixture validation`
-- `fixture portability`
+- `<focus_1>`
+- `<focus_2>`
+- `<focus_3>`
 
 Expected outcomes:
 
-- `placeholder-free output`
-- `required-section coverage`
-- `no approval claim`
+- `<outcome_1>`
+- `<outcome_2>`
+- `<outcome_3>`
 
 ## Dependency Boundary
 
 This milestone depends on and consumes the following prior surfaces, and it
 must not overclaim beyond them:
 
-- `consumes only versioned planning-template registry truth`
-- `does not imply milestone review or approval`
-- `remains portable across repo-relative template consumers`
+- `<dependency_1>`
+- `<dependency_2>`
+- `<dependency_3>`
 
 ## Scope Summary
 
 In scope:
 
-- `fixture validation`
-- `registry resolution`
-- `portable paths`
+- `<in_scope_1>`
+- `<in_scope_2>`
+- `<in_scope_3>`
 
 Out of scope:
 
-- `release truth`
-- `live milestone migration`
+- `<out_of_scope_1>`
+- `<out_of_scope_2>`
 
 Known risks:
 
-- `fixture proves only README generation`
-- `fixture is not live milestone truth`
+- `<risk_1>`
+- `<risk_2>`
 
 Open questions:
 
-- `none`
-- `none`
+- `<open_question_1>`
+- `<open_question_2>`
 
 ## Milestone-Specific Extensions
 
@@ -114,21 +103,21 @@ If no additional milestone-specific sections are needed, state that explicitly.
 
 Primary planning and proof sources:
 
-- Vision: `VISION.md`
-- Design: `DESIGN.md`
-- Work Breakdown Structure: `WBS.md`
-- Sprint plan: `SPRINT.md`
-- Decisions log: `DECISIONS.md`
-- Demo matrix: `DEMO_MATRIX.md`
-- Milestone checklist: `MILESTONE_CHECKLIST.md`
-- Release plan: `RELEASE_PLAN.md`
-- Release notes: `RELEASE_NOTES.md`
+- Vision: `<vision_doc>`
+- Design: `<design_doc>`
+- Work Breakdown Structure: `<wbs_doc>`
+- Sprint plan: `<sprint_doc>`
+- Decisions log: `<decisions_doc>`
+- Demo matrix: `<demo_matrix_doc>`
+- Milestone checklist: `<checklist_doc>`
+- Release plan: `<release_process_doc>`
+- Release notes: `<release_notes_doc>`
 
 Supporting / domain-specific docs:
 
-- `none`
-- `none`
-- `none`
+- `<supporting_doc_1>`
+- `<supporting_doc_2>`
+- `<supporting_doc_3>`
 
 ## Document Map
 
@@ -138,13 +127,13 @@ If readers need more help, route them to the linked milestone docs, issue wave,
 review packet, or owner surface instead of expanding this README into a full
 handbook.
 
-## Sidecar Work
+## <sidecar_heading>
 
 If this milestone includes a sidecar, record it here rather than hiding it in chat or issue comments.
 
-- Sidecar scope: `not applicable for fixture`
-- Sidecar boundary: `not applicable for fixture`
-- Sidecar proof surface: `not applicable for fixture`
+- Sidecar scope: `<sidecar_scope>`
+- Sidecar boundary: `<sidecar_boundary>`
+- Sidecar proof surface: `<sidecar_proof_surface>`
 
 If no sidecar exists, set these values to `not applicable`.
 
@@ -163,7 +152,7 @@ Execution expectations:
 
 ## Demo and Validation Surface
 
-Primary validation is defined in `DEMO_MATRIX.md`.
+Primary validation is defined in `<demo_matrix_doc>`.
 
 Additional validation surfaces:
 
@@ -173,14 +162,14 @@ Additional validation surfaces:
 
 Determinism evidence:
 
-- `docs/templates/planning/fixtures/minimal/readme_generated.md`
-- `docs/templates/planning/current.json`
+- `<determinism_evidence_path_1>`
+- `<determinism_evidence_path_2>`
 
 ## Success Criteria
 
-- `required sections are present`
-- `unresolved placeholders are absent`
-- `no review or approval status is claimed`
+- `<success_criteria_1>`
+- `<success_criteria_2>`
+- `<success_criteria_3>`
 
 ## Exit Criteria
 
