@@ -231,13 +231,14 @@ Preferred commands:
 bash adl/tools/pr.sh issue view <issue-number-or-url> --json
 bash adl/tools/pr.sh issue list --state open|closed|all --limit <n> --json
 bash adl/tools/pr.sh issue search --query "<text>" --state open|closed|all --json
+bash adl/tools/pr.sh issue create --title "<title>" --body-file <path> --label track:roadmap --json
+bash adl/tools/pr.sh issue comment <issue-number-or-url> --body-file <path> --json
+bash adl/tools/pr.sh issue edit <issue-number-or-url> --title "<title>" --body-file <path> --label area:tools --json
 ```
 
-Typed issue mutation commands are scheduled but not yet exposed. `#4078` owns
-adding `issue create`, `issue comment`, and `issue edit` or an equivalent
-title/body/label update path. Until that lands, any direct `gh issue
-create/comment/edit` use must be recorded as a temporary transport gap rather
-than treated as the normal ADL sprint setup path.
+Use typed issue mutation commands for covered issue setup and repair paths.
+Direct `gh issue create/comment/edit` use should be treated as helper migration
+debt, not as the normal ADL sprint setup path.
 
 Use this surface when:
 
@@ -246,6 +247,8 @@ Use this surface when:
   or closeout
 - reproducing milestone queue or closeout checks that previously depended on
   `gh issue list` or `gh issue view`
+- creating, commenting on, or updating issue metadata during bounded sprint
+  setup and tooling work
 
 Pair it with:
 

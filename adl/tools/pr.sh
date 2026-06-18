@@ -2634,12 +2634,13 @@ Usage:
   adl/tools/pr.sh issue list [-R owner/repo] [--state open|closed|all] [--limit <n>] [--json]
   adl/tools/pr.sh issue search --query "<text>" [-R owner/repo] [--state open|closed|all] [--limit <n>] [--json]
   adl/tools/pr.sh issue view <issue-number-or-url> [-R owner/repo] [--json]
+  adl/tools/pr.sh issue create --title "<title>" [--body "<markdown>" | --body-file <path>] [--label <label>]... [--labels <csv>] [-R owner/repo] [--json]
+  adl/tools/pr.sh issue comment <issue-number-or-url> [--body "<markdown>" | --body-file <path>] [-R owner/repo] [--json]
+  adl/tools/pr.sh issue edit <issue-number-or-url> [--title "<title>"] [--body "<markdown>" | --body-file <path>] [--label <label>]... [--labels <csv>] [-R owner/repo] [--json]
 
 Behavior:
-- delegates to the Rust-owned issue inspection surface
-- uses the typed GitHub transport rather than raw `gh issue list/view`
-- issue mutation commands (`create`, `comment`, `edit`) are not exposed here yet;
-  #4078 owns adding those typed octocrab-backed paths
+- delegates to the Rust-owned issue inspection and mutation surface
+- uses the typed GitHub transport rather than raw `gh issue` commands for covered paths
 - requires a shared GitHub token source for live GitHub operations. Supported
   sources are GITHUB_TOKEN, GH_TOKEN, ADL_GITHUB_TOKEN_FILE, or
   ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE. The keychain source uses macOS

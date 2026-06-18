@@ -1009,6 +1009,13 @@ pub(super) fn gh_issue_create(
     body: &str,
     labels_csv: &str,
 ) -> Result<String> {
+    #[derive(Serialize)]
+    struct IssueCreatePayload<'a> {
+        title: &'a str,
+        body: &'a str,
+        labels: Vec<String>,
+    }
+
     #[cfg(test)]
     if test_gh_fixture_fallback_allowed("issue.create")? {
         return run_gh_capture_shell(
@@ -1025,15 +1032,21 @@ pub(super) fn gh_issue_create(
     with_octocrab("issue.create", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let issue = block_on_octocrab(runtime, "issue.create", || async {
-            octo.issues(&owner, &name)
-                .create(title)
-                .body(body.to_string())
-                .labels(labels.clone())
-                .send()
-                .await
+        let route = format!("/repos/{owner}/{name}/issues");
+        let payload = IssueCreatePayload {
+            title,
+            body,
+            labels: labels.clone(),
+        };
+        let issue: RestIssueRecord = block_on_octocrab(runtime, "issue.create", || async {
+            octo.post(route.as_str(), Some(&payload)).await
         })?;
-        Ok(issue.html_url.to_string())
+        issue
+            .into_issue_record()
+            .map(|issue| issue.url)
+            .ok_or_else(|| {
+                anyhow!("issue create: GitHub returned a pull request or malformed issue")
+            })
     })
 }
 
@@ -1194,7 +1207,12 @@ pub(crate) fn gh_issue_label_names(issue: u32, repo: &str) -> Result<Vec<String>
     })
 }
 
-fn gh_issue_edit_title(repo: &str, issue: u32, title: &str) -> Result<()> {
+pub(super) fn gh_issue_edit_title(repo: &str, issue: u32, title: &str) -> Result<()> {
+    #[derive(Serialize)]
+    struct IssueTitlePayload<'a> {
+        title: &'a str,
+    }
+
     #[cfg(test)]
     if test_gh_fixture_fallback_allowed("issue.edit.title")? {
         return run_gh_status_shell(
@@ -1215,12 +1233,10 @@ fn gh_issue_edit_title(repo: &str, issue: u32, title: &str) -> Result<()> {
     with_octocrab("issue.edit.title", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        block_on_octocrab(runtime, "issue.edit.title", || async {
-            octo.issues(&owner, &name)
-                .update(issue as u64)
-                .title(title)
-                .send()
-                .await
+        let route = format!("/repos/{owner}/{name}/issues/{issue}");
+        let payload = IssueTitlePayload { title };
+        let _: RestIssueRecord = block_on_octocrab(runtime, "issue.edit.title", || async {
+            octo.patch(route.as_str(), Some(&payload)).await
         })?;
         Ok(())
     })
@@ -1278,6 +1294,11 @@ pub(super) fn ensure_issue_metadata_parity(
 }
 
 pub(super) fn gh_issue_edit_body(repo: &str, issue: u32, body: &str) -> Result<()> {
+    #[derive(Serialize)]
+    struct IssueBodyPayload<'a> {
+        body: &'a str,
+    }
+
     #[cfg(test)]
     if test_gh_fixture_fallback_allowed("issue.edit.body")? {
         return run_gh_status_shell(
@@ -1298,12 +1319,10 @@ pub(super) fn gh_issue_edit_body(repo: &str, issue: u32, body: &str) -> Result<(
     with_octocrab("issue.edit.body", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        block_on_octocrab(runtime, "issue.edit.body", || async {
-            octo.issues(&owner, &name)
-                .update(issue as u64)
-                .body(body)
-                .send()
-                .await
+        let route = format!("/repos/{owner}/{name}/issues/{issue}");
+        let payload = IssueBodyPayload { body };
+        let _: RestIssueRecord = block_on_octocrab(runtime, "issue.edit.body", || async {
+            octo.patch(route.as_str(), Some(&payload)).await
         })?;
         Ok(())
     })
@@ -1416,7 +1435,12 @@ pub(crate) fn gh_issue_is_closed_completed(issue: u32, repo: &str) -> Result<boo
     })
 }
 
-fn gh_issue_set_labels(repo: &str, issue: u32, labels: &[String]) -> Result<()> {
+pub(super) fn gh_issue_set_labels(repo: &str, issue: u32, labels: &[String]) -> Result<()> {
+    #[derive(Serialize)]
+    struct IssueLabelsPayload<'a> {
+        labels: &'a [String],
+    }
+
     #[cfg(test)]
     if test_gh_fixture_fallback_allowed("issue.edit.labels")? {
         return run_gh_status_shell(
@@ -1439,16 +1463,34 @@ fn gh_issue_set_labels(repo: &str, issue: u32, labels: &[String]) -> Result<()> 
     with_octocrab("issue.edit.labels", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        block_on_octocrab(runtime, "issue.edit.labels", || async {
-            octo.issues(&owner, &name)
-                .update(issue as u64)
-                .labels(labels)
-                .send()
-                .await
+        let route = format!("/repos/{owner}/{name}/issues/{issue}");
+        let payload = IssueLabelsPayload { labels };
+        let _: RestIssueRecord = block_on_octocrab(runtime, "issue.edit.labels", || async {
+            octo.patch(route.as_str(), Some(&payload)).await
         })?;
         Ok(())
     })
     .with_context(|| format!("create: octocrab issue label update failed for issue #{issue}"))
+}
+
+pub(super) fn gh_issue_comment(repo: &str, issue: u32, body: &str) -> Result<()> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.comment")? {
+        return run_gh_status_shell(
+            "issue.comment",
+            &[
+                "issue",
+                "comment",
+                &issue.to_string(),
+                "-R",
+                repo,
+                "--body",
+                body,
+            ],
+        )
+        .with_context(|| format!("issue comment: gh fixture comment failed for issue #{issue}"));
+    }
+    issue_comment_octocrab(repo, issue, body)
 }
 
 #[cfg(test)]
