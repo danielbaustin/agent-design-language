@@ -43,6 +43,8 @@ sprint:
   blocked_issue_number: <u32 or null>
   review_paths:
     - /absolute/or/repo-relative/path
+  activity_log_paths:
+    - /absolute/or/repo-relative/path
   closeout_paths:
     - /absolute/or/repo-relative/path
   issue_records:
@@ -93,6 +95,28 @@ sprint:
       - <path>
     diff_files:
       - <path>
+  readiness_sweep:
+    status: not_run | ready | needs_repair | blocked
+    execution_packet:
+      status: not_required | present | needs_repair | blocked
+      path: /absolute/or/repo-relative/path | null
+      missing_sections:
+        - <heading>
+    review_paths:
+      status: declared | needs_repair
+      paths:
+        - /absolute/or/repo-relative/path
+    activity_log_paths:
+      status: declared | needs_repair
+      paths:
+        - /absolute/or/repo-relative/path
+    issue_repairs:
+      - issue_number: <u32>
+        status: ready | needs_editor_repair | blocked
+        bundle_path: /absolute/or/repo-relative/path | null
+        next_skills:
+          - pr-init | workflow-conductor | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor
+        rationale: <bounded text>
   issue_closed: true | false
 policy:
   require_declared_execution_mode: true
@@ -129,3 +153,9 @@ Notes:
 - The current sprint-state helper remains single-current-issue. SEP records
   safe parallel intent and routing evidence; it does not by itself prove
   automated multi-active sprint execution.
+- `readiness_sweep` is the aggregate pre-execution gate. It is expected to
+  consume installed-skill parity, structured-prompt preflight, execution-packet
+  presence, review-path declaration, and activity-log declaration before the
+  first child issue runs.
+- Review and activity-log paths are declaration surfaces for future sprint
+  artifacts; readiness does not require those files to exist yet.

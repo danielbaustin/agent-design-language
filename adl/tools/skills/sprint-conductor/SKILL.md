@@ -70,6 +70,7 @@ At the moment, the key repo references are:
 Within this bundle, the operational details live in:
 - `references/conductor-playbook.md`
 - `references/output-contract.md`
+- `scripts/check_sprint_readiness.py`
 - `scripts/check_installed_skill_parity.py`
 - `scripts/check_sprint_truth.py`
 - `scripts/record_child_issue_closeout.py`
@@ -134,42 +135,53 @@ missing sprint-management issue first.
    `hybrid`, require safe lanes, serial gates, and PVF notes before execution
    is routed to separate issue workers or sessions.
 3. Create or load the sprint-state artifact.
-4. When live execution is about to begin, run the installed-skill parity/readiness gate first.
-5. Run sprint-wide structured prompt review before issue execution begins.
-5. If any child issue cards are not ready, repair them through the editor skills first.
+4. When live execution is about to begin, run the sprint readiness sweep first.
+   Use `check_sprint_readiness.py` to aggregate installed-skill parity,
+   structured-prompt preflight, execution-packet presence, review-path
+   declaration, and activity-log declaration into one readiness result.
+   Review and activity-log paths are declaration surfaces here; they do not
+   need to exist on disk yet to satisfy readiness.
+5. If the readiness sweep reports `needs_repair`, fix the flagged issue-local
+   or sprint-local defects before starting child execution.
+6. Run sprint-wide structured prompt review before issue execution begins when
+   the readiness sweep or policy requires a fresh pass.
+7. If any child issue cards are not ready, repair them through the editor skills first.
    When the child issue needs new or fully re-rendered cards, prefer the
    prompt-template values renderer and `validate-structure` before routing
    issue-local lifecycle truth through the matching editor skill.
-6. Select the next child issue or operator-approved lane handoff according to
+8. Select the next child issue or operator-approved lane handoff according to
    the declared execution mode and serial gates. Current helper state remains
    single-current-issue; parallel execution is achieved by separate issue
    workers/sessions using the SEP as the coordination contract.
-7. Route the selected child issue or lane handoff through `workflow-conductor`.
-8. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
-9. Run only the selected downstream lifecycle or editor skill.
-10. Re-check issue truth. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
-11. If the issue is healthy but waiting on review, checks, or merge, route it into the bounded watch/janitor path rather than surfacing that healthy waiting state as a default sprint stop.
-12. If the issue is merged or otherwise closed but not locally closeouted yet, immediately route `pr-closeout` and finish the child-closeout gate.
-13. If the issue is fully closed out, use the deterministic child-closeout helper path to advance sprint state.
-14. If the issue is still active after the fresh truth check, repeat the routing loop for the same issue.
-15. In `sequential` mode, only after child-closeout truth is satisfied may the
+9. Route the selected child issue or lane handoff through `workflow-conductor`.
+10. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
+11. Run only the selected downstream lifecycle or editor skill.
+12. Re-check issue truth. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
+13. If the issue is healthy but waiting on review, checks, or merge, route it into the bounded watch/janitor path rather than surfacing that healthy waiting state as a default sprint stop.
+14. If the issue is merged or otherwise closed but not locally closeouted yet, immediately route `pr-closeout` and finish the child-closeout gate.
+15. If the issue is fully closed out, use the deterministic child-closeout helper path to advance sprint state.
+16. If the issue is still active after the fresh truth check, repeat the routing loop for the same issue.
+17. In `sequential` mode, only after child-closeout truth is satisfied may the
     sprint advance to the next ordered issue. In `parallel` or `hybrid` mode,
     do not treat a lane as clear unless its SEP-defined dependencies, serial
     gates, and issue-local closeout truth are satisfied.
-16. After the final issue closes, assemble sprint review evidence.
-17. Record sprint closeout metrics including coverage and Rust tracker counts.
-18. Write the bounded sprint closeout artifact before closing the sprint-management issue.
-19. Stop with one bounded sprint review/closeout result.
+18. After the final issue closes, assemble sprint review evidence.
+19. Record sprint closeout metrics including coverage and Rust tracker counts.
+20. Write the bounded sprint closeout artifact before closing the sprint-management issue.
+21. Stop with one bounded sprint review/closeout result.
 
 ## Execution Model
 
 This skill enforces:
+- one issue at a time, fully closed out before the next in `sequential` mode
 - exactly one active child issue in this helper's local sprint state
 - SEP-declared active lanes for `parallel` and `hybrid` sprints as
   coordination evidence for separate workers/sessions
 - no child issue execution before the whole sprint batch passes structured prompt review
 - no child issue execution before the whole sprint batch passes design-time
   card-completion review for `SIP`, `STP`, `SPP`, and `SRP`
+- no live sprint execution before the readiness sweep records execution-packet,
+  review-path, and activity-log declaration truth
 - no issue `N+1` work before issue `N` is fully closed out in `sequential`
   mode
 - no intentional parallel lane work unless the SEP names the lane, write-set
@@ -206,6 +218,9 @@ This skill enforces:
   completion claims.
 
 Preferred per-issue routing model:
+- sprint readiness not run or stale ->
+  `check_sprint_readiness.py`, then repair the flagged sprint-local or
+  issue-local defects before child execution
 - sprint-wide structured prompt preflight not ready ->
   `check_sprint_structured_prompt_readiness.py`, then route flagged child issues
   through the matching editor skills before starting issue execution

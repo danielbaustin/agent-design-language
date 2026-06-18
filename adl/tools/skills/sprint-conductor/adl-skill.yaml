@@ -72,6 +72,7 @@ admission:
     - "sprint.blocked_issue_number"
     - "resume_from_state_path"
     - "sprint.review_paths"
+    - "sprint.activity_log_paths"
     - "sprint.closeout_paths"
     - "sprint.issue_records"
     - "sprint.execution_packet_path"
@@ -83,7 +84,7 @@ admission:
     - "sprint.structured_prompt_preflight"
     - "sprint.truth_check"
     - "sprint.installed_skill_parity"
-    - "sprint.closeout_gate"
+    - "sprint.readiness_sweep"
     - "review_subagent_ids"
   stop_if_missing:
     - "repo_root"
@@ -110,6 +111,7 @@ execution:
   allow_subagents: true
   workflow_role: "sprint_orchestrator"
   preferred_commands:
+    - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_readiness.py --repo-root <repo> --ordered-issues <csv> --execution-mode <sequential|parallel|hybrid> --state <path>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/check_installed_skill_parity.py --repo-root <repo> --state <path>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py --repo-root <repo> --ordered-issues <csv> --state <path>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <goal> --state <path>"
@@ -144,10 +146,14 @@ outputs:
     - "sprint"
     - "sequence"
     - "installed_skill_parity"
+    - "readiness_sweep"
+    - "structured_prompt_preflight"
     - "truth_check"
     - "current_state"
     - "review"
     - "closeout"
+    - "actions_taken"
+    - "next_handoff"
     - "artifact"
 security:
   trusted_root_required: true

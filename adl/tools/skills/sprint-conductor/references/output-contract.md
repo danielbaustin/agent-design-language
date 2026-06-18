@@ -88,6 +88,37 @@ installed_skill_parity:
     - <path>
   notes:
     - <bounded text>
+readiness_sweep:
+  status: not_run | ready | needs_repair | blocked
+  ordered_issue_numbers:
+    - <u32>
+  execution_mode: sequential | parallel | hybrid
+  execution_packet:
+    status: not_required | present | needs_repair | blocked
+    path: <path or null>
+    missing_sections:
+      - <heading>
+  review_paths:
+    status: declared | needs_repair
+    paths:
+      - <path>
+    missing_paths:
+      - <path>
+  activity_log_paths:
+    status: declared | needs_repair
+    paths:
+      - <path>
+    missing_paths:
+      - <path>
+  issue_repairs:
+    - issue_number: <u32>
+      status: ready | needs_editor_repair | blocked
+      bundle_path: <path or null>
+      next_skills:
+        - pr-init | workflow-conductor | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor
+      rationale: <bounded text>
+  notes:
+    - <bounded text>
 truth_check:
   status: not_run | matched | drift_detected | blocked
   source: github_live | sprint_state_only | mixed

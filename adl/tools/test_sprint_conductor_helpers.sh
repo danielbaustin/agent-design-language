@@ -207,6 +207,42 @@ issue: 2828
 - Not run yet.
 EOF2
 
+readiness_packet="${tmpdir}/trial-sep.md"
+cat >"${readiness_packet}" <<'EOF2'
+# Trial Sprint Execution Packet
+
+## Child Issue Wave
+
+- `#2827`
+- `#2828`
+
+## Recommended Execution Order
+
+1. `#2827`
+2. `#2828`
+
+## Safe Parallel Lanes
+
+- none for this trial
+
+## Serial Gates
+
+- `#2827` must close out before `#2828`
+
+## Watcher Policy
+
+- every wait state has a watcher
+EOF2
+
+readiness_review="${tmpdir}/trial-review.md"
+readiness_activity="${tmpdir}/trial-activity.md"
+touch "${readiness_review}" "${readiness_activity}"
+readiness_tracked_skill_dir="${tmpdir}/tracked-readiness-skill"
+readiness_installed_skill_dir="${tmpdir}/installed-readiness-skill"
+mkdir -p "${readiness_tracked_skill_dir}" "${readiness_installed_skill_dir}"
+printf 'alpha\n' > "${readiness_tracked_skill_dir}/SKILL.md"
+printf 'alpha\n' > "${readiness_installed_skill_dir}/SKILL.md"
+
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py" \
   --repo-root "${fake_repo}" \
   --ordered-issues "2827,2828" \
@@ -267,6 +303,59 @@ assert all(result["status"] == "ready" for result in preflight["issue_results"])
 assert all(result["canonical_slug"] for result in preflight["issue_results"])
 PY
 
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --execution-mode hybrid \
+  --execution-packet-path "${readiness_packet}" \
+  --review-path "${readiness_review}" \
+  --activity-log-path "${readiness_activity}" \
+  --tracked-skill-dir "${readiness_tracked_skill_dir}" \
+  --installed-skill-dir "${readiness_installed_skill_dir}" \
+  --state "${state_path}" >/dev/null
+
+python3 - "${state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+readiness = state["readiness_sweep"]
+assert readiness["status"] == "ready"
+assert readiness["execution_mode"] == "hybrid"
+assert readiness["execution_packet"]["status"] == "present"
+assert readiness["review_paths"]["status"] == "declared"
+assert readiness["activity_log_paths"]["status"] == "declared"
+assert readiness["issue_repairs"] == []
+assert state["installed_skill_parity"]["status"] == "matched"
+assert state["structured_prompt_preflight"]["status"] == "ready"
+PY
+
+blocked_readiness_state_path="${tmpdir}/sprint-state-readiness-blocked.json"
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --execution-mode hybrid \
+  --review-path "${readiness_review}" \
+  --activity-log-path "${readiness_activity}" \
+  --tracked-skill-dir "${readiness_tracked_skill_dir}" \
+  --installed-skill-dir "${readiness_installed_skill_dir}" \
+  --state "${blocked_readiness_state_path}" >/dev/null 2>&1; then
+  echo "expected check_sprint_readiness.py to fail when a hybrid sprint omits the execution packet path" >&2
+  exit 1
+fi
+
+python3 - "${blocked_readiness_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+readiness = state["readiness_sweep"]
+assert readiness["status"] == "blocked"
+assert readiness["execution_packet"]["status"] == "blocked"
+PY
+
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/srp.md" <<'EOF2'
 ---
 issue: 2828
@@ -295,6 +384,34 @@ assert preflight["status"] == "needs_editor_repair"
 wp06 = [result for result in preflight["issue_results"] if result["issue_number"] == 2828][0]
 assert "srp-editor" in wp06["required_editor_skills"]
 assert any("srp.md" in defect for defect in wp06["design_time_defects"])
+PY
+
+repair_readiness_state_path="${tmpdir}/sprint-state-readiness-repair.json"
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --execution-mode hybrid \
+  --execution-packet-path "${readiness_packet}" \
+  --review-path "${readiness_review}" \
+  --activity-log-path "${readiness_activity}" \
+  --tracked-skill-dir "${readiness_tracked_skill_dir}" \
+  --installed-skill-dir "${readiness_installed_skill_dir}" \
+  --state "${repair_readiness_state_path}" >/dev/null 2>&1; then
+  echo "expected check_sprint_readiness.py to fail with needs_repair when child issue cards need editor work" >&2
+  exit 1
+fi
+
+python3 - "${repair_readiness_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+readiness = state["readiness_sweep"]
+assert readiness["status"] == "needs_repair"
+repair = next(item for item in readiness["issue_repairs"] if item["issue_number"] == 2828)
+assert "srp-editor" in repair["next_skills"]
+assert repair["status"] == "needs_editor_repair"
 PY
 
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/srp.md" <<'EOF2'
