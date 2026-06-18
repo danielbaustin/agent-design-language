@@ -2,14 +2,13 @@
 
 ## Scope
 
-This packet records the bounded closeout-ready matrix for WP-05
+This packet records the bounded closeout matrix for WP-05
 provider/model reliability and multi-agent readiness.
 
-It does not close umbrella `#3970`. It records what each child slice now proves,
-what remains limited, and what `v0.92` may consume safely once the child PRs are
-reviewed.
-
-As-of date for mutable PR-backed status language in this packet: June 18, 2026.
+It is now a merged truth surface on `main` for the child closeout layer. It
+does not replace the umbrella closeout packet for `#3970`, but it does record
+what each child slice now proves, what remains limited, and what `v0.92` may
+consume safely after the full provider wave landed.
 
 ## Closeout posture
 
@@ -18,10 +17,10 @@ Current bounded posture for WP-05 as of June 18, 2026:
 - child proof packets exist for provider/capability boundaries, role
   suitability, OpenRouter and Gemma reliability, failure-mode integration,
   fixture sanitation, and role-provider routing
-- the provider tranche is ready for umbrella review consideration
-- the tranche is not yet a merged-final milestone truth surface on `main`
-- umbrella `#3970` must remain open until the child PR wave is reviewed and the
-  final umbrella closeout is written
+- the provider tranche is merged on `main`
+- umbrella `#3970` is closed after merge of the non-closing umbrella PR `#4082`
+- the tranche is now a merged milestone truth surface with explicit residual
+  limitations and follow-ons
 
 ## Source evidence
 
@@ -37,7 +36,7 @@ Tracked local supporting context available in this worktree:
 - `adl/src/resilience.rs`
 - `adl/src/provider_communication.rs`
 
-PR-backed child proof context consumed by this closeout packet:
+Merged child proof context consumed by this closeout packet:
 
 - `#4007` / PR `#4063`
 - `#4008` / PR `#4065`
@@ -50,28 +49,29 @@ PR-backed child proof context consumed by this closeout packet:
 
 | Surface | Child issue | Current bounded status | What is proven | Limits / non-claims | Proposed closeout classification |
 | --- | --- | --- | --- | --- | --- |
-| Provider profile boundary | `#4007` | `pr_backed_context_as_of_2026_06_18` | provider profiles and capability profiles are separate abstractions; provider profiles remain deterministic substrate descriptors | does not prove role routing, reliability, or closeout by itself; authored input drift remains captured for remediation | propose inclusion as the substrate boundary |
-| Role suitability matrix | `#4008` | `pr_backed_context_as_of_2026_06_18` | current strongest planning, coding, review, and watcher lanes are classified with named limits | does not prove universal model reliability or authority-bearing orchestration | propose inclusion as the role-suitability evidence layer |
-| OpenRouter reliability | `#4009` | `pr_backed_context_as_of_2026_06_18` | OpenRouter is the strongest current hosted-route proof lane with fail-closed auth behavior | no universal OpenRouter, JSON-mode, or tool-call claim | propose inclusion as bounded hosted reliability |
-| Remote Gemma reliability | `#4009` | `pr_backed_context_as_of_2026_06_18` | larger remote Gemma watcher lanes returned useful bounded output, strongest through `adl-provider-adapter` on `gemma4:31b` | no broad Gemma autonomy or universal prompt-shape claim | propose inclusion as bounded watcher-lane reliability |
+| Provider profile boundary | `#4007` | `merged_main_truth_as_of_2026_06_18` | provider profiles and capability profiles are separate abstractions; provider profiles remain deterministic substrate descriptors | does not prove role routing, reliability, or closeout by itself; authored input drift remains captured for remediation | included as the substrate boundary |
+| Role suitability matrix | `#4008` | `merged_main_truth_as_of_2026_06_18` | current strongest planning, coding, review, and watcher lanes are classified with named limits | does not prove universal model reliability or authority-bearing orchestration | included as the role-suitability evidence layer |
+| OpenRouter reliability | `#4009` | `merged_main_truth_as_of_2026_06_18` | OpenRouter is the strongest current hosted-route proof lane with fail-closed auth behavior | no universal OpenRouter, JSON-mode, or tool-call claim | included as bounded hosted reliability |
+| Remote Gemma reliability | `#4009` | `merged_main_truth_as_of_2026_06_18` | larger remote Gemma watcher lanes returned useful bounded output, strongest through `adl-provider-adapter` on `gemma4:31b` | no broad Gemma autonomy or universal prompt-shape claim | included as bounded watcher-lane reliability |
 | Direct hosted lanes | `#4009` | `blocked_or_candidate_only` | prior baseline preserved credential-blocked truth for direct hosted OpenAI, Anthropic, Gemini, and DeepSeek-native probes | not promoted to reliable defaults without credentialed live proof | keep as explicit blockers / candidates for future proof |
 | Local Ollama lanes | `#4009` | `candidate_only` | inventory-known and partially evidenced in adjacent packets | no broad local-model reliability claim | keep as future-proof candidates |
-| Failure-mode integration | `#4010` | `pr_backed_context_as_of_2026_06_18` | provider failures map into shared resilience vocabulary and six policy families | not every provider path is proven to execute every resilience policy today | propose inclusion as the routing and policy-consumption contract |
+| Failure-mode integration | `#4010` | `merged_main_truth_as_of_2026_06_18` | provider failures map into shared resilience vocabulary and six policy families | not every provider path is proven to execute every resilience policy today | included as the routing and policy-consumption contract |
 | Logging / diagnostics floor | `#3997` consumed by `#4009` and `#4010` | `tracked_local_proof` | provider route/model identity, bounded failure kinds, and redacted diagnostics exist for documented paths | not full telemetry parity for every raw probe lane | include as the diagnostic floor for WP-05 claims |
-| Fixture sanitation | `#4011` | `pr_backed_context_as_of_2026_06_18` | scanned durable packet roots are free of private-LAN literals and host-local portability residue | bounded to the scanned proof roots; does not close every historical fixture issue automatically | propose inclusion for bounded durable packet hygiene |
-| Role-provider profiles | `#4053` | `pr_backed_context_as_of_2026_06_18` | stable C-SDLC role-provider abstractions, deterministic route-resolution policy, and advisory-only authority boundaries are documented | does not claim the routing layer is already implemented in code or that every useful lane has a static provider profile id | propose inclusion as the provider-routing contract layer |
+| Fixture sanitation | `#4011` | `merged_main_truth_as_of_2026_06_18` | scanned durable packet roots are free of private-LAN literals and host-local portability residue | bounded to the scanned proof roots; does not close every historical fixture issue automatically | included for bounded durable packet hygiene |
+| Role-provider profiles | `#4053` | `merged_main_truth_as_of_2026_06_18` | stable C-SDLC role-provider abstractions, deterministic route-resolution policy, and advisory-only authority boundaries are documented | does not claim the routing layer is already implemented in code or that every useful lane has a static provider profile id | included as the provider-routing contract layer |
 | v0.92 consumption boundary | `#4012` | `ready_to_route` | `v0.92` may consume role-scoped provider readiness with named limits and explicit non-claims | may not infer training readiness, general intelligence, broad benchmark superiority, or autonomous repo authority | include as the release-consumption rule |
 
 ## Final WP-05 disposition
 
-WP-05 is now proposed as closeout-ready in the bounded sense required for review:
+WP-05 child closeout truth is now established on `main`:
 
 - every named provider reliability surface has a current classification,
   proving packet, or blocker state
 - unsupported surfaces are still visible as blockers or candidate-only lanes
 - the role-provider enhancement from `#4053` is accounted for as a documented
   routing contract rather than hidden scope expansion
-- no child packet claims merged-final umbrella closure on its own
+- the child wave has merged and the umbrella has separately closed
+- no child packet claims that every provider/model lane is production-ready
 
 ## Residual blockers and follow-ons
 
@@ -96,6 +96,13 @@ routed for remediation rather than fixed here:
   shape assumed by some older operator habits, so live issue-state probing
   should keep using the current PR tooling surface or an updated documented path
 
+Lifecycle traceability note:
+
+- umbrella PR `#4082` merged as a non-closing lifecycle PR and therefore has no
+  `closingIssuesReferences`; umbrella issue `#3970` was closed manually after
+  merge and that manual-close path should be treated as intentional truth, not
+  inferred closing linkage
+
 ## v0.92 consumption rule
 
 `v0.92` may consume WP-05 only as:
@@ -117,9 +124,8 @@ routed for remediation rather than fixed here:
 
 ## Non-Claims
 
-- This packet does not close umbrella `#3970`.
-- This packet does not claim the child PRs are reviewed/merged just because the
-  proof packets exist.
+- This packet is not the sole umbrella closeout authority; umbrella closure is
+  recorded separately in `WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md`.
 - This packet does not claim every provider lane is production-ready.
 - This packet does not claim OpenTelemetry, Observatory consumption, or runtime
   provider portability beyond the bounded proofs already written elsewhere.

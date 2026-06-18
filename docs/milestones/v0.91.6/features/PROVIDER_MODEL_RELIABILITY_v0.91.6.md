@@ -4,13 +4,13 @@
 
 - Feature Name: Provider And Model Reliability
 - Milestone Target: `v0.91.6`
-- Status: `m_05_reliability_closeout_matrix_defined`
+- Status: `wp_05_provider_sprint_completed`
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture
 - Proof Modes: tests, review, replay
-- Related issues: `#3970`, `#4007`, `#4008`
-- Current issue packet: `docs/milestones/v0.91.6/review/provider/PROVIDER_ROLE_SUITABILITY_MATRIX_4008.md`
+- Related issues: `#3970`, `#4007`, `#4008`, `#4009`, `#4010`, `#4011`, `#4012`, `#4053`
+- Primary issue packets: `docs/milestones/v0.91.6/review/provider/PROVIDER_ROLE_SUITABILITY_MATRIX_4008.md`, `docs/milestones/v0.91.6/review/provider/PROVIDER_RELIABILITY_CLOSEOUT_MATRIX_4012.md`, `docs/milestones/v0.91.6/review/provider/WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md`
 - Upstream catalog dependency: `#4007` / PR `#4063` merged (`PROVIDER_CAPABILITY_PROFILE_CATALOG_4007.md`)
 
 ## Purpose
@@ -48,7 +48,7 @@ Out of scope:
 
 ## Dependencies
 
-- `#4007` provider/capability catalog split and its PR-pending proof note.
+- `#4007` provider/capability catalog split and its merged proof note.
 - `docs/milestones/v0.91.5/features/PROVIDER_MODEL_MATRIX_v0.91.5.md`
 - `docs/milestones/v0.91.5/features/MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md`
 - `docs/milestones/v0.91.5/review/multi_agent_matrix/PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md`
