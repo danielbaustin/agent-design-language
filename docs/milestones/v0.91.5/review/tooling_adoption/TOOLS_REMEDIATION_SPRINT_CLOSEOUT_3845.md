@@ -42,9 +42,9 @@ PR #3858 was still active.
 Final live state:
 
 - `#3797` is CLOSED.
-- PR `#3858` is MERGED.
-- PR `#3858` checks completed with `adl-ci` success, `adl-coverage` success,
-  and `adl-slow-proof` skipped.
+- The earlier local-only readiness note's PR-specific block no longer keeps the
+  sprint open, but this reviewer-facing closeout packet now records only the
+  issue-closeout facts proven through the ADL-native issue inspection surface.
 
 No #3845 sprint-tail issue remains open.
 
@@ -59,9 +59,6 @@ Final review used live GitHub and repo workflow state:
   #3834, and #3835
   - confirmed every sprint child and tail issue is `closed` through the
     Rust-owned issue inspection surface rather than raw `gh issue view`.
-- `gh pr view 3858`
-  - confirmed PR #3858 is MERGED and its required checks succeeded or were
-    intentionally skipped.
 
 ## Residual Boundaries
 
