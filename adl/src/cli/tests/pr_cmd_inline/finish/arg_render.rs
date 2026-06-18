@@ -830,7 +830,69 @@ fn finish_validation_plan_classifies_owner_validation_lanes() {
 }
 
 #[test]
+fn finish_validation_plan_classifies_resilience_runtime_publication_paths() {
+    let provider_plan = select_finish_validation_plan("adl/src/provider_communication.rs")
+        .expect("provider communication runtime plan");
+    assert_eq!(
+        provider_plan.mode,
+        FinishValidationMode::LargerBinaryFocused
+    );
+    assert!(provider_plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --lib provider_communication".to_string()
+    ));
+    assert!(provider_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+    assert!(!provider_plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+
+    let resilience_plan =
+        select_finish_validation_plan("adl/src/resilience.rs").expect("resilience runtime plan");
+    assert_eq!(
+        resilience_plan.mode,
+        FinishValidationMode::LargerBinaryFocused
+    );
+    assert!(resilience_plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --lib resilience".to_string()));
+    assert!(resilience_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+    assert!(!resilience_plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+
+    let mixed_plan = select_finish_validation_plan(
+        "adl/src/lib.rs,adl/src/provider_communication.rs,adl/src/resilience.rs,docs/milestones/v0.91.6/features/RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md",
+    )
+    .expect("mixed resilience runtime plan");
+    assert_eq!(mixed_plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(mixed_plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --lib provider_communication".to_string()
+    ));
+    assert!(mixed_plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --lib resilience".to_string()));
+    assert!(mixed_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+    assert!(!mixed_plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+}
+
+#[test]
 fn finish_validation_plan_classifies_rust_refactor_slices() {
+    let lib_plan = select_finish_validation_plan("adl/src/lib.rs").expect("lib plan");
+    assert_eq!(lib_plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(lib_plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl".to_string()));
+
     let prompt_editor_plan = select_finish_validation_plan(
         "adl/src/csdlc_prompt_editor.rs,adl/src/csdlc_prompt_editor/structure.rs",
     )
@@ -1233,6 +1295,69 @@ fn finish_helper_paths_run_narrow_finish_focused_validation() {
     ));
     assert!(!cargo_calls.contains(" cli::pr_cmd\n"));
     assert!(!cargo_calls.contains("clippy --manifest-path"));
+}
+
+#[test]
+fn finish_runtime_paths_run_module_focused_validation_and_runtime_lane() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-runtime-focused-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/run_owner_validation_lane.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> \"$FOCUSED_LOG\"\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    let focused_log = temp.join("focused.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan =
+        select_finish_validation_plan("adl/src/provider_communication.rs,adl/src/resilience.rs")
+            .expect("runtime focused plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    run_finish_validation_rust(&repo, &plan).expect("runtime focused validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("--lib provider_communication"));
+    assert!(cargo_calls.contains("--lib resilience"));
+    assert!(!cargo_calls.contains("clippy --manifest-path"));
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains("runtime --build"));
 }
 
 #[test]
