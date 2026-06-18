@@ -1238,7 +1238,10 @@ fn finish_path_is_small_binary_focused(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(
         trimmed,
-        "adl/tools/pr.sh" | "adl/tools/test_pr_small_binary_delegation.sh"
+        "adl/tools/pr.sh"
+            | "adl/tools/test_pr_small_binary_delegation.sh"
+            | "adl/tools/test_install_adl_operational_skills.sh"
+            | "adl/tools/test_sprint_conductor_helpers.sh"
     ) || finish_path_needs_pr_finish_rust_focused_validation(trimmed)
 }
 

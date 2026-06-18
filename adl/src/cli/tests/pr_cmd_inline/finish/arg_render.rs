@@ -1039,6 +1039,27 @@ fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_sprint_shell_helper_tests_as_small_binary_focused() {
+    let plan = select_finish_validation_plan_for_finish(
+        ".",
+        &[
+            "adl/tools/test_install_adl_operational_skills.sh".to_string(),
+            "adl/tools/test_sprint_conductor_helpers.sh".to_string(),
+        ],
+    )
+    .expect("sprint shell helper plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert_eq!(
+        plan.commands,
+        vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+        ]
+    );
+}
+
+#[test]
 fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
     let plan = select_finish_validation_plan_for_finish(
         ".",
