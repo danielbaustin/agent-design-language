@@ -147,7 +147,7 @@ values-rendered card path is available.
 skill. It coordinates one sprint issue across an explicit child issue wave
 using the existing lifecycle/editor stack, then assembles sprint review and
 sprint closeout evidence. Sprint umbrellas should carry a Sprint Execution
-Packet from `docs/templates/SPRINT_EXECUTION_PACKET_TEMPLATE.md` or equivalent
+Packet from `docs/templates/sprints/1.0.0/sprint_execution_packet.md` or equivalent
 issue-body sections that name execution mode, dependency order, safe parallel
 lanes, serial gates, PVF notes, review bar, closeout bar, and residual routing.
 Current helper scripts still model one local current issue; parallel lanes are

@@ -12,7 +12,7 @@
 - List work items in planned execution order.
 - Track blockers here (not scattered chat notes).
 - For a sprint umbrella or mini-sprint, include or link a Sprint Execution
-  Packet from `docs/templates/SPRINT_EXECUTION_PACKET_TEMPLATE.md` so
+  Packet from `docs/templates/sprints/1.0.0/sprint_execution_packet.md` so
   dependency order, safe parallel lanes, PVF notes, and closeout bars are
   durable rather than chat-only.
 

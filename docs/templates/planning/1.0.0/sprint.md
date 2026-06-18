@@ -19,7 +19,7 @@
 - Keep sidecar or support work visible and bounded.
 - Record closeout expectations before execution begins.
 - For sprint umbrellas and mini-sprints, fill a Sprint Execution Packet using
-  `docs/templates/SPRINT_EXECUTION_PACKET_TEMPLATE.md` or embed the same
+  `docs/templates/sprints/1.0.0/sprint_execution_packet.md` or embed the same
   sections here so order, parallel lanes, PVF notes, and closeout truth are
   reviewable.
 
