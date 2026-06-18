@@ -12,32 +12,33 @@
 - Export contract proof note: [PUBLIC_PROMPT_RECORDS_EXPORT_CONTRACT_4002.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_EXPORT_CONTRACT_4002.md)
 - Redaction/publication safety proof note: [PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md)
 - Validation/indexing proof note: [PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md)
+- Security/CAV handoff packet: [PUBLIC_PROMPT_RECORDS_SECURITY_CAV_HANDOFF_4005.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_SECURITY_CAV_HANDOFF_4005.md)
 
 ## Template Rules
 
 This is a feature-scope contract and bridge record. It defines what public prompt
 records must look like, what source-selection policy the bridge intends to
-preserve, which publication-safety classes are allowed, and how validation and
-reviewer-facing indexing work at the current milestone boundary. It does not by
-itself prove security signoff, CAV approval, distribution approval, or release
-approval.
+preserve, which publication-safety classes are allowed, how validation and
+reviewer-facing indexing work at the current milestone boundary, and what
+security review/CAV handoff is required before distribution proof. It does not
+by itself prove CAV completion, distribution approval, or release approval.
 
 ## Purpose
 
 Define the `v0.91.6` contract for exporting public prompt records from local
 C-SDLC authoring state without promoting local `.adl` records into public truth,
 while keeping enforcement claims aligned with the current exporter and validator
-surfaces and making publication-safety, validation, and reviewer-facing index
-rules explicit.
+surfaces and making publication-safety, validation, reviewer-facing index,
+and security-review handoff rules explicit.
 
 ## Context
 
 `v0.91.5` established the first exporter and validator surface for public
 prompt packets plus a reviewer-facing pilot index. `v0.91.6` must now make the
 export shape, provenance, source-selection rules, publication-safety posture,
-validation contract, and public index rules explicit enough that later security
-review and distribution work can build on a stable contract instead of inferring
-one from implementation details.
+validation contract, public index rules, and activation-path security boundary
+explicit enough that later security review and distribution work can build on a
+stable contract instead of inferring one from implementation details.
 
 Public prompt records remain projections of local authoring state. The canonical
 editable lifecycle state continues to live in local `.adl/<version>/tasks/...`
@@ -51,20 +52,22 @@ This feature owns:
 - provenance and public metadata requirements
 - redaction and publication-safety policy for public prompt records
 - validation and reviewer-facing public index rules
+- bounded security review and CAV handoff for the public prompt-record surface
 - ineligible source and record categories
-- truthful proof notes for export shape, publication safety, and validation/indexing
+- truthful proof notes for export shape, publication safety, validation/indexing,
+  and security/CAV handoff
 - explicit separation between already-proven enforcement and later hardening
 
 This feature does not yet own:
-- security approval for publication
-- CAV approval
+- CAV completion
 - final public distribution workflow
 - exporter hardening beyond what current repository evidence already proves
-- full threat modeling for public-record publication
+- full threat modeling for all ADL security surfaces
+- broader provider/model, ACIP/A2A, or product-wide security closure
 
 ## Overview
 
-The public prompt-record bridge has three distinct layers:
+The public prompt-record bridge has four distinct layers:
 
 1. local authoring truth
    - issue-local `.adl` task bundles, source prompts, and review/output cards
@@ -74,6 +77,10 @@ The public prompt-record bridge has three distinct layers:
    - tracked reviewer-facing indexes and proof notes that describe which packets
      are included, why they are included, and what validation/publication-safety
      posture they satisfy
+4. activation-path security truth
+   - bounded review packets that record what abuse classes were reviewed,
+     which are already covered by current packet controls, which remain blocked
+     for distribution, and which must be carried into WP-07 CAV/security work
 
 `v0.91.6` makes that boundary explicit. Export is intended to operate only from
 approved, issue-bounded authoring sources, but current enforcement is layered:
@@ -89,9 +96,11 @@ approved, issue-bounded authoring sources, but current enforcement is layered:
   silent exporter rewriting of local `.adl` source cards
 - reviewer-facing public indexing currently uses a maintained tracked index
   surface rather than a separate generator binary
-- stricter source-admission checks for explicit override paths remain a policy
-  requirement for the bridge, but are not yet fully proven as export-time
-  rejection behavior by `#4002`
+- security review for public prompt records is now a required bounded handoff
+  surface before distribution proof, not an implied later cleanup step
+- broader adversarial verification, provider trust, malformed-output, and
+  ACIP/A2A security residuals still route through the security bridge/CAV lane
+  rather than hiding inside the packet export workflow
 
 ## Design
 
@@ -318,6 +327,67 @@ Current proof boundary:
 - reviewer-facing index completeness therefore remains a maintained-doc contract
   backed by focused docs/path proof rather than a fully machine-enforced gate
 
+### Security review and CAV handoff contract
+
+Public prompt records are not distributable merely because export,
+redaction/publication safety, and validation/indexing boundaries exist.
+Distribution remains blocked until the public prompt-record surface has a
+bounded security-review result and a truthful handoff into the broader
+security/CAV lane.
+
+The current bounded review classes for this surface are:
+
+- `reviewed_and_currently_covered`
+  - abuse classes already bounded by the existing packet contract and reviewed
+    evidence
+- `reviewed_and_routed`
+  - abuse classes reviewed here but intentionally handed to WP-07 for broader
+    adversarial verification, provider trust, or cross-surface security work
+- `distribution_blocker`
+  - anything that would permit public prompt-record distribution without a
+    completed security review result or without resolving/routing accepted
+    findings
+
+Security/publication abuse classes that must be reviewed before WP-04 closeout:
+
+- secret exposure through packet content or reviewer/public projections
+- raw provider log or raw provider payload exposure
+- private path leakage or worktree/local-state leakage
+- misleading provenance, spoofed tracker identity, or packet/index metadata that
+  could make a packet look safer or more canonical than it is
+- prompt injection or malicious text inside prompt-record artifacts that could
+  mislead downstream consumers or reviewer/public projections
+- provider-trust and transformed-artifact boundary confusion where a redacted
+  projection could be mistaken for raw authoritative history
+
+Current proven security posture for this issue family:
+
+- `#4003` already covers secret exposure, raw prompt/provider-output reduction,
+  and explicit reviewed redacted-projection posture
+- `#4004` already covers invalid provenance/tracker metadata refusal for
+  accepted packets and the maintained reviewer-index boundary
+- `#4005` does not claim that these controls alone complete CAV or all prompt
+  injection/provider trust analysis
+
+Distribution rule carried forward into WP-04:
+
+- public prompt records are not distributed without security review or an
+  explicit blocked state
+- accepted security findings must be fixed or routed before WP-04 closeout
+- unresolved broader security/CAV work must be handed off explicitly to the
+  security bridge lane rather than disappearing inside the public-records docs
+
+### WP-07 handoff boundary
+
+WP-04 owns the bounded public-record review and handoff surface.
+WP-07 owns the broader security bridge and CAV work, including:
+
+- dynamic adversarial verification beyond the current static packet contract
+- broader provider/model trust and malformed-output checks
+- cross-surface security implications for ACIP/A2A/provider communications
+- any public-record security residual that cannot be closed truthfully in this
+  bounded docs-only wave
+
 ### Non-exportable / non-publishable categories
 
 The following categories are not acceptable as public prompt-record inputs,
@@ -413,6 +483,19 @@ See [PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md](../review/publi
 
 See [PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md).
 
+### Security/CAV handoff surface
+
+`#4005` uses three bounded evidence classes:
+
+- already-covered public-record security controls:
+  - the `#4003` publication-safety proof note and `#4004` validation/indexing proof note
+- reviewed historical abuse cases and their repairs:
+  - the v0.91.5 internal/external review findings on raw prompt/output exposure and misleading public evidence posture
+- explicit handoff to the security bridge lane:
+  - [SECURITY_BRIDGE_AND_CAV_v0.91.6.md](SECURITY_BRIDGE_AND_CAV_v0.91.6.md)
+
+See [PUBLIC_PROMPT_RECORDS_SECURITY_CAV_HANDOFF_4005.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_SECURITY_CAV_HANDOFF_4005.md).
+
 ## Determinism and Constraints
 
 - local `.adl` state remains the authoring surface
@@ -425,8 +508,11 @@ See [PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md](../review/public_prompt_
   and must not require private local state outside repo-relative references
 - reviewer-facing indexes must include validated exported packets and omit
   refused records
+- public prompt records remain blocked for distribution until bounded security
+  review exists and broader residuals are either fixed or explicitly routed
 - later lanes may tighten enforcement, but they must not silently change this
-  issue's declared packet identity, publication-safety, or indexing contract
+  issue's declared packet identity, publication-safety, validation/indexing, or
+  security-handoff contract
 - later lanes must distinguish exporter-side guarantees from validator-side
   guarantees instead of collapsing them into one implied control
 - redacted reviewer/public projections must be explicit and reviewable rather
@@ -441,25 +527,22 @@ See [PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md](../review/public_prompt_
 
 ## Validation
 
-This issue's proof is documentation/provenance proof, not runtime proof.
-Validation for `#4004` should confirm:
+This issue family's proof is documentation/provenance/review proof, not runtime
+proof. Validation for `#4005` should confirm:
 
-- the feature doc defines one stable validation contract for accepted packets
-- packet-root validation and reviewer-facing index rules are explicit
-- the doc distinguishes exporter-proven behavior from validator-proven behavior
-- tracker metadata, provenance, and redaction-block requirements match the
-  current accepted packet contract
-- public indexes include validated exported records and omit refused records by rule
-- broken links or stale packet paths are covered by the current validator/index
-  contract
-- the accepted, invalid, and index example surfaces are linked to real repo
-  evidence
-- validation can run without private local state outside repo-relative packet
-  references
+- the feature doc defines one bounded security-review and CAV-handoff contract
+- public prompt records remain blocked for distribution until security review is
+  complete or explicitly blocked
+- reviewed abuse classes include secret exposure, provider-log/payload exposure,
+  private path leakage, misleading provenance, prompt-injection-style misleading
+  artifacts, and provider-trust confusion
+- already-covered classes are separated from broader residuals routed to WP-07
+- accepted security findings are fixed or routed before WP-04 closeout
+- no private details are published in the review packet
 
-This issue does not prove security approval, distribution approval, or a new
-machine-generated indexer. Those remain separately tracked and must not be
-claimed from `#4004` alone.
+This issue does not prove CAV completion, dynamic adversarial coverage, or final
+public distribution approval. Those remain separately tracked and must not be
+claimed from `#4005` alone.
 
 ## Acceptance Criteria
 
@@ -474,10 +557,12 @@ claimed from `#4004` alone.
 - Real allowed, redacted, refused, valid, invalid, and reviewer-index evidence
   surfaces are linked for review.
 - The reviewer-facing public index rules are explicit and omit refused records.
+- The security-review/CAV-handoff rules are explicit and keep distribution
+  blocked until review/routing truth exists.
 - The doc states clearly that local `.adl` remains the authoring surface and
   public packets are projections.
-- The doc does not overclaim exporter-side or universal completed-card
-  validation guarantees that are not yet proven.
+- The doc does not overclaim exporter-side, universal completed-card validation,
+  or completed CAV/security guarantees that are not yet proven.
 
 ## Risks
 
@@ -492,18 +577,21 @@ claimed from `#4004` alone.
   exposure.
 - If packet-root validation and reviewer indexes drift apart, reviewers can be
   shown stale or incomplete packet navigation.
+- If security review is treated as narrative rather than an explicit activation-
+  path gate, public prompt records can be distributed with unresolved abuse
+  classes hidden behind documentation theater.
 
 ## Future Work
 
-- codify security review/CAV routing (`#4005`)
 - prove bounded distribution and closeout (`#4006`)
 - harden exporter-side source-admission checks if later implementation work is
   needed to enforce the full bridge policy at export time
 - add machine-readable reviewer-index summary output only if later tooling work
   proves it is stable and useful
+- execute broader security bridge and CAV residuals through WP-07
 
 ## Notes
 
 `v0.92` may consume public prompt records only after export, redaction,
-validation, indexing, evidence, security-review, and distribution boundaries
-are all completed truthfully.
+validation, indexing, evidence, security-review, CAV/distribution boundaries,
+and closeout truth are all completed truthfully.
