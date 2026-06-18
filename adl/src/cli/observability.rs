@@ -350,20 +350,12 @@ mod tests {
         append_to_compatibility_log, emit_event, format_event_line, heartbeat_interval,
         sanitize_value, ProgressHeartbeat,
     };
+    use crate::test_support::env_lock;
     use std::env;
     use std::fs;
-    use std::path::PathBuf;
-    use std::sync::{Mutex, MutexGuard, OnceLock};
+    use std::path::{Path, PathBuf};
+    use std::sync::MutexGuard;
     use std::time::{Instant, SystemTime, UNIX_EPOCH};
-
-    static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-
-    fn env_lock() -> MutexGuard<'static, ()> {
-        match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
-            Ok(guard) => guard,
-            Err(poisoned) => poisoned.into_inner(),
-        }
-    }
 
     struct MultiEnvGuard {
         saved: Vec<(String, Option<std::ffi::OsString>)>,
@@ -407,6 +399,17 @@ mod tests {
         dir
     }
 
+    fn read_log_with_retry(path: &Path, needle: &str) -> String {
+        for _ in 0..10 {
+            let contents = fs::read_to_string(path).expect("read observability log");
+            if contents.contains(needle) {
+                return contents;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(25));
+        }
+        fs::read_to_string(path).expect("read observability log")
+    }
+
     #[test]
     fn sanitize_value_redacts_secret_markers() {
         assert_eq!(sanitize_value("api-token-value"), "<redacted>");
@@ -415,8 +418,10 @@ mod tests {
 
     #[test]
     fn sanitize_value_normalizes_repo_home_and_absolute_paths() {
-        env::set_var("ADL_OBSERVABILITY_REPO_ROOT", "/repo/adl");
-        env::set_var("HOME", "/home/operator");
+        let _env = MultiEnvGuard::set_all(&[
+            ("ADL_OBSERVABILITY_REPO_ROOT", "/repo/adl"),
+            ("HOME", "/home/operator"),
+        ]);
 
         assert_eq!(
             sanitize_value("/repo/adl/docs/example.md"),
@@ -440,8 +445,6 @@ mod tests {
             ),
             "diagnostic path=<path>, fallback=<path>"
         );
-
-        env::remove_var("ADL_OBSERVABILITY_REPO_ROOT");
     }
 
     #[test]
@@ -576,7 +579,7 @@ mod tests {
         std::thread::sleep(std::time::Duration::from_millis(80));
         heartbeat.completed(&[("exit_code", "0")]);
 
-        let contents = fs::read_to_string(&log_path).expect("read observability log");
+        let contents = read_log_with_retry(&log_path, "result=completed");
         assert!(contents.contains("command=finish"));
         assert!(contents.contains("stage=validation_subprocess"));
         assert!(contents.contains("result=started"));
@@ -595,7 +598,7 @@ mod tests {
                 log_path.to_str().expect("log path utf8"),
             ),
             ("ADL_OBSERVABILITY_STDERR", "0"),
-            ("ADL_OBSERVABILITY_HEARTBEAT_MS", "250"),
+            ("ADL_OBSERVABILITY_HEARTBEAT_MS", "5000"),
         ]);
 
         let started = Instant::now();
@@ -607,11 +610,11 @@ mod tests {
         std::thread::sleep(std::time::Duration::from_millis(20));
         heartbeat.completed(&[("final_status", "ok")]);
         assert!(
-            started.elapsed() < std::time::Duration::from_millis(150),
+            started.elapsed() < std::time::Duration::from_millis(500),
             "fast operations should not wait for the full heartbeat interval to stop"
         );
 
-        let contents = fs::read_to_string(&log_path).expect("read observability log");
+        let contents = read_log_with_retry(&log_path, "result=completed");
         assert!(contents.contains("result=started"));
         assert!(contents.contains("result=completed"));
         assert!(!contents.contains("result=heartbeat"));

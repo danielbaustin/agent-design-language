@@ -256,19 +256,15 @@ fn repo_relative_observability_ref(path: &Path) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test_support::env_lock as shared_env_lock;
     use std::io::{Read, Write};
     use std::net::TcpListener;
-    use std::sync::{Mutex, MutexGuard, OnceLock};
+    use std::sync::MutexGuard;
     use std::thread;
     use std::time::{SystemTime, UNIX_EPOCH};
 
-    static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-
     fn env_lock() -> MutexGuard<'static, ()> {
-        match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
-            Ok(guard) => guard,
-            Err(poisoned) => poisoned.into_inner(),
-        }
+        shared_env_lock()
     }
 
     fn temp_path(name: &str) -> PathBuf {
