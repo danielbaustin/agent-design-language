@@ -216,10 +216,14 @@ Use the Rust-owned issue inspection commands before execution, review, or
 closeout when you need live GitHub issue truth without falling back to raw
 `gh issue` commands.
 
-Live GitHub issue operations require `GITHUB_TOKEN` or `GH_TOKEN` in the ADL
-command environment. Load that value from an operator-approved secret source
-without echoing it. If the token is missing, stop and fix the ADL command
-environment; do not use direct `gh` or connector issue calls as a fallback.
+Live GitHub issue operations require one shared GitHub token source in the ADL
+command environment. Supported sources are `GITHUB_TOKEN`, `GH_TOKEN`,
+`ADL_GITHUB_TOKEN_FILE`, and `ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE`. The keychain
+source uses the macOS `security find-generic-password` command; keychain users
+may also set `ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT`. Load or configure the source
+without echoing token material. If the token is missing, stop and fix the ADL
+command environment; do not use direct `gh` or connector issue calls as a
+fallback.
 
 Preferred commands:
 

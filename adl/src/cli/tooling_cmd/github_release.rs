@@ -3,6 +3,8 @@ use octocrab::models::repos::Release;
 use std::fs;
 use std::path::PathBuf;
 
+use super::super::github_token::resolve_github_token;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum ReleaseAction {
     EnsureAbsent,
@@ -237,17 +239,14 @@ fn release_id_u64(release: &Release) -> Result<u64> {
 }
 
 fn build_octocrab() -> Result<octocrab::Octocrab> {
-    let token = std::env::var("GITHUB_TOKEN")
-        .ok()
-        .or_else(|| std::env::var("GH_TOKEN").ok())
-        .map(|value| value.trim().to_string())
-        .filter(|value| !value.is_empty())
+    let token = resolve_github_token()
+        .context("github-release token resolver failed")?
         .ok_or_else(|| {
             anyhow!(
-                "github-release requires GITHUB_TOKEN or GH_TOKEN; release operations do not use gh fallback"
+                "github-release requires GITHUB_TOKEN, GH_TOKEN, ADL_GITHUB_TOKEN_FILE, or ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE; release operations do not use gh fallback"
             )
         })?;
-    let builder = octocrab::Octocrab::builder().personal_token(token);
+    let builder = octocrab::Octocrab::builder().personal_token(token.value().to_string());
     #[cfg(test)]
     let builder = if let Ok(base_uri) = std::env::var("ADL_GITHUB_OCTOCRAB_BASE_URI") {
         builder

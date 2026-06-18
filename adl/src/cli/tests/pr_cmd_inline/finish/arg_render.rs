@@ -687,7 +687,7 @@ fn finish_validation_sanitizes_live_github_transport_env() {
     write_executable(
         &bin_dir.join("cargo"),
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'args=%s ADL_GITHUB_CLIENT=%s ADL_GITHUB_DISABLE_GH_FALLBACK=%s ADL_GITHUB_OCTOCRAB_BASE_URI=%s GITHUB_TOKEN=%s GH_TOKEN=%s\\n' \"$*\" \"${{ADL_GITHUB_CLIENT-}}\" \"${{ADL_GITHUB_DISABLE_GH_FALLBACK-}}\" \"${{ADL_GITHUB_OCTOCRAB_BASE_URI-}}\" \"${{GITHUB_TOKEN-}}\" \"${{GH_TOKEN-}}\" >> '{}'\nexit 0\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'args=%s ADL_GITHUB_CLIENT=%s ADL_GITHUB_DISABLE_GH_FALLBACK=%s ADL_GITHUB_OCTOCRAB_BASE_URI=%s GITHUB_TOKEN=%s GH_TOKEN=%s ADL_GITHUB_TOKEN_FILE=%s ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE=%s ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT=%s\\n' \"$*\" \"${{ADL_GITHUB_CLIENT-}}\" \"${{ADL_GITHUB_DISABLE_GH_FALLBACK-}}\" \"${{ADL_GITHUB_OCTOCRAB_BASE_URI-}}\" \"${{GITHUB_TOKEN-}}\" \"${{GH_TOKEN-}}\" \"${{ADL_GITHUB_TOKEN_FILE-}}\" \"${{ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE-}}\" \"${{ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT-}}\" >> '{}'\nexit 0\n",
             cargo_log.display()
         ),
     );
@@ -699,6 +699,9 @@ fn finish_validation_sanitizes_live_github_transport_env() {
         "ADL_GITHUB_OCTOCRAB_BASE_URI",
         "GITHUB_TOKEN",
         "GH_TOKEN",
+        "ADL_GITHUB_TOKEN_FILE",
+        "ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE",
+        "ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT",
     ];
     let old_github_envs = github_envs
         .iter()
@@ -711,6 +714,9 @@ fn finish_validation_sanitizes_live_github_transport_env() {
         env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", "http://127.0.0.1:9");
         env::set_var("GITHUB_TOKEN", "github-secret-token");
         env::set_var("GH_TOKEN", "gh-secret-token");
+        env::set_var("ADL_GITHUB_TOKEN_FILE", "/tmp/secret-token-file");
+        env::set_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE", "secret-service");
+        env::set_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT", "secret-account");
     }
 
     run_finish_validation_rust(
@@ -736,6 +742,9 @@ fn finish_validation_sanitizes_live_github_transport_env() {
     assert!(!cargo_env.contains("octocrab"));
     assert!(!cargo_env.contains("github-secret-token"));
     assert!(!cargo_env.contains("gh-secret-token"));
+    assert!(!cargo_env.contains("/tmp/secret-token-file"));
+    assert!(!cargo_env.contains("secret-service"));
+    assert!(!cargo_env.contains("secret-account"));
     assert!(!cargo_env.contains("127.0.0.1:9"));
     assert!(cargo_env
         .lines()
@@ -948,6 +957,42 @@ fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
         .commands
         .iter()
         .any(|command| command.contains("--doc --all-features")));
+}
+
+#[test]
+fn finish_validation_profile_classifies_github_token_loading_surfaces() {
+    let plan = select_finish_validation_plan_for_finish(
+        ".",
+        &[
+            "adl/src/cli/github_token.rs".to_string(),
+            "adl/src/cli/mod.rs".to_string(),
+            "adl/src/cli/tooling_cmd/github_release.rs".to_string(),
+            "adl/src/cli/pr_cmd/github_client.rs".to_string(),
+            "adl/src/cli/pr_cmd/github.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/support.rs".to_string(),
+            "adl/tools/pr.sh".to_string(),
+            "docs/default_workflow.md".to_string(),
+        ],
+    )
+    .expect("github token loading plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl github_token".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl github_client".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl github_release_octocrab_covers_absent_draft_present_publish"
+            .to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
 }
 
 #[test]

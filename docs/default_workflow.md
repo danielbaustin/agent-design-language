@@ -63,11 +63,14 @@ Minimum init contract:
 
 ## 2) Confirm GitHub Issue Exists And Inspect Live Issue Truth
 
-Live GitHub issue operations use the ADL typed GitHub transport. Provide
-`GITHUB_TOKEN` or `GH_TOKEN` from an operator-approved secret source in the
-command environment without printing the token. Do not fall back to direct
-`gh` commands or connector-specific issue APIs when the ADL issue surface needs
-credentials.
+Live GitHub issue operations use the ADL typed GitHub transport. Configure one
+shared token source for the ADL command environment without printing the token:
+`GITHUB_TOKEN`, `GH_TOKEN`, `ADL_GITHUB_TOKEN_FILE`, or
+`ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE`. The keychain source uses the macOS
+`security find-generic-password` command; when using it, optionally set
+`ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT` to disambiguate the keychain item. Do not
+fall back to direct `gh` commands or connector-specific issue APIs when the ADL
+issue surface needs credentials.
 
 ```bash
 bash ./adl/tools/pr.sh issue view <issue_num> --json

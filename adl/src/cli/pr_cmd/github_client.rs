@@ -6,12 +6,15 @@ use std::collections::BTreeSet;
 use std::fmt;
 use std::marker::PhantomData;
 
+use super::super::github_token::{
+    redact_for_github_token_diagnostics, resolve_github_token, GithubTokenSource,
+    ResolvedGithubToken,
+};
+
 const ADL_GITHUB_CLIENT_ENV: &str = "ADL_GITHUB_CLIENT";
 const ADL_GITHUB_DISABLE_GH_FALLBACK_ENV: &str = "ADL_GITHUB_DISABLE_GH_FALLBACK";
 #[cfg(test)]
 const ADL_GITHUB_OCTOCRAB_BASE_URI_ENV: &str = "ADL_GITHUB_OCTOCRAB_BASE_URI";
-const GITHUB_TOKEN_ENV: &str = "GITHUB_TOKEN";
-const GH_TOKEN_ENV: &str = "GH_TOKEN";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum GithubClientMode {
@@ -61,21 +64,6 @@ impl GithubClientBackend {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum GithubTokenSource {
-    GithubToken,
-    GhToken,
-}
-
-impl GithubTokenSource {
-    pub(super) fn env_name(self) -> &'static str {
-        match self {
-            Self::GithubToken => GITHUB_TOKEN_ENV,
-            Self::GhToken => GH_TOKEN_ENV,
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(super) struct AdlGithubClientConfig {
     pub(super) requested_mode: GithubClientMode,
@@ -102,13 +90,15 @@ impl fmt::Debug for AdlGithubClient {
 
 impl AdlGithubClient {
     pub(super) fn from_env() -> Result<Self, AdlGithubClientError> {
-        Self::from_values_with_fallback_policy(
-            std::env::var(ADL_GITHUB_CLIENT_ENV).ok().as_deref(),
-            std::env::var(GITHUB_TOKEN_ENV).ok().as_deref(),
-            std::env::var(GH_TOKEN_ENV).ok().as_deref(),
-            std::env::var(ADL_GITHUB_DISABLE_GH_FALLBACK_ENV)
-                .ok()
-                .as_deref(),
+        let requested_mode = std::env::var(ADL_GITHUB_CLIENT_ENV).ok();
+        let disable_gh_fallback = std::env::var(ADL_GITHUB_DISABLE_GH_FALLBACK_ENV).ok();
+        let token = resolve_github_token().map_err(|err| {
+            AdlGithubClientError::new(AdlGithubClientErrorKind::Transport, err.to_string())
+        })?;
+        Self::from_resolved_token_with_fallback_policy(
+            requested_mode.as_deref(),
+            token,
+            disable_gh_fallback.as_deref(),
         )
     }
 
@@ -126,9 +116,18 @@ impl AdlGithubClient {
         gh_token: Option<&str>,
         disable_gh_fallback: Option<&str>,
     ) -> Result<Self, AdlGithubClientError> {
+        let token = token_value(github_token, gh_token);
+        Self::from_resolved_token_with_fallback_policy(requested_mode, token, disable_gh_fallback)
+    }
+
+    fn from_resolved_token_with_fallback_policy(
+        requested_mode: Option<&str>,
+        token: Option<ResolvedGithubToken>,
+        disable_gh_fallback: Option<&str>,
+    ) -> Result<Self, AdlGithubClientError> {
         let requested_mode = GithubClientMode::parse(requested_mode)?;
         let gh_fallback_disabled = parse_disable_gh_fallback(disable_gh_fallback)?;
-        let token_source = discover_token_source(github_token, gh_token);
+        let token_source = token.as_ref().map(ResolvedGithubToken::source);
         let backend = match (requested_mode, token_source) {
             (GithubClientMode::Gh, _) => GithubClientBackend::GhFallback,
             (GithubClientMode::Auto, Some(_)) | (GithubClientMode::Octocrab, Some(_)) => {
@@ -139,7 +138,8 @@ impl AdlGithubClient {
                 return Err(AdlGithubClientError::new(
                     AdlGithubClientErrorKind::MissingToken,
                     format!(
-                        "octocrab GitHub client requires {GITHUB_TOKEN_ENV} or {GH_TOKEN_ENV}; covered C-SDLC GitHub workflow operations no longer use shell fallback"
+                        "{}; covered C-SDLC GitHub workflow operations no longer use shell fallback",
+                        missing_token_message()
                     ),
                 ));
             }
@@ -148,10 +148,11 @@ impl AdlGithubClient {
             return Err(AdlGithubClientError::new(
                 AdlGithubClientErrorKind::FallbackDisabled,
                 format!(
-                    "{ADL_GITHUB_DISABLE_GH_FALLBACK_ENV}=1 disables gh fallback; set {GITHUB_TOKEN_ENV} or {GH_TOKEN_ENV} for octocrab-backed mode, or unset {ADL_GITHUB_DISABLE_GH_FALLBACK_ENV}"
+                    "{ADL_GITHUB_DISABLE_GH_FALLBACK_ENV}=1 disables gh fallback; set a shared GitHub token source for octocrab-backed mode, or unset {ADL_GITHUB_DISABLE_GH_FALLBACK_ENV}"
                 ),
             ));
         }
+        let token_value = token.map(|token| token.value().to_string());
         Ok(Self {
             config: AdlGithubClientConfig {
                 requested_mode,
@@ -161,7 +162,7 @@ impl AdlGithubClient {
                     && !gh_fallback_disabled,
                 gh_fallback_disabled,
             },
-            token: token_value(github_token, gh_token),
+            token: token_value,
             _octocrab: PhantomData,
         })
     }
@@ -174,7 +175,7 @@ impl AdlGithubClient {
         let token = self.token.as_deref().ok_or_else(|| {
             AdlGithubClientError::new(
                 AdlGithubClientErrorKind::MissingToken,
-                "octocrab GitHub transport requires GITHUB_TOKEN or GH_TOKEN",
+                missing_token_message(),
             )
         })?;
         let builder = octocrab::Octocrab::builder().personal_token(token.to_string());
@@ -198,25 +199,12 @@ impl AdlGithubClient {
     }
 }
 
-fn discover_token_source(
-    github_token: Option<&str>,
-    gh_token: Option<&str>,
-) -> Option<GithubTokenSource> {
-    if github_token.is_some_and(|value| !value.trim().is_empty()) {
-        Some(GithubTokenSource::GithubToken)
-    } else if gh_token.is_some_and(|value| !value.trim().is_empty()) {
-        Some(GithubTokenSource::GhToken)
-    } else {
-        None
-    }
-}
-
-fn token_value(github_token: Option<&str>, gh_token: Option<&str>) -> Option<String> {
+fn token_value(github_token: Option<&str>, gh_token: Option<&str>) -> Option<ResolvedGithubToken> {
     github_token
-        .map(str::trim)
-        .filter(|value| !value.is_empty())
-        .or_else(|| gh_token.map(str::trim).filter(|value| !value.is_empty()))
-        .map(ToString::to_string)
+        .and_then(|value| ResolvedGithubToken::new(value, GithubTokenSource::GithubToken))
+        .or_else(|| {
+            gh_token.and_then(|value| ResolvedGithubToken::new(value, GithubTokenSource::GhToken))
+        })
 }
 
 fn parse_disable_gh_fallback(raw: Option<&str>) -> Result<bool, AdlGithubClientError> {
@@ -232,6 +220,10 @@ fn parse_disable_gh_fallback(raw: Option<&str>) -> Result<bool, AdlGithubClientE
             ),
         )),
     }
+}
+
+fn missing_token_message() -> &'static str {
+    "octocrab GitHub transport requires GITHUB_TOKEN, GH_TOKEN, ADL_GITHUB_TOKEN_FILE, or ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE"
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -295,20 +287,7 @@ pub(super) fn map_github_status(status: u16, message: impl Into<String>) -> AdlG
 }
 
 pub(super) fn redact_for_diagnostics(input: &str) -> String {
-    let mut redacted = Vec::new();
-    for token in input.split_whitespace() {
-        let lower = token.to_ascii_lowercase();
-        if lower.contains("token=")
-            || lower.contains("authorization:")
-            || lower.starts_with("ghp_")
-            || lower.starts_with("github_pat_")
-        {
-            redacted.push("<redacted>");
-        } else {
-            redacted.push(token);
-        }
-    }
-    redacted.join(" ")
+    redact_for_github_token_diagnostics(input)
 }
 
 pub(super) fn issue_labels_from_csv_in_order(labels_csv: &str) -> Vec<String> {
@@ -497,6 +476,7 @@ fn closing_keyword_match_targets_issue(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cli::github_token::{GH_TOKEN_ENV, GITHUB_TOKEN_ENV};
     use crate::cli::tests::env_lock as cli_env_lock;
 
     fn env_lock() -> std::sync::MutexGuard<'static, ()> {
