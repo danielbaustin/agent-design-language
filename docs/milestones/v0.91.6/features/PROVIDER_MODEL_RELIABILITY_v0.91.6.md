@@ -4,48 +4,56 @@
 
 - Feature Name: Provider And Model Reliability
 - Milestone Target: `v0.91.6`
-- Status: `m_00_provider_capability_catalog_defined`
+- Status: `m_01_role_suitability_matrix_defined`
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture
 - Proof Modes: tests, review, replay
-- Related issues: `#3970`, `#4007`
-- Catalog proof note: [PROVIDER_CAPABILITY_PROFILE_CATALOG_4007.md](../review/provider/PROVIDER_CAPABILITY_PROFILE_CATALOG_4007.md)
+- Related issues: `#3970`, `#4007`, `#4008`
+- Current issue packet: `docs/milestones/v0.91.6/review/provider/PROVIDER_ROLE_SUITABILITY_MATRIX_4008.md`
+- Upstream catalog dependency: `#4007` / PR `#4063` merged (`PROVIDER_CAPABILITY_PROFILE_CATALOG_4007.md`)
 
 ## Purpose
 
-Define model/provider suitability for reliable multi-agent operation before
-`v0.92` consumes provider or birthday-demo claims.
+Define role-scoped provider/model suitability for reliable multi-agent operation
+before `v0.92` consumes provider, watcher, or birthday-demo claims.
 
 ## Scope
 
 In scope:
 
-- hosted, local, remote, OpenRouter, and Gemma lanes;
-- provider-profile versus capability-profile catalog boundaries;
-- role suitability for planning, review, execution, and synthesis;
-- failure modes, timeouts, malformed outputs, and retry expectations;
-- multi-agent readiness and proof limits.
+- hosted, local, remote, OpenRouter, and Gemma role lanes;
+- role suitability for planning, coding, review, summarization, orchestration,
+  watcher/janitor, local/offline, and constrained fallback use;
+- explicit separation between provider infrastructure, model capability, and
+  role-routing policy;
+- evidence-status fields, known limits, and failure-mode routing;
+- bounded consumption notes for later capability-based delegation work.
 
 Out of scope:
 
 - model training;
 - Aptitude Atlas productization;
-- broad benchmark product claims.
+- broad benchmark product claims;
+- identity, citizen, or institutional authority modeling.
 
 ## Required Decisions
 
-- Which models may be used for which C-SDLC roles?
-- Which models are useful with limits versus blocked?
-- What evidence makes Gemma reliable enough for multi-agent work?
-- How are provider failures surfaced and routed?
-- Which fields belong to provider infrastructure profiles versus capability profiles?
+- Which provider/model lanes are supported, useful with limits, blocked, or
+  only inventory-known for each role?
+- Which lanes are proven through native provider surfaces versus historical or
+  comparative packets?
+- Which watcher and reviewer claims remain bounded instead of broad?
+- How should `v0.92` consume role routing without guessing at missing proof?
 
 ## Dependencies
 
-- Sprint 2 remediation proof packets.
-- Remote Gemma proof and multi-agent comparison remediation.
-- Tooling proof-loop reliability feature doc.
+- `#4007` provider/capability catalog split and its PR-pending proof note.
+- `docs/milestones/v0.91.5/features/PROVIDER_MODEL_MATRIX_v0.91.5.md`
+- `docs/milestones/v0.91.5/features/MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md`
+- `docs/milestones/v0.91.5/review/multi_agent_matrix/PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md`
+- `docs/milestones/v0.91.5/review/openrouter_matrix/OPENROUTER_MATRIX_PROOF_2026-06-14.md`
+- `docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md`
 
 ## Provider/Capability Catalog Boundary
 
@@ -179,16 +187,107 @@ Remediation note:
 
 ## Validation And Review
 
-- Require self-validating proof bundles for provider claims.
-- Run role-specific smoke/deep checks where needed.
-- Review model-output quality and reproducibility separately.
-- Record unsupported models as blocked or limited.
+- Require bounded evidence links for every promoted role lane.
+- Keep historical weaker results visible when newer bounded proofs improve a
+  lane.
+- Separate provider-route support from broad role usefulness.
+- Record credential-blocked and inventory-only lanes explicitly instead of
+  inferring reliability.
+
+## Catalog Boundary Consumed From M-00
+
+`#4008` consumes the `#4007` split between:
+
+1. provider profiles: infrastructure and service identity
+2. capability profiles: provider-independent behavioral posture
+
+This issue adds role suitability on top of that split, but does not collapse:
+
+- provider family
+- model behavior
+- role authority
+- identity/citizen/institution state
+
+## Evidence Inputs
+
+| Evidence surface | Role in this matrix | Current truth |
+| --- | --- | --- |
+| `#4007` proof note | Defines provider/capability boundary | PR-pending in `#4063`; used as dependency truth, not merged-baseline truth |
+| `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` | Historical v0.91.5 baseline | Useful for original lane availability and early non-claims |
+| `OPENROUTER_MATRIX_PROOF_2026-06-14.md` | Strongest OpenRouter route proof | Five native requested-route probes are `supported_with_limits` |
+| `MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md` | Multi-agent consumption baseline | Records that usefulness still depends on role/task shape |
+| `REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md` | Strongest remote Gemma watcher proof | Larger Gemma4 watcher routes are now `useful_with_limits` |
+
+## Role Suitability Matrix
+
+| Role / lane | Strongest currently evidenced lane | Evidence status | Strongest evidence | Known limits |
+| --- | --- | --- | --- | --- |
+| Planning | OpenRouter `deepseek/deepseek-v4-flash` | `supported_with_limits` | `OPENROUTER_MATRIX_PROOF_2026-06-14.md` | Structured route execution is proven; broad planner usefulness remains task-shaped rather than universal. Direct hosted OpenAI/Codex remains a conditional candidate rather than a currently evidenced default in the cited baseline shell. |
+| Coding / worker | OpenRouter `openai/gpt-4o-mini`; OpenRouter `qwen/qwen3.6-flash` | `supported_with_limits` | `OPENROUTER_MATRIX_PROOF_2026-06-14.md` | OpenRouter worker outputs were bounded route proofs, not broad code-quality certification. Local Qwen coder remains a candidate from prior matrix evidence rather than a newly proven default here. |
+| Review / critic | OpenRouter `anthropic/claude-3.5-haiku` | `supported_with_limits` | `OPENROUTER_MATRIX_PROOF_2026-06-14.md` | Reviewer route proof shows bounded finding output, not universal severity quality or long-context guarantee. Direct Anthropic and DeepSeek hosted remain credential-blocked in the cited baseline shell. |
+| Summarization / synthesis | Remote `gemma4:31b` via `adl-provider-adapter`; OpenRouter `google/gemini-2.5-flash-lite` | `useful_with_limits` for remote Gemma4 watcher-style summaries; `supported_with_limits` for OpenRouter Gemini watcher route | `REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md`; `OPENROUTER_MATRIX_PROOF_2026-06-14.md` | Proven on short structured prompts; not broad autonomy, not every Gemma size, not every prompt shape. Local Mistral/Gemma remains fallback-candidate inventory rather than a newly proven default here. |
+| Orchestration / conductor assist | OpenRouter planner/reviewer routes only as advisory inputs | `limited_advisory_only` | `OPENROUTER_MATRIX_PROOF_2026-06-14.md`; `MULTI_AGENT_C_SDLC_OPERATION_v0.91.5.md` | Role suggestions may assist routing, but no model lane gains merge, closeout, or authority-bearing control. Direct hosted Codex/OpenAI remains conditional on separate credentialed proof. |
+| Watcher / janitor | Remote `gemma4:31b` via `adl-provider-adapter`; remote `gemma4:26b` and `gemma4:e4b`; OpenRouter `google/gemini-2.5-flash-lite` | `useful_with_limits` for larger remote Gemma4 routes; `supported_with_limits` for OpenRouter Gemini watcher route; historical `gemma4:e2b` lane remains weaker | `REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md`; `OPENROUTER_MATRIX_PROOF_2026-06-14.md`; historical baseline in `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` | `gemma4:e2b` is not promoted; watcher usefulness remains bounded to short structured prompts and does not prove janitor autonomy. |
+| Local / offline fallback | No single lane promoted; local Qwen, DeepSeek, Gemma, Mistral, and Llama-family Ollama remain inventory-known candidates | `inventory_and_bounded_candidate_only` | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` | Inventory proves availability, not full role reliability; direct local usefulness must still be task/proof-specific. |
+| Constrained lanes / negative controls | Missing-credential and fail-closed routes | `proven_fail_closed` where tested | `OPENROUTER_MATRIX_PROOF_2026-06-14.md` | Negative controls prove auth failure behavior, not productive role output |
+
+## Provider / Model Lane Register
+
+| Provider/model lane | Provider boundary | Capability/role posture | Current status | Evidence |
+| --- | --- | --- | --- | --- |
+| Native OpenRouter `deepseek/deepseek-v4-flash` | Aggregator/provider route identity preserved | planner candidate | `supported_with_limits` | `OPENROUTER_MATRIX_PROOF_2026-06-14.md` |
+| Native OpenRouter `openai/gpt-4o-mini` | Aggregator/provider route identity preserved | worker candidate | `supported_with_limits` | `OPENROUTER_MATRIX_PROOF_2026-06-14.md` |
+| Native OpenRouter `anthropic/claude-3.5-haiku` | Aggregator/provider route identity preserved | reviewer candidate | `supported_with_limits` | `OPENROUTER_MATRIX_PROOF_2026-06-14.md` |
+| Native OpenRouter `google/gemini-2.5-flash-lite` | Aggregator/provider route identity preserved | watcher/summarizer candidate | `supported_with_limits` | `OPENROUTER_MATRIX_PROOF_2026-06-14.md` |
+| Native OpenRouter `qwen/qwen3.6-flash` | Aggregator/provider route identity preserved | worker candidate | `supported_with_limits` | `OPENROUTER_MATRIX_PROOF_2026-06-14.md` |
+| Remote Ollama `gemma4:31b` through `adl-provider-adapter` | Remote Ollama substrate | watcher/summarizer candidate | `useful_with_limits` | `REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md` |
+| Remote Ollama `gemma4:26b` raw HTTP | Remote Ollama substrate | watcher/summarizer candidate | `useful_with_limits` | `REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md` |
+| Remote Ollama `gemma4:e4b` raw HTTP | Remote Ollama substrate | watcher/summarizer candidate | `useful_with_limits` | `REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md` |
+| Remote Ollama `gemma4:e2b` historical watcher lane | Remote Ollama substrate | watcher candidate | `historical_empty_output` | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md`; `V0915_PARALLEL_C_SDLC_WORKCELL_PROOF_PACKET_2026-06-14.md` |
+| Direct hosted OpenAI / Codex | Native hosted provider | planner/worker/reviewer candidate | `blocked_missing_credential` in cited baseline shell | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` |
+| Direct hosted Anthropic | Native hosted provider | reviewer/synthesis candidate | `blocked_missing_credential` in cited baseline shell | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` |
+| Direct hosted DeepSeek API | Native hosted provider | critic/reviewer candidate | `blocked_missing_credential` in cited baseline shell | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` |
+| Gemini direct native provider | Not yet native in the cited baseline | reviewer/synthesis candidate | `compatibility_only_or_blocked` | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` |
+| Local Ollama Qwen / DeepSeek / Mistral / Gemma family | Local provider substrate | local/offline role candidates | `inventory_and_bounded_candidate_only` | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` |
+
+## Known Failure Modes And Non-Claims
+
+| Surface | Failure mode or risk | Truthful classification |
+| --- | --- | --- |
+| Hosted direct lanes | Credentials absent in the proving shell | blocked, not failed implementation |
+| OpenRouter routes | Route support proven on five requested IDs only | supported with limits, not universal gateway proof |
+| Remote Gemma watcher | Older `gemma4:e2b` lane completed with empty output | historical weak result remains binding for that lane |
+| Remote Gemma recovery | Larger Gemma4 routes succeeded on short structured prompts | useful with limits, not broad autonomy |
+| Local inventory | Model presence visible without role probe | candidate only, not reliable role proof |
+| Multi-agent consumption | Good lane output does not grant workflow authority | advisory only; merge/closeout authority remains serialized to team/tooling |
+
+## Capability-Based Delegation Consumption Notes
+
+- `v0.92` may consume this matrix only as a named role-routing table with
+  explicit proof labels.
+- Capability selection must preserve the provider/capability split from `#4007`
+  instead of encoding role authority into provider identity.
+- Watcher and reviewer routing may prefer `useful_with_limits` lanes for bounded
+  prompts, but must preserve single-agent fallback when prompt shape, latency,
+  or evidence quality is not a good fit.
+- Inventory-only and credential-blocked lanes must remain selectable only as
+  operator-known possibilities, not as proven defaults.
 
 ## v0.92 Consumption
 
-`v0.92` may consume provider/model readiness only as a role-scoped matrix with
-named limits. It must not infer general intelligence, training readiness, or
-product benchmark status from this tranche.
+`v0.92` may consume provider/model readiness only as:
+
+- a role-scoped matrix with named evidence states;
+- a bounded advisory routing surface;
+- a non-authority-bearing input to capability selection and birthday-demo
+  planning.
+
+`v0.92` must not infer:
+
+- general intelligence;
+- training readiness;
+- universal watcher autonomy;
+- authority to merge, close, or bypass C-SDLC review and closeout gates.
 
 ## Non-Goals
 
