@@ -1,6 +1,7 @@
 use anyhow::{anyhow, Result};
 use std::fmt;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+#[cfg(target_os = "macos")]
 use std::process::Command;
 use std::sync::{Mutex, OnceLock};
 
@@ -174,14 +175,14 @@ fn resolve_uncached(
 }
 
 trait TokenReader {
-    fn read_token_file(&self, path: &PathBuf) -> Result<String>;
+    fn read_token_file(&self, path: &Path) -> Result<String>;
     fn read_keychain_token(&self, service: &str, account: Option<&str>) -> Result<String>;
 }
 
 struct RealTokenReader;
 
 impl TokenReader for RealTokenReader {
-    fn read_token_file(&self, path: &PathBuf) -> Result<String> {
+    fn read_token_file(&self, path: &Path) -> Result<String> {
         std::fs::read_to_string(path)
             .map_err(|_| anyhow!("github_token.file_read_failed: configured token file unreadable"))
     }
@@ -262,7 +263,7 @@ mod tests {
     }
 
     impl TokenReader for StubReader {
-        fn read_token_file(&self, _path: &PathBuf) -> Result<String> {
+        fn read_token_file(&self, _path: &Path) -> Result<String> {
             self.file_reads.set(self.file_reads.get() + 1);
             Ok(self.file_value.to_string())
         }
