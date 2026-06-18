@@ -133,7 +133,9 @@ not require a further sequencing correction from this mini-sprint closeout.
 - `docs/milestones/v0.91.5/WP_ISSUE_WAVE_v0.91.5.yaml`
 - ADL-native closeout truth recorded in the paired issue-local `sor.md` cards
   for `#3746`, `#3747`, `#3748`, `#3749`, and `#3750`
-- Historical/manual GitHub provenance from `gh pr view`:
+- Retained historical/manual GitHub PR inspection for the merged-child PR
+  mapping because this packet does not yet have a reviewer-facing ADL-native PR
+  inspection surface for merged/check-state proof:
   - `gh pr view 3911 --json statusCheckRollup,files,mergedAt,mergeCommit`
   - `gh pr view 3912 --json statusCheckRollup,files,mergedAt,mergeCommit`
   - `gh pr view 3915 --json statusCheckRollup,files,mergedAt,mergeCommit`
@@ -162,12 +164,6 @@ not require a further sequencing correction from this mini-sprint closeout.
 bash adl/tools/report_large_rust_modules.sh
 bash adl/tools/report_module_navigability.sh --top 12 --format tsv
 rg -n "#3574|Sprint 4|3899" docs/milestones/v0.91.5/SPRINT_v0.91.5.md docs/milestones/v0.91.5/WBS_v0.91.5.md docs/milestones/v0.91.5/WP_ISSUE_WAVE_v0.91.5.yaml
-# Historical/manual GitHub provenance only; not the preferred ADL-native control-plane proof path:
-gh pr view 3911 --json statusCheckRollup,files,mergedAt,mergeCommit
-gh pr view 3912 --json statusCheckRollup,files,mergedAt,mergeCommit
-gh pr view 3915 --json statusCheckRollup,files,mergedAt,mergeCommit
-gh pr view 3917 --json statusCheckRollup,files,mergedAt,mergeCommit
-gh pr view 3918 --json statusCheckRollup,files,mergedAt,mergeCommit
 ```
 
 Result: passed.
