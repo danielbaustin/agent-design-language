@@ -489,6 +489,7 @@ pub fn provider_failure_classification_from_failure(
         summary: sanitize_resilience_summary(&failure.message),
         component_ref: None,
         http_status: failure.http_status,
+        retry_after_ms: None,
     }
 }
 
