@@ -16,10 +16,15 @@ pub const RESILIENCE_RETRY_EXECUTION_TRACE_SCHEMA_V1: &str =
     "adl.resilience.retry_execution_trace.v1";
 pub const RESILIENCE_TIMEOUT_EXECUTION_TRACE_SCHEMA_V1: &str =
     "adl.resilience.timeout_execution_trace.v1";
+pub const RESILIENCE_CIRCUIT_BREAKER_EXECUTION_TRACE_SCHEMA_V1: &str =
+    "adl.resilience.circuit_breaker_execution_trace.v1";
+pub const RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1: &str =
+    "adl.resilience.circuit_breaker_state.v1";
 pub const RESILIENCE_POLICY_SCHEMA_V1: &str = "adl.resilience.policy.v1";
 pub const RESILIENCE_SUBSTRATE_SCHEMA_V1: &str = "adl.resilience.substrate_manifest.v1";
 
 static TIMEOUT_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
+static CIRCUIT_BREAKER_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -322,6 +327,68 @@ pub struct TimeoutExecutionTraceV1 {
 pub struct TimeoutExecution<T, E> {
     pub result: Result<T, E>,
     pub trace: TimeoutExecutionTraceV1,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum CircuitBreakerStateKindV1 {
+    Closed,
+    Open,
+    HalfOpen,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum CircuitBreakerFinalStatusV1 {
+    ClosedSuccess,
+    ClosedFailure,
+    OpenRejected,
+    OpenFallback,
+    HalfOpenProbeSuccess,
+    HalfOpenProbeFailure,
+    HalfOpenProbeRejected,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CircuitBreakerStateV1 {
+    pub schema_version: String,
+    pub policy_id: String,
+    pub state: CircuitBreakerStateKindV1,
+    pub consecutive_failures: u32,
+    pub half_open_attempts: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub opened_at_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub last_failure: Option<ResilienceFaultClassificationV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CircuitBreakerExecutionTraceV1 {
+    pub schema_version: String,
+    pub policy_id: String,
+    pub surface: ResilienceSurfaceV1,
+    pub state_before: CircuitBreakerStateKindV1,
+    pub state_after: CircuitBreakerStateKindV1,
+    pub final_status: CircuitBreakerFinalStatusV1,
+    pub operation_executed: bool,
+    pub used_fallback: bool,
+    pub now_ms: u64,
+    pub decision_summary: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fault: Option<ResilienceFaultClassificationV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub telemetry_event: Option<ResilienceTelemetryEventV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub recovery_artifact: Option<RecoveryArtifactV1>,
+}
+
+#[derive(Debug)]
+pub struct CircuitBreakerExecution<T, E> {
+    pub result: Result<T, E>,
+    pub state: CircuitBreakerStateV1,
+    pub trace: CircuitBreakerExecutionTraceV1,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -952,6 +1019,379 @@ where
     }
 }
 
+pub fn circuit_breaker_initial_state(policy: &ResiliencePolicyV1) -> CircuitBreakerStateV1 {
+    CircuitBreakerStateV1 {
+        schema_version: RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1.to_string(),
+        policy_id: policy.policy_id.clone(),
+        state: CircuitBreakerStateKindV1::Closed,
+        consecutive_failures: 0,
+        half_open_attempts: 0,
+        opened_at_ms: None,
+        last_failure: None,
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn execute_circuit_breaker_policy<T, E, F, C, R, FB>(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    current_state: &CircuitBreakerStateV1,
+    now_ms: u64,
+    operation: F,
+    mut classify_error: C,
+    mut rejection_error: R,
+    mut fallback: Option<FB>,
+) -> CircuitBreakerExecution<T, E>
+where
+    F: FnOnce() -> Result<T, E>,
+    C: FnMut(&E) -> ResilienceFaultClassificationV1,
+    R: FnMut(&CircuitBreakerStateV1, u64) -> E,
+    FB: FnMut() -> T,
+{
+    let policy_state = circuit_breaker_state_for_policy(current_state, policy);
+    let Some(breaker_policy) = policy.circuit_breaker.as_ref() else {
+        let result = operation();
+        let state = circuit_breaker_initial_state(policy);
+        let fault = result.as_ref().err().map(&mut classify_error);
+        let final_status = if result.is_ok() {
+            CircuitBreakerFinalStatusV1::ClosedSuccess
+        } else {
+            CircuitBreakerFinalStatusV1::ClosedFailure
+        };
+        let decision_summary = if result.is_ok() {
+            format!("{operation_ref}: breaker disabled; operation completed")
+        } else {
+            format!("{operation_ref}: breaker disabled; operation failed")
+        };
+        let telemetry_event = Some(circuit_breaker_decision_event(
+            policy,
+            surface.clone(),
+            operation_ref,
+            &decision_summary,
+            fault.clone(),
+        ));
+        return CircuitBreakerExecution {
+            result,
+            state: state.clone(),
+            trace: CircuitBreakerExecutionTraceV1 {
+                schema_version: RESILIENCE_CIRCUIT_BREAKER_EXECUTION_TRACE_SCHEMA_V1.to_string(),
+                policy_id: policy.policy_id.clone(),
+                surface,
+                state_before: CircuitBreakerStateKindV1::Closed,
+                state_after: CircuitBreakerStateKindV1::Closed,
+                final_status,
+                operation_executed: true,
+                used_fallback: false,
+                now_ms,
+                decision_summary,
+                fault,
+                telemetry_event,
+                recovery_artifact: None,
+            },
+        };
+    };
+
+    let state_before = policy_state.state.clone();
+    let normalized_state = circuit_breaker_state_for_now(&policy_state, breaker_policy, now_ms);
+    let fallback_allowed = normalized_state
+        .last_failure
+        .as_ref()
+        .map(|fault| circuit_breaker_fallback_allowed(policy, fault))
+        .unwrap_or(false);
+
+    match normalized_state.state {
+        CircuitBreakerStateKindV1::Open => {
+            if fallback_allowed {
+                if let Some(ref mut fallback_fn) = fallback {
+                    let value = fallback_fn();
+                    let decision_summary = format!(
+                        "{operation_ref}: breaker open at {} failures; fallback executed",
+                        normalized_state.consecutive_failures
+                    );
+                    let telemetry_event = Some(circuit_breaker_decision_event(
+                        policy,
+                        surface.clone(),
+                        operation_ref,
+                        &decision_summary,
+                        normalized_state.last_failure.clone(),
+                    ));
+                    let recovery_artifact = normalized_state.last_failure.as_ref().map(|fault| {
+                        circuit_breaker_recovery_artifact(
+                            policy,
+                            surface.clone(),
+                            operation_ref,
+                            fault,
+                            RecoveryDispositionV1::FallbackAllowed,
+                            "breaker remained open; fallback path executed instead of calling the dependency",
+                        )
+                    });
+                    return CircuitBreakerExecution {
+                        result: Ok(value),
+                        state: normalized_state.clone(),
+                        trace: CircuitBreakerExecutionTraceV1 {
+                            schema_version: RESILIENCE_CIRCUIT_BREAKER_EXECUTION_TRACE_SCHEMA_V1
+                                .to_string(),
+                            policy_id: policy.policy_id.clone(),
+                            surface,
+                            state_before,
+                            state_after: normalized_state.state.clone(),
+                            final_status: CircuitBreakerFinalStatusV1::OpenFallback,
+                            operation_executed: false,
+                            used_fallback: true,
+                            now_ms,
+                            decision_summary,
+                            fault: normalized_state.last_failure.clone(),
+                            telemetry_event,
+                            recovery_artifact,
+                        },
+                    };
+                }
+            }
+
+            let error = rejection_error(&normalized_state, now_ms);
+            let decision_summary = if fallback.is_some() && normalized_state.last_failure.is_some()
+            {
+                format!(
+                    "{operation_ref}: breaker open at {} failures; fallback policy did not activate",
+                    normalized_state.consecutive_failures
+                )
+            } else {
+                format!(
+                    "{operation_ref}: breaker open at {} failures; dependency call rejected",
+                    normalized_state.consecutive_failures
+                )
+            };
+            let telemetry_event = Some(circuit_breaker_decision_event(
+                policy,
+                surface.clone(),
+                operation_ref,
+                &decision_summary,
+                normalized_state.last_failure.clone(),
+            ));
+            let recovery_artifact = normalized_state.last_failure.as_ref().map(|fault| {
+                circuit_breaker_recovery_artifact(
+                    policy,
+                    surface.clone(),
+                    operation_ref,
+                    fault,
+                    RecoveryDispositionV1::RetryAllowed,
+                    "breaker remained open; wait for the recovery window before probing again",
+                )
+            });
+            return CircuitBreakerExecution {
+                result: Err(error),
+                state: normalized_state.clone(),
+                trace: CircuitBreakerExecutionTraceV1 {
+                    schema_version: RESILIENCE_CIRCUIT_BREAKER_EXECUTION_TRACE_SCHEMA_V1
+                        .to_string(),
+                    policy_id: policy.policy_id.clone(),
+                    surface,
+                    state_before,
+                    state_after: normalized_state.state.clone(),
+                    final_status: CircuitBreakerFinalStatusV1::OpenRejected,
+                    operation_executed: false,
+                    used_fallback: false,
+                    now_ms,
+                    decision_summary,
+                    fault: normalized_state.last_failure.clone(),
+                    telemetry_event,
+                    recovery_artifact,
+                },
+            };
+        }
+        CircuitBreakerStateKindV1::HalfOpen
+            if normalized_state.half_open_attempts >= breaker_policy.half_open_max_attempts =>
+        {
+            let error = rejection_error(&normalized_state, now_ms);
+            let decision_summary = format!(
+                "{operation_ref}: half-open probe budget exhausted ({}/{})",
+                normalized_state.half_open_attempts, breaker_policy.half_open_max_attempts
+            );
+            let telemetry_event = Some(circuit_breaker_decision_event(
+                policy,
+                surface.clone(),
+                operation_ref,
+                &decision_summary,
+                normalized_state.last_failure.clone(),
+            ));
+            let recovery_artifact = normalized_state.last_failure.as_ref().map(|fault| {
+                circuit_breaker_recovery_artifact(
+                    policy,
+                    surface.clone(),
+                    operation_ref,
+                    fault,
+                    RecoveryDispositionV1::RetryAllowed,
+                    "half-open probe limit reached; wait for the next recovery window",
+                )
+            });
+            return CircuitBreakerExecution {
+                result: Err(error),
+                state: normalized_state.clone(),
+                trace: CircuitBreakerExecutionTraceV1 {
+                    schema_version: RESILIENCE_CIRCUIT_BREAKER_EXECUTION_TRACE_SCHEMA_V1
+                        .to_string(),
+                    policy_id: policy.policy_id.clone(),
+                    surface,
+                    state_before,
+                    state_after: normalized_state.state.clone(),
+                    final_status: CircuitBreakerFinalStatusV1::HalfOpenProbeRejected,
+                    operation_executed: false,
+                    used_fallback: false,
+                    now_ms,
+                    decision_summary,
+                    fault: normalized_state.last_failure.clone(),
+                    telemetry_event,
+                    recovery_artifact,
+                },
+            };
+        }
+        _ => {}
+    }
+
+    let mut state_after = normalized_state.clone();
+    let half_open_probe_attempt = if normalized_state.state == CircuitBreakerStateKindV1::HalfOpen {
+        let next_attempt = normalized_state.half_open_attempts.saturating_add(1);
+        state_after.half_open_attempts = next_attempt;
+        Some(next_attempt)
+    } else {
+        None
+    };
+    let result = operation();
+    match result {
+        Ok(value) => {
+            let final_status = if normalized_state.state == CircuitBreakerStateKindV1::HalfOpen {
+                CircuitBreakerFinalStatusV1::HalfOpenProbeSuccess
+            } else {
+                CircuitBreakerFinalStatusV1::ClosedSuccess
+            };
+            state_after.state = CircuitBreakerStateKindV1::Closed;
+            state_after.consecutive_failures = 0;
+            state_after.half_open_attempts = 0;
+            state_after.opened_at_ms = None;
+            state_after.last_failure = None;
+            let decision_summary =
+                if final_status == CircuitBreakerFinalStatusV1::HalfOpenProbeSuccess {
+                    format!("{operation_ref}: half-open probe succeeded; breaker closed")
+                } else {
+                    format!("{operation_ref}: breaker remained closed after successful call")
+                };
+            let telemetry_event = Some(circuit_breaker_decision_event(
+                policy,
+                surface.clone(),
+                operation_ref,
+                &decision_summary,
+                None,
+            ));
+            CircuitBreakerExecution {
+                result: Ok(value),
+                state: state_after.clone(),
+                trace: CircuitBreakerExecutionTraceV1 {
+                    schema_version: RESILIENCE_CIRCUIT_BREAKER_EXECUTION_TRACE_SCHEMA_V1
+                        .to_string(),
+                    policy_id: policy.policy_id.clone(),
+                    surface,
+                    state_before,
+                    state_after: state_after.state.clone(),
+                    final_status,
+                    operation_executed: true,
+                    used_fallback: false,
+                    now_ms,
+                    decision_summary,
+                    fault: None,
+                    telemetry_event,
+                    recovery_artifact: None,
+                },
+            }
+        }
+        Err(error) => {
+            let fault = classify_error(&error);
+            let final_status = if normalized_state.state == CircuitBreakerStateKindV1::HalfOpen {
+                let probe_attempt = half_open_probe_attempt.unwrap_or(1);
+                state_after.consecutive_failures = breaker_policy.failure_threshold;
+                state_after.last_failure = Some(fault.clone());
+                if probe_attempt >= breaker_policy.half_open_max_attempts {
+                    state_after.state = CircuitBreakerStateKindV1::Open;
+                    state_after.opened_at_ms = Some(now_ms);
+                } else {
+                    state_after.state = CircuitBreakerStateKindV1::HalfOpen;
+                    state_after.opened_at_ms = None;
+                }
+                CircuitBreakerFinalStatusV1::HalfOpenProbeFailure
+            } else {
+                state_after.consecutive_failures =
+                    normalized_state.consecutive_failures.saturating_add(1);
+                state_after.last_failure = Some(fault.clone());
+                if state_after.consecutive_failures >= breaker_policy.failure_threshold {
+                    state_after.state = CircuitBreakerStateKindV1::Open;
+                    state_after.opened_at_ms = Some(now_ms);
+                }
+                CircuitBreakerFinalStatusV1::ClosedFailure
+            };
+            let decision_summary = match final_status {
+                CircuitBreakerFinalStatusV1::HalfOpenProbeFailure
+                    if state_after.state == CircuitBreakerStateKindV1::Open =>
+                {
+                    format!("{operation_ref}: half-open probe failed; breaker reopened")
+                }
+                CircuitBreakerFinalStatusV1::HalfOpenProbeFailure => format!(
+                    "{operation_ref}: half-open probe failed; {} probe attempt(s) remain before reopening",
+                    breaker_policy
+                        .half_open_max_attempts
+                        .saturating_sub(state_after.half_open_attempts)
+                ),
+                _ if state_after.state == CircuitBreakerStateKindV1::Open => format!(
+                    "{operation_ref}: breaker opened after {} consecutive failures",
+                    state_after.consecutive_failures
+                ),
+                _ => format!(
+                    "{operation_ref}: breaker counted failure {}/{} while remaining closed",
+                    state_after.consecutive_failures, breaker_policy.failure_threshold
+                ),
+            };
+            let telemetry_event = Some(circuit_breaker_decision_event(
+                policy,
+                surface.clone(),
+                operation_ref,
+                &decision_summary,
+                Some(fault.clone()),
+            ));
+            let recovery_artifact = if state_after.state == CircuitBreakerStateKindV1::Open {
+                Some(circuit_breaker_recovery_artifact(
+                    policy,
+                    surface.clone(),
+                    operation_ref,
+                    &fault,
+                    RecoveryDispositionV1::RetryAllowed,
+                    "breaker opened; defer new attempts until the recovery window allows a bounded half-open probe",
+                ))
+            } else {
+                None
+            };
+            CircuitBreakerExecution {
+                result: Err(error),
+                state: state_after.clone(),
+                trace: CircuitBreakerExecutionTraceV1 {
+                    schema_version: RESILIENCE_CIRCUIT_BREAKER_EXECUTION_TRACE_SCHEMA_V1
+                        .to_string(),
+                    policy_id: policy.policy_id.clone(),
+                    surface,
+                    state_before,
+                    state_after: state_after.state.clone(),
+                    final_status,
+                    operation_executed: true,
+                    used_fallback: false,
+                    now_ms,
+                    decision_summary,
+                    fault: Some(fault),
+                    telemetry_event,
+                    recovery_artifact,
+                },
+            }
+        }
+    }
+}
+
 pub fn resilience_schema_smoke() -> Value {
     serde_json::to_value(schema_for!(ResilienceSubstrateManifestV1))
         .expect("resilience substrate schema should serialize")
@@ -1250,9 +1690,324 @@ fn classification_represents_timeout(classification: &ResilienceFaultClassificat
     false
 }
 
+fn circuit_breaker_state_for_now(
+    state: &CircuitBreakerStateV1,
+    policy: &CircuitBreakerPolicyV1,
+    now_ms: u64,
+) -> CircuitBreakerStateV1 {
+    if state.state != CircuitBreakerStateKindV1::Open {
+        return state.clone();
+    }
+    let ready_for_probe = state
+        .opened_at_ms
+        .map(|opened_at_ms| now_ms.saturating_sub(opened_at_ms) >= policy.recovery_window_ms)
+        .unwrap_or(false);
+    if !ready_for_probe {
+        return state.clone();
+    }
+
+    let mut next = state.clone();
+    next.state = CircuitBreakerStateKindV1::HalfOpen;
+    next.half_open_attempts = 0;
+    next
+}
+
+fn circuit_breaker_state_for_policy(
+    state: &CircuitBreakerStateV1,
+    policy: &ResiliencePolicyV1,
+) -> CircuitBreakerStateV1 {
+    if state.policy_id == policy.policy_id {
+        state.clone()
+    } else {
+        circuit_breaker_initial_state(policy)
+    }
+}
+
+fn circuit_breaker_fallback_allowed(
+    policy: &ResiliencePolicyV1,
+    fault: &ResilienceFaultClassificationV1,
+) -> bool {
+    let Some(fallback_policy) = policy.fallback.as_ref() else {
+        return false;
+    };
+    fallback_policy.activation_fault_classes.is_empty()
+        || fallback_policy
+            .activation_fault_classes
+            .contains(&fault.fault_class)
+}
+
+fn circuit_breaker_decision_event(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    decision_summary: &str,
+    fault: Option<ResilienceFaultClassificationV1>,
+) -> ResilienceTelemetryEventV1 {
+    let correlation_suffix = circuit_breaker_execution_correlation_suffix();
+    ResilienceTelemetryEventV1 {
+        schema_version: RESILIENCE_TELEMETRY_EVENT_SCHEMA_V1.to_string(),
+        event_id: format!(
+            "{}:circuit-breaker:{operation_ref}:{correlation_suffix}",
+            policy.policy_id
+        ),
+        event_kind: TelemetryEventKindV1::CircuitBreakerDecision,
+        surface,
+        decision_summary: decision_summary.to_string(),
+        run_id: None,
+        request_id: None,
+        policy_ref: Some(policy.policy_id.clone()),
+        fault,
+        artifact_ref: None,
+    }
+}
+
+fn circuit_breaker_recovery_artifact(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    fault: &ResilienceFaultClassificationV1,
+    disposition: RecoveryDispositionV1,
+    next_action: &str,
+) -> RecoveryArtifactV1 {
+    let correlation_suffix = circuit_breaker_execution_correlation_suffix();
+    RecoveryArtifactV1 {
+        schema_version: RESILIENCE_RECOVERY_ARTIFACT_SCHEMA_V1.to_string(),
+        artifact_id: format!(
+            "{}:circuit-breaker:{operation_ref}:{correlation_suffix}",
+            policy.policy_id
+        ),
+        surface,
+        triggering_fault: fault.clone(),
+        disposition,
+        next_action: next_action.to_string(),
+        source_run_id: None,
+        checkpoint_ref: None,
+        evidence_refs: vec![policy.policy_id.clone()],
+    }
+}
+
+fn circuit_breaker_execution_correlation_suffix() -> String {
+    CIRCUIT_BREAKER_EXECUTION_COUNTER
+        .fetch_add(1, Ordering::Relaxed)
+        .saturating_add(1)
+        .to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::cell::Cell;
+
+    fn clone_fault_classification(
+        error: &ResilienceFaultClassificationV1,
+    ) -> ResilienceFaultClassificationV1 {
+        error.clone()
+    }
+
+    fn workflow_timeout_fault(
+        breach_kind: TimeoutBreachKindV1,
+        elapsed_ms: u64,
+        budget_ms: u64,
+    ) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Workflow,
+            fault_class: ResilienceFaultClassV1::RuntimeFailure,
+            disposition: ResilienceFaultDispositionV1::Retryable,
+            retryable: true,
+            summary: format!(
+                "{} exceeded at {elapsed_ms}/{budget_ms}",
+                timeout_breach_label(&breach_kind)
+            ),
+            component_ref: None,
+            http_status: None,
+        }
+    }
+
+    fn provider_timeout_fault(
+        breach_kind: TimeoutBreachKindV1,
+        elapsed_ms: u64,
+        budget_ms: u64,
+    ) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Provider,
+            fault_class: ResilienceFaultClassV1::ProviderTimeout,
+            disposition: ResilienceFaultDispositionV1::Retryable,
+            retryable: true,
+            summary: format!(
+                "{} exceeded at {elapsed_ms}/{budget_ms}",
+                timeout_breach_label(&breach_kind)
+            ),
+            component_ref: None,
+            http_status: None,
+        }
+    }
+
+    fn tool_timeout_fault(
+        breach_kind: TimeoutBreachKindV1,
+        elapsed_ms: u64,
+        budget_ms: u64,
+    ) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Tool,
+            fault_class: ResilienceFaultClassV1::RuntimeFailure,
+            disposition: ResilienceFaultDispositionV1::Retryable,
+            retryable: true,
+            summary: format!(
+                "{} exceeded at {elapsed_ms}/{budget_ms}",
+                timeout_breach_label(&breach_kind)
+            ),
+            component_ref: None,
+            http_status: None,
+        }
+    }
+
+    fn runtime_timeout_fault(
+        breach_kind: TimeoutBreachKindV1,
+        elapsed_ms: u64,
+        budget_ms: u64,
+    ) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Runtime,
+            fault_class: ResilienceFaultClassV1::RuntimeFailure,
+            disposition: ResilienceFaultDispositionV1::Retryable,
+            retryable: true,
+            summary: format!(
+                "{} exceeded at {elapsed_ms}/{budget_ms}",
+                timeout_breach_label(&breach_kind)
+            ),
+            component_ref: None,
+            http_status: None,
+        }
+    }
+
+    fn tool_cancelled_fault(elapsed_ms: u64) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Tool,
+            fault_class: ResilienceFaultClassV1::RuntimeFailure,
+            disposition: ResilienceFaultDispositionV1::Terminal,
+            retryable: false,
+            summary: format!("cancelled at {elapsed_ms}"),
+            component_ref: None,
+            http_status: None,
+        }
+    }
+
+    fn workflow_cancelled_fault(elapsed_ms: u64) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Workflow,
+            fault_class: ResilienceFaultClassV1::RuntimeFailure,
+            disposition: ResilienceFaultDispositionV1::Terminal,
+            retryable: false,
+            summary: format!("cancelled at {elapsed_ms}"),
+            component_ref: None,
+            http_status: None,
+        }
+    }
+
+    fn provider_cancelled_fault(elapsed_ms: u64) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Provider,
+            fault_class: ResilienceFaultClassV1::RuntimeFailure,
+            disposition: ResilienceFaultDispositionV1::Terminal,
+            retryable: false,
+            summary: format!("cancelled at {elapsed_ms}"),
+            component_ref: None,
+            http_status: None,
+        }
+    }
+
+    fn runtime_cancelled_fault(elapsed_ms: u64) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Runtime,
+            fault_class: ResilienceFaultClassV1::RuntimeFailure,
+            disposition: ResilienceFaultDispositionV1::Terminal,
+            retryable: false,
+            summary: format!("cancelled at {elapsed_ms}"),
+            component_ref: None,
+            http_status: None,
+        }
+    }
+
+    fn provider_breaker_rejection(
+        state: &CircuitBreakerStateV1,
+        now_ms: u64,
+    ) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Provider,
+            fault_class: ResilienceFaultClassV1::ProviderTimeout,
+            disposition: ResilienceFaultDispositionV1::Retryable,
+            retryable: true,
+            summary: format!(
+                "breaker open at {} after {}ms",
+                state.consecutive_failures, now_ms
+            ),
+            component_ref: None,
+            http_status: None,
+        }
+    }
+
+    fn provider_breaker_probe_rejection(
+        state: &CircuitBreakerStateV1,
+        now_ms: u64,
+    ) -> ResilienceFaultClassificationV1 {
+        ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Provider,
+            fault_class: ResilienceFaultClassV1::ProviderTimeout,
+            disposition: ResilienceFaultDispositionV1::Retryable,
+            retryable: true,
+            summary: format!(
+                "breaker probe rejected at {} after {}ms",
+                state.half_open_attempts, now_ms
+            ),
+            component_ref: None,
+            http_status: None,
+        }
+    }
+
+    fn test_circuit_breaker_policy() -> ResiliencePolicyV1 {
+        ResiliencePolicyV1 {
+            schema_version: RESILIENCE_POLICY_SCHEMA_V1.to_string(),
+            policy_id: "breaker.policy".to_string(),
+            retry: Some(RetryPolicyV1 {
+                max_attempts: 3,
+                backoff_ms: Some(25),
+                jitter_ms: Some(5),
+                max_elapsed_ms: None,
+                retryable_fault_classes: vec![
+                    ResilienceFaultClassV1::ProviderTimeout,
+                    ResilienceFaultClassV1::ProviderTransientHttp,
+                ],
+            }),
+            timeout: Some(TimeoutPolicyV1 {
+                timeout_ms: 100,
+                hard_deadline_ms: Some(150),
+            }),
+            circuit_breaker: Some(CircuitBreakerPolicyV1 {
+                failure_threshold: 2,
+                recovery_window_ms: 30,
+                half_open_max_attempts: 1,
+            }),
+            rate_limit: None,
+            bulkhead: None,
+            fallback: Some(FallbackPolicyV1 {
+                fallback_ref: "test.fallback".to_string(),
+                activation_fault_classes: vec![ResilienceFaultClassV1::ProviderTimeout],
+                marks_output_degraded: true,
+            }),
+            checkpoint_required: false,
+            telemetry_required: true,
+        }
+    }
 
     #[test]
     fn provider_fault_classifier_emits_retryable_timeout() {
@@ -1495,27 +2250,9 @@ mod tests {
                 elapsed_ms: 40,
                 cancelled: false,
             },
-            |error: &ResilienceFaultClassificationV1| error.clone(),
-            |_, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Tool,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Retryable,
-                retryable: true,
-                summary: format!("timeout at {elapsed_ms}/{deadline_ms}"),
-                component_ref: None,
-                http_status: None,
-            },
-            |elapsed_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Tool,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Terminal,
-                retryable: false,
-                summary: format!("cancelled at {elapsed_ms}"),
-                component_ref: None,
-                http_status: None,
-            },
+            clone_fault_classification,
+            tool_timeout_fault,
+            tool_cancelled_fault,
         );
 
         assert_eq!(execution.result.expect("success"), "ok");
@@ -1540,30 +2277,9 @@ mod tests {
                 elapsed_ms: 75,
                 cancelled: false,
             },
-            |error| error.clone(),
-            |breach_kind, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Workflow,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Retryable,
-                retryable: true,
-                summary: format!(
-                    "{} exceeded at {elapsed_ms}/{deadline_ms}",
-                    timeout_breach_label(&breach_kind)
-                ),
-                component_ref: None,
-                http_status: None,
-            },
-            |elapsed_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Workflow,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Terminal,
-                retryable: false,
-                summary: format!("cancelled at {elapsed_ms}"),
-                component_ref: None,
-                http_status: None,
-            },
+            clone_fault_classification,
+            workflow_timeout_fault,
+            workflow_cancelled_fault,
         );
 
         let failure = execution.result.expect_err("timeout failure");
@@ -1615,30 +2331,9 @@ mod tests {
                 elapsed_ms: 60,
                 cancelled: false,
             },
-            |error| error.clone(),
-            |breach_kind, elapsed_ms, budget_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Workflow,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Retryable,
-                retryable: true,
-                summary: format!(
-                    "{} exceeded at {elapsed_ms}/{budget_ms}",
-                    timeout_breach_label(&breach_kind)
-                ),
-                component_ref: None,
-                http_status: None,
-            },
-            |elapsed_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Workflow,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Terminal,
-                retryable: false,
-                summary: format!("cancelled at {elapsed_ms}"),
-                component_ref: None,
-                http_status: None,
-            },
+            clone_fault_classification,
+            workflow_timeout_fault,
+            workflow_cancelled_fault,
         );
 
         assert!(execution.result.is_err());
@@ -1676,30 +2371,9 @@ mod tests {
                 elapsed_ms: 100,
                 cancelled: false,
             },
-            |error| error.clone(),
-            |breach_kind, elapsed_ms, budget_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Runtime,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Retryable,
-                retryable: true,
-                summary: format!(
-                    "{} exceeded at {elapsed_ms}/{budget_ms}",
-                    timeout_breach_label(&breach_kind)
-                ),
-                component_ref: None,
-                http_status: None,
-            },
-            |elapsed_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Runtime,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Terminal,
-                retryable: false,
-                summary: format!("cancelled at {elapsed_ms}"),
-                component_ref: None,
-                http_status: None,
-            },
+            clone_fault_classification,
+            runtime_timeout_fault,
+            runtime_cancelled_fault,
         );
 
         assert!(execution.result.is_err());
@@ -1728,30 +2402,9 @@ mod tests {
                 elapsed_ms: 20,
                 cancelled: false,
             },
-            |error| error.clone(),
-            |breach_kind, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Provider,
-                fault_class: ResilienceFaultClassV1::ProviderTimeout,
-                disposition: ResilienceFaultDispositionV1::Retryable,
-                retryable: true,
-                summary: format!(
-                    "{} exceeded at {elapsed_ms}/{deadline_ms}",
-                    timeout_breach_label(&breach_kind)
-                ),
-                component_ref: None,
-                http_status: None,
-            },
-            |elapsed_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Provider,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Terminal,
-                retryable: false,
-                summary: format!("cancelled at {elapsed_ms}"),
-                component_ref: None,
-                http_status: None,
-            },
+            clone_fault_classification,
+            provider_timeout_fault,
+            provider_cancelled_fault,
         );
 
         let failure = execution.result.expect_err("terminal failure");
@@ -1781,30 +2434,9 @@ mod tests {
                 elapsed_ms: 80,
                 cancelled: false,
             },
-            |error| error.clone(),
-            |breach_kind, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Provider,
-                fault_class: ResilienceFaultClassV1::ProviderTimeout,
-                disposition: ResilienceFaultDispositionV1::Retryable,
-                retryable: true,
-                summary: format!(
-                    "{} exceeded at {elapsed_ms}/{deadline_ms}",
-                    timeout_breach_label(&breach_kind)
-                ),
-                component_ref: None,
-                http_status: None,
-            },
-            |elapsed_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Provider,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Terminal,
-                retryable: false,
-                summary: format!("cancelled at {elapsed_ms}"),
-                component_ref: None,
-                http_status: None,
-            },
+            clone_fault_classification,
+            provider_timeout_fault,
+            provider_cancelled_fault,
         );
 
         let failure = execution.result.expect_err("terminal failure");
@@ -1841,30 +2473,9 @@ mod tests {
                 elapsed_ms: 105,
                 cancelled: false,
             },
-            |error| error.clone(),
-            |breach_kind, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Tool,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Retryable,
-                retryable: true,
-                summary: format!(
-                    "{} exceeded at {elapsed_ms}/{deadline_ms}",
-                    timeout_breach_label(&breach_kind)
-                ),
-                component_ref: None,
-                http_status: None,
-            },
-            |elapsed_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Tool,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Terminal,
-                retryable: false,
-                summary: format!("cancelled at {elapsed_ms}"),
-                component_ref: None,
-                http_status: None,
-            },
+            clone_fault_classification,
+            tool_timeout_fault,
+            tool_cancelled_fault,
         );
 
         let failure = execution.result.expect_err("generic timeout failure");
@@ -1912,9 +2523,9 @@ mod tests {
                 elapsed_ms: 45,
                 cancelled: false,
             },
-            |error| error.clone(),
-            |_, _, _| unreachable!("timeout budget is absent"),
-            |_| unreachable!("cancellation path not used"),
+            clone_fault_classification,
+            tool_timeout_fault,
+            tool_cancelled_fault,
         );
 
         assert!(execution.result.is_err());
@@ -1951,30 +2562,9 @@ mod tests {
                 elapsed_ms: 15,
                 cancelled: true,
             },
-            |error| error.clone(),
-            |breach_kind, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Workflow,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Retryable,
-                retryable: true,
-                summary: format!(
-                    "{} exceeded at {elapsed_ms}/{deadline_ms}",
-                    timeout_breach_label(&breach_kind)
-                ),
-                component_ref: None,
-                http_status: None,
-            },
-            |elapsed_ms| ResilienceFaultClassificationV1 {
-                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
-                surface: ResilienceSurfaceV1::Workflow,
-                fault_class: ResilienceFaultClassV1::RuntimeFailure,
-                disposition: ResilienceFaultDispositionV1::Terminal,
-                retryable: false,
-                summary: format!("cancelled at {elapsed_ms}"),
-                component_ref: None,
-                http_status: None,
-            },
+            clone_fault_classification,
+            workflow_timeout_fault,
+            workflow_cancelled_fault,
         );
 
         let failure = execution.result.expect_err("cancelled result");
@@ -2219,5 +2809,619 @@ mod tests {
             RecoveryDispositionV1::OperatorInterventionRequired
         );
         assert!(recovery.next_action.contains("retry budget exhausted"));
+    }
+
+    #[test]
+    fn timeout_fault_builder_helpers_cover_all_remaining_surfaces() {
+        let tool_timeout = tool_timeout_fault(TimeoutBreachKindV1::Timeout, 12, 10);
+        assert_eq!(tool_timeout.surface, ResilienceSurfaceV1::Tool);
+        assert!(tool_timeout.retryable);
+
+        let provider_timeout = provider_timeout_fault(TimeoutBreachKindV1::HardDeadline, 22, 20);
+        assert_eq!(provider_timeout.surface, ResilienceSurfaceV1::Provider);
+        assert!(provider_timeout.summary.contains("hard deadline"));
+
+        let tool_cancel = tool_cancelled_fault(13);
+        assert_eq!(tool_cancel.surface, ResilienceSurfaceV1::Tool);
+        assert!(!tool_cancel.retryable);
+
+        let provider_cancel = provider_cancelled_fault(14);
+        assert_eq!(provider_cancel.surface, ResilienceSurfaceV1::Provider);
+        assert!(provider_cancel.summary.contains("cancelled"));
+
+        let runtime_cancel = runtime_cancelled_fault(15);
+        assert_eq!(runtime_cancel.surface, ResilienceSurfaceV1::Runtime);
+        assert!(runtime_cancel.summary.contains("15"));
+    }
+
+    #[test]
+    fn circuit_breaker_trips_open_and_rejects_follow_up_calls() {
+        let policy = test_circuit_breaker_policy();
+        let first = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.trip",
+            &circuit_breaker_initial_state(&policy),
+            10,
+            || {
+                Err(ResilienceFaultClassificationV1::provider(
+                    "provider timeout",
+                    None,
+                ))
+            },
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert!(first.result.is_err());
+        assert_eq!(first.state.state, CircuitBreakerStateKindV1::Closed);
+        assert_eq!(first.state.consecutive_failures, 1);
+
+        let second = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.trip",
+            &first.state,
+            20,
+            || {
+                Err(ResilienceFaultClassificationV1::provider(
+                    "provider timeout",
+                    None,
+                ))
+            },
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert!(second.result.is_err());
+        assert_eq!(second.state.state, CircuitBreakerStateKindV1::Open);
+        assert_eq!(second.state.consecutive_failures, 2);
+        assert!(second.trace.recovery_artifact.is_some());
+
+        let called = Cell::new(0);
+        let third = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.trip",
+            &second.state,
+            25,
+            || {
+                called.set(called.get() + 1);
+                Ok::<_, ResilienceFaultClassificationV1>("should-not-run")
+            },
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert_eq!(called.get(), 0);
+        assert!(third.result.is_err());
+        assert_eq!(
+            third.trace.final_status,
+            CircuitBreakerFinalStatusV1::OpenRejected
+        );
+        assert!(!third.trace.operation_executed);
+    }
+
+    #[test]
+    fn circuit_breaker_uses_fallback_when_open() {
+        let policy = test_circuit_breaker_policy();
+        let open_state = CircuitBreakerStateV1 {
+            schema_version: RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1.to_string(),
+            policy_id: policy.policy_id.clone(),
+            state: CircuitBreakerStateKindV1::Open,
+            consecutive_failures: 2,
+            half_open_attempts: 0,
+            opened_at_ms: Some(10),
+            last_failure: Some(ResilienceFaultClassificationV1::provider(
+                "provider timeout",
+                None,
+            )),
+        };
+        let called = Cell::new(0);
+        let execution = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.breaker.fallback",
+            &open_state,
+            20,
+            || {
+                called.set(called.get() + 1);
+                Ok::<_, ResilienceFaultClassificationV1>("primary")
+            },
+            clone_fault_classification,
+            provider_breaker_rejection,
+            Some(|| "fallback"),
+        );
+
+        assert_eq!(called.get(), 0);
+        assert_eq!(execution.result.expect("fallback result"), "fallback");
+        assert_eq!(
+            execution.trace.final_status,
+            CircuitBreakerFinalStatusV1::OpenFallback
+        );
+        assert!(execution.trace.used_fallback);
+        assert!(execution.trace.recovery_artifact.is_some());
+    }
+
+    #[test]
+    fn circuit_breaker_allows_half_open_probe_and_closes_on_success() {
+        let policy = test_circuit_breaker_policy();
+        let open_state = CircuitBreakerStateV1 {
+            schema_version: RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1.to_string(),
+            policy_id: policy.policy_id.clone(),
+            state: CircuitBreakerStateKindV1::Open,
+            consecutive_failures: 2,
+            half_open_attempts: 0,
+            opened_at_ms: Some(10),
+            last_failure: Some(ResilienceFaultClassificationV1::provider(
+                "provider timeout",
+                None,
+            )),
+        };
+        let execution = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Tool,
+            "test.breaker.half-open-success",
+            &open_state,
+            50,
+            || Ok::<_, ResilienceFaultClassificationV1>("ok"),
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+
+        assert_eq!(execution.result.expect("success"), "ok");
+        assert_eq!(
+            execution.trace.state_before,
+            CircuitBreakerStateKindV1::Open
+        );
+        assert_eq!(
+            execution.trace.state_after,
+            CircuitBreakerStateKindV1::Closed
+        );
+        assert_eq!(
+            execution.trace.final_status,
+            CircuitBreakerFinalStatusV1::HalfOpenProbeSuccess
+        );
+        assert_eq!(execution.state.consecutive_failures, 0);
+        assert!(execution.state.last_failure.is_none());
+    }
+
+    #[test]
+    fn circuit_breaker_reopens_after_failed_half_open_probe() {
+        let policy = test_circuit_breaker_policy();
+        let half_open_state = CircuitBreakerStateV1 {
+            schema_version: RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1.to_string(),
+            policy_id: policy.policy_id.clone(),
+            state: CircuitBreakerStateKindV1::HalfOpen,
+            consecutive_failures: 2,
+            half_open_attempts: 0,
+            opened_at_ms: Some(10),
+            last_failure: Some(ResilienceFaultClassificationV1::provider(
+                "provider timeout",
+                None,
+            )),
+        };
+        let execution = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.half-open-failure",
+            &half_open_state,
+            60,
+            || {
+                Err(ResilienceFaultClassificationV1::provider(
+                    "provider timeout",
+                    None,
+                ))
+            },
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+
+        assert!(execution.result.is_err());
+        assert_eq!(execution.state.state, CircuitBreakerStateKindV1::Open);
+        assert_eq!(
+            execution.trace.final_status,
+            CircuitBreakerFinalStatusV1::HalfOpenProbeFailure
+        );
+        assert!(execution.trace.recovery_artifact.is_some());
+    }
+
+    #[test]
+    fn circuit_breaker_bounds_half_open_probe_attempts() {
+        let policy = test_circuit_breaker_policy();
+        let half_open_state = CircuitBreakerStateV1 {
+            schema_version: RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1.to_string(),
+            policy_id: policy.policy_id.clone(),
+            state: CircuitBreakerStateKindV1::HalfOpen,
+            consecutive_failures: 2,
+            half_open_attempts: 1,
+            opened_at_ms: Some(10),
+            last_failure: Some(ResilienceFaultClassificationV1::provider(
+                "provider timeout",
+                None,
+            )),
+        };
+        let called = Cell::new(0);
+        let execution = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.half-open-limit",
+            &half_open_state,
+            60,
+            || {
+                called.set(called.get() + 1);
+                Ok::<_, ResilienceFaultClassificationV1>("should-not-run")
+            },
+            clone_fault_classification,
+            provider_breaker_probe_rejection,
+            None::<fn() -> &'static str>,
+        );
+
+        assert_eq!(called.get(), 0);
+        assert!(execution.result.is_err());
+        assert_eq!(
+            execution.trace.final_status,
+            CircuitBreakerFinalStatusV1::HalfOpenProbeRejected
+        );
+        assert_eq!(execution.state.state, CircuitBreakerStateKindV1::HalfOpen);
+    }
+
+    #[test]
+    fn circuit_breaker_honors_multi_probe_budget_before_reopening() {
+        let mut policy = test_circuit_breaker_policy();
+        policy
+            .circuit_breaker
+            .as_mut()
+            .expect("breaker policy")
+            .half_open_max_attempts = 2;
+        let open_state = CircuitBreakerStateV1 {
+            schema_version: RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1.to_string(),
+            policy_id: policy.policy_id.clone(),
+            state: CircuitBreakerStateKindV1::Open,
+            consecutive_failures: 2,
+            half_open_attempts: 0,
+            opened_at_ms: Some(10),
+            last_failure: Some(ResilienceFaultClassificationV1::provider(
+                "provider timeout",
+                None,
+            )),
+        };
+
+        let first_failure = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.multi-probe.first",
+            &open_state,
+            50,
+            || {
+                Err(ResilienceFaultClassificationV1::provider(
+                    "provider timeout",
+                    None,
+                ))
+            },
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert!(first_failure.result.is_err());
+        assert_eq!(
+            first_failure.trace.final_status,
+            CircuitBreakerFinalStatusV1::HalfOpenProbeFailure
+        );
+        assert_eq!(
+            first_failure.state.state,
+            CircuitBreakerStateKindV1::HalfOpen
+        );
+        assert_eq!(first_failure.state.half_open_attempts, 1);
+        assert!(first_failure.state.opened_at_ms.is_none());
+
+        let second_failure = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.multi-probe.second",
+            &first_failure.state,
+            55,
+            || {
+                Err(ResilienceFaultClassificationV1::provider(
+                    "provider timeout",
+                    None,
+                ))
+            },
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert!(second_failure.result.is_err());
+        assert_eq!(
+            second_failure.trace.final_status,
+            CircuitBreakerFinalStatusV1::HalfOpenProbeFailure
+        );
+        assert_eq!(second_failure.state.state, CircuitBreakerStateKindV1::Open);
+        assert_eq!(second_failure.state.half_open_attempts, 2);
+        assert_eq!(second_failure.state.opened_at_ms, Some(55));
+    }
+
+    #[test]
+    fn circuit_breaker_resets_mismatched_policy_state() {
+        let policy = test_circuit_breaker_policy();
+        let stale_state = CircuitBreakerStateV1 {
+            schema_version: RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1.to_string(),
+            policy_id: "stale.policy".to_string(),
+            state: CircuitBreakerStateKindV1::Open,
+            consecutive_failures: 7,
+            half_open_attempts: 1,
+            opened_at_ms: Some(10),
+            last_failure: Some(ResilienceFaultClassificationV1::provider(
+                "provider timeout",
+                None,
+            )),
+        };
+
+        let execution = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.policy-reset",
+            &stale_state,
+            15,
+            || Ok::<_, ResilienceFaultClassificationV1>("ok"),
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert_eq!(execution.result.expect("success"), "ok");
+        assert_eq!(
+            execution.trace.state_before,
+            CircuitBreakerStateKindV1::Closed
+        );
+        assert_eq!(execution.state.policy_id, policy.policy_id);
+        assert_eq!(execution.state.state, CircuitBreakerStateKindV1::Closed);
+        assert_eq!(execution.state.consecutive_failures, 0);
+    }
+
+    #[test]
+    fn circuit_breaker_composes_timeout_faults_without_retry_storms() {
+        let policy = test_circuit_breaker_policy();
+        let first_timeout = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.compose.timeout",
+            || TimeoutObservation {
+                result: Ok::<_, ResilienceFaultClassificationV1>("late"),
+                elapsed_ms: 125,
+                cancelled: false,
+            },
+            clone_fault_classification,
+            provider_timeout_fault,
+            provider_cancelled_fault,
+        );
+        let first_fault = first_timeout.trace.fault.clone().expect("timeout fault");
+        assert_eq!(
+            first_fault.fault_class,
+            ResilienceFaultClassV1::RuntimeFailure
+        );
+
+        let first_breaker = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.compose.first",
+            &circuit_breaker_initial_state(&policy),
+            10,
+            || Err(first_fault.clone()),
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert!(first_breaker.result.is_err());
+        assert_eq!(first_breaker.state.state, CircuitBreakerStateKindV1::Closed);
+
+        let second_timeout = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.compose.timeout",
+            || TimeoutObservation {
+                result: Ok::<_, ResilienceFaultClassificationV1>("late"),
+                elapsed_ms: 130,
+                cancelled: false,
+            },
+            clone_fault_classification,
+            provider_timeout_fault,
+            provider_cancelled_fault,
+        );
+        let second_fault = second_timeout.trace.fault.clone().expect("timeout fault");
+
+        let second_breaker = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.compose.second",
+            &first_breaker.state,
+            20,
+            || Err(second_fault),
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert!(second_breaker.result.is_err());
+        assert_eq!(second_breaker.state.state, CircuitBreakerStateKindV1::Open);
+
+        let called = Cell::new(0);
+        let rejected = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.compose.third",
+            &second_breaker.state,
+            25,
+            || {
+                called.set(called.get() + 1);
+                Ok::<_, ResilienceFaultClassificationV1>("should-not-run")
+            },
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert_eq!(called.get(), 0);
+        assert!(rejected.result.is_err());
+        assert_eq!(
+            rejected.trace.final_status,
+            CircuitBreakerFinalStatusV1::OpenRejected
+        );
+    }
+
+    #[test]
+    fn circuit_breaker_disabled_path_reports_success_and_failure() {
+        let policy = ResiliencePolicyV1 {
+            circuit_breaker: None,
+            ..test_circuit_breaker_policy()
+        };
+        let state = circuit_breaker_initial_state(&policy);
+
+        let success = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Tool,
+            "test.breaker.disabled.success",
+            &state,
+            5,
+            || Ok::<_, ResilienceFaultClassificationV1>("ok"),
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert_eq!(success.result.expect("success"), "ok");
+        assert_eq!(
+            success.trace.final_status,
+            CircuitBreakerFinalStatusV1::ClosedSuccess
+        );
+        assert!(success.trace.decision_summary.contains("breaker disabled"));
+
+        let failure = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Tool,
+            "test.breaker.disabled.failure",
+            &state,
+            6,
+            || {
+                Err(ResilienceFaultClassificationV1::provider(
+                    "provider timeout",
+                    None,
+                ))
+            },
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+        assert!(failure.result.is_err());
+        assert_eq!(
+            failure.trace.final_status,
+            CircuitBreakerFinalStatusV1::ClosedFailure
+        );
+        assert!(failure.trace.fault.is_some());
+    }
+
+    #[test]
+    fn circuit_breaker_closed_success_resets_prior_failure_state() {
+        let policy = test_circuit_breaker_policy();
+        let prior_state = CircuitBreakerStateV1 {
+            schema_version: RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1.to_string(),
+            policy_id: policy.policy_id.clone(),
+            state: CircuitBreakerStateKindV1::Closed,
+            consecutive_failures: 1,
+            half_open_attempts: 0,
+            opened_at_ms: None,
+            last_failure: Some(ResilienceFaultClassificationV1::provider(
+                "provider timeout",
+                None,
+            )),
+        };
+        let execution = execute_circuit_breaker_policy(
+            &policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.breaker.closed-success",
+            &prior_state,
+            40,
+            || Ok::<_, ResilienceFaultClassificationV1>("ok"),
+            clone_fault_classification,
+            provider_breaker_rejection,
+            None::<fn() -> &'static str>,
+        );
+
+        assert_eq!(execution.result.expect("success"), "ok");
+        assert_eq!(
+            execution.trace.final_status,
+            CircuitBreakerFinalStatusV1::ClosedSuccess
+        );
+        assert_eq!(execution.state.consecutive_failures, 0);
+        assert_eq!(execution.state.state, CircuitBreakerStateKindV1::Closed);
+        assert!(execution.state.last_failure.is_none());
+    }
+
+    #[test]
+    fn circuit_breaker_helper_functions_cover_state_window_and_id_generation() {
+        let policy = test_circuit_breaker_policy();
+        let open_state = CircuitBreakerStateV1 {
+            schema_version: RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1.to_string(),
+            policy_id: policy.policy_id.clone(),
+            state: CircuitBreakerStateKindV1::Open,
+            consecutive_failures: 2,
+            half_open_attempts: 0,
+            opened_at_ms: Some(10),
+            last_failure: Some(ResilienceFaultClassificationV1::provider(
+                "provider timeout",
+                None,
+            )),
+        };
+        let still_open = circuit_breaker_state_for_now(
+            &open_state,
+            policy.circuit_breaker.as_ref().expect("breaker policy"),
+            20,
+        );
+        assert_eq!(still_open.state, CircuitBreakerStateKindV1::Open);
+        let half_open = circuit_breaker_state_for_now(
+            &open_state,
+            policy.circuit_breaker.as_ref().expect("breaker policy"),
+            45,
+        );
+        assert_eq!(half_open.state, CircuitBreakerStateKindV1::HalfOpen);
+        assert_eq!(half_open.half_open_attempts, 0);
+        let unchanged = circuit_breaker_state_for_now(
+            &circuit_breaker_initial_state(&policy),
+            policy.circuit_breaker.as_ref().expect("breaker policy"),
+            45,
+        );
+        assert_eq!(unchanged.state, CircuitBreakerStateKindV1::Closed);
+
+        let fault = ResilienceFaultClassificationV1::provider("provider timeout", None);
+        let first_event = circuit_breaker_decision_event(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.ids",
+            "first",
+            Some(fault.clone()),
+        );
+        let second_event = circuit_breaker_decision_event(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.ids",
+            "second",
+            Some(fault.clone()),
+        );
+        let first_artifact = circuit_breaker_recovery_artifact(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.ids",
+            &fault,
+            RecoveryDispositionV1::RetryAllowed,
+            "retry later",
+        );
+        let second_artifact = circuit_breaker_recovery_artifact(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.breaker.ids",
+            &fault,
+            RecoveryDispositionV1::RetryAllowed,
+            "retry later",
+        );
+        assert_ne!(first_event.event_id, second_event.event_id);
+        assert_ne!(first_artifact.artifact_id, second_artifact.artifact_id);
     }
 }

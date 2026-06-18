@@ -1,6 +1,6 @@
 ---
 name: sprint-conductor
-description: Lightweight slow-path sprint orchestrator for ADL. Use when one sprint issue should drive an ordered list of child issues through the existing lifecycle and editor skills sequentially, with no parallel issue execution, robust sprint-end review, and truthful sprint closeout including coverage and Rust tracker metrics.
+description: Lightweight sprint orchestrator for ADL. Use when one sprint issue should drive an explicit child issue wave through existing lifecycle and editor skills with a Sprint Execution Packet that records sequential, parallel, or hybrid intent, robust sprint-end review, and truthful sprint closeout.
 ---
 
 # Sprint Conductor
@@ -10,13 +10,17 @@ skills.
 
 Its job is to:
 - intake one concrete sprint issue and one explicit ordered issue list
-- enforce the slow path: one issue at a time, fully closed out before the next
-  issue starts
+- intake or verify the Sprint Execution Packet (SEP) for that sprint
+- preserve the declared execution mode: `sequential`, `parallel`, or `hybrid`
+  as sprint intent and operator routing evidence
 - route each issue through the existing lifecycle and editor skills rather than
   reimplementing them
 - preserve resumable sprint state in one lightweight local artifact
 - verify and, when needed, repair structured prompt readiness across the entire
   sprint before issue execution begins
+- preserve declared safe parallel lanes, serial gates, and PVF notes as sprint
+  control-plane truth without claiming unproven automated multi-active
+  execution
 - assemble a robust sprint-end review with code-facing review expectations
 - record sprint-end closeout truth including coverage and Rust tracker numbers
 - manage the sprint-management issue to completion, including closing it only
@@ -79,14 +83,14 @@ Use this skill when all of the following are true:
 - there is one concrete sprint-management issue, or sprint policy explicitly
   allows the skill to create the missing sprint-management issue first
 - the sprint has an explicit ordered list of issue numbers
-- the operator wants slow-path sequential execution rather than manual
-  issue-by-issue orchestration
+- the sprint has a declared execution mode and, for parallel or hybrid work,
+  a Sprint Execution Packet naming safe lanes and serial gates
 - sprint-end review and closeout should be handled as part of the same bounded
   sprint flow
 
 Do not use this skill for:
 - multi-sprint planning
-- parallel issue execution
+- unbounded parallel issue execution without a SEP
 - replacing issue-level lifecycle skills
 - silently widening sprint scope
 - broad portfolio or roadmap management
@@ -97,6 +101,7 @@ At minimum, gather:
 - `repo_root`
 - `sprint.issue_number` when it already exists
 - `sprint.ordered_issue_numbers`
+- `sprint.execution_mode`
 - `sprint.goal`
 - one explicit policy block
 
@@ -110,6 +115,10 @@ Useful additional inputs:
 - `sprint.review_paths`
 - `sprint.closeout_paths`
 - `sprint.issue_records`
+- `sprint.execution_packet_path`
+- `sprint.safe_parallel_lanes`
+- `sprint.serial_gates`
+- `sprint.pvf_notes`
 - `resume_from_state_path`
 
 If there is no concrete sprint issue or ordered issue list, stop and report
@@ -121,15 +130,21 @@ missing sprint-management issue first.
 1. Resolve the concrete sprint issue and ordered child issue list. If the sprint
    issue is missing and policy allows creation, create it through the bundled
    helper first.
-2. Create or load the sprint-state artifact.
-3. When live execution is about to begin, run the installed-skill parity/readiness gate first.
-4. Run sprint-wide structured prompt review before issue execution begins.
+2. Resolve the Sprint Execution Packet. If the sprint declares `parallel` or
+   `hybrid`, require safe lanes, serial gates, and PVF notes before execution
+   is routed to separate issue workers or sessions.
+3. Create or load the sprint-state artifact.
+4. When live execution is about to begin, run the installed-skill parity/readiness gate first.
+5. Run sprint-wide structured prompt review before issue execution begins.
 5. If any child issue cards are not ready, repair them through the editor skills first.
    When the child issue needs new or fully re-rendered cards, prefer the
    prompt-template values renderer and `validate-structure` before routing
    issue-local lifecycle truth through the matching editor skill.
-6. Confirm the current issue is the earliest not-yet-closed issue in the list.
-7. Route that issue through `workflow-conductor`.
+6. Select the next child issue or operator-approved lane handoff according to
+   the declared execution mode and serial gates. Current helper state remains
+   single-current-issue; parallel execution is achieved by separate issue
+   workers/sessions using the SEP as the coordination contract.
+7. Route the selected child issue or lane handoff through `workflow-conductor`.
 8. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
 9. Run only the selected downstream lifecycle or editor skill.
 10. Re-check issue truth. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
@@ -137,7 +152,10 @@ missing sprint-management issue first.
 12. If the issue is merged or otherwise closed but not locally closeouted yet, immediately route `pr-closeout` and finish the child-closeout gate.
 13. If the issue is fully closed out, use the deterministic child-closeout helper path to advance sprint state.
 14. If the issue is still active after the fresh truth check, repeat the routing loop for the same issue.
-15. Only after child-closeout truth is satisfied may the sprint advance to the next ordered issue.
+15. In `sequential` mode, only after child-closeout truth is satisfied may the
+    sprint advance to the next ordered issue. In `parallel` or `hybrid` mode,
+    do not treat a lane as clear unless its SEP-defined dependencies, serial
+    gates, and issue-local closeout truth are satisfied.
 16. After the final issue closes, assemble sprint review evidence.
 17. Record sprint closeout metrics including coverage and Rust tracker counts.
 18. Write the bounded sprint closeout artifact before closing the sprint-management issue.
@@ -146,11 +164,16 @@ missing sprint-management issue first.
 ## Execution Model
 
 This skill enforces:
-- exactly one active child issue at a time
+- exactly one active child issue in this helper's local sprint state
+- SEP-declared active lanes for `parallel` and `hybrid` sprints as
+  coordination evidence for separate workers/sessions
 - no child issue execution before the whole sprint batch passes structured prompt review
 - no child issue execution before the whole sprint batch passes design-time
   card-completion review for `SIP`, `STP`, `SPP`, and `SRP`
-- no issue `N+1` work before issue `N` is fully closed out
+- no issue `N+1` work before issue `N` is fully closed out in `sequential`
+  mode
+- no intentional parallel lane work unless the SEP names the lane, write-set
+  boundary, proof lane, and required coordination
 - editor-skill routing when cards drift
 - prompt-template renderer/schema validation when cards need deterministic
   regeneration rather than lifecycle-truth repair
@@ -169,6 +192,8 @@ This skill enforces:
   terminal closeout truth
 - healthy child waiting states are monitored issue-local lifecycle states, not default operator stop states
 - merged-but-not-closeouted children are immediate closeout work, not natural pause points
+- aggregate sprint proof must not hide failed, pending, deferred, blocked, or
+  skipped child lanes
 
 ## Observability Expectations
 
@@ -309,7 +334,8 @@ This skill must stop after:
 - surfacing any blocker that prevents safe continuation
 
 It must not:
-- parallelize child issues silently
+- parallelize child issues silently or claim automated multi-active execution
+  beyond the current helper implementation
 - absorb the underlying issue lifecycle logic
 - skip issue closeout to save time
 - invent coverage or Rust tracker numbers

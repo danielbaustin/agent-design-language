@@ -6,7 +6,7 @@ use super::{
 use super::{run_gh_status_shell, test_gh_fixture_fallback_allowed};
 use crate::cli::observability;
 use anyhow::{anyhow, bail, Context, Result};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone, Deserialize)]
@@ -233,14 +233,19 @@ pub(super) fn pr_body_octocrab(repo: &str, pr_ref: &str) -> Result<String> {
 }
 
 pub(super) fn issue_comment_octocrab(repo: &str, issue: u32, body: &str) -> Result<()> {
+    #[derive(Serialize)]
+    struct IssueCommentPayload<'a> {
+        body: &'a str,
+    }
+
     let repo_parts = parse_repo(repo)?;
     with_octocrab("issue.comment", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        block_on_octocrab(runtime, "issue.comment", || async {
-            octo.issues(&owner, &name)
-                .create_comment(issue as u64, body.to_string())
-                .await
+        let route = format!("/repos/{owner}/{name}/issues/{issue}/comments");
+        let payload = IssueCommentPayload { body };
+        let _: serde_json::Value = block_on_octocrab(runtime, "issue.comment", || async {
+            octo.post(route.as_str(), Some(&payload)).await
         })?;
         Ok(())
     })

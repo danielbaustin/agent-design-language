@@ -5,15 +5,20 @@
 Run one sprint through the existing ADL issue workflow without replacing the
 issue-level skill family.
 
-This is the slow path.
-One issue at a time.
-No parallel child issue execution.
+The default safe path is still sequential, but the sprint may declare
+`sequential`, `parallel`, or `hybrid` execution intent through a Sprint
+Execution Packet (SEP). Parallel and hybrid execution require named safe lanes,
+serial gates, and PVF notes before child work is delegated to separate issue
+workers or sessions. The current helper state remains single-current-issue and
+does not itself automate multi-active issue execution.
 
 ## Inputs
 
 Required:
 - one sprint-management issue, or policy authority to let the skill create it
 - ordered child issue list
+- declared execution mode
+- Sprint Execution Packet for parallel or hybrid modes
 - sprint goal
 - explicit policy block
 
@@ -27,7 +32,16 @@ Optional:
 ## Core Loop
 
 1. Load or create sprint-state.
-2. Before live issue execution begins, run the installed-skill parity/readiness gate when sprint policy requires it:
+2. Resolve the Sprint Execution Packet:
+   - if `execution_mode` is `sequential`, record the ordered child issue list
+     and serial closeout bar
+   - if `execution_mode` is `parallel`, require safe parallel lanes, write-set
+     boundaries, proof lanes, and coordination notes
+   - if `execution_mode` is `hybrid`, require both safe parallel lanes and the
+     serial gates that control later work
+   - if required SEP fields are missing, stop and repair the sprint umbrella
+     before starting child issue work
+3. Before live issue execution begins, run the installed-skill parity/readiness gate when sprint policy requires it:
    - if parity matches, continue
    - if installed skill drift is detected, stop and repair the live install before running the sprint
 3. Run sprint-wide structured prompt review before starting issue execution:
@@ -38,9 +52,15 @@ Optional:
    - create it through the bundled helper when policy allows, then continue
    - otherwise stop and report `missing_sprint_issue`
 5. Re-check live GitHub truth for the current sprint-state and require a matched result before any sprint-state transition.
-6. Choose the earliest child issue in the ordered list that is not yet closed
-   out.
-7. Route that child issue through `workflow-conductor`.
+6. Choose the next child issue or operator-approved lane handoff:
+   - in `sequential`, choose the earliest child issue that is not yet closed
+     out
+   - in `parallel`, use the SEP to identify ready lane work for separate
+     workers/sessions; this helper records and resumes one current child at a
+     time
+   - in `hybrid`, use the SEP to identify ready lane work until a named serial
+     gate blocks progress
+7. Route the selected child issue or lane handoff through `workflow-conductor`.
 8. Run only the selected downstream lifecycle or editor skill.
 9. Re-check issue truth.
 10. If the issue is in a healthy PR-open waiting state, route `issue-watcher`
@@ -57,6 +77,9 @@ Optional:
 15. If any true blocker is encountered, stop and report the blocker in
    sprint-state.
 
+Important: sprint-level aggregate proof must not hide failed, pending,
+deferred, blocked, skipped, or unreviewed child lanes.
+
 Preferred installed-skill parity helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/check_installed_skill_parity.py --repo-root <repo> --state <path>`
 
@@ -65,6 +88,13 @@ Preferred structured-prompt preflight helper:
 
 Preferred missing-sprint-issue helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <goal> --state <path>`
+
+Known helper migration note:
+- the typed issue mutation command surface exists as `pr.sh issue
+  create/comment/edit`
+- if the missing-sprint-issue helper still shells through direct `gh issue
+  create`, route that helper as migration debt and prefer the typed command
+  surface for new sprint setup automation
 
 Preferred live-truth helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match`

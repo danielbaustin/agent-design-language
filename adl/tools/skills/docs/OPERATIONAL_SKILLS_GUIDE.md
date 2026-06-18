@@ -88,7 +88,11 @@ The normal workflow is:
 `arxiv-paper-writer` is a bounded helper skill for turning one concrete scholarly source packet into a reviewer-friendly arXiv-style manuscript packet without submitting, publishing, or inventing citations.
 `diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
-`sprint-conductor` is a slow-path sprint orchestrator that sequences issues through the existing lifecycle and editor skills, then finishes with sprint review and closeout.
+`sprint-conductor` is a sprint orchestrator that sequences one local current
+issue while coordinating broader sprint intent through a declared Sprint
+Execution Packet, then finishes with sprint review and closeout. SEP can record
+safe parallel lanes for separate workers or sessions; it is not itself a claim
+that the current helper scripts automate multi-active issue execution.
 `adl-milestone-creator` is a bounded milestone setup helper for creating full milestone packages, bridge milestones, issue-routing truth, feature/proof coverage, and downstream handoff docs without relying on session memory.
 `issue-folding` is a bounded issue-disposition helper for classifying duplicate, superseded, absorbed, already-satisfied, obsolete, or still-actionable issues before closeout.
 `issue-splitter` is a bounded issue-scope helper for deciding whether one issue should stay intact, split now, defer splitting, or stop for operator review.
@@ -139,8 +143,24 @@ claims, integration state, and closeout truth. They should not be used as a
 reason to hand-write locked template prose or bypass schema validation when a
 values-rendered card path is available.
 
-`sprint-conductor` is a bounded orchestration helper rather than an editor skill. It sequences one sprint issue across ordered child issues using the existing lifecycle/editor stack, then assembles sprint review and sprint closeout evidence.
-It now includes a small deterministic sprint-state helper, supports a bounded review-subagent exception when policy enables it, and should be installed or synced into the active Codex skills directory before live use.
+`sprint-conductor` is a bounded orchestration helper rather than an editor
+skill. It coordinates one sprint issue across an explicit child issue wave
+using the existing lifecycle/editor stack, then assembles sprint review and
+sprint closeout evidence. Sprint umbrellas should carry a Sprint Execution
+Packet from `docs/templates/sprints/1.0.0/sprint_execution_packet.md` or equivalent
+issue-body sections that name execution mode, dependency order, safe parallel
+lanes, serial gates, PVF notes, review bar, closeout bar, and residual routing.
+Current helper scripts still model one local current issue; parallel lanes are
+operator/subagent/session coordination surfaces until a later implementation
+proves automated multi-active lane execution.
+Some legacy sprint-conductor helper scripts still call raw `gh` internally for
+truth checks, issue creation context, or closure while the public issue wrapper
+is list/search/view-only. Treat repo-native octocrab-backed issue mutation as
+the desired direction, but do not claim those helper internals are fully
+migrated until a later issue proves it.
+It includes deterministic sprint-state helpers, supports a bounded
+review-subagent exception when policy enables it, and should be installed or
+synced into the active Codex skills directory before live use.
 
 ## Where The Skills Live
 
@@ -231,7 +251,14 @@ Preferred commands:
 bash adl/tools/pr.sh issue view <issue-number-or-url> --json
 bash adl/tools/pr.sh issue list --state open|closed|all --limit <n> --json
 bash adl/tools/pr.sh issue search --query "<text>" --state open|closed|all --json
+bash adl/tools/pr.sh issue create --title "<title>" --body-file <path> --label track:roadmap --json
+bash adl/tools/pr.sh issue comment <issue-number-or-url> --body-file <path> --json
+bash adl/tools/pr.sh issue edit <issue-number-or-url> --title "<title>" --body-file <path> --label area:tools --json
 ```
+
+Use typed issue mutation commands for covered issue setup and repair paths.
+Direct `gh issue create/comment/edit` use should be treated as helper migration
+debt, not as the normal ADL sprint setup path.
 
 Use this surface when:
 
@@ -240,6 +267,8 @@ Use this surface when:
   or closeout
 - reproducing milestone queue or closeout checks that previously depended on
   `gh issue list` or `gh issue view`
+- creating, commenting on, or updating issue metadata during bounded sprint
+  setup and tooling work
 
 Pair it with:
 

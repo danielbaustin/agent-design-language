@@ -7,10 +7,34 @@ sprint:
   issue_url: <url or null>
   issue_created_by_skill: true | false
   issue_closed: true | false
+  execution_mode: sequential | parallel | hybrid
+  execution_packet_path: <path or null>
   follow_up_issue_policy: post_sprint_follow_on | must_land_before_sprint_close
   goal: <string or null>
   ordered_issue_numbers:
     - <u32>
+  recommended_execution_order:
+    - <bounded text>
+  safe_parallel_lanes:
+    - lane_id: <string>
+      issue_numbers:
+        - <u32>
+      why_parallel_safe: <bounded text>
+      required_coordination: <bounded text>
+  serial_gates:
+    - gate_id: <string>
+      blocks:
+        - <bounded text>
+      exit_condition: <bounded text>
+      owner: <string>
+  pvf_notes:
+    immediate_issue_local_proof: <bounded text>
+    parallel_validation_lanes:
+      - <bounded text>
+    serial_validation_gates:
+      - <bounded text>
+    proof_reuse_criteria: <bounded text>
+    fail_closed_rule: <bounded text>
   issue_records:
     - issue_number: <u32>
       status: pending | active | waiting_for_review | closed_out | blocked | deferred

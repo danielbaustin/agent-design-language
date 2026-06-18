@@ -153,10 +153,43 @@ pub(crate) struct IssueViewArgs {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct IssueCreateArgs {
+    pub(crate) title: String,
+    pub(crate) body: Option<String>,
+    pub(crate) body_file: Option<PathBuf>,
+    pub(crate) labels: Vec<String>,
+    pub(crate) repo: Option<String>,
+    pub(crate) json: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct IssueCommentArgs {
+    pub(crate) issue_ref: String,
+    pub(crate) body: Option<String>,
+    pub(crate) body_file: Option<PathBuf>,
+    pub(crate) repo: Option<String>,
+    pub(crate) json: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct IssueEditArgs {
+    pub(crate) issue_ref: String,
+    pub(crate) title: Option<String>,
+    pub(crate) body: Option<String>,
+    pub(crate) body_file: Option<PathBuf>,
+    pub(crate) labels: Vec<String>,
+    pub(crate) repo: Option<String>,
+    pub(crate) json: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum IssueArgs {
     List(IssueListArgs),
     Search(IssueSearchArgs),
     View(IssueViewArgs),
+    Create(IssueCreateArgs),
+    Comment(IssueCommentArgs),
+    Edit(IssueEditArgs),
 }
 
 pub(crate) fn parse_init_args(args: &[String]) -> Result<InitArgs> {
@@ -641,13 +674,16 @@ pub(crate) fn parse_closeout_args(args: &[String]) -> Result<CloseoutArgs> {
 
 pub(crate) fn parse_issue_args(args: &[String]) -> Result<IssueArgs> {
     let Some(subcommand) = args.first().map(|value| value.as_str()) else {
-        bail!("issue: missing subcommand (list | search | view)");
+        bail!("issue: missing subcommand (list | search | view | create | comment | edit)");
     };
 
     match subcommand {
         "list" => parse_issue_list_args(&args[1..]).map(IssueArgs::List),
         "search" => parse_issue_search_args(&args[1..]).map(IssueArgs::Search),
         "view" => parse_issue_view_args(&args[1..]).map(IssueArgs::View),
+        "create" => parse_issue_create_args(&args[1..]).map(IssueArgs::Create),
+        "comment" => parse_issue_comment_args(&args[1..]).map(IssueArgs::Comment),
+        "edit" => parse_issue_edit_args(&args[1..]).map(IssueArgs::Edit),
         other => bail!("issue: unknown subcommand: {other}"),
     }
 }
@@ -756,6 +792,195 @@ fn parse_issue_view_args(args: &[String]) -> Result<IssueViewArgs> {
         i += 1;
     }
     Ok(parsed)
+}
+
+fn parse_issue_create_args(args: &[String]) -> Result<IssueCreateArgs> {
+    let mut parsed = IssueCreateArgs {
+        title: String::new(),
+        body: None,
+        body_file: None,
+        labels: Vec::new(),
+        repo: None,
+        json: false,
+    };
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--title" => {
+                parsed.title = require_value(args, i, "issue create", "--title")?;
+                i += 1;
+            }
+            "--body" => {
+                parsed.body = Some(require_value(args, i, "issue create", "--body")?);
+                i += 1;
+            }
+            "--body-file" => {
+                parsed.body_file = Some(PathBuf::from(require_value(
+                    args,
+                    i,
+                    "issue create",
+                    "--body-file",
+                )?));
+                i += 1;
+            }
+            "--label" => {
+                parsed
+                    .labels
+                    .push(require_value(args, i, "issue create", "--label")?);
+                i += 1;
+            }
+            "--labels" => {
+                parsed.labels.extend(split_labels(&require_value(
+                    args,
+                    i,
+                    "issue create",
+                    "--labels",
+                )?));
+                i += 1;
+            }
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "issue create", args[i].as_str())?);
+                i += 1;
+            }
+            "--json" => parsed.json = true,
+            other => bail!("issue create: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    if parsed.title.trim().is_empty() {
+        bail!("issue create: --title is required");
+    }
+    if parsed.body.is_some() && parsed.body_file.is_some() {
+        bail!("issue create: pass only one of --body or --body-file");
+    }
+    Ok(parsed)
+}
+
+fn parse_issue_comment_args(args: &[String]) -> Result<IssueCommentArgs> {
+    let issue_ref = args
+        .first()
+        .ok_or_else(|| anyhow!("issue comment: missing <issue-number-or-url>"))?
+        .clone();
+    let mut parsed = IssueCommentArgs {
+        issue_ref,
+        body: None,
+        body_file: None,
+        repo: None,
+        json: false,
+    };
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--body" => {
+                parsed.body = Some(require_value(args, i, "issue comment", "--body")?);
+                i += 1;
+            }
+            "--body-file" => {
+                parsed.body_file = Some(PathBuf::from(require_value(
+                    args,
+                    i,
+                    "issue comment",
+                    "--body-file",
+                )?));
+                i += 1;
+            }
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "issue comment", args[i].as_str())?);
+                i += 1;
+            }
+            "--json" => parsed.json = true,
+            other => bail!("issue comment: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    if parsed.body.is_some() && parsed.body_file.is_some() {
+        bail!("issue comment: pass only one of --body or --body-file");
+    }
+    if parsed.body.is_none() && parsed.body_file.is_none() {
+        bail!("issue comment: --body or --body-file is required");
+    }
+    Ok(parsed)
+}
+
+fn parse_issue_edit_args(args: &[String]) -> Result<IssueEditArgs> {
+    let issue_ref = args
+        .first()
+        .ok_or_else(|| anyhow!("issue edit: missing <issue-number-or-url>"))?
+        .clone();
+    let mut parsed = IssueEditArgs {
+        issue_ref,
+        title: None,
+        body: None,
+        body_file: None,
+        labels: Vec::new(),
+        repo: None,
+        json: false,
+    };
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--title" => {
+                parsed.title = Some(require_value(args, i, "issue edit", "--title")?);
+                i += 1;
+            }
+            "--body" => {
+                parsed.body = Some(require_value(args, i, "issue edit", "--body")?);
+                i += 1;
+            }
+            "--body-file" => {
+                parsed.body_file = Some(PathBuf::from(require_value(
+                    args,
+                    i,
+                    "issue edit",
+                    "--body-file",
+                )?));
+                i += 1;
+            }
+            "--label" => {
+                parsed
+                    .labels
+                    .push(require_value(args, i, "issue edit", "--label")?);
+                i += 1;
+            }
+            "--labels" => {
+                parsed.labels.extend(split_labels(&require_value(
+                    args,
+                    i,
+                    "issue edit",
+                    "--labels",
+                )?));
+                i += 1;
+            }
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "issue edit", args[i].as_str())?);
+                i += 1;
+            }
+            "--json" => parsed.json = true,
+            other => bail!("issue edit: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    if parsed.body.is_some() && parsed.body_file.is_some() {
+        bail!("issue edit: pass only one of --body or --body-file");
+    }
+    if parsed.title.is_none()
+        && parsed.body.is_none()
+        && parsed.body_file.is_none()
+        && parsed.labels.is_empty()
+    {
+        bail!(
+            "issue edit: pass at least one of --title, --body, --body-file, --label, or --labels"
+        );
+    }
+    Ok(parsed)
+}
+
+fn split_labels(raw: &str) -> Vec<String> {
+    raw.split(',')
+        .map(str::trim)
+        .filter(|label| !label.is_empty())
+        .map(ToString::to_string)
+        .collect()
 }
 
 fn parse_issue_state_filter(cmd: &str, value: &str) -> Result<IssueStateFilter> {

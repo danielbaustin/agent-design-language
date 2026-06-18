@@ -1,0 +1,35 @@
+{
+  "schema_version": "adl.sprint_templates.v1",
+  "template_set": "1.0.0",
+  "template_root": "docs/templates/sprints/1.0.0",
+  "templates": {
+    "sprint_execution_packet": {
+      "role": "Sprint Execution Packet",
+      "path": "docs/templates/sprints/1.0.0/sprint_execution_packet.md",
+      "status": "active",
+      "required_sections": [
+        "Metadata",
+        "Sprint Goal",
+        "Sprint Boundary",
+        "Child Issue Wave",
+        "Dependency Graph",
+        "Recommended Execution Order",
+        "Issue Lifecycle Policy",
+        "Watcher Policy",
+        "Safe Parallel Lanes",
+        "Serial Gates",
+        "PVF / Validation-Tail Notes",
+        "Sprint Activity Log",
+        "Sprint-Level Review",
+        "Subagent / Local Model Policy",
+        "Template/AST Policy",
+        "Shared Inputs And Artifacts",
+        "Cross-Sprint Dependencies",
+        "Review Bar",
+        "Closeout Bar",
+        "Residual Routing Policy",
+        "Non-Claims"
+      ]
+    }
+  }
+}

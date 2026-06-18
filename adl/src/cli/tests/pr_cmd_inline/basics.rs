@@ -52,6 +52,23 @@ fn spawn_issue_octocrab_test_server(
                     "\"milestone\":{\"title\":\"v0.91.5\"}}"
                 )
                 .to_string(),
+                ("POST", "/repos/owner/repo/issues") => concat!(
+                    "{\"number\":101,\"title\":\"[v0.91.6][tools] Typed create\",",
+                    "\"state\":\"open\",\"html_url\":\"https://github.com/owner/repo/issues/101\",",
+                    "\"closed_at\":null,\"body\":\"Created body\",\"labels\":[],\"milestone\":null}"
+                )
+                .to_string(),
+                ("POST", "/repos/owner/repo/issues/77/comments") => {
+                    "{\"html_url\":\"https://github.com/owner/repo/issues/77#issuecomment-1\"}"
+                        .to_string()
+                }
+                ("PATCH", "/repos/owner/repo/issues/77") => concat!(
+                    "{\"number\":77,\"title\":\"[v0.91.6][tools] Edited\",",
+                    "\"state\":\"open\",\"html_url\":\"https://github.com/owner/repo/issues/77\",",
+                    "\"closed_at\":null,\"body\":\"Issue body\",\"labels\":[{\"name\":\"area:tools\"}],",
+                    "\"milestone\":{\"title\":\"v0.91.6\"}}"
+                )
+                .to_string(),
                 _ => {
                     panic!("unexpected request: {method} {url}");
                 }
@@ -233,6 +250,65 @@ fn parse_issue_args_accepts_list_search_and_view_modes() {
     assert!(err
         .to_string()
         .contains("issue search: --limit must be 1000 or less"));
+
+    let parsed = parse_issue_args(&[
+        "create".to_string(),
+        "--title".to_string(),
+        "[v0.91.6][tools] Typed create".to_string(),
+        "--body-file".to_string(),
+        "body.md".to_string(),
+        "--label".to_string(),
+        "area:tools".to_string(),
+        "--labels".to_string(),
+        "type:task,version:v0.91.6".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("parse issue create");
+    match parsed {
+        IssueArgs::Create(parsed) => {
+            assert_eq!(parsed.title, "[v0.91.6][tools] Typed create");
+            assert_eq!(parsed.body_file, Some(PathBuf::from("body.md")));
+            assert_eq!(
+                parsed.labels,
+                vec!["area:tools", "type:task", "version:v0.91.6"]
+            );
+            assert!(parsed.json);
+        }
+        other => panic!("expected create args, got {other:?}"),
+    }
+
+    let parsed = parse_issue_args(&[
+        "comment".to_string(),
+        "77".to_string(),
+        "--body".to_string(),
+        "comment body".to_string(),
+    ])
+    .expect("parse issue comment");
+    match parsed {
+        IssueArgs::Comment(parsed) => {
+            assert_eq!(parsed.issue_ref, "77");
+            assert_eq!(parsed.body.as_deref(), Some("comment body"));
+        }
+        other => panic!("expected comment args, got {other:?}"),
+    }
+
+    let parsed = parse_issue_args(&[
+        "edit".to_string(),
+        "77".to_string(),
+        "--title".to_string(),
+        "[v0.91.6][tools] Edited".to_string(),
+        "--label".to_string(),
+        "area:tools".to_string(),
+    ])
+    .expect("parse issue edit");
+    match parsed {
+        IssueArgs::Edit(parsed) => {
+            assert_eq!(parsed.issue_ref, "77");
+            assert_eq!(parsed.title.as_deref(), Some("[v0.91.6][tools] Edited"));
+            assert_eq!(parsed.labels, vec!["area:tools"]);
+        }
+        other => panic!("expected edit args, got {other:?}"),
+    }
 }
 
 #[test]
@@ -338,7 +414,7 @@ fn format_issue_view_renders_empty_labels_without_optional_fields() {
 }
 
 #[test]
-fn real_pr_issue_covers_list_search_and_url_view_against_mock_github() {
+fn real_pr_issue_covers_list_search_view_and_mutation_against_mock_github() {
     let _guard = env_lock();
     let _transport_env = force_gh_cli_transport_env();
     let temp = unique_temp_dir("adl-pr-issue-inline");
@@ -363,7 +439,11 @@ fn real_pr_issue_covers_list_search_and_url_view_against_mock_github() {
         .status()
         .expect("git commit")
         .success());
-    let (base_uri, server) = spawn_issue_octocrab_test_server(3);
+    let body_path = repo.join("issue-body.md");
+    std::fs::write(&body_path, "Created body\n").expect("write body");
+    let comment_path = repo.join("comment.md");
+    std::fs::write(&comment_path, "Comment body\n").expect("write comment");
+    let (base_uri, server) = spawn_issue_octocrab_test_server(6);
     unsafe {
         std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
         std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
@@ -385,13 +465,43 @@ fn real_pr_issue_covers_list_search_and_url_view_against_mock_github() {
         "https://github.com/owner/repo/issues/77".to_string(),
     ])
     .expect("issue view");
+    real_pr_issue(&[
+        "create".to_string(),
+        "--title".to_string(),
+        "[v0.91.6][tools] Typed create".to_string(),
+        "--body-file".to_string(),
+        body_path.to_string_lossy().to_string(),
+        "--label".to_string(),
+        "area:tools".to_string(),
+    ])
+    .expect("issue create");
+    real_pr_issue(&[
+        "comment".to_string(),
+        "77".to_string(),
+        "--body-file".to_string(),
+        comment_path.to_string_lossy().to_string(),
+    ])
+    .expect("issue comment");
+    real_pr_issue(&[
+        "edit".to_string(),
+        "77".to_string(),
+        "--label".to_string(),
+        "area:tools".to_string(),
+    ])
+    .expect("issue edit");
 
     std::env::set_current_dir(prev_dir).expect("restore cwd");
     let seen = server.join().expect("server join");
-    assert_eq!(seen.len(), 3);
+    assert_eq!(seen.len(), 6);
     assert!(seen[0].starts_with("GET /repos/owner/repo/issues?"));
     assert!(seen[1].contains("/search/issues?"));
     assert!(seen[2].starts_with("GET /repos/owner/repo/issues/77"));
+    assert!(seen[3].starts_with("POST /repos/owner/repo/issues "));
+    assert!(seen[3].contains("[v0.91.6][tools] Typed create"));
+    assert!(seen[4].starts_with("POST /repos/owner/repo/issues/77/comments "));
+    assert!(seen[4].contains("Comment body"));
+    assert!(seen[5].starts_with("PATCH /repos/owner/repo/issues/77 "));
+    assert!(seen[5].contains("area:tools"));
 }
 
 #[test]

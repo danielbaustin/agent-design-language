@@ -81,8 +81,9 @@ use self::git_support::{
     repo_root, run_capture, run_status, tracked_changes_status,
 };
 use self::github::{
-    ensure_issue_metadata_parity, format_open_pr_wave, gh_issue_create, gh_issue_edit_body,
-    gh_issue_title, issue_version, unresolved_milestone_pr_wave, IssueRecord,
+    ensure_issue_metadata_parity, format_open_pr_wave, gh_issue_comment, gh_issue_create,
+    gh_issue_edit_body, gh_issue_edit_title, gh_issue_set_labels, gh_issue_title, issue_version,
+    unresolved_milestone_pr_wave, IssueRecord,
 };
 
 const DEFAULT_VERSION: &str = "v0.86";
@@ -255,15 +256,7 @@ fn real_pr_issue(args: &[String]) -> Result<()> {
                 .repo
                 .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
                 .unwrap_or(default_repo(&repo_root)?);
-            let issue = if parsed.issue_ref.starts_with("http://")
-                || parsed.issue_ref.starts_with("https://")
-            {
-                parse_issue_number_from_url(&parsed.issue_ref)?
-            } else {
-                parsed.issue_ref.parse::<u32>().with_context(|| {
-                    format!("issue view: invalid issue number: {}", parsed.issue_ref)
-                })?
-            };
+            let issue = parse_issue_ref_number("issue view", &parsed.issue_ref)?;
             let record = github::gh_issue_view(&repo, issue)?;
             if parsed.json {
                 print_json(&record)?;
@@ -271,8 +264,80 @@ fn real_pr_issue(args: &[String]) -> Result<()> {
                 print_issue_view(&record);
             }
         }
+        IssueArgs::Create(parsed) => {
+            let repo = parsed.repo.unwrap_or(default_repo(&repo_root)?);
+            let body = resolve_issue_body(parsed.body, parsed.body_file.as_deref())?;
+            let labels_csv = parsed.labels.join(",");
+            let url = gh_issue_create(&repo, &parsed.title, &body, &labels_csv)?;
+            if parsed.json {
+                print_json(&IssueMutationResult {
+                    status: "created",
+                    issue: parse_issue_number_from_url(&url).ok(),
+                    url: Some(url),
+                })?;
+            } else {
+                println!("{url}");
+            }
+        }
+        IssueArgs::Comment(parsed) => {
+            let repo = parsed
+                .repo
+                .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
+                .unwrap_or(default_repo(&repo_root)?);
+            let issue = parse_issue_ref_number("issue comment", &parsed.issue_ref)?;
+            let body = resolve_issue_body(parsed.body, parsed.body_file.as_deref())?;
+            gh_issue_comment(&repo, issue, &body)?;
+            if parsed.json {
+                print_json(&IssueMutationResult {
+                    status: "commented",
+                    issue: Some(issue),
+                    url: None,
+                })?;
+            }
+        }
+        IssueArgs::Edit(parsed) => {
+            let repo = parsed
+                .repo
+                .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
+                .unwrap_or(default_repo(&repo_root)?);
+            let issue = parse_issue_ref_number("issue edit", &parsed.issue_ref)?;
+            if let Some(title) = parsed.title {
+                gh_issue_edit_title(&repo, issue, &title)?;
+            }
+            if parsed.body.is_some() || parsed.body_file.is_some() {
+                let body = resolve_issue_body(parsed.body, parsed.body_file.as_deref())?;
+                gh_issue_edit_body(&repo, issue, &body)?;
+            }
+            if !parsed.labels.is_empty() {
+                gh_issue_set_labels(&repo, issue, &parsed.labels)?;
+            }
+            if parsed.json {
+                print_json(&IssueMutationResult {
+                    status: "edited",
+                    issue: Some(issue),
+                    url: None,
+                })?;
+            }
+        }
     }
     Ok(())
+}
+
+#[derive(Serialize)]
+struct IssueMutationResult {
+    status: &'static str,
+    issue: Option<u32>,
+    url: Option<String>,
+}
+
+fn parse_issue_ref_number(command: &str, issue_ref: &str) -> Result<u32> {
+    if issue_ref.starts_with("http://") || issue_ref.starts_with("https://") {
+        parse_issue_number_from_url(issue_ref)
+    } else {
+        issue_ref
+            .parse::<u32>()
+            .with_context(|| format!("{command}: invalid issue number: {issue_ref}"))
+    }
 }
 
 fn repo_from_pr_ref(pr_ref: &str) -> Option<String> {

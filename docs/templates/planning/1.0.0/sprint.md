@@ -18,6 +18,10 @@
 - Track blockers here rather than scattered chat notes.
 - Keep sidecar or support work visible and bounded.
 - Record closeout expectations before execution begins.
+- For sprint umbrellas and mini-sprints, fill a Sprint Execution Packet using
+  `docs/templates/sprints/1.0.0/sprint_execution_packet.md` or embed the same
+  sections here so order, parallel lanes, PVF notes, and closeout truth are
+  reviewable.
 
 ## Sprint Overview
 
@@ -65,6 +69,20 @@ Planned scope:
 - Keep changes scoped per issue; use draft PRs until checks pass.
 - Run the smallest meaningful validation for each touched surface.
 - Record proof truthfully in issue-local output records or review docs.
+- Declare execution mode as `sequential`, `parallel`, or `hybrid`.
+- Parallel child issue execution is allowed only when the Sprint Execution
+  Packet names the safe lanes, write-set boundaries, proof lanes, and serial
+  gates.
+
+## Sprint Execution Packet
+
+- Execution mode: `<execution_mode>`
+- SEP artifact or issue-body section: `<sep_artifact_or_section>`
+- Recommended execution order: `<recommended_execution_order>`
+- Safe parallel lanes: `<safe_parallel_lanes>`
+- Serial gates: `<serial_gates>`
+- PVF / validation-tail notes: `<pvf_notes>`
+- Residual routing policy: `<residual_routing_policy>`
 
 ## Cadence Expectations
 
@@ -90,6 +108,8 @@ Planned scope:
 - Linked issues and PRs are updated and traceable.
 - Focused validation is recorded for every touched surface.
 - Sprint summary is captured in milestone docs.
+- Child issue state, PR URLs, proof surfaces, review findings, worktree pruning
+  state, and follow-up routing are recorded in the sprint closeout artifact.
 
 ## Exit Criteria
 
