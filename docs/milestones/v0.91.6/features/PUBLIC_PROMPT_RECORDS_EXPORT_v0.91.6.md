@@ -6,13 +6,15 @@
 - Version: `v0.91.6`
 - Date: `2026-06-18`
 - Owner: ADL maintainers
-- Status: `wp_04_execution_active`
+- Status: `wp_04_closeout_ready_pending_review`
 - Related issues: `#3969`, `#4002`, `#4003`, `#4004`, `#4005`, `#4006`
 - Prior baseline: [PUBLIC_PROMPT_RECORDS_v0.91.5.md](../../v0.91.5/features/PUBLIC_PROMPT_RECORDS_v0.91.5.md)
 - Export contract proof note: [PUBLIC_PROMPT_RECORDS_EXPORT_CONTRACT_4002.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_EXPORT_CONTRACT_4002.md)
 - Redaction/publication safety proof note: [PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md)
 - Validation/indexing proof note: [PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md)
 - Security/CAV handoff packet: [PUBLIC_PROMPT_RECORDS_SECURITY_CAV_HANDOFF_4005.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_SECURITY_CAV_HANDOFF_4005.md)
+- Distribution/closeout packet: [PUBLIC_PROMPT_RECORDS_DISTRIBUTION_CLOSEOUT_4006.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_DISTRIBUTION_CLOSEOUT_4006.md)
+- Reviewer-facing packet index: [review/evidence/csdlc/issues/README.md](../review/evidence/csdlc/issues/README.md)
 
 ## Template Rules
 
@@ -101,6 +103,45 @@ approved, issue-bounded authoring sources, but current enforcement is layered:
 - broader adversarial verification, provider trust, malformed-output, and
   ACIP/A2A security residuals still route through the security bridge/CAV lane
   rather than hiding inside the packet export workflow
+
+### Distribution proof and closeout contract
+
+`#4006` closes the WP-04 public prompt-records wave as a bridge proof and
+closeout surface, not as blanket release approval.
+
+Current closeout rules:
+
+- a `v0.91.6` reviewer-facing public-packet index must exist and remain
+  milestone-local, even when the validated packet examples are carried forward
+  from the `v0.91.5` pilot rather than exported anew by this docs-only lane
+- the final distribution packet must link the export-shape, publication-safety,
+  validation/indexing, and security/CAV handoff notes into one bounded reviewer
+  surface
+- the accepted packet set used for fixture-equivalent bridge proof may rely on
+  the already validated `v0.91.5` pilot packet root while `#4006` records the
+  milestone-local synthesis and reviewer index
+- local `.adl` task bundles remain the editable source of truth; no issue in
+  this lane promotes the tracked public packet index into authoring authority
+- broader public-distribution approval remains constrained by the routed WP-07
+  security/CAV residuals and must not be smuggled into WP-04 as if the later
+  security lane were already closed
+
+Closeout result for this feature lane:
+
+- export-shape/source-selection contract: defined in `#4002`
+- publication-safety/redaction classes: defined in `#4003`
+- accepted validation and reviewer-index contract: defined in `#4004`
+- bounded security review and CAV handoff: defined in `#4005`
+- milestone-local reviewer index plus distribution/closeout synthesis: defined
+  in `#4006`
+
+Truth boundary carried forward:
+
+- WP-04 becomes closeout-ready for review once the stacked `#4002`-`#4006`
+  proof set is present
+- broader activation-path security residuals remain routed to WP-07
+- this feature doc does not claim unrestricted release approval or that later
+  security work has already finished
 
 ## Design
 
