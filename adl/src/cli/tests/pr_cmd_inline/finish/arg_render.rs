@@ -925,6 +925,19 @@ fn finish_validation_plan_classifies_rust_refactor_slices() {
 }
 
 #[test]
+fn finish_validation_plan_classifies_github_release_tooling_slice() {
+    let plan = select_finish_validation_plan("adl/src/cli/tooling_cmd/github_release.rs")
+        .expect("github release tooling plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl github_release_".to_string()
+    ));
+}
+
+#[test]
 fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request() {
     let docs_plan = select_finish_validation_plan_for_finish(
         ".",
@@ -1358,6 +1371,50 @@ fn finish_runtime_paths_run_module_focused_validation_and_runtime_lane() {
 
     let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
     assert!(focused_calls.contains("runtime --build"));
+}
+
+#[test]
+fn finish_helper_paths_run_larger_binary_focused_validation() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-finish-larger-binary-validation");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+    let bin_dir = repo.join("fake-bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = repo.join("cargo.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let plan = select_finish_validation_plan("adl/src/cli/tooling_cmd/github_release.rs")
+        .expect("larger binary focused plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    run_finish_validation_rust(&repo, &plan).expect("larger binary focused validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("fmt --manifest-path"));
+    assert!(cargo_calls.contains("--bin adl github_release_"));
 }
 
 #[test]

@@ -5,8 +5,7 @@
 - Milestone: `v0.91.6`
 - Wave: `WP-03`
 - Umbrella: `#3968`
-- Covered child issues: `#3995`-`#4000`
-- Explicitly routed, not executed by this packet: `#4001`
+- Covered child issues: `#3995`-`#4001`
 - Captured: `2026-06-17`
 
 ## Purpose
@@ -32,7 +31,7 @@ No row may remain as vague future work.
 | `#3998` | Heartbeat, timeout, and progress diagnostics | `complete` | [`HEARTBEAT_TIMEOUT_PROGRESS_PROOF_3998.md`](review/logging_observability/HEARTBEAT_TIMEOUT_PROGRESS_PROOF_3998.md); `adl/src/cli/observability.rs`; `adl/src/cli/agent_cmd.rs`; `adl/src/cli/pr_cmd/finish_support.rs`; `adl/src/execute/support.rs` | Covers the currently claimed long-path surfaces and preserves explicit non-claims for exhaustive command-wide coverage. |
 | `#3999` | OTel boundary and Observatory/Unity consumption example | `complete` | [`OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md`](review/logging_observability/OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md); [`observatory_event_stream_example_3999.jsonl`](review/logging_observability/observatory_event_stream_example_3999.jsonl); `docs/milestones/v0.91.5/OPEN_TELEMETRY_INTEGRATION_BOUNDARY_3709.md`; `docs/milestones/v0.91.5/OBSERVATORY_LOG_CONSUMPTION_CONTRACT_3710.md` | Confirms the boundary and consumer packet without overclaiming a production exporter. |
 | `#4000` | Validation, redaction, path hygiene, proof-loop checks | `complete` | [`LOGGING_VALIDATION_REDACTION_PROOF_4000.md`](review/logging_observability/LOGGING_VALIDATION_REDACTION_PROOF_4000.md); `docs/milestones/v0.91.5/LOGGING_VALIDATION_CHECKLIST_3711.md`; `docs/milestones/v0.91.5/DOCS_ONLY_VALIDATION_BUNDLE_3736.md` | Keeps focused proof selection explicit and captures remaining tooling defects as remediation rather than hidden scope. |
-| `#4001` | GitHub, token, release, and projection observability | `routed` | row preserved here; umbrella issue `#3968` | Outside the user-approved execution scope for this run. It remains a tracked separate route and must not be claimed as done by `#3995`-`#4000`. |
+| `#4001` | GitHub, token, release, and projection observability | `complete` | [`GITHUB_TOKEN_RELEASE_PROJECTION_PROOF_4001.md`](review/logging_observability/GITHUB_TOKEN_RELEASE_PROJECTION_PROOF_4001.md); `adl/src/cli/pr_cmd/github_client.rs`; `adl/src/cli/tooling_cmd/github_release.rs` | Completes the shared token-policy reuse, native release publish proof, and bounded projection-convergence status for WP-03. |
 
 ## Historical Input Mapping
 
@@ -40,8 +39,10 @@ No row may remain as vague future work.
 | --- | --- | --- |
 | `#3922` runtime logging/observability scheduling | consumed | The logging mini-sprint now leaves a bounded completion ledger and proof packet. |
 | `#3925` repo-quality/staleness work | consumed_by_checklist | Logging validation proof consumes the quality/staleness posture where it affects durable artifacts. |
-| `#3935` card-to-GitHub projection convergence | routed | Explicitly preserved as adjacent tooling reliability work, not claimed by the logging-only child wave. |
-| `#3963` and `#3965` logging/tooling prep routes | consumed | Their planning and issue-wave readiness work is reflected in the WP-03 child issue set and proof packet. |
+| `#3935` card-to-GitHub projection convergence | consumed | First-tranche PR-body / closing-linkage managed projection is merged and consumed by the WP-03 publication and closeout path. |
+| `#3963` deterministic token-loading substrate | partially_consumed | `#4001` reuses the shared ADL GitHub client policy for release tooling; broader resolver/cache work remains separately tracked. |
+| `#3965` draft-release publish gap | consumed | Native octocrab-backed draft and publish proof is part of the `#4001` packet. |
+| `#3985` existing-issue metadata repair gap | routed | Explicitly preserved as adjacent tooling reliability work, not required to complete WP-03 logging/release observability. |
 | `v0.91.5` proof packets `#3705`-`#3711` | consumed | Used as baseline contracts and non-claim boundaries rather than treated as stale pre-hardening docs. |
 
 ## v0.92 Consumption Gate
@@ -66,8 +67,10 @@ true:
   rather than the shared `adl_event` vocabulary.
 - Heartbeat coverage is real but not exhaustive for every control-plane
   subcommand; future lanes should widen only with focused proof.
-- GitHub/token/release/projection observability remains a separate routed lane
-  under `#4001` and is intentionally not claimed complete here.
+- Broader cross-command GitHub credential caching/file-based resolution remains
+  outside this bounded WP-03 slice and stays tracked in `#3963`.
+- Existing-issue metadata repair for title/label/body parity remains outside
+  this bounded WP-03 slice and stays tracked in `#3985`.
 
 ## Closeout Rule
 

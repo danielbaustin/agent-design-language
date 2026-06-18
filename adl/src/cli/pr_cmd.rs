@@ -43,7 +43,7 @@ mod doctor;
 mod finish_support;
 mod git_support;
 mod github;
-mod github_client;
+pub(crate) mod github_client;
 mod lifecycle;
 
 pub(crate) use self::github::gh_issue_is_closed_completed;

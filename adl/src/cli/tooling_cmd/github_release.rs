@@ -1,9 +1,8 @@
+use crate::cli::pr_cmd::github_client::{AdlGithubClient, GithubClientBackend};
 use anyhow::{anyhow, bail, Context, Result};
 use octocrab::models::repos::Release;
 use std::fs;
 use std::path::PathBuf;
-
-use super::super::github_token::resolve_github_token;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum ReleaseAction {
@@ -239,24 +238,25 @@ fn release_id_u64(release: &Release) -> Result<u64> {
 }
 
 fn build_octocrab() -> Result<octocrab::Octocrab> {
-    let token = resolve_github_token()
-        .context("github-release token resolver failed")?
-        .ok_or_else(|| {
-            anyhow!(
-                "github-release requires GITHUB_TOKEN, GH_TOKEN, ADL_GITHUB_TOKEN_FILE, or ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE; release operations do not use gh fallback"
-            )
-        })?;
-    let builder = octocrab::Octocrab::builder().personal_token(token.value().to_string());
-    #[cfg(test)]
-    let builder = if let Ok(base_uri) = std::env::var("ADL_GITHUB_OCTOCRAB_BASE_URI") {
-        builder
-            .base_uri(base_uri)
-            .map_err(|err| anyhow!("failed to configure octocrab test base URI: {err}"))?
-    } else {
-        builder
-    };
-    builder
-        .build()
+    let client =
+        AdlGithubClient::from_env().map_err(|err| anyhow!("github_release.credentials: {err}"))?;
+    if client.backend() != GithubClientBackend::Octocrab {
+        let credential_status = client
+            .token_source()
+            .map(|source| {
+                format!(
+                    "credential_status=token_present source={}",
+                    source.env_name()
+                )
+            })
+            .unwrap_or_else(|| "credential_status=missing_token".to_string());
+        bail!(
+            "github-release requires octocrab-backed ADL GitHub credentials; {}; set GITHUB_TOKEN or GH_TOKEN before live release operations; release operations do not use gh fallback",
+            credential_status
+        );
+    }
+    client
+        .octocrab()
         .map_err(|err| anyhow!("github_release.octocrab_build: {err}"))
 }
 
@@ -367,6 +367,7 @@ mod tests {
         let _guard = env_lock();
         let old_token = std::env::var("GITHUB_TOKEN").ok();
         let old_gh_token = std::env::var("GH_TOKEN").ok();
+        let old_mode = std::env::var("ADL_GITHUB_CLIENT").ok();
         let old_base = std::env::var("ADL_GITHUB_OCTOCRAB_BASE_URI").ok();
         let (base_uri, server) = spawn_release_server();
         let notes_path = std::env::temp_dir().join(format!(
@@ -380,6 +381,7 @@ mod tests {
         unsafe {
             std::env::set_var("GITHUB_TOKEN", "test-token");
             std::env::remove_var("GH_TOKEN");
+            std::env::remove_var("ADL_GITHUB_CLIENT");
             std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
         }
 
@@ -435,8 +437,77 @@ mod tests {
 
         restore_env("GITHUB_TOKEN", old_token);
         restore_env("GH_TOKEN", old_gh_token);
+        restore_env("ADL_GITHUB_CLIENT", old_mode);
         restore_env("ADL_GITHUB_OCTOCRAB_BASE_URI", old_base);
         let _ = fs::remove_file(notes_path);
+    }
+
+    #[test]
+    fn github_release_octocrab_accepts_gh_token_when_github_token_missing() {
+        let _guard = env_lock();
+        let old_token = std::env::var("GITHUB_TOKEN").ok();
+        let old_gh_token = std::env::var("GH_TOKEN").ok();
+        let old_mode = std::env::var("ADL_GITHUB_CLIENT").ok();
+        let old_base = std::env::var("ADL_GITHUB_OCTOCRAB_BASE_URI").ok();
+        let (base_uri, server) = spawn_release_server();
+        unsafe {
+            std::env::remove_var("GITHUB_TOKEN");
+            std::env::set_var("GH_TOKEN", "test-gh-token");
+            std::env::remove_var("ADL_GITHUB_CLIENT");
+            std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+        }
+
+        real_github_release(&[
+            "ensure-present".into(),
+            "--repo".into(),
+            "owner/repo".into(),
+            "--tag".into(),
+            "v0.91.5".into(),
+        ])
+        .expect("ensure present with GH_TOKEN");
+
+        let seen = server.join().expect("server join");
+        assert!(
+            seen.iter()
+                .any(|call| call.starts_with("GET /repos/owner/repo/releases/tags/v0.91.5")),
+            "unexpected release API calls: {seen:#?}"
+        );
+
+        restore_env("GITHUB_TOKEN", old_token);
+        restore_env("GH_TOKEN", old_gh_token);
+        restore_env("ADL_GITHUB_CLIENT", old_mode);
+        restore_env("ADL_GITHUB_OCTOCRAB_BASE_URI", old_base);
+    }
+
+    #[test]
+    fn github_release_rejects_gh_fallback_mode_even_with_token() {
+        let _guard = env_lock();
+        let old_token = std::env::var("GITHUB_TOKEN").ok();
+        let old_gh_token = std::env::var("GH_TOKEN").ok();
+        let old_mode = std::env::var("ADL_GITHUB_CLIENT").ok();
+        unsafe {
+            std::env::set_var("GITHUB_TOKEN", "test-token");
+            std::env::remove_var("GH_TOKEN");
+            std::env::set_var("ADL_GITHUB_CLIENT", "gh");
+        }
+
+        let err = real_github_release(&[
+            "ensure-absent".into(),
+            "--repo".into(),
+            "owner/repo".into(),
+            "--tag".into(),
+            "v0.91.5".into(),
+        ])
+        .expect_err("gh fallback mode should be rejected");
+        let message = format!("{err:#}");
+        assert!(
+            message.contains("do not use gh fallback"),
+            "unexpected error: {message}"
+        );
+
+        restore_env("GITHUB_TOKEN", old_token);
+        restore_env("GH_TOKEN", old_gh_token);
+        restore_env("ADL_GITHUB_CLIENT", old_mode);
     }
 
     fn restore_env(name: &str, value: Option<String>) {
