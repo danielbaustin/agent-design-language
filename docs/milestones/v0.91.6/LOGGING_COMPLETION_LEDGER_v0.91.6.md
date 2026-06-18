@@ -37,7 +37,7 @@ No row may remain as vague future work.
 
 | Prior surface | Disposition in this wave | Notes |
 | --- | --- | --- |
-| `#3922` runtime logging/observability scheduling | consumed | The logging mini-sprint now leaves a bounded completion ledger and proof packet. |
+| `#3922` runtime logging/observability scheduling | superseded_by_explicit_schedule | The WP-03 ledger consumed the earlier scheduling concern as historical input, but the reopened issue now remains the active milestone-routing record through `RUNTIME_OBSERVABILITY_COMPLETION_SCHEDULE_v0.91.6.md`. |
 | `#3925` repo-quality/staleness work | consumed_by_checklist | Logging validation proof consumes the quality/staleness posture where it affects durable artifacts. |
 | `#3935` card-to-GitHub projection convergence | consumed | First-tranche PR-body / closing-linkage managed projection is merged and consumed by the WP-03 publication and closeout path. |
 | `#3963` deterministic token-loading substrate | partially_consumed | `#4001` reuses the shared ADL GitHub client policy for release tooling; broader resolver/cache work remains separately tracked. |
