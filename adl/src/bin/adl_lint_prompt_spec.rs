@@ -1,7 +1,4 @@
 use std::process;
-#[cfg(test)]
-#[path = "../test_support.rs"]
-mod test_support;
 
 #[allow(dead_code)]
 mod cli_observability {

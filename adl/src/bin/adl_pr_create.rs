@@ -5,9 +5,6 @@ extern crate adl;
 mod cli;
 #[path = "../pr_dispatch_support.rs"]
 mod pr_dispatch_support;
-#[cfg(test)]
-#[path = "../test_support.rs"]
-mod test_support;
 
 const USAGE: &str = "adl-pr-create - ADL direct PR lifecycle binary\n\n\
 Usage:\n\

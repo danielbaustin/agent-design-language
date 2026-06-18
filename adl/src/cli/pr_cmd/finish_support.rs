@@ -2072,7 +2072,7 @@ pub(super) fn write_temp_markdown(prefix: &str, body: &str) -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::run_finish_validation_status;
-    use crate::test_support::env_lock as shared_env_lock;
+    use crate::cli::observability::test_env_lock as shared_env_lock;
     use std::fs;
     use std::os::unix::fs::PermissionsExt;
     use std::path::PathBuf;

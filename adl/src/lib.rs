@@ -80,7 +80,6 @@ pub mod schema;
 pub mod signing;
 pub mod skill_composition_model;
 pub mod speculative_decoding_prototype;
-pub mod test_support;
 pub mod tool_registry;
 pub mod tool_result;
 pub mod trace;

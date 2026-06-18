@@ -437,7 +437,7 @@ fn status_state_label(state: &long_lived_agent::AgentStatusState) -> &'static st
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_support::env_lock;
+    use crate::cli::observability::test_env_lock as env_lock;
     use std::fs;
     use std::path::Path;
     use std::sync::atomic::{AtomicU64, Ordering};

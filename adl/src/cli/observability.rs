@@ -3,6 +3,8 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::Path;
 use std::sync::mpsc::{self, RecvTimeoutError, Sender};
+#[cfg(test)]
+use std::sync::{Mutex, MutexGuard, OnceLock};
 use std::thread::{self, JoinHandle};
 use std::time::{Duration, Instant};
 
@@ -345,12 +347,22 @@ fn contains_secret_marker(value: &str) -> bool {
 }
 
 #[cfg(test)]
+static TEST_ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+
+#[cfg(test)]
+pub(crate) fn test_env_lock() -> MutexGuard<'static, ()> {
+    TEST_ENV_LOCK
+        .get_or_init(|| Mutex::new(()))
+        .lock()
+        .expect("observability env lock poisoned")
+}
+
+#[cfg(test)]
 mod tests {
     use super::{
         append_to_compatibility_log, emit_event, format_event_line, heartbeat_interval,
-        sanitize_value, ProgressHeartbeat,
+        sanitize_value, test_env_lock, ProgressHeartbeat,
     };
-    use crate::test_support::env_lock;
     use std::env;
     use std::fs;
     use std::path::{Path, PathBuf};
@@ -364,7 +376,7 @@ mod tests {
 
     impl MultiEnvGuard {
         fn set_all(values: &[(&str, &str)]) -> Self {
-            let lock = env_lock();
+            let lock = test_env_lock();
             let mut saved = Vec::with_capacity(values.len());
             for (key, value) in values {
                 saved.push(((*key).to_string(), env::var_os(key)));
@@ -622,7 +634,7 @@ mod tests {
 
     #[test]
     fn heartbeat_interval_defaults_and_overrides() {
-        let _guard = env_lock();
+        let _guard = test_env_lock();
         unsafe {
             env::remove_var("ADL_OBSERVABILITY_HEARTBEAT_MS");
         }
