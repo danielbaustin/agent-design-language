@@ -1484,7 +1484,6 @@ mod tests {
     }
 
     #[test]
-<<<<<<< HEAD
     fn execute_timeout_policy_succeeds_before_deadline() {
         let policy = ResiliencePolicyV1::provider_attempt_policy("timeout.success", 1, 100);
         let execution = execute_timeout_policy(
