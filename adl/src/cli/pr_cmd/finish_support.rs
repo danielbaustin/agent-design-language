@@ -1113,6 +1113,15 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             mode = FinishValidationMode::LargerBinaryFocused;
             if paths
                 .iter()
+                .any(|path| finish_path_needs_provider_adapter_focused_validation(path))
+            {
+                push_finish_validation_command(
+                    &mut commands,
+                    "cargo test --manifest-path adl/Cargo.toml --lib provider_adapter",
+                );
+            }
+            if paths
+                .iter()
                 .any(|path| finish_path_needs_provider_communication_focused_validation(path))
             {
                 push_finish_validation_command(
@@ -1233,6 +1242,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/mod.rs"
             | "adl/src/cli/github_token.rs"
             | "adl/src/lib.rs"
+            | "adl/src/provider_adapter.rs"
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
@@ -1378,9 +1388,15 @@ fn finish_path_needs_runtime_owner_lane_validation(path: &str) -> bool {
     matches!(
         trimmed,
         "adl/tools/test_adl_runtime_compatibility.sh"
+            | "adl/src/provider_adapter.rs"
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
     )
+}
+
+fn finish_path_needs_provider_adapter_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed == "adl/src/provider_adapter.rs"
 }
 
 fn finish_path_needs_provider_communication_focused_validation(path: &str) -> bool {
@@ -1578,6 +1594,18 @@ pub(super) fn run_finish_validation_rust(
                             path_str(&manifest)?,
                             "--lib",
                             "provider_communication",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --lib provider_adapter" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--lib",
+                            "provider_adapter",
                         ],
                     )?;
                 }
