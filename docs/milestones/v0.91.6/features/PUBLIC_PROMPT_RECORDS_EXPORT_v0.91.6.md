@@ -11,30 +11,33 @@
 - Prior baseline: [PUBLIC_PROMPT_RECORDS_v0.91.5.md](../../v0.91.5/features/PUBLIC_PROMPT_RECORDS_v0.91.5.md)
 - Export contract proof note: [PUBLIC_PROMPT_RECORDS_EXPORT_CONTRACT_4002.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_EXPORT_CONTRACT_4002.md)
 - Redaction/publication safety proof note: [PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md)
+- Validation/indexing proof note: [PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md)
 
 ## Template Rules
 
 This is a feature-scope contract and bridge record. It defines what public prompt
 records must look like, what source-selection policy the bridge intends to
-preserve, and which parts of that policy are already proven versus still owned
-by later enforcement lanes. It also defines the current redaction and
-publication-safety posture for public prompt records. It does not by itself
-prove public indexing readiness, security signoff, or release approval.
+preserve, which publication-safety classes are allowed, and how validation and
+reviewer-facing indexing work at the current milestone boundary. It does not by
+itself prove security signoff, CAV approval, distribution approval, or release
+approval.
 
 ## Purpose
 
 Define the `v0.91.6` contract for exporting public prompt records from local
 C-SDLC authoring state without promoting local `.adl` records into public truth,
 while keeping enforcement claims aligned with the current exporter and validator
-surfaces and making publication-safety rules explicit.
+surfaces and making publication-safety, validation, and reviewer-facing index
+rules explicit.
 
 ## Context
 
 `v0.91.5` established the first exporter and validator surface for public
-prompt packets. `v0.91.6` must now make the export shape, provenance,
-source-selection rules, and redaction/publication-safety boundaries explicit
-enough that later validation, indexing, and security-review work can build on a
-stable contract instead of inferring one from implementation details.
+prompt packets plus a reviewer-facing pilot index. `v0.91.6` must now make the
+export shape, provenance, source-selection rules, publication-safety posture,
+validation contract, and public index rules explicit enough that later security
+review and distribution work can build on a stable contract instead of inferring
+one from implementation details.
 
 Public prompt records remain projections of local authoring state. The canonical
 editable lifecycle state continues to live in local `.adl/<version>/tasks/...`
@@ -47,41 +50,45 @@ This feature owns:
 - deterministic source-selection policy for the bridge
 - provenance and public metadata requirements
 - redaction and publication-safety policy for public prompt records
+- validation and reviewer-facing public index rules
 - ineligible source and record categories
-- a truthful proof note for a representative selected-record export
-- a truthful proof note for allowed, redacted, and refused publication classes
+- truthful proof notes for export shape, publication safety, and validation/indexing
 - explicit separation between already-proven enforcement and later hardening
 
 This feature does not yet own:
-- public indexing publication
 - security approval for publication
-- final public release workflow
+- CAV approval
+- final public distribution workflow
 - exporter hardening beyond what current repository evidence already proves
-- full threat modeling or CAV approval for public-record publication
+- full threat modeling for public-record publication
 
 ## Overview
 
-The public prompt-record bridge has two distinct layers:
+The public prompt-record bridge has three distinct layers:
 
 1. local authoring truth
    - issue-local `.adl` task bundles, source prompts, and review/output cards
-2. public projection truth
+2. public packet truth
    - tracked public packets under `docs/milestones/<version>/review/evidence/csdlc/issues/...`
-   - other explicit reviewer/public projections whose redaction posture is
-     separately recorded and reviewed
+3. reviewer/public navigation truth
+   - tracked reviewer-facing indexes and proof notes that describe which packets
+     are included, why they are included, and what validation/publication-safety
+     posture they satisfy
 
 `v0.91.6` makes that boundary explicit. Export is intended to operate only from
 approved, issue-bounded authoring sources, but current enforcement is layered:
 
 - the exporter already proves packet shape generation and source-card content
   hygiene checks on the selected bundle
-- the validator already proves packet-shape, tracker-metadata, and public
-  provenance requirements for accepted packets
+- the validator already proves packet-shape, tracker-metadata, redaction-block,
+  and public-provenance requirements for accepted packets
 - current public prompt packet export uses `refuse_not_rewrite` redaction mode
   for source cards and public packet text
 - explicitly redacted reviewer/public projections may exist in other tracked
   proof surfaces, but they require an explicit review-safe record rather than
   silent exporter rewriting of local `.adl` source cards
+- reviewer-facing public indexing currently uses a maintained tracked index
+  surface rather than a separate generator binary
 - stricter source-admission checks for explicit override paths remain a policy
   requirement for the bridge, but are not yet fully proven as export-time
   rejection behavior by `#4002`
@@ -216,6 +223,101 @@ Explicit exception rule:
 - such exceptions are not implicit exporter behavior and must remain separately
   reviewable
 
+### Validation contract
+
+The current public prompt packet validator is the machine gate for accepted
+packets and packet roots:
+
+```bash
+adl tooling public-prompt-packet validate \
+  --packet <packet-dir-or-packet-root> \
+  [--repo-root <repo-root>]
+```
+
+Current accepted validation surface:
+
+- one packet directory containing `manifest.json`; or
+- one packet root whose direct children each contain `manifest.json`
+
+Current deterministic validation checks for accepted packets:
+
+- manifest schema/version/issue/slug presence and shape
+- repo-relative source bundle provenance with `.adl/<version>/tasks/...` task-bundle rules
+- repo-relative output directory and public card paths
+- tracker contract: `provider=github`, matching issue number, present GitHub issue URL
+- redaction block contract: `status=passed`, `mode=refuse_not_rewrite`, non-empty checks array
+- all five lifecycle cards present with valid kinds and existing tracked paths
+- public packet text safety for manifest, README, and cards
+- packet README presence
+
+Validation constraints:
+
+- validation must run without private local state outside the selected tracked
+  packet root and repo-relative authoring/provenance references
+- validation must fail closed on broken tracker metadata, invalid provenance,
+  missing required files, or public-unsafe packet content
+- validation may operate over a whole packet root to cover reviewer-facing
+  packet-set completeness, not just one packet at a time
+
+Completed-card caveat inherited from the pilot evidence:
+- the v0.91.5 pilot showed that some latest-template structure diagnostics are
+  still bootstrap-oriented and not yet a complete universal gate for every
+  historical completed card
+- `#4004` therefore defines the current validation contract around the proven
+  packet validator and reviewer-facing packet-root checks, not around an
+  overclaimed universal completed-card schema story
+
+### Reviewer-facing public indexing contract
+
+The canonical reviewer-facing index root for public prompt packets is:
+
+- `docs/milestones/<version>/review/evidence/csdlc/issues/README.md`
+
+Current maintained-index rules:
+
+- one reviewer-facing row per included packet
+- each row links to the packet directory
+- each row states the represented issue, surface, selection reason, and status
+- the index includes validated exported records and omits refused records
+- refused candidates belong in proof notes, remediation records, or validation
+  findings rather than in the public packet index itself
+- the index must use repo-relative links only
+- the index root must stay consistent with the packet root accepted by
+  `adl tooling public-prompt-packet validate --packet <packet-root>`
+
+Current indexing/non-indexing distinction:
+
+- public packet directories are the machine-checked packet set
+- the README index is the reviewer/public navigation layer over that set
+- future machine-readable summary output is allowed, but `#4004` does not claim
+  that such a generator already exists
+- the current packet validator does not read or validate the root README index
+  itself; index-row completeness and packet-link correctness remain maintained
+  reviewer-facing obligations plus focused docs/path proof
+
+### Link and path consistency rules
+
+Reviewer-facing public indexing must detect or prevent:
+
+- links to missing packet directories
+- packet directories missing required files
+- stale paths pointing into worktrees or other private local state
+- index entries for refused or invalid packets
+
+The current proven path for that detection is the combination of:
+
+- packet-root validation over direct child manifests
+- packet README/file presence checks
+- repo-relative link/path discipline in the maintained reviewer index
+- focused link/path hygiene checks in docs-only proof
+
+Current proof boundary:
+- packet-root validation proves the accepted packet set under the packet root
+- it does not, by itself, prove that the maintained root README index has no
+  stale rows or broken links
+- reviewer-facing index completeness therefore remains a maintained-doc contract
+  backed by focused docs/path proof rather than a fully machine-enforced gate
+
 ### Non-exportable / non-publishable categories
 
 The following categories are not acceptable as public prompt-record inputs,
@@ -251,7 +353,6 @@ Current enforcement note:
 
 ### Relationship to later WP-04 issues
 
-- `#4004` owns validation and public indexing behavior on top of this contract
 - `#4005` owns security review and CAV handoff expectations
 - `#4006` owns end-to-end distribution proof and closeout truth
 
@@ -285,7 +386,8 @@ What this proof surface does not establish by itself:
 `#4003` uses three bounded evidence classes:
 
 - allowed packet example:
-  - `#3472` exported packet README/manifest/SOR
+  - `#3472` exported packet README/manifest/SOR after the pilot-validation
+    metadata normalization noted in `#3474`
 - refused example:
   - `adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs`
   - validator-side provenance/tracker refusal in `public_prompt_packet_validate_fails_closed_on_manifest_and_redaction_drift`
@@ -295,6 +397,22 @@ What this proof surface does not establish by itself:
 
 See [PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md).
 
+### Validation/indexing proof surface
+
+`#4004` uses four bounded evidence classes:
+
+- accepted single-packet validation example:
+  - `public_prompt_packet_export_writes_manifest_readme_and_cards`
+- accepted packet-root validation example:
+  - `public_prompt_packet_validate_covers_root_help_and_missing_artifacts`
+- invalid packet examples:
+  - `public_prompt_packet_validate_fails_closed_on_manifest_and_redaction_drift`
+  - missing README case inside `public_prompt_packet_validate_covers_root_help_and_missing_artifacts`
+- reviewer-facing index example:
+  - [docs/milestones/v0.91.5/review/evidence/csdlc/issues/README.md](../../v0.91.5/review/evidence/csdlc/issues/README.md)
+
+See [PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md](../review/public_prompt_records/PUBLIC_PROMPT_RECORDS_VALIDATION_INDEXING_4004.md).
+
 ## Determinism and Constraints
 
 - local `.adl` state remains the authoring surface
@@ -303,8 +421,12 @@ See [PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md](../review/publi
   reviewer-auditable
 - public prompt packet export stays `refuse_not_rewrite` unless a later issue
   explicitly changes and proves that behavior
+- current validation runs over one packet or a packet root of direct children
+  and must not require private local state outside repo-relative references
+- reviewer-facing indexes must include validated exported packets and omit
+  refused records
 - later lanes may tighten enforcement, but they must not silently change this
-  issue's declared packet identity or publication-safety contract
+  issue's declared packet identity, publication-safety, or indexing contract
 - later lanes must distinguish exporter-side guarantees from validator-side
   guarantees instead of collapsing them into one implied control
 - redacted reviewer/public projections must be explicit and reviewable rather
@@ -320,22 +442,24 @@ See [PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md](../review/publi
 ## Validation
 
 This issue's proof is documentation/provenance proof, not runtime proof.
-Validation for `#4003` should confirm:
+Validation for `#4004` should confirm:
 
-- the feature doc defines one stable export shape
-- eligible and ineligible source classes are explicit as bridge policy
+- the feature doc defines one stable validation contract for accepted packets
+- packet-root validation and reviewer-facing index rules are explicit
 - the doc distinguishes exporter-proven behavior from validator-proven behavior
-- tracker metadata and provenance requirements match the current accepted packet
+- tracker metadata, provenance, and redaction-block requirements match the
+  current accepted packet contract
+- public indexes include validated exported records and omit refused records by rule
+- broken links or stale packet paths are covered by the current validator/index
   contract
-- redaction/publication-safety classes and exception rules are explicit
-- non-publishable categories are explicit
-- the allowed, redacted, and refused example surfaces are linked to real repo
+- the accepted, invalid, and index example surfaces are linked to real repo
   evidence
-- logging validation/redaction proof from WP-03 is consumed where relevant
+- validation can run without private local state outside repo-relative packet
+  references
 
-This issue does not prove all explicit-override rejection behavior, public
-indexing, or security approval. Those remain separately tracked and must not be
-claimed from `#4003` alone.
+This issue does not prove security approval, distribution approval, or a new
+machine-generated indexer. Those remain separately tracked and must not be
+claimed from `#4004` alone.
 
 ## Acceptance Criteria
 
@@ -347,12 +471,13 @@ claimed from `#4003` alone.
 - Redaction/publication-safety classes, exception rules, and non-publishable
   categories are documented truthfully.
 - A real selected-record proof surface is linked for contract review.
-- Real allowed, redacted, and refused evidence surfaces are linked for
-  publication-safety review.
+- Real allowed, redacted, refused, valid, invalid, and reviewer-index evidence
+  surfaces are linked for review.
+- The reviewer-facing public index rules are explicit and omit refused records.
 - The doc states clearly that local `.adl` remains the authoring surface and
   public packets are projections.
-- The doc does not overclaim exporter-side rejection guarantees that are not yet
-  proven.
+- The doc does not overclaim exporter-side or universal completed-card
+  validation guarantees that are not yet proven.
 
 ## Risks
 
@@ -365,21 +490,20 @@ claimed from `#4003` alone.
 - If redacted projections are allowed without explicit review-safe records,
   public artifacts may quietly drift into raw prompt or provider-output
   exposure.
-- If issue-body or packet-input paths drift from the current proof surfaces,
-  later docs may cite stale redaction evidence.
+- If packet-root validation and reviewer indexes drift apart, reviewers can be
+  shown stale or incomplete packet navigation.
 
 ## Future Work
 
-- codify validation/public indexing contract (`#4004`)
 - codify security review/CAV routing (`#4005`)
 - prove bounded distribution and closeout (`#4006`)
 - harden exporter-side source-admission checks if later implementation work is
   needed to enforce the full bridge policy at export time
-- route stale issue-body proof-input paths for cleanup when they no longer match
-  the live milestone review packets
+- add machine-readable reviewer-index summary output only if later tooling work
+  proves it is stable and useful
 
 ## Notes
 
 `v0.92` may consume public prompt records only after export, redaction,
-validation, indexing, evidence, and security-review boundaries are all
-completed truthfully.
+validation, indexing, evidence, security-review, and distribution boundaries
+are all completed truthfully.
