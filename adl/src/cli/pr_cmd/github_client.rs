@@ -50,7 +50,7 @@ impl GithubClientMode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum GithubClientBackend {
+pub(crate) enum GithubClientBackend {
     Octocrab,
     GhFallback,
 }
@@ -74,7 +74,7 @@ pub(super) struct AdlGithubClientConfig {
 }
 
 #[derive(Clone)]
-pub(super) struct AdlGithubClient {
+pub(crate) struct AdlGithubClient {
     config: AdlGithubClientConfig,
     token: Option<String>,
     _octocrab: PhantomData<octocrab::Octocrab>,
@@ -89,7 +89,7 @@ impl fmt::Debug for AdlGithubClient {
 }
 
 impl AdlGithubClient {
-    pub(super) fn from_env() -> Result<Self, AdlGithubClientError> {
+    pub(crate) fn from_env() -> Result<Self, AdlGithubClientError> {
         let requested_mode = std::env::var(ADL_GITHUB_CLIENT_ENV).ok();
         let disable_gh_fallback = std::env::var(ADL_GITHUB_DISABLE_GH_FALLBACK_ENV).ok();
         let token = resolve_github_token().map_err(|err| {
@@ -171,7 +171,15 @@ impl AdlGithubClient {
         &self.config
     }
 
-    pub(super) fn octocrab(&self) -> Result<octocrab::Octocrab, AdlGithubClientError> {
+    pub(crate) fn backend(&self) -> GithubClientBackend {
+        self.config.backend
+    }
+
+    pub(crate) fn token_source(&self) -> Option<GithubTokenSource> {
+        self.config.token_source
+    }
+
+    pub(crate) fn octocrab(&self) -> Result<octocrab::Octocrab, AdlGithubClientError> {
         let token = self.token.as_deref().ok_or_else(|| {
             AdlGithubClientError::new(
                 AdlGithubClientErrorKind::MissingToken,
@@ -227,7 +235,7 @@ fn missing_token_message() -> &'static str {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum AdlGithubClientErrorKind {
+pub(crate) enum AdlGithubClientErrorKind {
     InvalidMode,
     MissingToken,
     FallbackDisabled,
@@ -238,7 +246,7 @@ pub(super) enum AdlGithubClientErrorKind {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(super) struct AdlGithubClientError {
+pub(crate) struct AdlGithubClientError {
     kind: AdlGithubClientErrorKind,
     message: String,
 }

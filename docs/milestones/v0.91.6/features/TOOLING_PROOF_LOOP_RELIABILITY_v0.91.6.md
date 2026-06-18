@@ -4,7 +4,7 @@
 
 - Feature Name: Tooling Proof-Loop Reliability
 - Milestone Target: `v0.91.6`
-- Status: WP-03 logging baseline completed for `#3995`-`#4000`; `#4001` routed separately
+- Status: WP-03 logging and GitHub/tooling observability baseline completed for `#3995`-`#4001`
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture, artifact
@@ -46,7 +46,7 @@ Out of scope:
 
 - Existing remediation issues `#3802`-`#3805`, `#3811`, `#3822`, and `#3823`.
 - `#3935` for `SOR`-driven PR-body convergence and generalized card-projection
-  policy.
+  policy, now consumed by the completed WP-03 tooling lane.
 - Logging mini-sprint outputs.
 - Toolkit simplification sprint.
 
@@ -60,7 +60,7 @@ Out of scope:
 
 ## WP-03 Execution Packet
 
-The logging/tooling mini-sprint execution packet for `#3995`-`#4000` is:
+The logging/tooling mini-sprint execution packet for `#3995`-`#4001` is:
 
 - [`LOGGING_COMPLETION_LEDGER_v0.91.6.md`](../LOGGING_COMPLETION_LEDGER_v0.91.6.md)
 - [`CONTROL_PLANE_LOGGING_PROOF_3996.md`](../review/logging_observability/CONTROL_PLANE_LOGGING_PROOF_3996.md)
@@ -68,15 +68,17 @@ The logging/tooling mini-sprint execution packet for `#3995`-`#4000` is:
 - [`HEARTBEAT_TIMEOUT_PROGRESS_PROOF_3998.md`](../review/logging_observability/HEARTBEAT_TIMEOUT_PROGRESS_PROOF_3998.md)
 - [`OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md`](../review/logging_observability/OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md)
 - [`LOGGING_VALIDATION_REDACTION_PROOF_4000.md`](../review/logging_observability/LOGGING_VALIDATION_REDACTION_PROOF_4000.md)
+- [`GITHUB_TOKEN_RELEASE_PROJECTION_PROOF_4001.md`](../review/logging_observability/GITHUB_TOKEN_RELEASE_PROJECTION_PROOF_4001.md)
 
-This packet intentionally leaves GitHub/token/release/projection observability
-under `#4001` as a routed adjacent lane rather than silently claiming it done.
+This packet now includes the bounded `#4001` GitHub/token/release/projection
+lane while preserving explicit non-claims for broader credential-manager and
+existing-issue metadata-repair work.
 
 ## v0.92 Consumption
 
-`v0.92` may consume a bounded proof-loop contract only after validator,
-GitHub, logging, and card-projection failure modes are classified, with
-`SOR`-owned PR publication truth completed for the first tranche.
+`v0.92` may consume a bounded proof-loop contract after validator, GitHub,
+logging, and card-projection failure modes are classified, with `SOR`-owned PR
+publication truth completed for the first tranche.
 
 For the logging-only execution slice, `v0.92` may consume:
 
@@ -85,8 +87,9 @@ For the logging-only execution slice, `v0.92` may consume:
 - the bounded heartbeat/timeout/progress slice
 - the redacted Observatory/Unity example packet
 
-It may not consume a claim that production OpenTelemetry export or the routed
-`#4001` GitHub/release observability lane is already complete.
+It may not consume a claim that production OpenTelemetry export, full
+credential-manager unification, or broad existing-issue metadata repair is
+already complete.
 
 ## Non-Goals
 

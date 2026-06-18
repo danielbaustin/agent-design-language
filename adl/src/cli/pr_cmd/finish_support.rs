@@ -1046,6 +1046,20 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_github_release_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml --bin adl github_release_",
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_public_prompt_packet_focused_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1249,8 +1263,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_adl_review_compatibility.sh"
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
-            | "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
             | "adl/src/cli/tooling_cmd/github_release.rs"
+            | "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
             | "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs"
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
@@ -1293,6 +1307,11 @@ fn finish_path_needs_owner_binary_rust_slice_validation(path: &str) -> bool {
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed == "adl/src/cli/run_artifacts_types.rs"
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
+}
+
+fn finish_path_needs_github_release_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed == "adl/src/cli/tooling_cmd/github_release.rs"
 }
 
 fn finish_path_needs_coverage_tooling_focused_validation(path: &str) -> bool {
@@ -1432,12 +1451,19 @@ pub(super) fn run_finish_validation_rust(
                 "cargo test --manifest-path adl/Cargo.toml --bin adl" => {
                     run_finish_validation_status(
                         "cargo",
+                        &["test", "--manifest-path", path_str(&manifest)?, "--bin", "adl"],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl github_release_" => {
+                    run_finish_validation_status(
+                        "cargo",
                         &[
                             "test",
                             "--manifest-path",
                             path_str(&manifest)?,
                             "--bin",
                             "adl",
+                            "github_release_",
                         ],
                     )?;
                 }
