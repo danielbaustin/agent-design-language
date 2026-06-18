@@ -9,8 +9,8 @@
 - Doc Role: primary
 - Feature Types: policy, architecture
 - Proof Modes: tests, review, replay
-- Related issues: `#3970`, `#4007`, `#4008`, `#4009`, `#4010`, `#4011`, `#4012`, `#4053`
-- Primary issue packets: `docs/milestones/v0.91.6/review/provider/PROVIDER_ROLE_SUITABILITY_MATRIX_4008.md`, `docs/milestones/v0.91.6/review/provider/PROVIDER_RELIABILITY_CLOSEOUT_MATRIX_4012.md`, `docs/milestones/v0.91.6/review/provider/WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md`
+- Related issues: `#3970`, `#4007`, `#4008`, `#4009`, `#4010`, `#4011`, `#4012`, `#4053`, `#4097`
+- Primary issue packets: `docs/milestones/v0.91.6/review/provider/PROVIDER_ROLE_SUITABILITY_MATRIX_4008.md`, `docs/milestones/v0.91.6/review/provider/PROVIDER_RELIABILITY_CLOSEOUT_MATRIX_4012.md`, `docs/milestones/v0.91.6/review/provider/WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md`, `docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md`
 - Upstream catalog dependency: `#4007` / PR `#4063` merged (`PROVIDER_CAPABILITY_PROFILE_CATALOG_4007.md`)
 
 ## Purpose
@@ -251,7 +251,7 @@ This issue adds role suitability on top of that split, but does not collapse:
 | Remote Ollama `gemma4:31b` through `adl-provider-adapter` | Remote Ollama substrate | watcher/summarizer candidate | `useful_with_limits` | `REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md` |
 | Remote Ollama `gemma4:26b` raw HTTP | Remote Ollama substrate | watcher/summarizer candidate | `useful_with_limits` | `REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md` |
 | Remote Ollama `gemma4:e4b` raw HTTP | Remote Ollama substrate | watcher/summarizer candidate | `useful_with_limits` | `REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md` |
-| Remote Ollama `gemma4:e2b` historical watcher lane | Remote Ollama substrate | watcher candidate | `historical_empty_output` | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md`; `V0915_PARALLEL_C_SDLC_WORKCELL_PROOF_PACKET_2026-06-14.md` |
+| Remote Ollama `gemma4:e2b` historical watcher lane | Remote Ollama substrate | watcher candidate | `historical_empty_output` | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md`; `multi_agent_workcell/V0915_PARALLEL_C_SDLC_WORKCELL_PROOF_PACKET_2026-06-14.md` |
 | Direct hosted OpenAI / Codex | Native hosted provider | planner/worker/reviewer candidate | `blocked_missing_credential` in cited baseline shell | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` |
 | Direct hosted Anthropic | Native hosted provider | reviewer/synthesis candidate | `blocked_missing_credential` in cited baseline shell | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` |
 | Direct hosted DeepSeek API | Native hosted provider | critic/reviewer candidate | `blocked_missing_credential` in cited baseline shell | `PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md` |
