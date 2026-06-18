@@ -5,9 +5,8 @@
 This packet records the umbrella-level closeout posture for WP-05 as of June 18,
 2026.
 
-It does not claim merged-final completion on `main`. It records that the full
-child wave has been executed to PR-backed review state and that the umbrella may
-advance to review/closeout consideration once that child wave is reviewed.
+It is now the merged umbrella closeout truth on `main` for the completed
+provider mini-sprint.
 
 ## Mini-sprint summary
 
@@ -23,7 +22,7 @@ WP-05 now has a complete bounded child wave covering:
 
 ## Child wave status as of June 18, 2026
 
-Published PR-backed child wave verified against the GitHub pull-request API on
+Merged child wave verified against live GitHub issue and pull-request state on
 June 18, 2026:
 
 - `#4007` -> PR `#4063`
@@ -34,9 +33,8 @@ June 18, 2026:
 - `#4053` -> PR `#4075`
 - `#4012` -> PR `#4080`
 
-All seven mapped PRs were `open`, `draft`, and still carried closing references
-for the intended child issues at verification time. This packet treats those
-PRs as review-time evidence surfaces, not merged-main truth.
+All seven mapped child PRs are merged and all mapped child issues are closed.
+Umbrella PR `#4082` is also merged and umbrella issue `#3970` is closed.
 
 ## Source evidence
 
@@ -53,7 +51,7 @@ Tracked local supporting context:
 - `adl/src/resilience.rs`
 - `adl/src/provider_communication.rs`
 
-PR-backed child context consumed here:
+Merged child context consumed here:
 
 - `#4007` / PR `#4063`
 - `#4008` / PR `#4065`
@@ -67,8 +65,7 @@ PR-backed child context consumed here:
 
 ### What is now true
 
-- Every planned WP-05 child issue in the execution order has a published
-  PR-backed review surface.
+- Every planned WP-05 child issue in the execution order is merged and closed.
 - The provider tranche now has explicit proof or routed limitation for:
   - provider/capability boundary
   - role suitability
@@ -83,11 +80,8 @@ PR-backed child context consumed here:
 - The mini-sprint no longer depends on a missing role-provider story; `#4053`
   covers that enhancement slice explicitly.
 
-### What is not yet true
+### What is still intentionally not claimed
 
-- WP-05 is not yet merged-final milestone truth on `main`.
-- Umbrella `#3970` is not ready to claim final closure until the child PR wave
-  is reviewed and any review findings are fixed.
 - Direct hosted-provider readiness is not promoted beyond blocked/candidate
   truth.
 - Broad local-model reliability is not promoted beyond candidate/limited truth.
@@ -99,11 +93,16 @@ PR-backed child context consumed here:
 As of June 18, 2026, the truthful umbrella disposition is:
 
 - child execution wave complete
-- umbrella closeout artifact authored in the fresh issue worktree
-- review pending before publication and final closeout
+- child PR wave merged in order
+- umbrella PR `#4082` merged on `main`
+- umbrella issue `#3970` closed
+- provider mini-sprint complete with routed follow-on tooling residue
 
-This packet intentionally reuses the issue-local record's ordinary lifecycle
-truth rather than inventing a separate umbrella-only status term.
+Lifecycle traceability note:
+
+- PR `#4082` was intentionally published as a non-closing lifecycle PR and has
+  no `closingIssuesReferences`; issue `#3970` was closed manually after merge
+  and that manual-close path is the truthful umbrella closeout record
 
 ## Residual risks and routed follow-ons
 
@@ -120,7 +119,8 @@ Tooling/process residue observed during umbrella closeout:
 1. the stale broken worktree
    `codex/3970-v0-91-6-wp-05-provider-complete-provider-model-reliability-and-multi-agent-readiness-broken`
    still causes doctor branch-mismatch noise against the fresh umbrella
-   worktree; this should be repaired or pruned after the provider sprint lands
+   worktree; this should be repaired or pruned as post-closeout tooling
+   remediation
 2. issue-mode bind prefers the literal primary checkout path instead of a clean
    launcher worktree and can therefore conflict with safe operator practice
 3. local CLI surface drift around issue-view commands should be documented or
@@ -133,15 +133,13 @@ umbrella completion claim.
 
 Recommended next step:
 
-1. review the child PR wave, especially `#4012` and `#4053`
-2. fix any findings
-3. merge the child wave in the intended order
-4. then return to `#3970` for final umbrella publication/closure truth if any
-   additional normalization is still needed
+1. keep the residual product/tooling limitations routed explicitly
+2. use `#4085`-`#4088` to remediate the workflow/tooling residue exposed by the
+   provider sprint exit path
+3. treat WP-05 itself as completed rather than review-pending
 
 ## Non-Claims
 
-- This packet does not claim final umbrella closure.
 - This packet does not claim every provider/model lane is reliable.
 - This packet does not claim the broken legacy `#3970` worktree is harmless.
 - This packet does not claim external providers gained repo mutation or merge
