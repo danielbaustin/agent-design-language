@@ -17,11 +17,13 @@ admission:
       - "sprint"
       - "policy"
     mode_enum:
-      - "run_sprint_slow_path"
-      - "resume_sprint_slow_path"
+      - "run_sprint"
+      - "resume_sprint"
       - "review_and_closeout_sprint"
     policy_fields:
+      - "require_declared_execution_mode"
       - "require_sequential_closeout"
+      - "require_sep_for_parallel_or_hybrid"
       - "require_existing_issue_skills"
       - "require_editor_skills"
       - "require_code_review"
@@ -37,24 +39,28 @@ admission:
       - "capture_rust_tracker_at_closeout"
       - "stop_on_blocker"
     mode_requirements:
-      run_sprint_slow_path:
+      run_sprint:
         required_sprint_fields:
           - "ordered_issue_numbers"
+          - "execution_mode"
           - "goal"
-      resume_sprint_slow_path:
+      resume_sprint:
         required_sprint_fields:
           - "ordered_issue_numbers"
+          - "execution_mode"
       review_and_closeout_sprint:
         required_sprint_fields:
           - "issue_number"
           - "ordered_issue_numbers"
+          - "execution_mode"
   intent:
     - "sprint_orchestration"
-    - "sequential_issue_execution"
+    - "declared_issue_wave_coordination"
     - "review_and_closeout"
   required_inputs:
     - "repo_root"
     - "sprint.ordered_issue_numbers"
+    - "sprint.execution_mode"
   optional_inputs:
     - "sprint.issue_number"
     - "sprint.goal"
@@ -68,6 +74,11 @@ admission:
     - "sprint.review_paths"
     - "sprint.closeout_paths"
     - "sprint.issue_records"
+    - "sprint.execution_packet_path"
+    - "sprint.recommended_execution_order"
+    - "sprint.safe_parallel_lanes"
+    - "sprint.serial_gates"
+    - "sprint.pvf_notes"
     - "sprint.follow_up_issues"
     - "sprint.structured_prompt_preflight"
     - "sprint.truth_check"
@@ -77,6 +88,7 @@ admission:
   stop_if_missing:
     - "repo_root"
     - "sprint.ordered_issue_numbers"
+    - "sprint.execution_mode"
   prevalidation_rules:
     - "repo_root_must_be_absolute"
     - "skill_input_schema_must_equal_sprint_conductor.v1_when_structured_input_is_used"

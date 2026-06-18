@@ -1191,6 +1191,11 @@ fn finish_path_is_docs_only(path: &str) -> bool {
     {
         return finish_path_has_docs_artifact_extension(trimmed);
     }
+    if trimmed.starts_with("adl/tools/skills/")
+        && (trimmed.ends_with("/adl-skill.yaml") || trimmed.contains("/scripts/"))
+    {
+        return finish_path_has_docs_artifact_extension(trimmed) || trimmed.ends_with(".py");
+    }
     !trimmed.contains('/')
         && Path::new(trimmed)
             .extension()
