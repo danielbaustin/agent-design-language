@@ -1457,6 +1457,7 @@ pub fn rate_limit_initial_state(policy: &ResiliencePolicyV1, now_ms: u64) -> Rat
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn execute_rate_limit_policy<T, E, F, R, C>(
     policy: &ResiliencePolicyV1,
     surface: ResilienceSurfaceV1,
