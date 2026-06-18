@@ -1193,6 +1193,51 @@ mod tests {
     }
 
     #[test]
+    fn hosted_openai_retry_flow_emits_reviewable_log_sequence() {
+        env::set_var("ADL_PROVIDER_ADAPTER_RETRY_LOG_KEY", "test-key");
+        let endpoint = scripted_server(vec![
+            (
+                r#"{"error":"rate limit exceeded"}"#,
+                "429 Too Many Requests",
+            ),
+            (r#"{"output_text":"retry success"}"#, "200 OK"),
+        ]);
+        let path = temp_log("retry-log-sequence");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_RETRY_LOG_KEY".to_string());
+        req.attempt_policy.max_attempts = 2;
+        req.attempt_policy.retry_backoff_ms = Some(1);
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+        let log = fs::read_to_string(&path).expect("read log");
+        let run_start = log.find("run_start").expect("run_start log");
+        let first_attempt_start = log.find("attempt_start").expect("attempt_start log");
+        let attempt_failure = log.find("attempt_failure").expect("attempt_failure log");
+        let second_attempt_start = log[first_attempt_start + 1..]
+            .find("attempt_start")
+            .map(|offset| first_attempt_start + 1 + offset)
+            .expect("second attempt_start log");
+        let attempt_success = log.find("attempt_success").expect("attempt_success log");
+        let run_finish = log.find("run_finish").expect("run_finish log");
+
+        assert!(run_start < first_attempt_start);
+        assert!(first_attempt_start < attempt_failure);
+        assert!(attempt_failure < second_attempt_start);
+        assert!(second_attempt_start < attempt_success);
+        assert!(attempt_success < run_finish);
+        assert!(log.contains("provider_rate_limited"));
+        assert!(!log.contains("secret prompt"));
+        assert!(!log.contains("retry success"));
+
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_RETRY_LOG_KEY");
+    }
+
+    #[test]
     fn hosted_openai_stops_after_non_retryable_failure() {
         env::set_var("ADL_PROVIDER_ADAPTER_NONRETRY_KEY", "test-key");
         let endpoint = scripted_server(vec![

@@ -4050,6 +4050,154 @@ mod tests {
     }
 
     #[test]
+    fn representative_provider_flow_composes_retry_rate_limit_timeout_breaker_and_fallback() {
+        let mut policy = test_degraded_fallback_policy();
+        policy.policy_id = "phase1.representative.provider".to_string();
+        policy.retry = Some(RetryPolicyV1 {
+            max_attempts: 4,
+            backoff_ms: Some(10),
+            jitter_ms: Some(0),
+            max_elapsed_ms: Some(1_000),
+            retryable_fault_classes: vec![
+                ResilienceFaultClassV1::ProviderTimeout,
+                ResilienceFaultClassV1::ProviderRateLimited,
+            ],
+        });
+        policy.fallback = Some(FallbackPolicyV1 {
+            fallback_ref: "test.phase1.degraded".to_string(),
+            activation_fault_classes: vec![ResilienceFaultClassV1::ProviderTimeout],
+            marks_output_degraded: true,
+        });
+        if let Some(circuit_breaker) = policy.circuit_breaker.as_mut() {
+            circuit_breaker.recovery_window_ms = 500;
+        }
+
+        let rate_state = RefCell::new(rate_limit_initial_state(&policy, 0));
+        let breaker_state = RefCell::new(circuit_breaker_initial_state(&policy));
+        let now_ms = Cell::new(0_u64);
+        let sleep_count = Cell::new(0_u32);
+        let mut sleeps = Vec::new();
+        let final_breaker_trace = RefCell::new(None);
+
+        let execution = execute_retry_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.phase1.provider-flow",
+            |attempt_index| {
+                let limited = execute_rate_limit_policy(
+                    &policy,
+                    ResilienceSurfaceV1::Provider,
+                    "test.phase1.provider-flow.rate-limit",
+                    &rate_state.borrow().clone(),
+                    now_ms.get(),
+                    || Ok::<_, ResilienceFaultClassificationV1>(()),
+                    provider_rate_limit_rejection,
+                    clone_fault_classification,
+                );
+                *rate_state.borrow_mut() = limited.state.clone();
+                limited.result?;
+
+                let breaker = execute_circuit_breaker_policy(
+                    &policy,
+                    ResilienceSurfaceV1::Provider,
+                    "test.phase1.provider-flow.breaker",
+                    &breaker_state.borrow().clone(),
+                    now_ms.get(),
+                    || {
+                        let timeout = execute_timeout_policy(
+                            &policy,
+                            ResilienceSurfaceV1::Provider,
+                            "test.phase1.provider-flow.timeout",
+                            || match attempt_index {
+                                1 | 3 => TimeoutObservation {
+                                    result: Ok::<_, ResilienceFaultClassificationV1>("late"),
+                                    elapsed_ms: 125,
+                                    cancelled: false,
+                                },
+                                _ => TimeoutObservation {
+                                    result: Ok::<_, ResilienceFaultClassificationV1>("fast"),
+                                    elapsed_ms: 5,
+                                    cancelled: false,
+                                },
+                            },
+                            clone_fault_classification,
+                            provider_timeout_fault,
+                            provider_cancelled_fault,
+                        );
+                        timeout.result
+                    },
+                    clone_fault_classification,
+                    provider_breaker_rejection,
+                    Some(|| "degraded-answer"),
+                );
+                *breaker_state.borrow_mut() = breaker.state.clone();
+                *final_breaker_trace.borrow_mut() = Some(breaker.trace.clone());
+                breaker.result
+            },
+            clone_fault_classification,
+            |delay_ms| {
+                sleeps.push(delay_ms);
+                let next_count = sleep_count.get().saturating_add(1);
+                sleep_count.set(next_count);
+                let advance = if next_count == 1 {
+                    delay_ms
+                } else {
+                    delay_ms.max(110)
+                };
+                now_ms.set(now_ms.get().saturating_add(advance));
+            },
+            |_| {},
+        );
+
+        assert_eq!(
+            execution.result.expect("degraded fallback"),
+            "degraded-answer"
+        );
+        assert_eq!(execution.trace.attempts.len(), 4);
+        assert_eq!(
+            execution.trace.attempts[0]
+                .fault
+                .as_ref()
+                .map(|f| f.fault_class.clone()),
+            Some(ResilienceFaultClassV1::ProviderTimeout)
+        );
+        assert_eq!(
+            execution.trace.attempts[1]
+                .fault
+                .as_ref()
+                .map(|f| f.fault_class.clone()),
+            Some(ResilienceFaultClassV1::ProviderRateLimited)
+        );
+        assert_eq!(
+            execution.trace.attempts[2]
+                .fault
+                .as_ref()
+                .map(|f| f.fault_class.clone()),
+            Some(ResilienceFaultClassV1::ProviderTimeout)
+        );
+        assert!(execution.trace.attempts[3].fault.is_none());
+        assert_eq!(sleeps.len(), 3);
+        assert_eq!(sleeps[0], 10);
+        assert!(sleeps[1] >= 40);
+        assert!(sleeps[2] >= 40);
+        assert_eq!(
+            breaker_state.borrow().state,
+            CircuitBreakerStateKindV1::Open
+        );
+
+        let breaker_trace = final_breaker_trace
+            .borrow()
+            .clone()
+            .expect("final breaker trace");
+        assert_eq!(
+            breaker_trace.final_status,
+            CircuitBreakerFinalStatusV1::OpenFallback
+        );
+        assert!(breaker_trace.used_fallback);
+        assert!(breaker_trace.recovery_artifact.is_some());
+    }
+
+    #[test]
     fn circuit_breaker_allows_half_open_probe_and_closes_on_success() {
         let policy = test_circuit_breaker_policy();
         let open_state = CircuitBreakerStateV1 {
