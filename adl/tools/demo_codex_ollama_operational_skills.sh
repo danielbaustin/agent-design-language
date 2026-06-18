@@ -33,7 +33,45 @@ normalize_ollama_host_url() {
   printf '%s\n' "${normalized%/}"
 }
 
+durable_ollama_host_ref() {
+  python3 - "$1" <<'PY'
+from __future__ import annotations
+
+import ipaddress
+import sys
+from urllib.parse import urlparse
+
+raw = sys.argv[1].strip().rstrip("/")
+parsed = urlparse(raw if "://" in raw else f"http://{raw}")
+host = parsed.hostname or ""
+
+if host in {"127.0.0.1", "localhost", "::1"}:
+    print(raw)
+    raise SystemExit(0)
+
+if host in {"remote_ollama_private_lan", "remote-ollama-private-lan"}:
+    print("remote_ollama_private_lan")
+    raise SystemExit(0)
+
+try:
+    addr = ipaddress.ip_address(host)
+except ValueError:
+    print(raw)
+    raise SystemExit(0)
+
+if addr.is_private and not addr.is_loopback:
+    print("remote_ollama_private_lan")
+else:
+    print(raw)
+PY
+}
+
 OLLAMA_HOST_URL="$(normalize_ollama_host_url "$RAW_OLLAMA_HOST_INPUT")"
+DURABLE_OLLAMA_HOST_REF="$(durable_ollama_host_ref "$OLLAMA_HOST_URL")"
+OLLAMA_HOST_ARTIFACT_POLICY="literal_runtime_url"
+if [[ "$DURABLE_OLLAMA_HOST_REF" != "$OLLAMA_HOST_URL" ]]; then
+  OLLAMA_HOST_ARTIFACT_POLICY="private_lan_redacted"
+fi
 
 usage() {
   cat <<'EOF'
@@ -50,7 +88,7 @@ Notes:
   - Default model: gpt-oss:latest
   - Default provider: ollama
   - Default Ollama API: http://127.0.0.1:11434
-  - Set OLLAMA_HOST=192.168.68.73 or OLLAMA_HOST_URL=http://192.168.68.73:11434 to target a remote Ollama host for this demo.
+  - Set OLLAMA_HOST=<private-lan-ollama-host> or OLLAMA_HOST_URL=http://<private-lan-ollama-host>:11434 to target a remote Ollama host for this demo.
   - Default semantic-fallback timeout: 90 seconds
   - Non-tool local models are routed through semantic tool fallback instead of native Codex tool calling.
   - --dry-run prepares the workspace, prompt, and manifest but does not invoke Codex.
@@ -367,7 +405,8 @@ cat >"$MANIFEST_FILE" <<EOF
   "codex_home": "$CODEX_HOME_DEMO",
   "install_mode": "$CODEX_INSTALL_MODE",
   "local_provider": "$LOCAL_PROVIDER",
-  "ollama_host_url": "$OLLAMA_HOST_URL",
+  "ollama_host_ref": "$DURABLE_OLLAMA_HOST_REF",
+  "ollama_host_runtime_input_policy": "$OLLAMA_HOST_ARTIFACT_POLICY",
   "model": "$MODEL",
   "capability_manifest": "$CAPABILITY_FILE",
   "capability_profile_id": "$CAPABILITY_PROFILE_ID",

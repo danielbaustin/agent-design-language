@@ -10,7 +10,7 @@ from pathlib import Path, PurePosixPath
 STATE_NAME = "v0915_remote_gemma_watcher_state_2026-06-15.json"
 PACKET_NAME = "REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md"
 EXPECTED_SCHEMA = "adl.remote_gemma_watcher_probe.v1"
-EXPECTED_ENDPOINT = "http://192.168.68.70:11434"
+EXPECTED_ENDPOINT = "remote_ollama_private_lan"
 REQUIRED_LANES = {
     "adapter_gemma4_31b": ("adl_provider_adapter", "gemma4:31b"),
     "raw_gemma4_26b": ("raw_ollama_http", "gemma4:26b"),

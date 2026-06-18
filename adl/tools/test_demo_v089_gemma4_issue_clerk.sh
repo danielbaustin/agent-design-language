@@ -7,7 +7,8 @@ VALID_FIXTURE="$ROOT_DIR/demos/fixtures/gemma4_issue_clerk_demo/valid_response.j
 INVALID_FIXTURE="$ROOT_DIR/demos/fixtures/gemma4_issue_clerk_demo/invalid_response.json"
 
 rm -rf "$ARTIFACT_ROOT"
-bash "$ROOT_DIR/adl/tools/demo_v089_gemma4_issue_clerk.sh" --artifact-root "$ARTIFACT_ROOT" --dry-run >/dev/null
+OLLAMA_HOST=remote_ollama_private_lan \
+  bash "$ROOT_DIR/adl/tools/demo_v089_gemma4_issue_clerk.sh" --artifact-root "$ARTIFACT_ROOT" --dry-run >/dev/null
 python3 - "$ARTIFACT_ROOT/demo_manifest.json" <<'PY'
 import json
 import sys
@@ -15,6 +16,8 @@ import sys
 with open(sys.argv[1], "r", encoding="utf-8") as fh:
     manifest = json.load(fh)
 assert manifest["disposition"] == "dry_run_prepared"
+assert manifest["ollama_host_ref"] == "remote_ollama_private_lan"
+assert manifest["ollama_host_runtime_input_policy"] == "private_lan_redacted"
 assert manifest["artifacts"]["issue_packet"]
 assert manifest["artifacts"]["model_prompt"]
 PY

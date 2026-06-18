@@ -851,6 +851,39 @@ fn finish_validation_plan_classifies_repo_quality_staleness_tooling() {
 }
 
 #[test]
+fn finish_validation_plan_classifies_private_endpoint_fixture_sanitation_slice() {
+    let plan = select_finish_validation_plan(
+        "adl/tools/demo_codex_ollama_operational_skills.sh,adl/tools/demo_v089_gemma4_issue_clerk.sh,adl/tools/test_demo_codex_ollama_operational_skills.sh,adl/tools/test_demo_codex_ollama_semantic_fallback.sh,adl/tools/test_demo_v089_gemma4_issue_clerk.sh,adl/src/provider_substrate.rs,adl/tools/validate_v0915_remote_gemma_watcher_probe.py,demos/v0.87.1/codex_ollama_operational_skills_demo.md,demos/v0.89/gemma4_issue_clerk_demo.md",
+    )
+    .expect("private endpoint fixture sanitation plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_demo_codex_ollama_operational_skills.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_demo_codex_ollama_semantic_fallback.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_demo_v089_gemma4_issue_clerk.sh".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --lib provider_substrate_uses_http_transport_for_ollama_with_endpoint".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"python3 adl/tools/validate_v0915_remote_gemma_watcher_probe.py docs/milestones/v0.91.5/review/remote_gemma_watcher".to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+}
+
+#[test]
 fn finish_validation_plan_classifies_resilience_runtime_publication_paths() {
     let adapter_plan = select_finish_validation_plan("adl/src/provider_adapter.rs")
         .expect("provider adapter runtime plan");

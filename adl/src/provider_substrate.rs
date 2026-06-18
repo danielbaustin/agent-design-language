@@ -670,7 +670,7 @@ mod tests {
     #[test]
     fn provider_substrate_uses_http_transport_for_ollama_with_endpoint() {
         let mut spec = provider_spec("ollama");
-        spec.base_url = Some("http://192.168.68.73:11434".to_string());
+        spec.base_url = Some("http://remote_ollama_private_lan:11434".to_string());
         spec.default_model = Some("phi4-mini".to_string());
 
         let substrate = provider_substrate_v1("remote_ollama", &spec).expect("substrate");
