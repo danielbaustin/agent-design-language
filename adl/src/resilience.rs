@@ -798,6 +798,7 @@ pub fn circuit_breaker_initial_state(policy: &ResiliencePolicyV1) -> CircuitBrea
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn execute_circuit_breaker_policy<T, E, F, C, R, FB>(
     policy: &ResiliencePolicyV1,
     surface: ResilienceSurfaceV1,
@@ -1385,8 +1386,7 @@ fn circuit_breaker_fallback_allowed(
     fallback_policy.activation_fault_classes.is_empty()
         || fallback_policy
             .activation_fault_classes
-            .iter()
-            .any(|fault_class| *fault_class == fault.fault_class)
+            .contains(&fault.fault_class)
 }
 
 fn circuit_breaker_decision_event(
