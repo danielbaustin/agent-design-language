@@ -74,6 +74,10 @@ This packet now includes the bounded `#4001` GitHub/token/release/projection
 lane while preserving explicit non-claims for broader credential-manager and
 existing-issue metadata-repair work.
 
+Runtime observability completion is also scheduled explicitly in
+[`RUNTIME_OBSERVABILITY_COMPLETION_SCHEDULE_v0.91.6.md`](../RUNTIME_OBSERVABILITY_COMPLETION_SCHEDULE_v0.91.6.md)
+so WP-03 does not overclaim provider-backed runtime or Observatory completion.
+
 ## v0.92 Consumption
 
 `v0.92` may consume a bounded proof-loop contract after validator, GitHub,
@@ -90,6 +94,11 @@ For the logging-only execution slice, `v0.92` may consume:
 It may not consume a claim that production OpenTelemetry export, full
 credential-manager unification, or broad existing-issue metadata repair is
 already complete.
+
+It also may not consume a claim that bounded `runtime-v2` logging proof equals
+full provider/runtime observability completion. That broader completion band is
+scheduled explicitly by `#3922` and deferred to later milestone homes where
+required.
 
 ## Non-Goals
 

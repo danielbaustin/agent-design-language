@@ -28,7 +28,7 @@ feature docs and decision records without claiming the birthday implementation.
 | WP-01 | Planning promotion and issue-wave readiness | Promote this candidate package, reconcile `#3778` and `v0.91.6`, open the issue wave, and prepare cards. | Opened issue wave and card bundles. | `#3778`, `#3800`, `#3801`. |
 | WP-02 | Curiosity Engine / Discovery Substrate | Define curiosity artifacts, detection hooks, hypotheses, experiment plans, discovery budget, governance, Freedom Gate integration, ObsMem/reasoning-graph update, and proof. | Curiosity feature doc and proof expectations. | WP-01. |
 | WP-03 | Constructability Gate | Define construction-event schema, external anchors, admissibility validator, shared-reality boundary, and proof path. | Constructability feature doc and validation plan. | WP-01, WP-02. |
-| WP-04 | Reasoning graph, loop runtime, and `adl.skill.v1` | Define the pre-v0.92 bridge among prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and `adl.skill.v1`. | Reasoning graph / skill-standard bridge feature doc. | WP-01, WP-02. |
+| WP-04 | Reasoning graph, loop runtime, and `adl.skill.v1` | Define the pre-v0.92 bridge among prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, `adl.skill.v1`, and residual runtime-observability handoff rows that remain bridge-only after `v0.91.6`. | Reasoning graph / skill-standard bridge feature doc. | WP-01, WP-02. |
 | WP-05 | Residual security readiness | Account for security/CAV residuals after v0.91.6 and define any activation-path blockers. | Security residual addendum. | WP-01, v0.91.6 security output. |
 | WP-06 | Residual ACIP/A2A/protobuf decisions | Decide remaining protobuf/JSON/WebSocket/access-rule questions after v0.91.6. | ACIP/A2A residual decision record. | WP-01, WP-03, WP-05. |
 | WP-07 | Affect and happiness bridge accounting | Define safe tests, non-claims, and public-evidence limits for affect, humor, happiness, and wellbeing. | Affect/happiness bridge record. | WP-01. |
@@ -43,6 +43,8 @@ feature docs and decision records without claiming the birthday implementation.
 - Curiosity must include governed discovery-cycle proof expectations.
 - Constructability must distinguish provisional cognition from shared reality.
 - Reasoning graph / `adl.skill.v1` must be a bridge, not a hand-waved standard.
+- Residual runtime/Observatory observability rows may be carried only as bridge
+  accounting after `v0.91.6`; they must not claim provider-backed completion.
 - Security residuals must wait for the v0.91.6 security/CAV output.
 - ACIP/A2A residuals must have explicit v0.92 dispositions and must consume
   both security and constructability boundaries.
