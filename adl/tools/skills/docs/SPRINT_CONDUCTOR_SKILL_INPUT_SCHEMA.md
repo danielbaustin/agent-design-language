@@ -2,12 +2,36 @@
 
 ```yaml
 skill_input_schema: sprint_conductor.v1
-mode: run_sprint_slow_path | resume_sprint_slow_path | review_and_closeout_sprint
+mode: run_sprint | resume_sprint | review_and_closeout_sprint
 repo_root: /absolute/path
 sprint:
   issue_number: <u32 or null>
   ordered_issue_numbers:
     - <u32>
+  execution_mode: sequential | parallel | hybrid
+  execution_packet_path: /absolute/or/repo-relative/path | null
+  recommended_execution_order:
+    - <bounded text>
+  safe_parallel_lanes:
+    - lane_id: <string>
+      issue_numbers:
+        - <u32>
+      why_parallel_safe: <bounded text>
+      required_coordination: <bounded text>
+  serial_gates:
+    - gate_id: <string>
+      blocks:
+        - <bounded text>
+      exit_condition: <bounded text>
+      owner: <string>
+  pvf_notes:
+    immediate_issue_local_proof: <bounded text>
+    parallel_validation_lanes:
+      - <bounded text>
+    serial_validation_gates:
+      - <bounded text>
+    proof_reuse_criteria: <bounded text>
+    fail_closed_rule: <bounded text>
   follow_up_issue_policy: post_sprint_follow_on | must_land_before_sprint_close
   goal: <string or null>
   version: <string or null>
@@ -71,7 +95,9 @@ sprint:
       - <path>
   issue_closed: true | false
 policy:
-  require_sequential_closeout: true
+  require_declared_execution_mode: true
+  require_sequential_closeout: true | false
+  require_sep_for_parallel_or_hybrid: true
   require_existing_issue_skills: true
   require_editor_skills: true
   require_code_review: true
@@ -90,3 +116,16 @@ review_subagent_ids:
   - <id>
 resume_from_state_path: /absolute/or/repo-relative/path/to/sprint_state.md
 ```
+
+Notes:
+
+- `sequential` mode means one child issue executes at a time.
+- `parallel` mode means the SEP must name all safe lanes and serial gates
+  before child work is delegated to separate workers or sessions.
+- `hybrid` mode means some child issues may execute in parallel, but named
+  serial gates control later lanes.
+- Sprint-level SEP state does not replace issue-local `SIP -> STP -> SPP ->
+  SRP -> SOR` truth.
+- The current sprint-state helper remains single-current-issue. SEP records
+  safe parallel intent and routing evidence; it does not by itself prove
+  automated multi-active sprint execution.

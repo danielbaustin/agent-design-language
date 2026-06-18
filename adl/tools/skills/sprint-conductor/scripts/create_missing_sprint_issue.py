@@ -228,7 +228,9 @@ Create the concrete sprint-management issue required to run one bounded `sprint-
 
 ## Trial Rules
 
-- Run child issues sequentially only.
+- Declare sprint execution mode: `sequential`, `parallel`, or `hybrid`.
+- For `parallel` or `hybrid` sprints, include or link a Sprint Execution Packet with safe lanes, serial gates, PVF notes, and residual routing.
+- Current sprint helper state remains single-current-issue; use separate issue workers or sessions for intentional parallel lanes.
 - Do not start the next child issue until the current one is fully closed out.
 - Use the existing issue lifecycle and editor skills for child issue execution.
 - Allow the bounded review-subagent exception only during sprint review when sprint policy explicitly enables it.
@@ -236,13 +238,13 @@ Create the concrete sprint-management issue required to run one bounded `sprint-
 
 ## Acceptance Criteria
 
-- A concrete sprint-management issue exists for this ordered child-issue list.
+- A concrete sprint-management issue exists for this child-issue wave and declared execution mode.
 - The sprint issue can be used directly as `sprint.issue_number` for `sprint-conductor`.
-- The ordered child-issue list is explicit and stable.
+- The child-issue list, execution mode, safe lanes, and serial gates are explicit and stable.
 
 ## Non-goals
 
-- Do not widen this sprint beyond the declared ordered child-issue list.
+- Do not widen this sprint beyond the declared child-issue wave or SEP boundary.
 - Do not treat this as a release-closeout or roadmap issue.
 """
     if notes:

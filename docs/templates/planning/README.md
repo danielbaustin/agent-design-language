@@ -72,6 +72,14 @@ Legacy flat files under `docs/templates/*_TEMPLATE.md` remain compatibility
 surfaces until migration is complete. New planning work should prefer the
 versioned registry and active template paths in this directory.
 
+Sprint umbrellas and mini-sprints should also use the companion Sprint
+Execution Packet template at
+`docs/templates/SPRINT_EXECUTION_PACKET_TEMPLATE.md`. The SEP is intentionally
+separate from the milestone planning registry: it is an execution-control
+surface for child issue order, safe parallelism, PVF notes, review bars, and
+closeout bars. It does not replace issue-local `SIP -> STP -> SPP -> SRP ->
+SOR` cards.
+
 ## Focused Validation
 
 Generate a filled planning draft from explicit JSON values:

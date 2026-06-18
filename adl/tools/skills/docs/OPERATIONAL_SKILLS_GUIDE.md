@@ -88,7 +88,11 @@ The normal workflow is:
 `arxiv-paper-writer` is a bounded helper skill for turning one concrete scholarly source packet into a reviewer-friendly arXiv-style manuscript packet without submitting, publishing, or inventing citations.
 `diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
-`sprint-conductor` is a slow-path sprint orchestrator that sequences issues through the existing lifecycle and editor skills, then finishes with sprint review and closeout.
+`sprint-conductor` is a sprint orchestrator that sequences one local current
+issue while coordinating broader sprint intent through a declared Sprint
+Execution Packet, then finishes with sprint review and closeout. SEP can record
+safe parallel lanes for separate workers or sessions; it is not itself a claim
+that the current helper scripts automate multi-active issue execution.
 `adl-milestone-creator` is a bounded milestone setup helper for creating full milestone packages, bridge milestones, issue-routing truth, feature/proof coverage, and downstream handoff docs without relying on session memory.
 `issue-folding` is a bounded issue-disposition helper for classifying duplicate, superseded, absorbed, already-satisfied, obsolete, or still-actionable issues before closeout.
 `issue-splitter` is a bounded issue-scope helper for deciding whether one issue should stay intact, split now, defer splitting, or stop for operator review.
@@ -139,8 +143,24 @@ claims, integration state, and closeout truth. They should not be used as a
 reason to hand-write locked template prose or bypass schema validation when a
 values-rendered card path is available.
 
-`sprint-conductor` is a bounded orchestration helper rather than an editor skill. It sequences one sprint issue across ordered child issues using the existing lifecycle/editor stack, then assembles sprint review and sprint closeout evidence.
-It now includes a small deterministic sprint-state helper, supports a bounded review-subagent exception when policy enables it, and should be installed or synced into the active Codex skills directory before live use.
+`sprint-conductor` is a bounded orchestration helper rather than an editor
+skill. It coordinates one sprint issue across an explicit child issue wave
+using the existing lifecycle/editor stack, then assembles sprint review and
+sprint closeout evidence. Sprint umbrellas should carry a Sprint Execution
+Packet from `docs/templates/SPRINT_EXECUTION_PACKET_TEMPLATE.md` or equivalent
+issue-body sections that name execution mode, dependency order, safe parallel
+lanes, serial gates, PVF notes, review bar, closeout bar, and residual routing.
+Current helper scripts still model one local current issue; parallel lanes are
+operator/subagent/session coordination surfaces until a later implementation
+proves automated multi-active lane execution.
+Some legacy sprint-conductor helper scripts still call raw `gh` internally for
+truth checks, issue creation context, or closure while the public issue wrapper
+is list/search/view-only. Treat repo-native octocrab-backed issue mutation as
+the desired direction, but do not claim those helper internals are fully
+migrated until a later issue proves it.
+It includes deterministic sprint-state helpers, supports a bounded
+review-subagent exception when policy enables it, and should be installed or
+synced into the active Codex skills directory before live use.
 
 ## Where The Skills Live
 
