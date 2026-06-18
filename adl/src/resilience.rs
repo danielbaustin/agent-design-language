@@ -1,6 +1,7 @@
 use schemars::{schema_for, JsonSchema};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 pub const RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1: &str =
     "adl.resilience.fault_classification.v1";
@@ -8,8 +9,12 @@ pub const RESILIENCE_CITIZEN_HEALTH_SCHEMA_V1: &str = "adl.resilience.citizen_he
 pub const RESILIENCE_RECOVERY_ARTIFACT_SCHEMA_V1: &str = "adl.resilience.recovery_artifact.v1";
 pub const RESILIENCE_CHECKPOINT_SCHEMA_V1: &str = "adl.resilience.checkpoint.v1";
 pub const RESILIENCE_TELEMETRY_EVENT_SCHEMA_V1: &str = "adl.resilience.telemetry_event.v1";
+pub const RESILIENCE_TIMEOUT_EXECUTION_TRACE_SCHEMA_V1: &str =
+    "adl.resilience.timeout_execution_trace.v1";
 pub const RESILIENCE_POLICY_SCHEMA_V1: &str = "adl.resilience.policy.v1";
 pub const RESILIENCE_SUBSTRATE_SCHEMA_V1: &str = "adl.resilience.substrate_manifest.v1";
+
+static TIMEOUT_EXECUTION_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -204,6 +209,58 @@ pub struct TimeoutPolicyV1 {
     pub timeout_ms: u64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub hard_deadline_ms: Option<u64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TimeoutBreachKindV1 {
+    Timeout,
+    HardDeadline,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TimeoutExecutionFinalStatusV1 {
+    Succeeded,
+    Failed,
+    TimedOut,
+    Cancelled,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TimeoutObservation<T, E> {
+    pub result: Result<T, E>,
+    pub elapsed_ms: u64,
+    pub cancelled: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct TimeoutExecutionTraceV1 {
+    pub schema_version: String,
+    pub policy_id: String,
+    pub surface: ResilienceSurfaceV1,
+    pub final_status: TimeoutExecutionFinalStatusV1,
+    pub elapsed_ms: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timeout_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub hard_deadline_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub breach_kind: Option<TimeoutBreachKindV1>,
+    pub decision_summary: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fault: Option<ResilienceFaultClassificationV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub telemetry_event: Option<ResilienceTelemetryEventV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub recovery_artifact: Option<RecoveryArtifactV1>,
+}
+
+#[derive(Debug)]
+pub struct TimeoutExecution<T, E> {
+    pub result: Result<T, E>,
+    pub trace: TimeoutExecutionTraceV1,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -440,6 +497,228 @@ impl ResilienceSubstrateManifestV1 {
     }
 }
 
+pub fn execute_timeout_policy<T, E, F, C, TO, CO>(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    operation: F,
+    mut classify_error: C,
+    mut timeout_error: TO,
+    mut cancellation_error: CO,
+) -> TimeoutExecution<T, E>
+where
+    F: FnOnce() -> TimeoutObservation<T, E>,
+    C: FnMut(&E) -> ResilienceFaultClassificationV1,
+    TO: FnMut(TimeoutBreachKindV1, u64, u64) -> E,
+    CO: FnMut(u64) -> E,
+{
+    let observation = operation();
+    let timeout_ms = policy.timeout.as_ref().map(|timeout| timeout.timeout_ms);
+    let hard_deadline_ms = policy
+        .timeout
+        .as_ref()
+        .and_then(|timeout| timeout.hard_deadline_ms);
+    let breach = timeout_breach(timeout_ms, hard_deadline_ms, observation.elapsed_ms);
+
+    if observation.cancelled {
+        let error = cancellation_error(observation.elapsed_ms);
+        let fault = timeout_cancellation_fault(surface.clone(), operation_ref);
+        let decision_summary = format!(
+            "{operation_ref}: operation cancelled after {}ms",
+            observation.elapsed_ms
+        );
+        let telemetry_event = Some(timeout_decision_event(
+            policy,
+            surface.clone(),
+            operation_ref,
+            &decision_summary,
+            Some(fault.clone()),
+        ));
+        let recovery_artifact = Some(timeout_recovery_artifact(
+            policy,
+            surface.clone(),
+            operation_ref,
+            &fault,
+            RecoveryDispositionV1::ResumeAllowed,
+            "handle explicit cancellation before retrying or rescheduling",
+        ));
+        return TimeoutExecution {
+            result: Err(error),
+            trace: TimeoutExecutionTraceV1 {
+                schema_version: RESILIENCE_TIMEOUT_EXECUTION_TRACE_SCHEMA_V1.to_string(),
+                policy_id: policy.policy_id.clone(),
+                surface,
+                final_status: TimeoutExecutionFinalStatusV1::Cancelled,
+                elapsed_ms: observation.elapsed_ms,
+                timeout_ms,
+                hard_deadline_ms,
+                breach_kind: None,
+                decision_summary,
+                fault: Some(fault),
+                telemetry_event,
+                recovery_artifact,
+            },
+        };
+    }
+
+    match observation.result {
+        Ok(value) => {
+            if let Some((breach_kind, breached_budget_ms)) = breach.clone() {
+                let error = timeout_error(
+                    breach_kind.clone(),
+                    observation.elapsed_ms,
+                    breached_budget_ms,
+                );
+                let fault = timeout_deadline_fault(
+                    surface.clone(),
+                    operation_ref,
+                    observation.elapsed_ms,
+                    breach_kind.clone(),
+                    breached_budget_ms,
+                );
+                let decision_summary = format!(
+                    "{operation_ref}: {} exceeded after {}ms (budget {}ms)",
+                    timeout_breach_label(&breach_kind),
+                    observation.elapsed_ms,
+                    breached_budget_ms
+                );
+                let telemetry_event = Some(timeout_decision_event(
+                    policy,
+                    surface.clone(),
+                    operation_ref,
+                    &decision_summary,
+                    Some(fault.clone()),
+                ));
+                let recovery_artifact = Some(timeout_recovery_artifact(
+                    policy,
+                    surface.clone(),
+                    operation_ref,
+                    &fault,
+                    RecoveryDispositionV1::RetryAllowed,
+                    "operation exceeded deadline; retry only through the caller's bounded policy",
+                ));
+                return TimeoutExecution {
+                    result: Err(error),
+                    trace: TimeoutExecutionTraceV1 {
+                        schema_version: RESILIENCE_TIMEOUT_EXECUTION_TRACE_SCHEMA_V1.to_string(),
+                        policy_id: policy.policy_id.clone(),
+                        surface,
+                        final_status: TimeoutExecutionFinalStatusV1::TimedOut,
+                        elapsed_ms: observation.elapsed_ms,
+                        timeout_ms,
+                        hard_deadline_ms,
+                        breach_kind: Some(breach_kind),
+                        decision_summary,
+                        fault: Some(fault),
+                        telemetry_event,
+                        recovery_artifact,
+                    },
+                };
+            }
+
+            let decision_summary =
+                format!("{operation_ref}: completed before timeout/deadline budget");
+            let telemetry_event = timeout_ms.map(|_| {
+                timeout_decision_event(
+                    policy,
+                    surface.clone(),
+                    operation_ref,
+                    &decision_summary,
+                    None,
+                )
+            });
+            TimeoutExecution {
+                result: Ok(value),
+                trace: TimeoutExecutionTraceV1 {
+                    schema_version: RESILIENCE_TIMEOUT_EXECUTION_TRACE_SCHEMA_V1.to_string(),
+                    policy_id: policy.policy_id.clone(),
+                    surface,
+                    final_status: TimeoutExecutionFinalStatusV1::Succeeded,
+                    elapsed_ms: observation.elapsed_ms,
+                    timeout_ms,
+                    hard_deadline_ms,
+                    breach_kind: None,
+                    decision_summary,
+                    fault: None,
+                    telemetry_event,
+                    recovery_artifact: None,
+                },
+            }
+        }
+        Err(error) => {
+            let classification = classify_error(&error);
+            let timed_out = classification_represents_timeout(&classification);
+            let final_status = if timed_out {
+                TimeoutExecutionFinalStatusV1::TimedOut
+            } else {
+                TimeoutExecutionFinalStatusV1::Failed
+            };
+            let decision_summary = if timed_out {
+                let budget_summary = breach
+                    .as_ref()
+                    .map(|(kind, ms)| format!(" ({}, {}ms)", timeout_breach_label(kind), ms))
+                    .unwrap_or_default();
+                format!(
+                    "{operation_ref}: timeout failure after {}ms{}",
+                    observation.elapsed_ms, budget_summary
+                )
+            } else if let Some((kind, budget_ms)) = breach.as_ref() {
+                format!(
+                    "{operation_ref}: failed after {} exceeded ({}ms budget) with {:?}",
+                    timeout_breach_label(kind),
+                    budget_ms,
+                    classification.fault_class
+                )
+            } else {
+                format!(
+                    "{operation_ref}: failed before deadline with {:?}",
+                    classification.fault_class
+                )
+            };
+            let telemetry_event = Some(timeout_decision_event(
+                policy,
+                surface.clone(),
+                operation_ref,
+                &decision_summary,
+                Some(classification.clone()),
+            ));
+            let recovery_artifact = if timed_out {
+                Some(timeout_recovery_artifact(
+                    policy,
+                    surface.clone(),
+                    operation_ref,
+                    &classification,
+                    RecoveryDispositionV1::RetryAllowed,
+                    "timeout classified distinctly from business failure; retry only through the caller's bounded policy",
+                ))
+            } else {
+                None
+            };
+            TimeoutExecution {
+                result: Err(error),
+                trace: TimeoutExecutionTraceV1 {
+                    schema_version: RESILIENCE_TIMEOUT_EXECUTION_TRACE_SCHEMA_V1.to_string(),
+                    policy_id: policy.policy_id.clone(),
+                    surface,
+                    final_status,
+                    elapsed_ms: observation.elapsed_ms,
+                    timeout_ms,
+                    hard_deadline_ms,
+                    breach_kind: if timed_out {
+                        breach.as_ref().map(|(kind, _)| kind.clone())
+                    } else {
+                        None
+                    },
+                    decision_summary,
+                    fault: Some(classification),
+                    telemetry_event,
+                    recovery_artifact,
+                },
+            }
+        }
+    }
+}
+
 pub fn resilience_schema_smoke() -> Value {
     serde_json::to_value(schema_for!(ResilienceSubstrateManifestV1))
         .expect("resilience substrate schema should serialize")
@@ -482,6 +761,148 @@ fn truncate_chars(text: &str, max_chars: usize) -> String {
     out
 }
 
+fn timeout_deadline_fault(
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    elapsed_ms: u64,
+    breach_kind: TimeoutBreachKindV1,
+    breached_budget_ms: u64,
+) -> ResilienceFaultClassificationV1 {
+    ResilienceFaultClassificationV1 {
+        schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+        surface,
+        fault_class: ResilienceFaultClassV1::RuntimeFailure,
+        disposition: ResilienceFaultDispositionV1::Retryable,
+        retryable: true,
+        summary: format!(
+            "{operation_ref} exceeded {} after {elapsed_ms}ms (budget {breached_budget_ms}ms)",
+            timeout_breach_label(&breach_kind)
+        ),
+        component_ref: Some(operation_ref.to_string()),
+        http_status: None,
+    }
+}
+
+fn timeout_cancellation_fault(
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+) -> ResilienceFaultClassificationV1 {
+    ResilienceFaultClassificationV1 {
+        schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+        surface,
+        fault_class: ResilienceFaultClassV1::RuntimeFailure,
+        disposition: ResilienceFaultDispositionV1::Terminal,
+        retryable: false,
+        summary: format!("{operation_ref} cancelled before completion"),
+        component_ref: Some(operation_ref.to_string()),
+        http_status: None,
+    }
+}
+
+fn timeout_decision_event(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    decision_summary: &str,
+    fault: Option<ResilienceFaultClassificationV1>,
+) -> ResilienceTelemetryEventV1 {
+    let correlation_suffix = timeout_execution_correlation_suffix();
+    ResilienceTelemetryEventV1 {
+        schema_version: RESILIENCE_TELEMETRY_EVENT_SCHEMA_V1.to_string(),
+        event_id: format!(
+            "{}:timeout:{operation_ref}:{correlation_suffix}",
+            policy.policy_id
+        ),
+        event_kind: TelemetryEventKindV1::TimeoutDecision,
+        surface,
+        decision_summary: decision_summary.to_string(),
+        run_id: None,
+        request_id: None,
+        policy_ref: Some(policy.policy_id.clone()),
+        fault,
+        artifact_ref: None,
+    }
+}
+
+fn timeout_recovery_artifact(
+    policy: &ResiliencePolicyV1,
+    surface: ResilienceSurfaceV1,
+    operation_ref: &str,
+    fault: &ResilienceFaultClassificationV1,
+    disposition: RecoveryDispositionV1,
+    next_action: &str,
+) -> RecoveryArtifactV1 {
+    let correlation_suffix = timeout_execution_correlation_suffix();
+    RecoveryArtifactV1 {
+        schema_version: RESILIENCE_RECOVERY_ARTIFACT_SCHEMA_V1.to_string(),
+        artifact_id: format!(
+            "{}:timeout:{operation_ref}:{correlation_suffix}",
+            policy.policy_id
+        ),
+        surface,
+        triggering_fault: fault.clone(),
+        disposition,
+        next_action: next_action.to_string(),
+        source_run_id: None,
+        checkpoint_ref: None,
+        evidence_refs: vec![policy.policy_id.clone()],
+    }
+}
+
+fn timeout_execution_correlation_suffix() -> String {
+    TIMEOUT_EXECUTION_COUNTER
+        .fetch_add(1, Ordering::Relaxed)
+        .saturating_add(1)
+        .to_string()
+}
+
+fn timeout_breach(
+    timeout_ms: Option<u64>,
+    hard_deadline_ms: Option<u64>,
+    elapsed_ms: u64,
+) -> Option<(TimeoutBreachKindV1, u64)> {
+    let mut budgets = Vec::new();
+    if let Some(timeout_ms) = timeout_ms {
+        budgets.push((timeout_ms, TimeoutBreachKindV1::Timeout));
+    }
+    if let Some(hard_deadline_ms) = hard_deadline_ms {
+        budgets.push((hard_deadline_ms, TimeoutBreachKindV1::HardDeadline));
+    }
+    budgets.sort_by_key(|(budget_ms, _)| *budget_ms);
+    budgets
+        .into_iter()
+        .find(|(budget_ms, _)| elapsed_ms > *budget_ms)
+        .map(|(budget_ms, kind)| (kind, budget_ms))
+}
+
+fn timeout_breach_label(kind: &TimeoutBreachKindV1) -> &'static str {
+    match kind {
+        TimeoutBreachKindV1::Timeout => "timeout budget",
+        TimeoutBreachKindV1::HardDeadline => "hard deadline",
+    }
+}
+
+fn classification_represents_timeout(classification: &ResilienceFaultClassificationV1) -> bool {
+    if classification.fault_class == ResilienceFaultClassV1::ProviderTimeout
+        || classification.fault_class == ResilienceFaultClassV1::LocalRuntimeHung
+    {
+        return true;
+    }
+    if matches!(
+        classification.fault_class,
+        ResilienceFaultClassV1::RuntimeFailure
+            | ResilienceFaultClassV1::WorkflowFailure
+            | ResilienceFaultClassV1::ToolFailure
+            | ResilienceFaultClassV1::Unknown
+    ) {
+        let summary = classification.summary.to_ascii_lowercase();
+        return summary.contains("timeout")
+            || summary.contains("timed out")
+            || summary.contains("deadline");
+    }
+    false
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -509,6 +930,138 @@ mod tests {
             ResilienceFaultDispositionV1::OperatorGated
         );
         assert!(!fault.retryable);
+    }
+
+    #[test]
+    fn provider_fault_classifier_covers_remaining_provider_fault_branches() {
+        let cases = [
+            (
+                "provider rate limit exceeded",
+                None,
+                ResilienceFaultClassV1::ProviderRateLimited,
+                ResilienceFaultDispositionV1::Retryable,
+                true,
+            ),
+            (
+                "provider timeout while waiting for upstream",
+                None,
+                ResilienceFaultClassV1::ProviderTimeout,
+                ResilienceFaultDispositionV1::Retryable,
+                true,
+            ),
+            (
+                "billing blocked due to credit balance",
+                None,
+                ResilienceFaultClassV1::ProviderBillingBlocked,
+                ResilienceFaultDispositionV1::OperatorGated,
+                false,
+            ),
+            (
+                "local_runtime_busy because this is a non-target model",
+                None,
+                ResilienceFaultClassV1::LocalRuntimeBusy,
+                ResilienceFaultDispositionV1::Retryable,
+                true,
+            ),
+            (
+                "local_runtime_hung while stopping...",
+                None,
+                ResilienceFaultClassV1::LocalRuntimeHung,
+                ResilienceFaultDispositionV1::Retryable,
+                true,
+            ),
+            (
+                "ollama not running: connection refused",
+                None,
+                ResilienceFaultClassV1::LocalRuntimeUnavailable,
+                ResilienceFaultDispositionV1::Retryable,
+                true,
+            ),
+            (
+                "provider model not found",
+                None,
+                ResilienceFaultClassV1::ProviderModelUnavailable,
+                ResilienceFaultDispositionV1::Terminal,
+                false,
+            ),
+            (
+                "empty provider response output",
+                None,
+                ResilienceFaultClassV1::ProviderEmptyTextOutput,
+                ResilienceFaultDispositionV1::Terminal,
+                false,
+            ),
+            (
+                "upstream exploded",
+                Some(503),
+                ResilienceFaultClassV1::ProviderTransientHttp,
+                ResilienceFaultDispositionV1::Retryable,
+                true,
+            ),
+            (
+                "provider_internal_error",
+                Some(418),
+                ResilienceFaultClassV1::ProviderError,
+                ResilienceFaultDispositionV1::Terminal,
+                false,
+            ),
+            (
+                "something ambiguous happened",
+                None,
+                ResilienceFaultClassV1::Unknown,
+                ResilienceFaultDispositionV1::Retryable,
+                true,
+            ),
+        ];
+
+        for (note, http_status, expected_class, expected_disposition, expected_retryable) in cases {
+            let fault = ResilienceFaultClassificationV1::provider(note, http_status);
+            assert_eq!(fault.fault_class, expected_class, "{note}");
+            assert_eq!(fault.disposition, expected_disposition, "{note}");
+            assert_eq!(fault.retryable, expected_retryable, "{note}");
+        }
+    }
+
+    #[test]
+    fn resilience_foundation_defaults_stay_wired_to_phase1_contract() {
+        let policy =
+            ResiliencePolicyV1::provider_attempt_policy("provider_attempt_default", 3, 30_000);
+        let retry = policy.retry.as_ref().expect("retry policy");
+        let timeout = policy.timeout.as_ref().expect("timeout policy");
+        assert_eq!(policy.schema_version, RESILIENCE_POLICY_SCHEMA_V1);
+        assert_eq!(retry.max_attempts, 3);
+        assert_eq!(retry.backoff_ms, None);
+        assert_eq!(retry.jitter_ms, None);
+        assert!(retry
+            .retryable_fault_classes
+            .contains(&ResilienceFaultClassV1::ProviderRateLimited));
+        assert!(retry
+            .retryable_fault_classes
+            .contains(&ResilienceFaultClassV1::LocalRuntimeHung));
+        assert_eq!(timeout.timeout_ms, 30_000);
+        assert_eq!(timeout.hard_deadline_ms, None);
+        assert!(policy.circuit_breaker.is_none());
+        assert!(policy.rate_limit.is_none());
+        assert!(policy.bulkhead.is_none());
+        assert!(policy.fallback.is_none());
+        assert!(!policy.checkpoint_required);
+        assert!(policy.telemetry_required);
+
+        let manifest = ResilienceSubstrateManifestV1::phase1_foundation();
+        assert_eq!(manifest.schema_version, RESILIENCE_SUBSTRATE_SCHEMA_V1);
+        assert_eq!(
+            manifest.supported_surfaces,
+            vec![
+                ResilienceSurfaceV1::Provider,
+                ResilienceSurfaceV1::Tool,
+                ResilienceSurfaceV1::Workflow,
+                ResilienceSurfaceV1::CitizenRuntime,
+            ]
+        );
+        assert_eq!(
+            manifest.policy,
+            ResiliencePolicyV1::provider_attempt_policy("provider_attempt_default", 3, 30_000)
+        );
     }
 
     #[test]
@@ -561,6 +1114,16 @@ mod tests {
     }
 
     #[test]
+    fn provider_fault_summary_normalizes_whitespace_and_truncates_long_messages() {
+        let note = format!("{}\n  {}", "word ".repeat(40), "tail");
+        let summary = sanitize_resilience_summary(&note);
+        assert!(!summary.contains('\n'));
+        assert!(!summary.contains("  "));
+        assert!(summary.ends_with("..."));
+        assert_eq!(summary.chars().count(), 180);
+    }
+
+    #[test]
     fn fault_classification_round_trips_with_snake_case_schema_values() {
         let classification =
             ResilienceFaultClassificationV1::provider("provider timeout", Some(504));
@@ -571,5 +1134,612 @@ mod tests {
         let reparsed: ResilienceFaultClassificationV1 =
             serde_json::from_value(json).expect("round trip classification");
         assert_eq!(reparsed, classification);
+    }
+
+    #[test]
+    fn execute_timeout_policy_succeeds_before_deadline() {
+        let policy = ResiliencePolicyV1::provider_attempt_policy("timeout.success", 1, 100);
+        let execution = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Tool,
+            "test.timeout.success",
+            || TimeoutObservation {
+                result: Ok("ok"),
+                elapsed_ms: 40,
+                cancelled: false,
+            },
+            |error: &ResilienceFaultClassificationV1| error.clone(),
+            |_, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Tool,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Retryable,
+                retryable: true,
+                summary: format!("timeout at {elapsed_ms}/{deadline_ms}"),
+                component_ref: None,
+                http_status: None,
+            },
+            |elapsed_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Tool,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Terminal,
+                retryable: false,
+                summary: format!("cancelled at {elapsed_ms}"),
+                component_ref: None,
+                http_status: None,
+            },
+        );
+
+        assert_eq!(execution.result.expect("success"), "ok");
+        assert_eq!(
+            execution.trace.final_status,
+            TimeoutExecutionFinalStatusV1::Succeeded
+        );
+        assert_eq!(execution.trace.timeout_ms, Some(100));
+        assert_eq!(execution.trace.hard_deadline_ms, None);
+        assert!(execution.trace.recovery_artifact.is_none());
+    }
+
+    #[test]
+    fn execute_timeout_policy_emits_timeout_artifact_when_timeout_budget_is_exceeded() {
+        let policy = ResiliencePolicyV1::provider_attempt_policy("timeout.deadline", 1, 50);
+        let execution = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.timeout.deadline",
+            || TimeoutObservation {
+                result: Ok::<(), ResilienceFaultClassificationV1>(()),
+                elapsed_ms: 75,
+                cancelled: false,
+            },
+            |error| error.clone(),
+            |breach_kind, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Workflow,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Retryable,
+                retryable: true,
+                summary: format!(
+                    "{} exceeded at {elapsed_ms}/{deadline_ms}",
+                    timeout_breach_label(&breach_kind)
+                ),
+                component_ref: None,
+                http_status: None,
+            },
+            |elapsed_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Workflow,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Terminal,
+                retryable: false,
+                summary: format!("cancelled at {elapsed_ms}"),
+                component_ref: None,
+                http_status: None,
+            },
+        );
+
+        let failure = execution.result.expect_err("timeout failure");
+        assert!(failure.retryable);
+        assert_eq!(
+            execution.trace.final_status,
+            TimeoutExecutionFinalStatusV1::TimedOut
+        );
+        assert_eq!(
+            execution.trace.breach_kind,
+            Some(TimeoutBreachKindV1::Timeout)
+        );
+        assert_eq!(
+            execution.trace.schema_version,
+            RESILIENCE_TIMEOUT_EXECUTION_TRACE_SCHEMA_V1
+        );
+        assert_eq!(
+            execution
+                .trace
+                .telemetry_event
+                .as_ref()
+                .map(|event| event.event_kind.clone()),
+            Some(TelemetryEventKindV1::TimeoutDecision)
+        );
+        assert_eq!(
+            execution
+                .trace
+                .recovery_artifact
+                .as_ref()
+                .map(|artifact| artifact.disposition.clone()),
+            Some(RecoveryDispositionV1::RetryAllowed)
+        );
+    }
+
+    #[test]
+    fn execute_timeout_policy_distinguishes_timeout_budget_from_hard_deadline() {
+        let mut policy = ResiliencePolicyV1::provider_attempt_policy("timeout.budgets", 1, 50);
+        policy
+            .timeout
+            .as_mut()
+            .expect("timeout policy")
+            .hard_deadline_ms = Some(90);
+        let execution = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.timeout.budgets",
+            || TimeoutObservation {
+                result: Ok::<(), ResilienceFaultClassificationV1>(()),
+                elapsed_ms: 60,
+                cancelled: false,
+            },
+            |error| error.clone(),
+            |breach_kind, elapsed_ms, budget_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Workflow,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Retryable,
+                retryable: true,
+                summary: format!(
+                    "{} exceeded at {elapsed_ms}/{budget_ms}",
+                    timeout_breach_label(&breach_kind)
+                ),
+                component_ref: None,
+                http_status: None,
+            },
+            |elapsed_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Workflow,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Terminal,
+                retryable: false,
+                summary: format!("cancelled at {elapsed_ms}"),
+                component_ref: None,
+                http_status: None,
+            },
+        );
+
+        assert!(execution.result.is_err());
+        assert_eq!(
+            execution.trace.breach_kind,
+            Some(TimeoutBreachKindV1::Timeout)
+        );
+        assert_eq!(execution.trace.timeout_ms, Some(50));
+        assert_eq!(execution.trace.hard_deadline_ms, Some(90));
+    }
+
+    #[test]
+    fn execute_timeout_policy_emits_hard_deadline_breach_when_timeout_budget_is_absent() {
+        let policy = ResiliencePolicyV1 {
+            schema_version: RESILIENCE_POLICY_SCHEMA_V1.to_string(),
+            policy_id: "timeout.deadline-only".to_string(),
+            retry: None,
+            timeout: Some(TimeoutPolicyV1 {
+                timeout_ms: 120,
+                hard_deadline_ms: Some(90),
+            }),
+            circuit_breaker: None,
+            rate_limit: None,
+            bulkhead: None,
+            fallback: None,
+            checkpoint_required: false,
+            telemetry_required: true,
+        };
+        let execution = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Runtime,
+            "test.timeout.deadline-only",
+            || TimeoutObservation {
+                result: Ok::<(), ResilienceFaultClassificationV1>(()),
+                elapsed_ms: 100,
+                cancelled: false,
+            },
+            |error| error.clone(),
+            |breach_kind, elapsed_ms, budget_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Runtime,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Retryable,
+                retryable: true,
+                summary: format!(
+                    "{} exceeded at {elapsed_ms}/{budget_ms}",
+                    timeout_breach_label(&breach_kind)
+                ),
+                component_ref: None,
+                http_status: None,
+            },
+            |elapsed_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Runtime,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Terminal,
+                retryable: false,
+                summary: format!("cancelled at {elapsed_ms}"),
+                component_ref: None,
+                http_status: None,
+            },
+        );
+
+        assert!(execution.result.is_err());
+        assert_eq!(
+            execution.trace.breach_kind,
+            Some(TimeoutBreachKindV1::HardDeadline)
+        );
+        assert!(execution
+            .trace
+            .decision_summary
+            .contains("hard deadline exceeded"));
+    }
+
+    #[test]
+    fn execute_timeout_policy_distinguishes_timeout_from_terminal_business_failure() {
+        let policy = ResiliencePolicyV1::provider_attempt_policy("timeout.failure", 1, 100);
+        let execution = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.timeout.failure",
+            || TimeoutObservation::<(), ResilienceFaultClassificationV1> {
+                result: Err(ResilienceFaultClassificationV1::provider(
+                    "provider invalid api key",
+                    Some(401),
+                )),
+                elapsed_ms: 20,
+                cancelled: false,
+            },
+            |error| error.clone(),
+            |breach_kind, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Provider,
+                fault_class: ResilienceFaultClassV1::ProviderTimeout,
+                disposition: ResilienceFaultDispositionV1::Retryable,
+                retryable: true,
+                summary: format!(
+                    "{} exceeded at {elapsed_ms}/{deadline_ms}",
+                    timeout_breach_label(&breach_kind)
+                ),
+                component_ref: None,
+                http_status: None,
+            },
+            |elapsed_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Provider,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Terminal,
+                retryable: false,
+                summary: format!("cancelled at {elapsed_ms}"),
+                component_ref: None,
+                http_status: None,
+            },
+        );
+
+        let failure = execution.result.expect_err("terminal failure");
+        assert_eq!(
+            failure.fault_class,
+            ResilienceFaultClassV1::ProviderAuthError
+        );
+        assert_eq!(
+            execution.trace.final_status,
+            TimeoutExecutionFinalStatusV1::Failed
+        );
+        assert!(execution.trace.recovery_artifact.is_none());
+    }
+
+    #[test]
+    fn execute_timeout_policy_keeps_late_terminal_errors_terminal() {
+        let policy = ResiliencePolicyV1::provider_attempt_policy("timeout.late-failure", 1, 50);
+        let execution = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Provider,
+            "test.timeout.late-failure",
+            || TimeoutObservation::<(), ResilienceFaultClassificationV1> {
+                result: Err(ResilienceFaultClassificationV1::provider(
+                    "provider invalid api key",
+                    Some(401),
+                )),
+                elapsed_ms: 80,
+                cancelled: false,
+            },
+            |error| error.clone(),
+            |breach_kind, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Provider,
+                fault_class: ResilienceFaultClassV1::ProviderTimeout,
+                disposition: ResilienceFaultDispositionV1::Retryable,
+                retryable: true,
+                summary: format!(
+                    "{} exceeded at {elapsed_ms}/{deadline_ms}",
+                    timeout_breach_label(&breach_kind)
+                ),
+                component_ref: None,
+                http_status: None,
+            },
+            |elapsed_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Provider,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Terminal,
+                retryable: false,
+                summary: format!("cancelled at {elapsed_ms}"),
+                component_ref: None,
+                http_status: None,
+            },
+        );
+
+        let failure = execution.result.expect_err("terminal failure");
+        assert_eq!(
+            failure.fault_class,
+            ResilienceFaultClassV1::ProviderAuthError
+        );
+        assert_eq!(
+            execution.trace.final_status,
+            TimeoutExecutionFinalStatusV1::Failed
+        );
+        assert!(execution.trace.decision_summary.contains("failed after"));
+        assert!(execution.trace.recovery_artifact.is_none());
+    }
+
+    #[test]
+    fn execute_timeout_policy_recognizes_generic_timeout_failures() {
+        let policy = ResiliencePolicyV1::provider_attempt_policy("timeout.generic", 1, 100);
+        let execution = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Tool,
+            "test.timeout.generic",
+            || TimeoutObservation::<(), ResilienceFaultClassificationV1> {
+                result: Err(ResilienceFaultClassificationV1 {
+                    schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                    surface: ResilienceSurfaceV1::Tool,
+                    fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                    disposition: ResilienceFaultDispositionV1::Retryable,
+                    retryable: true,
+                    summary: "tool timeout while waiting for child process".to_string(),
+                    component_ref: None,
+                    http_status: None,
+                }),
+                elapsed_ms: 105,
+                cancelled: false,
+            },
+            |error| error.clone(),
+            |breach_kind, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Tool,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Retryable,
+                retryable: true,
+                summary: format!(
+                    "{} exceeded at {elapsed_ms}/{deadline_ms}",
+                    timeout_breach_label(&breach_kind)
+                ),
+                component_ref: None,
+                http_status: None,
+            },
+            |elapsed_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Tool,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Terminal,
+                retryable: false,
+                summary: format!("cancelled at {elapsed_ms}"),
+                component_ref: None,
+                http_status: None,
+            },
+        );
+
+        let failure = execution.result.expect_err("generic timeout failure");
+        assert!(failure.retryable);
+        assert_eq!(
+            execution.trace.final_status,
+            TimeoutExecutionFinalStatusV1::TimedOut
+        );
+        assert_eq!(
+            execution.trace.breach_kind,
+            Some(TimeoutBreachKindV1::Timeout)
+        );
+        assert!(execution.trace.recovery_artifact.is_some());
+    }
+
+    #[test]
+    fn execute_timeout_policy_handles_timeout_classification_without_budget_breach() {
+        let policy = ResiliencePolicyV1 {
+            schema_version: RESILIENCE_POLICY_SCHEMA_V1.to_string(),
+            policy_id: "timeout.classified-only".to_string(),
+            retry: None,
+            timeout: None,
+            circuit_breaker: None,
+            rate_limit: None,
+            bulkhead: None,
+            fallback: None,
+            checkpoint_required: false,
+            telemetry_required: true,
+        };
+        let execution = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Tool,
+            "test.timeout.classified-only",
+            || TimeoutObservation::<(), ResilienceFaultClassificationV1> {
+                result: Err(ResilienceFaultClassificationV1 {
+                    schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                    surface: ResilienceSurfaceV1::Tool,
+                    fault_class: ResilienceFaultClassV1::Unknown,
+                    disposition: ResilienceFaultDispositionV1::Retryable,
+                    retryable: true,
+                    summary: "operation timed out without explicit timeout budget".to_string(),
+                    component_ref: None,
+                    http_status: None,
+                }),
+                elapsed_ms: 45,
+                cancelled: false,
+            },
+            |error| error.clone(),
+            |_, _, _| unreachable!("timeout budget is absent"),
+            |_| unreachable!("cancellation path not used"),
+        );
+
+        assert!(execution.result.is_err());
+        assert_eq!(
+            execution.trace.final_status,
+            TimeoutExecutionFinalStatusV1::TimedOut
+        );
+        assert_eq!(execution.trace.breach_kind, None);
+        assert!(execution
+            .trace
+            .decision_summary
+            .contains("timeout failure after 45ms"));
+        assert!(execution.trace.recovery_artifact.is_some());
+    }
+
+    #[test]
+    fn execute_timeout_policy_marks_cancellation_as_cancelled_not_success() {
+        let policy = ResiliencePolicyV1::provider_attempt_policy("timeout.cancel", 1, 100);
+        let execution = execute_timeout_policy(
+            &policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.timeout.cancel",
+            || TimeoutObservation::<(), ResilienceFaultClassificationV1> {
+                result: Err(ResilienceFaultClassificationV1 {
+                    schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                    surface: ResilienceSurfaceV1::Workflow,
+                    fault_class: ResilienceFaultClassV1::WorkflowFailure,
+                    disposition: ResilienceFaultDispositionV1::Terminal,
+                    retryable: false,
+                    summary: "cancelled".to_string(),
+                    component_ref: None,
+                    http_status: None,
+                }),
+                elapsed_ms: 15,
+                cancelled: true,
+            },
+            |error| error.clone(),
+            |breach_kind, elapsed_ms, deadline_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Workflow,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Retryable,
+                retryable: true,
+                summary: format!(
+                    "{} exceeded at {elapsed_ms}/{deadline_ms}",
+                    timeout_breach_label(&breach_kind)
+                ),
+                component_ref: None,
+                http_status: None,
+            },
+            |elapsed_ms| ResilienceFaultClassificationV1 {
+                schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+                surface: ResilienceSurfaceV1::Workflow,
+                fault_class: ResilienceFaultClassV1::RuntimeFailure,
+                disposition: ResilienceFaultDispositionV1::Terminal,
+                retryable: false,
+                summary: format!("cancelled at {elapsed_ms}"),
+                component_ref: None,
+                http_status: None,
+            },
+        );
+
+        let failure = execution.result.expect_err("cancelled result");
+        assert_eq!(failure.summary, "cancelled at 15");
+        assert_eq!(
+            execution.trace.final_status,
+            TimeoutExecutionFinalStatusV1::Cancelled
+        );
+        assert_eq!(
+            execution
+                .trace
+                .recovery_artifact
+                .as_ref()
+                .map(|artifact| artifact.disposition.clone()),
+            Some(RecoveryDispositionV1::ResumeAllowed)
+        );
+    }
+
+    #[test]
+    fn timeout_event_and_artifact_ids_remain_unique_across_repeated_emissions() {
+        let policy = ResiliencePolicyV1::provider_attempt_policy("timeout.ids", 1, 10);
+        let fault = timeout_deadline_fault(
+            ResilienceSurfaceV1::Workflow,
+            "test.timeout.ids",
+            12,
+            TimeoutBreachKindV1::Timeout,
+            10,
+        );
+        let first_event = timeout_decision_event(
+            &policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.timeout.ids",
+            "first timeout",
+            Some(fault.clone()),
+        );
+        let second_event = timeout_decision_event(
+            &policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.timeout.ids",
+            "second timeout",
+            Some(fault.clone()),
+        );
+        let first_artifact = timeout_recovery_artifact(
+            &policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.timeout.ids",
+            &fault,
+            RecoveryDispositionV1::RetryAllowed,
+            "retry",
+        );
+        let second_artifact = timeout_recovery_artifact(
+            &policy,
+            ResilienceSurfaceV1::Workflow,
+            "test.timeout.ids",
+            &fault,
+            RecoveryDispositionV1::RetryAllowed,
+            "retry",
+        );
+
+        assert_ne!(first_event.event_id, second_event.event_id);
+        assert_ne!(first_artifact.artifact_id, second_artifact.artifact_id);
+    }
+
+    #[test]
+    fn timeout_helper_functions_cover_remaining_branch_cases() {
+        assert_eq!(timeout_breach(None, None, 10), None);
+        assert_eq!(
+            timeout_breach(Some(50), Some(90), 95),
+            Some((TimeoutBreachKindV1::Timeout, 50))
+        );
+        assert_eq!(
+            timeout_breach(Some(120), Some(90), 100),
+            Some((TimeoutBreachKindV1::HardDeadline, 90))
+        );
+        assert_eq!(
+            timeout_breach_label(&TimeoutBreachKindV1::Timeout),
+            "timeout budget"
+        );
+        assert_eq!(
+            timeout_breach_label(&TimeoutBreachKindV1::HardDeadline),
+            "hard deadline"
+        );
+
+        let provider_timeout = ResilienceFaultClassificationV1::provider("provider timeout", None);
+        assert!(classification_represents_timeout(&provider_timeout));
+
+        let runtime_deadline = ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Runtime,
+            fault_class: ResilienceFaultClassV1::RuntimeFailure,
+            disposition: ResilienceFaultDispositionV1::Retryable,
+            retryable: true,
+            summary: "deadline elapsed while waiting".to_string(),
+            component_ref: None,
+            http_status: None,
+        };
+        assert!(classification_represents_timeout(&runtime_deadline));
+
+        let runtime_non_timeout = ResilienceFaultClassificationV1 {
+            schema_version: RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1.to_string(),
+            surface: ResilienceSurfaceV1::Runtime,
+            fault_class: ResilienceFaultClassV1::RuntimeFailure,
+            disposition: ResilienceFaultDispositionV1::Retryable,
+            retryable: true,
+            summary: "worker exited with code 2".to_string(),
+            component_ref: None,
+            http_status: None,
+        };
+        assert!(!classification_represents_timeout(&runtime_non_timeout));
+
+        let provider_error =
+            ResilienceFaultClassificationV1::provider("provider_internal_error", Some(500));
+        assert!(!classification_represents_timeout(&provider_error));
     }
 }
