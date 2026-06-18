@@ -916,7 +916,8 @@ where
             }
 
             let error = rejection_error(&normalized_state, now_ms);
-            let decision_summary = if fallback.is_some() && normalized_state.last_failure.is_some() {
+            let decision_summary = if fallback.is_some() && normalized_state.last_failure.is_some()
+            {
                 format!(
                     "{operation_ref}: breaker open at {} failures; fallback policy did not activate",
                     normalized_state.consecutive_failures
@@ -1598,7 +1599,10 @@ mod tests {
             fault_class: ResilienceFaultClassV1::ProviderTimeout,
             disposition: ResilienceFaultDispositionV1::Retryable,
             retryable: true,
-            summary: format!("breaker open at {} after {}ms", state.consecutive_failures, now_ms),
+            summary: format!(
+                "breaker open at {} after {}ms",
+                state.consecutive_failures, now_ms
+            ),
             component_ref: None,
             http_status: None,
         }
@@ -2588,7 +2592,11 @@ mod tests {
     #[test]
     fn circuit_breaker_honors_multi_probe_budget_before_reopening() {
         let mut policy = test_circuit_breaker_policy();
-        policy.circuit_breaker.as_mut().expect("breaker policy").half_open_max_attempts = 2;
+        policy
+            .circuit_breaker
+            .as_mut()
+            .expect("breaker policy")
+            .half_open_max_attempts = 2;
         let open_state = CircuitBreakerStateV1 {
             schema_version: RESILIENCE_CIRCUIT_BREAKER_STATE_SCHEMA_V1.to_string(),
             policy_id: policy.policy_id.clone(),
@@ -2623,7 +2631,10 @@ mod tests {
             first_failure.trace.final_status,
             CircuitBreakerFinalStatusV1::HalfOpenProbeFailure
         );
-        assert_eq!(first_failure.state.state, CircuitBreakerStateKindV1::HalfOpen);
+        assert_eq!(
+            first_failure.state.state,
+            CircuitBreakerStateKindV1::HalfOpen
+        );
         assert_eq!(first_failure.state.half_open_attempts, 1);
         assert!(first_failure.state.opened_at_ms.is_none());
 
@@ -2681,7 +2692,10 @@ mod tests {
             None::<fn() -> &'static str>,
         );
         assert_eq!(execution.result.expect("success"), "ok");
-        assert_eq!(execution.trace.state_before, CircuitBreakerStateKindV1::Closed);
+        assert_eq!(
+            execution.trace.state_before,
+            CircuitBreakerStateKindV1::Closed
+        );
         assert_eq!(execution.state.policy_id, policy.policy_id);
         assert_eq!(execution.state.state, CircuitBreakerStateKindV1::Closed);
         assert_eq!(execution.state.consecutive_failures, 0);
@@ -2704,7 +2718,10 @@ mod tests {
             provider_cancelled_fault,
         );
         let first_fault = first_timeout.trace.fault.clone().expect("timeout fault");
-        assert_eq!(first_fault.fault_class, ResilienceFaultClassV1::RuntimeFailure);
+        assert_eq!(
+            first_fault.fault_class,
+            ResilienceFaultClassV1::RuntimeFailure
+        );
 
         let first_breaker = execute_circuit_breaker_policy(
             &policy,
@@ -2804,7 +2821,12 @@ mod tests {
             "test.breaker.disabled.failure",
             &state,
             6,
-            || Err(ResilienceFaultClassificationV1::provider("provider timeout", None)),
+            || {
+                Err(ResilienceFaultClassificationV1::provider(
+                    "provider timeout",
+                    None,
+                ))
+            },
             clone_fault_classification,
             provider_breaker_rejection,
             None::<fn() -> &'static str>,
@@ -2827,7 +2849,10 @@ mod tests {
             consecutive_failures: 1,
             half_open_attempts: 0,
             opened_at_ms: None,
-            last_failure: Some(ResilienceFaultClassificationV1::provider("provider timeout", None)),
+            last_failure: Some(ResilienceFaultClassificationV1::provider(
+                "provider timeout",
+                None,
+            )),
         };
         let execution = execute_circuit_breaker_policy(
             &policy,
@@ -2861,7 +2886,10 @@ mod tests {
             consecutive_failures: 2,
             half_open_attempts: 0,
             opened_at_ms: Some(10),
-            last_failure: Some(ResilienceFaultClassificationV1::provider("provider timeout", None)),
+            last_failure: Some(ResilienceFaultClassificationV1::provider(
+                "provider timeout",
+                None,
+            )),
         };
         let still_open = circuit_breaker_state_for_now(
             &open_state,
