@@ -335,4 +335,38 @@ make_summary "/home/runner/work/agent-design-language/agent-design-language/adl/
 bash "$SCRIPT" --changed-files "$shared_module_changed" --summary "$shared_module_summary" >/tmp/coverage-impact-shared-module-pass.out
 grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-shared-module-pass.out >/dev/null
 
+duplicate_summary_changed="$TMP/duplicate-summary-changed.txt"
+printf 'M\tadl/src/cli/process_cmd.rs\n' >"$duplicate_summary_changed"
+duplicate_summary="$TMP/duplicate-summary.json"
+cat >"$duplicate_summary" <<'EOF'
+{
+  "data": [
+    {
+      "files": [
+        {
+          "filename": "/private/tmp/repo/adl/src/cli/process_cmd.rs",
+          "summary": {
+            "lines": {
+              "covered": 248,
+              "count": 281
+            }
+          }
+        },
+        {
+          "filename": "/private/tmp/repo/adl/src/cli/process_cmd.rs",
+          "summary": {
+            "lines": {
+              "covered": 0,
+              "count": 281
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+EOF
+bash "$SCRIPT" --changed-files "$duplicate_summary_changed" --summary "$duplicate_summary" >/tmp/coverage-impact-duplicate-summary-pass.out
+grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-duplicate-summary-pass.out >/dev/null
+
 echo "PASS test_check_coverage_impact"

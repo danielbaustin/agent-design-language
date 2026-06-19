@@ -427,11 +427,10 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
         | select(.filename == $path or .filename == ("/" + $path) or (.filename | endswith("/" + $path)))
       ]
       | if length == 0 then empty else
-          {
-            covered: (map(.covered) | add),
-            count: (map(.count) | add)
-          }
-          | .percent = (if .count == 0 then 0 else (.covered * 100.0 / .count) end)
+          map(
+            .percent = (if .count == 0 then 0 else (.covered * 100.0 / .count) end)
+          )
+          | max_by(.percent)
           | [.covered, .count, .percent]
           | @tsv
         end
