@@ -1,0 +1,256 @@
+{
+  "schema": "adl.agent_suitability_panel.v1",
+  "spec_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/spec/openai_codex_and_spark_panel_4155.json",
+  "panel_id": "openai_codex_and_spark_panel_4155",
+  "issue": 4155,
+  "parent_issue": 4154,
+  "date": "2026-06-18",
+  "panel_ref": "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+  "task_ids": [
+    "watcher_state_v1",
+    "card_validator_v1",
+    "review_findings_v1",
+    "bounded_planner_v1",
+    "closeout_checker_v1"
+  ],
+  "candidate_selection": {
+    "spec_candidate_ids": [
+      "openai:gpt-5-codex",
+      "openai:gpt-5.3-codex-spark"
+    ],
+    "executed_candidate_ids": [
+      "openai:gpt-5-codex",
+      "openai:gpt-5.3-codex-spark"
+    ],
+    "skipped_candidates": []
+  },
+  "candidates": [
+    {
+      "candidate_id": "openai:gpt-5-codex",
+      "provider_lane": "openai",
+      "provider_profile_ref": "unprofiled:openai:gpt-5-codex",
+      "provider_family": "openai",
+      "provider_spec_kind": "openai",
+      "model_ref": "gpt-5-codex",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openai2.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "useful_with_limits",
+      "supported_tasks": "watcher, card_validator, reviewer, planner, closeout_checker"
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex-spark",
+      "provider_lane": "openai",
+      "provider_profile_ref": "unprofiled:openai:gpt-5.3-codex-spark",
+      "provider_family": "openai",
+      "provider_spec_kind": "openai",
+      "model_ref": "gpt-5.3-codex-spark",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openai2.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "runtime_unsuitable_for_this_panel",
+      "supported_tasks": "none"
+    }
+  ],
+  "rows": [
+    {
+      "candidate_id": "openai:gpt-5-codex",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-19T05:42:14+00:00",
+      "elapsed_ms": 2790,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs/openai_gpt-5-codex__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "action_required",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results/openai_gpt-5-codex__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs/openai_gpt-5-codex__watcher_state_v1.jsonl",
+      "output_digest": "sha256:e8bb0f21c7e8"
+    },
+    {
+      "candidate_id": "openai:gpt-5-codex",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-19T05:42:17+00:00",
+      "elapsed_ms": 1603,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs/openai_gpt-5-codex__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P1"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results/openai_gpt-5-codex__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs/openai_gpt-5-codex__card_validator_v1.jsonl",
+      "output_digest": "sha256:98f6f684f677"
+    },
+    {
+      "candidate_id": "openai:gpt-5-codex",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-19T05:42:19+00:00",
+      "elapsed_ms": 6562,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs/openai_gpt-5-codex__review_findings_v1.md",
+      "normalized_result": {
+        "severity": "P2"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
+      "safe_role_recommendation": "reviewer_provider_candidate",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results/openai_gpt-5-codex__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs/openai_gpt-5-codex__review_findings_v1.jsonl",
+      "output_digest": "sha256:41d8b2102a00"
+    },
+    {
+      "candidate_id": "openai:gpt-5-codex",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-19T05:42:25+00:00",
+      "elapsed_ms": 3112,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs/openai_gpt-5-codex__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results/openai_gpt-5-codex__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs/openai_gpt-5-codex__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:8cba263cd0a2"
+    },
+    {
+      "candidate_id": "openai:gpt-5-codex",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-19T05:42:28+00:00",
+      "elapsed_ms": 1697,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs/openai_gpt-5-codex__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "needs_remediation"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "closeout output correctly withheld closure until merge/proof evidence exists",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results/openai_gpt-5-codex__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs/openai_gpt-5-codex__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:a4c0745e1e79"
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex-spark",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-19T05:42:30+00:00",
+      "elapsed_ms": 251,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs/openai_gpt-5.3-codex-spark__watcher_state_v1.md",
+      "normalized_result": {
+        "reason": "empty_output"
+      },
+      "provider_failure_class": "provider_model_unavailable",
+      "score": "timeout_or_empty",
+      "reviewer_judgment": "provider returned model_not_found for the requested model id",
+      "safe_role_recommendation": "do_not_promote",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results/openai_gpt-5.3-codex-spark__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs/openai_gpt-5.3-codex-spark__watcher_state_v1.jsonl",
+      "output_digest": null
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex-spark",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-19T05:42:30+00:00",
+      "elapsed_ms": 5255,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs/openai_gpt-5.3-codex-spark__card_validator_v1.md",
+      "normalized_result": {
+        "reason": "empty_output"
+      },
+      "provider_failure_class": "provider_model_unavailable",
+      "score": "timeout_or_empty",
+      "reviewer_judgment": "provider returned model_not_found for the requested model id",
+      "safe_role_recommendation": "do_not_promote",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results/openai_gpt-5.3-codex-spark__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs/openai_gpt-5.3-codex-spark__card_validator_v1.jsonl",
+      "output_digest": null
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex-spark",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-19T05:42:36+00:00",
+      "elapsed_ms": 5253,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs/openai_gpt-5.3-codex-spark__review_findings_v1.md",
+      "normalized_result": {
+        "reason": "empty_output"
+      },
+      "provider_failure_class": "provider_model_unavailable",
+      "score": "timeout_or_empty",
+      "reviewer_judgment": "provider returned model_not_found for the requested model id",
+      "safe_role_recommendation": "do_not_promote",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results/openai_gpt-5.3-codex-spark__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs/openai_gpt-5.3-codex-spark__review_findings_v1.jsonl",
+      "output_digest": null
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex-spark",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-19T05:42:41+00:00",
+      "elapsed_ms": 1308,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs/openai_gpt-5.3-codex-spark__bounded_planner_v1.md",
+      "normalized_result": {
+        "reason": "empty_output"
+      },
+      "provider_failure_class": "provider_model_unavailable",
+      "score": "timeout_or_empty",
+      "reviewer_judgment": "provider returned model_not_found for the requested model id",
+      "safe_role_recommendation": "do_not_promote",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results/openai_gpt-5.3-codex-spark__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs/openai_gpt-5.3-codex-spark__bounded_planner_v1.jsonl",
+      "output_digest": null
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex-spark",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-19T05:42:42+00:00",
+      "elapsed_ms": 5213,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs/openai_gpt-5.3-codex-spark__closeout_checker_v1.md",
+      "normalized_result": {
+        "reason": "empty_output"
+      },
+      "provider_failure_class": "provider_model_unavailable",
+      "score": "timeout_or_empty",
+      "reviewer_judgment": "provider returned model_not_found for the requested model id",
+      "safe_role_recommendation": "do_not_promote",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results/openai_gpt-5.3-codex-spark__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs/openai_gpt-5.3-codex-spark__closeout_checker_v1.jsonl",
+      "output_digest": null
+    }
+  ],
+  "non_claims": [
+    "does_not_claim_broad_model_intelligence",
+    "does_not_grant_merge_closeout_or_repo_mutation_authority",
+    "does_not_replace_uts_or_benchmarking",
+    "does_not_promote_unrun_or_missing_lanes"
+  ],
+  "artifacts": {
+    "packet": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/OPENAI_CODEX_AND_SPARK_SUITABILITY_PROOF_2026-06-18.md",
+    "state": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/openai_codex_and_spark_suitability_state_2026-06-18.json",
+    "requests": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_requests",
+    "results": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_results",
+    "logs": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_logs",
+    "outputs": "docs/milestones/v0.91.6/review/provider/openai_current_models_rerun/lane_outputs"
+  }
+}

@@ -1,0 +1,20 @@
+version: "0.5"
+
+providers:
+  openai_primary:
+    type: "openai"
+    config:
+      auth:
+        type: bearer
+        env: OPENAI_API_KEY
+      timeout_secs: 15
+      model_ref: "reasoning/default"
+      provider_model_id: "gpt-4.1-mini"
+
+agents:
+  openai_agent:
+    provider: "openai_primary"
+    model: "reasoning/default"
+
+# Merge this provider/agent snippet into your workflow file.
+# provider_model_id may be changed to any trusted model ID supported by this provider family.
