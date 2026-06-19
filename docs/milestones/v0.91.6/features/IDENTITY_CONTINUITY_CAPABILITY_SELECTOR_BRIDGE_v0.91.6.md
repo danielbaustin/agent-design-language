@@ -103,6 +103,65 @@ Selector non-inputs for `v0.91.6`:
 - institutional authority inferred from provider or capability metadata alone;
 - guild presence treated as runtime execution authority by itself.
 
+## Capability Evidence Inputs
+
+Capability evidence may inform selector behavior only when it is sourced from the bounded `v0.91.6` provider/capability reliability surfaces explicitly consumed by this bridge. Identity continuity must consume that evidence as advisory input rather than as actor identity, civil truth, or institutional authority.
+
+| Evidence surface | Allowed selector use | Not allowed to imply |
+| --- | --- | --- |
+| `PROVIDER_MODEL_RELIABILITY_v0.91.6.md` | Role-scoped provider/model suitability summaries such as `supported_with_limits`, `useful_with_limits`, `candidate`, or `blocked` | Personal identity, civil standing, or authority to act |
+| `PROVIDER_PROFILES_V2_RECONCILIATION_4111.md` and merged WP-05 proof surfaces | Current tracked provider/capability boundary truth and lane-specific reliability evidence that already landed in `v0.91.6` | Broad competence, merge authority, or autonomous workflow approval |
+| Provider proof packets and closeout matrices cited by WP-05 | Lane-specific reliability or failure-mode evidence when the cited packet still supports the claim | Permanent trust, provider-family superiority, or actor continuity |
+
+## Evidence Ingestion Boundary
+
+The selector may ingest only normalized capability evidence that answers bounded questions such as:
+
+- which advisory role lanes are currently evidenced, blocked, or candidate-only;
+- which runtime surface produced the evidence;
+- which failure class or limit note must stay attached to the lane;
+- which evidence packet is the strongest currently tracked proof.
+
+The selector must not ingest raw provider configuration, credentials, citizen records, guild membership, institution membership, or identity continuity state as if they were capability evidence. Provider profiles remain infrastructure descriptors, and capability evidence remains role-scoped behavioral evidence.
+
+### Normalized evidence fields
+
+The minimal identity-side evidence tuple is:
+
+| Field | Meaning |
+| --- | --- |
+| `provider_profile_ref` | Deterministic provider or route identifier from the cited provider surface |
+| `role_profile` | Advisory role being discussed, such as watcher, reviewer, planner, implementer, or tester |
+| `evidence_status` | Bounded status such as `supported_with_limits`, `useful_with_limits`, `candidate`, `blocked`, or panel-level `pass_with_limits` |
+| `proof_ref` | Strongest tracked packet or feature-doc reference supporting the row |
+| `limit_notes` | Required non-claims, failure notes, or authority limits that must survive selection |
+| `observed_at` | Timestamp or milestone-time marker for freshness checks |
+
+## Negative Cases And Stale-Evidence Rules
+
+The selector must treat capability evidence as unusable when any of the following is true:
+
+- the source packet is explicitly historical, superseded, or weaker than a newer tracked proof;
+- the evidence does not preserve its authority limits or failure notes;
+- the lane is recorded as `candidate`, `blocked`, `skipped_blocked`, `fail_truth`, `fail_authority`, or `timeout_or_empty`;
+- the evidence depends on credentials, runtimes, or local-model availability that are not currently present;
+- the evidence row cannot be tied back to a durable proof reference.
+
+Freshness rule:
+
+- capability evidence should be treated as advisory only within the milestone and proof context that produced it;
+- if a newer suitability packet, provider closeout packet, or milestone review contradicts an older row, the newer tracked evidence wins;
+- if no current proof exists, the selector must downgrade the lane to unknown or candidate rather than carrying forward stale confidence.
+
+## Aptitude Atlas Non-Claim
+
+This milestone still does not productize Aptitude Atlas as a general capability-ingestion or universal aptitude-ranking system. The identity bridge may later consume bounded capability evidence, but `v0.91.6` does not claim:
+
+- a first-class Aptitude Atlas runtime service;
+- universal cross-provider aptitude scoring;
+- identity continuity derived from provider/model performance;
+- selector authority to promote a lane beyond what the cited proof explicitly supports.
+
 ## Citizen And Guild Planning Hooks
 
 WP-08 keeps citizen and guild concepts visible without pretending the full
