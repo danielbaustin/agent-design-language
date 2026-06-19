@@ -82,9 +82,10 @@ not a transport implementation claim.
   role-provider policy, but they must not inline provider endpoint contracts as
   if those were the user-facing protocol.
 - The historical authored input path `.adl/docs/TBD/ADL_PROFILES_PROVIDERS_V2.MD`
-  is not present in the tracked repository state. For provider/profile boundary
-  truth, `v0.91.6` now depends on the merged WP-05 provider artifacts and the
-  reconciliation packet for `#4111`, not on the missing TBD file.
+  is no longer the authoritative source for this issue's provider/profile
+  boundary truth. `v0.91.6` now depends on the merged WP-05 provider artifacts
+  and the reconciliation packet for `#4111` rather than on that earlier authored
+  input path.
 
 ## `v0.92` Consumption Rules
 
@@ -393,13 +394,156 @@ market-style planning should become a disguised identity or authority layer.
   - capability need;
   - provider/model substrate choice.
 
+## Agent Comms 1.0 Message Substrate Boundary
+
+The first-tranche Agent Comms boundary in `v0.91.6` is message-first.
+
+Messages are the communication primitive.
+Prompts, cards, STP/SIP/SPP/SRP/SOR artifacts, contracts, evidence packets,
+and review records are payloads or references carried by messages, not the
+communication substrate itself.
+
+Invocation is a specialized message pattern, not a separate first-class
+protocol universe.
+
+## Core Message Substrate Fields
+
+An Agent Comms 1.0 message record should preserve these conceptual fields:
+
+- message id
+- conversation id
+- causal parent or source message id when applicable
+- sender class
+- recipient class
+- time/order metadata
+- intent
+- visibility
+- content body
+- payload refs
+- artifact refs
+- memory refs
+- authority scope
+- trace posture
+- attachments
+
+This issue records the boundary and vocabulary only. It does not claim the full
+typed runtime schema already exists.
+
+## Interaction Mode Vocabulary
+
+Agent Comms 1.0 recognizes these interaction modes as the bounded first-tranche
+vocabulary:
+
+- conversation
+- consultation
+- invocation
+- review
+- delegation
+- negotiation
+- handoff
+- broadcast
+
+These modes describe message purpose and expected handling posture. They do not
+grant authority by themselves.
+
+## Invocation Contract Boundary
+
+Invocation is the special-case message form used when one party asks another to
+perform a bounded task.
+
+An invocation-shaped message should preserve the following contract elements:
+
+- causal message or triggering request
+- caller
+- target
+- purpose
+- constraints
+- expected outputs
+- stop policy
+- authority scope
+- policy refs
+- response channel
+- trace requirement
+
+Messages alone do not create execution legitimacy. Invocation authority must be
+backed by policy, standing, contract, or Freedom Gate approval.
+
+## Artifact-As-Payload Rule
+
+Structured C-SDLC artifacts remain governed payloads or references within the
+message substrate:
+
+- SIP
+- STP
+- SPP
+- SRP
+- SOR
+- proof packets
+- contracts
+- review artifacts
+- evidence bundles
+
+This means ADL must not mistake “the card exists” for “the communication layer
+is the card.” The substrate stays message-first even when the payload is a
+governed record.
+
+## Evidence / Trace / Redaction Posture
+
+Agent Comms 1.0 messages may carry or reference evidence, traces, and governed
+artifacts, but the communication layer must preserve:
+
+- visibility boundaries
+- authority boundaries
+- trace posture declarations
+- payload-vs-reference distinction
+- redaction posture when sensitive evidence is referenced instead of copied
+
+The substrate therefore feeds the existing evidence and observability model
+without collapsing into raw trace dumps or uncontrolled prompt payloads.
+
+## Specialization Map
+
+The general message substrate supports specialized lanes without turning each
+lane into a distinct protocol:
+
+| Lane | Specialization posture on top of Agent Comms 1.0 |
+| --- | --- |
+| Review agent | review-mode messages and evidence-bound findings/dispositions |
+| Coding agent | invocation plus bounded artifact/output expectations |
+| Delegation / handoff | authority-scoped reassignment or continuation messages |
+| Demo / operator | operator-visible messages with proof, control, or replay posture |
+| Multi-agent negotiation | negotiation/broadcast/conversation patterns above the same substrate |
+
+## Substrate Non-Claims
+
+- `v0.91.6` does not implement live provider transport through Agent Comms 1.0.
+- `v0.91.6` does not define encrypted transport as a v1 requirement.
+- `v0.91.6` does not define cross-polis federation.
+- `v0.91.6` does not define reputation or karma systems.
+- `v0.91.6` does not grant autonomous authority through messages alone.
+- `v0.91.6` does not replace governed tools, UTS, ACC, Freedom Gate, or the
+  tracked lifecycle records.
+
+## Agent Comms Downstream Fit
+
+This substrate boundary feeds the rest of WP-06 cleanly:
+
+- schema catalog: messages become the common carrier shape
+- A2A posture: interaction modes and invocation fit above transport
+- provider-message boundary: provider invocations remain low-level substrate
+  messages under higher-layer policy
+- WebSocket/protobuf decisions: transport and encoding remain downstream of the
+  message substrate, not the other way around
+- closeout: `#4018` can verify whether Agent Comms 1.0 is accepted as the
+  first-tranche communication boundary or explicitly routed onward
+
 ## Dependencies
 
 - Security bridge and CAV feature doc.
 - Constructability Gate residual in `v0.91.7`.
 - Existing ACIP and WebSocket planning notes.
-- WP-07 access-rule security review packet:
-  `docs/milestones/v0.91.6/review/security/ACIP_A2A_ACCESS_RULE_SECURITY_REVIEW_4021.md`
+- The `v0.91.6` security bridge lane and its future access-rule security review
+  outputs.
 
 ## Validation And Review
 
