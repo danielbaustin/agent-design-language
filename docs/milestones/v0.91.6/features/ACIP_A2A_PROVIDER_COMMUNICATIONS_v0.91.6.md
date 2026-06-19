@@ -97,6 +97,101 @@ not a transport implementation claim.
 - `v0.92` must preserve the separation between provider profiles, capability
   profiles, role-provider policy, and civil identity surfaces.
 
+## Capability-Based Delegation Contract
+
+Delegation requests in `v0.91.6` are capability-first records.
+
+The canonical delegation request must be expressible in terms of:
+
+- requested capability or capability family;
+- optional role posture such as guild, citizen, member, or workflow role;
+- proof, safety, latency, cost, or tool-use constraints;
+- allowed candidate classes;
+- explicit refusal or escalation posture when no safe candidate exists.
+
+The canonical delegation request must not require:
+
+- a provider name as the primary routing key;
+- a model identifier as the primary routing key;
+- an endpoint or credential surface;
+- a collapsed identity record that mixes capability needs with provider or
+  citizen identity.
+
+Provider names, model ids, and endpoint families remain implementation
+candidates selected by lower layers after the capability request has been
+interpreted.
+
+## Provider-Message Boundary Rules
+
+Provider-message records stay below the capability delegation contract.
+
+| Surface | Allowed to express | Must not express |
+| --- | --- | --- |
+| Capability delegation request | capability need, constraints, allowed candidate classes, refusal posture | raw provider endpoint contract, credential material, or provider-specific transport framing as the canonical request |
+| Role-provider policy | which provider or model families are suitable candidates for a role/capability posture | direct replacement for capability semantics or citizen/guild identity |
+| Provider execution request | selected provider profile, model/profile expansion, low-level invocation payload, transport-specific request details | the authoritative meaning of the user-facing capability request |
+| Provider execution response | low-level completion/result/error payload from the selected substrate | the final policy meaning of a delegation result without ACIP-layer interpretation |
+
+This means a provider or model can satisfy a delegation request, but it is not
+the meaning of the request.
+
+## Candidate Discovery Ordering
+
+When resolving a delegation request, `v0.91.6` uses this discovery posture:
+
+1. interpret the requested capability and constraints
+2. determine the allowed candidate classes for that request
+3. evaluate whether guild, citizen, member, or workflow-role policy narrows the
+   candidate set
+4. consult capability profiles and role-provider policy before selecting any
+   concrete provider or model candidate
+5. resolve provider-profile and model candidates only after the higher-layer
+   capability and policy checks pass
+6. fail closed when no candidate satisfies the capability and security posture
+
+This ordering keeps capability semantics stable even if the available provider
+or model catalog changes later.
+
+## Delegation Candidate Classes
+
+`v0.91.6` recognizes distinct candidate classes for delegation routing:
+
+- capability-policy candidates: provider-independent descriptions of what kind
+  of behavior is needed
+- role-provider candidates: higher-level routing policies that can narrow which
+  provider families or model families are acceptable
+- provider-profile candidates: infrastructure-backed service families and
+  transport descriptors
+- model candidates: descriptive model identities under a selected provider or
+  profile family
+- guild/citizen/member or institutional candidates: higher-layer identity or
+  governance concepts that may authorize or forbid a route, but do not replace
+  provider or capability records
+
+These classes must remain distinguishable in tracked docs and later runtime
+artifacts. `v0.92` must not flatten them into one “best provider” field.
+
+## Security Handoff To WP-07
+
+This issue defines the delegation/provider boundary, but it does not close the
+access-control or message-security questions.
+
+WP-07 must consume this contract for the following security decisions:
+
+- which delegation or A2A messages require access checks before route
+  resolution;
+- whether any message families require signing, provenance markers, or stronger
+  integrity proof;
+- which provider/model failures are security-relevant rather than ordinary
+  routing failures;
+- how malformed-output, prompt-injection, or cross-boundary message abuse is
+  classified for ACIP/A2A traffic;
+- which unresolved security residuals block `v0.92`.
+
+Until WP-07 resolves those questions, `v0.92` may use capability-first
+delegation vocabulary but may not assume final access or message-security
+closure.
+
 ## Dependencies
 
 - Security bridge and CAV feature doc.
