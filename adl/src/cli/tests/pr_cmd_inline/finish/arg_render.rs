@@ -1251,6 +1251,23 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_lifecycle_inline_tests() {
+    let plan = select_finish_validation_plan_for_finish(
+        ".",
+        &["adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs".to_string()],
+    )
+    .expect("lifecycle inline test plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
+}
+
+#[test]
 fn finish_validation_profile_keeps_small_binary_delegation_proof_focused() {
     let plan = select_finish_validation_plan_for_finish(
         ".",
