@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "claude-opus-4-8",
+    "credential_ref": "env:ANTHROPIC_API_KEY",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "model_ref": "claude-opus-4-8",
+    "provider_model_id": "claude-opus-4-8",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1781847333",
+      "duration_ms": 3752,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=567 sha256=cd82087d8f41]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 3752,
+  "request_id": "anthropic:claude-opus-4-8__card_validator_v1",
+  "output_text_excerpt": "[redacted response len=567 sha256=cd82087d8f41]",
+  "artifact_ref": "<tmp>/result.json@2725e9f9ab13bfaa",
+  "output_text_chars": 567,
+  "output_text_digest": "sha256:cd82087d8f41"
+}
