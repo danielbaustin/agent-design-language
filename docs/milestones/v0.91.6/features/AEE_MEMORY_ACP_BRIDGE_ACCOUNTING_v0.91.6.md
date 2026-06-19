@@ -43,6 +43,7 @@ Out of scope:
 
 - Identity/continuity bridge feature doc.
 - Resilience and persistence feature doc.
+- Security bridge feature doc.
 - `v0.92` ACP and memory grounding docs.
 
 ## Validation And Review
@@ -50,6 +51,8 @@ Out of scope:
 - Review AEE completion claims against concrete artifacts.
 - Separate Memory/ObsMem handoff from Memory Palace future work.
 - Treat ACP profile privacy as a security boundary.
+- Consume WP-07 `#4022` for bounded publication/privacy review without
+  converting that review into false completion of open WP-10 work.
 
 ## v0.92 Consumption
 
@@ -61,3 +64,14 @@ rediscover AEE, Memory/ObsMem, or ACP scope during activation.
 - No Memory Palace completion claim.
 - No unreviewed cognitive-profile publication.
 - No runtime/provider action completion claim.
+
+## Current Security Consumption
+
+- WP-07 packet
+  `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md`
+  may be consumed as the current bounded publication/privacy review for this
+  bridge.
+- That packet does not close WP-10. It records that memory/profile publication
+  remains an open dependency until the WP-10 issue set, including the privacy
+  boundary lane `#4040` and closeout lane `#4041`, lands its own reviewed
+  privacy and closeout surfaces.
