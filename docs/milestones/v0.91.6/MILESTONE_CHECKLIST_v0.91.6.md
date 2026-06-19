@@ -25,7 +25,7 @@ milestone work.
 
 ## Feature Docs
 
-- [ ] Resilience, persistence, and sleep/wake feature doc completed or routed.
+- [x] Resilience, persistence, and sleep/wake feature doc completed or routed.
 - [ ] Logging/tooling proof-loop reliability feature doc completed or routed.
 - [x] Public prompt records export/redaction/indexing feature doc completed or
   routed.

@@ -39,9 +39,10 @@ pub fn execute_provider_invocation(
                 .with_failure(&failure)
                 .with_status("failed"),
         );
+        let attempts = vec![preflight_failure_attempt(&request, &failure)];
         return failed_result(
             request,
-            Vec::new(),
+            attempts,
             failure,
             started.elapsed().as_millis() as u64,
         );
@@ -158,6 +159,22 @@ fn failed_result(
         failure: Some(failure),
         artifact_ref: None,
         trace_ref: None,
+    }
+}
+
+fn preflight_failure_attempt(
+    request: &ProviderInvocationRequestV1,
+    failure: &ProviderFailureV1,
+) -> ProviderAttemptV1 {
+    ProviderAttemptV1 {
+        attempt_index: 1,
+        started_at: request.model_identity.observed_at.clone(),
+        duration_ms: 0,
+        status: ProviderAttemptStatusV1::Error,
+        retryable: false,
+        http_status: failure.http_status,
+        failure: Some(failure.clone()),
+        raw_response_excerpt: None,
     }
 }
 
@@ -1418,7 +1435,7 @@ mod tests {
 
     #[test]
     fn openrouter_hosted_adapter_returns_output_and_redacts_log() {
-        env::set_var("ADL_PROVIDER_ADAPTER_OPENROUTER_KEY", "test-key");
+        env::set_var("ADL_PROVIDER_ADAPTER_OPENROUTER_SUCCESS_KEY", "test-key");
         let (endpoint, rx) = capture_one_request_server(
             r#"{"model":"anthropic/claude-3.5-haiku","choices":[{"message":{"content":"openrouter success"}}]}"#,
             "200 OK",
@@ -1428,7 +1445,8 @@ mod tests {
         let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
         req.route.provider = "openrouter".to_string();
         req.route.provider_model_id = "anthropic/claude-3.5-haiku".to_string();
-        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_OPENROUTER_KEY".to_string());
+        req.route.credential_ref =
+            Some("env:ADL_PROVIDER_ADAPTER_OPENROUTER_SUCCESS_KEY".to_string());
         req.model_identity = hosted_model_identity(
             "openrouter",
             "anthropic/claude-3.5-haiku",
@@ -1454,12 +1472,12 @@ mod tests {
         assert!(!log.contains("secret prompt"));
         assert!(!log.contains("openrouter success"));
         let _ = fs::remove_file(path);
-        env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_KEY");
+        env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_SUCCESS_KEY");
     }
 
     #[test]
     fn openrouter_hosted_adapter_prefers_observed_provider_model_identity() {
-        env::set_var("ADL_PROVIDER_ADAPTER_OPENROUTER_KEY", "test-key");
+        env::set_var("ADL_PROVIDER_ADAPTER_OPENROUTER_OBSERVED_KEY", "test-key");
         let endpoint = one_shot_server(
             r#"{"model":"qwen/qwen3.6-flash","choices":[{"message":{"content":"identity success"}}]}"#,
             "200 OK",
@@ -1469,7 +1487,8 @@ mod tests {
         let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
         req.route.provider = "openrouter".to_string();
         req.route.provider_model_id = "reviewer/fast".to_string();
-        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_OPENROUTER_KEY".to_string());
+        req.route.credential_ref =
+            Some("env:ADL_PROVIDER_ADAPTER_OPENROUTER_OBSERVED_KEY".to_string());
         req.model_identity = hosted_model_identity(
             "openrouter",
             "reviewer/fast",
@@ -1488,7 +1507,7 @@ mod tests {
         );
 
         let _ = fs::remove_file(path);
-        env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_KEY");
+        env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_OBSERVED_KEY");
     }
 
     #[test]
@@ -1566,6 +1585,29 @@ mod tests {
             Some(ProviderFailureKindV1::ProviderAuthMissing)
         );
         assert!(rx.try_recv().is_err());
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn preflight_request_validation_failure_emits_valid_failed_result_shape() {
+        let path = temp_log("preflight-validation");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut invalid_request = request(
+            RuntimeSurfaceV1::HostedApi,
+            "http://127.0.0.1:1".to_string(),
+        );
+        invalid_request.input_text = None;
+
+        let result = execute_provider_invocation(invalid_request, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+        assert_eq!(result.attempts.len(), 1);
+        assert_eq!(result.attempts[0].status, ProviderAttemptStatusV1::Error);
+        assert!(result.attempts[0].failure.is_some());
+        crate::provider_communication::validate_provider_result(&result)
+            .expect("preflight failure result stays contract-valid");
+
         let _ = fs::remove_file(path);
     }
 }
