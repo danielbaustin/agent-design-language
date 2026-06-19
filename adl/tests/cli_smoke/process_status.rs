@@ -138,3 +138,90 @@ fn process_status_classifies_unknown_name_without_broad_lookup() {
     assert_eq!(json["broad_process_scan"], false);
     assert_eq!(json["uses_ps"], false);
 }
+
+#[test]
+fn process_status_reports_invalid_pid_metadata_without_process_scan() {
+    let pid_file = unique_test_temp_dir("process-status-invalid").join("server.pid");
+    fs::write(&pid_file, "not-a-pid\n").expect("write invalid pid metadata");
+
+    let json = run_status_json(&["--pid-file", pid_file.to_str().unwrap()]);
+
+    assert_eq!(json["check"], "pid_file");
+    assert_eq!(json["status"], "invalid_metadata");
+    assert!(json["pid"].is_null());
+    assert_eq!(json["broad_process_scan"], false);
+    assert_eq!(json["uses_ps"], false);
+}
+
+#[test]
+fn process_status_rejects_oversized_pid_metadata_without_scanning() {
+    let pid_file = unique_test_temp_dir("process-status-oversized").join("server.pid");
+    fs::write(&pid_file, "1".repeat(4097)).expect("write oversized pid metadata");
+
+    let json = run_status_json(&["--pid-file", pid_file.to_str().unwrap()]);
+
+    assert_eq!(json["check"], "pid_file");
+    assert_eq!(json["status"], "unknown");
+    assert_eq!(json["broad_process_scan"], false);
+    assert_eq!(json["uses_ps"], false);
+}
+
+#[test]
+fn process_status_rejects_missing_or_ambiguous_targets() {
+    let missing = run_status_failure(&[]);
+    assert!(!missing.status.success());
+    assert!(
+        String::from_utf8_lossy(&missing.stderr).contains("requires exactly one of --pid"),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&missing.stderr)
+    );
+
+    let ambiguous = run_status_failure(&["--pid", "7", "--port", "8787"]);
+    assert!(!ambiguous.status.success());
+    assert!(
+        String::from_utf8_lossy(&ambiguous.stderr).contains("requires exactly one of --pid"),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&ambiguous.stderr)
+    );
+
+    let unknown = run_status_failure(&["--wat", "now"]);
+    assert!(!unknown.status.success());
+    assert!(
+        String::from_utf8_lossy(&unknown.stderr).contains("unknown process status option"),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&unknown.stderr)
+    );
+}
+
+#[test]
+fn process_status_rejects_invalid_values_before_probing() {
+    for args in [
+        vec!["--pid"],
+        vec!["--pid", "--json"],
+        vec!["--pid", "0"],
+        vec!["--pid", "nope"],
+        vec!["--port", "0"],
+        vec!["--port", "nope"],
+        vec!["--name", ""],
+        vec!["--port", "8787", "--host", ""],
+    ] {
+        let out = run_status_failure(&args);
+        assert!(
+            !out.status.success(),
+            "args={args:?}\nstdout:\n{}\nstderr:\n{}",
+            String::from_utf8_lossy(&out.stdout),
+            String::from_utf8_lossy(&out.stderr)
+        );
+    }
+}
+
+#[test]
+fn process_status_help_documents_safe_surface() {
+    let out = run_adl(&["process", "status", "--help"]);
+    assert!(out.status.success());
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(stdout.contains("adl process status --pid <pid>"));
+    assert!(stdout.contains("--pid-file <path>"));
+    assert!(stdout.contains("does not run ps, pgrep, lsof"));
+}

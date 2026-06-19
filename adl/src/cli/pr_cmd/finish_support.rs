@@ -1058,7 +1058,7 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             );
             push_finish_validation_command(
                 &mut commands,
-                "cargo test --manifest-path adl/Cargo.toml process_status -- --nocapture",
+                "cargo test --manifest-path adl/Cargo.toml --test cli_smoke process_status -- --nocapture",
             );
         }
         if paths
@@ -1072,7 +1072,7 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             );
             push_finish_validation_command(
                 &mut commands,
-                "cargo test --manifest-path adl/Cargo.toml scheduler_economics",
+                "cargo test --manifest-path adl/Cargo.toml --lib scheduler_economics",
             );
         }
         if paths
@@ -1685,24 +1685,27 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
-                "cargo test --manifest-path adl/Cargo.toml scheduler_economics" => {
+                "cargo test --manifest-path adl/Cargo.toml --lib scheduler_economics" => {
                     run_finish_validation_status(
                         "cargo",
                         &[
                             "test",
                             "--manifest-path",
                             path_str(&manifest)?,
+                            "--lib",
                             "scheduler_economics",
                         ],
                     )?;
                 }
-                "cargo test --manifest-path adl/Cargo.toml process_status -- --nocapture" => {
+                "cargo test --manifest-path adl/Cargo.toml --test cli_smoke process_status -- --nocapture" => {
                     run_finish_validation_status(
                         "cargo",
                         &[
                             "test",
                             "--manifest-path",
                             path_str(&manifest)?,
+                            "--test",
+                            "cli_smoke",
                             "process_status",
                             "--",
                             "--nocapture",
