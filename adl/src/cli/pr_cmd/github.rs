@@ -10,6 +10,7 @@ use crate::cli::pr_cmd::github_client::{
 };
 use crate::cli::pr_cmd_args::IssueStateFilter;
 use crate::cli::pr_cmd_prompt::infer_workflow_queue;
+use crate::cli::tokio_runtime::with_current_thread_runtime;
 use ::adl::control_plane::resolve_primary_checkout_root;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -520,22 +521,16 @@ fn with_octocrab<T>(
     operation: &str,
     f: impl FnOnce(&tokio::runtime::Runtime, octocrab::Octocrab) -> Result<T>,
 ) -> Result<T> {
-    let runtime = build_octocrab_runtime(operation)?;
-    let _runtime_guard = runtime.enter();
-    let client = github_client(operation)?;
-    let octo = client
-        .octocrab()
-        .map_err(|err| anyhow!("github_client.octocrab_build: {err}"))?;
-    f(&runtime, octo)
-}
-
-fn build_octocrab_runtime(operation: &str) -> Result<tokio::runtime::Runtime> {
-    tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .with_context(|| {
-            format!("github_client.octocrab_runtime: failed to build runtime for {operation}")
-        })
+    with_current_thread_runtime(
+        &format!("github_client.octocrab_runtime: failed to build runtime for {operation}"),
+        |runtime| {
+            let client = github_client(operation)?;
+            let octo = client
+                .octocrab()
+                .map_err(|err| anyhow!("github_client.octocrab_build: {err}"))?;
+            f(runtime, octo)
+        },
+    )
 }
 
 fn run_octocrab_capture(operation: &str, args: &[&str]) -> Result<String> {

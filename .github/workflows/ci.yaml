@@ -368,13 +368,13 @@ jobs:
           bash adl/tools/check_coverage_impact.sh \
             --base "${{ github.event.pull_request.base.sha }}" \
             --head "${{ github.event.pull_request.head.sha }}" \
-            --print-risk-filters > adl/coverage-impact-filters.txt
-          if test -s adl/coverage-impact-filters.txt; then
+            --print-risk-nextest-expression > adl/coverage-impact-filter-expression.txt
+          if test -s adl/coverage-impact-filter-expression.txt; then
             echo "needs_fast_summary=true" >> "$GITHUB_OUTPUT"
-            echo "filters=$(paste -sd' ' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"
+            echo "filter_expression=$(cat adl/coverage-impact-filter-expression.txt)" >> "$GITHUB_OUTPUT"
           else
             echo "needs_fast_summary=false" >> "$GITHUB_OUTPUT"
-            echo "filters=" >> "$GITHUB_OUTPUT"
+            echo "filter_expression=" >> "$GITHUB_OUTPUT"
           fi
         working-directory: .
 
@@ -444,7 +444,7 @@ jobs:
       - name: PR fast coverage summary (json)
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: |
-          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -- ${{ steps.coverage-impact.outputs.filters }}
+          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E "${{ steps.coverage-impact.outputs.filter_expression }}"
           cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
 
       - name: Coverage-impact changed-source gate
