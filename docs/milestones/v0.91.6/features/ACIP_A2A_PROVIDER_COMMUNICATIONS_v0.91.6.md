@@ -330,6 +330,8 @@ transport architecture claim.
 - Security bridge and CAV feature doc.
 - Constructability Gate residual in `v0.91.7`.
 - Existing ACIP and WebSocket planning notes.
+- WP-07 access-rule security review packet:
+  `docs/milestones/v0.91.6/review/security/ACIP_A2A_ACCESS_RULE_SECURITY_REVIEW_4021.md`
 
 ## Validation And Review
 
