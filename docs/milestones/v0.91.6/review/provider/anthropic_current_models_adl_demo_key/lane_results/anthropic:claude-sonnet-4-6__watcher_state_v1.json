@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "claude-sonnet-4-6",
+    "credential_ref": "env:ANTHROPIC_API_KEY",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "model_ref": "claude-sonnet-4-6",
+    "provider_model_id": "claude-sonnet-4-6",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1781847348",
+      "duration_ms": 3539,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=526 sha256=3de372beda8a]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 3539,
+  "request_id": "anthropic:claude-sonnet-4-6__watcher_state_v1",
+  "output_text_excerpt": "[redacted response len=526 sha256=3de372beda8a]",
+  "artifact_ref": "<tmp>/result.json@7867d2841a98324f",
+  "output_text_chars": 526,
+  "output_text_digest": "sha256:3de372beda8a"
+}

@@ -1,0 +1,20 @@
+version: "0.5"
+
+providers:
+  anthropic_primary:
+    type: "anthropic"
+    config:
+      auth:
+        type: bearer
+        env: ANTHROPIC_API_KEY
+      timeout_secs: 15
+      model_ref: "reasoning/default"
+      provider_model_id: "claude-haiku-4-5-20251001"
+
+agents:
+  anthropic_agent:
+    provider: "anthropic_primary"
+    model: "reasoning/default"
+
+# Merge this provider/agent snippet into your workflow file.
+# provider_model_id may be changed to any trusted model ID supported by this provider family.
