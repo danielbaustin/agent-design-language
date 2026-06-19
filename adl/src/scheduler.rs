@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 pub const SCHEDULER_ECONOMICS_INPUT_SCHEMA_V1: &str = "adl.scheduler.economics_input.v1";
 pub const SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1: &str =
     "adl.scheduler.economics_input_bundle.v1";
+pub const COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1: &str = "adl.scheduler.decision.v1";
+pub const COGNITIVE_SCHEDULER_PLAN_SCHEMA_V1: &str = "adl.scheduler.plan.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -99,6 +101,24 @@ pub enum SchedulerConfidenceV1 {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum CognitiveSchedulerLaneV1 {
+    Local,
+    CheapRemote,
+    Premium,
+    Governor,
+    Delayed,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SchedulerAlternativeDispositionV1 {
+    Rejected,
+    Fallback,
+    Equivalent,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct SchedulerDependencyRefV1 {
     pub task_id: String,
@@ -157,6 +177,62 @@ pub struct SchedulerEconomicsSummaryV1 {
     pub dependency_posture_score: u32,
     pub confidence_score: u32,
     pub deterministic_rank_key: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct SchedulerAlternativeV1 {
+    pub lane: CognitiveSchedulerLaneV1,
+    pub disposition: SchedulerAlternativeDispositionV1,
+    pub reason: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct SchedulerScoreBreakdownV1 {
+    pub lifecycle_cost_score: u32,
+    pub value_score: u32,
+    pub attention_pressure_score: u32,
+    pub parallelism_score: u32,
+    pub dependency_posture_score: u32,
+    pub confidence_score: u32,
+    pub validation_cost: SchedulerCostLevelV1,
+    pub coordination_cost: SchedulerCostLevelV1,
+    pub risk: SchedulerRiskLevelV1,
+    pub urgency: SchedulerUrgencyV1,
+    pub expected_value: SchedulerExpectedValueV1,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct SchedulerManualOverrideV1 {
+    pub present: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reason: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CognitiveSchedulerDecisionV1 {
+    pub schema_version: String,
+    pub task_id: String,
+    pub selected_lane: CognitiveSchedulerLaneV1,
+    pub alternatives_considered: Vec<SchedulerAlternativeV1>,
+    pub reason: String,
+    pub score_breakdown: SchedulerScoreBreakdownV1,
+    pub dependency_status: SchedulerDependencyPostureV1,
+    pub manual_override: SchedulerManualOverrideV1,
+    pub confidence: SchedulerConfidenceV1,
+    pub scheduling_rank_key: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CognitiveSchedulerPlanV1 {
+    pub schema_version: String,
+    pub source_schema_version: String,
+    pub decisions: Vec<CognitiveSchedulerDecisionV1>,
+    pub recommended_order: Vec<String>,
 }
 
 pub fn parse_economics_input_json(input: &str) -> Result<SchedulerEconomicsInputV1> {
@@ -287,6 +363,278 @@ pub fn summarize_economics_input(
             input.task_id
         ),
     })
+}
+
+pub fn schedule_economics_bundle(
+    bundle: &SchedulerEconomicsInputBundleV1,
+) -> Result<CognitiveSchedulerPlanV1> {
+    validate_economics_bundle(bundle)?;
+    let mut decisions = bundle
+        .inputs
+        .iter()
+        .map(schedule_economics_input)
+        .collect::<Result<Vec<_>>>()?;
+    decisions.sort_by(|left, right| left.scheduling_rank_key.cmp(&right.scheduling_rank_key));
+    let recommended_order = decisions
+        .iter()
+        .map(|decision| decision.task_id.clone())
+        .collect::<Vec<_>>();
+    Ok(CognitiveSchedulerPlanV1 {
+        schema_version: COGNITIVE_SCHEDULER_PLAN_SCHEMA_V1.to_string(),
+        source_schema_version: bundle.schema_version.clone(),
+        decisions,
+        recommended_order,
+    })
+}
+
+pub fn schedule_economics_input(
+    input: &SchedulerEconomicsInputV1,
+) -> Result<CognitiveSchedulerDecisionV1> {
+    let summary = summarize_economics_input(input)?;
+    let selected_lane = select_lane(input, &summary);
+    let reason = decision_reason(input, &summary, &selected_lane);
+    let alternatives_considered = alternatives_for(input, &selected_lane);
+    let scheduling_rank_key = scheduling_rank_key(input, &summary, &selected_lane);
+
+    Ok(CognitiveSchedulerDecisionV1 {
+        schema_version: COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1.to_string(),
+        task_id: input.task_id.clone(),
+        selected_lane,
+        alternatives_considered,
+        reason,
+        score_breakdown: SchedulerScoreBreakdownV1 {
+            lifecycle_cost_score: summary.lifecycle_cost_score,
+            value_score: summary.value_score,
+            attention_pressure_score: summary.attention_pressure_score,
+            parallelism_score: summary.parallelism_score,
+            dependency_posture_score: summary.dependency_posture_score,
+            confidence_score: summary.confidence_score,
+            validation_cost: input.estimated_validation_cost.clone(),
+            coordination_cost: input.estimated_coordination_cost.clone(),
+            risk: input.risk_level.clone(),
+            urgency: input.urgency.clone(),
+            expected_value: input.expected_value.clone(),
+        },
+        dependency_status: input.dependency_posture.clone(),
+        manual_override: SchedulerManualOverrideV1 {
+            present: input.manual_override.is_some(),
+            reason: input.manual_override.clone(),
+        },
+        confidence: input.confidence.clone(),
+        scheduling_rank_key,
+    })
+}
+
+fn select_lane(
+    input: &SchedulerEconomicsInputV1,
+    summary: &SchedulerEconomicsSummaryV1,
+) -> CognitiveSchedulerLaneV1 {
+    if summary.blocked {
+        return CognitiveSchedulerLaneV1::Delayed;
+    }
+    if input.urgency == SchedulerUrgencyV1::Low
+        && input.premium_capacity_pressure == SchedulerPressureLevelV1::Constrained
+    {
+        return CognitiveSchedulerLaneV1::Delayed;
+    }
+    if should_wait_for_governor_capacity(input) {
+        return CognitiveSchedulerLaneV1::Delayed;
+    }
+    if governor_candidate(input) {
+        return CognitiveSchedulerLaneV1::Governor;
+    }
+    if matches!(
+        input.task_type,
+        SchedulerTaskTypeV1::Implementation
+            | SchedulerTaskTypeV1::Refactor
+            | SchedulerTaskTypeV1::SecurityReview
+    ) || input.risk_level == SchedulerRiskLevelV1::High
+        || input.expected_value == SchedulerExpectedValueV1::Critical
+    {
+        return CognitiveSchedulerLaneV1::Premium;
+    }
+    if matches!(
+        input.task_type,
+        SchedulerTaskTypeV1::Review | SchedulerTaskTypeV1::TestGeneration
+    ) || input.estimated_validation_cost != SchedulerCostLevelV1::Low
+        || input.estimated_coordination_cost != SchedulerCostLevelV1::Low
+    {
+        return CognitiveSchedulerLaneV1::CheapRemote;
+    }
+    CognitiveSchedulerLaneV1::Local
+}
+
+fn decision_reason(
+    input: &SchedulerEconomicsInputV1,
+    summary: &SchedulerEconomicsSummaryV1,
+    selected_lane: &CognitiveSchedulerLaneV1,
+) -> String {
+    match selected_lane {
+        CognitiveSchedulerLaneV1::Delayed if summary.blocked => {
+            "delayed because dependency or parallelism posture is blocked".to_string()
+        }
+        CognitiveSchedulerLaneV1::Delayed => {
+            if governor_candidate(input)
+                && input.governor_attention_pressure == SchedulerPressureLevelV1::Constrained
+            {
+                "delayed because governor attention is constrained and the task is not an immediate critical decision".to_string()
+            } else {
+                "delayed because urgency is low while premium capacity is constrained".to_string()
+            }
+        }
+        CognitiveSchedulerLaneV1::Governor => {
+            "routed to governor because human authority, release/architecture scope, critical risk, or manual override is present".to_string()
+        }
+        CognitiveSchedulerLaneV1::Premium => {
+            "routed to premium cognition because the work is high risk, implementation/security/refactor shaped, or critical value".to_string()
+        }
+        CognitiveSchedulerLaneV1::CheapRemote => {
+            "routed to cheap remote cognition because review/test generation or non-low validation and coordination burden can be parallelized".to_string()
+        }
+        CognitiveSchedulerLaneV1::Local => {
+            format!(
+                "routed local because {} is low-risk, low-cost, dependency-clear work",
+                input.task_id
+            )
+        }
+    }
+}
+
+fn alternatives_for(
+    input: &SchedulerEconomicsInputV1,
+    selected_lane: &CognitiveSchedulerLaneV1,
+) -> Vec<SchedulerAlternativeV1> {
+    all_lanes()
+        .into_iter()
+        .filter(|lane| lane != selected_lane)
+        .map(|lane| SchedulerAlternativeV1 {
+            disposition: alternative_disposition(input, &lane),
+            reason: alternative_reason(input, &lane, selected_lane),
+            lane,
+        })
+        .collect()
+}
+
+fn all_lanes() -> Vec<CognitiveSchedulerLaneV1> {
+    vec![
+        CognitiveSchedulerLaneV1::Local,
+        CognitiveSchedulerLaneV1::CheapRemote,
+        CognitiveSchedulerLaneV1::Premium,
+        CognitiveSchedulerLaneV1::Governor,
+        CognitiveSchedulerLaneV1::Delayed,
+    ]
+}
+
+fn alternative_disposition(
+    input: &SchedulerEconomicsInputV1,
+    lane: &CognitiveSchedulerLaneV1,
+) -> SchedulerAlternativeDispositionV1 {
+    if matches!(lane, CognitiveSchedulerLaneV1::Delayed)
+        && input.dependency_posture == SchedulerDependencyPostureV1::Partial
+    {
+        return SchedulerAlternativeDispositionV1::Fallback;
+    }
+    if matches!(lane, CognitiveSchedulerLaneV1::CheapRemote)
+        && input.parallelism_potential == SchedulerParallelismPotentialV1::HighlyParallelizable
+    {
+        return SchedulerAlternativeDispositionV1::Fallback;
+    }
+    SchedulerAlternativeDispositionV1::Rejected
+}
+
+fn alternative_reason(
+    input: &SchedulerEconomicsInputV1,
+    lane: &CognitiveSchedulerLaneV1,
+    selected_lane: &CognitiveSchedulerLaneV1,
+) -> String {
+    if lane == selected_lane {
+        return "selected".to_string();
+    }
+    match lane {
+        CognitiveSchedulerLaneV1::Local => {
+            "local lane rejected when risk, validation, coordination, or urgency exceeds routine local work".to_string()
+        }
+        CognitiveSchedulerLaneV1::CheapRemote => {
+            if input.parallelism_potential == SchedulerParallelismPotentialV1::HighlyParallelizable
+            {
+                "cheap remote remains a fallback for highly parallelizable support work".to_string()
+            } else {
+                "cheap remote rejected because the selected lane better matches authority, risk, or cost posture".to_string()
+            }
+        }
+        CognitiveSchedulerLaneV1::Premium => {
+            "premium lane rejected unless high-risk implementation, security/refactor work, or critical value justifies scarce capacity".to_string()
+        }
+        CognitiveSchedulerLaneV1::Governor => {
+            "governor lane rejected unless human authority, critical risk, release/architecture scope, or manual override is required".to_string()
+        }
+        CognitiveSchedulerLaneV1::Delayed => {
+            if input.dependency_posture == SchedulerDependencyPostureV1::Partial {
+                "delayed lane remains a fallback if partial dependency evidence does not land".to_string()
+            } else {
+                "delayed lane rejected because the task is schedulable now".to_string()
+            }
+        }
+    }
+}
+
+fn scheduling_rank_key(
+    input: &SchedulerEconomicsInputV1,
+    summary: &SchedulerEconomicsSummaryV1,
+    _selected_lane: &CognitiveSchedulerLaneV1,
+) -> String {
+    format!(
+        "blocked={};dependency={:02};gate={:02};risk={:02};urgency={:02};value={:02};validation={:02};premium_pressure={:02};coordination={:02};parallelism={:02};confidence={:02};task={}",
+        u8::from(summary.blocked),
+        summary.dependency_posture_score,
+        gate_priority(input),
+        reverse_weight(risk_weight(&input.risk_level)),
+        reverse_weight(urgency_weight(&input.urgency)),
+        reverse_weight(expected_value_weight(&input.expected_value)),
+        cost_weight(&input.estimated_validation_cost),
+        pressure_weight(&input.premium_capacity_pressure),
+        cost_weight(&input.estimated_coordination_cost),
+        reverse_weight(summary.parallelism_score),
+        reverse_weight(summary.confidence_score),
+        input.task_id
+    )
+}
+
+fn governor_candidate(input: &SchedulerEconomicsInputV1) -> bool {
+    input.manual_override.is_some()
+        || input.human_required
+        || input.risk_level == SchedulerRiskLevelV1::Critical
+        || matches!(
+            input.task_type,
+            SchedulerTaskTypeV1::ReleaseGate | SchedulerTaskTypeV1::Architecture
+        )
+}
+
+fn should_wait_for_governor_capacity(input: &SchedulerEconomicsInputV1) -> bool {
+    governor_candidate(input)
+        && input.governor_attention_pressure == SchedulerPressureLevelV1::Constrained
+        && input.urgency != SchedulerUrgencyV1::Immediate
+        && input.risk_level != SchedulerRiskLevelV1::Critical
+}
+
+fn gate_priority(input: &SchedulerEconomicsInputV1) -> u32 {
+    if governor_candidate(input) {
+        0
+    } else if matches!(
+        input.task_type,
+        SchedulerTaskTypeV1::Implementation
+            | SchedulerTaskTypeV1::Refactor
+            | SchedulerTaskTypeV1::SecurityReview
+    ) || input.risk_level == SchedulerRiskLevelV1::High
+    {
+        1
+    } else {
+        2
+    }
+}
+
+fn reverse_weight(value: u32) -> u32 {
+    99 - value
 }
 
 fn effort_weight(value: &SchedulerEffortV1) -> u32 {
@@ -431,6 +779,112 @@ mod tests {
     }
 
     #[test]
+    fn cognitive_scheduler_plan_routes_fixture_lanes() {
+        let bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
+        let plan = schedule_economics_bundle(&bundle).expect("scheduler plan");
+        assert_eq!(plan.schema_version, COGNITIVE_SCHEDULER_PLAN_SCHEMA_V1);
+        assert_eq!(
+            plan.source_schema_version,
+            SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1
+        );
+        assert_eq!(plan.decisions.len(), 7);
+
+        assert_lane(
+            &plan,
+            "release-authority",
+            CognitiveSchedulerLaneV1::Governor,
+        );
+        assert_lane(
+            &plan,
+            "premium-code-repair",
+            CognitiveSchedulerLaneV1::Premium,
+        );
+        assert_lane(
+            &plan,
+            "first-pass-review",
+            CognitiveSchedulerLaneV1::CheapRemote,
+        );
+        assert_lane(
+            &plan,
+            "partial-dependency-review",
+            CognitiveSchedulerLaneV1::CheapRemote,
+        );
+        assert_lane(&plan, "docs-status-check", CognitiveSchedulerLaneV1::Local);
+        assert_lane(
+            &plan,
+            "low-urgency-cleanup",
+            CognitiveSchedulerLaneV1::Delayed,
+        );
+        assert_lane(&plan, "blocked-proof", CognitiveSchedulerLaneV1::Delayed);
+
+        let blocked = decision(&plan, "blocked-proof");
+        assert_eq!(
+            blocked.reason,
+            "delayed because dependency or parallelism posture is blocked"
+        );
+        assert_eq!(
+            blocked.dependency_status,
+            SchedulerDependencyPostureV1::Blocked
+        );
+    }
+
+    #[test]
+    fn cognitive_scheduler_plan_order_is_deterministic_and_explainable() {
+        let bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
+        let first = schedule_economics_bundle(&bundle).expect("first plan");
+        let second = schedule_economics_bundle(&bundle).expect("second plan");
+        assert_eq!(first, second);
+        assert_eq!(
+            first.recommended_order.first().unwrap(),
+            "release-authority"
+        );
+        assert_eq!(first.recommended_order.last().unwrap(), "blocked-proof");
+
+        let premium = decision(&first, "premium-code-repair");
+        assert!(premium.reason.contains("premium cognition"));
+        assert!(premium
+            .alternatives_considered
+            .iter()
+            .any(
+                |alternative| alternative.lane == CognitiveSchedulerLaneV1::Governor
+                    && alternative.disposition == SchedulerAlternativeDispositionV1::Rejected
+            ));
+        assert!(premium.scheduling_rank_key.contains("gate=01"));
+        assert!(!premium.scheduling_rank_key.contains("lane="));
+    }
+
+    #[test]
+    fn cognitive_scheduler_delays_non_immediate_governor_work_when_attention_is_constrained() {
+        let bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
+        let mut input = bundle
+            .inputs
+            .iter()
+            .find(|input| input.task_id == "release-authority")
+            .expect("release fixture")
+            .clone();
+        input.task_id = "architecture-decision-later".to_string();
+        input.task_type = SchedulerTaskTypeV1::Architecture;
+        input.risk_level = SchedulerRiskLevelV1::High;
+        input.urgency = SchedulerUrgencyV1::High;
+        input.human_required = true;
+
+        let decision = schedule_economics_input(&input).expect("decision");
+        assert_eq!(decision.selected_lane, CognitiveSchedulerLaneV1::Delayed);
+        assert_eq!(
+            decision.reason,
+            "delayed because governor attention is constrained and the task is not an immediate critical decision"
+        );
+    }
+
+    #[test]
+    fn cognitive_scheduler_rejects_malformed_bundle_before_decision() {
+        let mut bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
+        bundle.inputs[0].claim_boundary = "exact_cost_claim".to_string();
+        let err = schedule_economics_bundle(&bundle).expect_err("invalid claim boundary");
+        assert!(err.to_string().contains("bounded or not_exact"));
+    }
+
+    #[test]
     fn scheduler_economics_input_parses_yaml() {
         let yaml = r#"
 schema_version: adl.scheduler.economics_input.v1
@@ -499,5 +953,19 @@ claim_boundary: bounded_v1_inputs_not_exact_measurement
 
         let err = validate_economics_input(&input).expect_err("claim rejected");
         assert!(err.to_string().contains("bounded or not_exact"));
+    }
+
+    fn decision<'a>(
+        plan: &'a CognitiveSchedulerPlanV1,
+        task_id: &str,
+    ) -> &'a CognitiveSchedulerDecisionV1 {
+        plan.decisions
+            .iter()
+            .find(|decision| decision.task_id == task_id)
+            .expect("decision exists")
+    }
+
+    fn assert_lane(plan: &CognitiveSchedulerPlanV1, task_id: &str, lane: CognitiveSchedulerLaneV1) {
+        assert_eq!(decision(plan, task_id).selected_lane, lane);
     }
 }
