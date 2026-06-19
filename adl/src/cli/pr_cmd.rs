@@ -82,9 +82,9 @@ use self::git_support::{
     repo_root, run_capture, run_status, tracked_changes_status,
 };
 use self::github::{
-    ensure_issue_metadata_parity, format_open_pr_wave, gh_issue_comment, gh_issue_create,
-    gh_issue_edit_body, gh_issue_edit_title, gh_issue_set_labels, gh_issue_title, issue_version,
-    unresolved_milestone_pr_wave, IssueRecord,
+    ensure_issue_metadata_parity, ensure_repo_labels_exist, format_open_pr_wave, gh_issue_comment,
+    gh_issue_create, gh_issue_edit_body, gh_issue_edit_title, gh_issue_set_labels, gh_issue_title,
+    issue_version, unresolved_milestone_pr_wave, IssueRecord,
 };
 
 const DEFAULT_VERSION: &str = "v0.86";
@@ -269,6 +269,8 @@ fn real_pr_issue(args: &[String]) -> Result<()> {
             let repo = parsed.repo.unwrap_or(default_repo(&repo_root)?);
             let body = resolve_issue_body(parsed.body, parsed.body_file.as_deref())?;
             let labels_csv = parsed.labels.join(",");
+            let expected = parsed.labels.iter().cloned().collect::<BTreeSet<_>>();
+            ensure_repo_labels_exist(&repo, &expected, "issue create")?;
             let url = gh_issue_create(&repo, &parsed.title, &body, &labels_csv)?;
             if parsed.json {
                 print_json(&IssueMutationResult {
@@ -302,11 +304,22 @@ fn real_pr_issue(args: &[String]) -> Result<()> {
                 .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
                 .unwrap_or(default_repo(&repo_root)?);
             let issue = parse_issue_ref_number("issue edit", &parsed.issue_ref)?;
+            let resolved_body = if parsed.body.is_some() || parsed.body_file.is_some() {
+                Some(resolve_issue_body(
+                    parsed.body,
+                    parsed.body_file.as_deref(),
+                )?)
+            } else {
+                None
+            };
+            if !parsed.labels.is_empty() {
+                let expected = parsed.labels.iter().cloned().collect::<BTreeSet<_>>();
+                ensure_repo_labels_exist(&repo, &expected, "issue edit")?;
+            }
             if let Some(title) = parsed.title {
                 gh_issue_edit_title(&repo, issue, &title)?;
             }
-            if parsed.body.is_some() || parsed.body_file.is_some() {
-                let body = resolve_issue_body(parsed.body, parsed.body_file.as_deref())?;
+            if let Some(body) = resolved_body {
                 gh_issue_edit_body(&repo, issue, &body)?;
             }
             if !parsed.labels.is_empty() {
@@ -532,10 +545,6 @@ fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
     }
 
     let issue_url = format!("https://github.com/{repo}/issues/{}", parsed.issue);
-    let current_title = gh_issue_title(parsed.issue, &repo)?.unwrap_or_default();
-    if title != current_title {
-        gh_issue_edit_title(&repo, parsed.issue, &title)?;
-    }
     let current_labels = gh_issue_label_names(parsed.issue, &repo)?
         .into_iter()
         .map(|label| label.trim().to_string())
@@ -547,6 +556,11 @@ fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
         .filter(|label| !label.is_empty())
         .map(str::to_string)
         .collect::<BTreeSet<_>>();
+    ensure_repo_labels_exist(&repo, &expected_labels, "repair-issue-body")?;
+    let current_title = gh_issue_title(parsed.issue, &repo)?.unwrap_or_default();
+    if title != current_title {
+        gh_issue_edit_title(&repo, parsed.issue, &title)?;
+    }
     if current_labels != expected_labels {
         let ordered_labels = normalized_labels
             .split(',')
@@ -641,6 +655,13 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         parsed.labels.as_deref().unwrap_or(DEFAULT_NEW_LABELS),
         &version,
     );
+    let expected_labels = normalized_labels
+        .split(',')
+        .map(str::trim)
+        .filter(|label| !label.is_empty())
+        .map(str::to_string)
+        .collect::<BTreeSet<_>>();
+    ensure_repo_labels_exist(&repo, &expected_labels, "create")?;
     let body = resolve_issue_body(parsed.body.clone(), parsed.body_file.as_deref())?;
     let create_body = if body.trim().is_empty() {
         render_generated_issue_body(

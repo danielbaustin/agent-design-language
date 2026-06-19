@@ -53,6 +53,25 @@ Sprint umbrella issues should record:
 Sprint umbrellas coordinate work. They do not replace child issue execution,
 review, validation, or closeout.
 
+## Issue Label Taxonomy
+
+Sprint routing should be visible in GitHub issue metadata, not only in titles or
+body prose.
+
+Use the following labels for milestone issue waves:
+
+- `type:sprint` for a sprint umbrella issue that coordinates one sprint band.
+- `type:mini-sprint` for a bounded mini-sprint umbrella or side-wave umbrella.
+- `type:task` for ordinary child implementation tasks under a sprint or
+  mini-sprint umbrella.
+- `type:planning` for companion planning issues, setup issues, or planning-only
+  sidecars.
+
+Do not reuse `type:task` or `type:planning` to stand in for a sprint umbrella.
+If a required sprint-routing label is missing from the repository, the ADL
+issue tooling should fail before mutating issue metadata so operators can add
+the approved label through the normal GitHub-label path.
+
 ## Closeout Tail
 
 The closeout-tail WP numbers may change based on the number of execution WPs.

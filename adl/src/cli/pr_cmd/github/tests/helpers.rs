@@ -398,6 +398,10 @@ args = sys.argv[1:]
 with log.open("a", encoding="utf-8") as fh:
     fh.write(repr(args) + "\n")
 
+if args[:2] == ["label", "list"]:
+    print("track:roadmap\narea:tools\ntype:task\nversion:v0.91.5")
+    sys.exit(0)
+
 if args[:2] == ["issue", "create"]:
     print("https://github.com/owner/repo/issues/77")
     sys.exit(0)
