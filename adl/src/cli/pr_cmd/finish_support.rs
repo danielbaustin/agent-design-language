@@ -1845,6 +1845,10 @@ fn build_issue_small_binary_validation_plan() -> FinishValidationPlan {
     );
     push_finish_validation_command(
         &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_issue_small_binary_slice -- --exact --nocapture",
+    );
+    push_finish_validation_command(
+        &mut commands,
         "bash adl/tools/test_pr_small_binary_delegation.sh",
     );
     FinishValidationPlan {
@@ -2337,6 +2341,22 @@ pub(super) fn run_finish_validation_rust(
                             "--bin",
                             "adl-issue",
                             "tests::adl_issue_forwards_args_to_dispatch",
+                            "--",
+                            "--exact",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_issue_small_binary_slice -- --exact --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-pr-finish",
+                            "cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_issue_small_binary_slice",
                             "--",
                             "--exact",
                             "--nocapture",

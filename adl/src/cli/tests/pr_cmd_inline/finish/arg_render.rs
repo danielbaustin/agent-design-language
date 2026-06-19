@@ -1732,6 +1732,10 @@ fn finish_validation_profile_classifies_issue_small_binary_slice() {
         &"cargo test --manifest-path adl/Cargo.toml --bin adl-issue tests::adl_issue_forwards_args_to_dispatch -- --exact --nocapture"
             .to_string()
     ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_issue_small_binary_slice -- --exact --nocapture"
+            .to_string()
+    ));
     assert!(plan
         .commands
         .contains(&"bash adl/tools/test_pr_small_binary_delegation.sh".to_string()));
