@@ -35,19 +35,15 @@ Out of scope:
 - `#4047`
 - `#4109`
 - `#4113`
-- `#4136`
 - `#4095`
 - `#4096`
 - refactoring-sprint or toolkit-simplification work not named above
-
-`#4136` is already excluded from this sprint. Any open PR state for `#4136`
-must be treated as unrelated tools-queue pressure, not sprint membership.
 
 ## Child Issue Wave
 
 | Issue | Role | Status | Notes |
 |---|---|---|---|
-| `#4085` | non-closing lifecycle PR declaration | ready_for_execution | First publication-contract input; should clarify `pr finish --no-close` truth before broader publication diagnostics. |
+| `#4085` | non-closing lifecycle PR declaration | completed | PR `#4170` merged and issue `#4085` closed as completed on 2026-06-19. |
 | `#4087` | configured token context inheritance | ready_for_execution | Mostly independent credential/context lane; must avoid printing secrets and avoid raw `gh` fallback for covered operations. |
 | `#4088` | fresh-worktree task-bundle materialization | ready_for_execution | First worktree/setup lane issue; should run before stale-worktree closeout behavior. |
 | `#4086` | stale dirty worktree closeout quarantine | waiting_on_4088 | Depends conceptually on fresh-worktree and closeout worktree-resolution truth. |
@@ -56,7 +52,7 @@ must be treated as unrelated tools-queue pressure, not sprint membership.
 
 ## Recommended Execution Order
 
-1. Run `#4085` first to establish non-closing lifecycle PR declaration truth.
+1. `#4085` completed through PR `#4170`; use that landed publication-contract truth for downstream `pr finish` work.
 2. Run `#4087` early in the independent credential/context lane.
 3. Run `#4088` before `#4086` to establish fresh-worktree task-bundle materialization.
 4. Run `#4086` after `#4088` closeout/worktree behavior is stable.
@@ -77,8 +73,8 @@ must be treated as unrelated tools-queue pressure, not sprint membership.
 
 | Gate | Blocks | Exit condition |
 |---|---|---|
-| sprint readiness gate | all child execution | This SEP exists, child bundles exist, child `SIP`/`STP`/`SPP`/`SRP` design-time readiness passes, and `#4136` is excluded from sprint accounting. |
-| finish contract gate | `#4094` | `#4085` lands or a fresh file-surface check proves safe isolation. |
+| sprint readiness gate | all child execution | This SEP exists, child bundles exist, and child `SIP`/`STP`/`SPP`/`SRP` design-time readiness passes. |
+| finish contract gate | `#4094` | Satisfied by merged PR `#4170` for `#4085`; re-check file-surface isolation before editing `#4094`. |
 | fresh-worktree gate | `#4086` | `#4088` lands or explicitly records a blocked/deferred outcome that still gives `#4086` a truthful starting surface. |
 | queue gate | `#4083` | Earlier lifecycle fixes have landed or been truthfully routed, so doctor/open-wave behavior can be evaluated against the current contract. |
 | closeout gate | `#4149` closure | All six child issues are closed or truthfully blocked/deferred, PR/watch/closeout state is reconciled, and sprint review is recorded. |
@@ -122,9 +118,9 @@ Closeout must verify:
 
 ## Current Preparation Notes
 
-- `#4149` was bound under `--allow-open-pr-wave` because draft PR `#4152` for
-  excluded issue `#4136` was unrelated queue pressure.
+- `#4149` was bound under `--allow-open-pr-wave` because draft PR `#4152`
+  was unrelated queue pressure.
 - The sprint child list remains exactly `#4085`, `#4087`, `#4088`, `#4086`,
   `#4094`, and `#4083`.
-- Child issue execution should begin with `#4085` unless a fresh workflow check
-  selects a different ready child for a recorded reason.
+- Child issue execution began with `#4085`; PR `#4170` merged and issue
+  `#4085` closed as completed on 2026-06-19.
