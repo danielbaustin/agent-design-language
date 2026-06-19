@@ -1,0 +1,110 @@
+{
+  "panel_id": "anthropic_current_models_panel_4156_adl_demo_key",
+  "issue": 4156,
+  "parent_issue": 4154,
+  "panel_ref": "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+  "packet_title": "Anthropic Current Direct-Hosted Suitability Proof",
+  "packet_filename_prefix": "ANTHROPIC_CURRENT_MODEL_SUITABILITY_PROOF",
+  "state_filename_prefix": "anthropic_current_model_suitability_state",
+  "provider_setup_family": "anthropic",
+  "scope_summary": "This packet runs the reusable C-SDLC suitability panel against current direct-hosted Anthropic models through the native hosted provider path using the ADL demo Anthropic key source.",
+  "source_evidence": [
+    "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+    "docs/milestones/v0.91.6/features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md",
+    "docs/milestones/v0.91.6/review/provider/ROLE_PROVIDER_PROFILES_4053.md"
+  ],
+  "non_claims": [
+    "does_not_claim_broad_model_intelligence",
+    "does_not_grant_merge_closeout_or_repo_mutation_authority",
+    "does_not_replace_uts_or_benchmarking",
+    "does_not_promote_unrun_or_missing_lanes"
+  ],
+  "packet_non_claim_lines": [
+    "This packet does not prove general Anthropic model quality outside the bounded panel tasks.",
+    "This packet does not promote any Claude lane to default authority-bearing use.",
+    "This packet does not grant any tested lane merge, closeout, release, or repo-mutation authority."
+  ],
+  "credential_loaders": [
+    {
+      "env_name": "ANTHROPIC_API_KEY",
+      "key_file": "~/keys/ADL_demo_ref_04.txt"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "watcher_state_v1",
+      "required_markers": ["#4156", "adl-wp-4156", "five-task suitability panel"],
+      "prompt": "You are evaluating a bounded ADL workflow state. Use only the supplied facts.\nReturn markdown only with exactly these headings:\n# Status\n# Evidence\n# Next-Step\n\nRequirements:\n- # Status body must be exactly one of: ready, pending, blocked, action_required\n- Mention #4156 in # Evidence\n- Mention adl-wp-4156 exactly once\n- Under # Next-Step mention the five-task suitability panel\n- Do not claim merge, closeout, or file-write authority\n- Keep the response under 110 words\n\nFacts:\n- Issue #4156 is open and bound to worktree adl-wp-4156.\n- The current proof targets direct-hosted Anthropic models claude-opus-4-8, claude-sonnet-4-6, and claude-haiku-4-5.\n- Hosted Anthropic credentials are available in the operator shell.\n- No current direct-hosted Anthropic suitability packet has been written yet."
+    },
+    {
+      "task_id": "card_validator_v1",
+      "prompt": "Review the following supplied SOR excerpt only. Do not infer unseen repo state.\nReturn markdown only with exactly these headings:\n# Findings\n# Severity\n# Non-Claims\n\nRequirements:\n- Identify the contradiction in the excerpt\n- The # Severity body must be exactly P1 or P2\n- Under # Non-Claims say that only the supplied excerpt was reviewed\n- Do not invent files, commits, or PR state beyond the excerpt\n- Keep the response under 130 words\n\nExcerpt:\n- Integration state: merged\n- PR publication and merge have not happened yet\n- Finish evidence: absent\n- Next action: publish PR #4054 and merge it"
+    },
+    {
+      "task_id": "review_findings_v1",
+      "prompt": "Review the following supplied document excerpt only.\nReturn markdown only with exactly these headings:\n# Findings\n# Severity\n# Routing\n# Residual Risk\n\nRequirements:\n- Focus on evidence-provenance drift, not code correctness\n- Mention raw gh evidence as historical/manual provenance rather than current ADL-native proof\n- Mention Octocrab or ADL-native proof exactly once\n- The # Severity body must be exactly P2 or P3\n- Under # Residual Risk include the exact phrase: no code-correctness claim\n- Keep the response under 140 words\n\nExcerpt:\nValidation evidence:\n- gh pr view 4054 --json mergeStateStatus\n- gh pr view 4054 --json state\n- manual GitHub CLI snapshots used as current sprint proof"
+    },
+    {
+      "task_id": "bounded_planner_v1",
+      "required_bits": [
+        "direct-hosted anthropic",
+        "claude-opus-4-8",
+        "claude-sonnet-4-6",
+        "claude-haiku-4-5",
+        "five-task suitability panel",
+        "skipped",
+        "blocked",
+        "no repo-mutation authority"
+      ],
+      "prompt": "Produce a bounded execution plan for issue #4156 only.\nReturn markdown only with exactly these headings:\n# Plan\n# Blockers\n# Assumptions\n# Non-Claims\n\nRequirements:\n- # Plan must contain exactly four numbered steps\n- Mention direct-hosted Anthropic plus claude-opus-4-8, claude-sonnet-4-6, and claude-haiku-4-5\n- Mention one shared five-task suitability panel\n- Mention that skipped or blocked lanes must be recorded explicitly\n- Under # Non-Claims say no repo-mutation authority\n- Keep the response under 155 words"
+    },
+    {
+      "task_id": "closeout_checker_v1",
+      "prompt": "Decide whether the supplied evidence is safe to close.\nReturn markdown only with exactly these headings:\n# Decision\n# Reasons\n# Missing Evidence\n\nRequirements:\n- # Decision body must be exactly one of: safe_to_close, needs_remediation, blocked\n- Mention that no PR or merge evidence is supplied\n- Mention that no final proof packet is supplied\n- Do not claim unseen CI or review state\n- Keep the response under 120 words\n\nSupplied evidence:\n- Issue #4156 is open.\n- Worktree is bound and prerequisites are available.\n- No PR has been published in the supplied evidence.\n- No final suitability packet has been supplied."
+    }
+  ],
+  "candidates": [
+    {
+      "candidate_id": "anthropic:claude-opus-4-8",
+      "provider_lane": "anthropic",
+      "provider_profile_ref": "unprofiled:anthropic:claude-opus-4-8",
+      "provider_family": "anthropic",
+      "provider_spec_kind": "anthropic",
+      "provider": "anthropic",
+      "model_ref": "claude-opus-4-8",
+      "provider_model_id": "claude-opus-4-8",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/ADL_demo_ref_04.txt",
+      "credential_ref": "env:ANTHROPIC_API_KEY",
+      "timeout_ms": 90000
+    },
+    {
+      "candidate_id": "anthropic:claude-sonnet-4-6",
+      "provider_lane": "anthropic",
+      "provider_profile_ref": "unprofiled:anthropic:claude-sonnet-4-6",
+      "provider_family": "anthropic",
+      "provider_spec_kind": "anthropic",
+      "provider": "anthropic",
+      "model_ref": "claude-sonnet-4-6",
+      "provider_model_id": "claude-sonnet-4-6",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/ADL_demo_ref_04.txt",
+      "credential_ref": "env:ANTHROPIC_API_KEY",
+      "timeout_ms": 90000
+    },
+    {
+      "candidate_id": "anthropic:claude-haiku-4-5",
+      "provider_lane": "anthropic",
+      "provider_profile_ref": "unprofiled:anthropic:claude-haiku-4-5",
+      "provider_family": "anthropic",
+      "provider_spec_kind": "anthropic",
+      "provider": "anthropic",
+      "model_ref": "claude-haiku-4-5",
+      "provider_model_id": "claude-haiku-4-5",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/ADL_demo_ref_04.txt",
+      "credential_ref": "env:ANTHROPIC_API_KEY",
+      "timeout_ms": 90000
+    }
+  ]
+}

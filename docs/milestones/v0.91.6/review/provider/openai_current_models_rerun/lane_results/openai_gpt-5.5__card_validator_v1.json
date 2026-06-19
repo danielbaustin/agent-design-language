@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openai",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "gpt-5.5",
+    "credential_ref": "env:OPENAI_API_KEY",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openai",
+    "model_ref": "gpt-5.5",
+    "provider_model_id": "gpt-5.5",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1781847249",
+      "duration_ms": 5423,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=299 sha256=ad89235737d4]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 5423,
+  "request_id": "openai:gpt-5.5__card_validator_v1",
+  "output_text_excerpt": "[redacted response len=299 sha256=ad89235737d4]",
+  "artifact_ref": "<tmp>/result.json@7afce0032b80329b",
+  "output_text_chars": 299,
+  "output_text_digest": "sha256:ad89235737d4"
+}

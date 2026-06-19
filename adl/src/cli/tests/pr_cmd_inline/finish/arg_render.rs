@@ -1092,6 +1092,7 @@ fn finish_validation_plan_classifies_github_release_tooling_slice() {
 #[test]
 fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request() {
     let docs_plan = select_finish_validation_plan_for_finish(
+        1153,
         ".",
         &["docs/milestones/v0.91.3/review/example.md".to_string()],
     )
@@ -1103,6 +1104,7 @@ fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request()
         .any(|command: &String| command.contains("cargo nextest")));
 
     let focused_plan = select_finish_validation_plan_for_finish(
+        1153,
         ".",
         &["adl/src/cli/pr_cmd/doctor.rs".to_string()],
     )
@@ -1120,6 +1122,7 @@ fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request()
 #[test]
 fn finish_validation_profile_treats_issue_records_and_skill_docs_as_docs_only() {
     let plan = select_finish_validation_plan_for_finish(
+        1153,
         ".",
         &[
             "adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md".to_string(),
@@ -1141,6 +1144,7 @@ fn finish_validation_profile_treats_issue_records_and_skill_docs_as_docs_only() 
 #[test]
 fn finish_validation_profile_treats_skill_schema_and_agent_manifest_as_docs_only() {
     let plan = select_finish_validation_plan_for_finish(
+        1153,
         ".",
         &[
             "adl/tools/skills/sprint-review/docs/SPRINT_REVIEW_SKILL_INPUT_SCHEMA.md".to_string(),
@@ -1162,6 +1166,7 @@ fn finish_validation_profile_treats_skill_schema_and_agent_manifest_as_docs_only
 #[test]
 fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
     let plan = select_finish_validation_plan_for_finish(
+        1153,
         ".",
         &[
             "adl/tools/pr.sh".to_string(),
@@ -1176,6 +1181,7 @@ fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
 #[test]
 fn finish_validation_profile_classifies_sprint_shell_helper_tests_as_small_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
+        1153,
         ".",
         &[
             "adl/tools/test_install_adl_operational_skills.sh".to_string(),
@@ -1197,6 +1203,7 @@ fn finish_validation_profile_classifies_sprint_shell_helper_tests_as_small_binar
 #[test]
 fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
     let plan = select_finish_validation_plan_for_finish(
+        1153,
         ".",
         &[
             "adl/src/cli/tooling_cmd/public_prompt_packet.rs".to_string(),
@@ -1231,6 +1238,7 @@ fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
 #[test]
 fn finish_validation_profile_classifies_github_token_loading_surfaces() {
     let plan = select_finish_validation_plan_for_finish(
+        4001,
         ".",
         &[
             "adl/src/cli/github_token.rs".to_string(),
@@ -1265,8 +1273,138 @@ fn finish_validation_profile_classifies_github_token_loading_surfaces() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_tokio_manifest_runtime_wave_paths() {
+    let plan = select_finish_validation_plan_for_finish(
+        4178,
+        ".",
+        &["adl/Cargo.toml".to_string(), "adl/Cargo.lock".to_string()],
+    )
+    .expect("tokio manifest plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml pr_cmd::github".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl github_release_".to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml long_lived_agent".to_string()));
+}
+
+#[test]
+fn finish_validation_profile_classifies_long_lived_agent_tokio_paths() {
+    let plan = select_finish_validation_plan_for_finish(
+        4179,
+        ".",
+        &[
+            "adl/src/long_lived_agent.rs".to_string(),
+            "adl/src/long_lived_agent/tests.rs".to_string(),
+        ],
+    )
+    .expect("long-lived tokio plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml long_lived_agent".to_string()));
+}
+
+#[test]
+fn finish_validation_profile_classifies_tokio_bootstrap_helper_paths() {
+    let plan = select_finish_validation_plan_for_finish(
+        4180,
+        ".",
+        &[
+            "adl/src/cli/tokio_runtime.rs".to_string(),
+            "docs/default_workflow.md".to_string(),
+        ],
+    )
+    .expect("tokio bootstrap helper plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml pr_cmd::github".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl github_release_".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl octocrab_transport_".to_string()
+    ));
+}
+
+#[test]
+fn finish_validation_profile_classifies_remote_exec_tokio_paths() {
+    let plan = select_finish_validation_plan_for_finish(
+        4181,
+        ".",
+        &[
+            "adl/src/execute/runner.rs".to_string(),
+            "adl/src/execute/tests.rs".to_string(),
+            "adl/src/remote_exec.rs".to_string(),
+            "adl/src/remote_exec/signing_support.rs".to_string(),
+            "adl/src/remote_exec/types.rs".to_string(),
+        ],
+    )
+    .expect("remote exec tokio plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml build_remote_execute_request_preserves_conversation_as_audit_metadata"
+            .to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml execute_step_with_retry_does_not_retry_remote_schema_violation"
+            .to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml security_envelope_rejects_tampered_signed_conversation_metadata"
+            .to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml remote_exec::".to_string()));
+}
+
+#[test]
+fn finish_validation_profile_classifies_bounded_cav_tokio_paths() {
+    let plan = select_finish_validation_plan_for_finish(
+        4182,
+        ".",
+        &[
+            "adl/src/continuous_verification_self_attack.rs".to_string(),
+            "adl/src/cli/identity_cmd/tests/adversarial_contracts.rs".to_string(),
+        ],
+    )
+    .expect("bounded cav tokio plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml continuous_verification_contract_covers_cadence_lifecycle_and_artifacts"
+            .to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml self_attack_contract_is_policy_bounded_and_reviewable"
+            .to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml identity_continuous_verification_writes_contract_json"
+            .to_string()
+    ));
+}
+
+#[test]
 fn finish_validation_profile_keeps_finish_support_changes_narrow() {
     let plan = select_finish_validation_plan_for_finish(
+        4177,
         ".",
         &[
             "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
@@ -1304,6 +1442,7 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
 #[test]
 fn finish_validation_profile_classifies_process_status_helper_surfaces() {
     let plan = select_finish_validation_plan_for_finish(
+        0,
         ".",
         &[
             "adl/src/cli/process_cmd.rs".to_string(),
@@ -1336,6 +1475,7 @@ fn finish_validation_profile_classifies_process_status_helper_surfaces() {
 #[test]
 fn finish_validation_profile_classifies_lifecycle_inline_tests() {
     let plan = select_finish_validation_plan_for_finish(
+        1153,
         ".",
         &["adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs".to_string()],
     )
@@ -1353,6 +1493,7 @@ fn finish_validation_profile_classifies_lifecycle_inline_tests() {
 #[test]
 fn finish_validation_profile_keeps_small_binary_delegation_proof_focused() {
     let plan = select_finish_validation_plan_for_finish(
+        1153,
         ".",
         &[
             "adl/tools/test_pr_small_binary_delegation.sh".to_string(),
@@ -1616,6 +1757,72 @@ fn finish_runtime_paths_run_module_focused_validation_and_runtime_lane() {
 
     let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
     assert!(focused_calls.contains("runtime --build"));
+}
+
+#[test]
+fn finish_tokio_wave_paths_run_new_focused_validation_commands() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-tokio-wave-focused-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let plan = select_finish_validation_plan_for_finish(
+        4178,
+        ".",
+        &["adl/Cargo.toml".to_string(), "adl/Cargo.lock".to_string()],
+    )
+    .expect("tokio wave focused plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    run_finish_validation_rust(&repo, &plan).expect("tokio wave focused validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("fmt --manifest-path"));
+    assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("pr_cmd::github"));
+    assert!(cargo_calls.contains("github_release_"));
+    assert!(cargo_calls.contains("long_lived_agent"));
+    assert!(!cargo_calls.contains("clippy --manifest-path"));
+}
+
+#[test]
+fn finish_validation_profile_does_not_special_case_tokio_manifest_paths_for_other_issues() {
+    let err = select_finish_validation_plan_for_finish(
+        5000,
+        ".",
+        &["adl/Cargo.toml".to_string(), "adl/Cargo.lock".to_string()],
+    )
+    .expect_err("non-Tokio manifest-only issues should stay unclassified");
+
+    assert!(err.to_string().contains("changed paths are not classified"));
 }
 
 #[test]

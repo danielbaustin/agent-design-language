@@ -1,0 +1,95 @@
+{
+  "panel_id": "openai_codex_and_spark_panel_4155",
+  "issue": 4155,
+  "parent_issue": 4154,
+  "panel_ref": "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+  "packet_title": "OpenAI Codex and Spark Direct-Hosted Suitability Proof",
+  "packet_filename_prefix": "OPENAI_CODEX_AND_SPARK_SUITABILITY_PROOF",
+  "state_filename_prefix": "openai_codex_and_spark_suitability_state",
+  "provider_setup_family": "openai",
+  "scope_summary": "This packet reruns the reusable C-SDLC suitability panel against direct-hosted OpenAI Codex-family model IDs requested by the operator.",
+  "source_evidence": [
+    "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+    "docs/milestones/v0.91.6/features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md",
+    "docs/milestones/v0.91.6/review/provider/ROLE_PROVIDER_PROFILES_4053.md"
+  ],
+  "non_claims": [
+    "does_not_claim_broad_model_intelligence",
+    "does_not_grant_merge_closeout_or_repo_mutation_authority",
+    "does_not_replace_uts_or_benchmarking",
+    "does_not_promote_unrun_or_missing_lanes"
+  ],
+  "packet_non_claim_lines": [
+    "This packet does not prove general OpenAI model quality outside the bounded panel tasks.",
+    "This packet does not equate direct-hosted OpenAI success with Codex shell authority.",
+    "This packet does not grant any tested lane merge, closeout, release, or repo-mutation authority."
+  ],
+  "credential_loaders": [
+    {
+      "env_name": "OPENAI_API_KEY",
+      "key_file": "~/keys/openai2.key"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "watcher_state_v1",
+      "required_markers": ["#4155", "adl-wp-4155", "five-task suitability panel"],
+      "prompt": "You are evaluating a bounded ADL workflow state. Use only the supplied facts.\nReturn markdown only with exactly these headings:\n# Status\n# Evidence\n# Next-Step\n\nRequirements:\n- # Status body must be exactly one of: ready, pending, blocked, action_required\n- Mention #4155 in # Evidence\n- Mention adl-wp-4155 exactly once\n- Under # Next-Step mention the five-task suitability panel\n- Do not claim merge, closeout, or file-write authority\n- Keep the response under 110 words\n\nFacts:\n- Issue #4155 is open and bound to worktree adl-wp-4155.\n- The current rerun targets direct-hosted OpenAI models gpt-5-codex and gpt-5.3-codex-spark.\n- Hosted OpenAI credentials are available in the operator shell.\n- No current direct-hosted OpenAI Codex/Spark suitability packet has been written yet."
+    },
+    {
+      "task_id": "card_validator_v1",
+      "prompt": "Review the following supplied SOR excerpt only. Do not infer unseen repo state.\nReturn markdown only with exactly these headings:\n# Findings\n# Severity\n# Non-Claims\n\nRequirements:\n- Identify the contradiction in the excerpt\n- The # Severity body must be exactly P1 or P2\n- Under # Non-Claims say that only the supplied excerpt was reviewed\n- Do not invent files, commits, or PR state beyond the excerpt\n- Keep the response under 130 words\n\nExcerpt:\n- Integration state: merged\n- PR publication and merge have not happened yet\n- Finish evidence: absent\n- Next action: publish PR #4054 and merge it"
+    },
+    {
+      "task_id": "review_findings_v1",
+      "prompt": "Review the following supplied document excerpt only.\nReturn markdown only with exactly these headings:\n# Findings\n# Severity\n# Routing\n# Residual Risk\n\nRequirements:\n- Focus on evidence-provenance drift, not code correctness\n- Mention raw gh evidence as historical/manual provenance rather than current ADL-native proof\n- Mention Octocrab or ADL-native proof exactly once\n- The # Severity body must be exactly P2 or P3\n- Under # Residual Risk include the exact phrase: no code-correctness claim\n- Keep the response under 140 words\n\nExcerpt:\nValidation evidence:\n- gh pr view 4054 --json mergeStateStatus\n- gh pr view 4054 --json state\n- manual GitHub CLI snapshots used as current sprint proof"
+    },
+    {
+      "task_id": "bounded_planner_v1",
+      "required_bits": [
+        "direct-hosted openai",
+        "gpt-5-codex",
+        "gpt-5.3-codex-spark",
+        "five-task suitability panel",
+        "skipped",
+        "blocked",
+        "no repo-mutation authority"
+      ],
+      "prompt": "Produce a bounded execution plan for issue #4155 only.\nReturn markdown only with exactly these headings:\n# Plan\n# Blockers\n# Assumptions\n# Non-Claims\n\nRequirements:\n- # Plan must contain exactly four numbered steps\n- Mention direct-hosted OpenAI plus gpt-5-codex and gpt-5.3-codex-spark\n- Mention one shared five-task suitability panel\n- Mention that skipped or blocked lanes must be recorded explicitly\n- Under # Non-Claims say no repo-mutation authority\n- Keep the response under 150 words"
+    },
+    {
+      "task_id": "closeout_checker_v1",
+      "prompt": "Decide whether the supplied evidence is safe to close.\nReturn markdown only with exactly these headings:\n# Decision\n# Reasons\n# Missing Evidence\n\nRequirements:\n- # Decision body must be exactly one of: safe_to_close, needs_remediation, blocked\n- Mention that no PR or merge evidence is supplied\n- Mention that no final proof packet is supplied\n- Do not claim unseen CI or review state\n- Keep the response under 120 words\n\nSupplied evidence:\n- Issue #4155 is open.\n- Worktree is bound and prerequisites are available.\n- No PR has been published in the supplied evidence.\n- No final suitability packet has been supplied."
+    }
+  ],
+  "candidates": [
+    {
+      "candidate_id": "openai:gpt-5-codex",
+      "provider_lane": "openai",
+      "provider_profile_ref": "unprofiled:openai:gpt-5-codex",
+      "provider_family": "openai",
+      "provider_spec_kind": "openai",
+      "provider": "openai",
+      "model_ref": "gpt-5-codex",
+      "provider_model_id": "gpt-5-codex",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openai2.key",
+      "credential_ref": "env:OPENAI_API_KEY",
+      "timeout_ms": 90000
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex-spark",
+      "provider_lane": "openai",
+      "provider_profile_ref": "unprofiled:openai:gpt-5.3-codex-spark",
+      "provider_family": "openai",
+      "provider_spec_kind": "openai",
+      "provider": "openai",
+      "model_ref": "gpt-5.3-codex-spark",
+      "provider_model_id": "gpt-5.3-codex-spark",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openai2.key",
+      "credential_ref": "env:OPENAI_API_KEY",
+      "timeout_ms": 90000
+    }
+  ]
+}

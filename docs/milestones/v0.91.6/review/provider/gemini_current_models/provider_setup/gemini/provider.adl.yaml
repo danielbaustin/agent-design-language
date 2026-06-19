@@ -1,0 +1,23 @@
+version: "0.5"
+
+providers:
+  gemini_primary:
+    profile: "http:gemini-2.0-flash"
+    config:
+      endpoint: "https://api.example.invalid/v1/complete"
+      auth:
+        type: bearer
+        env: GEMINI_API_KEY
+      headers:
+        X-Client: "adl-provider-setup"
+      timeout_secs: 15
+      model_ref: "reasoning/default"
+      provider_model_id: "gemini-2.0-flash"
+
+agents:
+  gemini_agent:
+    provider: "gemini_primary"
+    model: "reasoning/default"
+
+# Merge this provider/agent snippet into your workflow file.
+# provider_model_id may be changed to any trusted model ID supported by this provider family.

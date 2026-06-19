@@ -1,0 +1,371 @@
+{
+  "schema": "adl.agent_suitability_panel.v1",
+  "spec_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/spec/gemini_current_models_panel_4157.json",
+  "panel_id": "gemini_current_models_panel_4157",
+  "issue": 4157,
+  "parent_issue": 4154,
+  "date": "2026-06-18",
+  "panel_ref": "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+  "task_ids": [
+    "watcher_state_v1",
+    "card_validator_v1",
+    "review_findings_v1",
+    "bounded_planner_v1",
+    "closeout_checker_v1"
+  ],
+  "candidate_selection": {
+    "spec_candidate_ids": [
+      "gemini:gemini-2.5-pro",
+      "gemini:gemini-2.5-flash",
+      "gemini:gemini-2.5-flash-lite"
+    ],
+    "executed_candidate_ids": [
+      "gemini:gemini-2.5-pro",
+      "gemini:gemini-2.5-flash",
+      "gemini:gemini-2.5-flash-lite"
+    ],
+    "skipped_candidates": []
+  },
+  "candidates": [
+    {
+      "candidate_id": "gemini:gemini-2.5-pro",
+      "provider_lane": "gemini",
+      "provider_profile_ref": "unprofiled:gemini:gemini-2.5-pro",
+      "provider_family": "google",
+      "provider_spec_kind": "gemini",
+      "model_ref": "gemini-2.5-pro",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/gcp-ace-2023.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "useful_with_limits",
+      "supported_tasks": "watcher, card_validator, reviewer, planner, closeout_checker"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash",
+      "provider_lane": "gemini",
+      "provider_profile_ref": "unprofiled:gemini:gemini-2.5-flash",
+      "provider_family": "google",
+      "provider_spec_kind": "gemini",
+      "model_ref": "gemini-2.5-flash",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/gcp-ace-2023.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "useful_with_limits",
+      "supported_tasks": "watcher, card_validator, reviewer, planner, closeout_checker"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash-lite",
+      "provider_lane": "gemini",
+      "provider_profile_ref": "unprofiled:gemini:gemini-2.5-flash-lite",
+      "provider_family": "google",
+      "provider_spec_kind": "gemini",
+      "model_ref": "gemini-2.5-flash-lite",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/gcp-ace-2023.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "useful_with_limits",
+      "supported_tasks": "watcher, card_validator, reviewer, planner, closeout_checker"
+    }
+  ],
+  "rows": [
+    {
+      "candidate_id": "gemini:gemini-2.5-pro",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-19T03:16:53+00:00",
+      "elapsed_ms": 11886,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-pro__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "action_required",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-pro__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-pro__watcher_state_v1.jsonl",
+      "output_digest": "sha256:b4ecd66e175a"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-pro",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-19T03:17:05+00:00",
+      "elapsed_ms": 10234,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-pro__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P1"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-pro__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-pro__card_validator_v1.jsonl",
+      "output_digest": "sha256:1acec7dd1b69"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-pro",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-19T03:17:15+00:00",
+      "elapsed_ms": 12156,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-pro__review_findings_v1.md",
+      "normalized_result": {
+        "severity": "P2"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
+      "safe_role_recommendation": "reviewer_provider_candidate",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-pro__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-pro__review_findings_v1.jsonl",
+      "output_digest": "sha256:facbd12dfe1d"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-pro",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-19T03:17:27+00:00",
+      "elapsed_ms": 9162,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-pro__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-pro__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-pro__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:5492d7272e40"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-pro",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-19T03:17:36+00:00",
+      "elapsed_ms": 9584,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-pro__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "blocked"
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "closeout output remained conservative even if it missed one specific supplied gap",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-pro__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-pro__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:c012ab6bbd25"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-19T03:17:46+00:00",
+      "elapsed_ms": 4555,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-flash__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "action_required",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-flash__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-flash__watcher_state_v1.jsonl",
+      "output_digest": "sha256:a17736e0bf9c"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-19T03:17:50+00:00",
+      "elapsed_ms": 3475,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-flash__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P1"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-flash__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-flash__card_validator_v1.jsonl",
+      "output_digest": "sha256:d18fffc04d16"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-19T03:17:54+00:00",
+      "elapsed_ms": 4888,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-flash__review_findings_v1.md",
+      "normalized_result": {
+        "severity": "P3"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
+      "safe_role_recommendation": "reviewer_provider_candidate",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-flash__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-flash__review_findings_v1.jsonl",
+      "output_digest": "sha256:0b741fbef4be"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-19T03:17:59+00:00",
+      "elapsed_ms": 3382,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-flash__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-flash__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-flash__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:1e3bdf767877"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-19T03:18:02+00:00",
+      "elapsed_ms": 3299,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-flash__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "needs_remediation"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "closeout output correctly withheld closure until merge/proof evidence exists",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-flash__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-flash__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:ce62c4086400"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash-lite",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-19T03:18:06+00:00",
+      "elapsed_ms": 688,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-flash-lite__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "action_required",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-flash-lite__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-flash-lite__watcher_state_v1.jsonl",
+      "output_digest": "sha256:253c162341ec"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash-lite",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-19T03:18:06+00:00",
+      "elapsed_ms": 749,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-flash-lite__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P1"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-flash-lite__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-flash-lite__card_validator_v1.jsonl",
+      "output_digest": "sha256:e4c3cab30b7d"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash-lite",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-19T03:18:07+00:00",
+      "elapsed_ms": 1054,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-flash-lite__review_findings_v1.md",
+      "normalized_result": {
+        "severity": "P3"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
+      "safe_role_recommendation": "reviewer_provider_candidate",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-flash-lite__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-flash-lite__review_findings_v1.jsonl",
+      "output_digest": "sha256:43687b12fcd8"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash-lite",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-19T03:18:08+00:00",
+      "elapsed_ms": 1243,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-flash-lite__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-flash-lite__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-flash-lite__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:e90d2886dfc1"
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash-lite",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-19T03:18:09+00:00",
+      "elapsed_ms": 566,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs/gemini:gemini-2.5-flash-lite__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "needs_remediation"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "closeout output correctly withheld closure until merge/proof evidence exists",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results/gemini:gemini-2.5-flash-lite__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs/gemini:gemini-2.5-flash-lite__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:efb17e3e53ef"
+    }
+  ],
+  "non_claims": [
+    "does_not_claim_broad_model_intelligence",
+    "does_not_grant_merge_closeout_or_repo_mutation_authority",
+    "does_not_replace_uts_or_benchmarking",
+    "does_not_promote_unrun_or_missing_lanes"
+  ],
+  "artifacts": {
+    "packet": "docs/milestones/v0.91.6/review/provider/gemini_current_models/GEMINI_CURRENT_MODEL_SUITABILITY_PROOF_2026-06-18.md",
+    "state": "docs/milestones/v0.91.6/review/provider/gemini_current_models/gemini_current_model_suitability_state_2026-06-18.json",
+    "requests": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_requests",
+    "results": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_results",
+    "logs": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_logs",
+    "outputs": "docs/milestones/v0.91.6/review/provider/gemini_current_models/lane_outputs"
+  }
+}

@@ -121,8 +121,11 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         issue_ref.scope(),
         &validation_changed_paths,
     )?;
-    let finish_validation_plan =
-        select_finish_validation_plan_for_finish(&parsed.paths, &validation_changed_paths)?;
+    let finish_validation_plan = select_finish_validation_plan_for_finish(
+        parsed.issue,
+        &parsed.paths,
+        &validation_changed_paths,
+    )?;
     if !parsed.no_checks {
         run_finish_validation_rust(&repo_root, &finish_validation_plan)?;
         record_docs_only_validation_evidence_for_finish(&output_path, &finish_validation_plan)?;
@@ -1091,6 +1094,90 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_long_lived_agent_tokio_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml long_lived_agent",
+            );
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_tokio_bootstrap_helper_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml pr_cmd::github",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml --bin adl github_release_",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml --bin adl octocrab_transport_",
+            );
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_remote_exec_tokio_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml build_remote_execute_request_preserves_conversation_as_audit_metadata",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml execute_step_with_retry_does_not_retry_remote_schema_violation",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml security_envelope_rejects_tampered_signed_conversation_metadata",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml remote_exec::",
+            );
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_cav_tokio_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml continuous_verification_contract_covers_cadence_lifecycle_and_artifacts",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml self_attack_contract_is_policy_bounded_and_reviewable",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml identity_continuous_verification_writes_contract_json",
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_public_prompt_packet_focused_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1230,6 +1317,7 @@ fn push_finish_validation_command(commands: &mut Vec<String>, command: &str) {
 }
 
 pub(super) fn select_finish_validation_plan_for_finish(
+    issue_number: u32,
     requested_paths_csv: &str,
     changed_paths: &[String],
 ) -> Result<FinishValidationPlan> {
@@ -1243,6 +1331,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
     }
     if changed_paths.is_empty() {
         bail!("finish: no changed tracked paths available for validation profile selection");
+    }
+    if finish_issue_needs_tokio_manifest_runtime_validation(issue_number, changed_paths) {
+        return Ok(build_tokio_manifest_runtime_validation_plan());
     }
     select_finish_validation_plan(&changed_paths.join(","))
 }
@@ -1323,12 +1414,22 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/mod.rs"
             | "adl/src/cli/process_cmd.rs"
             | "adl/src/cli/usage.rs"
+            | "adl/src/cli/tokio_runtime.rs"
             | "adl/src/cli/github_token.rs"
             | "adl/src/lib.rs"
             | "adl/src/scheduler.rs"
             | "adl/src/provider_adapter.rs"
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
+            | "adl/src/long_lived_agent.rs"
+            | "adl/src/long_lived_agent/tests.rs"
+            | "adl/src/execute/runner.rs"
+            | "adl/src/execute/tests.rs"
+            | "adl/src/remote_exec.rs"
+            | "adl/src/remote_exec/signing_support.rs"
+            | "adl/src/remote_exec/types.rs"
+            | "adl/src/continuous_verification_self_attack.rs"
+            | "adl/src/cli/identity_cmd/tests/adversarial_contracts.rs"
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
             | "adl/tests/cli_smoke.rs"
             | "adl/tests/cli_smoke/process_status.rs"
@@ -1447,6 +1548,80 @@ fn finish_path_needs_scheduler_focused_validation(path: &str) -> bool {
 fn finish_path_needs_github_release_focused_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     trimmed == "adl/src/cli/tooling_cmd/github_release.rs"
+}
+
+fn finish_path_needs_long_lived_agent_tokio_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/long_lived_agent.rs" | "adl/src/long_lived_agent/tests.rs"
+    )
+}
+
+fn finish_path_needs_tokio_bootstrap_helper_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed == "adl/src/cli/tokio_runtime.rs"
+}
+
+fn finish_path_needs_remote_exec_tokio_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/execute/runner.rs"
+            | "adl/src/execute/tests.rs"
+            | "adl/src/remote_exec.rs"
+            | "adl/src/remote_exec/signing_support.rs"
+            | "adl/src/remote_exec/types.rs"
+    )
+}
+
+fn finish_path_needs_cav_tokio_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/continuous_verification_self_attack.rs"
+            | "adl/src/cli/identity_cmd/tests/adversarial_contracts.rs"
+    )
+}
+
+fn finish_issue_needs_tokio_manifest_runtime_validation(
+    issue_number: u32,
+    changed_paths: &[String],
+) -> bool {
+    if issue_number != 4178 {
+        return false;
+    }
+    !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            matches!(
+                path.trim().trim_matches('/'),
+                "adl/Cargo.toml" | "adl/Cargo.lock"
+            )
+        })
+}
+
+fn build_tokio_manifest_runtime_validation_plan() -> FinishValidationPlan {
+    let mut commands = Vec::new();
+    push_finish_validation_command(
+        &mut commands,
+        "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml pr_cmd::github",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml --bin adl github_release_",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml long_lived_agent",
+    );
+    FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands,
+    }
 }
 
 fn finish_path_needs_coverage_tooling_focused_validation(path: &str) -> bool {
@@ -1646,6 +1821,31 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
+                "cargo test --manifest-path adl/Cargo.toml pr_cmd::github" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &["test", "--manifest-path", path_str(&manifest)?, "pr_cmd::github"],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml long_lived_agent" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &["test", "--manifest-path", path_str(&manifest)?, "long_lived_agent"],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl octocrab_transport_" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl",
+                            "octocrab_transport_",
+                        ],
+                    )?;
+                }
                 "cargo test --manifest-path adl/Cargo.toml --bin adl github_token" => {
                     run_finish_validation_status(
                         "cargo",
@@ -1685,6 +1885,45 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
+                "cargo test --manifest-path adl/Cargo.toml build_remote_execute_request_preserves_conversation_as_audit_metadata" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "build_remote_execute_request_preserves_conversation_as_audit_metadata",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml execute_step_with_retry_does_not_retry_remote_schema_violation" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "execute_step_with_retry_does_not_retry_remote_schema_violation",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml security_envelope_rejects_tampered_signed_conversation_metadata" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "security_envelope_rejects_tampered_signed_conversation_metadata",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml remote_exec::" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &["test", "--manifest-path", path_str(&manifest)?, "remote_exec::"],
+                    )?;
+                }
                 "cargo test --manifest-path adl/Cargo.toml --lib scheduler_economics" => {
                     run_finish_validation_status(
                         "cargo",
@@ -1694,6 +1933,39 @@ pub(super) fn run_finish_validation_rust(
                             path_str(&manifest)?,
                             "--lib",
                             "scheduler_economics",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml continuous_verification_contract_covers_cadence_lifecycle_and_artifacts" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "continuous_verification_contract_covers_cadence_lifecycle_and_artifacts",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml self_attack_contract_is_policy_bounded_and_reviewable" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "self_attack_contract_is_policy_bounded_and_reviewable",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml identity_continuous_verification_writes_contract_json" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "identity_continuous_verification_writes_contract_json",
                         ],
                     )?;
                 }

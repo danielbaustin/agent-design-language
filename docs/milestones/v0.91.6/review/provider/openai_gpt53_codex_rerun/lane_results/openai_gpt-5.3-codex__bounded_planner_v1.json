@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openai",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "gpt-5.3-codex",
+    "credential_ref": "env:OPENAI_API_KEY",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openai",
+    "model_ref": "gpt-5.3-codex",
+    "provider_model_id": "gpt-5.3-codex",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1781848261",
+      "duration_ms": 4665,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=1124 sha256=6dabb05c0b4d]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 4665,
+  "request_id": "openai:gpt-5.3-codex__bounded_planner_v1",
+  "output_text_excerpt": "[redacted response len=1124 sha256=6dabb05c0b4d]",
+  "artifact_ref": "<tmp>/result.json@dc2a6a7cb1c954e4",
+  "output_text_chars": 1124,
+  "output_text_digest": "sha256:6dabb05c0b4d"
+}
