@@ -1,7 +1,7 @@
 use super::runner::{
     build_remote_execute_request, effective_max_concurrency_with_source, effective_step_placement,
     emit_delegation_lifecycle_finish, emit_delegation_lifecycle_start,
-    enforce_delegation_policy_for_step_actions, resolve_call_binding,
+    enforce_delegation_policy_for_step_actions, resolve_call_binding, RemoteExecuteRequestContext,
 };
 use super::*;
 use crate::adl::{
@@ -628,20 +628,19 @@ fn build_remote_execute_request_preserves_conversation_as_audit_metadata() {
     let mut saved_state = HashMap::new();
     saved_state.insert("history.latest".to_string(), "turn_00".to_string());
 
-    let req = build_remote_execute_request(
-        &step,
-        &doc,
-        "run-1",
-        "wf-1",
-        "p1",
-        "respond carefully",
-        &inputs,
-        &saved_state,
-        std::path::Path::new("."),
-        doc.providers.get("p1").expect("provider spec"),
-        Some("gpt-5.5"),
-    )
-    .expect("remote execute request");
+    let context = RemoteExecuteRequestContext {
+        doc: &doc,
+        run_id: "run-1",
+        workflow_id: "wf-1",
+        provider_id: "p1",
+        prompt_text: "respond carefully",
+        inputs: &inputs,
+        saved_state: &saved_state,
+        adl_base_dir: std::path::Path::new("."),
+        spec: doc.providers.get("p1").expect("provider spec"),
+        model_override: Some("gpt-5.5"),
+    };
+    let req = build_remote_execute_request(&step, &context).expect("remote execute request");
 
     assert_eq!(req.run_id, "run-1");
     assert_eq!(req.workflow_id, "wf-1");
