@@ -1504,6 +1504,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
             | "adl/tools/test_ci_runtime_contracts.sh"
+            | "adl/tools/run_authoritative_coverage_lane.sh"
+            | "adl/tools/test_run_authoritative_coverage_lane.sh"
             | "adl/tools/run_pr_fast_test_lane.sh"
             | "adl/tools/test_run_pr_fast_test_lane.sh"
             | "adl/config/validation_lane_selector.v0.91.6.json"
@@ -1732,7 +1734,10 @@ fn finish_path_needs_ci_runtime_contract_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(
         trimmed,
-        ".github/workflows/ci.yaml" | "adl/tools/test_ci_runtime_contracts.sh"
+        ".github/workflows/ci.yaml"
+            | "adl/tools/test_ci_runtime_contracts.sh"
+            | "adl/tools/run_authoritative_coverage_lane.sh"
+            | "adl/tools/test_run_authoritative_coverage_lane.sh"
     )
 }
 

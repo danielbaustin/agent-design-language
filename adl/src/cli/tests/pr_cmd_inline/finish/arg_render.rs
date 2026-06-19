@@ -1013,7 +1013,7 @@ fn finish_validation_plan_classifies_private_endpoint_fixture_sanitation_slice()
 #[test]
 fn finish_validation_plan_classifies_ci_runtime_contract_tooling() {
     let plan = select_finish_validation_plan(
-        ".github/workflows/ci.yaml,adl/tools/test_ci_runtime_contracts.sh",
+        ".github/workflows/ci.yaml,adl/tools/test_ci_runtime_contracts.sh,adl/tools/run_authoritative_coverage_lane.sh,adl/tools/test_run_authoritative_coverage_lane.sh",
     )
     .expect("ci runtime contract tooling plan");
 
