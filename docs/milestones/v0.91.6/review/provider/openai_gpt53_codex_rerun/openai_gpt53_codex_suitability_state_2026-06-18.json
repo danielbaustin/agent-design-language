@@ -1,0 +1,151 @@
+{
+  "schema": "adl.agent_suitability_panel.v1",
+  "spec_ref": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/spec/openai_gpt53_codex_panel_4155.json",
+  "panel_id": "openai_gpt53_codex_panel_4155",
+  "issue": 4155,
+  "parent_issue": 4154,
+  "date": "2026-06-18",
+  "panel_ref": "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+  "task_ids": [
+    "watcher_state_v1",
+    "card_validator_v1",
+    "review_findings_v1",
+    "bounded_planner_v1",
+    "closeout_checker_v1"
+  ],
+  "candidate_selection": {
+    "spec_candidate_ids": [
+      "openai:gpt-5.3-codex"
+    ],
+    "executed_candidate_ids": [
+      "openai:gpt-5.3-codex"
+    ],
+    "skipped_candidates": []
+  },
+  "candidates": [
+    {
+      "candidate_id": "openai:gpt-5.3-codex",
+      "provider_lane": "openai",
+      "provider_profile_ref": "unprofiled:openai:gpt-5.3-codex",
+      "provider_family": "openai",
+      "provider_spec_kind": "openai",
+      "model_ref": "gpt-5.3-codex",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openai2.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "useful_with_limits",
+      "supported_tasks": "watcher, card_validator, reviewer, planner, closeout_checker"
+    }
+  ],
+  "rows": [
+    {
+      "candidate_id": "openai:gpt-5.3-codex",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-19T05:50:48+00:00",
+      "elapsed_ms": 6520,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_outputs/openai_gpt-5.3-codex__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "action_required",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_results/openai_gpt-5.3-codex__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_logs/openai_gpt-5.3-codex__watcher_state_v1.jsonl",
+      "output_digest": "sha256:2b9985a0f92a"
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-19T05:50:54+00:00",
+      "elapsed_ms": 2463,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_outputs/openai_gpt-5.3-codex__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P1"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_results/openai_gpt-5.3-codex__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_logs/openai_gpt-5.3-codex__card_validator_v1.jsonl",
+      "output_digest": "sha256:5fae27771755"
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-19T05:50:57+00:00",
+      "elapsed_ms": 4549,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_outputs/openai_gpt-5.3-codex__review_findings_v1.md",
+      "normalized_result": {
+        "severity": "P2"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
+      "safe_role_recommendation": "reviewer_provider_candidate",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_results/openai_gpt-5.3-codex__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_logs/openai_gpt-5.3-codex__review_findings_v1.jsonl",
+      "output_digest": "sha256:64b2fe8b82f5"
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-19T05:51:01+00:00",
+      "elapsed_ms": 4665,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_outputs/openai_gpt-5.3-codex__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_results/openai_gpt-5.3-codex__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_logs/openai_gpt-5.3-codex__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:6dabb05c0b4d"
+    },
+    {
+      "candidate_id": "openai:gpt-5.3-codex",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-19T05:51:06+00:00",
+      "elapsed_ms": 3439,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_outputs/openai_gpt-5.3-codex__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "needs_remediation"
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "closeout output remained conservative even if it missed one specific supplied gap",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_results/openai_gpt-5.3-codex__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_logs/openai_gpt-5.3-codex__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:f618df2f5965"
+    }
+  ],
+  "non_claims": [
+    "does_not_claim_broad_model_intelligence",
+    "does_not_grant_merge_closeout_or_repo_mutation_authority",
+    "does_not_replace_uts_or_benchmarking",
+    "does_not_promote_unrun_or_missing_lanes"
+  ],
+  "artifacts": {
+    "packet": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/OPENAI_GPT53_CODEX_SUITABILITY_PROOF_2026-06-18.md",
+    "state": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/openai_gpt53_codex_suitability_state_2026-06-18.json",
+    "requests": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_requests",
+    "results": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_results",
+    "logs": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_logs",
+    "outputs": "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/lane_outputs"
+  }
+}

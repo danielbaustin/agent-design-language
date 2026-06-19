@@ -1,0 +1,32 @@
+{
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openai",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "gpt-5.5",
+    "source_registry": "v0.91.6.agent.suitability",
+    "credential_ref": "env:OPENAI_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openai",
+    "model_ref": "gpt-5.5",
+    "provider_model_id": "gpt-5.5",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "prompt_contract_ref": "v0.91.6.agent.suitability.bounded_planner_v1",
+  "lane_ref": "openai:gpt-5.5__bounded_planner_v1",
+  "run_id": "openai:gpt-5.5__bounded_planner_v1",
+  "request_id": "openai:gpt-5.5__bounded_planner_v1",
+  "attempt_policy": {
+    "max_attempts": 1,
+    "timeout_ms": 90000,
+    "retry_backoff_ms": 1000
+  },
+  "input_text_chars": 475,
+  "input_text_digest": "sha256:e6696e3dc8c1",
+  "input_text_excerpt": "[redacted prompt len=475 sha256=e6696e3dc8c1]"
+}
