@@ -2440,7 +2440,7 @@ Notes:
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
 - Runs Rust checks in adl/ by default (fmt, clippy -D warnings, test).
-- finish stages only the tracked repo-root paths selected by `--paths`; canonical `.adl` issue bundles remain local-only and must not be tracked or force-staged.
+- finish stages only the tracked repo-root paths selected by `--paths`; do not pass local `.adl` SIP/STP/SPP/SRP/SOR task-bundle files there. Use `--output-card` for the SOR truth surface; canonical `.adl` issue bundles remain local-only and must not be tracked or force-staged.
 - `--allow-gitignore` only permits staged `.gitignore` / `adl/.gitignore` changes during finish publication; it does not widen generic ignored-path staging.
 - C-SDLC prompt templates are stored in docs/templates/prompts/1.0.0/ (legacy SIP/SOR fallback: adl/templates/cards/ and .adl/templates/).
 - Cards are stored locally under cards_root and are not committed to git.
@@ -2610,6 +2610,7 @@ Usage:
 
 Notes:
 - By default, finish stages repo-root changes (`.`), which keeps docs and code changes together unless you narrow with `--paths`.
+- `--paths` is for tracked repo publication inputs only. Do not include local `.adl` SIP/STP/SPP/SRP/SOR task-bundle files; pass the SOR through `--output-card`.
 EOF
 }
 

@@ -433,6 +433,36 @@ fn finish_helper_paths_cover_nonempty_and_staged_checks() {
     .expect("cached names");
     assert!(!staged_name_only.contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md"));
     assert!(staged_name_only.contains("tracked.txt"));
+
+    let err = stage_selected_paths_rust(
+        &repo,
+        "tracked.txt,.adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md",
+    )
+    .expect_err("task-bundle SOR in --paths should fail before staging");
+    let err_text = err.to_string();
+    assert!(err_text.contains("--paths includes local-only .adl task-bundle card paths"));
+    assert!(err_text.contains("issue-1153__rust-finish-test/sor.md"));
+    assert!(err_text.contains("use --output-card for the SOR truth surface"));
+    assert!(err_text.contains("tracked repo publication inputs"));
+
+    let dot_relative_err = stage_selected_paths_rust(
+        &repo,
+        "tracked.txt,./.adl/v0.86/tasks/issue-1153__rust-finish-test/srp.md",
+    )
+    .expect_err("dot-relative task-bundle SRP in --paths should fail");
+    assert!(dot_relative_err
+        .to_string()
+        .contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/srp.md"));
+
+    let absolute_sor = repo
+        .join(".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md")
+        .display()
+        .to_string();
+    let absolute_err = stage_selected_paths_rust(&repo, &format!("tracked.txt,{absolute_sor}"))
+        .expect_err("absolute task-bundle SOR in --paths should fail");
+    assert!(absolute_err
+        .to_string()
+        .contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md"));
 }
 
 #[test]

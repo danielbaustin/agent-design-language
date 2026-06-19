@@ -2037,6 +2037,7 @@ pub(super) fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<(
     if paths.is_empty() {
         bail!("finish: --paths resolved to empty");
     }
+    reject_local_issue_bundle_paths_in_finish_paths(repo_root, &paths)?;
     let mut stageable = Vec::new();
     for path in paths {
         if path.starts_with(".adl/") {
@@ -2064,6 +2065,47 @@ pub(super) fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<(
     args.extend(stageable);
     run_status("git", &args)?;
     Ok(())
+}
+
+fn reject_local_issue_bundle_paths_in_finish_paths(repo_root: &Path, paths: &[&str]) -> Result<()> {
+    let mut local_issue_surfaces = paths
+        .iter()
+        .filter_map(|path| finish_local_issue_bundle_card_display(repo_root, path))
+        .collect::<Vec<_>>();
+    if local_issue_surfaces.is_empty() {
+        return Ok(());
+    }
+
+    local_issue_surfaces.sort_unstable();
+    local_issue_surfaces.dedup();
+    bail!(
+        "finish: --paths includes local-only .adl task-bundle card paths: {}. Do not pass SIP/STP/SPP/SRP/SOR task-bundle files via --paths; use --output-card for the SOR truth surface and pass only tracked repo publication inputs such as docs/... or adl/src/.... Canonical .adl bundles are validated and synchronized separately and must remain local-only.",
+        local_issue_surfaces.join(", ")
+    )
+}
+
+fn finish_local_issue_bundle_card_display(repo_root: &Path, path: &str) -> Option<String> {
+    let path_value = Path::new(path);
+    let relpath = if path_value.is_absolute() {
+        path_value.strip_prefix(repo_root).ok()?.to_path_buf()
+    } else {
+        path_value
+            .components()
+            .filter(|component| !matches!(component, std::path::Component::CurDir))
+            .collect::<PathBuf>()
+    };
+    let relpath = relpath.to_string_lossy().replace('\\', "/");
+    if !relpath.starts_with(".adl/") {
+        return None;
+    }
+    issue_bundle_issue_number_from_repo_relative(&relpath)?;
+    match Path::new(&relpath)
+        .file_name()
+        .and_then(|name| name.to_str())
+    {
+        Some("sip.md" | "stp.md" | "spp.md" | "srp.md" | "sor.md") => Some(relpath),
+        _ => None,
+    }
 }
 
 pub(super) fn ensure_no_staged_issue_bundle_mutations(
