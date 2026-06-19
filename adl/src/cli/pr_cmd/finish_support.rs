@@ -2098,9 +2098,7 @@ fn finish_local_issue_bundle_card_display(repo_root: &Path, path: &str) -> Optio
     if !relpath.starts_with(".adl/") {
         return None;
     }
-    if issue_bundle_issue_number_from_repo_relative(&relpath).is_none() {
-        return None;
-    }
+    issue_bundle_issue_number_from_repo_relative(&relpath)?;
     match Path::new(&relpath)
         .file_name()
         .and_then(|name| name.to_str())
