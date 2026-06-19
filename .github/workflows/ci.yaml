@@ -444,6 +444,11 @@ jobs:
       - name: PR fast coverage summary (json)
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: |
+          rm -rf target/debug target/llvm-cov-target
+          COVERAGE_BUILD_ROOT="/mnt/adl-pr-fast-coverage"
+          mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
+          export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
+          export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
           CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E "${{ steps.coverage-impact.outputs.filter_expression }}"
           cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
 

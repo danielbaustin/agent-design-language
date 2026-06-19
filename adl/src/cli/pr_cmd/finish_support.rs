@@ -1225,6 +1225,13 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_ci_runtime_contract_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            commands.push("bash adl/tools/test_ci_runtime_contracts.sh".to_string());
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_validation_selector_focused_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1496,6 +1503,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_check_coverage_impact.sh"
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
+            | "adl/tools/test_ci_runtime_contracts.sh"
             | "adl/tools/run_pr_fast_test_lane.sh"
             | "adl/tools/test_run_pr_fast_test_lane.sh"
             | "adl/config/validation_lane_selector.v0.91.6.json"
@@ -1717,6 +1725,14 @@ fn finish_path_needs_ci_policy_focused_validation(path: &str) -> bool {
             | "adl/tools/test_ci_path_policy.sh"
             | "adl/tools/run_pr_fast_test_lane.sh"
             | "adl/tools/test_run_pr_fast_test_lane.sh"
+    )
+}
+
+fn finish_path_needs_ci_runtime_contract_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        ".github/workflows/ci.yaml" | "adl/tools/test_ci_runtime_contracts.sh"
     )
 }
 
@@ -2149,6 +2165,10 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_ci_path_policy.sh" => {
                     let script = repo_root.join("adl/tools/test_ci_path_policy.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_ci_runtime_contracts.sh" => {
+                    let script = repo_root.join("adl/tools/test_ci_runtime_contracts.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_run_pr_fast_test_lane.sh" => {
