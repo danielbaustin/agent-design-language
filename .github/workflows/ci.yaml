@@ -372,28 +372,25 @@ jobs:
           if test -s adl/coverage-impact-filters.txt; then
             mapfile -t coverage_filters < adl/coverage-impact-filters.txt
             run_cli_smoke_process_status=false
+            run_cli_smoke_basics=false
             run_finish_bins=false
-            has_finish=false
             for filter in "${coverage_filters[@]}"; do
               case "$filter" in
                 process_status)
                   run_cli_smoke_process_status=true
                   ;;
+                cli_basics)
+                  run_cli_smoke_basics=true
+                  ;;
                 finish)
                   run_finish_bins=true
-                  has_finish=true
                   ;;
               esac
             done
             generic_filters=()
             for filter in "${coverage_filters[@]}"; do
               case "$filter" in
-                process_status|finish)
-                  ;;
-                cli|usage)
-                  if [ "$has_finish" != "true" ]; then
-                    generic_filters+=("$filter")
-                  fi
+                process_status|cli_basics|finish)
                   ;;
                 *)
                   generic_filters+=("$filter")
@@ -403,12 +400,14 @@ jobs:
             echo "needs_fast_summary=true" >> "$GITHUB_OUTPUT"
             echo "filters=$(paste -sd' ' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"
             echo "run_cli_smoke_process_status=$run_cli_smoke_process_status" >> "$GITHUB_OUTPUT"
+            echo "run_cli_smoke_basics=$run_cli_smoke_basics" >> "$GITHUB_OUTPUT"
             echo "run_finish_bins=$run_finish_bins" >> "$GITHUB_OUTPUT"
             echo "generic_filters=${generic_filters[*]}" >> "$GITHUB_OUTPUT"
           else
             echo "needs_fast_summary=false" >> "$GITHUB_OUTPUT"
             echo "filters=" >> "$GITHUB_OUTPUT"
             echo "run_cli_smoke_process_status=false" >> "$GITHUB_OUTPUT"
+            echo "run_cli_smoke_basics=false" >> "$GITHUB_OUTPUT"
             echo "run_finish_bins=false" >> "$GITHUB_OUTPUT"
             echo "generic_filters=" >> "$GITHUB_OUTPUT"
           fi
@@ -485,6 +484,11 @@ jobs:
             CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke process_status --no-report
             cargo llvm-cov report --json --summary-only --output-path coverage-summary-process-status.json
             summary_files+=(coverage-summary-process-status.json)
+          fi
+          if [ "${{ steps.coverage-impact.outputs.run_cli_smoke_basics }}" = "true" ]; then
+            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke basics --no-report
+            cargo llvm-cov report --json --summary-only --output-path coverage-summary-cli-basics.json
+            summary_files+=(coverage-summary-cli-basics.json)
           fi
           if [ "${{ steps.coverage-impact.outputs.run_finish_bins }}" = "true" ]; then
             CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --bin adl-pr-finish finish --no-report

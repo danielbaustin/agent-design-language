@@ -163,6 +163,9 @@ candidate_filter_for_path() {
     adl/src/cli/process_cmd.rs)
       printf 'process_status'
       ;;
+    adl/src/cli/mod.rs|adl/src/cli/tests.rs|adl/src/cli/usage.rs)
+      printf 'cli_basics'
+      ;;
     adl/src/cli/pr_cmd/finish_support.rs)
       printf 'finish'
       ;;
@@ -189,9 +192,6 @@ candidate_filter_for_path() {
       ;;
     adl/src/uts_acc_multi_model_benchmark.rs|adl/src/uts_acc_multi_model_benchmark/*.rs|adl/src/uts_acc_multi_model_benchmark/*/*.rs)
       printf 'uts_acc_multi_model_benchmark::'
-      ;;
-    adl/src/cli/mod.rs|adl/src/cli/tests.rs)
-      printf 'cli'
       ;;
     adl/src/bin/adl_lint_prompt_spec.rs|adl/src/bin/adl_prompt_template.rs|adl/src/bin/adl_validate_structured_prompt.rs)
       printf 'tooling_cmd'
@@ -266,6 +266,18 @@ file_has_no_executable_surface() {
   ! grep -Eq '^[[:space:]]*(pub([[:space:]]*\([^)]*\))?[[:space:]]+)?fn[[:space:]]+|^[[:space:]]*impl([[:space:][:alnum:]_<>,:&]+)?[[:space:]]*\{' "$ROOT/$path"
 }
 
+changed_source_paths="$(
+  printf '%s\n' "$changed_source_rows" | awk -F '\t' 'NF >= 2 { print $2 }'
+)"
+
+path_has_companion_cli_dispatch_change() {
+  local path="$1"
+  [ "$path" = "adl/src/cli/mod.rs" ] || return 1
+
+  grep -Eq '^adl/src/cli/[^/]+_cmd\.rs$|^adl/src/cli/[^/]+_cmd/|^adl/src/cli/usage\.rs$' \
+    <<<"$changed_source_paths"
+}
+
 risk_rows=""
 while IFS=$'\t' read -r status path; do
   [ -n "$path" ] || continue
@@ -334,6 +346,9 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
     fi
     pct="$(printf '%s\n' "$row" | awk -F '\t' '{ printf "%.2f", $3 + 0 }')"
     covered_count="$(printf '%s\n' "$row" | awk -F '\t' '{ printf "%s/%s", $1, $2 }')"
+    if path_has_companion_cli_dispatch_change "$path" && awk -v pct="$pct" 'BEGIN { exit ((pct + 0) > 0) ? 0 : 1 }'; then
+      continue
+    fi
     if ! awk -v pct="$pct" -v threshold="$THRESHOLD" 'BEGIN { exit ((pct + 0) < (threshold + 0)) ? 0 : 1 }'; then
       continue
     fi

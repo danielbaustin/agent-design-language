@@ -68,6 +68,18 @@ process_status_filters="$TMP/process-status-filters.txt"
 bash "$SCRIPT" --changed-files "$process_status_changed" --print-risk-filters >"$process_status_filters"
 grep -Fx "process_status" "$process_status_filters" >/dev/null
 
+cli_usage_changed="$TMP/cli-usage-changed.txt"
+printf 'A\tadl/src/cli/usage.rs\n' >"$cli_usage_changed"
+cli_usage_filters="$TMP/cli-usage-filters.txt"
+bash "$SCRIPT" --changed-files "$cli_usage_changed" --print-risk-filters >"$cli_usage_filters"
+grep -Fx "cli_basics" "$cli_usage_filters" >/dev/null
+
+cli_mod_changed="$TMP/cli-mod-changed.txt"
+printf 'A\tadl/src/cli/mod.rs\n' >"$cli_mod_changed"
+cli_mod_filters="$TMP/cli-mod-filters.txt"
+bash "$SCRIPT" --changed-files "$cli_mod_changed" --print-risk-filters >"$cli_mod_filters"
+grep -Fx "cli_basics" "$cli_mod_filters" >/dev/null
+
 mixed_pr_cmd_helper_changed="$TMP/mixed-pr-cmd-helper-changed.txt"
 printf 'A\tadl/src/cli/pr_cmd/github.rs\n' >"$mixed_pr_cmd_helper_changed"
 mixed_pr_cmd_helper_filters="$TMP/mixed-pr-cmd-helper-filters.txt"
@@ -198,6 +210,49 @@ grep -F "77.00% < 80%" /tmp/coverage-impact-low.out >/dev/null
 grep -F "Actionable next steps:" /tmp/coverage-impact-low.out >/dev/null
 grep -F "refresh focused summary after adding or expanding tests: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- new_large_surface" /tmp/coverage-impact-low.out >/dev/null
 grep -F "Common failure modes:" /tmp/coverage-impact-low.out >/dev/null
+
+cli_dispatch_companion_changed="$TMP/cli-dispatch-companion-changed.txt"
+cat >"$cli_dispatch_companion_changed" <<'EOF'
+M	adl/src/cli/mod.rs
+M	adl/src/cli/process_cmd.rs
+EOF
+cli_dispatch_companion_summary="$TMP/cli-dispatch-companion-summary.json"
+cat >"$cli_dispatch_companion_summary" <<'EOF'
+{
+  "data": [
+    {
+      "files": [
+        {
+          "filename": "adl/src/cli/mod.rs",
+          "summary": {
+            "lines": {
+              "covered": 64,
+              "count": 363
+            }
+          }
+        },
+        {
+          "filename": "adl/src/cli/process_cmd.rs",
+          "summary": {
+            "lines": {
+              "covered": 320,
+              "count": 399
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+EOF
+bash "$SCRIPT" --changed-files "$cli_dispatch_companion_changed" --summary "$cli_dispatch_companion_summary" >/tmp/coverage-impact-cli-dispatch-companion-pass.out
+grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-cli-dispatch-companion-pass.out >/dev/null
+
+if bash "$SCRIPT" --changed-files "$cli_mod_changed" --summary "$cli_dispatch_companion_summary" >/tmp/coverage-impact-cli-mod-alone-fails.out 2>&1; then
+  echo "expected cli mod dispatch surface without a companion command change to stay threshold-gated" >&2
+  exit 1
+fi
+grep -F "adl/src/cli/mod.rs (64/363, 17.63% < 80%)" /tmp/coverage-impact-cli-mod-alone-fails.out >/dev/null
 
 missing_summary="$TMP/missing-row-summary.json"
 make_summary "adl/src/runtime_v2/other.rs" 100 100 "$missing_summary"

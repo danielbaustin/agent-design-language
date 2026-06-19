@@ -479,12 +479,12 @@ workflow = Path(".github/workflows/ci.yaml")
 text = workflow.read_text()
 text = text.replace(
     '            echo "filters=$(paste -sd\' \' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"\n',
-    '            echo "filters=$(paste -sd\' \' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_process_status=true" >> "$GITHUB_OUTPUT"\n',
+    '            echo "filters=$(paste -sd\' \' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_process_status=true" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_basics=true" >> "$GITHUB_OUTPUT"\n',
     1,
 )
 text = text.replace(
     "          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -- ${{ steps.coverage-impact.outputs.filters }}\n          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json\n",
-    "          summary_files=()\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_process_status }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke process_status --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-process-status.json\n            summary_files+=(coverage-summary-process-status.json)\n          fi\n          cp \"${summary_files[0]}\" coverage-summary.json\n",
+    "          summary_files=()\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_process_status }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke process_status --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-process-status.json\n            summary_files+=(coverage-summary-process-status.json)\n          fi\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_basics }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke basics --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-cli-basics.json\n            summary_files+=(coverage-summary-cli-basics.json)\n          fi\n          cp \"${summary_files[0]}\" coverage-summary.json\n",
     1,
 )
 workflow.write_text(text)
@@ -498,6 +498,9 @@ coverage.write_text(
     "  case \"$path\" in\n"
     "    adl/src/cli/process_cmd.rs)\n"
     "      printf 'process_status'\n"
+    "      ;;\n"
+    "    adl/src/cli/mod.rs|adl/src/cli/usage.rs)\n"
+    "      printf 'cli_basics'\n"
     "      ;;\n"
     "  esac\n"
     "}\n"
