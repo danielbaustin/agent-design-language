@@ -4,7 +4,7 @@
 
 - Feature Name: AEE, Memory/ObsMem, And ACP Bridge Accounting
 - Milestone Target: `v0.91.6`
-- Status: planned_with_aee_obsmem_and_memory_palace_routing_state_explicit
+- Status: planned_with_aee_obsmem_memory_palace_and_acp_routing_state_explicit
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, policy
@@ -57,7 +57,7 @@ consumes it.
 | AEE completion and readiness | `#4037` | AEE is classified as complete, blocked, or explicitly routed with proof limits and `v0.92` status | routed with named `v0.92` proof owners |
 | Memory/ObsMem handoff | `#4038` | Memory/ObsMem boundary is distinct, evidence-backed, and privacy-constrained | routed with explicit handoff boundary and `v0.92` consumption limits |
 | Memory Palace long-context bridge | `#4039` | Long-context solution path is explicit with proof or explicitly accepted residual routing | routed with explicit long-context boundary and first proof shape |
-| ACP/cognitive profile scope and privacy boundary | `#4040` | ACP and cognitive-profile boundaries stay distinct from provider/capability/identity surfaces and preserve privacy/security rules | planned child issue |
+| ACP/cognitive profile scope and privacy boundary | `#4040` | ACP and cognitive-profile boundaries stay distinct from provider/capability/identity surfaces and preserve privacy/security rules | routed with explicit ACP boundary, privacy rules, and non-collapse constraints |
 | WP-10 feature closeout matrix | `#4041` | All child surfaces have terminal status and the final closeout packet preserves residual truth | planned closeout issue |
 
 ## Feature Surface Inventory
@@ -287,6 +287,130 @@ Current non-claims:
 - publication/privacy review is already closed for memory-adjacent material;
 - activation or birthday readiness may rely on Memory Palace as shipped
   runtime behavior.
+
+## ACP / Cognitive Profile Scope And Privacy Boundary Status
+
+Current truthful classification:
+
+- `routed_with_explicit_acp_scope_privacy_and_non_collapse_rules`
+
+ACP / cognitive profiles are now an explicit routed bridge surface with named
+privacy, schema, and non-collapse rules, but this issue does not prove a
+completed ACP runtime or authorize publication of private profile material.
+
+Evidence consumed for this status:
+
+- `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md`
+- `docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md`
+- `docs/milestones/v0.91.6/review/provider/PROVIDER_PROFILES_V2_RECONCILIATION_4111.md`
+- `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md`
+- `docs/milestones/v0.91.6/features/IDENTITY_CONTINUITY_CAPABILITY_SELECTOR_BRIDGE_v0.91.6.md`
+- this `v0.91.6` bridge ledger
+
+Authoring/input drift retained for traceability:
+
+- the issue body named `ADL_PROFILES_PROVIDERS_V2.MD`
+- that path is not the live tracked ACP/provider-profile authority in the
+  current repository state
+- the current tracked authority for the provider/profile boundary is the
+  reconciliation packet `PROVIDER_PROFILES_V2_RECONCILIATION_4111.md` plus the
+  cited bridge surfaces above
+
+What is already explicit enough to consume as routed planning truth:
+
+| ACP/profile surface | Current routed truth | Why it is not full completion |
+| --- | --- | --- |
+| ACP/profile role | ACP/cognitive profiles are bounded runtime-visible profile records, not reputation, public standing, rights, or identity itself | Role definition is not runtime implementation proof |
+| Provider/capability separation | Provider profiles remain low-level substrate records, and capability profiles remain provider-independent behavioral descriptors | Separation rules do not mean ACP profiles are already implemented |
+| Identity/citizen truth boundary | Identity, citizen, institution, guild, and continuity surfaces remain outside the provider lane and must not be collapsed into ACP records | Boundary truth is not durable identity or citizenship proof |
+| Privacy/redaction posture | Profile use must preserve private-state, redaction, and publication boundaries consumed from WP-07 | Security-floor consumption is not publication-safe completion |
+| v0.92 route | `v0.92` owns the first bounded ACP/profile contract, fixtures, update rules, and review packet posture | Routing still leaves implementation/proof work open |
+
+Current ACP/profile boundary:
+
+| Surface | Current bridge rule | Non-claim preserved here |
+| --- | --- | --- |
+| ACP / cognitive profile | Evidence-grounded runtime-visible profile record describing what evidence is available, private, or unsupported | ACP is not identity, personhood, rights, or reputation |
+| Provider profile | Low-level infrastructure and transport record | Provider profile is not ACP, capability, citizen, or public identity |
+| Capability profile | Provider-independent behavioral descriptor | Capability profile is not ACP/cognitive profile or civil identity |
+| Identity / citizen / institution / guild | Governance and continuity-facing surfaces that may later constrain profile use | These records are not provider or ACP profile fields by default |
+| Public/reviewer projection | Redacted reviewer/public surface only when the relevant security boundary is satisfied | This issue does not approve raw private profile publication |
+
+Current ACP field/privacy classification:
+
+| Field family | Current privacy class | Current rule |
+| --- | --- | --- |
+| Profile identifier, schema version, update reason, update actor, non-claims summary | `public_or_reviewer_visible_if_redacted` | These fields may appear in reviewer/public projections only as bounded metadata and must not imply reputation, personhood, or rights |
+| Source-evidence links and evidence-status summaries | `reviewer_visible_redacted_public_blocked_by_default` | Reviewer packets may cite bounded evidence references; public projection must stay redacted and must not expose private state or raw memory/profile material |
+| Memory-, continuity-, learning-, or intelligence-derived profile content | `private` | This issue does not authorize broad publication; such content remains inside the bounded runtime/reviewer path until later proof explicitly clears a narrower projection |
+| Unsupported or speculative reputation / standing / rights claims | `blocked` | These claims must not appear in ACP/profile records |
+| Citizen, institution, guild, and continuity records themselves | `blocked_from_acp_field_collapse` | These records may constrain later profile use but are not ACP fields in this bridge |
+
+Current ACP access posture:
+
+| Access class | What may be seen | Current posture |
+| --- | --- | --- |
+| Runtime-local bounded owner path | Full bounded ACP/profile record once later implementation exists | planned route only; not implemented by this issue |
+| Internal reviewer packet | Redacted metadata, bounded evidence references, privacy policy, and non-claims | allowed as the intended review surface once later proof lands |
+| Public/reviewer-facing projection | Redacted metadata and explicit non-claims only | blocked by default unless the relevant WP-07/WP-10 privacy proof clears the narrower projection |
+| Provider/capability/profile routing layers | No direct ACP/profile field access by default | must consume only the boundary rules, not private ACP content |
+| Identity/citizen/governance surfaces | May later constrain profile use, but not read ACP as authority by default | deferred and out of scope for this bridge |
+
+Current ACP/privacy and access rules:
+
+- ACP/profile records must stay evidence-grounded and cite allowed source
+  references rather than free-floating labels.
+- Access posture is bounded: reviewer-facing use is the intended first visible
+  path, public projection is blocked by default, and runtime-local full access
+  remains future implementation work.
+- Unsupported reputation, personhood, standing, or rights claims must remain
+  rejected.
+- Public or reviewer-facing profile material must respect WP-07 redaction and
+  publication boundaries.
+- ACP/profile scope must remain distinct from provider profiles, capability
+  profiles, and identity/citizen records.
+
+Current first ACP proof / fixture route:
+
+| Planned ACP proof surface | Why it matters | Current owner / route |
+| --- | --- | --- |
+| ACP/profile schema and fixtures | Makes the runtime-visible profile contract reviewable rather than narrative-only | `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md` and later `v0.92` issue work |
+| Update-rationale and evidence references | Shows profile changes are grounded in evidence and not label drift | planned `v0.92` ACP implementation slice; concrete issue owner still required before downstream proof consumption |
+| Redacted reviewer packet and validation report | Proves privacy policy, non-claims, and rejection behavior | planned `v0.92` review/validation slice; concrete issue owner still required before downstream proof consumption |
+
+Current non-claims:
+
+- `v0.91.6` does not prove a full ACP/profile runtime implementation.
+- `v0.91.6` does not prove profile schemas or fixtures are already landed.
+- `v0.91.6` does not authorize ACP/profile publication by default.
+- `v0.91.6` does not collapse provider, capability, identity, citizen, or
+  institution surfaces into ACP records.
+- `v0.92` must still require bounded implementation and proof before using ACP
+  profiles as more than a routed bridge surface.
+
+## v0.92 ACP / Cognitive Profile Consumption Rule
+
+`v0.92` may consume this issue as proof that:
+
+- ACP / cognitive profiles are a named bounded runtime-profile direction rather
+  than a vague future bucket;
+- ACP/profile scope must remain distinct from provider profiles, capability
+  profiles, and identity/citizen records;
+- privacy, redaction, and non-reputation rules are explicit;
+- the first ACP proof shape is at least explicit enough to route, with schema,
+  evidence/update-rationale, and redacted reviewer-packet surfaces named for
+  later ownership.
+
+`v0.92` may not consume this issue as proof that:
+
+- ACP/profile schema and fixtures are already implemented;
+- ACP/profile publication is already safe by default;
+- provider-profile reconciliation has turned ACP into a provider or capability
+  surface;
+- identity, citizen, institution, guild, or continuity truth can be inferred
+  from ACP alone;
+- activation or birthday readiness may rely on ACP as a fully shipped runtime
+  contract today.
 
 ## Dependency And Proof Expectations
 
