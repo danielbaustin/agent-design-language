@@ -4,7 +4,7 @@
 
 - Feature Name: Identity, Continuity, And Capability Selector Bridge
 - Milestone Target: `v0.91.6`
-- Status: issue_wave_open_with_partial_delivery
+- Status: wp_08_closeout_packet_authored
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, policy
@@ -405,6 +405,78 @@ Bridge completion for this issue wave requires at least:
 
 Anything less should be recorded as blocked, deferred, or routed rather than
 quietly treated as complete continuity support.
+
+## WP-08 Completion Matrix
+
+WP-08 closeout is only valid if the identity/capability bridge records what was
+actually completed in each child issue and which claims remain routed or
+bounded.
+
+| Child issue | Delivered surface | Bridge truth in this closeout packet |
+| --- | --- | --- |
+| `#4025` `I-00` | Provider/capability/citizen/guild/institution boundary vocabulary | Complete as the non-collapse baseline for later WP-08 slices |
+| `#4026` `I-01` | Capability evidence ingestion boundary and stale-evidence rules | Complete as the advisory capability-evidence intake posture for `v0.91.6` |
+| `#4027` `I-02` | Positive and negative continuity cases plus resilience/security dependency links | Complete as the continuity-claim guardrail layer; replay and publication residuals remain explicit |
+| `#4028` `I-03` | Capability-selector MVP bridge contract, candidate ordering, and governance narrowing rules | Complete as a capability-first advisory selector contract; no runtime selector implementation is implied |
+| `#4029` `I-04` | Final closeout matrix, validation/review link surface, and residual routing | This closeout packet records the final reviewer-facing bridge truth and becomes terminal when merged |
+
+Once `#4029` merges, WP-08 should therefore be treated as:
+
+- `complete_for_bridge_consumption` for the reviewed boundary vocabulary and
+  advisory bridge rules documented here;
+- `blocked_on_replay_or_custody_proof` for any durable continuity claim that
+  needs replay, restore, migration, or custody proof beyond the current bridge;
+- `blocked_on_security_exposure_review` for any publication, Observatory, or
+  transport-facing identity claim that exceeds the named WP-07/WP-09/WP-10
+  review boundaries;
+- `deferred_to_future_runtime_work` for any runtime selector, durable identity,
+  or Aptitude Atlas product behavior not explicitly proved in `v0.91.6`.
+
+## Validation And Review Links
+
+The closeout-ready bridge depends on the merged and reviewed issue wave rather
+than on one prose block alone. The minimum proving surfaces are:
+
+- `#4025` boundary vocabulary merged through PR `#4194`;
+- `#4026` capability-evidence ingestion merged through PR `#4195`;
+- `#4027` continuity positive/negative cases merged through PR `#4197`;
+- `#4028` selector MVP bridge merged through PR `#4198`;
+- issue-local SRP/SOR truth for each child issue capturing bounded review and
+  focused validation;
+- this bridge doc as the consolidated reviewer-facing WP-08 surface.
+
+The proving bar for WP-08 is documentation and review truth, not runtime-demo
+theater. No section of this bridge should be read as proof of a shipped identity
+runtime, durable citizen substrate, or provider-executing selector.
+
+## Residual List And Owners
+
+| Residual area | Current owner / route | Why it remains residual |
+| --- | --- | --- |
+| durable continuity replay and custody proof | WP-02 resilience substrate and later continuity work | `v0.91.6` names prerequisites but does not prove a durable same-entity runtime loop |
+| publication and inhabitant-safe identity exposure | WP-07 security bridge plus WP-09 and WP-10 open implementation owners | Identity-sensitive display and ingestion are still blocked from silent promotion |
+| runtime capability-selector implementation | future runtime / activation work after the bridge | WP-08 proves the contract shape, not an executable selector service |
+| guild/citizen/institution governance realization | later governance and identity milestone work | `v0.91.6` keeps these as narrowing or policy surfaces, not first-class runtime authority |
+| Aptitude Atlas productization | post-`v0.95` route only | WP-08 consumes bounded evidence but does not create an Atlas product baseline |
+
+## v0.92 Bridge Status
+
+For `v0.92`, this bridge now provides:
+
+- reviewed provider/capability/identity boundary vocabulary;
+- reviewed capability-evidence ingestion rules;
+- reviewed continuity positive/negative case language;
+- a reviewed capability-first selector MVP contract;
+- explicit blocked/deferred/residual routing for what is still not true.
+
+What is not true after WP-08 closeout:
+
+- `v0.92` does not inherit a shipped runtime selector or durable continuity
+  engine from this bridge;
+- `v0.92` does not inherit publication-safe identity exposure by default;
+- `v0.92` does not inherit personhood, citizen legitimacy, or institutional
+  authority from provider or capability evidence;
+- `v0.92` does not inherit Aptitude Atlas productization.
 
 ## Validation And Review
 
