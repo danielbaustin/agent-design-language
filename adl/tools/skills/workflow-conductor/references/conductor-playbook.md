@@ -55,6 +55,22 @@ Examples:
 - if cards are clean and execution is already bound, do not route back to `pr-ready`
 - if the PR exists and is failing CI, do not route to `pr-finish`; route to `pr-janitor`
 
+## Goal Handoff Rule
+
+When the selected route binds or resumes tracked issue execution, the conductor
+should record one explicit handoff note: create the issue-bound session goal
+after readiness/bind succeeds and before implementation starts.
+
+The handoff should treat goal state as session-scoped:
+
+- `complete` is truthful when the bounded session objective is done, including
+  a handoff into normal review/wait state after publication when that was the
+  declared session objective
+- `blocked` is truthful only when the repeated blocking threshold is met
+
+Do not claim the conductor or helper scripts can verify live goal state unless
+the relevant integration has been separately proved.
+
 ## Editor Rule
 
 If the blocker is card-local and the matching editor skill exists, route to the matching editor skill instead of allowing ad hoc card edits.

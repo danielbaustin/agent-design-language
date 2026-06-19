@@ -50,6 +50,7 @@ run_out="$(
 
 captured="$(cat "$capture_file")"
 assert_contains 'Issue-mode run: binding execution context for issue 1303' "$run_out" "issue-mode note"
+assert_contains 'Goal guardrail: call create_goal for issue 1303 after bind succeeds and before implementation starts; treat update_goal as a truthful session-terminal record only.' "$run_out" "goal guardrail note"
 assert_contains 'pr start 1303 --slug example-slug --version v0.86' "$captured" "delegates to start binder"
 
 echo "pr.sh run issue-mode delegation: ok"

@@ -121,11 +121,39 @@ Structured Card Templates v2 (required sections):
 These sections are designed to support deterministic replay/security verification and
 machine-parsable prompt automation.
 
-## 4) Implement
+## 4) Create The Issue-Bound Session Goal
+
+After the issue is ready and the execution worktree is bound, create a session
+goal before implementation starts.
+
+Minimum goal content:
+
+- the tracked issue number
+- the concrete session objective
+
+Preferred pattern:
+
+```text
+create_goal objective="#<issue_num> <bounded objective>"
+```
+
+The repository workflow currently treats this as an agent-session requirement,
+not as an ADL runtime-enforced object. `pr.sh` can remind, but it does not
+claim to introspect Codex goal state.
+
+Use `update_goal` only for truthful terminal state:
+
+- `complete` when the current session objective is actually achieved, including
+  publication-to-review handoff when opening or updating the PR was the bounded
+  session objective
+- `blocked` only when the repeated blocking threshold is met and meaningful
+  progress cannot continue without user input or an external state change
+
+## 5) Implement
 
 Read the active issue cards, stay inside the issue edit fence, and make the tracked repo changes.
 
-## 5) Run (when the issue requires a bounded runtime proof surface)
+## 6) Run (when the issue requires a bounded runtime proof surface)
 
 ```bash
 bash ./adl/tools/pr.sh run <adl-file> [run arguments...]
@@ -134,7 +162,7 @@ bash ./adl/tools/pr.sh run <adl-file> [run arguments...]
 Use `pr run` when the issue's proof surface requires emitted run artifacts, replay, or bounded runtime execution.
 For docs-only or non-runtime issues, skip `pr run` truthfully and record that in the SOR or report rather than inventing a hidden step.
 
-## 6) Validate
+## 7) Validate
 
 Typical local preflight:
 
@@ -242,7 +270,7 @@ Always record:
 Do not use full local validation as a reflex. Use it because the changed
 surface needs it.
 
-## 7) Finish PR
+## 8) Finish PR
 
 ```bash
 bash ./adl/tools/pr.sh finish <issue_num> \
@@ -259,7 +287,11 @@ should be synced to the canonical task bundle under:
 Do not treat legacy `.adl/cards/<issue_num>/...` paths as the canonical finish
 surface for new issue work.
 
-## 8) Report
+After publication and terminal issue-session disposition, update the active
+goal truthfully before closeout rather than leaving the session without a final
+completion or blocked record.
+
+## 9) Report
 
 Write a per-issue report under:
 
