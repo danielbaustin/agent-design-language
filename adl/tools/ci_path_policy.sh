@@ -264,7 +264,9 @@ is_bounded_pr_fast_coverage_policy_surface() {
   case "$path" in
     .github/workflows/ci.yaml|\
     adl/tools/check_coverage_impact.sh|\
+    adl/tools/ci_path_policy.sh|\
     adl/tools/test_check_coverage_impact.sh|\
+    adl/tools/test_ci_path_policy.sh|\
     adl/tools/test_ci_runtime_contracts.sh)
       return 0
       ;;
@@ -299,8 +301,22 @@ is_bounded_pr_fast_coverage_policy_change() {
           saw_other=true
         fi
         ;;
+      adl/tools/ci_path_policy.sh)
+        if git_pr_patch "$path" | grep -E 'is_pr_fast_coverage_workflow_change|is_bounded_pr_fast_coverage_policy_surface|is_bounded_pr_fast_coverage_policy_change|bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation' >/dev/null 2>&1; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
       adl/tools/test_check_coverage_impact.sh)
         if git_pr_patch "$path" | grep -F 'process_status' >/dev/null 2>&1; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+      adl/tools/test_ci_path_policy.sh)
+        if git_pr_patch "$path" | grep -F 'runtime-bounded-pr-fast-coverage-policy-change' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
