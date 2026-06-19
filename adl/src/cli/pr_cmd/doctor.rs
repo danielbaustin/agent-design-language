@@ -91,15 +91,12 @@ pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
         }
     };
     let mode = doctor_mode_name(&parsed.mode);
+    let ready_status = ready.as_ref().map(|x| x.status);
     let doctor_status = match parsed.mode {
         DoctorMode::Preflight => preflight.status,
-        DoctorMode::Ready => ready.as_ref().map(|x| x.status).unwrap_or("BLOCK"),
+        DoctorMode::Ready => ready_status.unwrap_or("BLOCK"),
         DoctorMode::Full => {
-            if preflight.status == "PASS" && ready.as_ref().map(|x| x.status) == Some("PASS") {
-                "PASS"
-            } else {
-                "BLOCK"
-            }
+            doctor_full_status(preflight.status, preflight.block_kind, ready_status)
         }
     };
 
@@ -114,10 +111,12 @@ pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
             target_queue: preflight.target_queue.clone(),
             target_queue_source: preflight.target_queue_source,
             preflight_status: preflight.status,
+            preflight_block_kind: preflight.block_kind,
+            preflight_guidance: preflight.guidance,
             open_pr_count: preflight.open_pr_count,
             open_prs: preflight.open_prs,
             lifecycle_state: ready.as_ref().map(|x| x.lifecycle_state),
-            ready_status: ready.as_ref().map(|x| x.status),
+            ready_status,
             worktree: ready.as_ref().and_then(|x| x.worktree.clone()),
             source: ready.as_ref().map(|x| x.source.clone()),
             root_stp: ready.as_ref().map(|x| x.root_stp.clone()),
@@ -145,6 +144,18 @@ pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
         println!("DOCTOR_STATUS={doctor_status}");
     }
     Ok(())
+}
+
+fn doctor_full_status(
+    preflight_status: &'static str,
+    preflight_block_kind: &'static str,
+    ready_status: Option<&'static str>,
+) -> &'static str {
+    match (preflight_status, preflight_block_kind, ready_status) {
+        ("PASS", _, Some("PASS")) => "PASS",
+        ("BLOCK", "open_pr_wave", Some("PASS")) => "WARN",
+        _ => "BLOCK",
+    }
 }
 
 fn resolve_doctor_scope_and_slug(

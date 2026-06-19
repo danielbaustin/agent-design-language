@@ -1,4 +1,4 @@
-use super::preflight::preflight_card_run_readiness;
+use super::preflight::{doctor_preflight_status, preflight_card_run_readiness};
 use super::*;
 use crate::cli::pr_cmd_cards::StructuredBundlePaths;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -22,6 +22,45 @@ fn doctor_issue_prompt_resolution_falls_back_to_bound_worktree_prompt() {
         resolve_doctor_issue_prompt_path(&repo, &issue_ref).expect("doctor source prompt");
 
     assert_eq!(resolved, source_path);
+}
+
+#[test]
+fn doctor_full_warns_when_only_open_wave_blocks_ready_issue() {
+    let (preflight_status, block_kind, guidance) = doctor_preflight_status(false, Some("ready"));
+
+    assert_eq!(preflight_status, "BLOCK");
+    assert_eq!(block_kind, "open_pr_wave");
+    assert!(guidance.contains("--allow-open-pr-wave"));
+    assert_eq!(
+        doctor_full_status(preflight_status, block_kind, Some("PASS")),
+        "WARN"
+    );
+}
+
+#[test]
+fn doctor_full_stays_blocked_for_issue_local_card_readiness() {
+    let (preflight_status, block_kind, guidance) = doctor_preflight_status(true, Some("blocked"));
+
+    assert_eq!(preflight_status, "BLOCK");
+    assert_eq!(block_kind, "card_run_readiness");
+    assert!(guidance.contains("SIP/STP/SPP/SRP/SOR"));
+    assert_eq!(
+        doctor_full_status(preflight_status, block_kind, Some("PASS")),
+        "BLOCK"
+    );
+}
+
+#[test]
+fn doctor_full_stays_blocked_for_combined_open_wave_and_card_readiness() {
+    let (preflight_status, block_kind, guidance) = doctor_preflight_status(false, Some("blocked"));
+
+    assert_eq!(preflight_status, "BLOCK");
+    assert_eq!(block_kind, "open_pr_wave_and_card_run_readiness");
+    assert!(guidance.contains("card readiness"));
+    assert_eq!(
+        doctor_full_status(preflight_status, block_kind, Some("PASS")),
+        "BLOCK"
+    );
 }
 
 #[test]
