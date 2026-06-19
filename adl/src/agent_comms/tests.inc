@@ -1383,6 +1383,268 @@
     }
 
     #[test]
+    fn acip_local_carrier_schemas_are_available() {
+        let carrier_schema = acip_local_carrier_v1_schema_json().expect("carrier schema");
+        let exchange_schema =
+            acip_local_invocation_exchange_v1_schema_json().expect("exchange schema");
+        assert!(carrier_schema.contains("\"routes\""));
+        assert!(exchange_schema.contains("\"response_message\""));
+    }
+
+    #[test]
+    fn acip_local_carrier_executes_review_round_trip() {
+        let carrier = sample_acip_local_carrier_v1();
+        validate_acip_local_carrier_v1(&carrier).expect("carrier should validate");
+
+        let contract = sample_invocation_contract();
+        let request_message = sample_local_review_request_message(&contract);
+        let exchange = execute_acip_local_invocation_round_trip(&carrier, &request_message, &contract)
+            .expect("local round trip should execute");
+
+        validate_acip_local_invocation_exchange_v1(&exchange)
+            .expect("exchange should validate");
+        assert_eq!(
+            exchange.invocation_event.status,
+            AcipInvocationStatusV1::Completed
+        );
+        assert_eq!(exchange.request_message.correlation_id, Some(contract.invocation_id.clone()));
+        assert_eq!(
+            exchange.response_message.correlation_id,
+            Some(contract.invocation_id.clone())
+        );
+        assert_eq!(
+            exchange.response_message.prior_message_id,
+            Some(exchange.request_message.message_id.clone())
+        );
+        assert_eq!(exchange.response_message.sender, contract.target);
+        assert_eq!(exchange.response_message.recipient, contract.caller);
+        assert_eq!(
+            exchange.invocation_event.output_refs,
+            vec!["runtime/comms/local_carrier/invoke-0001/review_report.json".to_string()]
+        );
+        assert!(exchange
+            .response_message
+            .content
+            .contains("completed locally"));
+    }
+
+    #[test]
+    fn acip_local_carrier_honors_artifact_reply_channel_for_single_output_contract() {
+        let carrier = sample_acip_local_carrier_v1();
+        let mut contract = sample_invocation_contract();
+        contract.response_channel = AcipResponseChannelV1 {
+            kind: AcipResponseChannelKindV1::ArtifactReply,
+            channel_ref: "runtime/comms/replies/review_report.json".to_string(),
+        };
+        let request_message = sample_local_review_request_message(&contract);
+        let exchange = execute_acip_local_invocation_round_trip(&carrier, &request_message, &contract)
+            .expect("artifact reply round trip should execute");
+
+        assert_eq!(
+            exchange.invocation_event.output_refs,
+            vec!["runtime/comms/replies/review_report.json".to_string()]
+        );
+        assert_eq!(
+            exchange.response_message.artifact_refs,
+            vec!["runtime/comms/replies/review_report.json".to_string()]
+        );
+    }
+
+    #[test]
+    fn acip_local_carrier_artifact_reply_multi_output_stays_within_declared_outputs() {
+        let carrier = sample_acip_local_carrier_v1();
+        let mut contract = sample_invocation_contract();
+        contract.expected_outputs.push(AcipExpectedOutputV1 {
+            output_id: "secondary_report".to_string(),
+            output_kind: "report".to_string(),
+            artifact_role: "review_surface".to_string(),
+            schema_ref: None,
+            required: true,
+        });
+        contract.response_channel = AcipResponseChannelV1 {
+            kind: AcipResponseChannelKindV1::ArtifactReply,
+            channel_ref: "runtime/comms/replies/review_report.json".to_string(),
+        };
+
+        let exchange = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &sample_local_review_request_message(&contract),
+            &contract,
+        )
+        .expect("multi-output artifact reply should execute");
+
+        assert_eq!(
+            exchange.invocation_event.output_refs,
+            vec![
+                "runtime/comms/replies/review_report.json".to_string(),
+                "runtime/comms/replies/secondary_report.json".to_string(),
+            ]
+        );
+        assert_eq!(
+            exchange.response_message.artifact_refs,
+            exchange.invocation_event.output_refs
+        );
+    }
+
+    #[test]
+    fn acip_local_carrier_rejects_missing_or_drifted_correlation_binding() {
+        let carrier = sample_acip_local_carrier_v1();
+        let contract = sample_invocation_contract();
+
+        let mut missing = sample_local_review_request_message(&contract);
+        missing.correlation_id = None;
+        let missing_error = execute_acip_local_invocation_round_trip(&carrier, &missing, &contract)
+            .expect_err("missing correlation should fail");
+        assert!(missing_error
+            .to_string()
+            .contains("request_message.correlation_id to match invocation_contract.invocation_id"));
+
+        let mut drifted = sample_local_review_request_message(&contract);
+        drifted.correlation_id = Some("wrong-correlation".to_string());
+        let drifted_error =
+            execute_acip_local_invocation_round_trip(&carrier, &drifted, &contract)
+                .expect_err("drifted correlation should fail");
+        assert!(drifted_error
+            .to_string()
+            .contains("request_message.correlation_id to match invocation_contract.invocation_id"));
+    }
+
+    #[test]
+    fn acip_local_carrier_rejects_handler_intent_misconfiguration() {
+        let mut carrier = sample_acip_local_carrier_v1();
+        carrier.routes[0].supported_intents =
+            vec![AcipIntentV1::ReviewRequest, AcipIntentV1::CodingRequest];
+        let error = validate_acip_local_carrier_v1(&carrier)
+            .expect_err("review handler must not advertise coding_request");
+        assert!(error
+            .to_string()
+            .contains("must only support review_request"));
+    }
+
+    #[test]
+    fn acip_local_exchange_validation_rejects_request_trace_response_intent_and_route_drift() {
+        let carrier = sample_acip_local_carrier_v1();
+        let contract = sample_invocation_contract();
+        let mut request_message = sample_local_review_request_message(&contract);
+        request_message.intent = AcipIntentV1::CodingRequest;
+        request_message.authority_scope =
+            Some(default_message_authority_scope(&AcipIntentV1::CodingRequest));
+        let event = sample_invocation_event(
+            &contract,
+            AcipInvocationStatusV1::Completed,
+            vec!["runtime/comms/local_carrier/invoke-0001/review_report.json".to_string()],
+            "completed_declared_outputs".to_string(),
+            None,
+            None,
+            vec!["runtime/comms/local_carrier/evidence/review_trace.json".to_string()],
+        );
+        let response_message = transport::sample_message(
+            "msg-invoke-0001-reply",
+            &contract.conversation_id,
+            2,
+            AcipIntentV1::Conversation,
+            "Completed local invocation.",
+        );
+        let exchange = AcipLocalInvocationExchangeV1 {
+            schema_version: "acip.local.invocation.exchange.v1".to_string(),
+            carrier: carrier.clone(),
+            request_message,
+            invocation_contract: contract.clone(),
+            invocation_event: event,
+            response_message: AcipMessageEnvelopeV1 {
+                sender: contract.target.clone(),
+                recipient: contract.caller.clone(),
+                trace_requirement: contract.trace_requirement.clone(),
+                artifact_refs: vec![
+                    "runtime/comms/local_carrier/invoke-0001/review_report.json".to_string(),
+                ],
+                correlation_id: Some(contract.invocation_id.clone()),
+                prior_message_id: Some(contract.causal_message_id.clone()),
+                authority_scope: None,
+                ..response_message
+            },
+        };
+        let intent_error = validate_acip_local_invocation_exchange_v1(&exchange)
+            .expect_err("request intent drift should fail");
+        assert!(intent_error
+            .to_string()
+            .contains("request_message.intent to match invocation_contract.intent"));
+
+        let mut request_trace_drift = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &sample_local_review_request_message(&contract),
+            &contract,
+        )
+        .expect("baseline exchange should execute");
+        request_trace_drift.request_message.trace_requirement = AcipTraceRequirementV1::None;
+        let request_trace_error =
+            validate_acip_local_invocation_exchange_v1(&request_trace_drift)
+                .expect_err("request trace drift should fail");
+        assert!(request_trace_error
+            .to_string()
+            .contains("request_message must preserve invocation trace_requirement"));
+
+        let mut response_intent_drift = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &sample_local_review_request_message(&contract),
+            &contract,
+        )
+        .expect("baseline exchange should execute");
+        response_intent_drift.response_message.intent = AcipIntentV1::ReviewRequest;
+        response_intent_drift.response_message.authority_scope =
+            Some(default_message_authority_scope(&AcipIntentV1::ReviewRequest));
+        let response_intent_error =
+            validate_acip_local_invocation_exchange_v1(&response_intent_drift)
+                .expect_err("response intent drift should fail");
+        assert!(response_intent_error
+            .to_string()
+            .contains("response_message must use conversation intent"));
+
+        let mut response_trace_drift = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &sample_local_review_request_message(&contract),
+            &contract,
+        )
+        .expect("baseline exchange should execute");
+        response_trace_drift.response_message.trace_requirement = AcipTraceRequirementV1::None;
+        let response_trace_error =
+            validate_acip_local_invocation_exchange_v1(&response_trace_drift)
+                .expect_err("response trace drift should fail");
+        assert!(response_trace_error
+            .to_string()
+            .contains("response_message must preserve invocation trace_requirement"));
+
+        let mut route_drift = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &sample_local_review_request_message(&contract),
+            &contract,
+        )
+        .expect("baseline exchange should execute");
+        route_drift.carrier.routes[0].agent.id = "different.agent".to_string();
+        let route_error = validate_acip_local_invocation_exchange_v1(&route_drift)
+            .expect_err("carrier route drift should fail");
+        assert!(route_error
+            .to_string()
+            .contains("has no route for 'reviewer.agent'"));
+
+        let mut artifact_drift = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &sample_local_review_request_message(&contract),
+            &contract,
+        )
+        .expect("baseline exchange should execute");
+        artifact_drift
+            .response_message
+            .artifact_refs
+            .push("runtime/comms/local_carrier/extra.json".to_string());
+        let artifact_error = validate_acip_local_invocation_exchange_v1(&artifact_drift)
+            .expect_err("extra artifact refs should fail");
+        assert!(artifact_error
+            .to_string()
+            .contains("response_message.artifact_refs must match invocation_event.output_refs"));
+    }
+
+    #[test]
     fn acip_message_envelope_rejects_unknown_fields() {
         let mut value =
             serde_json::to_value(acip_fixture_set_v1().valid_messages[0].message.clone())

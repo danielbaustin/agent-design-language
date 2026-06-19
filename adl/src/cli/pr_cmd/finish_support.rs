@@ -1295,6 +1295,15 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             mode = FinishValidationMode::LargerBinaryFocused;
             if paths
                 .iter()
+                .any(|path| finish_path_needs_agent_comms_focused_validation(path))
+            {
+                push_finish_validation_command(
+                    &mut commands,
+                    "cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture",
+                );
+            }
+            if paths
+                .iter()
                 .any(|path| finish_path_needs_provider_adapter_focused_validation(path))
             {
                 push_finish_validation_command(
@@ -1453,6 +1462,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/github_token.rs"
             | "adl/src/lib.rs"
             | "adl/src/scheduler.rs"
+            | "adl/src/agent_comms.rs"
             | "adl/src/provider_adapter.rs"
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
@@ -1528,6 +1538,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/lifecycle/")
+        || trimmed.starts_with("adl/src/agent_comms/")
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
         || trimmed.starts_with("adl/tests/fixtures/scheduler/")
@@ -1803,10 +1814,16 @@ fn finish_path_needs_runtime_owner_lane_validation(path: &str) -> bool {
     matches!(
         trimmed,
         "adl/tools/test_adl_runtime_compatibility.sh"
+            | "adl/src/agent_comms.rs"
             | "adl/src/provider_adapter.rs"
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
-    )
+    ) || trimmed.starts_with("adl/src/agent_comms/")
+}
+
+fn finish_path_needs_agent_comms_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed == "adl/src/agent_comms.rs" || trimmed.starts_with("adl/src/agent_comms/")
 }
 
 fn finish_path_needs_provider_adapter_focused_validation(path: &str) -> bool {
@@ -2203,6 +2220,20 @@ pub(super) fn run_finish_validation_rust(
                 "bash adl/tools/run_owner_validation_lane.sh runtime --build" => {
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?, "runtime", "--build"])?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "agent_comms",
+                            "--lib",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
                 }
                 "cargo test --manifest-path adl/Cargo.toml --lib provider_communication" => {
                     run_finish_validation_status(

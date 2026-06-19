@@ -1012,6 +1012,25 @@ fn finish_validation_plan_classifies_private_endpoint_fixture_sanitation_slice()
 
 #[test]
 fn finish_validation_plan_classifies_resilience_runtime_publication_paths() {
+    let agent_comms_plan = select_finish_validation_plan(
+        "adl/src/agent_comms.rs,adl/src/agent_comms/carrier.inc,adl/src/agent_comms/tests.inc",
+    )
+    .expect("agent_comms runtime plan");
+    assert_eq!(
+        agent_comms_plan.mode,
+        FinishValidationMode::LargerBinaryFocused
+    );
+    assert!(agent_comms_plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture".to_string()
+    ));
+    assert!(agent_comms_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+    assert!(!agent_comms_plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+
     let adapter_plan = select_finish_validation_plan("adl/src/provider_adapter.rs")
         .expect("provider adapter runtime plan");
     assert_eq!(adapter_plan.mode, FinishValidationMode::LargerBinaryFocused);
@@ -2020,7 +2039,7 @@ fn finish_runtime_paths_run_module_focused_validation_and_runtime_lane() {
     }
 
     let plan = select_finish_validation_plan(
-        "adl/src/provider_adapter.rs,adl/src/provider_communication.rs,adl/src/resilience.rs",
+        "adl/src/agent_comms.rs,adl/src/agent_comms/carrier.inc,adl/src/agent_comms/tests.inc,adl/src/provider_adapter.rs,adl/src/provider_communication.rs,adl/src/resilience.rs",
     )
     .expect("runtime focused plan");
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
@@ -2036,6 +2055,7 @@ fn finish_runtime_paths_run_module_focused_validation_and_runtime_lane() {
 
     let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
     assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("agent_comms --lib -- --nocapture"));
     assert!(cargo_calls.contains("--lib provider_adapter"));
     assert!(cargo_calls.contains("--lib provider_communication"));
     assert!(cargo_calls.contains("--lib resilience"));

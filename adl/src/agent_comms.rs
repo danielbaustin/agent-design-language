@@ -22,6 +22,8 @@ const ACIP_CODING_FIXTURE_SCHEMA_VERSION: &str = "acip.coding.fixture.v1";
 const ACIP_TRACE_BUNDLE_SCHEMA_VERSION: &str = "acip.trace.bundle.v1";
 const ACIP_TRACE_FIXTURE_SCHEMA_VERSION: &str = "acip.trace.fixture.v1";
 const ACIP_PROOF_DEMO_SCHEMA_VERSION: &str = "acip.proof.demo.v1";
+const ACIP_LOCAL_CARRIER_SCHEMA_VERSION: &str = "acip.local.carrier.v1";
+const ACIP_LOCAL_INVOCATION_EXCHANGE_SCHEMA_VERSION: &str = "acip.local.invocation.exchange.v1";
 const ACIP_A2A_ADAPTER_SCHEMA_VERSION: &str = "acip.a2a.adapter.v1";
 const ACIP_A2A_FIXTURE_SCHEMA_VERSION: &str = "acip.a2a.fixture.v1";
 const MAX_CONTENT_CHARS: usize = 4_000;
@@ -592,6 +594,39 @@ pub enum AcipProofClassificationV1 {
     NonProving,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipLocalHandlerKindV1 {
+    Review,
+    Coding,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipLocalRouteV1 {
+    pub agent: AcipAddressV1,
+    pub supported_intents: Vec<AcipIntentV1>,
+    pub handler: AcipLocalHandlerKindV1,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipLocalCarrierV1 {
+    pub schema_version: String,
+    pub routes: Vec<AcipLocalRouteV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipLocalInvocationExchangeV1 {
+    pub schema_version: String,
+    pub carrier: AcipLocalCarrierV1,
+    pub request_message: AcipMessageEnvelopeV1,
+    pub invocation_contract: AcipInvocationContractV1,
+    pub invocation_event: AcipInvocationEventV1,
+    pub response_message: AcipMessageEnvelopeV1,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum AcipA2aTrustClassV1 {
@@ -715,6 +750,11 @@ pub mod transport {
     include!("agent_comms/transport.inc");
 }
 
+pub mod carrier {
+    use super::*;
+    include!("agent_comms/carrier.inc");
+}
+
 pub mod dispatch {
     use super::*;
 
@@ -768,6 +808,7 @@ pub mod a2a {
 }
 
 pub use a2a::*;
+pub use carrier::*;
 pub use dispatch::*;
 pub use orchestrate::*;
 pub use transport::*;
@@ -976,6 +1017,18 @@ impl AcipIntentV1 {
             AcipIntentV1::CodingRequest => "coding_request",
             AcipIntentV1::Delegation => "delegation",
             AcipIntentV1::Negotiation => "negotiation",
+        }
+    }
+}
+
+impl AcipInvocationStatusV1 {
+    fn as_str(&self) -> &'static str {
+        match self {
+            AcipInvocationStatusV1::Requested => "requested",
+            AcipInvocationStatusV1::Completed => "completed",
+            AcipInvocationStatusV1::Refused => "refused",
+            AcipInvocationStatusV1::Failed => "failed",
+            AcipInvocationStatusV1::Partial => "partial",
         }
     }
 }
