@@ -31,6 +31,18 @@ These rules are mandatory for ADL issue work.
 1. Use `workflow-conductor` for every issue and lifecycle stage.
    - Do not bypass the conductor for issue execution, review routing,
      publication, janitor work, or closeout.
+   - GitHub operations should use the shared token resolver. When an explicit
+     token-file source is needed, use
+     `ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token`. Never print, copy,
+     commit, or expose the token contents.
+   - Provider credentials, when available, may also be sourced from
+     operator-approved files outside the repo under `$HOME/keys/`. Do not scan,
+     print, copy, commit, or expose that directory or file contents. Map the
+     approved source into the expected provider environment variable only for
+     the command that needs it, such as `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,
+     or `DEEPSEEK_API_KEY`. For provider-specific names such as Gemini/Google,
+     follow the active provider setup docs instead of assuming aliases, and
+     prefer those docs when preparing reusable local environment files.
 2. Edit cards only with editor skills.
    - Use `sip-editor`, `stp-editor`, `spp-editor`, `srp-editor`, `sor-editor`,
      or other issue-card editor skills when card surfaces need normalization.
@@ -74,6 +86,12 @@ These rules are mandatory for ADL issue work.
 - Keep milestone claims, proof claims, and review claims evidence-bound.
 - Prefer repo-relative paths in artifacts and records.
 - Do not silently widen issue scope.
+- For process liveness or port checks, use the permission-safe helper instead
+  of broad host process scans: `adl process status --pid-file <path> --json`,
+  `adl process status --pid <pid> --json`, or
+  `adl process status --port <port> --json`. See
+  `docs/tooling/PERMISSION_SAFE_PROCESS_STATUS.md`. Do not use `ps aux`,
+  `ps -ef`, broad `pgrep`, or broad `lsof` dumps as normal workflow control.
 - New tests must be PVF-classifiable at authoring time. When adding a new test
   surface, make lane class, proof role, determinism posture, resource profile,
   and release-gate status explicit in the same issue/PR through the tracked
@@ -178,7 +196,7 @@ It is not:
 
 ## Source Baseline Used
 
-Last reviewed: 2026-05-19.
+Last reviewed: 2026-06-19.
 
 This file was shaped from the OpenAI/source baselines named by `#2986`, plus
 ADL-specific workflow policy:
@@ -192,6 +210,7 @@ ADL-specific workflow policy:
 - broader open-format companion reference:
   `https://agents.md/`
 - ADL's conductor, worktree, review, and closeout discipline
+- ADL's shared GitHub token resolver and permission-safe process-status helper
 
 The issue named the GitHub `openai/agents.md` baseline explicitly. That
 repository now routes into the broader `agents.md` effort, so this file keeps
