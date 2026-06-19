@@ -162,6 +162,25 @@ fn remote_provider_spec() -> crate::adl::ProviderSpec {
     }
 }
 
+fn mock_provider_spec() -> crate::adl::ProviderSpec {
+    crate::adl::ProviderSpec {
+        id: None,
+        profile: None,
+        kind: "mock".to_string(),
+        base_url: None,
+        default_model: Some("echo-v1".to_string()),
+        config: HashMap::new(),
+    }
+}
+
+fn unique_temp_path(label: &str) -> std::path::PathBuf {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    std::env::temp_dir().join(format!("{label}-{now}-{}", std::process::id()))
+}
+
 fn steering_patch() -> SteeringPatch {
     let mut set_state = HashMap::new();
     set_state.insert("next.input".to_string(), "ready".to_string());
@@ -1278,4 +1297,582 @@ fn delegation_lifecycle_events_follow_remote_step_shape() {
             ..
         } if step_id == "remote-step" && outcome == "failure"
     )));
+}
+
+#[test]
+fn runner_executes_concurrent_mock_workflow_success_path() {
+    let mut resolved = minimal_resolved();
+    resolved
+        .doc
+        .providers
+        .insert("p1".to_string(), mock_provider_spec());
+
+    let branch_a = crate::resolve::ResolvedStep {
+        id: "fork.branch.a".to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: Some(PlacementMode::Local),
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: None,
+        conversation: None,
+        prompt: Some(PromptSpec {
+            user: Some("BRANCH_A={{label}}".to_string()),
+            ..Default::default()
+        }),
+        inputs: HashMap::from([("label".to_string(), "alpha".to_string())]),
+        guards: vec![],
+        save_as: Some("branch_a".to_string()),
+        write_to: None,
+        on_error: None,
+        retry: None,
+    };
+    let branch_b = crate::resolve::ResolvedStep {
+        id: "fork.branch.b".to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: Some(PlacementMode::Local),
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: None,
+        conversation: None,
+        prompt: Some(PromptSpec {
+            user: Some("BRANCH_B={{label}}".to_string()),
+            ..Default::default()
+        }),
+        inputs: HashMap::from([("label".to_string(), "beta".to_string())]),
+        guards: vec![],
+        save_as: Some("branch_b".to_string()),
+        write_to: None,
+        on_error: None,
+        retry: None,
+    };
+    let join = crate::resolve::ResolvedStep {
+        id: "fork.join".to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: Some(PlacementMode::Local),
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: None,
+        conversation: None,
+        prompt: Some(PromptSpec {
+            user: Some("JOIN={{a}}+{{b}}".to_string()),
+            ..Default::default()
+        }),
+        inputs: HashMap::from([
+            ("a".to_string(), "@state:branch_a".to_string()),
+            ("b".to_string(), "@state:branch_b".to_string()),
+        ]),
+        guards: vec![],
+        save_as: Some("joined".to_string()),
+        write_to: Some("artifacts/join.txt".to_string()),
+        on_error: None,
+        retry: None,
+    };
+
+    resolved.steps = vec![branch_a, branch_b, join];
+    resolved.execution_plan = crate::execution_plan::ExecutionPlan {
+        workflow_kind: WorkflowKind::Concurrent,
+        nodes: vec![
+            crate::execution_plan::ExecutionNode {
+                step_id: "fork.branch.a".to_string(),
+                depends_on: vec![],
+                save_as: Some("branch_a".to_string()),
+                delegation: None,
+            },
+            crate::execution_plan::ExecutionNode {
+                step_id: "fork.branch.b".to_string(),
+                depends_on: vec![],
+                save_as: Some("branch_b".to_string()),
+                delegation: None,
+            },
+            crate::execution_plan::ExecutionNode {
+                step_id: "fork.join".to_string(),
+                depends_on: vec!["fork.branch.a".to_string(), "fork.branch.b".to_string()],
+                save_as: Some("joined".to_string()),
+                delegation: None,
+            },
+        ],
+    };
+
+    let base = unique_temp_path("adl-runner-concurrent");
+    let out_dir = base.join("out");
+    std::fs::create_dir_all(&out_dir).expect("create out dir");
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.3");
+    let result = execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir)
+        .expect("concurrent mock workflow should succeed");
+
+    assert_eq!(result.outputs.len(), 3);
+    assert_eq!(result.records.len(), 3);
+    assert!(result.pause.is_none());
+    assert_eq!(result.artifacts.len(), 1);
+
+    let join_output = result
+        .outputs
+        .iter()
+        .find(|output| output.step_id == "fork.join")
+        .expect("join output");
+    assert!(join_output.model_output.contains("JOIN="));
+    assert!(join_output.model_output.contains("BRANCH_A=alpha"));
+    assert!(join_output.model_output.contains("BRANCH_B=beta"));
+    let join_artifact =
+        std::fs::read_to_string(out_dir.join("artifacts/join.txt")).expect("read join artifact");
+    assert_eq!(join_artifact, join_output.model_output);
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn runner_executes_called_workflow_success_path() {
+    let mut resolved = minimal_resolved();
+    resolved
+        .doc
+        .providers
+        .insert("p1".to_string(), mock_provider_spec());
+    resolved.doc.agents.insert(
+        "a1".to_string(),
+        crate::adl::AgentSpec {
+            id: None,
+            provider: "p1".to_string(),
+            model: "echo-v1".to_string(),
+            temperature: None,
+            top_k: None,
+            description: None,
+            prompt: None,
+            tools: vec![],
+        },
+    );
+    resolved.doc.tasks.insert(
+        "callee_task".to_string(),
+        crate::adl::TaskSpec {
+            id: None,
+            agent_ref: Some("a1".to_string()),
+            inputs: vec!["topic".to_string()],
+            tool_allowlist: vec![],
+            description: None,
+            prompt: PromptSpec {
+                user: Some("CALLEE={{topic}}".to_string()),
+                ..Default::default()
+            },
+        },
+    );
+    resolved.doc.workflows.insert(
+        "callee".to_string(),
+        WorkflowSpec {
+            id: Some("callee".to_string()),
+            kind: WorkflowKind::Sequential,
+            max_concurrency: None,
+            steps: vec![crate::adl::StepSpec {
+                id: Some("reply".to_string()),
+                task: Some("callee_task".to_string()),
+                save_as: Some("reply_text".to_string()),
+                write_to: Some("callee/reply.txt".to_string()),
+                inputs: HashMap::from([("topic".to_string(), "{{ topic }}".to_string())]),
+                ..crate::adl::StepSpec::default()
+            }],
+        },
+    );
+
+    resolved.steps = vec![crate::resolve::ResolvedStep {
+        id: "call.callee".to_string(),
+        agent: None,
+        provider: None,
+        placement: None,
+        task: None,
+        call: Some("callee".to_string()),
+        with: HashMap::from([("topic".to_string(), "acip".to_string())]),
+        as_ns: Some("nested".to_string()),
+        delegation: None,
+        conversation: None,
+        prompt: None,
+        inputs: HashMap::new(),
+        guards: vec![],
+        save_as: None,
+        write_to: None,
+        on_error: None,
+        retry: None,
+    }];
+    resolved.execution_plan = crate::execution_plan::ExecutionPlan {
+        workflow_kind: WorkflowKind::Sequential,
+        nodes: vec![crate::execution_plan::ExecutionNode {
+            step_id: "call.callee".to_string(),
+            depends_on: vec![],
+            save_as: None,
+            delegation: None,
+        }],
+    };
+
+    let base = unique_temp_path("adl-runner-call");
+    let out_dir = base.join("out");
+    std::fs::create_dir_all(&out_dir).expect("create out dir");
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.3");
+    let result = execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir)
+        .expect("called workflow should succeed");
+
+    assert!(result.pause.is_none());
+    assert_eq!(result.outputs.len(), 1);
+    assert_eq!(result.artifacts.len(), 1);
+    assert!(result
+        .records
+        .iter()
+        .any(|record| record.step_id == "call.callee" && record.provider_id == "<call>"));
+    let output = &result.outputs[0];
+    assert!(output.step_id.contains("reply"));
+    assert!(!output.model_output.is_empty());
+    let artifact =
+        std::fs::read_to_string(out_dir.join("callee/reply.txt")).expect("read callee artifact");
+    assert_eq!(artifact, output.model_output);
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn runner_executes_nested_called_workflow_success_path() {
+    let mut resolved = minimal_resolved();
+    resolved
+        .doc
+        .providers
+        .insert("p1".to_string(), mock_provider_spec());
+    resolved.doc.agents.insert(
+        "a1".to_string(),
+        crate::adl::AgentSpec {
+            id: None,
+            provider: "p1".to_string(),
+            model: "echo-v1".to_string(),
+            temperature: None,
+            top_k: None,
+            description: None,
+            prompt: None,
+            tools: vec![],
+        },
+    );
+    resolved.doc.tasks.insert(
+        "leaf_task".to_string(),
+        crate::adl::TaskSpec {
+            id: None,
+            agent_ref: Some("a1".to_string()),
+            inputs: vec!["topic".to_string()],
+            tool_allowlist: vec![],
+            description: None,
+            prompt: PromptSpec {
+                user: Some("LEAF={{topic}}".to_string()),
+                ..Default::default()
+            },
+        },
+    );
+    resolved.doc.tasks.insert(
+        "summary_task".to_string(),
+        crate::adl::TaskSpec {
+            id: None,
+            agent_ref: Some("a1".to_string()),
+            inputs: vec!["reply".to_string()],
+            tool_allowlist: vec![],
+            description: None,
+            prompt: PromptSpec {
+                user: Some("SUMMARY={{reply}}".to_string()),
+                ..Default::default()
+            },
+        },
+    );
+    resolved.doc.workflows.insert(
+        "grandchild".to_string(),
+        WorkflowSpec {
+            id: Some("grandchild".to_string()),
+            kind: WorkflowKind::Sequential,
+            max_concurrency: None,
+            steps: vec![crate::adl::StepSpec {
+                id: Some("leaf".to_string()),
+                task: Some("leaf_task".to_string()),
+                save_as: Some("reply_text".to_string()),
+                inputs: HashMap::from([("topic".to_string(), "{{ topic }}".to_string())]),
+                ..crate::adl::StepSpec::default()
+            }],
+        },
+    );
+    resolved.doc.workflows.insert(
+        "callee".to_string(),
+        WorkflowSpec {
+            id: Some("callee".to_string()),
+            kind: WorkflowKind::Sequential,
+            max_concurrency: None,
+            steps: vec![
+                crate::adl::StepSpec {
+                    id: Some("call-grandchild".to_string()),
+                    call: Some("grandchild".to_string()),
+                    as_ns: Some("child".to_string()),
+                    with: HashMap::from([("topic".to_string(), "nested".to_string())]),
+                    ..crate::adl::StepSpec::default()
+                },
+                crate::adl::StepSpec {
+                    id: Some("summarize".to_string()),
+                    task: Some("summary_task".to_string()),
+                    save_as: Some("summary_text".to_string()),
+                    inputs: HashMap::from([(
+                        "reply".to_string(),
+                        "@state:child.reply_text".to_string(),
+                    )]),
+                    ..crate::adl::StepSpec::default()
+                },
+            ],
+        },
+    );
+
+    resolved.steps = vec![crate::resolve::ResolvedStep {
+        id: "call.callee".to_string(),
+        agent: None,
+        provider: None,
+        placement: None,
+        task: None,
+        call: Some("callee".to_string()),
+        with: HashMap::new(),
+        as_ns: Some("nested".to_string()),
+        delegation: None,
+        conversation: None,
+        prompt: None,
+        inputs: HashMap::new(),
+        guards: vec![],
+        save_as: None,
+        write_to: None,
+        on_error: None,
+        retry: None,
+    }];
+    resolved.execution_plan = crate::execution_plan::ExecutionPlan {
+        workflow_kind: WorkflowKind::Sequential,
+        nodes: vec![crate::execution_plan::ExecutionNode {
+            step_id: "call.callee".to_string(),
+            depends_on: vec![],
+            save_as: None,
+            delegation: None,
+        }],
+    };
+
+    let base = unique_temp_path("adl-runner-nested-call");
+    let out_dir = base.join("out");
+    std::fs::create_dir_all(&out_dir).expect("create out dir");
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.3");
+    let result = execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir)
+        .expect("nested called workflow should succeed");
+
+    assert!(result.pause.is_none());
+    assert_eq!(result.outputs.len(), 2);
+    assert!(result.records.iter().any(|record| {
+        record.step_id == "call.callee::call-grandchild" && record.provider_id == "<call>"
+    }));
+    assert!(result
+        .records
+        .iter()
+        .any(|record| { record.step_id == "call.callee" && record.provider_id == "<call>" }));
+    assert!(result
+        .outputs
+        .iter()
+        .any(|output| output.step_id.ends_with("leaf")));
+    assert!(result
+        .outputs
+        .iter()
+        .any(|output| output.step_id.ends_with("summarize")));
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn runner_concurrent_failure_can_continue_when_step_is_marked_continue_on_error() {
+    let mut resolved = minimal_resolved();
+    resolved
+        .doc
+        .providers
+        .insert("p1".to_string(), mock_provider_spec());
+
+    let failing = crate::resolve::ResolvedStep {
+        id: "fork.fail".to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: Some(PlacementMode::Local),
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: None,
+        conversation: None,
+        prompt: Some(PromptSpec {
+            user: Some("FAIL={{missing}}".to_string()),
+            ..Default::default()
+        }),
+        inputs: HashMap::new(),
+        guards: vec![],
+        save_as: None,
+        write_to: None,
+        on_error: Some(crate::adl::StepOnError::Continue),
+        retry: None,
+    };
+    let succeeding = crate::resolve::ResolvedStep {
+        id: "fork.ok".to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: Some(PlacementMode::Local),
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: None,
+        conversation: None,
+        prompt: Some(PromptSpec {
+            user: Some("OK={{value}}".to_string()),
+            ..Default::default()
+        }),
+        inputs: HashMap::from([("value".to_string(), "present".to_string())]),
+        guards: vec![],
+        save_as: Some("ok".to_string()),
+        write_to: None,
+        on_error: None,
+        retry: None,
+    };
+
+    resolved.steps = vec![failing, succeeding];
+    resolved.execution_plan = crate::execution_plan::ExecutionPlan {
+        workflow_kind: WorkflowKind::Concurrent,
+        nodes: vec![
+            crate::execution_plan::ExecutionNode {
+                step_id: "fork.fail".to_string(),
+                depends_on: vec![],
+                save_as: None,
+                delegation: None,
+            },
+            crate::execution_plan::ExecutionNode {
+                step_id: "fork.ok".to_string(),
+                depends_on: vec![],
+                save_as: Some("ok".to_string()),
+                delegation: None,
+            },
+        ],
+    };
+
+    let base = unique_temp_path("adl-runner-continue");
+    let out_dir = base.join("out");
+    std::fs::create_dir_all(&out_dir).expect("create out dir");
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.3");
+    let result = execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir)
+        .expect("continue_on_error branch should allow overall success");
+
+    assert!(result.pause.is_none());
+    assert_eq!(result.outputs.len(), 1);
+    assert!(result
+        .records
+        .iter()
+        .any(|record| record.step_id == "fork.fail" && record.status == "failure"));
+    assert!(result
+        .records
+        .iter()
+        .any(|record| record.step_id == "fork.ok" && record.status == "success"));
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn runner_concurrent_success_can_pause_after_completed_step() {
+    let mut resolved = minimal_resolved();
+    resolved
+        .doc
+        .providers
+        .insert("p1".to_string(), mock_provider_spec());
+
+    let paused = crate::resolve::ResolvedStep {
+        id: "pause.step".to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: Some(PlacementMode::Local),
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: None,
+        conversation: None,
+        prompt: Some(PromptSpec {
+            user: Some("PAUSE={{value}}".to_string()),
+            ..Default::default()
+        }),
+        inputs: HashMap::from([("value".to_string(), "now".to_string())]),
+        guards: vec![crate::adl::GuardSpec {
+            kind: "pause".to_string(),
+            config: HashMap::from([(
+                "reason".to_string(),
+                serde_json::Value::String("operator checkpoint".to_string()),
+            )]),
+        }],
+        save_as: Some("paused".to_string()),
+        write_to: None,
+        on_error: None,
+        retry: None,
+    };
+
+    resolved.steps = vec![paused];
+    resolved.execution_plan = crate::execution_plan::ExecutionPlan {
+        workflow_kind: WorkflowKind::Concurrent,
+        nodes: vec![crate::execution_plan::ExecutionNode {
+            step_id: "pause.step".to_string(),
+            depends_on: vec![],
+            save_as: Some("paused".to_string()),
+            delegation: None,
+        }],
+    };
+
+    let base = unique_temp_path("adl-runner-pause");
+    let out_dir = base.join("out");
+    std::fs::create_dir_all(&out_dir).expect("create out dir");
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.3");
+    let result = execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir)
+        .expect("pause branch should return paused result");
+
+    let pause = result.pause.expect("pause result");
+    assert_eq!(pause.paused_step_id, "pause.step");
+    assert_eq!(pause.reason.as_deref(), Some("operator checkpoint"));
+    assert_eq!(pause.completed_step_ids, vec!["pause.step".to_string()]);
+    assert!(pause.remaining_step_ids.is_empty());
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn runner_validation_covers_core_helper_paths() {
+    resolve_state_inputs_resolves_and_validates_state_bindings();
+    validate_steering_patch_rejects_invalid_shapes();
+    apply_steering_patch_updates_resume_state_and_records_sorted_keys();
+    effective_max_concurrency_precedence_and_validation();
+    effective_max_concurrency_supports_workflow_ref_overrides();
+    effective_step_placement_prefers_step_then_run_then_local_default();
+    pause_reason_for_step_detects_pause_guard_and_optional_reason();
+    pause_reason_for_step_ignores_non_pause_guards();
+    effective_max_concurrency_tracks_source_order();
+    scheduler_policy_for_run_returns_none_for_sequential_workflows();
+}
+
+#[test]
+fn runner_validation_covers_retry_and_remote_request_paths() {
+    execute_step_with_retry_does_not_retry_remote_schema_violation();
+    build_remote_execute_request_preserves_conversation_as_audit_metadata();
+    execute_step_with_retry_does_not_retry_missing_prompt_binding();
+    execute_step_with_retry_does_not_retry_unknown_provider_setup_failure();
+    execution_policy_error_code_covers_all_kinds();
+    execution_policy_error_display_covers_approval_required_branch();
+    execution_policy_error_display_handles_approval_without_rule_id();
+    execution_policy_error_display_includes_rule_id_for_denied();
+    stable_failure_kind_detects_only_policy_errors();
+}
+
+#[test]
+fn runner_validation_covers_called_workflow_and_delegation_paths() {
+    resolve_call_binding_requires_state_prefix_and_known_key();
+    execute_called_workflow_rejects_unknown_workflow();
+    execute_called_workflow_rejects_missing_state_binding_in_call_with();
+    execute_called_workflow_rejects_write_to_without_save_as();
+    execute_called_workflow_nested_call_failure_is_propagated();
+    enforce_delegation_policy_for_step_actions_denies_filesystem_write_targets();
+    enforce_delegation_policy_for_step_actions_requires_approval_for_remote_exec();
+    delegation_lifecycle_events_follow_remote_step_shape();
 }
