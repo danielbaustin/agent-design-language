@@ -225,7 +225,7 @@ fn runtime_v2_memory_identity_architecture_proof_route_paths_exist() {
     std::fs::remove_dir_all(temp_root).expect("cleanup memory-identity proof-route temp root");
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 #[test]
 fn runtime_v2_memory_identity_architecture_write_to_root_materializes_fixture() {
     let packet = runtime_v2_memory_identity_architecture_contract()

@@ -21,7 +21,7 @@ fn runtime_v2_external_counterparty_validation_matrix_rejects_drift() {
 }
 
 #[test]
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-security"))]
 fn runtime_v2_external_counterparty_golden_and_materialization_proofs_are_stable() {
     runtime_v2_external_counterparty_model_matches_golden_fixture();
     runtime_v2_external_counterparty_write_to_root_materializes_fixtures();
@@ -638,7 +638,7 @@ fn runtime_v2_external_counterparty_helper_validators_cover_remaining_variants()
         .contains("requested_tool_capability must not be empty"));
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-security"))]
 fn runtime_v2_external_counterparty_model_matches_golden_fixture() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");
@@ -674,7 +674,7 @@ fn runtime_v2_external_counterparty_negative_cases_match_golden_fixture() {
     );
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-security"))]
 fn runtime_v2_external_counterparty_write_to_root_materializes_fixtures() {
     let artifacts =
         runtime_v2_external_counterparty_model().expect("external counterparty artifacts");

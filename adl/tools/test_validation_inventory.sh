@@ -45,6 +45,7 @@ rust = inventory["rust"]
 assert rust["rust_lib_unit_tests"]["file_count"] > 0
 assert rust["rust_integration_tests"]["file_count"] > 0
 assert "slow-proof-tests" in inventory["feature_inventory"]
+assert "slow-proof-runtime" in inventory["feature_inventory"]
 assert len(inventory["release_gate_surfaces"]) > 0
 assert len(inventory["coverage_only_surfaces"]) > 0
 assert len(inventory["manifest_backed_surfaces"]) > 0
@@ -75,6 +76,8 @@ assert all(
 )
 python_validator_paths = {record["path"] for record in inventory["python_validators"]}
 assert "adl/tools/test_prompt_template_structure_schemas.py" in python_validator_paths
+shell_validator_paths = {record["path"] for record in inventory["shell_validators"]}
+assert "adl/tools/run_slow_proof_family.sh" in shell_validator_paths
 assert any(
     record["path"] == "adl/tools/test_prompt_template_structure_schemas.py"
     and record["classification_status"] == "partial"
@@ -84,10 +87,37 @@ assert any(
     record["path"] == "adl/Cargo.toml" and record["owner"] == "runtime"
     for record in inventory["slow_proof_surfaces"]
 )
+assert [family["id"] for family in inventory["slow_proof_family_inventory"]] == [
+    "runtime",
+    "private_state",
+    "observatory",
+    "security",
+]
+assert any(
+    record["path"] == "adl/src/runtime_v2/tests/private_state_observatory.rs"
+    and record["slow_proof_families"] == ["private_state"]
+    for record in inventory["slow_proof_surfaces"]
+)
+assert any(
+    record["path"] == "adl/src/runtime_v2/tests/a2a_adapter_boundary.rs"
+    and record["slow_proof_families"] == ["runtime"]
+    and record["feature_requirements"] == ["slow-proof-runtime", "slow-proof-tests"]
+    for record in inventory["slow_proof_surfaces"]
+)
+assert any(
+    record["path"] == "adl/Cargo.toml"
+    and "runtime" in record["slow_proof_families"]
+    and "security" in record["slow_proof_families"]
+    and "slow-proof-runtime" in record["feature_requirements"]
+    and "slow-proof-security" in record["feature_requirements"]
+    for record in inventory["slow_proof_surfaces"]
+)
 
 assert "## Rust test-bearing surfaces" in markdown
+assert "## Slow-proof families" in markdown
 assert "## Unknown or unclassified surfaces" in markdown
 assert "status=partial" in markdown
+assert "`private_state` feature=`slow-proof-private-state`" in markdown
 PY
 
 echo "PASS test_validation_inventory"

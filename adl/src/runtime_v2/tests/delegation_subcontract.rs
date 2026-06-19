@@ -16,7 +16,7 @@ fn runtime_v2_delegation_subcontract_negative_matrix_rejects_drift() {
 }
 
 #[test]
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 fn runtime_v2_delegation_subcontract_golden_surfaces_are_stable() {
     delegation_subcontract_matches_golden_fixture();
     delegated_output_matches_golden_fixture();
@@ -25,7 +25,7 @@ fn runtime_v2_delegation_subcontract_golden_surfaces_are_stable() {
 }
 
 #[test]
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 fn runtime_v2_delegation_subcontract_materialization_proof_is_stable() {
     delegation_subcontract_write_to_root_materializes_fixtures();
 }
@@ -48,7 +48,7 @@ fn delegation_subcontract_artifacts_are_stable() {
     assert_eq!(artifacts.negative_cases.required_negative_cases.len(), 5);
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 fn delegation_subcontract_matches_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
@@ -69,7 +69,7 @@ fn delegation_subcontract_matches_golden_fixture() {
     );
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 fn delegated_output_matches_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
@@ -88,7 +88,7 @@ fn delegated_output_matches_golden_fixture() {
     );
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 fn parent_integration_matches_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
@@ -107,7 +107,7 @@ fn parent_integration_matches_golden_fixture() {
     );
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 fn delegation_negative_cases_match_golden_fixture() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");
@@ -348,7 +348,7 @@ fn delegation_subcontract_rejects_subcontractor_outside_runner_up_basis() {
         .contains("subcontractor must match the runner-up bid counterparty selected by subcontractor_selection_basis_ref"));
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 fn delegation_subcontract_write_to_root_materializes_fixtures() {
     let artifacts =
         runtime_v2_delegation_subcontract_model().expect("delegation subcontract artifacts");

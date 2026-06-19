@@ -1,31 +1,31 @@
 use super::*;
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 mod a2a_adapter_boundary;
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-security"))]
 mod access_control;
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-security"))]
 mod acip_hardening;
 mod affect_reasoning_control;
 mod agent_lifecycle_state;
 mod anti_harm_trajectory_constraints;
 mod bid_schema;
 mod boot_admission;
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 mod challenge;
 mod citizen_lifecycle;
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 mod citizen_state_substrate;
 mod cognitive_being_flagship_demo;
 mod common;
 mod contract_lifecycle_state;
 mod contract_market_demo;
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 mod contract_registry_accessors;
 mod contract_schema;
 mod csm_run_packet;
 mod cultivating_intelligence;
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 mod delegation_subcontract;
 mod evaluation_selection;
 mod external_counterparty;

@@ -18,6 +18,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MANIFEST = ROOT / "adl/config/validation_lane_selector.v0.91.6.json"
 DEFAULT_CARGO = ROOT / "adl/Cargo.toml"
+SLOW_PROOF_FAMILIES = ROOT / "adl/config/slow_proof_families.v0.91.6.json"
 
 TEST_ATTRIBUTE_RE = re.compile(
     r"#\[\s*(?:tokio::test|test|rstest|quickcheck|proptest)\b"
@@ -26,9 +27,12 @@ DOC_FENCE_RE = re.compile(
     r"^\s*(?:(?://[/!])|(?:/\*\*)|(?:\*))?.*```(?:rust|ignore|no_run|should_panic|compile_fail|edition\d{4})\b",
     re.MULTILINE,
 )
+RUNTIME_TEST_MODULE_RE = re.compile(r"^mod\s+([A-Za-z0-9_]+);$")
 
 SLOW_PROOF_PATTERNS = (
     "adl/Cargo.toml",
+    "adl/config/slow_proof_families.v0.91.6.json",
+    "adl/tools/run_slow_proof_family.sh",
     "adl/tools/test_slow_proof_lane_contract.sh",
     "adl/src/runtime_v2/tests/**",
     ".github/workflows/ci.yaml",
@@ -36,6 +40,7 @@ SLOW_PROOF_PATTERNS = (
 RELEASE_GATE_EXTRA_PATTERNS = (
     "adl/tools/run_authoritative_coverage_lane.sh",
     "adl/tools/run_local_authoritative_coverage_gate.sh",
+    "adl/tools/run_slow_proof_family.sh",
     "adl/tools/test_slow_proof_lane_contract.sh",
 )
 COVERAGE_ONLY_PATTERNS = (
@@ -79,6 +84,16 @@ def load_features(path: Path) -> dict[str, list[str]]:
         name: sorted(value) if isinstance(value, list) else []
         for name, value in sorted(features.items())
     }
+
+
+def load_slow_proof_families(path: Path) -> list[dict[str, Any]]:
+    payload = json.loads(path.read_text())
+    if payload.get("schema_version") != "adl.slow_proof_families.v1":
+        fail(f"{path}: unsupported schema_version")
+    families = payload.get("families")
+    if not isinstance(families, list):
+        fail(f"{path}: slow-proof families config must expose a families array")
+    return families
 
 
 def matches(path: str, patterns: tuple[str, ...] | list[str]) -> bool:
@@ -216,6 +231,7 @@ def add_surface_record(
     resource_class: str | None,
     proof_role: str,
     feature_requirements: list[str] | None = None,
+    slow_proof_families: list[str] | None = None,
 ) -> None:
     records.append(
         {
@@ -226,17 +242,81 @@ def add_surface_record(
             "resource_class": resource_class,
             "proof_role": proof_role,
             "feature_requirements": sorted(feature_requirements or []),
+            "slow_proof_families": sorted(slow_proof_families or []),
         }
     )
+
+
+def classify_slow_proof_families(
+    path: str,
+    family_feature_map: dict[str, str],
+    runtime_module_family_map: dict[str, list[str]],
+) -> list[str]:
+    family_ids = sorted(family_feature_map)
+    shared_surfaces = {
+        "adl/Cargo.toml",
+        "adl/config/slow_proof_families.v0.91.6.json",
+        "adl/tools/run_slow_proof_family.sh",
+        "adl/tools/test_slow_proof_lane_contract.sh",
+        ".github/workflows/ci.yaml",
+    }
+    if path in shared_surfaces:
+        return family_ids
+    if not path.startswith("adl/src/runtime_v2/tests"):
+        return []
+    text = (ROOT / path).read_text(encoding="utf-8")
+    memberships = {
+        family_id
+        for family_id, feature in sorted(family_feature_map.items())
+        if feature in text
+    }
+    module_name = Path(path).stem
+    memberships.update(runtime_module_family_map.get(module_name, []))
+    return sorted(memberships)
+
+
+def load_runtime_module_family_map(
+    family_feature_map: dict[str, str],
+) -> dict[str, list[str]]:
+    tests_root = ROOT / "adl/src/runtime_v2/tests.rs"
+    cfg_line = ""
+    mapping: dict[str, list[str]] = {}
+    for raw_line in tests_root.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if line.startswith("#[cfg("):
+            cfg_line = line
+            continue
+        match = RUNTIME_TEST_MODULE_RE.match(line)
+        if match:
+            module_name = match.group(1)
+            memberships = [
+                family_id
+                for family_id, feature in sorted(family_feature_map.items())
+                if feature in cfg_line
+            ]
+            if memberships:
+                mapping[module_name] = memberships
+            cfg_line = ""
+            continue
+        if line and not line.startswith("#["):
+            cfg_line = ""
+    return mapping
 
 
 def build_surface_inventory(
     files: list[str],
     manifest: dict[str, Any],
     rust_candidate_paths: list[str],
+    slow_proof_families: list[dict[str, Any]],
 ) -> dict[str, Any]:
     records: list[dict[str, Any]] = []
     known_paths: set[str] = set()
+    family_feature_map = {
+        family["id"]: family["feature"]
+        for family in slow_proof_families
+        if isinstance(family.get("id"), str) and isinstance(family.get("feature"), str)
+    }
+    runtime_module_family_map = load_runtime_module_family_map(family_feature_map)
 
     for lane in manifest.get("lanes", []):
         lane_class = lane["lane_class"]
@@ -289,7 +369,7 @@ def build_surface_inventory(
                     name.startswith("run_")
                     and any(
                         token in name
-                        for token in ("validation", "coverage", "proof", "lane", "benchmark")
+                        for token in ("validation", "coverage", "proof", "lane", "benchmark", "family")
                     )
                 )
             ):
@@ -311,7 +391,7 @@ def build_surface_inventory(
                     name.startswith("run_")
                     and any(
                         token in name
-                        for token in ("validation", "coverage", "proof", "benchmark")
+                        for token in ("validation", "coverage", "proof", "benchmark", "family")
                     )
                 )
             ):
@@ -327,6 +407,11 @@ def build_surface_inventory(
 
     for path in files:
         if matches(path, SLOW_PROOF_PATTERNS):
+            slow_proof_memberships = classify_slow_proof_families(
+                path,
+                family_feature_map,
+                runtime_module_family_map,
+            )
             add_surface_record(
                 records,
                 path,
@@ -335,7 +420,15 @@ def build_surface_inventory(
                 owner=classify_owner(path),
                 resource_class="expensive",
                 proof_role="slow_proof",
-                feature_requirements=["slow-proof-tests"],
+                feature_requirements=[
+                    "slow-proof-tests",
+                    *[
+                        family_feature_map[family_id]
+                        for family_id in slow_proof_memberships
+                        if family_id in family_feature_map
+                    ],
+                ],
+                slow_proof_families=slow_proof_memberships,
             )
         if matches(path, COVERAGE_ONLY_PATTERNS):
             add_surface_record(
@@ -389,7 +482,7 @@ def candidate_validation_paths(files: list[str], rust_candidate_paths: list[str]
                     name.startswith("run_")
                     and any(
                         token in name
-                        for token in ("validation", "coverage", "proof", "lane", "benchmark")
+                        for token in ("validation", "coverage", "proof", "lane", "benchmark", "family")
                     )
                 )
             ):
@@ -411,8 +504,9 @@ def feature_inventory(features: dict[str, list[str]]) -> dict[str, Any]:
 
 
 def build_inventory(files: list[str], manifest: dict[str, Any], features: dict[str, list[str]]) -> dict[str, Any]:
+    slow_proof_families = load_slow_proof_families(SLOW_PROOF_FAMILIES)
     rust = build_rust_inventory(files)
-    surfaces = build_surface_inventory(files, manifest, rust["candidate_paths"])
+    surfaces = build_surface_inventory(files, manifest, rust["candidate_paths"], slow_proof_families)
     candidates = candidate_validation_paths(files, rust["candidate_paths"])
     unmatched_paths = sorted(set(candidates) - set(surfaces["known_paths"]))
 
@@ -487,6 +581,14 @@ def build_inventory(files: list[str], manifest: dict[str, Any], features: dict[s
             "by_proof_role": dict(sorted(proof_role_summary.items())),
         },
         "feature_inventory": feature_inventory(features),
+        "slow_proof_family_inventory": [
+            {
+                "id": family["id"],
+                "feature": family["feature"],
+                "sample_tests": family.get("sample_tests", []),
+            }
+            for family in slow_proof_families
+        ],
         "all_surface_records": surfaces["records"],
         "shell_validators": [
             record for record in surfaces["records"] if record["surface_kind"] == "shell_validator"
@@ -569,6 +671,17 @@ def render_markdown(inventory: dict[str, Any]) -> str:
             )
     lines.append("")
 
+    lines.extend(["## Slow-proof families", ""])
+    if not inventory["slow_proof_family_inventory"]:
+        lines.append("- none")
+    else:
+        for family in inventory["slow_proof_family_inventory"]:
+            lines.append(
+                f"- `{family['id']}` feature=`{family['feature']}` "
+                f"samples={', '.join(family['sample_tests']) if family['sample_tests'] else 'none'}"
+            )
+    lines.append("")
+
     for heading, records in (
         ("Shell validators", inventory["shell_validators"]),
         ("Python validators", inventory["python_validators"]),
@@ -583,7 +696,8 @@ def render_markdown(inventory: dict[str, Any]) -> str:
                 lines.append(
                     f"- `{record['path']}` owner={record['owner'] or 'unknown'} "
                     f"lane={record['lane_class'] or 'unknown'} "
-                    f"resource={record['resource_class'] or 'unknown'}"
+                    f"resource={record['resource_class'] or 'unknown'} "
+                    f"families={','.join(record['slow_proof_families']) if record['slow_proof_families'] else 'none'}"
                 )
         lines.append("")
 

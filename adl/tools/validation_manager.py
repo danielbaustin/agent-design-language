@@ -13,11 +13,21 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 SELECTOR = ROOT / "adl/tools/select_validation_lanes.sh"
+SLOW_PROOF_FAMILIES = ROOT / "adl/config/slow_proof_families.v0.91.6.json"
 
 
 def fail(message: str) -> None:
     print(f"validation_manager: {message}", file=sys.stderr)
     raise SystemExit(2)
+
+
+def load_slow_proof_families() -> dict[str, Any]:
+    payload = json.loads(SLOW_PROOF_FAMILIES.read_text())
+    if payload.get("schema_version") != "adl.slow_proof_families.v1":
+        fail("slow-proof families config returned unsupported schema_version")
+    if not isinstance(payload.get("families"), list):
+        fail("slow-proof families config must expose a families array")
+    return payload
 
 
 def selector_plan(args: argparse.Namespace) -> dict[str, Any]:
@@ -142,6 +152,8 @@ def estimate_cost(selected: list[tuple[str, dict[str, Any]]], blocked: list[tupl
 
 
 def build_profile(plan: dict[str, Any], max_selected_lanes: int) -> dict[str, Any]:
+    slow_proof_config = load_slow_proof_families()
+    slow_proof_families = slow_proof_config.get("families", [])
     lanes = plan.get("lanes", {})
     changed_paths = plan.get("changed_paths", [])
     covered_paths = {
@@ -197,6 +209,14 @@ def build_profile(plan: dict[str, Any], max_selected_lanes: int) -> dict[str, An
             "reason": "reserved for coverage or release policy selection",
         },
     ]
+    not_run.extend(
+        {
+            "surface": f"slow_proof/{family['id']}",
+            "reason": "reserved for explicit proof-family selection",
+            "feature": family["feature"],
+        }
+        for family in slow_proof_families
+    )
 
     unmapped_change_gap = bool(uncovered_paths)
 
@@ -263,6 +283,18 @@ def build_profile(plan: dict[str, Any], max_selected_lanes: int) -> dict[str, An
             "edges": [],
             "compression_note": "profile validates behavior surfaces rather than enumerating every test-bearing module",
         },
+        "slow_proof_families": [
+            {
+                "id": family["id"],
+                "feature": family["feature"],
+                "proof_role": family.get("proof_role", "slow_proof"),
+                "description": family.get("description", ""),
+                "selection_mode": "manual_only",
+                "command": f"bash adl/tools/run_slow_proof_family.sh --family {family['id']} --run",
+                "sample_tests": family.get("sample_tests", []),
+            }
+            for family in slow_proof_families
+        ],
         "estimated_cost": estimate_cost(selected, blocked),
         "escalation": {
             "required": escalation_required,
@@ -296,6 +328,12 @@ def print_text(profile: dict[str, Any]) -> None:
         for behavior in profile["behavior_surfaces"]:
             print(
                 f"    - id={behavior['id']} risk={behavior['risk_class']} source={behavior['source']}"
+            )
+    if profile.get("slow_proof_families"):
+        print("  slow_proof_families:")
+        for family in profile["slow_proof_families"]:
+            print(
+                f"    - id={family['id']} feature={family['feature']} selection_mode={family['selection_mode']}"
             )
     print(
         "  estimated_cost="

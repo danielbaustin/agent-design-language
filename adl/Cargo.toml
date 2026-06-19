@@ -90,7 +90,16 @@ path = "tools/adl_provider_adapter.rs"
 # Heavy runtime_v2 proof-materialization and CLI proof-smoke tests stay out of
 # ordinary `cargo test` but remain covered by authoritative `--all-features`
 # lanes such as cargo-llvm-cov.
-slow-proof-tests = []
+slow-proof-runtime = []
+slow-proof-private-state = []
+slow-proof-observatory = []
+slow-proof-security = []
+slow-proof-tests = [
+  "slow-proof-runtime",
+  "slow-proof-private-state",
+  "slow-proof-observatory",
+  "slow-proof-security",
+]
 # Heavy `pr finish` temp-repo publication and sync integration tests stay out
 # of ordinary `cargo test` but remain covered by authoritative `--all-features`
 # lanes such as cargo-llvm-cov.

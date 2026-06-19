@@ -1702,6 +1702,45 @@ fn finish_validation_profile_classifies_validation_inventory_slice_as_small_bina
 }
 
 #[test]
+fn finish_validation_profile_classifies_slow_proof_family_split_slice() {
+    let plan = select_finish_validation_plan_for_finish(
+        4219,
+        ".",
+        &[
+            "adl/Cargo.toml".to_string(),
+            "adl/config/slow_proof_families.v0.91.6.json".to_string(),
+            "adl/src/runtime_v2/tests.rs".to_string(),
+            "adl/src/runtime_v2/tests/private_state_observatory.rs".to_string(),
+            "adl/tools/run_slow_proof_family.sh".to_string(),
+            "adl/tools/test_slow_proof_lane_contract.sh".to_string(),
+            "adl/tools/validation_inventory.py".to_string(),
+            "adl/tools/test_validation_inventory.sh".to_string(),
+            "adl/tools/validation_manager.py".to_string(),
+            "adl/tools/test_validation_manager.sh".to_string(),
+            "adl/tools/ci_path_policy.sh".to_string(),
+        ],
+    )
+    .expect("slow-proof family split plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_slow_proof_lane_contract.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_validation_inventory.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_validation_manager.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_ci_path_policy.sh".to_string()));
+}
+
+#[test]
 fn finish_restores_missing_canonical_cards_from_slug_drifted_issue_bundle() {
     let repo = unique_temp_dir("adl-pr-finish-slug-drift");
     let issue_ref = IssueRef::new(

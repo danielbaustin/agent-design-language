@@ -1,7 +1,7 @@
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 use super::common::unique_temp_path;
 use super::*;
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 use std::fs;
 
 #[test]
@@ -88,7 +88,7 @@ fn runtime_v2_csm_run_packet_contract_matches_golden_fixture() {
     );
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 #[test]
 fn runtime_v2_csm_run_packet_contract_writes_without_path_leakage() {
     let temp_root = unique_temp_path("csm-run-contract");

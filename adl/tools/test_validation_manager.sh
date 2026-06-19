@@ -74,6 +74,13 @@ profile = json.load(open(sys.argv[1]))
 assert profile["schema_version"] == "adl.validation_profile.v1"
 assert profile["status"] == "ready_to_run"
 assert [item["lane_id"] for item in profile["run"]] == ["rust_pr_fast"]
+assert [family["id"] for family in profile["slow_proof_families"]] == [
+    "runtime",
+    "private_state",
+    "observatory",
+    "security",
+]
+assert profile["slow_proof_families"][0]["feature"] == "slow-proof-runtime"
 surface = profile["behavior_surfaces"][0]
 assert surface["id"] == "rust_focused_behavior"
 assert surface["owner"] == "shared"
@@ -118,6 +125,7 @@ profile = json.load(open(sys.argv[1]))
 assert profile["schema_version"] == "adl.validation_profile.v1"
 assert profile["status"] == "escalation_required"
 assert profile["escalation"]["required"] is True
+assert any(item["surface"] == "slow_proof/runtime" for item in profile["not_run"])
 assert any(
     reason["lane_id"] == "release_gate_review"
     for reason in profile["escalation"]["reasons"]

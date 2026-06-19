@@ -1,7 +1,7 @@
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 use super::common::unique_temp_path;
 use super::*;
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 use std::fs;
 
 #[test]
@@ -80,7 +80,7 @@ fn runtime_v2_csm_wake_continuity_contract_matches_golden_fixtures() {
     );
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 #[test]
 fn runtime_v2_csm_wake_continuity_writes_without_path_leakage() {
     let temp_root = unique_temp_path("csm-wake-continuity");
@@ -114,7 +114,7 @@ fn runtime_v2_csm_wake_continuity_writes_without_path_leakage() {
     fs::remove_dir_all(temp_root).ok();
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 #[test]
 fn runtime_v2_csm_wake_continuity_proof_standalone_writes_without_path_leakage() {
     let temp_root = unique_temp_path("csm-wake-proof-standalone");

@@ -176,7 +176,7 @@ fn runtime_v2_private_state_envelope_rejects_signature_and_trust_policy_drift() 
         .contains("missing negative case"));
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-private-state"))]
 #[test]
 fn runtime_v2_private_state_envelope_write_to_root_materializes_fixtures() {
     let artifacts =
