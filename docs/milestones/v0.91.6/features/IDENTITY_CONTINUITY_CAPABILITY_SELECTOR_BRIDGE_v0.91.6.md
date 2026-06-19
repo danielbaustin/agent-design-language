@@ -4,7 +4,7 @@
 
 - Feature Name: Identity, Continuity, And Capability Selector Bridge
 - Milestone Target: `v0.91.6`
-- Status: in_progress
+- Status: issue_wave_open_with_partial_delivery
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, policy
@@ -193,6 +193,99 @@ not claim:
 - a shipped capability-market runtime;
 - selector decisions driven by productized aptitude scores;
 - continuity proof derived from capability-testing output.
+
+## Identity Continuity Positive Cases
+
+Identity continuity in `v0.91.6` is only meaningful when the claim can be tied
+back to concrete resilience and security prerequisites rather than labels or
+chat-memory alone.
+
+| Case | What must be true | Why it is positive but still bounded |
+| --- | --- | --- |
+| Reviewed capability-selection continuity | The selector decision is tied to current `v0.91.6` capability evidence with proof references, freshness posture, and preserved limit notes | Shows that a later identity-sensitive route can reuse reviewed evidence without claiming civil or personhood continuity |
+| Checkpoint-aware continuity planning | The continuity claim names checkpoint/restore and replay as prerequisites from `RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md` rather than silently assuming durable state | Keeps continuity connected to the resilience substrate instead of a label-only identity story |
+| Sleep/wake guarded continuity | A future sleep/wake or wake-after-pause claim stays explicitly blocked until replayable transition proof exists | Preserves an honest bridge from present planning vocabulary to later runtime proof |
+| Privacy-reviewed identity-sensitive publication | Any public prompt, Observatory, or inhabitant-facing use names the WP-07 security bridge as the publication/privacy guard instead of assuming identity-safe display by default | Keeps continuity-related publication claims subordinate to reviewed security surfaces |
+
+## Identity Continuity Negative Cases
+
+The bridge must treat continuity as invalid, downgraded, or blocked when any of
+the following conditions hold:
+
+| Negative case | Why continuity fails or downgrades | Required handling |
+| --- | --- | --- |
+| Label-only continuity | The system has a stable name, label, or role tag but no checkpoint, replay, or reviewed evidence chain | Reject the continuity claim as non-proving |
+| Interrupted evidence custody | Capability evidence, resilience artifacts, or route-selection rationale cannot be linked to durable proof references | Downgrade to unknown or candidate-only continuity posture |
+| Replay gap | The claimed same-entity or same-session continuation depends on sleep/wake, restore, or migration behavior that WP-02 still marks residual | Block the continuity claim pending replay proof |
+| Provider-performance inference | The claim tries to infer continuity from provider/model reliability or capability results alone | Reject as category error; provider evidence is advisory input only |
+| Unreviewed publication or display | Identity-sensitive continuity is exposed through public records, Observatory, or cross-agent messages without the relevant WP-07 security review path | Treat the publication/display claim as blocked even if internal planning vocabulary exists |
+| Guild or citizen overreach | Guild presence or citizen posture is used as if it were autonomous runtime authority or proven durable identity | Reject the authority upgrade and route it back to planned governance surfaces |
+
+## Resilience And Provider Dependency Links
+
+Identity continuity in this bridge depends on two different but cooperating
+proof families:
+
+- resilience proof from `RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md` for
+  checkpoint shape, restore expectations, sleep/wake replay boundaries, and
+  in-transit custody expectations;
+- provider and capability proof from
+  `PROVIDER_MODEL_RELIABILITY_v0.91.6.md` for bounded advisory suitability
+  evidence, failure classes, and freshness-limited route selection.
+
+Those dependencies must remain distinct:
+
+- provider/model reliability can help explain which advisory lane was chosen;
+- resilience can help explain whether a continuity-sensitive claim has replay or
+  custody support;
+- neither proof family by itself is enough to establish durable identity
+  continuity.
+
+## Privacy And Security Links
+
+Continuity-sensitive identity claims must also preserve the WP-07 security
+boundaries documented in `SECURITY_BRIDGE_AND_CAV_v0.91.6.md`. In particular:
+
+- public prompt records and publication surfaces are not identity-safe by
+  default;
+- ACIP/A2A or provider-message transport does not grant trusted identity
+  continuity by itself;
+- Observatory or inhabitant-facing consumption remains blocked from silent
+  identity upgrades while WP-08, WP-09, and WP-10 stay open;
+- malformed-output, prompt-injection, or provider-trust failures must be
+  treated as potential continuity-breaking events rather than cosmetic errors.
+
+A continuity claim is therefore only eligible for later `v0.92` consumption
+when all three boundaries line up:
+
+1. capability evidence is current and reviewable;
+2. resilience replay/custody prerequisites are satisfied or explicitly blocked;
+3. privacy/publication and transport security reviews do not leave the claim in
+   an unreviewed exposure path.
+
+## Bridge Completion And Evidence Classification
+
+This bridge is not complete merely because the vocabulary exists. `v0.92`
+consumption should classify the bridge state using the following evidence rules:
+
+| State | Meaning | Required evidence |
+| --- | --- | --- |
+| `complete_for_bridge_consumption` | The bridge vocabulary, continuity cases, negative cases, and dependency links are all present and have reviewed issue-truth surfaces | Merged WP-08 bridge issues, bounded review packets, and explicit residual non-claims still preserved |
+| `blocked_on_replay_or_custody_proof` | A continuity-sensitive claim depends on checkpoint, restore, sleep/wake, migration, or custody proof that WP-02 still routes as residual | Named replay/custody gap tied back to `RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md` and the affected continuity claim downgraded or blocked |
+| `blocked_on_security_exposure_review` | A publication, Observatory, inhabitant, or transport-facing continuity claim has not yet cleared the relevant WP-07 or downstream security review boundary | Named WP-07/WP-09/WP-10 review dependency and no silent upgrade to safe publication |
+| `deferred_to_future_runtime_work` | The bridge names a valid future continuity or selector behavior but runtime implementation or proof is intentionally not part of `v0.91.6` | Explicit route to later milestone/runtime work with no present-tense claim |
+| `routed_non_claim` | The bridge explicitly rules a tempting claim out of scope, such as personhood, productized Aptitude Atlas, or provider-derived continuity | The non-claim remains visible in the bridge and any dependent proof packet |
+
+Bridge completion for this issue wave requires at least:
+
+- reviewed positive and negative continuity cases;
+- explicit distinction between advisory capability evidence and durable continuity proof;
+- named resilience prerequisites for replay, custody, sleep/wake, or restore-sensitive claims;
+- named privacy/security gates for publication, transport, or inhabitant-facing exposure;
+- explicit downgrade or block behavior when those prerequisites are absent.
+
+Anything less should be recorded as blocked, deferred, or routed rather than
+quietly treated as complete continuity support.
 
 ## Validation And Review
 
