@@ -1291,6 +1291,12 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_validation_inventory_focused_validation(path))
+        {
+            commands.push("bash adl/tools/test_validation_inventory.sh".to_string());
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_small_binary_delegation_validation(path))
         {
             commands.push("bash adl/tools/test_pr_small_binary_delegation.sh".to_string());
@@ -1508,6 +1514,9 @@ fn finish_path_is_small_binary_focused(path: &str) -> bool {
             | "adl/tools/validation_manager.py"
             | "adl/tools/validation_manager.sh"
             | "adl/tools/test_validation_manager.sh"
+            | "adl/tools/validation_inventory.py"
+            | "adl/tools/validation_inventory.sh"
+            | "adl/tools/test_validation_inventory.sh"
             | "adl/tools/test_install_adl_operational_skills.sh"
             | "adl/tools/test_sprint_conductor_helpers.sh"
     ) || finish_path_needs_pr_finish_rust_focused_validation(trimmed)
@@ -1808,6 +1817,16 @@ fn finish_path_needs_validation_manager_focused_validation(path: &str) -> bool {
         "adl/tools/validation_manager.py"
             | "adl/tools/validation_manager.sh"
             | "adl/tools/test_validation_manager.sh"
+    )
+}
+
+fn finish_path_needs_validation_inventory_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/tools/validation_inventory.py"
+            | "adl/tools/validation_inventory.sh"
+            | "adl/tools/test_validation_inventory.sh"
     )
 }
 
@@ -2225,6 +2244,10 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_validation_manager.sh" => {
                     let script = repo_root.join("adl/tools/test_validation_manager.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_validation_inventory.sh" => {
+                    let script = repo_root.join("adl/tools/test_validation_inventory.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_pr_small_binary_delegation.sh" => {
