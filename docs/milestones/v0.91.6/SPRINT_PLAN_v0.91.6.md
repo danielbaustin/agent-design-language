@@ -7,7 +7,7 @@
 - Start date: not scheduled
 - End date: not scheduled
 - Owner: ADL maintainers
-- Status: issue waves opened; WP-03 merged; WP-04 merged and closed
+- Status: issue waves opened; WP-03 merged; WP-04 merged and closed; WP-05 merged and closed with follow-on reconciliation in progress
 
 ## Status
 
@@ -37,7 +37,7 @@ turns planning docs and feature docs into issue-ready work with review gates.
 | 3 | Resilience, persistence, sleep/wake execution route | not opened | ADL maintainers | planned |
 | 4 | Tooling proof-loop reliability route | `#3968`, `#3995`-`#4001` | ADL maintainers | merged |
 | 5 | Public prompt records export route | `#3969`, `#4002`-`#4006` | ADL maintainers | merged and closed through umbrella `#3969` |
-| 6 | Provider/model reliability route | not opened | ADL maintainers | planned |
+| 6 | Provider/model reliability route | `#3970`, `#4007`-`#4012`, `#4053` merged and closed; `#4111` follow-on reconciliation | ADL maintainers | merged and closed with reconciliation follow-on |
 | 7 | ACIP/A2A/provider communications route | not opened | ADL maintainers | planned |
 | 8 | Security bridge and CAV route | not opened | ADL maintainers | planned |
 | 9 | Identity, Observatory/Unity, AEE, Memory/ObsMem, ACP accounting | not opened | ADL maintainers | planned |
