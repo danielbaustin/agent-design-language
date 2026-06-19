@@ -237,6 +237,10 @@ filter_token_for_path() {
       printf 'pr_cmd_finish'
       return 0
       ;;
+    adl/src/long_lived_agent.rs|adl/src/long_lived_agent/tests.rs)
+      printf 'long_lived_agent'
+      return 0
+      ;;
     adl/src/cli/tests/run_state/*.rs)
       printf 'run_state'
       return 0
