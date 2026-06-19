@@ -76,10 +76,11 @@ The normal workflow is:
 2. qualitative card review
 3. `pr-ready`
 4. `pr-run`
-5. `pr-finish`
-6. `pr-janitor`
+5. create the issue-bound session goal for the tracked session before implementation begins
+6. `pr-finish`
+7. `pr-janitor`
    - the repo finish path should auto-attach the janitor hook after PR publication so in-flight monitoring starts without an extra manual step
-7. `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
+8. truthful `update_goal` terminal state, then `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
 
 `repo-code-review` is cross-cutting rather than phase-specific.
 `test-generator` is a bounded helper skill for focused tests for a concrete issue, diff, file, or worktree.
@@ -103,6 +104,17 @@ that the current helper scripts automate multi-active issue execution.
 `review-readiness-cleanup` is a bounded review-cycle preflight helper for classifying safe cleanup, blockers, skipped surfaces, and follow-on needs before formal review starts.
 `planning-doc-editor` is a bounded planning-document editor for milestone/project docs that need placeholder cleanup, required-section repair, status-truth normalization, template-contract alignment, or portable-path cleanup without editing lifecycle cards.
 `portable-contract-normalizer` is a bounded portability helper for detecting machine-local assumptions and applying only explicitly approved safe mechanical normalization.
+
+Tracked issue sessions should create an explicit issue-bound session goal after
+readiness/bind succeeds and before implementation starts. The minimum goal
+surface is the issue number plus the bounded session objective. Current repo
+workflow guidance treats this as a Codex/session discipline rather than a
+proven ADL runtime-enforced contract, so helper scripts may warn about the
+requirement but must not claim they can verify live goal state unless a later
+issue proves that integration. A truthful `complete` update may represent a
+session handoff into normal review/wait state after PR publication when that
+handoff was the declared bounded session objective; it does not imply the whole
+issue is merged or closed.
 
 The PR lifecycle skills share the CI runtime interpretation policy in
 `adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md`. Stable PR check names

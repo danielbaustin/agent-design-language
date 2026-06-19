@@ -71,10 +71,21 @@ These rules are mandatory for ADL issue work.
 3. Always work in a bound worktree on a specific branch.
    - Never do tracked issue work on `main`.
    - Use the repo-native issue-mode `pr run` flow to bind execution context.
-4. Always review work with a subagent before opening the PR.
+4. Always create an issue-bound session goal before implementation work starts.
+   - For tracked issue sessions, call `create_goal` after the issue is ready and
+     before bounded implementation begins in the issue worktree.
+   - The goal should minimally name the issue number and the concrete session
+     objective so token accounting, completion, and blocked-state reporting stay
+     tied to the tracked issue.
+   - Use `update_goal` only for truthful terminal state changes:
+     `complete` when the current session's bounded objective is actually
+     achieved, including a truthful handoff into review/wait state after
+     publication when that was the session goal, or `blocked` only when the
+     repeated blocking threshold is met and meaningful progress cannot continue.
+5. Always review work with a subagent before opening the PR.
    - Run a bounded review subagent over the changed work product.
    - Fix all actionable findings immediately before publication.
-5. Always perform closeout after the issue is closed.
+6. Always perform closeout after the issue is closed.
    - Use the normal closeout path so issue truth, cards, artifacts, and GitHub
      state all agree.
 
@@ -142,11 +153,14 @@ For a normal tracked issue:
 4. make sure `SIP`, `STP`, and `SPP` are issue-specific and design-time ready
 5. follow the conductor-selected lifecycle step
 6. if the issue is ready for execution binding, use `adl/tools/pr.sh run <issue>`
-7. make the bounded change in the issue worktree, never on `main`
-8. run the smallest meaningful validation for the touched surface
-9. run a pre-PR subagent review and fix findings
-10. verify PR base/stack topology, then publish through the normal PR workflow
-11. perform closeout after merge/closure
+7. call `create_goal` for the bound tracked issue session before implementation
+   starts
+8. make the bounded change in the issue worktree, never on `main`
+9. run the smallest meaningful validation for the touched surface
+10. run a pre-PR subagent review and fix findings
+11. verify PR base/stack topology, then publish through the normal PR workflow
+12. use `update_goal` for truthful terminal session state, then perform closeout
+   after merge/closure
 
 ## Validation Expectations
 

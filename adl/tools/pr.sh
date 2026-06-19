@@ -1796,6 +1796,7 @@ cmd_run() {
     require_rust_pr_delegate start
     adl_obs_event "pr.sh" "issue_bind" "started" "issue" "$1"
     note "Issue-mode run: binding execution context for issue $1"
+    note "Goal guardrail: call create_goal for issue $1 after bind succeeds and before implementation starts; treat update_goal as a truthful session-terminal record only."
     ADL_PR_SUPPRESS_START_COMPAT_NOTE=1 delegate_pr_command_to_rust start "$@"
     return 0
   fi

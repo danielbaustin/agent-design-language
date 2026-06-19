@@ -1250,6 +1250,7 @@ fn finish_validation_profile_classifies_sprint_shell_helper_tests_as_small_binar
         &[
             "adl/tools/test_install_adl_operational_skills.sh".to_string(),
             "adl/tools/test_sprint_conductor_helpers.sh".to_string(),
+            "adl/tools/test_pr_run_issue_mode.sh".to_string(),
         ],
     )
     .expect("sprint shell helper plan");

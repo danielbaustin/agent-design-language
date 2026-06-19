@@ -110,9 +110,14 @@ If there is no concrete target, stop and report `blocked`.
    - blocked/no-op reporting
 4. Apply the declared skill/subagent policy.
 5. Select the next skill.
-6. Record the workflow-compliance result and write the routing artifact.
-7. When explicit dispatch mode is enabled, dispatch one bounded downstream skill subtask.
-8. Stop without absorbing the selected skill's logic.
+6. If the selected route binds or resumes tracked issue execution, record the
+   issue-bound session-goal requirement in the routing result or handoff note:
+   create the goal after bind/readiness succeeds and before implementation
+   starts; treat `complete` or `blocked` as truthful session-terminal states
+   only.
+7. Record the workflow-compliance result and write the routing artifact.
+8. When explicit dispatch mode is enabled, dispatch one bounded downstream skill subtask.
+9. Stop without absorbing the selected skill's logic.
 
 ## Observability Expectations
 
@@ -178,6 +183,9 @@ Important rule:
 - when values-rendered prompt-card support exists for the target, do not route
   broad card generation to direct Markdown edits; use the renderer/schema path
   first, then card-editor skills only for issue-local lifecycle truth
+- when routing to `pr-run` or resuming bound execution, include the issue-bound
+  session-goal requirement in the handoff: create the goal after bind/readiness
+  succeeds and before implementation starts
 
 ## Policy Model
 

@@ -1496,6 +1496,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_owner_validation_lane.sh"
             | "adl/tools/test_cli_wrapper_migration_contract.sh"
             | "adl/tools/test_pr_run_ambiguity_policy.sh"
+            | "adl/tools/test_pr_run_issue_mode.sh"
             | "adl/tools/test_pr_small_binary_delegation.sh"
             | "adl/tools/test_control_plane_observability.sh"
             | "adl/tools/test_adl_runtime_compatibility.sh"
