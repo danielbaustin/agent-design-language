@@ -4,7 +4,7 @@
 
 - Feature Name: AEE, Memory/ObsMem, And ACP Bridge Accounting
 - Milestone Target: `v0.91.6`
-- Status: planned_with_aee_and_obsmem_routing_state_explicit
+- Status: planned_with_aee_obsmem_and_memory_palace_routing_state_explicit
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, policy
@@ -56,7 +56,7 @@ consumes it.
 | --- | --- | --- | --- |
 | AEE completion and readiness | `#4037` | AEE is classified as complete, blocked, or explicitly routed with proof limits and `v0.92` status | routed with named `v0.92` proof owners |
 | Memory/ObsMem handoff | `#4038` | Memory/ObsMem boundary is distinct, evidence-backed, and privacy-constrained | routed with explicit handoff boundary and `v0.92` consumption limits |
-| Memory Palace long-context bridge | `#4039` | Long-context solution path is explicit with proof or explicitly accepted residual routing | planned child issue |
+| Memory Palace long-context bridge | `#4039` | Long-context solution path is explicit with proof or explicitly accepted residual routing | routed with explicit long-context boundary and first proof shape |
 | ACP/cognitive profile scope and privacy boundary | `#4040` | ACP and cognitive-profile boundaries stay distinct from provider/capability/identity surfaces and preserve privacy/security rules | planned child issue |
 | WP-10 feature closeout matrix | `#4041` | All child surfaces have terminal status and the final closeout packet preserves residual truth | planned closeout issue |
 
@@ -88,7 +88,7 @@ Evidence consumed for this status:
 - `docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md`
 - this `v0.91.6` bridge ledger
 
-What is already evidence-backed enough to consume:
+What is already explicit enough to consume as routed planning truth:
 
 | AEE surface | Current evidence-backed truth | Why it is not full completion |
 | --- | --- | --- |
@@ -199,6 +199,94 @@ Current privacy and security constraints:
 - working set or context cache runtime behavior is complete;
 - Memory Palace is complete;
 - memory/profile publication or privacy closure is already finished.
+
+## Memory Palace Long-Context Bridge Status
+
+Current truthful classification:
+
+- `routed_with_explicit_long_context_boundary_and_first_proof_shape`
+
+Memory Palace is now an explicit long-context solution direction with a named
+first proof shape, but this issue does not prove runtime completion,
+publication/privacy closure, or durable continuity by itself.
+
+Evidence consumed for this status:
+
+- `.adl/docs/TBD/ADL_MEMORY_PALACE_CONTEXT_PROBLEM.md`
+- `.adl/docs/TBD/memory_identity/ADL_MEMORY_PALACE_ARCHITECTURE.md`
+- `docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md`
+- `docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md`
+- `docs/milestones/v0.91.6/features/RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md`
+- `docs/milestones/v0.91.6/features/IDENTITY_CONTINUITY_CAPABILITY_SELECTOR_BRIDGE_v0.91.6.md`
+- `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md`
+- this `v0.91.6` bridge ledger
+
+What is already evidence-backed enough to consume:
+
+| Memory Palace surface | Current evidence-backed truth | Why it is not full completion |
+| --- | --- | --- |
+| Context problem statement | Long-lived agents cannot solve context loss by increasing context windows alone; they need navigable structure over bounded working context | The source remains an operator/TBD planning input, not a stable milestone proof artifact |
+| Architectural role | Memory Palace is the navigational layer between ObsMem, working set, and context window rather than a duplicate storage system | The architecture note remains source material, not implemented runtime behavior |
+| Boundary vocabulary | The distinction among ObsMem, Memory Palace, working set, and context cache is explicit and already required by `v0.92` routing | Boundary clarity is not execution proof |
+| First proof shape | The first reviewable slice is no longer a vague future promise; topology, working-set, and stale-context proof surfaces are named as the intended shape | Only the topology route is concretely anchored today; the other proof surfaces still need explicit `v0.92` owners |
+| Integration posture | Memory Palace must remain aligned with resilience replay/custody prerequisites and identity/continuity boundaries | Dependency naming is not continuity proof |
+
+Current long-context boundary:
+
+| Surface | Current bridge rule | Non-claim preserved here |
+| --- | --- | --- |
+| ObsMem | Durable storage and evidence retrieval input | ObsMem is not the navigational solution to the context problem |
+| Memory Palace | Navigational topology over durable context anchors, rooms, portals, and traversal hints | Memory Palace is not a finished runtime memory system here |
+| Working set | Bounded active cognition materialized for the current task | This issue does not prove working-set runtime behavior |
+| Context cache | Execution-time cache of the current working set | Context cache is not memory and is not long-term continuity proof |
+| Identity continuity | May later consume palace navigation as part of continuity posture when replay/custody/security proof exists | No durable same-entity continuity claim is proved here |
+| Publication/privacy | Memory Palace planning and bridge docs remain security-sensitive surfaces | This issue does not approve publication of private memory or profile material |
+
+Current first proof / fixture plan:
+
+| Planned proof surface | Why it matters | Current owner / route |
+| --- | --- | --- |
+| Memory Palace topology packet | Makes the navigational structure reviewable instead of metaphor-only | `docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md` and later `v0.92` issue work |
+| Context working-set packet | Shows how bounded active cognition is materialized from durable references | planned `v0.92` memory/context implementation slice; concrete issue owner still required before downstream proof consumption |
+| Stale-context validation report | Proves the system can detect outdated or misleading retrieved context | planned `v0.92` validation slice; concrete issue owner still required before downstream proof consumption |
+
+Current non-claims:
+
+- `v0.91.6` does not prove a full Memory Palace runtime implementation.
+- `v0.91.6` does not prove replayable long-lived continuity or same-entity
+  persistence through migration, wake, or restore.
+- `v0.91.6` does not prove private memory material is publication-safe.
+- `v0.91.6` does not replace ObsMem, working set, or context cache with
+  Memory Palace.
+- `v0.92` must still require bounded implementation and proof before using
+  Memory Palace as more than a planned long-context route.
+
+## v0.92 Memory Palace Consumption Rule
+
+`v0.92` may consume this issue as proof that:
+
+- Memory Palace is a named long-context solution direction rather than a vague
+  deferral;
+- the boundary among ObsMem, Memory Palace, working set, and context cache is
+  explicit;
+- the first proof shape is at least explicit enough to route, with a concrete
+  topology artifact already named and the remaining proof surfaces still
+  requiring explicit `v0.92` owners;
+- Memory Palace must stay aligned with resilience and identity-continuity
+  prerequisites.
+
+`v0.92` may not consume this issue as proof that:
+
+- the Memory Palace runtime is already complete;
+- the `TBD` context-problem or architecture notes are themselves stable
+  milestone-proof artifacts;
+- replay, custody, wake/restore, or durable identity continuity proof already
+  exists;
+- the context working-set packet or stale-context validation report already has
+  an opened implementation/proof owner;
+- publication/privacy review is already closed for memory-adjacent material;
+- activation or birthday readiness may rely on Memory Palace as shipped
+  runtime behavior.
 
 ## Dependency And Proof Expectations
 
