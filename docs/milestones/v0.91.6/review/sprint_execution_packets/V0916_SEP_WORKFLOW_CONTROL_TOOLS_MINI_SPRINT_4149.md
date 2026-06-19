@@ -1,6 +1,6 @@
 # v0.91.6 Workflow-Control Tools Mini-Sprint SEP
 
-Status: `ready_for_child_execution`
+Status: `closed_child_wave_ready_for_umbrella_closeout`
 Date: 2026-06-19
 Sprint umbrella: `#4149`
 Execution mode: `hybrid`
@@ -44,21 +44,21 @@ Out of scope:
 | Issue | Role | Status | Notes |
 |---|---|---|---|
 | `#4085` | non-closing lifecycle PR declaration | completed | PR `#4170` merged and issue `#4085` closed as completed on 2026-06-19. |
-| `#4087` | configured token context inheritance | ready_for_execution | Mostly independent credential/context lane; must avoid printing secrets and avoid raw `gh` fallback for covered operations. |
-| `#4088` | fresh-worktree task-bundle materialization | ready_for_execution | First worktree/setup lane issue; should run before stale-worktree closeout behavior. |
-| `#4086` | stale dirty worktree closeout quarantine | waiting_on_4088 | Depends conceptually on fresh-worktree and closeout worktree-resolution truth. |
-| `#4094` | `pr finish` output-card/card-path routing | waiting_on_4085_or_file_isolation | Shares publication surfaces with `#4085`; may run after `#4085` or alongside only if write sets are proven disjoint. |
-| `#4083` | doctor/open-wave queue pressure behavior | wait_until_lifecycle_fixes_land | Should account for the current lifecycle behavior after earlier fixes land. |
+| `#4087` | configured token context inheritance | completed | PR `#4172` merged and issue `#4087` closed as completed on 2026-06-19. |
+| `#4088` | fresh-worktree task-bundle materialization | completed | PR `#4173` merged and issue `#4088` closed as completed on 2026-06-19. |
+| `#4086` | stale dirty worktree closeout quarantine | completed | PR `#4174` merged and issue `#4086` closed as completed on 2026-06-19. |
+| `#4094` | `pr finish` output-card/card-path routing | completed | PR `#4175` merged and issue `#4094` closed as completed on 2026-06-19. |
+| `#4083` | doctor/open-wave queue pressure behavior | completed | PR `#4184` merged and issue `#4083` closed as completed on 2026-06-19. |
 
 ## Recommended Execution Order
 
-1. `#4085` completed through PR `#4170`; use that landed publication-contract truth for downstream `pr finish` work.
-2. Run `#4087` early in the independent credential/context lane.
-3. Run `#4088` before `#4086` to establish fresh-worktree task-bundle materialization.
-4. Run `#4086` after `#4088` closeout/worktree behavior is stable.
-5. Run `#4094` after `#4085`, unless a fresh file-surface check proves no collision.
-6. Run `#4083` near the end so queue-pressure behavior reflects the current lifecycle contract.
-7. Close `#4149` only after all six child issues are closed or truthfully blocked/deferred, child closeout truth is recorded, and sprint review exists.
+1. `#4085` completed through PR `#4170`.
+2. `#4087` completed through PR `#4172`.
+3. `#4088` completed through PR `#4173`.
+4. `#4086` completed through PR `#4174`.
+5. `#4094` completed through PR `#4175`.
+6. `#4083` completed through PR `#4184`.
+7. `#4149` may close after final umbrella SOR truth records this child-wave completion and the sprint review packet below remains current.
 
 ## Safe Parallel Lanes
 
@@ -74,10 +74,10 @@ Out of scope:
 | Gate | Blocks | Exit condition |
 |---|---|---|
 | sprint readiness gate | all child execution | This SEP exists, child bundles exist, and child `SIP`/`STP`/`SPP`/`SRP` design-time readiness passes. |
-| finish contract gate | `#4094` | Satisfied by merged PR `#4170` for `#4085`; re-check file-surface isolation before editing `#4094`. |
-| fresh-worktree gate | `#4086` | `#4088` lands or explicitly records a blocked/deferred outcome that still gives `#4086` a truthful starting surface. |
-| queue gate | `#4083` | Earlier lifecycle fixes have landed or been truthfully routed, so doctor/open-wave behavior can be evaluated against the current contract. |
-| closeout gate | `#4149` closure | All six child issues are closed or truthfully blocked/deferred, PR/watch/closeout state is reconciled, and sprint review is recorded. |
+| finish contract gate | `#4094` | Satisfied by merged PRs `#4170` and `#4175`. |
+| fresh-worktree gate | `#4086` | Satisfied by merged PRs `#4173` and `#4174`. |
+| queue gate | `#4083` | Satisfied by merged PR `#4184`; doctor now reports issue-local readiness as `PASS` with unrelated open-wave pressure classified separately. |
+| closeout gate | `#4149` closure | Satisfied for the child wave: all six child issues are closed, their PRs are merged, child worktrees are pruned, and this sprint review packet is recorded. |
 
 ## Watcher Policy
 
@@ -104,13 +104,13 @@ failed, pending, blocked, skipped, or deferred lanes.
 Sprint review must collect child issue PRs, changed implementation surfaces,
 validation notes, blocked/deferred findings, and closeout evidence. The review
 must include code-facing and test-facing review coverage before `#4149` closes.
-The review artifact is declared at
+The review artifact is recorded at
 `docs/milestones/v0.91.6/review/V0916_WORKFLOW_CONTROL_TOOLS_MINI_SPRINT_REVIEW_4149.md`
-and remains `not_started` until the child wave has execution evidence to review.
+with the child-wave execution evidence reviewed for umbrella closeout.
 
 Closeout must verify:
 
-- all six child issues are closed or truthfully blocked/deferred;
+- all six child issues are closed;
 - each completed child has PR, validation, SRP, SOR, and closeout truth aligned;
 - all merged child worktrees are pruned;
 - the sprint review artifact exists;
@@ -122,5 +122,10 @@ Closeout must verify:
   was unrelated queue pressure.
 - The sprint child list remains exactly `#4085`, `#4087`, `#4088`, `#4086`,
   `#4094`, and `#4083`.
-- Child issue execution began with `#4085`; PR `#4170` merged and issue
-  `#4085` closed as completed on 2026-06-19.
+- Child issue execution completed for all six children on 2026-06-19.
+- PR `#4184` for `#4083` exposed one workflow-tools remediation note: the
+  repo-native `pr finish --merge` path saw green checks but did not transition
+  the draft PR to ready before waiting on aggregate validation. A bounded manual
+  `gh pr ready 4184` intervention was used, then `pr finish --merge` completed
+  the merge and closeout. This is recorded as sprint residual tooling friction,
+  not as additional sprint implementation scope.
