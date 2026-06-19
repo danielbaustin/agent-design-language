@@ -85,6 +85,28 @@ assert node["proof_role"] == "regression"
 assert node["resource_class"] == "medium"
 PY
 
+runtime_family="$TMP/runtime-family.txt"
+printf 'M\tadl/src/runtime_v2/standing/mod.rs\n' >"$runtime_family"
+bash "$SCRIPT" --changed-files "$runtime_family" --json >"$TMP/runtime-family.json"
+python3 - <<'PY' "$TMP/runtime-family.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["status"] == "ready_to_run"
+assert [item["lane_id"] for item in profile["run"]] == ["rust_pr_fast"]
+surface = profile["behavior_surfaces"][0]
+assert surface["id"] == "rust_family_behavior"
+assert surface["owner"] == "shared"
+assert surface["default_surface"] == "shared_rust"
+assert surface["proof_role"] == "regression"
+assert "runtime_v2" in surface["requirement_ids"]
+node = profile["validation_dag"]["nodes"][0]
+assert node["proof_role"] == "regression"
+assert node["resource_class"] == "medium"
+PY
+
 release_gate="$TMP/release-gate.txt"
 printf 'M\t.github/workflows/ci.yaml\n' >"$release_gate"
 bash "$SCRIPT" --changed-files "$release_gate" --json >"$TMP/release.json"

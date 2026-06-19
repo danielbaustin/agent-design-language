@@ -140,6 +140,23 @@ is_structural_companion_surface() {
   return 1
 }
 
+is_structural_family_barrel_surface() {
+  local path="$1"
+  case "$path" in
+    adl/src/runtime_v2/*/mod.rs)
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+
+  if ! file_is_structural_module_barrel "$path"; then
+    return 1
+  fi
+
+  family_token_for_path "$path" >/dev/null 2>&1
+}
+
 is_broad_rust_surface() {
   local path="$1"
   case "$path" in
@@ -163,6 +180,9 @@ is_broad_rust_surface() {
       return 1
       ;;
     */mod.rs)
+      if is_structural_family_barrel_surface "$path"; then
+        return 1
+      fi
       return 0
       ;;
   esac
