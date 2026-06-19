@@ -509,9 +509,20 @@ jobs:
                     files: (
                       map(.data[]?.files // [])
                       | add
-                      | sort_by(.filename)
-                      | group_by(.filename)
-                      | map(max_by(.summary.lines.percent // 0))
+                      | map(
+                          .normalized_filename = (
+                            .filename
+                            | gsub("\\\\"; "/")
+                            | sub("^/home/runner/work/[^/]+/[^/]+/"; "")
+                            | sub("^/__w/[^/]+/[^/]+/"; "")
+                            | sub("^[A-Za-z]:/a/[^/]+/[^/]+/"; "")
+                            | gsub("/\\./"; "/")
+                            | gsub("/[^/]+/\\.\\./"; "/")
+                          )
+                        )
+                      | sort_by(.normalized_filename)
+                      | group_by(.normalized_filename)
+                      | map(max_by(.summary.lines.percent // 0) | del(.normalized_filename))
                     ),
                     totals: (.[0].data[0].totals)
                   }
