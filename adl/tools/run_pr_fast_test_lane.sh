@@ -98,7 +98,7 @@ changed_rows() {
 is_relevant_fast_lane_surface() {
   local path="$1"
   case "$path" in
-    adl/src/*.rs|adl/tests/*.rs|adl/build.rs|\
+    adl/src/*.rs|adl/tests/*.rs|adl/build.rs|adl/Cargo.toml|adl/Cargo.lock|\
     docs/default_workflow.md|\
     docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md)
       return 0
@@ -310,6 +310,32 @@ family_token_for_path() {
   return 1
 }
 
+is_manifest_only_rust_wave() {
+  local saw_manifest=false
+  local saw_lock=false
+  local path=""
+  while IFS= read -r path; do
+    [ -n "$path" ] || continue
+    case "$path" in
+      adl/Cargo.toml)
+        saw_manifest=true
+        ;;
+      adl/Cargo.lock)
+        saw_lock=true
+        ;;
+      *)
+        return 1
+        ;;
+    esac
+  done <<EOF
+$(changed_rows \
+  | normalize_changed_rows \
+  | awk -F '\t' 'NF >= 2 { print $2 }')
+EOF
+
+  [ "$saw_manifest" = true ] || [ "$saw_lock" = true ]
+}
+
 build_filter_expression() {
   python3 - "$@" <<'PY'
 import sys
@@ -419,6 +445,11 @@ EOF
 
 if [ "$classification_locked" = true ]; then
   :
+elif is_manifest_only_rust_wave; then
+  mode="focused"
+  reason="manifest_only_rust_wave_runs_focused_nextest"
+  filter_expression="$(build_filter_expression "pr_cmd::github" "github_release_" "long_lived_agent")"
+  filter_tokens="pr_cmd::github,github_release_,long_lived_agent"
 elif [ "$slow_proof_inventory_surface_count" -gt 0 ] && [ "$rust_surface_count" -eq "$slow_proof_inventory_surface_count" ]; then
   mode="contract_only"
   reason="slow_proof_inventory_change_covered_by_contract_check"

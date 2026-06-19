@@ -223,6 +223,24 @@ assert_has "$mixed_family_output" "reason=bounded_family_surface_runs_family_nex
 assert_has "$mixed_family_output" "filter_tokens=runtime_v2,cli"
 assert_has "$mixed_family_output" "filter_expression=test(runtime_v2) or test(cli)"
 
+manifest_only_pair="$TMP/manifest_only_pair.txt"
+cat >"$manifest_only_pair" <<'EOF'
+M	adl/Cargo.toml
+M	adl/Cargo.lock
+EOF
+manifest_only_pair_output="$(bash "$SCRIPT" --changed-files "$manifest_only_pair" --print-plan)"
+assert_has "$manifest_only_pair_output" "mode=focused"
+assert_has "$manifest_only_pair_output" "reason=manifest_only_rust_wave_runs_focused_nextest"
+assert_has "$manifest_only_pair_output" "filter_tokens=pr_cmd::github,github_release_,long_lived_agent"
+assert_has "$manifest_only_pair_output" "filter_expression=test(pr_cmd::github) or test(github_release_) or test(long_lived_agent)"
+
+manifest_only_single="$TMP/manifest_only_single.txt"
+printf 'M\tadl/Cargo.toml\n' >"$manifest_only_single"
+manifest_only_single_output="$(bash "$SCRIPT" --changed-files "$manifest_only_single" --print-plan)"
+assert_has "$manifest_only_single_output" "mode=focused"
+assert_has "$manifest_only_single_output" "reason=manifest_only_rust_wave_runs_focused_nextest"
+assert_has "$manifest_only_single_output" "filter_tokens=pr_cmd::github,github_release_,long_lived_agent"
+
 too_many_families="$TMP/too_many_families.txt"
 cat >"$too_many_families" <<'EOF'
 M	adl/src/runtime_v2/subdir/nested.rs
