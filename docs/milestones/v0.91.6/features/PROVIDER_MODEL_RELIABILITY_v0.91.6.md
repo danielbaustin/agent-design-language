@@ -4,13 +4,13 @@
 
 - Feature Name: Provider And Model Reliability
 - Milestone Target: `v0.91.6`
-- Status: `wp_05_provider_sprint_completed`
+- Status: `wp_05_provider_sprint_completed_with_v2_reconciliation_follow_on`
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture
 - Proof Modes: tests, review, replay
-- Related issues: `#3970`, `#4007`, `#4008`, `#4009`, `#4010`, `#4011`, `#4012`, `#4053`, `#4097`
-- Primary issue packets: `docs/milestones/v0.91.6/review/provider/PROVIDER_ROLE_SUITABILITY_MATRIX_4008.md`, `docs/milestones/v0.91.6/review/provider/PROVIDER_RELIABILITY_CLOSEOUT_MATRIX_4012.md`, `docs/milestones/v0.91.6/review/provider/WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md`, `docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md`
+- Related issues: `#3970`, `#4007`, `#4008`, `#4009`, `#4010`, `#4011`, `#4012`, `#4053`, `#4097`, `#4111`
+- Primary issue packets: `docs/milestones/v0.91.6/review/provider/PROVIDER_ROLE_SUITABILITY_MATRIX_4008.md`, `docs/milestones/v0.91.6/review/provider/PROVIDER_RELIABILITY_CLOSEOUT_MATRIX_4012.md`, `docs/milestones/v0.91.6/review/provider/WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md`, `docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md`, `docs/milestones/v0.91.6/review/provider/PROVIDER_PROFILES_V2_RECONCILIATION_4111.md`
 - Upstream catalog dependency: `#4007` / PR `#4063` merged (`PROVIDER_CAPABILITY_PROFILE_CATALOG_4007.md`)
 
 ## Purpose
@@ -174,6 +174,31 @@ Remediation note:
 
 - the stale issue-input path should be corrected or retired in future
   authoring/remediation work rather than silently treated as canonical
+
+Tracked reconciliation note:
+
+- `#4111` now records the live tracked replacement contract in
+  `docs/milestones/v0.91.6/review/provider/PROVIDER_PROFILES_V2_RECONCILIATION_4111.md`
+  so provider/profile V2 truth is no longer hidden behind the missing TBD path
+
+## Provider profiles V2 reconciliation status
+
+`#4111` makes the post-WP-05 truth explicit:
+
+- provider profiles are partially implemented in runtime plus documented in the
+  WP-05 boundary packets
+- capability profiles are documented-only today
+- role-provider profiles are documented-only today
+- model identity is only partially documented and is not yet a first-class
+  typed runtime surface
+- citizen, institution, guild, continuity, and broader identity concepts remain
+  routed out of the provider lane
+
+This feature doc should therefore be read together with:
+
+- `docs/milestones/v0.91.6/review/provider/PROVIDER_PROFILES_V2_RECONCILIATION_4111.md`
+- `docs/milestones/v0.91.6/review/provider/PROVIDER_CAPABILITY_PROFILE_CATALOG_4007.md`
+- `docs/milestones/v0.91.6/review/provider/ROLE_PROVIDER_PROFILES_4053.md`
 
 ## Downstream consumption
 
