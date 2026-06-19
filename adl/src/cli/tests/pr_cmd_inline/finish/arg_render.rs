@@ -3,8 +3,11 @@ use crate::cli::pr_cmd::finish_support::{
     ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
     finish_declared_paths_for_validation, non_closing_lifecycle_line, normalize_docs_only_sor_text,
     open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout, real_pr_finish,
-    resolve_finish_issue_scope_and_slug, select_finish_validation_plan_for_finish,
-    FinishValidationMode, FinishValidationPlan,
+    render_default_finish_validation, resolve_finish_issue_scope_and_slug,
+    select_finish_validation_plan_for_finish, FinishValidationMode, FinishValidationPlan,
+    FinishValidationProfile, FinishValidationProfileEscalation,
+    FinishValidationProfileEscalationReason, FinishValidationProfileRunItem,
+    FinishValidationProfileSurfaceItem,
 };
 use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
 
@@ -152,14 +155,17 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
         &input,
         &output,
         Some("extra notes"),
-        Some(&render_default_finish_validation(&FinishValidationPlan {
-            mode: FinishValidationMode::LargerBinaryFocused,
-            commands: vec![
-                "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
-                "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
-                "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string(),
-            ],
-        })),
+        Some(&render_default_finish_validation(
+            &FinishValidationPlan {
+                mode: FinishValidationMode::LargerBinaryFocused,
+                commands: vec![
+                    "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+                    "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string(),
+                ],
+            },
+            None,
+        )),
         "fp-123",
         &temp,
     )
@@ -178,14 +184,17 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
         &input,
         &output,
         Some("issue_card_schema: adl.issue.v1"),
-        Some(&render_default_finish_validation(&FinishValidationPlan {
-            mode: FinishValidationMode::LargerBinaryFocused,
-            commands: vec![
-                "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
-                "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
-                "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string(),
-            ],
-        })),
+        Some(&render_default_finish_validation(
+            &FinishValidationPlan {
+                mode: FinishValidationMode::LargerBinaryFocused,
+                commands: vec![
+                    "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+                    "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string(),
+                ],
+            },
+            None,
+        )),
         "fp-123",
         &temp,
     )
@@ -240,13 +249,16 @@ fn render_pr_body_defaults_docs_only_validation_when_needed() {
         &input,
         &output,
         None,
-        Some(&render_default_finish_validation(&FinishValidationPlan {
-            mode: FinishValidationMode::DocsOnly,
-            commands: vec![
-                "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
-                "git diff --check".to_string(),
-            ],
-        })),
+        Some(&render_default_finish_validation(
+            &FinishValidationPlan {
+                mode: FinishValidationMode::DocsOnly,
+                commands: vec![
+                    "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+                    "git diff --check".to_string(),
+                ],
+            },
+            None,
+        )),
         "fp-123",
         &temp,
     )
@@ -382,6 +394,67 @@ verification_summary:
     let commands = vec!["git diff --check".to_string()];
     let normalized = normalize_docs_only_sor_text(input, &commands);
     assert_eq!(normalized.matches("git diff --check").count(), 2);
+}
+
+#[test]
+fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed_files() {
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec![
+            "git diff --check".to_string(),
+            "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish profile_test"
+                .to_string(),
+        ],
+    };
+    let profile = FinishValidationProfile {
+        selected_profile: "selected_2_lane_profile".to_string(),
+        status: "ready_to_run".to_string(),
+        pr_publication_sufficient: true,
+        run: vec![
+            FinishValidationProfileRunItem {
+                lane_id: "csdlc_owner_lane".to_string(),
+                command: "bash adl/tools/run_owner_validation_lane.sh csdlc".to_string(),
+                reason: "csdlc_owner_surface_requires_csdlc_owner_lane".to_string(),
+            },
+            FinishValidationProfileRunItem {
+                lane_id: "rust_pr_fast".to_string(),
+                command: "bash adl/tools/run_pr_fast_test_lane.sh --changed-files /private/tmp/changed-files.txt".to_string(),
+                reason: "bounded_rust_surface_runs_focused_nextest".to_string(),
+            },
+        ],
+        not_run: vec![FinishValidationProfileSurfaceItem {
+            surface: "coverage_release_gate".to_string(),
+            reason: "reserved for coverage or release policy selection".to_string(),
+        }],
+        deferred: vec![FinishValidationProfileSurfaceItem {
+            surface: "ci_integration".to_string(),
+            reason: "deferred to GitHub checks for merge-context validation".to_string(),
+        }],
+        escalation: FinishValidationProfileEscalation {
+            required: false,
+            reasons: vec![FinishValidationProfileEscalationReason {
+                lane_id: "none".to_string(),
+                status: "not_applicable".to_string(),
+                reason: "not used".to_string(),
+            }],
+        },
+    };
+
+    let rendered = render_default_finish_validation(&plan, Some(&profile));
+
+    assert!(rendered.contains("Selected validation profile: `selected_2_lane_profile`"));
+    assert!(rendered.contains("Profile-selected run lanes:"));
+    assert!(rendered
+        .contains("`csdlc_owner_lane` via `bash adl/tools/run_owner_validation_lane.sh csdlc`"));
+    assert!(rendered.contains("`rust_pr_fast` via `bash adl/tools/run_pr_fast_test_lane.sh --changed-files <changed-files>`"));
+    assert!(rendered.contains("Profile-skipped proof surfaces:"));
+    assert!(rendered
+        .contains("`coverage_release_gate`: reserved for coverage or release policy selection"));
+    assert!(rendered.contains("Deferred proof:"));
+    assert!(rendered
+        .contains("`ci_integration`: deferred to GitHub checks for merge-context validation"));
+    assert!(rendered.contains("Escalation: not required"));
+    assert!(!rendered.contains("/private/tmp/changed-files.txt"));
 }
 
 #[test]
@@ -907,7 +980,7 @@ fn finish_validation_plan_classifies_owner_validation_lanes() {
         .commands
         .iter()
         .any(|command| command.contains("cargo clippy")));
-    let csdlc_rendered_validation = render_default_finish_validation(&csdlc_plan);
+    let csdlc_rendered_validation = render_default_finish_validation(&csdlc_plan, None);
     assert!(!csdlc_rendered_validation.contains("cargo nextest run"));
     assert!(csdlc_rendered_validation.contains("larger owner-binary focused build/test only"));
     assert!(csdlc_rendered_validation.contains("CI integration proof"));
@@ -2778,7 +2851,39 @@ fn real_pr_finish_restages_tracked_output_truth_written_during_validation() {
         .success());
     fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
     fs::create_dir_all(repo.join("docs")).expect("docs dir");
+    fs::create_dir_all(repo.join("adl/tools")).expect("tools dir");
     fs::write(repo.join("docs/notes.md"), "initial notes\n").expect("write docs");
+    write_executable(
+        &repo.join("adl/tools/validation_manager.py"),
+        r#"#!/usr/bin/env python3
+import json
+
+print(json.dumps({
+    "selected_profile": "docs_diff_check_profile",
+    "status": "ready_to_run",
+    "pr_publication_sufficient": True,
+    "run": [
+        {
+            "lane_id": "docs_diff_check",
+            "command": "git diff --check",
+            "reason": "docs_only_surface_requires_diff_hygiene",
+        }
+    ],
+    "not_run": [],
+    "deferred": [
+        {
+            "surface": "ci_integration",
+            "reason": "deferred to GitHub checks for merge-context validation",
+        }
+    ],
+    "behavior_surfaces": ["docs_only"],
+    "validation_dag": [],
+    "estimated_cost": "low",
+    "escalation": {"required": False, "reasons": []},
+    "selector_plan": [],
+}))
+"#,
+    );
 
     let issue_ref = IssueRef::new(
         1162,

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+VALIDATION_MANAGER="$ROOT_DIR/adl/tools/validation_manager.py"
 event_name="${GITHUB_EVENT_NAME:-}"
 base_sha=""
 head_sha=""
@@ -68,6 +70,14 @@ reason="path_policy_docs_or_tooling_only"
 changed_count=0
 changed_files=""
 changed_rows=""
+validation_profile_selected=""
+validation_profile_status=""
+validation_profile_pr_publication_sufficient=""
+validation_profile_escalation_required=""
+validation_profile_run_lanes=""
+validation_profile_primary_reason=""
+validation_profile_escalation_lanes=""
+validation_profile_error=""
 large_file_lines="${COVERAGE_IMPACT_LARGE_FILE_LINES:-200}"
 large_file_delta="${COVERAGE_IMPACT_LARGE_FILE_DELTA:-80}"
 
@@ -592,6 +602,97 @@ raise SystemExit(1)
 PY
 }
 
+load_validation_manager_profile() {
+  local tmp_dir changed_file_list
+  tmp_dir="$(mktemp -d)"
+  changed_file_list="$tmp_dir/changed-files.txt"
+  printf '%s\n' "$changed_rows" >"$changed_file_list"
+  if ! python3 - "$VALIDATION_MANAGER" "$changed_file_list" <<'PY' >"$tmp_dir/meta.txt" 2>"$tmp_dir/error.txt"
+import json
+import subprocess
+import sys
+
+manager, changed_files = sys.argv[1], sys.argv[2]
+result = subprocess.run(
+    ["python3", manager, "--changed-files", changed_files, "--json"],
+    text=True,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    check=False,
+)
+if result.returncode != 0:
+    sys.stderr.write(result.stderr)
+    raise SystemExit(result.returncode)
+profile = json.loads(result.stdout)
+run_lanes = ",".join(item.get("lane_id", "") for item in profile.get("run", []))
+primary_reason = ""
+if profile.get("run"):
+    primary_reason = profile["run"][0].get("reason", "")
+elif profile.get("escalation", {}).get("reasons"):
+    primary_reason = profile["escalation"]["reasons"][0].get("reason", "")
+escalation_lanes = ",".join(
+    item.get("lane_id", "") for item in profile.get("escalation", {}).get("reasons", [])
+)
+print(f"selected={profile.get('selected_profile', '')}")
+print(f"status={profile.get('status', '')}")
+print(
+    f"pr_publication_sufficient={str(profile.get('pr_publication_sufficient', False)).lower()}"
+)
+print(
+    f"escalation_required={str(profile.get('escalation', {}).get('required', False)).lower()}"
+)
+print(f"run_lanes={run_lanes}")
+print(f"primary_reason={primary_reason}")
+print(f"escalation_lanes={escalation_lanes}")
+PY
+  then
+    validation_profile_error="$(tr '\n' ' ' <"$tmp_dir/error.txt" | sed 's/[[:space:]]\+/ /g; s/^ //; s/ $//')"
+    if [ -z "$validation_profile_error" ]; then
+      validation_profile_error="validation_manager_invocation_failed_without_error_output"
+    fi
+    rm -rf "$tmp_dir"
+    return 1
+  fi
+  validation_profile_selected="$(awk -F= '$1=="selected"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
+  validation_profile_status="$(awk -F= '$1=="status"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
+  validation_profile_pr_publication_sufficient="$(awk -F= '$1=="pr_publication_sufficient"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
+  validation_profile_escalation_required="$(awk -F= '$1=="escalation_required"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
+  validation_profile_run_lanes="$(awk -F= '$1=="run_lanes"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
+  validation_profile_primary_reason="$(awk -F= '$1=="primary_reason"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
+  validation_profile_escalation_lanes="$(awk -F= '$1=="escalation_lanes"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
+  rm -rf "$tmp_dir"
+}
+
+manager_profile_is_release_gate_only_escalation() {
+  [ "$validation_profile_escalation_required" = true ] || return 1
+  [ "$validation_profile_escalation_lanes" = "release_gate_review" ]
+}
+
+apply_validation_manager_routing() {
+  case "$validation_profile_status:$validation_profile_run_lanes:$validation_profile_escalation_required" in
+    ready_to_run:docs_diff_check:false)
+      reason="${validation_profile_primary_reason:-docs_only_surface_requires_diff_hygiene}"
+      return 0
+      ;;
+    ready_to_run:rust_pr_fast:false)
+      mark_pr_fast_coverage
+      reason="${validation_profile_primary_reason:-bounded_rust_surface_runs_focused_nextest}"
+      return 0
+      ;;
+    ready_to_run:ci_path_policy_contracts:false)
+      ci_contracts_required=true
+      reason="${validation_profile_primary_reason:-ci_policy_surface_requires_path_policy_contract_checks}"
+      return 0
+      ;;
+  esac
+  if [ "$validation_profile_status" = "escalation_required" ] && ! manager_profile_is_release_gate_only_escalation; then
+    fail_closed=true
+    mark_authoritative_full_coverage "fail_closed" "validation_manager_escalation_requires_authoritative_full_coverage"
+    return 0
+  fi
+  return 1
+}
+
 is_release_version_only_surface_change() {
   local saw_manifest=false
   local saw_lock=false
@@ -653,53 +754,82 @@ else
     fail_closed=true
     mark_authoritative_full_coverage "fail_closed" "empty_or_unavailable_diff_runs_full_validation"
   else
-	    saw_pr_finish_control_plane=false
-	    changed_count="$(printf '%s\n' "$changed_files" | sed '/^$/d' | wc -l | tr -d ' ')"
-	    if is_release_version_only_surface_change; then
-	      release_version_only=true
-	      reason="release_version_only_cargo_surface_change_runs_lightweight_validation"
-	    fi
-	    pvf_slow_proof_policy_change=false
-	    if is_pvf_slow_proof_policy_change; then
-	      pvf_slow_proof_policy_change=true
-	      mark_pvf_slow_proof_contract_validation
-	    fi
-	    while IFS= read -r path; do
+    saw_pr_finish_control_plane=false
+    saw_full_coverage_policy_surface=false
+    saw_v0913_proof_surface=false
+    changed_count="$(printf '%s\n' "$changed_files" | sed '/^$/d' | wc -l | tr -d ' ')"
+    if is_release_version_only_surface_change; then
+      release_version_only=true
+      reason="release_version_only_cargo_surface_change_runs_lightweight_validation"
+    fi
+    pvf_slow_proof_policy_change=false
+    if is_pvf_slow_proof_policy_change; then
+      pvf_slow_proof_policy_change=true
+      mark_pvf_slow_proof_contract_validation
+    fi
+    while IFS= read -r path; do
       [ -n "$path" ] || continue
       if is_pr_finish_control_plane_surface "$path"; then
-        rust_required=true
-        ci_contracts_required=true
         saw_pr_finish_control_plane=true
-        continue
+      fi
+      if is_full_coverage_policy_surface "$path"; then
+        saw_full_coverage_policy_surface=true
       fi
       if is_v0913_proof_surface "$path"; then
-        mark_v0913_proof_required
+        saw_v0913_proof_surface=true
       fi
-      case "$path" in
-        adl/src/tests.rs|adl/src/*/tests.rs)
-          rust_required=true
-          ci_contracts_required=true
-          if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
-            reason="rust_test_manifest_change_runs_focused_validation"
-          fi
-          ;;
-        adl/src/*|adl/tests/*|adl/Cargo.toml|adl/Cargo.lock|adl/build.rs)
-          if [ "$release_version_only" = true ] && { [ "$path" = "adl/Cargo.toml" ] || [ "$path" = "adl/Cargo.lock" ]; }; then
-            continue
-          fi
-          mark_pr_fast_coverage
-          ;;
-        demos/*|adl/tools/demo_*|adl/tools/test_demo_*)
-          ci_contracts_required=true
-          demo_smoke_required=true
-          ;;
-        .github/workflows/*|adl/tools/*)
-          ci_contracts_required=true
-          ;;
-      esac
     done <<EOF
 $changed_files
 EOF
+    used_validation_manager=false
+    if [ "$release_version_only" != true ] && [ "$pvf_slow_proof_policy_change" != true ]; then
+      if load_validation_manager_profile; then
+        if [ "$saw_pr_finish_control_plane" != true ] && [ "$saw_full_coverage_policy_surface" != true ] && [ "$saw_v0913_proof_surface" != true ] && apply_validation_manager_routing; then
+          used_validation_manager=true
+        fi
+      elif [ -n "$validation_profile_error" ]; then
+        fail_closed=true
+        mark_authoritative_full_coverage "fail_closed" "validation_manager_failed_closed_for_pull_request"
+        used_validation_manager=true
+      fi
+    fi
+    if [ "$used_validation_manager" != true ]; then
+      while IFS= read -r path; do
+        [ -n "$path" ] || continue
+        if is_pr_finish_control_plane_surface "$path"; then
+          rust_required=true
+          ci_contracts_required=true
+          continue
+        fi
+        if is_v0913_proof_surface "$path"; then
+          mark_v0913_proof_required
+        fi
+        case "$path" in
+          adl/src/tests.rs|adl/src/*/tests.rs)
+            rust_required=true
+            ci_contracts_required=true
+            if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
+              reason="rust_test_manifest_change_runs_focused_validation"
+            fi
+            ;;
+          adl/src/*|adl/tests/*|adl/Cargo.toml|adl/Cargo.lock|adl/build.rs)
+            if [ "$release_version_only" = true ] && { [ "$path" = "adl/Cargo.toml" ] || [ "$path" = "adl/Cargo.lock" ]; }; then
+              continue
+            fi
+            mark_pr_fast_coverage
+            ;;
+          demos/*|adl/tools/demo_*|adl/tools/test_demo_*)
+            ci_contracts_required=true
+            demo_smoke_required=true
+            ;;
+          .github/workflows/*|adl/tools/*)
+            ci_contracts_required=true
+            ;;
+        esac
+      done <<EOF
+$changed_files
+EOF
+    fi
       bounded_pr_fast_coverage_policy_change=false
       if [ "$coverage_required" = true ] && is_bounded_pr_fast_coverage_policy_change; then
         bounded_pr_fast_coverage_policy_change=true
@@ -769,6 +899,14 @@ emit "coverage_authority" "$coverage_authority"
 emit "proof_validation_scope" "$proof_validation_scope"
 emit "changed_count" "$changed_count"
 emit "reason" "$reason"
+emit "validation_profile_selected" "$validation_profile_selected"
+emit "validation_profile_status" "$validation_profile_status"
+emit "validation_profile_pr_publication_sufficient" "$validation_profile_pr_publication_sufficient"
+emit "validation_profile_escalation_required" "$validation_profile_escalation_required"
+emit "validation_profile_run_lanes" "$validation_profile_run_lanes"
+emit "validation_profile_primary_reason" "$validation_profile_primary_reason"
+emit "validation_profile_escalation_lanes" "$validation_profile_escalation_lanes"
+emit "validation_profile_error" "$validation_profile_error"
 
 printf '\nChanged path policy: %s\n' "$reason"
 printf '  rust_required=%s\n' "$rust_required"
