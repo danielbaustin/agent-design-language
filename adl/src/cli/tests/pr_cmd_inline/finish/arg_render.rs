@@ -1084,7 +1084,52 @@ fn finish_validation_plan_classifies_private_endpoint_fixture_sanitation_slice()
 }
 
 #[test]
+fn finish_validation_plan_classifies_ci_runtime_contract_tooling() {
+    let plan = select_finish_validation_plan(
+        ".github/workflows/ci.yaml,adl/tools/test_ci_runtime_contracts.sh,adl/tools/run_authoritative_coverage_lane.sh,adl/tools/test_run_authoritative_coverage_lane.sh",
+    )
+    .expect("ci runtime contract tooling plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_ci_runtime_contracts.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_ci_path_policy.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_run_pr_fast_test_lane.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+}
+
+#[test]
 fn finish_validation_plan_classifies_resilience_runtime_publication_paths() {
+    let agent_comms_plan = select_finish_validation_plan(
+        "adl/src/agent_comms.rs,adl/src/agent_comms/carrier.inc,adl/src/agent_comms/tests.inc",
+    )
+    .expect("agent_comms runtime plan");
+    assert_eq!(
+        agent_comms_plan.mode,
+        FinishValidationMode::LargerBinaryFocused
+    );
+    assert!(agent_comms_plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture".to_string()
+    ));
+    assert!(agent_comms_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+    assert!(!agent_comms_plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+
     let adapter_plan = select_finish_validation_plan("adl/src/provider_adapter.rs")
         .expect("provider adapter runtime plan");
     assert_eq!(adapter_plan.mode, FinishValidationMode::LargerBinaryFocused);
@@ -1755,6 +1800,10 @@ fn finish_helper_paths_run_focused_local_ci_gated_validation() {
         "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' path-policy >> \"$FOCUSED_LOG\"\n",
     );
     write_executable(
+        &repo.join("adl/tools/test_ci_runtime_contracts.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' runtime-contracts >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
         &repo.join("adl/tools/test_run_pr_fast_test_lane.sh"),
         "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' pr-fast >> \"$FOCUSED_LOG\"\n",
     );
@@ -1803,6 +1852,7 @@ fn finish_helper_paths_run_focused_local_ci_gated_validation() {
     let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
     assert!(focused_calls.contains("coverage"));
     assert!(focused_calls.contains("path-policy"));
+    assert!(focused_calls.contains("runtime-contracts"));
     assert!(focused_calls.contains("pr-fast"));
 }
 
@@ -2094,7 +2144,7 @@ fn finish_runtime_paths_run_module_focused_validation_and_runtime_lane() {
     }
 
     let plan = select_finish_validation_plan(
-        "adl/src/provider_adapter.rs,adl/src/provider_communication.rs,adl/src/resilience.rs",
+        "adl/src/agent_comms.rs,adl/src/agent_comms/carrier.inc,adl/src/agent_comms/tests.inc,adl/src/provider_adapter.rs,adl/src/provider_communication.rs,adl/src/resilience.rs",
     )
     .expect("runtime focused plan");
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
@@ -2110,6 +2160,7 @@ fn finish_runtime_paths_run_module_focused_validation_and_runtime_lane() {
 
     let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
     assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("agent_comms --lib -- --nocapture"));
     assert!(cargo_calls.contains("--lib provider_adapter"));
     assert!(cargo_calls.contains("--lib provider_communication"));
     assert!(cargo_calls.contains("--lib resilience"));

@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 WORKFLOW="$ROOT_DIR/.github/workflows/ci.yaml"
 
-python3 - "$WORKFLOW" "$ROOT_DIR/adl/tools/test_run_authoritative_coverage_lane.sh" <<'PY'
+python3 - "$WORKFLOW" "$ROOT_DIR/adl/tools/test_run_authoritative_coverage_lane.sh" "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" <<'PY'
 import pathlib
 import re
 import sys
@@ -12,6 +12,7 @@ import sys
 workflow_path = pathlib.Path(sys.argv[1])
 workflow = workflow_path.read_text()
 runner_test = pathlib.Path(sys.argv[2])
+runner_script = pathlib.Path(sys.argv[3])
 workflow_root = workflow_path.parent
 
 def step_run(name: str) -> str:
@@ -112,6 +113,28 @@ if not runner_test.exists():
     raise SystemExit(
         "authoritative coverage runner contract test must exist"
     )
+if not runner_script.exists():
+    raise SystemExit(
+        "authoritative coverage runner script must exist"
+    )
+
+runner_script_text = runner_script.read_text()
+for required_fragment in (
+    'default_coverage_build_root()',
+    'if [ -d /mnt ] && [ -w /mnt ]; then',
+    'printf \'/mnt/adl-authoritative-coverage\\n\'',
+    'printf \'%s\\n\' "$ADL_DIR/target/authoritative-coverage-scratch"',
+    'COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"',
+    'rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    'mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
+    'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+):
+    if required_fragment not in runner_script_text:
+        raise SystemExit(
+            "authoritative coverage runner must relocate llvm-cov build outputs onto the runner scratch mount; "
+            f"missing fragment: {required_fragment}"
+        )
 
 fast_summary_step = step_block("PR fast coverage summary (json)")
 if 'coverage-summary.json' not in fast_summary_step:
@@ -119,6 +142,17 @@ if 'coverage-summary.json' not in fast_summary_step:
         "PR fast coverage summary must emit coverage-summary.json inside the adl working directory; "
         "workflow is missing that output path"
     )
+for required_fragment in (
+    'rm -rf target/debug target/llvm-cov-target',
+    'COVERAGE_BUILD_ROOT="/mnt/adl-pr-fast-coverage"',
+    'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
+    'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+):
+    if required_fragment not in fast_summary_step:
+        raise SystemExit(
+            "PR fast coverage summary must move heavy llvm-cov build outputs onto the runner scratch mount; "
+            f"missing fragment: {required_fragment}"
+        )
 
 authoritative_gate_step = step_block("Coverage-impact changed-source gate")
 if '--summary adl/coverage-summary.json \\' not in authoritative_gate_step:

@@ -8,6 +8,16 @@ AUTHORITY="push_main"
 EVENT_NAME="push"
 MODE="full_authoritative_default_features"
 
+default_coverage_build_root() {
+  if [ -d /mnt ] && [ -w /mnt ]; then
+    printf '/mnt/adl-authoritative-coverage\n'
+  else
+    printf '%s\n' "$ADL_DIR/target/authoritative-coverage-scratch"
+  fi
+}
+
+COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"
+
 usage() {
   cat <<'USAGE'
 Usage:
@@ -55,6 +65,7 @@ if [ "$PRINT_PLAN" = true ]; then
   printf 'authority=%s\n' "$AUTHORITY"
   printf 'event_name=%s\n' "$EVENT_NAME"
   printf 'mode=%s\n' "$MODE"
+  printf 'build_root=%s\n' "$COVERAGE_BUILD_ROOT"
   if [ "$MODE" = "full_authoritative_default_features" ]; then
     printf 'features=default\n'
     printf 'workspace=full\n'
@@ -66,6 +77,11 @@ if [ "$PRINT_PLAN" = true ]; then
 fi
 
 cd "$ADL_DIR"
+
+rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
+mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
+export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
+export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
 
 if [ "$MODE" = "full_authoritative_default_features" ]; then
   echo "Authoritative coverage mode: full_authoritative_default_features"

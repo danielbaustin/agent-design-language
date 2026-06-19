@@ -1278,6 +1278,13 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_ci_runtime_contract_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            commands.push("bash adl/tools/test_ci_runtime_contracts.sh".to_string());
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_validation_selector_focused_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1346,6 +1353,15 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             .any(|path| finish_path_needs_runtime_owner_lane_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
+            if paths
+                .iter()
+                .any(|path| finish_path_needs_agent_comms_focused_validation(path))
+            {
+                push_finish_validation_command(
+                    &mut commands,
+                    "cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture",
+                );
+            }
             if paths
                 .iter()
                 .any(|path| finish_path_needs_provider_adapter_focused_validation(path))
@@ -1533,6 +1549,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/github_token.rs"
             | "adl/src/lib.rs"
             | "adl/src/scheduler.rs"
+            | "adl/src/agent_comms.rs"
             | "adl/src/provider_adapter.rs"
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
@@ -1566,6 +1583,9 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_check_coverage_impact.sh"
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
+            | "adl/tools/test_ci_runtime_contracts.sh"
+            | "adl/tools/run_authoritative_coverage_lane.sh"
+            | "adl/tools/test_run_authoritative_coverage_lane.sh"
             | "adl/tools/run_pr_fast_test_lane.sh"
             | "adl/tools/test_run_pr_fast_test_lane.sh"
             | "adl/config/validation_lane_selector.v0.91.6.json"
@@ -1609,6 +1629,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/lifecycle/")
+        || trimmed.starts_with("adl/src/agent_comms/")
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
         || trimmed.starts_with("adl/tests/fixtures/scheduler/")
@@ -1790,6 +1811,17 @@ fn finish_path_needs_ci_policy_focused_validation(path: &str) -> bool {
     )
 }
 
+fn finish_path_needs_ci_runtime_contract_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        ".github/workflows/ci.yaml"
+            | "adl/tools/test_ci_runtime_contracts.sh"
+            | "adl/tools/run_authoritative_coverage_lane.sh"
+            | "adl/tools/test_run_authoritative_coverage_lane.sh"
+    )
+}
+
 fn finish_path_needs_validation_selector_focused_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(
@@ -1884,10 +1916,16 @@ fn finish_path_needs_runtime_owner_lane_validation(path: &str) -> bool {
     matches!(
         trimmed,
         "adl/tools/test_adl_runtime_compatibility.sh"
+            | "adl/src/agent_comms.rs"
             | "adl/src/provider_adapter.rs"
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
-    )
+    ) || trimmed.starts_with("adl/src/agent_comms/")
+}
+
+fn finish_path_needs_agent_comms_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed == "adl/src/agent_comms.rs" || trimmed.starts_with("adl/src/agent_comms/")
 }
 
 fn finish_path_needs_provider_adapter_focused_validation(path: &str) -> bool {
@@ -2215,6 +2253,10 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/test_ci_path_policy.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
+                "bash adl/tools/test_ci_runtime_contracts.sh" => {
+                    let script = repo_root.join("adl/tools/test_ci_runtime_contracts.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
                 "bash adl/tools/test_run_pr_fast_test_lane.sh" => {
                     let script = repo_root.join("adl/tools/test_run_pr_fast_test_lane.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
@@ -2284,6 +2326,20 @@ pub(super) fn run_finish_validation_rust(
                 "bash adl/tools/run_owner_validation_lane.sh runtime --build" => {
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?, "runtime", "--build"])?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "agent_comms",
+                            "--lib",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
                 }
                 "cargo test --manifest-path adl/Cargo.toml --lib provider_communication" => {
                     run_finish_validation_status(
