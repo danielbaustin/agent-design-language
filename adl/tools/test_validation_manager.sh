@@ -24,7 +24,7 @@ assert_has "$TMP/docs.out" "selected_profile=docs_diff_check_profile"
 assert_has "$TMP/docs.out" "status=ready_to_run"
 assert_has "$TMP/docs.out" "lane=docs_diff_check"
 assert_has "$TMP/docs.out" "behavior_surfaces:"
-assert_has "$TMP/docs.out" "id=documentation_contract"
+assert_has "$TMP/docs.out" "id=diff_hygiene_docs_diff_check"
 assert_has "$TMP/docs.out" "estimated_cost=tiny"
 
 bash "$SCRIPT" --changed-files "$docs_only" --json >"$TMP/docs.json"
@@ -34,10 +34,55 @@ import sys
 
 profile = json.load(open(sys.argv[1]))
 assert profile["schema_version"] == "adl.validation_profile.v1"
-assert profile["behavior_surfaces"][0]["id"] == "documentation_contract"
+assert profile["behavior_surfaces"][0]["id"] == "diff_hygiene_docs_diff_check"
+assert profile["behavior_surfaces"][0]["owner"] == "docs"
+assert profile["behavior_surfaces"][0]["proof_role"] == "diff_hygiene"
+assert profile["behavior_surfaces"][0]["resource_class"] == "tiny"
 assert profile["validation_dag"]["nodes"][0]["status"] == "runnable"
+assert profile["validation_dag"]["nodes"][0]["proof_role"] == "diff_hygiene"
 assert profile["estimated_cost"]["runtime_class"] == "tiny"
 assert profile["validation_dag"]["compression_note"].startswith("profile validates behavior surfaces")
+PY
+
+tooling="$TMP/tooling.txt"
+printf 'M\tadl/tools/ci_path_policy.sh\n' >"$tooling"
+bash "$SCRIPT" --changed-files "$tooling" --json >"$TMP/tooling.json"
+python3 - <<'PY' "$TMP/tooling.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["status"] == "ready_to_run"
+assert [item["lane_id"] for item in profile["run"]] == ["ci_path_policy_contracts"]
+surface = profile["behavior_surfaces"][0]
+assert surface["id"] == "ci_contract_ci_path_policy_contracts"
+assert surface["owner"] == "tools"
+assert surface["proof_role"] == "ci_contract"
+assert surface["resource_class"] == "small"
+assert profile["validation_dag"]["nodes"][0]["proof_role"] == "ci_contract"
+PY
+
+runtime="$TMP/runtime.txt"
+printf 'M\tadl/src/runtime_v2/contract_schema.rs\n' >"$runtime"
+bash "$SCRIPT" --changed-files "$runtime" --json >"$TMP/runtime.json"
+python3 - <<'PY' "$TMP/runtime.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["status"] == "ready_to_run"
+assert [item["lane_id"] for item in profile["run"]] == ["rust_pr_fast"]
+surface = profile["behavior_surfaces"][0]
+assert surface["id"] == "rust_focused_behavior"
+assert surface["owner"] == "shared"
+assert surface["default_surface"] == "shared_rust"
+assert surface["proof_role"] == "regression"
+assert "contract_schema" in surface["requirement_ids"]
+node = profile["validation_dag"]["nodes"][0]
+assert node["proof_role"] == "regression"
+assert node["resource_class"] == "medium"
 PY
 
 release_gate="$TMP/release-gate.txt"
@@ -57,7 +102,12 @@ assert any(
 )
 assert any(item["lane_id"] == "ci_path_policy_contracts" for item in profile["run"])
 assert any(
-    behavior["id"] == "release_or_ci_policy_boundary"
+    behavior["id"] == "release_gate_release_gate_review"
+    for behavior in profile["behavior_surfaces"]
+)
+assert any(
+    behavior["proof_role"] == "release_gate"
+    and behavior["owner"] == "tools"
     for behavior in profile["behavior_surfaces"]
 )
 assert profile["estimated_cost"]["runtime_class"] == "escalated"
@@ -128,6 +178,22 @@ if bash "$SCRIPT" --changed-files "$mixed" --run >"$TMP/mixed-run.out" 2>"$TMP/m
   exit 1
 fi
 assert_has "$TMP/mixed-run.err" "refusing --run for non-runnable profile"
+
+owner_mix="$TMP/owner-mix.txt"
+printf 'M\tadl/tools/pr.sh\nM\tadl/src/bin/adl_runtime.rs\n' >"$owner_mix"
+bash "$SCRIPT" --changed-files "$owner_mix" --json >"$TMP/owner-mix.json"
+python3 - <<'PY' "$TMP/owner-mix.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+surface_ids = [surface["id"] for surface in profile["behavior_surfaces"]]
+assert "owner_lane_csdlc_owner_lane" in surface_ids
+assert "owner_lane_runtime_owner_lane" in surface_ids
+assert len(surface_ids) == len(set(surface_ids))
+node_ids = [node["behavior_surface"] for node in profile["validation_dag"]["nodes"]]
+assert len(node_ids) == len(set(node_ids))
+PY
 
 portable_dir="$TMP/portable"
 mkdir -p "$portable_dir"

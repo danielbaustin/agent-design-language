@@ -57,42 +57,46 @@ def profile_id(plan: dict[str, Any]) -> str:
     return f"{aggregate}_{len(lanes)}_lane_profile"
 
 
+def lane_requirement_ids(lane: dict[str, Any]) -> list[str]:
+    requirement_ids = lane.get("requirement_ids", [])
+    if not isinstance(requirement_ids, list):
+        return []
+    return [item for item in requirement_ids if isinstance(item, str) and item]
+
+
+def lane_behavior_id(lane_id: str, lane: dict[str, Any]) -> str:
+    proof_role = str(lane.get("proof_role", "")).strip()
+    default_surface = str(lane.get("default_surface", "")).strip()
+    mode = str(lane.get("mode", "")).strip()
+    if lane_id == "rust_pr_fast":
+        suffix = mode or "unknown"
+        return f"rust_{suffix}_behavior"
+    if proof_role:
+        return f"{proof_role}_{lane_id}"
+    if default_surface:
+        return f"{default_surface}_behavior"
+    return lane_id
+
+
 def lane_behavior_surface(lane_id: str, lane: dict[str, Any]) -> dict[str, Any]:
     matched_paths = lane.get("matched_paths", [])
+    requirement_ids = lane_requirement_ids(lane)
     if lane_id == "rust_pr_fast":
-        mode = lane.get("mode", "unknown")
-        filter_tokens = lane.get("filter_tokens", "")
-        return {
-            "id": f"rust_{mode}_behavior",
-            "source": "selector_pr_fast_plan",
-            "requirement_ids": [token for token in filter_tokens.split("|") if token],
-            "matched_paths": matched_paths,
-            "risk_class": "medium" if lane.get("status") == "selected" else "high",
-        }
-    if lane_id == "release_gate_review":
-        return {
-            "id": "release_or_ci_policy_boundary",
-            "source": "release_gate_hints",
-            "requirement_ids": ["release_gate_disposition_required"],
-            "matched_paths": matched_paths,
-            "risk_class": "high",
-        }
-    if "docs" in lane_id:
-        behavior_id = "documentation_contract"
-    elif "prompt" in lane_id:
-        behavior_id = "prompt_template_contract"
-    elif "ci" in lane_id:
-        behavior_id = "ci_validation_policy"
-    elif "owner" in lane_id:
-        behavior_id = "owner_binary_contract"
-    else:
-        behavior_id = lane_id.replace("_lane", "").replace("_contracts", "_contract")
+        filter_tokens = str(lane.get("filter_tokens", ""))
+        requirement_ids.extend(token for token in filter_tokens.split("|") if token)
     return {
-        "id": behavior_id,
+        "id": lane_behavior_id(lane_id, lane),
         "source": "validation_lane_selector",
-        "requirement_ids": [lane_id],
+        "lane_id": lane_id,
+        "owner": lane.get("owner", "unknown"),
+        "default_surface": lane.get("default_surface", "unknown"),
+        "proof_role": lane.get("proof_role", "unknown"),
+        "resource_class": lane.get("resource_class", "unknown"),
+        "determinism_posture": lane.get("determinism_posture", "unknown"),
+        "escalation_rule": lane.get("escalation_rule", "unknown"),
+        "requirement_ids": requirement_ids or [lane_id],
         "matched_paths": matched_paths,
-        "risk_class": "low" if lane.get("status") == "selected" else "medium",
+        "risk_class": lane.get("risk_class", "unknown"),
     }
 
 
@@ -109,7 +113,10 @@ def validation_dag_node(lane_id: str, lane: dict[str, Any], behavior_id: str) ->
         "lane_id": lane_id,
         "behavior_surface": behavior_id,
         "status": node_status,
-        "proof_role": "release_gate" if status == "release_gate_required" else "regression",
+        "proof_role": lane.get("proof_role", "unknown"),
+        "owner": lane.get("owner", "unknown"),
+        "resource_class": lane.get("resource_class", "unknown"),
+        "determinism_posture": lane.get("determinism_posture", "unknown"),
         "command": lane.get("run_command") or lane.get("command", ""),
         "depends_on": [],
     }
