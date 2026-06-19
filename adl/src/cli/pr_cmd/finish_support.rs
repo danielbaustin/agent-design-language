@@ -1046,6 +1046,20 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_scheduler_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml scheduler_economics",
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_github_release_focused_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1285,6 +1299,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/mod.rs"
             | "adl/src/cli/github_token.rs"
             | "adl/src/lib.rs"
+            | "adl/src/scheduler.rs"
             | "adl/src/provider_adapter.rs"
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
@@ -1335,6 +1350,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
+        || trimmed.starts_with("adl/tests/fixtures/scheduler/")
         || trimmed.starts_with("docs/milestones/v0.91.4/review/merge_readiness/")
         || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
 }
@@ -1374,6 +1390,11 @@ fn finish_path_needs_owner_binary_rust_slice_validation(path: &str) -> bool {
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed == "adl/src/cli/run_artifacts_types.rs"
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
+}
+
+fn finish_path_needs_scheduler_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed == "adl/src/scheduler.rs" || trimmed.starts_with("adl/tests/fixtures/scheduler/")
 }
 
 fn finish_path_needs_github_release_focused_validation(path: &str) -> bool {
@@ -1601,6 +1622,17 @@ pub(super) fn run_finish_validation_rust(
                             "--bin",
                             "adl",
                             "github_release_octocrab_covers_absent_draft_present_publish",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml scheduler_economics" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "scheduler_economics",
                         ],
                     )?;
                 }

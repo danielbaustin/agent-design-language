@@ -1489,6 +1489,56 @@ fn finish_runtime_paths_run_module_focused_validation_and_runtime_lane() {
 }
 
 #[test]
+fn finish_scheduler_paths_run_scheduler_economics_focused_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-scheduler-focused-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let plan = select_finish_validation_plan(
+        "adl/src/scheduler.rs,adl/tests/fixtures/scheduler/economics_inputs_v1.json,docs/milestones/v0.91.6/review/scheduler/SCHEDULER_ECONOMICS_INPUTS_4106.md",
+    )
+    .expect("scheduler focused plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    run_finish_validation_rust(&repo, &plan).expect("scheduler focused validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("fmt --manifest-path"));
+    assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("scheduler_economics"));
+    assert!(!cargo_calls.contains("clippy --manifest-path"));
+}
+
+#[test]
 fn finish_helper_paths_run_larger_binary_focused_validation() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-finish-larger-binary-validation");
