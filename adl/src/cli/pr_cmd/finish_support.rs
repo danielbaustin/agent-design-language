@@ -1480,6 +1480,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_tokio_manifest_runtime_validation(issue_number, changed_paths) {
         return Ok(build_tokio_manifest_runtime_validation_plan());
     }
+    if finish_issue_needs_issue_small_binary_validation(issue_number, changed_paths) {
+        return Ok(build_issue_small_binary_validation_plan());
+    }
     select_finish_validation_plan(&changed_paths.join(","))
 }
 
@@ -1782,6 +1785,27 @@ fn finish_issue_needs_tokio_manifest_runtime_validation(
         })
 }
 
+fn finish_issue_needs_issue_small_binary_validation(
+    issue_number: u32,
+    changed_paths: &[String],
+) -> bool {
+    if issue_number != 4216 {
+        return false;
+    }
+    !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            matches!(
+                path.trim().trim_matches('/'),
+                "adl/Cargo.toml"
+                    | "adl/src/bin/adl_issue.rs"
+                    | "adl/src/cli/pr_cmd/finish_support.rs"
+                    | "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
+                    | "adl/tools/pr.sh"
+                    | "adl/tools/test_pr_small_binary_delegation.sh"
+            )
+        })
+}
+
 fn build_tokio_manifest_runtime_validation_plan() -> FinishValidationPlan {
     let mut commands = Vec::new();
     push_finish_validation_command(
@@ -1802,6 +1826,29 @@ fn build_tokio_manifest_runtime_validation_plan() -> FinishValidationPlan {
     );
     FinishValidationPlan {
         mode: FinishValidationMode::LargerBinaryFocused,
+        commands,
+    }
+}
+
+fn build_issue_small_binary_validation_plan() -> FinishValidationPlan {
+    let mut commands = vec![
+        "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+        "git diff --check".to_string(),
+    ];
+    push_finish_validation_command(
+        &mut commands,
+        "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-issue tests::adl_issue_forwards_args_to_dispatch -- --exact --nocapture",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "bash adl/tools/test_pr_small_binary_delegation.sh",
+    );
+    FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
         commands,
     }
 }
@@ -2277,6 +2324,22 @@ pub(super) fn run_finish_validation_rust(
                             "--bin",
                             "adl-pr-finish",
                             "cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-issue tests::adl_issue_forwards_args_to_dispatch -- --exact --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-issue",
+                            "tests::adl_issue_forwards_args_to_dispatch",
+                            "--",
+                            "--exact",
+                            "--nocapture",
                         ],
                     )?;
                 }

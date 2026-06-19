@@ -16,7 +16,6 @@ cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$OBS_SRC" "$repo/adl/tools/observability.sh"
 chmod +x "$repo/adl/tools/pr.sh"
-touch "$repo/adl/Cargo.toml"
 
 (
   cd "$repo"
@@ -60,6 +59,14 @@ set -euo pipefail
 printf 'validation:%s\n' "$*" >"${ADL_TEST_LOG}"
 EOF
 chmod +x "$validation_bin"
+
+issue_bin="$repo/bin/adl-issue"
+cat >"$issue_bin" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'issue:%s\n' "$*" >"${ADL_TEST_LOG}"
+EOF
+chmod +x "$issue_bin"
 
 closeout_bin="$repo/bin/adl-pr-closeout"
 cat >"$closeout_bin" <<'EOF'
@@ -122,6 +129,18 @@ validation_log="$tmpdir/validation.log"
 )
 grep -Fqx 'validation:3888 --json' "$validation_log" || {
   echo "assertion failed: validation should delegate directly to adl-pr-validation without broad 'pr validation' argv" >&2
+  exit 1
+}
+
+issue_log="$tmpdir/issue.log"
+(
+  cd "$repo"
+  ADL_TEST_LOG="$issue_log" \
+    ADL_ISSUE_BIN="$issue_bin" \
+    "$BASH_BIN" adl/tools/pr.sh issue search --query "validation manager" --state open --json >/dev/null
+)
+grep -Fqx 'issue:search --query validation manager --state open --json' "$issue_log" || {
+  echo "assertion failed: issue operations should delegate directly to adl-issue without broad 'pr issue' argv" >&2
   exit 1
 }
 

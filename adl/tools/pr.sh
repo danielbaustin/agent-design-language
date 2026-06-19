@@ -262,6 +262,7 @@ rust_pr_subcommand_binary_name() {
     preflight) printf 'adl-pr-preflight\n' ;;
     finish) printf 'adl-pr-finish\n' ;;
     validation) printf 'adl-pr-validation\n' ;;
+    issue) printf 'adl-issue\n' ;;
     closeout) printf 'adl-pr-closeout\n' ;;
     *) return 1 ;;
   esac
@@ -278,6 +279,7 @@ rust_pr_subcommand_override_var_name() {
     preflight) printf 'ADL_PR_PREFLIGHT_BIN\n' ;;
     finish) printf 'ADL_PR_FINISH_BIN\n' ;;
     validation) printf 'ADL_PR_VALIDATION_BIN\n' ;;
+    issue) printf 'ADL_ISSUE_BIN\n' ;;
     closeout) printf 'ADL_PR_CLOSEOUT_BIN\n' ;;
     *) return 1 ;;
   esac
@@ -2330,7 +2332,7 @@ cmd_issue() {
     return 0
   fi
   adl_obs_event "pr.sh" "issue" "started" "issue_query" "${1:-}"
-  require_rust_pr_delegate
+  require_rust_pr_delegate issue
   delegate_pr_command_to_rust issue "$@"
 }
 

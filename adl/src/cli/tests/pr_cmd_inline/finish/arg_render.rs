@@ -580,6 +580,10 @@ fn finish_helper_paths_cover_ahead_count_and_validation_modes() {
         &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
         "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
     );
+    write_executable(
+        &repo.join("adl/tools/test_pr_small_binary_delegation.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])
@@ -836,6 +840,10 @@ fn finish_validation_sanitizes_live_github_transport_env() {
     .expect("cargo toml");
     write_executable(
         &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_pr_small_binary_delegation.sh"),
         "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
     );
     init_git_repo(&repo);
@@ -1701,6 +1709,43 @@ fn finish_validation_profile_keeps_small_binary_delegation_proof_focused() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_issue_small_binary_slice() {
+    let plan = select_finish_validation_plan_for_finish(
+        4216,
+        ".",
+        &[
+            "adl/Cargo.toml".to_string(),
+            "adl/src/bin/adl_issue.rs".to_string(),
+            "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+            "adl/tools/pr.sh".to_string(),
+            "adl/tools/test_pr_small_binary_delegation.sh".to_string(),
+        ],
+    )
+    .expect("issue small binary focused plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-issue tests::adl_issue_forwards_args_to_dispatch -- --exact --nocapture"
+            .to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_pr_small_binary_delegation.sh".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo nextest")));
+}
+
+#[test]
 fn finish_validation_profile_classifies_validation_manager_slice_as_small_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         4215,
@@ -2502,6 +2547,70 @@ fn finish_owner_binary_paths_run_owner_binary_focused_validation() {
     assert!(cargo_calls.contains("--bin adl"));
     assert!(!cargo_calls.contains("github_token"));
     assert!(!cargo_calls.contains(" cli::pr_cmd"));
+    assert!(!cargo_calls.contains("clippy --manifest-path"));
+}
+
+#[test]
+fn finish_issue_small_binary_paths_run_issue_focused_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-issue-small-binary-focused-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_pr_small_binary_delegation.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let plan = select_finish_validation_plan_for_finish(
+        4216,
+        ".",
+        &[
+            "adl/Cargo.toml".to_string(),
+            "adl/src/bin/adl_issue.rs".to_string(),
+            "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+            "adl/tools/pr.sh".to_string(),
+            "adl/tools/test_pr_small_binary_delegation.sh".to_string(),
+        ],
+    )
+    .expect("issue small binary plan");
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    run_finish_validation_rust(&repo, &plan).expect("issue small binary focused validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("fmt --manifest-path"));
+    assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("--bin adl-issue"));
+    assert!(cargo_calls.contains("tests::adl_issue_forwards_args_to_dispatch"));
     assert!(!cargo_calls.contains("clippy --manifest-path"));
 }
 
