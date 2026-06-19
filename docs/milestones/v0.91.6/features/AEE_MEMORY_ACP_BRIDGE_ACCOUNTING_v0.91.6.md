@@ -4,7 +4,7 @@
 
 - Feature Name: AEE, Memory/ObsMem, And ACP Bridge Accounting
 - Milestone Target: `v0.91.6`
-- Status: planned_with_aee_obsmem_memory_palace_and_acp_routing_state_explicit
+- Status: wp10_closeout_matrix_authored_review_pending
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, policy
@@ -58,7 +58,7 @@ consumes it.
 | Memory/ObsMem handoff | `#4038` | Memory/ObsMem boundary is distinct, evidence-backed, and privacy-constrained | routed with explicit handoff boundary and `v0.92` consumption limits |
 | Memory Palace long-context bridge | `#4039` | Long-context solution path is explicit with proof or explicitly accepted residual routing | routed with explicit long-context boundary and first proof shape |
 | ACP/cognitive profile scope and privacy boundary | `#4040` | ACP and cognitive-profile boundaries stay distinct from provider/capability/identity surfaces and preserve privacy/security rules | routed with explicit ACP boundary, privacy rules, and non-collapse constraints |
-| WP-10 feature closeout matrix | `#4041` | All child surfaces have terminal status and the final closeout packet preserves residual truth | planned closeout issue |
+| WP-10 feature closeout matrix | `#4041` | All child surfaces have terminal status and the final closeout packet preserves residual truth | closeout matrix authored; review pending while umbrella `#3975` remains open |
 
 ## Feature Surface Inventory
 
@@ -445,6 +445,49 @@ Proof expectations for this setup ledger are intentionally modest:
   must not be rewritten as full WP-10 completion.
 - `v0.92` may consume only surfaces classified as evidence-backed in the final
   WP-10 closeout matrix.
+
+## WP-10 Final Closeout Matrix
+
+The substantive WP-10 child wave `#4036` through `#4040` is now in terminal
+closed-issue state, but closeout issue `#4041` and umbrella `#3975` must
+remain open until this packet is reviewed and merged.
+
+| Surface / child issue | GitHub state on 2026-06-19 | Current bridge truth | `v0.92` may consume | Residual owner / note |
+| --- | --- | --- | --- | --- |
+| `#4036` A-00 completion ledger | closed on 2026-06-19 | The WP-10 bridge ledger exists and names the memory-facing completion surfaces separately | Yes: as the structural accounting baseline only | none inside `v0.91.6`; later closeout consumers must keep the named surfaces distinct |
+| `#4037` A-01 AEE readiness/completion proof | closed on 2026-06-19 | AEE is a named routed closure lane with explicit `v0.92` proof owners and non-claims | Yes: bounded AEE routing truth only | `v0.92` AEE implementation/proof wave owns steering, queue/wake/handoff, distributed boundary, control-path, policy-stop, trace/replay, and end-to-end proof |
+| `#4038` A-02 Memory/ObsMem handoff proof | closed on 2026-06-19 | Memory/ObsMem handoff is explicit, evidence-fed, and distinct from grounding, working set, context cache, and Memory Palace | Yes: handoff boundary and consumption rule only | `v0.92` owns memory grounding, working-set/context-cache proof, and any later publication-safe memory use |
+| `#4039` A-03 Memory Palace long-context bridge | closed on 2026-06-19 | Memory Palace is explicit as a long-context route with a named first proof shape and preserved non-claims | Yes: routed topology direction and named first proof shape only | `v0.92` still needs explicit owners and proof for working-set and stale-context surfaces; runtime completion remains open |
+| `#4040` A-04 ACP/cognitive-profile boundary and privacy proof | closed on 2026-06-19 | ACP/profile scope, non-collapse rules, field/privacy classes, and access posture are explicit without claiming shipped runtime contracts | Yes: bounded ACP/profile route, privacy rules, and non-claims only | `v0.92` still owns ACP/profile schema/fixtures, update-rationale handling, reviewer packet, and validation report |
+| WP-07 security input `#4022` consumed by WP-10 | reviewed dependency; not a WP-10 child | Security/publication posture is a bounded consumed floor, not a substitute for WP-10 closeout | Yes: as a current security floor only | does not close WP-10 by itself; WP-10 closeout and any narrower publication proofs remain required |
+| `#4041` A-05 final closeout matrix | open while this issue is under review | Final matrix authored with terminal child truth and residual routing preserved | Not until this packet is reviewed/merged | this issue owns the final reviewer-facing closeout record |
+| Umbrella `#3975` | open | Correctly remains open until closeout review completes | No: umbrella-open truth must remain visible | close only after `#4041` merges and reviewers confirm the child matrix is truthful |
+
+## Current WP-10 Closeout Verdict
+
+Current verdict:
+
+- `substantive_child_surfaces_terminal_closeout_review_pending`
+
+What is now true:
+
+- Every planned WP-10 child issue `#4036` through `#4040` is closed.
+- The bridge doc now carries explicit routed truth for AEE, Memory/ObsMem,
+  Memory Palace, and ACP/cognitive profiles.
+- `v0.92` has named consumption limits for each routed surface.
+
+What is not yet true:
+
+- WP-10 is not fully closed while `#4041` and umbrella `#3975` are still open.
+- `v0.91.6` still does not prove full AEE, memory-runtime, Memory Palace, or
+  ACP/profile runtime completion.
+- WP-07 security input does not replace WP-10 closeout truth.
+
+Current closeout rule:
+
+- reviewers may treat the child issue wave as complete-for-review,
+- `v0.92` may consume only the bounded routed surfaces named above,
+- and umbrella `#3975` must remain open until `#4041` is reviewed and merged.
 
 ## Validation And Review
 
