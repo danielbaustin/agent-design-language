@@ -78,6 +78,11 @@ struct RestIssueLabel {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+struct RepoLabelRecord {
+    name: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
 struct RestIssueMilestone {
     title: String,
 }
@@ -505,6 +510,7 @@ fn octocrab_operation_allows_retry(operation: &str) -> bool {
             | "issue.view.body"
             | "issue.view.full"
             | "issue.view.state"
+            | "issue.view.repo_labels"
             | "issue.edit.labels"
             | "issue.close"
     )
@@ -1207,6 +1213,83 @@ pub(crate) fn gh_issue_label_names(issue: u32, repo: &str) -> Result<Vec<String>
     })
 }
 
+fn gh_repo_label_names(repo: &str) -> Result<BTreeSet<String>> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.view.repo_labels")? {
+        let out = run_gh_capture_shell(
+            "issue.view.repo_labels",
+            &[
+                "label", "list", "-R", repo, "--json", "name", "--jq", ".[].name",
+            ],
+        )?;
+        return Ok(out
+            .lines()
+            .map(str::trim)
+            .filter(|label| !label.is_empty())
+            .map(str::to_string)
+            .collect());
+    }
+
+    #[derive(Serialize)]
+    struct RepoLabelsQuery {
+        per_page: usize,
+        page: usize,
+    }
+
+    let repo_parts = parse_repo(repo)?;
+    with_octocrab("issue.view.repo_labels", |runtime, octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let route = format!("/repos/{owner}/{name}/labels");
+        let mut page = 1usize;
+        let mut labels = BTreeSet::new();
+        loop {
+            let query = RepoLabelsQuery {
+                per_page: 100,
+                page,
+            };
+            let batch: Vec<RepoLabelRecord> =
+                block_on_octocrab(runtime, "issue.view.repo_labels", || async {
+                    octo.get(route.as_str(), Some(&query)).await
+                })?;
+            if batch.is_empty() {
+                break;
+            }
+            let count = batch.len();
+            labels.extend(
+                batch
+                    .into_iter()
+                    .map(|label| label.name.trim().to_string())
+                    .filter(|label| !label.is_empty()),
+            );
+            if count < 100 {
+                break;
+            }
+            page += 1;
+        }
+        Ok(labels)
+    })
+}
+
+pub(super) fn ensure_repo_labels_exist(
+    repo: &str,
+    labels: &BTreeSet<String>,
+    operation: &str,
+) -> Result<()> {
+    if labels.is_empty() {
+        return Ok(());
+    }
+    let available = gh_repo_label_names(repo)?;
+    let missing = labels.difference(&available).cloned().collect::<Vec<_>>();
+    if missing.is_empty() {
+        return Ok(());
+    }
+    bail!(
+        "{operation}: repo is missing required GitHub labels: {}. Create them through the approved ADL GitHub label path before retrying so issue metadata does not mutate partially.",
+        missing.join(", ")
+    );
+}
+
 pub(super) fn gh_issue_edit_title(repo: &str, issue: u32, title: &str) -> Result<()> {
     #[derive(Serialize)]
     struct IssueTitlePayload<'a> {
@@ -1253,6 +1336,7 @@ pub(super) fn ensure_issue_metadata_parity(
     if expected.is_empty() {
         bail!("create: expected at least one label for tracked issue creation");
     }
+    ensure_repo_labels_exist(repo, &expected, "create")?;
 
     let current_title = gh_issue_title(issue, repo)?.unwrap_or_default();
     let actual = IssueMetadataSnapshot::new(current_title, gh_issue_label_names(issue, repo)?);

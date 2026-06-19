@@ -1289,6 +1289,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+            | "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs"
             | "adl/src/cli/tests/pr_cmd_inline/support.rs"
             | "adl/src/csdlc_prompt_editor.rs"
             | "adl/src/cli/run_artifacts_types.rs"
@@ -1349,6 +1350,7 @@ fn finish_path_needs_pr_cmd_lifecycle_focused_validation(path: &str) -> bool {
     trimmed == "adl/src/cli/pr_cmd.rs"
         || trimmed == "adl/src/cli/pr_cmd_args.rs"
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+        || trimmed == "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs"
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/support.rs"
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || (trimmed.starts_with("adl/src/cli/pr_cmd/")
@@ -2257,6 +2259,29 @@ mod tests {
         shared_env_lock()
     }
 
+    struct ObservabilityEnvGuard;
+
+    impl ObservabilityEnvGuard {
+        fn install(log: &PathBuf) -> Self {
+            unsafe {
+                std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
+                std::env::set_var("ADL_OBSERVABILITY_LOG", log);
+                std::env::set_var("ADL_OBSERVABILITY_HEARTBEAT_MS", "25");
+            }
+            Self
+        }
+    }
+
+    impl Drop for ObservabilityEnvGuard {
+        fn drop(&mut self) {
+            unsafe {
+                std::env::remove_var("ADL_OBSERVABILITY_STDERR");
+                std::env::remove_var("ADL_OBSERVABILITY_LOG");
+                std::env::remove_var("ADL_OBSERVABILITY_HEARTBEAT_MS");
+            }
+        }
+    }
+
     fn temp_dir(prefix: &str) -> PathBuf {
         let dir = std::env::temp_dir().join(format!(
             "adl-finish-validation-{prefix}-{}-{}",
@@ -2265,6 +2290,17 @@ mod tests {
         ));
         fs::create_dir_all(&dir).expect("create temp dir");
         dir
+    }
+
+    fn read_log_until(log: &PathBuf, needle: &str) -> String {
+        for _ in 0..10 {
+            let contents = fs::read_to_string(log).unwrap_or_default();
+            if contents.contains(needle) {
+                return contents;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        fs::read_to_string(log).unwrap_or_default()
     }
 
     #[test]
@@ -2278,28 +2314,18 @@ mod tests {
         perms.set_mode(0o755);
         fs::set_permissions(&script, perms).expect("chmod");
 
-        unsafe {
-            std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
-            std::env::set_var("ADL_OBSERVABILITY_LOG", &log);
-            std::env::set_var("ADL_OBSERVABILITY_HEARTBEAT_MS", "25");
-        }
+        let _env = ObservabilityEnvGuard::install(&log);
 
         run_finish_validation_status("bash", &[script.to_str().expect("script path")])
             .expect("validation command");
 
-        let contents = fs::read_to_string(&log).expect("read log");
+        let contents = read_log_until(&log, "result=completed");
         assert!(contents.contains("command=finish"));
         assert!(contents.contains("stage=validation_subprocess"));
         assert!(contents.contains("program=bash"));
         assert!(contents.contains("subprocess_class=shell_validation"));
         assert!(contents.contains("result=heartbeat"));
         assert!(contents.contains("result=completed"));
-
-        unsafe {
-            std::env::remove_var("ADL_OBSERVABILITY_STDERR");
-            std::env::remove_var("ADL_OBSERVABILITY_LOG");
-            std::env::remove_var("ADL_OBSERVABILITY_HEARTBEAT_MS");
-        }
     }
 
     #[test]
@@ -2308,27 +2334,17 @@ mod tests {
         let temp = temp_dir("spawn-error");
         let log = temp.join("observability.log");
 
-        unsafe {
-            std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
-            std::env::set_var("ADL_OBSERVABILITY_LOG", &log);
-            std::env::set_var("ADL_OBSERVABILITY_HEARTBEAT_MS", "25");
-        }
+        let _env = ObservabilityEnvGuard::install(&log);
 
         let err =
             run_finish_validation_status("definitely-not-a-real-finish-subprocess", &["--version"])
                 .expect_err("spawn should fail");
         assert!(err.to_string().contains("failed to spawn"));
 
-        let contents = fs::read_to_string(&log).expect("read log");
+        let contents = read_log_until(&log, "result=failed");
         assert!(contents.contains("result=started"));
         assert!(contents.contains("result=failed"));
         assert!(contents.contains("reason_code=validation_subprocess_spawn_failed"));
         assert!(contents.contains("next_action_hint=check_subprocess_path_and_permissions"));
-
-        unsafe {
-            std::env::remove_var("ADL_OBSERVABILITY_STDERR");
-            std::env::remove_var("ADL_OBSERVABILITY_LOG");
-            std::env::remove_var("ADL_OBSERVABILITY_HEARTBEAT_MS");
-        }
     }
 }

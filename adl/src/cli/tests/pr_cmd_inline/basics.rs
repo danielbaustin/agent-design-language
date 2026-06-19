@@ -58,6 +58,14 @@ fn spawn_issue_octocrab_test_server(
                     "\"closed_at\":null,\"body\":\"Created body\",\"labels\":[],\"milestone\":null}"
                 )
                 .to_string(),
+                ("GET", "/repos/owner/repo/labels") => concat!(
+                    "[",
+                    "{\"name\":\"area:tools\"},",
+                    "{\"name\":\"track:roadmap\"},",
+                    "{\"name\":\"type:task\"}",
+                    "]"
+                )
+                .to_string(),
                 ("POST", "/repos/owner/repo/issues/77/comments") => {
                     "{\"html_url\":\"https://github.com/owner/repo/issues/77#issuecomment-1\"}"
                         .to_string()
@@ -443,7 +451,7 @@ fn real_pr_issue_covers_list_search_view_and_mutation_against_mock_github() {
     std::fs::write(&body_path, "Created body\n").expect("write body");
     let comment_path = repo.join("comment.md");
     std::fs::write(&comment_path, "Comment body\n").expect("write comment");
-    let (base_uri, server) = spawn_issue_octocrab_test_server(6);
+    let (base_uri, server) = spawn_issue_octocrab_test_server(8);
     unsafe {
         std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
         std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
@@ -492,16 +500,54 @@ fn real_pr_issue_covers_list_search_view_and_mutation_against_mock_github() {
 
     std::env::set_current_dir(prev_dir).expect("restore cwd");
     let seen = server.join().expect("server join");
-    assert_eq!(seen.len(), 6);
+    assert_eq!(seen.len(), 8);
     assert!(seen[0].starts_with("GET /repos/owner/repo/issues?"));
     assert!(seen[1].contains("/search/issues?"));
     assert!(seen[2].starts_with("GET /repos/owner/repo/issues/77"));
-    assert!(seen[3].starts_with("POST /repos/owner/repo/issues "));
-    assert!(seen[3].contains("[v0.91.6][tools] Typed create"));
-    assert!(seen[4].starts_with("POST /repos/owner/repo/issues/77/comments "));
-    assert!(seen[4].contains("Comment body"));
-    assert!(seen[5].starts_with("PATCH /repos/owner/repo/issues/77 "));
-    assert!(seen[5].contains("area:tools"));
+    assert!(seen[3].starts_with("GET /repos/owner/repo/labels?"));
+    assert!(seen[4].starts_with("POST /repos/owner/repo/issues "));
+    assert!(seen[4].contains("[v0.91.6][tools] Typed create"));
+    assert!(seen[5].starts_with("POST /repos/owner/repo/issues/77/comments "));
+    assert!(seen[5].contains("Comment body"));
+    assert!(seen[6].starts_with("GET /repos/owner/repo/labels?"));
+    assert!(seen[7].starts_with("PATCH /repos/owner/repo/issues/77 "));
+    assert!(seen[7].contains("area:tools"));
+}
+
+#[test]
+fn real_pr_issue_edit_resolves_body_before_mutating_title() {
+    let _guard = env_lock();
+    let _transport_env = force_gh_cli_transport_env();
+    let repo = unique_temp_dir("adl-pr-issue-edit-body-first");
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &fixture,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display()
+        ),
+    );
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
+
+    let missing_body = repo.join("missing-body.md");
+    let err = real_pr_issue(&[
+        "edit".to_string(),
+        "https://github.com/owner/repo/issues/77".to_string(),
+        "--title".to_string(),
+        "[v0.91.6][tools] Edited".to_string(),
+        "--body-file".to_string(),
+        missing_body.display().to_string(),
+    ])
+    .expect_err("missing body file should fail before title mutation");
+
+    assert!(err.to_string().contains("new: --body-file not found"));
+    let gh_calls = fs::read_to_string(&gh_log).unwrap_or_default();
+    assert!(
+        !gh_calls.contains("--title [v0.91.6][tools] Edited"),
+        "issue edit should resolve the body before mutating the GitHub title"
+    );
 }
 
 #[test]
@@ -929,7 +975,7 @@ fn real_pr_repair_issue_body_updates_github_source_prompt_and_bundle() {
     write_executable(
         &fixture,
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  exit 0\nfi\nexit 1\n",
             gh_log.display(),
             issue_body_log.display()
         ),
@@ -994,7 +1040,7 @@ fn real_pr_repair_issue_body_repairs_title_and_labels_without_body_mutation() {
     write_executable(
         &fixture,
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.91.6\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  exit 0\nfi\nexit 1\n",
             gh_log.display(),
             authored_repair_body(),
             issue_body_log.display()
@@ -1047,6 +1093,60 @@ fn real_pr_repair_issue_body_repairs_title_and_labels_without_body_mutation() {
 }
 
 #[test]
+fn real_pr_repair_issue_body_fails_before_metadata_mutation_when_repo_labels_are_missing() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-repair-issue-missing-repo-labels");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &fixture,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:roadmap\\ntype:task\\nversion:v0.91.6\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            authored_repair_body()
+        ),
+    );
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "repair-issue-body".to_string(),
+        "1304".to_string(),
+        "--slug".to_string(),
+        "repair-body".to_string(),
+        "--title".to_string(),
+        "[v0.91.6][tools] Repair metadata".to_string(),
+        "--labels".to_string(),
+        "track:roadmap,type:task,area:tools".to_string(),
+        "--version".to_string(),
+        "v0.91.6".to_string(),
+    ])
+    .expect_err("repair should fail before metadata mutation when repo labels are missing");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    assert!(err
+        .to_string()
+        .contains("repair-issue-body: repo is missing required GitHub labels: area:tools"));
+    let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(gh_calls.contains("label list -R "));
+    assert!(
+        !gh_calls.contains("--title [v0.91.6][tools] Repair metadata"),
+        "repair should not edit the GitHub issue title when required repo labels are absent"
+    );
+    assert!(
+        !gh_calls.contains("--add-label track:roadmap,type:task,area:tools,version:v0.91.6"),
+        "repair should not edit GitHub issue labels when required repo labels are absent"
+    );
+}
+
+#[test]
 fn real_pr_repair_issue_body_blocks_metadata_only_overwrite_of_authored_prompt_without_force() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-repair-metadata-overwrite-blocked");
@@ -1059,7 +1159,7 @@ fn real_pr_repair_issue_body_blocks_metadata_only_overwrite_of_authored_prompt_w
     write_executable(
         &fixture,
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
             gh_log.display(),
             authored_repair_body()
         ),
@@ -1111,7 +1211,7 @@ fn real_pr_repair_issue_body_blocks_slug_change_for_existing_local_identity() {
     write_executable(
         &fixture,
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
             gh_log.display(),
             authored_repair_body()
         ),
@@ -1162,7 +1262,7 @@ fn real_pr_repair_issue_body_blocks_version_change_for_existing_local_identity()
     write_executable(
         &fixture,
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
             gh_log.display(),
             authored_repair_body()
         ),
@@ -1547,7 +1647,7 @@ fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
     write_executable(
             &gh_path,
             &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1202\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Simplified init path\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1202\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Simplified init path\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
                 gh_log.display(),
                 issue_body_log.display()
             ),
@@ -1687,7 +1787,7 @@ fn real_pr_create_fails_when_post_bootstrap_ready_validation_fails() {
     let gh_path = bin_dir.join("gh");
     write_executable(
         &gh_path,
-        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  printf 'https://github.com/example/repo/issues/1205\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Create ready fail\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  printf 'https://github.com/example/repo/issues/1205\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Create ready fail\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
     );
 
     let old_path = env::var("PATH").unwrap_or_default();
@@ -1736,25 +1836,24 @@ fn real_pr_create_fails_when_post_bootstrap_ready_validation_fails() {
 }
 
 #[test]
-fn real_pr_create_fails_when_created_issue_is_missing_requested_labels() {
+fn real_pr_create_fails_before_creating_issue_when_repo_labels_are_missing() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-create-missing-labels");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
 
-    let bin_dir = repo.join("bin");
-    fs::create_dir_all(&bin_dir).expect("bin dir");
-    let gh_path = bin_dir.join("gh");
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
     write_executable(
-        &gh_path,
-        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  printf 'https://github.com/example/repo/issues/1204\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Missing labels\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+        &fixture,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:roadmap\\ntype:task\\nversion:v0.86\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  printf 'https://github.com/example/repo/issues/1204\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Missing labels\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display()
+        ),
     );
-
-    let old_path = env::var("PATH").unwrap_or_default();
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
     let prev_dir = env::current_dir().expect("cwd");
-    unsafe {
-        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
-    }
     env::set_current_dir(&repo).expect("chdir");
 
     let err = real_pr(&[
@@ -1771,13 +1870,16 @@ fn real_pr_create_fails_when_created_issue_is_missing_requested_labels() {
     .expect_err("missing labels should fail after create");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
-    unsafe {
-        env::set_var("PATH", old_path);
-    }
 
     assert!(err
         .to_string()
-        .contains("create: issue #1204 metadata drift remains after parity enforcement: missing labels: area:tools"));
+        .contains("create: repo is missing required GitHub labels: area:tools"));
+    let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(gh_calls.contains("label list -R "));
+    assert!(
+        !gh_calls.contains("issue create"),
+        "create should fail before opening the issue when required labels are absent"
+    );
 }
 
 #[test]
@@ -1794,7 +1896,7 @@ fn real_pr_create_generated_body_leaves_repairable_evidence_when_not_immediately
     write_executable(
             &gh_path,
             &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1203\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Generated issue body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+                "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1203\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Generated issue body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
                 issue_body_log.display()
             ),
         );
@@ -1864,7 +1966,7 @@ fn real_pr_create_rejects_issue_body_that_cannot_pass_source_prompt_validation()
     let gh_path = bin_dir.join("gh");
     write_executable(
         &gh_path,
-        "#!/usr/bin/env bash\nset -euo pipefail\nexit 99\n",
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n  exit 0\nfi\nexit 99\n",
     );
 
     let old_path = env::var("PATH").unwrap_or_default();
@@ -1920,7 +2022,7 @@ fn real_pr_create_rejects_bootstrap_stub_issue_body_with_authored_body_guidance(
     let gh_path = bin_dir.join("gh");
     write_executable(
         &gh_path,
-        "#!/usr/bin/env bash\nset -euo pipefail\nexit 99\n",
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n  exit 0\nfi\nexit 99\n",
     );
 
     let old_path = env::var("PATH").unwrap_or_default();
