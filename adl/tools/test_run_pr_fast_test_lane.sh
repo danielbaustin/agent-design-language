@@ -265,6 +265,17 @@ assert_has "$finish_only_output" "reason=bounded_rust_surface_runs_focused_nexte
 assert_has "$finish_only_output" "filter_tokens=pr_cmd_finish"
 assert_has "$finish_only_output" "filter_expression=binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
 
+long_lived_agent_only="$TMP/long_lived_agent_only.txt"
+cat >"$long_lived_agent_only" <<'EOF'
+M	adl/src/long_lived_agent.rs
+M	adl/src/long_lived_agent/tests.rs
+EOF
+long_lived_agent_only_output="$(bash "$SCRIPT" --changed-files "$long_lived_agent_only" --print-plan)"
+assert_has "$long_lived_agent_only_output" "mode=focused"
+assert_has "$long_lived_agent_only_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$long_lived_agent_only_output" "filter_tokens=long_lived_agent"
+assert_has "$long_lived_agent_only_output" "filter_expression=binary_id(adl) and test(/^long_lived_agent::/)"
+
 too_many_families="$TMP/too_many_families.txt"
 cat >"$too_many_families" <<'EOF'
 M	adl/src/runtime_v2/subdir/nested.rs
