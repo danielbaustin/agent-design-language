@@ -1,4 +1,5 @@
 use crate::cli::pr_cmd::github_client::{AdlGithubClient, GithubClientBackend};
+use crate::cli::tokio_runtime::with_current_thread_runtime;
 use anyhow::{anyhow, bail, Context, Result};
 use octocrab::models::repos::Release;
 use std::fs;
@@ -119,88 +120,90 @@ fn run_release_action(args: &ReleaseArgs) -> Result<String> {
         .repo
         .split_once('/')
         .ok_or_else(|| anyhow!("github-release --repo must be owner/repo"))?;
-    let runtime = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .context("github_release.octocrab_runtime: failed to build runtime")?;
-    let _guard = runtime.enter();
-    let octo = build_octocrab()?;
-    runtime.block_on(async move {
-        match args.action {
-            ReleaseAction::EnsureAbsent => {
-                if release_by_tag(&octo, owner, repo, &args.tag)
-                    .await?
-                    .is_some()
-                {
-                    bail!("GitHub release already exists for tag {}", args.tag);
+    with_current_thread_runtime(
+        "github_release.octocrab_runtime: failed to build runtime",
+        |runtime| {
+            let octo = build_octocrab()?;
+            runtime.block_on(async move {
+                match args.action {
+                    ReleaseAction::EnsureAbsent => {
+                        if release_by_tag(&octo, owner, repo, &args.tag)
+                            .await?
+                            .is_some()
+                        {
+                            bail!("GitHub release already exists for tag {}", args.tag);
+                        }
+                        Ok(format!("release_absent tag={}", args.tag))
+                    }
+                    ReleaseAction::EnsurePresent => {
+                        let release = release_by_tag(&octo, owner, repo, &args.tag).await?;
+                        if release.is_none() {
+                            bail!("GitHub release does not exist for tag {}", args.tag);
+                        }
+                        Ok(format!("release_present tag={}", args.tag))
+                    }
+                    ReleaseAction::Draft => {
+                        if release_by_tag(&octo, owner, repo, &args.tag)
+                            .await?
+                            .is_some()
+                        {
+                            bail!("GitHub release already exists for tag {}", args.tag);
+                        }
+                        let body = read_notes(args.notes_file.as_ref())?;
+                        let name = args.name.as_deref().unwrap_or(&args.tag);
+                        let repo_handler = octo.repos(owner, repo);
+                        let releases = repo_handler.releases();
+                        let mut builder = releases
+                            .create(&args.tag)
+                            .name(name)
+                            .body(&body)
+                            .draft(true)
+                            .prerelease(false);
+                        if let Some(target) = args.target.as_deref() {
+                            builder = builder.target_commitish(target);
+                        }
+                        let release = builder.send().await.with_context(|| {
+                            format!(
+                                "github_release.octocrab_transport: failed to draft {}",
+                                args.tag
+                            )
+                        })?;
+                        Ok(format!(
+                            "release_drafted tag={} url={}",
+                            release.tag_name, release.html_url
+                        ))
+                    }
+                    ReleaseAction::Publish => {
+                        let release = release_by_tag(&octo, owner, repo, &args.tag)
+                            .await?
+                            .ok_or_else(|| {
+                                anyhow!("GitHub release does not exist for tag {}", args.tag)
+                            })?;
+                        if !release.draft {
+                            bail!("GitHub release for tag {} is not a draft", args.tag);
+                        }
+                        let updated = octo
+                            .repos(owner, repo)
+                            .releases()
+                            .update(release_id_u64(&release)?)
+                            .draft(false)
+                            .send()
+                            .await
+                            .with_context(|| {
+                                format!(
+                                    "github_release.octocrab_transport: failed to publish {}",
+                                    args.tag
+                                )
+                            })?;
+                        Ok(format!(
+                            "release_published tag={} url={}",
+                            updated.tag_name, updated.html_url
+                        ))
+                    }
                 }
-                Ok(format!("release_absent tag={}", args.tag))
-            }
-            ReleaseAction::EnsurePresent => {
-                let release = release_by_tag(&octo, owner, repo, &args.tag).await?;
-                if release.is_none() {
-                    bail!("GitHub release does not exist for tag {}", args.tag);
-                }
-                Ok(format!("release_present tag={}", args.tag))
-            }
-            ReleaseAction::Draft => {
-                if release_by_tag(&octo, owner, repo, &args.tag)
-                    .await?
-                    .is_some()
-                {
-                    bail!("GitHub release already exists for tag {}", args.tag);
-                }
-                let body = read_notes(args.notes_file.as_ref())?;
-                let name = args.name.as_deref().unwrap_or(&args.tag);
-                let repo_handler = octo.repos(owner, repo);
-                let releases = repo_handler.releases();
-                let mut builder = releases
-                    .create(&args.tag)
-                    .name(name)
-                    .body(&body)
-                    .draft(true)
-                    .prerelease(false);
-                if let Some(target) = args.target.as_deref() {
-                    builder = builder.target_commitish(target);
-                }
-                let release = builder.send().await.with_context(|| {
-                    format!(
-                        "github_release.octocrab_transport: failed to draft {}",
-                        args.tag
-                    )
-                })?;
-                Ok(format!(
-                    "release_drafted tag={} url={}",
-                    release.tag_name, release.html_url
-                ))
-            }
-            ReleaseAction::Publish => {
-                let release = release_by_tag(&octo, owner, repo, &args.tag)
-                    .await?
-                    .ok_or_else(|| anyhow!("GitHub release does not exist for tag {}", args.tag))?;
-                if !release.draft {
-                    bail!("GitHub release for tag {} is not a draft", args.tag);
-                }
-                let updated = octo
-                    .repos(owner, repo)
-                    .releases()
-                    .update(release_id_u64(&release)?)
-                    .draft(false)
-                    .send()
-                    .await
-                    .with_context(|| {
-                        format!(
-                            "github_release.octocrab_transport: failed to publish {}",
-                            args.tag
-                        )
-                    })?;
-                Ok(format!(
-                    "release_published tag={} url={}",
-                    updated.tag_name, updated.html_url
-                ))
-            }
-        }
-    })
+            })
+        },
+    )
 }
 
 async fn release_by_tag(
