@@ -1351,6 +1351,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "demos/v0.89/gemma4_issue_clerk_demo.md"
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
+        || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/lifecycle/")
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
         || trimmed.starts_with("adl/tests/fixtures/scheduler/")
@@ -1371,6 +1372,7 @@ fn finish_path_needs_pr_cmd_lifecycle_focused_validation(path: &str) -> bool {
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/basics.rs"
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs"
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/support.rs"
+        || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/lifecycle/")
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || (trimmed.starts_with("adl/src/cli/pr_cmd/")
             && trimmed != "adl/src/cli/pr_cmd/finish_support.rs")

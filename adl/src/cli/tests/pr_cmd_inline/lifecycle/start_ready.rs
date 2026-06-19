@@ -1,5 +1,20 @@
 use super::*;
 
+fn assert_nonempty_materialized_file(path: impl AsRef<std::path::Path>) {
+    let path = path.as_ref();
+    let metadata = fs::metadata(path).unwrap_or_else(|err| {
+        panic!(
+            "expected materialized nonempty file at {}: {err}",
+            path.display()
+        )
+    });
+    assert!(
+        metadata.is_file() && metadata.len() > 0,
+        "expected materialized nonempty file at {}",
+        path.display()
+    );
+}
+
 #[test]
 fn real_pr_start_rejects_tracked_dirty_primary_main_before_binding_worktree() {
     let _guard = env_lock();
@@ -234,14 +249,12 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
     assert!(issue_ref.task_bundle_output_path(&repo).is_file());
     assert!(issue_ref.task_bundle_plan_path(&repo).is_file());
     assert!(issue_ref.task_bundle_review_policy_path(&repo).is_file());
-    assert!(issue_ref.issue_prompt_path(&worktree).is_file());
-    assert!(issue_ref.task_bundle_stp_path(&worktree).is_file());
-    assert!(issue_ref.task_bundle_input_path(&worktree).is_file());
-    assert!(issue_ref.task_bundle_output_path(&worktree).is_file());
-    assert!(issue_ref.task_bundle_plan_path(&worktree).is_file());
-    assert!(issue_ref
-        .task_bundle_review_policy_path(&worktree)
-        .is_file());
+    assert_nonempty_materialized_file(issue_ref.issue_prompt_path(&worktree));
+    assert_nonempty_materialized_file(issue_ref.task_bundle_stp_path(&worktree));
+    assert_nonempty_materialized_file(issue_ref.task_bundle_input_path(&worktree));
+    assert_nonempty_materialized_file(issue_ref.task_bundle_output_path(&worktree));
+    assert_nonempty_materialized_file(issue_ref.task_bundle_plan_path(&worktree));
+    assert_nonempty_materialized_file(issue_ref.task_bundle_review_policy_path(&worktree));
     assert_eq!(
         fs::read_to_string(worktree.join("docs/templates/README_TEMPLATE.md"))
             .expect("read mirrored template"),
@@ -508,20 +521,12 @@ fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
 
     env::set_current_dir(prev_dir).expect("restore cwd");
 
-    assert!(issue_ref.issue_prompt_path(&worktree).is_file());
-    assert!(issue_ref.worktree_task_bundle_stp_path(&worktree).is_file());
-    assert!(issue_ref
-        .worktree_task_bundle_input_path(&worktree)
-        .is_file());
-    assert!(issue_ref
-        .worktree_task_bundle_output_path(&worktree)
-        .is_file());
-    assert!(issue_ref
-        .worktree_task_bundle_plan_path(&worktree)
-        .is_file());
-    assert!(issue_ref
-        .worktree_task_bundle_review_policy_path(&worktree)
-        .is_file());
+    assert_nonempty_materialized_file(issue_ref.issue_prompt_path(&worktree));
+    assert_nonempty_materialized_file(issue_ref.worktree_task_bundle_stp_path(&worktree));
+    assert_nonempty_materialized_file(issue_ref.worktree_task_bundle_input_path(&worktree));
+    assert_nonempty_materialized_file(issue_ref.worktree_task_bundle_output_path(&worktree));
+    assert_nonempty_materialized_file(issue_ref.worktree_task_bundle_plan_path(&worktree));
+    assert_nonempty_materialized_file(issue_ref.worktree_task_bundle_review_policy_path(&worktree));
 }
 
 #[test]
