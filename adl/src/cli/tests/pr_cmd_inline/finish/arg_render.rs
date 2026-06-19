@@ -40,6 +40,32 @@ fn parse_finish_args_requires_title_and_accepts_finish_flags() {
     assert!(parsed.ready);
     assert!(parsed.allow_gitignore);
     assert!(parsed.no_open);
+
+    let merge_parsed = parse_finish_args(&[
+        "1153".to_string(),
+        "--title".to_string(),
+        "Example".to_string(),
+        "--merge".to_string(),
+    ])
+    .expect("parse finish merge");
+    assert!(merge_parsed.merge_mode);
+    assert!(
+        merge_parsed.ready,
+        "--merge should imply ready so native finish merge does not stall on draft-only state"
+    );
+
+    let auto_merge_parsed = parse_finish_args(&[
+        "1153".to_string(),
+        "--title".to_string(),
+        "Example".to_string(),
+        "--auto-merge".to_string(),
+    ])
+    .expect("parse finish auto-merge");
+    assert!(auto_merge_parsed.merge_mode);
+    assert!(
+        auto_merge_parsed.ready,
+        "--auto-merge should imply ready so native finish merge does not stall on draft-only state"
+    );
 }
 
 #[test]
