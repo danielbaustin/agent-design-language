@@ -614,6 +614,30 @@ fn card_lifecycle_reports_final_review_and_output_truth() {
 }
 
 #[test]
+fn card_lifecycle_accepts_terminal_sor_with_retained_dirty_worktree_truth() {
+    let repo = lifecycle_temp_repo("retained-dirty-worktree-final-sor");
+    let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Branch: codex/3065-test\n",
+                stp: complete_stp_fixture(),
+                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\n---\n",
+                srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- pass\n",
+                sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: issue worktree retained: adl-wp-3065\n- Worktree prune result: retained_with_reason: dirty stale worktree retained: adl-wp-3065\n- Integration state: merged\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
+            },
+        );
+
+    let lifecycle = build_doctor_card_lifecycle(
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+    );
+
+    assert_eq!(lifecycle.active_stage, "SOR");
+    assert_eq!(lifecycle.next_required_stage, None);
+    assert_eq!(lifecycle.pr_finish_readiness, "ready");
+    assert_stage(&lifecycle, "SOR", "final", true, true);
+}
+
+#[test]
 fn card_lifecycle_blocks_final_sor_with_contradictory_status_and_result() {
     let repo = lifecycle_temp_repo("contradictory-sor-status-result");
     let paths = write_lifecycle_fixture(

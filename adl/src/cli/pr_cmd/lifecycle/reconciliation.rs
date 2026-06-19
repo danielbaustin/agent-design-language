@@ -130,30 +130,65 @@ pub(crate) fn closeout_closed_completed_issue_bundle(
             .map(PathBuf::from)
             .as_deref(),
     );
-    let recovery_bundles = [issue_ref.task_bundle_dir_path(&worktree_path)];
-    reconcile_closed_completed_issue_bundle_with_recovery_sources(
+    let worktree_is_dirty =
+        worktree_path.is_dir() && has_uncommitted_or_untracked_changes(&worktree_path)?;
+    let recovery_bundles = if worktree_is_dirty {
+        Vec::new()
+    } else {
+        vec![issue_ref.task_bundle_dir_path(&worktree_path)]
+    };
+    if let Err(error) = reconcile_closed_completed_issue_bundle_with_recovery_sources(
         primary_root,
         issue_ref,
         canonical_output,
         &recovery_bundles,
-    )?;
+    ) {
+        if worktree_is_dirty {
+            if canonical_output.is_file() {
+                let name = super::cleanup::worktree_display_name(&worktree_path);
+                super::cleanup::record_worktree_prune_result(
+                    canonical_output,
+                    &format!("blocked_dirty: retained {name}"),
+                )?;
+                super::cleanup::replace_worktree_only_paths_remaining(
+                    canonical_output,
+                    &format!("issue worktree retained: {name}"),
+                )?;
+            }
+            return Err(error).with_context(|| {
+                format!(
+                    "closeout: dirty worktree '{}' was retained and was not used as a recovery source",
+                    worktree_path.display()
+                )
+            });
+        }
+        return Err(error);
+    }
     if worktree_path.is_dir() {
         super::cleanup::scrub_noncanonical_issue_bundle_residue(&worktree_path, issue_ref)?;
     }
-    if worktree_path.is_dir() && has_uncommitted_or_untracked_changes(&worktree_path)? {
-        let name = super::cleanup::worktree_display_name(&worktree_path);
+    if worktree_is_dirty {
+        let retained_result = super::cleanup::IssueWorktreePruneResult::RetainedWithReason(
+            super::cleanup::worktree_display_name(&worktree_path),
+        );
         super::cleanup::record_worktree_prune_result(
             canonical_output,
-            &format!("blocked_dirty: retained {name}"),
+            &retained_result.card_value(),
         )?;
         super::cleanup::replace_worktree_only_paths_remaining(
             canonical_output,
-            &format!("issue worktree retained: {name}"),
+            &format!(
+                "issue worktree retained: {}",
+                super::cleanup::worktree_display_name(&worktree_path)
+            ),
         )?;
-        bail!(
-            "closeout: refusing to prune dirty worktree '{}' because it contains staged, unstaged, or untracked changes",
-            worktree_path.display()
-        );
+        return ensure_closed_completed_issue_bundle_truth(primary_root, issue_ref, canonical_output)
+            .with_context(|| {
+                format!(
+                    "closeout: canonical closed-issue sor truth drift remains for issue #{} after retaining dirty stale worktree",
+                    issue_ref.issue_number()
+                )
+            });
     }
     let prune_result = super::cleanup::prune_issue_worktree(repo_root, primary_root, issue_ref)?;
     super::cleanup::record_worktree_prune_result(canonical_output, &prune_result.card_value())?;
@@ -186,6 +221,9 @@ pub(crate) fn ensure_closed_completed_issue_bundle_truth(
     } else {
         let text = fs::read_to_string(canonical_output)?;
         sor_integration_state = line_value_after_prefix(&text, "- Integration state:");
+        let worktree_only_paths =
+            line_value_after_prefix(&text, "- Worktree-only paths remaining:");
+        let worktree_prune_result = line_value_after_prefix(&text, "- Worktree prune result:");
         let branch = line_value_after_prefix(&text, "Branch:");
         let retrospective_no_branch = branch.as_deref() == Some("retrospective-no-branch");
         check_required_field(&text, "Status:", "DONE", "SOR Status", &mut mismatches);
@@ -219,13 +257,24 @@ pub(crate) fn ensure_closed_completed_issue_bundle_truth(
             )),
             None => mismatches.push("SOR Integration state is missing".to_string()),
         }
-        check_required_field(
-            &text,
-            "- Worktree-only paths remaining:",
-            "none",
-            "SOR Worktree-only paths remaining",
-            &mut mismatches,
-        );
+        match worktree_only_paths.as_deref() {
+            Some("none") => {}
+            Some(value) if value.starts_with("issue worktree retained: ") => {
+                match worktree_prune_result.as_deref() {
+                    Some(result) if result.starts_with("retained_with_reason: ") => {}
+                    Some(result) => mismatches.push(format!(
+                        "SOR Worktree prune result expected retained_with_reason for retained worktree but found '{result}'"
+                    )),
+                    None => mismatches.push(
+                        "SOR Worktree prune result is missing for retained worktree".to_string(),
+                    ),
+                }
+            }
+            Some(value) => mismatches.push(format!(
+                "SOR Worktree-only paths remaining expected 'none' or retained issue worktree but found '{value}'"
+            )),
+            None => mismatches.push("SOR Worktree-only paths remaining is missing".to_string()),
+        }
     }
 
     let stp_path = issue_ref.task_bundle_stp_path(repo_root);

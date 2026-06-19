@@ -58,6 +58,7 @@ pub(crate) fn same_filesystem_target(left: &Path, right: &Path) -> Result<bool> 
 pub(crate) enum IssueWorktreePruneResult {
     Missing(String),
     Pruned(String),
+    RetainedWithReason(String),
 }
 
 impl IssueWorktreePruneResult {
@@ -65,6 +66,9 @@ impl IssueWorktreePruneResult {
         match self {
             Self::Missing(name) => format!("skipped_missing: {name}"),
             Self::Pruned(name) => format!("pruned: {name}"),
+            Self::RetainedWithReason(name) => {
+                format!("retained_with_reason: dirty stale worktree retained: {name}")
+            }
         }
     }
 }
