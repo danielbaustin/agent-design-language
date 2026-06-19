@@ -296,6 +296,69 @@ pub(super) fn enforce_delegation_policy_for_step_actions(
     Ok(())
 }
 
+pub(super) fn build_remote_execute_request(
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+    run_id: &str,
+    workflow_id: &str,
+    provider_id: &str,
+    prompt_text: &str,
+    inputs: &HashMap<String, String>,
+    saved_state: &HashMap<String, String>,
+    adl_base_dir: &Path,
+    spec: &crate::adl::ProviderSpec,
+    model_override: Option<&str>,
+) -> Result<remote_exec::ExecuteRequest> {
+    let remote = doc.run.remote.as_ref().ok_or_else(|| {
+        crate::remote_exec::RemoteExecuteClientError::new(
+            crate::remote_exec::RemoteExecuteClientErrorKind::SchemaViolation,
+            "REMOTE_SCHEMA_VIOLATION",
+            "run.remote.endpoint is required when placement=remote",
+        )
+    })?;
+    let timeout_ms = remote.timeout_ms.unwrap_or(30_000);
+    Ok(remote_exec::ExecuteRequest {
+        protocol_version: remote_exec::PROTOCOL_VERSION.to_string(),
+        run_id: run_id.to_string(),
+        workflow_id: workflow_id.to_string(),
+        step_id: step.id.clone(),
+        step: remote_exec::ExecuteStepPayload {
+            kind: "task".to_string(),
+            provider: provider_id.to_string(),
+            prompt: prompt_text.to_string(),
+            conversation: step.conversation.clone(),
+            tools: Vec::new(),
+            provider_spec: spec.clone(),
+            model_override: model_override.map(|v| v.to_string()),
+        },
+        inputs: remote_exec::ExecuteInputsPayload {
+            inputs: inputs.clone(),
+            state: saved_state.clone(),
+        },
+        timeout_ms,
+        security: Some(remote_exec::ExecuteSecurityEnvelope {
+            require_signature: remote.require_signed_requests,
+            require_key_id: remote.require_key_id,
+            signed: doc.signature.is_some(),
+            key_id: doc.signature.as_ref().map(|s| s.key_id.clone()),
+            signature_alg: doc.signature.as_ref().map(|s| s.alg.clone()),
+            key_source: doc
+                .signature
+                .as_ref()
+                .and_then(|s| s.public_key_b64.as_ref().map(|_| "embedded".to_string())),
+            request_signature: None,
+            allowed_algs: remote.verify_allowed_algs.clone(),
+            allowed_key_sources: remote.verify_allowed_key_sources.clone(),
+            sandbox_root: Some(adl_base_dir.display().to_string()),
+            requested_paths: step
+                .write_to
+                .as_ref()
+                .map(|w| vec![w.clone()])
+                .unwrap_or_default(),
+        }),
+    })
+}
+
 pub(super) fn execute_step_with_retry(
     step: &crate::resolve::ResolvedStep,
     doc: &crate::adl::AdlDoc,
@@ -422,44 +485,19 @@ where
                         )
                     })?;
                     let timeout_ms = remote.timeout_ms.unwrap_or(30_000);
-                    let mut req = remote_exec::ExecuteRequest {
-                        protocol_version: remote_exec::PROTOCOL_VERSION.to_string(),
-                        run_id: run_id.to_string(),
-                        workflow_id: workflow_id.to_string(),
-                        step_id: step_id.clone(),
-                        step: remote_exec::ExecuteStepPayload {
-                            kind: "task".to_string(),
-                            provider: provider_id.to_string(),
-                            prompt: prompt_text.clone(),
-                            tools: Vec::new(),
-                            provider_spec: spec.clone(),
-                            model_override: model_override.map(|v| v.to_string()),
-                        },
-                        inputs: remote_exec::ExecuteInputsPayload {
-                            inputs: inputs.clone(),
-                            state: saved_state.clone(),
-                        },
-                        timeout_ms,
-                        security: Some(remote_exec::ExecuteSecurityEnvelope {
-                            require_signature: remote.require_signed_requests,
-                            require_key_id: remote.require_key_id,
-                            signed: doc.signature.is_some(),
-                            key_id: doc.signature.as_ref().map(|s| s.key_id.clone()),
-                            signature_alg: doc.signature.as_ref().map(|s| s.alg.clone()),
-                            key_source: doc.signature.as_ref().and_then(|s| {
-                                s.public_key_b64.as_ref().map(|_| "embedded".to_string())
-                            }),
-                            request_signature: None,
-                            allowed_algs: remote.verify_allowed_algs.clone(),
-                            allowed_key_sources: remote.verify_allowed_key_sources.clone(),
-                            sandbox_root: Some(adl_base_dir.display().to_string()),
-                            requested_paths: step
-                                .write_to
-                                .as_ref()
-                                .map(|w| vec![w.clone()])
-                                .unwrap_or_default(),
-                        }),
-                    };
+                    let mut req = build_remote_execute_request(
+                        step,
+                        doc,
+                        run_id,
+                        workflow_id,
+                        provider_id,
+                        &prompt_text,
+                        &inputs,
+                        saved_state,
+                        adl_base_dir,
+                        spec,
+                        model_override,
+                    )?;
                     remote_exec::maybe_attach_request_signature_from_env(&mut req).with_context(
                         || {
                             format!(

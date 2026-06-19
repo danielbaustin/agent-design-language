@@ -1,5 +1,5 @@
 use super::runner::{
-    effective_max_concurrency_with_source, effective_step_placement,
+    build_remote_execute_request, effective_max_concurrency_with_source, effective_step_placement,
     emit_delegation_lifecycle_finish, emit_delegation_lifecycle_start,
     enforce_delegation_policy_for_step_actions, resolve_call_binding,
 };
@@ -148,6 +148,17 @@ fn delegated_step(id: &str) -> crate::resolve::ResolvedStep {
         write_to: None,
         on_error: None,
         retry: None,
+    }
+}
+
+fn remote_provider_spec() -> crate::adl::ProviderSpec {
+    crate::adl::ProviderSpec {
+        id: None,
+        profile: None,
+        kind: "http".to_string(),
+        base_url: None,
+        default_model: None,
+        config: HashMap::new(),
     }
 }
 
@@ -585,6 +596,73 @@ fn execute_step_with_retry_does_not_retry_remote_schema_violation() {
         "unexpected error: {:#}",
         failure.err
     );
+}
+
+#[test]
+fn build_remote_execute_request_preserves_conversation_as_audit_metadata() {
+    let mut doc = minimal_resolved().doc;
+    doc.providers
+        .insert("p1".to_string(), remote_provider_spec());
+    doc.run.placement = Some(RunPlacementSpec::Mode(PlacementMode::Remote));
+    doc.run.remote = Some(crate::adl::RunRemoteSpec {
+        endpoint: "http://127.0.0.1:4100/v1/execute".to_string(),
+        timeout_ms: Some(45_000),
+        require_signed_requests: false,
+        require_key_id: false,
+        verify_allowed_algs: vec!["ed25519".to_string()],
+        verify_allowed_key_sources: vec!["embedded".to_string()],
+    });
+
+    let mut step = remote_retry_step(2);
+    step.write_to = Some("artifacts/reply.json".to_string());
+    step.conversation = Some(crate::adl::ConversationTurnSpec {
+        id: "turn_01".to_string(),
+        speaker: "agent.alpha".to_string(),
+        sequence: Some(1),
+        thread_id: Some("thread.local".to_string()),
+        responds_to: Some("turn_00".to_string()),
+    });
+
+    let mut inputs = HashMap::new();
+    inputs.insert("topic".to_string(), "acip".to_string());
+    let mut saved_state = HashMap::new();
+    saved_state.insert("history.latest".to_string(), "turn_00".to_string());
+
+    let req = build_remote_execute_request(
+        &step,
+        &doc,
+        "run-1",
+        "wf-1",
+        "p1",
+        "respond carefully",
+        &inputs,
+        &saved_state,
+        std::path::Path::new("."),
+        doc.providers.get("p1").expect("provider spec"),
+        Some("gpt-5.5"),
+    )
+    .expect("remote execute request");
+
+    assert_eq!(req.run_id, "run-1");
+    assert_eq!(req.workflow_id, "wf-1");
+    assert_eq!(req.step_id, step.id);
+    assert_eq!(req.timeout_ms, 45_000);
+    assert_eq!(req.step.provider, "p1");
+    assert_eq!(req.step.prompt, "respond carefully");
+    assert_eq!(req.step.model_override.as_deref(), Some("gpt-5.5"));
+    assert_eq!(req.step.conversation, step.conversation);
+    assert!(req.step.tools.is_empty());
+    assert_eq!(req.inputs.inputs, inputs);
+    assert_eq!(req.inputs.state, saved_state);
+
+    let security = req.security.expect("security envelope");
+    assert_eq!(security.sandbox_root.as_deref(), Some("."));
+    assert_eq!(
+        security.requested_paths,
+        vec!["artifacts/reply.json".to_string()]
+    );
+    assert_eq!(security.allowed_algs, vec!["ed25519".to_string()]);
+    assert_eq!(security.allowed_key_sources, vec!["embedded".to_string()]);
 }
 
 #[test]
